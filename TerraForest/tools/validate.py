@@ -11,7 +11,7 @@ ROOT=Path(__file__).resolve().parents[1]
 parser=argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--godot',default=os.environ.get('GODOT_EXE') or shutil.which('godot'))
 parser.add_argument('--gpu',action='store_true')
-parser.add_argument('--test',choices=['integration','persistence','native_runtime','presentation','water','water_integration','world_archive','world_persistence','terrain_native'],default='integration')
+parser.add_argument('--test',choices=['integration','persistence','native_runtime','presentation','water','water_integration','world_archive','world_persistence','terrain_native','structures'],default='integration')
 args=parser.parse_args()
 if not args.godot:
     parser.error('Godot is required; use --godot PATH')

@@ -27,5 +27,5 @@ def archive(path,entries):
     print(f'{path.name}: {path.stat().st_size:,} bytes; SHA256 {hashlib.sha256(path.read_bytes()).hexdigest()}')
 
 archive(destination/'TerraForest-source.zip',files)
-for addon in ['volumetric_terrain','vegetation','world_ecosystem','world_runtime','presentation','volumetric_water']:
+for addon in ['volumetric_terrain','vegetation','world_ecosystem','world_runtime','presentation','volumetric_water','structures']:
     archive(destination/(addon+'.zip'),[p for p in files if p.relative_to(root).as_posix().startswith('addons/'+addon+'/')])

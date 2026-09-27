@@ -11,8 +11,8 @@ from bootstrap_native import ROOT
 
 parser=argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--godot',default=os.environ.get('GODOT_EXE') or shutil.which('godot'))
-parser.add_argument('--addon',choices=['world_runtime','volumetric_water'],default='world_runtime')
-parser.add_argument('--test',choices=['native_runtime','water','world_archive','world_persistence'])
+parser.add_argument('--addon',choices=['world_runtime','volumetric_water','structures'],default='world_runtime')
+parser.add_argument('--test',choices=['native_runtime','water','world_archive','world_persistence','structures'])
 args=parser.parse_args()
 if not args.godot:parser.error('Specify --godot PATH')
 engine=Path(args.godot)
@@ -32,7 +32,7 @@ with tempfile.TemporaryDirectory(prefix='release_smoke_',dir=build) as temporary
     (addon/(args.addon+'.gdextension')).write_text(descriptor)
     (project/'project.godot').write_text('config_version=5\n[application]\nconfig/name="TerraForest Native Release Test"\n')
     (project/'tests').mkdir()
-    test=args.test or ('water' if args.addon=='volumetric_water' else 'native_runtime')
+    test=args.test or {'volumetric_water':'water','structures':'structures'}.get(args.addon,'native_runtime')
     if test in ['world_archive','world_persistence']:
         for name in ['world_runtime','volumetric_water']:
             destination=project/'addons'/name

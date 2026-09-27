@@ -39,8 +39,16 @@ with tempfile.TemporaryDirectory(prefix='package_',dir=build) as temporary:
     log=run.stdout+'\n'+run.stderr
     report=json.loads((project/'reports/integration.json').read_text())
     ok=run.returncode==0 and report['failures']==0 and 'ERROR:' not in log and 'instances leaked' not in log
+    structures=subprocess.run([str(engine),'--headless','--path',str(project),'--script','res://tests/structures.gd'],capture_output=True,text=True,timeout=120)
+    structure_log=structures.stdout+'\n'+structures.stderr
+    structure_report=json.loads((project/'reports/structures.json').read_text())
+    ok=ok and structures.returncode==0 and structure_report['failures']==0 and 'ERROR:' not in structure_log and 'instances leaked' not in structure_log
+    scene=subprocess.run([str(engine),'--headless','--path',str(project),'--quit-after','120','res://demo/structures.tscn'],capture_output=True,text=True,timeout=60)
+    scene_log=scene.stdout+'\n'+scene.stderr
+    ok=ok and scene.returncode==0 and 'ERROR:' not in scene_log and 'instances leaked' not in scene_log
+    log+='\n'+structure_log+'\n'+scene_log
     (root/'reports').mkdir(exist_ok=True)
-    (root/'reports/package_verification.json').write_text(json.dumps({'archive':args.archive.name,'sha256':hashlib.sha256(args.archive.read_bytes()).hexdigest(),'manifest_files':len(manifest),'checks':len(report['checks']),'pass':ok,'log':log},indent=2),encoding='utf-8')
-    print(f'{"PASS" if ok else "FAIL"} {len(manifest)} archived hashes; {len(report["checks"])} clean-extraction integration checks')
+    (root/'reports/package_verification.json').write_text(json.dumps({'archive':args.archive.name,'sha256':hashlib.sha256(args.archive.read_bytes()).hexdigest(),'manifest_files':len(manifest),'checks':len(report['checks']),'structures_checks':structure_report['checks'],'structures_scene_smoke':scene.returncode==0 and 'ERROR:' not in scene_log,'pass':ok,'log':log},indent=2),encoding='utf-8')
+    print(f'{"PASS" if ok else "FAIL"} {len(manifest)} archived hashes; {len(report["checks"])} integration + {structure_report["checks"]} structures checks; construction scene startup')
     if not ok:print(log)
     raise SystemExit(0 if ok else 1)
