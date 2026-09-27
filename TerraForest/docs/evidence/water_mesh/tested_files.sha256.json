@@ -1,0 +1,6 @@
+{
+  "addons/volumetric_water/native/lake_volume.cpp": "bb362f7f3143c074ea2d5f1da583cf77f9fb74aa0ee62fcbf9f5cdeb856d5cbf",
+  "tests/water.gd": "5d64bdecb1a02aa250ee3eef4f190a1f96a55b90b43c0e567b9a724855a1f599",
+  "addons/volumetric_water/bin/volumetric_water.windows.template_debug.x86_64.dll": "b9161d12d087df459ad9c75e0af7100a6ac208e52406ab1b0b05d822313153bc",
+  "addons/volumetric_water/bin/volumetric_water.windows.template_release.x86_64.dll": "a776ac95d7f277e2479b31497090ae51119efc1abc15adb6800b424b4b846149"
+}

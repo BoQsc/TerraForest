@@ -13,7 +13,7 @@ This implementation stores a **three-dimensional connected water volume**, not a
 - Reaching any lateral or bottom boundary rejects the entire bake. Water is never silently truncated at an unsealed region edge. The top is above the fill level by configuration.
 - Successful volumes retain one byte per cell; density and flood queue scratch are freed. Published volumes cannot be reconfigured or rebaked.
 - Query cost is constant per volume. The scene adapter checks at most 16 bounded lake records (default 8). Idle lakes have no per-voxel update loop.
-- Surface extraction merges contiguous X runs, emits only the fill-level surface, and omits submerged internal faces. One MeshInstance per lake allows whole-lake frustum culling.
+- Surface extraction greedily merges occupied rectangles in X/Z, emits only the fill-level surface, and omits submerged internal faces. Rectangular basins need one quad; islands and irregular shorelines stay dry. Extraction uses a bounded 16 KiB local mask and leaves published occupancy immutable. One MeshInstance per lake allows whole-lake frustum culling.
 
 ## Native API
 
@@ -57,4 +57,4 @@ python tools/validate.py --test water_integration --gpu
 python tools/test_isolation.py
 ```
 
-See `docs/WATER_VALIDATION.md` for recorded evidence. Code license: 0BSD. Linked godot-cpp license: MIT, included beside this file.
+See [initial water validation](../../docs/WATER_VALIDATION.md) and [native rectangle-mesh validation](../../docs/WATER_MESH_VALIDATION.md) for recorded evidence. Code license: 0BSD. Linked godot-cpp license: MIT, included beside this file.
