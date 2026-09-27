@@ -111,6 +111,7 @@ func _create_static_models() -> void:
 		_append_transform(transforms, Vector3(31.5, rung * 0.4 + 0.2, 5.7), Vector3(1.0, 0.075, 0.10))
 	var batch: Node3D = ClassDB.instantiate("NativeStaticBatch")
 	add_child(batch)
+	assert(batch.configure_asset("showcase/metal_beam",beam))
 	assert(batch.set_instances(beam, transforms))
 	props.append(batch)
 

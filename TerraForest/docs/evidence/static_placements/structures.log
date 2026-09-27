@@ -1,0 +1,90 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS native block extension registered
+PASS empty snapshot validates
+PASS place cube
+PASS isolated cube is six merged quads
+PASS cube exact area and clockwise winding
+PASS place adjacent cube
+PASS adjacent cubes merge into six quads
+PASS adjacent cubes have no internal face
+PASS second material cube
+PASS material boundary does not expose internal face
+PASS reject invalid shape in batch
+PASS invalid batch is atomic
+PASS reject out of range coordinates
+PASS reject reserved material bits
+PASS reject incomplete records
+PASS clear using valid snapshot
+PASS edit across positive and negative chunk seams
+PASS negative floor division and positive seam ownership
+PASS no internal faces at either chunk seam
+PASS negative coordinate lookup
+PASS remove sole cell in negative chunk
+PASS empty chunk reclaimed and neighbour face restored
+PASS shape 1 rotation 0 accepted
+PASS shape 1 rotation 0 exact boundary and winding
+PASS shape 1 rotation 1 accepted
+PASS shape 1 rotation 1 exact boundary and winding
+PASS shape 1 rotation 2 accepted
+PASS shape 1 rotation 2 exact boundary and winding
+PASS shape 1 rotation 3 accepted
+PASS shape 1 rotation 3 exact boundary and winding
+PASS shape 2 rotation 0 accepted
+PASS shape 2 rotation 0 exact boundary and winding
+PASS shape 2 rotation 1 accepted
+PASS shape 2 rotation 1 exact boundary and winding
+PASS shape 2 rotation 2 accepted
+PASS shape 2 rotation 2 exact boundary and winding
+PASS shape 2 rotation 3 accepted
+PASS shape 2 rotation 3 exact boundary and winding
+PASS shape 3 rotation 0 accepted
+PASS shape 3 rotation 0 exact boundary and winding
+PASS shape 3 rotation 1 accepted
+PASS shape 3 rotation 1 exact boundary and winding
+PASS shape 3 rotation 2 accepted
+PASS shape 3 rotation 2 exact boundary and winding
+PASS shape 3 rotation 3 accepted
+PASS shape 3 rotation 3 exact boundary and winding
+PASS shape 4 rotation 0 accepted
+PASS shape 4 rotation 0 exact boundary and winding
+PASS shape 4 rotation 1 accepted
+PASS shape 4 rotation 1 exact boundary and winding
+PASS shape 4 rotation 2 accepted
+PASS shape 4 rotation 2 exact boundary and winding
+PASS shape 4 rotation 3 accepted
+PASS shape 4 rotation 3 exact boundary and winding
+PASS shape 5 rotation 0 accepted
+PASS shape 5 rotation 0 exact boundary and winding
+PASS shape 5 rotation 1 accepted
+PASS shape 5 rotation 1 exact boundary and winding
+PASS shape 5 rotation 2 accepted
+PASS shape 5 rotation 2 exact boundary and winding
+PASS shape 5 rotation 3 accepted
+PASS shape 5 rotation 3 exact boundary and winding
+PASS adjacent slabs merge without hidden faces
+PASS deterministic snapshot round trip
+PASS corrupt snapshot rejected
+PASS rejected load preserves live building
+PASS truncated snapshot rejected
+PASS stale worker output discarded after edit
+PASS latest edit is eventually published
+PASS repeated distant placement/removal retains no empty chunks or dirty tombstones
+PASS 4096 solid cubes become 12 triangles
+PASS dense chunk RLE snapshot is 60 bytes with checksum
+PASS stair collision tread 0
+PASS stair collision tread 1
+PASS stair collision tread 2
+PASS stair collision tread 3
+PASS true slope collision plane
+PASS far physics bodies released
+PASS static mesh transform upload
+PASS static model instances partition at signed spatial boundaries
+PASS invalid static transform rejected atomically
+PASS static batches reclaimed on clear
+PASS 100000 static model instances accepted
+PASS 100000 placements use 49 batches and 4.8 MB of transform payload
+PASS static model capacity/record limit enforced
+PASS house/tower showcase uses chunks rather than block nodes
+STRUCTURES_RESULT {"checks":86,"dense_bake_ms":6.027,"failures":0,"showcase":{"cell_bytes":417792,"cells":9469,"chunks":51,"collision_chunks":47,"dirty_chunks":0,"max_chunks":2048,"mesh_chunks":51,"published_bakes":51,"stale_bakes_rejected":0,"triangles":7502,"worker_jobs":0},"showcase_bake_ms":372.403,"static_100k":{"asset_id":"","batch_uploads":51,"instance_updates":0,"instances":100000,"slot_entries":100000,"spatial_batches":49,"transform_bytes":4800000},"static_100k_upload_ms":113.686}
+
