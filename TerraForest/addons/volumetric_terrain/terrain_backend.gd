@@ -79,6 +79,8 @@ func _input_active() -> bool:
 
 func _compatibility() -> String:
 	var library: String = "res://addons/volumetric_terrain/bin/terrain_core.windows.x86_64.dll" if OS.get_name() == "Windows" else "res://addons/volumetric_terrain/bin/libterrain_core.linux.x86_64.so"
+	if OS.get_name() == "Windows" and native != null and native.has_method("build_variant") and native.build_variant() == "template_release":
+		library = "res://addons/volumetric_terrain/bin/terrain_core.windows.template_release.x86_64.dll"
 	var codec_path: String = "res://addons/volumetric_terrain/mesh_codec.gd"
 	# Exported scripts become bytecode. Hash the remapped payload rather than an
 	# absent source file, otherwise every future exported codec shares an empty hash.

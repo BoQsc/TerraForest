@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Optional native rebuild. Python standard library only. Requires an existing C++ toolchain.
+"""Windows delegates to pinned Zig; legacy Linux/tests require an existing C++ toolchain.
 Runtime users need no compiler: Windows x86-64 DLL and Linux x86-64 SO are included.
 """
 from __future__ import annotations
@@ -20,6 +20,10 @@ def main() -> None:
     parser.add_argument("target", choices=["windows", "linux", "tests", "regression", "latency", "acceptance", "release", "bake"])
     parser.add_argument("--compiler", help="clang++ or g++ executable")
     args = parser.parse_args()
+    if args.target == "windows":
+        subprocess.run([sys.executable, str(ROOT.parents[1] / "tools/build_native.py"),
+                        "--addon", "volumetric_terrain", "--target", "all"], check=True)
+        return
     work = ROOT / ".build"
     work.mkdir(exist_ok=True)
     (ROOT / "bin").mkdir(exist_ok=True)
@@ -29,18 +33,7 @@ def main() -> None:
     core = str(ROOT / "native/core.cpp")
     bridge = str(ROOT / "native/godot_bridge.cpp")
     flags = ["-O2", "-std=c++17", "-fno-math-errno", "-ffp-contract=off"]
-    if args.target == "windows":
-        linker = shutil.which("lld-link")
-        if not linker or "clang" not in Path(compiler).name.lower():
-            raise RuntimeError("The standalone Windows target requires clang++ and lld-link in PATH")
-        flags += ["--target=x86_64-pc-windows-msvc", "-fno-exceptions", "-fno-rtti", "-fno-stack-protector", "-fno-builtin"]
-        objects = []
-        for source in (core, bridge):
-            obj = str(work / (Path(source).stem + ".win.obj"))
-            run([compiler, *flags, "-c", source, "-o", obj])
-            objects.append(obj)
-        run([linker, "/dll", "/noentry", "/nodefaultlib", "/machine:x64", "/opt:ref", "/opt:icf", "/out:" + str(ROOT / "bin/terrain_core.windows.x86_64.dll"), *objects])
-    elif args.target == "linux":
+    if args.target == "linux":
         run([compiler, *flags, "-fno-exceptions", "-fno-rtti", "-fPIC", "-shared", core, bridge, "-o", str(ROOT / "bin/libterrain_core.linux.x86_64.so")])
     else:
         source = ROOT / {"tests": "tests/native_tests.cpp", "regression": "tests/regression_042.cpp", "latency": "tests/regression_043.cpp", "acceptance": "tests/regression_044.cpp", "release": "tests/regression_045.cpp", "bake": "tools/bake_cache.cpp"}[args.target]

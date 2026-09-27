@@ -3,13 +3,17 @@
 void *(*tr_alloc)(size_t)=nullptr;
 void *(*tr_realloc)(void *,size_t)=nullptr;
 void (*tr_free)(void *)=nullptr;
+#if defined(TERRAFOREST_TYPED_BRIDGE)
+thread_local bool tr_oom=false;
+#else
 bool tr_oom=false;
+#endif
 // The worker alone owns World. This atomic counter is the ONLY main-thread
 // write observed during a build. No shared mesh/world mutation or forced kill.
 static u32 build_epoch_value=0;
-u32 terrain_build_epoch(){return __atomic_load_n(&build_epoch_value,__ATOMIC_RELAXED);}
-u32 terrain_cancel_builds(){return __atomic_add_fetch(&build_epoch_value,1u,__ATOMIC_RELAXED);}
-static bool cancelled(u32 epoch){return epoch!=0xffffffffu && terrain_build_epoch()!=epoch;}
+u32 terrain_build_epoch(const World *w){return __atomic_load_n(w&&w->build_control?&w->build_control->epoch:&build_epoch_value,__ATOMIC_RELAXED);}
+u32 terrain_cancel_builds(const World *w){return __atomic_add_fetch(w&&w->build_control?&w->build_control->epoch:&build_epoch_value,1u,__ATOMIC_RELAXED);}
+static bool cancelled(const World &w,u32 epoch){return epoch!=0xffffffffu && terrain_build_epoch(&w)!=epoch;}
 static constexpr int NP=126;
 static float smooth(float t){return t*t*(3.f-2.f*t);}
 static float noise(float x,float z,u32 seed){
@@ -125,7 +129,7 @@ bool World::deserialize(const u8*data,int n){
  if(n<32)return false;u32 actual;copy_bytes(&actual,data+n-4,4);if(actual!=checksum(data,n-4))return false;
  Reader r{data,n-4};if(r.u()!=SAVE_MAGIC||r.u()!=1)return false;int s=int(r.u()),pc=int(r.u()),bc=int(r.u()),rev=int(r.u()),ed=int(r.u());
  if(pc<0||pc>MAX_PAGES||bc<0||bc>2000000||i64(pc)*(4+PAGE_SAMPLES*3)+i64(bc)*8+28!=n-4)return false;
- World t;t.init(s);t.revision=rev;t.edits=ed;t.surface_style=surface_style;
+ World t;t.build_control=build_control;t.init(s);t.revision=rev;t.edits=ed;t.surface_style=surface_style;
  for(int i=0;i<pc;i++){
   u32 k=r.u();int px,py,pz;decode_page(k,px,py,pz);if(!k||k>u32(NP*NP*17)||px<0||pz<0||py<0||px>=NP||pz>=NP||py>16||t.pages_by_key.get(k)>=0){t.release();return false;}
   Page p;p.key=k;p.d=(i16*)tr_alloc(PAGE_SAMPLES*2);p.mat=(u8*)tr_alloc(PAGE_SAMPLES);if(!p.d||!p.mat){if(p.d)tr_free(p.d);if(p.mat)tr_free(p.mat);t.release();return false;}
@@ -203,8 +207,8 @@ static void simplify(const World&w,Mesh&m,int ox,int oz,int size,int step,u32 ep
  }
  for(int t=0;t<m.i.n/3;t++)for(int k=0;k<3;k++)adj[m.i[t*3+k]].push(t);
  for(int pass=0;pass<9;pass++){
-  if(cancelled(epoch))break;
-  int changed=0;for(int t=0;t<m.i.n;t+=3){if((t&255)==0&&cancelled(epoch))break;if(m.i[t]==0xffffffffu)continue;for(int k=0;k<3;k++){
+  if(cancelled(w,epoch))break;
+  int changed=0;for(int t=0;t<m.i.n;t+=3){if((t&255)==0&&cancelled(w,epoch))break;if(m.i[t]==0xffffffffu)continue;for(int k=0;k<3;k++){
    int a=m.i[t+k],b=m.i[t+(k+1)%3];if(a<0||b<0)break;
    if(group[a]==0xffffffffu||group[a]!=group[b]||ab(m.v[a].material-m.v[b].material)>.1f||dot(m.v[a].n,m.v[b].n)<.35f)continue;
    if(try_collapse(m,a,b,adj,weight,alive)){changed++;break;}
@@ -251,18 +255,18 @@ static void add_blocks(const World&w,int ox,int oz,int size,Mesh&m){
 static void mark_y(u32*bits,int lo,int hi){lo=imx(0,lo);hi=imn(255,hi);for(int y=lo;y<=hi;y++)bits[y>>5]|=1u<<(y&31);}
 struct CachedSample {i16 value;u8 material,valid;};
 bool build_patch(const World&w,int ox,int oz,int size,int step,Mesh&m,u32 expected_epoch){
- const u32 epoch=expected_epoch==0xffffffffu?terrain_build_epoch():expected_epoch;
- if(cancelled(epoch))return false;
+ const u32 epoch=expected_epoch==0xffffffffu?terrain_build_epoch(&w):expected_epoch;
+ if(cancelled(w,epoch))return false;
  const int hn=size+2;List<float> heights;heights.resize(hn*hn);
  for(int z=-1;z<=size;z++){
-  if(cancelled(epoch)){heights.release();return false;}
+  if(cancelled(w,epoch)){heights.release();return false;}
   for(int x=-1;x<=size;x++)heights[(x+1)+hn*(z+1)]=w.height(float(ox+x),float(oz+z));
  }
  Map ids;
  List<CachedSample> cache;const int plane_size=hn*257;cache.resize(plane_size*2);
  static const int edges[12][2]={{0,1},{2,3},{4,5},{6,7},{0,2},{1,3},{4,6},{5,7},{0,4},{1,5},{2,6},{3,7}};
  for(int z=-1;z<size;z++){
-  if(cancelled(epoch))break;
+  if(cancelled(w,epoch))break;
   zero_bytes(cache.p+((z+1)&1)*plane_size,size_t(plane_size)*sizeof(CachedSample));
   for(int x=-1;x<size;x++){
   int gx=ox+x,gz=oz+z;if(gx<-1||gx>WORLD||gz<-1||gz>WORLD)continue;
@@ -316,7 +320,7 @@ bool build_patch(const World&w,int ox,int oz,int size,int step,Mesh&m,u32 expect
   }
  }}
  cache.release();
- if(cancelled(epoch)){heights.release();ids.release();m.release();return false;}
+ if(cancelled(w,epoch)){heights.release();ids.release();m.release();return false;}
  int vn=m.v.n;
  for(int j=0;j<vn;j++){
   const Vertex&v=m.v[j];int x=v.cx-ox,y=v.cy,z=v.cz-oz;if(x<0||z<0||x>=size||z>=size)continue;u32 s=v.mask;
@@ -329,11 +333,11 @@ bool build_patch(const World&w,int ox,int oz,int size,int step,Mesh&m,u32 expect
   }
  }
  heights.release();ids.release();simplify(w,m,ox,oz,size,step,epoch);
- if(cancelled(epoch)){m.release();return false;}
+ if(cancelled(w,epoch)){m.release();return false;}
  add_blocks(w,ox,oz,size,m);
- if(cancelled(epoch)){m.release();return false;}
+ if(cancelled(w,epoch)){m.release();return false;}
  shade_mesh(w,m,epoch);
- if(cancelled(epoch)){m.release();return false;}
+ if(cancelled(w,epoch)){m.release();return false;}
  return true;
 }
 
@@ -446,10 +450,10 @@ static bool has_cover_candidates(const World&w,V3 p,float original_height){
  return false;
 }
 void shade_mesh(const World&w,Mesh&m,u32 expected_epoch){
- const u32 epoch=expected_epoch==0xffffffffu?terrain_build_epoch():expected_epoch;
- if(cancelled(epoch))return;
+ const u32 epoch=expected_epoch==0xffffffffu?terrain_build_epoch(&w):expected_epoch;
+ if(cancelled(w,epoch))return;
  for(int i=0;i<m.v.n;i++){
-  if((i&31)==0&&cancelled(epoch))return;
+  if((i&31)==0&&cancelled(w,epoch))return;
   Vertex&v=m.v[i];float h=w.height(v.p.x,v.p.z);
   v.substrate=eased(.15f,.65f,h-v.p.y);v.blend={};
   if(v.material<5){
@@ -475,7 +479,7 @@ void shade_mesh(const World&w,Mesh&m,u32 expected_epoch){
    }
   }
  }
- if(!cancelled(epoch))shade_visibility(w,m,epoch);
+ if(!cancelled(w,epoch))shade_visibility(w,m,epoch);
 }
 // Project a representative from the cached mesh to the AIR side of the sampled
 // field before testing visibility. Surface Nets representatives need not lie
@@ -516,7 +520,7 @@ static bool connected_air(const World&w,RoofCache&roof,V3 a,V3 b){
  return t>=distance;
 }
 void shade_visibility(const World&w,Mesh&m,u32 expected_epoch){
- const u32 epoch=expected_epoch==0xffffffffu?terrain_build_epoch():expected_epoch;
+ const u32 epoch=expected_epoch==0xffffffffu?terrain_build_epoch(&w):expected_epoch;
  const V3 toward_sun={-0.3141378f,0.7431448f,0.5908073f};
  // A vertical roof test alone classifies the open side of an excavation as
  // sealed. Sample the upper hemisphere only where cover can actually exist.
@@ -528,7 +532,7 @@ void shade_visibility(const World&w,Mesh&m,u32 expected_epoch){
   {.6956f,.18f,-.6956f},{-.6956f,.18f,-.6956f}};
  RoofCache roof(w);Map &probe_ids=w.light_probe_ids;List<SkyProbe>&probes=w.light_probes;
  for(int i=0;i<m.v.n;i++){
-  if((i&7)==0&&cancelled(epoch))break;
+  if((i&7)==0&&cancelled(w,epoch))break;
   Vertex&v=m.v[i];float h=w.height(v.p.x,v.p.z);
   v.sky=1;v.sun=1;
   if(!has_cover_candidates(w,v.p,h))continue;
@@ -570,7 +574,7 @@ void shade_visibility(const World&w,Mesh&m,u32 expected_epoch){
   else{
    float visible=0.f;
    for(int ray=0;ray<12;ray++){
-    if(cancelled(epoch))break;
+    if(cancelled(w,epoch))break;
     if(!trace_occluded(w,start,sky_dirs[ray],&roof))visible+=1.f;
    }
    v.sky=visible/13.f;
@@ -602,7 +606,7 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
  if(cmd==0){out.u(w.revision);out.u(w.edits);out.u(w.pages.n);out.u(w.blocks.n);out.u(u32(w.changed_samples));out.u(w.seed);}
  else if(cmd==1){
   int ox=int(r.u()),oz=int(r.u()),size=int(r.u()),step=int(r.u());
-  u32 epoch=r.at+4<=r.n?r.u():terrain_build_epoch();
+  u32 epoch=r.at+4<=r.n?r.u():terrain_build_epoch(&w);
   if(!r.good||ox<0||oz<0||ox>=2048||oz>=2048||(size!=16&&size!=32&&size!=64&&size!=128&&size!=256)||(step!=1&&step!=2&&step!=4&&step!=8)){out.p[8]=1;return;}
   Mesh m;
   if(!build_patch(w,ox,oz,size,step,m,epoch)){out.p[8]=4;return;}
@@ -621,7 +625,7 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
  }
  else if(cmd==4){w.serialize(out);}
  else if(cmd==5){if(!w.deserialize(data+4,n-4))out.p[8]=1;out.u(w.revision);out.u(w.pages.n);out.u(w.blocks.n);}
- else if(cmd==6){int seed=int(r.u());if(!r.good){out.p[8]=1;return;}w.release();w=World{};w.init(seed);}
+ else if(cmd==6){int seed=int(r.u());if(!r.good){out.p[8]=1;return;}BuildControl *control=w.build_control;w.release();w=World{};w.build_control=control;w.init(seed);}
  else if(cmd==7){V3 p=r.vec();if(!r.good||!(ab(p.x)<=10000&&ab(p.y)<=10000&&ab(p.z)<=10000)){out.p[8]=1;return;}out.f(w.height(p.x,p.z));out.f(w.sample(fl(p.x),fl(p.y),fl(p.z)));}
  else if(cmd==8){ // Deterministic construction proof; not a replay list.
   int bx=1472,bz=1440,by=int(w.height(float(bx),float(bz)))+1;
@@ -636,19 +640,19 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
   // thread supplies immutable positions/normals. No colliders or indices change.
   u32 epoch=r.u(),count=r.u();
   if(!r.good||count>2000000u||(i64(count)*24+12!=n && i64(count)*28+12!=n)){out.p[8]=1;return;}
-  if(cancelled(epoch)){out.p[8]=4;return;}
+  if(cancelled(w,epoch)){out.p[8]=4;return;}
   Mesh m;m.v.resize(int(count));
   for(u32 i=0;i<count;i++)m.v[i].p=r.vec();
   for(u32 i=0;i<count;i++)m.v[i].n=r.vec();
   if(i64(count)*28+12==n)for(u32 i=0;i<count;i++)m.v[i].material=r.f();
   shade_visibility(w,m,epoch);
-  if(cancelled(epoch))out.p[8]=4;
+  if(cancelled(w,epoch))out.p[8]=4;
   else {out.u(count);for(u32 i=0;i<count;i++){out.f(m.v[i].sky);out.f(m.v[i].sun);}}
   m.release();
  }else if(cmd==12){
   // Safe from the main thread during native meshing: atomic only, no World access.
-  out.u(terrain_cancel_builds());return;
- }else if(cmd==13){out.u(terrain_build_epoch());return;}
+  out.u(terrain_cancel_builds(&w));return;
+ }else if(cmd==13){out.u(terrain_build_epoch(&w));return;}
  else if(cmd==14){int style=int(r.u());if(!r.good||style<0||style>1){out.p[8]=1;return;}w.surface_style=style;out.u(style);}
  else if(cmd==15){out.u(u32(w.light_rays));out.u(u32(w.light_steps));out.u(u32(w.light_unresolved));out.u(u32(w.light_probe_hits));out.u(w.light_samples.n);out.u(w.light_probes.n);}
  else if(cmd==16){

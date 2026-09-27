@@ -1,0 +1,10 @@
+{
+  "addons/volumetric_terrain/native/core.cpp": "de462fb58af01c6465ebe85b7b6aa220a2299af14a00e3d6b70fda558722b98b",
+  "addons/volumetric_terrain/native/core.h": "979beddfc3d83a56a658ba58ccaa0a2697e38a78c2d9d836cc007fda8be64346",
+  "addons/volumetric_terrain/native/platform.h": "0c6cbefc3cb29bfc54465f167f6eaf36dfb091ea9dd9c0eafd00a471231ea30d",
+  "addons/volumetric_terrain/native/terrain_binding.cpp": "680fc21bfe63470dea695c229aa4ded311788cd88262a153adae7d1f78309a03",
+  "tests/terrain_native.gd": "43901f948a78dcc4342a874174abcc4f70d9a54ef08fe3f225ca4e9afd714bb1",
+  "tools/test_terrain_bridge.py": "bc8458ce59ec17333519e29ba54fa6a47f065363f8655b14763c417170160dbd",
+  "addons/volumetric_terrain/bin/terrain_core.windows.x86_64.dll": "3705ac2312c070c29c030e6b2d3e5879b32b19bcf7aeaa0daa4c5ebca127bc21",
+  "addons/volumetric_terrain/bin/terrain_core.windows.template_release.x86_64.dll": "9e6b2a4e0445009465638b7e386ab39bd93c6fb4d8e567811b5d443bb5ac1592"
+}

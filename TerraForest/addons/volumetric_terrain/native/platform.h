@@ -8,7 +8,11 @@ using i16=int16_t; using i32=int32_t; using i64=int64_t;
 extern void *(*tr_alloc)(size_t);
 extern void *(*tr_realloc)(void *,size_t);
 extern void (*tr_free)(void *);
+#if defined(TERRAFOREST_TYPED_BRIDGE)
+extern thread_local bool tr_oom;
+#else
 extern bool tr_oom;
+#endif
 inline void copy_bytes(void *dst,const void *src,size_t n) { auto d=(u8*)dst;auto s=(const u8*)src;for(size_t i=0;i<n;++i)d[i]=s[i]; }
 inline void zero_bytes(void *dst,size_t n) { auto d=(u8*)dst;for(size_t i=0;i<n;++i)d[i]=0; }
 template<class T> struct List {
