@@ -1,0 +1,65 @@
+{
+  "checks": [
+    {
+      "name": "main terrain scene finishes its loading gate",
+      "pass": true
+    },
+    {
+      "name": "construction site has real terrain collision",
+      "pass": true
+    },
+    {
+      "name": "native foundation/walls and editing target created in terrain world",
+      "pass": true
+    },
+    {
+      "name": "building chunk meshes publish in the main scene",
+      "pass": true
+    },
+    {
+      "name": "B selects independent block construction",
+      "pass": true
+    },
+    {
+      "name": "tool mode switch cannot carry a terrain stroke into later editing",
+      "pass": true
+    },
+    {
+      "name": "actual construction picking places the adjacent block",
+      "pass": true
+    },
+    {
+      "name": "placed block mesh publishes",
+      "pass": true
+    },
+    {
+      "name": "actual construction picking removes the selected block",
+      "pass": true
+    },
+    {
+      "name": "block authoring does not mutate terrain density",
+      "pass": true
+    },
+    {
+      "name": "temporary editing target removed",
+      "pass": true
+    },
+    {
+      "name": "existing player stands on independent building collision",
+      "pass": true
+    },
+    {
+      "name": "static model placement shares the main world structures owner",
+      "pass": true
+    },
+    {
+      "name": "main scene captures blocks and static models as one validated component",
+      "pass": true
+    },
+    {
+      "name": "integrated construction view is 1920x1080 fullscreen at full scale",
+      "pass": true
+    }
+  ],
+  "failures": 0
+}
