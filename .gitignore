@@ -1,0 +1,10 @@
+/TerraForest.zip
+/TerraForest/.godot/
+/TerraForest/.build/
+/TerraForest/reports/
+/TerraForest/dist/
+__pycache__/
+*.pyc
+.env
+.env.*
+!.env.example

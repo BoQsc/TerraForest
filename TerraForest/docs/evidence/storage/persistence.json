@@ -1,0 +1,61 @@
+{
+  "checks": [
+    {
+      "name": "persistent world starts",
+      "pass": true
+    },
+    {
+      "name": "new persistent world ready",
+      "pass": true
+    },
+    {
+      "name": "public sphere edit accepted",
+      "pass": true
+    },
+    {
+      "name": "persistent edit finishes",
+      "pass": true
+    },
+    {
+      "name": "edited column marked before save",
+      "pass": true
+    },
+    {
+      "name": "canonical save verified on worker",
+      "pass": true
+    },
+    {
+      "name": "canonical snapshot written",
+      "pass": true
+    },
+    {
+      "name": "persistent world starts",
+      "pass": true
+    },
+    {
+      "name": "saved snapshot reloads in a new world instance",
+      "pass": true
+    },
+    {
+      "name": "persistent modification metadata prevents tree regrowth after reload",
+      "pass": true
+    },
+    {
+      "name": "persistent world starts",
+      "pass": true
+    },
+    {
+      "name": "corrupt snapshot reports initialization failure",
+      "pass": true
+    },
+    {
+      "name": "corrupt world never becomes ready",
+      "pass": true
+    },
+    {
+      "name": "shutdown does not overwrite corrupt canonical snapshot",
+      "pass": true
+    }
+  ],
+  "failures": 0
+}

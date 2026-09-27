@@ -1,0 +1,35 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS native terrain starts
+PASS worker completes startup
+PASS second native world rejected before competing for global cancellation
+PASS source meshes, compact maps and all view arrays load
+PASS placement deterministic before asynchronous surface queries
+PASS nine cells finish streaming
+PASS vegetation placed on native terrain support
+PASS resident tree count bounded by candidate budget
+PASS teleport unloads old owners and replaces cells
+PASS unloaded ownership and render cells reclaimed
+PASS surface query concurrency bounded
+PASS truncated edit packet rejected before decoding
+PASS non-edit native opcodes rejected at public edit boundary
+PASS nonfinite edit coordinates rejected
+PASS terrain excavation accepted
+PASS excavation transaction commits
+PASS exactly one region event after publication
+PASS edited columns excluded from procedural regrowth
+PASS published excavation removes supported tree owner
+PASS edits preserve unaffected cell ownership without resampling
+PASS excavated root stays absent while unaffected roots remain
+PASS travel away releases the edited neighborhood
+PASS travel back resamples the edited neighborhood
+PASS excavated stable ID does not regrow after unload and return
+PASS invalid transforms rejected without mutation
+PASS global root limit applies before mutation
+PASS rapid travel preserves residency and in-flight bounds
+PASS clear releases all roots, owners and GPU cell nodes
+PASS clear releases selector event heap
+[TerrainRewrite] Temporary test world: save skipped
+PASS shutdown joins the persistent worker
+PASS stopped terrain rejects restart rather than silently starting a stopped worker
+

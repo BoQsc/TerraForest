@@ -1,0 +1,43 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=5
+
+[application]
+
+config/name="TerraForest"
+config/description="Modular volumetric terrain and streamed vegetation"
+config/version="1.0.0-dev"
+run/main_scene="res://demo/world.tscn"
+config/features=PackedStringArray("4.7", "Forward Plus")
+
+[debug]
+
+gdscript/warnings/integer_division=0
+
+[display]
+
+window/size/viewport_width=1920
+window/size/viewport_height=1080
+window/size/mode=4
+window/size/window_width_override=1920
+window/size/window_height_override=1080
+window/stretch/mode="viewport"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/volumetric_terrain/plugin.cfg", "res://addons/vegetation/plugin.cfg", "res://addons/world_ecosystem/plugin.cfg")
+
+[physics]
+
+3d/default_gravity=20.0
+
+[rendering]
+
+lights_and_shadows/directional_shadow/size=2048
+anti_aliasing/quality/msaa_3d=1

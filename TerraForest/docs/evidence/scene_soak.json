@@ -1,0 +1,295 @@
+{
+  "adapter": "NVIDIA GeForce GTX 1060 with Max-Q Design",
+  "checks": [
+    {
+      "name": "full scene finishes collision/loading gate and vegetation streaming",
+      "pass": true
+    },
+    {
+      "name": "full scene renders over one thousand supported trees",
+      "pass": true
+    },
+    {
+      "name": "published terrain has usable collision under player",
+      "pass": true
+    },
+    {
+      "name": "rendered terrain excavation accepted",
+      "pass": true
+    },
+    {
+      "name": "edited meshes and collision publish in the live scene",
+      "pass": true
+    },
+    {
+      "name": "published collider follows the excavated surface rather than the old ground",
+      "pass": true
+    },
+    {
+      "name": "travel cycle 0 settles",
+      "pass": true
+    },
+    {
+      "name": "travel cycle 0 stays within streaming limits",
+      "pass": true
+    },
+    {
+      "name": "travel cycle 1 settles",
+      "pass": true
+    },
+    {
+      "name": "travel cycle 1 stays within streaming limits",
+      "pass": true
+    },
+    {
+      "name": "travel cycle 2 settles",
+      "pass": true
+    },
+    {
+      "name": "travel cycle 2 stays within streaming limits",
+      "pass": true
+    },
+    {
+      "name": "travel cycle 3 settles",
+      "pass": true
+    },
+    {
+      "name": "travel cycle 3 stays within streaming limits",
+      "pass": true
+    }
+  ],
+  "engine": {
+    "build": "steam",
+    "hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+    "hex": 263938,
+    "major": 4,
+    "minor": 7,
+    "patch": 2,
+    "status": "stable",
+    "string": "4.7.2-stable (steam)",
+    "timestamp": 0
+  },
+  "failures": 0,
+  "frame_times": {
+    "count": 1800,
+    "max_ms": 9.013,
+    "p50_ms": 5.754,
+    "p95_ms": 6.794,
+    "p99_ms": 7.062
+  },
+  "note": "Repeat-travel integration soak; not a multi-hour endurance or baseline speedup claim.",
+  "renderer": "forward_plus",
+  "snapshots": [
+    {
+      "label": "warm",
+      "memory_static": 194049383.0,
+      "nodes": 759.0,
+      "pending": 0,
+      "resident": 169,
+      "resources": 24.0,
+      "terrain_cache_bytes": 91636688,
+      "terrain_tiles": 292,
+      "vegetation": {
+        "custom_writes": 1200,
+        "event_heap": 1506,
+        "event_pops": 42,
+        "event_queue_records": 1506,
+        "far": 2434,
+        "flush_us": 45,
+        "flushed_tiers": 68,
+        "full_rebuilds": 117,
+        "instance_allocation_events": 200,
+        "instance_cache_live_payload_bytes": 310016,
+        "instance_cache_primes": 200,
+        "live_certificates": 1506,
+        "middle": 233,
+        "owners": 117,
+        "resident_cells": 35,
+        "row_writes": 280,
+        "selection_checked": 117507,
+        "selection_jobs": 107,
+        "selection_skipped_cells": 16,
+        "selection_us": 782,
+        "shadow_proxy": 447,
+        "shadow_source": 21,
+        "source": 57,
+        "tested_rows": 42,
+        "transition_followups": 0,
+        "transitions": 0,
+        "trees": 2724,
+        "update_us": 9,
+        "uploaded_bytes": 810432,
+        "uploads": 268
+      }
+    },
+    {
+      "label": "travel_0",
+      "memory_static": 223854699.0,
+      "nodes": 1022.0,
+      "pending": 2,
+      "resident": 165,
+      "resources": 24.0,
+      "terrain_cache_bytes": 96983088,
+      "terrain_tiles": 360,
+      "vegetation": {
+        "custom_writes": 4688,
+        "event_heap": 1744,
+        "event_pops": 1522,
+        "event_queue_records": 1744,
+        "far": 3243,
+        "flush_us": 506,
+        "flushed_tiers": 170,
+        "full_rebuilds": 150,
+        "instance_allocation_events": 251,
+        "instance_cache_live_payload_bytes": 468800,
+        "instance_cache_primes": 251,
+        "live_certificates": 1744,
+        "middle": 286,
+        "owners": 150,
+        "resident_cells": 48,
+        "row_writes": 1962,
+        "selection_checked": 166262,
+        "selection_jobs": 135,
+        "selection_skipped_cells": 28,
+        "selection_us": 15468,
+        "shadow_proxy": 475,
+        "shadow_source": 16,
+        "source": 51,
+        "tested_rows": 1744,
+        "transition_followups": 0,
+        "transitions": 0,
+        "trees": 3580,
+        "update_us": 12,
+        "uploaded_bytes": 1097696,
+        "uploads": 407
+      }
+    },
+    {
+      "label": "travel_1",
+      "memory_static": 229965211.0,
+      "nodes": 1055.0,
+      "pending": 0,
+      "resident": 169,
+      "resources": 24.0,
+      "terrain_cache_bytes": 100832392,
+      "terrain_tiles": 382,
+      "vegetation": {
+        "custom_writes": 8194,
+        "event_heap": 1498,
+        "event_pops": 4108,
+        "event_queue_records": 1498,
+        "far": 2399,
+        "flush_us": 953,
+        "flushed_tiers": 310,
+        "full_rebuilds": 150,
+        "instance_allocation_events": 251,
+        "instance_cache_live_payload_bytes": 413504,
+        "instance_cache_primes": 251,
+        "live_certificates": 1498,
+        "middle": 268,
+        "owners": 117,
+        "resident_cells": 35,
+        "row_writes": 3670,
+        "selection_checked": 170533,
+        "selection_jobs": 138,
+        "selection_skipped_cells": 56,
+        "selection_us": 14260,
+        "shadow_proxy": 448,
+        "shadow_source": 13,
+        "source": 49,
+        "tested_rows": 871,
+        "transition_followups": 504,
+        "transitions": 0,
+        "trees": 2716,
+        "update_us": 9,
+        "uploaded_bytes": 1235776,
+        "uploads": 547
+      }
+    },
+    {
+      "label": "travel_2",
+      "memory_static": 270308867.0,
+      "nodes": 1271.0,
+      "pending": 0,
+      "resident": 169,
+      "resources": 24.0,
+      "terrain_cache_bytes": 112616880,
+      "terrain_tiles": 440,
+      "vegetation": {
+        "custom_writes": 11591,
+        "event_heap": 1744,
+        "event_pops": 5601,
+        "event_queue_records": 1744,
+        "far": 3330,
+        "flush_us": 2445,
+        "flushed_tiers": 410,
+        "full_rebuilds": 186,
+        "instance_allocation_events": 287,
+        "instance_cache_live_payload_bytes": 474368,
+        "instance_cache_primes": 287,
+        "live_certificates": 1744,
+        "middle": 286,
+        "owners": 153,
+        "resident_cells": 49,
+        "row_writes": 5308,
+        "selection_checked": 224778,
+        "selection_jobs": 169,
+        "selection_skipped_cells": 68,
+        "selection_us": 16021,
+        "shadow_proxy": 475,
+        "shadow_source": 16,
+        "source": 51,
+        "tested_rows": 1744,
+        "transition_followups": 504,
+        "transitions": 0,
+        "trees": 3667,
+        "update_us": 10,
+        "uploaded_bytes": 1496496,
+        "uploads": 683
+      }
+    },
+    {
+      "label": "travel_3",
+      "memory_static": 268404598.0,
+      "nodes": 1257.0,
+      "pending": 0,
+      "resident": 169,
+      "resources": 24.0,
+      "terrain_cache_bytes": 112616880,
+      "terrain_tiles": 440,
+      "vegetation": {
+        "custom_writes": 14911,
+        "event_heap": 1498,
+        "event_pops": 7316,
+        "event_queue_records": 1498,
+        "far": 2406,
+        "flush_us": 12291,
+        "flushed_tiers": 506,
+        "full_rebuilds": 186,
+        "instance_allocation_events": 287,
+        "instance_cache_live_payload_bytes": 413504,
+        "instance_cache_primes": 287,
+        "live_certificates": 1498,
+        "middle": 261,
+        "owners": 117,
+        "resident_cells": 35,
+        "row_writes": 6920,
+        "selection_checked": 228178,
+        "selection_jobs": 171,
+        "selection_skipped_cells": 80,
+        "selection_us": 12005,
+        "shadow_proxy": 448,
+        "shadow_source": 13,
+        "source": 49,
+        "tested_rows": 1498,
+        "transition_followups": 985,
+        "transitions": 0,
+        "trees": 2716,
+        "update_us": 10,
+        "uploaded_bytes": 1626992,
+        "uploads": 779
+      }
+    }
+  ],
+  "uncapped": true
+}

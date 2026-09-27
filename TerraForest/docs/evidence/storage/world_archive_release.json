@@ -1,0 +1,98 @@
+{
+  "checks": [
+    {
+      "name": "native lake catalog round-trips stable IDs and definitions",
+      "pass": true
+    },
+    {
+      "name": "empty catalog retains persistent ID allocation cursor",
+      "pass": true
+    },
+    {
+      "name": "catalog rejects cursor that would reuse a live ID",
+      "pass": true
+    },
+    {
+      "name": "duplicate lake IDs rejected",
+      "pass": true
+    },
+    {
+      "name": "nonfinite lake definition rejected",
+      "pass": true
+    },
+    {
+      "name": "unsupported lake record flags rejected",
+      "pass": true
+    },
+    {
+      "name": "truncated lake definition rejected",
+      "pass": true
+    },
+    {
+      "name": "archive byte representation independent of dictionary insertion order",
+      "pass": true
+    },
+    {
+      "name": "native archive round-trips opaque addon sections",
+      "pass": true
+    },
+    {
+      "name": "section value type checked",
+      "pass": true
+    },
+    {
+      "name": "noncanonical section name rejected",
+      "pass": true
+    },
+    {
+      "name": "required terrain section enforced",
+      "pass": true
+    },
+    {
+      "name": "payload corruption detected by SHA-256",
+      "pass": true
+    },
+    {
+      "name": "unsupported archive schema rejected",
+      "pass": true
+    },
+    {
+      "name": "authenticated oversized section length rejected before allocation",
+      "pass": true
+    },
+    {
+      "name": "authenticated trailing bytes rejected",
+      "pass": true
+    },
+    {
+      "name": "truncated archive rejected",
+      "pass": true
+    },
+    {
+      "name": "exclusive save lease rejects competing writer",
+      "pass": true
+    },
+    {
+      "name": "unleased writer cannot publish",
+      "pass": true
+    },
+    {
+      "name": "native file write flushed verified and published",
+      "pass": true
+    },
+    {
+      "name": "atomic replacement retains previous full snapshot backup",
+      "pass": true
+    },
+    {
+      "name": "invalid publication leaves canonical save untouched",
+      "pass": true
+    },
+    {
+      "name": "save lease released for next owner",
+      "pass": true
+    }
+  ],
+  "failures": 0,
+  "library": "world_runtime.windows.template_release.x86_64.dll"
+}

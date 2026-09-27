@@ -1,0 +1,20 @@
+{
+  "captured_size": [
+    1920,
+    1080
+  ],
+  "fair_graphical_sample": true,
+  "fullscreen": true,
+  "headless": false,
+  "pass": true,
+  "render_scale": 1.0,
+  "viewport": [
+    1920,
+    1080
+  ],
+  "window_mode": 4,
+  "window_size": [
+    1920,
+    1080
+  ]
+}

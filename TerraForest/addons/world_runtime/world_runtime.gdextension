@@ -1,0 +1,8 @@
+[configuration]
+entry_symbol = "terraforest_runtime_init"
+compatibility_minimum = "4.7"
+reloadable = false
+
+[libraries]
+windows.debug.x86_64 = "res://addons/world_runtime/bin/world_runtime.windows.template_debug.x86_64.dll"
+windows.release.x86_64 = "res://addons/world_runtime/bin/world_runtime.windows.template_release.x86_64.dll"

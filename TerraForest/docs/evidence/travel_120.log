@@ -1,0 +1,374 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.3.289 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce GTX 1060 with Max-Q Design
+
+[TerrainRewrite] New world
+[TerrainRewrite] New world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+PASS full scene finishes collision/loading gate and vegetation streaming
+PASS full scene renders over one thousand supported trees
+PASS published terrain has usable collision under player
+PASS rendered terrain excavation accepted
+PASS edited meshes and collision publish in the live scene
+PASS published collider follows the excavated surface rather than the old ground
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 0 settles
+[TerrainRewrite] Temporary test world: save skipped
+PASS travel cycle 0 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 1 settles
+PASS travel cycle 1 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 2 settles
+PASS travel cycle 2 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 3 settles
+PASS travel cycle 3 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 4 settles
+PASS travel cycle 4 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 5 settles
+PASS travel cycle 5 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 6 settles
+PASS travel cycle 6 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 7 settles
+PASS travel cycle 7 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 8 settles
+PASS travel cycle 8 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 9 settles
+PASS travel cycle 9 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 10 settles
+PASS travel cycle 10 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 11 settles
+PASS travel cycle 11 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 12 settles
+PASS travel cycle 12 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 13 settles
+PASS travel cycle 13 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 14 settles
+PASS travel cycle 14 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 15 settles
+PASS travel cycle 15 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 16 settles
+PASS travel cycle 16 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 17 settles
+PASS travel cycle 17 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 18 settles
+PASS travel cycle 18 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 19 settles
+PASS travel cycle 19 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 20 settles
+PASS travel cycle 20 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 21 settles
+PASS travel cycle 21 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 22 settles
+PASS travel cycle 22 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 23 settles
+PASS travel cycle 23 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 24 settles
+PASS travel cycle 24 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 25 settles
+PASS travel cycle 25 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 26 settles
+PASS travel cycle 26 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 27 settles
+PASS travel cycle 27 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 28 settles
+PASS travel cycle 28 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 29 settles
+PASS travel cycle 29 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 30 settles
+PASS travel cycle 30 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 31 settles
+PASS travel cycle 31 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 32 settles
+PASS travel cycle 32 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 33 settles
+PASS travel cycle 33 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 34 settles
+PASS travel cycle 34 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 35 settles
+PASS travel cycle 35 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 36 settles
+PASS travel cycle 36 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 37 settles
+PASS travel cycle 37 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 38 settles
+PASS travel cycle 38 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 39 settles
+PASS travel cycle 39 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 40 settles
+PASS travel cycle 40 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 41 settles
+PASS travel cycle 41 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 42 settles
+PASS travel cycle 42 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 43 settles
+PASS travel cycle 43 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 44 settles
+PASS travel cycle 44 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 45 settles
+PASS travel cycle 45 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 46 settles
+PASS travel cycle 46 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 47 settles
+PASS travel cycle 47 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 48 settles
+PASS travel cycle 48 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 49 settles
+PASS travel cycle 49 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 50 settles
+PASS travel cycle 50 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 51 settles
+PASS travel cycle 51 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 52 settles
+PASS travel cycle 52 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 53 settles
+PASS travel cycle 53 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 54 settles
+PASS travel cycle 54 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 55 settles
+PASS travel cycle 55 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 56 settles
+PASS travel cycle 56 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 57 settles
+PASS travel cycle 57 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 58 settles
+PASS travel cycle 58 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 59 settles
+PASS travel cycle 59 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 60 settles
+PASS travel cycle 60 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 61 settles
+PASS travel cycle 61 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 62 settles
+PASS travel cycle 62 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 63 settles
+PASS travel cycle 63 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 64 settles
+PASS travel cycle 64 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 65 settles
+PASS travel cycle 65 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 66 settles
+PASS travel cycle 66 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 67 settles
+PASS travel cycle 67 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 68 settles
+PASS travel cycle 68 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 69 settles
+PASS travel cycle 69 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 70 settles
+PASS travel cycle 70 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 71 settles
+PASS travel cycle 71 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 72 settles
+PASS travel cycle 72 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 73 settles
+PASS travel cycle 73 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 74 settles
+PASS travel cycle 74 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 75 settles
+PASS travel cycle 75 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 76 settles
+PASS travel cycle 76 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 77 settles
+PASS travel cycle 77 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 78 settles
+PASS travel cycle 78 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 79 settles
+PASS travel cycle 79 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 80 settles
+PASS travel cycle 80 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 81 settles
+PASS travel cycle 81 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 82 settles
+PASS travel cycle 82 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 83 settles
+PASS travel cycle 83 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 84 settles
+PASS travel cycle 84 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 85 settles
+PASS travel cycle 85 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 86 settles
+PASS travel cycle 86 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 87 settles
+PASS travel cycle 87 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 88 settles
+PASS travel cycle 88 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 89 settles
+PASS travel cycle 89 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 90 settles
+PASS travel cycle 90 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 91 settles
+PASS travel cycle 91 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 92 settles
+PASS travel cycle 92 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 93 settles
+PASS travel cycle 93 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 94 settles
+PASS travel cycle 94 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 95 settles
+PASS travel cycle 95 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 96 settles
+PASS travel cycle 96 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 97 settles
+PASS travel cycle 97 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 98 settles
+PASS travel cycle 98 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 99 settles
+PASS travel cycle 99 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 100 settles
+PASS travel cycle 100 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 101 settles
+PASS travel cycle 101 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 102 settles
+PASS travel cycle 102 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 103 settles
+PASS travel cycle 103 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 104 settles
+PASS travel cycle 104 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 105 settles
+PASS travel cycle 105 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 106 settles
+PASS travel cycle 106 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 107 settles
+PASS travel cycle 107 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 108 settles
+PASS travel cycle 108 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 109 settles
+PASS travel cycle 109 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 110 settles
+PASS travel cycle 110 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 111 settles
+PASS travel cycle 111 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 112 settles
+PASS travel cycle 112 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 113 settles
+PASS travel cycle 113 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 114 settles
+PASS travel cycle 114 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 115 settles
+PASS travel cycle 115 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 116 settles
+PASS travel cycle 116 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 117 settles
+PASS travel cycle 117 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 118 settles
+PASS travel cycle 118 stays within streaming limits
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS travel cycle 119 settles
+PASS travel cycle 119 stays within streaming limits
+[TerrainRewrite] Temporary test world: save skipped

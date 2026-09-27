@@ -1,0 +1,27 @@
+{
+  "failures": 0,
+  "trials": [
+    {
+      "trial": 0,
+      "cross_process_lease": true,
+      "temporary_write_observed_before_kill": true,
+      "canonical_and_backup_valid_after_kill": true,
+      "orphan_temporary_files": 1
+    },
+    {
+      "trial": 1,
+      "cross_process_lease": true,
+      "temporary_write_observed_before_kill": true,
+      "canonical_and_backup_valid_after_kill": true,
+      "orphan_temporary_files": 1
+    },
+    {
+      "trial": 2,
+      "cross_process_lease": true,
+      "temporary_write_observed_before_kill": true,
+      "canonical_and_backup_valid_after_kill": true,
+      "orphan_temporary_files": 1
+    }
+  ],
+  "scope": "Abrupt process termination during repeated writes; not physical power-loss testing"
+}

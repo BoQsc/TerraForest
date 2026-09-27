@@ -1,0 +1,314 @@
+{
+  "adapter": "NVIDIA GeForce GTX 1060 with Max-Q Design",
+  "checks": [
+    {
+      "name": "full scene finishes collision/loading gate and vegetation streaming",
+      "pass": true
+    },
+    {
+      "name": "measured presentation is 1920x1080 fullscreen at 100 percent render scale",
+      "pass": true
+    },
+    {
+      "name": "full scene renders over one thousand supported trees",
+      "pass": true
+    },
+    {
+      "name": "published terrain has usable collision under player",
+      "pass": true
+    },
+    {
+      "name": "rendered terrain excavation accepted",
+      "pass": true
+    },
+    {
+      "name": "edited meshes and collision publish in the live scene",
+      "pass": true
+    },
+    {
+      "name": "published collider follows the excavated surface rather than the old ground",
+      "pass": true
+    },
+    {
+      "name": "travel cycle 0 settles",
+      "pass": true
+    },
+    {
+      "name": "travel cycle 0 stays within streaming limits",
+      "pass": true
+    },
+    {
+      "name": "travel cycle 1 settles",
+      "pass": true
+    },
+    {
+      "name": "travel cycle 1 stays within streaming limits",
+      "pass": true
+    },
+    {
+      "name": "travel cycle 2 settles",
+      "pass": true
+    },
+    {
+      "name": "travel cycle 2 stays within streaming limits",
+      "pass": true
+    },
+    {
+      "name": "travel cycle 3 settles",
+      "pass": true
+    },
+    {
+      "name": "travel cycle 3 stays within streaming limits",
+      "pass": true
+    }
+  ],
+  "engine": {
+    "build": "steam",
+    "hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+    "hex": 263938,
+    "major": 4,
+    "minor": 7,
+    "patch": 2,
+    "status": "stable",
+    "string": "4.7.2-stable (steam)",
+    "timestamp": 0
+  },
+  "failures": 0,
+  "frame_times": {
+    "count": 1800,
+    "max_ms": 34.167,
+    "p50_ms": 7.506,
+    "p95_ms": 8.905,
+    "p99_ms": 9.997
+  },
+  "note": "Repeat-travel integration soak; not a multi-hour endurance or baseline speedup claim.",
+  "presentation": {
+    "fair_graphical_sample": true,
+    "fullscreen": true,
+    "headless": false,
+    "render_scale": 1.0,
+    "viewport": [
+      1920,
+      1080
+    ],
+    "window_mode": 4,
+    "window_size": [
+      1920,
+      1080
+    ]
+  },
+  "renderer": "forward_plus",
+  "snapshots": [
+    {
+      "label": "warm",
+      "memory_static": 194613368.0,
+      "nodes": 761.0,
+      "pending": 0,
+      "resident": 169,
+      "resources": 26.0,
+      "terrain_cache_bytes": 91636688,
+      "terrain_tiles": 292,
+      "vegetation": {
+        "custom_writes": 1281,
+        "event_heap": 1897,
+        "event_pops": 41,
+        "event_queue_records": 1897,
+        "far": 2318,
+        "flush_us": 45,
+        "flushed_tiers": 78,
+        "full_rebuilds": 117,
+        "instance_allocation_events": 208,
+        "instance_cache_live_payload_bytes": 320896,
+        "instance_cache_primes": 208,
+        "live_certificates": 1897,
+        "middle": 328,
+        "owners": 117,
+        "resident_cells": 35,
+        "row_writes": 297,
+        "selection_checked": 132857,
+        "selection_jobs": 105,
+        "selection_skipped_cells": 20,
+        "selection_us": 742,
+        "shadow_proxy": 447,
+        "shadow_source": 21,
+        "source": 78,
+        "tested_rows": 41,
+        "transition_followups": 46,
+        "transitions": 0,
+        "trees": 2724,
+        "update_us": 9,
+        "uploaded_bytes": 840768,
+        "uploads": 286
+      }
+    },
+    {
+      "label": "travel_0",
+      "memory_static": 224442456.0,
+      "nodes": 1027.0,
+      "pending": 2,
+      "resident": 164,
+      "resources": 26.0,
+      "terrain_cache_bytes": 97029124,
+      "terrain_tiles": 361,
+      "vegetation": {
+        "custom_writes": 5288,
+        "event_heap": 2783,
+        "event_pops": 1805,
+        "event_queue_records": 2783,
+        "far": 3094,
+        "flush_us": 801,
+        "flushed_tiers": 190,
+        "full_rebuilds": 150,
+        "instance_allocation_events": 260,
+        "instance_cache_live_payload_bytes": 486848,
+        "instance_cache_primes": 260,
+        "live_certificates": 2783,
+        "middle": 413,
+        "owners": 149,
+        "resident_cells": 47,
+        "row_writes": 2229,
+        "selection_checked": 201021,
+        "selection_jobs": 132,
+        "selection_skipped_cells": 35,
+        "selection_us": 31013,
+        "shadow_proxy": 475,
+        "shadow_source": 16,
+        "source": 71,
+        "tested_rows": 2783,
+        "transition_followups": 46,
+        "transitions": 0,
+        "trees": 3578,
+        "update_us": 11,
+        "uploaded_bytes": 1151920,
+        "uploads": 435
+      }
+    },
+    {
+      "label": "travel_1",
+      "memory_static": 230455102.0,
+      "nodes": 1061.0,
+      "pending": 0,
+      "resident": 169,
+      "resources": 26.0,
+      "terrain_cache_bytes": 100878428,
+      "terrain_tiles": 383,
+      "vegetation": {
+        "custom_writes": 9142,
+        "event_heap": 1889,
+        "event_pops": 5082,
+        "event_queue_records": 1889,
+        "far": 2239,
+        "flush_us": 782,
+        "flushed_tiers": 330,
+        "full_rebuilds": 150,
+        "instance_allocation_events": 260,
+        "instance_cache_live_payload_bytes": 431680,
+        "instance_cache_primes": 260,
+        "live_certificates": 1889,
+        "middle": 407,
+        "owners": 117,
+        "resident_cells": 35,
+        "row_writes": 4095,
+        "selection_checked": 206671,
+        "selection_jobs": 135,
+        "selection_skipped_cells": 70,
+        "selection_us": 19521,
+        "shadow_proxy": 448,
+        "shadow_source": 13,
+        "source": 70,
+        "tested_rows": 886,
+        "transition_followups": 645,
+        "transitions": 0,
+        "trees": 2716,
+        "update_us": 9,
+        "uploaded_bytes": 1303152,
+        "uploads": 575
+      }
+    },
+    {
+      "label": "travel_2",
+      "memory_static": 271398448.0,
+      "nodes": 1272.0,
+      "pending": 0,
+      "resident": 169,
+      "resources": 26.0,
+      "terrain_cache_bytes": 111252312,
+      "terrain_tiles": 438,
+      "vegetation": {
+        "custom_writes": 12939,
+        "event_heap": 2783,
+        "event_pops": 6918,
+        "event_queue_records": 2783,
+        "far": 3182,
+        "flush_us": 929,
+        "flushed_tiers": 442,
+        "full_rebuilds": 186,
+        "instance_allocation_events": 296,
+        "instance_cache_live_payload_bytes": 492544,
+        "instance_cache_primes": 296,
+        "live_certificates": 2783,
+        "middle": 414,
+        "owners": 153,
+        "resident_cells": 49,
+        "row_writes": 5928,
+        "selection_checked": 276927,
+        "selection_jobs": 162,
+        "selection_skipped_cells": 85,
+        "selection_us": 30462,
+        "shadow_proxy": 475,
+        "shadow_source": 16,
+        "source": 71,
+        "tested_rows": 2783,
+        "transition_followups": 1235,
+        "transitions": 0,
+        "trees": 3667,
+        "update_us": 10,
+        "uploaded_bytes": 1579632,
+        "uploads": 723
+      }
+    },
+    {
+      "label": "travel_3",
+      "memory_static": 267314281.0,
+      "nodes": 1259.0,
+      "pending": 0,
+      "resident": 169,
+      "resources": 26.0,
+      "terrain_cache_bytes": 111921060,
+      "terrain_tiles": 439,
+      "vegetation": {
+        "custom_writes": 16714,
+        "event_heap": 1889,
+        "event_pops": 9309,
+        "event_queue_records": 1889,
+        "far": 2239,
+        "flush_us": 163,
+        "flushed_tiers": 576,
+        "full_rebuilds": 186,
+        "instance_allocation_events": 296,
+        "instance_cache_live_payload_bytes": 431680,
+        "instance_cache_primes": 296,
+        "live_certificates": 1889,
+        "middle": 408,
+        "owners": 117,
+        "resident_cells": 35,
+        "row_writes": 7761,
+        "selection_checked": 281691,
+        "selection_jobs": 164,
+        "selection_skipped_cells": 100,
+        "selection_us": 19130,
+        "shadow_proxy": 470,
+        "shadow_source": 0,
+        "source": 69,
+        "tested_rows": 1889,
+        "transition_followups": 1832,
+        "transitions": 0,
+        "trees": 2716,
+        "update_us": 9,
+        "uploaded_bytes": 1728016,
+        "uploads": 857
+      }
+    }
+  ],
+  "uncapped": true
+}

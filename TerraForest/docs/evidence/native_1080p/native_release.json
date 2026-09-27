@@ -1,0 +1,108 @@
+{
+  "checks": [
+    {
+      "name": "Zig/prebuilt godot-cpp extension loads into installed Godot",
+      "pass": true
+    },
+    {
+      "name": "native entity class registered",
+      "pass": true
+    },
+    {
+      "name": "pool capacity validated before allocation",
+      "pass": true
+    },
+    {
+      "name": "bounded native pool allocated",
+      "pass": true
+    },
+    {
+      "name": "live handles distinct",
+      "pass": true
+    },
+    {
+      "name": "full pool rejects spawn",
+      "pass": true
+    },
+    {
+      "name": "live pool cannot be reconfigured destructively",
+      "pass": true
+    },
+    {
+      "name": "invalid tick durations rejected",
+      "pass": true
+    },
+    {
+      "name": "native tick integrates position",
+      "pass": true
+    },
+    {
+      "name": "despawn invalidates handle exactly once",
+      "pass": true
+    },
+    {
+      "name": "reused slot cannot resurrect stale handle",
+      "pass": true
+    },
+    {
+      "name": "invalid handle and nonfinite velocity rejected",
+      "pass": true
+    },
+    {
+      "name": "dense removal preserves bulk transform order and layout",
+      "pass": true
+    },
+    {
+      "name": "100000-entity native pool allocated",
+      "pass": true
+    },
+    {
+      "name": "100000 entities spawned in one native batch",
+      "pass": true
+    },
+    {
+      "name": "reconfiguration does not revive handles",
+      "pass": true
+    },
+    {
+      "name": "bulk spawn observes capacity without partial mutation",
+      "pass": true
+    },
+    {
+      "name": "240 native ticks retain bounded entity state",
+      "pass": true
+    },
+    {
+      "name": "100000 transforms produced in a single native output buffer",
+      "pass": true
+    }
+  ],
+  "engine": {
+    "build": "steam",
+    "hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+    "hex": 263938,
+    "major": 4,
+    "minor": 7,
+    "patch": 2,
+    "status": "stable",
+    "string": "4.7.2-stable (steam)",
+    "timestamp": 0
+  },
+  "failures": 0,
+  "kinematic_step_ms": {
+    "max": 2.928,
+    "p50": 0.774,
+    "p95": 1.056
+  },
+  "scope": "CPU-only entity kinematics; not collision, vehicles, networking or rendering FPS",
+  "stats": {
+    "active": 100000,
+    "capacity": 100000,
+    "collision_simulation": false,
+    "free": 0,
+    "native": true,
+    "pool_bytes": 4400000,
+    "ticks": 240
+  },
+  "library": "world_runtime.windows.template_release.x86_64.dll"
+}

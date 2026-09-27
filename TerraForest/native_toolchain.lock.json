@@ -1,0 +1,20 @@
+{
+  "schema": 1,
+  "platform": "windows",
+  "architecture": "x86_64",
+  "precision": "single",
+  "godot_api": "4.7",
+  "godot_cpp_commit": "d7b6162249ed52796a8301d216c24ee71d68c2bf",
+  "zig": {
+    "version": "0.16.0",
+    "url": "https://ziglang.org/download/0.16.0/zig-x86_64-windows-0.16.0.zip",
+    "sha256": "68659eb5f1e4eb1437a722f1dd889c5a322c9954607f5edcf337bc3684a75a7e",
+    "size": 97217739
+  },
+  "godot_cpp": {
+    "release": "api-4.7-d7b6162-zig",
+    "url": "https://github.com/BoQsc/godot-cpp-prebuilt/releases/download/api-4.7-d7b6162-zig/godot-cpp-api-4.7-windows-x86_64-zig-single.zip",
+    "sha256": "599f6048cde6889f053a3b2c9d225f90eeb9da436ee529bdf72d1bc4287ca2fd",
+    "size": 79059032
+  }
+}

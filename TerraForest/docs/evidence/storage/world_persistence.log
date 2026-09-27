@@ -1,0 +1,54 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS compound persistence provider attaches before terrain startup
+PASS leased persistent world starts
+PASS new compound world ready
+PASS terrain worker returns basin height
+PASS lake definition and terrain excavation accepted
+PASS lake bakes before saving
+PASS compound terrain and lake snapshot published
+PASS single canonical file contains terrain and water sections
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+PASS compound persistence provider attaches before terrain startup
+PASS leased persistent world starts
+PASS new process-equivalent world instance restores and rebakes lake
+PASS shutdown during queued reload does not overwrite restored addon state with stale UI state
+PASS persistent IDs definitions and water occupancy restored
+PASS terrain edit metadata restored with lake state
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+PASS test snapshot includes unknown addon section
+PASS compound persistence provider attaches before terrain startup
+PASS leased persistent world starts
+PASS world with unknown addon section opens
+PASS world with unknown addon section saves
+PASS disabled or unknown addon bytes survive round trip
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+PASS compound persistence provider attaches before terrain startup
+PASS leased persistent world starts
+PASS legacy raw terrain snapshot imports
+PASS legacy snapshot starts with an empty water catalog
+PASS legacy snapshot migrates to compound format
+PASS migration preserves exact legacy backup
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+PASS compound persistence provider attaches before terrain startup
+PASS leased persistent world starts
+PASS malformed addon section blocks world startup
+[TerrainRewrite] ERROR: save disabled after corrupt snapshot; original file protected
+PASS shutdown preserves semantically invalid canonical file
+PASS compound persistence provider attaches before terrain startup
+PASS leased persistent world starts
+PASS repaired test snapshot starts
+PASS edit accepted immediately before shutdown
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+PASS compound persistence provider attaches before terrain startup
+PASS leased persistent world starts
+PASS shutdown drains accepted edit and stores its lake definition
+PASS shutdown-drained edit survives restart
+PASS lake removal publishes an empty catalog with its ID cursor
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+PASS compound persistence provider attaches before terrain startup
+PASS leased persistent world starts
+PASS empty lake catalog reloads
+PASS deleted persistent lake IDs are not reused after restart
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+

@@ -1,0 +1,23 @@
+{
+  "target": "template_debug",
+  "compiled_extension_sources": [],
+  "godot_cpp_sources_compiled": 0,
+  "linked": false,
+  "seconds": 0.0021621999912895262,
+  "output": "C:\\Users\\Windows10_new\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll",
+  "sha256": "b0cb6d79542e2ae8bf1eb9a868c321041e6b3846b59fdfe521f827879fc5d456",
+  "sdk": {
+    "api_version": "4.7",
+    "godot_cpp_sha": "d7b6162249ed52796a8301d216c24ee71d68c2bf",
+    "variant": "windows-x86_64-zig",
+    "compiler": "zig-0.16.0",
+    "platform": "windows",
+    "arch": "x86_64",
+    "targets": [
+      "template_debug",
+      "template_release"
+    ],
+    "precision": "single",
+    "created_unix": 1786965830
+  }
+}

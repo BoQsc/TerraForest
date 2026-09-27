@@ -1,0 +1,3 @@
+# Preserve source and binary bytes for the project's SHA-256 package manifest.
+# Do not let platform checkout settings rewrite the supplied project files.
+* -text

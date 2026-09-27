@@ -1,0 +1,26 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS native lake catalog round-trips stable IDs and definitions
+PASS empty catalog retains persistent ID allocation cursor
+PASS catalog rejects cursor that would reuse a live ID
+PASS duplicate lake IDs rejected
+PASS nonfinite lake definition rejected
+PASS unsupported lake record flags rejected
+PASS truncated lake definition rejected
+PASS archive byte representation independent of dictionary insertion order
+PASS native archive round-trips opaque addon sections
+PASS section value type checked
+PASS noncanonical section name rejected
+PASS required terrain section enforced
+PASS payload corruption detected by SHA-256
+PASS unsupported archive schema rejected
+PASS authenticated oversized section length rejected before allocation
+PASS authenticated trailing bytes rejected
+PASS truncated archive rejected
+PASS exclusive save lease rejects competing writer
+PASS unleased writer cannot publish
+PASS native file write flushed verified and published
+PASS atomic replacement retains previous full snapshot backup
+PASS invalid publication leaves canonical save untouched
+PASS save lease released for next owner
+

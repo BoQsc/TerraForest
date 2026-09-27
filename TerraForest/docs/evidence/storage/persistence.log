@@ -1,0 +1,20 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS persistent world starts
+PASS new persistent world ready
+PASS public sphere edit accepted
+PASS persistent edit finishes
+PASS edited column marked before save
+PASS canonical save verified on worker
+PASS canonical snapshot written
+[TerrainRewrite] World saved and verified; previous snapshot retained as .bak
+PASS persistent world starts
+PASS saved snapshot reloads in a new world instance
+PASS persistent modification metadata prevents tree regrowth after reload
+[TerrainRewrite] World saved and verified; previous snapshot retained as .bak
+PASS persistent world starts
+PASS corrupt snapshot reports initialization failure
+PASS corrupt world never becomes ready
+[TerrainRewrite] ERROR: save disabled after corrupt snapshot; original file protected
+PASS shutdown does not overwrite corrupt canonical snapshot
+

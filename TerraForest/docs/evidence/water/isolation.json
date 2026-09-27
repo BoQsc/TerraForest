@@ -1,0 +1,17 @@
+[
+  {
+    "addon": "volumetric_water",
+    "pass": true,
+    "log": "Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org\n\nISOLATION_OK\n\n"
+  },
+  {
+    "addon": "volumetric_terrain",
+    "pass": true,
+    "log": "Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org\n\n[TerrainRewrite] Temporary test world: save skipped\nISOLATION_OK\n\n"
+  },
+  {
+    "addon": "vegetation",
+    "pass": true,
+    "log": "Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org\n\nISOLATION_OK\n\n"
+  }
+]
