@@ -43,6 +43,8 @@ with tempfile.TemporaryDirectory(prefix='release_smoke_',dir=build) as temporary
         terrain=project/'addons/volumetric_terrain'
         if test=='world_persistence':
             shutil.copytree(ROOT/'addons/volumetric_terrain',terrain)
+            descriptor=terrain/'terrain_core.gdextension'
+            descriptor.write_text(descriptor.read_text().replace('terrain_core.windows.x86_64.dll','terrain_core.windows.template_release.x86_64.dll'))
         else:
             terrain.mkdir()
             for name in ['terrain_core.gdextension','mesh_codec.gd']:

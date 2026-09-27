@@ -7,7 +7,10 @@ constexpr u32 SAVE_MAGIC=0x32575254u, MESH_MAGIC=0x324d5254u, REPLY_MAGIC=0x3250
 struct Page {u32 key=0; i16 *d=nullptr;u8 *mat=nullptr;};
 struct Cave {V3 a,b;float r;};
 struct SkyProbe {V3 p,n;float sky;};
+// Stable owner storage outside World, so reset/load cannot reset cancellation.
+struct BuildControl {u32 epoch=0;};
 struct World {
+ BuildControl *build_control=nullptr;
  Map pages_by_key,blocks; List<Page> pages; List<Cave> caves; List<List<u32>> block_columns;
  u32 *edit_columns=nullptr;
  int seed=1703, revision=0, edits=0;u64 changed_samples=0;
@@ -30,8 +33,8 @@ struct World {
 struct Vertex {V3 p,n;float material=0; i32 cx=0,cy=0,cz=0;u32 mask=0; V3 blend{};float substrate=0,sky=1,sun=1;};
 struct Mesh {List<Vertex> v; List<u32> i;void release(){v.release();i.release();}};
 // Cancellation state is outside World: save/load cannot race a main-thread request.
-u32 terrain_build_epoch();
-u32 terrain_cancel_builds();
+u32 terrain_build_epoch(const World *world=nullptr);
+u32 terrain_cancel_builds(const World *world=nullptr);
 bool build_patch(const World&w,int ox,int oz,int size,int step,Mesh&m,u32 expected_epoch=0xffffffffu);
 void shade_visibility(const World&w,Mesh&m,u32 expected_epoch=0xffffffffu);
 bool terrain_occluded(const World&w,V3 origin,V3 direction);

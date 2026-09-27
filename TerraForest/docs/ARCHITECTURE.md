@@ -20,7 +20,7 @@ The native world and filesystem cache are owned by one worker. Only its cancella
 
 The main thread validates epoch/tile stamps before installing terrain packets. Density edits prepare their whole affected set, then publish meshes and collision together. Lighting refreshes are separate background work. The ecosystem reacts after publication; pre-edit query results never repopulate a later terrain revision.
 
-The terrain native ABI uses process-global cancellation. The public facade therefore enforces one active native world per process. This is an explicit current constraint, not an assumption that multiple worlds happen not to overlap.
+The Windows typed terrain binding has instance-owned cancellation and serializes world access per instance; cancellation remains lock-free. Its legacy Linux binary still uses process-global cancellation. The public facade continues enforcing one active scene world per process until cache paths and save-slot ownership support multiple live scene worlds. Independent native worlds are tested separately; see [terrain bridge validation](TERRAIN_NATIVE_VALIDATION.md).
 
 ## Backpressure and memory
 

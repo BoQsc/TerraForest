@@ -1,6 +1,7 @@
 extends "res://addons/volumetric_terrain/terrain_stream.gd"
 ## Public terrain facade. All coordinates are world coordinates; keep this node at identity.
-## One instance per process: the supplied native ABI has process-wide cancellation state.
+## One facade per process until scene save/cache ownership supports multiple worlds.
+## Windows TerrainCore instances now have independent native cancellation.
 signal surface_batch_ready(token: int, points: PackedVector3Array, normals: PackedVector3Array, epoch_id: int, revision: int)
 signal region_changed(bounds: AABB, revision: int)
 signal region_invalidated(bounds: AABB)

@@ -1,0 +1,178 @@
+{
+  "checks": [
+    {
+      "name": "compound persistence provider attaches before terrain startup",
+      "pass": true
+    },
+    {
+      "name": "leased persistent world starts",
+      "pass": true
+    },
+    {
+      "name": "new compound world ready",
+      "pass": true
+    },
+    {
+      "name": "terrain worker returns basin height",
+      "pass": true
+    },
+    {
+      "name": "lake definition and terrain excavation accepted",
+      "pass": true
+    },
+    {
+      "name": "lake bakes before saving",
+      "pass": true
+    },
+    {
+      "name": "compound terrain and lake snapshot published",
+      "pass": true
+    },
+    {
+      "name": "single canonical file contains terrain and water sections",
+      "pass": true
+    },
+    {
+      "name": "compound persistence provider attaches before terrain startup",
+      "pass": true
+    },
+    {
+      "name": "leased persistent world starts",
+      "pass": true
+    },
+    {
+      "name": "new process-equivalent world instance restores and rebakes lake",
+      "pass": true
+    },
+    {
+      "name": "shutdown during queued reload does not overwrite restored addon state with stale UI state",
+      "pass": true
+    },
+    {
+      "name": "persistent IDs definitions and water occupancy restored",
+      "pass": true
+    },
+    {
+      "name": "terrain edit metadata restored with lake state",
+      "pass": true
+    },
+    {
+      "name": "test snapshot includes unknown addon section",
+      "pass": true
+    },
+    {
+      "name": "compound persistence provider attaches before terrain startup",
+      "pass": true
+    },
+    {
+      "name": "leased persistent world starts",
+      "pass": true
+    },
+    {
+      "name": "world with unknown addon section opens",
+      "pass": true
+    },
+    {
+      "name": "world with unknown addon section saves",
+      "pass": true
+    },
+    {
+      "name": "disabled or unknown addon bytes survive round trip",
+      "pass": true
+    },
+    {
+      "name": "compound persistence provider attaches before terrain startup",
+      "pass": true
+    },
+    {
+      "name": "leased persistent world starts",
+      "pass": true
+    },
+    {
+      "name": "legacy raw terrain snapshot imports",
+      "pass": true
+    },
+    {
+      "name": "legacy snapshot starts with an empty water catalog",
+      "pass": true
+    },
+    {
+      "name": "legacy snapshot migrates to compound format",
+      "pass": true
+    },
+    {
+      "name": "migration preserves exact legacy backup",
+      "pass": true
+    },
+    {
+      "name": "compound persistence provider attaches before terrain startup",
+      "pass": true
+    },
+    {
+      "name": "leased persistent world starts",
+      "pass": true
+    },
+    {
+      "name": "malformed addon section blocks world startup",
+      "pass": true
+    },
+    {
+      "name": "shutdown preserves semantically invalid canonical file",
+      "pass": true
+    },
+    {
+      "name": "compound persistence provider attaches before terrain startup",
+      "pass": true
+    },
+    {
+      "name": "leased persistent world starts",
+      "pass": true
+    },
+    {
+      "name": "repaired test snapshot starts",
+      "pass": true
+    },
+    {
+      "name": "edit accepted immediately before shutdown",
+      "pass": true
+    },
+    {
+      "name": "compound persistence provider attaches before terrain startup",
+      "pass": true
+    },
+    {
+      "name": "leased persistent world starts",
+      "pass": true
+    },
+    {
+      "name": "shutdown drains accepted edit and stores its lake definition",
+      "pass": true
+    },
+    {
+      "name": "shutdown-drained edit survives restart",
+      "pass": true
+    },
+    {
+      "name": "lake removal publishes an empty catalog with its ID cursor",
+      "pass": true
+    },
+    {
+      "name": "compound persistence provider attaches before terrain startup",
+      "pass": true
+    },
+    {
+      "name": "leased persistent world starts",
+      "pass": true
+    },
+    {
+      "name": "empty lake catalog reloads",
+      "pass": true
+    },
+    {
+      "name": "deleted persistent lake IDs are not reused after restart",
+      "pass": true
+    }
+  ],
+  "failures": 0,
+  "library": "world_runtime.windows.template_release.x86_64.dll"
+}

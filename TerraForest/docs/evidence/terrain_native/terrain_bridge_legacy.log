@@ -1,0 +1,10 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS native terrain initializes
+PASS native sphere edit accepted
+PASS editing one world leaves second world unchanged
+PASS snapshot loads into independent world with identical bytes
+PASS native mesh generated at (320, 1312, 32)
+PASS native mesh generated at (960, 960, 32)
+PASS native mesh generated at (1024, 1088, 64)
+

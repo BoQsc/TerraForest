@@ -29,11 +29,14 @@ def build(target, addon_name='world_runtime'):
     work=ROOT/'.build/native'/addon_name/target
     work.mkdir(parents=True,exist_ok=True)
     output=addon/'bin'/f'{addon_name}.windows.{target}.x86_64.dll'
+    if addon_name=='volumetric_terrain':
+        output=addon/'bin'/('terrain_core.windows.x86_64.dll' if target=='template_debug' else 'terrain_core.windows.template_release.x86_64.dll')
     output.parent.mkdir(exist_ok=True)
     library=sdk/'bin'/f'libgodot-cpp.windows.{target}.x86_64.a'
     compiler=[info['zig'],'c++','-target','x86_64-windows-gnu']
     flags=['-std=c++17','-fno-exceptions','-fno-sanitize=undefined','-fvisibility=hidden','-ffp-contract=off','-Wno-nullability-completeness','-DGDEXTENSION','-DWINDOWS_ENABLED','-DTHREADS_ENABLED','-O2' if target=='template_debug' else '-O3']
     if target=='template_debug':flags+=['-DDEBUG_ENABLED','-g']
+    if addon_name=='volumetric_terrain':flags+=['-DTERRAFOREST_TYPED_BRIDGE']
     for directory in ['include','gen/include','gdextension']:flags+=['-I',str(sdk/directory)]
     env=os.environ.copy()
     env['ZIG_GLOBAL_CACHE_DIR']=str(CACHE/'zig-global-cache')
@@ -41,11 +44,12 @@ def build(target, addon_name='world_runtime'):
     state_path=work/'state.json'
     state=json.loads(state_path.read_text()) if state_path.exists() else {}
     fingerprint=hashlib.sha256((info['lock_sha256']+json.dumps(flags)+digest(library)).encode())
-    for header in sorted(native.glob('*.hpp')):fingerprint.update(header.read_bytes())
+    for header in sorted([*native.glob('*.hpp'),*native.glob('*.h')]):fingerprint.update(header.read_bytes())
     common=fingerprint.hexdigest()
     objects=[]; compiled=[]; records={}
     started=time.perf_counter()
     for source in sorted(native.glob('*.cpp')):
+        if addon_name=='volumetric_terrain' and source.name=='godot_bridge.cpp':continue
         signature=hashlib.sha256((common+digest(source)).encode()).hexdigest()
         obj=work/(source.stem+'.o')
         records[source.name]=signature
@@ -73,7 +77,7 @@ def build(target, addon_name='world_runtime'):
 if __name__=='__main__':
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--target',choices=['template_debug','template_release','all'],default='template_debug')
-    parser.add_argument('--addon',choices=['world_runtime','volumetric_water','all'],default='all')
+    parser.add_argument('--addon',choices=['world_runtime','volumetric_water','volumetric_terrain','all'],default='all')
     args=parser.parse_args()
-    for addon in (['world_runtime','volumetric_water'] if args.addon=='all' else [args.addon]):
+    for addon in (['world_runtime','volumetric_water','volumetric_terrain'] if args.addon=='all' else [args.addon]):
         for target in (['template_debug','template_release'] if args.target=='all' else [args.target]):build(target,addon)

@@ -34,7 +34,7 @@ func run() -> void:
 	check(terrain.start(StandardMaterial3D.new(), true) == OK, "native terrain starts")
 	check(await until(func(): return terrain.world_ready), "worker completes startup")
 	var second = Terrain.new()
-	check(second.start(StandardMaterial3D.new(), true) == ERR_ALREADY_IN_USE, "second native world rejected before competing for global cancellation")
+	check(second.start(StandardMaterial3D.new(), true) == ERR_ALREADY_IN_USE, "second scene facade rejected until cache and save ownership supports multiple worlds")
 	second.free()
 	var unused = Vegetation.new()
 	unused.free()

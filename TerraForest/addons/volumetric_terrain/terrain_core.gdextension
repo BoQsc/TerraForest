@@ -1,12 +1,12 @@
 [configuration]
 entry_symbol = "terrain_library_init"
-compatibility_minimum = "4.3"
+compatibility_minimum = "4.7"
 ; Editor temporary copies are a separate Godot behavior, not controlled by this flag.
 ; The standalone launcher avoids editor mode during startup.
 reloadable = false
 
 [libraries]
 windows.debug.x86_64 = "res://addons/volumetric_terrain/bin/terrain_core.windows.x86_64.dll"
-windows.release.x86_64 = "res://addons/volumetric_terrain/bin/terrain_core.windows.x86_64.dll"
+windows.release.x86_64 = "res://addons/volumetric_terrain/bin/terrain_core.windows.template_release.x86_64.dll"
 linux.debug.x86_64 = "res://addons/volumetric_terrain/bin/libterrain_core.linux.x86_64.so"
 linux.release.x86_64 = "res://addons/volumetric_terrain/bin/libterrain_core.linux.x86_64.so"

@@ -6,7 +6,7 @@ Implemented so far: pinned native toolchain, bounded native entity kinematics, f
 
 ## Representation and authority
 
-A server-owned world descriptor identifies generator version, seed, material registry, region coordinates, and content hashes. Untouched regions regenerate from that descriptor. Persistent storage records edits, placed prefab instances, water basin changes and entity state; derived meshes, collision, light data and instance buffers remain disposable caches. Native world state must become instance-owned, including cancellation, before multiple authoritative worlds can share a process.
+A server-owned world descriptor identifies generator version, seed, material registry, region coordinates, and content hashes. Untouched regions regenerate from that descriptor. Persistent storage records edits, placed prefab instances, water basin changes and entity state; derived meshes, collision, light data and instance buffers remain disposable caches. Windows native terrain cancellation is now instance-owned and tested during concurrent mesh jobs. Multiple authoritative scene worlds still require cache/save ownership changes; the scene facade retains its single-world guard.
 
 Use compact uniform records for homogeneous bricks and dense/palette payloads only for mixed edited bricks. Spatial keys and persistent IDs must be stable and independent of scene node paths. Versioned, bounded binary commands form the common editor/player/network mutation boundary. Server validation controls reach, ownership, materials, inventory cost, rate and revision; clients never directly authorize density edits.
 
