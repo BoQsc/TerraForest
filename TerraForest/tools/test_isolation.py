@@ -19,6 +19,20 @@ build=root/'.build'
 build.mkdir(exist_ok=True)
 reports=[]
 tests={
+    'structures': '''extends SceneTree
+func _initialize():
+    call_deferred("run")
+func run():
+    GDExtensionManager.load_extension("res://addons/structures/structures.gdextension")
+    var world = ClassDB.instantiate("NativeBlockWorld")
+    root.add_child(world)
+    var success = world.set_cells(PackedInt32Array([0,0,0,1,1,0,0,1]))
+    world.flush_bakes()
+    success = success and world.stats().triangles == 12 and world.validate_snapshot(world.capture_snapshot())
+    world.free()
+    print("ISOLATION_OK" if success else "ISOLATION_FAIL")
+    quit(0 if success else 1)
+''',
     'volumetric_water': '''extends SceneTree
 func _initialize():
     call_deferred("run")

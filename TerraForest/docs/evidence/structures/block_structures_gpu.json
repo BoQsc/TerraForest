@@ -1,0 +1,9 @@
+{
+  "frame_interval_p50_ms": 2.372,
+  "frame_interval_p95_ms": 2.596,
+  "resolution": "(1920.0, 1080.0)",
+  "samples": 240,
+  "scope": "static showcase after bake; not a city or multiplayer benchmark",
+  "window_mode": 4,
+  "window_size": "(1920, 1080)"
+}

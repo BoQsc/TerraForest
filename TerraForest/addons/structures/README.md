@@ -1,0 +1,49 @@
+# Native block structures and static models
+
+Independent Godot 4.7 Windows x86-64 addon. Copy this directory into a project; the GDExtension registers `NativeBlockWorld` and `NativeStaticBatch`. No terrain, vegetation or other TerraForest addon is required. Native sources and both debug/release DLLs are included. Build using the repository's pinned Zig/prebuilt godot-cpp toolchain:
+
+```text
+python tools/build_native.py --addon structures --target all
+```
+
+## Representation and editing
+
+`NativeBlockWorld` is a Node3D with sparse 16×16×16 cell chunks. Each cell is a 16-bit word; a resident chunk's cell payload is 8 KiB. A cell is one local metre. Translation/rotation can be applied to the world node; supply focus in that node's local coordinates. Nonuniform scaling is not a supported physics configuration. There is no node per block.
+
+`set_cells(PackedInt32Array)` accepts `[x,y,z,word, ...]`, up to 262,144 records. Coordinates are signed integers in ±1,048,575. Word zero erases. Nonzero words encode `shape | (rotation << 3) | (material << 5)`:
+
+| Field | Values |
+| --- | --- |
+| Shape | 1 cube, 2 lower half slab, 3 four-step staircase, 4 planar slope, 5 centred half-width post |
+| Rotation | 0–3 quarter turns about Y |
+| Material | 0 brick, 1 wood, 2 concrete, 3 metal |
+
+The entire batch is validated and staged before modification; repeated coordinates use their final value. Invalid input or exceeding the 2,048 resident chunk capacity leaves the world unchanged. Empty chunks are reclaimed. Authoring methods and snapshot capture/restore run on the main thread. `validate_snapshot` reads only its argument and can run on a worker. General concurrent authoring is not supported.
+
+## Baking and rendering
+
+Changes invalidate the edited chunk and resident face neighbours. One native worker receives an immutable 18³ cell halo, generates geometry without accessing Godot objects, and returns plain buffers. Main-thread publication checks a dependency ticket and rejects obsolete work. At most one nonempty mesh is published per frame. A repeated edit deduplicates pending work; abandoned empty chunks do not leave historical queue entries.
+
+Quarter-cell occupancy is temporary bake scratch space for exact slab, stair and post joins. Greedy face merging removes hidden boundaries and combines coplanar regions of the same material, including across block edges. Chunk boundaries hide internal faces but do not merge separate chunk meshes. Slopes use an exact planar wedge; wedge boundaries currently use conservative geometry and are not greedily merged or clipped against neighbours.
+
+Each occupied visual chunk is one ArrayMesh surface with a texture array. Four original deterministic 128² tile textures and their independent mip chains are generated once per world. Repeating UVs preserve material detail across merged faces. These are basic procedural materials, not a finished PBR asset library.
+
+Nearby chunk collision uses the same triangles as rendering, on layer **2**. `set_focus(Vector3)` and `set_collision_radius(metres)` control residency; radius defaults to 48 and accepts 0–256. One new collision shape is created per frame, with distant bodies released. Collision range uses chunk centres plus a conservative 14 m extent. This bounds normal physics work, but high-speed collision readiness and nearest-first shape creation still need a dedicated traversal policy. Mesh upload/collision construction for one complex chunk can still spike a frame; publication has a count budget, not a measured time budget.
+
+`flush_bakes()` deliberately blocks for offline baking/tests. Do not call it from a live gameplay frame loop. `stats()` reports cell payload, resident chunks, triangles, pending work and rejected stale bakes.
+
+## Static models
+
+`NativeStaticBatch.set_instances(mesh, transforms)` accepts any Godot Mesh, including one extracted from an imported model. Transforms use Godot's 12-float MultiMesh row layout:
+
+```text
+xx xy xz origin_x   yx yy yz origin_y   zx zy zz origin_z
+```
+
+The native implementation validates finite, nonsingular transforms, partitions origins into signed 32 m spatial groups, shares the source mesh, and bulk uploads one MultiMesh per group. The limit is 100,000 instances and 4,096 groups per collection. An empty input clears the collection. This is a static bulk replacement API; stable object IDs, incremental single-object edits, collision proxies, saved asset references and network replication are not implemented. Large models crossing group bounds retain their full rendering bounds but should use a suitable grouping/LOD strategy.
+
+## Saves and present scope
+
+`capture_snapshot`, `validate_snapshot`, and `restore_snapshot` implement a versioned, sorted, RLE block format with SHA-256 integrity validation. Loads are bounded and validated before replacing data; restoration invalidates outstanding bakes. This is an interchange/snapshot layer. The showcase F5/F9 file is a basic local demonstration save, not the compound terrain archive or a crash-durable production journal. Static model placements in the showcase are regenerated and not in the block snapshot.
+
+The addon supplies an editable block building foundation and a separate static rendering path. Region eviction, mesh bake caches, distant building LOD/HLOD, transparent windows, doors, prefab asset definitions, undo/redo, city generation, multiplayer authority and long-duration performance validation remain open. All building chunks currently remain resident up to the explicit capacity. It must not be described as a production city engine.

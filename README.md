@@ -14,6 +14,14 @@ python TerraForest/tools/run.py
 
 Use `--temporary` for a disposable world. WASD moves, mouse looks, Space jumps, Shift sprints, G flies, and Escape releases the mouse. Left/right mouse dig/build. L creates a basin with static water; F5 saves the world and F9 reloads it.
 
+The **separate block construction showcase** contains a textured house, tower frame, stairs, slopes, fences and ladder. Its C++ structures addon stores and meshes buildings independently of terrain, with a separate spatial MultiMesh path for static models:
+
+```text
+python TerraForest/tools/run.py --scene structures
+```
+
+See the [structures API and limitations](TerraForest/addons/structures/README.md) and [validation evidence](TerraForest/docs/STRUCTURES_VALIDATION.md). This is a building foundation; city streaming, LOD and multiplayer are still pending.
+
 ## Documentation
 
 - [Project guide and addon layout](TerraForest/README.md)

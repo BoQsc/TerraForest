@@ -1,5 +1,9 @@
 # TerraForest
 
+## Independent building showcase
+
+Run `python tools/run.py --scene structures --godot PATH` to inspect the separate native block construction addon. It includes textured cubes, slabs, stairs, slopes and posts; chunked native mesh baking; nearby collision; a house and tower frame; and separate static-model MultiMesh batches. See [structures API](addons/structures/README.md) and [validation](docs/STRUCTURES_VALIDATION.md). The terrain demo remains the default scene.
+
 A new Godot project combining editable volumetric terrain and streamed spruce vegetation. The terrain renderer, vegetation renderer, and their integration are separate addons. The supplied TerrainRewrite and Forest12 folders are not modified.
 
 Native development uses **Zig 0.16.0 + prebuilt godot-cpp API 4.7**. Builds compile only our extension sources. The native entity foundation and [static volumetric lake addon](addons/volumetric_water/README.md) are implemented. Roads, cities, vehicles, multiplayer and the remaining world expansion are pending. See [native development](docs/NATIVE_DEVELOPMENT.md) and the [world systems expansion contract](docs/WORLD_SYSTEMS_DESIGN.md).

@@ -1,0 +1,25 @@
+{
+  "checks": 86,
+  "dense_bake_ms": 14.154,
+  "failures": 0,
+  "showcase": {
+    "cell_bytes": 417792,
+    "cells": 9469,
+    "chunks": 51,
+    "collision_chunks": 47,
+    "dirty_chunks": 0,
+    "max_chunks": 2048,
+    "mesh_chunks": 51,
+    "published_bakes": 51,
+    "stale_bakes_rejected": 0,
+    "triangles": 7502,
+    "worker_jobs": 0
+  },
+  "showcase_bake_ms": 484.357,
+  "static_100k": {
+    "instances": 100000,
+    "spatial_batches": 49,
+    "transform_bytes": 4800000
+  },
+  "static_100k_upload_ms": 23.995
+}
