@@ -1,0 +1,49 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS reject edits before mesh configuration
+PASS unconfigured collection cannot silently save anonymous assets
+PASS reject invalid asset keys
+PASS configure stable asset key
+PASS empty configured snapshot validates
+PASS insert explicit 64-bit stable IDs
+PASS IDs remain sorted and preserve 64-bit precision
+PASS retrieve exact authored transform
+PASS missing object returns no transform
+PASS move object inside group
+PASS single local edit updates one GPU slot without rebuilding its group
+PASS unrelated group keeps its scene node
+PASS identical edit performs no GPU upload
+PASS direct slot update accepts rotated scaled basis
+PASS move existing ID across signed group boundary
+PASS move reclaims old empty group and preserves ID
+PASS duplicate IDs rejected
+PASS zero ID rejected
+PASS negative ID rejected
+PASS incomplete transform rejected
+PASS singular basis rejected
+PASS nonfinite basis rejected
+PASS mixed existing/missing removal rejected
+PASS duplicate removal IDs rejected
+PASS populated asset identity cannot change silently
+PASS all rejected commands preserve snapshot bytes
+PASS valid snapshot with unresolved asset identity rejected on restore
+PASS asset-bound snapshot round trip preserves IDs/transforms
+PASS checksum catches accidental corruption
+PASS truncated snapshot rejected
+PASS checksummed zero placement ID rejected
+PASS checksummed duplicate placement ID rejected
+PASS checksummed NaN transform rejected
+PASS checksummed excessive count rejected before allocation
+PASS rejected loads preserve published collection
+PASS removal preserves all remaining IDs
+PASS restoring empty collection releases all render batches
+PASS large same-group update accepted
+PASS large edit uses one bulk upload instead of individual renderer calls
+PASS 4096 spatial group boundary accepted
+PASS 4097th spatial group rejected atomically
+PASS group overflow leaves collection unchanged
+PASS moving singleton group at capacity allowed
+PASS capacity move retains exact limits
+PASS repeated placement/removal retains no spatial or slot tombstones
+STATIC_PLACEMENTS_RESULT {"checks":45,"failures":0,"gpu_readback":false}
+

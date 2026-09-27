@@ -3,17 +3,30 @@ const Vegetation = preload("res://addons/vegetation/vegetation_world.gd")
 const Ecosystem = preload("res://addons/world_ecosystem/world_ecosystem.gd")
 const Lakes = preload("res://addons/volumetric_water/lake_world.gd")
 const Persistence = preload("res://addons/world_runtime/world_persistence.gd")
+const Structures = preload("res://addons/structures/structures_world.gd")
 var persistence = Persistence.new()
 var vegetation = Vegetation.new()
 var ecosystem = Ecosystem.new()
 var lakes = Lakes.new()
+var structures = Structures.new()
+var structure_mode := false
+var structure_shape := 1
+var structure_material := 0
+var structure_rotation := 0
 var telemetry := Label.new()
 var _telemetry_time: float = 0.0
 var _lake_notice: String = ""
 var _lake_notice_until: int = 0
 
 func _ready() -> void:
-	if not lakes.prepare() or not persistence.register_component("volumetric_water", lakes.capture_snapshot, lakes.restore_snapshot, lakes.snapshot_validator(), lakes.empty_snapshot()) or persistence.attach(terrain) != OK:
+	structures.name = "Structures"
+	add_child(structures)
+	var beam := BoxMesh.new()
+	var beam_material := StandardMaterial3D.new()
+	beam_material.albedo_color = Color("3b5359")
+	beam.material = beam_material
+	var structures_ready: bool = structures.prepare() and structures.register_model("architecture/metal_beam/v1",beam) != null
+	if not structures_ready or not lakes.prepare() or not persistence.register_component("structures", structures.capture_snapshot, structures.restore_snapshot, structures.snapshot_validator(), structures.empty_snapshot()) or not persistence.register_component("volumetric_water", lakes.capture_snapshot, lakes.restore_snapshot, lakes.snapshot_validator(), lakes.empty_snapshot()) or persistence.attach(terrain) != OK:
 		push_error("World persistence initialization failed")
 		get_tree().quit(2)
 		return
@@ -71,6 +84,7 @@ func create_lake(point: Vector3) -> int:
 
 func _setup_scene() -> void:
 	super._setup_scene()
+	player.collision_mask |= 2
 	player.position = Vector3(800, 100, 1310)
 	for child in get_children():
 		if child is WorldEnvironment:
@@ -95,8 +109,9 @@ func _setup_hud() -> void:
 	super._setup_hud()
 	hud.hide()
 	status.hide()
-	help.text = "WASD  Move    Shift  Sprint    Space  Jump    G  Fly    Mouse  Look    Esc  Release\nLMB  Dig    RMB  Build    Wheel  Brush size    1–3  Tools    L  Carve lake    F5  Save    F9  Reload    F3  Diagnostics"
+	help.text = "WASD  Move    Shift  Sprint    Space  Jump    G  Fly    Mouse  Look    Esc  Release\nB  Terrain / Blocks    LMB  Remove    RMB  Place    1–5  Block shapes    T  Material    R  Rotate\nTerrain: Wheel  Brush size    1–3  Tools    L  Lake    F5  Save world    F9  Reload    F3  Diagnostics"
 	help.add_theme_font_size_override("font_size", 15)
+	help.offset_top = -88
 	help.add_theme_color_override("font_color", Color("e6eee9"))
 	var panel := PanelContainer.new()
 	panel.position = Vector2(26, 24)
@@ -133,6 +148,33 @@ func _setup_hud() -> void:
 	status.position = Vector2(26, 570)
 
 func _unhandled_input(event: InputEvent) -> void:
+	if not loading_active and not benchmark_enabled:
+		if event is InputEventKey and event.pressed and not event.echo:
+			if event.physical_keycode == KEY_B:
+				structure_mode = not structure_mode
+				stroke_buffer.clear()
+				held_previous = false
+				stroke_valid = false
+				last_capture_signature.clear()
+				terrain.set_brush_active(false)
+				_show_lake_notice("Block construction · 1–5 shapes · T material · R rotate" if structure_mode else "Terrain editing")
+				return
+			if structure_mode:
+				var handled := true
+				if event.physical_keycode >= KEY_1 and event.physical_keycode <= KEY_5:
+					structure_shape = event.physical_keycode-KEY_1+1
+				elif event.physical_keycode == KEY_T:
+					structure_material = (structure_material+1)%4
+				elif event.physical_keycode == KEY_R:
+					structure_rotation = (structure_rotation+1)%4
+				else:
+					handled = false
+				if handled:
+					_show_lake_notice("%s · %s · %d°" % [["Cube","Slab","Stairs","Slope","Post"][structure_shape-1],["Brick","Wood","Concrete","Metal"][structure_material],structure_rotation*90])
+					return
+		if structure_mode and event is InputEventMouseButton and event.pressed and event.button_index in [MOUSE_BUTTON_LEFT,MOUSE_BUTTON_RIGHT] and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
+			_edit_structure(event.button_index == MOUSE_BUTTON_LEFT)
+			return
 	if event is InputEventKey and event.pressed and not event.echo and event.physical_keycode == KEY_L:
 		var query := PhysicsRayQueryParameters3D.create(camera.global_position, camera.global_position-camera.global_basis.z*80.0, 1)
 		var hit: Dictionary = get_world_3d().direct_space_state.intersect_ray(query)
@@ -147,8 +189,44 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	super._unhandled_input(event)
 
+func _update_edit(delta: float) -> void:
+	if structure_mode:
+		pointer.hide()
+		if input_vector != Vector3.ZERO:
+			terrain.note_interaction()
+		terrain.set_brush_active(false)
+		return
+	super._update_edit(delta)
+
+func _edit_structure(remove: bool) -> void:
+	if not terrain.world_ready or not app_focused:
+		return
+	var origin := camera.global_position
+	var hit := get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(origin,origin-camera.global_basis.z*48,3))
+	if hit.is_empty():
+		return
+	var building_hit: bool = hit.collider is CollisionObject3D and (hit.collider.collision_layer & 2) != 0
+	if remove and not building_hit:
+		_show_lake_notice("Aim at a building block to remove it")
+		return
+	var target := Vector3i((hit.position + hit.normal*0.001).floor())
+	if building_hit:
+		target = Vector3i((hit.position-hit.normal*0.001).floor())
+		if not remove:
+			var normal: Vector3 = hit.normal
+			var axis := normal.abs().max_axis_index()
+			target[axis] += 1 if normal[axis]>0 else -1
+	if not remove and _brush_overlaps_player(Vector3(target)+Vector3.ONE*0.5,0.87):
+		_show_lake_notice("Block placement intersects the player")
+		return
+	var word := 0 if remove else structure_shape+(structure_rotation<<3)+(structure_material<<5)
+	if structures.blocks.set_cells(PackedInt32Array([target.x,target.y,target.z,word])):
+		_show_lake_notice("Block removed · F5 saves world" if remove else "Block placed · F5 saves world")
+
 func _process(delta: float) -> void:
 	super._process(delta)
+	if structures.blocks != null:
+		structures.blocks.set_focus(player.position)
 	_telemetry_time += delta
 	if _telemetry_time >= 0.5 and vegetation.ready_to_render:
 		_telemetry_time = 0.0

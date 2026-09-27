@@ -55,7 +55,7 @@ PackedByteArray NativeWorldArchive::encode(const Dictionary &sections) const {
         const String name=keys[i]; const Variant value=sections[name];
         if(!valid_name(name) || value.get_type()!=Variant::PACKED_BYTE_ARRAY)return {};
         const PackedByteArray part=value;
-        if(part.size()>LIMIT || (name!="terrain" && part.size()>16*1024*1024))return {};
+        if(part.size()>LIMIT || (name!="terrain" && part.size()>64*1024*1024))return {};
         total+=8+name.length()+part.size();
         if(total>LIMIT)return {};
     }
@@ -86,7 +86,7 @@ static Dictionary decode_archive(const PackedByteArray &bytes, bool materialize)
         const uint32_t n=bytes.decode_u32(cursor), length=bytes.decode_u32(cursor+4);cursor+=8;
         if(n<1||n>48||cursor+n>bytes.size()||length>bytes.size()-cursor-n)return result;
         names[i]=String::utf8(reinterpret_cast<const char*>(bytes.ptr()+cursor),n);
-        if(!valid_name(names[i]) || (i && names[i]<=previous) || (names[i]!="terrain" && length>16*1024*1024))return result;
+        if(!valid_name(names[i]) || (i && names[i]<=previous) || (names[i]!="terrain" && length>64*1024*1024))return result;
         previous=names[i];cursor+=n;offsets[i]=cursor;lengths[i]=length;cursor+=length;
     }
     if(cursor!=bytes.size())return result;

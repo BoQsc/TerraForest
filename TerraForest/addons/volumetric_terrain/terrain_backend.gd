@@ -31,6 +31,7 @@ var snapshot_validators: Dictionary = {}
 var components: Dictionary = {} # Worker-owned; unknown addon sections survive round trips.
 var component_epoch: int = 0
 var component_generation: int = -1
+var _component_capture_valid: bool = true # Worker-owned; invalid live captures do not poison disk state.
 var _capture_generation: int = 0 # Main-thread only.
 var _shutdown_snapshot: Dictionary = {}
 var _snapshot_writes_blocked: bool = false
@@ -58,13 +59,14 @@ func _apply_components(state: Dictionary) -> void:
 	if state.is_empty() or int(state.get("epoch", -1)) != component_epoch or int(state.get("generation", -1)) <= component_generation:
 		return
 	var selected: Dictionary = state.get("sections", {})
+	component_generation = int(state["generation"])
 	for key: String in selected:
 		if snapshot_validators.has(key) and not snapshot_validators[key].validate_snapshot(selected[key]):
-			write_allowed = false
+			_component_capture_valid = false
 			return
 	for key: String in selected:
 		components[key] = selected[key]
-	component_generation = int(state["generation"])
+	_component_capture_valid = true
 
 func set_input_active(value: bool) -> void:
 	mutex.lock()
@@ -240,6 +242,8 @@ func _save() -> String:
 		return "Temporary test world: save skipped"
 	if not write_allowed or not _snapshot_writable():
 		return "ERROR: save disabled after corrupt snapshot; original file protected"
+	if not _component_capture_valid:
+		return "ERROR: invalid addon capture; previous canonical snapshot retained"
 	var response: PackedByteArray = _call(Codec.command(4))
 	if not Codec.reply_ok(response):
 		return "ERROR: native save failed; previous save retained"
@@ -463,6 +467,7 @@ func _run() -> void:
 					cache_valid = false
 					component_epoch = int(remaining["epoch"])
 					component_generation = -1
+					_component_capture_valid = true
 					if remaining_kind == "load":
 						_load()
 					else:
@@ -550,6 +555,7 @@ func _run() -> void:
 		elif kind == "load" or kind == "reset":
 			component_epoch = int(job["epoch"])
 			component_generation = -1
+			_component_capture_valid = true
 			var message: String = "World reset (previous disk save retained until next save)"
 			if kind == "reset":
 				_call(Codec.command(6, [1703]))

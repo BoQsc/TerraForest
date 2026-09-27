@@ -15,6 +15,7 @@ using namespace godot;
 // local; authoring does not create a node for every fence, rung, or prop.
 class NativeStaticBatch : public Node3D {
     GDCLASS(NativeStaticBatch,Node3D)
+    friend class NativeStructuresSnapshot;
     using Placement = std::array<float,12>;
     std::map<int64_t,Placement> placements;
     std::map<BlockKey,std::set<int64_t>> groups;
@@ -22,6 +23,7 @@ class NativeStaticBatch : public Node3D {
     std::map<int64_t,int> slots;
     Ref<Mesh> source_mesh;
     String asset_id;
+    bool asset_locked=false;
     uint64_t uploads=0;
     uint64_t instance_updates=0;
     static bool valid_transform(const float *t);
@@ -34,6 +36,7 @@ protected:
 public:
     bool set_instances(const Ref<Mesh> &mesh,const PackedFloat32Array &transforms);
     bool configure_asset(const String &id,const Ref<Mesh> &mesh);
+    bool lock_asset_identity();
     bool upsert_instances(const PackedInt64Array &ids,const PackedFloat32Array &transforms);
     bool remove_instances(const PackedInt64Array &ids);
     PackedFloat32Array get_instance(int64_t id) const;

@@ -8,6 +8,7 @@ namespace terraforest {
 void NativeStaticBatch::_bind_methods() {
     ClassDB::bind_method(D_METHOD("set_instances","mesh","transforms"),&NativeStaticBatch::set_instances);
     ClassDB::bind_method(D_METHOD("configure_asset","asset_id","mesh"),&NativeStaticBatch::configure_asset);
+    ClassDB::bind_method(D_METHOD("lock_asset_identity"),&NativeStaticBatch::lock_asset_identity);
     ClassDB::bind_method(D_METHOD("upsert_instances","ids","transforms"),&NativeStaticBatch::upsert_instances);
     ClassDB::bind_method(D_METHOD("remove_instances","ids"),&NativeStaticBatch::remove_instances);
     ClassDB::bind_method(D_METHOD("get_instance","id"),&NativeStaticBatch::get_instance);
@@ -30,12 +31,13 @@ bool NativeStaticBatch::valid_asset(const String &id) {
     return true;
 }
 bool NativeStaticBatch::configure_asset(const String &id,const Ref<Mesh> &mesh) {
-    if(!valid_asset(id)||mesh.is_null()||(!placements.empty()&&!asset_id.is_empty()&&asset_id!=id))return false;
+    if(!valid_asset(id)||mesh.is_null()||((asset_locked||!placements.empty())&&!asset_id.is_empty()&&asset_id!=id))return false;
     bool changed=asset_id!=id||source_mesh!=mesh;
     asset_id=id;source_mesh=mesh;
     for(auto &e:batches)e.second->get_multimesh()->set_mesh(mesh);
     if(changed)emit_signal("changed");return true;
 }
+bool NativeStaticBatch::lock_asset_identity() {if(!valid_asset(asset_id)||source_mesh.is_null())return false;asset_locked=true;return true;}
 void NativeStaticBatch::rebuild(const std::set<BlockKey> &keys) {
     for(auto k:keys) {
         auto group=groups.find(k);auto old=batches.find(k);

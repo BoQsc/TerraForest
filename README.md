@@ -1,6 +1,6 @@
 # TerraForest
 
-An editable volumetric terrain and streamed vegetation project for Godot, organized as modular addons. Includes native static volumetric lakes, a native entity foundation, and compound terrain/water saves with checksums, backups and Windows file locking.
+An editable volumetric terrain and streamed vegetation project for Godot, organized as modular addons. Includes native static volumetric lakes, block structures, static model placement, a native entity foundation, and compound world saves with checksums, backups and Windows file locking.
 
 **Development integration — not a production-ready world engine.** Roads, cities, vehicles, complete inventory and multiplayer are pending. Performance evidence is scoped to the tests documented below; large multiplayer and long-running production workloads are not certified.
 
@@ -13,6 +13,8 @@ python TerraForest/tools/run.py
 ```
 
 Use `--temporary` for a disposable world. WASD moves, mouse looks, Space jumps, Shift sprints, G flies, and Escape releases the mouse. Left/right mouse dig/build. L creates a basin with static water; F5 saves the world and F9 reloads it.
+
+In the terrain world, **B** switches to independent block construction: left mouse removes, right mouse places, **1–5** select shapes, **T** changes material and **R** rotates. F5/F9 now save/load terrain, water, blocks and registered static-model placements together. Vegetation exclusion around buildings and high-speed structure collision readiness remain unfinished.
 
 The **separate block construction showcase** contains a textured house, tower frame, stairs, slopes, fences and ladder. Its C++ structures addon stores and meshes buildings independently of terrain, with a separate spatial MultiMesh path for static models:
 

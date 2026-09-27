@@ -26,6 +26,7 @@ struct BlockVisual { MeshInstance3D *mesh=nullptr; StaticBody3D *body=nullptr; i
 // No SceneTree or Godot resources are touched by the bake worker.
 class NativeBlockWorld : public Node3D {
     GDCLASS(NativeBlockWorld,Node3D)
+    friend class NativeStructuresSnapshot;
     std::map<BlockKey,BlockChunk> chunks;
     std::set<BlockKey> dirty;
     std::map<BlockKey,uint64_t> tickets;
