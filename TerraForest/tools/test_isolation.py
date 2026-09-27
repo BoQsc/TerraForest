@@ -19,6 +19,21 @@ build=root/'.build'
 build.mkdir(exist_ok=True)
 reports=[]
 tests={
+    'structures': '''extends SceneTree
+const Tools = preload("res://addons/structures/structure_tools.gd")
+const Codec = preload("res://addons/volumetric_terrain/mesh_codec.gd")
+func _initialize():
+    call_deferred("run")
+func run():
+    var success = true
+    for preset in Tools.PRESETS:
+        var packet = preset.packet(Vector3(336,180,1328),0,true,1)
+        var core = ClassDB.instantiate("TerrainCore")
+        success = success and Codec.reply_ok(core.execute(packet))
+        success = success and core.execute(Codec.point_command(Vector3(336,178,1328))).decode_float(16)<0
+    print("ISOLATION_OK" if success else "ISOLATION_FAIL")
+    quit(0 if success else 1)
+''',
     'volumetric_water': '''extends SceneTree
 func _initialize():
     call_deferred("run")
@@ -78,6 +93,8 @@ for addon,script in tests.items():
         # Verify the automatic recursive cleanup target is inside this build directory.
         assert build.resolve() in project.parents
         shutil.copytree(root/'addons'/addon,project/'addons'/addon)
+        if addon=='structures':
+            shutil.copytree(root/'addons/volumetric_terrain',project/'addons/volumetric_terrain')
         (project/'project.godot').write_text('config_version=5\n[application]\nconfig/name="TerraForest Isolation"\n',encoding='utf-8')
         (project/'test.gd').write_text(script,encoding='utf-8')
         run=subprocess.run([str(engine),'--headless','--path',str(project),'--script','res://test.gd'],capture_output=True,text=True,timeout=60)

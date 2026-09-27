@@ -12,7 +12,7 @@ from bootstrap_native import ROOT
 parser=argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--godot',default=os.environ.get('GODOT_EXE') or shutil.which('godot'))
 parser.add_argument('--addon',choices=['world_runtime','volumetric_water'],default='world_runtime')
-parser.add_argument('--test',choices=['native_runtime','water','world_archive','world_persistence'])
+parser.add_argument('--test',choices=['native_runtime','water','world_archive','world_persistence','structures'])
 args=parser.parse_args()
 if not args.godot:parser.error('Specify --godot PATH')
 engine=Path(args.godot)
@@ -39,9 +39,12 @@ with tempfile.TemporaryDirectory(prefix='release_smoke_',dir=build) as temporary
             shutil.copytree(ROOT/'addons'/name,destination,dirs_exist_ok=True)
             descriptor=destination/(name+'.gdextension')
             descriptor.write_text(descriptor.read_text().replace('template_debug','template_release'))
-    if test in ['water','world_persistence']:
+    if test=='structures':
+        shutil.copytree(ROOT/'addons/structures',project/'addons/structures')
+        library='terrain_core.windows.template_release.x86_64.dll'
+    if test in ['water','world_persistence','structures']:
         terrain=project/'addons/volumetric_terrain'
-        if test=='world_persistence':
+        if test in ['world_persistence','structures']:
             shutil.copytree(ROOT/'addons/volumetric_terrain',terrain)
             descriptor=terrain/'terrain_core.gdextension'
             descriptor.write_text(descriptor.read_text().replace('terrain_core.windows.x86_64.dll','terrain_core.windows.template_release.x86_64.dll'))

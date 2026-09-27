@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: 0BSD
 #pragma once
 #include "platform.h"
+#include "primitive_stamp.h"
 constexpr int WORLD=2000, WORLD_Y=256, PAGE=16, PAGE_SAMPLES=4096, MAX_PAGES=16384;
 constexpr float SDF_BAND=4.f, SDF_SCALE=1024.f;
 constexpr u32 SAVE_MAGIC=0x32575254u, MESH_MAGIC=0x324d5254u, REPLY_MAGIC=0x32505254u;
@@ -28,6 +29,7 @@ struct World {
  float sample(int x,int y,int z,u8*mat=nullptr)const;
  Page *ensure(int px,int py,int pz);
  bool edit(V3 a,V3 b,float radius,int shape,bool add,u8 material,V3 &lo,V3 &hi,int &changes);
+ bool stamp(const PrimitiveStamp &shape,V3 &lo,V3 &hi,int &changes);
  void serialize(Bytes &out)const;bool deserialize(const u8*p,int n);
 };
 struct Vertex {V3 p,n;float material=0; i32 cx=0,cy=0,cz=0;u32 mask=0; V3 blend{};float substrate=0,sky=1,sun=1;};

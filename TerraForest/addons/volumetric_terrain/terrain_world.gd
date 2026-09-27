@@ -9,6 +9,7 @@ signal lake_slice_ready(token: int, status: int, epoch_id: int, revision: int)
 signal snapshot_restored(sections: Dictionary, epoch_id: int)
 const TerrainAssets = preload("res://addons/volumetric_terrain/runtime_assets.gd")
 static var _active_world: WeakRef
+var _stamp_inspector: RefCounted
 var _started: bool = false
 var snapshot_restore_ok: bool = true
 var density_revision: int = 0
@@ -115,6 +116,17 @@ func edit(data: PackedByteArray, lo: Vector3, hi: Vector3, captured_us: int = 0,
 			var halo: Vector3 = Vector3.ONE * (radius + 5.0)
 			safe_lo = safe_lo.min(a.min(b) - halo)
 			safe_hi = safe_hi.max(a.max(b) + halo)
+		elif kind == 17:
+			if not ClassDB.class_exists("NativeTerrainStamp"):
+				return false
+			if _stamp_inspector == null:
+				_stamp_inspector = ClassDB.instantiate("NativeTerrainStamp")
+			var description: Dictionary = _stamp_inspector.inspect(packet)
+			if not description.get("valid", false):
+				return false
+			var bounds: AABB = description["edit_bounds"]
+			safe_lo = safe_lo.min(bounds.position)
+			safe_hi = safe_hi.max(bounds.end)
 		elif kind == 3 and packet.size() == 20:
 			var cell := Vector3i(packet.decode_s32(4), packet.decode_s32(8), packet.decode_s32(12))
 			if cell.x < 0 or cell.x >= 2000 or cell.z < 0 or cell.z >= 2000 or cell.y < 2 or cell.y >= 255 or packet.decode_u32(16) > 3:

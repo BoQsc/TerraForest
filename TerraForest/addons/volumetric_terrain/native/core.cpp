@@ -85,37 +85,50 @@ Page* World::ensure(int px,int py,int pz){
  int idx=pages.push(page);pages_by_key.put(key,idx);edit_columns[px+NP*pz]|=(1u<<py);return &pages[idx];
 }
 static float box_distance(V3 p,V3 c,float r){V3 q={ab(p.x-c.x)-r,ab(p.y-c.y)-r,ab(p.z-c.z)-r};return length({mx(q.x,0),mx(q.y,0),mx(q.z,0)})+mn(mx(q.x,mx(q.y,q.z)),0);}
-bool World::edit(V3 a,V3 b,float radius,int shape,bool add,u8 material,V3&lo,V3&hi,int&changes){
- changes=0;radius=clampf(radius,0.5f,64.f);
- lo={mx(0,mn(a.x,b.x)-radius-SDF_BAND-1),mx(0,mn(a.y,b.y)-radius-SDF_BAND-1),mx(0,mn(a.z,b.z)-radius-SDF_BAND-1)};
- hi={mn(WORLD,mx(a.x,b.x)+radius+SDF_BAND+1),mn(255,mx(a.y,b.y)+radius+SDF_BAND+1),mn(WORLD,mx(a.z,b.z)+radius+SDF_BAND+1)};
+template<class Distance>
+static bool apply_field(World &w,const Distance &distance,bool add,u8 material,V3 &lo,V3 &hi,int &changes){
+ changes=0;
+ lo={mx(0,lo.x),mx(0,lo.y),mx(0,lo.z)};
+ hi={mn(WORLD,hi.x),mn(255,hi.y),mn(WORLD,hi.z)};
  if(lo.x>hi.x||lo.y>hi.y||lo.z>hi.z)return false;
  // Capacity check before mutation: fail the edit, never silently discard terrain.
- int need=0;for(int py=fl(lo.y)/16;py<=fl(hi.y)/16;py++)for(int pz=fl(lo.z)/16;pz<=fl(hi.z)/16;pz++)for(int px=fl(lo.x)/16;px<=fl(hi.x)/16;px++)if(pages_by_key.get(page_key(px,py,pz))<0)need++;
- if(pages.n+need>MAX_PAGES)return false;
+ int need=0;for(int py=fl(lo.y)/16;py<=fl(hi.y)/16;py++)for(int pz=fl(lo.z)/16;pz<=fl(hi.z)/16;pz++)for(int px=fl(lo.x)/16;px<=fl(hi.x)/16;px++)if(w.pages_by_key.get(page_key(px,py,pz))<0)need++;
+ if(w.pages.n+need>MAX_PAGES)return false;
  int x0=fl(lo.x),x1=fl(hi.x),y0=fl(lo.y),y1=fl(hi.y),z0=fl(lo.z),z1=fl(hi.z);
  for(int z=z0;z<=z1;z++)for(int x=x0;x<=x1;x++){
-  float h=height(float(x),float(z));int lastpy=-1,idx=-1;
+  float h=w.height(float(x),float(z));int lastpy=-1,idx=-1;
   for(int y=y0;y<=y1;y++){
-   V3 p={float(x),float(y),float(z)};float brush=shape==1?box_distance(p,b,radius):capsule(p,a,b,radius);
+   V3 p={float(x),float(y),float(z)};float brush=distance(p);
    if(brush>SDF_BAND)continue;
-   int py=y>>4;if(py!=lastpy){idx=pages_by_key.get(page_key(x>>4,py,z>>4));lastpy=py;}
-   int j=(x&15)+16*((z&15)+16*(y&15));float old=idx<0?base(p,h):float(pages[idx].d[j])/SDF_SCALE;
+   int py=y>>4;if(py!=lastpy){idx=w.pages_by_key.get(page_key(x>>4,py,z>>4));lastpy=py;}
+   int j=(x&15)+16*((z&15)+16*(y&15));float old=idx<0?w.base(p,h):float(w.pages[idx].d[j])/SDF_SCALE;
    float value=add?mn(old,brush):mx(old,-brush);
    if(y<=3)value=old; // Preserve the bottom solid slab; excavation cannot open the world underside.
    // Bedrock and exterior remain outside the writable field.
    if(x==0||x==WORLD||z==0||z==WORLD||y<=1||y>=255)value=mx(value,0.f);
    i16 q=quant(value),previous=quant(old);if(q==previous)continue;
-   if(idx<0){Page* page=ensure(x>>4,py,z>>4);if(!page)return false;idx=pages_by_key.get(page_key(x>>4,py,z>>4));}
-   pages[idx].d[j]=q;pages[idx].mat[j]=material;changes++;
+   if(idx<0){Page* page=w.ensure(x>>4,py,z>>4);if(!page)return false;idx=w.pages_by_key.get(page_key(x>>4,py,z>>4));}
+   w.pages[idx].d[j]=q;w.pages[idx].mat[j]=material;changes++;
   }
  }
  // Construction is a separate exact grid. Smooth excavation removes whole intersected cubes,
  // rather than silently rounding them into the smooth density lattice.
  if(!add)for(int cz=fl(lo.z)/32;cz<=fl(hi.z)/32;cz++)for(int cx=fl(lo.x)/32;cx<=fl(hi.x)/32;cx++){
-  auto&column=block_columns[cx+64*cz];int j=0;while(j<column.n){u32 key=column[j];int x,y,z;decode_block(key,x,y,z);V3 p={x+.5f,y+.5f,z+.5f};float d=shape==1?box_distance(p,b,radius):capsule(p,a,b,radius);if(d<=0){blocks.erase(key);column[j]=column[column.n-1];column.n--;changes++;}else j++;}
+  auto&column=w.block_columns[cx+64*cz];int j=0;while(j<column.n){u32 key=column[j];int x,y,z;decode_block(key,x,y,z);V3 p={x+.5f,y+.5f,z+.5f};float d=distance(p);if(d<=0){w.blocks.erase(key);column[j]=column[column.n-1];column.n--;changes++;}else j++;}
  }
- if(changes){revision++;edits++;changed_samples+=changes;lighting_revision=-1;}return true;
+ if(changes){w.revision++;w.edits++;w.changed_samples+=changes;w.lighting_revision=-1;}return true;
+}
+bool World::edit(V3 a,V3 b,float radius,int shape,bool add,u8 material,V3&lo,V3&hi,int&changes){
+ radius=clampf(radius,.5f,64.f);
+ lo={mn(a.x,b.x)-radius-SDF_BAND-1,mn(a.y,b.y)-radius-SDF_BAND-1,mn(a.z,b.z)-radius-SDF_BAND-1};
+ hi={mx(a.x,b.x)+radius+SDF_BAND+1,mx(a.y,b.y)+radius+SDF_BAND+1,mx(a.z,b.z)+radius+SDF_BAND+1};
+ return apply_field(*this,[=](V3 p){return shape==1?box_distance(p,b,radius):capsule(p,a,b,radius);},add,material,lo,hi,changes);
+}
+bool World::stamp(const PrimitiveStamp &shape,V3 &lo,V3 &hi,int &changes){
+ if(!shape.valid())return false;
+ const V3 e=shape.extent()+V3{SDF_BAND+1,SDF_BAND+1,SDF_BAND+1};
+ lo=shape.center-e;hi=shape.center+e;
+ return apply_field(*this,[&](V3 p){return shape.distance(p);},shape.add!=0,u8(shape.material),lo,hi,changes);
 }
 static u32 checksum(const u8*p,int n){u32 h=2166136261u;for(int i=0;i<n;i++){h^=p[i];h*=16777619u;}return h;}
 void World::serialize(Bytes&out)const{
@@ -666,6 +679,11 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
    u8*p=out.p+begin+i*stride;copy_bytes(p+uv,vis+i*8,8);copy_bytes(p+uv2,tex+i*8,8);
    Reader channels{rgba+i*16,16};for(int k=0;k<4;k++)p[color+k]=u8(clampf(channels.f(),0,1)*255.f+.5f);
   }
+ }
+ else if(cmd==17){
+  PrimitiveStamp shape;if(!shape.decode(data,n)){out.p[8]=1;return;}
+  V3 lo,hi;int changes=0;if(!w.stamp(shape,lo,hi,changes))out.p[8]=2;
+  out.u(w.revision);out.u(changes);out.u(w.pages.n);out.u(w.blocks.n);out.vec(lo);out.vec(hi);
  }
  else out.p[8]=1;
  if(tr_oom)out.p[8]=3;

@@ -3,6 +3,12 @@ const Vegetation = preload("res://addons/vegetation/vegetation_world.gd")
 const Ecosystem = preload("res://addons/world_ecosystem/world_ecosystem.gd")
 const Lakes = preload("res://addons/volumetric_water/lake_world.gd")
 const Persistence = preload("res://addons/world_runtime/world_persistence.gd")
+const Structures = preload("res://addons/structures/structure_tools.gd")
+var structures = Structures.new()
+var selected_structure: int = 0
+var structure_turn: int = 0
+var structure_buttons: Array[Button] = []
+var structure_hint := Label.new()
 var persistence = Persistence.new()
 var vegetation = Vegetation.new()
 var ecosystem = Ecosystem.new()
@@ -21,6 +27,7 @@ func _ready() -> void:
 	pending_spawn = Vector3(800, 0, 1310)
 	terrain.focus = pending_spawn
 	super._ready()
+	structures.terrain = terrain
 	DisplayServer.window_set_title("TerraForest | Living terrain")
 	vegetation.name = "Vegetation"
 	vegetation.camera = camera
@@ -69,6 +76,22 @@ func create_lake(point: Vector3) -> int:
 		return 0
 	return id
 
+func create_structure(point: Vector3, selection: int, quarter_turns: int = 0) -> bool:
+	if loading_active or selection < 0 or selection >= Structures.PRESETS.size() or not point.is_finite():
+		return false
+	var preset = Structures.PRESETS[selection]
+	var center: Vector3 = point.floor()+Vector3(0,preset.half_extents.y-0.5,0)
+	if _brush_overlaps_player(center,preset.half_extents.length()):
+		_reject_placement("Construction overlaps the player; aim farther away")
+		return false
+	return structures.place(preset,center,quarter_turns,material_id)
+
+func _select_structure(selection: int) -> void:
+	selected_structure = selection
+	for i in range(structure_buttons.size()):
+		structure_buttons[i].set_pressed_no_signal(i==selection)
+	structure_hint.text = "%s · %d°\nT rotates · P places at the crosshair" % [Structures.PRESETS[selection].title,structure_turn*90]
+
 func _setup_scene() -> void:
 	super._setup_scene()
 	player.position = Vector3(800, 100, 1310)
@@ -95,7 +118,7 @@ func _setup_hud() -> void:
 	super._setup_hud()
 	hud.hide()
 	status.hide()
-	help.text = "WASD  Move    Shift  Sprint    Space  Jump    G  Fly    Mouse  Look    Esc  Release\nLMB  Dig    RMB  Build    Wheel  Brush size    1–3  Tools    L  Carve lake    F5  Save    F9  Reload    F3  Diagnostics"
+	help.text = "WASD  Move    Shift  Sprint    Space  Jump    G  Fly    Mouse  Look    Esc  Release\nLMB  Dig    RMB  Build    Wheel  Brush size    1–4  Tools    5–9  Shapes    P  Place    L  Lake    F5  Save    F9  Reload    F3  Diagnostics"
 	help.add_theme_font_size_override("font_size", 15)
 	help.add_theme_color_override("font_color", Color("e6eee9"))
 	var panel := PanelContainer.new()
@@ -129,10 +152,53 @@ func _setup_hud() -> void:
 	telemetry.add_theme_color_override("font_color", Color("bbcfc6"))
 	box.add_child(telemetry)
 	help.get_parent().add_child(panel)
+	var construction := PanelContainer.new()
+	help.get_parent().add_child(construction)
+	construction.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
+	construction.offset_left = -580
+	construction.offset_right = -26
+	construction.offset_top = 24
+	construction.add_theme_stylebox_override("panel",style.duplicate())
+	var construction_box := VBoxContainer.new()
+	construction.add_child(construction_box)
+	var heading := Label.new()
+	heading.text = "CONSTRUCTION"
+	heading.add_theme_color_override("font_color",Color("83d6b2"))
+	construction_box.add_child(heading)
+	var row := HBoxContainer.new()
+	construction_box.add_child(row)
+	for i in range(Structures.PRESETS.size()):
+		var button := Button.new()
+		button.text = "%d  %s" % [i+5,Structures.PRESETS[i].title]
+		button.toggle_mode = true
+		button.focus_mode = Control.FOCUS_NONE
+		button.pressed.connect(_select_structure.bind(i))
+		row.add_child(button)
+		structure_buttons.append(button)
+	construction_box.add_child(structure_hint)
+	_select_structure(selected_structure)
 	hud.position = Vector2(26, 200)
 	status.position = Vector2(26, 570)
 
 func _unhandled_input(event: InputEvent) -> void:
+	if loading_active or benchmark_enabled:
+		return
+	if event is InputEventKey and event.pressed and not event.echo:
+		if event.physical_keycode >= KEY_5 and event.physical_keycode <= KEY_9:
+			_select_structure(event.physical_keycode-KEY_5)
+			return
+		if event.physical_keycode == KEY_T:
+			structure_turn = (structure_turn+1)%4
+			_select_structure(selected_structure)
+			return
+		if event.physical_keycode == KEY_P:
+			var query := PhysicsRayQueryParameters3D.create(camera.global_position,camera.global_position-camera.global_basis.z*80.0,1)
+			var hit: Dictionary = get_world_3d().direct_space_state.intersect_ray(query)
+			if hit.is_empty():
+				_show_lake_notice("Aim at nearby terrain to place construction")
+			else:
+				_show_lake_notice("Placing %s" % Structures.PRESETS[selected_structure].title if create_structure(hit["position"],selected_structure,structure_turn) else "Construction unavailable here")
+			return
 	if event is InputEventKey and event.pressed and not event.echo and event.physical_keycode == KEY_L:
 		var query := PhysicsRayQueryParameters3D.create(camera.global_position, camera.global_position-camera.global_basis.z*80.0, 1)
 		var hit: Dictionary = get_world_3d().direct_space_state.intersect_ray(query)
