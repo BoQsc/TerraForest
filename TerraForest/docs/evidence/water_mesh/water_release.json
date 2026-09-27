@@ -1,0 +1,190 @@
+{
+  "checks": [
+    {
+      "name": "independent water GDExtension registered",
+      "pass": true
+    },
+    {
+      "name": "hard voxel cap rejects oversized allocation",
+      "pass": true
+    },
+    {
+      "name": "nonfinite origin rejected",
+      "pass": true
+    },
+    {
+      "name": "nonfinite spacing rejected",
+      "pass": true
+    },
+    {
+      "name": "bounded lake builder configured",
+      "pass": true
+    },
+    {
+      "name": "incomplete density field rejected without committing",
+      "pass": true
+    },
+    {
+      "name": "nonfinite density rejected before mutation",
+      "pass": true
+    },
+    {
+      "name": "connected sealed basin bakes",
+      "pass": true
+    },
+    {
+      "name": "3D occupancy and submerged depth agree",
+      "pass": true
+    },
+    {
+      "name": "surface, solid floor and exterior are dry",
+      "pass": true
+    },
+    {
+      "name": "invalid query positions are dry",
+      "pass": true
+    },
+    {
+      "name": "published volume is immutable",
+      "pass": true
+    },
+    {
+      "name": "bake scratch freed and occupancy remains bounded",
+      "pass": true
+    },
+    {
+      "name": "rectangular basin reduces six strips to one quad",
+      "pass": true
+    },
+    {
+      "name": "rectangle surface has exact nonoverlapping coverage, stable UVs and deterministic extraction",
+      "pass": true
+    },
+    {
+      "name": "bounded lake builder configured",
+      "pass": true
+    },
+    {
+      "name": "open boundary rejects entire lake without partial publication",
+      "pass": true
+    },
+    {
+      "name": "bounded lake builder configured",
+      "pass": true
+    },
+    {
+      "name": "flood fill does not fill disconnected neighboring basin",
+      "pass": true
+    },
+    {
+      "name": "disconnected dry basin is absent from merged surface",
+      "pass": true
+    },
+    {
+      "name": "bounded lake builder configured",
+      "pass": true
+    },
+    {
+      "name": "connected water occupies below cave roof while solid ceiling stays dry",
+      "pass": true
+    },
+    {
+      "name": "irregular cave roof remains absent from merged fill surface",
+      "pass": true
+    },
+    {
+      "name": "bounded lake builder configured",
+      "pass": true
+    },
+    {
+      "name": "connected lake around central island bakes",
+      "pass": true
+    },
+    {
+      "name": "surface rectangles preserve central island hole without overlaps",
+      "pass": true
+    },
+    {
+      "name": "bounded lake builder configured",
+      "pass": true
+    },
+    {
+      "name": "blocked seed rejects publication",
+      "pass": true
+    },
+    {
+      "name": "bounded lake builder configured",
+      "pass": true
+    },
+    {
+      "name": "negative world coordinates preserve occupancy indexing",
+      "pass": true
+    },
+    {
+      "name": "negative coordinates preserve merged surface coverage",
+      "pass": true
+    },
+    {
+      "name": "scaled lattice with integer fill elevation bakes",
+      "pass": true
+    },
+    {
+      "name": "scaled lattice and exact layer boundary preserve surface coverage and UVs",
+      "pass": true
+    },
+    {
+      "name": "bounded lake builder configured",
+      "pass": true
+    },
+    {
+      "name": "maximum configured cell budget bakes",
+      "pass": true
+    },
+    {
+      "name": "262144-cell lake frees all temporary scratch",
+      "pass": true
+    },
+    {
+      "name": "maximum-cell rectangular basin reduces 62 strips to one quad",
+      "pass": true
+    },
+    {
+      "name": "maximum-cell basin preserves exact surface coverage",
+      "pass": true
+    },
+    {
+      "name": "actual terrain basin excavation accepted",
+      "pass": true
+    },
+    {
+      "name": "bounded lake builder configured",
+      "pass": true
+    },
+    {
+      "name": "bounded slices sample actual edited 3D terrain into water occupancy",
+      "pass": true
+    },
+    {
+      "name": "bounded lake builder configured",
+      "pass": true
+    },
+    {
+      "name": "terrain revision mismatch cancels bake",
+      "pass": true
+    },
+    {
+      "name": "bounded lake builder configured",
+      "pass": true
+    },
+    {
+      "name": "terrain cancellation epoch rejects stale bake",
+      "pass": true
+    }
+  ],
+  "failures": 0,
+  "large_bake_ms": 11.059,
+  "scope": "CPU correctness and bake costs; no flow simulation or multiplayer claim",
+  "terrain_sample_ms": 34.17,
+  "terrain_slices": 45,
+  "library": "volumetric_water.windows.template_release.x86_64.dll"
+}

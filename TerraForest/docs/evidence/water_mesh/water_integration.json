@@ -1,0 +1,105 @@
+{
+  "checks": [
+    {
+      "name": "terrain/player loading gate settles",
+      "pass": true
+    },
+    {
+      "name": "lake authoring target has real terrain collision",
+      "pass": true
+    },
+    {
+      "name": "lake tool accepts bounded excavation and water definition",
+      "pass": true
+    },
+    {
+      "name": "worker-baked lake publishes in real terrain scene",
+      "pass": true
+    },
+    {
+      "name": "scene water query finds submerged volume",
+      "pass": true
+    },
+    {
+      "name": "scene water query rejects point above lake",
+      "pass": true
+    },
+    {
+      "name": "water visual check uses 1920x1080 fullscreen at 100 percent scale",
+      "pass": true
+    },
+    {
+      "name": "submerged terrain edit accepted",
+      "pass": true
+    },
+    {
+      "name": "accepted terrain edit immediately invalidates stale water",
+      "pass": true
+    },
+    {
+      "name": "water rebakes after edited terrain publishes",
+      "pass": true
+    },
+    {
+      "name": "completed bake leaves no outstanding worker slice",
+      "pass": true
+    },
+    {
+      "name": "removing lake releases surface ownership and resident volume",
+      "pass": true
+    },
+    {
+      "name": "removal during sampling discards late worker completion",
+      "pass": true
+    }
+  ],
+  "engine": {
+    "build": "steam",
+    "hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+    "hex": 263938,
+    "major": 4,
+    "minor": 7,
+    "patch": 2,
+    "status": "stable",
+    "string": "4.7.2-stable (steam)",
+    "timestamp": 0
+  },
+  "failures": 0,
+  "frame_times": {
+    "count": 600,
+    "max_ms": 70.062,
+    "p50_ms": 6.605,
+    "p95_ms": 8.812,
+    "p99_ms": 9.077
+  },
+  "presentation": {
+    "fair_graphical_sample": true,
+    "fullscreen": true,
+    "headless": false,
+    "render_scale": 1.0,
+    "viewport": [
+      1920,
+      1080
+    ],
+    "window_mode": 4,
+    "window_size": [
+      1920,
+      1080
+    ]
+  },
+  "scope": "Fixed warmed lake scene; excludes bake/travel tails and is not a speedup comparison",
+  "snapshots": [
+    {
+      "lakes": 1,
+      "outstanding_slices": 0,
+      "ready": 1,
+      "resident_occupancy_bytes": 20480
+    },
+    {
+      "lakes": 1,
+      "outstanding_slices": 0,
+      "ready": 1,
+      "resident_occupancy_bytes": 20480
+    }
+  ]
+}

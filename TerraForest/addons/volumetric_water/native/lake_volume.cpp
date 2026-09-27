@@ -6,6 +6,7 @@
 #include <godot_cpp/variant/packed_int32_array.hpp>
 #include <godot_cpp/classes/time.hpp>
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <new>
 
@@ -126,13 +127,26 @@ Array NativeLakeVolume::surface_arrays() const {
     if(status_!=1)return arrays;
     PackedVector3Array vertices,normals; PackedVector2Array uv; PackedInt32Array indices;
     const int y=int(std::ceil((level_-origin_.y)/spacing_))-1;
-    // Merge adjacent surface cells along X. No geometry for internal interfaces
-    // or submerged cave roofs. Godot frustum-culls each bounded lake instance.
-    for(int z=0;z<size_.z;++z) for(int x=0;x<size_.x;) {
-        if(!wet_[index(x,y,z)]){++x;continue;}
-        const int first=x;
-        while(x<size_.x && wet_[index(x,y,z)])++x;
-        const float x0=origin_.x+first*spacing_,x1=origin_.x+x*spacing_,z0=origin_.z+z*spacing_,z1=z0+spacing_;
+    // A bounded local mask keeps extraction read-only on published volumes.
+    // Merge rectangles in X/Z without bridging dry cells, islands or cave roofs.
+    // Each cell is emitted once; rectangular lakes reduce to a single quad.
+    std::array<uint8_t,128*128> surface{};
+    for(int z=0;z<size_.z;++z) for(int x=0;x<size_.x;++x)
+        surface[x+size_.x*z]=wet_[index(x,y,z)];
+    for(int z=0;z<size_.z;++z) for(int x=0;x<size_.x;++x) {
+        if(!surface[x+size_.x*z])continue;
+        int end_x=x+1;
+        while(end_x<size_.x && surface[end_x+size_.x*z])++end_x;
+        int end_z=z+1;
+        while(end_z<size_.z) {
+            bool complete=true;
+            for(int scan=x;scan<end_x;++scan) if(!surface[scan+size_.x*end_z]){complete=false;break;}
+            if(!complete)break;
+            ++end_z;
+        }
+        for(int row=z;row<end_z;++row)
+            std::fill(surface.begin()+x+size_.x*row,surface.begin()+end_x+size_.x*row,0);
+        const float x0=origin_.x+x*spacing_,x1=origin_.x+end_x*spacing_,z0=origin_.z+z*spacing_,z1=origin_.z+end_z*spacing_;
         const int base=int(vertices.size());
         vertices.push_back(Vector3(x0,level_,z0)); vertices.push_back(Vector3(x1,level_,z0));
         vertices.push_back(Vector3(x1,level_,z1)); vertices.push_back(Vector3(x0,level_,z1));
