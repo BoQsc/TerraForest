@@ -33,7 +33,6 @@ const FINE_SIZE: int = 16
 @export_range(64, 4096, 1) var cache_entry_limit: int = 512
 @export_range(100, 16000, 1) var main_build_budget_us: int = 2500
 const LIGHT_UPLOAD_BYTES: int = 256 * 1024
-const COLLIDER_TRIANGLES_PER_PIECE: int = 1024
 var backend = Backend.new()
 var planner: RefCounted
 var material: Material
@@ -83,7 +82,6 @@ var last_retire_ms: float = 0.0
 var last_receive_ms: float = 0.0
 var last_schedule_ms: float = 0.0
 var last_collision_piece_ms: float = 0.0
-const CollisionReuse = preload("res://addons/volumetric_terrain/collision_reuse.gd")
 var collision_pieces_reused: int = 0
 var collision_pieces_built: int = 0
 var last_collision_match_ms: float = 0.0
@@ -445,8 +443,7 @@ func _begin_entry(data: Dictionary) -> Dictionary:
 			"uv2": RenderingServer.mesh_surface_get_format_offset(format, count, Mesh.ARRAY_TEX_UV2),
 			"color": RenderingServer.mesh_surface_get_format_offset(format, count, Mesh.ARRAY_COLOR),
 			"compressed": (format & Mesh.ARRAY_FLAG_COMPRESS_ATTRIBUTES) != 0}
-		var faces: PackedVector3Array = data["faces"]
-		if not faces.is_empty():
+		if not data["collision_pieces"].is_empty():
 			body = StaticBody3D.new()
 			body.name = "MatchingCollision"
 			body.collision_layer = 0
@@ -463,30 +460,32 @@ func _begin_entry(data: Dictionary) -> Dictionary:
 func _prepare_piece() -> bool:
 	var piece_begin: int = Time.get_ticks_usec()
 	var data: Dictionary = preparation["data"]
-	var faces: PackedVector3Array = data["faces"]
-	var at: int = preparation["face_at"]
-	if at < faces.size():
-		var end: int = mini(faces.size(), at + 3 * COLLIDER_TRIANGLES_PER_PIECE)
-		var piece: PackedVector3Array = faces.slice(at, end)
+	var pieces: Array = data["collision_pieces"]
+	var at: int = preparation["piece_at"]
+	if at < pieces.size():
 		var entry: Dictionary = preparation["entry"]
 		var old_entry: Dictionary = tiles.get(data["key"], {})
 		var previous: Dictionary = old_entry.get("collision_shapes", {})
 		var current: Dictionary = entry["collision_shapes"]
-		var match_begin: int = Time.get_ticks_usec()
-		var prepared: Dictionary = CollisionReuse.prepare(piece, previous, current)
-		last_collision_match_ms = float(Time.get_ticks_usec() - match_begin) / 1000.0
+		var prepared: Dictionary = pieces[at].resolve(previous)
+		last_collision_match_ms = prepared.match_ms
+		current[prepared.token] = prepared.shape
+		_record_stage("collision exact match", prepared.match_ms)
+		_record_stage("collision physics cook", prepared.cook_ms)
 		if bool(prepared["reused"]):
 			collision_pieces_reused += 1
 		else:
 			collision_pieces_built += 1
+		var attach_begin: int = Time.get_ticks_usec()
 		var collision := CollisionShape3D.new()
 		collision.shape = prepared["shape"]
 		var body: StaticBody3D = preparation["entry"]["body"]
 		body.add_child(collision)
-		preparation["face_at"] = end
+		_record_stage("collision node attach", float(Time.get_ticks_usec() - attach_begin) / 1000.0)
+		preparation["piece_at"] = at + 1
 	last_collision_piece_ms = float(Time.get_ticks_usec() - piece_begin) / 1000.0
 	_record_stage("collision piece", last_collision_piece_ms)
-	return int(preparation["face_at"]) >= faces.size()
+	return int(preparation["piece_at"]) >= pieces.size()
 
 func _drain_staging() -> void:
 	var begin: int = Time.get_ticks_usec()
@@ -514,7 +513,7 @@ func _drain_staging() -> void:
 				lighting_upload = {"data": data, "offset": 0}
 				_apply_lighting_piece()
 				break
-			preparation = {"data": data, "entry": _begin_entry(data), "face_at": 0}
+			preparation = {"data": data, "entry": _begin_entry(data), "piece_at": 0}
 		else:
 			var data: Dictionary = preparation["data"]
 			var key: Vector3i = data["key"]

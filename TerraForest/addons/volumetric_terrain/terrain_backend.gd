@@ -10,6 +10,7 @@ var results: Array[Dictionary] = []
 var stopping: bool = false
 var temporary: bool = false
 var native: Object
+var collision_recipes: RefCounted
 var world_seed: int = 1703
 var build_epoch: int = 0
 var active_kind: String = "idle"
@@ -146,6 +147,9 @@ func start(use_temporary: bool) -> Error:
 		push_error("The extension loaded but did not register TerrainCore.")
 		return ERR_UNAVAILABLE
 	native = ClassDB.instantiate("TerrainCore")
+	if not ClassDB.class_exists("NativeTerrainCollision"):
+		return ERR_UNAVAILABLE
+	collision_recipes = ClassDB.instantiate("NativeTerrainCollision")
 	if native == null:
 		return ERR_CANT_CREATE
 	var epoch_reply: PackedByteArray = _call(Codec.command(13))
@@ -364,6 +368,20 @@ func _build(key: Vector3i, allow_base_cache: bool, expected_build_epoch: int, re
 		_remember_packet(key, data)
 		if cache_valid and not _input_active():
 			disk_cache.store_packet(key, data)
+	if not result.has("error"):
+		var epoch_reply: PackedByteArray = _call(Codec.command(13))
+		if epoch_reply.decode_u32(12) != expected_build_epoch:
+			return {"cancelled": true}
+		var recipes: Dictionary = collision_recipes.prepare(result["faces"], 1024)
+		if not recipes.ok:
+			return {"error": recipes.error}
+		epoch_reply = _call(Codec.command(13))
+		if epoch_reply.decode_u32(12) != expected_build_epoch:
+			return {"cancelled": true}
+		result["collision_pieces"] = recipes.pieces
+		result["collision_prepare_ms"] = recipes.prepare_ms
+		# The pieces own the exact faces; release the now redundant full array.
+		result["faces"] = PackedVector3Array()
 	result["worker_ms"] = float(Time.get_ticks_usec() - begin) / 1000.0
 	result["derived_cached"] = derived
 	result["cache_stats"] = disk_cache.counters()

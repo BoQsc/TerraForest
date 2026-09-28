@@ -1,5 +1,10 @@
 # Original objective and completion evidence
 
+Terrain collision slicing, validation and cache-key preparation now run in a
+native worker recipe API. Main-thread shape matching, cooking and node attachment
+are measured separately; see TERRAIN_COLLISION_VALIDATION.md. Physics cooking is
+still non-preemptible, and long-run/high-speed collision readiness remains open.
+
 Native authored-cell picking supports block editing and model placement without
 waiting for block mesh/collision admission. See BLOCK_PICKING_VALIDATION.md.
 Player/vehicle collision readiness and model collision residency remain separate

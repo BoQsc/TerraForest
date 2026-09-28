@@ -7,7 +7,7 @@ var failures := 0
 var planning_samples := {}
 
 func record_planning(label: String, milliseconds: float) -> void:
-	if not label.begins_with("LOD "):
+	if not label.begins_with("LOD ") and not label.begins_with("collision "):
 		return
 	if not planning_samples.has(label): planning_samples[label]=[]
 	if planning_samples[label].size()<10000: planning_samples[label].append(milliseconds)
