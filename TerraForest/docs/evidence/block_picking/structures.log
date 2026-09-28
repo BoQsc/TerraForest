@@ -1,0 +1,288 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS native block extension registered
+PASS sphere rotation/material 0 accepted
+PASS sphere has bounded nondegenerate clockwise geometry 0
+SPHERE_VERTEX_METRICS 0 count=91 normal_error=0.00010269861377 radius_error=0.0
+PASS sphere reuses indexed vertices with radial normals and material UVs 0
+PASS sphere rotation/material 1 accepted
+PASS sphere has bounded nondegenerate clockwise geometry 1
+SPHERE_VERTEX_METRICS 1 count=91 normal_error=0.00010269861377 radius_error=0.0
+PASS sphere reuses indexed vertices with radial normals and material UVs 1
+PASS sphere rotation/material 2 accepted
+PASS sphere has bounded nondegenerate clockwise geometry 2
+SPHERE_VERTEX_METRICS 2 count=91 normal_error=0.00010269861377 radius_error=0.0
+PASS sphere reuses indexed vertices with radial normals and material UVs 2
+PASS sphere rotation/material 3 accepted
+PASS sphere has bounded nondegenerate clockwise geometry 3
+SPHERE_VERTEX_METRICS 3 count=91 normal_error=0.00010269861377 radius_error=0.0
+PASS sphere reuses indexed vertices with radial normals and material UVs 3
+PASS sphere snapshot round trip preserves shape, rotation and material
+PASS sphere supports native prefab capture and rotated placement across a negative seam
+PASS touching spheres keep their complete curved surfaces across chunk seams
+PASS sphere prefab edit uses bounded undo and redo
+PASS sphere enclosed by six full cubes emits no hidden curved geometry
+PASS removing a cross-chunk enclosure face republishes the sphere
+PASS sphere collision reaches its exact top pole
+PASS sphere collision reaches its equatorial extent
+PASS sphere collision leaves cell corners empty rather than using a cube proxy
+PASS sphere workload uses existing mesh admission budgets
+PASS dense curved chunk retains authored cells but cannot exceed mesh byte admission
+PASS authoritative ray picks signed cells before any bake or physics
+PASS cell ray is read-only and independent of derived residency
+PASS ray endpoint exactly on a block face is included
+PASS ray starting on a face and entering the solid hits at zero distance
+PASS ray leaving a boundary does not pick a back face
+PASS ray starting inside a solid rejects front-face picking
+PASS invalid and zero-length rays reject safely
+PASS ray length and coordinate domain are explicitly bounded
+PASS unbaked native shape 1 orientation 0 is pickable
+PASS authored ray agrees with actual triangle collision for shape 1 orientation 0
+PASS unbaked native shape 1 orientation 1 is pickable
+PASS authored ray agrees with actual triangle collision for shape 1 orientation 1
+PASS unbaked native shape 1 orientation 2 is pickable
+PASS authored ray agrees with actual triangle collision for shape 1 orientation 2
+PASS unbaked native shape 1 orientation 3 is pickable
+PASS authored ray agrees with actual triangle collision for shape 1 orientation 3
+PASS unbaked native shape 2 orientation 0 is pickable
+PASS authored ray agrees with actual triangle collision for shape 2 orientation 0
+PASS unbaked native shape 2 orientation 1 is pickable
+PASS authored ray agrees with actual triangle collision for shape 2 orientation 1
+PASS unbaked native shape 2 orientation 2 is pickable
+PASS authored ray agrees with actual triangle collision for shape 2 orientation 2
+PASS unbaked native shape 2 orientation 3 is pickable
+PASS authored ray agrees with actual triangle collision for shape 2 orientation 3
+PASS unbaked native shape 3 orientation 0 is pickable
+PASS authored ray agrees with actual triangle collision for shape 3 orientation 0
+PASS unbaked native shape 3 orientation 1 is pickable
+PASS authored ray agrees with actual triangle collision for shape 3 orientation 1
+PASS unbaked native shape 3 orientation 2 is pickable
+PASS authored ray agrees with actual triangle collision for shape 3 orientation 2
+PASS unbaked native shape 3 orientation 3 is pickable
+PASS authored ray agrees with actual triangle collision for shape 3 orientation 3
+PASS unbaked native shape 4 orientation 0 is pickable
+PASS authored ray agrees with actual triangle collision for shape 4 orientation 0
+PASS unbaked native shape 4 orientation 1 is pickable
+PASS authored ray agrees with actual triangle collision for shape 4 orientation 1
+PASS unbaked native shape 4 orientation 2 is pickable
+PASS authored ray agrees with actual triangle collision for shape 4 orientation 2
+PASS unbaked native shape 4 orientation 3 is pickable
+PASS authored ray agrees with actual triangle collision for shape 4 orientation 3
+PASS unbaked native shape 5 orientation 0 is pickable
+PASS authored ray agrees with actual triangle collision for shape 5 orientation 0
+PASS unbaked native shape 5 orientation 1 is pickable
+PASS authored ray agrees with actual triangle collision for shape 5 orientation 1
+PASS unbaked native shape 5 orientation 2 is pickable
+PASS authored ray agrees with actual triangle collision for shape 5 orientation 2
+PASS unbaked native shape 5 orientation 3 is pickable
+PASS authored ray agrees with actual triangle collision for shape 5 orientation 3
+PASS unbaked native shape 6 orientation 0 is pickable
+PASS authored ray agrees with actual triangle collision for shape 6 orientation 0
+PASS unbaked native shape 6 orientation 1 is pickable
+PASS authored ray agrees with actual triangle collision for shape 6 orientation 1
+PASS unbaked native shape 6 orientation 2 is pickable
+PASS authored ray agrees with actual triangle collision for shape 6 orientation 2
+PASS unbaked native shape 6 orientation 3 is pickable
+PASS authored ray agrees with actual triangle collision for shape 6 orientation 3
+PASS ray passes through empty sphere corners to the next authored cell
+PASS ray passes through empty post corners
+PASS negative-direction traversal selects nearest cross-chunk cell
+PASS cell query transforms points and normals through an affine collection frame
+PASS evicted building remains authoritatively pickable
+PASS removal immediately invalidates native picking before another bake
+PASS combined query prioritizes authored block over a farther static model
+PASS fixture retains a real previous-revision block collision before rebake
+PASS combined query ignores stale block body and returns the actual model behind it
+PASS new unbaked block immediately occludes static models
+PASS nearer terrain-layer physics occludes authored blocks
+PASS combined query honours caller RID exclusions
+PASS combined query honours collision masks including authored layer two
+PASS invalid scene ray masks reject without truncation
+PASS caller exclusion count is bounded
+PASS occupancy handles negative seams, touching faces, slope cells and vertical clearance
+PASS occupancy updates after removal
+PASS occupancy index rebuilt from persisted cells
+PASS occupancy transforms world placements into block coordinates
+PASS negative query bounds rejected
+PASS nonfinite transforms rejected atomically
+PASS huge query bounded by resident chunks
+PASS remote huge coordinates safely rejected before integer conversion
+PASS empty restored world clears occupancy
+PASS native prefab accepts sparse shape/material records
+PASS prefab canonicalizes record ordering
+PASS returned prefab records cannot mutate the asset
+PASS invalid prefab authoring is atomic
+PASS invalid prefab authoring is atomic
+PASS invalid prefab authoring is atomic
+PASS invalid prefab authoring is atomic
+PASS invalid prefab authoring is atomic
+PASS native prefab quarter-turn placement 0
+PASS quarter-turn rotates coordinates and oriented shape 0
+PASS preview bounds match rotated cell extents 0
+PASS native prefab quarter-turn placement 1
+PASS quarter-turn rotates coordinates and oriented shape 1
+PASS preview bounds match rotated cell extents 1
+PASS native prefab quarter-turn placement 2
+PASS quarter-turn rotates coordinates and oriented shape 2
+PASS preview bounds match rotated cell extents 2
+PASS native prefab quarter-turn placement 3
+PASS quarter-turn rotates coordinates and oriented shape 3
+PASS preview bounds match rotated cell extents 3
+PASS occupied destination rejects entire prefab
+PASS explicit replace mode is deterministic
+PASS coordinate overflow rejects placement before mutation
+PASS invalid rotation and null asset rejected
+PASS sparse prefab leaves unlisted destination cells untouched
+PASS capture creates reusable asset from actual world cells
+PASS capture dimensions and volume are bounded
+PASS captured asset can be placed independently
+PASS native prefab saves as a Godot resource
+PASS native prefab resource round trip preserves all records
+PASS prefab capacity preflight and commit both reject atomically
+PASS history is opt-in for runtime worlds
+PASS bounded native editor history enabled
+PASS one command stores only two unique changed cells
+PASS forward change listeners observe committed history
+PASS undo restores original values across signed chunk seams
+PASS undo cursor is committed before change notification
+PASS net-zero duplicate edits preserve redo
+PASS invalid batch preserves history atomically
+PASS redo reproduces exact shapes and materials
+PASS redo cursor is committed before change notification
+PASS new edit discards abandoned future commands
+PASS failed load preserves construction history
+PASS successful load starts a new history timeline
+PASS invalid history limits preserve configuration
+PASS byte and command budgets evict the oldest undo steps
+PASS eviction retains a valid nearest undo chain
+PASS shrinking undone history retains nearest redo steps
+PASS oversized accepted edit forms a barrier instead of unsafe partial undo
+PASS whole prefab history is independent of later asset changes
+PASS undo removes chunk geometry and collision
+PASS redo rebuilds geometry and vegetation occupancy
+PASS protected player volume blocks solid restoration atomically
+PASS protected volume is transformed into block coordinates
+PASS nonfinite history protection is rejected
+PASS nonintersecting protection permits restoration
+PASS redo also respects player clearance
+PASS reentrant signal listener may clear history safely
+PASS disabling history releases retained cell data
+PASS 400 deterministic edits, undo, redo and history evictions match an independent state model
+PASS history test has a live bake awaiting publication
+PASS undo rejects in-flight geometry from the abandoned edit
+PASS redo publishes current geometry and collision after stale rejection
+PASS native mesh residency and bake cache configured
+PASS only nearby building meshes and physics are resident
+PASS travel releases old meshes while retaining bounded CPU bakes
+PASS 100 warmed travel cycles reuse bakes within fixed residency/cache budgets
+PASS render eviction never removes authored cells from persistence
+PASS bounded LRU eviction regenerates a dropped bake on revisit
+PASS invalid streaming limits preserve current state
+PASS nonfinite focus cannot corrupt residency
+PASS streamed adjacent chunks omit their shared boundary faces
+PASS distant chunks retain only cached CPU geometry
+PASS far edit invalidates both the changed chunk and its cached neighbour
+PASS returning after a far edit rebuilds the exposed boundary face
+PASS undo and streamed cache invalidation preserve chunk seams
+PASS world restoration cannot reuse old cached bakes
+PASS zero cache budget immediately releases all retained bakes
+PASS over-budget chunk reports a settled admission failure without an endless bake loop
+PASS raising the mesh budget reuses the cached rejected bake
+PASS mesh-byte budget bounds fragmented buildings independently of chunk count
+PASS nearer building mesh displaces farther mesh under byte pressure
+PASS sub-threshold focus motion does not rescan all building chunks
+PASS chunk-count limit and tiny cache budget are enforced independently
+PASS disabling streaming restores standalone all-chunk authoring
+PASS empty world releases mesh, collision and cache residency
+PASS cached reentry uploads at most one nonempty mesh per frame
+PASS travel test has an actual in-flight building bake
+PASS completed out-of-range bake is cached without uploading a distant mesh
+PASS return uses the bake completed during travel
+PASS edit during in-flight travel cannot cache or publish obsolete building material
+PASS empty snapshot validates
+PASS place cube
+PASS isolated cube is six merged quads
+PASS cube exact area and clockwise winding
+PASS place adjacent cube
+PASS adjacent cubes merge into six quads
+PASS adjacent cubes have no internal face
+PASS second material cube
+PASS material boundary does not expose internal face
+PASS reject invalid shape in batch
+PASS invalid batch is atomic
+PASS reject out of range coordinates
+PASS reject reserved material bits
+PASS reject incomplete records
+PASS clear using valid snapshot
+PASS edit across positive and negative chunk seams
+PASS negative floor division and positive seam ownership
+PASS no internal faces at either chunk seam
+PASS negative coordinate lookup
+PASS remove sole cell in negative chunk
+PASS empty chunk reclaimed and neighbour face restored
+PASS shape 1 rotation 0 accepted
+PASS shape 1 rotation 0 exact boundary and winding
+PASS shape 1 rotation 1 accepted
+PASS shape 1 rotation 1 exact boundary and winding
+PASS shape 1 rotation 2 accepted
+PASS shape 1 rotation 2 exact boundary and winding
+PASS shape 1 rotation 3 accepted
+PASS shape 1 rotation 3 exact boundary and winding
+PASS shape 2 rotation 0 accepted
+PASS shape 2 rotation 0 exact boundary and winding
+PASS shape 2 rotation 1 accepted
+PASS shape 2 rotation 1 exact boundary and winding
+PASS shape 2 rotation 2 accepted
+PASS shape 2 rotation 2 exact boundary and winding
+PASS shape 2 rotation 3 accepted
+PASS shape 2 rotation 3 exact boundary and winding
+PASS shape 3 rotation 0 accepted
+PASS shape 3 rotation 0 exact boundary and winding
+PASS shape 3 rotation 1 accepted
+PASS shape 3 rotation 1 exact boundary and winding
+PASS shape 3 rotation 2 accepted
+PASS shape 3 rotation 2 exact boundary and winding
+PASS shape 3 rotation 3 accepted
+PASS shape 3 rotation 3 exact boundary and winding
+PASS shape 4 rotation 0 accepted
+PASS shape 4 rotation 0 exact boundary and winding
+PASS shape 4 rotation 1 accepted
+PASS shape 4 rotation 1 exact boundary and winding
+PASS shape 4 rotation 2 accepted
+PASS shape 4 rotation 2 exact boundary and winding
+PASS shape 4 rotation 3 accepted
+PASS shape 4 rotation 3 exact boundary and winding
+PASS shape 5 rotation 0 accepted
+PASS shape 5 rotation 0 exact boundary and winding
+PASS shape 5 rotation 1 accepted
+PASS shape 5 rotation 1 exact boundary and winding
+PASS shape 5 rotation 2 accepted
+PASS shape 5 rotation 2 exact boundary and winding
+PASS shape 5 rotation 3 accepted
+PASS shape 5 rotation 3 exact boundary and winding
+PASS adjacent slabs merge without hidden faces
+PASS deterministic snapshot round trip
+PASS corrupt snapshot rejected
+PASS rejected load preserves live building
+PASS truncated snapshot rejected
+PASS stale worker output discarded after edit
+PASS latest edit is eventually published
+PASS repeated distant placement/removal retains no empty chunks or dirty tombstones
+PASS 4096 solid cubes become 12 triangles
+PASS dense chunk RLE snapshot is 60 bytes with checksum
+PASS stair collision tread 0
+PASS stair collision tread 1
+PASS stair collision tread 2
+PASS stair collision tread 3
+PASS true slope collision plane
+PASS far physics bodies released
+PASS static mesh transform upload
+PASS static model instances partition at signed spatial boundaries
+PASS invalid static transform rejected atomically
+PASS static batches reclaimed on clear
+PASS 100000 static model instances accepted
+PASS 100000 placements use 49 batches and 4.8 MB of transform payload
+PASS static model capacity/record limit enforced
+PASS house/tower showcase uses chunks rather than block nodes
+STRUCTURES_RESULT {"checks":280,"dense_bake_ms":7.589,"failures":0,"fragmented_budget":{"bake_jobs":16,"budget_blocked_chunks":2,"cache_byte_limit":16777216,"cache_capacity_bytes":8650752,"cache_evictions":6,"cache_hits":101,"cached_chunks":3,"chunk_limit":3,"deferred_chunks":0,"enabled":true,"mesh_byte_limit":2262016,"mesh_evictions":107,"mesh_payload_bytes":2260992,"radius":64.0,"residency_checks":116,"residency_pending":false,"settled_chunks":1,"wanted_chunks":3},"showcase":{"cell_bytes":417792,"cells":9469,"chunks":51,"collision_chunks":47,"dirty_chunks":0,"max_chunks":2048,"mesh_chunks":51,"published_bakes":51,"stale_bakes_rejected":0,"triangles":7502,"worker_jobs":0},"showcase_bake_ms":484.999,"static_100k":{"asset_id":"","batch_uploads":51,"instance_updates":0,"instances":100000,"slot_entries":100000,"spatial_batches":49,"transform_bytes":4800000},"static_100k_upload_ms":167.848,"streaming_warm":{"bake_jobs":4,"budget_blocked_chunks":0,"cache_byte_limit":1048576,"cache_capacity_bytes":5632,"cache_evictions":0,"cache_hits":100,"cached_chunks":4,"chunk_limit":2,"deferred_chunks":3,"enabled":true,"mesh_byte_limit":1048576,"mesh_evictions":103,"mesh_payload_bytes":1104,"radius":64.0,"residency_checks":104,"residency_pending":false,"settled_chunks":1,"wanted_chunks":1}}
+

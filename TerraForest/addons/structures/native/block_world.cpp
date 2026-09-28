@@ -1,4 +1,5 @@
 #include "block_world.hpp"
+#include "block_shapes.hpp"
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/classes/array_mesh.hpp>
 #include <godot_cpp/classes/collision_shape3d.hpp>
@@ -19,6 +20,8 @@ static PackedByteArray sha(const PackedByteArray &data) {
     Ref<HashingContext> h; h.instantiate(); h->start(HashingContext::HASH_SHA256); h->update(data); return h->finish();
 }
 void NativeBlockWorld::_bind_methods() {
+    ClassDB::bind_method(D_METHOD("raycast_cells","from","to"),&NativeBlockWorld::raycast_cells);
+    ClassDB::bind_method(D_METHOD("raycast_scene","from","to","collision_mask","exclude"),&NativeBlockWorld::raycast_scene,DEFVAL(3),DEFVAL(TypedArray<RID>()));
     ClassDB::bind_method(D_METHOD("set_cells","records"),&NativeBlockWorld::set_cells);
     ClassDB::bind_method(D_METHOD("configure_history","byte_limit","step_limit"),&NativeBlockWorld::configure_history);
     ClassDB::bind_method(D_METHOD("clear_history"),&NativeBlockWorld::clear_history);
@@ -179,27 +182,7 @@ static Vector3 rotate_shape(Vector3 p,int r) {
 static void sphere(BlockBake &out,Vector3 origin,int rotation,int material) {
     // One immutable indexed template shared by all workers/instances. Six latitude
     // bands and twelve sectors: 120 nondegenerate triangles, 91 seam-aware vertices.
-    struct Template {std::array<BlockVertex,91> vertices;std::array<int32_t,360> indices;};
-    static const Template geometry=[] {
-        Template result{};constexpr double pi=3.14159265358979323846;
-        for(int y=0;y<=6;y++)for(int x=0;x<=12;x++) {
-            double theta=pi*y/6,phi=2*pi*(x==12?0:x)/12;
-            double radial=(y==0||y==6)?0:std::sin(theta);
-            Vector3 n(float(radial*std::cos(phi)),float(std::cos(theta)),float(radial*std::sin(phi)));
-            Vector3 p=Vector3(.5,.5,.5)+n*.5;
-            // Integer longitudinal repeats keep the existing tiling textures
-            // continuous at the duplicated UV seam.
-            result.vertices[y*13+x]={p.x,p.y,p.z,n.x,n.y,n.z,float(3.0*x/12),float(theta*.5),0};
-        }
-        int index=0;
-        for(int y=0;y<6;y++)for(int x=0;x<12;x++) {
-            int a=y*13+x,b=a+13,c=b+1,d=a+1;
-            // Clockwise front faces; omit the collapsed half of each polar quad.
-            if(y<5)for(int v:{a,b,c})result.indices[index++]=v;
-            if(y>0)for(int v:{a,c,d})result.indices[index++]=v;
-        }
-        return result;
-    }();
+    const auto &geometry=sphere_template();
     int base=int(out.vertices.size());
     for(auto v:geometry.vertices) {
         Vector3 p=origin+rotate_shape(Vector3(v.x,v.y,v.z),rotation),n(v.nx,v.ny,v.nz);

@@ -54,7 +54,7 @@ func _ready() -> void:
 	model_tool.configure(camera,player,[
 		{"title":"Metal beam","mesh":beam,"collection":structures.model("architecture/metal_beam/v1"),"scale":Vector3(4,0.2,0.2)},
 		{"title":"Floor panel","mesh":beam,"collection":structures.model("architecture/metal_beam/v1"),"scale":Vector3(4,0.25,4)},
-		{"title":"Doorway","mesh":doorway,"collection":door_models,"scale":Vector3.ONE}],help.get_parent())
+		{"title":"Doorway","mesh":doorway,"collection":door_models,"scale":Vector3.ONE}],help.get_parent(),structures.blocks)
 	model_tool.notice.connect(_show_lake_notice)
 	DisplayServer.window_set_title("TerraForest | Living terrain")
 	vegetation.name = "Vegetation"
@@ -320,17 +320,17 @@ func _construction_history(forward: bool) -> void:
 
 func _structure_target(remove: bool) -> Dictionary:
 	var origin := camera.global_position
-	var hit := get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(origin,origin-camera.global_basis.z*48,3))
+	var hit: Dictionary = structures.blocks.raycast_scene(origin,origin-camera.global_basis.z*48,3,[player.get_rid()])
 	if hit.is_empty():
 		return {}
-	var building_hit: bool = hit.collider is CollisionObject3D and (hit.collider.collision_layer & 2) != 0
+	var building_hit: bool = hit.has("cell") and hit.collider==structures.blocks
 	if remove and not building_hit:
 		return {}
 	var target := Vector3i((hit.position + hit.normal*0.001).floor())
 	if building_hit:
-		target = Vector3i((hit.position-hit.normal*0.001).floor())
+		target = hit.cell
 		if not remove:
-			var normal: Vector3 = hit.normal
+			var normal: Vector3 = hit.cell_normal
 			var axis := normal.abs().max_axis_index()
 			target[axis] += 1 if normal[axis]>0 else -1
 	return {"target":target}

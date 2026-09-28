@@ -1,5 +1,10 @@
 # Original objective and completion evidence
 
+Native authored-cell picking supports block editing and model placement without
+waiting for block mesh/collision admission. See BLOCK_PICKING_VALIDATION.md.
+Player/vehicle collision readiness and model collision residency remain separate
+outstanding work.
+
 The original scope remains active. This project must not be called fully game-ready based on the implemented subset below. Each remaining item needs working implementation and evidence at its actual scope, not merely a class, API stub or narrow benchmark.
 
 | Requested outcome | Current state | Evidence still needed for completion |

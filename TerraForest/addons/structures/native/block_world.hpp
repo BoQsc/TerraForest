@@ -81,6 +81,8 @@ class NativeBlockWorld : public Node3D {
 protected:
     static void _bind_methods();
 public:
+    Dictionary raycast_cells(Vector3 from,Vector3 to) const;
+    Dictionary raycast_scene(Vector3 from,Vector3 to,int64_t mask,const TypedArray<RID> &exclude) const;
     ~NativeBlockWorld();
     void _process(double delta) override;
     bool set_cells(const PackedInt32Array &records);

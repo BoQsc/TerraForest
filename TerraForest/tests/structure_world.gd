@@ -204,6 +204,8 @@ func check_sphere_editor(site: Vector3) -> void:
 	editor_key(KEY_6)
 	check(game.structure_shape==6,"6 selects the native sphere block in the world editor")
 	var revision: int = game.terrain.density_revision
+	game.structures.blocks.set_collision_radius(0)
+	check(await until(func(): return game.structures.blocks.stats().collision_chunks==0,10),"editor fixture removes all derived block collision")
 	for material in range(4):
 		var cell := Vector3i(site)+Vector3i(-3+material*2,1,0)
 		game.player.position=Vector3(cell)+Vector3(0.5,6,0.5)
@@ -214,11 +216,16 @@ func check_sphere_editor(site: Vector3) -> void:
 			var picked: Dictionary = game._structure_target(false)
 			return not picked.is_empty() and picked.target==cell
 		,10),"sphere site has the expected construction support %d" % material)
+		var model_hit: Dictionary = game.model_tool.ray()
+		check(model_hit.get("collider")==game.structures.blocks and model_hit.has("cell"),"model placement ray sees authored support without block collision %d" % material)
 		game.structure_material=material
 		game._edit_structure(false)
 		check(game.structures.blocks.get_cell(cell)==6+(material<<5),"actual block tool places sphere material %d" % material)
+		var immediate: Dictionary = game._structure_target(true)
+		check(not immediate.is_empty() and immediate.target==cell,"new sphere is immediately removable before baking %d" % material)
 		check(await until(func(): return game.structures.blocks.is_idle(),20),"sphere chunk bake publishes material %d" % material)
 	check(game.terrain.density_revision==revision,"sphere authoring leaves terrain density unchanged")
+	game.structures.blocks.set_collision_radius(48)
 	var saved: PackedByteArray = game.structures.capture_snapshot()
 	check(game.structures.snapshot_validator().validate_snapshot(saved) and game.structures.restore_snapshot(saved),"compound world codec accepts and restores sphere blocks")
 	check(await until(func(): return game.structures.blocks.is_idle() and game.ecosystem._reconcile.is_empty(),20),"restored spheres settle geometry and vegetation exclusion")

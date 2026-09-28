@@ -28,8 +28,9 @@ godot-cpp sources rebuilt against the pinned Zig/prebuilt SDK.
 
 Existing saves remain readable. Older builds reject the newly assigned shape
 code, so saves containing spheres require this or a later structures build.
-The editor still requires nearby collision to finish admission before reliable
-surface picking; high-speed collision readiness remains pending.
+At this recorded stage, the editor required nearby collision admission for
+surface picking. BLOCK_PICKING_VALIDATION.md records its replacement with native
+authored-cell queries; high-speed player collision readiness remains pending.
 
 The integrated main-world test passes 135 checks at 1920×1080 fullscreen and full
 render scale. It selects shape 6 through the actual editor input handler, waits
