@@ -1,0 +1,108 @@
+{
+  "checks": 18,
+  "failures": 0,
+  "timing": {
+    "1024": {
+      "cook_piece": {
+        "max_ms": 0.991,
+        "median_ms": 0.736,
+        "p95_ms": 0.988,
+        "samples": 36
+      },
+      "cook_tile": {
+        "max_ms": 1.973,
+        "median_ms": 1.819,
+        "p95_ms": 1.973,
+        "samples": 12
+      },
+      "legacy_reuse_tile": {
+        "max_ms": 0.879,
+        "median_ms": 0.695,
+        "p95_ms": 0.879,
+        "samples": 12
+      },
+      "pieces": 3,
+      "prepare_worker": {
+        "max_ms": 0.303,
+        "median_ms": 0.22,
+        "p95_ms": 0.303,
+        "samples": 12
+      },
+      "reuse_tile": {
+        "max_ms": 0.045,
+        "median_ms": 0.04,
+        "p95_ms": 0.045,
+        "samples": 12
+      }
+    },
+    "256": {
+      "cook_piece": {
+        "max_ms": 0.317,
+        "median_ms": 0.143,
+        "p95_ms": 0.211,
+        "samples": 120
+      },
+      "cook_tile": {
+        "max_ms": 1.676,
+        "median_ms": 1.403,
+        "p95_ms": 1.676,
+        "samples": 12
+      },
+      "legacy_reuse_tile": {
+        "max_ms": 0.787,
+        "median_ms": 0.738,
+        "p95_ms": 0.787,
+        "samples": 12
+      },
+      "pieces": 10,
+      "prepare_worker": {
+        "max_ms": 0.374,
+        "median_ms": 0.245,
+        "p95_ms": 0.374,
+        "samples": 12
+      },
+      "reuse_tile": {
+        "max_ms": 0.162,
+        "median_ms": 0.073,
+        "p95_ms": 0.162,
+        "samples": 12
+      }
+    },
+    "512": {
+      "cook_piece": {
+        "max_ms": 0.886,
+        "median_ms": 0.334,
+        "p95_ms": 0.429,
+        "samples": 60
+      },
+      "cook_tile": {
+        "max_ms": 2.181,
+        "median_ms": 1.56,
+        "p95_ms": 2.181,
+        "samples": 12
+      },
+      "legacy_reuse_tile": {
+        "max_ms": 1.189,
+        "median_ms": 0.711,
+        "p95_ms": 1.189,
+        "samples": 12
+      },
+      "pieces": 5,
+      "prepare_worker": {
+        "max_ms": 0.368,
+        "median_ms": 0.236,
+        "p95_ms": 0.368,
+        "samples": 12
+      },
+      "reuse_tile": {
+        "max_ms": 0.055,
+        "median_ms": 0.049,
+        "p95_ms": 0.055,
+        "samples": 12
+      }
+    },
+    "scope": "Headless real-terrain CPU calls, excludes simulation and node attachment; no frame-rate guarantee.",
+    "triangles": 2356
+  },
+  "library": "terrain_core.windows.template_release.x86_64.dll"
+}
