@@ -12,7 +12,7 @@ from bootstrap_native import ROOT
 parser=argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--godot',default=os.environ.get('GODOT_EXE') or shutil.which('godot'))
 parser.add_argument('--addon',choices=['world_runtime','volumetric_water','volumetric_terrain','structures'],default='world_runtime')
-parser.add_argument('--test',choices=['native_runtime','water','world_archive','world_persistence','terrain_planner','terrain_collision','block_lattice','structures','static_placements','structure_persistence'])
+parser.add_argument('--test',choices=['native_runtime','water','world_archive','world_persistence','terrain_planner','terrain_collision','block_lattice','block_worker','structures','static_placements','structure_persistence'])
 args=parser.parse_args()
 if not args.godot:parser.error('Specify --godot PATH')
 engine=Path(args.godot)

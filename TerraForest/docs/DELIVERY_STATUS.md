@@ -1,5 +1,9 @@
 # Original objective and completion evidence
 
+Block worlds now reuse one sleeping native bake worker instead of creating a
+thread per chunk. Lifecycle, stale-result and shutdown tests are documented in
+BLOCK_WORKER_VALIDATION.md; multi-hour endurance remains outstanding.
+
 Native block baking now uses exact shape-dependent scratch grids instead of
 quarter-cell expansion for every chunk. Seven legacy mesh fingerprints match,
 including cross-chunk partial shapes; see BLOCK_LATTICE_VALIDATION.md. This

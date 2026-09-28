@@ -9,7 +9,9 @@
 #include <array>
 #include <map>
 #include <set>
-#include <future>
+#include <thread>
+#include <mutex>
+#include <condition_variable>
 #include <vector>
 #include <deque>
 
@@ -36,7 +38,21 @@ class NativeBlockWorld : public Node3D {
     std::set<BlockKey> dirty;
     std::map<BlockKey,uint64_t> tickets;
     std::map<BlockKey,BlockVisual> visuals;
-    std::future<BlockBake> worker;
+    // Exactly one main-thread submission may be outstanding, including a ready
+    // result. The sleeping worker never accesses authoring or scene state.
+    std::thread worker_thread;
+    std::mutex worker_mutex;
+    std::condition_variable worker_wake;
+    bool worker_active=false;
+    bool worker_stopping=false,worker_pending=false,worker_ready=false;
+    BlockKey submitted_key;
+    uint64_t submitted_ticket=0;
+    std::array<uint16_t,5832> submitted_halo{};
+    BlockBake worker_result;
+    uint64_t worker_starts=0,worker_submissions=0,worker_consumed=0;
+    void worker_loop();
+    void submit_bake(BlockKey key,uint64_t ticket,const std::array<uint16_t,5832> &halo);
+    bool take_bake(BlockBake &result,bool wait);
     BlockKey worker_key;
     uint64_t revision=0, rejected=0, published=0;
     Ref<ShaderMaterial> material;
@@ -103,7 +119,7 @@ public:
     bool configure_streaming(bool enabled,double radius,int64_t chunk_limit,int64_t mesh_byte_limit,int64_t cache_byte_limit);
     Dictionary streaming_stats() const;
     void set_collision_radius(double radius);
-    bool is_idle() const { return !residency_dirty&&dirty.empty()&&!worker.valid(); }
+    bool is_idle() const { return !residency_dirty&&dirty.empty()&&!worker_active; }
     void flush_bakes(); // Explicit offline baking/test operation; never called each frame.
     PackedByteArray capture_snapshot() const;
     bool validate_snapshot(const PackedByteArray &bytes) const { return parse(bytes,nullptr); }

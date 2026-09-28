@@ -51,6 +51,10 @@ with tempfile.TemporaryDirectory(prefix='package_',dir=build) as temporary:
     lattice_log=lattice.stdout+'\n'+lattice.stderr
     lattice_report=json.loads((project/'reports/block_lattice.json').read_text())
     ok=ok and lattice.returncode==0 and lattice_report['failures']==0 and 'ERROR:' not in lattice_log and 'instances leaked' not in lattice_log
+    worker=subprocess.run([str(engine),'--headless','--path',str(project),'--script','res://tests/block_worker.gd'],capture_output=True,text=True,timeout=120)
+    worker_log=worker.stdout+'\n'+worker.stderr
+    worker_report=json.loads((project/'reports/block_worker.json').read_text())
+    ok=ok and worker.returncode==0 and worker_report['failures']==0 and 'ERROR:' not in worker_log and 'instances leaked' not in worker_log
     structures=subprocess.run([str(engine),'--headless','--path',str(project),'--script','res://tests/structures.gd'],capture_output=True,text=True,timeout=120)
     structure_log=structures.stdout+'\n'+structures.stderr
     structure_report=json.loads((project/'reports/structures.json').read_text())
@@ -66,9 +70,9 @@ with tempfile.TemporaryDirectory(prefix='package_',dir=build) as temporary:
     scene=subprocess.run([str(engine),'--headless','--path',str(project),'--quit-after','120','res://demo/structures.tscn'],capture_output=True,text=True,timeout=60)
     scene_log=scene.stdout+'\n'+scene.stderr
     ok=ok and scene.returncode==0 and 'ERROR:' not in scene_log and 'instances leaked' not in scene_log
-    log+='\n'+planner_log+'\n'+collision_log+'\n'+lattice_log+'\n'+structure_log+'\n'+placement_log+'\n'+persistence_log+'\n'+scene_log
+    log+='\n'+planner_log+'\n'+collision_log+'\n'+lattice_log+'\n'+worker_log+'\n'+structure_log+'\n'+placement_log+'\n'+persistence_log+'\n'+scene_log
     (root/'reports').mkdir(exist_ok=True)
-    (root/'reports/package_verification.json').write_text(json.dumps({'archive':args.archive.name,'sha256':hashlib.sha256(args.archive.read_bytes()).hexdigest(),'manifest_files':len(manifest),'checks':len(report['checks']),'terrain_planner_checks':planner_report['checks'],'terrain_collision_checks':collision_report['checks'],'block_lattice_checks':lattice_report['checks'],'structures_checks':structure_report['checks'],'static_placement_checks':placement_report['checks'],'structure_persistence_checks':len(persistence_report['checks']),'structures_scene_smoke':scene.returncode==0 and 'ERROR:' not in scene_log,'pass':ok,'log':log},indent=2),encoding='utf-8')
+    (root/'reports/package_verification.json').write_text(json.dumps({'archive':args.archive.name,'sha256':hashlib.sha256(args.archive.read_bytes()).hexdigest(),'manifest_files':len(manifest),'checks':len(report['checks']),'terrain_planner_checks':planner_report['checks'],'terrain_collision_checks':collision_report['checks'],'block_lattice_checks':lattice_report['checks'],'block_worker_checks':worker_report['checks'],'structures_checks':structure_report['checks'],'static_placement_checks':placement_report['checks'],'structure_persistence_checks':len(persistence_report['checks']),'structures_scene_smoke':scene.returncode==0 and 'ERROR:' not in scene_log,'pass':ok,'log':log},indent=2),encoding='utf-8')
     print(f'{"PASS" if ok else "FAIL"} {len(manifest)} archived hashes; {len(report["checks"])} integration + {planner_report["checks"]} terrain planner + {collision_report["checks"]} terrain collision + {lattice_report["checks"]} block lattice + {structure_report["checks"]} structures + {placement_report["checks"]} placement + {len(persistence_report["checks"])} structure persistence checks; construction scene startup')
     if not ok:print(log)
     raise SystemExit(0 if ok else 1)
