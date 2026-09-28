@@ -169,8 +169,62 @@ func run() -> void:
 		await RenderingServer.frame_post_draw
 		DirAccess.make_dir_recursive_absolute("res://reports")
 		root.get_texture().get_image().save_png("res://reports/structure_world.png")
+	await check_model_editor(Vector3(site))
 	await check_prefab_editor(Vector3(site)+Vector3(22,0,0))
 	finish()
+
+func editor_key(code: int) -> void:
+	var event := InputEventKey.new()
+	event.physical_keycode=code
+	event.pressed=true
+	game._unhandled_input(event)
+
+func check_model_editor(site: Vector3) -> void:
+	game.fly=true
+	game.player.position=site+Vector3(10,11,-3)
+	game.player.velocity=Vector3.ZERO
+	game.camera.look_at(site+Vector3(2,4.25,-8))
+	editor_key(KEY_M)
+	editor_key(KEY_3)
+	check(game.model_tool.active and game.structure_mode and game.model_tool.panel.visible,"M opens the independent model placement catalog")
+	check(game.model_tool.selected==2,"number keys select a model asset")
+	var collection: Node3D = game.structures.model("architecture/doorway/v1")
+	var before: PackedInt64Array = collection.get_ids()
+	var before_save: PackedByteArray = game.structures.capture_snapshot()
+	editor_key(KEY_R)
+	game.model_tool.refresh()
+	check(game.model_tool.quarter_turns==1 and game.model_tool.preview.visible and game.model_tool.preview_valid,"rotation updates a valid model ghost preview")
+	var target: Dictionary = game.model_tool.target()
+	check(not target.is_empty(),"model tool finds an actual support surface")
+	if target.is_empty():
+		editor_key(KEY_M)
+		return
+	var expected: PackedFloat32Array = game.model_tool.records(target.transform,collection)
+	var click := InputEventMouseButton.new()
+	click.button_index=MOUSE_BUTTON_RIGHT
+	click.pressed=true
+	Input.mouse_mode=Input.MOUSE_MODE_CAPTURED
+	game._unhandled_input(click)
+	var after: PackedInt64Array = collection.get_ids()
+	check(after.size()==before.size()+1,"actual RMB tool input inserts one native placement")
+	var id: int = after[-1]
+	check(collection.get_instance(id)==expected,"placed transform matches the rotated preview")
+	check(game.structures.capture_snapshot()!=before_save,"model tool edits invalidate compound world save cache")
+	check(await until(func(): return collection.collision_stats().pending_bodies==0 and not collection.collision_stats().selection_pending),"placed model collision finishes admission")
+	if DisplayServer.get_name()!="headless":
+		await RenderingServer.frame_post_draw
+		root.get_texture().get_image().save_png("res://reports/model_editor.png")
+	var placed: Transform3D = target.transform
+	var aim := placed*Vector3(-1.5,1.5,0)
+	game.player.position=aim+Vector3(6,3,6)
+	game.camera.look_at(aim)
+	click.button_index=MOUSE_BUTTON_LEFT
+	game._unhandled_input(click)
+	check(collection.get_instance(id).is_empty() and collection.get_ids()==before,"LMB removes the picked model by stable placement ID")
+	check(game.structures.capture_snapshot()==before_save,"removal restores the prior authored world content")
+	editor_key(KEY_M)
+	check(not game.model_tool.active and game.structure_mode and not game.model_tool.preview.visible,"M returns to block editing and hides model preview")
+	Input.mouse_mode=Input.MOUSE_MODE_VISIBLE
 
 func check_prefab_editor(location: Vector3) -> void:
 	check(game.structure_prefabs.size()==4,"editor loads reusable cottage, stair, wall and tower-floor assets")

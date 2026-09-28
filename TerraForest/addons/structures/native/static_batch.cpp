@@ -6,6 +6,8 @@
 #include <cstring>
 namespace terraforest {
 void NativeStaticBatch::_bind_methods() {
+    ClassDB::bind_method(D_METHOD("can_insert_instance","transform","protected_bounds"),&NativeStaticBatch::can_insert_instance,DEFVAL(AABB()));
+    ClassDB::bind_method(D_METHOD("insert_instance","transform","protected_bounds"),&NativeStaticBatch::insert_instance,DEFVAL(AABB()));
     ClassDB::bind_method(D_METHOD("set_instances","mesh","transforms"),&NativeStaticBatch::set_instances);
     ClassDB::bind_method(D_METHOD("configure_asset","asset_id","mesh"),&NativeStaticBatch::configure_asset);
     ClassDB::bind_method(D_METHOD("lock_asset_identity"),&NativeStaticBatch::lock_asset_identity);
@@ -28,6 +30,26 @@ bool NativeStaticBatch::valid_transform(const float *t) {
     for(int j=0;j<12;j++)if(!std::isfinite(t[j])||std::abs(t[j])>1048575)return false;
     double determinant=t[0]*(double(t[5])*t[10]-double(t[6])*t[9])-t[1]*(double(t[4])*t[10]-double(t[6])*t[8])+t[2]*(double(t[4])*t[9]-double(t[5])*t[8]);
     return std::abs(determinant)>=1e-9;
+}
+bool NativeStaticBatch::can_insert_instance(const PackedFloat32Array &transform,const AABB &protection) const {
+    if(source_mesh.is_null()||transform.size()!=12||!valid_transform(transform.ptr())||placements.size()>=100000||
+       (!placements.empty()&&placements.rbegin()->first==INT64_MAX)||!protection.position.is_finite()||!protection.size.is_finite()||
+       protection.size.x<0||protection.size.y<0||protection.size.z<0)return false;
+    Placement p;std::copy(transform.ptr(),transform.ptr()+12,p.begin());
+    if(!groups.count(group_for(p))&&groups.size()>=4096)return false;
+    if(protection.size.x>0&&protection.size.y>0&&protection.size.z>0) {
+        Transform3D world=get_global_transform()*placement_transform(p);
+        if(!world.is_finite())return false;
+        if(proxy_parts.empty())return !world.xform(source_mesh->get_aabb()).intersects(protection);
+        for(const auto &part:proxy_parts)if(world.xform(part).intersects(protection))return false;
+    }
+    return true;
+}
+int64_t NativeStaticBatch::insert_instance(const PackedFloat32Array &transform,const AABB &protection) {
+    if(!can_insert_instance(transform,protection))return 0;
+    int64_t id=placements.empty()?1:placements.rbegin()->first+1;
+    PackedInt64Array ids;ids.push_back(id);
+    return upsert_instances(ids,transform)?id:0;
 }
 BlockKey NativeStaticBatch::group_for(const Placement &p) {return {int(std::floor(p[3]/32)),int(std::floor(p[7]/32)),int(std::floor(p[11]/32))};}
 bool NativeStaticBatch::valid_asset(const String &id) {
