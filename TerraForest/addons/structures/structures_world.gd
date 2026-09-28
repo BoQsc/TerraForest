@@ -57,6 +57,9 @@ func register_model(asset_id: String, mesh: Mesh) -> Node3D:
 func model(asset_id: String) -> Node3D:
 	return _models.get(asset_id)
 
+func is_collision_region_ready(bounds: AABB) -> bool:
+	return blocks != null and _queries.is_collision_region_ready(blocks,_models.values(),bounds)
+
 func seal() -> bool:
 	if _sealed:
 		return true

@@ -5,7 +5,17 @@
 namespace terraforest {
 using namespace godot;
 void NativeStructureQueries::_bind_methods() {
+    ClassDB::bind_method(D_METHOD("is_collision_region_ready","blocks","models","world_bounds"),&NativeStructureQueries::is_collision_region_ready);
     ClassDB::bind_method(D_METHOD("overlap_mask","blocks","models","transforms","prototype_bounds"),&NativeStructureQueries::overlap_mask);
+}
+bool NativeStructureQueries::is_collision_region_ready(NativeBlockWorld *blocks,const Array &models,const AABB &bounds) const {
+    if(!blocks||models.size()>256||!blocks->is_collision_region_ready(bounds))return false;
+    for(int i=0;i<models.size();i++) {
+        Variant value=models[i];if(value.get_type()!=Variant::OBJECT)return false;
+        Object *object=value;auto *model=Object::cast_to<NativeStaticBatch>(object);
+        if(!model||!model->is_collision_region_ready(bounds))return false;
+    }
+    return true;
 }
 PackedByteArray NativeStructureQueries::overlap_mask(NativeBlockWorld *blocks,const Array &models,const TypedArray<Transform3D> &transforms,const AABB &bounds) const {
     if(!blocks||models.size()>256)return {};

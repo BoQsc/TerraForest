@@ -92,6 +92,7 @@ public:
     bool configure_compound_collision(const TypedArray<AABB> &boxes,double radius,int64_t instance_limit,int64_t builds_per_tick,int64_t shape_limit,int64_t shapes_per_tick);
     void set_collision_focus(Vector3 focus);
     Dictionary collision_stats() const;
+    bool is_collision_region_ready(const AABB &world_bounds) const;
     int64_t placement_for_body(RID body) const;
     bool set_instances(const Ref<Mesh> &mesh,const PackedFloat32Array &transforms);
     bool configure_asset(const String &id,const Ref<Mesh> &mesh);

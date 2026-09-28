@@ -33,7 +33,7 @@ func _additional_motion_ready(delta: float) -> bool:
 	# travel distance. The occupancy/readiness query itself is native.
 	var bounds := AABB(player.global_position+Vector3(-0.34,-player.floor_snap_length,-0.34),Vector3(0.68,1.8+player.floor_snap_length,0.68))
 	bounds = bounds.grow(player.velocity.length()*delta+0.05)
-	return structures.blocks.is_collision_region_ready(bounds)
+	return structures.is_collision_region_ready(bounds)
 
 func _ready() -> void:
 	structures.name = "Structures"

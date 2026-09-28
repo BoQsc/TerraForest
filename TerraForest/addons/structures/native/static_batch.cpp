@@ -28,6 +28,7 @@ void NativeStaticBatch::_bind_methods() {
     ClassDB::bind_method(D_METHOD("configure_compound_collision","boxes","radius","instance_limit","builds_per_tick","shape_limit","shapes_per_tick"),&NativeStaticBatch::configure_compound_collision);
     ClassDB::bind_method(D_METHOD("set_collision_focus","focus"),&NativeStaticBatch::set_collision_focus);
     ClassDB::bind_method(D_METHOD("collision_stats"),&NativeStaticBatch::collision_stats);
+    ClassDB::bind_method(D_METHOD("is_collision_region_ready","world_bounds"),&NativeStaticBatch::is_collision_region_ready);
     ClassDB::bind_method(D_METHOD("placement_for_body","body"),&NativeStaticBatch::placement_for_body);
     ADD_SIGNAL(MethodInfo("changed"));
     ADD_SIGNAL(MethodInfo("exclusion_changed"));

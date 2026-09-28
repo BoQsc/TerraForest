@@ -202,7 +202,35 @@ func run() -> void:
 	await check_prefab_editor(Vector3(site)+Vector3(22,0,0))
 	await check_sphere_editor(Vector3(site))
 	await check_building_movement_gate(Vector3(site))
+	await check_model_movement_gate(Vector3(site))
 	finish()
+
+func check_model_movement_gate(site: Vector3) -> void:
+	game.fly=true
+	var models: Node3D = game.structures.model("architecture/metal_beam/v1")
+	var saved: PackedByteArray = models.capture_snapshot()
+	var center := site+Vector3(0,32,0)
+	var box := AABB(Vector3(-0.5,-0.5,-0.5),Vector3.ONE)
+	models.configure_collision(box,0,512,8)
+	models.upsert_instances(PackedInt64Array([9223372036854775806]),PackedFloat32Array([6,0,0,center.x,0,1,0,center.y,0,0,6,center.z]))
+	game.player.position=center+Vector3(0,0.58,0)
+	game.player.velocity=Vector3.ZERO
+	check(await until(func(): return game.terrain.player_region_ready(game.player.position)),"model movement fixture has ready terrain")
+	game.fly=false
+	var held: Vector3 = game.player.position
+	for i in range(20): await physics_frame
+	check(game.structure_motion_blocked and game.player.position.is_equal_approx(held),"walking waits above an authored static-model floor without collision")
+	models.configure_collision(box,64,512,8)
+	check(await until(func(): return game.player.is_on_floor() and not game.structure_motion_blocked),"walking resumes and lands after the model collider arrives")
+	models.configure_collision(box,0,512,8)
+	for i in range(5): await physics_frame
+	check(game.structure_motion_blocked,"model collision eviction holds the standing player")
+	models.restore_snapshot(saved)
+	var old_y: float = game.player.position.y
+	for i in range(10): await physics_frame
+	check(not game.structure_motion_blocked and game.player.position.y<old_y,"removing the missing model floor releases the movement gate")
+	game.fly=true
+	models.configure_collision(box,64,512,8)
 
 func check_building_movement_gate(site: Vector3) -> void:
 	game.fly=true
@@ -267,6 +295,9 @@ func check_sphere_editor(site: Vector3) -> void:
 		var model_hit: Dictionary = game.model_tool.ray()
 		check(model_hit.get("collider")==game.structures.blocks and model_hit.has("cell"),"model placement ray sees authored support without block collision %d" % material)
 		game.structure_material=material
+		# This synthetic action must not inherit desktop focus changes during
+		# the preceding asynchronous mesh/terrain waits.
+		game.app_focused=true
 		game._edit_structure(false)
 		check(game.structures.blocks.get_cell(cell)==6+(material<<5),"actual block tool places sphere material %d" % material)
 		var immediate: Dictionary = game._structure_target(true)
