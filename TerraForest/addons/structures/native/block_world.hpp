@@ -6,6 +6,7 @@
 #include <godot_cpp/classes/shader_material.hpp>
 #include <godot_cpp/variant/packed_int32_array.hpp>
 #include <godot_cpp/variant/packed_byte_array.hpp>
+#include <godot_cpp/variant/packed_vector3_array.hpp>
 #include <array>
 #include <map>
 #include <set>
@@ -24,7 +25,14 @@ struct BlockKey {
 struct BlockChunk { std::array<uint16_t,4096> cells{}; std::array<uint16_t,256> columns{}; int count=0; };
 struct BlockVertex { float x,y,z,nx,ny,nz,u,v,material; };
 struct BlockBake { BlockKey key; uint64_t revision=0; std::vector<BlockVertex> vertices; std::vector<int32_t> indices; int lattice_width=0; };
-struct BlockVisual { MeshInstance3D *mesh=nullptr; StaticBody3D *body=nullptr; int triangles=0; uint64_t payload_bytes=0; int lattice_width=0; };
+struct BlockVisual {
+    MeshInstance3D *mesh=nullptr; StaticBody3D *body=nullptr;
+    int triangles=0; uint64_t payload_bytes=0; int lattice_width=0;
+    PackedVector3Array collision_vertices;
+    PackedInt32Array collision_indices;
+    int collision_at=0;
+    bool collision_ready=false;
+};
 struct CachedBlockBake { BlockBake bake; uint64_t used=0; };
 struct BlockChange { int32_t x,y,z; uint16_t before,after; };
 static_assert(sizeof(BlockChange)==16,"History cell accounting must match allocated records");
@@ -59,6 +67,13 @@ class NativeBlockWorld : public Node3D {
     Vector3 focus;
     double collision_radius=48.0;
     bool collisions=true;
+    std::deque<StaticBody3D *> retired_collision;
+    uint64_t collision_ticks=0,collision_pieces_built=0,collision_pieces_retired=0;
+    double collision_last_ms=0,collision_max_ms=0;
+    double collision_cook_max_ms=0,collision_attach_max_ms=0,collision_activate_max_ms=0,collision_retire_max_ms=0;
+    static constexpr int COLLISION_PIECE_TRIANGLES=1024, COLLISION_RETIRE_PER_TICK=4;
+    bool collision_near(BlockKey key) const;
+    void retire_collision(BlockVisual &visual);
     bool streaming=false,residency_dirty=false;
     double render_radius=384;
     int render_limit=256;
@@ -90,7 +105,7 @@ class NativeBlockWorld : public Node3D {
     void invalidate(BlockKey key);
     void launch(bool allow_cached_upload=true);
     bool publish(BlockBake &&bake);
-    void update_collisions();
+    bool update_collisions();
     void ensure_material();
     static BlockBake bake(BlockKey key,uint64_t ticket,std::array<uint16_t,5832> halo);
     static bool parse(const PackedByteArray &bytes,std::map<BlockKey,BlockChunk> *out);
@@ -115,6 +130,7 @@ public:
     PackedByteArray overlap_mask(const TypedArray<Transform3D> &transforms, const AABB &prototype_bounds) const;
     int get_cell(Vector3i p) const { return cell(p.x,p.y,p.z); }
     Dictionary stats() const;
+    Dictionary collision_stats() const;
     void set_focus(Vector3 p);
     bool configure_streaming(bool enabled,double radius,int64_t chunk_limit,int64_t mesh_byte_limit,int64_t cache_byte_limit);
     Dictionary streaming_stats() const;

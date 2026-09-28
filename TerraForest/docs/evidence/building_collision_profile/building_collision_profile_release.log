@@ -1,0 +1,13 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS dense shape 1 authored
+PASS dense shape 1 actual collision matches authored surface on every admission
+PASS shape 1 residency cycles preserve authoring and avoid geometry rebakes
+PASS dense shape 3 authored
+PASS dense shape 3 actual collision matches authored surface on every admission
+PASS shape 3 residency cycles preserve authoring and avoid geometry rebakes
+PASS dense shape 6 authored
+PASS dense shape 6 actual collision matches authored surface on every admission
+PASS shape 6 residency cycles preserve authoring and avoid geometry rebakes
+BUILDING_COLLISION_PROFILE {"1":{"admission_max_ms":0.611,"admission_median_ms":0.146,"cells":4096,"release_max_ms":0.075,"release_median_ms":0.032,"samples":8,"triangles":12},"3":{"admission_max_ms":16.211,"admission_median_ms":10.496,"cells":4096,"release_max_ms":0.404,"release_median_ms":0.224,"samples":8,"triangles":7236},"6":{"admission_max_ms":1827.883,"admission_median_ms":1362.032,"cells":4096,"release_max_ms":7.847,"release_median_ms":7.394,"samples":8,"triangles":491520}}
+
