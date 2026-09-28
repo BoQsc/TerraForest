@@ -592,7 +592,7 @@
   "docs/BUILDING_HISTORY_VALIDATION.md": "ed6afa5ad914e987dc2fe2414185a7f09e6f513460113e784b94a9a4a8d5450f",
   "docs/BUILDING_STREAMING_VALIDATION.md": "de7e0646e598618640f98ea127092e2df151d18ac73bad6165d81a455094a876",
   "docs/COMPOUND_COLLISION_VALIDATION.md": "21334c88c1dd487c770676cadfd406e613c7c3ca01bde4f6af6d15648af9ad76",
-  "docs/DELIVERY_STATUS.md": "4d8479cb23b2aec891e05ed1f465badb78b7ea4f5b2d10d03f90cbd9713beef2",
+  "docs/DELIVERY_STATUS.md": "3aaf3030f1285d3c68a665e00027a2d628835b8d9fb4205afc5a4441b18cc3a5",
   "docs/evidence/.gdignore": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
   "docs/evidence/after_edit.png": "1bd958d7cd3f0713371d0d0cff1dbb688b402e519ebc376877bcbf85532b7275",
   "docs/evidence/after_edit.png.import": "3fe185d8d8e58570b9e36c3f323432f2252b0eb3dd4eeb76f6f6c1357e12810e",
@@ -830,6 +830,7 @@
   "docs/STRUCTURE_PERSISTENCE_VALIDATION.md": "a828f9ea20bf91b9a441b323dc46881081493e347da89d8092000a0ea1827586",
   "docs/STRUCTURE_VEGETATION_VALIDATION.md": "ff334e7d7c55a616e83be98fb683430b4d80e43816ac1eea45e39b3a66da8538",
   "docs/STRUCTURES_VALIDATION.md": "6801cfa1b276ca0d7167cee42830fe9e819dba5d3471170b534176dc38f5cdd3",
+  "docs/TERRAIN_CACHE_MAINTENANCE.md": "d4ed9566f20135ad7dd8bcd230195883c94ee9f03db3925849ea9fbd5cd31a2f",
   "docs/TERRAIN_NATIVE_VALIDATION.md": "a1e79ad9b08ba3f0cd0c7ef280da4e24ee39a40c398870370838a1a2626ee953",
   "docs/TOOLCHAIN_VALIDATION.md": "bb377d5a7b41841d5a96b481febc05f79a9c4f6d531d20cb9d824423bb6c4319",
   "docs/VALIDATION.md": "954e3dbbf6b9d7eb744200fcc9f2f8cc577dbd9285936c69059d39fd59250445",
@@ -880,6 +881,7 @@
   "tools/generate_architecture.gd.uid": "8c33a09d1b4be97d70b462b6c7090bc197bd605c6d675ed1ef0271b31f43c400",
   "tools/generate_prefabs.py": "784823bb6968837028f5d43adcd5402e64ac86ab50787600eaa6c3a74f57ac26",
   "tools/inspect_native_release.py": "0dad388c813679e9e43e4ee05de88d2da00ef04ae8736ede31b554eabfd1f220",
+  "tools/maintain_terrain_cache.py": "99a0a3939fea76e72542b5acfc84b2cb110943115ec1823c48fc481be8aa1d7f",
   "tools/package.py": "0fe7140be2bdd471fb76cc3029043865c2f1533b034589793df112679bac518a",
   "tools/record_native_validation.py": "3d9a3418407c6850c1796c536619a46b3acb38a3800d44eec7f7b149aa5919ea",
   "tools/record_storage_validation.py": "3b4d17098613c39ee06e1134c0a2d51fe5eefcb7f3bc9974e005e7c45fab7028",
@@ -893,6 +895,7 @@
   "tools/test_isolation.py": "07d92e517c476d851f6772a3ef861d21a150316e8a76f4644865bac5a2478cd2",
   "tools/test_native_release.py": "b31e96025c9e73f053fdfee4a67fa39afbf7246de3033bd4babbde05bd3a1b36",
   "tools/test_terrain_bridge.py": "bc8458ce59ec17333519e29ba54fa6a47f065363f8655b14763c417170160dbd",
+  "tools/test_terrain_cache_maintenance.py": "094290fb625557df5bc9c39f90fb25b051994b6581e49d22a8241610dd7d8119",
   "tools/validate.py": "992b3b6c24637e44af88dcf062da41891544e0758d2fef96c7a3edb643523c31",
   "tools/verify_package.py": "20819184b7fb3ab0f3aeee2cf153a4ba592da631797d251daaa1005ed0673825"
 }
