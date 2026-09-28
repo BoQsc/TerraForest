@@ -39,6 +39,7 @@ func _ready() -> void:
 		return
 	_setup_prefabs()
 	structures.blocks.configure_history(16*1024*1024,128)
+	structures.blocks.configure_streaming(true,384,256,64*1024*1024,32*1024*1024)
 	terrain.nearby_first = true
 	pending_spawn = Vector3(800, 0, 1310)
 	terrain.focus = pending_spawn
@@ -339,6 +340,9 @@ func _process(delta: float) -> void:
 	if _telemetry_time >= 0.5 and vegetation.ready_to_render:
 		_telemetry_time = 0.0
 		var activity: String = "Updating terrain…" if terrain.pending_edit else "Explore · Sculpt · Build"
+		var building_stream: Dictionary = structures.blocks.streaming_stats()
+		if building_stream.budget_blocked_chunks>0:
+			activity="Building detail limit · %d chunks deferred" % building_stream.budget_blocked_chunks
 		if Time.get_ticks_msec() < _lake_notice_until:
 			activity = _lake_notice
 		telemetry.text = "%d FPS  ·  %s trees  ·  %d cells\n%s" % [Engine.get_frames_per_second(), str(vegetation.renderer.roots.size()), ecosystem.resident.size(), activity]

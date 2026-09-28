@@ -1,0 +1,143 @@
+{
+  "blocks": {
+    "cell_bytes": 196608,
+    "cells": 5557,
+    "chunks": 24,
+    "collision_chunks": 12,
+    "dirty_chunks": 0,
+    "max_chunks": 2048,
+    "mesh_chunks": 24,
+    "published_bakes": 69,
+    "stale_bakes_rejected": 2,
+    "triangles": 6556,
+    "worker_jobs": 0
+  },
+  "building_travel": {
+    "away": {
+      "streaming": {
+        "bake_jobs": 47,
+        "budget_blocked_chunks": 0,
+        "cache_byte_limit": 33554432,
+        "cache_capacity_bytes": 830976,
+        "cache_evictions": 0,
+        "cache_hits": 0,
+        "cached_chunks": 24,
+        "chunk_limit": 256,
+        "deferred_chunks": 24,
+        "enabled": true,
+        "mesh_byte_limit": 67108864,
+        "mesh_evictions": 25,
+        "mesh_payload_bytes": 0,
+        "radius": 384.0,
+        "residency_checks": 20,
+        "residency_pending": false,
+        "settled_chunks": 0,
+        "wanted_chunks": 0
+      },
+      "world": {
+        "cell_bytes": 196608,
+        "cells": 5557,
+        "chunks": 24,
+        "collision_chunks": 0,
+        "dirty_chunks": 0,
+        "max_chunks": 2048,
+        "mesh_chunks": 0,
+        "published_bakes": 45,
+        "stale_bakes_rejected": 2,
+        "triangles": 0,
+        "worker_jobs": 0
+      }
+    },
+    "before": {
+      "streaming": {
+        "bake_jobs": 47,
+        "budget_blocked_chunks": 0,
+        "cache_byte_limit": 33554432,
+        "cache_capacity_bytes": 830976,
+        "cache_evictions": 0,
+        "cache_hits": 0,
+        "cached_chunks": 24,
+        "chunk_limit": 256,
+        "deferred_chunks": 0,
+        "enabled": true,
+        "mesh_byte_limit": 67108864,
+        "mesh_evictions": 1,
+        "mesh_payload_bytes": 611472,
+        "radius": 384.0,
+        "residency_checks": 19,
+        "residency_pending": false,
+        "settled_chunks": 24,
+        "wanted_chunks": 24
+      },
+      "world": {
+        "cell_bytes": 196608,
+        "cells": 5557,
+        "chunks": 24,
+        "collision_chunks": 22,
+        "dirty_chunks": 0,
+        "max_chunks": 2048,
+        "mesh_chunks": 24,
+        "published_bakes": 45,
+        "stale_bakes_rejected": 2,
+        "triangles": 6556,
+        "worker_jobs": 0
+      }
+    },
+    "returned": {
+      "streaming": {
+        "bake_jobs": 47,
+        "budget_blocked_chunks": 0,
+        "cache_byte_limit": 33554432,
+        "cache_capacity_bytes": 830976,
+        "cache_evictions": 0,
+        "cache_hits": 24,
+        "cached_chunks": 24,
+        "chunk_limit": 256,
+        "deferred_chunks": 0,
+        "enabled": true,
+        "mesh_byte_limit": 67108864,
+        "mesh_evictions": 25,
+        "mesh_payload_bytes": 611472,
+        "radius": 384.0,
+        "residency_checks": 21,
+        "residency_pending": false,
+        "settled_chunks": 24,
+        "wanted_chunks": 24
+      },
+      "world": {
+        "cell_bytes": 196608,
+        "cells": 5557,
+        "chunks": 24,
+        "collision_chunks": 22,
+        "dirty_chunks": 0,
+        "max_chunks": 2048,
+        "mesh_chunks": 24,
+        "published_bakes": 69,
+        "stale_bakes_rejected": 2,
+        "triangles": 6556,
+        "worker_jobs": 0
+      }
+    }
+  },
+  "fair_graphical_sample": true,
+  "fullscreen": true,
+  "headless": false,
+  "render_scale": 1.0,
+  "scope": "Stationary presentation intervals after 3 s warmup; integrated terrain/forest with one twelve-storey tower and cottage; not isolated GPU timing or a city benchmark.",
+  "stationary_frame_intervals_ms": {
+    "maximum": 18.612,
+    "median": 16.665,
+    "p95": 16.766,
+    "samples": 240
+  },
+  "trees": 2398,
+  "viewport": [
+    1920,
+    1080
+  ],
+  "window_mode": 4,
+  "window_size": [
+    1920,
+    1080
+  ]
+}

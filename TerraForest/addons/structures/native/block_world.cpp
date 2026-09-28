@@ -34,6 +34,8 @@ void NativeBlockWorld::_bind_methods() {
     ClassDB::bind_method(D_METHOD("overlap_mask","transforms","prototype_bounds"),&NativeBlockWorld::overlap_mask);
     ClassDB::bind_method(D_METHOD("stats"),&NativeBlockWorld::stats);
     ClassDB::bind_method(D_METHOD("set_focus","position"),&NativeBlockWorld::set_focus);
+    ClassDB::bind_method(D_METHOD("configure_streaming","enabled","radius","chunk_limit","mesh_byte_limit","cache_byte_limit"),&NativeBlockWorld::configure_streaming);
+    ClassDB::bind_method(D_METHOD("streaming_stats"),&NativeBlockWorld::streaming_stats);
     ClassDB::bind_method(D_METHOD("set_collision_radius","radius"),&NativeBlockWorld::set_collision_radius);
     ClassDB::bind_method(D_METHOD("is_idle"),&NativeBlockWorld::is_idle);
     ClassDB::bind_method(D_METHOD("flush_bakes"),&NativeBlockWorld::flush_bakes);
@@ -48,6 +50,7 @@ uint16_t NativeBlockWorld::cell(int x,int y,int z) const {
     auto it=chunks.find(key_for(x,y,z)); return it==chunks.end()?0:it->second.cells[index(x,y,z)];
 }
 void NativeBlockWorld::invalidate(BlockKey key) {
+    residency_dirty=true;settled.erase(key);budget_blocked.erase(key);erase_cached(key);
     bool active=worker.valid()&&!(key<worker_key)&&!(worker_key<key);
     if(!chunks.count(key)&&!visuals.count(key)&&!active) {
         dirty.erase(key);tickets.erase(key);return;
@@ -233,7 +236,7 @@ BlockBake NativeBlockWorld::bake(BlockKey key,uint64_t ticket,std::array<uint16_
     }
     return out;
 }
-void NativeBlockWorld::launch() {
+void NativeBlockWorld::launch(bool allow_cached_upload) {
     while(!worker.valid()&&!dirty.empty()) {
         // Nearest dirty chunk first; pending work is deduplicated and bounded by resident cells.
         auto best=dirty.begin(); double distance=1e300;
@@ -241,8 +244,17 @@ void NativeBlockWorld::launch() {
             Vector3 c(it->x*16+8,it->y*16+8,it->z*16+8); double d=c.distance_squared_to(focus);
             if(d<distance) { distance=d;best=it; }
         }
-        BlockKey k=*best; dirty.erase(best); uint64_t ticket=tickets[k];
+        BlockKey k=*best;
+        auto cached=bake_cache.find(k);
+        if(cached!=bake_cache.end()&&!allow_cached_upload)return;
+        dirty.erase(best); uint64_t ticket=tickets[k];
         if(!chunks.count(k)) { BlockBake empty;empty.key=k;empty.revision=ticket;publish(std::move(empty));continue; }
+        if(cached!=bake_cache.end()) {
+            cache_bytes-=cached->second.bake.vertices.capacity()*sizeof(BlockVertex)+cached->second.bake.indices.capacity()*sizeof(int32_t);
+            BlockBake restored=std::move(cached->second.bake);bake_cache.erase(cached);
+            restored.revision=ticket;cache_hits++;publish(std::move(restored));return;
+        }
+        cache_misses++;
         std::array<uint16_t,5832> halo{};
         for(int z=-1;z<=16;z++) for(int y=-1;y<=16;y++) for(int x=-1;x<=16;x++)
             halo[(x+1)+18*((y+1)+18*(z+1))]=cell(k.x*16+x,k.y*16+y,k.z*16+z);
@@ -250,16 +262,20 @@ void NativeBlockWorld::launch() {
         worker=std::async(std::launch::async,[k,ticket,halo](){return bake(k,ticket,halo);});
     }
 }
-void NativeBlockWorld::publish(BlockBake &&b) {
+bool NativeBlockWorld::publish(BlockBake &&b) {
     auto t=tickets.find(b.key);
-    if(t==tickets.end()||t->second!=b.revision) { rejected++;return; }
-    auto old=visuals.find(b.key);
-    if(old!=visuals.end()) {
-        if(old->second.body) memdelete(old->second.body);
-        memdelete(old->second.mesh); visuals.erase(old);
+    if(t==tickets.end()||t->second!=b.revision) {
+        rejected++;
+        if(!wanted.count(b.key))tickets.erase(b.key);
+        else if(chunks.count(b.key)&&!dirty.count(b.key)) {tickets[b.key]=++revision;dirty.insert(b.key);}
+        return false;
     }
     tickets.erase(b.key);
-    if(b.indices.empty()) return;
+    release_visual(b.key);
+    if(!wanted.count(b.key)) {cache_bake(std::move(b));return false;}
+    if(b.indices.empty()) {settled.insert(b.key);cache_bake(std::move(b));return false;}
+    uint64_t payload=b.vertices.size()*40+b.indices.size()*sizeof(int32_t);
+    if(!admit_mesh(b.key,payload)) {budget_blocked.insert(b.key);cache_bake(std::move(b));return false;}
     ensure_material();
     PackedVector3Array vertices,normals; PackedVector2Array uv,uv2; PackedInt32Array indices;
     int count=int(b.vertices.size()); vertices.resize(count);normals.resize(count);uv.resize(count);uv2.resize(count);
@@ -268,7 +284,8 @@ void NativeBlockWorld::publish(BlockBake &&b) {
     Array arrays; arrays.resize(Mesh::ARRAY_MAX);arrays[Mesh::ARRAY_VERTEX]=vertices;arrays[Mesh::ARRAY_NORMAL]=normals;arrays[Mesh::ARRAY_TEX_UV]=uv;arrays[Mesh::ARRAY_TEX_UV2]=uv2;arrays[Mesh::ARRAY_INDEX]=indices;
     Ref<ArrayMesh> mesh;mesh.instantiate();mesh->add_surface_from_arrays(Mesh::PRIMITIVE_TRIANGLES,arrays);mesh->surface_set_material(0,material);
     auto *instance=memnew(MeshInstance3D);instance->set_mesh(mesh);instance->set_position(Vector3(b.key.x*16,b.key.y*16,b.key.z*16));add_child(instance);
-    visuals[b.key]={instance,nullptr,int(b.indices.size()/3)};published++;
+    visuals[b.key]={instance,nullptr,int(b.indices.size()/3),payload};mesh_bytes+=payload;
+    settled.insert(b.key);budget_blocked.erase(b.key);published++;cache_bake(std::move(b));return true;
 }
 void NativeBlockWorld::set_collision_radius(double radius) {
     if(!std::isfinite(radius)||radius<0||radius>256) return; collision_radius=radius;collisions=radius>0;
@@ -290,11 +307,14 @@ void NativeBlockWorld::update_collisions() {
     }
 }
 void NativeBlockWorld::_process(double) {
-    if(worker.valid()&&worker.wait_for(std::chrono::seconds(0))==std::future_status::ready) publish(worker.get());
-    launch(); update_collisions();
+    refresh_residency();
+    bool uploaded=false;
+    if(worker.valid()&&worker.wait_for(std::chrono::seconds(0))==std::future_status::ready) uploaded=publish(worker.get());
+    launch(!uploaded); update_collisions();
 }
 void NativeBlockWorld::flush_bakes() {
-    while(!is_idle()) { launch();if(worker.valid()) publish(worker.get()); }
+    refresh_residency();
+    while(!is_idle()) { refresh_residency();launch();if(worker.valid()) publish(worker.get()); }
     for(size_t i=0;i<visuals.size();i++) update_collisions();
 }
 Dictionary NativeBlockWorld::stats() const {
@@ -387,6 +407,7 @@ bool NativeBlockWorld::restore_snapshot(const PackedByteArray &bytes) {
     for(auto &e:visuals)affected.insert(e.first);
     // Preserve pending keys so any in-flight publication receives a new ticket.
     for(auto &e:tickets)affected.insert(e.first);
+    bake_cache.clear();cache_bytes=0;settled.clear();budget_blocked.clear();residency_dirty=true;
     chunks=std::move(restored);dirty.clear();tickets.clear();for(auto k:affected)invalidate(k);
     clear_history();
     set_process(true);emit_signal("changed");return true;

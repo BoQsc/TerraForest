@@ -22,7 +22,8 @@ struct BlockKey {
 struct BlockChunk { std::array<uint16_t,4096> cells{}; std::array<uint16_t,256> columns{}; int count=0; };
 struct BlockVertex { float x,y,z,nx,ny,nz,u,v,material; };
 struct BlockBake { BlockKey key; uint64_t revision=0; std::vector<BlockVertex> vertices; std::vector<int32_t> indices; };
-struct BlockVisual { MeshInstance3D *mesh=nullptr; StaticBody3D *body=nullptr; int triangles=0; };
+struct BlockVisual { MeshInstance3D *mesh=nullptr; StaticBody3D *body=nullptr; int triangles=0; uint64_t payload_bytes=0; };
+struct CachedBlockBake { BlockBake bake; uint64_t used=0; };
 struct BlockChange { int32_t x,y,z; uint16_t before,after; };
 static_assert(sizeof(BlockChange)==16,"History cell accounting must match allocated records");
 
@@ -42,6 +43,21 @@ class NativeBlockWorld : public Node3D {
     Vector3 focus;
     double collision_radius=48.0;
     bool collisions=true;
+    bool streaming=false,residency_dirty=false;
+    double render_radius=384;
+    int render_limit=256;
+    uint64_t mesh_budget=64*1024*1024,cache_budget=32*1024*1024,mesh_bytes=0,cache_bytes=0;
+    uint64_t cache_clock=0,cache_hits=0,cache_misses=0,mesh_evictions=0,cache_evictions=0,residency_checks=0;
+    Vector3 residency_focus;
+    std::set<BlockKey> wanted,settled,budget_blocked;
+    std::map<BlockKey,CachedBlockBake> bake_cache;
+    void refresh_residency();
+    void release_visual(BlockKey key);
+    void erase_cached(BlockKey key);
+    void cache_bake(BlockBake &&bake);
+    void trim_cache();
+    bool admit_mesh(BlockKey key,uint64_t bytes);
+    double distance_to_focus(BlockKey key) const;
     std::deque<std::vector<BlockChange>> undo_edits,redo_edits;
     uint64_t history_bytes=0,history_budget=0,unrecorded_edits=0;
     int history_steps=0;
@@ -56,8 +72,8 @@ class NativeBlockWorld : public Node3D {
     bool occupied(const AABB &bounds) const;
     bool prefab_records(const Ref<NativeBlockPrefab> &prefab,Vector3i origin,int turns,bool replace,PackedInt32Array *out) const;
     void invalidate(BlockKey key);
-    void launch();
-    void publish(BlockBake &&bake);
+    void launch(bool allow_cached_upload=true);
+    bool publish(BlockBake &&bake);
     void update_collisions();
     void ensure_material();
     static BlockBake bake(BlockKey key,uint64_t ticket,std::array<uint16_t,5832> halo);
@@ -81,9 +97,11 @@ public:
     PackedByteArray overlap_mask(const TypedArray<Transform3D> &transforms, const AABB &prototype_bounds) const;
     int get_cell(Vector3i p) const { return cell(p.x,p.y,p.z); }
     Dictionary stats() const;
-    void set_focus(Vector3 p) { focus=p; }
+    void set_focus(Vector3 p);
+    bool configure_streaming(bool enabled,double radius,int64_t chunk_limit,int64_t mesh_byte_limit,int64_t cache_byte_limit);
+    Dictionary streaming_stats() const;
     void set_collision_radius(double radius);
-    bool is_idle() const { return dirty.empty()&&!worker.valid(); }
+    bool is_idle() const { return !residency_dirty&&dirty.empty()&&!worker.valid(); }
     void flush_bakes(); // Explicit offline baking/test operation; never called each frame.
     PackedByteArray capture_snapshot() const;
     bool validate_snapshot(const PackedByteArray &bytes) const { return parse(bytes,nullptr); }
