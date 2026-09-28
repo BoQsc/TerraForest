@@ -26,12 +26,14 @@ class NativeStaticBatch : public Node3D {
     bool asset_locked=false;
     uint64_t uploads=0;
     uint64_t instance_updates=0;
-    struct ProxyBody { RID body,shape; };
+    struct ProxyBody { RID body; std::vector<RID> shapes; };
     std::map<int64_t,ProxyBody> collision_bodies;
     std::map<RID,int64_t> body_ids;
     std::map<BlockKey,AABB> collision_bounds;
     std::vector<int64_t> collision_pending;
     AABB proxy_box;
+    std::vector<AABB> proxy_parts;
+    int proxy_shape_limit=4096,proxy_shapes_per_tick=64;
     Vector3 collision_focus,selection_focus;
     Transform3D collision_transform;
     double proxy_radius=0;
@@ -57,6 +59,7 @@ public:
     ~NativeStaticBatch();
     void _physics_process(double delta) override;
     bool configure_collision(const AABB &box,double radius,int64_t instance_limit,int64_t builds_per_tick);
+    bool configure_compound_collision(const TypedArray<AABB> &boxes,double radius,int64_t instance_limit,int64_t builds_per_tick,int64_t shape_limit,int64_t shapes_per_tick);
     void set_collision_focus(Vector3 focus);
     Dictionary collision_stats() const;
     int64_t placement_for_body(RID body) const;

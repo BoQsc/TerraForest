@@ -33,6 +33,9 @@ func _ready() -> void:
 	beam_material.albedo_color = Color("3b5359")
 	beam.material = beam_material
 	var structures_ready: bool = structures.prepare() and structures.register_model("architecture/metal_beam/v1",beam) != null
+	var doorway: Mesh = load("res://addons/structures/prefabs/doorway_model.tres")
+	var door_models: Node3D = structures.register_model("architecture/doorway/v1",doorway)
+	structures_ready = structures_ready and door_models != null
 	if not structures_ready or not lakes.prepare() or not persistence.register_component("structures", structures.capture_snapshot, structures.restore_snapshot, structures.snapshot_validator(), structures.empty_snapshot()) or not persistence.register_component("volumetric_water", lakes.capture_snapshot, lakes.restore_snapshot, lakes.snapshot_validator(), lakes.empty_snapshot()) or persistence.attach(terrain) != OK:
 		push_error("World persistence initialization failed")
 		get_tree().quit(2)
@@ -41,6 +44,7 @@ func _ready() -> void:
 	structures.blocks.configure_history(16*1024*1024,128)
 	structures.blocks.configure_streaming(true,384,256,64*1024*1024,32*1024*1024)
 	structures.model("architecture/metal_beam/v1").configure_collision(beam.get_aabb(),64,512,8)
+	door_models.configure_compound_collision(doorway.get_meta("collision_boxes"),64,512,8,1536,24)
 	terrain.nearby_first = true
 	pending_spawn = Vector3(800, 0, 1310)
 	terrain.focus = pending_spawn
@@ -338,6 +342,7 @@ func _process(delta: float) -> void:
 	if structures.blocks != null:
 		structures.blocks.set_focus(player.position)
 		structures.model("architecture/metal_beam/v1").set_collision_focus(player.position)
+		structures.model("architecture/doorway/v1").set_collision_focus(player.position)
 	_telemetry_time += delta
 	if _telemetry_time >= 0.5 and vegetation.ready_to_render:
 		_telemetry_time = 0.0

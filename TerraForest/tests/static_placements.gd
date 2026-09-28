@@ -188,6 +188,71 @@ func check_collision() -> void:
 	await process_frame
 	check(collision_ray(Vector3(0,3,0),Vector3(0,-3,0)).is_empty(),"destroying collection leaves no ghost physics")
 
+func check_compound_collision() -> void:
+	var world: Node3D = ClassDB.instantiate("NativeStaticBatch")
+	root.add_child(world)
+	var mesh: Mesh = load("res://addons/structures/prefabs/doorway_model.tres")
+	var boxes: Array[AABB] = mesh.get_meta("collision_boxes")
+	world.configure_asset("architecture/doorway/v1",mesh)
+	world.upsert_instances(PackedInt64Array([11,22,33]),transform_at(0)+transform_at(8)+transform_at(16))
+	check(world.configure_compound_collision(boxes,64,3,8,6,3),"compound doorway uses explicit body and shape budgets")
+	var before: int = world.collision_stats().body_builds
+	var tick := Engine.get_physics_frames()
+	var bounded := true
+	for i in range(5):
+		await physics_frame
+		await process_frame
+		var built: int = world.collision_stats().body_builds
+		bounded=bounded and (built-before)*3<=(Engine.get_physics_frames()-tick)*3
+		before=built
+		tick=Engine.get_physics_frames()
+	var status: Dictionary = world.collision_stats()
+	check(bounded and status.resident_bodies==2 and status.resident_shapes==6 and status.budget_deferred==1,"shape budgets bound residency and tick publication independently of body budgets")
+	check(collision_ray(Vector3(0,1,-2),Vector3(0,1,2)).is_empty(),"doorway opening is not filled by the union bounding box")
+	for point in [Vector3(-1.5,1,0),Vector3(1.5,1,0),Vector3(0,2.5,0)]:
+		var hit := collision_ray(point+Vector3(0,0,-2),point+Vector3(0,0,2))
+		check(not hit.is_empty() and world.placement_for_body(hit.rid)==11,"each doorway part resolves to the same placement identity")
+	var player := CharacterBody3D.new()
+	player.collision_mask=2
+	var shape := CollisionShape3D.new()
+	var capsule := CapsuleShape3D.new()
+	capsule.radius=0.25
+	capsule.height=1
+	shape.shape=capsule
+	player.add_child(shape)
+	root.add_child(player)
+	player.position=Vector3(0,1,-2)
+	check(player.move_and_collide(Vector3(0,0,4))==null and player.position.z>1.9,"character passes through the compound doorway")
+	player.position=Vector3(1.5,1,-2)
+	check(player.move_and_collide(Vector3(0,0,4))!=null and player.position.z<0,"character is stopped by the door post")
+	player.free()
+	check(not world.configure_compound_collision(boxes,64,3,8,2,3) and not world.configure_compound_collision(boxes,64,3,8,6,2),"budgets too small for one complete compound body reject atomically")
+	var bad: Array[AABB] = boxes.duplicate()
+	bad.append(AABB(Vector3.ZERO,Vector3.ZERO))
+	check(not world.configure_compound_collision(bad,64,3,8,6,3),"invalid part rejects the entire compound configuration")
+	var excess: Array[AABB] = []
+	for i in range(33):
+		excess.append(boxes[0])
+	check(not world.configure_compound_collision(excess,64,3,8,100,64),"compound part count is bounded")
+	check(world.collision_stats().resident_shapes==6,"rejected compound configurations preserve live bodies")
+	boxes[0]=AABB(Vector3(50,0,0),Vector3.ONE)
+	world.set_collision_focus(Vector3(16,0,0))
+	await settle_collision(world)
+	world.set_collision_focus(Vector3.ZERO)
+	await settle_collision(world)
+	check(not collision_ray(Vector3(-1.5,1,-2),Vector3(-1.5,1,2)).is_empty(),"caller array mutation cannot alter retained compound metadata")
+	var saved: PackedByteArray = world.capture_snapshot()
+	world.remove_instances(PackedInt64Array([11]))
+	await settle_collision(world)
+	check(collision_ray(Vector3(-1.5,1,-2),Vector3(-1.5,1,2)).is_empty(),"removal releases every part of a compound body")
+	world.restore_snapshot(saved)
+	await settle_collision(world)
+	check(not collision_ray(Vector3(-1.5,1,-2),Vector3(-1.5,1,2)).is_empty() and collision_ray(Vector3(0,1,-2),Vector3(0,1,2)).is_empty(),"restore reconstructs compound solids and openings")
+	world.free()
+	await physics_frame
+	await process_frame
+	check(collision_ray(Vector3(-1.5,1,-2),Vector3(-1.5,1,2)).is_empty(),"compound destruction leaves no ghost shapes")
+
 func run() -> void:
 	if gpu:
 		DisplayServer.window_set_size(Vector2i(1920,1080))
@@ -298,6 +363,7 @@ func run() -> void:
 		world.remove_instances(PackedInt64Array([i+1]))
 	check(world.stats().instances==0 and world.stats().spatial_batches==0 and world.stats().slot_entries==0 and world.get_child_count()==0, "repeated placement/removal retains no spatial or slot tombstones")
 	await check_collision()
+	await check_compound_collision()
 	var result := {"checks":checks,"failures":failures,"gpu_readback":gpu,"collision_100k":collision_evidence}
 	DirAccess.make_dir_recursive_absolute("res://reports")
 	var file := FileAccess.open("res://reports/static_placements_gpu.json" if gpu else "res://reports/static_placements.json",FileAccess.WRITE)
