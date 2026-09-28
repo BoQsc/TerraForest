@@ -191,18 +191,19 @@ static void sphere(BlockBake &out,Vector3 origin,int rotation,int material) {
     }
     for(auto index:geometry.indices)out.indices.push_back(base+index);
 }
-BlockBake NativeBlockWorld::bake(BlockKey key,uint64_t ticket,std::array<uint16_t,5832> halo) {
-    BlockBake out; out.key=key; out.revision=ticket;
-    // Quarter-cell occupancy makes stairs/slabs/posts meet exactly, while greedy
-    // rectangles collapse flat regions back to large polygons. This is offline
-    // bake work, not persistent high-resolution storage or per-frame iteration.
-    constexpr int N=64,H=66;
+template<int scale>
+static void bake_lattice(BlockBake &out,const std::array<uint16_t,5832> &halo) {
+    // Compile each exact grid separately so the inner loops retain constant
+    // strides/divisors, including the unchanged quarter-cell case.
+    constexpr int N=16*scale,H=N+2;
+    constexpr float unit=1.f/scale;
+    out.lattice_width=N;
     std::vector<uint8_t> voxels(H*H*H,0);
     auto at=[&](int x,int y,int z)->uint8_t& { return voxels[(x+1)+H*((y+1)+H*(z+1))]; };
     for(int z=-1;z<=N;z++) for(int y=-1;y<=N;y++) for(int x=-1;x<=N;x++) {
-        int bx=x<0?-1:x/4,by=y<0?-1:y/4,bz=z<0?-1:z/4;
+        int bx=x<0?-1:x/scale,by=y<0?-1:y/scale,bz=z<0?-1:z/scale;
         int w=halo[(bx+1)+18*((by+1)+18*(bz+1))],shape=w&7;
-        int sx=x&3,sy=y&3,sz=z&3;
+        int sx=(x&(scale-1))*(4/scale),sy=(y&(scale-1))*(4/scale),sz=(z&(scale-1))*(4/scale);
         for(int r=0;r<((w>>3)&3);r++) { int old=sx; sx=sz; sz=3-old; }
         bool full=shape==1 || (shape==2&&sy<2) || (shape==3&&sy<=sz) || (shape==5&&sx>=1&&sx<=2&&sz>=1&&sz<=2);
         if(full) at(x,y,z)=1+(w>>5);
@@ -227,8 +228,8 @@ BlockBake NativeBlockWorld::bake(BlockKey key,uint64_t ticket,std::array<uint16_
                     for(int k=0;k<width;k++) if(mask[i+k+N*(j+height)]!=m) {extend=false;break;}
                     if(extend) height++;
                 }
-                Vector3 p,du,dv,n; p[axis]=plane*.25f;p[u]=i*.25f;p[v]=j*.25f;
-                du[u]=width*.25f;dv[v]=height*.25f;n[axis]=m>0?1:-1;
+                Vector3 p,du,dv,n; p[axis]=plane*unit;p[u]=i*unit;p[v]=j*unit;
+                du[u]=width*unit;dv[v]=height*unit;n[axis]=m>0?1:-1;
                 if(m>0) quad(out,{p,p+du,p+du+dv,p+dv},n,std::abs(m)-1);
                 else quad(out,{p,p+dv,p+du+dv,p+du},n,std::abs(m)-1);
                 for(int h=0;h<height;h++) for(int k=0;k<width;k++) mask[i+k+N*(j+h)]=0;
@@ -236,6 +237,20 @@ BlockBake NativeBlockWorld::bake(BlockKey key,uint64_t ticket,std::array<uint16_
             }
         }
     }
+}
+BlockBake NativeBlockWorld::bake(BlockKey key,uint64_t ticket,std::array<uint16_t,5832> halo) {
+    BlockBake out; out.key=key; out.revision=ticket;
+    // Include the halo: a neighboring stair/post can expose quarter-cell
+    // fragments on an otherwise ordinary cube wall. Wedges/spheres are separate.
+    int scale=1;
+    for(uint16_t word:halo) {
+        const int shape=word&7;
+        if(shape==3||shape==5) {scale=4;break;}
+        if(shape==2)scale=2;
+    }
+    if(scale==1)bake_lattice<1>(out,halo);
+    else if(scale==2)bake_lattice<2>(out,halo);
+    else bake_lattice<4>(out,halo);
     // True planar wedges, rather than staircase approximations of slopes.
     // Wedge boundary faces are currently conservative; see addon limitations.
     for(int z=0;z<16;z++) for(int y=0;y<16;y++) for(int x=0;x<16;x++) {
@@ -305,7 +320,7 @@ bool NativeBlockWorld::publish(BlockBake &&b) {
     Array arrays; arrays.resize(Mesh::ARRAY_MAX);arrays[Mesh::ARRAY_VERTEX]=vertices;arrays[Mesh::ARRAY_NORMAL]=normals;arrays[Mesh::ARRAY_TEX_UV]=uv;arrays[Mesh::ARRAY_TEX_UV2]=uv2;arrays[Mesh::ARRAY_INDEX]=indices;
     Ref<ArrayMesh> mesh;mesh.instantiate();mesh->add_surface_from_arrays(Mesh::PRIMITIVE_TRIANGLES,arrays);mesh->surface_set_material(0,material);
     auto *instance=memnew(MeshInstance3D);instance->set_mesh(mesh);instance->set_position(Vector3(b.key.x*16,b.key.y*16,b.key.z*16));add_child(instance);
-    visuals[b.key]={instance,nullptr,int(b.indices.size()/3),payload};mesh_bytes+=payload;
+    visuals[b.key]={instance,nullptr,int(b.indices.size()/3),payload,b.lattice_width};mesh_bytes+=payload;
     settled.insert(b.key);budget_blocked.erase(b.key);published++;cache_bake(std::move(b));return true;
 }
 void NativeBlockWorld::set_collision_radius(double radius) {
@@ -340,9 +355,14 @@ void NativeBlockWorld::flush_bakes() {
 }
 Dictionary NativeBlockWorld::stats() const {
     int cells=0,triangles=0,bodies=0;
+    int lattice16=0,lattice32=0,lattice64=0;
     for(auto &e:chunks) cells+=e.second.count;
-    for(auto &e:visuals) {triangles+=e.second.triangles;bodies+=e.second.body!=nullptr;}
-    Dictionary d;d["cells"]=cells;d["chunks"]=int(chunks.size());d["cell_bytes"]=int(chunks.size())*8192;d["mesh_chunks"]=int(visuals.size());d["triangles"]=triangles;d["collision_chunks"]=bodies;d["dirty_chunks"]=int(dirty.size());d["worker_jobs"]=worker.valid()?1:0;d["stale_bakes_rejected"]=int64_t(rejected);d["published_bakes"]=int64_t(published);d["max_chunks"]=MAX_CHUNKS;return d;
+    for(auto &e:visuals) {
+        triangles+=e.second.triangles;bodies+=e.second.body!=nullptr;
+        lattice16+=e.second.lattice_width==16;lattice32+=e.second.lattice_width==32;lattice64+=e.second.lattice_width==64;
+    }
+    Dictionary d;d["cells"]=cells;d["chunks"]=int(chunks.size());d["cell_bytes"]=int(chunks.size())*8192;d["mesh_chunks"]=int(visuals.size());d["triangles"]=triangles;d["collision_chunks"]=bodies;d["dirty_chunks"]=int(dirty.size());d["worker_jobs"]=worker.valid()?1:0;d["stale_bakes_rejected"]=int64_t(rejected);d["published_bakes"]=int64_t(published);d["max_chunks"]=MAX_CHUNKS;
+    d["bake_lattice_16_chunks"]=lattice16;d["bake_lattice_32_chunks"]=lattice32;d["bake_lattice_64_chunks"]=lattice64;return d;
 }
 void NativeBlockWorld::ensure_material() {
     if(material.is_valid()) return;

@@ -1,0 +1,18 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS fixture 0 accepted
+PASS fixture 0 deterministic output
+PASS fixture 1 accepted
+PASS fixture 1 deterministic output
+PASS fixture 2 accepted
+PASS fixture 2 deterministic output
+PASS fixture 3 accepted
+PASS fixture 3 deterministic output
+PASS fixture 4 accepted
+PASS fixture 4 deterministic output
+PASS fixture 5 accepted
+PASS fixture 5 deterministic output
+PASS fixture 6 accepted
+PASS fixture 6 deterministic output
+BLOCK_LATTICE_RESULT {"0":{"max_ms":37.067,"median_ms":34.082,"sha256":"f9e221886e9f72c40dd746bc77371dca152ae1cca4cbb81aed5a6707edd3d854","stats":{"cell_bytes":24576,"cells":1384,"chunks":3,"collision_chunks":0,"dirty_chunks":0,"max_chunks":2048,"mesh_chunks":3,"published_bakes":51,"stale_bakes_rejected":0,"triangles":5380,"worker_jobs":0},"triangles":5380},"1":{"max_ms":76.478,"median_ms":36.099,"sha256":"b08ee8434a2a4eb4626763eed0730dad44f3f54dd5be2c939974097d9a0274e5","stats":{"cell_bytes":24576,"cells":1398,"chunks":3,"collision_chunks":0,"dirty_chunks":0,"max_chunks":2048,"mesh_chunks":3,"published_bakes":51,"stale_bakes_rejected":0,"triangles":16408,"worker_jobs":0},"triangles":16408},"2":{"max_ms":36.208,"median_ms":34.254,"sha256":"d18a66e2d23e986f80e4a4f053dd3be35ec668d65dd2ca92b10f04d2b9c05858","stats":{"cell_bytes":24576,"cells":4128,"chunks":3,"collision_chunks":0,"dirty_chunks":0,"max_chunks":2048,"mesh_chunks":3,"published_bakes":51,"stale_bakes_rejected":0,"triangles":18388,"worker_jobs":0},"triangles":18388},"3":{"max_ms":54.112,"median_ms":45.414,"sha256":"a98939dfa711e72c9219dd32090ab66664ca7219162c40f840a076b9ce89c130","stats":{"cell_bytes":24576,"cells":4128,"chunks":3,"collision_chunks":0,"dirty_chunks":0,"max_chunks":2048,"mesh_chunks":3,"published_bakes":51,"stale_bakes_rejected":0,"triangles":40936,"worker_jobs":0},"triangles":40936},"4":{"max_ms":45.869,"median_ms":44.402,"sha256":"9e9687456397c63275f052487e8f2a8f8e04f890c8e590e1e6b74fe6402b997b","stats":{"cell_bytes":24576,"cells":4128,"chunks":3,"collision_chunks":0,"dirty_chunks":0,"max_chunks":2048,"mesh_chunks":3,"published_bakes":51,"stale_bakes_rejected":0,"triangles":44040,"worker_jobs":0},"triangles":44040},"5":{"max_ms":32.216,"median_ms":31.673,"sha256":"e6f88a3e6757cd45fe827ea4dba53d51eb79f955081a6cabd2a39781e0e3ceff","stats":{"cell_bytes":24576,"cells":617,"chunks":3,"collision_chunks":0,"dirty_chunks":0,"max_chunks":2048,"mesh_chunks":3,"published_bakes":51,"stale_bakes_rejected":0,"triangles":37408,"worker_jobs":0},"triangles":37408},"6":{"max_ms":24.654,"median_ms":23.625,"sha256":"6abc7647303f338f315fcbd61658225de21bc67063b07683a6d434c267d9ce4b","stats":{"cell_bytes":24576,"cells":4129,"chunks":3,"collision_chunks":0,"dirty_chunks":0,"max_chunks":2048,"mesh_chunks":3,"published_bakes":51,"stale_bakes_rejected":0,"triangles":3060,"worker_jobs":0},"triangles":3060}}
+

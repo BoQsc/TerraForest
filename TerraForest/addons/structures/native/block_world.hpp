@@ -21,8 +21,8 @@ struct BlockKey {
 };
 struct BlockChunk { std::array<uint16_t,4096> cells{}; std::array<uint16_t,256> columns{}; int count=0; };
 struct BlockVertex { float x,y,z,nx,ny,nz,u,v,material; };
-struct BlockBake { BlockKey key; uint64_t revision=0; std::vector<BlockVertex> vertices; std::vector<int32_t> indices; };
-struct BlockVisual { MeshInstance3D *mesh=nullptr; StaticBody3D *body=nullptr; int triangles=0; uint64_t payload_bytes=0; };
+struct BlockBake { BlockKey key; uint64_t revision=0; std::vector<BlockVertex> vertices; std::vector<int32_t> indices; int lattice_width=0; };
+struct BlockVisual { MeshInstance3D *mesh=nullptr; StaticBody3D *body=nullptr; int triangles=0; uint64_t payload_bytes=0; int lattice_width=0; };
 struct CachedBlockBake { BlockBake bake; uint64_t used=0; };
 struct BlockChange { int32_t x,y,z; uint16_t before,after; };
 static_assert(sizeof(BlockChange)==16,"History cell accounting must match allocated records");

@@ -1,5 +1,10 @@
 # Original objective and completion evidence
 
+Native block baking now uses exact shape-dependent scratch grids instead of
+quarter-cell expansion for every chunk. Seven legacy mesh fingerprints match,
+including cross-chunk partial shapes; see BLOCK_LATTICE_VALIDATION.md. This
+reduces cube/slab bake work while building LOD and region storage remain open.
+
 Terrain collision slicing, validation and cache-key preparation now run in a
 native worker recipe API. Main-thread shape matching, cooking and node attachment
 are measured separately; see TERRAIN_COLLISION_VALIDATION.md. Physics cooking is
