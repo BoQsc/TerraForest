@@ -420,6 +420,7 @@ func check_cached_publication() -> void:
 
 func run() -> void:
 	check(ClassDB.class_exists("NativeBlockWorld"), "native block extension registered")
+	await check_spheres()
 	check_exclusion()
 	check_prefabs()
 	check_history()
@@ -564,3 +565,81 @@ func run() -> void:
 	showcase.free()
 	print("STRUCTURES_RESULT ", JSON.stringify(evidence))
 	quit(1 if failures else 0)
+
+func check_spheres() -> void:
+	var world := make_world()
+	world.configure_history(1024*1024,32)
+	var empty: PackedByteArray = world.capture_snapshot()
+	for turn in range(4):
+		world.restore_snapshot(empty)
+		check(world.set_cells(PackedInt32Array([0,0,0,6+(turn<<3)+(turn<<5)])),"sphere rotation/material %d accepted" % turn)
+		world.flush_bakes()
+		check(world.stats().triangles==120 and area_and_winding(world).y==0,"sphere has bounded nondegenerate clockwise geometry %d" % turn)
+		var valid := true
+		var count := 0
+		var normal_error := 0.0
+		var radius_error := 0.0
+		for child in world.get_children():
+			if child is MeshInstance3D:
+				var arrays: Array = child.mesh.surface_get_arrays(0)
+				var p: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
+				var n: PackedVector3Array = arrays[Mesh.ARRAY_NORMAL]
+				var uv: PackedVector2Array = arrays[Mesh.ARRAY_TEX_UV]
+				var materials: PackedVector2Array = arrays[Mesh.ARRAY_TEX_UV2]
+				count+=p.size()
+				for i in range(p.size()):
+					normal_error=maxf(normal_error,n[i].distance_to((p[i]-Vector3.ONE*0.5).normalized()))
+					radius_error=maxf(radius_error,absf(p[i].distance_to(Vector3.ONE*0.5)-0.5))
+					# ArrayMesh normal encoding introduces a small readback error.
+					valid=valid and absf(p[i].distance_to(Vector3.ONE*0.5)-0.5)<0.00001 and n[i].distance_to((p[i]-Vector3.ONE*0.5).normalized())<0.0002 and uv[i].is_finite() and materials[i].x==turn
+		print("SPHERE_VERTEX_METRICS ",turn," count=",count," normal_error=",normal_error," radius_error=",radius_error)
+		check(valid and count==91,"sphere reuses indexed vertices with radial normals and material UVs %d" % turn)
+	var saved: PackedByteArray = world.capture_snapshot()
+	check(world.restore_snapshot(saved) and world.capture_snapshot()==saved,"sphere snapshot round trip preserves shape, rotation and material")
+	var prefab: Resource = world.capture_prefab(Vector3i.ZERO,Vector3i.ONE)
+	check(prefab!=null and prefab.get_cell_count()==1 and world.place_prefab(prefab,Vector3i(-1,0,0),1),"sphere supports native prefab capture and rotated placement across a negative seam")
+	world.flush_bakes()
+	check(world.stats().triangles==240,"touching spheres keep their complete curved surfaces across chunk seams")
+	check(world.undo() and world.get_cell(Vector3i(-1,0,0))==0 and world.redo(),"sphere prefab edit uses bounded undo and redo")
+	world.restore_snapshot(empty)
+	world.set_cells(PackedInt32Array([15,0,0,6,14,0,0,1,16,0,0,1,15,-1,0,1,15,1,0,1,15,0,-1,1,15,0,1,1]))
+	world.flush_bakes()
+	var without_sphere := 0
+	for child in world.get_children():
+		if child is MeshInstance3D:
+			var normals: PackedVector3Array = child.mesh.surface_get_arrays(0)[Mesh.ARRAY_NORMAL]
+			for n in normals:
+				if absf(n.x)+absf(n.y)+absf(n.z)>1.01:
+					without_sphere+=1
+	check(without_sphere==0,"sphere enclosed by six full cubes emits no hidden curved geometry")
+	world.set_cells(PackedInt32Array([16,0,0,0]))
+	world.flush_bakes()
+	var visible := false
+	for child in world.get_children():
+		if child is MeshInstance3D:
+			var normals: PackedVector3Array = child.mesh.surface_get_arrays(0)[Mesh.ARRAY_NORMAL]
+			for n in normals:
+				visible=visible or absf(n.x)+absf(n.y)+absf(n.z)>1.01
+	check(visible,"removing a cross-chunk enclosure face republishes the sphere")
+	world.restore_snapshot(empty)
+	world.set_cells(PackedInt32Array([0,0,0,6]))
+	world.flush_bakes()
+	await physics_frame
+	await physics_frame
+	var space := world.get_world_3d().direct_space_state
+	var top := space.intersect_ray(PhysicsRayQueryParameters3D.create(Vector3(0.5,2,0.5),Vector3(0.5,-1,0.5),2))
+	check(not top.is_empty() and absf(top.position.y-1)<0.001,"sphere collision reaches its exact top pole")
+	var side := space.intersect_ray(PhysicsRayQueryParameters3D.create(Vector3(2,0.5,0.5),Vector3(-1,0.5,0.5),2))
+	check(not side.is_empty() and absf(side.position.x-1)<0.001,"sphere collision reaches its equatorial extent")
+	var corner := space.intersect_ray(PhysicsRayQueryParameters3D.create(Vector3(0.05,2,0.05),Vector3(0.05,-1,0.05),2))
+	check(corner.is_empty(),"sphere collision leaves cell corners empty rather than using a cube proxy")
+	check(world.configure_streaming(true,64,1,1024*1024,0),"sphere workload uses existing mesh admission budgets")
+	var dense := PackedInt32Array()
+	for z in range(16):
+		for y in range(16):
+			for x in range(16):
+				dense.append_array(PackedInt32Array([x,y,z,6]))
+	world.set_cells(dense)
+	world.flush_bakes()
+	check(world.stats().cells==4096 and world.stats().mesh_chunks==0 and world.streaming_stats().budget_blocked_chunks==1,"dense curved chunk retains authored cells but cannot exceed mesh byte admission")
+	world.free()

@@ -79,7 +79,7 @@ func _ready() -> void:
 	_update_label()
 	var help := Label.new()
 	help.position = Vector2(26, 983)
-	help.text = "RMB hold + mouse · Look     WASD · Fly     Q / E · Down / Up     Shift · Fast\n1–5 · Shape     T · Material     R · Rotate     LMB · Place     Shift+LMB · Remove     Ctrl+Z / Y · Undo / Redo     F5 / F9 · Save / Load     Esc · Quit"
+	help.text = "RMB hold + mouse · Look     WASD · Fly     Q / E · Down / Up     Shift · Fast\n1–6 · Shape     T · Material     R · Rotate     LMB · Place     Shift+LMB · Remove     Ctrl+Z / Y · Undo / Redo     F5 / F9 · Save / Load     Esc · Quit"
 	help.add_theme_font_size_override("font_size", 17)
 	canvas.add_child(help)
 	if "--capture-structures" in OS.get_cmdline_user_args():
@@ -135,7 +135,7 @@ func _process(delta: float) -> void:
 
 func _update_label() -> void:
 	var s: Dictionary = buildings.stats()
-	var shape_names := ["Cube", "Half slab", "Four-step stairs", "Slope", "Post"]
+	var shape_names := ["Cube", "Half slab", "Four-step stairs", "Slope", "Post", "Sphere"]
 	var material_names := ["Brick", "Wood", "Concrete", "Metal"]
 	label.text = "T E R R A F O R E S T  /  S T R U C T U R E S\n\nBlock construction\n%s\n\n%s cells · %s mesh chunks · %s triangles\n%s physics chunks · %s FPS\n\n%s / %s / %d°" % [notice, s.cells, s.mesh_chunks, s.triangles, s.collision_chunks, Engine.get_frames_per_second(), shape_names[selected_shape-1], material_names[selected_material], rotation_step*90]
 
@@ -152,7 +152,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			var forward: bool = event.physical_keycode==KEY_Y or event.shift_pressed
 			var applied: bool = buildings.redo() if forward else buildings.undo()
 			notice = ("Construction redone" if forward else "Construction undone") if applied else "No construction history available"
-		elif event.physical_keycode >= KEY_1 and event.physical_keycode <= KEY_5:
+		elif event.physical_keycode >= KEY_1 and event.physical_keycode <= KEY_6:
 			selected_shape = event.physical_keycode-KEY_1+1
 		elif event.physical_keycode == KEY_T:
 			selected_material = (selected_material+1)%4

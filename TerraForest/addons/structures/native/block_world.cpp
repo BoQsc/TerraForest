@@ -14,7 +14,7 @@
 
 namespace terraforest {
 static constexpr int MAX_CHUNKS=2048, LIMIT=1048575;
-static bool valid_word(int w) { return w==0 || (w>0&&w<128&&(w&7)>=1&&(w&7)<=5); }
+static bool valid_word(int w) { return w==0 || (w>0&&w<128&&(w&7)>=1&&(w&7)<=6); }
 static PackedByteArray sha(const PackedByteArray &data) {
     Ref<HashingContext> h; h.instantiate(); h->start(HashingContext::HASH_SHA256); h->update(data); return h->finish();
 }
@@ -176,6 +176,38 @@ static void triangle(BlockBake &b,Vector3 a,Vector3 c,Vector3 d,int material) {
 static Vector3 rotate_shape(Vector3 p,int r) {
     for(int i=0;i<r;i++) p=Vector3(1-p.z,p.y,p.x); return p;
 }
+static void sphere(BlockBake &out,Vector3 origin,int rotation,int material) {
+    // One immutable indexed template shared by all workers/instances. Six latitude
+    // bands and twelve sectors: 120 nondegenerate triangles, 91 seam-aware vertices.
+    struct Template {std::array<BlockVertex,91> vertices;std::array<int32_t,360> indices;};
+    static const Template geometry=[] {
+        Template result{};constexpr double pi=3.14159265358979323846;
+        for(int y=0;y<=6;y++)for(int x=0;x<=12;x++) {
+            double theta=pi*y/6,phi=2*pi*(x==12?0:x)/12;
+            double radial=(y==0||y==6)?0:std::sin(theta);
+            Vector3 n(float(radial*std::cos(phi)),float(std::cos(theta)),float(radial*std::sin(phi)));
+            Vector3 p=Vector3(.5,.5,.5)+n*.5;
+            // Integer longitudinal repeats keep the existing tiling textures
+            // continuous at the duplicated UV seam.
+            result.vertices[y*13+x]={p.x,p.y,p.z,n.x,n.y,n.z,float(3.0*x/12),float(theta*.5),0};
+        }
+        int index=0;
+        for(int y=0;y<6;y++)for(int x=0;x<12;x++) {
+            int a=y*13+x,b=a+13,c=b+1,d=a+1;
+            // Clockwise front faces; omit the collapsed half of each polar quad.
+            if(y<5)for(int v:{a,b,c})result.indices[index++]=v;
+            if(y>0)for(int v:{a,c,d})result.indices[index++]=v;
+        }
+        return result;
+    }();
+    int base=int(out.vertices.size());
+    for(auto v:geometry.vertices) {
+        Vector3 p=origin+rotate_shape(Vector3(v.x,v.y,v.z),rotation),n(v.nx,v.ny,v.nz);
+        for(int r=0;r<rotation;r++)n=Vector3(-n.z,n.y,n.x);
+        out.vertices.push_back({p.x,p.y,p.z,n.x,n.y,n.z,v.u,v.v,float(material)});
+    }
+    for(auto index:geometry.indices)out.indices.push_back(base+index);
+}
 BlockBake NativeBlockWorld::bake(BlockKey key,uint64_t ticket,std::array<uint16_t,5832> halo) {
     BlockBake out; out.key=key; out.revision=ticket;
     // Quarter-cell occupancy makes stairs/slabs/posts meet exactly, while greedy
@@ -224,7 +256,13 @@ BlockBake NativeBlockWorld::bake(BlockKey key,uint64_t ticket,std::array<uint16_
     // True planar wedges, rather than staircase approximations of slopes.
     // Wedge boundary faces are currently conservative; see addon limitations.
     for(int z=0;z<16;z++) for(int y=0;y<16;y++) for(int x=0;x<16;x++) {
-        int w=halo[(x+1)+18*((y+1)+18*(z+1))]; if((w&7)!=4) continue;
+        int at=(x+1)+18*((y+1)+18*(z+1)),w=halo[at];
+        if((w&7)==6) {
+            bool enclosed=true;for(int step:{-1,1,-18,18,-324,324})if((halo[at+step]&7)!=1){enclosed=false;break;}
+            if(!enclosed)sphere(out,Vector3(x,y,z),(w>>3)&3,w>>5);
+            continue;
+        }
+        if((w&7)!=4) continue;
         Vector3 origin(x,y,z); int r=(w>>3)&3,m=w>>5;
         auto p=[&](float a,float b,float c){return origin+rotate_shape(Vector3(a,b,c),r);};
         auto q=[&](Vector3 a,Vector3 b,Vector3 c,Vector3 d){quad(out,{a,b,c,d},(b-a).cross(c-a).normalized(),m);};
