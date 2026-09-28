@@ -4,7 +4,7 @@
 
 Run `python tools/run.py --scene structures --godot PATH` to inspect the separate native block construction addon. It includes textured cubes, slabs, stairs, slopes and posts; chunked native mesh baking; nearby collision; a house and tower frame; and separate static-model MultiMesh batches. See [structures API](addons/structures/README.md) and [validation](docs/STRUCTURES_VALIDATION.md). The terrain demo remains the default scene.
 
-In the main world, press **M** for the object catalog: **1–3** selects a beam, floor panel or doorway, **R** rotates, **RMB** places and **LMB** removes a picked object. A ghost preview checks capacity and player clearance. **M** returns to block tools; **F5/F9** saves/reloads the combined world. Object move/scale handles and object undo/redo remain unfinished. See [model editor validation](docs/MODEL_EDITOR_VALIDATION.md).
+In the main world, press **M** for the object catalog: **1–3** selects a beam, floor panel or doorway, **R** rotates, **RMB** places and **LMB** removes a picked object. A ghost preview checks capacity and player clearance. **Ctrl+Z** undoes model edits; **Ctrl+Y** or **Ctrl+Shift+Z** redoes them through bounded native history. **M** returns to block tools; **F5/F9** saves/reloads the combined world. Object move/scale handles remain unfinished. See [model editor validation](docs/MODEL_EDITOR_VALIDATION.md) and [model history validation](docs/MODEL_HISTORY_VALIDATION.md).
 
 A new Godot project combining editable volumetric terrain and streamed spruce vegetation. The terrain renderer, vegetation renderer, and their integration are separate addons. The supplied TerrainRewrite and Forest12 folders are not modified.
 
