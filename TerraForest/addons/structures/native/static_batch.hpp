@@ -56,6 +56,8 @@ protected:
     static void _bind_methods();
     void _notification(int what);
 public:
+    NativeStaticBatch();
+    PackedByteArray overlap_mask(const TypedArray<Transform3D> &transforms,const AABB &bounds) const;
     bool can_insert_instance(const PackedFloat32Array &transform,const AABB &protected_bounds) const;
     int64_t insert_instance(const PackedFloat32Array &transform,const AABB &protected_bounds);
     ~NativeStaticBatch();
