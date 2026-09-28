@@ -9,6 +9,7 @@ var vegetation = Vegetation.new()
 var ecosystem = Ecosystem.new()
 var lakes = Lakes.new()
 var structures = Structures.new()
+var model_tool = preload("res://addons/structures/model_tool.gd").new()
 var structure_mode := false
 var structure_shape := 1
 var structure_material := 0
@@ -49,6 +50,12 @@ func _ready() -> void:
 	pending_spawn = Vector3(800, 0, 1310)
 	terrain.focus = pending_spawn
 	super._ready()
+	add_child(model_tool)
+	model_tool.configure(camera,player,[
+		{"title":"Metal beam","mesh":beam,"collection":structures.model("architecture/metal_beam/v1"),"scale":Vector3(4,0.2,0.2)},
+		{"title":"Floor panel","mesh":beam,"collection":structures.model("architecture/metal_beam/v1"),"scale":Vector3(4,0.25,4)},
+		{"title":"Doorway","mesh":doorway,"collection":door_models,"scale":Vector3.ONE}],help.get_parent())
+	model_tool.notice.connect(_show_lake_notice)
 	DisplayServer.window_set_title("TerraForest | Living terrain")
 	vegetation.name = "Vegetation"
 	vegetation.camera = camera
@@ -108,7 +115,7 @@ func _invalidate_prefab_preview() -> void:
 	_prefab_preview_timer=0.0
 
 func _update_prefab_preview(delta: float) -> void:
-	if not structure_mode or structure_prefab_index<0 or loading_active or not app_focused:
+	if not structure_mode or model_tool.active or structure_prefab_index<0 or loading_active or not app_focused:
 		prefab_preview.hide()
 		return
 	_prefab_preview_timer -= delta
@@ -186,6 +193,7 @@ func _setup_hud() -> void:
 	status.hide()
 	help.text = "WASD  Move    Shift  Sprint    Space  Jump    G  Fly    Mouse  Look    Esc  Release\nB  Terrain / Blocks    LMB  Remove    RMB  Place    1–5  Shapes    P  Prefabs    T  Material    R  Rotate    Ctrl+Z / Y  Undo / Redo\nTerrain: Wheel  Brush size    1–3  Tools    L  Lake    F5  Save world    F9  Reload    F3  Diagnostics"
 	help.add_theme_font_size_override("font_size", 15)
+	help.text=help.text.replace("B  Terrain / Blocks", "B  Terrain / Blocks    M  Objects")
 	help.offset_top = -88
 	help.add_theme_color_override("font_color", Color("e6eee9"))
 	var panel := PanelContainer.new()
@@ -225,7 +233,18 @@ func _setup_hud() -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if not loading_active and not benchmark_enabled:
 		if event is InputEventKey and event.pressed and not event.echo:
+			if event.physical_keycode==KEY_M:
+				structure_mode=true
+				model_tool.set_active(not model_tool.active)
+				stroke_buffer.clear()
+				held_previous=false
+				stroke_valid=false
+				last_capture_signature.clear()
+				terrain.set_brush_active(false)
+				_show_lake_notice("Object placement · 1–3 assets · R rotate" if model_tool.active else "Block construction")
+				return
 			if event.physical_keycode == KEY_B:
+				model_tool.set_active(false)
 				structure_mode = not structure_mode
 				stroke_buffer.clear()
 				held_previous = false
@@ -234,7 +253,11 @@ func _unhandled_input(event: InputEvent) -> void:
 				terrain.set_brush_active(false)
 				_show_lake_notice("Block construction · 1–5 shapes · T material · R rotate" if structure_mode else "Terrain editing")
 				return
-			if structure_mode:
+		if model_tool.active and app_focused and terrain.world_ready:
+			if model_tool.handle_input(event):
+				return
+		if event is InputEventKey and event.pressed and not event.echo:
+			if structure_mode and not model_tool.active:
 				if (event.ctrl_pressed or event.meta_pressed) and event.physical_keycode in [KEY_Z,KEY_Y]:
 					_construction_history(event.physical_keycode==KEY_Y or event.shift_pressed)
 					return
@@ -259,7 +282,7 @@ func _unhandled_input(event: InputEvent) -> void:
 					_prefab_preview_timer=0.0
 					_show_lake_notice("%s · %d°" % [structure_prefabs[structure_prefab_index].resource_name,structure_rotation*90] if structure_prefab_index>=0 else "%s · %s · %d°" % [["Cube","Slab","Stairs","Slope","Post"][structure_shape-1],["Brick","Wood","Concrete","Metal"][structure_material],structure_rotation*90])
 					return
-		if structure_mode and event is InputEventMouseButton and event.pressed and event.button_index in [MOUSE_BUTTON_LEFT,MOUSE_BUTTON_RIGHT] and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
+		if structure_mode and not model_tool.active and event is InputEventMouseButton and event.pressed and event.button_index in [MOUSE_BUTTON_LEFT,MOUSE_BUTTON_RIGHT] and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 			_edit_structure(event.button_index == MOUSE_BUTTON_LEFT)
 			return
 	if event is InputEventKey and event.pressed and not event.echo and event.physical_keycode == KEY_L:
@@ -339,6 +362,7 @@ func _edit_structure(remove: bool) -> void:
 func _process(delta: float) -> void:
 	super._process(delta)
 	_update_prefab_preview(delta)
+	model_tool.update(delta,not loading_active and app_focused and terrain.world_ready)
 	if structures.blocks != null:
 		structures.blocks.set_focus(player.position)
 		structures.model("architecture/metal_beam/v1").set_collision_focus(player.position)

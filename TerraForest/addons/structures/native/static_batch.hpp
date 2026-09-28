@@ -56,6 +56,8 @@ protected:
     static void _bind_methods();
     void _notification(int what);
 public:
+    bool can_insert_instance(const PackedFloat32Array &transform,const AABB &protected_bounds) const;
+    int64_t insert_instance(const PackedFloat32Array &transform,const AABB &protected_bounds);
     ~NativeStaticBatch();
     void _physics_process(double delta) override;
     bool configure_collision(const AABB &box,double radius,int64_t instance_limit,int64_t builds_per_tick);
