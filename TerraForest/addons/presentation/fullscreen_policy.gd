@@ -8,7 +8,14 @@ static func apply(window: Window) -> void:
 	window.content_scale_aspect = Window.CONTENT_SCALE_ASPECT_KEEP
 	window.scaling_3d_scale = 1.0
 	if DisplayServer.get_name() != "headless":
-		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_EXCLUSIVE_FULLSCREEN)
+		# Use Windows' composed fullscreen path, including on hybrid-GPU laptops.
+		# Apply synchronization AFTER the window transition recreates presentation.
+		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
+		restore_vsync()
+
+static func restore_vsync() -> void:
+	if DisplayServer.get_name() != "headless":
+		DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_ENABLED)
 
 static func measurement(window: Window) -> Dictionary:
 	var viewport: Vector2i = Vector2i(window.get_visible_rect().size)
