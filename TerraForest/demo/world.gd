@@ -38,6 +38,7 @@ func _ready() -> void:
 		get_tree().quit(2)
 		return
 	_setup_prefabs()
+	structures.blocks.configure_history(16*1024*1024,128)
 	terrain.nearby_first = true
 	pending_spawn = Vector3(800, 0, 1310)
 	terrain.focus = pending_spawn
@@ -177,7 +178,7 @@ func _setup_hud() -> void:
 	super._setup_hud()
 	hud.hide()
 	status.hide()
-	help.text = "WASD  Move    Shift  Sprint    Space  Jump    G  Fly    Mouse  Look    Esc  Release\nB  Terrain / Blocks    LMB  Remove    RMB  Place    1–5  Shapes    P  Prefabs    T  Material    R  Rotate\nTerrain: Wheel  Brush size    1–3  Tools    L  Lake    F5  Save world    F9  Reload    F3  Diagnostics"
+	help.text = "WASD  Move    Shift  Sprint    Space  Jump    G  Fly    Mouse  Look    Esc  Release\nB  Terrain / Blocks    LMB  Remove    RMB  Place    1–5  Shapes    P  Prefabs    T  Material    R  Rotate    Ctrl+Z / Y  Undo / Redo\nTerrain: Wheel  Brush size    1–3  Tools    L  Lake    F5  Save world    F9  Reload    F3  Diagnostics"
 	help.add_theme_font_size_override("font_size", 15)
 	help.offset_top = -88
 	help.add_theme_color_override("font_color", Color("e6eee9"))
@@ -228,6 +229,9 @@ func _unhandled_input(event: InputEvent) -> void:
 				_show_lake_notice("Block construction · 1–5 shapes · T material · R rotate" if structure_mode else "Terrain editing")
 				return
 			if structure_mode:
+				if (event.ctrl_pressed or event.meta_pressed) and event.physical_keycode in [KEY_Z,KEY_Y]:
+					_construction_history(event.physical_keycode==KEY_Y or event.shift_pressed)
+					return
 				if event.physical_keycode == KEY_P:
 					structure_prefab_index += 1
 					if structure_prefab_index >= structure_prefabs.size():
@@ -274,6 +278,16 @@ func _update_edit(delta: float) -> void:
 		terrain.set_brush_active(false)
 		return
 	super._update_edit(delta)
+
+func _construction_history(forward: bool) -> void:
+	if not terrain.world_ready:
+		return
+	if (forward and not structures.blocks.can_redo()) or (not forward and not structures.blocks.can_undo()):
+		_show_lake_notice("No construction to redo" if forward else "No construction to undo")
+		return
+	var protection := AABB(player.global_position+Vector3(-0.4,0,-0.4),Vector3(0.8,1.8,0.8))
+	var applied: bool = structures.blocks.redo(protection) if forward else structures.blocks.undo(protection)
+	_show_lake_notice(("Construction redone · F5 saves world" if forward else "Construction undone · F5 saves world") if applied else "History blocked · move clear of the blocks being restored")
 
 func _structure_target(remove: bool) -> Dictionary:
 	var origin := camera.global_position

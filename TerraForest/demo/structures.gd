@@ -23,6 +23,7 @@ func _ready() -> void:
 	buildings.name = "IndependentStructures"
 	add_child(buildings)
 	buildings.create_showcase()
+	buildings.configure_history(16*1024*1024,128)
 	var sun := DirectionalLight3D.new()
 	sun.rotation_degrees = Vector3(-47, -28, 0)
 	sun.light_energy = 1.6
@@ -78,7 +79,7 @@ func _ready() -> void:
 	_update_label()
 	var help := Label.new()
 	help.position = Vector2(26, 983)
-	help.text = "RMB hold + mouse · Look     WASD · Fly     Q / E · Down / Up     Shift · Fast\n1–5 · Shape     T · Material     R · Rotate     LMB · Place     Shift+LMB · Remove     F5 / F9 · Save / Load     Esc · Quit"
+	help.text = "RMB hold + mouse · Look     WASD · Fly     Q / E · Down / Up     Shift · Fast\n1–5 · Shape     T · Material     R · Rotate     LMB · Place     Shift+LMB · Remove     Ctrl+Z / Y · Undo / Redo     F5 / F9 · Save / Load     Esc · Quit"
 	help.add_theme_font_size_override("font_size", 17)
 	canvas.add_child(help)
 	if "--capture-structures" in OS.get_cmdline_user_args():
@@ -147,7 +148,11 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 		_edit(event.shift_pressed)
 	if event is InputEventKey and event.pressed and not event.echo:
-		if event.physical_keycode >= KEY_1 and event.physical_keycode <= KEY_5:
+		if (event.ctrl_pressed or event.meta_pressed) and event.physical_keycode in [KEY_Z,KEY_Y]:
+			var forward: bool = event.physical_keycode==KEY_Y or event.shift_pressed
+			var applied: bool = buildings.redo() if forward else buildings.undo()
+			notice = ("Construction redone" if forward else "Construction undone") if applied else "No construction history available"
+		elif event.physical_keycode >= KEY_1 and event.physical_keycode <= KEY_5:
 			selected_shape = event.physical_keycode-KEY_1+1
 		elif event.physical_keycode == KEY_T:
 			selected_material = (selected_material+1)%4
