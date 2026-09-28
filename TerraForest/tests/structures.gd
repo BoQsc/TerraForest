@@ -257,6 +257,167 @@ func check_history_worker() -> void:
 	check(redone and world.stats().triangles==12 and world.stats().collision_chunks==1,"redo publishes current geometry and collision after stale rejection")
 	world.free()
 
+func check_streaming() -> void:
+	var world := make_world()
+	var empty: PackedByteArray = world.capture_snapshot()
+	check(world.configure_streaming(true,64,2,1048576,1048576),"native mesh residency and bake cache configured")
+	world.set_cells(PackedInt32Array([0,0,0,1,512,0,0,1,1024,0,0,1,1536,0,0,1]))
+	var authored: PackedByteArray = world.capture_snapshot()
+	world.set_focus(Vector3(8,8,8))
+	world.flush_bakes()
+	check(world.stats().chunks==4 and world.stats().mesh_chunks==1 and world.stats().collision_chunks==1 and world.streaming_stats().deferred_chunks==3,"only nearby building meshes and physics are resident")
+	for i in range(1,4):
+		world.set_focus(Vector3(i*512+8,8,8))
+		world.flush_bakes()
+	var warmed: Dictionary = world.streaming_stats()
+	check(warmed.bake_jobs==4 and warmed.cached_chunks==4 and world.stats().mesh_chunks==1,"travel releases old meshes while retaining bounded CPU bakes")
+	var bounded := true
+	for i in range(100):
+		world.set_focus(Vector3((i%4)*512+8,8,8))
+		world.flush_bakes()
+		var stats: Dictionary = world.streaming_stats()
+		bounded=bounded and stats.cache_capacity_bytes<=1048576 and stats.mesh_payload_bytes<=1048576 and world.stats().mesh_chunks==1
+	check(bounded and world.streaming_stats().bake_jobs==4 and world.streaming_stats().cache_hits>=100,"100 warmed travel cycles reuse bakes within fixed residency/cache budgets")
+	evidence.streaming_warm=world.streaming_stats()
+	check(world.capture_snapshot()==authored,"render eviction never removes authored cells from persistence")
+	var single_cache_budget: int = int(warmed.cache_capacity_bytes/4)
+	world.configure_streaming(true,64,2,1048576,single_cache_budget)
+	world.flush_bakes()
+	var evicted_jobs: int = world.streaming_stats().bake_jobs
+	world.set_focus(Vector3(8,8,8))
+	world.flush_bakes()
+	check(world.streaming_stats().cached_chunks==1 and world.streaming_stats().bake_jobs==evicted_jobs+1 and world.streaming_stats().cache_evictions>0,"bounded LRU eviction regenerates a dropped bake on revisit")
+	world.configure_streaming(true,64,2,1048576,1048576)
+	world.flush_bakes()
+	var before: Dictionary = world.streaming_stats()
+	check(not world.configure_streaming(true,NAN,2,1048576,1048576) and not world.configure_streaming(true,64,2147483649,1048576,1048576) and not world.configure_streaming(true,64,2,0,1048576) and world.streaming_stats()==before,"invalid streaming limits preserve current state")
+	world.set_focus(Vector3(INF,0,0))
+	world.flush_bakes()
+	check(world.stats().mesh_chunks==1 and world.streaming_stats().residency_checks==before.residency_checks,"nonfinite focus cannot corrupt residency")
+	world.restore_snapshot(empty)
+	world.set_focus(Vector3(8,8,8))
+	world.set_cells(PackedInt32Array([15,0,0,1,16,0,0,1]))
+	world.flush_bakes()
+	check(world.stats().triangles==20,"streamed adjacent chunks omit their shared boundary faces")
+	world.set_focus(Vector3(1000,8,8))
+	world.flush_bakes()
+	check(world.stats().mesh_chunks==0 and world.streaming_stats().cached_chunks==2,"distant chunks retain only cached CPU geometry")
+	world.configure_history(1024,16)
+	world.set_cells(PackedInt32Array([16,0,0,0]))
+	check(world.streaming_stats().cached_chunks==0,"far edit invalidates both the changed chunk and its cached neighbour")
+	world.set_focus(Vector3(8,8,8))
+	world.flush_bakes()
+	check(world.stats().triangles==12,"returning after a far edit rebuilds the exposed boundary face")
+	world.undo()
+	world.flush_bakes()
+	check(world.stats().triangles==20,"undo and streamed cache invalidation preserve chunk seams")
+	var replacement: PackedByteArray = world.capture_snapshot()
+	world.restore_snapshot(replacement)
+	check(world.streaming_stats().cached_chunks==0,"world restoration cannot reuse old cached bakes")
+	world.flush_bakes()
+	world.configure_streaming(true,64,2,1048576,0)
+	world.flush_bakes()
+	check(world.streaming_stats().cache_capacity_bytes==0 and world.streaming_stats().cached_chunks==0,"zero cache budget immediately releases all retained bakes")
+	world.restore_snapshot(empty)
+	var fragmented := PackedInt32Array()
+	for z in range(16):
+		for y in range(16):
+			for x in range(16):
+				if (x+y+z)%2==0:
+					fragmented.append_array(PackedInt32Array([x,y,z,1]))
+	world.configure_streaming(true,64,3,65536,16777216)
+	world.set_cells(fragmented)
+	world.flush_bakes()
+	check(world.is_idle() and world.stats().mesh_chunks==0 and world.streaming_stats().budget_blocked_chunks==1 and world.streaming_stats().cached_chunks==1,"over-budget chunk reports a settled admission failure without an endless bake loop")
+	var jobs: int = world.streaming_stats().bake_jobs
+	world.configure_streaming(true,64,3,4194304,16777216)
+	world.flush_bakes()
+	check(world.stats().mesh_chunks==1 and world.streaming_stats().bake_jobs==jobs,"raising the mesh budget reuses the cached rejected bake")
+	var one_payload: int = world.streaming_stats().mesh_payload_bytes
+	for offset in [16,32]:
+		var translated := fragmented.duplicate()
+		for i in range(0,translated.size(),4):
+			translated[i]+=offset
+		world.set_cells(translated)
+	world.configure_streaming(true,64,3,one_payload+1024,16777216)
+	world.flush_bakes()
+	check(world.stats().mesh_chunks==1 and world.streaming_stats().budget_blocked_chunks==2 and world.streaming_stats().mesh_payload_bytes<=one_payload+1024,"mesh-byte budget bounds fragmented buildings independently of chunk count")
+	evidence.fragmented_budget=world.streaming_stats()
+	world.set_focus(Vector3(40,8,8))
+	world.flush_bakes()
+	var nearest := false
+	for child in world.get_children():
+		if child is MeshInstance3D:
+			nearest=child.position.x==32
+	check(nearest and world.stats().mesh_chunks==1,"nearer building mesh displaces farther mesh under byte pressure")
+	var scans: int = world.streaming_stats().residency_checks
+	for i in range(20):
+		world.set_focus(Vector3(40.1,8,8))
+		world.flush_bakes()
+	check(world.streaming_stats().residency_checks==scans,"sub-threshold focus motion does not rescan all building chunks")
+	world.configure_streaming(true,64,1,16777216,1)
+	world.flush_bakes()
+	check(world.stats().mesh_chunks==1 and world.streaming_stats().wanted_chunks==1 and world.streaming_stats().cache_capacity_bytes<=1,"chunk-count limit and tiny cache budget are enforced independently")
+	world.configure_streaming(false,64,1,65536,0)
+	world.flush_bakes()
+	check(world.stats().mesh_chunks==3 and not world.streaming_stats().enabled,"disabling streaming restores standalone all-chunk authoring")
+	world.restore_snapshot(empty)
+	world.flush_bakes()
+	check(world.streaming_stats().mesh_payload_bytes==0 and world.streaming_stats().cache_capacity_bytes==0 and world.stats().collision_chunks==0,"empty world releases mesh, collision and cache residency")
+	world.free()
+
+func check_cached_publication() -> void:
+	var world := make_world()
+	world.configure_streaming(true,64,4,1048576,1048576)
+	world.set_cells(PackedInt32Array([0,0,0,1,16,0,0,1,32,0,0,1]))
+	world.set_focus(Vector3(8,8,8))
+	world.flush_bakes()
+	world.set_focus(Vector3(512,8,8))
+	world.flush_bakes()
+	var previous: int = world.stats().published_bakes
+	world.set_focus(Vector3(8,8,8))
+	var bounded := true
+	for i in range(8):
+		await process_frame
+		var current: int = world.stats().published_bakes
+		bounded=bounded and current-previous<=1
+		previous=current
+	check(bounded and world.is_idle() and world.stats().mesh_chunks==3 and world.streaming_stats().cache_hits==3,"cached reentry uploads at most one nonempty mesh per frame")
+	var clear: Node3D = make_world()
+	world.restore_snapshot(clear.capture_snapshot())
+	clear.free()
+	world.set_cells(PackedInt32Array([0,0,0,1]))
+	for attempt in range(120):
+		await process_frame
+		if world.stats().worker_jobs==1:
+			break
+	check(world.stats().worker_jobs==1,"travel test has an actual in-flight building bake")
+	world.set_focus(Vector3(512,8,8))
+	for i in range(120):
+		await process_frame
+		if world.is_idle():
+			break
+	check(world.is_idle() and world.stats().mesh_chunks==0 and world.streaming_stats().cached_chunks==1,"completed out-of-range bake is cached without uploading a distant mesh")
+	var jobs: int = world.streaming_stats().bake_jobs
+	world.set_focus(Vector3(8,8,8))
+	world.flush_bakes()
+	check(world.stats().mesh_chunks==1 and world.streaming_stats().bake_jobs==jobs,"return uses the bake completed during travel")
+	world.set_cells(PackedInt32Array([0,0,0,33]))
+	await process_frame
+	await process_frame
+	world.set_focus(Vector3(512,8,8))
+	world.set_cells(PackedInt32Array([0,0,0,65]))
+	await process_frame
+	world.set_focus(Vector3(8,8,8))
+	world.flush_bakes()
+	var latest_material := false
+	for child in world.get_children():
+		if child is MeshInstance3D:
+			var arrays: Array = child.mesh.surface_get_arrays(0)
+			latest_material=(arrays[Mesh.ARRAY_TEX_UV2] as PackedVector2Array)[0].x==2.0
+	check(latest_material and world.is_idle(),"edit during in-flight travel cannot cache or publish obsolete building material")
+	world.free()
+
 func run() -> void:
 	check(ClassDB.class_exists("NativeBlockWorld"), "native block extension registered")
 	check_exclusion()
@@ -264,6 +425,8 @@ func run() -> void:
 	check_history()
 	check_history_model()
 	await check_history_worker()
+	check_streaming()
+	await check_cached_publication()
 	var world := make_world()
 	var empty: PackedByteArray = world.capture_snapshot()
 	check(world.validate_snapshot(empty), "empty snapshot validates")

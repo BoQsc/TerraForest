@@ -255,6 +255,20 @@ func check_prefab_editor(location: Vector3) -> void:
 		check(stairs_ok,"repeated tower stair flights preserve their four rises through the floor shaft")
 	game.fly=true
 	game.structure_prefab_index=-1
+	var travel_start: Vector3 = game.player.position
+	var travel_data: PackedByteArray = game.structures.blocks.capture_snapshot()
+	var travel_meshes: int = game.structures.blocks.stats().mesh_chunks
+	var travel_jobs: int = game.structures.blocks.streaming_stats().bake_jobs
+	var travel_evidence := {"before":{"streaming":game.structures.blocks.streaming_stats(),"world":game.structures.blocks.stats()}}
+	game.player.position=travel_start+Vector3(900,100,0)
+	game.player.velocity=Vector3.ZERO
+	check(await until(func(): return game.structures.blocks.is_idle() and game.structures.blocks.stats().mesh_chunks==0,20),"main-world travel evicts distant building meshes")
+	check(game.structures.blocks.stats().collision_chunks==0 and game.structures.blocks.capture_snapshot()==travel_data,"travel releases building physics without changing saved cells")
+	travel_evidence["away"]={"streaming":game.structures.blocks.streaming_stats(),"world":game.structures.blocks.stats()}
+	game.player.position=travel_start
+	check(await until(func(): return game.structures.blocks.is_idle() and game.structures.blocks.stats().mesh_chunks==travel_meshes,20),"return travel restores building meshes from cache")
+	check(game.structures.blocks.streaming_stats().bake_jobs==travel_jobs,"return travel needs no additional building bake jobs")
+	travel_evidence["returned"]={"streaming":game.structures.blocks.streaming_stats(),"world":game.structures.blocks.stats()}
 	game.player.position=Vector3(anchor)+Vector3(18,13,18)
 	game.player.velocity=Vector3.ZERO
 	game.camera.look_at(Vector3(anchor)+Vector3(0,3,0))
@@ -277,6 +291,7 @@ func check_prefab_editor(location: Vector3) -> void:
 		var measurement: Dictionary = Presentation.measurement(root)
 		measurement["stationary_frame_intervals_ms"]={"samples":intervals.size(),"median":intervals[120],"p95":intervals[228],"maximum":intervals[-1]}
 		measurement["blocks"]=game.structures.blocks.stats()
+		measurement["building_travel"]=travel_evidence
 		measurement["trees"]=game.vegetation.renderer.roots.size()
 		measurement["scope"]="Stationary presentation intervals after 3 s warmup; integrated terrain/forest with one twelve-storey tower and cottage; not isolated GPU timing or a city benchmark."
 		var performance_file := FileAccess.open("res://reports/prefab_performance.json",FileAccess.WRITE)
