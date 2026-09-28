@@ -68,7 +68,8 @@ void NativeStaticBatch::refresh_collision_bounds(const std::set<BlockKey> &keys)
     for(auto key:keys) {
         auto group=groups.find(key);collision_bounds.erase(key);
         render_bounds.erase(key);
-        if(group==groups.end())continue;
+        if(group==groups.end()) {render_ids.erase(key);continue;}
+        if(!render_ids.count(key))render_ids[key].assign(group->second.begin(),group->second.end());
         bool first=true;AABB box,render_box;
         for(auto id:group->second) {
             Transform3D transform=placement_transform(placements.at(id));

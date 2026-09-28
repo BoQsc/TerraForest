@@ -3,6 +3,7 @@ var checks := 0
 var failures := 0
 var gpu := DisplayServer.get_name() != "headless"
 var collision_evidence := {}
+var render_page_evidence := {}
 
 func check(value: bool, description: String) -> void:
 	checks += 1
@@ -78,8 +79,10 @@ func check_render_streaming() -> void:
 	world.configure_render_streaming(true,256,2,96,2,48)
 	world.upsert_instances(PackedInt64Array([4]),transform_at(1))
 	await settle_render(world)
-	check(world.render_stats().budget_deferred==1 and world.stats().slot_entries==2,"oversized batch is deferred without starving smaller admissible groups")
-	check(world.get_instance(4).size()==12,"upload-deferred model stays authored")
+	check(world.render_stats().budget_deferred==2 and world.stats().slot_entries==2 and world.render_stats().page_capacity==1,"tiny upload budget splits dense nearest group into admissible pages")
+	var nearest_pages := true
+	for child in world.get_children(): nearest_pages=nearest_pages and child.position.x==0.0
+	check(nearest_pages and world.get_instance(4).size()==12,"nearest dense-group pages render while farther placements stay authored")
 	world.remove_instances(PackedInt64Array([1,4]))
 	await settle_render(world)
 	check(world.stats().slot_entries==2 and world.render_stats().resident_transform_bytes==96,"removal reclaims memberships without stale slots")
@@ -94,6 +97,7 @@ func check_render_streaming() -> void:
 	await process_frame
 	await check_render_bounds()
 	await check_render_population()
+	await check_dense_render_pages()
 
 func check_render_bounds() -> void:
 	var world: Node3D = ClassDB.instantiate("NativeStaticBatch")
@@ -156,6 +160,114 @@ func check_render_population() -> void:
 	world.remove_instances(ids)
 	await settle_render(world)
 	check(world.get_child_count()==0 and world.stats().slot_entries==0 and world.render_stats().resident_transform_bytes==0 and world.render_stats().authored_groups==0,"clearing the population releases all render buffers, bounds and slots")
+	world.queue_free()
+	await process_frame
+
+func check_dense_render_pages() -> void:
+	var world: Node3D = ClassDB.instantiate("NativeStaticBatch")
+	root.add_child(world)
+	var mesh := BoxMesh.new()
+	mesh.size=Vector3.ONE*0.3
+	world.configure_asset("tests/dense_render_pages",mesh)
+	check(world.configure_render_streaming(true,64,128,4800000,2,49152),"dense model fixture configures one 1024-record page payload per tick")
+	var ids := PackedInt64Array()
+	var transforms := PackedFloat32Array()
+	ids.resize(100000)
+	transforms.resize(1200000)
+	for i in range(100000):
+		ids[i]=9000000001+i
+		var offset := i*12
+		transforms[offset]=1
+		transforms[offset+3]=(i%46)*0.5
+		transforms[offset+5]=1
+		transforms[offset+7]=((i/46)%46)*0.5
+		transforms[offset+10]=1
+		transforms[offset+11]=(i/2116)*0.5
+	check(world.upsert_instances(ids,transforms),"100000 high-ID model records fit one authored spatial group")
+	var saved: PackedByteArray = world.capture_snapshot()
+	check(world.render_stats().authored_groups==1 and world.render_stats().indexed_instances==100000 and world.stats().slot_entries==0,"dense authoring builds its ordered index without immediate renderer uploads")
+	var bounded := true
+	var observed := 0
+	for i in range(120):
+		var before: Dictionary = world.render_stats()
+		var frame := Engine.get_process_frames()
+		var uploads: int = world.stats().batch_uploads
+		await process_frame
+		var elapsed := Engine.get_process_frames()-frame
+		var after: Dictionary = world.render_stats()
+		bounded=bounded and after.uploaded_transform_bytes-before.uploaded_transform_bytes<=elapsed*49152 and world.stats().batch_uploads-uploads<=elapsed*2 and after.resident_transform_bytes<=4800000 and after.resident_batches<=128
+		observed+=1
+		if not after.selection_pending and after.pending_batches==0: break
+	check(bounded and observed>1,"dense group loads across frames within upload and residency ceilings")
+	check(world.stats().slot_entries==100000 and world.get_child_count()==98 and world.render_stats().budget_deferred==0,"all 100000 dense placements become render resident across 98 pages")
+	var page_sizes := true
+	var total := 0
+	var exact := true
+	for child in world.get_children():
+		var count: int = child.multimesh.instance_count
+		page_sizes=page_sizes and count<=1024 and count>0
+		if gpu:
+			for slot in [0,count-1]:
+				var index: int = (total+slot)*12
+				var expected := Vector3(transforms[index+3],transforms[index+7],transforms[index+11])
+				exact=exact and child.multimesh.get_instance_transform(slot).origin.is_equal_approx(expected)
+		total+=count
+	check(page_sizes and total==100000,"dense render pages have bounded size and complete record coverage")
+	if gpu: check(exact,"GPU first/last record readback matches every dense render page")
+	check(world.capture_snapshot()==saved,"dense render paging does not change snapshot format or bytes")
+	render_page_evidence={"dense":world.render_stats(),"observed_process_frames":observed,"gpu_page_readback":gpu}
+	var untouched: int = world.get_child(1).get_instance_id()
+	var prior_uploads: int = world.stats().batch_uploads
+	var local_edit := transforms.slice(0,12)
+	local_edit[3]=0.25
+	check(world.upsert_instances(PackedInt64Array([ids[0]]),local_edit),"edit one transform within a dense origin group")
+	check(world.get_child_count()==97 and world.stats().slot_entries==98976,"same-group edit evicts only its 1024-instance page")
+	await settle_render(world)
+	check(world.stats().batch_uploads==prior_uploads+1 and world.stats().slot_entries==100000 and is_instance_id_valid(untouched),"dense local edit republishes one page and retains unrelated render nodes")
+	if gpu: check(world.get_child(97).multimesh.get_instance_transform(0).origin.x==0.25,"GPU readback reflects the updated dense page")
+	world.upsert_instances(PackedInt64Array([ids[0]]),transforms.slice(0,12))
+	await settle_render(world)
+	check(world.stats().batch_uploads==prior_uploads+2 and world.capture_snapshot()==saved,"reversing dense local edit preserves every other page and original snapshot")
+	world.configure_render_streaming(true,64,4,130560,2,49152)
+	await settle_render(world)
+	check(world.stats().slot_entries==2720 and world.get_child_count()==3 and world.render_stats().budget_deferred==95,"partial final page fills remaining resident budget after two full pages")
+	if gpu:
+		var tail: MultiMesh = world.get_child(2).multimesh
+		var index := 99328*12
+		check(tail.instance_count==672 and tail.get_instance_transform(0).origin.is_equal_approx(Vector3(transforms[index+3],transforms[index+7],transforms[index+11])),"GPU partial-page readback uses the correct noncontiguous page offset")
+	world.configure_render_streaming(true,64,5,240,1,48)
+	await settle_render(world)
+	check(world.render_stats().page_capacity==1 and world.stats().slot_entries==5 and world.render_stats().candidate_batches==100000 and world.render_stats().budget_deferred==99995,"tiny upload budget admits dense records without requiring a whole group upload")
+	check(world.get_child_count()==5 and world.render_stats().resident_transform_bytes==240,"tiny-budget dense fixture never allocates invisible overflow render nodes")
+	render_page_evidence["tiny_budget"]=world.render_stats()
+	var queries: int = world.render_stats().selection_queries
+	await process_frame
+	await process_frame
+	check(world.render_stats().selection_queries==queries,"settled dense pages do not rescan while stationary")
+	world.configure_render_streaming(true,64,128,4800000,2,49152)
+	await process_frame
+	await process_frame
+	check(world.stats().slot_entries>0 and world.render_stats().pending_batches>0,"mutation fixture has both resident and pending dense pages")
+	check(world.remove_instances(ids.slice(0,2000)),"remove dense records while old pages are still queued")
+	check(world.stats().slot_entries==0,"dense membership change discards obsolete page slots before republication")
+	await settle_render(world)
+	check(world.stats().slot_entries==98000 and world.render_stats().indexed_instances==98000 and world.get_child_count()==96,"queued dense pages rebuild from current membership without removed records")
+	check(world.restore_snapshot(saved),"dense page fixture restores its saved high-ID records")
+	await settle_render(world)
+	var moved := transforms.slice(0,12)
+	moved[3]=-1
+	check(world.upsert_instances(PackedInt64Array([ids[0]]),moved),"move one dense-page record across a signed origin-group boundary")
+	await settle_render(world)
+	check(world.stats().slot_entries==100000 and world.render_stats().indexed_instances==100000 and world.render_stats().authored_groups==2 and world.get_child_count()==99,"cross-group dense move retains unique complete render slot membership")
+	world.set_render_focus(Vector3(1000,0,0))
+	await settle_render(world)
+	check(world.get_child_count()==0 and world.stats().slot_entries==0 and world.render_stats().resident_transform_bytes==0,"travel evicts every dense page and its derived slot mappings")
+	world.set_render_focus(Vector3.ZERO)
+	await settle_render(world)
+	check(world.stats().slot_entries==100000 and world.get_child_count()==99,"return travel restores dense pages within the same bounded scheduler")
+	world.remove_instances(ids)
+	await settle_render(world)
+	check(world.render_stats().indexed_instances==0 and world.render_stats().index_capacity_bytes==0 and world.get_child_count()==0 and world.stats().slot_entries==0,"clearing dense data releases the ordered index and all render pages")
 	world.queue_free()
 	await process_frame
 
@@ -540,7 +652,7 @@ func run() -> void:
 	check_model_exclusion()
 	await check_model_history()
 	await check_render_streaming()
-	var result := {"checks":checks,"failures":failures,"gpu_readback":gpu,"collision_100k":collision_evidence}
+	var result := {"checks":checks,"failures":failures,"gpu_readback":gpu,"collision_100k":collision_evidence,"render_pages_100k":render_page_evidence}
 	DirAccess.make_dir_recursive_absolute("res://reports")
 	var file := FileAccess.open("res://reports/static_placements_gpu.json" if gpu else "res://reports/static_placements.json",FileAccess.WRITE)
 	file.store_string(JSON.stringify(result,"  "))

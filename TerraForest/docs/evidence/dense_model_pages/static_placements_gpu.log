@@ -1,0 +1,238 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.3.289 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce GTX 1060 with Max-Q Design
+
+PASS GPU test uses 1920x1080 exclusive fullscreen
+PASS GPU test render target is 1920x1080
+PASS reject edits before mesh configuration
+PASS unconfigured collection cannot silently save anonymous assets
+PASS reject invalid asset keys
+PASS configure stable asset key
+PASS empty configured snapshot validates
+PASS insert explicit 64-bit stable IDs
+PASS IDs remain sorted and preserve 64-bit precision
+PASS retrieve exact authored transform
+PASS missing object returns no transform
+PASS move object inside group
+PASS single local edit updates one GPU slot without rebuilding its group
+PASS GPU slot contains updated local translation
+PASS unrelated group keeps its scene node
+PASS identical edit performs no GPU upload
+PASS direct slot update accepts rotated scaled basis
+PASS direct slot update preserves matrix row/column convention
+PASS move existing ID across signed group boundary
+PASS move reclaims old empty group and preserves ID
+PASS duplicate IDs rejected
+PASS zero ID rejected
+PASS negative ID rejected
+PASS incomplete transform rejected
+PASS singular basis rejected
+PASS nonfinite basis rejected
+PASS mixed existing/missing removal rejected
+PASS duplicate removal IDs rejected
+PASS populated asset identity cannot change silently
+PASS all rejected commands preserve snapshot bytes
+PASS valid snapshot with unresolved asset identity rejected on restore
+PASS asset-bound snapshot round trip preserves IDs/transforms
+PASS checksum catches accidental corruption
+PASS truncated snapshot rejected
+PASS checksummed zero placement ID rejected
+PASS checksummed duplicate placement ID rejected
+PASS checksummed NaN transform rejected
+PASS checksummed excessive count rejected before allocation
+PASS rejected loads preserve published collection
+PASS removal preserves all remaining IDs
+PASS restoring empty collection releases all render batches
+PASS large same-group update accepted
+PASS large edit uses one bulk upload instead of individual renderer calls
+PASS 4096 spatial group boundary accepted
+PASS 4097th spatial group rejected atomically
+PASS group overflow leaves collection unchanged
+PASS moving singleton group at capacity allowed
+PASS capacity move retains exact limits
+PASS repeated placement/removal retains no spatial or slot tombstones
+PASS static collision defaults to opt-in
+PASS configure bounded native static collision
+PASS nearby proxies publish within one-body-per-tick budget
+PASS native collision adds no per-placement scene nodes
+PASS physics ray resolves exact stable 64-bit placement ID
+PASS distant static placements have no physics body
+PASS collision residency does not change placement snapshots
+PASS invalid load and edit reject before changing physics
+PASS rejected commands preserve existing physics handles
+PASS small focus changes avoid repeated placement scans
+PASS invalid budgets preserve collision configuration
+PASS invalid proxy geometry rejected
+PASS invalid configuration preserves existing collision
+PASS travel evicts old bodies and admits the nearby placement
+PASS travelled-to object has its own collision identity
+PASS moving a placement immediately invalidates its old physics identity
+PASS local render edit also moves static collision
+PASS removal releases collision
+PASS restore collidable placements
+PASS snapshot restore rebuilds application-configured proxies
+PASS large proxy crossing origin groups remains selectable by its bounds
+PASS collision count cap can shrink
+PASS nearest admission reports capacity-deferred collision
+PASS affine placement basis produces matching convex proxy surface
+PASS collection transform updates physics without scaled-body mismatch
+PASS leaving the scene releases all native physics handles
+PASS reentering the scene rebuilds collision
+PASS moving to a private physics world removes collision from the old world
+PASS private physics world receives the placement proxies
+PASS in-tree world reassignment rebinds native bodies to the new space
+PASS disabling collision releases bodies immediately
+PASS twenty visits retain only nearby physics and preserve authored records
+PASS 100000 placements coexist with bounded collision configuration
+PASS 100000-placement collection admits only sixteen nearest physics bodies
+PASS large collidable collection retains only spatial render nodes
+PASS 100000-placement collection supports bounded native authoring history
+PASS native journal updates one model inside a 100000-placement collection
+PASS history keeps same-group GPU updates incremental
+PASS one edit retains one fixed-size record regardless of collection population
+PASS dense collection undo and redo restore exact transform
+PASS CharacterBody3D lands on the placed model floor
+PASS destroying collection leaves no ghost physics
+PASS compound doorway uses explicit body and shape budgets
+PASS shape budgets bound residency and tick publication independently of body budgets
+PASS doorway opening is not filled by the union bounding box
+PASS each doorway part resolves to the same placement identity
+PASS each doorway part resolves to the same placement identity
+PASS each doorway part resolves to the same placement identity
+PASS character passes through the compound doorway
+PASS character is stopped by the door post
+PASS budgets too small for one complete compound body reject atomically
+PASS invalid part rejects the entire compound configuration
+PASS compound part count is bounded
+PASS rejected compound configurations preserve live bodies
+PASS caller array mutation cannot alter retained compound metadata
+PASS removal releases every part of a compound body
+PASS restore reconstructs compound solids and openings
+PASS compound destruction leaves no ghost shapes
+PASS native insertion preview is read-only
+PASS automatic placement IDs do not overwrite live objects
+PASS native placement rejects player intersection atomically
+PASS invalid automatic insertion preserves data
+PASS automatic IDs derive from restored authoritative records
+PASS automatic insertion rejects ID overflow without wrapping
+PASS model exclusion uses authored mesh bounds with collision disabled
+PASS moving models updates exclusion across signed groups
+PASS removing models reclaims exclusion bounds
+PASS model restoration rebuilds authoritative exclusion
+PASS compound exclusion preserves openings even with physics disabled
+PASS distant physics admission does not change model exclusion
+PASS model exclusion respects collection transforms
+PASS invalid prototype bounds reject exclusion query
+PASS nonfinite candidates reject exclusion query
+PASS exclusion query candidate count is bounded
+PASS native combined query unions block and model exclusion
+PASS combined query rejects invalid model collections
+PASS native model journal registers multiple collections
+PASS history cursor is published before one changed signal; reentrant replay rejects
+PASS journal edits span collections and signed spatial groups
+PASS journal removal deletes the exact placement
+PASS chronological journal records four small deltas
+PASS undo restores removed model with original stable ID
+PASS next undo crosses collection boundary and restores transform
+PASS next undo removes the second catalog placement
+PASS full undo restores exact pre-edit authored snapshots
+PASS empty undo leaves future intact
+PASS redo cannot recreate model through protected player bounds
+PASS redo replays the complete chronological sequence
+PASS redo reproduces exact final state and stable IDs
+PASS invalid history edits reject without mutation
+PASS invalid journal configuration preserves existing registry and history
+PASS rejected edits and configuration preserve history
+PASS undo removal prepares a protected restore test
+PASS remove restored model as a new branch
+PASS undo deletion also protects player and retains retryable command
+PASS after moving clear undo works; redo deletion may remove an overlapping object
+PASS no-op update retains redo branch
+PASS new edit discards obsolete redo branch
+PASS rejected external mutation does not invalidate journal
+PASS external authored mutation forms a history barrier across all collections
+PASS stale undo never overwrites external data
+PASS even identical snapshot restoration invalidates old model commands
+PASS changing the collection mesh invalidates history
+PASS bulk collection replacement is a history barrier
+PASS record budget can be smaller than step budget
+PASS byte budget drops oldest delta without snapshot-sized allocations
+PASS trimmed history cannot undo past retained boundary
+PASS undo and redo share one record budget
+PASS step cap can be configured independently
+PASS step cap keeps newest edit across asset types
+PASS undersized history budget permits authored edits
+PASS unrecordable edit retains no stale history
+PASS undo preserves stable IDs beyond 32-bit range
+PASS native protection preserves compound opening in transformed collection
+PASS undo uses current collection frame and individual collision parts
+PASS undo restoration republishes physical model parts
+PASS journal update moves compound model
+PASS history move releases former collision
+PASS undo model move accepted
+PASS undo model move restores collision at original position
+PASS history restores authoritative vegetation exclusion bounds
+PASS external mutation during notification invalidates completed history safely
+PASS notification may destroy another collection without leaving dangling history
+PASS asset mutation invalidates history before exclusion notification callbacks
+PASS destroyed collection releases journal references and all retained deltas
+PASS unconfigured model rendering preserves eager compatibility
+PASS native rendering accepts explicit residency and upload budgets
+PASS streaming reconfiguration immediately releases old buffers
+PASS renderer obeys resident bytes, batch count, upload bytes and upload count
+PASS only admitted placements retain GPU slot entries
+PASS render residency preserves the exact authored snapshot
+PASS sub-threshold travel does not rescan stationary model groups
+PASS travel chooses nearest batches and evicts distant render buffers
+PASS nonresident model edits preserve data without allocating a distant buffer
+PASS return travel uploads the latest nonresident placement transform
+PASS resident transform edits queue their replacement within upload budgets
+PASS resident edit republishes one current group
+PASS GPU readback contains the republished resident transform
+PASS streamed collection restores its authoritative snapshot
+PASS snapshot restore reconstructs only admitted batches
+PASS invalid render configurations reject atomically
+PASS invalid budget and focus leave render state unchanged
+PASS tiny upload budget splits dense nearest group into admissible pages
+PASS nearest dense-group pages render while farther placements stay authored
+PASS removal reclaims memberships without stale slots
+PASS tree exit releases streamed rendering and slot membership
+PASS tree reentry restores eligible rendering
+PASS disabling streaming restores eager rendering
+PASS render admission uses mesh extent independently of smaller collision proxies
+PASS asset mesh bounds changes invalidate render residency
+PASS render eviction does not change independently admitted physics
+PASS nonresident rendering still excludes vegetation from authored geometry
+PASS 100000 placements enter authored storage with deferred rendering
+PASS 100000 placements retain only 2000 nearby render transforms under 96 KB payload budget
+PASS repeated end-to-end travel bounds rendering without altering 100000 placements
+PASS clearing the population releases all render buffers, bounds and slots
+PASS dense model fixture configures one 1024-record page payload per tick
+PASS 100000 high-ID model records fit one authored spatial group
+PASS dense authoring builds its ordered index without immediate renderer uploads
+PASS dense group loads across frames within upload and residency ceilings
+PASS all 100000 dense placements become render resident across 98 pages
+PASS dense render pages have bounded size and complete record coverage
+PASS GPU first/last record readback matches every dense render page
+PASS dense render paging does not change snapshot format or bytes
+PASS edit one transform within a dense origin group
+PASS same-group edit evicts only its 1024-instance page
+PASS dense local edit republishes one page and retains unrelated render nodes
+PASS GPU readback reflects the updated dense page
+PASS reversing dense local edit preserves every other page and original snapshot
+PASS partial final page fills remaining resident budget after two full pages
+PASS GPU partial-page readback uses the correct noncontiguous page offset
+PASS tiny upload budget admits dense records without requiring a whole group upload
+PASS tiny-budget dense fixture never allocates invisible overflow render nodes
+PASS settled dense pages do not rescan while stationary
+PASS mutation fixture has both resident and pending dense pages
+PASS remove dense records while old pages are still queued
+PASS dense membership change discards obsolete page slots before republication
+PASS queued dense pages rebuild from current membership without removed records
+PASS dense page fixture restores its saved high-ID records
+PASS move one dense-page record across a signed origin-group boundary
+PASS cross-group dense move retains unique complete render slot membership
+PASS travel evicts every dense page and its derived slot mappings
+PASS return travel restores dense pages within the same bounded scheduler
+PASS clearing dense data releases the ordered index and all render pages
+STATIC_PLACEMENTS_RESULT {"checks":233,"collision_100k":{"body_builds":66,"body_evictions":50,"budget_deferred":80,"builds_per_tick":4,"candidate_bodies":96,"enabled":true,"history":{"barriers":0,"busy":false,"byte_limit":4096,"collections":1,"record_bytes":120,"record_size":120,"redo_steps":0,"step_limit":16,"undo_steps":1,"unrecorded_edits":0},"instance_limit":16,"invalid_proxies":0,"parts_per_body":1,"pending_bodies":0,"radius":16.0,"resident_bodies":16,"resident_shapes":16,"selection_pending":false,"selection_queries":34,"shape_limit":4096,"shapes_per_tick":64,"transform_valid":true},"failures":0,"gpu_readback":true,"render_pages_100k":{"dense":{"authored_groups":1,"batch_limit":128,"budget_deferred":0,"byte_limit":4800000,"bytes_per_tick":49152,"candidate_batches":98,"enabled":true,"evictions":0,"index_capacity_bytes":800000,"indexed_instances":100000,"page_capacity":1024,"pending_batches":0,"radius":64.0,"resident_batches":98,"resident_instances":100000,"resident_transform_bytes":4800000,"selection_pending":false,"selection_queries":1,"uploaded_transform_bytes":4800000,"uploads_per_tick":2},"gpu_page_readback":true,"observed_process_frames":98,"tiny_budget":{"authored_groups":1,"batch_limit":5,"budget_deferred":99995,"byte_limit":240,"bytes_per_tick":48,"candidate_batches":100000,"enabled":true,"evictions":103,"index_capacity_bytes":800000,"indexed_instances":100000,"page_capacity":1,"pending_batches":0,"radius":64.0,"resident_batches":5,"resident_instances":5,"resident_transform_bytes":240,"selection_pending":false,"selection_queries":5,"uploaded_transform_bytes":5029104,"uploads_per_tick":1}}}
+
