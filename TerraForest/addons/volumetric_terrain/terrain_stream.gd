@@ -8,6 +8,8 @@ signal edit_published(latency_ms: float)
 signal edit_measured(record: Dictionary)
 signal work_measured(record: Dictionary)
 signal stage_measured(label: String, milliseconds: float)
+signal collision_piece_measured(sample: Dictionary, faces: PackedVector3Array)
+var profile_collision_pieces := false
 var committed_measurements: Array[Dictionary] = []
 var published_revision: int = 0
 var derived_metrics: Dictionary = {}
@@ -483,6 +485,8 @@ func _prepare_piece() -> bool:
 		body.add_child(collision)
 		_record_stage("collision node attach", float(Time.get_ticks_usec() - attach_begin) / 1000.0)
 		preparation["piece_at"] = at + 1
+		if profile_collision_pieces:
+			collision_piece_measured.emit({"tile":[data.key.x,data.key.y,data.key.z],"piece":at,"pieces":pieces.size(),"match_ms":prepared.match_ms,"cook_ms":prepared.cook_ms,"reused":prepared.reused,"piece_ms":float(Time.get_ticks_usec()-piece_begin)/1000.0},pieces[at].get_faces())
 	last_collision_piece_ms = float(Time.get_ticks_usec() - piece_begin) / 1000.0
 	_record_stage("collision piece", last_collision_piece_ms)
 	return int(preparation["piece_at"]) >= pieces.size()

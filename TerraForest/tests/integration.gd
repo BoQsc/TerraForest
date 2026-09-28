@@ -31,7 +31,10 @@ func run() -> void:
 	Engine.max_fps = 120
 	root.add_child(terrain)
 	terrain.diagnostics_pause_streaming = true
+	check(not terrain.backend.configure_collision_piece_size(255) and not terrain.backend.configure_collision_piece_size(1025), "invalid collision piece sizes rejected before startup")
+	check(terrain.backend.configure_collision_piece_size(256) and terrain.backend.configure_collision_piece_size(1024), "collision recipe size configurable before worker startup")
 	check(terrain.start(StandardMaterial3D.new(), true) == OK, "native terrain starts")
+	check(not terrain.backend.configure_collision_piece_size(512), "running terrain worker rejects collision recipe size mutation")
 	check(await until(func(): return terrain.world_ready), "worker completes startup")
 	var second = Terrain.new()
 	check(second.start(StandardMaterial3D.new(), true) == ERR_ALREADY_IN_USE, "second scene facade rejected until cache and save ownership supports multiple worlds")

@@ -1,0 +1,3705 @@
+{
+  "configured_piece_triangles": 1024,
+  "dropped": 0,
+  "engine": {
+    "build": "steam",
+    "hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+    "hex": 263938,
+    "major": 4,
+    "minor": 7,
+    "patch": 2,
+    "status": "stable",
+    "string": "4.7.2-stable (steam)",
+    "timestamp": 0
+  },
+  "engine_static_bytes": 227067619,
+  "foreground_and_background_fps_cap": 60,
+  "pass": true,
+  "presentation": {
+    "fair_graphical_sample": true,
+    "fullscreen": true,
+    "headless": false,
+    "render_scale": 1.0,
+    "viewport": [
+      1920,
+      1080
+    ],
+    "window_mode": 3,
+    "window_size": [
+      1920,
+      1080
+    ]
+  },
+  "ready_ms": 3446,
+  "replay": {
+    "1024": {
+      "per_piece": {
+        "count": 40,
+        "max_ms": 0.838,
+        "median_ms": 0.74,
+        "p95_ms": 0.757
+      },
+      "pieces": 1,
+      "whole_fixture": {
+        "count": 40,
+        "max_ms": 0.838,
+        "median_ms": 0.74,
+        "p95_ms": 0.757
+      }
+    },
+    "256": {
+      "per_piece": {
+        "count": 160,
+        "max_ms": 0.187,
+        "median_ms": 0.138,
+        "p95_ms": 0.149
+      },
+      "pieces": 4,
+      "whole_fixture": {
+        "count": 40,
+        "max_ms": 0.645,
+        "median_ms": 0.555,
+        "p95_ms": 0.602
+      }
+    },
+    "512": {
+      "per_piece": {
+        "count": 80,
+        "max_ms": 0.475,
+        "median_ms": 0.32,
+        "p95_ms": 0.334
+      },
+      "pieces": 2,
+      "whole_fixture": {
+        "count": 40,
+        "max_ms": 0.842,
+        "median_ms": 0.64,
+        "p95_ms": 0.656
+      }
+    }
+  },
+  "resident_shapes": 257,
+  "resident_tiles": 292,
+  "runtime_cook": {
+    "count": 257,
+    "max_ms": 1.07,
+    "median_ms": 0.754,
+    "p95_ms": 0.917
+  },
+  "samples": [
+    {
+      "cook_ms": 0.82,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 1.604,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        768,
+        1280,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.739,
+      "match_ms": 0.0,
+      "piece": 1,
+      "piece_ms": 1.479,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        768,
+        1280,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.214,
+      "match_ms": 0.001,
+      "piece": 2,
+      "piece_ms": 0.435,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        768,
+        1280,
+        32
+      ],
+      "triangles": 294
+    },
+    {
+      "cook_ms": 0.393,
+      "match_ms": 0.0,
+      "piece": 0,
+      "piece_ms": 0.814,
+      "pieces": 1,
+      "reused": false,
+      "tile": [
+        784,
+        1296,
+        16
+      ],
+      "triangles": 564
+    },
+    {
+      "cook_ms": 0.796,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 1.557,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        800,
+        1280,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.794,
+      "match_ms": 0.0,
+      "piece": 1,
+      "piece_ms": 1.584,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        800,
+        1280,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.177,
+      "match_ms": 0.001,
+      "piece": 2,
+      "piece_ms": 0.372,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        800,
+        1280,
+        32
+      ],
+      "triangles": 278
+    },
+    {
+      "cook_ms": 0.392,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 0.807,
+      "pieces": 1,
+      "reused": false,
+      "tile": [
+        800,
+        1296,
+        16
+      ],
+      "triangles": 546
+    },
+    {
+      "cook_ms": 0.805,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 1.604,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        768,
+        1312,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.786,
+      "match_ms": 0.001,
+      "piece": 1,
+      "piece_ms": 1.583,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        768,
+        1312,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.313,
+      "match_ms": 0.001,
+      "piece": 2,
+      "piece_ms": 0.63,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        768,
+        1312,
+        32
+      ],
+      "triangles": 392
+    },
+    {
+      "cook_ms": 0.467,
+      "match_ms": 0.0,
+      "piece": 0,
+      "piece_ms": 0.906,
+      "pieces": 1,
+      "reused": false,
+      "tile": [
+        784,
+        1312,
+        16
+      ],
+      "triangles": 594
+    },
+    {
+      "cook_ms": 0.83,
+      "match_ms": 0.0,
+      "piece": 0,
+      "piece_ms": 1.569,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        800,
+        1312,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.939,
+      "match_ms": 0.0,
+      "piece": 1,
+      "piece_ms": 1.73,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        800,
+        1312,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.166,
+      "match_ms": 0.001,
+      "piece": 2,
+      "piece_ms": 0.338,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        800,
+        1312,
+        32
+      ],
+      "triangles": 258
+    },
+    {
+      "cook_ms": 0.474,
+      "match_ms": 0.0,
+      "piece": 0,
+      "piece_ms": 0.894,
+      "pieces": 1,
+      "reused": false,
+      "tile": [
+        800,
+        1312,
+        16
+      ],
+      "triangles": 572
+    },
+    {
+      "cook_ms": 0.497,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 0.945,
+      "pieces": 1,
+      "reused": false,
+      "tile": [
+        784,
+        1280,
+        16
+      ],
+      "triangles": 554
+    },
+    {
+      "cook_ms": 0.458,
+      "match_ms": 0.0,
+      "piece": 0,
+      "piece_ms": 0.92,
+      "pieces": 1,
+      "reused": false,
+      "tile": [
+        800,
+        1280,
+        16
+      ],
+      "triangles": 572
+    },
+    {
+      "cook_ms": 0.54,
+      "match_ms": 0.0,
+      "piece": 0,
+      "piece_ms": 0.998,
+      "pieces": 1,
+      "reused": false,
+      "tile": [
+        768,
+        1296,
+        16
+      ],
+      "triangles": 614
+    },
+    {
+      "cook_ms": 0.483,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 0.931,
+      "pieces": 1,
+      "reused": false,
+      "tile": [
+        816,
+        1296,
+        16
+      ],
+      "triangles": 584
+    },
+    {
+      "cook_ms": 0.501,
+      "match_ms": 0.0,
+      "piece": 0,
+      "piece_ms": 0.941,
+      "pieces": 1,
+      "reused": false,
+      "tile": [
+        768,
+        1312,
+        16
+      ],
+      "triangles": 590
+    },
+    {
+      "cook_ms": 0.467,
+      "match_ms": 0.0,
+      "piece": 0,
+      "piece_ms": 0.878,
+      "pieces": 1,
+      "reused": false,
+      "tile": [
+        816,
+        1312,
+        16
+      ],
+      "triangles": 556
+    },
+    {
+      "cook_ms": 0.554,
+      "match_ms": 0.0,
+      "piece": 0,
+      "piece_ms": 1.052,
+      "pieces": 1,
+      "reused": false,
+      "tile": [
+        784,
+        1328,
+        16
+      ],
+      "triangles": 632
+    },
+    {
+      "cook_ms": 0.492,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 1.006,
+      "pieces": 1,
+      "reused": false,
+      "tile": [
+        800,
+        1328,
+        16
+      ],
+      "triangles": 622
+    },
+    {
+      "cook_ms": 0.5,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 0.989,
+      "pieces": 1,
+      "reused": false,
+      "tile": [
+        768,
+        1280,
+        16
+      ],
+      "triangles": 610
+    },
+    {
+      "cook_ms": 0.517,
+      "match_ms": 0.0,
+      "piece": 0,
+      "piece_ms": 1.171,
+      "pieces": 1,
+      "reused": false,
+      "tile": [
+        816,
+        1280,
+        16
+      ],
+      "triangles": 624
+    },
+    {
+      "cook_ms": 0.468,
+      "match_ms": 0.0,
+      "piece": 0,
+      "piece_ms": 0.944,
+      "pieces": 1,
+      "reused": false,
+      "tile": [
+        768,
+        1328,
+        16
+      ],
+      "triangles": 624
+    },
+    {
+      "cook_ms": 0.403,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 0.818,
+      "pieces": 1,
+      "reused": false,
+      "tile": [
+        816,
+        1328,
+        16
+      ],
+      "triangles": 556
+    },
+    {
+      "cook_ms": 0.88,
+      "match_ms": 0.0,
+      "piece": 0,
+      "piece_ms": 1.651,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        768,
+        1248,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.839,
+      "match_ms": 0.001,
+      "piece": 1,
+      "piece_ms": 1.598,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        768,
+        1248,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.392,
+      "match_ms": 0.001,
+      "piece": 2,
+      "piece_ms": 0.819,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        768,
+        1248,
+        32
+      ],
+      "triangles": 536
+    },
+    {
+      "cook_ms": 0.485,
+      "match_ms": 0.0,
+      "piece": 0,
+      "piece_ms": 0.983,
+      "pieces": 1,
+      "reused": false,
+      "tile": [
+        784,
+        1264,
+        16
+      ],
+      "triangles": 656
+    },
+    {
+      "cook_ms": 0.895,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 1.66,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        800,
+        1248,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 1.003,
+      "match_ms": 0.001,
+      "piece": 1,
+      "piece_ms": 1.787,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        800,
+        1248,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.488,
+      "match_ms": 0.0,
+      "piece": 2,
+      "piece_ms": 0.981,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        800,
+        1248,
+        32
+      ],
+      "triangles": 678
+    },
+    {
+      "cook_ms": 0.484,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 0.958,
+      "pieces": 1,
+      "reused": false,
+      "tile": [
+        800,
+        1264,
+        16
+      ],
+      "triangles": 634
+    },
+    {
+      "cook_ms": 0.79,
+      "match_ms": 0.0,
+      "piece": 0,
+      "piece_ms": 1.724,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        736,
+        1280,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.827,
+      "match_ms": 0.001,
+      "piece": 1,
+      "piece_ms": 1.641,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        736,
+        1280,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.152,
+      "match_ms": 0.0,
+      "piece": 2,
+      "piece_ms": 0.31,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        736,
+        1280,
+        32
+      ],
+      "triangles": 226
+    },
+    {
+      "cook_ms": 0.459,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 0.926,
+      "pieces": 1,
+      "reused": false,
+      "tile": [
+        752,
+        1296,
+        16
+      ],
+      "triangles": 606
+    },
+    {
+      "cook_ms": 0.831,
+      "match_ms": 0.0,
+      "piece": 0,
+      "piece_ms": 1.648,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        832,
+        1280,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.806,
+      "match_ms": 0.0,
+      "piece": 1,
+      "piece_ms": 1.56,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        832,
+        1280,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.386,
+      "match_ms": 0.001,
+      "piece": 2,
+      "piece_ms": 0.739,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        832,
+        1280,
+        32
+      ],
+      "triangles": 462
+    },
+    {
+      "cook_ms": 0.516,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 1.148,
+      "pieces": 1,
+      "reused": false,
+      "tile": [
+        832,
+        1296,
+        16
+      ],
+      "triangles": 606
+    },
+    {
+      "cook_ms": 0.807,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 1.586,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        736,
+        1312,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.747,
+      "match_ms": 0.001,
+      "piece": 1,
+      "piece_ms": 1.499,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        736,
+        1312,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.233,
+      "match_ms": 0.001,
+      "piece": 2,
+      "piece_ms": 0.498,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        736,
+        1312,
+        32
+      ],
+      "triangles": 316
+    },
+    {
+      "cook_ms": 0.45,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 0.903,
+      "pieces": 1,
+      "reused": false,
+      "tile": [
+        752,
+        1312,
+        16
+      ],
+      "triangles": 602
+    },
+    {
+      "cook_ms": 0.825,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 1.613,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        832,
+        1312,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.806,
+      "match_ms": 0.001,
+      "piece": 1,
+      "piece_ms": 1.591,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        832,
+        1312,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.143,
+      "match_ms": 0.0,
+      "piece": 2,
+      "piece_ms": 0.295,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        832,
+        1312,
+        32
+      ],
+      "triangles": 230
+    },
+    {
+      "cook_ms": 0.455,
+      "match_ms": 0.0,
+      "piece": 0,
+      "piece_ms": 0.879,
+      "pieces": 1,
+      "reused": false,
+      "tile": [
+        832,
+        1312,
+        16
+      ],
+      "triangles": 572
+    },
+    {
+      "cook_ms": 0.569,
+      "match_ms": 0.0,
+      "piece": 0,
+      "piece_ms": 1.1,
+      "pieces": 1,
+      "reused": false,
+      "tile": [
+        768,
+        1264,
+        16
+      ],
+      "triangles": 636
+    },
+    {
+      "cook_ms": 0.519,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 1.032,
+      "pieces": 1,
+      "reused": false,
+      "tile": [
+        816,
+        1264,
+        16
+      ],
+      "triangles": 678
+    },
+    {
+      "cook_ms": 0.882,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 1.68,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        768,
+        1344,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.815,
+      "match_ms": 0.001,
+      "piece": 1,
+      "piece_ms": 1.609,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        768,
+        1344,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.414,
+      "match_ms": 0.0,
+      "piece": 2,
+      "piece_ms": 0.849,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        768,
+        1344,
+        32
+      ],
+      "triangles": 546
+    },
+    {
+      "cook_ms": 0.482,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 0.979,
+      "pieces": 1,
+      "reused": false,
+      "tile": [
+        784,
+        1344,
+        16
+      ],
+      "triangles": 628
+    },
+    {
+      "cook_ms": 0.808,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 1.573,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        800,
+        1344,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.793,
+      "match_ms": 0.0,
+      "piece": 1,
+      "piece_ms": 1.558,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        800,
+        1344,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.128,
+      "match_ms": 0.0,
+      "piece": 2,
+      "piece_ms": 0.267,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        800,
+        1344,
+        32
+      ],
+      "triangles": 202
+    },
+    {
+      "cook_ms": 0.469,
+      "match_ms": 0.0,
+      "piece": 0,
+      "piece_ms": 0.905,
+      "pieces": 1,
+      "reused": false,
+      "tile": [
+        800,
+        1344,
+        16
+      ],
+      "triangles": 590
+    },
+    {
+      "cook_ms": 0.517,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 1.003,
+      "pieces": 1,
+      "reused": false,
+      "tile": [
+        752,
+        1280,
+        16
+      ],
+      "triangles": 610
+    },
+    {
+      "cook_ms": 0.533,
+      "match_ms": 0.0,
+      "piece": 0,
+      "piece_ms": 1.035,
+      "pieces": 1,
+      "reused": false,
+      "tile": [
+        832,
+        1280,
+        16
+      ],
+      "triangles": 660
+    },
+    {
+      "cook_ms": 0.461,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 0.974,
+      "pieces": 1,
+      "reused": false,
+      "tile": [
+        752,
+        1328,
+        16
+      ],
+      "triangles": 604
+    },
+    {
+      "cook_ms": 0.365,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 0.739,
+      "pieces": 1,
+      "reused": false,
+      "tile": [
+        832,
+        1328,
+        16
+      ],
+      "triangles": 536
+    },
+    {
+      "cook_ms": 0.506,
+      "match_ms": 0.0,
+      "piece": 0,
+      "piece_ms": 1.009,
+      "pieces": 1,
+      "reused": false,
+      "tile": [
+        768,
+        1344,
+        16
+      ],
+      "triangles": 656
+    },
+    {
+      "cook_ms": 0.42,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 0.859,
+      "pieces": 1,
+      "reused": false,
+      "tile": [
+        816,
+        1344,
+        16
+      ],
+      "triangles": 550
+    },
+    {
+      "cook_ms": 0.807,
+      "match_ms": 0.0,
+      "piece": 0,
+      "piece_ms": 1.577,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        736,
+        1248,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.89,
+      "match_ms": 0.001,
+      "piece": 1,
+      "piece_ms": 1.689,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        736,
+        1248,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.25,
+      "match_ms": 0.0,
+      "piece": 2,
+      "piece_ms": 0.605,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        736,
+        1248,
+        32
+      ],
+      "triangles": 356
+    },
+    {
+      "cook_ms": 0.544,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 1.046,
+      "pieces": 1,
+      "reused": false,
+      "tile": [
+        752,
+        1264,
+        16
+      ],
+      "triangles": 600
+    },
+    {
+      "cook_ms": 0.848,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 1.616,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        832,
+        1248,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.874,
+      "match_ms": 0.001,
+      "piece": 1,
+      "piece_ms": 1.652,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        832,
+        1248,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.706,
+      "match_ms": 0.001,
+      "piece": 2,
+      "piece_ms": 1.361,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        832,
+        1248,
+        32
+      ],
+      "triangles": 906
+    },
+    {
+      "cook_ms": 0.581,
+      "match_ms": 0.0,
+      "piece": 0,
+      "piece_ms": 1.141,
+      "pieces": 1,
+      "reused": false,
+      "tile": [
+        832,
+        1264,
+        16
+      ],
+      "triangles": 718
+    },
+    {
+      "cook_ms": 0.479,
+      "match_ms": 0.0,
+      "piece": 0,
+      "piece_ms": 1.113,
+      "pieces": 1,
+      "reused": false,
+      "tile": [
+        784,
+        1248,
+        16
+      ],
+      "triangles": 642
+    },
+    {
+      "cook_ms": 0.594,
+      "match_ms": 0.0,
+      "piece": 0,
+      "piece_ms": 1.12,
+      "pieces": 1,
+      "reused": false,
+      "tile": [
+        800,
+        1248,
+        16
+      ],
+      "triangles": 686
+    },
+    {
+      "cook_ms": 0.87,
+      "match_ms": 0.0,
+      "piece": 0,
+      "piece_ms": 1.639,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        736,
+        1344,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.924,
+      "match_ms": 0.0,
+      "piece": 1,
+      "piece_ms": 1.789,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        736,
+        1344,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.502,
+      "match_ms": 0.001,
+      "piece": 2,
+      "piece_ms": 0.976,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        736,
+        1344,
+        32
+      ],
+      "triangles": 602
+    },
+    {
+      "cook_ms": 0.541,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 1.039,
+      "pieces": 1,
+      "reused": false,
+      "tile": [
+        752,
+        1344,
+        16
+      ],
+      "triangles": 652
+    },
+    {
+      "cook_ms": 0.88,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 1.646,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        832,
+        1344,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.909,
+      "match_ms": 0.001,
+      "piece": 1,
+      "piece_ms": 1.741,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        832,
+        1344,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.206,
+      "match_ms": 0.0,
+      "piece": 2,
+      "piece_ms": 0.422,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        832,
+        1344,
+        32
+      ],
+      "triangles": 316
+    },
+    {
+      "cook_ms": 0.445,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 0.863,
+      "pieces": 1,
+      "reused": false,
+      "tile": [
+        832,
+        1344,
+        16
+      ],
+      "triangles": 566
+    },
+    {
+      "cook_ms": 0.434,
+      "match_ms": 0.0,
+      "piece": 0,
+      "piece_ms": 0.837,
+      "pieces": 1,
+      "reused": false,
+      "tile": [
+        736,
+        1296,
+        16
+      ],
+      "triangles": 530
+    },
+    {
+      "cook_ms": 0.489,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 0.928,
+      "pieces": 1,
+      "reused": false,
+      "tile": [
+        848,
+        1296,
+        16
+      ],
+      "triangles": 578
+    },
+    {
+      "cook_ms": 0.483,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 0.909,
+      "pieces": 1,
+      "reused": false,
+      "tile": [
+        736,
+        1312,
+        16
+      ],
+      "triangles": 580
+    },
+    {
+      "cook_ms": 0.522,
+      "match_ms": 0.0,
+      "piece": 0,
+      "piece_ms": 1.011,
+      "pieces": 1,
+      "reused": false,
+      "tile": [
+        848,
+        1312,
+        16
+      ],
+      "triangles": 618
+    },
+    {
+      "cook_ms": 0.52,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 1.021,
+      "pieces": 1,
+      "reused": false,
+      "tile": [
+        768,
+        1248,
+        16
+      ],
+      "triangles": 650
+    },
+    {
+      "cook_ms": 0.632,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 1.192,
+      "pieces": 1,
+      "reused": false,
+      "tile": [
+        816,
+        1248,
+        16
+      ],
+      "triangles": 728
+    },
+    {
+      "cook_ms": 0.416,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 0.798,
+      "pieces": 1,
+      "reused": false,
+      "tile": [
+        736,
+        1280,
+        16
+      ],
+      "triangles": 528
+    },
+    {
+      "cook_ms": 0.566,
+      "match_ms": 0.0,
+      "piece": 0,
+      "piece_ms": 1.068,
+      "pieces": 1,
+      "reused": false,
+      "tile": [
+        848,
+        1280,
+        16
+      ],
+      "triangles": 666
+    },
+    {
+      "cook_ms": 0.469,
+      "match_ms": 0.0,
+      "piece": 0,
+      "piece_ms": 0.94,
+      "pieces": 1,
+      "reused": false,
+      "tile": [
+        784,
+        1360,
+        16
+      ],
+      "triangles": 622
+    },
+    {
+      "cook_ms": 0.401,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 0.817,
+      "pieces": 1,
+      "reused": false,
+      "tile": [
+        800,
+        1360,
+        16
+      ],
+      "triangles": 562
+    },
+    {
+      "cook_ms": 0.434,
+      "match_ms": 0.0,
+      "piece": 0,
+      "piece_ms": 0.872,
+      "pieces": 1,
+      "reused": false,
+      "tile": [
+        736,
+        1328,
+        16
+      ],
+      "triangles": 578
+    },
+    {
+      "cook_ms": 0.479,
+      "match_ms": 0.0,
+      "piece": 0,
+      "piece_ms": 0.912,
+      "pieces": 1,
+      "reused": false,
+      "tile": [
+        848,
+        1328,
+        16
+      ],
+      "triangles": 552
+    },
+    {
+      "cook_ms": 0.522,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 1.046,
+      "pieces": 1,
+      "reused": false,
+      "tile": [
+        768,
+        1360,
+        16
+      ],
+      "triangles": 688
+    },
+    {
+      "cook_ms": 0.406,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 0.836,
+      "pieces": 1,
+      "reused": false,
+      "tile": [
+        816,
+        1360,
+        16
+      ],
+      "triangles": 548
+    },
+    {
+      "cook_ms": 0.459,
+      "match_ms": 0.0,
+      "piece": 0,
+      "piece_ms": 0.91,
+      "pieces": 1,
+      "reused": false,
+      "tile": [
+        752,
+        1248,
+        16
+      ],
+      "triangles": 600
+    },
+    {
+      "cook_ms": 0.562,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 1.135,
+      "pieces": 1,
+      "reused": false,
+      "tile": [
+        832,
+        1248,
+        16
+      ],
+      "triangles": 754
+    },
+    {
+      "cook_ms": 0.443,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 0.896,
+      "pieces": 1,
+      "reused": false,
+      "tile": [
+        736,
+        1264,
+        16
+      ],
+      "triangles": 592
+    },
+    {
+      "cook_ms": 0.538,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 1.085,
+      "pieces": 1,
+      "reused": false,
+      "tile": [
+        848,
+        1264,
+        16
+      ],
+      "triangles": 736
+    },
+    {
+      "cook_ms": 0.501,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 1.008,
+      "pieces": 1,
+      "reused": false,
+      "tile": [
+        736,
+        1344,
+        16
+      ],
+      "triangles": 630
+    },
+    {
+      "cook_ms": 0.377,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 0.764,
+      "pieces": 1,
+      "reused": false,
+      "tile": [
+        848,
+        1344,
+        16
+      ],
+      "triangles": 546
+    },
+    {
+      "cook_ms": 0.534,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 1.082,
+      "pieces": 1,
+      "reused": false,
+      "tile": [
+        752,
+        1360,
+        16
+      ],
+      "triangles": 704
+    },
+    {
+      "cook_ms": 0.469,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 0.945,
+      "pieces": 1,
+      "reused": false,
+      "tile": [
+        832,
+        1360,
+        16
+      ],
+      "triangles": 612
+    },
+    {
+      "cook_ms": 0.876,
+      "match_ms": 0.0,
+      "piece": 0,
+      "piece_ms": 1.658,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        768,
+        1216,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.939,
+      "match_ms": 0.0,
+      "piece": 1,
+      "piece_ms": 1.751,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        768,
+        1216,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.73,
+      "match_ms": 0.0,
+      "piece": 2,
+      "piece_ms": 1.41,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        768,
+        1216,
+        32
+      ],
+      "triangles": 894
+    },
+    {
+      "cook_ms": 0.8,
+      "match_ms": 0.0,
+      "piece": 0,
+      "piece_ms": 1.592,
+      "pieces": 4,
+      "reused": false,
+      "tile": [
+        800,
+        1216,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.759,
+      "match_ms": 0.0,
+      "piece": 1,
+      "piece_ms": 1.526,
+      "pieces": 4,
+      "reused": false,
+      "tile": [
+        800,
+        1216,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.784,
+      "match_ms": 0.0,
+      "piece": 2,
+      "piece_ms": 1.589,
+      "pieces": 4,
+      "reused": false,
+      "tile": [
+        800,
+        1216,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.025,
+      "match_ms": 0.0,
+      "piece": 3,
+      "piece_ms": 0.066,
+      "pieces": 4,
+      "reused": false,
+      "tile": [
+        800,
+        1216,
+        32
+      ],
+      "triangles": 20
+    },
+    {
+      "cook_ms": 0.807,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 1.582,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        704,
+        1280,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.768,
+      "match_ms": 0.001,
+      "piece": 1,
+      "piece_ms": 1.552,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        704,
+        1280,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.149,
+      "match_ms": 0.001,
+      "piece": 2,
+      "piece_ms": 0.32,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        704,
+        1280,
+        32
+      ],
+      "triangles": 234
+    },
+    {
+      "cook_ms": 0.766,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 1.558,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        864,
+        1280,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.801,
+      "match_ms": 0.0,
+      "piece": 1,
+      "piece_ms": 1.609,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        864,
+        1280,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.334,
+      "match_ms": 0.001,
+      "piece": 2,
+      "piece_ms": 0.687,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        864,
+        1280,
+        32
+      ],
+      "triangles": 498
+    },
+    {
+      "cook_ms": 0.773,
+      "match_ms": 0.0,
+      "piece": 0,
+      "piece_ms": 1.541,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        704,
+        1312,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.822,
+      "match_ms": 0.001,
+      "piece": 1,
+      "piece_ms": 1.574,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        704,
+        1312,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.236,
+      "match_ms": 0.0,
+      "piece": 2,
+      "piece_ms": 0.501,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        704,
+        1312,
+        32
+      ],
+      "triangles": 334
+    },
+    {
+      "cook_ms": 0.77,
+      "match_ms": 0.0,
+      "piece": 0,
+      "piece_ms": 1.535,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        864,
+        1312,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.753,
+      "match_ms": 0.0,
+      "piece": 1,
+      "piece_ms": 1.531,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        864,
+        1312,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.268,
+      "match_ms": 0.001,
+      "piece": 2,
+      "piece_ms": 0.543,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        864,
+        1312,
+        32
+      ],
+      "triangles": 360
+    },
+    {
+      "cook_ms": 0.792,
+      "match_ms": 0.0,
+      "piece": 0,
+      "piece_ms": 1.581,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        768,
+        1376,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.812,
+      "match_ms": 0.001,
+      "piece": 1,
+      "piece_ms": 1.632,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        768,
+        1376,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.409,
+      "match_ms": 0.0,
+      "piece": 2,
+      "piece_ms": 0.831,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        768,
+        1376,
+        32
+      ],
+      "triangles": 570
+    },
+    {
+      "cook_ms": 0.774,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 1.547,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        800,
+        1376,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.747,
+      "match_ms": 0.0,
+      "piece": 1,
+      "piece_ms": 1.496,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        800,
+        1376,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.224,
+      "match_ms": 0.0,
+      "piece": 2,
+      "piece_ms": 0.462,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        800,
+        1376,
+        32
+      ],
+      "triangles": 314
+    },
+    {
+      "cook_ms": 0.447,
+      "match_ms": 0.0,
+      "piece": 0,
+      "piece_ms": 0.903,
+      "pieces": 1,
+      "reused": false,
+      "tile": [
+        736,
+        1248,
+        16
+      ],
+      "triangles": 612
+    },
+    {
+      "cook_ms": 0.583,
+      "match_ms": 0.0,
+      "piece": 0,
+      "piece_ms": 1.157,
+      "pieces": 1,
+      "reused": false,
+      "tile": [
+        848,
+        1248,
+        16
+      ],
+      "triangles": 746
+    },
+    {
+      "cook_ms": 0.54,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 1.077,
+      "pieces": 1,
+      "reused": false,
+      "tile": [
+        736,
+        1360,
+        16
+      ],
+      "triangles": 664
+    },
+    {
+      "cook_ms": 0.475,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 0.957,
+      "pieces": 1,
+      "reused": false,
+      "tile": [
+        848,
+        1360,
+        16
+      ],
+      "triangles": 640
+    },
+    {
+      "cook_ms": 0.905,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 1.739,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        736,
+        1216,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.772,
+      "match_ms": 0.0,
+      "piece": 1,
+      "piece_ms": 1.564,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        736,
+        1216,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.539,
+      "match_ms": 0.001,
+      "piece": 2,
+      "piece_ms": 1.095,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        736,
+        1216,
+        32
+      ],
+      "triangles": 716
+    },
+    {
+      "cook_ms": 0.772,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 1.548,
+      "pieces": 4,
+      "reused": false,
+      "tile": [
+        832,
+        1216,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.833,
+      "match_ms": 0.001,
+      "piece": 1,
+      "piece_ms": 1.652,
+      "pieces": 4,
+      "reused": false,
+      "tile": [
+        832,
+        1216,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.754,
+      "match_ms": 0.001,
+      "piece": 2,
+      "piece_ms": 1.513,
+      "pieces": 4,
+      "reused": false,
+      "tile": [
+        832,
+        1216,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.114,
+      "match_ms": 0.0,
+      "piece": 3,
+      "piece_ms": 0.246,
+      "pieces": 4,
+      "reused": false,
+      "tile": [
+        832,
+        1216,
+        32
+      ],
+      "triangles": 150
+    },
+    {
+      "cook_ms": 0.786,
+      "match_ms": 0.0,
+      "piece": 0,
+      "piece_ms": 1.562,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        704,
+        1248,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.758,
+      "match_ms": 0.0,
+      "piece": 1,
+      "piece_ms": 1.519,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        704,
+        1248,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.308,
+      "match_ms": 0.0,
+      "piece": 2,
+      "piece_ms": 0.627,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        704,
+        1248,
+        32
+      ],
+      "triangles": 432
+    },
+    {
+      "cook_ms": 0.773,
+      "match_ms": 0.0,
+      "piece": 0,
+      "piece_ms": 1.532,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        864,
+        1248,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.779,
+      "match_ms": 0.001,
+      "piece": 1,
+      "piece_ms": 1.555,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        864,
+        1248,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.641,
+      "match_ms": 0.0,
+      "piece": 2,
+      "piece_ms": 1.291,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        864,
+        1248,
+        32
+      ],
+      "triangles": 876
+    },
+    {
+      "cook_ms": 0.791,
+      "match_ms": 0.0,
+      "piece": 0,
+      "piece_ms": 1.58,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        704,
+        1344,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.778,
+      "match_ms": 0.001,
+      "piece": 1,
+      "piece_ms": 1.56,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        704,
+        1344,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.478,
+      "match_ms": 0.001,
+      "piece": 2,
+      "piece_ms": 0.962,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        704,
+        1344,
+        32
+      ],
+      "triangles": 632
+    },
+    {
+      "cook_ms": 0.862,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 1.622,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        864,
+        1344,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.81,
+      "match_ms": 0.001,
+      "piece": 1,
+      "piece_ms": 1.599,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        864,
+        1344,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.322,
+      "match_ms": 0.0,
+      "piece": 2,
+      "piece_ms": 0.637,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        864,
+        1344,
+        32
+      ],
+      "triangles": 452
+    },
+    {
+      "cook_ms": 0.802,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 1.633,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        736,
+        1376,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.841,
+      "match_ms": 0.001,
+      "piece": 1,
+      "piece_ms": 1.608,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        736,
+        1376,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.501,
+      "match_ms": 0.0,
+      "piece": 2,
+      "piece_ms": 1.002,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        736,
+        1376,
+        32
+      ],
+      "triangles": 644
+    },
+    {
+      "cook_ms": 0.829,
+      "match_ms": 0.0,
+      "piece": 0,
+      "piece_ms": 1.666,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        832,
+        1376,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.787,
+      "match_ms": 0.001,
+      "piece": 1,
+      "piece_ms": 1.578,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        832,
+        1376,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.328,
+      "match_ms": 0.0,
+      "piece": 2,
+      "piece_ms": 0.661,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        832,
+        1376,
+        32
+      ],
+      "triangles": 482
+    },
+    {
+      "cook_ms": 0.781,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 1.61,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        704,
+        1216,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.859,
+      "match_ms": 0.0,
+      "piece": 1,
+      "piece_ms": 1.968,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        704,
+        1216,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.29,
+      "match_ms": 0.0,
+      "piece": 2,
+      "piece_ms": 0.59,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        704,
+        1216,
+        32
+      ],
+      "triangles": 394
+    },
+    {
+      "cook_ms": 0.821,
+      "match_ms": 0.0,
+      "piece": 0,
+      "piece_ms": 1.58,
+      "pieces": 4,
+      "reused": false,
+      "tile": [
+        864,
+        1216,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.844,
+      "match_ms": 0.0,
+      "piece": 1,
+      "piece_ms": 1.645,
+      "pieces": 4,
+      "reused": false,
+      "tile": [
+        864,
+        1216,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.777,
+      "match_ms": 0.0,
+      "piece": 2,
+      "piece_ms": 1.561,
+      "pieces": 4,
+      "reused": false,
+      "tile": [
+        864,
+        1216,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.114,
+      "match_ms": 0.001,
+      "piece": 3,
+      "piece_ms": 0.253,
+      "pieces": 4,
+      "reused": false,
+      "tile": [
+        864,
+        1216,
+        32
+      ],
+      "triangles": 148
+    },
+    {
+      "cook_ms": 0.802,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 1.587,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        704,
+        1376,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.756,
+      "match_ms": 0.0,
+      "piece": 1,
+      "piece_ms": 1.54,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        704,
+        1376,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.432,
+      "match_ms": 0.0,
+      "piece": 2,
+      "piece_ms": 0.886,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        704,
+        1376,
+        32
+      ],
+      "triangles": 584
+    },
+    {
+      "cook_ms": 0.776,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 1.554,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        864,
+        1376,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.857,
+      "match_ms": 0.001,
+      "piece": 1,
+      "piece_ms": 1.664,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        864,
+        1376,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.248,
+      "match_ms": 0.0,
+      "piece": 2,
+      "piece_ms": 0.502,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        864,
+        1376,
+        32
+      ],
+      "triangles": 370
+    },
+    {
+      "cook_ms": 0.835,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 1.644,
+      "pieces": 4,
+      "reused": false,
+      "tile": [
+        768,
+        1184,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.862,
+      "match_ms": 0.0,
+      "piece": 1,
+      "piece_ms": 1.835,
+      "pieces": 4,
+      "reused": false,
+      "tile": [
+        768,
+        1184,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.884,
+      "match_ms": 0.001,
+      "piece": 2,
+      "piece_ms": 1.879,
+      "pieces": 4,
+      "reused": false,
+      "tile": [
+        768,
+        1184,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.087,
+      "match_ms": 0.001,
+      "piece": 3,
+      "piece_ms": 0.191,
+      "pieces": 4,
+      "reused": false,
+      "tile": [
+        768,
+        1184,
+        32
+      ],
+      "triangles": 134
+    },
+    {
+      "cook_ms": 0.896,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 1.707,
+      "pieces": 4,
+      "reused": false,
+      "tile": [
+        800,
+        1184,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.879,
+      "match_ms": 0.001,
+      "piece": 1,
+      "piece_ms": 1.663,
+      "pieces": 4,
+      "reused": false,
+      "tile": [
+        800,
+        1184,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.971,
+      "match_ms": 0.0,
+      "piece": 2,
+      "piece_ms": 1.791,
+      "pieces": 4,
+      "reused": false,
+      "tile": [
+        800,
+        1184,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.28,
+      "match_ms": 0.001,
+      "piece": 3,
+      "piece_ms": 0.564,
+      "pieces": 4,
+      "reused": false,
+      "tile": [
+        800,
+        1184,
+        32
+      ],
+      "triangles": 420
+    },
+    {
+      "cook_ms": 0.81,
+      "match_ms": 0.0,
+      "piece": 0,
+      "piece_ms": 1.602,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        672,
+        1280,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.782,
+      "match_ms": 0.001,
+      "piece": 1,
+      "piece_ms": 1.553,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        672,
+        1280,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.293,
+      "match_ms": 0.0,
+      "piece": 2,
+      "piece_ms": 0.766,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        672,
+        1280,
+        32
+      ],
+      "triangles": 392
+    },
+    {
+      "cook_ms": 0.829,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 1.607,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        896,
+        1280,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.834,
+      "match_ms": 0.001,
+      "piece": 1,
+      "piece_ms": 1.611,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        896,
+        1280,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.376,
+      "match_ms": 0.0,
+      "piece": 2,
+      "piece_ms": 0.756,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        896,
+        1280,
+        32
+      ],
+      "triangles": 550
+    },
+    {
+      "cook_ms": 0.865,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 1.703,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        672,
+        1312,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.805,
+      "match_ms": 0.001,
+      "piece": 1,
+      "piece_ms": 1.576,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        672,
+        1312,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.418,
+      "match_ms": 0.0,
+      "piece": 2,
+      "piece_ms": 1.006,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        672,
+        1312,
+        32
+      ],
+      "triangles": 542
+    },
+    {
+      "cook_ms": 0.871,
+      "match_ms": 0.0,
+      "piece": 0,
+      "piece_ms": 1.629,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        896,
+        1312,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.917,
+      "match_ms": 0.001,
+      "piece": 1,
+      "piece_ms": 1.734,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        896,
+        1312,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.271,
+      "match_ms": 0.0,
+      "piece": 2,
+      "piece_ms": 0.539,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        896,
+        1312,
+        32
+      ],
+      "triangles": 392
+    },
+    {
+      "cook_ms": 0.88,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 1.679,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        768,
+        1408,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.847,
+      "match_ms": 0.0,
+      "piece": 1,
+      "piece_ms": 1.626,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        768,
+        1408,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.435,
+      "match_ms": 0.001,
+      "piece": 2,
+      "piece_ms": 0.886,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        768,
+        1408,
+        32
+      ],
+      "triangles": 538
+    },
+    {
+      "cook_ms": 1.063,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 1.836,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        800,
+        1408,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.799,
+      "match_ms": 0.001,
+      "piece": 1,
+      "piece_ms": 1.661,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        800,
+        1408,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.302,
+      "match_ms": 0.001,
+      "piece": 2,
+      "piece_ms": 0.613,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        800,
+        1408,
+        32
+      ],
+      "triangles": 456
+    },
+    {
+      "cook_ms": 0.816,
+      "match_ms": 0.0,
+      "piece": 0,
+      "piece_ms": 1.652,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        736,
+        1184,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.871,
+      "match_ms": 0.0,
+      "piece": 1,
+      "piece_ms": 1.665,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        736,
+        1184,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.747,
+      "match_ms": 0.001,
+      "piece": 2,
+      "piece_ms": 1.492,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        736,
+        1184,
+        32
+      ],
+      "triangles": 942
+    },
+    {
+      "cook_ms": 0.769,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 1.606,
+      "pieces": 4,
+      "reused": false,
+      "tile": [
+        832,
+        1184,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.886,
+      "match_ms": 0.001,
+      "piece": 1,
+      "piece_ms": 1.71,
+      "pieces": 4,
+      "reused": false,
+      "tile": [
+        832,
+        1184,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.891,
+      "match_ms": 0.001,
+      "piece": 2,
+      "piece_ms": 1.663,
+      "pieces": 4,
+      "reused": false,
+      "tile": [
+        832,
+        1184,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.143,
+      "match_ms": 0.0,
+      "piece": 3,
+      "piece_ms": 0.314,
+      "pieces": 4,
+      "reused": false,
+      "tile": [
+        832,
+        1184,
+        32
+      ],
+      "triangles": 186
+    },
+    {
+      "cook_ms": 0.872,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 1.669,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        704,
+        1184,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.862,
+      "match_ms": 0.001,
+      "piece": 1,
+      "piece_ms": 1.644,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        704,
+        1184,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.524,
+      "match_ms": 0.001,
+      "piece": 2,
+      "piece_ms": 1.061,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        704,
+        1184,
+        32
+      ],
+      "triangles": 702
+    },
+    {
+      "cook_ms": 0.769,
+      "match_ms": 0.0,
+      "piece": 0,
+      "piece_ms": 1.548,
+      "pieces": 4,
+      "reused": false,
+      "tile": [
+        864,
+        1184,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.895,
+      "match_ms": 0.001,
+      "piece": 1,
+      "piece_ms": 1.732,
+      "pieces": 4,
+      "reused": false,
+      "tile": [
+        864,
+        1184,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.762,
+      "match_ms": 0.001,
+      "piece": 2,
+      "piece_ms": 1.551,
+      "pieces": 4,
+      "reused": false,
+      "tile": [
+        864,
+        1184,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.265,
+      "match_ms": 0.0,
+      "piece": 3,
+      "piece_ms": 0.554,
+      "pieces": 4,
+      "reused": false,
+      "tile": [
+        864,
+        1184,
+        32
+      ],
+      "triangles": 356
+    },
+    {
+      "cook_ms": 0.81,
+      "match_ms": 0.0,
+      "piece": 0,
+      "piece_ms": 1.649,
+      "pieces": 4,
+      "reused": false,
+      "tile": [
+        768,
+        1152,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.824,
+      "match_ms": 0.001,
+      "piece": 1,
+      "piece_ms": 1.658,
+      "pieces": 4,
+      "reused": false,
+      "tile": [
+        768,
+        1152,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.788,
+      "match_ms": 0.0,
+      "piece": 2,
+      "piece_ms": 1.591,
+      "pieces": 4,
+      "reused": false,
+      "tile": [
+        768,
+        1152,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.555,
+      "match_ms": 0.001,
+      "piece": 3,
+      "piece_ms": 1.116,
+      "pieces": 4,
+      "reused": false,
+      "tile": [
+        768,
+        1152,
+        32
+      ],
+      "triangles": 722
+    },
+    {
+      "cook_ms": 0.802,
+      "match_ms": 0.0,
+      "piece": 0,
+      "piece_ms": 1.601,
+      "pieces": 4,
+      "reused": false,
+      "tile": [
+        800,
+        1152,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.881,
+      "match_ms": 0.0,
+      "piece": 1,
+      "piece_ms": 1.8,
+      "pieces": 4,
+      "reused": false,
+      "tile": [
+        800,
+        1152,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.797,
+      "match_ms": 0.0,
+      "piece": 2,
+      "piece_ms": 1.581,
+      "pieces": 4,
+      "reused": false,
+      "tile": [
+        800,
+        1152,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.307,
+      "match_ms": 0.0,
+      "piece": 3,
+      "piece_ms": 0.635,
+      "pieces": 4,
+      "reused": false,
+      "tile": [
+        800,
+        1152,
+        32
+      ],
+      "triangles": 426
+    },
+    {
+      "cook_ms": 0.859,
+      "match_ms": 0.0,
+      "piece": 0,
+      "piece_ms": 1.65,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        640,
+        1280,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.912,
+      "match_ms": 0.0,
+      "piece": 1,
+      "piece_ms": 1.716,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        640,
+        1280,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.279,
+      "match_ms": 0.001,
+      "piece": 2,
+      "piece_ms": 0.565,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        640,
+        1280,
+        32
+      ],
+      "triangles": 404
+    },
+    {
+      "cook_ms": 0.775,
+      "match_ms": 0.0,
+      "piece": 0,
+      "piece_ms": 1.55,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        928,
+        1280,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.843,
+      "match_ms": 0.001,
+      "piece": 1,
+      "piece_ms": 1.626,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        928,
+        1280,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.491,
+      "match_ms": 0.001,
+      "piece": 2,
+      "piece_ms": 0.995,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        928,
+        1280,
+        32
+      ],
+      "triangles": 656
+    },
+    {
+      "cook_ms": 0.781,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 1.564,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        640,
+        1312,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.926,
+      "match_ms": 0.001,
+      "piece": 1,
+      "piece_ms": 1.806,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        640,
+        1312,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.398,
+      "match_ms": 0.0,
+      "piece": 2,
+      "piece_ms": 0.803,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        640,
+        1312,
+        32
+      ],
+      "triangles": 552
+    },
+    {
+      "cook_ms": 0.778,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 1.564,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        928,
+        1312,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.825,
+      "match_ms": 0.0,
+      "piece": 1,
+      "piece_ms": 1.599,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        928,
+        1312,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.364,
+      "match_ms": 0.001,
+      "piece": 2,
+      "piece_ms": 0.742,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        928,
+        1312,
+        32
+      ],
+      "triangles": 506
+    },
+    {
+      "cook_ms": 0.894,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 1.717,
+      "pieces": 4,
+      "reused": false,
+      "tile": [
+        736,
+        1152,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.947,
+      "match_ms": 0.0,
+      "piece": 1,
+      "piece_ms": 1.801,
+      "pieces": 4,
+      "reused": false,
+      "tile": [
+        736,
+        1152,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.885,
+      "match_ms": 0.001,
+      "piece": 2,
+      "piece_ms": 1.697,
+      "pieces": 4,
+      "reused": false,
+      "tile": [
+        736,
+        1152,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.312,
+      "match_ms": 0.0,
+      "piece": 3,
+      "piece_ms": 0.641,
+      "pieces": 4,
+      "reused": false,
+      "tile": [
+        736,
+        1152,
+        32
+      ],
+      "triangles": 416
+    },
+    {
+      "cook_ms": 1.031,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 1.92,
+      "pieces": 4,
+      "reused": false,
+      "tile": [
+        832,
+        1152,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.885,
+      "match_ms": 0.0,
+      "piece": 1,
+      "piece_ms": 1.686,
+      "pieces": 4,
+      "reused": false,
+      "tile": [
+        832,
+        1152,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.852,
+      "match_ms": 0.001,
+      "piece": 2,
+      "piece_ms": 1.632,
+      "pieces": 4,
+      "reused": false,
+      "tile": [
+        832,
+        1152,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.241,
+      "match_ms": 0.0,
+      "piece": 3,
+      "piece_ms": 0.612,
+      "pieces": 4,
+      "reused": false,
+      "tile": [
+        832,
+        1152,
+        32
+      ],
+      "triangles": 330
+    },
+    {
+      "cook_ms": 0.92,
+      "match_ms": 0.0,
+      "piece": 0,
+      "piece_ms": 1.724,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        768,
+        1440,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.974,
+      "match_ms": 0.0,
+      "piece": 1,
+      "piece_ms": 2.018,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        768,
+        1440,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.404,
+      "match_ms": 0.001,
+      "piece": 2,
+      "piece_ms": 0.873,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        768,
+        1440,
+        32
+      ],
+      "triangles": 566
+    },
+    {
+      "cook_ms": 0.898,
+      "match_ms": 0.001,
+      "piece": 0,
+      "piece_ms": 1.692,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        800,
+        1440,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.815,
+      "match_ms": 0.001,
+      "piece": 1,
+      "piece_ms": 1.581,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        800,
+        1440,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.323,
+      "match_ms": 0.0,
+      "piece": 2,
+      "piece_ms": 0.672,
+      "pieces": 3,
+      "reused": false,
+      "tile": [
+        800,
+        1440,
+        32
+      ],
+      "triangles": 436
+    },
+    {
+      "cook_ms": 0.897,
+      "match_ms": 0.0,
+      "piece": 0,
+      "piece_ms": 1.777,
+      "pieces": 4,
+      "reused": false,
+      "tile": [
+        704,
+        1152,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.826,
+      "match_ms": 0.0,
+      "piece": 1,
+      "piece_ms": 1.659,
+      "pieces": 4,
+      "reused": false,
+      "tile": [
+        704,
+        1152,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.837,
+      "match_ms": 0.0,
+      "piece": 2,
+      "piece_ms": 1.646,
+      "pieces": 4,
+      "reused": false,
+      "tile": [
+        704,
+        1152,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.1,
+      "match_ms": 0.001,
+      "piece": 3,
+      "piece_ms": 0.231,
+      "pieces": 4,
+      "reused": false,
+      "tile": [
+        704,
+        1152,
+        32
+      ],
+      "triangles": 126
+    },
+    {
+      "cook_ms": 0.842,
+      "match_ms": 0.0,
+      "piece": 0,
+      "piece_ms": 1.632,
+      "pieces": 4,
+      "reused": false,
+      "tile": [
+        864,
+        1152,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 1.07,
+      "match_ms": 0.0,
+      "piece": 1,
+      "piece_ms": 2.083,
+      "pieces": 4,
+      "reused": false,
+      "tile": [
+        864,
+        1152,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.818,
+      "match_ms": 0.0,
+      "piece": 2,
+      "piece_ms": 1.653,
+      "pieces": 4,
+      "reused": false,
+      "tile": [
+        864,
+        1152,
+        32
+      ],
+      "triangles": 1024
+    },
+    {
+      "cook_ms": 0.201,
+      "match_ms": 0.0,
+      "piece": 3,
+      "piece_ms": 0.412,
+      "pieces": 4,
+      "reused": false,
+      "tile": [
+        864,
+        1152,
+        32
+      ],
+      "triangles": 308
+    }
+  ],
+  "scene_nodes": 791,
+  "scope": "30-second temporary-world startup, wall-clock main-thread shape creation; isolated replay after worker shutdown excludes body attachment and simulation. Not a physical display, endurance or CPU-time guarantee.",
+  "steady_frame_intervals": {
+    "count": 1405,
+    "max_ms": 34.189,
+    "median_ms": 16.663,
+    "p95_ms": 17.33
+  },
+  "steady_physics_monitor": {
+    "count": 1405,
+    "max_ms": 2.652,
+    "median_ms": 0.474,
+    "p95_ms": 1.722
+  },
+  "world_ready": true,
+  "worst_faces_triangles": 1024
+}

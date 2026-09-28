@@ -11,6 +11,14 @@ var stopping: bool = false
 var temporary: bool = false
 var native: Object
 var collision_recipes: RefCounted
+var _collision_piece_triangles := 1024
+
+func configure_collision_piece_size(triangles: int) -> bool:
+	# Configuration is immutable while the native-world worker is running.
+	if thread.is_started() or triangles<256 or triangles>1024:
+		return false
+	_collision_piece_triangles=triangles
+	return true
 var world_seed: int = 1703
 var build_epoch: int = 0
 var active_kind: String = "idle"
@@ -372,7 +380,7 @@ func _build(key: Vector3i, allow_base_cache: bool, expected_build_epoch: int, re
 		var epoch_reply: PackedByteArray = _call(Codec.command(13))
 		if epoch_reply.decode_u32(12) != expected_build_epoch:
 			return {"cancelled": true}
-		var recipes: Dictionary = collision_recipes.prepare(result["faces"], 1024)
+		var recipes: Dictionary = collision_recipes.prepare(result["faces"], _collision_piece_triangles)
 		if not recipes.ok:
 			return {"error": recipes.error}
 		epoch_reply = _call(Codec.command(13))
