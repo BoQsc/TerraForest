@@ -34,19 +34,29 @@ bool NativeStaticBatch::valid_transform(const float *t) {
     double determinant=t[0]*(double(t[5])*t[10]-double(t[6])*t[9])-t[1]*(double(t[4])*t[10]-double(t[6])*t[8])+t[2]*(double(t[4])*t[9]-double(t[5])*t[8]);
     return std::abs(determinant)>=1e-9;
 }
-bool NativeStaticBatch::can_insert_instance(const PackedFloat32Array &transform,const AABB &protection) const {
-    if(source_mesh.is_null()||transform.size()!=12||!valid_transform(transform.ptr())||placements.size()>=100000||
-       (!placements.empty()&&placements.rbegin()->first==INT64_MAX)||!protection.position.is_finite()||!protection.size.is_finite()||
+void NativeStaticBatch::publish_change() {
+    ++edit_revision;
+    if(!defer_change_signal)emit_signal("changed");
+}
+bool NativeStaticBatch::placement_clear(const PackedFloat32Array &transform,const AABB &protection) const {
+    if(source_mesh.is_null()||transform.size()!=12||!valid_transform(transform.ptr())||!protection.position.is_finite()||!protection.size.is_finite()||
        protection.size.x<0||protection.size.y<0||protection.size.z<0)return false;
     Placement p;std::copy(transform.ptr(),transform.ptr()+12,p.begin());
-    if(!groups.count(group_for(p))&&groups.size()>=4096)return false;
     if(protection.size.x>0&&protection.size.y>0&&protection.size.z>0) {
-        Transform3D world=get_global_transform()*placement_transform(p);
+        Transform3D frame=is_inside_tree()?get_global_transform():get_transform();
+        if(!frame.is_finite()||std::abs(frame.basis.determinant())<1e-12)return false;
+        Transform3D world=frame*placement_transform(p);
         if(!world.is_finite())return false;
         if(proxy_parts.empty())return !world.xform(source_mesh->get_aabb()).intersects(protection);
         for(const auto &part:proxy_parts)if(world.xform(part).intersects(protection))return false;
     }
     return true;
+}
+bool NativeStaticBatch::can_insert_instance(const PackedFloat32Array &transform,const AABB &protection) const {
+    if(!placement_clear(transform,protection)||placements.size()>=100000||
+       (!placements.empty()&&placements.rbegin()->first==INT64_MAX))return false;
+    Placement p;std::copy(transform.ptr(),transform.ptr()+12,p.begin());
+    return groups.count(group_for(p))||groups.size()<4096;
 }
 int64_t NativeStaticBatch::insert_instance(const PackedFloat32Array &transform,const AABB &protection) {
     if(!can_insert_instance(transform,protection))return 0;
@@ -66,8 +76,10 @@ bool NativeStaticBatch::configure_asset(const String &id,const Ref<Mesh> &mesh) 
     asset_id=id;source_mesh=mesh;
     std::set<BlockKey> keys;for(auto &e:groups)keys.insert(e.first);refresh_collision_bounds(keys);
     for(auto &e:batches)e.second->get_multimesh()->set_mesh(mesh);
+    // Invalidate journals before either notification can call back into editing.
+    if(changed)++edit_revision;
     emit_signal("exclusion_changed");
-    if(changed)emit_signal("changed");return true;
+    if(changed&&!defer_change_signal)emit_signal("changed");return true;
 }
 bool NativeStaticBatch::lock_asset_identity() {if(!valid_asset(asset_id)||source_mesh.is_null())return false;asset_locked=true;return true;}
 void NativeStaticBatch::rebuild(const std::set<BlockKey> &keys) {
@@ -139,7 +151,7 @@ bool NativeStaticBatch::upsert_instances(const PackedInt64Array &ids,const Packe
             multi->set_instance_transform(slots.at(id),Transform3D(basis,Vector3(p[3]-e.first.x*32,p[7]-e.first.y*32,p[11]-e.first.z*32)));instance_updates++;
         }
     }
-    if(!touched.empty()||!local_updates.empty())emit_signal("changed");return true;
+    if(!touched.empty()||!local_updates.empty())publish_change();return true;
 }
 bool NativeStaticBatch::remove_instances(const PackedInt64Array &ids) {
     if(ids.size()>100000)return false;std::set<int64_t> unique;
@@ -150,7 +162,7 @@ bool NativeStaticBatch::remove_instances(const PackedInt64Array &ids) {
         auto old=placements.find(id);auto k=group_for(old->second);auto &g=groups.at(k);g.erase(id);if(g.empty())groups.erase(k);
         placements.erase(old);slots.erase(id);touched.insert(k);
     }
-    rebuild(touched);if(!touched.empty())emit_signal("changed");return true;
+    rebuild(touched);if(!touched.empty())publish_change();return true;
 }
 bool NativeStaticBatch::set_instances(const Ref<Mesh> &mesh,const PackedFloat32Array &transforms) {
     if(mesh.is_null()||transforms.size()%12||transforms.size()>1200000)return false;
@@ -165,7 +177,7 @@ bool NativeStaticBatch::set_instances(const Ref<Mesh> &mesh,const PackedFloat32A
     clear_proxies();collision_bounds.clear();collision_dirty=true;
     placements=std::move(staged);groups=std::move(staged_groups);slots.clear();source_mesh=mesh;
     for(auto &e:batches)e.second->get_multimesh()->set_mesh(mesh);
-    rebuild(touched);emit_signal("changed");return true;
+    rebuild(touched);publish_change();return true;
 }
 PackedFloat32Array NativeStaticBatch::get_instance(int64_t id) const {
     PackedFloat32Array result;auto it=placements.find(id);if(it==placements.end())return result;
@@ -208,7 +220,7 @@ bool NativeStaticBatch::restore_snapshot(const PackedByteArray &bytes) {
     std::set<BlockKey> touched;for(auto &e:groups)touched.insert(e.first);
     clear_proxies();collision_bounds.clear();collision_dirty=true;
     placements=std::move(restored);groups.clear();slots.clear();for(auto &e:placements){auto k=group_for(e.second);groups[k].insert(e.first);touched.insert(k);}
-    rebuild(touched);emit_signal("changed");return true;
+    rebuild(touched);publish_change();return true;
 }
 Dictionary NativeStaticBatch::stats() const {
     Dictionary d;d["instances"]=int(placements.size());d["spatial_batches"]=int(batches.size());d["transform_bytes"]=int(placements.size())*48;

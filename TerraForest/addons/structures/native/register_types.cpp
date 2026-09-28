@@ -2,6 +2,7 @@
 #include "static_batch.hpp"
 #include "structures_snapshot.hpp"
 #include "structure_queries.hpp"
+#include "static_history.hpp"
 #include <godot_cpp/godot.hpp>
 using namespace godot;
 static void initialize(ModuleInitializationLevel level) {
@@ -11,6 +12,7 @@ static void initialize(ModuleInitializationLevel level) {
         GDREGISTER_CLASS(terraforest::NativeStaticBatch);
         GDREGISTER_CLASS(terraforest::NativeStructuresSnapshot);
         GDREGISTER_CLASS(terraforest::NativeStructureQueries);
+        GDREGISTER_CLASS(terraforest::NativeStaticHistory);
     }
 }
 static void terminate(ModuleInitializationLevel) {}

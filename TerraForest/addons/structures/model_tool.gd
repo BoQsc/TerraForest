@@ -14,11 +14,19 @@ var choices: Array[Button] = []
 var timer := 0.0
 var preview_valid := false
 var preview_material := StandardMaterial3D.new()
+var history: RefCounted
 
 func configure(view: Camera3D, actor: CharacterBody3D, entries: Array[Dictionary], ui: Node) -> void:
 	camera=view
 	player=actor
 	catalog=entries
+	history=ClassDB.instantiate("NativeStaticHistory")
+	var collections: Array = []
+	for entry in catalog:
+		if not collections.has(entry.collection):
+			collections.append(entry.collection)
+	if not history.configure(collections,1024*1024,256):
+		push_error("Could not configure native model edit history")
 	preview_material.shading_mode=BaseMaterial3D.SHADING_MODE_UNSHADED
 	preview_material.transparency=BaseMaterial3D.TRANSPARENCY_ALPHA
 	preview.material_override=preview_material
@@ -28,7 +36,7 @@ func configure(view: Camera3D, actor: CharacterBody3D, entries: Array[Dictionary
 	ui.add_child(panel)
 	panel.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_RIGHT)
 	panel.offset_left=-360
-	panel.offset_top=-280
+	panel.offset_top=-300
 	panel.offset_right=-24
 	panel.offset_bottom=-106
 	var style := StyleBoxFlat.new()
@@ -49,7 +57,7 @@ func configure(view: Camera3D, actor: CharacterBody3D, entries: Array[Dictionary
 		content.add_child(button)
 		choices.append(button)
 	var help := Label.new()
-	help.text="R Rotate · RMB Place · LMB Remove\nM Blocks · F5 Save · Esc Use buttons"
+	help.text="R Rotate · RMB Place · LMB Remove\nCtrl+Z Undo · Ctrl+Y / Ctrl+Shift+Z Redo\nM Blocks · F5 Save · Esc Use buttons"
 	help.add_theme_font_size_override("font_size",13)
 	content.add_child(help)
 	panel.hide()
@@ -99,7 +107,8 @@ func records(world_transform: Transform3D, collection: Node3D) -> PackedFloat32A
 func refresh() -> void:
 	var hit := target()
 	preview_valid=false
-	caption.text="OBJECTS · %s · %d°" % [catalog[selected].title,quarter_turns*90]
+	var status: Dictionary = history.stats()
+	caption.text="OBJECTS · %s · %d°\nUndo %d · Redo %d" % [catalog[selected].title,quarter_turns*90,status.undo_steps,status.redo_steps]
 	if hit.is_empty():
 		preview.hide()
 		return
@@ -119,7 +128,7 @@ func edit(remove: bool) -> int:
 				var collection: Node3D = entry.collection
 				if hit.collider==collection:
 					var id: int = collection.placement_for_body(hit.rid)
-					if id>0 and collection.remove_instances(PackedInt64Array([id])):
+					if id>0 and history.erase(collection,id):
 						notice.emit("Object removed · F5 saves world")
 						return id
 		notice.emit("Aim at a nearby placed object to remove it")
@@ -129,7 +138,7 @@ func edit(remove: bool) -> int:
 		notice.emit("Aim at a nearby upward-facing surface")
 		return 0
 	var collection: Node3D = catalog[selected].collection
-	var id: int = collection.insert_instance(records(hit.transform,collection),protection())
+	var id: int = history.insert(collection,records(hit.transform,collection),protection())
 	notice.emit("%s placed · F5 saves world" % catalog[selected].title if id>0 else "Placement blocked · move clear or check capacity")
 	timer=0
 	return id
@@ -146,7 +155,10 @@ func handle_input(event: InputEvent) -> bool:
 			timer=0
 			return true
 		if (event.ctrl_pressed or event.meta_pressed) and event.physical_keycode in [KEY_Z,KEY_Y]:
-			notice.emit("Object undo/redo is not available yet")
+			var forward: bool = event.physical_keycode==KEY_Y or event.shift_pressed
+			var accepted: bool = history.redo(protection()) if forward else history.undo(protection())
+			notice.emit(("Object redo" if forward else "Object undo")+ (" · F5 saves world" if accepted else " unavailable · move clear or check history"))
+			timer=0
 			return true
 		if event.physical_keycode in [KEY_P,KEY_T]:
 			return true

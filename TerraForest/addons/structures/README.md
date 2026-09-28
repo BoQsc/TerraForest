@@ -72,7 +72,7 @@ In the main world, **M** enters object mode or returns to block mode. **1–3** 
 
 `can_insert_instance(transform, protected_bounds=AABB())` is a read-only native preflight for one 12-float placement. `insert_instance(...)` revalidates and returns a positive ID, or zero without modification. IDs are one above the largest live ID; an empty collection starts at one, and INT64_MAX rejects automatic allocation. They are unique among current placements, not permanent network identities: deleting the highest ID or loading an older snapshot can allow reuse. Player protection uses conservative world-space AABBs of configured compound parts, or mesh bounds when no proxy is configured. Positive-volume protection is optional; malformed bounds reject the command. Arbitrary client authority/ID allocation is not a multiplayer protocol.
 
-The catalog currently has three configured entries. Existing-object movement/scaling, asset import UI, static-object history and cross-addon transactions remain pending. Ctrl+Z/Y in object mode reports unavailable history instead of undoing unrelated blocks. See [editor validation](../../docs/MODEL_EDITOR_VALIDATION.md).
+The catalog currently has three configured entries. Ctrl+Z/Y in object mode uses the native model journal described below. Existing-object movement/scaling UI, asset import UI and cross-addon transactions remain pending. See [editor validation](../../docs/MODEL_EDITOR_VALIDATION.md) and [model history validation](../../docs/MODEL_HISTORY_VALIDATION.md).
 
 ### Collision configuration
 
@@ -121,6 +121,43 @@ In the terrain scene, **B** selects block mode, **P** cycles prefab assets and s
 Prefab capture has a native API but no selection/save dialog yet. Static-model composition, instance-level selection and prefab-linked updates remain pending. See [prefab validation](../../docs/PREFAB_VALIDATION.md) for native and graphical evidence.
 
 ### Bounded construction history
+
+Static model edits use a separate native `NativeStaticHistory` journal. Configure
+it with an array of distinct `NativeStaticBatch` collections, a retained-record
+byte budget (0–64 MiB), and a step cap (0–1,024). Registration holds weak object
+identities and accepts at most 256 collections. `insert(collection, transform,
+protected_bounds)`, `erase(collection, id)` and `update(collection, id, transform,
+protected_bounds)` record fixed-size before/after transform deltas. Model IDs are
+preserved on replay. `undo(protected_bounds)` and `redo(protected_bounds)` follow
+one chronological timeline across all registered model assets. These are
+scene-thread authoring APIs; they do not record terrain or block commands.
+
+The demo model catalog uses 1 MiB / 256 steps. In M mode, **Ctrl+Z** undoes and
+**Ctrl+Y** or **Ctrl+Shift+Z** redoes placement/removal, with player protection.
+The UI displays available step counts. Transform update history is available to
+native API consumers; interactive move/scale handles remain pending.
+
+The shared record budget covers undo and redo, excluding deque allocator overhead
+and the separately bounded registry. `stats()` reports `record_bytes`,
+`record_size`, limits, step counts, external-change barriers and unrecorded edits.
+The oldest undo commands are retired at capacity. Rejected/no-op edits preserve
+redo; accepted new edits discard it. Zero limits or a budget smaller than one
+record allow edits but retain no history. Valid reconfiguration clears history;
+invalid reconfiguration leaves it intact.
+
+External placement edits, mesh replacement, bulk replacement, valid snapshot
+restoration (even identical bytes), or destruction of a registered collection
+invalidate the entire model timeline at the next command/status query. Failed or
+net-zero external updates do not. This prevents stale undo from overwriting
+loaded or independently authored data. Collection transforms and collision-only
+configuration do not change local authored records; replay uses their current
+world frame and compound parts for player protection. History is not serialized.
+
+Journal state commits before `changed` notifications. Reentrant journal commands
+are rejected during notification; external callback mutations are detected and
+invalidate history afterward. Replay uses the normal incremental batch edit path
+so render groups, physics, vegetation exclusion and save invalidation stay in
+sync. This is local editor history, not a multiplayer command protocol.
 
 History is opt-in: `configure_history(byte_limit, step_limit)` enables native undo/redo for subsequent `set_cells` and `place_prefab` calls. Both demos use 16 MiB of retained cell-record capacity and 128 commands. Runtime-only worlds default to disabled history. Limits may be 0–64 MiB and 0–1,024 commands; either zero disables history and releases its retained records. Invalid limits leave the prior configuration intact.
 

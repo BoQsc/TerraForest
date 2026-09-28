@@ -16,6 +16,7 @@ using namespace godot;
 class NativeStaticBatch : public Node3D {
     GDCLASS(NativeStaticBatch,Node3D)
     friend class NativeStructuresSnapshot;
+    friend class NativeStaticHistory;
     using Placement = std::array<float,12>;
     std::map<int64_t,Placement> placements;
     std::map<BlockKey,std::set<int64_t>> groups;
@@ -26,6 +27,10 @@ class NativeStaticBatch : public Node3D {
     bool asset_locked=false;
     uint64_t uploads=0;
     uint64_t instance_updates=0;
+    uint64_t edit_revision=0;
+    bool defer_change_signal=false;
+    void publish_change();
+    bool placement_clear(const PackedFloat32Array &transform,const AABB &protection) const;
     struct ProxyBody { RID body; std::vector<RID> shapes; };
     std::map<int64_t,ProxyBody> collision_bodies;
     std::map<RID,int64_t> body_ids;

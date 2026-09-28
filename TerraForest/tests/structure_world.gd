@@ -243,6 +243,33 @@ func check_model_editor(site: Vector3) -> void:
 	game._unhandled_input(click)
 	check(collection.get_instance(id).is_empty() and collection.get_ids()==before,"LMB removes the picked model by stable placement ID")
 	check(game.structures.capture_snapshot()==before_save,"removal restores the prior authored world content")
+	var history_key := InputEventKey.new()
+	history_key.physical_keycode=KEY_Z
+	history_key.ctrl_pressed=true
+	history_key.pressed=true
+	game._unhandled_input(history_key)
+	check(collection.get_instance(id)==expected,"model Ctrl+Z restores removed object with exact ID and transform")
+	check(await until(func(): return collection.collision_stats().pending_bodies==0 and not collection.collision_stats().selection_pending),"model undo restores nearby collision admission")
+	history_key.physical_keycode=KEY_Y
+	game._unhandled_input(history_key)
+	check(collection.get_instance(id).is_empty(),"model Ctrl+Y replays object removal")
+	var outside: Vector3 = game.player.position
+	game.player.position=aim-Vector3(0,0.8,0)
+	history_key.physical_keycode=KEY_Z
+	game._unhandled_input(history_key)
+	check(collection.get_instance(id).is_empty() and game.model_tool.history.stats().undo_steps==2,"model undo cannot restore a doorway post through the player")
+	game.player.position=outside
+	game._unhandled_input(history_key)
+	check(collection.get_instance(id)==expected,"blocked model undo remains retryable after moving clear")
+	game._unhandled_input(history_key)
+	check(collection.get_instance(id).is_empty() and game.structures.capture_snapshot()==before_save,"next model undo removes original placement and restores saved content")
+	history_key.shift_pressed=true
+	game._unhandled_input(history_key)
+	check(collection.get_instance(id)==expected,"model Ctrl+Shift+Z restores original placement")
+	history_key.physical_keycode=KEY_Y
+	history_key.shift_pressed=false
+	game._unhandled_input(history_key)
+	check(game.structures.capture_snapshot()==before_save,"complete model redo chain returns to pre-test authored content")
 	editor_key(KEY_M)
 	check(not game.model_tool.active and game.structure_mode and not game.model_tool.preview.visible,"M returns to block editing and hides model preview")
 	Input.mouse_mode=Input.MOUSE_MODE_VISIBLE
@@ -323,6 +350,7 @@ func check_prefab_editor(location: Vector3) -> void:
 	var snapshot: PackedByteArray = game.structures.blocks.capture_snapshot()
 	check(game.structures.restore_snapshot(saved) and game.structures.blocks.capture_snapshot()==snapshot,"compound world restoration preserves prefab-authored cells")
 	check(not game.structures.blocks.can_undo() and not game.structures.blocks.can_redo(),"world restoration clears the prior editor history")
+	check(game.model_tool.history.stats().undo_steps==0 and game.model_tool.history.stats().redo_steps==0,"compound world restoration also invalidates model history")
 	check(await until(func(): return game.structures.blocks.is_idle() and game.ecosystem._reconcile.is_empty(),20),"prefab reload finishes meshes and forest exclusion")
 	var tower_asset: Resource = game.structure_prefabs[3]
 	var tower_anchor := anchor+Vector3i(30,0,-10)
