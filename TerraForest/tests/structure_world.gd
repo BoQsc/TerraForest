@@ -132,7 +132,123 @@ func run() -> void:
 		await RenderingServer.frame_post_draw
 		DirAccess.make_dir_recursive_absolute("res://reports")
 		root.get_texture().get_image().save_png("res://reports/structure_world.png")
+	await check_prefab_editor(Vector3(site)+Vector3(22,0,0))
 	finish()
+
+func check_prefab_editor(location: Vector3) -> void:
+	check(game.structure_prefabs.size()==4,"editor loads reusable cottage, stair, wall and tower-floor assets")
+	if game.structure_prefabs.size()!=4:
+		return
+	var ground := game.get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(location+Vector3.UP*64,location-Vector3.UP*64,1))
+	check(not ground.is_empty(),"prefab site has terrain collision")
+	if ground.is_empty():
+		return
+	game.fly=true
+	game.player.position=ground.position+Vector3(0,30,0)
+	game.player.velocity=Vector3.ZERO
+	game.camera.look_at(ground.position,Vector3.FORWARD)
+	game.structure_prefab_index=-1
+	var select := InputEventKey.new()
+	select.physical_keycode=KEY_P
+	select.pressed=true
+	game._unhandled_input(select)
+	check(game.structure_prefab_index==0,"P selects the cottage asset in block mode")
+	var turn := InputEventKey.new()
+	turn.physical_keycode=KEY_R
+	turn.pressed=true
+	game.structure_rotation=0
+	game._unhandled_input(turn)
+	check(game.structure_rotation==1,"R rotates prefab orientation")
+	var picked: Dictionary = game._structure_target(false)
+	check(not picked.is_empty(),"prefab tool picks an actual construction anchor")
+	if picked.is_empty():
+		return
+	var anchor: Vector3i = picked.target
+	var asset: Resource = game.structure_prefabs[0]
+	game._update_prefab_preview(1.0)
+	check(game.prefab_preview.visible and game._prefab_allowed(asset,anchor),"clear prefab placement displays a valid bounds preview")
+	var bounds: AABB = asset.placement_bounds(anchor,1)
+	check(game.prefab_preview.position==bounds.position and game.prefab_preview.scale==bounds.size,"preview follows rotated prefab bounds")
+	var outside: Vector3 = game.player.position
+	game.player.position=Vector3(anchor)+Vector3(0.5,1,0.5)
+	check(not game._prefab_allowed(asset,anchor),"prefab authoring rejects enclosing the player")
+	game.player.position=outside
+	var density_revision: int = game.terrain.density_revision
+	var before_cells: int = game.structures.blocks.stats().cells
+	game._edit_structure(false)
+	check(game._prefab_preview_signature.is_empty(),"logical world changes invalidate cached placement validation")
+	check(game.structures.blocks.stats().cells==before_cells+asset.get_cell_count(),"actual placement tool creates every cottage cell in one operation")
+	check(game.terrain.density_revision==density_revision,"prefab placement leaves terrain density unchanged")
+	check(not game._prefab_allowed(asset,anchor),"occupied prefab footprint is rejected")
+	check(await until(func(): return game.structures.blocks.is_idle(),20),"prefab chunk meshes finish their bounded bake queue")
+	await physics_frame
+	await physics_frame
+	game.player.position=Vector3(anchor)+Vector3(0.5,3,0.5)
+	game.player.velocity=Vector3.ZERO
+	game.fly=false
+	for i in range(120):
+		await physics_frame
+	check(game.player.is_on_floor() and game.player.position.y>anchor.y+0.9 and game.player.position.y<anchor.y+1.2,"existing player stands inside the prefab on its timber floor")
+	var saved: PackedByteArray = game.structures.capture_snapshot()
+	var snapshot: PackedByteArray = game.structures.blocks.capture_snapshot()
+	check(game.structures.restore_snapshot(saved) and game.structures.blocks.capture_snapshot()==snapshot,"compound world restoration preserves prefab-authored cells")
+	check(await until(func(): return game.structures.blocks.is_idle() and game.ecosystem._reconcile.is_empty(),20),"prefab reload finishes meshes and forest exclusion")
+	var tower_asset: Resource = game.structure_prefabs[3]
+	var tower_anchor := anchor+Vector3i(30,0,-10)
+	var tower_ground := game.get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(Vector3(tower_anchor)+Vector3.UP*64,Vector3(tower_anchor)-Vector3.UP*64,1))
+	check(not tower_ground.is_empty(),"tower site has terrain collision")
+	if not tower_ground.is_empty():
+		tower_anchor.y=floori(tower_ground.position.y)+1
+		var tower_ok := true
+		var tower_before: int = game.structures.blocks.stats().cells
+		for level in range(12):
+			tower_ok=game.structures.blocks.place_prefab(tower_asset,tower_anchor+Vector3i(0,level*4,0),0) and tower_ok
+		check(tower_ok and game.structures.blocks.stats().cells==tower_before+tower_asset.get_cell_count()*12,"twelve repeated tower floors interlock without overwriting cells")
+		game.structures.blocks.set_focus(Vector3(tower_anchor)+Vector3(0,24,0))
+		check(await until(func(): return game.structures.blocks.is_idle() and game.ecosystem._reconcile.is_empty(),30),"tower geometry and vegetation exclusion finish")
+		game.player.position=Vector3(tower_anchor)+Vector3(3.5,27,4.5)
+		game.player.velocity=Vector3.ZERO
+		game.fly=false
+		for i in range(120):
+			await physics_frame
+		check(game.player.is_on_floor() and absf(game.player.position.y-(tower_anchor.y+25.0))<0.2,"player collision works on an upper repeated tower floor")
+		var stairs_ok := true
+		for step in range(4):
+			var tread := Vector3(tower_anchor)+Vector3(0.5,25.25+step,0.125+step)
+			var tread_hit := game.get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(tread+Vector3.UP*0.2,tread-Vector3.UP*0.5,2))
+			stairs_ok=stairs_ok and not tread_hit.is_empty() and absf(tread_hit.position.y-tread.y)<0.01
+		check(stairs_ok,"repeated tower stair flights preserve their four rises through the floor shaft")
+	game.fly=true
+	game.structure_prefab_index=-1
+	game.player.position=Vector3(anchor)+Vector3(18,13,18)
+	game.player.velocity=Vector3.ZERO
+	game.camera.look_at(Vector3(anchor)+Vector3(0,3,0))
+	await create_timer(1.0).timeout
+	if DisplayServer.get_name()!="headless":
+		check(Presentation.measurement(root).fair_graphical_sample,"prefab evidence is 1920x1080 fullscreen at full scale")
+		await RenderingServer.frame_post_draw
+		root.get_texture().get_image().save_png("res://reports/prefab_world.png")
+		game.player.position=Vector3(tower_anchor)+Vector3(36,28,38)
+		game.camera.look_at(Vector3(tower_anchor)+Vector3(0,24,0))
+		await create_timer(3.0).timeout
+		var intervals: Array[float] = []
+		var previous := Time.get_ticks_usec()
+		for i in range(240):
+			await process_frame
+			var now := Time.get_ticks_usec()
+			intervals.append((now-previous)/1000.0)
+			previous=now
+		intervals.sort()
+		var measurement: Dictionary = Presentation.measurement(root)
+		measurement["stationary_frame_intervals_ms"]={"samples":intervals.size(),"median":intervals[120],"p95":intervals[228],"maximum":intervals[-1]}
+		measurement["blocks"]=game.structures.blocks.stats()
+		measurement["trees"]=game.vegetation.renderer.roots.size()
+		measurement["scope"]="Stationary presentation intervals after 3 s warmup; integrated terrain/forest with one twelve-storey tower and cottage; not isolated GPU timing or a city benchmark."
+		var performance_file := FileAccess.open("res://reports/prefab_performance.json",FileAccess.WRITE)
+		performance_file.store_string(JSON.stringify(measurement,"  "))
+		performance_file.close()
+		await RenderingServer.frame_post_draw
+		root.get_texture().get_image().save_png("res://reports/tower_prefab_world.png")
 
 func finish() -> void:
 	game.terrain.shutdown()

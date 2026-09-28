@@ -20,6 +20,9 @@ static PackedByteArray sha(const PackedByteArray &data) {
 }
 void NativeBlockWorld::_bind_methods() {
     ClassDB::bind_method(D_METHOD("set_cells","records"),&NativeBlockWorld::set_cells);
+    ClassDB::bind_method(D_METHOD("can_place_prefab","prefab","origin","quarter_turns","replace"),&NativeBlockWorld::can_place_prefab,DEFVAL(false));
+    ClassDB::bind_method(D_METHOD("place_prefab","prefab","origin","quarter_turns","replace"),&NativeBlockWorld::place_prefab,DEFVAL(false));
+    ClassDB::bind_method(D_METHOD("capture_prefab","origin","size"),&NativeBlockWorld::capture_prefab);
     ClassDB::bind_method(D_METHOD("get_cell","position"),&NativeBlockWorld::get_cell);
     ClassDB::bind_method(D_METHOD("overlap_mask","transforms","prototype_bounds"),&NativeBlockWorld::overlap_mask);
     ClassDB::bind_method(D_METHOD("stats"),&NativeBlockWorld::stats);

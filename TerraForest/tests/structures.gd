@@ -63,9 +63,57 @@ func check_exclusion() -> void:
 	check(blocks.overlap_mask(samples,bounds)==PackedByteArray([0,0,0,0]),"empty restored world clears occupancy")
 	blocks.free()
 
+func check_prefabs() -> void:
+	var prefab: Resource = ClassDB.instantiate("NativeBlockPrefab")
+	var records := PackedInt32Array([0,1,2,44,-1,0,0,65])
+	check(prefab.configure(records) and prefab.get_cell_count()==2,"native prefab accepts sparse shape/material records")
+	var canonical := PackedInt32Array([-1,0,0,65,0,1,2,44])
+	check(prefab.get_records()==canonical,"prefab canonicalizes record ordering")
+	var exposed: PackedInt32Array = prefab.get_records()
+	exposed[3]=0
+	check(prefab.get_records()==canonical,"returned prefab records cannot mutate the asset")
+	for bad in [PackedInt32Array([0,0,0,0]),PackedInt32Array([0,0,0,7]),PackedInt32Array([0,0,0,1,0,0,0,2]),PackedInt32Array([4096,0,0,1]),PackedInt32Array([0,0,0])]:
+		check(not prefab.configure(bad) and prefab.get_records()==canonical,"invalid prefab authoring is atomic")
+	var world := make_world()
+	var empty: PackedByteArray = world.capture_snapshot()
+	var origin := Vector3i(-16,5,-16)
+	var positions := [[Vector3i(-1,0,0),Vector3i(0,1,2)],[Vector3i(0,0,-1),Vector3i(-2,1,0)],[Vector3i(1,0,0),Vector3i(0,1,-2)],[Vector3i(0,0,1),Vector3i(2,1,0)]]
+	var lows := [Vector3(-1,0,0),Vector3(-2,0,-1),Vector3(0,0,-2),Vector3(0,0,0)]
+	for rotation in range(4):
+		world.restore_snapshot(empty)
+		check(world.can_place_prefab(prefab,origin,rotation) and world.place_prefab(prefab,origin,rotation),"native prefab quarter-turn placement %d" % rotation)
+		check(world.get_cell(origin+positions[rotation][0])==(65|(rotation<<3)) and world.get_cell(origin+positions[rotation][1])==(36|(((rotation+1)%4)<<3)),"quarter-turn rotates coordinates and oriented shape %d" % rotation)
+		var bounds: AABB = prefab.placement_bounds(origin,rotation)
+		check(bounds.position==Vector3(origin)+lows[rotation] and bounds.size==Vector3(2 if rotation%2==0 else 3,2,3 if rotation%2==0 else 2),"preview bounds match rotated cell extents %d" % rotation)
+	var before: PackedByteArray = world.capture_snapshot()
+	check(not world.place_prefab(prefab,origin,3) and world.capture_snapshot()==before,"occupied destination rejects entire prefab")
+	check(world.place_prefab(prefab,origin,3,true) and world.capture_snapshot()==before,"explicit replace mode is deterministic")
+	check(not world.place_prefab(prefab,Vector3i(2147483647,0,0),0) and world.capture_snapshot()==before,"coordinate overflow rejects placement before mutation")
+	check(not world.place_prefab(prefab,origin,4) and not world.place_prefab(null,origin,0),"invalid rotation and null asset rejected")
+	world.restore_snapshot(empty)
+	world.set_cells(PackedInt32Array([0,0,1,1]))
+	check(world.place_prefab(prefab,Vector3i.ZERO,0) and world.get_cell(Vector3i(0,0,1))==1,"sparse prefab leaves unlisted destination cells untouched")
+	var captured: Resource = world.capture_prefab(Vector3i(-1,0,0),Vector3i(2,2,3))
+	check(captured!=null and captured.get_cell_count()==3,"capture creates reusable asset from actual world cells")
+	check(world.capture_prefab(Vector3i.ZERO,Vector3i(257,1,1))==null and world.capture_prefab(Vector3i.ZERO,Vector3i(256,256,256))==null,"capture dimensions and volume are bounded")
+	check(world.place_prefab(captured,Vector3i(100,0,100),0) and world.get_cell(Vector3i(101,1,102))==44,"captured asset can be placed independently")
+	DirAccess.make_dir_recursive_absolute("res://reports")
+	check(ResourceSaver.save(captured,"res://reports/prefab_roundtrip.tres")==OK,"native prefab saves as a Godot resource")
+	var loaded: Resource = ResourceLoader.load("res://reports/prefab_roundtrip.tres","",ResourceLoader.CACHE_MODE_IGNORE)
+	check(loaded!=null and loaded.get_records()==captured.get_records(),"native prefab resource round trip preserves all records")
+	world.restore_snapshot(empty)
+	var capacity := PackedInt32Array()
+	for i in range(2048):
+		capacity.append_array(PackedInt32Array([i*16,0,0,1]))
+	world.set_cells(capacity)
+	before=world.capture_snapshot()
+	check(not world.can_place_prefab(prefab,Vector3i(40000,0,0),0) and not world.place_prefab(prefab,Vector3i(40000,0,0),0) and world.capture_snapshot()==before,"prefab capacity preflight and commit both reject atomically")
+	world.free()
+
 func run() -> void:
 	check(ClassDB.class_exists("NativeBlockWorld"), "native block extension registered")
 	check_exclusion()
+	check_prefabs()
 	var world := make_world()
 	var empty: PackedByteArray = world.capture_snapshot()
 	check(world.validate_snapshot(empty), "empty snapshot validates")
