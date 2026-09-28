@@ -1,22 +1,22 @@
 # Native static-model render residency
 
 Static model collections previously allocated a MultiMesh buffer for every
-authored spatial group. They now optionally admit only nearby groups in C++,
-with separate ceilings for resident group count, resident transform payload,
-groups uploaded per process tick and transform payload uploaded per tick.
+authored spatial group. They now optionally admit nearby render pages in C++,
+with separate ceilings for resident page count, resident transform payload,
+pages uploaded per process tick and transform payload uploaded per tick.
 The main world enables this mode for its registered model assets.
 
 All authored placements and mesh resources remain in RAM. This change releases
 derived MultiMesh nodes, buffers and GPU slot mappings during travel; it does
 not implement disk regions, geometry LOD or an aggregate city asset budget.
-The existing 100,000-placement and 4,096-group limits still apply per collection.
+The existing 100,000-placement and 4,096-page limits still apply per collection.
 
 ## API contract
 
 `configure_render_streaming(enabled, radius, batch_limit, byte_limit,
 uploads_per_tick, bytes_per_tick)` validates the entire configuration before
-changing state. Radius is finite, 0–16,384 collection-local units; group limit
-is 1–4,096; both payload budgets are 48–4,800,000 bytes; uploads are 1–64 per
+changing state. Radius is finite, 0–16,384 collection-local units; page limit
+is 1–4,096 render pages; both payload budgets are 48–4,800,000 bytes; uploads are 1–64 per
 process tick. Both enabled and disabled calls require valid limits. Invalid
 calls preserve existing state. Reconfiguration releases old rendering
 immediately, ensuring a smaller budget is respected without an over-budget
@@ -30,16 +30,19 @@ deterministic signed group-key tie break. Pending batches upload nearest first.
 At most 4,096 maintained group bounds are scanned and sorted during selection;
 unchanged stationary collections do not repeat that work.
 
-Whole batches are admission units. A batch that exceeds either payload budget
-is reported as `budget_deferred` and stays invisible; smaller admissible groups
-can still load. Dense groups are not subdivided by this implementation. Changed
-resident groups release their obsolete buffer and queue a replacement. That
-can briefly hide a group during sustained authoring; streaming mode deliberately
-does not bypass upload limits via immediate per-instance renderer calls.
-The eager mode retains incremental slot updates for small edits.
+Render pages are admission units. Each group is divided by sorted placement ID
+into pages of at most 1,024 instances, reduced further to fit the resident and
+per-tick payload budgets. A dense group can progressively load across frames.
+Pages that exceed the remaining resident payload or page-count capacity are
+reported as `budget_deferred`; a smaller final page can fill remaining space.
+Changed transforms within a group replace only their affected pages. Membership
+changes replace all affected groups' pages. Those pages can briefly disappear
+while queued; streaming edits do not bypass upload limits. The eager mode
+retains incremental slot updates for small edits. See DENSE_MODEL_PAGES.md for
+the implementation and validation that supersede the initial whole-page limit.
 
-`render_stats()` reports authored groups, resident groups/instances/payload,
-pending groups, candidate and deferred counts, selection status/count, evictions
+`render_stats()` reports authored groups, resident pages/instances/payload,
+pending pages, candidate and deferred counts, selection status/count, evictions
 and cumulative uploaded transform bytes. Payload accounting uses 48 bytes per
 resident transform. It excludes mesh resources, driver allocations, Godot nodes,
 map/vector overhead and authored records, and must not be described as measured
