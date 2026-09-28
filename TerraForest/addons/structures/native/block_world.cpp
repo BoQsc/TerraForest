@@ -36,6 +36,7 @@ void NativeBlockWorld::_bind_methods() {
     ClassDB::bind_method(D_METHOD("get_cell","position"),&NativeBlockWorld::get_cell);
     ClassDB::bind_method(D_METHOD("overlap_mask","transforms","prototype_bounds"),&NativeBlockWorld::overlap_mask);
     ClassDB::bind_method(D_METHOD("stats"),&NativeBlockWorld::stats);
+    ClassDB::bind_method(D_METHOD("collision_stats"),&NativeBlockWorld::collision_stats);
     ClassDB::bind_method(D_METHOD("set_focus","position"),&NativeBlockWorld::set_focus);
     ClassDB::bind_method(D_METHOD("configure_streaming","enabled","radius","chunk_limit","mesh_byte_limit","cache_byte_limit"),&NativeBlockWorld::configure_streaming);
     ClassDB::bind_method(D_METHOD("streaming_stats"),&NativeBlockWorld::streaming_stats);
@@ -318,27 +319,11 @@ bool NativeBlockWorld::publish(BlockBake &&b) {
     Array arrays; arrays.resize(Mesh::ARRAY_MAX);arrays[Mesh::ARRAY_VERTEX]=vertices;arrays[Mesh::ARRAY_NORMAL]=normals;arrays[Mesh::ARRAY_TEX_UV]=uv;arrays[Mesh::ARRAY_TEX_UV2]=uv2;arrays[Mesh::ARRAY_INDEX]=indices;
     Ref<ArrayMesh> mesh;mesh.instantiate();mesh->add_surface_from_arrays(Mesh::PRIMITIVE_TRIANGLES,arrays);mesh->surface_set_material(0,material);
     auto *instance=memnew(MeshInstance3D);instance->set_mesh(mesh);instance->set_position(Vector3(b.key.x*16,b.key.y*16,b.key.z*16));add_child(instance);
-    visuals[b.key]={instance,nullptr,int(b.indices.size()/3),payload,b.lattice_width};mesh_bytes+=payload;
+    visuals[b.key]={instance,nullptr,int(b.indices.size()/3),payload,b.lattice_width,vertices,indices};mesh_bytes+=payload;
     settled.insert(b.key);budget_blocked.erase(b.key);published++;cache_bake(std::move(b));return true;
 }
 void NativeBlockWorld::set_collision_radius(double radius) {
     if(!std::isfinite(radius)||radius<0||radius>256) return; collision_radius=radius;collisions=radius>0;
-}
-void NativeBlockWorld::update_collisions() {
-    // At most one new physics shape per frame; remove far shapes immediately.
-    bool created=false;
-    for(auto &entry:visuals) {
-        auto &v=entry.second;Vector3 center=v.mesh->get_position()+Vector3(8,8,8);
-        bool near=collisions&&center.distance_squared_to(focus)<=(collision_radius+14)*(collision_radius+14);
-        if(!near&&v.body) {memdelete(v.body);v.body=nullptr;}
-        if(near&&!v.body&&!created) {
-            auto shape=v.mesh->get_mesh()->create_trimesh_shape();
-            if(shape.is_valid()) {
-                v.body=memnew(StaticBody3D);v.body->set_position(v.mesh->get_position());v.body->set_collision_layer(2);
-                auto *collision=memnew(CollisionShape3D);collision->set_shape(shape);v.body->add_child(collision);add_child(v.body);created=true;
-            }
-        }
-    }
 }
 void NativeBlockWorld::_process(double) {
     refresh_residency();
@@ -354,14 +339,14 @@ void NativeBlockWorld::flush_bakes() {
         BlockBake completed;
         if(take_bake(completed,true))publish(std::move(completed));
     }
-    for(size_t i=0;i<visuals.size();i++) update_collisions();
+    while(update_collisions()) {}
 }
 Dictionary NativeBlockWorld::stats() const {
     int cells=0,triangles=0,bodies=0;
     int lattice16=0,lattice32=0,lattice64=0;
     for(auto &e:chunks) cells+=e.second.count;
     for(auto &e:visuals) {
-        triangles+=e.second.triangles;bodies+=e.second.body!=nullptr;
+        triangles+=e.second.triangles;bodies+=e.second.collision_ready;
         lattice16+=e.second.lattice_width==16;lattice32+=e.second.lattice_width==32;lattice64+=e.second.lattice_width==64;
     }
     Dictionary d;d["cells"]=cells;d["chunks"]=int(chunks.size());d["cell_bytes"]=int(chunks.size())*8192;d["mesh_chunks"]=int(visuals.size());d["triangles"]=triangles;d["collision_chunks"]=bodies;d["dirty_chunks"]=int(dirty.size());d["worker_jobs"]=worker_active?1:0;d["stale_bakes_rejected"]=int64_t(rejected);d["published_bakes"]=int64_t(published);d["max_chunks"]=MAX_CHUNKS;

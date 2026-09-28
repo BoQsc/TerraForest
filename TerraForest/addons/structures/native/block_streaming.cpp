@@ -24,7 +24,7 @@ bool NativeBlockWorld::configure_streaming(bool enabled,double radius,int64_t ch
 void NativeBlockWorld::release_visual(BlockKey key) {
     auto it=visuals.find(key);if(it==visuals.end())return;
     mesh_bytes-=it->second.payload_bytes;
-    if(it->second.body)memdelete(it->second.body);
+    retire_collision(it->second);
     memdelete(it->second.mesh);visuals.erase(it);
 }
 void NativeBlockWorld::erase_cached(BlockKey key) {

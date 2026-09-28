@@ -55,9 +55,11 @@ containing spheres rather than silently changing their meaning. Prefab capture,
 placement, undo/redo and compound snapshots support spheres. Press **6** in block
 mode in either demo. See [sphere validation](../../docs/SPHERE_BLOCK_VALIDATION.md).
 
-Nearby chunk collision uses the same triangles as rendering, on layer **2**. `set_focus(Vector3)` and `set_collision_radius(metres)` control residency; radius defaults to 48 and accepts 0–256. One new collision shape is created per frame, with distant bodies released. Collision range uses chunk centres plus a conservative 14 m extent. This bounds normal physics work, but high-speed collision readiness and nearest-first shape creation still need a dedicated traversal policy. Mesh upload/collision construction for one complex chunk can still spike a frame; publication has a count budget, not a measured time budget.
+Nearby chunk collision uses the same triangles as rendering, on layer **2**. `set_focus(Vector3)` and `set_collision_radius(metres)` control residency; radius defaults to 48 and accepts 0–256. The native scheduler selects the nearest incomplete chunk and creates at most one 1,024-triangle piece per tick. Each chunk stays on layer zero until all pieces are installed, then activates as a whole. Leaving range or replacing geometry disables the old body and retires at most four pieces/empty bodies per tick. Pending retirements drain before admitting replacements. Collision range uses chunk centres plus a conservative 14 m extent. Engine calls and final activation remain non-preemptible; these are work-count limits, not hard time limits.
 
-`flush_bakes()` deliberately blocks for offline baking/tests. Do not call it from a live gameplay frame loop. `stats()` reports cell payload, resident chunks, triangles, pending work and rejected stale bakes.
+Block `collision_stats()` exposes `ready`, `pending_chunks`, `unresolved_mesh_chunks`, live/retired piece counts, retained source payload, work counters and timing maxima. `ready` covers currently authored chunks within the configured collision radius; disabled collision returns false, as do unresolved or mesh-budget-deferred near chunks. This is not a swept vehicle-path guarantee. The world UI reports pending building collision but does not yet stop a player from entering unavailable geometry. See [piece admission validation](../../docs/BUILDING_COLLISION_STREAMING.md).
+
+`flush_bakes()` deliberately blocks for offline baking/tests, including all pending collision admission and retirement. Do not call it from a live gameplay frame loop. `stats()` reports cell payload, resident chunks, triangles, pending work and rejected stale bakes; `collision_chunks` counts completed bodies only.
 
 ### Mesh residency and bake reuse
 

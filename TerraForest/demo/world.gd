@@ -374,6 +374,9 @@ func _process(delta: float) -> void:
 		_telemetry_time = 0.0
 		var activity: String = "Updating terrain…" if terrain.pending_edit else "Explore · Sculpt · Build"
 		var building_stream: Dictionary = structures.blocks.streaming_stats()
+		var building_collision: Dictionary = structures.blocks.collision_stats()
+		if building_collision.pending_chunks>0 or building_collision.unresolved_mesh_chunks>0:
+			activity="Preparing nearby building collision…"
 		if building_stream.budget_blocked_chunks>0:
 			activity="Building detail limit · %d chunks deferred" % building_stream.budget_blocked_chunks
 		if Time.get_ticks_msec() < _lake_notice_until:

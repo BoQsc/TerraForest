@@ -1,0 +1,17 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS dense curved chunk authored
+PASS dense fixture has expected geometry and disabled collision readiness
+PASS enabling collision reports pending before any shape admission
+PASS 480-piece admission obeys per-tick bounds and keeps partial collision inactive
+PASS complete dense chunk activates all 480 exact pieces
+PASS completed paged collision agrees with authored spheres across the chunk
+PASS dense collision retirement drains incrementally
+PASS collision streaming leaves authored data unchanged
+PASS second admission can be interrupted with real partial pieces
+PASS travel away retires incomplete collision without activation
+PASS authored edit immediately invalidates readiness
+PASS edit during partial admission replaces every old piece and publishes the changed surface
+PASS mesh-budget rejection is not reported as collision ready and releases all old pieces
+BUILDING_COLLISION_STREAM {"abandoned":{"bounded":true,"done":true,"max_ms":0.211,"median_ms":0.097,"partial_inactive":true,"samples":3},"admission":{"bounded":true,"done":true,"max_ms":2.593,"median_ms":1.195,"partial_inactive":true,"samples":480},"final":{"activate_max_ms":0.119,"attach_max_ms":1.711,"cook_max_ms":1.777,"enabled":true,"last_tick_ms":0.011,"live_pieces":0,"max_tick_ms":2.593,"pending_chunks":0,"pieces_built":980,"pieces_per_tick":1,"pieces_retired":980,"ready":false,"ready_chunks":0,"retire_max_ms":0.857,"retire_operations_per_tick":4,"retired_bodies":0,"retired_pieces":0,"source_payload_bytes":0,"ticks":1228,"triangles_per_piece":1024,"unresolved_mesh_chunks":1},"release":{"bounded":true,"done":true,"max_ms":0.857,"median_ms":0.275,"partial_inactive":true,"samples":121},"scope":"Headless native collision tick time, excludes physics simulation and rendered frames; offline flush after edit is intentionally blocking."}
+
