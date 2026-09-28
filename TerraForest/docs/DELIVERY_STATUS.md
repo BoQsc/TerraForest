@@ -24,3 +24,8 @@ The original scope remains active. This project must not be called fully game-re
 | Zig and prebuilt godot-cpp | Implemented, pinned, checksum-verified; debug/release tests | Maintain ABI checks and reproducible release packaging on upgrades |
 
 Relevant evidence: VALIDATION.md (historical terrain/forest), TOOLCHAIN_VALIDATION.md (initial native/fullscreen), WATER_VALIDATION.md (first lake stage), WORLD_STORAGE.md and STORAGE_VALIDATION.md (current compound saves). Historical limitations and timings describe their recorded stage, not the final target.
+
+Offline terrain cache inventory and verified quota cleanup are available via
+`tools/maintain_terrain_cache.py`; see TERRAIN_CACHE_MAINTENANCE.md. This does not
+replace the pending native runtime cache ownership, eviction and disk-reserve
+work. Live-cache cleanup has not been applied while the editor/game are running.
