@@ -14,7 +14,7 @@ python tools/build_native.py --addon structures --target all
 
 | Field | Values |
 | --- | --- |
-| Shape | 1 cube, 2 lower half slab, 3 four-step staircase, 4 planar slope, 5 centred half-width post |
+| Shape | 1 cube, 2 lower half slab, 3 four-step staircase, 4 planar slope, 5 centred half-width post, 6 sphere |
 | Rotation | 0–3 quarter turns about Y |
 | Material | 0 brick, 1 wood, 2 concrete, 3 metal |
 
@@ -27,6 +27,26 @@ Changes invalidate the edited chunk and resident face neighbours. One native wor
 Quarter-cell occupancy is temporary bake scratch space for exact slab, stair and post joins. Greedy face merging removes hidden boundaries and combines coplanar regions of the same material, including across block edges. Chunk boundaries hide internal faces but do not merge separate chunk meshes. Slopes use an exact planar wedge; wedge boundaries currently use conservative geometry and are not greedily merged or clipped against neighbours.
 
 Each occupied visual chunk is one ArrayMesh surface with a texture array. Four original deterministic 128² tile textures and their independent mip chains are generated once per world. Repeating UVs preserve material detail across merged faces. These are basic procedural materials, not a finished PBR asset library.
+
+Sphere cells have radius 0.5 m and are centred in their grid cell. Their native
+indexed template has 91 vertices and 120 triangles, radial shading normals and
+seam-aware UVs with three longitudinal texture repeats. Quarter turns rotate the
+texture orientation; sphere geometry is rotationally symmetric at those angles.
+The template is initialized once, then appended to chunk bake buffers; no sphere
+nodes or per-sphere physics objects are created. A sphere surrounded on all six
+faces by full cubes is omitted until a neighbour changes. Touching spheres keep
+their curved surfaces. Collision uses the same faceted mesh, not an analytic
+sphere primitive. Vegetation/player authoring exclusion still reserves the full
+cell, as for other partial block shapes.
+
+Curves cost more geometry than greedy cubes: a completely filled sphere chunk
+can contain 491,520 triangles. Existing mesh admission limits apply; use repeated
+static-model batching for large decorative instance populations. Sphere-specific
+LOD and curved-shape greedy merging are not implemented. Shape 6 uses a previously
+reserved cell code: new builds load existing saves, but older builds reject saves
+containing spheres rather than silently changing their meaning. Prefab capture,
+placement, undo/redo and compound snapshots support spheres. Press **6** in block
+mode in either demo. See [sphere validation](../../docs/SPHERE_BLOCK_VALIDATION.md).
 
 Nearby chunk collision uses the same triangles as rendering, on layer **2**. `set_focus(Vector3)` and `set_collision_radius(metres)` control residency; radius defaults to 48 and accepts 0–256. One new collision shape is created per frame, with distant bodies released. Collision range uses chunk centres plus a conservative 14 m extent. This bounds normal physics work, but high-speed collision readiness and nearest-first shape creation still need a dedicated traversal policy. Mesh upload/collision construction for one complex chunk can still spike a frame; publication has a count budget, not a measured time budget.
 
@@ -118,7 +138,7 @@ Queries use authored records, not resident physics. Disabling or evicting collis
 
 Original examples in `prefabs/`: a 468-cell brick cottage, 46-cell stair flight, 32-cell doorway wall and 398-cell tower floor. Regenerate them with `python tools/generate_prefabs.py`. Tower floors repeat every four metres vertically, with an open stair shaft connecting storeys; twelve floors contain 4,776 cells. These are editable architectural examples with open window apertures, not finished assets with glass, doors or furnished interiors.
 
-In the terrain scene, **B** selects block mode, **P** cycles prefab assets and single-block mode, **R** rotates, and **RMB** places. **1–5** returns to individual shapes. A green/red bounds outline indicates whether placement passes occupancy, player-clearance and capacity checks. The outline updates at 10 Hz and caches native validation until its anchor, rotation, selected asset or block data changes. Clicking revalidates before placement. Prepare suitable ground first: prefab placement does not grade terrain or automatically extend foundations. The editor uses non-replacing placement; removal still edits individual blocks.
+In the terrain scene, **B** selects block mode, **P** cycles prefab assets and single-block mode, **R** rotates, and **RMB** places. **1–6** returns to individual shapes. A green/red bounds outline indicates whether placement passes occupancy, player-clearance and capacity checks. The outline updates at 10 Hz and caches native validation until its anchor, rotation, selected asset or block data changes. Clicking revalidates before placement. Prepare suitable ground first: prefab placement does not grade terrain or automatically extend foundations. The editor uses non-replacing placement; removal still edits individual blocks.
 
 Prefab capture has a native API but no selection/save dialog yet. Static-model composition, instance-level selection and prefab-linked updates remain pending. See [prefab validation](../../docs/PREFAB_VALIDATION.md) for native and graphical evidence.
 

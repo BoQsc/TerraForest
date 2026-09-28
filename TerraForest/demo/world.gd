@@ -191,7 +191,7 @@ func _setup_hud() -> void:
 	super._setup_hud()
 	hud.hide()
 	status.hide()
-	help.text = "WASD  Move    Shift  Sprint    Space  Jump    G  Fly    Mouse  Look    Esc  Release\nB  Terrain / Blocks    LMB  Remove    RMB  Place    1–5  Shapes    P  Prefabs    T  Material    R  Rotate    Ctrl+Z / Y  Undo / Redo\nTerrain: Wheel  Brush size    1–3  Tools    L  Lake    F5  Save world    F9  Reload    F3  Diagnostics"
+	help.text = "WASD  Move    Shift  Sprint    Space  Jump    G  Fly    Mouse  Look    Esc  Release\nB  Terrain / Blocks    LMB  Remove    RMB  Place    1–6  Shapes    P  Prefabs    T  Material    R  Rotate    Ctrl+Z / Y  Undo / Redo\nTerrain: Wheel  Brush size    1–3  Tools    L  Lake    F5  Save world    F9  Reload    F3  Diagnostics"
 	help.add_theme_font_size_override("font_size", 15)
 	help.text=help.text.replace("B  Terrain / Blocks", "B  Terrain / Blocks    M  Objects")
 	help.offset_top = -88
@@ -251,7 +251,7 @@ func _unhandled_input(event: InputEvent) -> void:
 				stroke_valid = false
 				last_capture_signature.clear()
 				terrain.set_brush_active(false)
-				_show_lake_notice("Block construction · 1–5 shapes · T material · R rotate" if structure_mode else "Terrain editing")
+				_show_lake_notice("Block construction · 1–6 shapes · T material · R rotate" if structure_mode else "Terrain editing")
 				return
 		if model_tool.active and app_focused and terrain.world_ready:
 			if model_tool.handle_input(event):
@@ -269,7 +269,7 @@ func _unhandled_input(event: InputEvent) -> void:
 					_show_lake_notice("Single blocks" if structure_prefab_index<0 else "%s · R rotate · RMB place · green bounds required" % structure_prefabs[structure_prefab_index].resource_name)
 					return
 				var handled := true
-				if event.physical_keycode >= KEY_1 and event.physical_keycode <= KEY_5:
+				if event.physical_keycode >= KEY_1 and event.physical_keycode <= KEY_6:
 					structure_prefab_index = -1
 					structure_shape = event.physical_keycode-KEY_1+1
 				elif event.physical_keycode == KEY_T:
@@ -280,7 +280,7 @@ func _unhandled_input(event: InputEvent) -> void:
 					handled = false
 				if handled:
 					_prefab_preview_timer=0.0
-					_show_lake_notice("%s · %d°" % [structure_prefabs[structure_prefab_index].resource_name,structure_rotation*90] if structure_prefab_index>=0 else "%s · %s · %d°" % [["Cube","Slab","Stairs","Slope","Post"][structure_shape-1],["Brick","Wood","Concrete","Metal"][structure_material],structure_rotation*90])
+					_show_lake_notice("%s · %d°" % [structure_prefabs[structure_prefab_index].resource_name,structure_rotation*90] if structure_prefab_index>=0 else "%s · %s · %d°" % [["Cube","Slab","Stairs","Slope","Post","Sphere"][structure_shape-1],["Brick","Wood","Concrete","Metal"][structure_material],structure_rotation*90])
 					return
 		if structure_mode and not model_tool.active and event is InputEventMouseButton and event.pressed and event.button_index in [MOUSE_BUTTON_LEFT,MOUSE_BUTTON_RIGHT] and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 			_edit_structure(event.button_index == MOUSE_BUTTON_LEFT)

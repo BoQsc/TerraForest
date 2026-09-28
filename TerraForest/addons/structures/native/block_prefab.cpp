@@ -20,7 +20,7 @@ bool NativeBlockPrefab::configure(const PackedInt32Array &records) {
     Vector3 lo(4096,4096,4096),hi(-4096,-4096,-4096);
     for(int64_t i=0;i<records.size();i+=4) {
         int x=records[i],y=records[i+1],z=records[i+2],w=records[i+3];
-        if(x<-4095||x>4095||y<-4095||y>4095||z<-4095||z>4095||w<=0||w>=128||(w&7)>5||(w&7)==0)return false;
+        if(x<-4095||x>4095||y<-4095||y>4095||z<-4095||z>4095||w<=0||w>=128||(w&7)>6||(w&7)==0)return false;
         staged.push_back({x,y,z,w});
         for(int a=0;a<3;a++) {lo[a]=std::min(lo[a],float(records[i+a]));hi[a]=std::max(hi[a],float(records[i+a]+1));}
     }

@@ -192,7 +192,43 @@ func run() -> void:
 		root.get_texture().get_image().save_png("res://reports/structure_world.png")
 	await check_model_editor(Vector3(site))
 	await check_prefab_editor(Vector3(site)+Vector3(22,0,0))
+	await check_sphere_editor(Vector3(site))
 	finish()
+
+func check_sphere_editor(site: Vector3) -> void:
+	game.fly=true
+	game.model_tool.set_active(false)
+	game.structure_mode=true
+	game.structure_prefab_index=-1
+	game.structure_rotation=0
+	editor_key(KEY_6)
+	check(game.structure_shape==6,"6 selects the native sphere block in the world editor")
+	var revision: int = game.terrain.density_revision
+	for material in range(4):
+		var cell := Vector3i(site)+Vector3i(-3+material*2,1,0)
+		game.player.position=Vector3(cell)+Vector3(0.5,6,0.5)
+		game.player.velocity=Vector3.ZERO
+		game.camera.look_at(Vector3(cell)+Vector3(0.5,-0.5,0.5),Vector3.FORWARD)
+		game.structures.blocks.set_focus(Vector3(cell))
+		check(await until(func():
+			var picked: Dictionary = game._structure_target(false)
+			return not picked.is_empty() and picked.target==cell
+		,10),"sphere site has the expected construction support %d" % material)
+		game.structure_material=material
+		game._edit_structure(false)
+		check(game.structures.blocks.get_cell(cell)==6+(material<<5),"actual block tool places sphere material %d" % material)
+		check(await until(func(): return game.structures.blocks.is_idle(),20),"sphere chunk bake publishes material %d" % material)
+	check(game.terrain.density_revision==revision,"sphere authoring leaves terrain density unchanged")
+	var saved: PackedByteArray = game.structures.capture_snapshot()
+	check(game.structures.snapshot_validator().validate_snapshot(saved) and game.structures.restore_snapshot(saved),"compound world codec accepts and restores sphere blocks")
+	check(await until(func(): return game.structures.blocks.is_idle() and game.ecosystem._reconcile.is_empty(),20),"restored spheres settle geometry and vegetation exclusion")
+	game.player.position=site+Vector3(0,2,-6.5)
+	game.camera.look_at(site+Vector3(0,1.5,0.5))
+	await create_timer(1.0).timeout
+	if DisplayServer.get_name()!="headless":
+		check(Presentation.measurement(root).fair_graphical_sample,"sphere material evidence is 1920x1080 fullscreen at full scale")
+		await RenderingServer.frame_post_draw
+		root.get_texture().get_image().save_png("res://reports/sphere_blocks.png")
 
 func editor_key(code: int) -> void:
 	var event := InputEventKey.new()
