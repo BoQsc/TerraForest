@@ -13,7 +13,8 @@ void NativeStaticBatch::release_proxy(int64_t id) {
     auto it=collision_bodies.find(id);if(it==collision_bodies.end())return;
     auto *server=PhysicsServer3D::get_singleton();
     body_ids.erase(it->second.body);
-    server->free_rid(it->second.body);server->free_rid(it->second.shape);
+    server->free_rid(it->second.body);
+    for(auto shape:it->second.shapes)server->free_rid(shape);
     collision_bodies.erase(it);proxy_evictions++;
 }
 void NativeStaticBatch::clear_proxies() {
@@ -26,12 +27,24 @@ void NativeStaticBatch::_notification(int what) {
     if(what==NOTIFICATION_ENTER_TREE||what==NOTIFICATION_ENTER_WORLD)collision_dirty=true;
 }
 bool NativeStaticBatch::configure_collision(const AABB &box,double radius,int64_t instance_limit,int64_t builds_per_tick) {
-    if(!box.position.is_finite()||!box.size.is_finite()||box.size.x<=0||box.size.y<=0||box.size.z<=0||
+    TypedArray<AABB> boxes;boxes.push_back(box);
+    return configure_compound_collision(boxes,radius,instance_limit,builds_per_tick,4096,64);
+}
+bool NativeStaticBatch::configure_compound_collision(const TypedArray<AABB> &boxes,double radius,int64_t instance_limit,int64_t builds_per_tick,int64_t shape_limit,int64_t shapes_per_tick) {
+    if(boxes.is_empty()||boxes.size()>32||!std::isfinite(radius)||radius<0||radius>512||
+       instance_limit<1||instance_limit>4096||builds_per_tick<1||builds_per_tick>64||
+       shape_limit<boxes.size()||shape_limit>16384||shapes_per_tick<boxes.size()||shapes_per_tick>256)return false;
+    std::vector<AABB> parts;AABB combined;
+    for(int i=0;i<boxes.size();i++) {
+        AABB box=boxes[i];
+        if(!box.position.is_finite()||!box.size.is_finite()||box.size.x<=0||box.size.y<=0||box.size.z<=0||
        box.size.x>4096||box.size.y>4096||box.size.z>4096||
-       std::abs(box.position.x)>4096||std::abs(box.position.y)>4096||std::abs(box.position.z)>4096||
-       !std::isfinite(radius)||radius<0||radius>512||instance_limit<1||instance_limit>4096||builds_per_tick<1||builds_per_tick>64)return false;
+       std::abs(box.position.x)>4096||std::abs(box.position.y)>4096||std::abs(box.position.z)>4096)return false;
+        combined=i?combined.merge(box):box;parts.push_back(box);
+    }
     // Proxy geometry is application-owned asset metadata, not untrusted save data.
-    clear_proxies();collision_bounds.clear();proxy_box=box;proxy_radius=radius;
+    clear_proxies();collision_bounds.clear();proxy_box=combined;proxy_parts=std::move(parts);proxy_radius=radius;
+    proxy_shape_limit=int(shape_limit);proxy_shapes_per_tick=int(shapes_per_tick);
     proxy_limit=int(instance_limit);proxy_build_limit=int(builds_per_tick);collision_dirty=true;
     std::set<BlockKey> keys;for(auto &e:groups)keys.insert(e.first);refresh_collision_bounds(keys);
     set_physics_process(radius>0);return true;
@@ -72,7 +85,7 @@ void NativeStaticBatch::select_proxies() {
         }
     }
     proxy_candidates=int(candidates.size());
-    size_t count=std::min(candidates.size(),size_t(proxy_limit));
+    size_t count=std::min(candidates.size(),size_t(std::min(proxy_limit,proxy_shape_limit/int(proxy_parts.size()))));
     std::partial_sort(candidates.begin(),candidates.begin()+count,candidates.end());candidates.resize(count);
     std::set<int64_t> wanted;for(auto &e:candidates)wanted.insert(e.second);
     std::vector<int64_t> remove;for(auto &e:collision_bodies)if(!wanted.count(e.first))remove.push_back(e.first);
@@ -90,22 +103,31 @@ void NativeStaticBatch::_physics_process(double) {
     if(current!=collision_transform) {clear_proxies();collision_transform=current;collision_dirty=true;}
     if(collision_dirty)select_proxies();
     auto *server=PhysicsServer3D::get_singleton();
-    for(int i=0;i<proxy_build_limit&&!collision_pending.empty();i++) {
+    int build_limit=std::min(proxy_build_limit,proxy_shapes_per_tick/int(proxy_parts.size()));
+    for(int i=0;i<build_limit&&!collision_pending.empty();i++) {
         int64_t id=collision_pending.back();collision_pending.pop_back();
         Transform3D world=current*placement_transform(placements.at(id));
-        PackedVector3Array points;points.resize(8);
+        std::vector<PackedVector3Array> hulls;
         bool finite=world.origin.is_finite();
-        for(int corner=0;corner<8;corner++) {
-            Vector3 point=world.basis.xform(proxy_box.get_endpoint(corner));finite=finite&&point.is_finite();points.set(corner,point);
+        for(const AABB &part:proxy_parts) {
+            PackedVector3Array points;points.resize(8);
+            for(int corner=0;corner<8;corner++) {
+                Vector3 point=world.basis.xform(part.get_endpoint(corner));finite=finite&&point.is_finite();points.set(corner,point);
+            }
+            hulls.push_back(points);
         }
         if(!finite) {invalid_proxies++;continue;}
-        RID shape=server->convex_polygon_shape_create();server->shape_set_data(shape,points);
         RID body=server->body_create();server->body_set_mode(body,PhysicsServer3D::BODY_MODE_STATIC);
-        server->body_add_shape(body,shape);server->body_set_collision_layer(body,2);server->body_set_collision_mask(body,0);
+        std::vector<RID> shapes;
+        for(auto &points:hulls) {
+            RID shape=server->convex_polygon_shape_create();server->shape_set_data(shape,points);
+            server->body_add_shape(body,shape);shapes.push_back(shape);
+        }
+        server->body_set_collision_layer(body,2);server->body_set_collision_mask(body,0);
         server->body_attach_object_instance_id(body,get_instance_id());
         server->body_set_state(body,PhysicsServer3D::BODY_STATE_TRANSFORM,Transform3D(Basis(),world.origin));
         server->body_set_space(body,get_world_3d()->get_space());
-        collision_bodies.emplace(id,ProxyBody{body,shape});body_ids.emplace(body,id);proxy_builds++;
+        collision_bodies.emplace(id,ProxyBody{body,std::move(shapes)});body_ids.emplace(body,id);proxy_builds++;
     }
 }
 int64_t NativeStaticBatch::placement_for_body(RID body) const {
@@ -114,7 +136,10 @@ int64_t NativeStaticBatch::placement_for_body(RID body) const {
 Dictionary NativeStaticBatch::collision_stats() const {
     Dictionary d;d["enabled"]=proxy_radius>0;d["radius"]=proxy_radius;d["instance_limit"]=proxy_limit;d["builds_per_tick"]=proxy_build_limit;
     d["resident_bodies"]=int(collision_bodies.size());d["pending_bodies"]=int(collision_pending.size());d["candidate_bodies"]=proxy_candidates;
-    d["budget_deferred"]=std::max(0,proxy_candidates-proxy_limit);d["selection_pending"]=collision_dirty;d["transform_valid"]=proxy_transform_valid;
+    int effective_limit=proxy_parts.empty()?proxy_limit:std::min(proxy_limit,proxy_shape_limit/int(proxy_parts.size()));
+    d["budget_deferred"]=std::max(0,proxy_candidates-effective_limit);d["selection_pending"]=collision_dirty;d["transform_valid"]=proxy_transform_valid;
+    d["parts_per_body"]=int(proxy_parts.size());d["resident_shapes"]=int(collision_bodies.size()*proxy_parts.size());
+    d["shape_limit"]=proxy_shape_limit;d["shapes_per_tick"]=proxy_shapes_per_tick;
     d["invalid_proxies"]=invalid_proxies;
     d["body_builds"]=int64_t(proxy_builds);d["body_evictions"]=int64_t(proxy_evictions);d["selection_queries"]=int64_t(proxy_queries);return d;
 }

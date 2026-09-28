@@ -18,6 +18,7 @@ void NativeStaticBatch::_bind_methods() {
     ClassDB::bind_method(D_METHOD("restore_snapshot","bytes"),&NativeStaticBatch::restore_snapshot);
     ClassDB::bind_method(D_METHOD("stats"),&NativeStaticBatch::stats);
     ClassDB::bind_method(D_METHOD("configure_collision","box","radius","instance_limit","builds_per_tick"),&NativeStaticBatch::configure_collision);
+    ClassDB::bind_method(D_METHOD("configure_compound_collision","boxes","radius","instance_limit","builds_per_tick","shape_limit","shapes_per_tick"),&NativeStaticBatch::configure_compound_collision);
     ClassDB::bind_method(D_METHOD("set_collision_focus","focus"),&NativeStaticBatch::set_collision_focus);
     ClassDB::bind_method(D_METHOD("collision_stats"),&NativeStaticBatch::collision_stats);
     ClassDB::bind_method(D_METHOD("placement_for_body","body"),&NativeStaticBatch::placement_for_body);
@@ -102,7 +103,7 @@ bool NativeStaticBatch::upsert_instances(const PackedInt64Array &ids,const Packe
     // edits use one buffer upload instead of thousands of renderer API calls.
     for(auto &e:local_updates)if(e.second.size()>64)touched.insert(e.first);
     rebuild(touched);
-    std::set<BlockKey> locally_changed;for(auto &e:local_updates)locally_changed.insert(e.first);
+    std::set<BlockKey> locally_changed;for(auto &e:local_updates)if(!touched.count(e.first))locally_changed.insert(e.first);
     refresh_collision_bounds(locally_changed);
     for(auto &e:local_updates)if(!touched.count(e.first)) {
         auto multi=batches.at(e.first)->get_multimesh();

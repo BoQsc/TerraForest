@@ -33,6 +33,8 @@ with tempfile.TemporaryDirectory(prefix='release_smoke_',dir=build) as temporary
     (project/'project.godot').write_text('config_version=5\n[application]\nconfig/name="TerraForest Native Release Test"\n')
     (project/'tests').mkdir()
     test=args.test or {'volumetric_water':'water','structures':'structures'}.get(args.addon,'native_runtime')
+    if args.addon=='structures':
+        shutil.copytree(source/'prefabs',addon/'prefabs')
     if test in ['world_archive','world_persistence','structure_persistence']:
         for name in (['world_runtime','volumetric_water','structures'] if test=='structure_persistence' else ['world_runtime','volumetric_water']):
             destination=project/'addons'/name

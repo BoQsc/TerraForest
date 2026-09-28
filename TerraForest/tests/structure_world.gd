@@ -134,7 +134,19 @@ func run() -> void:
 		await physics_frame
 	check(game.player.is_on_floor() and game.player.position.y>site.y+4.0,"existing player stands on independently placed static model")
 	var bundle: Dictionary = game.structures.snapshot_validator().decode(game.structures.capture_snapshot())
-	check(bundle.ok and bundle.models.size()==1,"main scene captures blocks and static models as one validated component")
+	check(bundle.ok and bundle.models.size()==2,"main scene captures blocks and static models as one validated component")
+	var doors: Node3D = game.structures.model("architecture/doorway/v1")
+	check(doors.upsert_instances(PackedInt64Array([201]),PackedFloat32Array([1,0,0,site.x,0,1,0,site.y+4.25,0,0,1,site.z-10.0])),"place reusable doorway model on the static platform")
+	check(await until(func(): return doors.collision_stats().resident_shapes==3),"doorway publishes all three collision parts")
+	var door_center := Vector3(site)+Vector3(0,5.25,-10)
+	var door_query := PhysicsRayQueryParameters3D.create(door_center+Vector3(0,0,-2),door_center+Vector3(0,0,2),2)
+	door_query.exclude=[game.player.get_rid()]
+	var clear_door := game.get_world_3d().direct_space_state.intersect_ray(door_query)
+	check(clear_door.is_empty(),"main-world doorway preserves its traversable opening")
+	game.player.position=Vector3(site)+Vector3(0,4.3,-11.5)
+	game.player.velocity=Vector3.ZERO
+	var doorway_collision = game.player.move_and_collide(Vector3(0,0,3))
+	check(doorway_collision==null and game.player.position.z>site.z-9,"actual world player passes through the static doorway")
 	game.fly=true
 	game.player.position=Vector3(site)+Vector3(10,8,15)
 	game.player.velocity=Vector3.ZERO
