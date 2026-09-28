@@ -131,6 +131,7 @@ public:
     int get_cell(Vector3i p) const { return cell(p.x,p.y,p.z); }
     Dictionary stats() const;
     Dictionary collision_stats() const;
+    bool is_collision_region_ready(const AABB &world_bounds) const;
     void set_focus(Vector3 p);
     bool configure_streaming(bool enabled,double radius,int64_t chunk_limit,int64_t mesh_byte_limit,int64_t cache_byte_limit);
     Dictionary streaming_stats() const;

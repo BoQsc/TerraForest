@@ -201,7 +201,47 @@ func run() -> void:
 	await check_model_editor(Vector3(site))
 	await check_prefab_editor(Vector3(site)+Vector3(22,0,0))
 	await check_sphere_editor(Vector3(site))
+	await check_building_movement_gate(Vector3(site))
 	finish()
+
+func check_building_movement_gate(site: Vector3) -> void:
+	game.fly=true
+	var blocks: Node3D = game.structures.blocks
+	var saved: PackedByteArray = blocks.capture_snapshot()
+	var origin := Vector3i(site)+Vector3i(0,24,0)
+	var records := PackedInt32Array()
+	for z in range(-1,2):
+		for x in range(-1,2): records.append_array(PackedInt32Array([origin.x+x,origin.y,origin.z+z,1]))
+	blocks.set_collision_radius(0)
+	blocks.set_cells(records)
+	blocks.flush_bakes()
+	game.player.position=Vector3(origin)+Vector3(0.5,1.08,0.5)
+	game.player.velocity=Vector3.ZERO
+	game.needs_floor_spawn=false
+	check(await until(func(): return game.terrain.player_region_ready(game.player.position)),"movement-gate fixture has ready terrain independently of building physics")
+	game.fly=false
+	var held_position: Vector3 = game.player.position
+	game.app_focused=true
+	Input.mouse_mode=Input.MOUSE_MODE_CAPTURED
+	game.controls.set_key(KEY_D,true,Time.get_ticks_usec())
+	for i in range(20): await physics_frame
+	check(game.structure_motion_blocked and game.player.position.is_equal_approx(held_position) and game.player.velocity==Vector3.ZERO,"actual walking controller holds above an authored platform whose collision is unavailable")
+	game.controls.set_key(KEY_D,false,Time.get_ticks_usec())
+	Input.mouse_mode=Input.MOUSE_MODE_VISIBLE
+	blocks.set_collision_radius(48)
+	check(await until(func(): return game.player.is_on_floor() and not game.structure_motion_blocked),"walking resumes automatically after building collision is complete")
+	check(game.player.position.y>origin.y+0.9,"resumed player lands on the building instead of falling through it")
+	blocks.set_collision_radius(0)
+	blocks.flush_bakes()
+	for i in range(5): await physics_frame
+	check(game.structure_motion_blocked,"loss of building collision while standing also holds the player")
+	blocks.restore_snapshot(saved)
+	blocks.flush_bakes()
+	var old_y: float = game.player.position.y
+	for i in range(10): await physics_frame
+	check(not game.structure_motion_blocked and game.player.position.y<old_y,"removing the unavailable authored support releases the gate in empty space")
+	game.fly=true
+	blocks.set_collision_radius(48)
 
 func check_sphere_editor(site: Vector3) -> void:
 	game.fly=true

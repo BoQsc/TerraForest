@@ -1,5 +1,10 @@
 # Incremental block collision admission
 
+Follow-up: walking now uses local native readiness bounds as documented in
+BUILDING_MOVEMENT_READINESS.md. Statements below about the absence of a movement
+gate describe the original collision-streaming milestone; vehicle and static
+model readiness remain unfinished.
+
 The previous whole-chunk path could create a 491,520-triangle sphere collider in
 one call, taking roughly 1.3 seconds in the retained baseline. The block runtime
 now creates one piece of at most 1,024 triangles per collision tick. It extracts

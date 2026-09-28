@@ -96,6 +96,10 @@ var loading_reason: String = "Preparing world"
 var loading_started_us: int = 0
 var loading_ready_frames: int = 0
 var travel_blocked_s: float = 0.0
+var structure_motion_blocked: bool = false
+
+func _additional_motion_ready(_delta: float) -> bool:
+	return true
 var record_interaction: bool = false
 var journal_failure_reported: bool = false
 
@@ -558,6 +562,7 @@ func _physics_process(delta: float) -> void:
 	var speed: float = 9.9 if controls.sprint() else 5.5
 	var direction: Vector3 = player.basis * input
 	var before_motion: Vector3 = player.position
+	structure_motion_blocked = false
 	if fly:
 		direction = camera.global_basis * input
 		if app_focused and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
@@ -583,7 +588,11 @@ func _physics_process(delta: float) -> void:
 				player.velocity.y = 7.0
 			else:
 				player.velocity.y = 0.0
-			player.move_and_slide()
+			structure_motion_blocked = not _additional_motion_ready(delta)
+			if structure_motion_blocked:
+				player.velocity = Vector3.ZERO
+			else:
+				player.move_and_slide()
 	var displacement: Vector3 = player.position - before_motion
 	planar_speed = Vector2(displacement.x, displacement.z).length() / maxf(delta, 0.000001)
 	if input != Vector3.ZERO and planar_speed > 0.01 and controls.last_press_us > 0:

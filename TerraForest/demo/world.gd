@@ -26,6 +26,15 @@ var _telemetry_time: float = 0.0
 var _lake_notice: String = ""
 var _lake_notice_until: int = 0
 
+func _additional_motion_ready(delta: float) -> bool:
+	if structures.blocks == null:
+		return false
+	# Cover capsule, floor snapping and any slide direction within this tick's
+	# travel distance. The occupancy/readiness query itself is native.
+	var bounds := AABB(player.global_position+Vector3(-0.34,-player.floor_snap_length,-0.34),Vector3(0.68,1.8+player.floor_snap_length,0.68))
+	bounds = bounds.grow(player.velocity.length()*delta+0.05)
+	return structures.blocks.is_collision_region_ready(bounds)
+
 func _ready() -> void:
 	structures.name = "Structures"
 	add_child(structures)
@@ -377,6 +386,8 @@ func _process(delta: float) -> void:
 		var building_collision: Dictionary = structures.blocks.collision_stats()
 		if building_collision.pending_chunks>0 or building_collision.unresolved_mesh_chunks>0:
 			activity="Preparing nearby building collision…"
+		if structure_motion_blocked:
+			activity="Waiting for building collision ahead…"
 		if building_stream.budget_blocked_chunks>0:
 			activity="Building detail limit · %d chunks deferred" % building_stream.budget_blocked_chunks
 		if Time.get_ticks_msec() < _lake_notice_until:
