@@ -21,6 +21,9 @@ void NativeStaticBatch::_bind_methods() {
     ClassDB::bind_method(D_METHOD("validate_snapshot","bytes"),&NativeStaticBatch::validate_snapshot);
     ClassDB::bind_method(D_METHOD("restore_snapshot","bytes"),&NativeStaticBatch::restore_snapshot);
     ClassDB::bind_method(D_METHOD("stats"),&NativeStaticBatch::stats);
+    ClassDB::bind_method(D_METHOD("configure_render_streaming","enabled","radius","batch_limit","byte_limit","uploads_per_tick","bytes_per_tick"),&NativeStaticBatch::configure_render_streaming);
+    ClassDB::bind_method(D_METHOD("set_render_focus","focus"),&NativeStaticBatch::set_render_focus);
+    ClassDB::bind_method(D_METHOD("render_stats"),&NativeStaticBatch::render_stats);
     ClassDB::bind_method(D_METHOD("configure_collision","box","radius","instance_limit","builds_per_tick"),&NativeStaticBatch::configure_collision);
     ClassDB::bind_method(D_METHOD("configure_compound_collision","boxes","radius","instance_limit","builds_per_tick","shape_limit","shapes_per_tick"),&NativeStaticBatch::configure_compound_collision);
     ClassDB::bind_method(D_METHOD("set_collision_focus","focus"),&NativeStaticBatch::set_collision_focus);
@@ -84,25 +87,10 @@ bool NativeStaticBatch::configure_asset(const String &id,const Ref<Mesh> &mesh) 
 bool NativeStaticBatch::lock_asset_identity() {if(!valid_asset(asset_id)||source_mesh.is_null())return false;asset_locked=true;return true;}
 void NativeStaticBatch::rebuild(const std::set<BlockKey> &keys) {
     refresh_collision_bounds(keys);
-    for(auto k:keys) {
-        auto group=groups.find(k);auto old=batches.find(k);
-        if(group==groups.end()) {
-            if(old!=batches.end()){memdelete(old->second);batches.erase(old);}continue;
-        }
-        Ref<MultiMesh> multi;
-        if(old==batches.end()) {
-            multi.instantiate();multi->set_transform_format(MultiMesh::TRANSFORM_3D);multi->set_mesh(source_mesh);
-            auto *instance=memnew(MultiMeshInstance3D);instance->set_multimesh(multi);instance->set_position(Vector3(k.x*32,k.y*32,k.z*32));
-            add_child(instance);batches[k]=instance;
-        } else multi=old->second->get_multimesh();
-        PackedFloat32Array buffer;buffer.resize(group->second.size()*12);int offset=0;
-        for(auto id:group->second) {
-            slots[id]=offset/12;
-            auto &t=placements.at(id);std::copy(t.begin(),t.end(),buffer.ptrw()+offset);
-            buffer[offset+3]-=k.x*32;buffer[offset+7]-=k.y*32;buffer[offset+11]-=k.z*32;offset+=12;
-        }
-        multi->set_instance_count(group->second.size());multi->set_buffer(buffer);uploads++;
-    }
+    // Release all old memberships before assigning slots in their new groups.
+    for(auto k:keys)release_batch(k);
+    if(render_streaming) {if(!keys.empty())render_dirty=true;return;}
+    for(auto k:keys)if(groups.count(k))upload_batch(k);
 }
 bool NativeStaticBatch::upsert_instances(const PackedInt64Array &ids,const PackedFloat32Array &transforms) {
     if(source_mesh.is_null()||ids.size()>100000||transforms.size()!=ids.size()*12)return false;
@@ -140,11 +128,12 @@ bool NativeStaticBatch::upsert_instances(const PackedInt64Array &ids,const Packe
     }
     // A few moves inside an existing group update GPU slots directly. Large
     // edits use one buffer upload instead of thousands of renderer API calls.
-    for(auto &e:local_updates)if(e.second.size()>64)touched.insert(e.first);
+    for(auto &e:local_updates)if(render_streaming||e.second.size()>64)touched.insert(e.first);
     rebuild(touched);
     std::set<BlockKey> locally_changed;for(auto &e:local_updates)if(!touched.count(e.first))locally_changed.insert(e.first);
     refresh_collision_bounds(locally_changed);
     for(auto &e:local_updates)if(!touched.count(e.first)) {
+        if(!batches.count(e.first))continue;
         auto multi=batches.at(e.first)->get_multimesh();
         for(auto id:e.second) {
             auto &p=placements.at(id);Basis basis(p[0],p[1],p[2],p[4],p[5],p[6],p[8],p[9],p[10]);

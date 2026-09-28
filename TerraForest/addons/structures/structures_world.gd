@@ -46,6 +46,7 @@ func register_model(asset_id: String, mesh: Mesh) -> Node3D:
 		collection.free()
 		return null
 	collection.lock_asset_identity()
+	collection.configure_render_streaming(true,384,128,4*1024*1024,2,256*1024)
 	_models[asset_id] = collection
 	_empty_models[asset_id] = collection.capture_snapshot()
 	add_child(collection)

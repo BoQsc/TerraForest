@@ -13,6 +13,152 @@ func check(value: bool, description: String) -> void:
 func transform_at(x: float, y := 0.0, z := 0.0) -> PackedFloat32Array:
 	return PackedFloat32Array([1,0,0,x,0,1,0,y,0,0,1,z])
 
+func settle_render(world: Node3D) -> void:
+	for i in range(120):
+		await process_frame
+		if not world.render_stats().selection_pending and world.render_stats().pending_batches==0:
+			return
+	check(false,"render residency settles within bounded test frames")
+
+func check_render_streaming() -> void:
+	var world: Node3D = ClassDB.instantiate("NativeStaticBatch")
+	root.add_child(world)
+	world.configure_asset("tests/render_streaming",BoxMesh.new())
+	world.upsert_instances(PackedInt64Array([1,2,3]),transform_at(0)+transform_at(64)+transform_at(128))
+	var saved: PackedByteArray = world.capture_snapshot()
+	check(not world.render_stats().enabled and world.stats().spatial_batches==3,"unconfigured model rendering preserves eager compatibility")
+	check(world.configure_render_streaming(true,256,2,96,1,48),"native rendering accepts explicit residency and upload budgets")
+	check(world.stats().spatial_batches==0 and world.render_stats().resident_transform_bytes==0,"streaming reconfiguration immediately releases old buffers")
+	var bounded := true
+	for i in range(5):
+		var before: Dictionary = world.render_stats()
+		var frame := Engine.get_process_frames()
+		var uploads: int = world.stats().batch_uploads
+		await process_frame
+		var elapsed := Engine.get_process_frames()-frame
+		var after: Dictionary = world.render_stats()
+		bounded=bounded and after.resident_transform_bytes<=96 and after.resident_batches<=2 and after.uploaded_transform_bytes-before.uploaded_transform_bytes<=elapsed*48 and world.stats().batch_uploads-uploads<=elapsed
+	check(bounded,"renderer obeys resident bytes, batch count, upload bytes and upload count")
+	check(world.stats().slot_entries==2 and world.render_stats().budget_deferred==1,"only admitted placements retain GPU slot entries")
+	check(world.capture_snapshot()==saved,"render residency preserves the exact authored snapshot")
+	var queries: int = world.render_stats().selection_queries
+	world.set_render_focus(Vector3(0.1,0,0))
+	await process_frame
+	await process_frame
+	check(world.render_stats().selection_queries==queries,"sub-threshold travel does not rescan stationary model groups")
+	world.set_render_focus(Vector3(128,0,0))
+	await settle_render(world)
+	var positions: Array = []
+	for child in world.get_children(): positions.append(child.position.x)
+	check(positions.has(128.0) and positions.has(64.0) and not positions.has(0.0),"travel chooses nearest batches and evicts distant render buffers")
+	world.upsert_instances(PackedInt64Array([1]),transform_at(-256))
+	await settle_render(world)
+	check(world.stats().slot_entries==2 and world.get_instance(1)[3]==-256,"nonresident model edits preserve data without allocating a distant buffer")
+	world.set_render_focus(Vector3(-256,0,0))
+	await settle_render(world)
+	var rendered := false
+	for child in world.get_children():
+		if child.position.x==-256.0: rendered=not gpu or child.multimesh.get_instance_transform(0).origin.x==0.0
+	check(rendered,"return travel uploads the latest nonresident placement transform")
+	var edited_uploads: int = world.stats().batch_uploads
+	world.upsert_instances(PackedInt64Array([1]),transform_at(-255))
+	check(world.stats().spatial_batches==0,"resident transform edits queue their replacement within upload budgets")
+	await settle_render(world)
+	check(world.stats().batch_uploads==edited_uploads+1 and world.get_instance(1)[3]==-255 and world.stats().slot_entries==1,"resident edit republishes one current group")
+	if gpu:
+		check(world.get_child(0).multimesh.get_instance_transform(0).origin.x==1.0,"GPU readback contains the republished resident transform")
+	check(world.restore_snapshot(saved),"streamed collection restores its authoritative snapshot")
+	world.set_render_focus(Vector3.ZERO)
+	await settle_render(world)
+	check(world.stats().slot_entries==2 and world.capture_snapshot()==saved,"snapshot restore reconstructs only admitted batches")
+	var invalid_before: Dictionary = world.render_stats()
+	check(not world.configure_render_streaming(true,NAN,2,96,1,48) and not world.configure_render_streaming(true,32,0,96,1,48) and not world.configure_render_streaming(true,32,2,47,1,48) and not world.configure_render_streaming(true,32,2,96,0,48) and not world.configure_render_streaming(true,32,2,96,1,47),"invalid render configurations reject atomically")
+	world.set_render_focus(Vector3(NAN,0,0))
+	check(world.render_stats()==invalid_before,"invalid budget and focus leave render state unchanged")
+	world.configure_render_streaming(true,256,2,96,2,48)
+	world.upsert_instances(PackedInt64Array([4]),transform_at(1))
+	await settle_render(world)
+	check(world.render_stats().budget_deferred==1 and world.stats().slot_entries==2,"oversized batch is deferred without starving smaller admissible groups")
+	check(world.get_instance(4).size()==12,"upload-deferred model stays authored")
+	world.remove_instances(PackedInt64Array([1,4]))
+	await settle_render(world)
+	check(world.stats().slot_entries==2 and world.render_stats().resident_transform_bytes==96,"removal reclaims memberships without stale slots")
+	root.remove_child(world)
+	check(world.render_stats().resident_transform_bytes==0 and world.stats().slot_entries==0,"tree exit releases streamed rendering and slot membership")
+	root.add_child(world)
+	await settle_render(world)
+	check(world.stats().slot_entries==2,"tree reentry restores eligible rendering")
+	world.configure_render_streaming(false,256,2,96,1,48)
+	check(world.stats().slot_entries==world.stats().instances,"disabling streaming restores eager rendering")
+	world.queue_free()
+	await process_frame
+	await check_render_bounds()
+	await check_render_population()
+
+func check_render_bounds() -> void:
+	var world: Node3D = ClassDB.instantiate("NativeStaticBatch")
+	root.add_child(world)
+	world.configure_asset("tests/extended_mesh",BoxMesh.new())
+	world.configure_render_streaming(true,4,4,192,1,96)
+	var long_model := transform_at(100)
+	long_model[0]=200
+	world.upsert_instances(PackedInt64Array([1]),long_model)
+	world.configure_collision(AABB(Vector3(-0.1,-0.1,-0.1),Vector3.ONE*0.2),4,1,1)
+	await settle_render(world)
+	await settle_collision(world)
+	check(world.stats().slot_entries==1 and world.collision_stats().resident_bodies==0,"render admission uses mesh extent independently of smaller collision proxies")
+	var expanded := BoxMesh.new()
+	expanded.size=Vector3(0.1,1,1)
+	world.configure_asset("tests/extended_mesh",expanded)
+	await settle_render(world)
+	check(world.stats().slot_entries==0,"asset mesh bounds changes invalidate render residency")
+	world.set_render_focus(Vector3(100,0,0))
+	world.set_collision_focus(Vector3(100,0,0))
+	await settle_render(world)
+	await settle_collision(world)
+	var hit := collision_ray(Vector3(100,3,0),Vector3(100,-3,0))
+	world.set_render_focus(Vector3(10000,0,0))
+	await settle_render(world)
+	check(world.stats().slot_entries==0 and not hit.is_empty() and world.collision_stats().resident_bodies==1,"render eviction does not change independently admitted physics")
+	var occupancy: PackedByteArray = world.overlap_mask([Transform3D(Basis(),Vector3(100,0,0))],AABB(Vector3(-0.1,-0.1,-0.1),Vector3.ONE*0.2))
+	check(occupancy.size()==1 and occupancy[0]==1,"nonresident rendering still excludes vegetation from authored geometry")
+	world.queue_free()
+	await process_frame
+
+func check_render_population() -> void:
+	var world: Node3D = ClassDB.instantiate("NativeStaticBatch")
+	root.add_child(world)
+	world.configure_asset("tests/100k_streaming",BoxMesh.new())
+	world.configure_render_streaming(true,80,2,96000,1,48000)
+	var ids := PackedInt64Array()
+	var transforms := PackedFloat32Array()
+	ids.resize(100000)
+	transforms.resize(1200000)
+	for i in range(100000):
+		ids[i]=i+1
+		var offset := i*12
+		transforms[offset]=1
+		transforms[offset+3]=float(i/1000)*64
+		transforms[offset+5]=1
+		transforms[offset+7]=float((i%1000)/32)
+		transforms[offset+10]=1
+		transforms[offset+11]=i%32
+	check(world.upsert_instances(ids,transforms),"100000 placements enter authored storage with deferred rendering")
+	var saved: PackedByteArray = world.capture_snapshot()
+	await settle_render(world)
+	check(world.stats().instances==100000 and world.render_stats().authored_groups==100 and world.stats().slot_entries==2000 and world.render_stats().resident_transform_bytes==96000,"100000 placements retain only 2000 nearby render transforms under 96 KB payload budget")
+	var stable := true
+	for cycle in range(20):
+		world.set_render_focus(Vector3((cycle%2)*6336,0,0))
+		await settle_render(world)
+		stable=stable and world.render_stats().resident_transform_bytes<=96000 and world.stats().slot_entries<=2000 and world.get_child_count()<=2
+	check(stable and world.capture_snapshot()==saved,"repeated end-to-end travel bounds rendering without altering 100000 placements")
+	world.remove_instances(ids)
+	await settle_render(world)
+	check(world.get_child_count()==0 and world.stats().slot_entries==0 and world.render_stats().resident_transform_bytes==0 and world.render_stats().authored_groups==0,"clearing the population releases all render buffers, bounds and slots")
+	world.queue_free()
+	await process_frame
+
 func signed_snapshot(payload: PackedByteArray) -> PackedByteArray:
 	var hash := HashingContext.new()
 	hash.start(HashingContext.HASH_SHA256)
@@ -393,6 +539,7 @@ func run() -> void:
 	auto_world.free()
 	check_model_exclusion()
 	await check_model_history()
+	await check_render_streaming()
 	var result := {"checks":checks,"failures":failures,"gpu_readback":gpu,"collision_100k":collision_evidence}
 	DirAccess.make_dir_recursive_absolute("res://reports")
 	var file := FileAccess.open("res://reports/static_placements_gpu.json" if gpu else "res://reports/static_placements.json",FileAccess.WRITE)
