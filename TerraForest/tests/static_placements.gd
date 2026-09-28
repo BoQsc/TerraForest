@@ -306,6 +306,9 @@ func check_collision() -> void:
 	world.upsert_instances(PackedInt64Array([17,9000000001,33]),transform_at(0)+transform_at(8)+transform_at(80))
 	var saved: PackedByteArray = world.capture_snapshot()
 	check(world.configure_collision(box,16,2,1),"configure bounded native static collision")
+	check(not world.is_collision_region_ready(box),"authored model blocks readiness before its collider is admitted")
+	check(world.is_collision_region_ready(AABB(Vector3(3,-0.5,-0.5),Vector3.ONE)),"empty space within a model origin group remains ready")
+	check(not world.is_collision_region_ready(AABB(Vector3.ZERO,Vector3.ZERO)),"model readiness rejects degenerate query bounds")
 	var bounded := true
 	var previous: int = world.collision_stats().body_builds
 	var previous_tick := Engine.get_physics_frames()
@@ -317,6 +320,11 @@ func check_collision() -> void:
 		previous=now
 		previous_tick=Engine.get_physics_frames()
 	check(bounded and world.collision_stats().resident_bodies==2,"nearby proxies publish within one-body-per-tick budget")
+	check(world.is_collision_region_ready(box),"resident model collision satisfies local readiness")
+	check(not world.is_collision_region_ready(AABB(Vector3(79.5,-0.5,-0.5),Vector3.ONE)),"distant authored model stays unready when its collider is absent")
+	world.position=Vector3(100,0,0)
+	check(not world.is_collision_region_ready(AABB(Vector3(99.5,-0.5,-0.5),Vector3.ONE)),"collection transform change rejects stale collision immediately")
+	world.position=Vector3.ZERO
 	check(world.get_child_count()==world.stats().spatial_batches,"native collision adds no per-placement scene nodes")
 	var hit := collision_ray(Vector3(8,3,0),Vector3(8,-3,0))
 	check(not hit.is_empty() and hit.collider==world and world.placement_for_body(hit.rid)==9000000001,"physics ray resolves exact stable 64-bit placement ID")
@@ -466,6 +474,8 @@ func check_compound_collision() -> void:
 	world.configure_asset("architecture/doorway/v1",mesh)
 	world.upsert_instances(PackedInt64Array([11,22,33]),transform_at(0)+transform_at(8)+transform_at(16))
 	check(world.configure_compound_collision(boxes,64,3,8,6,3),"compound doorway uses explicit body and shape budgets")
+	check(world.is_collision_region_ready(AABB(Vector3(-0.3,0.3,-0.2),Vector3(0.6,1.2,0.4))),"unbuilt compound doorway leaves its actual opening ready")
+	check(not world.is_collision_region_ready(boxes[0]),"unbuilt doorway post is not collision ready")
 	var before: int = world.collision_stats().body_builds
 	var tick := Engine.get_physics_frames()
 	var bounded := true
@@ -478,6 +488,10 @@ func check_compound_collision() -> void:
 		tick=Engine.get_physics_frames()
 	var status: Dictionary = world.collision_stats()
 	check(bounded and status.resident_bodies==2 and status.resident_shapes==6 and status.budget_deferred==1,"shape budgets bound residency and tick publication independently of body budgets")
+	check(world.is_collision_region_ready(boxes[0]),"completed compound proxy satisfies readiness")
+	var deferred_part: AABB = boxes[0]
+	deferred_part.position.x+=16
+	check(not world.is_collision_region_ready(deferred_part),"shape-budget-deferred model remains unready even with an empty pending queue")
 	check(collision_ray(Vector3(0,1,-2),Vector3(0,1,2)).is_empty(),"doorway opening is not filled by the union bounding box")
 	for point in [Vector3(-1.5,1,0),Vector3(1.5,1,0),Vector3(0,2.5,0)]:
 		var hit := collision_ray(point+Vector3(0,0,-2),point+Vector3(0,0,2))

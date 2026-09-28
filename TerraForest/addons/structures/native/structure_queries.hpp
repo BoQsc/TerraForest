@@ -11,6 +11,7 @@ class NativeStructureQueries : public godot::RefCounted {
 protected:
     static void _bind_methods();
 public:
+    bool is_collision_region_ready(NativeBlockWorld *blocks,const godot::Array &models,const godot::AABB &bounds) const;
     godot::PackedByteArray overlap_mask(NativeBlockWorld *blocks,const godot::Array &models,const godot::TypedArray<godot::Transform3D> &transforms,const godot::AABB &bounds) const;
 };
 }

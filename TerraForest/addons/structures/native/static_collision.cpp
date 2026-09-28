@@ -6,6 +6,33 @@
 #include <cmath>
 
 namespace terraforest {
+bool NativeStaticBatch::is_collision_region_ready(const AABB &world_bounds) const {
+    if(!world_bounds.position.is_finite()||!world_bounds.size.is_finite()||
+       world_bounds.size.x<=0||world_bounds.size.y<=0||world_bounds.size.z<=0)return false;
+    // Assets without collision metadata are intentionally decorative.
+    if(proxy_parts.empty()||placements.empty())return true;
+    Transform3D current=is_inside_tree()?get_global_transform():get_transform();
+    double determinant=current.basis.determinant();
+    if(!current.is_finite()||!std::isfinite(determinant)||std::abs(determinant)<1e-9)return false;
+    AABB local=current.affine_inverse().xform(world_bounds);
+    if(!local.position.is_finite()||!local.size.is_finite()||!local.get_end().is_finite())return false;
+    // Bounds include full transformed proxy extents, even beyond origin groups.
+    for(const auto &group:collision_bounds) {
+        if(!group.second.intersects(local))continue;
+        for(auto id:groups.at(group.first)) {
+            auto placement=placement_transform(placements.at(id));
+            if(!placement.xform(proxy_box).intersects(local))continue;
+            bool overlap=false;
+            for(const auto &part:proxy_parts) {
+                if(placement.xform(part).intersects(local)) {overlap=true;break;}
+            }
+            if(!overlap)continue;
+            if(!is_inside_tree()||proxy_radius<=0||current!=collision_transform||
+               !collision_bodies.count(id))return false;
+        }
+    }
+    return true;
+}
 Transform3D NativeStaticBatch::placement_transform(const Placement &p) {
     return Transform3D(Basis(p[0],p[1],p[2],p[4],p[5],p[6],p[8],p[9],p[10]),Vector3(p[3],p[7],p[11]));
 }
