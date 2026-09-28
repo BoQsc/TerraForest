@@ -1,0 +1,265 @@
+{
+  "checks": [
+    {
+      "name": "main terrain scene finishes its loading gate",
+      "pass": true
+    },
+    {
+      "name": "natural vegetation is resident before construction",
+      "pass": true
+    },
+    {
+      "name": "placing a block removes an intersecting tree canopy",
+      "pass": true
+    },
+    {
+      "name": "undo restores vegetation excluded by construction",
+      "pass": true
+    },
+    {
+      "name": "redo reapplies construction vegetation exclusion",
+      "pass": true
+    },
+    {
+      "name": "removing construction restores the deterministic tree candidate",
+      "pass": true
+    },
+    {
+      "name": "restored tree keeps its original placement",
+      "pass": true
+    },
+    {
+      "name": "snapshot restore also reapplies occupancy exclusion",
+      "pass": true
+    },
+    {
+      "name": "forest owner is regenerated after residency reset",
+      "pass": true
+    },
+    {
+      "name": "regenerated forest does not grow through saved blocks",
+      "pass": true
+    },
+    {
+      "name": "regenerated blocked candidate remains available after demolition",
+      "pass": true
+    },
+    {
+      "name": "construction site has real terrain collision",
+      "pass": true
+    },
+    {
+      "name": "native foundation/walls and editing target created in terrain world",
+      "pass": true
+    },
+    {
+      "name": "building chunk meshes publish in the main scene",
+      "pass": true
+    },
+    {
+      "name": "B selects independent block construction",
+      "pass": true
+    },
+    {
+      "name": "tool mode switch cannot carry a terrain stroke into later editing",
+      "pass": true
+    },
+    {
+      "name": "actual construction picking places the adjacent block",
+      "pass": true
+    },
+    {
+      "name": "Ctrl+Z reverses the edit and invalidates cached world persistence",
+      "pass": true
+    },
+    {
+      "name": "Ctrl+Y restores the edit and its persistent representation",
+      "pass": true
+    },
+    {
+      "name": "placed block mesh publishes",
+      "pass": true
+    },
+    {
+      "name": "actual construction picking removes the selected block",
+      "pass": true
+    },
+    {
+      "name": "block authoring does not mutate terrain density",
+      "pass": true
+    },
+    {
+      "name": "temporary editing target removed",
+      "pass": true
+    },
+    {
+      "name": "existing player stands on independent building collision",
+      "pass": true
+    },
+    {
+      "name": "static model placement shares the main world structures owner",
+      "pass": true
+    },
+    {
+      "name": "place a separate static-model platform",
+      "pass": true
+    },
+    {
+      "name": "main scene admits nearby model collision proxies",
+      "pass": true
+    },
+    {
+      "name": "main-world model picking returns stable placement identity",
+      "pass": true
+    },
+    {
+      "name": "existing player stands on independently placed static model",
+      "pass": true
+    },
+    {
+      "name": "main scene captures blocks and static models as one validated component",
+      "pass": true
+    },
+    {
+      "name": "building exclusion reconciliation drains",
+      "pass": true
+    },
+    {
+      "name": "no resident tree canopy overlaps any occupied building cell",
+      "pass": true
+    },
+    {
+      "name": "cached candidates stay within the residency budget",
+      "pass": true
+    },
+    {
+      "name": "eviction reclaims samples even when publication had failed",
+      "pass": true
+    },
+    {
+      "name": "integrated construction view is 1920x1080 fullscreen at full scale",
+      "pass": true
+    },
+    {
+      "name": "editor loads reusable cottage, stair, wall and tower-floor assets",
+      "pass": true
+    },
+    {
+      "name": "prefab site has terrain collision",
+      "pass": true
+    },
+    {
+      "name": "P selects the cottage asset in block mode",
+      "pass": true
+    },
+    {
+      "name": "R rotates prefab orientation",
+      "pass": true
+    },
+    {
+      "name": "prefab tool picks an actual construction anchor",
+      "pass": true
+    },
+    {
+      "name": "clear prefab placement displays a valid bounds preview",
+      "pass": true
+    },
+    {
+      "name": "preview follows rotated prefab bounds",
+      "pass": true
+    },
+    {
+      "name": "prefab authoring rejects enclosing the player",
+      "pass": true
+    },
+    {
+      "name": "logical world changes invalidate cached placement validation",
+      "pass": true
+    },
+    {
+      "name": "actual placement tool creates every cottage cell in one operation",
+      "pass": true
+    },
+    {
+      "name": "prefab placement leaves terrain density unchanged",
+      "pass": true
+    },
+    {
+      "name": "occupied prefab footprint is rejected",
+      "pass": true
+    },
+    {
+      "name": "Ctrl+Z removes the entire prefab in one step",
+      "pass": true
+    },
+    {
+      "name": "editor redo cannot restore the prefab through the player",
+      "pass": true
+    },
+    {
+      "name": "Ctrl+Shift+Z restores the complete prefab after moving clear",
+      "pass": true
+    },
+    {
+      "name": "prefab chunk meshes finish their bounded bake queue",
+      "pass": true
+    },
+    {
+      "name": "existing player stands inside the prefab on its timber floor",
+      "pass": true
+    },
+    {
+      "name": "compound world restoration preserves prefab-authored cells",
+      "pass": true
+    },
+    {
+      "name": "world restoration clears the prior editor history",
+      "pass": true
+    },
+    {
+      "name": "prefab reload finishes meshes and forest exclusion",
+      "pass": true
+    },
+    {
+      "name": "tower site has terrain collision",
+      "pass": true
+    },
+    {
+      "name": "twelve repeated tower floors interlock without overwriting cells",
+      "pass": true
+    },
+    {
+      "name": "tower geometry and vegetation exclusion finish",
+      "pass": true
+    },
+    {
+      "name": "player collision works on an upper repeated tower floor",
+      "pass": true
+    },
+    {
+      "name": "repeated tower stair flights preserve their four rises through the floor shaft",
+      "pass": true
+    },
+    {
+      "name": "main-world travel evicts distant building meshes",
+      "pass": true
+    },
+    {
+      "name": "travel releases building physics without changing saved cells",
+      "pass": true
+    },
+    {
+      "name": "return travel restores building meshes from cache",
+      "pass": true
+    },
+    {
+      "name": "return travel needs no additional building bake jobs",
+      "pass": true
+    },
+    {
+      "name": "prefab evidence is 1920x1080 fullscreen at full scale",
+      "pass": true
+    }
+  ],
+  "failures": 0
+}

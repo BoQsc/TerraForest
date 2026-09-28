@@ -1,0 +1,21 @@
+{
+  "checks": 86,
+  "collision_100k": {
+    "body_builds": 66,
+    "body_evictions": 50,
+    "budget_deferred": 80,
+    "builds_per_tick": 4,
+    "candidate_bodies": 96,
+    "enabled": true,
+    "instance_limit": 16,
+    "invalid_proxies": 0,
+    "pending_bodies": 0,
+    "radius": 16.0,
+    "resident_bodies": 16,
+    "selection_pending": false,
+    "selection_queries": 34,
+    "transform_valid": true
+  },
+  "failures": 0,
+  "gpu_readback": true
+}

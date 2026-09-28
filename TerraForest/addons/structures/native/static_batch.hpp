@@ -26,6 +26,25 @@ class NativeStaticBatch : public Node3D {
     bool asset_locked=false;
     uint64_t uploads=0;
     uint64_t instance_updates=0;
+    struct ProxyBody { RID body,shape; };
+    std::map<int64_t,ProxyBody> collision_bodies;
+    std::map<RID,int64_t> body_ids;
+    std::map<BlockKey,AABB> collision_bounds;
+    std::vector<int64_t> collision_pending;
+    AABB proxy_box;
+    Vector3 collision_focus,selection_focus;
+    Transform3D collision_transform;
+    double proxy_radius=0;
+    int proxy_limit=512,proxy_build_limit=8;
+    bool collision_dirty=true,proxy_transform_valid=true;
+    uint64_t proxy_builds=0,proxy_evictions=0,proxy_queries=0;
+    int proxy_candidates=0,invalid_proxies=0;
+    static Transform3D placement_transform(const Placement &p);
+    void release_proxy(int64_t id);
+    void clear_proxies();
+    void invalidate_proxy(int64_t id);
+    void refresh_collision_bounds(const std::set<BlockKey> &keys);
+    void select_proxies();
     static bool valid_transform(const float *t);
     static BlockKey group_for(const Placement &p);
     static bool valid_asset(const String &id);
@@ -33,7 +52,14 @@ class NativeStaticBatch : public Node3D {
     void rebuild(const std::set<BlockKey> &keys);
 protected:
     static void _bind_methods();
+    void _notification(int what);
 public:
+    ~NativeStaticBatch();
+    void _physics_process(double delta) override;
+    bool configure_collision(const AABB &box,double radius,int64_t instance_limit,int64_t builds_per_tick);
+    void set_collision_focus(Vector3 focus);
+    Dictionary collision_stats() const;
+    int64_t placement_for_body(RID body) const;
     bool set_instances(const Ref<Mesh> &mesh,const PackedFloat32Array &transforms);
     bool configure_asset(const String &id,const Ref<Mesh> &mesh);
     bool lock_asset_identity();

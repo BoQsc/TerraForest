@@ -124,6 +124,15 @@ func run() -> void:
 	check(game.player.is_on_floor() and game.player.position.y>site.y+0.9,"existing player stands on independent building collision")
 	var models: Node3D = game.structures.model("architecture/metal_beam/v1")
 	check(models.upsert_instances(PackedInt64Array([101]),PackedFloat32Array([6,0,0,site.x,0,0.15,0,site.y+4.0,0,0,0.15,site.z-3.0])),"static model placement shares the main world structures owner")
+	check(models.upsert_instances(PackedInt64Array([102]),PackedFloat32Array([6,0,0,site.x,0,0.5,0,site.y+4.0,0,0,6,site.z-10.0])),"place a separate static-model platform")
+	check(await until(func(): return models.collision_stats().resident_bodies==2),"main scene admits nearby model collision proxies")
+	var model_hit := game.get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(Vector3(site)+Vector3(0,8,-10),Vector3(site)+Vector3(0,2,-10),2))
+	check(not model_hit.is_empty() and model_hit.collider==models and models.placement_for_body(model_hit.rid)==102,"main-world model picking returns stable placement identity")
+	game.player.position=Vector3(site)+Vector3(0,7,-10)
+	game.player.velocity=Vector3.ZERO
+	for i in range(120):
+		await physics_frame
+	check(game.player.is_on_floor() and game.player.position.y>site.y+4.0,"existing player stands on independently placed static model")
 	var bundle: Dictionary = game.structures.snapshot_validator().decode(game.structures.capture_snapshot())
 	check(bundle.ok and bundle.models.size()==1,"main scene captures blocks and static models as one validated component")
 	game.fly=true
