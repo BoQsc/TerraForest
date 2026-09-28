@@ -15,6 +15,12 @@ var timer := 0.0
 var preview_valid := false
 var preview_material := StandardMaterial3D.new()
 var history: RefCounted
+var picked_collection: Node3D
+var picked_id := 0
+var transforming := false
+var edit_available := false
+var transform_controls := VBoxContainer.new()
+var help := Label.new()
 
 func configure(view: Camera3D, actor: CharacterBody3D, entries: Array[Dictionary], ui: Node) -> void:
 	camera=view
@@ -36,7 +42,7 @@ func configure(view: Camera3D, actor: CharacterBody3D, entries: Array[Dictionary
 	ui.add_child(panel)
 	panel.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_RIGHT)
 	panel.offset_left=-360
-	panel.offset_top=-300
+	panel.offset_top=-430
 	panel.offset_right=-24
 	panel.offset_bottom=-106
 	var style := StyleBoxFlat.new()
@@ -56,8 +62,22 @@ func configure(view: Camera3D, actor: CharacterBody3D, entries: Array[Dictionary
 		button.pressed.connect(select.bind(i))
 		content.add_child(button)
 		choices.append(button)
-	var help := Label.new()
-	help.text="R Rotate · RMB Place · LMB Remove\nCtrl+Z Undo · Ctrl+Y / Ctrl+Shift+Z Redo\nM Blocks · F5 Save · Esc Use buttons"
+	var selection_row := HBoxContainer.new()
+	content.add_child(selection_row)
+	tool_button(selection_row,"Select aimed (E)",pick)
+	tool_button(selection_row,"Clear (Q)",clear_selection)
+	content.add_child(transform_controls)
+	var move_row := HBoxContainer.new()
+	transform_controls.add_child(move_row)
+	for axis in [Vector3.LEFT,Vector3.RIGHT,Vector3.DOWN,Vector3.UP,Vector3.FORWARD,Vector3.BACK]:
+		var names := {Vector3.LEFT:"X−",Vector3.RIGHT:"X+",Vector3.DOWN:"Y−",Vector3.UP:"Y+",Vector3.FORWARD:"Z−",Vector3.BACK:"Z+"}
+		tool_button(move_row,names[axis],transform_selected.bind(axis*0.5,0.0,1.0))
+	var shape_row := HBoxContainer.new()
+	transform_controls.add_child(shape_row)
+	tool_button(shape_row,"Rotate 90°",transform_selected.bind(Vector3.ZERO,PI*0.5,1.0))
+	tool_button(shape_row,"Scale −",transform_selected.bind(Vector3.ZERO,0.0,1.0/1.1))
+	tool_button(shape_row,"Scale +",transform_selected.bind(Vector3.ZERO,0.0,1.1))
+	transform_controls.hide()
 	help.add_theme_font_size_override("font_size",13)
 	content.add_child(help)
 	panel.hide()
@@ -66,6 +86,7 @@ func configure(view: Camera3D, actor: CharacterBody3D, entries: Array[Dictionary
 func select(index: int) -> void:
 	if index<0 or index>=catalog.size():
 		return
+	clear_selection()
 	selected=index
 	preview.mesh=catalog[index].mesh
 	for i in range(choices.size()):
@@ -73,10 +94,86 @@ func select(index: int) -> void:
 	timer=0
 
 func set_active(value: bool) -> void:
+	clear_selection()
 	active=value and not catalog.is_empty() and is_instance_valid(camera) and is_instance_valid(player)
 	panel.visible=active
 	preview.hide()
 	timer=0
+
+func tool_button(row: Control, text: String, action: Callable) -> void:
+	var button := Button.new()
+	button.text=text
+	button.focus_mode=Control.FOCUS_NONE
+	button.size_flags_horizontal=Control.SIZE_EXPAND_FILL
+	button.pressed.connect(action)
+	row.add_child(button)
+
+func clear_selection() -> void:
+	if is_instance_valid(picked_collection) and picked_collection.changed.is_connected(_selected_changed):
+		picked_collection.changed.disconnect(_selected_changed)
+	picked_collection=null
+	picked_id=0
+	transform_controls.hide()
+	if not catalog.is_empty():
+		preview.mesh=catalog[selected].mesh
+	preview.hide()
+	timer=0
+
+func _selected_changed() -> void:
+	# Loads, undo and external edits invalidate selection before an ID can be reused.
+	if not transforming:
+		clear_selection()
+
+func pick() -> void:
+	if not active or not edit_available:
+		return
+	clear_selection()
+	var hit := ray()
+	if not hit.is_empty():
+		for entry in catalog:
+			if hit.collider==entry.collection:
+				var id: int = entry.collection.placement_for_body(hit.rid)
+				if id>0:
+					picked_collection=entry.collection
+					picked_id=id
+					preview.mesh=entry.mesh
+					picked_collection.changed.connect(_selected_changed)
+					transform_controls.show()
+					refresh()
+					notice.emit("Object selected · arrows move · R rotates · +/− scales")
+					return
+	notice.emit("Aim at a nearby placed model to select it")
+
+func selected_transform() -> Dictionary:
+	if not is_instance_valid(picked_collection) or picked_id<=0:
+		return {}
+	var p: PackedFloat32Array = picked_collection.get_instance(picked_id)
+	if p.size()!=12:
+		clear_selection()
+		return {}
+	var basis := Basis(Vector3(p[0],p[4],p[8]),Vector3(p[1],p[5],p[9]),Vector3(p[2],p[6],p[10]))
+	return {"transform":picked_collection.global_transform*Transform3D(basis,Vector3(p[3],p[7],p[11]))}
+
+func transform_selected(offset: Vector3, angle: float, factor: float) -> bool:
+	if not active or not edit_available:
+		return false
+	var current := selected_transform()
+	if current.is_empty():
+		return false
+	var t: Transform3D = current.transform
+	t.origin+=offset
+	t.basis=Basis(Vector3.UP,angle)*t.basis*factor
+	var requested := records(t,picked_collection)
+	var prior_barriers: int = history.stats().barriers
+	transforming=true
+	var accepted: bool = history.update(picked_collection,picked_id,requested,protection())
+	transforming=false
+	if not is_instance_valid(picked_collection) or history.stats().barriers!=prior_barriers:
+		clear_selection()
+	timer=0
+	refresh()
+	notice.emit("Object transformed · Ctrl+Z undoes" if accepted else "Transform blocked · move clear or check capacity")
+	return accepted
 
 func ray() -> Dictionary:
 	var query := PhysicsRayQueryParameters3D.create(camera.global_position,camera.global_position-camera.global_basis.z*48,3)
@@ -105,9 +202,18 @@ func records(world_transform: Transform3D, collection: Node3D) -> PackedFloat32A
 	return PackedFloat32Array([t.basis.x.x,t.basis.y.x,t.basis.z.x,t.origin.x,t.basis.x.y,t.basis.y.y,t.basis.z.y,t.origin.y,t.basis.x.z,t.basis.y.z,t.basis.z.z,t.origin.z])
 
 func refresh() -> void:
-	var hit := target()
 	preview_valid=false
 	var status: Dictionary = history.stats()
+	var selection := selected_transform()
+	if not selection.is_empty():
+		caption.text="OBJECT #%d · selected\nUndo %d · Redo %d" % [picked_id,status.undo_steps,status.redo_steps]
+		help.text="Arrows X/Z · PgUp/Dn Y · Shift fine\nR Rotate · +/− Scale · Q Clear\nCtrl+Z Undo · Ctrl+Y Redo · M Blocks"
+		preview.global_transform=selection.transform
+		preview_material.albedo_color=Color(1.0,0.72,0.2,0.35)
+		preview.show()
+		return
+	help.text="E Select · R Rotate · RMB Place · LMB Remove\nCtrl+Z Undo · Ctrl+Y / Ctrl+Shift+Z Redo\nM Blocks · F5 Save · Esc Use buttons"
+	var hit := target()
 	caption.text="OBJECTS · %s · %d°\nUndo %d · Redo %d" % [catalog[selected].title,quarter_turns*90,status.undo_steps,status.redo_steps]
 	if hit.is_empty():
 		preview.hide()
@@ -119,7 +225,10 @@ func refresh() -> void:
 	preview.show()
 
 func edit(remove: bool) -> int:
-	if not active:
+	if not active or not edit_available:
+		return 0
+	if picked_id>0 and not remove:
+		notice.emit("Q clears selection and returns to placement")
 		return 0
 	if remove:
 		var hit := ray()
@@ -147,13 +256,30 @@ func handle_input(event: InputEvent) -> bool:
 	if not active:
 		return false
 	if event is InputEventKey and event.pressed and not event.echo:
+		if event.physical_keycode==KEY_E:
+			pick()
+			return true
+		if event.physical_keycode==KEY_Q:
+			clear_selection()
+			return true
 		if event.physical_keycode>=KEY_1 and event.physical_keycode<KEY_1+catalog.size():
 			select(event.physical_keycode-KEY_1)
 			return true
 		if event.physical_keycode==KEY_R:
+			if picked_id>0:
+				transform_selected(Vector3.ZERO,PI*0.5,1.0)
+				return true
 			quarter_turns=(quarter_turns+1)%4
 			timer=0
 			return true
+		if picked_id>0:
+			var directions := {KEY_LEFT:Vector3.LEFT,KEY_RIGHT:Vector3.RIGHT,KEY_UP:Vector3.FORWARD,KEY_DOWN:Vector3.BACK,KEY_PAGEUP:Vector3.UP,KEY_PAGEDOWN:Vector3.DOWN}
+			if directions.has(event.physical_keycode):
+				transform_selected(directions[event.physical_keycode]*(0.1 if event.shift_pressed else 0.5),0.0,1.0)
+				return true
+			if event.physical_keycode in [KEY_EQUAL,KEY_PLUS,KEY_KP_ADD,KEY_MINUS,KEY_KP_SUBTRACT]:
+				transform_selected(Vector3.ZERO,0.0,1.0/1.1 if event.physical_keycode in [KEY_MINUS,KEY_KP_SUBTRACT] else 1.1)
+				return true
 		if (event.ctrl_pressed or event.meta_pressed) and event.physical_keycode in [KEY_Z,KEY_Y]:
 			var forward: bool = event.physical_keycode==KEY_Y or event.shift_pressed
 			var accepted: bool = history.redo(protection()) if forward else history.undo(protection())
@@ -168,6 +294,7 @@ func handle_input(event: InputEvent) -> bool:
 	return false
 
 func update(delta: float, available: bool) -> void:
+	edit_available=available
 	if not active or not available:
 		preview.hide()
 		return
@@ -177,5 +304,6 @@ func update(delta: float, available: bool) -> void:
 		refresh()
 
 func _exit_tree() -> void:
+	clear_selection()
 	if is_instance_valid(panel):
 		panel.queue_free()

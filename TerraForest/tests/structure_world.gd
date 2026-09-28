@@ -239,6 +239,9 @@ func check_model_editor(site: Vector3) -> void:
 	var aim := placed*Vector3(-1.5,1.5,0)
 	game.player.position=aim+Vector3(6,3,6)
 	game.camera.look_at(aim)
+	await check_model_transforms(collection,id,expected,aim)
+	game.player.position=aim+Vector3(6,3,6)
+	game.camera.look_at(aim)
 	click.button_index=MOUSE_BUTTON_LEFT
 	game._unhandled_input(click)
 	check(collection.get_instance(id).is_empty() and collection.get_ids()==before,"LMB removes the picked model by stable placement ID")
@@ -273,6 +276,77 @@ func check_model_editor(site: Vector3) -> void:
 	editor_key(KEY_M)
 	check(not game.model_tool.active and game.structure_mode and not game.model_tool.preview.visible,"M returns to block editing and hides model preview")
 	Input.mouse_mode=Input.MOUSE_MODE_VISIBLE
+
+func check_model_transforms(collection: Node3D, id: int, original: PackedFloat32Array, aim: Vector3) -> void:
+	editor_key(KEY_E)
+	check(game.model_tool.picked_id==id and game.model_tool.picked_collection==collection,"E selects the aimed model by native physics identity")
+	check(game.model_tool.transform_controls.visible,"selection exposes transform buttons")
+	game.model_tool.update(0.0,false)
+	check(not game.model_tool.transform_selected(Vector3.RIGHT,0.0,1.0) and collection.get_instance(id)==original,"transform callbacks cannot edit while loading or application focus disables authoring")
+	game.model_tool.update(0.0,true)
+	var before: PackedByteArray = game.structures.capture_snapshot()
+	var density: int = game.terrain.density_revision
+	editor_key(KEY_RIGHT)
+	var moved: PackedFloat32Array = collection.get_instance(id)
+	check(is_equal_approx(moved[3],original[3]+0.5) and moved[7]==original[7] and moved[11]==original[11],"arrow input moves selected model by half a metre on world X")
+	check(game.model_tool.picked_id==id and game.structures.capture_snapshot()!=before,"own transform edit retains selection and invalidates compound save cache")
+	editor_key(KEY_R)
+	var rotated: PackedFloat32Array = collection.get_instance(id)
+	check(rotated!=moved and rotated[3]==moved[3] and rotated[7]==moved[7] and rotated[11]==moved[11],"R rotates selected model around its origin")
+	editor_key(KEY_EQUAL)
+	var scaled: PackedFloat32Array = collection.get_instance(id)
+	check(is_equal_approx(Vector3(scaled[0],scaled[4],scaled[8]).length(),Vector3(rotated[0],rotated[4],rotated[8]).length()*1.1),"plus input scales the selected model by ten percent")
+	var fine := InputEventKey.new()
+	fine.physical_keycode=KEY_PAGEUP
+	fine.shift_pressed=true
+	fine.pressed=true
+	game._unhandled_input(fine)
+	var lifted: PackedFloat32Array = collection.get_instance(id)
+	check(is_equal_approx(lifted[7],scaled[7]+0.1),"Shift plus Page Up provides a tenth-metre height adjustment")
+	check(game.terrain.density_revision==density,"model transforms leave terrain density unchanged")
+	check(await until(func(): return collection.collision_stats().pending_bodies==0 and not collection.collision_stats().selection_pending),"transformed model physics finishes bounded admission")
+	var current: Transform3D = game.model_tool.selected_transform().transform
+	var selected_post: Vector3 = current*Vector3(-1.5,1,0)
+	var query := PhysicsRayQueryParameters3D.create(selected_post+Vector3.UP*8,selected_post-Vector3.UP*1,2)
+	query.exclude=[game.player.get_rid()]
+	var hit := game.get_world_3d().direct_space_state.intersect_ray(query)
+	check(not hit.is_empty() and hit.collider==collection and collection.placement_for_body(hit.rid)==id,"transformed collision still resolves the same selected ID")
+	game.model_tool.refresh()
+	if DisplayServer.get_name()!="headless":
+		await RenderingServer.frame_post_draw
+		root.get_texture().get_image().save_png("res://reports/model_transform_editor.png")
+	var outside: Vector3 = game.player.position
+	game.player.position=selected_post+Vector3(0.5,-0.8,0)
+	var steps: int = game.model_tool.history.stats().undo_steps
+	check(not game.model_tool.transform_selected(Vector3(0.5,0,0),0.0,1.0) and collection.get_instance(id)==lifted,"native transform edit rejects moving a post through the player")
+	check(game.model_tool.history.stats().undo_steps==steps,"rejected model transform adds no history command")
+	game.player.position=outside
+	var undo := InputEventKey.new()
+	undo.physical_keycode=KEY_Z
+	undo.ctrl_pressed=true
+	undo.pressed=true
+	game._unhandled_input(undo)
+	check(game.model_tool.picked_id==0 and not game.model_tool.transform_controls.visible,"undo clears selection before an authored record can be reused")
+	for i in range(3):
+		game._unhandled_input(undo)
+	check(collection.get_instance(id)==original and game.structures.capture_snapshot()==before,"four transform undos restore exact original placement and world snapshot")
+	check(await until(func(): return collection.collision_stats().pending_bodies==0 and not collection.collision_stats().selection_pending),"undo restores original selectable model collision")
+	game.player.position=aim+Vector3(6,3,6)
+	game.camera.look_at(aim)
+	editor_key(KEY_E)
+	check(game.model_tool.picked_id==id,"restored model can be selected again")
+	editor_key(KEY_Q)
+	check(game.model_tool.picked_id==0,"Q explicitly returns from selection to placement")
+	editor_key(KEY_E)
+	var saved: PackedByteArray = collection.capture_snapshot()
+	collection.restore_snapshot(saved)
+	check(game.model_tool.picked_id==0,"even an identical collection reload invalidates editor selection")
+	# Restore the original placement as a fresh journal command for the caller's
+	# placement/removal undo sequence, after deliberately invalidating the timeline.
+	collection.remove_instances(PackedInt64Array([id]))
+	var replaced: int = game.model_tool.history.insert(collection,original)
+	check(replaced==id,"post-reload fixture reestablishes original stable placement ID")
+	await until(func(): return collection.collision_stats().pending_bodies==0 and not collection.collision_stats().selection_pending)
 
 func check_prefab_editor(location: Vector3) -> void:
 	check(game.structure_prefabs.size()==4,"editor loads reusable cottage, stair, wall and tower-floor assets")

@@ -72,7 +72,9 @@ In the main world, **M** enters object mode or returns to block mode. **1–3** 
 
 `can_insert_instance(transform, protected_bounds=AABB())` is a read-only native preflight for one 12-float placement. `insert_instance(...)` revalidates and returns a positive ID, or zero without modification. IDs are one above the largest live ID; an empty collection starts at one, and INT64_MAX rejects automatic allocation. They are unique among current placements, not permanent network identities: deleting the highest ID or loading an older snapshot can allow reuse. Player protection uses conservative world-space AABBs of configured compound parts, or mesh bounds when no proxy is configured. Positive-volume protection is optional; malformed bounds reject the command. Arbitrary client authority/ID allocation is not a multiplayer protocol.
 
-The catalog currently has three configured entries. Ctrl+Z/Y in object mode uses the native model journal described below. Existing-object movement/scaling UI, asset import UI and cross-addon transactions remain pending. See [editor validation](../../docs/MODEL_EDITOR_VALIDATION.md) and [model history validation](../../docs/MODEL_HISTORY_VALIDATION.md).
+The catalog currently has three configured entries. Ctrl+Z/Y in object mode uses the native model journal described below. **E** selects an aimed existing model by its nearby native physics body. Selected objects have an amber overlay and transform buttons. Arrow keys move by 0.5 m along world X/Z; Page Up/Down moves on Y; Shift reduces movement to 0.1 m. **R** rotates 90 degrees around world up at the object's origin. **+ / −** scales all basis axes by 1.1 or its reciprocal about that origin. **Q**, changing the catalog entry or leaving object mode clears selection. RMB placement is suppressed while a model is selected. Release the mouse with Escape to use panel buttons, which apply the default movement/rotation/scale increments.
+
+Each transform action is one native history command with player protection, capacity validation, incremental rendering, collision/exclusion updates and persistence invalidation. Own edits keep selection; undo, loads and external authored changes to that collection clear it so reused IDs cannot target stale selections. The overlay reads one transform at 10 Hz; GDScript provides UI/input glue and the native collection remains authoritative. Transform edits can overlap other objects or terrain and do not automatically ensure support. Only nearby collision-resident objects can be picked. Numeric entry, drag handles, multi-selection, per-axis scale, asset import UI and cross-addon transactions remain pending. See [transform validation](../../docs/MODEL_TRANSFORM_VALIDATION.md) and [model history validation](../../docs/MODEL_HISTORY_VALIDATION.md).
 
 ### Collision configuration
 
@@ -134,8 +136,8 @@ scene-thread authoring APIs; they do not record terrain or block commands.
 
 The demo model catalog uses 1 MiB / 256 steps. In M mode, **Ctrl+Z** undoes and
 **Ctrl+Y** or **Ctrl+Shift+Z** redoes placement/removal, with player protection.
-The UI displays available step counts. Transform update history is available to
-native API consumers; interactive move/scale handles remain pending.
+The UI displays available step counts. Selection buttons and keyboard increments
+use native transform update history; drag handles remain pending.
 
 The shared record budget covers undo and redo, excluding deque allocator overhead
 and the separately bounded registry. `stats()` reports `record_bytes`,
