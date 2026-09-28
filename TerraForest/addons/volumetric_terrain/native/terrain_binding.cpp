@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: 0BSD
 #include "core.h"
+#include "terrain_planner.hpp"
 #include <godot_cpp/classes/ref_counted.hpp>
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/godot.hpp>
@@ -71,6 +72,7 @@ static void initialize(godot::ModuleInitializationLevel level) {
     // Installed once before any instance exists; thereafter immutable across workers.
     tr_alloc=std::malloc; tr_realloc=std::realloc; tr_free=std::free;
     GDREGISTER_CLASS(terraforest::TerrainCore);
+    GDREGISTER_CLASS(terraforest::NativeTerrainPlanner);
 }
 static void terminate(godot::ModuleInitializationLevel) {}
 extern "C" GDExtensionBool GDE_EXPORT terrain_library_init(

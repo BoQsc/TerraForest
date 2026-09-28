@@ -4,6 +4,13 @@ const Presentation = preload("res://addons/presentation/fullscreen_policy.gd")
 var game: Node3D
 var checks: Array[Dictionary] = []
 var failures := 0
+var planning_samples := {}
+
+func record_planning(label: String, milliseconds: float) -> void:
+	if not label.begins_with("LOD "):
+		return
+	if not planning_samples.has(label): planning_samples[label]=[]
+	if planning_samples[label].size()<10000: planning_samples[label].append(milliseconds)
 
 func _initialize() -> void:
 	run.call_deferred()
@@ -24,6 +31,7 @@ func run() -> void:
 	game=Scene.instantiate()
 	game.temporary_world=true
 	root.add_child(game)
+	game.terrain.stage_measured.connect(record_planning)
 	Input.mouse_mode=Input.MOUSE_MODE_VISIBLE
 	check(await until(func(): return not game.loading_active and game.terrain.world_ready),"main terrain scene finishes its loading gate")
 	if failures:
@@ -549,10 +557,15 @@ func check_prefab_editor(location: Vector3) -> void:
 		root.get_texture().get_image().save_png("res://reports/tower_prefab_world.png")
 
 func finish() -> void:
+	var planning_summary := {}
+	for label in planning_samples:
+		var samples: Array = planning_samples[label]
+		samples.sort()
+		planning_summary[label]={"samples":samples.size(),"median_ms":samples[samples.size()/2],"p95_ms":samples[mini(samples.size()-1,int(samples.size()*0.95))],"max_ms":samples[-1]}
 	game.terrain.shutdown()
 	game.free()
 	DirAccess.make_dir_recursive_absolute("res://reports")
 	var file := FileAccess.open("res://reports/structure_world.json",FileAccess.WRITE)
-	file.store_string(JSON.stringify({"checks":checks,"failures":failures},"  "))
+	file.store_string(JSON.stringify({"checks":checks,"failures":failures,"terrain_planning_stages":planning_summary},"  "))
 	file.close()
 	quit(1 if failures else 0)
