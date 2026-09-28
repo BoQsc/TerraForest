@@ -4,8 +4,39 @@
 #include <godot_cpp/classes/concave_polygon_shape3d.hpp>
 #include <godot_cpp/classes/time.hpp>
 #include <algorithm>
+#include <cmath>
 
 namespace terraforest {
+bool NativeBlockWorld::is_collision_region_ready(const AABB &world_bounds) const {
+    if(!world_bounds.position.is_finite()||!world_bounds.size.is_finite()||
+       world_bounds.size.x<=0||world_bounds.size.y<=0||world_bounds.size.z<=0)return false;
+    const Transform3D frame=is_inside_tree()?get_global_transform():get_transform();
+    if(!frame.is_finite()||std::abs(frame.basis.determinant())<1e-12)return false;
+    const AABB local=frame.affine_inverse().xform(world_bounds);
+    if(!local.position.is_finite()||!local.get_end().is_finite())return false;
+    for(const auto &entry:chunks) {
+        const auto &key=entry.first;
+        const AABB chunk_bounds(Vector3(key.x*16,key.y*16,key.z*16),Vector3(16,16,16));
+        if(!local.intersects(chunk_bounds))continue;
+        const AABB overlap=local.intersection(chunk_bounds);
+        const Vector3 lo=overlap.position-chunk_bounds.position,hi=overlap.get_end()-chunk_bounds.position;
+        const int x0=std::max(0,int(std::floor(lo.x))),x1=std::min(15,int(std::ceil(hi.x))-1);
+        const int y0=std::max(0,int(std::floor(lo.y))),y1=std::min(15,int(std::ceil(hi.y))-1);
+        const int z0=std::max(0,int(std::floor(lo.z))),z1=std::min(15,int(std::ceil(hi.z))-1);
+        if(x0>x1||y0>y1||z0>z1)continue;
+        const uint16_t mask=uint16_t(((1u<<(y1+1))-1)&~((1u<<y0)-1));
+        bool occupied=false;
+        for(int z=z0;z<=z1&&!occupied;++z)for(int x=x0;x<=x1;++x)
+            if(entry.second.columns[x+16*z]&mask) {occupied=true;break;}
+        if(!occupied)continue;
+        if(!collisions||!settled.count(key)||dirty.count(key)||tickets.count(key))return false;
+        const auto visual=visuals.find(key);
+        if(visual!=visuals.end()&&!visual->second.collision_ready)return false;
+        // Settled fully enclosed cells emit no surfaces and need no body.
+        if(visual==visuals.end()&&budget_blocked.count(key))return false;
+    }
+    return true;
+}
 bool NativeBlockWorld::collision_near(BlockKey key) const {
     return collisions&&distance_to_focus(key)<=(collision_radius+14)*(collision_radius+14);
 }

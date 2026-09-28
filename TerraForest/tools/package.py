@@ -8,7 +8,14 @@ root=Path(__file__).resolve().parents[1]
 destination=root/'dist'
 destination.mkdir(exist_ok=True)
 excluded={'.godot','.build','.git','dist','reports','__pycache__'}
-files=sorted(p for p in root.rglob('*') if p.is_file() and not any(part in excluded for part in p.relative_to(root).parts) and p.name!='MANIFEST.sha256.json')
+def include_file(path):
+    if not path.is_file() or any(part in excluded for part in path.relative_to(root).parts):
+        return False
+    # Godot editor hot reload may leave a temporary copy beside the real DLL.
+    # It is neither a declared runtime library nor part of the source release.
+    return path.name!='MANIFEST.sha256.json' and not (path.name.startswith('~') and path.suffix.lower()=='.dll')
+
+files=sorted(p for p in root.rglob('*') if include_file(p))
 manifest={p.relative_to(root).as_posix():hashlib.sha256(p.read_bytes()).hexdigest() for p in files}
 manifest_path=root/'MANIFEST.sha256.json'
 manifest_path.write_text(json.dumps(manifest,indent=2)+'\n',encoding='utf-8')

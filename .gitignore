@@ -3,6 +3,7 @@
 /TerraForest/.build/
 /TerraForest/reports/
 /TerraForest/dist/
+/TerraForest/addons/**/bin/~*.dll
 __pycache__/
 *.pyc
 .env

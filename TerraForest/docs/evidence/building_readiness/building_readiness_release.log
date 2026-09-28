@@ -1,0 +1,18 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS empty region does not block movement
+PASS invalid readiness volumes fail closed
+PASS unbaked negative-coordinate cell blocks entry
+PASS empty space within the same unfinished chunk remains traversable
+PASS face-touching volume does not falsely overlap adjacent occupied cell
+PASS render-ready cell with disabled collision blocks entry
+PASS completed collision releases the movement gate
+PASS edit invalidates readiness before old physics is replaced
+PASS edited collision restores readiness
+PASS out-of-range authored surface is not treated as ready
+PASS world-space bounds respect translated and rotated block worlds
+PASS transformed dirty surface still blocks entry
+PASS singular transforms fail closed
+PASS chunk-limit deferred surface blocks entry even when other chunks are ready
+PASS deleted deferred surface no longer blocks empty space
+
