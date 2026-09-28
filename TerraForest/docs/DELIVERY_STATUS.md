@@ -1,5 +1,11 @@
 # Original objective and completion evidence
 
+Dense building collision admission is a confirmed performance gap: a single
+4,096-sphere chunk takes about 1.3 seconds median to create collision in both
+Windows binary variants. See BUILDING_COLLISION_PROFILE.md. Whole-chunk creation
+and destruction need bounded pieces and explicit readiness before dense-shape
+or high-speed building claims are justified.
+
 Block worlds now reuse one sleeping native bake worker instead of creating a
 thread per chunk. Lifecycle, stale-result and shutdown tests are documented in
 BLOCK_WORKER_VALIDATION.md; multi-hour endurance remains outstanding.

@@ -1,0 +1,35 @@
+{
+  "checks": 9,
+  "failures": 0,
+  "measurements": {
+    "1": {
+      "admission_max_ms": 0.611,
+      "admission_median_ms": 0.146,
+      "cells": 4096,
+      "release_max_ms": 0.075,
+      "release_median_ms": 0.032,
+      "samples": 8,
+      "triangles": 12
+    },
+    "3": {
+      "admission_max_ms": 16.211,
+      "admission_median_ms": 10.496,
+      "cells": 4096,
+      "release_max_ms": 0.404,
+      "release_median_ms": 0.224,
+      "samples": 8,
+      "triangles": 7236
+    },
+    "6": {
+      "admission_max_ms": 1827.883,
+      "admission_median_ms": 1362.032,
+      "cells": 4096,
+      "release_max_ms": 7.847,
+      "release_median_ms": 7.394,
+      "samples": 8,
+      "triangles": 491520
+    }
+  },
+  "scope": "Headless CPU collision creation/attachment and release, pre-baked single dense chunk. Excludes frame presentation; does not establish full simulation cost.",
+  "library": "structures.windows.template_release.x86_64.dll"
+}
