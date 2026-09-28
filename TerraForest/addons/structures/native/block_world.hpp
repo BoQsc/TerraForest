@@ -1,4 +1,5 @@
 #pragma once
+#include "block_prefab.hpp"
 #include <godot_cpp/classes/node3d.hpp>
 #include <godot_cpp/classes/mesh_instance3d.hpp>
 #include <godot_cpp/classes/static_body3d.hpp>
@@ -43,6 +44,7 @@ class NativeBlockWorld : public Node3D {
     static int index(int x,int y,int z) { return (x&15)+16*((y&15)+16*(z&15)); }
     uint16_t cell(int x,int y,int z) const;
     bool occupied(const AABB &bounds) const;
+    bool prefab_records(const Ref<NativeBlockPrefab> &prefab,Vector3i origin,int turns,bool replace,PackedInt32Array *out) const;
     void invalidate(BlockKey key);
     void launch();
     void publish(BlockBake &&bake);
@@ -56,6 +58,9 @@ public:
     ~NativeBlockWorld();
     void _process(double delta) override;
     bool set_cells(const PackedInt32Array &records);
+    bool can_place_prefab(const Ref<NativeBlockPrefab> &prefab,Vector3i origin,int quarter_turns,bool replace=false) const;
+    bool place_prefab(const Ref<NativeBlockPrefab> &prefab,Vector3i origin,int quarter_turns,bool replace=false);
+    Ref<NativeBlockPrefab> capture_prefab(Vector3i origin,Vector3i size) const;
     PackedByteArray overlap_mask(const TypedArray<Transform3D> &transforms, const AABB &prototype_bounds) const;
     int get_cell(Vector3i p) const { return cell(p.x,p.y,p.z); }
     Dictionary stats() const;

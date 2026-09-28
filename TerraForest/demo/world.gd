@@ -13,6 +13,13 @@ var structure_mode := false
 var structure_shape := 1
 var structure_material := 0
 var structure_rotation := 0
+var structure_prefabs: Array[Resource] = []
+var structure_prefab_index := -1
+var prefab_preview := MeshInstance3D.new()
+var _prefab_preview_material := StandardMaterial3D.new()
+var _prefab_preview_timer := 0.0
+var _prefab_preview_signature: Array = []
+var _prefab_preview_clear := false
 var telemetry := Label.new()
 var _telemetry_time: float = 0.0
 var _lake_notice: String = ""
@@ -30,6 +37,7 @@ func _ready() -> void:
 		push_error("World persistence initialization failed")
 		get_tree().quit(2)
 		return
+	_setup_prefabs()
 	terrain.nearby_first = true
 	pending_spawn = Vector3(800, 0, 1310)
 	terrain.focus = pending_spawn
@@ -58,6 +66,65 @@ func _show_lake_notice(text: String) -> void:
 	_lake_notice = text
 	_lake_notice_until = Time.get_ticks_msec()+6000
 	_message(text)
+
+func _setup_prefabs() -> void:
+	for path in ["res://addons/structures/prefabs/brick_cottage.tres","res://addons/structures/prefabs/stair_flight.tres","res://addons/structures/prefabs/doorway_wall.tres","res://addons/structures/prefabs/tower_floor.tres"]:
+		var asset: Resource = load(path)
+		if asset != null and asset.get_cell_count()>0:
+			structure_prefabs.append(asset)
+			asset.changed.connect(_invalidate_prefab_preview)
+	structures.blocks.changed.connect(_invalidate_prefab_preview)
+	# A single bounds outline is UI feedback, not another building simulation.
+	var arrays := []
+	arrays.resize(Mesh.ARRAY_MAX)
+	arrays[Mesh.ARRAY_VERTEX] = PackedVector3Array([Vector3(0,0,0),Vector3(1,0,0),Vector3(1,0,1),Vector3(0,0,1),Vector3(0,1,0),Vector3(1,1,0),Vector3(1,1,1),Vector3(0,1,1)])
+	arrays[Mesh.ARRAY_INDEX] = PackedInt32Array([0,1,1,2,2,3,3,0,4,5,5,6,6,7,7,4,0,4,1,5,2,6,3,7])
+	var mesh := ArrayMesh.new()
+	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_LINES,arrays)
+	prefab_preview.mesh = mesh
+	_prefab_preview_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	prefab_preview.material_override = _prefab_preview_material
+	prefab_preview.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	prefab_preview.hide()
+	add_child(prefab_preview)
+
+func _prefab_allowed(asset: Resource, target: Vector3i) -> bool:
+	var bounds: AABB = asset.placement_bounds(target,structure_rotation)
+	return _prefab_player_clear(bounds) and structures.blocks.can_place_prefab(asset,target,structure_rotation)
+
+func _prefab_player_clear(bounds: AABB) -> bool:
+	var player_bounds := AABB(player.global_position+Vector3(-0.4,0,-0.4),Vector3(0.8,1.8,0.8))
+	return not bounds.intersects(player_bounds)
+
+func _invalidate_prefab_preview() -> void:
+	_prefab_preview_signature.clear()
+	_prefab_preview_timer=0.0
+
+func _update_prefab_preview(delta: float) -> void:
+	if not structure_mode or structure_prefab_index<0 or loading_active or not app_focused:
+		prefab_preview.hide()
+		return
+	_prefab_preview_timer -= delta
+	if _prefab_preview_timer>0:
+		return
+	_prefab_preview_timer=0.1
+	var hit := _structure_target(false)
+	if hit.is_empty():
+		prefab_preview.hide()
+		return
+	var asset: Resource = structure_prefabs[structure_prefab_index]
+	if asset.get_cell_count()==0:
+		prefab_preview.hide()
+		return
+	var bounds: AABB = asset.placement_bounds(hit.target,structure_rotation)
+	var signature: Array = [structure_prefab_index,hit.target,structure_rotation]
+	if signature != _prefab_preview_signature:
+		_prefab_preview_clear=structures.blocks.can_place_prefab(asset,hit.target,structure_rotation)
+		_prefab_preview_signature=signature
+	prefab_preview.position=bounds.position
+	prefab_preview.scale=bounds.size
+	_prefab_preview_material.albedo_color=Color("66f2b3") if _prefab_preview_clear and _prefab_player_clear(bounds) else Color("ff705f")
+	prefab_preview.show()
 
 func _message(text: String) -> void:
 	super._message(text)
@@ -110,7 +177,7 @@ func _setup_hud() -> void:
 	super._setup_hud()
 	hud.hide()
 	status.hide()
-	help.text = "WASD  Move    Shift  Sprint    Space  Jump    G  Fly    Mouse  Look    Esc  Release\nB  Terrain / Blocks    LMB  Remove    RMB  Place    1–5  Block shapes    T  Material    R  Rotate\nTerrain: Wheel  Brush size    1–3  Tools    L  Lake    F5  Save world    F9  Reload    F3  Diagnostics"
+	help.text = "WASD  Move    Shift  Sprint    Space  Jump    G  Fly    Mouse  Look    Esc  Release\nB  Terrain / Blocks    LMB  Remove    RMB  Place    1–5  Shapes    P  Prefabs    T  Material    R  Rotate\nTerrain: Wheel  Brush size    1–3  Tools    L  Lake    F5  Save world    F9  Reload    F3  Diagnostics"
 	help.add_theme_font_size_override("font_size", 15)
 	help.offset_top = -88
 	help.add_theme_color_override("font_color", Color("e6eee9"))
@@ -161,8 +228,16 @@ func _unhandled_input(event: InputEvent) -> void:
 				_show_lake_notice("Block construction · 1–5 shapes · T material · R rotate" if structure_mode else "Terrain editing")
 				return
 			if structure_mode:
+				if event.physical_keycode == KEY_P:
+					structure_prefab_index += 1
+					if structure_prefab_index >= structure_prefabs.size():
+						structure_prefab_index = -1
+					_prefab_preview_timer=0.0
+					_show_lake_notice("Single blocks" if structure_prefab_index<0 else "%s · R rotate · RMB place · green bounds required" % structure_prefabs[structure_prefab_index].resource_name)
+					return
 				var handled := true
 				if event.physical_keycode >= KEY_1 and event.physical_keycode <= KEY_5:
+					structure_prefab_index = -1
 					structure_shape = event.physical_keycode-KEY_1+1
 				elif event.physical_keycode == KEY_T:
 					structure_material = (structure_material+1)%4
@@ -171,7 +246,8 @@ func _unhandled_input(event: InputEvent) -> void:
 				else:
 					handled = false
 				if handled:
-					_show_lake_notice("%s · %s · %d°" % [["Cube","Slab","Stairs","Slope","Post"][structure_shape-1],["Brick","Wood","Concrete","Metal"][structure_material],structure_rotation*90])
+					_prefab_preview_timer=0.0
+					_show_lake_notice("%s · %d°" % [structure_prefabs[structure_prefab_index].resource_name,structure_rotation*90] if structure_prefab_index>=0 else "%s · %s · %d°" % [["Cube","Slab","Stairs","Slope","Post"][structure_shape-1],["Brick","Wood","Concrete","Metal"][structure_material],structure_rotation*90])
 					return
 		if structure_mode and event is InputEventMouseButton and event.pressed and event.button_index in [MOUSE_BUTTON_LEFT,MOUSE_BUTTON_RIGHT] and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 			_edit_structure(event.button_index == MOUSE_BUTTON_LEFT)
@@ -199,17 +275,14 @@ func _update_edit(delta: float) -> void:
 		return
 	super._update_edit(delta)
 
-func _edit_structure(remove: bool) -> void:
-	if not terrain.world_ready or not app_focused:
-		return
+func _structure_target(remove: bool) -> Dictionary:
 	var origin := camera.global_position
 	var hit := get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(origin,origin-camera.global_basis.z*48,3))
 	if hit.is_empty():
-		return
+		return {}
 	var building_hit: bool = hit.collider is CollisionObject3D and (hit.collider.collision_layer & 2) != 0
 	if remove and not building_hit:
-		_show_lake_notice("Aim at a building block to remove it")
-		return
+		return {}
 	var target := Vector3i((hit.position + hit.normal*0.001).floor())
 	if building_hit:
 		target = Vector3i((hit.position-hit.normal*0.001).floor())
@@ -217,6 +290,25 @@ func _edit_structure(remove: bool) -> void:
 			var normal: Vector3 = hit.normal
 			var axis := normal.abs().max_axis_index()
 			target[axis] += 1 if normal[axis]>0 else -1
+	return {"target":target}
+
+func _edit_structure(remove: bool) -> void:
+	if not terrain.world_ready or not app_focused:
+		return
+	var hit := _structure_target(remove)
+	if hit.is_empty():
+		_show_lake_notice("Aim at a building block to remove it" if remove else "Aim at terrain or a building")
+		return
+	var target: Vector3i = hit.target
+	if not remove and structure_prefab_index>=0:
+		var asset: Resource = structure_prefabs[structure_prefab_index]
+		if not _prefab_allowed(asset,target):
+			_show_lake_notice("Prefab blocked · clear existing blocks and move outside its bounds")
+			return
+		if structures.blocks.place_prefab(asset,target,structure_rotation):
+			_show_lake_notice("%s placed · F5 saves world" % asset.resource_name)
+		_prefab_preview_timer=0.0
+		return
 	if not remove and _brush_overlaps_player(Vector3(target)+Vector3.ONE*0.5,0.87):
 		_show_lake_notice("Block placement intersects the player")
 		return
@@ -226,6 +318,7 @@ func _edit_structure(remove: bool) -> void:
 
 func _process(delta: float) -> void:
 	super._process(delta)
+	_update_prefab_preview(delta)
 	if structures.blocks != null:
 		structures.blocks.set_focus(player.position)
 	_telemetry_time += delta
