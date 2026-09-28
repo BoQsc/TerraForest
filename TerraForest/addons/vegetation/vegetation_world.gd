@@ -51,6 +51,10 @@ func upsert_chunk(key: String, ids: PackedInt64Array, transforms: Array[Transfor
 func remove_chunk(key: String) -> void:
 	renderer.remove_chunk(key)
 
+func placement_bounds() -> AABB:
+	# Maximum supported wind amplitude, before instance scale/rotation.
+	return assets.meshes[0].get_aabb().grow(2.0) if ready_to_render else AABB()
+
 func remove_roots_in_bounds(bounds: AABB) -> int:
 	# Spatial lookup touches only intersecting render cells. Surviving roots keep
 	# their current LOD/fade state and owner, avoiding cell-wide disappearance.

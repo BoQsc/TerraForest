@@ -29,6 +29,28 @@ func run() -> void:
 	if failures:
 		finish()
 		return
+	check(await until(func(): return game.vegetation.renderer.roots.size()>0),"natural vegetation is resident before construction")
+	if failures:
+		finish()
+		return
+	var tree_id: int = game.vegetation.renderer.roots.keys()[0]
+	var tree_transform: Transform3D = game.vegetation.renderer.roots[tree_id]["t"]
+	var tree_owner: String = game.vegetation.renderer.roots[tree_id]["owner"]
+	var tree_cell := Vector3i(tree_transform.origin.floor())+Vector3i(0,5,0)
+	var empty_blocks: PackedByteArray = game.structures.blocks.capture_snapshot()
+	game.structures.blocks.set_cells(PackedInt32Array([tree_cell.x,tree_cell.y,tree_cell.z,1]))
+	var occupied_blocks: PackedByteArray = game.structures.blocks.capture_snapshot()
+	check(await until(func(): return not game.vegetation.renderer.roots.has(tree_id)),"placing a block removes an intersecting tree canopy")
+	game.structures.blocks.restore_snapshot(empty_blocks)
+	check(await until(func(): return game.vegetation.renderer.roots.has(tree_id)),"removing construction restores the deterministic tree candidate")
+	check(game.vegetation.renderer.roots.get(tree_id,{}).get("t",Transform3D())==tree_transform,"restored tree keeps its original placement")
+	game.structures.blocks.restore_snapshot(occupied_blocks)
+	check(await until(func(): return not game.vegetation.renderer.roots.has(tree_id)),"snapshot restore also reapplies occupancy exclusion")
+	game.ecosystem.reset()
+	check(await until(func(): return game.vegetation.renderer.owners.has(tree_owner)),"forest owner is regenerated after residency reset")
+	check(not game.vegetation.renderer.roots.has(tree_id),"regenerated forest does not grow through saved blocks")
+	game.structures.blocks.restore_snapshot(empty_blocks)
+	check(await until(func(): return game.vegetation.renderer.roots.has(tree_id)),"regenerated blocked candidate remains available after demolition")
 	var origin: Vector3 = game.player.position+Vector3(0,0,-12)
 	var hit := game.get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(origin+Vector3.UP*64,origin-Vector3.UP*64,1))
 	check(not hit.is_empty(),"construction site has real terrain collision")
@@ -92,6 +114,18 @@ func run() -> void:
 	game.player.position=Vector3(site)+Vector3(10,8,15)
 	game.player.velocity=Vector3.ZERO
 	game.camera.look_at(Vector3(site)+Vector3(0,1,0))
+	check(await until(func(): return game.ecosystem._reconcile.is_empty()),"building exclusion reconciliation drains")
+	var live_transforms: Array[Transform3D] = []
+	for row in game.vegetation.renderer.roots.values():
+		live_transforms.append(row["t"])
+	var overlaps: PackedByteArray = game.structures.blocks.overlap_mask(live_transforms,game.vegetation.placement_bounds())
+	check(overlaps.size()==live_transforms.size() and overlaps.count(1)==0,"no resident tree canopy overlaps any occupied building cell")
+	check(game.ecosystem._samples.size()<=game.ecosystem.max_resident_cells,"cached candidates stay within the residency budget")
+	var rejected_key := Vector2i(31,31)
+	game.ecosystem._samples[rejected_key] = {"published":false}
+	game.ecosystem._reconcile[rejected_key] = true
+	game.ecosystem._refresh(game.ecosystem._cell(game.camera.global_position))
+	check(not game.ecosystem._samples.has(rejected_key) and not game.ecosystem._reconcile.has(rejected_key),"eviction reclaims samples even when publication had failed")
 	await create_timer(1.0).timeout
 	if DisplayServer.get_name()!="headless":
 		check(Presentation.measurement(root).fair_graphical_sample,"integrated construction view is 1920x1080 fullscreen at full scale")

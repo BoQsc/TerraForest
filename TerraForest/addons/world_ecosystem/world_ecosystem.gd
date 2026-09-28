@@ -6,6 +6,7 @@ const GRID: int = 6
 @export var terrain: Node3D
 @export var vegetation: Node3D
 @export var camera: Camera3D
+@export var structures: Node3D
 @export var seed: int = 1703
 @export_range(64.0, 768.0, 64.0) var stream_radius: float = 384.0
 @export_range(9, 625, 1) var max_resident_cells: int = 169
@@ -21,6 +22,8 @@ var _last_cell := Vector2i(-9999, -9999)
 var _connected: bool = false
 var stale_results: int = 0
 var rejected_batches: int = 0
+var _samples: Dictionary = {}
+var _reconcile: Dictionary = {}
 
 func _ready() -> void:
 	if terrain == null or vegetation == null or camera == null:
@@ -30,6 +33,8 @@ func _ready() -> void:
 	terrain.surface_batch_ready.connect(_surface_ready)
 	terrain.region_changed.connect(_region_changed)
 	terrain.reload_started.connect(reset)
+	if structures != null:
+		structures.changed.connect(_structures_changed)
 	_connected = true
 
 func _cell(point: Vector3) -> Vector2i:
@@ -42,6 +47,8 @@ func reset() -> void:
 	for key in resident:
 		vegetation.remove_chunk(_owner(key))
 	resident.clear()
+	_samples.clear()
+	_reconcile.clear()
 	_requests.clear()
 	_pending_cells.clear()
 	_wanted.clear()
@@ -50,6 +57,12 @@ func reset() -> void:
 func _process(delta: float) -> void:
 	if not terrain.world_ready or not vegetation.ready_to_render:
 		return
+	# Coalesce edits; reconcile at most one 36-candidate owner per frame.
+	if not terrain.pending_edit and not _reconcile.is_empty():
+		var key: Vector2i = _reconcile.keys()[0]
+		_reconcile.erase(key)
+		if _samples.has(key) and _wanted.has(key):
+			_publish_samples(key)
 	_scan_timer -= delta
 	var cell: Vector2i = _cell(camera.global_position)
 	if cell != _last_cell or _scan_timer <= 0.0:
@@ -90,6 +103,11 @@ func _refresh(center: Vector2i) -> void:
 		if not _wanted.has(key):
 			vegetation.remove_chunk(_owner(key))
 			resident.erase(key)
+	# Failed publication has samples but no resident owner; evict those too.
+	for key in _samples.keys():
+		if not _wanted.has(key):
+			_samples.erase(key)
+			_reconcile.erase(key)
 	# Keep outstanding tokens until completion; this bounds work during teleports.
 
 func _candidates(key: Vector2i) -> Dictionary:
@@ -138,7 +156,34 @@ func _surface_ready(token: int, points: PackedVector3Array, normals: PackedVecto
 		var basis := Basis(Vector3.UP, request["rotations"][i]).scaled(Vector3.ONE * request["scales"][i])
 		ids.append(request["ids"][i])
 		transforms.append(Transform3D(basis, points[i] - Vector3(0.0, 0.2, 0.0)))
-	if vegetation.upsert_chunk(_owner(key), ids, transforms):
+	_samples[key] = {"ids": ids, "transforms": transforms, "active": PackedInt64Array(), "published": false}
+	_publish_samples(key)
+
+func _structures_changed() -> void:
+	for key in _samples:
+		_reconcile[key] = true
+
+func _publish_samples(key: Vector2i) -> void:
+	var sample: Dictionary = _samples[key]
+	var transforms: Array[Transform3D] = sample["transforms"]
+	var mask := PackedByteArray()
+	if structures != null:
+		mask = structures.overlap_mask(transforms, vegetation.placement_bounds())
+		if mask.size() != transforms.size():
+			rejected_batches += 1
+			return
+	var ids := PackedInt64Array()
+	var accepted: Array[Transform3D] = []
+	for i in range(transforms.size()):
+		if (structures == null or mask[i] == 0) and terrain.natural_column_available(transforms[i].origin):
+			ids.append(sample["ids"][i])
+			accepted.append(transforms[i])
+	# Unaffected owners retain their current LOD/fade state.
+	if sample["published"] and ids == sample["active"]:
+		return
+	if vegetation.upsert_chunk(_owner(key), ids, accepted):
+		sample["active"] = ids
+		sample["published"] = true
 		resident[key] = true
 	else:
 		rejected_batches += 1
@@ -154,8 +199,11 @@ func _region_changed(bounds: AABB, _revision: int) -> void:
 	low.y = -128.0
 	high.y = 512.0
 	vegetation.remove_roots_in_bounds(AABB(low, high - low))
+	_structures_changed()
 
 func _exit_tree() -> void:
+	if is_instance_valid(structures) and structures.changed.is_connected(_structures_changed):
+		structures.changed.disconnect(_structures_changed)
 	if _connected and is_instance_valid(terrain):
 		terrain.surface_batch_ready.disconnect(_surface_ready)
 		terrain.region_changed.disconnect(_region_changed)

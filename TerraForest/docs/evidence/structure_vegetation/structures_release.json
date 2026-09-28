@@ -1,0 +1,30 @@
+{
+  "checks": 95,
+  "dense_bake_ms": 5.661,
+  "failures": 0,
+  "showcase": {
+    "cell_bytes": 417792,
+    "cells": 9469,
+    "chunks": 51,
+    "collision_chunks": 47,
+    "dirty_chunks": 0,
+    "max_chunks": 2048,
+    "mesh_chunks": 51,
+    "published_bakes": 51,
+    "stale_bakes_rejected": 0,
+    "triangles": 7502,
+    "worker_jobs": 0
+  },
+  "showcase_bake_ms": 305.795,
+  "static_100k": {
+    "asset_id": "",
+    "batch_uploads": 51,
+    "instance_updates": 0,
+    "instances": 100000,
+    "slot_entries": 100000,
+    "spatial_batches": 49,
+    "transform_bytes": 4800000
+  },
+  "static_100k_upload_ms": 76.264,
+  "library": "structures.windows.template_release.x86_64.dll"
+}
