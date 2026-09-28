@@ -2,6 +2,7 @@ extends SceneTree
 var checks := 0
 var failures := 0
 var gpu := DisplayServer.get_name() != "headless"
+var collision_evidence := {}
 
 func check(value: bool, description: String) -> void:
 	checks += 1
@@ -23,6 +24,169 @@ func _initialize() -> void:
 	if not ClassDB.class_exists("NativeStaticBatch"):
 		GDExtensionManager.load_extension("res://addons/structures/structures.gdextension")
 	run.call_deferred()
+
+func settle_collision(world: Node3D) -> void:
+	for i in range(30):
+		await physics_frame
+		await process_frame
+		var status: Dictionary = world.collision_stats()
+		if not status.selection_pending and status.pending_bodies==0:
+			break
+	await physics_frame
+	await process_frame
+
+func collision_ray(from: Vector3, to: Vector3) -> Dictionary:
+	var query := PhysicsRayQueryParameters3D.create(from,to,2)
+	return root.get_world_3d().direct_space_state.intersect_ray(query)
+
+func check_collision() -> void:
+	var world: Node3D = ClassDB.instantiate("NativeStaticBatch")
+	root.add_child(world)
+	world.configure_asset("tests/collision_box",BoxMesh.new())
+	var box := AABB(Vector3(-0.5,-0.5,-0.5),Vector3.ONE)
+	check(not world.collision_stats().enabled,"static collision defaults to opt-in")
+	world.upsert_instances(PackedInt64Array([17,9000000001,33]),transform_at(0)+transform_at(8)+transform_at(80))
+	var saved: PackedByteArray = world.capture_snapshot()
+	check(world.configure_collision(box,16,2,1),"configure bounded native static collision")
+	var bounded := true
+	var previous: int = world.collision_stats().body_builds
+	var previous_tick := Engine.get_physics_frames()
+	for i in range(5):
+		await physics_frame
+		await process_frame
+		var now: int = world.collision_stats().body_builds
+		bounded=bounded and now-previous<=Engine.get_physics_frames()-previous_tick
+		previous=now
+		previous_tick=Engine.get_physics_frames()
+	check(bounded and world.collision_stats().resident_bodies==2,"nearby proxies publish within one-body-per-tick budget")
+	check(world.get_child_count()==world.stats().spatial_batches,"native collision adds no per-placement scene nodes")
+	var hit := collision_ray(Vector3(8,3,0),Vector3(8,-3,0))
+	check(not hit.is_empty() and hit.collider==world and world.placement_for_body(hit.rid)==9000000001,"physics ray resolves exact stable 64-bit placement ID")
+	check(collision_ray(Vector3(80,3,0),Vector3(80,-3,0)).is_empty(),"distant static placements have no physics body")
+	check(world.capture_snapshot()==saved,"collision residency does not change placement snapshots")
+	var corrupt := saved.duplicate()
+	corrupt[40]^=1
+	var invalid := transform_at(3)
+	invalid[0]=NAN
+	var builds_before: int = world.collision_stats().body_builds
+	check(not world.restore_snapshot(corrupt) and not world.upsert_instances(PackedInt64Array([17]),invalid),"invalid load and edit reject before changing physics")
+	await settle_collision(world)
+	check(world.collision_stats().body_builds==builds_before and world.collision_stats().resident_bodies==2,"rejected commands preserve existing physics handles")
+	var queries: int = world.collision_stats().selection_queries
+	world.set_collision_focus(Vector3(0.1,0,0))
+	await settle_collision(world)
+	check(world.collision_stats().selection_queries==queries,"small focus changes avoid repeated placement scans")
+	check(not world.configure_collision(box,NAN,2,1) and not world.configure_collision(box,16,0,1) and not world.configure_collision(box,16,2,0),"invalid budgets preserve collision configuration")
+	check(not world.configure_collision(AABB(Vector3.ZERO,Vector3(-1,1,1)),16,2,1),"invalid proxy geometry rejected")
+	check(world.collision_stats().resident_bodies==2 and world.collision_stats().radius==16,"invalid configuration preserves existing collision")
+	world.set_collision_focus(Vector3(80,0,0))
+	await settle_collision(world)
+	check(world.collision_stats().resident_bodies==1 and collision_ray(Vector3(8,3,0),Vector3(8,-3,0)).is_empty(),"travel evicts old bodies and admits the nearby placement")
+	hit=collision_ray(Vector3(80,3,0),Vector3(80,-3,0))
+	check(not hit.is_empty() and world.placement_for_body(hit.rid)==33,"travelled-to object has its own collision identity")
+	world.set_collision_focus(Vector3.ZERO)
+	await settle_collision(world)
+	var stale_rid: RID = collision_ray(Vector3(8,3,0),Vector3(8,-3,0)).rid
+	world.upsert_instances(PackedInt64Array([9000000001]),transform_at(12))
+	check(world.placement_for_body(stale_rid)==0,"moving a placement immediately invalidates its old physics identity")
+	await settle_collision(world)
+	check(collision_ray(Vector3(8,3,0),Vector3(8,-3,0)).is_empty() and not collision_ray(Vector3(12,3,0),Vector3(12,-3,0)).is_empty(),"local render edit also moves static collision")
+	world.remove_instances(PackedInt64Array([9000000001]))
+	await settle_collision(world)
+	check(collision_ray(Vector3(12,3,0),Vector3(12,-3,0)).is_empty(),"removal releases collision")
+	check(world.restore_snapshot(saved),"restore collidable placements")
+	await settle_collision(world)
+	check(not collision_ray(Vector3(8,3,0),Vector3(8,-3,0)).is_empty(),"snapshot restore rebuilds application-configured proxies")
+	# A large scaled proxy crosses several origin groups; selection uses its bounds.
+	world.upsert_instances(PackedInt64Array([44]),PackedFloat32Array([100,0,0,65,0,1,0,0,0,0,1,0]))
+	world.set_collision_focus(Vector3(20,0,0))
+	await settle_collision(world)
+	hit=collision_ray(Vector3(20,3,0),Vector3(20,-3,0))
+	check(not hit.is_empty() and world.placement_for_body(hit.rid)==44,"large proxy crossing origin groups remains selectable by its bounds")
+	check(world.configure_collision(box,128,1,1),"collision count cap can shrink")
+	await settle_collision(world)
+	check(world.collision_stats().resident_bodies==1 and world.collision_stats().budget_deferred==3,"nearest admission reports capacity-deferred collision")
+	world.restore_snapshot(saved)
+	world.configure_collision(box,16,2,2)
+	world.set_collision_focus(Vector3.ZERO)
+	# Nonuniform scale and shear are baked into convex vertices, not body scale.
+	world.upsert_instances(PackedInt64Array([17]),PackedFloat32Array([2,0.5,0,0,0,2,0,0,0,0,3,0]))
+	await settle_collision(world)
+	hit=collision_ray(Vector3(0,3,0),Vector3(0,-3,0))
+	check(not hit.is_empty() and absf(hit.position.y-1.0)<0.02,"affine placement basis produces matching convex proxy surface")
+	world.position=Vector3(0,10,0)
+	world.scale=Vector3(1,2,1)
+	await settle_collision(world)
+	hit=collision_ray(Vector3(0,15,0),Vector3(0,5,0))
+	check(not hit.is_empty() and absf(hit.position.y-12.0)<0.02,"collection transform updates physics without scaled-body mismatch")
+	root.remove_child(world)
+	check(world.collision_stats().resident_bodies==0,"leaving the scene releases all native physics handles")
+	root.add_child(world)
+	await settle_collision(world)
+	check(world.collision_stats().resident_bodies==2,"reentering the scene rebuilds collision")
+	var viewport := SubViewport.new()
+	viewport.own_world_3d=true
+	root.add_child(viewport)
+	world.reparent(viewport)
+	await settle_collision(world)
+	check(collision_ray(Vector3(0,15,0),Vector3(0,5,0)).is_empty(),"moving to a private physics world removes collision from the old world")
+	# Retain the departing World3D through Godot's viewport scenario reassignment.
+	var private_world: World3D = world.get_world_3d()
+	var private_hit := private_world.direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(Vector3(0,15,0),Vector3(0,5,0),2))
+	check(not private_hit.is_empty() and world.placement_for_body(private_hit.rid)==17,"private physics world receives the placement proxies")
+	viewport.own_world_3d=false
+	await settle_collision(world)
+	check(not collision_ray(Vector3(0,15,0),Vector3(0,5,0)).is_empty(),"in-tree world reassignment rebinds native bodies to the new space")
+	world.reparent(root)
+	viewport.free()
+	check(world.configure_collision(box,0,2,2) and world.collision_stats().resident_bodies==0,"disabling collision releases bodies immediately")
+	# Repeated travel checks bounded retained handles, not a long-duration benchmark.
+	world.transform=Transform3D.IDENTITY
+	world.restore_snapshot(saved)
+	world.configure_collision(box,16,2,2)
+	var travel_ok := true
+	for i in range(20):
+		world.set_collision_focus(Vector3.ZERO if i%2==0 else Vector3(80,0,0))
+		await settle_collision(world)
+		travel_ok=travel_ok and world.collision_stats().resident_bodies==(2 if i%2==0 else 1)
+	check(travel_ok and world.capture_snapshot()==saved,"twenty visits retain only nearby physics and preserve authored records")
+	var dense := PackedFloat32Array()
+	dense.resize(100000*12)
+	for i in range(100000):
+		var p := transform_at((i%1000)*2,0,(i/1000)*2)
+		for j in range(12):
+			dense[i*12+j]=p[j]
+	world.configure_collision(box,16,16,4)
+	world.set_collision_focus(Vector3.ZERO)
+	check(world.set_instances(BoxMesh.new(),dense),"100000 placements coexist with bounded collision configuration")
+	await settle_collision(world)
+	collision_evidence=world.collision_stats()
+	check(collision_evidence.resident_bodies==16 and collision_evidence.budget_deferred>0 and collision_evidence.pending_bodies==0,"100000-placement collection admits only sixteen nearest physics bodies")
+	check(world.get_child_count()==world.stats().spatial_batches,"large collidable collection retains only spatial render nodes")
+	# A real character controller must stand on a scaled static model floor.
+	world.set_instances(BoxMesh.new(),PackedFloat32Array([8,0,0,0,0,1,0,0,0,0,8,0]))
+	world.set_collision_focus(Vector3.ZERO)
+	await settle_collision(world)
+	var player := CharacterBody3D.new()
+	player.collision_mask=2
+	var shape := CollisionShape3D.new()
+	var capsule := CapsuleShape3D.new()
+	capsule.radius=0.25
+	capsule.height=1
+	shape.shape=capsule
+	player.add_child(shape)
+	root.add_child(player)
+	player.position=Vector3(0,3,0)
+	for i in range(90):
+		await physics_frame
+		player.velocity.y-=9.8/60.0
+		player.move_and_slide()
+	check(player.is_on_floor() and absf(player.position.y-1.0)<0.06,"CharacterBody3D lands on the placed model floor")
+	player.free()
+	world.free()
+	await physics_frame
+	await process_frame
+	check(collision_ray(Vector3(0,3,0),Vector3(0,-3,0)).is_empty(),"destroying collection leaves no ghost physics")
 
 func run() -> void:
 	if gpu:
@@ -133,7 +297,8 @@ func run() -> void:
 		world.upsert_instances(PackedInt64Array([i+1]),transform_at(i*32))
 		world.remove_instances(PackedInt64Array([i+1]))
 	check(world.stats().instances==0 and world.stats().spatial_batches==0 and world.stats().slot_entries==0 and world.get_child_count()==0, "repeated placement/removal retains no spatial or slot tombstones")
-	var result := {"checks":checks,"failures":failures,"gpu_readback":gpu}
+	await check_collision()
+	var result := {"checks":checks,"failures":failures,"gpu_readback":gpu,"collision_100k":collision_evidence}
 	DirAccess.make_dir_recursive_absolute("res://reports")
 	var file := FileAccess.open("res://reports/static_placements_gpu.json" if gpu else "res://reports/static_placements.json",FileAccess.WRITE)
 	file.store_string(JSON.stringify(result,"  "))

@@ -17,6 +17,10 @@ void NativeStaticBatch::_bind_methods() {
     ClassDB::bind_method(D_METHOD("validate_snapshot","bytes"),&NativeStaticBatch::validate_snapshot);
     ClassDB::bind_method(D_METHOD("restore_snapshot","bytes"),&NativeStaticBatch::restore_snapshot);
     ClassDB::bind_method(D_METHOD("stats"),&NativeStaticBatch::stats);
+    ClassDB::bind_method(D_METHOD("configure_collision","box","radius","instance_limit","builds_per_tick"),&NativeStaticBatch::configure_collision);
+    ClassDB::bind_method(D_METHOD("set_collision_focus","focus"),&NativeStaticBatch::set_collision_focus);
+    ClassDB::bind_method(D_METHOD("collision_stats"),&NativeStaticBatch::collision_stats);
+    ClassDB::bind_method(D_METHOD("placement_for_body","body"),&NativeStaticBatch::placement_for_body);
     ADD_SIGNAL(MethodInfo("changed"));
 }
 bool NativeStaticBatch::valid_transform(const float *t) {
@@ -39,6 +43,7 @@ bool NativeStaticBatch::configure_asset(const String &id,const Ref<Mesh> &mesh) 
 }
 bool NativeStaticBatch::lock_asset_identity() {if(!valid_asset(asset_id)||source_mesh.is_null())return false;asset_locked=true;return true;}
 void NativeStaticBatch::rebuild(const std::set<BlockKey> &keys) {
+    refresh_collision_bounds(keys);
     for(auto k:keys) {
         auto group=groups.find(k);auto old=batches.find(k);
         if(group==groups.end()) {
@@ -81,6 +86,7 @@ bool NativeStaticBatch::upsert_instances(const PackedInt64Array &ids,const Packe
     for(auto &e:staged) {
         auto old=placements.find(e.first);
         if(old!=placements.end()&&old->second==e.second)continue;
+        invalidate_proxy(e.first);
         if(old!=placements.end()) {
             auto a=group_for(old->second),b=group_for(e.second);
             if(!(a<b)&&!(b<a)) {
@@ -96,6 +102,8 @@ bool NativeStaticBatch::upsert_instances(const PackedInt64Array &ids,const Packe
     // edits use one buffer upload instead of thousands of renderer API calls.
     for(auto &e:local_updates)if(e.second.size()>64)touched.insert(e.first);
     rebuild(touched);
+    std::set<BlockKey> locally_changed;for(auto &e:local_updates)locally_changed.insert(e.first);
+    refresh_collision_bounds(locally_changed);
     for(auto &e:local_updates)if(!touched.count(e.first)) {
         auto multi=batches.at(e.first)->get_multimesh();
         for(auto id:e.second) {
@@ -110,6 +118,7 @@ bool NativeStaticBatch::remove_instances(const PackedInt64Array &ids) {
     for(int64_t id:ids)if(id<=0||!placements.count(id)||!unique.insert(id).second)return false;
     std::set<BlockKey> touched;
     for(auto id:unique) {
+        invalidate_proxy(id);
         auto old=placements.find(id);auto k=group_for(old->second);auto &g=groups.at(k);g.erase(id);if(g.empty())groups.erase(k);
         placements.erase(old);slots.erase(id);touched.insert(k);
     }
@@ -125,6 +134,7 @@ bool NativeStaticBatch::set_instances(const Ref<Mesh> &mesh,const PackedFloat32A
         staged[i+1]=p;staged_groups[k].insert(i+1);
     }
     std::set<BlockKey> touched;for(auto &e:groups)touched.insert(e.first);for(auto &e:staged_groups)touched.insert(e.first);
+    clear_proxies();collision_bounds.clear();collision_dirty=true;
     placements=std::move(staged);groups=std::move(staged_groups);slots.clear();source_mesh=mesh;
     for(auto &e:batches)e.second->get_multimesh()->set_mesh(mesh);
     rebuild(touched);emit_signal("changed");return true;
@@ -168,6 +178,7 @@ bool NativeStaticBatch::restore_snapshot(const PackedByteArray &bytes) {
     String asset;std::map<int64_t,Placement> restored;
     if(!parse(bytes,asset,&restored)||asset!=asset_id||source_mesh.is_null())return false;
     std::set<BlockKey> touched;for(auto &e:groups)touched.insert(e.first);
+    clear_proxies();collision_bounds.clear();collision_dirty=true;
     placements=std::move(restored);groups.clear();slots.clear();for(auto &e:placements){auto k=group_for(e.second);groups[k].insert(e.first);touched.insert(k);}
     rebuild(touched);emit_signal("changed");return true;
 }

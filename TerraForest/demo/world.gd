@@ -40,6 +40,7 @@ func _ready() -> void:
 	_setup_prefabs()
 	structures.blocks.configure_history(16*1024*1024,128)
 	structures.blocks.configure_streaming(true,384,256,64*1024*1024,32*1024*1024)
+	structures.model("architecture/metal_beam/v1").configure_collision(beam.get_aabb(),64,512,8)
 	terrain.nearby_first = true
 	pending_spawn = Vector3(800, 0, 1310)
 	terrain.focus = pending_spawn
@@ -336,6 +337,7 @@ func _process(delta: float) -> void:
 	_update_prefab_preview(delta)
 	if structures.blocks != null:
 		structures.blocks.set_focus(player.position)
+		structures.model("architecture/metal_beam/v1").set_collision_focus(player.position)
 	_telemetry_time += delta
 	if _telemetry_time >= 0.5 and vegetation.ready_to_render:
 		_telemetry_time = 0.0
