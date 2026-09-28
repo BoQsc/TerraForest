@@ -1,0 +1,38 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.3.289 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce GTX 1060 with Max-Q Design
+
+[TerrainRewrite] New world
+[TerrainRewrite] New world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+PASS main terrain scene finishes its loading gate
+PASS natural vegetation is resident before construction
+PASS placing a block removes an intersecting tree canopy
+PASS removing construction restores the deterministic tree candidate
+PASS restored tree keeps its original placement
+PASS snapshot restore also reapplies occupancy exclusion
+PASS forest owner is regenerated after residency reset
+PASS regenerated forest does not grow through saved blocks
+PASS regenerated blocked candidate remains available after demolition
+PASS construction site has real terrain collision
+PASS native foundation/walls and editing target created in terrain world
+PASS building chunk meshes publish in the main scene
+[TerrainRewrite] Block construction Â· 1â€“5 shapes Â· T material Â· R rotate
+PASS B selects independent block construction
+PASS tool mode switch cannot carry a terrain stroke into later editing
+[TerrainRewrite] Block placed Â· F5 saves world
+PASS actual construction picking places the adjacent block
+PASS placed block mesh publishes
+[TerrainRewrite] Block removed Â· F5 saves world
+PASS actual construction picking removes the selected block
+PASS block authoring does not mutate terrain density
+PASS temporary editing target removed
+PASS existing player stands on independent building collision
+PASS static model placement shares the main world structures owner
+PASS main scene captures blocks and static models as one validated component
+PASS building exclusion reconciliation drains
+PASS no resident tree canopy overlaps any occupied building cell
+PASS cached candidates stay within the residency budget
+PASS eviction reclaims samples even when publication had failed
+PASS integrated construction view is 1920x1080 fullscreen at full scale
+[TerrainRewrite] Temporary test world: save skipped
+

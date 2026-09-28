@@ -21,6 +21,7 @@ static PackedByteArray sha(const PackedByteArray &data) {
 void NativeBlockWorld::_bind_methods() {
     ClassDB::bind_method(D_METHOD("set_cells","records"),&NativeBlockWorld::set_cells);
     ClassDB::bind_method(D_METHOD("get_cell","position"),&NativeBlockWorld::get_cell);
+    ClassDB::bind_method(D_METHOD("overlap_mask","transforms","prototype_bounds"),&NativeBlockWorld::overlap_mask);
     ClassDB::bind_method(D_METHOD("stats"),&NativeBlockWorld::stats);
     ClassDB::bind_method(D_METHOD("set_focus","position"),&NativeBlockWorld::set_focus);
     ClassDB::bind_method(D_METHOD("set_collision_radius","radius"),&NativeBlockWorld::set_collision_radius);
@@ -59,6 +60,9 @@ bool NativeBlockWorld::set_cells(const PackedInt32Array &records) {
         }
         auto &c=it->second; auto &v=c.cells[index(x,y,z)];
         c.count+=(w!=0)-(v!=0); v=uint16_t(w);
+        auto &column=c.columns[(x&15)+16*(z&15)];
+        const uint16_t bit=uint16_t(1u<<(y&15));
+        column=w?uint16_t(column|bit):uint16_t(column&~bit);
     }
     int final_count=int(chunks.size());
     for(auto &entry:staged) final_count+=(entry.second.count>0)-(chunks.count(entry.first)>0);
@@ -78,6 +82,54 @@ bool NativeBlockWorld::set_cells(const PackedInt32Array &records) {
     }
     if(changed) { set_process(true); emit_signal("changed"); }
     return true;
+}
+
+// Full occupied cells are conservative exclusion volumes for every block shape.
+// Query cost is bounded by resident chunks even for enormous caller bounds.
+bool NativeBlockWorld::occupied(const AABB &bounds) const {
+    Vector3 lo=bounds.position, hi=bounds.get_end();
+    for(int axis=0;axis<3;axis++) {
+        if(hi[axis]<=-LIMIT || lo[axis]>=LIMIT+1) return false;
+        lo[axis]=std::max(double(lo[axis]),double(-LIMIT));
+        hi[axis]=std::min(double(hi[axis]),double(LIMIT+1));
+    }
+    int low[3],high[3];
+    for(int a=0;a<3;a++) {low[a]=int(std::floor(lo[a]));high[a]=int(std::ceil(hi[a]))-1;}
+    auto test=[&](BlockKey k,const BlockChunk &c) {
+        int origin[3]={k.x*16,k.y*16,k.z*16},a[3],b[3];
+        for(int axis=0;axis<3;axis++) {
+            a[axis]=std::max(0,low[axis]-origin[axis]);b[axis]=std::min(15,high[axis]-origin[axis]);
+            if(a[axis]>b[axis]) return false;
+        }
+        uint16_t mask=uint16_t(((1u<<(b[1]+1))-1)&~((1u<<a[1])-1));
+        for(int z=a[2];z<=b[2];z++)for(int x=a[0];x<=b[0];x++)
+            if(c.columns[x+16*z]&mask)return true;
+        return false;
+    };
+    BlockKey first=key_for(low[0],low[1],low[2]),last=key_for(high[0],high[1],high[2]);
+    int64_t volume=int64_t(last.x-first.x+1)*(last.y-first.y+1)*(last.z-first.z+1);
+    if(volume<=int64_t(chunks.size())) {
+        for(int z=first.z;z<=last.z;z++)for(int y=first.y;y<=last.y;y++)for(int x=first.x;x<=last.x;x++) {
+            BlockKey k{x,y,z};auto it=chunks.find(k);if(it!=chunks.end()&&test(k,it->second))return true;
+        }
+    } else for(const auto &entry:chunks)if(test(entry.first,entry.second))return true;
+    return false;
+}
+PackedByteArray NativeBlockWorld::overlap_mask(const TypedArray<Transform3D> &transforms,const AABB &bounds) const {
+    PackedByteArray result;
+    if(transforms.size()>65536||!bounds.position.is_finite()||!bounds.size.is_finite()||
+       bounds.size.x<=0||bounds.size.y<=0||bounds.size.z<=0)return result;
+    Transform3D frame=is_inside_tree()?get_global_transform():get_transform();
+    if(!frame.is_finite()||std::abs(frame.basis.determinant())<1e-12)return result;
+    Transform3D inverse=frame.affine_inverse();
+    result.resize(transforms.size());
+    for(int64_t i=0;i<transforms.size();i++) {
+        Transform3D t=transforms[i];if(!t.is_finite()||std::abs(t.basis.determinant())<1e-12)return PackedByteArray();
+        AABB box=(inverse*t).xform(bounds);
+        if(!box.position.is_finite()||!box.get_end().is_finite())return PackedByteArray();
+        result.set(i,occupied(box)?1:0);
+    }
+    return result;
 }
 
 static void quad(BlockBake &b,const std::array<Vector3,4>&p,Vector3 n,int material) {
@@ -298,7 +350,11 @@ bool NativeBlockWorld::parse(const PackedByteArray &bytes,std::map<BlockKey,Bloc
         if(k.x==-65536||k.y==-65536||k.z==-65536)
             for(int z=0;z<16;z++)for(int y=0;y<16;y++)for(int x=0;x<16;x++)
                 if(chunk.cells[index(x,y,z)]&&(k.x*16+x<-LIMIT||k.y*16+y<-LIMIT||k.z*16+z<-LIMIT))return false;
-        if(out)(*out)[k]=std::move(chunk);
+        if(out) {
+            for(int z=0;z<16;z++)for(int y=0;y<16;y++)for(int x=0;x<16;x++)
+                if(chunk.cells[index(x,y,z)])chunk.columns[x+16*z]|=uint16_t(1u<<y);
+            (*out)[k]=std::move(chunk);
+        }
     }
     return p==n;
 }

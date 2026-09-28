@@ -17,7 +17,7 @@ struct BlockKey {
     int x=0,y=0,z=0;
     bool operator<(const BlockKey &b) const { return std::tie(x,y,z)<std::tie(b.x,b.y,b.z); }
 };
-struct BlockChunk { std::array<uint16_t,4096> cells{}; int count=0; };
+struct BlockChunk { std::array<uint16_t,4096> cells{}; std::array<uint16_t,256> columns{}; int count=0; };
 struct BlockVertex { float x,y,z,nx,ny,nz,u,v,material; };
 struct BlockBake { BlockKey key; uint64_t revision=0; std::vector<BlockVertex> vertices; std::vector<int32_t> indices; };
 struct BlockVisual { MeshInstance3D *mesh=nullptr; StaticBody3D *body=nullptr; int triangles=0; };
@@ -42,6 +42,7 @@ class NativeBlockWorld : public Node3D {
     static BlockKey key_for(int x,int y,int z) { return {div16(x),div16(y),div16(z)}; }
     static int index(int x,int y,int z) { return (x&15)+16*((y&15)+16*(z&15)); }
     uint16_t cell(int x,int y,int z) const;
+    bool occupied(const AABB &bounds) const;
     void invalidate(BlockKey key);
     void launch();
     void publish(BlockBake &&bake);
@@ -55,6 +56,7 @@ public:
     ~NativeBlockWorld();
     void _process(double delta) override;
     bool set_cells(const PackedInt32Array &records);
+    PackedByteArray overlap_mask(const TypedArray<Transform3D> &transforms, const AABB &prototype_bounds) const;
     int get_cell(Vector3i p) const { return cell(p.x,p.y,p.z); }
     Dictionary stats() const;
     void set_focus(Vector3 p) { focus=p; }

@@ -37,8 +37,35 @@ func area_and_winding(world: Node3D) -> Vector2:
 					wrong += 1
 	return Vector2(area, wrong)
 
+func check_exclusion() -> void:
+	var blocks := make_world()
+	var empty: PackedByteArray = blocks.capture_snapshot()
+	blocks.set_cells(PackedInt32Array([-1,0,0,1,16,3,0,4]))
+	var bounds := AABB(Vector3.ZERO,Vector3.ONE)
+	var samples: Array[Transform3D] = [Transform3D(Basis.IDENTITY,Vector3(-1,0,0)),Transform3D.IDENTITY,Transform3D(Basis.IDENTITY,Vector3(16,3,0)),Transform3D(Basis.IDENTITY,Vector3(-1,2,0))]
+	check(blocks.overlap_mask(samples,bounds)==PackedByteArray([1,0,1,0]),"occupancy handles negative seams, touching faces, slope cells and vertical clearance")
+	var saved: PackedByteArray = blocks.capture_snapshot()
+	blocks.set_cells(PackedInt32Array([-1,0,0,0]))
+	check(blocks.overlap_mask(samples,bounds)==PackedByteArray([0,0,1,0]),"occupancy updates after removal")
+	blocks.restore_snapshot(saved)
+	check(blocks.overlap_mask(samples,bounds)==PackedByteArray([1,0,1,0]),"occupancy index rebuilt from persisted cells")
+	blocks.position=Vector3(100,0,0)
+	var moved: Array[Transform3D] = [Transform3D(Basis.IDENTITY,Vector3(99,0,0))]
+	check(blocks.overlap_mask(moved,bounds)==PackedByteArray([1]),"occupancy transforms world placements into block coordinates")
+	blocks.position=Vector3.ZERO
+	check(blocks.overlap_mask(samples,AABB(Vector3.ZERO,Vector3(-1,1,1))).is_empty(),"negative query bounds rejected")
+	var bad: Array[Transform3D] = [Transform3D(Basis.IDENTITY,Vector3(INF,0,0))]
+	check(blocks.overlap_mask(bad,bounds).is_empty(),"nonfinite transforms rejected atomically")
+	var large: Array[Transform3D] = [Transform3D.IDENTITY]
+	check(blocks.overlap_mask(large,AABB(Vector3.ONE*-1e10,Vector3.ONE*2e10))==PackedByteArray([1]),"huge query bounded by resident chunks")
+	check(blocks.overlap_mask(large,AABB(Vector3.ONE*1e10,Vector3.ONE))==PackedByteArray([0]),"remote huge coordinates safely rejected before integer conversion")
+	blocks.restore_snapshot(empty)
+	check(blocks.overlap_mask(samples,bounds)==PackedByteArray([0,0,0,0]),"empty restored world clears occupancy")
+	blocks.free()
+
 func run() -> void:
 	check(ClassDB.class_exists("NativeBlockWorld"), "native block extension registered")
+	check_exclusion()
 	var world := make_world()
 	var empty: PackedByteArray = world.capture_snapshot()
 	check(world.validate_snapshot(empty), "empty snapshot validates")
