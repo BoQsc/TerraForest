@@ -1,0 +1,46 @@
+{
+  "checks": 9,
+  "failures": 0,
+  "measurements": {
+    "repeated_edits": {
+      "bake_lattice_16_chunks": 1,
+      "bake_lattice_32_chunks": 0,
+      "bake_lattice_64_chunks": 0,
+      "cell_bytes": 8192,
+      "cells": 1,
+      "chunks": 1,
+      "collision_chunks": 0,
+      "dirty_chunks": 0,
+      "max_chunks": 2048,
+      "mesh_chunks": 1,
+      "published_bakes": 200,
+      "stale_bakes_rejected": 0,
+      "triangles": 12,
+      "worker_jobs": 0,
+      "worker_jobs_submitted": 200,
+      "worker_results_consumed": 200,
+      "worker_threads_started": 1
+    },
+    "shutdown_cycles": 40,
+    "shutdown_cycles_ms": 286.794,
+    "stale_replacement": {
+      "bake_lattice_16_chunks": 0,
+      "bake_lattice_32_chunks": 0,
+      "bake_lattice_64_chunks": 1,
+      "cell_bytes": 8192,
+      "cells": 4095,
+      "chunks": 1,
+      "collision_chunks": 0,
+      "dirty_chunks": 0,
+      "max_chunks": 2048,
+      "mesh_chunks": 1,
+      "published_bakes": 1,
+      "stale_bakes_rejected": 1,
+      "triangles": 70660,
+      "worker_jobs": 0,
+      "worker_jobs_submitted": 2,
+      "worker_results_consumed": 2,
+      "worker_threads_started": 1
+    }
+  }
+}

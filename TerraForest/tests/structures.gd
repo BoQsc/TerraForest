@@ -482,11 +482,15 @@ func run() -> void:
 	# Launch a real worker, then edit its dependency before publication.
 	world.restore_snapshot(empty)
 	world.set_cells(PackedInt32Array([0,0,0,1]))
-	await process_frame
-	await process_frame
+	var stale_before: int = world.stats().stale_bakes_rejected
+	for attempt in range(120):
+		await process_frame
+		if world.stats().worker_jobs==1:
+			break
+	check(world.stats().worker_jobs==1, "stale-output test observes an outstanding worker result before editing")
 	world.set_cells(PackedInt32Array([1,0,0,1]))
 	world.flush_bakes()
-	check(world.stats().stale_bakes_rejected > 0, "stale worker output discarded after edit")
+	check(world.stats().stale_bakes_rejected > stale_before, "stale worker output discarded after edit")
 	check(area_and_winding(world).is_equal_approx(Vector2(10,0)), "latest edit is eventually published")
 	world.restore_snapshot(empty)
 	world.flush_bakes()

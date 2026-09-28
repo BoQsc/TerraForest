@@ -48,13 +48,12 @@ void NativeBlockWorld::_bind_methods() {
     ClassDB::bind_method(D_METHOD("create_showcase"),&NativeBlockWorld::create_showcase);
     ADD_SIGNAL(MethodInfo("changed"));
 }
-NativeBlockWorld::~NativeBlockWorld() { if(worker.valid()) worker.wait(); }
 uint16_t NativeBlockWorld::cell(int x,int y,int z) const {
     auto it=chunks.find(key_for(x,y,z)); return it==chunks.end()?0:it->second.cells[index(x,y,z)];
 }
 void NativeBlockWorld::invalidate(BlockKey key) {
     residency_dirty=true;settled.erase(key);budget_blocked.erase(key);erase_cached(key);
-    bool active=worker.valid()&&!(key<worker_key)&&!(worker_key<key);
+    bool active=worker_active&&!(key<worker_key)&&!(worker_key<key);
     if(!chunks.count(key)&&!visuals.count(key)&&!active) {
         dirty.erase(key);tickets.erase(key);return;
     }
@@ -273,7 +272,7 @@ BlockBake NativeBlockWorld::bake(BlockKey key,uint64_t ticket,std::array<uint16_
     return out;
 }
 void NativeBlockWorld::launch(bool allow_cached_upload) {
-    while(!worker.valid()&&!dirty.empty()) {
+    while(!worker_active&&!dirty.empty()) {
         // Nearest dirty chunk first; pending work is deduplicated and bounded by resident cells.
         auto best=dirty.begin(); double distance=1e300;
         for(auto it=dirty.begin();it!=dirty.end();++it) {
@@ -294,8 +293,7 @@ void NativeBlockWorld::launch(bool allow_cached_upload) {
         std::array<uint16_t,5832> halo{};
         for(int z=-1;z<=16;z++) for(int y=-1;y<=16;y++) for(int x=-1;x<=16;x++)
             halo[(x+1)+18*((y+1)+18*(z+1))]=cell(k.x*16+x,k.y*16+y,k.z*16+z);
-        worker_key=k;
-        worker=std::async(std::launch::async,[k,ticket,halo](){return bake(k,ticket,halo);});
+        submit_bake(k,ticket,halo);
     }
 }
 bool NativeBlockWorld::publish(BlockBake &&b) {
@@ -345,12 +343,17 @@ void NativeBlockWorld::update_collisions() {
 void NativeBlockWorld::_process(double) {
     refresh_residency();
     bool uploaded=false;
-    if(worker.valid()&&worker.wait_for(std::chrono::seconds(0))==std::future_status::ready) uploaded=publish(worker.get());
+    BlockBake completed;
+    if(take_bake(completed,false))uploaded=publish(std::move(completed));
     launch(!uploaded); update_collisions();
 }
 void NativeBlockWorld::flush_bakes() {
     refresh_residency();
-    while(!is_idle()) { refresh_residency();launch();if(worker.valid()) publish(worker.get()); }
+    while(!is_idle()) {
+        refresh_residency();launch();
+        BlockBake completed;
+        if(take_bake(completed,true))publish(std::move(completed));
+    }
     for(size_t i=0;i<visuals.size();i++) update_collisions();
 }
 Dictionary NativeBlockWorld::stats() const {
@@ -361,8 +364,9 @@ Dictionary NativeBlockWorld::stats() const {
         triangles+=e.second.triangles;bodies+=e.second.body!=nullptr;
         lattice16+=e.second.lattice_width==16;lattice32+=e.second.lattice_width==32;lattice64+=e.second.lattice_width==64;
     }
-    Dictionary d;d["cells"]=cells;d["chunks"]=int(chunks.size());d["cell_bytes"]=int(chunks.size())*8192;d["mesh_chunks"]=int(visuals.size());d["triangles"]=triangles;d["collision_chunks"]=bodies;d["dirty_chunks"]=int(dirty.size());d["worker_jobs"]=worker.valid()?1:0;d["stale_bakes_rejected"]=int64_t(rejected);d["published_bakes"]=int64_t(published);d["max_chunks"]=MAX_CHUNKS;
-    d["bake_lattice_16_chunks"]=lattice16;d["bake_lattice_32_chunks"]=lattice32;d["bake_lattice_64_chunks"]=lattice64;return d;
+    Dictionary d;d["cells"]=cells;d["chunks"]=int(chunks.size());d["cell_bytes"]=int(chunks.size())*8192;d["mesh_chunks"]=int(visuals.size());d["triangles"]=triangles;d["collision_chunks"]=bodies;d["dirty_chunks"]=int(dirty.size());d["worker_jobs"]=worker_active?1:0;d["stale_bakes_rejected"]=int64_t(rejected);d["published_bakes"]=int64_t(published);d["max_chunks"]=MAX_CHUNKS;
+    d["bake_lattice_16_chunks"]=lattice16;d["bake_lattice_32_chunks"]=lattice32;d["bake_lattice_64_chunks"]=lattice64;
+    d["worker_threads_started"]=int64_t(worker_starts);d["worker_jobs_submitted"]=int64_t(worker_submissions);d["worker_results_consumed"]=int64_t(worker_consumed);return d;
 }
 void NativeBlockWorld::ensure_material() {
     if(material.is_valid()) return;

@@ -1,0 +1,13 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS unused block world allocates no worker thread
+PASS 200 real edits reuse one thread and consume exactly one result per submission
+PASS idle processing submits no jobs and changes no worker counters
+PASS 50 cached return trips neither submit work nor create threads
+PASS independent block worlds each own one bounded outstanding job
+PASS edit during a pending bake rejects stale geometry without cross-world mutation
+PASS replacement result matches a fresh bake of the final authored state
+PASS stale replacement also reuses the same worker
+PASS 40 worlds destroyed with outstanding work join safely without publishing after destruction
+BLOCK_WORKER_RESULT {"repeated_edits":{"bake_lattice_16_chunks":1,"bake_lattice_32_chunks":0,"bake_lattice_64_chunks":0,"cell_bytes":8192,"cells":1,"chunks":1,"collision_chunks":0,"dirty_chunks":0,"max_chunks":2048,"mesh_chunks":1,"published_bakes":200,"stale_bakes_rejected":0,"triangles":12,"worker_jobs":0,"worker_jobs_submitted":200,"worker_results_consumed":200,"worker_threads_started":1},"shutdown_cycles":40,"shutdown_cycles_ms":286.794,"stale_replacement":{"bake_lattice_16_chunks":0,"bake_lattice_32_chunks":0,"bake_lattice_64_chunks":1,"cell_bytes":8192,"cells":4095,"chunks":1,"collision_chunks":0,"dirty_chunks":0,"max_chunks":2048,"mesh_chunks":1,"published_bakes":1,"stale_bakes_rejected":1,"triangles":70660,"worker_jobs":0,"worker_jobs_submitted":2,"worker_results_consumed":2,"worker_threads_started":1}}
+

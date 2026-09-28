@@ -89,13 +89,13 @@ void NativeBlockWorld::refresh_residency() {
     }
     for(auto it=dirty.begin();it!=dirty.end();) {
         if(!wanted.count(*it)) {
-            bool active=worker.valid()&&!(*it<worker_key)&&!(worker_key<*it);
+            bool active=worker_active&&!(*it<worker_key)&&!(worker_key<*it);
             if(!active)tickets.erase(*it);
             it=dirty.erase(it);
         } else ++it;
     }
     for(auto key:wanted) {
-        bool active=worker.valid()&&!(key<worker_key)&&!(worker_key<key);
+        bool active=worker_active&&!(key<worker_key)&&!(worker_key<key);
         if(!settled.count(key)&&!budget_blocked.count(key)&&!dirty.count(key)&&!active) {
             tickets[key]=++revision;dirty.insert(key);
         }
