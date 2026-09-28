@@ -4,6 +4,7 @@ signal notice(text: String)
 var active := false
 var camera: Camera3D
 var player: CharacterBody3D
+var block_world: Node3D
 var catalog: Array[Dictionary] = []
 var selected := 0
 var quarter_turns := 0
@@ -22,9 +23,10 @@ var edit_available := false
 var transform_controls := VBoxContainer.new()
 var help := Label.new()
 
-func configure(view: Camera3D, actor: CharacterBody3D, entries: Array[Dictionary], ui: Node) -> void:
+func configure(view: Camera3D, actor: CharacterBody3D, entries: Array[Dictionary], ui: Node, blocks: Node3D = null) -> void:
 	camera=view
 	player=actor
+	block_world=blocks
 	catalog=entries
 	history=ClassDB.instantiate("NativeStaticHistory")
 	var collections: Array = []
@@ -176,6 +178,8 @@ func transform_selected(offset: Vector3, angle: float, factor: float) -> bool:
 	return accepted
 
 func ray() -> Dictionary:
+	if is_instance_valid(block_world):
+		return block_world.raycast_scene(camera.global_position,camera.global_position-camera.global_basis.z*48,3,[player.get_rid()])
 	var query := PhysicsRayQueryParameters3D.create(camera.global_position,camera.global_position-camera.global_basis.z*48,3)
 	query.exclude=[player.get_rid()]
 	return get_world_3d().direct_space_state.intersect_ray(query)

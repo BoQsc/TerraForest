@@ -1,5 +1,10 @@
 # Native block structures and static models
 
+`raycast_cells(from, to)` selects authored shapes without waiting for mesh or
+collision baking. `raycast_scene(from, to, collision_mask=3, exclude=[])` also
+respects nearer scene collision while ignoring stale bodies belonging to this
+block world. See [API limits and validation](../../docs/BLOCK_PICKING_VALIDATION.md).
+
 Independent Godot 4.7 Windows x86-64 addon. Copy this directory into a project; the GDExtension registers `NativeBlockWorld` and `NativeStaticBatch`. No terrain, vegetation or other TerraForest addon is required. Native sources and both debug/release DLLs are included. Build using the repository's pinned Zig/prebuilt godot-cpp toolchain:
 
 ```text

@@ -421,6 +421,7 @@ func check_cached_publication() -> void:
 func run() -> void:
 	check(ClassDB.class_exists("NativeBlockWorld"), "native block extension registered")
 	await check_spheres()
+	await check_picking()
 	check_exclusion()
 	check_prefabs()
 	check_history()
@@ -642,4 +643,110 @@ func check_spheres() -> void:
 	world.set_cells(dense)
 	world.flush_bakes()
 	check(world.stats().cells==4096 and world.stats().mesh_chunks==0 and world.streaming_stats().budget_blocked_chunks==1,"dense curved chunk retains authored cells but cannot exceed mesh byte admission")
+	world.free()
+
+func query_turn(p: Vector3, turns: int) -> Vector3:
+	for i in range(turns):
+		p=Vector3(1-p.z,p.y,p.x)
+	return p
+
+func check_picking() -> void:
+	var world := make_world()
+	var empty: PackedByteArray = world.capture_snapshot()
+	world.set_cells(PackedInt32Array([-1,0,0,1]))
+	var original: PackedByteArray = world.capture_snapshot()
+	var hit: Dictionary = world.raycast_cells(Vector3(-0.5,3,0.5),Vector3(-0.5,-1,0.5))
+	check(not hit.is_empty() and hit.cell==Vector3i(-1,0,0) and hit.word==1 and hit.normal==Vector3.UP and hit.position==Vector3(-0.5,1,0.5),"authoritative ray picks signed cells before any bake or physics")
+	check(world.stats().mesh_chunks==0 and world.stats().collision_chunks==0 and world.capture_snapshot()==original,"cell ray is read-only and independent of derived residency")
+	check(world.raycast_cells(Vector3(-0.5,2,0.5),Vector3(-0.5,1,0.5)).has("cell"),"ray endpoint exactly on a block face is included")
+	check(world.raycast_cells(Vector3(-0.5,1,0.5),Vector3(-0.5,-1,0.5)).fraction==0,"ray starting on a face and entering the solid hits at zero distance")
+	check(world.raycast_cells(Vector3(-0.5,1,0.5),Vector3(-0.5,2,0.5)).is_empty(),"ray leaving a boundary does not pick a back face")
+	check(world.raycast_cells(Vector3(-0.5,0.5,0.5),Vector3(-0.5,3,0.5)).is_empty(),"ray starting inside a solid rejects front-face picking")
+	check(world.raycast_cells(Vector3.ZERO,Vector3.ZERO).is_empty() and world.raycast_cells(Vector3(NAN,0,0),Vector3.ONE).is_empty(),"invalid and zero-length rays reject safely")
+	check(world.raycast_cells(Vector3.ZERO,Vector3(257,0,0)).is_empty() and world.raycast_cells(Vector3(1e10,0,0),Vector3(1e10,1,0)).is_empty(),"ray length and coordinate domain are explicitly bounded")
+	for shape in range(1,7):
+		for turn in range(4):
+			world.restore_snapshot(empty)
+			world.set_cells(PackedInt32Array([0,0,0,shape+(turn<<3)]))
+			var from := query_turn(Vector3(0.413,3,0.637),turn)
+			var to := query_turn(Vector3(0.413,-1,0.637),turn)
+			hit=world.raycast_cells(from,to)
+			check(not hit.is_empty() and hit.cell==Vector3i.ZERO,"unbaked native shape %d orientation %d is pickable" % [shape,turn])
+			world.flush_bakes()
+			await physics_frame
+			await physics_frame
+			var physical: Dictionary = world.get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(from,to,2))
+			check(not physical.is_empty() and not hit.is_empty() and physical.position.distance_to(hit.position)<0.0002 and physical.normal.dot(hit.normal)>0.999,"authored ray agrees with actual triangle collision for shape %d orientation %d" % [shape,turn])
+	world.restore_snapshot(empty)
+	world.set_cells(PackedInt32Array([0,0,0,6,0,-2,0,1]))
+	hit=world.raycast_cells(Vector3(0.05,3,0.05),Vector3(0.05,-3,0.05))
+	check(not hit.is_empty() and hit.cell==Vector3i(0,-2,0),"ray passes through empty sphere corners to the next authored cell")
+	world.set_cells(PackedInt32Array([0,0,0,5]))
+	hit=world.raycast_cells(Vector3(0.05,3,0.05),Vector3(0.05,-3,0.05))
+	check(not hit.is_empty() and hit.cell==Vector3i(0,-2,0),"ray passes through empty post corners")
+	world.restore_snapshot(empty)
+	world.set_cells(PackedInt32Array([15,0,0,1,16,0,0,1]))
+	hit=world.raycast_cells(Vector3(20,0.5,0.5),Vector3(10,0.5,0.5))
+	check(hit.cell==Vector3i(16,0,0) and hit.normal==Vector3.RIGHT,"negative-direction traversal selects nearest cross-chunk cell")
+	world.set_collision_radius(0)
+	await process_frame
+	world.transform=Transform3D(Basis.from_euler(Vector3(0.2,0.3,0.1))*Basis.from_scale(Vector3(2,3,1)),Vector3(40,10,2))
+	var frame: Transform3D = world.global_transform
+	hit=world.raycast_cells(frame*Vector3(15.5,3,0.5),frame*Vector3(15.5,-1,0.5))
+	var expected_normal := (frame.basis.inverse().transposed()*Vector3.UP).normalized()
+	check(hit.cell==Vector3i(15,0,0) and hit.position.distance_to(frame*Vector3(15.5,1,0.5))<0.0001 and hit.normal.dot(expected_normal)>0.9999,"cell query transforms points and normals through an affine collection frame")
+	world.transform=Transform3D.IDENTITY
+	world.configure_streaming(true,16,1,65536,0)
+	world.set_focus(Vector3(1000,0,0))
+	world.flush_bakes()
+	check(world.stats().mesh_chunks==0 and not world.raycast_cells(Vector3(15.5,3,0.5),Vector3(15.5,-1,0.5)).is_empty(),"evicted building remains authoritatively pickable")
+	world.set_cells(PackedInt32Array([15,0,0,0,16,0,0,0]))
+	check(world.raycast_cells(Vector3(15.5,3,0.5),Vector3(15.5,-1,0.5)).is_empty(),"removal immediately invalidates native picking before another bake")
+	world.free()
+	await check_scene_picking()
+
+func check_scene_picking() -> void:
+	var world := make_world()
+	world.set_cells(PackedInt32Array([0,0,0,1]))
+	world.flush_bakes()
+	var models: Node3D = ClassDB.instantiate("NativeStaticBatch")
+	root.add_child(models)
+	models.configure_asset("tests/ray_model",BoxMesh.new())
+	models.upsert_instances(PackedInt64Array([200]),PackedFloat32Array([1,0,0,0.5,0,1,0,-2,0,0,1,0.5]))
+	models.configure_collision(AABB(Vector3.ONE*-0.5,Vector3.ONE),128,8,8)
+	for i in range(4):
+		await physics_frame
+		await process_frame
+	var from := Vector3(0.5,5,0.5)
+	var to := Vector3(0.5,-4,0.5)
+	var hit: Dictionary = world.raycast_scene(from,to)
+	check(hit.get("cell",Vector3i(9,9,9))==Vector3i.ZERO and hit.collider==world,"combined query prioritizes authored block over a farther static model")
+	world.set_cells(PackedInt32Array([0,0,0,0]))
+	var stale: Dictionary = world.get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(from,to,2))
+	check(not stale.is_empty() and stale.position.y>0,"fixture retains a real previous-revision block collision before rebake")
+	hit=world.raycast_scene(from,to)
+	check(not hit.is_empty() and hit.collider==models and models.placement_for_body(hit.rid)==200,"combined query ignores stale block body and returns the actual model behind it")
+	world.set_cells(PackedInt32Array([0,2,0,1]))
+	hit=world.raycast_scene(from,to)
+	check(hit.get("cell",Vector3i.ZERO)==Vector3i(0,2,0) and hit.position.y==3,"new unbaked block immediately occludes static models")
+	var obstacle := StaticBody3D.new()
+	obstacle.collision_layer=1
+	var shape := CollisionShape3D.new()
+	shape.shape=BoxShape3D.new()
+	obstacle.add_child(shape)
+	root.add_child(obstacle)
+	obstacle.position=Vector3(0.5,3.5,0.5)
+	await physics_frame
+	await physics_frame
+	hit=world.raycast_scene(from,to)
+	check(hit.collider==obstacle,"nearer terrain-layer physics occludes authored blocks")
+	hit=world.raycast_scene(from,to,3,[obstacle.get_rid()])
+	check(hit.get("cell",Vector3i.ZERO)==Vector3i(0,2,0),"combined query honours caller RID exclusions")
+	check(world.raycast_scene(from,to,1).collider==obstacle and world.raycast_scene(from,to,2).collider==world and world.raycast_scene(from,to,0).is_empty(),"combined query honours collision masks including authored layer two")
+	check(world.raycast_scene(from,to,-1).is_empty() and world.raycast_scene(from,to,4294967296).is_empty(),"invalid scene ray masks reject without truncation")
+	var exclusions: Array[RID] = []
+	exclusions.resize(257)
+	check(world.raycast_scene(from,to,3,exclusions).is_empty(),"caller exclusion count is bounded")
+	obstacle.free()
+	models.free()
 	world.free()

@@ -174,15 +174,15 @@ func _edit(remove: bool) -> void:
 	var mouse := get_viewport().get_mouse_position()
 	var origin := camera.project_ray_origin(mouse)
 	var direction := camera.project_ray_normal(mouse)
-	var hit := get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(origin, origin+direction*96, 2))
+	var hit: Dictionary = buildings.raycast_cells(origin,origin+direction*96)
 	if hit.is_empty():
-		notice = "Aim at a nearby baked building surface"
+		notice = "Aim at a nearby building surface"
 		return
-	var inside := Vector3i((hit.position-hit.normal*0.001).floor())
+	var inside: Vector3i = hit.cell
 	var target := inside
 	if not remove:
 		# Choose the dominant face axis; partial shapes still occupy a full grid cell.
-		var normal: Vector3 = hit.normal
+		var normal: Vector3 = hit.cell_normal
 		var axis := normal.abs().max_axis_index()
 		target[axis] += 1 if normal[axis] > 0 else -1
 	var word := 0 if remove else selected_shape+(rotation_step<<3)+(selected_material<<5)
