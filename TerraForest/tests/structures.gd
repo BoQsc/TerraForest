@@ -110,10 +110,160 @@ func check_prefabs() -> void:
 	check(not world.can_place_prefab(prefab,Vector3i(40000,0,0),0) and not world.place_prefab(prefab,Vector3i(40000,0,0),0) and world.capture_snapshot()==before,"prefab capacity preflight and commit both reject atomically")
 	world.free()
 
+func check_history() -> void:
+	var world := make_world()
+	var empty: PackedByteArray = world.capture_snapshot()
+	world.set_cells(PackedInt32Array([0,0,0,1]))
+	check(not world.can_undo() and world.history_stats().cell_capacity_bytes==0,"history is opt-in for runtime worlds")
+	world.restore_snapshot(empty)
+	check(world.configure_history(16*1024*1024,128),"bounded native editor history enabled")
+	var notices: Array = []
+	var observe := func(): notices.append(world.history_stats())
+	world.changed.connect(observe)
+	world.set_cells(PackedInt32Array([0,0,0,1,16,-1,-16,44,0,0,0,33]))
+	var authored: PackedByteArray = world.capture_snapshot()
+	check(world.history_stats().undo_steps==1 and world.history_stats().cell_capacity_bytes==32,"one command stores only two unique changed cells")
+	check(notices[-1].undo_steps==1 and notices[-1].redo_steps==0,"forward change listeners observe committed history")
+	check(world.undo() and world.capture_snapshot()==empty,"undo restores original values across signed chunk seams")
+	check(notices[-1].undo_steps==0 and notices[-1].redo_steps==1,"undo cursor is committed before change notification")
+	var history: Dictionary = world.history_stats()
+	world.set_cells(PackedInt32Array([0,0,0,1,0,0,0,0]))
+	check(world.history_stats()==history and world.can_redo(),"net-zero duplicate edits preserve redo")
+	check(not world.set_cells(PackedInt32Array([0,0,0,1,1,0,0,7])) and world.history_stats()==history,"invalid batch preserves history atomically")
+	check(world.redo() and world.capture_snapshot()==authored,"redo reproduces exact shapes and materials")
+	check(notices[-1].undo_steps==1 and notices[-1].redo_steps==0,"redo cursor is committed before change notification")
+	world.undo()
+	world.set_cells(PackedInt32Array([2,0,0,65]))
+	check(not world.can_redo() and world.history_stats().undo_steps==1,"new edit discards abandoned future commands")
+	var corrupt := authored.duplicate()
+	corrupt[10]^=1
+	history=world.history_stats()
+	check(not world.restore_snapshot(corrupt) and world.history_stats()==history,"failed load preserves construction history")
+	check(world.restore_snapshot(authored) and not world.can_undo() and not world.can_redo(),"successful load starts a new history timeline")
+	world.changed.disconnect(observe)
+	history=world.history_stats()
+	check(not world.configure_history(-1,2) and not world.configure_history(67108865,2) and not world.configure_history(1024,1025) and world.history_stats()==history,"invalid history limits preserve configuration")
+	world.restore_snapshot(empty)
+	world.configure_history(32,2)
+	for x in range(3):
+		world.set_cells(PackedInt32Array([x,0,0,1]))
+	check(world.history_stats().undo_steps==2 and world.history_stats().cell_capacity_bytes==32,"byte and command budgets evict the oldest undo steps")
+	check(world.undo() and world.undo() and not world.undo() and world.get_cell(Vector3i.ZERO)==1,"eviction retains a valid nearest undo chain")
+	world.restore_snapshot(empty)
+	world.configure_history(1024,3)
+	for x in range(3):
+		world.set_cells(PackedInt32Array([x,0,0,1]))
+	world.undo()
+	world.undo()
+	world.undo()
+	world.configure_history(32,2)
+	check(world.redo() and world.redo() and not world.redo() and world.get_cell(Vector3i(2,0,0))==0,"shrinking undone history retains nearest redo steps")
+	world.configure_history(16,2)
+	world.set_cells(PackedInt32Array([4,0,0,1,5,0,0,1]))
+	check(not world.can_undo() and not world.can_redo() and world.history_stats().cell_capacity_bytes==0 and world.history_stats().unrecorded_edits==1,"oversized accepted edit forms a barrier instead of unsafe partial undo")
+	world.restore_snapshot(empty)
+	world.configure_history(1024,16)
+	var prefab: Resource = ClassDB.instantiate("NativeBlockPrefab")
+	prefab.configure(PackedInt32Array([0,0,0,1,1,0,0,1,16,0,0,3]))
+	world.place_prefab(prefab,Vector3i.ZERO,0)
+	authored=world.capture_snapshot()
+	prefab.configure(PackedInt32Array([100,0,0,65]))
+	check(world.undo() and world.capture_snapshot()==empty and world.redo() and world.capture_snapshot()==authored,"whole prefab history is independent of later asset changes")
+	world.flush_bakes()
+	var triangles: int = world.stats().triangles
+	world.undo()
+	world.flush_bakes()
+	check(world.stats().triangles==0 and world.stats().collision_chunks==0,"undo removes chunk geometry and collision")
+	world.redo()
+	world.flush_bakes()
+	var instances: Array[Transform3D] = [Transform3D.IDENTITY]
+	check(world.stats().triangles==triangles and world.overlap_mask(instances,AABB(Vector3.ZERO,Vector3.ONE))==PackedByteArray([1]),"redo rebuilds geometry and vegetation occupancy")
+	world.restore_snapshot(empty)
+	world.set_cells(PackedInt32Array([0,0,0,1]))
+	world.set_cells(PackedInt32Array([0,0,0,0]))
+	history=world.history_stats()
+	check(not world.undo(AABB(Vector3.ZERO,Vector3.ONE)) and world.history_stats()==history and world.get_cell(Vector3i.ZERO)==0,"protected player volume blocks solid restoration atomically")
+	world.position=Vector3(100,0,0)
+	check(not world.undo(AABB(Vector3(100,0,0),Vector3.ONE)),"protected volume is transformed into block coordinates")
+	check(not world.undo(AABB(Vector3(INF,0,0),Vector3.ONE)),"nonfinite history protection is rejected")
+	check(world.undo(AABB(Vector3.ZERO,Vector3.ONE)) and world.get_cell(Vector3i.ZERO)==1,"nonintersecting protection permits restoration")
+	world.position=Vector3.ZERO
+	world.undo()
+	check(not world.redo(AABB(Vector3.ZERO,Vector3.ONE)) and world.can_redo(),"redo also respects player clearance")
+	world.redo()
+	var clear_on_change := func(): world.clear_history()
+	world.changed.connect(clear_on_change)
+	check(world.undo() and not world.can_undo() and not world.can_redo(),"reentrant signal listener may clear history safely")
+	world.changed.disconnect(clear_on_change)
+	world.configure_history(0,128)
+	world.set_cells(PackedInt32Array([0,0,0,1]))
+	check(world.history_stats().cell_capacity_bytes==0 and not world.can_undo(),"disabling history releases retained cell data")
+	world.free()
+
+func check_history_model() -> void:
+	var world := make_world()
+	world.configure_history(1152,8)
+	var states: Array[Dictionary] = [{}]
+	var cursor := 0
+	var rng := RandomNumberGenerator.new()
+	rng.seed=1703
+	var correct := true
+	for operation in range(400):
+		var action := rng.randi_range(0,9)
+		if action<6:
+			var next: Dictionary = states[cursor].duplicate()
+			var records := PackedInt32Array()
+			for j in range(rng.randi_range(1,6)):
+				var x := rng.randi_range(0,8)
+				var word: int = [0,1,33,65,3][rng.randi_range(0,4)]
+				records.append_array(PackedInt32Array([x,0,0,word]))
+				if word:
+					next[x]=word
+				else:
+					next.erase(x)
+			correct=world.set_cells(records) and correct
+			if next!=states[cursor]:
+				states.resize(cursor+1)
+				states.append(next)
+				cursor+=1
+				if states.size()>9:
+					states.pop_front()
+					cursor-=1
+		elif action<8:
+			correct=(world.undo()==(cursor>0)) and correct
+			cursor=maxi(0,cursor-1)
+		else:
+			correct=(world.redo()==(cursor<states.size()-1)) and correct
+			cursor=mini(states.size()-1,cursor+1)
+		for x in range(9):
+			correct=(world.get_cell(Vector3i(x,0,0))==states[cursor].get(x,0)) and correct
+		var history: Dictionary = world.history_stats()
+		correct=(history.undo_steps==cursor and history.redo_steps==states.size()-cursor-1 and history.cell_capacity_bytes<=1152) and correct
+	check(correct,"400 deterministic edits, undo, redo and history evictions match an independent state model")
+	world.free()
+
+func check_history_worker() -> void:
+	var world := make_world()
+	world.configure_history(1024,16)
+	world.set_cells(PackedInt32Array([0,0,0,1]))
+	await process_frame
+	await process_frame
+	check(world.stats().worker_jobs==1,"history test has a live bake awaiting publication")
+	var undone: bool = world.undo()
+	world.flush_bakes()
+	check(undone and world.stats().triangles==0 and world.stats().stale_bakes_rejected>0,"undo rejects in-flight geometry from the abandoned edit")
+	var redone: bool = world.redo()
+	world.flush_bakes()
+	check(redone and world.stats().triangles==12 and world.stats().collision_chunks==1,"redo publishes current geometry and collision after stale rejection")
+	world.free()
+
 func run() -> void:
 	check(ClassDB.class_exists("NativeBlockWorld"), "native block extension registered")
 	check_exclusion()
 	check_prefabs()
+	check_history()
+	check_history_model()
+	await check_history_worker()
 	var world := make_world()
 	var empty: PackedByteArray = world.capture_snapshot()
 	check(world.validate_snapshot(empty), "empty snapshot validates")

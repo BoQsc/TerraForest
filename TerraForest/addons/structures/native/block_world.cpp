@@ -20,6 +20,13 @@ static PackedByteArray sha(const PackedByteArray &data) {
 }
 void NativeBlockWorld::_bind_methods() {
     ClassDB::bind_method(D_METHOD("set_cells","records"),&NativeBlockWorld::set_cells);
+    ClassDB::bind_method(D_METHOD("configure_history","byte_limit","step_limit"),&NativeBlockWorld::configure_history);
+    ClassDB::bind_method(D_METHOD("clear_history"),&NativeBlockWorld::clear_history);
+    ClassDB::bind_method(D_METHOD("history_stats"),&NativeBlockWorld::history_stats);
+    ClassDB::bind_method(D_METHOD("can_undo"),&NativeBlockWorld::can_undo);
+    ClassDB::bind_method(D_METHOD("can_redo"),&NativeBlockWorld::can_redo);
+    ClassDB::bind_method(D_METHOD("undo","protected_bounds"),&NativeBlockWorld::undo,DEFVAL(AABB()));
+    ClassDB::bind_method(D_METHOD("redo","protected_bounds"),&NativeBlockWorld::redo,DEFVAL(AABB()));
     ClassDB::bind_method(D_METHOD("can_place_prefab","prefab","origin","quarter_turns","replace"),&NativeBlockWorld::can_place_prefab,DEFVAL(false));
     ClassDB::bind_method(D_METHOD("place_prefab","prefab","origin","quarter_turns","replace"),&NativeBlockWorld::place_prefab,DEFVAL(false));
     ClassDB::bind_method(D_METHOD("capture_prefab","origin","size"),&NativeBlockWorld::capture_prefab);
@@ -48,7 +55,17 @@ void NativeBlockWorld::invalidate(BlockKey key) {
     dirty.insert(key); tickets[key]=++revision;
 }
 bool NativeBlockWorld::set_cells(const PackedInt32Array &records) {
+    bool changed=false;
+    if(!apply_cells(records,true,changed))return false;
+    if(changed)emit_signal("changed");
+    return true;
+}
+bool NativeBlockWorld::apply_cells(const PackedInt32Array &records,bool record_history,bool &changed) {
+    changed=false;
     if(records.size()%4 || records.size()>4*262144) return false;
+    const bool capture=record_history&&history_budget&&history_steps;
+    std::vector<BlockChange> changes;
+    if(capture)changes.reserve(records.size()/4);
     // Stage touched chunks: bad records or a capacity overflow cannot partially edit a building.
     std::map<BlockKey,BlockChunk> staged;
     for(int64_t i=0;i<records.size();i+=4) {
@@ -62,6 +79,7 @@ bool NativeBlockWorld::set_cells(const PackedInt32Array &records) {
             it=staged.emplace(k,old==chunks.end()?BlockChunk{}:old->second).first;
         }
         auto &c=it->second; auto &v=c.cells[index(x,y,z)];
+        if(capture)changes.push_back({x,y,z,v,uint16_t(w)});
         c.count+=(w!=0)-(v!=0); v=uint16_t(w);
         auto &column=c.columns[(x&15)+16*(z&15)];
         const uint16_t bit=uint16_t(1u<<(y&15));
@@ -70,7 +88,6 @@ bool NativeBlockWorld::set_cells(const PackedInt32Array &records) {
     int final_count=int(chunks.size());
     for(auto &entry:staged) final_count+=(entry.second.count>0)-(chunks.count(entry.first)>0);
     if(final_count>MAX_CHUNKS) return false;
-    bool changed=false;
     for(auto &entry:staged) {
         auto old=chunks.find(entry.first);
         if(old!=chunks.end()&&old->second.cells==entry.second.cells) continue;
@@ -83,7 +100,10 @@ bool NativeBlockWorld::set_cells(const PackedInt32Array &records) {
         invalidate({k.x,k.y-1,k.z}); invalidate({k.x,k.y+1,k.z});
         invalidate({k.x,k.y,k.z-1}); invalidate({k.x,k.y,k.z+1});
     }
-    if(changed) { set_process(true); emit_signal("changed"); }
+    if(changed) {
+        if(record_history)remember_edit(std::move(changes));
+        set_process(true);
+    }
     return true;
 }
 
@@ -368,6 +388,7 @@ bool NativeBlockWorld::restore_snapshot(const PackedByteArray &bytes) {
     // Preserve pending keys so any in-flight publication receives a new ticket.
     for(auto &e:tickets)affected.insert(e.first);
     chunks=std::move(restored);dirty.clear();tickets.clear();for(auto k:affected)invalidate(k);
+    clear_history();
     set_process(true);emit_signal("changed");return true;
 }
 }

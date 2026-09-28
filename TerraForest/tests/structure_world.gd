@@ -41,6 +41,8 @@ func run() -> void:
 	game.structures.blocks.set_cells(PackedInt32Array([tree_cell.x,tree_cell.y,tree_cell.z,1]))
 	var occupied_blocks: PackedByteArray = game.structures.blocks.capture_snapshot()
 	check(await until(func(): return not game.vegetation.renderer.roots.has(tree_id)),"placing a block removes an intersecting tree canopy")
+	check(game.structures.blocks.undo() and await until(func(): return game.vegetation.renderer.roots.has(tree_id)),"undo restores vegetation excluded by construction")
+	check(game.structures.blocks.redo() and await until(func(): return not game.vegetation.renderer.roots.has(tree_id)),"redo reapplies construction vegetation exclusion")
 	game.structures.blocks.restore_snapshot(empty_blocks)
 	check(await until(func(): return game.vegetation.renderer.roots.has(tree_id)),"removing construction restores the deterministic tree candidate")
 	check(game.vegetation.renderer.roots.get(tree_id,{}).get("t",Transform3D())==tree_transform,"restored tree keeps its original placement")
@@ -88,8 +90,22 @@ func run() -> void:
 	game.player.position=Vector3(isolated)+Vector3(0.5,6,0.5)
 	game.camera.look_at(Vector3(isolated)+Vector3(0.5,0.5,0.5),Vector3.FORWARD)
 	var revision: int = game.terrain.density_revision
+	var before_placement: PackedByteArray = game.structures.capture_snapshot()
 	game._edit_structure(false)
 	check(game.structures.blocks.get_cell(isolated+Vector3i.UP)==1,"actual construction picking places the adjacent block")
+	var after_placement: PackedByteArray = game.structures.capture_snapshot()
+	var undo_key := InputEventKey.new()
+	undo_key.physical_keycode=KEY_Z
+	undo_key.ctrl_pressed=true
+	undo_key.pressed=true
+	game._unhandled_input(undo_key)
+	check(game.structures.capture_snapshot()==before_placement,"Ctrl+Z reverses the edit and invalidates cached world persistence")
+	var redo_key := InputEventKey.new()
+	redo_key.physical_keycode=KEY_Y
+	redo_key.ctrl_pressed=true
+	redo_key.pressed=true
+	game._unhandled_input(redo_key)
+	check(game.structures.capture_snapshot()==after_placement,"Ctrl+Y restores the edit and its persistent representation")
 	check(await until(func(): return game.structures.blocks.is_idle(),20),"placed block mesh publishes")
 	await physics_frame
 	await physics_frame
@@ -180,6 +196,24 @@ func check_prefab_editor(location: Vector3) -> void:
 	check(game.structures.blocks.stats().cells==before_cells+asset.get_cell_count(),"actual placement tool creates every cottage cell in one operation")
 	check(game.terrain.density_revision==density_revision,"prefab placement leaves terrain density unchanged")
 	check(not game._prefab_allowed(asset,anchor),"occupied prefab footprint is rejected")
+	var cottage_snapshot: PackedByteArray = game.structures.blocks.capture_snapshot()
+	var undo_key := InputEventKey.new()
+	undo_key.physical_keycode=KEY_Z
+	undo_key.ctrl_pressed=true
+	undo_key.pressed=true
+	game._unhandled_input(undo_key)
+	check(game.structures.blocks.stats().cells==before_cells,"Ctrl+Z removes the entire prefab in one step")
+	game.player.position=Vector3(anchor)+Vector3(0.5,0.1,0.5)
+	var redo_key := InputEventKey.new()
+	redo_key.physical_keycode=KEY_Y
+	redo_key.ctrl_pressed=true
+	redo_key.pressed=true
+	game._unhandled_input(redo_key)
+	check(game.structures.blocks.stats().cells==before_cells and game.structures.blocks.can_redo(),"editor redo cannot restore the prefab through the player")
+	game.player.position=outside
+	undo_key.shift_pressed=true
+	game._unhandled_input(undo_key)
+	check(game.structures.blocks.capture_snapshot()==cottage_snapshot,"Ctrl+Shift+Z restores the complete prefab after moving clear")
 	check(await until(func(): return game.structures.blocks.is_idle(),20),"prefab chunk meshes finish their bounded bake queue")
 	await physics_frame
 	await physics_frame
@@ -192,6 +226,7 @@ func check_prefab_editor(location: Vector3) -> void:
 	var saved: PackedByteArray = game.structures.capture_snapshot()
 	var snapshot: PackedByteArray = game.structures.blocks.capture_snapshot()
 	check(game.structures.restore_snapshot(saved) and game.structures.blocks.capture_snapshot()==snapshot,"compound world restoration preserves prefab-authored cells")
+	check(not game.structures.blocks.can_undo() and not game.structures.blocks.can_redo(),"world restoration clears the prior editor history")
 	check(await until(func(): return game.structures.blocks.is_idle() and game.ecosystem._reconcile.is_empty(),20),"prefab reload finishes meshes and forest exclusion")
 	var tower_asset: Resource = game.structure_prefabs[3]
 	var tower_anchor := anchor+Vector3i(30,0,-10)

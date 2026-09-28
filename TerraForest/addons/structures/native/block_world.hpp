@@ -11,6 +11,7 @@
 #include <set>
 #include <future>
 #include <vector>
+#include <deque>
 
 namespace terraforest {
 using namespace godot;
@@ -22,6 +23,8 @@ struct BlockChunk { std::array<uint16_t,4096> cells{}; std::array<uint16_t,256> 
 struct BlockVertex { float x,y,z,nx,ny,nz,u,v,material; };
 struct BlockBake { BlockKey key; uint64_t revision=0; std::vector<BlockVertex> vertices; std::vector<int32_t> indices; };
 struct BlockVisual { MeshInstance3D *mesh=nullptr; StaticBody3D *body=nullptr; int triangles=0; };
+struct BlockChange { int32_t x,y,z; uint16_t before,after; };
+static_assert(sizeof(BlockChange)==16,"History cell accounting must match allocated records");
 
 // Main-thread authoring/publication, one immutable native worker snapshot at a time.
 // No SceneTree or Godot resources are touched by the bake worker.
@@ -39,6 +42,13 @@ class NativeBlockWorld : public Node3D {
     Vector3 focus;
     double collision_radius=48.0;
     bool collisions=true;
+    std::deque<std::vector<BlockChange>> undo_edits,redo_edits;
+    uint64_t history_bytes=0,history_budget=0,unrecorded_edits=0;
+    int history_steps=0;
+    bool apply_cells(const PackedInt32Array &records,bool record_history,bool &changed);
+    void remember_edit(std::vector<BlockChange> &&changes);
+    void trim_history();
+    bool replay_edit(bool backwards,const AABB &protected_bounds);
     static int div16(int v) { return v>=0?v/16:(v-15)/16; }
     static BlockKey key_for(int x,int y,int z) { return {div16(x),div16(y),div16(z)}; }
     static int index(int x,int y,int z) { return (x&15)+16*((y&15)+16*(z&15)); }
@@ -58,6 +68,13 @@ public:
     ~NativeBlockWorld();
     void _process(double delta) override;
     bool set_cells(const PackedInt32Array &records);
+    bool configure_history(int64_t byte_limit,int step_limit);
+    void clear_history();
+    Dictionary history_stats() const;
+    bool can_undo() const { return !undo_edits.empty(); }
+    bool can_redo() const { return !redo_edits.empty(); }
+    bool undo(const AABB &protected_bounds=AABB()) { return replay_edit(true,protected_bounds); }
+    bool redo(const AABB &protected_bounds=AABB()) { return replay_edit(false,protected_bounds); }
     bool can_place_prefab(const Ref<NativeBlockPrefab> &prefab,Vector3i origin,int quarter_turns,bool replace=false) const;
     bool place_prefab(const Ref<NativeBlockPrefab> &prefab,Vector3i origin,int quarter_turns,bool replace=false);
     Ref<NativeBlockPrefab> capture_prefab(Vector3i origin,Vector3i size) const;

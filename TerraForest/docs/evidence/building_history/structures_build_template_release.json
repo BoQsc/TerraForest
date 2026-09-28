@@ -1,0 +1,33 @@
+{
+  "target": "template_release",
+  "compiled_extension_sources": [
+    "block_history.cpp",
+    "block_prefab.cpp",
+    "block_world.cpp",
+    "prefab_placement.cpp",
+    "register_types.cpp",
+    "showcase.cpp",
+    "static_batch.cpp",
+    "structures_snapshot.cpp"
+  ],
+  "godot_cpp_sources_compiled": 0,
+  "linked": true,
+  "seconds": 29.501180100021884,
+  "output": "C:\\Users\\Windows10_new\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\addons\\structures\\bin\\structures.windows.template_release.x86_64.dll",
+  "sha256": "547725e30d88d7607bd259a3924df0248cb5fc56713113e8cc5405ab9b606804",
+  "sdk": {
+    "api_version": "4.7",
+    "godot_cpp_sha": "d7b6162249ed52796a8301d216c24ee71d68c2bf",
+    "variant": "windows-x86_64-zig",
+    "compiler": "zig-0.16.0",
+    "platform": "windows",
+    "arch": "x86_64",
+    "targets": [
+      "template_debug",
+      "template_release"
+    ],
+    "precision": "single",
+    "created_unix": 1786965830
+  },
+  "addon": "structures"
+}
