@@ -367,6 +367,8 @@ func _process(delta: float) -> void:
 		structures.blocks.set_focus(player.position)
 		structures.model("architecture/metal_beam/v1").set_collision_focus(player.position)
 		structures.model("architecture/doorway/v1").set_collision_focus(player.position)
+		structures.model("architecture/metal_beam/v1").set_render_focus(player.position)
+		structures.model("architecture/doorway/v1").set_render_focus(player.position)
 	_telemetry_time += delta
 	if _telemetry_time >= 0.5 and vegetation.ready_to_render:
 		_telemetry_time = 0.0

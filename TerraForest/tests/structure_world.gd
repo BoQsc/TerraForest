@@ -497,6 +497,10 @@ func check_prefab_editor(location: Vector3) -> void:
 	game.fly=true
 	game.structure_prefab_index=-1
 	var travel_start: Vector3 = game.player.position
+	var travel_models: Node3D = game.structures.model("architecture/metal_beam/v1")
+	check(await until(func(): return not travel_models.render_stats().selection_pending and travel_models.render_stats().pending_batches==0 and travel_models.stats().slot_entries>0),"main world admits nearby static model rendering")
+	var model_save: PackedByteArray = travel_models.capture_snapshot()
+	var model_slots: int = travel_models.stats().slot_entries
 	var travel_data: PackedByteArray = game.structures.blocks.capture_snapshot()
 	var travel_meshes: int = game.structures.blocks.stats().mesh_chunks
 	var travel_jobs: int = game.structures.blocks.streaming_stats().bake_jobs
@@ -505,10 +509,13 @@ func check_prefab_editor(location: Vector3) -> void:
 	game.player.velocity=Vector3.ZERO
 	check(await until(func(): return game.structures.blocks.is_idle() and game.structures.blocks.stats().mesh_chunks==0,20),"main-world travel evicts distant building meshes")
 	check(game.structures.blocks.stats().collision_chunks==0 and game.structures.blocks.capture_snapshot()==travel_data,"travel releases building physics without changing saved cells")
+	check(await until(func(): return travel_models.render_stats().resident_transform_bytes==0 and travel_models.stats().slot_entries==0),"main-world travel evicts distant static model rendering")
+	check(travel_models.capture_snapshot()==model_save,"model render eviction leaves authored save unchanged")
 	travel_evidence["away"]={"streaming":game.structures.blocks.streaming_stats(),"world":game.structures.blocks.stats()}
 	game.player.position=travel_start
 	check(await until(func(): return game.structures.blocks.is_idle() and game.structures.blocks.stats().mesh_chunks==travel_meshes,20),"return travel restores building meshes from cache")
 	check(game.structures.blocks.streaming_stats().bake_jobs==travel_jobs,"return travel needs no additional building bake jobs")
+	check(await until(func(): return travel_models.stats().slot_entries==model_slots),"return travel restores static model render residency")
 	travel_evidence["returned"]={"streaming":game.structures.blocks.streaming_stats(),"world":game.structures.blocks.stats()}
 	game.player.position=Vector3(anchor)+Vector3(18,13,18)
 	game.player.velocity=Vector3.ZERO

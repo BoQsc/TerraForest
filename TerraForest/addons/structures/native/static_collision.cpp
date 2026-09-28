@@ -26,6 +26,11 @@ void NativeStaticBatch::_notification(int what) {
     if(what==NOTIFICATION_TRANSFORM_CHANGED)emit_signal("exclusion_changed");
     if(what==NOTIFICATION_EXIT_TREE||what==NOTIFICATION_EXIT_WORLD) {clear_proxies();collision_dirty=true;}
     if(what==NOTIFICATION_ENTER_TREE||what==NOTIFICATION_ENTER_WORLD)collision_dirty=true;
+    if(what==NOTIFICATION_EXIT_TREE&&render_streaming) {
+        while(!batches.empty())release_batch(batches.begin()->first);
+        render_pending.clear();render_dirty=true;
+    }
+    if(what==NOTIFICATION_ENTER_TREE)render_dirty=true;
 }
 bool NativeStaticBatch::configure_collision(const AABB &box,double radius,int64_t instance_limit,int64_t builds_per_tick) {
     TypedArray<AABB> boxes;boxes.push_back(box);
@@ -59,17 +64,22 @@ void NativeStaticBatch::invalidate_proxy(int64_t id) {release_proxy(id);collisio
 void NativeStaticBatch::refresh_collision_bounds(const std::set<BlockKey> &keys) {
     if(source_mesh.is_null())return;
     const AABB prototype=proxy_parts.empty()?source_mesh->get_aabb():proxy_box;
+    const AABB visual=source_mesh->get_aabb();
     for(auto key:keys) {
         auto group=groups.find(key);collision_bounds.erase(key);
+        render_bounds.erase(key);
         if(group==groups.end())continue;
-        bool first=true;AABB box;
+        bool first=true;AABB box,render_box;
         for(auto id:group->second) {
-            AABB next=placement_transform(placements.at(id)).xform(prototype);
+            Transform3D transform=placement_transform(placements.at(id));
+            AABB next=transform.xform(prototype),render_next=transform.xform(visual);
+            render_box=first?render_next:render_box.merge(render_next);
             box=first?next:box.merge(next);first=false;
         }
         collision_bounds.emplace(key,box);
+        render_bounds.emplace(key,render_box);
     }
-    if(!keys.empty())collision_dirty=true;
+    if(!keys.empty()) {collision_dirty=true;render_dirty=true;}
 }
 static double box_distance_squared(const AABB &box,const Vector3 &point) {
     Vector3 end=box.position+box.size;

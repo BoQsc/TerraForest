@@ -1,0 +1,37 @@
+{
+  "checks": 200,
+  "collision_100k": {
+    "body_builds": 66,
+    "body_evictions": 50,
+    "budget_deferred": 80,
+    "builds_per_tick": 4,
+    "candidate_bodies": 96,
+    "enabled": true,
+    "history": {
+      "barriers": 0,
+      "busy": false,
+      "byte_limit": 4096,
+      "collections": 1,
+      "record_bytes": 120,
+      "record_size": 120,
+      "redo_steps": 0,
+      "step_limit": 16,
+      "undo_steps": 1,
+      "unrecorded_edits": 0
+    },
+    "instance_limit": 16,
+    "invalid_proxies": 0,
+    "parts_per_body": 1,
+    "pending_bodies": 0,
+    "radius": 16.0,
+    "resident_bodies": 16,
+    "resident_shapes": 16,
+    "selection_pending": false,
+    "selection_queries": 34,
+    "shape_limit": 4096,
+    "shapes_per_tick": 64,
+    "transform_valid": true
+  },
+  "failures": 0,
+  "gpu_readback": false
+}
