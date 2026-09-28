@@ -1,0 +1,134 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS native terrain planner registered
+PASS empty startup request set, priorities and hysteresis match legacy
+PASS empty startup coverage, dirty fallback and immutable inputs match legacy
+PASS empty startup eviction preserves visible/requested/root tiles and LRU ordering
+PASS seeded travel 0 request set, priorities and hysteresis match legacy
+PASS seeded travel 0 coverage, dirty fallback and immutable inputs match legacy
+PASS seeded travel 0 eviction preserves visible/requested/root tiles and LRU ordering
+PASS seeded travel 1 request set, priorities and hysteresis match legacy
+PASS seeded travel 1 coverage, dirty fallback and immutable inputs match legacy
+PASS seeded travel 1 eviction preserves visible/requested/root tiles and LRU ordering
+PASS seeded travel 2 request set, priorities and hysteresis match legacy
+PASS seeded travel 2 coverage, dirty fallback and immutable inputs match legacy
+PASS seeded travel 2 eviction preserves visible/requested/root tiles and LRU ordering
+PASS seeded travel 3 request set, priorities and hysteresis match legacy
+PASS seeded travel 3 coverage, dirty fallback and immutable inputs match legacy
+PASS seeded travel 3 eviction preserves visible/requested/root tiles and LRU ordering
+PASS seeded travel 4 request set, priorities and hysteresis match legacy
+PASS seeded travel 4 coverage, dirty fallback and immutable inputs match legacy
+PASS seeded travel 4 eviction preserves visible/requested/root tiles and LRU ordering
+PASS seeded travel 5 request set, priorities and hysteresis match legacy
+PASS seeded travel 5 coverage, dirty fallback and immutable inputs match legacy
+PASS seeded travel 5 eviction preserves visible/requested/root tiles and LRU ordering
+PASS seeded travel 6 request set, priorities and hysteresis match legacy
+PASS seeded travel 6 coverage, dirty fallback and immutable inputs match legacy
+PASS seeded travel 6 eviction preserves visible/requested/root tiles and LRU ordering
+PASS seeded travel 7 request set, priorities and hysteresis match legacy
+PASS seeded travel 7 coverage, dirty fallback and immutable inputs match legacy
+PASS seeded travel 7 eviction preserves visible/requested/root tiles and LRU ordering
+PASS seeded travel 8 request set, priorities and hysteresis match legacy
+PASS seeded travel 8 coverage, dirty fallback and immutable inputs match legacy
+PASS seeded travel 8 eviction preserves visible/requested/root tiles and LRU ordering
+PASS seeded travel 9 request set, priorities and hysteresis match legacy
+PASS seeded travel 9 coverage, dirty fallback and immutable inputs match legacy
+PASS seeded travel 9 eviction preserves visible/requested/root tiles and LRU ordering
+PASS seeded travel 10 request set, priorities and hysteresis match legacy
+PASS seeded travel 10 coverage, dirty fallback and immutable inputs match legacy
+PASS seeded travel 10 eviction preserves visible/requested/root tiles and LRU ordering
+PASS seeded travel 11 request set, priorities and hysteresis match legacy
+PASS seeded travel 11 coverage, dirty fallback and immutable inputs match legacy
+PASS seeded travel 11 eviction preserves visible/requested/root tiles and LRU ordering
+PASS seeded travel 12 request set, priorities and hysteresis match legacy
+PASS seeded travel 12 coverage, dirty fallback and immutable inputs match legacy
+PASS seeded travel 12 eviction preserves visible/requested/root tiles and LRU ordering
+PASS seeded travel 13 request set, priorities and hysteresis match legacy
+PASS seeded travel 13 coverage, dirty fallback and immutable inputs match legacy
+PASS seeded travel 13 eviction preserves visible/requested/root tiles and LRU ordering
+PASS seeded travel 14 request set, priorities and hysteresis match legacy
+PASS seeded travel 14 coverage, dirty fallback and immutable inputs match legacy
+PASS seeded travel 14 eviction preserves visible/requested/root tiles and LRU ordering
+PASS seeded travel 15 request set, priorities and hysteresis match legacy
+PASS seeded travel 15 coverage, dirty fallback and immutable inputs match legacy
+PASS seeded travel 15 eviction preserves visible/requested/root tiles and LRU ordering
+PASS seeded travel 16 request set, priorities and hysteresis match legacy
+PASS seeded travel 16 coverage, dirty fallback and immutable inputs match legacy
+PASS seeded travel 16 eviction preserves visible/requested/root tiles and LRU ordering
+PASS seeded travel 17 request set, priorities and hysteresis match legacy
+PASS seeded travel 17 coverage, dirty fallback and immutable inputs match legacy
+PASS seeded travel 17 eviction preserves visible/requested/root tiles and LRU ordering
+PASS seeded travel 18 request set, priorities and hysteresis match legacy
+PASS seeded travel 18 coverage, dirty fallback and immutable inputs match legacy
+PASS seeded travel 18 eviction preserves visible/requested/root tiles and LRU ordering
+PASS seeded travel 19 request set, priorities and hysteresis match legacy
+PASS seeded travel 19 coverage, dirty fallback and immutable inputs match legacy
+PASS seeded travel 19 eviction preserves visible/requested/root tiles and LRU ordering
+PASS seeded travel 20 request set, priorities and hysteresis match legacy
+PASS seeded travel 20 coverage, dirty fallback and immutable inputs match legacy
+PASS seeded travel 20 eviction preserves visible/requested/root tiles and LRU ordering
+PASS seeded travel 21 request set, priorities and hysteresis match legacy
+PASS seeded travel 21 coverage, dirty fallback and immutable inputs match legacy
+PASS seeded travel 21 eviction preserves visible/requested/root tiles and LRU ordering
+PASS seeded travel 22 request set, priorities and hysteresis match legacy
+PASS seeded travel 22 coverage, dirty fallback and immutable inputs match legacy
+PASS seeded travel 22 eviction preserves visible/requested/root tiles and LRU ordering
+PASS seeded travel 23 request set, priorities and hysteresis match legacy
+PASS seeded travel 23 coverage, dirty fallback and immutable inputs match legacy
+PASS seeded travel 23 eviction preserves visible/requested/root tiles and LRU ordering
+PASS seeded travel 24 request set, priorities and hysteresis match legacy
+PASS seeded travel 24 coverage, dirty fallback and immutable inputs match legacy
+PASS seeded travel 24 eviction preserves visible/requested/root tiles and LRU ordering
+PASS seeded travel 25 request set, priorities and hysteresis match legacy
+PASS seeded travel 25 coverage, dirty fallback and immutable inputs match legacy
+PASS seeded travel 25 eviction preserves visible/requested/root tiles and LRU ordering
+PASS seeded travel 26 request set, priorities and hysteresis match legacy
+PASS seeded travel 26 coverage, dirty fallback and immutable inputs match legacy
+PASS seeded travel 26 eviction preserves visible/requested/root tiles and LRU ordering
+PASS seeded travel 27 request set, priorities and hysteresis match legacy
+PASS seeded travel 27 coverage, dirty fallback and immutable inputs match legacy
+PASS seeded travel 27 eviction preserves visible/requested/root tiles and LRU ordering
+PASS seeded travel 28 request set, priorities and hysteresis match legacy
+PASS seeded travel 28 coverage, dirty fallback and immutable inputs match legacy
+PASS seeded travel 28 eviction preserves visible/requested/root tiles and LRU ordering
+PASS seeded travel 29 request set, priorities and hysteresis match legacy
+PASS seeded travel 29 coverage, dirty fallback and immutable inputs match legacy
+PASS seeded travel 29 eviction preserves visible/requested/root tiles and LRU ordering
+PASS seeded travel 30 request set, priorities and hysteresis match legacy
+PASS seeded travel 30 coverage, dirty fallback and immutable inputs match legacy
+PASS seeded travel 30 eviction preserves visible/requested/root tiles and LRU ordering
+PASS seeded travel 31 request set, priorities and hysteresis match legacy
+PASS seeded travel 31 coverage, dirty fallback and immutable inputs match legacy
+PASS seeded travel 31 eviction preserves visible/requested/root tiles and LRU ordering
+PASS seeded travel 32 request set, priorities and hysteresis match legacy
+PASS seeded travel 32 coverage, dirty fallback and immutable inputs match legacy
+PASS seeded travel 32 eviction preserves visible/requested/root tiles and LRU ordering
+PASS seeded travel 33 request set, priorities and hysteresis match legacy
+PASS seeded travel 33 coverage, dirty fallback and immutable inputs match legacy
+PASS seeded travel 33 eviction preserves visible/requested/root tiles and LRU ordering
+PASS seeded travel 34 request set, priorities and hysteresis match legacy
+PASS seeded travel 34 coverage, dirty fallback and immutable inputs match legacy
+PASS seeded travel 34 eviction preserves visible/requested/root tiles and LRU ordering
+PASS seeded travel 35 request set, priorities and hysteresis match legacy
+PASS seeded travel 35 coverage, dirty fallback and immutable inputs match legacy
+PASS seeded travel 35 eviction preserves visible/requested/root tiles and LRU ordering
+PASS dirty visible tile remains valid coverage before edit publication
+PASS dirty hidden parent cannot resurrect stale geometry
+PASS partial world root cannot expose an incomplete cut
+PASS complete fine coverage clips excluded edge children without holes
+PASS full fine-world cut matches legacy ordered traversal
+PASS prior split remains inside the 30 percent hysteresis band
+PASS flight altitude reduces refinement while collision mode retains ground coverage
+PASS nonfinite focus rejected
+PASS unaligned terrain tile rejected
+PASS unsupported tile size rejected
+PASS out-of-domain tile rejected
+PASS malformed dirty flag rejected
+PASS malformed hysteresis flag rejected
+PASS malformed visible key rejected
+PASS malformed eviction timestamp rejected
+PASS requested-key membership protects eviction independently of stored boolean value
+PASS oversized planner input rejected before traversal
+PLANNER_TIMING {"legacy_median_ms":6.699,"legacy_p95_ms":7.411,"native_median_ms":0.529,"native_p95_ms":0.742,"scope":"Matched headless request + coverage CPU calls, 80 samples; excludes scene publication, backend locks and rendering.","tiles":197}
+TERRAIN_PLANNER_RESULT {"checks":129,"failures":0,"timing":{"legacy_median_ms":6.699,"legacy_p95_ms":7.411,"native_median_ms":0.529,"native_p95_ms":0.742,"scope":"Matched headless request + coverage CPU calls, 80 samples; excludes scene publication, backend locks and rendering.","tiles":197}}
+

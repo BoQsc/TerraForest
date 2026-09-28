@@ -1,0 +1,114 @@
+{
+  "checks": [
+    {
+      "name": "native terrain initializes",
+      "pass": true
+    },
+    {
+      "name": "native sphere edit accepted",
+      "pass": true
+    },
+    {
+      "name": "editing one world leaves second world unchanged",
+      "pass": true
+    },
+    {
+      "name": "snapshot loads into independent world with identical bytes",
+      "pass": true
+    },
+    {
+      "name": "native mesh generated at (320, 1312, 32)",
+      "pass": true
+    },
+    {
+      "name": "native mesh generated at (960, 960, 32)",
+      "pass": true
+    },
+    {
+      "name": "native mesh generated at (1024, 1088, 64)",
+      "pass": true
+    },
+    {
+      "name": "typed binding advertises independent native worlds",
+      "pass": true
+    },
+    {
+      "name": "truncated request rejected",
+      "pass": true
+    },
+    {
+      "name": "malformed cancellation cannot change epoch",
+      "pass": true
+    },
+    {
+      "name": "cancellation belongs only to its owner",
+      "pass": true
+    },
+    {
+      "name": "snapshot load preserves owner cancellation counter",
+      "pass": true
+    },
+    {
+      "name": "world reset preserves owner cancellation counter",
+      "pass": true
+    },
+    {
+      "name": "first native worker starts",
+      "pass": true
+    },
+    {
+      "name": "first worker observed inside native mesh operation",
+      "pass": true
+    },
+    {
+      "name": "second native worker starts",
+      "pass": true
+    },
+    {
+      "name": "second worker observed inside native mesh operation",
+      "pass": true
+    },
+    {
+      "name": "owner cancellation aborts active native mesh",
+      "pass": true
+    },
+    {
+      "name": "other active world completes despite neighboring cancellation",
+      "pass": true
+    },
+    {
+      "name": "cancellation remains nonblocking and joins within one second",
+      "pass": true
+    },
+    {
+      "name": "concurrent mesh equals a fresh sequential world byte for byte",
+      "pass": true
+    },
+    {
+      "name": "native execution diagnostics return idle after completion",
+      "pass": true
+    },
+    {
+      "name": "concurrent callers serialize all 200 same-world block edits without losing revisions",
+      "pass": true
+    },
+    {
+      "name": "serialized concurrent block edits produce the sequential collision and render mesh",
+      "pass": true
+    },
+    {
+      "name": "1000 resets cannot lose any of 1000 concurrent owner cancellation increments",
+      "pass": true
+    }
+  ],
+  "failures": 0,
+  "fingerprints": {
+    "(1024, 1088, 64)": "203f47ac8e47c49bd793be9f5a4f1374bb8f14525420a4772d9c3364be75c680",
+    "(320, 1312, 32)": "31b95210a8f59beb471b9c8f10965fff64bbf1fc1524670b723c0239f3acc87d",
+    "(960, 960, 32)": "778f16a815406c3ce4f6b3193f6af26efe9bbd65b9cff51609e4b4bc002b3c8d",
+    "cancellation_join_ms": 3.082,
+    "edited_snapshot": "7ddb32daab59f81ea6d4f68910f128fbd0a5bd23989c6da1c2b6683ca603d16f",
+    "field_samples": "fc8478bd596f9daabcd519c836f968316f3dd89473e92fe832502181448963e4",
+    "initial_snapshot": "8ef827075380bf885ba6e474b1e8735d1f8650ca7a520c2461fa1aacd75f6ab3"
+  }
+}

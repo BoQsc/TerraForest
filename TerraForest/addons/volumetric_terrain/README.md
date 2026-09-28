@@ -19,7 +19,9 @@ func _process(_delta):
     terrain.focus = $Player.global_position
 ```
 
-`start(material = null, temporary_world = false) -> Error` starts the single worker. A new node is required after shutdown. Call `shutdown()` before explicit resource teardown; `_exit_tree()` also joins the worker. A second active world is rejected. Identity global transform is mandatory. Supported native binaries are Windows x86-64 and Linux x86-64; this revision was exercised on Windows only.
+`start(material = null, temporary_world = false) -> Error` starts the single worker. A new node is required after shutdown. Call `shutdown()` before explicit resource teardown; `_exit_tree()` also joins the worker. A second active world is rejected. Identity global transform is mandatory. The current facade requires `NativeTerrainPlanner`, supplied by the rebuilt Windows x86-64 binaries. The retained legacy Linux binary lacks that class and cannot start this facade until rebuilt with the typed binding and planner. Current validation covers Windows only.
+
+`NativeTerrainPlanner` performs bounded request traversal, hysteresis, priority sorting, coverage fallback and eviction candidate ordering in C++. Runtime GDScript keeps queue submission and scene publication. The facade reports separate `LOD requests`, `LOD coverage` and `LOD eviction` stages as well as the total. See [planner validation and limits](../../docs/TERRAIN_PLANNER_VALIDATION.md).
 
 `sculpt_sphere(center, radius, add = false, material_id = 1) -> bool` submits a sphere edit. `set_block(cell, material_id) -> bool` writes/removes an exact cube. Both return false if not ready, busy, malformed or admission fails. Radius is 0.5–64 m. Material values are 0–3; block material 0 removes. Existing `edit(...)` supports bounded ordered groups of up to four native brush packets, with validation before mutation. Failed native multi-command groups are not rollback-atomic; saving is disabled on that failure path.
 

@@ -1,0 +1,26 @@
+{
+  "target": "template_release",
+  "compiled_extension_sources": [
+    "terrain_planner.cpp"
+  ],
+  "godot_cpp_sources_compiled": 0,
+  "linked": true,
+  "seconds": 4.972690300026443,
+  "output": "C:\\Users\\Windows10_new\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll",
+  "sha256": "a05770d78ff9ae805bf661df6594051c92252845185bc792da5191a8a4640d4b",
+  "sdk": {
+    "api_version": "4.7",
+    "godot_cpp_sha": "d7b6162249ed52796a8301d216c24ee71d68c2bf",
+    "variant": "windows-x86_64-zig",
+    "compiler": "zig-0.16.0",
+    "platform": "windows",
+    "arch": "x86_64",
+    "targets": [
+      "template_debug",
+      "template_release"
+    ],
+    "precision": "single",
+    "created_unix": 1786965830
+  },
+  "addon": "volumetric_terrain"
+}

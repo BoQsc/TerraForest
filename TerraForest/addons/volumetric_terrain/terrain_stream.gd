@@ -35,6 +35,7 @@ const FINE_SIZE: int = 16
 const LIGHT_UPLOAD_BYTES: int = 256 * 1024
 const COLLIDER_TRIANGLES_PER_PIECE: int = 1024
 var backend = Backend.new()
+var planner: RefCounted
 var material: Material
 var focus := Vector3(960, 110, 1310)
 var epoch: int = 0
@@ -110,6 +111,7 @@ var lighting_generation: int = 0
 var geometry_lo := Vector3.ZERO
 var geometry_hi := Vector3.ZERO
 var root_coverage: int = 0
+var covered_roots: Dictionary = {}
 var initial_loading: bool = true
 var last_geometry_done_us: int = 0
 var lighting_upload: Dictionary = {}
@@ -122,6 +124,12 @@ var reused_light_probes: int = 0
 var slow_edits: Array[Dictionary] = []
 
 func start(terrain_material: Material, temporary_world: bool) -> Error:
+	if not ClassDB.class_exists("NativeTerrainPlanner"):
+		GDExtensionManager.load_extension("res://addons/volumetric_terrain/terrain_core.gdextension")
+	if not ClassDB.class_exists("NativeTerrainPlanner"):
+		push_error("Terrain requires the current native planner build; the legacy terrain binary is not supported.")
+		return ERR_UNAVAILABLE
+	planner = ClassDB.instantiate("NativeTerrainPlanner")
 	material = terrain_material
 	# Receive completed work before the parent consumes the next pending sample.
 	# Does not change physics ordering or increase the per-frame upload budget.
@@ -182,8 +190,13 @@ func _process(delta: float) -> void:
 		schedule_timer = 0.025 if initial_loading else 0.10
 		var schedule_begin: int = Time.get_ticks_usec()
 		_schedule()
+		_record_stage("LOD requests",float(Time.get_ticks_usec()-schedule_begin)/1000.0)
+		var cut_begin: int = Time.get_ticks_usec()
 		_update_cut()
+		_record_stage("LOD coverage",float(Time.get_ticks_usec()-cut_begin)/1000.0)
+		var evict_begin: int = Time.get_ticks_usec()
 		_evict()
+		_record_stage("LOD eviction",float(Time.get_ticks_usec()-evict_begin)/1000.0)
 		last_schedule_ms = float(Time.get_ticks_usec() - schedule_begin) / 1000.0
 		_record_stage("LOD schedule/cut/evict", last_schedule_ms)
 	_schedule_lighting()
@@ -700,44 +713,6 @@ func _distance(key: Vector3i) -> float:
 	var dy: float = maxf(0.0, focus.y - 256.0) if not require_collision else 0.0
 	return sqrt(dx * dx + dz * dz + dy * dy)
 
-func _want_split(key: Vector3i) -> bool:
-	if key.z <= FINE_SIZE:
-		return false
-	var was_split: bool = bool(split_state.get(key, false))
-	var near_radius: float = 48.0 if key.z == 32 else (100.0 if key.z == 64 else float(key.z) * 1.4)
-	var threshold: float = near_radius * (1.30 if was_split else 1.0)
-	var answer: bool = _distance(key) < threshold
-	split_state[key] = answer
-	return answer
-
-func _children(key: Vector3i) -> Array[Vector3i]:
-	var half: int = key.z / 2
-	return [Vector3i(key.x, key.y, half), Vector3i(key.x + half, key.y, half),
-		Vector3i(key.x, key.y + half, half), Vector3i(key.x + half, key.y + half, half)]
-
-func _collect_requests(key: Vector3i, output: Array[Vector3i]) -> void:
-	if key.x >= 2000 or key.y >= 2000:
-		return
-	requested_keys[key] = true
-	var split: bool = _want_split(key)
-	# Do not rebuild unused coarse ancestors on every dig. Retain the live fine cut
-	# and rebuild a dirty parent only when it will actually become visible again.
-	if not tiles.has(key) or (bool(tiles[key]["dirty"]) and (not split or visible_cut.has(key))):
-		output.push_back(key)
-	if split:
-		for child: Vector3i in _children(key):
-			_collect_requests(child, output)
-
-func _priority(a: Vector3i, b: Vector3i) -> bool:
-	# Root coverage first, then near collision leaves, then intermediate caches.
-	var pa: float = _distance(a) + (0.0 if a.z == 256 else (20.0 if a.z <= 32 else 200.0))
-	var pb: float = _distance(b) + (0.0 if b.z == 256 else (20.0 if b.z <= 32 else 200.0))
-	if a.z <= 32 and _distance(a) < 25.0:
-		pa -= 5000.0
-	if b.z <= 32 and _distance(b) < 25.0:
-		pb -= 5000.0
-	return pa < pb
-
 func _tile_modified(key: Vector3i) -> bool:
 	for z in range(maxi(0, (key.y - 2) / 16), mini(125, (key.y + key.z + 2) / 16) + 1):
 		for x in range(maxi(0, (key.x - 2) / 16), mini(125, (key.x + key.z + 2) / 16) + 1):
@@ -758,10 +733,7 @@ func _schedule_urgent_collision() -> void:
 	if not require_collision:
 		return
 	schedule_timer = 0.10
-	var requests: Array[Vector3i] = []
-	for key: Vector3i in roots:
-		_collect_requests(key, requests)
-	requests.sort_custom(_priority)
+	var requests := _plan_requests()
 	var available: int = maxi(0, 2 - backend.queued())
 	for key: Vector3i in requests:
 		if available <= 0:
@@ -779,12 +751,17 @@ func _schedule_urgent_collision() -> void:
 			available -= 1
 	_update_cut()
 
+func _plan_requests() -> Array[Vector3i]:
+	var plan: Dictionary = planner.requests(focus,require_collision,tiles,split_state,visible_cut)
+	if not plan.ok:
+		_fail("Native terrain scheduling rejected invalid state")
+		return []
+	requested_keys = plan.requested_keys
+	split_state = plan.split_state
+	return plan.requests
+
 func _schedule() -> void:
-	requested_keys.clear()
-	var requests: Array[Vector3i] = []
-	for key: Vector3i in roots:
-		_collect_requests(key, requests)
-	requests.sort_custom(_priority)
+	var requests := _plan_requests()
 	for cancelled: Dictionary in backend.cancel_stale_meshes(requested_keys, epoch, stamps):
 		var key: Vector3i = cancelled["key"]
 		if in_flight.get(key) == Vector2i(int(cancelled["epoch"]), int(cancelled["stamp"])):
@@ -805,46 +782,18 @@ func _schedule() -> void:
 			in_flight[key] = version
 			available -= 1
 
-func _cover(key: Vector3i) -> Dictionary:
-	if key.x >= 2000 or key.y >= 2000:
-		return {"ok": true, "keys": []}
-	if bool(split_state.get(key, false)) and key.z > FINE_SIZE:
-		var result: Array[Vector3i] = []
-		var complete: bool = true
-		for child: Vector3i in _children(key):
-			var covered: Dictionary = _cover(child)
-			if not covered["ok"]:
-				complete = false
-			else:
-				result.append_array(covered["keys"])
-		if complete:
-			return {"ok": true, "keys": result}
-	# A dirty live mesh remains a valid OLD visual/collision until its transaction completes.
-	if tiles.has(key) and (not bool(tiles[key]["dirty"]) or visible_cut.has(key)):
-		return {"ok": true, "keys": [key]}
-	# Do not resurrect a stale parent when walking away during its rebuild.
-	if key.z > FINE_SIZE:
-		var descendants: Array[Vector3i] = []
-		for child: Vector3i in _children(key):
-			var part: Dictionary = _cover(child)
-			if not part["ok"]:
-				return {"ok": false, "keys": []}
-			descendants.append_array(part["keys"])
-		return {"ok": true, "keys": descendants}
-	return {"ok": false, "keys": []}
-
 func _update_cut() -> void:
 	if pending_edit:
 		return
-	var next: Array[Vector3i] = []
-	root_coverage = 0
-	for root: Vector3i in roots:
-		var covered: Dictionary = _cover(root)
-		if covered["ok"]:
-			root_coverage += 1
-			next.append_array(covered["keys"])
-	for key: Vector3i in visible_cut:
-		if not next.has(key) and tiles.has(key):
+	var covered: Dictionary = planner.coverage(tiles,split_state,visible_cut)
+	if not covered.ok:
+		_fail("Native terrain coverage rejected invalid state")
+		return
+	var next: Array[Vector3i] = covered["keys"]
+	root_coverage = covered.root_coverage
+	covered_roots = covered.covered_roots
+	for key: Vector3i in covered.hidden:
+		if tiles.has(key):
 			_set_active(tiles[key], false)
 	active_leaves.clear()
 	total_triangles = 0
@@ -861,11 +810,11 @@ func _update_cut() -> void:
 func _evict() -> void:
 	if tiles.size() <= cache_entry_limit and cache_bytes <= cache_byte_limit:
 		return
-	var victims: Array[Vector3i] = []
-	for key: Vector3i in tiles:
-		if key.z != ROOT_SIZE and not visible_cut.has(key) and not requested_keys.has(key):
-			victims.push_back(key)
-	victims.sort_custom(func(a: Vector3i, b: Vector3i) -> bool: return int(tiles[a]["used"]) < int(tiles[b]["used"]))
+	var eviction: Dictionary = planner.eviction_candidates(tiles,visible_cut,requested_keys)
+	if not eviction.ok:
+		_fail("Native terrain eviction rejected invalid state")
+		return
+	var victims: Array[Vector3i] = eviction["keys"]
 	for key: Vector3i in victims:
 		if tiles.size() <= cache_entry_limit and cache_bytes <= cache_byte_limit:
 			break
@@ -955,7 +904,7 @@ func loading_state(point: Vector3, flying: bool) -> Dictionary:
 		for key: Vector3i in roots:
 			var dx: float = maxf(maxf(float(key.x) - point.x, point.x - float(key.x + key.z)), 0.0)
 			var dz: float = maxf(maxf(float(key.y) - point.z, point.z - float(key.y + key.z)), 0.0)
-			if dx * dx + dz * dz < 384.0 * 384.0 and not bool(_cover(key)["ok"]):
+			if dx * dx + dz * dz < 384.0 * 384.0 and not covered_roots.has(key):
 				coverage_ready = false
 				break
 	return {"ready": world_ready and coverage_ready and ready_near == needed_near,
@@ -1054,6 +1003,7 @@ func reload_world(reset: bool = false) -> void:
 	epoch += 1
 	initial_loading = true
 	root_coverage = 0
+	covered_roots.clear()
 	lighting_dirty.clear()
 	lighting_in_flight.clear()
 	lighting_upload.clear()

@@ -25,7 +25,7 @@ The original scope remains active. This project must not be called fully game-re
 | High entity counts | Native bounded kinematics and bulk transforms | Gameplay simulation, spatial queries, rendering, collision and replication at measured populations |
 | Efficient vehicles and high-speed travel | Pending | Vehicle physics, swept collision readiness, predictive streaming, correction and sustained high-speed traversal tests |
 | Always 1920×1080 fullscreen for fair graphical testing | Implemented presentation policy and report assertions | Continue enforcing for every new graphical measurement |
-| Most systems as Godot addons; no performance-critical GDScript | New entity/archive/water work is C++; legacy streaming/forest schedulers remain GDScript | Native migration and profiling of all remaining hot paths |
+| Most systems as Godot addons; no performance-critical GDScript | Native terrain planning, entity/archive/water and structures work implemented; remaining scene and forest schedulers use GDScript | Native migration of remaining scene/forest hot paths, non-Windows planner binaries and profiling across targets |
 | Zig and prebuilt godot-cpp | Implemented, pinned, checksum-verified; debug/release tests | Maintain ABI checks and reproducible release packaging on upgrades |
 
 Relevant evidence: VALIDATION.md (historical terrain/forest), TOOLCHAIN_VALIDATION.md (initial native/fullscreen), WATER_VALIDATION.md (first lake stage), WORLD_STORAGE.md and STORAGE_VALIDATION.md (current compound saves). Historical limitations and timings describe their recorded stage, not the final target.
