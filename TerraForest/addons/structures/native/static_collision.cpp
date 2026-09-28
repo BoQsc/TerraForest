@@ -23,6 +23,7 @@ void NativeStaticBatch::clear_proxies() {
 }
 NativeStaticBatch::~NativeStaticBatch() {clear_proxies();}
 void NativeStaticBatch::_notification(int what) {
+    if(what==NOTIFICATION_TRANSFORM_CHANGED)emit_signal("exclusion_changed");
     if(what==NOTIFICATION_EXIT_TREE||what==NOTIFICATION_EXIT_WORLD) {clear_proxies();collision_dirty=true;}
     if(what==NOTIFICATION_ENTER_TREE||what==NOTIFICATION_ENTER_WORLD)collision_dirty=true;
 }
@@ -47,7 +48,7 @@ bool NativeStaticBatch::configure_compound_collision(const TypedArray<AABB> &box
     proxy_shape_limit=int(shape_limit);proxy_shapes_per_tick=int(shapes_per_tick);
     proxy_limit=int(instance_limit);proxy_build_limit=int(builds_per_tick);collision_dirty=true;
     std::set<BlockKey> keys;for(auto &e:groups)keys.insert(e.first);refresh_collision_bounds(keys);
-    set_physics_process(radius>0);return true;
+    set_physics_process(radius>0);emit_signal("exclusion_changed");return true;
 }
 void NativeStaticBatch::set_collision_focus(Vector3 p) {
     if(!p.is_finite())return;
@@ -56,13 +57,14 @@ void NativeStaticBatch::set_collision_focus(Vector3 p) {
 }
 void NativeStaticBatch::invalidate_proxy(int64_t id) {release_proxy(id);collision_dirty=true;}
 void NativeStaticBatch::refresh_collision_bounds(const std::set<BlockKey> &keys) {
-    if(proxy_radius<=0)return;
+    if(source_mesh.is_null())return;
+    const AABB prototype=proxy_parts.empty()?source_mesh->get_aabb():proxy_box;
     for(auto key:keys) {
         auto group=groups.find(key);collision_bounds.erase(key);
         if(group==groups.end())continue;
         bool first=true;AABB box;
         for(auto id:group->second) {
-            AABB next=placement_transform(placements.at(id)).xform(proxy_box);
+            AABB next=placement_transform(placements.at(id)).xform(prototype);
             box=first?next:box.merge(next);first=false;
         }
         collision_bounds.emplace(key,box);

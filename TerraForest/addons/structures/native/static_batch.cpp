@@ -5,7 +5,9 @@
 #include <cmath>
 #include <cstring>
 namespace terraforest {
+NativeStaticBatch::NativeStaticBatch() {set_notify_transform(true);}
 void NativeStaticBatch::_bind_methods() {
+    ClassDB::bind_method(D_METHOD("overlap_mask","transforms","prototype_bounds"),&NativeStaticBatch::overlap_mask);
     ClassDB::bind_method(D_METHOD("can_insert_instance","transform","protected_bounds"),&NativeStaticBatch::can_insert_instance,DEFVAL(AABB()));
     ClassDB::bind_method(D_METHOD("insert_instance","transform","protected_bounds"),&NativeStaticBatch::insert_instance,DEFVAL(AABB()));
     ClassDB::bind_method(D_METHOD("set_instances","mesh","transforms"),&NativeStaticBatch::set_instances);
@@ -25,6 +27,7 @@ void NativeStaticBatch::_bind_methods() {
     ClassDB::bind_method(D_METHOD("collision_stats"),&NativeStaticBatch::collision_stats);
     ClassDB::bind_method(D_METHOD("placement_for_body","body"),&NativeStaticBatch::placement_for_body);
     ADD_SIGNAL(MethodInfo("changed"));
+    ADD_SIGNAL(MethodInfo("exclusion_changed"));
 }
 bool NativeStaticBatch::valid_transform(const float *t) {
     for(int j=0;j<12;j++)if(!std::isfinite(t[j])||std::abs(t[j])>1048575)return false;
@@ -61,7 +64,9 @@ bool NativeStaticBatch::configure_asset(const String &id,const Ref<Mesh> &mesh) 
     if(!valid_asset(id)||mesh.is_null()||((asset_locked||!placements.empty())&&!asset_id.is_empty()&&asset_id!=id))return false;
     bool changed=asset_id!=id||source_mesh!=mesh;
     asset_id=id;source_mesh=mesh;
+    std::set<BlockKey> keys;for(auto &e:groups)keys.insert(e.first);refresh_collision_bounds(keys);
     for(auto &e:batches)e.second->get_multimesh()->set_mesh(mesh);
+    emit_signal("exclusion_changed");
     if(changed)emit_signal("changed");return true;
 }
 bool NativeStaticBatch::lock_asset_identity() {if(!valid_asset(asset_id)||source_mesh.is_null())return false;asset_locked=true;return true;}

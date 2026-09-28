@@ -1,16 +1,27 @@
 extends Node3D
+signal changed
 ## Scene/persistence integration only. Storage, validation and rendering are native.
 var blocks: Node3D
 var _models: Dictionary = {}
 var _empty_models: Dictionary = {}
 var _empty_blocks := PackedByteArray()
 var _codec: RefCounted
+var _queries: RefCounted
 var _sealed := false
 var _dirty := true
 var _cached_snapshot := PackedByteArray()
 
 func _mark_dirty() -> void:
 	_dirty = true
+	changed.emit()
+
+func _exclusion_changed() -> void:
+	changed.emit()
+
+func overlap_mask(transforms: Array[Transform3D], bounds: AABB) -> PackedByteArray:
+	if not prepare():
+		return PackedByteArray()
+	return _queries.overlap_mask(blocks,_models.values(),transforms,bounds)
 
 func prepare() -> bool:
 	if blocks != null:
@@ -24,6 +35,7 @@ func prepare() -> bool:
 	blocks.changed.connect(_mark_dirty)
 	_empty_blocks = blocks.capture_snapshot()
 	_codec = ClassDB.instantiate("NativeStructuresSnapshot")
+	_queries = ClassDB.instantiate("NativeStructureQueries")
 	return true
 
 func register_model(asset_id: String, mesh: Mesh) -> Node3D:
@@ -38,6 +50,7 @@ func register_model(asset_id: String, mesh: Mesh) -> Node3D:
 	_empty_models[asset_id] = collection.capture_snapshot()
 	add_child(collection)
 	collection.changed.connect(_mark_dirty)
+	collection.exclusion_changed.connect(_exclusion_changed)
 	return collection
 
 func model(asset_id: String) -> Node3D:

@@ -68,7 +68,7 @@ func _ready() -> void:
 	ecosystem.terrain = terrain
 	ecosystem.vegetation = vegetation
 	ecosystem.camera = camera
-	ecosystem.structures = structures.blocks
+	ecosystem.structures = structures
 	add_child(ecosystem)
 	lakes.name = "Lakes"
 	lakes.terrain = terrain
