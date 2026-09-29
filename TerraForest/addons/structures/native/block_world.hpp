@@ -51,6 +51,7 @@ class NativeBlockWorld : public Node3D {
     bool unavailable_region(const AABB &local_bounds) const;
     static PackedByteArray encode_chunks(const std::map<BlockKey,BlockChunk> &source);
     static bool parse_region(const PackedByteArray &bytes,BlockKey &region,std::map<BlockKey,BlockChunk> &out);
+    void replace_storage(std::map<BlockKey,BlockChunk> &&resident,std::map<BlockKey,PackedByteArray> &&unavailable);
     void replace_region_chunks(BlockKey region,std::map<BlockKey,BlockChunk> &&restored);
     std::set<BlockKey> dirty;
     std::map<BlockKey,uint64_t> tickets;
@@ -129,6 +130,7 @@ public:
     bool is_region_loaded(Vector3i region) const;
     Dictionary region_stats() const;
     Dictionary capture_storage_state() const;
+    bool restore_storage_state(const PackedByteArray &resident,const PackedInt32Array &keys,const PackedByteArray &checksums);
     Dictionary raycast_cells(Vector3 from,Vector3 to) const;
     Dictionary raycast_scene(Vector3 from,Vector3 to,int64_t mask,const TypedArray<RID> &exclude) const;
     ~NativeBlockWorld();

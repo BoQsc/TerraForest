@@ -6,7 +6,7 @@
 
 namespace terraforest {
 void NativeRegionWorldArchive::_bind_methods() {
-    ClassDB::bind_method(D_METHOD("configure","archive","structures_codec"),&NativeRegionWorldArchive::configure);
+    ClassDB::bind_method(D_METHOD("configure","archive","structures_codec","metadata_first"),&NativeRegionWorldArchive::configure,DEFVAL(false));
     ClassDB::bind_method(D_METHOD("acquire","absolute_path"),&NativeRegionWorldArchive::acquire);
     ClassDB::bind_method(D_METHOD("release"),&NativeRegionWorldArchive::release);
     ClassDB::bind_method(D_METHOD("encode","sections"),&NativeRegionWorldArchive::encode);
@@ -14,12 +14,13 @@ void NativeRegionWorldArchive::_bind_methods() {
     ClassDB::bind_method(D_METHOD("read","absolute_path"),&NativeRegionWorldArchive::read);
     ClassDB::bind_method(D_METHOD("publish","absolute_path","bytes"),&NativeRegionWorldArchive::publish);
     ClassDB::bind_method(D_METHOD("validate_snapshot","bytes"),&NativeRegionWorldArchive::validate_snapshot);
+    ClassDB::bind_method(D_METHOD("read_storage_region","region","expected","checkpoint"),&NativeRegionWorldArchive::read_storage_region,DEFVAL(PackedByteArray()));
     ClassDB::bind_method(D_METHOD("storage_stats"),&NativeRegionWorldArchive::storage_stats);
 }
 NativeRegionWorldArchive::~NativeRegionWorldArchive(){release();}
-bool NativeRegionWorldArchive::configure(const Ref<RefCounted> &archive,const Ref<NativeStructuresSnapshot> &codec) {
+bool NativeRegionWorldArchive::configure(const Ref<RefCounted> &archive,const Ref<NativeStructuresSnapshot> &codec,bool metadata_first) {
     if(archive_.is_valid()||archive.is_null()||codec.is_null()||archive->get_class()!=StringName("NativeWorldArchive"))return false;
-    archive_=archive;codec_=codec;return true;
+    archive_=archive;codec_=codec;metadata_first_=metadata_first;return true;
 }
 bool NativeRegionWorldArchive::acquire(const String &path) {
     if(archive_.is_null()||!path_.is_empty()||!path.is_absolute_path()||path.begins_with("res://")||path.begins_with("user://"))return false;
@@ -56,15 +57,15 @@ Dictionary NativeRegionWorldArchive::decode(const PackedByteArray &bytes) const 
     Dictionary reference=codec_->decode_reference(structure);
     if(!bool(reference["ok"]))return codec_->validate_snapshot(structure)?root:failed;
     if(store_.is_null())return failed;
-    Dictionary restored=store_->read_block_checkpoint(reference["checkpoint"]);
+    Dictionary restored=metadata_first_?store_->checkpoint_regions(reference["checkpoint"]):store_->read_block_checkpoint(reference["checkpoint"]);
     if(!bool(restored["ok"]))return failed;
     // Older saved bundles may omit newly registered model assets. Preserve that
     // schema behavior using the reference's own registered subset codec.
     Dictionary models=reference["models"];PackedStringArray ids;Array keys=models.keys();
     for(int64_t i=0;i<keys.size();++i)ids.push_back(keys[i]);
     Ref<NativeStructuresSnapshot> subset;subset.instantiate();if(!subset->configure_assets(ids))return failed;
-    PackedByteArray resident=subset->encode(restored["blocks"],models);
-    if(resident.is_empty()||!codec_->validate_snapshot(resident))return failed;
+    PackedByteArray resident=metadata_first_?subset->encode_metadata(reference["checkpoint"],restored["keys"],restored["checksums"],models):subset->encode(restored["blocks"],models);
+    if(resident.is_empty()||!codec_->validate_storage_snapshot(resident))return failed;
     sections["structures"]=resident;root["sections"]=sections;return root;
 }
 bool NativeRegionWorldArchive::reference_in_file(const String &path,std::set<String> &keep) const {
@@ -102,7 +103,7 @@ int64_t NativeRegionWorldArchive::publish(const String &path,const PackedByteArr
     // Failed previous saves can leave extra pins. Retire only after validating
     // both published roots, before allocating another pin.
     if(!retire_unreferenced())return ERR_FILE_CORRUPT;
-    Dictionary published=partial?store_->publish_storage_state(structure["resident"],structure["unavailable_keys"],structure["unavailable_checksums"]):store_->publish_block_snapshot(structure["blocks"]);if(!bool(published["ok"]))return published["error"];
+    Dictionary published=partial?store_->publish_storage_state(structure["resident"],structure["unavailable_keys"],structure["unavailable_checksums"],structure["checkpoint"]):store_->publish_block_snapshot(structure["blocks"]);if(!bool(published["ok"]))return published["error"];
     Dictionary pin=store_->pin_checkpoint();if(!bool(pin["ok"]))return pin["error"];
     Dictionary models=structure["models"];PackedStringArray ids;Array keys=models.keys();for(int64_t i=0;i<keys.size();++i)ids.push_back(keys[i]);
     Ref<NativeStructuresSnapshot> subset;subset.instantiate();if(!subset->configure_assets(ids))return ERR_INVALID_DATA;
@@ -113,6 +114,10 @@ int64_t NativeRegionWorldArchive::publish(const String &path,const PackedByteArr
     // failed commit; retain safe excess data and retry on the next save.
     if(retire_unreferenced())store_->collect_garbage(32);
     return OK;
+}
+Dictionary NativeRegionWorldArchive::read_storage_region(Vector3i region,const PackedByteArray &expected,const PackedByteArray &checkpoint) const {
+    if(store_.is_valid())return store_->read_storage_region(region,expected,checkpoint);
+    Dictionary failed;failed["ok"]=false;failed["error"]=int(ERR_UNCONFIGURED);return failed;
 }
 Dictionary NativeRegionWorldArchive::storage_stats() const {
     Dictionary out;if(store_.is_valid())out=store_->stats();else out["open"]=false;return out;

@@ -44,6 +44,7 @@ public:
     PackedInt32Array list_regions() const;
     PackedByteArray checksum(Vector3i region) const;
     Dictionary read_region(Vector3i region) const;
+    Dictionary read_storage_region(Vector3i region,const PackedByteArray &expected,const PackedByteArray &checkpoint=PackedByteArray()) const;
     Dictionary publish_region(const PackedByteArray &packet,const PackedByteArray &expected_checksum);
     Dictionary publish_regions(const Array &packets,const Array &expected_checksums);
     Dictionary remove_region(Vector3i region,const PackedByteArray &expected_checksum);
@@ -55,7 +56,7 @@ public:
     Dictionary activate_checkpoint(const PackedByteArray &checkpoint);
     Dictionary release_checkpoint(const PackedByteArray &checkpoint);
     Dictionary publish_block_snapshot(const PackedByteArray &blocks);
-    Dictionary publish_storage_state(const PackedByteArray &resident,const PackedInt32Array &unavailable_keys,const PackedByteArray &unavailable_checksums);
+    Dictionary publish_storage_state(const PackedByteArray &resident,const PackedInt32Array &unavailable_keys,const PackedByteArray &unavailable_checksums,const PackedByteArray &checkpoint=PackedByteArray());
     Dictionary read_block_checkpoint(const PackedByteArray &checkpoint) const;
 };
 }

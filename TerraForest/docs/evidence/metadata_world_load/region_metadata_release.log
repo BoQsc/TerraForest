@@ -1,0 +1,66 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS atomic native restore replaces resident and unavailable maps together
+PASS new storage state replaces previous cells and preserves exact unavailability
+PASS metadata-only region cannot be mistaken for editable empty space
+PASS partial xyz rejects before restore
+PASS partial digest rejects before restore
+PASS duplicate availability keys reject before restore
+PASS resident and unavailable overlap rejects before restore
+PASS out-of-range availability key rejects before restore
+PASS invalid resident snapshot rejects before restore
+PASS failed storage restores preserve both maps exactly
+PASS matching region admission resolves metadata unavailability
+PASS checkpoint storage envelope round-trips its explicit base identity
+PASS checkpoint storage envelope is neither a complete scene nor a published reference
+PASS checkpoint storage encoder rejects truncated identity
+PASS checkpoint identity is protected by envelope checksum
+PASS scene provider restores and caches validated partial state
+PASS legacy scene interface stays guarded after metadata restore
+PASS resident edit retains the fallback checkpoint identity
+PASS ordinary scene restore clears partial cache and unavailable map
+PASS empty metadata checkpoint captures as an ordinary complete scene
+PASS empty metadata checkpoint allocates no authored cells
+PASS metadata archive mode is selected before acquiring the world
+PASS metadata fixture commits an ordinary initial world
+PASS failed root replacement leaves canonical checkpoint older than active catalog
+PASS metadata load reads the published checkpoint instead of newer active catalog
+PASS checkpoint restore allocates no resident block chunks
+PASS unqualified version read cannot silently return newer active data
+PASS explicit pinned checkpoint resolves the old exact region version
+PASS partial save without fallback identity cannot replace mismatching active versions
+PASS checkpoint-based partial save recovers after active catalog advanced during failed save
+PASS recovered save retains the exact unloaded region bytes
+PASS subsequent saves remain valid after original fallback pin is retired
+PASS exact active version remains readable with a retired fallback identity
+PASS unknown exact version fails rather than returning another region revision
+PASS version read requires full expected checksum
+PASS complete reopen preserves canonical historical regions together with later resident edits
+PASS metadata loading does not read or allocate distant region payloads
+PASS lazy exact-version read detects damaged region instead of admitting empty space
+PASS large-world fixture commits 2112 sparse chunks across 33 regions
+PASS legacy full reconstruction still rejects its 2048-chunk bound
+PASS metadata adapter opens checkpoint above resident chunk capacity
+PASS large checkpoint loads availability without reconstructing cells
+PASS large metadata restore replaces previous authoring with zero resident chunks
+PASS one region can be admitted without reconstructing remaining 2048 chunks
+PASS partially admitted large checkpoint saves without hitting full-world chunk cap
+PASS metadata-aware scene provider attaches to real terrain worker 0
+PASS metadata terrain worker starts 0
+PASS metadata terrain worker loads validated world 0
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+PASS metadata-aware scene provider attaches to real terrain worker 1
+PASS metadata terrain worker starts 1
+PASS metadata terrain worker loads validated world 1
+PASS terrain worker restore leaves building cells unloaded
+PASS metadata load retains static model ID and transform
+PASS worker-bound capture retains explicit original checkpoint
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+PASS metadata-aware scene provider attaches to real terrain worker 2
+PASS metadata terrain worker starts 2
+PASS metadata terrain worker loads validated world 2
+PASS shutdown saves resident edits with untouched unloaded cells
+PASS exact original region admits after metadata reload
+PASS repeated metadata shutdown/reload preserves model collection
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+

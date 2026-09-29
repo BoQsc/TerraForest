@@ -1,5 +1,10 @@
 # Original objective and completion evidence
 
+Opt-in metadata-first archive loading now restores region availability without
+reconstructing all block cells, and preserves checkpoint identity through later
+saves. See [metadata world loading](METADATA_WORLD_LOADING.md). The main demo still
+uses full loading until bounded automatic region admission is connected.
+
 Fresh block worlds can now initialize checkpoint availability metadata without
 loading cell chunks; see [region bootstrap](BLOCK_REGION_BOOTSTRAP.md). Automatic paging and saving
 partially loaded worlds remain unfinished.

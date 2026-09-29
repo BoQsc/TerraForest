@@ -28,6 +28,7 @@ void NativeBlockWorld::_bind_methods() {
     ClassDB::bind_method(D_METHOD("is_region_loaded","region"),&NativeBlockWorld::is_region_loaded);
     ClassDB::bind_method(D_METHOD("region_stats"),&NativeBlockWorld::region_stats);
     ClassDB::bind_method(D_METHOD("capture_storage_state"),&NativeBlockWorld::capture_storage_state);
+    ClassDB::bind_method(D_METHOD("restore_storage_state","resident","keys","checksums"),&NativeBlockWorld::restore_storage_state);
     ClassDB::bind_method(D_METHOD("raycast_cells","from","to"),&NativeBlockWorld::raycast_cells);
     ClassDB::bind_method(D_METHOD("raycast_scene","from","to","collision_mask","exclude"),&NativeBlockWorld::raycast_scene,DEFVAL(3),DEFVAL(TypedArray<RID>()));
     ClassDB::bind_method(D_METHOD("set_cells","records"),&NativeBlockWorld::set_cells);
@@ -449,7 +450,10 @@ bool NativeBlockWorld::parse(const PackedByteArray &bytes,std::map<BlockKey,Bloc
 }
 bool NativeBlockWorld::restore_snapshot(const PackedByteArray &bytes) {
     std::map<BlockKey,BlockChunk> restored;if(!parse(bytes,&restored))return false;
-    unloaded_regions.clear();
+    replace_storage(std::move(restored),{});return true;
+}
+void NativeBlockWorld::replace_storage(std::map<BlockKey,BlockChunk> &&restored,std::map<BlockKey,PackedByteArray> &&unavailable) {
+    unloaded_regions=std::move(unavailable);
     std::set<BlockKey> affected;for(auto &e:chunks)affected.insert(e.first);for(auto &e:restored)affected.insert(e.first);
     for(auto &e:visuals)affected.insert(e.first);
     // Preserve pending keys so any in-flight publication receives a new ticket.
@@ -457,6 +461,6 @@ bool NativeBlockWorld::restore_snapshot(const PackedByteArray &bytes) {
     bake_cache.clear();cache_bytes=0;settled.clear();budget_blocked.clear();residency_dirty=true;
     chunks=std::move(restored);dirty.clear();tickets.clear();for(auto k:affected)invalidate(k);
     clear_history();
-    set_process(true);emit_signal("changed");return true;
+    set_process(true);emit_signal("changed");
 }
 }
