@@ -21,6 +21,7 @@ void NativeRegionWorldArchive::_bind_methods() {
     ClassDB::bind_method(D_METHOD("stop_region_reads"),&NativeRegionWorldArchive::stop_region_reads);
     ClassDB::bind_method(D_METHOD("join_region_reads"),&NativeRegionWorldArchive::join_region_reads);
     ClassDB::bind_method(D_METHOD("region_read_stats"),&NativeRegionWorldArchive::region_read_stats);
+    ClassDB::bind_method(D_METHOD("published_region_index","after_revision"),&NativeRegionWorldArchive::published_region_index,DEFVAL(0));
     ClassDB::bind_method(D_METHOD("storage_stats"),&NativeRegionWorldArchive::storage_stats);
 }
 NativeRegionWorldArchive::~NativeRegionWorldArchive(){release();}
@@ -48,6 +49,7 @@ bool NativeRegionWorldArchive::acquire(const String &path) {
 }
 void NativeRegionWorldArchive::release() {
     join_region_reads();
+    {std::lock_guard<std::mutex> lock(read_mutex_);published_keys_=PackedInt32Array();published_checksums_=PackedByteArray();published_checkpoint_=PackedByteArray();}
     if(store_.is_valid()){store_->close();store_.unref();}
     if(!path_.is_empty()&&archive_.is_valid())archive_->call("release");path_=String();
 }
@@ -118,6 +120,12 @@ int64_t NativeRegionWorldArchive::publish(const String &path,const PackedByteArr
     PackedByteArray reference=subset->encode_reference(pin["checkpoint"],models);if(reference.is_empty())return ERR_INVALID_DATA;
     sections["structures"]=reference;PackedByteArray compact=archive_->call("encode",sections);if(compact.is_empty())return ERR_INVALID_DATA;
     int64_t error=archive_->call("publish",path,compact);if(error!=OK)return error;
+    Dictionary index=store_->checkpoint_regions(pin["checkpoint"]);
+    if(bool(index["ok"])) {
+        std::lock_guard<std::mutex> lock(read_mutex_);
+        published_keys_=index["keys"];published_checksums_=index["checksums"];published_checkpoint_=pin["checkpoint"];
+        ++published_index_revision_;
+    }
     // Publication already succeeded. Cleanup failure must never masquerade as a
     // failed commit; retain safe excess data and retry on the next save.
     if(retire_unreferenced())store_->collect_garbage(32);

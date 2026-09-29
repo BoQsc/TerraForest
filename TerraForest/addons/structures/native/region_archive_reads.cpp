@@ -86,6 +86,12 @@ void NativeRegionWorldArchive::stop_region_reads() {
 void NativeRegionWorldArchive::join_region_reads() {
     stop_region_reads();if(read_worker_.joinable())read_worker_.join();
 }
+Dictionary NativeRegionWorldArchive::published_region_index(int64_t after_revision) const {
+    std::lock_guard<std::mutex> lock(read_mutex_);Dictionary out;
+    if(published_checkpoint_.is_empty()||published_index_revision_<=after_revision)return out;
+    out["revision"]=published_index_revision_;out["keys"]=published_keys_;
+    out["checksums"]=published_checksums_;out["checkpoint"]=published_checkpoint_;return out;
+}
 Dictionary NativeRegionWorldArchive::region_read_stats() const {
     std::lock_guard<std::mutex> lock(read_mutex_);Dictionary out;
     out["running"]=read_running_;out["stopping"]=read_stopping_;out["active"]=read_active_;

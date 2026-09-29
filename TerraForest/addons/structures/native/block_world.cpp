@@ -453,7 +453,7 @@ bool NativeBlockWorld::restore_snapshot(const PackedByteArray &bytes) {
     replace_storage(std::move(restored),{});return true;
 }
 void NativeBlockWorld::replace_storage(std::map<BlockKey,BlockChunk> &&restored,std::map<BlockKey,PackedByteArray> &&unavailable) {
-    unloaded_regions=std::move(unavailable);
+    ++storage_epoch;unloaded_regions=std::move(unavailable);
     std::set<BlockKey> affected;for(auto &e:chunks)affected.insert(e.first);for(auto &e:restored)affected.insert(e.first);
     for(auto &e:visuals)affected.insert(e.first);
     // Preserve pending keys so any in-flight publication receives a new ticket.

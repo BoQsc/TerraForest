@@ -12,6 +12,41 @@ var _dirty := true
 var _cached_snapshot := PackedByteArray()
 var _cached_storage := PackedByteArray()
 var _storage_checkpoint := PackedByteArray()
+var _pager: RefCounted
+
+func enable_region_paging(archive: RefCounted, load_radius: float = 384, unload_radius: float = 512, chunk_limit: int = 1536) -> bool:
+	if _pager != null:
+		return true
+	if not seal():
+		return false
+	var pager: RefCounted = ClassDB.instantiate("NativeBlockPager")
+	if not pager.configure(blocks,archive,load_radius,unload_radius,chunk_limit):
+		return false
+	_pager = pager
+	return true
+
+func step_region_paging(world_focus: Vector3) -> bool:
+	if _pager == null:
+		return false
+	var ok: bool = _pager.step(world_focus,_storage_checkpoint)
+	if not ok:
+		return false
+	var checkpoint: PackedByteArray = _pager.get_checkpoint()
+	if checkpoint != _storage_checkpoint:
+		_storage_checkpoint = checkpoint
+		_cached_storage = PackedByteArray()
+	return ok
+
+func region_paging_stats() -> Dictionary:
+	return _pager.stats() if _pager != null else {"active":false}
+
+func stop_region_paging() -> void:
+	if _pager != null:
+		_pager.stop()
+		_pager = null
+
+func _exit_tree() -> void:
+	stop_region_paging()
 
 func _mark_dirty() -> void:
 	_dirty = true

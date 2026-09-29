@@ -70,7 +70,7 @@ bool NativeBlockWorld::parse_region(const PackedByteArray &bytes,BlockKey &regio
 bool NativeBlockWorld::validate_region_snapshot(const PackedByteArray &bytes) const {
     BlockKey region;std::map<BlockKey,BlockChunk> restored;return parse_region(bytes,region,restored);
 }
-void NativeBlockWorld::replace_region_chunks(BlockKey region,std::map<BlockKey,BlockChunk> &&restored) {
+void NativeBlockWorld::replace_region_chunks(BlockKey region,std::map<BlockKey,BlockChunk> &&restored,bool reset_history) {
     std::set<BlockKey> affected;
     for(int z=0;z<4;z++)for(int y=0;y<4;y++)for(int x=0;x<4;x++) {
         BlockKey key{region.x*4+x,region.y*4+y,region.z*4+z};
@@ -83,7 +83,7 @@ void NativeBlockWorld::replace_region_chunks(BlockKey region,std::map<BlockKey,B
         invalidate({k.x,k.y-1,k.z});invalidate({k.x,k.y+1,k.z});
         invalidate({k.x,k.y,k.z-1});invalidate({k.x,k.y,k.z+1});
     }
-    clear_history();set_process(true);
+    if(reset_history)clear_history();set_process(true);
 }
 bool NativeBlockWorld::unload_region(const PackedByteArray &expected_snapshot) {
     BlockKey region;std::map<BlockKey,BlockChunk> parsed;
@@ -94,8 +94,11 @@ bool NativeBlockWorld::unload_region(const PackedByteArray &expected_snapshot) {
     emit_signal("changed");return true;
 }
 bool NativeBlockWorld::restore_region(const PackedByteArray &bytes,const PackedByteArray &expected_current) {
+    return restore_region_impl(bytes,expected_current,false);
+}
+bool NativeBlockWorld::restore_region_impl(const PackedByteArray &bytes,const PackedByteArray &expected_current,bool preserve_history) {
     BlockKey region;std::map<BlockKey,BlockChunk> restored;
-    if(!parse_region(bytes,region,restored))return false;
+    if(!parse_region(bytes,region,restored)||(preserve_history&&region_has_history(region)))return false;
     auto unloaded=unloaded_regions.find(region);
     if(unloaded!=unloaded_regions.end()) {
         if(!expected_current.is_empty()||unloaded->second!=bytes.slice(bytes.size()-32))return false;
@@ -104,7 +107,7 @@ bool NativeBlockWorld::restore_region(const PackedByteArray &bytes,const PackedB
     for(int z=0;z<4;z++)for(int y=0;y<4;y++)for(int x=0;x<4;x++)removed+=chunks.count({region.x*4+x,region.y*4+y,region.z*4+z});
     if(chunks.size()-removed+restored.size()>2048)return false;
     if(unloaded==unloaded_regions.end()&&bytes==expected_current)return true;
-    unloaded_regions.erase(region);replace_region_chunks(region,std::move(restored));
+    unloaded_regions.erase(region);replace_region_chunks(region,std::move(restored),!preserve_history);
     emit_signal("changed");return true;
 }
 Dictionary NativeBlockWorld::region_stats() const {
@@ -123,7 +126,7 @@ bool NativeBlockWorld::initialize_region_index(const PackedInt32Array &keys,cons
         selected.emplace(key,checksums.slice(i*32,(i+1)*32));previous=key;
     }
     if(selected.empty())return true;
-    unloaded_regions=std::move(selected);clear_history();
+    ++storage_epoch;unloaded_regions=std::move(selected);clear_history();
     emit_signal("changed");return true;
 }
 bool NativeBlockWorld::restore_storage_state(const PackedByteArray &resident,const PackedInt32Array &keys,const PackedByteArray &checksums) {
