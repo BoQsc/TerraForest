@@ -1,0 +1,5 @@
+{
+  "checks": 35,
+  "failures": 0,
+  "scope": "Native complete-block conversion and checkpoint-reference codec; world-file adapter integration pending."
+}

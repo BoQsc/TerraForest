@@ -1,5 +1,9 @@
 # Native block structures and static models
 
+The main world now publishes block-region checkpoint references through a native
+archive adapter, retaining current and backup roots. See [region-backed world saves](../../docs/REGION_WORLD_ARCHIVE.md).
+Full-resident capture/restore limits remain; automatic runtime paging is unfinished.
+
 Persistent native catalog checkpoints now preserve referenced block versions through
 future edits and collection. See [checkpoint API](../../docs/BLOCK_REGION_CHECKPOINTS.md). World-root integration remains pending.
 

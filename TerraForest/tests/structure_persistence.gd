@@ -10,8 +10,9 @@ var persistence: RefCounted
 var checks: Array[Dictionary] = []
 var failures := 0
 var messages: Array[String] = []
-var slot := "structure_save_%d" % OS.get_process_id()
+var slot := "structure_save_%d_%d" % [OS.get_process_id(),Time.get_ticks_usec()]
 var asset_ids := PackedStringArray(["architecture/fence/v1","props/crate/v1"])
+var region_storage := OS.get_cmdline_user_args().has("--region-storage")
 
 func _initialize() -> void:
 	run.call_deferred()
@@ -44,8 +45,12 @@ func create_world() -> void:
 	root.add_child(lakes)
 	persistence = Persistence.new()
 	check(persistence.register_component("structures",structures.capture_snapshot,structures.restore_snapshot,structures.snapshot_validator(),structures.empty_snapshot()),"structures bundle registers as one world component")
+	if region_storage:
+		check(persistence.enable_region_structures(),"native region archive enabled before terrain starts")
 	check(persistence.register_component("volumetric_water",lakes.capture_snapshot,lakes.restore_snapshot,lakes.snapshot_validator(),lakes.empty_snapshot()) and persistence.attach(terrain)==OK,"water and structures share the terrain persistence coordinator")
-	terrain.message_changed.connect(func(text: String): messages.append(text))
+	terrain.message_changed.connect(func(text: String):
+		messages.append(text)
+		if region_storage: print("REGION_PERSISTENCE: ",text))
 	check(terrain.start(StandardMaterial3D.new(),false)==OK,"persistent structure world starts")
 
 func close_world() -> void:
@@ -71,7 +76,13 @@ func write_bytes(path: String, bytes: PackedByteArray) -> void:
 func run() -> void:
 	Engine.max_fps=240
 	create_world()
-	check(await until(func(): return terrain.world_ready),"new terrain/water/structure world becomes ready")
+	var ready := await until(func(): return terrain.world_ready or not terrain.latest_error.is_empty())
+	check(ready and terrain.world_ready,"new terrain/water/structure world becomes ready")
+	if not terrain.world_ready:
+		print("STARTUP_DIAGNOSTICS ",JSON.stringify({"messages":messages,"error":terrain.latest_error,"worker":terrain.backend.status(),"queued":terrain.backend.queued(),"slot":slot}))
+		close_world()
+		finish_report()
+		return
 	check(structures.blocks.stats().cells==0,"absent structures section restores an empty block world")
 	check(structures.register_model("late/asset",BoxMesh.new())==null,"registered persistence schema rejects late asset mutation")
 	check(not structures.model(asset_ids[0]).configure_asset("wrong/key",BoxMesh.new()),"empty registered collection keeps its asset identity locked")
@@ -99,8 +110,11 @@ func run() -> void:
 	check(await save(),"compound save publishes terrain water blocks and static models")
 	var path := ProjectSettings.globalize_path("user://worlds/"+slot+".trw")
 	var archive: RefCounted = ClassDB.instantiate("NativeWorldArchive")
-	var decoded: Dictionary = archive.decode(archive.read(path))
+	var decoded: Dictionary = terrain.backend.snapshot_codec.decode(archive.read(path))
 	check(decoded.ok and decoded.sections.size()==3 and decoded.sections.structures==saved,"one canonical file contains all providers, with models inside the structures section")
+	if region_storage:
+		var disk_root: Dictionary = archive.decode(archive.read(path))
+		check(structures.snapshot_validator().decode_reference(disk_root.sections.structures).ok and DirAccess.dir_exists_absolute(path+".regions"),"integrated terrain save publishes checkpoint reference and region sidecar")
 	var disk_before: PackedByteArray = archive.read(path)
 	var real_capture: Callable = terrain.backend.snapshot_capture
 	terrain.backend.snapshot_capture = func():
@@ -179,7 +193,11 @@ func run() -> void:
 		if FileAccess.file_exists(path+suffix):
 			DirAccess.remove_absolute(path+suffix)
 	DirAccess.make_dir_recursive_absolute("res://reports")
-	var file := FileAccess.open("res://reports/structure_persistence.json",FileAccess.WRITE)
+	finish_report()
+
+func finish_report() -> void:
+	DirAccess.make_dir_recursive_absolute("res://reports")
+	var file := FileAccess.open("res://reports/structure_region_persistence.json" if region_storage else "res://reports/structure_persistence.json",FileAccess.WRITE)
 	file.store_string(JSON.stringify({"checks":checks,"failures":failures},"  "))
 	file.close()
 	print("STRUCTURE_PERSISTENCE_RESULT ",checks.size()," checks; ",failures," failures")
