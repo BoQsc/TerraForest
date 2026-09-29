@@ -667,6 +667,35 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
    Reader channels{rgba+i*16,16};for(int k=0;k<4;k++)p[color+k]=u8(clampf(channels.f(),0,1)*255.f+.5f);
   }
  }
+ else if(cmd==17){
+  // Bounded natural-root support batch. Evaluate the same interpolated density
+  // lattice as the terrain surface, never integer-rounded point probes.
+  u32 count=r.u();
+  if(!r.good||count==0||count>64||n!=8+int(count)*12){out.p[8]=1;return;}
+  V3 points[64];
+  for(u32 i=0;i<count;i++){
+   points[i]=r.vec();V3 p=points[i];
+   if(!r.good||!(p.x>=2&&p.x<1998&&p.z>=2&&p.z<1998&&ab(p.y)<=10000)){out.p[8]=1;return;}
+  }
+  auto density=[&](V3 p){
+   int x=fl(p.x),y=fl(p.y),z=fl(p.z);float dx=p.x-x,dy=p.y-y,dz=p.z-z,value=0;
+   for(int k=0;k<8;k++)value+=w.sample(x+(k&1),y+((k>>1)&1),z+((k>>2)&1))*(k&1?dx:1-dx)*(k&2?dy:1-dy)*(k&4?dz:1-dz);
+   return value;
+  };
+  out.u(count);V3 normals[64];
+  for(u32 i=0;i<count;i++){
+   V3 p=points[i];int x=fl(p.x),z=fl(p.z);float dx=p.x-x,dz=p.z-z;
+   float h00=w.height(float(x),float(z)),h10=w.height(float(x+1),float(z));
+   float h01=w.height(float(x),float(z+1)),h11=w.height(float(x+1),float(z+1));
+   p.y=(h00*(1-dx)+h10*dx)*(1-dz)+(h01*(1-dx)+h11*dx)*dz;
+   V3 normal{};
+   if(density(p+V3{0,-.35f,0})<0&&density(p+V3{0,.35f,0})>0){
+    normal=::normal(V3{(h00-h10)*(1-dz)+(h01-h11)*dz,1,(h00-h01)*(1-dx)+(h10-h11)*dx});
+   }
+   out.vec(p);normals[i]=normal;
+  }
+  for(u32 i=0;i<count;i++)out.vec(normals[i]);
+ }
  else out.p[8]=1;
  if(tr_oom)out.p[8]=3;
 }

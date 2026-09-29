@@ -1,0 +1,184 @@
+{
+  "checks": [
+    {
+      "name": "GPU correctness run uses 1920x1080 fullscreen at full render scale",
+      "pass": true
+    },
+    {
+      "name": "invalid collision piece sizes rejected before startup",
+      "pass": true
+    },
+    {
+      "name": "collision recipe size configurable before worker startup",
+      "pass": true
+    },
+    {
+      "name": "native terrain starts",
+      "pass": true
+    },
+    {
+      "name": "running terrain worker rejects collision recipe size mutation",
+      "pass": true
+    },
+    {
+      "name": "worker completes startup",
+      "pass": true
+    },
+    {
+      "name": "second scene facade rejected until cache and save ownership supports multiple worlds",
+      "pass": true
+    },
+    {
+      "name": "source meshes, compact maps and all view arrays load",
+      "pass": true
+    },
+    {
+      "name": "placement deterministic before asynchronous surface queries",
+      "pass": true
+    },
+    {
+      "name": "nine cells finish streaming",
+      "pass": true
+    },
+    {
+      "name": "vegetation placed on native terrain support",
+      "pass": true
+    },
+    {
+      "name": "resident tree count bounded by candidate budget",
+      "pass": true
+    },
+    {
+      "name": "teleport unloads old owners and replaces cells",
+      "pass": true
+    },
+    {
+      "name": "unloaded ownership and render cells reclaimed",
+      "pass": true
+    },
+    {
+      "name": "surface query concurrency bounded",
+      "pass": true
+    },
+    {
+      "name": "truncated edit packet rejected before decoding",
+      "pass": true
+    },
+    {
+      "name": "non-edit native opcodes rejected at public edit boundary",
+      "pass": true
+    },
+    {
+      "name": "nonfinite edit coordinates rejected",
+      "pass": true
+    },
+    {
+      "name": "underground mining accepted beneath resident tree",
+      "pass": true
+    },
+    {
+      "name": "underground support revalidation completes",
+      "pass": true
+    },
+    {
+      "name": "underground edit preserves every surface tree",
+      "pass": true
+    },
+    {
+      "name": "unchanged tree keeps its renderer row and transition state",
+      "pass": true
+    },
+    {
+      "name": "terrain excavation accepted",
+      "pass": true
+    },
+    {
+      "name": "excavation transaction commits",
+      "pass": true
+    },
+    {
+      "name": "exactly one region event after publication",
+      "pass": true
+    },
+    {
+      "name": "legacy modification metadata retained independently of root support",
+      "pass": true
+    },
+    {
+      "name": "published excavation removes supported tree owner",
+      "pass": true
+    },
+    {
+      "name": "surface support revalidation completes",
+      "pass": true
+    },
+    {
+      "name": "small surface excavation removes only the unsupported tree",
+      "pass": true
+    },
+    {
+      "name": "support revalidation preserves resident ownership",
+      "pass": true
+    },
+    {
+      "name": "excavated root stays absent while unaffected roots remain",
+      "pass": true
+    },
+    {
+      "name": "travel away releases the edited neighborhood",
+      "pass": true
+    },
+    {
+      "name": "travel back resamples the edited neighborhood",
+      "pass": true
+    },
+    {
+      "name": "excavated stable ID does not regrow after unload and return",
+      "pass": true
+    },
+    {
+      "name": "unaffected stable IDs return even inside modified terrain columns",
+      "pass": true
+    },
+    {
+      "name": "invalid transforms rejected without mutation",
+      "pass": true
+    },
+    {
+      "name": "global root limit applies before mutation",
+      "pass": true
+    },
+    {
+      "name": "rapid travel preserves residency and in-flight bounds",
+      "pass": true
+    },
+    {
+      "name": "clear releases all roots, owners and GPU cell nodes",
+      "pass": true
+    },
+    {
+      "name": "clear releases selector event heap",
+      "pass": true
+    },
+    {
+      "name": "shutdown joins the persistent worker",
+      "pass": true
+    },
+    {
+      "name": "stopped terrain rejects restart rather than silently starting a stopped worker",
+      "pass": true
+    }
+  ],
+  "engine": {
+    "build": "steam",
+    "hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+    "hex": 263938,
+    "major": 4,
+    "minor": 7,
+    "patch": 2,
+    "status": "stable",
+    "string": "4.7.2-stable (steam)",
+    "timestamp": 0
+  },
+  "failures": 0
+}

@@ -4,6 +4,7 @@ const Vegetation = preload("res://addons/vegetation/vegetation_world.gd")
 const Ecosystem = preload("res://addons/world_ecosystem/world_ecosystem.gd")
 const Codec = preload("res://addons/volumetric_terrain/mesh_codec.gd")
 const Demo = preload("res://demo/world.gd")
+const Presentation = preload("res://addons/presentation/fullscreen_policy.gd")
 var failures: int = 0
 var checks: Array[Dictionary] = []
 var terrain = Terrain.new()
@@ -28,7 +29,11 @@ func until(predicate: Callable, seconds: float = 20.0) -> bool:
 	return predicate.call()
 
 func run() -> void:
-	Engine.max_fps = 120
+	Engine.max_fps = 60
+	Presentation.apply(root)
+	if DisplayServer.get_name() != "headless":
+		await process_frame
+		check(Presentation.measurement(root).fair_graphical_sample, "GPU correctness run uses 1920x1080 fullscreen at full render scale")
 	root.add_child(terrain)
 	terrain.diagnostics_pause_streaming = true
 	check(not terrain.backend.configure_collision_piece_size(255) and not terrain.backend.configure_collision_piece_size(1025), "invalid collision piece sizes rejected before startup")
@@ -69,20 +74,30 @@ func run() -> void:
 	check(not terrain.edit(Codec.brush(Vector3.INF, Vector3.ZERO, 2, 0, false, 1), Vector3.ZERO, Vector3.ONE), "nonfinite edit coordinates rejected")
 	var first: int = vegetation.renderer.roots.keys()[0]
 	var point: Vector3 = vegetation.renderer.roots[first]["t"].origin
+	var before_mining: Array = vegetation.renderer.roots.keys()
+	var preserved_row: Dictionary = vegetation.renderer.roots[first]
+	var underground: Vector3 = point - Vector3(0, 20, 0)
+	check(terrain.sculpt_sphere(underground, 3.0), "underground mining accepted beneath resident tree")
+	check(await until(func(): return not terrain.pending_edit and ecosystem._resample.is_empty() and ecosystem._requests.is_empty()), "underground support revalidation completes")
+	check(vegetation.renderer.roots.size() == before_mining.size() and before_mining.all(func(id): return vegetation.renderer.roots.has(id)), "underground edit preserves every surface tree")
+	check(is_same(preserved_row, vegetation.renderer.roots.get(first)), "unchanged tree keeps its renderer row and transition state")
 	terrain.region_changed.connect(func(_bounds: AABB, _revision: int): _region_events += 1)
-	var radius: float = 3.0
+	var radius: float = 1.5
 	check(terrain.edit(Codec.brush(point, point, radius, 0, false, 1), point - Vector3.ONE * 8, point + Vector3.ONE * 8), "terrain excavation accepted")
 	check(await until(func(): return not terrain.pending_edit), "excavation transaction commits")
 	check(_region_events == 1, "exactly one region event after publication")
-	check(not terrain.natural_column_available(point), "edited columns excluded from procedural regrowth")
+	check(not terrain.natural_column_available(point), "legacy modification metadata retained independently of root support")
 	check(await until(func(): return not vegetation.renderer.roots.has(first)), "published excavation removes supported tree owner")
-	check(ecosystem.resident.size() == 9, "edits preserve unaffected cell ownership without resampling")
+	check(await until(func(): return ecosystem._resample.is_empty() and ecosystem._requests.is_empty()), "surface support revalidation completes")
+	check(vegetation.renderer.roots.size() == before_mining.size() - 1 and before_mining.all(func(id): return id == first or vegetation.renderer.roots.has(id)), "small surface excavation removes only the unsupported tree")
+	check(ecosystem.resident.size() == 9, "support revalidation preserves resident ownership")
 	check(not vegetation.renderer.roots.has(first), "excavated root stays absent while unaffected roots remain")
 	camera.position.x = 800.0
 	check(await until(func(): return ecosystem.resident.size() == 9 and ecosystem._requests.is_empty() and vegetation.renderer.roots.keys().all(func(id): return vegetation.renderer.roots[id]["t"].origin.x > 600.0)), "travel away releases the edited neighborhood")
 	camera.position.x = 300.0
 	check(await until(func(): return ecosystem.resident.size() == 9 and ecosystem._requests.is_empty() and vegetation.renderer.roots.size() > 100 and vegetation.renderer.roots.keys().all(func(id): return vegetation.renderer.roots[id]["t"].origin.x < 500.0)), "travel back resamples the edited neighborhood")
 	check(not vegetation.renderer.roots.has(first), "excavated stable ID does not regrow after unload and return")
+	check(before_mining.all(func(id): return id == first or vegetation.renderer.roots.has(id)), "unaffected stable IDs return even inside modified terrain columns")
 	var root_count: int = vegetation.renderer.roots.size()
 	var invalid: Array[Transform3D] = [Transform3D(Basis.IDENTITY, Vector3.INF)]
 	check(not vegetation.upsert_chunk("invalid", PackedInt64Array([999999]), invalid) and vegetation.renderer.roots.size() == root_count, "invalid transforms rejected without mutation")

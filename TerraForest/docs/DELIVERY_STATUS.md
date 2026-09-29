@@ -1,5 +1,11 @@
 # Original objective and completion evidence
 
+Foundation work now replaces column-wide forest clearing after mining with
+bounded native surface-support revalidation and preserves unchanged tree renderer
+rows. See [localized vegetation support](FOUNDATION_VEGETATION_SUPPORT.md).
+This fixes a correctness defect; sustained combined-world performance and
+progressively slower mining remain unqualified.
+
 The native mesh cache now uploads bounded batches. A 16-tower / 8-cottage
 fullscreen district returned from cache in 0.536 s versus 4.267 s before, with
 exactly preserved texture mipmaps and authored data. See
@@ -96,7 +102,7 @@ The original scope remains active. This project must not be called fully game-re
 | Efficient world representation and storage | Legacy sparse edited terrain, native checksummed compound snapshots and exact-version block-region storage/paging | Terrain/model region and delta representation, arbitrary-world addressing, journal/compaction and bounded streaming under travel |
 | High entity counts | Native bounded kinematics and bulk transforms | Gameplay simulation, spatial queries, rendering, collision and replication at measured populations |
 | Efficient vehicles and high-speed travel | Pending | Vehicle physics, swept collision readiness, predictive streaming, correction and sustained high-speed traversal tests |
-| Always 1920×1080 fullscreen for fair graphical testing | Implemented presentation policy and report assertions | Continue enforcing for every new graphical measurement |
+| Always 1920Ã—1080 fullscreen for fair graphical testing | Implemented presentation policy and report assertions | Continue enforcing for every new graphical measurement |
 | Most systems as Godot addons; no performance-critical GDScript | Native terrain planning, entity/archive/water and structures work implemented; remaining scene and forest schedulers use GDScript | Native migration of remaining scene/forest hot paths, non-Windows planner binaries and profiling across targets |
 | Zig and prebuilt godot-cpp | Implemented, pinned, checksum-verified; debug/release tests | Maintain ABI checks and reproducible release packaging on upgrades |
 

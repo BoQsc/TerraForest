@@ -24,6 +24,7 @@ var stale_results: int = 0
 var rejected_batches: int = 0
 var _samples: Dictionary = {}
 var _reconcile: Dictionary = {}
+var _resample: Dictionary = {}
 
 func _ready() -> void:
 	if terrain == null or vegetation == null or camera == null:
@@ -49,6 +50,7 @@ func reset() -> void:
 	resident.clear()
 	_samples.clear()
 	_reconcile.clear()
+	_resample.clear()
 	_requests.clear()
 	_pending_cells.clear()
 	_wanted.clear()
@@ -73,11 +75,12 @@ func _process(delta: float) -> void:
 		return
 	# One small batch submitted per frame. Queue admission is owned by TerrainWorld.
 	for key in _wanted:
-		if resident.has(key) or _pending_cells.has(key):
+		if (resident.has(key) and not _resample.has(key)) or _pending_cells.has(key):
 			continue
 		var candidates: Dictionary = _candidates(key)
 		if candidates["points"].is_empty():
 			resident[key] = true
+			_resample.erase(key)
 			continue
 		_token += 1
 		if terrain.request_surface_batch(candidates["points"], _token):
@@ -108,7 +111,11 @@ func _refresh(center: Vector2i) -> void:
 		if not _wanted.has(key):
 			_samples.erase(key)
 			_reconcile.erase(key)
+			_resample.erase(key)
 	# Keep outstanding tokens until completion; this bounds work during teleports.
+	for key in _resample.keys():
+		if not _wanted.has(key):
+			_resample.erase(key)
 
 func _candidates(key: Vector2i) -> Dictionary:
 	var rng := RandomNumberGenerator.new()
@@ -125,7 +132,7 @@ func _candidates(key: Vector2i) -> Dictionary:
 			var scale: float = rng.randf_range(0.7, 1.18)
 			# Ecological mask: grassy SW biome, tapered at the snow/sand boundaries.
 			var biome: float = clampf((1000.0 - point.x) / 100.0, 0.0, 1.0) * clampf((point.z - 1000.0) / 100.0, 0.0, 1.0)
-			if roll >= density * biome or not terrain.natural_column_available(point):
+			if roll >= density * biome or point.x < 2.0 or point.z < 2.0 or point.x >= 1998.0 or point.z >= 1998.0:
 				continue
 			points.append(point)
 			ids.append(1 + (key.y * 32 + key.x) * GRID * GRID + z * GRID + x)
@@ -151,12 +158,14 @@ func _surface_ready(token: int, points: PackedVector3Array, normals: PackedVecto
 	var transforms: Array[Transform3D] = []
 	var min_up: float = cos(deg_to_rad(max_slope_degrees))
 	for i in range(points.size()):
-		if not points[i].is_finite() or normals[i].y < min_up or not terrain.natural_column_available(points[i]):
+		if not points[i].is_finite() or normals[i].y < min_up:
 			continue
 		var basis := Basis(Vector3.UP, request["rotations"][i]).scaled(Vector3.ONE * request["scales"][i])
 		ids.append(request["ids"][i])
 		transforms.append(Transform3D(basis, points[i] - Vector3(0.0, 0.2, 0.0)))
-	_samples[key] = {"ids": ids, "transforms": transforms, "active": PackedInt64Array(), "published": false}
+	var previous: Dictionary = _samples.get(key, {})
+	_samples[key] = {"ids": ids, "transforms": transforms, "active": previous.get("active", PackedInt64Array()), "published": previous.get("published", false)}
+	_resample.erase(key)
 	_publish_samples(key)
 
 func _structures_changed() -> void:
@@ -171,11 +180,12 @@ func _publish_samples(key: Vector2i) -> void:
 		mask = structures.overlap_mask(transforms, vegetation.placement_bounds())
 		if mask.size() != transforms.size():
 			rejected_batches += 1
+			_reconcile[key] = true
 			return
 	var ids := PackedInt64Array()
 	var accepted: Array[Transform3D] = []
 	for i in range(transforms.size()):
-		if (structures == null or mask[i] == 0) and terrain.natural_column_available(transforms[i].origin):
+		if structures == null or mask[i] == 0:
 			ids.append(sample["ids"][i])
 			accepted.append(transforms[i])
 	# Unaffected owners retain their current LOD/fade state.
@@ -187,19 +197,16 @@ func _publish_samples(key: Vector2i) -> void:
 		resident[key] = true
 	else:
 		rejected_batches += 1
+		_reconcile[key] = true
 
 func _region_changed(bounds: AABB, _revision: int) -> void:
-	# Match the conservative 16 m dirty-column exclusion, including boundary roots.
-	var low: Vector3 = bounds.position
-	var high: Vector3 = bounds.end
-	low.x = floorf(low.x / 16.0) * 16.0
-	low.z = floorf(low.z / 16.0) * 16.0
-	high.x = (floorf(high.x / 16.0) + 1.0) * 16.0
-	high.z = (floorf(high.z / 16.0) + 1.0) * 16.0
-	low.y = -128.0
-	high.y = 512.0
-	vegetation.remove_roots_in_bounds(AABB(low, high - low))
-	_structures_changed()
+	# Preserve live rows until authoritative support samples arrive. Only owners
+	# intersecting the footprint need revalidation, including underground edits.
+	for key in _wanted:
+		var low := Vector3(key.x * CELL_SIZE, bounds.position.y, key.y * CELL_SIZE)
+		var footprint := AABB(low, Vector3(CELL_SIZE, maxf(bounds.size.y, 1.0), CELL_SIZE))
+		if footprint.intersects(bounds):
+			_resample[key] = true
 
 func _exit_tree() -> void:
 	if is_instance_valid(structures) and structures.changed.is_connected(_structures_changed):

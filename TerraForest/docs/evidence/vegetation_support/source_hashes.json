@@ -1,0 +1,10 @@
+{
+  "TerraForest/addons/vegetation/forest.gd": "324e0901d3883e1048a38bd7588da2c194d6a79d04abadc60bc914e96922201e",
+  "TerraForest/addons/volumetric_terrain/bin/terrain_core.windows.template_release.x86_64.dll": "20b50f742ffb07021c30f3ac3d5738e8a5f9fc7867938c6f2495e7f4d6193391",
+  "TerraForest/addons/volumetric_terrain/bin/terrain_core.windows.x86_64.dll": "df94956a70b76b41b9fa75bff04daca7bcdf7631f94335102151d7a8c9f0096e",
+  "TerraForest/addons/volumetric_terrain/native/core.cpp": "9c1e7560634025aa7f34b2965859bcf29504960eddea6a3d5cddfe5cbf4a9166",
+  "TerraForest/addons/volumetric_terrain/terrain_backend.gd": "eec720e5f6794112868862090f68bd49eff422c15ce0b919be5307efa21c1a58",
+  "TerraForest/addons/world_ecosystem/world_ecosystem.gd": "04536f922245e83d9e70c79a9d0cdf206d385396ac92db00690751013745c419",
+  "TerraForest/tests/integration.gd": "145f356e0e491e2ac7bdd8cc1bd31e5b6b0f43173249d8dd94ce34f6494e0e06",
+  "TerraForest/tests/terrain_native.gd": "71f7f6202cbd6aaaa9f7d2556165108b823f24cc754c72d3a937004ea9ef5d0a"
+}

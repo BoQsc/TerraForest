@@ -607,26 +607,17 @@ func _run() -> void:
 			var points: PackedVector3Array = job["points"]
 			var normals := PackedVector3Array()
 			normals.resize(points.size())
-			for i in range(points.size()):
-				var p: Vector3 = points[i]
-				var center: PackedByteArray = _call(Codec.point_command(p))
-				if not Codec.reply_ok(center) or center.size() < 20:
-					continue
-				p.y = center.decode_float(12)
-				var below: PackedByteArray = _call(Codec.point_command(p - Vector3(0, 2, 0)))
-				var above: PackedByteArray = _call(Codec.point_command(p + Vector3(0, 2, 0)))
-				if not Codec.reply_ok(below) or not Codec.reply_ok(above) or below.size() < 20 or above.size() < 20:
-					continue
-				if below.decode_float(16) >= 0.0 or above.decode_float(16) <= 0.0:
-					continue
-				var left: PackedByteArray = _call(Codec.point_command(p - Vector3(1, 0, 0)))
-				var right: PackedByteArray = _call(Codec.point_command(p + Vector3(1, 0, 0)))
-				var back: PackedByteArray = _call(Codec.point_command(p - Vector3(0, 0, 1)))
-				var front: PackedByteArray = _call(Codec.point_command(p + Vector3(0, 0, 1)))
-				if left.size() < 20 or right.size() < 20 or back.size() < 20 or front.size() < 20:
-					continue
-				points[i] = p
-				normals[i] = Vector3(left.decode_float(12) - right.decode_float(12), 2.0, back.decode_float(12) - front.decode_float(12)).normalized()
+			var packet: PackedByteArray = Codec.command(17, [points.size()])
+			packet.append_array(points.to_byte_array())
+			var reply: PackedByteArray = _call(packet)
+			if Codec.reply_ok(reply) and reply.size() == 16 + points.size() * 24 and reply.decode_u32(12) == points.size():
+				var count: int = points.size()
+				points = Codec._packed_channel(reply, 16, count, 12, TYPE_PACKED_VECTOR3_ARRAY)
+				normals = Codec._packed_channel(reply, 16 + count * 12, count, 12, TYPE_PACKED_VECTOR3_ARRAY)
+			else:
+				# Failed sampling must not publish a valid-looking empty forest.
+				points = PackedVector3Array()
+				normals = PackedVector3Array()
 			_push({"kind": "surface_batch", "points": points, "normals": normals, "token": job["token"], "epoch": job["epoch"], "revision": job["revision"]})
 		elif kind == "height":
 			var reply: PackedByteArray = _call(Codec.point_command(job["point"]))

@@ -65,10 +65,15 @@ func upsert_chunk(chunk: String,ids: PackedInt64Array,transforms: Array[Transfor
 		if absf(t.basis.y.length()-sc)>0.001 or absf(t.basis.z.length()-sc)>0.001 or t.basis.determinant()<=0:return false
 		if absf(t.basis.x.dot(t.basis.y))>0.001*sc*sc or absf(t.basis.x.dot(t.basis.z))>0.001*sc*sc or absf(t.basis.y.dot(t.basis.z))>0.001*sc*sc:return false
 		seen[id]=true
-	remove_chunk(chunk)
+	# Keep unchanged rows and their ongoing LOD/shadow transitions intact.
+	for old_id in owners.get(chunk,PackedInt64Array()):
+		if not seen.has(old_id):remove_root(old_id)
 	owners[chunk]=ids
 	for i in range(ids.size()):
-		var t: Transform3D=transforms[i];var sc: float=t.basis.x.length();var key: Vector2i=_key(t.origin)
+		var t: Transform3D=transforms[i]
+		if roots.has(ids[i]) and roots[ids[i]]["t"]==t:continue
+		if roots.has(ids[i]):remove_root(ids[i])
+		var sc: float=t.basis.x.length();var key: Vector2i=_key(t.origin)
 		var row: Dictionary={"id":ids[i],"owner":chunk,"key":key,"t":t,"center":t*CENTER,"scale":sc,"lod":2,"next":-1,"shadow":-1,"shadow_next":-2,"time":0.0,"shadow_time":0.0,"seed":float(posmod(ids[i]*48271,2147483647))/2147483647.0}
 		var local_t: Transform3D=t;local_t.origin-=_ensure(key)["origin"];row["local_t"]=local_t
 		if audit_enabled:_audit_pending[ids[i]]=true
