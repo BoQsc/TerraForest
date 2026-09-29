@@ -98,6 +98,9 @@ func run() -> void:
 	var stats: Dictionary = game.structures.region_paging_stats()
 	check(stats.scan_high<=128 and stats.operation_high<=1 and blocks.region_stats().resident_chunks<=1536,"interactive main-world paging stays within configured scan transfer and chunk bounds")
 	if DisplayServer.get_name()!="headless":
+		game.camera.look_at(Vector3(far)+Vector3(0,3,0))
+		check(await until(func(): return blocks.is_idle() and blocks.stats().mesh_chunks>0,30),"streamed cottage completes visible mesh admission")
+		await create_timer(3.0).timeout
 		var measurement: Dictionary = Presentation.measurement(root)
 		check(measurement.window_size==[1920,1080] and measurement.viewport==[1920,1080] and measurement.fullscreen,"persistent paging evidence uses 1920x1080 fullscreen")
 		await RenderingServer.frame_post_draw

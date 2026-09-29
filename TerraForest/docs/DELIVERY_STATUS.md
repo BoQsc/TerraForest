@@ -1,35 +1,39 @@
 # Original objective and completion evidence
 
-The native world archive now has a bounded persistent exact-region read queue
-sharing its existing store owner; see [archive region reads](ARCHIVE_REGION_READS.md).
-Automatic scene admission and travel paging remain unfinished.
+The persistent main world now uses a native building-region pager for automatic
+nearby admission and safe distant eviction. It retains unsaved edits and undo/redo
+history, rejects stale read results, and saves partially resident worlds. See
+[native region paging](NATIVE_REGION_PAGING.md). City-scale latency and memory,
+high-speed readiness and multi-hour endurance remain unverified.
 
 Opt-in metadata-first archive loading now restores region availability without
 reconstructing all block cells, and preserves checkpoint identity through later
-saves. See [metadata world loading](METADATA_WORLD_LOADING.md). The main demo still
-uses full loading until bounded automatic region admission is connected.
+saves. See [metadata world loading](METADATA_WORLD_LOADING.md). The persistent
+main demo now enables metadata loading and bounded automatic region admission.
 
 Fresh block worlds can now initialize checkpoint availability metadata without
-loading cell chunks; see [region bootstrap](BLOCK_REGION_BOOTSTRAP.md). Automatic paging and saving
-partially loaded worlds remain unfinished.
+loading cell chunks; see [region bootstrap](BLOCK_REGION_BOOTSTRAP.md). Partial
+saving and automatic building paging are now connected to the main world.
 
 The main world now publishes block-region checkpoint references through a native
 archive adapter, retaining current and backup roots. See [region-backed world saves](REGION_WORLD_ARCHIVE.md).
-Full-resident restore limits remain; automatic runtime paging is unfinished.
+Legacy full-resident restore limits remain; metadata loading avoids reconstructing
+all building cells at startup.
 
 Persistent native catalog checkpoints now preserve referenced block versions through
 future edits and collection. See BLOCK_REGION_CHECKPOINTS.md. World-root integration is covered by REGION_WORLD_ARCHIVE.md.
 
 NativeBlockRegionIO now runs disk catalog work on one persistent C++ worker,
 bounding queued, active and unread-completion reservations. See BLOCK_REGION_IO.md.
-The scene residency manager remains unfinished; the world-save root uses native catalog checkpoints.
+The main pager uses the archive's shared reader instead of opening a second store
+owner; see [archive region reads](ARCHIVE_REGION_READS.md).
 
 Authored block regions now support bounded native capture, conditional unload
 and reload, availability-aware walking/editing/exclusion, and refusal of legacy
 whole-world saves that would omit unloaded data. See BLOCK_REGION_TRANSFERS.md.
 A native disk catalog now provides conditional batch publication and explicit
-backup recovery; see BLOCK_REGION_CATALOG.md. Automatic travel paging and model-region storage remain
-unfinished; the demo does not automatically evict authored regions yet.
+backup recovery; see BLOCK_REGION_CATALOG.md. Automatic block travel paging is
+connected; authored static-model region storage remains unfinished.
 
 Walking now checks native block and static-model collision readiness within conservative capsule
 travel bounds before moving, and waits without accumulating motion when an
@@ -50,7 +54,7 @@ BLOCK_WORKER_VALIDATION.md; multi-hour endurance remains outstanding.
 Native block baking now uses exact shape-dependent scratch grids instead of
 quarter-cell expansion for every chunk. Seven legacy mesh fingerprints match,
 including cross-chunk partial shapes; see BLOCK_LATTICE_VALIDATION.md. This
-reduces cube/slab bake work while building LOD and region storage remain open.
+reduces cube/slab bake work while building LOD and authored model-region storage remain open.
 
 Terrain collision slicing, validation and cache-key preparation now run in a
 native worker recipe API. Main-thread shape matching, cooking and node attachment
@@ -73,12 +77,12 @@ The original scope remains active. This project must not be called fully game-re
 | Underground material veins and material variety | Inherited limited material set | Native material registry, seeded vein generation, editing/rendering/persistence tests |
 | Volumetric asphalt roads | Pending | Native road volumes, surface/material blending, placement/editing and terrain integration |
 | Shape prefabs: cubes/boxels, stairs, spheres, slopes and more | Separate native structures addon: textured cubes, slabs, stairs, slopes, posts and spheres; chunk collision, main-world block authoring, native reusable block prefabs, bounded native block undo/redo and compound persistence | Combined block/model prefabs, additional curved shapes, material catalog, graphical selection/capture and cross-addon editor commands |
-| Large buildings, towns and cities | Native chunked house/tower showcase; bounded nearby block meshes and memory bake reuse; model catalog/placement UI, single-model selection/move/rotate/uniform-scale controls and bounded native model history across assets; spatial static-model batching with bounded nearby paged render buffers, native per-tick upload budgets and page-local transform refresh, stable IDs, incremental edits, nearby compound-box collision, native vegetation exclusion, asset-bound snapshots and compound world persistence; 100,000-placement API test | Authoritative region eviction/disk cache, building LOD, prefab selection/capture UI, city generation, model drag handles/numeric transforms/multi-selection, arbitrary concave model collision and dense-settlement rendering tests |
-| Efficient world generator/editor with baking and caching | Existing terrain cache; dependency-invalidated native block bake cache and mesh admission budgets; compound snapshot bridge | Unified command/editor model, persistent bake caches, region storage and high-speed loading tests |
+| Large buildings, towns and cities | Native chunked house/tower showcase; automatic committed block-region paging; bounded nearby block meshes and memory bake reuse; model catalog/placement UI, single-model selection/move/rotate/uniform-scale controls and bounded native model history across assets; spatial static-model batching with bounded nearby paged render buffers, native per-tick upload budgets and page-local transform refresh, stable IDs, incremental edits, nearby compound-box collision, native vegetation exclusion, asset-bound snapshots and compound world persistence; 100,000-placement API test | Authored static-model region storage, persistent derived bake cache, building LOD, prefab selection/capture UI, city generation, model drag handles/numeric transforms/multi-selection, arbitrary concave model collision and dense-settlement rendering tests |
+| Efficient world generator/editor with baking and caching | Existing terrain cache; dependency-invalidated native block bake cache and mesh admission budgets; compound snapshot bridge and native block-region paging | Unified command/editor model, persistent bake caches, model-region storage and high-speed loading tests |
 | Proper player, toolbelt, inventory, unified interaction | Inherited controller and basic brush HUD | Native movement/interaction/inventory rules, UI, water integration and interaction tests |
 | Large multiplayer world, terrain, vegetation, structures and players | Native Windows terrain instances now isolate cancellation; networking remains pending | Multiple-scene cache/save ownership, authoritative region/command model, interest management, bandwidth/backpressure, server + two-client loss/reorder/late-join tests, measured scaling |
 | Forest/vegetation including stones, plants and grass | Streamed spruce renderer and bounds | Native scatter/selection hot paths, species tiers, small-object batching and visual/performance tests |
-| Efficient world representation and storage | Legacy sparse edited terrain plus native checksummed compound snapshots | Region/delta representation, arbitrary-world addressing, journal/compaction and bounded streaming under travel |
+| Efficient world representation and storage | Legacy sparse edited terrain, native checksummed compound snapshots and exact-version block-region storage/paging | Terrain/model region and delta representation, arbitrary-world addressing, journal/compaction and bounded streaming under travel |
 | High entity counts | Native bounded kinematics and bulk transforms | Gameplay simulation, spatial queries, rendering, collision and replication at measured populations |
 | Efficient vehicles and high-speed travel | Pending | Vehicle physics, swept collision readiness, predictive streaming, correction and sustained high-speed traversal tests |
 | Always 1920×1080 fullscreen for fair graphical testing | Implemented presentation policy and report assertions | Continue enforcing for every new graphical measurement |

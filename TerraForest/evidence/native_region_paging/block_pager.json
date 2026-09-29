@@ -1,0 +1,5 @@
+{
+  "checks": 29,
+  "failures": 0,
+  "scope": "Native automatic region selection, bounded admission, clean eviction, history protection and stale epoch rejection."
+}
