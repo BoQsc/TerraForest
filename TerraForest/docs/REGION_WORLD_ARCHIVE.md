@@ -1,5 +1,9 @@
 # World saves backed by building-region checkpoints
 
+Real process-interruption validation now passes three debug and three clean-release
+trials, including fresh-process checkpoint reconstruction and subsequent saves.
+See [interruption evidence and scope](REGION_SAVE_INTERRUPTION.md).
+
 The main world now uses `NativeRegionWorldArchive`, a C++ adapter around
 `NativeWorldArchive` and the registered `NativeStructuresSnapshot` schema. The
 terrain backend still owns save/load sequencing and component generations. Region
