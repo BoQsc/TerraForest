@@ -37,7 +37,7 @@ func attach(terrain: Node) -> Error:
 	terrain.backend.snapshot_codec = archive
 	terrain.backend.snapshot_capture = _capture
 	for name: String in _providers:
-		terrain.backend.snapshot_validators[name] = _providers[name]["validator"]
+		terrain.backend.snapshot_validators[name] = archive if _region_structures and name == "structures" else _providers[name]["validator"]
 	terrain.snapshot_restored.connect(_restore)
 	return OK
 

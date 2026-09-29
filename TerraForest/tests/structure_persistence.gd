@@ -44,7 +44,7 @@ func create_world() -> void:
 	lakes.prepare()
 	root.add_child(lakes)
 	persistence = Persistence.new()
-	check(persistence.register_component("structures",structures.capture_snapshot,structures.restore_snapshot,structures.snapshot_validator(),structures.empty_snapshot()),"structures bundle registers as one world component")
+	check(persistence.register_component("structures",structures.capture_storage_snapshot if region_storage else structures.capture_snapshot,structures.restore_snapshot,structures.snapshot_validator(),structures.empty_snapshot()),"structures bundle registers as one world component")
 	if region_storage:
 		check(persistence.enable_region_structures(),"native region archive enabled before terrain starts")
 	check(persistence.register_component("volumetric_water",lakes.capture_snapshot,lakes.restore_snapshot,lakes.snapshot_validator(),lakes.empty_snapshot()) and persistence.attach(terrain)==OK,"water and structures share the terrain persistence coordinator")
@@ -115,6 +115,23 @@ func run() -> void:
 	if region_storage:
 		var disk_root: Dictionary = archive.decode(archive.read(path))
 		check(structures.snapshot_validator().decode_reference(disk_root.sections.structures).ok and DirAccess.dir_exists_absolute(path+".regions"),"integrated terrain save publishes checkpoint reference and region sidecar")
+	if region_storage:
+		var packet: PackedByteArray = structures.blocks.capture_region(Vector3i(12,1,20))
+		check(structures.blocks.unload_region(packet),"saved building region unloads while the terrain worker stays live")
+		check(structures.blocks.set_cells(PackedInt32Array([864,64,1310,6])),"resident region edits coexist with unloaded buildings")
+		var partial: PackedByteArray = structures.capture_storage_snapshot()
+		check(not partial.is_empty() and terrain.backend.snapshot_codec.validate_snapshot(partial),"region provider validates native partial storage envelope")
+		check(structures.capture_snapshot().is_empty() and not structures.snapshot_validator().validate_snapshot(partial),"legacy whole-world capture and validator never accept partial data")
+		var exposed_partial := partial.duplicate()
+		exposed_partial[0]^=1
+		check(structures.capture_storage_snapshot()==partial and not structures.restore_snapshot(partial),"partial cache is isolated and cannot be restored as a complete scene")
+		structures.model(asset_ids[1]).upsert_instances(PackedInt64Array([12]),transform_at(812))
+		check(structures.capture_storage_snapshot()!=partial,"model edits invalidate the partial storage cache")
+		check(await save(),"terrain worker commits resident edits alongside unloaded region references")
+		decoded=terrain.backend.snapshot_codec.decode(archive.read(path))
+		saved=decoded.sections.structures
+		check(structures.blocks.restore_region(packet,PackedByteArray()) and structures.capture_snapshot()==saved,"reconstructed world exactly matches edited resident and preserved unloaded cells")
+		check(structures.capture_storage_snapshot()==saved,"admitting the region invalidates partial cache and returns ordinary bundle")
 	var disk_before: PackedByteArray = archive.read(path)
 	var real_capture: Callable = terrain.backend.snapshot_capture
 	terrain.backend.snapshot_capture = func():
@@ -146,6 +163,8 @@ func run() -> void:
 	structures.blocks.set_cells(PackedInt32Array([-1,3,-1,100]))
 	structures.model(asset_ids[1]).upsert_instances(PackedInt64Array([12]),transform_at(830))
 	var latest: PackedByteArray = structures.capture_snapshot()
+	if region_storage:
+		check(structures.blocks.unload_region(structures.blocks.capture_region(Vector3i(12,1,20))),"shutdown fixture retains an unloaded persisted region")
 	close_world()
 	create_world()
 	check(await until(func(): return terrain.world_ready),"structure-only edit shutdown reloads")

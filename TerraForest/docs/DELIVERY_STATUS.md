@@ -6,14 +6,14 @@ partially loaded worlds remain unfinished.
 
 The main world now publishes block-region checkpoint references through a native
 archive adapter, retaining current and backup roots. See [region-backed world saves](REGION_WORLD_ARCHIVE.md).
-Full-resident capture/restore limits remain; automatic runtime paging is unfinished.
+Full-resident restore limits remain; automatic runtime paging is unfinished.
 
 Persistent native catalog checkpoints now preserve referenced block versions through
-future edits and collection. See BLOCK_REGION_CHECKPOINTS.md. World-root integration remains pending.
+future edits and collection. See BLOCK_REGION_CHECKPOINTS.md. World-root integration is covered by REGION_WORLD_ARCHIVE.md.
 
 NativeBlockRegionIO now runs disk catalog work on one persistent C++ worker,
 bounding queued, active and unread-completion reservations. See BLOCK_REGION_IO.md.
-The scene residency manager and catalog-aware world-save root remain unfinished.
+The scene residency manager remains unfinished; the world-save root uses native catalog checkpoints.
 
 Authored block regions now support bounded native capture, conditional unload
 and reload, availability-aware walking/editing/exclusion, and refusal of legacy

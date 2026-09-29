@@ -41,7 +41,6 @@ catalog metadata are not covered by the background queue's payload accounting.
 
 Tests cover preserved unloaded cells together with resident edits, exact checkpoint
 reconstruction, old checkpoint retention, resident demolition, malformed/overlapping
-manifests, stale references, disk reopen and unchanged publication. The main world
-still needs a partial-state envelope and archive-adapter integration before this
-API can safely replace its current fully resident save path. Automatic paging is
-not enabled by this change.
+manifests, stale references, disk reopen and unchanged publication. The main world uses the storage envelope and archive integration
+described in [PARTIAL_WORLD_ARCHIVE.md](PARTIAL_WORLD_ARCHIVE.md). Automatic paging
+is not enabled by this change.

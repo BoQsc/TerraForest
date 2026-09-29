@@ -1,0 +1,5 @@
+{
+  "checks": 57,
+  "failures": 0,
+  "scope": "Native full and partial structure envelopes, checkpoint references and world-root publication; automatic paging is not exercised."
+}

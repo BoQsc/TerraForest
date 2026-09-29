@@ -1,0 +1,5 @@
+{
+  "checks": 24,
+  "failures": 0,
+  "scope": "Native partial-state capture and catalog publication; world-root encoding and automatic paging integration remain pending."
+}

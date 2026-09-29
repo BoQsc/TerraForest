@@ -26,5 +26,6 @@ public:
     PackedByteArray read(const String &absolute_path) const;
     int64_t publish(const String &absolute_path,const PackedByteArray &bytes);
     Dictionary storage_stats() const;
+    bool validate_snapshot(const PackedByteArray &bytes) const {return codec_.is_valid()&&codec_->validate_storage_snapshot(bytes);}
 };
 }
