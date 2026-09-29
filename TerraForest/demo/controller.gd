@@ -133,9 +133,6 @@ func _ready() -> void:
 	if journal != null and journal.is_open():
 		journal.store_line("time_us,wall_frame_ms,physics_cpu_ms,desired_x,desired_z,planar_speed,release_to_physics_ms,release_to_draw_callback_ms,edit_queue_ms,edit_worker_ms,edit_total_build_ms,publish_unit_ms,publish_frame_ms,edit_to_publish_ms,edit_to_draw_callback_ms,queued,staging,hitches,staging_wait_ms,mesh_upload_ms,collision_piece_ms,retire_ms,receive_ms,schedule_ms,commit_ms,geometry_tiles,lighting_tiles,active_worker")
 	Engine.max_fps = max_fps
-	DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_ENABLED)
-	if OS.get_name() == "Windows" and DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_FULLSCREEN:
-		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_EXCLUSIVE_FULLSCREEN)
 	_setup_scene()
 	_setup_hud()
 	_setup_loading()
@@ -732,7 +729,7 @@ func _process(delta: float) -> void:
 	hud.text += "Brush capture %d/%d | coalesced %d | backpressure %d | distant lighting pending %d\n" % [stroke_buffer.samples.size(), StrokeBuffer.LIMIT, stroke_buffer.coalesced, stroke_buffer.backpressure, terrain.lighting_dirty.size()]
 	hud.text += "Derived disk cache %s | duplicate pending-surface samples avoided %d\n" % [str(terrain.derived_metrics), duplicate_surface_samples]
 	hud.text += "Surface: %s | captured wait %.1f ms | light uploads %d (%.2f ms) | unresolved rays %d\n" % ["Fitted (experimental)" if fitted_surface else "Character", terrain.last_capture_wait_ms, terrain.lighting_attribute_updates, terrain.last_light_upload_ms, terrain.unresolved_light_rays]
-	hud.text += "V-Sync %s | cap %d | collision pieces reused %d / built %d | match/build %.3f ms\n" % ["ON" if DisplayServer.window_get_vsync_mode() == DisplayServer.VSYNC_ENABLED else "NOT ENABLED", Engine.max_fps, terrain.collision_pieces_reused, terrain.collision_pieces_built, terrain.last_collision_match_ms]
+	hud.text += "V-Sync requested %s | cap %d | collision pieces reused %d / built %d | match/build %.3f ms\n" % ["ON" if DisplayServer.window_get_vsync_mode() == DisplayServer.VSYNC_ENABLED else "NOT ENABLED", Engine.max_fps, terrain.collision_pieces_reused, terrain.collision_pieces_built, terrain.last_collision_match_ms]
 	if terrain.nearby_first and terrain.root_coverage < terrain.roots.size():
 		hud.text += "Nearby-first streaming: %d/%d outer regions | TEMPORARY 320 m view distance\n" % [terrain.root_coverage, terrain.roots.size()]
 	hud.text += "Tool %d | radius %.1f m | %s | %s | player %.1f, %.1f, %.1f | %s" % [tool, radius, ["Stone", "Wood", "Metal"][material_id - 1], "FLY" if fly else "WALK 5.5 m/s", player.position.x, player.position.y, player.position.z, "collision ready" if terrain.player_region_ready(player.position) else "waiting for fine collision"]
@@ -745,6 +742,7 @@ func _notification(what: int) -> void:
 		# No resolution change or stale motion queue. Restore the requested cap on focus.
 		Engine.max_fps = background_fps
 	elif what == NOTIFICATION_WM_WINDOW_FOCUS_IN:
+		Presentation.restore_vsync()
 		app_focused = true
 		Engine.max_fps = max_fps
 	if what == NOTIFICATION_WM_CLOSE_REQUEST and not shutdown_requested:

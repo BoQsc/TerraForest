@@ -16,8 +16,7 @@ func _ready() -> void:
 			push_error("Cannot load the native structures addon")
 			get_tree().quit(2)
 			return
-	DisplayServer.window_set_size(Vector2i(1920, 1080))
-	DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_EXCLUSIVE_FULLSCREEN)
+	preload("res://addons/presentation/fullscreen_policy.gd").apply(get_window())
 	DisplayServer.window_set_title("TerraForest | Block structures")
 	buildings = ClassDB.instantiate("NativeBlockWorld")
 	buildings.name = "IndependentStructures"

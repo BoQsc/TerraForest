@@ -1,0 +1,25 @@
+{
+  "adapter": "NVIDIA GeForce GTX 1060 with Max-Q Design",
+  "captured_size": [
+    1920,
+    1080
+  ],
+  "fair_graphical_sample": true,
+  "fullscreen": true,
+  "headless": false,
+  "pass": true,
+  "refresh_hz": 60.0204238891602,
+  "render_scale": 1.0,
+  "renderer": "forward_plus",
+  "scanout_verified": false,
+  "viewport": [
+    1920,
+    1080
+  ],
+  "vsync_mode": 1,
+  "window_mode": 3,
+  "window_size": [
+    1920,
+    1080
+  ]
+}
