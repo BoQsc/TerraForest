@@ -1,0 +1,22 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.3.289 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce GTX 1060 with Max-Q Design
+
+PASS dense render fixture uses the main-world mesh and cache budgets
+PASS native prefab authoring creates sixteen twelve-storey towers and eight cottages
+PASS dense district completes nearby mesh and collision admission
+PASS all authored district chunks fit the configured view without missing pieces
+PASS dense district respects mesh and cache payload budgets
+PASS dense district is measured at 1920x1080 fullscreen and full rendering scale
+PASS bulk-generated material layer 0 preserves every texel and mip level
+PASS bulk-generated material layer 1 preserves every texel and mip level
+PASS bulk-generated material layer 2 preserves every texel and mip level
+PASS bulk-generated material layer 3 preserves every texel and mip level
+PASS street-level nearby collision finishes after travel
+PASS render and collision travel leave authored district bytes unchanged
+PASS distant view finishes mesh and physics retirement
+PASS distant travel releases all district meshes and physics
+PASS return view restores the district within the same budgets
+PASS cache return preserves the entire district
+PASS returning district uses cached geometry without any new worker bakes
+PASS district cache return batches uploads within per-frame count and payload policies
+

@@ -50,6 +50,7 @@ void NativeBlockWorld::_bind_methods() {
     ClassDB::bind_method(D_METHOD("set_focus","position"),&NativeBlockWorld::set_focus);
     ClassDB::bind_method(D_METHOD("configure_streaming","enabled","radius","chunk_limit","mesh_byte_limit","cache_byte_limit"),&NativeBlockWorld::configure_streaming);
     ClassDB::bind_method(D_METHOD("streaming_stats"),&NativeBlockWorld::streaming_stats);
+    ClassDB::bind_method(D_METHOD("configure_mesh_uploads","chunk_limit","byte_limit","time_limit_us"),&NativeBlockWorld::configure_mesh_uploads);
     ClassDB::bind_method(D_METHOD("set_collision_radius","radius"),&NativeBlockWorld::set_collision_radius);
     ClassDB::bind_method(D_METHOD("is_idle"),&NativeBlockWorld::is_idle);
     ClassDB::bind_method(D_METHOD("flush_bakes"),&NativeBlockWorld::flush_bakes);
@@ -284,7 +285,7 @@ BlockBake NativeBlockWorld::bake(BlockKey key,uint64_t ticket,std::array<uint16_
     }
     return out;
 }
-void NativeBlockWorld::launch(bool allow_cached_upload) {
+void NativeBlockWorld::launch(bool allow_cached_upload,uint64_t cached_byte_allowance,bool allow_oversize) {
     while(!worker_active&&!dirty.empty()) {
         // Nearest dirty chunk first; pending work is deduplicated and bounded by resident cells.
         auto best=dirty.begin(); double distance=1e300;
@@ -295,6 +296,8 @@ void NativeBlockWorld::launch(bool allow_cached_upload) {
         BlockKey k=*best;
         auto cached=bake_cache.find(k);
         if(cached!=bake_cache.end()&&!allow_cached_upload)return;
+        if(cached!=bake_cache.end()&&!allow_oversize&&
+           cached->second.bake.vertices.size()*sizeof(BlockVertex)+cached->second.bake.indices.size()*sizeof(int32_t)>cached_byte_allowance)return;
         dirty.erase(best); uint64_t ticket=tickets[k];
         if(!chunks.count(k)) { BlockBake empty;empty.key=k;empty.revision=ticket;publish(std::move(empty));continue; }
         if(cached!=bake_cache.end()) {
@@ -323,6 +326,7 @@ bool NativeBlockWorld::publish(BlockBake &&b) {
     if(b.indices.empty()) {settled.insert(b.key);cache_bake(std::move(b));return false;}
     uint64_t payload=b.vertices.size()*40+b.indices.size()*sizeof(int32_t);
     if(!admit_mesh(b.key,payload)) {budget_blocked.insert(b.key);cache_bake(std::move(b));return false;}
+    if(measure_uploads){++upload_last_chunks;upload_last_bytes+=payload;}
     ensure_material();
     PackedVector3Array vertices,normals; PackedVector2Array uv,uv2; PackedInt32Array indices;
     int count=int(b.vertices.size()); vertices.resize(count);normals.resize(count);uv.resize(count);uv2.resize(count);
@@ -339,10 +343,26 @@ void NativeBlockWorld::set_collision_radius(double radius) {
 }
 void NativeBlockWorld::_process(double) {
     refresh_residency();
-    bool uploaded=false;
+    const auto begin=std::chrono::steady_clock::now();
+    auto elapsed=[&](){return std::chrono::duration<double,std::micro>(std::chrono::steady_clock::now()-begin).count();};
+    upload_last_chunks=0;upload_last_bytes=0;measure_uploads=true;
     BlockBake completed;
-    if(take_bake(completed,false))uploaded=publish(std::move(completed));
-    launch(!uploaded); update_collisions();
+    if(take_bake(completed,false))publish(std::move(completed));
+    // Never wait for a worker here. Reuse several ready cached meshes within
+    // count, payload and soft elapsed-time budgets. One oversized first mesh
+    // is allowed to make progress; engine upload calls are not preemptible.
+    for(int attempt=0;attempt<upload_chunk_limit&&upload_last_chunks<upload_chunk_limit&&
+        upload_last_bytes<upload_byte_limit&&elapsed()<upload_time_limit_us;++attempt) {
+        const auto previous_hits=cache_hits;
+        launch(true,upload_byte_limit-upload_last_bytes,upload_last_chunks==0);
+        if(cache_hits==previous_hits)break;
+    }
+    // Keep the single bake worker fed even after this tick's upload budget.
+    launch(false);
+    measure_uploads=false;upload_last_us=elapsed();upload_max_us=std::max(upload_max_us,upload_last_us);
+    upload_high_chunks=std::max(upload_high_chunks,upload_last_chunks);upload_high_bytes=std::max(upload_high_bytes,upload_last_bytes);
+    if(upload_last_bytes>upload_byte_limit)++upload_oversize_ticks;
+    update_collisions();
 }
 void NativeBlockWorld::flush_bakes() {
     refresh_residency();
@@ -371,7 +391,7 @@ void NativeBlockWorld::ensure_material() {
     // independent mip chains and repeat without atlas bleeding or material splits.
     TypedArray<Image> images;
     for(int layer=0;layer<4;layer++) {
-        Ref<Image> img=Image::create_empty(128,128,false,Image::FORMAT_RGB8);
+        PackedByteArray pixels;pixels.resize(128*128*3);uint8_t *rgb=pixels.ptrw();
         for(int y=0;y<128;y++) for(int x=0;x<128;x++) {
             uint32_t hash=uint32_t(x*1973+y*9277+layer*26699);hash=(hash^(hash>>13))*1274126177u;
             float noise=float(hash&255)/255.f-.5f;Color c;
@@ -383,8 +403,12 @@ void NativeBlockWorld::ensure_material() {
                 c=seam?Color(.15,.095,.04):Color(.48+grain,.32+grain,.15+grain);
             } else if(layer==2) c=Color(.58+noise*.07,.60+noise*.07,.59+noise*.07);
             else {bool seam=x<2||y<2; c=seam?Color(.08,.11,.13):Color(.19+noise*.015,.26+noise*.015,.29+noise*.015);}
-            img->set_pixel(x,y,c);
+            const int at=(y*128+x)*3;
+            rgb[at]=uint8_t(std::clamp(c.r*255.f,0.f,255.f));
+            rgb[at+1]=uint8_t(std::clamp(c.g*255.f,0.f,255.f));
+            rgb[at+2]=uint8_t(std::clamp(c.b*255.f,0.f,255.f));
         }
+        Ref<Image> img=Image::create_from_data(128,128,false,Image::FORMAT_RGB8,pixels);
         img->generate_mipmaps();images.append(img);
     }
     Ref<Texture2DArray> textures;textures.instantiate();textures->create_from_images(images);
