@@ -1,5 +1,9 @@
 # Original objective and completion evidence
 
+Fresh block worlds can now initialize checkpoint availability metadata without
+loading cell chunks; see [region bootstrap](BLOCK_REGION_BOOTSTRAP.md). Automatic paging and saving
+partially loaded worlds remain unfinished.
+
 The main world now publishes block-region checkpoint references through a native
 archive adapter, retaining current and backup roots. See [region-backed world saves](REGION_WORLD_ARCHIVE.md).
 Full-resident capture/restore limits remain; automatic runtime paging is unfinished.

@@ -1,0 +1,88 @@
+extends SceneTree
+var checks := 0
+var failures := 0
+func _initialize() -> void:
+	GDExtensionManager.load_extension("res://addons/structures/structures.gdextension")
+	run.call_deferred()
+func check(ok: bool,label: String) -> void:
+	checks+=1
+	if not ok: failures+=1
+	print(("PASS " if ok else "FAIL ")+label)
+func run() -> void:
+	var path := ProjectSettings.globalize_path("res://reports/bootstrap_%d_%d" % [OS.get_process_id(),Time.get_ticks_usec()])
+	DirAccess.make_dir_recursive_absolute(path)
+	var store: RefCounted = ClassDB.instantiate("NativeBlockRegionStore")
+	store.open_store(path)
+	var source: Node3D = ClassDB.instantiate("NativeBlockWorld")
+	source.set_cells(PackedInt32Array([-1,0,0,1,64,0,0,2]))
+	var a: PackedByteArray = source.capture_region(Vector3i(-1,0,0))
+	var b: PackedByteArray = source.capture_region(Vector3i(1,0,0))
+	var expected: PackedByteArray = source.capture_snapshot()
+	store.publish_regions([a,b],[PackedByteArray(),PackedByteArray()])
+	var id: PackedByteArray = store.pin_checkpoint().checkpoint
+	var manifest: Dictionary = store.checkpoint_regions(id)
+	check(manifest.ok and manifest.keys==PackedInt32Array([-1,0,0,1,0,0]) and manifest.checksums==a.slice(a.size()-32)+b.slice(b.size()-32),"checkpoint manifest pairs sorted region keys with exact packet checksums")
+	var world: Node3D = ClassDB.instantiate("NativeBlockWorld")
+	check(world.initialize_region_index(manifest.keys,manifest.checksums),"fresh world initializes checkpoint availability without loading cells")
+	check(world.stats().cells==0 and world.region_stats().resident_chunks==0 and world.region_stats().unloaded_regions==2,"bootstrap retains only availability metadata")
+	check(not world.is_region_loaded(Vector3i(-1,0,0)) and not world.is_region_loaded(Vector3i(1,0,0)) and world.is_region_loaded(Vector3i.ZERO),"catalog regions are unavailable while uncataloged space remains known empty")
+	check(world.capture_snapshot().is_empty() and world.capture_region(Vector3i(-1,0,0)).is_empty(),"bootstrapped missing regions cannot be serialized as empty cells")
+	check(not world.set_cells(PackedInt32Array([-1,0,0,3])) and world.stats().cells==0,"editing cannot overwrite a bootstrapped missing region")
+	check(not world.is_collision_region_ready(AABB(Vector3(-1,0,0),Vector3.ONE)),"walking readiness blocks missing authored space before any cells are loaded")
+	var mask: PackedByteArray = world.overlap_mask([Transform3D.IDENTITY],AABB(Vector3(-1,0,0),Vector3.ONE))
+	check(mask==PackedByteArray([1]),"vegetation exclusion reserves bootstrapped missing authored space")
+	check(not world.initialize_region_index(manifest.keys,manifest.checksums) and world.region_stats().unloaded_regions==2,"second initialization cannot replace an existing residency index")
+	source.set_cells(PackedInt32Array([-1,0,0,3]))
+	var wrong: PackedByteArray = source.capture_region(Vector3i(-1,0,0))
+	check(not world.restore_region(wrong,PackedByteArray()) and world.stats().cells==0,"wrong packet version cannot satisfy checkpoint availability metadata")
+	check(world.restore_region(store.read_checkpoint_region(id,Vector3i(-1,0,0)).bytes,PackedByteArray()) and world.region_stats().unloaded_regions==1,"checkpoint read admits one matching region on demand")
+	check(world.capture_snapshot().is_empty(),"partially loaded checkpoint still blocks incomplete whole-world saves")
+	check(world.restore_region(store.read_checkpoint_region(id,Vector3i(1,0,0)).bytes,PackedByteArray()) and world.capture_snapshot()==expected,"loading the remaining region reconstructs exact authored world")
+	check(not world.initialize_region_index(manifest.keys,manifest.checksums) and world.capture_snapshot()==expected,"bootstrap cannot replace existing authored cells")
+	world.free()
+	source.free()
+	store.close()
+	world=ClassDB.instantiate("NativeBlockWorld")
+	var hash := PackedByteArray()
+	hash.resize(32)
+	check(not world.initialize_region_index(PackedInt32Array([0,0]),hash),"incomplete xyz record rejected")
+	check(not world.initialize_region_index(PackedInt32Array([0,0,0]),PackedByteArray()),"missing checksum rejected")
+	check(not world.initialize_region_index(PackedInt32Array([16384,0,0]),hash),"out-of-world region key rejected")
+	check(not world.initialize_region_index(PackedInt32Array([0,0,0,0,0,0]),hash+hash),"duplicate region rejected")
+	check(not world.initialize_region_index(PackedInt32Array([1,0,0,0,0,0]),hash+hash),"unsorted index rejected")
+	check(world.region_stats().unloaded_regions==0 and not world.capture_snapshot().is_empty(),"malformed index checks leave original empty world intact")
+	var keys := PackedInt32Array()
+	var hashes := PackedByteArray()
+	for x in range(-128,128):
+		for y in range(-128,128): keys.append_array(PackedInt32Array([x,y,0]))
+	hashes.resize(65536*32)
+	check(world.initialize_region_index(keys,hashes) and world.region_stats().unloaded_regions==65536 and world.region_stats().resident_chunks==0,"maximum metadata index initializes 65,536 unavailable regions without cell allocation")
+	check(world.region_stats().unloaded_digest_bytes==65536*32,"reported digest payload is bounded independently of resident cell capacity")
+	world.free()
+	world=ClassDB.instantiate("NativeBlockWorld")
+	keys.append_array(PackedInt32Array([128,0,0]))
+	hashes.resize(65537*32)
+	check(not world.initialize_region_index(keys,hashes) and world.region_stats().unloaded_regions==0,"capacity overflow rejects entire manifest")
+	world.free()
+	var io: RefCounted = ClassDB.instantiate("NativeBlockRegionIO")
+	io.start(path,16,2*1024*1024)
+	await wait_result(io)
+	check(io.checkpoint_regions(id)==0,"checkpoint index admission reserves keys and digests above the minimum queue budget")
+	io.join()
+	io.start(path,16,4*1024*1024)
+	await wait_result(io)
+	check(io.checkpoint_regions(id)>0,"sufficient byte budget admits full checkpoint metadata request")
+	var result: Dictionary = await wait_result(io)
+	check(result.ok and result.keys==manifest.keys and result.checksums==manifest.checksums and io.stats().reserved_bytes==0,"background manifest result preserves checksum alignment and releases reservation")
+	io.join()
+	var file := FileAccess.open("res://reports/block_region_bootstrap.json",FileAccess.WRITE)
+	file.store_string(JSON.stringify({"checks":checks,"failures":failures,"scope":"Metadata-only initialization and incremental exact-region admission; automatic paging and partial-world saves remain pending."},"  "))
+	file.close()
+	quit(1 if failures else 0)
+func wait_result(io: RefCounted) -> Dictionary:
+	var deadline := Time.get_ticks_msec()+15000
+	while Time.get_ticks_msec()<deadline:
+		var results: Array = io.poll(1)
+		if not results.is_empty(): return results[0]
+		await process_frame
+	return {"ok":false}

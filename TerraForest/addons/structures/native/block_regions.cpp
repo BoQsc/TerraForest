@@ -112,4 +112,18 @@ Dictionary NativeBlockWorld::region_stats() const {
     out["unloaded_regions"]=int(unloaded_regions.size());out["unloaded_digest_bytes"]=int64_t(unloaded_regions.size()*32);
     out["max_unloaded_regions"]=MAX_UNLOADED;out["whole_snapshot_available"]=unloaded_regions.empty();return out;
 }
+bool NativeBlockWorld::initialize_region_index(const PackedInt32Array &keys,const PackedByteArray &checksums) {
+    // Scene-owner operation: seed only an empty world. A failed manifest never
+    // replaces authored cells or an existing residency map.
+    if(!chunks.empty()||!unloaded_regions.empty()||keys.size()%3||keys.size()/3>MAX_UNLOADED||checksums.size()!=keys.size()/3*32)return false;
+    std::map<BlockKey,PackedByteArray> selected;BlockKey previous;
+    for(int64_t i=0;i<keys.size()/3;++i) {
+        BlockKey key{keys[i*3],keys[i*3+1],keys[i*3+2]};
+        if(!valid_region(key)||(i&&!(previous<key)))return false;
+        selected.emplace(key,checksums.slice(i*32,(i+1)*32));previous=key;
+    }
+    if(selected.empty())return true;
+    unloaded_regions=std::move(selected);clear_history();
+    emit_signal("changed");return true;
+}
 }

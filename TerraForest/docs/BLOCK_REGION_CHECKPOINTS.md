@@ -36,8 +36,9 @@ blobs. Missing/corrupt data remains an explicit read failure, never inferred air
 All six methods also exist on `NativeBlockRegionIO`, returning normal queue tickets.
 Completion operations are `pin`, `pins`, `checkpoint_index`, `checkpoint_read`,
 `checkpoint_activate` and `checkpoint_release`. The list result uses `checkpoints`.
-Pin/list reserve 32/512 bytes; checkpoint index and read reserve their usual maximum
-output plus the 32-byte identity; activation/release reserve 32 bytes. A checkpoint
+Pin/list reserve 32/512 bytes; checkpoint index reserves 2,883,616 bytes for xyz
+keys, digests and the input identity. Checkpoint reads reserve their maximum
+packet output plus the 32-byte identity; activation/release reserve 32 bytes. A checkpoint
 read therefore needs more than a minimal 2 MiB queue budget. Existing FIFO,
 backpressure, result ownership and shutdown rules apply.
 

@@ -1,0 +1,6 @@
+{
+  "checks": 26,
+  "failures": 0,
+  "scope": "Metadata-only initialization and incremental exact-region admission; automatic paging and partial-world saves remain pending.",
+  "library": "structures.windows.template_release.x86_64.dll"
+}

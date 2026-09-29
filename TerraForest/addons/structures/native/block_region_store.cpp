@@ -333,8 +333,10 @@ Dictionary NativeBlockRegionStore::checkpoint_regions(const PackedByteArray &has
     Digest id{};std::memcpy(id.data(),hash.ptr(),32);auto it=checkpoints_.find(id);
     if(it==checkpoints_.end())return status(ERR_DOES_NOT_EXIST,"Checkpoint is not pinned.");
     PackedInt32Array keys;keys.resize(it->second.entries.size()*3);int64_t at=0;
-    for(const auto &entry:it->second.entries){keys.set(at++,entry.first.x);keys.set(at++,entry.first.y);keys.set(at++,entry.first.z);}
-    Dictionary out=status(OK);out["keys"]=keys;out["generation"]=int64_t(it->second.generation);return out;
+    PackedByteArray checksums;checksums.resize(it->second.entries.size()*32);int64_t digest_at=0;
+    for(const auto &entry:it->second.entries){keys.set(at++,entry.first.x);keys.set(at++,entry.first.y);keys.set(at++,entry.first.z);
+        std::memcpy(checksums.ptrw()+digest_at,entry.second.digest.data(),32);digest_at+=32;}
+    Dictionary out=status(OK);out["keys"]=keys;out["checksums"]=checksums;out["generation"]=int64_t(it->second.generation);return out;
 }
 Dictionary NativeBlockRegionStore::read_checkpoint_region(const PackedByteArray &hash,Vector3i region) const {
     std::lock_guard<std::mutex> lock(mutex_);
