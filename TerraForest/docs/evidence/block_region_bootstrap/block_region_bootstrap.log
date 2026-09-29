@@ -1,0 +1,29 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS checkpoint manifest pairs sorted region keys with exact packet checksums
+PASS fresh world initializes checkpoint availability without loading cells
+PASS bootstrap retains only availability metadata
+PASS catalog regions are unavailable while uncataloged space remains known empty
+PASS bootstrapped missing regions cannot be serialized as empty cells
+PASS editing cannot overwrite a bootstrapped missing region
+PASS walking readiness blocks missing authored space before any cells are loaded
+PASS vegetation exclusion reserves bootstrapped missing authored space
+PASS second initialization cannot replace an existing residency index
+PASS wrong packet version cannot satisfy checkpoint availability metadata
+PASS checkpoint read admits one matching region on demand
+PASS partially loaded checkpoint still blocks incomplete whole-world saves
+PASS loading the remaining region reconstructs exact authored world
+PASS bootstrap cannot replace existing authored cells
+PASS incomplete xyz record rejected
+PASS missing checksum rejected
+PASS out-of-world region key rejected
+PASS duplicate region rejected
+PASS unsorted index rejected
+PASS malformed index checks leave original empty world intact
+PASS maximum metadata index initializes 65,536 unavailable regions without cell allocation
+PASS reported digest payload is bounded independently of resident cell capacity
+PASS capacity overflow rejects entire manifest
+PASS checkpoint index admission reserves keys and digests above the minimum queue budget
+PASS sufficient byte budget admits full checkpoint metadata request
+PASS background manifest result preserves checksum alignment and releases reservation
+

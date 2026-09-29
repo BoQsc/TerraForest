@@ -12,7 +12,7 @@ parser=argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--godot',default=os.environ.get('GODOT_EXE') or shutil.which('godot'))
 parser.add_argument('--gpu',action='store_true')
 parser.add_argument('--timeout',type=int,default=180)
-parser.add_argument('--test',choices=['integration','persistence','native_runtime','presentation','water','water_integration','world_archive','world_persistence','terrain_native','terrain_planner','terrain_collision','terrain_collision_profile','structures','block_lattice','block_worker','building_collision_profile','building_collision_stream','building_readiness','block_regions','block_region_store','block_region_io','block_region_checkpoints','region_world_archive','static_placements','structure_persistence','structure_world'],default='integration')
+parser.add_argument('--test',choices=['integration','persistence','native_runtime','presentation','water','water_integration','world_archive','world_persistence','terrain_native','terrain_planner','terrain_collision','terrain_collision_profile','structures','block_lattice','block_worker','building_collision_profile','building_collision_stream','building_readiness','block_regions','block_region_store','block_region_io','block_region_checkpoints','block_region_bootstrap','region_world_archive','static_placements','structure_persistence','structure_world'],default='integration')
 args=parser.parse_args()
 if not args.godot:
     parser.error('Godot is required; use --godot PATH')

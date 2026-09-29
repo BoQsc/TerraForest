@@ -94,7 +94,7 @@ int64_t NativeBlockRegionIO::list_checkpoints() {
 }
 int64_t NativeBlockRegionIO::checkpoint_regions(const PackedByteArray &checkpoint) {
     if(checkpoint.size()!=32)return 0;
-    Request request;request.operation=PIN_INDEX;request.checksum=checkpoint;request.reserved=INDEX_RESERVATION+32;return enqueue(std::move(request));
+    Request request;request.operation=PIN_INDEX;request.checksum=checkpoint;request.reserved=INDEX_RESERVATION+65536*32+32;return enqueue(std::move(request));
 }
 int64_t NativeBlockRegionIO::read_checkpoint_region(const PackedByteArray &checkpoint,Vector3i region) {
     if(checkpoint.size()!=32)return 0;

@@ -125,6 +125,7 @@ public:
     bool validate_region_snapshot(const PackedByteArray &bytes) const;
     bool unload_region(const PackedByteArray &expected_snapshot);
     bool restore_region(const PackedByteArray &bytes,const PackedByteArray &expected_current);
+    bool initialize_region_index(const PackedInt32Array &keys,const PackedByteArray &checksums);
     bool is_region_loaded(Vector3i region) const;
     Dictionary region_stats() const;
     Dictionary raycast_cells(Vector3 from,Vector3 to) const;
