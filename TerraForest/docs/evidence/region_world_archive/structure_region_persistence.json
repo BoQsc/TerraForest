@@ -1,0 +1,269 @@
+{
+  "checks": [
+    {
+      "name": "structures bundle registers as one world component",
+      "pass": true
+    },
+    {
+      "name": "native region archive enabled before terrain starts",
+      "pass": true
+    },
+    {
+      "name": "water and structures share the terrain persistence coordinator",
+      "pass": true
+    },
+    {
+      "name": "persistent structure world starts",
+      "pass": true
+    },
+    {
+      "name": "new terrain/water/structure world becomes ready",
+      "pass": true
+    },
+    {
+      "name": "absent structures section restores an empty block world",
+      "pass": true
+    },
+    {
+      "name": "registered persistence schema rejects late asset mutation",
+      "pass": true
+    },
+    {
+      "name": "empty registered collection keeps its asset identity locked",
+      "pass": true
+    },
+    {
+      "name": "worker validator schema is immutable after registration",
+      "pass": true
+    },
+    {
+      "name": "native building edits accepted independently of terrain",
+      "pass": true
+    },
+    {
+      "name": "fence placement retains a 64-bit ID",
+      "pass": true
+    },
+    {
+      "name": "second mesh collection accepts placement",
+      "pass": true
+    },
+    {
+      "name": "terrain edit accepted alongside buildings",
+      "pass": true
+    },
+    {
+      "name": "terrain edit completes",
+      "pass": true
+    },
+    {
+      "name": "unchanged bundle capture reuses the same logical snapshot",
+      "pass": true
+    },
+    {
+      "name": "older capture cannot overtake a newer rejected capture",
+      "pass": true
+    },
+    {
+      "name": "newer valid capture recovers worker-owned component state",
+      "pass": true
+    },
+    {
+      "name": "caller mutation of returned bytes cannot corrupt the component cache",
+      "pass": true
+    },
+    {
+      "name": "compound save publishes terrain water blocks and static models",
+      "pass": true
+    },
+    {
+      "name": "one canonical file contains all providers, with models inside the structures section",
+      "pass": true
+    },
+    {
+      "name": "integrated terrain save publishes checkpoint reference and region sidecar",
+      "pass": true
+    },
+    {
+      "name": "invalid live component capture refuses publication",
+      "pass": true
+    },
+    {
+      "name": "invalid live capture leaves the canonical file unchanged",
+      "pass": true
+    },
+    {
+      "name": "a subsequent valid capture recovers saving without reopening the world",
+      "pass": true
+    },
+    {
+      "name": "native bundle stores both registered mesh assets",
+      "pass": true
+    },
+    {
+      "name": "native changes invalidate cached component bytes",
+      "pass": true
+    },
+    {
+      "name": "invalid bundle restore cannot partially change block/model state",
+      "pass": true
+    },
+    {
+      "name": "structures bundle registers as one world component",
+      "pass": true
+    },
+    {
+      "name": "native region archive enabled before terrain starts",
+      "pass": true
+    },
+    {
+      "name": "water and structures share the terrain persistence coordinator",
+      "pass": true
+    },
+    {
+      "name": "persistent structure world starts",
+      "pass": true
+    },
+    {
+      "name": "restart after shutdown during reload becomes ready",
+      "pass": true
+    },
+    {
+      "name": "queued reload wins over stale shutdown capture for every structure collection",
+      "pass": true
+    },
+    {
+      "name": "static placement ID and transform survive world restart",
+      "pass": true
+    },
+    {
+      "name": "terrain edit metadata survives with the structure snapshot",
+      "pass": true
+    },
+    {
+      "name": "structures bundle registers as one world component",
+      "pass": true
+    },
+    {
+      "name": "native region archive enabled before terrain starts",
+      "pass": true
+    },
+    {
+      "name": "water and structures share the terrain persistence coordinator",
+      "pass": true
+    },
+    {
+      "name": "persistent structure world starts",
+      "pass": true
+    },
+    {
+      "name": "structure-only edit shutdown reloads",
+      "pass": true
+    },
+    {
+      "name": "shutdown persists building/model changes without a terrain edit or explicit save",
+      "pass": true
+    },
+    {
+      "name": "structures bundle registers as one world component",
+      "pass": true
+    },
+    {
+      "name": "native region archive enabled before terrain starts",
+      "pass": true
+    },
+    {
+      "name": "water and structures share the terrain persistence coordinator",
+      "pass": true
+    },
+    {
+      "name": "persistent structure world starts",
+      "pass": true
+    },
+    {
+      "name": "extended asset registry loads an older structures bundle",
+      "pass": true
+    },
+    {
+      "name": "new asset starts empty without changing existing placement IDs",
+      "pass": true
+    },
+    {
+      "name": "new asset placement accepted",
+      "pass": true
+    },
+    {
+      "name": "extended catalog publishes all asset records",
+      "pass": true
+    },
+    {
+      "name": "structures bundle registers as one world component",
+      "pass": true
+    },
+    {
+      "name": "native region archive enabled before terrain starts",
+      "pass": true
+    },
+    {
+      "name": "water and structures share the terrain persistence coordinator",
+      "pass": true
+    },
+    {
+      "name": "persistent structure world starts",
+      "pass": true
+    },
+    {
+      "name": "unresolved saved model asset blocks startup",
+      "pass": true
+    },
+    {
+      "name": "unresolved asset cannot partially restore block data",
+      "pass": true
+    },
+    {
+      "name": "failed asset resolution cannot overwrite canonical save during shutdown",
+      "pass": true
+    },
+    {
+      "name": "structures bundle registers as one world component",
+      "pass": true
+    },
+    {
+      "name": "native region archive enabled before terrain starts",
+      "pass": true
+    },
+    {
+      "name": "water and structures share the terrain persistence coordinator",
+      "pass": true
+    },
+    {
+      "name": "persistent structure world starts",
+      "pass": true
+    },
+    {
+      "name": "restoring the complete asset registry reopens the world",
+      "pass": true
+    },
+    {
+      "name": "valid outer archive cannot bypass malformed structures validation",
+      "pass": true
+    },
+    {
+      "name": "failed hot reload preserves existing block and object state",
+      "pass": true
+    },
+    {
+      "name": "failed hot reload protects invalid canonical bytes from automatic overwrite",
+      "pass": true
+    },
+    {
+      "name": "bounded archive accepts structure sections above the old 16 MiB ceiling",
+      "pass": true
+    },
+    {
+      "name": "non-terrain sections remain bounded at 64 MiB",
+      "pass": true
+    }
+  ],
+  "failures": 0
+}

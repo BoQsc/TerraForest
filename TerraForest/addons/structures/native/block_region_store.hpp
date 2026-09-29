@@ -54,5 +54,7 @@ public:
     Dictionary read_checkpoint_region(const PackedByteArray &checkpoint,Vector3i region) const;
     Dictionary activate_checkpoint(const PackedByteArray &checkpoint);
     Dictionary release_checkpoint(const PackedByteArray &checkpoint);
+    Dictionary publish_block_snapshot(const PackedByteArray &blocks);
+    Dictionary read_block_checkpoint(const PackedByteArray &checkpoint) const;
 };
 }

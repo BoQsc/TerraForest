@@ -1,5 +1,9 @@
 # Compound world snapshots
 
+The main world now publishes block-region checkpoint references through a native
+archive adapter, retaining current and backup roots. See [region-backed world saves](REGION_WORLD_ARCHIVE.md).
+Full-resident capture/restore limits remain; automatic runtime paging is unfinished.
+
 Terrain, lake definitions, building blocks and registered static-model placements share one versioned canonical snapshot in the terrain demo. The demo attaches `world_runtime/world_persistence.gd` before terrain startup and registers the water catalog and structures bundle as addon sections. Native C++ performs archive packing, hashing, schema validation, bounded file reads and Windows publication on the terrain worker. Small GDScript callbacks collect/restore addon configuration and connect scene ownership; a dirty structures bundle is serialized on capture before worker publication.
 
 ## Format and ownership

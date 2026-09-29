@@ -13,6 +13,8 @@ void NativeStructuresSnapshot::_bind_methods() {
     ClassDB::bind_method(D_METHOD("encode","blocks","models"),&NativeStructuresSnapshot::encode);
     ClassDB::bind_method(D_METHOD("decode","bytes"),&NativeStructuresSnapshot::decode);
     ClassDB::bind_method(D_METHOD("validate_snapshot","bytes"),&NativeStructuresSnapshot::validate_snapshot);
+    ClassDB::bind_method(D_METHOD("encode_reference","checkpoint","models"),&NativeStructuresSnapshot::encode_reference);
+    ClassDB::bind_method(D_METHOD("decode_reference","bytes"),&NativeStructuresSnapshot::decode_reference);
 }
 bool NativeStructuresSnapshot::configure_assets(const PackedStringArray &ids) {
     if(configured||ids.size()>256)return false;
@@ -21,7 +23,13 @@ bool NativeStructuresSnapshot::configure_assets(const PackedStringArray &ids) {
     assets=std::move(selected);configured=true;return true;
 }
 PackedByteArray NativeStructuresSnapshot::encode(const PackedByteArray &blocks,const Dictionary &models) const {
-    if(!configured||models.size()!=int64_t(assets.size())||!NativeBlockWorld::parse(blocks,nullptr))return {};
+    return encode_payload(blocks,models,false);
+}
+PackedByteArray NativeStructuresSnapshot::encode_reference(const PackedByteArray &checkpoint,const Dictionary &models) const {
+    return encode_payload(checkpoint,models,true);
+}
+PackedByteArray NativeStructuresSnapshot::encode_payload(const PackedByteArray &blocks,const Dictionary &models,bool reference) const {
+    if(!configured||models.size()!=int64_t(assets.size())||(reference?blocks.size()!=32:!NativeBlockWorld::parse(blocks,nullptr)))return {};
     int64_t size=16+blocks.size()+32;
     for(auto asset:assets) {
         if(!models.has(asset)||models[asset].get_type()!=Variant::PACKED_BYTE_ARRAY)return {};
@@ -30,7 +38,7 @@ PackedByteArray NativeStructuresSnapshot::encode(const PackedByteArray &blocks,c
         size+=4+value.size();if(size>LIMIT)return {};
     }
     if(size>LIMIT)return {};
-    PackedByteArray result;result.resize(size-32);uint8_t *out=result.ptrw();std::memcpy(out,"TFSB\1\0\0\0",8);
+    PackedByteArray result;result.resize(size-32);uint8_t *out=result.ptrw();std::memcpy(out,reference?"TFSR\1\0\0\0":"TFSB\1\0\0\0",8);
     int64_t cursor=8;
     auto u32=[&](uint32_t n){for(int i=0;i<4;i++)out[cursor++]=uint8_t(n>>(8*i));};
     auto copy=[&](const PackedByteArray &bytes){std::memcpy(out+cursor,bytes.ptr(),bytes.size());cursor+=bytes.size();};
@@ -38,13 +46,13 @@ PackedByteArray NativeStructuresSnapshot::encode(const PackedByteArray &blocks,c
     for(auto asset:assets){PackedByteArray bytes=models[asset];u32(uint32_t(bytes.size()));copy(bytes);}
     result.append_array(digest(result));return result;
 }
-bool NativeStructuresSnapshot::parse(const PackedByteArray &bytes,Dictionary *result) const {
-    if(!configured||bytes.size()<48||bytes.size()>LIMIT||std::memcmp(bytes.ptr(),"TFSB\1\0\0\0",8))return false;
+bool NativeStructuresSnapshot::parse(const PackedByteArray &bytes,Dictionary *result,bool reference) const {
+    if(!configured||bytes.size()<48||bytes.size()>LIMIT||std::memcmp(bytes.ptr(),reference?"TFSR\1\0\0\0":"TFSB\1\0\0\0",8))return false;
     auto payload=bytes.slice(0,bytes.size()-32);if(digest(payload)!=bytes.slice(bytes.size()-32))return false;
     const uint8_t *data=payload.ptr();int64_t p=8,n=payload.size();
     auto u32=[&](){uint32_t v=uint32_t(data[p])|uint32_t(data[p+1])<<8|uint32_t(data[p+2])<<16|uint32_t(data[p+3])<<24;p+=4;return v;};
     uint32_t count=u32(),length=u32();if(count>256||length>n-p)return false;
-    auto blocks=payload.slice(p,p+length);p+=length;if(!NativeBlockWorld::parse(blocks,nullptr))return false;
+    auto blocks=payload.slice(p,p+length);p+=length;if(reference?blocks.size()!=32:!NativeBlockWorld::parse(blocks,nullptr))return false;
     Dictionary models;String previous;
     for(uint32_t i=0;i<count;i++) {
         if(p+4>n)return false;length=u32();if(length>n-p)return false;
@@ -53,10 +61,13 @@ bool NativeStructuresSnapshot::parse(const PackedByteArray &bytes,Dictionary *re
         previous=asset;if(result)models[asset]=model;
     }
     if(p!=n)return false;
-    if(result){(*result)["ok"]=true;(*result)["blocks"]=blocks;(*result)["models"]=models;}
+    if(result){(*result)["ok"]=true;(*result)[reference?"checkpoint":"blocks"]=blocks;(*result)["models"]=models;}
     return true;
 }
 Dictionary NativeStructuresSnapshot::decode(const PackedByteArray &bytes) const {
     Dictionary result;result["ok"]=false;parse(bytes,&result);return result;
+}
+Dictionary NativeStructuresSnapshot::decode_reference(const PackedByteArray &bytes) const {
+    Dictionary result;result["ok"]=false;parse(bytes,&result,true);return result;
 }
 }

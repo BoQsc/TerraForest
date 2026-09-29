@@ -9,7 +9,8 @@ class NativeStructuresSnapshot : public godot::RefCounted {
     GDCLASS(NativeStructuresSnapshot,godot::RefCounted)
     bool configured=false;
     std::set<godot::String> assets;
-    bool parse(const godot::PackedByteArray &bytes,godot::Dictionary *result) const;
+    bool parse(const godot::PackedByteArray &bytes,godot::Dictionary *result,bool reference=false) const;
+    godot::PackedByteArray encode_payload(const godot::PackedByteArray &blocks,const godot::Dictionary &models,bool reference) const;
 protected:
     static void _bind_methods();
 public:
@@ -17,6 +18,8 @@ public:
     bool configure_assets(const godot::PackedStringArray &ids);
     godot::PackedByteArray encode(const godot::PackedByteArray &blocks,const godot::Dictionary &models) const;
     godot::Dictionary decode(const godot::PackedByteArray &bytes) const;
+    godot::PackedByteArray encode_reference(const godot::PackedByteArray &checkpoint,const godot::Dictionary &models) const;
+    godot::Dictionary decode_reference(const godot::PackedByteArray &bytes) const;
     bool validate_snapshot(const godot::PackedByteArray &bytes) const {return parse(bytes,nullptr);}
 };
 }

@@ -1,0 +1,86 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS structures bundle registers as one world component
+PASS native region archive enabled before terrain starts
+PASS water and structures share the terrain persistence coordinator
+PASS persistent structure world starts
+REGION_PERSISTENCE: New world
+PASS new terrain/water/structure world becomes ready
+PASS absent structures section restores an empty block world
+PASS registered persistence schema rejects late asset mutation
+PASS empty registered collection keeps its asset identity locked
+PASS worker validator schema is immutable after registration
+PASS native building edits accepted independently of terrain
+PASS fence placement retains a 64-bit ID
+PASS second mesh collection accepts placement
+PASS terrain edit accepted alongside buildings
+PASS terrain edit completes
+PASS unchanged bundle capture reuses the same logical snapshot
+PASS older capture cannot overtake a newer rejected capture
+PASS newer valid capture recovers worker-owned component state
+PASS caller mutation of returned bytes cannot corrupt the component cache
+REGION_PERSISTENCE: World saved and verified; terrain and addon state published together
+PASS compound save publishes terrain water blocks and static models
+PASS one canonical file contains all providers, with models inside the structures section
+PASS integrated terrain save publishes checkpoint reference and region sidecar
+REGION_PERSISTENCE: ERROR: invalid addon capture; previous canonical snapshot retained
+PASS invalid live component capture refuses publication
+PASS invalid live capture leaves the canonical file unchanged
+REGION_PERSISTENCE: World saved and verified; terrain and addon state published together
+PASS a subsequent valid capture recovers saving without reopening the world
+PASS native bundle stores both registered mesh assets
+PASS native changes invalidate cached component bytes
+PASS invalid bundle restore cannot partially change block/model state
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+PASS structures bundle registers as one world component
+PASS native region archive enabled before terrain starts
+PASS water and structures share the terrain persistence coordinator
+PASS persistent structure world starts
+REGION_PERSISTENCE: World loaded
+PASS restart after shutdown during reload becomes ready
+PASS queued reload wins over stale shutdown capture for every structure collection
+PASS static placement ID and transform survive world restart
+PASS terrain edit metadata survives with the structure snapshot
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+PASS structures bundle registers as one world component
+PASS native region archive enabled before terrain starts
+PASS water and structures share the terrain persistence coordinator
+PASS persistent structure world starts
+REGION_PERSISTENCE: World loaded
+PASS structure-only edit shutdown reloads
+PASS shutdown persists building/model changes without a terrain edit or explicit save
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+PASS structures bundle registers as one world component
+PASS native region archive enabled before terrain starts
+PASS water and structures share the terrain persistence coordinator
+PASS persistent structure world starts
+REGION_PERSISTENCE: World loaded
+PASS extended asset registry loads an older structures bundle
+PASS new asset starts empty without changing existing placement IDs
+PASS new asset placement accepted
+REGION_PERSISTENCE: World saved and verified; terrain and addon state published together
+PASS extended catalog publishes all asset records
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+PASS structures bundle registers as one world component
+PASS native region archive enabled before terrain starts
+PASS water and structures share the terrain persistence coordinator
+PASS persistent structure world starts
+REGION_PERSISTENCE: ERROR: invalid compound snapshot; original file protected
+PASS unresolved saved model asset blocks startup
+PASS unresolved asset cannot partially restore block data
+[TerrainRewrite] ERROR: save disabled after corrupt snapshot; original file protected
+PASS failed asset resolution cannot overwrite canonical save during shutdown
+PASS structures bundle registers as one world component
+PASS native region archive enabled before terrain starts
+PASS water and structures share the terrain persistence coordinator
+PASS persistent structure world starts
+REGION_PERSISTENCE: World loaded
+PASS restoring the complete asset registry reopens the world
+REGION_PERSISTENCE: ERROR: invalid compound snapshot; original file protected
+PASS valid outer archive cannot bypass malformed structures validation
+PASS failed hot reload preserves existing block and object state
+[TerrainRewrite] ERROR: save disabled after corrupt snapshot; original file protected
+PASS failed hot reload protects invalid canonical bytes from automatic overwrite
+PASS bounded archive accepts structure sections above the old 16 MiB ceiling
+PASS non-terrain sections remain bounded at 64 MiB
+STRUCTURE_PERSISTENCE_RESULT 66 checks; 0 failures

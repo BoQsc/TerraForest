@@ -4,6 +4,13 @@ extends RefCounted
 var _terrain: Node
 var _providers: Dictionary = {}
 var _restored_epoch: int = -1
+var _region_structures := false
+
+func enable_region_structures() -> bool:
+	if _terrain != null or not _providers.has("structures") or not ClassDB.class_exists("NativeRegionWorldArchive"):
+		return false
+	_region_structures = true
+	return true
 
 func register_component(name: String, capture: Callable, restore: Callable, validator: RefCounted, empty: PackedByteArray) -> bool:
 	if _terrain != null or _providers.size() >= 63 or _providers.has(name) or name == "terrain" or name.length()>48 or name.to_lower()!=name or name.to_utf8_buffer().size()!=name.length() or not name.is_valid_identifier() or not capture.is_valid() or not restore.is_valid() or validator == null:
@@ -20,8 +27,14 @@ func attach(terrain: Node) -> Error:
 		GDExtensionManager.load_extension("res://addons/world_runtime/world_runtime.gdextension")
 	if not ClassDB.class_exists("NativeWorldArchive"):
 		return ERR_CANT_OPEN
+	var archive: RefCounted = ClassDB.instantiate("NativeWorldArchive")
+	if _region_structures:
+		var adapter: RefCounted = ClassDB.instantiate("NativeRegionWorldArchive")
+		if not adapter.configure(archive,_providers["structures"]["validator"]):
+			return ERR_INVALID_PARAMETER
+		archive = adapter
 	_terrain = terrain
-	terrain.backend.snapshot_codec = ClassDB.instantiate("NativeWorldArchive")
+	terrain.backend.snapshot_codec = archive
 	terrain.backend.snapshot_capture = _capture
 	for name: String in _providers:
 		terrain.backend.snapshot_validators[name] = _providers[name]["validator"]

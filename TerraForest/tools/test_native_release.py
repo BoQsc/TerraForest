@@ -12,8 +12,10 @@ from bootstrap_native import ROOT
 parser=argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--godot',default=os.environ.get('GODOT_EXE') or shutil.which('godot'))
 parser.add_argument('--addon',choices=['world_runtime','volumetric_water','volumetric_terrain','structures'],default='world_runtime')
-parser.add_argument('--test',choices=['native_runtime','water','world_archive','world_persistence','terrain_planner','terrain_collision','block_lattice','block_worker','building_collision_profile','building_collision_stream','building_readiness','block_regions','block_region_store','block_region_io','block_region_checkpoints','structures','static_placements','structure_persistence'])
+parser.add_argument('--region-storage',action='store_true',help='Exercise structure_persistence through the native region archive')
+parser.add_argument('--test',choices=['native_runtime','water','world_archive','world_persistence','terrain_planner','terrain_collision','block_lattice','block_worker','building_collision_profile','building_collision_stream','building_readiness','block_regions','block_region_store','block_region_io','block_region_checkpoints','region_world_archive','structures','static_placements','structure_persistence'])
 args=parser.parse_args()
+if args.region_storage and args.test!='structure_persistence':parser.error('--region-storage requires --test structure_persistence')
 if not args.godot:parser.error('Specify --godot PATH')
 engine=Path(args.godot)
 direct=engine.parent/'godot.windows.opt.tools.64.exe'
@@ -44,6 +46,11 @@ with tempfile.TemporaryDirectory(prefix='release_smoke_',dir=build) as temporary
         shutil.copytree(source/'prefabs',addon/'prefabs')
     if test=='block_lattice':
         shutil.copytree(ROOT/'tests/fixtures',project/'tests/fixtures')
+    if test=='region_world_archive':
+        destination=project/'addons/world_runtime'
+        shutil.copytree(ROOT/'addons/world_runtime',destination,dirs_exist_ok=True)
+        descriptor=destination/'world_runtime.gdextension'
+        descriptor.write_text(descriptor.read_text().replace('template_debug','template_release'))
     if test in ['world_archive','world_persistence','structure_persistence']:
         for name in (['world_runtime','volumetric_water','structures'] if test=='structure_persistence' else ['world_runtime','volumetric_water']):
             destination=project/'addons'/name
@@ -62,12 +69,15 @@ with tempfile.TemporaryDirectory(prefix='release_smoke_',dir=build) as temporary
                 shutil.copy2(ROOT/'addons/volumetric_terrain'/name,terrain/name)
             shutil.copytree(ROOT/'addons/volumetric_terrain/bin',terrain/'bin')
     shutil.copy2(ROOT/'tests'/(test+'.gd'),project/'tests'/(test+'.gd'))
-    run=subprocess.run([str(engine),'--headless','--path',str(project),'--script',f'res://tests/{test}.gd'],capture_output=True,text=True,timeout=120)
+    command=[str(engine),'--headless','--path',str(project),'--script',f'res://tests/{test}.gd']
+    if args.region_storage:command+=['--','--region-storage']
+    run=subprocess.run(command,capture_output=True,text=True,timeout=180 if args.region_storage else 120)
     log=run.stdout+'\n'+run.stderr
     print(log)
-    report_name={'water':'water_release','native_runtime':'native_release'}.get(test,test+'_release')
+    result_test='structure_region_persistence' if args.region_storage else test
+    report_name={'water':'water_release','native_runtime':'native_release'}.get(result_test,result_test+'_release')
     (ROOT/'reports'/(report_name+'.log')).write_text(log,encoding='utf-8')
-    report=json.loads((project/'reports'/(test+'.json')).read_text())
+    report=json.loads((project/'reports'/(result_test+'.json')).read_text())
     report['library']=library
     (ROOT/'reports'/(report_name+'.json')).write_text(json.dumps(report,indent=2))
     errors=re.search(r'(?m)^(?:SCRIPT ERROR|ERROR:|FAIL |WARNING: ObjectDB instances leaked)',log)
