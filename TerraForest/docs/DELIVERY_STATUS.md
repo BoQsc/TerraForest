@@ -1,5 +1,8 @@
 # Original objective and completion evidence
 
+Persistent native catalog checkpoints now preserve referenced block versions through
+future edits and collection. See BLOCK_REGION_CHECKPOINTS.md. World-root integration remains pending.
+
 NativeBlockRegionIO now runs disk catalog work on one persistent C++ worker,
 bounding queued, active and unread-completion reservations. See BLOCK_REGION_IO.md.
 The scene residency manager and catalog-aware world-save root remain unfinished.

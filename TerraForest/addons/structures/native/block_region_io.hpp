@@ -9,7 +9,7 @@ namespace terraforest {
 // Scene-owner API; the worker owns the store and never accesses scene objects.
 class NativeBlockRegionIO : public RefCounted {
     GDCLASS(NativeBlockRegionIO,RefCounted)
-    enum Operation { OPEN, READ, PUBLISH, REMOVE, COLLECT, INDEX };
+    enum Operation { OPEN, READ, PUBLISH, REMOVE, COLLECT, INDEX, PIN, PINS, PIN_INDEX, PIN_READ, PIN_ACTIVATE, PIN_RELEASE };
     struct Request {
         Operation operation=OPEN;
         int64_t ticket=0,reserved=0;
@@ -41,6 +41,12 @@ public:
     int64_t remove_region(Vector3i region,const PackedByteArray &expected_checksum);
     int64_t collect_garbage(int max_inspected);
     int64_t list_regions();
+    int64_t pin_checkpoint();
+    int64_t list_checkpoints();
+    int64_t checkpoint_regions(const PackedByteArray &checkpoint);
+    int64_t read_checkpoint_region(const PackedByteArray &checkpoint,Vector3i region);
+    int64_t activate_checkpoint(const PackedByteArray &checkpoint);
+    int64_t release_checkpoint(const PackedByteArray &checkpoint);
     Array poll(int max_results=16);
     void request_stop();
     void join();

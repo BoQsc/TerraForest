@@ -1,5 +1,8 @@
 # Native block structures and static models
 
+Persistent native catalog checkpoints now preserve referenced block versions through
+future edits and collection. See [checkpoint API](../../docs/BLOCK_REGION_CHECKPOINTS.md). World-root integration remains pending.
+
 `raycast_cells(from, to)` selects authored shapes without waiting for mesh or
 collision baking. `raycast_scene(from, to, collision_mask=3, exclude=[])` also
 respects nearer scene collision while ignoring stale bodies belonging to this

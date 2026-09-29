@@ -1,0 +1,6 @@
+{
+  "checks": 46,
+  "failures": 0,
+  "scope": "Persistent checkpoint references and garbage-collection protection; not integrated whole-world roots or physical crash certification.",
+  "library": "structures.windows.template_release.x86_64.dll"
+}
