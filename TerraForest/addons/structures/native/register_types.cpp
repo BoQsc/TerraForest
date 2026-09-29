@@ -6,6 +6,7 @@
 #include "block_region_store.hpp"
 #include "block_region_io.hpp"
 #include "region_world_archive.hpp"
+#include "block_pager.hpp"
 #include <godot_cpp/godot.hpp>
 using namespace godot;
 static void initialize(ModuleInitializationLevel level) {
@@ -19,6 +20,7 @@ static void initialize(ModuleInitializationLevel level) {
         GDREGISTER_CLASS(terraforest::NativeBlockRegionStore);
         GDREGISTER_CLASS(terraforest::NativeBlockRegionIO);
         GDREGISTER_CLASS(terraforest::NativeRegionWorldArchive);
+        GDREGISTER_CLASS(terraforest::NativeBlockPager);
     }
 }
 static void terminate(ModuleInitializationLevel) {}

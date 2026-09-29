@@ -42,6 +42,10 @@ static_assert(sizeof(BlockChange)==16,"History cell accounting must match alloca
 class NativeBlockWorld : public Node3D {
     GDCLASS(NativeBlockWorld,Node3D)
     friend class NativeStructuresSnapshot;
+    friend class NativeBlockPager;
+    uint64_t storage_epoch=0,history_revision=0;
+    bool region_has_history(BlockKey region) const;
+    bool restore_region_impl(const PackedByteArray &bytes,const PackedByteArray &expected,bool preserve_history);
     friend class NativeBlockRegionStore;
     std::map<BlockKey,BlockChunk> chunks;
     // Only checksums remain after an explicit authored-region transfer.
@@ -52,7 +56,7 @@ class NativeBlockWorld : public Node3D {
     static PackedByteArray encode_chunks(const std::map<BlockKey,BlockChunk> &source);
     static bool parse_region(const PackedByteArray &bytes,BlockKey &region,std::map<BlockKey,BlockChunk> &out);
     void replace_storage(std::map<BlockKey,BlockChunk> &&resident,std::map<BlockKey,PackedByteArray> &&unavailable);
-    void replace_region_chunks(BlockKey region,std::map<BlockKey,BlockChunk> &&restored);
+    void replace_region_chunks(BlockKey region,std::map<BlockKey,BlockChunk> &&restored,bool reset_history=true);
     std::set<BlockKey> dirty;
     std::map<BlockKey,uint64_t> tickets;
     std::map<BlockKey,BlockVisual> visuals;

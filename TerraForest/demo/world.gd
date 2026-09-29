@@ -46,7 +46,7 @@ func _ready() -> void:
 	var doorway: Mesh = load("res://addons/structures/prefabs/doorway_model.tres")
 	var door_models: Node3D = structures.register_model("architecture/doorway/v1",doorway)
 	structures_ready = structures_ready and door_models != null
-	if not structures_ready or not lakes.prepare() or not persistence.register_component("structures", structures.capture_storage_snapshot, structures.restore_snapshot, structures.snapshot_validator(), structures.empty_snapshot()) or not persistence.register_component("volumetric_water", lakes.capture_snapshot, lakes.restore_snapshot, lakes.snapshot_validator(), lakes.empty_snapshot()) or not persistence.enable_region_structures() or persistence.attach(terrain) != OK:
+	if not structures_ready or not lakes.prepare() or not persistence.register_component("structures", structures.capture_storage_snapshot, structures.restore_storage_snapshot, structures.snapshot_validator(), structures.empty_snapshot()) or not persistence.register_component("volumetric_water", lakes.capture_snapshot, lakes.restore_snapshot, lakes.snapshot_validator(), lakes.empty_snapshot()) or not persistence.enable_region_structures(true) or persistence.attach(terrain) != OK:
 		push_error("World persistence initialization failed")
 		get_tree().quit(2)
 		return
@@ -374,6 +374,9 @@ func _process(delta: float) -> void:
 	model_tool.update(delta,not loading_active and app_focused and terrain.world_ready)
 	if structures.blocks != null:
 		structures.blocks.set_focus(player.position)
+		if terrain.world_ready and (not temporary_world or terrain.backend.readonly_snapshot) and not shutdown_requested:
+			if structures.enable_region_paging(terrain.backend.snapshot_codec):
+				structures.step_region_paging(player.global_position)
 		structures.model("architecture/metal_beam/v1").set_collision_focus(player.position)
 		structures.model("architecture/doorway/v1").set_collision_focus(player.position)
 		structures.model("architecture/metal_beam/v1").set_render_focus(player.position)
@@ -384,6 +387,11 @@ func _process(delta: float) -> void:
 		var activity: String = "Updating terrain…" if terrain.pending_edit else "Explore · Sculpt · Build"
 		var building_stream: Dictionary = structures.blocks.streaming_stats()
 		var building_collision: Dictionary = structures.blocks.collision_stats()
+		var paging: Dictionary = structures.region_paging_stats()
+		if paging.active and paging.pending>0:
+			activity="Loading nearby buildings…"
+		if paging.active and paging.failed_reads>0:
+			activity="Building region unavailable · retrying"
 		if building_collision.pending_chunks>0 or building_collision.unresolved_mesh_chunks>0:
 			activity="Preparing nearby building collision…"
 		if structure_motion_blocked:

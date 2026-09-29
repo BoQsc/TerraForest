@@ -16,6 +16,9 @@ class NativeRegionWorldArchive : public RefCounted {
     Ref<NativeBlockRegionStore> store_;
     String path_;
     bool metadata_first_=false;
+    int64_t published_index_revision_=0;
+    PackedInt32Array published_keys_;
+    PackedByteArray published_checksums_,published_checkpoint_;
     struct RegionRead {
         int64_t ticket=0,epoch=0;
         Vector3i region;
@@ -54,6 +57,7 @@ public:
     void stop_region_reads();
     void join_region_reads();
     Dictionary region_read_stats() const;
+    Dictionary published_region_index(int64_t after_revision=0) const;
     bool validate_snapshot(const PackedByteArray &bytes) const {return codec_.is_valid()&&codec_->validate_storage_snapshot(bytes);}
 };
 }

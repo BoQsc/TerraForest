@@ -5,11 +5,12 @@
 namespace terraforest {
 bool NativeBlockWorld::configure_history(int64_t byte_limit,int step_limit) {
     if(byte_limit<0||byte_limit>64*1024*1024||step_limit<0||step_limit>1024)return false;
-    history_budget=uint64_t(byte_limit);history_steps=step_limit;
+    ++history_revision;history_budget=uint64_t(byte_limit);history_steps=step_limit;
     if(!history_budget||!history_steps)clear_history();else trim_history();
     return true;
 }
 void NativeBlockWorld::clear_history() {
+    ++history_revision;
     decltype(undo_edits)().swap(undo_edits);decltype(redo_edits)().swap(redo_edits);history_bytes=0;
 }
 void NativeBlockWorld::trim_history() {
@@ -22,6 +23,7 @@ void NativeBlockWorld::trim_history() {
 }
 void NativeBlockWorld::remember_edit(std::vector<BlockChange> &&changes) {
     if(!history_budget||!history_steps)return;
+    ++history_revision;
     for(const auto &edit:redo_edits)history_bytes-=edit.capacity()*sizeof(BlockChange);
     decltype(redo_edits)().swap(redo_edits);
     // Duplicate input coordinates have last-write-wins semantics. Retain the
@@ -74,6 +76,17 @@ bool NativeBlockWorld::replay_edit(bool backwards,const AABB &protected_bounds) 
     // mutate the world; no references to a command are used after this signal.
     if(changed)emit_signal("changed");
     return true;
+}
+bool NativeBlockWorld::region_has_history(BlockKey region) const {
+    const int x=region.x*64,y=region.y*64,z=region.z*64;
+    // History records are already sorted by xyz. Skip unrelated x ranges without
+    // allocating a second per-cell/region index outside the history budget.
+    for(const auto *queue:{&undo_edits,&redo_edits})for(const auto &edit:*queue) {
+        auto begin=std::lower_bound(edit.begin(),edit.end(),x,[](const BlockChange &cell,int low){return cell.x<low;});
+        for(auto it=begin;it!=edit.end()&&it->x<x+64;++it)
+            if(it->y>=y&&it->y<y+64&&it->z>=z&&it->z<z+64)return true;
+    }
+    return false;
 }
 Dictionary NativeBlockWorld::history_stats() const {
     Dictionary out;
