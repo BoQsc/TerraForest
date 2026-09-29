@@ -1,0 +1,82 @@
+{
+  "failures": 0,
+  "variant": "release",
+  "trials": [
+    {
+      "trial": 0,
+      "root_and_region_lease_exclusive": true,
+      "root_temporary_observed": true,
+      "orphan_root_temporaries": 1,
+      "reconstruction": {
+        "after": {
+          "ok": true,
+          "revision": 4
+        },
+        "backup_after": {
+          "ok": true,
+          "revision": 3
+        },
+        "backup_before": {
+          "ok": true,
+          "revision": 0
+        },
+        "before": {
+          "ok": true,
+          "revision": 1
+        },
+        "pass": true
+      }
+    },
+    {
+      "trial": 1,
+      "root_and_region_lease_exclusive": true,
+      "root_temporary_observed": true,
+      "orphan_root_temporaries": 1,
+      "reconstruction": {
+        "after": {
+          "ok": true,
+          "revision": 4
+        },
+        "backup_after": {
+          "ok": true,
+          "revision": 3
+        },
+        "backup_before": {
+          "ok": true,
+          "revision": 0
+        },
+        "before": {
+          "ok": true,
+          "revision": 1
+        },
+        "pass": true
+      }
+    },
+    {
+      "trial": 2,
+      "root_and_region_lease_exclusive": true,
+      "root_temporary_observed": true,
+      "orphan_root_temporaries": 1,
+      "reconstruction": {
+        "after": {
+          "ok": true,
+          "revision": 4
+        },
+        "backup_after": {
+          "ok": true,
+          "revision": 3
+        },
+        "backup_before": {
+          "ok": true,
+          "revision": 0
+        },
+        "before": {
+          "ok": true,
+          "revision": 1
+        },
+        "pass": true
+      }
+    }
+  ],
+  "scope": "Abrupt process termination during observed root publication, not physical power loss; terrain/water are opaque revision-marker payloads, blocks/models are real native snapshots."
+}
