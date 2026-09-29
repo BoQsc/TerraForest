@@ -10,9 +10,11 @@ var _queries: RefCounted
 var _sealed := false
 var _dirty := true
 var _cached_snapshot := PackedByteArray()
+var _cached_storage := PackedByteArray()
 
 func _mark_dirty() -> void:
 	_dirty = true
+	_cached_storage = PackedByteArray()
 	changed.emit()
 
 func _exclusion_changed() -> void:
@@ -92,6 +94,26 @@ func capture_snapshot() -> PackedByteArray:
 	_dirty = _cached_snapshot.is_empty()
 	return _cached_snapshot.duplicate()
 
+func capture_storage_snapshot() -> PackedByteArray:
+	if not seal():
+		return PackedByteArray()
+	if not _cached_storage.is_empty():
+		return _cached_storage.duplicate()
+	# Retain the ordinary bundle for fully resident worlds and legacy consumers.
+	if blocks.region_stats().whole_snapshot_available:
+		return capture_snapshot()
+	var state: Dictionary = blocks.capture_storage_state()
+	var models: Dictionary = {}
+	var byte_count: int = 56+state.resident.size()+state.unavailable_keys.size()/3*44
+	for id: String in _models:
+		var bytes: PackedByteArray = _models[id].capture_snapshot()
+		byte_count += 4+bytes.size()
+		if bytes.is_empty() or byte_count > 64*1024*1024:
+			return PackedByteArray()
+		models[id] = bytes
+	_cached_storage = _codec.encode_storage(state.resident,state.unavailable_keys,state.unavailable_checksums,models)
+	return _cached_storage.duplicate()
+
 func restore_snapshot(bytes: PackedByteArray) -> bool:
 	if not seal():
 		return false
@@ -105,6 +127,7 @@ func restore_snapshot(bytes: PackedByteArray) -> bool:
 	for id: String in _models:
 		if not _models[id].restore_snapshot(decoded.models.get(id,_empty_models[id])):
 			return false
+	_cached_storage = PackedByteArray()
 	_cached_snapshot = bytes.duplicate()
 	_dirty = false
 	return true

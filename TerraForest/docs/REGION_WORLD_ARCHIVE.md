@@ -68,7 +68,7 @@ can block during startup. Other operations must not race that lifecycle.
 Applications opt in after registering the structures provider and before attachment:
 
 ```gdscript
-persistence.register_component("structures", structures.capture_snapshot,
+persistence.register_component("structures", structures.capture_storage_snapshot,
     structures.restore_snapshot, structures.snapshot_validator(), structures.empty_snapshot())
 persistence.enable_region_structures()
 persistence.attach(terrain)
@@ -82,7 +82,8 @@ archive unless they opt in. Temporary graphical tests skip disk saves as before.
 This step integrates region-addressed disk storage, not automatic runtime paging.
 Capture still serializes all resident authored blocks and models. Reload reconstructs
 all blocks, capped at 2,048 chunks; a larger checkpoint fails instead of truncating
-it. Whole-world capture still rejects explicitly unloaded regions. The existing
+it. Whole-world capture still rejects explicitly unloaded regions; the separate
+storage capture now supports partial residency (see PARTIAL_WORLD_ARCHIVE.md). The existing
 64 MiB structures and 256 MiB root limits remain. The conversion uses transient
 chunk maps and packed buffers; peak memory and large-world latency are unmeasured.
 Model regions, delta capture, predictive streaming and background admission remain

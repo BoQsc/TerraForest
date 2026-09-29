@@ -15,6 +15,9 @@ void NativeStructuresSnapshot::_bind_methods() {
     ClassDB::bind_method(D_METHOD("validate_snapshot","bytes"),&NativeStructuresSnapshot::validate_snapshot);
     ClassDB::bind_method(D_METHOD("encode_reference","checkpoint","models"),&NativeStructuresSnapshot::encode_reference);
     ClassDB::bind_method(D_METHOD("decode_reference","bytes"),&NativeStructuresSnapshot::decode_reference);
+    ClassDB::bind_method(D_METHOD("encode_storage","resident","keys","checksums","models"),&NativeStructuresSnapshot::encode_storage);
+    ClassDB::bind_method(D_METHOD("decode_storage","bytes"),&NativeStructuresSnapshot::decode_storage);
+    ClassDB::bind_method(D_METHOD("validate_storage_snapshot","bytes"),&NativeStructuresSnapshot::validate_storage_snapshot);
 }
 bool NativeStructuresSnapshot::configure_assets(const PackedStringArray &ids) {
     if(configured||ids.size()>256)return false;
@@ -28,8 +31,8 @@ PackedByteArray NativeStructuresSnapshot::encode(const PackedByteArray &blocks,c
 PackedByteArray NativeStructuresSnapshot::encode_reference(const PackedByteArray &checkpoint,const Dictionary &models) const {
     return encode_payload(checkpoint,models,true);
 }
-PackedByteArray NativeStructuresSnapshot::encode_payload(const PackedByteArray &blocks,const Dictionary &models,bool reference) const {
-    if(!configured||models.size()!=int64_t(assets.size())||(reference?blocks.size()!=32:!NativeBlockWorld::parse(blocks,nullptr)))return {};
+PackedByteArray NativeStructuresSnapshot::encode_payload(const PackedByteArray &blocks,const Dictionary &models,int mode) const {
+    if(!configured||models.size()!=int64_t(assets.size())||(mode==1?blocks.size()!=32:mode==2?!parse_storage(blocks,nullptr):!NativeBlockWorld::parse(blocks,nullptr)))return {};
     int64_t size=16+blocks.size()+32;
     for(auto asset:assets) {
         if(!models.has(asset)||models[asset].get_type()!=Variant::PACKED_BYTE_ARRAY)return {};
@@ -38,7 +41,7 @@ PackedByteArray NativeStructuresSnapshot::encode_payload(const PackedByteArray &
         size+=4+value.size();if(size>LIMIT)return {};
     }
     if(size>LIMIT)return {};
-    PackedByteArray result;result.resize(size-32);uint8_t *out=result.ptrw();std::memcpy(out,reference?"TFSR\1\0\0\0":"TFSB\1\0\0\0",8);
+    PackedByteArray result;result.resize(size-32);uint8_t *out=result.ptrw();std::memcpy(out,mode==1?"TFSR\1\0\0\0":mode==2?"TFSP\1\0\0\0":"TFSB\1\0\0\0",8);
     int64_t cursor=8;
     auto u32=[&](uint32_t n){for(int i=0;i<4;i++)out[cursor++]=uint8_t(n>>(8*i));};
     auto copy=[&](const PackedByteArray &bytes){std::memcpy(out+cursor,bytes.ptr(),bytes.size());cursor+=bytes.size();};
@@ -46,13 +49,13 @@ PackedByteArray NativeStructuresSnapshot::encode_payload(const PackedByteArray &
     for(auto asset:assets){PackedByteArray bytes=models[asset];u32(uint32_t(bytes.size()));copy(bytes);}
     result.append_array(digest(result));return result;
 }
-bool NativeStructuresSnapshot::parse(const PackedByteArray &bytes,Dictionary *result,bool reference) const {
-    if(!configured||bytes.size()<48||bytes.size()>LIMIT||std::memcmp(bytes.ptr(),reference?"TFSR\1\0\0\0":"TFSB\1\0\0\0",8))return false;
+bool NativeStructuresSnapshot::parse(const PackedByteArray &bytes,Dictionary *result,int mode) const {
+    if(!configured||bytes.size()<48||bytes.size()>LIMIT||std::memcmp(bytes.ptr(),mode==1?"TFSR\1\0\0\0":mode==2?"TFSP\1\0\0\0":"TFSB\1\0\0\0",8))return false;
     auto payload=bytes.slice(0,bytes.size()-32);if(digest(payload)!=bytes.slice(bytes.size()-32))return false;
     const uint8_t *data=payload.ptr();int64_t p=8,n=payload.size();
     auto u32=[&](){uint32_t v=uint32_t(data[p])|uint32_t(data[p+1])<<8|uint32_t(data[p+2])<<16|uint32_t(data[p+3])<<24;p+=4;return v;};
     uint32_t count=u32(),length=u32();if(count>256||length>n-p)return false;
-    auto blocks=payload.slice(p,p+length);p+=length;if(reference?blocks.size()!=32:!NativeBlockWorld::parse(blocks,nullptr))return false;
+    Dictionary storage;auto blocks=payload.slice(p,p+length);p+=length;if(mode==1?blocks.size()!=32:mode==2?!parse_storage(blocks,result?&storage:nullptr):!NativeBlockWorld::parse(blocks,nullptr))return false;
     Dictionary models;String previous;
     for(uint32_t i=0;i<count;i++) {
         if(p+4>n)return false;length=u32();if(length>n-p)return false;
@@ -61,8 +64,45 @@ bool NativeStructuresSnapshot::parse(const PackedByteArray &bytes,Dictionary *re
         previous=asset;if(result)models[asset]=model;
     }
     if(p!=n)return false;
-    if(result){(*result)["ok"]=true;(*result)[reference?"checkpoint":"blocks"]=blocks;(*result)["models"]=models;}
+    if(result){if(mode==2)*result=storage;else (*result)[mode==1?"checkpoint":"blocks"]=blocks;(*result)["ok"]=true;(*result)["models"]=models;}
     return true;
+}
+// TFSP is an in-memory save envelope, never a standalone published world.
+// The inner payload is length/count, resident TFBL, then sorted xyz/digest records.
+bool NativeStructuresSnapshot::parse_storage(const PackedByteArray &payload,Dictionary *result) const {
+    if(payload.size()<8||payload.size()>LIMIT)return false;
+    const int64_t length=payload.decode_u32(0),count=payload.decode_u32(4);
+    if(count>65536||8+length+count*44!=payload.size())return false;
+    auto resident=payload.slice(8,8+length);
+    std::map<BlockKey,BlockChunk> chunks;
+    if(!NativeBlockWorld::parse(resident,&chunks))return false;
+    std::set<BlockKey> occupied;
+    for(const auto &entry:chunks)occupied.insert(NativeBlockWorld::region_for(entry.first));
+    if(occupied.size()+count>65536)return false;
+    PackedInt32Array keys;PackedByteArray checksums;
+    if(result){keys.resize(count*3);checksums.resize(count*32);}
+    BlockKey previous;
+    for(int64_t i=0;i<count;++i) {
+        const int64_t offset=8+length+i*44;
+        BlockKey key{int(payload.decode_s32(offset)),int(payload.decode_s32(offset+4)),int(payload.decode_s32(offset+8))};
+        if(!NativeBlockWorld::valid_region(key)||(i&&!(previous<key))||occupied.count(key))return false;
+        previous=key;
+        if(result){keys.set(i*3,key.x);keys.set(i*3+1,key.y);keys.set(i*3+2,key.z);std::memcpy(checksums.ptrw()+i*32,payload.ptr()+offset+12,32);}
+    }
+    if(result){(*result)["resident"]=resident;(*result)["unavailable_keys"]=keys;(*result)["unavailable_checksums"]=checksums;}
+    return true;
+}
+PackedByteArray NativeStructuresSnapshot::encode_storage(const PackedByteArray &resident,const PackedInt32Array &keys,const PackedByteArray &checksums,const Dictionary &models) const {
+    if(keys.size()%3||keys.size()/3>65536||checksums.size()!=keys.size()/3*32)return {};
+    const int64_t count=keys.size()/3,size=8+resident.size()+count*44;
+    if(size>LIMIT-48)return {};
+    PackedByteArray payload;payload.resize(size);payload.encode_u32(0,resident.size());payload.encode_u32(4,count);
+    if(resident.size())std::memcpy(payload.ptrw()+8,resident.ptr(),resident.size());
+    for(int64_t i=0;i<count;++i){const int64_t offset=8+resident.size()+i*44;for(int j=0;j<3;++j)payload.encode_s32(offset+j*4,keys[i*3+j]);std::memcpy(payload.ptrw()+offset+12,checksums.ptr()+i*32,32);}
+    return encode_payload(payload,models,2);
+}
+Dictionary NativeStructuresSnapshot::decode_storage(const PackedByteArray &bytes) const {
+    Dictionary result;result["ok"]=false;parse(bytes,&result,2);return result;
 }
 Dictionary NativeStructuresSnapshot::decode(const PackedByteArray &bytes) const {
     Dictionary result;result["ok"]=false;parse(bytes,&result);return result;

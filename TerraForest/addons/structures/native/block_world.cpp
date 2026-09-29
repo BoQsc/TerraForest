@@ -27,6 +27,7 @@ void NativeBlockWorld::_bind_methods() {
     ClassDB::bind_method(D_METHOD("initialize_region_index","keys","checksums"),&NativeBlockWorld::initialize_region_index);
     ClassDB::bind_method(D_METHOD("is_region_loaded","region"),&NativeBlockWorld::is_region_loaded);
     ClassDB::bind_method(D_METHOD("region_stats"),&NativeBlockWorld::region_stats);
+    ClassDB::bind_method(D_METHOD("capture_storage_state"),&NativeBlockWorld::capture_storage_state);
     ClassDB::bind_method(D_METHOD("raycast_cells","from","to"),&NativeBlockWorld::raycast_cells);
     ClassDB::bind_method(D_METHOD("raycast_scene","from","to","collision_mask","exclude"),&NativeBlockWorld::raycast_scene,DEFVAL(3),DEFVAL(TypedArray<RID>()));
     ClassDB::bind_method(D_METHOD("set_cells","records"),&NativeBlockWorld::set_cells);

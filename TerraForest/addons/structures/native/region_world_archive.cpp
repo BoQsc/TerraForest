@@ -13,6 +13,7 @@ void NativeRegionWorldArchive::_bind_methods() {
     ClassDB::bind_method(D_METHOD("decode","bytes"),&NativeRegionWorldArchive::decode);
     ClassDB::bind_method(D_METHOD("read","absolute_path"),&NativeRegionWorldArchive::read);
     ClassDB::bind_method(D_METHOD("publish","absolute_path","bytes"),&NativeRegionWorldArchive::publish);
+    ClassDB::bind_method(D_METHOD("validate_snapshot","bytes"),&NativeRegionWorldArchive::validate_snapshot);
     ClassDB::bind_method(D_METHOD("storage_stats"),&NativeRegionWorldArchive::storage_stats);
 }
 NativeRegionWorldArchive::~NativeRegionWorldArchive(){release();}
@@ -94,11 +95,14 @@ int64_t NativeRegionWorldArchive::publish(const String &path,const PackedByteArr
     Dictionary root=archive_->call("decode",bytes);if(!bool(root.get("ok",false)))return ERR_INVALID_DATA;
     Dictionary sections=root["sections"];
     if(!sections.has("structures"))return ERR_INVALID_DATA;
-    Dictionary structure=codec_->decode(sections["structures"]);if(!bool(structure["ok"]))return ERR_INVALID_DATA;
+    Dictionary structure=codec_->decode(sections["structures"]);
+    const bool partial=!bool(structure["ok"]);
+    if(partial)structure=codec_->decode_storage(sections["structures"]);
+    if(!bool(structure["ok"]))return ERR_INVALID_DATA;
     // Failed previous saves can leave extra pins. Retire only after validating
     // both published roots, before allocating another pin.
     if(!retire_unreferenced())return ERR_FILE_CORRUPT;
-    Dictionary published=store_->publish_block_snapshot(structure["blocks"]);if(!bool(published["ok"]))return published["error"];
+    Dictionary published=partial?store_->publish_storage_state(structure["resident"],structure["unavailable_keys"],structure["unavailable_checksums"]):store_->publish_block_snapshot(structure["blocks"]);if(!bool(published["ok"]))return published["error"];
     Dictionary pin=store_->pin_checkpoint();if(!bool(pin["ok"]))return pin["error"];
     Dictionary models=structure["models"];PackedStringArray ids;Array keys=models.keys();for(int64_t i=0;i<keys.size();++i)ids.push_back(keys[i]);
     Ref<NativeStructuresSnapshot> subset;subset.instantiate();if(!subset->configure_assets(ids))return ERR_INVALID_DATA;

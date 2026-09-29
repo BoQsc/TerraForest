@@ -73,6 +73,7 @@ void NativeBlockRegionStore::_bind_methods() {
     ClassDB::bind_method(D_METHOD("activate_checkpoint","checkpoint"),&NativeBlockRegionStore::activate_checkpoint);
     ClassDB::bind_method(D_METHOD("release_checkpoint","checkpoint"),&NativeBlockRegionStore::release_checkpoint);
     ClassDB::bind_method(D_METHOD("publish_block_snapshot","blocks"),&NativeBlockRegionStore::publish_block_snapshot);
+    ClassDB::bind_method(D_METHOD("publish_storage_state","resident","unavailable_keys","unavailable_checksums"),&NativeBlockRegionStore::publish_storage_state);
     ClassDB::bind_method(D_METHOD("read_block_checkpoint","checkpoint"),&NativeBlockRegionStore::read_block_checkpoint);
 }
 PackedByteArray NativeBlockRegionStore::pack_digest(const Digest &value) {
@@ -372,14 +373,27 @@ Dictionary NativeBlockRegionStore::release_checkpoint(const PackedByteArray &has
     Dictionary out=status(OK);out["checkpoint_file_removed"]=removed;return out;
 }
 Dictionary NativeBlockRegionStore::publish_block_snapshot(const PackedByteArray &blocks) {
+    return publish_storage_state(blocks,PackedInt32Array(),PackedByteArray());
+}
+Dictionary NativeBlockRegionStore::publish_storage_state(const PackedByteArray &blocks,const PackedInt32Array &keys,const PackedByteArray &checksums) {
     std::lock_guard<std::mutex> lock(mutex_);
     if(!lease_)return status(ERR_UNCONFIGURED,"Store is closed.");
+    if(keys.size()%3||keys.size()/3>int64_t(REGION_LIMIT)||checksums.size()!=keys.size()/3*32)return status(ERR_INVALID_DATA,"Invalid unavailable-region manifest lengths.");
     std::map<BlockKey,BlockChunk> chunks;
-    if(!NativeBlockWorld::parse(blocks,&chunks))return status(ERR_INVALID_DATA,"Invalid complete block snapshot.");
+    if(!NativeBlockWorld::parse(blocks,&chunks))return status(ERR_INVALID_DATA,"Invalid resident block snapshot.");
     if(!observed_files_unchanged())return status(ERR_BUSY,"Storage metadata changed outside this owner.");
     std::map<BlockKey,std::map<BlockKey,BlockChunk>> regions;
     for(auto &entry:chunks)regions[NativeBlockWorld::region_for(entry.first)].emplace(entry.first,std::move(entry.second));
     Catalog next;
+    BlockKey previous;
+    for(int64_t i=0;i<keys.size()/3;++i) {
+        BlockKey key{keys[i*3],keys[i*3+1],keys[i*3+2]};
+        if(!NativeBlockWorld::valid_region(key)||(i&&!(previous<key))||regions.count(key))return status(ERR_INVALID_DATA,"Unavailable regions must be sorted, unique and disjoint from resident chunks.");
+        auto found=entries_.find(key);
+        if(found==entries_.end()||std::memcmp(found->second.digest.data(),checksums.ptr()+i*32,32))return status(ERR_BUSY,"Unavailable region version does not match committed catalog.");
+        next.emplace(key,found->second);previous=key;
+    }
+    if(next.size()+regions.size()>REGION_LIMIT)return status(ERR_OUT_OF_MEMORY,"Combined resident and unavailable regions exceed catalog capacity.");
     for(const auto &region:regions) {
         const auto payload=NativeBlockWorld::encode_chunks(region.second);PackedByteArray packet;packet.resize(24);
         std::memcpy(packet.ptrw(),"TFRG\1\0\0\0",8);packet.encode_s32(8,region.first.x);packet.encode_s32(12,region.first.y);packet.encode_s32(16,region.first.z);

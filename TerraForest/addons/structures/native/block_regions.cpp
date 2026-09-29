@@ -126,4 +126,16 @@ bool NativeBlockWorld::initialize_region_index(const PackedInt32Array &keys,cons
     unloaded_regions=std::move(selected);clear_history();
     emit_signal("changed");return true;
 }
+Dictionary NativeBlockWorld::capture_storage_state() const {
+    // One scene-owner capture: the caller must transfer these immutable values
+    // together. Resident-only TFBL bytes are not a complete world snapshot.
+    PackedInt32Array keys;keys.resize(unloaded_regions.size()*3);
+    PackedByteArray checksums;checksums.resize(unloaded_regions.size()*32);
+    int64_t at=0,digest_at=0;
+    for(const auto &entry:unloaded_regions) {
+        keys.set(at++,entry.first.x);keys.set(at++,entry.first.y);keys.set(at++,entry.first.z);
+        std::memcpy(checksums.ptrw()+digest_at,entry.second.ptr(),32);digest_at+=32;
+    }
+    Dictionary out;out["resident"]=encode_chunks(chunks);out["unavailable_keys"]=keys;out["unavailable_checksums"]=checksums;return out;
+}
 }

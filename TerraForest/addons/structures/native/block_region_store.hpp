@@ -55,6 +55,7 @@ public:
     Dictionary activate_checkpoint(const PackedByteArray &checkpoint);
     Dictionary release_checkpoint(const PackedByteArray &checkpoint);
     Dictionary publish_block_snapshot(const PackedByteArray &blocks);
+    Dictionary publish_storage_state(const PackedByteArray &resident,const PackedInt32Array &unavailable_keys,const PackedByteArray &unavailable_checksums);
     Dictionary read_block_checkpoint(const PackedByteArray &checkpoint) const;
 };
 }
