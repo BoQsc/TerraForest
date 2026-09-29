@@ -1,0 +1,30 @@
+{
+  "checks": 21,
+  "failures": 0,
+  "observed_step_times": {
+    "max_ms": 0.297,
+    "median_ms": 0.006,
+    "p95_ms": 0.011,
+    "samples": 428
+  },
+  "pager": {
+    "active": true,
+    "admitted": 2,
+    "blocked_candidates": 0,
+    "budget_deferred": 0,
+    "chunk_limit": 1536,
+    "epoch": 1,
+    "evicted": 1,
+    "failed_reads": 0,
+    "last_ms": 0.006,
+    "max_ms": 0.297,
+    "operation_high": 1,
+    "operation_last": 0,
+    "pending": 0,
+    "requested": 2,
+    "scan_high": 128,
+    "scan_last": 128,
+    "stale_results": 0
+  },
+  "scope": "Two-cottage persistent main-world travel and reload; not a city or sustained high-speed benchmark."
+}

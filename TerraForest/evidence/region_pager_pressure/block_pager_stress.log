@@ -1,0 +1,16 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS stress fixture exclusively owns its new region store
+PASS 64 building-shell regions commit 4096 chunks and 1294336 authored cells
+PASS fixture exceeds legacy whole-world resident reconstruction capacity
+PASS archive takes ownership after fixture publication
+PASS large saved world starts with metadata and zero resident chunks
+PASS stress pager starts with eight-region resident capacity
+PASS four complete traversals reach every destination under memory pressure
+PASS all 256 arrivals reproduce exact authored region bytes
+PASS every observed step respects scan transfer request and resident chunk bounds
+PASS rapid direction changes discard stale reads without read failures
+PASS settled dense focus does not churn admission and eviction
+PASS stress world saves exact unloaded references without full reconstruction
+PASS stress shutdown drains every owned disk request
+

@@ -1,0 +1,41 @@
+{
+  "arrival_latency_ms": {
+    "max": 10004.35,
+    "median": 6.245,
+    "p95": 10004.306,
+    "samples": 36
+  },
+  "authored_cells": 1294336,
+  "authored_chunks": 4096,
+  "checks": 13,
+  "failures": 1,
+  "max_pending_reads": 4,
+  "max_resident_chunks": 512,
+  "pager": {
+    "active": true,
+    "admitted": 268,
+    "blocked_candidates": 0,
+    "budget_deferred": 1251,
+    "chunk_limit": 512,
+    "epoch": 1,
+    "evicted": 260,
+    "failed_reads": 0,
+    "last_ms": 0.053,
+    "max_ms": 2.53,
+    "operation_high": 1,
+    "operation_last": 0,
+    "pending": 0,
+    "requested": 311,
+    "scan_high": 128,
+    "scan_last": 128,
+    "stale_results": 43
+  },
+  "regions": 64,
+  "scene_step_ms": {
+    "max": 2.53,
+    "median": 0.053,
+    "p95": 0.866,
+    "samples": 6474
+  },
+  "scope": "Headless native cell storage and paging; no rendering, physics, terrain streaming or multiplayer. Teleport arrivals include already-resident destinations; not a high-speed vehicle benchmark."
+}

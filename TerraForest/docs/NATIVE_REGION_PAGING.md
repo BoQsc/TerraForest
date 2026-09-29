@@ -74,3 +74,7 @@ two-cottage fixture is functional evidence, not a city, high-speed travel or
 multi-hour endurance benchmark. Authored static-model region storage, building
 LOD, sustained memory/latency measurements and vehicle readiness remain open.
 The project as a whole is not yet game-ready.
+
+A later 4,096-chunk pressure fixture found and fixed destination starvation in
+the rolling selection cursor. See [pressure regression](REGION_PAGER_PRESSURE.md)
+for the failure, fix, debug/release timings and limits of that evidence.

@@ -112,7 +112,13 @@ bool NativeBlockPager::step(Vector3 world_focus,const PackedByteArray &restore_c
         } else {++failed_;retry_after_[captured.key]=ticks_+RETRY_TICKS;}
     }
     blocks=world();if(!blocks||blocks->storage_epoch!=world_epoch_)return false;
-    if(operations_==0&&evict_one(blocks,focus))++operations_;
+    if(operations_==0&&evict_one(blocks,focus)) {
+        ++operations_;
+        // The vacancy belongs to the nearest missing region, not whichever
+        // farther coordinate follows the old scan cursor. Otherwise pressure
+        // can repeatedly refill distant regions and starve the destination.
+        cursor_=0;
+    }
     blocks=world();if(!blocks||blocks->storage_epoch!=world_epoch_)return false;
     pressure_distance_=1e100;
     int submitted=0;
