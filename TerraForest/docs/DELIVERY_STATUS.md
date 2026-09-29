@@ -1,5 +1,11 @@
 # Original objective and completion evidence
 
+The native mesh cache now uploads bounded batches. A 16-tower / 8-cottage
+fullscreen district returned from cache in 0.536 s versus 4.267 s before, with
+exactly preserved texture mipmaps and authored data. See
+[dense building rendering](DENSE_BUILDING_RENDERING.md). Cold startup spikes,
+combined-world city density and endurance remain open.
+
 Dense native paging now covers 4,096 authored chunks across 256 travel arrivals
 under a 512-chunk resident budget. It exposed and fixed destination starvation
 after pressure eviction; see [pressure regression](REGION_PAGER_PRESSURE.md).

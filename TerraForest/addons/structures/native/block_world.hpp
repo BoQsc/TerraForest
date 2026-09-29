@@ -93,6 +93,11 @@ class NativeBlockWorld : public Node3D {
     int render_limit=256;
     uint64_t mesh_budget=64*1024*1024,cache_budget=32*1024*1024,mesh_bytes=0,cache_bytes=0;
     uint64_t cache_clock=0,cache_hits=0,cache_misses=0,mesh_evictions=0,cache_evictions=0,residency_checks=0;
+    int upload_chunk_limit=8,upload_last_chunks=0,upload_high_chunks=0;
+    uint64_t upload_byte_limit=512*1024,upload_time_limit_us=1500;
+    uint64_t upload_last_bytes=0,upload_high_bytes=0,upload_oversize_ticks=0;
+    double upload_last_us=0,upload_max_us=0;
+    bool measure_uploads=false;
     Vector3 residency_focus;
     std::set<BlockKey> wanted,settled,budget_blocked;
     std::map<BlockKey,CachedBlockBake> bake_cache;
@@ -117,7 +122,7 @@ class NativeBlockWorld : public Node3D {
     bool occupied(const AABB &bounds) const;
     bool prefab_records(const Ref<NativeBlockPrefab> &prefab,Vector3i origin,int turns,bool replace,PackedInt32Array *out) const;
     void invalidate(BlockKey key);
-    void launch(bool allow_cached_upload=true);
+    void launch(bool allow_cached_upload=true,uint64_t cached_byte_allowance=UINT64_MAX,bool allow_oversize=true);
     bool publish(BlockBake &&bake);
     bool update_collisions();
     void ensure_material();
@@ -158,6 +163,7 @@ public:
     void set_focus(Vector3 p);
     bool configure_streaming(bool enabled,double radius,int64_t chunk_limit,int64_t mesh_byte_limit,int64_t cache_byte_limit);
     Dictionary streaming_stats() const;
+    bool configure_mesh_uploads(int chunk_limit,int64_t byte_limit,int64_t time_limit_us);
     void set_collision_radius(double radius);
     bool is_idle() const { return !residency_dirty&&dirty.empty()&&!worker_active; }
     void flush_bakes(); // Explicit offline baking/test operation; never called each frame.

@@ -1,0 +1,723 @@
+{
+  "checks": [
+    {
+      "name": "main terrain scene finishes its loading gate",
+      "pass": true
+    },
+    {
+      "name": "natural vegetation is resident before construction",
+      "pass": true
+    },
+    {
+      "name": "placing a block removes an intersecting tree canopy",
+      "pass": true
+    },
+    {
+      "name": "undo restores vegetation excluded by construction",
+      "pass": true
+    },
+    {
+      "name": "redo reapplies construction vegetation exclusion",
+      "pass": true
+    },
+    {
+      "name": "removing construction restores the deterministic tree candidate",
+      "pass": true
+    },
+    {
+      "name": "restored tree keeps its original placement",
+      "pass": true
+    },
+    {
+      "name": "snapshot restore also reapplies occupancy exclusion",
+      "pass": true
+    },
+    {
+      "name": "forest owner is regenerated after residency reset",
+      "pass": true
+    },
+    {
+      "name": "regenerated forest does not grow through saved blocks",
+      "pass": true
+    },
+    {
+      "name": "regenerated blocked candidate remains available after demolition",
+      "pass": true
+    },
+    {
+      "name": "placed static model excludes an intersecting tree canopy",
+      "pass": true
+    },
+    {
+      "name": "collection transform change restores eligible vegetation",
+      "pass": true
+    },
+    {
+      "name": "returning model collection reapplies vegetation exclusion",
+      "pass": true
+    },
+    {
+      "name": "removing models restores cached tree candidates",
+      "pass": true
+    },
+    {
+      "name": "model removal preserves deterministic tree placement",
+      "pass": true
+    },
+    {
+      "name": "restored model records reapply vegetation exclusion",
+      "pass": true
+    },
+    {
+      "name": "model exclusion survives forest residency reset",
+      "pass": true
+    },
+    {
+      "name": "regenerated trees do not grow through saved static models",
+      "pass": true
+    },
+    {
+      "name": "demolition restores trees after model-driven forest regeneration",
+      "pass": true
+    },
+    {
+      "name": "construction site has real terrain collision",
+      "pass": true
+    },
+    {
+      "name": "native foundation/walls and editing target created in terrain world",
+      "pass": true
+    },
+    {
+      "name": "building chunk meshes publish in the main scene",
+      "pass": true
+    },
+    {
+      "name": "B selects independent block construction",
+      "pass": true
+    },
+    {
+      "name": "tool mode switch cannot carry a terrain stroke into later editing",
+      "pass": true
+    },
+    {
+      "name": "actual construction picking places the adjacent block",
+      "pass": true
+    },
+    {
+      "name": "Ctrl+Z reverses the edit and invalidates cached world persistence",
+      "pass": true
+    },
+    {
+      "name": "Ctrl+Y restores the edit and its persistent representation",
+      "pass": true
+    },
+    {
+      "name": "placed block mesh publishes",
+      "pass": true
+    },
+    {
+      "name": "actual construction picking removes the selected block",
+      "pass": true
+    },
+    {
+      "name": "block authoring does not mutate terrain density",
+      "pass": true
+    },
+    {
+      "name": "temporary editing target removed",
+      "pass": true
+    },
+    {
+      "name": "existing player stands on independent building collision",
+      "pass": true
+    },
+    {
+      "name": "static model placement shares the main world structures owner",
+      "pass": true
+    },
+    {
+      "name": "place a separate static-model platform",
+      "pass": true
+    },
+    {
+      "name": "main scene admits nearby model collision proxies",
+      "pass": true
+    },
+    {
+      "name": "main-world model picking returns stable placement identity",
+      "pass": true
+    },
+    {
+      "name": "existing player stands on independently placed static model",
+      "pass": true
+    },
+    {
+      "name": "main scene captures blocks and static models as one validated component",
+      "pass": true
+    },
+    {
+      "name": "place reusable doorway model on the static platform",
+      "pass": true
+    },
+    {
+      "name": "doorway publishes all three collision parts",
+      "pass": true
+    },
+    {
+      "name": "main-world doorway preserves its traversable opening",
+      "pass": true
+    },
+    {
+      "name": "actual world player passes through the static doorway",
+      "pass": true
+    },
+    {
+      "name": "building exclusion reconciliation drains",
+      "pass": true
+    },
+    {
+      "name": "no resident tree canopy overlaps blocks or authored model proxies",
+      "pass": true
+    },
+    {
+      "name": "cached candidates stay within the residency budget",
+      "pass": true
+    },
+    {
+      "name": "eviction reclaims samples even when publication had failed",
+      "pass": true
+    },
+    {
+      "name": "integrated construction view is 1920x1080 fullscreen at full scale",
+      "pass": true
+    },
+    {
+      "name": "M opens the independent model placement catalog",
+      "pass": true
+    },
+    {
+      "name": "number keys select a model asset",
+      "pass": true
+    },
+    {
+      "name": "rotation updates a valid model ghost preview",
+      "pass": true
+    },
+    {
+      "name": "model tool finds an actual support surface",
+      "pass": true
+    },
+    {
+      "name": "actual RMB tool input inserts one native placement",
+      "pass": true
+    },
+    {
+      "name": "placed transform matches the rotated preview",
+      "pass": true
+    },
+    {
+      "name": "model tool edits invalidate compound world save cache",
+      "pass": true
+    },
+    {
+      "name": "placed model collision finishes admission",
+      "pass": true
+    },
+    {
+      "name": "E selects the aimed model by native physics identity",
+      "pass": true
+    },
+    {
+      "name": "selection exposes transform buttons",
+      "pass": true
+    },
+    {
+      "name": "transform callbacks cannot edit while loading or application focus disables authoring",
+      "pass": true
+    },
+    {
+      "name": "arrow input moves selected model by half a metre on world X",
+      "pass": true
+    },
+    {
+      "name": "own transform edit retains selection and invalidates compound save cache",
+      "pass": true
+    },
+    {
+      "name": "R rotates selected model around its origin",
+      "pass": true
+    },
+    {
+      "name": "plus input scales the selected model by ten percent",
+      "pass": true
+    },
+    {
+      "name": "Shift plus Page Up provides a tenth-metre height adjustment",
+      "pass": true
+    },
+    {
+      "name": "model transforms leave terrain density unchanged",
+      "pass": true
+    },
+    {
+      "name": "transformed model physics finishes bounded admission",
+      "pass": true
+    },
+    {
+      "name": "transformed collision still resolves the same selected ID",
+      "pass": true
+    },
+    {
+      "name": "native transform edit rejects moving a post through the player",
+      "pass": true
+    },
+    {
+      "name": "rejected model transform adds no history command",
+      "pass": true
+    },
+    {
+      "name": "undo clears selection before an authored record can be reused",
+      "pass": true
+    },
+    {
+      "name": "four transform undos restore exact original placement and world snapshot",
+      "pass": true
+    },
+    {
+      "name": "undo restores original selectable model collision",
+      "pass": true
+    },
+    {
+      "name": "restored model can be selected again",
+      "pass": true
+    },
+    {
+      "name": "Q explicitly returns from selection to placement",
+      "pass": true
+    },
+    {
+      "name": "even an identical collection reload invalidates editor selection",
+      "pass": true
+    },
+    {
+      "name": "post-reload fixture reestablishes original stable placement ID",
+      "pass": true
+    },
+    {
+      "name": "LMB removes the picked model by stable placement ID",
+      "pass": true
+    },
+    {
+      "name": "removal restores the prior authored world content",
+      "pass": true
+    },
+    {
+      "name": "model Ctrl+Z restores removed object with exact ID and transform",
+      "pass": true
+    },
+    {
+      "name": "model undo restores nearby collision admission",
+      "pass": true
+    },
+    {
+      "name": "model Ctrl+Y replays object removal",
+      "pass": true
+    },
+    {
+      "name": "model undo cannot restore a doorway post through the player",
+      "pass": true
+    },
+    {
+      "name": "blocked model undo remains retryable after moving clear",
+      "pass": true
+    },
+    {
+      "name": "next model undo removes original placement and restores saved content",
+      "pass": true
+    },
+    {
+      "name": "model Ctrl+Shift+Z restores original placement",
+      "pass": true
+    },
+    {
+      "name": "complete model redo chain returns to pre-test authored content",
+      "pass": true
+    },
+    {
+      "name": "M returns to block editing and hides model preview",
+      "pass": true
+    },
+    {
+      "name": "editor loads reusable cottage, stair, wall and tower-floor assets",
+      "pass": true
+    },
+    {
+      "name": "prefab site has terrain collision",
+      "pass": true
+    },
+    {
+      "name": "P selects the cottage asset in block mode",
+      "pass": true
+    },
+    {
+      "name": "R rotates prefab orientation",
+      "pass": true
+    },
+    {
+      "name": "prefab tool picks an actual construction anchor",
+      "pass": true
+    },
+    {
+      "name": "clear prefab placement displays a valid bounds preview",
+      "pass": true
+    },
+    {
+      "name": "preview follows rotated prefab bounds",
+      "pass": true
+    },
+    {
+      "name": "prefab authoring rejects enclosing the player",
+      "pass": true
+    },
+    {
+      "name": "logical world changes invalidate cached placement validation",
+      "pass": true
+    },
+    {
+      "name": "actual placement tool creates every cottage cell in one operation",
+      "pass": true
+    },
+    {
+      "name": "prefab placement leaves terrain density unchanged",
+      "pass": true
+    },
+    {
+      "name": "occupied prefab footprint is rejected",
+      "pass": true
+    },
+    {
+      "name": "Ctrl+Z removes the entire prefab in one step",
+      "pass": true
+    },
+    {
+      "name": "editor redo cannot restore the prefab through the player",
+      "pass": true
+    },
+    {
+      "name": "Ctrl+Shift+Z restores the complete prefab after moving clear",
+      "pass": true
+    },
+    {
+      "name": "prefab chunk meshes finish their bounded bake queue",
+      "pass": true
+    },
+    {
+      "name": "existing player stands inside the prefab on its timber floor",
+      "pass": true
+    },
+    {
+      "name": "compound world restoration preserves prefab-authored cells",
+      "pass": true
+    },
+    {
+      "name": "world restoration clears the prior editor history",
+      "pass": true
+    },
+    {
+      "name": "compound world restoration also invalidates model history",
+      "pass": true
+    },
+    {
+      "name": "prefab reload finishes meshes and forest exclusion",
+      "pass": true
+    },
+    {
+      "name": "tower site has terrain collision",
+      "pass": true
+    },
+    {
+      "name": "twelve repeated tower floors interlock without overwriting cells",
+      "pass": true
+    },
+    {
+      "name": "tower geometry and vegetation exclusion finish",
+      "pass": true
+    },
+    {
+      "name": "player collision works on an upper repeated tower floor",
+      "pass": true
+    },
+    {
+      "name": "repeated tower stair flights preserve their four rises through the floor shaft",
+      "pass": true
+    },
+    {
+      "name": "main world admits nearby static model rendering",
+      "pass": true
+    },
+    {
+      "name": "main-world travel evicts distant building meshes",
+      "pass": true
+    },
+    {
+      "name": "travel releases building physics without changing saved cells",
+      "pass": true
+    },
+    {
+      "name": "main-world travel evicts distant static model rendering",
+      "pass": true
+    },
+    {
+      "name": "model render eviction leaves authored save unchanged",
+      "pass": true
+    },
+    {
+      "name": "return travel restores building meshes from cache",
+      "pass": true
+    },
+    {
+      "name": "return travel needs no additional building bake jobs",
+      "pass": true
+    },
+    {
+      "name": "return travel restores static model render residency",
+      "pass": true
+    },
+    {
+      "name": "prefab evidence is 1920x1080 fullscreen at full scale",
+      "pass": true
+    },
+    {
+      "name": "6 selects the native sphere block in the world editor",
+      "pass": true
+    },
+    {
+      "name": "editor fixture removes all derived block collision",
+      "pass": true
+    },
+    {
+      "name": "sphere site has the expected construction support 0",
+      "pass": true
+    },
+    {
+      "name": "model placement ray sees authored support without block collision 0",
+      "pass": true
+    },
+    {
+      "name": "actual block tool places sphere material 0",
+      "pass": true
+    },
+    {
+      "name": "new sphere is immediately removable before baking 0",
+      "pass": true
+    },
+    {
+      "name": "sphere chunk bake publishes material 0",
+      "pass": true
+    },
+    {
+      "name": "sphere site has the expected construction support 1",
+      "pass": true
+    },
+    {
+      "name": "model placement ray sees authored support without block collision 1",
+      "pass": true
+    },
+    {
+      "name": "actual block tool places sphere material 1",
+      "pass": true
+    },
+    {
+      "name": "new sphere is immediately removable before baking 1",
+      "pass": true
+    },
+    {
+      "name": "sphere chunk bake publishes material 1",
+      "pass": true
+    },
+    {
+      "name": "sphere site has the expected construction support 2",
+      "pass": true
+    },
+    {
+      "name": "model placement ray sees authored support without block collision 2",
+      "pass": true
+    },
+    {
+      "name": "actual block tool places sphere material 2",
+      "pass": true
+    },
+    {
+      "name": "new sphere is immediately removable before baking 2",
+      "pass": true
+    },
+    {
+      "name": "sphere chunk bake publishes material 2",
+      "pass": true
+    },
+    {
+      "name": "sphere site has the expected construction support 3",
+      "pass": true
+    },
+    {
+      "name": "model placement ray sees authored support without block collision 3",
+      "pass": true
+    },
+    {
+      "name": "actual block tool places sphere material 3",
+      "pass": true
+    },
+    {
+      "name": "new sphere is immediately removable before baking 3",
+      "pass": true
+    },
+    {
+      "name": "sphere chunk bake publishes material 3",
+      "pass": true
+    },
+    {
+      "name": "sphere authoring leaves terrain density unchanged",
+      "pass": true
+    },
+    {
+      "name": "compound world codec accepts and restores sphere blocks",
+      "pass": true
+    },
+    {
+      "name": "restored spheres settle geometry and vegetation exclusion",
+      "pass": true
+    },
+    {
+      "name": "sphere material evidence is 1920x1080 fullscreen at full scale",
+      "pass": true
+    },
+    {
+      "name": "movement-gate fixture has ready terrain independently of building physics",
+      "pass": true
+    },
+    {
+      "name": "actual walking controller holds above an authored platform whose collision is unavailable",
+      "pass": true
+    },
+    {
+      "name": "walking resumes automatically after building collision is complete",
+      "pass": true
+    },
+    {
+      "name": "resumed player lands on the building instead of falling through it",
+      "pass": true
+    },
+    {
+      "name": "loss of building collision while standing also holds the player",
+      "pass": true
+    },
+    {
+      "name": "removing the unavailable authored support releases the gate in empty space",
+      "pass": true
+    },
+    {
+      "name": "model movement fixture has ready terrain",
+      "pass": true
+    },
+    {
+      "name": "walking waits above an authored static-model floor without collision",
+      "pass": true
+    },
+    {
+      "name": "walking resumes and lands after the model collider arrives",
+      "pass": true
+    },
+    {
+      "name": "model collision eviction holds the standing player",
+      "pass": true
+    },
+    {
+      "name": "removing the missing model floor releases the movement gate",
+      "pass": true
+    },
+    {
+      "name": "region transfer fixture has independent terrain readiness",
+      "pass": true
+    },
+    {
+      "name": "player stands on a resident authored-region fixture",
+      "pass": true
+    },
+    {
+      "name": "integrated world transfers the authored region out of resident storage",
+      "pass": true
+    },
+    {
+      "name": "player waits when an authored region itself is unavailable",
+      "pass": true
+    },
+    {
+      "name": "world save component refuses an incomplete resident-only snapshot",
+      "pass": true
+    },
+    {
+      "name": "matching region packet returns to the integrated world",
+      "pass": true
+    },
+    {
+      "name": "walking resumes only after restored region collision is ready",
+      "pass": true
+    },
+    {
+      "name": "complete world saves become available after region reload",
+      "pass": true
+    }
+  ],
+  "failures": 0,
+  "terrain_planning_stages": {
+    "LOD coverage": {
+      "max_ms": 2.428,
+      "median_ms": 0.688,
+      "p95_ms": 1.291,
+      "samples": 342
+    },
+    "LOD eviction": {
+      "max_ms": 0.1,
+      "median_ms": 0.002,
+      "p95_ms": 0.007,
+      "samples": 342
+    },
+    "LOD requests": {
+      "max_ms": 1.506,
+      "median_ms": 0.501,
+      "p95_ms": 0.701,
+      "samples": 342
+    },
+    "LOD schedule/cut/evict": {
+      "max_ms": 4.046,
+      "median_ms": 1.234,
+      "p95_ms": 1.979,
+      "samples": 342
+    },
+    "collision exact match": {
+      "max_ms": 0.013,
+      "median_ms": 0.0,
+      "p95_ms": 0.001,
+      "samples": 435
+    },
+    "collision node attach": {
+      "max_ms": 1.926,
+      "median_ms": 0.533,
+      "p95_ms": 0.908,
+      "samples": 435
+    },
+    "collision physics cook": {
+      "max_ms": 1.886,
+      "median_ms": 0.574,
+      "p95_ms": 0.909,
+      "samples": 435
+    },
+    "collision piece": {
+      "max_ms": 3.705,
+      "median_ms": 0.753,
+      "p95_ms": 1.67,
+      "samples": 623
+    }
+  }
+}

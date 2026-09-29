@@ -3,6 +3,10 @@
 #include <cmath>
 
 namespace terraforest {
+bool NativeBlockWorld::configure_mesh_uploads(int count,int64_t bytes,int64_t micros) {
+    if(count<1||count>16||bytes<65536||bytes>8*1024*1024||micros<100||micros>5000)return false;
+    upload_chunk_limit=count;upload_byte_limit=uint64_t(bytes);upload_time_limit_us=uint64_t(micros);return true;
+}
 double NativeBlockWorld::distance_to_focus(BlockKey k) const {
     return Vector3(k.x*16+8,k.y*16+8,k.z*16+8).distance_squared_to(focus);
 }
@@ -108,6 +112,10 @@ Dictionary NativeBlockWorld::streaming_stats() const {
     out["deferred_chunks"]=deferred;out["residency_pending"]=residency_dirty;out["mesh_payload_bytes"]=int64_t(mesh_bytes);out["mesh_byte_limit"]=int64_t(mesh_budget);
     out["cache_capacity_bytes"]=int64_t(cache_bytes);out["cache_byte_limit"]=int64_t(cache_budget);out["cached_chunks"]=int(bake_cache.size());
     out["cache_hits"]=int64_t(cache_hits);out["bake_jobs"]=int64_t(cache_misses);out["mesh_evictions"]=int64_t(mesh_evictions);
-    out["cache_evictions"]=int64_t(cache_evictions);out["residency_checks"]=int64_t(residency_checks);return out;
+    out["cache_evictions"]=int64_t(cache_evictions);out["residency_checks"]=int64_t(residency_checks);
+    out["upload_chunk_limit"]=upload_chunk_limit;out["upload_byte_limit"]=int64_t(upload_byte_limit);out["upload_time_limit_us"]=int64_t(upload_time_limit_us);
+    out["upload_last_chunks"]=upload_last_chunks;out["upload_high_chunks"]=upload_high_chunks;
+    out["upload_last_bytes"]=int64_t(upload_last_bytes);out["upload_high_bytes"]=int64_t(upload_high_bytes);out["upload_oversize_ticks"]=int64_t(upload_oversize_ticks);
+    out["upload_last_us"]=upload_last_us;out["upload_max_us"]=upload_max_us;return out;
 }
 }

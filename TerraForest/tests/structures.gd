@@ -368,6 +368,7 @@ func check_streaming() -> void:
 
 func check_cached_publication() -> void:
 	var world := make_world()
+	world.configure_mesh_uploads(1,512*1024,1500)
 	world.configure_streaming(true,64,4,1048576,1048576)
 	world.set_cells(PackedInt32Array([0,0,0,1,16,0,0,1,32,0,0,1]))
 	world.set_focus(Vector3(8,8,8))
@@ -382,7 +383,7 @@ func check_cached_publication() -> void:
 		var current: int = world.stats().published_bakes
 		bounded=bounded and current-previous<=1
 		previous=current
-	check(bounded and world.is_idle() and world.stats().mesh_chunks==3 and world.streaming_stats().cache_hits==3,"cached reentry uploads at most one nonempty mesh per frame")
+	check(bounded and world.is_idle() and world.stats().mesh_chunks==3 and world.streaming_stats().cache_hits==3,"explicit one-chunk upload policy preserves one mesh per frame")
 	var clear: Node3D = make_world()
 	world.restore_snapshot(clear.capture_snapshot())
 	clear.free()
@@ -418,6 +419,58 @@ func check_cached_publication() -> void:
 	check(latest_material and world.is_idle(),"edit during in-flight travel cannot cache or publish obsolete building material")
 	world.free()
 
+func check_upload_budgets() -> void:
+	var world := make_world()
+	world.set_collision_radius(0)
+	check(not world.configure_mesh_uploads(0,65536,1000) and not world.configure_mesh_uploads(17,65536,1000),"mesh upload count rejects values outside one to sixteen")
+	check(not world.configure_mesh_uploads(8,65535,1000) and not world.configure_mesh_uploads(8,8*1024*1024+1,1000),"mesh upload payload policy rejects unsupported bounds")
+	check(not world.configure_mesh_uploads(8,65536,99) and not world.configure_mesh_uploads(8,65536,5001),"mesh upload time policy rejects unsupported bounds")
+	check(world.configure_mesh_uploads(3,65536,5000),"bounded cached mesh batch configuration is accepted")
+	world.configure_streaming(true,256,16,8*1024*1024,8*1024*1024)
+	var records := PackedInt32Array()
+	for i in range(12): records.append_array(PackedInt32Array([i*16,0,0,1]))
+	world.set_cells(records)
+	world.flush_bakes()
+	var expected: PackedByteArray = world.capture_snapshot()
+	var jobs: int = world.streaming_stats().bake_jobs
+	world.set_focus(Vector3(1024,0,0))
+	world.flush_bakes()
+	world.set_focus(Vector3.ZERO)
+	var bounded := true
+	for i in range(30):
+		await process_frame
+		var stats: Dictionary = world.streaming_stats()
+		bounded=bounded and stats.upload_last_chunks<=3 and stats.upload_last_bytes<=65536
+	check(bounded and world.is_idle() and world.stats().mesh_chunks==12,"cached batches finish while respecting configured count and byte limits")
+	check(world.streaming_stats().upload_high_chunks>1 and world.streaming_stats().bake_jobs==jobs,"small cached meshes upload in batches without new bake work")
+	check(world.capture_snapshot()==expected,"batched mesh admission does not alter authored cell data")
+	world.free()
+	# Oversized immutable meshes cannot be split at publication. Admit one alone
+	# rather than leaving it permanently missing under a small byte policy.
+	world=make_world()
+	world.set_collision_radius(0)
+	world.configure_streaming(true,128,4,8*1024*1024,8*1024*1024)
+	world.configure_mesh_uploads(8,65536,5000)
+	records.clear()
+	for chunk in range(2):
+		for x in range(0,16,2):
+			for z in range(0,16,2): records.append_array(PackedInt32Array([chunk*16+x,0,z,6]))
+	world.set_cells(records)
+	world.flush_bakes()
+	check(world.streaming_stats().mesh_payload_bytes>2*65536,"curved fixture contains meshes larger than the per-frame byte policy")
+	jobs=world.streaming_stats().bake_jobs
+	world.set_focus(Vector3(1024,0,0))
+	world.flush_bakes()
+	world.set_focus(Vector3.ZERO)
+	bounded=true
+	for i in range(30):
+		await process_frame
+		var stats: Dictionary = world.streaming_stats()
+		bounded=bounded and (stats.upload_last_bytes<=65536 or stats.upload_last_chunks==1)
+	check(bounded and world.is_idle() and world.stats().mesh_chunks==2 and world.streaming_stats().upload_oversize_ticks==2,"oversized cached meshes progress alone without sharing an over-budget frame")
+	check(world.streaming_stats().bake_jobs==jobs,"oversized cache return does not rebake geometry")
+	world.free()
+
 func run() -> void:
 	check(ClassDB.class_exists("NativeBlockWorld"), "native block extension registered")
 	await check_spheres()
@@ -429,6 +482,7 @@ func run() -> void:
 	await check_history_worker()
 	check_streaming()
 	await check_cached_publication()
+	await check_upload_budgets()
 	var world := make_world()
 	var empty: PackedByteArray = world.capture_snapshot()
 	check(world.validate_snapshot(empty), "empty snapshot validates")
