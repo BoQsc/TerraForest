@@ -66,6 +66,12 @@ void NativeBlockRegionStore::_bind_methods() {
     ClassDB::bind_method(D_METHOD("publish_regions","packets","expected_checksums"),&NativeBlockRegionStore::publish_regions);
     ClassDB::bind_method(D_METHOD("remove_region","region","expected_checksum"),&NativeBlockRegionStore::remove_region);
     ClassDB::bind_method(D_METHOD("collect_garbage","max_inspected"),&NativeBlockRegionStore::collect_garbage);
+    ClassDB::bind_method(D_METHOD("pin_checkpoint"),&NativeBlockRegionStore::pin_checkpoint);
+    ClassDB::bind_method(D_METHOD("list_checkpoints"),&NativeBlockRegionStore::list_checkpoints);
+    ClassDB::bind_method(D_METHOD("checkpoint_regions","checkpoint"),&NativeBlockRegionStore::checkpoint_regions);
+    ClassDB::bind_method(D_METHOD("read_checkpoint_region","checkpoint","region"),&NativeBlockRegionStore::read_checkpoint_region);
+    ClassDB::bind_method(D_METHOD("activate_checkpoint","checkpoint"),&NativeBlockRegionStore::activate_checkpoint);
+    ClassDB::bind_method(D_METHOD("release_checkpoint","checkpoint"),&NativeBlockRegionStore::release_checkpoint);
 }
 PackedByteArray NativeBlockRegionStore::pack_digest(const Digest &value) {
     PackedByteArray out;out.resize(32);std::memcpy(out.ptrw(),value.data(),32);return out;
@@ -76,7 +82,8 @@ bool NativeBlockRegionStore::packet_entry(const PackedByteArray &bytes,BlockKey 
     std::memcpy(entry.digest.data(),bytes.ptr()+bytes.size()-32,32);entry.size=uint32_t(bytes.size());return true;
 }
 bool NativeBlockRegionStore::parse_catalog(const PackedByteArray &bytes,Catalog &entries,uint64_t &generation) {
-    if(bytes.size()<52||bytes.size()>CATALOG_LIMIT||std::memcmp(bytes.ptr(),"TFRC\1\0\0\0",8))return false;
+    if(bytes.size()<52||bytes.size()>CATALOG_LIMIT||
+       (std::memcmp(bytes.ptr(),"TFRC\1\0\0\0",8)&&std::memcmp(bytes.ptr(),"TFRC\2\0\0\0",8)))return false;
     uint64_t gen=bytes.decode_u64(8),count=bytes.decode_u32(16);
     if(!gen||gen>uint64_t(INT64_MAX)||count>REGION_LIMIT||bytes.size()!=int64_t(52+48*count))return false;
     if(digest(bytes.slice(0,bytes.size()-32))!=bytes.slice(bytes.size()-32))return false;
@@ -92,7 +99,7 @@ bool NativeBlockRegionStore::parse_catalog(const PackedByteArray &bytes,Catalog 
     entries=std::move(parsed);generation=gen;return true;
 }
 PackedByteArray NativeBlockRegionStore::encode_catalog(const Catalog &entries,uint64_t generation) {
-    PackedByteArray out;out.resize(20+48*entries.size());std::memcpy(out.ptrw(),"TFRC\1\0\0\0",8);
+    PackedByteArray out;out.resize(20+48*entries.size());std::memcpy(out.ptrw(),"TFRC\2\0\0\0",8);
     out.encode_u64(8,generation);out.encode_u32(16,uint32_t(entries.size()));int64_t at=20;
     for(const auto &entry:entries) {
         out.encode_s32(at,entry.first.x);out.encode_s32(at+4,entry.first.y);out.encode_s32(at+8,entry.first.z);
@@ -104,6 +111,7 @@ void NativeBlockRegionStore::reset_scan() {if(scan_){FindClose(static_cast<HANDL
 void NativeBlockRegionStore::close_locked() {
     reset_scan();if(lease_)CloseHandle(static_cast<HANDLE>(lease_));lease_=nullptr;
     directory_=String();entries_.clear();retained_.clear();canonical_bytes_=PackedByteArray();backup_bytes_=PackedByteArray();
+    checkpoints_.clear();pinned_blobs_.clear();pins_bytes_=PackedByteArray();
     canonical_exists_=backup_exists_=canonical_active_=backup_valid_=recovered_=false;generation_=generation_floor_=deleted_=0;
 }
 NativeBlockRegionStore::~NativeBlockRegionStore(){close();}
@@ -129,6 +137,7 @@ Dictionary NativeBlockRegionStore::open_store(const String &path,bool recover_ba
        !read_file(directory_.path_join("catalog.tfrc.bak"),CATALOG_LIMIT,backup_bytes_,backup_exists_)) {close_locked();return status(ERR_FILE_CANT_READ,"Catalog files exceed limits or cannot be read.");}
     Catalog main,backup;uint64_t main_gen=0,backup_gen=0;
     bool main_valid=canonical_exists_&&parse_catalog(canonical_bytes_,main,main_gen);
+    bool initialized=false;
     backup_valid_=backup_exists_&&parse_catalog(backup_bytes_,backup,backup_gen);
     if((recover_backup&&!backup_valid_)||(!recover_backup&&!main_valid&&(canonical_exists_||backup_exists_))) {
         Dictionary out=status(ERR_FILE_CORRUPT,"No valid selected catalog. Backup recovery must be explicitly requested.");
@@ -148,14 +157,18 @@ Dictionary NativeBlockRegionStore::open_store(const String &path,bool recover_ba
         if(!write_pending(path,canonical_bytes_,pending)){close_locked();return status(ERR_FILE_CANT_WRITE,"Cannot initialize empty catalog.");}
         if(!move_file(pending,path,false)){delete_exact(pending);close_locked();return status(ERR_FILE_CANT_WRITE,"Cannot publish initial catalog.");}
         canonical_exists_=canonical_active_=true;generation_=main_gen=1;
+        initialized=true;
     }
+    if(!open_checkpoints(initialized||(canonical_active_&&canonical_bytes_[4]==1))){close_locked();return status(ERR_FILE_CORRUPT,"Cannot validate checkpoint retention metadata; no storage cleanup is permitted.");}
     generation_floor_=std::max(main_gen,backup_gen);rebuild_retained();
+    for(const auto &checkpoint:checkpoints_)generation_floor_=std::max(generation_floor_,checkpoint.second.generation);
     Dictionary out=status(OK);out["generation"]=int64_t(generation_);out["regions"]=int(entries_.size());out["recovered_from_backup"]=recovered_;out["backup_valid"]=backup_valid_;return out;
 }
 bool NativeBlockRegionStore::observed_files_unchanged() const {
     PackedByteArray bytes;bool exists=false;
     if(!read_file(directory_.path_join("catalog.tfrc"),CATALOG_LIMIT,bytes,exists)||exists!=canonical_exists_||bytes!=canonical_bytes_)return false;
-    return read_file(directory_.path_join("catalog.tfrc.bak"),CATALOG_LIMIT,bytes,exists)&&exists==backup_exists_&&bytes==backup_bytes_;
+    if(!read_file(directory_.path_join("catalog.tfrc.bak"),CATALOG_LIMIT,bytes,exists)||exists!=backup_exists_||bytes!=backup_bytes_)return false;
+    return read_file(directory_.path_join("checkpoints.tfcp"),556,bytes,exists)&&exists&&bytes==pins_bytes_;
 }
 Dictionary NativeBlockRegionStore::commit_catalog(Catalog &&next) {
     if(generation_floor_>=uint64_t(INT64_MAX))return status(ERR_OUT_OF_MEMORY,"Catalog generation exhausted.");
@@ -227,16 +240,132 @@ Dictionary NativeBlockRegionStore::read_region(Vector3i region) const {
     std::lock_guard<std::mutex> lock(mutex_);if(!lease_)return status(ERR_UNCONFIGURED,"Store is closed.");
     const BlockKey key{region.x,region.y,region.z};auto it=entries_.find(key);
     if(it==entries_.end())return status(ERR_DOES_NOT_EXIST,"Region is not cataloged.");
-    const auto expected=pack_digest(it->second.digest);PackedByteArray bytes;bool exists=false;BlockKey parsed;Entry entry;
+    return read_entry(key,it->second,generation_);
+}
+Dictionary NativeBlockRegionStore::read_entry(const BlockKey &key,const Entry &stored,uint64_t generation) const {
+    const auto expected=pack_digest(stored.digest);PackedByteArray bytes;bool exists=false;BlockKey parsed;Entry entry;
     if(!read_file(directory_.path_join("blobs").path_join(expected.hex_encode()+String(".tfrg")),BLOB_LIMIT,bytes,exists)||!exists||
-       bytes.size()!=it->second.size||!packet_entry(bytes,parsed,entry)||parsed<key||key<parsed||entry.digest!=it->second.digest)return status(ERR_FILE_CORRUPT,"Cataloged blob is missing or corrupt.");
-    Dictionary out=status(OK);out["bytes"]=bytes;out["checksum"]=expected;out["generation"]=int64_t(generation_);return out;
+       bytes.size()!=stored.size||!packet_entry(bytes,parsed,entry)||parsed<key||key<parsed||entry.digest!=stored.digest)return status(ERR_FILE_CORRUPT,"Cataloged blob is missing or corrupt.");
+    Dictionary out=status(OK);out["bytes"]=bytes;out["checksum"]=expected;out["generation"]=int64_t(generation);return out;
 }
 Dictionary NativeBlockRegionStore::stats() const {
     std::lock_guard<std::mutex> lock(mutex_);Dictionary out;uint64_t bytes=0;for(const auto &entry:entries_)bytes+=entry.second.size;
     out["open"]=lease_!=nullptr;out["regions"]=int(entries_.size());out["generation"]=int64_t(generation_);
     out["recovered_from_backup"]=recovered_;out["catalog_bytes"]=canonical_bytes_.size();out["referenced_blob_bytes"]=int64_t(bytes);
-    out["garbage_deleted"]=int64_t(deleted_);out["max_regions"]=int(REGION_LIMIT);return out;
+    out["garbage_deleted"]=int64_t(deleted_);out["max_regions"]=int(REGION_LIMIT);
+    out["checkpoints"]=int(checkpoints_.size());out["pinned_unique_blobs"]=int64_t(pinned_blobs_.size());out["max_checkpoints"]=16;return out;
+}
+bool NativeBlockRegionStore::publish_pins(const std::set<Digest> &ids) {
+    PackedByteArray bytes;bytes.resize(12+32*ids.size());std::memcpy(bytes.ptrw(),"TFCP\1\0\0\0",8);
+    bytes.encode_u32(8,uint32_t(ids.size()));int64_t at=12;
+    for(const auto &id:ids){std::memcpy(bytes.ptrw()+at,id.data(),32);at+=32;}
+    bytes.append_array(digest(bytes));String temporary;
+    const String path=directory_.path_join("checkpoints.tfcp");
+    if(!write_pending(path,bytes,temporary))return false;
+    if(!move_file(temporary,path,!pins_bytes_.is_empty())){delete_exact(temporary);return false;}
+    pins_bytes_=bytes;reset_scan();return true;
+}
+bool NativeBlockRegionStore::open_checkpoints(bool allow_initialize) {
+    const auto path=directory_.path_join("checkpoints").utf16();const auto folder=reinterpret_cast<LPCWSTR>(path.get_data());
+    CreateDirectoryW(folder,nullptr);DWORD attributes=GetFileAttributesW(folder);
+    if(attributes==INVALID_FILE_ATTRIBUTES||!(attributes&FILE_ATTRIBUTE_DIRECTORY)||(attributes&FILE_ATTRIBUTE_REPARSE_POINT))return false;
+    bool exists=false;
+    if(!read_file(directory_.path_join("checkpoints.tfcp"),556,pins_bytes_,exists))return false;
+    if(!exists) {
+        if(!allow_initialize)return false;
+        WIN32_FIND_DATAW data{};const auto pattern=directory_.path_join("checkpoints").path_join("*.tfrc").utf16();
+        HANDLE found=FindFirstFileW(reinterpret_cast<LPCWSTR>(pattern.get_data()),&data);
+        if(found!=INVALID_HANDLE_VALUE){FindClose(found);return false;}
+        if(GetLastError()!=ERROR_FILE_NOT_FOUND)return false;
+        return publish_pins({});
+    }
+    if(pins_bytes_.size()<44||std::memcmp(pins_bytes_.ptr(),"TFCP\1\0\0\0",8))return false;
+    uint32_t count=pins_bytes_.decode_u32(8);
+    if(count>16||pins_bytes_.size()!=44+32*count||digest(pins_bytes_.slice(0,pins_bytes_.size()-32))!=pins_bytes_.slice(pins_bytes_.size()-32))return false;
+    Digest previous{};
+    for(uint32_t i=0;i<count;++i) {
+        Digest id{};std::memcpy(id.data(),pins_bytes_.ptr()+12+32*i,32);
+        if(i&&!(previous<id))return false;previous=id;
+        PackedByteArray bytes;Checkpoint checkpoint;
+        const String file=directory_.path_join("checkpoints").path_join(pack_digest(id).hex_encode()+String(".tfrc"));
+        if(!read_file(file,CATALOG_LIMIT,bytes,exists)||!exists||digest(bytes)!=pack_digest(id)||!parse_catalog(bytes,checkpoint.entries,checkpoint.generation))return false;
+        for(const auto &entry:checkpoint.entries)++pinned_blobs_[entry.second.digest];
+        checkpoints_.emplace(id,std::move(checkpoint));
+    }
+    return true;
+}
+Dictionary NativeBlockRegionStore::pin_checkpoint() {
+    std::lock_guard<std::mutex> lock(mutex_);
+    if(!lease_)return status(ERR_UNCONFIGURED,"Store is closed.");
+    if(!observed_files_unchanged())return status(ERR_BUSY,"Catalog or retention metadata changed outside this owner.");
+    // Old catalog readers ignore checkpoint pins. Upgrade the active catalog
+    // before exposing any pin so those readers reject ordinary opening.
+    if(!canonical_active_||canonical_bytes_[4]==1) {
+        Catalog next=entries_;Dictionary upgraded=commit_catalog(std::move(next));
+        if(!bool(upgraded["ok"]))return upgraded;
+    }
+    const PackedByteArray bytes=encode_catalog(entries_,generation_),hash=digest(bytes);Digest id{};std::memcpy(id.data(),hash.ptr(),32);
+    if(checkpoints_.count(id)){Dictionary out=status(OK);out["checkpoint"]=hash;out["unchanged"]=true;return out;}
+    if(checkpoints_.size()>=16)return status(ERR_OUT_OF_MEMORY,"Release an unreferenced checkpoint before creating more than 16.");
+    const String path=directory_.path_join("checkpoints").path_join(hash.hex_encode()+String(".tfrc"));
+    PackedByteArray existing;bool exists=false;
+    if(!read_file(path,CATALOG_LIMIT,existing,exists))return status(ERR_FILE_CANT_READ,"Cannot inspect immutable checkpoint.");
+    if(exists&&existing!=bytes)return status(ERR_FILE_CORRUPT,"Existing checkpoint does not match its content identity.");
+    if(!exists) {
+        String temporary;if(!write_pending(path,bytes,temporary))return status(ERR_FILE_CANT_WRITE,"Cannot flush checkpoint catalog.");
+        if(!move_file(temporary,path,false)){delete_exact(temporary);return status(ERR_FILE_CANT_WRITE,"Cannot publish checkpoint catalog.");}
+    }
+    std::set<Digest> ids;for(const auto &checkpoint:checkpoints_)ids.insert(checkpoint.first);ids.insert(id);
+    if(!publish_pins(ids))return status(ERR_FILE_CANT_WRITE,"Cannot publish checkpoint retention index.");
+    checkpoints_.emplace(id,Checkpoint{entries_,generation_});for(const auto &entry:entries_)++pinned_blobs_[entry.second.digest];
+    Dictionary out=status(OK);out["checkpoint"]=hash;out["generation"]=int64_t(generation_);return out;
+}
+PackedByteArray NativeBlockRegionStore::list_checkpoints() const {
+    std::lock_guard<std::mutex> lock(mutex_);PackedByteArray out;out.resize(checkpoints_.size()*32);int64_t at=0;
+    for(const auto &checkpoint:checkpoints_){std::memcpy(out.ptrw()+at,checkpoint.first.data(),32);at+=32;}return out;
+}
+Dictionary NativeBlockRegionStore::checkpoint_regions(const PackedByteArray &hash) const {
+    std::lock_guard<std::mutex> lock(mutex_);
+    if(!lease_)return status(ERR_UNCONFIGURED,"Store is closed.");
+    if(hash.size()!=32)return status(ERR_INVALID_PARAMETER,"Checkpoint identity must contain 32 bytes.");
+    Digest id{};std::memcpy(id.data(),hash.ptr(),32);auto it=checkpoints_.find(id);
+    if(it==checkpoints_.end())return status(ERR_DOES_NOT_EXIST,"Checkpoint is not pinned.");
+    PackedInt32Array keys;keys.resize(it->second.entries.size()*3);int64_t at=0;
+    for(const auto &entry:it->second.entries){keys.set(at++,entry.first.x);keys.set(at++,entry.first.y);keys.set(at++,entry.first.z);}
+    Dictionary out=status(OK);out["keys"]=keys;out["generation"]=int64_t(it->second.generation);return out;
+}
+Dictionary NativeBlockRegionStore::read_checkpoint_region(const PackedByteArray &hash,Vector3i region) const {
+    std::lock_guard<std::mutex> lock(mutex_);
+    if(!lease_)return status(ERR_UNCONFIGURED,"Store is closed.");
+    if(hash.size()!=32)return status(ERR_INVALID_PARAMETER,"Checkpoint identity must contain 32 bytes.");
+    Digest id{};std::memcpy(id.data(),hash.ptr(),32);auto checkpoint=checkpoints_.find(id);
+    if(checkpoint==checkpoints_.end())return status(ERR_DOES_NOT_EXIST,"Checkpoint is not pinned.");
+    const BlockKey key{region.x,region.y,region.z};auto entry=checkpoint->second.entries.find(key);
+    if(entry==checkpoint->second.entries.end())return status(ERR_DOES_NOT_EXIST,"Region is absent from checkpoint.");
+    return read_entry(key,entry->second,checkpoint->second.generation);
+}
+Dictionary NativeBlockRegionStore::activate_checkpoint(const PackedByteArray &hash) {
+    std::lock_guard<std::mutex> lock(mutex_);
+    if(!lease_)return status(ERR_UNCONFIGURED,"Store is closed.");
+    if(hash.size()!=32)return status(ERR_INVALID_PARAMETER,"Checkpoint identity must contain 32 bytes.");
+    Digest id{};std::memcpy(id.data(),hash.ptr(),32);auto checkpoint=checkpoints_.find(id);
+    if(checkpoint==checkpoints_.end())return status(ERR_DOES_NOT_EXIST,"Checkpoint is not pinned.");
+    Catalog next=checkpoint->second.entries;return commit_catalog(std::move(next));
+}
+Dictionary NativeBlockRegionStore::release_checkpoint(const PackedByteArray &hash) {
+    std::lock_guard<std::mutex> lock(mutex_);
+    if(!lease_)return status(ERR_UNCONFIGURED,"Store is closed.");
+    if(hash.size()!=32)return status(ERR_INVALID_PARAMETER,"Checkpoint identity must contain 32 bytes.");
+    Digest id{};std::memcpy(id.data(),hash.ptr(),32);auto checkpoint=checkpoints_.find(id);
+    if(checkpoint==checkpoints_.end())return status(ERR_DOES_NOT_EXIST,"Checkpoint is not pinned.");
+    if(!observed_files_unchanged())return status(ERR_BUSY,"Catalog or retention metadata changed outside this owner.");
+    std::set<Digest> ids;for(const auto &pin:checkpoints_)if(pin.first!=id)ids.insert(pin.first);
+    if(!publish_pins(ids))return status(ERR_FILE_CANT_WRITE,"Cannot publish checkpoint release.");
+    for(const auto &entry:checkpoint->second.entries){auto count=pinned_blobs_.find(entry.second.digest);if(--count->second==0)pinned_blobs_.erase(count);}
+    checkpoints_.erase(checkpoint);
+    const auto path=directory_.path_join("checkpoints").path_join(hash.hex_encode()+String(".tfrc")).utf16();
+    bool removed=DeleteFileW(reinterpret_cast<LPCWSTR>(path.get_data()));
+    Dictionary out=status(OK);out["checkpoint_file_removed"]=removed;return out;
 }
 Dictionary NativeBlockRegionStore::collect_garbage(int max_inspected) {
     std::lock_guard<std::mutex> lock(mutex_);
@@ -259,7 +388,7 @@ Dictionary NativeBlockRegionStore::collect_garbage(int max_inspected) {
         if(eligible) {
             Digest id{};auto nibble=[](char32_t c){return c<='9'?int(c-'0'):int(c-'a'+10);};
             for(int i=0;i<32;i++)id[i]=uint8_t((nibble(name[i*2])<<4)|nibble(name[i*2+1]));
-            if(!retained_.count(id)) {
+            if(!retained_.count(id)&&!pinned_blobs_.count(id)) {
                 const String path=directory_.path_join("blobs").path_join(name);PackedByteArray bytes;bool exists=false;BlockKey key;Entry entry;
                 if(read_file(path,BLOB_LIMIT,bytes,exists)&&exists&&packet_entry(bytes,key,entry)&&entry.digest==id) {
                     const auto file=path.utf16();if(DeleteFileW(reinterpret_cast<LPCWSTR>(file.get_data()))){++removed;++deleted_;}

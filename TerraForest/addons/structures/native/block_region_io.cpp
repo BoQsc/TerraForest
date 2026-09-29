@@ -8,7 +8,9 @@ static constexpr int64_t READ_RESERVATION=2*1024*1024;
 static constexpr int64_t INDEX_RESERVATION=65536*3*sizeof(int32_t);
 const char *NativeBlockRegionIO::operation_name(Operation operation) {
     switch(operation){case OPEN:return "open";case READ:return "read";case PUBLISH:return "publish";
-        case REMOVE:return "remove";case COLLECT:return "collect";case INDEX:return "index";}
+        case REMOVE:return "remove";case COLLECT:return "collect";case INDEX:return "index";
+        case PIN:return "pin";case PINS:return "pins";case PIN_INDEX:return "checkpoint_index";
+        case PIN_READ:return "checkpoint_read";case PIN_ACTIVATE:return "checkpoint_activate";case PIN_RELEASE:return "checkpoint_release";}
     return "unknown";
 }
 void NativeBlockRegionIO::_bind_methods() {
@@ -18,6 +20,12 @@ void NativeBlockRegionIO::_bind_methods() {
     ClassDB::bind_method(D_METHOD("remove_region","region","expected_checksum"),&NativeBlockRegionIO::remove_region);
     ClassDB::bind_method(D_METHOD("collect_garbage","max_inspected"),&NativeBlockRegionIO::collect_garbage);
     ClassDB::bind_method(D_METHOD("list_regions"),&NativeBlockRegionIO::list_regions);
+    ClassDB::bind_method(D_METHOD("pin_checkpoint"),&NativeBlockRegionIO::pin_checkpoint);
+    ClassDB::bind_method(D_METHOD("list_checkpoints"),&NativeBlockRegionIO::list_checkpoints);
+    ClassDB::bind_method(D_METHOD("checkpoint_regions","checkpoint"),&NativeBlockRegionIO::checkpoint_regions);
+    ClassDB::bind_method(D_METHOD("read_checkpoint_region","checkpoint","region"),&NativeBlockRegionIO::read_checkpoint_region);
+    ClassDB::bind_method(D_METHOD("activate_checkpoint","checkpoint"),&NativeBlockRegionIO::activate_checkpoint);
+    ClassDB::bind_method(D_METHOD("release_checkpoint","checkpoint"),&NativeBlockRegionIO::release_checkpoint);
     ClassDB::bind_method(D_METHOD("poll","max_results"),&NativeBlockRegionIO::poll,DEFVAL(16));
     ClassDB::bind_method(D_METHOD("request_stop"),&NativeBlockRegionIO::request_stop);
     ClassDB::bind_method(D_METHOD("join"),&NativeBlockRegionIO::join);
@@ -78,6 +86,28 @@ int64_t NativeBlockRegionIO::collect_garbage(int max_inspected) {
 int64_t NativeBlockRegionIO::list_regions() {
     Request request;request.operation=INDEX;request.reserved=INDEX_RESERVATION;return enqueue(std::move(request));
 }
+int64_t NativeBlockRegionIO::pin_checkpoint() {
+    Request request;request.operation=PIN;request.reserved=32;return enqueue(std::move(request));
+}
+int64_t NativeBlockRegionIO::list_checkpoints() {
+    Request request;request.operation=PINS;request.reserved=512;return enqueue(std::move(request));
+}
+int64_t NativeBlockRegionIO::checkpoint_regions(const PackedByteArray &checkpoint) {
+    if(checkpoint.size()!=32)return 0;
+    Request request;request.operation=PIN_INDEX;request.checksum=checkpoint;request.reserved=INDEX_RESERVATION+32;return enqueue(std::move(request));
+}
+int64_t NativeBlockRegionIO::read_checkpoint_region(const PackedByteArray &checkpoint,Vector3i region) {
+    if(checkpoint.size()!=32)return 0;
+    Request request;request.operation=PIN_READ;request.checksum=checkpoint;request.region=region;request.reserved=READ_RESERVATION+32;return enqueue(std::move(request));
+}
+int64_t NativeBlockRegionIO::activate_checkpoint(const PackedByteArray &checkpoint) {
+    if(checkpoint.size()!=32)return 0;
+    Request request;request.operation=PIN_ACTIVATE;request.checksum=checkpoint;request.reserved=32;return enqueue(std::move(request));
+}
+int64_t NativeBlockRegionIO::release_checkpoint(const PackedByteArray &checkpoint) {
+    if(checkpoint.size()!=32)return 0;
+    Request request;request.operation=PIN_RELEASE;request.checksum=checkpoint;request.reserved=32;return enqueue(std::move(request));
+}
 void NativeBlockRegionIO::run(String path,bool recover,Request opening) {
     Ref<NativeBlockRegionStore> store;store.instantiate();
     Dictionary opened=store->open_store(path,recover);
@@ -104,10 +134,16 @@ void NativeBlockRegionIO::run(String path,bool recover,Request opening) {
             case REMOVE:result=store->remove_region(request.region,request.checksum);break;
             case COLLECT:result=store->collect_garbage(request.budget);break;
             case INDEX:result["ok"]=true;result["error"]=int(OK);result["message"]=String();result["keys"]=store->list_regions();break;
+            case PIN:result=store->pin_checkpoint();break;
+            case PINS:result["ok"]=true;result["error"]=int(OK);result["message"]=String();result["checkpoints"]=store->list_checkpoints();break;
+            case PIN_INDEX:result=store->checkpoint_regions(request.checksum);break;
+            case PIN_READ:result=store->read_checkpoint_region(request.checksum,request.region);break;
+            case PIN_ACTIVATE:result=store->activate_checkpoint(request.checksum);break;
+            case PIN_RELEASE:result=store->release_checkpoint(request.checksum);break;
             case OPEN:break;
         }
         result["ticket"]=request.ticket;result["operation"]=operation_name(request.operation);
-        if(request.operation==READ||request.operation==REMOVE)result["region"]=request.region;
+        if(request.operation==READ||request.operation==REMOVE||request.operation==PIN_READ)result["region"]=request.region;
         // Release input handles before exposing completion; reservation remains
         // charged until poll, even for failures and small successful replies.
         request.packets.clear();request.expected.clear();request.checksum=PackedByteArray();

@@ -77,15 +77,18 @@ succeeded. Publication resets the cursor.
 
 Garbage collection refuses selected recovery before publication, an invalid
 existing backup, or out-of-owner catalog changes. Publication also detects
-changes to the catalog files observed by the owner. There is no whole-world
-checkpoint pinning: retention covers only the active catalog and one backup.
+changes to the catalog files observed by the owner. Explicit [catalog checkpoints](BLOCK_REGION_CHECKPOINTS.md) now retain additional
+versions beyond the active catalog and one backup. Whole-world root integration
+is still required.
 
 ## Format and validation
 
-TFRC v1 contains the eight bytes `TFRC\1\0\0\0`, a little-endian u64 generation,
+The original TFRC v1 layout contains the eight bytes `TFRC\1\0\0\0`, a little-endian u64 generation,
 a u32 entry count, then sorted 48-byte entries: three signed 32-bit coordinates,
 32 digest bytes and a u32 blob size. A final SHA-256 covers all preceding bytes.
-The total is 52 + 48 × entry count bytes. Generation is 1 through INT64_MAX.
+The total is 52 + 48 × entry count bytes. New writes use TFRC v2 with the same
+layout and required checkpoint-retention metadata; current readers accept v1/v2.
+See the checkpoint compatibility rules before accessing a store with older builds. Generation is 1 through INT64_MAX.
 Duplicate, unordered, out-of-range and malformed entries are rejected even with
 a recomputed checksum.
 

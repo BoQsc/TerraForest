@@ -1,0 +1,5 @@
+{
+  "checks": 89,
+  "failures": 0,
+  "scope": "Native bounded queue, ordering, lifecycle and real filesystem correctness; no automatic world paging or long-run throughput claim."
+}

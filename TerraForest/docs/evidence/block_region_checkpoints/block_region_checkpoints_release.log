@@ -1,0 +1,53 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS closed catalog cannot create checkpoint references
+PASS store initializes committed retention metadata
+PASS checkpoint APIs reject malformed identities
+PASS current catalog is published as a pinned immutable checkpoint
+PASS pinning the same catalog is idempotent
+PASS checkpoint index exposes stable identities and region keys
+PASS pinned old region survives publication beyond current and backup revisions
+PASS reading checkpoint data does not change active catalog
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS fresh process checkpoint retention
+
+PASS fresh engine process preserves and reads a pinned historical region after collection
+PASS pin survives lease release and reopen
+PASS checkpoint activation publishes its catalog as a newer revision
+PASS activation retains checkpoint for its referencing save
+PASS explicit release removes the pin and disables further checkpoint reads
+PASS released old data becomes collectible after it leaves current and backup
+PASS released checkpoint cannot be silently reactivated
+PASS checkpoint count is explicitly bounded to sixteen
+PASS seventeenth checkpoint rejection preserves all existing references
+PASS capacity does not evict the oldest pinned save
+PASS explicitly releasing a save reference permits another checkpoint
+PASS releasing one checkpoint leaves other pinned regions retained
+PASS full checkpoint index validates after reopening
+PASS shared blob reference counts preserve other checkpoints when one is released
+PASS activation restores the checkpoint's complete signed region index
+PASS out-of-owner retention edits stop publication, collection and pin mutations
+PASS corrupt pin index cannot be bypassed by catalog backup recovery
+PASS corrupt checkpoint catalog prevents opening rather than losing retention
+PASS missing retention index with checkpoint files is not inferred as empty
+PASS checksummed malformed retention index rejected case 0
+PASS checksummed malformed retention index rejected case 1
+PASS checksummed malformed retention index rejected case 2
+PASS checksummed malformed retention index rejected case 3
+PASS restoring exact metadata recovers the store
+PASS checkpoint read validates blob integrity and collection preserves corrupt referenced data
+PASS legacy v1 catalog initializes retention metadata without changing authored bytes
+PASS first legacy checkpoint upgrades active catalog so old readers reject normal opening
+PASS v2 catalog requires retention metadata even when checkpoint folder is empty
+PASS failed retention-index replacement leaves no pin and only an uncommitted catalog file
+PASS retry adopts only an exactly matching uncommitted checkpoint file
+PASS failed checkpoint release preserves both the reference and immutable catalog
+PASS checkpoint release succeeds after filesystem obstruction clears
+PASS background worker opens checkpoint-capable store
+PASS queue checks checkpoint identity lengths before admission
+PASS FIFO checkpoint is captured after its queued publication
+PASS background checkpoint queries retain the saved version through later writes and cleanup
+PASS shutdown drains checkpoint activation/read/release operations in order
+PASS checkpoint completions release all queue reservations
+
