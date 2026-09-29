@@ -44,9 +44,10 @@ GDScript connects scene providers and schedules capture only.
 
 ## Remaining scope
 
-Automatic runtime paging is not enabled. Reload still reconstructs the entire
-checkpoint, with the current 2,048-chunk bound; larger worlds need metadata-first
-loading and bounded region admission before this becomes a large-world path.
+Automatic runtime paging is not enabled. The main demo still reconstructs the entire
+checkpoint, with the current 2,048-chunk bound. An opt-in metadata-first path now
+exists (see METADATA_WORLD_LOADING.md); bounded automatic region admission remains
+necessary before enabling it for interactive large-world use.
 Capture still serializes every resident block and static model. Dirty-region
 delta saves, model-region storage, measured peak memory, large-world latency,
 predictive vehicle streaming and multi-hour endurance remain unfinished.

@@ -15,7 +15,9 @@ Applications must not feed `resident` alone to the complete-snapshot save path.
 unavailable_checksums)` validates the resident snapshot and complete unavailable
 manifest before publishing region files. Missing-region keys must be sorted,
 unique, in range and disjoint from resident chunks. Every missing region must
-already exist in this store's committed catalog with exactly the expected digest.
+exist in this store's committed catalog with exactly the expected digest, or in an
+explicitly supplied pinned checkpoint (see METADATA_WORLD_LOADING.md). Without that
+optional checkpoint argument, only the active catalog is accepted.
 A stale or absent reference rejects the operation without changing the catalog.
 Combined resident and unavailable regions remain capped at 65,536.
 

@@ -1,0 +1,6 @@
+{
+  "checks": 60,
+  "failures": 0,
+  "scope": "Opt-in metadata-first block loading, atomic scene restore and checkpoint-based partial saves. Automatic paging is not enabled.",
+  "library": "structures.windows.template_release.x86_64.dll"
+}

@@ -126,6 +126,19 @@ bool NativeBlockWorld::initialize_region_index(const PackedInt32Array &keys,cons
     unloaded_regions=std::move(selected);clear_history();
     emit_signal("changed");return true;
 }
+bool NativeBlockWorld::restore_storage_state(const PackedByteArray &resident,const PackedInt32Array &keys,const PackedByteArray &checksums) {
+    if(keys.size()%3||keys.size()/3>MAX_UNLOADED||checksums.size()!=keys.size()/3*32)return false;
+    std::map<BlockKey,BlockChunk> restored;if(!parse(resident,&restored))return false;
+    std::set<BlockKey> occupied;for(const auto &entry:restored)occupied.insert(region_for(entry.first));
+    if(occupied.size()+keys.size()/3>MAX_UNLOADED)return false;
+    std::map<BlockKey,PackedByteArray> unavailable;BlockKey previous;
+    for(int64_t i=0;i<keys.size()/3;++i) {
+        BlockKey key{keys[i*3],keys[i*3+1],keys[i*3+2]};
+        if(!valid_region(key)||(i&&!(previous<key))||occupied.count(key))return false;
+        unavailable.emplace(key,checksums.slice(i*32,(i+1)*32));previous=key;
+    }
+    replace_storage(std::move(restored),std::move(unavailable));return true;
+}
 Dictionary NativeBlockWorld::capture_storage_state() const {
     // One scene-owner capture: the caller must transfer these immutable values
     // together. Resident-only TFBL bytes are not a complete world snapshot.

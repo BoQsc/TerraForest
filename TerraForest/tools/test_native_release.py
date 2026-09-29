@@ -13,7 +13,7 @@ parser=argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--godot',default=os.environ.get('GODOT_EXE') or shutil.which('godot'))
 parser.add_argument('--addon',choices=['world_runtime','volumetric_water','volumetric_terrain','structures'],default='world_runtime')
 parser.add_argument('--region-storage',action='store_true',help='Exercise structure_persistence through the native region archive')
-parser.add_argument('--test',choices=['native_runtime','water','world_archive','world_persistence','terrain_planner','terrain_collision','block_lattice','block_worker','building_collision_profile','building_collision_stream','building_readiness','block_regions','block_region_store','block_region_io','block_region_checkpoints','block_region_bootstrap','partial_region_storage','region_world_archive','structures','static_placements','structure_persistence'])
+parser.add_argument('--test',choices=['native_runtime','water','world_archive','world_persistence','terrain_planner','terrain_collision','block_lattice','block_worker','building_collision_profile','building_collision_stream','building_readiness','block_regions','block_region_store','block_region_io','block_region_checkpoints','block_region_bootstrap','partial_region_storage','region_world_archive','region_metadata','structures','static_placements','structure_persistence'])
 args=parser.parse_args()
 if args.region_storage and args.test!='structure_persistence':parser.error('--region-storage requires --test structure_persistence')
 if not args.godot:parser.error('Specify --godot PATH')
@@ -51,15 +51,15 @@ with tempfile.TemporaryDirectory(prefix='release_smoke_',dir=build) as temporary
         shutil.copytree(ROOT/'addons/world_runtime',destination,dirs_exist_ok=True)
         descriptor=destination/'world_runtime.gdextension'
         descriptor.write_text(descriptor.read_text().replace('template_debug','template_release'))
-    if test in ['world_archive','world_persistence','structure_persistence']:
-        for name in (['world_runtime','volumetric_water','structures'] if test=='structure_persistence' else ['world_runtime','volumetric_water']):
+    if test in ['world_archive','world_persistence','structure_persistence','region_metadata']:
+        for name in (['world_runtime','volumetric_water','structures'] if test in ['structure_persistence','region_metadata'] else ['world_runtime','volumetric_water']):
             destination=project/'addons'/name
             shutil.copytree(ROOT/'addons'/name,destination,dirs_exist_ok=True)
             descriptor=destination/(name+'.gdextension')
             descriptor.write_text(descriptor.read_text().replace('template_debug','template_release'))
-    if test in ['water','world_persistence','structure_persistence']:
+    if test in ['water','world_persistence','structure_persistence','region_metadata']:
         terrain=project/'addons/volumetric_terrain'
-        if test in ['world_persistence','structure_persistence']:
+        if test in ['world_persistence','structure_persistence','region_metadata']:
             shutil.copytree(ROOT/'addons/volumetric_terrain',terrain)
             descriptor=terrain/'terrain_core.gdextension'
             descriptor.write_text(descriptor.read_text().replace('terrain_core.windows.x86_64.dll','terrain_core.windows.template_release.x86_64.dll'))
