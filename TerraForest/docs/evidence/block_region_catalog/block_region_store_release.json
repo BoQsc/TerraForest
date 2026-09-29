@@ -1,0 +1,6 @@
+{
+  "checks": 65,
+  "failures": 0,
+  "scope": "Windows real-filesystem correctness, explicit recovery and worker-thread I/O; not physical power-loss or large-world throughput validation.",
+  "library": "structures.windows.template_release.x86_64.dll"
+}

@@ -220,4 +220,4 @@ The addon supplies editable block buildings, reusable block prefab assets, bound
 
 ## Authored region storage
 
-The native block world supports explicit 64-cell region packets with conditional capture/unload/reload, missing-region readiness and save guards. See [Block region transfers](../../docs/BLOCK_REGION_TRANSFERS.md) for the API and format. This is the transfer layer for future disk paging; automatic travel eviction and a durable region catalog are not enabled in the demo.
+The native block world supports explicit 64-cell region packets with conditional capture/unload/reload, missing-region readiness and save guards. See [Block region transfers](../../docs/BLOCK_REGION_TRANSFERS.md) for the API and format. The independent `NativeBlockRegionStore` adds conditional batch disk publication, explicit backup recovery and bounded garbage collection; see [Block region catalog](../../docs/BLOCK_REGION_CATALOG.md). Its synchronous C++ API can run on a caller-owned I/O worker. Automatic travel paging and catalog-aware compound saves are not enabled in the demo.

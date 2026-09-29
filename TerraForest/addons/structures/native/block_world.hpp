@@ -42,6 +42,7 @@ static_assert(sizeof(BlockChange)==16,"History cell accounting must match alloca
 class NativeBlockWorld : public Node3D {
     GDCLASS(NativeBlockWorld,Node3D)
     friend class NativeStructuresSnapshot;
+    friend class NativeBlockRegionStore;
     std::map<BlockKey,BlockChunk> chunks;
     // Only checksums remain after an explicit authored-region transfer.
     std::map<BlockKey,PackedByteArray> unloaded_regions;
