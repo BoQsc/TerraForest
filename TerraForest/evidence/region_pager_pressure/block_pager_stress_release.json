@@ -1,0 +1,42 @@
+{
+  "arrival_latency_ms": {
+    "max": 34.525,
+    "median": 20.0,
+    "p95": 20.157,
+    "samples": 256
+  },
+  "authored_cells": 1294336,
+  "authored_chunks": 4096,
+  "checks": 13,
+  "failures": 0,
+  "max_pending_reads": 4,
+  "max_resident_chunks": 512,
+  "pager": {
+    "active": true,
+    "admitted": 258,
+    "blocked_candidates": 0,
+    "budget_deferred": 1775,
+    "chunk_limit": 512,
+    "epoch": 1,
+    "evicted": 250,
+    "failed_reads": 0,
+    "last_ms": 0.051,
+    "max_ms": 2.308,
+    "operation_high": 1,
+    "operation_last": 0,
+    "pending": 0,
+    "requested": 299,
+    "scan_high": 128,
+    "scan_last": 128,
+    "stale_results": 41
+  },
+  "regions": 64,
+  "scene_step_ms": {
+    "max": 2.308,
+    "median": 0.067,
+    "p95": 1.327,
+    "samples": 1353
+  },
+  "scope": "Headless native cell storage and paging; no rendering, physics, terrain streaming or multiplayer. Teleport arrivals include already-resident destinations; not a high-speed vehicle benchmark.",
+  "library": "structures.windows.template_release.x86_64.dll"
+}

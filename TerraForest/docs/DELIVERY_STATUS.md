@@ -1,5 +1,10 @@
 # Original objective and completion evidence
 
+Dense native paging now covers 4,096 authored chunks across 256 travel arrivals
+under a 512-chunk resident budget. It exposed and fixed destination starvation
+after pressure eviction; see [pressure regression](REGION_PAGER_PRESSURE.md).
+This is cell-storage evidence, not a rendered-city or endurance result.
+
 The persistent main world now uses a native building-region pager for automatic
 nearby admission and safe distant eviction. It retains unsaved edits and undo/redo
 history, rejects stale read results, and saves partially resident worlds. See
