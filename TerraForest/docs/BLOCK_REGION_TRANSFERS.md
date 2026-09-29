@@ -2,7 +2,7 @@
 
 `NativeBlockWorld` can now transfer authored data independently of mesh residency. A region is 64×64×64 local cells, containing at most 4×4×4 existing 16-cell chunks. Region coordinates use mathematical floor division, including negative coordinates. Their valid range is -16,384 through 16,383 per axis, within the existing cell-coordinate limits.
 
-This is an explicit native transfer API. The demo does not automatically unload authored regions during travel yet. A durable region catalog, crash-safe file transactions, background disk I/O, automatic admission/eviction, cross-region editing history and model-region storage remain required for complete large-world paging. Whole-world saves are deliberately unavailable while any region has been explicitly unloaded; existing single-file saves cannot represent that state safely.
+This is an explicit native transfer API. The demo does not automatically unload authored regions during travel yet. A native disk catalog with explicit recovery is now available; see [Block region catalog](BLOCK_REGION_CATALOG.md). Automatic background scheduling, admission/eviction, catalog-aware whole-world transactions, cross-region editing history and model-region storage remain required for complete large-world paging. Whole-world saves are deliberately unavailable while any region has been explicitly unloaded; existing single-file saves cannot represent that state safely.
 
 ## API and ownership
 
