@@ -20,6 +20,12 @@ static PackedByteArray sha(const PackedByteArray &data) {
     Ref<HashingContext> h; h.instantiate(); h->start(HashingContext::HASH_SHA256); h->update(data); return h->finish();
 }
 void NativeBlockWorld::_bind_methods() {
+    ClassDB::bind_method(D_METHOD("capture_region","region"),&NativeBlockWorld::capture_region);
+    ClassDB::bind_method(D_METHOD("validate_region_snapshot","bytes"),&NativeBlockWorld::validate_region_snapshot);
+    ClassDB::bind_method(D_METHOD("unload_region","expected_snapshot"),&NativeBlockWorld::unload_region);
+    ClassDB::bind_method(D_METHOD("restore_region","bytes","expected_current"),&NativeBlockWorld::restore_region);
+    ClassDB::bind_method(D_METHOD("is_region_loaded","region"),&NativeBlockWorld::is_region_loaded);
+    ClassDB::bind_method(D_METHOD("region_stats"),&NativeBlockWorld::region_stats);
     ClassDB::bind_method(D_METHOD("raycast_cells","from","to"),&NativeBlockWorld::raycast_cells);
     ClassDB::bind_method(D_METHOD("raycast_scene","from","to","collision_mask","exclude"),&NativeBlockWorld::raycast_scene,DEFVAL(3),DEFVAL(TypedArray<RID>()));
     ClassDB::bind_method(D_METHOD("set_cells","records"),&NativeBlockWorld::set_cells);
@@ -79,6 +85,7 @@ bool NativeBlockWorld::apply_cells(const PackedInt32Array &records,bool record_h
         int x=records[i],y=records[i+1],z=records[i+2],w=records[i+3];
         if(x<-LIMIT||x>LIMIT||y<-LIMIT||y>LIMIT||z<-LIMIT||z>LIMIT||!valid_word(w)) return false;
         BlockKey k=key_for(x,y,z);
+        if(unloaded_regions.count(region_for(k)))return false;
         auto it=staged.find(k);
         if(it==staged.end()) {
             if(staged.size()>=MAX_CHUNKS) return false;
@@ -117,6 +124,7 @@ bool NativeBlockWorld::apply_cells(const PackedInt32Array &records,bool record_h
 // Full occupied cells are conservative exclusion volumes for every block shape.
 // Query cost is bounded by resident chunks even for enormous caller bounds.
 bool NativeBlockWorld::occupied(const AABB &bounds) const {
+    if(unavailable_region(bounds))return true;
     Vector3 lo=bounds.position, hi=bounds.get_end();
     for(int axis=0;axis<3;axis++) {
         if(hi[axis]<=-LIMIT || lo[axis]>=LIMIT+1) return false;
@@ -390,11 +398,16 @@ void fragment() {
 }
 
 PackedByteArray NativeBlockWorld::capture_snapshot() const {
+    // A legacy whole-world save must never silently omit evicted authored data.
+    if(!unloaded_regions.empty())return {};
+    return encode_chunks(chunks);
+}
+PackedByteArray NativeBlockWorld::encode_chunks(const std::map<BlockKey,BlockChunk> &source) {
     std::vector<uint8_t> bytes={'T','F','B','L',1,0,0,0};
     auto u32=[&](uint32_t v){for(int i=0;i<4;i++)bytes.push_back(uint8_t(v>>(8*i)));};
     auto u16=[&](uint16_t v){bytes.push_back(v&255);bytes.push_back(v>>8);};
-    u32(uint32_t(chunks.size()));
-    for(auto &e:chunks) {
+    u32(uint32_t(source.size()));
+    for(auto &e:source) {
         u32(uint32_t(e.first.x));u32(uint32_t(e.first.y));u32(uint32_t(e.first.z));
         for(int i=0;i<4096;) {int end=i+1;while(end<4096&&e.second.cells[end]==e.second.cells[i])end++;u16(uint16_t(end-i));u16(e.second.cells[i]);i=end;}
     }
@@ -434,6 +447,7 @@ bool NativeBlockWorld::parse(const PackedByteArray &bytes,std::map<BlockKey,Bloc
 }
 bool NativeBlockWorld::restore_snapshot(const PackedByteArray &bytes) {
     std::map<BlockKey,BlockChunk> restored;if(!parse(bytes,&restored))return false;
+    unloaded_regions.clear();
     std::set<BlockKey> affected;for(auto &e:chunks)affected.insert(e.first);for(auto &e:restored)affected.insert(e.first);
     for(auto &e:visuals)affected.insert(e.first);
     // Preserve pending keys so any in-flight publication receives a new ticket.

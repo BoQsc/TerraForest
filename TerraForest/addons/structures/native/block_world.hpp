@@ -43,6 +43,14 @@ class NativeBlockWorld : public Node3D {
     GDCLASS(NativeBlockWorld,Node3D)
     friend class NativeStructuresSnapshot;
     std::map<BlockKey,BlockChunk> chunks;
+    // Only checksums remain after an explicit authored-region transfer.
+    std::map<BlockKey,PackedByteArray> unloaded_regions;
+    static BlockKey region_for(BlockKey k) { auto q=[](int v){return v>=0?v/4:(v-3)/4;};return {q(k.x),q(k.y),q(k.z)}; }
+    static bool valid_region(BlockKey k);
+    bool unavailable_region(const AABB &local_bounds) const;
+    static PackedByteArray encode_chunks(const std::map<BlockKey,BlockChunk> &source);
+    static bool parse_region(const PackedByteArray &bytes,BlockKey &region,std::map<BlockKey,BlockChunk> &out);
+    void replace_region_chunks(BlockKey region,std::map<BlockKey,BlockChunk> &&restored);
     std::set<BlockKey> dirty;
     std::map<BlockKey,uint64_t> tickets;
     std::map<BlockKey,BlockVisual> visuals;
@@ -112,6 +120,12 @@ class NativeBlockWorld : public Node3D {
 protected:
     static void _bind_methods();
 public:
+    PackedByteArray capture_region(Vector3i region) const;
+    bool validate_region_snapshot(const PackedByteArray &bytes) const;
+    bool unload_region(const PackedByteArray &expected_snapshot);
+    bool restore_region(const PackedByteArray &bytes,const PackedByteArray &expected_current);
+    bool is_region_loaded(Vector3i region) const;
+    Dictionary region_stats() const;
     Dictionary raycast_cells(Vector3 from,Vector3 to) const;
     Dictionary raycast_scene(Vector3 from,Vector3 to,int64_t mask,const TypedArray<RID> &exclude) const;
     ~NativeBlockWorld();
