@@ -1,5 +1,11 @@
 # Original objective and completion evidence
 
+Authored block regions now support bounded native capture, conditional unload
+and reload, availability-aware walking/editing/exclusion, and refusal of legacy
+whole-world saves that would omit unloaded data. See BLOCK_REGION_TRANSFERS.md.
+Automatic travel paging, a durable disk catalog and model-region storage remain
+unfinished; the demo does not automatically evict authored regions yet.
+
 Walking now checks native block and static-model collision readiness within conservative capsule
 travel bounds before moving, and waits without accumulating motion when an
 authored surface is unavailable. See BUILDING_MOVEMENT_READINESS.md and

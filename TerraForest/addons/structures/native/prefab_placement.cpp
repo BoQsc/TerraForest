@@ -13,6 +13,7 @@ bool NativeBlockWorld::prefab_records(const Ref<NativeBlockPrefab> &prefab,Vecto
         for(auto v:{x,y,z})if(v<-1048575||v>1048575)return false;
         if(!replace&&cell(int(x),int(y),int(z)))return false;
         BlockKey k=key_for(int(x),int(y),int(z));
+        if(unloaded_regions.count(region_for(k)))return false;
         if(!chunks.count(k))new_chunks.insert(k);
         if(chunks.size()+new_chunks.size()>2048)return false;
         int word=(c.word&~24)|((((c.word>>3)+turns)&3)<<3);
@@ -34,6 +35,7 @@ Ref<NativeBlockPrefab> NativeBlockWorld::capture_prefab(Vector3i origin,Vector3i
         volume*=size[a];
     }
     if(volume>262144)return {};
+    if(unavailable_region(AABB(Vector3(origin),Vector3(size))))return {};
     PackedInt32Array records;
     for(int z=0;z<size.z;z++)for(int y=0;y<size.y;y++)for(int x=0;x<size.x;x++) {
         int w=cell(origin.x+x,origin.y+y,origin.z+z);

@@ -1,0 +1,46 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS author signed region-boundary fixtures
+PASS 64-cell region captures only its two occupied signed chunks
+PASS region coordinates are bounded before multiplication
+PASS region encoding is deterministic
+PASS corrupt region cannot validate or evict authored data
+PASS truncated region rejected
+PASS valid checksum cannot bind foreign chunks to a different region
+PASS declared region payload length must match
+PASS edit after capture rejects stale unload without mutation
+PASS region packet survives a real file round trip
+PASS unrelated region edit does not invalidate local unload acknowledgement
+PASS unload reclaims only the addressed authored chunks
+PASS unloaded region retains a digest rather than its cell payload
+PASS region transfer creates a history barrier
+PASS whole-world and region captures cannot silently omit unavailable data
+PASS compound structure save also rejects omitted unloaded regions
+PASS region availability distinguishes missing from authored-empty data
+PASS walking blocks even in apparently empty space of an unloaded region
+PASS unavailable-region readiness respects the block-world transform
+PASS unrelated empty region remains ready
+PASS mixed edit touching missing data fails atomically
+PASS prefab replacement cannot overwrite an unloaded region
+PASS prefab capture cannot mistake unavailable data for air
+PASS vegetation exclusion conservatively reserves unavailable regions
+PASS wrong version of unloaded region cannot replace its acknowledged packet
+PASS unloaded restore requires an explicit empty current-state token
+PASS disk-backed reload restores exact world bytes and leaves other regions unchanged
+PASS reload clears missing-region metadata
+PASS resident replacement requires a matching captured current packet
+PASS conditional replacement atomically removes obsolete chunks in only one region
+PASS forty eviction/reload cycles preserve authored bytes
+PASS failed full-world restore preserves region availability
+PASS explicit valid full-world replacement resets region transfer state
+PASS authored-empty region has a valid bounded canonical packet
+PASS empty-region availability round trips independently of cell occupancy
+PASS fill resident chunk capacity outside the incoming region
+PASS capacity overflow rejects the whole region without evicting unrelated data
+PASS adjacent cubes share a face across the region boundary
+PASS unload retires old visuals and rebuilds the retained neighbor halo
+PASS reload rebuilds both sides of a region seam
+PASS region fixture observes an outstanding native bake before unloading
+PASS region unload accepts a matching capture while baking is outstanding
+PASS stale worker result cannot republish an unloaded region
+

@@ -14,6 +14,7 @@ bool NativeBlockWorld::is_collision_region_ready(const AABB &world_bounds) const
     if(!frame.is_finite()||std::abs(frame.basis.determinant())<1e-12)return false;
     const AABB local=frame.affine_inverse().xform(world_bounds);
     if(!local.position.is_finite()||!local.get_end().is_finite())return false;
+    if(unavailable_region(local))return false;
     for(const auto &entry:chunks) {
         const auto &key=entry.first;
         const AABB chunk_bounds(Vector3(key.x*16,key.y*16,key.z*16),Vector3(16,16,16));

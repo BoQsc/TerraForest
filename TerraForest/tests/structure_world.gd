@@ -203,7 +203,34 @@ func run() -> void:
 	await check_sphere_editor(Vector3(site))
 	await check_building_movement_gate(Vector3(site))
 	await check_model_movement_gate(Vector3(site))
+	await check_region_movement_gate(Vector3(site))
 	finish()
+
+func check_region_movement_gate(site: Vector3) -> void:
+	game.fly=true
+	var blocks: Node3D = game.structures.blocks
+	var saved: PackedByteArray = blocks.capture_snapshot()
+	var cell := Vector3i(site)+Vector3i(3,28,3)
+	blocks.set_cells(PackedInt32Array([cell.x,cell.y,cell.z,1]))
+	blocks.flush_bakes()
+	game.player.position=Vector3(cell)+Vector3(0.5,1.08,0.5)
+	game.player.velocity=Vector3.ZERO
+	check(await until(func(): return game.terrain.player_region_ready(game.player.position)),"region transfer fixture has independent terrain readiness")
+	game.fly=false
+	game.app_focused=true
+	check(await until(func(): return game.player.is_on_floor()),"player stands on a resident authored-region fixture")
+	var region := Vector3i(floori(cell.x/64.0),floori(cell.y/64.0),floori(cell.z/64.0))
+	var packet: PackedByteArray = blocks.capture_region(region)
+	check(blocks.unload_region(packet),"integrated world transfers the authored region out of resident storage")
+	var held: Vector3 = game.player.position
+	for i in range(10): await physics_frame
+	check(game.structure_motion_blocked and game.player.position.is_equal_approx(held),"player waits when an authored region itself is unavailable")
+	check(game.structures.capture_snapshot().is_empty(),"world save component refuses an incomplete resident-only snapshot")
+	check(blocks.restore_region(packet,PackedByteArray()),"matching region packet returns to the integrated world")
+	check(await until(func(): return game.player.is_on_floor() and not game.structure_motion_blocked),"walking resumes only after restored region collision is ready")
+	check(not game.structures.capture_snapshot().is_empty(),"complete world saves become available after region reload")
+	game.fly=true
+	blocks.restore_snapshot(saved)
 
 func check_model_movement_gate(site: Vector3) -> void:
 	game.fly=true
