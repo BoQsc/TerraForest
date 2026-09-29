@@ -128,6 +128,7 @@ public:
     bool initialize_region_index(const PackedInt32Array &keys,const PackedByteArray &checksums);
     bool is_region_loaded(Vector3i region) const;
     Dictionary region_stats() const;
+    Dictionary capture_storage_state() const;
     Dictionary raycast_cells(Vector3 from,Vector3 to) const;
     Dictionary raycast_scene(Vector3 from,Vector3 to,int64_t mask,const TypedArray<RID> &exclude) const;
     ~NativeBlockWorld();
