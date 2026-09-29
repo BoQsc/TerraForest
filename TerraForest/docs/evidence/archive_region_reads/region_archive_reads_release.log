@@ -1,0 +1,43 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS closed archive cannot start a region worker
+PASS archive acquires root and sidecar before read service starts
+PASS read fixture publishes a complete world
+PASS read request limits reject values outside the supported bound
+PASS read byte limit must reserve a worst-case packet and stay bounded
+PASS one persistent worker starts per archive lifecycle
+PASS read service shares the exclusive existing store instead of opening another writer
+PASS requests receive increasing nonzero tickets
+PASS count backpressure includes accepted active and pending reads
+PASS accepted reads finish without scene polling
+PASS unread completions retain their full reservation and apply backpressure
+PASS invalid poll budgets do not release reservations
+PASS bounded polling preserves FIFO ticket epoch and region
+PASS caller mutation cannot change accepted request digests or exact returned bytes
+PASS polling releases exactly one result reservation
+PASS remaining completion releases all queued payload accounting
+PASS stopped drained service can restart with a smaller byte budget
+PASS byte backpressure applies independently of request count and tickets survive restart
+PASS restarted worker respects its new byte ceiling
+PASS invalid digest lengths reject before queue admission
+PASS out-of-range regions and negative epochs reject before queue admission
+PASS missing exact version yields an explicit failed completion
+PASS failed result releases its reservation when consumed
+PASS completed read keeps its submission epoch across scene replacement
+PASS old region data cannot replace a different expected version after scene reload
+PASS read service restarts for concurrent save exercise
+PASS save owner runs concurrently with background exact-version reads
+PASS 100 exact reads coexist with 32 checkpoint publications and pin retirement
+PASS concurrent workload stays within both queue budgets
+PASS background reads do not leak checkpoint pins
+PASS stop closes admission while retaining accepted requests
+PASS release drains accepted work and joins the reader before closing storage
+PASS unconsumed old-world completions prevent archive reacquisition
+PASS accepted completions remain consumable after release
+PASS consuming completions permits a fresh archive lifecycle
+PASS tickets remain unique across world release and reacquisition
+PASS reacquired service still reads the exact retained active version
+PASS corrupt region produces failure without exposing an admissible payload
+PASS final shutdown leaves no reserved payloads
+PASS 12 destructor cycles join queued readers and relinquish both file leases
+

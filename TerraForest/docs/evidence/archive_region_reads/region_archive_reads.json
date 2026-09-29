@@ -1,0 +1,5 @@
+{
+  "checks": 40,
+  "failures": 0,
+  "scope": "Bounded native region reads sharing the world archive store; automatic scene admission remains pending."
+}

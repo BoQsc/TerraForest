@@ -13,7 +13,7 @@ parser=argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--godot',default=os.environ.get('GODOT_EXE') or shutil.which('godot'))
 parser.add_argument('--addon',choices=['world_runtime','volumetric_water','volumetric_terrain','structures'],default='world_runtime')
 parser.add_argument('--region-storage',action='store_true',help='Exercise structure_persistence through the native region archive')
-parser.add_argument('--test',choices=['native_runtime','water','world_archive','world_persistence','terrain_planner','terrain_collision','block_lattice','block_worker','building_collision_profile','building_collision_stream','building_readiness','block_regions','block_region_store','block_region_io','block_region_checkpoints','block_region_bootstrap','partial_region_storage','region_world_archive','region_metadata','structures','static_placements','structure_persistence'])
+parser.add_argument('--test',choices=['native_runtime','water','world_archive','world_persistence','terrain_planner','terrain_collision','block_lattice','block_worker','building_collision_profile','building_collision_stream','building_readiness','block_regions','block_region_store','block_region_io','block_region_checkpoints','block_region_bootstrap','partial_region_storage','region_world_archive','region_archive_reads','region_metadata','structures','static_placements','structure_persistence'])
 args=parser.parse_args()
 if args.region_storage and args.test!='structure_persistence':parser.error('--region-storage requires --test structure_persistence')
 if not args.godot:parser.error('Specify --godot PATH')
@@ -46,7 +46,7 @@ with tempfile.TemporaryDirectory(prefix='release_smoke_',dir=build) as temporary
         shutil.copytree(source/'prefabs',addon/'prefabs')
     if test=='block_lattice':
         shutil.copytree(ROOT/'tests/fixtures',project/'tests/fixtures')
-    if test=='region_world_archive':
+    if test in ['region_world_archive','region_archive_reads']:
         destination=project/'addons/world_runtime'
         shutil.copytree(ROOT/'addons/world_runtime',destination,dirs_exist_ok=True)
         descriptor=destination/'world_runtime.gdextension'

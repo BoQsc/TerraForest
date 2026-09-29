@@ -1,5 +1,9 @@
 # Original objective and completion evidence
 
+The native world archive now has a bounded persistent exact-region read queue
+sharing its existing store owner; see [archive region reads](ARCHIVE_REGION_READS.md).
+Automatic scene admission and travel paging remain unfinished.
+
 Opt-in metadata-first archive loading now restores region availability without
 reconstructing all block cells, and preserves checkpoint identity through later
 saves. See [metadata world loading](METADATA_WORLD_LOADING.md). The main demo still

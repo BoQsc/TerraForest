@@ -61,9 +61,10 @@ authoritative single-owner snapshot protocol, not concurrent edit merging.
 `read_storage_region(region, expected_digest, checkpoint)` on the store/archive
 uses the same active-then-explicit-checkpoint selection. It validates the selected
 blob and returns an error for missing/corrupt content or unavailable versions.
-This is synchronous I/O for the archive owner, not a gameplay-frame call. A future
-bounded request/admission path must schedule it off the scene thread and discard
-stale scene-epoch completions. Acquire/release must not race archive operations.
+This synchronous API is for the archive owner, not a gameplay-frame call. The
+archive now provides a bounded background queue (see ARCHIVE_REGION_READS.md).
+Automatic scene admission must still compare epochs and reject stale completions.
+Acquire/release must not race archive operations.
 
 ## Bounds and evidence
 

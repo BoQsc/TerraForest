@@ -15,6 +15,12 @@ void NativeRegionWorldArchive::_bind_methods() {
     ClassDB::bind_method(D_METHOD("publish","absolute_path","bytes"),&NativeRegionWorldArchive::publish);
     ClassDB::bind_method(D_METHOD("validate_snapshot","bytes"),&NativeRegionWorldArchive::validate_snapshot);
     ClassDB::bind_method(D_METHOD("read_storage_region","region","expected","checkpoint"),&NativeRegionWorldArchive::read_storage_region,DEFVAL(PackedByteArray()));
+    ClassDB::bind_method(D_METHOD("start_region_reads","request_limit","byte_limit"),&NativeRegionWorldArchive::start_region_reads,DEFVAL(8),DEFVAL(int64_t(8)*(2*1024*1024+96)));
+    ClassDB::bind_method(D_METHOD("request_region_read","region","expected","checkpoint","epoch"),&NativeRegionWorldArchive::request_region_read);
+    ClassDB::bind_method(D_METHOD("poll_region_reads","max_results"),&NativeRegionWorldArchive::poll_region_reads,DEFVAL(4));
+    ClassDB::bind_method(D_METHOD("stop_region_reads"),&NativeRegionWorldArchive::stop_region_reads);
+    ClassDB::bind_method(D_METHOD("join_region_reads"),&NativeRegionWorldArchive::join_region_reads);
+    ClassDB::bind_method(D_METHOD("region_read_stats"),&NativeRegionWorldArchive::region_read_stats);
     ClassDB::bind_method(D_METHOD("storage_stats"),&NativeRegionWorldArchive::storage_stats);
 }
 NativeRegionWorldArchive::~NativeRegionWorldArchive(){release();}
@@ -24,6 +30,7 @@ bool NativeRegionWorldArchive::configure(const Ref<RefCounted> &archive,const Re
 }
 bool NativeRegionWorldArchive::acquire(const String &path) {
     if(archive_.is_null()||!path_.is_empty()||!path.is_absolute_path()||path.begins_with("res://")||path.begins_with("user://"))return false;
+    {std::lock_guard<std::mutex> lock(read_mutex_);if(read_running_||read_outstanding_)return false;}
     if(!bool(archive_->call("acquire",path)))return false;
     const String directory=path+String(".regions");
     // Never recreate a missing sidecar for an already checkpoint-based root.
@@ -40,6 +47,7 @@ bool NativeRegionWorldArchive::acquire(const String &path) {
     path_=path;return true;
 }
 void NativeRegionWorldArchive::release() {
+    join_region_reads();
     if(store_.is_valid()){store_->close();store_.unref();}
     if(!path_.is_empty()&&archive_.is_valid())archive_->call("release");path_=String();
 }
