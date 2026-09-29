@@ -4,6 +4,7 @@
 #include "structure_queries.hpp"
 #include "static_history.hpp"
 #include "block_region_store.hpp"
+#include "block_region_io.hpp"
 #include <godot_cpp/godot.hpp>
 using namespace godot;
 static void initialize(ModuleInitializationLevel level) {
@@ -15,6 +16,7 @@ static void initialize(ModuleInitializationLevel level) {
         GDREGISTER_CLASS(terraforest::NativeStructureQueries);
         GDREGISTER_CLASS(terraforest::NativeStaticHistory);
         GDREGISTER_CLASS(terraforest::NativeBlockRegionStore);
+        GDREGISTER_CLASS(terraforest::NativeBlockRegionIO);
     }
 }
 static void terminate(ModuleInitializationLevel) {}
