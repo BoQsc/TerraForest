@@ -97,6 +97,7 @@ leaves the catalog unchanged and the earlier orphan collectible. Evidence is in
 `docs/evidence/block_region_catalog`. These tests do not measure full-capacity
 throughput, multi-hour endurance or actual process/power interruption.
 
-Automatic paging still requires an asynchronous bounded request queue, residency
-policy, catalog-aware world roots and model-region storage. The existing
+The [native background I/O queue](BLOCK_REGION_IO.md) now bounds requests and
+unread completions on one persistent worker. Automatic paging still requires a
+residency policy, catalog-aware world roots and model-region storage. The existing
 whole-world save guard remains necessary whenever block regions are unloaded.

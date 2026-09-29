@@ -1,0 +1,92 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS closed queue rejects submissions
+PASS start rejects virtual paths without creating a worker
+PASS request capacity bounded to 1..256
+PASS payload reservation budget bounded to 2..256 MiB
+PASS invalid configuration starts no threads
+PASS asynchronous open owns store: limits
+PASS active queue cannot be rebound to another directory
+PASS malformed batch containers rejected before queuing
+PASS checksum lengths checked before admission
+PASS maintenance work requires a bounded inspection count
+PASS oversized region payload rejected before queueing
+PASS batch packet count bounded to 64
+PASS asynchronous open owns store: ordered
+PASS background worker retains exclusive directory lease
+PASS every accepted operation retains one completion
+PASS completion tickets preserve FIFO order through an intervening failure
+PASS caller mutation cannot change an accepted packet or container
+PASS worker validates stale versions and continues with the next valid write
+PASS ordered index query returns committed signed region triples
+PASS consuming completions releases all queue reservations
+PASS semantic packet validation happens asynchronously on the worker
+PASS ordered remove, missing read and bounded maintenance complete
+PASS stop immediately closes admission
+PASS joined worker releases its native store lease
+PASS asynchronous open owns store: count
+PASS outstanding request count supplies immediate backpressure
+PASS unread completions still consume request capacity
+PASS invalid poll limits cannot discard results
+PASS consuming one result admits one more request
+PASS shutdown preserves completed results for the consumer
+PASS asynchronous open owns store: bytes
+PASS read reserves worst-case packet output before disk access
+PASS even failed unread results retain their reservation
+PASS polling releases byte capacity for the next read
+PASS reported high-water marks stay within configured bounds
+PASS asynchronous open owns store: drain
+PASS shutdown drains accepted writes and reads before exiting
+PASS restart preserves ticket identity and returns the persisted index
+PASS restart cannot discard unconsumed results
+PASS asynchronous open owns store: destroy0
+PASS destruction drains writes and releases lease cycle 0
+PASS asynchronous open owns store: destroy1
+PASS destruction drains writes and releases lease cycle 1
+PASS asynchronous open owns store: destroy2
+PASS destruction drains writes and releases lease cycle 2
+PASS asynchronous open owns store: destroy3
+PASS destruction drains writes and releases lease cycle 3
+PASS asynchronous open owns store: destroy4
+PASS destruction drains writes and releases lease cycle 4
+PASS asynchronous open owns store: destroy5
+PASS destruction drains writes and releases lease cycle 5
+PASS asynchronous open owns store: destroy6
+PASS destruction drains writes and releases lease cycle 6
+PASS asynchronous open owns store: destroy7
+PASS destruction drains writes and releases lease cycle 7
+PASS asynchronous open owns store: destroy8
+PASS destruction drains writes and releases lease cycle 8
+PASS asynchronous open owns store: destroy9
+PASS destruction drains writes and releases lease cycle 9
+PASS asynchronous open owns store: destroy10
+PASS destruction drains writes and releases lease cycle 10
+PASS asynchronous open owns store: destroy11
+PASS destruction drains writes and releases lease cycle 11
+PASS asynchronous open owns store: destroy12
+PASS destruction drains writes and releases lease cycle 12
+PASS asynchronous open owns store: destroy13
+PASS destruction drains writes and releases lease cycle 13
+PASS asynchronous open owns store: destroy14
+PASS destruction drains writes and releases lease cycle 14
+PASS asynchronous open owns store: destroy15
+PASS destruction drains writes and releases lease cycle 15
+PASS asynchronous open owns store: destroy16
+PASS destruction drains writes and releases lease cycle 16
+PASS asynchronous open owns store: destroy17
+PASS destruction drains writes and releases lease cycle 17
+PASS asynchronous open owns store: destroy18
+PASS destruction drains writes and releases lease cycle 18
+PASS asynchronous open owns store: destroy19
+PASS destruction drains writes and releases lease cycle 19
+PASS filesystem open failure is reported and worker terminates
+PASS failed opener can restart after consuming its result
+PASS restart after open failure acquires a valid store
+PASS asynchronous open owns store: handshake
+PASS successful disk acknowledgement cannot evict a region edited after capture
+PASS matching asynchronous acknowledgement permits native authored-region unload
+PASS background read restores exact authored cells through the transfer API
+PASS asynchronous open owns store: sustained
+PASS 100 persisted revisions and dependent reads preserve bytes and release reservations
+PASS sustained I/O reuses one worker and stays within reservation budget
+

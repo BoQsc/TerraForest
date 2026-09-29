@@ -1,5 +1,9 @@
 # Original objective and completion evidence
 
+NativeBlockRegionIO now runs disk catalog work on one persistent C++ worker,
+bounding queued, active and unread-completion reservations. See BLOCK_REGION_IO.md.
+The scene residency manager and catalog-aware world-save root remain unfinished.
+
 Authored block regions now support bounded native capture, conditional unload
 and reload, availability-aware walking/editing/exclusion, and refusal of legacy
 whole-world saves that would omit unloaded data. See BLOCK_REGION_TRANSFERS.md.
