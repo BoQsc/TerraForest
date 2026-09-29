@@ -2,6 +2,9 @@
 #pragma once
 #include "block_region_store.hpp"
 #include "structures_snapshot.hpp"
+#include <condition_variable>
+#include <deque>
+#include <thread>
 
 namespace terraforest {
 // An optional native adapter around NativeWorldArchive. One save-worker owner.
@@ -13,6 +16,21 @@ class NativeRegionWorldArchive : public RefCounted {
     Ref<NativeBlockRegionStore> store_;
     String path_;
     bool metadata_first_=false;
+    struct RegionRead {
+        int64_t ticket=0,epoch=0;
+        Vector3i region;
+        PackedByteArray expected,checkpoint;
+    };
+    mutable std::mutex read_mutex_;
+    std::condition_variable read_wake_;
+    std::thread read_worker_;
+    std::deque<RegionRead> read_pending_;
+    std::deque<Dictionary> read_completed_;
+    bool read_running_=false,read_stopping_=false,read_active_=false;
+    int read_request_limit_=0,read_outstanding_=0,read_high_requests_=0;
+    int64_t read_byte_limit_=0,read_reserved_=0,read_high_bytes_=0,read_next_ticket_=1;
+    int64_t read_accepted_=0,read_finished_=0,read_rejected_=0,read_starts_=0;
+    void run_region_reads(Ref<NativeBlockRegionStore> store);
     bool reference_in_file(const String &path,std::set<String> &keep) const;
     bool retire_unreferenced();
 protected:
@@ -28,6 +46,14 @@ public:
     int64_t publish(const String &absolute_path,const PackedByteArray &bytes);
     Dictionary storage_stats() const;
     Dictionary read_storage_region(Vector3i region,const PackedByteArray &expected,const PackedByteArray &checkpoint=PackedByteArray()) const;
+    // Queue request/poll/stats calls never wait for the store's I/O mutex.
+    // Lifecycle calls have one owner; release drains and joins before closing.
+    bool start_region_reads(int request_limit=8,int64_t byte_limit=8*(2*1024*1024+96));
+    int64_t request_region_read(Vector3i region,const PackedByteArray &expected,const PackedByteArray &checkpoint,int64_t epoch);
+    Array poll_region_reads(int max_results=4);
+    void stop_region_reads();
+    void join_region_reads();
+    Dictionary region_read_stats() const;
     bool validate_snapshot(const PackedByteArray &bytes) const {return codec_.is_valid()&&codec_->validate_storage_snapshot(bytes);}
 };
 }
