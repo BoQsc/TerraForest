@@ -1,5 +1,12 @@
 # Original objective and completion evidence
 
+Integrated mining pressure now rejects the foundation at 136, 544 and 2,176
+edits. The largest run reaches 452 ms edit publication and 382 ms frame stalls;
+patch tracing identifies expensive coarse-LOD rebuilds for small edits. See
+[measured failures](FOUNDATION_MINING_RESULTS.md) and the
+[qualification matrix](FOUNDATION_QUALIFICATION.md). These are open failures,
+not an accepted performance baseline.
+
 Foundation work now replaces column-wide forest clearing after mining with
 bounded native surface-support revalidation and preserves unchanged tree renderer
 rows. See [localized vegetation support](FOUNDATION_VEGETATION_SUPPORT.md).

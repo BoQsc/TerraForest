@@ -1,0 +1,682 @@
+[
+  {
+    "scale": 1,
+    "failed_checks": [
+      "streaming_baseline: frame p99 <=20 ms and no >50 ms stalls",
+      "travel_new_regions: edit publication p95 <=150 ms"
+    ],
+    "phases": [
+      {
+        "build": {},
+        "cache_bytes": 91636688,
+        "changed_edits": 0,
+        "edit_latency": {},
+        "elapsed_ms": 5009,
+        "engine_static_bytes": 227271030,
+        "frames": {
+          "count": 298,
+          "max_ms": 33.857,
+          "median_ms": 16.666,
+          "over_50ms": 0,
+          "p95_ms": 17.401,
+          "p99_ms": 32.323
+        },
+        "phase": "streaming_baseline",
+        "sdf_pages": 0,
+        "tiles": 292,
+        "trees": 2724,
+        "triangles": 1676162,
+        "worker_queue": {}
+      },
+      {
+        "build": {
+          "count": 24,
+          "max_ms": 9.036,
+          "median_ms": 8.342,
+          "over_50ms": 0,
+          "p95_ms": 8.937,
+          "p99_ms": 9.036
+        },
+        "cache_bytes": 95724352,
+        "changed_edits": 24,
+        "edit_latency": {
+          "count": 24,
+          "max_ms": 34.215,
+          "median_ms": 19.646,
+          "over_50ms": 0,
+          "p95_ms": 33.151,
+          "p99_ms": 34.215
+        },
+        "elapsed_ms": 1775,
+        "engine_static_bytes": 210245690,
+        "frames": {
+          "count": 107,
+          "max_ms": 29.306,
+          "median_ms": 16.672,
+          "over_50ms": 0,
+          "p95_ms": 17.437,
+          "p99_ms": 19.944
+        },
+        "phase": "compact_history_control",
+        "sdf_pages": 2,
+        "tiles": 324,
+        "trees": 3044,
+        "triangles": 1707616,
+        "worker_queue": {
+          "count": 24,
+          "max_ms": 1.694,
+          "median_ms": 0.115,
+          "over_50ms": 0,
+          "p95_ms": 1.354,
+          "p99_ms": 1.694
+        }
+      },
+      {
+        "build": {
+          "count": 24,
+          "max_ms": 11.138,
+          "median_ms": 9.961,
+          "over_50ms": 0,
+          "p95_ms": 10.77,
+          "p99_ms": 11.138
+        },
+        "cache_bytes": 97268976,
+        "changed_edits": 24,
+        "edit_latency": {
+          "count": 24,
+          "max_ms": 35.624,
+          "median_ms": 34.667,
+          "over_50ms": 0,
+          "p95_ms": 35.189,
+          "p99_ms": 35.624
+        },
+        "elapsed_ms": 1980,
+        "engine_static_bytes": 214089472,
+        "frames": {
+          "count": 119,
+          "max_ms": 22.91,
+          "median_ms": 16.658,
+          "over_50ms": 0,
+          "p95_ms": 17.382,
+          "p99_ms": 17.503
+        },
+        "phase": "expanding_excavation",
+        "sdf_pages": 10,
+        "tiles": 332,
+        "trees": 2724,
+        "triangles": 1728088,
+        "worker_queue": {
+          "count": 24,
+          "max_ms": 0.144,
+          "median_ms": 0.113,
+          "over_50ms": 0,
+          "p95_ms": 0.141,
+          "p99_ms": 0.144
+        }
+      },
+      {
+        "build": {
+          "count": 64,
+          "max_ms": 329.298,
+          "median_ms": 73.941,
+          "over_50ms": 41,
+          "p95_ms": 244.217,
+          "p99_ms": 329.298
+        },
+        "cache_bytes": 110516116,
+        "changed_edits": 64,
+        "edit_latency": {
+          "count": 64,
+          "max_ms": 334.533,
+          "median_ms": 84.683,
+          "over_50ms": 46,
+          "p95_ms": 251.545,
+          "p99_ms": 334.533
+        },
+        "elapsed_ms": 9411,
+        "engine_static_bytes": 243470166,
+        "frames": {
+          "count": 565,
+          "max_ms": 20.814,
+          "median_ms": 16.666,
+          "over_50ms": 0,
+          "p95_ms": 16.882,
+          "p99_ms": 17.352
+        },
+        "phase": "travel_new_regions",
+        "sdf_pages": 96,
+        "tiles": 453,
+        "trees": 256,
+        "triangles": 1504432,
+        "worker_queue": {
+          "count": 64,
+          "max_ms": 0.281,
+          "median_ms": 0.116,
+          "over_50ms": 0,
+          "p95_ms": 0.152,
+          "p99_ms": 0.281
+        }
+      },
+      {
+        "build": {
+          "count": 24,
+          "max_ms": 8.909,
+          "median_ms": 8.295,
+          "over_50ms": 0,
+          "p95_ms": 8.579,
+          "p99_ms": 8.909
+        },
+        "cache_bytes": 112743656,
+        "changed_edits": 24,
+        "edit_latency": {
+          "count": 24,
+          "max_ms": 37.093,
+          "median_ms": 19.676,
+          "over_50ms": 0,
+          "p95_ms": 34.112,
+          "p99_ms": 37.093
+        },
+        "elapsed_ms": 1980,
+        "engine_static_bytes": 247190620,
+        "frames": {
+          "count": 119,
+          "max_ms": 17.959,
+          "median_ms": 16.668,
+          "over_50ms": 0,
+          "p95_ms": 17.258,
+          "p99_ms": 17.787
+        },
+        "phase": "return_history_control",
+        "sdf_pages": 96,
+        "tiles": 460,
+        "trees": 808,
+        "triangles": 1763436,
+        "worker_queue": {
+          "count": 24,
+          "max_ms": 9.017,
+          "median_ms": 0.111,
+          "over_50ms": 0,
+          "p95_ms": 5.209,
+          "p99_ms": 9.017
+        }
+      },
+      {
+        "build": {},
+        "cache_bytes": 112743656,
+        "changed_edits": 0,
+        "edit_latency": {},
+        "elapsed_ms": 9999,
+        "engine_static_bytes": 252528428,
+        "frames": {
+          "count": 600,
+          "max_ms": 18.026,
+          "median_ms": 16.666,
+          "over_50ms": 0,
+          "p95_ms": 16.743,
+          "p99_ms": 16.83
+        },
+        "phase": "recovery",
+        "sdf_pages": 96,
+        "tiles": 460,
+        "trees": 3043,
+        "triangles": 1763436,
+        "worker_queue": {}
+      }
+    ]
+  },
+  {
+    "scale": 4,
+    "failed_checks": [
+      "streaming_baseline: frame p99 <=20 ms and no >50 ms stalls",
+      "travel_new_regions: edit publication p95 <=150 ms",
+      "return control median latency grows no more than 25 percent"
+    ],
+    "phases": [
+      {
+        "build": {},
+        "cache_bytes": 91636688,
+        "changed_edits": 0,
+        "edit_latency": {},
+        "elapsed_ms": 4992,
+        "engine_static_bytes": 227269334,
+        "frames": {
+          "count": 298,
+          "max_ms": 33.72,
+          "median_ms": 16.666,
+          "over_50ms": 0,
+          "p95_ms": 17.647,
+          "p99_ms": 27.164
+        },
+        "phase": "streaming_baseline",
+        "sdf_pages": 0,
+        "tiles": 292,
+        "trees": 2724,
+        "triangles": 1676162,
+        "worker_queue": {}
+      },
+      {
+        "build": {
+          "count": 96,
+          "max_ms": 11.234,
+          "median_ms": 8.181,
+          "over_50ms": 0,
+          "p95_ms": 10.381,
+          "p99_ms": 11.234
+        },
+        "cache_bytes": 95724352,
+        "changed_edits": 96,
+        "edit_latency": {
+          "count": 96,
+          "max_ms": 35.334,
+          "median_ms": 19.43,
+          "over_50ms": 0,
+          "p95_ms": 20.197,
+          "p99_ms": 35.334
+        },
+        "elapsed_ms": 6558,
+        "engine_static_bytes": 210728218,
+        "frames": {
+          "count": 394,
+          "max_ms": 19.88,
+          "median_ms": 16.654,
+          "over_50ms": 0,
+          "p95_ms": 17.276,
+          "p99_ms": 18.938
+        },
+        "phase": "compact_history_control",
+        "sdf_pages": 2,
+        "tiles": 324,
+        "trees": 3044,
+        "triangles": 1707616,
+        "worker_queue": {
+          "count": 96,
+          "max_ms": 1.89,
+          "median_ms": 0.109,
+          "over_50ms": 0,
+          "p95_ms": 0.284,
+          "p99_ms": 1.89
+        }
+      },
+      {
+        "build": {
+          "count": 96,
+          "max_ms": 13.599,
+          "median_ms": 10.457,
+          "over_50ms": 0,
+          "p95_ms": 11.81,
+          "p99_ms": 13.599
+        },
+        "cache_bytes": 98971272,
+        "changed_edits": 96,
+        "edit_latency": {
+          "count": 96,
+          "max_ms": 36.369,
+          "median_ms": 34.326,
+          "over_50ms": 0,
+          "p95_ms": 36.045,
+          "p99_ms": 36.369
+        },
+        "elapsed_ms": 7225,
+        "engine_static_bytes": 219758068,
+        "frames": {
+          "count": 434,
+          "max_ms": 17.837,
+          "median_ms": 16.664,
+          "over_50ms": 0,
+          "p95_ms": 17.186,
+          "p99_ms": 17.452
+        },
+        "phase": "expanding_excavation",
+        "sdf_pages": 18,
+        "tiles": 348,
+        "trees": 2723,
+        "triangles": 1738160,
+        "worker_queue": {
+          "count": 96,
+          "max_ms": 0.194,
+          "median_ms": 0.112,
+          "over_50ms": 0,
+          "p95_ms": 0.151,
+          "p99_ms": 0.194
+        }
+      },
+      {
+        "build": {
+          "count": 256,
+          "max_ms": 366.813,
+          "median_ms": 69.878,
+          "over_50ms": 132,
+          "p95_ms": 259.471,
+          "p99_ms": 349.974
+        },
+        "cache_bytes": 121385904,
+        "changed_edits": 256,
+        "edit_latency": {
+          "count": 256,
+          "max_ms": 385.193,
+          "median_ms": 84.559,
+          "over_50ms": 135,
+          "p95_ms": 268.539,
+          "p99_ms": 368.431
+        },
+        "elapsed_ms": 36904,
+        "engine_static_bytes": 275019682,
+        "frames": {
+          "count": 2215,
+          "max_ms": 20.126,
+          "median_ms": 16.666,
+          "over_50ms": 0,
+          "p95_ms": 16.971,
+          "p99_ms": 17.29
+        },
+        "phase": "travel_new_regions",
+        "sdf_pages": 156,
+        "tiles": 512,
+        "trees": 278,
+        "triangles": 1540530,
+        "worker_queue": {
+          "count": 256,
+          "max_ms": 3.273,
+          "median_ms": 0.115,
+          "over_50ms": 0,
+          "p95_ms": 0.398,
+          "p99_ms": 2.805
+        }
+      },
+      {
+        "build": {
+          "count": 96,
+          "max_ms": 96.915,
+          "median_ms": 91.162,
+          "over_50ms": 96,
+          "p95_ms": 94.478,
+          "p99_ms": 96.915
+        },
+        "cache_bytes": 119577344,
+        "changed_edits": 96,
+        "edit_latency": {
+          "count": 96,
+          "max_ms": 101.808,
+          "median_ms": 101.24,
+          "over_50ms": 96,
+          "p95_ms": 101.6,
+          "p99_ms": 101.808
+        },
+        "elapsed_ms": 14391,
+        "engine_static_bytes": 277868052,
+        "frames": {
+          "count": 864,
+          "max_ms": 17.072,
+          "median_ms": 16.666,
+          "over_50ms": 0,
+          "p95_ms": 16.729,
+          "p99_ms": 16.762
+        },
+        "phase": "return_history_control",
+        "sdf_pages": 156,
+        "tiles": 512,
+        "trees": 2801,
+        "triangles": 1571348,
+        "worker_queue": {
+          "count": 96,
+          "max_ms": 0.19,
+          "median_ms": 0.114,
+          "over_50ms": 0,
+          "p95_ms": 0.16,
+          "p99_ms": 0.19
+        }
+      },
+      {
+        "build": {},
+        "cache_bytes": 123278904,
+        "changed_edits": 0,
+        "edit_latency": {},
+        "elapsed_ms": 9994,
+        "engine_static_bytes": 292868337,
+        "frames": {
+          "count": 600,
+          "max_ms": 22.115,
+          "median_ms": 16.666,
+          "over_50ms": 0,
+          "p95_ms": 16.902,
+          "p99_ms": 17.069
+        },
+        "phase": "recovery",
+        "sdf_pages": 156,
+        "tiles": 512,
+        "trees": 3036,
+        "triangles": 1790878,
+        "worker_queue": {}
+      }
+    ]
+  },
+  {
+    "scale": 16,
+    "failed_checks": [
+      "expanding_excavation: frame p99 <=20 ms and no >50 ms stalls",
+      "travel_new_regions: frame p99 <=20 ms and no >50 ms stalls",
+      "travel_new_regions: edit publication p95 <=150 ms",
+      "return_history_control: frame p99 <=20 ms and no >50 ms stalls",
+      "recovery: frame p99 <=20 ms and no >50 ms stalls",
+      "return control median latency grows no more than 25 percent"
+    ],
+    "phases": [
+      {
+        "build": {},
+        "cache_bytes": 91636688,
+        "changed_edits": 0,
+        "edit_latency": {},
+        "elapsed_ms": 4984,
+        "engine_static_bytes": 227401694,
+        "frames": {
+          "count": 300,
+          "max_ms": 20.025,
+          "median_ms": 16.663,
+          "over_50ms": 0,
+          "p95_ms": 16.913,
+          "p99_ms": 18.998
+        },
+        "phase": "streaming_baseline",
+        "sdf_pages": 0,
+        "tiles": 292,
+        "trees": 2724,
+        "triangles": 1676162,
+        "worker_queue": {}
+      },
+      {
+        "build": {
+          "count": 384,
+          "max_ms": 11.767,
+          "median_ms": 7.656,
+          "over_50ms": 0,
+          "p95_ms": 8.462,
+          "p99_ms": 8.737
+        },
+        "cache_bytes": 95724352,
+        "changed_edits": 384,
+        "edit_latency": {
+          "count": 384,
+          "max_ms": 23.579,
+          "median_ms": 19.511,
+          "over_50ms": 0,
+          "p95_ms": 19.998,
+          "p99_ms": 20.686
+        },
+        "elapsed_ms": 25707,
+        "engine_static_bytes": 214732310,
+        "frames": {
+          "count": 1543,
+          "max_ms": 20.326,
+          "median_ms": 16.666,
+          "over_50ms": 0,
+          "p95_ms": 16.735,
+          "p99_ms": 17.027
+        },
+        "phase": "compact_history_control",
+        "sdf_pages": 2,
+        "tiles": 324,
+        "trees": 3044,
+        "triangles": 1707616,
+        "worker_queue": {
+          "count": 384,
+          "max_ms": 1.867,
+          "median_ms": 0.111,
+          "over_50ms": 0,
+          "p95_ms": 0.16,
+          "p99_ms": 1.393
+        }
+      },
+      {
+        "build": {
+          "count": 384,
+          "max_ms": 12.811,
+          "median_ms": 9.807,
+          "over_50ms": 0,
+          "p95_ms": 11.386,
+          "p99_ms": 12.246
+        },
+        "cache_bytes": 110983832,
+        "changed_edits": 384,
+        "edit_latency": {
+          "count": 384,
+          "max_ms": 52.301,
+          "median_ms": 35.449,
+          "over_50ms": 2,
+          "p95_ms": 37.098,
+          "p99_ms": 38.92
+        },
+        "elapsed_ms": 29755,
+        "engine_static_bytes": 251714156,
+        "frames": {
+          "count": 1787,
+          "max_ms": 69.112,
+          "median_ms": 16.666,
+          "over_50ms": 1,
+          "p95_ms": 16.809,
+          "p99_ms": 17.022
+        },
+        "phase": "expanding_excavation",
+        "sdf_pages": 42,
+        "tiles": 436,
+        "trees": 2106,
+        "triangles": 1744648,
+        "worker_queue": {
+          "count": 384,
+          "max_ms": 3.288,
+          "median_ms": 0.111,
+          "over_50ms": 0,
+          "p95_ms": 0.233,
+          "p99_ms": 0.351
+        }
+      },
+      {
+        "build": {
+          "count": 1024,
+          "max_ms": 435.537,
+          "median_ms": 13.839,
+          "over_50ms": 250,
+          "p95_ms": 349.683,
+          "p99_ms": 365.537
+        },
+        "cache_bytes": 128768664,
+        "changed_edits": 1012,
+        "edit_latency": {
+          "count": 1024,
+          "max_ms": 452.17,
+          "median_ms": 36.445,
+          "over_50ms": 375,
+          "p95_ms": 369.205,
+          "p99_ms": 384.106
+        },
+        "elapsed_ms": 138848,
+        "engine_static_bytes": 317383150,
+        "frames": {
+          "count": 8333,
+          "max_ms": 98.149,
+          "median_ms": 16.666,
+          "over_50ms": 1,
+          "p95_ms": 16.746,
+          "p99_ms": 16.924
+        },
+        "phase": "travel_new_regions",
+        "sdf_pages": 509,
+        "tiles": 512,
+        "trees": 301,
+        "triangles": 1752322,
+        "worker_queue": {
+          "count": 1024,
+          "max_ms": 2.13,
+          "median_ms": 0.132,
+          "over_50ms": 0,
+          "p95_ms": 0.295,
+          "p99_ms": 1.244
+        }
+      },
+      {
+        "build": {
+          "count": 384,
+          "max_ms": 47.154,
+          "median_ms": 43.559,
+          "over_50ms": 0,
+          "p95_ms": 45.439,
+          "p99_ms": 46.608
+        },
+        "cache_bytes": 126432944,
+        "changed_edits": 384,
+        "edit_latency": {
+          "count": 384,
+          "max_ms": 63.646,
+          "median_ms": 51.636,
+          "over_50ms": 360,
+          "p95_ms": 52.084,
+          "p99_ms": 52.517
+        },
+        "elapsed_ms": 38391,
+        "engine_static_bytes": 323981920,
+        "frames": {
+          "count": 2305,
+          "max_ms": 352.577,
+          "median_ms": 16.666,
+          "over_50ms": 1,
+          "p95_ms": 16.767,
+          "p99_ms": 18.598
+        },
+        "phase": "return_history_control",
+        "sdf_pages": 509,
+        "tiles": 512,
+        "trees": 3012,
+        "triangles": 1743612,
+        "worker_queue": {
+          "count": 384,
+          "max_ms": 0.509,
+          "median_ms": 0.132,
+          "over_50ms": 0,
+          "p95_ms": 0.151,
+          "p99_ms": 0.295
+        }
+      },
+      {
+        "build": {},
+        "cache_bytes": 136648752,
+        "changed_edits": 0,
+        "edit_latency": {},
+        "elapsed_ms": 9859,
+        "engine_static_bytes": 355249040,
+        "frames": {
+          "count": 593,
+          "max_ms": 382.033,
+          "median_ms": 16.666,
+          "over_50ms": 1,
+          "p95_ms": 16.688,
+          "p99_ms": 17.032
+        },
+        "phase": "recovery",
+        "sdf_pages": 509,
+        "tiles": 512,
+        "trees": 3012,
+        "triangles": 1949710,
+        "worker_queue": {}
+      }
+    ]
+  }
+]
