@@ -1,5 +1,6 @@
 extends SceneTree
 var results: Array[Dictionary] = []
+var sweeps: Array[Dictionary] = []
 func _initialize() -> void:
 	run.call_deferred()
 func run() -> void:
@@ -32,6 +33,27 @@ func run() -> void:
 				await process_frame
 				var center := (faces[0]+faces[1]+faces[2])/3.0+body.position
 				var normal := (faces[1]-faces[0]).cross(faces[2]-faces[0]).normalized()
+				var tangent := (faces[1]-faces[0]).normalized()
+				for kind in ["sphere","capsule"]:
+					var shape: Shape3D
+					if kind=="sphere":
+						var sphere := SphereShape3D.new()
+						sphere.radius=0.25
+						shape=sphere
+					else:
+						var capsule := CapsuleShape3D.new()
+						capsule.radius=0.25
+						capsule.height=1.5
+						shape=capsule
+					for displaced in [false,true]:
+						var query := PhysicsShapeQueryParameters3D.new()
+						query.shape=shape
+						query.margin=0.0
+						query.collision_mask=1
+						query.transform=Transform3D(Basis.IDENTITY,center+normal*2.0+(tangent*10.0 if displaced else Vector3.ZERO))
+						query.motion=-normal*4.0
+						var fractions := scene.get_world_3d().direct_space_state.cast_motion(query)
+						sweeps.append({"fixture":row.fixture,"triangle":row.triangle,"mode":mode,"scale":scale_factor,"shape":kind,"displaced_control":displaced,"safe_fraction":fractions[0],"unsafe_fraction":fractions[1],"hit":fractions[0]<1.0})
 				for reach: float in [0.02,2.0,20.0]:
 					var start := center+normal*reach
 					var finish := center-normal*reach
@@ -44,7 +66,7 @@ func run() -> void:
 	scene.free()
 	DirAccess.make_dir_recursive_absolute("res://reports")
 	var file := FileAccess.open("res://reports/isolation.json",FileAccess.WRITE)
-	file.store_string(JSON.stringify({"results":results,"scope":"Single-triangle diagnosis using frozen missed-ray faces; scaling is diagnostic, not a proposed geometry modification."},"  "))
+	file.store_string(JSON.stringify({"results":results,"sweeps":sweeps,"scope":"Single-triangle ray and sphere/capsule sweep diagnosis using frozen missed-ray faces; scaling is diagnostic, not a proposed geometry modification. Sweeps do not qualify dynamic body stability."},"  "))
 	file.close()
 	print("Completed ",results.size()," isolated triangle cases")
 	quit()

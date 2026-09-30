@@ -38,6 +38,11 @@ traffic is included in this test.
 
 ## Required primitive pressure matrix — not yet certified
 
+The [shape-sweep follow-up](TERRAIN_COLLISION_SWEEPS.md) passes all 528 centered
+sphere/capsule casts and 528 displaced controls across the frozen ray-miss
+faces and diagnostic transforms. Ray failures persist; these results narrow
+the failure to query behavior in the tested cases, not proven player fall-through.
+
 The [exact-zero merge variant](TERRAIN_EXACT_ZERO.md) preserves all tested
 topology/partitions and recovers all 21 frozen missed rays. One of 180 newly
 sampled rays still misses a nonzero thin triangle, so collision qualification
