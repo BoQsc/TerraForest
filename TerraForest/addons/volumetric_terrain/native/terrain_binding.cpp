@@ -4,6 +4,7 @@
 #include "terrain_collision.hpp"
 #include "experimental/snapshot_worker.hpp"
 #include "experimental/godot_surface_mesh.hpp"
+#include "experimental/mesh_partition.hpp"
 #include <godot_cpp/classes/ref_counted.hpp>
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/godot.hpp>
@@ -46,10 +47,12 @@ protected:
         godot::ClassDB::bind_method(godot::D_METHOD("experimental_snapshot_submit_timing"), &TerrainCore::experimental_snapshot_submit_timing);
         godot::ClassDB::bind_method(godot::D_METHOD("experimental_snapshot_create_mesh","packet"), &TerrainCore::experimental_snapshot_create_mesh);
         godot::ClassDB::bind_method(godot::D_METHOD("experimental_snapshot_encode","packet","x","z","size"), &TerrainCore::experimental_snapshot_encode);
+        godot::ClassDB::bind_method(godot::D_METHOD("experimental_partition_mesh","packet"), &TerrainCore::experimental_partition_mesh);
     }
 public:
     TerrainCore() {world_.build_control=&control_; tr_oom=false; world_.init();}
     ~TerrainCore() {snapshot_worker_.reset();world_.release();}
+    godot::Array experimental_partition_mesh(const godot::PackedByteArray&packet){return experimental::partition_mesh(packet);}
     godot::PackedByteArray experimental_snapshot_encode(const godot::Dictionary&packet,int64_t x,int64_t z,int64_t size){
         if(x<0||z<0||(size!=16&&size!=32)||x+size>WORLD||z+size>WORLD)return {};
         for(const char*key:{"status","epoch","validated_revision","source_id"})
