@@ -38,6 +38,12 @@ traffic is included in this test.
 
 ## Required primitive pressure matrix — not yet certified
 
+The [sustained distant-edit test](TERRAIN_SNAPSHOT_EDITS.md) completes 640 mesh
+jobs alongside 640 changing density edits and 8,127 queries. Every edit occurs
+with pending work; no completion is discarded. Provisional call gates pass,
+but query/capture outliers reach 11.966/14.059 ms. This remains a short headless
+geometry-only workload, not normal mining or graphical qualification.
+
 The [snapshot locality correction](TERRAIN_SNAPSHOT_LOCALITY.md) fixes rejection
 of unchanged geometry after remote density edits. All 33 engine checks pass;
 interior/edge/corner edits remain invalidated even after another remote edit.
