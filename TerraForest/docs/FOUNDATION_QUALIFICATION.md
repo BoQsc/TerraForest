@@ -38,6 +38,11 @@ traffic is included in this test.
 
 ## Required primitive pressure matrix — not yet certified
 
+The [native coverage transition probe](TERRAIN_TRANSITION_DECISION.md) passes 54
+checks while refining a real parent into thirteen owners, editing locally and
+coarsening only after refreshing the dirty parent. This supports reuse of coverage
+publication; automatic distance scheduling, cave geometry and FPS remain unqualified.
+
 The [mixed-size cut probe](TERRAIN_MIXED_CUT_DECISION.md) preserves tested open
 boundaries with thirteen owners over a 256 m extent. It rejects the cave cut for
 topology and exact local replacement: editing four fine regions also changes

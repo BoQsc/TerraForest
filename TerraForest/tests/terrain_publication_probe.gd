@@ -7,7 +7,7 @@ class FixedCut extends Stream:
 	func _update_cut() -> void:
 		pass
 
-var world: FixedCut
+var world: Stream
 var core: RefCounted
 var recipes: RefCounted
 var checks: Array[Dictionary] = []

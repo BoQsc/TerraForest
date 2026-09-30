@@ -1,0 +1,58 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS transition native worker starts
+PASS transition worker ready
+PASS coarse parent prepared through real worker
+PASS native planner activates complete parent coverage
+PASS replacement owner prepared (1408, 1280, 128)
+PASS no absent or overlapping ownership after child 0
+PASS incomplete descendants cannot retire parent 0
+PASS replacement owner prepared (1280, 1408, 128)
+PASS no absent or overlapping ownership after child 1
+PASS incomplete descendants cannot retire parent 1
+PASS replacement owner prepared (1408, 1408, 128)
+PASS no absent or overlapping ownership after child 2
+PASS incomplete descendants cannot retire parent 2
+PASS replacement owner prepared (1344, 1280, 64)
+PASS no absent or overlapping ownership after child 3
+PASS incomplete descendants cannot retire parent 3
+PASS replacement owner prepared (1280, 1344, 64)
+PASS no absent or overlapping ownership after child 4
+PASS incomplete descendants cannot retire parent 4
+PASS replacement owner prepared (1344, 1344, 64)
+PASS no absent or overlapping ownership after child 5
+PASS incomplete descendants cannot retire parent 5
+PASS replacement owner prepared (1312, 1280, 32)
+PASS no absent or overlapping ownership after child 6
+PASS incomplete descendants cannot retire parent 6
+PASS replacement owner prepared (1280, 1312, 32)
+PASS no absent or overlapping ownership after child 7
+PASS incomplete descendants cannot retire parent 7
+PASS replacement owner prepared (1312, 1312, 32)
+PASS no absent or overlapping ownership after child 8
+PASS incomplete descendants cannot retire parent 8
+PASS replacement owner prepared (1280, 1280, 16)
+PASS no absent or overlapping ownership after child 9
+PASS incomplete descendants cannot retire parent 9
+PASS replacement owner prepared (1296, 1280, 16)
+PASS no absent or overlapping ownership after child 10
+PASS incomplete descendants cannot retire parent 10
+PASS replacement owner prepared (1280, 1296, 16)
+PASS no absent or overlapping ownership after child 11
+PASS incomplete descendants cannot retire parent 11
+PASS replacement owner prepared (1296, 1296, 16)
+PASS no absent or overlapping ownership after child 12
+PASS complete mixed cut replaces parent
+PASS fine collision readiness becomes available after refinement
+PASS transition edit height obtained
+PASS edit accepted with mixed cut active
+PASS mixed-cut edit rebuilds four fine owners
+PASS mixed-cut edit publishes through worker
+PASS edit preserves mixed coverage and invalidates cached parent
+PASS coarsening cannot resurrect obsolete hidden parent
+PASS fresh coarse parent rebuilt after edit
+PASS coarsening switches only to refreshed parent
+PASS coarsening disables all hidden child visuals and colliders
+[TerrainRewrite] Temporary test world: save skipped
+PASS transition worker joins cleanly
+
