@@ -22,4 +22,3 @@ def inspect(path):
             unseen.difference_update(unseen_neighbors);pending.extend(unseen_neighbors)
     topology=dict(components=components,euler=len(neighbors)-len(edges)+sum(triangles.values()),overused_edges=sum(n>2 for n in edges.values()))
     return Counter({e:n for e,n in edges.items() if n==1}),triangles,topology
-
