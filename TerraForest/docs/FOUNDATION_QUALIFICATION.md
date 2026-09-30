@@ -38,6 +38,10 @@ traffic is included in this test.
 
 ## Required primitive pressure matrix — not yet certified
 
+The [bounded LOD admission experiment](TERRAIN_LOD_ADMISSION_DECISION.md) safely
+falls back in 18 of 30 cases but takes up to 516 ms. It is rejected for live edits;
+passing geometry checks through fallback does not qualify runtime performance.
+
 The [controlled simplifier](TERRAIN_CONTROLLED_SIMPLIFICATION.md) preserves all
 tested boundaries/components with pruning disabled. Independent sampled-distance
 checks nevertheless reject 39 of 60 error settings; library-reported error alone
