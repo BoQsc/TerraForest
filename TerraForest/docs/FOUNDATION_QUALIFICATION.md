@@ -38,6 +38,13 @@ traffic is included in this test.
 
 ## Required primitive pressure matrix — not yet certified
 
+The [native contention comparison](TERRAIN_SNAPSHOT_CONTENTION.md) completes all
+216 candidate mesh jobs with exact geometry while querying a mutex-protected
+world. Meshing outside the lock reduces the observed maximum query duration
+from 74.15 to 1.002 ms across the fixtures. This supports the snapshot design,
+not runtime adoption: it excludes mutations, backend queues and rendering, and
+permits only one active snapshot. Aggregate admission remains unimplemented.
+
 The [snapshot lifecycle probe](TERRAIN_SNAPSHOT_LIFECYCLE.md) exposed stale valid
 state after moving ownership. Explicit move invalidation fixes the three failing
 groups; all six groups and the 36 geometry comparisons now pass. Allocation
