@@ -48,11 +48,23 @@ protected:
         godot::ClassDB::bind_method(godot::D_METHOD("experimental_snapshot_create_mesh","packet"), &TerrainCore::experimental_snapshot_create_mesh);
         godot::ClassDB::bind_method(godot::D_METHOD("experimental_snapshot_encode","packet","x","z","size"), &TerrainCore::experimental_snapshot_encode);
         godot::ClassDB::bind_method(godot::D_METHOD("experimental_partition_mesh","packet"), &TerrainCore::experimental_partition_mesh);
+        godot::ClassDB::bind_method(godot::D_METHOD("experimental_partition_mesh_budgeted","packet","workspace_bytes","output_bytes","expected_epoch"), &TerrainCore::experimental_partition_mesh_budgeted);
     }
 public:
     TerrainCore() {world_.build_control=&control_; tr_oom=false; world_.init();}
     ~TerrainCore() {snapshot_worker_.reset();world_.release();}
-    godot::Array experimental_partition_mesh(const godot::PackedByteArray&packet){return experimental::partition_mesh(packet);}
+    godot::Dictionary experimental_partition_mesh_budgeted(const godot::PackedByteArray&packet,int64_t workspace,int64_t output,int64_t expected){
+        godot::Dictionary result;result["packets"]=godot::Array();result["workspace_peak"]=0;result["denied"]=0;result["cancelled"]=false;
+        if(workspace<1||workspace>128*1024*1024||output<1||output>128*1024*1024||expected<0||expected>0xffffffffLL)return result;
+        struct Context{BuildControl*control;u32 epoch;}context{&control_,u32(expected)};
+        experimental::PartitionLimits limits;limits.workspace_bytes=size_t(workspace);limits.output_bytes=size_t(output);limits.context=&context;
+        limits.cancelled=[](void*p){auto*c=static_cast<Context*>(p);return __atomic_load_n(&c->control->epoch,__ATOMIC_RELAXED)!=c->epoch;};
+        experimental::PartitionStats stats;
+        result["packets"]=experimental::partition_mesh(packet,limits,&stats);result["workspace_peak"]=int64_t(stats.workspace_peak);result["denied"]=int64_t(stats.denied);result["cancelled"]=stats.cancelled;return result;
+    }
+    godot::Array experimental_partition_mesh(const godot::PackedByteArray&packet){
+        return experimental_partition_mesh_budgeted(packet,128*1024*1024,128*1024*1024,__atomic_load_n(&control_.epoch,__ATOMIC_RELAXED))["packets"];
+    }
     godot::PackedByteArray experimental_snapshot_encode(const godot::Dictionary&packet,int64_t x,int64_t z,int64_t size){
         if(x<0||z<0||(size!=16&&size!=32)||x+size>WORLD||z+size>WORLD)return {};
         for(const char*key:{"status","epoch","validated_revision","source_id"})

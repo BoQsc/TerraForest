@@ -8,6 +8,7 @@ var semaphore := Semaphore.new()
 var jobs: Array[Dictionary] = []
 var results: Array[Dictionary] = []
 var _density_pending: int = 0 # Accepted queries, including unconsumed results.
+var _partition_pending: int = 0 # One bounded source/result, including unconsumed output.
 var stopping: bool = false
 var temporary: bool = false
 var native: Object
@@ -172,6 +173,12 @@ func start(use_temporary: bool) -> Error:
 	return thread.start(_run, Thread.PRIORITY_NORMAL)
 
 func submit(job: Dictionary, priority: bool = false) -> bool:
+	if job.get("kind","")=="partition":
+		if typeof(job.get("packet"))!=TYPE_PACKED_BYTE_ARRAY or job.packet.size()<36 or job.packet.size()>64*1024*1024: return false
+		for field in ["token","epoch","stamp"]:
+			if typeof(job.get(field))!=TYPE_INT or int(job[field])<0: return false
+		job={"kind":"partition","packet":job.packet,"token":job.token,"epoch":job.epoch,"stamp":job.stamp}
+		priority=false
 	if job.get("kind","")=="density_ray":
 		if typeof(job.get("from"))!=TYPE_VECTOR3 or typeof(job.get("to"))!=TYPE_VECTOR3:
 			return false
@@ -192,6 +199,9 @@ func submit(job: Dictionary, priority: bool = false) -> bool:
 	if str(job.get("kind", "")) in ["edit", "save"]:
 		job["component_snapshot"] = _capture_snapshot()
 	mutex.lock()
+	if job.get("kind","")=="partition" and _partition_pending>=1:
+		mutex.unlock()
+		return false
 	if job.get("kind","")=="density_ray" and _density_pending>=8:
 		mutex.unlock()
 		return false
@@ -224,6 +234,7 @@ func submit(job: Dictionary, priority: bool = false) -> bool:
 			build_epoch = cancellation.decode_u32(12)
 	job["build_epoch"] = build_epoch
 	if job.get("kind","")=="density_ray": _density_pending+=1
+	if job.get("kind","")=="partition": _partition_pending+=1
 	if priority:
 		jobs.push_front(job)
 	else:
@@ -263,6 +274,7 @@ func poll() -> Array[Dictionary]:
 	var ready: Array[Dictionary] = results
 	for result: Dictionary in ready:
 		if result.get("kind","")=="density_ray": _density_pending-=1
+		if result.get("kind","")=="partition": _partition_pending-=1
 	results = []
 	mutex.unlock()
 	return ready
@@ -271,6 +283,7 @@ func stop() -> void:
 	_shutdown_snapshot = _capture_snapshot()
 	mutex.lock()
 	stopping = true
+	if active_kind=="partition": _call(Codec.command(12))
 	mutex.unlock()
 	semaphore.post()
 	if thread.is_started():
@@ -549,6 +562,8 @@ func _run() -> void:
 					_apply_components(remaining.get("component_snapshot", {}))
 				elif remaining_kind == "density_ray":
 					_push({"kind":"density_ray","status":"cancelled","cancelled":true,"token":remaining["token"],"epoch":remaining["epoch"],"requested_revision":remaining["revision"],"build_epoch":remaining["build_epoch"]})
+				elif remaining_kind == "partition":
+					_push({"kind":"partition","packets":[],"cancelled":true,"token":remaining.token,"epoch":remaining.epoch,"stamp":remaining.stamp})
 				elif remaining_kind in ["load", "reset"]:
 					latest_packets.clear()
 					latest_packet_bytes = 0
@@ -573,7 +588,15 @@ func _run() -> void:
 			continue
 		var kind: String = str(job.get("kind", ""))
 		var queue_ms: float = float(Time.get_ticks_usec() - int(job.get("submitted_us", Time.get_ticks_usec()))) / 1000.0
-		if kind == "mesh":
+		if kind == "partition":
+			var partition: Dictionary=native.experimental_partition_mesh_budgeted(job.packet,128*1024*1024,128*1024*1024,job.build_epoch)
+			partition["kind"]="partition"
+			partition["token"]=job.token
+			partition["epoch"]=job.epoch
+			partition["stamp"]=job.stamp
+			partition["queue_ms"]=queue_ms
+			_push(partition)
+		elif kind == "mesh":
 			var mesh_result: Dictionary = _build(job["key"], bool(job.get("base", false)), int(job["build_epoch"]), bool(job.get("relight_cache", false)))
 			mesh_result["kind"] = "mesh"
 			mesh_result["key"] = job["key"]

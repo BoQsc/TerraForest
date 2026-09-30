@@ -60,6 +60,16 @@ func run() -> void:
 	for child: PackedByteArray in children:
 		for grandchild: PackedByteArray in native.experimental_partition_mesh(child): grandchildren_area+=area(grandchild)
 	check(abs(grandchildren_area-area(packet))<0.03,"recursive partition retains surface area")
+	for limit in [1,512,2048,8192,65536]:
+		var budgeted: Dictionary=native.experimental_partition_mesh_budgeted(packet,limit,65536,0)
+		check(budgeted.workspace_peak<=limit,"workspace admission never exceeds "+str(limit))
+		check(budgeted.packets.size()==4 or (budgeted.packets.is_empty() and budgeted.denied>0),"allocation rejection is atomic "+str(limit))
+	var output_rejected: Dictionary=native.experimental_partition_mesh_budgeted(packet,65536,1,0)
+	check(output_rejected.packets.is_empty(),"output budget rejects entire partition")
+	var stale: Dictionary=native.experimental_partition_mesh_budgeted(packet,65536,65536,1)
+	check(stale.cancelled and stale.packets.is_empty() and stale.workspace_peak==0,"stale epoch cancels before allocating")
+	var retry: Dictionary=native.experimental_partition_mesh_budgeted(packet,65536,65536,0)
+	check(retry.packets.size()==4,"retry succeeds after budget and cancellation rejection")
 	var real_fixtures: Array[Dictionary]=[]
 	for origin in [Vector2i(1280,1280),Vector2i(768,768)]:
 		var request:=PackedByteArray();request.resize(20)
@@ -83,9 +93,52 @@ func run() -> void:
 		elif fault=="index": bad.encode_u32(36+points.size()*56,999)
 		elif fault=="unaligned": bad.encode_u32(8,1)
 		check(native.experimental_partition_mesh(bad).is_empty(),"reject "+fault)
+	# A large valid request ensures cancellation can interrupt admitted work.
+	var large:=packet.slice(0,36+points.size()*56)
+	var repeated:=PackedInt32Array();repeated.resize(1500000)
+	for i in range(repeated.size()): repeated[i]=[0,2,1][i%3]
+	large.encode_u32(28,repeated.size());large.append_array(repeated.to_byte_array())
+	var worker:=Thread.new()
+	worker.start(func(): return native.experimental_partition_mesh_budgeted(large,128*1024*1024,128*1024*1024,0))
+	OS.delay_usec(5000)
+	var cancel:=PackedByteArray();cancel.resize(4);cancel.encode_u32(0,12)
+	var cancel_begin:=Time.get_ticks_usec();native.execute(cancel)
+	var interrupted: Dictionary=worker.wait_to_finish()
+	var cancel_ms:=(Time.get_ticks_usec()-cancel_begin)/1000.0
+	check(interrupted.cancelled and interrupted.packets.is_empty() and interrupted.workspace_peak>0,"in-flight partition cancels after workspace admission")
+	check(interrupted.workspace_peak<=128*1024*1024,"cancelled work stays within workspace budget")
+	var recovered: Dictionary=native.experimental_partition_mesh_budgeted(packet,65536,65536,1)
+	check(recovered.packets.size()==4,"new epoch can partition after cancellation")
+	var backend=load("res://addons/volumetric_terrain/terrain_backend.gd").new()
+	check(backend.start(true)==OK,"partition backend starts")
+	var startup:=false;var deadline:=Time.get_ticks_msec()+5000
+	while not startup and Time.get_ticks_msec()<deadline:
+		for row: Dictionary in backend.poll():
+			if row.kind=="startup": startup=true
+		await process_frame
+	check(startup,"partition backend startup delivered")
+	var job:={"kind":"partition","packet":packet,"token":99,"epoch":3,"stamp":8}
+	check(backend.submit(job),"worker admits partition")
+	job.token=100
+	OS.delay_usec(10000)
+	check(not backend.submit(job),"worker retains one-slot limit through unconsumed completion")
+	var delivered: Dictionary={};deadline=Time.get_ticks_msec()+5000
+	while delivered.is_empty() and Time.get_ticks_msec()<deadline:
+		for row: Dictionary in backend.poll():
+			if row.kind=="partition": delivered=row
+		await process_frame
+	check(delivered.get("token")==99 and delivered.get("epoch")==3 and delivered.get("stamp")==8 and delivered.get("packets",[]).size()==4,"worker returns captured identity and four children")
+	job.packet=large
+	check(backend.submit(job),"worker admits next partition after consumption")
+	OS.delay_usec(5000)
+	backend.stop()
+	check(not backend.thread.is_started(),"partition worker joins on shutdown")
+	var final_rows: Array=backend.poll()
+	check(final_rows.size()==1 and final_rows[0].kind=="partition","shutdown accounts for accepted partition once")
+	backend=null
 	var failures:=0
 	for row in checks:
 		if not row.passed: failures+=1
 	DirAccess.make_dir_recursive_absolute("res://reports")
-	var file:=FileAccess.open("res://reports/command.json",FileAccess.WRITE);file.store_string(JSON.stringify({"checks":checks,"failures":failures,"partition_ms":elapsed,"real_fixtures":real_fixtures},"  "));file.close();native=null
+	var file:=FileAccess.open("res://reports/command.json",FileAccess.WRITE);file.store_string(JSON.stringify({"checks":checks,"failures":failures,"partition_ms":elapsed,"real_fixtures":real_fixtures,"cancel_join_ms":cancel_ms,"cancel_workspace_peak":interrupted.workspace_peak},"  "));file.close();native=null
 	quit(0 if failures==0 else 1)

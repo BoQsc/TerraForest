@@ -9,6 +9,7 @@ library=ROOT/'addons/volumetric_terrain/bin/terrain_core.windows.template_releas
 with tempfile.TemporaryDirectory(prefix='partition_',dir=ROOT/'.build') as temporary:
     project=Path(temporary);addon=project/'addons/volumetric_terrain';(addon/'bin').mkdir(parents=True)
     shutil.copy2(library,addon/'bin'/library.name);shutil.copy2(script,project/'probe.gd')
+    for source_script in (ROOT/'addons/volumetric_terrain').glob('*.gd'): shutil.copy2(source_script,addon/source_script.name)
     (addon/'terrain_core.gdextension').write_text('[configuration]\nentry_symbol="terrain_library_init"\ncompatibility_minimum="4.7"\n[libraries]\nwindows.debug.x86_64="res://addons/volumetric_terrain/bin/'+library.name+'"\nwindows.release.x86_64="res://addons/volumetric_terrain/bin/'+library.name+'"\n')
     (project/'project.godot').write_text('config_version=5\n[application]\nconfig/name="Density command probe"\n')
     try:
@@ -24,5 +25,6 @@ with tempfile.TemporaryDirectory(prefix='partition_',dir=ROOT/'.build') as tempo
     report=json.loads((project/'reports/command.json').read_text())
     sources=[ROOT/'addons/volumetric_terrain/native/terrain_binding.cpp',*sorted((ROOT/'addons/volumetric_terrain/native/experimental').glob('*.hpp')),script,library,Path(__file__).resolve(),ROOT/'tools/build_native.py',ROOT/'addons/volumetric_terrain/native/core.cpp',ROOT/'addons/volumetric_terrain/native/experimental/density_ray.hpp']
     report.update(source_hashes={str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in sources},adoption_qualified=False,scope='Native retained surface partition; no local edited seam or runtime adoption qualification.')
+    report['source_hashes'].update({str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in (ROOT/'addons/volumetric_terrain').glob('*.gd')})
     (ROOT/'reports/terrain_partition.json').write_text(json.dumps(report,indent=2)+'\n')
     raise SystemExit(bool(run.returncode or report['failures'] or re.search(r'(?m)^(SCRIPT ERROR|ERROR:|WARNING: ObjectDB instances leaked)',log)))

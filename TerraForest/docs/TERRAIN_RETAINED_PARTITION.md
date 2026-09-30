@@ -8,17 +8,25 @@ normal, material weights and visibility channels are interpolated along original
 triangles. A triangle lying entirely on a split plane has one owner.
 
 This supplies retained surrounding geometry for the next local-replacement
-integration. It is not called automatically by the runtime yet. Connecting a
+integration. The backend accepts a bounded `partition` job, but the stream does
+not request or publish these jobs automatically yet. Connecting a
 newly reconstructed edited region to this retained surface remains unfinished;
 partitioning an old surface alone does not prove that connection is watertight.
 The old mesher's topology and approximation errors are retained, not repaired.
 
 The native packet input is limited to 64 MiB, one million vertices and 1.5 million
-indices. Output growth has explicit count and size rejection. The 128 MiB working
-allocation check occurs after a grow operation and is **not** a hard peak-memory
-allocator budget. Outputs are all-or-nothing; the caller retains its original
-packet on rejection. Requests do not yet have cooperative cancellation. These
-limitations need resolution before broad runtime use.
+indices. Native workspace admission now uses the shared budget allocator before
+allocation, including old and new buffers during growth and allocator headers.
+The workspace ceiling is 128 MiB; packed output payloads have a separate 128 MiB
+ceiling checked before resizing. Caller input, Godot object/allocator overhead,
+thread stacks and process memory are outside those budgets. Outputs are
+all-or-nothing. Cancellation observes command 12's epoch during geometry work
+and output encoding; individual allocations and input decoding are not preempted.
+
+The backend admits only one partition including unconsumed completion. It captures
+token/scene epoch/stamp by value and returns them for future publication checks.
+Shutdown cancels active partition work and accounts for queued accepted work.
+This queue bound does not limit packets already consumed and retained by a caller.
 
 ## Validation, 2026-09-30
 
@@ -41,3 +49,18 @@ or become valid player-residency evidence merely by becoming smaller owners.
 Both native variants build against prebuilt godot-cpp. Reproduce with
 `python tools/probe_terrain_partition.py --godot PATH`.
 Source fingerprints and the report are in `evidence/retained_partition/`.
+
+## Worker and budget follow-up
+
+43 checks pass after the budget/cancellation implementation, including all prior
+geometry checks, tiny workspace/output limits, rejection followed by successful
+retry, in-flight cancellation after allocation admission, backend queue bounds,
+request identity and shutdown accounting. The separate 42-check snapshot gameplay
+publication regression also passes. Both extension variants build successfully.
+Current evidence is retained separately in `evidence/retained_partition_worker/`.
+The original 19-check report and timings above remain historical evidence.
+
+The cancellation fixture has 1.5 million indices. It verifies actual admitted work
+was interrupted, but its diagnostic join time is not a hard cancellation deadline.
+The tests do not yet inject every upstream allocation failure or qualify final
+scene publication, edited seams, FPS or long-run memory behavior.
