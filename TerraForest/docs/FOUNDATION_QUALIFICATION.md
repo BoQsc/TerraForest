@@ -38,6 +38,11 @@ traffic is included in this test.
 
 ## Required primitive pressure matrix — not yet certified
 
+The [mixed-size cut probe](TERRAIN_MIXED_CUT_DECISION.md) preserves tested open
+boundaries with thirteen owners over a 256 m extent. It rejects the cave cut for
+topology and exact local replacement: editing four fine regions also changes
+three coarse neighbors under a fresh rebuild. Dependency bounds remain unresolved.
+
 The [publication probe](TERRAIN_PUBLICATION_DECISION.md) passes 35 checks for a
 four-region edit, including actual physics queries before/after the batch swap.
 It fixes duplicate-completion publication but excludes worker scheduling, mixed
