@@ -239,7 +239,7 @@ static void block_quad(Mesh&m,int axis,int side,float plane,float u,float v,floa
  else {p[0]={u,v,plane};p[1]={u+w,v,plane};p[2]={u+w,v+h,plane};p[3]={u,v+h,plane};n={0,0,float(side)};}
  u32 b=m.v.n;for(int i=0;i<4;i++){Vertex q;q.p=p[i];q.n=n;q.material=float(mat+4);m.v.push(q);}quad(m,b,b+1,b+2,b+3,side<0);
 }
-static void add_blocks(const World&w,int ox,int oz,int size,Mesh&m){
+void add_blocks(const World&w,int ox,int oz,int size,Mesh&m){
  List<Face> faces;static const int dx[6]={-1,1,0,0,0,0},dy[6]={0,0,-1,1,0,0},dz[6]={0,0,0,0,-1,1};
  for(int cz=oz/32;cz<imn(64,(oz+size+31)/32);cz++)for(int cx=ox/32;cx<imn(64,(ox+size+31)/32);cx++){
   const auto&column=w.block_columns[cx+64*cz];for(int i=0;i<column.n;i++){

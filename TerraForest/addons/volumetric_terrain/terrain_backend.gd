@@ -13,6 +13,8 @@ var temporary: bool = false
 var native: Object
 var collision_recipes: RefCounted
 var _collision_piece_triangles := 1024
+var snapshot_terrain: bool = "--snapshot-terrain" in OS.get_cmdline_user_args()
+var _snapshot_token: int = 0
 
 func configure_collision_piece_size(triangles: int) -> bool:
 	# Configuration is immutable while the native-world worker is running.
@@ -384,14 +386,30 @@ func _build(key: Vector3i, allow_base_cache: bool, expected_build_epoch: int, re
 	var derived: bool = false
 	var cached: bool = false
 	var base_available: bool = allow_base_cache and world_seed == 1703 and FileAccess.file_exists(path)
-	if cache_valid and (not base_available or relight_cache):
+	var snapshot_build: bool = snapshot_terrain and key.z<=32 and key.x+key.z<=2000 and key.y+key.z<=2000
+	if snapshot_build:
+		var revision_reply: PackedByteArray = _call(Codec.command(0))
+		_snapshot_token+=1
+		if not native.experimental_snapshot_submit(key.x,key.y,key.z,_snapshot_token,revision_reply.decode_u32(12)):
+			return {"error":"Snapshot terrain admission failed"}
+		var rows: Array=[]
+		while rows.is_empty():
+			rows=native.experimental_snapshot_poll()
+			if rows.is_empty(): OS.delay_usec(1000)
+		var packet: Dictionary=rows[0]
+		if bool(packet.get("stale",true)): return {"cancelled":true}
+		data=native.experimental_snapshot_encode(packet,key.x,key.y,key.z)
+		if data.is_empty():
+			if _call(Codec.command(13)).decode_u32(12)!=expected_build_epoch: return {"cancelled":true}
+			return {"error":"Snapshot terrain conversion failed"}
+	elif cache_valid and (not base_available or relight_cache):
 		data = disk_cache.load_packet(key)
 		derived = not data.is_empty()
 		cached = derived
-	if not derived and base_available:
+	if not snapshot_build and not derived and base_available:
 		data = FileAccess.get_file_as_bytes(path)
 		cached = data.size() >= 36 and data.decode_u32(4) == 5
-	if not cached:
+	if not snapshot_build and not cached:
 		var reply: PackedByteArray = _call(Codec.command(1, [key.x, key.y, key.z, step, expected_build_epoch]))
 		if not Codec.reply_ok(reply):
 			if reply.size() >= 12 and reply.decode_u32(8) == 4:
@@ -405,7 +423,7 @@ func _build(key: Vector3i, allow_base_cache: bool, expected_build_epoch: int, re
 			return updated
 		result["arrays"] = updated["arrays"]
 		result["cavity_visibility"] = updated["cavity_visibility"]
-	if not result.has("error") and not derived and (not cached or relight_cache):
+	if not snapshot_build and not result.has("error") and not derived and (not cached or relight_cache):
 		# A relit base packet is not equal to its original encoded bytes.
 		if cached and relight_cache:
 			data = Codec.encode_decoded_mesh(result)

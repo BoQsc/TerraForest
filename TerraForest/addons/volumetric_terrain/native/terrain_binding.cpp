@@ -3,6 +3,7 @@
 #include "terrain_planner.hpp"
 #include "terrain_collision.hpp"
 #include "experimental/snapshot_worker.hpp"
+#include "experimental/godot_surface_mesh.hpp"
 #include <godot_cpp/classes/ref_counted.hpp>
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/godot.hpp>
@@ -43,10 +44,50 @@ protected:
         godot::ClassDB::bind_method(godot::D_METHOD("experimental_snapshot_poll"), &TerrainCore::experimental_snapshot_poll);
         godot::ClassDB::bind_method(godot::D_METHOD("experimental_snapshot_stop"), &TerrainCore::experimental_snapshot_stop);
         godot::ClassDB::bind_method(godot::D_METHOD("experimental_snapshot_submit_timing"), &TerrainCore::experimental_snapshot_submit_timing);
+        godot::ClassDB::bind_method(godot::D_METHOD("experimental_snapshot_create_mesh","packet"), &TerrainCore::experimental_snapshot_create_mesh);
+        godot::ClassDB::bind_method(godot::D_METHOD("experimental_snapshot_encode","packet","x","z","size"), &TerrainCore::experimental_snapshot_encode);
     }
 public:
     TerrainCore() {world_.build_control=&control_; tr_oom=false; world_.init();}
     ~TerrainCore() {snapshot_worker_.reset();world_.release();}
+    godot::PackedByteArray experimental_snapshot_encode(const godot::Dictionary&packet,int64_t x,int64_t z,int64_t size){
+        if(x<0||z<0||(size!=16&&size!=32)||x+size>WORLD||z+size>WORLD)return {};
+        for(const char*key:{"status","epoch","validated_revision","source_id"})
+            if(!packet.has(key)||godot::Variant(packet[key]).get_type()!=godot::Variant::INT)return {};
+        if(int64_t(packet["status"])!=0||bool(packet.get("stale",true))||int64_t(packet["source_id"])!=int64_t(get_instance_id()))return {};
+        auto arrays=experimental::surface_arrays(packet);if(arrays.is_empty())return {};
+        godot::PackedVector3Array positions=arrays[godot::Mesh::ARRAY_VERTEX],normals=arrays[godot::Mesh::ARRAY_NORMAL];
+        godot::PackedInt32Array indices=arrays[godot::Mesh::ARRAY_INDEX];
+        std::lock_guard<std::mutex> lock(mutex_);
+        if(int64_t(packet["validated_revision"])!=world_.revision||int64_t(packet["epoch"])<0||u64(int64_t(packet["epoch"]))!=snapshot_epoch_.load())return {};
+        const u32 build_epoch=terrain_build_epoch(&world_);tr_oom=false;
+        Mesh mesh;mesh.v.resize(int(positions.size()));mesh.i.resize(int(indices.size()));
+        if(tr_oom){mesh.release();return {};}
+        for(int at=0;at<positions.size();at++){
+            auto p=positions[at],n=normals[at];
+            if(p.x<x||p.x>x+size||p.z<z||p.z>z+size){mesh.release();return {};}
+            mesh.v[at].p={float(p.x),float(p.y),float(p.z)};mesh.v[at].n={float(n.x),float(n.y),float(n.z)};
+        }
+        for(int at=0;at<indices.size();at++)mesh.i[at]=u32(indices[at]);
+        add_blocks(world_,int(x),int(z),int(size),mesh);
+        if(!tr_oom)shade_mesh(world_,mesh,build_epoch);
+        Bytes encoded;
+        if(!tr_oom&&build_epoch==terrain_build_epoch(&world_))encode_mesh(mesh,int(x),int(z),int(size),1,encoded);
+        godot::PackedByteArray result;
+        if(!tr_oom&&u64(int64_t(packet["epoch"]))==snapshot_epoch_.load()&&result.resize(encoded.n)==godot::OK&&encoded.n)copy_bytes(result.ptrw(),encoded.p,encoded.n);
+        mesh.release();encoded.release();return result;
+    }
+    godot::Ref<godot::ArrayMesh> experimental_snapshot_create_mesh(const godot::Dictionary&packet){
+        for(const char*key:{"status","epoch","validated_revision","source_id"})
+            if(!packet.has(key)||godot::Variant(packet[key]).get_type()!=godot::Variant::INT)return {};
+        if(int64_t(packet["status"])!=0||bool(packet.get("stale",true))||int64_t(packet["source_id"])!=int64_t(get_instance_id()))return {};
+        const int64_t revision=packet["validated_revision"],epoch=packet["epoch"];
+        {std::lock_guard<std::mutex> lock(mutex_);if(revision!=world_.revision||epoch<0||u64(epoch)!=snapshot_epoch_.load())return {};}
+        auto mesh=experimental::make_surface_mesh(packet);
+        // Engine allocation/upload is outside the authoritative-world mutex.
+        {std::lock_guard<std::mutex> lock(mutex_);if(revision!=world_.revision||u64(epoch)!=snapshot_epoch_.load())return {};}
+        return mesh;
+    }
     bool experimental_snapshot_submit(int64_t x,int64_t z,int64_t size,int64_t token,int64_t revision){
         if(x<0||z<0||x>WORLD||z>WORLD||size<1||size>32||token<0||revision<0)return false;
         using Clock=std::chrono::steady_clock;auto begin=Clock::now();
@@ -79,6 +120,7 @@ public:
         const u64 epoch=snapshot_epoch_.load();
         snapshot_worker_->consume_surface(epoch,world_.revision,[&](u64 token,u64 captured,int revision,bool stale,const experimental::Result&r,const experimental::NormalResult&n){
             godot::Dictionary row;row["token"]=int64_t(token);row["epoch"]=int64_t(captured);row["revision"]=revision;row["stale"]=stale;
+            row["source_id"]=int64_t(get_instance_id());
             row["validated_revision"]=stale?-1:world_.revision;
             int status=int(r.status);godot::PackedByteArray positions,indices,normals;
             if(r.status==experimental::MeshStatus::ok){

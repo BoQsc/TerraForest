@@ -66,6 +66,6 @@ func run() -> void:
 	await process_frame
 	DirAccess.make_dir_recursive_absolute("res://reports")
 	var file := FileAccess.open("res://reports/terrain_worker_publication_probe.json",FileAccess.WRITE)
-	file.store_string(JSON.stringify({"failures":failures,"checks":checks,"rows":rows,"events":worker_events,"scope":"Real native worker, public stream edit/invalidation, collision staging and physics queries. Fixed four-region cut; no quadtree transitions, draw/GPU, new mesher or endurance. Held mode deliberately includes observer delay; all timings are headless diagnostic only."},"  "))
+	file.store_string(JSON.stringify({"failures":failures,"checks":checks,"rows":rows,"events":worker_events,"scope":"Real native worker, public stream edit/invalidation, collision staging and physics queries. Fixed four-region cut; no quadtree transitions, draw/GPU or endurance. Snapshot candidate selected only with --snapshot-terrain. Held mode deliberately includes observer delay; all timings are headless diagnostic only."},"  "))
 	file.close()
 	quit(0 if failures==0 else 1)
