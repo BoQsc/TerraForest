@@ -3,8 +3,8 @@
 #pragma once
 #include "core.h"
 #include "fallible_buffer.hpp"
+#include "lattice_edge_table.hpp"
 #include <vector>
-#include <unordered_map>
 #include <algorithm>
 #include <cmath>
 #include <limits>
@@ -17,17 +17,18 @@ struct MeshLimits{
  bool(*cancel)(void*)=nullptr;void*context=nullptr;
  BufferAllocator output_allocator;
  BufferAllocator sampler_allocator;
+ BufferAllocator crossing_allocator;
  bool cancelled()const{return cancel&&cancel(context);}
 };
 struct Result{
  FallibleBuffer<V3> p;FallibleBuffer<u32> indices;
- std::unordered_map<u64,u32> crossings;
- size_t peak_crossings=0,peak_buckets=0;
+ LatticeEdgeTable crossings;
+ size_t peak_crossings=0,peak_table_slots=0;
  size_t peak_vertices=0,peak_indices=0;
  MeshLimits limits;MeshStatus status=MeshStatus::ok;
  void discard(MeshStatus why){
   status=why;p.clear();indices.clear();
-  std::unordered_map<u64,u32>().swap(crossings);
+  crossings.clear();
  }
  template<class T>static bool grow(FallibleBuffer<T>&v,size_t need,size_t limit){
   return need<=v.capacity()||v.reserve(std::min(limit,std::max(need,std::max(size_t(16),v.capacity()*2))));
@@ -35,17 +36,18 @@ struct Result{
  u32 intersection(Sample a,Sample b){
   if(status!=MeshStatus::ok)return 0;
   if(a.id>b.id)std::swap(a,b);
-  u64 key=(u64(a.id)<<32)|b.id;
-  auto found=crossings.find(key);if(found!=crossings.end())return found->second;
+  size_t slot=crossings.slot(a.id,b.id);
+  if(slot==LatticeEdgeTable::invalid_slot){status=MeshStatus::internal_error;return 0;}
+  u32 found=crossings.get(slot);if(found!=LatticeEdgeTable::absent)return found;
   if(p.size()>=limits.vertices){status=MeshStatus::output_limit;return 0;}
   // Canonical endpoint order makes adjacent independently built regions agree.
   double t=double(a.d)/(double(a.d)-b.d);
   V3 point={float(a.p.x+(b.p.x-a.p.x)*t),float(a.p.y+(b.p.y-a.p.y)*t),float(a.p.z+(b.p.z-a.p.z)*t)};
   if(!grow(p,p.size()+1,limits.vertices)){status=MeshStatus::allocation_failed;return 0;}
-  u32 id=u32(p.size());p.push_back(point);crossings.emplace(key,id);
+  u32 id=u32(p.size());p.push_back(point);crossings.put(slot,id);
   peak_vertices=std::max(peak_vertices,p.size());
   peak_crossings=std::max(peak_crossings,crossings.size());
-  peak_buckets=std::max(peak_buckets,crossings.bucket_count());return id;
+  peak_table_slots=std::max(peak_table_slots,crossings.slots());return id;
  }
  void tri(u32 a,u32 b,u32 c,V3 outward){
   if(status!=MeshStatus::ok)return;
@@ -73,7 +75,7 @@ struct Result{
 
 static bool valid_region(int x0,int z0,int size,const MeshLimits&limits){
  return size>=1&&size<=32&&x0>=0&&z0>=0&&x0<=WORLD-size&&z0<=WORLD-size&&
-        limits.vertices<=std::numeric_limits<u32>::max()&&limits.indices<=std::numeric_limits<u32>::max()&&limits.output_allocator.allocate&&limits.output_allocator.release&&limits.sampler_allocator.allocate&&limits.sampler_allocator.release;
+        limits.vertices<=std::numeric_limits<u32>::max()&&limits.indices<=std::numeric_limits<u32>::max()&&limits.output_allocator.allocate&&limits.output_allocator.release&&limits.sampler_allocator.allocate&&limits.sampler_allocator.release&&limits.crossing_allocator.allocate&&limits.crossing_allocator.release;
 }
 
 // Providers must return two contiguous (size+1)^2 planes for each requested Y.
@@ -84,6 +86,8 @@ static Result mesh_layers(int x0,int z0,int size,bool retire_edges,Layers&&layer
  int n=size+1;
  auto index=[&](int x,int y,int z){return x+n*(z+n*y);};
  Result result;result.limits=limits;result.p.set_allocator(limits.output_allocator);result.indices.set_allocator(limits.output_allocator);
+ if(limits.cancelled()){result.discard(MeshStatus::cancelled);return result;}
+ if(!result.crossings.initialize(x0,z0,size,retire_edges,limits.crossing_allocator)){result.discard(MeshStatus::allocation_failed);return result;}
  constexpr int tets[6][4]={{0,1,3,7},{0,3,2,7},{0,2,6,7},{0,6,4,7},{0,4,5,7},{0,5,1,7}};
  for(int y=0;y<256;y++){
  if(limits.cancelled()){result.discard(MeshStatus::cancelled);return result;}
@@ -115,13 +119,12 @@ static Result mesh_layers(int x0,int z0,int size,bool retire_edges,Layers&&layer
   if(retire_edges){
    // A later cell can only reuse edges on this layer's top plane. Canonical
    // endpoint IDs increase with Y, so the smaller endpoint determines survival.
-   const u32 next_plane=u32(y+1)*2049u*2049u;
-   for(auto it=result.crossings.begin();it!=result.crossings.end();){
-    if(u32(it->first>>32)<next_plane)it=result.crossings.erase(it);else ++it;
-   }
+   result.crossings.retire(y);
   }
  }
  if(retire_edges&&result.peak_crossings>size_t(36)*size*size){result.discard(MeshStatus::internal_error);}
+ // Deduplication storage is scratch, not part of the returned mesh lifetime.
+ result.crossings.clear();
  return result;
 }
 

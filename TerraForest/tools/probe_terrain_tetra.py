@@ -33,6 +33,7 @@ interface_controls=[row for row in controls if row['name']=='validated region in
 world_controls=[row for row in controls if row['name']=='world region entry']
 allocation_controls=[row for row in controls if row['name']=='output allocation failures']
 sampler_allocation_controls=[row for row in controls if row['name']=='sampler allocation failures']
+all_allocation_controls=[row for row in controls if row['name']=='all candidate allocation failures']
 
 def decode(path):
     data=path.read_bytes();nv,ni=struct.unpack_from('<II',data)
@@ -103,10 +104,11 @@ checks.append(dict(name='native region interface rejects invalid bounds limits b
 checks.append(dict(name='world-region entry validates setup cancellation limits sequencing and recovery',passed=len(world_controls)==12 and all(s['passed'] for s in world_controls)))
 checks.append(dict(name='every output-buffer allocation can fail without partial output or live buffers',passed=len(allocation_controls)==1 and all(s['injected_failures']>=4 and s['empty_failures'] and s['no_live_buffers'] and s['retry_and_move_parity'] for s in allocation_controls)))
 checks.append(dict(name='every sampler allocation can fail through the world entry and recover',passed=len(sampler_allocation_controls)==1 and all(s['injected_failures']==3 and s['invalid_hooks']==2 and s['empty_failures'] and s['no_live_buffers'] and s['retry_parity'] for s in sampler_allocation_controls)))
-result=dict(failures=sum(not c['passed'] for c in checks),checks=checks,native_samples=samples,storage_controls=storage_controls,sampler_controls=sampler_controls,limit_controls=limit_controls,thread_controls=thread_controls,interface_controls=interface_controls,world_controls=world_controls,allocation_controls=allocation_controls,sampler_allocation_controls=sampler_allocation_controls,elapsed_seconds=time.perf_counter()-begin,
+checks.append(dict(name='fixed crossing slots and all candidate allocations fail cleanly',passed=len(all_allocation_controls)==1 and all(s['injected_failures']>4 and s['invalid_crossing_hooks']==2 and s['empty_failures'] and s['no_live_buffers'] and s['success_releases_scratch'] for s in all_allocation_controls) and all(s['peak_table_slots']==14*(s['size']+1)**2 for s in samples+storage_controls)))
+result=dict(failures=sum(not c['passed'] for c in checks),checks=checks,native_samples=samples,storage_controls=storage_controls,sampler_controls=sampler_controls,limit_controls=limit_controls,thread_controls=thread_controls,interface_controls=interface_controls,world_controls=world_controls,allocation_controls=allocation_controls,sampler_allocation_controls=sampler_allocation_controls,all_allocation_controls=all_allocation_controls,crossing_storage='Direct lattice table; paired retained control is a full-height table, not the historical hash implementation.',elapsed_seconds=time.perf_counter()-begin,
             adoption_qualified=False,build_command=command,toolchain_lock_sha256=toolchain['lock_sha256'],executable_sha256=hashlib.sha256(exe.read_bytes()).hexdigest(),
             reference_report_sha256=hashlib.sha256(baseline_path.read_bytes()).hexdigest(),
-            hashes={str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in [source,Path(__file__).resolve(),native/'core.cpp',native/'core.h',native/'platform.h',native/'geometry_regions.hpp',native/'experimental/region_mesher.hpp',native/'experimental/world_region_sampler.hpp',native/'experimental/fallible_buffer.hpp']},
+            hashes={str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in [source,Path(__file__).resolve(),native/'core.cpp',native/'core.h',native/'platform.h',native/'geometry_regions.hpp',native/'experimental/region_mesher.hpp',native/'experimental/world_region_sampler.hpp',native/'experimental/fallible_buffer.hpp',native/'experimental/lattice_edge_table.hpp']},
             scope='Isolated tetrahedral geometry prototype with full-buffer controls and a two-plane streaming sampler. Sampler payload excludes reference buffers, output geometry and allocator overhead. Changes interpolation and zero convention; no LOD, visual-error, material, shading, collider, GPU or runtime qualification.')
 (ROOT/'reports').mkdir(exist_ok=True)
 (ROOT/'reports/terrain_tetra_probe.json').write_text(json.dumps(result,indent=2)+'\n')

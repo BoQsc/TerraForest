@@ -96,7 +96,7 @@ static void build(World&w,int x0,int z0,int size,const std::string&file){
  for(size_t i=0;i<scan_times.size();i++)printf("%s%.6f",i?",":"",scan_times[i]);
  printf("],\"control_meshing_samples_ms\":[");
  for(size_t i=0;i<control_times.size();i++)printf("%s%.6f",i?",":"",control_times[i]);
- printf("],\"peak_crossings\":%zu,\"control_peak_crossings\":%zu,\"peak_buckets\":%zu,\"control_peak_buckets\":%zu,\"streamed_parity\":true,\"streamed_total_ms\":%.6f,\"density_plane_bytes\":%zu,\"sampler_payload_bytes\":%zu,\"full_field_bytes\":%zu}\n",result.peak_crossings,control.peak_crossings,result.peak_buckets,control.peak_buckets,streamed_ms,rolling.planes.size()*sizeof(float),rolling.payload_bytes(),field.size()*sizeof(float));
+ printf("],\"peak_crossings\":%zu,\"control_peak_crossings\":%zu,\"peak_table_slots\":%zu,\"control_peak_table_slots\":%zu,\"streamed_parity\":true,\"streamed_total_ms\":%.6f,\"density_plane_bytes\":%zu,\"sampler_payload_bytes\":%zu,\"full_field_bytes\":%zu}\n",result.peak_crossings,control.peak_crossings,result.peak_table_slots,control.peak_table_slots,streamed_ms,rolling.planes.size()*sizeof(float),rolling.payload_bytes(),field.size()*sizeof(float));
 }
 int main(int argc,char**argv){
  if(argc!=2)return 2;
@@ -108,7 +108,7 @@ int main(int argc,char**argv){
   for(int y=0;y<=256;y++)for(int z=0;z<n;z++)for(int x=0;x<n;x++)field[x+n*(z+n*y)]=(y&1)?-1.f:1.f;
   Result rolling=mesh_field(field,1280,1280,size,true),retained=mesh_field(field,1280,1280,size,false);
   if(rolling.indices!=retained.indices||rolling.p.size()!=retained.p.size()||std::memcmp(rolling.p.data(),retained.p.data(),rolling.p.size()*sizeof(V3))||rolling.peak_crossings>=retained.peak_crossings)return 8;
-  fprintf(stderr,"{\"name\":\"256 alternating layers\",\"mesh_parity\":true,\"size\":8,\"peak_crossings\":%zu,\"control_peak_crossings\":%zu,\"peak_buckets\":%zu,\"control_peak_buckets\":%zu}\n",rolling.peak_crossings,retained.peak_crossings,rolling.peak_buckets,retained.peak_buckets);
+  fprintf(stderr,"{\"name\":\"256 alternating layers\",\"mesh_parity\":true,\"size\":8,\"peak_crossings\":%zu,\"control_peak_crossings\":%zu,\"peak_table_slots\":%zu,\"control_peak_table_slots\":%zu}\n",rolling.peak_crossings,retained.peak_crossings,rolling.peak_table_slots,retained.peak_table_slots);
   auto empty_failure=[](const Result&r,MeshStatus status){return r.status==status&&r.p.empty()&&r.indices.empty()&&r.crossings.empty()&&r.p.capacity()==0&&r.indices.capacity()==0;};
   struct Allocations{int fail=0,calls=0,live=0;};
   auto allocator=[](Allocations&state){
@@ -227,6 +227,33 @@ int main(int argc,char**argv){
   fprintf(stderr,"{\"name\":\"threaded per-world epoch cancellation\",\"cancelled_after_vertices\":%zu,\"callback_calls\":%d,\"discarded\":true,\"other_world_unchanged\":true,\"retry_parity\":true}\n",cancelled_result.peak_vertices,held.calls);
  }
  World w;w.init(1703);
+ {
+  struct Allocations{int fail=0,calls=0,live=0;};
+  auto hooks=[](Allocations&state){
+   BufferAllocator allocator;allocator.context=&state;
+   allocator.allocate=[](void*p,size_t bytes)->void*{auto&s=*static_cast<Allocations*>(p);if(++s.calls==s.fail)return nullptr;void*memory=std::malloc(bytes);if(memory)s.live++;return memory;};
+   allocator.release=[](void*p,void*memory){auto&s=*static_cast<Allocations*>(p);s.live--;std::free(memory);};return allocator;
+  };
+  Allocations baseline;
+  {
+   MeshLimits limits;limits.output_allocator=limits.sampler_allocator=limits.crossing_allocator=hooks(baseline);
+   Result output=build_world_region(w,1280,1280,16,limits);
+   if(output.status!=MeshStatus::ok||baseline.live!=2||output.crossings.slots()!=0)return 37;
+  }
+  if(baseline.live)return 38;
+  for(int fail=1;fail<=baseline.calls;fail++){
+   Allocations state;state.fail=fail;MeshLimits limits;limits.output_allocator=limits.sampler_allocator=limits.crossing_allocator=hooks(state);
+   Result output=build_world_region(w,1280,1280,16,limits);
+   if(output.status!=MeshStatus::allocation_failed||!output.p.empty()||!output.indices.empty()||output.crossings.slots()||state.live||state.calls!=fail)return 39;
+  }
+  for(int missing=0;missing<2;missing++){
+   Allocations state;MeshLimits limits;limits.crossing_allocator=hooks(state);
+   if(missing)limits.crossing_allocator.release=nullptr;else limits.crossing_allocator.allocate=nullptr;
+   Result output=build_world_region(w,1280,1280,16,limits);
+   if(output.status!=MeshStatus::invalid_input||state.calls||state.live)return 40;
+  }
+  fprintf(stderr,"{\"name\":\"all candidate allocation failures\",\"injected_failures\":%d,\"invalid_crossing_hooks\":2,\"empty_failures\":true,\"no_live_buffers\":true,\"success_releases_scratch\":true}\n",baseline.calls);
+ }
  {
   struct Allocations{int fail=0,calls=0,live=0;};
   auto hooks=[](Allocations&state){

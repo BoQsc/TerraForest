@@ -41,21 +41,21 @@ traffic is included in this test.
 The [candidate output allocator](TERRAIN_CANDIDATE_OUTPUT_ALLOCATION.md) recovers
 from all 30 injected position/index growth failures without partial output or
 tracked-buffer leaks. The follow-up also recovers all three sampler allocation
-failures through the world entry point. Hash-map allocation remains unrecoverable;
-this does not establish complete OOM resilience.
+failures through the world entry point. The subsequent [fixed edge table](TERRAIN_CANDIDATE_EDGE_TABLE.md)
+removes hash-node allocation and passes all 24 combined candidate allocation
+failure injections. This does not establish engine-wide OOM resilience.
 
 The [experimental native region interface](TERRAIN_CANDIDATE_INTERFACE.md) now
 separates meshing from its benchmark, rejects invalid region/buffer inputs and
 retains exact geometry and cancellation checks. It remains unregistered in the
-game extension; allocation-failure recovery and runtime integration are incomplete.
+game extension; runtime integration remains incomplete.
 Its world-backed entry now covers cancellation during sampler setup as well as
 meshing, with exact output parity. The world must remain immutable during a build.
 
 The [candidate build-limit controls](TERRAIN_TETRA_BUILD_LIMITS.md) verify explicit
 output-limit/cancellation status, discarded partial geometry and exact recovery.
 A native-thread follow-up verifies per-world epoch interruption and isolation.
-Allocator-failure recovery and Godot-worker integration remain unqualified for
-the replacement candidate.
+Godot-worker integration remains unqualified for the replacement candidate.
 
 The [two-plane candidate sampler](TERRAIN_TETRA_ROLLING_FIELD.md) reduces a 32 m
 region's sampling payload from a 1.07 MiB density buffer to 17 KiB including
