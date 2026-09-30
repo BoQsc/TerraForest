@@ -84,6 +84,7 @@ baseline=json.loads(gzip.decompress(baseline_path.read_bytes()))
 fingerprints={c['name']:c['sha256'] for c in baseline['checks'] if 'sha256' in c}
 checks.append(dict(name='all optimized meshes equal committed reference bytes',passed=len(fingerprints)==15 and all(meshes[name][1]['sha256']==digest for name,digest in fingerprints.items())))
 checks.append(dict(name='all quantized field samples match World::sample',passed=len(samples)==15 and all(s['sample_parity'] for s in samples)))
+checks.append(dict(name='five paired sign-scan controls preserve exact geometry per fixture',passed=len(samples)==15 and all(s['mesh_parity'] and len(s['meshing_samples_ms'])==5 and len(s['control_meshing_samples_ms'])==5 for s in samples)))
 result=dict(failures=sum(not c['passed'] for c in checks),checks=checks,native_samples=samples,elapsed_seconds=time.perf_counter()-begin,
             adoption_qualified=False,build_command=command,toolchain_lock_sha256=toolchain['lock_sha256'],executable_sha256=hashlib.sha256(exe.read_bytes()).hexdigest(),
             reference_report_sha256=hashlib.sha256(baseline_path.read_bytes()).hexdigest(),

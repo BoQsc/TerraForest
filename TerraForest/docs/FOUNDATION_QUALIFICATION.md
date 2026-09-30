@@ -38,6 +38,11 @@ traffic is included in this test.
 
 ## Required primitive pressure matrix — not yet certified
 
+The [tetrahedral sign-scan optimization](TERRAIN_TETRA_SIGN_SCAN.md) reduces the
+sum of fifteen fixture median meshing times by 39.6%, with all 75 paired outputs
+byte-identical. This improves the isolated candidate; it is not integrated into
+gameplay and does not qualify its field error, LOD or full pipeline cost.
+
 The [native coverage transition probe](TERRAIN_TRANSITION_DECISION.md) passes 54
 checks while refining a real parent into thirteen owners, editing locally and
 coarsening only after refreshing the dirty parent. This supports reuse of coverage

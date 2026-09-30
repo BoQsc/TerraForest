@@ -8,6 +8,7 @@
 #include <cstdlib>
 #include <cstdio>
 #include <string>
+#include <cstring>
 
 static double now(){return std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now().time_since_epoch()).count();}
 struct Sample{V3 p;float d;u32 id;};
@@ -43,6 +44,29 @@ struct Result{
  }
 };
 
+static Result mesh_field(const std::vector<float>&field,int x0,int z0,int size,bool early_sign_scan){
+ int n=size+1;
+ auto index=[&](int x,int y,int z){return x+n*(z+n*y);};
+ Result result;
+ constexpr int tets[6][4]={{0,1,3,7},{0,3,2,7},{0,2,6,7},{0,6,4,7},{0,4,5,7},{0,5,1,7}};
+ for(int y=0;y<256;y++)for(int z=0;z<size;z++)for(int x=0;x<size;x++){
+  if(early_sign_scan){
+   unsigned mask=0;
+   for(int k=0;k<8;k++)mask|=unsigned(field[index(x+(k&1),y+((k>>1)&1),z+((k>>2)&1))]<0)<<k;
+   if(mask==0||mask==255)continue;
+  }
+  Sample s[8];int negative=0;
+  for(int k=0;k<8;k++){
+   int sx=x+(k&1),sy=y+((k>>1)&1),sz=z+((k>>2)&1);
+   s[k]={{float(x0+sx),float(sy),float(z0+sz)},field[index(sx,sy,sz)],u32(x0+sx+2049*((z0+sz)+2049*sy))};
+   negative+=s[k].d<0;
+  }
+  if(negative==0||negative==8)continue;
+  for(const auto&t:tets)result.tetra(s,t);
+ }
+ return result;
+}
+
 static void build(World&w,int x0,int z0,int size,const std::string&file){
  int n=size+1;
  std::vector<float> field(size_t(n)*n*257);
@@ -76,20 +100,23 @@ static void build(World&w,int x0,int z0,int size,const std::string&file){
  }
  double sampled=now();
  if(field!=reference){fprintf(stderr,"Column sampler disagrees with authoritative samples\n");std::exit(5);}
- double mesh_begin=now();Result result;
- // Six tetrahedra sharing the 0->7 cube diagonal; same split in every cell.
- constexpr int tets[6][4]={{0,1,3,7},{0,3,2,7},{0,2,6,7},{0,6,4,7},{0,4,5,7},{0,5,1,7}};
- for(int y=0;y<256;y++)for(int z=0;z<size;z++)for(int x=0;x<size;x++){
-  Sample s[8];int negative=0;
-  for(int k=0;k<8;k++){
-   int sx=x+(k&1),sy=y+((k>>1)&1),sz=z+((k>>2)&1);
-   s[k]={{float(x0+sx),float(sy),float(z0+sz)},field[index(sx,sy,sz)],u32(x0+sx+2049*((z0+sz)+2049*sy))};
-   negative+=s[k].d<0;
-  }
-  if(negative==0||negative==8)continue;
-  for(const auto&t:tets)result.tetra(s,t);
+ Result result,control;double meshing_ms=0,control_ms=0;
+ std::vector<double> scan_times,control_times;
+ // Paired same-field control; alternate order between fixtures to expose bias.
+ static int ordinal=0;
+ for(int repetition=0;repetition<5;repetition++){
+ for(int pass=0;pass<2;pass++){
+  bool scan=((ordinal+repetition+pass)%2)==0;double tick=now();
+  Result output=mesh_field(field,x0,z0,size,scan);
+  double elapsed=now()-tick;
+  if(scan){result=std::move(output);scan_times.push_back(elapsed);}
+  else{control=std::move(output);control_times.push_back(elapsed);}
  }
- double meshed=now();
+ if(result.indices!=control.indices||result.p.size()!=control.p.size()||std::memcmp(result.p.data(),control.p.data(),result.p.size()*sizeof(V3))){fprintf(stderr,"Early sign scan changed geometry\n");std::exit(6);}
+ }
+ ordinal++;
+ auto median=[](std::vector<double> values){std::sort(values.begin(),values.end());return values[values.size()/2];};
+ meshing_ms=median(scan_times);control_ms=median(control_times);
  auto residual=[&](V3 p){
   int x=imn(size-1,imx(0,fl(p.x)-x0)),z=imn(size-1,imx(0,fl(p.z)-z0)),y=imn(255,imx(0,fl(p.y)));
   double dx=p.x-x0-x,dy=p.y-y,dz=p.z-z0-z,value=0;
@@ -106,7 +133,11 @@ static void build(World&w,int x0,int z0,int size,const std::string&file){
  FILE*f=fopen(file.c_str(),"wb");if(!f)std::exit(2);
  u32 counts[2]={u32(result.p.size()),u32(result.indices.size())};
  fwrite(counts,4,2,f);fwrite(result.p.data(),sizeof(V3),result.p.size(),f);fwrite(result.indices.data(),4,result.indices.size(),f);fclose(f);
- printf("{\"size\":%d,\"x\":%d,\"z\":%d,\"reference_sampling_ms\":%.6f,\"sampling_ms\":%.6f,\"meshing_ms\":%.6f,\"sample_parity\":true,\"vertices\":%zu,\"triangles\":%zu,\"zero_samples\":%d,\"max_vertex_field_residual\":%.8f,\"max_centroid_field_residual\":%.8f}\n",size,x0,z0,reference_sampled-begin,sampled-reference_sampled,meshed-mesh_begin,result.p.size(),result.indices.size()/3,zeros,vertex_error,centroid_error);
+ printf("{\"size\":%d,\"x\":%d,\"z\":%d,\"reference_sampling_ms\":%.6f,\"sampling_ms\":%.6f,\"meshing_ms\":%.6f,\"control_meshing_ms\":%.6f,\"mesh_parity\":true,\"sample_parity\":true,\"vertices\":%zu,\"triangles\":%zu,\"zero_samples\":%d,\"max_vertex_field_residual\":%.8f,\"max_centroid_field_residual\":%.8f,\"meshing_samples_ms\":[",size,x0,z0,reference_sampled-begin,sampled-reference_sampled,meshing_ms,control_ms,result.p.size(),result.indices.size()/3,zeros,vertex_error,centroid_error);
+ for(size_t i=0;i<scan_times.size();i++)printf("%s%.6f",i?",":"",scan_times[i]);
+ printf("],\"control_meshing_samples_ms\":[");
+ for(size_t i=0;i<control_times.size();i++)printf("%s%.6f",i?",":"",control_times[i]);
+ printf("]}\n");
 }
 int main(int argc,char**argv){
  if(argc!=2)return 2;
