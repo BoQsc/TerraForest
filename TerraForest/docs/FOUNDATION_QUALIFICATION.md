@@ -38,6 +38,11 @@ traffic is included in this test.
 
 ## Required primitive pressure matrix — not yet certified
 
+The [publication probe](TERRAIN_PUBLICATION_DECISION.md) passes 35 checks for a
+four-region edit, including actual physics queries before/after the batch swap.
+It fixes duplicate-completion publication but excludes worker scheduling, mixed
+LOD coverage and graphical performance. It supports reuse of this component only.
+
 The [bounded LOD admission experiment](TERRAIN_LOD_ADMISSION_DECISION.md) safely
 falls back in 18 of 30 cases but takes up to 516 ms. It is rejected for live edits;
 passing geometry checks through fallback does not qualify runtime performance.

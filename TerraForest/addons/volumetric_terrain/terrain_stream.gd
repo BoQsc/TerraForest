@@ -353,7 +353,7 @@ func _receive(result: Dictionary) -> void:
 		result["kind"] = "batch"
 		staging.push_front(result)
 	elif kind == "edit_done":
-		if int(result["epoch"]) != epoch or int(result["ticket"]) != edit_ticket:
+		if not pending_edit or int(result["epoch"]) != epoch or int(result["ticket"]) != edit_ticket:
 			return
 		last_total_build_ms = float(result["build_total_ms"])
 		last_worker_finished_us = int(result["worker_finished_us"])

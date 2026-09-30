@@ -1,0 +1,24 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS four native fine regions installed
+PASS initial visual and collider active (1280, 1280, 16)
+PASS initial visual and collider active (1296, 1280, 16)
+PASS initial visual and collider active (1280, 1296, 16)
+PASS initial visual and collider active (1296, 1296, 16)
+PASS obsolete stamp and epoch preserve newer request
+PASS stale preparation cannot replace live visual or collision
+PASS boundary excavation changes native field
+PASS old complete batch stays active during preparation (1280, 1280, 16)
+PASS old complete batch stays active during preparation (1296, 1280, 16)
+PASS old complete batch stays active during preparation (1280, 1296, 16)
+PASS old complete batch stays active during preparation (1296, 1296, 16)
+PASS excavation changes all four neighboring meshes
+PASS prepared batch waits for worker completion
+PASS obsolete completion cannot publish batch
+PASS matching completion publishes once
+FAIL duplicate completion cannot republish the finished transaction
+PASS visual and collision activation switch together (1280, 1280, 16)
+PASS visual and collision activation switch together (1296, 1280, 16)
+PASS visual and collision activation switch together (1280, 1296, 16)
+PASS visual and collision activation switch together (1296, 1296, 16)
+
