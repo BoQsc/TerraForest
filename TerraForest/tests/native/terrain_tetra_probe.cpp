@@ -47,22 +47,24 @@ struct Result{
  }
 };
 
-static Result mesh_field(const std::vector<float>&field,int x0,int z0,int size,bool retire_edges){
+template<class Layers>
+static Result mesh_layers(int x0,int z0,int size,bool retire_edges,Layers&&layers){
  int n=size+1;
  auto index=[&](int x,int y,int z){return x+n*(z+n*y);};
  Result result;
  constexpr int tets[6][4]={{0,1,3,7},{0,3,2,7},{0,2,6,7},{0,6,4,7},{0,4,5,7},{0,5,1,7}};
  for(int y=0;y<256;y++){
+ const float*field=layers(y);
  for(int z=0;z<size;z++)for(int x=0;x<size;x++){
   {
    unsigned mask=0;
-   for(int k=0;k<8;k++)mask|=unsigned(field[index(x+(k&1),y+((k>>1)&1),z+((k>>2)&1))]<0)<<k;
+   for(int k=0;k<8;k++)mask|=unsigned(field[index(x+(k&1),(k>>1)&1,z+((k>>2)&1))]<0)<<k;
    if(mask==0||mask==255)continue;
   }
   Sample s[8];int negative=0;
   for(int k=0;k<8;k++){
    int sx=x+(k&1),sy=y+((k>>1)&1),sz=z+((k>>2)&1);
-   s[k]={{float(x0+sx),float(sy),float(z0+sz)},field[index(sx,sy,sz)],u32(x0+sx+2049*((z0+sz)+2049*sy))};
+   s[k]={{float(x0+sx),float(sy),float(z0+sz)},field[index(sx,sy-y,sz)],u32(x0+sx+2049*((z0+sz)+2049*sy))};
    negative+=s[k].d<0;
   }
   if(negative==0||negative==8)continue;
@@ -80,6 +82,50 @@ static Result mesh_field(const std::vector<float>&field,int x0,int z0,int size,b
  if(retire_edges&&result.peak_crossings>size_t(36)*size*size){fprintf(stderr,"Crossing map exceeded single-slab edge bound\n");std::exit(7);}
  return result;
 }
+
+static Result mesh_field(const std::vector<float>&field,int x0,int z0,int size,bool retire_edges){
+ size_t plane=size_t(size+1)*(size+1);
+ return mesh_layers(x0,z0,size,retire_edges,[&](int y){return field.data()+size_t(y)*plane;});
+}
+
+static float density_value(float d){
+ float v=clampf(d,-SDF_BAND,SDF_BAND)*SDF_SCALE;int q=int(v>=0?v+.5f:v-.5f);
+ return q?float(q)/SDF_SCALE:.5f/SDF_SCALE;
+}
+
+struct RollingField{
+ World&w;int x0,z0,n,page_y=-1;
+ size_t plane;
+ std::vector<float> planes,heights;
+ std::vector<int> page_indices;
+ const std::vector<float>*expected;
+ RollingField(World&world,int x,int z,int size,const std::vector<float>*reference):w(world),x0(x),z0(z),n(size+1),plane(size_t(n)*n),planes(plane*2),heights(plane),page_indices(plane),expected(reference){
+  for(int dz=0;dz<n;dz++)for(int dx=0;dx<n;dx++)heights[dx+n*dz]=w.height(float(x0+dx),float(z0+dz));
+  fill(0,planes.data());fill(1,planes.data()+plane);
+ }
+ void fill(int y,float*out){
+  constexpr int np=WORLD/PAGE+1;
+  int py=y>>4;
+  if(py!=page_y){
+   for(int z=0;z<n;z++)for(int x=0;x<n;x++){
+    int wx=x0+x,wz=z0+z;
+    page_indices[x+n*z]=(wx<0||wx>WORLD||wz<0||wz>WORLD)?-2:w.pages_by_key.get(u32((wx>>4)+np*((wz>>4)+np*py))+1);
+   }
+   page_y=py;
+  }
+  for(int z=0;z<n;z++)for(int x=0;x<n;x++){
+   int wx=x0+x,wz=z0+z,at=x+n*z,pi=page_indices[at];
+   float d=pi==-2?SDF_BAND:(pi<0?w.base({float(wx),float(y),float(wz)},heights[at]):float(w.pages[pi].d[(wx&15)+16*((wz&15)+16*(y&15))])/SDF_SCALE);
+   out[at]=density_value(d);
+  }
+  if(expected&&std::memcmp(out,expected->data()+size_t(y)*plane,plane*sizeof(float))){fprintf(stderr,"Rolling sampler differs from full field\n");std::exit(9);}
+ }
+ const float*layers(int y){
+  if(y){std::copy(planes.begin()+plane,planes.end(),planes.begin());fill(y+1,planes.data()+plane);}
+  return planes.data();
+ }
+ size_t payload_bytes()const{return (planes.size()+heights.size())*sizeof(float)+page_indices.size()*sizeof(int);}
+};
 
 static void build(World&w,int x0,int z0,int size,const std::string&file){
  int n=size+1;
@@ -131,6 +177,11 @@ static void build(World&w,int x0,int z0,int size,const std::string&file){
  ordinal++;
  auto median=[](std::vector<double> values){std::sort(values.begin(),values.end());return values[values.size()/2];};
  meshing_ms=median(scan_times);control_ms=median(control_times);
+ double stream_begin=now();
+ RollingField rolling(w,x0,z0,size,&reference);
+ Result streamed=mesh_layers(x0,z0,size,true,[&](int y){return rolling.layers(y);});
+ double streamed_ms=now()-stream_begin;
+ if(streamed.indices!=result.indices||streamed.p.size()!=result.p.size()||std::memcmp(streamed.p.data(),result.p.data(),result.p.size()*sizeof(V3))){fprintf(stderr,"Rolling density field changed geometry\n");std::exit(10);}
  auto residual=[&](V3 p){
   int x=imn(size-1,imx(0,fl(p.x)-x0)),z=imn(size-1,imx(0,fl(p.z)-z0)),y=imn(255,imx(0,fl(p.y)));
   double dx=p.x-x0-x,dy=p.y-y,dz=p.z-z0-z,value=0;
@@ -151,7 +202,7 @@ static void build(World&w,int x0,int z0,int size,const std::string&file){
  for(size_t i=0;i<scan_times.size();i++)printf("%s%.6f",i?",":"",scan_times[i]);
  printf("],\"control_meshing_samples_ms\":[");
  for(size_t i=0;i<control_times.size();i++)printf("%s%.6f",i?",":"",control_times[i]);
- printf("],\"peak_crossings\":%zu,\"control_peak_crossings\":%zu,\"peak_buckets\":%zu,\"control_peak_buckets\":%zu}\n",result.peak_crossings,control.peak_crossings,result.peak_buckets,control.peak_buckets);
+ printf("],\"peak_crossings\":%zu,\"control_peak_crossings\":%zu,\"peak_buckets\":%zu,\"control_peak_buckets\":%zu,\"streamed_parity\":true,\"streamed_total_ms\":%.6f,\"density_plane_bytes\":%zu,\"sampler_payload_bytes\":%zu,\"full_field_bytes\":%zu}\n",result.peak_crossings,control.peak_crossings,result.peak_buckets,control.peak_buckets,streamed_ms,rolling.planes.size()*sizeof(float),rolling.payload_bytes(),field.size()*sizeof(float));
 }
 int main(int argc,char**argv){
  if(argc!=2)return 2;
@@ -166,6 +217,14 @@ int main(int argc,char**argv){
   fprintf(stderr,"{\"name\":\"256 alternating layers\",\"mesh_parity\":true,\"size\":8,\"peak_crossings\":%zu,\"control_peak_crossings\":%zu,\"peak_buckets\":%zu,\"control_peak_buckets\":%zu}\n",rolling.peak_crossings,retained.peak_crossings,rolling.peak_buckets,retained.peak_buckets);
  }
  World w;w.init(1703);
+ // Sampler-only world-edge controls; no global mesh IDs are formed outside world.
+ for(auto origin:std::array<std::array<int,2>,3>{{{{0,0}},{{-8,0}},{{1992,1992}}}}){
+  const int size=16,n=17;std::vector<float>reference(size_t(n)*n*257);
+  for(int y=0;y<=256;y++)for(int z=0;z<n;z++)for(int x=0;x<n;x++)reference[x+n*(z+n*y)]=density_value(w.sample(origin[0]+x,y,origin[1]+z));
+  RollingField rolling(w,origin[0],origin[1],size,&reference);
+  for(int y=0;y<256;y++)rolling.layers(y);
+  fprintf(stderr,"{\"name\":\"world-edge sampler\",\"x\":%d,\"z\":%d,\"sample_parity\":true,\"samples\":%zu}\n",origin[0],origin[1],reference.size());
+ }
  for(int site=0;site<3;site++){
   int x=site==0?960:1280,z=site==0?960:1280;
   if(site==2){V3 p={1296,w.height(1296,1296),1296},lo,hi;int changes=0;if(!w.edit(p,p,5,0,false,1,lo,hi,changes)||!changes)return 3;}

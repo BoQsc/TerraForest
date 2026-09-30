@@ -38,6 +38,11 @@ traffic is included in this test.
 
 ## Required primitive pressure matrix — not yet certified
 
+The [two-plane candidate sampler](TERRAIN_TETRA_ROLLING_FIELD.md) reduces a 32 m
+region's sampling payload from a 1.07 MiB density buffer to 17 KiB including
+height/page caches. Exact density and geometry parity, including sampler edge
+controls, pass. Output storage and total runtime performance remain unqualified.
+
 The [rolling crossing-map candidate](TERRAIN_TETRA_EDGE_STORAGE.md) bounds temporary
 edge entries to one height layer, preserving all geometry bytes. Its alternating
 layer stress case falls from 73,984 to 289 entries. This is a memory tradeoff with
