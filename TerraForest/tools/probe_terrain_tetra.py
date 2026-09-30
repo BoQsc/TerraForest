@@ -37,6 +37,8 @@ all_allocation_controls=[row for row in controls if row['name']=='all candidate 
 
 locality_controls=[row for row in controls if row['name']=='local edit dependency']
 
+normal_controls=[row for row in controls if row['name']=='canonical normals']
+
 def decode(path):
     data=path.read_bytes();nv,ni=struct.unpack_from('<II',data)
     assert len(data)==8+12*nv+4*ni and ni%3==0
@@ -108,10 +110,31 @@ checks.append(dict(name='every output-buffer allocation can fail without partial
 checks.append(dict(name='every sampler allocation can fail through the world entry and recover',passed=len(sampler_allocation_controls)==1 and all(s['injected_failures']==3 and s['invalid_hooks']==2 and s['empty_failures'] and s['no_live_buffers'] and s['retry_parity'] for s in sampler_allocation_controls)))
 checks.append(dict(name='fixed crossing slots and all candidate allocations fail cleanly',passed=len(all_allocation_controls)==1 and all(s['injected_failures']>4 and s['invalid_crossing_hooks']==2 and s['empty_failures'] and s['no_live_buffers'] and s['success_releases_scratch'] for s in all_allocation_controls) and all(s['peak_table_slots']==14*(s['size']+1)**2 for s in samples+storage_controls)))
 checks.append(dict(name='local edits retain exact geometry outside inclusive sample dependencies',passed=len(locality_controls)==6 and all(s['retained_parity'] and s['changed']>0 and s['unchanged_outside']>0 and s['selected']==[1,2,4][s['placement']] for s in locality_controls)))
-result=dict(locality_controls=locality_controls,failures=sum(not c['passed'] for c in checks),checks=checks,native_samples=samples,storage_controls=storage_controls,sampler_controls=sampler_controls,limit_controls=limit_controls,thread_controls=thread_controls,interface_controls=interface_controls,world_controls=world_controls,allocation_controls=allocation_controls,sampler_allocation_controls=sampler_allocation_controls,all_allocation_controls=all_allocation_controls,crossing_storage='Direct lattice table; paired retained control is a full-height table, not the historical hash implementation.',elapsed_seconds=time.perf_counter()-begin,
+normal_maps={}
+for path in expected:
+    data=path.read_bytes();nv=struct.unpack_from('<I',data)[0]
+    normals=Path(str(path)+'.normals').read_bytes()
+    valid=len(normals)==12*nv
+    values=list(struct.iter_unpack('<3f',normals))
+    valid=valid and all(abs(sum(v*v for v in n)-1)<1e-5 for n in values)
+    checks.append(dict(name=path.stem+' finite unit normals',passed=valid))
+    normal_maps[path.stem]={data[8+12*i:20+12*i]:normals[12*i:12*i+12] for i in range(nv)} if valid else {}
+for site,x,z in [(0,960,960),(1,1280,1280),(2,1280,1280)]:
+    whole=normal_maps[f'{site}_{x}_{z}_32'];combined={};consistent=bool(whole);shared=0
+    for dz in [0,16]:
+        for dx in [0,16]:
+            child=normal_maps[f'{site}_{x+dx}_{z+dz}_16']
+            consistent=consistent and bool(child)
+            for point,normal in child.items():
+                if point in combined:
+                    shared+=1;consistent=consistent and combined[point]==normal
+                combined[point]=normal
+    checks.append(dict(name=f'{site} partition independent normals',passed=consistent and shared>0 and whole==combined,shared_vertices=shared))
+checks.append(dict(name='normal sampling completes for all geometry fixtures',passed=len(normal_controls)==15 and all(c['passed'] and c['samples']==8*c['vertices'] for c in normal_controls)))
+result=dict(normal_controls=normal_controls,locality_controls=locality_controls,failures=sum(not c['passed'] for c in checks),checks=checks,native_samples=samples,storage_controls=storage_controls,sampler_controls=sampler_controls,limit_controls=limit_controls,thread_controls=thread_controls,interface_controls=interface_controls,world_controls=world_controls,allocation_controls=allocation_controls,sampler_allocation_controls=sampler_allocation_controls,all_allocation_controls=all_allocation_controls,crossing_storage='Direct lattice table; paired retained control is a full-height table, not the historical hash implementation.',elapsed_seconds=time.perf_counter()-begin,
             adoption_qualified=False,build_command=command,toolchain_lock_sha256=toolchain['lock_sha256'],executable_sha256=hashlib.sha256(exe.read_bytes()).hexdigest(),
             reference_report_sha256=hashlib.sha256(baseline_path.read_bytes()).hexdigest(),
-            hashes={str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in [source,Path(__file__).resolve(),native/'core.cpp',native/'core.h',native/'platform.h',native/'geometry_regions.hpp',native/'experimental/region_mesher.hpp',native/'experimental/world_region_sampler.hpp',native/'experimental/fallible_buffer.hpp',native/'experimental/lattice_edge_table.hpp',native/'experimental/region_dependencies.hpp']},
+            hashes={str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in [source,Path(__file__).resolve(),native/'core.cpp',native/'core.h',native/'platform.h',native/'geometry_regions.hpp',native/'experimental/region_mesher.hpp',native/'experimental/world_region_sampler.hpp',native/'experimental/fallible_buffer.hpp',native/'experimental/lattice_edge_table.hpp',native/'experimental/region_dependencies.hpp',native/'experimental/region_normals.hpp']},
             scope='Isolated tetrahedral geometry prototype with full-buffer controls and a two-plane streaming sampler. Sampler payload excludes reference buffers, output geometry and allocator overhead. Changes interpolation and zero convention; no LOD, visual-error, material, shading, collider, GPU or runtime qualification.')
 (ROOT/'reports').mkdir(exist_ok=True)
 (ROOT/'reports/terrain_tetra_probe.json').write_text(json.dumps(result,indent=2)+'\n')

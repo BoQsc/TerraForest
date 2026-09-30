@@ -38,6 +38,11 @@ traffic is included in this test.
 
 ## Required primitive pressure matrix — not yet certified
 
+The [canonical normal reference](TERRAIN_CANDIDATE_NORMALS.md) preserves exact
+normals across tested partitions, but direct scalar sampling costs 27.85 ms
+for the 32 m cave fixture in the retained run. Runtime adoption is rejected;
+density reuse and an explicit shading halo are required.
+
 The [candidate geometry dependency control](TERRAIN_CANDIDATE_LOCAL_DEPENDENCY.md)
 passes six real-edit cases at region interiors, edges and corners. Only 1, 2
 or 4 owners change; all unselected owners match fresh rebuilds exactly. This

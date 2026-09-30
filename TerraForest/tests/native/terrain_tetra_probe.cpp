@@ -16,6 +16,7 @@
 static double now(){return std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now().time_since_epoch()).count();}
 #include "experimental/world_region_sampler.hpp"
 #include "experimental/region_dependencies.hpp"
+#include "experimental/region_normals.hpp"
 using namespace terraforest::experimental;
 
 static void build(World&w,int x0,int z0,int size,const std::string&file){
@@ -90,6 +91,10 @@ static void build(World&w,int x0,int z0,int size,const std::string&file){
  double vertex_error=0,centroid_error=0;
  for(V3 p:result.p)vertex_error=std::max(vertex_error,residual(p));
  for(size_t i=0;i<result.indices.size();i+=3){V3 p=(result.p[result.indices[i]]+result.p[result.indices[i+1]]+result.p[result.indices[i+2]])/3.f;centroid_error=std::max(centroid_error,residual(p));}
+ double normal_begin=now();NormalResult normals=build_region_normals(w,result);double normal_ms=now()-normal_begin;
+ fprintf(stderr,"{\"name\":\"canonical normals\",\"file\":\"%s\",\"passed\":%s,\"vertices\":%zu,\"samples\":%zu,\"ms\":%.6f}\n",file.substr(file.find_last_of("/\\")+1).c_str(),normals.status==MeshStatus::ok?"true":"false",normals.values.size(),normals.samples,normal_ms);
+ FILE*nf=fopen((file+".normals").c_str(),"wb");if(!nf)std::exit(2);
+ fwrite(normals.values.data(),sizeof(V3),normals.values.size(),nf);fclose(nf);
  FILE*f=fopen(file.c_str(),"wb");if(!f)std::exit(2);
  u32 counts[2]={u32(result.p.size()),u32(result.indices.size())};
  fwrite(counts,4,2,f);fwrite(result.p.data(),sizeof(V3),result.p.size(),f);fwrite(result.indices.data(),4,result.indices.size(),f);fclose(f);
