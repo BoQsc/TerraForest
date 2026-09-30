@@ -16,6 +16,7 @@ struct MeshLimits{
  size_t vertices=1000000,indices=3000000;
  bool(*cancel)(void*)=nullptr;void*context=nullptr;
  BufferAllocator output_allocator;
+ BufferAllocator sampler_allocator;
  bool cancelled()const{return cancel&&cancel(context);}
 };
 struct Result{
@@ -72,7 +73,7 @@ struct Result{
 
 static bool valid_region(int x0,int z0,int size,const MeshLimits&limits){
  return size>=1&&size<=32&&x0>=0&&z0>=0&&x0<=WORLD-size&&z0<=WORLD-size&&
-        limits.vertices<=std::numeric_limits<u32>::max()&&limits.indices<=std::numeric_limits<u32>::max()&&limits.output_allocator.allocate&&limits.output_allocator.release;
+        limits.vertices<=std::numeric_limits<u32>::max()&&limits.indices<=std::numeric_limits<u32>::max()&&limits.output_allocator.allocate&&limits.output_allocator.release&&limits.sampler_allocator.allocate&&limits.sampler_allocator.release;
 }
 
 // Providers must return two contiguous (size+1)^2 planes for each requested Y.

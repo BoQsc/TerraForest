@@ -8,8 +8,8 @@ namespace terraforest::experimental {
 struct WorldRegionSampler {
  const World&w;int x0,z0,n=0,page_y=-1,next_layer=0;
  size_t plane=0;
- std::vector<float> planes,heights;
- std::vector<int> page_indices;
+ FallibleBuffer<float> planes,heights;
+ FallibleBuffer<int> page_indices;
  MeshLimits limits;MeshStatus status=MeshStatus::ok;
  bool checkpoint(){
   if(status!=MeshStatus::ok)return false;
@@ -17,10 +17,13 @@ struct WorldRegionSampler {
   return true;
  }
  WorldRegionSampler(const World&world,int x,int z,int size,const MeshLimits&control=MeshLimits{}):w(world),x0(x),z0(z),limits(control){
-  if(size<1||size>32||x<-32||z<-32||x>WORLD||z>WORLD||!w.edit_columns){status=MeshStatus::invalid_input;return;}
+  if(size<1||size>32||x<-32||z<-32||x>WORLD||z>WORLD||!w.edit_columns||!limits.sampler_allocator.allocate||!limits.sampler_allocator.release){status=MeshStatus::invalid_input;return;}
   if(!checkpoint())return;
   n=size+1;plane=size_t(n)*n;
-  planes.resize(plane*2);heights.resize(plane);page_indices.resize(plane);
+  planes.set_allocator(limits.sampler_allocator);heights.set_allocator(limits.sampler_allocator);page_indices.set_allocator(limits.sampler_allocator);
+  if(!planes.resize(plane*2)||!heights.resize(plane)||!page_indices.resize(plane)){
+   planes.clear();heights.clear();page_indices.clear();status=MeshStatus::allocation_failed;return;
+  }
   for(int dz=0;dz<n;dz++){
    if(!checkpoint())return;
    for(int dx=0;dx<n;dx++)heights[dx+n*dz]=w.height(float(x0+dx),float(z0+dz));

@@ -42,6 +42,11 @@ public:
   if(data_)allocator_.release(allocator_.context,data_);
   data_=static_cast<T*>(memory);capacity_=capacity;return true;
  }
+ bool resize(size_t count){
+  if(!reserve(count))return false;
+  while(size_<count){::new(static_cast<void*>(data_+size_)) T{};size_++;}
+  size_=count;return true;
+ }
  // Callers reserve and check their logical output limit before these operations.
  void push_back(const T&value){::new(static_cast<void*>(data_+size_)) T(value);size_++;}
  size_t size()const{return size_;}

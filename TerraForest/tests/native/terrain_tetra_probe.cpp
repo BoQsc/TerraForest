@@ -228,6 +228,32 @@ int main(int argc,char**argv){
  }
  World w;w.init(1703);
  {
+  struct Allocations{int fail=0,calls=0,live=0;};
+  auto hooks=[](Allocations&state){
+   BufferAllocator allocator;allocator.context=&state;
+   allocator.allocate=[](void*p,size_t bytes)->void*{auto&s=*static_cast<Allocations*>(p);if(++s.calls==s.fail)return nullptr;void*memory=std::malloc(bytes);if(memory)s.live++;return memory;};
+   allocator.release=[](void*p,void*memory){auto&s=*static_cast<Allocations*>(p);s.live--;std::free(memory);};return allocator;
+  };
+  auto empty=[](const Result&r,MeshStatus status){return r.status==status&&r.p.empty()&&r.indices.empty()&&r.crossings.empty();};
+  Allocations baseline;MeshLimits limits;limits.sampler_allocator=hooks(baseline);
+  Result reference=build_world_region(w,1280,1280,16,limits);
+  if(reference.status!=MeshStatus::ok||baseline.calls!=3||baseline.live)return 33;
+  for(int fail=1;fail<=baseline.calls;fail++){
+   Allocations state;state.fail=fail;MeshLimits selected;selected.sampler_allocator=hooks(state);
+   Result output=build_world_region(w,1280,1280,16,selected);
+   if(!empty(output,MeshStatus::allocation_failed)||state.calls!=fail||state.live)return 34;
+  }
+  for(int missing=0;missing<2;missing++){
+   Allocations state;MeshLimits selected;selected.sampler_allocator=hooks(state);
+   if(missing)selected.sampler_allocator.release=nullptr;else selected.sampler_allocator.allocate=nullptr;
+   if(!empty(build_world_region(w,1280,1280,16,selected),MeshStatus::invalid_input)||state.calls||state.live)return 35;
+  }
+  Allocations retry;MeshLimits selected;selected.sampler_allocator=hooks(retry);
+  Result output=build_world_region(w,1280,1280,16,selected);
+  if(output.status!=MeshStatus::ok||retry.live||output.indices!=reference.indices||output.p.size()!=reference.p.size()||std::memcmp(output.p.data(),reference.p.data(),output.p.size()*sizeof(V3)))return 36;
+  fprintf(stderr,"{\"name\":\"sampler allocation failures\",\"injected_failures\":3,\"invalid_hooks\":2,\"empty_failures\":true,\"no_live_buffers\":true,\"retry_parity\":true}\n");
+ }
+ {
   auto empty=[](const Result&r,MeshStatus status){return r.status==status&&r.p.empty()&&r.indices.empty()&&r.crossings.empty();};
   struct Stop{int at,calls=0;};
   for(int at:{1,5,40,100,1000}){

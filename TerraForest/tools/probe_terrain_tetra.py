@@ -32,6 +32,7 @@ thread_controls=[row for row in controls if row['name']=='threaded per-world epo
 interface_controls=[row for row in controls if row['name']=='validated region interface']
 world_controls=[row for row in controls if row['name']=='world region entry']
 allocation_controls=[row for row in controls if row['name']=='output allocation failures']
+sampler_allocation_controls=[row for row in controls if row['name']=='sampler allocation failures']
 
 def decode(path):
     data=path.read_bytes();nv,ni=struct.unpack_from('<II',data)
@@ -101,7 +102,8 @@ checks.append(dict(name='native epoch cancels an in-progress worker without affe
 checks.append(dict(name='native region interface rejects invalid bounds limits buffers and densities',passed=len(interface_controls)==1 and all(s['invalid_cases']==15 and s['empty_failure'] and s['invalid_region_skips_provider'] for s in interface_controls)))
 checks.append(dict(name='world-region entry validates setup cancellation limits sequencing and recovery',passed=len(world_controls)==12 and all(s['passed'] for s in world_controls)))
 checks.append(dict(name='every output-buffer allocation can fail without partial output or live buffers',passed=len(allocation_controls)==1 and all(s['injected_failures']>=4 and s['empty_failures'] and s['no_live_buffers'] and s['retry_and_move_parity'] for s in allocation_controls)))
-result=dict(failures=sum(not c['passed'] for c in checks),checks=checks,native_samples=samples,storage_controls=storage_controls,sampler_controls=sampler_controls,limit_controls=limit_controls,thread_controls=thread_controls,interface_controls=interface_controls,world_controls=world_controls,allocation_controls=allocation_controls,elapsed_seconds=time.perf_counter()-begin,
+checks.append(dict(name='every sampler allocation can fail through the world entry and recover',passed=len(sampler_allocation_controls)==1 and all(s['injected_failures']==3 and s['invalid_hooks']==2 and s['empty_failures'] and s['no_live_buffers'] and s['retry_parity'] for s in sampler_allocation_controls)))
+result=dict(failures=sum(not c['passed'] for c in checks),checks=checks,native_samples=samples,storage_controls=storage_controls,sampler_controls=sampler_controls,limit_controls=limit_controls,thread_controls=thread_controls,interface_controls=interface_controls,world_controls=world_controls,allocation_controls=allocation_controls,sampler_allocation_controls=sampler_allocation_controls,elapsed_seconds=time.perf_counter()-begin,
             adoption_qualified=False,build_command=command,toolchain_lock_sha256=toolchain['lock_sha256'],executable_sha256=hashlib.sha256(exe.read_bytes()).hexdigest(),
             reference_report_sha256=hashlib.sha256(baseline_path.read_bytes()).hexdigest(),
             hashes={str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in [source,Path(__file__).resolve(),native/'core.cpp',native/'core.h',native/'platform.h',native/'geometry_regions.hpp',native/'experimental/region_mesher.hpp',native/'experimental/world_region_sampler.hpp',native/'experimental/fallible_buffer.hpp']},

@@ -40,7 +40,8 @@ traffic is included in this test.
 
 The [candidate output allocator](TERRAIN_CANDIDATE_OUTPUT_ALLOCATION.md) recovers
 from all 30 injected position/index growth failures without partial output or
-tracked-buffer leaks. Hash-map and sampler allocations remain unrecoverable;
+tracked-buffer leaks. The follow-up also recovers all three sampler allocation
+failures through the world entry point. Hash-map allocation remains unrecoverable;
 this does not establish complete OOM resilience.
 
 The [experimental native region interface](TERRAIN_CANDIDATE_INTERFACE.md) now

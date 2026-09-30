@@ -35,3 +35,27 @@ The change is confined to the experimental native candidate; the game extension
 does not register or call it. Run `python tools/probe_terrain_tetra.py`.
 Evidence and source/toolchain hashes are in
 `docs/evidence/terrain_candidate_output_allocation/`.
+
+## Sampler allocation follow-up
+
+Density planes, cached heights and page indices now use the same fallible buffer
+primitive. A separate sampler allocator hook keeps scratch allocation accounting
+distinct from output ownership. All three allocations are checked; setup failure
+releases any earlier scratch buffers and returns `allocation_failed` through
+`build_world_region`. Buffer resize initializes trivial elements only after a
+successful reserve. Existing cancellation and plane-parity checks remain intact.
+
+The follow-up injects failure at each of the three sampler allocations through
+the world-backed entry point, rejects missing allocation/release hooks before
+allocation, and verifies successful retry geometry. Every failure returns empty
+geometry with zero live tracked scratch buffers. Successful builds also release
+all sampler storage before returning their independently owned output. The full
+probe passes **30 checks**; all fifteen immutable fixture meshes are unchanged.
+
+The crossing hash map remains an unrecoverable standard-container allocation
+path. World storage, renderer/physics resources, diagnostic controls and total
+process allocation budgets remain outside this result. This still does not
+establish complete OOM resilience or runtime adoption.
+
+Evidence is retained separately in
+`docs/evidence/terrain_candidate_sampler_allocation/`.
