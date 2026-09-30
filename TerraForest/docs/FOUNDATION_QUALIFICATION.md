@@ -38,6 +38,11 @@ traffic is included in this test.
 
 ## Required primitive pressure matrix — not yet certified
 
+The [rolling crossing-map candidate](TERRAIN_TETRA_EDGE_STORAGE.md) bounds temporary
+edge entries to one height layer, preserving all geometry bytes. Its alternating
+layer stress case falls from 73,984 to 289 entries. This is a memory tradeoff with
+roughly unchanged aggregate meshing time, not runtime adoption or a total memory bound.
+
 The [tetrahedral sign-scan optimization](TERRAIN_TETRA_SIGN_SCAN.md) reduces the
 sum of fifteen fixture median meshing times by 39.6%, with all 75 paired outputs
 byte-identical. This improves the isolated candidate; it is not integrated into

@@ -15,6 +15,7 @@ struct Sample{V3 p;float d;u32 id;};
 struct Result{
  std::vector<V3> p;std::vector<u32> indices;
  std::unordered_map<u64,u32> crossings;
+ size_t peak_crossings=0,peak_buckets=0;
  u32 intersection(Sample a,Sample b){
   if(a.id>b.id)std::swap(a,b);
   u64 key=(u64(a.id)<<32)|b.id;
@@ -22,7 +23,9 @@ struct Result{
   // Canonical endpoint order makes adjacent independently built regions agree.
   double t=double(a.d)/(double(a.d)-b.d);
   V3 point={float(a.p.x+(b.p.x-a.p.x)*t),float(a.p.y+(b.p.y-a.p.y)*t),float(a.p.z+(b.p.z-a.p.z)*t)};
-  u32 id=u32(p.size());p.push_back(point);crossings.emplace(key,id);return id;
+  u32 id=u32(p.size());p.push_back(point);crossings.emplace(key,id);
+  peak_crossings=std::max(peak_crossings,crossings.size());
+  peak_buckets=std::max(peak_buckets,crossings.bucket_count());return id;
  }
  void tri(u32 a,u32 b,u32 c,V3 outward){
   if(dot(cross(p[b]-p[a],p[c]-p[a]),outward)<0)std::swap(b,c);
@@ -44,13 +47,14 @@ struct Result{
  }
 };
 
-static Result mesh_field(const std::vector<float>&field,int x0,int z0,int size,bool early_sign_scan){
+static Result mesh_field(const std::vector<float>&field,int x0,int z0,int size,bool retire_edges){
  int n=size+1;
  auto index=[&](int x,int y,int z){return x+n*(z+n*y);};
  Result result;
  constexpr int tets[6][4]={{0,1,3,7},{0,3,2,7},{0,2,6,7},{0,6,4,7},{0,4,5,7},{0,5,1,7}};
- for(int y=0;y<256;y++)for(int z=0;z<size;z++)for(int x=0;x<size;x++){
-  if(early_sign_scan){
+ for(int y=0;y<256;y++){
+ for(int z=0;z<size;z++)for(int x=0;x<size;x++){
+  {
    unsigned mask=0;
    for(int k=0;k<8;k++)mask|=unsigned(field[index(x+(k&1),y+((k>>1)&1),z+((k>>2)&1))]<0)<<k;
    if(mask==0||mask==255)continue;
@@ -64,6 +68,16 @@ static Result mesh_field(const std::vector<float>&field,int x0,int z0,int size,b
   if(negative==0||negative==8)continue;
   for(const auto&t:tets)result.tetra(s,t);
  }
+  if(retire_edges){
+   // A later cell can only reuse edges on this layer's top plane. Canonical
+   // endpoint IDs increase with Y, so the smaller endpoint determines survival.
+   const u32 next_plane=u32(y+1)*2049u*2049u;
+   for(auto it=result.crossings.begin();it!=result.crossings.end();){
+    if(u32(it->first>>32)<next_plane)it=result.crossings.erase(it);else ++it;
+   }
+  }
+ }
+ if(retire_edges&&result.peak_crossings>size_t(36)*size*size){fprintf(stderr,"Crossing map exceeded single-slab edge bound\n");std::exit(7);}
  return result;
 }
 
@@ -112,7 +126,7 @@ static void build(World&w,int x0,int z0,int size,const std::string&file){
   if(scan){result=std::move(output);scan_times.push_back(elapsed);}
   else{control=std::move(output);control_times.push_back(elapsed);}
  }
- if(result.indices!=control.indices||result.p.size()!=control.p.size()||std::memcmp(result.p.data(),control.p.data(),result.p.size()*sizeof(V3))){fprintf(stderr,"Early sign scan changed geometry\n");std::exit(6);}
+ if(result.indices!=control.indices||result.p.size()!=control.p.size()||std::memcmp(result.p.data(),control.p.data(),result.p.size()*sizeof(V3))){fprintf(stderr,"Slab edge retirement changed geometry\n");std::exit(6);}
  }
  ordinal++;
  auto median=[](std::vector<double> values){std::sort(values.begin(),values.end());return values[values.size()/2];};
@@ -137,11 +151,20 @@ static void build(World&w,int x0,int z0,int size,const std::string&file){
  for(size_t i=0;i<scan_times.size();i++)printf("%s%.6f",i?",":"",scan_times[i]);
  printf("],\"control_meshing_samples_ms\":[");
  for(size_t i=0;i<control_times.size();i++)printf("%s%.6f",i?",":"",control_times[i]);
- printf("]}\n");
+ printf("],\"peak_crossings\":%zu,\"control_peak_crossings\":%zu,\"peak_buckets\":%zu,\"control_peak_buckets\":%zu}\n",result.peak_crossings,control.peak_crossings,result.peak_buckets,control.peak_buckets);
 }
 int main(int argc,char**argv){
  if(argc!=2)return 2;
  tr_alloc=std::malloc;tr_realloc=std::realloc;tr_free=std::free;
+ // Adversarial vertical density alternation: crossings throughout all 256 layers.
+ // This is a storage/parity control, not a physically representative terrain.
+ {
+  const int size=8,n=9;std::vector<float>field(size_t(n)*n*257);
+  for(int y=0;y<=256;y++)for(int z=0;z<n;z++)for(int x=0;x<n;x++)field[x+n*(z+n*y)]=(y&1)?-1.f:1.f;
+  Result rolling=mesh_field(field,1280,1280,size,true),retained=mesh_field(field,1280,1280,size,false);
+  if(rolling.indices!=retained.indices||rolling.p.size()!=retained.p.size()||std::memcmp(rolling.p.data(),retained.p.data(),rolling.p.size()*sizeof(V3))||rolling.peak_crossings>=retained.peak_crossings)return 8;
+  fprintf(stderr,"{\"name\":\"256 alternating layers\",\"mesh_parity\":true,\"size\":8,\"peak_crossings\":%zu,\"control_peak_crossings\":%zu,\"peak_buckets\":%zu,\"control_peak_buckets\":%zu}\n",rolling.peak_crossings,retained.peak_crossings,rolling.peak_buckets,retained.peak_buckets);
+ }
  World w;w.init(1703);
  for(int site=0;site<3;site++){
   int x=site==0?960:1280,z=site==0?960:1280;
