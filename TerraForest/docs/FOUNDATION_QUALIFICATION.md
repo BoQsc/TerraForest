@@ -38,6 +38,11 @@ traffic is included in this test.
 
 ## Required primitive pressure matrix — not yet certified
 
+The [bounded backend density job](TERRAIN_DENSITY_BACKEND.md) passes 38 real
+queue checks, including eight outstanding requests, revision rejection and
+shutdown accounting. The existing 42 publication checks still pass. Final
+consumer staleness, player arbitration and loaded latency remain outstanding.
+
 The [opt-in native density command](TERRAIN_DENSITY_COMMAND.md) is now exposed
 in both extension builds. Thirteen release-thread API checks and 22 native
 wire parity cases pass; the existing 42 worker publication checks still pass.

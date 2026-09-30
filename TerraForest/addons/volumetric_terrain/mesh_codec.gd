@@ -38,6 +38,29 @@ static func point_command(point: Vector3) -> PackedByteArray:
 static func reply_ok(reply: PackedByteArray) -> bool:
 	return reply.size() >= 12 and reply.decode_u32(0) == REPLY_MAGIC and reply.decode_u32(8) == 0
 
+static func density_ray_command(from: Vector3, to: Vector3, budget: int, epoch: int) -> PackedByteArray:
+	var packet := command(23,[0,0,0,0,0,0,budget,epoch])
+	for axis in range(3):
+		packet.encode_float(4+axis*4,from[axis])
+		packet.encode_float(16+axis*4,to[axis])
+	return packet
+
+static func decode_density_ray(reply: PackedByteArray) -> Dictionary:
+	if reply.size()<12 or reply.decode_u32(0)!=REPLY_MAGIC or reply.decode_u32(4)!=23:
+		return {"status":"error","error":"Invalid density query envelope"}
+	if reply.decode_u32(8)==4 and reply.size()==12:
+		return {"status":"cancelled","cancelled":true}
+	if not reply_ok(reply) or reply.size()!=40 or reply.decode_u32(16)>2:
+		return {"status":"error","error":"Invalid density query reply"}
+	var result := {"status":["hit","miss","work_limit"][reply.decode_u32(16)],"revision":reply.decode_u32(12),"cells":reply.decode_u32(20)}
+	if result.status=="hit":
+		var fraction := reply.decode_float(24)
+		var position := Vector3(reply.decode_float(28),reply.decode_float(32),reply.decode_float(36))
+		if not is_finite(fraction) or fraction<0 or fraction>1 or not position.is_finite():
+			return {"status":"error","error":"Invalid density hit"}
+		result["fraction"]=fraction;result["position"]=position
+	return result
+
 static func _packed_channel(source: PackedByteArray, offset: int, count: int, stride: int, type: int) -> Variant:
 	# Use Godot's native Variant decoder, NOT a per-vertex GDScript loop.
 	# TYPE_* constants come from this running engine, avoiding stale numeric type tables.

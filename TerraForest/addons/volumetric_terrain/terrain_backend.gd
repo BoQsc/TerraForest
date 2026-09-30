@@ -7,6 +7,7 @@ var mutex := Mutex.new()
 var semaphore := Semaphore.new()
 var jobs: Array[Dictionary] = []
 var results: Array[Dictionary] = []
+var _density_pending: int = 0 # Accepted queries, including unconsumed results.
 var stopping: bool = false
 var temporary: bool = false
 var native: Object
@@ -169,10 +170,29 @@ func start(use_temporary: bool) -> Error:
 	return thread.start(_run, Thread.PRIORITY_NORMAL)
 
 func submit(job: Dictionary, priority: bool = false) -> bool:
+	if job.get("kind","")=="density_ray":
+		if typeof(job.get("from"))!=TYPE_VECTOR3 or typeof(job.get("to"))!=TYPE_VECTOR3:
+			return false
+		var from: Vector3=job["from"]
+		var to: Vector3=job["to"]
+		if not from.is_finite() or not to.is_finite() or from==to:
+			return false
+		for field in ["token","epoch","revision","budget"]:
+			if typeof(job.get(field))!=TYPE_INT or int(job[field])<0: return false
+		if job.budget<1 or job.budget>8192:
+			return false
+		for axis in range(3):
+			if abs(from[axis])>10000 or abs(to[axis])>10000: return false
+		# Snapshot only the bounded request fields, not a caller-owned dictionary.
+		job={"kind":"density_ray","from":from,"to":to,"token":job.token,"epoch":job.epoch,"revision":job.revision,"budget":job.budget}
+		priority=false # Queries cannot jump ahead of already queued mutations.
 	job["submitted_us"] = Time.get_ticks_usec()
 	if str(job.get("kind", "")) in ["edit", "save"]:
 		job["component_snapshot"] = _capture_snapshot()
 	mutex.lock()
+	if job.get("kind","")=="density_ray" and _density_pending>=8:
+		mutex.unlock()
+		return false
 	if stopping or jobs.size() >= 96 or jobs.size() + results.size() >= 128:
 		mutex.unlock()
 		return false
@@ -201,6 +221,7 @@ func submit(job: Dictionary, priority: bool = false) -> bool:
 		if Codec.reply_ok(cancellation) and cancellation.size() >= 16:
 			build_epoch = cancellation.decode_u32(12)
 	job["build_epoch"] = build_epoch
+	if job.get("kind","")=="density_ray": _density_pending+=1
 	if priority:
 		jobs.push_front(job)
 	else:
@@ -238,6 +259,8 @@ func status() -> String:
 func poll() -> Array[Dictionary]:
 	mutex.lock()
 	var ready: Array[Dictionary] = results
+	for result: Dictionary in ready:
+		if result.get("kind","")=="density_ray": _density_pending-=1
 	results = []
 	mutex.unlock()
 	return ready
@@ -506,6 +529,8 @@ func _run() -> void:
 					_apply_components(remaining.get("component_snapshot", {}))
 				elif remaining_kind == "save":
 					_apply_components(remaining.get("component_snapshot", {}))
+				elif remaining_kind == "density_ray":
+					_push({"kind":"density_ray","status":"cancelled","cancelled":true,"token":remaining["token"],"epoch":remaining["epoch"],"requested_revision":remaining["revision"],"build_epoch":remaining["build_epoch"]})
 				elif remaining_kind in ["load", "reset"]:
 					latest_packets.clear()
 					latest_packet_bytes = 0
@@ -638,6 +663,15 @@ func _run() -> void:
 				points = PackedVector3Array()
 				normals = PackedVector3Array()
 			_push({"kind": "surface_batch", "points": points, "normals": normals, "token": job["token"], "epoch": job["epoch"], "revision": job["revision"]})
+		elif kind == "density_ray":
+			var reply: PackedByteArray=_call(Codec.density_ray_command(job["from"],job["to"],job["budget"],job["build_epoch"]))
+			var result: Dictionary=Codec.decode_density_ray(reply)
+			if result.get("cells",0)>job["budget"]:
+				result={"status":"error","error":"Density query exceeded requested budget"}
+			if result.has("revision") and result.revision!=job["revision"]:
+				result.erase("position");result.erase("fraction");result["status"]="stale"
+			result.merge({"kind":"density_ray","token":job["token"],"epoch":job["epoch"],"requested_revision":job["revision"],"build_epoch":job["build_epoch"],"queue_ms":queue_ms})
+			_push(result)
 		elif kind == "height":
 			var reply: PackedByteArray = _call(Codec.point_command(job["point"]))
 			_push({"kind": "height", "reply": reply, "point": job["point"], "token": job["token"]})

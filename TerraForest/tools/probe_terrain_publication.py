@@ -13,10 +13,13 @@ parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--godot', required=True)
 parser.add_argument('--worker', action='store_true', help='Drive public stream edits through the real worker')
 parser.add_argument('--transition', action='store_true', help='Exercise native mixed-cut coverage transitions')
+parser.add_argument('--density', action='store_true', help='Exercise bounded density query backend jobs')
 args = parser.parse_args()
-test = 'terrain_transition_probe' if args.transition else ('terrain_worker_publication_probe' if args.worker else 'terrain_publication_probe')
+test = 'terrain_density_backend_probe' if args.density else ('terrain_transition_probe' if args.transition else ('terrain_worker_publication_probe' if args.worker else 'terrain_publication_probe'))
 source = ROOT / 'addons/volumetric_terrain'
 files = list(source.glob('*.gd')) + [ROOT / 'tests/terrain_publication_probe.gd']
+if args.density:
+    files.append(ROOT / 'tests/terrain_density_backend_probe.gd')
 if args.worker or args.transition:
     files.append(ROOT / 'tests/terrain_worker_publication_probe.gd')
 if args.transition:
@@ -39,6 +42,8 @@ windows.release.x86_64 = "res://addons/volumetric_terrain/bin/terrain_core.windo
 ''')
     (project / 'tests').mkdir()
     shutil.copy2(ROOT / 'tests/terrain_publication_probe.gd', project / 'tests/terrain_publication_probe.gd')
+    if args.density:
+        shutil.copy2(ROOT / 'tests/terrain_density_backend_probe.gd', project / 'tests/terrain_density_backend_probe.gd')
     if args.worker or args.transition:
         shutil.copy2(ROOT / 'tests/terrain_worker_publication_probe.gd', project / 'tests/terrain_worker_publication_probe.gd')
     if args.transition:
