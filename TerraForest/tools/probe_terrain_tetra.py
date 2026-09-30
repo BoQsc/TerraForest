@@ -29,6 +29,7 @@ storage_controls=[row for row in controls if 'control_peak_crossings' in row]
 sampler_controls=[row for row in controls if row['name']=='world-edge sampler']
 limit_controls=[row for row in controls if row['name'] in ['vertex limit','index limit','cancellation','exact output limits and recovery']]
 thread_controls=[row for row in controls if row['name']=='threaded per-world epoch cancellation']
+interface_controls=[row for row in controls if row['name']=='validated region interface']
 
 def decode(path):
     data=path.read_bytes();nv,ni=struct.unpack_from('<II',data)
@@ -95,10 +96,11 @@ checks.append(dict(name='two-plane sampling preserves all densities and geometry
 checks.append(dict(name='rolling sampler matches authoritative samples at and across world edges',passed=len(sampler_controls)==3 and all(s['sample_parity'] for s in sampler_controls)))
 checks.append(dict(name='output limits and cancellation discard partial meshes and recover exactly',passed=len(limit_controls)==12 and all(s.get('empty_failure',s.get('mesh_parity',False)) for s in limit_controls)))
 checks.append(dict(name='native epoch cancels an in-progress worker without affecting another world',passed=len(thread_controls)==1 and all(s['cancelled_after_vertices']>0 and s['discarded'] and s['other_world_unchanged'] and s['retry_parity'] for s in thread_controls)))
-result=dict(failures=sum(not c['passed'] for c in checks),checks=checks,native_samples=samples,storage_controls=storage_controls,sampler_controls=sampler_controls,limit_controls=limit_controls,thread_controls=thread_controls,elapsed_seconds=time.perf_counter()-begin,
+checks.append(dict(name='native region interface rejects invalid bounds limits buffers and densities',passed=len(interface_controls)==1 and all(s['invalid_cases']==15 and s['empty_failure'] and s['invalid_region_skips_provider'] for s in interface_controls)))
+result=dict(failures=sum(not c['passed'] for c in checks),checks=checks,native_samples=samples,storage_controls=storage_controls,sampler_controls=sampler_controls,limit_controls=limit_controls,thread_controls=thread_controls,interface_controls=interface_controls,elapsed_seconds=time.perf_counter()-begin,
             adoption_qualified=False,build_command=command,toolchain_lock_sha256=toolchain['lock_sha256'],executable_sha256=hashlib.sha256(exe.read_bytes()).hexdigest(),
             reference_report_sha256=hashlib.sha256(baseline_path.read_bytes()).hexdigest(),
-            hashes={str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in [source,Path(__file__).resolve(),native/'core.cpp',native/'core.h',native/'platform.h',native/'geometry_regions.hpp']},
+            hashes={str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in [source,Path(__file__).resolve(),native/'core.cpp',native/'core.h',native/'platform.h',native/'geometry_regions.hpp',native/'experimental/region_mesher.hpp']},
             scope='Isolated tetrahedral geometry prototype with full-buffer controls and a two-plane streaming sampler. Sampler payload excludes reference buffers, output geometry and allocator overhead. Changes interpolation and zero convention; no LOD, visual-error, material, shading, collider, GPU or runtime qualification.')
 (ROOT/'reports').mkdir(exist_ok=True)
 (ROOT/'reports/terrain_tetra_probe.json').write_text(json.dumps(result,indent=2)+'\n')

@@ -1,0 +1,137 @@
+// SPDX-License-Identifier: 0BSD
+// Experimental geometry-only mesher. Not registered in the game extension.
+#pragma once
+#include "core.h"
+#include <vector>
+#include <unordered_map>
+#include <algorithm>
+#include <cmath>
+#include <limits>
+
+namespace terraforest::experimental {
+struct Sample{V3 p;float d;u32 id;};
+enum class MeshStatus{ok,output_limit,cancelled,invalid_input,internal_error};
+struct MeshLimits{
+ size_t vertices=1000000,indices=3000000;
+ bool(*cancel)(void*)=nullptr;void*context=nullptr;
+ bool cancelled()const{return cancel&&cancel(context);}
+};
+struct Result{
+ std::vector<V3> p;std::vector<u32> indices;
+ std::unordered_map<u64,u32> crossings;
+ size_t peak_crossings=0,peak_buckets=0;
+ size_t peak_vertices=0,peak_indices=0;
+ MeshLimits limits;MeshStatus status=MeshStatus::ok;
+ void discard(MeshStatus why){
+  status=why;std::vector<V3>().swap(p);std::vector<u32>().swap(indices);
+  std::unordered_map<u64,u32>().swap(crossings);
+ }
+ template<class T>static void grow(std::vector<T>&v,size_t need,size_t limit){
+  if(need>v.capacity())v.reserve(std::min(limit,std::max(need,std::max(size_t(16),v.capacity()*2))));
+ }
+ u32 intersection(Sample a,Sample b){
+  if(status!=MeshStatus::ok)return 0;
+  if(a.id>b.id)std::swap(a,b);
+  u64 key=(u64(a.id)<<32)|b.id;
+  auto found=crossings.find(key);if(found!=crossings.end())return found->second;
+  if(p.size()>=limits.vertices){status=MeshStatus::output_limit;return 0;}
+  // Canonical endpoint order makes adjacent independently built regions agree.
+  double t=double(a.d)/(double(a.d)-b.d);
+  V3 point={float(a.p.x+(b.p.x-a.p.x)*t),float(a.p.y+(b.p.y-a.p.y)*t),float(a.p.z+(b.p.z-a.p.z)*t)};
+  grow(p,p.size()+1,limits.vertices);
+  u32 id=u32(p.size());p.push_back(point);crossings.emplace(key,id);
+  peak_vertices=std::max(peak_vertices,p.size());
+  peak_crossings=std::max(peak_crossings,crossings.size());
+  peak_buckets=std::max(peak_buckets,crossings.bucket_count());return id;
+ }
+ void tri(u32 a,u32 b,u32 c,V3 outward){
+  if(status!=MeshStatus::ok)return;
+  if(indices.size()>limits.indices||limits.indices-indices.size()<3){status=MeshStatus::output_limit;return;}
+  if(dot(cross(p[b]-p[a],p[c]-p[a]),outward)<0)std::swap(b,c);
+  grow(indices,indices.size()+3,limits.indices);
+  indices.insert(indices.end(),{a,b,c});
+  peak_indices=std::max(peak_indices,indices.size());
+ }
+ void tetra(const Sample*s,const int*q){
+  int in[4],out[4],ni=0,no=0;V3 ci{},co{};
+  for(int i=0;i<4;i++){int k=q[i];if(s[k].d<0){in[ni++]=k;ci=ci+s[k].p;}else{out[no++]=k;co=co+s[k].p;}}
+  if(!ni||!no)return;
+  V3 direction=co/float(no)-ci/float(ni);
+  if(ni==1||no==1){
+   int single=ni==1?in[0]:out[0];int*other=ni==1?out:in;
+   tri(intersection(s[single],s[other[0]]),intersection(s[single],s[other[1]]),intersection(s[single],s[other[2]]),direction);
+  }else{
+   u32 ac=intersection(s[in[0]],s[out[0]]),ad=intersection(s[in[0]],s[out[1]]);
+   u32 bc=intersection(s[in[1]],s[out[0]]),bd=intersection(s[in[1]],s[out[1]]);
+   tri(ac,ad,bd,direction);tri(ac,bd,bc,direction);
+  }
+ }
+};
+
+static bool valid_region(int x0,int z0,int size,const MeshLimits&limits){
+ return size>=1&&size<=32&&x0>=0&&z0>=0&&x0<=WORLD-size&&z0<=WORLD-size&&
+        limits.vertices<=std::numeric_limits<u32>::max()&&limits.indices<=std::numeric_limits<u32>::max();
+}
+
+// Providers must return two contiguous (size+1)^2 planes for each requested Y.
+// The caller owns immutable sample storage throughout the synchronous call.
+template<class Layers>
+static Result mesh_layers(int x0,int z0,int size,bool retire_edges,Layers&&layers,const MeshLimits&limits=MeshLimits{}){
+ if(!valid_region(x0,z0,size,limits)){Result invalid;invalid.status=MeshStatus::invalid_input;return invalid;}
+ int n=size+1;
+ auto index=[&](int x,int y,int z){return x+n*(z+n*y);};
+ Result result;result.limits=limits;
+ constexpr int tets[6][4]={{0,1,3,7},{0,3,2,7},{0,2,6,7},{0,6,4,7},{0,4,5,7},{0,5,1,7}};
+ for(int y=0;y<256;y++){
+ if(limits.cancelled()){result.discard(MeshStatus::cancelled);return result;}
+ const float*field=layers(y);
+ if(!field){result.discard(MeshStatus::invalid_input);return result;}
+ for(size_t i=0;i<size_t(n)*n*2;i++)if(!std::isfinite(field[i])){result.discard(MeshStatus::invalid_input);return result;}
+ for(int z=0;z<size;z++){
+ if(limits.cancelled()){result.discard(MeshStatus::cancelled);return result;}
+ for(int x=0;x<size;x++){
+  {
+   unsigned mask=0;
+   for(int k=0;k<8;k++)mask|=unsigned(field[index(x+(k&1),(k>>1)&1,z+((k>>2)&1))]<0)<<k;
+   if(mask==0||mask==255)continue;
+  }
+  Sample s[8];int negative=0;
+  for(int k=0;k<8;k++){
+   int sx=x+(k&1),sy=y+((k>>1)&1),sz=z+((k>>2)&1);
+   s[k]={{float(x0+sx),float(sy),float(z0+sz)},field[index(sx,sy-y,sz)],u32(x0+sx+2049*((z0+sz)+2049*sy))};
+   negative+=s[k].d<0;
+  }
+  if(negative==0||negative==8)continue;
+  for(const auto&t:tets){
+   result.tetra(s,t);
+   if(result.status!=MeshStatus::ok){result.discard(result.status);return result;}
+  }
+ }
+ }
+ if(limits.cancelled()){result.discard(MeshStatus::cancelled);return result;}
+  if(retire_edges){
+   // A later cell can only reuse edges on this layer's top plane. Canonical
+   // endpoint IDs increase with Y, so the smaller endpoint determines survival.
+   const u32 next_plane=u32(y+1)*2049u*2049u;
+   for(auto it=result.crossings.begin();it!=result.crossings.end();){
+    if(u32(it->first>>32)<next_plane)it=result.crossings.erase(it);else ++it;
+   }
+  }
+ }
+ if(retire_edges&&result.peak_crossings>size_t(36)*size*size){result.discard(MeshStatus::internal_error);}
+ return result;
+}
+
+static Result mesh_field(const std::vector<float>&field,int x0,int z0,int size,bool retire_edges,const MeshLimits&limits=MeshLimits{}){
+ if(!valid_region(x0,z0,size,limits)||field.size()!=size_t(size+1)*(size+1)*257){Result invalid;invalid.status=MeshStatus::invalid_input;return invalid;}
+ size_t plane=size_t(size+1)*(size+1);
+ return mesh_layers(x0,z0,size,retire_edges,[&](int y){return field.data()+size_t(y)*plane;},limits);
+}
+
+static float density_value(float d){
+ float v=clampf(d,-SDF_BAND,SDF_BAND)*SDF_SCALE;int q=int(v>=0?v+.5f:v-.5f);
+ return q?float(q)/SDF_SCALE:.5f/SDF_SCALE;
+}
+
+
+} // namespace terraforest::experimental

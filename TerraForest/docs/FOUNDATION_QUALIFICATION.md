@@ -38,6 +38,11 @@ traffic is included in this test.
 
 ## Required primitive pressure matrix — not yet certified
 
+The [experimental native region interface](TERRAIN_CANDIDATE_INTERFACE.md) now
+separates meshing from its benchmark, rejects invalid region/buffer inputs and
+retains exact geometry and cancellation checks. It remains unregistered in the
+game extension; allocation-failure recovery and runtime integration are incomplete.
+
 The [candidate build-limit controls](TERRAIN_TETRA_BUILD_LIMITS.md) verify explicit
 output-limit/cancellation status, discarded partial geometry and exact recovery.
 A native-thread follow-up verifies per-world epoch interruption and isolation.

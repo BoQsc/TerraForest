@@ -14,118 +14,8 @@
 #include <condition_variable>
 
 static double now(){return std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now().time_since_epoch()).count();}
-struct Sample{V3 p;float d;u32 id;};
-enum class MeshStatus{ok,output_limit,cancelled};
-struct MeshLimits{
- size_t vertices=1000000,indices=3000000;
- bool(*cancel)(void*)=nullptr;void*context=nullptr;
- bool cancelled()const{return cancel&&cancel(context);}
-};
-struct Result{
- std::vector<V3> p;std::vector<u32> indices;
- std::unordered_map<u64,u32> crossings;
- size_t peak_crossings=0,peak_buckets=0;
- size_t peak_vertices=0,peak_indices=0;
- MeshLimits limits;MeshStatus status=MeshStatus::ok;
- void discard(MeshStatus why){
-  status=why;std::vector<V3>().swap(p);std::vector<u32>().swap(indices);
-  std::unordered_map<u64,u32>().swap(crossings);
- }
- template<class T>static void grow(std::vector<T>&v,size_t need,size_t limit){
-  if(need>v.capacity())v.reserve(std::min(limit,std::max(need,std::max(size_t(16),v.capacity()*2))));
- }
- u32 intersection(Sample a,Sample b){
-  if(status!=MeshStatus::ok)return 0;
-  if(a.id>b.id)std::swap(a,b);
-  u64 key=(u64(a.id)<<32)|b.id;
-  auto found=crossings.find(key);if(found!=crossings.end())return found->second;
-  if(p.size()>=limits.vertices){status=MeshStatus::output_limit;return 0;}
-  // Canonical endpoint order makes adjacent independently built regions agree.
-  double t=double(a.d)/(double(a.d)-b.d);
-  V3 point={float(a.p.x+(b.p.x-a.p.x)*t),float(a.p.y+(b.p.y-a.p.y)*t),float(a.p.z+(b.p.z-a.p.z)*t)};
-  grow(p,p.size()+1,limits.vertices);
-  u32 id=u32(p.size());p.push_back(point);crossings.emplace(key,id);
-  peak_vertices=std::max(peak_vertices,p.size());
-  peak_crossings=std::max(peak_crossings,crossings.size());
-  peak_buckets=std::max(peak_buckets,crossings.bucket_count());return id;
- }
- void tri(u32 a,u32 b,u32 c,V3 outward){
-  if(status!=MeshStatus::ok)return;
-  if(indices.size()>limits.indices||limits.indices-indices.size()<3){status=MeshStatus::output_limit;return;}
-  if(dot(cross(p[b]-p[a],p[c]-p[a]),outward)<0)std::swap(b,c);
-  grow(indices,indices.size()+3,limits.indices);
-  indices.insert(indices.end(),{a,b,c});
-  peak_indices=std::max(peak_indices,indices.size());
- }
- void tetra(const Sample*s,const int*q){
-  int in[4],out[4],ni=0,no=0;V3 ci{},co{};
-  for(int i=0;i<4;i++){int k=q[i];if(s[k].d<0){in[ni++]=k;ci=ci+s[k].p;}else{out[no++]=k;co=co+s[k].p;}}
-  if(!ni||!no)return;
-  V3 direction=co/float(no)-ci/float(ni);
-  if(ni==1||no==1){
-   int single=ni==1?in[0]:out[0];int*other=ni==1?out:in;
-   tri(intersection(s[single],s[other[0]]),intersection(s[single],s[other[1]]),intersection(s[single],s[other[2]]),direction);
-  }else{
-   u32 ac=intersection(s[in[0]],s[out[0]]),ad=intersection(s[in[0]],s[out[1]]);
-   u32 bc=intersection(s[in[1]],s[out[0]]),bd=intersection(s[in[1]],s[out[1]]);
-   tri(ac,ad,bd,direction);tri(ac,bd,bc,direction);
-  }
- }
-};
-
-template<class Layers>
-static Result mesh_layers(int x0,int z0,int size,bool retire_edges,Layers&&layers,const MeshLimits&limits=MeshLimits{}){
- int n=size+1;
- auto index=[&](int x,int y,int z){return x+n*(z+n*y);};
- Result result;result.limits=limits;
- constexpr int tets[6][4]={{0,1,3,7},{0,3,2,7},{0,2,6,7},{0,6,4,7},{0,4,5,7},{0,5,1,7}};
- for(int y=0;y<256;y++){
- if(limits.cancelled()){result.discard(MeshStatus::cancelled);return result;}
- const float*field=layers(y);
- for(int z=0;z<size;z++){
- if(limits.cancelled()){result.discard(MeshStatus::cancelled);return result;}
- for(int x=0;x<size;x++){
-  {
-   unsigned mask=0;
-   for(int k=0;k<8;k++)mask|=unsigned(field[index(x+(k&1),(k>>1)&1,z+((k>>2)&1))]<0)<<k;
-   if(mask==0||mask==255)continue;
-  }
-  Sample s[8];int negative=0;
-  for(int k=0;k<8;k++){
-   int sx=x+(k&1),sy=y+((k>>1)&1),sz=z+((k>>2)&1);
-   s[k]={{float(x0+sx),float(sy),float(z0+sz)},field[index(sx,sy-y,sz)],u32(x0+sx+2049*((z0+sz)+2049*sy))};
-   negative+=s[k].d<0;
-  }
-  if(negative==0||negative==8)continue;
-  for(const auto&t:tets){
-   result.tetra(s,t);
-   if(result.status!=MeshStatus::ok){result.discard(result.status);return result;}
-  }
- }
- }
- if(limits.cancelled()){result.discard(MeshStatus::cancelled);return result;}
-  if(retire_edges){
-   // A later cell can only reuse edges on this layer's top plane. Canonical
-   // endpoint IDs increase with Y, so the smaller endpoint determines survival.
-   const u32 next_plane=u32(y+1)*2049u*2049u;
-   for(auto it=result.crossings.begin();it!=result.crossings.end();){
-    if(u32(it->first>>32)<next_plane)it=result.crossings.erase(it);else ++it;
-   }
-  }
- }
- if(retire_edges&&result.peak_crossings>size_t(36)*size*size){fprintf(stderr,"Crossing map exceeded single-slab edge bound\n");std::exit(7);}
- return result;
-}
-
-static Result mesh_field(const std::vector<float>&field,int x0,int z0,int size,bool retire_edges,const MeshLimits&limits=MeshLimits{}){
- size_t plane=size_t(size+1)*(size+1);
- return mesh_layers(x0,z0,size,retire_edges,[&](int y){return field.data()+size_t(y)*plane;},limits);
-}
-
-static float density_value(float d){
- float v=clampf(d,-SDF_BAND,SDF_BAND)*SDF_SCALE;int q=int(v>=0?v+.5f:v-.5f);
- return q?float(q)/SDF_SCALE:.5f/SDF_SCALE;
-}
+#include "experimental/region_mesher.hpp"
+using namespace terraforest::experimental;
 
 struct RollingField{
  World&w;int x0,z0,n,page_y=-1;
@@ -250,6 +140,31 @@ int main(int argc,char**argv){
   if(rolling.indices!=retained.indices||rolling.p.size()!=retained.p.size()||std::memcmp(rolling.p.data(),retained.p.data(),rolling.p.size()*sizeof(V3))||rolling.peak_crossings>=retained.peak_crossings)return 8;
   fprintf(stderr,"{\"name\":\"256 alternating layers\",\"mesh_parity\":true,\"size\":8,\"peak_crossings\":%zu,\"control_peak_crossings\":%zu,\"peak_buckets\":%zu,\"control_peak_buckets\":%zu}\n",rolling.peak_crossings,retained.peak_crossings,rolling.peak_buckets,retained.peak_buckets);
   auto empty_failure=[](const Result&r,MeshStatus status){return r.status==status&&r.p.empty()&&r.indices.empty()&&r.crossings.empty()&&r.p.capacity()==0&&r.indices.capacity()==0;};
+  int invalid_cases=0;
+  for(auto region:std::vector<std::array<int,3>>{{-1,1280,8},{1280,-1,8},{1993,1280,8},{1280,1993,8},{std::numeric_limits<int>::max(),1280,8},{1280,1280,0},{1280,1280,-1},{1280,1280,33},{1280,1280,std::numeric_limits<int>::max()}}){
+   int calls=0;
+   Result invalid=mesh_layers(region[0],region[1],region[2],true,[&](int){calls++;return field.data();});
+   if(calls||!empty_failure(invalid,MeshStatus::invalid_input))return 17;
+   invalid_cases++;
+  }
+  for(bool vertices:{true,false}){
+   MeshLimits oversized;if(vertices)oversized.vertices=size_t(std::numeric_limits<u32>::max())+1;else oversized.indices=size_t(std::numeric_limits<u32>::max())+1;
+   Result invalid=mesh_field(field,1280,1280,size,true,oversized);
+   if(!empty_failure(invalid,MeshStatus::invalid_input))return 18;
+   invalid_cases++;
+  }
+  std::vector<float>short_field(1,1.f);
+  if(!empty_failure(mesh_field(short_field,1280,1280,size,true),MeshStatus::invalid_input))return 19;
+  invalid_cases++;
+  if(!empty_failure(mesh_layers(1280,1280,size,true,[](int)->const float*{return nullptr;}),MeshStatus::invalid_input))return 20;
+  invalid_cases++;
+  for(float bad:{std::numeric_limits<float>::quiet_NaN(),std::numeric_limits<float>::infinity()}){
+   auto invalid_field=field;invalid_field[size_t(n)*n*100]=bad;
+   Result invalid=mesh_field(invalid_field,1280,1280,size,true);
+   if(!empty_failure(invalid,MeshStatus::invalid_input)||!invalid.peak_vertices)return 21;
+   invalid_cases++;
+  }
+  fprintf(stderr,"{\"name\":\"validated region interface\",\"invalid_cases\":%d,\"empty_failure\":true,\"invalid_region_skips_provider\":true}\n",invalid_cases);
   for(size_t cap:{size_t(0),size_t(1),size_t(10),rolling.p.size()-1}){
    MeshLimits limits;limits.vertices=cap;Result failed=mesh_field(field,1280,1280,size,true,limits);
    if(!empty_failure(failed,MeshStatus::output_limit)||failed.peak_vertices>cap)return 11;
