@@ -664,13 +664,14 @@ func _run() -> void:
 				normals = PackedVector3Array()
 			_push({"kind": "surface_batch", "points": points, "normals": normals, "token": job["token"], "epoch": job["epoch"], "revision": job["revision"]})
 		elif kind == "density_ray":
+			var query_started: int=Time.get_ticks_usec()
 			var reply: PackedByteArray=_call(Codec.density_ray_command(job["from"],job["to"],job["budget"],job["build_epoch"]))
 			var result: Dictionary=Codec.decode_density_ray(reply)
 			if result.get("cells",0)>job["budget"]:
 				result={"status":"error","error":"Density query exceeded requested budget"}
 			if result.has("revision") and result.revision!=job["revision"]:
 				result.erase("position");result.erase("fraction");result["status"]="stale"
-			result.merge({"kind":"density_ray","token":job["token"],"epoch":job["epoch"],"requested_revision":job["revision"],"build_epoch":job["build_epoch"],"queue_ms":queue_ms})
+			result.merge({"kind":"density_ray","token":job["token"],"epoch":job["epoch"],"requested_revision":job["revision"],"build_epoch":job["build_epoch"],"queue_ms":queue_ms,"query_ms":(Time.get_ticks_usec()-query_started)/1000.0,"worker_finished_us":Time.get_ticks_usec()})
 			_push(result)
 		elif kind == "height":
 			var reply: PackedByteArray = _call(Codec.point_command(job["point"]))

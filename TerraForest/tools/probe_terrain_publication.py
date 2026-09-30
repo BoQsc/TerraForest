@@ -15,15 +15,19 @@ parser.add_argument('--worker', action='store_true', help='Drive public stream e
 parser.add_argument('--transition', action='store_true', help='Exercise native mixed-cut coverage transitions')
 parser.add_argument('--density', action='store_true', help='Exercise bounded density query backend jobs')
 parser.add_argument('--density-stream', action='store_true', help='Exercise stream-side density reply freshness')
+parser.add_argument('--density-latency', action='store_true', help='Measure query latency behind meshing')
 args = parser.parse_args()
 test = 'terrain_density_backend_probe' if args.density else ('terrain_transition_probe' if args.transition else ('terrain_worker_publication_probe' if args.worker else 'terrain_publication_probe'))
 if args.density_stream: test='terrain_density_stream_probe'
+if args.density_latency: test='terrain_density_latency_probe'
 source = ROOT / 'addons/volumetric_terrain'
 files = list(source.glob('*.gd')) + [ROOT / 'tests/terrain_publication_probe.gd']
 if args.density:
     files.append(ROOT / 'tests/terrain_density_backend_probe.gd')
 if args.density_stream:
     files.append(ROOT / 'tests/terrain_density_stream_probe.gd')
+if args.density_latency:
+    files.append(ROOT / 'tests/terrain_density_latency_probe.gd')
 if args.worker or args.transition:
     files.append(ROOT / 'tests/terrain_worker_publication_probe.gd')
 if args.transition:
@@ -50,6 +54,8 @@ windows.release.x86_64 = "res://addons/volumetric_terrain/bin/terrain_core.windo
         shutil.copy2(ROOT / 'tests/terrain_density_backend_probe.gd', project / 'tests/terrain_density_backend_probe.gd')
     if args.density_stream:
         shutil.copy2(ROOT / 'tests/terrain_density_stream_probe.gd', project / 'tests/terrain_density_stream_probe.gd')
+    if args.density_latency:
+        shutil.copy2(ROOT / 'tests/terrain_density_latency_probe.gd', project / 'tests/terrain_density_latency_probe.gd')
     if args.worker or args.transition:
         shutil.copy2(ROOT / 'tests/terrain_worker_publication_probe.gd', project / 'tests/terrain_worker_publication_probe.gd')
     if args.transition:
@@ -62,10 +68,10 @@ windows.release.x86_64 = "res://addons/volumetric_terrain/bin/terrain_core.windo
     reports.mkdir(exist_ok=True)
     (reports / (test+'.log')).write_text(log, encoding='utf-8')
     print(log)
-    if result.returncode or re.search(r'(?m)^(SCRIPT ERROR|ERROR:|FAIL |WARNING: ObjectDB instances leaked)', log):
+    if not (project / 'reports' / (test+'.json')).exists():
         raise SystemExit(1)
     report = json.loads((project / 'reports' / (test+'.json')).read_text())
     report['source_hashes'] = {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest() for p in files}
     report['adoption_qualified'] = False
     (reports / (test+'.json')).write_text(json.dumps(report, indent=2) + '\n')
-    raise SystemExit(bool(report['failures']))
+    raise SystemExit(bool(result.returncode or report['failures'] or re.search(r'(?m)^(SCRIPT ERROR|ERROR:|FAIL |WARNING: ObjectDB instances leaked)', log)))

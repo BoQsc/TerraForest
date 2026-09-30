@@ -38,6 +38,13 @@ traffic is included in this test.
 
 ## Required primitive pressure matrix — not yet certified
 
+The [loaded density latency gate](TERRAIN_DENSITY_LATENCY.md) rejects the shared
+worker: 72 of 168 responses exceed 50 ms despite zero correctness failures.
+Median response behind one 256 m mesh is 1098 ms, while query execution/decode
+never exceeds 0.072 ms. Bounded access to authoritative terrain during meshing
+is required; neither queue priority nor another caller of the same world mutex
+resolves an active oversized mesh command. These are headless CPU measurements.
+
 The [stream-side density gate](TERRAIN_DENSITY_STREAM.md) passes 22 checks
 using held real replies across edit/reset/shutdown. Late hits and reused
 caller tokens cannot bypass revision/epoch checks. Player aim freshness, hit
