@@ -38,6 +38,10 @@ traffic is included in this test.
 
 ## Required primitive pressure matrix — not yet certified
 
+An isolated [C++ tetrahedral candidate](TERRAIN_TETRA_PROTOTYPE.md) passes the
+retained cave topology and fine-partition checks. Dense sampling, geometry volume,
+changed interpolation and absent LOD/error qualification keep it out of gameplay.
+
 The [boundary/topology probe](TERRAIN_BOUNDARY_DECISION.md) preserves fine geometry
 across tested partitions but rejects existing cave topology. Edited regions also
 show no LOD triangle reduction. Both gate reuse of the current mesher unchanged.

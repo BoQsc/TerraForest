@@ -1,0 +1,103 @@
+// Isolated geometry prototype. Not linked into the game or advertised as an addon.
+#include "core.h"
+#include <array>
+#include <vector>
+#include <unordered_map>
+#include <algorithm>
+#include <chrono>
+#include <cstdlib>
+#include <cstdio>
+#include <string>
+
+static double now(){return std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now().time_since_epoch()).count();}
+struct Sample{V3 p;float d;u32 id;};
+struct Result{
+ std::vector<V3> p;std::vector<u32> indices;
+ std::unordered_map<u64,u32> crossings;
+ u32 intersection(Sample a,Sample b){
+  if(a.id>b.id)std::swap(a,b);
+  u64 key=(u64(a.id)<<32)|b.id;
+  auto found=crossings.find(key);if(found!=crossings.end())return found->second;
+  // Canonical endpoint order makes adjacent independently built regions agree.
+  double t=double(a.d)/(double(a.d)-b.d);
+  V3 point={float(a.p.x+(b.p.x-a.p.x)*t),float(a.p.y+(b.p.y-a.p.y)*t),float(a.p.z+(b.p.z-a.p.z)*t)};
+  u32 id=u32(p.size());p.push_back(point);crossings.emplace(key,id);return id;
+ }
+ void tri(u32 a,u32 b,u32 c,V3 outward){
+  if(dot(cross(p[b]-p[a],p[c]-p[a]),outward)<0)std::swap(b,c);
+  indices.insert(indices.end(),{a,b,c});
+ }
+ void tetra(const Sample*s,const int*q){
+  int in[4],out[4],ni=0,no=0;V3 ci{},co{};
+  for(int i=0;i<4;i++){int k=q[i];if(s[k].d<0){in[ni++]=k;ci=ci+s[k].p;}else{out[no++]=k;co=co+s[k].p;}}
+  if(!ni||!no)return;
+  V3 direction=co/float(no)-ci/float(ni);
+  if(ni==1||no==1){
+   int single=ni==1?in[0]:out[0];int*other=ni==1?out:in;
+   tri(intersection(s[single],s[other[0]]),intersection(s[single],s[other[1]]),intersection(s[single],s[other[2]]),direction);
+  }else{
+   u32 ac=intersection(s[in[0]],s[out[0]]),ad=intersection(s[in[0]],s[out[1]]);
+   u32 bc=intersection(s[in[1]],s[out[0]]),bd=intersection(s[in[1]],s[out[1]]);
+   tri(ac,ad,bd,direction);tri(ac,bd,bc,direction);
+  }
+ }
+};
+
+static void build(World&w,int x0,int z0,int size,const std::string&file){
+ double begin=now();int n=size+1;
+ std::vector<float> field(size_t(n)*n*257);
+ auto index=[&](int x,int y,int z){return x+n*(z+n*y);};
+ int zeros=0;
+ for(int y=0;y<=256;y++)for(int z=0;z<=size;z++)for(int x=0;x<=size;x++){
+  float value=clampf(w.sample(x0+x,y,z0+z),-SDF_BAND,SDF_BAND)*SDF_SCALE;
+  int quantized=int(value>=0?value+.5f:value-.5f);
+  if(!quantized)zeros++;
+  // Experimental convention: zero is exterior, displaced by half a quantization
+  // unit to avoid placing multiple intersections exactly on a lattice corner.
+  field[index(x,y,z)]=quantized?float(quantized)/SDF_SCALE:.5f/SDF_SCALE;
+ }
+ double sampled=now();Result result;
+ // Six tetrahedra sharing the 0->7 cube diagonal; same split in every cell.
+ constexpr int tets[6][4]={{0,1,3,7},{0,3,2,7},{0,2,6,7},{0,6,4,7},{0,4,5,7},{0,5,1,7}};
+ for(int y=0;y<256;y++)for(int z=0;z<size;z++)for(int x=0;x<size;x++){
+  Sample s[8];int negative=0;
+  for(int k=0;k<8;k++){
+   int sx=x+(k&1),sy=y+((k>>1)&1),sz=z+((k>>2)&1);
+   s[k]={{float(x0+sx),float(sy),float(z0+sz)},field[index(sx,sy,sz)],u32(x0+sx+2049*((z0+sz)+2049*sy))};
+   negative+=s[k].d<0;
+  }
+  if(negative==0||negative==8)continue;
+  for(const auto&t:tets)result.tetra(s,t);
+ }
+ double meshed=now();
+ auto residual=[&](V3 p){
+  int x=imn(size-1,imx(0,fl(p.x)-x0)),z=imn(size-1,imx(0,fl(p.z)-z0)),y=imn(255,imx(0,fl(p.y)));
+  double dx=p.x-x0-x,dy=p.y-y,dz=p.z-z0-z,value=0;
+  for(int k=0;k<8;k++){
+   float d=field[index(x+(k&1),y+((k>>1)&1),z+((k>>2)&1))];
+   if(d==.5f/SDF_SCALE)d=0; // Compare against original quantized field, not biased zeros.
+   value+=d*(k&1?dx:1-dx)*(k&2?dy:1-dy)*(k&4?dz:1-dz);
+  }
+  return value<0?-value:value;
+ };
+ double vertex_error=0,centroid_error=0;
+ for(V3 p:result.p)vertex_error=std::max(vertex_error,residual(p));
+ for(size_t i=0;i<result.indices.size();i+=3){V3 p=(result.p[result.indices[i]]+result.p[result.indices[i+1]]+result.p[result.indices[i+2]])/3.f;centroid_error=std::max(centroid_error,residual(p));}
+ FILE*f=fopen(file.c_str(),"wb");if(!f)std::exit(2);
+ u32 counts[2]={u32(result.p.size()),u32(result.indices.size())};
+ fwrite(counts,4,2,f);fwrite(result.p.data(),sizeof(V3),result.p.size(),f);fwrite(result.indices.data(),4,result.indices.size(),f);fclose(f);
+ printf("{\"size\":%d,\"x\":%d,\"z\":%d,\"sampling_ms\":%.6f,\"meshing_ms\":%.6f,\"vertices\":%zu,\"triangles\":%zu,\"zero_samples\":%d,\"max_vertex_field_residual\":%.8f,\"max_centroid_field_residual\":%.8f}\n",size,x0,z0,sampled-begin,meshed-sampled,result.p.size(),result.indices.size()/3,zeros,vertex_error,centroid_error);
+}
+int main(int argc,char**argv){
+ if(argc!=2)return 2;
+ tr_alloc=std::malloc;tr_realloc=std::realloc;tr_free=std::free;
+ World w;w.init(1703);
+ for(int site=0;site<3;site++){
+  int x=site==0?960:1280,z=site==0?960:1280;
+  if(site==2){V3 p={1296,w.height(1296,1296),1296},lo,hi;int changes=0;if(!w.edit(p,p,5,0,false,1,lo,hi,changes)||!changes)return 3;}
+  auto path=[&](int ox,int oz,int n){return std::string(argv[1])+"/"+std::to_string(site)+"_"+std::to_string(ox)+"_"+std::to_string(oz)+"_"+std::to_string(n)+".bin";};
+  build(w,x,z,32,path(x,z,32));
+  for(int dz:{0,16})for(int dx:{0,16})build(w,x+dx,z+dz,16,path(x+dx,z+dz,16));
+ }
+ w.release();return tr_oom?4:0;
+}
