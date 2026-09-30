@@ -38,6 +38,12 @@ traffic is included in this test.
 
 ## Required primitive pressure matrix — not yet certified
 
+The [candidate collision probe](TERRAIN_CANDIDATE_COLLISION.md) **fails**: 21 of
+180 real Godot physics rays miss very small candidate triangles, although
+native collision recipes preserve all input faces. Earlier nonzero-area and
+topology checks are insufficient for collision readiness. Adoption is rejected
+pending numerical robustness diagnosis and correction.
+
 The [combined CPU surface entry](TERRAIN_CANDIDATE_SURFACE.md) couples geometry
 and normals: all 27 allocation failure points and initial/final cancellation
 controls discard both outputs. This is not yet a material/collision/render
