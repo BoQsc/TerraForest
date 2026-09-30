@@ -38,6 +38,11 @@ traffic is included in this test.
 
 ## Required primitive pressure matrix — not yet certified
 
+The [combined CPU surface entry](TERRAIN_CANDIDATE_SURFACE.md) couples geometry
+and normals: all 27 allocation failure points and initial/final cancellation
+controls discard both outputs. This is not yet a material/collision/render
+packet or Godot-worker integration.
+
 The [bounded normal density cache](TERRAIN_CANDIDATE_NORMAL_DENSITY.md) reduces
 the retained 32 m cave normal pass from 16.19 to 4.92 ms versus height-only
 caching, preserving 75 paired outputs. Scratch is 32,368 bytes for that owner.

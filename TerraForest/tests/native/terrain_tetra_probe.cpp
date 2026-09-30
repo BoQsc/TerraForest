@@ -17,6 +17,7 @@ static double now(){return std::chrono::duration<double,std::milli>(std::chrono:
 #include "experimental/world_region_sampler.hpp"
 #include "experimental/region_dependencies.hpp"
 #include "experimental/region_normals.hpp"
+#include "experimental/region_surface.hpp"
 using namespace terraforest::experimental;
 
 static void build(World&w,int x0,int z0,int size,const std::string&file){
@@ -284,6 +285,39 @@ int main(int argc,char**argv){
     !edit_affects_region(1280,1280,16,{1296.75f,10,1288},{1296.9f,10,1288})||
     edit_affects_region(1280,1280,16,{1297,10,1288},{1297,10,1288}))return 46;
  World w;w.init(1703);
+ {
+  struct State{int calls=0,live=0,fail=0;};
+  auto hooks=[](State&state){
+   BufferAllocator a;a.context=&state;
+   a.allocate=[](void*p,size_t bytes)->void*{auto&s=*static_cast<State*>(p);if(++s.calls==s.fail)return nullptr;void*m=std::malloc(bytes);if(m)s.live++;return m;};
+   a.release=[](void*p,void*m){static_cast<State*>(p)->live--;std::free(m);};return a;
+  };
+  auto empty=[](const RegionSurface&s){return !s.ready()&&s.geometry.p.empty()&&s.geometry.indices.empty()&&s.normals.values.empty()&&s.geometry.crossings.slots()==0;};
+  State baseline;int checkpoints=0;MeshLimits limits;
+  limits.sampler_allocator=limits.output_allocator=limits.crossing_allocator=hooks(baseline);
+  limits.context=&checkpoints;limits.cancel=[](void*p){++*static_cast<int*>(p);return false;};
+  {
+   RegionSurface surface=build_world_surface(w,1280,1280,16,limits);
+   Result reference=build_world_region(w,1280,1280,16);
+   NormalResult normals=build_region_normals(w,reference);
+   if(!surface.ready()||baseline.live!=3||surface.revision!=w.revision||surface.geometry.indices!=reference.indices||surface.geometry.p!=reference.p||surface.normals.values!=normals.values)return 53;
+  }
+  if(baseline.live)return 54;
+  for(int fail=1;fail<=baseline.calls;fail++){
+   State state;state.fail=fail;MeshLimits control;
+   control.sampler_allocator=control.output_allocator=control.crossing_allocator=hooks(state);
+   RegionSurface failed=build_world_surface(w,1280,1280,16,control);
+   if(failed.status!=MeshStatus::allocation_failed||!empty(failed)||state.live||state.calls!=fail)return 55;
+  }
+  for(int at:{1,checkpoints-1,checkpoints}){
+   struct Stop{int calls=0,at;};Stop stop{0,at};MeshLimits control;
+   control.context=&stop;control.cancel=[](void*p){auto&s=*static_cast<Stop*>(p);return ++s.calls>=s.at;};
+   RegionSurface failed=build_world_surface(w,1280,1280,16,control);
+   if(failed.status!=MeshStatus::cancelled||!empty(failed)||stop.calls!=at)return 56;
+  }
+  if(!build_world_surface(w,1280,1280,16).ready())return 57;
+  fprintf(stderr,"{\"name\":\"atomic region surface\",\"allocation_failures\":%d,\"cancellation_cases\":3,\"checkpoints\":%d,\"reference_parity\":true,\"no_partial_surface\":true,\"no_live_buffers\":true,\"retry_ready\":true}\n",baseline.calls,checkpoints);
+ }
  {
   Result mesh=build_world_region(w,1280,1280,16);
   NormalResult reference_normals=build_region_normals(w,mesh);
