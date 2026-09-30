@@ -6,7 +6,7 @@ namespace terraforest::experimental {
 // Internal sequential sampler. Border-crossing extents are permitted here for
 // sampling controls; the public meshing entry point requires an in-world region.
 struct WorldRegionSampler {
- const World&w;int x0,z0,n=0,page_y=-1,next_layer=0;
+ const World&w;int x0,z0,n=0,page_y=-1,next_layer=0,first_layer=0;
  size_t plane=0;
  FallibleBuffer<float> planes,heights;
  FallibleBuffer<int> page_indices;
@@ -16,8 +16,9 @@ struct WorldRegionSampler {
   if(limits.cancelled()){status=MeshStatus::cancelled;return false;}
   return true;
  }
- WorldRegionSampler(const World&world,int x,int z,int size,const MeshLimits&control=MeshLimits{}):w(world),x0(x),z0(z),limits(control){
-  if(size<1||size>32||x<-32||z<-32||x>WORLD||z>WORLD||!w.edit_columns||!limits.sampler_allocator.allocate||!limits.sampler_allocator.release){status=MeshStatus::invalid_input;return;}
+ WorldRegionSampler(const World&world,int x,int z,int size,const MeshLimits&control=MeshLimits{},int y_begin=0):w(world),x0(x),z0(z),limits(control){
+  if(size<1||size>32||x<-32||z<-32||x>WORLD||z>WORLD||!valid_vertical_range(y_begin,WORLD_Y)||!w.edit_columns||!limits.sampler_allocator.allocate||!limits.sampler_allocator.release){status=MeshStatus::invalid_input;return;}
+  next_layer=first_layer=y_begin;
   if(!checkpoint())return;
   n=size+1;plane=size_t(n)*n;
   planes.set_allocator(limits.sampler_allocator);heights.set_allocator(limits.sampler_allocator);page_indices.set_allocator(limits.sampler_allocator);
@@ -28,7 +29,7 @@ struct WorldRegionSampler {
    if(!checkpoint())return;
    for(int dx=0;dx<n;dx++)heights[dx+n*dz]=w.height(float(x0+dx),float(z0+dz));
   }
-  fill(0,planes.data());fill(1,planes.data()+plane);
+  fill(y_begin,planes.data());fill(y_begin+1,planes.data()+plane);
  }
  void fill(int y,float*out){
   if(status!=MeshStatus::ok)return;
@@ -57,7 +58,7 @@ struct WorldRegionSampler {
   if(status!=MeshStatus::ok)return nullptr;
   if(y!=next_layer||y<0||y>=256){status=MeshStatus::invalid_input;return nullptr;}
   if(!checkpoint())return nullptr;
-  if(y){std::copy(planes.begin()+plane,planes.end(),planes.begin());fill(y+1,planes.data()+plane);}
+  if(y>first_layer){std::copy(planes.begin()+plane,planes.end(),planes.begin());fill(y+1,planes.data()+plane);}
   if(status!=MeshStatus::ok)return nullptr;
   next_layer++;
   return planes.data();
@@ -65,13 +66,13 @@ struct WorldRegionSampler {
  size_t payload_bytes()const{return (planes.size()+heights.size())*sizeof(float)+page_indices.size()*sizeof(int);}
 };
 
-static Result build_world_region(const World&w,int x,int z,int size,const MeshLimits&limits=MeshLimits{}){
+static Result build_world_region(const World&w,int x,int z,int size,const MeshLimits&limits=MeshLimits{},int y_begin=0,int y_end=WORLD_Y){
  Result result;
- if(!valid_region(x,z,size,limits)||!w.edit_columns){result.status=MeshStatus::invalid_input;return result;}
+ if(!valid_region(x,z,size,limits)||!valid_vertical_range(y_begin,y_end)||!w.edit_columns){result.status=MeshStatus::invalid_input;return result;}
  if(limits.cancelled()){result.status=MeshStatus::cancelled;return result;}
- WorldRegionSampler sampler(w,x,z,size,limits);
+ WorldRegionSampler sampler(w,x,z,size,limits,y_begin);
  if(sampler.status!=MeshStatus::ok){result.status=sampler.status;return result;}
- result=mesh_layers(x,z,size,true,[&](int y){return sampler.layers(y);},limits);
+ result=mesh_layers(x,z,size,true,[&](int y){return sampler.layers(y);},limits,y_begin,y_end);
  // A cancelled provider returns nullptr. Preserve its cancellation status rather
  // than reporting malformed input, and never return its incomplete geometry.
  if(sampler.status!=MeshStatus::ok)result.discard(sampler.status);

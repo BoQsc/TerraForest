@@ -10,7 +10,7 @@ struct RegionSurface {
  Result geometry;
  NormalResult normals;
  MeshStatus status=MeshStatus::invalid_input;
- int x=0,z=0,size=0,revision=0;
+ int x=0,z=0,size=0,revision=0,y_begin=0,y_end=WORLD_Y;
  void discard(MeshStatus why){
   geometry.discard(why);normals.discard(why);status=why;
  }
@@ -20,9 +20,9 @@ struct RegionSurface {
  }
 };
 
-static RegionSurface build_world_surface(const World&w,int x,int z,int size,const MeshLimits&limits=MeshLimits{}){
- RegionSurface surface;surface.x=x;surface.z=z;surface.size=size;
- surface.geometry=build_world_region(w,x,z,size,limits);
+static RegionSurface build_world_surface(const World&w,int x,int z,int size,const MeshLimits&limits=MeshLimits{},int y_begin=0,int y_end=WORLD_Y){
+ RegionSurface surface;surface.x=x;surface.z=z;surface.size=size;surface.y_begin=y_begin;surface.y_end=y_end;
+ surface.geometry=build_world_region(w,x,z,size,limits,y_begin,y_end);
  if(surface.geometry.status!=MeshStatus::ok){surface.discard(surface.geometry.status);return surface;}
  surface.normals=build_region_normals_cached(w,surface.geometry,x,z,size,limits,true);
  if(surface.normals.status!=MeshStatus::ok){surface.discard(surface.normals.status);return surface;}

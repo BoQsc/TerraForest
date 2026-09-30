@@ -93,12 +93,15 @@ static bool valid_region(int x0,int z0,int size,const MeshLimits&limits){
  return size>=1&&size<=32&&x0>=0&&z0>=0&&x0<=WORLD-size&&z0<=WORLD-size&&
         limits.vertices<=std::numeric_limits<u32>::max()&&limits.indices<=std::numeric_limits<u32>::max()&&limits.output_allocator.allocate&&limits.output_allocator.release&&limits.sampler_allocator.allocate&&limits.sampler_allocator.release&&limits.crossing_allocator.allocate&&limits.crossing_allocator.release;
 }
+static bool valid_vertical_range(int begin,int end){return begin>=0&&begin<end&&end<=WORLD_Y;}
 
-// Providers must return two contiguous (size+1)^2 planes for each requested Y.
+// Providers must return two contiguous (size+1)^2 planes for each absolute Y.
+// Cell ownership is [y_begin,y_end); shared samples include y_end. Global edge
+// IDs and canonical intersections are unchanged across independently built slabs.
 // The caller owns immutable sample storage throughout the synchronous call.
 template<class Layers>
-static Result mesh_layers(int x0,int z0,int size,bool retire_edges,Layers&&layers,const MeshLimits&limits=MeshLimits{}){
- if(!valid_region(x0,z0,size,limits)){Result invalid;invalid.status=MeshStatus::invalid_input;return invalid;}
+static Result mesh_layers(int x0,int z0,int size,bool retire_edges,Layers&&layers,const MeshLimits&limits=MeshLimits{},int y_begin=0,int y_end=WORLD_Y){
+ if(!valid_region(x0,z0,size,limits)||!valid_vertical_range(y_begin,y_end)){Result invalid;invalid.status=MeshStatus::invalid_input;return invalid;}
  int n=size+1;
  auto index=[&](int x,int y,int z){return x+n*(z+n*y);};
  Result result;result.limits=limits;result.p.set_allocator(limits.output_allocator);result.indices.set_allocator(limits.output_allocator);
@@ -111,7 +114,7 @@ static Result mesh_layers(int x0,int z0,int size,bool retire_edges,Layers&&layer
   std::fill(result.zero_vertices.begin(),result.zero_vertices.end(),LatticeEdgeTable::absent);
  }
  constexpr int tets[6][4]={{0,1,3,7},{0,3,2,7},{0,2,6,7},{0,6,4,7},{0,4,5,7},{0,5,1,7}};
- for(int y=0;y<256;y++){
+ for(int y=y_begin;y<y_end;y++){
  if(limits.cancelled()){result.discard(MeshStatus::cancelled);return result;}
  const float*field=layers(y);
  if(!field){result.discard(MeshStatus::invalid_input);return result;}
