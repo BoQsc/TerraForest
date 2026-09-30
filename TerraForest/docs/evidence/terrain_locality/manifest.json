@@ -1,0 +1,12 @@
+{
+  "parent_commit": "2d3d57f9ab218fde524dc9873893cba03533478e",
+  "hashes": {
+    "tests/terrain_locality_probe.gd": "62878b003db70f5f752987ba3a7f1c66fc9b05f53dd4e5d0e739da8db15a50e6",
+    "tools/test_native_release.py": "818f2f60d84e3dccbe8290c16696771c540507788657ee288fc5c606c4edaf95",
+    "addons/volumetric_terrain/bin/terrain_core.windows.template_release.x86_64.dll": "5752092084efd8ba6eb0963328219e7076bdb6f833cefcdbf5def41bef15c8c5"
+  },
+  "reports": {
+    "terrain_locality_probe_release.json": "a15523b91756abd6950fc3aec27acc0122a4750c99fdf19c02eeee001339fd3e",
+    "terrain_locality_probe_release.log": "01dff193532e8a1ad3ae2362628c761732c0f167c438bdddfdc4bb5cb97cb796"
+  }
+}

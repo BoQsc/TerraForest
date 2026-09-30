@@ -38,6 +38,10 @@ traffic is included in this test.
 
 ## Required primitive pressure matrix — not yet certified
 
+The subsequent [cheap locality probe](TERRAIN_LOCALITY_DECISION.md) rejects both
+extraction-only optimization and covering distant terrain with fine regions.
+It measures a promising local component cost, but does not qualify a replacement.
+
 The opt-in [reconstruction-region cache experiment](TERRAIN_REGION_CACHE_EXPERIMENT.md)
 adds native parity, cancellation, local invalidation and working-set pressure tests.
 Its warm reuse improves extraction, but cold/thrashing regressions and full-patch
