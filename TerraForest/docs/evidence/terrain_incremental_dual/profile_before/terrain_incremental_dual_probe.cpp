@@ -6,26 +6,11 @@
 using namespace dual_probe;
 static double now(){return std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now().time_since_epoch()).count();}
 static double canonical(float density){float v=std::max(-4.f,std::min(4.f,density))*1024.f;int q=int(v>=0?v+.5f:v-.5f);return q?double(q)/1024:.5/1024;}
-struct WorldField{
- const World*world;P origin;mutable std::unordered_map<uint64_t,float> heights;
- double lattice(int x,int y,int z)const{
-  if(x<0||x>WORLD||z<0||z>WORLD||y<0||y>WORLD_Y)return SDF_BAND;
-  constexpr int np=WORLD/PAGE+1;int page=world->pages_by_key.get(uint32_t((x>>4)+np*((z>>4)+np*(y>>4)))+1);
-  if(page>=0)return canonical(float(world->pages[page].d[(x&15)+16*((z&15)+16*(y&15))])/SDF_SCALE);
-  uint64_t key=(uint64_t(uint32_t(x))<<32)|uint32_t(z);auto found=heights.find(key);float height;
-  if(found==heights.end()){height=world->height(float(x),float(z));heights.emplace(key,height);}else height=found->second;
-  return canonical(world->base({float(x),float(y),float(z)},height));
- }
- double operator()(P p)const{
-  for(int k=0;k<3;k++)p[k]+=origin[k];int x=int(std::floor(p[0])),y=int(std::floor(p[1])),z=int(std::floor(p[2]));if(p[0]==x&&p[1]==y&&p[2]==z)return lattice(x,y,z);
-  double d=0;for(int k=0;k<8;k++){int dx=k&1,dy=(k>>1)&1,dz=(k>>2)&1;d+=(dx?p[0]-x:1-(p[0]-x))*(dy?p[1]-y:1-(p[1]-y))*(dz?p[2]-z:1-(p[2]-z))*lattice(x+dx,y+dy,z+dz);}return d;
- }
-};
 struct Audit{int open=0,overused=0,winding=0,degenerate=0,links=0;};
 template<class Field>static Audit audit(const dual_probe::Mesh<Field>&mesh){
  using E=std::array<P,2>;struct Use{int count=0,balance=0;};std::map<E,Use> edges;std::map<P,std::vector<E>> links;std::map<P,unsigned> boundary;Audit out;
  for(const auto&c:mesh.cells)if(c.active){unsigned mask=0;for(int k=0;k<3;k++){if(c.lo[k]==0)mask|=1u<<(2*k);if(c.lo[k]+c.size==mesh.side)mask|=2u<<(2*k);}for(P vertex:c.vertices)boundary[vertex]|=mask;}
- for(size_t id=0;id<mesh.edge_count();id++){auto poly=mesh.polygon(int(id));for(size_t t=1;t+1<poly.size();t++){
+ for(size_t id=0;id<mesh.edges.size();id++){auto poly=mesh.polygon(int(id));for(size_t t=1;t+1<poly.size();t++){
   P p[3]={mesh.position(poly[0]),mesh.position(poly[t]),mesh.position(poly[t+1])};double a[3],b[3],area=0;for(int k=0;k<3;k++){a[k]=p[1][k]-p[0][k];b[k]=p[2][k]-p[0][k];}for(int k=0;k<3;k++){double v=a[(k+1)%3]*b[(k+2)%3]-a[(k+2)%3]*b[(k+1)%3];area+=v*v;}out.degenerate+=area==0;
   for(int k=0;k<3;k++){P a=p[k],b=p[(k+1)%3];bool reverse=b<a;if(reverse)std::swap(a,b);auto&u=edges[{a,b}];u.count++;u.balance+=reverse?-1:1;links[p[k]].push_back({p[(k+1)%3],p[(k+2)%3]});}
  }}
@@ -36,23 +21,13 @@ template<class Field>static Audit audit(const dual_probe::Mesh<Field>&mesh){
  for(const auto&item:links){std::map<P,std::vector<P>> graph;for(auto e:item.second){graph[e[0]].push_back(e[1]);graph[e[1]].push_back(e[0]);}bool bad=false;int endpoints=0;for(const auto&v:graph){bad|=v.second.size()>2;endpoints+=v.second.size()==1;}bad|=boundary[item.first]?(endpoints!=0&&endpoints!=2):endpoints!=0;std::set<P> seen;std::vector<P> todo{graph.begin()->first};while(!todo.empty()){P p=todo.back();todo.pop_back();if(!seen.insert(p).second)continue;for(P q:graph[p])todo.push_back(q);}bad|=seen.size()!=graph.size();out.links+=bad;}return out;
 }
 template<class Field,class Edit>static int run(const char*kind,int extent,Field field,Edit edit){
- double start=now();dual_probe::Mesh<Field> mesh(field,extent);double cold=now()-start;int failures=0;bool ownership=mesh.valid_ownership();
+ double start=now();dual_probe::Mesh<Field> mesh(field,extent);double cold=now()-start;int failures=0;
  for(int iteration=0;iteration<4;iteration++){
   double edit_ms=0,oracle_ms=0;bool equal=true,changed=true;
   if(iteration){Box box;changed=edit(iteration,box);start=now();mesh.edit(box);edit_ms=now()-start;start=now();dual_probe::Mesh<Field> fresh(field,extent);oracle_ms=now()-start;equal=mesh.same(fresh);}
-  auto a=audit(mesh);size_t unmapped=mesh.unmapped_crossings(),unrepresented=mesh.unrepresented_loops();bool passed=ownership&&mesh.valid_storage()&&!unmapped&&!unrepresented&&equal&&changed&&!(a.open||a.overused||a.winding||a.degenerate||a.links);failures+=!passed;
-  printf("{\"kind\":\"%s\",\"extent\":%d,\"edit\":%d,\"leaves\":%zu,\"shared_edges\":%zu,\"triangles\":%zu,\"unmapped_crossings\":%zu,\"unrepresented_boundary_loops\":%zu,\"cold_ms\":%.6f,\"cold_stages_ms\":[%.6f,%.6f,%.6f,%.6f],\"edge_payload_bytes\":%zu,\"dependency_payload_bytes\":%zu,\"fingerprint\":\"%016llx\",\"local_update_ms\":%.6f,\"oracle_ms\":%.6f,\"candidate_edges\":%zu,\"reevaluated_edges\":%zu,\"refitted_cells\":%zu,\"affected_faces\":%zu,\"local_samples\":%zu,\"fresh_equal\":%s,\"edit_changed\":%s,\"internal_open_edges\":%d,\"overused_edges\":%d,\"winding_errors\":%d,\"degenerate_triangles\":%d,\"invalid_vertex_links\":%d,\"passed\":%s}\n",kind,extent,iteration,mesh.cells.size(),mesh.edge_count(),mesh.triangles(),unmapped,unrepresented,cold,mesh.cold_stages[0],mesh.cold_stages[1],mesh.cold_stages[2],mesh.cold_stages[3],mesh.edge_payload_bytes(),mesh.dependency_payload_bytes(),(unsigned long long)mesh.fingerprint(),edit_ms,oracle_ms,mesh.last.candidates,mesh.last.edges,mesh.last.cells,mesh.last.faces,mesh.last.samples,equal?"true":"false",changed?"true":"false",a.open,a.overused,a.winding,a.degenerate,a.links,passed?"true":"false");fflush(stdout);
+  auto a=audit(mesh);size_t unmapped=mesh.unmapped_crossings(),unrepresented=mesh.unrepresented_loops();bool passed=!unmapped&&!unrepresented&&equal&&changed&&!(a.open||a.overused||a.winding||a.degenerate||a.links);failures+=!passed;
+  printf("{\"kind\":\"%s\",\"extent\":%d,\"edit\":%d,\"leaves\":%zu,\"shared_edges\":%zu,\"triangles\":%zu,\"unmapped_crossings\":%zu,\"unrepresented_boundary_loops\":%zu,\"cold_ms\":%.6f,\"cold_stages_ms\":[%.6f,%.6f,%.6f,%.6f],\"edge_payload_bytes\":%zu,\"dependency_payload_bytes\":%zu,\"fingerprint\":\"%016llx\",\"local_update_ms\":%.6f,\"oracle_ms\":%.6f,\"candidate_edges\":%zu,\"reevaluated_edges\":%zu,\"refitted_cells\":%zu,\"affected_faces\":%zu,\"local_samples\":%zu,\"fresh_equal\":%s,\"edit_changed\":%s,\"internal_open_edges\":%d,\"overused_edges\":%d,\"winding_errors\":%d,\"degenerate_triangles\":%d,\"invalid_vertex_links\":%d,\"passed\":%s}\n",kind,extent,iteration,mesh.cells.size(),mesh.edges.size(),mesh.triangles(),unmapped,unrepresented,cold,mesh.cold_stages[0],mesh.cold_stages[1],mesh.cold_stages[2],mesh.cold_stages[3],mesh.edge_payload_bytes(),mesh.dependency_payload_bytes(),(unsigned long long)mesh.fingerprint(),edit_ms,oracle_ms,mesh.last.candidates,mesh.last.edges,mesh.last.cells,mesh.last.faces,mesh.last.samples,equal?"true":"false",changed?"true":"false",a.open,a.overused,a.winding,a.degenerate,a.links,passed?"true":"false");fflush(stdout);
  }return failures;
-}
-static int recycle(){
- bool carved=false;auto field=[&](P p){double distance=0;for(int k=0;k<3;k++)distance+=(p[k]-32)*(p[k]-32);distance=std::sqrt(distance);double d=std::max(-4.,std::min(4.,distance-12));return carved?std::max(d,2.5-distance):d;};
- dual_probe::Mesh<decltype(field)> mesh(field,64);uint64_t expected[2]={mesh.fingerprint(),0};size_t capacity=0;int failures=0;
- for(int i=0;i<64;i++){carved=(i%2)==0;mesh.edit({{25,25,25},{39,39,39}});uint64_t fingerprint=mesh.fingerprint();
-  if(i==0){dual_probe::Mesh<decltype(field)> fresh(field,64);if(!mesh.same(fresh))failures++;expected[1]=fresh.fingerprint();}
-  if(i==1)capacity=mesh.edge_payload_bytes();
-  if(fingerprint!=expected[carved]||!mesh.valid_storage()||(i>1&&mesh.edge_payload_bytes()!=capacity))failures++;
- }
- printf("{\"kind\":\"crossing_reuse\",\"cycles\":64,\"slot_count\":%zu,\"free_slots\":%zu,\"steady_edge_capacity_bytes\":%zu,\"failures\":%d,\"passed\":%s}\n",mesh.crossings.size(),mesh.free_crossings.size(),capacity,failures,failures?"false":"true");return failures;
 }
 int main(){
  tr_alloc=std::malloc;tr_realloc=std::realloc;tr_free=std::free;int failures=0;
@@ -62,8 +37,8 @@ int main(){
   auto edit=[&](int n,Box&box){P c={center+(n>=2?8:0),center-(n==3?8:0),center+(n==3?8:0)};cuts.push_back(c);for(int k=0;k<3;k++){box.lo[k]=int(c[k])-7;box.hi[k]=int(c[k])+7;}return true;};
   failures+=run("sphere",extent,field,edit);
   World world;world.init();P anchor={1024,double(int(world.height(1024,1024))-1),1024};
-  WorldField terrain{&world,{anchor[0]-center,anchor[1]-center,anchor[2]-center},{}};
+  auto terrain=[&](P p){for(int k=0;k<3;k++)p[k]+=anchor[k]-center;int x=int(std::floor(p[0])),y=int(std::floor(p[1])),z=int(std::floor(p[2]));if(p[0]==x&&p[1]==y&&p[2]==z)return canonical(world.sample(x,y,z));double d=0;for(int k=0;k<8;k++){int dx=k&1,dy=(k>>1)&1,dz=(k>>2)&1;d+=(dx?p[0]-x:1-(p[0]-x))*(dy?p[1]-y:1-(p[1]-y))*(dz?p[2]-z:1-(p[2]-z))*canonical(world.sample(x+dx,y+dy,z+dz));}return d;};
   auto terrain_edit=[&](int n,Box&box){V3 p={float(anchor[0]+(n>=2?8:0)),float(anchor[1]-(n>=2?8:0)),float(anchor[2]+(n==3?8:0))},lo,hi;int changes=0;bool changed=world.edit(p,p,2.5f,0,false,1,lo,hi,changes);float low[3]={lo.x,lo.y,lo.z},high[3]={hi.x,hi.y,hi.z};for(int k=0;k<3;k++){box.lo[k]=int(std::floor(low[k]-anchor[k]+center));box.hi[k]=int(std::ceil(high[k]-anchor[k]+center));}return changed&&changes>0;};
   failures+=run("world",extent,terrain,terrain_edit);world.release();
- }failures+=recycle();return failures?1:0;
+ }return failures?1:0;
 }

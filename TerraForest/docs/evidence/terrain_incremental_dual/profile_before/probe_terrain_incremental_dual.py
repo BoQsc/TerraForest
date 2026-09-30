@@ -24,16 +24,11 @@ run = subprocess.run([str(exe)], capture_output=True, text=True, timeout=120)
 rows = [json.loads(line) for line in run.stdout.splitlines()]
 files = [source, Path(__file__).resolve(), ROOT / 'tests/native/incremental_dual_probe.hpp',
          native / 'core.cpp', *sorted(native.glob('*.h')), *sorted(native.glob('*.hpp'))]
-report = dict(rows=rows, exit_code=run.returncode, stderr=run.stderr, complete=len(rows) == 25,
+report = dict(rows=rows, exit_code=run.returncode, stderr=run.stderr, complete=len(rows) == 24,
               adoption_qualified=False, build_command=command, toolchain_lock_sha256=info['lock_sha256'],
               source_hashes={str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest() for p in files},
               scope='Fixed mixed-resolution leaf layout (1m center, 8m surroundings), shared unit edge segments, canonical unit face triangulation, per-component vertices, '
-                    'box-constrained regularized QEF and bucket-indexed shared edge runs with reusable sparse crossing storage. '
-                    '64 carve/restore cycles check slot ownership, stable capacity after warmup and geometry fingerprints. '
-                    'Every shared edge interval is checked against independent unit-segment neighbor lookup. '
-                    'Cold stages are layout/indexing/sampling/component fitting. Capacity counters cover edge/dependency arrays, '
-                    'excluding allocator/hash-node overhead, transient arrays, field height caches, total process memory and render resources. '
-                    'Unrepresented boundary loops in active cells are rejected; wholly hidden features remain unqualified. '
+                    'box-constrained regularized QEF and bucket-indexed edit dependencies. Unrepresented boundary loops in active cells are rejected; wholly hidden features remain unqualified. '
                     '32/64/128m volumes, synthetic sphere and actual World edits. '
                     'Each incremental update compared bit-for-bit with full reconstruction, plus mesh topology checks. '
                     'Single CPU observations excluding diagnostic audits/oracles. '

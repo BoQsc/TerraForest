@@ -1,0 +1,37 @@
+{
+  "geometry_fingerprints_matched": 24,
+  "fresh_parity_updates": 18,
+  "world_cold_observations": [
+    {
+      "extent": 32,
+      "cold_before_ms": 63.0267,
+      "cold_after_ms": 44.553,
+      "capacity_before_bytes": 2348944,
+      "capacity_after_bytes": 2285728
+    },
+    {
+      "extent": 64,
+      "cold_before_ms": 129.3236,
+      "cold_after_ms": 81.2657,
+      "capacity_before_bytes": 3896080,
+      "capacity_after_bytes": 2514912
+    },
+    {
+      "extent": 128,
+      "cold_before_ms": 625.6115,
+      "cold_after_ms": 326.6766,
+      "capacity_before_bytes": 17965072,
+      "capacity_after_bytes": 6064736
+    }
+  ],
+  "reuse": {
+    "kind": "crossing_reuse",
+    "cycles": 64,
+    "slot_count": 444,
+    "free_slots": 126,
+    "steady_edge_capacity_bytes": 1695360,
+    "failures": 0,
+    "passed": true
+  },
+  "qualification": "CPU observations only; capacity includes edge and dependency arrays, not total memory. No FPS or end-to-end mining claim."
+}
