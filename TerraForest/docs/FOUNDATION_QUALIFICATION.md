@@ -38,6 +38,12 @@ traffic is included in this test.
 
 ## Required primitive pressure matrix — not yet certified
 
+The [snapshot lifecycle probe](TERRAIN_SNAPSHOT_LIFECYCLE.md) exposed stale valid
+state after moving ownership. Explicit move invalidation fixes the three failing
+groups; all six groups and the 36 geometry comparisons now pass. Allocation
+failure, capture cancellation and a native-thread handoff after source release
+are covered. Actual concurrent query scheduling remains unqualified.
+
 The [sparse snapshot follow-up](TERRAIN_SPARSE_SNAPSHOT.md) passes 36 exact
 geometry comparisons after source-world release, including fully populated and
 world-edge owners with 0/32/256 distant stored pages. Local lookup count and

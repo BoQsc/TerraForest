@@ -13,6 +13,20 @@ class SparseRegionSnapshot {
  int lookups_=0;
  MeshStatus status_=MeshStatus::invalid_input;
 public:
+ SparseRegionSnapshot()=default;
+ SparseRegionSnapshot(const SparseRegionSnapshot&)=delete;
+ SparseRegionSnapshot&operator=(const SparseRegionSnapshot&)=delete;
+ SparseRegionSnapshot(SparseRegionSnapshot&&other)noexcept{*this=std::move(other);}
+ SparseRegionSnapshot&operator=(SparseRegionSnapshot&&other)noexcept{
+  if(this==&other)return *this;
+  caves_=std::move(other.caves_);pages_=std::move(other.pages_);
+  std::copy(other.indices_,other.indices_+153,indices_);
+  x_=other.x_;z_=other.z_;size_=other.size_;px_=other.px_;pz_=other.pz_;
+  nx_=other.nx_;nz_=other.nz_;seed_=other.seed_;revision_=other.revision_;
+  lookups_=other.lookups_;status_=other.status_;
+  other.status_=MeshStatus::invalid_input;other.revision_=-1;other.lookups_=0;
+  return *this;
+ }
  int revision()const{return revision_;}
  int lookups()const{return lookups_;}
  size_t bytes()const{return caves_.size()*sizeof(Cave)+pages_.size()*sizeof(i16)+sizeof(indices_);}
@@ -38,10 +52,12 @@ public:
    if(limits.cancelled()){caves_.clear();pages_.clear();return status_=MeshStatus::cancelled;}
    std::copy(w.pages[sources[i]].d,w.pages[sources[i]].d+PAGE_SAMPLES,pages_.data()+size_t(i)*PAGE_SAMPLES);
   }
+  if(limits.cancelled()){caves_.clear();pages_.clear();return status_=MeshStatus::cancelled;}
   seed_=w.seed;revision_=w.revision;return status_=MeshStatus::ok;
  }
  Result mesh(const MeshLimits&limits=MeshLimits{})const{
   Result failed;if(status_!=MeshStatus::ok){failed.status=status_;return failed;}
+  if(limits.cancelled()){failed.status=MeshStatus::cancelled;return failed;}
   // Non-owning procedural view into this snapshot only. Never init/release it.
   World generator;generator.seed=seed_;generator.caves.p=const_cast<Cave*>(caves_.data());generator.caves.n=int(caves_.size());
   FallibleBuffer<float> planes,heights;planes.set_allocator(limits.sampler_allocator);heights.set_allocator(limits.sampler_allocator);
