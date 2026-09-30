@@ -23,8 +23,9 @@ class TerrainCore : public godot::RefCounted {
     std::atomic<int64_t> active_command_{-1};
     std::atomic<u64> snapshot_epoch_{0};
     std::optional<experimental::SnapshotWorker> snapshot_worker_;
-    struct SubmitTiming{int64_t token=-1;bool accepted=false;double total_ms=0,world_lock_ms=0,startup_ms=0;experimental::SnapshotWorker::SubmitTiming worker;};
+    struct SubmitTiming{int64_t token=-1;bool accepted=false;double total_ms=0,world_lock_ms=0,startup_ms=0,world_unlock_ms=0;experimental::SnapshotWorker::SubmitTiming worker;};
     SubmitTiming last_submit_;
+    std::mutex submit_timing_mutex_;
     static godot::PackedByteArray reply(uint32_t command, uint32_t status, uint32_t value=0, bool include_value=false) {
         godot::PackedByteArray result;
         result.resize(include_value ? 16 : 12);
@@ -49,22 +50,28 @@ public:
     bool experimental_snapshot_submit(int64_t x,int64_t z,int64_t size,int64_t token,int64_t revision){
         if(x<0||z<0||x>WORLD||z>WORLD||size<1||size>32||token<0||revision<0)return false;
         using Clock=std::chrono::steady_clock;auto begin=Clock::now();
-        std::lock_guard<std::mutex> lock(mutex_);
-        last_submit_=SubmitTiming{};last_submit_.token=token;
-        last_submit_.world_lock_ms=std::chrono::duration<double,std::milli>(Clock::now()-begin).count();
-        if(revision!=world_.revision)return false;
-        auto startup=Clock::now();
-        if(!snapshot_worker_)snapshot_worker_.emplace(3*1024*1024,32*1024*1024);
-        last_submit_.startup_ms=std::chrono::duration<double,std::milli>(Clock::now()-startup).count();
-        last_submit_.accepted=snapshot_worker_->submit(world_,int(x),int(z),int(size),snapshot_epoch_.load(),u64(token),&last_submit_.worker);
-        last_submit_.total_ms=std::chrono::duration<double,std::milli>(Clock::now()-begin).count();
-        return last_submit_.accepted;
+        std::unique_lock<std::mutex> lock(mutex_);
+        SubmitTiming timing;timing.token=token;
+        timing.world_lock_ms=std::chrono::duration<double,std::milli>(Clock::now()-begin).count();
+        if(revision==world_.revision){
+            auto startup=Clock::now();
+            if(!snapshot_worker_)snapshot_worker_.emplace(3*1024*1024,32*1024*1024);
+            timing.startup_ms=std::chrono::duration<double,std::milli>(Clock::now()-startup).count();
+            timing.accepted=snapshot_worker_->submit(world_,int(x),int(z),int(size),snapshot_epoch_.load(),u64(token),&timing.worker);
+        }
+        auto unlocking=Clock::now();lock.unlock();
+        timing.world_unlock_ms=std::chrono::duration<double,std::milli>(Clock::now()-unlocking).count();
+        timing.total_ms=std::chrono::duration<double,std::milli>(Clock::now()-begin).count();
+        {std::lock_guard<std::mutex> timing_lock(submit_timing_mutex_);last_submit_=timing;}
+        return timing.accepted;
     }
     godot::Dictionary experimental_snapshot_submit_timing(){
-        std::lock_guard<std::mutex> lock(mutex_);godot::Dictionary row;
-        row["token"]=last_submit_.token;row["accepted"]=last_submit_.accepted;row["total_ms"]=last_submit_.total_ms;
-        row["world_lock_ms"]=last_submit_.world_lock_ms;row["startup_ms"]=last_submit_.startup_ms;
-        row["worker_lock_ms"]=last_submit_.worker.lock_ms;row["capture_ms"]=last_submit_.worker.capture_ms;return row;
+        SubmitTiming timing;{std::lock_guard<std::mutex> lock(submit_timing_mutex_);timing=last_submit_;}
+        godot::Dictionary row;
+        row["token"]=timing.token;row["accepted"]=timing.accepted;row["total_ms"]=timing.total_ms;
+        row["world_lock_ms"]=timing.world_lock_ms;row["startup_ms"]=timing.startup_ms;
+        row["worker_lock_ms"]=timing.worker.lock_ms;row["capture_ms"]=timing.worker.capture_ms;
+        row["handoff_ms"]=timing.worker.handoff_ms;row["world_unlock_ms"]=timing.world_unlock_ms;return row;
     }
     godot::Array experimental_snapshot_poll(){
         std::lock_guard<std::mutex> lock(mutex_);godot::Array rows;

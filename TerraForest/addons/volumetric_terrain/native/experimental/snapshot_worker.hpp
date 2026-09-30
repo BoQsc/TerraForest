@@ -50,7 +50,7 @@ class SnapshotWorker {
   }
  }
 public:
- struct SubmitTiming{double lock_ms=0,capture_ms=0;};
+ struct SubmitTiming{double lock_ms=0,capture_ms=0,handoff_ms=0;};
  SnapshotWorker(size_t snapshot_bytes,size_t mesh_bytes):snapshots_(snapshot_bytes),meshes_(mesh_bytes),thread_([this]{run();}){}
  SnapshotWorker(const SnapshotWorker&)=delete;
  SnapshotWorker&operator=(const SnapshotWorker&)=delete;
@@ -60,7 +60,7 @@ public:
  void stop(){stopping_.store(true);wake_.notify_all();if(thread_.joinable())thread_.join();}
  bool submit(const World&w,int x,int z,int size,u64 epoch,u64 token,SubmitTiming*timing=nullptr){
   auto begin=std::chrono::steady_clock::now();
-  std::lock_guard<std::mutex> lock(mutex_);
+  std::unique_lock<std::mutex> lock(mutex_);
   if(timing)timing->lock_ms=std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-begin).count();
   if(stopping_.load()||serial_==std::numeric_limits<u64>::max())return false;
   Slot*slot=nullptr;for(auto&s:slots_)if(s.state==empty){slot=&s;break;}
@@ -70,8 +70,11 @@ public:
   auto captured=slot->snapshot.capture(w,x,z,size,limits,true);
   if(timing)timing->capture_ms=std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-begin).count();
   if(captured!=MeshStatus::ok)return false;
+  begin=std::chrono::steady_clock::now();
   slot->revision=slot->snapshot.revision();slot->validated_revision=slot->revision;slot->x=x;slot->z=z;slot->size=size;
-  slot->epoch=epoch;slot->token=token;slot->serial=++serial_;slot->state=ready;wake_.notify_one();return true;
+  slot->epoch=epoch;slot->token=token;slot->serial=++serial_;slot->state=ready;lock.unlock();wake_.notify_one();
+  if(timing)timing->handoff_ms=std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-begin).count();
+  return true;
  }
  // Only a complete chain of certified, nonintersecting density edits advances
  // validity. An intersecting or unreported revision can never be resurrected.

@@ -38,6 +38,12 @@ traffic is included in this test.
 
 ## Required primitive pressure matrix — not yet certified
 
+The [handoff timing follow-up](TERRAIN_SNAPSHOT_HANDOFF.md) localizes one 7.418 ms
+submission to notification/worker unlock. Releasing the worker mutex before
+notification reduces the measured maximum to 0.530 ms in the follow-up, with all
+640 jobs/edits completing. Single before/after runs do not resolve the older
+20.351 ms rejection or establish a tail-latency bound.
+
 The [submission timing breakdown](TERRAIN_SNAPSHOT_SUBMIT_TIMING.md) records
 world/worker lock waits, startup and capture. The follow-up completes 640 jobs
 without reproducing the 20.351 ms failure. Its slowest external submit is 5.742 ms
