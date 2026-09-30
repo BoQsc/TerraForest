@@ -25,7 +25,7 @@ struct Result{
  FallibleBuffer<V3> p;FallibleBuffer<u32> indices;
  LatticeEdgeTable crossings;
  FallibleBuffer<u32> zero_vertices;
- int origin_x=0,origin_z=0,width=0;bool rolling_zeros=true;
+ int origin_x=0,origin_z=0,width=0,y_begin=0,y_end=WORLD_Y;bool rolling_zeros=true;
  size_t collapsed_triangles=0;
  size_t peak_crossings=0,peak_table_slots=0;
  size_t peak_vertices=0,peak_indices=0;
@@ -105,7 +105,7 @@ static Result mesh_layers(int x0,int z0,int size,bool retire_edges,Layers&&layer
  int n=size+1;
  auto index=[&](int x,int y,int z){return x+n*(z+n*y);};
  Result result;result.limits=limits;result.p.set_allocator(limits.output_allocator);result.indices.set_allocator(limits.output_allocator);
- result.origin_x=x0;result.origin_z=z0;result.width=n;result.rolling_zeros=retire_edges;
+ result.origin_x=x0;result.origin_z=z0;result.width=n;result.y_begin=y_begin;result.y_end=y_end;result.rolling_zeros=retire_edges;
  if(limits.cancelled()){result.discard(MeshStatus::cancelled);return result;}
  if(!result.crossings.initialize(x0,z0,size,retire_edges,limits.crossing_allocator)){result.discard(MeshStatus::allocation_failed);return result;}
  if(limits.exact_zero_vertices){

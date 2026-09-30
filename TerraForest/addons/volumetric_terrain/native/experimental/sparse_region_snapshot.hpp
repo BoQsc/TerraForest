@@ -11,7 +11,7 @@ class SparseRegionSnapshot {
  FallibleBuffer<i16> pages_;
  int indices_[272]={}; // Up to 4 x 4 x 17 with an optional positive normal halo.
  int x_=0,z_=0,size_=0,px_=0,pz_=0,nx_=0,nz_=0,seed_=0,revision_=-1;
- int lookups_=0;
+ int lookups_=0,y_begin_=0,y_end_=WORLD_Y,py_=0;
  bool normal_halo_=false;
  MeshStatus status_=MeshStatus::invalid_input;
 public:
@@ -26,23 +26,23 @@ public:
   x_=other.x_;z_=other.z_;size_=other.size_;px_=other.px_;pz_=other.pz_;
   nx_=other.nx_;nz_=other.nz_;seed_=other.seed_;revision_=other.revision_;
   lookups_=other.lookups_;status_=other.status_;
-  normal_halo_=other.normal_halo_;
+  normal_halo_=other.normal_halo_;y_begin_=other.y_begin_;y_end_=other.y_end_;py_=other.py_;
   other.status_=MeshStatus::invalid_input;other.revision_=-1;other.lookups_=0;
   return *this;
  }
  int revision()const{return revision_;}
  int lookups()const{return lookups_;}
  size_t bytes()const{return caves_.size()*sizeof(Cave)+pages_.size()*sizeof(i16)+sizeof(indices_);}
- MeshStatus capture(const World&w,int x,int z,int size,const MeshLimits&limits=MeshLimits{},bool normal_halo=false){
+ MeshStatus capture(const World&w,int x,int z,int size,const MeshLimits&limits=MeshLimits{},bool normal_halo=false,int y_begin=0,int y_end=WORLD_Y){
   caves_.clear();pages_.clear();revision_=-1;lookups_=0;status_=MeshStatus::invalid_input;
-  if(!valid_region(x,z,size,limits)||!w.edit_columns||w.caves.n>64)return status_;
+  if(!valid_region(x,z,size,limits)||!valid_vertical_range(y_begin,y_end)||!w.edit_columns||w.caves.n>64)return status_;
   if(limits.cancelled())return status_=MeshStatus::cancelled;
   x_=x;z_=z;size_=size;px_=x>>4;pz_=z>>4;
-  normal_halo_=normal_halo;
+  normal_halo_=normal_halo;y_begin_=y_begin;y_end_=y_end;py_=y_begin>>4;
   nx_=((x+size+int(normal_halo))>>4)-px_+1;nz_=((z+size+int(normal_halo))>>4)-pz_+1;
   caves_.set_allocator(limits.sampler_allocator);pages_.set_allocator(limits.sampler_allocator);
   int sources[272],count=0,at=0;constexpr int np=WORLD/PAGE+1;
-  for(int y=0;y<=WORLD_Y/PAGE;y++)for(int dz=0;dz<nz_;dz++)for(int dx=0;dx<nx_;dx++){
+  for(int y=py_;y<=(std::min(WORLD_Y,y_end+int(normal_halo))>>4);y++)for(int dz=0;dz<nz_;dz++)for(int dx=0;dx<nx_;dx++){
    if(limits.cancelled())return status_=MeshStatus::cancelled;
    int source=w.pages_by_key.get(u32(px_+dx+np*(pz_+dz+np*y))+1);lookups_++;
    indices_[at++]=source<0?-1:count;
@@ -63,7 +63,7 @@ public:
   NormalResult failed;
   if(status_!=MeshStatus::ok||!normal_halo_||mesh.status!=MeshStatus::ok){failed.status=MeshStatus::invalid_input;return failed;}
   if(limits.cancelled()){failed.status=MeshStatus::cancelled;return failed;}
-  for(V3 p:mesh.p)if(!std::isfinite(p.x)||!std::isfinite(p.z)||p.x<x_||p.x>x_+size_||p.z<z_||p.z>z_+size_){failed.status=MeshStatus::invalid_input;return failed;}
+  for(V3 p:mesh.p)if(!std::isfinite(p.x)||!std::isfinite(p.z)||p.x<x_||p.x>x_+size_||p.z<z_||p.z>z_+size_||!std::isfinite(p.y)||p.y<y_begin_||p.y>y_end_){failed.status=MeshStatus::invalid_input;return failed;}
   World generator;generator.seed=seed_;generator.caves.p=const_cast<Cave*>(caves_.data());generator.caves.n=int(caves_.size());
   const int n=size_+2;
   FallibleBuffer<float> heights;heights.set_allocator(limits.sampler_allocator);
@@ -80,7 +80,7 @@ public:
     evaluations++;e.y=y;
     if(x<0||x>WORLD||z<0||z>WORLD||y<0||y>WORLD_Y)e.value=SDF_BAND;
     else{
-     int page=indices_[((x>>4)-px_)+nx_*(((z>>4)-pz_)+nz_*(y>>4))];
+     int page=indices_[((x>>4)-px_)+nx_*(((z>>4)-pz_)+nz_*((y>>4)-py_))];
      e.value=page<0?generator.base({float(x),float(y),float(z)},heights[(x-x_)+n*(z-z_)]):float(pages_[size_t(page)*PAGE_SAMPLES+(x&15)+16*((z&15)+16*(y&15))])/SDF_SCALE;
     }
    }
@@ -100,16 +100,16 @@ public:
   auto fill=[&](int y,float*out){
    for(int z=0;z<n;z++)for(int x=0;x<n;x++){
     int wx=x_+x,wz=z_+z;
-    int page=indices_[((wx>>4)-px_)+nx_*(((wz>>4)-pz_)+nz_*(y>>4))];
+    int page=indices_[((wx>>4)-px_)+nx_*(((wz>>4)-pz_)+nz_*((y>>4)-py_))];
     float d=page<0?generator.base({float(wx),float(y),float(wz)},heights[x+n*z]):float(pages_[size_t(page)*PAGE_SAMPLES+(wx&15)+16*((wz&15)+16*(y&15))])/SDF_SCALE;
     out[x+n*z]=density_value(d);
    }
   };
-  fill(0,planes.data());fill(1,planes.data()+plane);
+  fill(y_begin_,planes.data());fill(y_begin_+1,planes.data()+plane);
   return mesh_layers(x_,z_,size_,true,[&](int y){
-   if(y){std::copy(planes.begin()+plane,planes.end(),planes.begin());fill(y+1,planes.data()+plane);}
+   if(y>y_begin_){std::copy(planes.begin()+plane,planes.end(),planes.begin());fill(y+1,planes.data()+plane);}
    return planes.data();
-  },limits);
+  },limits,y_begin_,y_end_);
  }
 };
 }

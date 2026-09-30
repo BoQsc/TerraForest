@@ -14,7 +14,7 @@ namespace terraforest::experimental {
 // consume's callback must not reenter this object or retain Result references.
 class SnapshotWorker {
  enum State{empty,ready,running,complete};
- struct Slot{State state=empty;u64 serial=0,epoch=0,token=0;int revision=-1,validated_revision=-1,x=0,z=0,size=0;SparseRegionSnapshot snapshot;Result result;NormalResult normals;};
+ struct Slot{State state=empty;u64 serial=0,epoch=0,token=0;int revision=-1,validated_revision=-1,x=0,z=0,size=0,y_begin=0,y_end=WORLD_Y;SparseRegionSnapshot snapshot;Result result;NormalResult normals;};
  SnapshotMemoryBudget snapshots_,meshes_;
  Slot slots_[2];
  std::mutex mutex_;
@@ -43,6 +43,7 @@ class SnapshotWorker {
    if(limits.cancelled()){result.discard(MeshStatus::cancelled);normals.discard(MeshStatus::cancelled);}
    // No callable owner pointer escapes in the completed packet.
    result.limits.context=nullptr;result.limits.cancel=nullptr;
+   result.y_begin=slot->y_begin;result.y_end=slot->y_end;
    {
     std::lock_guard<std::mutex> lock(mutex_);
     slot->snapshot=SparseRegionSnapshot{};slot->result=std::move(result);slot->normals=std::move(normals);slot->state=complete;
@@ -58,7 +59,7 @@ public:
  // Call stop from the owning thread, never a consume callback. Completed packets
  // remain consumable; destructor frees them before either budget is destroyed.
  void stop(){stopping_.store(true);wake_.notify_all();if(thread_.joinable())thread_.join();}
- bool submit(const World&w,int x,int z,int size,u64 epoch,u64 token,SubmitTiming*timing=nullptr){
+ bool submit(const World&w,int x,int z,int size,u64 epoch,u64 token,SubmitTiming*timing=nullptr,int y_begin=0,int y_end=WORLD_Y){
   auto begin=std::chrono::steady_clock::now();
   std::unique_lock<std::mutex> lock(mutex_);
   if(timing)timing->lock_ms=std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-begin).count();
@@ -67,11 +68,11 @@ public:
   if(!slot)return false;
   MeshLimits limits;limits.sampler_allocator=snapshots_.allocator();
   begin=std::chrono::steady_clock::now();
-  auto captured=slot->snapshot.capture(w,x,z,size,limits,true);
+  auto captured=slot->snapshot.capture(w,x,z,size,limits,true,y_begin,y_end);
   if(timing)timing->capture_ms=std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-begin).count();
   if(captured!=MeshStatus::ok)return false;
   begin=std::chrono::steady_clock::now();
-  slot->revision=slot->snapshot.revision();slot->validated_revision=slot->revision;slot->x=x;slot->z=z;slot->size=size;
+  slot->revision=slot->snapshot.revision();slot->validated_revision=slot->revision;slot->x=x;slot->z=z;slot->size=size;slot->y_begin=y_begin;slot->y_end=y_end;
   slot->epoch=epoch;slot->token=token;slot->serial=++serial_;slot->state=ready;lock.unlock();wake_.notify_one();
   if(timing)timing->handoff_ms=std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-begin).count();
   return true;
@@ -82,7 +83,7 @@ public:
  void observe_density_edit(int previous,int next,V3 lo,V3 hi){
   std::lock_guard<std::mutex> lock(mutex_);
   if(next<=previous)return;
-  for(auto&s:slots_)if(s.state!=empty&&s.validated_revision==previous&&!edit_affects_region_normals(s.x,s.z,s.size,lo,hi))s.validated_revision=next;
+  for(auto&s:slots_)if(s.state!=empty&&s.validated_revision==previous&&!edit_affects_region_normals(s.x,s.z,s.size,lo,hi,s.y_begin,s.y_end))s.validated_revision=next;
  }
  template<class Consumer>int consume(u64 epoch,int revision,Consumer&&consumer){
   return consume_surface(epoch,revision,[&](u64 token,u64 captured,int source,bool stale,const Result&r,const NormalResult&){consumer(token,captured,source,stale,r);});

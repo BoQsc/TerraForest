@@ -1,5 +1,6 @@
 #include "experimental/region_surface.hpp"
 #include "experimental/region_dependencies.hpp"
+#include "experimental/snapshot_worker.hpp"
 #include <array>
 #include <map>
 #include <vector>
@@ -38,6 +39,10 @@ int main(){
    for(size_t i=1;i<cuts.size();i++){
     double begin=now();auto brick=build_world_surface(w,origin,origin,32,MeshLimits{},cuts[i-1],cuts[i]);elapsed+=now()-begin;
     if(!brick.ready()||brick.y_begin!=cuts[i-1]||brick.y_end!=cuts[i])return 4;
+    SparseRegionSnapshot snapshot;
+    if(snapshot.capture(w,origin,origin,32,MeshLimits{},true,cuts[i-1],cuts[i])!=MeshStatus::ok)return 17;
+    auto geometry=snapshot.mesh();auto normals=snapshot.normals(geometry);
+    if(geometry.status!=MeshStatus::ok||normals.status!=MeshStatus::ok||geometry.p!=brick.geometry.p||geometry.indices!=brick.geometry.indices||normals.values!=brick.normals.values)return 18;
     for(V3 p:brick.geometry.p)if(p.y<cuts[i-1]||p.y>cuts[i])return 5;
     append(combined,brick);tris+=brick.geometry.indices.size()/3;
    }
@@ -66,11 +71,46 @@ int main(){
    }
    for(const auto&s:bricks)append(retained,s);
    if(fresh!=retained)return 12;
+   // Run actual bounded snapshots through the asynchronous worker after edits.
+   SnapshotWorker worker(3*1024*1024,32*1024*1024);
+   const auto& expected=bricks[size_t((p.y/32))];
+   if(!worker.submit(w,expected.x,expected.z,32,1,1,nullptr,expected.y_begin,expected.y_end))return 19;
+   bool received=false,parity=false;auto deadline=now()+5000;
+   while(!received&&now()<deadline){
+    worker.consume_surface(1,w.revision,[&](u64,u64,int,bool stale,const Result&r,const NormalResult&n){received=true;parity=!stale&&r.status==MeshStatus::ok&&n.status==MeshStatus::ok&&!(r.p!=expected.geometry.p)&&!(r.indices!=expected.geometry.indices)&&!(n.values!=expected.normals.values);});
+    if(!received)std::this_thread::sleep_for(std::chrono::milliseconds(1));
+   }
+   worker.stop();if(!received||!parity||worker.snapshot_bytes()||worker.mesh_bytes())return 20;
    printf("{\"kind\":\"edit\",\"origin\":%d,\"placement\":%d,\"affected_bricks\":%d,\"triangles\":%zu,\"render_payload_bytes\":%zu,\"rebuild_ms\":%.6f,\"four_column_ms\":%.6f,\"four_column_triangles\":%zu,\"exact_oriented_geometry_and_normals\":true}\n",origin,placement,affected,triangles,vertex_bytes,rebuild_ms,column_ms,full_triangles);fflush(stdout);
   }
   MeshLimits cancel;cancel.cancel=[](void*){return true;};auto failed=build_world_surface(w,origin,origin,32,cancel,64,96);
   if(failed.status!=MeshStatus::cancelled||!failed.geometry.p.empty()||!failed.normals.values.empty())return 13;
   w.release();
  }
+ // Edits in another vertical brick may advance validity; overlapping edits may not.
+ World edits;edits.init();
+ for(int overlap=0;overlap<2;overlap++){
+  SnapshotWorker worker(3*1024*1024,32*1024*1024);
+  if(!worker.submit(edits,1280,1280,32,7,8,nullptr,0,32))return 21;
+  V3 p{1296,float(overlap?16:96),1296},lo,hi;int changes=0,previous=edits.revision;
+  bool changed=edits.edit(p,p,2,0,false,1,lo,hi,changes);
+  if(!changed)changed=edits.edit(p,p,2,0,true,1,lo,hi,changes);
+  if(!changed)return 22;
+  worker.observe_density_edit(previous,edits.revision,lo,hi);
+  bool received=false,correct=false;double deadline=now()+5000;
+  while(!received&&now()<deadline){
+   worker.consume_surface(7,edits.revision,[&](u64,u64,int,bool stale,const Result&r,const NormalResult&n){received=true;correct=stale==bool(overlap)&&r.y_begin==0&&r.y_end==32&&(stale?(r.p.empty()&&n.values.empty()):r.status==MeshStatus::ok);});
+   if(!received)std::this_thread::sleep_for(std::chrono::milliseconds(1));
+  }
+  worker.stop();if(!received||!correct)return 23;
+ }
+ edits.release();
+ World dense;dense.init();
+ for(int y=0;y<=16;y++)for(int z=80;z<=82;z++)for(int x=80;x<=82;x++)if(!dense.ensure(x,y,z))return 24;
+ SparseRegionSnapshot full,bounded;
+ if(full.capture(dense,1280,1280,32,MeshLimits{},true)!=MeshStatus::ok||bounded.capture(dense,1280,1280,32,MeshLimits{},true,32,64)!=MeshStatus::ok)return 25;
+ if(full.lookups()!=153||bounded.lookups()!=27||full.bytes()-bounded.bytes()!=size_t(126)*PAGE_SAMPLES*sizeof(i16))return 26;
+ printf("{\"kind\":\"capture\",\"full_lookups\":%d,\"bounded_lookups\":%d,\"full_bytes\":%zu,\"bounded_bytes\":%zu}\n",full.lookups(),bounded.lookups(),full.bytes(),bounded.bytes());
+ dense.release();
  return 0;
 }

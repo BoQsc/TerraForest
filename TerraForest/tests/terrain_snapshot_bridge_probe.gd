@@ -41,6 +41,17 @@ func run() -> void:
 		for at in range(0,row.indices.size(),4): valid=valid and row.indices.decode_u32(at)<row.positions.size()/12
 	check(valid,"bridge transfers indexed geometry with valid ranges")
 	check(rows.size()==2 and rows[0].positions==rows[1].positions and rows[0].indices==rows[1].indices and rows[0].normals==rows[1].normals,"identical captures transfer identical bytes")
+	check(not native.experimental_snapshot_submit_brick(960,960,32,20,0,-1,32) and not native.experimental_snapshot_submit_brick(960,960,32,20,0,32,32) and not native.experimental_snapshot_submit_brick(960,960,32,20,0,32,257),"invalid vertical bounds rejected")
+	check(native.experimental_snapshot_submit_brick(960,960,32,20,0,0,128) and native.experimental_snapshot_submit_brick(960,960,32,21,0,128,256),"bounded vertical jobs admitted")
+	rows=await gather(native);valid=rows.size()==2
+	for row: Dictionary in rows:
+		var bottom: int=0 if row.token==20 else 128
+		valid=valid and row.status==0 and not row.stale and row.y_begin==bottom and row.y_end==bottom+128
+		for at in range(0,row.positions.size(),12):
+			var y: float=row.positions.decode_float(at+4)
+			valid=valid and y>=bottom and y<=bottom+128
+		check(native.experimental_snapshot_encode(row,960,960,32).is_empty(),"partial column rejected by full-column publication codec")
+	check(valid,"bounded geometry transfers with matching vertical metadata")
 	for action in [6,5,12,3,2]:
 		var revision: int=native.execute(command(0)).decode_u32(12)
 		check(native.experimental_snapshot_submit(960,960,32,action*10,revision) and native.experimental_snapshot_submit(960,960,32,action*10+1,revision),"stale-control submissions admitted")

@@ -42,6 +42,7 @@ protected:
         godot::ClassDB::bind_method(godot::D_METHOD("build_variant"), &TerrainCore::build_variant);
         godot::ClassDB::bind_method(godot::D_METHOD("executing_command"), &TerrainCore::executing_command);
         godot::ClassDB::bind_method(godot::D_METHOD("experimental_snapshot_submit","x","z","size","token","revision"), &TerrainCore::experimental_snapshot_submit);
+        godot::ClassDB::bind_method(godot::D_METHOD("experimental_snapshot_submit_brick","x","z","size","token","revision","y_begin","y_end"), &TerrainCore::experimental_snapshot_submit_brick);
         godot::ClassDB::bind_method(godot::D_METHOD("experimental_snapshot_poll"), &TerrainCore::experimental_snapshot_poll);
         godot::ClassDB::bind_method(godot::D_METHOD("experimental_snapshot_stop"), &TerrainCore::experimental_snapshot_stop);
         godot::ClassDB::bind_method(godot::D_METHOD("experimental_snapshot_submit_timing"), &TerrainCore::experimental_snapshot_submit_timing);
@@ -66,6 +67,9 @@ public:
         return experimental_partition_mesh_budgeted(packet,128*1024*1024,128*1024*1024,__atomic_load_n(&control_.epoch,__ATOMIC_RELAXED))["packets"];
     }
     godot::PackedByteArray experimental_snapshot_encode(const godot::Dictionary&packet,int64_t x,int64_t z,int64_t size){
+        // The legacy column codec adds full-height blocks and owns a column.
+        // Bounded surfaces must not be published through it as complete columns.
+        if(int64_t(packet.get("y_begin",0))!=0||int64_t(packet.get("y_end",WORLD_Y))!=WORLD_Y)return {};
         if(x<0||z<0||(size!=16&&size!=32)||x+size>WORLD||z+size>WORLD)return {};
         for(const char*key:{"status","epoch","validated_revision","source_id"})
             if(!packet.has(key)||godot::Variant(packet[key]).get_type()!=godot::Variant::INT)return {};
@@ -104,7 +108,10 @@ public:
         return mesh;
     }
     bool experimental_snapshot_submit(int64_t x,int64_t z,int64_t size,int64_t token,int64_t revision){
-        if(x<0||z<0||x>WORLD||z>WORLD||size<1||size>32||token<0||revision<0)return false;
+        return experimental_snapshot_submit_brick(x,z,size,token,revision,0,WORLD_Y);
+    }
+    bool experimental_snapshot_submit_brick(int64_t x,int64_t z,int64_t size,int64_t token,int64_t revision,int64_t y_begin,int64_t y_end){
+        if(x<0||z<0||x>WORLD||z>WORLD||size<1||size>32||token<0||revision<0||y_begin<0||y_begin>=y_end||y_end>WORLD_Y)return false;
         using Clock=std::chrono::steady_clock;auto begin=Clock::now();
         std::unique_lock<std::mutex> lock(mutex_);
         SubmitTiming timing;timing.token=token;
@@ -113,7 +120,7 @@ public:
             auto startup=Clock::now();
             if(!snapshot_worker_)snapshot_worker_.emplace(3*1024*1024,32*1024*1024);
             timing.startup_ms=std::chrono::duration<double,std::milli>(Clock::now()-startup).count();
-            timing.accepted=snapshot_worker_->submit(world_,int(x),int(z),int(size),snapshot_epoch_.load(),u64(token),&timing.worker);
+            timing.accepted=snapshot_worker_->submit(world_,int(x),int(z),int(size),snapshot_epoch_.load(),u64(token),&timing.worker,int(y_begin),int(y_end));
         }
         auto unlocking=Clock::now();lock.unlock();
         timing.world_unlock_ms=std::chrono::duration<double,std::milli>(Clock::now()-unlocking).count();
@@ -137,6 +144,7 @@ public:
             godot::Dictionary row;row["token"]=int64_t(token);row["epoch"]=int64_t(captured);row["revision"]=revision;row["stale"]=stale;
             row["source_id"]=int64_t(get_instance_id());
             row["validated_revision"]=stale?-1:world_.revision;
+            row["y_begin"]=r.y_begin;row["y_end"]=r.y_end;
             int status=int(r.status);godot::PackedByteArray positions,indices,normals;
             if(r.status==experimental::MeshStatus::ok){
                 static_assert(sizeof(V3)==12);
