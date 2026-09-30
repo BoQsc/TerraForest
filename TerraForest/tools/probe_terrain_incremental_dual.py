@@ -27,8 +27,8 @@ files = [source, Path(__file__).resolve(), ROOT / 'tests/native/incremental_dual
 report = dict(rows=rows, exit_code=run.returncode, stderr=run.stderr, complete=len(rows) == 24,
               adoption_qualified=False, build_command=command, toolchain_lock_sha256=info['lock_sha256'],
               source_hashes={str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest() for p in files},
-              scope='Fixed mixed-resolution leaf layout (1m center, 8m surroundings), shared minimal edges, '
-                    'box-constrained regularized QEF and bucket-indexed edit dependencies. '
+              scope='Fixed mixed-resolution leaf layout (1m center, 8m surroundings), shared unit edge segments, canonical unit face triangulation, per-component vertices, '
+                    'box-constrained regularized QEF and bucket-indexed edit dependencies. Unrepresented boundary loops in active cells are rejected; wholly hidden features remain unqualified. '
                     '32/64/128m volumes, synthetic sphere and actual World edits. '
                     'Each incremental update compared bit-for-bit with full reconstruction, plus mesh topology checks. '
                     'Single CPU observations excluding diagnostic audits/oracles. '

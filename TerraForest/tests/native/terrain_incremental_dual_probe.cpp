@@ -9,9 +9,9 @@ static double canonical(float density){float v=std::max(-4.f,std::min(4.f,densit
 struct Audit{int open=0,overused=0,winding=0,degenerate=0,links=0;};
 template<class Field>static Audit audit(const dual_probe::Mesh<Field>&mesh){
  using E=std::array<P,2>;struct Use{int count=0,balance=0;};std::map<E,Use> edges;std::map<P,std::vector<E>> links;std::map<P,unsigned> boundary;Audit out;
- for(const auto&c:mesh.cells)if(c.active){unsigned mask=0;for(int k=0;k<3;k++){if(c.lo[k]==0)mask|=1u<<(2*k);if(c.lo[k]+c.size==mesh.side)mask|=2u<<(2*k);}boundary[c.vertex]|=mask;}
+ for(const auto&c:mesh.cells)if(c.active){unsigned mask=0;for(int k=0;k<3;k++){if(c.lo[k]==0)mask|=1u<<(2*k);if(c.lo[k]+c.size==mesh.side)mask|=2u<<(2*k);}for(P vertex:c.vertices)boundary[vertex]|=mask;}
  for(size_t id=0;id<mesh.edges.size();id++){auto poly=mesh.polygon(int(id));for(size_t t=1;t+1<poly.size();t++){
-  P p[3]={mesh.cells[poly[0]].vertex,mesh.cells[poly[t]].vertex,mesh.cells[poly[t+1]].vertex};double a[3],b[3],area=0;for(int k=0;k<3;k++){a[k]=p[1][k]-p[0][k];b[k]=p[2][k]-p[0][k];}for(int k=0;k<3;k++){double v=a[(k+1)%3]*b[(k+2)%3]-a[(k+2)%3]*b[(k+1)%3];area+=v*v;}out.degenerate+=area==0;
+  P p[3]={mesh.position(poly[0]),mesh.position(poly[t]),mesh.position(poly[t+1])};double a[3],b[3],area=0;for(int k=0;k<3;k++){a[k]=p[1][k]-p[0][k];b[k]=p[2][k]-p[0][k];}for(int k=0;k<3;k++){double v=a[(k+1)%3]*b[(k+2)%3]-a[(k+2)%3]*b[(k+1)%3];area+=v*v;}out.degenerate+=area==0;
   for(int k=0;k<3;k++){P a=p[k],b=p[(k+1)%3];bool reverse=b<a;if(reverse)std::swap(a,b);auto&u=edges[{a,b}];u.count++;u.balance+=reverse?-1:1;links[p[k]].push_back({p[(k+1)%3],p[(k+2)%3]});}
  }}
  int witnesses=0;
@@ -25,8 +25,8 @@ template<class Field,class Edit>static int run(const char*kind,int extent,Field 
  for(int iteration=0;iteration<4;iteration++){
   double edit_ms=0,oracle_ms=0;bool equal=true,changed=true;
   if(iteration){Box box;changed=edit(iteration,box);start=now();mesh.edit(box);edit_ms=now()-start;start=now();dual_probe::Mesh<Field> fresh(field,extent);oracle_ms=now()-start;equal=mesh.same(fresh);}
-  auto a=audit(mesh);bool passed=equal&&changed&&!(a.open||a.overused||a.winding||a.degenerate||a.links);failures+=!passed;
-  printf("{\"kind\":\"%s\",\"extent\":%d,\"edit\":%d,\"leaves\":%zu,\"shared_edges\":%zu,\"triangles\":%zu,\"cold_ms\":%.6f,\"local_update_ms\":%.6f,\"oracle_ms\":%.6f,\"candidate_edges\":%zu,\"reevaluated_edges\":%zu,\"refitted_cells\":%zu,\"affected_faces\":%zu,\"local_samples\":%zu,\"fresh_equal\":%s,\"edit_changed\":%s,\"internal_open_edges\":%d,\"overused_edges\":%d,\"winding_errors\":%d,\"degenerate_triangles\":%d,\"invalid_vertex_links\":%d,\"passed\":%s}\n",kind,extent,iteration,mesh.cells.size(),mesh.edges.size(),mesh.triangles(),cold,edit_ms,oracle_ms,mesh.last.candidates,mesh.last.edges,mesh.last.cells,mesh.last.faces,mesh.last.samples,equal?"true":"false",changed?"true":"false",a.open,a.overused,a.winding,a.degenerate,a.links,passed?"true":"false");fflush(stdout);
+  auto a=audit(mesh);size_t unmapped=mesh.unmapped_crossings(),unrepresented=mesh.unrepresented_loops();bool passed=!unmapped&&!unrepresented&&equal&&changed&&!(a.open||a.overused||a.winding||a.degenerate||a.links);failures+=!passed;
+  printf("{\"kind\":\"%s\",\"extent\":%d,\"edit\":%d,\"leaves\":%zu,\"shared_edges\":%zu,\"triangles\":%zu,\"unmapped_crossings\":%zu,\"unrepresented_boundary_loops\":%zu,\"cold_ms\":%.6f,\"local_update_ms\":%.6f,\"oracle_ms\":%.6f,\"candidate_edges\":%zu,\"reevaluated_edges\":%zu,\"refitted_cells\":%zu,\"affected_faces\":%zu,\"local_samples\":%zu,\"fresh_equal\":%s,\"edit_changed\":%s,\"internal_open_edges\":%d,\"overused_edges\":%d,\"winding_errors\":%d,\"degenerate_triangles\":%d,\"invalid_vertex_links\":%d,\"passed\":%s}\n",kind,extent,iteration,mesh.cells.size(),mesh.edges.size(),mesh.triangles(),unmapped,unrepresented,cold,edit_ms,oracle_ms,mesh.last.candidates,mesh.last.edges,mesh.last.cells,mesh.last.faces,mesh.last.samples,equal?"true":"false",changed?"true":"false",a.open,a.overused,a.winding,a.degenerate,a.links,passed?"true":"false");fflush(stdout);
  }return failures;
 }
 int main(){
