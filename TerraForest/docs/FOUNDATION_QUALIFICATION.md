@@ -38,6 +38,11 @@ traffic is included in this test.
 
 ## Required primitive pressure matrix — not yet certified
 
+The [candidate geometry dependency control](TERRAIN_CANDIDATE_LOCAL_DEPENDENCY.md)
+passes six real-edit cases at region interiors, edges and corners. Only 1, 2
+or 4 owners change; all unselected owners match fresh rebuilds exactly. This
+does not qualify LOD, shading dependencies or runtime scheduling.
+
 The [candidate output allocator](TERRAIN_CANDIDATE_OUTPUT_ALLOCATION.md) recovers
 from all 30 injected position/index growth failures without partial output or
 tracked-buffer leaks. The follow-up also recovers all three sampler allocation

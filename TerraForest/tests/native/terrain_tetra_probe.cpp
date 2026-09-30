@@ -15,6 +15,7 @@
 
 static double now(){return std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now().time_since_epoch()).count();}
 #include "experimental/world_region_sampler.hpp"
+#include "experimental/region_dependencies.hpp"
 using namespace terraforest::experimental;
 
 static void build(World&w,int x0,int z0,int size,const std::string&file){
@@ -226,6 +227,38 @@ int main(int argc,char**argv){
   if(retried.status!=MeshStatus::ok||retried.indices!=rolling.indices||retried.p.size()!=rolling.p.size()||std::memcmp(retried.p.data(),rolling.p.data(),rolling.p.size()*sizeof(V3)))return 16;
   fprintf(stderr,"{\"name\":\"threaded per-world epoch cancellation\",\"cancelled_after_vertices\":%zu,\"callback_calls\":%d,\"discarded\":true,\"other_world_unchanged\":true,\"retry_parity\":true}\n",cancelled_result.peak_vertices,held.calls);
  }
+ // Real edits: keep every mesh outside the declared sample dependency and
+ // compare it byte-for-byte with an independent rebuild after the mutation.
+ for(int site=0;site<2;site++)for(int placement=0;placement<3;placement++){
+  World local;local.init(1703);int base=site?1280:960;
+  std::vector<Result> before;
+  for(int dz=-16;dz<=16;dz+=16)for(int dx=-16;dx<=16;dx+=16){
+   before.push_back(build_world_region(local,base+dx,base+dz,16));
+   if(before.back().status!=MeshStatus::ok)return 41;
+  }
+  float px=float(base+(placement?16:8)),pz=float(base+(placement==2?16:8));
+  V3 point{px,site?local.height(px,pz):20.f,pz},lo,hi;int changes=0;
+  if(!local.edit(point,point,2,0,false,1,lo,hi,changes)||!changes)return 42;
+  int selected=0,changed=0,unchanged_outside=0,index=0;
+  for(int dz=-16;dz<=16;dz+=16)for(int dx=-16;dx<=16;dx+=16){
+   Result fresh=build_world_region(local,base+dx,base+dz,16);const Result&old=before[index++];
+   if(fresh.status!=MeshStatus::ok)return 43;
+   bool same=!(fresh.indices!=old.indices)&&fresh.p.size()==old.p.size()&&
+       !std::memcmp(fresh.p.data(),old.p.data(),old.p.size()*sizeof(V3));
+   bool affected=edit_affects_region(base+dx,base+dz,16,lo,hi);
+   selected+=affected;changed+=!same;
+   if(!affected){if(!same)return 44;unchanged_outside++;}
+  }
+  if(!changed||!unchanged_outside||selected!=(placement==0?1:(placement==1?2:4)))return 45;
+  fprintf(stderr,"{\"name\":\"local edit dependency\",\"site\":%d,\"placement\":%d,\"selected\":%d,\"changed\":%d,\"unchanged_outside\":%d,\"changed_samples\":%d,\"retained_parity\":true}\n",site,placement,selected,changed,unchanged_outside,changes);
+  local.release();
+ }
+ // Equality at a sample boundary must invalidate both owners, including when
+ // a fractional brush bound floors down onto that shared lattice coordinate.
+ if(!edit_affects_region(1280,1280,16,{1296,10,1288},{1296,10,1288})||
+    !edit_affects_region(1296,1280,16,{1296,10,1288},{1296,10,1288})||
+    !edit_affects_region(1280,1280,16,{1296.75f,10,1288},{1296.9f,10,1288})||
+    edit_affects_region(1280,1280,16,{1297,10,1288},{1297,10,1288}))return 46;
  World w;w.init(1703);
  {
   struct Allocations{int fail=0,calls=0,live=0;};
