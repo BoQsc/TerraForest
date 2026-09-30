@@ -38,6 +38,12 @@ traffic is included in this test.
 
 ## Required primitive pressure matrix — not yet certified
 
+The [bounded native snapshot worker](TERRAIN_SNAPSHOT_WORKER.md) connects capture,
+meshing, two fixed outstanding slots and separate snapshot/mesh budgets. Seven
+groups pass for exact completions, stale revision/epoch rejection, exhaustion
+and joined shutdown. It is a geometry-only prototype outside the runtime bridge;
+Godot publication and loaded latency remain unqualified.
+
 The [shared snapshot allocator budget](TERRAIN_SNAPSHOT_BUDGET.md) passes nine
 groups covering competing native allocations, real snapshot rejection/retry,
 cancellation, move ownership and transient buffer growth. This bounds routed
