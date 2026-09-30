@@ -42,6 +42,8 @@ The [experimental native region interface](TERRAIN_CANDIDATE_INTERFACE.md) now
 separates meshing from its benchmark, rejects invalid region/buffer inputs and
 retains exact geometry and cancellation checks. It remains unregistered in the
 game extension; allocation-failure recovery and runtime integration are incomplete.
+Its world-backed entry now covers cancellation during sampler setup as well as
+meshing, with exact output parity. The world must remain immutable during a build.
 
 The [candidate build-limit controls](TERRAIN_TETRA_BUILD_LIMITS.md) verify explicit
 output-limit/cancellation status, discarded partial geometry and exact recovery.

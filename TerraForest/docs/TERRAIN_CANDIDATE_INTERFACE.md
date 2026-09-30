@@ -40,3 +40,33 @@ finite checks add work and no new speedup claim is made.
 
 Run `python tools/probe_terrain_tetra.py`. Evidence and the new header hash are
 retained in `docs/evidence/terrain_candidate_interface/`.
+
+## World-backed entry point
+
+`experimental/world_region_sampler.hpp` now provides `build_world_region` and
+the sequential `WorldRegionSampler`. Sampling is no longer implemented only in
+the benchmark. The entry point validates an initialized world, in-world region
+and limits before sampler allocation, and checks cancellation before setup.
+Sampler checkpoints also cover height rows, page-index rows and density rows.
+The native world must remain immutable throughout the call; this is not a
+concurrent snapshot or locking implementation.
+
+If sampling is interrupted, the provider stops and the entry point returns
+`cancelled`, overriding the generic null-provider classification. It discards
+partial geometry. The sequential sampler rejects skipped, repeated or out-of-range
+layer requests. Internal border sampling remains available for the edge controls;
+the public geometry entry point still requires the complete region inside world
+bounds. Sampling-vector allocation failures remain unrecoverable.
+
+Twelve additional controls cover five cancellation checkpoints through setup and
+building, an uninitialized world, invalid region, zero vertex allowance, three
+invalid plane sequences and successful retry repeatability. All fifteen fixture
+meshes produced through the new entry point match the previous immutable outputs.
+Separate plane comparisons still verify every sample. The full probe passes
+**28 checks**.
+
+`streamed_total_ms` now times the entry point without diagnostic plane comparisons;
+these run separately afterward. Do not directly compare it to earlier reports
+whose interval included those comparisons. No performance or gameplay-adoption
+claim follows. Evidence is retained separately in
+`docs/evidence/terrain_world_region_entry/`.

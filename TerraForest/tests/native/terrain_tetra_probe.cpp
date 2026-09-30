@@ -14,42 +14,8 @@
 #include <condition_variable>
 
 static double now(){return std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now().time_since_epoch()).count();}
-#include "experimental/region_mesher.hpp"
+#include "experimental/world_region_sampler.hpp"
 using namespace terraforest::experimental;
-
-struct RollingField{
- World&w;int x0,z0,n,page_y=-1;
- size_t plane;
- std::vector<float> planes,heights;
- std::vector<int> page_indices;
- const std::vector<float>*expected;
- RollingField(World&world,int x,int z,int size,const std::vector<float>*reference):w(world),x0(x),z0(z),n(size+1),plane(size_t(n)*n),planes(plane*2),heights(plane),page_indices(plane),expected(reference){
-  for(int dz=0;dz<n;dz++)for(int dx=0;dx<n;dx++)heights[dx+n*dz]=w.height(float(x0+dx),float(z0+dz));
-  fill(0,planes.data());fill(1,planes.data()+plane);
- }
- void fill(int y,float*out){
-  constexpr int np=WORLD/PAGE+1;
-  int py=y>>4;
-  if(py!=page_y){
-   for(int z=0;z<n;z++)for(int x=0;x<n;x++){
-    int wx=x0+x,wz=z0+z;
-    page_indices[x+n*z]=(wx<0||wx>WORLD||wz<0||wz>WORLD)?-2:w.pages_by_key.get(u32((wx>>4)+np*((wz>>4)+np*py))+1);
-   }
-   page_y=py;
-  }
-  for(int z=0;z<n;z++)for(int x=0;x<n;x++){
-   int wx=x0+x,wz=z0+z,at=x+n*z,pi=page_indices[at];
-   float d=pi==-2?SDF_BAND:(pi<0?w.base({float(wx),float(y),float(wz)},heights[at]):float(w.pages[pi].d[(wx&15)+16*((wz&15)+16*(y&15))])/SDF_SCALE);
-   out[at]=density_value(d);
-  }
-  if(expected&&std::memcmp(out,expected->data()+size_t(y)*plane,plane*sizeof(float))){fprintf(stderr,"Rolling sampler differs from full field\n");std::exit(9);}
- }
- const float*layers(int y){
-  if(y){std::copy(planes.begin()+plane,planes.end(),planes.begin());fill(y+1,planes.data()+plane);}
-  return planes.data();
- }
- size_t payload_bytes()const{return (planes.size()+heights.size())*sizeof(float)+page_indices.size()*sizeof(int);}
-};
 
 static void build(World&w,int x0,int z0,int size,const std::string&file){
  int n=size+1;
@@ -102,10 +68,14 @@ static void build(World&w,int x0,int z0,int size,const std::string&file){
  auto median=[](std::vector<double> values){std::sort(values.begin(),values.end());return values[values.size()/2];};
  meshing_ms=median(scan_times);control_ms=median(control_times);
  double stream_begin=now();
- RollingField rolling(w,x0,z0,size,&reference);
- Result streamed=mesh_layers(x0,z0,size,true,[&](int y){return rolling.layers(y);});
+ Result streamed=build_world_region(w,x0,z0,size);
  double streamed_ms=now()-stream_begin;
- if(streamed.indices!=result.indices||streamed.p.size()!=result.p.size()||std::memcmp(streamed.p.data(),result.p.data(),result.p.size()*sizeof(V3))){fprintf(stderr,"Rolling density field changed geometry\n");std::exit(10);}
+ if(streamed.status!=MeshStatus::ok||streamed.indices!=result.indices||streamed.p.size()!=result.p.size()||std::memcmp(streamed.p.data(),result.p.data(),result.p.size()*sizeof(V3))){fprintf(stderr,"Rolling density field changed geometry\n");std::exit(10);}
+ WorldRegionSampler rolling(w,x0,z0,size);
+ for(int y=0;y<256;y++){
+  const float*planes=rolling.layers(y);
+  if(!planes||std::memcmp(planes,reference.data()+size_t(y)*n*n,size_t(n)*n*2*sizeof(float)))return std::exit(9);
+ }
  auto residual=[&](V3 p){
   int x=imn(size-1,imx(0,fl(p.x)-x0)),z=imn(size-1,imx(0,fl(p.z)-z0)),y=imn(255,imx(0,fl(p.y)));
   double dx=p.x-x0-x,dy=p.y-y,dz=p.z-z0-z,value=0;
@@ -228,12 +198,42 @@ int main(int argc,char**argv){
   fprintf(stderr,"{\"name\":\"threaded per-world epoch cancellation\",\"cancelled_after_vertices\":%zu,\"callback_calls\":%d,\"discarded\":true,\"other_world_unchanged\":true,\"retry_parity\":true}\n",cancelled_result.peak_vertices,held.calls);
  }
  World w;w.init(1703);
+ {
+  auto empty=[](const Result&r,MeshStatus status){return r.status==status&&r.p.empty()&&r.indices.empty()&&r.crossings.empty();};
+  struct Stop{int at,calls=0;};
+  for(int at:{1,5,40,100,1000}){
+   Stop stop{at};MeshLimits limits;limits.context=&stop;limits.cancel=[](void*p){auto&s=*static_cast<Stop*>(p);return ++s.calls>=s.at;};
+   Result failed=build_world_region(w,1280,1280,16,limits);
+   if(!empty(failed,MeshStatus::cancelled)||stop.calls!=at)return 22;
+   fprintf(stderr,"{\"name\":\"world region entry\",\"case\":\"cancel\",\"at\":%d,\"passed\":true}\n",at);
+  }
+  World uninitialized;
+  if(!empty(build_world_region(uninitialized,1280,1280,16),MeshStatus::invalid_input))return 23;
+  fprintf(stderr,"{\"name\":\"world region entry\",\"case\":\"uninitialized world\",\"passed\":true}\n");
+  if(!empty(build_world_region(w,-1,1280,16),MeshStatus::invalid_input))return 24;
+  fprintf(stderr,"{\"name\":\"world region entry\",\"case\":\"invalid region\",\"passed\":true}\n");
+  MeshLimits zero;zero.vertices=0;
+  if(!empty(build_world_region(w,1280,1280,16,zero),MeshStatus::output_limit))return 25;
+  fprintf(stderr,"{\"name\":\"world region entry\",\"case\":\"output limit\",\"passed\":true}\n");
+  for(int kind=0;kind<3;kind++){
+   WorldRegionSampler sampler(w,1280,1280,16);
+   if(kind==1)sampler.layers(0);
+   if(sampler.layers(kind==0?1:(kind==1?0:256))||sampler.status!=MeshStatus::invalid_input)return 26;
+   fprintf(stderr,"{\"name\":\"world region entry\",\"case\":\"invalid plane sequence\",\"kind\":%d,\"passed\":true}\n",kind);
+  }
+  Result first=build_world_region(w,1280,1280,16),second=build_world_region(w,1280,1280,16);
+  if(first.status!=MeshStatus::ok||second.status!=MeshStatus::ok||first.indices!=second.indices||first.p.size()!=second.p.size()||std::memcmp(first.p.data(),second.p.data(),first.p.size()*sizeof(V3)))return 27;
+  fprintf(stderr,"{\"name\":\"world region entry\",\"case\":\"successful retry repeatability\",\"passed\":true}\n");
+ }
  // Sampler-only world-edge controls; no global mesh IDs are formed outside world.
  for(auto origin:std::array<std::array<int,2>,3>{{{{0,0}},{{-8,0}},{{1992,1992}}}}){
   const int size=16,n=17;std::vector<float>reference(size_t(n)*n*257);
   for(int y=0;y<=256;y++)for(int z=0;z<n;z++)for(int x=0;x<n;x++)reference[x+n*(z+n*y)]=density_value(w.sample(origin[0]+x,y,origin[1]+z));
-  RollingField rolling(w,origin[0],origin[1],size,&reference);
-  for(int y=0;y<256;y++)rolling.layers(y);
+  WorldRegionSampler rolling(w,origin[0],origin[1],size);
+  for(int y=0;y<256;y++){
+   const float*planes=rolling.layers(y);
+   if(!planes||std::memcmp(planes,reference.data()+size_t(y)*n*n,size_t(n)*n*2*sizeof(float)))return 9;
+  }
   fprintf(stderr,"{\"name\":\"world-edge sampler\",\"x\":%d,\"z\":%d,\"sample_parity\":true,\"samples\":%zu}\n",origin[0],origin[1],reference.size());
  }
  for(int site=0;site<3;site++){
