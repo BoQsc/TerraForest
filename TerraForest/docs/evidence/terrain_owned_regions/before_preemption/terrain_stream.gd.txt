@@ -82,7 +82,6 @@ var temporary: bool = false
 var stopping: bool = false
 var latest_error: String = ""
 var preparation: Dictionary = {}
-var paused_preparation: Dictionary = {}
 var retired_nodes: Array[Node] = []
 var last_queue_ms: float = 0.0
 var last_worker_finished_us: int = 0
@@ -171,10 +170,6 @@ func shutdown() -> void:
 		if is_instance_valid(prepared):
 			prepared.free()
 		preparation.clear()
-	if not paused_preparation.is_empty():
-		var prepared: Node = paused_preparation.entry.node
-		if is_instance_valid(prepared): prepared.free()
-		paused_preparation.clear()
 	for retired: Node in retired_nodes:
 		if is_instance_valid(retired):
 			retired.free()
@@ -551,12 +546,6 @@ func _prepare_piece() -> bool:
 
 func _drain_staging() -> void:
 	var begin: int = Time.get_ticks_usec()
-	# A multi-region background upload must yield between bounded pieces rather
-	# than keep a ready edit waiting for the entire coarse container.
-	if pending_edit and not preparation.is_empty() and preparation.data.get("kind","")=="mesh":
-		assert(paused_preparation.is_empty())
-		paused_preparation=preparation
-		preparation={}
 	if not partition_request.is_empty() and not _partition_valid(): _cancel_partition()
 	if not lighting_upload.is_empty() and not pending_edit:
 		_apply_lighting_piece()
@@ -565,13 +554,9 @@ func _drain_staging() -> void:
 			return
 	while Time.get_ticks_usec() - begin < main_build_budget_us:
 		var unit_begin: int = Time.get_ticks_usec()
-		if preparation.is_empty() and not pending_edit and not paused_preparation.is_empty():
-			preparation=paused_preparation
-			paused_preparation={}
 		if preparation.is_empty():
 			if staging.is_empty():
 				break
-			if pending_edit and str(staging.front().get("kind",""))!="batch": break
 			var data: Dictionary = staging.pop_front()
 			var key: Vector3i = data["key"]
 			if str(data.get("kind", "")) == "mesh" and staging_versions.get(key) == Vector2i(int(data["epoch"]), int(data["stamp"])):
@@ -836,7 +821,6 @@ func _schedule_urgent_collision() -> void:
 		var version := Vector2i(epoch, int(stamps.get(key, 0)))
 		if not preparation.is_empty() and preparation["data"]["key"] == key:
 			continue
-		if not paused_preparation.is_empty() and paused_preparation.data.key==key: continue
 		if in_flight.get(key, Vector2i(-1, -1)) == version or staging_versions.get(key, Vector2i(-1, -1)) == version:
 			continue
 		if backend.submit({"kind": "mesh", "key": key, "stamp": version.y, "epoch": epoch,
@@ -868,7 +852,6 @@ func _schedule() -> void:
 		var version := Vector2i(epoch, int(stamps.get(key, 0)))
 		if not preparation.is_empty() and preparation["data"]["key"] == key:
 			continue
-		if not paused_preparation.is_empty() and paused_preparation.data.key==key: continue
 		if in_flight.get(key, Vector2i(-1, -1)) == version or staging_versions.get(key, Vector2i(-1, -1)) == version:
 			continue
 		var accepted: bool = backend.submit({"kind": "mesh", "key": key,
@@ -1242,9 +1225,6 @@ func reload_world(reset: bool = false) -> void:
 	if not preparation.is_empty():
 		_destroy_entry(preparation["entry"])
 		preparation.clear()
-	if not paused_preparation.is_empty():
-		_destroy_entry(paused_preparation.entry)
-		paused_preparation.clear()
 	staged_batch.clear()
 	staging.clear()
 	staging_versions.clear()

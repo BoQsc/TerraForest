@@ -40,6 +40,7 @@ protected:
     static void _bind_methods() {
         godot::ClassDB::bind_method(godot::D_METHOD("execute","packet"), &TerrainCore::execute);
         godot::ClassDB::bind_method(godot::D_METHOD("geometry_cache_key","x","z","size","step"), &TerrainCore::geometry_cache_key);
+        godot::ClassDB::bind_method(godot::D_METHOD("build_owned_region","x","z","size","step","y_begin","y_end","epoch"), &TerrainCore::build_owned_region);
         godot::ClassDB::bind_method(godot::D_METHOD("supports_isolated_worlds"), &TerrainCore::supports_isolated_worlds);
         godot::ClassDB::bind_method(godot::D_METHOD("build_variant"), &TerrainCore::build_variant);
         godot::ClassDB::bind_method(godot::D_METHOD("executing_command"), &TerrainCore::executing_command);
@@ -55,6 +56,18 @@ protected:
         godot::ClassDB::bind_method(godot::D_METHOD("experimental_partition_mesh_budgeted","packet","workspace_bytes","output_bytes","expected_epoch"), &TerrainCore::experimental_partition_mesh_budgeted);
     }
 public:
+    godot::PackedByteArray build_owned_region(int64_t x,int64_t z,int64_t size,int64_t step,int64_t y_begin,int64_t y_end,int64_t epoch){
+        if(x<0||z<0||x>=2048||z>=2048||size<16||size>64||step<1||step>8||y_begin<0||y_end>WORLD_Y||epoch<0||epoch>0xffffffffLL)return {};
+        std::lock_guard<std::mutex> lock(mutex_);tr_oom=false;
+        Mesh mesh;Bytes bytes;godot::PackedByteArray result;
+        if(::build_owned_region(world_,int(x),int(z),int(size),int(step),int(y_begin),int(y_end),mesh,u32(epoch))){
+            encode_mesh(mesh,int(x),int(z),int(size),int(step),bytes);
+            if(!tr_oom&&terrain_build_epoch(&world_)==u32(epoch)){
+                result.resize(bytes.n);if(bytes.n)copy_bytes(result.ptrw(),bytes.p,bytes.n);
+            }
+        }
+        mesh.release();bytes.release();return result;
+    }
     godot::Dictionary geometry_cache_key(int64_t x,int64_t z,int64_t size,int64_t step) {
         if(x<0||z<0||x>=2048||z>=2048||size<16||size>256||step<1||step>8)return {};
         std::lock_guard<std::mutex> lock(mutex_);

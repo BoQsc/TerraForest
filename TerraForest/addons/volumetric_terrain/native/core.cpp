@@ -187,7 +187,7 @@ static bool try_collapse(Mesh&m,int u,int v,List<int>*adj,float*weight,u8*alive)
  }
  adj[v].clear();return true;
 }
-static void simplify(const World&w,Mesh&m,int ox,int oz,int size,int step,u32 epoch){
+static void simplify(const World&w,Mesh&m,int ox,int oz,int size,int step,u32 epoch,bool shared_regions=false){
  if(step<=1||m.i.n<300)return;
  int nv=m.v.n;auto adj=(List<int>*)tr_alloc(size_t(nv)*sizeof(List<int>));auto alive=(u8*)tr_alloc(nv);auto weight=(float*)tr_alloc(size_t(nv)*4);auto group=(u32*)tr_alloc(size_t(nv)*4);
  if(!adj||!alive||!weight||!group){if(adj)tr_free(adj);if(alive)tr_free(alive);if(weight)tr_free(weight);if(group)tr_free(group);return;}
@@ -195,7 +195,13 @@ static void simplify(const World&w,Mesh&m,int ox,int oz,int size,int step,u32 ep
  for(int i=0;i<nv;i++){
   alive[i]=1;weight[i]=1;const Vertex&v=m.v[i];int x=v.cx-ox,z=v.cz-oz;
   // All patch-border representatives stay EXACTLY at their original world positions.
-  bool pin=x<=0||z<=0||x>=size-2||z>=size-2;
+   bool pin=x<=0||z<=0||x>=size-2||z>=size-2;
+   if(shared_regions){
+    // Every potential 16m horizontal / 32m vertical ownership boundary keeps
+    // the original representatives, independent of parent LOD and owner size.
+    int bx=v.cx&15,bz=v.cz&15,by=v.cy&31;
+    pin=pin||bx==0||bx>=14||bz==0||bz>=14||by==0||by>=30;
+   }
   // Editing/caves are NOT a heightfield LOD. Protect their actual vertices at
   // every distance. This also prevents the old unconstrained collapse from
   // shrinking a tunnel mouth or changing an excavation into a different shape.
@@ -264,7 +270,7 @@ void add_blocks(const World&w,int ox,int oz,int size,Mesh&m,int y_begin,int y_en
 }
 static void mark_y(u32*bits,int lo,int hi){lo=imx(0,lo);hi=imn(255,hi);for(int y=lo;y<=hi;y++)bits[y>>5]|=1u<<(y&31);}
 struct CachedSample {i16 value;u8 material,valid;};
-static bool extract_vertices(const World&w,int ox,int oz,int size,Mesh&m,u32 epoch){
+static bool extract_vertices(const World&w,int ox,int oz,int size,Mesh&m,u32 epoch,int y_begin=0,int y_end=WORLD_Y){
  const int hn=size+2;List<float> heights;heights.resize(hn*hn);
  for(int z=-1;z<=size;z++){
   if(cancelled(w,epoch)){heights.release();return false;}
@@ -284,7 +290,7 @@ static bool extract_vertices(const World&w,int ox,int oz,int size,Mesh&m,u32 epo
   for(int j=0;j<w.caves.n;j++){const Cave&c=w.caves[j];if(gx+1<mn(c.a.x,c.b.x)-c.r-2||gx>mx(c.a.x,c.b.x)+c.r+2||gz+1<mn(c.a.z,c.b.z)-c.r-2||gz>mx(c.a.z,c.b.z)+c.r+2)continue;mark_y(ybits,fl(mn(c.a.y,c.b.y)-c.r-2),fl(mx(c.a.y,c.b.y)+c.r+2)+1);low=mn(low,mn(c.a.y,c.b.y)-c.r-2);high=mx(high,mx(c.a.y,c.b.y)+c.r+2);}
   u32 mask=0;for(int zz=0;zz<2;zz++)for(int xx=0;xx<2;xx++){int px=(gx+xx)>>4,pz=(gz+zz)>>4;if(px>=0&&px<NP&&pz>=0&&pz<NP)mask|=w.edit_columns[px+NP*pz];}
   if(mask)for(int py=0;py<=16;py++)if(mask&(1u<<py)){mark_y(ybits,py*16-1,py*16+17);low=mn(low,float(py*16-1));high=mx(high,float(py*16+16));}
-  int y0=imx(0,fl(low)),y1=imn(255,fl(high)+1);
+   int y0=imx(imx(0,y_begin-1),fl(low)),y1=imn(y_end-1,fl(high)+1);
   // Page indices for the four vertical sample columns are shared across all Y cells.
   int cached_py=-999,page_indices[4]={-1,-1,-1,-1};
   for(int y=y0;y<=y1;y++){
@@ -331,12 +337,12 @@ static bool extract_vertices(const World&w,int ox,int oz,int size,Mesh&m,u32 epo
  heights.release();return true;
 }
 
-static void connect_patch(int ox,int oz,int size,Mesh&m){
+static void connect_patch(int ox,int oz,int size,Mesh&m,int y_begin=0,int y_end=WORLD_Y){
  Map ids;
  for(int j=0;j<m.v.n;j++){const Vertex&v=m.v[j];ids.put(cell_key(v.cx-ox,v.cy,v.cz-oz,size),j);}
  int vn=m.v.n;
  for(int j=0;j<vn;j++){
-  const Vertex&v=m.v[j];int x=v.cx-ox,y=v.cy,z=v.cz-oz;if(x<0||z<0||x>=size||z>=size)continue;u32 s=v.mask;
+   const Vertex&v=m.v[j];int x=v.cx-ox,y=v.cy,z=v.cz-oz;if(x<0||z<0||x>=size||z>=size||y<y_begin||y>=y_end)continue;u32 s=v.mask;
   for(int axis=0;axis<3;axis++){
    int other=axis==0?1:(axis==1?2:4);if((s&1)==((s>>other)&1))continue;int a,b,c,d;
    if(axis==0){if(y<1||z<0)continue;a=ids.get(cell_key(x,y-1,z-1,size));b=ids.get(cell_key(x,y,z-1,size));c=j;d=ids.get(cell_key(x,y-1,z,size));}
@@ -368,6 +374,20 @@ bool build_patch(const World&w,int ox,int oz,int size,int step,Mesh&m,u32 expect
  shade_mesh(w,m,epoch);
  if(w.profile_mesh)w.mesh_stage_ms[3]=float(mesh_clock_ms()-mark);
  if(cancelled(w,epoch)){m.release();return false;}
+ return true;
+}
+
+bool build_owned_region(const World&w,int ox,int oz,int size,int step,int y_begin,int y_end,Mesh&m,u32 epoch){
+ if(ox<0||oz<0||ox>=2048||oz>=2048||(size!=16&&size!=32&&size!=64)||
+    ox%size||oz%size||(step!=1&&step!=2&&step!=4&&step!=8)||
+    y_begin<0||y_end>WORLD_Y||y_begin>=y_end||y_begin%32||y_end-y_begin!=32)return false;
+ if(cancelled(w,epoch)||!extract_vertices(w,ox,oz,size,m,epoch,y_begin,y_end)){m.release();return false;}
+ connect_patch(ox,oz,size,m,y_begin,y_end);
+ simplify(w,m,ox,oz,size,step,epoch,true);
+ if(cancelled(w,epoch)||tr_oom){m.release();return false;}
+ add_blocks(w,ox,oz,size,m,y_begin,y_end);
+ if(!cancelled(w,epoch)&&!tr_oom)shade_mesh(w,m,epoch);
+ if(cancelled(w,epoch)||tr_oom){m.release();return false;}
  return true;
 }
 

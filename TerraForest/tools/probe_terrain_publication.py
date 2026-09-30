@@ -14,6 +14,7 @@ parser.add_argument('--godot', required=True)
 parser.add_argument('--worker', action='store_true', help='Drive public stream edits through the real worker')
 parser.add_argument('--snapshot-terrain', action='store_true', help='Use candidate snapshot geometry in the real worker')
 parser.add_argument('--brick-terrain', action='store_true', help='Use vertically bounded terrain in the real worker and stream')
+parser.add_argument('--region-terrain', action='store_true', help='Use locally replaceable Surface Nets regions')
 parser.add_argument('--transition', action='store_true', help='Exercise native mixed-cut coverage transitions')
 parser.add_argument('--density', action='store_true', help='Exercise bounded density query backend jobs')
 parser.add_argument('--density-stream', action='store_true', help='Exercise stream-side density reply freshness')
@@ -70,11 +71,11 @@ windows.release.x86_64 = "res://addons/volumetric_terrain/bin/terrain_core.windo
         shutil.copy2(ROOT / 'tests/terrain_transition_probe.gd', project / 'tests/terrain_transition_probe.gd')
     (project / 'project.godot').write_text('config_version=5\n[application]\nconfig/name="Terrain publication probe"\n')
     result = subprocess.run([args.godot, '--headless', '--path', str(project), '--script',
-                             f'res://tests/{test}.gd'] + (['--', '--brick-terrain'] if args.brick_terrain else (['--', '--snapshot-terrain'] if args.snapshot_terrain else [])), capture_output=True, text=True, timeout=45)
+                             f'res://tests/{test}.gd'] + (['--', '--region-terrain'] if args.region_terrain else (['--', '--brick-terrain'] if args.brick_terrain else (['--', '--snapshot-terrain'] if args.snapshot_terrain else []))), capture_output=True, text=True, timeout=90)
     log = result.stdout + '\n' + result.stderr
     reports = ROOT / 'reports'
     reports.mkdir(exist_ok=True)
-    report_name = test + ('_bricks' if args.brick_terrain else ('_snapshot' if args.snapshot_terrain else ''))
+    report_name = test + ('_regions' if args.region_terrain else ('_bricks' if args.brick_terrain else ('_snapshot' if args.snapshot_terrain else '')))
     (reports / (report_name+'.log')).write_text(log, encoding='utf-8')
     print(log)
     if not (project / 'reports' / (test+'.json')).exists():

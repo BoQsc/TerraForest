@@ -179,6 +179,75 @@ the earlier brick run failed five gates. This change establishes reuse semantics
 not a mining fix. Large changed patches still reconstruct in full, and cache
 lookup/hash/visibility costs require further budgeting in the replacement path.
 
+### Locally replaceable Surface Nets regions — integrated, not qualified
+
+`--region-terrain` now routes every terrain LOD through bounded native Surface
+Nets reconstruction. A render tile is a container of 32x32x32 m owners (16 m wide
+for the smallest tile); a 256 m parent has 512 logical owners. The old whole-patch
+build is not called in this mode. Empty owners remain represented, so an edit can
+introduce a new surface without losing ownership. This mode is off by default.
+
+Native extraction includes the preceding cell layer for shared edges; only the
+owned layer emits faces. Simplification pins representatives at every potential
+16 m horizontal and 32 m vertical join. Local rebuilding uses the same mesher
+family at every LOD, not a splice between legacy and tetrahedral candidate meshes.
+The sampler, connectivity, simplification, shading and encoding run in C++.
+Existing content-addressed storage also caches these bounded packets, with a
+distinct representation key and refreshed visibility on reuse.
+
+The stream selects affected owners, conservatively including adjacent-page
+simplification dependencies for coarse tiles. It stages replacements and transfers
+unaffected mesh/collision children at atomic publication. Background preparation
+can now pause between pieces for a pending edit, then resume with its prepared
+resources intact. At most one background preparation is paused; reset and shutdown
+release it and scheduling avoids duplicate requests for it.
+
+The real worker/publication test passes 139 checks in this mode. Its 256 m corner
+edit replaces 12 owners and retains 500. Retained plus replaced geometry, normals,
+material channels and indices equal a fresh reconstruction. Fine physics queries
+observe old collision until publication and excavated collision afterward.
+Additional checks exercise preemption/resumption, two mixed-resolution joins,
+an interior vertical cave join, and exact oriented triangle/normal multisets for
+all eight slabs against the full-height fine mesh at cave and mountain sites.
+The vertical edge comparison excludes unrelated lateral open edges; the complete
+fine partition comparison covers the entire column. These fixtures do not prove
+general topology, collision robustness, visual quality or every LOD transition.
+The existing brick fixture still passes 120 checks, and legacy/debug/release
+field, save and mesh fingerprints remain identical (7/31/31 checks).
+
+Three integrated 136-edit fullscreen runs are retained under
+`evidence/terrain_owned_regions/`. They are sequential observations, not matched
+statistical comparisons. Thresholds, content and rendering scale were unchanged.
+
+| Reconstruction / staging | Compact p95 ms | Expanding p95 ms | Travel p95 ms | Return p95 ms |
+| --- | ---: | ---: | ---: | ---: |
+| Initial 64x32x64 owners | 85.743 | 104.063 | 171.545 | 103.930 |
+| 32m owners with background preparation yielding to edits | 35.997 | 52.272 | 186.777 | 36.960 |
+
+The intermediate 32 m run without preemption exposed edits waiting behind large
+background preparations; its raw failed result is retained as well. The final
+run still **fails six gates**: travel exceeds the 150 ms publication ceiling,
+baseline frame p99 is 30.552 ms and four phases record frames over 50 ms (maximum
+158.241 ms). It has no runtime errors and passes the original/return degradation
+gate. The end-of-recovery reported terrain cache payload is 238,663,464 bytes;
+protected coverage can exceed the nominal cache target. No total-memory plateau
+or rendering-headroom claim is established.
+
+A retained travel example at (1072,52.059,1310) spends 100.944 ms rebuilding owners
+inside a 128 m container, then 52.348 ms on four requested fine tiles included in
+the edit transaction. Main-thread preparation adds further latency. This is the
+next measured critical path; neither reducing region size alone nor cache reuse
+has finished the mining fix. Remaining work includes controlling fine-refinement
+dependencies, region-build costs, frame stalls, aggregate rendering/residency,
+broader seam/topology checks, cold-cache/restart tests for this mode and the 4x/16x
+pressure and endurance workloads. Do not promote this mode based on these tests.
+
+Reproduce with `tools/probe_terrain_publication.py --worker --region-terrain
+--godot PATH` and `tools/foundation_scaling.py --terrain regions --scales 1
+--godot PATH`. The `initial` evidence includes the earlier backend source;
+`before_preemption` includes the earlier stream source. The remaining runtime
+sources are the same as this revision; manifests identify the measured binaries.
+
 ```mermaid
 flowchart TD
     Demo[Demo: player, tools, lighting, HUD] --> Terrain[TerrainWorld public API]

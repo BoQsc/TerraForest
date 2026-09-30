@@ -1,0 +1,653 @@
+{
+  "checks": [
+    {
+      "name": "real native terrain worker starts",
+      "pass": true
+    },
+    {
+      "name": "real worker startup delivered",
+      "pass": true
+    },
+    {
+      "name": "initial region admitted (1280, 1280, 16)",
+      "pass": true
+    },
+    {
+      "name": "initial region admitted (1296, 1280, 16)",
+      "pass": true
+    },
+    {
+      "name": "initial region admitted (1280, 1296, 16)",
+      "pass": true
+    },
+    {
+      "name": "initial region admitted (1296, 1296, 16)",
+      "pass": true
+    },
+    {
+      "name": "worker meshes reach live staging and publication",
+      "pass": true
+    },
+    {
+      "name": "worker height query completes",
+      "pass": true
+    },
+    {
+      "name": "worker fixture original physics completion_before_preparation (1280, 1280, 16)",
+      "pass": true
+    },
+    {
+      "name": "worker fixture original physics completion_before_preparation (1296, 1280, 16)",
+      "pass": true
+    },
+    {
+      "name": "worker fixture original physics completion_before_preparation (1280, 1296, 16)",
+      "pass": true
+    },
+    {
+      "name": "worker fixture original physics completion_before_preparation (1296, 1296, 16)",
+      "pass": true
+    },
+    {
+      "name": "public stream edit accepted completion_before_preparation",
+      "pass": true
+    },
+    {
+      "name": "edit invalidates exactly four visible local regions completion_before_preparation",
+      "pass": true
+    },
+    {
+      "name": "worker completion received with staging deliberately held",
+      "pass": true
+    },
+    {
+      "name": "completion alone cannot publish unprepared batch",
+      "pass": true
+    },
+    {
+      "name": "worker completed but original collision retained (1280, 1280, 16)",
+      "pass": true
+    },
+    {
+      "name": "worker completed but original collision retained (1296, 1280, 16)",
+      "pass": true
+    },
+    {
+      "name": "worker completed but original collision retained (1280, 1296, 16)",
+      "pass": true
+    },
+    {
+      "name": "worker completed but original collision retained (1296, 1296, 16)",
+      "pass": true
+    },
+    {
+      "name": "completion-before-preparation keeps original physics surface",
+      "pass": true
+    },
+    {
+      "name": "local worker edit commits completion_before_preparation",
+      "pass": true
+    },
+    {
+      "name": "worker transaction publishes exactly once completion_before_preparation",
+      "pass": true
+    },
+    {
+      "name": "complete vertical ownership retained",
+      "pass": true
+    },
+    {
+      "name": "affected brick replaced",
+      "pass": true
+    },
+    {
+      "name": "affected brick replaced",
+      "pass": true
+    },
+    {
+      "name": "unaffected brick mesh and collision node retained",
+      "pass": true
+    },
+    {
+      "name": "unaffected brick mesh and collision node retained",
+      "pass": true
+    },
+    {
+      "name": "unaffected brick mesh and collision node retained",
+      "pass": true
+    },
+    {
+      "name": "unaffected brick mesh and collision node retained",
+      "pass": true
+    },
+    {
+      "name": "unaffected brick mesh and collision node retained",
+      "pass": true
+    },
+    {
+      "name": "unaffected brick mesh and collision node retained",
+      "pass": true
+    },
+    {
+      "name": "complete vertical ownership retained",
+      "pass": true
+    },
+    {
+      "name": "affected brick replaced",
+      "pass": true
+    },
+    {
+      "name": "affected brick replaced",
+      "pass": true
+    },
+    {
+      "name": "unaffected brick mesh and collision node retained",
+      "pass": true
+    },
+    {
+      "name": "unaffected brick mesh and collision node retained",
+      "pass": true
+    },
+    {
+      "name": "unaffected brick mesh and collision node retained",
+      "pass": true
+    },
+    {
+      "name": "unaffected brick mesh and collision node retained",
+      "pass": true
+    },
+    {
+      "name": "unaffected brick mesh and collision node retained",
+      "pass": true
+    },
+    {
+      "name": "unaffected brick mesh and collision node retained",
+      "pass": true
+    },
+    {
+      "name": "complete vertical ownership retained",
+      "pass": true
+    },
+    {
+      "name": "affected brick replaced",
+      "pass": true
+    },
+    {
+      "name": "affected brick replaced",
+      "pass": true
+    },
+    {
+      "name": "unaffected brick mesh and collision node retained",
+      "pass": true
+    },
+    {
+      "name": "unaffected brick mesh and collision node retained",
+      "pass": true
+    },
+    {
+      "name": "unaffected brick mesh and collision node retained",
+      "pass": true
+    },
+    {
+      "name": "unaffected brick mesh and collision node retained",
+      "pass": true
+    },
+    {
+      "name": "unaffected brick mesh and collision node retained",
+      "pass": true
+    },
+    {
+      "name": "unaffected brick mesh and collision node retained",
+      "pass": true
+    },
+    {
+      "name": "complete vertical ownership retained",
+      "pass": true
+    },
+    {
+      "name": "affected brick replaced",
+      "pass": true
+    },
+    {
+      "name": "affected brick replaced",
+      "pass": true
+    },
+    {
+      "name": "unaffected brick mesh and collision node retained",
+      "pass": true
+    },
+    {
+      "name": "unaffected brick mesh and collision node retained",
+      "pass": true
+    },
+    {
+      "name": "unaffected brick mesh and collision node retained",
+      "pass": true
+    },
+    {
+      "name": "unaffected brick mesh and collision node retained",
+      "pass": true
+    },
+    {
+      "name": "unaffected brick mesh and collision node retained",
+      "pass": true
+    },
+    {
+      "name": "unaffected brick mesh and collision node retained",
+      "pass": true
+    },
+    {
+      "name": "edit updates a strict subset of cached vertical bricks",
+      "pass": true
+    },
+    {
+      "name": "retained brick residency is counted exactly once",
+      "pass": true
+    },
+    {
+      "name": "worker fixture replacement physics completion_before_preparation (1280, 1280, 16)",
+      "pass": true
+    },
+    {
+      "name": "worker fixture replacement physics completion_before_preparation (1296, 1280, 16)",
+      "pass": true
+    },
+    {
+      "name": "worker fixture replacement physics completion_before_preparation (1280, 1296, 16)",
+      "pass": true
+    },
+    {
+      "name": "worker fixture replacement physics completion_before_preparation (1296, 1296, 16)",
+      "pass": true
+    },
+    {
+      "name": "worker excavation lowers all four sampled surfaces completion_before_preparation",
+      "pass": true
+    },
+    {
+      "name": "worker fixture original physics overlapped (1280, 1280, 16)",
+      "pass": true
+    },
+    {
+      "name": "worker fixture original physics overlapped (1296, 1280, 16)",
+      "pass": true
+    },
+    {
+      "name": "worker fixture original physics overlapped (1280, 1296, 16)",
+      "pass": true
+    },
+    {
+      "name": "worker fixture original physics overlapped (1296, 1296, 16)",
+      "pass": true
+    },
+    {
+      "name": "public stream edit accepted overlapped",
+      "pass": true
+    },
+    {
+      "name": "edit invalidates exactly four visible local regions overlapped",
+      "pass": true
+    },
+    {
+      "name": "local worker edit commits overlapped",
+      "pass": true
+    },
+    {
+      "name": "worker transaction publishes exactly once overlapped",
+      "pass": true
+    },
+    {
+      "name": "complete vertical ownership retained",
+      "pass": true
+    },
+    {
+      "name": "affected brick replaced",
+      "pass": true
+    },
+    {
+      "name": "affected brick replaced",
+      "pass": true
+    },
+    {
+      "name": "unaffected brick mesh and collision node retained",
+      "pass": true
+    },
+    {
+      "name": "unaffected brick mesh and collision node retained",
+      "pass": true
+    },
+    {
+      "name": "unaffected brick mesh and collision node retained",
+      "pass": true
+    },
+    {
+      "name": "unaffected brick mesh and collision node retained",
+      "pass": true
+    },
+    {
+      "name": "unaffected brick mesh and collision node retained",
+      "pass": true
+    },
+    {
+      "name": "unaffected brick mesh and collision node retained",
+      "pass": true
+    },
+    {
+      "name": "complete vertical ownership retained",
+      "pass": true
+    },
+    {
+      "name": "affected brick replaced",
+      "pass": true
+    },
+    {
+      "name": "affected brick replaced",
+      "pass": true
+    },
+    {
+      "name": "unaffected brick mesh and collision node retained",
+      "pass": true
+    },
+    {
+      "name": "unaffected brick mesh and collision node retained",
+      "pass": true
+    },
+    {
+      "name": "unaffected brick mesh and collision node retained",
+      "pass": true
+    },
+    {
+      "name": "unaffected brick mesh and collision node retained",
+      "pass": true
+    },
+    {
+      "name": "unaffected brick mesh and collision node retained",
+      "pass": true
+    },
+    {
+      "name": "unaffected brick mesh and collision node retained",
+      "pass": true
+    },
+    {
+      "name": "complete vertical ownership retained",
+      "pass": true
+    },
+    {
+      "name": "affected brick replaced",
+      "pass": true
+    },
+    {
+      "name": "affected brick replaced",
+      "pass": true
+    },
+    {
+      "name": "unaffected brick mesh and collision node retained",
+      "pass": true
+    },
+    {
+      "name": "unaffected brick mesh and collision node retained",
+      "pass": true
+    },
+    {
+      "name": "unaffected brick mesh and collision node retained",
+      "pass": true
+    },
+    {
+      "name": "unaffected brick mesh and collision node retained",
+      "pass": true
+    },
+    {
+      "name": "unaffected brick mesh and collision node retained",
+      "pass": true
+    },
+    {
+      "name": "unaffected brick mesh and collision node retained",
+      "pass": true
+    },
+    {
+      "name": "complete vertical ownership retained",
+      "pass": true
+    },
+    {
+      "name": "affected brick replaced",
+      "pass": true
+    },
+    {
+      "name": "affected brick replaced",
+      "pass": true
+    },
+    {
+      "name": "unaffected brick mesh and collision node retained",
+      "pass": true
+    },
+    {
+      "name": "unaffected brick mesh and collision node retained",
+      "pass": true
+    },
+    {
+      "name": "unaffected brick mesh and collision node retained",
+      "pass": true
+    },
+    {
+      "name": "unaffected brick mesh and collision node retained",
+      "pass": true
+    },
+    {
+      "name": "unaffected brick mesh and collision node retained",
+      "pass": true
+    },
+    {
+      "name": "unaffected brick mesh and collision node retained",
+      "pass": true
+    },
+    {
+      "name": "edit updates a strict subset of cached vertical bricks",
+      "pass": true
+    },
+    {
+      "name": "retained brick residency is counted exactly once",
+      "pass": true
+    },
+    {
+      "name": "worker fixture replacement physics overlapped (1280, 1280, 16)",
+      "pass": true
+    },
+    {
+      "name": "worker fixture replacement physics overlapped (1296, 1280, 16)",
+      "pass": true
+    },
+    {
+      "name": "worker fixture replacement physics overlapped (1280, 1296, 16)",
+      "pass": true
+    },
+    {
+      "name": "worker fixture replacement physics overlapped (1296, 1296, 16)",
+      "pass": true
+    },
+    {
+      "name": "worker excavation lowers all four sampled surfaces overlapped",
+      "pass": true
+    },
+    {
+      "name": "deferred brick lighting completes",
+      "pass": true
+    },
+    {
+      "name": "brick relighting retains meshes and collision nodes",
+      "pass": true
+    },
+    {
+      "name": "real worker joins cleanly",
+      "pass": true
+    }
+  ],
+  "events": [
+    {
+      "kind": "startup",
+      "remaining_before_receive": 0,
+      "ticket": -1,
+      "worker_ms": 0.0
+    },
+    {
+      "kind": "mesh",
+      "remaining_before_receive": 0,
+      "ticket": -1,
+      "worker_ms": 25.731
+    },
+    {
+      "kind": "mesh",
+      "remaining_before_receive": 0,
+      "ticket": -1,
+      "worker_ms": 27.893
+    },
+    {
+      "kind": "mesh",
+      "remaining_before_receive": 0,
+      "ticket": -1,
+      "worker_ms": 30.219
+    },
+    {
+      "kind": "mesh",
+      "remaining_before_receive": 0,
+      "ticket": -1,
+      "worker_ms": 25.649
+    },
+    {
+      "kind": "height",
+      "remaining_before_receive": 0,
+      "ticket": -1,
+      "worker_ms": 0.0
+    },
+    {
+      "kind": "edit_begin",
+      "remaining_before_receive": 0,
+      "ticket": 1,
+      "worker_ms": 0.0
+    },
+    {
+      "kind": "edit_chunk",
+      "remaining_before_receive": 4,
+      "ticket": 1,
+      "worker_ms": 9.082
+    },
+    {
+      "kind": "edit_chunk",
+      "remaining_before_receive": 4,
+      "ticket": 1,
+      "worker_ms": 8.239
+    },
+    {
+      "kind": "edit_chunk",
+      "remaining_before_receive": 4,
+      "ticket": 1,
+      "worker_ms": 8.169
+    },
+    {
+      "kind": "edit_chunk",
+      "remaining_before_receive": 4,
+      "ticket": 1,
+      "worker_ms": 7.687
+    },
+    {
+      "kind": "edit_done",
+      "remaining_before_receive": 4,
+      "ticket": 1,
+      "worker_ms": 0.0
+    },
+    {
+      "kind": "edit_begin",
+      "remaining_before_receive": 0,
+      "ticket": 2,
+      "worker_ms": 0.0
+    },
+    {
+      "kind": "edit_chunk",
+      "remaining_before_receive": 4,
+      "ticket": 2,
+      "worker_ms": 8.702
+    },
+    {
+      "kind": "edit_chunk",
+      "remaining_before_receive": 4,
+      "ticket": 2,
+      "worker_ms": 9.03
+    },
+    {
+      "kind": "edit_chunk",
+      "remaining_before_receive": 2,
+      "ticket": 2,
+      "worker_ms": 8.961
+    },
+    {
+      "kind": "edit_chunk",
+      "remaining_before_receive": 2,
+      "ticket": 2,
+      "worker_ms": 8.35
+    },
+    {
+      "kind": "edit_done",
+      "remaining_before_receive": 2,
+      "ticket": 2,
+      "worker_ms": 0.0
+    }
+  ],
+  "failures": 0,
+  "rows": [
+    {
+      "after_heights": [
+        101.86247253418,
+        101.86247253418,
+        101.862503051758,
+        101.862487792969
+      ],
+      "before_heights": [
+        105.28515625,
+        105.513687133789,
+        105.679718017578,
+        105.910171508789
+      ],
+      "elapsed_ms": 95.992,
+      "mode": "completion_before_preparation",
+      "publish_ms": 0.493,
+      "worker_build_ms": 33.177,
+      "worker_queue_ms": 0.04
+    },
+    {
+      "after_heights": [
+        99.8624877929688,
+        99.8624725341797,
+        99.8625030517578,
+        99.8624877929688
+      ],
+      "before_heights": [
+        101.86247253418,
+        101.86247253418,
+        101.862503051758,
+        101.862487792969
+      ],
+      "elapsed_ms": 55.008,
+      "mode": "overlapped",
+      "publish_ms": 1.698,
+      "worker_build_ms": 35.043,
+      "worker_queue_ms": 0.05
+    }
+  ],
+  "scope": "Real native worker, public stream edit/invalidation, collision staging and physics queries. Fixed four-region cut; no quadtree transitions, draw/GPU or endurance. Snapshot candidate selected only with --snapshot-terrain. Held mode deliberately includes observer delay; all timings are headless diagnostic only.",
+  "source_hashes": {
+    "addons\\volumetric_terrain\\collision_reuse.gd": "261ed776c54c2db3d84d4579cacbec908ff857d40016b89e1aff1195a6ac0c6a",
+    "addons\\volumetric_terrain\\derived_cache.gd": "a50479bb5071873245d652244bca7dce6455253581d93a255ce5f935dde8e059",
+    "addons\\volumetric_terrain\\mesh_codec.gd": "1cc58b27f483b2f8e8bccd70e5343c624f7edb8abdee8a6fa20580b2e1d059c3",
+    "addons\\volumetric_terrain\\plugin.gd": "4bc3d414ab0be6d3cb7e28bb26b8e6c356d53952b49f219b490171c68f30b328",
+    "addons\\volumetric_terrain\\runtime_assets.gd": "5eb08dd1ee0a47d004fb59f69a3e591f3c12bc23290da168d7ad8044161dd05d",
+    "addons\\volumetric_terrain\\terrain_backend.gd": "5225ab1b46c3efd68b65c72a86539bc8865bd995def32b9a3394200332c8fbc7",
+    "addons\\volumetric_terrain\\terrain_stream.gd": "29c843dcc971c5622850f66938f30aaf31adac4bd57e04c2b8ba14dfd2743181",
+    "addons\\volumetric_terrain\\terrain_world.gd": "a2f53ac78ed7aecbecf958507952463b4f77521ac0f2845f06a7c7415ee42bba",
+    "tests\\terrain_publication_probe.gd": "c7d2eed49dd827acf7135ff78d1f8eb43f55f48b0e7d720e9ff84f4d0cdd8f9a",
+    "tests\\terrain_worker_publication_probe.gd": "535ef139d89066f6a171cbbbc5546aef995b600bd036c12a48cf972105b73948",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "3fe2ee47ad53e6af2611207b3ff4f5d312d2d7720515f73524f47c0a0536f4c3",
+    "tools\\probe_terrain_publication.py": "a7d13d5e096c19032967c9d3a89ff3927b9ccfb4e97503cc624d0c8297f261da"
+  },
+  "adoption_qualified": false,
+  "snapshot_terrain": false,
+  "brick_terrain": true
+}

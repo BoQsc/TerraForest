@@ -1,0 +1,143 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS real native terrain worker starts
+PASS real worker startup delivered
+PASS initial region admitted (1280, 1280, 16)
+PASS initial region admitted (1296, 1280, 16)
+PASS initial region admitted (1280, 1296, 16)
+PASS initial region admitted (1296, 1296, 16)
+PASS worker meshes reach live staging and publication
+PASS worker height query completes
+PASS worker fixture original physics completion_before_preparation (1280, 1280, 16)
+PASS worker fixture original physics completion_before_preparation (1296, 1280, 16)
+PASS worker fixture original physics completion_before_preparation (1280, 1296, 16)
+PASS worker fixture original physics completion_before_preparation (1296, 1296, 16)
+PASS public stream edit accepted completion_before_preparation
+PASS edit invalidates exactly four visible local regions completion_before_preparation
+PASS worker completion received with staging deliberately held
+PASS completion alone cannot publish unprepared batch
+PASS worker completed but original collision retained (1280, 1280, 16)
+PASS worker completed but original collision retained (1296, 1280, 16)
+PASS worker completed but original collision retained (1280, 1296, 16)
+PASS worker completed but original collision retained (1296, 1296, 16)
+PASS completion-before-preparation keeps original physics surface
+PASS local worker edit commits completion_before_preparation
+PASS worker transaction publishes exactly once completion_before_preparation
+PASS complete vertical ownership retained
+PASS affected brick replaced
+PASS affected brick replaced
+PASS unaffected brick mesh and collision node retained
+PASS unaffected brick mesh and collision node retained
+PASS unaffected brick mesh and collision node retained
+PASS unaffected brick mesh and collision node retained
+PASS unaffected brick mesh and collision node retained
+PASS unaffected brick mesh and collision node retained
+PASS complete vertical ownership retained
+PASS affected brick replaced
+PASS affected brick replaced
+PASS unaffected brick mesh and collision node retained
+PASS unaffected brick mesh and collision node retained
+PASS unaffected brick mesh and collision node retained
+PASS unaffected brick mesh and collision node retained
+PASS unaffected brick mesh and collision node retained
+PASS unaffected brick mesh and collision node retained
+PASS complete vertical ownership retained
+PASS affected brick replaced
+PASS affected brick replaced
+PASS unaffected brick mesh and collision node retained
+PASS unaffected brick mesh and collision node retained
+PASS unaffected brick mesh and collision node retained
+PASS unaffected brick mesh and collision node retained
+PASS unaffected brick mesh and collision node retained
+PASS unaffected brick mesh and collision node retained
+PASS complete vertical ownership retained
+PASS affected brick replaced
+PASS affected brick replaced
+PASS unaffected brick mesh and collision node retained
+PASS unaffected brick mesh and collision node retained
+PASS unaffected brick mesh and collision node retained
+PASS unaffected brick mesh and collision node retained
+PASS unaffected brick mesh and collision node retained
+PASS unaffected brick mesh and collision node retained
+PASS edit updates a strict subset of cached vertical bricks
+PASS retained brick residency is counted exactly once
+PASS worker fixture replacement physics completion_before_preparation (1280, 1280, 16)
+PASS worker fixture replacement physics completion_before_preparation (1296, 1280, 16)
+PASS worker fixture replacement physics completion_before_preparation (1280, 1296, 16)
+PASS worker fixture replacement physics completion_before_preparation (1296, 1296, 16)
+PASS worker excavation lowers all four sampled surfaces completion_before_preparation
+PASS worker fixture original physics overlapped (1280, 1280, 16)
+PASS worker fixture original physics overlapped (1296, 1280, 16)
+PASS worker fixture original physics overlapped (1280, 1296, 16)
+PASS worker fixture original physics overlapped (1296, 1296, 16)
+PASS public stream edit accepted overlapped
+PASS edit invalidates exactly four visible local regions overlapped
+PASS local worker edit commits overlapped
+PASS worker transaction publishes exactly once overlapped
+PASS complete vertical ownership retained
+PASS affected brick replaced
+PASS affected brick replaced
+PASS unaffected brick mesh and collision node retained
+PASS unaffected brick mesh and collision node retained
+PASS unaffected brick mesh and collision node retained
+PASS unaffected brick mesh and collision node retained
+PASS unaffected brick mesh and collision node retained
+PASS unaffected brick mesh and collision node retained
+PASS complete vertical ownership retained
+PASS affected brick replaced
+PASS affected brick replaced
+PASS unaffected brick mesh and collision node retained
+PASS unaffected brick mesh and collision node retained
+PASS unaffected brick mesh and collision node retained
+PASS unaffected brick mesh and collision node retained
+PASS unaffected brick mesh and collision node retained
+PASS unaffected brick mesh and collision node retained
+PASS complete vertical ownership retained
+PASS affected brick replaced
+PASS affected brick replaced
+PASS unaffected brick mesh and collision node retained
+PASS unaffected brick mesh and collision node retained
+PASS unaffected brick mesh and collision node retained
+PASS unaffected brick mesh and collision node retained
+PASS unaffected brick mesh and collision node retained
+PASS unaffected brick mesh and collision node retained
+PASS complete vertical ownership retained
+PASS affected brick replaced
+PASS affected brick replaced
+PASS unaffected brick mesh and collision node retained
+PASS unaffected brick mesh and collision node retained
+PASS unaffected brick mesh and collision node retained
+PASS unaffected brick mesh and collision node retained
+PASS unaffected brick mesh and collision node retained
+PASS unaffected brick mesh and collision node retained
+PASS edit updates a strict subset of cached vertical bricks
+PASS retained brick residency is counted exactly once
+PASS worker fixture replacement physics overlapped (1280, 1280, 16)
+PASS worker fixture replacement physics overlapped (1296, 1280, 16)
+PASS worker fixture replacement physics overlapped (1280, 1296, 16)
+PASS worker fixture replacement physics overlapped (1296, 1296, 16)
+PASS worker excavation lowers all four sampled surfaces overlapped
+PASS deferred brick lighting completes
+PASS brick relighting retains meshes and collision nodes
+PASS coarse container admitted
+PASS coarse container published through actual stream
+PASS 256m container has 512 bounded 32x32x32 owners
+PASS coarse edit height available
+PASS unrelated background container admitted
+PASS unrelated background container reaches preparation
+PASS coarse corner excavation admitted
+PASS coarse corner excavation published
+PASS edit preempts an unfinished background container
+PASS background preparation resumes after edit publication
+PASS resumption preserves already prepared background resources
+PASS coarse edit retains unaffected owners instead of rebuilding the parent
+PASS retained plus replaced coarse geometry equals full fresh reconstruction
+PASS coarse partial publication accounts retained bytes once
+PASS coarse/fine shared edge bit multisets match (1280, 96, 1280)
+PASS coarse/fine shared edge bit multisets match (960, 32, 960)
+PASS vertical cave join interior edge bit multisets match
+PASS all vertical slabs reproduce full-height oriented geometry and normals 960
+PASS all vertical slabs reproduce full-height oriented geometry and normals 1280
+[TerrainRewrite] Temporary test world: save skipped
+PASS real worker joins cleanly
+

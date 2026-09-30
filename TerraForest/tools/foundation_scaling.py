@@ -11,7 +11,7 @@ root = Path(__file__).resolve().parents[1]
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--godot', required=True)
 parser.add_argument('--scales', nargs='+', type=int, choices=[1, 4, 16], default=[1, 4, 16])
-parser.add_argument('--terrain', choices=['legacy','snapshot','bricks'], default='legacy')
+parser.add_argument('--terrain', choices=['legacy','snapshot','bricks','regions'], default='legacy')
 args = parser.parse_args()
 engine = Path(args.godot)
 direct = engine.parent / 'godot.windows.opt.tools.64.exe'
@@ -37,7 +37,7 @@ for scale in args.scales:
         (root / 'reports' / name).unlink(missing_ok=True)
     command = [str(engine), '--path', str(root), '--script',
                'res://tests/foundation_mining.gd', '--', f'--foundation-scale={scale}']
-    if args.terrain!='legacy': command.append('--brick-terrain' if args.terrain=='bricks' else '--snapshot-terrain')
+    if args.terrain!='legacy': command.append({'bricks':'--brick-terrain','snapshot':'--snapshot-terrain','regions':'--region-terrain'}[args.terrain])
     (output/'launch.json').write_text(json.dumps({'terrain':args.terrain,'command':command},indent=2))
     with (output / 'run.log').open('w', encoding='utf-8') as log:
         try:

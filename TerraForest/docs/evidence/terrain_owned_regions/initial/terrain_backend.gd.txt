@@ -428,7 +428,7 @@ func _build_bricks(key: Vector3i, expected_build_epoch: int, selected: Array) ->
 
 func _build_regions(key: Vector3i, expected_build_epoch: int, selected: Array) -> Dictionary:
 	var begin:=Time.get_ticks_usec()
-	var size:=mini(32,key.z)
+	var size:=mini(64,key.z)
 	var step:=maxi(1,key.z/32)
 	var parts: Array[Dictionary]=[]
 	var bytes:=0
@@ -438,7 +438,7 @@ func _build_regions(key: Vector3i, expected_build_epoch: int, selected: Array) -
 		for x in range(key.x,key.x+key.z,size):
 			var dependency: String=""
 			for bottom in range(0,256,32):
-				var id: int=bottom+256*((x-key.x)/size+8*((z-key.y)/size))
+				var id: int=bottom+256*((x-key.x)/size+4*((z-key.y)/size))
 				if not selected.is_empty() and not selected.has(id): continue
 				if _call(Codec.command(13)).decode_u32(12)!=expected_build_epoch: return {"cancelled":true}
 				if dependency.is_empty() and disk_cache.enabled:
