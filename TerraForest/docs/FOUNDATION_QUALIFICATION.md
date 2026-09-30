@@ -38,6 +38,12 @@ traffic is included in this test.
 
 ## Required primitive pressure matrix — not yet certified
 
+The [shared snapshot allocator budget](TERRAIN_SNAPSHOT_BUDGET.md) passes nine
+groups covering competing native allocations, real snapshot rejection/retry,
+cancellation, move ownership and transient buffer growth. This bounds routed
+heap allocations, not process RAM. Scheduler job limits and budget lifetime
+through shutdown remain to be integrated.
+
 The [native contention comparison](TERRAIN_SNAPSHOT_CONTENTION.md) completes all
 216 candidate mesh jobs with exact geometry while querying a mutex-protected
 world. Meshing outside the lock reduces the observed maximum query duration
