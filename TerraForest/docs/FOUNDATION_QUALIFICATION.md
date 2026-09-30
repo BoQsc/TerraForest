@@ -38,6 +38,11 @@ traffic is included in this test.
 
 ## Required primitive pressure matrix — not yet certified
 
+The [density-crossing diagnostic](TERRAIN_DENSITY_RAYS.md) brackets field hits
+at all 22 frozen triangle-ray misses within 2 mm, with shifted air/solid
+controls. There is no existing exposed density interaction raycaster; first
+hit traversal, tangencies and runtime integration remain to be implemented.
+
 The [shape-sweep follow-up](TERRAIN_COLLISION_SWEEPS.md) passes all 528 centered
 sphere/capsule casts and 528 displaced controls across the frozen ray-miss
 faces and diagnostic transforms. Ray failures persist; these results narrow
