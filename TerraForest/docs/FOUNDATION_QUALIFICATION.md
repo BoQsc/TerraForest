@@ -38,6 +38,11 @@ traffic is included in this test.
 
 ## Required primitive pressure matrix — not yet certified
 
+The [candidate output allocator](TERRAIN_CANDIDATE_OUTPUT_ALLOCATION.md) recovers
+from all 30 injected position/index growth failures without partial output or
+tracked-buffer leaks. Hash-map and sampler allocations remain unrecoverable;
+this does not establish complete OOM resilience.
+
 The [experimental native region interface](TERRAIN_CANDIDATE_INTERFACE.md) now
 separates meshing from its benchmark, rejects invalid region/buffer inputs and
 retains exact geometry and cancellation checks. It remains unregistered in the

@@ -2,6 +2,7 @@
 // Experimental geometry-only mesher. Not registered in the game extension.
 #pragma once
 #include "core.h"
+#include "fallible_buffer.hpp"
 #include <vector>
 #include <unordered_map>
 #include <algorithm>
@@ -10,24 +11,25 @@
 
 namespace terraforest::experimental {
 struct Sample{V3 p;float d;u32 id;};
-enum class MeshStatus{ok,output_limit,cancelled,invalid_input,internal_error};
+enum class MeshStatus{ok,output_limit,cancelled,invalid_input,internal_error,allocation_failed};
 struct MeshLimits{
  size_t vertices=1000000,indices=3000000;
  bool(*cancel)(void*)=nullptr;void*context=nullptr;
+ BufferAllocator output_allocator;
  bool cancelled()const{return cancel&&cancel(context);}
 };
 struct Result{
- std::vector<V3> p;std::vector<u32> indices;
+ FallibleBuffer<V3> p;FallibleBuffer<u32> indices;
  std::unordered_map<u64,u32> crossings;
  size_t peak_crossings=0,peak_buckets=0;
  size_t peak_vertices=0,peak_indices=0;
  MeshLimits limits;MeshStatus status=MeshStatus::ok;
  void discard(MeshStatus why){
-  status=why;std::vector<V3>().swap(p);std::vector<u32>().swap(indices);
+  status=why;p.clear();indices.clear();
   std::unordered_map<u64,u32>().swap(crossings);
  }
- template<class T>static void grow(std::vector<T>&v,size_t need,size_t limit){
-  if(need>v.capacity())v.reserve(std::min(limit,std::max(need,std::max(size_t(16),v.capacity()*2))));
+ template<class T>static bool grow(FallibleBuffer<T>&v,size_t need,size_t limit){
+  return need<=v.capacity()||v.reserve(std::min(limit,std::max(need,std::max(size_t(16),v.capacity()*2))));
  }
  u32 intersection(Sample a,Sample b){
   if(status!=MeshStatus::ok)return 0;
@@ -38,7 +40,7 @@ struct Result{
   // Canonical endpoint order makes adjacent independently built regions agree.
   double t=double(a.d)/(double(a.d)-b.d);
   V3 point={float(a.p.x+(b.p.x-a.p.x)*t),float(a.p.y+(b.p.y-a.p.y)*t),float(a.p.z+(b.p.z-a.p.z)*t)};
-  grow(p,p.size()+1,limits.vertices);
+  if(!grow(p,p.size()+1,limits.vertices)){status=MeshStatus::allocation_failed;return 0;}
   u32 id=u32(p.size());p.push_back(point);crossings.emplace(key,id);
   peak_vertices=std::max(peak_vertices,p.size());
   peak_crossings=std::max(peak_crossings,crossings.size());
@@ -48,8 +50,8 @@ struct Result{
   if(status!=MeshStatus::ok)return;
   if(indices.size()>limits.indices||limits.indices-indices.size()<3){status=MeshStatus::output_limit;return;}
   if(dot(cross(p[b]-p[a],p[c]-p[a]),outward)<0)std::swap(b,c);
-  grow(indices,indices.size()+3,limits.indices);
-  indices.insert(indices.end(),{a,b,c});
+  if(!grow(indices,indices.size()+3,limits.indices)){status=MeshStatus::allocation_failed;return;}
+  indices.push_back(a);indices.push_back(b);indices.push_back(c);
   peak_indices=std::max(peak_indices,indices.size());
  }
  void tetra(const Sample*s,const int*q){
@@ -70,7 +72,7 @@ struct Result{
 
 static bool valid_region(int x0,int z0,int size,const MeshLimits&limits){
  return size>=1&&size<=32&&x0>=0&&z0>=0&&x0<=WORLD-size&&z0<=WORLD-size&&
-        limits.vertices<=std::numeric_limits<u32>::max()&&limits.indices<=std::numeric_limits<u32>::max();
+        limits.vertices<=std::numeric_limits<u32>::max()&&limits.indices<=std::numeric_limits<u32>::max()&&limits.output_allocator.allocate&&limits.output_allocator.release;
 }
 
 // Providers must return two contiguous (size+1)^2 planes for each requested Y.
@@ -80,7 +82,7 @@ static Result mesh_layers(int x0,int z0,int size,bool retire_edges,Layers&&layer
  if(!valid_region(x0,z0,size,limits)){Result invalid;invalid.status=MeshStatus::invalid_input;return invalid;}
  int n=size+1;
  auto index=[&](int x,int y,int z){return x+n*(z+n*y);};
- Result result;result.limits=limits;
+ Result result;result.limits=limits;result.p.set_allocator(limits.output_allocator);result.indices.set_allocator(limits.output_allocator);
  constexpr int tets[6][4]={{0,1,3,7},{0,3,2,7},{0,2,6,7},{0,6,4,7},{0,4,5,7},{0,5,1,7}};
  for(int y=0;y<256;y++){
  if(limits.cancelled()){result.discard(MeshStatus::cancelled);return result;}

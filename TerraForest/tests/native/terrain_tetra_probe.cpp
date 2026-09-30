@@ -110,6 +110,35 @@ int main(int argc,char**argv){
   if(rolling.indices!=retained.indices||rolling.p.size()!=retained.p.size()||std::memcmp(rolling.p.data(),retained.p.data(),rolling.p.size()*sizeof(V3))||rolling.peak_crossings>=retained.peak_crossings)return 8;
   fprintf(stderr,"{\"name\":\"256 alternating layers\",\"mesh_parity\":true,\"size\":8,\"peak_crossings\":%zu,\"control_peak_crossings\":%zu,\"peak_buckets\":%zu,\"control_peak_buckets\":%zu}\n",rolling.peak_crossings,retained.peak_crossings,rolling.peak_buckets,retained.peak_buckets);
   auto empty_failure=[](const Result&r,MeshStatus status){return r.status==status&&r.p.empty()&&r.indices.empty()&&r.crossings.empty()&&r.p.capacity()==0&&r.indices.capacity()==0;};
+  struct Allocations{int fail=0,calls=0,live=0;};
+  auto allocator=[](Allocations&state){
+   BufferAllocator hooks;hooks.context=&state;
+   hooks.allocate=[](void*p,size_t bytes)->void*{auto&s=*static_cast<Allocations*>(p);if(++s.calls==s.fail)return nullptr;void*memory=std::malloc(bytes);if(memory)s.live++;return memory;};
+   hooks.release=[](void*p,void*memory){auto&s=*static_cast<Allocations*>(p);s.live--;std::free(memory);};
+   return hooks;
+  };
+  Allocations allocation_baseline;
+  {
+   MeshLimits limits;limits.output_allocator=allocator(allocation_baseline);
+   Result output=mesh_field(field,1280,1280,size,true,limits);
+   if(output.status!=MeshStatus::ok||output.indices!=rolling.indices||output.p.size()!=rolling.p.size()||std::memcmp(output.p.data(),rolling.p.data(),rolling.p.size()*sizeof(V3)))return 28;
+  }
+  if(allocation_baseline.live||allocation_baseline.calls<4)return 29;
+  for(int fail=1;fail<=allocation_baseline.calls;fail++){
+   Allocations state;state.fail=fail;MeshLimits limits;limits.output_allocator=allocator(state);
+   Result output=mesh_field(field,1280,1280,size,true,limits);
+   if(!empty_failure(output,MeshStatus::allocation_failed)||state.live||state.calls!=fail)return 30;
+  }
+  // Allocation failure must not poison a later build or allocator ownership on move.
+  Allocations recovery;
+  {
+   MeshLimits limits;limits.output_allocator=allocator(recovery);
+   Result output=mesh_field(field,1280,1280,size,true,limits);
+   Result moved=std::move(output);
+   if(moved.status!=MeshStatus::ok||!output.p.empty()||!output.indices.empty()||moved.indices!=rolling.indices||moved.p.size()!=rolling.p.size()||std::memcmp(moved.p.data(),rolling.p.data(),rolling.p.size()*sizeof(V3)))return 31;
+  }
+  if(recovery.live)return 32;
+  fprintf(stderr,"{\"name\":\"output allocation failures\",\"injected_failures\":%d,\"empty_failures\":true,\"no_live_buffers\":true,\"retry_and_move_parity\":true}\n",allocation_baseline.calls);
   int invalid_cases=0;
   for(auto region:std::vector<std::array<int,3>>{{-1,1280,8},{1280,-1,8},{1993,1280,8},{1280,1993,8},{std::numeric_limits<int>::max(),1280,8},{1280,1280,0},{1280,1280,-1},{1280,1280,33},{1280,1280,std::numeric_limits<int>::max()}}){
    int calls=0;
