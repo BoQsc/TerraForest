@@ -101,6 +101,16 @@ static void build(World&w,int x0,int z0,int size,const std::string&file){
   (cached?normal_cached_times:normal_reference_times).push_back(elapsed);
  }
  fprintf(stderr,"{\"name\":\"cached normals\",\"size\":%d,\"parity\":%s,\"pairs\":5,\"height_payload_bytes\":%zu,\"reference_median_ms\":%.6f,\"cached_median_ms\":%.6f}\n",size,normal_parity?"true":"false",size_t(size+2)*(size+2)*sizeof(float),median(normal_reference_times),median(normal_cached_times));
+ std::vector<double> density_times,height_times;NormalResult reused;
+ for(int repetition=0;repetition<5;repetition++)for(int pass=0;pass<2;pass++){
+  bool reuse=(ordinal+repetition+pass)%2==0;double tick=now();
+  NormalResult measured=build_region_normals_cached(w,result,x0,z0,size,MeshLimits{},reuse);
+  double elapsed=now()-tick;
+  if(measured.status!=MeshStatus::ok||measured.values!=normals.values)std::exit(49);
+  (reuse?density_times:height_times).push_back(elapsed);
+  if(reuse)reused=std::move(measured);
+ }
+ fprintf(stderr,"{\"name\":\"density reused normals\",\"size\":%d,\"parity\":true,\"pairs\":5,\"scratch_bytes\":%zu,\"requests\":%zu,\"evaluations\":%zu,\"height_median_ms\":%.6f,\"reused_median_ms\":%.6f}\n",size,reused.scratch_bytes,reused.samples,reused.density_evaluations,median(height_times),median(density_times));
  fprintf(stderr,"{\"name\":\"canonical normals\",\"file\":\"%s\",\"passed\":%s,\"vertices\":%zu,\"samples\":%zu,\"ms\":%.6f}\n",file.substr(file.find_last_of("/\\")+1).c_str(),normals.status==MeshStatus::ok?"true":"false",normals.values.size(),normals.samples,normal_ms);
  FILE*nf=fopen((file+".normals").c_str(),"wb");if(!nf)std::exit(2);
  fwrite(normals.values.data(),sizeof(V3),normals.values.size(),nf);fclose(nf);
@@ -276,6 +286,22 @@ int main(int argc,char**argv){
  World w;w.init(1703);
  {
   Result mesh=build_world_region(w,1280,1280,16);
+  NormalResult reference_normals=build_region_normals(w,mesh);
+  std::reverse(mesh.p.begin(),mesh.p.end());
+  NormalResult reversed=build_region_normals_cached(w,mesh,1280,1280,16,MeshLimits{},true);
+  std::reverse(mesh.p.begin(),mesh.p.end());
+  if(reference_normals.status!=MeshStatus::ok||reversed.status!=MeshStatus::ok)return 50;
+  for(size_t i=0;i<mesh.p.size();i++)if(std::memcmp(&reference_normals.values[i],&reversed.values[mesh.p.size()-1-i],sizeof(V3)))return 51;
+  for(int fail=1;fail<=3;fail++){
+   struct State{int calls=0,live=0,fail;};State state{0,0,fail};
+   BufferAllocator hooks;hooks.context=&state;
+   hooks.allocate=[](void*p,size_t bytes)->void*{auto&s=*static_cast<State*>(p);if(++s.calls==s.fail)return nullptr;void*m=std::malloc(bytes);if(m)s.live++;return m;};
+   hooks.release=[](void*p,void*m){static_cast<State*>(p)->live--;std::free(m);};
+   MeshLimits limits;limits.sampler_allocator=limits.output_allocator=hooks;
+   NormalResult failed=build_region_normals_cached(w,mesh,1280,1280,16,limits,true);
+   if(failed.status!=MeshStatus::allocation_failed||!failed.values.empty()||state.live||state.calls!=fail)return 52;
+  }
+  fprintf(stderr,"{\"name\":\"density normal controls\",\"reverse_parity\":true,\"allocation_failures\":3,\"no_live_buffers\":true}\n");
   MeshLimits failure;failure.sampler_allocator.allocate=[](void*,size_t)->void*{return nullptr;};
   NormalResult a=build_region_normals_cached(w,mesh,1280,1280,16,failure);
   failure=MeshLimits{};failure.output_allocator.allocate=[](void*,size_t)->void*{return nullptr;};

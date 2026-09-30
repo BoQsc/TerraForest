@@ -38,6 +38,11 @@ traffic is included in this test.
 
 ## Required primitive pressure matrix — not yet certified
 
+The [bounded normal density cache](TERRAIN_CANDIDATE_NORMAL_DENSITY.md) reduces
+the retained 32 m cave normal pass from 16.19 to 4.92 ms versus height-only
+caching, preserving 75 paired outputs. Scratch is 32,368 bytes for that owner.
+Integrated pipeline and graphical qualification remain outstanding.
+
 The [normal column cache](TERRAIN_CANDIDATE_NORMAL_CACHE.md) preserves all 75
 paired outputs and reduces aggregate fixture median normal time by 57.2%.
 The 32 m cave still takes 12.15 ms for normals alone; gameplay adoption and
