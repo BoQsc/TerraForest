@@ -11,7 +11,7 @@ namespace terraforest {
 using namespace godot;
 namespace {
 constexpr int COUNT=21824;
-enum Flag { PRESENT=1,DIRTY=2,VISIBLE=4,SPLIT=8,CHOSEN=16 };
+enum Flag { PRESENT=1,DIRTY=2,VISIBLE=4,SPLIT=8,CHOSEN=16,RETAINED_COARSE=32 };
 int index_for(Vector3i key) {
     if(key.x<0||key.y<0||key.x>=2048||key.y>=2048)return -1;
     int offset=0;
@@ -36,6 +36,9 @@ struct State {
             Dictionary tile=value;Variant dirty=tile.get("dirty",false);
             if(dirty.get_type()!=Variant::BOOL)return false;
             flags[index]|=PRESENT|(bool(dirty)?DIRTY:0);
+            Vector3i tile_key=key;Variant step=tile.get("step",std::max(1,tile_key.z/32));
+            if(step.get_type()!=Variant::INT||int64_t(step)<1||int64_t(step)>8)return false;
+            if(int64_t(step)>std::max(1,tile_key.z/32))flags[index]|=RETAINED_COARSE;
         }
         Array split_keys=split.keys();
         for(int i=0;i<split_keys.size();i++) {
@@ -71,7 +74,7 @@ void collect(Vector3i key,Vector3 focus,bool collision,State &state,Dictionary &
         double radius=key.z==32?48:(key.z==64?100:key.z*1.4);
         divide=d<radius*((flag&SPLIT)?1.30:1.0);split[key]=divide;
     }
-    if(!(flag&PRESENT)||((flag&DIRTY)&&(!divide||(flag&VISIBLE)))) {
+    if(!(flag&PRESENT)||(flag&RETAINED_COARSE)||((flag&DIRTY)&&(!divide||(flag&VISIBLE)))) {
         double priority=d+(key.z==256?0:(key.z<=32?20:200));
         if(key.z<=32&&d<25)priority-=5000;
         requests.push_back({key,priority});

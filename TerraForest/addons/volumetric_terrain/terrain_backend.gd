@@ -590,6 +590,17 @@ func _run() -> void:
 		var queue_ms: float = float(Time.get_ticks_usec() - int(job.get("submitted_us", Time.get_ticks_usec()))) / 1000.0
 		if kind == "partition":
 			var partition: Dictionary=native.experimental_partition_mesh_budgeted(job.packet,128*1024*1024,128*1024*1024,job.build_epoch)
+			var chunks: Array[Dictionary]=[]
+			for packet: PackedByteArray in partition.packets:
+				var decoded: Dictionary=Codec.decode_mesh(packet)
+				if decoded.has("error"): chunks.clear();break
+				var prepared: Dictionary=collision_recipes.prepare(decoded.faces,_collision_piece_triangles)
+				if not prepared.ok: chunks.clear();break
+				decoded["collision_pieces"]=prepared.pieces
+				decoded["faces"]=PackedVector3Array()
+				decoded["worker_ms"]=0.0
+				chunks.append(decoded)
+			partition["chunks"]=chunks
 			partition["kind"]="partition"
 			partition["token"]=job.token
 			partition["epoch"]=job.epoch

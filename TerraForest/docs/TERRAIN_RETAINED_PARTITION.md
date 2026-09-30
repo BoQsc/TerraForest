@@ -8,8 +8,9 @@ normal, material weights and visibility channels are interpolated along original
 triangles. A triangle lying entirely on a split plane has one owner.
 
 This supplies retained surrounding geometry for the next local-replacement
-integration. The backend accepts a bounded `partition` job, but the stream does
-not request or publish these jobs automatically yet. Connecting a
+integration. The backend accepts a bounded `partition` job, and the stream's
+explicit `request_partition(key)` API stages and publishes its four children.
+Distance scheduling and mining do not request partitions automatically yet. Connecting a
 newly reconstructed edited region to this retained surface remains unfinished;
 partitioning an old surface alone does not prove that connection is watertight.
 The old mesher's topology and approximation errors are retained, not repaired.
@@ -64,3 +65,27 @@ The cancellation fixture has 1.5 million indices. It verifies actual admitted wo
 was interrupted, but its diagnostic join time is not a hard cancellation deadline.
 The tests do not yet inject every upstream allocation failure or qualify final
 scene publication, edited seams, FPS or long-run memory behavior.
+
+## Scene publication follow-up
+
+The stream now stages all four children before installing any of them. Parent
+identity, stamp, scene epoch and edit ticket are checked through preparation.
+Child reservations prevent ordinary duplicate builds. Cancellation releases
+reservations and retires prepared nodes; edits, reload and shutdown abandon the
+transaction. Both admission and final publication check resident entry/byte limits.
+Source packet encoding still occurs on the caller thread and is not latency-qualified.
+
+Children record their actual inherited LOD step. A 32 m child with step 8 cannot
+claim fine player readiness, even if empty. The planner continues to request a
+proper replacement for retained geometry coarser than the desired tile resolution.
+The parent is retained in cache and coverage changes through the existing planner.
+
+51 headless scene checks pass: three nested partitions (256→128→64→32), held
+partial preparation, parent retention, complete child publication, coarse readiness
+rejection, fine 32→16 collision replacement with a matching physics ray, parent
+stamp invalidation after a child was prepared, cache-limit rejection and shutdown.
+The existing 54 transition checks and 42 snapshot-worker publication checks also
+pass. These runs do not verify visual seams between retained and newly mined
+geometry, automatic scheduling, vegetation, dynamic player motion or 1080p FPS.
+Evidence is retained in `evidence/retained_partition_scene/`; reproduce with
+`python tools/probe_terrain_partition_stage.py --godot PATH`.

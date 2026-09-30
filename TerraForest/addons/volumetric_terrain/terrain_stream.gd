@@ -40,6 +40,8 @@ const FINE_SIZE: int = 16
 @export_range(100, 16000, 1) var main_build_budget_us: int = 2500
 const LIGHT_UPLOAD_BYTES: int = 256 * 1024
 var backend = Backend.new()
+var partition_request: Dictionary = {}
+var _partition_serial: int = 0
 var planner: RefCounted
 var material: Material
 var focus := Vector3(960, 110, 1310)
@@ -149,6 +151,7 @@ func shutdown() -> void:
 	if stopping:
 		return
 	stopping = true
+	_cancel_partition()
 	_cancel_density_requests("cancelled")
 	set_process(false)
 	if RenderingServer.frame_post_draw.is_connected(_post_draw):
@@ -304,7 +307,9 @@ func _receive(result: Dictionary) -> void:
 			unresolved_light_rays = light.decode_u32(20)
 			reused_light_probes = light.decode_u32(24)
 	var kind: String = str(result.get("kind", ""))
-	if kind == "startup" or kind == "reload":
+	if kind == "partition":
+		_receive_partition(result)
+	elif kind == "startup" or kind == "reload":
 		if kind == "reload" and int(result["epoch"]) != epoch:
 			return
 		_read_modified(result["modified"])
@@ -476,6 +481,7 @@ func _begin_entry(data: Dictionary) -> Dictionary:
 	last_mesh_upload_ms = float(Time.get_ticks_usec() - upload_begin) / 1000.0
 	_record_stage("mesh upload/create", last_mesh_upload_ms)
 	return {"node": mesh_node, "body": body, "dirty": false, "stamp": data["stamp"],
+		"step": int(data.get("step",maxi(1,key.z/32))),
 		"arrays": arrays, "attribute_layout": layout, "collision_shapes": {}, "lighting_only": bool(data.get("lighting_only", false)),
 		"triangles": int(data["triangles"]), "bytes": int(data["bytes"]),
 		"used": Time.get_ticks_msec(), "key": key, "active": false, "cavity_visibility": bool(data.get("cavity_visibility", true))}
@@ -514,6 +520,7 @@ func _prepare_piece() -> bool:
 
 func _drain_staging() -> void:
 	var begin: int = Time.get_ticks_usec()
+	if not partition_request.is_empty() and not _partition_valid(): _cancel_partition()
 	if not lighting_upload.is_empty() and not pending_edit:
 		_apply_lighting_piece()
 		if not lighting_upload.is_empty():
@@ -553,7 +560,10 @@ func _drain_staging() -> void:
 				preparation.clear()
 				last_mesh_ms = float(data["worker_ms"])
 				worker_builds += 1
-				if str(data["kind"]) == "batch":
+				if str(data["kind"]) == "partition_child":
+					partition_request.entries[key]=entry
+					if partition_request.entries.size()==4: _commit_partition()
+				elif str(data["kind"]) == "batch":
 					if int(data["ticket"]) != edit_ticket:
 						_destroy_entry(entry)
 						continue
@@ -619,6 +629,8 @@ func _staging_valid(data: Dictionary) -> bool:
 	var key: Vector3i = data["key"]
 	if int(data["epoch"]) != epoch or int(data["stamp"]) != int(stamps.get(key, 0)):
 		return false
+	if str(data.get("kind",""))=="partition_child":
+		return _partition_valid() and int(data.token)==int(partition_request.token)
 	if str(data.get("kind", "")) == "relight":
 		return int(data["light_ticket"]) == int(lighting_dirty.get(key, -1))
 	return true
@@ -806,6 +818,76 @@ func _schedule() -> void:
 			in_flight[key] = version
 			available -= 1
 
+func request_partition(key: Vector3i) -> bool:
+	if stopping or not world_ready or pending_edit or not partition_request.is_empty() or key.z<=16 or not visible_cut.has(key) or not tiles.has(key): return false
+	var parent: Dictionary=tiles[key]
+	if bool(parent.dirty) or int(parent.stamp)!=int(stamps.get(key,0)) or in_flight.has(key) or staging_versions.has(key): return false
+	var half:=key.z/2
+	var children: Dictionary={}
+	for offset: Vector2i in [Vector2i(0,0),Vector2i(1,0),Vector2i(0,1),Vector2i(1,1)]:
+		var child:=Vector3i(key.x+offset.x*half,key.y+offset.y*half,half)
+		if tiles.has(child) or in_flight.has(child) or staging_versions.has(child): return false
+		children[child]=int(stamps.get(child,0))
+	var source:=parent.duplicate()
+	source["faces"]=PackedVector3Array()
+	var packet:=Codec.encode_decoded_mesh(source)
+	_partition_serial+=1
+	if not backend.submit({"kind":"partition","packet":packet,"token":_partition_serial,"epoch":epoch,"stamp":int(stamps.get(key,0))}): return false
+	partition_request={"key":key,"parent":parent,"stamp":int(stamps.get(key,0)),"epoch":epoch,"ticket":edit_ticket,"token":_partition_serial,"children":children,"entries":{}}
+	for child: Vector3i in children: in_flight[child]=Vector2i(epoch,children[child])
+	return true
+
+func _partition_valid() -> bool:
+	if partition_request.is_empty() or stopping or not world_ready or pending_edit: return false
+	var request:=partition_request
+	if request.epoch!=epoch or request.ticket!=edit_ticket or not visible_cut.has(request.key) or not tiles.has(request.key): return false
+	if tiles[request.key]!=request.parent or tiles[request.key].dirty or int(stamps.get(request.key,0))!=request.stamp: return false
+	for child: Vector3i in request.children:
+		if tiles.has(child) or int(stamps.get(child,0))!=request.children[child]: return false
+	return true
+
+func _cancel_partition() -> void:
+	if partition_request.is_empty(): return
+	var request:=partition_request
+	partition_request={}
+	for child: Vector3i in request.children:
+		if in_flight.get(child)==Vector2i(request.epoch,request.children[child]): in_flight.erase(child)
+	for entry: Dictionary in request.entries.values(): _destroy_entry(entry)
+	staging=staging.filter(func(data: Dictionary): return data.get("kind","")!="partition_child" or data.get("token")!=request.token)
+	if not preparation.is_empty() and preparation.data.get("kind","")=="partition_child" and preparation.data.get("token")==request.token:
+		_destroy_entry(preparation.entry)
+		preparation.clear()
+
+func _receive_partition(result: Dictionary) -> void:
+	if partition_request.is_empty() or result.get("token")!=partition_request.token: return
+	if partition_request.get("received",false): return
+	if not _partition_valid() or result.get("epoch")!=epoch or result.get("stamp")!=partition_request.stamp or result.get("cancelled",false) or result.get("chunks",[]).size()!=4:
+		_cancel_partition();return
+	var received: Dictionary={}
+	var added_bytes: int=0
+	for data: Dictionary in result.chunks:
+		if not partition_request.children.has(data.key) or received.has(data.key): _cancel_partition();return
+		received[data.key]=true
+		added_bytes+=int(data.bytes)
+	if tiles.size()+4>cache_entry_limit or cache_bytes+added_bytes>cache_byte_limit: _cancel_partition();return
+	partition_request["received"]=true
+	for data: Dictionary in result.chunks:
+		data.merge({"kind":"partition_child","token":partition_request.token,"epoch":epoch,"stamp":partition_request.children[data.key]},true)
+		staging.append(data)
+
+func _commit_partition() -> void:
+	if not _partition_valid(): _cancel_partition();return
+	var request:=partition_request
+	var added_bytes: int=0
+	for entry: Dictionary in request.entries.values(): added_bytes+=int(entry.bytes)
+	if tiles.size()+4>cache_entry_limit or cache_bytes+added_bytes>cache_byte_limit: _cancel_partition();return
+	partition_request={}
+	for key: Vector3i in request.entries:
+		in_flight.erase(key)
+		_install(key,request.entries[key])
+	split_state[request.key]=true
+	_update_cut()
+
 func _update_cut() -> void:
 	if pending_edit:
 		return
@@ -825,7 +907,7 @@ func _update_cut() -> void:
 		_set_active(tiles[key], true)
 		total_triangles += int(tiles[key]["triangles"])
 		# A completed EMPTY fine patch has valid empty collision, not missing data.
-		if key.z <= 32 and (is_instance_valid(tiles[key]["body"]) or int(tiles[key]["triangles"]) == 0):
+		if key.z <= 32 and int(tiles[key].get("step",1))==1 and (is_instance_valid(tiles[key]["body"]) or int(tiles[key]["triangles"]) == 0):
 			for z in range(key.y / FINE_SIZE, (key.y + key.z) / FINE_SIZE):
 				for x in range(key.x / FINE_SIZE, (key.x + key.z) / FINE_SIZE):
 					active_leaves[Vector2i(x, z)] = true
@@ -966,6 +1048,7 @@ func edit(data: PackedByteArray, lo: Vector3, hi: Vector3, captured_us: int = 0,
 		commands = [data]
 	if commands.size() > 4 or (not member_captures.is_empty() and member_captures.size() != commands.size()):
 		return false
+	_cancel_partition()
 	note_interaction()
 	# Start timing BEFORE invalidation, not after unmeasured input-thread work.
 	var accepted_us: int = Time.get_ticks_usec()
@@ -1049,6 +1132,7 @@ func reload_world(reset: bool = false) -> void:
 	if pending_edit:
 		message_changed.emit("Wait for the pending edit before loading/resetting")
 		return
+	_cancel_partition()
 	reload_started.emit()
 	epoch += 1
 	initial_loading = true
