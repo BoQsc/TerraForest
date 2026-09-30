@@ -38,6 +38,10 @@ traffic is included in this test.
 
 ## Required primitive pressure matrix — not yet certified
 
+The [boundary/topology probe](TERRAIN_BOUNDARY_DECISION.md) preserves fine geometry
+across tested partitions but rejects existing cave topology. Edited regions also
+show no LOD triangle reduction. Both gate reuse of the current mesher unchanged.
+
 The subsequent [cheap locality probe](TERRAIN_LOCALITY_DECISION.md) rejects both
 extraction-only optimization and covering distant terrain with fine regions.
 It measures a promising local component cost, but does not qualify a replacement.
