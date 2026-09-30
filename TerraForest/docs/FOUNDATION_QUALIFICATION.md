@@ -38,6 +38,13 @@ traffic is included in this test.
 
 ## Required primitive pressure matrix — not yet certified
 
+The [sparse snapshot follow-up](TERRAIN_SPARSE_SNAPSHOT.md) passes 36 exact
+geometry comparisons after source-world release, including fully populated and
+world-edge owners with 0/32/256 distant stored pages. Local lookup count and
+captured bytes remain unchanged by distant pages. Fully populated 32 m capture
+takes 0.95–1.13 ms but retains 1.25 MB; runtime concurrency and memory admission
+remain unqualified. This supports continuing the sparse-input design.
+
 The [region snapshot experiment](TERRAIN_REGION_SNAPSHOT.md) preserves exact
 geometry in 18 comparisons after releasing the source world. Eager 32 m density
 capture nevertheless takes 12.38–18.70 ms and retains 1,119,492 bytes per owner,
