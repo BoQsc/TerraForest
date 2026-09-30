@@ -38,6 +38,12 @@ traffic is included in this test.
 
 ## Required primitive pressure matrix — not yet certified
 
+The [sustained snapshot bridge test](TERRAIN_SNAPSHOT_LOAD.md) completes 640
+geometry jobs and 6,569 concurrent density calls with no correctness or provisional
+call-latency failures. Query maximum is 9.08 ms; completion nevertheless reaches
+135.269 ms. The workload repeats an unedited fixed grid and discards returned
+packets; it does not qualify mining, residency, rendering or endurance.
+
 The [opt-in Godot snapshot API](TERRAIN_SNAPSHOT_BRIDGE.md) passes 15 engine
 checks including geometry transfer and real reset/load/cancel/edit invalidation.
 Both extension variants build; the release library also retains 13 density-command
