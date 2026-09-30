@@ -38,6 +38,12 @@ traffic is included in this test.
 
 ## Required primitive pressure matrix — not yet certified
 
+The [opt-in Godot snapshot API](TERRAIN_SNAPSHOT_BRIDGE.md) passes 15 engine
+checks including geometry transfer and real reset/load/cancel/edit invalidation.
+Both extension variants build; the release library also retains 13 density-command
+and 42 worker-publication checks. Normal gameplay does not use this geometry-only
+API. Godot array copies, loaded poll latency and downstream memory remain unqualified.
+
 The [bounded native snapshot worker](TERRAIN_SNAPSHOT_WORKER.md) connects capture,
 meshing, two fixed outstanding slots and separate snapshot/mesh budgets. Seven
 groups pass for exact completions, stale revision/epoch rejection, exhaustion

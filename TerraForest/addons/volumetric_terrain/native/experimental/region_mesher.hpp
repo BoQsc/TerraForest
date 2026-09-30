@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: 0BSD
 // Experimental geometry-only mesher. Not registered in the game extension.
 #pragma once
-#include "core.h"
+#include "../core.h"
 #include "fallible_buffer.hpp"
 #include "lattice_edge_table.hpp"
 #include <vector>

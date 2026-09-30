@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: 0BSD
 #pragma once
 #include "fallible_buffer.hpp"
-#include "core.h"
+#include "../core.h"
 #include <algorithm>
 
 namespace terraforest::experimental {
