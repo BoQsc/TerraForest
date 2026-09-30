@@ -14,9 +14,9 @@ struct NormalResult {
 // No owner-relative clamping or triangle adjacency, so shared positions use the
 // same samples. Not a geometric normal of the tetrahedral interpolant.
 template<class SampleDensity>
-static NormalResult build_normals_from_samples(const World&w,const Result&mesh,const MeshLimits&limits,SampleDensity&&sample){
+static NormalResult build_normals_from_samples(const Result&mesh,const MeshLimits&limits,SampleDensity&&sample){
  NormalResult out;
- if(!w.edit_columns||mesh.status!=MeshStatus::ok||!limits.output_allocator.allocate||!limits.output_allocator.release){out.status=MeshStatus::invalid_input;return out;}
+ if(mesh.status!=MeshStatus::ok||!limits.output_allocator.allocate||!limits.output_allocator.release){out.status=MeshStatus::invalid_input;return out;}
  if(limits.cancelled()){out.status=MeshStatus::cancelled;return out;}
  if(mesh.p.size()>limits.vertices){out.status=MeshStatus::output_limit;return out;}
  out.values.set_allocator(limits.output_allocator);
@@ -43,7 +43,8 @@ static NormalResult build_normals_from_samples(const World&w,const Result&mesh,c
  return out;
 }
 static NormalResult build_region_normals(const World&w,const Result&mesh,const MeshLimits&limits=MeshLimits{}){
- return build_normals_from_samples(w,mesh,limits,[&](int x,int y,int z){return w.sample(x,y,z);});
+ if(!w.edit_columns){NormalResult failed;failed.status=MeshStatus::invalid_input;return failed;}
+ return build_normals_from_samples(mesh,limits,[&](int x,int y,int z){return w.sample(x,y,z);});
 }
 // Retain one height per horizontal lattice column, including the positive halo
 // read by canonical cells on the region boundary. No persistent world cache.
@@ -73,7 +74,7 @@ static NormalResult build_region_normals_cached(const World&w,const Result&mesh,
   if(page>=0)return float(w.pages[page].d[(x&15)+16*((z&15)+16*(y&15))])/SDF_SCALE;
   return w.base({float(x),float(y),float(z)},heights[(x-x0)+n*(z-z0)]);
  };
- NormalResult result=build_normals_from_samples(w,mesh,limits,[&](int x,int y,int z){
+ NormalResult result=build_normals_from_samples(mesh,limits,[&](int x,int y,int z){
   if(!reuse_density)return evaluate(x,y,z);
   Entry&entry=density[size_t(y%3)*n*n+(z-z0)*n+(x-x0)];
   if(entry.y!=y){entry.value=evaluate(x,y,z);entry.y=y;}

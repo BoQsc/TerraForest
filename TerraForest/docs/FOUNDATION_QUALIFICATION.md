@@ -38,6 +38,12 @@ traffic is included in this test.
 
 ## Required primitive pressure matrix — not yet certified
 
+The [snapshot normal pass](TERRAIN_SNAPSHOT_NORMALS.md) preserves exact geometry
+and reference normals in ten cases after source release, including positive-border
+edits that change normals alone. Thirty allocation failures and ten initial
+cancellations return empty results. Async worker/packet integration and expanded
+normal invalidation remain outstanding; normal timings are not isolated evidence.
+
 The [sustained distant-edit test](TERRAIN_SNAPSHOT_EDITS.md) completes 640 mesh
 jobs alongside 640 changing density edits and 8,127 queries. Every edit occurs
 with pending work; no completion is discarded. Provisional call gates pass,
