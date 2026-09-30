@@ -38,6 +38,11 @@ traffic is included in this test.
 
 ## Required primitive pressure matrix — not yet certified
 
+The [stream-side density gate](TERRAIN_DENSITY_STREAM.md) passes 22 checks
+using held real replies across edit/reset/shutdown. Late hits and reused
+caller tokens cannot bypass revision/epoch checks. Player aim freshness, hit
+arbitration and latency under load remain outstanding.
+
 The [bounded backend density job](TERRAIN_DENSITY_BACKEND.md) passes 38 real
 queue checks, including eight outstanding requests, revision rejection and
 shutdown accounting. The existing 42 publication checks still pass. Final

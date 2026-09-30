@@ -4,6 +4,10 @@ extends Node3D
 signal initialized(message: String)
 signal message_changed(message: String)
 signal height_received(point: Vector3, height: float, token: int)
+signal density_ray_received(result: Dictionary)
+var native_revision: int = 0
+var _density_serial: int = 0
+var _density_requests: Dictionary = {}
 signal edit_published(latency_ms: float)
 signal edit_measured(record: Dictionary)
 signal work_measured(record: Dictionary)
@@ -145,6 +149,7 @@ func shutdown() -> void:
 	if stopping:
 		return
 	stopping = true
+	_cancel_density_requests("cancelled")
 	set_process(false)
 	if RenderingServer.frame_post_draw.is_connected(_post_draw):
 		RenderingServer.frame_post_draw.disconnect(_post_draw)
@@ -241,6 +246,7 @@ func _retire_some() -> void:
 
 func _read_stats(data: PackedByteArray) -> void:
 	if Codec.reply_ok(data) and data.size() >= 32:
+		native_revision = data.decode_u32(12)
 		total_edits = data.decode_u32(16)
 		sdf_pages = data.decode_u32(20)
 		blocks = data.decode_u32(24)
@@ -313,6 +319,20 @@ func _receive(result: Dictionary) -> void:
 		message_changed.emit(text)
 		initialized.emit(text)
 		schedule_timer = 0.0
+	elif kind == "density_ray":
+		var serial: int=int(result.get("token",-1))
+		if not _density_requests.has(serial): return
+		var request: Dictionary=_density_requests[serial]
+		_density_requests.erase(serial)
+		var reply := result.duplicate()
+		reply["token"]=request.token
+		if stopping or not world_ready or pending_edit or request.epoch!=epoch or request.revision!=native_revision or request.ticket!=edit_ticket or int(result.get("epoch",-1))!=request.epoch or int(result.get("requested_revision",-1))!=request.revision:
+			reply["status"]="stale"
+		elif str(reply.get("status","error")) in ["hit","miss","work_limit"] and int(reply.get("revision",-1))!=native_revision:
+			reply["status"]="stale"
+		if reply.get("status","")!="hit":
+			reply.erase("position");reply.erase("fraction")
+		density_ray_received.emit(reply)
 	elif kind == "height":
 		var reply: PackedByteArray = result["reply"]
 		if Codec.reply_ok(reply) and reply.size() >= 16:
@@ -418,6 +438,7 @@ func _receive(result: Dictionary) -> void:
 func _fail(text: String) -> void:
 	latest_error = text
 	world_ready = false
+	_cancel_density_requests("cancelled")
 	push_error(text)
 	message_changed.emit("ERROR: " + text)
 
@@ -832,6 +853,20 @@ func player_region_ready(point: Vector3) -> bool:
 func request_height(point: Vector3, token: int) -> void:
 	backend.submit({"kind": "height", "point": point, "token": token}, true)
 
+func request_density_ray(from: Vector3, to: Vector3, token: int, budget: int = 256) -> bool:
+	if stopping or not world_ready or pending_edit or _density_requests.size()>=8 or token<0: return false
+	_density_serial+=1
+	var request := {"token":token,"epoch":epoch,"revision":native_revision,"ticket":edit_ticket}
+	if not backend.submit({"kind":"density_ray","from":from,"to":to,"budget":budget,"token":_density_serial,"epoch":epoch,"revision":native_revision}): return false
+	_density_requests[_density_serial]=request
+	return true
+
+func _cancel_density_requests(status: String) -> void:
+	var requests := _density_requests.values()
+	_density_requests.clear()
+	for request: Dictionary in requests:
+		density_ray_received.emit({"kind":"density_ray","status":status,"token":request.token,"epoch":request.epoch,"requested_revision":request.revision})
+
 func _invalidate(lo: Vector3, hi: Vector3) -> Array[Dictionary]:
 	var affected: Array[Dictionary] = []
 	var refinement: Array[Dictionary] = []
@@ -987,6 +1022,8 @@ func edit(data: PackedByteArray, lo: Vector3, hi: Vector3, captured_us: int = 0,
 		pending_edit = false
 		_rollback_dirty()
 		_fail("Bounded edit queue is full; edit was not submitted")
+	else:
+		_cancel_density_requests("stale")
 	return accepted
 
 func _rollback_dirty() -> void:
@@ -1022,6 +1059,7 @@ func reload_world(reset: bool = false) -> void:
 	lighting_upload.clear()
 	latest_error = ""
 	world_ready = false
+	_cancel_density_requests("stale")
 	for key: Vector3i in tiles:
 		_destroy_entry(tiles[key])
 	for key: Vector3i in staged_batch:
