@@ -69,3 +69,40 @@ GPU performance or endurance. No production code changes are introduced.
 Reproduce with `python tools/probe_terrain_mixed_cut.py --godot PATH`.
 The 56 native requests, mesh hashes, source/DLL hashes, failure coordinates and
 report are retained in `docs/evidence/terrain_mixed_cut/`.
+
+## Dependency isolation follow-up
+
+The probe now additionally builds all six 64 m neighbors at step 1 before and
+after the edit. **All six full-resolution triangle multisets are unchanged.**
+In particular, the three changing cave neighbors have identical extracted
+surfaces but different simplified geometry. This rules out changed extracted
+surface positions/connectivity as the explanation for this witness; the
+history-dependent simplification decisions are responsible for the difference.
+
+A conservative experimental dependency projection takes the native edit bounds,
+rounds to 16 m pages, expands by one neighboring page and two cells for extraction
+support, and selects intersecting simplified owners. It includes four fine owners
+in both cases and the three additional 64 m cave neighbors. Replacing that set
+exactly matches the fresh mixed cut in both fixtures.
+
+This is a tested candidate bound for two fixtures, not a universal proof. It
+projects away Y and can over-invalidate. It uses native edit bounds, not merely
+the brush radius. The raw bounds and selected owners are retained in the report.
+
+**Reject expanding synchronous invalidation as the solution:** the cave's seven
+selected builds total **199.07 ms**, versus **69.91 ms** for its four fine regions,
+before main-thread publication or queueing. This exceeds the existing 150 ms
+whole-interaction rejection ceiling. The mountain remains at four regions and
+6.37 ms. These are single-run native diagnostics, not FPS or latency distributions.
+The extended runner has 19 passing checks and six failures, including the new
+latency rejection; it intentionally exits 1.
+
+The architectural requirement is now more specific: distant simplification must
+not become synchronous edit work merely because edit-history metadata changed
+near an otherwise unchanged extracted surface. A replacement must base retained
+geometry validity on explicit field/approximation dependencies, or schedule a
+validated distant refresh separately. This does not authorize simply removing
+vertex protection, which could erase cave or excavation detail.
+
+Follow-up evidence (68 native requests) is retained separately under
+`docs/evidence/terrain_mixed_dependencies/`; the earlier evidence is unchanged.

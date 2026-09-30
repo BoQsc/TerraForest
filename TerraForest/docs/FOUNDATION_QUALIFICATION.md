@@ -42,6 +42,10 @@ The [mixed-size cut probe](TERRAIN_MIXED_CUT_DECISION.md) preserves tested open
 boundaries with thirteen owners over a 256 m extent. It rejects the cave cut for
 topology and exact local replacement: editing four fine regions also changes
 three coarse neighbors under a fresh rebuild. Dependency bounds remain unresolved.
+Full-resolution controls show those neighbor surfaces are unchanged; the
+simplification changes. Expanding the synchronous rebuild set restores tested
+equivalence but takes 199 ms of native work in the cave fixture, so it is rejected
+as the live-edit solution.
 
 The [publication probe](TERRAIN_PUBLICATION_DECISION.md) passes 35 checks for a
 four-region edit, including actual physics queries before/after the batch swap.

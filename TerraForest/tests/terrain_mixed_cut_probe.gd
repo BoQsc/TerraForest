@@ -3,6 +3,7 @@ const Codec = preload("res://addons/volumetric_terrain/mesh_codec.gd")
 var rows: Array[Dictionary] = []
 var failures := 0
 var core: RefCounted
+var edit_bounds: Dictionary = {}
 
 func _initialize() -> void:
 	run.call_deferred()
@@ -12,7 +13,7 @@ func build(site: String, phase: String, request: Array) -> void:
 	var reply: PackedByteArray = core.execute(Codec.command(1,request))
 	var elapsed := (Time.get_ticks_usec()-begin)/1000.0
 	if not Codec.reply_ok(reply): failures += 1
-	var name := "%s_%s_%d_%d_%d.bin" % [site,phase,request[0],request[1],request[2]]
+	var name := "%s_%s_%d_%d_%d_%d.bin" % [site,phase,request[0],request[1],request[2],request[3]]
 	var file := FileAccess.open("res://reports/"+name,FileAccess.WRITE)
 	file.store_buffer(reply)
 	file.close()
@@ -42,9 +43,13 @@ func run() -> void:
 				point.y = core.execute(Codec.point_command(point)).decode_float(12)
 				var edit: PackedByteArray = core.execute(Codec.brush(point,point,2.5,0,false,1))
 				if not Codec.reply_ok(edit) or edit.decode_u32(16)==0: failures += 1
+				edit_bounds[site[0]] = {"lo":[edit.decode_float(28),edit.decode_float(32),edit.decode_float(36)],"hi":[edit.decode_float(40),edit.decode_float(44),edit.decode_float(48)]}
 			build(site[0],phase,[site[1],site[2],256,8])
 			for request in requests: build(site[0],phase,request)
+			# Full-resolution controls distinguish changed extraction from changed LOD.
+			for request in requests:
+				if request[2]==64: build(site[0],"fine_"+phase,[request[0],request[1],64,1])
 	var file := FileAccess.open("res://reports/terrain_mixed_cut_probe.json",FileAccess.WRITE)
-	file.store_string(JSON.stringify({"failures":failures,"rows":rows}))
+	file.store_string(JSON.stringify({"failures":failures,"rows":rows,"edit_bounds":edit_bounds}))
 	file.close()
 	quit(0 if failures==0 else 1)

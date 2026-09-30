@@ -4,6 +4,7 @@ from pathlib import Path
 import argparse
 import hashlib
 import json
+import math
 import re
 import shutil
 import struct
@@ -66,7 +67,8 @@ with tempfile.TemporaryDirectory(prefix='mixed_cut_', dir=ROOT/'.build') as temp
     summaries = []
     for site in ['mountain','cave']:
         rows = [r for r in raw['rows'] if r['site']==site]
-        meshes = {(r['phase'],tuple(r['request'])):triangles((project/'reports'/r['file']).read_bytes()) for r in rows}
+        all_meshes = {(r['phase'],tuple(r['request'])):triangles((project/'reports'/r['file']).read_bytes()) for r in rows}
+        meshes = {k:v for k,v in all_meshes.items() if k[0] in ['before','after']}
         combined = {}
         for phase in ['before','after']:
             parent = next(m for (p,q),m in meshes.items() if p==phase and q[2]==256)
@@ -92,13 +94,31 @@ with tempfile.TemporaryDirectory(prefix='mixed_cut_', dir=ROOT/'.build') as temp
             if m!=fresh:
                 changed_neighbors.append(dict(request=q,removed=sum((m-fresh).values()),added=sum((fresh-m).values())))
         check(f'{site} replacing only four fine owners equals freshly rebuilt mixed cut',replacement==combined['after'],missing_triangles=sum((combined['after']-replacement).values()),extra_triangles=sum((replacement-combined['after']).values()),changed_coarse_neighbors=changed_neighbors)
+        for (phase,q),m in all_meshes.items():
+            if phase=='fine_before':
+                fresh = all_meshes['fine_after',q]
+                check(f'{site} full-resolution neighbor {q[:2]} unchanged',m==fresh,removed=sum((m-fresh).values()),added=sum((fresh-m).values()))
+        # Conservative XZ projection of edit pages, neighboring pin pages and
+        # extraction halo. This deliberately ignores Y and is a probe, not a
+        # verified universal dependency bound or runtime policy.
+        bounds = raw['edit_bounds'][site]
+        low = [math.floor(bounds['lo'][i]/16)*16-18 for i in [0,2]]
+        high = [(math.floor(bounds['hi'][i]/16)+2)*16+2 for i in [0,2]]
+        selected = {q for phase,q in meshes if phase=='after' and q[2]<256 and
+                    (q[2]==16 or (q[3]>1 and q[0]<=high[0] and q[0]+q[2]>=low[0] and q[1]<=high[1] and q[1]+q[2]>=low[1]))}
+        expanded = Counter()
+        for (phase,q),m in meshes.items():
+            if q[2]<256 and phase==('after' if q in selected else 'before'): expanded.update(m)
+        check(f'{site} page-expanded replacement equals fresh mixed cut',expanded==combined['after'],selected_owners=sorted(selected),projected_lo=low,projected_hi=high)
         after = [r for r in rows if r['phase']=='after']
         parent_row = next(r for r in after if r['request'][2]==256)
         fine_rows = [r for r in after if r['request'][2]==16]
         cut_rows = [r for r in after if r['request'][2]<256]
+        expanded_ms = sum(r['native_ms'] for r in after if tuple(r['request']) in selected)
+        check(f'{site} expanded native work fits whole-interaction rejection ceiling',expanded_ms<=150,native_ms=expanded_ms,ceiling_ms=150)
         parent_triangles = sum(meshes['after',tuple(parent_row['request'])].values())
-        summaries.append(dict(site=site,owners=len(cut_rows),parent_triangles=parent_triangles,cut_triangles=sum(combined['after'].values()),triangle_ratio=sum(combined['after'].values())/parent_triangles,parent_bytes=parent_row['bytes'],cut_bytes=sum(r['bytes'] for r in cut_rows),parent_native_ms=parent_row['native_ms'],four_local_native_ms=sum(r['native_ms'] for r in fine_rows),initial_cut_native_ms=sum(r['native_ms'] for r in cut_rows)))
-    report = dict(failures=sum(not c['passed'] for c in checks),adoption_qualified=False,checks=checks,summary=summaries,native_samples=raw['rows'],elapsed_seconds=time.perf_counter()-begin,mesh_hashes={r['file']:hashlib.sha256((project/'reports'/r['file']).read_bytes()).hexdigest() for r in raw['rows']},source_hashes={str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in [Path(__file__).resolve(),ROOT/'tests/terrain_mixed_cut_probe.gd',source/'mesh_codec.gd',library]},scope='Exact float-position render triangle multisets and open-edge comparison. Existing mesher; fixed mixed-size partitions, two sites, one excavation each. No shading/material continuity, interpolation error, full manifold proof, live coverage transition, GPU, physics or endurance qualification.')
+        summaries.append(dict(site=site,owners=len(cut_rows),parent_triangles=parent_triangles,cut_triangles=sum(combined['after'].values()),triangle_ratio=sum(combined['after'].values())/parent_triangles,parent_bytes=parent_row['bytes'],cut_bytes=sum(r['bytes'] for r in cut_rows),parent_native_ms=parent_row['native_ms'],four_local_native_ms=sum(r['native_ms'] for r in fine_rows),expanded_owners=len(selected),expanded_native_ms=sum(r['native_ms'] for r in after if tuple(r['request']) in selected),initial_cut_native_ms=sum(r['native_ms'] for r in cut_rows)))
+    report = dict(failures=sum(not c['passed'] for c in checks),adoption_qualified=False,checks=checks,summary=summaries,edit_bounds=raw['edit_bounds'],native_samples=raw['rows'],elapsed_seconds=time.perf_counter()-begin,mesh_hashes={r['file']:hashlib.sha256((project/'reports'/r['file']).read_bytes()).hexdigest() for r in raw['rows']},source_hashes={str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in [Path(__file__).resolve(),ROOT/'tests/terrain_mixed_cut_probe.gd',source/'mesh_codec.gd',library]},scope='Exact float-position render triangle multisets and open-edge comparison. Existing mesher; fixed mixed-size partitions, two sites, one excavation each. Expanded dependency bounds are conservative experimental XZ projections, not universally verified. No shading/material continuity, interpolation error, full manifold proof, live coverage transition, GPU, physics or endurance qualification.')
     (ROOT/'reports/terrain_mixed_cut_probe.json').write_text(json.dumps(report,indent=2)+'\n')
     print(json.dumps(summaries,indent=2))
     raise SystemExit(bool(report['failures']))
