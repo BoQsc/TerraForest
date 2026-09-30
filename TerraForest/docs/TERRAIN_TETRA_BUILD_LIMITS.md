@@ -44,3 +44,28 @@ advertising this as a resilient production mesher yet.
 
 Run `python tools/probe_terrain_tetra.py`; evidence and hashes are retained in
 `docs/evidence/terrain_tetra_build_limits/`.
+
+## Native epoch across threads
+
+A follow-up connects the callback to `terrain_build_epoch` and advances the
+epoch with `terrain_cancel_builds`, using separate `BuildControl` objects for
+two worlds. A real `std::thread` runs the mesher on the alternating-layer field.
+A condition-variable barrier holds its fifth cancellation checkpoint after it
+has accumulated **119 vertices**. The controlling thread advances only that
+world's epoch, builds an unaffected second-world result, releases the barrier
+and joins the worker.
+
+The interrupted result has cancellation status and empty geometry. The other
+world's epoch and mesh remain unchanged. A retry using the advanced epoch
+reproduces the complete reference bytes. Startup synchronization has a five-second
+timeout and joins/releases the worker on the timeout path; no sleep-based race
+is used. The full probe now passes **26 checks**.
+
+This establishes cross-thread epoch observation and isolation for the candidate
+callback. The two world objects supply cancellation controls only; the geometry
+input is the retained immutable synthetic field. It does not test concurrent
+world mutation or connect the candidate to the Godot worker, packet codec or
+publication state machine. The deliberately held checkpoint is not cancellation
+latency evidence. Initial sampler setup and allocation-failure limitations above
+still apply. Evidence is retained separately in
+`docs/evidence/terrain_tetra_epoch/`.

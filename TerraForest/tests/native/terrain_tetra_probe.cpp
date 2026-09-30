@@ -9,6 +9,9 @@
 #include <cstdio>
 #include <string>
 #include <cstring>
+#include <thread>
+#include <mutex>
+#include <condition_variable>
 
 static double now(){return std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now().time_since_epoch()).count();}
 struct Sample{V3 p;float d;u32 id;};
@@ -268,6 +271,46 @@ int main(int argc,char**argv){
   Result recovered=mesh_field(field,1280,1280,size,true,exact);
   if(recovered.status!=MeshStatus::ok||recovered.indices!=rolling.indices||recovered.p.size()!=rolling.p.size()||std::memcmp(recovered.p.data(),rolling.p.data(),rolling.p.size()*sizeof(V3))||recovered.p.capacity()>exact.vertices||recovered.indices.capacity()>exact.indices)return 14;
   fprintf(stderr,"{\"name\":\"exact output limits and recovery\",\"mesh_parity\":true}\n");
+  // Use the same per-world atomic epoch API as the native terrain bridge.
+  // A synchronization barrier makes interruption happen after geometry exists,
+  // rather than relying on a sleep or hoping the worker has started.
+  BuildControl control_a,control_b;World world_a,world_b;
+  world_a.build_control=&control_a;world_b.build_control=&control_b;
+  struct HeldEpoch{
+   const World*world;u32 expected;std::mutex mutex;std::condition_variable condition;
+   bool entered=false,resume=false;int calls=0;
+  } held{&world_a,terrain_build_epoch(&world_a)};
+  MeshLimits interrupted;interrupted.context=&held;
+  interrupted.cancel=[](void*p){
+   auto&s=*static_cast<HeldEpoch*>(p);
+   if(++s.calls==5){
+    std::unique_lock<std::mutex>lock(s.mutex);s.entered=true;s.condition.notify_one();
+    s.condition.wait(lock,[&]{return s.resume;});
+   }
+   return terrain_build_epoch(s.world)!=s.expected;
+  };
+  Result cancelled_result;
+  std::thread worker([&]{cancelled_result=mesh_field(field,1280,1280,size,true,interrupted);});
+  bool entered=false;
+  {
+   std::unique_lock<std::mutex>lock(held.mutex);
+   entered=held.condition.wait_for(lock,std::chrono::seconds(5),[&]{return held.entered;});
+  }
+  const u32 other_epoch=terrain_build_epoch(&world_b);
+  terrain_cancel_builds(&world_a);
+  struct Epoch{const World*world;u32 expected;};
+  Epoch unaffected{&world_b,other_epoch};MeshLimits other_limits;other_limits.context=&unaffected;
+  other_limits.cancel=[](void*p){auto&s=*static_cast<Epoch*>(p);return terrain_build_epoch(s.world)!=s.expected;};
+  Result other=mesh_field(field,1280,1280,size,true,other_limits);
+  {
+   std::lock_guard<std::mutex>lock(held.mutex);held.resume=true;
+  }
+  held.condition.notify_one();worker.join();
+  if(!entered||!empty_failure(cancelled_result,MeshStatus::cancelled)||cancelled_result.peak_vertices==0||other.status!=MeshStatus::ok||other.indices!=rolling.indices||other.p.size()!=rolling.p.size()||std::memcmp(other.p.data(),rolling.p.data(),rolling.p.size()*sizeof(V3))||terrain_build_epoch(&world_b)!=other_epoch)return 15;
+  Epoch refreshed{&world_a,terrain_build_epoch(&world_a)};MeshLimits refreshed_limits=other_limits;refreshed_limits.context=&refreshed;
+  Result retried=mesh_field(field,1280,1280,size,true,refreshed_limits);
+  if(retried.status!=MeshStatus::ok||retried.indices!=rolling.indices||retried.p.size()!=rolling.p.size()||std::memcmp(retried.p.data(),rolling.p.data(),rolling.p.size()*sizeof(V3)))return 16;
+  fprintf(stderr,"{\"name\":\"threaded per-world epoch cancellation\",\"cancelled_after_vertices\":%zu,\"callback_calls\":%d,\"discarded\":true,\"other_world_unchanged\":true,\"retry_parity\":true}\n",cancelled_result.peak_vertices,held.calls);
  }
  World w;w.init(1703);
  // Sampler-only world-edge controls; no global mesh IDs are formed outside world.
