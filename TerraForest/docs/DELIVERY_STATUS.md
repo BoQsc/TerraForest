@@ -1,11 +1,22 @@
 # Original objective and completion evidence
 
+Repeated edits now preserve unaffected queued terrain jobs and atomically
+advance a bounded set of requested fine children. In the corrected 2,176-command
+run, original/return median latency is 20.4/20.7 ms. Travel p95 is still 451 ms,
+so the foundation remains unqualified. See [refinement progress and observer
+correction](TERRAIN_REFINEMENT_PROGRESS.md).
+
 Integrated mining pressure now rejects the foundation at 136, 544 and 2,176
-edits. The largest run reaches 452 ms edit publication and 382 ms frame stalls;
+edits. The largest original run reaches 452 ms edit publication;
 patch tracing identifies expensive coarse-LOD rebuilds for small edits. See
 [measured failures](FOUNDATION_MINING_RESULTS.md) and the
 [qualification matrix](FOUNDATION_QUALIFICATION.md). These are open failures,
 not an accepted performance baseline.
+
+The original large boundary-frame stall figures are withdrawn as game evidence:
+full synchronous benchmark checkpoints caused substantial observer overhead.
+The harness now retains only compact progress during capture and writes detailed
+traces after capture stops. Original artifacts are preserved with this correction.
 
 Foundation work now replaces column-wide forest clearing after mining with
 bounded native surface-support revalidation and preserves unchanged tree renderer

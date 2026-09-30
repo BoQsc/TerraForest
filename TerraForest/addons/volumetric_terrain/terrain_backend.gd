@@ -178,6 +178,19 @@ func submit(job: Dictionary, priority: bool = false) -> bool:
 		return false
 	if priority and str(job.get("kind", "")) in ["edit", "reset", "load"]:
 		for index in range(jobs.size() - 1, -1, -1):
+			if str(job.get("kind", "")) == "edit" and str(jobs[index].get("kind", "")) == "mesh":
+				var queued: Dictionary = jobs[index]
+				var key: Vector3i = queued["key"]
+				var low: Vector3 = job.get("geometry_lo", Vector3(-INF,-INF,-INF))
+				var high: Vector3 = job.get("geometry_hi", Vector3.INF)
+				if key.x <= high.x and key.x + key.z >= low.x and key.y <= high.z and key.y + key.z >= low.z:
+					results.push_back({"kind":"mesh", "cancelled":true, "key":key, "epoch":queued["epoch"], "stamp":queued["stamp"]})
+					jobs.remove_at(index)
+				else:
+					# Geometry may remain valid while edited roofs change lighting.
+					# Re-evaluate cached visibility against the current worker world.
+					queued["relight_cache"] = true
+				continue
 			if str(jobs[index].get("kind", "")) == "relight":
 				var old: Dictionary = jobs[index]
 				results.push_back({"kind": "relight", "cancelled": true, "key": old["key"], "epoch": old["epoch"], "stamp": old["stamp"], "light_ticket": old["light_ticket"]})
@@ -470,6 +483,12 @@ func _run() -> void:
 		var job: Dictionary = {}
 		if not should_stop and not jobs.is_empty():
 			job = jobs.pop_front()
+			# Cancellation epochs belong to execution, not time spent queued.
+			# Edits prune intersecting queued jobs; unaffected work may survive many
+			# edits. Snapshot the token under the same lock used by submit so a new
+			# priority mutation can still cancel this job after it starts.
+			if str(job.get("kind", "")) == "mesh":
+				job["build_epoch"] = build_epoch
 		active_kind = str(job.get("kind", "idle"))
 		mutex.unlock()
 		if should_stop:

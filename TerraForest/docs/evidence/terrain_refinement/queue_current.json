@@ -1,0 +1,61 @@
+{
+  "checks": [
+    {
+      "name": "queue fixture starts real native worker",
+      "pass": true
+    },
+    {
+      "name": "worker initialized",
+      "pass": true
+    },
+    {
+      "name": "held job admitted",
+      "pass": true
+    },
+    {
+      "name": "worker held before queued work begins",
+      "pass": true
+    },
+    {
+      "name": "unaffected fine mesh queued",
+      "pass": true
+    },
+    {
+      "name": "intersecting fine mesh queued",
+      "pass": true
+    },
+    {
+      "name": "priority edit advances cancellation epoch 0",
+      "pass": true
+    },
+    {
+      "name": "priority edit advances cancellation epoch 1",
+      "pass": true
+    },
+    {
+      "name": "priority edit advances cancellation epoch 2",
+      "pass": true
+    },
+    {
+      "name": "retained geometry rechecks lighting after intervening edits",
+      "pass": true
+    },
+    {
+      "name": "queued unaffected mesh makes progress after three priority edits",
+      "pass": true
+    },
+    {
+      "name": "unaffected mesh completes with its original dependency stamp",
+      "pass": true
+    },
+    {
+      "name": "intersecting queued mesh is cancelled exactly once",
+      "pass": true
+    },
+    {
+      "name": "queue fixture joins worker",
+      "pass": true
+    }
+  ],
+  "failures": 0
+}

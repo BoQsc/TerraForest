@@ -834,6 +834,7 @@ func request_height(point: Vector3, token: int) -> void:
 
 func _invalidate(lo: Vector3, hi: Vector3) -> Array[Dictionary]:
 	var affected: Array[Dictionary] = []
+	var refinement: Array[Dictionary] = []
 	for size: int in [16, 32, 64, 128, 256]:
 		var x0: int = maxi(0, floori(lo.x / float(size))) * size
 		var z0: int = maxi(0, floori(lo.z / float(size))) * size
@@ -849,6 +850,15 @@ func _invalidate(lo: Vector3, hi: Vector3) -> Array[Dictionary]:
 				if visible_cut.has(key):
 					last_density_tiles += 1
 					affected.push_back({"key": key, "stamp": stamps[key], "lighting_only": false})
+				elif size == 16 and requested_keys.has(key):
+					# Repeated edits must not invalidate the same requested fine
+					# children forever. Publish a bounded set in this transaction,
+					# with the same field revision as the still-visible coarse mesh.
+					refinement.push_back({"key": key, "stamp": stamps[key], "lighting_only": false})
+	refinement.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return _distance(a["key"]) < _distance(b["key"]))
+	for index in range(mini(4, refinement.size())):
+		affected.push_back(refinement[index])
+		last_density_tiles += 1
 	affected.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return _distance(a["key"]) < _distance(b["key"]))
 	return affected
 
@@ -972,7 +982,7 @@ func edit(data: PackedByteArray, lo: Vector3, hi: Vector3, captured_us: int = 0,
 	edit_worker_done = false
 	batch_remaining = 0
 	var accepted: bool = backend.submit({"kind": "edit", "command": data, "commands": commands, "tiles": affected,
-		"epoch": epoch, "ticket": edit_ticket}, true)
+		"epoch": epoch, "ticket": edit_ticket, "geometry_lo": geometry_lo, "geometry_hi": geometry_hi}, true)
 	if not accepted:
 		pending_edit = false
 		_rollback_dirty()

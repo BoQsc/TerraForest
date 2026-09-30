@@ -54,4 +54,6 @@ current build). Reports and tested source/DLL hashes are retained under
 
 This is diagnostic evidence, not a performance fix. Native warm-cache timing
 excludes scene publication, physics attachment, GPU work and the separate
-353/382 ms frame stalls. The integrated foundation remains unqualified.
+boundary-frame intervals. Those original 353/382 ms intervals were contaminated
+by synchronous benchmark report serialization and are withdrawn as game-stall
+evidence. The integrated foundation remains unqualified.

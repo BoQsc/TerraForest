@@ -1,5 +1,14 @@
 # Integrated mining pressure: foundation rejected
 
+**Measurement correction:** the original detailed JSON checkpoints serialized
+the entire accumulated trace synchronously between phases. Independent Godot
+measurement confirms hundreds of milliseconds of observer overhead. The reported
+353/382 ms boundary-frame stalls are withdrawn as evidence of game-engine stalls.
+The corrected harness writes compact progress during capture and full traces
+after capture stops. Original artifacts remain intact for audit. Native patch
+costs and individual edit timings still identify expensive coarse rebuilds, but
+the old frame distributions must not be used to qualify gameplay performance.
+
 Godot 4.7.2, Vulkan Forward+, GTX 1060 Max-Q, 1920×1080 fullscreen,
 full render scale, foreground/background cap 60 FPS. All three completed runs
 returned failure from explicit performance gates, without script/runtime errors.
@@ -36,12 +45,13 @@ coarse rebuilds while preserving complete visual/collision coverage and seams.
 Blocking input until streaming catches up would move latency elsewhere, not
 prove that this cost has been fixed.
 
-The 16× run also recorded 69, 98, 353 and 382 ms frame stalls across excavation,
-travel, return and recovery. These are not explained merely by asynchronous
-worker build times and require separate main-thread/engine investigation. Engine
+The original 16× run recorded 69, 98, 353 and 382 ms boundary intervals across
+excavation, travel, return and recovery. These include benchmark checkpoint work
+and are not valid standalone game-stall measurements. Engine
 static memory rose from approximately 215 MB at the original control to 355 MB
 after recovery. Changing residency/cache contents confound this comparison;
-this is not yet evidence of a leak or a verified memory plateau.
+this is not yet evidence of a leak or a verified memory plateau. The monitor also
+includes the benchmark's growing retained event buffers.
 
 ## Evidence and limits
 

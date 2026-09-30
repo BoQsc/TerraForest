@@ -1,0 +1,18 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS queue fixture starts real native worker
+PASS worker initialized
+PASS held job admitted
+PASS worker held before queued work begins
+PASS unaffected fine mesh queued
+PASS intersecting fine mesh queued
+PASS priority edit advances cancellation epoch 0
+PASS priority edit advances cancellation epoch 1
+PASS priority edit advances cancellation epoch 2
+PASS retained geometry rechecks lighting after intervening edits
+PASS queued unaffected mesh makes progress after three priority edits
+PASS unaffected mesh completes with its original dependency stamp
+PASS intersecting queued mesh is cancelled exactly once
+[TerrainRewrite] Temporary test world: save skipped
+PASS queue fixture joins worker
+

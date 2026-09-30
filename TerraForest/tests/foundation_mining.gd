@@ -73,9 +73,11 @@ func end_phase() -> void:
 		builds.append(row.build_ms)
 		queue.append(row.worker_queue_ms)
 		if row.changed: changed+=1
-	var record := {"phase":phase,"elapsed_ms":Time.get_ticks_msec()-phase_begin,"frames":summary(frames),"edit_latency":summary(latency),"build":summary(builds),"worker_queue":summary(queue),"changed_edits":changed,"edits":edits.duplicate(true),"stages":stage_totals.duplicate(true),"sdf_pages":game.terrain.sdf_pages,"triangles":game.terrain.total_triangles,"tiles":game.terrain.tiles.size(),"cache_bytes":game.terrain.cache_bytes,"engine_static_bytes":int(Performance.get_monitor(Performance.MEMORY_STATIC)),"trees":game.vegetation.renderer.roots.size()}
+	# Event dictionaries are immutable after capture. Copy only the array so the
+	# next phase can clear its live buffer without deep-copying the entire trace.
+	var record := {"phase":phase,"elapsed_ms":Time.get_ticks_msec()-phase_begin,"frames":summary(frames),"edit_latency":summary(latency),"build":summary(builds),"worker_queue":summary(queue),"changed_edits":changed,"edits":edits.duplicate(),"stages":stage_totals.duplicate(true),"sdf_pages":game.terrain.sdf_pages,"triangles":game.terrain.total_triangles,"tiles":game.terrain.tiles.size(),"cache_bytes":game.terrain.cache_bytes,"engine_static_bytes":int(Performance.get_monitor(Performance.MEMORY_STATIC)),"trees":game.vegetation.renderer.roots.size()}
 	phases.append(record)
-	record["patch_work"]=work.duplicate(true)
+	record["patch_work"]=work.duplicate()
 	checkpoint(false)
 	frame_file.flush()
 	print("FOUNDATION_RESULT ",JSON.stringify({"phase":phase,"frames":record.frames,"latency":record.edit_latency,"build":record.build,"pages":record.sdf_pages}))
@@ -158,6 +160,18 @@ func run() -> void:
 func checkpoint(complete: bool) -> void:
 	var report := {"workload_scale":workload_scale,"checks":checks,"phases":phases,"presentation":Presentation.measurement(root),"engine":Engine.get_version_info(),"scope":"Integrated temporary terrain and forest; scripted public edit calls and stepped travel without waiting for destination residency; four controlled workloads and recovery. Separate original/return control site. Does not test furnished cities, entities, multiplayer, physical input latency, or hour-long endurance. 20 ms frame gate is a regression tolerance, not proof of strict 60 FPS or headroom."}
 	report["complete"]=complete
+	if not complete:
+		# Full trace serialization is large enough to stall the main thread.
+		# During measurement retain only compact progress; detailed output is
+		# written after disconnecting frame capture in finish().
+		var progress: Array[Dictionary]=[]
+		for entry in phases:
+			var compact: Dictionary=entry.duplicate()
+			compact.erase("edits")
+			compact.erase("patch_work")
+			compact.erase("stages")
+			progress.append(compact)
+		report["phases"]=progress
 	var file := FileAccess.open("res://reports/foundation_mining.json",FileAccess.WRITE)
 	file.store_string(JSON.stringify(report,"  "))
 	file.close()

@@ -1,0 +1,149 @@
+{
+  "samples": [
+    {
+      "compact_chars": 3306,
+      "compact_ms": 0.176,
+      "full_chars": 41375,
+      "full_ms": 8.236,
+      "phases": 1,
+      "repeat": 0
+    },
+    {
+      "compact_chars": 3306,
+      "compact_ms": 0.144,
+      "full_chars": 41375,
+      "full_ms": 2.295,
+      "phases": 1,
+      "repeat": 1
+    },
+    {
+      "compact_chars": 3306,
+      "compact_ms": 1.652,
+      "full_chars": 41375,
+      "full_ms": 3.711,
+      "phases": 1,
+      "repeat": 2
+    },
+    {
+      "compact_chars": 4329,
+      "compact_ms": 0.225,
+      "full_chars": 1077949,
+      "full_ms": 65.595,
+      "phases": 2,
+      "repeat": 0
+    },
+    {
+      "compact_chars": 4329,
+      "compact_ms": 0.503,
+      "full_chars": 1077949,
+      "full_ms": 63.152,
+      "phases": 2,
+      "repeat": 1
+    },
+    {
+      "compact_chars": 4329,
+      "compact_ms": 0.36,
+      "full_chars": 1077949,
+      "full_ms": 69.701,
+      "phases": 2,
+      "repeat": 2
+    },
+    {
+      "compact_chars": 5353,
+      "compact_ms": 0.289,
+      "full_chars": 2147549,
+      "full_ms": 125.154,
+      "phases": 3,
+      "repeat": 0
+    },
+    {
+      "compact_chars": 5353,
+      "compact_ms": 0.326,
+      "full_chars": 2147549,
+      "full_ms": 121.799,
+      "phases": 3,
+      "repeat": 1
+    },
+    {
+      "compact_chars": 5353,
+      "compact_ms": 0.348,
+      "full_chars": 2147549,
+      "full_ms": 162.864,
+      "phases": 3,
+      "repeat": 2
+    },
+    {
+      "compact_chars": 6390,
+      "compact_ms": 0.382,
+      "full_chars": 6071602,
+      "full_ms": 374.18,
+      "phases": 4,
+      "repeat": 0
+    },
+    {
+      "compact_chars": 6390,
+      "compact_ms": 0.514,
+      "full_chars": 6071602,
+      "full_ms": 376.81,
+      "phases": 4,
+      "repeat": 1
+    },
+    {
+      "compact_chars": 6390,
+      "compact_ms": 0.41,
+      "full_chars": 6071602,
+      "full_ms": 415.899,
+      "phases": 4,
+      "repeat": 2
+    },
+    {
+      "compact_chars": 7422,
+      "compact_ms": 1.437,
+      "full_chars": 7529499,
+      "full_ms": 670.864,
+      "phases": 5,
+      "repeat": 0
+    },
+    {
+      "compact_chars": 7422,
+      "compact_ms": 0.673,
+      "full_chars": 7529499,
+      "full_ms": 525.324,
+      "phases": 5,
+      "repeat": 1
+    },
+    {
+      "compact_chars": 7422,
+      "compact_ms": 0.455,
+      "full_chars": 7529499,
+      "full_ms": 591.919,
+      "phases": 5,
+      "repeat": 2
+    },
+    {
+      "compact_chars": 7949,
+      "compact_ms": 0.543,
+      "full_chars": 7598758,
+      "full_ms": 456.159,
+      "phases": 6,
+      "repeat": 0
+    },
+    {
+      "compact_chars": 7949,
+      "compact_ms": 0.606,
+      "full_chars": 7598758,
+      "full_ms": 584.194,
+      "phases": 6,
+      "repeat": 1
+    },
+    {
+      "compact_chars": 7949,
+      "compact_ms": 0.569,
+      "full_chars": 7598758,
+      "full_ms": 548.404,
+      "phases": 6,
+      "repeat": 2
+    }
+  ],
+  "scope": "Godot JSON serialization only, using retained pressure trace. Excludes gameplay and disk I/O."
+}

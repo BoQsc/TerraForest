@@ -22,13 +22,17 @@ The multipliers submit 136, 544 and 2,176 edits respectively. At least 90% must
 actually change terrain, preventing empty-space commands from masquerading as
 throughput. Queueing, field mutation, rebuilding, publication, draw callbacks,
 patch work, frame intervals, page/triangle counts and engine memory are retained.
-Per-phase checkpoints and frame CSVs preserve evidence on interrupted runs.
+Compact per-phase checkpoints and frame CSVs preserve progress on interrupted
+runs. Detailed event/patch traces are serialized only after capture disconnects;
+the original full checkpoints introduced hundreds of milliseconds of observer
+overhead and invalidated the original boundary-frame stall conclusions.
 
 Provisional rejection gates: frame p99 above 20 ms, any frame above 50 ms, edit
 publication p95 above 150 ms, or return-control median degradation above 25%.
 These are early rejection criteria. Passing does not demonstrate strict 60 FPS,
 CPU/GPU headroom, physical input-to-photon latency, or an hour-long soak. Engine
-memory excludes some native/GPU allocations. A capped frame interval does not
+memory excludes some native/GPU allocations and includes retained test events.
+A capped frame interval does not
 measure available GPU headroom. No city, active entity population or multiplayer
 traffic is included in this test.
 
