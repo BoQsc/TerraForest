@@ -13,6 +13,22 @@ inline double polynomial(const double*c,double t){return ((c[3]*t+c[2])*t+c[1])*
 // Partition at derivative roots so same-sign endpoints cannot hide two roots.
 // Numerical zero tolerance is relative to coefficient magnitude, not world units.
 inline bool first_cubic_root(const double*c,double&root){
+ // Exact lower-degree restrictions need no approximate tangent admission.
+ // Preserve the input coefficients before normalization; division can erase a
+ // tiny but meaningful positive discriminant or minimum in these cases.
+ if(c[3]==0){
+  long double a=c[2],b=c[1],d=c[0];
+  if(d==0){root=0;return true;}
+  if(a==0){if(b==0)return false;long double t=-d/b;if(t<0||t>1)return false;root=double(t);return true;}
+  long double disc=b*b-4*a*d;
+  if(disc<0)return false;
+  long double q=-.5L*(b+std::copysign(std::sqrt(disc),b));
+  long double t0=q/a,t1=q==0?-b/(2*a):d/q;
+  if(t0>t1)std::swap(t0,t1);
+  if(t0>=0&&t0<=1){root=double(t0);return true;}
+  if(t1>=0&&t1<=1){root=double(t1);return true;}
+  return false;
+ }
  double scale=0;for(int i=0;i<4;i++)scale=std::max(scale,std::abs(c[i]));
  if(scale==0){root=0;return true;}
  double normalized[4];for(int i=0;i<4;i++)normalized[i]=c[i]/scale;c=normalized;

@@ -38,6 +38,11 @@ traffic is included in this test.
 
 ## Required primitive pressure matrix — not yet certified
 
+The [near-tangent quadratic suite](TERRAIN_RAY_NUMERICS.md) exposed seven
+query failures. A separate lower-degree solve corrects all 33 cases while
+retaining the original query controls. General cubic near-tangency remains
+unqualified; this is not runtime adoption.
+
 The [experimental density query](TERRAIN_DENSITY_QUERY.md) adds bounded native
 cell traversal and cubic first-root handling. Eighteen analytic controls and
 all 22 frozen ray-miss locations pass. Runtime ownership, broader numerical
