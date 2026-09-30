@@ -38,6 +38,11 @@ traffic is included in this test.
 
 ## Required primitive pressure matrix — not yet certified
 
+The [collision isolation experiment](TERRAIN_COLLISION_ISOLATION.md) repeats
+21 missed faces across 756 coordinate/scale/ray cases. Origin rebasing does
+not recover the original faces; size and ray-length sensitivity also occurs
+in direct Geometry3D queries. Tiny-face robustness remains unresolved.
+
 The [candidate collision probe](TERRAIN_CANDIDATE_COLLISION.md) **fails**: 21 of
 180 real Godot physics rays miss very small candidate triangles, although
 native collision recipes preserve all input faces. Earlier nonzero-area and
