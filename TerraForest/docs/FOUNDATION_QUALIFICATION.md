@@ -38,6 +38,12 @@ traffic is included in this test.
 
 ## Required primitive pressure matrix — not yet certified
 
+The opt-in [reconstruction-region cache experiment](TERRAIN_REGION_CACHE_EXPERIMENT.md)
+adds native parity, cancellation, local invalidation and working-set pressure tests.
+Its warm reuse improves extraction, but cold/thrashing regressions and full-patch
+simplification costs reject enabling it as the foundation fix. It remains outside
+normal gameplay and does not change the integrated qualification status.
+
 | Primitive | Adversarial variables | Required evidence |
 |---|---|---|
 | Terrain editing | Fixed local edit versus 1×/4×/16× remote edited pages; deep cavities; patch corners; cold/coarse and settled/fine destinations | Local work and latency remain bounded; exact collision/density agreement; per-patch amplification measured |

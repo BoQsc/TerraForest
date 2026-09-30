@@ -1,0 +1,27 @@
+{
+  "parent_commit": "10abcddc024f6c2e53119f07c8b1d1aa19f0d337",
+  "platform": "Windows-10-10.0.19045-SP0",
+  "hashes": {
+    "addons/volumetric_terrain/native/core.cpp": "250244691b4c8a989e75fe8ce34d6d4763d4dd2bec7a622658d1b9fdff670fec",
+    "addons/volumetric_terrain/native/core.h": "1ccc05ebdfddde27cc92a97585054c600d335b49e46d8cef10f4661d29be42c6",
+    "addons/volumetric_terrain/native/geometry_regions.hpp": "1a8f8f097427380a75e0cb1d22dc33f94a2471df737bd57e64dbd320c46621fa",
+    "addons/volumetric_terrain/native/terrain_binding.cpp": "a46c2d586cf30545005ac3d3d36741c51c49baa0875b3ff2d7436190395440eb",
+    "addons/volumetric_terrain/bin/terrain_core.windows.x86_64.dll": "00e278f569f1132519dc69b6a50ff37050414d37b0edc6bd72efe08cbde2b745",
+    "addons/volumetric_terrain/bin/terrain_core.windows.template_release.x86_64.dll": "5752092084efd8ba6eb0963328219e7076bdb6f833cefcdbf5def41bef15c8c5",
+    "tests/terrain_region_cache.gd": "ef51e4b4852913676bb51e0acd93cb1c30223ebb5dcff8aa6299ed2e1adb3a64",
+    "tools/validate.py": "9216cfd41583644946068220b604c6b18c4bbf1dbfad61c623474b96f21aeb44",
+    "tools/test_native_release.py": "acb9faa5aae71177846842c509420a8fa0232ae0c0849cf961fb52fcffb63f31",
+    "tools/test_terrain_bridge.py": "bc8458ce59ec17333519e29ba54fa6a47f065363f8655b14763c417170160dbd",
+    "tools/qualify_terrain_region_cache.py": "8e4becaac7d722f4f13bc4f22326dcc2ff5308984de0ad1f37e53a5943fb1dc2",
+    "docs/evidence/foundation_mining/scale_16/foundation_mining.json.gz": "3b738c530c6a57a1d36fd01e237e2a42619e7db3261ff9b8b6d76bb201b43348"
+  },
+  "reports": {
+    "terrain_region_cache.json": "b8ba897727baac7098002d59e9134f0c7dc33037edcc06fc4b47a8d24cb48f9c",
+    "terrain_region_cache.log": "6929ebd0bec361d1fd40ec5c609f12616dd49426c0df3277cf460e5186c03362",
+    "terrain_region_cache_release.json": "b8c225325bfd49302e85cb3d06617df95350204eb73d08d151f27935664229e6",
+    "terrain_region_cache_release.log": "77fa9491ff4ed43d254793cb059aa433eb466f92474143815a9c45752405c06c",
+    "terrain_region_qualification.json": "b855983f52c95d4409ed4673406dbd2d04d183ffcdd919c378644a83e071a7b4",
+    "terrain_bridge.json": "1ad40814c6db66973d7c6b2dcd8d3a408f8aa3299a363b5d81a61c768d54ff75"
+  },
+  "status": "Correctness passed; experimental performance adoption rejected. Default gameplay uses uncached command 1."
+}

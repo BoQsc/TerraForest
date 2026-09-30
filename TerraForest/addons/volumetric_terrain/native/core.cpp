@@ -64,7 +64,7 @@ void World::init(int p_seed){
  caves.push({{990,60,975},{1090,49,900},7});caves.push({{1090,49,900},{1090,49,900},17});
  V3 e2={480,height(480,800)-2,800};caves.push({e2,{460,54,690},6});caves.push({{460,54,690},{430,52,575},8});caves.push({{430,52,575},{420,52,550},18});
 }
-void World::release(){light_roofs.release();light_samples.release();light_tops.release();light_probe_ids.release();light_probes.release();lighting_revision=-1;for(int i=0;i<pages.n;i++){if(pages[i].d)tr_free(pages[i].d);if(pages[i].mat)tr_free(pages[i].mat);}pages.release();pages_by_key.release();blocks.release();caves.release();for(int i=0;i<block_columns.n;i++)block_columns[i].release();block_columns.release();if(edit_columns)tr_free(edit_columns);edit_columns=nullptr;}
+void World::release(){release_geometry_cache(*this);light_roofs.release();light_samples.release();light_tops.release();light_probe_ids.release();light_probes.release();lighting_revision=-1;for(int i=0;i<pages.n;i++){if(pages[i].d)tr_free(pages[i].d);if(pages[i].mat)tr_free(pages[i].mat);}pages.release();pages_by_key.release();blocks.release();caves.release();for(int i=0;i<block_columns.n;i++)block_columns[i].release();block_columns.release();if(edit_columns)tr_free(edit_columns);edit_columns=nullptr;}
 static u32 page_key(int x,int y,int z){return u32(x+NP*(z+NP*y))+1;}
 static void decode_page(u32 k,int&x,int&y,int&z){int v=int(k-1);x=v%NP;v/=NP;z=v%NP;y=v/NP;}
 static u32 block_key(int x,int y,int z){return 1+u32(x|(z<<11)|(y<<22));}
@@ -125,7 +125,7 @@ bool World::edit(V3 a,V3 b,float radius,int shape,bool add,u8 material,V3&lo,V3&
  if(!add)for(int cz=fl(lo.z)/32;cz<=fl(hi.z)/32;cz++)for(int cx=fl(lo.x)/32;cx<=fl(hi.x)/32;cx++){
   auto&column=block_columns[cx+64*cz];int j=0;while(j<column.n){u32 key=column[j];int x,y,z;decode_block(key,x,y,z);V3 p={x+.5f,y+.5f,z+.5f};float d=shape==1?box_distance(p,b,radius):capsule(p,a,b,radius);if(d<=0){blocks.erase(key);column[j]=column[column.n-1];column.n--;changes++;}else j++;}
  }
- if(changes){revision++;edits++;changed_samples+=changes;lighting_revision=-1;}return true;
+ if(changes){invalidate_geometry_cache(*this,lo,hi);revision++;edits++;changed_samples+=changes;lighting_revision=-1;}return true;
 }
 static u32 checksum(const u8*p,int n){u32 h=2166136261u;for(int i=0;i<n;i++){h^=p[i];h*=16777619u;}return h;}
 void World::serialize(Bytes&out)const{
@@ -264,17 +264,12 @@ static void add_blocks(const World&w,int ox,int oz,int size,Mesh&m){
 }
 static void mark_y(u32*bits,int lo,int hi){lo=imx(0,lo);hi=imn(255,hi);for(int y=lo;y<=hi;y++)bits[y>>5]|=1u<<(y&31);}
 struct CachedSample {i16 value;u8 material,valid;};
-bool build_patch(const World&w,int ox,int oz,int size,int step,Mesh&m,u32 expected_epoch){
- double mark=w.profile_mesh?mesh_clock_ms():0;
- if(w.profile_mesh)zero_bytes(w.mesh_stage_ms,sizeof(w.mesh_stage_ms));
- const u32 epoch=expected_epoch==0xffffffffu?terrain_build_epoch(&w):expected_epoch;
- if(cancelled(w,epoch))return false;
+static bool extract_vertices(const World&w,int ox,int oz,int size,Mesh&m,u32 epoch){
  const int hn=size+2;List<float> heights;heights.resize(hn*hn);
  for(int z=-1;z<=size;z++){
   if(cancelled(w,epoch)){heights.release();return false;}
   for(int x=-1;x<=size;x++)heights[(x+1)+hn*(z+1)]=w.height(float(ox+x),float(oz+z));
  }
- Map ids;
  List<CachedSample> cache;const int plane_size=hn*257;cache.resize(plane_size*2);
  static const int edges[12][2]={{0,1},{2,3},{4,5},{6,7},{0,2},{1,3},{4,6},{5,7},{0,4},{1,5},{2,6},{3,7}};
  for(int z=-1;z<size;z++){
@@ -328,11 +323,17 @@ bool build_patch(const World&w,int ox,int oz,int size,int step,Mesh&m,u32 expect
    Vertex v;v.p={gx+p.x,y+p.y,gz+p.z};v.n=gradient(d,p);v.cx=gx;v.cy=y;v.cz=gz;v.mask=signs;
    // Material classification does not affect the field or topology.
    float best=1e30f;for(int k=0;k<8;k++)if(mats[k]&&ab(d[k])<best){best=ab(d[k]);v.material=float(mats[k]);} // Used only to constrain simplification, NOT as a shader material ID.
-   int id=m.v.push(v);ids.put(cell_key(x,y,z,size),id);
+   m.v.push(v);
   }
  }}
  cache.release();
- if(cancelled(w,epoch)){heights.release();ids.release();m.release();return false;}
+ if(cancelled(w,epoch)){heights.release();m.release();return false;}
+ heights.release();return true;
+}
+
+static void connect_patch(int ox,int oz,int size,Mesh&m){
+ Map ids;
+ for(int j=0;j<m.v.n;j++){const Vertex&v=m.v[j];ids.put(cell_key(v.cx-ox,v.cy,v.cz-oz,size),j);}
  int vn=m.v.n;
  for(int j=0;j<vn;j++){
   const Vertex&v=m.v[j];int x=v.cx-ox,y=v.cy,z=v.cz-oz;if(x<0||z<0||x>=size||z>=size)continue;u32 s=v.mask;
@@ -344,7 +345,19 @@ bool build_patch(const World&w,int ox,int oz,int size,int step,Mesh&m,u32 expect
    if(a<0||b<0||c<0||d<0)continue;quad(m,a,b,c,d,(s&1)==0);
   }
  }
- heights.release();ids.release();
+ ids.release();
+}
+
+#include "geometry_regions.hpp"
+
+bool build_patch(const World&w,int ox,int oz,int size,int step,Mesh&m,u32 expected_epoch,bool region_cache){
+ double mark=w.profile_mesh?mesh_clock_ms():0;
+ if(w.profile_mesh)zero_bytes(w.mesh_stage_ms,sizeof(w.mesh_stage_ms));
+ const u32 epoch=expected_epoch==0xffffffffu?terrain_build_epoch(&w):expected_epoch;
+ if(cancelled(w,epoch))return false;
+ bool ok=region_cache?cached_vertices(w,ox,oz,size,m,epoch):extract_vertices(w,ox,oz,size,m,epoch);
+ if(!ok){m.release();return false;}
+ connect_patch(ox,oz,size,m);
  if(w.profile_mesh){double now=mesh_clock_ms();w.mesh_stage_ms[0]=float(now-mark);mark=now;}
  simplify(w,m,ox,oz,size,step,epoch);
  if(w.profile_mesh){double now=mesh_clock_ms();w.mesh_stage_ms[1]=float(now-mark);mark=now;}
@@ -621,12 +634,12 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
  Reader r{data,n};u32 cmd=r.u();out.u(REPLY_MAGIC);out.u(cmd);out.u(0);
  if(!r.good){out.p[8]=1;return;}
  if(cmd==0){out.u(w.revision);out.u(w.edits);out.u(w.pages.n);out.u(w.blocks.n);out.u(u32(w.changed_samples));out.u(w.seed);}
- else if(cmd==1){
+ else if(cmd==1||cmd==20){
   int ox=int(r.u()),oz=int(r.u()),size=int(r.u()),step=int(r.u());
   u32 epoch=r.at+4<=r.n?r.u():terrain_build_epoch(&w);
   if(!r.good||ox<0||oz<0||ox>=2048||oz>=2048||(size!=16&&size!=32&&size!=64&&size!=128&&size!=256)||(step!=1&&step!=2&&step!=4&&step!=8)){out.p[8]=1;return;}
   Mesh m;
-  if(!build_patch(w,ox,oz,size,step,m,epoch)){out.p[8]=4;return;}
+  if(!build_patch(w,ox,oz,size,step,m,epoch,cmd==20)){out.p[8]=4;return;}
   out.u(w.revision);encode_mesh(m,ox,oz,size,step,out);m.release();
  }
  else if(cmd==2){V3 a=r.vec(),b=r.vec();float radius=r.f();int shape=int(r.u()),add=int(r.u()),mat=int(r.u());if(!r.good||!(radius>=.5f&&radius<=64.f)||shape<0||shape>1||mat<0||mat>3||!(ab(a.x)<=10000&&ab(b.x)<=10000&&ab(a.y)<=10000&&ab(b.y)<=10000&&ab(a.z)<=10000&&ab(b.z)<=10000)){out.p[8]=1;return;}V3 lo,hi;int changes;bool ok=w.edit(a,b,radius,shape,add!=0,u8(mat),lo,hi,changes);if(!ok)out.p[8]=2;out.u(w.revision);out.u(changes);out.u(w.pages.n);out.u(w.blocks.n);out.vec(lo);out.vec(hi);}
@@ -670,7 +683,7 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
   // Safe from the main thread during native meshing: atomic only, no World access.
   out.u(terrain_cancel_builds(&w));return;
  }else if(cmd==13){out.u(terrain_build_epoch(&w));return;}
- else if(cmd==14){int style=int(r.u());if(!r.good||style<0||style>1){out.p[8]=1;return;}w.surface_style=style;out.u(style);}
+ else if(cmd==14){int style=int(r.u());if(!r.good||style<0||style>1){out.p[8]=1;return;}if(w.surface_style!=style)release_geometry_cache(w);w.surface_style=style;out.u(style);}
  else if(cmd==15){out.u(u32(w.light_rays));out.u(u32(w.light_steps));out.u(u32(w.light_unresolved));out.u(u32(w.light_probe_hits));out.u(w.light_samples.n);out.u(w.light_probes.n);}
  else if(cmd==16){
   // No Godot-layout constants here: validated offsets come from RenderingServer.
@@ -720,6 +733,8 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
   if(n!=4){out.p[8]=1;return;}
   for(float value:w.mesh_stage_ms)out.f(value);
  }
+ else if(cmd==21){if(n!=4){out.p[8]=1;return;}geometry_cache_stats(w,out);}
+ else if(cmd==22){u32 budget=r.u();if(!r.good||n!=8||!configure_geometry_cache(w,budget)){out.p[8]=1;return;}}
  else out.p[8]=1;
  if(tr_oom)out.p[8]=3;
 }

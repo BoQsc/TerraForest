@@ -9,6 +9,7 @@ struct Cave {V3 a,b;float r;};
 struct SkyProbe {V3 p,n;float sky;};
 // Stable owner storage outside World, so reset/load cannot reset cancellation.
 struct BuildControl {u32 epoch=0;};
+struct GeometryCache;
 struct World {
  BuildControl *build_control=nullptr;
  Map pages_by_key,blocks; List<Page> pages; List<Cave> caves; List<List<u32>> block_columns;
@@ -19,6 +20,7 @@ struct World {
  // Optional diagnostics, worker-owned and never serialized.
  bool profile_mesh=false;
  mutable float mesh_stage_ms[4]={}; // extraction, simplification, blocks, shading
+ mutable GeometryCache *geometry_cache=nullptr;
  mutable int lighting_revision=-1;
  mutable Map light_roofs,light_samples,light_probe_ids;
  mutable List<float> light_tops;
@@ -38,7 +40,10 @@ struct Mesh {List<Vertex> v; List<u32> i;void release(){v.release();i.release();
 // Cancellation state is outside World: save/load cannot race a main-thread request.
 u32 terrain_build_epoch(const World *world=nullptr);
 u32 terrain_cancel_builds(const World *world=nullptr);
-bool build_patch(const World&w,int ox,int oz,int size,int step,Mesh&m,u32 expected_epoch=0xffffffffu);
+bool build_patch(const World&w,int ox,int oz,int size,int step,Mesh&m,u32 expected_epoch=0xffffffffu,bool region_cache=false);
+void release_geometry_cache(const World&w);
+void invalidate_geometry_cache(const World&w,V3 lo,V3 hi);
+void geometry_cache_stats(const World&w,Bytes&out);
 void shade_visibility(const World&w,Mesh&m,u32 expected_epoch=0xffffffffu);
 bool terrain_occluded(const World&w,V3 origin,V3 direction);
 // 0 visible, 1 occluded, 2 unresolved (budget); conservative bool wrapper above.
