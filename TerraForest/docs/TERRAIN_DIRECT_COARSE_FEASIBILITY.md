@@ -1,4 +1,8 @@
-# Direct coarse terrain feasibility — not adopted
+# Direct coarse terrain feasibility — archived experiment, not adopted
+
+Preserved on `codex/experimental-transvoxel` at the user's request. Do not resume
+runtime adoption of this experiment without further direction. The active
+foundation work continues without these tables or this experimental dependency.
 
 The existing fullscreen brick run still fails the mining acceptance gates.
 This experiment asks whether coarse reconstruction can avoid extracting and
@@ -63,10 +67,42 @@ numbers are density units, not distance bounds. No normal-projected displacement
 or visual/error admission policy has been implemented. Multiple transition faces
 meeting at corners remain untested, as do vertex manifoldness and physics.
 
-The next architectural gate is multiple-face transition placement and
-shape/feature witnesses. Passing that gate is required before investing in
-another streaming integration. The coarse tables alone must not be connected
-directly to the existing fine mesh.
+The coarse tables alone must not be connected directly to the existing fine mesh.
+
+## Six-face assemblies and displacement correction
+
+The final corner probe assembles a complete fine cube, six transition faces,
+and an enclosing coarse shell. It checks paired edges, winding, nondegeneracy,
+and connected vertex links. Negative controls distinguish two closed surfaces
+touching at one vertex from a manifold surface and detect a removed face.
+
+All 56 cases pass these structural checks with both displacement modes: 32
+synthetic plane/hash/sphere cases and 24 real-terrain cases. Each of six real
+excavations changes density samples and the resulting meshes at all tested
+steps. Excavations cover an interior, a face, and a three-face corner.
+
+The inward-only placement visibly distorts even planes. A shared optional
+vertex projection now removes the normal component of that displacement,
+using central-difference gradients at the canonical undisplaced position.
+The real-world fixture evaluates the continuous trilinear density for these
+gradients. Matching faces use identical positions and calculations.
+
+At 1 m fine resolution, maximum sampled plane error falls from 0.14434 m to
+0.000177 m. At 2 m it falls from 0.28868 m to 0.000177 m; at 4 m from 0.57736 m
+to 0.00527 m. Remaining coarse sampling error is significant: the worst sampled
+sphere-to-mesh distance remains about 0.338/0.675/1.280 m for those three steps.
+Mesh-to-sphere maxima with projection are about 0.335/0.670/1.263 m.
+
+These are sampled witnesses, not certified Hausdorff bounds or an accepted
+visual-error policy. The error metrics do not contribute to the structural
+`passed` field. Adaptive mixtures of fine/coarse neighbor masks, geometric
+self-intersection, rendering normals, cost of the extra gradient queries,
+physics, streaming and end-to-end mining latency remain unqualified.
+
+Run `python tools/probe_terrain_transvoxel_corner.py` for projected placement,
+or add `--unprojected` for its comparison. Both final reports and source hashes
+are retained. The earlier exhaustive and single-face outputs remain unchanged
+after introducing the optional projection callback.
 
 ## Licensing boundary
 

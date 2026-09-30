@@ -358,7 +358,7 @@
   ],
   "source_hashes": {
     "tests\\native\\terrain_transvoxel_join_probe.cpp": "c7f7acd06c9f54cbb65aa64714d36b99cbc42c97775ab52eaa725536b6e2656e",
-    "tests\\native\\transvoxel_probe_cells.hpp": "51300bf37cca0c6fff1129523f4d9a9f79b45b5580225ac7f70e74ade6e79bee",
+    "tests\\native\\transvoxel_probe_cells.hpp": "baa7be855981974d1cb1433a6cb49c80a3ddd1f36a40f4ab8e40a58b7a0f410b",
     "tools\\probe_terrain_transvoxel_joins.py": "5eeef4548b00cb3cddb07c7ec83e9b875e895e76fc2579d0797555eca191e85b"
   },
   "scope": "512 sign patterns, six face orientations, five magnitude/coordinate sets. Profiles 0-2 are nonzero, 3 inserts exact zeros, 4 replaces those zeros by positive half a density quantum. Four fine regular cells, one transition slab and one coarse regular cell. Exact geometric edge incidence, winding and nondegeneracy. Synthetic extruded fields and expanded slab, not world reconstruction, normals, corner transition combinations, simplified terrain error, memory or performance qualification."
