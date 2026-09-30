@@ -38,6 +38,11 @@ traffic is included in this test.
 
 ## Required primitive pressure matrix — not yet certified
 
+The [experimental density query](TERRAIN_DENSITY_QUERY.md) adds bounded native
+cell traversal and cubic first-root handling. Eighteen analytic controls and
+all 22 frozen ray-miss locations pass. Runtime ownership, broader numerical
+adversaries and rendered-surface agreement remain unqualified.
+
 The [density-crossing diagnostic](TERRAIN_DENSITY_RAYS.md) brackets field hits
 at all 22 frozen triangle-ray misses within 2 mm, with shifted air/solid
 controls. There is no existing exposed density interaction raycaster; first

@@ -1,5 +1,6 @@
 // Diagnostic only: bracketed root on frozen short segments, not a general raycaster.
 #include "experimental/region_mesher.hpp"
+#include "experimental/density_ray.hpp"
 #include <cstdio>
 #include <cstdlib>
 #include <cmath>
@@ -15,6 +16,32 @@ static double density(const World&w,V3 p){
 int main(int argc,char**argv){
  if(argc!=2)return 2;FILE*f=fopen(argv[1],"r");if(!f)return 2;
  tr_alloc=std::malloc;tr_realloc=std::realloc;tr_free=std::free;
+ using namespace terraforest::experimental;
+ int controls=0;
+ auto plane=[](int x,int,int){return 4.25-x;};
+ auto hit=[&](DensityHit r,double expected){controls++;return r.status==RayStatus::hit&&std::abs(r.fraction-expected)<1e-9;};
+ if(!hit(trace_density({0,10,10},{10,10,10},plane),.425)||!hit(trace_density({10,10,10},{0,10,10},plane),.575))return 10;
+ if(!hit(trace_density({-2,10,10},{10,10,10},plane),6.25/12))return 11;
+ if(!hit(trace_density({0,0,0},{1,1,1},[](int x,int y,int z){return (x-.2)*(y-.5)*(z-.8);}),.2))return 12;
+ if(!hit(trace_density({0,0,0},{1,1,1},[](int x,int y,int){return (x-.5)*(y-.5);}),.5))return 13;
+ if(!hit(trace_density({1,1,1},{0,0,0},[](int x,int y,int z){return (x-.2)*(y-.5)*(z-.8);}),.2))return 14;
+ if(!hit(trace_density({0,1,1},{2,1,1},[](int x,int,int){return 1.-x;}),.5))return 15;
+ if(!hit(trace_density({4.25f,10,10},{10,10,10},plane),0))return 16;
+ RayControl limited;limited.max_cells=4;
+ if(trace_density({0,10,10},{10,10,10},plane,limited).status!=RayStatus::work_limit)return 17;controls++;
+ limited.max_cells=5;if(!hit(trace_density({0,10,10},{10,10,10},plane,limited),.425))return 18;
+ int cancel_calls=0;RayControl cancelled;cancelled.context=&cancel_calls;cancelled.cancel=[](void*p){return ++*static_cast<int*>(p)==6;};
+ if(trace_density({0,10,10},{10,10,10},plane,cancelled).status!=RayStatus::cancelled)return 19;controls++;
+ if(trace_density({0,10,10},{10,10,10},[](int,int,int){return 1.;}).status!=RayStatus::miss)return 20;controls++;
+ if(trace_density({0,10,10},{0,10,10},plane).status!=RayStatus::invalid_input)return 21;controls++;
+ if(trace_density({0,10,10},{10,10,10},[](int,int,int){return std::numeric_limits<double>::quiet_NaN();}).status!=RayStatus::invalid_input)return 22;controls++;
+ int sampled=0;
+ if(trace_density({-2,0,0},{-1,0,0},[&](int,int,int){sampled++;return 0.;}).status!=RayStatus::miss||sampled)return 23;controls++;
+ if(trace_density({-2,std::numeric_limits<float>::quiet_NaN(),0},{-2,0,0},plane).status!=RayStatus::invalid_input)return 24;controls++;
+ if(!hit(trace_density({1999,10,10},{2001,10,10},[](int x,int,int){return 2000.-x;}),.5))return 25;
+ limited.max_cells=0;
+ if(trace_density({0,10,10},{10,10,10},plane,limited).status!=RayStatus::work_limit)return 26;controls++;
+ fprintf(stderr,"{\"analytic_controls\":%d,\"passed\":true}\n",controls);
  int id,site;V3 a,b,c;
  while(fscanf(f,"%d %d %f %f %f %f %f %f %f %f %f",&id,&site,&a.x,&a.y,&a.z,&b.x,&b.y,&b.z,&c.x,&c.y,&c.z)==11){
   World w;w.init(1703);
@@ -33,6 +60,8 @@ int main(int argc,char**argv){
   }
   bool air_clear=density(w,start+normal*.1f)>0&&density(w,end+normal*.1f)>0;
   bool solid_clear=density(w,start-normal*.1f)<0&&density(w,end-normal*.1f)<0;
+  DensityHit traced=trace_world_density(w,start,end);
+  printf("{\"query_id\":%d,\"hit\":%s,\"distance\":%.12g,\"cells\":%zu}\n",id,traced.status==RayStatus::hit?"true":"false",length(traced.position-center),traced.cells);
   printf("{\"id\":%d,\"bracketed\":%s,\"air_control_clear\":%s,\"solid_control_clear\":%s,\"start_density\":%.12g,\"end_density\":%.12g,\"center_density\":%.12g,\"root_density\":%.12g,\"distance\":%.12g}\n",id,bracket?"true":"false",air_clear?"true":"false",solid_clear?"true":"false",d0,d1,dc,root_density,distance);
   w.release();
  }
