@@ -38,6 +38,11 @@ traffic is included in this test.
 
 ## Required primitive pressure matrix — not yet certified
 
+The [normal column cache](TERRAIN_CANDIDATE_NORMAL_CACHE.md) preserves all 75
+paired outputs and reduces aggregate fixture median normal time by 57.2%.
+The 32 m cave still takes 12.15 ms for normals alone; gameplay adoption and
+integrated normal-halo invalidation remain unqualified.
+
 The [canonical normal reference](TERRAIN_CANDIDATE_NORMALS.md) preserves exact
 normals across tested partitions, but direct scalar sampling costs 27.85 ms
 for the 32 m cave fixture in the retained run. Runtime adoption is rejected;

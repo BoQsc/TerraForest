@@ -92,6 +92,15 @@ static void build(World&w,int x0,int z0,int size,const std::string&file){
  for(V3 p:result.p)vertex_error=std::max(vertex_error,residual(p));
  for(size_t i=0;i<result.indices.size();i+=3){V3 p=(result.p[result.indices[i]]+result.p[result.indices[i+1]]+result.p[result.indices[i+2]])/3.f;centroid_error=std::max(centroid_error,residual(p));}
  double normal_begin=now();NormalResult normals=build_region_normals(w,result);double normal_ms=now()-normal_begin;
+ std::vector<double> normal_reference_times,normal_cached_times;bool normal_parity=true;
+ for(int repetition=0;repetition<5;repetition++)for(int pass=0;pass<2;pass++){
+  bool cached=(ordinal+repetition+pass)%2==0;double tick=now();
+  NormalResult measured=cached?build_region_normals_cached(w,result,x0,z0,size):build_region_normals(w,result);
+  double elapsed=now()-tick;
+  normal_parity=normal_parity&&measured.status==MeshStatus::ok&&!(measured.values!=normals.values);
+  (cached?normal_cached_times:normal_reference_times).push_back(elapsed);
+ }
+ fprintf(stderr,"{\"name\":\"cached normals\",\"size\":%d,\"parity\":%s,\"pairs\":5,\"height_payload_bytes\":%zu,\"reference_median_ms\":%.6f,\"cached_median_ms\":%.6f}\n",size,normal_parity?"true":"false",size_t(size+2)*(size+2)*sizeof(float),median(normal_reference_times),median(normal_cached_times));
  fprintf(stderr,"{\"name\":\"canonical normals\",\"file\":\"%s\",\"passed\":%s,\"vertices\":%zu,\"samples\":%zu,\"ms\":%.6f}\n",file.substr(file.find_last_of("/\\")+1).c_str(),normals.status==MeshStatus::ok?"true":"false",normals.values.size(),normals.samples,normal_ms);
  FILE*nf=fopen((file+".normals").c_str(),"wb");if(!nf)std::exit(2);
  fwrite(normals.values.data(),sizeof(V3),normals.values.size(),nf);fclose(nf);
@@ -265,6 +274,21 @@ int main(int argc,char**argv){
     !edit_affects_region(1280,1280,16,{1296.75f,10,1288},{1296.9f,10,1288})||
     edit_affects_region(1280,1280,16,{1297,10,1288},{1297,10,1288}))return 46;
  World w;w.init(1703);
+ {
+  Result mesh=build_world_region(w,1280,1280,16);
+  MeshLimits failure;failure.sampler_allocator.allocate=[](void*,size_t)->void*{return nullptr;};
+  NormalResult a=build_region_normals_cached(w,mesh,1280,1280,16,failure);
+  failure=MeshLimits{};failure.output_allocator.allocate=[](void*,size_t)->void*{return nullptr;};
+  NormalResult b=build_region_normals_cached(w,mesh,1280,1280,16,failure);
+  int calls=0;MeshLimits cancel;cancel.context=&calls;cancel.cancel=[](void*p){return ++*static_cast<int*>(p)>=22;};
+  NormalResult c=build_region_normals_cached(w,mesh,1280,1280,16,cancel);
+  NormalResult d=build_region_normals_cached(w,mesh,0,0,16);
+  if(a.status!=MeshStatus::allocation_failed||b.status!=MeshStatus::allocation_failed||c.status!=MeshStatus::cancelled||d.status!=MeshStatus::invalid_input||!a.values.empty()||!b.values.empty()||!c.values.empty()||!d.values.empty())return 47;
+  if(!edit_affects_region_normals(1280,1280,16,{1297,20,1297},{1297,20,1297})||
+      edit_affects_region_normals(1280,1280,16,{1298,20,1288},{1298,20,1288})||
+      edit_affects_region(1280,1280,16,{1297,20,1297},{1297,20,1297}))return 48;
+  fprintf(stderr,"{\"name\":\"normal controls\",\"allocation_failures\":2,\"cancelled_samples\":%zu,\"wrong_owner_rejected\":true,\"positive_halo_checked\":true}\n",c.samples);
+ }
  {
   struct Allocations{int fail=0,calls=0,live=0;};
   auto hooks=[](Allocations&state){

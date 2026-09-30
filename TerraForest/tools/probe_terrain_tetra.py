@@ -39,6 +39,8 @@ locality_controls=[row for row in controls if row['name']=='local edit dependenc
 
 normal_controls=[row for row in controls if row['name']=='canonical normals']
 
+cached_normal_controls=[row for row in controls if row['name']=='cached normals']
+
 def decode(path):
     data=path.read_bytes();nv,ni=struct.unpack_from('<II',data)
     assert len(data)==8+12*nv+4*ni and ni%3==0
@@ -131,7 +133,8 @@ for site,x,z in [(0,960,960),(1,1280,1280),(2,1280,1280)]:
                 combined[point]=normal
     checks.append(dict(name=f'{site} partition independent normals',passed=consistent and shared>0 and whole==combined,shared_vertices=shared))
 checks.append(dict(name='normal sampling completes for all geometry fixtures',passed=len(normal_controls)==15 and all(c['passed'] and c['samples']==8*c['vertices'] for c in normal_controls)))
-result=dict(normal_controls=normal_controls,locality_controls=locality_controls,failures=sum(not c['passed'] for c in checks),checks=checks,native_samples=samples,storage_controls=storage_controls,sampler_controls=sampler_controls,limit_controls=limit_controls,thread_controls=thread_controls,interface_controls=interface_controls,world_controls=world_controls,allocation_controls=allocation_controls,sampler_allocation_controls=sampler_allocation_controls,all_allocation_controls=all_allocation_controls,crossing_storage='Direct lattice table; paired retained control is a full-height table, not the historical hash implementation.',elapsed_seconds=time.perf_counter()-begin,
+checks.append(dict(name='cached normal heights preserve all five paired outputs per fixture',passed=len(cached_normal_controls)==15 and all(c['parity'] and c['pairs']==5 and c['height_payload_bytes']==4*(c['size']+2)**2 for c in cached_normal_controls)))
+result=dict(normal_fault_controls=[row for row in controls if row.get('name')=='normal controls'],cached_normal_controls=cached_normal_controls,normal_controls=normal_controls,locality_controls=locality_controls,failures=sum(not c['passed'] for c in checks),checks=checks,native_samples=samples,storage_controls=storage_controls,sampler_controls=sampler_controls,limit_controls=limit_controls,thread_controls=thread_controls,interface_controls=interface_controls,world_controls=world_controls,allocation_controls=allocation_controls,sampler_allocation_controls=sampler_allocation_controls,all_allocation_controls=all_allocation_controls,crossing_storage='Direct lattice table; paired retained control is a full-height table, not the historical hash implementation.',elapsed_seconds=time.perf_counter()-begin,
             adoption_qualified=False,build_command=command,toolchain_lock_sha256=toolchain['lock_sha256'],executable_sha256=hashlib.sha256(exe.read_bytes()).hexdigest(),
             reference_report_sha256=hashlib.sha256(baseline_path.read_bytes()).hexdigest(),
             hashes={str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in [source,Path(__file__).resolve(),native/'core.cpp',native/'core.h',native/'platform.h',native/'geometry_regions.hpp',native/'experimental/region_mesher.hpp',native/'experimental/world_region_sampler.hpp',native/'experimental/fallible_buffer.hpp',native/'experimental/lattice_edge_table.hpp',native/'experimental/region_dependencies.hpp',native/'experimental/region_normals.hpp']},
