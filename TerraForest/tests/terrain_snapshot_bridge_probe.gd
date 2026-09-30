@@ -37,7 +37,7 @@ func run() -> void:
 		for at in range(0,row.indices.size(),4): valid=valid and row.indices.decode_u32(at)<row.positions.size()/12
 	check(valid,"bridge transfers indexed geometry with valid ranges")
 	check(rows.size()==2 and rows[0].positions==rows[1].positions and rows[0].indices==rows[1].indices,"identical captures transfer identical bytes")
-	for action in [6,5,12,3]:
+	for action in [6,5,12,3,2]:
 		var revision: int=native.execute(command(0)).decode_u32(12)
 		check(native.experimental_snapshot_submit(960,960,32,action*10,revision) and native.experimental_snapshot_submit(960,960,32,action*10+1,revision),"stale-control submissions admitted")
 		if action==6: native.execute(command(6,[1703]))
@@ -45,6 +45,7 @@ func run() -> void:
 			var saved: PackedByteArray=native.execute(command(4))
 			var load_packet:=command(5);load_packet.append_array(saved.slice(12));native.execute(load_packet)
 		elif action==12: native.execute(command(12))
+		elif action==2: native.execute(command(2)) # Failed edit: conservative invalidation.
 		else: native.execute(command(3,[100,30,100,1]))
 		rows=await gather(native);valid=rows.size()==2
 		for row: Dictionary in rows: valid=valid and row.stale and row.status==2 and row.positions.is_empty() and row.indices.is_empty()

@@ -38,6 +38,12 @@ traffic is included in this test.
 
 ## Required primitive pressure matrix — not yet certified
 
+The [snapshot locality correction](TERRAIN_SNAPSHOT_LOCALITY.md) fixes rejection
+of unchanged geometry after remote density edits. All 33 engine checks pass;
+interior/edge/corner edits remain invalidated even after another remote edit.
+Capture provenance and validated revision are separate. This certification is
+geometry-only and has not been adopted by normal gameplay.
+
 The [sustained snapshot bridge test](TERRAIN_SNAPSHOT_LOAD.md) completes 640
 geometry jobs and 6,569 concurrent density calls with no correctness or provisional
 call-latency failures. Query maximum is 9.08 ms; completion nevertheless reaches

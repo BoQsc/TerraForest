@@ -2,6 +2,7 @@
 #pragma once
 #include "sparse_region_snapshot.hpp"
 #include "snapshot_memory_budget.hpp"
+#include "region_dependencies.hpp"
 #include <condition_variable>
 #include <mutex>
 #include <thread>
@@ -12,7 +13,7 @@ namespace terraforest::experimental {
 // consume's callback must not reenter this object or retain Result references.
 class SnapshotWorker {
  enum State{empty,ready,running,complete};
- struct Slot{State state=empty;u64 serial=0,epoch=0,token=0;int revision=-1;SparseRegionSnapshot snapshot;Result result;};
+ struct Slot{State state=empty;u64 serial=0,epoch=0,token=0;int revision=-1,validated_revision=-1,x=0,z=0,size=0;SparseRegionSnapshot snapshot;Result result;};
  SnapshotMemoryBudget snapshots_,meshes_;
  Slot slots_[2];
  std::mutex mutex_;
@@ -56,12 +57,21 @@ public:
   if(!slot)return false;
   MeshLimits limits;limits.sampler_allocator=snapshots_.allocator();
   if(slot->snapshot.capture(w,x,z,size,limits)!=MeshStatus::ok)return false;
-  slot->revision=slot->snapshot.revision();slot->epoch=epoch;slot->token=token;slot->serial=++serial_;slot->state=ready;wake_.notify_one();return true;
+  slot->revision=slot->snapshot.revision();slot->validated_revision=slot->revision;slot->x=x;slot->z=z;slot->size=size;
+  slot->epoch=epoch;slot->token=token;slot->serial=++serial_;slot->state=ready;wake_.notify_one();return true;
+ }
+ // Only a complete chain of certified, nonintersecting density edits advances
+ // validity. An intersecting or unreported revision can never be resurrected.
+ // Geometry sample bounds only: not sufficient for normals/materials/lighting.
+ void observe_density_edit(int previous,int next,V3 lo,V3 hi){
+  std::lock_guard<std::mutex> lock(mutex_);
+  if(next<=previous)return;
+  for(auto&s:slots_)if(s.state!=empty&&s.validated_revision==previous&&!edit_affects_region(s.x,s.z,s.size,lo,hi))s.validated_revision=next;
  }
  template<class Consumer>int consume(u64 epoch,int revision,Consumer&&consumer){
   std::lock_guard<std::mutex> lock(mutex_);int count=0;
   for(auto&s:slots_)if(s.state==complete){
-   bool stale=s.epoch!=epoch||s.revision!=revision;
+   bool stale=s.epoch!=epoch||s.validated_revision!=revision;
    if(stale)s.result.discard(MeshStatus::cancelled);
    consumer(s.token,s.epoch,s.revision,stale,static_cast<const Result&>(s.result));
    s.result=Result{};s.state=empty;count++;

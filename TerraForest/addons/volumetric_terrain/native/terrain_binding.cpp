@@ -56,6 +56,7 @@ public:
         const u64 epoch=snapshot_epoch_.load();
         snapshot_worker_->consume(epoch,world_.revision,[&](u64 token,u64 captured,int revision,bool stale,const experimental::Result&r){
             godot::Dictionary row;row["token"]=int64_t(token);row["epoch"]=int64_t(captured);row["revision"]=revision;row["stale"]=stale;
+            row["validated_revision"]=stale?-1:world_.revision;
             int status=int(r.status);godot::PackedByteArray positions,indices;
             if(r.status==experimental::MeshStatus::ok){
                 static_assert(sizeof(V3)==12);
@@ -71,6 +72,7 @@ public:
         // Command 12 can invalidate concurrently without acquiring the world lock.
         if(snapshot_epoch_.load()!=epoch)for(int i=0;i<rows.size();i++){
             godot::Dictionary row=rows[i];row["stale"]=true;row["status"]=int(experimental::MeshStatus::cancelled);
+            row["validated_revision"]=-1;
             row["positions"]=godot::PackedByteArray();row["indices"]=godot::PackedByteArray();
         }
         return rows;
@@ -102,8 +104,19 @@ public:
         if(command==5||command==6)snapshot_epoch_.fetch_add(1);
         tr_oom=false;
         Bytes bytes;
+        const int previous_revision=world_.revision;
         active_command_.store(command,std::memory_order_relaxed);
         process_request(world_,packet.ptr(),int(packet.size()),bytes);
+        if(command==2){
+            if(bytes.n>=52&&bytes.p[8]==0){
+                Reader bounds{bytes.p,bytes.n,28};V3 lo=bounds.vec(),hi=bounds.vec();
+                if(snapshot_worker_&&bounds.good)snapshot_worker_->observe_density_edit(previous_revision,world_.revision,lo,hi);
+            }else{
+                // Failed edits can have partially modified pages before returning
+                // without a revision increment. Never certify those snapshots.
+                snapshot_epoch_.fetch_add(1);
+            }
+        }
         active_command_.store(-1,std::memory_order_relaxed);
         godot::PackedByteArray result;
         if(result.resize(bytes.n)==godot::OK && bytes.n)copy_bytes(result.ptrw(),bytes.p,size_t(bytes.n));
