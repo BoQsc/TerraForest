@@ -11,7 +11,7 @@ struct RayControl {size_t max_cells=4096;bool(*cancel)(void*)=nullptr;void*conte
 struct DensityHit {RayStatus status=RayStatus::miss;double fraction=0;V3 position{};size_t cells=0;};
 inline double polynomial(const double*c,double t){return ((c[3]*t+c[2])*t+c[1])*t+c[0];}
 // Partition at derivative roots so same-sign endpoints cannot hide two roots.
-// Numerical zero tolerance is relative to coefficient magnitude, not world units.
+// Extended-precision evaluation preserves the original input coefficients.
 inline bool first_cubic_root(const double*c,double&root){
  // Exact lower-degree restrictions need no approximate tangent admission.
  // Preserve the input coefficients before normalization; division can erase a
@@ -29,27 +29,27 @@ inline bool first_cubic_root(const double*c,double&root){
   if(t1>=0&&t1<=1){root=double(t1);return true;}
   return false;
  }
- double scale=0;for(int i=0;i<4;i++)scale=std::max(scale,std::abs(c[i]));
- if(scale==0){root=0;return true;}
- double normalized[4];for(int i=0;i<4;i++)normalized[i]=c[i]/scale;c=normalized;
- double eps=64*std::numeric_limits<double>::epsilon();
- double cuts[4]={0,1,0,0};int count=2;
- auto add=[&](double t){if(t>0&&t<1)cuts[count++]=t;};
- double a=3*c[3],b=2*c[2],d=c[1];
- if(std::abs(a)<=eps){if(std::abs(b)>eps)add(-d/b);}
- else{
-  double disc=b*b-4*a*d;
-  if(disc>=0){double q=-.5*(b+std::copysign(std::sqrt(disc),b));if(q!=0){add(q/a);add(d/q);}else add(-b/(2*a));}
- }
+ // Keep the original double coefficients in extended precision throughout
+ // derivative partitioning and evaluation; do not turn near-zero minima into hits.
+ auto value=[&](long double t){return ((static_cast<long double>(c[3])*t+c[2])*t+c[1])*t+c[0];};
+ long double cuts[4]={0,1,0,0};int count=2;
+ auto add=[&](long double t){if(t>0&&t<1)cuts[count++]=t;};
+ long double a=3.L*c[3],b=2.L*c[2],d=c[1];
+ long double disc=b*b-4*a*d;
+ if(disc>=0){long double q=-.5L*(b+std::copysign(std::sqrt(disc),b));if(q!=0){add(q/a);add(d/q);}else add(-b/(2*a));}
  std::sort(cuts,cuts+count);
  for(int i=0;i<count;i++){
-  double lo=cuts[i],fl=polynomial(c,lo);
-  if(std::abs(fl)<=eps){root=lo;return true;}
+  long double lo=cuts[i],fl=value(lo);
+  if(fl==0){root=double(lo);return true;}
   if(i+1==count)break;
-  double hi=cuts[i+1],fh=polynomial(c,hi);
+  long double hi=cuts[i+1],fh=value(hi);
   if((fl<0)==(fh<0))continue;
-  for(int j=0;j<60;j++){double mid=(lo+hi)*.5,fm=polynomial(c,mid);if(fm==0){lo=hi=mid;break;}if((fm<0)==(fl<0)){lo=mid;fl=fm;}else hi=mid;}
-  root=(lo+hi)*.5;return true;
+  for(int j=0;j<80;j++){
+   long double mid=(lo+hi)*.5L,fm=value(mid);
+   if(fm==0||mid==lo||mid==hi){lo=hi=mid;break;}
+   if((fm<0)==(fl<0)){lo=mid;fl=fm;}else hi=mid;
+  }
+  root=double((lo+hi)*.5L);return true;
  }
  return false;
 }

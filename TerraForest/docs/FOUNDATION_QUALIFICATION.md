@@ -38,6 +38,11 @@ traffic is included in this test.
 
 ## Required primitive pressure matrix — not yet certified
 
+The [cubic numerical follow-up](TERRAIN_CUBIC_NUMERICS.md) exposes and corrects
+seven additional cubic errors. All 67 numerical cases now pass, along with
+the traversal/frozen-ray controls. This remains finite-precision experimental
+code, with runtime performance and broader traversal adversaries unqualified.
+
 The [near-tangent quadratic suite](TERRAIN_RAY_NUMERICS.md) exposed seven
 query failures. A separate lower-degree solve corrects all 33 cases while
 retaining the original query controls. General cubic near-tangency remains
