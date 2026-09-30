@@ -12,7 +12,7 @@ triangle quality/count tradeoffs discussed in
 [Regularised marching tetrahedra](https://www.sciencedirect.com/science/article/pii/S009784939900076X).
 That paper is background; this prototype does not implement its regularisation.
 
-## What passed
+## What passed in the initial revision
 
 Three fields (retained cave, mountain, edited mountain) each produce one 32 m
 parent and four independent 16 m children, over y=0..256. All 18 checks pass:
@@ -67,6 +67,35 @@ distant geometry and the existing region-boundary tests. Neither its topology
 passes nor the current mesher's lower triangle count decides that comparison.
 
 ## Reproduce
+
+### Column sampling follow-up
+
+The candidate now evaluates height once per XZ column and looks up each edited
+16-sample page once per column/page band, instead of repeating those operations
+for every Y sample. It still densely evaluates the full vertical range; no
+samples or geometry are omitted. This code remains isolated in the prototype,
+and directly reads the current native page layout rather than adding a runtime API.
+
+The runner now passes 20 checks, including comparison of **all 1,730,895 quantized
+density samples** with World::sample and byte-for-byte mesh hashes against the
+committed initial prototype. Topology, triangle counts and field residuals remain
+unchanged. The original report above is retained; this follow-up is stored in
+`docs/evidence/terrain_tetra_column/`.
+
+| 32 m case | Original sampling ms | Column sampling ms | Meshing ms |
+|---|---:|---:|---:|
+| Cave | 43.45 | 13.65 | 14.39 |
+| Mountain | 38.24 | 9.12 | 7.49 |
+| Edited mountain | 39.45 | 9.50 | 8.06 |
+
+These are matched single-run observations, with original sampling first. They
+are not percentiles or cold/warm order-controlled performance certification.
+Array equality validation is outside both sampling and meshing timers. The cave
+candidate now spends approximately 28 ms in these two stages in this run, still
+excluding materials, lighting, collision publication and rendering. Geometry
+growth, interpolation differences, dense sampling and absent distant LOD still
+prevent adoption. This change establishes that repeated column evaluation was
+avoidable overhead without changing the candidate's output.
 
 ```text
 python tools/probe_terrain_tetra.py

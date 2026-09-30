@@ -44,9 +44,12 @@ struct Result{
 };
 
 static void build(World&w,int x0,int z0,int size,const std::string&file){
- double begin=now();int n=size+1;
+ int n=size+1;
  std::vector<float> field(size_t(n)*n*257);
+ std::vector<float> reference(field.size());
  auto index=[&](int x,int y,int z){return x+n*(z+n*y);};
+ auto quantized_density=[](float d){float v=clampf(d,-SDF_BAND,SDF_BAND)*SDF_SCALE;int q=int(v>=0?v+.5f:v-.5f);return q?float(q)/SDF_SCALE:.5f/SDF_SCALE;};
+ double begin=now();
  int zeros=0;
  for(int y=0;y<=256;y++)for(int z=0;z<=size;z++)for(int x=0;x<=size;x++){
   float value=clampf(w.sample(x0+x,y,z0+z),-SDF_BAND,SDF_BAND)*SDF_SCALE;
@@ -54,9 +57,26 @@ static void build(World&w,int x0,int z0,int size,const std::string&file){
   if(!quantized)zeros++;
   // Experimental convention: zero is exterior, displaced by half a quantization
   // unit to avoid placing multiple intersections exactly on a lattice corner.
-  field[index(x,y,z)]=quantized?float(quantized)/SDF_SCALE:.5f/SDF_SCALE;
+  reference[index(x,y,z)]=quantized?float(quantized)/SDF_SCALE:.5f/SDF_SCALE;
  }
- double sampled=now();Result result;
+ double reference_sampled=now();
+ constexpr int np=WORLD/PAGE+1;
+ for(int z=0;z<=size;z++)for(int x=0;x<=size;x++){
+  int wx=x0+x,wz=z0+z;
+  if(wx<0||wx>WORLD||wz<0||wz>WORLD){for(int y=0;y<=256;y++)field[index(x,y,z)]=SDF_BAND;continue;}
+  float h=w.height(float(wx),float(wz));
+  for(int py=0;py<=16;py++){
+   u32 key=u32((wx>>4)+np*((wz>>4)+np*py))+1;
+   int page_index=w.pages_by_key.get(key);
+   for(int y=py*16;y<=imn(256,py*16+15);y++){
+    float value=page_index<0?w.base({float(wx),float(y),float(wz)},h):float(w.pages[page_index].d[(wx&15)+16*((wz&15)+16*(y&15))])/SDF_SCALE;
+    field[index(x,y,z)]=quantized_density(value);
+   }
+  }
+ }
+ double sampled=now();
+ if(field!=reference){fprintf(stderr,"Column sampler disagrees with authoritative samples\n");std::exit(5);}
+ double mesh_begin=now();Result result;
  // Six tetrahedra sharing the 0->7 cube diagonal; same split in every cell.
  constexpr int tets[6][4]={{0,1,3,7},{0,3,2,7},{0,2,6,7},{0,6,4,7},{0,4,5,7},{0,5,1,7}};
  for(int y=0;y<256;y++)for(int z=0;z<size;z++)for(int x=0;x<size;x++){
@@ -86,7 +106,7 @@ static void build(World&w,int x0,int z0,int size,const std::string&file){
  FILE*f=fopen(file.c_str(),"wb");if(!f)std::exit(2);
  u32 counts[2]={u32(result.p.size()),u32(result.indices.size())};
  fwrite(counts,4,2,f);fwrite(result.p.data(),sizeof(V3),result.p.size(),f);fwrite(result.indices.data(),4,result.indices.size(),f);fclose(f);
- printf("{\"size\":%d,\"x\":%d,\"z\":%d,\"sampling_ms\":%.6f,\"meshing_ms\":%.6f,\"vertices\":%zu,\"triangles\":%zu,\"zero_samples\":%d,\"max_vertex_field_residual\":%.8f,\"max_centroid_field_residual\":%.8f}\n",size,x0,z0,sampled-begin,meshed-sampled,result.p.size(),result.indices.size()/3,zeros,vertex_error,centroid_error);
+ printf("{\"size\":%d,\"x\":%d,\"z\":%d,\"reference_sampling_ms\":%.6f,\"sampling_ms\":%.6f,\"meshing_ms\":%.6f,\"sample_parity\":true,\"vertices\":%zu,\"triangles\":%zu,\"zero_samples\":%d,\"max_vertex_field_residual\":%.8f,\"max_centroid_field_residual\":%.8f}\n",size,x0,z0,reference_sampled-begin,sampled-reference_sampled,meshed-mesh_begin,result.p.size(),result.indices.size()/3,zeros,vertex_error,centroid_error);
 }
 int main(int argc,char**argv){
  if(argc!=2)return 2;

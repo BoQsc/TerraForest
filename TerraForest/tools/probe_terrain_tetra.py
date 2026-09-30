@@ -2,6 +2,7 @@
 from pathlib import Path
 from collections import Counter
 import hashlib
+import gzip
 import json
 import os
 import struct
@@ -78,8 +79,14 @@ for site,x,z in [(0,960,960),(1,1280,1280),(2,1280,1280)]:
     for dz in [0,16]:
         for dx in [0,16]: combined.update(meshes[f'{site}_{x+dx}_{z+dz}_16'][0])
     checks.append(dict(name=f'{site} exact fine partition',passed=whole==combined,missing=sum((whole-combined).values()),extra=sum((combined-whole).values())))
+baseline_path=ROOT/'docs/evidence/terrain_tetra/terrain_tetra_probe.json.gz'
+baseline=json.loads(gzip.decompress(baseline_path.read_bytes()))
+fingerprints={c['name']:c['sha256'] for c in baseline['checks'] if 'sha256' in c}
+checks.append(dict(name='all optimized meshes equal committed reference bytes',passed=len(fingerprints)==15 and all(meshes[name][1]['sha256']==digest for name,digest in fingerprints.items())))
+checks.append(dict(name='all quantized field samples match World::sample',passed=len(samples)==15 and all(s['sample_parity'] for s in samples)))
 result=dict(failures=sum(not c['passed'] for c in checks),checks=checks,native_samples=samples,elapsed_seconds=time.perf_counter()-begin,
             adoption_qualified=False,build_command=command,toolchain_lock_sha256=toolchain['lock_sha256'],executable_sha256=hashlib.sha256(exe.read_bytes()).hexdigest(),
+            reference_report_sha256=hashlib.sha256(baseline_path.read_bytes()).hexdigest(),
             hashes={str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in [source,Path(__file__).resolve(),native/'core.cpp',native/'core.h',native/'platform.h',native/'geometry_regions.hpp']},
             scope='Isolated dense full-height tetrahedral geometry prototype. Changes interpolation and zero convention; no LOD, visual-error, material, shading, collider, GPU or runtime qualification.')
 (ROOT/'reports').mkdir(exist_ok=True)
