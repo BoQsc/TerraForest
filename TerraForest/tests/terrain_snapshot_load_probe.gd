@@ -54,8 +54,8 @@ func run_case(count: int,repetition: int) -> void:
 			if not pending.has(row.token) or seen.has(row.token): errors+=1;continue
 			completion.append((Time.get_ticks_usec()-int(pending[row.token]))/1000.0)
 			pending.erase(row.token);seen[row.token]=true;finished+=1
-			if row.status!=0 or row.stale or row.validated_revision!=revision or row.positions.is_empty() or row.indices.is_empty(): errors+=1
-			packet_bytes+=row.positions.size()+row.indices.size()
+			if row.status!=0 or row.stale or row.validated_revision!=revision or row.positions.is_empty() or row.indices.is_empty() or row.normals.size()!=row.positions.size(): errors+=1
+			packet_bytes+=row.positions.size()+row.indices.size()+row.normals.size()
 		geometry_bytes+=packet_bytes;peak_packet_bytes=maxi(peak_packet_bytes,packet_bytes)
 		await process_frame
 	var elapsed: float=(Time.get_ticks_usec()-start)/1000.0

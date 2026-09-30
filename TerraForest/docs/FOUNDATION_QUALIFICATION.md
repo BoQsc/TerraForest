@@ -38,6 +38,12 @@ traffic is included in this test.
 
 ## Required primitive pressure matrix — not yet certified
 
+The [asynchronous geometry/normal packet](TERRAIN_SNAPSHOT_SURFACE_PACKET.md)
+passes four native surface-worker and 17 engine bridge checks, including
+normal-border invalidation. Its loaded test completes 640 jobs/edits correctly
+but rejects one 20.351 ms capture call. Internal capture/lock timing is needed;
+the result is not runtime performance qualification.
+
 The [snapshot normal pass](TERRAIN_SNAPSHOT_NORMALS.md) preserves exact geometry
 and reference normals in ten cases after source release, including positive-border
 edits that change normals alone. Thirty allocation failures and ten initial

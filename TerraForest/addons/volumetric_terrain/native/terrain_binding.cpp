@@ -54,26 +54,29 @@ public:
         std::lock_guard<std::mutex> lock(mutex_);godot::Array rows;
         if(!snapshot_worker_)return rows;
         const u64 epoch=snapshot_epoch_.load();
-        snapshot_worker_->consume(epoch,world_.revision,[&](u64 token,u64 captured,int revision,bool stale,const experimental::Result&r){
+        snapshot_worker_->consume_surface(epoch,world_.revision,[&](u64 token,u64 captured,int revision,bool stale,const experimental::Result&r,const experimental::NormalResult&n){
             godot::Dictionary row;row["token"]=int64_t(token);row["epoch"]=int64_t(captured);row["revision"]=revision;row["stale"]=stale;
             row["validated_revision"]=stale?-1:world_.revision;
-            int status=int(r.status);godot::PackedByteArray positions,indices;
+            int status=int(r.status);godot::PackedByteArray positions,indices,normals;
             if(r.status==experimental::MeshStatus::ok){
                 static_assert(sizeof(V3)==12);
-                if(positions.resize(r.p.size()*sizeof(V3))!=godot::OK||indices.resize(r.indices.size()*sizeof(u32))!=godot::OK){
-                    positions.clear();indices.clear();status=int(experimental::MeshStatus::allocation_failed);
+                if(n.status!=experimental::MeshStatus::ok||n.values.size()!=r.p.size()){
+                    status=int(experimental::MeshStatus::internal_error);
+                }else if(positions.resize(r.p.size()*sizeof(V3))!=godot::OK||indices.resize(r.indices.size()*sizeof(u32))!=godot::OK||normals.resize(n.values.size()*sizeof(V3))!=godot::OK){
+                    positions.clear();indices.clear();normals.clear();status=int(experimental::MeshStatus::allocation_failed);
                 }else{
                     if(!r.p.empty())copy_bytes(positions.ptrw(),r.p.data(),r.p.size()*sizeof(V3));
                     if(!r.indices.empty())copy_bytes(indices.ptrw(),r.indices.data(),r.indices.size()*sizeof(u32));
+                    if(!n.values.empty())copy_bytes(normals.ptrw(),n.values.data(),n.values.size()*sizeof(V3));
                 }
             }
-            row["status"]=status;row["positions"]=positions;row["indices"]=indices;rows.push_back(row);
+            row["status"]=status;row["positions"]=positions;row["indices"]=indices;row["normals"]=normals;rows.push_back(row);
         });
         // Command 12 can invalidate concurrently without acquiring the world lock.
         if(snapshot_epoch_.load()!=epoch)for(int i=0;i<rows.size();i++){
             godot::Dictionary row=rows[i];row["stale"]=true;row["status"]=int(experimental::MeshStatus::cancelled);
             row["validated_revision"]=-1;
-            row["positions"]=godot::PackedByteArray();row["indices"]=godot::PackedByteArray();
+            row["positions"]=godot::PackedByteArray();row["indices"]=godot::PackedByteArray();row["normals"]=godot::PackedByteArray();
         }
         return rows;
     }

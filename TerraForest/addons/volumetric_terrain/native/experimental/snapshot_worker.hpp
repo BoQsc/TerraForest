@@ -13,7 +13,7 @@ namespace terraforest::experimental {
 // consume's callback must not reenter this object or retain Result references.
 class SnapshotWorker {
  enum State{empty,ready,running,complete};
- struct Slot{State state=empty;u64 serial=0,epoch=0,token=0;int revision=-1,validated_revision=-1,x=0,z=0,size=0;SparseRegionSnapshot snapshot;Result result;};
+ struct Slot{State state=empty;u64 serial=0,epoch=0,token=0;int revision=-1,validated_revision=-1,x=0,z=0,size=0;SparseRegionSnapshot snapshot;Result result;NormalResult normals;};
  SnapshotMemoryBudget snapshots_,meshes_;
  Slot slots_[2];
  std::mutex mutex_;
@@ -34,11 +34,17 @@ class SnapshotWorker {
    MeshLimits limits;limits.sampler_allocator=meshes_.allocator();limits.output_allocator=meshes_.allocator();limits.crossing_allocator=meshes_.allocator();
    limits.context=this;limits.cancel=[](void*p){return static_cast<SnapshotWorker*>(p)->stopping_.load();};
    Result result=slot->snapshot.mesh(limits);
+   NormalResult normals;
+   if(result.status==MeshStatus::ok){
+    normals=slot->snapshot.normals(result,limits);
+    if(normals.status!=MeshStatus::ok)result.discard(normals.status);
+   }else normals.discard(result.status);
+   if(limits.cancelled()){result.discard(MeshStatus::cancelled);normals.discard(MeshStatus::cancelled);}
    // No callable owner pointer escapes in the completed packet.
    result.limits.context=nullptr;result.limits.cancel=nullptr;
    {
     std::lock_guard<std::mutex> lock(mutex_);
-    slot->snapshot=SparseRegionSnapshot{};slot->result=std::move(result);slot->state=complete;
+    slot->snapshot=SparseRegionSnapshot{};slot->result=std::move(result);slot->normals=std::move(normals);slot->state=complete;
    }
   }
  }
@@ -56,25 +62,28 @@ public:
   Slot*slot=nullptr;for(auto&s:slots_)if(s.state==empty){slot=&s;break;}
   if(!slot)return false;
   MeshLimits limits;limits.sampler_allocator=snapshots_.allocator();
-  if(slot->snapshot.capture(w,x,z,size,limits)!=MeshStatus::ok)return false;
+  if(slot->snapshot.capture(w,x,z,size,limits,true)!=MeshStatus::ok)return false;
   slot->revision=slot->snapshot.revision();slot->validated_revision=slot->revision;slot->x=x;slot->z=z;slot->size=size;
   slot->epoch=epoch;slot->token=token;slot->serial=++serial_;slot->state=ready;wake_.notify_one();return true;
  }
  // Only a complete chain of certified, nonintersecting density edits advances
  // validity. An intersecting or unreported revision can never be resurrected.
- // Geometry sample bounds only: not sufficient for normals/materials/lighting.
+ // Includes canonical normal samples; not sufficient for materials/lighting.
  void observe_density_edit(int previous,int next,V3 lo,V3 hi){
   std::lock_guard<std::mutex> lock(mutex_);
   if(next<=previous)return;
-  for(auto&s:slots_)if(s.state!=empty&&s.validated_revision==previous&&!edit_affects_region(s.x,s.z,s.size,lo,hi))s.validated_revision=next;
+  for(auto&s:slots_)if(s.state!=empty&&s.validated_revision==previous&&!edit_affects_region_normals(s.x,s.z,s.size,lo,hi))s.validated_revision=next;
  }
  template<class Consumer>int consume(u64 epoch,int revision,Consumer&&consumer){
+  return consume_surface(epoch,revision,[&](u64 token,u64 captured,int source,bool stale,const Result&r,const NormalResult&){consumer(token,captured,source,stale,r);});
+ }
+ template<class Consumer>int consume_surface(u64 epoch,int revision,Consumer&&consumer){
   std::lock_guard<std::mutex> lock(mutex_);int count=0;
   for(auto&s:slots_)if(s.state==complete){
    bool stale=s.epoch!=epoch||s.validated_revision!=revision;
-   if(stale)s.result.discard(MeshStatus::cancelled);
-   consumer(s.token,s.epoch,s.revision,stale,static_cast<const Result&>(s.result));
-   s.result=Result{};s.state=empty;count++;
+   if(stale){s.result.discard(MeshStatus::cancelled);s.normals.discard(MeshStatus::cancelled);}
+   consumer(s.token,s.epoch,s.revision,stale,static_cast<const Result&>(s.result),static_cast<const NormalResult&>(s.normals));
+   s.result=Result{};s.normals=NormalResult{};s.state=empty;count++;
   }
   return count;
  }
