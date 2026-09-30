@@ -31,8 +31,19 @@ func run() -> void:
 			file.store_buffer(reply)
 			file.close()
 			rows.append({"site":site[0],"request":request,"file":name,"native_ms":elapsed})
+	core.execute(Codec.command(6,[1703]))
+	var witnesses: Array = []
+	# Shared lattice faces between cells at the retained overused indexed edges.
+	for origin in [Vector3(963,56,989),Vector3(964,55,991)]:
+		var samples: Array = []
+		for offset in [Vector3.ZERO,Vector3(1,0,0),Vector3(1,0,1),Vector3(0,0,1)]:
+			var p: Vector3 = origin+offset
+			var reply: PackedByteArray = core.execute(Codec.point_command(p))
+			samples.append({"position":[p.x,p.y,p.z],"density":reply.decode_float(16)})
+		witnesses.append(samples)
+	var zero_sample: PackedByteArray = core.execute(Codec.point_command(Vector3(985,61,963)))
 	var file := FileAccess.open("res://reports/terrain_boundary_probe.json",FileAccess.WRITE)
-	file.store_string(JSON.stringify({"failures":failures,"rows":rows}))
+	file.store_string(JSON.stringify({"failures":failures,"rows":rows,"ambiguous_faces":witnesses,"degenerate_corner_density":zero_sample.decode_float(16)}))
 	file.close()
 	core = null
 	quit(0 if failures==0 else 1)

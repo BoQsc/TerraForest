@@ -34,6 +34,7 @@ def decode(data):
     triangles=Counter()
     edges=Counter()
     indexed_edges=Counter()
+    cleaned_indexed_edges=Counter()
     degenerate=0
     for i in range(0,ni,3):
         a,b,c=(points[j] for j in indices[i:i+3])
@@ -41,11 +42,14 @@ def decode(data):
         for u,v in [(ia,ib),(ib,ic),(ic,ia)]: indexed_edges[tuple(sorted((u,v)))]+=1
         triangles[triangle(a,b,c)]+=1
         if len({a,b,c})<3: degenerate+=1
+        else:
+            for u,v in [(ia,ib),(ib,ic),(ic,ia)]: cleaned_indexed_edges[tuple(sorted((u,v)))]+=1
         for u,v in [(a,b),(b,c),(c,a)]: edges[tuple(sorted((u,v)))]+=1
     faces=mesh[36+56*nv+4*ni:]
     collision=Counter(triangle(bytes(faces[i:i+12]),bytes(faces[i+12:i+24]),bytes(faces[i+24:i+36])) for i in range(0,len(faces),36))
     return dict(triangles=triangles,boundary=Counter({e:n for e,n in edges.items() if n==1}),
                 nonmanifold=sum(n>2 for n in edges.values()),indexed_nonmanifold=sum(n>2 for n in indexed_edges.values()),degenerate=degenerate,
+                after_removing_degenerate=sum(n>2 for n in cleaned_indexed_edges.values()),
                 bad_edge_examples=[dict(a=struct.unpack('<3f',e[0]),b=struct.unpack('<3f',e[1]),incidence=n) for e,n in edges.items() if n>2][:4],
                 indexed_bad_edge_examples=[dict(a=struct.unpack('<3f',points[e[0]]),b=struct.unpack('<3f',points[e[1]]),incidence=n) for e,n in indexed_edges.items() if n>2][:4],
                 collision=collision,bytes=len(data),count=ni//3)
@@ -99,9 +103,14 @@ with tempfile.TemporaryDirectory(prefix='boundary_probe_',dir=ROOT/'.build') as 
                 coarse=meshes[q[:3]+(step,)]
                 check(f'{site} {q[:2]} step {step} boundary',coarse['boundary']==fine['boundary'],fine_edges=len(fine['boundary']),coarse_edges=len(coarse['boundary']))
         check(site+' no repeated-position triangles or >2 edge incidence',all(m['degenerate']==0 and m['nonmanifold']==0 for m in meshes.values()),
-              defective_meshes=[dict(request=q,degenerate=m['degenerate'],nonmanifold=m['nonmanifold'],indexed_nonmanifold=m['indexed_nonmanifold'],examples=m['bad_edge_examples'],indexed_examples=m['indexed_bad_edge_examples']) for q,m in meshes.items() if m['degenerate'] or m['nonmanifold']])
+              defective_meshes=[dict(request=q,degenerate=m['degenerate'],nonmanifold=m['nonmanifold'],indexed_nonmanifold=m['indexed_nonmanifold'],after_removing_degenerate=m['after_removing_degenerate'],examples=m['bad_edge_examples'],indexed_examples=m['indexed_bad_edge_examples']) for q,m in meshes.items() if m['degenerate'] or m['nonmanifold']])
         summary.append(dict(site=site,triangles_by_step={str(step):sum(m['count'] for q,m in meshes.items() if q[2]==32 and q[3]==step) for step in [1,2,4,8]},mesh_hashes={r['file']:hashlib.sha256((project/'reports'/r['file']).read_bytes()).hexdigest() for r in rows}))
-    result=dict(failures=sum(not c['passed'] for c in checks),checks=checks,summary=summary,native_samples=raw['rows'],
+    for face in raw['ambiguous_faces']:
+        signs=[sample['density']<0 for sample in face]
+        for sample in face:
+            sample['inside']=sample['density']<0
+        check('retained ambiguous face has four sign crossings',sum(signs[i]!=signs[(i+1)%4] for i in range(4))==4)
+    result=dict(failures=sum(not c['passed'] for c in checks),checks=checks,summary=summary,native_samples=raw['rows'],ambiguous_faces=raw['ambiguous_faces'],degenerate_corner_density=raw['degenerate_corner_density'],
                 elapsed_seconds=time.perf_counter()-begin,
                 source_hashes={str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in [ROOT/'tests/terrain_boundary_probe.gd',Path(__file__).resolve(),library]},
                 scope='Exact render/collision fine partition and open-edge preservation under interior simplification. No shading continuity, error bound, mixed-size T-junction proof, publication or GPU qualification.')

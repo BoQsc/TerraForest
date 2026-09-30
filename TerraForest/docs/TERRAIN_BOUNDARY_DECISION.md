@@ -5,7 +5,7 @@ It checks mountain, cave, two world-edge locations and an excavation at the
 intersection of four regions. At each site it builds one 64 m fine mesh and four
 32 m regions at steps 1, 2, 4 and 8: 85 native queries total.
 
-Results: **75 checks pass, one topology gate fails.** The test intentionally exits
+Results: **77 checks pass, one topology gate fails.** The test intentionally exits
 1 until the defect is fixed; successful partition comparisons are not acceptance
 of the underlying mesh.
 
@@ -45,6 +45,36 @@ detail but cannot serve as a scalable distant representation of extensively edit
 terrain. Cave/steep-surface protection also restricts reduction.
 
 ## Decision
+
+### Isolated failure mechanisms
+
+The public density sampler gives these values in cyclic order around shared
+horizontal lattice faces (seed 1703, no edits):
+
+| Face origin (x,y,z) | (0,0) | (1,0) | (1,1) | (0,1) |
+|---|---:|---:|---:|---:|
+| (963,56,989) | -0.385383 | +0.045502 | -0.017482 | +0.269484 |
+| (964,55,991) | -0.253205 | +0.274439 | -0.022715 | +0.153343 |
+
+Both faces have four solid/empty crossings. In `extract_vertices`, a cell gets
+one averaged representative regardless of how many surface pieces it contains.
+`connect_patch` connects representatives around each crossing lattice edge.
+Here that creates four incident triangles on the same dual edge. The second
+edge has three incident triangles in the retained child because its fourth lies
+beyond that child's boundary. The parent still exhibits the defect.
+
+Separately, the density at (985,61,963) is exactly zero. Edge interpolation reaches
+that lattice corner, producing multiple coincident representatives and zero-area
+triangles. The report retains the exact sample and defective edge positions.
+
+Offline removal of every repeated-position triangle leaves **both indexed
+overused edges** in the parent and retained child. Thus filtering degenerate
+triangles is insufficient. The two failure cases must remain independent
+regressions for any replacement: a consistent zero-value convention and a
+representation/connectivity rule that resolves the alternating-sign face.
+Do not weaken the topology gate to make cleanup look like a mesher fix.
+
+### Adoption constraint
 
 Region ownership and boundary pinning are useful starting points; they do not
 require discarding all existing systems. However, do not integrate a region-based
