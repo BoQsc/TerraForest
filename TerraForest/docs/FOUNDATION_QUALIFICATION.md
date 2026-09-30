@@ -38,6 +38,11 @@ traffic is included in this test.
 
 ## Required primitive pressure matrix — not yet certified
 
+The [opt-in native density command](TERRAIN_DENSITY_COMMAND.md) is now exposed
+in both extension builds. Thirteen release-thread API checks and 22 native
+wire parity cases pass; the existing 42 worker publication checks still pass.
+Backend queue/player adoption and end-to-end latency remain outstanding.
+
 The [cubic numerical follow-up](TERRAIN_CUBIC_NUMERICS.md) exposes and corrects
 seven additional cubic errors. All 67 numerical cases now pass, along with
 the traversal/frozen-ray controls. This remains finite-precision experimental

@@ -44,7 +44,9 @@ def build(target, addon_name='world_runtime'):
     state_path=work/'state.json'
     state=json.loads(state_path.read_text()) if state_path.exists() else {}
     fingerprint=hashlib.sha256((info['lock_sha256']+json.dumps(flags)+digest(library)).encode())
-    for header in sorted([*native.glob('*.hpp'),*native.glob('*.h')]):fingerprint.update(header.read_bytes())
+    for header in sorted([*native.rglob('*.hpp'),*native.rglob('*.h')]):
+        fingerprint.update(str(header.relative_to(native)).encode())
+        fingerprint.update(header.read_bytes())
     common=fingerprint.hexdigest()
     objects=[]; compiled=[]; records={}
     started=time.perf_counter()

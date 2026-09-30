@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: 0BSD
 #pragma once
-#include "core.h"
+#include "../core.h"
 #include <algorithm>
 #include <cmath>
 #include <limits>

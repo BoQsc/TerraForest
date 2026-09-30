@@ -630,6 +630,7 @@ void encode_mesh(const Mesh&m,int ox,int oz,int size,int step,Bytes&out){
  if(m.i.n)out.raw(m.i.p,m.i.n*4);
  for(int i=0;i<face_count;i++)out.vec(m.v[m.i[i]].p);
 }
+#include "experimental/density_ray.hpp"
 void process_request(World&w,const u8*data,int n,Bytes&out){
  Reader r{data,n};u32 cmd=r.u();out.u(REPLY_MAGIC);out.u(cmd);out.u(0);
  if(!r.good){out.p[8]=1;return;}
@@ -735,6 +736,24 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
  }
  else if(cmd==21){if(n!=4){out.p[8]=1;return;}geometry_cache_stats(w,out);}
  else if(cmd==22){u32 budget=r.u();if(!r.good||n!=8||!configure_geometry_cache(w,budget)){out.p[8]=1;return;}}
+ else if(cmd==23){
+  // Opt-in density interaction query. The typed bridge serializes world access.
+  // Request: from, to, max_cells, expected build epoch. No implicit retry.
+  V3 from=r.vec(),to=r.vec();u32 budget=r.u(),epoch=r.u();
+  if(!r.good||n!=36||budget==0||budget>8192){out.p[8]=1;return;}
+  struct QueryEpoch{const World*world;u32 expected;};QueryEpoch state{&w,epoch};
+  terraforest::experimental::RayControl control;control.max_cells=budget;control.context=&state;
+  control.cancel=[](void*p){auto&s=*static_cast<QueryEpoch*>(p);return terrain_build_epoch(s.world)!=s.expected;};
+  if(control.cancel(control.context)){out.p[8]=4;return;}
+  auto hit=terraforest::experimental::trace_world_density(w,from,to,control);
+  using terraforest::experimental::RayStatus;
+  if(hit.status==RayStatus::cancelled||control.cancel(control.context)){out.p[8]=4;return;}
+  if(hit.status==RayStatus::invalid_input){out.p[8]=1;return;}
+  // Reply payload: revision, result (0 hit, 1 miss, 2 work limit), cells,
+  // fraction, position. The latter two are meaningful only for a hit.
+  out.u(w.revision);out.u(hit.status==RayStatus::hit?0:(hit.status==RayStatus::miss?1:2));
+  out.u(u32(hit.cells));out.f(float(hit.fraction));out.vec(hit.position);
+ }
  else out.p[8]=1;
  if(tr_oom)out.p[8]=3;
 }

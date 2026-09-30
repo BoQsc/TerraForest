@@ -61,7 +61,13 @@ int main(int argc,char**argv){
   bool air_clear=density(w,start+normal*.1f)>0&&density(w,end+normal*.1f)>0;
   bool solid_clear=density(w,start-normal*.1f)<0&&density(w,end-normal*.1f)<0;
   DensityHit traced=trace_world_density(w,start,end);
-  printf("{\"query_id\":%d,\"hit\":%s,\"distance\":%.12g,\"cells\":%zu}\n",id,traced.status==RayStatus::hit?"true":"false",length(traced.position-center),traced.cells);
+  Bytes request,reply;request.u(23);request.vec(start);request.vec(end);request.u(4096);request.u(terrain_build_epoch(&w));
+  process_request(w,request.p,request.n,reply);Reader wire{reply.p,reply.n};
+  if(reply.n!=40||wire.u()!=REPLY_MAGIC||wire.u()!=23||wire.u()!=0||wire.u()!=u32(w.revision)||wire.u()!=0||wire.u()!=traced.cells)return 27;
+  float fraction=wire.f();V3 position=wire.vec();
+  if(!wire.good||fraction!=float(traced.fraction)||length(position-traced.position)!=0)return 28;
+  reply.release();request.release();
+  printf("{\"query_id\":%d,\"wire_parity\":true,\"hit\":%s,\"distance\":%.12g,\"cells\":%zu}\n",id,traced.status==RayStatus::hit?"true":"false",length(traced.position-center),traced.cells);
   printf("{\"id\":%d,\"bracketed\":%s,\"air_control_clear\":%s,\"solid_control_clear\":%s,\"start_density\":%.12g,\"end_density\":%.12g,\"center_density\":%.12g,\"root_density\":%.12g,\"distance\":%.12g}\n",id,bracket?"true":"false",air_clear?"true":"false",solid_clear?"true":"false",d0,d1,dc,root_density,distance);
   w.release();
  }
