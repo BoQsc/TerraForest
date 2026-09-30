@@ -38,6 +38,11 @@ traffic is included in this test.
 
 ## Required primitive pressure matrix — not yet certified
 
+The [controlled simplifier](TERRAIN_CONTROLLED_SIMPLIFICATION.md) preserves all
+tested boundaries/components with pruning disabled. Independent sampled-distance
+checks nevertheless reject 39 of 60 error settings; library-reported error alone
+is insufficient for LOD admission.
+
 The [native LOD probe](TERRAIN_NATIVE_LOD_DECISION.md) demonstrates substantial
 edited-mesh reduction but rejects six component-pruning outputs. Native
 simplification remains a candidate with explicit locks, pruning control and
