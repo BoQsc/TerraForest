@@ -38,6 +38,11 @@ traffic is included in this test.
 
 ## Required primitive pressure matrix — not yet certified
 
+The [native LOD probe](TERRAIN_NATIVE_LOD_DECISION.md) demonstrates substantial
+edited-mesh reduction but rejects six component-pruning outputs. Native
+simplification remains a candidate with explicit locks, pruning control and
+independent shape-error qualification.
+
 An isolated [C++ tetrahedral candidate](TERRAIN_TETRA_PROTOTYPE.md) passes the
 retained cave topology and fine-partition checks. Dense sampling, geometry volume,
 changed interpolation and absent LOD/error qualification keep it out of gameplay.
