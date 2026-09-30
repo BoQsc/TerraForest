@@ -38,6 +38,11 @@ traffic is included in this test.
 
 ## Required primitive pressure matrix — not yet certified
 
+The [exact-zero merge variant](TERRAIN_EXACT_ZERO.md) preserves all tested
+topology/partitions and recovers all 21 frozen missed rays. One of 180 newly
+sampled rays still misses a nonzero thin triangle, so collision qualification
+remains failed. The variant is opt-in; production defaults are unchanged.
+
 The [collision isolation experiment](TERRAIN_COLLISION_ISOLATION.md) repeats
 21 missed faces across 756 coordinate/scale/ray cases. Origin rebasing does
 not recover the original faces; size and ray-length sensitivity also occurs

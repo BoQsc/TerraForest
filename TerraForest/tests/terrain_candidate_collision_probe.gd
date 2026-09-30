@@ -18,6 +18,9 @@ func run() -> void:
 	var scene := Node3D.new()
 	root.add_child(scene)
 	var fixtures: Array = JSON.parse_string(FileAccess.get_file_as_string("res://fixtures.json"))
+	var regression: Array = []
+	if FileAccess.file_exists("res://regression_rays.json"):
+		regression=JSON.parse_string(FileAccess.get_file_as_string("res://regression_rays.json"))
 	for fixture: String in fixtures:
 		var values := FileAccess.get_file_as_bytes("res://faces/"+fixture).to_float32_array()
 		var faces := PackedVector3Array()
@@ -57,6 +60,17 @@ func run() -> void:
 			rays.append({"fixture":fixture,"triangle":at/3,"twice_area":(b-a).cross(c-a).length(),"a":[a.x,a.y,a.z],"b":[b.x,b.y,b.z],"c":[c.x,c.y,c.z],"hit":not hit.is_empty(),"distance":hit.position.distance_to(center) if not hit.is_empty() else -1.0})
 			if not hit.is_empty() and hit.position.distance_to(center)<0.002: hits += 1
 		check(attempted==12 and hits==12,fixture+" physics rays agree with 12 triangle centers (%d/12)" % hits)
+		for old: Dictionary in regression:
+			if old.fixture!=fixture: continue
+			var a := Vector3(old.a[0],old.a[1],old.a[2])
+			var b := Vector3(old.b[0],old.b[1],old.b[2])
+			var c := Vector3(old.c[0],old.c[1],old.c[2])
+			var center := (a+b+c)/3.0
+			var normal := (b-a).cross(c-a).normalized()
+			var query := PhysicsRayQueryParameters3D.create(center+normal*0.02,center-normal*0.02,1)
+			query.hit_back_faces=true
+			var hit := scene.get_world_3d().direct_space_state.intersect_ray(query)
+			check(not hit.is_empty() and hit.position.distance_to(center)<0.002,fixture+" frozen failed ray %d" % old.triangle)
 		body.free()
 	scene.free()
 	DirAccess.make_dir_recursive_absolute("res://reports")
