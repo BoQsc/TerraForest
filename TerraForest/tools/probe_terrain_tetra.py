@@ -27,6 +27,7 @@ samples=[json.loads(line) for line in run.stdout.splitlines()]
 controls=[json.loads(line) for line in run.stderr.splitlines()]
 storage_controls=[row for row in controls if 'control_peak_crossings' in row]
 sampler_controls=[row for row in controls if row['name']=='world-edge sampler']
+limit_controls=[row for row in controls if row['name'] in ['vertex limit','index limit','cancellation','exact output limits and recovery']]
 
 def decode(path):
     data=path.read_bytes();nv,ni=struct.unpack_from('<II',data)
@@ -91,7 +92,8 @@ checks.append(dict(name='five paired slab-retirement controls preserve exact geo
 checks.append(dict(name='crossing map stays within single-slab edge bound including alternating layers',passed=len(storage_controls)==1 and all(s['peak_crossings']<=36*s['size']**2 and s['peak_crossings']<s['control_peak_crossings'] and s['mesh_parity'] for s in samples+storage_controls)))
 checks.append(dict(name='two-plane sampling preserves all densities and geometry with bounded scratch payload',passed=len(samples)==15 and all(s['streamed_parity'] and s['density_plane_bytes']==8*(s['size']+1)**2 and s['sampler_payload_bytes']==16*(s['size']+1)**2 for s in samples)))
 checks.append(dict(name='rolling sampler matches authoritative samples at and across world edges',passed=len(sampler_controls)==3 and all(s['sample_parity'] for s in sampler_controls)))
-result=dict(failures=sum(not c['passed'] for c in checks),checks=checks,native_samples=samples,storage_controls=storage_controls,sampler_controls=sampler_controls,elapsed_seconds=time.perf_counter()-begin,
+checks.append(dict(name='output limits and cancellation discard partial meshes and recover exactly',passed=len(limit_controls)==12 and all(s.get('empty_failure',s.get('mesh_parity',False)) for s in limit_controls)))
+result=dict(failures=sum(not c['passed'] for c in checks),checks=checks,native_samples=samples,storage_controls=storage_controls,sampler_controls=sampler_controls,limit_controls=limit_controls,elapsed_seconds=time.perf_counter()-begin,
             adoption_qualified=False,build_command=command,toolchain_lock_sha256=toolchain['lock_sha256'],executable_sha256=hashlib.sha256(exe.read_bytes()).hexdigest(),
             reference_report_sha256=hashlib.sha256(baseline_path.read_bytes()).hexdigest(),
             hashes={str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in [source,Path(__file__).resolve(),native/'core.cpp',native/'core.h',native/'platform.h',native/'geometry_regions.hpp']},

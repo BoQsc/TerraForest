@@ -38,6 +38,11 @@ traffic is included in this test.
 
 ## Required primitive pressure matrix — not yet certified
 
+The [candidate build-limit controls](TERRAIN_TETRA_BUILD_LIMITS.md) verify explicit
+output-limit/cancellation status, discarded partial geometry and exact recovery.
+Allocator-failure recovery and actual concurrent worker cancellation are not yet
+implemented or qualified for the replacement candidate.
+
 The [two-plane candidate sampler](TERRAIN_TETRA_ROLLING_FIELD.md) reduces a 32 m
 region's sampling payload from a 1.07 MiB density buffer to 17 KiB including
 height/page caches. Exact density and geometry parity, including sampler edge

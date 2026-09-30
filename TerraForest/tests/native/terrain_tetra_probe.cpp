@@ -12,24 +12,47 @@
 
 static double now(){return std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now().time_since_epoch()).count();}
 struct Sample{V3 p;float d;u32 id;};
+enum class MeshStatus{ok,output_limit,cancelled};
+struct MeshLimits{
+ size_t vertices=1000000,indices=3000000;
+ bool(*cancel)(void*)=nullptr;void*context=nullptr;
+ bool cancelled()const{return cancel&&cancel(context);}
+};
 struct Result{
  std::vector<V3> p;std::vector<u32> indices;
  std::unordered_map<u64,u32> crossings;
  size_t peak_crossings=0,peak_buckets=0;
+ size_t peak_vertices=0,peak_indices=0;
+ MeshLimits limits;MeshStatus status=MeshStatus::ok;
+ void discard(MeshStatus why){
+  status=why;std::vector<V3>().swap(p);std::vector<u32>().swap(indices);
+  std::unordered_map<u64,u32>().swap(crossings);
+ }
+ template<class T>static void grow(std::vector<T>&v,size_t need,size_t limit){
+  if(need>v.capacity())v.reserve(std::min(limit,std::max(need,std::max(size_t(16),v.capacity()*2))));
+ }
  u32 intersection(Sample a,Sample b){
+  if(status!=MeshStatus::ok)return 0;
   if(a.id>b.id)std::swap(a,b);
   u64 key=(u64(a.id)<<32)|b.id;
   auto found=crossings.find(key);if(found!=crossings.end())return found->second;
+  if(p.size()>=limits.vertices){status=MeshStatus::output_limit;return 0;}
   // Canonical endpoint order makes adjacent independently built regions agree.
   double t=double(a.d)/(double(a.d)-b.d);
   V3 point={float(a.p.x+(b.p.x-a.p.x)*t),float(a.p.y+(b.p.y-a.p.y)*t),float(a.p.z+(b.p.z-a.p.z)*t)};
+  grow(p,p.size()+1,limits.vertices);
   u32 id=u32(p.size());p.push_back(point);crossings.emplace(key,id);
+  peak_vertices=std::max(peak_vertices,p.size());
   peak_crossings=std::max(peak_crossings,crossings.size());
   peak_buckets=std::max(peak_buckets,crossings.bucket_count());return id;
  }
  void tri(u32 a,u32 b,u32 c,V3 outward){
+  if(status!=MeshStatus::ok)return;
+  if(indices.size()>limits.indices||limits.indices-indices.size()<3){status=MeshStatus::output_limit;return;}
   if(dot(cross(p[b]-p[a],p[c]-p[a]),outward)<0)std::swap(b,c);
+  grow(indices,indices.size()+3,limits.indices);
   indices.insert(indices.end(),{a,b,c});
+  peak_indices=std::max(peak_indices,indices.size());
  }
  void tetra(const Sample*s,const int*q){
   int in[4],out[4],ni=0,no=0;V3 ci{},co{};
@@ -48,14 +71,17 @@ struct Result{
 };
 
 template<class Layers>
-static Result mesh_layers(int x0,int z0,int size,bool retire_edges,Layers&&layers){
+static Result mesh_layers(int x0,int z0,int size,bool retire_edges,Layers&&layers,const MeshLimits&limits=MeshLimits{}){
  int n=size+1;
  auto index=[&](int x,int y,int z){return x+n*(z+n*y);};
- Result result;
+ Result result;result.limits=limits;
  constexpr int tets[6][4]={{0,1,3,7},{0,3,2,7},{0,2,6,7},{0,6,4,7},{0,4,5,7},{0,5,1,7}};
  for(int y=0;y<256;y++){
+ if(limits.cancelled()){result.discard(MeshStatus::cancelled);return result;}
  const float*field=layers(y);
- for(int z=0;z<size;z++)for(int x=0;x<size;x++){
+ for(int z=0;z<size;z++){
+ if(limits.cancelled()){result.discard(MeshStatus::cancelled);return result;}
+ for(int x=0;x<size;x++){
   {
    unsigned mask=0;
    for(int k=0;k<8;k++)mask|=unsigned(field[index(x+(k&1),(k>>1)&1,z+((k>>2)&1))]<0)<<k;
@@ -68,8 +94,13 @@ static Result mesh_layers(int x0,int z0,int size,bool retire_edges,Layers&&layer
    negative+=s[k].d<0;
   }
   if(negative==0||negative==8)continue;
-  for(const auto&t:tets)result.tetra(s,t);
+  for(const auto&t:tets){
+   result.tetra(s,t);
+   if(result.status!=MeshStatus::ok){result.discard(result.status);return result;}
+  }
  }
+ }
+ if(limits.cancelled()){result.discard(MeshStatus::cancelled);return result;}
   if(retire_edges){
    // A later cell can only reuse edges on this layer's top plane. Canonical
    // endpoint IDs increase with Y, so the smaller endpoint determines survival.
@@ -83,9 +114,9 @@ static Result mesh_layers(int x0,int z0,int size,bool retire_edges,Layers&&layer
  return result;
 }
 
-static Result mesh_field(const std::vector<float>&field,int x0,int z0,int size,bool retire_edges){
+static Result mesh_field(const std::vector<float>&field,int x0,int z0,int size,bool retire_edges,const MeshLimits&limits=MeshLimits{}){
  size_t plane=size_t(size+1)*(size+1);
- return mesh_layers(x0,z0,size,retire_edges,[&](int y){return field.data()+size_t(y)*plane;});
+ return mesh_layers(x0,z0,size,retire_edges,[&](int y){return field.data()+size_t(y)*plane;},limits);
 }
 
 static float density_value(float d){
@@ -215,6 +246,28 @@ int main(int argc,char**argv){
   Result rolling=mesh_field(field,1280,1280,size,true),retained=mesh_field(field,1280,1280,size,false);
   if(rolling.indices!=retained.indices||rolling.p.size()!=retained.p.size()||std::memcmp(rolling.p.data(),retained.p.data(),rolling.p.size()*sizeof(V3))||rolling.peak_crossings>=retained.peak_crossings)return 8;
   fprintf(stderr,"{\"name\":\"256 alternating layers\",\"mesh_parity\":true,\"size\":8,\"peak_crossings\":%zu,\"control_peak_crossings\":%zu,\"peak_buckets\":%zu,\"control_peak_buckets\":%zu}\n",rolling.peak_crossings,retained.peak_crossings,rolling.peak_buckets,retained.peak_buckets);
+  auto empty_failure=[](const Result&r,MeshStatus status){return r.status==status&&r.p.empty()&&r.indices.empty()&&r.crossings.empty()&&r.p.capacity()==0&&r.indices.capacity()==0;};
+  for(size_t cap:{size_t(0),size_t(1),size_t(10),rolling.p.size()-1}){
+   MeshLimits limits;limits.vertices=cap;Result failed=mesh_field(field,1280,1280,size,true,limits);
+   if(!empty_failure(failed,MeshStatus::output_limit)||failed.peak_vertices>cap)return 11;
+   fprintf(stderr,"{\"name\":\"vertex limit\",\"limit\":%zu,\"peak\":%zu,\"empty_failure\":true}\n",cap,failed.peak_vertices);
+  }
+  for(size_t cap:{size_t(0),size_t(2),size_t(30),rolling.indices.size()-1}){
+   MeshLimits limits;limits.indices=cap;Result failed=mesh_field(field,1280,1280,size,true,limits);
+   if(!empty_failure(failed,MeshStatus::output_limit)||failed.peak_indices>cap)return 12;
+   fprintf(stderr,"{\"name\":\"index limit\",\"limit\":%zu,\"peak\":%zu,\"empty_failure\":true}\n",cap,failed.peak_indices);
+  }
+  struct Cancel{int at,calls=0;};
+  for(int at:{1,5,1000}){
+   Cancel state{at};MeshLimits limits;limits.context=&state;limits.cancel=[](void*p){auto&s=*static_cast<Cancel*>(p);return ++s.calls>=s.at;};
+   Result failed=mesh_field(field,1280,1280,size,true,limits);
+   if(!empty_failure(failed,MeshStatus::cancelled)||state.calls!=at||(at>1&&failed.peak_vertices==0))return 13;
+   fprintf(stderr,"{\"name\":\"cancellation\",\"at\":%d,\"calls\":%d,\"peak_vertices\":%zu,\"empty_failure\":true}\n",at,state.calls,failed.peak_vertices);
+  }
+  MeshLimits exact;exact.vertices=rolling.p.size();exact.indices=rolling.indices.size();
+  Result recovered=mesh_field(field,1280,1280,size,true,exact);
+  if(recovered.status!=MeshStatus::ok||recovered.indices!=rolling.indices||recovered.p.size()!=rolling.p.size()||std::memcmp(recovered.p.data(),rolling.p.data(),rolling.p.size()*sizeof(V3))||recovered.p.capacity()>exact.vertices||recovered.indices.capacity()>exact.indices)return 14;
+  fprintf(stderr,"{\"name\":\"exact output limits and recovery\",\"mesh_parity\":true}\n");
  }
  World w;w.init(1703);
  // Sampler-only world-edge controls; no global mesh IDs are formed outside world.
