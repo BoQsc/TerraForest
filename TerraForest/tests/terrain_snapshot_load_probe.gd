@@ -26,6 +26,7 @@ func run_case(count: int,repetition: int) -> void:
 	var edit_ms: Array[float]=[]
 	var pending: Dictionary={};var seen: Dictionary={}
 	var captures: Array[float]=[];var polls: Array[float]=[];var completion: Array[float]=[]
+	var submit_timings: Array[Dictionary]=[]
 	var geometry_bytes:=0;var peak_packet_bytes:=0;var max_pending:=0
 	var start:=Time.get_ticks_usec();var deadline:=Time.get_ticks_msec()+30000
 	while (finished<count or (remote_edits and edits<count)) and Time.get_ticks_msec()<deadline:
@@ -34,6 +35,9 @@ func run_case(count: int,repetition: int) -> void:
 			var begin:=Time.get_ticks_usec()
 			var admitted: bool=native.experimental_snapshot_submit(960+(cell%8)*32,960+(cell/8)*32,32,token,revision)
 			captures.append((Time.get_ticks_usec()-begin)/1000.0)
+			var timing: Dictionary=native.experimental_snapshot_submit_timing()
+			timing["external_ms"]=captures.back();submit_timings.append(timing)
+			if timing.token!=token or timing.accepted!=admitted: errors+=1
 			if not admitted: rejected+=1;break
 			pending[token]=begin;submitted+=1;max_pending=maxi(max_pending,pending.size())
 		if remote_edits and edits<count:
@@ -71,6 +75,7 @@ func run_case(count: int,repetition: int) -> void:
 	if remote_edits: correctness=correctness and changed_edits==count and edits_with_pending>=count/2
 	var row: Dictionary={"count":count,"repetition":repetition,"submitted":submitted,"finished":finished,"correctness":correctness,"rejected":rejected,"max_pending":max_pending,"query_gate_failures":query_failures,"main_call_gate_failures":main_failures,"capture_ms":captures,"poll_ms":polls,"completion_ms":completion,"run_ms":elapsed,"geometry_bytes":geometry_bytes,"peak_packet_bytes":peak_packet_bytes}
 	row.merge(queries);cases.append(row)
+	row["submit_timings"]=submit_timings
 	row.merge({"remote_edits":remote_edits,"edit_ms":edit_ms,"edits":edits,"changed_edits":changed_edits,"edits_with_pending":edits_with_pending})
 	print("CASE ",count,"/",repetition," complete=",finished," correct=",correctness," query failures=",query_failures," main-call failures=",main_failures)
 func run() -> void:

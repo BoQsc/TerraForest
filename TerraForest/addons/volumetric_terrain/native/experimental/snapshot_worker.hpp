@@ -6,6 +6,7 @@
 #include <condition_variable>
 #include <mutex>
 #include <thread>
+#include <chrono>
 
 namespace terraforest::experimental {
 // Experimental geometry worker. Caller serializes submit against World mutation.
@@ -49,6 +50,7 @@ class SnapshotWorker {
   }
  }
 public:
+ struct SubmitTiming{double lock_ms=0,capture_ms=0;};
  SnapshotWorker(size_t snapshot_bytes,size_t mesh_bytes):snapshots_(snapshot_bytes),meshes_(mesh_bytes),thread_([this]{run();}){}
  SnapshotWorker(const SnapshotWorker&)=delete;
  SnapshotWorker&operator=(const SnapshotWorker&)=delete;
@@ -56,13 +58,18 @@ public:
  // Call stop from the owning thread, never a consume callback. Completed packets
  // remain consumable; destructor frees them before either budget is destroyed.
  void stop(){stopping_.store(true);wake_.notify_all();if(thread_.joinable())thread_.join();}
- bool submit(const World&w,int x,int z,int size,u64 epoch,u64 token){
+ bool submit(const World&w,int x,int z,int size,u64 epoch,u64 token,SubmitTiming*timing=nullptr){
+  auto begin=std::chrono::steady_clock::now();
   std::lock_guard<std::mutex> lock(mutex_);
+  if(timing)timing->lock_ms=std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-begin).count();
   if(stopping_.load()||serial_==std::numeric_limits<u64>::max())return false;
   Slot*slot=nullptr;for(auto&s:slots_)if(s.state==empty){slot=&s;break;}
   if(!slot)return false;
   MeshLimits limits;limits.sampler_allocator=snapshots_.allocator();
-  if(slot->snapshot.capture(w,x,z,size,limits,true)!=MeshStatus::ok)return false;
+  begin=std::chrono::steady_clock::now();
+  auto captured=slot->snapshot.capture(w,x,z,size,limits,true);
+  if(timing)timing->capture_ms=std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-begin).count();
+  if(captured!=MeshStatus::ok)return false;
   slot->revision=slot->snapshot.revision();slot->validated_revision=slot->revision;slot->x=x;slot->z=z;slot->size=size;
   slot->epoch=epoch;slot->token=token;slot->serial=++serial_;slot->state=ready;wake_.notify_one();return true;
  }

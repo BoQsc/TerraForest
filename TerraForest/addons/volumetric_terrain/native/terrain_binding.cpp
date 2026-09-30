@@ -23,6 +23,8 @@ class TerrainCore : public godot::RefCounted {
     std::atomic<int64_t> active_command_{-1};
     std::atomic<u64> snapshot_epoch_{0};
     std::optional<experimental::SnapshotWorker> snapshot_worker_;
+    struct SubmitTiming{int64_t token=-1;bool accepted=false;double total_ms=0,world_lock_ms=0,startup_ms=0;experimental::SnapshotWorker::SubmitTiming worker;};
+    SubmitTiming last_submit_;
     static godot::PackedByteArray reply(uint32_t command, uint32_t status, uint32_t value=0, bool include_value=false) {
         godot::PackedByteArray result;
         result.resize(include_value ? 16 : 12);
@@ -39,16 +41,30 @@ protected:
         godot::ClassDB::bind_method(godot::D_METHOD("experimental_snapshot_submit","x","z","size","token","revision"), &TerrainCore::experimental_snapshot_submit);
         godot::ClassDB::bind_method(godot::D_METHOD("experimental_snapshot_poll"), &TerrainCore::experimental_snapshot_poll);
         godot::ClassDB::bind_method(godot::D_METHOD("experimental_snapshot_stop"), &TerrainCore::experimental_snapshot_stop);
+        godot::ClassDB::bind_method(godot::D_METHOD("experimental_snapshot_submit_timing"), &TerrainCore::experimental_snapshot_submit_timing);
     }
 public:
     TerrainCore() {world_.build_control=&control_; tr_oom=false; world_.init();}
     ~TerrainCore() {snapshot_worker_.reset();world_.release();}
     bool experimental_snapshot_submit(int64_t x,int64_t z,int64_t size,int64_t token,int64_t revision){
         if(x<0||z<0||x>WORLD||z>WORLD||size<1||size>32||token<0||revision<0)return false;
+        using Clock=std::chrono::steady_clock;auto begin=Clock::now();
         std::lock_guard<std::mutex> lock(mutex_);
+        last_submit_=SubmitTiming{};last_submit_.token=token;
+        last_submit_.world_lock_ms=std::chrono::duration<double,std::milli>(Clock::now()-begin).count();
         if(revision!=world_.revision)return false;
+        auto startup=Clock::now();
         if(!snapshot_worker_)snapshot_worker_.emplace(3*1024*1024,32*1024*1024);
-        return snapshot_worker_->submit(world_,int(x),int(z),int(size),snapshot_epoch_.load(),u64(token));
+        last_submit_.startup_ms=std::chrono::duration<double,std::milli>(Clock::now()-startup).count();
+        last_submit_.accepted=snapshot_worker_->submit(world_,int(x),int(z),int(size),snapshot_epoch_.load(),u64(token),&last_submit_.worker);
+        last_submit_.total_ms=std::chrono::duration<double,std::milli>(Clock::now()-begin).count();
+        return last_submit_.accepted;
+    }
+    godot::Dictionary experimental_snapshot_submit_timing(){
+        std::lock_guard<std::mutex> lock(mutex_);godot::Dictionary row;
+        row["token"]=last_submit_.token;row["accepted"]=last_submit_.accepted;row["total_ms"]=last_submit_.total_ms;
+        row["world_lock_ms"]=last_submit_.world_lock_ms;row["startup_ms"]=last_submit_.startup_ms;
+        row["worker_lock_ms"]=last_submit_.worker.lock_ms;row["capture_ms"]=last_submit_.worker.capture_ms;return row;
     }
     godot::Array experimental_snapshot_poll(){
         std::lock_guard<std::mutex> lock(mutex_);godot::Array rows;

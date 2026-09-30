@@ -38,6 +38,12 @@ traffic is included in this test.
 
 ## Required primitive pressure matrix — not yet certified
 
+The [submission timing breakdown](TERRAIN_SNAPSHOT_SUBMIT_TIMING.md) records
+world/worker lock waits, startup and capture. The follow-up completes 640 jobs
+without reproducing the 20.351 ms failure. Its slowest external submit is 5.742 ms
+versus 0.054 ms measured inside that native call; some other native totals also
+have unattributed time. The earlier rejection remains unresolved.
+
 The [asynchronous geometry/normal packet](TERRAIN_SNAPSHOT_SURFACE_PACKET.md)
 passes four native surface-worker and 17 engine bridge checks, including
 normal-border invalidation. Its loaded test completes 640 jobs/edits correctly
