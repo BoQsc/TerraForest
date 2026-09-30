@@ -38,6 +38,12 @@ traffic is included in this test.
 
 ## Required primitive pressure matrix — not yet certified
 
+The [region snapshot experiment](TERRAIN_REGION_SNAPSHOT.md) preserves exact
+geometry in 18 comparisons after releasing the source world. Eager 32 m density
+capture nevertheless takes 12.38–18.70 ms and retains 1,119,492 bytes per owner,
+so it is not adopted as the scheduling fix. Sparse input capture remains to be
+investigated; runtime query latency remains failed.
+
 The [loaded density latency gate](TERRAIN_DENSITY_LATENCY.md) rejects the shared
 worker: 72 of 168 responses exceed 50 ms despite zero correctness failures.
 Median response behind one 256 m mesh is 1098 ms, while query execution/decode
