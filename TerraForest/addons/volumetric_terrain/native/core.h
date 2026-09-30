@@ -16,6 +16,9 @@ struct World {
  int seed=1703, revision=0, edits=0;u64 changed_samples=0;
  // Derived only: never serialized. Owned by the terrain worker, not renderer.
  int surface_style=0;
+ // Optional diagnostics, worker-owned and never serialized.
+ bool profile_mesh=false;
+ mutable float mesh_stage_ms[4]={}; // extraction, simplification, blocks, shading
  mutable int lighting_revision=-1;
  mutable Map light_roofs,light_samples,light_probe_ids;
  mutable List<float> light_tops;

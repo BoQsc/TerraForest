@@ -1,5 +1,15 @@
 // SPDX-License-Identifier: 0BSD
 #include "core.h"
+#if defined(TERRAFOREST_TYPED_BRIDGE)
+#include <chrono>
+#endif
+static double mesh_clock_ms(){
+#if defined(TERRAFOREST_TYPED_BRIDGE)
+ return std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now().time_since_epoch()).count();
+#else
+ return 0;
+#endif
+}
 void *(*tr_alloc)(size_t)=nullptr;
 void *(*tr_realloc)(void *,size_t)=nullptr;
 void (*tr_free)(void *)=nullptr;
@@ -255,6 +265,8 @@ static void add_blocks(const World&w,int ox,int oz,int size,Mesh&m){
 static void mark_y(u32*bits,int lo,int hi){lo=imx(0,lo);hi=imn(255,hi);for(int y=lo;y<=hi;y++)bits[y>>5]|=1u<<(y&31);}
 struct CachedSample {i16 value;u8 material,valid;};
 bool build_patch(const World&w,int ox,int oz,int size,int step,Mesh&m,u32 expected_epoch){
+ double mark=w.profile_mesh?mesh_clock_ms():0;
+ if(w.profile_mesh)zero_bytes(w.mesh_stage_ms,sizeof(w.mesh_stage_ms));
  const u32 epoch=expected_epoch==0xffffffffu?terrain_build_epoch(&w):expected_epoch;
  if(cancelled(w,epoch))return false;
  const int hn=size+2;List<float> heights;heights.resize(hn*hn);
@@ -332,11 +344,16 @@ bool build_patch(const World&w,int ox,int oz,int size,int step,Mesh&m,u32 expect
    if(a<0||b<0||c<0||d<0)continue;quad(m,a,b,c,d,(s&1)==0);
   }
  }
- heights.release();ids.release();simplify(w,m,ox,oz,size,step,epoch);
+ heights.release();ids.release();
+ if(w.profile_mesh){double now=mesh_clock_ms();w.mesh_stage_ms[0]=float(now-mark);mark=now;}
+ simplify(w,m,ox,oz,size,step,epoch);
+ if(w.profile_mesh){double now=mesh_clock_ms();w.mesh_stage_ms[1]=float(now-mark);mark=now;}
  if(cancelled(w,epoch)){m.release();return false;}
  add_blocks(w,ox,oz,size,m);
+ if(w.profile_mesh){double now=mesh_clock_ms();w.mesh_stage_ms[2]=float(now-mark);mark=now;}
  if(cancelled(w,epoch)){m.release();return false;}
  shade_mesh(w,m,epoch);
+ if(w.profile_mesh)w.mesh_stage_ms[3]=float(mesh_clock_ms()-mark);
  if(cancelled(w,epoch)){m.release();return false;}
  return true;
 }
@@ -695,6 +712,13 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
    out.vec(p);normals[i]=normal;
   }
   for(u32 i=0;i<count;i++)out.vec(normals[i]);
+ }
+ else if(cmd==18){
+  u32 enabled=r.u();if(!r.good||n!=8||enabled>1){out.p[8]=1;return;}
+  w.profile_mesh=enabled!=0;zero_bytes(w.mesh_stage_ms,sizeof(w.mesh_stage_ms));
+ }else if(cmd==19){
+  if(n!=4){out.p[8]=1;return;}
+  for(float value:w.mesh_stage_ms)out.f(value);
  }
  else out.p[8]=1;
  if(tr_oom)out.p[8]=3;
