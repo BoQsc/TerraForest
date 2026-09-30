@@ -2,6 +2,7 @@
 #include "core.h"
 #include "terrain_planner.hpp"
 #include "terrain_collision.hpp"
+#include "geometry_content_key.hpp"
 #include "experimental/snapshot_worker.hpp"
 #include "experimental/godot_surface_mesh.hpp"
 #include "experimental/mesh_partition.hpp"
@@ -38,6 +39,7 @@ class TerrainCore : public godot::RefCounted {
 protected:
     static void _bind_methods() {
         godot::ClassDB::bind_method(godot::D_METHOD("execute","packet"), &TerrainCore::execute);
+        godot::ClassDB::bind_method(godot::D_METHOD("geometry_cache_key","x","z","size","step"), &TerrainCore::geometry_cache_key);
         godot::ClassDB::bind_method(godot::D_METHOD("supports_isolated_worlds"), &TerrainCore::supports_isolated_worlds);
         godot::ClassDB::bind_method(godot::D_METHOD("build_variant"), &TerrainCore::build_variant);
         godot::ClassDB::bind_method(godot::D_METHOD("executing_command"), &TerrainCore::executing_command);
@@ -53,6 +55,11 @@ protected:
         godot::ClassDB::bind_method(godot::D_METHOD("experimental_partition_mesh_budgeted","packet","workspace_bytes","output_bytes","expected_epoch"), &TerrainCore::experimental_partition_mesh_budgeted);
     }
 public:
+    godot::Dictionary geometry_cache_key(int64_t x,int64_t z,int64_t size,int64_t step) {
+        if(x<0||z<0||x>=2048||z>=2048||size<16||size>256||step<1||step>8)return {};
+        std::lock_guard<std::mutex> lock(mutex_);
+        return terraforest::geometry_content_key(world_,int(x),int(z),int(size),int(step));
+    }
     TerrainCore() {world_.build_control=&control_; tr_oom=false; world_.init();}
     ~TerrainCore() {snapshot_worker_.reset();world_.release();}
     godot::Dictionary experimental_partition_mesh_budgeted(const godot::PackedByteArray&packet,int64_t workspace,int64_t output,int64_t expected){

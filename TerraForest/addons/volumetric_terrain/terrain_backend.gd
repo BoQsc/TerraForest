@@ -433,9 +433,20 @@ func _build(key: Vector3i, allow_base_cache: bool, expected_build_epoch: int, re
 	var path: String = "res://addons/volumetric_terrain/base_cache/%d_%d_%d.trm" % [key.x, key.y, key.z]
 	var data := PackedByteArray()
 	var derived: bool = false
+	var geometry_cached: bool = false
+	var content: String = ""
 	var cached: bool = false
 	var base_available: bool = allow_base_cache and world_seed == 1703 and FileAccess.file_exists(path)
 	var snapshot_build: bool = snapshot_terrain and key.z<=32 and key.x+key.z<=2000 and key.y+key.z<=2000
+	# Geometry validity survives unrelated edits and save-snapshot changes. Its
+	# visibility is deliberately not trusted: distant edits can change sky rays.
+	if not snapshot_build and disk_cache.enabled and native.has_method("geometry_cache_key"):
+		var dependency: Dictionary = native.geometry_cache_key(key.x,key.y,key.z,step)
+		content = str(dependency.get("key", ""))
+		if not content.is_empty():
+			data = disk_cache.load_packet(key, content)
+			geometry_cached = not data.is_empty()
+			cached = geometry_cached
 	if snapshot_build:
 		var revision_reply: PackedByteArray = _call(Codec.command(0))
 		_snapshot_token+=1
@@ -451,11 +462,11 @@ func _build(key: Vector3i, allow_base_cache: bool, expected_build_epoch: int, re
 		if data.is_empty():
 			if _call(Codec.command(13)).decode_u32(12)!=expected_build_epoch: return {"cancelled":true}
 			return {"error":"Snapshot terrain conversion failed"}
-	elif cache_valid and (not base_available or relight_cache):
+	elif not geometry_cached and cache_valid and (not base_available or relight_cache):
 		data = disk_cache.load_packet(key)
 		derived = not data.is_empty()
 		cached = derived
-	if not snapshot_build and not derived and base_available:
+	if not snapshot_build and not geometry_cached and not derived and base_available:
 		data = FileAccess.get_file_as_bytes(path)
 		cached = data.size() >= 36 and data.decode_u32(4) == 5
 	if not snapshot_build and not cached:
@@ -466,19 +477,23 @@ func _build(key: Vector3i, allow_base_cache: bool, expected_build_epoch: int, re
 			return {"error": "Native mesh build failed: %s" % key}
 		data = reply.slice(16)
 	var result: Dictionary = Codec.decode_mesh(data)
-	if cached and not derived and relight_cache and not result.has("error"):
+	if (geometry_cached or (cached and not derived and relight_cache)) and not result.has("error"):
 		var updated: Dictionary = _refresh_visibility(result["arrays"], expected_build_epoch)
 		if updated.has("error") or bool(updated.get("cancelled", false)):
 			return updated
 		result["arrays"] = updated["arrays"]
 		result["cavity_visibility"] = updated["cavity_visibility"]
-	if not snapshot_build and not result.has("error") and not derived and (not cached or relight_cache):
+	if not snapshot_build and not geometry_cached and not result.has("error") and not derived and (not cached or relight_cache):
 		# A relit base packet is not equal to its original encoded bytes.
 		if cached and relight_cache:
 			data = Codec.encode_decoded_mesh(result)
 		_remember_packet(key, data)
 		if cache_valid and not _input_active():
 			disk_cache.store_packet(key, data)
+	# Bundled base packets were not built against this dependency signature.
+	# Only freshly reconstructed or exact-snapshot packets may seed this cache.
+	if not snapshot_build and not geometry_cached and (not cached or derived) and not content.is_empty() and not result.has("error") and not _input_active():
+		disk_cache.store_packet(key, data, content)
 	if not result.has("error"):
 		var epoch_reply: PackedByteArray = _call(Codec.command(13))
 		if epoch_reply.decode_u32(12) != expected_build_epoch:
@@ -495,6 +510,7 @@ func _build(key: Vector3i, allow_base_cache: bool, expected_build_epoch: int, re
 		result["faces"] = PackedVector3Array()
 	result["worker_ms"] = float(Time.get_ticks_usec() - begin) / 1000.0
 	result["derived_cached"] = derived
+	result["geometry_cached"] = geometry_cached
 	result["cache_stats"] = disk_cache.counters()
 	result["cached"] = cached
 	result["light_stats"] = _call(Codec.command(15))

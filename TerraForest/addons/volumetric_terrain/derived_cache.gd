@@ -49,43 +49,48 @@ func set_snapshot(snapshot: String) -> void:
 	if enabled:
 		DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(cache_directory))
 
-func _name(key: Vector3i) -> String:
+func _name(key: Vector3i, content: String = "") -> String:
+	if not content.is_empty():
+		return base_path.path_join(signature).path_join("geometry_v1").path_join(content).path_join("%d_%d_%d.trc" % [key.x, key.y, key.z])
 	return cache_directory.path_join("%d_%d_%d.trc" % [key.x, key.y, key.z])
 
-func _reject(key: Vector3i, bytes: int) -> PackedByteArray:
+func _reject(key: Vector3i, bytes: int, content: String = "") -> PackedByteArray:
 	corrupt += 1
-	if DirAccess.remove_absolute(ProjectSettings.globalize_path(_name(key))) == OK:
+	if DirAccess.remove_absolute(ProjectSettings.globalize_path(_name(key, content))) == OK:
 		total_bytes = maxi(0, total_bytes - bytes)
 	return PackedByteArray()
 
-func load_packet(key: Vector3i) -> PackedByteArray:
+func load_packet(key: Vector3i, content: String = "") -> PackedByteArray:
 	if not enabled:
 		return PackedByteArray()
-	var f := FileAccess.open(_name(key), FileAccess.READ)
+	var f := FileAccess.open(_name(key, content), FileAccess.READ)
 	if f == null:
 		misses += 1
 		return PackedByteArray()
 	var length: int = f.get_length()
 	if length < 76 or length > MAX_PACKET + 40:
 		f.close()
-		return _reject(key, length)
+		return _reject(key, length, content)
 	var header: PackedByteArray = f.get_buffer(40)
 	var data: PackedByteArray = f.get_buffer(length - 40)
 	f.close()
 	if header.size() != 40 or header.decode_u32(0) != MAGIC or header.decode_u32(4) != data.size() or digest(data) != header.slice(8, 40):
-		return _reject(key, length)
+		return _reject(key, length, content)
 	if data.size() < 36 or data.decode_u32(0) != Codec.MESH_MAGIC or data.decode_u32(4) != 5 or Vector3i(data.decode_u32(8), data.decode_u32(12), data.decode_u32(16)) != key:
-		return _reject(key, length)
+		return _reject(key, length, content)
 	hits += 1
 	return data
 
-func store_packet(key: Vector3i, data: PackedByteArray) -> void:
+func store_packet(key: Vector3i, data: PackedByteArray, content: String = "") -> void:
 	if not enabled or data.size() < 36 or data.size() > MAX_PACKET:
 		return
-	var path: String = _name(key)
+	var path: String = _name(key, content)
 	if FileAccess.file_exists(path):
 		return
 	if total_bytes + data.size() + 40 > LIMIT_BYTES:
+		return
+	if DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(path.get_base_dir())) != OK:
+		write_failures += 1
 		return
 	var head := PackedByteArray()
 	head.resize(8)

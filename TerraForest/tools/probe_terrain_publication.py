@@ -18,12 +18,16 @@ parser.add_argument('--transition', action='store_true', help='Exercise native m
 parser.add_argument('--density', action='store_true', help='Exercise bounded density query backend jobs')
 parser.add_argument('--density-stream', action='store_true', help='Exercise stream-side density reply freshness')
 parser.add_argument('--density-latency', action='store_true', help='Measure query latency behind meshing')
+parser.add_argument('--geometry-cache', action='store_true', help='Exercise native content cache through the real backend and restart')
 args = parser.parse_args()
 test = 'terrain_density_backend_probe' if args.density else ('terrain_transition_probe' if args.transition else ('terrain_worker_publication_probe' if args.worker else 'terrain_publication_probe'))
 if args.density_stream: test='terrain_density_stream_probe'
 if args.density_latency: test='terrain_density_latency_probe'
+if args.geometry_cache: test='terrain_geometry_cache_probe'
 source = ROOT / 'addons/volumetric_terrain'
 files = list(source.glob('*.gd')) + [ROOT / 'tests/terrain_publication_probe.gd']
+if args.geometry_cache:
+    files += [ROOT / 'tests/terrain_geometry_cache_probe.gd', source / 'native/geometry_content_key.hpp', source / 'native/terrain_binding.cpp', source / 'native/core.cpp']
 if args.density:
     files.append(ROOT / 'tests/terrain_density_backend_probe.gd')
 if args.density_stream:
@@ -52,6 +56,8 @@ windows.release.x86_64 = "res://addons/volumetric_terrain/bin/terrain_core.windo
 ''')
     (project / 'tests').mkdir()
     shutil.copy2(ROOT / 'tests/terrain_publication_probe.gd', project / 'tests/terrain_publication_probe.gd')
+    if args.geometry_cache:
+        shutil.copy2(ROOT / 'tests/terrain_geometry_cache_probe.gd', project / 'tests/terrain_geometry_cache_probe.gd')
     if args.density:
         shutil.copy2(ROOT / 'tests/terrain_density_backend_probe.gd', project / 'tests/terrain_density_backend_probe.gd')
     if args.density_stream:

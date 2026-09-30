@@ -1,0 +1,65 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS real backend starts
+PASS world loads
+PASS native dependency key is available
+PASS mesh admitted cold
+PASS mesh completes cold
+PASS mesh admitted warm
+PASS mesh completes warm
+PASS actual backend writes and reuses disk geometry
+PASS warm result matches fresh geometry, shading and collision recipes
+PASS mesh admitted obsolete_visibility
+PASS mesh completes obsolete_visibility
+PASS checksum-valid stale visibility is replaced before returning cached geometry
+PASS edit admitted
+PASS changing edit completes
+PASS remote block edit preserves key and dependency work
+PASS mesh admitted remote_edit
+PASS mesh completes remote_edit
+PASS geometry reused despite global snapshot-cache invalidation
+PASS mesh admitted remote_fresh_oracle
+PASS mesh completes remote_fresh_oracle
+PASS remote-edit cached result equals a current uncached build
+PASS edit admitted
+PASS changing edit completes
+PASS remote density allocation preserves local content identity and lookup count
+PASS edit admitted
+PASS changing edit completes
+PASS neighbor block dependency changes key
+PASS mesh admitted neighbor_edit
+PASS mesh completes neighbor_edit
+PASS neighbor dependency rejects stale disk geometry
+PASS edit admitted
+PASS changing edit completes
+PASS local block edit changes key
+PASS mesh admitted local_edit
+PASS mesh completes local_edit
+PASS local edit rebuilds instead of returning old geometry
+PASS save admitted
+PASS canonical save published
+[TerrainRewrite] World saved and verified; previous snapshot retained as .bak
+PASS real backend starts
+PASS world loads
+PASS dependency identity survives real save and world restart
+PASS mesh admitted restart
+PASS mesh completes restart
+PASS restart reuses geometry across snapshot namespace changes
+PASS restart geometry and refreshed visibility match pre-save result
+PASS edit admitted
+PASS changing edit completes
+PASS density excavation invalidates local content
+PASS mesh admitted density_edit
+PASS mesh completes density_edit
+PASS excavation cannot reuse pre-edit geometry
+PASS mesh admitted density_warm
+PASS mesh completes density_warm
+PASS edited density mesh caches with current shading
+PASS invalid key input rejected
+PASS mesh admitted near_cold
+PASS mesh completes near_cold
+PASS mesh admitted near_warm
+PASS mesh completes near_warm
+PASS near cache preserves nonempty collision recipes and full surface channels
+[TerrainRewrite] World saved and verified; previous snapshot retained as .bak
+

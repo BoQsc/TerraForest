@@ -1,0 +1,327 @@
+{
+  "checks": [
+    {
+      "name": "real backend starts",
+      "passed": true
+    },
+    {
+      "name": "world loads",
+      "passed": true
+    },
+    {
+      "name": "native dependency key is available",
+      "passed": true
+    },
+    {
+      "name": "mesh admitted cold",
+      "passed": true
+    },
+    {
+      "name": "mesh completes cold",
+      "passed": true
+    },
+    {
+      "name": "mesh admitted warm",
+      "passed": true
+    },
+    {
+      "name": "mesh completes warm",
+      "passed": true
+    },
+    {
+      "name": "actual backend writes and reuses disk geometry",
+      "passed": true
+    },
+    {
+      "name": "warm result matches fresh geometry, shading and collision recipes",
+      "passed": true
+    },
+    {
+      "name": "mesh admitted obsolete_visibility",
+      "passed": true
+    },
+    {
+      "name": "mesh completes obsolete_visibility",
+      "passed": true
+    },
+    {
+      "name": "checksum-valid stale visibility is replaced before returning cached geometry",
+      "passed": true
+    },
+    {
+      "name": "edit admitted",
+      "passed": true
+    },
+    {
+      "name": "changing edit completes",
+      "passed": true
+    },
+    {
+      "name": "remote block edit preserves key and dependency work",
+      "passed": true
+    },
+    {
+      "name": "mesh admitted remote_edit",
+      "passed": true
+    },
+    {
+      "name": "mesh completes remote_edit",
+      "passed": true
+    },
+    {
+      "name": "geometry reused despite global snapshot-cache invalidation",
+      "passed": true
+    },
+    {
+      "name": "mesh admitted remote_fresh_oracle",
+      "passed": true
+    },
+    {
+      "name": "mesh completes remote_fresh_oracle",
+      "passed": true
+    },
+    {
+      "name": "remote-edit cached result equals a current uncached build",
+      "passed": true
+    },
+    {
+      "name": "edit admitted",
+      "passed": true
+    },
+    {
+      "name": "changing edit completes",
+      "passed": true
+    },
+    {
+      "name": "remote density allocation preserves local content identity and lookup count",
+      "passed": true
+    },
+    {
+      "name": "edit admitted",
+      "passed": true
+    },
+    {
+      "name": "changing edit completes",
+      "passed": true
+    },
+    {
+      "name": "neighbor block dependency changes key",
+      "passed": true
+    },
+    {
+      "name": "mesh admitted neighbor_edit",
+      "passed": true
+    },
+    {
+      "name": "mesh completes neighbor_edit",
+      "passed": true
+    },
+    {
+      "name": "neighbor dependency rejects stale disk geometry",
+      "passed": true
+    },
+    {
+      "name": "edit admitted",
+      "passed": true
+    },
+    {
+      "name": "changing edit completes",
+      "passed": true
+    },
+    {
+      "name": "local block edit changes key",
+      "passed": true
+    },
+    {
+      "name": "mesh admitted local_edit",
+      "passed": true
+    },
+    {
+      "name": "mesh completes local_edit",
+      "passed": true
+    },
+    {
+      "name": "local edit rebuilds instead of returning old geometry",
+      "passed": true
+    },
+    {
+      "name": "save admitted",
+      "passed": true
+    },
+    {
+      "name": "canonical save published",
+      "passed": true
+    },
+    {
+      "name": "real backend starts",
+      "passed": true
+    },
+    {
+      "name": "world loads",
+      "passed": true
+    },
+    {
+      "name": "dependency identity survives real save and world restart",
+      "passed": true
+    },
+    {
+      "name": "mesh admitted restart",
+      "passed": true
+    },
+    {
+      "name": "mesh completes restart",
+      "passed": true
+    },
+    {
+      "name": "restart reuses geometry across snapshot namespace changes",
+      "passed": true
+    },
+    {
+      "name": "restart geometry and refreshed visibility match pre-save result",
+      "passed": true
+    },
+    {
+      "name": "edit admitted",
+      "passed": true
+    },
+    {
+      "name": "changing edit completes",
+      "passed": true
+    },
+    {
+      "name": "density excavation invalidates local content",
+      "passed": true
+    },
+    {
+      "name": "mesh admitted density_edit",
+      "passed": true
+    },
+    {
+      "name": "mesh completes density_edit",
+      "passed": true
+    },
+    {
+      "name": "excavation cannot reuse pre-edit geometry",
+      "passed": true
+    },
+    {
+      "name": "mesh admitted density_warm",
+      "passed": true
+    },
+    {
+      "name": "mesh completes density_warm",
+      "passed": true
+    },
+    {
+      "name": "edited density mesh caches with current shading",
+      "passed": true
+    },
+    {
+      "name": "invalid key input rejected",
+      "passed": true
+    },
+    {
+      "name": "mesh admitted near_cold",
+      "passed": true
+    },
+    {
+      "name": "mesh completes near_cold",
+      "passed": true
+    },
+    {
+      "name": "mesh admitted near_warm",
+      "passed": true
+    },
+    {
+      "name": "mesh completes near_warm",
+      "passed": true
+    },
+    {
+      "name": "near cache preserves nonempty collision recipes and full surface channels",
+      "passed": true
+    }
+  ],
+  "failures": 0,
+  "timings": [
+    {
+      "geometry_cached": false,
+      "name": "cold",
+      "worker_ms": 34.885
+    },
+    {
+      "geometry_cached": true,
+      "name": "warm",
+      "worker_ms": 9.655
+    },
+    {
+      "geometry_cached": true,
+      "name": "obsolete_visibility",
+      "worker_ms": 15.582
+    },
+    {
+      "geometry_cached": true,
+      "name": "remote_edit",
+      "worker_ms": 5.007
+    },
+    {
+      "geometry_cached": false,
+      "name": "remote_fresh_oracle",
+      "worker_ms": 22.967
+    },
+    {
+      "geometry_cached": false,
+      "name": "neighbor_edit",
+      "worker_ms": 35.415
+    },
+    {
+      "geometry_cached": false,
+      "name": "local_edit",
+      "worker_ms": 53.15
+    },
+    {
+      "geometry_cached": true,
+      "name": "restart",
+      "worker_ms": 11.211
+    },
+    {
+      "geometry_cached": false,
+      "name": "density_edit",
+      "worker_ms": 54.244
+    },
+    {
+      "geometry_cached": true,
+      "name": "density_warm",
+      "worker_ms": 16.685
+    },
+    {
+      "geometry_cached": false,
+      "name": "near_cold",
+      "worker_ms": 21.07
+    },
+    {
+      "geometry_cached": true,
+      "name": "near_warm",
+      "worker_ms": 9.089
+    }
+  ],
+  "source_hashes": {
+    "addons\\volumetric_terrain\\collision_reuse.gd": "261ed776c54c2db3d84d4579cacbec908ff857d40016b89e1aff1195a6ac0c6a",
+    "addons\\volumetric_terrain\\derived_cache.gd": "a50479bb5071873245d652244bca7dce6455253581d93a255ce5f935dde8e059",
+    "addons\\volumetric_terrain\\mesh_codec.gd": "1cc58b27f483b2f8e8bccd70e5343c624f7edb8abdee8a6fa20580b2e1d059c3",
+    "addons\\volumetric_terrain\\plugin.gd": "4bc3d414ab0be6d3cb7e28bb26b8e6c356d53952b49f219b490171c68f30b328",
+    "addons\\volumetric_terrain\\runtime_assets.gd": "5eb08dd1ee0a47d004fb59f69a3e591f3c12bc23290da168d7ad8044161dd05d",
+    "addons\\volumetric_terrain\\terrain_backend.gd": "e7f96a636d3e3b4e1c08a68c1ad5347c8180917ee758b332f30832984df7e8e0",
+    "addons\\volumetric_terrain\\terrain_stream.gd": "ac06d4c7952ae721da85110895a961874699db9ba46b3d74d0b7687f4f159ad8",
+    "addons\\volumetric_terrain\\terrain_world.gd": "a2f53ac78ed7aecbecf958507952463b4f77521ac0f2845f06a7c7415ee42bba",
+    "tests\\terrain_publication_probe.gd": "c7d2eed49dd827acf7135ff78d1f8eb43f55f48b0e7d720e9ff84f4d0cdd8f9a",
+    "tests\\terrain_geometry_cache_probe.gd": "62f5452f323a4e71b274b304b20d39cdfcd38438e298ff4d6b8a317073d38c59",
+    "addons\\volumetric_terrain\\native\\geometry_content_key.hpp": "37278e401bf2a58240095eeeb27b692a733068925f74539ada28e3a76144cd5b",
+    "addons\\volumetric_terrain\\native\\terrain_binding.cpp": "0ea04de70e8017f4fd84108e3dbb5c3911c453df768c53a9498a810b80731102",
+    "addons\\volumetric_terrain\\native\\core.cpp": "37e0c86ea735343a1deee9a6b71847f62183cbef55e38cb37be7e44bc32d9d31",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "944e78f3dfbf8e9beedb67c68dbcbe5487d95357f9097876871caf659db068ef",
+    "tools\\probe_terrain_publication.py": "6f4e2a7d31879ecc09367fe5882146a04d2380615d36ebdc068594dc500bd224"
+  },
+  "adoption_qualified": false,
+  "snapshot_terrain": false,
+  "brick_terrain": false
+}
