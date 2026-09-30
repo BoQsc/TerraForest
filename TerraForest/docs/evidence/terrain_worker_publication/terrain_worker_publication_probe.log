@@ -1,0 +1,46 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS real native terrain worker starts
+PASS real worker startup delivered
+PASS initial region admitted (1280, 1280, 16)
+PASS initial region admitted (1296, 1280, 16)
+PASS initial region admitted (1280, 1296, 16)
+PASS initial region admitted (1296, 1296, 16)
+PASS worker meshes reach live staging and publication
+PASS worker height query completes
+PASS worker fixture original physics completion_before_preparation (1280, 1280, 16)
+PASS worker fixture original physics completion_before_preparation (1296, 1280, 16)
+PASS worker fixture original physics completion_before_preparation (1280, 1296, 16)
+PASS worker fixture original physics completion_before_preparation (1296, 1296, 16)
+PASS public stream edit accepted completion_before_preparation
+PASS edit invalidates exactly four visible local regions completion_before_preparation
+PASS worker completion received with staging deliberately held
+PASS completion alone cannot publish unprepared batch
+PASS worker completed but original collision retained (1280, 1280, 16)
+PASS worker completed but original collision retained (1296, 1280, 16)
+PASS worker completed but original collision retained (1280, 1296, 16)
+PASS worker completed but original collision retained (1296, 1296, 16)
+PASS completion-before-preparation keeps original physics surface
+PASS local worker edit commits completion_before_preparation
+PASS worker transaction publishes exactly once completion_before_preparation
+PASS worker fixture replacement physics completion_before_preparation (1280, 1280, 16)
+PASS worker fixture replacement physics completion_before_preparation (1296, 1280, 16)
+PASS worker fixture replacement physics completion_before_preparation (1280, 1296, 16)
+PASS worker fixture replacement physics completion_before_preparation (1296, 1296, 16)
+PASS worker excavation lowers all four sampled surfaces completion_before_preparation
+PASS worker fixture original physics overlapped (1280, 1280, 16)
+PASS worker fixture original physics overlapped (1296, 1280, 16)
+PASS worker fixture original physics overlapped (1280, 1296, 16)
+PASS worker fixture original physics overlapped (1296, 1296, 16)
+PASS public stream edit accepted overlapped
+PASS edit invalidates exactly four visible local regions overlapped
+PASS local worker edit commits overlapped
+PASS worker transaction publishes exactly once overlapped
+PASS worker fixture replacement physics overlapped (1280, 1280, 16)
+PASS worker fixture replacement physics overlapped (1296, 1280, 16)
+PASS worker fixture replacement physics overlapped (1280, 1296, 16)
+PASS worker fixture replacement physics overlapped (1296, 1296, 16)
+PASS worker excavation lowers all four sampled surfaces overlapped
+[TerrainRewrite] Temporary test world: save skipped
+PASS real worker joins cleanly
+
