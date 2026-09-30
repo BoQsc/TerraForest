@@ -448,6 +448,10 @@ func _fail(text: String) -> void:
 	message_changed.emit("ERROR: " + text)
 
 func _begin_entry(data: Dictionary) -> Dictionary:
+	if data.has("bricks"):
+		var parent:=MeshInstance3D.new()
+		parent.visible=false
+		return {"node":parent,"body":null,"bricks":{},"brick_partial":data.get("brick_partial",false),"dirty":false,"stamp":data.stamp,"step":1,"triangles":data.triangles,"bytes":data.bytes,"used":Time.get_ticks_msec(),"key":data.key,"active":false,"cavity_visibility":true}
 	var upload_begin: int = Time.get_ticks_usec()
 	var key: Vector3i = data["key"]
 	var mesh_node := MeshInstance3D.new()
@@ -487,6 +491,26 @@ func _begin_entry(data: Dictionary) -> Dictionary:
 		"used": Time.get_ticks_msec(), "key": key, "active": false, "cavity_visibility": bool(data.get("cavity_visibility", true))}
 
 func _prepare_piece() -> bool:
+	if preparation.data.has("bricks"):
+		var parent: Dictionary=preparation
+		var parts: Array=parent.data.bricks
+		var index: int=parent.get("brick_at",0)
+		if index>=parts.size(): return true
+		if not parent.has("brick_preparation"):
+			var part: Dictionary=parts[index]
+			part["stamp"]=parent.data.stamp
+			parent["brick_preparation"]={"data":part,"entry":_begin_entry(part),"piece_at":0}
+			parent.entry.node.add_child(parent.brick_preparation.entry.node)
+			return false
+		preparation=parent.brick_preparation
+		var finished:=_prepare_piece()
+		preparation=parent
+		if finished:
+			var child: Dictionary=parent.brick_preparation.entry
+			parent.entry.bricks[parts[index].brick_bottom]=child
+			parent.erase("brick_preparation")
+			parent["brick_at"]=index+1
+		return int(parent.get("brick_at",0))>=parts.size()
 	var piece_begin: int = Time.get_ticks_usec()
 	var data: Dictionary = preparation["data"]
 	var pieces: Array = data["collision_pieces"]
@@ -494,6 +518,7 @@ func _prepare_piece() -> bool:
 	if at < pieces.size():
 		var entry: Dictionary = preparation["entry"]
 		var old_entry: Dictionary = tiles.get(data["key"], {})
+		if data.has("brick_bottom"): old_entry=old_entry.get("bricks",{}).get(data.brick_bottom,{})
 		var previous: Dictionary = old_entry.get("collision_shapes", {})
 		var current: Dictionary = entry["collision_shapes"]
 		var prepared: Dictionary = pieces[at].resolve(previous)
@@ -590,13 +615,15 @@ func _apply_lighting_piece() -> void:
 			lighting_upload.clear()
 		return
 	var entry: Dictionary = tiles[key]
+	if data.has("brick_bottom"): entry=entry.bricks[data.brick_bottom]
 	var node: MeshInstance3D = entry["node"]
 	var mesh: ArrayMesh = node.mesh as ArrayMesh
 	var layout: Dictionary = entry.get("attribute_layout", {})
 	var bytes: PackedByteArray = data["attribute_data"]
 	if mesh == null or mesh.get_surface_count() == 0 or layout.is_empty():
 		_forget_light_job(data)
-		lighting_dirty.erase(key)
+		if data.has("brick_bottom"): entry["light_generation"]=data.light_ticket
+		else: lighting_dirty.erase(key)
 		lighting_upload.clear()
 		return
 	var stride: int = int(layout["stride"])
@@ -617,7 +644,8 @@ func _apply_lighting_piece() -> void:
 	if offset >= bytes.size():
 		entry["arrays"] = data["arrays"]
 		entry["cavity_visibility"] = data["cavity_visibility"]
-		lighting_dirty.erase(key)
+		if data.has("brick_bottom"): entry["light_generation"]=data.light_ticket
+		else: lighting_dirty.erase(key)
 		_forget_light_job(data)
 		lighting_upload.clear()
 
@@ -636,6 +664,8 @@ func _staging_valid(data: Dictionary) -> bool:
 	return true
 
 func _destroy_entry(entry: Dictionary) -> void:
+	if entry.has("bricks"):
+		for child: Dictionary in entry.bricks.values(): _set_active(child,false)
 	var body: StaticBody3D = entry.get("body")
 	if is_instance_valid(body):
 		body.collision_layer = 0
@@ -648,6 +678,8 @@ func _set_active(entry: Dictionary, active: bool) -> void:
 	if bool(entry.get("active", false)) == active:
 		return
 	entry["active"] = active
+	if entry.has("bricks"):
+		for child: Dictionary in entry.bricks.values(): _set_active(child,active)
 	var node: MeshInstance3D = entry["node"]
 	node.visible = active
 	var body: StaticBody3D = entry["body"]
@@ -659,6 +691,15 @@ func _set_active(entry: Dictionary, active: bool) -> void:
 func _install(key: Vector3i, entry: Dictionary) -> void:
 	if tiles.has(key):
 		var old: Dictionary = tiles[key]
+		if entry.get("brick_partial",false) and old.has("bricks"):
+			for bottom: int in old.bricks.keys():
+				if entry.bricks.has(bottom): continue
+				var retained: Dictionary=old.bricks[bottom]
+				retained.node.reparent(entry.node)
+				entry.bricks[bottom]=retained
+				entry.bytes+=int(retained.bytes)
+				entry.triangles+=int(retained.triangles)
+				old.bricks.erase(bottom)
 		cache_bytes -= int(old["bytes"])
 		_destroy_entry(old)
 	tiles[key] = entry
@@ -821,6 +862,7 @@ func _schedule() -> void:
 func request_partition(key: Vector3i) -> bool:
 	if stopping or not world_ready or pending_edit or not partition_request.is_empty() or key.z<=16 or not visible_cut.has(key) or not tiles.has(key): return false
 	var parent: Dictionary=tiles[key]
+	if parent.has("bricks"): return false
 	if bool(parent.dirty) or int(parent.stamp)!=int(stamps.get(key,0)) or in_flight.has(key) or staging_versions.has(key): return false
 	var half:=key.z/2
 	var children: Dictionary={}
@@ -907,7 +949,7 @@ func _update_cut() -> void:
 		_set_active(tiles[key], true)
 		total_triangles += int(tiles[key]["triangles"])
 		# A completed EMPTY fine patch has valid empty collision, not missing data.
-		if key.z <= 32 and int(tiles[key].get("step",1))==1 and (is_instance_valid(tiles[key]["body"]) or int(tiles[key]["triangles"]) == 0):
+		if key.z <= 32 and int(tiles[key].get("step",1))==1 and (is_instance_valid(tiles[key]["body"]) or tiles[key].get("bricks",{}).size()==8 or int(tiles[key]["triangles"]) == 0):
 			for z in range(key.y / FINE_SIZE, (key.y + key.z) / FINE_SIZE):
 				for x in range(key.x / FINE_SIZE, (key.x + key.z) / FINE_SIZE):
 					active_leaves[Vector2i(x, z)] = true
@@ -967,6 +1009,11 @@ func _invalidate(lo: Vector3, hi: Vector3) -> Array[Dictionary]:
 				if visible_cut.has(key):
 					last_density_tiles += 1
 					affected.push_back({"key": key, "stamp": stamps[key], "lighting_only": false})
+					if tiles[key].has("bricks"):
+						var bottoms: Array=[]
+						for bottom: int in tiles[key].bricks:
+							if bottom<=hi.y and bottom+33>=lo.y: bottoms.append(bottom)
+						if not bottoms.is_empty(): affected[-1]["brick_bottoms"]=bottoms
 				elif size == 16 and requested_keys.has(key):
 					# Repeated edits must not invalidate the same requested fine
 					# children forever. Publish a bounded set in this transaction,
@@ -986,7 +1033,10 @@ func _queue_lighting_refresh() -> void:
 		# Newly rebuilt geometry already contains current lighting. Inactive old
 		# cache entries get invalidated, not synchronously rebuilt for a dig.
 		if float(key.x + key.z) >= geometry_lo.x and float(key.x) <= geometry_hi.x and float(key.y + key.z) >= geometry_lo.z and float(key.y) <= geometry_hi.z:
-			lighting_dirty.erase(key)
+			if tiles[key].has("bricks"):
+				lighting_dirty[key]=lighting_generation
+				last_relight_tiles+=1
+			else: lighting_dirty.erase(key)
 			continue
 		if float(key.x + key.z) < shadow_lo.x or float(key.x) > shadow_hi.x or float(key.y + key.z) < shadow_lo.z or float(key.y) > shadow_hi.z:
 			continue
@@ -1008,11 +1058,26 @@ func _schedule_lighting() -> void:
 		if lighting_in_flight.has(key) or not tiles.has(key) or not visible_cut.has(key):
 			continue
 		var entry: Dictionary = tiles[key]
-		if bool(entry["dirty"]) or not entry.has("arrays"):
+		if bool(entry["dirty"]):
 			continue
+		var brick_bottom: int=-1
+		if entry.has("bricks"):
+			for bottom: int in entry.bricks:
+				var child: Dictionary=entry.bricks[bottom]
+				if int(child.get("light_generation",-1))==int(lighting_dirty[key]): continue
+				if child.attribute_layout.is_empty():
+					child["light_generation"]=lighting_dirty[key]
+					continue
+				brick_bottom=bottom
+				entry=child
+				break
+			if brick_bottom<0:
+				lighting_dirty.erase(key)
+				continue
+		if not entry.has("arrays"): continue
 		var accepted: bool = backend.submit({"kind": "relight", "key": key, "arrays": entry["arrays"], "attribute_layout": entry["attribute_layout"],
 			"triangles": entry["triangles"], "bytes": entry["bytes"], "stamp": stamps.get(key, 0),
-			"epoch": epoch, "light_ticket": lighting_dirty[key]})
+			"epoch": epoch, "light_ticket": lighting_dirty[key], "brick_bottom":brick_bottom})
 		if accepted:
 			lighting_in_flight[key] = lighting_dirty[key]
 		break

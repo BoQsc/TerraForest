@@ -40,6 +40,9 @@ func run() -> void:
 	var rows: Array[Dictionary] = []
 	for mode in ["completion_before_preparation","overlapped"]:
 		var old: Dictionary = world.tiles.duplicate()
+		var old_brick_nodes: Dictionary={}
+		for key in old:
+			for bottom in old[key].get("bricks",{}): old_brick_nodes[Vector4i(key.x,bottom,key.y,key.z)]=old[key].bricks[bottom].node.get_instance_id()
 		var before: Array[float] = await physics_hits(old,"worker fixture original physics "+mode)
 		var revision_before: int = world.published_revision
 		var start := Time.get_ticks_usec()
@@ -53,6 +56,29 @@ func run() -> void:
 		check(await pump_until(func(): return not world.pending_edit),"local worker edit commits "+mode)
 		var elapsed := (Time.get_ticks_usec()-start)/1000.0
 		check(world.published_revision==revision_before+1 and world.batch_remaining==0 and world.staged_batch.is_empty(),"worker transaction publishes exactly once "+mode)
+		if world.backend.brick_terrain:
+			var retained:=0
+			var rebuilt:=0
+			for key in world.tiles:
+				check(world.tiles[key].bricks.size()==8,"complete vertical ownership retained")
+				for bottom: int in world.tiles[key].bricks:
+					var identity:=Vector4i(key.x,bottom,key.y,key.z)
+					var same: bool=world.tiles[key].bricks[bottom].node.get_instance_id()==old_brick_nodes[identity]
+					if bottom>world.geometry_hi.y or bottom+33<world.geometry_lo.y:
+						check(same,"unaffected brick mesh and collision node retained")
+						retained+=1
+					else:
+						check(not same,"affected brick replaced")
+						rebuilt+=1
+			check(retained>0 and rebuilt>0 and retained+rebuilt==32,"edit updates a strict subset of cached vertical bricks")
+			var counted_bytes:=0
+			var exact_accounting:=true
+			for key in world.tiles:
+				var child_bytes:=0
+				for child: Dictionary in world.tiles[key].bricks.values(): child_bytes+=int(child.bytes)
+				exact_accounting=exact_accounting and child_bytes==int(world.tiles[key].bytes)
+				counted_bytes+=child_bytes
+			check(exact_accounting and counted_bytes==world.cache_bytes,"retained brick residency is counted exactly once")
 		var after: Array[float] = await physics_hits(world.tiles,"worker fixture replacement physics "+mode)
 		var lowered := 0
 		for i in range(4):
@@ -60,6 +86,22 @@ func run() -> void:
 		check(lowered==4,"worker excavation lowers all four sampled surfaces "+mode)
 		rows.append({"mode":mode,"elapsed_ms":elapsed,"worker_build_ms":world.last_total_build_ms,"worker_queue_ms":world.last_queue_ms,"publish_ms":world.last_commit_ms,"before_heights":before,"after_heights":after})
 		point.y -= 2.0
+	if world.backend.brick_terrain:
+		var retained_ids: Dictionary={}
+		for key in world.tiles:
+			for bottom in world.tiles[key].bricks: retained_ids[Vector4i(key.x,bottom,key.y,key.z)]=world.tiles[key].bricks[bottom].node.get_instance_id()
+		world.last_geometry_done_us=0
+		var deadline:=Time.get_ticks_msec()+10000
+		while not world.lighting_dirty.is_empty() and Time.get_ticks_msec()<deadline:
+			world._schedule_lighting()
+			for result: Dictionary in world.backend.poll(): world._receive(result)
+			world._drain_staging()
+			await process_frame
+		check(world.lighting_dirty.is_empty() and world.lighting_in_flight.is_empty(),"deferred brick lighting completes")
+		var unchanged:=true
+		for key in world.tiles:
+			for bottom in world.tiles[key].bricks: unchanged=unchanged and world.tiles[key].bricks[bottom].node.get_instance_id()==retained_ids[Vector4i(key.x,bottom,key.y,key.z)]
+		check(unchanged,"brick relighting retains meshes and collision nodes")
 	world.shutdown()
 	check(not world.backend.thread.is_started(),"real worker joins cleanly")
 	world.free()

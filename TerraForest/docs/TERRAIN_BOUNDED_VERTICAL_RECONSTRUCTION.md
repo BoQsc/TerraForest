@@ -75,7 +75,8 @@ newly exposed neighboring face. A real density excavation centered on Y=32
 verifies cavity-wall ray hits on both sides of the join. In both cases old
 collision remains active while replacements are prepared, then both replacements
 are activated together. Empty replacement geometry creates no empty ArrayMesh
-surface. These publication steps currently live in the test, not the game stream.
+surface. This initial fixture established conversion before the main-stream
+integration described below.
 
 This does not resolve the earlier tiny-face collision qualification failures or
 establish a general collision guarantee. No graphical appearance or frame-budget
@@ -83,11 +84,50 @@ claim follows from a headless two-brick test. Evidence for this conversion is in
 `evidence/terrain_brick_publication/`; ordinary debug/release bridge fingerprints
 still match the published baseline after the bounded block-emission change.
 
-## Remaining integration
+## Main worker/stream integration and fullscreen result
 
-Gameplay still requests full-height terrain. Cached ownership and the main stream's
-scene publication must carry vertical bounds before
-this reduces gameplay mining work. It does not solve distant LOD reduction or the
-simplifier defects recorded in `TERRAIN_REGION_AGGREGATION.md`. Collision, shading,
-GPU upload, render batching and the automated fullscreen mining/travel workload
-remain necessary; this native component result does not qualify the mining fix.
+`--brick-terrain` now routes in-world 16/32 m columns through bounded snapshot
+jobs in the existing backend. Initial columns contain eight 32 m height ranges.
+The stream rebuilds only ranges intersecting the edit dependency box, stages
+their collision pieces under the existing frame budget, and moves unchanged
+mesh/collision nodes into the replacement column at commit. Residency bytes count
+retained children once. Deferred lighting updates child attributes without
+rebuilding their geometry or collision. No persistent disk brick cache is added.
+
+The real worker publication fixture checks held and overlapped preparation:
+each edit replaces eight bricks and retains 24, with old physics active until
+commit. It verifies complete ownership, exact cache accounting, changed surface
+hits, deferred lighting completion and retained node identities. The earlier
+full-column snapshot worker fixture also passes.
+
+The existing 136-edit mining/travel workload was run with this path selected,
+at verified 1920x1080 fullscreen/full render scale on the GTX 1060 Max-Q:
+
+| Phase | Frame p99 ms | Edit publication p95 ms |
+| --- | ---: | ---: |
+| Baseline | 16.741 | — |
+| Compact control | 24.262 | 167.976 |
+| Expanding excavation | 19.729 | 201.529 |
+| Travel | 16.874 | 451.044 |
+| Return control | 16.700 | 69.814 |
+| Recovery | 26.353 | — |
+
+The run **fails five gates**, with no runtime errors and no measured frame above
+50 ms. It is a single observation, not a matched speedup comparison or endurance
+qualification. The slowest recorded travel patch remains an old-path 256 m edit
+rebuild at (1280,1280), taking 303.522 ms. Brick ownership is operational in the
+main stream; that fact alone has not fixed overall edit latency or headroom.
+
+Reproduce with `python tools/foundation_scaling.py --terrain bricks --scales 1
+--godot PATH`. Mode-specific report folders retain the launch command and source
+hashes. Evidence is retained in `evidence/terrain_brick_stream/`.
+
+## Remaining work
+
+The option remains experimental and off by default. Large patches still use the
+old reconstruction path. It does not solve distant LOD reduction or the
+simplifier defects recorded in `TERRAIN_REGION_AGGREGATION.md`. Mixed legacy/candidate
+joins remain unqualified. Collision cooking/attachment also consumes multiple
+publication frames in the local cases. The failed fullscreen workload must pass
+before claiming the mining fix; longer travel, residency/cancellation pressure
+and endurance qualification remain outstanding.

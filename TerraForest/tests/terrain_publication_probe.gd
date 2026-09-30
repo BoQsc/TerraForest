@@ -52,7 +52,10 @@ func physics_hits(entries: Dictionary, label: String) -> Array[float]:
 		var z: float = 1295.0 if key.y==1280 else 1297.0
 		var query := PhysicsRayQueryParameters3D.create(Vector3(x,300,z),Vector3(x,0,z),1)
 		var hit: Dictionary = world.get_world_3d().direct_space_state.intersect_ray(query)
-		check(not hit.is_empty() and hit.get("collider")==entries[key].body,label+" %s" % key)
+		var matches: bool=not hit.is_empty() and hit.get("collider")==entries[key].body
+		if entries[key].has("bricks"):
+			for child: Dictionary in entries[key].bricks.values(): matches=matches or (not hit.is_empty() and hit.get("collider")==child.body)
+		check(matches,label+" %s" % key)
 		heights.append(float(hit.position.y) if not hit.is_empty() else -1.0)
 	return heights
 

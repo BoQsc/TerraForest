@@ -15,6 +15,7 @@ var native: Object
 var collision_recipes: RefCounted
 var _collision_piece_triangles := 1024
 var snapshot_terrain: bool = "--snapshot-terrain" in OS.get_cmdline_user_args()
+var brick_terrain: bool = "--brick-terrain" in OS.get_cmdline_user_args()
 var _snapshot_token: int = 0
 
 func configure_collision_piece_size(triangles: int) -> bool:
@@ -391,7 +392,42 @@ func _load() -> String:
 	write_allowed = true
 	return "World loaded"
 
-func _build(key: Vector3i, allow_base_cache: bool, expected_build_epoch: int, relight_cache: bool = false) -> Dictionary:
+func _build_bricks(key: Vector3i, expected_build_epoch: int, selected: Array) -> Dictionary:
+	var begin := Time.get_ticks_usec()
+	var bottoms: Array=selected if not selected.is_empty() else [0,32,64,96,128,160,192,224]
+	var parts: Array[Dictionary]=[]
+	var bytes:=0
+	var triangles:=0
+	var revision: int=_call(Codec.command(0)).decode_u32(12)
+	for bottom: int in bottoms:
+		if _call(Codec.command(13)).decode_u32(12)!=expected_build_epoch: return {"cancelled":true}
+		_snapshot_token+=1
+		if not native.experimental_snapshot_submit_brick(key.x,key.y,key.z,_snapshot_token,revision,bottom,bottom+32): return {"error":"Brick admission failed"}
+		var rows: Array=[]
+		while rows.is_empty():
+			rows=native.experimental_snapshot_poll()
+			if rows.is_empty(): OS.delay_usec(1000)
+		if bool(rows[0].get("stale",true)): return {"cancelled":true}
+		var envelope: Dictionary=native.experimental_snapshot_encode_brick(rows[0],key.x,key.y,key.z)
+		if envelope.is_empty():
+			if _call(Codec.command(13)).decode_u32(12)!=expected_build_epoch: return {"cancelled":true}
+			return {"error":"Brick conversion failed"}
+		var part: Dictionary=Codec.decode_mesh(envelope.packet)
+		if part.has("error"): return part
+		var recipes: Dictionary=collision_recipes.prepare(part.faces,_collision_piece_triangles)
+		if not recipes.ok: return {"error":recipes.error}
+		part["collision_pieces"]=recipes.pieces
+		part["faces"]=PackedVector3Array()
+		part["brick_bottom"]=bottom
+		parts.append(part)
+		bytes+=int(part.bytes)
+		triangles+=int(part.triangles)
+	if _call(Codec.command(13)).decode_u32(12)!=expected_build_epoch: return {"cancelled":true}
+	return {"key":key,"step":1,"bricks":parts,"brick_partial":not selected.is_empty(),"bytes":bytes,"triangles":triangles,"worker_ms":(Time.get_ticks_usec()-begin)/1000.0}
+
+func _build(key: Vector3i, allow_base_cache: bool, expected_build_epoch: int, relight_cache: bool = false, brick_bottoms: Array = []) -> Dictionary:
+	if brick_terrain and key.z<=32 and key.x+key.z<=2000 and key.y+key.z<=2000:
+		return _build_bricks(key,expected_build_epoch,brick_bottoms)
 	var begin: int = Time.get_ticks_usec()
 	var step: int = maxi(1, key.z / 32)
 	var path: String = "res://addons/volumetric_terrain/base_cache/%d_%d_%d.trm" % [key.x, key.y, key.z]
@@ -516,6 +552,7 @@ func _relight(item: Dictionary, expected_build_epoch: int) -> Dictionary:
 		return {"error": "Native attribute packing failed; no GPU write performed"}
 	result["attribute_data"] = packed.slice(20)
 	result["key"] = item["key"]
+	if int(item.get("brick_bottom",-1))>=0: result["brick_bottom"]=item.brick_bottom
 	result["faces"] = PackedVector3Array()
 	result["triangles"] = item["triangles"]
 	result["bytes"] = item["bytes"]
@@ -651,7 +688,7 @@ func _run() -> void:
 				# builds and resource preparation OVERLAP instead of running in series.
 				var build_total: float = 0.0
 				for item: Dictionary in job["tiles"]:
-					var chunk: Dictionary = _build(item["key"], false, int(job["build_epoch"]))
+					var chunk: Dictionary = _build(item["key"], false, int(job["build_epoch"]), false, item.get("brick_bottoms",[]))
 					if bool(chunk.get("cancelled", false)):
 						chunk = {"error": "Edit build cancelled; reload before further editing"}
 					build_total += float(chunk.get("worker_ms", 0.0))
