@@ -239,11 +239,11 @@ static void block_quad(Mesh&m,int axis,int side,float plane,float u,float v,floa
  else {p[0]={u,v,plane};p[1]={u+w,v,plane};p[2]={u+w,v+h,plane};p[3]={u,v+h,plane};n={0,0,float(side)};}
  u32 b=m.v.n;for(int i=0;i<4;i++){Vertex q;q.p=p[i];q.n=n;q.material=float(mat+4);m.v.push(q);}quad(m,b,b+1,b+2,b+3,side<0);
 }
-void add_blocks(const World&w,int ox,int oz,int size,Mesh&m){
+void add_blocks(const World&w,int ox,int oz,int size,Mesh&m,int y_begin,int y_end){
  List<Face> faces;static const int dx[6]={-1,1,0,0,0,0},dy[6]={0,0,-1,1,0,0},dz[6]={0,0,0,0,-1,1};
  for(int cz=oz/32;cz<imn(64,(oz+size+31)/32);cz++)for(int cx=ox/32;cx<imn(64,(ox+size+31)/32);cx++){
   const auto&column=w.block_columns[cx+64*cz];for(int i=0;i<column.n;i++){
-  u32 key=column[i];int x,y,z;decode_block(key,x,y,z);if(x<ox||x>=ox+size||z<oz||z>=oz+size)continue;int material=w.blocks.get(key);
+  u32 key=column[i];int x,y,z;decode_block(key,x,y,z);if(x<ox||x>=ox+size||z<oz||z>=oz+size||y<y_begin||y>=y_end)continue;int material=w.blocks.get(key);
   for(int d=0;d<6;d++){
    int xx=x+dx[d],yy=y+dy[d],zz=z+dz[d];if(xx>=0&&xx<WORLD&&zz>=0&&zz<WORLD&&yy>=0&&yy<256&&w.blocks.get(block_key(xx,yy,zz))>=0)continue;
    int a=d/2,s=d%2?1:-1;Face f;f.axis=a;f.side=s;f.mat=material;

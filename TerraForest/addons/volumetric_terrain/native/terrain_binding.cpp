@@ -48,6 +48,7 @@ protected:
         godot::ClassDB::bind_method(godot::D_METHOD("experimental_snapshot_submit_timing"), &TerrainCore::experimental_snapshot_submit_timing);
         godot::ClassDB::bind_method(godot::D_METHOD("experimental_snapshot_create_mesh","packet"), &TerrainCore::experimental_snapshot_create_mesh);
         godot::ClassDB::bind_method(godot::D_METHOD("experimental_snapshot_encode","packet","x","z","size"), &TerrainCore::experimental_snapshot_encode);
+        godot::ClassDB::bind_method(godot::D_METHOD("experimental_snapshot_encode_brick","packet","x","z","size"), &TerrainCore::experimental_snapshot_encode_brick);
         godot::ClassDB::bind_method(godot::D_METHOD("experimental_partition_mesh","packet"), &TerrainCore::experimental_partition_mesh);
         godot::ClassDB::bind_method(godot::D_METHOD("experimental_partition_mesh_budgeted","packet","workspace_bytes","output_bytes","expected_epoch"), &TerrainCore::experimental_partition_mesh_budgeted);
     }
@@ -70,7 +71,20 @@ public:
         // The legacy column codec adds full-height blocks and owns a column.
         // Bounded surfaces must not be published through it as complete columns.
         if(int64_t(packet.get("y_begin",0))!=0||int64_t(packet.get("y_end",WORLD_Y))!=WORLD_Y)return {};
-        if(x<0||z<0||(size!=16&&size!=32)||x+size>WORLD||z+size>WORLD)return {};
+        return encode_snapshot_surface(packet,x,z,size,0,WORLD_Y);
+    }
+    godot::Dictionary experimental_snapshot_encode_brick(const godot::Dictionary&packet,int64_t x,int64_t z,int64_t size){
+        for(const char*key:{"y_begin","y_end"})if(!packet.has(key)||godot::Variant(packet[key]).get_type()!=godot::Variant::INT)return {};
+        int64_t begin=packet["y_begin"],end=packet["y_end"];
+        if(begin<0||begin>=end||end>WORLD_Y)return {};
+        auto bytes=encode_snapshot_surface(packet,x,z,size,int(begin),int(end));if(bytes.is_empty())return {};
+        godot::Dictionary result;result["packet"]=bytes;
+        result["origin"]=godot::Vector3i(int(x),int(begin),int(z));result["extent"]=godot::Vector3i(int(size),int(end-begin),int(size));
+        result["epoch"]=packet["epoch"];result["revision"]=packet["validated_revision"];return result;
+    }
+private:
+    godot::PackedByteArray encode_snapshot_surface(const godot::Dictionary&packet,int64_t x,int64_t z,int64_t size,int y_begin,int y_end){
+        if(x<0||z<0||(size!=16&&size!=32)||x>WORLD-size||z>WORLD-size)return {};
         for(const char*key:{"status","epoch","validated_revision","source_id"})
             if(!packet.has(key)||godot::Variant(packet[key]).get_type()!=godot::Variant::INT)return {};
         if(int64_t(packet["status"])!=0||bool(packet.get("stale",true))||int64_t(packet["source_id"])!=int64_t(get_instance_id()))return {};
@@ -84,11 +98,11 @@ public:
         if(tr_oom){mesh.release();return {};}
         for(int at=0;at<positions.size();at++){
             auto p=positions[at],n=normals[at];
-            if(p.x<x||p.x>x+size||p.z<z||p.z>z+size){mesh.release();return {};}
+            if(p.x<x||p.x>x+size||p.z<z||p.z>z+size||p.y<y_begin||p.y>y_end){mesh.release();return {};}
             mesh.v[at].p={float(p.x),float(p.y),float(p.z)};mesh.v[at].n={float(n.x),float(n.y),float(n.z)};
         }
         for(int at=0;at<indices.size();at++)mesh.i[at]=u32(indices[at]);
-        add_blocks(world_,int(x),int(z),int(size),mesh);
+        add_blocks(world_,int(x),int(z),int(size),mesh,y_begin,y_end);
         if(!tr_oom)shade_mesh(world_,mesh,build_epoch);
         Bytes encoded;
         if(!tr_oom&&build_epoch==terrain_build_epoch(&world_))encode_mesh(mesh,int(x),int(z),int(size),1,encoded);
@@ -96,6 +110,7 @@ public:
         if(!tr_oom&&u64(int64_t(packet["epoch"]))==snapshot_epoch_.load()&&result.resize(encoded.n)==godot::OK&&encoded.n)copy_bytes(result.ptrw(),encoded.p,encoded.n);
         mesh.release();encoded.release();return result;
     }
+public:
     godot::Ref<godot::ArrayMesh> experimental_snapshot_create_mesh(const godot::Dictionary&packet){
         for(const char*key:{"status","epoch","validated_revision","source_id"})
             if(!packet.has(key)||godot::Variant(packet[key]).get_type()!=godot::Variant::INT)return {};

@@ -59,10 +59,34 @@ The existing 36-case sparse snapshot regression also passes.
 Evidence for this extension is under `evidence/terrain_brick_snapshots/`; initial
 direct reconstruction measurements above remain in their original evidence folder.
 
+## Shaded packet and collision conversion
+
+`experimental_snapshot_encode_brick(packet,x,z,size)` converts a fresh bounded
+result into existing v5 render/material/lighting channels and collision faces,
+wrapped with explicit 3D `origin`, `extent`, revision and epoch. The legacy column
+encoder continues to reject partial-height input. Conversion validates every
+position against the owned volume. Unit-block emission filters by the same
+half-open Y interval, retaining neighbor occlusion across the cut; a block at a
+different height is not accidentally emitted in every brick.
+
+The headless snapshot-mesh test now constructs actual ArrayMesh resources and
+native collision recipes for adjacent bricks. A block-removal case verifies the
+newly exposed neighboring face. A real density excavation centered on Y=32
+verifies cavity-wall ray hits on both sides of the join. In both cases old
+collision remains active while replacements are prepared, then both replacements
+are activated together. Empty replacement geometry creates no empty ArrayMesh
+surface. These publication steps currently live in the test, not the game stream.
+
+This does not resolve the earlier tiny-face collision qualification failures or
+establish a general collision guarantee. No graphical appearance or frame-budget
+claim follows from a headless two-brick test. Evidence for this conversion is in
+`evidence/terrain_brick_publication/`; ordinary debug/release bridge fingerprints
+still match the published baseline after the bounded block-emission change.
+
 ## Remaining integration
 
-Gameplay still requests full-height terrain. Cached ownership and scene publication
-must carry vertical bounds before
+Gameplay still requests full-height terrain. Cached ownership and the main stream's
+scene publication must carry vertical bounds before
 this reduces gameplay mining work. It does not solve distant LOD reduction or the
 simplifier defects recorded in `TERRAIN_REGION_AGGREGATION.md`. Collision, shading,
 GPU upload, render batching and the automated fullscreen mining/travel workload
