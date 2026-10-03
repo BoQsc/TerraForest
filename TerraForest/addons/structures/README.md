@@ -383,3 +383,8 @@ saves the result. Main-thread completion publishes it to the library. Call
 shutdown_frontage before releasing the library while work is outstanding; it
 joins and removes unpublished output. The demo connects this to tree exit.
 The synchronous frontage API remains available for offline tools/tests.
+
+Frontage validation also probes beneath the maximum 8 m grading-fill depth
+(clamped at low altitude toward protected bedrock). This rejects an isolated
+slab that passes immediate floor support. It is a conservative two-depth
+screen; it does not prove continuous support between probes or below them.

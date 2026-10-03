@@ -39,6 +39,13 @@ func run() -> void:
 		await wait_placement(game)
 		check(game.foundation_check.status=="Placement cancelled" and game.structures.blocks.can_place_prefab(asset,target,0),"rotation change cancels deferred placement")
 		game.structure_rotation=0
+		game._begin_frontage_placement(asset,target);await wait_placement(game)
+		check(game.foundation_check.status.begins_with("Fill lacks support") and game.structures.blocks.can_place_prefab(asset,target,0),"floating graded slab rejected despite solid surface probes")
+		check(game.terrain.sculpt_sphere(Vector3(416,160,400),32,true,1),"controlled underlying hill added")
+		await wait_edit(game)
+		for z in [387,413]:
+			game.terrain.construct_graded_bed(Vector3(400,180,z),Vector3(433,180,z),8,8,12,1)
+			await wait_edit(game)
 		check(game.terrain.sculpt_sphere(Vector3(404,183,389),1,true,1),"interior obstruction submitted above supported foundation")
 		await wait_edit(game)
 		game._begin_frontage_placement(asset,target);await wait_placement(game)
