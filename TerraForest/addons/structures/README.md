@@ -62,8 +62,8 @@ metalness maps are not included. The existing roughness and metal settings remai
 in the shader. Flat faces repeat approximately once per world meter; changing
 resolution changes detail, not the world scale of the pattern.
 
-`project.godot` defaults to `[structures] material_set="original"`. Set it to
-`"terraforest"` for a persistent project default, or override one launch:
+`project.godot` defaults to `[structures] material_set="terraforest"`. Set it to
+`"original"` to restore the preserved originals as the default, or override one launch:
 
 ```sh
 python tools/run.py --scene structures --block-textures terraforest
