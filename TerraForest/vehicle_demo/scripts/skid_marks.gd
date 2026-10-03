@@ -109,13 +109,12 @@ func _update_wheel_mark(wheel_index: int) -> void:
 		return
 
 	var ray: RayCast3D = wheel_rays[wheel_index]
-	ray.force_raycast_update()
-	if not ray.is_colliding():
+	if not car._contact_active[wheel_index]:
 		_has_last_point[wheel_index] = false
 		return
 
-	var contact_point: Vector3 = ray.get_collision_point()
-	var normal: Vector3 = ray.get_collision_normal()
+	var contact_point: Vector3 = car._contact_points[wheel_index]
+	var normal: Vector3 = car._contact_normals[wheel_index]
 	if normal.length_squared() < 0.0001:
 		normal = Vector3.UP
 	else:

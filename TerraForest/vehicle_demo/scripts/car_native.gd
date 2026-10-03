@@ -1,10 +1,29 @@
 # SPDX-License-Identifier: 0BSD
 extends "res://vehicle_demo/scripts/car.gd"
 var driving_policy: RefCounted
+var suspension: RefCounted
 func _ready() -> void:
 	GDExtensionManager.load_extension("res://addons/vehicle_runtime/vehicle_runtime.gdextension")
 	driving_policy=ClassDB.instantiate("NativeDrivingPolicy")
+	suspension=ClassDB.instantiate("NativeVehicleSuspension")
 	super._ready()
+	for ray in wheel_rays: ray.enabled=false # Native pass explicitly updates once.
+func _update_wheel_contacts() -> void:
+	var samples: PackedFloat32Array=suspension.sample_and_apply(self,wheel_rays)
+	grounded_wheels=0;loaded_wheels=0
+	if samples.size()!=40:
+		set_physics_process(false);push_error("Vehicle suspension contacts unavailable");return
+	# Temporary compatibility adapter for the original visual/telemetry scripts.
+	for i in 4:
+		var offset:=i*10
+		_contact_active[i]=samples[offset]>0;_load_active[i]=samples[offset+1]>0
+		_spring_lengths[i]=samples[offset+2];_normal_forces[i]=samples[offset+3]
+		_contact_points[i]=Vector3(samples[offset+4],samples[offset+5],samples[offset+6])
+		_contact_normals[i]=Vector3(samples[offset+7],samples[offset+8],samples[offset+9])
+		if _contact_active[i]: grounded_wheels+=1
+		if _load_active[i]: loaded_wheels+=1
+func _apply_suspension_forces() -> void:
+	pass # Applied by the native contact pass exactly once per physics tick.
 func _update_ground_state(handbrake: bool,delta: float) -> void:
 	var was_normal:=_normal_mode
 	super._update_ground_state(handbrake,delta)

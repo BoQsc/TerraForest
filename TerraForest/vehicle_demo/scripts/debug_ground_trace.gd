@@ -114,11 +114,10 @@ func _sample_if_needed() -> void:
 	var contact_count: int = 0
 	var ground_point: Vector3 = Vector3.ZERO
 	var ground_normal: Vector3 = Vector3.ZERO
-	for ray: RayCast3D in wheel_rays:
-		ray.force_raycast_update()
-		if ray.is_colliding():
-			ground_point += ray.get_collision_point()
-			ground_normal += ray.get_collision_normal()
+	for index in wheel_rays.size():
+		if car._contact_active[index]:
+			ground_point += car._contact_points[index]
+			ground_normal += car._contact_normals[index]
 			contact_count += 1
 
 	if contact_count < 2:

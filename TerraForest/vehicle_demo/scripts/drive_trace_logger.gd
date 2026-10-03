@@ -172,12 +172,11 @@ func _write_frame() -> void:
 
 func _measure_wheel(wheel_index: int, wheel_slips: Array[float], wheel_lateral_speeds: Array[float], wheel_skids: Array[int]) -> void:
 	var ray: RayCast3D = wheel_rays[wheel_index]
-	ray.force_raycast_update()
-	if not ray.is_colliding():
+	if not car._contact_active[wheel_index]:
 		return
 
-	var contact_point: Vector3 = ray.get_collision_point()
-	var normal: Vector3 = ray.get_collision_normal()
+	var contact_point: Vector3 = car._contact_points[wheel_index]
+	var normal: Vector3 = car._contact_normals[wheel_index]
 	if normal.length_squared() < 0.000001:
 		normal = Vector3.UP
 	else:

@@ -2,6 +2,16 @@
 
 ## Current delivery priority
 
+Vehicle suspension/contact sampling now runs in NativeVehicleSuspension with
+the original spring, damping, travel and force cap. The native pass updates four
+rays once per tick; automatic ray updates are disabled and effects/telemetry
+reuse those contacts. Five targeted support/force-limit/input checks pass. The
+1080p automated drive remains close to the pre-port result (14.7136 m, 49.0202
+km/h, four loaded wheels). Both binaries rebuilt; evidence:
+`evidence/vehicle_suspension/`. A small script adapter still copies contact data;
+motion modes, impacts, effects, fleet activation and streamed-world integration
+remain unfinished. No fleet performance claim follows from this single-car test.
+
 The user's own vehicle project is imported under `vehicle_demo`, with their
 explicit 0BSD declaration recorded in PROVENANCE.md. NativeDrivingPolicy ports
 its steering and longitudinal control rather than substituting the earlier

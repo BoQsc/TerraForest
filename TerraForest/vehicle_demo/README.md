@@ -5,8 +5,8 @@ assets and runs this isolated scene at 1920x1080 fullscreen Forward+, 60 FPS,
 with the original 120 Hz physics. See PROVENANCE.md for the user's 0BSD grant.
 
 The original car.gd remains a behavior reference. car_native.gd delegates
-steering and longitudinal control to the vehicle_runtime C++ addon. Suspension,
-impacts, damage and accessories remain scripted pending migration. This scene
+steering, longitudinal control and suspension to the vehicle_runtime C++ addon.
+Impacts, motion integration, damage and accessories remain scripted pending migration. This scene
 does not yet integrate vehicles into the streamed world.
 
 The ZIP intentionally contains no `.godot` cache and no generated `.import` files.

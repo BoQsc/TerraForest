@@ -10,7 +10,15 @@ speed() returns speed/acceleration. Inputs use metres, seconds and radians.
 Build: `python tools/build_native.py --addon vehicle_runtime --target all`.
 Uses the pinned Zig/prebuilt godot-cpp workflow; see its separate MIT notice.
 
-The vehicle_demo adapter retains original suspension, rigid-body integration,
+NativeVehicleSuspension samples four wheel rays and applies the original spring
+and compression/rebound damping forces in C++. Call sample_and_apply once per
+physics tick; it returns four packed rows of contact, load, spring length,
+force, world point xyz and normal xyz. Invalid body/ray sets return an empty
+array. Automatic ray updates are disabled in the adapter. Effects and telemetry
+reuse the sampled contacts. A temporary four-wheel script adapter still copies
+the 160-byte result into the original visual state.
+
+The vehicle_demo adapter retains original rigid-body motion integration,
 visual effects and interaction scripts pending migration. Neither the policy
 nor demo provides streamed collision readiness, vehicle persistence, authority
 or fleet activation/LOD. The simple CharacterBody controller was discarded
