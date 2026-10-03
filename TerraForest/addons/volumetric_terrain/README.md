@@ -50,6 +50,15 @@ the preview while a section is pending does not change the captured endpoint.
 Failed or mismatched results cannot authorize a new continuation, and changing
 world epoch clears it. Only the last completed section is retained in memory;
 this is not a persistent road network or automatic street-junction planner.
+
+Completing street preparation also adds **Street end A / B** to the road panel.
+Switch to a terrain tool and choose an end to capture the prepared street's
+exact centerline endpoint, grade and width. Mark the other endpoint and build
+through the ordinary road protections. The handoff itself makes no terrain
+edits. It remembers only the last prepared street in this session, and reload
+clears it. Streets wider than 32 m require manually chosen narrower connections;
+the tool does not silently reduce the requested width. Later terrain edits do
+not move these stored authoring coordinates or certify that the pavement remains.
 An editor outline shows the rounded footprint and depth, updating only on
 selection changes. Green indicates valid parameters, not route clearance; red
 indicates an incomplete/invalid selection. It follows normal depth testing.

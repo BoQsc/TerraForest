@@ -1,3 +1,13 @@
+## Prepared street entrance handoff - 2026-10-03
+
+Site planning now captures two street centerline endpoints using native prefab cell-center rotation conventions. Only completed preparation registers them with the road editor. Street end A / B transfers the captured endpoint, grade and street width into an asphalt preview; the user marks the connecting endpoint and uses existing guarded road construction. The handoff survives building placement and later plan mutation, but world reload clears it. Streets above the road tool maximum width of 32 m are explicitly rejected rather than narrowed. Coordinates remain authoring anchors, not certification against subsequent terrain edits.
+
+Twelve continuation/handoff checks, 28 native paving checks and 33 mixed-street graphical checks passed. Native terrain tests verify asphalt at both rotated entrances and extension beyond one end in all four rotations. The graphical test uses the actual tool-switch method, verifies no terrain mutation during handoff, and checks that only the road panel is visible and fits above the toolbelt. The inspected 1080p screenshot records that UI. An earlier test-only direct mode assignment left overlapping panels; the test now exercises the real switching path.
+
+This supplies manual connectors from the last prepared street, not persistent road topology, automatic routing, junctions or a city generator. The functional capture still reached 36.377 ms; no sustained-60-FPS claim is made.
+
+Evidence: docs/evidence/street_entrances.
+
 ## Confirmed road-section continuation - 2026-10-03
 
 The road/foundation editor now tracks the exact epoch, ticket and expected revision of its accepted edit. A matching published or unchanged outcome unlocks Continue from completed end. This restores captured endpoint and section settings, clears the next endpoint and changes only the preview. Pending or mismatched edits cannot authorize continuation, later selection changes cannot redirect it, and world reload clears the remembered section. Terrain processing and protection checks remain in the existing native-backed path.

@@ -332,6 +332,13 @@ they do not depend on the original sources to reload. Survey and prepare the
 result to grade its site and pave its street before placement. This remains a
 straight street layout, not an intersection or road-network generator.
 
+Successful site preparation transfers its two street entrances to the terrain
+road editor. **Street end A / B** starts a connector preview at the captured
+grade after switching to a terrain tool. `site_plan.prepare` supplies the
+`street_ends` pair in terrain coordinates, using the same cell-center rotation
+as native prefab placement. The handoff survives building placement but is
+session-only; it is not a persistent road graph or automatic route finder.
+
 `NativeBlockPrefab.compose_frontage(sources, lots_per_side, street_width, gap, seed)`
 creates a deterministic pair of building rows using the existing prefab format.
 Source building fronts must face local +Z. The opposite row rotates by two

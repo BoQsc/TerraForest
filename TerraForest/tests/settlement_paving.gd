@@ -30,6 +30,17 @@ func _initialize() -> void:
 		var query:=Codec.point_command(point);query.encode_u32(0,26)
 		var result: PackedByteArray=core.execute(query)
 		check(Codec.reply_ok(result) and result.decode_u32(12)==4 and result.decode_float(16)<0,"rotated street has solid native asphalt material "+str(rotation))
+		var ends: PackedVector3Array=plan.street_ends
+		var entrances_paved:=ends.size()==2 and ends[0].y==80 and ends[1].y==80
+		for entrance in ends:
+			query=Codec.point_command(entrance-Vector3.UP);query.encode_u32(0,26)
+			result=core.execute(query)
+			entrances_paved=entrances_paved and Codec.reply_ok(result) and result.decode_u32(12)==4 and result.decode_float(16)<0
+		check(entrances_paved,"captured street entrances match real rotated asphalt "+str(rotation))
+		var end: Vector3=ends[1]+(ends[1]-ends[0]).normalized()*16
+		check(Codec.reply_ok(core.execute(Codec.graded_bed(ends[1],end,4,8,12,4))),"connecting road accepted at captured endpoint "+str(rotation))
+		query=Codec.point_command(ends[1].lerp(end,0.5)-Vector3.UP);query.encode_u32(0,26);result=core.execute(query)
+		check(Codec.reply_ok(result) and result.decode_u32(12)==4 and result.decode_float(16)<0,"connector extends asphalt outside original street "+str(rotation))
 	asset.set_meta("street_width",64)
 	check(not Plan.prepare(asset,Vector3i(700,0,700),0,80).ok,"street metadata cannot pave through actual foundation columns")
 	asset.compose_frontage([load("res://addons/structures/prefabs/brick_cottage.tres")],2,64,3,1703)

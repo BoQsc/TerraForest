@@ -120,6 +120,16 @@ func run() -> void:
 	game.construction_palette.survey_dialog.hide()
 	await RenderingServer.frame_post_draw
 	root.get_texture().get_image().save_png("res://reports/settlement_prepared_placement.png")
+	var connector_revision: int=game.terrain.density_revision
+	game.app_focused=true
+	check(game._set_player_tool_mode(false,false,0),"street handoff uses normal terrain tool switch")
+	game.road_palette.action_requested.emit("street_b")
+	check(game.road_palette.has_start and not game.road_palette.has_finish and game.road_palette.start==game.site_preparation.plan.street_ends[1],"road editor captures prepared street end after building placement")
+	check(not game.terrain.pending_edit and game.terrain.density_revision==connector_revision,"street handoff changes preview only")
+	await process_frame;await RenderingServer.frame_post_draw
+	check(game.road_palette.panel.visible and not game.construction_palette.panel.visible and game.road_palette.panel.get_global_rect().end.y<900,"street connection controls exclusively fit above the 1080p toolbelt")
+	root.get_texture().get_image().save_png("res://reports/settlement_street_handoff.png")
+	game._set_player_tool_mode(true,false,0)
 	game.player.global_position=original_player
 	game.construction_palette.survey_dialog.hide()
 	game.app_focused=true

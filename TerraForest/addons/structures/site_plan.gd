@@ -36,6 +36,12 @@ static func prepare(asset: Resource,origin: Vector3i,rotation: int,grade: int) -
 			plan.bounds=plan.bounds.merge(region)
 			plan.segments.append({"start":a,"finish":b,"half_width":half_width,"depth":8.0,"clearance":12.0,"shoulder":0.0,"material":4,"bounds":region})
 	plan.paving_segments=columns*rows;plan["street_width"]=street
+	var ends:=PackedVector3Array([Vector3(local.position.x,0,0),Vector3(local.end.x,0,0)])
+	for i in 2:
+		var point:=ends[i]
+		for turn in rotation: point=Vector3(1-point.z,0,point.x)
+		ends[i]=point+Vector3(plan.target)
+	plan["street_ends"]=ends
 	return plan
 
 static func foundation(asset: Resource,origin: Vector3i,rotation: int,grade: int) -> Dictionary:

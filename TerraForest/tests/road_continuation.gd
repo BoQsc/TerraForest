@@ -32,4 +32,16 @@ func run() -> void:
 	check(panel.completed.finish==Vector3(130,52,100) and panel.status.text.contains("did not publish"),"wrong ticket cannot replace last completed endpoint")
 	terrain.epoch=5;panel.poll_submission(terrain)
 	check(panel.completed.is_empty() and panel.continue_button.disabled and not panel.continue_selection(terrain),"world reload invalidates continuation")
+	var plan:={"paving_segments":1,"street_width":8,"street_ends":PackedVector3Array([Vector3(500,50,500),Vector3(540,50,500)])}
+	panel.register_prepared_street(plan,terrain.epoch)
+	var actions: Array[String]=[];panel.action_requested.connect(func(action: String): actions.append(action))
+	panel.street_controls.get_child(0).pressed.emit();panel.street_controls.get_child(1).pressed.emit()
+	check(actions==["street_a","street_b"],"street buttons identify their distinct endpoints")
+	check(panel.select_street_end(1,terrain) and panel.start==Vector3(540,50,500) and panel.width.value==4 and not panel.has_finish,"prepared street endpoint transfers exact height and width into road preview")
+	plan.street_ends[1]=Vector3.ZERO
+	check(panel.select_street_end(1,terrain) and panel.start==Vector3(540,50,500),"street entrance capture does not follow later plan mutation")
+	plan.street_width=64;panel.register_prepared_street(plan,terrain.epoch)
+	check(not panel.select_street_end(0,terrain),"oversized street does not silently narrow connecting road")
+	terrain.epoch+=1;panel.poll_submission(terrain)
+	check(panel.prepared_street.is_empty() and not panel.street_controls.visible,"world reload clears captured street entrances")
 	panel.free();terrain.free();print("ROAD_CONTINUATION failures=",failures);quit(1 if failures else 0)

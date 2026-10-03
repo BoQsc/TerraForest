@@ -17,6 +17,8 @@ var build_button: Button
 var continue_button: Button
 var pending: Dictionary={}
 var completed: Dictionary={}
+var prepared_street: Dictionary={}
+var street_controls: HBoxContainer
 func material_id() -> int:
 	return 4 if surface.selected==0 else 1
 func shoulder_width() -> float:
@@ -26,7 +28,7 @@ func _ready() -> void:
 	panel=PanelContainer.new();panel.position=Vector2(1500,36);panel.custom_minimum_size=Vector2(380,0);add_child(panel)
 	var margin:=MarginContainer.new();panel.add_child(margin)
 	for side in ["left","right","top","bottom"]: margin.add_theme_constant_override("margin_"+side,20)
-	var column:=VBoxContainer.new();column.add_theme_constant_override("separation",10);margin.add_child(column)
+	var column:=VBoxContainer.new();column.add_theme_constant_override("separation",8);margin.add_child(column)
 	var title:=Label.new();title.text="ROADS / FOUNDATIONS";title.add_theme_font_size_override("font_size",22);column.add_child(title)
 	var hint:=Label.new();hint.text="Aim at terrain, then Esc to use controls.\nMark both ends, then build.\nClearance cuts terrain above the road.";column.add_child(hint)
 	surface=OptionButton.new();surface.focus_mode=Control.FOCUS_NONE;surface.add_item("Asphalt road");surface.add_item("Stone foundation");column.add_child(surface)
@@ -47,6 +49,10 @@ func _ready() -> void:
 		if item[0]=="build": build_button=button
 		if item[0]=="continue": continue_button=button;continue_button.disabled=true
 		button.pressed.connect(func(): action_requested.emit(item[0]))
+	street_controls=HBoxContainer.new();column.add_child(street_controls);street_controls.hide()
+	for end in 2:
+		var button:=Button.new();button.text="Street end A" if end==0 else "Street end B";button.size_flags_horizontal=Control.SIZE_EXPAND_FILL;button.focus_mode=Control.FOCUS_NONE;street_controls.add_child(button)
+		button.pressed.connect(func(): action_requested.emit("street_a" if end==0 else "street_b"))
 	status=Label.new();status.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;status.text="Select two terrain points. Maximum length 128 m; maximum grade 25%.";column.add_child(status)
 	panel.hide()
 func _number(parent: Control,title: String,minimum: float,maximum: float,value: float) -> SpinBox:
@@ -73,6 +79,8 @@ func track_submission(terrain: Node) -> void:
 	pending={"epoch":terrain.epoch,"ticket":terrain.edit_ticket,"revision":terrain.density_revision,"finish":finish,"width":width.value,"depth":depth.value,"clearance":clearance.value,"shoulder":shoulder_width(),"surface":surface.selected}
 	continue_button.disabled=true
 func poll_submission(terrain: Node) -> void:
+	if not prepared_street.is_empty() and prepared_street.epoch!=terrain.epoch:
+		prepared_street={};street_controls.hide()
 	if not completed.is_empty() and completed.epoch!=terrain.epoch:
 		completed={};continue_button.disabled=true
 	if pending.is_empty(): return
@@ -95,6 +103,20 @@ func continue_selection(terrain: Node) -> bool:
 	width.value=completed.width;depth.value=completed.depth;clearance.value=completed.clearance
 	surface.select(completed.surface);surface.item_selected.emit(completed.surface);shoulder.value=completed.shoulder
 	status.text="Start at completed end: %s\nMark the next end. Use Level to continue at this height." % str(start)
+	selection_changed.emit();return true
+func register_prepared_street(plan: Dictionary,epoch: int) -> void:
+	if plan.get("paving_segments",0)<=0 or not plan.has("street_ends"): return
+	prepared_street={"ends":plan.street_ends.duplicate(),"width":plan.street_width,"epoch":epoch}
+	street_controls.show()
+func select_street_end(index: int,terrain: Node) -> bool:
+	if not pending.is_empty() or index<0 or index>1 or prepared_street.is_empty() or prepared_street.epoch!=terrain.epoch:
+		status.text="No prepared street in this world, or a road section is still pending.";return false
+	if prepared_street.width>32:
+		status.text="This street exceeds the road tool's 32 m width. Connect narrower lanes manually.";return false
+	start=prepared_street.ends[index];has_start=true;has_finish=false
+	width.value=prepared_street.width*0.5;depth.value=8;clearance.value=12;shoulder.value=0
+	surface.select(0);surface.item_selected.emit(0)
+	status.text="Start at prepared street end %s: %s\nMark the connecting road's end, then build." % ["A" if index==0 else "B",str(start)]
 	selection_changed.emit();return true
 func validation_error() -> String:
 	if not has_start or not has_finish: return "Mark both ends first."

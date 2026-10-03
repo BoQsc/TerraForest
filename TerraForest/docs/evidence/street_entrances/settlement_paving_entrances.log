@@ -1,0 +1,30 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS rotated frontage includes paving 0
+PASS stone grading precedes accepted native asphalt edits 0
+PASS rotated street has solid native asphalt material 0
+PASS captured street entrances match real rotated asphalt 0
+PASS connecting road accepted at captured endpoint 0
+PASS connector extends asphalt outside original street 0
+PASS rotated frontage includes paving 1
+PASS stone grading precedes accepted native asphalt edits 1
+PASS rotated street has solid native asphalt material 1
+PASS captured street entrances match real rotated asphalt 1
+PASS connecting road accepted at captured endpoint 1
+PASS connector extends asphalt outside original street 1
+PASS rotated frontage includes paving 2
+PASS stone grading precedes accepted native asphalt edits 2
+PASS rotated street has solid native asphalt material 2
+PASS captured street entrances match real rotated asphalt 2
+PASS connecting road accepted at captured endpoint 2
+PASS connector extends asphalt outside original street 2
+PASS rotated frontage includes paving 3
+PASS stone grading precedes accepted native asphalt edits 3
+PASS rotated street has solid native asphalt material 3
+PASS captured street entrances match real rotated asphalt 3
+PASS connecting road accepted at captured endpoint 3
+PASS connector extends asphalt outside original street 3
+PASS street metadata cannot pave through actual foundation columns
+PASS 64 m street splits into native-width strips
+PASS invalid street metadata rejects rather than guessing
+PASS ordinary prefab does not acquire an invented street

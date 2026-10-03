@@ -696,6 +696,7 @@ func _road_action(action: String) -> void:
 	if action=="clear": road_palette.clear();return
 	if action=="level": road_palette.level_selection();return
 	if action=="continue": road_palette.continue_selection(terrain);return
+	if action in ["street_a","street_b"]: road_palette.select_street_end(0 if action=="street_a" else 1,terrain);return
 	if action in ["start","finish"]:
 		var origin:=camera.global_position
 		var hit: Dictionary=structures.blocks.raycast_scene(origin,origin-camera.global_basis.z*48,3,[player.get_rid()])
@@ -823,8 +824,10 @@ func _advance_site_preparation() -> void:
 	site_preparation.tick(terrain,_site_protection_error)
 	construction_palette.survey_dialog.dialog_text="Foundation: %d / %d sections complete.\nAccepted terrain edits remain if preparation is stopped." % [site_preparation.completed,site_preparation.plan.segments.size()]
 	if site_preparation.status=="running": return
+	if site_preparation.status=="complete": road_palette.register_prepared_street(site_preparation.plan,terrain.epoch)
 	construction_palette.survey_busy=false;_sync_construction_palette();construction_palette.stop_preparation_button.hide()
 	var message: String="Foundation prepared at Y=%d. Place the selected prefab at this height; frontage support and clearance are checked again." % site_preparation.plan.target.y if site_preparation.status=="complete" else site_preparation.reason
+	if site_preparation.status=="complete" and site_preparation.plan.get("paving_segments",0)>0: message+="\nRoad tools now offer Street end A / B for connecting roads."
 	construction_palette.prepare_button.text="Resume foundation preparation"
 	construction_palette.show_survey(message+"\nCompleted: %d / %d sections. Terrain grading has no block undo." % [site_preparation.completed,site_preparation.plan.segments.size()],site_preparation.status=="stopped" and _site_selection_current())
 	construction_palette.place_prepared_button.visible=site_preparation.status=="complete" and _site_selection_current()
