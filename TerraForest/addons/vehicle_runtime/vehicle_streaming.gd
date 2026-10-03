@@ -13,6 +13,9 @@ func bind_vegetation(provider: Node) -> bool:
 var waiting:=false
 var _linear:=Vector3.ZERO
 var _angular:=Vector3.ZERO
+func restore_parked(car: RigidBody3D) -> void:
+	_linear=Vector3.ZERO;_angular=Vector3.ZERO;waiting=false
+	car.linear_velocity=Vector3.ZERO;car.angular_velocity=Vector3.ZERO;car.freeze=true
 func discard_motion(car: RigidBody3D) -> void:
 	_linear=Vector3.ZERO;_angular=Vector3.ZERO
 	car.linear_velocity=Vector3.ZERO;car.angular_velocity=Vector3.ZERO

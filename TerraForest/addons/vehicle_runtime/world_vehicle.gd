@@ -26,6 +26,9 @@ func restore_snapshot(data: PackedByteArray) -> bool:
 		_world.player.collision_layer=_player_layer;_world.player.collision_mask=_player_mask
 		_world.camera.transform=_camera_local;Engine.physics_ticks_per_second=_physics_ticks
 		driving=false
+	if decoded.present and is_instance_valid(car):
+		car.restore_parked(decoded.pose)
+		return true
 	if is_instance_valid(car): car.free()
 	car=null
 	if decoded.present: _install_vehicle(_world,decoded.pose)

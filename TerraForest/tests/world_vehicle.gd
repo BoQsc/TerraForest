@@ -49,7 +49,16 @@ func run() -> void:
 	var saved: PackedByteArray=session.capture_snapshot()
 	var pose: Transform3D=session.car.transform
 	check(persistence._capture().sections.vehicles==saved,"world capture includes vehicle")
-	check(session.restore_snapshot(saved) and session.car.transform.is_equal_approx(pose) and session.car.freeze and not session.car.is_physics_processing(),"restore recreates parked vehicle pose")
+	var original_id: int=session.car.get_instance_id()
+	session.car.linear_velocity=Vector3(25,2,3);session.car.streaming.discard_motion(session.car)
+	session.car.damage_dent_count=3;session.car._pending_damage=true
+	session.car.open_driver_door()
+	var restore_start:=Time.get_ticks_usec()
+	check(session.restore_snapshot(saved) and session.car.transform.is_equal_approx(pose) and session.car.freeze and not session.car.is_physics_processing(),"restore resets parked vehicle pose")
+	print("VEHICLE_REUSE_RESTORE_US ",Time.get_ticks_usec()-restore_start)
+	check(session.car.get_instance_id()==original_id,"reload reuses detailed vehicle model")
+	check(not session.car.streaming.waiting and session.car.linear_velocity==Vector3.ZERO and session.car.angular_velocity==Vector3.ZERO,"reuse clears held momentum")
+	check(session.car.damage_dent_count==0 and not session.car._pending_damage and not session.car.driver_door_open and session.car.driver_door_hinge.rotation.y==0,"reuse resets damage and door state")
 	var id: int=session.car.get_instance_id()
 	check(not session.restore_snapshot(PackedByteArray([0])) and session.car.get_instance_id()==id,"invalid restore leaves live vehicle untouched")
 	session.car.position.x=-1

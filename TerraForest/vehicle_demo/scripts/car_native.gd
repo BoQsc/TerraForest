@@ -83,6 +83,20 @@ func reset_vehicle() -> void:
 	super.reset_vehicle()
 	if driving_policy!=null: driving_policy.reset()
 	if streaming!=null: streaming.discard_motion(self)
+func restore_parked(pose: Transform3D) -> void:
+	set_controls_enabled(false);set_physics_process(false)
+	_spawn_transform=pose
+	reset_vehicle()
+	global_transform=pose # Interactive reset adds clearance; saved poses are exact.
+	if streaming!=null: streaming.restore_parked(self)
+	else: freeze=true
+	repair_visual_damage()
+	if is_instance_valid(_door_tween): _door_tween.kill()
+	driver_door_open=false;driver_door_hinge.rotation.y=0
+	grounded_wheels=0;loaded_wheels=0;speed_kph=0
+	for i in WHEEL_COUNT:
+		_contact_active[i]=false;_load_active[i]=false;_normal_forces[i]=0
+	_update_wheel_visuals(0)
 func _update_steering(input_amount: float,delta: float) -> void:
 	var speed_for_limit:=absf(_drive_speed) if _normal_mode else linear_velocity.slide(_support_normal()).length()
 	var state: Vector3=driving_policy.steering(input_amount,speed_for_limit,delta)
