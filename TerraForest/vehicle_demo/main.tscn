@@ -1,0 +1,376 @@
+[gd_scene load_steps=31 format=3]
+
+[ext_resource type="Script" path="res://vehicle_demo/scripts/session.gd" id="10_session"]
+
+[ext_resource type="PackedScene" path="res://vehicle_demo/scenes/car.tscn" id="1_car"]
+[ext_resource type="Script" path="res://vehicle_demo/scripts/chase_camera.gd" id="2_camera"]
+[ext_resource type="Script" path="res://vehicle_demo/scripts/hud.gd" id="3_hud"]
+[ext_resource type="Script" path="res://vehicle_demo/scripts/game_controller.gd" id="4_controller"]
+[ext_resource type="PackedScene" path="res://vehicle_demo/scenes/character.tscn" id="5_character"]
+[ext_resource type="Script" path="res://vehicle_demo/scripts/speedometer.gd" id="6_speedometer"]
+[ext_resource type="Script" path="res://vehicle_demo/scripts/debug_ground_trace.gd" id="7_ground_trace"]
+[ext_resource type="Script" path="res://vehicle_demo/scripts/skid_marks.gd" id="8_skid_marks"]
+[ext_resource type="Script" path="res://vehicle_demo/scripts/drive_trace_logger.gd" id="9_trace_logger"]
+
+[sub_resource type="Environment" id="Environment_main"]
+background_mode = 1
+background_color = Color(0.54, 0.7, 0.84, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.78, 0.84, 0.92, 1)
+ambient_light_energy = 0.72
+ambient_light_sky_contribution = 0.0
+
+[sub_resource type="StandardMaterial3D" id="Material_ground"]
+albedo_color = Color(0.17, 0.19, 0.2, 1)
+roughness = 0.92
+
+[sub_resource type="StandardMaterial3D" id="Material_shoulder"]
+albedo_color = Color(0.78, 0.78, 0.72, 1)
+roughness = 0.9
+
+[sub_resource type="StandardMaterial3D" id="Material_dash"]
+albedo_color = Color(0.88, 0.84, 0.56, 1)
+roughness = 0.9
+
+[sub_resource type="StandardMaterial3D" id="Material_rumble"]
+albedo_color = Color(0.34, 0.35, 0.36, 1)
+roughness = 0.92
+
+[sub_resource type="StandardMaterial3D" id="Material_ramp"]
+albedo_color = Color(0.26, 0.28, 0.29, 1)
+roughness = 0.92
+
+[sub_resource type="StandardMaterial3D" id="Material_slalom"]
+albedo_color = Color(0.72, 0.3, 0.16, 1)
+roughness = 0.92
+
+[sub_resource type="StandardMaterial3D" id="Material_barrier"]
+albedo_color = Color(0.46, 0.48, 0.49, 1)
+roughness = 0.92
+
+[sub_resource type="BoxShape3D" id="Shape_ground"]
+size = Vector3(72, 1, 100)
+
+[sub_resource type="BoxMesh" id="Mesh_ground"]
+size = Vector3(72, 1, 100)
+
+[sub_resource type="BoxMesh" id="Mesh_shoulder"]
+size = Vector3(0.18, 0.025, 86)
+
+[sub_resource type="BoxMesh" id="Mesh_dash"]
+size = Vector3(0.12, 0.03, 2.4)
+
+[sub_resource type="BoxShape3D" id="Shape_rumble"]
+size = Vector3(4.6, 0.03, 0.24)
+
+[sub_resource type="BoxMesh" id="Mesh_rumble"]
+size = Vector3(4.6, 0.03, 0.24)
+
+[sub_resource type="BoxShape3D" id="Shape_ramp"]
+size = Vector3(4.8, 0.42, 7)
+
+[sub_resource type="BoxMesh" id="Mesh_ramp"]
+size = Vector3(4.8, 0.42, 7)
+
+[sub_resource type="BoxShape3D" id="Shape_slalom"]
+size = Vector3(0.8, 0.96, 0.8)
+
+[sub_resource type="BoxMesh" id="Mesh_slalom"]
+size = Vector3(0.8, 0.96, 0.8)
+
+[sub_resource type="BoxShape3D" id="Shape_barrier"]
+size = Vector3(0.35, 0.75, 68)
+
+[sub_resource type="BoxMesh" id="Mesh_barrier"]
+size = Vector3(0.35, 0.75, 68)
+
+[node name="VehicleDrivingTest" type="Node3D"]
+script = ExtResource("10_session")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_main")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+rotation = Vector3(-0.907571211, -0.558505361, 0)
+light_energy = 1.25
+shadow_enabled = true
+
+[node name="Ground" type="StaticBody3D" parent="."]
+position = Vector3(0, -0.5, 14)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ground"]
+shape = SubResource("Shape_ground")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Ground"]
+mesh = SubResource("Mesh_ground")
+material_override = SubResource("Material_ground")
+
+[node name="RoadMarkings" type="Node3D" parent="."]
+
+[node name="LeftShoulder" type="MeshInstance3D" parent="RoadMarkings"]
+position = Vector3(-5.6, 0.015, 14)
+mesh = SubResource("Mesh_shoulder")
+material_override = SubResource("Material_shoulder")
+
+[node name="RightShoulder" type="MeshInstance3D" parent="RoadMarkings"]
+position = Vector3(5.6, 0.015, 14)
+mesh = SubResource("Mesh_shoulder")
+material_override = SubResource("Material_shoulder")
+
+[node name="Dash01" type="MeshInstance3D" parent="RoadMarkings"]
+position = Vector3(0, 0.02, -6.0)
+mesh = SubResource("Mesh_dash")
+material_override = SubResource("Material_dash")
+
+[node name="Dash02" type="MeshInstance3D" parent="RoadMarkings"]
+position = Vector3(0, 0.02, 0.0)
+mesh = SubResource("Mesh_dash")
+material_override = SubResource("Material_dash")
+
+[node name="Dash03" type="MeshInstance3D" parent="RoadMarkings"]
+position = Vector3(0, 0.02, 6.0)
+mesh = SubResource("Mesh_dash")
+material_override = SubResource("Material_dash")
+
+[node name="Dash04" type="MeshInstance3D" parent="RoadMarkings"]
+position = Vector3(0, 0.02, 12.0)
+mesh = SubResource("Mesh_dash")
+material_override = SubResource("Material_dash")
+
+[node name="Dash05" type="MeshInstance3D" parent="RoadMarkings"]
+position = Vector3(0, 0.02, 18.0)
+mesh = SubResource("Mesh_dash")
+material_override = SubResource("Material_dash")
+
+[node name="Dash06" type="MeshInstance3D" parent="RoadMarkings"]
+position = Vector3(0, 0.02, 24.0)
+mesh = SubResource("Mesh_dash")
+material_override = SubResource("Material_dash")
+
+[node name="Dash07" type="MeshInstance3D" parent="RoadMarkings"]
+position = Vector3(0, 0.02, 30.0)
+mesh = SubResource("Mesh_dash")
+material_override = SubResource("Material_dash")
+
+[node name="Dash08" type="MeshInstance3D" parent="RoadMarkings"]
+position = Vector3(0, 0.02, 36.0)
+mesh = SubResource("Mesh_dash")
+material_override = SubResource("Material_dash")
+
+[node name="Dash09" type="MeshInstance3D" parent="RoadMarkings"]
+position = Vector3(0, 0.02, 42.0)
+mesh = SubResource("Mesh_dash")
+material_override = SubResource("Material_dash")
+
+[node name="TestCourse" type="Node3D" parent="."]
+
+[node name="Rumble1" type="StaticBody3D" parent="TestCourse"]
+position = Vector3(0, 0.015, 8.0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="TestCourse/Rumble1"]
+shape = SubResource("Shape_rumble")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="TestCourse/Rumble1"]
+mesh = SubResource("Mesh_rumble")
+material_override = SubResource("Material_rumble")
+
+[node name="Rumble2" type="StaticBody3D" parent="TestCourse"]
+position = Vector3(0, 0.015, 9.3)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="TestCourse/Rumble2"]
+shape = SubResource("Shape_rumble")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="TestCourse/Rumble2"]
+mesh = SubResource("Mesh_rumble")
+material_override = SubResource("Material_rumble")
+
+[node name="Rumble3" type="StaticBody3D" parent="TestCourse"]
+position = Vector3(0, 0.015, 10.6)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="TestCourse/Rumble3"]
+shape = SubResource("Shape_rumble")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="TestCourse/Rumble3"]
+mesh = SubResource("Mesh_rumble")
+material_override = SubResource("Material_rumble")
+
+[node name="Ramp" type="StaticBody3D" parent="TestCourse"]
+position = Vector3(0, 0.63, 17)
+rotation = Vector3(-0.13962634, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="TestCourse/Ramp"]
+shape = SubResource("Shape_ramp")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="TestCourse/Ramp"]
+mesh = SubResource("Mesh_ramp")
+material_override = SubResource("Material_ramp")
+
+[node name="SlalomBlock1" type="StaticBody3D" parent="TestCourse"]
+position = Vector3(-2.6, 0.48, 26.0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="TestCourse/SlalomBlock1"]
+shape = SubResource("Shape_slalom")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="TestCourse/SlalomBlock1"]
+mesh = SubResource("Mesh_slalom")
+material_override = SubResource("Material_slalom")
+
+[node name="SlalomBlock2" type="StaticBody3D" parent="TestCourse"]
+position = Vector3(2.6, 0.48, 31.0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="TestCourse/SlalomBlock2"]
+shape = SubResource("Shape_slalom")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="TestCourse/SlalomBlock2"]
+mesh = SubResource("Mesh_slalom")
+material_override = SubResource("Material_slalom")
+
+[node name="SlalomBlock3" type="StaticBody3D" parent="TestCourse"]
+position = Vector3(-2.6, 0.48, 36.0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="TestCourse/SlalomBlock3"]
+shape = SubResource("Shape_slalom")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="TestCourse/SlalomBlock3"]
+mesh = SubResource("Mesh_slalom")
+material_override = SubResource("Material_slalom")
+
+[node name="LeftBarrier" type="StaticBody3D" parent="TestCourse"]
+position = Vector3(-7.0, 0.375, 17)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="TestCourse/LeftBarrier"]
+shape = SubResource("Shape_barrier")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="TestCourse/LeftBarrier"]
+mesh = SubResource("Mesh_barrier")
+material_override = SubResource("Material_barrier")
+
+[node name="RightBarrier" type="StaticBody3D" parent="TestCourse"]
+position = Vector3(7.0, 0.375, 17)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="TestCourse/RightBarrier"]
+shape = SubResource("Shape_barrier")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="TestCourse/RightBarrier"]
+mesh = SubResource("Mesh_barrier")
+material_override = SubResource("Material_barrier")
+
+[node name="Car" parent="." instance=ExtResource("1_car")]
+position = Vector3(0, 0.62, -9)
+
+[node name="DebugGroundPaint" type="Node3D" parent="."]
+script = ExtResource("7_ground_trace")
+
+[node name="PaintMesh" type="MeshInstance3D" parent="DebugGroundPaint"]
+cast_shadow = 0
+
+[node name="SkidMarks" type="Node3D" parent="."]
+script = ExtResource("8_skid_marks")
+car_path = NodePath("../Car")
+
+
+[node name="DriveTraceLogger" type="Node" parent="."]
+script = ExtResource("9_trace_logger")
+car_path = NodePath("../Car")
+
+[node name="Character" parent="." instance=ExtResource("5_character")]
+position = Vector3(2.8, 0.04, -8.6)
+
+[node name="ChaseCamera" type="Camera3D" parent="."]
+position = Vector3(0, 3.62, -16.2)
+rotation = Vector3(-0.20944, 3.141593, 0)
+current = true
+fov = 72.0
+near = 0.08
+script = ExtResource("2_camera")
+target_path = NodePath("../Car")
+
+[node name="HUD" type="CanvasLayer" parent="."]
+script = ExtResource("3_hud")
+car_path = NodePath("../Car")
+
+[node name="Panel" type="ColorRect" parent="HUD"]
+offset_left = 16.0
+offset_top = 16.0
+offset_right = 1115.0
+offset_bottom = 188.0
+mouse_filter = 2
+color = Color(0.02, 0.025, 0.03, 0.72)
+
+[node name="SpeedLabel" type="Label" parent="HUD"]
+offset_left = 30.0
+offset_top = 26.0
+offset_right = 220.0
+offset_bottom = 62.0
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 5
+theme_override_font_sizes/font_size = 28
+text = "000 km/h"
+
+[node name="StateLabel" type="Label" parent="HUD"]
+offset_left = 31.0
+offset_top = 65.0
+offset_right = 1100.0
+offset_bottom = 92.0
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 13
+text = "Drive:N  G:4/4  Tire drive:0.0kN  Roll:+0.0  Steer:+0.0/28.0 deg  Body slip:+0.0  Tire F/R:0.0/0.0 deg  Yaw:+0.0 deg/s"
+
+[node name="ControlsLabel" type="Label" parent="HUD"]
+offset_left = 31.0
+offset_top = 113.0
+offset_right = 600.0
+offset_bottom = 138.0
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 14
+text = "WASD / arrows: drive   Space: handbrake   E: exit vehicle   R: reset"
+
+[node name="DebugLegendLabel" type="Label" parent="HUD"]
+offset_left = 31.0
+offset_top = 143.0
+offset_right = 720.0
+offset_bottom = 171.0
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 13
+text = "Ground paint — GREEN: heading   ORANGE: rear-axle motion   CYAN: driven path   F4: clear   F5: on/off"
+
+[node name="Speedometer" type="Control" parent="HUD"]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 500.0
+offset_right = 220.0
+offset_bottom = 700.0
+custom_minimum_size = Vector2(200, 200)
+mouse_filter = 2
+z_index = 10
+script = ExtResource("6_speedometer")
+car_path = NodePath("../../Car")
+
+[node name="ValueLabel" type="Label" parent="HUD/Speedometer"]
+layout_mode = 0
+offset_left = 57.0
+offset_top = 112.0
+offset_right = 143.0
+offset_bottom = 150.0
+theme_override_colors/font_color = Color(0.95, 0.96, 0.97, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 5
+theme_override_font_sizes/font_size = 30
+text = "000"
+horizontal_alignment = 1
+
+[node name="UnitLabel" type="Label" parent="HUD/Speedometer"]
+layout_mode = 0
+offset_left = 66.0
+offset_top = 148.0
+offset_right = 134.0
+offset_bottom = 172.0
+theme_override_colors/font_color = Color(0.8, 0.82, 0.84, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 14
+text = "km/h"
+horizontal_alignment = 1

@@ -1,0 +1,114 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://vehicle_demo/scripts/car_native.gd" id="1_car"]
+[ext_resource type="PackedScene" path="res://vehicle_demo/assets/Vehicle.glb" id="2_model"]
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_chassis"]
+friction = 0.78
+bounce = 0.055
+
+[sub_resource type="BoxShape3D" id="BoxShape_chassis"]
+size = Vector3(1.82, 0.95, 3.55)
+
+[node name="Car" type="RigidBody3D"]
+physics_material_override = SubResource("PhysicsMaterial_chassis")
+mass = 1650.0
+continuous_cd = true
+contact_monitor = true
+max_contacts_reported = 8
+can_sleep = false
+linear_damp = 0.035
+angular_damp = 0.08
+center_of_mass_mode = 1
+center_of_mass = Vector3(0, -0.22, -0.04)
+script = ExtResource("1_car")
+
+[node name="ChassisCollision" type="CollisionShape3D" parent="."]
+position = Vector3(0, 0.34, -0.02)
+shape = SubResource("BoxShape_chassis")
+
+[node name="VehicleVisual" type="Node3D" parent="."]
+position = Vector3(0, 0.575865385, 0)
+rotation = Vector3(0, -1.570796327, 0)
+scale = Vector3(4.5, 4.5, 4.5)
+
+[node name="Model" parent="VehicleVisual" instance=ExtResource("2_model")]
+
+[node name="RuntimeBody" type="Node3D" parent="VehicleVisual"]
+
+[node name="DriverDoorHinge" type="Node3D" parent="VehicleVisual"]
+position = Vector3(0.193269231, 0.024807692, -0.175769231)
+
+[node name="DriverDoorVisual" type="MeshInstance3D" parent="VehicleVisual/DriverDoorHinge"]
+position = Vector3(-0.013269231, 0, 0)
+
+[node name="FrontLeft" type="Node3D" parent="."]
+position = Vector3(0.8438, 0.05, 1.4279)
+
+[node name="Ray" type="RayCast3D" parent="FrontLeft"]
+target_position = Vector3(0, -0.906, 0)
+collision_mask = 1
+exclude_parent = true
+enabled = true
+
+[node name="Steer" type="Node3D" parent="FrontLeft"]
+position = Vector3(0, -0.30, 0)
+
+[node name="Spin" type="Node3D" parent="FrontLeft/Steer"]
+
+[node name="Visual" type="MeshInstance3D" parent="FrontLeft/Steer/Spin"]
+rotation = Vector3(0, -1.570796327, 0)
+scale = Vector3(4.5, 4.5, 4.5)
+
+[node name="FrontRight" type="Node3D" parent="."]
+position = Vector3(-0.8438, 0.05, 1.4279)
+
+[node name="Ray" type="RayCast3D" parent="FrontRight"]
+target_position = Vector3(0, -0.906, 0)
+collision_mask = 1
+exclude_parent = true
+enabled = true
+
+[node name="Steer" type="Node3D" parent="FrontRight"]
+position = Vector3(0, -0.30, 0)
+
+[node name="Spin" type="Node3D" parent="FrontRight/Steer"]
+
+[node name="Visual" type="MeshInstance3D" parent="FrontRight/Steer/Spin"]
+rotation = Vector3(0, -1.570796327, 0)
+scale = Vector3(4.5, 4.5, 4.5)
+
+[node name="RearLeft" type="Node3D" parent="."]
+position = Vector3(0.8438, 0.05, -1.2981)
+
+[node name="Ray" type="RayCast3D" parent="RearLeft"]
+target_position = Vector3(0, -0.906, 0)
+collision_mask = 1
+exclude_parent = true
+enabled = true
+
+[node name="Steer" type="Node3D" parent="RearLeft"]
+position = Vector3(0, -0.30, 0)
+
+[node name="Spin" type="Node3D" parent="RearLeft/Steer"]
+
+[node name="Visual" type="MeshInstance3D" parent="RearLeft/Steer/Spin"]
+rotation = Vector3(0, -1.570796327, 0)
+scale = Vector3(4.5, 4.5, 4.5)
+
+[node name="RearRight" type="Node3D" parent="."]
+position = Vector3(-0.8438, 0.05, -1.2981)
+
+[node name="Ray" type="RayCast3D" parent="RearRight"]
+target_position = Vector3(0, -0.906, 0)
+collision_mask = 1
+exclude_parent = true
+enabled = true
+
+[node name="Steer" type="Node3D" parent="RearRight"]
+position = Vector3(0, -0.30, 0)
+
+[node name="Spin" type="Node3D" parent="RearRight/Steer"]
+
+[node name="Visual" type="MeshInstance3D" parent="RearRight/Steer/Spin"]
+rotation = Vector3(0, -1.570796327, 0)
+scale = Vector3(4.5, 4.5, 4.5)

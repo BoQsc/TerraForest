@@ -2,6 +2,18 @@
 
 ## Current delivery priority
 
+The user's own vehicle project is imported under `vehicle_demo`, with their
+explicit 0BSD declaration recorded in PROVENANCE.md. NativeDrivingPolicy ports
+its steering and longitudinal control rather than substituting the earlier
+simple controller. 3,600 original-script comparisons at 60/120 Hz pass with
+maximum errors below 1e-6 radians and 1e-5 m/s. A short automated 1920x1080
+Forward+ drive at the original 120 Hz physics travelled 14.7 m and reached
+49 km/h with four loaded wheels. Both native binaries built; evidence is in
+`evidence/vehicle_adoption/`. Launch Vehicle Demo.cmd imports and launches the
+isolated comparison scene. Suspension, impacts, damage and accessory runtime
+remain scripted; native migration, world collision streaming, vehicle storage,
+fleet activation and multiplayer integration remain required work.
+
 Native entity ticks now iterate only a preallocated dense list of nonzero-velocity
 entities instead of scanning the entire live population twice. Spawn, velocity
 changes, despawn and restore maintain membership; spatial queries and snapshots
