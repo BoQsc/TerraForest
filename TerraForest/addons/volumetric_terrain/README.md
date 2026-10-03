@@ -34,7 +34,11 @@ Material weights use `UV2.y = integer_lod_step + asphalt_weight * 0.25`;
 the integer step is constant within each mesh. This retains the existing mesh
 packet layout and gives old cached meshes zero asphalt weight. Older binaries
 can read density saves but do not render the new asphalt material correctly.
-Road editor tools and network construction are not yet provided.
+The demo provides a road panel while a terrain tool is equipped and the mouse
+is released (Esc). Aim, release the mouse, mark each endpoint, then build.
+Width/depth and endpoint selection live in `road_palette.gd`; density processing
+stays native. Selection is temporary, while accepted roads save with terrain.
+Route preview, hill cutting, terrain undo and network construction are pending.
 
 Signals:
 

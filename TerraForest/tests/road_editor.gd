@@ -1,0 +1,50 @@
+# SPDX-License-Identifier: 0BSD
+extends SceneTree
+var failures:=0
+func check(ok: bool,label: String) -> void:
+	print(("PASS " if ok else "FAIL ")+label)
+	if not ok: failures+=1
+func _initialize() -> void: call_deferred("run")
+func run() -> void:
+	Engine.max_fps=60
+	var game=load("res://demo/world.tscn").instantiate();game.temporary_world=true
+	game.terrain.backend.world_generator=2;game.terrain.backend.world_seed=1703
+	root.add_child(game)
+	var deadline:=Time.get_ticks_msec()+30000
+	while game.loading_active and Time.get_ticks_msec()<deadline: await process_frame
+	check(not game.loading_active,"world starts with road editor")
+	if not game.loading_active:
+		game.set_physics_process(false);game._clear_motion();game.app_focused=true
+		var panel=game.road_palette
+		var camera_transform: Transform3D=game.camera.global_transform
+		game.camera.global_position=game.player.global_position+Vector3(0,10,0)
+		game.camera.look_at(game.player.global_position,Vector3.FORWARD)
+		panel.action_requested.emit("start")
+		check(panel.has_start,"mark button acquires terrain through actual physics ray")
+		panel.mark(false,panel.start+Vector3(10,0,0))
+		panel.action_requested.emit("build")
+		check(panel.status.text.begins_with("Move clear"),"road overlapping player is rejected")
+		game.camera.global_transform=camera_transform
+		panel.mark(true,Vector3(400,180,400));panel.mark(false,Vector3(432,184,400))
+		check(panel.validation_error().is_empty(),"graded selection accepted")
+		panel.finish.y=200
+		check(not panel.validation_error().is_empty(),"excessive grade explained before submission")
+		panel.finish.y=184
+		game.player_hud.set_open(true);panel.action_requested.emit("clear")
+		check(panel.has_start,"inventory blocks road editor actions")
+		game.player_hud.set_open(false);game.app_focused=true
+		panel.action_requested.emit("build")
+		check(panel.status.text.begins_with("Road submitted"),"road panel routes construction to terrain worker")
+		deadline=Time.get_ticks_msec()+10000
+		while game.terrain.pending_edit and Time.get_ticks_msec()<deadline: await process_frame
+		check(not game.terrain.pending_edit and game.terrain.latest_error.is_empty(),"editor road completes without worker error")
+		Input.mouse_mode=Input.MOUSE_MODE_VISIBLE
+		for frame in 3: await process_frame
+		check(panel.panel.visible and panel.panel.get_global_rect().end.y<900,"road panel visible and fits above toolbelt at 1080p")
+		if DisplayServer.get_name()!="headless":
+			await RenderingServer.frame_post_draw
+			var screenshot:=root.get_texture().get_image()
+			game.terrain.shutdown()
+			screenshot.save_png("res://reports/road_editor.png")
+	game.terrain.shutdown();game.queue_free();await process_frame
+	quit(1 if failures else 0)

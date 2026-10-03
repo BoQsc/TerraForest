@@ -18,6 +18,7 @@ var player_hud=preload("res://addons/player_runtime/player_hud.gd").new()
 var model_tool = preload("res://addons/structures/model_tool.gd").new()
 var structure_mode := false
 var construction_palette=preload("res://addons/structures/construction_palette.gd").new()
+var road_palette=preload("res://addons/volumetric_terrain/road_palette.gd").new()
 var structure_shape := 1
 var structure_material := 0
 var structure_rotation := 0
@@ -97,6 +98,8 @@ func _ready() -> void:
 	player_hud.temporary_world=temporary_world
 	add_child(player_hud)
 	add_child(construction_palette)
+	add_child(road_palette)
+	road_palette.action_requested.connect(_road_action)
 	construction_palette.configure(structure_prefabs)
 	construction_palette.selection_requested.connect(_construction_selection)
 	construction_palette.capture_requested.connect(_capture_construction)
@@ -592,6 +595,27 @@ func _place_material_supply(item: int) -> void:
 		return
 	_show_lake_notice("%s supply placed · %s" % [pickups.ITEMS[item],"temporary world" if temporary_world else "F5 saves world"])
 
+func _road_action(action: String) -> void:
+	if loading_active or shutdown_requested or benchmark_enabled or not app_focused or not terrain.world_ready or player_hud.inventory_open or structure_mode or model_tool.active: return
+	if action=="clear": road_palette.clear();return
+	if action in ["start","finish"]:
+		var origin:=camera.global_position
+		var query:=PhysicsRayQueryParameters3D.create(origin,origin-camera.global_basis.z*48,1,[player.get_rid()])
+		var hit:=get_world_3d().direct_space_state.intersect_ray(query)
+		if hit.is_empty(): road_palette.status.text="Aim at nearby loaded terrain.";return
+		road_palette.mark(action=="start",terrain.to_local(hit.position)+Vector3(0,0.25,0))
+		return
+	if action!="build": return
+	var error: String=road_palette.validation_error()
+	if not error.is_empty(): road_palette.status.text=error;return
+	var a: Vector3=road_palette.start;var b: Vector3=road_palette.finish
+	var lo:=a.min(b)-Vector3(road_palette.width.value,road_palette.depth.value,road_palette.width.value)
+	var hi:=a.max(b)+Vector3(road_palette.width.value,0,road_palette.width.value)
+	var protection:=AABB(terrain.to_local(player.global_position)-Vector3(0.4,0,0.4),Vector3(0.8,1.8,0.8))
+	if AABB(lo,hi-lo).grow(0.5).intersects(protection): road_palette.status.text="Move clear of the road before building.";return
+	var accepted: bool=terrain.construct_road_bed(a,b,road_palette.width.value,road_palette.depth.value)
+	road_palette.status.text=("Road submitted · %s. Terrain roads have no block undo." % ["temporary world" if temporary_world else "F5 saves world"]) if accepted else "Road not accepted; wait for terrain work to finish."
+
 func _block_player_clear(target: Vector3i) -> bool:
 	return not _brush_overlaps_player(Vector3(target)+Vector3.ONE*0.5,0.87)
 
@@ -622,6 +646,7 @@ func _edit_structure(remove: bool) -> void:
 func _process(delta: float) -> void:
 	var frame_begin:=Time.get_ticks_usec()
 	super._process(delta)
+	road_palette.panel.visible=not structure_mode and not model_tool.active and not loading_active and not shutdown_requested and not player_hud.inventory_open and Input.mouse_mode==Input.MOUSE_MODE_VISIBLE
 	water_camera.update()
 	pickups.update_view(delta,player.global_position,not loading_active and not shutdown_requested)
 	terrain._record_stage("controller process",(Time.get_ticks_usec()-frame_begin)/1000.0)
