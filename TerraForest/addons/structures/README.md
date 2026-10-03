@@ -339,3 +339,20 @@ and choose **Create street frontage from selected prefab**. Set buildings per
 side, even street width and gap, then create and save. The result enters the
 personal prefab library and is selected for ordinary preview/placement. This
 authors the building layout only; prepare suitable terrain and roads separately.
+
+## Foundation sampling
+
+NativeBlockPrefab.foundation_samples(origin, quarter_turns, max_base_y) returns
+world-space column-centre probes 0.25 m below each selected lowest cell. The
+lowest cell per X/Z column is cached during successful asset configuration;
+queries traverse the footprint, not every building floor. max_base_y is an
+explicit local-space foundation band ceiling, preventing roof eaves and
+balconies from being treated as ground-bearing columns. Use 0 for normalized
+frontages; stepped foundations require an authored band that includes their
+base heights. Rotation matches integer block placement. Invalid rotation or
+out-of-range origin/band returns an empty array. Empty is not proof of support.
+
+These are screening probes, not structural analysis or full contact coverage.
+The world editor does not yet reject unsupported prefabs automatically. Terrain
+queries must use a consistent revision and placement must revalidate before
+commit; a result from older terrain cannot authorize a later placement.

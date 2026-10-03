@@ -3,6 +3,7 @@
 #include <godot_cpp/variant/packed_int32_array.hpp>
 #include <godot_cpp/variant/aabb.hpp>
 #include <godot_cpp/variant/array.hpp>
+#include <godot_cpp/variant/packed_vector3_array.hpp>
 #include <vector>
 
 namespace terraforest {
@@ -13,6 +14,7 @@ class NativeBlockPrefab : public Resource {
     GDCLASS(NativeBlockPrefab,Resource)
     friend class NativeBlockWorld;
     std::vector<PrefabCell> cells;
+    std::vector<PrefabCell> foundation_columns;
     AABB bounds;
 protected:
     static void _bind_methods();
@@ -25,5 +27,6 @@ public:
     int get_cell_count() const { return int(cells.size()); }
     AABB get_bounds() const { return bounds; }
     AABB placement_bounds(Vector3i origin,int quarter_turns) const;
+    PackedVector3Array foundation_samples(Vector3i origin,int quarter_turns,int max_base_y) const;
 };
 }

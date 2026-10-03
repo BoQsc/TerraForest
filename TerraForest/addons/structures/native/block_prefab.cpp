@@ -3,6 +3,7 @@
 #include <godot_cpp/classes/ref.hpp>
 #include <algorithm>
 #include <tuple>
+#include <map>
 
 namespace terraforest {
 void NativeBlockPrefab::_bind_methods() {
@@ -14,6 +15,7 @@ void NativeBlockPrefab::_bind_methods() {
     ClassDB::bind_method(D_METHOD("get_cell_count"),&NativeBlockPrefab::get_cell_count);
     ClassDB::bind_method(D_METHOD("get_bounds"),&NativeBlockPrefab::get_bounds);
     ClassDB::bind_method(D_METHOD("placement_bounds","origin","quarter_turns"),&NativeBlockPrefab::placement_bounds);
+    ClassDB::bind_method(D_METHOD("foundation_samples","origin","quarter_turns","max_base_y"),&NativeBlockPrefab::foundation_samples);
     ADD_PROPERTY(PropertyInfo(Variant::PACKED_INT32_ARRAY,"records"),"set_records","get_records");
 }
 bool NativeBlockPrefab::configure(const PackedInt32Array &records) {
@@ -30,7 +32,37 @@ bool NativeBlockPrefab::configure(const PackedInt32Array &records) {
     auto less=[](const PrefabCell &a,const PrefabCell &b){return std::tie(a.x,a.y,a.z)<std::tie(b.x,b.y,b.z);};
     std::sort(staged.begin(),staged.end(),less);
     for(size_t i=1;i<staged.size();i++)if(!less(staged[i-1],staged[i]))return false;
+    // Compute once on authoring changes, not by scanning every floor per preview.
+    // Each occupied X/Z column contributes its lowest cell, including stepped bases.
+    std::map<std::pair<int,int>,PrefabCell> columns;
+    for(const auto &c:staged) {
+        auto key=std::make_pair(c.x,c.z);
+        auto found=columns.find(key);
+        if(found==columns.end()||c.y<found->second.y)columns[key]=c;
+    }
+    std::vector<PrefabCell> footprint;footprint.reserve(columns.size());
+    for(const auto &entry:columns)footprint.push_back(entry.second);
+    foundation_columns=std::move(footprint);
     cells=std::move(staged);bounds=cells.empty()?AABB():AABB(lo,hi-lo);emit_changed();return true;
+}
+PackedVector3Array NativeBlockPrefab::foundation_samples(Vector3i origin,int turns,int max_base_y) const {
+    PackedVector3Array out;
+    if(turns<0||turns>3||max_base_y<-4095||max_base_y>4095)return out;
+    for(int a=0;a<3;++a)if(origin[a]<-1044480||origin[a]>1044480)return out;
+    int count=0;
+    for(const auto &c:foundation_columns)if(c.y<=max_base_y)++count;
+    out.resize(count);int i=0;
+    for(const auto &c:foundation_columns) {
+        // The author/planner explicitly selects the foundation band; roof eaves
+        // and balconies must not become artificial ground-support requirements.
+        if(c.y>max_base_y)continue;
+        int x=c.x,z=c.z;
+        for(int r=0;r<turns;++r){int old=x;x=-z;z=old;}
+        // Cell-centred probe 0.25 m below the base. Sampling is a site-screening
+        // input, not a proof that arbitrary slopes/overhangs are structurally safe.
+        out.set(i++,Vector3(origin.x+x+0.5f,origin.y+c.y-0.25f,origin.z+z+0.5f));
+    }
+    return out;
 }
 void NativeBlockPrefab::set_records(const PackedInt32Array &records) {
     ERR_FAIL_COND_MSG(!configure(records),"Invalid block prefab records; previous asset preserved");
