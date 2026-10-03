@@ -1,3 +1,11 @@
+## Integrated frontage street paving - 2026-10-03
+
+The editor preparation plan now appends asphalt street segments after stone grading for version-1 frontages with valid street-width metadata. It uses the native prefab rotation convention (about the cell centre), validates the corridor against actual foundation columns, divides wide streets into native-width strips and respects the combined 256-section limit. The entire grading/paving envelope participates in existing protection checks and the same sequential stop/resume controller. Ordinary prefabs gain no invented street. Missing/inconsistent metadata rejects with a regenerate-layout message. The built-in four-cottage frontage now carries its actual 8 m street width and 3 m setback metadata.
+
+Sixteen native-backed checks passed, including solid asphalt material samples in all four rotations, stone-before-asphalt ordering, a 64 m street split, and invalid/colliding metadata rejection. Twenty-two full editor checks passed at 1920x1080 using the built-in frontage: survey, grade, pave, cancel/retry validation and exact placement, with player/structure/vehicle guards and a focused 60 FPS cap. The result screenshot is retained; its modal obscures much of the street, so material verification relies on native samples rather than that image. No sustained frame-time/thermal qualification follows.
+
+Road intersections and connections between sites, spatial grading preview, terrain undo and recovery across reload remain incomplete. The preparation coordinator still expects an edit revision increment per accepted section; explicit no-op completion handling needs verification before treating repeated preparation as idempotent. Evidence: evidence/site_paving/.
+
 ## Exact placement after editor site preparation - 2026-10-03
 
 Completed preparation now exposes Place prefab on prepared site and the panel can reopen its retained site dialog. Placement uses the captured origin/height/rotation, not the current camera aim. The existing complete foundation, deep support, clearance and final player/vehicle/block checks run before insertion. A changed terrain revision triggers fresh validation; a changed world, layout or survey cannot reuse an old prepared target. Closing the dialog cancels pending validation; reopening allows retry. Results are reported in the dialog and duplicate placement is rejected.

@@ -219,6 +219,7 @@ func _setup_prefabs() -> void:
 	if frontage.compose_frontage([cottage],2,8,3,1703):
 		frontage.resource_name="Street frontage · 4 cottages (ungraded)"
 		frontage.set_meta("frontage_version",1)
+		frontage.set_meta("street_width",8);frontage.set_meta("frontage_gap",3)
 		structure_prefabs.append(frontage)
 		frontage.changed.connect(_invalidate_prefab_preview)
 	structures.blocks.changed.connect(_invalidate_prefab_preview)
@@ -759,13 +760,14 @@ func _survey_construction() -> void:
 		construction_palette.show_survey("Selection changed during survey. Survey the new placement again.");return
 	if not result.ok:
 		construction_palette.show_survey(result.reason);return
-	var plan: Dictionary=preload("res://addons/structures/site_plan.gd").foundation(asset,target,rotation,result.grade)
+	var plan: Dictionary=preload("res://addons/structures/site_plan.gd").prepare(asset,target,rotation,result.grade)
 	if not plan.ok: construction_palette.show_survey(plan.reason);return
 	plan["epoch"]=terrain.epoch;plan["revision"]=terrain.density_revision;plan["generation"]=generation;plan["asset"]=asset
 	_survey_plan=plan
 	construction_palette.preparation_status_button.show()
-	construction_palette.prepare_button.text="Prepare stone foundation"
+	construction_palette.prepare_button.text="Prepare foundation and street" if plan.paving_segments>0 else "Prepare stone foundation"
 	construction_palette.show_survey("Origin X/Z: %d / %d · Rotation: %d°\nSuggested base Y: %d m (allowed %d–%d m)\nGround elevation: %.1f–%.1f m · %d foundation columns\n\nPrepare grades the whole rectangular site, including gaps,\nwith up to 8 m fill, 12 m cut and 8 m sloped fill shoulders.\nTerrain grading has no block undo. Buildings are not placed." % [target.x,target.z,rotation*90,result.grade,result.minimum_grade,result.maximum_grade,result.min_height,result.max_height,result.samples],true)
+	if plan.paving_segments>0: construction_palette.survey_dialog.dialog_text+="\nThen paves the %d m street with asphalt before placement." % plan.street_width
 
 func _site_protection_error(bounds: AABB) -> String:
 	var protection:=AABB(terrain.to_local(player.global_position)-Vector3(0.4,0,0.4),Vector3(0.8,1.8,0.8))

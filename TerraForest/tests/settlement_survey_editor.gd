@@ -14,9 +14,11 @@ func run() -> void:
 	check(not game.loading_active,"world starts")
 	if game.loading_active: game.terrain.shutdown();game.free();quit(1);return
 	game.set_physics_process(false);game._clear_motion();game.app_focused=true;game.structure_mode=true
-	var asset=ClassDB.instantiate("NativeBlockPrefab")
-	asset.compose_frontage([load("res://addons/structures/prefabs/brick_cottage.tres")],2,8,3,1703)
-	asset.set_meta("frontage_version",1);asset.resource_name="Survey fixture"
+	var asset: Resource
+	for candidate: Resource in game.structure_prefabs:
+		if candidate.resource_name.begins_with("Street frontage") and candidate.has_meta("frontage_version"): asset=candidate;break
+	check(asset!=null and asset.get_meta("street_width",0)==8,"built-in frontage supplies its real street metadata")
+	if asset==null: game.terrain.shutdown();game.free();quit(1);return
 	game.structure_prefabs.append(asset);game.structure_prefab_index=game.structure_prefabs.size()-1
 	game.construction_palette.configure(game.structure_prefabs)
 	game._sync_construction_palette()
@@ -50,6 +52,7 @@ func run() -> void:
 	deadline=Time.get_ticks_msec()+30000
 	while game.site_preparation.status=="running" and Time.get_ticks_msec()<deadline: await process_frame
 	check(game.site_preparation.status=="complete" and game.site_preparation.completed==game.site_preparation.plan.segments.size(),"all real terrain grading sections publish")
+	check(game.site_preparation.plan.paving_segments>0 and game.site_preparation.plan.segments[-1].material==4,"editor preparation includes asphalt after the stone foundation")
 	check(game.terrain.density_revision==revision+game.site_preparation.completed and game.structures.blocks.stats().cells==0,"preparation changes terrain only by its accepted edit count")
 	var prepared_target: Vector3i=game.site_preparation.plan.target
 	game.construction_palette.survey_dialog.hide()

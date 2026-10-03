@@ -422,4 +422,10 @@ at the captured coordinates. Reopen site preparation returns to the retained
 plan without surveying edited terrain again. Closing the dialog cancels pending
 placement validation; completed terrain edits remain. Placement always rechecks
 support, underground continuity, room clearance and current obstructions.
-Camera aim changes do not move the captured site. Street paving is still separate.
+Camera aim changes do not move the captured site. Frontage preparation also paves its declared street before placement.
+
+Version-1 frontages require valid street_width metadata for automatic paving.
+The plan grades first, then applies bounded asphalt strips using the captured
+rotation. Its corridor must not overlap foundation columns. Missing metadata
+requires regenerating the frontage; ordinary prefabs receive only a foundation.
+Road intersections and links between separate sites are not generated.
