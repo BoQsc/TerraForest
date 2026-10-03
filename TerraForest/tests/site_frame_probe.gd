@@ -21,6 +21,7 @@ func _frame() -> void:
 		rows.append({"phase":phase,"frame_ms":(now-previous)/1000.0,"cap":Engine.max_fps,"dialog_focus":host.construction_palette.survey_dialog.has_focus(),"stages":stages.duplicate(),"render_cpu_ms":RenderingServer.viewport_get_measured_render_time_cpu(viewport),"render_gpu_ms":RenderingServer.viewport_get_measured_render_time_gpu(viewport),"vegetation_update_us":host.vegetation.renderer.stats.get("update_us",0),"ecosystem_us":host.ecosystem.last_process_us,"queued":host.terrain.backend.queued(),"pending_edit":host.terrain.pending_edit,"draw_calls":Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME)})
 		rows[-1]["vegetation_phases_us"]=Array(host.vegetation.renderer.phase_us)
 		rows[-1]["vegetation_stats"]=host.vegetation.renderer.stats.duplicate()
+		rows[-1]["native_selection"]=host.vegetation.renderer.native_selection!=null
 	previous=now;stages.clear()
 func finish(path: String) -> Dictionary:
 	RenderingServer.frame_post_draw.disconnect(_frame);host.terrain.stage_measured.disconnect(_stage)

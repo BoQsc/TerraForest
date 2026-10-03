@@ -12,6 +12,7 @@ func run() -> void:
 	var deadline:=Time.get_ticks_msec()+30000
 	while game.loading_active and Time.get_ticks_msec()<deadline: await process_frame
 	check(not game.loading_active,"world starts")
+	if game.loading_active: print("STARTUP_STATE ",game.terrain.loading_state(game.player.position,game.fly)," error=",game.terrain.latest_error)
 	if game.loading_active: game.terrain.shutdown();game.free();quit(1);return
 	game.set_physics_process(false);game._clear_motion();game.app_focused=true;game.structure_mode=true
 	var asset: Resource

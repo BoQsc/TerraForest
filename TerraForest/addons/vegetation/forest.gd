@@ -9,6 +9,12 @@ var meshes: Array[ArrayMesh]=[]
 # Profiling is disabled in RUN. Native setter duration is a subset of flush time,
 # not a GPU driver transfer measurement and never added to it again.
 var profiling_enabled: bool=false
+var native_selection: RefCounted
+func _init() -> void:
+	if "--scripted-vegetation-selection" in OS.get_cmdline_user_args(): return
+	if not ClassDB.class_exists("NativeVegetationSelection") and FileAccess.file_exists("res://addons/vegetation_runtime/vegetation_runtime.gdextension"):
+		GDExtensionManager.load_extension("res://addons/vegetation_runtime/vegetation_runtime.gdextension")
+	if ClassDB.class_exists("NativeVegetationSelection"): native_selection=ClassDB.instantiate("NativeVegetationSelection")
 var phase_us: PackedInt64Array=PackedInt64Array([0,0,0,0,0,0])
 var api_us_this_tick: int=0
 var rows_this_tick: int=0
@@ -84,6 +90,7 @@ func upsert_chunk(chunk: String,ids: PackedInt64Array,transforms: Array[Transfor
 	return true
 
 func remove_root(id: int)->void:
+	if native_selection!=null: native_selection.erase(id)
 	if audit_enabled:_audit_pending[id]=true
 	if not roots.has(id):return
 	var row: Dictionary=roots[id];var key: Vector2i=row["key"]
@@ -224,6 +231,7 @@ func _heap_pop()->int:
 	return id
 
 func _clear_events()->void:
+	if native_selection!=null: native_selection.clear()
 	_heap_distance.clear();_heap_id.clear();_heap_token.clear()
 	_due_tokens.clear();_due_distances.clear();_invalid_decisions.clear();_travel=0.0
 
@@ -271,6 +279,9 @@ func _evaluate_decision(row: Dictionary,eye: Vector3,projection: float,t: float,
 	_schedule(id,slack)
 
 func _choose(eye: Vector3,projection: float,t: float,instant: bool)->void:
+	if native_selection!=null:
+		native_selection.select(self,eye,projection,t,instant)
+		return
 	var started: int=Time.get_ticks_usec()
 	var reset_events: bool=changed or instant or projection!=last_projection
 	if reset_events:_clear_events()

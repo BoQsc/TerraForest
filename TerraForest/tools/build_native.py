@@ -79,7 +79,7 @@ def build(target, addon_name='world_runtime'):
 if __name__=='__main__':
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--target',choices=['template_debug','template_release','all'],default='template_debug')
-    parser.add_argument('--addon',choices=['world_runtime','volumetric_water','volumetric_terrain','structures','player_runtime','vehicle_runtime','all'],default='all')
+    parser.add_argument('--addon',choices=['world_runtime','volumetric_water','volumetric_terrain','structures','player_runtime','vehicle_runtime','vegetation_runtime','all'],default='all')
     args=parser.parse_args()
-    for addon in (['world_runtime','volumetric_water','volumetric_terrain','structures','player_runtime','vehicle_runtime'] if args.addon=='all' else [args.addon]):
+    for addon in (['world_runtime','volumetric_water','volumetric_terrain','structures','player_runtime','vehicle_runtime','vegetation_runtime'] if args.addon=='all' else [args.addon]):
         for target in (['template_debug','template_release'] if args.target=='all' else [args.target]):build(target,addon)

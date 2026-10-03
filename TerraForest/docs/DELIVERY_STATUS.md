@@ -1,3 +1,13 @@
+## Native vegetation selection - 2026-10-03
+
+The optional vegetation_runtime extension now performs neighborhood selection, visual/shadow decisions and camera-travel event scheduling in C++. The original scripted selector remains available with --scripted-vegetation-selection. The implementation uses existing scene-thread dictionaries; transition completion and instance flush remain scripted. Build-all and addon packaging include the new extension.
+
+The 2000-root, 180-frame adversarial comparison passed audit and final state parity, queue bounds, deletion/reuse, teleports and projection/profile changes. Additional exact LOD boundary sweeps with an extreme negative signed ID passed. Summed selection time was 1628928 us scripted versus 572658 us native (2.84x reduction) in this CPU fixture.
+
+The first graphical attempt failed the 30-second startup deadline before capture; no cause was established. The unchanged-deadline retry passed all 27 editor checks at 1920x1080 fullscreen Forward+ with a 60 FPS cap, and every captured frame reported native selection active. Its largest selection phase was 8.176 ms for 1887 rows, compared with the earlier scripted capture of 32.144 ms for 1892 rows. These are comparable workflow observations, not identical workload timing guarantees. Overall capture: 178 frames, p95 18.983 ms, maximum 101.741 ms. The worst wall interval contained only 4.353 ms vegetation work, so the remaining frame spike is not resolved or fully attributed. Sustained 60 FPS and laptop thermal headroom remain unproven.
+
+Evidence: docs/evidence/vegetation_native_selection.
+
 ## Short site-workflow frame attribution capture - 2026-10-03
 
 The graphical editor test now includes a bounded post-draw frame probe spanning preparation, validation and 60 post-placement frames. It records wall intervals, cap/focus state, terrain stage timings, renderer CPU/GPU timers, vegetation phase timings and counters, ecosystem time and draw calls. At most 1200 frames are retained. Vegetation profiling is restored and viewport timing disabled when the probe finishes. Nested stage labels must not be added together; GPU timers may lag and zero denotes unavailable measurement.

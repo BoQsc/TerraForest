@@ -1,0 +1,4 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+NATIVE_SELECTION_BOUNDARIES true
+NATIVE_SELECTION_PARITY { "passed": true, "bounded": true, "roots": 2000, "frames": 180, "script_selection_us": 1628928, "native_selection_us": 572658, "scope": "Same renderer and meshes; native selection versus scripted selection, no GPU performance claim." }
