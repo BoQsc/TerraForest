@@ -2,6 +2,15 @@
 
 ## Current delivery priority
 
+Fixed a rendering regression introduced by asphalt commit `43cf536`: extracting
+weight with `fract(UV2.y)` wrapped interpolated LOD integers slightly below their
+exact value to nearly full asphalt. Untouched terrain acquired noisy dark pixels
+and bands. Decode now subtracts the nearest integer before clamping. The same
+1920x1080 Forward+ fixture visibly loses the speckling with only this shader
+change; before/after captures are in `evidence/asphalt_weight_fix/`. The earlier
+shader-error-free render was insufficient validation and its visible noise was
+missed. World data and native binaries are unchanged by this fix.
+
 Native graded road-bed construction is available through
 `TerrainWorld.construct_road_bed(a, b, half_width, depth)`. It unions a rounded
 road footprint with a graded top into existing terrain density, using asphalt

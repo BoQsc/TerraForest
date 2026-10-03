@@ -44,7 +44,9 @@ void fragment(){
  else if(exact_material>4.5){color=triplanar(gravel,p,w,dx,dy);}
  else {
   vec3 blend=clamp(material_weights.rgb,vec3(0.0),vec3(1.0));
-  float asphalt=clamp(fract(UV2.y)*4.0,0.0,1.0);
+  // Interpolated integer steps can round slightly below the integer. fract()
+  // would wrap that error to nearly one and paint untouched terrain asphalt.
+  float asphalt=clamp((UV2.y-floor(UV2.y+0.5))*4.0,0.0,1.0);
   float total=clamp(dot(blend,vec3(1.0))+asphalt,0.0,1.0);
   float exposed=max(material_weights.a,1.0-smoothstep(0.52,0.76,n.y));
   // Never interpolate a categorical material ID and threshold it. That was
