@@ -7,6 +7,7 @@ const Structures = preload("res://addons/structures/structures_world.gd")
 var persistence = Persistence.new()
 var pickups = preload("res://addons/world_runtime/material_pickups.gd").new()
 var player_pose: RefCounted
+var world_vehicle=preload("res://addons/vehicle_runtime/world_vehicle.gd").new()
 var _saved_pose:=PackedByteArray()
 var _restored_pose: Dictionary={}
 var vegetation = Vegetation.new()
@@ -53,6 +54,7 @@ func _player_water_depth() -> float:
 	return lakes.depth_at(player.global_position+Vector3(0,1.1,0))
 
 func _ready() -> void:
+	add_child(world_vehicle)
 	add_child(pickups)
 	if not pickups.prepare(persistence):
 		push_error("Material pickup initialization failed")
@@ -141,7 +143,7 @@ func _show_lake_notice(text: String) -> void:
 	_message(text)
 
 func _capture_player_pose() -> PackedByteArray:
-	if not loading_active and not waiting_spawn:
+	if not loading_active and not waiting_spawn and not world_vehicle.driving:
 		var captured: PackedByteArray=player_pose.encode(player.position,wrapf(yaw,-PI,PI),pitch,fly,player_hud.active_item)
 		if not captured.is_empty(): _saved_pose=captured
 	return _saved_pose
@@ -219,6 +221,8 @@ func _invalidate_prefab_preview() -> void:
 	_prefab_preview_timer=0.0
 
 func _update_prefab_preview(delta: float) -> void:
+	if world_vehicle.driving:
+		prefab_preview.hide();shape_preview.hide();capture_selection.hide();return
 	capture_selection.visible=structure_mode and not model_tool.active and not loading_active and not player_hud.inventory_open
 	if not structure_mode or model_tool.active or loading_active or not app_focused or player_hud.inventory_open or Input.mouse_mode!=Input.MOUSE_MODE_CAPTURED:
 		prefab_preview.hide()
@@ -286,7 +290,7 @@ func create_lake(point: Vector3) -> int:
 
 func _setup_scene() -> void:
 	super._setup_scene()
-	player.collision_mask |= 2
+	player.collision_mask |= 6
 	player.position = Vector3(800, 100, 1310)
 	for child in get_children():
 		if child is WorldEnvironment:
@@ -314,7 +318,8 @@ func _setup_hud() -> void:
 	help.text = "WASD  Move    Shift  Sprint    Space  Jump    G  Fly    Mouse  Look    Esc  Release\nB  Terrain / Blocks    LMB  Remove    RMB  Place    1–6  Shapes    P  Prefabs    T  Material    R  Rotate    Ctrl+Z / Y  Undo / Redo\nTerrain: Wheel  Brush size    1–3  Tools    L  Lake    F5  Save world    F9  Reload    F3  Diagnostics"
 	help.add_theme_font_size_override("font_size", 15)
 	help.text=help.text.replace("B  Terrain / Blocks", "B  Terrain / Blocks    M  Objects    E  Collect")
-	help.offset_top = -88
+	help.text+="\nV  Place vehicle (session only)    E  Enter / exit stopped vehicle"
+	help.offset_top = -108
 	help.add_theme_color_override("font_color", Color("e6eee9"))
 	var panel := PanelContainer.new()
 	panel.position = Vector2(26, 24)
@@ -464,6 +469,18 @@ func _set_player_tool_mode(building: bool,objects: bool,terrain_tool: int) -> bo
 
 func _unhandled_input(event: InputEvent) -> void:
 	if player_hud.inventory_open: return
+	if world_vehicle.driving:
+		if event is InputEventKey and event.pressed and not event.echo:
+			if event.physical_keycode==KEY_E:
+				_show_lake_notice(world_vehicle.exit_vehicle(self));_clear_motion()
+			elif event.physical_keycode==KEY_ESCAPE:
+				Input.mouse_mode=Input.MOUSE_MODE_VISIBLE if Input.mouse_mode==Input.MOUSE_MODE_CAPTURED else Input.MOUSE_MODE_CAPTURED
+		return
+	if event is InputEventKey and event.pressed and not event.echo and not loading_active and not shutdown_requested and app_focused and not fly and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED:
+		if event.physical_keycode==KEY_V:
+			_show_lake_notice(world_vehicle.spawn(self));return
+		if event.physical_keycode==KEY_E and world_vehicle.enter(self):
+			_clear_motion();_show_lake_notice("Driving · E exit when stopped · Space brake");return
 	if event is InputEventKey and event.pressed and not event.echo and event.physical_keycode==KEY_E and not fly:
 		if not loading_active and not shutdown_requested and app_focused and terrain.world_ready and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED:
 			var collected: Dictionary=pickups.collect_near(player.global_position+Vector3(0,0.5,0),player_hud.inventory,_pickup_reachable)
@@ -532,6 +549,8 @@ func _unhandled_input(event: InputEvent) -> void:
 	super._unhandled_input(event)
 
 func _update_edit(delta: float) -> void:
+	if world_vehicle.driving:
+		pointer.hide();terrain.set_brush_active(false);return
 	if player_hud.inventory_open:
 		pointer.hide()
 		terrain.set_brush_active(false)
@@ -658,16 +677,22 @@ func _edit_structure(remove: bool) -> void:
 	if structures.blocks.set_cells(PackedInt32Array([target.x,target.y,target.z,word])):
 		_show_lake_notice("Block removed · F5 saves world" if remove else "Block placed · F5 saves world")
 
+func _physics_process(delta: float) -> void:
+	if world_vehicle.driving:
+		return # The bound vehicle owns terrain focus and physics while occupied.
+	super._physics_process(delta)
+
 func _process(delta: float) -> void:
 	var frame_begin:=Time.get_ticks_usec()
+	world_vehicle.update(self,delta)
 	super._process(delta)
-	road_palette.panel.visible=not structure_mode and not model_tool.active and not loading_active and not shutdown_requested and not player_hud.inventory_open and Input.mouse_mode==Input.MOUSE_MODE_VISIBLE
-	road_preview.visible=not structure_mode and not model_tool.active and not loading_active and not shutdown_requested and not player_hud.inventory_open
+	road_palette.panel.visible=not world_vehicle.driving and not structure_mode and not model_tool.active and not loading_active and not shutdown_requested and not player_hud.inventory_open and Input.mouse_mode==Input.MOUSE_MODE_VISIBLE
+	road_preview.visible=not world_vehicle.driving and not structure_mode and not model_tool.active and not loading_active and not shutdown_requested and not player_hud.inventory_open
 	water_camera.update()
 	pickups.update_view(delta,player.global_position,not loading_active and not shutdown_requested)
 	terrain._record_stage("controller process",(Time.get_ticks_usec()-frame_begin)/1000.0)
 	_update_prefab_preview(delta)
-	model_tool.update(delta,not loading_active and app_focused and terrain.world_ready)
+	model_tool.update(delta,not world_vehicle.driving and not loading_active and app_focused and terrain.world_ready)
 	if structures.blocks != null:
 		structures.blocks.set_focus(player.position)
 		if terrain.world_ready and (not temporary_world or terrain.backend.readonly_snapshot) and not shutdown_requested:

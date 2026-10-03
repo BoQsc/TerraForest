@@ -62,5 +62,14 @@ plus travel and acceleration allowance. It is not a generic arbitrary-vehicle
 bound, smooth braking system, or guarantee against unbounded external impulses.
 Reset discards held momentum. A bound terrain reload signal holds the vehicle
 in place and clears speed; it resumes at rest after publication. Reset input
-remains usable while held. World entry/exit and multi-vehicle focus management
-still need integration. The ordinary standalone demo remains unbound.
+remains usable while held. Multi-vehicle focus management still needs
+integration. The ordinary standalone demo remains unbound.
+
+Main world now uses world_vehicle.gd for one session-only vehicle: V places it
+on nearby clear loaded ground; E enters within 3.5 m or exits below 1.5 m/s
+when either side has clear loaded capsule space. Walking/editing are suspended
+while occupied; terrain focus belongs to the vehicle and existing building/
+vegetation focus follows its occupant. Parked simulation is disabled. Vehicle
+collision uses layer 4, terrain/buildings layers 1/2. Driving uses 120 Hz physics
+and restores the previous rate on exit. Persistence, camera obstacle avoidance,
+door animation and multiple vehicles are not integrated in this adapter.
