@@ -1,0 +1,29 @@
+{
+  "failures": 0,
+  "foundation_status": "supported",
+  "frame_max_ms": 51.8,
+  "frame_p95_ms": 16.702,
+  "origin": "(830, 52, 1310)",
+  "pending_vegetation_owners": 0,
+  "scope": "16 cottages on three live graded/paved terrain edits with live forest, followed by 180 graphical frames. No vehicle, populated-city or thermal guarantee.",
+  "structures": {
+    "bake_lattice_16_chunks": 4,
+    "bake_lattice_32_chunks": 12,
+    "bake_lattice_64_chunks": 12,
+    "cell_bytes": 229376,
+    "cells": 7488,
+    "chunks": 28,
+    "collision_chunks": 11,
+    "dirty_chunks": 0,
+    "max_chunks": 2048,
+    "mesh_chunks": 28,
+    "published_bakes": 28,
+    "stale_bakes_rejected": 0,
+    "triangles": 19008,
+    "worker_jobs": 0,
+    "worker_jobs_submitted": 28,
+    "worker_results_consumed": 28,
+    "worker_threads_started": 1
+  },
+  "vegetation_roots": 2144
+}
