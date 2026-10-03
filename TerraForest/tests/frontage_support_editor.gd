@@ -46,6 +46,12 @@ func run() -> void:
 		for z in [387,413]:
 			game.terrain.construct_graded_bed(Vector3(400,180,z),Vector3(433,180,z),8,8,12,1)
 			await wait_edit(game)
+		check(game.terrain.sculpt_sphere(Vector3(404,175,389),1,false,1),"hidden air pocket excavated between support depths")
+		await wait_edit(game)
+		game._begin_frontage_placement(asset,target);await wait_placement(game)
+		check(game.foundation_check.status.begins_with("Fill lacks support") and game.structures.blocks.can_place_prefab(asset,target,0),"intermediate void rejects placement even with solid upper and lower samples")
+		check(game.terrain.sculpt_sphere(Vector3(404,175,389),1.5,true,1),"support pocket repaired with solid margin at former cavity boundary")
+		await wait_edit(game)
 		check(game.terrain.sculpt_sphere(Vector3(404,183,389),1,true,1),"interior obstruction submitted above supported foundation")
 		await wait_edit(game)
 		game._begin_frontage_placement(asset,target);await wait_placement(game)

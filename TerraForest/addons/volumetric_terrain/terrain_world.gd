@@ -157,9 +157,9 @@ func request_lake_slice(builder: RefCounted, token: int) -> bool:
 		return false
 	return backend.submit({"kind": "lake_slice", "builder": builder, "token": token, "epoch": epoch, "revision": published_revision, "density_revision": density_revision})
 
-func request_density_batch(points: PackedVector3Array,token: int) -> bool:
+func request_density_batch(points: PackedVector3Array,token: int,support_depth: int=0) -> bool:
 	if not world_ready or pending_edit or foreground_brush or stopping or backend.queued()>8: return false
-	return backend.submit({"kind":"density_batch","points":points,"token":token,"epoch":epoch,"revision":density_revision})
+	return backend.submit({"kind":"density_batch","points":points,"token":token,"epoch":epoch,"revision":density_revision,"support_depth":support_depth})
 
 func sculpt_sphere(center: Vector3, radius: float, add: bool = false, material_id: int = 1) -> bool:
 	return edit(Codec.brush(center, center, radius, 0, add, material_id), center, center)

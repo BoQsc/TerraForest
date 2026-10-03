@@ -1,0 +1,34 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+[TerrainRewrite] New world
+[TerrainRewrite] New world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+PASS world starts
+PASS fixture requires multiple worker batches
+[TerrainRewrite] Checking foundation support…
+[TerrainRewrite] Unsupported foundation; grade terrain first
+PASS unsupported frontage rejected without placing cells
+PASS foundation grading submitted
+PASS foundation grading submitted
+[TerrainRewrite] Checking foundation support…
+[TerrainRewrite] Placement cancelled
+PASS rotation change cancels deferred placement
+[TerrainRewrite] Checking foundation support…
+[TerrainRewrite] Fill lacks support through grading depth; choose a lower site
+PASS floating graded slab rejected despite solid surface probes
+PASS controlled underlying hill added
+PASS hidden air pocket excavated between support depths
+[TerrainRewrite] Checking foundation support…
+[TerrainRewrite] Fill lacks support through grading depth; choose a lower site
+PASS intermediate void rejects placement even with solid upper and lower samples
+PASS support pocket repaired with solid margin at former cavity boundary
+PASS interior obstruction submitted above supported foundation
+[TerrainRewrite] Checking foundation support…
+[TerrainRewrite] Terrain inside building; clear or grade site first
+PASS terrain filling interior rejects placement despite supported floor
+PASS interior clearance grading submitted
+[TerrainRewrite] Checking foundation support…
+[TerrainRewrite] Six cottage test placed · F5 saves world
+PASS supported six-cottage frontage commits after multiple batches
+PASS world authoring action publishes maximum frontage from worker
+[TerrainRewrite] Temporary test world: save skipped

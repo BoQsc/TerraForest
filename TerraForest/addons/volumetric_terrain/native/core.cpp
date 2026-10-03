@@ -914,19 +914,23 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
   u8 material=0;float density=w.sample(fl(point.x),fl(point.y),fl(point.z),&material);
   out.u(material);out.f(density);out.f(w.generator_id>=3?geological_weight(point,w.height(point.x,point.z),u32(w.seed)):0);
  }
- else if(cmd==29){
+ else if(cmd==29||cmd==30){
   // Bounded read-only site probes. The worker owns the density field; never
   // sample it from the scene thread. Revision mismatch publishes no values.
-  u32 revision=r.u(),count=r.u();
-  if(!r.good||count<1||count>512||n!=12+int(count)*12){out.p[8]=1;return;}
+  u32 revision=r.u(),count=r.u(),depth=cmd==30?r.u():0;
+  if(!r.good||count<1||count>512||depth>8||n!=(cmd==30?16:12)+int(count)*12){out.p[8]=1;return;}
   V3 points[512];
   for(u32 i=0;i<count;i++){
    points[i]=r.vec();const V3 &p=points[i];
-   if(!(p.x>=0&&p.x<WORLD&&p.z>=0&&p.z<WORLD&&p.y>=0&&p.y<WORLD_Y)){out.p[8]=1;return;}
+   if(!(p.x>=0&&p.x<WORLD&&p.z>=0&&p.z<WORLD&&p.y>=(depth?3.f:0.f)&&p.y<WORLD_Y)){out.p[8]=1;return;}
   }
   if(revision!=w.revision){out.p[8]=4;return;}
   out.u(w.revision);out.u(count);
-  for(u32 i=0;i<count;i++){const V3 &p=points[i];out.f(w.sample(fl(p.x),fl(p.y),fl(p.z)));}
+  for(u32 i=0;i<count;i++){
+   const V3 &p=points[i];float value=w.sample(fl(p.x),fl(p.y),fl(p.z));
+   for(u32 down=1;down<=depth;down++)value=mx(value,w.sample(fl(p.x),int(mx(3.f,float(fl(p.y))-down)),fl(p.z)));
+   out.f(value);
+  }
  }
  else if(cmd==27){
   if(n!=4){out.p[8]=1;return;}

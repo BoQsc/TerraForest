@@ -1,0 +1,9 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS solid column accepted
+PASS intermediate air pocket detected
+PASS two endpoint probes would miss the pocket
+PASS invalid depth and stale revision rejected
+SUPPORT_COLUMN_512_US 100
+PASS maximum batch has bounded reply size
+PASS low-altitude scan stops at protected bedrock

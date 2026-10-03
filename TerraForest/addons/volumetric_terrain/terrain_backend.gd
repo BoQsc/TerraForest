@@ -198,7 +198,9 @@ func submit(job: Dictionary, priority: bool = false) -> bool:
 		if typeof(job.get("points"))!=TYPE_PACKED_VECTOR3_ARRAY or job.points.is_empty() or job.points.size()>512: return false
 		for field in ["token","epoch","revision"]:
 			if typeof(job.get(field))!=TYPE_INT or job[field]<0: return false
-		job={"kind":"density_batch","points":job.points.duplicate(),"token":job.token,"epoch":job.epoch,"revision":job.revision}
+		var depth: Variant=job.get("support_depth",0)
+		if typeof(depth)!=TYPE_INT or depth<0 or depth>8: return false
+		job={"kind":"density_batch","points":job.points.duplicate(),"token":job.token,"epoch":job.epoch,"revision":job.revision,"support_depth":depth}
 		priority=false
 	if job.get("kind","")=="lake_slice":
 		if not is_instance_valid(job.get("builder")) or job.builder.get_class()!="NativeLakeVolume": return false
@@ -988,6 +990,7 @@ func _run() -> void:
 				"components": components.duplicate(), "modified": _call(Codec.command(10)), "stats": _call(Codec.command(0))})
 		elif kind == "density_batch":
 			var packet:=Codec.command(29,[job.revision,job.points.size()])
+			if job.support_depth>0: packet=Codec.command(30,[job.revision,job.points.size(),job.support_depth])
 			packet.append_array(job.points.to_byte_array())
 			var reply: PackedByteArray=_call(packet)
 			var values:=PackedFloat32Array()

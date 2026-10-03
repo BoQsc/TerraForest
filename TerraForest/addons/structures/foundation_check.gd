@@ -32,11 +32,9 @@ func tick(terrain: Node) -> void:
 	if waiting: return
 	token+=1
 	var batch: PackedVector3Array=checked_asset.clearance_samples(checked_target,checked_rotation,offset,512) if clearance else points.slice(offset,mini(offset+512,points.size()))
-	if deep_support and not clearance:
-		# Grading can add at most 8 m of fill. Probe beneath that envelope,
-		# clamping to the protected bottom slab for low-altitude foundations.
-		batch=Transform3D(Basis.IDENTITY,Vector3(0,-minf(8.0,maxf(0.0,checked_target.y-4.0)),0))*batch
-	waiting=terrain.request_density_batch(batch,token)
+	# Native column maximum checks every layer through the bounded fill depth.
+	var support_depth: int=mini(8,maxi(0,checked_target.y-4)) if deep_support and not clearance else 0
+	waiting=terrain.request_density_batch(batch,token,support_depth)
 func receive(result: Dictionary) -> void:
 	if status!="checking" or not waiting or result.token!=token: return
 	waiting=false
@@ -48,7 +46,7 @@ func receive(result: Dictionary) -> void:
 		if not is_finite(value): status="Invalid terrain check";return
 		if clearance and value<0: status="Terrain inside building; clear or grade site first";return
 		if not clearance and value>=0:
-			status="Fill lacks support below grading depth; choose a lower site" if deep_support else "Unsupported foundation; grade terrain first"
+			status="Fill lacks support through grading depth; choose a lower site" if deep_support else "Unsupported foundation; grade terrain first"
 			return
 	offset+=values.size()
 	if clearance:

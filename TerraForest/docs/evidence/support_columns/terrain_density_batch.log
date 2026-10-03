@@ -1,0 +1,19 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS native bounded query includes revision and exact result size
+PASS batch agrees with authoritative lattice density samples
+PASS stale revision supplies no accepted density values
+PASS maximum 512-probe batch remains bounded
+PASS invalid or oversized batch rejected
+PASS invalid or oversized batch rejected
+PASS invalid or oversized batch rejected
+PASS invalid or oversized batch rejected
+PASS terrain starts
+PASS public facade submits query to terrain worker
+PASS one outstanding reservation includes unconsumed completion
+PASS worker publishes requested batch
+PASS stale worker fixture admitted
+PASS stale worker result contains no usable values
+PASS old world epoch cannot authorize placement
+PASS unpublished edit invalidates apparently current support result
+[TerrainRewrite] Temporary test world: save skipped
