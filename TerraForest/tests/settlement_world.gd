@@ -20,20 +20,31 @@ func run() -> void:
 	if game.loading_active: game.terrain.shutdown();game.free();quit(1);return
 	game.set_physics_process(false);game._clear_motion();game.app_focused=true;game.structure_mode=true
 	var origin:=Vector3i(ceili(game.player.position.x)+30,ceili(game.player.position.y)+2,ceili(game.player.position.z))
+	var asset=ClassDB.instantiate("NativeBlockPrefab")
+	asset.compose_frontage([load("res://addons/structures/prefabs/brick_cottage.tres")],8,8,3,1703)
+	var survey=preload("res://addons/structures/site_survey.gd").new()
+	var site: Dictionary=await survey.assess(game.terrain,asset,origin,0)
+	check(site.ok,"whole footprint admits a bounded terrain grade")
+	print("SITE_PLAN ",site)
+	if not site.ok: game.terrain.shutdown();game.free();quit(1);return
+	origin.y=site.grade
 	var p:=Vector3(origin)
 	for z in [-13,13]:
 		check(game.terrain.construct_graded_bed(p+Vector3(0,0,z),p+Vector3(93,0,z),8,8,12,1,8),"building row grading accepted")
 		await wait_edit(game)
 	check(game.terrain.construct_road_bed(p,p+Vector3(93,0,0),5,8,12),"street paving accepted")
 	await wait_edit(game)
-	var asset=ClassDB.instantiate("NativeBlockPrefab")
-	asset.compose_frontage([load("res://addons/structures/prefabs/brick_cottage.tres")],8,8,3,1703)
 	asset.set_meta("frontage_version",1);asset.resource_name="Combined world street"
 	game.structure_prefabs.append(asset);game.structure_prefab_index=game.structure_prefabs.size()-1
 	asset.changed.connect(game._invalidate_prefab_preview);game.construction_palette.configure(game.structure_prefabs)
 	game._begin_frontage_placement(asset,origin)
 	deadline=Time.get_ticks_msec()+12000
-	while not game._foundation_placement.is_empty() and Time.get_ticks_msec()<deadline: await process_frame
+	var next_trace:=0
+	while not game._foundation_placement.is_empty() and Time.get_ticks_msec()<deadline:
+		await process_frame
+		if Time.get_ticks_msec()>=next_trace:
+			next_trace=Time.get_ticks_msec()+1000
+			print("FOUNDATION_PROGRESS ",{"offset":game.foundation_check.offset,"waiting":game.foundation_check.waiting,"deep":game.foundation_check.deep_support,"clearance":game.foundation_check.clearance,"queued":game.terrain.backend.queued(),"worker":game.terrain.backend.status(),"brush":game.terrain.foreground_brush})
 	check(game.foundation_check.status=="supported" and not game.structures.blocks.can_place_prefab(asset,origin,0),"sixteen cottages pass live terrain checks and place")
 	game.camera.global_position=p+Vector3(115,60,75);game.camera.look_at(p+Vector3(42,3,0))
 	var intervals:=PackedFloat64Array();var previous:=Time.get_ticks_usec()

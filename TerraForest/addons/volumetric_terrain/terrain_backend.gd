@@ -532,6 +532,18 @@ func _service_lake_slice() -> void:
 	mutex.unlock()
 	if not selected.is_empty(): _execute_lake_slice(selected)
 
+func _execute_density_batch(job: Dictionary) -> void:
+	var packet:=Codec.command(29,[job.revision,job.points.size()])
+	if job.support_depth>0: packet=Codec.command(30,[job.revision,job.points.size(),job.support_depth])
+	packet.append_array(job.points.to_byte_array())
+	var reply: PackedByteArray=_call(packet)
+	var values:=PackedFloat32Array()
+	var status: String="error"
+	if Codec.reply_ok(reply) and reply.size()==20+job.points.size()*4 and reply.decode_u32(12)==job.revision and reply.decode_u32(16)==job.points.size():
+		values=reply.slice(20).to_float32_array();status="ok"
+	elif reply.size()>=12 and reply.decode_u32(8)==4: status="stale"
+	_push({"kind":"density_batch","token":job.token,"epoch":job.epoch,"revision":job.revision,"status":status,"values":values})
+
 func _service_density_query() -> void:
 	# Worker-only cooperative read point. Keep the current mesh's completed
 	# regions; never cancel/restart its work merely to answer a target query.
@@ -540,12 +552,14 @@ func _service_density_query() -> void:
 	if not stopping:
 		for index in range(jobs.size()):
 			var kind: String=jobs[index].get("kind","")
-			if kind=="density_ray":
+			if kind in ["density_ray","density_batch"]:
 				query=jobs[index];jobs.remove_at(index);break
 			# Never cross mutations, saves, or unknown future job types.
 			if kind not in ["mesh","relight","height","surface_batch"]: break
 	mutex.unlock()
-	if not query.is_empty(): _execute_density_query(query)
+	if not query.is_empty():
+		if query.kind=="density_batch": _execute_density_batch(query)
+		else: _execute_density_query(query)
 
 func _execute_mesh(job: Dictionary, interactive: bool=false) -> void:
 	var result: Dictionary=_build(job.key,bool(job.get("base",false)),int(job.build_epoch),bool(job.get("relight_cache",false)),[],interactive)
@@ -814,6 +828,9 @@ func _run() -> void:
 		"components": components.duplicate(), "modified": _call(Codec.command(10)), "stats": _call(Codec.command(0))})
 	while true:
 		semaphore.wait()
+		# All meshing modes serve bounded queries before taking another background
+		# job. The selector cannot cross an already queued mutation or save.
+		_service_density_query()
 		mutex.lock()
 		var should_stop: bool = stopping
 		var job: Dictionary = {}
@@ -989,16 +1006,7 @@ func _run() -> void:
 			_push({"kind": "reload", "epoch": job["epoch"], "message": message,
 				"components": components.duplicate(), "modified": _call(Codec.command(10)), "stats": _call(Codec.command(0))})
 		elif kind == "density_batch":
-			var packet:=Codec.command(29,[job.revision,job.points.size()])
-			if job.support_depth>0: packet=Codec.command(30,[job.revision,job.points.size(),job.support_depth])
-			packet.append_array(job.points.to_byte_array())
-			var reply: PackedByteArray=_call(packet)
-			var values:=PackedFloat32Array()
-			var status: String="error"
-			if Codec.reply_ok(reply) and reply.size()==20+job.points.size()*4 and reply.decode_u32(12)==job.revision and reply.decode_u32(16)==job.points.size():
-				values=reply.slice(20).to_float32_array();status="ok"
-			elif reply.size()>=12 and reply.decode_u32(8)==4: status="stale"
-			_push({"kind":"density_batch","token":job.token,"epoch":job.epoch,"revision":job.revision,"status":status,"values":values})
+			_execute_density_batch(job)
 		elif kind == "lake_slice":
 			_execute_lake_slice(job)
 		elif kind == "surface_batch":

@@ -1,0 +1,31 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.3.289 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce GTX 1060 with Max-Q Design
+
+[TerrainRewrite] New world
+[TerrainRewrite] New world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+PASS combined world starts
+STARTUP_STATE { "reason": "Preparing destination", "ready": true, "error": "", "queued": 0, "worker": "mesh", "terrain_processing": true, "world_processing": true }
+PASS whole footprint admits a bounded terrain grade
+SITE_PLAN { "ok": true, "min_height": 41.0588531494141, "max_height": 47.1509742736816, "samples": 1584, "epoch": 0, "revision": 0, "minimum_grade": 37, "maximum_grade": 48, "grade": 44 }
+PASS building row grading accepted
+PASS terrain edit publication finishes
+PASS building row grading accepted
+PASS terrain edit publication finishes
+PASS street paving accepted
+PASS terrain edit publication finishes
+[TerrainRewrite] Checking foundation support…
+FOUNDATION_PROGRESS { "offset": 0, "waiting": true, "deep": false, "clearance": false, "queued": 5, "worker": "mesh", "brush": false }
+FOUNDATION_PROGRESS { "offset": 512, "waiting": true, "deep": true, "clearance": false, "queued": 4, "worker": "mesh", "brush": false }
+FOUNDATION_PROGRESS { "offset": 1536, "waiting": true, "deep": true, "clearance": true, "queued": 4, "worker": "mesh", "brush": false }
+FOUNDATION_PROGRESS { "offset": 3072, "waiting": true, "deep": true, "clearance": true, "queued": 4, "worker": "relight", "brush": false }
+FOUNDATION_PROGRESS { "offset": 7168, "waiting": true, "deep": true, "clearance": true, "queued": 4, "worker": "mesh", "brush": false }
+FOUNDATION_PROGRESS { "offset": 9216, "waiting": true, "deep": true, "clearance": true, "queued": 5, "worker": "relight", "brush": false }
+FOUNDATION_PROGRESS { "offset": 10240, "waiting": true, "deep": true, "clearance": true, "queued": 4, "worker": "mesh", "brush": false }
+FOUNDATION_PROGRESS { "offset": 10240, "waiting": true, "deep": true, "clearance": true, "queued": 4, "worker": "mesh", "brush": false }
+FOUNDATION_PROGRESS { "offset": 11264, "waiting": true, "deep": true, "clearance": true, "queued": 4, "worker": "mesh", "brush": false }
+FOUNDATION_PROGRESS { "offset": 12800, "waiting": true, "deep": true, "clearance": true, "queued": 5, "worker": "mesh", "brush": false }
+[TerrainRewrite] Combined world street placed · F5 saves world
+PASS sixteen cottages pass live terrain checks and place
+{"failures":0,"foundation_status":"supported","frame_max_ms":48.798,"frame_p95_ms":16.68,"origin":"(830, 44, 1310)","pending_vegetation_owners":0,"scope":"16 cottages on three live graded/paved terrain edits with live forest, followed by 180 graphical frames. No vehicle, populated-city or thermal guarantee.","structures":{"bake_lattice_16_chunks":20,"bake_lattice_32_chunks":24,"bake_lattice_64_chunks":12,"cell_bytes":458752,"cells":7488,"chunks":56,"collision_chunks":22,"dirty_chunks":0,"max_chunks":2048,"mesh_chunks":56,"published_bakes":56,"stale_bakes_rejected":0,"triangles":20320,"worker_jobs":0,"worker_jobs_submitted":56,"worker_results_consumed":56,"worker_threads_started":1},"vegetation_roots":2014}
+[TerrainRewrite] Temporary test world: save skipped

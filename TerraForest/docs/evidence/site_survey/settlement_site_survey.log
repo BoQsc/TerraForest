@@ -1,0 +1,4 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+SITE_SURVEY { "passed": true, "result": { "ok": true, "min_height": 41.0588531494141, "max_height": 47.1509742736816, "samples": 1584, "epoch": 0, "revision": 0, "minimum_grade": 37, "maximum_grade": 48, "grade": 44 }, "unchanged_density_revision": true }
+[TerrainRewrite] Temporary test world: save skipped
