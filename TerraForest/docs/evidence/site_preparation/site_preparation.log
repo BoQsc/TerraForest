@@ -1,0 +1,11 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS whole-site obstruction rejects before any edit
+PASS clear site admitted
+PASS only one edit is in flight
+PASS stop waits for accepted edit
+PASS stop preserves and accounts for completed terrain edit
+PASS unchanged partial preparation resumes
+PASS new obstruction prevents next edit
+PASS resume applies only remaining edit
+PASS unrelated terrain revision prevents remaining edits

@@ -45,6 +45,8 @@ var foundation_check=preload("res://addons/structures/foundation_check.gd").new(
 var _foundation_placement: Dictionary={}
 var site_survey=preload("res://addons/structures/site_survey.gd").new()
 var _survey_generation:=0
+var site_preparation=preload("res://addons/structures/site_preparation.gd").new()
+var _survey_plan: Dictionary={}
 
 func _additional_motion_ready(delta: float) -> bool:
 	if structures.blocks == null:
@@ -124,6 +126,10 @@ func _ready() -> void:
 	construction_palette.stack_requested.connect(_stack_construction)
 	construction_palette.frontage_requested.connect(_frontage_construction)
 	construction_palette.survey_requested.connect(_survey_construction)
+	construction_palette.preparation_requested.connect(_prepare_construction_site)
+	construction_palette.preparation_stop_requested.connect(site_preparation.cancel)
+	construction_palette.survey_dialog.canceled.connect(site_preparation.cancel)
+	construction_palette.survey_dialog.confirmed.connect(site_preparation.cancel)
 	player_hud.tool_requested.connect(_equip_player_tool)
 	player_hud.menu_changed.connect(func(_open: bool): _clear_motion())
 	_sync_player_tool()
@@ -730,7 +736,9 @@ func _edit_structure(remove: bool) -> void:
 		_show_lake_notice("Block removed · F5 saves world" if remove else "Block placed · F5 saves world")
 
 func _survey_construction() -> void:
-	if site_survey.busy or loading_active or shutdown_requested or not app_focused or player_hud.inventory_open or world_vehicle.driving or not structure_mode or model_tool.active or structure_prefab_index<0: return
+	if site_preparation.status=="running" or site_survey.busy or loading_active or shutdown_requested or not app_focused or player_hud.inventory_open or world_vehicle.driving or not structure_mode or model_tool.active or structure_prefab_index<0: return
+	_survey_plan={}
+	_survey_generation+=1
 	var hit:=_structure_target(false)
 	if hit.is_empty():
 		construction_palette.show_survey("Aim at nearby terrain before starting a survey.");return
@@ -748,7 +756,51 @@ func _survey_construction() -> void:
 		construction_palette.show_survey("Selection changed during survey. Survey the new placement again.");return
 	if not result.ok:
 		construction_palette.show_survey(result.reason);return
-	construction_palette.show_survey("Origin X/Z: %d / %d · Rotation: %d°\nSuggested base Y: %d m (allowed %d–%d m)\nGround elevation: %.1f–%.1f m · %d foundation columns\n\nProposal uses up to 8 m fill and 12 m cut.\nGrade the site before placing. Frontage placement rechecks\nsupport and room clearance. Surveying changes no terrain." % [target.x,target.z,rotation*90,result.grade,result.minimum_grade,result.maximum_grade,result.min_height,result.max_height,result.samples])
+	var plan: Dictionary=preload("res://addons/structures/site_plan.gd").foundation(asset,target,rotation,result.grade)
+	if not plan.ok: construction_palette.show_survey(plan.reason);return
+	plan["epoch"]=terrain.epoch;plan["revision"]=terrain.density_revision;plan["generation"]=generation;plan["asset"]=asset
+	_survey_plan=plan
+	construction_palette.prepare_button.text="Prepare stone foundation"
+	construction_palette.show_survey("Origin X/Z: %d / %d · Rotation: %d°\nSuggested base Y: %d m (allowed %d–%d m)\nGround elevation: %.1f–%.1f m · %d foundation columns\n\nPrepare grades the whole rectangular site, including gaps,\nwith up to 8 m fill, 12 m cut and 8 m sloped fill shoulders.\nTerrain grading has no block undo. Buildings are not placed." % [target.x,target.z,rotation*90,result.grade,result.minimum_grade,result.maximum_grade,result.min_height,result.max_height,result.samples],true)
+
+func _site_protection_error(bounds: AABB) -> String:
+	var protection:=AABB(terrain.to_local(player.global_position)-Vector3(0.4,0,0.4),Vector3(0.8,1.8,0.8))
+	if bounds.grow(0.5).intersects(protection): return "Move outside the entire foundation and its shoulders."
+	if world_vehicle.overlaps_edit(terrain.global_transform*bounds.grow(0.5)): return "Move the vehicle outside the entire site."
+	var transforms: Array[Transform3D]=[terrain.global_transform]
+	var occupied: PackedByteArray=structures.overlap_mask(transforms,bounds.grow(0.5))
+	if occupied.size()!=1 or occupied[0]!=0: return "Site overlaps buildings, objects or unavailable structure data."
+	return ""
+
+func _site_selection_current() -> bool:
+	return not _survey_plan.is_empty() and _survey_plan.generation==_survey_generation and structure_prefab_index>=0 and structure_prefabs[structure_prefab_index]==_survey_plan.asset and structure_rotation==_survey_plan.rotation
+
+func _prepare_construction_site() -> void:
+	# This action comes from the survey dialog, which can own native window focus.
+	if site_preparation.status=="running" or loading_active or shutdown_requested or player_hud.inventory_open or world_vehicle.driving or not structure_mode or model_tool.active: return
+	if not _site_selection_current(): construction_palette.show_survey("Selection changed; survey again.");return
+	var accepted:=false
+	if site_preparation.status=="stopped" and site_preparation.plan.get("generation",-1)==_survey_plan.generation and site_preparation.plan.get("target") == _survey_plan.target:
+		accepted=site_preparation.resume(terrain,_site_protection_error)
+	else:
+		if terrain.epoch!=_survey_plan.epoch or terrain.density_revision!=_survey_plan.revision: construction_palette.show_survey("Terrain changed; survey again.");return
+		accepted=site_preparation.begin(_survey_plan,terrain,_site_protection_error)
+	if not accepted:
+		construction_palette.show_survey(site_preparation.reason if not site_preparation.reason.is_empty() else "Preparation unavailable; survey again.",true);return
+	construction_palette.survey_busy=true;_sync_construction_palette()
+	construction_palette.prepare_button.disabled=true;construction_palette.stop_preparation_button.show()
+	construction_palette.survey_dialog.dialog_text="Preparing foundation. Stop waits for the accepted edit to finish."
+
+func _advance_site_preparation() -> void:
+	if site_preparation.status!="running": return
+	if loading_active or shutdown_requested or not structure_mode or model_tool.active or world_vehicle.driving or not _site_selection_current(): site_preparation.cancel()
+	site_preparation.tick(terrain,_site_protection_error)
+	construction_palette.survey_dialog.dialog_text="Foundation: %d / %d sections complete.\nAccepted terrain edits remain if preparation is stopped." % [site_preparation.completed,site_preparation.plan.segments.size()]
+	if site_preparation.status=="running": return
+	construction_palette.survey_busy=false;_sync_construction_palette();construction_palette.stop_preparation_button.hide()
+	var message: String="Foundation prepared at Y=%d. Place the selected prefab at this height; frontage support and clearance are checked again." % site_preparation.plan.target.y if site_preparation.status=="complete" else site_preparation.reason
+	construction_palette.prepare_button.text="Resume foundation preparation"
+	construction_palette.show_survey(message+"\nCompleted: %d / %d sections. Terrain grading has no block undo." % [site_preparation.completed,site_preparation.plan.segments.size()],site_preparation.status=="stopped" and _site_selection_current())
 
 func _begin_frontage_placement(asset: Resource,target: Vector3i) -> void:
 	if not _foundation_placement.is_empty(): _show_lake_notice("Checking foundation support…");return
@@ -784,6 +836,7 @@ func _process(delta: float) -> void:
 	var frontage_result: Dictionary=prefab_library.poll_frontage()
 	if not frontage_result.is_empty(): _accept_composed_prefab(frontage_result)
 	_advance_frontage_placement()
+	_advance_site_preparation()
 	world_vehicle.update(self,delta)
 	if world_vehicle.driving!=_vehicle_ui_active:
 		_vehicle_ui_active=world_vehicle.driving

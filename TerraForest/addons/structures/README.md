@@ -398,7 +398,7 @@ and clearance scan to succeed at the captured terrain revision.
 In the world construction panel, select a prefab, aim at nearby terrain and
 choose Survey ground for selected prefab. The read-only dialog reports the
 captured origin/rotation and a proposed base height for up to 8 m fill and 12 m
-cut. Grade manually before placement. Natural-surface surveys cannot reconstruct
+cut. Use the survey dialog to prepare the stone foundation, or grade manually. Natural-surface surveys cannot reconstruct
 arbitrary edited terrain; frontage placement still performs its support and
 interior-clearance checks.
 
@@ -407,4 +407,12 @@ segments and their combined protection AABB for a normalized local-Y=0 layout.
 It covers the rectangular site, including gaps, with stone fill and shoulders.
 It performs no edits. Callers must validate the complete protection envelope
 against the player, vehicles and structures before applying any segment.
-Automatic editor application and recovery are not yet implemented.
+The survey dialog can apply the plan through site_preparation.gd.
+
+Site preparation checks the whole expanded plan against the player, vehicle
+and structures before starting and between native edits. Stop or close the
+dialog to stop after the accepted edit completes. Completed terrain edits
+remain; resume applies only remaining sections at the same terrain revision.
+This in-memory workflow has no terrain undo or recovery across reload. It
+does not pave streets or place buildings, and frontage support checks remain
+mandatory after grading.

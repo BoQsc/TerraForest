@@ -38,10 +38,32 @@ func run() -> void:
 	print("SURVEY_DIALOG ",game.construction_palette.survey_dialog.dialog_text)
 	await RenderingServer.frame_post_draw
 	root.get_texture().get_image().save_png("res://reports/settlement_survey_editor.png")
+	var original_player: Vector3=game.player.global_position
+	game.player.global_position=Vector3(game._survey_plan.target)
+	game.construction_palette.preparation_requested.emit()
+	print("PREPARATION_GUARD ",game.construction_palette.survey_dialog.dialog_text," state=",game.site_preparation.status)
+	check(game.site_preparation.status!="running" and game.terrain.density_revision==revision and "outside" in game.construction_palette.survey_dialog.dialog_text,"player inside complete foundation envelope rejects preparation")
+	game.player.global_position=original_player-Vector3(100,0,0)
+	game.construction_palette.preparation_requested.emit()
+	print("PREPARATION_ADMISSION ",game.site_preparation.status," ",game.site_preparation.reason)
+	check(game.site_preparation.status=="running","editor admits preparation after player moves clear")
+	deadline=Time.get_ticks_msec()+30000
+	while game.site_preparation.status=="running" and Time.get_ticks_msec()<deadline: await process_frame
+	check(game.site_preparation.status=="complete" and game.site_preparation.completed==game.site_preparation.plan.segments.size(),"all real terrain grading sections publish")
+	check(game.terrain.density_revision==revision+game.site_preparation.completed and game.structures.blocks.stats().cells==0,"preparation changes terrain only by its accepted edit count")
+	game.player.global_position=original_player
 	game.construction_palette.survey_dialog.hide()
 	game.construction_palette.survey_button.pressed.emit()
 	game.structure_rotation=(game.structure_rotation+1)%4
 	deadline=Time.get_ticks_msec()+17000
 	while game.construction_palette.survey_busy and Time.get_ticks_msec()<deadline: await process_frame
 	check("Selection changed" in game.construction_palette.survey_dialog.dialog_text,"rotation change invalidates in-flight proposal")
+	game.player.global_position=original_player-Vector3(100,0,0)
+	var prepared: Dictionary=game.site_preparation.plan
+	var target: Vector3i=prepared.target
+	game.structures.blocks.set_cells(PackedInt32Array([target.x,target.y,target.z,1]))
+	check("buildings" in game._site_protection_error(prepared.bounds),"existing structure inside plan rejects grading")
+	game.structures.blocks.set_cells(PackedInt32Array([target.x,target.y,target.z,0]))
+	game.world_vehicle._install_vehicle(game,Transform3D(Basis.IDENTITY,Vector3(target)+Vector3.UP))
+	check("vehicle" in game._site_protection_error(prepared.bounds),"parked vehicle inside plan rejects grading")
 	game.terrain.shutdown();game.queue_free();await process_frame;quit(1 if failures else 0)
