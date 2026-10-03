@@ -116,6 +116,7 @@ func _ready() -> void:
 	construction_palette.capture_requested.connect(_capture_construction)
 	construction_palette.supply_requested.connect(_place_material_supply)
 	construction_palette.stack_requested.connect(_stack_construction)
+	construction_palette.frontage_requested.connect(_frontage_construction)
 	player_hud.tool_requested.connect(_equip_player_tool)
 	player_hud.menu_changed.connect(func(_open: bool): _clear_motion())
 	_sync_player_tool()
@@ -442,6 +443,14 @@ func _capture_construction(action: String,title: String) -> void:
 func _stack_construction(count: int,title: String) -> void:
 	if loading_active or shutdown_requested or benchmark_enabled or player_hud.inventory_open or not structure_mode or model_tool.active or structure_prefab_index<0: return
 	var result: Dictionary=prefab_library.stack(structure_prefabs[structure_prefab_index],count,title)
+	_accept_composed_prefab(result)
+
+func _frontage_construction(lots: int,width: int,gap: int,seed: int,title: String) -> void:
+	if loading_active or shutdown_requested or benchmark_enabled or player_hud.inventory_open or not structure_mode or model_tool.active or structure_prefab_index<0: return
+	var result: Dictionary=prefab_library.frontage(structure_prefabs[structure_prefab_index],lots,width,gap,seed,title)
+	_accept_composed_prefab(result)
+
+func _accept_composed_prefab(result: Dictionary) -> void:
 	if not result.ok:
 		construction_palette.capture_status.text=result.reason
 		return

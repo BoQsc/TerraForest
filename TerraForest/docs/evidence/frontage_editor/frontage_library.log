@@ -1,0 +1,26 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS missing library starts empty
+PASS capture requires two corners
+PASS reversed corners capture occupied cells
+PASS capture does not mutate source world
+PASS saved native prefab reopens with exact cells and title
+PASS reopened prefab can be placed with rotation
+PASS placement preserves material and composes rotation
+PASS empty name rejected
+PASS oversized selection reports capture limit before saving
+PASS oversized selection rejected without saving
+PASS empty selection rejected
+PASS archive moves exact asset bytes out of active library
+PASS archiving prefab preserves placed buildings
+PASS already archived asset cannot be archived again
+PASS new library instance excludes archive
+PASS restore after reopen recovers exact prefab
+PASS empty archive restore is harmless
+PASS built-in prefab cannot be archived
+PASS library stacks module through native composition
+PASS library validates repeat count and source
+PASS stacked asset survives library reopen
+PASS frontage saves through personal prefab library
+PASS invalid frontage saves no asset
+PASS frontage geometry and layout metadata survive reopen

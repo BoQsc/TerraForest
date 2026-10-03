@@ -331,5 +331,11 @@ prefab limits. Version-1 building choice uses a fixed ordinal hash, independent
 of engine RNG state. Invalid or oversized compositions preserve the previous
 prefab. The result can use normal prefab placement, conflict checks and block
 world persistence. It does not stamp asphalt, grade terrain, validate support,
-generate navigation or provide a settlement editor. Those integration steps
+generate navigation or provide a complete settlement editor. Those integration steps
 remain required before treating this as a complete town generator.
+
+In the construction palette, select a building prefab, enter a new prefab name,
+and choose **Create street frontage from selected prefab**. Set buildings per
+side, even street width and gap, then create and save. The result enters the
+personal prefab library and is selected for ordinary preview/placement. This
+authors the building layout only; prepare suitable terrain and roads separately.

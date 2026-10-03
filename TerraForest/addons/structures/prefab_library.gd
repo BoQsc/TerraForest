@@ -126,3 +126,15 @@ func _save_asset(asset: Resource,title: String) -> Dictionary:
 	assets.append(asset)
 	_paths[asset.get_instance_id()]=path
 	return {"ok":true,"asset":asset,"path":path}
+
+func frontage(source: Resource,lots: int,width: int,gap: int,seed: int,title: String) -> Dictionary:
+	title=title.strip_edges()
+	if title.is_empty() or title.length()>48: return {"ok":false,"reason":"Use a name of 1–48 characters"}
+	if assets.size()>=MAX_ASSETS: return {"ok":false,"reason":"Library is full (32 prefabs)"}
+	if source==null or not source.is_class("NativeBlockPrefab"): return {"ok":false,"reason":"Select a building prefab"}
+	var asset: Resource=ClassDB.instantiate("NativeBlockPrefab")
+	if not asset.compose_frontage([source],lots,width,gap,seed): return {"ok":false,"reason":"Invalid layout or prefab cell/coordinate limit exceeded"}
+	asset.set_meta("frontage_version",1)
+	asset.set_meta("street_width",width)
+	asset.set_meta("frontage_gap",gap)
+	return _save_asset(asset,title)
