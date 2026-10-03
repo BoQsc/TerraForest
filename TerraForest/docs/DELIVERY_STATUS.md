@@ -1,3 +1,11 @@
+## Layout-derived foundation grading plan - 2026-10-03
+
+The structures site_plan API converts actual native prefab placement bounds into a bounded set of stone foundation capsules, covering the full rectangular site including space between buildings. It chooses the longer sweep axis, partitions length to at most 120 m and breadth to at most 24 m, and supplies an expanded protection envelope including 8 m fill shoulders, 8 m depth and 12 m clearance. Plans exceeding 256 segments, world margins, grade limits or normalized local base Y=0 reject before application. This is infrequent authoring geometry; terrain evaluation stays native. It does not minimize earthworks or preserve holes in the site's rectangle.
+
+Eighteen focused checks passed, including every native foundation column of a 128-cottage layout in all four rotations, per-segment native limits, enclosing protection bounds, world margins, elevated bases and oversized plans. The full graphical 16-cottage fixture now uses the derived two-segment plan instead of hand-coded row positions; grading, paving and support/clearance-gated placement passed. Validation took 1596.87 ms; the 180-frame post-placement sample had p95 16.699 ms and maximum 53.896 ms. Screenshot inspected. These results do not qualify 128 cottages on live terrain or sustained frame-time headroom.
+
+The planner is an addon API exercised by the integration fixture. Editor preview/application, whole-plan player/vehicle/structure protection, cancellation and partial-application recovery remain required before exposing automatic site preparation. Evidence: evidence/site_plan/.
+
 ## Construction editor site survey - 2026-10-03
 
 The construction panel now offers Survey ground for selected prefab. It captures the aimed terrain origin and selected rotation, queries the actual foundation footprint asynchronously, and presents the proposed base Y, feasible grade interval and natural elevation range. Duplicate requests are disabled until completion. Selection/layout changes invalidate the proposal; world/terrain changes remain covered by the survey revision checks. The action is read-only and does not automatically grade, pave or place buildings. Edited-surface reconstruction and automatic site development remain incomplete.

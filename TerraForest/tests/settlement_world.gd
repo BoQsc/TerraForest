@@ -29,8 +29,12 @@ func run() -> void:
 	if not site.ok: game.terrain.shutdown();game.free();quit(1);return
 	origin.y=site.grade
 	var p:=Vector3(origin)
-	for z in [-13,13]:
-		check(game.terrain.construct_graded_bed(p+Vector3(0,0,z),p+Vector3(93,0,z),8,8,12,1,8),"building row grading accepted")
+	var plan: Dictionary=preload("res://addons/structures/site_plan.gd").foundation(asset,origin,0,origin.y)
+	check(plan.ok,"layout derives bounded foundation grading plan")
+	if not plan.ok: game.terrain.shutdown();game.free();quit(1);return
+	print("SITE_GRADING_SEGMENTS ",plan.segments.size())
+	for segment: Dictionary in plan.segments:
+		check(game.terrain.construct_graded_bed(segment.start,segment.finish,segment.half_width,segment.depth,segment.clearance,segment.material,segment.shoulder),"planned foundation grading accepted")
 		await wait_edit(game)
 	check(game.terrain.construct_road_bed(p,p+Vector3(93,0,0),5,8,12),"street paving accepted")
 	await wait_edit(game)

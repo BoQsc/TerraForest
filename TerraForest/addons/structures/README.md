@@ -401,3 +401,10 @@ captured origin/rotation and a proposed base height for up to 8 m fill and 12 m
 cut. Grade manually before placement. Natural-surface surveys cannot reconstruct
 arbitrary edited terrain; frontage placement still performs its support and
 interior-clearance checks.
+
+site_plan.gd foundation(asset, origin, rotation, grade) returns bounded grading
+segments and their combined protection AABB for a normalized local-Y=0 layout.
+It covers the rectangular site, including gaps, with stone fill and shoulders.
+It performs no edits. Callers must validate the complete protection envelope
+against the player, vehicles and structures before applying any segment.
+Automatic editor application and recovery are not yet implemented.
