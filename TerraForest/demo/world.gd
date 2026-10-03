@@ -47,6 +47,7 @@ var site_survey=preload("res://addons/structures/site_survey.gd").new()
 var _survey_generation:=0
 var site_preparation=preload("res://addons/structures/site_preparation.gd").new()
 var _survey_plan: Dictionary={}
+var site_preview=preload("res://addons/structures/site_preview.gd").new()
 
 func _additional_motion_ready(delta: float) -> bool:
 	if structures.blocks == null:
@@ -118,6 +119,7 @@ func _ready() -> void:
 	add_child(road_palette)
 	road_palette.action_requested.connect(_road_action)
 	terrain.add_child(road_preview)
+	terrain.add_child(site_preview)
 	road_palette.selection_changed.connect(_update_road_preview)
 	construction_palette.configure(structure_prefabs)
 	construction_palette.selection_requested.connect(_construction_selection)
@@ -742,6 +744,7 @@ func _edit_structure(remove: bool) -> void:
 func _survey_construction() -> void:
 	if site_preparation.status=="running" or site_survey.busy or loading_active or shutdown_requested or not app_focused or player_hud.inventory_open or world_vehicle.driving or not structure_mode or model_tool.active or structure_prefab_index<0: return
 	_survey_plan={}
+	site_preview.clear()
 	_survey_generation+=1
 	var hit:=_structure_target(false)
 	if hit.is_empty():
@@ -764,10 +767,12 @@ func _survey_construction() -> void:
 	if not plan.ok: construction_palette.show_survey(plan.reason);return
 	plan["epoch"]=terrain.epoch;plan["revision"]=terrain.density_revision;plan["generation"]=generation;plan["asset"]=asset
 	_survey_plan=plan
+	site_preview.show_plan(plan)
 	construction_palette.preparation_status_button.show()
 	construction_palette.prepare_button.text="Prepare foundation and street" if plan.paving_segments>0 else "Prepare stone foundation"
 	construction_palette.show_survey("Origin X/Z: %d / %d · Rotation: %d°\nSuggested base Y: %d m (allowed %d–%d m)\nGround elevation: %.1f–%.1f m · %d foundation columns\n\nPrepare grades the whole rectangular site, including gaps,\nwith up to 8 m fill, 12 m cut and 8 m sloped fill shoulders.\nTerrain grading has no block undo. Buildings are not placed." % [target.x,target.z,rotation*90,result.grade,result.minimum_grade,result.maximum_grade,result.min_height,result.max_height,result.samples],true)
 	if plan.paving_segments>0: construction_palette.survey_dialog.dialog_text+="\nThen paves the %d m street with asphalt before placement." % plan.street_width
+	construction_palette.survey_dialog.dialog_text+="\nOutline: green foundation · orange fill · cyan asphalt."
 
 func _site_protection_error(bounds: AABB) -> String:
 	var protection:=AABB(terrain.to_local(player.global_position)-Vector3(0.4,0,0.4),Vector3(0.8,1.8,0.8))
@@ -881,6 +886,7 @@ func _physics_process(delta: float) -> void:
 
 func _process(delta: float) -> void:
 	var frame_begin:=Time.get_ticks_usec()
+	site_preview.visible=site_preview.vertices>0 and _site_selection_current() and _survey_plan.get("epoch",-1)==terrain.epoch and structure_mode and not model_tool.active and not world_vehicle.driving and not loading_active and not player_hud.inventory_open
 	# A focused native survey dialog belongs to this app, not the background.
 	if construction_palette.survey_dialog!=null and construction_palette.survey_dialog.visible and construction_palette.survey_dialog.has_focus(): Engine.max_fps=max_fps
 	var frontage_result: Dictionary=prefab_library.poll_frontage()

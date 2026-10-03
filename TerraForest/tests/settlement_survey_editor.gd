@@ -35,6 +35,22 @@ func run() -> void:
 	check(not game.construction_palette.survey_busy and game.construction_palette.survey_dialog.visible and "Suggested base Y" in game.construction_palette.survey_dialog.dialog_text,"survey displays a usable grade proposal")
 	check(game.terrain.density_revision==revision and game.structures.blocks.stats().cells==0,"survey changes neither terrain nor structures")
 	await process_frame
+	check(game.site_preview.visible and game.site_preview.vertices>0 and game.site_preview.outline.get_surface_count()==1,"survey builds one spatial preview mesh")
+	var preview_rebuilds: int=game.site_preview.rebuilds
+	for frame in 3: await process_frame
+	check(game.site_preview.rebuilds==preview_rebuilds,"unchanged frames reuse preview geometry")
+	var saved_camera: Transform3D=game.camera.global_transform
+	game.construction_palette.survey_dialog.hide()
+	game.camera.global_position=Vector3(game._survey_plan.target)+Vector3(60,45,60)
+	game.camera.look_at(Vector3(game._survey_plan.target)+Vector3(10,0,0))
+	await process_frame;await RenderingServer.frame_post_draw
+	root.get_texture().get_image().save_png("res://reports/settlement_site_preview.png")
+	game.structure_mode=false;await process_frame;await RenderingServer.frame_post_draw
+	check(not game.site_preview.visible,"leaving construction hides the site outline")
+	game.structure_mode=true;game.camera.global_transform=saved_camera
+	game.construction_palette.survey_dialog.popup_centered()
+	await process_frame;await RenderingServer.frame_post_draw
+	check(game.site_preview.visible and game.site_preview.rebuilds==preview_rebuilds,"returning to construction restores cached preview")
 	check(game.construction_palette.panel.visible and game.construction_palette.panel.get_global_rect().end.y<=1080,"visible construction panel fits 1080p")
 	print("PANEL_RECT ",game.construction_palette.panel.get_global_rect())
 	print("SURVEY_DIALOG ",game.construction_palette.survey_dialog.dialog_text)
@@ -69,6 +85,8 @@ func run() -> void:
 	deadline=Time.get_ticks_msec()+12000
 	while not game._foundation_placement.is_empty() and Time.get_ticks_msec()<deadline: await process_frame
 	check(game.foundation_check.status=="supported" and game.structures.blocks.stats().cells==asset.get_records().size()/4,"prepared site places exactly one prefab after full validation")
+	await process_frame
+	check(not game.site_preview.visible,"committed building invalidates the old preparation preview")
 	game.camera.global_position=Vector3(prepared_target)+Vector3(45,35,45)
 	game.camera.look_at(Vector3(prepared_target)+Vector3(10,3,0))
 	for frame in 60: await process_frame

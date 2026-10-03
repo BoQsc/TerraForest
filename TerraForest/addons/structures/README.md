@@ -434,3 +434,10 @@ Preparation completion uses the exact terrain edit ticket and explicit
 published/unchanged outcome. Already graded sections complete without a
 revision increment; failed or unpublished edits stop the job. This permits
 idempotent repeated sections without confusing rejection with success.
+
+Surveyed plans display a cached spatial overlay: green foundation edges,
+orange sloped-fill extents, cyan asphalt and pale vertical cut-height guides.
+The outline is visible through terrain/foliage and does not modify the world.
+It is an approximation for planning; native validation and conservative
+protection bounds remain authoritative. One mesh is rebuilt only for a new
+plan and hidden outside construction or after the plan is invalidated.

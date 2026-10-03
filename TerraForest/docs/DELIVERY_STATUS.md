@@ -1,3 +1,11 @@
+## Cached spatial preparation preview - 2026-10-03
+
+Surveyed site plans now create a single editor overlay mesh: green flat foundation capsule edges, orange sloped-fill bottom edges and connecting guides, cyan asphalt outlines, and pale vertical clearance guides. Depth testing is disabled deliberately so the intended excavation/fill footprint remains readable through terrain and trees. The outline approximates curved boundaries with 12-segment semicircles; it is a planning aid, not authoritative collision geometry. Safety still uses the full plan bounds and native terrain checks.
+
+The mesh is built once per new plan, never once per frame or terrain cell. At most 256 plan sections are accepted; each emits at most 126 line vertices. Rendering has no shadows and uses one mesh surface. Selection/layout changes, world changes, leaving construction and successful building placement hide invalid/inactive previews. Cached geometry is reused when returning to the same plan.
+
+Twenty-seven graphical editor checks passed at 1920x1080, including a single populated preview surface, unchanged rebuild count over frames, mode-switch hiding/restoration and post-placement invalidation, plus the existing grade/pave/place/guard workflow. The initial mode-switch assertion ran before scene processing; the final fixture waits through frame_post_draw. The unobscured aerial screenshot was inspected and shows the intended colored outlines within the forest. Evidence: evidence/site_preview/. This is not a sustained GPU or thermal benchmark.
+
 ## Explicit preparation edit outcomes and idempotent sections - 2026-10-03
 
 TerrainWorld now retains one bounded last_edit_outcome record with world epoch, edit ticket, status and density revision. Native unchanged/rejected results are distinguished from changed edits still building; changed edits become published only after main-thread batch commit. The site coordinator requires its exact ticket/epoch and a published or explicitly unchanged result. Published sections require one density revision increment; no-op sections require the same revision. A failed or incomplete publication cannot be counted as an unchanged success.
