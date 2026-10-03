@@ -303,6 +303,7 @@ func _setup_hud() -> void:
 	help.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	help.text = "WASD move | mouse look | Shift sprint | Space jump | G fly | LMB dig / RMB build | 1 cube / 2 grid box / 3 sphere / 4 box | wheel radius | Q/E material\nF2 sites | F3 construction | F4 biomes | F5 save | F9 load | F11 fullscreen | F6 LOD colors | F7 shadows / Ctrl+F7 cavity sun | F8 flashlight | F10 diagnostics | Esc mouse | Ctrl+R twice reset"
 	var crosshair := Label.new()
+	crosshair.name="Crosshair"
 	crosshair.text = "+"
 	crosshair.add_theme_font_size_override("font_size", 25)
 	canvas.add_child(crosshair)

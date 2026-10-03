@@ -1,3 +1,7 @@
+## Main-world vehicle visual integration check - 2026-10-03
+
+Automated fullscreen 1080p test now exercises actual world placement, entry, a short straight drive, stopped exit and restoration of walking UI. Passing run travelled 4.044 m, reached 27.706 km/h and had 2,320 trees resident. Driving HUD now hides the editing toolbelt/crosshair, shows driving controls and reports speed or collision-loading status. Screenshot reviewed. Test explicitly stops the car before exit; braking dynamics are not proved by that step. Evidence: evidence/world_vehicle_visual/. This is integration evidence, not sustained FPS, fleet or thermal validation. Persistence and camera obstacle avoidance remain unfinished.
+
 ## Main-world vehicle controls - 2026-10-03
 
 Added single session-only vehicle placement (V), nearby entry and clear stopped exit (E). Placement rejects unavailable/obstructed ground; exit uses a capsule clearance query and terrain/building readiness. Driving suspends walking/editing and owns terrain focus; occupant position supplies building/vegetation focus. Parked physics is suspended, and camera/player collision/physics rate are restored on exit. Nine interaction checks passed against real physics with controlled readiness providers; a short temporary main-world headless startup exited without script errors. Evidence: evidence/world_vehicle/. Full populated-world visual driving, persistence, door transitions, camera obstacle avoidance and fleets remain unverified/incomplete. No human playtest was run.

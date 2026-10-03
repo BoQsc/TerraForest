@@ -8,6 +8,8 @@ var persistence = Persistence.new()
 var pickups = preload("res://addons/world_runtime/material_pickups.gd").new()
 var player_pose: RefCounted
 var world_vehicle=preload("res://addons/vehicle_runtime/world_vehicle.gd").new()
+var _vehicle_ui_active:=false
+var _walking_help:=""
 var _saved_pose:=PackedByteArray()
 var _restored_pose: Dictionary={}
 var vegetation = Vegetation.new()
@@ -685,6 +687,15 @@ func _physics_process(delta: float) -> void:
 func _process(delta: float) -> void:
 	var frame_begin:=Time.get_ticks_usec()
 	world_vehicle.update(self,delta)
+	if world_vehicle.driving!=_vehicle_ui_active:
+		_vehicle_ui_active=world_vehicle.driving
+		player_hud.visible=not _vehicle_ui_active;player_hud.enabled=not _vehicle_ui_active
+		var crosshair=help.get_parent().get_node_or_null("Crosshair")
+		if crosshair!=null: crosshair.visible=not _vehicle_ui_active
+		if _vehicle_ui_active:
+			_walking_help=help.text
+			help.text="W / S  Accelerate / Brake or reverse    A / D  Steer    Space  Handbrake    Shift  Boost\nE  Exit when stopped    R  Reset vehicle    Esc  Release mouse\nVehicle is session-only; it is not saved with the world."
+		else: help.text=_walking_help
 	super._process(delta)
 	road_palette.panel.visible=not world_vehicle.driving and not structure_mode and not model_tool.active and not loading_active and not shutdown_requested and not player_hud.inventory_open and Input.mouse_mode==Input.MOUSE_MODE_VISIBLE
 	road_preview.visible=not world_vehicle.driving and not structure_mode and not model_tool.active and not loading_active and not shutdown_requested and not player_hud.inventory_open
@@ -721,6 +732,8 @@ func _process(delta: float) -> void:
 			activity="Building detail limit · %d chunks deferred" % building_stream.budget_blocked_chunks
 		if Time.get_ticks_msec() < _lake_notice_until:
 			activity = _lake_notice
+		if world_vehicle.driving:
+			activity="Waiting for terrain/building collision…" if world_vehicle.car.streaming.waiting else "Driving · %.0f km/h · E exit when stopped" % world_vehicle.car.speed_kph
 		telemetry.text = "%d FPS  ·  %s trees  ·  %d cells\n%s" % [Engine.get_frames_per_second(), str(vegetation.renderer.roots.size()), ecosystem.resident.size(), activity]
 	terrain._record_stage("world process",(Time.get_ticks_usec()-frame_begin)/1000.0)
 
