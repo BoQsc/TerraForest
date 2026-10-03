@@ -1,0 +1,13 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS native structures ready
+PASS actual vegetation assets and trunk proxies ready
+PASS initial renderer and physics roots agree
+PASS frontage placed across two tree roots
+PASS structure change schedules vegetation reconciliation
+PASS only intersecting trees removed; street and distant roots survive
+PASS removed render roots have no remaining trunk proxy records
+PASS unaffected distant tree transform preserved
+PASS building removal restores empty structure state
+PASS deterministic trees and trunk records return after structure removal
+FRONTAGE_VEGETATION { "failures": 0, "reconciled_owners": 2, "root_count": 4, "scope": "actual native block exclusion and vegetation root/proxy membership; no visual rendering or physics contact qualification" }
