@@ -1,3 +1,7 @@
+## Native vehicle cosmetic damage - 2026-10-03
+
+Crash dent vertex work now runs in NativeVehicleDamage, with conservative bounds rejection and copy-on-write vertex changes. Original scripts still orchestrate damage events and repair. A short headless comparison matched 6,266 vertices on 10 damageable meshes exactly, preserved source vertices/materials, and rejected distant/zero-radius impacts. One sample measured native 1,504 us versus script 3,257 us; this is not a fleet or sustained-performance result. Evidence: evidence/vehicle_damage/vehicle_damage.log. Static ArrayMesh only; original normals are retained and mesh upload remains synchronous.
+
 ## Vehicle native motion migration — 2026-10-03
 
 Grounded bicycle velocity, free-mode drive/brake forces, stabilization and downforce now run in C++. Original mode transitions and visual/interaction scripts remain scripted. This is an isolated vehicle demo, not streamed-world integration.

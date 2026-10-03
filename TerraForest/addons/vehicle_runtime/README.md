@@ -26,3 +26,11 @@ pending migration. Neither the policy
 nor demo provides streamed collision readiness, vehicle persistence, authority
 or fleet activation/LOD. The simple CharacterBody controller was discarded
 before integration in favour of preserving the supplied vehicle behavior.
+
+NativeVehicleDamage performs cosmetic dent vertex deformation for static
+ArrayMesh assets. It rejects distant impacts using conservative world bounds,
+leaves the source mesh untouched and retains materials. Invalid inputs and
+impacts affecting no vertices return null. Vertex normals retain the original
+demo behavior (not regenerated); this is not a skinned-mesh or blend-shape
+damage pipeline. Mesh creation/upload remains synchronous, so this does not
+establish a bounded cost for arbitrarily large meshes or simultaneous crashes.
