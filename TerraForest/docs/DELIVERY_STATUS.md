@@ -1,3 +1,7 @@
+## Native chase camera obstacle avoidance - 2026-10-03
+
+Main-world chase follow now runs in C++ and uses a reusable sphere/query to shorten camera distance at terrain/building/vehicle colliders. Six focused physics checks passed: clear distance, wall stopping, repeated smoothing against wall, recovery after removal, invalid delta rejection and self-body exclusion. Fullscreen 1080p main-world placement/drive/exit/UI regression also passed; screenshot reviewed. Evidence: evidence/vehicle_camera/. Embedded anchors return failure with the previous camera pose retained, and vegetation without physics colliders is not covered. Persistence, fleets and sustained performance remain incomplete.
+
 ## Main-world vehicle visual integration check - 2026-10-03
 
 Automated fullscreen 1080p test now exercises actual world placement, entry, a short straight drive, stopped exit and restoration of walking UI. Passing run travelled 4.044 m, reached 27.706 km/h and had 2,320 trees resident. Driving HUD now hides the editing toolbelt/crosshair, shows driving controls and reports speed or collision-loading status. Screenshot reviewed. Test explicitly stops the car before exit; braking dynamics are not proved by that step. Evidence: evidence/world_vehicle_visual/. This is integration evidence, not sustained FPS, fleet or thermal validation. Persistence and camera obstacle avoidance remain unfinished.

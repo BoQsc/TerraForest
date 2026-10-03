@@ -7,6 +7,7 @@ var _camera_local: Transform3D
 var _player_layer:=0
 var _player_mask:=0
 var _physics_ticks:=60
+var _camera_follow: RefCounted
 func ready_bounds(world: Node,bounds: AABB) -> bool:
 	return world.terrain.is_collision_region_ready(bounds) and world.structures.is_collision_region_ready(bounds)
 func spawn(world: Node) -> String:
@@ -29,6 +30,7 @@ func spawn(world: Node) -> String:
 	for wheel in car.wheel_rays: wheel.collision_mask=3
 	car.set_controls_enabled(false);car.freeze=true;car.set_physics_process(false)
 	car.bind_streamed_world(world.terrain,world.structures)
+	_camera_follow=ClassDB.instantiate("NativeVehicleCamera")
 	return "Vehicle placed · E nearby to enter · session only"
 func enter(world: Node) -> bool:
 	if driving or not is_instance_valid(car) or world.player.global_position.distance_to(car.position)>3.5: return false
@@ -71,7 +73,4 @@ func update(world: Node,delta: float) -> void:
 	world.player.position=car.position # Existing vegetation/building focus follows the occupant.
 	world.player.velocity=Vector3.ZERO
 	car.set_controls_enabled(world.app_focused and not world.player_hud.inventory_open and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED)
-	var forward: Vector3=car.global_basis.z.normalized()
-	var desired: Vector3=car.position-forward*7.2+Vector3.UP*3
-	world.camera.global_position=world.camera.global_position.lerp(desired,1-exp(-7.5*delta))
-	world.camera.look_at(car.position+forward*1.8+Vector3.UP*.65)
+	_camera_follow.update(car,world.camera,delta)

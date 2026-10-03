@@ -71,5 +71,14 @@ when either side has clear loaded capsule space. Walking/editing are suspended
 while occupied; terrain focus belongs to the vehicle and existing building/
 vegetation focus follows its occupant. Parked simulation is disabled. Vehicle
 collision uses layer 4, terrain/buildings layers 1/2. Driving uses 120 Hz physics
-and restores the previous rate on exit. Persistence, camera obstacle avoidance,
-door animation and multiple vehicles are not integrated in this adapter.
+and restores the previous rate on exit. Persistence, door animation and multiple
+vehicles are not integrated in this adapter.
+
+NativeVehicleCamera now performs the main-world chase follow and a 0.25 m
+sphere sweep against terrain, buildings and other vehicle collision (mask 7).
+It reuses its shape/query resources and excludes the occupied body. Camera
+distance shortens immediately at obstacles and recovers with smoothing. If
+the follow anchor is already embedded, update returns false and retains the
+previous camera pose; it does not claim to solve that penetration. Only actual
+physics colliders participate, so vegetation without colliders cannot occlude
+the camera. This replaces the main-world scripted follow calculation.
