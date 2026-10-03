@@ -5,6 +5,10 @@ signal capture_requested(action: String,title: String)
 signal supply_requested(item: int)
 signal stack_requested(count: int,title: String)
 signal frontage_requested(lots: int,width: int,gap: int,seed: int,title: String)
+signal survey_requested
+var survey_button: Button
+var survey_dialog: AcceptDialog
+var survey_busy:=false
 var frontage_button: Button
 var frontage_dialog: AcceptDialog
 var frontage_lots: SpinBox
@@ -34,6 +38,9 @@ func _ready() -> void:
 	material=_option(column,"Material",["Brick","Wood","Concrete","Metal"],"material")
 	rotation_choice=_option(column,"Rotation",["0°","90°","180°","270°"],"rotation")
 	prefab=_option(column,"Prefab",["Single blocks"],"prefab")
+	survey_button=Button.new();survey_button.text="Survey ground for selected prefab";survey_button.focus_mode=Control.FOCUS_NONE;column.add_child(survey_button)
+	survey_button.pressed.connect(func(): survey_requested.emit())
+	survey_dialog=AcceptDialog.new();survey_dialog.title="Building site survey";add_child(survey_dialog)
 	var corners:=HBoxContainer.new();column.add_child(corners)
 	for action: String in ["a","b"]:
 		var button:=Button.new();button.text="Mark corner "+action.to_upper();button.focus_mode=Control.FOCUS_NONE
@@ -92,4 +99,11 @@ func synchronize(active: bool,shape_id: int,material_id: int,quarter_turn: int,p
 	material.disabled=prefab_index>=0
 	stack_button.disabled=prefab_index<0
 	frontage_button.disabled=prefab_index<0
+	survey_button.disabled=prefab_index<0 or survey_busy
+	survey_button.text="Surveying ground…" if survey_busy else "Survey ground for selected prefab"
 	if not active: frontage_dialog.hide()
+	if not active: survey_dialog.hide()
+
+func show_survey(message: String) -> void:
+	survey_dialog.dialog_text=message
+	survey_dialog.popup_centered(Vector2i(600,240))

@@ -43,6 +43,8 @@ var _lake_notice: String = ""
 var _lake_notice_until: int = 0
 var foundation_check=preload("res://addons/structures/foundation_check.gd").new()
 var _foundation_placement: Dictionary={}
+var site_survey=preload("res://addons/structures/site_survey.gd").new()
+var _survey_generation:=0
 
 func _additional_motion_ready(delta: float) -> bool:
 	if structures.blocks == null:
@@ -121,6 +123,7 @@ func _ready() -> void:
 	construction_palette.supply_requested.connect(_place_material_supply)
 	construction_palette.stack_requested.connect(_stack_construction)
 	construction_palette.frontage_requested.connect(_frontage_construction)
+	construction_palette.survey_requested.connect(_survey_construction)
 	player_hud.tool_requested.connect(_equip_player_tool)
 	player_hud.menu_changed.connect(func(_open: bool): _clear_motion())
 	_sync_player_tool()
@@ -242,6 +245,7 @@ func _prefab_player_clear(bounds: AABB) -> bool:
 	return not bounds.intersects(player_bounds)
 
 func _invalidate_prefab_preview() -> void:
+	_survey_generation+=1
 	_prefab_preview_signature.clear()
 	if not _foundation_placement.is_empty(): foundation_check.status="Layout changed; place again"
 	_prefab_preview_timer=0.0
@@ -724,6 +728,27 @@ func _edit_structure(remove: bool) -> void:
 	var word := 0 if remove else structure_shape+(structure_rotation<<3)+(structure_material<<5)
 	if structures.blocks.set_cells(PackedInt32Array([target.x,target.y,target.z,word])):
 		_show_lake_notice("Block removed · F5 saves world" if remove else "Block placed · F5 saves world")
+
+func _survey_construction() -> void:
+	if site_survey.busy or loading_active or shutdown_requested or not app_focused or player_hud.inventory_open or world_vehicle.driving or not structure_mode or model_tool.active or structure_prefab_index<0: return
+	var hit:=_structure_target(false)
+	if hit.is_empty():
+		construction_palette.show_survey("Aim at nearby terrain before starting a survey.");return
+	var asset: Resource=structure_prefabs[structure_prefab_index]
+	var target: Vector3i=hit.target
+	var rotation:=structure_rotation
+	var generation:=_survey_generation
+	construction_palette.survey_busy=true
+	_sync_construction_palette()
+	var result: Dictionary=await site_survey.assess(terrain,asset,target,rotation)
+	construction_palette.survey_busy=false
+	_sync_construction_palette()
+	if shutdown_requested or loading_active or not structure_mode or model_tool.active or world_vehicle.driving: return
+	if generation!=_survey_generation or structure_prefab_index<0 or structure_prefabs[structure_prefab_index]!=asset or structure_rotation!=rotation:
+		construction_palette.show_survey("Selection changed during survey. Survey the new placement again.");return
+	if not result.ok:
+		construction_palette.show_survey(result.reason);return
+	construction_palette.show_survey("Origin X/Z: %d / %d · Rotation: %d°\nSuggested base Y: %d m (allowed %d–%d m)\nGround elevation: %.1f–%.1f m · %d foundation columns\n\nProposal uses up to 8 m fill and 12 m cut.\nGrade the site before placing. Frontage placement rechecks\nsupport and room clearance. Surveying changes no terrain." % [target.x,target.z,rotation*90,result.grade,result.minimum_grade,result.maximum_grade,result.min_height,result.max_height,result.samples])
 
 func _begin_frontage_placement(asset: Resource,target: Vector3i) -> void:
 	if not _foundation_placement.is_empty(): _show_lake_notice("Checking foundation support…");return

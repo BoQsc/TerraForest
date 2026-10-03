@@ -1,0 +1,23 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.3.289 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce GTX 1060 with Max-Q Design
+
+[TerrainRewrite] New world
+[TerrainRewrite] New world
+[terrain-hitch] receive 327.48 ms at 6866
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+PASS world starts
+PASS editor camera has a real terrain target
+PASS button starts asynchronous survey and prevents duplicate requests
+PASS survey displays a usable grade proposal
+PASS survey changes neither terrain nor structures
+PASS visible construction panel fits 1080p
+PANEL_RECT [P: (1500.0, 36.0), S: (386.0, 900.0)]
+SURVEY_DIALOG Origin X/Z: 807 / 1310 · Rotation: 0°
+Suggested base Y: 48 m (allowed 39–53 m)
+Ground elevation: 46.8–49.1 m · 396 foundation columns
+
+Proposal uses up to 8 m fill and 12 m cut.
+Grade the site before placing. Frontage placement rechecks
+support and room clearance. Surveying changes no terrain.
+PASS rotation change invalidates in-flight proposal
+[TerrainRewrite] Temporary test world: save skipped

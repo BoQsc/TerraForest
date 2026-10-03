@@ -1,0 +1,47 @@
+# SPDX-License-Identifier: 0BSD
+extends SceneTree
+var failures:=0
+func check(ok: bool,label: String) -> void:
+	print("PASS " if ok else "FAIL ",label)
+	if not ok: failures+=1
+func _initialize() -> void: call_deferred("run")
+func run() -> void:
+	Engine.max_fps=60
+	var game=load("res://demo/world.tscn").instantiate();game.temporary_world=true
+	game.terrain.backend.world_generator=2;root.add_child(game)
+	var deadline:=Time.get_ticks_msec()+30000
+	while game.loading_active and Time.get_ticks_msec()<deadline: await process_frame
+	check(not game.loading_active,"world starts")
+	if game.loading_active: game.terrain.shutdown();game.free();quit(1);return
+	game.set_physics_process(false);game._clear_motion();game.app_focused=true;game.structure_mode=true
+	var asset=ClassDB.instantiate("NativeBlockPrefab")
+	asset.compose_frontage([load("res://addons/structures/prefabs/brick_cottage.tres")],2,8,3,1703)
+	asset.set_meta("frontage_version",1);asset.resource_name="Survey fixture"
+	game.structure_prefabs.append(asset);game.structure_prefab_index=game.structure_prefabs.size()-1
+	game.construction_palette.configure(game.structure_prefabs)
+	game._sync_construction_palette()
+	game.camera.global_position=game.player.global_position+Vector3(0,15,0)
+	game.camera.look_at(game.player.global_position+Vector3(10,-5,0))
+	Input.mouse_mode=Input.MOUSE_MODE_VISIBLE
+	await physics_frame;await process_frame
+	check(not game._structure_target(false).is_empty(),"editor camera has a real terrain target")
+	var revision: int=game.terrain.density_revision
+	game.construction_palette.survey_button.pressed.emit()
+	check(game.construction_palette.survey_busy and game.construction_palette.survey_button.disabled,"button starts asynchronous survey and prevents duplicate requests")
+	deadline=Time.get_ticks_msec()+17000
+	while game.construction_palette.survey_busy and Time.get_ticks_msec()<deadline: await process_frame
+	check(not game.construction_palette.survey_busy and game.construction_palette.survey_dialog.visible and "Suggested base Y" in game.construction_palette.survey_dialog.dialog_text,"survey displays a usable grade proposal")
+	check(game.terrain.density_revision==revision and game.structures.blocks.stats().cells==0,"survey changes neither terrain nor structures")
+	await process_frame
+	check(game.construction_palette.panel.visible and game.construction_palette.panel.get_global_rect().end.y<=1080,"visible construction panel fits 1080p")
+	print("PANEL_RECT ",game.construction_palette.panel.get_global_rect())
+	print("SURVEY_DIALOG ",game.construction_palette.survey_dialog.dialog_text)
+	await RenderingServer.frame_post_draw
+	root.get_texture().get_image().save_png("res://reports/settlement_survey_editor.png")
+	game.construction_palette.survey_dialog.hide()
+	game.construction_palette.survey_button.pressed.emit()
+	game.structure_rotation=(game.structure_rotation+1)%4
+	deadline=Time.get_ticks_msec()+17000
+	while game.construction_palette.survey_busy and Time.get_ticks_msec()<deadline: await process_frame
+	check("Selection changed" in game.construction_palette.survey_dialog.dialog_text,"rotation change invalidates in-flight proposal")
+	game.terrain.shutdown();game.queue_free();await process_frame;quit(1 if failures else 0)

@@ -394,3 +394,10 @@ request_density_scan (4096 samples). Scans share the terrain batch reservation
 and revision checks, reducing repeated waits behind background meshing. A failed
 page discards all values from that scan; placement still requires every support
 and clearance scan to succeed at the captured terrain revision.
+
+In the world construction panel, select a prefab, aim at nearby terrain and
+choose Survey ground for selected prefab. The read-only dialog reports the
+captured origin/rotation and a proposed base height for up to 8 m fill and 12 m
+cut. Grade manually before placement. Natural-surface surveys cannot reconstruct
+arbitrary edited terrain; frontage placement still performs its support and
+interior-clearance checks.
