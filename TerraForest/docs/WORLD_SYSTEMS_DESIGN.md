@@ -2,7 +2,7 @@
 
 This document records the requested expansion and the intended native boundaries. It is not a list of already implemented features.
 
-Implemented so far: pinned native toolchain, bounded native entity kinematics, fullscreen measurement policy, static volumetric water, and compound terrain/addon snapshots. Water bakes connected occupancy from terrain density and invalidates after edits. Definitions and stable IDs survive reload; derived occupancy rebakes. See the addon README for its conservative voxel shoreline and lack of dynamic flow, WORLD_STORAGE.md for snapshot limits, and DELIVERY_STATUS.md for the full outstanding scope. Other systems below remain a design contract.
+Implemented paths include the pinned native toolchain, bounded native entity storage/kinematics, fullscreen measurement policy, static volumetric water, seeded cave/mountain/geology generation, terrain road editing, block/prefab construction, a single integrated vehicle, and compound terrain/addon snapshots. Water bakes connected occupancy from terrain density and invalidates after edits. Definitions and stable IDs survive reload; derived occupancy rebakes. See the addon READMEs for API limits, WORLD_STORAGE.md for snapshot limits, and DELIVERY_STATUS.md for evidence. The contract below remains broader than the implementation: it is not a claim of complete settlement generation, fleets, multiplayer or sustained populated-world performance.
 
 ## Representation and authority
 
