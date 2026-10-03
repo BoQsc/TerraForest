@@ -1,0 +1,15 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+Vehicle controller V3 ready: no-slip bicycle driving + no-pivot full-lock launch grip budget.
+Vehicle runtime visuals ready: 27 fixed body meshes + animated driver door + 4 wheel meshes.
+Visual mesh damage: enabled (F8 toggle, F9 repair).
+Mounted accessory motion: enabled (F10 toggle, 11 moving items).
+PASS compound vehicle save published
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+Vehicle controller V3 ready: no-slip bicycle driving + no-pivot full-lock launch grip budget.
+Vehicle runtime visuals ready: 27 fixed body meshes + animated driver door + 4 wheel meshes.
+Visual mesh damage: enabled (F8 toggle, F9 repair).
+Mounted accessory motion: enabled (F10 toggle, 11 moving items).
+[terrain-hitch] receive 241.26 ms at 6987
+PASS vehicle restored parked from new world instance
+[TerrainRewrite] World saved and verified; terrain and addon state published together

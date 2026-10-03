@@ -81,6 +81,10 @@ func _ready() -> void:
 		push_error("Player pose persistence initialization failed")
 		get_tree().quit(2)
 		return
+	if not world_vehicle.prepare(self,persistence):
+		push_error("Vehicle persistence initialization failed")
+		get_tree().quit(2)
+		return
 	if not structures_ready or not lakes.prepare() or not persistence.register_component("structures", structures.capture_storage_snapshot, structures.restore_storage_snapshot, structures.snapshot_validator(), structures.empty_snapshot()) or not persistence.register_component("volumetric_water", lakes.capture_snapshot, lakes.restore_snapshot, lakes.snapshot_validator(), lakes.empty_snapshot()) or not persistence.enable_region_structures(true) or persistence.attach(terrain) != OK:
 		push_error("World persistence initialization failed")
 		get_tree().quit(2)
@@ -320,7 +324,7 @@ func _setup_hud() -> void:
 	help.text = "WASD  Move    Shift  Sprint    Space  Jump    G  Fly    Mouse  Look    Esc  Release\nB  Terrain / Blocks    LMB  Remove    RMB  Place    1–6  Shapes    P  Prefabs    T  Material    R  Rotate    Ctrl+Z / Y  Undo / Redo\nTerrain: Wheel  Brush size    1–3  Tools    L  Lake    F5  Save world    F9  Reload    F3  Diagnostics"
 	help.add_theme_font_size_override("font_size", 15)
 	help.text=help.text.replace("B  Terrain / Blocks", "B  Terrain / Blocks    M  Objects    E  Collect")
-	help.text+="\nV  Place vehicle (session only)    E  Enter / exit stopped vehicle"
+	help.text+="\nV  Place vehicle    E  Enter / exit stopped vehicle    F5  Save world and vehicle"
 	help.offset_top = -108
 	help.add_theme_color_override("font_color", Color("e6eee9"))
 	var panel := PanelContainer.new()
@@ -694,7 +698,7 @@ func _process(delta: float) -> void:
 		if crosshair!=null: crosshair.visible=not _vehicle_ui_active
 		if _vehicle_ui_active:
 			_walking_help=help.text
-			help.text="W / S  Accelerate / Brake or reverse    A / D  Steer    Space  Handbrake    Shift  Boost\nE  Exit when stopped    R  Reset vehicle    Esc  Release mouse\nVehicle is session-only; it is not saved with the world."
+			help.text="W / S  Accelerate / Brake or reverse    A / D  Steer    Space  Handbrake    Shift  Boost\nE  Exit when stopped    R  Reset vehicle    Esc  Release mouse\nExit to save with F5. Vehicle restores parked; cosmetic dents are not saved."
 		else: help.text=_walking_help
 	super._process(delta)
 	road_palette.panel.visible=not world_vehicle.driving and not structure_mode and not model_tool.active and not loading_active and not shutdown_requested and not player_hud.inventory_open and Input.mouse_mode==Input.MOUSE_MODE_VISIBLE

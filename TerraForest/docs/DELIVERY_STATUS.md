@@ -1,3 +1,7 @@
+## Vehicle pose persistence - 2026-10-03
+
+The single world vehicle now participates in compound world saves through a native versioned 72-byte pose record. Older saves default to no vehicle; restored vehicles remain parked at rest. Invalid live captures reject the save and invalid restores retain the existing vehicle. Ten codec/archive checks, fifteen interaction/storage checks, a real worker disk publication/new-world restore and a temporary main-world startup passed. Evidence: evidence/vehicle_persistence/. The restore run recorded a 241.26 ms receive step while instantiating the detailed model; synchronous creation remains a loading hitch. Cosmetic dents, velocity and occupied-seat state are not persisted. Fleets and sustained frame/thermal performance remain incomplete.
+
 ## Native chase camera obstacle avoidance - 2026-10-03
 
 Main-world chase follow now runs in C++ and uses a reusable sphere/query to shorten camera distance at terrain/building/vehicle colliders. Six focused physics checks passed: clear distance, wall stopping, repeated smoothing against wall, recovery after removal, invalid delta rejection and self-body exclusion. Fullscreen 1080p main-world placement/drive/exit/UI regression also passed; screenshot reviewed. Evidence: evidence/vehicle_camera/. Embedded anchors return failure with the previous camera pose retained, and vegetation without physics colliders is not covered. Persistence, fleets and sustained performance remain incomplete.

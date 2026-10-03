@@ -8,6 +8,36 @@ var _player_layer:=0
 var _player_mask:=0
 var _physics_ticks:=60
 var _camera_follow: RefCounted
+var storage: RefCounted
+var _world: Node
+func prepare(world: Node,persistence: RefCounted) -> bool:
+	GDExtensionManager.load_extension("res://addons/vehicle_runtime/vehicle_runtime.gdextension")
+	storage=ClassDB.instantiate("NativeVehicleStorage");_world=world
+	return persistence.register_component("vehicles",capture_snapshot,restore_snapshot,storage,PackedByteArray())
+func capture_snapshot() -> PackedByteArray:
+	if not is_instance_valid(car): return PackedByteArray()
+	var data: PackedByteArray=storage.encode(car.global_transform)
+	# Invalid live state must reject the compound save, not silently delete a car.
+	return PackedByteArray([0]) if data.is_empty() else data
+func restore_snapshot(data: PackedByteArray) -> bool:
+	var decoded: Dictionary=storage.decode(data)
+	if not decoded.ok: return false
+	if driving:
+		_world.player.collision_layer=_player_layer;_world.player.collision_mask=_player_mask
+		_world.camera.transform=_camera_local;Engine.physics_ticks_per_second=_physics_ticks
+		driving=false
+	if is_instance_valid(car): car.free()
+	car=null
+	if decoded.present: _install_vehicle(_world,decoded.pose)
+	return true
+func _install_vehicle(world: Node,pose: Transform3D) -> void:
+	car=load("res://vehicle_demo/scenes/car.tscn").instantiate()
+	car.transform=pose;car.collision_layer=4;car.collision_mask=3
+	world.add_child(car)
+	for wheel in car.wheel_rays: wheel.collision_mask=3
+	car.set_controls_enabled(false);car.freeze=true;car.set_physics_process(false)
+	car.bind_streamed_world(world.terrain,world.structures)
+	_camera_follow=ClassDB.instantiate("NativeVehicleCamera")
 func ready_bounds(world: Node,bounds: AABB) -> bool:
 	return world.terrain.is_collision_region_ready(bounds) and world.structures.is_collision_region_ready(bounds)
 func spawn(world: Node) -> String:
@@ -24,14 +54,8 @@ func spawn(world: Node) -> String:
 	# Keep the ground below the initial chassis and reject walls/objects/player.
 	if bounds.has_point(world.player.global_position): return "Place vehicle farther from the player"
 	if not world.get_world_3d().direct_space_state.intersect_shape(query,1).is_empty(): return "Vehicle space is obstructed"
-	car=load("res://vehicle_demo/scenes/car.tscn").instantiate()
-	car.position=at;car.collision_layer=4;car.collision_mask=3
-	world.add_child(car)
-	for wheel in car.wheel_rays: wheel.collision_mask=3
-	car.set_controls_enabled(false);car.freeze=true;car.set_physics_process(false)
-	car.bind_streamed_world(world.terrain,world.structures)
-	_camera_follow=ClassDB.instantiate("NativeVehicleCamera")
-	return "Vehicle placed · E nearby to enter · session only"
+	_install_vehicle(world,Transform3D(Basis.IDENTITY,at))
+	return "Vehicle placed · E nearby to enter · F5 saves world"
 func enter(world: Node) -> bool:
 	if driving or not is_instance_valid(car) or world.player.global_position.distance_to(car.position)>3.5: return false
 	var ray:=PhysicsRayQueryParameters3D.create(world.player.global_position+Vector3.UP,car.position,3,[world.player.get_rid(),car.get_rid()])

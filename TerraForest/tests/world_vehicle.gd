@@ -23,6 +23,8 @@ func run() -> void:
 	var floor:=StaticBody3D.new();var collision:=CollisionShape3D.new();var box:=BoxShape3D.new();box.size=Vector3(40,.2,40)
 	collision.shape=box;floor.position.y=-.1;floor.add_child(collision);world.add_child(floor)
 	var session=load("res://addons/vehicle_runtime/world_vehicle.gd").new();world.add_child(session)
+	var persistence=load("res://addons/world_runtime/world_persistence.gd").new()
+	check(session.prepare(world,persistence),"vehicle component registers with world persistence")
 	await physics_frame;await physics_frame
 	world.terrain.available=false
 	check(session.spawn(world)=="Vehicle area is still loading" and session.car==null,"spawn rejects unavailable ground")
@@ -43,4 +45,14 @@ func run() -> void:
 	world.structures.available=true
 	check(session.exit_vehicle(world).begins_with("On foot") and not session.driving,"clear loaded exit restores walking")
 	check(world.camera.transform==original_camera and Engine.physics_ticks_per_second==old_ticks and world.player.collision_mask==1,"camera physics rate and collision restored")
+	session.car.position=Vector3(400,50,400);session.car.rotation=Vector3(.1,.3,.2)
+	var saved: PackedByteArray=session.capture_snapshot()
+	var pose: Transform3D=session.car.transform
+	check(persistence._capture().sections.vehicles==saved,"world capture includes vehicle")
+	check(session.restore_snapshot(saved) and session.car.transform.is_equal_approx(pose) and session.car.freeze and not session.car.is_physics_processing(),"restore recreates parked vehicle pose")
+	var id: int=session.car.get_instance_id()
+	check(not session.restore_snapshot(PackedByteArray([0])) and session.car.get_instance_id()==id,"invalid restore leaves live vehicle untouched")
+	session.car.position.x=-1
+	check(not session.storage.validate_snapshot(session.capture_snapshot()),"invalid live pose rejects save instead of removing vehicle")
+	check(session.restore_snapshot(PackedByteArray()) and session.car==null,"absent section removes old vehicle")
 	world.free();quit(0 if failures==0 else 1)

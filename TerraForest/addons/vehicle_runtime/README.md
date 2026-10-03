@@ -65,14 +65,23 @@ in place and clears speed; it resumes at rest after publication. Reset input
 remains usable while held. Multi-vehicle focus management still needs
 integration. The ordinary standalone demo remains unbound.
 
-Main world now uses world_vehicle.gd for one session-only vehicle: V places it
+Main world now uses world_vehicle.gd for one vehicle: V places it
 on nearby clear loaded ground; E enters within 3.5 m or exits below 1.5 m/s
 when either side has clear loaded capsule space. Walking/editing are suspended
 while occupied; terrain focus belongs to the vehicle and existing building/
 vegetation focus follows its occupant. Parked simulation is disabled. Vehicle
 collision uses layer 4, terrain/buildings layers 1/2. Driving uses 120 Hz physics
-and restores the previous rate on exit. Persistence, door animation and multiple
-vehicles are not integrated in this adapter.
+and restores the previous rate on exit. Door animation and multiple vehicles
+are not integrated in this adapter.
+
+NativeVehicleStorage validates a versioned 72-byte position/orientation record
+for the supplied vehicle. The vehicles section is registered with compound
+world persistence. Missing/empty sections mean no vehicle for older saves.
+Restoration creates a parked vehicle at rest, with simulation disabled until
+entry. Invalid live poses reject saving rather than producing an empty section.
+Cosmetic dents, momentum and occupied-seat state are not persisted. F5 on foot
+saves through the existing world pipeline; temporary-world rules still apply.
+Model instantiation currently occurs synchronously during restoration.
 
 NativeVehicleCamera now performs the main-world chase follow and a 0.25 m
 sphere sweep against terrain, buildings and other vehicle collision (mask 7).
