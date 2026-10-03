@@ -1,0 +1,10 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS stationary planning unchanged
+PASS current position loading retained
+PASS continuous fine corridor across high-speed lookahead
+PASS extreme speed cannot expand past bounded horizon
+PASS reverse travel preloads behind
+PASS overlapping corridor samples do not duplicate jobs
+PASS nonfinite travel rejected
+PASS stream scheduler consumes travel velocity

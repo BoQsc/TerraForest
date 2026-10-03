@@ -45,6 +45,7 @@ var _partition_serial: int = 0
 var planner: RefCounted
 var material: Material
 var focus := Vector3(960, 110, 1310)
+var travel_velocity := Vector3.ZERO
 var epoch: int = 0
 var world_ready: bool = false
 var require_collision: bool = true
@@ -912,6 +913,8 @@ func _plan_requests() -> Array[Vector3i]:
 	var plan: Dictionary
 	if backend.region_terrain and interaction_target.is_finite() and Time.get_ticks_usec()<interaction_target_until_us:
 		plan=planner.requests_targeted(focus,require_collision,interaction_target,tiles,split_state,visible_cut)
+	elif travel_velocity.is_finite() and travel_velocity.length_squared()>0.01:
+		plan=planner.requests_travel(focus,require_collision,travel_velocity,tiles,split_state,visible_cut)
 	else:
 		plan=planner.requests(focus,require_collision,tiles,split_state,visible_cut)
 	if not plan.ok:

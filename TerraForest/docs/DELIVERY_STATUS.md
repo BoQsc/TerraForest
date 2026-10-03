@@ -1,3 +1,7 @@
+## Directional terrain preloading - 2026-10-03
+
+Native requests_travel adds up to four lookahead samples at no more than 32 m spacing, covering two seconds of horizontal travel capped at 128 m. Current-position requests remain included and retain activation priority. TerrainStream consumes travel_velocity; the walking controller now supplies intended velocity, including when movement is blocked. Brush targeting retains precedence. Eight targeted checks and all 179 planner regressions passed. Evidence: evidence/terrain_travel/. This establishes request planning only: actual delivery latency, turns, braking and vehicle/world control handoff still require integration and measurement.
+
 ## Terrain collision region readiness - 2026-10-03
 
 TerrainStream.is_collision_region_ready now exposes a native all-cell bounds check over published fine collision columns. It requires every touched 16 m column, including the far boundary, and rejects nonfinite, negative-sized and out-of-world bounds. Published empty columns remain valid: this tests readiness, not solid ground. Ten targeted boundary/input cases and all 179 existing terrain planner checks passed. Evidence: evidence/terrain_collision_region/. This is an integration prerequisite; the vehicle demo does not yet call it, predictive loading/braking is not implemented, and no high-speed streamed-world claim is made.

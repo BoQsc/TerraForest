@@ -597,6 +597,7 @@ func _physics_process(delta: float) -> void:
 		return
 	terrain.focus = player.position
 	terrain.require_collision = not fly
+	terrain.travel_velocity = Vector3.ZERO
 	if benchmark_enabled:
 		return
 	if waiting_spawn or not terrain.world_ready or loading_active:
@@ -613,6 +614,7 @@ func _physics_process(delta: float) -> void:
 	input_vector = input
 	var speed: float = 9.9 if controls.sprint() else 5.5
 	var direction: Vector3 = player.basis * input
+	if not fly: terrain.travel_velocity=direction*speed
 	var before_motion: Vector3 = player.position
 	structure_motion_blocked = false
 	if fly:

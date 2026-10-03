@@ -11,6 +11,7 @@ class NativeTerrainPlanner : public godot::RefCounted {
 protected:
     static void _bind_methods();
 public:
+    godot::Dictionary requests_travel(godot::Vector3 focus,bool collision,godot::Vector3 velocity,const godot::Dictionary &tiles,const godot::Dictionary &split,const godot::Array &visible) const;
     bool collision_region_ready(godot::AABB bounds,const godot::Dictionary &active_leaves) const;
     godot::Dictionary requests(godot::Vector3 focus,bool collision,const godot::Dictionary &tiles,const godot::Dictionary &split,const godot::Array &visible) const;
     godot::Dictionary requests_targeted(godot::Vector3 focus,bool collision,godot::Vector3 target,const godot::Dictionary &tiles,const godot::Dictionary &split,const godot::Array &visible) const;
