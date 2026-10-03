@@ -13,6 +13,7 @@ static var _active_world: WeakRef
 var _started: bool = false
 var snapshot_restore_ok: bool = true
 var density_revision: int = 0
+var last_edit_outcome: Dictionary={}
 
 func _read_stats(data: PackedByteArray) -> void:
 	super._read_stats(data)
@@ -68,6 +69,11 @@ func request_surface_batch(points: PackedVector3Array, token: int) -> bool:
 	return backend.submit({"kind": "surface_batch", "points": points.duplicate(), "token": token, "epoch": epoch, "revision": published_revision})
 
 func _receive(result: Dictionary) -> void:
+	var tracks_edit: bool=result.get("kind","") in ["edit","edit_begin"] and pending_edit and result.get("epoch",-1)==epoch and result.get("ticket",-1)==edit_ticket
+	if tracks_edit:
+		var outcome: String="building"
+		if result.kind=="edit": outcome="rejected" if not Codec.reply_ok(result.reply) else ("unchanged" if result.get("no_change",false) else "building")
+		last_edit_outcome={"epoch":epoch,"ticket":edit_ticket,"status":outcome}
 	if result.get("kind", "") == "density_batch":
 		if result.epoch!=epoch or result.revision!=density_revision or pending_edit or foreground_brush or stopping or not world_ready:
 			result["status"]="stale";result["values"]=PackedFloat32Array()
@@ -87,9 +93,12 @@ func _receive(result: Dictionary) -> void:
 		surface_batch_ready.emit(result["token"], result["points"], result["normals"], result["epoch"], result["revision"])
 		return
 	super._receive(result)
+	if tracks_edit: last_edit_outcome["revision"]=density_revision
 
 func _commit_batch() -> void:
 	super._commit_batch()
+	if last_edit_outcome.get("epoch",-1)==epoch and last_edit_outcome.get("ticket",-1)==edit_ticket and last_edit_outcome.get("status")=="building":
+		last_edit_outcome["status"]="published";last_edit_outcome["revision"]=density_revision
 	var low: Vector3 = geometry_lo.min(edit_lo)
 	var high: Vector3 = geometry_hi.max(edit_hi)
 	region_changed.emit(AABB(low, high - low), published_revision)

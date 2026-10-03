@@ -1,0 +1,10 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS native terrain worker starts
+PASS repeated-section preparation admitted
+PASS changed section and identical no-op both complete
+PASS native no-op preserves revision and supplies explicit outcome
+PASS already prepared site can be submitted again
+PASS entire already prepared site completes without changing terrain
+FINAL_OUTCOME { "epoch": 0, "ticket": 4, "status": "unchanged", "revision": 1 }
+[TerrainRewrite] Temporary test world: save skipped

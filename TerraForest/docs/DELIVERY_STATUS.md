@@ -1,3 +1,11 @@
+## Explicit preparation edit outcomes and idempotent sections - 2026-10-03
+
+TerrainWorld now retains one bounded last_edit_outcome record with world epoch, edit ticket, status and density revision. Native unchanged/rejected results are distinguished from changed edits still building; changed edits become published only after main-thread batch commit. The site coordinator requires its exact ticket/epoch and a published or explicitly unchanged result. Published sections require one density revision increment; no-op sections require the same revision. A failed or incomplete publication cannot be counted as an unchanged success.
+
+Eleven coordinator checks passed, including explicit no-op completion and rejected-edit separation. Six real native-worker checks passed: grading a section twice completes both sections with only one revision increment, and resubmitting the entire already prepared two-section plan completes without any additional revision increment. Twenty-two full graphical editor checks passed at 1920x1080, exercising publication, paving, cancellation/retry and placement. Evidence: evidence/site_edit_outcomes/.
+
+This closes the previously recorded no-op preparation issue. The last-outcome record is in-memory and bounded, not a durable command journal. Cross-reload recovery, terrain undo and sustained 60 FPS remain incomplete.
+
 ## Integrated frontage street paving - 2026-10-03
 
 The editor preparation plan now appends asphalt street segments after stone grading for version-1 frontages with valid street-width metadata. It uses the native prefab rotation convention (about the cell centre), validates the corridor against actual foundation columns, divides wide streets into native-width strips and respects the combined 256-section limit. The entire grading/paving envelope participates in existing protection checks and the same sequential stop/resume controller. Ordinary prefabs gain no invented street. Missing/inconsistent metadata rejects with a regenerate-layout message. The built-in four-cottage frontage now carries its actual 8 m street width and 3 m setback metadata.

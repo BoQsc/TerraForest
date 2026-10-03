@@ -8,9 +8,13 @@ class Terrain:
 	var epoch:=0
 	var density_revision:=0
 	var calls:=0
+	var edit_ticket:=0
+	var last_edit_outcome: Dictionary={}
 	func construct_graded_bed(_a,_b,_width,_depth,_clearance,_material,_shoulder) -> bool:
-		calls+=1;pending_edit=true;return true
-	func finish() -> void: density_revision+=1;pending_edit=false
+		calls+=1;edit_ticket+=1;pending_edit=true;return true
+	func finish(changed: bool=true) -> void:
+		if changed: density_revision+=1
+		pending_edit=false;last_edit_outcome={"epoch":epoch,"ticket":edit_ticket,"status":"published" if changed else "unchanged","revision":density_revision}
 var failures:=0
 var obstruction:=""
 func guard(_bounds: AABB) -> String: return obstruction
@@ -39,4 +43,8 @@ func _initialize() -> void:
 	check(runner.status=="complete" and runner.completed==2 and terrain.calls==2,"resume applies only remaining edit")
 	runner.begin(plan,terrain,guard);runner.tick(terrain,guard);terrain.finish();terrain.density_revision+=1;runner.tick(terrain,guard)
 	check(runner.status=="failed" and terrain.calls==3,"unrelated terrain revision prevents remaining edits")
+	runner.begin(plan,terrain,guard);runner.tick(terrain,guard);terrain.finish(false);runner.tick(terrain,guard)
+	check(runner.completed==1 and runner.status=="running","confirmed no-op completes a section without revision increment")
+	terrain.finish(false);terrain.last_edit_outcome.status="rejected";runner.tick(terrain,guard)
+	check(runner.status=="failed" and runner.completed==1,"rejected edit is not mistaken for successful no-op")
 	terrain.free();quit(1 if failures else 0)

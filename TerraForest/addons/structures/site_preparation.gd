@@ -6,6 +6,7 @@ var epoch:=0
 var revision:=0
 var completed:=0
 var waiting:=false
+var ticket:=-1
 var stop_requested:=false
 var status:="idle"
 var reason:=""
@@ -32,7 +33,11 @@ func tick(terrain: Node,guard: Callable) -> void:
 	if waiting:
 		if terrain.pending_edit: return
 		waiting=false
-		if terrain.density_revision!=revision+1:
+		var outcome: Dictionary=terrain.last_edit_outcome
+		if outcome.get("epoch",-1)!=epoch or outcome.get("ticket",-1)!=ticket or outcome.get("status","") not in ["published","unchanged"]:
+			status="failed";reason="Terrain section failed or did not publish; survey again";return
+		var expected: int=revision+(1 if outcome.status=="published" else 0)
+		if terrain.density_revision!=expected or outcome.get("revision",-1)!=expected:
 			status="failed";reason="Unexpected terrain revision; survey again";return
 		revision=terrain.density_revision;completed+=1
 	if completed==plan.segments.size(): status="complete";return
@@ -43,4 +48,5 @@ func tick(terrain: Node,guard: Callable) -> void:
 	if not error.is_empty(): status="stopped";reason=error;return
 	var segment: Dictionary=plan.segments[completed]
 	waiting=terrain.construct_graded_bed(segment.start,segment.finish,segment.half_width,segment.depth,segment.clearance,segment.material,segment.shoulder)
+	if waiting: ticket=terrain.edit_ticket
 	if not waiting: status="stopped";reason="Terrain edit not accepted; retry when terrain is ready"

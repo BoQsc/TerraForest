@@ -429,3 +429,8 @@ The plan grades first, then applies bounded asphalt strips using the captured
 rotation. Its corridor must not overlap foundation columns. Missing metadata
 requires regenerating the frontage; ordinary prefabs receive only a foundation.
 Road intersections and links between separate sites are not generated.
+
+Preparation completion uses the exact terrain edit ticket and explicit
+published/unchanged outcome. Already graded sections complete without a
+revision increment; failed or unpublished edits stop the job. This permits
+idempotent repeated sections without confusing rejection with success.
