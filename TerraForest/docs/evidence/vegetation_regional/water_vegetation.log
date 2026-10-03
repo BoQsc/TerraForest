@@ -1,0 +1,14 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS water addon ready
+PASS partitioned lake bakes
+PASS native root mask excludes submerged soil but preserves dry and disconnected roots
+PASS column query index uses one byte per horizontal cell
+PASS no lakes preserve all roots
+PASS invalid volume rejected
+PASS placement batch has hard 512-root cap
+PASS water publication reconciles only intersecting vegetation owner
+PASS publication removes only submerged root and retains all dry IDs
+PASS unchanged water mask preserves renderer rows
+PASS lake removal only schedules intersecting owner
+PASS removal restores original deterministic vegetation candidates

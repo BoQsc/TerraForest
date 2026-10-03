@@ -1,0 +1,6 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS departed roots do not remain in renderer LOD selection
+PASS barren arrival generates one empty candidate owner per frame
+PASS barren generation makes bounded progress on the next frame
+PASS candidate admission preserves residency cap

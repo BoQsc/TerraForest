@@ -37,7 +37,7 @@ func _ready() -> void:
 	terrain.region_changed.connect(_region_changed)
 	terrain.reload_started.connect(reset)
 	if structures != null:
-		structures.changed.connect(_structures_changed)
+		structures.vegetation_changed.connect(_structure_region_changed)
 	if water!=null: water.exclusion_changed.connect(_water_changed)
 	_connected = true
 
@@ -182,6 +182,14 @@ func _structures_changed() -> void:
 	for key in _samples:
 		_reconcile[key] = true
 
+func _structure_region_changed(bounds: AABB) -> void:
+	if bounds.size==Vector3.ZERO:
+		_structures_changed();return
+	for key in _samples:
+		var sample: Dictionary=_samples[key]
+		if not sample.has("exclusion_bounds") or sample.exclusion_bounds.intersects(bounds):
+			_reconcile[key]=true
+
 func _water_changed(bounds: AABB) -> void:
 	for key: Vector2i in _samples:
 		var footprint:=AABB(Vector3(key.x*CELL_SIZE,bounds.position.y,key.y*CELL_SIZE),Vector3(CELL_SIZE,maxf(bounds.size.y,1.0),CELL_SIZE))
@@ -190,6 +198,11 @@ func _water_changed(bounds: AABB) -> void:
 func _publish_samples(key: Vector2i) -> void:
 	var sample: Dictionary = _samples[key]
 	var transforms: Array[Transform3D] = sample["transforms"]
+	if structures!=null and not sample.has("exclusion_bounds") and not transforms.is_empty():
+		var prototype: AABB=vegetation.placement_bounds()
+		var bounds: AABB=transforms[0]*prototype
+		for i in range(1,transforms.size()): bounds=bounds.merge(transforms[i]*prototype)
+		sample["exclusion_bounds"]=bounds
 	var mask := PackedByteArray()
 	if structures != null:
 		mask = structures.overlap_mask(transforms, vegetation.placement_bounds())
@@ -231,8 +244,8 @@ func _region_changed(bounds: AABB, _revision: int) -> void:
 func _exit_tree() -> void:
 	if is_instance_valid(water) and water.exclusion_changed.is_connected(_water_changed):
 		water.exclusion_changed.disconnect(_water_changed)
-	if is_instance_valid(structures) and structures.changed.is_connected(_structures_changed):
-		structures.changed.disconnect(_structures_changed)
+	if is_instance_valid(structures) and structures.vegetation_changed.is_connected(_structure_region_changed):
+		structures.vegetation_changed.disconnect(_structure_region_changed)
 	if _connected and is_instance_valid(terrain):
 		terrain.surface_batch_ready.disconnect(_surface_ready)
 		terrain.region_changed.disconnect(_region_changed)

@@ -68,6 +68,7 @@ void NativeBlockWorld::_bind_methods() {
     ClassDB::bind_method(D_METHOD("restore_snapshot","bytes"),&NativeBlockWorld::restore_snapshot);
     ClassDB::bind_method(D_METHOD("create_showcase"),&NativeBlockWorld::create_showcase);
     ADD_SIGNAL(MethodInfo("changed"));
+    ADD_SIGNAL(MethodInfo("cells_changed",PropertyInfo(Variant::AABB,"bounds")));
 }
 uint16_t NativeBlockWorld::cell(int x,int y,int z) const {
     auto it=chunks.find(key_for(x,y,z)); return it==chunks.end()?0:it->second.cells[index(x,y,z)];
@@ -133,11 +134,14 @@ bool NativeBlockWorld::apply_cells(const PackedInt32Array &records,bool record_h
     int final_count=int(chunks.size());
     for(auto &entry:staged) final_count+=(entry.second.count>0)-(chunks.count(entry.first)>0);
     if(final_count>MAX_CHUNKS) return false;
+    AABB changed_bounds;bool has_bounds=false;
     for(auto &entry:staged) {
         auto old=chunks.find(entry.first);
         if(old!=chunks.end()&&old->second.cells==entry.second.cells) continue;
         if(old==chunks.end()&&entry.second.count==0) continue;
         auto k=entry.first; changed=true;
+        AABB chunk_bounds(Vector3(k.x*16,k.y*16,k.z*16),Vector3(16,16,16));
+        changed_bounds=has_bounds?changed_bounds.merge(chunk_bounds):chunk_bounds;has_bounds=true;
         if(entry.second.count) chunks[k]=std::move(entry.second); else chunks.erase(k);
         invalidate(k);
         // Halo dependencies are face neighbours. Conservatively invalidate all six.
@@ -148,6 +152,7 @@ bool NativeBlockWorld::apply_cells(const PackedInt32Array &records,bool record_h
     if(changed) {
         if(record_history)remember_edit(std::move(changes));
         set_process(true);
+        emit_signal("cells_changed",changed_bounds);
     }
     return true;
 }

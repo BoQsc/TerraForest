@@ -1,5 +1,7 @@
 extends Node3D
 signal changed
+signal vegetation_changed(bounds: AABB)
+var _block_change_bounds:=AABB()
 ## Scene/persistence integration only. Storage, validation and rendering are native.
 var blocks: Node3D
 var _models: Dictionary = {}
@@ -51,9 +53,15 @@ func _exit_tree() -> void:
 func _mark_dirty() -> void:
 	_dirty = true
 	_cached_storage = PackedByteArray()
+	var bounds:=_block_change_bounds;_block_change_bounds=AABB()
+	vegetation_changed.emit(bounds)
 	changed.emit()
 
+func _block_cells_changed(bounds: AABB) -> void:
+	_block_change_bounds=blocks.global_transform*bounds
+
 func _exclusion_changed() -> void:
+	vegetation_changed.emit(AABB())
 	changed.emit()
 
 func overlap_mask(transforms: Array[Transform3D], bounds: AABB) -> PackedByteArray:
@@ -73,6 +81,7 @@ func prepare() -> bool:
 	blocks.name = "Blocks"
 	add_child(blocks)
 	blocks.changed.connect(_mark_dirty)
+	blocks.cells_changed.connect(_block_cells_changed)
 	_empty_blocks = blocks.capture_snapshot()
 	_codec = ClassDB.instantiate("NativeStructuresSnapshot")
 	_queries = ClassDB.instantiate("NativeStructureQueries")
