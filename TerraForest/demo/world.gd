@@ -151,6 +151,11 @@ func _show_lake_notice(text: String) -> void:
 	_message(text)
 
 func _capture_player_pose() -> PackedByteArray:
+	if world_vehicle.driving:
+		var feet:=world_vehicle.safe_exit_position(self)
+		var captured: PackedByteArray=player_pose.encode(feet,wrapf(yaw,-PI,PI),pitch,false,player_hud.active_item) if feet.is_finite() else PackedByteArray()
+		# Reject the compound save if no safe on-foot restore point exists.
+		return captured if not captured.is_empty() else PackedByteArray([0])
 	if not loading_active and not waiting_spawn and not world_vehicle.driving:
 		var captured: PackedByteArray=player_pose.encode(player.position,wrapf(yaw,-PI,PI),pitch,fly,player_hud.active_item)
 		if not captured.is_empty(): _saved_pose=captured
@@ -479,7 +484,10 @@ func _unhandled_input(event: InputEvent) -> void:
 	if player_hud.inventory_open: return
 	if world_vehicle.driving:
 		if event is InputEventKey and event.pressed and not event.echo:
-			if event.physical_keycode==KEY_E:
+			if event.physical_keycode==KEY_F5 and app_focused and not loading_active and not shutdown_requested:
+				if world_vehicle.safe_exit_position(self).is_finite(): terrain.save_world()
+				else: _show_lake_notice("Cannot save here · move beside clear, loaded ground")
+			elif event.physical_keycode==KEY_E:
 				_show_lake_notice(world_vehicle.exit_vehicle(self));_clear_motion()
 			elif event.physical_keycode==KEY_ESCAPE:
 				Input.mouse_mode=Input.MOUSE_MODE_VISIBLE if Input.mouse_mode==Input.MOUSE_MODE_CAPTURED else Input.MOUSE_MODE_CAPTURED
@@ -700,7 +708,7 @@ func _process(delta: float) -> void:
 		if crosshair!=null: crosshair.visible=not _vehicle_ui_active
 		if _vehicle_ui_active:
 			_walking_help=help.text
-			help.text="W / S  Accelerate / Brake or reverse    A / D  Steer    Space  Handbrake    Shift  Boost\nE  Exit when stopped    R  Reset vehicle    Esc  Release mouse\nExit to save with F5. Vehicle restores parked; cosmetic dents are not saved."
+			help.text="W / S  Accelerate / Brake or reverse    A / D  Steer    Space  Handbrake    Shift  Boost\nE  Exit when stopped    R  Reset vehicle    Esc  Release mouse\nF5 Save · reload on foot beside the parked vehicle. Cosmetic dents are not saved."
 		else: help.text=_walking_help
 	super._process(delta)
 	road_palette.panel.visible=not world_vehicle.driving and not structure_mode and not model_tool.active and not loading_active and not shutdown_requested and not player_hud.inventory_open and Input.mouse_mode==Input.MOUSE_MODE_VISIBLE

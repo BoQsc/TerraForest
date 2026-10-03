@@ -69,9 +69,8 @@ func enter(world: Node) -> bool:
 	car.freeze=false;car.set_controls_enabled(true);car.set_physics_process(true)
 	driving=true
 	return true
-func exit_vehicle(world: Node) -> String:
-	if not driving: return ""
-	if car.linear_velocity.length()>1.5: return "Stop the vehicle before exiting"
+func safe_exit_position(world: Node) -> Vector3:
+	if not is_instance_valid(car): return Vector3.INF
 	for side in [1.0,-1.0]:
 		var desired: Vector3=car.position+car.global_basis.x*side*2.8
 		var ray:=PhysicsRayQueryParameters3D.create(desired+Vector3.UP*2,desired-Vector3.UP*3,3,[car.get_rid()])
@@ -83,14 +82,20 @@ func exit_vehicle(world: Node) -> String:
 		var query:=PhysicsShapeQueryParameters3D.new();query.shape=capsule;query.transform=Transform3D(Basis.IDENTITY,feet+Vector3.UP*.9);query.collision_mask=7
 		query.exclude=[world.player.get_rid()]
 		if not world.get_world_3d().direct_space_state.intersect_shape(query,1).is_empty(): continue
-		car.set_controls_enabled(false);car.freeze=true;car.set_physics_process(false)
-		world.player.position=feet;world.player.velocity=Vector3.ZERO
-		world.player.collision_layer=_player_layer;world.player.collision_mask=_player_mask
-		world.camera.transform=_camera_local;driving=false
-		Engine.physics_ticks_per_second=_physics_ticks
-		world.terrain.focus=feet;world.terrain.travel_velocity=Vector3.ZERO
-		return "On foot · E nearby to enter vehicle"
-	return "No clear, loaded exit beside the vehicle"
+		return feet
+	return Vector3.INF
+func exit_vehicle(world: Node) -> String:
+	if not driving: return ""
+	if car.linear_velocity.length()>1.5: return "Stop the vehicle before exiting"
+	var feet:=safe_exit_position(world)
+	if not feet.is_finite(): return "No clear, loaded exit beside the vehicle"
+	car.set_controls_enabled(false);car.freeze=true;car.set_physics_process(false)
+	world.player.position=feet;world.player.velocity=Vector3.ZERO
+	world.player.collision_layer=_player_layer;world.player.collision_mask=_player_mask
+	world.camera.transform=_camera_local;driving=false
+	Engine.physics_ticks_per_second=_physics_ticks
+	world.terrain.focus=feet;world.terrain.travel_velocity=Vector3.ZERO
+	return "On foot · E nearby to enter vehicle"
 func _exit_tree() -> void:
 	if driving: Engine.physics_ticks_per_second=_physics_ticks
 func update(world: Node,delta: float) -> void:

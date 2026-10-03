@@ -27,6 +27,13 @@ func run() -> void:
 	if not game.world_vehicle.enter(game): finish(game,false,"world vehicle entry");return
 	game._clear_motion()
 	for tick in 120: await physics_frame
+	var saved_player: PackedByteArray=game._capture_player_pose()
+	var decoded_player: Dictionary=game.player_pose.decode(saved_player)
+	var seated_save_ok: bool=decoded_player.get("ok",false) and decoded_player.has("position") and decoded_player.position.distance_to(car.position)<4 and game.world_vehicle.driving
+	game.vegetation._collision_sync_ok=false
+	seated_save_ok=seated_save_ok and not game.player_pose.validate_snapshot(game._capture_player_pose())
+	game.vegetation._collision_sync_ok=true
+	print("SEATED_SAVE ",{"passed":seated_save_ok,"restore_pose":decoded_player,"driving":game.world_vehicle.driving})
 	var start: Vector3=car.position
 	var press:=InputEventKey.new();press.keycode=KEY_W;press.physical_keycode=KEY_W;press.pressed=true
 	Input.parse_input_event(press);Input.flush_buffered_events()
@@ -50,4 +57,4 @@ func run() -> void:
 	await process_frame;await process_frame
 	var restored: bool=not game.world_vehicle.driving and game.player_hud.visible and game.player_hud.enabled and game.help.text==walking_help
 	print("WORLD_VEHICLE_EXIT ",{"passed":restored,"message":exit_message})
-	finish(game,passed and restored,"main-world placement driving exit and UI restoration")
+	finish(game,passed and restored and seated_save_ok,"main-world placement driving seated save exit and UI restoration")
