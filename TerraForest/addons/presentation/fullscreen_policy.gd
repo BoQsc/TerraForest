@@ -24,3 +24,13 @@ static func measurement(window: Window) -> Dictionary:
 	var mode: int = DisplayServer.window_get_mode()
 	var fullscreen: bool = mode in [DisplayServer.WINDOW_MODE_FULLSCREEN, DisplayServer.WINDOW_MODE_EXCLUSIVE_FULLSCREEN]
 	return {"viewport": [viewport.x, viewport.y], "window_size": [DisplayServer.window_get_size().x, DisplayServer.window_get_size().y], "fullscreen": fullscreen, "window_mode": mode, "render_scale": window.scaling_3d_scale, "headless": DisplayServer.get_name() == "headless", "fair_graphical_sample": viewport == RESOLUTION and fullscreen and is_equal_approx(window.scaling_3d_scale, 1.0)}
+
+static func refresh_frame_cap(active_cap: int,background_cap: int) -> void:
+	# Embedded GUI focus is not OS application focus. A focused native dialog
+	# also belongs to the application. Call after focus signals have settled.
+	var focused:=DisplayServer.get_name()=="headless"
+	if not focused:
+		for id: int in DisplayServer.get_window_list():
+			if DisplayServer.window_get_mode(id)!=DisplayServer.WINDOW_MODE_MINIMIZED and DisplayServer.window_is_focused(id):
+				focused=true;break
+	Engine.max_fps=active_cap if focused else background_cap

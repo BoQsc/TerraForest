@@ -134,7 +134,9 @@ func _ready() -> void:
 	construction_palette.preparation_stop_requested.connect(site_preparation.cancel)
 	construction_palette.survey_dialog.canceled.connect(_cancel_site_actions)
 	construction_palette.survey_dialog.confirmed.connect(_cancel_site_actions)
-	construction_palette.survey_dialog.focus_exited.connect(func(): Engine.max_fps=background_fps)
+	for dialog: Window in [construction_palette.survey_dialog,construction_palette.frontage_dialog]:
+		dialog.focus_entered.connect(func(): _refresh_frame_cap.call_deferred())
+		dialog.focus_exited.connect(func(): _refresh_frame_cap.call_deferred())
 	player_hud.tool_requested.connect(_equip_player_tool)
 	player_hud.menu_changed.connect(func(_open: bool): _clear_motion())
 	_sync_player_tool()
@@ -887,8 +889,6 @@ func _physics_process(delta: float) -> void:
 func _process(delta: float) -> void:
 	var frame_begin:=Time.get_ticks_usec()
 	site_preview.visible=site_preview.vertices>0 and _site_selection_current() and _survey_plan.get("epoch",-1)==terrain.epoch and structure_mode and not model_tool.active and not world_vehicle.driving and not loading_active and not player_hud.inventory_open
-	# A focused native survey dialog belongs to this app, not the background.
-	if construction_palette.survey_dialog!=null and construction_palette.survey_dialog.visible and construction_palette.survey_dialog.has_focus(): Engine.max_fps=max_fps
 	var frontage_result: Dictionary=prefab_library.poll_frontage()
 	if not frontage_result.is_empty(): _accept_composed_prefab(frontage_result)
 	_advance_frontage_placement()

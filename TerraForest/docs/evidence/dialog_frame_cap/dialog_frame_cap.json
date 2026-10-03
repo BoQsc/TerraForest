@@ -1,0 +1,90 @@
+{
+  "checks": [
+    {
+      "cap": 60,
+      "expected": 60,
+      "name": "focused dialog embedded=true cycle=0",
+      "passed": true,
+      "window_mode": 3
+    },
+    {
+      "cap": 60,
+      "expected": 60,
+      "name": "closed dialog embedded=true cycle=0",
+      "passed": true,
+      "window_mode": 3
+    },
+    {
+      "cap": 60,
+      "expected": 60,
+      "name": "focused dialog embedded=true cycle=1",
+      "passed": true,
+      "window_mode": 3
+    },
+    {
+      "cap": 60,
+      "expected": 60,
+      "name": "closed dialog embedded=true cycle=1",
+      "passed": true,
+      "window_mode": 3
+    },
+    {
+      "cap": 60,
+      "expected": 60,
+      "name": "focused dialog embedded=false cycle=0",
+      "passed": true,
+      "window_mode": 3
+    },
+    {
+      "cap": 60,
+      "expected": 60,
+      "name": "closed dialog embedded=false cycle=0",
+      "passed": true,
+      "window_mode": 3
+    },
+    {
+      "cap": 60,
+      "expected": 60,
+      "name": "focused dialog embedded=false cycle=1",
+      "passed": true,
+      "window_mode": 3
+    },
+    {
+      "cap": 60,
+      "expected": 60,
+      "name": "closed dialog embedded=false cycle=1",
+      "passed": true,
+      "window_mode": 3
+    },
+    {
+      "cap": 15,
+      "expected": 15,
+      "name": "minimized application",
+      "passed": true,
+      "window_mode": 1
+    },
+    {
+      "cap": 60,
+      "expected": 60,
+      "name": "restored application",
+      "passed": true,
+      "window_mode": 3
+    }
+  ],
+  "failures": 0,
+  "presentation": {
+    "fair_graphical_sample": true,
+    "fullscreen": true,
+    "headless": false,
+    "render_scale": 1.0,
+    "viewport": [
+      1920,
+      1080
+    ],
+    "window_mode": 3,
+    "window_size": [
+      1920,
+      1080
+    ]
+  }
+}

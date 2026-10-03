@@ -1,3 +1,11 @@
+## Application focus frame-cap policy - 2026-10-03
+
+Frame-cap selection now queries OS focus across application windows after focus events settle. Embedded control focus loss no longer immediately assigns the background cap. Both survey and frontage dialogs use the policy, replacing the survey-only per-frame override. Player movement still clears on main-window focus loss. Minimized windows are excluded even when the platform reports them focused. There is no added per-frame window scan.
+
+The short graphical dialog_frame_cap test passed ten event-driven checks: two open/close cycles each for embedded and native dialogs retained 60 FPS caps; minimizing selected 15 FPS and restoration returned to 60 without a manual refresh. The final window was 1920x1080 fullscreen at scale 1.0. Background behavior was verified through minimization, not a physical Alt-Tab test. The world editor test passed all 27 checks; its 206-frame capture measured p95 18.839 ms and maximum 54.693 ms. Timing varies with streaming and this is not a sustained-60-FPS claim.
+
+Evidence: docs/evidence/dialog_frame_cap.
+
 ## Dialog focus presentation hitch - 2026-10-03
 
 The presentation policy now sets VSync only when the reported mode is not already enabled. Previously, every window focus return reapplied the mode, including returns from embedded survey dialogs. The fix preserves enabled VSync and the requested fullscreen resolution.

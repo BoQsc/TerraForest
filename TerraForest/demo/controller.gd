@@ -796,17 +796,20 @@ func _process(delta: float) -> void:
 		hud.text += "Nearby-first streaming: %d/%d outer regions | TEMPORARY 320 m view distance\n" % [terrain.root_coverage, terrain.roots.size()]
 	hud.text += "Tool %d | radius %.1f m | %s | %s | player %.1f, %.1f, %.1f | %s" % [tool, radius, ["Stone", "Wood", "Metal"][material_id - 1], "FLY" if fly else "WALK 5.5 m/s", player.position.x, player.position.y, player.position.z, "collision ready" if terrain.player_region_ready(player.position) else "waiting for fine collision"]
 
+func _refresh_frame_cap() -> void:
+	Presentation.refresh_frame_cap(max_fps,background_fps)
+
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_WINDOW_FOCUS_OUT:
 		app_focused = false
 		_clear_motion()
 		# Do not render 60 copies of an unfocused game window every second.
 		# No resolution change or stale motion queue. Restore the requested cap on focus.
-		Engine.max_fps = background_fps
+		_refresh_frame_cap.call_deferred()
 	elif what == NOTIFICATION_WM_WINDOW_FOCUS_IN:
 		Presentation.restore_vsync()
 		app_focused = true
-		Engine.max_fps = max_fps
+		_refresh_frame_cap.call_deferred()
 	if what == NOTIFICATION_WM_CLOSE_REQUEST and not shutdown_requested:
 		shutdown_requested = true
 		_close_journal()
