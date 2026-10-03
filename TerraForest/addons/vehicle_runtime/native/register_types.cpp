@@ -2,6 +2,7 @@
 #include "driving.hpp"
 #include "suspension.hpp"
 #include "damage.hpp"
+#include "accessories.hpp"
 #include <godot_cpp/godot.hpp>
 #include <godot_cpp/core/class_db.hpp>
 using namespace godot;
@@ -10,6 +11,7 @@ static void initialize(ModuleInitializationLevel level) {
         GDREGISTER_CLASS(terraforest::NativeDrivingPolicy);
         GDREGISTER_CLASS(terraforest::NativeVehicleSuspension);
         GDREGISTER_CLASS(terraforest::NativeVehicleDamage);
+        GDREGISTER_CLASS(terraforest::NativeVehicleAccessories);
     }
 }
 static void terminate(ModuleInitializationLevel) {}

@@ -3,13 +3,21 @@ extends "res://vehicle_demo/scripts/car.gd"
 var driving_policy: RefCounted
 var suspension: RefCounted
 var visual_damage: RefCounted
+var accessories: RefCounted
 func _ready() -> void:
 	GDExtensionManager.load_extension("res://addons/vehicle_runtime/vehicle_runtime.gdextension")
 	driving_policy=ClassDB.instantiate("NativeDrivingPolicy")
 	suspension=ClassDB.instantiate("NativeVehicleSuspension")
 	visual_damage=ClassDB.instantiate("NativeVehicleDamage")
+	accessories=ClassDB.instantiate("NativeVehicleAccessories")
 	super._ready()
+	if not accessories.configure(_accessory_mounts,PackedFloat32Array(_accessory_profiles)):
+		push_error("Vehicle accessory configuration failed")
 	for ray in wheel_rays: ray.enabled=false # Native pass explicitly updates once.
+func _reset_accessory_motion() -> void:
+	if accessories!=null: accessories.reset(linear_velocity,angular_velocity)
+func _update_accessory_motion(delta: float) -> void:
+	accessories.step(global_basis,linear_velocity,angular_velocity,delta,accessory_motion_enabled,accessory_motion_strength)
 func _build_dented_mesh(visual: MeshInstance3D,world_point: Vector3,dent_direction: Vector3,radius: float,depth: float) -> ArrayMesh:
 	return visual_damage.dent(visual.mesh,visual.global_transform,world_point,dent_direction,radius,depth)
 func _update_wheel_contacts() -> void:

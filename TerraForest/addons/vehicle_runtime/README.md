@@ -34,3 +34,12 @@ impacts affecting no vertices return null. Vertex normals retain the original
 demo behavior (not regenerated); this is not a skinned-mesh or blend-shape
 damage pipeline. Mesh creation/upload remains synchronous, so this does not
 establish a bounded cost for arbitrarily large meshes or simultaneous crashes.
+
+NativeVehicleAccessories owns accessory spring state and cached coefficients.
+Configure once with up to 256 mount nodes and matching nonnegative profiles;
+step once per physics tick. Node instance IDs allow deleted mounts to be skipped
+safely. Disabled motion resets transforms once, then only updates the previous
+vehicle velocities. Reset after teleport/vehicle reset. Configuration is
+transactional; mismatched arrays return false without replacing existing state.
+This moves mount animation calculations to C++; distance-based activation and
+rendering LOD remain future work.

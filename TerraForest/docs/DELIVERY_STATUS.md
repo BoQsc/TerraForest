@@ -1,3 +1,7 @@
+## Native vehicle accessory motion - 2026-10-03
+
+Eleven mounted accessory springs now use native state, cached spring coefficients and one adapter call per physics tick. Disabled animation resets transforms once instead of every tick. A 600-tick comparison at 120/60 Hz, including toggles and reset, matched original mount transforms exactly; deleted-node handling and mismatched configuration were exercised. The short fullscreen 1080p Forward+ smoke drive also passed; screenshot inspected. Evidence: evidence/vehicle_accessories/. Fleet LOD, world integration and sustained performance remain incomplete.
+
 ## Native vehicle cosmetic damage - 2026-10-03
 
 Crash dent vertex work now runs in NativeVehicleDamage, with conservative bounds rejection and copy-on-write vertex changes. Original scripts still orchestrate damage events and repair. A short headless comparison matched 6,266 vertices on 10 damageable meshes exactly, preserved source vertices/materials, and rejected distant/zero-radius impacts. One sample measured native 1,504 us versus script 3,257 us; this is not a fleet or sustained-performance result. Evidence: evidence/vehicle_damage/vehicle_damage.log. Static ArrayMesh only; original normals are retained and mesh upload remains synchronous.
