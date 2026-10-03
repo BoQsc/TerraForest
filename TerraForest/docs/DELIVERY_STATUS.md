@@ -1,3 +1,13 @@
+## Native sparse vegetation updates - 2026-10-03
+
+The vegetation extension now runs sparse instance slot removal/insertion and transform/fade-data updates in C++. Full cell rebuilds, allocation and transition completion still use the existing renderer; dictionary-based scene-thread state remains. The original flush loop is available through --scripted-vegetation-flush for comparisons. Both native binaries were rebuilt against the prebuilt SDK.
+
+The 2000-tree, 180-frame adversarial parity test now compares logical render slots and packets each frame, plus MultiMesh transforms/custom data at checkpoints. It passed deletion/reuse, removal of all roots with zero live cache payload, threshold behavior and fade-time wrap at 4096 seconds. The final CPU fixture measured 358999 us scripted flush versus 300966 us native, including unchanged full rebuild work (about 16 percent less time). This is a modest improvement, not a complete renderer redesign.
+
+The 1920x1080 fullscreen Forward+ editor test passed all 27 checks and confirmed native flush on every captured frame. The 178-frame capture measured p95 18.881 ms and max 39.001 ms; max flush phase was 11.863 ms. The earlier capture had max flush 19.133 ms, but streaming workloads differ, so this is observational evidence rather than a controlled throughput guarantee. Sustained 60 FPS is still unproven.
+
+Evidence: docs/evidence/vegetation_native_flush.
+
 ## Application focus frame-cap policy - 2026-10-03
 
 Frame-cap selection now queries OS focus across application windows after focus events settle. Embedded control focus loss no longer immediately assigns the background cap. Both survey and frontage dialogs use the policy, replacing the survey-only per-frame override. Player movement still clears on main-window focus loss. Minimized windows are excluded even when the platform reports them focused. There is no added per-frame window scan.

@@ -35,6 +35,7 @@ func _frame() -> void:
 		rows[-1]["vegetation_phases_us"]=Array(host.vegetation.renderer.phase_us)
 		rows[-1]["vegetation_stats"]=host.vegetation.renderer.stats.duplicate()
 		rows[-1]["native_selection"]=host.vegetation.renderer.native_selection!=null
+		rows[-1]["native_flush"]=host.vegetation.renderer.native_selection!=null and host.vegetation.renderer.native_flush_enabled
 		rows[-1]["embedded_dialog"]=host.construction_palette.survey_dialog.is_embedded()
 		rows[-1]["before_process_ms"]=(process_started-previous)/1000.0
 		rows[-1]["process_to_draw_ms"]=(draw_started-process_started)/1000.0

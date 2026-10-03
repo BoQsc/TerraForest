@@ -11,6 +11,7 @@
 using namespace godot;
 namespace terraforest {
 void NativeVegetationSelection::_bind_methods(){
+ ClassDB::bind_method(D_METHOD("flush","renderer"),&NativeVegetationSelection::flush);
  ClassDB::bind_method(D_METHOD("select","renderer","eye","projection","time","instant"),&NativeVegetationSelection::select);
  ClassDB::bind_method(D_METHOD("clear"),&NativeVegetationSelection::clear);
  ClassDB::bind_method(D_METHOD("erase","id"),&NativeVegetationSelection::erase);

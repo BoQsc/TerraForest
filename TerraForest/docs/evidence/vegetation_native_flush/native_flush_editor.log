@@ -1,0 +1,54 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.3.289 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce GTX 1060 with Max-Q Design
+
+[TerrainRewrite] New world
+[TerrainRewrite] New world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+PASS world starts
+PASS built-in frontage supplies its real street metadata
+PASS editor camera has a real terrain target
+PASS button starts asynchronous survey and prevents duplicate requests
+PASS survey displays a usable grade proposal
+PASS survey changes neither terrain nor structures
+PASS survey builds one spatial preview mesh
+PASS unchanged frames reuse preview geometry
+PASS leaving construction hides the site outline
+PASS returning to construction restores cached preview
+PASS visible construction panel fits 1080p
+PANEL_RECT [P: (1500.0, 36.0), S: (386.0, 941.0)]
+SURVEY_DIALOG Origin X/Z: 807 / 1310 · Rotation: 0°
+Suggested base Y: 48 m (allowed 39–53 m)
+Ground elevation: 46.8–49.1 m · 396 foundation columns
+
+Prepare grades the whole rectangular site, including gaps,
+with up to 8 m fill, 12 m cut and 8 m sloped fill shoulders.
+Terrain grading has no block undo. Buildings are not placed.
+Then paves the 8 m street with asphalt before placement.
+Outline: green foundation · orange fill · cyan asphalt.
+PREPARATION_GUARD Move outside the entire foundation and its shoulders. state=idle
+PASS player inside complete foundation envelope rejects preparation
+PREPARATION_ADMISSION running 
+PASS editor admits preparation after player moves clear
+PASS all real terrain grading sections publish
+PASS editor preparation includes asphalt after the stone foundation
+PASS preparation changes terrain only by its accepted edit count
+PASS completed site can be reopened for exact placement
+[TerrainRewrite] Checking foundation support…
+PASS dialog placement captures prepared target despite changed aim
+PASS closing dialog cancels pending validation without inserting blocks
+[TerrainRewrite] Checking foundation support…
+[TerrainRewrite] Street frontage · 4 cottages (ungraded) placed · F5 saves world
+PASS prepared site places exactly one prefab after full validation
+PASS committed building invalidates the old preparation preview
+SITE_FRAME_PROBE { "frames": 178, "p95_ms": 18.881, "max_ms": 39.001, "notes": "Post-draw wall intervals include cap/wait time. Stage labels can nest and must not be summed across labels. GPU timers may lag and zero is unavailable, not zero work. 1200-frame capture limit." }
+PASS focused survey dialog retains 60 FPS cap
+PASS repeated placement cannot duplicate the prepared building
+PASS replacement survey really starts before rotation invalidation
+PASS rotation change invalidates in-flight proposal
+PASS existing structure inside plan rejects grading
+Vehicle controller V3 ready: no-slip bicycle driving + no-pivot full-lock launch grip budget.
+Vehicle runtime visuals ready: 27 fixed body meshes + animated driver door + 4 wheel meshes.
+Visual mesh damage: enabled (F8 toggle, F9 repair).
+Mounted accessory motion: enabled (F10 toggle, 11 moving items).
+PASS parked vehicle inside plan rejects grading
+[TerrainRewrite] Temporary test world: save skipped

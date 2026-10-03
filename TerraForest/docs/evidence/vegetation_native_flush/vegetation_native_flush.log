@@ -1,0 +1,6 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+NATIVE_FLUSH_PARITY { "passed": true, "script_flush_us": 356422, "native_flush_us": 300409 }
+NATIVE_FLUSH_EMPTY_CELLS true
+NATIVE_SELECTION_BOUNDARIES true
+NATIVE_SELECTION_PARITY { "passed": true, "bounded": true, "roots": 2000, "frames": 180, "script_selection_us": 2119811, "native_selection_us": 697448, "scope": "Same renderer and meshes; native selection versus scripted selection, no GPU performance claim." }

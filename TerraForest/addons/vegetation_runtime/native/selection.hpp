@@ -17,6 +17,7 @@ protected: static void _bind_methods();
 public:
  void clear();
  void erase(int64_t id);
+ void flush(godot::Object *renderer);
  void select(godot::Object *renderer,godot::Vector3 eye,double projection,double time,bool instant);
  godot::Dictionary queue_stats() const;
 };

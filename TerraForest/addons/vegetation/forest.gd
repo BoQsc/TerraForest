@@ -10,6 +10,7 @@ var meshes: Array[ArrayMesh]=[]
 # not a GPU driver transfer measurement and never added to it again.
 var profiling_enabled: bool=false
 var native_selection: RefCounted
+var native_flush_enabled: bool=not "--scripted-vegetation-flush" in OS.get_cmdline_user_args()
 func _init() -> void:
 	if "--scripted-vegetation-selection" in OS.get_cmdline_user_args(): return
 	if not ClassDB.class_exists("NativeVegetationSelection") and FileAccess.file_exists("res://addons/vegetation_runtime/vegetation_runtime.gdextension"):
@@ -424,6 +425,9 @@ func _rebuild(cell: Dictionary,rows: Array)->void:
 		stats["uploaded_bytes"]=int(stats["uploaded_bytes"])+buffer.size()*4
 
 func _flush()->void:
+	if native_selection!=null and native_flush_enabled:
+		native_selection.flush(self)
+		return
 	var start: int=Time.get_ticks_usec()
 	for key in dirty:
 		if not cells.has(key):continue
