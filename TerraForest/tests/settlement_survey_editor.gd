@@ -62,6 +62,7 @@ func run() -> void:
 	print("PREPARATION_GUARD ",game.construction_palette.survey_dialog.dialog_text," state=",game.site_preparation.status)
 	check(game.site_preparation.status!="running" and game.terrain.density_revision==revision and "outside" in game.construction_palette.survey_dialog.dialog_text,"player inside complete foundation envelope rejects preparation")
 	game.player.global_position=original_player-Vector3(100,0,0)
+	var frame_probe=preload("res://tests/site_frame_probe.gd").new();frame_probe.start(game)
 	game.construction_palette.preparation_requested.emit()
 	print("PREPARATION_ADMISSION ",game.site_preparation.status," ",game.site_preparation.reason)
 	check(game.site_preparation.status=="running","editor admits preparation after player moves clear")
@@ -76,6 +77,7 @@ func run() -> void:
 	check(game.construction_palette.place_prepared_button.visible,"completed site can be reopened for exact placement")
 	game.camera.global_position+=Vector3(20,0,0)
 	game.construction_palette.survey_dialog.custom_action.emit("place_prepared")
+	frame_probe.phase="placement validation"
 	check(not game._foundation_placement.is_empty() and game._foundation_placement.target==prepared_target,"dialog placement captures prepared target despite changed aim")
 	await process_frame
 	game.construction_palette.survey_dialog.canceled.emit()
@@ -88,8 +90,10 @@ func run() -> void:
 	await process_frame
 	check(not game.site_preview.visible,"committed building invalidates the old preparation preview")
 	game.camera.global_position=Vector3(prepared_target)+Vector3(45,35,45)
+	frame_probe.phase="post placement"
 	game.camera.look_at(Vector3(prepared_target)+Vector3(10,3,0))
 	for frame in 60: await process_frame
+	print("SITE_FRAME_PROBE ",frame_probe.finish("res://reports/site_frame_probe.json"))
 	check(game.construction_palette.survey_dialog.has_focus() and Engine.max_fps==60,"focused survey dialog retains 60 FPS cap")
 	await RenderingServer.frame_post_draw
 	root.get_texture().get_image().save_png("res://reports/settlement_prepared_placement.png")

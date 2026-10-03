@@ -1,3 +1,11 @@
+## Short site-workflow frame attribution capture - 2026-10-03
+
+The graphical editor test now includes a bounded post-draw frame probe spanning preparation, validation and 60 post-placement frames. It records wall intervals, cap/focus state, terrain stage timings, renderer CPU/GPU timers, vegetation phase timings and counters, ecosystem time and draw calls. At most 1200 frames are retained. Vegetation profiling is restored and viewport timing disabled when the probe finishes. Nested stage labels must not be added together; GPU timers may lag and zero denotes unavailable measurement.
+
+The first 176-frame capture measured p95 18.584 ms and maximum 108.461 ms. A second 185-frame capture with vegetation phase counters measured p95 18.574 ms and maximum 113.121 ms. Its largest vegetation update was 44.137 ms: selection 32.144 ms, flush 11.866 ms, transition 0.122 ms and negligible audit work. It evaluated 1892 roots. Another selection phase took 21.099 ms for 1475 roots. Native sparse setter time is a subset of flush (3.947 ms in the 44 ms update), so it cannot explain the entire spike. These observations establish scripted selection as a concrete frame-budget failure in this fixture. They do not attribute the full 113 ms wall interval, whose recorded vegetation work was 12.961 ms.
+
+The next performance action is a native vegetation decision/scheduling path with behavioral parity checks, not a new terrain mesher. Runtime production behavior is unchanged by this diagnostic addition. All 27 editor functional checks still pass, but this capture fails the sustained-60-FPS expectation and provides no thermal guarantee. Evidence: evidence/site_frame_probe/.
+
 ## Cached spatial preparation preview - 2026-10-03
 
 Surveyed site plans now create a single editor overlay mesh: green flat foundation capsule edges, orange sloped-fill bottom edges and connecting guides, cyan asphalt outlines, and pale vertical clearance guides. Depth testing is disabled deliberately so the intended excavation/fill footprint remains readable through terrain and trees. The outline approximates curved boundaries with 12-segment semicircles; it is a planning aid, not authoritative collision geometry. Safety still uses the full plan bounds and native terrain checks.
