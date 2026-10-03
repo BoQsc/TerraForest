@@ -1,5 +1,5 @@
 extends Node3D
-## Renderer-only API: this addon has no dependency on a terrain implementation.
+## Terrain-independent renderer with optional native nearby trunk collision.
 signal initialization_failed(message: String)
 const Renderer = preload("res://addons/vegetation/forest.gd")
 const Assets = preload("res://addons/vegetation/assets.gd")
@@ -13,6 +13,19 @@ var renderer = Renderer.new()
 var assets = Assets.new()
 var ready_to_render: bool = false
 var _clock: float = 0.0
+var trunk_collision: Node3D
+var _collision_sync_ok:=true
+func enable_trunk_collision() -> bool:
+	if trunk_collision!=null: return true
+	if not ClassDB.class_exists("NativeStaticBatch") or not renderer.roots.is_empty(): return false
+	trunk_collision=ClassDB.instantiate("NativeStaticBatch")
+	var proxy:=BoxMesh.new()
+	if not trunk_collision.configure_asset("vegetation/trunk_proxy/v1",proxy) or not trunk_collision.configure_collision_only() or not trunk_collision.configure_collision(AABB(Vector3(-.35,0,-.35),Vector3(.7,8,.7)),96,256,16):
+		trunk_collision.free();trunk_collision=null;return false
+	add_child(trunk_collision)
+	return true
+func is_collision_region_ready(bounds: AABB) -> bool:
+	return _collision_sync_ok and (trunk_collision==null or trunk_collision.is_collision_region_ready(bounds))
 
 func _init() -> void:
 	# Parent owns the renderer even if the facade is freed before entering a tree.
@@ -46,9 +59,27 @@ func upsert_chunk(key: String, ids: PackedInt64Array, transforms: Array[Transfor
 			old_size += 1
 	if renderer.roots.size() - old_size + ids.size() > root_limit:
 		return false
-	return renderer.upsert_chunk(key, ids, transforms)
+	var previous:=PackedInt64Array()
+	for id in renderer.owners.get(key,PackedInt64Array()):
+		if renderer.roots.has(id): previous.append(id)
+	if trunk_collision!=null:
+		for id in ids:
+			if id<=0: return false
+	if not renderer.upsert_chunk(key, ids, transforms): return false
+	if trunk_collision!=null:
+		if not trunk_collision.upsert_transforms(ids,transforms): _collision_sync_ok=false;return false
+		var removed:=PackedInt64Array()
+		for id in previous:
+			if not ids.has(id): removed.append(id)
+		if not removed.is_empty() and not trunk_collision.remove_instances(removed): _collision_sync_ok=false;return false
+	return true
 
 func remove_chunk(key: String) -> void:
+	if trunk_collision!=null:
+		var ids:=PackedInt64Array()
+		for id in renderer.owners.get(key,PackedInt64Array()):
+			if renderer.roots.has(id): ids.append(id)
+		if not ids.is_empty() and not trunk_collision.remove_instances(ids): _collision_sync_ok=false
 	renderer.remove_chunk(key)
 
 func placement_bounds() -> AABB:
@@ -68,13 +99,14 @@ func remove_roots_in_bounds(bounds: AABB) -> int:
 			continue
 		for id in cell["rows"].keys():
 			if bounds.has_point((renderer.roots[id]["t"] as Transform3D).origin):
+				if trunk_collision!=null and not trunk_collision.remove_instances(PackedInt64Array([id])): _collision_sync_ok=false
 				renderer.remove_root(id)
 				removed += 1
 	return removed
 
 func clear() -> void:
 	for key in renderer.owners.keys():
-		renderer.remove_chunk(key)
+		remove_chunk(key)
 	# Flush even without a camera so unloaded GPU batches do not remain visible.
 	renderer._clear_events()
 	renderer._flush()
@@ -91,6 +123,7 @@ func _process(delta: float) -> void:
 	if not ready_to_render or not is_instance_valid(camera):
 		return
 	_clock += delta
+	if trunk_collision!=null: trunk_collision.set_collision_focus(camera.global_position)
 	var height: float = camera.get_viewport().get_visible_rect().size.y
 	var projection: float = height / (2.0 * tan(deg_to_rad(camera.fov) * 0.5))
 	renderer.tick(camera.global_position, projection, _clock)

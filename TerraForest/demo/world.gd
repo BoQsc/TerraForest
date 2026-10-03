@@ -50,7 +50,7 @@ func _additional_motion_ready(delta: float) -> bool:
 	var bounds := AABB(player.global_position+Vector3(-0.34,-player.floor_snap_length,-0.34),Vector3(0.68,1.8+player.floor_snap_length,0.68))
 	bounds.size.y+=0.3 # Native walking step-up head clearance.
 	bounds = bounds.grow(player.velocity.length()*delta+0.05)
-	return structures.is_collision_region_ready(bounds)
+	return structures.is_collision_region_ready(bounds) and vegetation.is_collision_region_ready(bounds)
 
 func _player_water_depth() -> float:
 	return lakes.depth_at(player.global_position+Vector3(0,1.1,0))
@@ -127,6 +127,8 @@ func _ready() -> void:
 	if vegetation.initialize() != OK:
 		_message("Vegetation initialization failed; inspect the log")
 		return
+	if not vegetation.enable_trunk_collision():
+		push_error("Tree collision initialization failed");get_tree().quit(2);return
 	ecosystem.name = "Ecosystem"
 	ecosystem.terrain = terrain
 	ecosystem.vegetation = vegetation

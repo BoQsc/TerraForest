@@ -1,0 +1,20 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.3.289 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce GTX 1060 with Max-Q Design
+
+[TerrainRewrite] New world
+[TerrainRewrite] New world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+Vehicle controller V3 ready: no-slip bicycle driving + no-pivot full-lock launch grip budget.
+Vehicle runtime visuals ready: 27 fixed body meshes + animated driver door + 4 wheel meshes.
+Visual mesh damage: enabled (F8 toggle, F9 repair).
+Mounted accessory motion: enabled (F10 toggle, 11 moving items).
+WARNING: An input event object is being parsed more than once in the same frame, which is unsafe.
+If you are generating events in a script, you have to instantiate a new event instead of sending the same one more than once, unless the original one was sent on an earlier frame.
+You can call duplicate() on the event to get a new instance with identical values.
+   at: parse_input_event (core/input/input.cpp:1540)
+   GDScript backtrace (most recent call first):
+       [0] run (res://tests/world_vehicle_visual.gd:38)
+WORLD_VEHICLE_VISUAL { "passed": true, "distance": 4.04401159286499, "position": (800.0475, 50.26629, 1307.043), "speed_kph": 27.7057720184326, "held": false, "controls_enabled": true, "simulated_foreground": true, "trees": 2526 }
+WORLD_VEHICLE_EXIT { "passed": true, "message": "On foot · E nearby to enter vehicle" }
+PASS main-world placement driving exit and UI restoration
+[TerrainRewrite] Temporary test world: save skipped

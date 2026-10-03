@@ -30,13 +30,19 @@ func run() -> void:
 	var start: Vector3=car.position
 	var press:=InputEventKey.new();press.keycode=KEY_W;press.physical_keycode=KEY_W;press.pressed=true
 	Input.parse_input_event(press);Input.flush_buffered_events()
-	for tick in 120: await physics_frame
+	# Automation can lose OS focus while tools run. Simulate the foreground
+	# input contract explicitly; this fixture is not a frame-rate benchmark.
+	for tick in 120:
+		game.app_focused=true;Engine.max_fps=60
+		Input.mouse_mode=Input.MOUSE_MODE_CAPTURED
+		Input.parse_input_event(press.duplicate());Input.flush_buffered_events()
+		await physics_frame
 	var release:=InputEventKey.new();release.keycode=KEY_W;release.physical_keycode=KEY_W
 	Input.parse_input_event(release);Input.flush_buffered_events()
 	var distance: float=car.position.distance_to(start)
 	var passed: bool=game.world_vehicle.driving and distance>1 and car.position.is_finite() and game.player.position.distance_to(car.position)<2 and game.camera.current
 	passed=passed and not game.player_hud.visible and not game.player_hud.enabled and game.help.text.contains("Steer")
-	print("WORLD_VEHICLE_VISUAL ",{"passed":passed,"distance":distance,"position":car.position,"speed_kph":car.speed_kph,"held":car.streaming.waiting,"trees":game.vegetation.renderer.roots.size()})
+	print("WORLD_VEHICLE_VISUAL ",{"passed":passed,"distance":distance,"position":car.position,"speed_kph":car.speed_kph,"held":car.streaming.waiting,"controls_enabled":car.controls_enabled,"simulated_foreground":true,"trees":game.vegetation.renderer.roots.size()})
 	await process_frame;await RenderingServer.frame_post_draw
 	root.get_texture().get_image().save_png("res://reports/world_vehicle_visual.png")
 	car.set_physics_process(false);car.linear_velocity=Vector3.ZERO;car._drive_speed=0.0

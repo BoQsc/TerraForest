@@ -4,6 +4,7 @@ extends RefCounted
 var terrain: Node
 var structures: Node
 var structures_required:=false
+var vegetation: Node
 var waiting:=false
 var _linear:=Vector3.ZERO
 var _angular:=Vector3.ZERO
@@ -26,6 +27,7 @@ func update(car: RigidBody3D,policy: RefCounted,delta: float) -> bool:
 	var ready: bool=terrain.is_collision_region_ready(bounds)
 	if structures_required:
 		ready=ready and is_instance_valid(structures) and structures.is_collision_region_ready(bounds)
+	if vegetation!=null: ready=ready and is_instance_valid(vegetation) and vegetation.is_collision_region_ready(bounds)
 	if not ready:
 		_hold(car)
 		return false

@@ -114,6 +114,7 @@ void NativeStaticBatch::select_render_batches() {
     for(auto it=ordered.rbegin();it!=ordered.rend();++it)if(!batches.count(*it))render_pending.push_back(*it);
 }
 void NativeStaticBatch::_process(double) {
+    if(collision_only)return;
     if(!render_streaming||!is_inside_tree())return;
     if(render_dirty)select_render_batches();
     uint64_t uploaded=0;int count=0;

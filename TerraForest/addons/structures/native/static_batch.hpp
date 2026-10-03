@@ -28,6 +28,7 @@ class NativeStaticBatch : public Node3D {
     std::map<BlockKey,AABB> render_bounds;
     std::vector<RenderKey> render_pending;
     bool render_streaming=false,render_dirty=true;
+    bool collision_only=false;
     Vector3 render_focus,render_selection_focus;
     double render_radius=384;
     int render_batch_limit=128,render_upload_limit=2,render_candidates=0,render_blocked=0;
@@ -78,6 +79,8 @@ protected:
     static void _bind_methods();
     void _notification(int what);
 public:
+    bool configure_collision_only();
+    bool upsert_transforms(const PackedInt64Array &ids,const TypedArray<Transform3D> &transforms);
     NativeStaticBatch();
     PackedByteArray overlap_mask(const TypedArray<Transform3D> &transforms,const AABB &bounds) const;
     bool can_insert_instance(const PackedFloat32Array &transform,const AABB &protected_bounds) const;

@@ -1,0 +1,14 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS bounded collision-only batch configured
+PASS native transform upload accepts tree batch
+TRUNK_STATS { "enabled": true, "radius": 32.0, "instance_limit": 8, "builds_per_tick": 2, "resident_bodies": 8, "pending_bodies": 0, "candidate_bodies": 19, "budget_deferred": 11, "selection_pending": false, "transform_valid": true, "parts_per_body": 1, "resident_shapes": 8, "shape_limit": 4096, "shapes_per_tick": 64, "invalid_proxies": 0, "body_builds": 8, "body_evictions": 0, "selection_queries": 1 } render={ "enabled": false, "radius": 384.0, "batch_limit": 128, "byte_limit": 4194304, "uploads_per_tick": 2, "bytes_per_tick": 262144, "resident_batches": 0, "resident_instances": 0, "resident_transform_bytes": 0, "authored_groups": 3, "candidate_batches": 0, "budget_deferred": 0, "pending_batches": 0, "selection_pending": true, "selection_queries": 0, "evictions": 0, "uploaded_transform_bytes": 0, "page_capacity": 100000, "indexed_instances": 40, "index_capacity_bytes": 320 }
+PASS nearby collider budget is enforced
+PASS physics-only roots allocate no render batches
+PASS near trunk participates in physics ray collision
+PASS root removal accepted
+PASS removed root has no ghost collider
+PASS vegetation enables native trunk collision
+PASS vegetation publishes render and collision roots
+PASS local removal targets one tree
+PASS chunk retirement tolerates previously removed roots

@@ -7,6 +7,8 @@
 namespace terraforest {
 NativeStaticBatch::NativeStaticBatch() {set_notify_transform(true);}
 void NativeStaticBatch::_bind_methods() {
+    ClassDB::bind_method(D_METHOD("configure_collision_only"),&NativeStaticBatch::configure_collision_only);
+    ClassDB::bind_method(D_METHOD("upsert_transforms","ids","transforms"),&NativeStaticBatch::upsert_transforms);
     ClassDB::bind_method(D_METHOD("overlap_mask","transforms","prototype_bounds"),&NativeStaticBatch::overlap_mask);
     ClassDB::bind_method(D_METHOD("can_insert_instance","transform","protected_bounds"),&NativeStaticBatch::can_insert_instance,DEFVAL(AABB()));
     ClassDB::bind_method(D_METHOD("insert_instance","transform","protected_bounds"),&NativeStaticBatch::insert_instance,DEFVAL(AABB()));
@@ -86,6 +88,22 @@ bool NativeStaticBatch::configure_asset(const String &id,const Ref<Mesh> &mesh) 
     if(changed&&!defer_change_signal)emit_signal("changed");return true;
 }
 bool NativeStaticBatch::lock_asset_identity() {if(!valid_asset(asset_id)||source_mesh.is_null())return false;asset_locked=true;return true;}
+bool NativeStaticBatch::configure_collision_only(){
+    if(!placements.empty()||!batches.empty())return false;
+    collision_only=true;set_process(false);return true;
+}
+bool NativeStaticBatch::upsert_transforms(const PackedInt64Array &ids,const TypedArray<Transform3D> &transforms){
+    if(ids.size()!=transforms.size()||ids.size()>100000)return false;
+    PackedFloat32Array packed;packed.resize(ids.size()*12);float *out=packed.ptrw();
+    for(int64_t i=0;i<ids.size();++i){
+        Transform3D t=transforms[i];
+        for(int row=0;row<3;++row){
+            for(int column=0;column<3;++column)out[i*12+row*4+column]=t.basis[row][column];
+            out[i*12+row*4+3]=t.origin[row];
+        }
+    }
+    return upsert_instances(ids,packed);
+}
 void NativeStaticBatch::rebuild(const std::set<BlockKey> &keys) {
     // Membership changes invalidate page offsets. Ordinary same-group transform
     // edits bypass this path and retain the ordered index allocation.
@@ -93,6 +111,7 @@ void NativeStaticBatch::rebuild(const std::set<BlockKey> &keys) {
     refresh_collision_bounds(keys);
     // Release all old memberships before assigning slots in their new groups.
     for(auto k:keys)release_group(k);
+    if(collision_only)return;
     if(render_streaming) {if(!keys.empty())render_dirty=true;return;}
     for(auto k:keys)if(groups.count(k))upload_batch({k,0});
 }
@@ -137,6 +156,7 @@ bool NativeStaticBatch::upsert_instances(const PackedInt64Array &ids,const Packe
     std::set<BlockKey> locally_changed;for(auto &e:local_updates)if(!touched.count(e.first))locally_changed.insert(e.first);
     refresh_collision_bounds(locally_changed);
     for(auto &e:local_updates)if(!touched.count(e.first)) {
+        if(collision_only)continue;
         if(render_streaming) {
             // Same-group transforms preserve sorted membership. Rebuild only
             // their draw pages; untouched pages retain both nodes and buffers.
