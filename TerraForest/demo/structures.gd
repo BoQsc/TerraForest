@@ -19,6 +19,7 @@ func _ready() -> void:
 	preload("res://addons/presentation/fullscreen_policy.gd").apply(get_window())
 	DisplayServer.window_set_title("TerraForest | Block structures")
 	buildings = ClassDB.instantiate("NativeBlockWorld")
+	preload("res://addons/structures/material_startup.gd").prepare(buildings)
 	buildings.name = "IndependentStructures"
 	add_child(buildings)
 	buildings.create_showcase()

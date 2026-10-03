@@ -1,0 +1,30 @@
+{
+  "frame_max_ms": 193.413,
+  "frame_p95_ms": 16.735,
+  "insert_us": 12269,
+  "max_upload_chunks_per_tick": 0,
+  "max_upload_us": 0,
+  "passed": true,
+  "publication_frames": 195,
+  "publication_ms": 3409.768,
+  "scope": "128 cottage isolated structure fixture at 1920x1080 fullscreen Forward+, 60 FPS cap. Includes mesh publication; excludes terrain, vegetation, entities, sustained thermal qualification.",
+  "stats": {
+    "bake_lattice_16_chunks": 0,
+    "bake_lattice_32_chunks": 96,
+    "bake_lattice_64_chunks": 96,
+    "cell_bytes": 1572864,
+    "cells": 59904,
+    "chunks": 192,
+    "collision_chunks": 32,
+    "dirty_chunks": 0,
+    "max_chunks": 2048,
+    "mesh_chunks": 192,
+    "published_bakes": 192,
+    "stale_bakes_rejected": 0,
+    "triangles": 151680,
+    "worker_jobs": 0,
+    "worker_jobs_submitted": 192,
+    "worker_results_consumed": 192,
+    "worker_threads_started": 1
+  }
+}
