@@ -11,10 +11,13 @@ var status: Label
 var width: SpinBox
 var depth: SpinBox
 var clearance: SpinBox
+var shoulder: SpinBox
 var surface: OptionButton
 var build_button: Button
 func material_id() -> int:
 	return 4 if surface.selected==0 else 1
+func shoulder_width() -> float:
+	return shoulder.value if material_id()==1 else 0.0
 func _ready() -> void:
 	layer=15
 	panel=PanelContainer.new();panel.position=Vector2(1500,36);panel.custom_minimum_size=Vector2(380,0);add_child(panel)
@@ -26,10 +29,13 @@ func _ready() -> void:
 	surface=OptionButton.new();surface.focus_mode=Control.FOCUS_NONE;surface.add_item("Asphalt road");surface.add_item("Stone foundation");column.add_child(surface)
 	surface.item_selected.connect(func(_index: int):
 		build_button.text="Build asphalt road" if material_id()==4 else "Grade stone foundation"
+		shoulder.editable=material_id()==1
 		selection_changed.emit())
 	width=_number(column,"Half-width (m)",0.5,16,3)
 	depth=_number(column,"Depth (m)",1,8,2)
 	clearance=_number(column,"Clearance cut (m; 0 disables)",0,16,0)
+	shoulder=_number(column,"Foundation fill shoulder (m)",0,16,0);shoulder.editable=false
+	shoulder.value_changed.connect(func(_value: float): selection_changed.emit())
 	clearance.value_changed.connect(func(_value: float): selection_changed.emit())
 	width.value_changed.connect(func(_value: float): selection_changed.emit())
 	depth.value_changed.connect(func(_value: float): selection_changed.emit())
@@ -67,5 +73,6 @@ func validation_error() -> String:
 	if length<1 or length>128: return "Horizontal length must be 1–128 m."
 	if absf(finish.y-start.y)>length*0.25: return "Grade exceeds 25%. Choose a gentler route."
 	for point: Vector3 in [start,finish]:
-		if point.x<width.value+5 or point.x>1995-width.value or point.z<width.value+5 or point.z>1995-width.value or point.y<depth.value+4 or point.y>250: return "Road is too close to a world boundary."
+		var extent: float=width.value+shoulder_width()
+		if point.x<extent+5 or point.x>1995-extent or point.z<extent+5 or point.z>1995-extent or point.y<depth.value+4 or point.y>250: return "Road is too close to a world boundary."
 	return ""

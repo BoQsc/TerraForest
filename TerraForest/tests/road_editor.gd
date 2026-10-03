@@ -73,6 +73,15 @@ func run() -> void:
 		game.app_focused=true;panel.action_requested.emit("level")
 		check(panel.finish.y==panel.start.y and Vector2(panel.finish.x,panel.finish.z)==horizontal_end,"level control aligns height while preserving horizontal endpoints")
 		check(not game.terrain.pending_edit and game.terrain.published_revision==revision and panel.status.text.contains("preview only"),"leveling selection does not mutate terrain before build")
+		panel.shoulder.value=6
+		check(panel.shoulder.editable and panel.shoulder_width()==6 and game.road_preview.outline.get_aabb().size.z>panel.width.value*2,"foundation shoulder expands preview footprint")
+		game.structures.blocks.set_cells(PackedInt32Array([416,180,407,1]))
+		panel.action_requested.emit("build")
+		check(panel.status.text.begins_with("Road bounds overlap") and not game.terrain.pending_edit,"structure outside flat bed but inside shoulder blocks grading")
+		game.structures.blocks.set_cells(PackedInt32Array([416,180,407,0]))
+		panel.surface.select(0);panel.surface.item_selected.emit(0)
+		check(not panel.shoulder.editable and panel.shoulder_width()==0,"asphalt selection does not inherit foundation shoulder")
+		panel.surface.select(1);panel.surface.item_selected.emit(1)
 		game.app_focused=true;panel.action_requested.emit("build")
 		check(panel.status.text.begins_with("Foundation submitted"),"foundation panel routes grading through guarded world action")
 		deadline=Time.get_ticks_msec()+10000

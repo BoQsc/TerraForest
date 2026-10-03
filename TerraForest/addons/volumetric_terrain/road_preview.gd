@@ -9,7 +9,7 @@ func _init() -> void:
 	cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	appearance.shading_mode=BaseMaterial3D.SHADING_MODE_UNSHADED
 	material_override=appearance
-func update_selection(a: Vector3,b: Vector3,half_width: float,depth: float,valid: bool,clearance: float=0.0) -> void:
+func update_selection(a: Vector3,b: Vector3,half_width: float,depth: float,valid: bool,clearance: float=0.0,shoulder: float=0.0) -> void:
 	outline.clear_surfaces();rebuilds+=1
 	if not a.is_finite() or not b.is_finite(): return
 	appearance.albedo_color=Color("50e6b5") if valid else Color("ff705e")
@@ -17,16 +17,21 @@ func update_selection(a: Vector3,b: Vector3,half_width: float,depth: float,valid
 	if axis.length_squared()<0.5: axis=Vector3.RIGHT
 	var side:=Vector3(-axis.z,0,axis.x)
 	var ring:=PackedVector3Array()
+	var outer:=PackedVector3Array()
 	# Two semicircles match the native rounded footprint and constant end heights.
 	for end in 2:
 		var center: Vector3=b if end==0 else a
 		for i in 13:
 			var angle: float=-PI*0.5+PI*i/12.0+PI*end
 			ring.append(center+(axis*cos(angle)+side*sin(angle))*half_width)
+			outer.append(center+(axis*cos(angle)+side*sin(angle))*(half_width+shoulder)-Vector3.UP*depth)
 	outline.surface_begin(Mesh.PRIMITIVE_LINES)
 	for i in ring.size():
 		var next: int=(i+1)%ring.size()
 		_line(ring[i],ring[next])
+		if shoulder>0:
+			_line(outer[i],outer[next])
+			if i%6==0: _line(ring[i],outer[i])
 		_line(ring[i]-Vector3.UP*depth,ring[next]-Vector3.UP*depth)
 		if clearance>0:
 			_line(ring[i]+Vector3.UP*clearance,ring[next]+Vector3.UP*clearance)

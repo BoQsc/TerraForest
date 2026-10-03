@@ -661,7 +661,7 @@ func _update_road_preview() -> void:
 		road_preview.clear();return
 	var a: Vector3=road_palette.start if road_palette.has_start else road_palette.finish
 	var b: Vector3=road_palette.finish if road_palette.has_finish else a
-	road_preview.update_selection(a,b,road_palette.width.value,road_palette.depth.value,road_palette.validation_error().is_empty(),road_palette.clearance.value)
+	road_preview.update_selection(a,b,road_palette.width.value,road_palette.depth.value,road_palette.validation_error().is_empty(),road_palette.clearance.value,road_palette.shoulder_width())
 
 func _road_action(action: String) -> void:
 	if loading_active or shutdown_requested or benchmark_enabled or not app_focused or not terrain.world_ready or player_hud.inventory_open or structure_mode or model_tool.active: return
@@ -679,8 +679,9 @@ func _road_action(action: String) -> void:
 	var error: String=road_palette.validation_error()
 	if not error.is_empty(): road_palette.status.text=error;return
 	var a: Vector3=road_palette.start;var b: Vector3=road_palette.finish
-	var lo:=a.min(b)-Vector3(road_palette.width.value,road_palette.depth.value,road_palette.width.value)
-	var hi:=a.max(b)+Vector3(road_palette.width.value,road_palette.clearance.value,road_palette.width.value)
+	var extent: float=road_palette.width.value+road_palette.shoulder_width()
+	var lo:=a.min(b)-Vector3(extent,road_palette.depth.value,extent)
+	var hi:=a.max(b)+Vector3(extent,road_palette.clearance.value,extent)
 	var protection:=AABB(terrain.to_local(player.global_position)-Vector3(0.4,0,0.4),Vector3(0.8,1.8,0.8))
 	if AABB(lo,hi-lo).grow(0.5).intersects(protection): road_palette.status.text="Move clear of the road before building.";return
 	if world_vehicle.overlaps_edit(terrain.global_transform*AABB(lo,hi-lo).grow(0.5)):
@@ -690,7 +691,7 @@ func _road_action(action: String) -> void:
 	if occupied.size()!=1 or occupied[0]!=0:
 		road_palette.status.text="Road bounds overlap a structure or unavailable building region. Choose a clear route.";return
 	var material: int=road_palette.material_id()
-	var accepted: bool=terrain.construct_road_bed(a,b,road_palette.width.value,road_palette.depth.value,road_palette.clearance.value) if material==4 else terrain.construct_graded_bed(a,b,road_palette.width.value,road_palette.depth.value,road_palette.clearance.value,material)
+	var accepted: bool=terrain.construct_road_bed(a,b,road_palette.width.value,road_palette.depth.value,road_palette.clearance.value) if material==4 else terrain.construct_graded_bed(a,b,road_palette.width.value,road_palette.depth.value,road_palette.clearance.value,material,road_palette.shoulder_width())
 	var kind: String="Road" if material==4 else "Foundation"
 	road_palette.status.text=("%s submitted · %s. Terrain grading has no block undo." % [kind,"temporary world" if temporary_world else "F5 saves world"]) if accepted else "%s not accepted; wait for terrain work to finish." % kind
 
