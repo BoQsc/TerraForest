@@ -1,0 +1,36 @@
+{
+  "date": "2026-10-03",
+  "tool": "built-in image_gen.imagegen",
+  "reference": "User-supplied TerraForest material reference sheet",
+  "size": [
+    1024,
+    1024
+  ],
+  "format": "RGB8 PNG",
+  "preparation": "Godot Image INTERPOLATE_LANCZOS normalization from 1254px generated images to 1024px; original 128px images untouched.",
+  "prompts": [
+    {
+      "file": "brick_albedo.png",
+      "prompt": "Use case: photorealistic-natural. Asset type: game material albedo texture. Generate one separate 1024 x 1024 square seamless tile. Input image is STYLE REFERENCE ONLY: use the specified material panel, ignore sheet labels and layout. Subject: Dark aged reddish brown fired brick, matching the dark aged brick panel in the reference sheet. Four horizontal courses with staggered half-brick running bond; rough chipped brick, muted gray brown mortar, subtle dirt and small moss stains. Precisely 4 courses per tile, brick scale suitable for a one meter tile. Composition: orthographic straight-on surface fills every pixel, no perspective. Lighting: neutral uniform diffuse illumination; base color only, no directional highlights, no vignette, no cast shadows or ambient occlusion. Constraints: tile repeats seamlessly horizontally and vertically with structures aligned at opposite edges; equal brightness at edges; texture only, no text, no borders, no cubes, no presentation sheet, no watermark. Opaque image."
+    },
+    {
+      "file": "wood_albedo.png",
+      "prompt": "Use case: photorealistic-natural. Asset type: game material albedo texture. Generate one separate 1024 x 1024 square seamless tile. Input image is STYLE REFERENCE ONLY: use the specified material panel, ignore sheet labels and layout. Subject: Rough weathered brown wood planks, matching the rough wood planks panel in the reference sheet. Four horizontal planks, pronounced fine grain running horizontally, occasional knots, worn nail heads, age and subtle grime. Suitable for a one meter tile. Composition: orthographic straight-on surface fills every pixel, no perspective. Lighting: neutral uniform diffuse illumination; base color only, no directional highlights, no vignette, no cast shadows or ambient occlusion. Constraints: tile repeats seamlessly horizontally and vertically with structures aligned at opposite edges; equal brightness at edges; texture only, no text, no borders, no cubes, no presentation sheet, no watermark. Opaque image."
+    },
+    {
+      "file": "concrete_albedo.png",
+      "prompt": "Use case: photorealistic-natural. Asset type: game material albedo texture. Generate one separate 1024 x 1024 square seamless tile. Input image is STYLE REFERENCE ONLY: use the specified material panel, ignore sheet labels and layout. Subject: Weathered medium gray concrete, matching the weathered concrete panel in the reference sheet. Irregular fine aggregate, shallow pitting, hairline cracks, darker stains and very subtle moss. Continuous poured concrete surface, no brick or stone joints. Suitable for a one meter tile. Composition: orthographic straight-on surface fills every pixel, no perspective. Lighting: neutral uniform diffuse illumination; base color only, no directional highlights, no vignette, no cast shadows or ambient occlusion. Constraints: tile repeats seamlessly horizontally and vertically with structures aligned at opposite edges; equal brightness at edges; texture only, no text, no borders, no cubes, no presentation sheet, no watermark. Opaque image."
+    },
+    {
+      "file": "metal_albedo.png",
+      "prompt": "Use case: photorealistic-natural. Asset type: game material albedo texture. Generate one separate 1024 x 1024 square seamless tile. Input image is STYLE REFERENCE ONLY: use the specified material panel, ignore sheet labels and layout. Subject: Worn painted blue charcoal metal, matching the worn painted metal panel in the reference sheet. Four vertical broad panel strips, fine rusty seams, chipped desaturated blue gray paint, scattered orange brown corrosion, scratches and grime. Suitable for a one meter tile. Composition: orthographic straight-on surface fills every pixel, no perspective. Lighting: neutral uniform diffuse illumination; base color only, no directional highlights, no vignette, no cast shadows or ambient occlusion. Constraints: tile repeats seamlessly horizontally and vertically with structures aligned at opposite edges; equal brightness at edges; texture only, no text, no borders, no cubes, no presentation sheet, no watermark. Opaque image."
+    }
+  ],
+  "selected_variants": {
+    "brick": "first generation",
+    "wood": "second generation (tiling continuity edit)",
+    "concrete": "first generation",
+    "metal": "first generation"
+  },
+  "wood_edit_prompt": "Edit this game albedo material tile to correct ONLY tiling continuity. Preserve the material, realistic details and neutral color. Output a 1024 x 1024 opaque square texture that tiles seamlessly on BOTH axes, with left and right borders continuing the same structures and top and bottom borders continuing the same structures. Use exactly four horizontal wooden planks, with top and bottom boundaries at the same seam phase; grain and nails continue smoothly left/right. Remove any broad edge-to-edge brightness shift. No text, border, vignette, perspective, cube, lighting effects or cast shadows. Carefully prioritize seamless edges over central composition."
+}

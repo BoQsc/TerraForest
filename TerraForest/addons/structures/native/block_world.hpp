@@ -78,6 +78,8 @@ class NativeBlockWorld : public Node3D {
     BlockKey worker_key;
     uint64_t revision=0, rejected=0, published=0;
     Ref<ShaderMaterial> material;
+    String texture_set;
+    bool load_texture_set(const String &name);
     std::array<Ref<Mesh>,24> preview_meshes;
     Vector3 focus;
     double collision_radius=48.0;
@@ -132,6 +134,8 @@ class NativeBlockWorld : public Node3D {
 protected:
     static void _bind_methods();
 public:
+    bool set_texture_set(const String &name);
+    String get_texture_set() const { return texture_set.is_empty()?String("original"):texture_set; }
     PackedByteArray capture_region(Vector3i region) const;
     bool validate_region_snapshot(const PackedByteArray &bytes) const;
     bool unload_region(const PackedByteArray &expected_snapshot);

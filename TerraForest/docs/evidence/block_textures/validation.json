@@ -1,0 +1,37 @@
+{
+  "date": "2026-10-03",
+  "material_sets": [
+    "original",
+    "terraforest"
+  ],
+  "default": "original",
+  "texture_checks": {
+    "debug": 17,
+    "release": 17,
+    "exported_pack": 17,
+    "failures": 0
+  },
+  "existing_regressions": {
+    "structures": 291,
+    "structure_preview": 25,
+    "prefab_building": 13,
+    "structure_persistence": 59
+  },
+  "visual_evidence": [
+    "comparison.png",
+    "new_materials_house.png"
+  ],
+  "limits": "Albedo only. Distinctive details reveal repetition on large walls. No normal/roughness/metalness maps. Texture uploads are synchronous when switching.",
+  "sha256": {
+    "addons\\structures\\textures\\original\\brick_albedo.png": "0ef9e7d66882734a569958eb755777a86286472c4bd0e8812bb6f0c7ecd940ad",
+    "addons\\structures\\textures\\original\\concrete_albedo.png": "47dcb2b1bfeb7f76660b3d08b96e6c7b8c9c2657d8a7f2f5f035278bac564df2",
+    "addons\\structures\\textures\\original\\metal_albedo.png": "414de5b3844e4588e3789135cc2f81b427b46680bb374fd8fe9d6dd73a9ba93c",
+    "addons\\structures\\textures\\original\\wood_albedo.png": "462c1d1f99e39a4cd5f1a12870f8491ef84f12f6fa0476ca74249677e4c606f9",
+    "addons\\structures\\textures\\terraforest\\brick_albedo.png": "f3fe53042e4b0636964aa4137aefc8c64b7513be86146d82867690be5712d1f3",
+    "addons\\structures\\textures\\terraforest\\concrete_albedo.png": "204c3ee3dbf15a30e7e5e89eb6fd7a3ba45b4a9bb8b7c6d6f47f36f50c6d11fc",
+    "addons\\structures\\textures\\terraforest\\metal_albedo.png": "3375c5cdde3e6f7e878ba9347c3b7e7d019b609fde6672e49e04931c4a72c862",
+    "addons\\structures\\textures\\terraforest\\wood_albedo.png": "b3cf18bf82e0bca41323e34433b6592b7dcd2e91182b9d36a016bdd1acf720f2",
+    "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "9c877f3b4277ef5462bdddca8a3a84f04ec9c807e363eefcae21e2807a5182a9",
+    "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "dbaabd4d4883179b3e57193ec45e39fe5112904e804df25c79f0b4ae3f4927c0"
+  }
+}

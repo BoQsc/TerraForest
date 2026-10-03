@@ -6,8 +6,14 @@
 #include <godot_cpp/classes/concave_polygon_shape3d.hpp>
 #include <godot_cpp/classes/hashing_context.hpp>
 #include <godot_cpp/classes/image.hpp>
+#include <godot_cpp/classes/file_access.hpp>
+#include <godot_cpp/classes/project_settings.hpp>
+#include <godot_cpp/classes/resource_loader.hpp>
+#include <godot_cpp/classes/texture2d.hpp>
+#include <godot_cpp/classes/os.hpp>
 #include <godot_cpp/classes/texture2d_array.hpp>
 #include <godot_cpp/classes/shader.hpp>
+#include <godot_cpp/variant/utility_functions.hpp>
 #include <algorithm>
 #include <cmath>
 #include <chrono>
@@ -20,6 +26,8 @@ static PackedByteArray sha(const PackedByteArray &data) {
     Ref<HashingContext> h; h.instantiate(); h->start(HashingContext::HASH_SHA256); h->update(data); return h->finish();
 }
 void NativeBlockWorld::_bind_methods() {
+    ClassDB::bind_method(D_METHOD("set_texture_set","name"),&NativeBlockWorld::set_texture_set);
+    ClassDB::bind_method(D_METHOD("get_texture_set"),&NativeBlockWorld::get_texture_set);
     ClassDB::bind_method(D_METHOD("preview_mesh","shape","rotation"),&NativeBlockWorld::preview_mesh);
     ClassDB::bind_method(D_METHOD("capture_region","region"),&NativeBlockWorld::capture_region);
     ClassDB::bind_method(D_METHOD("validate_region_snapshot","bytes"),&NativeBlockWorld::validate_region_snapshot);
@@ -404,6 +412,48 @@ Dictionary NativeBlockWorld::stats() const {
     d["bake_lattice_16_chunks"]=lattice16;d["bake_lattice_32_chunks"]=lattice32;d["bake_lattice_64_chunks"]=lattice64;
     d["worker_threads_started"]=int64_t(worker_starts);d["worker_jobs_submitted"]=int64_t(worker_submissions);d["worker_results_consumed"]=int64_t(worker_consumed);return d;
 }
+bool NativeBlockWorld::load_texture_set(const String &name) {
+    if(name!="original"&&name!="terraforest")return false;
+    const char *names[]={"brick","wood","concrete","metal"};
+    TypedArray<Image> images;
+    int size=0;
+    for(int layer=0;layer<4;++layer) {
+        String path=String("res://addons/structures/textures/")+name+"/"+names[layer]+"_albedo.png";
+        Ref<Image> img;
+        if(FileAccess::file_exists(path)) {
+            img.instantiate();
+            if(img->load_png_from_buffer(FileAccess::get_file_as_bytes(path))!=OK)return false;
+        } else {
+            // Exports remap PNGs to lossless imported textures; source bytes are
+            // available in the checkout but are not retained in ordinary PCKs.
+            if(!ResourceLoader::get_singleton()->exists(path))return false;
+            Ref<Texture2D> imported=ResourceLoader::get_singleton()->load(path);
+            if(imported.is_null())return false;
+            img=imported->get_image();
+            if(img.is_null()||img->is_empty())return false;
+            if(img->is_compressed()&&img->decompress()!=OK)return false;
+        }
+        const int width=img->get_width();
+        if(width<128||width>2048||(width&(width-1))||img->get_height()!=width||(size&&width!=size))return false;
+        size=width;
+        img->convert(Image::FORMAT_RGB8);
+        if(img->generate_mipmaps()!=OK)return false;
+        images.append(img);
+    }
+    Ref<Texture2DArray> textures;textures.instantiate();
+    if(textures->create_from_images(images)!=OK)return false;
+    // One shared material also updates already-published chunks. Meshes, collision,
+    // worker tickets, history and authored material IDs remain untouched.
+    material->set_shader_parameter("tiles",textures);
+    texture_set=name;
+    return true;
+}
+bool NativeBlockWorld::set_texture_set(const String &name) {
+    if(name!="original"&&name!="terraforest")return false;
+    ensure_material();
+    if(texture_set==name)return true;
+    return load_texture_set(name);
+}
 void NativeBlockWorld::ensure_material() {
     if(material.is_valid()) return;
     // Original deterministic tile textures generated once. Texture arrays retain
@@ -441,6 +491,14 @@ void fragment() {
 }
 )");
     material.instantiate();material->set_shader(shader);material->set_shader_parameter("tiles",textures);
+    texture_set="original";
+    String selected=ProjectSettings::get_singleton()->get_setting("structures/material_set",String("original"));
+    for(const String &arg:OS::get_singleton()->get_cmdline_user_args())
+        if(arg.begins_with("--block-textures="))selected=arg.get_slice("=",1);
+    if(!load_texture_set(selected)) {
+        UtilityFunctions::push_warning(String("Block texture set unavailable or invalid: ")+selected+". Using preserved original materials.");
+        if(selected!="original")load_texture_set("original");
+    }
 }
 
 PackedByteArray NativeBlockWorld::capture_snapshot() const {

@@ -44,7 +44,54 @@ The worker starts lazily and sleeps between jobs, reusing one thread per block-w
 
 The native worker chooses an exact temporary bake lattice from the chunk and its halo: whole cells for cubes, half cells when slabs are present, and quarter cells for stairs or posts. Greedy face merging removes hidden boundaries and combines coplanar regions of the same material, including across block edges. Chunk boundaries hide internal faces but do not merge separate chunk meshes. Slopes use an exact planar wedge; wedge boundaries currently use conservative geometry and are not greedily merged or clipped against neighbours. This adaptive scratch grid preserves geometry and texture coordinates; it is not distance-based LOD. `stats()` reports resident visual counts as `bake_lattice_16_chunks`, `bake_lattice_32_chunks` and `bake_lattice_64_chunks`. See [exact bake validation](../../docs/BLOCK_LATTICE_VALIDATION.md).
 
-Each occupied visual chunk is one ArrayMesh surface with a texture array. Four original deterministic 128² tile textures and their independent mip chains are generated once per world. Repeating UVs preserve material detail across merged faces. These are basic procedural materials, not a finished PBR asset library.
+Each occupied visual chunk is one ArrayMesh surface with a shared texture array.
+The four material IDs remain Brick (0), Wood (1), Concrete (2) and Metal (3).
+Two interchangeable image sets live in `textures/original/` and
+`textures/terraforest/`, each containing `brick_albedo.png`, `wood_albedo.png`,
+`concrete_albedo.png` and `metal_albedo.png`. The original 128² RGB images were
+exported from the legacy generator; their regenerated mip chains match every
+byte in `tests/fixtures/block_material_tiles.json`. Keep this folder as the first
+alternative. The unchanged deterministic generator is also retained as the
+fallback when the original images are unavailable.
+
+The TerraForest alternative contains generated 1024² RGB albedo images inspired
+by the supplied reference: dark aged brick, rough wood planks, weathered concrete
+and worn painted metal. These are a first visual trial; distinctive knots, stains
+and brick variation can reveal repetition on large walls. Normal, roughness and
+metalness maps are not included. The existing roughness and metal settings remain
+in the shader. Flat faces repeat approximately once per world meter; changing
+resolution changes detail, not the world scale of the pattern.
+
+`project.godot` defaults to `[structures] material_set="original"`. Set it to
+`"terraforest"` for a persistent project default, or override one launch:
+
+```sh
+python tools/run.py --scene structures --block-textures terraforest
+python tools/run.py --block-textures terraforest
+python tools/run.py --block-textures original
+```
+
+In the structures showcase, **F6** switches the sets live. The native API is
+`set_texture_set("original" | "terraforest") -> bool` and `get_texture_set()`.
+Switching updates the shared material on existing chunks without changing
+geometry, physics, material IDs, undo history, prefabs or saves. Unknown names
+and failed loads return false and retain the current material. At startup, an
+invalid project/launch selection warns and falls back to originals.
+
+PNG source files are read directly in the checkout; exported packs load their
+lossless imported textures instead. Both paths convert to RGB8 and generate
+independent mip chains. Keep the supplied lossless import settings. Within a set all four
+images must be square, the same size, and a power of two from 128 to 2048. Replace
+images in `terraforest/`, then restart or switch away and back to reload. Do not
+overwrite `original/`. Texture payload is separate from the mesh streaming budget;
+the new RGB array is about 16 MiB including mipmaps, versus 256 KiB for originals.
+The generator remains available even when PNG loading fails.
+
+Validate with a graphical Godot run of `tests/block_texture_sets.gd`. The one-time
+`tools/export_original_block_textures.gd` refuses to overwrite preserved originals.
+`tools/prepare_block_textures.gd` only normalizes generated images to 1024² RGB;
+it never edits the original folder. Image generation prompts and provenance are
+recorded in `textures/terraforest/generation.json`.
 
 Sphere cells have radius 0.5 m and are centred in their grid cell. Their native
 indexed template has 91 vertices and 120 triangles, radial shading normals and

@@ -78,7 +78,7 @@ func _ready() -> void:
 	_update_label()
 	var help := Label.new()
 	help.position = Vector2(26, 983)
-	help.text = "RMB hold + mouse · Look     WASD · Fly     Q / E · Down / Up     Shift · Fast\n1–6 · Shape     T · Material     R · Rotate     LMB · Place     Shift+LMB · Remove     Ctrl+Z / Y · Undo / Redo     F5 / F9 · Save / Load     Esc · Quit"
+	help.text = "RMB hold + mouse · Look     WASD · Fly     Q / E · Down / Up     Shift · Fast\n1–6 · Shape     T · Material     R · Rotate     LMB · Place     Shift+LMB · Remove     Ctrl+Z / Y · Undo / Redo     F5 / F9 · Save / Load     F6 · Textures     Esc · Quit"
 	help.add_theme_font_size_override("font_size", 17)
 	canvas.add_child(help)
 	if "--capture-structures" in OS.get_cmdline_user_args():
@@ -157,6 +157,9 @@ func _unhandled_input(event: InputEvent) -> void:
 			selected_material = (selected_material+1)%4
 		elif event.physical_keycode == KEY_R:
 			rotation_step = (rotation_step+1)%4
+		elif event.physical_keycode == KEY_F6:
+			var next_set := "terraforest" if buildings.get_texture_set() == "original" else "original"
+			notice = "Textures: " + next_set if buildings.set_texture_set(next_set) else "Texture set could not be loaded"
 		elif event.physical_keycode == KEY_F5:
 			var file := FileAccess.open("user://structures-showcase.tfbl", FileAccess.WRITE)
 			if file:

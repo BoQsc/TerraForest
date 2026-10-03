@@ -15,6 +15,7 @@ def parse_args(argv=None):
     parser.add_argument('--renderer', choices=['forward_plus', 'mobile', 'gl_compatibility'], default='forward_plus')
     parser.add_argument('--temporary', action='store_true')
     parser.add_argument('--scene', choices=['world', 'structures'], default='world')
+    parser.add_argument('--block-textures', choices=['original', 'terraforest'], help='Override the project block material set for this launch')
     parser.add_argument('--generator', type=int, choices=[1, 2, 3, 4], help='New worlds: 1 original, 2 mountains/caves, 3 ore veins, 4 ore veins and lakes')
     parser.add_argument('--seed', type=int, help='New-world seed; existing saves retain their generator and seed')
     parser.add_argument('--slot', help='Save slot; generated profiles automatically receive separate slots')
@@ -27,8 +28,8 @@ def parse_args(argv=None):
     if args.slot is not None and not re.fullmatch(r'[A-Za-z_][A-Za-z0-9_]{0,47}', args.slot):
         parser.error('--slot must be an identifier of at most 48 ASCII characters')
     # These flags have validated public equivalents; prevent forwarded overrides.
-    if any(value.split('=', 1)[0] in ('--world-generator', '--world-seed', '--world-slot') for value in extra):
-        parser.error('Use --generator, --seed and --slot instead of raw world flags')
+    if any(value.split('=', 1)[0] in ('--world-generator', '--world-seed', '--world-slot', '--block-textures') for value in extra):
+        parser.error('Use --generator, --seed, --slot and --block-textures instead of raw flags')
     return args, extra
 
 
@@ -45,6 +46,7 @@ def launch_details(args, extra):
                '--fullscreen', '--resolution', '1920x1080', '--max-fps', '60',
                f'res://demo/{args.scene}.tscn', '--', f'--world-generator={generator}',
                f'--world-seed={seed}', f'--world-slot={slot}',
+               *([f'--block-textures={args.block_textures}'] if args.block_textures else []),
                *(['--temporary'] if args.temporary else []), *extra, '--max-fps=60']
     return {'slot': slot, 'new_world_generator': generator, 'new_world_seed': seed,
             'temporary': args.temporary, 'existing_save_takes_precedence': True, 'command': command}

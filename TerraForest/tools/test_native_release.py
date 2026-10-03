@@ -13,7 +13,7 @@ parser=argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--godot',default=os.environ.get('GODOT_EXE') or shutil.which('godot'))
 parser.add_argument('--addon',choices=['world_runtime','volumetric_water','volumetric_terrain','structures'],default='world_runtime')
 parser.add_argument('--region-storage',action='store_true',help='Exercise structure_persistence through the native region archive')
-parser.add_argument('--test',choices=['terrain_locality_probe','terrain_region_cache','terrain_mesh_pressure','native_runtime','water','world_archive','world_persistence','terrain_planner','terrain_collision','block_lattice','block_worker','building_collision_profile','building_collision_stream','building_readiness','block_regions','block_region_store','block_region_io','block_region_checkpoints','block_region_bootstrap','partial_region_storage','region_world_archive','region_archive_reads','block_pager','block_pager_stress','region_metadata','structures','static_placements','structure_persistence'])
+parser.add_argument('--test',choices=['terrain_locality_probe','terrain_region_cache','terrain_mesh_pressure','native_runtime','water','world_archive','world_persistence','terrain_planner','terrain_collision','block_lattice','block_worker','block_texture_sets','building_collision_profile','building_collision_stream','building_readiness','block_regions','block_region_store','block_region_io','block_region_checkpoints','block_region_bootstrap','partial_region_storage','region_world_archive','region_archive_reads','block_pager','block_pager_stress','region_metadata','structures','static_placements','structure_persistence'])
 args=parser.parse_args()
 if args.region_storage and args.test!='structure_persistence':parser.error('--region-storage requires --test structure_persistence')
 if not args.godot:parser.error('Specify --godot PATH')
@@ -51,7 +51,8 @@ with tempfile.TemporaryDirectory(prefix='release_smoke_',dir=build) as temporary
             shutil.copy2(source/name,addon/name)
     if args.addon=='structures':
         shutil.copytree(source/'prefabs',addon/'prefabs')
-    if test=='block_lattice':
+        shutil.copytree(source/'textures',addon/'textures')
+    if test in ['block_lattice','block_texture_sets']:
         shutil.copytree(ROOT/'tests/fixtures',project/'tests/fixtures')
     if test in ['region_world_archive','region_archive_reads','block_pager','block_pager_stress']:
         destination=project/'addons/world_runtime'
@@ -76,7 +77,8 @@ with tempfile.TemporaryDirectory(prefix='release_smoke_',dir=build) as temporary
                 shutil.copy2(ROOT/'addons/volumetric_terrain'/name,terrain/name)
             shutil.copytree(ROOT/'addons/volumetric_terrain/bin',terrain/'bin')
     shutil.copy2(ROOT/'tests'/(test+'.gd'),project/'tests'/(test+'.gd'))
-    command=[str(engine),'--headless','--path',str(project),'--script',f'res://tests/{test}.gd']
+    display=['--windowed','--resolution','960x540','--rendering-method','forward_plus'] if test=='block_texture_sets' else ['--headless']
+    command=[str(engine),*display,'--path',str(project),'--script',f'res://tests/{test}.gd']
     if args.region_storage:command+=['--','--region-storage']
     run=subprocess.run(command,capture_output=True,text=True,timeout=180 if args.region_storage else 120)
     log=run.stdout+'\n'+run.stderr

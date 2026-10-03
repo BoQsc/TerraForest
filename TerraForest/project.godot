@@ -41,3 +41,7 @@ enabled=PackedStringArray("res://addons/volumetric_terrain/plugin.cfg", "res://a
 
 lights_and_shadows/directional_shadow/size=2048
 anti_aliasing/quality/msaa_3d=1
+
+[structures]
+
+material_set="original"
