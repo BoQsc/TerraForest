@@ -1,0 +1,66 @@
+{
+  "failures": 0,
+  "rows": [
+    {
+      "batches": 7,
+      "cells": 1872,
+      "clearance_probes": 3252,
+      "compose_us": 5971,
+      "cottages": 4,
+      "max_packet_bytes": 8224,
+      "max_query_us": 107,
+      "max_sample_us": 19,
+      "place_us": 437,
+      "query_us": 568,
+      "sample_us": 52,
+      "snapshot_bytes": 7308,
+      "snapshot_us": 224
+    },
+    {
+      "batches": 26,
+      "cells": 7488,
+      "clearance_probes": 13008,
+      "compose_us": 8932,
+      "cottages": 16,
+      "max_packet_bytes": 8224,
+      "max_query_us": 192,
+      "max_sample_us": 17,
+      "place_us": 1591,
+      "query_us": 2336,
+      "sample_us": 156,
+      "snapshot_bytes": 28876,
+      "snapshot_us": 330
+    },
+    {
+      "batches": 102,
+      "cells": 29952,
+      "clearance_probes": 52032,
+      "compose_us": 15167,
+      "cottages": 64,
+      "max_packet_bytes": 8224,
+      "max_query_us": 202,
+      "max_sample_us": 28,
+      "place_us": 3795,
+      "query_us": 10031,
+      "sample_us": 707,
+      "snapshot_bytes": 115372,
+      "snapshot_us": 1689
+    },
+    {
+      "batches": 204,
+      "cells": 59904,
+      "clearance_probes": 104064,
+      "compose_us": 26004,
+      "cottages": 128,
+      "max_packet_bytes": 8224,
+      "max_query_us": 1299,
+      "max_sample_us": 388,
+      "place_us": 10341,
+      "query_us": 23685,
+      "sample_us": 2068,
+      "snapshot_bytes": 230700,
+      "snapshot_us": 2585
+    }
+  ],
+  "scope": "CPU composition, native clearance sampling, native density queries, block insertion and storage only. No rendering, physics, worker queue latency, supported-site claim or 60 FPS claim."
+}
