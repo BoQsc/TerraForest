@@ -1,0 +1,29 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+[TerrainRewrite] New world
+[TerrainRewrite] New world
+[terrain-hitch] staging frame 53.76 ms at 23925
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+Vehicle controller V3 ready: no-slip bicycle driving + no-pivot full-lock launch grip budget.
+Vehicle runtime visuals ready: 27 fixed body meshes + animated driver door + 4 wheel meshes.
+Visual mesh damage: enabled (F8 toggle, F9 repair).
+Mounted accessory motion: enabled (F10 toggle, 11 moving items).
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+PASS F5 published compound save while still seated: true
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+Vehicle controller V3 ready: no-slip bicycle driving + no-pivot full-lock launch grip budget.
+Vehicle runtime visuals ready: 27 fixed body meshes + animated driver door + 4 wheel meshes.
+Visual mesh damage: enabled (F8 toggle, F9 repair).
+Mounted accessory motion: enabled (F10 toggle, 11 moving items).
+[TerrainRewrite] World loaded
+[TerrainRewrite] World loaded
+[terrain-hitch] receive 464.09 ms at 38473
+[terrain-hitch] collision node attach 151.82 ms at 45394
+[terrain-hitch] collision piece 255.24 ms at 45491
+[terrain-hitch] staging frame 299.16 ms at 45534
+[terrain-hitch] LOD coverage 66.17 ms at 53563
+[terrain-hitch] LOD schedule/cut/evict 87.86 ms at 53574
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+SEATED_DISK_RESTORE { "passed": false, "expected_player": (802.8, 49.43315, 1303.0), "actual_player": (802.8, 49.42759, 1303.0), "parked_car": (800.0, 50.36941, 1303.0) }
+FAIL new world restores player beside parked vehicle
+[TerrainRewrite] World saved and verified; terrain and addon state published together
