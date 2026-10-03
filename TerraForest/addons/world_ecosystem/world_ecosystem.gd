@@ -174,7 +174,7 @@ func _surface_ready(token: int, points: PackedVector3Array, normals: PackedVecto
 		ids.append(request["ids"][i])
 		transforms.append(Transform3D(basis, points[i] - Vector3(0.0, 0.2, 0.0)))
 	var previous: Dictionary = _samples.get(key, {})
-	_samples[key] = {"ids": ids, "transforms": transforms, "active": previous.get("active", PackedInt64Array()), "published": previous.get("published", false)}
+	_samples[key] = {"ids": ids, "transforms": transforms, "active": previous.get("active", PackedInt64Array()), "active_transforms": previous.get("active_transforms", []), "published": previous.get("published", false)}
 	_resample.erase(key)
 	_publish_samples(key)
 
@@ -221,11 +221,14 @@ func _publish_samples(key: Vector2i) -> void:
 		if (structures == null or mask[i] == 0) and (water==null or water_mask[i]==0):
 			ids.append(sample["ids"][i])
 			accepted.append(transforms[i])
-	# Unaffected owners retain their current LOD/fade state.
-	if sample["published"] and ids == sample["active"]:
+	# Stable IDs survive terrain edits; support heights can still change.
+	# Compare the accepted transforms too, then let the renderer preserve each
+	# unchanged row and its LOD/fade state during an actual owner update.
+	if sample["published"] and ids == sample["active"] and accepted == sample.get("active_transforms", []):
 		return
 	if vegetation.upsert_chunk(_owner(key), ids, accepted):
 		sample["active"] = ids
+		sample["active_transforms"] = accepted
 		sample["published"] = true
 		resident[key] = true
 	else:

@@ -1,3 +1,11 @@
+## Tree support resampling correctness - 2026-10-03
+
+Fixed an ecosystem publication bug: matching stable IDs previously skipped publication even when authoritative surface samples moved their transforms. This left both renderer roots and native trunk records at the previous height. Each resident sample now retains its last accepted transforms and skips an owner update only when IDs and transforms both match. The renderer already preserves unchanged neighboring rows and their fade state. The extra comparison is bounded by the existing 36-candidate owner batch.
+
+A targeted test first reproduced two failures (render and trunk heights). After the fix all eight checks passed, covering raised/lowered support, unchanged neighbors, identical resamples and stale revision rejection. All fourteen existing frontage vegetation checks passed. The mixed-street graphical editor test passed 29 checks, including a new post-placement native overlap query for resident tree envelopes. This checks occupied structure space rather than inferring overlap from an image; the screenshot concern was not independently established as a pre-fix intersection. The graphical capture still reached 40.927 ms and does not establish sustained 60 FPS.
+
+Evidence: docs/evidence/vegetation_resample.
+
 ## Mixed building street authoring - 2026-10-03
 
 The street dialog now exposes a full unsigned-32-bit layout seed and an optional explicit prefab mix. Ctrl-click selects building types; single-prefab behavior remains available. The world routes mixed selections through begin_frontage_sources on the existing low-priority authoring worker. Input is bounded to 32 sources and 262144 total source blocks before snapshots are copied. Native composition still validates output limits. Saved resources include completed geometry, street metadata, source count and seed, without depending on mutable source assets.

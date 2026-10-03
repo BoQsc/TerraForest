@@ -1,0 +1,9 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS native rendering and trunk records ready
+PASS initial surface publishes two roots
+FAIL same stable ID follows changed terrain support
+FAIL trunk placement follows changed terrain support
+PASS unchanged neighbor retains its transition state and transform
+PASS identical resample does not republish owner
+VEGETATION_RESAMPLE failures=2

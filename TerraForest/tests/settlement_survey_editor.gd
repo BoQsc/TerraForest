@@ -104,6 +104,15 @@ func run() -> void:
 	game.camera.look_at(Vector3(prepared_target)+Vector3(10,3,0))
 	for frame in 60: await process_frame
 	print("SITE_FRAME_PROBE ",frame_probe.finish("res://reports/site_frame_probe.json"))
+	var nearby_trees: Array[Transform3D]=[]
+	var building_bounds: AABB=asset.placement_bounds(prepared_target,game.structure_rotation)
+	var tree_bounds: AABB=game.vegetation.placement_bounds()
+	for row: Dictionary in game.vegetation.renderer.roots.values():
+		if (row.t*tree_bounds).intersects(building_bounds): nearby_trees.append(row.t)
+	var mask: PackedByteArray=game.structures.overlap_mask(nearby_trees,tree_bounds)
+	var trees_clear:=mask.size()==nearby_trees.size()
+	for value in mask: trees_clear=trees_clear and value==0
+	check(trees_clear,"resident tree envelopes do not overlap placed structures")
 	check(game.construction_palette.survey_dialog.has_focus() and Engine.max_fps==60,"focused survey dialog retains 60 FPS cap")
 	var placed_cells: int=game.structures.blocks.stats().cells
 	game.construction_palette.survey_dialog.custom_action.emit("place_prepared")
