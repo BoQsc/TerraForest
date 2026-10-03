@@ -45,6 +45,27 @@ func run() -> void:
 	car.streaming.update(car,car.driving_policy,1.0/120)
 	terrain.world_ready=true;car.streaming.update(car,car.driving_policy,1.0/120)
 	check(car.freeze,"streaming does not release an externally frozen vehicle")
-	car.freeze=false;terrain.free()
+	car.freeze=false
+	GDExtensionManager.load_extension("res://addons/structures/structures.gdextension")
+	var vegetation=load("res://addons/vegetation/vegetation_world.gd").new();root.add_child(vegetation)
+	vegetation.ready_to_render=true
+	check(vegetation.enable_trunk_collision() and car.streaming.bind_vegetation(vegetation),"vehicle binds actual native trunk provider")
+	var trees: Array[Transform3D]=[Transform3D(Basis.IDENTITY,car.position+Vector3(2,0,0))]
+	check(vegetation.upsert_chunk("near",PackedInt64Array([1]),trees),"nearby trunk authored before collider admission")
+	vegetation.trunk_collision.set_collision_focus(car.position)
+	car.linear_velocity=Vector3(10,0,0)
+	check(not car.streaming.update(car,car.driving_policy,1.0/120) and car.freeze,"unpublished trunk collision holds vehicle")
+	check(not car.streaming.bind_vegetation(vegetation),"held vehicle rejects provider rebinding")
+	for tick in 4: await physics_frame
+	check(car.streaming.update(car,car.driving_policy,1.0/120) and not car.freeze and car.linear_velocity==Vector3(10,0,0),"native trunk publication resumes saved motion")
+	trees[0].origin+=Vector3(.5,0,0)
+	check(vegetation.upsert_chunk("near",PackedInt64Array([1]),trees) and not car.streaming.update(car,car.driving_policy,1.0/120),"moving a tree invalidates stale collider readiness")
+	for tick in 4: await physics_frame
+	check(car.streaming.update(car,car.driving_policy,1.0/120),"updated trunk collider resumes travel")
+	vegetation.remove_chunk("near")
+	check(car.streaming.update(car,car.driving_policy,1.0/120),"removed tree does not leave a readiness hold")
+	vegetation.free()
+	check(not car.streaming.update(car,car.driving_policy,1.0/120) and car.freeze,"lost required vegetation provider fails closed")
+	terrain.free()
 	check(not car.streaming.update(car,car.driving_policy,1.0/120) and car.freeze,"lost terrain provider fails closed")
 	car.free();quit(0 if failures==0 else 1)

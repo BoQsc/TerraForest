@@ -37,7 +37,7 @@ func _install_vehicle(world: Node,pose: Transform3D) -> void:
 	for wheel in car.wheel_rays: wheel.collision_mask=3
 	car.set_controls_enabled(false);car.freeze=true;car.set_physics_process(false)
 	car.bind_streamed_world(world.terrain,world.structures)
-	if "vegetation" in world: car.streaming.vegetation=world.vegetation
+	if "vegetation" in world: car.streaming.bind_vegetation(world.vegetation)
 	_camera_follow=ClassDB.instantiate("NativeVehicleCamera")
 func ready_bounds(world: Node,bounds: AABB) -> bool:
 	return world.terrain.is_collision_region_ready(bounds) and world.structures.is_collision_region_ready(bounds) and (not "vegetation" in world or world.vegetation.is_collision_region_ready(bounds))
