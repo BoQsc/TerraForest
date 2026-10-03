@@ -49,7 +49,7 @@ struct World {
  bool edit(V3 a,V3 b,float radius,int shape,bool add,u8 material,V3 &lo,V3 &hi,int &changes,float depth=1.f);
  void serialize(Bytes &out)const;bool deserialize(const u8*p,int n);
 };
-struct Vertex {V3 p,n;float material=0; i32 cx=0,cy=0,cz=0;u32 mask=0; V3 blend{};float substrate=0,sky=1,sun=1,ore=0;};
+struct Vertex {V3 p,n;float material=0; i32 cx=0,cy=0,cz=0;u32 mask=0; V3 blend{};float substrate=0,sky=1,sun=1,ore=0,asphalt=0;};
 struct Mesh {List<Vertex> v; List<u32> i;void release(){v.release();i.release();}};
 // Cancellation state is outside World: save/load cannot race a main-thread request.
 u32 terrain_build_epoch(const World *world=nullptr);

@@ -13,6 +13,7 @@ PASS invalid road geometry rejected without mutation
 PASS bed density survives existing terrain snapshot format
 PASS ordinary mining edits road volume
 PASS bed uses existing native terrain meshing
+PASS saved asphalt reaches mesh as normalized continuous weights with LOD preserved
 PASS public road API submits through terrain worker
 PASS road edit completes through existing publication lifecycle
 [TerrainRewrite] Temporary test world: save skipped

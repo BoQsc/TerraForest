@@ -31,6 +31,15 @@ func run() -> void:
 	var epoch: int=restored.execute(Codec.command(13)).decode_u32(12)
 	var mesh: Dictionary=Codec.decode_mesh(restored.build_owned_region(400,400,16,1,160,192,epoch))
 	check(not mesh.has("error") and not mesh.arrays[Mesh.ARRAY_VERTEX].is_empty(),"bed uses existing native terrain meshing")
+	var asphalt_vertices:=0
+	var weights: PackedColorArray=mesh.arrays[Mesh.ARRAY_COLOR]
+	var channels: PackedVector2Array=mesh.arrays[Mesh.ARRAY_TEX_UV2]
+	var valid_weights:=true
+	for i in channels.size():
+		var asphalt: float=(channels[i].y-floorf(channels[i].y))*4.0
+		if asphalt>0.9: asphalt_vertices+=1
+		valid_weights=valid_weights and floorf(channels[i].y)==1 and asphalt>=0 and asphalt<=1 and weights[i].r+weights[i].g+weights[i].b+asphalt<=1.0001
+	check(asphalt_vertices>20 and valid_weights,"saved asphalt reaches mesh as normalized continuous weights with LOD preserved")
 	var terrain:=preload("res://addons/volumetric_terrain/terrain_world.gd").new()
 	terrain.diagnostics_pause_streaming=true;terrain.backend.world_generator=2;root.add_child(terrain)
 	terrain.start(StandardMaterial3D.new(),true)
@@ -43,5 +52,5 @@ func run() -> void:
 	terrain.shutdown();terrain.free()
 	DirAccess.make_dir_recursive_absolute("res://reports")
 	var file:=FileAccess.open("res://reports/terrain_road_bed.json",FileAccess.WRITE)
-	file.store_string(JSON.stringify({"failures":failures,"scope":"graded density volume, native mesh, save format, mining and worker routing; no asphalt surface or road network"}));file.close()
+	file.store_string(JSON.stringify({"failures":failures,"scope":"graded asphalt density volume, native material weights, mesh, save format, mining and worker routing; no road editor or network"}));file.close()
 	quit(1 if failures else 0)

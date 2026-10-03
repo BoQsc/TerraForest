@@ -4,12 +4,16 @@
 
 Native graded road-bed construction is available through
 `TerrainWorld.construct_road_bed(a, b, half_width, depth)`. It unions a rounded
-road footprint with a graded top into existing terrain density, using gravel
+road footprint with a graded top into existing terrain density, using asphalt
 and the existing worker, meshing and snapshot paths. Both terrain binaries
-rebuilt; fifteen short headless checks pass for geometry, input rejection,
+rebuilt; sixteen short headless checks pass for geometry, input rejection,
 idempotence, snapshot restoration, mining, meshing and worker completion.
+Asphalt uses saved material ID 4 and continuous native vertex weights; the
+shader reuses the existing aggregate texture without overlay geometry. A short
+1920x1080 fullscreen Forward+ render passed without shader errors. Its isolated
+floating segment validates appearance only, not road placement in a world.
 Evidence: `evidence/terrain_road_bed/`. This raises terrain only: hill cutting,
-asphalt surfacing, road editor/network tools and large-scale performance are
+road editor/network tools, surface polish and large-scale performance are
 not implemented or certified by these checks. Segments are limited to 128 m,
 half-width 0.5–16 m, depth 1–8 m and grade at most 25 percent.
 

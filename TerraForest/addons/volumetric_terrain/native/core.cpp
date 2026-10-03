@@ -607,9 +607,9 @@ void shade_mesh(const World&w,Mesh&m,u32 expected_epoch){
   if((i&31)==0&&cancelled(w,epoch))return;
   Vertex&v=m.v[i];float h=w.height(v.p.x,v.p.z);
   v.ore=w.generator_id>=3&&v.material<5?geological_weight(v.p,h,u32(w.seed)):0;
-  v.substrate=eased(.15f,.65f,h-v.p.y);v.blend={};
+  v.substrate=eased(.15f,.65f,h-v.p.y);v.blend={};v.asphalt=0;
   if(v.material<5){
-   int x=fl(v.p.x),y=fl(v.p.y),z=fl(v.p.z);V3 f={v.p.x-x,v.p.y-y,v.p.z-z};float delta=0,total=0,original[8];V3 influence{};
+   int x=fl(v.p.x),y=fl(v.p.y),z=fl(v.p.z);V3 f={v.p.x-x,v.p.y-y,v.p.z-z};float delta=0,total=0,asphalt=0,original[8];V3 influence{};
    for(int k=0;k<8;k++){
     int sx=x+(k&1),sy=y+((k>>1)&1),sz=z+((k>>2)&1);u8 mat=0;
     float original_sample=w.base({float(sx),float(sy),float(sz)},owned_lattice_height(w,sx,sz));
@@ -620,9 +620,9 @@ void shade_mesh(const World&w,Mesh&m,u32 expected_epoch){
     original[k]=base;
     float weight=(k&1?f.x:1-f.x)*(k&2?f.y:1-f.y)*(k&4?f.z:1-f.z);float difference=current-base;
     delta+=difference*weight;
-    float amount=ab(difference)*weight;if(mat==1)influence.x+=amount;else if(mat==2)influence.y+=amount;else if(mat==3)influence.z+=amount;
+    float amount=ab(difference)*weight;if(mat==1)influence.x+=amount;else if(mat==2)influence.y+=amount;else if(mat==3)influence.z+=amount;else if(mat==4)asphalt+=amount;
    }
-   total=influence.x+influence.y+influence.z;
+   total=influence.x+influence.y+influence.z+asphalt;
    // Unchanged surface => ZERO paint, even in an allocated/previously edited page.
    // Blend continuously across the sub-metre reconstructed rim, not categorical UV thresholds.
    if(total>1e-6f){
@@ -631,7 +631,7 @@ void shade_mesh(const World&w,Mesh&m,u32 expected_epoch){
     for(int e=0;e<12;e++){int a=edge[e][0],b=edge[e][1];if((original[a]<0)==(original[b]<0))continue;float t=original[a]/(original[a]-original[b]);V3 pa={float(a&1),float((a>>1)&1),float((a>>2)&1)},pb={float(b&1),float((b>>1)&1),float((b>>2)&1)};original_vertex=original_vertex+pa+(pb-pa)*t;crossings++;}
     float amount=eased(.025f,.35f,ab(delta));
     if(crossings)amount=mn(amount,eased(.025f,.28f,length(f-original_vertex/float(crossings))));
-    v.blend=influence*(amount/total);
+    v.blend=influence*(amount/total);v.asphalt=asphalt*(amount/total);
    }
   }
  }
@@ -751,7 +751,9 @@ void encode_mesh(const Mesh&m,int ox,int oz,int size,int step,Bytes&out){
  // Packet v3: UV carries cached sky/sun transmission; UV2 identifies exact
  // blocks/LOD only. COLOR is continuous material weights + geological exposure.
  for(int i=0;i<m.v.n;i++){out.f(m.v[i].sky);out.f(m.v[i].sun);}
- for(int i=0;i<m.v.n;i++){out.f(m.v[i].material>=5?m.v[i].material:m.v[i].ore);out.f(float(step));}
+ // Integer LOD step plus continuous asphalt weight in the fractional quarter.
+ // Step is constant within a surface, so interpolation preserves both channels.
+ for(int i=0;i<m.v.n;i++){out.f(m.v[i].material>=5?m.v[i].material:m.v[i].ore);out.f(float(step)+clampf(m.v[i].asphalt,0,1)*.25f);}
  for(int i=0;i<m.v.n;i++){out.vec(m.v[i].blend);out.f(m.v[i].substrate);}
  if(m.i.n)out.raw(m.i.p,m.i.n*4);
  for(int i=0;i<face_count;i++)out.vec(m.v[m.i[i]].p);
@@ -774,7 +776,7 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
   V3 a=r.vec(),b=r.vec();float width=r.f(),depth=r.f();V3 axis={b.x-a.x,0,b.z-a.z};float distance=length(axis);
   if(!r.good||n!=36||!(width>=.5f&&width<=16.f&&depth>=1.f&&depth<=8.f&&distance>=1.f&&distance<=128.f)||
      !(a.x>=width+5&&a.x<=WORLD-width-5&&b.x>=width+5&&b.x<=WORLD-width-5&&a.z>=width+5&&a.z<=WORLD-width-5&&b.z>=width+5&&b.z<=WORLD-width-5&&a.y>=depth+4&&a.y<=250&&b.y>=depth+4&&b.y<=250&&ab(b.y-a.y)<=distance*.25f)){out.p[8]=1;return;}
-  V3 lo,hi;int changes;bool ok=w.edit(a,b,width,2,true,1,lo,hi,changes,depth);
+  V3 lo,hi;int changes;bool ok=w.edit(a,b,width,2,true,4,lo,hi,changes,depth);
   if(!ok)out.p[8]=2;out.u(w.revision);out.u(changes);out.u(w.pages.n);out.u(w.blocks.n);out.vec(lo);out.vec(hi);
  }
  else if(cmd==3){

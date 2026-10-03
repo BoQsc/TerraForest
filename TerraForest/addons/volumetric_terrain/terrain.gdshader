@@ -44,7 +44,8 @@ void fragment(){
  else if(exact_material>4.5){color=triplanar(gravel,p,w,dx,dy);}
  else {
   vec3 blend=clamp(material_weights.rgb,vec3(0.0),vec3(1.0));
-  float total=clamp(dot(blend,vec3(1.0)),0.0,1.0);
+  float asphalt=clamp(fract(UV2.y)*4.0,0.0,1.0);
+  float total=clamp(dot(blend,vec3(1.0))+asphalt,0.0,1.0);
   float exposed=max(material_weights.a,1.0-smoothstep(0.52,0.76,n.y));
   // Never interpolate a categorical material ID and threshold it. That was
   // painting unmodified corner vertices with rectangular stone fringes.
@@ -53,6 +54,8 @@ void fragment(){
   vec3 wood=vec3(0.28,0.14,0.055)*(0.94+0.06*sin(wp.y*18.0+sin(wp.x*1.8)));
   color=wood*blend.g+vec3(0.32,0.37,0.42)*blend.b;
   if(rock_weight>0.001)color+=triplanar(gravel,p,w,dx,dy)*rock_weight;
+  // Reuse the mipmapped aggregate texture; no extra texture or overlay surface.
+  if(asphalt>0.001)color+=(vec3(0.025)+triplanar(gravel,p,w,dx,dy)*0.12)*asphalt;
   if(biome_weight>0.001){
    vec2 climate=smoothstep(vec2(940.0),vec2(1060.0),wp.xz);
    vec4 biome=vec4((1.0-climate.x)*climate.y,(1.0-climate.x)*(1.0-climate.y),climate.x*climate.y,climate.x*(1.0-climate.y));
