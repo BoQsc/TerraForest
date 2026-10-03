@@ -23,6 +23,24 @@ func run() -> void:
 	for z in 2:
 		for x in 2: terrain.active_leaves[Vector2i(x,z)]=true
 	check(car.streaming.update(car,car.driving_policy,1.0/120) and not car.freeze and car.linear_velocity==Vector3(60,0,0),"published region releases hold and restores velocity")
+	car._spawn_transform=car.global_transform
+	terrain.world_ready=false;car.streaming.update(car,car.driving_policy,1.0/120)
+	car.reset_vehicle()
+	terrain.world_ready=true;car.streaming.update(car,car.driving_policy,1.0/120)
+	check(not car.freeze and car.linear_velocity==Vector3.ZERO and car._drive_speed==0,"reset while held discards old momentum")
+	car.linear_velocity=Vector3(40,0,0);car._drive_speed=40
+	var before_reload: Vector3=car.position
+	terrain.reload_started.emit();terrain.world_ready=false
+	check(car.freeze and car.position==before_reload and car._drive_speed==0,"reload holds without teleporting and clears driving speed")
+	terrain.world_ready=true;car.streaming.update(car,car.driving_policy,1.0/120)
+	check(not car.freeze and car.linear_velocity==Vector3.ZERO,"reload resumes at rest")
+	car.linear_velocity=Vector3(20,0,0);terrain.world_ready=false
+	var key:=InputEventKey.new();key.keycode=KEY_R;key.physical_keycode=KEY_R;key.pressed=true
+	Input.parse_input_event(key);Input.flush_buffered_events();car._physics_process(1.0/120)
+	var released:=InputEventKey.new();released.keycode=KEY_R;released.physical_keycode=KEY_R;released.pressed=false
+	Input.parse_input_event(released);Input.flush_buffered_events()
+	terrain.world_ready=true;car.streaming.update(car,car.driving_policy,1.0/120)
+	check(car.linear_velocity==Vector3.ZERO,"reset key remains usable while streaming holds physics")
 	car.freeze=true;terrain.world_ready=false
 	car.streaming.update(car,car.driving_policy,1.0/120)
 	terrain.world_ready=true;car.streaming.update(car,car.driving_policy,1.0/120)

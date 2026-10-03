@@ -1,3 +1,7 @@
+## Vehicle reset and reload during streaming holds - 2026-10-03
+
+Reset now discards retained momentum, including when invoked by the R key during a hold. Bound terrain reload holds without teleporting and clears drive speed, resuming at rest after readiness returns. Rebinding disconnects the previous reload signal. All 12 streaming checks passed, including injected reset input. Evidence updated in evidence/vehicle_streaming/. Main-world control handoff and actual streamed-world driving remain incomplete.
+
 ## Vehicle streaming adapter - 2026-10-03
 
 The native demo vehicle now exposes optional streamed-world binding. It supplies terrain focus/travel velocity and checks terrain plus optional structure publication before/after control updates using native motion bounds. Missing readiness holds physics and retains momentum; ready publication resumes it. Eight targeted checks passed, including no drift over four physics steps and missing-provider handling. Evidence: evidence/vehicle_streaming/. These use real native readiness with controlled published-cell state, not a generated-world driving run. Main-world spawn/control handoff, smooth braking, reload/reset while held, and fleet focus remain incomplete.

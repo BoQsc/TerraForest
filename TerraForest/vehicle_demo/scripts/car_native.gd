@@ -8,12 +8,25 @@ var streaming: RefCounted
 func bind_streamed_world(terrain: Node,structures: Node=null) -> bool:
 	if streaming!=null and streaming.waiting: return false
 	if not is_instance_valid(terrain): return false
+	if streaming!=null and is_instance_valid(streaming.terrain):
+		var old: Node=streaming.terrain
+		if old.has_signal("reload_started") and old.reload_started.is_connected(_stream_reload_started):
+			old.reload_started.disconnect(_stream_reload_started)
 	streaming=load("res://addons/vehicle_runtime/vehicle_streaming.gd").new()
 	streaming.terrain=terrain;streaming.structures=structures
 	streaming.structures_required=structures!=null
+	if terrain.has_signal("reload_started"):
+		terrain.reload_started.connect(_stream_reload_started)
 	return true
+func _stream_reload_started() -> void:
+	streaming.discard_motion(self)
+	_drive_speed=0.0;_normal_mode=false;_physics_override_time=0.0
+	if driving_policy!=null: driving_policy.reset()
+	_reset_accessory_motion()
 func _physics_process(delta: float) -> void:
-	if streaming!=null and not streaming.update(self,driving_policy,delta): return
+	if streaming!=null and not streaming.update(self,driving_policy,delta):
+		_update_reset() # Keep recovery input available while world loading holds motion.
+		return
 	super._physics_process(delta)
 	# Recheck after controls change speed, before the physics integration step.
 	if streaming!=null: streaming.update(self,driving_policy,delta)
@@ -67,6 +80,7 @@ func _update_ground_state(handbrake: bool,delta: float) -> void:
 func reset_vehicle() -> void:
 	super.reset_vehicle()
 	if driving_policy!=null: driving_policy.reset()
+	if streaming!=null: streaming.discard_motion(self)
 func _update_steering(input_amount: float,delta: float) -> void:
 	var speed_for_limit:=absf(_drive_speed) if _normal_mode else linear_velocity.slide(_support_normal()).length()
 	var state: Vector3=driving_policy.steering(input_amount,speed_for_limit,delta)

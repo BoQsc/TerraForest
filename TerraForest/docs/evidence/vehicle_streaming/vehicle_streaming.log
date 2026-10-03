@@ -10,5 +10,9 @@ PASS held body does not drift during physics steps
 PASS loading retains travel direction while held
 PASS rebinding cannot discard held momentum
 PASS published region releases hold and restores velocity
+PASS reset while held discards old momentum
+PASS reload holds without teleporting and clears driving speed
+PASS reload resumes at rest
+PASS reset key remains usable while streaming holds physics
 PASS streaming does not release an externally frozen vehicle
 PASS lost terrain provider fails closed

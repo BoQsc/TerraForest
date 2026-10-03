@@ -53,5 +53,7 @@ the walking controller must relinquish that ownership during driving.
 Native travel_bounds uses a 3 m envelope for this supplied chassis/suspension,
 plus travel and acceleration allowance. It is not a generic arbitrary-vehicle
 bound, smooth braking system, or guarantee against unbounded external impulses.
-World entry/exit, reload/reset during a hold, and multi-vehicle focus management
+Reset discards held momentum. A bound terrain reload signal holds the vehicle
+in place and clears speed; it resumes at rest after publication. Reset input
+remains usable while held. World entry/exit and multi-vehicle focus management
 still need integration. The ordinary standalone demo remains unbound.

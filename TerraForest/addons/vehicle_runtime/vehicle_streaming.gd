@@ -7,6 +7,12 @@ var structures_required:=false
 var waiting:=false
 var _linear:=Vector3.ZERO
 var _angular:=Vector3.ZERO
+func discard_motion(car: RigidBody3D) -> void:
+	_linear=Vector3.ZERO;_angular=Vector3.ZERO
+	car.linear_velocity=Vector3.ZERO;car.angular_velocity=Vector3.ZERO
+	# Retain ownership of an existing hold; otherwise acquire a zero-speed hold
+	# until the next readiness check. External freezes remain externally owned.
+	_hold(car)
 func update(car: RigidBody3D,policy: RefCounted,delta: float) -> bool:
 	if not is_instance_valid(terrain):
 		# Loss of the bound world must not silently disable the readiness guard.
