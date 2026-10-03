@@ -907,6 +907,20 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
   u8 material=0;float density=w.sample(fl(point.x),fl(point.y),fl(point.z),&material);
   out.u(material);out.f(density);out.f(w.generator_id>=3?geological_weight(point,w.height(point.x,point.z),u32(w.seed)):0);
  }
+ else if(cmd==29){
+  // Bounded read-only site probes. The worker owns the density field; never
+  // sample it from the scene thread. Revision mismatch publishes no values.
+  u32 revision=r.u(),count=r.u();
+  if(!r.good||count<1||count>512||n!=12+int(count)*12){out.p[8]=1;return;}
+  V3 points[512];
+  for(u32 i=0;i<count;i++){
+   points[i]=r.vec();const V3 &p=points[i];
+   if(!(p.x>=0&&p.x<WORLD&&p.z>=0&&p.z<WORLD&&p.y>=0&&p.y<WORLD_Y)){out.p[8]=1;return;}
+  }
+  if(revision!=w.revision){out.p[8]=4;return;}
+  out.u(w.revision);out.u(count);
+  for(u32 i=0;i<count;i++){const V3 &p=points[i];out.f(w.sample(fl(p.x),fl(p.y),fl(p.z)));}
+ }
  else if(cmd==27){
   if(n!=4){out.p[8]=1;return;}
   out.u(w.basin_count);

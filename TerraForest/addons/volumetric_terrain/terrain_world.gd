@@ -6,6 +6,7 @@ signal surface_batch_ready(token: int, points: PackedVector3Array, normals: Pack
 signal region_changed(bounds: AABB, revision: int)
 signal region_invalidated(bounds: AABB)
 signal lake_slice_ready(token: int, status: int, epoch_id: int, revision: int)
+signal density_batch_ready(result: Dictionary)
 signal snapshot_restored(sections: Dictionary, epoch_id: int)
 const TerrainAssets = preload("res://addons/volumetric_terrain/runtime_assets.gd")
 static var _active_world: WeakRef
@@ -67,6 +68,11 @@ func request_surface_batch(points: PackedVector3Array, token: int) -> bool:
 	return backend.submit({"kind": "surface_batch", "points": points.duplicate(), "token": token, "epoch": epoch, "revision": published_revision})
 
 func _receive(result: Dictionary) -> void:
+	if result.get("kind", "") == "density_batch":
+		if result.epoch!=epoch or result.revision!=density_revision or pending_edit or foreground_brush or stopping or not world_ready:
+			result["status"]="stale";result["values"]=PackedFloat32Array()
+		density_batch_ready.emit(result)
+		return
 	if result.get("kind", "") in ["startup", "reload"] and not str(result.get("message", "")).begins_with("ERROR:"):
 		if result.get("kind") == "startup" or int(result.get("epoch", -1)) == epoch:
 			snapshot_restore_ok = true
@@ -148,6 +154,10 @@ func request_lake_slice(builder: RefCounted, token: int) -> bool:
 	if not world_ready or pending_edit or foreground_brush or stopping:
 		return false
 	return backend.submit({"kind": "lake_slice", "builder": builder, "token": token, "epoch": epoch, "revision": published_revision, "density_revision": density_revision})
+
+func request_density_batch(points: PackedVector3Array,token: int) -> bool:
+	if not world_ready or pending_edit or foreground_brush or stopping or backend.queued()>8: return false
+	return backend.submit({"kind":"density_batch","points":points,"token":token,"epoch":epoch,"revision":density_revision})
 
 func sculpt_sphere(center: Vector3, radius: float, add: bool = false, material_id: int = 1) -> bool:
 	return edit(Codec.brush(center, center, radius, 0, add, material_id), center, center)

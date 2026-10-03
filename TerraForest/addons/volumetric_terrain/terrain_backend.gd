@@ -192,7 +192,14 @@ func start(use_temporary: bool) -> Error:
 	# One sleeping worker; normal priority prevents foreground edits being starved.
 	return thread.start(_run, Thread.PRIORITY_NORMAL)
 
+var _site_pending:=0
 func submit(job: Dictionary, priority: bool = false) -> bool:
+	if job.get("kind","")=="density_batch":
+		if typeof(job.get("points"))!=TYPE_PACKED_VECTOR3_ARRAY or job.points.is_empty() or job.points.size()>512: return false
+		for field in ["token","epoch","revision"]:
+			if typeof(job.get(field))!=TYPE_INT or job[field]<0: return false
+		job={"kind":"density_batch","points":job.points.duplicate(),"token":job.token,"epoch":job.epoch,"revision":job.revision}
+		priority=false
 	if job.get("kind","")=="lake_slice":
 		if not is_instance_valid(job.get("builder")) or job.builder.get_class()!="NativeLakeVolume": return false
 		# RefCounted instance IDs may use the signed integer's high bit.
@@ -231,6 +238,8 @@ func submit(job: Dictionary, priority: bool = false) -> bool:
 		job["component_snapshot"] = _capture_snapshot()
 	mutex.lock()
 	if job.get("kind","")=="lake_slice" and _lake_pending>=1:
+		mutex.unlock();return false
+	if job.get("kind","")=="density_batch" and _site_pending>=1:
 		mutex.unlock();return false
 	if job.get("interaction_mesh",false):
 		var waiting:=0
@@ -275,6 +284,7 @@ func submit(job: Dictionary, priority: bool = false) -> bool:
 	if job.get("kind","")=="density_ray": _density_pending+=1
 	if job.get("kind","")=="partition": _partition_pending+=1
 	if job.get("kind","")=="lake_slice": _lake_pending+=1
+	if job.get("kind","")=="density_batch": _site_pending+=1
 	if priority:
 		jobs.push_front(job)
 	else:
@@ -313,6 +323,7 @@ func poll() -> Array[Dictionary]:
 	mutex.lock()
 	var ready: Array[Dictionary] = results
 	for result: Dictionary in ready:
+		if result.get("kind","")=="density_batch": _site_pending-=1
 		if result.get("kind","")=="density_ray": _density_pending-=1
 		if result.get("kind","")=="partition": _partition_pending-=1
 		if result.get("kind","")=="lake_slice": _lake_pending-=1
@@ -831,6 +842,8 @@ func _run() -> void:
 					_apply_components(remaining.get("component_snapshot", {}))
 				elif remaining_kind == "save":
 					_apply_components(remaining.get("component_snapshot", {}))
+				elif remaining_kind == "density_batch":
+					_push({"kind":"density_batch","token":remaining.token,"epoch":remaining.epoch,"revision":remaining.revision,"status":"cancelled","values":PackedFloat32Array()})
 				elif remaining_kind == "density_ray":
 					_push({"kind":"density_ray","status":"cancelled","cancelled":true,"token":remaining["token"],"epoch":remaining["epoch"],"requested_revision":remaining["revision"],"build_epoch":remaining["build_epoch"]})
 				elif remaining_kind == "partition":
@@ -973,6 +986,16 @@ func _run() -> void:
 			_set_cache_snapshot(snapshot_id)
 			_push({"kind": "reload", "epoch": job["epoch"], "message": message,
 				"components": components.duplicate(), "modified": _call(Codec.command(10)), "stats": _call(Codec.command(0))})
+		elif kind == "density_batch":
+			var packet:=Codec.command(29,[job.revision,job.points.size()])
+			packet.append_array(job.points.to_byte_array())
+			var reply: PackedByteArray=_call(packet)
+			var values:=PackedFloat32Array()
+			var status: String="error"
+			if Codec.reply_ok(reply) and reply.size()==20+job.points.size()*4 and reply.decode_u32(12)==job.revision and reply.decode_u32(16)==job.points.size():
+				values=reply.slice(20).to_float32_array();status="ok"
+			elif reply.size()>=12 and reply.decode_u32(8)==4: status="stale"
+			_push({"kind":"density_batch","token":job.token,"epoch":job.epoch,"revision":job.revision,"status":status,"values":values})
 		elif kind == "lake_slice":
 			_execute_lake_slice(job)
 		elif kind == "surface_batch":
