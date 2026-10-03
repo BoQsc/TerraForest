@@ -1,0 +1,228 @@
+{
+  "checks": [
+    {
+      "name": "query preserves barrier edit",
+      "pass": true
+    },
+    {
+      "name": "query preserves barrier reset",
+      "pass": true
+    },
+    {
+      "name": "query preserves barrier load",
+      "pass": true
+    },
+    {
+      "name": "query preserves barrier save",
+      "pass": true
+    },
+    {
+      "name": "query preserves barrier partition",
+      "pass": true
+    },
+    {
+      "name": "query preserves barrier lake_slice",
+      "pass": true
+    },
+    {
+      "name": "query preserves barrier unknown",
+      "pass": true
+    },
+    {
+      "name": "one FIFO query per regional boundary",
+      "pass": true
+    },
+    {
+      "name": "stopping prevents cooperative queries",
+      "pass": true
+    },
+    {
+      "name": "local mesh preserves barrier edit",
+      "pass": true
+    },
+    {
+      "name": "local mesh preserves barrier reset",
+      "pass": true
+    },
+    {
+      "name": "local mesh preserves barrier load",
+      "pass": true
+    },
+    {
+      "name": "local mesh preserves barrier save",
+      "pass": true
+    },
+    {
+      "name": "local mesh preserves barrier partition",
+      "pass": true
+    },
+    {
+      "name": "local mesh preserves barrier lake_slice",
+      "pass": true
+    },
+    {
+      "name": "local mesh preserves barrier unknown",
+      "pass": true
+    },
+    {
+      "name": "one local mesh per background boundary",
+      "pass": true
+    },
+    {
+      "name": "shutdown prevents cooperative local builds",
+      "pass": true
+    },
+    {
+      "name": "interactive slot accepts first bounded tile",
+      "pass": true
+    },
+    {
+      "name": "priority submission itself cannot cross a queued mutation",
+      "pass": true
+    },
+    {
+      "name": "interactive slot accepts second bounded tile",
+      "pass": true
+    },
+    {
+      "name": "interactive queue refuses unbounded third tile",
+      "pass": true
+    },
+    {
+      "name": "coarse container cannot masquerade as bounded interactive work",
+      "pass": true
+    },
+    {
+      "name": "query world starts",
+      "pass": true
+    },
+    {
+      "name": "query world ready",
+      "pass": true
+    },
+    {
+      "name": "collision-independent target query admitted",
+      "pass": true
+    },
+    {
+      "name": "target query returns",
+      "pass": true
+    },
+    {
+      "name": "canonical field supplies target",
+      "pass": true
+    },
+    {
+      "name": "query supplies a finite outward unit normal",
+      "pass": true
+    },
+    {
+      "name": "query requires no published terrain or physics collision",
+      "pass": true
+    },
+    {
+      "name": "target query including delivery stays within 150ms",
+      "pass": true
+    },
+    {
+      "name": "query world starts",
+      "pass": true
+    },
+    {
+      "name": "query world ready",
+      "pass": true
+    },
+    {
+      "name": "background mesh admitted",
+      "pass": true
+    },
+    {
+      "name": "background mesh admitted",
+      "pass": true
+    },
+    {
+      "name": "collision-independent target query admitted",
+      "pass": true
+    },
+    {
+      "name": "target query returns",
+      "pass": true
+    },
+    {
+      "name": "canonical field supplies target",
+      "pass": true
+    },
+    {
+      "name": "query supplies a finite outward unit normal",
+      "pass": true
+    },
+    {
+      "name": "query requires no published terrain or physics collision",
+      "pass": true
+    },
+    {
+      "name": "target query including delivery stays within 150ms",
+      "pass": true
+    },
+    {
+      "name": "local build gets bounded interactive slot",
+      "pass": true
+    },
+    {
+      "name": "local build reaches real scene publication",
+      "pass": true
+    },
+    {
+      "name": "local build bypasses background containers within 150ms",
+      "pass": true
+    },
+    {
+      "name": "both background meshes finish after cooperative query",
+      "pass": true
+    },
+    {
+      "name": "query result releases bounded query slot",
+      "pass": true
+    }
+  ],
+  "rows": [
+    {
+      "background_queued": false,
+      "build_epoch": 0,
+      "cells": 82,
+      "elapsed_ms": 33.286,
+      "epoch": 0,
+      "fraction": 0.676741540431976,
+      "kind": "density_ray",
+      "normal": "(0.082877, 0.953552, -0.289604)",
+      "position": "(1308.0, 98.79102, 1260.0)",
+      "query_ms": 0.211,
+      "queue_ms": 0.065,
+      "requested_revision": 0,
+      "revision": 0,
+      "status": "hit",
+      "token": 123,
+      "worker_finished_us": 802929
+    },
+    {
+      "background_queued": true,
+      "build_epoch": 0,
+      "cells": 82,
+      "elapsed_ms": 33.185,
+      "epoch": 0,
+      "fraction": 0.676741540431976,
+      "kind": "density_ray",
+      "local_build_delivery_ms": 49.871,
+      "normal": "(0.082877, 0.953552, -0.289604)",
+      "position": "(1308.0, 98.79102, 1260.0)",
+      "query_ms": 0.15,
+      "queue_ms": 0.986,
+      "requested_revision": 0,
+      "revision": 0,
+      "status": "hit",
+      "token": 123,
+      "worker_finished_us": 1020430
+    }
+  ],
+  "scope": "Native density target query without published geometry, idle versus two queued regional mesh builds; no rendering or controller integration."
+}

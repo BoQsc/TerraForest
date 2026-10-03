@@ -17,15 +17,25 @@ static godot::Dictionary geometry_content_key(const World &w,int x,int z,int siz
        (step!=1&&step!=2&&step!=4&&step!=8))return result;
     godot::Ref<godot::HashingContext> hash;hash.instantiate();
     if(hash->start(godot::HashingContext::HASH_SHA256)!=godot::OK)return result;
-    int64_t bytes=0,lookups=0,pages=0,blocks=0;
+    int64_t bytes=0,lookups=0,pages=0,blocks=0,page_hash_bytes=0;
     bool ok=true;
+    // Feed the identical byte stream in bounded blocks. Calling the Godot hash
+    // API (and allocating a PackedByteArray) for every four-byte field made a
+    // dependency lookup increasingly expensive as local pages accumulated.
+    constexpr int capacity=65536;
+    godot::PackedByteArray buffer;buffer.resize(capacity);
+    int used=0;
     auto feed=[&](const void *data,int count){
-        godot::PackedByteArray part;part.resize(count);
-        if(count)copy_bytes(part.ptrw(),data,count);
-        ok=ok&&hash->update(part)==godot::OK;bytes+=count;
+        const auto *source=static_cast<const u8*>(data);bytes+=count;
+        while(count){
+            int amount=std::min(count,capacity-used);
+            copy_bytes(buffer.ptrw()+used,source,amount);
+            used+=amount;source+=amount;count-=amount;
+            if(used==capacity){ok=ok&&hash->update(buffer)==godot::OK;used=0;}
+        }
     };
     auto number=[&](u32 value){u8 b[4]={u8(value),u8(value>>8),u8(value>>16),u8(value>>24)};feed(b,4);};
-    number(1);number(w.seed);number(w.surface_style);number(x);number(z);number(size);number(step);
+    number(3);number(w.generator_id);number(w.seed);number(w.surface_style);number(x);number(z);number(size);number(step);
     number(w.caves.n);
     for(int i=0;i<w.caves.n;i++){
         const Cave &c=w.caves[i];float values[]={c.a.x,c.a.y,c.a.z,c.b.x,c.b.y,c.b.z,c.r};
@@ -39,7 +49,20 @@ static godot::Dictionary geometry_content_key(const World &w,int x,int z,int siz
         for(int py=0;py<=WORLD_Y/PAGE;py++){
             u32 key=1+u32(px+np*(pz+np*py));int at=w.pages_by_key.get(key);lookups++;
             number(key);number(at>=0?1:0);
-            if(at>=0){const Page &p=w.pages[at];feed(p.d,PAGE_SAMPLES*sizeof(i16));feed(p.mat,PAGE_SAMPLES);pages++;}
+            if(at>=0){
+                const Page &p=w.pages[at];
+                if(!p.geometry_digest_valid){
+                    godot::Ref<godot::HashingContext> page_hash;page_hash.instantiate();
+                    godot::PackedByteArray samples;samples.resize(PAGE_SAMPLES*3);
+                    copy_bytes(samples.ptrw(),p.d,PAGE_SAMPLES*sizeof(i16));
+                    copy_bytes(samples.ptrw()+PAGE_SAMPLES*sizeof(i16),p.mat,PAGE_SAMPLES);
+                    if(page_hash->start(godot::HashingContext::HASH_SHA256)!=godot::OK||page_hash->update(samples)!=godot::OK)return {};
+                    const auto digest=page_hash->finish();if(digest.size()!=32)return {};
+                    copy_bytes(p.geometry_digest,digest.ptr(),32);p.geometry_digest_valid=true;
+                    page_hash_bytes+=samples.size();
+                }
+                feed(p.geometry_digest,32);pages++;
+            }
         }
     }
     // Only adjacent 32m block columns are inspected, in canonical key order.
@@ -54,9 +77,11 @@ static godot::Dictionary geometry_content_key(const World &w,int x,int z,int siz
     }
     std::sort(keys.begin(),keys.end());number(u32(keys.size()));
     for(u32 key:keys){number(key);number(w.blocks.get(key));blocks++;}
+    if(used){buffer.resize(used);ok=ok&&hash->update(buffer)==godot::OK;}
     if(!ok)return {};
     result["key"]=hash->finish().hex_encode();result["page_lookups"]=lookups;
     result["pages"]=pages;result["blocks"]=blocks;result["hashed_bytes"]=bytes;
+    result["page_hash_bytes"]=page_hash_bytes;
     return result;
 }
 }

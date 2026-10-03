@@ -38,19 +38,19 @@ static func point_command(point: Vector3) -> PackedByteArray:
 static func reply_ok(reply: PackedByteArray) -> bool:
 	return reply.size() >= 12 and reply.decode_u32(0) == REPLY_MAGIC and reply.decode_u32(8) == 0
 
-static func density_ray_command(from: Vector3, to: Vector3, budget: int, epoch: int) -> PackedByteArray:
-	var packet := command(23,[0,0,0,0,0,0,budget,epoch])
+static func density_ray_command(from: Vector3, to: Vector3, budget: int, epoch: int, with_normal: bool=false) -> PackedByteArray:
+	var packet := command(24 if with_normal else 23,[0,0,0,0,0,0,budget,epoch])
 	for axis in range(3):
 		packet.encode_float(4+axis*4,from[axis])
 		packet.encode_float(16+axis*4,to[axis])
 	return packet
 
 static func decode_density_ray(reply: PackedByteArray) -> Dictionary:
-	if reply.size()<12 or reply.decode_u32(0)!=REPLY_MAGIC or reply.decode_u32(4)!=23:
+	if reply.size()<12 or reply.decode_u32(0)!=REPLY_MAGIC or reply.decode_u32(4) not in [23,24]:
 		return {"status":"error","error":"Invalid density query envelope"}
 	if reply.decode_u32(8)==4 and reply.size()==12:
 		return {"status":"cancelled","cancelled":true}
-	if not reply_ok(reply) or reply.size()!=40 or reply.decode_u32(16)>2:
+	if not reply_ok(reply) or reply.size()!=(52 if reply.decode_u32(4)==24 else 40) or reply.decode_u32(16)>2:
 		return {"status":"error","error":"Invalid density query reply"}
 	var result := {"status":["hit","miss","work_limit"][reply.decode_u32(16)],"revision":reply.decode_u32(12),"cells":reply.decode_u32(20)}
 	if result.status=="hit":
@@ -59,6 +59,10 @@ static func decode_density_ray(reply: PackedByteArray) -> Dictionary:
 		if not is_finite(fraction) or fraction<0 or fraction>1 or not position.is_finite():
 			return {"status":"error","error":"Invalid density hit"}
 		result["fraction"]=fraction;result["position"]=position
+		if reply.decode_u32(4)==24:
+			var normal:=Vector3(reply.decode_float(40),reply.decode_float(44),reply.decode_float(48))
+			if not normal.is_finite(): return {"status":"error","error":"Invalid density normal"}
+			result["normal"]=normal
 	return result
 
 static func _packed_channel(source: PackedByteArray, offset: int, count: int, stride: int, type: int) -> Variant:

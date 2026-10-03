@@ -11,7 +11,9 @@ protected:
     static void _bind_methods();
 public:
     godot::Dictionary requests(godot::Vector3 focus,bool collision,const godot::Dictionary &tiles,const godot::Dictionary &split,const godot::Array &visible) const;
+    godot::Dictionary requests_targeted(godot::Vector3 focus,bool collision,godot::Vector3 target,const godot::Dictionary &tiles,const godot::Dictionary &split,const godot::Array &visible) const;
     godot::Dictionary coverage(const godot::Dictionary &tiles,const godot::Dictionary &split,const godot::Array &visible) const;
+    godot::Dictionary coverage_available(const godot::Dictionary &tiles,const godot::Dictionary &split,const godot::Array &visible) const;
     godot::Dictionary eviction_candidates(const godot::Dictionary &tiles,const godot::Array &visible,const godot::Dictionary &requested) const;
 };
 }

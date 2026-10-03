@@ -1,0 +1,13 @@
+{
+  "terrain": "regions",
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\godot.windows.opt.tools.64.exe",
+    "--path",
+    "C:\\Users\\Windows10_new\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+    "--script",
+    "res://tests/foundation_mining.gd",
+    "--",
+    "--foundation-scale=1",
+    "--region-terrain"
+  ]
+}

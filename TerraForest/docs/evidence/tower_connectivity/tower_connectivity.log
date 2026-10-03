@@ -1,0 +1,8 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS four-storey assembly preserves explicit module pitch
+PASS assembled cells place without overlaps
+PASS every quarter step reaches the next floor landing without a height gap
+PASS three stacked flights retain 1.85 metres of vertical headroom across their width
+PASS explicit assembly spacing survives asset reload
+PASS invalid authored spacing is rejected

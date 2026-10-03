@@ -30,6 +30,39 @@ var cooldown: float = 0.0
 var held_previous: bool = false
 var last_capture_signature: Dictionary = {}
 var duplicate_surface_samples: int = 0
+var terrain_pick_serial: int=100000000
+var terrain_pick_request: Dictionary={}
+var terrain_pick_cache: Dictionary={}
+
+func _terrain_pick_received(reply: Dictionary) -> void:
+	if terrain_pick_request.is_empty() or reply.get("token",-1)!=terrain_pick_request.token: return
+	var request:=terrain_pick_request
+	terrain_pick_request={}
+	terrain_pick_cache={}
+	if reply.get("status","")!="hit" or not reply.has("normal"): return
+	var normal: Vector3=reply.normal
+	if normal.length_squared()<0.5: return
+	terrain_pick_cache={"from":request["from"],"to":request["to"],"revision":reply.revision,"epoch":reply.epoch,"position":reply.position,"normal":normal}
+
+func _terrain_pick(from: Vector3, to: Vector3) -> Dictionary:
+	if terrain.pending_edit: return {}
+	if not terrain_pick_cache.is_empty():
+		if terrain_pick_cache.revision==terrain.native_revision and terrain_pick_cache.epoch==terrain.epoch and terrain_pick_cache["from"].is_equal_approx(from) and terrain_pick_cache["to"].is_equal_approx(to):
+			# A canonical hit is not permission to edit invisible terrain. Keep
+			# loading until a current visible owner can publish this operation.
+			var position: Vector3=terrain_pick_cache.position
+			terrain.set_interaction_target(position)
+			for size: int in [16,32,64,128,256]:
+				var key:=Vector3i(floori(position.x/size)*size,floori(position.z/size)*size,size)
+				if terrain.tiles.has(key) and terrain.tiles[key].get("active",false) and not terrain.tiles[key].dirty:
+					return {"position":position,"normal":terrain_pick_cache.normal}
+			return {}
+		terrain_pick_cache={}
+	if terrain_pick_request.is_empty():
+		terrain_pick_serial+=1
+		if terrain.request_density_ray(from,to,terrain_pick_serial,256):
+			terrain_pick_request={"token":terrain_pick_serial,"from":from,"to":to}
+	return {}
 
 func _same_pending_surface(center: Vector3, shape: int, add: bool) -> bool:
 	# The picking collider remains the published surface until atomic commit.
@@ -63,6 +96,7 @@ var gpu_timing_enabled: bool = false
 var frame_debug: bool = false
 const ControllerState = preload("res://demo/controller_state.gd")
 var controls = ControllerState.new()
+var movement: RefCounted
 var flashlight := SpotLight3D.new()
 var app_focused: bool = true
 var background_fps: int = 15
@@ -104,10 +138,23 @@ var record_interaction: bool = false
 var journal_failure_reported: bool = false
 
 func _ready() -> void:
+	if not ClassDB.class_exists("NativePlayerMovement"):
+		GDExtensionManager.load_extension("res://addons/player_runtime/player_runtime.gdextension")
+	if not ClassDB.class_exists("NativePlayerMovement"):
+		push_error("Native player movement unavailable")
+		get_tree().quit(2)
+		return
+	movement=ClassDB.instantiate("NativePlayerMovement")
 	Presentation.apply(get_window())
 	start_ms = Time.get_ticks_msec()
 	get_tree().auto_accept_quit = false
 	for arg: String in OS.get_cmdline_user_args():
+		if arg.begins_with("--world-slot="):
+			terrain.save_slot=arg.get_slice("=",1)
+		if arg.begins_with("--world-generator="):
+			terrain.backend.world_generator=int(arg.get_slice("=",1))
+		if arg.begins_with("--world-seed="):
+			terrain.backend.world_seed=int(arg.get_slice("=",1))
 		if arg == "--nearby-first":
 			terrain.nearby_first = true
 		if arg == "--smooth-surface":
@@ -146,6 +193,7 @@ func _ready() -> void:
 	add_child(terrain)
 	terrain.initialized.connect(_terrain_initialized)
 	terrain.height_received.connect(_height_ready)
+	terrain.density_ray_received.connect(_terrain_pick_received)
 	terrain.message_changed.connect(_message)
 	terrain.edit_published.connect(_edited)
 	terrain.reload_started.connect(_loading_reload)
@@ -330,6 +378,9 @@ func _update_loading() -> void:
 	_clear_motion()
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	_message("Ready: nearby coverage/collision active; distant terrain still streaming" if terrain.nearby_first and terrain.root_coverage < terrain.roots.size() else "Ready: map coverage and local collision are active")
+	if "--human-playtest" in OS.get_cmdline_user_args():
+		DisplayServer.window_set_title("TerraForest — Human playtest (temporary world)")
+		print("HUMAN_PLAYTEST_READY ", JSON.stringify({"presentation":Presentation.measurement(get_window()),"vsync":DisplayServer.window_get_vsync_mode(),"fps_cap":Engine.max_fps,"temporary":temporary_world,"snapshot_terrain":terrain.backend.snapshot_terrain}))
 
 func _consume_stroke() -> void:
 	if loading_active or shutdown_requested or terrain.pending_edit or not terrain.world_ready:
@@ -444,6 +495,7 @@ func _clear_motion() -> void:
 	stroke_valid = false
 	stroke_buffer.cancel_continuous()
 	terrain.set_brush_active(false)
+	terrain.set_interaction_target(Vector3.INF)
 	last_capture_signature.clear()
 
 func _frame_drawn() -> void:
@@ -535,6 +587,9 @@ func build_proof() -> void:
 	if terrain.edit(Codec.command(8), Vector3(1467, 0, 1435), Vector3(1502, 256, 1470)):
 		_message("Building the exact-cube proof shell; old collision remains until mesh publication")
 
+func _player_water_depth() -> float:
+	return 0.0
+
 func _physics_process(delta: float) -> void:
 	var physics_begin: int = Time.get_ticks_usec()
 	Input.flush_buffered_events()
@@ -562,10 +617,9 @@ func _physics_process(delta: float) -> void:
 	structure_motion_blocked = false
 	if fly:
 		direction = camera.global_basis * input
-		if app_focused and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
-			direction.y += controls.vertical()
+		var vertical: float=controls.vertical() if app_focused and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED else 0.0
 		player.velocity = Vector3.ZERO
-		player.position += direction.normalized() * (40.0 if controls.sprint() else 14.0) * delta
+		player.position += movement.flight_displacement(direction,vertical,delta,controls.sprint())
 	else:
 		var ahead: Vector3 = player.position + direction * maxf(2.0, speed * delta)
 		if not terrain.player_region_ready(player.position) or not terrain.player_region_ready(ahead):
@@ -577,19 +631,18 @@ func _physics_process(delta: float) -> void:
 			direction = Vector3.ZERO
 		else:
 			travel_blocked_s = 0.0
-			player.velocity.x = direction.x * speed
-			player.velocity.z = direction.z * speed
-			if not player.is_on_floor():
-				player.velocity.y -= 20.0 * delta
-			elif controls.held.has(KEY_SPACE):
-				player.velocity.y = 7.0
+			var water_depth: float=_player_water_depth()
+			if water_depth>0.0:
+				var vertical: float=controls.vertical() if app_focused and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED else 0.0
+				player.velocity=movement.swimming_velocity(direction,player.velocity,vertical,water_depth,delta,controls.sprint())
 			else:
-				player.velocity.y = 0.0
+				player.velocity=movement.walking_velocity(direction,player.velocity,delta,controls.sprint(),player.is_on_floor(),controls.held.has(KEY_SPACE))
 			structure_motion_blocked = not _additional_motion_ready(delta)
 			if structure_motion_blocked:
 				player.velocity = Vector3.ZERO
 			else:
-				player.move_and_slide()
+				if water_depth>0.0: player.move_and_slide()
+				else: movement.move_grounded(player,delta)
 	var displacement: Vector3 = player.position - before_motion
 	planar_speed = Vector2(displacement.x, displacement.z).length() / maxf(delta, 0.000001)
 	if input != Vector3.ZERO and planar_speed > 0.01 and controls.last_press_us > 0:
@@ -623,15 +676,21 @@ func _update_edit(delta: float) -> void:
 	pointer.visible = false
 	latest_hit.clear()
 	if not captured:
+		terrain.set_interaction_target(Vector3.INF)
 		return
 	var start: Vector3 = camera.global_position
 	var end: Vector3 = start - camera.global_basis.z * 120.0
 	var query := PhysicsRayQueryParameters3D.create(start, end, 1)
 	query.hit_back_faces = false
 	latest_hit = get_world_3d().direct_space_state.intersect_ray(query)
+	# Terrain targeting must not wait for a streamed physics collider. Existing
+	# physics hits still win, so loaded structures/objects retain their ordering.
+	if latest_hit.is_empty() and terrain.backend.region_terrain:
+		latest_hit=_terrain_pick(start,end)
 	if latest_hit.is_empty():
 		return
 	var hit: Vector3 = latest_hit["position"]
+	terrain.set_interaction_target(hit)
 	var normal: Vector3 = latest_hit["normal"]
 	var add: bool = building and not mining
 	if tool == 1:

@@ -1,0 +1,14 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS identity resolves live runtime handle
+PASS invalid references rejected
+PASS despawn and slot reuse never recycle identity
+PASS identity survives reload with fresh runtime handle
+PASS allocation cursor survives reload
+PASS invalid identity metadata rejected atomically 0
+PASS invalid identity metadata rejected atomically 1
+PASS invalid identity metadata rejected atomically 2
+PASS invalid identity metadata rejected atomically 3
+PASS legacy snapshot migrates to deterministic identities
+PASS identity exhaustion rejects spawning without wrap
+PASS empty reconfiguration preserves identity allocation cursor

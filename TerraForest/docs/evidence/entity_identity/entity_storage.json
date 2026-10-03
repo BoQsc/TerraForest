@@ -1,0 +1,8 @@
+{
+  "bytes": 3199992,
+  "capture_us": 1496,
+  "failures": 0,
+  "restore_us": 41586,
+  "rows": 99999,
+  "scope": "native codec and compound provider integration; no gameplay population or streaming"
+}

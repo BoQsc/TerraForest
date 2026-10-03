@@ -1,11 +1,13 @@
 #include "block_prefab.hpp"
 #include <godot_cpp/core/class_db.hpp>
+#include <godot_cpp/classes/ref.hpp>
 #include <algorithm>
 #include <tuple>
 
 namespace terraforest {
 void NativeBlockPrefab::_bind_methods() {
     ClassDB::bind_method(D_METHOD("configure","records"),&NativeBlockPrefab::configure);
+    ClassDB::bind_method(D_METHOD("compose","sources","placements"),&NativeBlockPrefab::compose);
     ClassDB::bind_method(D_METHOD("set_records","records"),&NativeBlockPrefab::set_records);
     ClassDB::bind_method(D_METHOD("get_records"),&NativeBlockPrefab::get_records);
     ClassDB::bind_method(D_METHOD("get_cell_count"),&NativeBlockPrefab::get_cell_count);
@@ -31,6 +33,40 @@ bool NativeBlockPrefab::configure(const PackedInt32Array &records) {
 }
 void NativeBlockPrefab::set_records(const PackedInt32Array &records) {
     ERR_FAIL_COND_MSG(!configure(records),"Invalid block prefab records; previous asset preserved");
+}
+bool NativeBlockPrefab::compose(const Array &sources,const PackedInt32Array &placements) {
+    // Each placement is [source index, x, y, z, quarter turns]. Flatten once in
+    // native code; the resulting asset uses the existing chunked world pipeline.
+    if(sources.is_empty()||sources.size()>256||placements.is_empty()||placements.size()%5||placements.size()>4096*5)return false;
+    std::vector<Ref<NativeBlockPrefab>> assets;
+    for(int64_t i=0;i<sources.size();++i) {
+        if(sources[i].get_type()!=Variant::OBJECT)return false;
+        Ref<NativeBlockPrefab> asset=sources[i];
+        if(asset.is_null()||asset->cells.empty())return false;
+        assets.push_back(asset);
+    }
+    int64_t count=0;
+    for(int64_t i=0;i<placements.size();i+=5) {
+        int index=placements[i],turns=placements[i+4];
+        if(index<0||index>=int(assets.size())||turns<0||turns>3)return false;
+        count+=assets[index]->cells.size();
+        if(count>262144)return false;
+    }
+    PackedInt32Array records;records.resize(count*4);int64_t at=0;
+    for(int64_t i=0;i<placements.size();i+=5) {
+        const int turns=placements[i+4];
+        for(const auto &c:assets[placements[i]]->cells) {
+            int64_t x=c.x,y=int64_t(c.y)+placements[i+2],z=c.z;
+            for(int r=0;r<turns;++r){int64_t old=x;x=-z;z=old;}
+            x+=placements[i+1];z+=placements[i+3];
+            if(x<-4095||x>4095||y<-4095||y>4095||z<-4095||z>4095)return false;
+            records.set(at++,int32_t(x));records.set(at++,int32_t(y));records.set(at++,int32_t(z));
+            records.set(at++,(c.word&~24)|((((c.word>>3)+turns)&3)<<3));
+        }
+    }
+    // configure rejects any duplicated cells and commits only after validation;
+    // this remains safe when this resource also occurs among the sources.
+    return configure(records);
 }
 PackedInt32Array NativeBlockPrefab::get_records() const {
     PackedInt32Array out;out.resize(cells.size()*4);int i=0;

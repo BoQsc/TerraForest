@@ -1,0 +1,46 @@
+# SPDX-License-Identifier: 0BSD
+extends SceneTree
+var failures := 0
+func check(ok: bool,label: String) -> void:
+	print(("PASS " if ok else "FAIL ")+label)
+	if not ok: failures+=1
+func _initialize() -> void:
+	GDExtensionManager.load_extension("res://addons/world_runtime/world_runtime.gdextension")
+	var store: RefCounted=ClassDB.instantiate("NativeEntityStore")
+	store.configure(8)
+	var first: int=store.spawn(Vector3(1,2,3),Vector3.ZERO)
+	var second: int=store.spawn(Vector3(4,5,6),Vector3.ZERO)
+	var identity: int=store.persistent_id(first)
+	check(identity>0 and store.resolve_identity(identity)==first,"identity resolves live runtime handle")
+	check(store.persistent_id(0)==0 and store.resolve_identity(-1)==0,"invalid references rejected")
+	store.despawn(second)
+	var third: int=store.spawn(Vector3.ZERO,Vector3.ZERO)
+	check(store.persistent_id(third)==3 and store.resolve_identity(2)==0,"despawn and slot reuse never recycle identity")
+	var saved: PackedByteArray=store.capture_storage_snapshot()
+	store.restore_storage_snapshot(saved)
+	var restored: int=store.resolve_identity(identity)
+	check(restored!=first and not store.contains(first) and store.get_position(restored)==Vector3(1,2,3),"identity survives reload with fresh runtime handle")
+	check(store.persistent_id(store.spawn(Vector3.ZERO,Vector3.ZERO))==4,"allocation cursor survives reload")
+	store.restore_storage_snapshot(saved)
+	for mutation: int in 4:
+		var bad:=saved.duplicate()
+		match mutation:
+			0: bad.encode_u64(56,bad.decode_u64(24))
+			1: bad.encode_u64(24,0)
+			2: bad.encode_u64(16,3)
+			3: bad.encode_u64(16,0)
+		check(not store.restore_storage_snapshot(bad) and store.capture_storage_snapshot()==saved,"invalid identity metadata rejected atomically %d" % mutation)
+	var legacy:=PackedByteArray();legacy.resize(40)
+	legacy.encode_u32(0,0x31454654);legacy.encode_u32(4,1);legacy.encode_u32(8,8);legacy.encode_u32(12,1)
+	legacy.encode_float(16,42)
+	check(store.restore_storage_snapshot(legacy) and store.get_position(store.resolve_identity(1)).x==42 and store.capture_storage_snapshot().decode_u32(4)==2,"legacy snapshot migrates to deterministic identities")
+	var exhausted: PackedByteArray=store.capture_storage_snapshot()
+	exhausted.encode_u32(16,0);exhausted.encode_u32(20,0x80000000)
+	check(store.restore_storage_snapshot(exhausted) and store.spawn(Vector3.ZERO,Vector3.ZERO)==0 and store.spawn_grid(1,Vector3.ZERO,1,Vector3.ZERO).is_empty(),"identity exhaustion rejects spawning without wrap")
+	store.restore_storage_snapshot(saved)
+	store.despawn(store.resolve_identity(1));store.despawn(store.resolve_identity(3))
+	check(store.configure(8) and store.persistent_id(store.spawn(Vector3.ZERO,Vector3.ZERO))==4,"empty reconfiguration preserves identity allocation cursor")
+	DirAccess.make_dir_recursive_absolute("res://reports")
+	var file:=FileAccess.open("res://reports/entity_identity.json",FileAccess.WRITE)
+	file.store_string(JSON.stringify({"failures":failures,"scope":"store-local persistent identities, not network replication or cross-world IDs"}));file.close()
+	quit(1 if failures else 0)

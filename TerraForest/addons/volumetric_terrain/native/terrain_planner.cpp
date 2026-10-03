@@ -66,67 +66,136 @@ double distance(Vector3i key,Vector3 focus,bool collision) {
     return std::sqrt(dx*dx+dz*dz+dy*dy);
 }
 struct Request {Vector3i key;double priority;};
-void collect(Vector3i key,Vector3 focus,bool collision,State &state,Dictionary &split,Dictionary &wanted,std::vector<Request> &requests) {
+void collect(Vector3i key,Vector3 focus,bool collision,State &state,Dictionary &split,Dictionary &wanted,std::vector<Request> &requests,const Vector3 *target=nullptr) {
     if(key.x>=2000||key.y>=2000)return;
     wanted[key]=true;int index=index_for(key);auto flag=state.flags[index];
     double d=distance(key,focus,collision);bool divide=false;
+    if(target)d=std::min(d,distance(key,*target,true));
     if(key.z>16) {
         double radius=key.z==32?48:(key.z==64?100:key.z*1.4);
         divide=d<radius*((flag&SPLIT)?1.30:1.0);split[key]=divide;
+        state.flags[index]=(state.flags[index]&~SPLIT)|(divide?SPLIT:0);
     }
     if(!(flag&PRESENT)||(flag&RETAINED_COARSE)||((flag&DIRTY)&&(!divide||(flag&VISIBLE)))) {
         double priority=d+(key.z==256?0:(key.z<=32?20:200));
         if(key.z<=32&&d<25)priority-=5000;
         requests.push_back({key,priority});
     }
-    if(divide)for(auto child:children(key))collect(child,focus,collision,state,split,wanted,requests);
+    if(divide)for(auto child:children(key))collect(child,focus,collision,state,split,wanted,requests,target);
 }
-bool cover(Vector3i key,const State &state,std::vector<Vector3i> &out) {
+bool cover(Vector3i key,const State &state,std::vector<Vector3i> &out,bool available=false) {
     if(key.x>=2000||key.y>=2000)return true;
     auto flag=state.flags[index_for(key)];size_t start=out.size();
     bool attempted=(flag&SPLIT)&&key.z>16;
     if(attempted) {
         bool complete=true;
-        for(auto child:children(key))if(!cover(child,state,out)){complete=false;break;}
+        for(auto child:children(key))if(!cover(child,state,out,available)){complete=false;if(!available)break;}
         if(complete)return true;
-        out.resize(start);
+        if(!available)out.resize(start);
     }
     // Keep dirty live collision/visuals until their edit transaction publishes;
     // never resurrect a dirty hidden parent while its replacement is pending.
-    if((flag&PRESENT)&&(!(flag&DIRTY)||(flag&VISIBLE))) {out.push_back(key);return true;}
+    if((flag&PRESENT)&&(!(flag&DIRTY)||(flag&VISIBLE))) {out.resize(start);out.push_back(key);return true;}
     if(!attempted&&key.z>16) {
-        for(auto child:children(key))if(!cover(child,state,out)){out.resize(start);return false;}
-        return true;
+        bool complete=true;
+        for(auto child:children(key))if(!cover(child,state,out,available)) {
+            complete=false;
+            if(!available){out.resize(start);return false;}
+        }
+        return complete;
     }
     return false;
+}
+void prioritize_coverage(Vector3 focus,bool collision,const State &state,const Dictionary &wanted,std::vector<Request> &pending) {
+    // Finish one nearby activation path before accumulating more hidden detail.
+    // Sibling coverage at every ancestor is required by cover(); the old
+    // distance-only order deferred those 64/128m bridges behind distant detail.
+    if(focus.x<=-25||focus.z<=-25||focus.x>=2025||focus.z>=2025)return;
+    Vector3i target(-1,-1,16);
+    double best=1e30;
+    int x0=std::max(0,int(std::floor((focus.x-25)/16))*16);
+    int z0=std::max(0,int(std::floor((focus.z-25)/16))*16);
+    int x1=std::min(1999,int(std::floor((focus.x+25)/16))*16);
+    int z1=std::min(1999,int(std::floor((focus.z+25)/16))*16);
+    for(int z=z0;z<=z1;z+=16)for(int x=x0;x<=x1;x+=16) {
+        Vector3i key(x,z,16);
+        if(!wanted.has(key)||(state.flags[index_for(key)]&VISIBLE)||distance(key,focus,collision)>=25)continue;
+        double dx=x+8-focus.x,dz=z+8-focus.z;
+        double rank=dx*dx+dz*dz;
+        if(focus.x>=x&&focus.x<x+16&&focus.z>=z&&focus.z<z+16)rank=-1;
+        if(rank<best){best=rank;target=key;}
+    }
+    if(target.x<0)return;
+    for(auto &request:pending)if(request.key==target)request.priority=-12000;
+    std::vector<Vector3i> covered;
+    for(Vector3i child=target;child.z<256;) {
+        int size=child.z*2;
+        Vector3i parent(child.x/size*size,child.y/size*size,size);
+        for(auto sibling:children(parent)) {
+            if(sibling==child)continue;
+            covered.clear();
+            if(cover(sibling,state,covered))continue;
+            // Preserve the request set. A dirty hidden sibling may need its
+            // descendants instead of a parent rebuild; prioritize those too.
+            for(auto &request:pending) {
+                auto key=request.key;
+                if(key.z<=sibling.z&&key.x>=sibling.x&&key.y>=sibling.y&&
+                   key.x+key.z<=sibling.x+sibling.z&&key.y+key.z<=sibling.y+sibling.z)
+                    request.priority=-11000-key.z+distance(key,focus,collision)*0.01;
+            }
+        }
+        child=parent;
+    }
 }
 }
 void NativeTerrainPlanner::_bind_methods() {
     ClassDB::bind_method(D_METHOD("requests","focus","require_collision","tiles","split_state","visible_cut"),&NativeTerrainPlanner::requests);
+    ClassDB::bind_method(D_METHOD("requests_targeted","focus","require_collision","target","tiles","split_state","visible_cut"),&NativeTerrainPlanner::requests_targeted);
     ClassDB::bind_method(D_METHOD("coverage","tiles","split_state","visible_cut"),&NativeTerrainPlanner::coverage);
+    ClassDB::bind_method(D_METHOD("coverage_available","tiles","split_state","visible_cut"),&NativeTerrainPlanner::coverage_available);
     ClassDB::bind_method(D_METHOD("eviction_candidates","tiles","visible_cut","requested_keys"),&NativeTerrainPlanner::eviction_candidates);
 }
-Dictionary NativeTerrainPlanner::requests(Vector3 focus,bool collision,const Dictionary &tiles,const Dictionary &previous,const Array &visible) const {
-    State state;if(!focus.is_finite()||!state.load(tiles,previous,visible))return failure();
+static Dictionary plan_requests(Vector3 focus,bool collision,const Dictionary &tiles,const Dictionary &previous,const Array &visible,const Vector3 *target) {
+    State state;if(!focus.is_finite()||(target&&!target->is_finite())||!state.load(tiles,previous,visible))return failure();
     Dictionary split=previous.duplicate(),wanted;
     std::vector<Request> pending;pending.reserve(512);
-    for(int z=0;z<2048;z+=256)for(int x=0;x<2048;x+=256)collect(Vector3i(x,z,256),focus,collision,state,split,wanted,pending);
+    for(int z=0;z<2048;z+=256)for(int x=0;x<2048;x+=256)collect(Vector3i(x,z,256),focus,collision,state,split,wanted,pending,target);
+    prioritize_coverage(target?*target:focus,target?true:collision,state,wanted,pending);
     std::stable_sort(pending.begin(),pending.end(),[](const Request &a,const Request &b){return a.priority<b.priority;});
-    TypedArray<Vector3i> keys;keys.resize(pending.size());
-    for(size_t i=0;i<pending.size();i++)keys[i]=pending[i].key;
-    Dictionary result;result["ok"]=true;result["requests"]=keys;result["requested_keys"]=wanted;result["split_state"]=split;return result;
+    TypedArray<Vector3i> keys;keys.resize(pending.size());Dictionary activation;
+    for(size_t i=0;i<pending.size();i++) {
+        keys[i]=pending[i].key;
+        if(pending[i].priority<-10000)activation[pending[i].key]=true;
+    }
+    Dictionary result;result["ok"]=true;result["requests"]=keys;result["requested_keys"]=wanted;result["split_state"]=split;result["activation_keys"]=activation;return result;
 }
-Dictionary NativeTerrainPlanner::coverage(const Dictionary &tiles,const Dictionary &split,const Array &visible) const {
+Dictionary NativeTerrainPlanner::requests(Vector3 focus,bool collision,const Dictionary &tiles,const Dictionary &previous,const Array &visible) const {
+    return plan_requests(focus,collision,tiles,previous,visible,nullptr);
+}
+Dictionary NativeTerrainPlanner::requests_targeted(Vector3 focus,bool collision,Vector3 target,const Dictionary &tiles,const Dictionary &previous,const Array &visible) const {
+    return plan_requests(focus,collision,tiles,previous,visible,&target);
+}
+static Dictionary plan_coverage(const Dictionary &tiles,const Dictionary &split,const Array &visible,bool available) {
     State state;if(!state.load(tiles,split,visible))return failure();
     std::vector<Vector3i> covered;covered.reserve(512);int roots=0;Dictionary covered_roots;
     for(int z=0;z<2048;z+=256)for(int x=0;x<2048;x+=256) {
         Vector3i root(x,z,256);
-        if(cover(root,state,covered)) {++roots;covered_roots[root]=true;}
+        // An absent root is already a coverage hole. Publish valid disjoint
+        // descendants there without waiting for siblings across 256 metres.
+        // A usable parent remains the fallback until its full replacement is
+        // ready: never turn previously covered space into a new hole.
+        if(cover(root,state,covered,available)) {++roots;covered_roots[root]=true;}
     }
     TypedArray<Vector3i> keys,hidden;keys.resize(covered.size());
     for(size_t i=0;i<covered.size();i++) {keys[i]=covered[i];state.flags[index_for(covered[i])]|=CHOSEN;}
     for(int i=0;i<visible.size();i++)if(!(state.flags[index_for(visible[i])]&CHOSEN))hidden.push_back(visible[i]);
     Dictionary result;result["ok"]=true;result["keys"]=keys;result["hidden"]=hidden;result["root_coverage"]=roots;result["covered_roots"]=covered_roots;return result;
+}
+Dictionary NativeTerrainPlanner::coverage(const Dictionary &tiles,const Dictionary &split,const Array &visible) const {
+    return plan_coverage(tiles,split,visible,false);
+}
+Dictionary NativeTerrainPlanner::coverage_available(const Dictionary &tiles,const Dictionary &split,const Array &visible) const {
+    return plan_coverage(tiles,split,visible,true);
 }
 Dictionary NativeTerrainPlanner::eviction_candidates(const Dictionary &tiles,const Array &visible,const Dictionary &requested) const {
     State state;if(!state.load(tiles,requested,visible))return failure();

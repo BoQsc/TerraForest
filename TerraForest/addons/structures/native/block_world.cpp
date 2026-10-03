@@ -20,6 +20,7 @@ static PackedByteArray sha(const PackedByteArray &data) {
     Ref<HashingContext> h; h.instantiate(); h->start(HashingContext::HASH_SHA256); h->update(data); return h->finish();
 }
 void NativeBlockWorld::_bind_methods() {
+    ClassDB::bind_method(D_METHOD("preview_mesh","shape","rotation"),&NativeBlockWorld::preview_mesh);
     ClassDB::bind_method(D_METHOD("capture_region","region"),&NativeBlockWorld::capture_region);
     ClassDB::bind_method(D_METHOD("validate_region_snapshot","bytes"),&NativeBlockWorld::validate_region_snapshot);
     ClassDB::bind_method(D_METHOD("unload_region","expected_snapshot"),&NativeBlockWorld::unload_region);
@@ -70,6 +71,24 @@ void NativeBlockWorld::invalidate(BlockKey key) {
         dirty.erase(key);tickets.erase(key);return;
     }
     dirty.insert(key); tickets[key]=++revision;
+}
+Ref<Mesh> NativeBlockWorld::preview_mesh(int64_t shape,int64_t rotation) {
+    if(shape<1||shape>6||rotation<0||rotation>3)return {};
+    auto &cached=preview_meshes[(shape-1)*4+rotation];
+    if(cached.is_valid())return cached;
+    std::array<uint16_t,5832> halo{};
+    halo[1+18*(1+18)]=uint16_t(shape+(rotation<<3));
+    auto geometry=bake({},0,halo);
+    PackedVector3Array vertices,normals;PackedInt32Array indices;
+    vertices.resize(geometry.vertices.size());normals.resize(geometry.vertices.size());
+    for(int i=0;i<int(geometry.vertices.size());++i){
+        const auto &v=geometry.vertices[i];vertices.set(i,Vector3(v.x,v.y,v.z));normals.set(i,Vector3(v.nx,v.ny,v.nz));
+    }
+    indices.resize(geometry.indices.size());
+    std::memcpy(indices.ptrw(),geometry.indices.data(),geometry.indices.size()*sizeof(int32_t));
+    Array arrays;arrays.resize(Mesh::ARRAY_MAX);arrays[Mesh::ARRAY_VERTEX]=vertices;arrays[Mesh::ARRAY_NORMAL]=normals;arrays[Mesh::ARRAY_INDEX]=indices;
+    Ref<ArrayMesh> mesh;mesh.instantiate();mesh->add_surface_from_arrays(Mesh::PRIMITIVE_TRIANGLES,arrays);
+    cached=mesh;return cached;
 }
 bool NativeBlockWorld::set_cells(const PackedInt32Array &records) {
     bool changed=false;

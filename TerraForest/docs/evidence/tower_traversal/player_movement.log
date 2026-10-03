@@ -1,0 +1,22 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS diagonal walking cannot exceed walking speed
+PASS sprint speed preserved
+PASS release stops horizontal motion immediately
+PASS grounded jump impulse
+PASS holding jump in air cannot cancel gravity
+PASS one second falling accumulates gravity
+PASS one second flight distance at 60 ticks
+PASS vertical plus forward flight has bounded speed
+PASS invalid timestep rejected: 0.0
+PASS invalid timestep rejected: -1.0
+PASS invalid timestep rejected: 0.5
+PASS invalid timestep rejected: nan
+PASS invalid timestep rejected: inf
+PASS nonfinite input rejected
+PASS swim ascent and forward movement share speed cap
+PASS water drag stops released movement at float depth
+PASS submerged idle player has buoyancy
+PASS dive overrides passive buoyancy
+PASS invalid water depth rejected
+PASS swim drag converges consistently across tick rates

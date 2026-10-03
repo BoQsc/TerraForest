@@ -6,10 +6,12 @@ ROOT = Path(__file__).resolve().parents[1]
 DESTINATION = ROOT / 'addons/structures/prefabs'
 
 
-def save(name, title, cells):
+def save(name, title, cells, stack_height=None):
     records = [value for position, word in sorted(cells.items()) for value in (*position, word)]
     text = '[gd_resource type="NativeBlockPrefab" format=3]\n\n[resource]\n'
     text += 'resource_name = ' + json.dumps(title) + '\n'
+    if stack_height is not None:
+        text += f'metadata/stack_height = {stack_height}\n'
     text += 'records = PackedInt32Array(' + ', '.join(map(str, records)) + ')\n'
     (DESTINATION / (name + '.tres')).write_text(text, encoding='utf-8')
     print(f'{name}: {len(cells)} cells')
@@ -76,10 +78,10 @@ def main():
     # Open shaft and four-metre stair rise connect storeys at Y increments of 4.
     for z in range(4):
         for x in range(-1, 2):
-            for y in range(1, z + 1):
-                tower[x, y, z] = 65
+            # Keep the underside open: solid infill in the next module would
+            # obstruct headroom above this storey's flight.
             tower[x, z + 1, z] = 67
-    save('tower_floor', 'Tower floor', tower)
+    save('tower_floor', 'Tower floor', tower, stack_height=4)
 
 
 if __name__ == '__main__':

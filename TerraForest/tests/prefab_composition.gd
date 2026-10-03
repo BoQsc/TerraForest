@@ -1,0 +1,48 @@
+# SPDX-License-Identifier: 0BSD
+extends SceneTree
+var failures:=0
+func check(ok: bool,label: String) -> void:
+	print(("PASS " if ok else "FAIL ")+label)
+	if not ok: failures+=1
+func _initialize() -> void:
+	GDExtensionManager.load_extension("res://addons/structures/structures.gdextension")
+	var source: Resource=ClassDB.instantiate("NativeBlockPrefab")
+	source.configure(PackedInt32Array([0,0,0,1,2,1,0,3+(1<<3)+(2<<5)]))
+	var output: Resource=ClassDB.instantiate("NativeBlockPrefab")
+	var sites:=PackedInt32Array()
+	for turn in 4: sites.append_array(PackedInt32Array([0,turn*8,0,0,turn]))
+	check(output.compose([source],sites) and output.get_cell_count()==8,"four rotated modules compose in one native operation")
+	var world: Node3D=ClassDB.instantiate("NativeBlockWorld")
+	check(world.place_prefab(output,Vector3i.ZERO,0),"composed resource uses ordinary world placement")
+	for turn in 4:
+		var offset:=Vector3i(2,1,0)
+		for r in turn: offset=Vector3i(-offset.z,offset.y,offset.x)
+		check(world.get_cell(Vector3i(turn*8,0,0)+offset)==3+(((1+turn)%4)<<3)+(2<<5),"shape rotation and material preserved %d" % turn)
+	var saved: PackedInt32Array=output.get_records()
+	check(not output.compose([source],PackedInt32Array([0,0,0,0,0,0,0,0,0,0])) and output.get_records()==saved,"overlapping modules rejected without changing asset")
+	check(not output.compose([source],PackedInt32Array([1,0,0,0,0])) and not output.compose([source],PackedInt32Array([0,0,0,0,4])),"invalid source and rotation rejected")
+	check(not output.compose([source],PackedInt32Array([0,2147483647,0,0,0])) and output.get_records()==saved,"coordinate overflow rejected before mutation")
+	check(output.compose([output],PackedInt32Array([0,1,0,0,0])) and output.get_cell_count()==8,"self-source composition is staged safely")
+	check(source.get_cell_count()==2,"composition preserves source assets")
+	check(not output.compose([],sites) and not output.compose([source],PackedInt32Array([0,1])) and not output.compose([null],sites),"missing assets and malformed placement rows rejected")
+	var floor_asset: Resource=load("res://addons/structures/prefabs/tower_floor.tres")
+	var height: int=ceili(floor_asset.get_bounds().size.y)
+	sites.clear()
+	for level in 16: sites.append_array(PackedInt32Array([0,0,level*height,0,0]))
+	var begin:=Time.get_ticks_usec()
+	check(output.compose([floor_asset],sites),"sixteen authored tower floors compose")
+	var elapsed:=Time.get_ticks_usec()-begin
+	check(output.get_cell_count()==floor_asset.get_cell_count()*16 and output.get_bounds().size.y==height*16,"large assembly preserves every floor without per-module nodes")
+	var large_saved: PackedInt32Array=output.get_records()
+	sites.resize(4096*5);sites.fill(0)
+	check(not output.compose([floor_asset],sites) and output.get_records()==large_saved,"assembly cell limit rejects before replacing existing resource")
+	var path:="user://composed_prefab_%d.res" % OS.get_process_id()
+	check(ResourceSaver.save(output,path)==OK,"composed prefab saves as reusable resource")
+	var reopened: Resource=ResourceLoader.load(path,"",ResourceLoader.CACHE_MODE_IGNORE)
+	check(reopened.get_records()==output.get_records(),"composed prefab reloads exact geometry")
+	DirAccess.remove_absolute(path)
+	world.free()
+	DirAccess.make_dir_recursive_absolute("res://reports")
+	var file:=FileAccess.open("res://reports/prefab_composition.json",FileAccess.WRITE)
+	file.store_string(JSON.stringify({"failures":failures,"cells":output.get_cell_count(),"composition_us":elapsed,"scope":"native module composition and asset persistence; no rendered city or frame-rate claim"}));file.close()
+	quit(1 if failures else 0)

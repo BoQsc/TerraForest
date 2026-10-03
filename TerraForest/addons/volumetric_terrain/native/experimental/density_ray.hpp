@@ -8,7 +8,7 @@
 namespace terraforest::experimental {
 enum class RayStatus {hit,miss,work_limit,cancelled,invalid_input};
 struct RayControl {size_t max_cells=4096;bool(*cancel)(void*)=nullptr;void*context=nullptr;};
-struct DensityHit {RayStatus status=RayStatus::miss;double fraction=0;V3 position{};size_t cells=0;};
+struct DensityHit {RayStatus status=RayStatus::miss;double fraction=0;V3 position{},normal{};size_t cells=0;};
 inline double polynomial(const double*c,double t){return ((c[3]*t+c[2])*t+c[1])*t+c[0];}
 // Partition at derivative roots so same-sign endpoints cannot hide two roots.
 // Extended-precision evaluation preserves the original input coefficients.
@@ -80,10 +80,11 @@ static DensityHit trace_density(V3 from,V3 to,Sample&&sample,const RayControl&co
   if(out.cells>=control.max_cells){out.status=RayStatus::work_limit;return out;}out.cells++;
   double exit=std::min(leave,std::min(next[0],std::min(next[1],next[2])));
   if(exit<enter){out.status=RayStatus::invalid_input;return out;}
-  double coefficient[4]={};
+  double coefficient[4]={},samples[8];
   for(int corner=0;corner<8;corner++){
    double value=sample(cell[0]+(corner&1),cell[1]+((corner>>1)&1),cell[2]+((corner>>2)&1));
    if(!std::isfinite(value)){out.status=RayStatus::invalid_input;return out;}
+   samples[corner]=value;
    double product[4]={value,0,0,0};
    for(int k=0;k<3;k++){
     double p=start[k]+delta[k]*enter-cell[k],v=delta[k]*(exit-enter);
@@ -97,7 +98,17 @@ static DensityHit trace_density(V3 from,V3 to,Sample&&sample,const RayControl&co
   if(first_cubic_root(coefficient,local)){
    if(control.cancel&&control.cancel(control.context)){out.status=RayStatus::cancelled;return out;}
    out.status=RayStatus::hit;out.fraction=enter+(exit-enter)*local;
-   out.position={float(start[0]+delta[0]*out.fraction),float(start[1]+delta[1]*out.fraction),float(start[2]+delta[2]*out.fraction)};return out;
+   out.position={float(start[0]+delta[0]*out.fraction),float(start[1]+delta[1]*out.fraction),float(start[2]+delta[2]*out.fraction)};
+   double p[3],g[3]={};
+   for(int k=0;k<3;k++)p[k]=std::clamp(start[k]+delta[k]*out.fraction-cell[k],0.0,1.0);
+   for(int corner=0;corner<8;corner++)for(int axis=0;axis<3;axis++){
+    double v=samples[corner]*((corner&(1<<axis))?1:-1);
+    for(int k=0;k<3;k++)if(k!=axis)v*=corner&(1<<k)?p[k]:1-p[k];
+    g[axis]+=v;
+   }
+   double length=std::sqrt(g[0]*g[0]+g[1]*g[1]+g[2]*g[2]);
+   if(length>1e-12)out.normal={float(g[0]/length),float(g[1]/length),float(g[2]/length)};
+   return out;
   }
   if(exit==leave)return out;
   for(int k=0;k<3;k++)if(next[k]<=exit){cell[k]+=delta[k]>0?1:-1;if(cell[k]<0||cell[k]>=bounds[k])return out;next[k]=(cell[k]+(delta[k]>0?1:0)-start[k])/delta[k];}

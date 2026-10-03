@@ -7,6 +7,7 @@ const GRID: int = 6
 @export var vegetation: Node3D
 @export var camera: Camera3D
 @export var structures: Node3D
+@export var water: Node3D
 @export var seed: int = 1703
 @export_range(64.0, 768.0, 64.0) var stream_radius: float = 384.0
 @export_range(9, 625, 1) var max_resident_cells: int = 169
@@ -25,6 +26,7 @@ var rejected_batches: int = 0
 var _samples: Dictionary = {}
 var _reconcile: Dictionary = {}
 var _resample: Dictionary = {}
+var last_process_us: int = 0
 
 func _ready() -> void:
 	if terrain == null or vegetation == null or camera == null:
@@ -36,6 +38,7 @@ func _ready() -> void:
 	terrain.reload_started.connect(reset)
 	if structures != null:
 		structures.changed.connect(_structures_changed)
+	if water!=null: water.exclusion_changed.connect(_water_changed)
 	_connected = true
 
 func _cell(point: Vector3) -> Vector2i:
@@ -57,6 +60,11 @@ func reset() -> void:
 	_last_cell = Vector2i(-9999, -9999)
 
 func _process(delta: float) -> void:
+	var begin:=Time.get_ticks_usec()
+	_step(delta)
+	last_process_us=Time.get_ticks_usec()-begin
+
+func _step(delta: float) -> void:
 	if not terrain.world_ready or not vegetation.ready_to_render:
 		return
 	# Coalesce edits; reconcile at most one 36-candidate owner per frame.
@@ -77,11 +85,13 @@ func _process(delta: float) -> void:
 	for key in _wanted:
 		if (resident.has(key) and not _resample.has(key)) or _pending_cells.has(key):
 			continue
+		if not resident.has(key) and resident.size()+_requests.size()>=max_resident_cells:
+			continue
 		var candidates: Dictionary = _candidates(key)
 		if candidates["points"].is_empty():
 			resident[key] = true
 			_resample.erase(key)
-			continue
+			break # Empty owners consume the same per-frame generation budget.
 		_token += 1
 		if terrain.request_surface_batch(candidates["points"], _token):
 			candidates["key"] = key
@@ -172,6 +182,11 @@ func _structures_changed() -> void:
 	for key in _samples:
 		_reconcile[key] = true
 
+func _water_changed(bounds: AABB) -> void:
+	for key: Vector2i in _samples:
+		var footprint:=AABB(Vector3(key.x*CELL_SIZE,bounds.position.y,key.y*CELL_SIZE),Vector3(CELL_SIZE,maxf(bounds.size.y,1.0),CELL_SIZE))
+		if footprint.intersects(bounds): _reconcile[key]=true
+
 func _publish_samples(key: Vector2i) -> void:
 	var sample: Dictionary = _samples[key]
 	var transforms: Array[Transform3D] = sample["transforms"]
@@ -183,9 +198,14 @@ func _publish_samples(key: Vector2i) -> void:
 			_reconcile[key] = true
 			return
 	var ids := PackedInt64Array()
+	var water_mask:=PackedByteArray()
+	if water!=null:
+		water_mask=water.placement_mask(transforms)
+		if water_mask.size()!=transforms.size():
+			rejected_batches+=1;_reconcile[key]=true;return
 	var accepted: Array[Transform3D] = []
 	for i in range(transforms.size()):
-		if structures == null or mask[i] == 0:
+		if (structures == null or mask[i] == 0) and (water==null or water_mask[i]==0):
 			ids.append(sample["ids"][i])
 			accepted.append(transforms[i])
 	# Unaffected owners retain their current LOD/fade state.
@@ -209,6 +229,8 @@ func _region_changed(bounds: AABB, _revision: int) -> void:
 			_resample[key] = true
 
 func _exit_tree() -> void:
+	if is_instance_valid(water) and water.exclusion_changed.is_connected(_water_changed):
+		water.exclusion_changed.disconnect(_water_changed)
 	if is_instance_valid(structures) and structures.changed.is_connected(_structures_changed):
 		structures.changed.disconnect(_structures_changed)
 	if _connected and is_instance_valid(terrain):

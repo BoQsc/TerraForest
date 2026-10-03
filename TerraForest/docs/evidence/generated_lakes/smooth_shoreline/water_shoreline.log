@@ -1,0 +1,19 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS shoreline volume configured
+PASS curved basin bakes
+PASS clipped triangles preserve winding, height, UVs and solid exclusion
+PASS curved shore has sub-cell contour vertices
+PASS surface reaches the physical shoreline rather than the conservative voxel inset
+PASS surface is cached and 3D scratch is released
+PASS caller cannot mutate published surface channels
+PASS shoreline volume configured
+PASS curved basin bakes
+PASS clipped triangles preserve winding, height, UVs and solid exclusion
+PASS curved shore has sub-cell contour vertices
+PASS surface reaches the physical shoreline rather than the conservative voxel inset
+PASS surface is cached and 3D scratch is released
+PASS caller cannot mutate published surface channels
+PASS disconnected neighboring basin remains dry
+PASS conservative volume excludes sub-cell boundary opening
+PASS surface reaching volume boundary falls back without drawing a leak

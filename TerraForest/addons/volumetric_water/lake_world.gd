@@ -3,6 +3,7 @@ extends Node3D
 ## and occupancy queries are C++. One bounded worker slice is outstanding.
 signal lake_ready(id: int)
 signal lake_failed(id: int, status: int)
+signal exclusion_changed(bounds: AABB)
 @export var terrain: Node3D
 @export_range(1, 16) var max_lakes: int = 8
 const WaterShader = preload("res://addons/volumetric_water/water.gdshader")
@@ -97,20 +98,25 @@ func remove_lake(id: int) -> void:
 		return
 	if id == _busy_id:
 		_discard_completion = true
+	var bounds: AABB=_lakes[id]["bounds"]
 	_lakes[id]["mesh"].queue_free()
 	_lakes.erase(id)
+	exclusion_changed.emit(bounds)
 
 func clear() -> void:
 	for id: int in _lakes.keys():
 		remove_lake(id)
 
 func _invalidate(bounds: AABB) -> void:
+	var changed:=false
 	for item: Dictionary in _lakes.values():
 		if item["bounds"].intersects(bounds):
+			changed=true
 			item["volume"] = null
 			item["mesh"].mesh = null
 			item["builder"] = null
 			item["dirty"] = true
+	if changed: exclusion_changed.emit(bounds)
 
 func _process(_delta: float) -> void:
 	if not _available or not is_instance_valid(terrain):
@@ -161,16 +167,25 @@ func _slice_ready(token: int, status: int, epoch_id: int, revision: int) -> void
 	if status != 1:
 		item["builder"] = null
 		lake_failed.emit(id, status)
+		exclusion_changed.emit(item["bounds"])
 		return
 	item["volume"] = item["builder"]
 	item["builder"] = null
-	var arrays: Array = item["volume"].surface_arrays()
+	var arrays: Array = item["volume"].smooth_surface_arrays()
 	var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
 	if not vertices.is_empty():
 		var mesh := ArrayMesh.new()
 		mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
 		item["mesh"].mesh = mesh
 	lake_ready.emit(id)
+	exclusion_changed.emit(item["bounds"])
+
+func placement_mask(transforms: Array[Transform3D]) -> PackedByteArray:
+	var volumes: Array=[]
+	if is_instance_valid(terrain) and _epoch==terrain.epoch:
+		for item: Dictionary in _lakes.values():
+			if item["volume"]!=null: volumes.append(item["volume"])
+	return _catalog.placement_mask(volumes,transforms) if _catalog!=null else PackedByteArray()
 
 func depth_at(point: Vector3) -> float:
 	if not is_instance_valid(terrain) or _epoch != terrain.epoch:

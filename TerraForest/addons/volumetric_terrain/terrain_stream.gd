@@ -54,6 +54,18 @@ var in_flight: Dictionary = {}
 var modified_columns: Dictionary = {}
 var split_state: Dictionary = {}
 var requested_keys: Dictionary = {}
+var activation_keys: Dictionary = {}
+var interaction_target:=Vector3.INF
+var interaction_target_until_us: int=0
+
+func set_interaction_target(point: Vector3) -> void:
+	var now:=Time.get_ticks_usec()
+	var changed: bool=now>=interaction_target_until_us or not interaction_target.is_finite()
+	if point.is_finite() and interaction_target.is_finite():
+		changed=changed or Vector2i(floori(point.x/16),floori(point.z/16))!=Vector2i(floori(interaction_target.x/16),floori(interaction_target.z/16))
+	interaction_target=point
+	interaction_target_until_us=now+250000 if point.is_finite() else 0
+	if changed: schedule_timer=0.0
 var visible_cut: Array[Vector3i] = []
 var active_leaves: Dictionary = {}
 var roots: Array[Vector3i] = []
@@ -82,7 +94,7 @@ var temporary: bool = false
 var stopping: bool = false
 var latest_error: String = ""
 var preparation: Dictionary = {}
-var paused_preparation: Dictionary = {}
+var paused_preparations: Array[Dictionary] = []
 var retired_nodes: Array[Node] = []
 var last_queue_ms: float = 0.0
 var last_worker_finished_us: int = 0
@@ -171,10 +183,10 @@ func shutdown() -> void:
 		if is_instance_valid(prepared):
 			prepared.free()
 		preparation.clear()
-	if not paused_preparation.is_empty():
-		var prepared: Node = paused_preparation.entry.node
+	for paused: Dictionary in paused_preparations:
+		var prepared: Node = paused.entry.node
 		if is_instance_valid(prepared): prepared.free()
-		paused_preparation.clear()
+	paused_preparations.clear()
 	for retired: Node in retired_nodes:
 		if is_instance_valid(retired):
 			retired.free()
@@ -193,6 +205,7 @@ func _process(delta: float) -> void:
 	last_receive_ms = float(Time.get_ticks_usec() - receive_begin) / 1000.0
 	_record_stage("receive", last_receive_ms)
 	_drain_staging()
+	_record_stage("staging frame", last_publish_frame_ms)
 	_retire_some()
 	if not world_ready:
 		return
@@ -212,13 +225,17 @@ func _process(delta: float) -> void:
 		_record_stage("LOD eviction",float(Time.get_ticks_usec()-evict_begin)/1000.0)
 		last_schedule_ms = float(Time.get_ticks_usec() - schedule_begin) / 1000.0
 		_record_stage("LOD schedule/cut/evict", last_schedule_ms)
+	var lighting_begin:=Time.get_ticks_usec()
 	_schedule_lighting()
+	_record_stage("lighting schedule",(Time.get_ticks_usec()-lighting_begin)/1000.0)
 	autosave_timer += delta
 	var quiet: bool = Time.get_ticks_usec() - last_interaction_us >= 3000000
 	if autosave_timer >= 15.0 and changed_since_save and not pending_edit and quiet and backend.status() == "idle" and backend.queued() == 0:
+		var save_begin:=Time.get_ticks_usec()
 		if backend.submit({"kind": "save"}):
 			autosave_timer = 0.0
 			changed_since_save = false
+		_record_stage("save capture",(Time.get_ticks_usec()-save_begin)/1000.0)
 
 func note_interaction() -> void:
 	last_interaction_us = Time.get_ticks_usec()
@@ -303,6 +320,7 @@ func _receive(result: Dictionary) -> void:
 			"key": [key.x, key.y, key.z], "worker_ms": result.get("worker_ms", null),
 			"cached": result.get("cached", false), "derived_cached": result.get("derived_cached", false),
 			"bytes": result.get("bytes", null), "triangles": result.get("triangles", null),
+			"region_parts":result.get("region_parts",0),"region_stages":result.get("region_stages",{}),
 			"cancelled": result.get("cancelled", false), "error": result.get("error", "")})
 	if result.has("cache_stats"):
 		derived_metrics = result["cache_stats"]
@@ -362,6 +380,7 @@ func _receive(result: Dictionary) -> void:
 			return
 		staging_versions[key] = Vector2i(epoch, int(result["stamp"]))
 		staging.push_back(result)
+		if activation_keys.has(key): schedule_timer=0.0
 	elif kind == "edit_begin":
 		if int(result["epoch"]) != epoch or int(result["ticket"]) != edit_ticket:
 			return
@@ -379,6 +398,11 @@ func _receive(result: Dictionary) -> void:
 			return
 		if result.has("error"):
 			_fail(str(result["error"]))
+			return
+		if result.get("retain_geometry",false):
+			staged_batch[result.key]={"retain_geometry":true,"stamp":result.stamp}
+			batch_remaining-=1
+			if batch_remaining==0 and edit_worker_done: _commit_batch()
 			return
 		result["kind"] = "batch"
 		staging.push_front(result)
@@ -454,21 +478,22 @@ func _fail(text: String) -> void:
 
 func _begin_entry(data: Dictionary) -> Dictionary:
 	if data.has("bricks"):
-		var parent:=MeshInstance3D.new()
+		var parent:=Node3D.new()
 		parent.visible=false
 		return {"node":parent,"body":null,"bricks":{},"brick_partial":data.get("brick_partial",false),"dirty":false,"stamp":data.stamp,"step":data.get("step",1),"triangles":data.triangles,"bytes":data.bytes,"used":Time.get_ticks_msec(),"key":data.key,"active":false,"cavity_visibility":true}
 	var upload_begin: int = Time.get_ticks_usec()
 	var key: Vector3i = data["key"]
-	var mesh_node := MeshInstance3D.new()
-	mesh_node.name = "Patch_%d_%d_%d" % [key.x, key.y, key.z]
-	mesh_node.visible = false
-	# Two-sided shadow casting prevents a thin roof's reverse side being discarded.
-	mesh_node.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_DOUBLE_SIDED
-	var body: StaticBody3D = null
-	var layout: Dictionary = {}
 	var arrays: Array = data["arrays"]
 	var indices: PackedInt32Array = arrays[Mesh.ARRAY_INDEX]
+	var mesh_node: Node3D = Node3D.new() if indices.is_empty() else MeshInstance3D.new()
+	mesh_node.name = "Patch_%d_%d_%d" % [key.x, key.y, key.z]
+	mesh_node.visible = false
+	var body: StaticBody3D = null
+	var layout: Dictionary = {}
 	if not indices.is_empty():
+		# Empty owners retain their logical identity without a rendering instance.
+		# Two-sided shadows preserve thin roofs.
+		mesh_node.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_DOUBLE_SIDED
 		var mesh := ArrayMesh.new()
 		mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays, [], {}, Mesh.ARRAY_FLAG_USE_DYNAMIC_UPDATE)
 		mesh.surface_set_material(0, material)
@@ -506,6 +531,9 @@ func _prepare_piece() -> bool:
 			part["stamp"]=parent.data.stamp
 			parent["brick_preparation"]={"data":part,"entry":_begin_entry(part),"piece_at":0}
 			parent.entry.node.add_child(parent.brick_preparation.entry.node)
+			# The hidden parent gates the whole region. Keep child visibility local
+			# to the mesh so LOD switches need only one inherited visibility change.
+			parent.brick_preparation.entry.node.visible=true
 			return false
 		preparation=parent.brick_preparation
 		var finished:=_prepare_piece()
@@ -549,25 +577,52 @@ func _prepare_piece() -> bool:
 	_record_stage("collision piece", last_collision_piece_ms)
 	return int(preparation["piece_at"]) >= pieces.size()
 
+func _has_paused_preparation(key: Vector3i) -> bool:
+	for paused: Dictionary in paused_preparations:
+		if paused.data.key==key: return true
+	return false
+
+func _urgent_staging_index() -> int:
+	for i in range(staging.size()):
+		if staging[i].get("kind","")=="mesh" and activation_keys.has(staging[i].key): return i
+	return -1
+
+func _select_preparation_work() -> void:
+	# Preserve partially uploaded resources; priority changes must not restart
+	# them. Cap suspended background containers while retaining an edit slot.
+	var urgent:=_urgent_staging_index() if not pending_edit else -1
+	if not preparation.is_empty() and preparation.data.get("kind","")=="mesh":
+		if pending_edit or (urgent>=0 and not activation_keys.has(preparation.data.key) and paused_preparations.size()<4):
+			paused_preparations.append(preparation)
+			preparation={}
+	if not preparation.is_empty() or pending_edit: return
+	for i in range(paused_preparations.size()):
+		if activation_keys.has(paused_preparations[i].data.key):
+			preparation=paused_preparations[i]
+			paused_preparations.remove_at(i)
+			return
+	if urgent>=0:
+		if urgent>0:
+			var data: Dictionary=staging[urgent]
+			staging.remove_at(urgent)
+			staging.push_front(data)
+	elif not paused_preparations.is_empty():
+		preparation=paused_preparations.pop_front()
+
 func _drain_staging() -> void:
 	var begin: int = Time.get_ticks_usec()
 	# A multi-region background upload must yield between bounded pieces rather
 	# than keep a ready edit waiting for the entire coarse container.
-	if pending_edit and not preparation.is_empty() and preparation.data.get("kind","")=="mesh":
-		assert(paused_preparation.is_empty())
-		paused_preparation=preparation
-		preparation={}
+	_select_preparation_work()
 	if not partition_request.is_empty() and not _partition_valid(): _cancel_partition()
-	if not lighting_upload.is_empty() and not pending_edit:
+	if not lighting_upload.is_empty() and not pending_edit and _urgent_staging_index()<0 and (preparation.is_empty() or not activation_keys.has(preparation.data.key)):
 		_apply_lighting_piece()
 		if not lighting_upload.is_empty():
 			last_publish_frame_ms = float(Time.get_ticks_usec() - begin) / 1000.0
 			return
 	while Time.get_ticks_usec() - begin < main_build_budget_us:
 		var unit_begin: int = Time.get_ticks_usec()
-		if preparation.is_empty() and not pending_edit and not paused_preparation.is_empty():
-			preparation=paused_preparation
-			paused_preparation={}
+		_select_preparation_work()
 		if preparation.is_empty():
 			if staging.is_empty():
 				break
@@ -597,7 +652,9 @@ func _drain_staging() -> void:
 				continue
 			if _prepare_piece():
 				var entry: Dictionary = preparation["entry"]
+				var attach_begin:=Time.get_ticks_usec()
 				add_child(entry["node"])
+				_record_stage("prepared subtree attach",(Time.get_ticks_usec()-attach_begin)/1000.0)
 				preparation.clear()
 				last_mesh_ms = float(data["worker_ms"])
 				worker_builds += 1
@@ -632,8 +689,8 @@ func _apply_lighting_piece() -> void:
 		return
 	var entry: Dictionary = tiles[key]
 	if data.has("brick_bottom"): entry=entry.bricks[data.brick_bottom]
-	var node: MeshInstance3D = entry["node"]
-	var mesh: ArrayMesh = node.mesh as ArrayMesh
+	var node: Node3D = entry["node"]
+	var mesh: ArrayMesh = node.mesh as ArrayMesh if node is MeshInstance3D else null
 	var layout: Dictionary = entry.get("attribute_layout", {})
 	var bytes: PackedByteArray = data["attribute_data"]
 	if mesh == null or mesh.get_surface_count() == 0 or layout.is_empty():
@@ -681,23 +738,23 @@ func _staging_valid(data: Dictionary) -> bool:
 
 func _destroy_entry(entry: Dictionary) -> void:
 	if entry.has("bricks"):
-		for child: Dictionary in entry.bricks.values(): _set_active(child,false)
+		for child: Dictionary in entry.bricks.values(): _set_active(child,false,true)
 	var body: StaticBody3D = entry.get("body")
 	if is_instance_valid(body):
 		body.collision_layer = 0
-	var node: MeshInstance3D = entry.get("node")
+	var node: Node3D = entry.get("node")
 	if is_instance_valid(node):
 		node.visible = false
 		retired_nodes.push_back(node)
 
-func _set_active(entry: Dictionary, active: bool) -> void:
+func _set_active(entry: Dictionary, active: bool, inherited_visibility: bool=false) -> void:
 	if bool(entry.get("active", false)) == active:
 		return
 	entry["active"] = active
 	if entry.has("bricks"):
-		for child: Dictionary in entry.bricks.values(): _set_active(child,active)
-	var node: MeshInstance3D = entry["node"]
-	node.visible = active
+		for child: Dictionary in entry.bricks.values(): _set_active(child,active,true)
+	var node: Node3D = entry["node"]
+	if not inherited_visibility: node.visible = active
 	var body: StaticBody3D = entry["body"]
 	if is_instance_valid(body):
 		body.collision_layer = 1 if active else 0
@@ -721,13 +778,17 @@ func _install(key: Vector3i, entry: Dictionary) -> void:
 	tiles[key] = entry
 	cache_bytes += int(entry["bytes"])
 	_set_active(entry, visible_cut.has(key))
+	if activation_keys.has(key): schedule_timer=0.0
 
 func _commit_batch() -> void:
 	var commit_begin: int = Time.get_ticks_usec()
 	# All edited neighboring surfaces/colliders are already prepared off-screen.
 	# Publish the complete set in one main-thread turn; old colliders survive until here.
 	for key: Vector3i in staged_batch:
-		_install(key, staged_batch[key])
+		if staged_batch[key].get("retain_geometry",false):
+			tiles[key].stamp=staged_batch[key].stamp
+			tiles[key].dirty=false
+		else: _install(key, staged_batch[key])
 	staged_batch.clear()
 	pending_edit = false
 	last_geometry_done_us = Time.get_ticks_usec()
@@ -822,44 +883,54 @@ func _tile_light_modified(key: Vector3i) -> bool:
 
 func _schedule_urgent_collision() -> void:
 	# A long held stroke must not indefinitely stop coverage immediately ahead.
-	# No distant LOD/lighting work is submitted from this exception.
-	if not require_collision:
-		return
+	# Include the coverage bridges required to expose local fine collision.
+	# Arbitrary distant LOD/lighting work remains excluded.
+	# Flying still permits mining and needs editable local terrain. Disabling
+	# walking collision requirements must not disable held-brush loading.
 	schedule_timer = 0.10
 	var requests := _plan_requests()
+	_cancel_unrequested_meshes()
 	var available: int = maxi(0, 2 - backend.queued())
 	for key: Vector3i in requests:
-		if available <= 0:
-			break
-		if key.z > 32 or _distance(key) > 24.0:
+		var interactive: bool=backend.region_terrain and key.z==16 and activation_keys.has(key)
+		if available <= 0 and not interactive: continue
+		if not activation_keys.has(key) and (key.z > 32 or _distance(key) > 24.0):
 			continue
 		var version := Vector2i(epoch, int(stamps.get(key, 0)))
 		if not preparation.is_empty() and preparation["data"]["key"] == key:
 			continue
-		if not paused_preparation.is_empty() and paused_preparation.data.key==key: continue
+		if _has_paused_preparation(key): continue
 		if in_flight.get(key, Vector2i(-1, -1)) == version or staging_versions.get(key, Vector2i(-1, -1)) == version:
 			continue
 		if backend.submit({"kind": "mesh", "key": key, "stamp": version.y, "epoch": epoch,
-			"base": not _tile_modified(key), "relight_cache": _tile_light_modified(key)}, true):
+			"base": not _tile_modified(key), "relight_cache": _tile_light_modified(key),"interaction_mesh":interactive}, true):
 			in_flight[key] = version
 			available -= 1
 	_update_cut()
 
 func _plan_requests() -> Array[Vector3i]:
-	var plan: Dictionary = planner.requests(focus,require_collision,tiles,split_state,visible_cut)
+	var plan: Dictionary
+	if backend.region_terrain and interaction_target.is_finite() and Time.get_ticks_usec()<interaction_target_until_us:
+		plan=planner.requests_targeted(focus,require_collision,interaction_target,tiles,split_state,visible_cut)
+	else:
+		plan=planner.requests(focus,require_collision,tiles,split_state,visible_cut)
 	if not plan.ok:
 		_fail("Native terrain scheduling rejected invalid state")
 		return []
 	requested_keys = plan.requested_keys
+	activation_keys = plan.activation_keys
 	split_state = plan.split_state
 	return plan.requests
 
-func _schedule() -> void:
-	var requests := _plan_requests()
+func _cancel_unrequested_meshes() -> void:
 	for cancelled: Dictionary in backend.cancel_stale_meshes(requested_keys, epoch, stamps):
 		var key: Vector3i = cancelled["key"]
 		if in_flight.get(key) == Vector2i(int(cancelled["epoch"]), int(cancelled["stamp"])):
 			in_flight.erase(key)
+
+func _schedule() -> void:
+	var requests := _plan_requests()
+	_cancel_unrequested_meshes()
 	# No walking-path backlog: the active worker plus at most four waiting builds.
 	var available: int = maxi(0, 4 - backend.queued())
 	for key: Vector3i in requests:
@@ -868,7 +939,7 @@ func _schedule() -> void:
 		var version := Vector2i(epoch, int(stamps.get(key, 0)))
 		if not preparation.is_empty() and preparation["data"]["key"] == key:
 			continue
-		if not paused_preparation.is_empty() and paused_preparation.data.key==key: continue
+		if _has_paused_preparation(key): continue
 		if in_flight.get(key, Vector2i(-1, -1)) == version or staging_versions.get(key, Vector2i(-1, -1)) == version:
 			continue
 		var accepted: bool = backend.submit({"kind": "mesh", "key": key,
@@ -951,7 +1022,7 @@ func _commit_partition() -> void:
 func _update_cut() -> void:
 	if pending_edit:
 		return
-	var covered: Dictionary = planner.coverage(tiles,split_state,visible_cut)
+	var covered: Dictionary = planner.coverage_available(tiles,split_state,visible_cut) if backend.region_terrain else planner.coverage(tiles,split_state,visible_cut)
 	if not covered.ok:
 		_fail("Native terrain coverage rejected invalid state")
 		return
@@ -1009,6 +1080,19 @@ func _cancel_density_requests(status: String) -> void:
 	for request: Dictionary in requests:
 		density_ray_received.emit({"kind":"density_ray","status":status,"token":request.token,"epoch":request.epoch,"requested_revision":request.revision})
 
+func _select_dirty_owners(job: Dictionary, lo: Vector3, hi: Vector3) -> void:
+	var key: Vector3i=job.key
+	if not tiles.has(key) or not tiles[key].has("bricks"): return
+	var bottoms: Array=[]
+	for bottom: int in tiles[key].bricks:
+		var child: Dictionary=tiles[key].bricks[bottom]
+		if child.has("region_bounds"):
+			# Include simplifier support and shared boundary samples.
+			var bounds: AABB=child.region_bounds.grow(17.0 if key.z>32 else 1.0)
+			if bounds.intersects(AABB(lo,hi-lo)): bottoms.append(bottom)
+		elif bottom<=hi.y and bottom+33>=lo.y: bottoms.append(bottom)
+	if not bottoms.is_empty(): job["brick_bottoms"]=bottoms
+
 func _invalidate(lo: Vector3, hi: Vector3) -> Array[Dictionary]:
 	var affected: Array[Dictionary] = []
 	var refinement: Array[Dictionary] = []
@@ -1021,6 +1105,7 @@ func _invalidate(lo: Vector3, hi: Vector3) -> Array[Dictionary]:
 		for z in range(z0, z1 + 1, size):
 			for x in range(x0, x1 + 1, size):
 				var key := Vector3i(x, z, size)
+				var was_clean: bool=tiles.has(key) and not tiles[key].dirty
 				edit_rollback.push_back({"key": key, "stamp": int(stamps.get(key, 0)), "dirty": bool(tiles[key]["dirty"]) if tiles.has(key) else false})
 				stamps[key] = int(stamps.get(key, 0)) + 1
 				if tiles.has(key):
@@ -1028,22 +1113,16 @@ func _invalidate(lo: Vector3, hi: Vector3) -> Array[Dictionary]:
 				if visible_cut.has(key):
 					last_density_tiles += 1
 					affected.push_back({"key": key, "stamp": stamps[key], "lighting_only": false})
-					if tiles[key].has("bricks"):
-						var bottoms: Array=[]
-						for bottom: int in tiles[key].bricks:
-							var child: Dictionary=tiles[key].bricks[bottom]
-							if child.has("region_bounds"):
-								# The legacy simplifier protects adjacent edited pages.
-								# Include that support as well as shared boundary samples.
-								var bounds: AABB=child.region_bounds.grow(17.0 if key.z>32 else 1.0)
-								if bounds.intersects(AABB(lo,hi-lo)): bottoms.append(bottom)
-							elif bottom<=hi.y and bottom+33>=lo.y: bottoms.append(bottom)
-						if not bottoms.is_empty(): affected[-1]["brick_bottoms"]=bottoms
+					_select_dirty_owners(affected[-1],lo,hi)
 				elif size == 16 and requested_keys.has(key):
 					# Repeated edits must not invalidate the same requested fine
 					# children forever. Publish a bounded set in this transaction,
 					# with the same field revision as the still-visible coarse mesh.
 					refinement.push_back({"key": key, "stamp": stamps[key], "lighting_only": false})
+					# A current hidden child can retain unaffected owners just like
+					# a visible child. Previously dirty children require a full build:
+					# this brush's bounds cannot account for earlier missed changes.
+					if was_clean: _select_dirty_owners(refinement[-1],lo,hi)
 	refinement.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return _distance(a["key"]) < _distance(b["key"]))
 	for index in range(mini(4, refinement.size())):
 		affected.push_back(refinement[index])
@@ -1242,9 +1321,9 @@ func reload_world(reset: bool = false) -> void:
 	if not preparation.is_empty():
 		_destroy_entry(preparation["entry"])
 		preparation.clear()
-	if not paused_preparation.is_empty():
-		_destroy_entry(paused_preparation.entry)
-		paused_preparation.clear()
+	for paused: Dictionary in paused_preparations:
+		_destroy_entry(paused.entry)
+	paused_preparations.clear()
 	staged_batch.clear()
 	staging.clear()
 	staging_versions.clear()

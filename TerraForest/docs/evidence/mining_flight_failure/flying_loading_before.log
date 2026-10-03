@@ -1,0 +1,14 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS real stream starts
+PASS real world ready
+PASS initial coarse coverage admitted
+PASS initial coarse coverage published
+PASS real planner displays initial coarse root
+PASS initial world coverage remains complete during handover
+FAIL held mining button permits local collision activation within three seconds
+FAIL paced travel keeps every mining destination ready
+FAIL paced input-through-publication p95 remains within 150ms
+PASS paced travel does not accumulate more than 50ms arrival lag
+[TerrainRewrite] Temporary test world: save skipped
+LOADING_RUNTIME {"checks":[{"name":"real stream starts","pass":true},{"name":"real world ready","pass":true},{"name":"initial coarse coverage admitted","pass":true},{"name":"initial coarse coverage published","pass":true},{"name":"real planner displays initial coarse root","pass":true},{"name":"initial world coverage remains complete during handover","pass":true},{"name":"held mining button permits local collision activation within three seconds","pass":false},{"name":"paced travel keeps every mining destination ready","pass":false},{"name":"paced input-through-publication p95 remains within 150ms","pass":false},{"name":"paced travel does not accumulate more than 50ms arrival lag","pass":true}],"edits":[],"flying":true,"input_p95_ms":1e99999,"max_arrival_lag_ms":0.0,"paced":true,"readiness_ms":3006.037,"ready":false,"ready_destinations":0,"replayed_edits":0,"resident_tiles":1,"scope":"Real terrain scheduler and worker, coarse root initially resident, held brush readiness then travel/mining. Paced mode: 24 two-metre steps every 125ms (nominal 16m/s, 8 edits/s); immediate mode: four 8m steps without travel delay. Arrival lag exposes inability to maintain the nominal pace. Headless regression, not graphical FPS or endurance. Input-through-publication includes synchronous height query.","travel_ms":17.004,"visible_tiles":1}

@@ -1,0 +1,9 @@
+{
+  "status": "Mining responsiveness gates pass in this short run; overall test FAIL due to 52.49ms arrival frame. Not endurance or full-world acceptance. Deferred vegetation retirement was reverted after a regression.",
+  "sha256": {
+    "addons/volumetric_terrain/terrain_backend.gd": "82c53ea6a51a6c0439dad1a79dab7070d693d4caad8c9953662907901668b5e2",
+    "addons/volumetric_terrain/terrain_stream.gd": "1e43721bb3f3553c0ba47bf636f8acf7fd49aa186590a20828cd1e5f34dc249e",
+    "addons/world_ecosystem/world_ecosystem.gd": "43351f013cc3ba718d06e3c350f5818ffa5aaed66430e3009097428c70f3f069",
+    "tests/held_mining_flight.gd": "05c76e689221db9ff160f636a4b69573fa4fe75dfe9fcda13fc2140f44ec6c0f"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "head": "93b6384fb36d0873051415a4bba98d36eb855a26",
+  "dirty_worktree": true,
+  "status": "FAIL: first-arrival visible mining delay remains 987.969 ms; not acceptance",
+  "checks": "6 preparation priority checks and native worker publication probe pass",
+  "source_sha256": {
+    "addons/volumetric_terrain/terrain_stream.gd": "5c30551e60fb8b9cce1feb80ef95930e617dfc914449ceb2b7e0e45918fd0b37",
+    "addons/volumetric_terrain/native/terrain_planner.cpp": "94f58d63245db44f0edefdf44cd3588377da3b0f2716ac5d13d387dc519253ea",
+    "demo/controller.gd": "3668d6bb1eb558009ece72616303eccb2ba2b381f7044c8e0b7832bf37b9af3f",
+    "tests/held_mining_flight.gd": "6fadd50556c5cb129bb4afe9f373bb43b34f95c7276661483f60ad4e15cdce90"
+  }
+}

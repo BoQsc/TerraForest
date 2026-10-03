@@ -1,0 +1,18 @@
+{
+  "failures": 0,
+  "observations": [
+    {
+      "cells": 8,
+      "population": 1024,
+      "query_us": 19,
+      "visited": 4
+    },
+    {
+      "cells": 8,
+      "population": 100000,
+      "query_us": 26,
+      "visited": 4
+    }
+  ],
+  "scope": "native CPU spatial queries; no rendering, collision or networking"
+}

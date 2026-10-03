@@ -67,6 +67,11 @@ void fragment(){
    color+=natural*biome_weight;
   }
   METALLIC=0.65*blend.b;ROUGHNESS=mix(0.98,0.45,blend.b);
+  // Native continuous vein weight, zero outside isolated geological capsules.
+  float ore=clamp(abs(exact_material),0.0,1.0)*exposed*(1.0-total);
+  vec3 mineral=exact_material<0.0?vec3(0.43,0.19,0.075):vec3(0.19,0.23,0.27);
+  color=mix(color,mineral,ore);
+  METALLIC=mix(METALLIC,0.55,ore);ROUGHNESS=mix(ROUGHNESS,0.65,ore);
  }
  ALBEDO=min(color,vec3(0.82));
  // There is no uniform ambient source inside sealed caves. This is a cached

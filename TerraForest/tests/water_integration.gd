@@ -47,6 +47,27 @@ func run() -> void:
 	check(await wait_settled(true),"worker-baked lake publishes in real terrain scene")
 	check(game.lakes.depth_at(center-Vector3(0,6,0))>2.5,"scene water query finds submerged volume")
 	check(game.lakes.depth_at(center+Vector3(0,2,0))==0,"scene water query rejects point above lake")
+	game.fly=false
+	game.needs_floor_spawn=false
+	game.player.position=center-Vector3(0,6,0)
+	game._clear_motion()
+	Input.mouse_mode=Input.MOUSE_MODE_CAPTURED
+	check(game._player_water_depth()>0,"player chest sample enters baked volumetric lake")
+	var swim_start: Vector3=game.player.position
+	game.controls.set_key(KEY_SPACE,true,Time.get_ticks_usec())
+	for i in range(12): await physics_frame
+	check(game.player.position.y>swim_start.y and game.player.velocity.y>0,"real player swims upward through collision-aware movement")
+	game.water_camera.update()
+	check(game.water_camera.underwater and game.camera.environment!=null and game.camera.environment.fog_enabled,"submerged camera enables local underwater fog")
+	if DisplayServer.get_name()!="headless":
+		await RenderingServer.frame_post_draw
+		root.get_texture().get_image().save_png("res://reports/water_underwater.png")
+	game._clear_motion()
+	game.player.position=center+Vector3(0,2,0)
+	check(game._player_water_depth()==0,"player leaving volume returns to dry movement")
+	game.water_camera.update()
+	check(not game.water_camera.underwater and game.camera.environment==null,"leaving water restores inherited scene environment")
+	Input.mouse_mode=Input.MOUSE_MODE_VISIBLE
 	snapshots.append(game.lakes.statistics())
 	game.fly = true
 	game.player.position = center+Vector3(18,15,22)
@@ -59,10 +80,10 @@ func run() -> void:
 		check(Presentation.measurement(root)["fair_graphical_sample"],"water visual check uses 1920x1080 fullscreen at 100 percent scale")
 		await RenderingServer.frame_post_draw
 		root.get_texture().get_image().save_png("res://reports/water_lake.png")
-		Engine.max_fps = 0
-		DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_DISABLED)
+		Engine.max_fps = 60
+		DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_ENABLED)
 		var previous: int = Time.get_ticks_usec()
-		for i in range(600):
+		for i in range(120):
 			await process_frame
 			var now: int = Time.get_ticks_usec()
 			samples.append((now-previous)/1000.0)

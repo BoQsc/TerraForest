@@ -1,0 +1,26 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS pickup and inventory providers attach to disk archive
+PASS persistent world starts
+PASS fresh world ready
+PASS two persistent supplies authored
+PASS worker verifies first pickup save
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+PASS pickup and inventory providers attach to disk archive
+PASS persistent world starts
+PASS fresh instances reopen authored world
+PASS supply identities and positions survive file reload
+PASS loaded supply transfers into inventory
+PASS worker verifies collected state save
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+PASS pickup and inventory providers attach to disk archive
+PASS persistent world starts
+PASS collected world reopens
+PASS file reload retains inventory and cannot respawn collected supply
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+PASS disk archive includes all four supply sections
+PASS isolated corrupt-section fixture has valid outer checksum
+PASS pickup and inventory providers attach to disk archive
+PASS persistent world starts
+PASS worker rejects malformed supply section before world readiness
+[TerrainRewrite] ERROR: save disabled after corrupt snapshot; original file protected

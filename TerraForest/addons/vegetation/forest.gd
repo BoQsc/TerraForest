@@ -37,6 +37,7 @@ var _invalid_decisions: Dictionary={}
 var last_eye: Vector3=Vector3(1e20,1e20,1e20)
 var last_projection: float=-1.0
 var changed: bool=true
+var membership_changed: bool=false
 var reference: bool=false
 var trees_enabled: bool=true
 var shadows_enabled: bool=true
@@ -78,14 +79,16 @@ func upsert_chunk(chunk: String,ids: PackedInt64Array,transforms: Array[Transfor
 		var local_t: Transform3D=t;local_t.origin-=_ensure(key)["origin"];row["local_t"]=local_t
 		if audit_enabled:_audit_pending[ids[i]]=true
 		roots[ids[i]]=row;_ensure(key)["rows"][ids[i]]=row;_invalidate_cell(key);max_scale=maxf(max_scale,sc)
-	stats["trees"]=roots.size();changed=true
+		_invalid_decisions[ids[i]]=true
+	stats["trees"]=roots.size();membership_changed=true
 	return true
 
 func remove_root(id: int)->void:
 	if audit_enabled:_audit_pending[id]=true
 	if not roots.has(id):return
 	var row: Dictionary=roots[id];var key: Vector2i=row["key"]
-	cells[key]["rows"].erase(id);roots.erase(id);moving.erase(id);_invalidate_cell(key);changed=true;stats["trees"]=roots.size()
+	cells[key]["rows"].erase(id);roots.erase(id);moving.erase(id);_invalidate_cell(key);membership_changed=true;stats["trees"]=roots.size()
+	_due_tokens.erase(id);_due_distances.erase(id);_invalid_decisions.erase(id)
 
 func remove_chunk(chunk: String)->void:
 	if not owners.has(chunk):return
@@ -308,7 +311,7 @@ func _choose(eye: Vector3,projection: float,t: float,instant: bool)->void:
 	stats["event_pops"]=int(stats.get("event_pops",0))+popped
 	stats["event_queue_records"]=_heap_distance.size()
 	stats["live_certificates"]=_due_tokens.size()
-	previous_neighborhood=current;last_eye=eye;last_projection=projection;changed=false
+	previous_neighborhood=current;last_eye=eye;last_projection=projection;changed=false;membership_changed=false
 	stats["selection_jobs"]=int(stats["selection_jobs"])+1;stats["tested_rows"]=due.size();stats["selection_us"]=Time.get_ticks_usec()-started
 
 # A bulk upload alone leaves Godot 4.7's CPU instance cache uninitialized.
@@ -481,7 +484,7 @@ func tick(eye: Vector3,projection: float,t: float,instant: bool=false)->void:
 			r["shadow"]=r["shadow_next"];r["shadow_next"]=-2
 		if int(r["next"])==-1 and int(r["shadow_next"])==-2:moving.erase(id)
 	if profiling_enabled:p_transition=Time.get_ticks_usec()-phase_mark;phase_mark=Time.get_ticks_usec()
-	if changed or instant or last_eye.distance_squared_to(eye)>=membership_guard_m*membership_guard_m or absf(last_projection-projection)>0.01:
+	if changed or membership_changed or instant or last_eye.distance_squared_to(eye)>=membership_guard_m*membership_guard_m or absf(last_projection-projection)>0.01:
 		_choose(eye,projection,t,instant)
 	else:
 		# A completed fade only needs a follow-up decision for that tree.

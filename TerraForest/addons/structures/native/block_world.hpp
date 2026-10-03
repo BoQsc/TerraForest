@@ -78,6 +78,7 @@ class NativeBlockWorld : public Node3D {
     BlockKey worker_key;
     uint64_t revision=0, rejected=0, published=0;
     Ref<ShaderMaterial> material;
+    std::array<Ref<Mesh>,24> preview_meshes;
     Vector3 focus;
     double collision_radius=48.0;
     bool collisions=true;
@@ -157,6 +158,7 @@ public:
     Ref<NativeBlockPrefab> capture_prefab(Vector3i origin,Vector3i size) const;
     PackedByteArray overlap_mask(const TypedArray<Transform3D> &transforms, const AABB &prototype_bounds) const;
     int get_cell(Vector3i p) const { return cell(p.x,p.y,p.z); }
+    Ref<Mesh> preview_mesh(int64_t shape,int64_t rotation);
     Dictionary stats() const;
     Dictionary collision_stats() const;
     bool is_collision_region_ready(const AABB &world_bounds) const;

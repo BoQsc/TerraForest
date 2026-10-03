@@ -1,0 +1,82 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS lake generator accepts seed 0
+PASS four bounded lake definitions
+PASS lake 0 definition configures
+PASS lake 0 is closed and contains water
+PASS lake 0 stays inside basin
+PASS lake 0 produces water surface
+PASS lake 1 definition configures
+PASS lake 1 is closed and contains water
+PASS lake 1 stays inside basin
+PASS lake 1 produces water surface
+PASS lake 2 definition configures
+PASS lake 2 is closed and contains water
+PASS lake 2 stays inside basin
+PASS lake 2 produces water surface
+PASS lake 3 definition configures
+PASS lake 3 is closed and contains water
+PASS lake 3 stays inside basin
+PASS lake 3 produces water surface
+PASS older generator has no implicit lakes
+PASS save restores exact basin definitions
+PASS lake generator accepts seed 1703
+PASS four bounded lake definitions
+PASS lake 0 definition configures
+PASS lake 0 is closed and contains water
+PASS lake 0 stays inside basin
+PASS lake 0 produces water surface
+PASS lake 1 definition configures
+PASS lake 1 is closed and contains water
+PASS lake 1 stays inside basin
+PASS lake 1 produces water surface
+PASS lake 2 definition configures
+PASS lake 2 is closed and contains water
+PASS lake 2 stays inside basin
+PASS lake 2 produces water surface
+PASS lake 3 definition configures
+PASS lake 3 is closed and contains water
+PASS lake 3 stays inside basin
+PASS lake 3 produces water surface
+PASS older generator has no implicit lakes
+PASS save restores exact basin definitions
+PASS lake generator accepts seed 2468
+PASS four bounded lake definitions
+PASS lake 0 definition configures
+PASS lake 0 is closed and contains water
+PASS lake 0 stays inside basin
+PASS lake 0 produces water surface
+PASS lake 1 definition configures
+PASS lake 1 is closed and contains water
+PASS lake 1 stays inside basin
+PASS lake 1 produces water surface
+PASS lake 2 definition configures
+PASS lake 2 is closed and contains water
+PASS lake 2 stays inside basin
+PASS lake 2 produces water surface
+PASS lake 3 definition configures
+PASS lake 3 is closed and contains water
+PASS lake 3 stays inside basin
+PASS lake 3 produces water surface
+PASS older generator has no implicit lakes
+PASS save restores exact basin definitions
+PASS lake generator accepts seed 2147483647
+PASS four bounded lake definitions
+PASS lake 0 definition configures
+PASS lake 0 is closed and contains water
+PASS lake 0 stays inside basin
+PASS lake 0 produces water surface
+PASS lake 1 definition configures
+PASS lake 1 is closed and contains water
+PASS lake 1 stays inside basin
+PASS lake 1 produces water surface
+PASS lake 2 definition configures
+PASS lake 2 is closed and contains water
+PASS lake 2 stays inside basin
+PASS lake 2 produces water surface
+PASS lake 3 definition configures
+PASS lake 3 is closed and contains water
+PASS lake 3 stays inside basin
+PASS lake 3 produces water surface
+PASS older generator has no implicit lakes
+PASS save restores exact basin definitions

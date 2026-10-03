@@ -5,18 +5,29 @@ const Lakes = preload("res://addons/volumetric_water/lake_world.gd")
 const Persistence = preload("res://addons/world_runtime/world_persistence.gd")
 const Structures = preload("res://addons/structures/structures_world.gd")
 var persistence = Persistence.new()
+var pickups = preload("res://addons/world_runtime/material_pickups.gd").new()
+var player_pose: RefCounted
+var _saved_pose:=PackedByteArray()
+var _restored_pose: Dictionary={}
 var vegetation = Vegetation.new()
 var ecosystem = Ecosystem.new()
 var lakes = Lakes.new()
+var water_camera=preload("res://addons/volumetric_water/water_camera.gd").new()
 var structures = Structures.new()
+var player_hud=preload("res://addons/player_runtime/player_hud.gd").new()
 var model_tool = preload("res://addons/structures/model_tool.gd").new()
 var structure_mode := false
+var construction_palette=preload("res://addons/structures/construction_palette.gd").new()
 var structure_shape := 1
 var structure_material := 0
 var structure_rotation := 0
 var structure_prefabs: Array[Resource] = []
+var prefab_library=preload("res://addons/structures/prefab_library.gd").new()
+var capture_selection=preload("res://addons/structures/capture_selection.gd").new()
 var structure_prefab_index := -1
 var prefab_preview := MeshInstance3D.new()
+var shape_preview := MeshInstance3D.new()
+var _shape_preview_material := StandardMaterial3D.new()
 var _prefab_preview_material := StandardMaterial3D.new()
 var _prefab_preview_timer := 0.0
 var _prefab_preview_signature: Array = []
@@ -32,10 +43,19 @@ func _additional_motion_ready(delta: float) -> bool:
 	# Cover capsule, floor snapping and any slide direction within this tick's
 	# travel distance. The occupancy/readiness query itself is native.
 	var bounds := AABB(player.global_position+Vector3(-0.34,-player.floor_snap_length,-0.34),Vector3(0.68,1.8+player.floor_snap_length,0.68))
+	bounds.size.y+=0.3 # Native walking step-up head clearance.
 	bounds = bounds.grow(player.velocity.length()*delta+0.05)
 	return structures.is_collision_region_ready(bounds)
 
+func _player_water_depth() -> float:
+	return lakes.depth_at(player.global_position+Vector3(0,1.1,0))
+
 func _ready() -> void:
+	add_child(pickups)
+	if not pickups.prepare(persistence):
+		push_error("Material pickup initialization failed")
+		get_tree().quit(2)
+		return
 	structures.name = "Structures"
 	add_child(structures)
 	var beam := BoxMesh.new()
@@ -46,6 +66,15 @@ func _ready() -> void:
 	var doorway: Mesh = load("res://addons/structures/prefabs/doorway_model.tres")
 	var door_models: Node3D = structures.register_model("architecture/doorway/v1",doorway)
 	structures_ready = structures_ready and door_models != null
+	if not player_hud.prepare() or not persistence.register_component("player_loadout", player_hud.capture_snapshot, player_hud.restore_snapshot, player_hud.inventory, player_hud.default_loadout):
+		push_error("Player loadout persistence initialization failed")
+		get_tree().quit(2)
+		return
+	player_pose=ClassDB.instantiate("NativePlayerPose")
+	if not persistence.register_component("player_pose",_capture_player_pose,_restore_player_pose,player_pose,PackedByteArray()):
+		push_error("Player pose persistence initialization failed")
+		get_tree().quit(2)
+		return
 	if not structures_ready or not lakes.prepare() or not persistence.register_component("structures", structures.capture_storage_snapshot, structures.restore_storage_snapshot, structures.snapshot_validator(), structures.empty_snapshot()) or not persistence.register_component("volumetric_water", lakes.capture_snapshot, lakes.restore_snapshot, lakes.snapshot_validator(), lakes.empty_snapshot()) or not persistence.enable_region_structures(true) or persistence.attach(terrain) != OK:
 		push_error("World persistence initialization failed")
 		get_tree().quit(2)
@@ -65,6 +94,17 @@ func _ready() -> void:
 		{"title":"Floor panel","mesh":beam,"collection":structures.model("architecture/metal_beam/v1"),"scale":Vector3(4,0.25,4)},
 		{"title":"Doorway","mesh":doorway,"collection":door_models,"scale":Vector3.ONE}],help.get_parent(),structures.blocks)
 	model_tool.notice.connect(_show_lake_notice)
+	player_hud.temporary_world=temporary_world
+	add_child(player_hud)
+	add_child(construction_palette)
+	construction_palette.configure(structure_prefabs)
+	construction_palette.selection_requested.connect(_construction_selection)
+	construction_palette.capture_requested.connect(_capture_construction)
+	construction_palette.supply_requested.connect(_place_material_supply)
+	construction_palette.stack_requested.connect(_stack_construction)
+	player_hud.tool_requested.connect(_equip_player_tool)
+	player_hud.menu_changed.connect(func(_open: bool): _clear_motion())
+	_sync_player_tool()
 	DisplayServer.window_set_title("TerraForest | Living terrain")
 	vegetation.name = "Vegetation"
 	vegetation.camera = camera
@@ -78,25 +118,68 @@ func _ready() -> void:
 	ecosystem.vegetation = vegetation
 	ecosystem.camera = camera
 	ecosystem.structures = structures
+	ecosystem.water = lakes
 	add_child(ecosystem)
 	lakes.name = "Lakes"
 	lakes.terrain = terrain
 	add_child(lakes)
+	add_child(water_camera)
+	water_camera.configure(camera,lakes)
 	lakes.lake_ready.connect(func(_id: int): _show_lake_notice("Lake ready · temporary world" if temporary_world else "Lake ready · F5 saves world"))
 	lakes.lake_failed.connect(func(_id: int, code: int): _show_lake_notice("Lake rejected (%d): open basin or blocked seed" % code))
 
 func _show_lake_notice(text: String) -> void:
+	_sync_construction_palette()
 	_lake_notice = text
 	_lake_notice_until = Time.get_ticks_msec()+6000
 	_message(text)
 
+func _capture_player_pose() -> PackedByteArray:
+	if not loading_active and not waiting_spawn:
+		var captured: PackedByteArray=player_pose.encode(player.position,wrapf(yaw,-PI,PI),pitch,fly,player_hud.active_item)
+		if not captured.is_empty(): _saved_pose=captured
+	return _saved_pose
+
+func _restore_player_pose(data: PackedByteArray) -> bool:
+	var decoded: Dictionary=player_pose.decode(data)
+	if not decoded.ok: return false
+	_saved_pose=data
+	_restored_pose=decoded
+	return true
+
+func _terrain_initialized(text: String) -> void:
+	if _restored_pose.has("position"):
+		pending_spawn=_restored_pose.position
+		spawn_override_y=pending_spawn.y
+		fly=_restored_pose.fly
+		yaw=_restored_pose.yaw
+		pitch=_restored_pose.pitch
+		player.rotation.y=yaw
+		camera.rotation.x=pitch
+		var item: int=_restored_pose.tool
+		structure_mode=item in [3,4]
+		model_tool.set_active(item==4)
+		if item==1: tool=3
+		elif item==2: tool=1
+		_sync_player_tool()
+	else:
+		pending_spawn=Vector3(800,0,1310)
+		spawn_override_y=-1.0
+	_restored_pose.clear()
+	super._terrain_initialized(text)
+
 func _setup_prefabs() -> void:
+	add_child(capture_selection)
+	prefab_library.load_library()
 	for path in ["res://addons/structures/prefabs/brick_cottage.tres","res://addons/structures/prefabs/stair_flight.tres","res://addons/structures/prefabs/doorway_wall.tres","res://addons/structures/prefabs/tower_floor.tres"]:
 		var asset: Resource = load(path)
 		if asset != null and asset.get_cell_count()>0:
 			structure_prefabs.append(asset)
 			asset.changed.connect(_invalidate_prefab_preview)
 	structures.blocks.changed.connect(_invalidate_prefab_preview)
+	for asset: Resource in prefab_library.assets:
+		structure_prefabs.append(asset)
+		asset.changed.connect(_invalidate_prefab_preview)
 	# A single bounds outline is UI feedback, not another building simulation.
 	var arrays := []
 	arrays.resize(Mesh.ARRAY_MAX)
@@ -110,6 +193,12 @@ func _setup_prefabs() -> void:
 	prefab_preview.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	prefab_preview.hide()
 	add_child(prefab_preview)
+	_shape_preview_material.shading_mode=StandardMaterial3D.SHADING_MODE_UNSHADED
+	_shape_preview_material.transparency=StandardMaterial3D.TRANSPARENCY_ALPHA
+	shape_preview.material_override=_shape_preview_material
+	shape_preview.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	shape_preview.hide()
+	add_child(shape_preview)
 
 func _prefab_allowed(asset: Resource, target: Vector3i) -> bool:
 	var bounds: AABB = asset.placement_bounds(target,structure_rotation)
@@ -124,8 +213,10 @@ func _invalidate_prefab_preview() -> void:
 	_prefab_preview_timer=0.0
 
 func _update_prefab_preview(delta: float) -> void:
-	if not structure_mode or model_tool.active or structure_prefab_index<0 or loading_active or not app_focused:
+	capture_selection.visible=structure_mode and not model_tool.active and not loading_active and not player_hud.inventory_open
+	if not structure_mode or model_tool.active or loading_active or not app_focused or player_hud.inventory_open or Input.mouse_mode!=Input.MOUSE_MODE_CAPTURED:
 		prefab_preview.hide()
+		shape_preview.hide()
 		return
 	_prefab_preview_timer -= delta
 	if _prefab_preview_timer>0:
@@ -134,7 +225,21 @@ func _update_prefab_preview(delta: float) -> void:
 	var hit := _structure_target(false)
 	if hit.is_empty():
 		prefab_preview.hide()
+		shape_preview.hide()
 		return
+	if structure_prefab_index<0:
+		prefab_preview.position=Vector3(hit.target)
+		prefab_preview.scale=Vector3.ONE
+		_prefab_preview_material.albedo_color=Color("66f2b3") if _block_player_clear(hit.target) else Color("ff705f")
+		shape_preview.mesh=structures.blocks.preview_mesh(structure_shape,structure_rotation)
+		shape_preview.position=Vector3(hit.target)
+		var tint: Color=_prefab_preview_material.albedo_color
+		tint.a=0.35
+		_shape_preview_material.albedo_color=tint
+		shape_preview.show()
+		prefab_preview.show()
+		return
+	shape_preview.hide()
 	var asset: Resource = structure_prefabs[structure_prefab_index]
 	if asset.get_cell_count()==0:
 		prefab_preview.hide()
@@ -202,7 +307,7 @@ func _setup_hud() -> void:
 	status.hide()
 	help.text = "WASD  Move    Shift  Sprint    Space  Jump    G  Fly    Mouse  Look    Esc  Release\nB  Terrain / Blocks    LMB  Remove    RMB  Place    1–6  Shapes    P  Prefabs    T  Material    R  Rotate    Ctrl+Z / Y  Undo / Redo\nTerrain: Wheel  Brush size    1–3  Tools    L  Lake    F5  Save world    F9  Reload    F3  Diagnostics"
 	help.add_theme_font_size_override("font_size", 15)
-	help.text=help.text.replace("B  Terrain / Blocks", "B  Terrain / Blocks    M  Objects")
+	help.text=help.text.replace("B  Terrain / Blocks", "B  Terrain / Blocks    M  Objects    E  Collect")
 	help.offset_top = -88
 	help.add_theme_color_override("font_color", Color("e6eee9"))
 	var panel := PanelContainer.new()
@@ -239,34 +344,146 @@ func _setup_hud() -> void:
 	hud.position = Vector2(26, 200)
 	status.position = Vector2(26, 570)
 
+func _equip_player_tool(item: int) -> void:
+	if item not in player_hud.CATALOG: return
+	_set_player_tool_mode(item==3 or item==4,item==4,3 if item==1 else (1 if item==2 else tool))
+
+func _sync_player_tool() -> void:
+	_sync_construction_palette()
+	player_hud.show_active_tool(4 if model_tool.active else (3 if structure_mode else (1 if tool==3 else (2 if tool==1 else 0))))
+
+func _sync_construction_palette() -> void:
+	construction_palette.synchronize(structure_mode and not model_tool.active,structure_shape,structure_material,structure_rotation,structure_prefab_index)
+	if construction_palette.archive_button!=null:
+		construction_palette.archive_button.disabled=structure_prefab_index<0 or not prefab_library.owns(structure_prefabs[structure_prefab_index])
+
+func _capture_construction(action: String,title: String) -> void:
+	if loading_active or shutdown_requested or benchmark_enabled or player_hud.inventory_open or not structure_mode or model_tool.active: return
+	if action=="archive":
+		if structure_prefab_index<0: return
+		var asset: Resource=structure_prefabs[structure_prefab_index]
+		var result: Dictionary=prefab_library.archive(asset)
+		if not result.ok:
+			construction_palette.capture_status.text=result.reason
+			return
+		asset.changed.disconnect(_invalidate_prefab_preview)
+		structure_prefabs.remove_at(structure_prefab_index);structure_prefab_index=-1
+		construction_palette.configure(structure_prefabs)
+		construction_palette.capture_status.text="Archived %s · placed blocks retained" % asset.resource_name
+		_sync_construction_palette();_invalidate_prefab_preview()
+		return
+	if action=="restore":
+		var result: Dictionary=prefab_library.restore_latest()
+		if not result.ok:
+			construction_palette.capture_status.text=result.reason
+			return
+		structure_prefabs.append(result.asset);result.asset.changed.connect(_invalidate_prefab_preview)
+		structure_prefab_index=structure_prefabs.size()-1
+		construction_palette.configure(structure_prefabs)
+		construction_palette.capture_status.text="Restored "+result.asset.resource_name
+		_sync_construction_palette();_invalidate_prefab_preview()
+		return
+	if action=="clear":
+		prefab_library.clear_selection()
+		capture_selection.synchronize(prefab_library)
+		construction_palette.capture_status.text="Aim at a block, then mark each corner."
+		return
+	if action in ["a","b"]:
+		var hit:=_structure_target(true)
+		if hit.is_empty():
+			construction_palette.capture_status.text="Aim at a building block to mark a corner."
+			return
+		prefab_library.select_corner(action=="a",hit.target)
+		capture_selection.synchronize(prefab_library)
+		construction_palette.capture_status.text=prefab_library.selection_text()
+	elif action=="save":
+		var result: Dictionary=prefab_library.capture(structures.blocks,title)
+		if not result.ok:
+			construction_palette.capture_status.text=result.reason
+			return
+		structure_prefabs.append(result.asset)
+		result.asset.changed.connect(_invalidate_prefab_preview)
+		structure_prefab_index=structure_prefabs.size()-1
+		construction_palette.configure(structure_prefabs)
+		construction_palette.capture_status.text="Saved %s · %d blocks" % [title,result.asset.get_cell_count()]
+		_sync_construction_palette()
+		_invalidate_prefab_preview()
+
+func _stack_construction(count: int,title: String) -> void:
+	if loading_active or shutdown_requested or benchmark_enabled or player_hud.inventory_open or not structure_mode or model_tool.active or structure_prefab_index<0: return
+	var result: Dictionary=prefab_library.stack(structure_prefabs[structure_prefab_index],count,title)
+	if not result.ok:
+		construction_palette.capture_status.text=result.reason
+		return
+	structure_prefabs.append(result.asset)
+	result.asset.changed.connect(_invalidate_prefab_preview)
+	structure_prefab_index=structure_prefabs.size()-1
+	construction_palette.configure(structure_prefabs)
+	construction_palette.capture_status.text="Saved %s · %d blocks" % [result.asset.resource_name,result.asset.get_cell_count()]
+	_sync_construction_palette();_invalidate_prefab_preview()
+
+func _construction_selection(field: String,value: int) -> void:
+	if loading_active or shutdown_requested or benchmark_enabled or player_hud.inventory_open or not structure_mode or model_tool.active:
+		_sync_construction_palette()
+		return
+	match field:
+		"shape":
+			if value<0 or value>=6: return
+			structure_shape=value+1;structure_prefab_index=-1
+		"material":
+			if value<0 or value>=4: return
+			structure_material=value
+		"rotation":
+			if value<0 or value>=4: return
+			structure_rotation=value
+		"prefab":
+			if value<0 or value>structure_prefabs.size(): return
+			structure_prefab_index=value-1
+		_: return
+	_prefab_preview_timer=0.0
+	_sync_construction_palette()
+
+func _set_player_tool_mode(building: bool,objects: bool,terrain_tool: int) -> bool:
+	if loading_active or benchmark_enabled or shutdown_requested or not app_focused or not terrain.world_ready: return false
+	# All tool entry points cancel unsubmitted strokes before changing mode.
+	# Already accepted terrain edits finish independently; they do not lock equipment.
+	_clear_motion()
+	stroke_buffer.clear();held_previous=false
+	model_tool.set_active(objects)
+	structure_mode=building
+	tool=terrain_tool
+	_sync_player_tool()
+	_show_lake_notice(player_hud.CATALOG.get(player_hud.active_item,"Terrain editing"))
+	return true
+
 func _unhandled_input(event: InputEvent) -> void:
+	if player_hud.inventory_open: return
+	if event is InputEventKey and event.pressed and not event.echo and event.physical_keycode==KEY_E and not fly:
+		if not loading_active and not shutdown_requested and app_focused and terrain.world_ready and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED:
+			var collected: Dictionary=pickups.collect_near(player.global_position+Vector3(0,0.5,0),player_hud.inventory,_pickup_reachable)
+			if collected.ok: player_hud.refresh()
+			_show_lake_notice(collected.reason)
+		return
 	if not loading_active and not benchmark_enabled:
 		if event is InputEventKey and event.pressed and not event.echo:
 			if event.physical_keycode==KEY_M:
-				structure_mode=true
-				model_tool.set_active(not model_tool.active)
-				stroke_buffer.clear()
-				held_previous=false
-				stroke_valid=false
-				last_capture_signature.clear()
-				terrain.set_brush_active(false)
-				_show_lake_notice("Object placement · 1–3 assets · R rotate" if model_tool.active else "Block construction")
+				_set_player_tool_mode(true,not model_tool.active,tool)
 				return
 			if event.physical_keycode == KEY_B:
-				model_tool.set_active(false)
-				structure_mode = not structure_mode
-				stroke_buffer.clear()
-				held_previous = false
-				stroke_valid = false
-				last_capture_signature.clear()
-				terrain.set_brush_active(false)
-				_show_lake_notice("Block construction · 1–6 shapes · T material · R rotate" if structure_mode else "Terrain editing")
+				_set_player_tool_mode(not structure_mode,false,tool)
+				return
+			if not structure_mode and event.physical_keycode in [KEY_1,KEY_2,KEY_3,KEY_4]:
+				_set_player_tool_mode(false,false,event.physical_keycode-KEY_1+1)
 				return
 		if model_tool.active and app_focused and terrain.world_ready:
 			if model_tool.handle_input(event):
 				return
 		if event is InputEventKey and event.pressed and not event.echo:
 			if structure_mode and not model_tool.active:
+				if event.physical_keycode in [KEY_BRACKETLEFT,KEY_BRACKETRIGHT]:
+					_capture_construction("a" if event.physical_keycode==KEY_BRACKETLEFT else "b","")
+					get_viewport().set_input_as_handled()
+					return
 				if (event.ctrl_pressed or event.meta_pressed) and event.physical_keycode in [KEY_Z,KEY_Y]:
 					_construction_history(event.physical_keycode==KEY_Y or event.shift_pressed)
 					return
@@ -309,6 +526,10 @@ func _unhandled_input(event: InputEvent) -> void:
 	super._unhandled_input(event)
 
 func _update_edit(delta: float) -> void:
+	if player_hud.inventory_open:
+		pointer.hide()
+		terrain.set_brush_active(false)
+		return
 	if structure_mode:
 		pointer.hide()
 		if input_vector != Vector3.ZERO:
@@ -342,7 +563,37 @@ func _structure_target(remove: bool) -> Dictionary:
 			var normal: Vector3 = hit.cell_normal
 			var axis := normal.abs().max_axis_index()
 			target[axis] += 1 if normal[axis]>0 else -1
-	return {"target":target}
+	return {"target":target,"position":hit.position,"normal":hit.normal}
+
+func _place_material_supply(item: int) -> void:
+	if loading_active or shutdown_requested or benchmark_enabled or not app_focused or not terrain.world_ready or player_hud.inventory_open or not structure_mode or model_tool.active: return
+	if item not in pickups.ITEMS: return
+	var hit:=_structure_target(false)
+	if hit.is_empty() or hit.normal.y<0.7:
+		_show_lake_notice("Aim at a supporting surface for the supply")
+		return
+	var point: Vector3=hit.position+Vector3(0,0.2,0)
+	var bounds:=AABB(point-Vector3.ONE*0.2,Vector3.ONE*0.4)
+	if not structures.is_collision_region_ready(bounds):
+		_show_lake_notice("Supply placement waiting for nearby collision")
+		return
+	var shape:=BoxShape3D.new();shape.size=Vector3.ONE*0.35
+	var query:=PhysicsShapeQueryParameters3D.new();query.shape=shape;query.transform=Transform3D(Basis.IDENTITY,point);query.collision_mask=3
+	if not get_world_3d().direct_space_state.intersect_shape(query,1).is_empty():
+		_show_lake_notice("Supply placement is obstructed")
+		return
+	for store: RefCounted in pickups.stores.values():
+		var nearby: Dictionary=store.query_sphere(pickups.to_local(point),0.5,1,64)
+		if not nearby.ok or not nearby.complete or not nearby.ids.is_empty():
+			_show_lake_notice("Supply placement overlaps another supply")
+			return
+	if pickups.spawn(item,pickups.to_local(point))==0:
+		_show_lake_notice("Supply capacity reached")
+		return
+	_show_lake_notice("%s supply placed · %s" % [pickups.ITEMS[item],"temporary world" if temporary_world else "F5 saves world"])
+
+func _block_player_clear(target: Vector3i) -> bool:
+	return not _brush_overlaps_player(Vector3(target)+Vector3.ONE*0.5,0.87)
 
 func _edit_structure(remove: bool) -> void:
 	if not terrain.world_ready or not app_focused:
@@ -361,7 +612,7 @@ func _edit_structure(remove: bool) -> void:
 			_show_lake_notice("%s placed · F5 saves world" % asset.resource_name)
 		_prefab_preview_timer=0.0
 		return
-	if not remove and _brush_overlaps_player(Vector3(target)+Vector3.ONE*0.5,0.87):
+	if not remove and not _block_player_clear(target):
 		_show_lake_notice("Block placement intersects the player")
 		return
 	var word := 0 if remove else structure_shape+(structure_rotation<<3)+(structure_material<<5)
@@ -369,7 +620,11 @@ func _edit_structure(remove: bool) -> void:
 		_show_lake_notice("Block removed · F5 saves world" if remove else "Block placed · F5 saves world")
 
 func _process(delta: float) -> void:
+	var frame_begin:=Time.get_ticks_usec()
 	super._process(delta)
+	water_camera.update()
+	pickups.update_view(delta,player.global_position,not loading_active and not shutdown_requested)
+	terrain._record_stage("controller process",(Time.get_ticks_usec()-frame_begin)/1000.0)
 	_update_prefab_preview(delta)
 	model_tool.update(delta,not loading_active and app_focused and terrain.world_ready)
 	if structures.blocks != null:
@@ -401,3 +656,8 @@ func _process(delta: float) -> void:
 		if Time.get_ticks_msec() < _lake_notice_until:
 			activity = _lake_notice
 		telemetry.text = "%d FPS  ·  %s trees  ·  %d cells\n%s" % [Engine.get_frames_per_second(), str(vegetation.renderer.roots.size()), ecosystem.resident.size(), activity]
+	terrain._record_stage("world process",(Time.get_ticks_usec()-frame_begin)/1000.0)
+
+func _pickup_reachable(point: Vector3) -> bool:
+	var query:=PhysicsRayQueryParameters3D.create(camera.global_position,point,3,[player.get_rid()])
+	return get_world_3d().direct_space_state.intersect_ray(query).is_empty()

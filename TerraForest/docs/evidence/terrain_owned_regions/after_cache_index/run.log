@@ -1,0 +1,36 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.3.289 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce GTX 1060 with Max-Q Design
+
+[TerrainRewrite] New world
+[TerrainRewrite] New world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+PASS 1920x1080 fullscreen, full rendering scale
+FOUNDATION_PHASE streaming_baseline
+FOUNDATION_RESULT {"build":{},"frames":{"count":297,"max_ms":45.821,"median_ms":16.664,"over_50ms":0,"p95_ms":17.834,"p99_ms":29.054},"latency":{},"pages":0,"phase":"streaming_baseline"}
+FOUNDATION_PHASE compact_history_control
+FOUNDATION_RESULT {"build":{"count":24,"max_ms":12.671,"median_ms":11.862,"over_50ms":0,"p95_ms":12.469,"p99_ms":12.671},"frames":{"count":405,"max_ms":28.403,"median_ms":16.666,"over_50ms":0,"p95_ms":17.012,"p99_ms":18.69},"latency":{"count":24,"max_ms":37.013,"median_ms":21.247,"over_50ms":0,"p95_ms":35.604,"p99_ms":37.013},"pages":2,"phase":"compact_history_control"}
+FOUNDATION_PHASE expanding_excavation
+FOUNDATION_RESULT {"build":{"count":24,"max_ms":18.571,"median_ms":16.24,"over_50ms":0,"p95_ms":18.216,"p99_ms":18.571},"frames":{"count":697,"max_ms":65.561,"median_ms":16.665,"over_50ms":1,"p95_ms":18.534,"p99_ms":18.713},"latency":{"count":24,"max_ms":55.912,"median_ms":36.955,"over_50ms":2,"p95_ms":52.149,"p99_ms":55.912},"pages":10,"phase":"expanding_excavation"}
+FOUNDATION_PHASE travel_new_regions
+FOUNDATION_RESULT {"build":{"count":64,"max_ms":103.158,"median_ms":82.636,"over_50ms":48,"p95_ms":97.802,"p99_ms":103.158},"frames":{"count":629,"max_ms":25.178,"median_ms":16.666,"over_50ms":0,"p95_ms":16.691,"p99_ms":18.676},"latency":{"count":64,"max_ms":137.575,"median_ms":119.984,"over_50ms":59,"p95_ms":137.133,"p99_ms":137.575},"pages":96,"phase":"travel_new_regions"}
+FOUNDATION_PHASE return_history_control
+FOUNDATION_RESULT {"build":{"count":24,"max_ms":14.335,"median_ms":13.704,"over_50ms":0,"p95_ms":14.252,"p99_ms":14.335},"frames":{"count":101,"max_ms":44.909,"median_ms":16.665,"over_50ms":0,"p95_ms":17.407,"p99_ms":33.708},"latency":{"count":24,"max_ms":35.926,"median_ms":21.361,"over_50ms":0,"p95_ms":35.593,"p99_ms":35.926},"pages":96,"phase":"return_history_control"}
+FOUNDATION_PHASE recovery
+FOUNDATION_RESULT {"build":{},"frames":{"count":600,"max_ms":25.662,"median_ms":16.666,"over_50ms":0,"p95_ms":16.842,"p99_ms":18.463},"latency":{},"pages":96,"phase":"recovery"}
+FAIL streaming_baseline: frame p99 <=20 ms and no >50 ms stalls
+PASS compact_history_control: frame p99 <=20 ms and no >50 ms stalls
+PASS compact_history_control: edit publication p95 <=150 ms
+PASS compact_history_control: at least 90 percent of edits actually change terrain
+FAIL expanding_excavation: frame p99 <=20 ms and no >50 ms stalls
+PASS expanding_excavation: edit publication p95 <=150 ms
+PASS expanding_excavation: at least 90 percent of edits actually change terrain
+PASS travel_new_regions: frame p99 <=20 ms and no >50 ms stalls
+PASS travel_new_regions: edit publication p95 <=150 ms
+PASS travel_new_regions: at least 90 percent of edits actually change terrain
+FAIL return_history_control: frame p99 <=20 ms and no >50 ms stalls
+PASS return_history_control: edit publication p95 <=150 ms
+PASS return_history_control: at least 90 percent of edits actually change terrain
+PASS recovery: frame p99 <=20 ms and no >50 ms stalls
+PASS return control median latency grows no more than 25 percent
+PASS bounded observer writer retains all frames and progress reports
+[TerrainRewrite] Temporary test world: save skipped

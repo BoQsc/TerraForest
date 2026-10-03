@@ -1,0 +1,13 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS four material stores register for world saving
+PASS valid material spawn returns persistent identity
+PASS native renderer displays authored supply
+PASS occluded pickup remains in world
+PASS collection removes entity after successful inventory grant
+PASS collected material appears in inventory without becoming a tool
+PASS inventory displays material quantity
+PASS compound reload restores both uncollected supply and prior inventory
+PASS collected snapshot does not respawn supply
+PASS full inventory leaves pickup intact
+PASS loading gate hides pickup rendering

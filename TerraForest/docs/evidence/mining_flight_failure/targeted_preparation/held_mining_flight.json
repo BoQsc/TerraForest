@@ -1,0 +1,2250 @@
+{
+  "checks": [
+    {
+      "name": "1920x1080 fullscreen at full scale",
+      "pass": true
+    },
+    {
+      "name": "held-input workload valid: focused, captured and pressed",
+      "pass": true
+    },
+    {
+      "name": "held input produces repeated visible changes",
+      "pass": true
+    },
+    {
+      "name": "held capture-to-draw p95 <=150ms",
+      "pass": true
+    },
+    {
+      "name": "no gap between visible mining changes exceeds 150ms",
+      "pass": false
+    },
+    {
+      "name": "held-input workload valid: focused, captured and pressed",
+      "pass": true
+    },
+    {
+      "name": "held input produces repeated visible changes",
+      "pass": true
+    },
+    {
+      "name": "held capture-to-draw p95 <=150ms",
+      "pass": true
+    },
+    {
+      "name": "no gap between visible mining changes exceeds 150ms",
+      "pass": true
+    }
+  ],
+  "phases": [
+    {
+      "capture_to_draw": {
+        "count": 23,
+        "max_ms": 124.929,
+        "median_ms": 74.617,
+        "over_50ms": 20,
+        "p95_ms": 108.378,
+        "p99_ms": 124.929
+      },
+      "changed_draws": 23,
+      "edits": [
+        {
+          "accepted_us": 31266513,
+          "after_worker_ms": 41.925,
+          "build_ms": 24.883,
+          "capture_wait_ms": 0.066,
+          "captured_us": 31266447,
+          "changed": true,
+          "collision_last_piece_ms": 1.069,
+          "collision_match_last_ms": 0.0,
+          "collision_pieces_built_total": 290,
+          "collision_pieces_reused_total": 3,
+          "costs_shared_by_group": false,
+          "current_visible_terrain": true,
+          "descriptor": {
+            "a": [
+              1307.88708496094,
+              97.4780197143555,
+              1260.40063476563
+            ],
+            "add": false,
+            "b": [
+              1307.88708496094,
+              97.4780197143555,
+              1260.40063476563
+            ],
+            "command": 2,
+            "radius": 2.5
+          },
+          "draw_ms": 73.531,
+          "draw_us": 31339978,
+          "field_ms": 1.635,
+          "geometry_patches": 5,
+          "group_size": 1,
+          "member_index": 0,
+          "publish_ms": 69.156,
+          "publish_us": 31335603,
+          "ticket": 1,
+          "upload_last_piece_ms": 0.155,
+          "worker_queue_ms": 0.1
+        },
+        {
+          "accepted_us": 31349813,
+          "after_worker_ms": 29.129,
+          "build_ms": 21.046,
+          "capture_wait_ms": 0.049,
+          "captured_us": 31349764,
+          "changed": true,
+          "collision_last_piece_ms": 0.079,
+          "collision_match_last_ms": 0.01,
+          "collision_pieces_built_total": 294,
+          "collision_pieces_reused_total": 9,
+          "costs_shared_by_group": false,
+          "current_visible_terrain": true,
+          "descriptor": {
+            "a": [
+              1307.88708496094,
+              97.4780197143555,
+              1260.40063476563
+            ],
+            "add": false,
+            "b": [
+              1308.05773925781,
+              96.0720901489258,
+              1256.92065429688
+            ],
+            "command": 2,
+            "radius": 2.5
+          },
+          "draw_ms": 57.887,
+          "draw_us": 31407651,
+          "field_ms": 0.154,
+          "geometry_patches": 5,
+          "group_size": 1,
+          "member_index": 0,
+          "publish_ms": 51.377,
+          "publish_us": 31401141,
+          "ticket": 2,
+          "upload_last_piece_ms": 0.173,
+          "worker_queue_ms": 0.548
+        },
+        {
+          "accepted_us": 31416470,
+          "after_worker_ms": 40.142,
+          "build_ms": 43.986,
+          "capture_wait_ms": 0.048,
+          "captured_us": 31416422,
+          "changed": true,
+          "collision_last_piece_ms": 0.068,
+          "collision_match_last_ms": 0.009,
+          "collision_pieces_built_total": 302,
+          "collision_pieces_reused_total": 23,
+          "costs_shared_by_group": false,
+          "current_visible_terrain": true,
+          "descriptor": {
+            "a": [
+              1308.05773925781,
+              96.0720901489258,
+              1256.92065429688
+            ],
+            "add": false,
+            "b": [
+              1307.92443847656,
+              93.3293991088867,
+              1254.47961425781
+            ],
+            "command": 2,
+            "radius": 2.5
+          },
+          "draw_ms": 90.074,
+          "draw_us": 31506496,
+          "field_ms": 0.165,
+          "geometry_patches": 9,
+          "group_size": 1,
+          "member_index": 0,
+          "publish_ms": 85.154,
+          "publish_us": 31501576,
+          "ticket": 3,
+          "upload_last_piece_ms": 0.154,
+          "worker_queue_ms": 0.123
+        },
+        {
+          "accepted_us": 31516462,
+          "after_worker_ms": 12.013,
+          "build_ms": 38.962,
+          "capture_wait_ms": 0.049,
+          "captured_us": 31516413,
+          "changed": true,
+          "collision_last_piece_ms": 0.045,
+          "collision_match_last_ms": 0.005,
+          "collision_pieces_built_total": 303,
+          "collision_pieces_reused_total": 40,
+          "costs_shared_by_group": false,
+          "current_visible_terrain": true,
+          "descriptor": {
+            "a": [
+              1307.92443847656,
+              93.3293991088867,
+              1254.47961425781
+            ],
+            "add": false,
+            "b": [
+              1308.03930664063,
+              91.0502777099609,
+              1251.56604003906
+            ],
+            "command": 2,
+            "radius": 2.5
+          },
+          "draw_ms": 56.956,
+          "draw_us": 31573369,
+          "field_ms": 0.526,
+          "geometry_patches": 7,
+          "group_size": 1,
+          "member_index": 0,
+          "publish_ms": 52.199,
+          "publish_us": 31568612,
+          "ticket": 4,
+          "upload_last_piece_ms": 0.092,
+          "worker_queue_ms": 0.13
+        },
+        {
+          "accepted_us": 31583133,
+          "after_worker_ms": 25.882,
+          "build_ms": 41.207,
+          "capture_wait_ms": 0.05,
+          "captured_us": 31583083,
+          "changed": true,
+          "collision_last_piece_ms": 0.081,
+          "collision_match_last_ms": 0.01,
+          "collision_pieces_built_total": 307,
+          "collision_pieces_reused_total": 54,
+          "costs_shared_by_group": false,
+          "current_visible_terrain": true,
+          "descriptor": {
+            "a": [
+              1308.03930664063,
+              91.0502777099609,
+              1251.56604003906
+            ],
+            "add": false,
+            "b": [
+              1307.96923828125,
+              88.2301177978516,
+              1249.16552734375
+            ],
+            "command": 2,
+            "radius": 2.5
+          },
+          "draw_ms": 74.187,
+          "draw_us": 31657270,
+          "field_ms": 0.17,
+          "geometry_patches": 7,
+          "group_size": 1,
+          "member_index": 0,
+          "publish_ms": 68.086,
+          "publish_us": 31651169,
+          "ticket": 5,
+          "upload_last_piece_ms": 0.171,
+          "worker_queue_ms": 0.177
+        },
+        {
+          "accepted_us": 31666464,
+          "after_worker_ms": 26.605,
+          "build_ms": 41.45,
+          "capture_wait_ms": 0.051,
+          "captured_us": 31666413,
+          "changed": true,
+          "collision_last_piece_ms": 0.047,
+          "collision_match_last_ms": 0.006,
+          "collision_pieces_built_total": 312,
+          "collision_pieces_reused_total": 68,
+          "costs_shared_by_group": false,
+          "current_visible_terrain": true,
+          "descriptor": {
+            "a": [
+              1307.96923828125,
+              88.2301177978516,
+              1249.16552734375
+            ],
+            "add": false,
+            "b": [
+              1308.01623535156,
+              85.5315856933594,
+              1246.65966796875
+            ],
+            "command": 2,
+            "radius": 2.5
+          },
+          "draw_ms": 73.679,
+          "draw_us": 31740092,
+          "field_ms": 0.155,
+          "geometry_patches": 7,
+          "group_size": 1,
+          "member_index": 0,
+          "publish_ms": 68.93,
+          "publish_us": 31735343,
+          "ticket": 6,
+          "upload_last_piece_ms": 0.094,
+          "worker_queue_ms": 0.092
+        },
+        {
+          "accepted_us": 31749792,
+          "after_worker_ms": 22.049,
+          "build_ms": 30.799,
+          "capture_wait_ms": 0.049,
+          "captured_us": 31749743,
+          "changed": true,
+          "collision_last_piece_ms": 0.594,
+          "collision_match_last_ms": 0.001,
+          "collision_pieces_built_total": 317,
+          "collision_pieces_reused_total": 76,
+          "costs_shared_by_group": false,
+          "current_visible_terrain": true,
+          "descriptor": {
+            "a": [
+              1308.01623535156,
+              85.5315856933594,
+              1246.65966796875
+            ],
+            "add": false,
+            "b": [
+              1307.99157714844,
+              83.3605041503906,
+              1243.64721679688
+            ],
+            "command": 2,
+            "radius": 2.5
+          },
+          "draw_ms": 58.708,
+          "draw_us": 31808451,
+          "field_ms": 0.757,
+          "geometry_patches": 7,
+          "group_size": 1,
+          "member_index": 0,
+          "publish_ms": 54.315,
+          "publish_us": 31804058,
+          "ticket": 7,
+          "upload_last_piece_ms": 0.364,
+          "worker_queue_ms": 0.144
+        },
+        {
+          "accepted_us": 31816469,
+          "after_worker_ms": 35.85,
+          "build_ms": 31.967,
+          "capture_wait_ms": 0.054,
+          "captured_us": 31816415,
+          "changed": true,
+          "collision_last_piece_ms": 0.954,
+          "collision_match_last_ms": 0.001,
+          "collision_pieces_built_total": 321,
+          "collision_pieces_reused_total": 85,
+          "costs_shared_by_group": false,
+          "current_visible_terrain": true,
+          "descriptor": {
+            "a": [
+              1307.99157714844,
+              83.3605041503906,
+              1243.64721679688
+            ],
+            "add": false,
+            "b": [
+              1308.00451660156,
+              80.4133071899414,
+              1241.45129394531
+            ],
+            "command": 2,
+            "radius": 2.5
+          },
+          "draw_ms": 74.173,
+          "draw_us": 31890588,
+          "field_ms": 0.171,
+          "geometry_patches": 7,
+          "group_size": 1,
+          "member_index": 0,
+          "publish_ms": 68.767,
+          "publish_us": 31885182,
+          "ticket": 8,
+          "upload_last_piece_ms": 0.379,
+          "worker_queue_ms": 0.147
+        },
+        {
+          "accepted_us": 31899795,
+          "after_worker_ms": 45.901,
+          "build_ms": 38.728,
+          "capture_wait_ms": 0.05,
+          "captured_us": 31899745,
+          "changed": true,
+          "collision_last_piece_ms": 1.249,
+          "collision_match_last_ms": 0.001,
+          "collision_pieces_built_total": 327,
+          "collision_pieces_reused_total": 93,
+          "costs_shared_by_group": false,
+          "current_visible_terrain": true,
+          "descriptor": {
+            "a": [
+              1308.00451660156,
+              80.4133071899414,
+              1241.45129394531
+            ],
+            "add": false,
+            "b": [
+              1307.99780273438,
+              78.2496185302734,
+              1238.47399902344
+            ],
+            "command": 2,
+            "radius": 2.5
+          },
+          "draw_ms": 90.868,
+          "draw_us": 31990613,
+          "field_ms": 0.158,
+          "geometry_patches": 9,
+          "group_size": 1,
+          "member_index": 0,
+          "publish_ms": 85.784,
+          "publish_us": 31985529,
+          "ticket": 9,
+          "upload_last_piece_ms": 0.389,
+          "worker_queue_ms": 0.132
+        },
+        {
+          "accepted_us": 31999802,
+          "after_worker_ms": 23.813,
+          "build_ms": 46.78,
+          "capture_wait_ms": 0.051,
+          "captured_us": 31999751,
+          "changed": true,
+          "collision_last_piece_ms": 1.403,
+          "collision_match_last_ms": 0.001,
+          "collision_pieces_built_total": 333,
+          "collision_pieces_reused_total": 99,
+          "costs_shared_by_group": false,
+          "current_visible_terrain": true,
+          "descriptor": {
+            "a": [
+              1307.99780273438,
+              78.2496185302734,
+              1238.47399902344
+            ],
+            "add": false,
+            "b": [
+              1308.00122070313,
+              75.3347702026367,
+              1236.27368164063
+            ],
+            "command": 2,
+            "radius": 2.5
+          },
+          "draw_ms": 76.324,
+          "draw_us": 32076075,
+          "field_ms": 0.345,
+          "geometry_patches": 7,
+          "group_size": 1,
+          "member_index": 0,
+          "publish_ms": 71.779,
+          "publish_us": 32071530,
+          "ticket": 10,
+          "upload_last_piece_ms": 0.235,
+          "worker_queue_ms": 0.131
+        },
+        {
+          "accepted_us": 32083133,
+          "after_worker_ms": 52.88,
+          "build_ms": 47.345,
+          "capture_wait_ms": 0.053,
+          "captured_us": 32083080,
+          "changed": true,
+          "collision_last_piece_ms": 0.221,
+          "collision_match_last_ms": 0.001,
+          "collision_pieces_built_total": 340,
+          "collision_pieces_reused_total": 105,
+          "costs_shared_by_group": false,
+          "current_visible_terrain": true,
+          "descriptor": {
+            "a": [
+              1308.00122070313,
+              75.3347702026367,
+              1236.27368164063
+            ],
+            "add": false,
+            "b": [
+              1307.9990234375,
+              73.196174621582,
+              1233.31860351563
+            ],
+            "command": 2,
+            "radius": 2.5
+          },
+          "draw_ms": 108.155,
+          "draw_us": 32191235,
+          "field_ms": 0.396,
+          "geometry_patches": 7,
+          "group_size": 1,
+          "member_index": 0,
+          "publish_ms": 101.439,
+          "publish_us": 32184519,
+          "ticket": 11,
+          "upload_last_piece_ms": 0.386,
+          "worker_queue_ms": 0.156
+        },
+        {
+          "accepted_us": 32199793,
+          "after_worker_ms": 60.02,
+          "build_ms": 40.318,
+          "capture_wait_ms": 0.051,
+          "captured_us": 32199742,
+          "changed": true,
+          "collision_last_piece_ms": 0.457,
+          "collision_match_last_ms": 0.001,
+          "collision_pieces_built_total": 348,
+          "collision_pieces_reused_total": 111,
+          "costs_shared_by_group": false,
+          "current_visible_terrain": true,
+          "descriptor": {
+            "a": [
+              1307.9990234375,
+              73.196174621582,
+              1233.31860351563
+            ],
+            "add": false,
+            "b": [
+              1308.00024414063,
+              70.3470840454102,
+              1231.00061035156
+            ],
+            "command": 2,
+            "radius": 2.5
+          },
+          "draw_ms": 106.776,
+          "draw_us": 32306518,
+          "field_ms": 0.246,
+          "geometry_patches": 7,
+          "group_size": 1,
+          "member_index": 0,
+          "publish_ms": 101.381,
+          "publish_us": 32301123,
+          "ticket": 12,
+          "upload_last_piece_ms": 0.38,
+          "worker_queue_ms": 0.122
+        },
+        {
+          "accepted_us": 32316446,
+          "after_worker_ms": 48.16,
+          "build_ms": 53.981,
+          "capture_wait_ms": 0.05,
+          "captured_us": 32316396,
+          "changed": true,
+          "collision_last_piece_ms": 0.636,
+          "collision_match_last_ms": 0.001,
+          "collision_pieces_built_total": 357,
+          "collision_pieces_reused_total": 116,
+          "costs_shared_by_group": false,
+          "current_visible_terrain": true,
+          "descriptor": {
+            "a": [
+              1308.00024414063,
+              70.3470840454102,
+              1231.00061035156
+            ],
+            "add": false,
+            "b": [
+              1308.0,
+              67.6598281860352,
+              1228.43395996094
+            ],
+            "command": 2,
+            "radius": 2.5
+          },
+          "draw_ms": 108.378,
+          "draw_us": 32424774,
+          "field_ms": 0.727,
+          "geometry_patches": 7,
+          "group_size": 1,
+          "member_index": 0,
+          "publish_ms": 103.722,
+          "publish_us": 32420118,
+          "ticket": 13,
+          "upload_last_piece_ms": 0.376,
+          "worker_queue_ms": 0.222
+        },
+        {
+          "accepted_us": 32433119,
+          "after_worker_ms": 54.832,
+          "build_ms": 46.497,
+          "capture_wait_ms": 0.051,
+          "captured_us": 32433068,
+          "changed": true,
+          "collision_last_piece_ms": 0.039,
+          "collision_match_last_ms": 0.005,
+          "collision_pieces_built_total": 366,
+          "collision_pieces_reused_total": 123,
+          "costs_shared_by_group": false,
+          "current_visible_terrain": true,
+          "descriptor": {
+            "a": [
+              1308.0,
+              67.6598281860352,
+              1228.43395996094
+            ],
+            "add": false,
+            "b": [
+              1308.0,
+              65.4899139404297,
+              1225.46240234375
+            ],
+            "command": 2,
+            "radius": 2.5
+          },
+          "draw_ms": 107.121,
+          "draw_us": 32540189,
+          "field_ms": 0.18,
+          "geometry_patches": 7,
+          "group_size": 1,
+          "member_index": 0,
+          "publish_ms": 102.338,
+          "publish_us": 32535406,
+          "ticket": 14,
+          "upload_last_piece_ms": 0.246,
+          "worker_queue_ms": 0.155
+        },
+        {
+          "accepted_us": 32549864,
+          "after_worker_ms": 45.387,
+          "build_ms": 55.908,
+          "capture_wait_ms": 0.058,
+          "captured_us": 32549806,
+          "changed": true,
+          "collision_last_piece_ms": 0.044,
+          "collision_match_last_ms": 0.006,
+          "collision_pieces_built_total": 375,
+          "collision_pieces_reused_total": 130,
+          "costs_shared_by_group": false,
+          "current_visible_terrain": true,
+          "descriptor": {
+            "a": [
+              1308.0,
+              65.4899139404297,
+              1225.46240234375
+            ],
+            "add": false,
+            "b": [
+              1308.0,
+              62.5427131652832,
+              1223.23950195313
+            ],
+            "command": 2,
+            "radius": 2.5
+          },
+          "draw_ms": 107.472,
+          "draw_us": 32657278,
+          "field_ms": 0.211,
+          "geometry_patches": 7,
+          "group_size": 1,
+          "member_index": 0,
+          "publish_ms": 102.688,
+          "publish_us": 32652494,
+          "ticket": 15,
+          "upload_last_piece_ms": 0.262,
+          "worker_queue_ms": 0.398
+        },
+        {
+          "accepted_us": 32666447,
+          "after_worker_ms": 62.241,
+          "build_ms": 56.39,
+          "capture_wait_ms": 0.052,
+          "captured_us": 32666395,
+          "changed": true,
+          "collision_last_piece_ms": 0.463,
+          "collision_match_last_ms": 0.001,
+          "collision_pieces_built_total": 386,
+          "collision_pieces_reused_total": 134,
+          "costs_shared_by_group": false,
+          "current_visible_terrain": true,
+          "descriptor": {
+            "a": [
+              1308.0,
+              62.5427131652832,
+              1223.23950195313
+            ],
+            "add": false,
+            "b": [
+              1308.0,
+              60.4069442749023,
+              1220.2763671875
+            ],
+            "command": 2,
+            "radius": 2.5
+          },
+          "draw_ms": 124.929,
+          "draw_us": 32791324,
+          "field_ms": 0.605,
+          "geometry_patches": 7,
+          "group_size": 1,
+          "member_index": 0,
+          "publish_ms": 119.977,
+          "publish_us": 32786372,
+          "ticket": 16,
+          "upload_last_piece_ms": 0.171,
+          "worker_queue_ms": 0.124
+        },
+        {
+          "accepted_us": 32799777,
+          "after_worker_ms": 12.973,
+          "build_ms": 55.279,
+          "capture_wait_ms": 0.051,
+          "captured_us": 32799726,
+          "changed": true,
+          "collision_last_piece_ms": 0.0,
+          "collision_match_last_ms": 0.009,
+          "collision_pieces_built_total": 389,
+          "collision_pieces_reused_total": 147,
+          "costs_shared_by_group": false,
+          "current_visible_terrain": true,
+          "descriptor": {
+            "a": [
+              1308.0,
+              60.4069442749023,
+              1220.2763671875
+            ],
+            "add": false,
+            "b": [
+              1308.0,
+              57.4698524475098,
+              1218.06298828125
+            ],
+            "command": 2,
+            "radius": 2.5
+          },
+          "draw_ms": 74.402,
+          "draw_us": 32874128,
+          "field_ms": 0.348,
+          "geometry_patches": 7,
+          "group_size": 1,
+          "member_index": 0,
+          "publish_ms": 69.409,
+          "publish_us": 32869135,
+          "ticket": 17,
+          "upload_last_piece_ms": 0.232,
+          "worker_queue_ms": 0.144
+        },
+        {
+          "accepted_us": 32883099,
+          "after_worker_ms": 11.264,
+          "build_ms": 57.54,
+          "capture_wait_ms": 0.05,
+          "captured_us": 32883049,
+          "changed": true,
+          "collision_last_piece_ms": 0.001,
+          "collision_match_last_ms": 0.008,
+          "collision_pieces_built_total": 392,
+          "collision_pieces_reused_total": 160,
+          "costs_shared_by_group": false,
+          "current_visible_terrain": true,
+          "descriptor": {
+            "a": [
+              1308.0,
+              57.4698524475098,
+              1218.06298828125
+            ],
+            "add": false,
+            "b": [
+              1308.0,
+              55.1356620788574,
+              1215.18310546875
+            ],
+            "command": 2,
+            "radius": 2.5
+          },
+          "draw_ms": 74.617,
+          "draw_us": 32957666,
+          "field_ms": 0.161,
+          "geometry_patches": 7,
+          "group_size": 1,
+          "member_index": 0,
+          "publish_ms": 69.823,
+          "publish_us": 32952872,
+          "ticket": 18,
+          "upload_last_piece_ms": 0.225,
+          "worker_queue_ms": 0.114
+        },
+        {
+          "accepted_us": 32999791,
+          "after_worker_ms": 9.727,
+          "build_ms": 25.396,
+          "capture_wait_ms": 0.052,
+          "captured_us": 32999739,
+          "changed": true,
+          "collision_last_piece_ms": 0.001,
+          "collision_match_last_ms": 0.001,
+          "collision_pieces_built_total": 398,
+          "collision_pieces_reused_total": 160,
+          "costs_shared_by_group": false,
+          "current_visible_terrain": true,
+          "descriptor": {
+            "a": [
+              1308.0,
+              55.1356620788574,
+              1215.18310546875
+            ],
+            "add": false,
+            "b": [
+              1308.27526855469,
+              52.5105018615723,
+              1212.44067382813
+            ],
+            "command": 2,
+            "radius": 2.5
+          },
+          "draw_ms": 40.735,
+          "draw_us": 33040474,
+          "field_ms": 0.356,
+          "geometry_patches": 6,
+          "group_size": 1,
+          "member_index": 0,
+          "publish_ms": 36.165,
+          "publish_us": 33035904,
+          "ticket": 19,
+          "upload_last_piece_ms": 0.227,
+          "worker_queue_ms": 0.11
+        },
+        {
+          "accepted_us": 33083126,
+          "after_worker_ms": 6.674,
+          "build_ms": 28.945,
+          "capture_wait_ms": 0.053,
+          "captured_us": 33083073,
+          "changed": true,
+          "collision_last_piece_ms": 0.0,
+          "collision_match_last_ms": 0.001,
+          "collision_pieces_built_total": 402,
+          "collision_pieces_reused_total": 161,
+          "costs_shared_by_group": false,
+          "current_visible_terrain": true,
+          "descriptor": {
+            "a": [
+              1308.27526855469,
+              52.5105018615723,
+              1212.44067382813
+            ],
+            "add": false,
+            "b": [
+              1308.1181640625,
+              49.8235473632813,
+              1209.72412109375
+            ],
+            "command": 2,
+            "radius": 2.5
+          },
+          "draw_ms": 41.616,
+          "draw_us": 33124689,
+          "field_ms": 0.575,
+          "geometry_patches": 6,
+          "group_size": 1,
+          "member_index": 0,
+          "publish_ms": 36.925,
+          "publish_us": 33119998,
+          "ticket": 20,
+          "upload_last_piece_ms": 0.282,
+          "worker_queue_ms": 0.104
+        },
+        {
+          "accepted_us": 33166443,
+          "after_worker_ms": 13.783,
+          "build_ms": 22.911,
+          "capture_wait_ms": 0.051,
+          "captured_us": 33166392,
+          "changed": true,
+          "collision_last_piece_ms": 1.201,
+          "collision_match_last_ms": 0.001,
+          "collision_pieces_built_total": 408,
+          "collision_pieces_reused_total": 162,
+          "costs_shared_by_group": false,
+          "current_visible_terrain": true,
+          "descriptor": {
+            "a": [
+              1308.1181640625,
+              49.8235473632813,
+              1209.72412109375
+            ],
+            "add": false,
+            "b": [
+              1308.20751953125,
+              47.2975921630859,
+              1206.84265136719
+            ],
+            "command": 2,
+            "radius": 2.5
+          },
+          "draw_ms": 42.058,
+          "draw_us": 33208450,
+          "field_ms": 0.174,
+          "geometry_patches": 7,
+          "group_size": 1,
+          "member_index": 0,
+          "publish_ms": 37.672,
+          "publish_us": 33204064,
+          "ticket": 21,
+          "upload_last_piece_ms": 0.123,
+          "worker_queue_ms": 0.1
+        },
+        {
+          "accepted_us": 33249784,
+          "after_worker_ms": 28.037,
+          "build_ms": 40.679,
+          "capture_wait_ms": 0.051,
+          "captured_us": 33249733,
+          "changed": true,
+          "collision_last_piece_ms": 1.543,
+          "collision_match_last_ms": 0.001,
+          "collision_pieces_built_total": 412,
+          "collision_pieces_reused_total": 162,
+          "costs_shared_by_group": false,
+          "current_visible_terrain": true,
+          "descriptor": {
+            "a": [
+              1308.20751953125,
+              47.2975921630859,
+              1206.84265136719
+            ],
+            "add": false,
+            "b": [
+              1308.17065429688,
+              44.4083595275879,
+              1204.35974121094
+            ],
+            "command": 2,
+            "radius": 2.5
+          },
+          "draw_ms": 76.99,
+          "draw_us": 33326723,
+          "field_ms": 0.546,
+          "geometry_patches": 5,
+          "group_size": 1,
+          "member_index": 0,
+          "publish_ms": 69.907,
+          "publish_us": 33319640,
+          "ticket": 22,
+          "upload_last_piece_ms": 0.178,
+          "worker_queue_ms": 0.103
+        },
+        {
+          "accepted_us": 33366466,
+          "after_worker_ms": 44.189,
+          "build_ms": 40.376,
+          "capture_wait_ms": 0.054,
+          "captured_us": 33366412,
+          "changed": true,
+          "collision_last_piece_ms": 0.0,
+          "collision_match_last_ms": 0.001,
+          "collision_pieces_built_total": 417,
+          "collision_pieces_reused_total": 162,
+          "costs_shared_by_group": false,
+          "current_visible_terrain": true,
+          "descriptor": {
+            "a": [
+              1308.17065429688,
+              44.4083595275879,
+              1204.35974121094
+            ],
+            "add": false,
+            "b": [
+              1308.17456054688,
+              41.8772010803223,
+              1201.49780273438
+            ],
+            "command": 2,
+            "radius": 2.5
+          },
+          "draw_ms": 92.374,
+          "draw_us": 33458786,
+          "field_ms": 0.353,
+          "geometry_patches": 5,
+          "group_size": 1,
+          "member_index": 0,
+          "publish_ms": 85.586,
+          "publish_us": 33451998,
+          "ticket": 23,
+          "upload_last_piece_ms": 0.233,
+          "worker_queue_ms": 0.108
+        }
+      ],
+      "frames": {
+        "count": 187,
+        "max_ms": 51.277,
+        "median_ms": 16.668,
+        "over_50ms": 1,
+        "p95_ms": 17.127,
+        "p99_ms": 17.617
+      },
+      "input_state": {
+        "eligible": 180,
+        "frames": 180,
+        "loading": 0,
+        "pending_edit": 117,
+        "ray_hit": 107
+      },
+      "last_hit": false,
+      "phase": "held_flight_0",
+      "readiness_trace": [
+        {
+          "in_flight": "[(512, 1408, 128), (640, 1472, 64), (896, 1088, 64)]",
+          "ms": 48.155,
+          "preparing": "(960, 1152, 64)",
+          "staging": 0,
+          "state": "query=true cache=false hit=false target=(800.0, 49.39584, 1289.216) pending=false",
+          "visible": "[(512, 768, 256), (768, 768, 256), (1024, 768, 256), (256, 1024, 256), (512, 1024, 256), (768, 1024, 128), (896, 1024, 128), (768, 1152, 32), (800, 1152, 32), (768, 1184, 32), (800, 1184, 32), (832, 1152, 32), (864, 1152, 32), (832, 1184, 32), (864, 1184, 32), (768, 1216, 32), (800, 1216, 32), (768, 1248, 16), (784, 1248, 16), (768, 1264, 16), (784, 1264, 16), (800, 1248, 16), (816, 1248, 16), (800, 1264, 16), (816, 1264, 16), (832, 1216, 32), (864, 1216, 32), (832, 1248, 16), (848, 1248, 16), (832, 1264, 16), (848, 1264, 16), (864, 1248, 32), (896, 1152, 128), (1024, 1024, 256), (256, 1280, 256), (512, 1280, 256), (768, 1280, 16), (784, 1280, 16), (768, 1296, 16), (784, 1296, 16), (800, 1280, 16), (816, 1280, 16), (800, 1296, 16), (816, 1296, 16), (768, 1312, 16), (784, 1312, 16), (768, 1328, 16), (784, 1328, 16), (800, 1312, 16), (816, 1312, 16), (800, 1328, 16), (816, 1328, 16), (832, 1280, 16), (848, 1280, 16), (832, 1296, 16), (848, 1296, 16), (864, 1280, 32), (832, 1312, 16), (848, 1312, 16), (832, 1328, 16), (848, 1328, 16), (864, 1312, 32), (768, 1344, 16), (784, 1344, 16), (768, 1360, 16), (784, 1360, 16), (800, 1344, 16), (816, 1344, 16), (800, 1360, 16), (816, 1360, 16), (768, 1376, 32), (800, 1376, 32), (832, 1344, 16), (848, 1344, 16), (832, 1360, 16), (848, 1360, 16), (864, 1344, 32), (832, 1376, 32), (864, 1376, 32), (896, 1280, 32), (928, 1280, 32), (896, 1312, 32), (928, 1312, 32), (960, 1280, 64), (896, 1344, 64), (960, 1344, 64), (768, 1408, 32), (800, 1408, 32), (768, 1440, 32), (800, 1440, 32), (832, 1408, 64), (768, 1472, 64), (832, 1472, 64), (896, 1408, 128), (1024, 1280, 256), (256, 1536, 256), (512, 1536, 256), (768, 1536, 256), (1024, 1536, 256)]"
+        },
+        {
+          "in_flight": "[(512, 1408, 128), (640, 1472, 64), (896, 1088, 64)]",
+          "ms": 58.538,
+          "preparing": "none",
+          "staging": 0,
+          "state": "query=false cache=true hit=false target=(1308.0, 98.79103, 1260.0) pending=false",
+          "visible": "[(512, 768, 256), (768, 768, 256), (1024, 768, 256), (256, 1024, 256), (512, 1024, 256), (768, 1024, 128), (896, 1024, 128), (768, 1152, 32), (800, 1152, 32), (768, 1184, 32), (800, 1184, 32), (832, 1152, 32), (864, 1152, 32), (832, 1184, 32), (864, 1184, 32), (768, 1216, 32), (800, 1216, 32), (768, 1248, 16), (784, 1248, 16), (768, 1264, 16), (784, 1264, 16), (800, 1248, 16), (816, 1248, 16), (800, 1264, 16), (816, 1264, 16), (832, 1216, 32), (864, 1216, 32), (832, 1248, 16), (848, 1248, 16), (832, 1264, 16), (848, 1264, 16), (864, 1248, 32), (896, 1152, 128), (1024, 1024, 256), (256, 1280, 256), (512, 1280, 256), (768, 1280, 16), (784, 1280, 16), (768, 1296, 16), (784, 1296, 16), (800, 1280, 16), (816, 1280, 16), (800, 1296, 16), (816, 1296, 16), (768, 1312, 16), (784, 1312, 16), (768, 1328, 16), (784, 1328, 16), (800, 1312, 16), (816, 1312, 16), (800, 1328, 16), (816, 1328, 16), (832, 1280, 16), (848, 1280, 16), (832, 1296, 16), (848, 1296, 16), (864, 1280, 32), (832, 1312, 16), (848, 1312, 16), (832, 1328, 16), (848, 1328, 16), (864, 1312, 32), (768, 1344, 16), (784, 1344, 16), (768, 1360, 16), (784, 1360, 16), (800, 1344, 16), (816, 1344, 16), (800, 1360, 16), (816, 1360, 16), (768, 1376, 32), (800, 1376, 32), (832, 1344, 16), (848, 1344, 16), (832, 1360, 16), (848, 1360, 16), (864, 1344, 32), (832, 1376, 32), (864, 1376, 32), (896, 1280, 32), (928, 1280, 32), (896, 1312, 32), (928, 1312, 32), (960, 1280, 64), (896, 1344, 64), (960, 1344, 64), (768, 1408, 32), (800, 1408, 32), (768, 1440, 32), (800, 1440, 32), (832, 1408, 64), (768, 1472, 64), (832, 1472, 64), (896, 1408, 128), (1024, 1280, 256), (256, 1536, 256), (512, 1536, 256), (768, 1536, 256), (1024, 1536, 256)]"
+        },
+        {
+          "in_flight": "[(1280, 1280, 16), (1328, 1248, 16)]",
+          "ms": 914.899,
+          "preparing": "(1312, 1248, 16)",
+          "staging": 12,
+          "state": "query=false cache=true hit=true target=(1308.0, 98.78734, 1259.996) pending=true",
+          "visible": "[(512, 768, 256), (768, 768, 256), (1024, 768, 256), (256, 1024, 256), (512, 1024, 256), (768, 1024, 128), (896, 1024, 128), (768, 1152, 128), (896, 1152, 128), (1024, 1024, 256), (1280, 1024, 128), (1408, 1024, 128), (1280, 1152, 64), (1344, 1152, 64), (1280, 1216, 32), (1312, 1216, 32), (1280, 1248, 16), (1296, 1248, 16), (1280, 1264, 16), (1296, 1264, 16), (1312, 1248, 32), (1344, 1216, 64), (1408, 1152, 128), (256, 1280, 256), (512, 1280, 256), (768, 1280, 128), (896, 1280, 128), (768, 1408, 128), (896, 1408, 128), (1024, 1280, 256), (256, 1536, 256), (512, 1536, 256), (768, 1536, 256), (1024, 1536, 256)]"
+        }
+      ],
+      "visible_gaps": {
+        "count": 23,
+        "max_ms": 987.969,
+        "median_ms": 85.462,
+        "over_50ms": 23,
+        "p95_ms": 134.046,
+        "p99_ms": 987.969
+      }
+    },
+    {
+      "capture_to_draw": {
+        "count": 29,
+        "max_ms": 62.822,
+        "median_ms": 43.759,
+        "over_50ms": 8,
+        "p95_ms": 60.96,
+        "p99_ms": 62.822
+      },
+      "changed_draws": 29,
+      "edits": [
+        {
+          "accepted_us": 34240002,
+          "after_worker_ms": 17.37,
+          "build_ms": 28.078,
+          "capture_wait_ms": 0.049,
+          "captured_us": 34239953,
+          "changed": true,
+          "collision_last_piece_ms": 0.001,
+          "collision_match_last_ms": 0.008,
+          "collision_pieces_built_total": 449,
+          "collision_pieces_reused_total": 165,
+          "costs_shared_by_group": false,
+          "current_visible_terrain": true,
+          "descriptor": {
+            "a": [
+              1302.20385742188,
+              80.2522201538086,
+              1212.17517089844
+            ],
+            "add": false,
+            "b": [
+              1302.20385742188,
+              80.2522201538086,
+              1212.17517089844
+            ],
+            "command": 2,
+            "radius": 2.5
+          },
+          "draw_ms": 54.653,
+          "draw_us": 34294606,
+          "field_ms": 0.576,
+          "geometry_patches": 5,
+          "group_size": 1,
+          "member_index": 0,
+          "publish_ms": 47.416,
+          "publish_us": 34287369,
+          "ticket": 24,
+          "upload_last_piece_ms": 0.009,
+          "worker_queue_ms": 0.245
+        },
+        {
+          "accepted_us": 34296087,
+          "after_worker_ms": 18.891,
+          "build_ms": 14.192,
+          "capture_wait_ms": 0.048,
+          "captured_us": 34296039,
+          "changed": true,
+          "collision_last_piece_ms": 0.048,
+          "collision_match_last_ms": 0.005,
+          "collision_pieces_built_total": 450,
+          "collision_pieces_reused_total": 169,
+          "costs_shared_by_group": false,
+          "current_visible_terrain": true,
+          "descriptor": {
+            "a": [
+              1302.20385742188,
+              80.2522201538086,
+              1212.17517089844
+            ],
+            "add": false,
+            "b": [
+              1301.87670898438,
+              79.116325378418,
+              1208.65539550781
+            ],
+            "command": 2,
+            "radius": 2.5
+          },
+          "draw_ms": 43.151,
+          "draw_us": 34339190,
+          "field_ms": 0.16,
+          "geometry_patches": 5,
+          "group_size": 1,
+          "member_index": 0,
+          "publish_ms": 34.471,
+          "publish_us": 34330510,
+          "ticket": 25,
+          "upload_last_piece_ms": 0.161,
+          "worker_queue_ms": 0.114
+        },
+        {
+          "accepted_us": 34364050,
+          "after_worker_ms": 14.076,
+          "build_ms": 19.273,
+          "capture_wait_ms": 0.05,
+          "captured_us": 34364000,
+          "changed": true,
+          "collision_last_piece_ms": 0.044,
+          "collision_match_last_ms": 0.005,
+          "collision_pieces_built_total": 454,
+          "collision_pieces_reused_total": 175,
+          "costs_shared_by_group": false,
+          "current_visible_terrain": true,
+          "descriptor": {
+            "a": [
+              1301.87670898438,
+              79.116325378418,
+              1208.65539550781
+            ],
+            "add": false,
+            "b": [
+              1302.08666992188,
+              75.9692611694336,
+              1206.72192382813
+            ],
+            "command": 2,
+            "radius": 2.5
+          },
+          "draw_ms": 42.061,
+          "draw_us": 34406061,
+          "field_ms": 0.153,
+          "geometry_patches": 7,
+          "group_size": 1,
+          "member_index": 0,
+          "publish_ms": 34.923,
+          "publish_us": 34398923,
+          "ticket": 26,
+          "upload_last_piece_ms": 0.165,
+          "worker_queue_ms": 0.163
+        },
+        {
+          "accepted_us": 34429456,
+          "after_worker_ms": 7.228,
+          "build_ms": 32.279,
+          "capture_wait_ms": 0.052,
+          "captured_us": 34429404,
+          "changed": true,
+          "collision_last_piece_ms": 0.001,
+          "collision_match_last_ms": 0.008,
+          "collision_pieces_built_total": 457,
+          "collision_pieces_reused_total": 178,
+          "costs_shared_by_group": false,
+          "current_visible_terrain": true,
+          "descriptor": {
+            "a": [
+              1302.08666992188,
+              75.9692611694336,
+              1206.72192382813
+            ],
+            "add": false,
+            "b": [
+              1301.95092773438,
+              73.6957321166992,
+              1203.80529785156
+            ],
+            "command": 2,
+            "radius": 2.5
+          },
+          "draw_ms": 49.207,
+          "draw_us": 34478611,
+          "field_ms": 0.394,
+          "geometry_patches": 5,
+          "group_size": 1,
+          "member_index": 0,
+          "publish_ms": 41.523,
+          "publish_us": 34470927,
+          "ticket": 27,
+          "upload_last_piece_ms": 0.008,
+          "worker_queue_ms": 0.436
+        },
+        {
+          "accepted_us": 34496113,
+          "after_worker_ms": 15.15,
+          "build_ms": 22.024,
+          "capture_wait_ms": 0.052,
+          "captured_us": 34496061,
+          "changed": true,
+          "collision_last_piece_ms": 2.972,
+          "collision_match_last_ms": 0.001,
+          "collision_pieces_built_total": 462,
+          "collision_pieces_reused_total": 183,
+          "costs_shared_by_group": false,
+          "current_visible_terrain": true,
+          "descriptor": {
+            "a": [
+              1301.95092773438,
+              73.6957321166992,
+              1203.80529785156
+            ],
+            "add": false,
+            "b": [
+              1302.02355957031,
+              70.695426940918,
+              1201.51525878906
+            ],
+            "command": 2,
+            "radius": 2.5
+          },
+          "draw_ms": 43.759,
+          "draw_us": 34539820,
+          "field_ms": 0.159,
+          "geometry_patches": 5,
+          "group_size": 1,
+          "member_index": 0,
+          "publish_ms": 38.678,
+          "publish_us": 34534739,
+          "ticket": 28,
+          "upload_last_piece_ms": 0.106,
+          "worker_queue_ms": 0.187
+        },
+        {
+          "accepted_us": 34563721,
+          "after_worker_ms": 28.639,
+          "build_ms": 23.54,
+          "capture_wait_ms": 0.053,
+          "captured_us": 34563668,
+          "changed": true,
+          "collision_last_piece_ms": 0.595,
+          "collision_match_last_ms": 0.001,
+          "collision_pieces_built_total": 466,
+          "collision_pieces_reused_total": 188,
+          "costs_shared_by_group": false,
+          "current_visible_terrain": true,
+          "descriptor": {
+            "a": [
+              1302.02355957031,
+              70.695426940918,
+              1201.51525878906
+            ],
+            "add": false,
+            "b": [
+              1301.98620605469,
+              68.7131652832031,
+              1198.40783691406
+            ],
+            "command": 2,
+            "radius": 2.5
+          },
+          "draw_ms": 60.96,
+          "draw_us": 34624628,
+          "field_ms": 0.213,
+          "geometry_patches": 5,
+          "group_size": 1,
+          "member_index": 0,
+          "publish_ms": 53.877,
+          "publish_us": 34617545,
+          "ticket": 29,
+          "upload_last_piece_ms": 0.166,
+          "worker_queue_ms": 0.339
+        },
+        {
+          "accepted_us": 34629454,
+          "after_worker_ms": 25.048,
+          "build_ms": 24.656,
+          "capture_wait_ms": 0.054,
+          "captured_us": 34629400,
+          "changed": true,
+          "collision_last_piece_ms": 0.07,
+          "collision_match_last_ms": 0.01,
+          "collision_pieces_built_total": 470,
+          "collision_pieces_reused_total": 192,
+          "costs_shared_by_group": false,
+          "current_visible_terrain": true,
+          "descriptor": {
+            "a": [
+              1301.98620605469,
+              68.7131652832031,
+              1198.40783691406
+            ],
+            "add": false,
+            "b": [
+              1302.00708007813,
+              65.6676254272461,
+              1196.25866699219
+            ],
+            "command": 2,
+            "radius": 2.5
+          },
+          "draw_ms": 57.698,
+          "draw_us": 34687098,
+          "field_ms": 0.16,
+          "geometry_patches": 5,
+          "group_size": 1,
+          "member_index": 0,
+          "publish_ms": 51.19,
+          "publish_us": 34680590,
+          "ticket": 30,
+          "upload_last_piece_ms": 0.152,
+          "worker_queue_ms": 0.105
+        },
+        {
+          "accepted_us": 34696113,
+          "after_worker_ms": 24.793,
+          "build_ms": 25.031,
+          "capture_wait_ms": 0.052,
+          "captured_us": 34696061,
+          "changed": true,
+          "collision_last_piece_ms": 0.073,
+          "collision_match_last_ms": 0.01,
+          "collision_pieces_built_total": 473,
+          "collision_pieces_reused_total": 198,
+          "costs_shared_by_group": false,
+          "current_visible_terrain": true,
+          "descriptor": {
+            "a": [
+              1302.00708007813,
+              65.6676254272461,
+              1196.25866699219
+            ],
+            "add": false,
+            "b": [
+              1301.99682617188,
+              63.5764541625977,
+              1193.2470703125
+            ],
+            "command": 2,
+            "radius": 2.5
+          },
+          "draw_ms": 56.826,
+          "draw_us": 34752887,
+          "field_ms": 0.16,
+          "geometry_patches": 5,
+          "group_size": 1,
+          "member_index": 0,
+          "publish_ms": 51.231,
+          "publish_us": 34747292,
+          "ticket": 31,
+          "upload_last_piece_ms": 0.163,
+          "worker_queue_ms": 0.105
+        },
+        {
+          "accepted_us": 34762777,
+          "after_worker_ms": 19.819,
+          "build_ms": 30.051,
+          "capture_wait_ms": 0.055,
+          "captured_us": 34762722,
+          "changed": true,
+          "collision_last_piece_ms": 0.07,
+          "collision_match_last_ms": 0.009,
+          "collision_pieces_built_total": 475,
+          "collision_pieces_reused_total": 206,
+          "costs_shared_by_group": false,
+          "current_visible_terrain": true,
+          "descriptor": {
+            "a": [
+              1301.99682617188,
+              63.5764541625977,
+              1193.2470703125
+            ],
+            "add": false,
+            "b": [
+              1302.00146484375,
+              61.0225868225098,
+              1190.58605957031
+            ],
+            "command": 2,
+            "radius": 2.5
+          },
+          "draw_ms": 57.778,
+          "draw_us": 34820500,
+          "field_ms": 0.156,
+          "geometry_patches": 7,
+          "group_size": 1,
+          "member_index": 0,
+          "publish_ms": 51.395,
+          "publish_us": 34814117,
+          "ticket": 32,
+          "upload_last_piece_ms": 0.161,
+          "worker_queue_ms": 0.109
+        },
+        {
+          "accepted_us": 34829425,
+          "after_worker_ms": 11.97,
+          "build_ms": 27.152,
+          "capture_wait_ms": 0.05,
+          "captured_us": 34829375,
+          "changed": true,
+          "collision_last_piece_ms": 0.056,
+          "collision_match_last_ms": 0.009,
+          "collision_pieces_built_total": 477,
+          "collision_pieces_reused_total": 210,
+          "costs_shared_by_group": false,
+          "current_visible_terrain": true,
+          "descriptor": {
+            "a": [
+              1302.00146484375,
+              61.0225868225098,
+              1190.58605957031
+            ],
+            "add": false,
+            "b": [
+              1301.99853515625,
+              58.3241882324219,
+              1188.05822753906
+            ],
+            "command": 2,
+            "radius": 2.5
+          },
+          "draw_ms": 46.359,
+          "draw_us": 34875734,
+          "field_ms": 0.35,
+          "geometry_patches": 5,
+          "group_size": 1,
+          "member_index": 0,
+          "publish_ms": 40.693,
+          "publish_us": 34870068,
+          "ticket": 33,
+          "upload_last_piece_ms": 0.138,
+          "worker_queue_ms": 0.116
+        },
+        {
+          "accepted_us": 34896090,
+          "after_worker_ms": 16.925,
+          "build_ms": 16.131,
+          "capture_wait_ms": 0.049,
+          "captured_us": 34896041,
+          "changed": true,
+          "collision_last_piece_ms": 0.073,
+          "collision_match_last_ms": 0.009,
+          "collision_pieces_built_total": 481,
+          "collision_pieces_reused_total": 214,
+          "costs_shared_by_group": false,
+          "current_visible_terrain": true,
+          "descriptor": {
+            "a": [
+              1301.99853515625,
+              58.3241882324219,
+              1188.05822753906
+            ],
+            "add": false,
+            "b": [
+              1302.00048828125,
+              55.5472717285156,
+              1185.63232421875
+            ],
+            "command": 2,
+            "radius": 2.5
+          },
+          "draw_ms": 41.287,
+          "draw_us": 34937328,
+          "field_ms": 0.154,
+          "geometry_patches": 5,
+          "group_size": 1,
+          "member_index": 0,
+          "publish_ms": 34.576,
+          "publish_us": 34930617,
+          "ticket": 34,
+          "upload_last_piece_ms": 0.159,
+          "worker_queue_ms": 0.264
+        },
+        {
+          "accepted_us": 34962774,
+          "after_worker_ms": 22.343,
+          "build_ms": 31.276,
+          "capture_wait_ms": 0.051,
+          "captured_us": 34962723,
+          "changed": true,
+          "collision_last_piece_ms": 0.078,
+          "collision_match_last_ms": 0.012,
+          "collision_pieces_built_total": 485,
+          "collision_pieces_reused_total": 218,
+          "costs_shared_by_group": false,
+          "current_visible_terrain": true,
+          "descriptor": {
+            "a": [
+              1302.00048828125,
+              55.5472717285156,
+              1185.63232421875
+            ],
+            "add": false,
+            "b": [
+              1301.99951171875,
+              53.4368858337402,
+              1182.59118652344
+            ],
+            "command": 2,
+            "radius": 2.5
+          },
+          "draw_ms": 60.704,
+          "draw_us": 35023427,
+          "field_ms": 0.363,
+          "geometry_patches": 5,
+          "group_size": 1,
+          "member_index": 0,
+          "publish_ms": 55.261,
+          "publish_us": 35017984,
+          "ticket": 35,
+          "upload_last_piece_ms": 0.198,
+          "worker_queue_ms": 0.167
+        },
+        {
+          "accepted_us": 35029438,
+          "after_worker_ms": 7.798,
+          "build_ms": 10.83,
+          "capture_wait_ms": 0.052,
+          "captured_us": 35029386,
+          "changed": true,
+          "collision_last_piece_ms": 1.082,
+          "collision_match_last_ms": 0.001,
+          "collision_pieces_built_total": 487,
+          "collision_pieces_reused_total": 218,
+          "costs_shared_by_group": false,
+          "current_visible_terrain": true,
+          "descriptor": {
+            "a": [
+              1301.99951171875,
+              53.4368858337402,
+              1182.59118652344
+            ],
+            "add": false,
+            "b": [
+              1302.00061035156,
+              50.4664573669434,
+              1180.42041015625
+            ],
+            "command": 2,
+            "radius": 2.5
+          },
+          "draw_ms": 25.09,
+          "draw_us": 35054476,
+          "field_ms": 0.159,
+          "geometry_patches": 5,
+          "group_size": 1,
+          "member_index": 0,
+          "publish_ms": 20.106,
+          "publish_us": 35049492,
+          "ticket": 36,
+          "upload_last_piece_ms": 0.121,
+          "worker_queue_ms": 0.222
+        },
+        {
+          "accepted_us": 35096089,
+          "after_worker_ms": 6.471,
+          "build_ms": 11.509,
+          "capture_wait_ms": 0.05,
+          "captured_us": 35096039,
+          "changed": true,
+          "collision_last_piece_ms": 0.059,
+          "collision_match_last_ms": 0.011,
+          "collision_pieces_built_total": 490,
+          "collision_pieces_reused_total": 219,
+          "costs_shared_by_group": false,
+          "current_visible_terrain": true,
+          "descriptor": {
+            "a": [
+              1302.00061035156,
+              50.4664573669434,
+              1180.42041015625
+            ],
+            "add": false,
+            "b": [
+              1301.99987792969,
+              48.3270454406738,
+              1177.43286132813
+            ],
+            "command": 2,
+            "radius": 2.5
+          },
+          "draw_ms": 23.954,
+          "draw_us": 35119993,
+          "field_ms": 0.157,
+          "geometry_patches": 5,
+          "group_size": 1,
+          "member_index": 0,
+          "publish_ms": 19.422,
+          "publish_us": 35115461,
+          "ticket": 37,
+          "upload_last_piece_ms": 0.121,
+          "worker_queue_ms": 0.201
+        },
+        {
+          "accepted_us": 35162778,
+          "after_worker_ms": 4.991,
+          "build_ms": 13.298,
+          "capture_wait_ms": 0.054,
+          "captured_us": 35162724,
+          "changed": true,
+          "collision_last_piece_ms": 0.062,
+          "collision_match_last_ms": 0.01,
+          "collision_pieces_built_total": 491,
+          "collision_pieces_reused_total": 220,
+          "costs_shared_by_group": false,
+          "current_visible_terrain": true,
+          "descriptor": {
+            "a": [
+              1301.99987792969,
+              48.3270454406738,
+              1177.43286132813
+            ],
+            "add": false,
+            "b": [
+              1302.0,
+              45.4006805419922,
+              1175.22985839844
+            ],
+            "command": 2,
+            "radius": 2.5
+          },
+          "draw_ms": 24.955,
+          "draw_us": 35187679,
+          "field_ms": 0.206,
+          "geometry_patches": 8,
+          "group_size": 1,
+          "member_index": 0,
+          "publish_ms": 20.228,
+          "publish_us": 35182952,
+          "ticket": 38,
+          "upload_last_piece_ms": 0.134,
+          "worker_queue_ms": 0.325
+        },
+        {
+          "accepted_us": 35229421,
+          "after_worker_ms": 16.263,
+          "build_ms": 39.045,
+          "capture_wait_ms": 0.052,
+          "captured_us": 35229369,
+          "changed": true,
+          "collision_last_piece_ms": 0.0,
+          "collision_match_last_ms": 0.001,
+          "collision_pieces_built_total": 492,
+          "collision_pieces_reused_total": 220,
+          "costs_shared_by_group": false,
+          "current_visible_terrain": true,
+          "descriptor": {
+            "a": [
+              1302.0,
+              45.4006805419922,
+              1175.22985839844
+            ],
+            "add": false,
+            "b": [
+              1302.0,
+              43.1735458374023,
+              1172.30920410156
+            ],
+            "command": 2,
+            "radius": 2.5
+          },
+          "draw_ms": 62.822,
+          "draw_us": 35292191,
+          "field_ms": 0.431,
+          "geometry_patches": 6,
+          "group_size": 1,
+          "member_index": 0,
+          "publish_ms": 57.259,
+          "publish_us": 35286628,
+          "ticket": 39,
+          "upload_last_piece_ms": 0.129,
+          "worker_queue_ms": 0.216
+        },
+        {
+          "accepted_us": 35296089,
+          "after_worker_ms": 21.823,
+          "build_ms": 10.818,
+          "capture_wait_ms": 0.053,
+          "captured_us": 35296036,
+          "changed": true,
+          "collision_last_piece_ms": 0.129,
+          "collision_match_last_ms": 0.001,
+          "collision_pieces_built_total": 495,
+          "collision_pieces_reused_total": 220,
+          "costs_shared_by_group": false,
+          "current_visible_terrain": true,
+          "descriptor": {
+            "a": [
+              1302.0,
+              43.1735458374023,
+              1172.30920410156
+            ],
+            "add": false,
+            "b": [
+              1302.0,
+              40.4172439575195,
+              1169.87841796875
+            ],
+            "command": 2,
+            "radius": 2.5
+          },
+          "draw_ms": 41.075,
+          "draw_us": 35337111,
+          "field_ms": 0.158,
+          "geometry_patches": 6,
+          "group_size": 1,
+          "member_index": 0,
+          "publish_ms": 34.342,
+          "publish_us": 35330378,
+          "ticket": 40,
+          "upload_last_piece_ms": 0.141,
+          "worker_queue_ms": 0.252
+        },
+        {
+          "accepted_us": 35362766,
+          "after_worker_ms": 20.476,
+          "build_ms": 11.853,
+          "capture_wait_ms": 0.054,
+          "captured_us": 35362712,
+          "changed": true,
+          "collision_last_piece_ms": 0.183,
+          "collision_match_last_ms": 0.0,
+          "collision_pieces_built_total": 499,
+          "collision_pieces_reused_total": 220,
+          "costs_shared_by_group": false,
+          "current_visible_terrain": true,
+          "descriptor": {
+            "a": [
+              1302.0,
+              40.4172439575195,
+              1169.87841796875
+            ],
+            "add": false,
+            "b": [
+              1302.0,
+              37.6764373779297,
+              1167.35803222656
+            ],
+            "command": 2,
+            "radius": 2.5
+          },
+          "draw_ms": 38.787,
+          "draw_us": 35401499,
+          "field_ms": 0.161,
+          "geometry_patches": 6,
+          "group_size": 1,
+          "member_index": 0,
+          "publish_ms": 34.359,
+          "publish_us": 35397071,
+          "ticket": 41,
+          "upload_last_piece_ms": 0.148,
+          "worker_queue_ms": 0.554
+        },
+        {
+          "accepted_us": 35429418,
+          "after_worker_ms": 15.48,
+          "build_ms": 23.305,
+          "capture_wait_ms": 0.054,
+          "captured_us": 35429364,
+          "changed": true,
+          "collision_last_piece_ms": 0.001,
+          "collision_match_last_ms": 0.002,
+          "collision_pieces_built_total": 501,
+          "collision_pieces_reused_total": 221,
+          "costs_shared_by_group": false,
+          "current_visible_terrain": true,
+          "descriptor": {
+            "a": [
+              1302.0,
+              37.6764373779297,
+              1167.35803222656
+            ],
+            "add": false,
+            "b": [
+              1302.0,
+              35.5116539001465,
+              1164.38610839844
+            ],
+            "command": 2,
+            "radius": 2.5
+          },
+          "draw_ms": 46.63,
+          "draw_us": 35475994,
+          "field_ms": 0.624,
+          "geometry_patches": 6,
+          "group_size": 1,
+          "member_index": 0,
+          "publish_ms": 40.843,
+          "publish_us": 35470207,
+          "ticket": 42,
+          "upload_last_piece_ms": 0.007,
+          "worker_queue_ms": 0.147
+        },
+        {
+          "accepted_us": 35496081,
+          "after_worker_ms": 17.15,
+          "build_ms": 15.729,
+          "capture_wait_ms": 0.051,
+          "captured_us": 35496030,
+          "changed": true,
+          "collision_last_piece_ms": 0.727,
+          "collision_match_last_ms": 0.001,
+          "collision_pieces_built_total": 503,
+          "collision_pieces_reused_total": 223,
+          "costs_shared_by_group": false,
+          "current_visible_terrain": true,
+          "descriptor": {
+            "a": [
+              1302.0,
+              35.5116539001465,
+              1164.38610839844
+            ],
+            "add": false,
+            "b": [
+              1302.0,
+              32.5667343139648,
+              1162.1474609375
+            ],
+            "command": 2,
+            "radius": 2.5
+          },
+          "draw_ms": 40.147,
+          "draw_us": 35536177,
+          "field_ms": 0.159,
+          "geometry_patches": 6,
+          "group_size": 1,
+          "member_index": 0,
+          "publish_ms": 35.588,
+          "publish_us": 35531618,
+          "ticket": 43,
+          "upload_last_piece_ms": 0.1,
+          "worker_queue_ms": 1.242
+        },
+        {
+          "accepted_us": 35562766,
+          "after_worker_ms": 28.884,
+          "build_ms": 22.77,
+          "capture_wait_ms": 0.052,
+          "captured_us": 35562714,
+          "changed": true,
+          "collision_last_piece_ms": 0.704,
+          "collision_match_last_ms": 0.0,
+          "collision_pieces_built_total": 506,
+          "collision_pieces_reused_total": 225,
+          "costs_shared_by_group": false,
+          "current_visible_terrain": true,
+          "descriptor": {
+            "a": [
+              1302.0,
+              32.5667343139648,
+              1162.1474609375
+            ],
+            "add": false,
+            "b": [
+              1302.0,
+              30.3113746643066,
+              1159.22485351563
+            ],
+            "command": 2,
+            "radius": 2.5
+          },
+          "draw_ms": 58.145,
+          "draw_us": 35620859,
+          "field_ms": 0.17,
+          "geometry_patches": 8,
+          "group_size": 1,
+          "member_index": 0,
+          "publish_ms": 53.364,
+          "publish_us": 35616078,
+          "ticket": 44,
+          "upload_last_piece_ms": 0.155,
+          "worker_queue_ms": 0.087
+        },
+        {
+          "accepted_us": 35629407,
+          "after_worker_ms": 20.149,
+          "build_ms": 17.723,
+          "capture_wait_ms": 0.05,
+          "captured_us": 35629357,
+          "changed": true,
+          "collision_last_piece_ms": 0.001,
+          "collision_match_last_ms": 0.001,
+          "collision_pieces_built_total": 508,
+          "collision_pieces_reused_total": 225,
+          "costs_shared_by_group": false,
+          "current_visible_terrain": true,
+          "descriptor": {
+            "a": [
+              1302.0,
+              30.3113746643066,
+              1159.22485351563
+            ],
+            "add": false,
+            "b": [
+              1302.0,
+              27.8098392486572,
+              1156.52136230469
+            ],
+            "command": 2,
+            "radius": 2.5
+          },
+          "draw_ms": 45.501,
+          "draw_us": 35674858,
+          "field_ms": 0.363,
+          "geometry_patches": 6,
+          "group_size": 1,
+          "member_index": 0,
+          "publish_ms": 39.719,
+          "publish_us": 35669076,
+          "ticket": 45,
+          "upload_last_piece_ms": 0.007,
+          "worker_queue_ms": 0.13
+        },
+        {
+          "accepted_us": 35696073,
+          "after_worker_ms": 5.331,
+          "build_ms": 13.874,
+          "capture_wait_ms": 0.047,
+          "captured_us": 35696026,
+          "changed": true,
+          "collision_last_piece_ms": 0.055,
+          "collision_match_last_ms": 0.008,
+          "collision_pieces_built_total": 510,
+          "collision_pieces_reused_total": 226,
+          "costs_shared_by_group": false,
+          "current_visible_terrain": true,
+          "descriptor": {
+            "a": [
+              1302.0,
+              27.8098392486572,
+              1156.52136230469
+            ],
+            "add": false,
+            "b": [
+              1302.0,
+              25.3526344299316,
+              1153.69543457031
+            ],
+            "command": 2,
+            "radius": 2.5
+          },
+          "draw_ms": 25.991,
+          "draw_us": 35722017,
+          "field_ms": 0.163,
+          "geometry_patches": 6,
+          "group_size": 1,
+          "member_index": 0,
+          "publish_ms": 20.791,
+          "publish_us": 35716817,
+          "ticket": 46,
+          "upload_last_piece_ms": 0.107,
+          "worker_queue_ms": 0.111
+        },
+        {
+          "accepted_us": 35762740,
+          "after_worker_ms": 18.252,
+          "build_ms": 15.412,
+          "capture_wait_ms": 0.05,
+          "captured_us": 35762690,
+          "changed": true,
+          "collision_last_piece_ms": 0.001,
+          "collision_match_last_ms": 0.009,
+          "collision_pieces_built_total": 515,
+          "collision_pieces_reused_total": 227,
+          "costs_shared_by_group": false,
+          "current_visible_terrain": true,
+          "descriptor": {
+            "a": [
+              1302.0,
+              25.3526344299316,
+              1153.69543457031
+            ],
+            "add": false,
+            "b": [
+              1302.0,
+              22.4068298339844,
+              1151.49450683594
+            ],
+            "command": 2,
+            "radius": 2.5
+          },
+          "draw_ms": 40.376,
+          "draw_us": 35803066,
+          "field_ms": 0.173,
+          "geometry_patches": 6,
+          "group_size": 1,
+          "member_index": 0,
+          "publish_ms": 35.371,
+          "publish_us": 35798061,
+          "ticket": 47,
+          "upload_last_piece_ms": 0.008,
+          "worker_queue_ms": 0.098
+        },
+        {
+          "accepted_us": 35846093,
+          "after_worker_ms": 18.328,
+          "build_ms": 21.457,
+          "capture_wait_ms": 0.05,
+          "captured_us": 35846043,
+          "changed": true,
+          "collision_last_piece_ms": 0.001,
+          "collision_match_last_ms": 0.001,
+          "collision_pieces_built_total": 522,
+          "collision_pieces_reused_total": 227,
+          "costs_shared_by_group": false,
+          "current_visible_terrain": true,
+          "descriptor": {
+            "a": [
+              1302.0,
+              22.4068298339844,
+              1151.49450683594
+            ],
+            "add": false,
+            "b": [
+              1302.25317382813,
+              19.9407806396484,
+              1148.57934570313
+            ],
+            "command": 2,
+            "radius": 2.5
+          },
+          "draw_ms": 47.237,
+          "draw_us": 35893280,
+          "field_ms": 0.526,
+          "geometry_patches": 6,
+          "group_size": 1,
+          "member_index": 0,
+          "publish_ms": 41.741,
+          "publish_us": 35887784,
+          "ticket": 48,
+          "upload_last_piece_ms": 0.006,
+          "worker_queue_ms": 0.096
+        },
+        {
+          "accepted_us": 35929429,
+          "after_worker_ms": 18.141,
+          "build_ms": 17.427,
+          "capture_wait_ms": 0.052,
+          "captured_us": 35929377,
+          "changed": true,
+          "collision_last_piece_ms": 1.59,
+          "collision_match_last_ms": 0.0,
+          "collision_pieces_built_total": 526,
+          "collision_pieces_reused_total": 229,
+          "costs_shared_by_group": false,
+          "current_visible_terrain": true,
+          "descriptor": {
+            "a": [
+              1302.25317382813,
+              19.9407806396484,
+              1148.57934570313
+            ],
+            "add": false,
+            "b": [
+              1302.13745117188,
+              17.3115196228027,
+              1145.80517578125
+            ],
+            "command": 2,
+            "radius": 2.5
+          },
+          "draw_ms": 42.03,
+          "draw_us": 35971407,
+          "field_ms": 0.164,
+          "geometry_patches": 6,
+          "group_size": 1,
+          "member_index": 0,
+          "publish_ms": 37.19,
+          "publish_us": 35966567,
+          "ticket": 49,
+          "upload_last_piece_ms": 0.194,
+          "worker_queue_ms": 0.098
+        },
+        {
+          "accepted_us": 36012747,
+          "after_worker_ms": 18.425,
+          "build_ms": 14.933,
+          "capture_wait_ms": 0.053,
+          "captured_us": 36012694,
+          "changed": true,
+          "collision_last_piece_ms": 0.04,
+          "collision_match_last_ms": 0.003,
+          "collision_pieces_built_total": 531,
+          "collision_pieces_reused_total": 231,
+          "costs_shared_by_group": false,
+          "current_visible_terrain": true,
+          "descriptor": {
+            "a": [
+              1302.13745117188,
+              17.3115196228027,
+              1145.80517578125
+            ],
+            "add": false,
+            "b": [
+              1301.89123535156,
+              14.499584197998,
+              1143.42309570313
+            ],
+            "command": 2,
+            "radius": 2.5
+          },
+          "draw_ms": 41.405,
+          "draw_us": 36054099,
+          "field_ms": 0.172,
+          "geometry_patches": 7,
+          "group_size": 1,
+          "member_index": 0,
+          "publish_ms": 34.854,
+          "publish_us": 36047548,
+          "ticket": 50,
+          "upload_last_piece_ms": 0.202,
+          "worker_queue_ms": 0.103
+        },
+        {
+          "accepted_us": 36079414,
+          "after_worker_ms": 21.834,
+          "build_ms": 16.281,
+          "capture_wait_ms": 0.053,
+          "captured_us": 36079361,
+          "changed": true,
+          "collision_last_piece_ms": 0.0,
+          "collision_match_last_ms": 0.001,
+          "collision_pieces_built_total": 537,
+          "collision_pieces_reused_total": 231,
+          "costs_shared_by_group": false,
+          "current_visible_terrain": true,
+          "descriptor": {
+            "a": [
+              1301.89123535156,
+              14.499584197998,
+              1143.42309570313
+            ],
+            "add": false,
+            "b": [
+              1302.05749511719,
+              12.3282785415649,
+              1140.45922851563
+            ],
+            "command": 2,
+            "radius": 2.5
+          },
+          "draw_ms": 45.324,
+          "draw_us": 36124685,
+          "field_ms": 0.348,
+          "geometry_patches": 5,
+          "group_size": 1,
+          "member_index": 0,
+          "publish_ms": 39.673,
+          "publish_us": 36119034,
+          "ticket": 51,
+          "upload_last_piece_ms": 0.006,
+          "worker_queue_ms": 0.103
+        },
+        {
+          "accepted_us": 36146100,
+          "after_worker_ms": 21.524,
+          "build_ms": 12.131,
+          "capture_wait_ms": 0.067,
+          "captured_us": 36146033,
+          "changed": true,
+          "collision_last_piece_ms": 0.831,
+          "collision_match_last_ms": 0.001,
+          "collision_pieces_built_total": 542,
+          "collision_pieces_reused_total": 231,
+          "costs_shared_by_group": false,
+          "current_visible_terrain": true,
+          "descriptor": {
+            "a": [
+              1302.05749511719,
+              12.3282785415649,
+              1140.45922851563
+            ],
+            "add": false,
+            "b": [
+              1301.96948242188,
+              9.41144371032715,
+              1138.24108886719
+            ],
+            "command": 2,
+            "radius": 2.5
+          },
+          "draw_ms": 40.424,
+          "draw_us": 36186457,
+          "field_ms": 0.159,
+          "geometry_patches": 5,
+          "group_size": 1,
+          "member_index": 0,
+          "publish_ms": 35.042,
+          "publish_us": 36181075,
+          "ticket": 52,
+          "upload_last_piece_ms": 0.175,
+          "worker_queue_ms": 0.103
+        }
+      ],
+      "frames": {
+        "count": 183,
+        "max_ms": 27.117,
+        "median_ms": 16.671,
+        "over_50ms": 0,
+        "p95_ms": 17.86,
+        "p99_ms": 19.004
+      },
+      "input_state": {
+        "eligible": 182,
+        "frames": 182,
+        "loading": 0,
+        "pending_edit": 91,
+        "ray_hit": 108
+      },
+      "last_hit": false,
+      "phase": "held_flight_1",
+      "readiness_trace": [
+        {
+          "in_flight": "[(1280, 1280, 256), (1280, 1296, 16), (1248, 1184, 32)]",
+          "ms": 6.542,
+          "preparing": "(1280, 1024, 256)",
+          "staging": 0,
+          "state": "query=false cache=true hit=true target=(1302.0, 81.6012, 1212.004) pending=true",
+          "visible": "[(512, 768, 256), (768, 768, 256), (1024, 768, 256), (256, 1024, 256), (512, 1024, 256), (768, 1024, 128), (896, 1024, 128), (768, 1152, 128), (896, 1152, 128), (1024, 1024, 256), (1280, 1024, 128), (1408, 1024, 128), (1280, 1152, 32), (1312, 1152, 16), (1328, 1152, 16), (1312, 1168, 16), (1328, 1168, 16), (1280, 1184, 16), (1296, 1184, 16), (1280, 1200, 16), (1296, 1200, 16), (1312, 1184, 16), (1328, 1184, 16), (1312, 1200, 16), (1328, 1200, 16), (1344, 1152, 64), (1280, 1216, 16), (1296, 1216, 16), (1280, 1232, 16), (1296, 1232, 16), (1312, 1216, 16), (1328, 1216, 16), (1312, 1232, 16), (1328, 1232, 16), (1280, 1248, 16), (1296, 1248, 16), (1280, 1264, 16), (1296, 1264, 16), (1312, 1248, 16), (1328, 1248, 16), (1312, 1264, 16), (1328, 1264, 16), (1344, 1216, 64), (1408, 1152, 128), (256, 1280, 256), (512, 1280, 256), (768, 1280, 128), (896, 1280, 128), (768, 1408, 128), (896, 1408, 128), (1024, 1280, 256), (256, 1536, 256), (512, 1536, 256), (768, 1536, 256), (1024, 1536, 256)]"
+        }
+      ],
+      "visible_gaps": {
+        "count": 29,
+        "max_ms": 104.512,
+        "median_ms": 65.789,
+        "over_50ms": 25,
+        "p95_ms": 90.214,
+        "p99_ms": 104.512
+      }
+    }
+  ],
+  "presentation": {
+    "fair_graphical_sample": true,
+    "fullscreen": true,
+    "headless": false,
+    "render_scale": 1.0,
+    "viewport": [
+      1920,
+      1080
+    ],
+    "window_mode": 3,
+    "window_size": [
+      1920,
+      1080
+    ]
+  },
+  "scope": "Two three-second held mining bursts after scripted flight arrival; real controller physics ray, capture queue and rendered draw timing. No sustained movement during each burst; not endurance acceptance."
+}

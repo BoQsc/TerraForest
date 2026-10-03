@@ -1,0 +1,15 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS lake persistence provider attaches
+PASS generated world starts
+PASS fresh world automatically bakes four generated lakes
+PASS one generated lake can be removed
+PASS compound world with modified lake catalog saves
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+PASS lake persistence provider attaches
+PASS generated world starts
+PASS saved world rebakes remaining lakes
+PASS reload preserves catalog and does not respawn removed generated lake
+PASS explicit reset regenerates the initial four lakes
+PASS reset restores deterministic original lake catalog
+[TerrainRewrite] World saved and verified; terrain and addon state published together

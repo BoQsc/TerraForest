@@ -1,0 +1,29 @@
+{
+  "asset_bytes": 1258302,
+  "cells": 78624,
+  "dimensions": [
+    64,
+    64,
+    64
+  ],
+  "failures": 0,
+  "floors": 16,
+  "history": {
+    "byte_limit": 16777216,
+    "cell_capacity_bytes": 2515968,
+    "redo_steps": 0,
+    "step_limit": 128,
+    "undo_steps": 2,
+    "unrecorded_edits": 0
+  },
+  "scope": "native building authoring; no rendering or physics baking",
+  "timings_ms": {
+    "capture_and_save": 46.992,
+    "library_reload": 5.035,
+    "native_capture": 18.639,
+    "place": 14.09,
+    "redo": 6.895,
+    "source_write": 7.06,
+    "undo": 7.285
+  }
+}

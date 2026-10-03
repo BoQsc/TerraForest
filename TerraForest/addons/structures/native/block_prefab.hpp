@@ -2,6 +2,7 @@
 #include <godot_cpp/classes/resource.hpp>
 #include <godot_cpp/variant/packed_int32_array.hpp>
 #include <godot_cpp/variant/aabb.hpp>
+#include <godot_cpp/variant/array.hpp>
 #include <vector>
 
 namespace terraforest {
@@ -17,6 +18,7 @@ protected:
     static void _bind_methods();
 public:
     bool configure(const PackedInt32Array &records);
+    bool compose(const Array &sources,const PackedInt32Array &placements);
     void set_records(const PackedInt32Array &records);
     PackedInt32Array get_records() const;
     int get_cell_count() const { return int(cells.size()); }

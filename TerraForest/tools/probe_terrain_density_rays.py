@@ -20,7 +20,7 @@ run=subprocess.run([str(exe),str(input_file)],capture_output=True,text=True,chec
 outputs=[json.loads(line) for line in run.stdout.splitlines()]
 queries=[row for row in outputs if 'query_id' in row]
 samples=[row for row in outputs if 'id' in row];assert len(samples)==len(rows) and len(queries)==len(rows)
-controls=json.loads(run.stderr);assert controls['passed'] and controls['analytic_controls']==18
+controls=json.loads(run.stderr);assert controls['passed'] and controls['analytic_controls']==20
 for sample,row in zip(samples,rows):
     sample.update(fixture=row['fixture'],triangle=row['triangle'],source=row['source'],passed=sample['bracketed'] and sample['distance']<.002 and sample['air_control_clear'] and sample['solid_control_clear'])
 report=dict(queries=queries,controls=controls,samples=samples,failures=sum(not s['passed'] for s in samples)+sum(not q['hit'] or q['distance']>=.002 for q in queries),adoption_qualified=False,toolchain_lock_sha256=toolchain['lock_sha256'],build_command=command,source_hashes={str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in [source,Path(__file__).resolve(),native/'core.cpp',native/'core.h',native/'platform.h',native/'experimental/density_ray.hpp',*sources]},scope='Experimental bounded cell traversal and cubic first-root solver against analytic controls and frozen physics misses; not runtime, visual-error or performance qualification.')

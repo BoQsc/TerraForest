@@ -1,0 +1,6 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS three-floor collision fixture placed
+PASS native stair collision ready
+FAIL capsule walks up flight onto next floor without jumping
+TRAVERSAL_POSITION (0.5, 1.0, -0.341667)

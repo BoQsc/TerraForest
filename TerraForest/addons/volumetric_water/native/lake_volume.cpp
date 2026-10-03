@@ -9,6 +9,7 @@
 #include <array>
 #include <cmath>
 #include <new>
+#include <vector>
 
 using namespace godot;
 namespace terraforest {
@@ -19,6 +20,7 @@ void NativeLakeVolume::_bind_methods() {
     ClassDB::bind_method(D_METHOD("contains", "point"), &NativeLakeVolume::contains);
     ClassDB::bind_method(D_METHOD("depth_at", "point"), &NativeLakeVolume::depth_at);
     ClassDB::bind_method(D_METHOD("surface_arrays"), &NativeLakeVolume::surface_arrays);
+    ClassDB::bind_method(D_METHOD("smooth_surface_arrays"), &NativeLakeVolume::smooth_surface_arrays);
     ClassDB::bind_method(D_METHOD("statistics"), &NativeLakeVolume::statistics);
     ClassDB::bind_method(D_METHOD("bounds"), &NativeLakeVolume::bounds);
 }
@@ -111,7 +113,15 @@ int NativeLakeVolume::finish() {
             if (!wet_[next] && eligible(nx,ny,nz)) { wet_[next]=1; queue_[tail++]=next; }
         }
     }
-    wet_count_=tail; density_.reset(); queue_.reset(); status_=1;
+    column_top_.reset(new(std::nothrow) uint8_t[size_t(size_.x)*size_.z]());
+    if(!column_top_){status_=-1;wet_.reset();density_.reset();queue_.reset();return status_;}
+    for(uint32_t i=0;i<tail;++i){
+        const uint32_t id=queue_[i];const int x=id%size_.x,y=(id/size_.x)%size_.y,z=id/(size_.x*size_.y);
+        auto &top=column_top_[x+size_.x*z];top=std::max(top,uint8_t(y+1));
+    }
+    wet_count_=tail; status_=1;
+    smooth_surface_=build_smooth_surface();
+    density_.reset(); queue_.reset();
     return status_;
 }
 bool NativeLakeVolume::contains(const Vector3 &p) const {
@@ -121,6 +131,13 @@ bool NativeLakeVolume::contains(const Vector3 &p) const {
     return wet_[index(int(std::floor(v.x)),int(std::floor(v.y)),int(std::floor(v.z)))]!=0;
 }
 double NativeLakeVolume::depth_at(const Vector3 &point) const { return contains(point) ? level_-point.y : 0.0; }
+bool NativeLakeVolume::submerges_root(const Vector3 &p) const {
+    if(status_!=1||!p.is_finite()||p.y>=level_||p.y<origin_.y)return false;
+    const Vector3 v=(p-origin_)/spacing_;
+    if(v.x<0||v.z<0||v.x>=size_.x||v.z>=size_.z)return false;
+    const uint8_t top=column_top_[int(std::floor(v.x))+size_.x*int(std::floor(v.z))];
+    return top && p.y<std::min(level_,origin_.y+top*spacing_);
+}
 AABB NativeLakeVolume::bounds() const { return AABB(origin_,Vector3(size_)*spacing_); }
 Array NativeLakeVolume::surface_arrays() const {
     Array arrays; arrays.resize(Mesh::ARRAY_MAX);
@@ -156,10 +173,14 @@ Array NativeLakeVolume::surface_arrays() const {
     arrays[Mesh::ARRAY_VERTEX]=vertices; arrays[Mesh::ARRAY_NORMAL]=normals; arrays[Mesh::ARRAY_TEX_UV]=uv; arrays[Mesh::ARRAY_INDEX]=indices;
     return arrays;
 }
+#include "lake_surface.hpp"
 Dictionary NativeLakeVolume::statistics() const {
     Dictionary d; d["status"]=status_; d["cells"]=count_; d["sampled_nodes"]=sampled_; d["total_nodes"]=node_count_;
     d["wet_cells"]=wet_count_; d["resident_bytes"]=wet_ ? count_ : 0;
     d["builder_bytes"]=(density_ ? node_count_*sizeof(float):0)+(queue_ ? count_*sizeof(uint32_t):0);
+    d["query_index_bytes"]=column_top_ ? size_.x*size_.z : 0;
+    d["surface_bytes"]=smooth_surface_.size()==Mesh::ARRAY_MAX ?
+        PackedVector3Array(smooth_surface_[Mesh::ARRAY_VERTEX]).size()*32+PackedInt32Array(smooth_surface_[Mesh::ARRAY_INDEX]).size()*4 : 0;
     d["fill_level"]=level_; d["spacing"]=spacing_; d["dynamic_flow"]=false; return d;
 }
 }

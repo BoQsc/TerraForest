@@ -25,14 +25,15 @@ struct IHash{size_t operator()(const I&p)const{return size_t(uint32_t(p[0])*7385
 static uint64_t cell_key(I p,int size){return uint64_t(p[0])|(uint64_t(p[1])<<16)|(uint64_t(p[2])<<32)|(uint64_t(size)<<48);}
 static double clock_ms(){return std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now().time_since_epoch()).count();}
 template<class Field>struct Mesh {
- Field field;int side;std::vector<Cell> cells;std::vector<EdgeRun> runs;
+ Field field;int side;std::vector<Box> detail_regions;std::vector<Cell> cells;std::vector<EdgeRun> runs;
  std::vector<uint32_t> edge_runs;std::vector<uint8_t> edge_offsets,edge_flags;
  std::vector<int> crossing_slots,free_crossings;std::vector<Crossing> crossings;
  std::unordered_map<uint64_t,int> lookup;std::unordered_map<I,std::vector<int>,IHash> buckets;
  size_t samples=0;Work last;std::array<double,4> cold_stages{};
- Mesh(Field f,int extent):field(f),side(extent){double t=clock_ms();subdivide({0,0,0},side);cold_stages[0]=clock_ms()-t;t=clock_ms();make_edges();cold_stages[1]=clock_ms()-t;t=clock_ms();for(size_t e=0;e<edge_count();e++)evaluate(int(e));cold_stages[2]=clock_ms()-t;t=clock_ms();for(size_t c=0;c<cells.size();c++)fit(int(c));cold_stages[3]=clock_ms()-t;}
+ // Detail regions cover half-open cell ranges. Edit dependency boxes are inclusive.
+ Mesh(Field f,int extent,std::vector<Box> detail={}):field(f),side(extent),detail_regions(std::move(detail)){if(detail_regions.empty()){int c=side/2;detail_regions.push_back({{c-8,c-8,c-8},{c+8,c+8,c+8}});}double t=clock_ms();subdivide({0,0,0},side);cold_stages[0]=clock_ms()-t;t=clock_ms();make_edges();cold_stages[1]=clock_ms()-t;t=clock_ms();for(size_t e=0;e<edge_count();e++)evaluate(int(e));cold_stages[2]=clock_ms()-t;t=clock_ms();for(size_t c=0;c<cells.size();c++)fit(int(c));cold_stages[3]=clock_ms()-t;}
  void subdivide(I lo,int size){
-  int center=side/2;bool near=true;for(int k=0;k<3;k++)near&=lo[k]<center+8&&lo[k]+size>center-8;
+  bool near=false;for(const auto&box:detail_regions){bool hit=true;for(int k=0;k<3;k++)hit&=lo[k]<box.hi[k]&&lo[k]+size>box.lo[k];near|=hit;}
   if(size>8||(near&&size>1)){int half=size/2;for(int k=0;k<8;k++)subdivide({lo[0]+(k&1)*half,lo[1]+((k>>1)&1)*half,lo[2]+((k>>2)&1)*half},half);return;}
   int id=int(cells.size());cells.push_back({lo,size});lookup[cell_key(lo,size)]=id;
  }

@@ -1,40 +1,11 @@
 // SPDX-License-Identifier: 0BSD
 #include "core.h"
-#include "incremental_dual_probe.hpp"
+#include "dual_probe_world_field.hpp"
+#include "dual_probe_audit.hpp"
 #include <chrono>
 #include <cstdio>
 using namespace dual_probe;
 static double now(){return std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now().time_since_epoch()).count();}
-static double canonical(float density){float v=std::max(-4.f,std::min(4.f,density))*1024.f;int q=int(v>=0?v+.5f:v-.5f);return q?double(q)/1024:.5/1024;}
-struct WorldField{
- const World*world;P origin;mutable std::unordered_map<uint64_t,float> heights;
- double lattice(int x,int y,int z)const{
-  if(x<0||x>WORLD||z<0||z>WORLD||y<0||y>WORLD_Y)return SDF_BAND;
-  constexpr int np=WORLD/PAGE+1;int page=world->pages_by_key.get(uint32_t((x>>4)+np*((z>>4)+np*(y>>4)))+1);
-  if(page>=0)return canonical(float(world->pages[page].d[(x&15)+16*((z&15)+16*(y&15))])/SDF_SCALE);
-  uint64_t key=(uint64_t(uint32_t(x))<<32)|uint32_t(z);auto found=heights.find(key);float height;
-  if(found==heights.end()){height=world->height(float(x),float(z));heights.emplace(key,height);}else height=found->second;
-  return canonical(world->base({float(x),float(y),float(z)},height));
- }
- double operator()(P p)const{
-  for(int k=0;k<3;k++)p[k]+=origin[k];int x=int(std::floor(p[0])),y=int(std::floor(p[1])),z=int(std::floor(p[2]));if(p[0]==x&&p[1]==y&&p[2]==z)return lattice(x,y,z);
-  double d=0;for(int k=0;k<8;k++){int dx=k&1,dy=(k>>1)&1,dz=(k>>2)&1;d+=(dx?p[0]-x:1-(p[0]-x))*(dy?p[1]-y:1-(p[1]-y))*(dz?p[2]-z:1-(p[2]-z))*lattice(x+dx,y+dy,z+dz);}return d;
- }
-};
-struct Audit{int open=0,overused=0,winding=0,degenerate=0,links=0;};
-template<class Field>static Audit audit(const dual_probe::Mesh<Field>&mesh){
- using E=std::array<P,2>;struct Use{int count=0,balance=0;};std::map<E,Use> edges;std::map<P,std::vector<E>> links;std::map<P,unsigned> boundary;Audit out;
- for(const auto&c:mesh.cells)if(c.active){unsigned mask=0;for(int k=0;k<3;k++){if(c.lo[k]==0)mask|=1u<<(2*k);if(c.lo[k]+c.size==mesh.side)mask|=2u<<(2*k);}for(P vertex:c.vertices)boundary[vertex]|=mask;}
- for(size_t id=0;id<mesh.edge_count();id++){auto poly=mesh.polygon(int(id));for(size_t t=1;t+1<poly.size();t++){
-  P p[3]={mesh.position(poly[0]),mesh.position(poly[t]),mesh.position(poly[t+1])};double a[3],b[3],area=0;for(int k=0;k<3;k++){a[k]=p[1][k]-p[0][k];b[k]=p[2][k]-p[0][k];}for(int k=0;k<3;k++){double v=a[(k+1)%3]*b[(k+2)%3]-a[(k+2)%3]*b[(k+1)%3];area+=v*v;}out.degenerate+=area==0;
-  for(int k=0;k<3;k++){P a=p[k],b=p[(k+1)%3];bool reverse=b<a;if(reverse)std::swap(a,b);auto&u=edges[{a,b}];u.count++;u.balance+=reverse?-1:1;links[p[k]].push_back({p[(k+1)%3],p[(k+2)%3]});}
- }}
- int witnesses=0;
- for(const auto&item:edges){const auto&e=item.first;const auto&u=item.second;out.overused+=u.count>2;out.winding+=u.count==2&&u.balance!=0;out.open+=u.count==1&&!(boundary[e[0]]&boundary[e[1]]);
-  if(u.count>2&&witnesses++<2){fprintf(stderr,"{\"kind\":\"overused_edge\",\"extent\":%d,\"incidence\":%d,\"cells\":[",mesh.side,u.count);int count=0;for(const auto&c:mesh.cells)if(c.vertex==e[0]||c.vertex==e[1]){unsigned signs=0;for(int k=0;k<8;k++)if(mesh.field({double(c.lo[0]+(k&1)*c.size),double(c.lo[1]+((k>>1)&1)*c.size),double(c.lo[2]+((k>>2)&1)*c.size)})<0)signs|=1u<<k;fprintf(stderr,"%s{\"lo\":[%d,%d,%d],\"size\":%d,\"signs\":%u}",count++?",":"",c.lo[0],c.lo[1],c.lo[2],c.size,signs);}fprintf(stderr,"]}\n");}
- }
- for(const auto&item:links){std::map<P,std::vector<P>> graph;for(auto e:item.second){graph[e[0]].push_back(e[1]);graph[e[1]].push_back(e[0]);}bool bad=false;int endpoints=0;for(const auto&v:graph){bad|=v.second.size()>2;endpoints+=v.second.size()==1;}bad|=boundary[item.first]?(endpoints!=0&&endpoints!=2):endpoints!=0;std::set<P> seen;std::vector<P> todo{graph.begin()->first};while(!todo.empty()){P p=todo.back();todo.pop_back();if(!seen.insert(p).second)continue;for(P q:graph[p])todo.push_back(q);}bad|=seen.size()!=graph.size();out.links+=bad;}return out;
-}
 template<class Field,class Edit>static int run(const char*kind,int extent,Field field,Edit edit){
  double start=now();dual_probe::Mesh<Field> mesh(field,extent);double cold=now()-start;int failures=0;bool ownership=mesh.valid_ownership();
  for(int iteration=0;iteration<4;iteration++){

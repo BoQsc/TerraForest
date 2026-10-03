@@ -16,6 +16,9 @@ var corrupt: int = 0
 var write_failures: int = 0
 var enabled: bool = true
 var signature: String = ""
+const INDEX_LIMIT: int = 262144
+var geometry_directories: Dictionary = {}
+var geometry_index_complete: bool = false
 
 static func digest(data: PackedByteArray) -> PackedByteArray:
 	var h := HashingContext.new()
@@ -29,6 +32,20 @@ func configure(compatibility: String, snapshot: String, style: int, path: String
 	set_snapshot(snapshot)
 	# Bounded derived disk use; reaching the cap disables writes, not gameplay.
 	total_bytes = _size(base_path)
+	geometry_directories.clear()
+	geometry_index_complete = true
+	var directory := DirAccess.open(base_path.path_join(signature).path_join("geometry_v1"))
+	if directory != null:
+		directory.list_dir_begin()
+		var name := directory.get_next()
+		while not name.is_empty():
+			if directory.current_is_dir() and name != "." and name != "..":
+				if geometry_directories.size() >= INDEX_LIMIT:
+					geometry_index_complete = false
+					break
+				geometry_directories[name] = true
+			name = directory.get_next()
+		directory.list_dir_end()
 
 func _size(path: String) -> int:
 	var d := DirAccess.open(path)
@@ -63,6 +80,11 @@ func _reject(key: Vector3i, bytes: int, content: String = "") -> PackedByteArray
 func load_packet(key: Vector3i, content: String = "") -> PackedByteArray:
 	if not enabled:
 		return PackedByteArray()
+	# Only positive directory entries are retained. Unbounded edit history must
+	# not grow a negative cache; a miss here is still safe to reconstruct.
+	if not content.is_empty() and geometry_index_complete and not geometry_directories.has(content):
+		misses += 1
+		return PackedByteArray()
 	var f := FileAccess.open(_name(key, content), FileAccess.READ)
 	if f == null:
 		misses += 1
@@ -85,9 +107,9 @@ func store_packet(key: Vector3i, data: PackedByteArray, content: String = "") ->
 	if not enabled or data.size() < 36 or data.size() > MAX_PACKET:
 		return
 	var path: String = _name(key, content)
-	if FileAccess.file_exists(path):
-		return
 	if total_bytes + data.size() + 40 > LIMIT_BYTES:
+		return
+	if FileAccess.file_exists(path):
 		return
 	if DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(path.get_base_dir())) != OK:
 		write_failures += 1
@@ -110,6 +132,9 @@ func store_packet(key: Vector3i, data: PackedByteArray, content: String = "") ->
 	if ok and DirAccess.rename_absolute(ProjectSettings.globalize_path(temp), ProjectSettings.globalize_path(path)) == OK:
 		total_bytes += data.size() + 40
 		writes += 1
+		if not content.is_empty():
+			if geometry_directories.size() < INDEX_LIMIT: geometry_directories[content] = true
+			else: geometry_index_complete = false
 	else:
 		write_failures += 1
 		DirAccess.remove_absolute(ProjectSettings.globalize_path(temp))

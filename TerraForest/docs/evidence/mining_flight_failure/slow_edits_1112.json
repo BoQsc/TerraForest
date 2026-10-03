@@ -1,0 +1,326 @@
+[
+	{
+		"build_total_ms": 78.514,
+		"capture_wait_ms": 37.456,
+		"collision_ms": 0.049,
+		"edit_ms": 0.294,
+		"geometry": 6,
+		"latency_ms": 151.738,
+		"lighting": 230,
+		"position": [
+			823.599609375,
+			50.948429107666,
+			1273.65930175781
+		],
+		"stage_wait_ms": 34.793,
+		"time_ms": 32625,
+		"upload_ms": 0.133,
+		"worker_queue_ms": 0.094
+	},
+	{
+		"build_total_ms": 75.946,
+		"capture_wait_ms": 87.183,
+		"collision_ms": 0.041,
+		"edit_ms": 0.461,
+		"geometry": 6,
+		"latency_ms": 185.91,
+		"lighting": 236,
+		"position": [
+			823.599609375,
+			50.948429107666,
+			1273.65930175781
+		],
+		"stage_wait_ms": 21.594,
+		"time_ms": 32725,
+		"upload_ms": 0.108,
+		"worker_queue_ms": 0.137
+	},
+	{
+		"build_total_ms": 65.25,
+		"capture_wait_ms": 71.651,
+		"collision_ms": 1.075,
+		"edit_ms": 0.446,
+		"geometry": 4,
+		"latency_ms": 152.873,
+		"lighting": 252,
+		"position": [
+			823.599609375,
+			50.948429107666,
+			1273.65930175781
+		],
+		"stage_wait_ms": 14.941,
+		"time_ms": 33025,
+		"upload_ms": 0.204,
+		"worker_queue_ms": 0.096
+	},
+	{
+		"build_total_ms": 50.193,
+		"capture_wait_ms": 53.138,
+		"collision_ms": 0.467,
+		"edit_ms": 0.28,
+		"geometry": 4,
+		"latency_ms": 151.476,
+		"lighting": 201,
+		"position": [
+			821.725219726563,
+			57.6195106506348,
+			1278.63952636719
+		],
+		"stage_wait_ms": 47.334,
+		"time_ms": 33357,
+		"upload_ms": 0.284,
+		"worker_queue_ms": 0.106
+	},
+	{
+		"build_total_ms": 52.256,
+		"capture_wait_ms": 86.359,
+		"collision_ms": 0.045,
+		"edit_ms": 0.19,
+		"geometry": 4,
+		"latency_ms": 153.236,
+		"lighting": 197,
+		"position": [
+			821.139526367188,
+			59.7042274475098,
+			1280.19567871094
+		],
+		"stage_wait_ms": 13.902,
+		"time_ms": 33425,
+		"upload_ms": 0.226,
+		"worker_queue_ms": 0.097
+	},
+	{
+		"build_total_ms": 66.203,
+		"capture_wait_ms": 71.963,
+		"collision_ms": 0.039,
+		"edit_ms": 0.194,
+		"geometry": 4,
+		"latency_ms": 167.516,
+		"lighting": 230,
+		"position": [
+			818.885925292969,
+			67.7139663696289,
+			1285.74035644531
+		],
+		"stage_wait_ms": 28.617,
+		"time_ms": 33674,
+		"upload_ms": 0.26,
+		"worker_queue_ms": 0.097
+	},
+	{
+		"build_total_ms": 60.687,
+		"capture_wait_ms": 19.993,
+		"collision_ms": 0.657,
+		"edit_ms": 0.576,
+		"geometry": 7,
+		"latency_ms": 167.946,
+		"lighting": 510,
+		"position": [
+			1306.4189453125,
+			104.934997558594,
+			1260.76513671875
+		],
+		"stage_wait_ms": 86.08,
+		"time_ms": 66106,
+		"upload_ms": 0.315,
+		"worker_queue_ms": 0.098
+	},
+	{
+		"build_total_ms": 61.802,
+		"capture_wait_ms": 103.536,
+		"collision_ms": 0.647,
+		"edit_ms": 0.666,
+		"geometry": 7,
+		"latency_ms": 253.249,
+		"lighting": 510,
+		"position": [
+			1308.12731933594,
+			104.239631652832,
+			1259.76208496094
+		],
+		"stage_wait_ms": 86.65,
+		"time_ms": 66258,
+		"upload_ms": 0.305,
+		"worker_queue_ms": 0.095
+	},
+	{
+		"build_total_ms": 49.963,
+		"capture_wait_ms": 122.922,
+		"collision_ms": 0.001,
+		"edit_ms": 0.197,
+		"geometry": 7,
+		"latency_ms": 201.846,
+		"lighting": 510,
+		"position": [
+			1309.07641601563,
+			103.853317260742,
+			1259.20483398438
+		],
+		"stage_wait_ms": 28.117,
+		"time_ms": 66339,
+		"upload_ms": 0.007,
+		"worker_queue_ms": 0.099
+	},
+	{
+		"build_total_ms": 64.513,
+		"capture_wait_ms": 70.745,
+		"collision_ms": 0.357,
+		"edit_ms": 0.477,
+		"geometry": 7,
+		"latency_ms": 202.867,
+		"lighting": 510,
+		"position": [
+			1310.51806640625,
+			103.871826171875,
+			1258.35864257813
+		],
+		"stage_wait_ms": 66.449,
+		"time_ms": 66474,
+		"upload_ms": 0.139,
+		"worker_queue_ms": 0.102
+	},
+	{
+		"build_total_ms": 58.717,
+		"capture_wait_ms": 121.532,
+		"collision_ms": 0.03,
+		"edit_ms": 0.186,
+		"geometry": 7,
+		"latency_ms": 220.009,
+		"lighting": 512,
+		"position": [
+			1311.50317382813,
+			104.68147277832,
+			1257.78076171875
+		],
+		"stage_wait_ms": 38.961,
+		"time_ms": 66574,
+		"upload_ms": 0.242,
+		"worker_queue_ms": 0.096
+	},
+	{
+		"build_total_ms": 76.5,
+		"capture_wait_ms": 88.676,
+		"collision_ms": 0.0,
+		"edit_ms": 0.863,
+		"geometry": 9,
+		"latency_ms": 202.978,
+		"lighting": 513,
+		"position": [
+			1312.65246582031,
+			105.62606048584,
+			1257.10656738281
+		],
+		"stage_wait_ms": 36.096,
+		"time_ms": 66690,
+		"upload_ms": 0.007,
+		"worker_queue_ms": 0.098
+	},
+	{
+		"build_total_ms": 61.01,
+		"capture_wait_ms": 71.691,
+		"collision_ms": 0.001,
+		"edit_ms": 0.366,
+		"geometry": 9,
+		"latency_ms": 153.192,
+		"lighting": 513,
+		"position": [
+			1313.47338867188,
+			106.300765991211,
+			1256.625
+		],
+		"stage_wait_ms": 19.246,
+		"time_ms": 66774,
+		"upload_ms": 0.008,
+		"worker_queue_ms": 0.135
+	},
+	{
+		"build_total_ms": 82.343,
+		"capture_wait_ms": 71.897,
+		"collision_ms": 0.0,
+		"edit_ms": 0.65,
+		"geometry": 10,
+		"latency_ms": 185.545,
+		"lighting": 516,
+		"position": [
+			1316.60034179688,
+			104.788192749023,
+			1252.50671386719
+		],
+		"stage_wait_ms": 29.704,
+		"time_ms": 67257,
+		"upload_ms": 0.009,
+		"worker_queue_ms": 0.096
+	},
+	{
+		"build_total_ms": 141.718,
+		"capture_wait_ms": 36.747,
+		"collision_ms": 0.001,
+		"edit_ms": 0.396,
+		"geometry": 8,
+		"latency_ms": 186.524,
+		"lighting": 504,
+		"position": [
+			1302.49951171875,
+			96.4222793579102,
+			1211.74255371094
+		],
+		"stage_wait_ms": 6.787,
+		"time_ms": 73225,
+		"upload_ms": 0.007,
+		"worker_queue_ms": 0.106
+	},
+	{
+		"build_total_ms": 40.436,
+		"capture_wait_ms": 122.169,
+		"collision_ms": 0.001,
+		"edit_ms": 0.304,
+		"geometry": 8,
+		"latency_ms": 202.076,
+		"lighting": 514,
+		"position": [
+			1302.49951171875,
+			96.4222793579102,
+			1211.74255371094
+		],
+		"stage_wait_ms": 38.428,
+		"time_ms": 73307,
+		"upload_ms": 0.01,
+		"worker_queue_ms": 0.118
+	},
+	{
+		"build_total_ms": 54.737,
+		"capture_wait_ms": 55.914,
+		"collision_ms": 0.001,
+		"edit_ms": 0.665,
+		"geometry": 6,
+		"latency_ms": 169.494,
+		"lighting": 512,
+		"position": [
+			1304.29809570313,
+			95.8091201782227,
+			1214.95141601563
+		],
+		"stage_wait_ms": 57.592,
+		"time_ms": 73908,
+		"upload_ms": 0.016,
+		"worker_queue_ms": 0.096
+	},
+	{
+		"build_total_ms": 41.279,
+		"capture_wait_ms": 104.855,
+		"collision_ms": 0.001,
+		"edit_ms": 0.415,
+		"geometry": 9,
+		"latency_ms": 202.685,
+		"lighting": 506,
+		"position": [
+			1304.29809570313,
+			95.8091201782227,
+			1214.95141601563
+		],
+		"stage_wait_ms": 55.398,
+		"time_ms": 74007,
+		"upload_ms": 0.017,
+		"worker_queue_ms": 0.095
+	}
+]

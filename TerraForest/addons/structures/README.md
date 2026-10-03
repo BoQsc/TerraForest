@@ -158,6 +158,40 @@ Queries use authored records, not resident physics. Disabling or evicting collis
 
 ### Reusable block prefabs
 
+`NativeBlockPrefab.compose(sources, placements)` assembles existing modules in
+C++. `sources` is an array of 1–256 nonempty native prefab resources; `placements`
+contains up to 4,096 `[source_index, x, y, z, quarter_turns]` rows. Rotations are
+0–3 and follow the same cell-centered convention as world prefab placement.
+Coordinates, shape orientation and material are retained in the resulting asset.
+The operation rejects overlapping cells, invalid references, out-of-range
+coordinates and totals over 262,144 cells before replacing the destination.
+Sources are unchanged, including when the destination is itself a source.
+
+For example, place a floor module at successive floor-height offsets to author
+a tower, then add stair and roof modules in the same placement list. The result
+is a flattened reusable prefab, with the normal world placement, chunk meshing,
+collision, history and resource serialization paths. Composition is synchronous
+authoring work, not a per-frame operation. It does not preserve a live module
+hierarchy, automatically connect stairs, grade terrain or generate a city layout.
+See `tests/prefab_composition.gd` for rotation and sixteen-floor examples.
+
+In the construction palette, select a prefab, enter a name, choose 2–32 repeats
+and click **Stack selected prefab**. The library composes copies vertically at
+the module's integer `stack_height` metadata when present, otherwise its
+bounding-box height, saves a new personal asset and selects it for
+normal preview/placement. It never changes the source module or existing world
+blocks. This is a repeated-module authoring helper; use a suitable floor module
+and verify stair openings and roof design yourself. The native cell/coordinate
+limits still apply, and the personal library retains its 32-asset limit.
+
+The supplied tower-floor module has a four-metre `stack_height`; its staircase
+extends into the next level, so its five-metre bounds must not determine spacing.
+Open stair undersides preserve headroom when repeated. Assemblies inherit the
+combined pitch for further stacking. Explicit pitch must be an integer 1–4,095;
+composition still rejects overlapping cells. `tests/tower_connectivity.gd`
+checks quarter-step heights, landings and 1.85 m vertical clearance with native
+geometry rays. It does not certify capsule traversal, navigation or building codes.
+
 `NativeBlockPrefab` is a native Godot `Resource`. `configure(PackedInt32Array)` accepts occupied `[x,y,z,word]` records, validates them atomically, rejects duplicate coordinates, and sorts them for deterministic serialization. The shape/material words match `NativeBlockWorld`. Limits are 262,144 cells per asset and local coordinates from -4,095 to 4,095. `get_records()` returns independent data; empty assets are allowed for authoring but cannot be placed. Godot `ResourceSaver`/`ResourceLoader` support `.tres` files directly through the `records` property.
 
 `can_place_prefab(asset, origin, quarter_turns, replace=false)` validates the complete destination against coordinate and world chunk limits. `place_prefab(...)` performs the same validation and commits all cells together through the native chunk edit path, emitting one logical change signal. The default rejects occupied destination cells. Explicit `replace=true` overwrites only listed cells; unlisted cells inside the bounding box remain untouched. Rotations 0–3 turn cell coordinates `(x,z)` to `(-z,x)` and rotate stair/slope orientation as well. The pivot is the centre of local cell `(0,0,0)`. `asset.placement_bounds(origin, turns)` returns the matching local-world cell bounds.

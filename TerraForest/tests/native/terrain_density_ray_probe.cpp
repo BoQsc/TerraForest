@@ -19,6 +19,10 @@ int main(int argc,char**argv){
  using namespace terraforest::experimental;
  int controls=0;
  auto plane=[](int x,int,int){return 4.25-x;};
+ auto directed=trace_density({0,10,10},{10,10,10},plane);
+ if(std::abs(directed.normal.x+1)>1e-6||std::abs(directed.normal.y)>1e-6||std::abs(directed.normal.z)>1e-6)return 60;controls++;
+ auto slope=trace_density({0,0,0},{1,1,1},[](int x,int y,int z){return x+2*y+3*z-3.;});
+ if(slope.status!=RayStatus::hit||std::abs(slope.normal.x-1/std::sqrt(14.))>1e-6||std::abs(slope.normal.y-2/std::sqrt(14.))>1e-6||std::abs(slope.normal.z-3/std::sqrt(14.))>1e-6)return 61;controls++;
  auto hit=[&](DensityHit r,double expected){controls++;return r.status==RayStatus::hit&&std::abs(r.fraction-expected)<1e-9;};
  if(!hit(trace_density({0,10,10},{10,10,10},plane),.425)||!hit(trace_density({10,10,10},{0,10,10},plane),.575))return 10;
  if(!hit(trace_density({-2,10,10},{10,10,10},plane),6.25/12))return 11;

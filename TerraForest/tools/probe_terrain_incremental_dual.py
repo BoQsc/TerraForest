@@ -22,7 +22,8 @@ env['ZIG_LOCAL_CACHE_DIR'] = str(ROOT / '.build/zig-local-cache')
 subprocess.run(command, check=True, env=env, timeout=120)
 run = subprocess.run([str(exe)], capture_output=True, text=True, timeout=120)
 rows = [json.loads(line) for line in run.stdout.splitlines()]
-files = [source, Path(__file__).resolve(), ROOT / 'tests/native/incremental_dual_probe.hpp',
+files = [source, Path(__file__).resolve(), ROOT / 'tests/native/incremental_dual_probe.hpp', ROOT / 'tests/native/dual_probe_world_field.hpp',
+         ROOT / 'tests/native/dual_probe_audit.hpp',
          native / 'core.cpp', *sorted(native.glob('*.h')), *sorted(native.glob('*.hpp'))]
 report = dict(rows=rows, exit_code=run.returncode, stderr=run.stderr, complete=len(rows) == 25,
               adoption_qualified=False, build_command=command, toolchain_lock_sha256=info['lock_sha256'],

@@ -9,6 +9,7 @@ var jobs: Array[Dictionary] = []
 var results: Array[Dictionary] = []
 var _density_pending: int = 0 # Accepted queries, including unconsumed results.
 var _partition_pending: int = 0 # One bounded source/result, including unconsumed output.
+var _lake_pending: int = 0 # One builder reservation through completion consumption.
 var stopping: bool = false
 var temporary: bool = false
 var native: Object
@@ -17,6 +18,7 @@ var _collision_piece_triangles := 1024
 var snapshot_terrain: bool = "--snapshot-terrain" in OS.get_cmdline_user_args()
 var brick_terrain: bool = "--brick-terrain" in OS.get_cmdline_user_args()
 var region_terrain: bool = "--region-terrain" in OS.get_cmdline_user_args()
+var profile_regions: bool = "--profile-owned-regions" in OS.get_cmdline_user_args()
 var _snapshot_token: int = 0
 
 func configure_collision_piece_size(triangles: int) -> bool:
@@ -26,8 +28,24 @@ func configure_collision_piece_size(triangles: int) -> bool:
 	_collision_piece_triangles=triangles
 	return true
 var world_seed: int = 1703
+var world_generator: int = 1
 var build_epoch: int = 0
 var active_kind: String = "idle"
+var diagnostic_active: Dictionary = {}
+var diagnostic_enabled:=false
+
+func enable_diagnostics() -> void:
+	mutex.lock();diagnostic_enabled=true;mutex.unlock()
+
+func diagnostic_queue_snapshot() -> Dictionary:
+	# Opt-in observer: never copy mesh buffers or native world data.
+	mutex.lock()
+	var queued_jobs: Array=[]
+	for job: Dictionary in jobs:
+		queued_jobs.append({"kind":job.get("kind",""),"key":str(job.get("key","")),"submitted_us":job.get("submitted_us",0)})
+	var snapshot: Dictionary={"active":diagnostic_active.duplicate(),"queued":queued_jobs}
+	mutex.unlock()
+	return snapshot
 var write_allowed: bool = true
 var save_path: String = "user://world.trw"
 var surface_style: int = 0
@@ -175,6 +193,17 @@ func start(use_temporary: bool) -> Error:
 	return thread.start(_run, Thread.PRIORITY_NORMAL)
 
 func submit(job: Dictionary, priority: bool = false) -> bool:
+	if job.get("kind","")=="lake_slice":
+		if not is_instance_valid(job.get("builder")) or job.builder.get_class()!="NativeLakeVolume": return false
+		# RefCounted instance IDs may use the signed integer's high bit.
+		if typeof(job.get("token"))!=TYPE_INT: return false
+		for field in ["epoch","revision","density_revision"]:
+			if typeof(job.get(field))!=TYPE_INT or int(job[field])<0: return false
+		job={"kind":"lake_slice","builder":job.builder,"token":job.token,"epoch":job.epoch,"revision":job.revision,"density_revision":job.density_revision}
+		priority=false
+	if job.get("interaction_mesh",false):
+		if job.get("kind","")!="mesh" or typeof(job.get("key"))!=TYPE_VECTOR3I or job.key.z!=16: return false
+		priority=false # Only the cooperative reader may bypass read-only work.
 	if job.get("kind","")=="partition":
 		if typeof(job.get("packet"))!=TYPE_PACKED_BYTE_ARRAY or job.packet.size()<36 or job.packet.size()>64*1024*1024: return false
 		for field in ["token","epoch","stamp"]:
@@ -201,6 +230,14 @@ func submit(job: Dictionary, priority: bool = false) -> bool:
 	if str(job.get("kind", "")) in ["edit", "save"]:
 		job["component_snapshot"] = _capture_snapshot()
 	mutex.lock()
+	if job.get("kind","")=="lake_slice" and _lake_pending>=1:
+		mutex.unlock();return false
+	if job.get("interaction_mesh",false):
+		var waiting:=0
+		for queued_job: Dictionary in jobs:
+			if queued_job.get("interaction_mesh",false): waiting+=1
+		if waiting>=2:
+			mutex.unlock();return false
 	if job.get("kind","")=="partition" and _partition_pending>=1:
 		mutex.unlock()
 		return false
@@ -237,6 +274,7 @@ func submit(job: Dictionary, priority: bool = false) -> bool:
 	job["build_epoch"] = build_epoch
 	if job.get("kind","")=="density_ray": _density_pending+=1
 	if job.get("kind","")=="partition": _partition_pending+=1
+	if job.get("kind","")=="lake_slice": _lake_pending+=1
 	if priority:
 		jobs.push_front(job)
 	else:
@@ -277,6 +315,7 @@ func poll() -> Array[Dictionary]:
 	for result: Dictionary in ready:
 		if result.get("kind","")=="density_ray": _density_pending-=1
 		if result.get("kind","")=="partition": _partition_pending-=1
+		if result.get("kind","")=="lake_slice": _lake_pending-=1
 	results = []
 	mutex.unlock()
 	return ready
@@ -360,10 +399,31 @@ func _save() -> String:
 	_flush_current_packets()
 	return "World saved and verified; previous snapshot retained as .bak"
 
+func _initialize_generated_components() -> bool:
+	components = {}
+	if world_generator==4 and snapshot_validators.has("volumetric_water"):
+		var definitions: PackedByteArray=_call(Codec.command(27))
+		var records: Array=[]
+		if not Codec.reply_ok(definitions) or definitions.size()!=192:
+			write_allowed=false
+			return false
+		for i in range(4):
+			var offset:=16+i*44
+			var origin:=Vector3(definitions.decode_float(offset),definitions.decode_float(offset+4),definitions.decode_float(offset+8))
+			var cells:=Vector3i(definitions.decode_u32(offset+12),definitions.decode_u32(offset+16),definitions.decode_u32(offset+20))
+			var seed_point:=Vector3(definitions.decode_float(offset+32),definitions.decode_float(offset+36),definitions.decode_float(offset+40))
+			records.append({"id":i+1,"origin":origin,"cells":cells,"spacing":definitions.decode_float(offset+24),"level":definitions.decode_float(offset+28),"seed":seed_point})
+		components["volumetric_water"]=snapshot_validators["volumetric_water"].encode(records,5)
+	return true
+
 func _load() -> String:
 	if (temporary and not readonly_snapshot) or not FileAccess.file_exists(save_path):
-		components = {}
-		snapshot_id = "new_seed_1703"
+		if not Codec.reply_ok(_call(Codec.command(6,[world_seed,world_generator]))):
+			write_allowed=false
+			return "ERROR: unsupported world generator"
+		if not _initialize_generated_components():
+			return "ERROR: generated lake definitions unavailable"
+		snapshot_id = "new_generator_%d_seed_%d"%[world_generator,world_seed]
 		return "New world"
 	var payload: PackedByteArray = snapshot_codec.read(ProjectSettings.globalize_path(save_path)) if snapshot_codec != null else FileAccess.get_file_as_bytes(save_path)
 	var restored: Dictionary = {}
@@ -389,6 +449,7 @@ func _load() -> String:
 	var info: PackedByteArray = _call(Codec.command(0))
 	if info.size() >= 36:
 		world_seed = info.decode_u32(32)
+	world_generator=payload.decode_u32(28) if payload.decode_u32(4)==2 else 1
 	components = restored
 	write_allowed = true
 	return "World loaded"
@@ -426,7 +487,88 @@ func _build_bricks(key: Vector3i, expected_build_epoch: int, selected: Array) ->
 	if _call(Codec.command(13)).decode_u32(12)!=expected_build_epoch: return {"cancelled":true}
 	return {"key":key,"step":1,"bricks":parts,"brick_partial":not selected.is_empty(),"bytes":bytes,"triangles":triangles,"worker_ms":(Time.get_ticks_usec()-begin)/1000.0}
 
-func _build_regions(key: Vector3i, expected_build_epoch: int, selected: Array) -> Dictionary:
+func _execute_density_query(job: Dictionary) -> void:
+	var query_started:=Time.get_ticks_usec()
+	var queue_ms: float=(query_started-int(job.get("submitted_us",query_started)))/1000.0
+	var reply: PackedByteArray=_call(Codec.density_ray_command(job["from"],job["to"],job["budget"],job["build_epoch"],true))
+	var result: Dictionary=Codec.decode_density_ray(reply)
+	if result.get("cells",0)>job["budget"]:
+		result={"status":"error","error":"Density query exceeded requested budget"}
+	if result.has("revision") and result.revision!=job["revision"]:
+		result.erase("position");result.erase("fraction");result["status"]="stale"
+	result.merge({"kind":"density_ray","token":job["token"],"epoch":job["epoch"],"requested_revision":job["revision"],"build_epoch":job["build_epoch"],"queue_ms":queue_ms,"query_ms":(Time.get_ticks_usec()-query_started)/1000.0,"worker_finished_us":Time.get_ticks_usec()})
+	_push(result)
+
+func _execute_lake_slice(job: Dictionary) -> void:
+	var started:=Time.get_ticks_usec()
+	# Native sampling yields at 2 ms or 2048 points; final flood fill is bounded
+	# by the configured volume. Only the terrain worker touches this builder.
+	var status: int=job.builder.sample_terrain(native,2048,job.density_revision,job.build_epoch)
+	_push({"kind":"lake_slice","status":status,"token":job.token,"epoch":job.epoch,"revision":job.revision,
+		"queue_ms":(started-int(job.get("submitted_us",started)))/1000.0,"worker_ms":(Time.get_ticks_usec()-started)/1000.0})
+
+func _service_lake_slice() -> void:
+	var selected: Dictionary={}
+	mutex.lock()
+	if not stopping:
+		for index in range(jobs.size()):
+			var kind: String=jobs[index].get("kind","")
+			if kind=="lake_slice":
+				selected=jobs[index];jobs.remove_at(index);break
+			if kind not in ["mesh","relight","height","surface_batch","density_ray"]: break
+	mutex.unlock()
+	if not selected.is_empty(): _execute_lake_slice(selected)
+
+func _service_density_query() -> void:
+	# Worker-only cooperative read point. Keep the current mesh's completed
+	# regions; never cancel/restart its work merely to answer a target query.
+	var query: Dictionary={}
+	mutex.lock()
+	if not stopping:
+		for index in range(jobs.size()):
+			var kind: String=jobs[index].get("kind","")
+			if kind=="density_ray":
+				query=jobs[index];jobs.remove_at(index);break
+			# Never cross mutations, saves, or unknown future job types.
+			if kind not in ["mesh","relight","height","surface_batch"]: break
+	mutex.unlock()
+	if not query.is_empty(): _execute_density_query(query)
+
+func _execute_mesh(job: Dictionary, interactive: bool=false) -> void:
+	var result: Dictionary=_build(job.key,bool(job.get("base",false)),int(job.build_epoch),bool(job.get("relight_cache",false)),[],interactive)
+	result["kind"]="mesh"
+	result["key"]=job.key
+	result["stamp"]=job.stamp
+	result["epoch"]=job.epoch
+	_push(result)
+
+func _service_interaction_mesh() -> void:
+	# One bounded 16m read-only build between background owners. The nested
+	# build disables cooperative servicing, so this cannot recurse or starve
+	# a queued mutation. Retain the interrupted container's completed owners.
+	var selected: Dictionary={}
+	var prior_diagnostic: Dictionary={}
+	mutex.lock()
+	if not stopping:
+		for index in range(jobs.size()):
+			var job: Dictionary=jobs[index]
+			var kind: String=job.get("kind","")
+			if kind=="mesh" and job.get("interaction_mesh",false):
+				selected=job;selected["build_epoch"]=build_epoch
+				jobs.remove_at(index)
+				if diagnostic_enabled:
+					prior_diagnostic=diagnostic_active
+					diagnostic_active={"kind":"interactive_mesh","key":str(job.key),"started_us":Time.get_ticks_usec(),"submitted_us":job.get("submitted_us",0)}
+				break
+			if kind not in ["mesh","relight","height","surface_batch","density_ray"]: break
+	mutex.unlock()
+	if not selected.is_empty():
+		_execute_mesh(selected,true)
+		mutex.lock()
+		if diagnostic_enabled: diagnostic_active=prior_diagnostic
+		mutex.unlock()
+
+func _build_regions(key: Vector3i, expected_build_epoch: int, selected: Array, foreground: bool=false) -> Dictionary:
 	var begin:=Time.get_ticks_usec()
 	var size:=mini(32,key.z)
 	var step:=maxi(1,key.z/32)
@@ -434,34 +576,57 @@ func _build_regions(key: Vector3i, expected_build_epoch: int, selected: Array) -
 	var bytes:=0
 	var triangles:=0
 	var hits:=0
+	var stages: Dictionary={"key_us":0,"read_us":0,"build_us":0,"decode_us":0,"light_us":0,"write_us":0,"recipes_us":0,"native_ms":[0.0,0.0,0.0,0.0]}
 	for z in range(key.y,key.y+key.z,size):
 		for x in range(key.x,key.x+key.z,size):
 			var dependency: String=""
 			for bottom in range(0,256,32):
 				var id: int=bottom+256*((x-key.x)/size+8*((z-key.y)/size))
 				if not selected.is_empty() and not selected.has(id): continue
+				if not foreground:
+					_service_density_query()
+					_service_interaction_mesh()
+					_service_lake_slice()
 				if _call(Codec.command(13)).decode_u32(12)!=expected_build_epoch: return {"cancelled":true}
 				if dependency.is_empty() and disk_cache.enabled:
+					var mark:=Time.get_ticks_usec()
 					dependency=str(native.geometry_cache_key(x,z,size,step).get("key",""))
+					stages.key_us+=Time.get_ticks_usec()-mark
 				var content: String=("owned-region-v1:%s:%d" % [dependency,bottom]).sha256_text() if not dependency.is_empty() else ""
 				var owner:=Vector3i(x,z,size)
 				var packet:=PackedByteArray()
+				var mark:=Time.get_ticks_usec()
 				if not content.is_empty(): packet=disk_cache.load_packet(owner,content)
+				stages.read_us+=Time.get_ticks_usec()-mark
 				var cached:=not packet.is_empty()
+				mark=Time.get_ticks_usec()
 				if not cached: packet=native.build_owned_region(x,z,size,step,bottom,bottom+32,expected_build_epoch)
+				stages.build_us+=Time.get_ticks_usec()-mark
+				if profile_regions and not cached:
+					var native_stages: PackedByteArray=_call(Codec.command(19))
+					for index in range(4): stages.native_ms[index]+=native_stages.decode_float(12+index*4)
 				if packet.is_empty():
 					if _call(Codec.command(13)).decode_u32(12)!=expected_build_epoch: return {"cancelled":true}
 					return {"error":"Owned terrain reconstruction failed"}
+				mark=Time.get_ticks_usec()
 				var part: Dictionary=Codec.decode_mesh(packet)
+				stages.decode_us+=Time.get_ticks_usec()-mark
 				if part.has("error"): return part
 				if cached:
+					mark=Time.get_ticks_usec()
 					var refreshed: Dictionary=_refresh_visibility(part.arrays,expected_build_epoch)
 					if refreshed.has("error") or refreshed.get("cancelled",false): return refreshed
 					part.arrays=refreshed.arrays
 					part.cavity_visibility=refreshed.cavity_visibility
 					hits+=1
-				elif not content.is_empty() and not _input_active(): disk_cache.store_packet(owner,packet,content)
+					stages.light_us+=Time.get_ticks_usec()-mark
+				elif not foreground and not content.is_empty() and not _input_active():
+					mark=Time.get_ticks_usec()
+					disk_cache.store_packet(owner,packet,content)
+					stages.write_us+=Time.get_ticks_usec()-mark
+				mark=Time.get_ticks_usec()
 				var recipes: Dictionary=collision_recipes.prepare(part.faces,_collision_piece_triangles)
+				stages.recipes_us+=Time.get_ticks_usec()-mark
 				if not recipes.ok: return {"error":recipes.error}
 				part["collision_pieces"]=recipes.pieces
 				part["faces"]=PackedVector3Array()
@@ -472,10 +637,10 @@ func _build_regions(key: Vector3i, expected_build_epoch: int, selected: Array) -
 				bytes+=int(part.bytes)
 				triangles+=int(part.triangles)
 	if _call(Codec.command(13)).decode_u32(12)!=expected_build_epoch: return {"cancelled":true}
-	return {"key":key,"step":step,"bricks":parts,"brick_partial":not selected.is_empty(),"bytes":bytes,"triangles":triangles,"worker_ms":(Time.get_ticks_usec()-begin)/1000.0,"region_parts":parts.size(),"geometry_cache_hits":hits}
+	return {"key":key,"step":step,"bricks":parts,"brick_partial":not selected.is_empty(),"bytes":bytes,"triangles":triangles,"worker_ms":(Time.get_ticks_usec()-begin)/1000.0,"region_parts":parts.size(),"geometry_cache_hits":hits,"region_stages":stages}
 
-func _build(key: Vector3i, allow_base_cache: bool, expected_build_epoch: int, relight_cache: bool = false, brick_bottoms: Array = []) -> Dictionary:
-	if region_terrain: return _build_regions(key,expected_build_epoch,brick_bottoms)
+func _build(key: Vector3i, allow_base_cache: bool, expected_build_epoch: int, relight_cache: bool = false, brick_bottoms: Array = [], foreground: bool=false) -> Dictionary:
+	if region_terrain: return _build_regions(key,expected_build_epoch,brick_bottoms,foreground)
 	if brick_terrain and key.z<=32 and key.x+key.z<=2000 and key.y+key.z<=2000:
 		return _build_bricks(key,expected_build_epoch,brick_bottoms)
 	var begin: int = Time.get_ticks_usec()
@@ -486,7 +651,7 @@ func _build(key: Vector3i, allow_base_cache: bool, expected_build_epoch: int, re
 	var geometry_cached: bool = false
 	var content: String = ""
 	var cached: bool = false
-	var base_available: bool = allow_base_cache and world_seed == 1703 and FileAccess.file_exists(path)
+	var base_available: bool = allow_base_cache and world_generator == 1 and world_seed == 1703 and FileAccess.file_exists(path)
 	var snapshot_build: bool = snapshot_terrain and key.z<=32 and key.x+key.z<=2000 and key.y+key.z<=2000
 	# Geometry validity survives unrelated edits and save-snapshot changes. Its
 	# visibility is deliberately not trusted: distant edits can change sky rays.
@@ -538,11 +703,11 @@ func _build(key: Vector3i, allow_base_cache: bool, expected_build_epoch: int, re
 		if cached and relight_cache:
 			data = Codec.encode_decoded_mesh(result)
 		_remember_packet(key, data)
-		if cache_valid and not _input_active():
+		if not foreground and cache_valid and not _input_active():
 			disk_cache.store_packet(key, data)
 	# Bundled base packets were not built against this dependency signature.
 	# Only freshly reconstructed or exact-snapshot packets may seed this cache.
-	if not snapshot_build and not geometry_cached and (not cached or derived) and not content.is_empty() and not result.has("error") and not _input_active():
+	if not foreground and not snapshot_build and not geometry_cached and (not cached or derived) and not content.is_empty() and not result.has("error") and not _input_active():
 		disk_cache.store_packet(key, data, content)
 	if not result.has("error"):
 		var epoch_reply: PackedByteArray = _call(Codec.command(13))
@@ -631,6 +796,7 @@ func _run() -> void:
 	var load_message: String = _load()
 	disk_cache.configure(_compatibility(), snapshot_id, surface_style, cache_path)
 	_call(Codec.command(14, [surface_style]))
+	if profile_regions: _call(Codec.command(18,[1]))
 	_push({"kind": "startup", "message": load_message,
 		"components": components.duplicate(), "modified": _call(Codec.command(10)), "stats": _call(Codec.command(0))})
 	while true:
@@ -647,6 +813,8 @@ func _run() -> void:
 			if str(job.get("kind", "")) == "mesh":
 				job["build_epoch"] = build_epoch
 		active_kind = str(job.get("kind", "idle"))
+		if diagnostic_enabled:
+			diagnostic_active={"kind":active_kind,"key":str(job.get("key","")),"started_us":Time.get_ticks_usec(),"submitted_us":job.get("submitted_us",0)}
 		mutex.unlock()
 		if should_stop:
 			# Preserve accepted mutations even if their render jobs have not run.
@@ -677,10 +845,8 @@ func _run() -> void:
 					if remaining_kind == "load":
 						_load()
 					else:
-						_call(Codec.command(6, [1703]))
-						components = {}
-						world_seed = 1703
-						write_allowed = true
+						_call(Codec.command(6, [world_seed,world_generator]))
+						write_allowed = _initialize_generated_components()
 			jobs.clear()
 			_apply_components(_shutdown_snapshot)
 			set_input_active(false)
@@ -711,12 +877,7 @@ func _run() -> void:
 			partition["queue_ms"]=queue_ms
 			_push(partition)
 		elif kind == "mesh":
-			var mesh_result: Dictionary = _build(job["key"], bool(job.get("base", false)), int(job["build_epoch"]), bool(job.get("relight_cache", false)))
-			mesh_result["kind"] = "mesh"
-			mesh_result["key"] = job["key"]
-			mesh_result["stamp"] = job["stamp"]
-			mesh_result["epoch"] = job["epoch"]
-			_push(mesh_result)
+			_execute_mesh(job,bool(job.get("interaction_mesh",false)))
 		elif kind == "edit":
 			_apply_components(job.get("component_snapshot", {}))
 			var before_stats: PackedByteArray = _call(Codec.command(0))
@@ -754,7 +915,23 @@ func _run() -> void:
 				# builds and resource preparation OVERLAP instead of running in series.
 				var build_total: float = 0.0
 				for item: Dictionary in job["tiles"]:
-					var chunk: Dictionary = _build(item["key"], false, int(job["build_epoch"]), false, item.get("brick_bottoms",[]))
+					var selected: Array=item.get("brick_bottoms",[])
+					var retain_geometry:=false
+					# The 17m halo protects changes to the simplifier's page-presence
+					# mask. Existing pages never disappear during an edit. If none were
+					# allocated, only the actual field/normal support can change.
+					if region_terrain and not selected.is_empty() and before_stats.decode_u32(20)==after_stats.decode_u32(20):
+						var key: Vector3i=item.key
+						var owner_size:=mini(32,key.z)
+						var local: Array=[]
+						var bounds:=AABB(job.geometry_lo,job.geometry_hi-job.geometry_lo)
+						for id: int in selected:
+							var column: int=id/256
+							var owner:=AABB(Vector3(key.x+(column%8)*owner_size,id%256,key.y+(column/8)*owner_size),Vector3(owner_size,32,owner_size))
+							if owner.grow(1.0).intersects(bounds): local.append(id)
+						selected=local
+						retain_geometry=selected.is_empty()
+					var chunk: Dictionary = {"retain_geometry":true,"worker_ms":0.0} if retain_geometry else _build(item["key"], false, int(job["build_epoch"]), false, selected, true)
 					if bool(chunk.get("cancelled", false)):
 						chunk = {"error": "Edit build cancelled; reload before further editing"}
 					build_total += float(chunk.get("worker_ms", 0.0))
@@ -783,25 +960,21 @@ func _run() -> void:
 			_component_capture_valid = true
 			var message: String = "World reset (previous disk save retained until next save)"
 			if kind == "reset":
-				_call(Codec.command(6, [1703]))
-				world_seed = 1703
-				write_allowed = true
-				components = {}
+				_call(Codec.command(6, [world_seed,world_generator]))
+				write_allowed = _initialize_generated_components()
+				if not write_allowed: message = "ERROR: generated lake definitions unavailable"
 			else:
 				message = _load()
 			_call(Codec.command(14, [surface_style]))
 			latest_packets.clear()
 			latest_packet_bytes = 0
 			if kind == "reset":
-				snapshot_id = "new_seed_1703"
+				snapshot_id = "new_generator_%d_seed_%d"%[world_generator,world_seed]
 			_set_cache_snapshot(snapshot_id)
 			_push({"kind": "reload", "epoch": job["epoch"], "message": message,
 				"components": components.duplicate(), "modified": _call(Codec.command(10)), "stats": _call(Codec.command(0))})
 		elif kind == "lake_slice":
-			# Worker exclusively owns terrain; the native builder is not read by the
-			# main thread until this slice completes. Sampling yields after ~2 ms.
-			var status: int = job["builder"].sample_terrain(native, 512, job["density_revision"], job["build_epoch"])
-			_push({"kind": "lake_slice", "status": status, "token": job["token"], "epoch": job["epoch"], "revision": job["revision"]})
+			_execute_lake_slice(job)
 		elif kind == "surface_batch":
 			var points: PackedVector3Array = job["points"]
 			var normals := PackedVector3Array()
@@ -819,18 +992,11 @@ func _run() -> void:
 				normals = PackedVector3Array()
 			_push({"kind": "surface_batch", "points": points, "normals": normals, "token": job["token"], "epoch": job["epoch"], "revision": job["revision"]})
 		elif kind == "density_ray":
-			var query_started: int=Time.get_ticks_usec()
-			var reply: PackedByteArray=_call(Codec.density_ray_command(job["from"],job["to"],job["budget"],job["build_epoch"]))
-			var result: Dictionary=Codec.decode_density_ray(reply)
-			if result.get("cells",0)>job["budget"]:
-				result={"status":"error","error":"Density query exceeded requested budget"}
-			if result.has("revision") and result.revision!=job["revision"]:
-				result.erase("position");result.erase("fraction");result["status"]="stale"
-			result.merge({"kind":"density_ray","token":job["token"],"epoch":job["epoch"],"requested_revision":job["revision"],"build_epoch":job["build_epoch"],"queue_ms":queue_ms,"query_ms":(Time.get_ticks_usec()-query_started)/1000.0,"worker_finished_us":Time.get_ticks_usec()})
-			_push(result)
+			_execute_density_query(job)
 		elif kind == "height":
 			var reply: PackedByteArray = _call(Codec.point_command(job["point"]))
 			_push({"kind": "height", "reply": reply, "point": job["point"], "token": job["token"]})
 		mutex.lock()
 		active_kind = "idle"
+		diagnostic_active={}
 		mutex.unlock()

@@ -1,0 +1,8 @@
+{
+  "failures": 0,
+  "population": 100000,
+  "rendered": 49,
+  "scope": "bounded renderer correctness; no sustained frame rate or thermal claim",
+  "upload_bytes": 6144,
+  "visited": 256
+}

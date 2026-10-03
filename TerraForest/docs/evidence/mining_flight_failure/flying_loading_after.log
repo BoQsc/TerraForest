@@ -1,0 +1,110 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS real stream starts
+PASS real world ready
+PASS initial coarse coverage admitted
+PASS initial coarse coverage published
+PASS real planner displays initial coarse root
+PASS initial world coverage remains complete during handover
+PASS held mining button permits local collision activation within three seconds
+PASS travel target height available
+PASS travel mining admitted
+PASS travel mining changes and publishes terrain
+PASS travel mining retains root coverage
+PASS travel target height available
+PASS travel mining admitted
+PASS travel mining changes and publishes terrain
+PASS travel mining retains root coverage
+PASS travel target height available
+PASS travel mining admitted
+PASS travel mining changes and publishes terrain
+PASS travel mining retains root coverage
+PASS travel target height available
+PASS travel mining admitted
+PASS travel mining changes and publishes terrain
+PASS travel mining retains root coverage
+PASS travel target height available
+PASS travel mining admitted
+PASS travel mining changes and publishes terrain
+PASS travel mining retains root coverage
+PASS travel target height available
+PASS travel mining admitted
+PASS travel mining changes and publishes terrain
+PASS travel mining retains root coverage
+PASS travel target height available
+PASS travel mining admitted
+PASS travel mining changes and publishes terrain
+PASS travel mining retains root coverage
+PASS travel target height available
+PASS travel mining admitted
+PASS travel mining changes and publishes terrain
+PASS travel mining retains root coverage
+PASS travel target height available
+PASS travel mining admitted
+PASS travel mining changes and publishes terrain
+PASS travel mining retains root coverage
+PASS travel target height available
+PASS travel mining admitted
+PASS travel mining changes and publishes terrain
+PASS travel mining retains root coverage
+PASS travel target height available
+PASS travel mining admitted
+PASS travel mining changes and publishes terrain
+PASS travel mining retains root coverage
+PASS travel target height available
+PASS travel mining admitted
+PASS travel mining changes and publishes terrain
+PASS travel mining retains root coverage
+PASS travel target height available
+PASS travel mining admitted
+PASS travel mining changes and publishes terrain
+PASS travel mining retains root coverage
+PASS travel target height available
+PASS travel mining admitted
+PASS travel mining changes and publishes terrain
+PASS travel mining retains root coverage
+PASS travel target height available
+PASS travel mining admitted
+PASS travel mining changes and publishes terrain
+PASS travel mining retains root coverage
+PASS travel target height available
+PASS travel mining admitted
+PASS travel mining changes and publishes terrain
+PASS travel mining retains root coverage
+PASS travel target height available
+PASS travel mining admitted
+PASS travel mining changes and publishes terrain
+PASS travel mining retains root coverage
+PASS travel target height available
+PASS travel mining admitted
+PASS travel mining changes and publishes terrain
+PASS travel mining retains root coverage
+PASS travel target height available
+PASS travel mining admitted
+PASS travel mining changes and publishes terrain
+PASS travel mining retains root coverage
+PASS travel target height available
+PASS travel mining admitted
+PASS travel mining changes and publishes terrain
+PASS travel mining retains root coverage
+PASS travel target height available
+PASS travel mining admitted
+PASS travel mining changes and publishes terrain
+PASS travel mining retains root coverage
+PASS travel target height available
+PASS travel mining admitted
+PASS travel mining changes and publishes terrain
+PASS travel mining retains root coverage
+PASS travel target height available
+PASS travel mining admitted
+PASS travel mining changes and publishes terrain
+PASS travel mining retains root coverage
+PASS travel target height available
+PASS travel mining admitted
+PASS travel mining changes and publishes terrain
+PASS travel mining retains root coverage
+PASS paced travel keeps every mining destination ready
+FAIL paced input-through-publication p95 remains within 150ms
+FAIL paced travel does not accumulate more than 50ms arrival lag
+[TerrainRewrite] Temporary test world: save skipped
+LOADING_RUNTIME {"checks":[{"name":"real stream starts","pass":true},{"name":"real world ready","pass":true},{"name":"initial coarse coverage admitted","pass":true},{"name":"initial coarse coverage published","pass":true},{"name":"real planner displays initial coarse root","pass":true},{"name":"initial world coverage remains complete during handover","pass":true},{"name":"held mining button permits local collision activation within three seconds","pass":true},{"name":"travel target height available","pass":true},{"name":"travel mining admitted","pass":true},{"name":"travel mining changes and publishes terrain","pass":true},{"name":"travel mining retains root coverage","pass":true},{"name":"travel target height available","pass":true},{"name":"travel mining admitted","pass":true},{"name":"travel mining changes and publishes terrain","pass":true},{"name":"travel mining retains root coverage","pass":true},{"name":"travel target height available","pass":true},{"name":"travel mining admitted","pass":true},{"name":"travel mining changes and publishes terrain","pass":true},{"name":"travel mining retains root coverage","pass":true},{"name":"travel target height available","pass":true},{"name":"travel mining admitted","pass":true},{"name":"travel mining changes and publishes terrain","pass":true},{"name":"travel mining retains root coverage","pass":true},{"name":"travel target height available","pass":true},{"name":"travel mining admitted","pass":true},{"name":"travel mining changes and publishes terrain","pass":true},{"name":"travel mining retains root coverage","pass":true},{"name":"travel target height available","pass":true},{"name":"travel mining admitted","pass":true},{"name":"travel mining changes and publishes terrain","pass":true},{"name":"travel mining retains root coverage","pass":true},{"name":"travel target height available","pass":true},{"name":"travel mining admitted","pass":true},{"name":"travel mining changes and publishes terrain","pass":true},{"name":"travel mining retains root coverage","pass":true},{"name":"travel target height available","pass":true},{"name":"travel mining admitted","pass":true},{"name":"travel mining changes and publishes terrain","pass":true},{"name":"travel mining retains root coverage","pass":true},{"name":"travel target height available","pass":true},{"name":"travel mining admitted","pass":true},{"name":"travel mining changes and publishes terrain","pass":true},{"name":"travel mining retains root coverage","pass":true},{"name":"travel target height available","pass":true},{"name":"travel mining admitted","pass":true},{"name":"travel mining changes and publishes terrain","pass":true},{"name":"travel mining retains root coverage","pass":true},{"name":"travel target height available","pass":true},{"name":"travel mining admitted","pass":true},{"name":"travel mining changes and publishes terrain","pass":true},{"name":"travel mining retains root coverage","pass":true},{"name":"travel target height available","pass":true},{"name":"travel mining admitted","pass":true},{"name":"travel mining changes and publishes terrain","pass":true},{"name":"travel mining retains root coverage","pass":true},{"name":"travel target height available","pass":true},{"name":"travel mining admitted","pass":true},{"name":"travel mining changes and publishes terrain","pass":true},{"name":"travel mining retains root coverage","pass":true},{"name":"travel target height available","pass":true},{"name":"travel mining admitted","pass":true},{"name":"travel mining changes and publishes terrain","pass":true},{"name":"travel mining retains root coverage","pass":true},{"name":"travel target height available","pass":true},{"name":"travel mining admitted","pass":true},{"name":"travel mining changes and publishes terrain","pass":true},{"name":"travel mining retains root coverage","pass":true},{"name":"travel target height available","pass":true},{"name":"travel mining admitted","pass":true},{"name":"travel mining changes and publishes terrain","pass":true},{"name":"travel mining retains root coverage","pass":true},{"name":"travel target height available","pass":true},{"name":"travel mining admitted","pass":true},{"name":"travel mining changes and publishes terrain","pass":true},{"name":"travel mining retains root coverage","pass":true},{"name":"travel target height available","pass":true},{"name":"travel mining admitted","pass":true},{"name":"travel mining changes and publishes terrain","pass":true},{"name":"travel mining retains root coverage","pass":true},{"name":"travel target height available","pass":true},{"name":"travel mining admitted","pass":true},{"name":"travel mining changes and publishes terrain","pass":true},{"name":"travel mining retains root coverage","pass":true},{"name":"travel target height available","pass":true},{"name":"travel mining admitted","pass":true},{"name":"travel mining changes and publishes terrain","pass":true},{"name":"travel mining retains root coverage","pass":true},{"name":"travel target height available","pass":true},{"name":"travel mining admitted","pass":true},{"name":"travel mining changes and publishes terrain","pass":true},{"name":"travel mining retains root coverage","pass":true},{"name":"travel target height available","pass":true},{"name":"travel mining admitted","pass":true},{"name":"travel mining changes and publishes terrain","pass":true},{"name":"travel mining retains root coverage","pass":true},{"name":"travel target height available","pass":true},{"name":"travel mining admitted","pass":true},{"name":"travel mining changes and publishes terrain","pass":true},{"name":"travel mining retains root coverage","pass":true},{"name":"travel target height available","pass":true},{"name":"travel mining admitted","pass":true},{"name":"travel mining changes and publishes terrain","pass":true},{"name":"travel mining retains root coverage","pass":true},{"name":"paced travel keeps every mining destination ready","pass":true},{"name":"paced input-through-publication p95 remains within 150ms","pass":false},{"name":"paced travel does not accumulate more than 50ms arrival lag","pass":false}],"edits":[{"arrival_lag_ms":0.004,"input_through_publication_ms":86.347,"publish_ms":51.947,"ready_before":true,"step":0,"worker_ms":46.857},{"arrival_lag_ms":13.975,"input_through_publication_ms":39.735,"publish_ms":16.718,"ready_before":true,"step":1,"worker_ms":10.746},{"arrival_lag_ms":5.632,"input_through_publication_ms":40.343,"publish_ms":14.507,"ready_before":true,"step":2,"worker_ms":11.853},{"arrival_lag_ms":13.963,"input_through_publication_ms":84.869,"publish_ms":33.063,"ready_before":true,"step":3,"worker_ms":20.6},{"arrival_lag_ms":23.158,"input_through_publication_ms":98.771,"publish_ms":66.539,"ready_before":true,"step":4,"worker_ms":33.531},{"arrival_lag_ms":2.862,"input_through_publication_ms":73.514,"publish_ms":48.697,"ready_before":true,"step":5,"worker_ms":38.992},{"arrival_lag_ms":11.312,"input_through_publication_ms":271.416,"publish_ms":28.037,"ready_before":true,"step":6,"worker_ms":24.976},{"arrival_lag_ms":157.745,"input_through_publication_ms":361.714,"publish_ms":45.082,"ready_before":true,"step":7,"worker_ms":14.709},{"arrival_lag_ms":394.478,"input_through_publication_ms":555.637,"publish_ms":254.985,"ready_before":true,"step":8,"worker_ms":17.785},{"arrival_lag_ms":825.345,"input_through_publication_ms":812.375,"publish_ms":353.432,"ready_before":true,"step":9,"worker_ms":15.609},{"arrival_lag_ms":1512.736,"input_through_publication_ms":92.214,"publish_ms":26.07,"ready_before":true,"step":10,"worker_ms":12.36},{"arrival_lag_ms":1480.038,"input_through_publication_ms":56.504,"publish_ms":30.88,"ready_before":true,"step":11,"worker_ms":13.672},{"arrival_lag_ms":1411.559,"input_through_publication_ms":60.314,"publish_ms":33.122,"ready_before":true,"step":12,"worker_ms":18.59},{"arrival_lag_ms":1346.891,"input_through_publication_ms":55.167,"publish_ms":27.874,"ready_before":true,"step":13,"worker_ms":23.179},{"arrival_lag_ms":1277.075,"input_through_publication_ms":51.938,"publish_ms":24.789,"ready_before":true,"step":14,"worker_ms":11.649},{"arrival_lag_ms":1204.029,"input_through_publication_ms":51.617,"publish_ms":21.204,"ready_before":true,"step":15,"worker_ms":10.571},{"arrival_lag_ms":1130.662,"input_through_publication_ms":64.265,"publish_ms":30.854,"ready_before":true,"step":16,"worker_ms":14.035},{"arrival_lag_ms":1069.939,"input_through_publication_ms":76.232,"publish_ms":40.352,"ready_before":true,"step":17,"worker_ms":32.226},{"arrival_lag_ms":1021.209,"input_through_publication_ms":82.216,"publish_ms":44.807,"ready_before":true,"step":18,"worker_ms":26.076},{"arrival_lag_ms":978.442,"input_through_publication_ms":32.619,"publish_ms":18.584,"ready_before":true,"step":19,"worker_ms":13.535},{"arrival_lag_ms":886.072,"input_through_publication_ms":102.36,"publish_ms":57.855,"ready_before":true,"step":20,"worker_ms":38.167},{"arrival_lag_ms":863.446,"input_through_publication_ms":65.04,"publish_ms":41.084,"ready_before":true,"step":21,"worker_ms":37.103},{"arrival_lag_ms":803.498,"input_through_publication_ms":79.88,"publish_ms":57.021,"ready_before":true,"step":22,"worker_ms":37.97},{"arrival_lag_ms":758.394,"input_through_publication_ms":84.854,"publish_ms":60.317,"ready_before":true,"step":23,"worker_ms":25.957}],"flying":true,"input_p95_ms":555.637,"max_arrival_lag_ms":1512.736,"paced":true,"readiness_ms":1280.618,"ready":true,"ready_destinations":24,"replayed_edits":0,"resident_tiles":35,"scope":"Real terrain scheduler and worker, coarse root initially resident, held brush readiness then travel/mining. Paced mode: 24 two-metre steps every 125ms (nominal 16m/s, 8 edits/s); immediate mode: four 8m steps without travel delay. Arrival lag exposes inability to maintain the nominal pace. Headless regression, not graphical FPS or endurance. Input-through-publication includes synchronous height query.","travel_ms":3728.26,"visible_tiles":25}

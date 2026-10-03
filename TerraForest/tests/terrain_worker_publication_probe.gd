@@ -7,10 +7,10 @@ func pump_until(predicate: Callable, prepare: bool = true) -> bool:
 	var deadline := Time.get_ticks_msec()+15000
 	while not predicate.call() and Time.get_ticks_msec()<deadline:
 		for result: Dictionary in world.backend.poll():
-			worker_events.append({"kind":result.kind,"ticket":result.get("ticket",-1),"remaining_before_receive":world.batch_remaining,"worker_ms":result.get("worker_ms",0.0)})
+			worker_events.append({"kind":result.kind,"ticket":result.get("ticket",-1),"remaining_before_receive":world.batch_remaining,"worker_ms":result.get("worker_ms",0.0),"region_parts":result.get("region_parts",0),"region_stages":result.get("region_stages",{})})
 			world._receive(result)
 		if prepare: world._drain_staging()
-		if not world.paused_preparation.is_empty(): preemption_observed=true
+		if not world.paused_preparations.is_empty(): preemption_observed=true
 		if not world.latest_error.is_empty(): return false
 		await process_frame
 	return predicate.call()
@@ -126,6 +126,18 @@ func verify_coarse_locality(rows: Array[Dictionary]) -> void:
 	if not world.tiles.has(key): return
 	var before: Dictionary=world.tiles[key]
 	check(before.bricks.size()==512,"256m container has 512 bounded 32x32x32 owners")
+	var empty_without_render_instance:=0
+	var inherited_visible:=true
+	for child: Dictionary in before.bricks.values():
+		if child.triangles==0 and not child.node is MeshInstance3D: empty_without_render_instance+=1
+		inherited_visible=inherited_visible and child.node.is_visible_in_tree()
+	check(empty_without_render_instance>0 and not before.node is MeshInstance3D,"empty owners and parent allocate no rendering instances")
+	check(inherited_visible,"published owners inherit visible parent")
+	world._set_active(before,false)
+	var inherited_hidden:=true
+	for child: Dictionary in before.bricks.values(): inherited_hidden=inherited_hidden and not child.node.is_visible_in_tree() and child.node.visible
+	check(inherited_hidden,"one parent visibility switch hides every owner without changing child visibility")
+	world._set_active(before,true)
 	var ids: Dictionary={}
 	for id in before.bricks: ids[id]=before.bricks[id].node.get_instance_id()
 	var reply: Array[float]=[]
@@ -174,6 +186,27 @@ func verify_coarse_locality(rows: Array[Dictionary]) -> void:
 	check(exact,"retained plus replaced coarse geometry equals full fresh reconstruction")
 	check(bytes==int(current.bytes),"coarse partial publication accounts retained bytes once")
 	rows.append({"mode":"coarse_locality","retained":retained,"replaced":replaced,"worker_ms":world.last_total_build_ms,"publication_ms":world.last_latency_ms})
+	ids.clear()
+	for id in current.bricks: ids[id]=current.bricks[id].node.get_instance_id()
+	var pages_before: int=world.sdf_pages
+	var fill:=point-Vector3.UP*1.5
+	check(world.edit(Codec.brush(fill,fill,0.5,0,true,1),fill-Vector3.ONE*5.5,fill+Vector3.ONE*5.5),"existing-page coarse refill admitted")
+	check(await pump_until(func(): return not world.pending_edit),"existing-page coarse refill published")
+	check(world.sdf_pages==pages_before,"refill leaves simplifier page-presence mask unchanged")
+	current=world.tiles[key]
+	var local_replaced:=0
+	exact=true
+	epoch_reply=world.backend.native.execute(Codec.command(13))
+	for id in current.bricks:
+		var child: Dictionary=current.bricks[id]
+		if child.node.get_instance_id()!=ids[id]: local_replaced+=1
+		var bounds: AABB=child.region_bounds
+		var fresh: Dictionary=Codec.decode_mesh(world.backend.native.build_owned_region(int(bounds.position.x),int(bounds.position.z),32,8,int(bounds.position.y),int(bounds.end.y),epoch_reply.decode_u32(12)))
+		if fresh.has("error"): exact=false;continue
+		for channel: int in [Mesh.ARRAY_VERTEX,Mesh.ARRAY_NORMAL,Mesh.ARRAY_COLOR,Mesh.ARRAY_TEX_UV2,Mesh.ARRAY_INDEX]:
+			if child.arrays[channel]!=fresh.arrays[channel]: exact=false
+	check(local_replaced>0 and local_replaced<replaced,"unchanged page mask avoids rebuilding the broad simplification halo")
+	check(exact,"narrow field invalidation matches full fresh coarse reconstruction")
 
 func boundary_edges(packets: Array,axis: int,plane: float, interior: bool = false) -> Dictionary:
 	var counts: Dictionary={}

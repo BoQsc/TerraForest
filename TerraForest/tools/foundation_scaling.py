@@ -12,6 +12,7 @@ parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--godot', required=True)
 parser.add_argument('--scales', nargs='+', type=int, choices=[1, 4, 16], default=[1, 4, 16])
 parser.add_argument('--terrain', choices=['legacy','snapshot','bricks','regions'], default='legacy')
+parser.add_argument('--quick', action='store_true', help='Short diagnostic with unchanged gates; not full acceptance')
 args = parser.parse_args()
 engine = Path(args.godot)
 direct = engine.parent / 'godot.windows.opt.tools.64.exe'
@@ -20,6 +21,7 @@ if direct.exists():
 results = []
 for scale in args.scales:
     prefix='foundation' if args.terrain=='legacy' else 'foundation_'+args.terrain
+    if args.quick: prefix+='_quick'
     output = root / 'reports' / f'{prefix}_scale_{scale}'
     output.mkdir(parents=True, exist_ok=True)
     sources = [root / 'tests/foundation_mining.gd', Path(__file__).resolve()]
@@ -28,6 +30,12 @@ for scale in args.scales:
     sources += sorted((root / 'addons/volumetric_terrain/native').rglob('*.hpp'))
     sources += sorted((root / 'addons/volumetric_terrain/native').rglob('*.h'))
     sources += sorted((root / 'addons/volumetric_terrain/bin').glob('*.dll'))
+    sources += sorted((root / 'addons/vegetation').glob('*.gd'))
+    sources += sorted((root / 'addons/vegetation').glob('*.gdshader'))
+    sources += sorted((root / 'demo').glob('*.gd'))
+    sources += sorted((root / 'demo').glob('*.tscn'))
+    sources.append(root / 'project.godot')
+    sources += sorted((root / 'addons/world_ecosystem').glob('*.gd'))
     manifest = {str(path.relative_to(root)): hashlib.sha256(path.read_bytes()).hexdigest()
                 for path in sources}
     (output / 'source_hashes.json').write_text(json.dumps(manifest, indent=2))
@@ -38,6 +46,8 @@ for scale in args.scales:
     command = [str(engine), '--path', str(root), '--script',
                'res://tests/foundation_mining.gd', '--', f'--foundation-scale={scale}']
     if args.terrain!='legacy': command.append({'bricks':'--brick-terrain','snapshot':'--snapshot-terrain','regions':'--region-terrain'}[args.terrain])
+    if args.terrain=='regions': command.append('--profile-owned-regions')
+    if args.quick: command.append('--foundation-quick')
     (output/'launch.json').write_text(json.dumps({'terrain':args.terrain,'command':command},indent=2))
     with (output / 'run.log').open('w', encoding='utf-8') as log:
         try:

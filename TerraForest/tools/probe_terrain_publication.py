@@ -71,7 +71,7 @@ windows.release.x86_64 = "res://addons/volumetric_terrain/bin/terrain_core.windo
         shutil.copy2(ROOT / 'tests/terrain_transition_probe.gd', project / 'tests/terrain_transition_probe.gd')
     (project / 'project.godot').write_text('config_version=5\n[application]\nconfig/name="Terrain publication probe"\n')
     result = subprocess.run([args.godot, '--headless', '--path', str(project), '--script',
-                             f'res://tests/{test}.gd'] + (['--', '--region-terrain'] if args.region_terrain else (['--', '--brick-terrain'] if args.brick_terrain else (['--', '--snapshot-terrain'] if args.snapshot_terrain else []))), capture_output=True, text=True, timeout=90)
+                             f'res://tests/{test}.gd'] + (['--', '--region-terrain', '--profile-owned-regions'] if args.region_terrain else (['--', '--brick-terrain'] if args.brick_terrain else (['--', '--snapshot-terrain'] if args.snapshot_terrain else []))), capture_output=True, text=True, timeout=90)
     log = result.stdout + '\n' + result.stderr
     reports = ROOT / 'reports'
     reports.mkdir(exist_ok=True)

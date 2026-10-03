@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: 0BSD
 #include "core.h"
+#include "geology.hpp"
 #if defined(TERRAFOREST_TYPED_BRIDGE)
 #include <chrono>
 #endif
@@ -39,6 +40,24 @@ static float bump(float x,float z,float cx,float cz,float r,float height){
 }
 float World::height(float x,float z)const{
  float h=49.f+noise(x/320.f,z/320.f,u32(seed))*20.f+noise(x/100.f,z/100.f,u32(seed)+1u)*8.f+noise(x/34.f,z/34.f,u32(seed)+2u)*2.5f;
+ if(generator_id>=2){
+  // Four seed-derived massifs, constant query work and no generated sample storage.
+  for(u32 i=0;i<4;i++){
+   u32 a=hash32(u32(seed)^0x6d2b79f5u^(i*0x9e3779b9u)),b=hash32(a);
+   float cx=350.f+float(i&1)*1000.f+float(a&255),cz=350.f+float(i>>1)*1000.f+float((a>>8)&255);
+   h+=bump(x,z,cx,cz,330.f+float(b&127),85.f+float((b>>8)&63));
+  }
+  h=clampf(h,18.f,225.f);
+  for(int i=0;i<basin_count;i++){
+   const auto &b=basins[i];float dx=x-b.x,dz=z-b.z,d2=dx*dx+dz*dz;
+   if(d2>=1600.f)continue;
+   // Closed rim at radius 24; outer annulus blends back into the landscape.
+   if(d2<=576.f)return b.level-9.f+12.f*d2/576.f;
+   float t=smooth((__builtin_sqrtf(d2)-24.f)/16.f);
+   return (b.level+3.f)*(1.f-t)+h*t;
+  }
+  return h;
+ }
  h+=bump(x,z,1000,850,480,128)+bump(x,z,440,440,390,85)+bump(x,z,1580,480,390,95)+bump(x,z,1480,1450,430,55);
  return clampf(h,18.f,225.f);
 }
@@ -53,9 +72,35 @@ float World::base(V3 p,float h)const{
  d=mx(d,1.f-p.y);d=mx(d,p.y-255.f);d=mx(d,-p.x);d=mx(d,p.x-WORLD);d=mx(d,-p.z);d=mx(d,p.z-WORLD);
  return clampf(d,-SDF_BAND,SDF_BAND);
 }
-void World::init(int p_seed){
- seed=p_seed;revision=edits=0;changed_samples=0;block_columns.resize(4096);
+void World::init(int p_seed,u32 generator){
+ seed=p_seed;generator_id=generator;basin_count=0;revision=edits=0;changed_samples=0;block_columns.resize(4096);
  edit_columns=(u32*)tr_alloc(NP*NP*sizeof(u32));if(edit_columns)zero_bytes(edit_columns,NP*NP*sizeof(u32));else tr_oom=true;
+ if(generator_id==4){
+  // Separate seed domains and quadrant placement keep basins away from caves.
+  for(u32 i=0;i<4;i++){
+   u32 h=hash32(u32(seed)^0x7a91c3b5u^(i*0x9e3779b9u));
+   float x=180.f+float(i&1)*1000.f+float(h&63),z=180.f+float(i>>1)*1000.f+float((h>>8)&63);
+   basins[i]={x,z,height(x,z)-3.f};
+  }
+  basin_count=4;
+ }
+ if(generator_id>=2){
+  // Four connected entrance/tunnel/chamber systems. All capsules remain in the
+  // canonical cave list used by density, mesh envelopes and visibility queries.
+  for(u32 i=0;i<4;i++){
+   u32 a=hash32(u32(seed)^0x6d2b79f5u^(i*0x9e3779b9u)),b=hash32(a),c=hash32(b);
+   float x=350.f+float(i&1)*1000.f+float(a&255),z=350.f+float(i>>1)*1000.f+float((a>>8)&255);
+   float side=(b&1)?1.f:-1.f;
+   V3 entrance={x+side*230.f,0,z};entrance.y=height(entrance.x,entrance.z)-2.f;
+   float floor=mx(25.f,mn(height(x,z)-45.f,75.f));
+   V3 bend={x+side*110.f,floor+10.f,z+float(int(c&63)-31)},center={x,floor,z};
+   caves.push({entrance,bend,7.f});caves.push({bend,center,9.f});
+   caves.push({center,center,18.f+float((c>>8)&7)});
+   V3 branch={x-side*110.f,floor-5.f,z+80.f};
+   caves.push({center,branch,7.f});caves.push({branch,branch,14.f});
+  }
+  return;
+ }
  // Explicit cave envelopes are derived from these same primitives, never hand-maintained elsewhere.
  V3 entrance={1050,height(1050,1210)-2,1210};
  caves.push({entrance,{1050,76,1115},7});caves.push({{1050,76,1115},{1020,66,1030},8});
@@ -64,7 +109,7 @@ void World::init(int p_seed){
  caves.push({{990,60,975},{1090,49,900},7});caves.push({{1090,49,900},{1090,49,900},17});
  V3 e2={480,height(480,800)-2,800};caves.push({e2,{460,54,690},6});caves.push({{460,54,690},{430,52,575},8});caves.push({{430,52,575},{420,52,550},18});
 }
-void World::release(){release_geometry_cache(*this);light_roofs.release();light_samples.release();light_tops.release();light_probe_ids.release();light_probes.release();lighting_revision=-1;for(int i=0;i<pages.n;i++){if(pages[i].d)tr_free(pages[i].d);if(pages[i].mat)tr_free(pages[i].mat);}pages.release();pages_by_key.release();blocks.release();caves.release();for(int i=0;i<block_columns.n;i++)block_columns[i].release();block_columns.release();if(edit_columns)tr_free(edit_columns);edit_columns=nullptr;}
+void World::release(){owned_heights.release();release_geometry_cache(*this);light_roofs.release();light_samples.release();light_tops.release();light_probe_ids.release();light_probes.release();lighting_revision=-1;for(int i=0;i<pages.n;i++){if(pages[i].d)tr_free(pages[i].d);if(pages[i].mat)tr_free(pages[i].mat);}pages.release();pages_by_key.release();blocks.release();caves.release();for(int i=0;i<block_columns.n;i++)block_columns[i].release();block_columns.release();if(edit_columns)tr_free(edit_columns);edit_columns=nullptr;}
 static u32 page_key(int x,int y,int z){return u32(x+NP*(z+NP*y))+1;}
 static void decode_page(u32 k,int&x,int&y,int&z){int v=int(k-1);x=v%NP;v/=NP;z=v%NP;y=v/NP;}
 static u32 block_key(int x,int y,int z){return 1+u32(x|(z<<11)|(y<<22));}
@@ -81,7 +126,9 @@ float World::sample(int x,int y,int z,u8*mat)const{
  if(x<0||x>WORLD||z<0||z>WORLD||y<0||y>WORLD_Y)return SDF_BAND;
  int index=pages_by_key.get(page_key(x>>4,y>>4,z>>4));
  if(index>=0){const Page&p=pages[index];int j=(x&15)+16*((z&15)+16*(y&15));if(mat)*mat=p.mat[j];return float(p.d[j])/SDF_SCALE;}
- return base({float(x),float(y),float(z)},height(float(x),float(z)));
+ V3 point={float(x),float(y),float(z)};float h=height(point.x,point.z);
+ if(mat&&generator_id>=3){float weight=geological_weight(point,h,u32(seed));*mat=weight>.5f?8:(weight<-.5f?9:0);}
+ return base(point,h);
 }
 Page* World::ensure(int px,int py,int pz){
  u32 key=page_key(px,py,pz);int at=pages_by_key.get(key);if(at>=0)return &pages[at];if(pages.n>=MAX_PAGES)return nullptr;
@@ -90,7 +137,10 @@ Page* World::ensure(int px,int py,int pz){
  zero_bytes(page.mat,PAGE_SAMPLES);
  for(int z=0;z<16;z++)for(int x=0;x<16;x++){
   float wx=float(px*16+x),wz=float(pz*16+z),h=height(wx,wz);
-  for(int y=0;y<16;y++)page.d[x+16*(z+16*y)]=quant(base({wx,float(py*16+y),wz},h));
+  for(int y=0;y<16;y++){
+   int index=x+16*(z+16*y);V3 point={wx,float(py*16+y),wz};page.d[index]=quant(base(point,h));
+   if(generator_id>=3){float weight=geological_weight(point,h,u32(seed));page.mat[index]=weight>.5f?8:(weight<-.5f?9:0);}
+  }
  }
  int idx=pages.push(page);pages_by_key.put(key,idx);edit_columns[px+NP*pz]|=(1u<<py);return &pages[idx];
 }
@@ -117,7 +167,9 @@ bool World::edit(V3 a,V3 b,float radius,int shape,bool add,u8 material,V3&lo,V3&
    if(x==0||x==WORLD||z==0||z==WORLD||y<=1||y>=255)value=mx(value,0.f);
    i16 q=quant(value),previous=quant(old);if(q==previous)continue;
    if(idx<0){Page* page=ensure(x>>4,py,z>>4);if(!page)return false;idx=pages_by_key.get(page_key(x>>4,py,z>>4));}
-   pages[idx].d[j]=q;pages[idx].mat[j]=material;changes++;
+   pages[idx].d[j]=q;
+   if(add||generator_id<3)pages[idx].mat[j]=material;
+   pages[idx].geometry_digest_valid=false;changes++;
   }
  }
  // Construction is a separate exact grid. Smooth excavation removes whole intersected cubes,
@@ -130,16 +182,19 @@ bool World::edit(V3 a,V3 b,float radius,int shape,bool add,u8 material,V3&lo,V3&
 static u32 checksum(const u8*p,int n){u32 h=2166136261u;for(int i=0;i<n;i++){h^=p[i];h*=16777619u;}return h;}
 void World::serialize(Bytes&out)const{
  int start=out.n;
- out.u(SAVE_MAGIC);out.u(1);out.u(seed);out.u(pages.n);out.u(blocks.n);out.u(revision);out.u(edits);
+ out.u(SAVE_MAGIC);out.u(2);out.u(seed);out.u(pages.n);out.u(blocks.n);out.u(revision);out.u(edits);out.u(generator_id);
  for(int i=0;i<pages.n;i++){const Page&p=pages[i];out.u(p.key);out.raw(p.d,PAGE_SAMPLES*2);out.raw(p.mat,PAGE_SAMPLES);}
  for(int i=0;i<blocks.cap;i++)if(blocks.p[i].key&&blocks.p[i].key!=0xffffffffu){out.u(blocks.p[i].key);out.u(blocks.p[i].value);}
  out.u(checksum(out.p+start,out.n-start));
 }
 bool World::deserialize(const u8*data,int n){
  if(n<32)return false;u32 actual;copy_bytes(&actual,data+n-4,4);if(actual!=checksum(data,n-4))return false;
- Reader r{data,n-4};if(r.u()!=SAVE_MAGIC||r.u()!=1)return false;int s=int(r.u()),pc=int(r.u()),bc=int(r.u()),rev=int(r.u()),ed=int(r.u());
- if(pc<0||pc>MAX_PAGES||bc<0||bc>2000000||i64(pc)*(4+PAGE_SAMPLES*3)+i64(bc)*8+28!=n-4)return false;
- World t;t.build_control=build_control;t.init(s);t.revision=rev;t.edits=ed;t.surface_style=surface_style;
+ Reader r{data,n-4};if(r.u()!=SAVE_MAGIC)return false;u32 format=r.u();if(format!=1&&format!=2)return false;
+ int s=int(r.u()),pc=int(r.u()),bc=int(r.u()),rev=int(r.u()),ed=int(r.u());
+ u32 generator=format==1?1:r.u();
+ if(!r.good||generator<1||generator>4)return false;
+ if(pc<0||pc>MAX_PAGES||bc<0||bc>2000000||i64(pc)*(4+PAGE_SAMPLES*3)+i64(bc)*8+(format==1?28:32)!=n-4)return false;
+ World t;t.build_control=build_control;t.init(s,generator);t.revision=rev;t.edits=ed;t.surface_style=surface_style;
  for(int i=0;i<pc;i++){
   u32 k=r.u();int px,py,pz;decode_page(k,px,py,pz);if(!k||k>u32(NP*NP*17)||px<0||pz<0||py<0||px>=NP||pz>=NP||py>16||t.pages_by_key.get(k)>=0){t.release();return false;}
   Page p;p.key=k;p.d=(i16*)tr_alloc(PAGE_SAMPLES*2);p.mat=(u8*)tr_alloc(PAGE_SAMPLES);if(!p.d||!p.mat){if(p.d)tr_free(p.d);if(p.mat)tr_free(p.mat);t.release();return false;}
@@ -270,12 +325,15 @@ void add_blocks(const World&w,int ox,int oz,int size,Mesh&m,int y_begin,int y_en
 }
 static void mark_y(u32*bits,int lo,int hi){lo=imx(0,lo);hi=imn(255,hi);for(int y=lo;y<=hi;y++)bits[y>>5]|=1u<<(y&31);}
 struct CachedSample {i16 value;u8 material,valid;};
-static bool extract_vertices(const World&w,int ox,int oz,int size,Mesh&m,u32 epoch,int y_begin=0,int y_end=WORLD_Y){
- const int hn=size+2;List<float> heights;heights.resize(hn*hn);
+static bool extract_vertices(const World&w,int ox,int oz,int size,Mesh&m,u32 epoch,int y_begin=0,int y_end=WORLD_Y,const float*cached_heights=nullptr){
+ const int hn=size+2;List<float> heights;
+ if(!cached_heights){heights.resize(hn*hn);
  for(int z=-1;z<=size;z++){
   if(cancelled(w,epoch)){heights.release();return false;}
   for(int x=-1;x<=size;x++)heights[(x+1)+hn*(z+1)]=w.height(float(ox+x),float(oz+z));
  }
+ }
+ const float*height_values=cached_heights?cached_heights:heights.p;
  List<CachedSample> cache;const int plane_size=hn*257;cache.resize(plane_size*2);
  static const int edges[12][2]={{0,1},{2,3},{4,5},{6,7},{0,2},{1,3},{4,6},{5,7},{0,4},{1,5},{2,6},{3,7}};
  for(int z=-1;z<size;z++){
@@ -283,7 +341,7 @@ static bool extract_vertices(const World&w,int ox,int oz,int size,Mesh&m,u32 epo
   zero_bytes(cache.p+((z+1)&1)*plane_size,size_t(plane_size)*sizeof(CachedSample));
   for(int x=-1;x<size;x++){
   int gx=ox+x,gz=oz+z;if(gx<-1||gx>WORLD||gz<-1||gz>WORLD)continue;
-  float h[4]={heights[(x+1)+hn*(z+1)],heights[(x+2)+hn*(z+1)],heights[(x+1)+hn*(z+2)],heights[(x+2)+hn*(z+2)]};
+  float h[4]={height_values[(x+1)+hn*(z+1)],height_values[(x+2)+hn*(z+1)],height_values[(x+1)+hn*(z+2)],height_values[(x+2)+hn*(z+2)]};
   float low=mn(mn(h[0],h[1]),mn(h[2],h[3]))-2,high=mx(mx(h[0],h[1]),mx(h[2],h[3]))+1;
   u32 ybits[8]={};mark_y(ybits,fl(low),fl(high)+1);
   bool side=gx<1||gz<1||gx>=WORLD-1||gz>=WORLD-1;if(side){low=0;mark_y(ybits,0,fl(high)+1);}
@@ -328,7 +386,7 @@ static bool extract_vertices(const World&w,int ox,int oz,int size,Mesh&m,u32 epo
    }
    Vertex v;v.p={gx+p.x,y+p.y,gz+p.z};v.n=gradient(d,p);v.cx=gx;v.cy=y;v.cz=gz;v.mask=signs;
    // Material classification does not affect the field or topology.
-   float best=1e30f;for(int k=0;k<8;k++)if(mats[k]&&ab(d[k])<best){best=ab(d[k]);v.material=float(mats[k]);} // Used only to constrain simplification, NOT as a shader material ID.
+   float best=1e30f;for(int k=0;k<8;k++)if(mats[k]&&mats[k]<5&&ab(d[k])<best){best=ab(d[k]);v.material=float(mats[k]);} // Natural ore IDs are shaded separately from edit materials.
    m.v.push(v);
   }
  }}
@@ -378,15 +436,45 @@ bool build_patch(const World&w,int ox,int oz,int size,int step,Mesh&m,u32 expect
 }
 
 bool build_owned_region(const World&w,int ox,int oz,int size,int step,int y_begin,int y_end,Mesh&m,u32 epoch){
+ double mark=w.profile_mesh?mesh_clock_ms():0;
+ if(w.profile_mesh)zero_bytes(w.mesh_stage_ms,sizeof(w.mesh_stage_ms));
  if(ox<0||oz<0||ox>=2048||oz>=2048||(size!=16&&size!=32&&size!=64)||
     ox%size||oz%size||(step!=1&&step!=2&&step!=4&&step!=8)||
     y_begin<0||y_end>WORLD_Y||y_begin>=y_end||y_begin%32||y_end-y_begin!=32)return false;
- if(cancelled(w,epoch)||!extract_vertices(w,ox,oz,size,m,epoch,y_begin,y_end)){m.release();return false;}
+ const int hn=size+2;
+ if(w.owned_height_x!=ox||w.owned_height_z!=oz||w.owned_height_size!=size||w.owned_height_seed!=w.seed||w.owned_heights.n!=hn*hn){
+  w.owned_height_size=0;
+  w.owned_heights.resize(hn*hn);
+  if(tr_oom)return false;
+  for(int z=-1;z<=size;z++){
+   if(cancelled(w,epoch))return false;
+   for(int x=-1;x<=size;x++)w.owned_heights[(x+1)+hn*(z+1)]=w.height(float(ox+x),float(oz+z));
+  }
+  w.owned_height_x=ox;w.owned_height_z=oz;w.owned_height_seed=w.seed;w.owned_height_size=size;
+ }
+ if(cancelled(w,epoch)||!extract_vertices(w,ox,oz,size,m,epoch,y_begin,y_end,w.owned_heights.p)){m.release();return false;}
  connect_patch(ox,oz,size,m,y_begin,y_end);
+ if(w.profile_mesh){double now=mesh_clock_ms();w.mesh_stage_ms[0]=float(now-mark);mark=now;}
  simplify(w,m,ox,oz,size,step,epoch,true);
+ if(w.profile_mesh){double now=mesh_clock_ms();w.mesh_stage_ms[1]=float(now-mark);mark=now;}
  if(cancelled(w,epoch)||tr_oom){m.release();return false;}
  add_blocks(w,ox,oz,size,m,y_begin,y_end);
+ // Halo representatives with no owned face are inputs, not render vertices.
+ // Do not perform lighting or transfer them to the engine.
+ if(!tr_oom){
+  List<u32> remap;remap.resize(m.v.n);
+  if(tr_oom){remap.release();m.release();return false;}
+  for(int i=0;i<remap.n;i++)remap[i]=0xffffffffu;
+  for(int i=0;i<m.i.n;i++)remap[m.i[i]]=0;
+  List<Vertex> used;
+  for(int i=0;i<m.v.n;i++)if(remap[i]!=0xffffffffu){remap[i]=u32(used.n);used.push(m.v[i]);}
+  if(!tr_oom){for(int i=0;i<m.i.n;i++)m.i[i]=remap[m.i[i]];m.v.release();m.v=used;}
+  else used.release();
+  remap.release();
+ }
+ if(w.profile_mesh){double now=mesh_clock_ms();w.mesh_stage_ms[2]=float(now-mark);mark=now;}
  if(!cancelled(w,epoch)&&!tr_oom)shade_mesh(w,m,epoch);
+ if(w.profile_mesh)w.mesh_stage_ms[3]=float(mesh_clock_ms()-mark);
  if(cancelled(w,epoch)||tr_oom){m.release();return false;}
  return true;
 }
@@ -499,18 +587,28 @@ static bool has_cover_candidates(const World&w,V3 p,float original_height){
  for(int zz=imx(0,cz-1);zz<=imn(63,cz+1);zz++)for(int xx=imx(0,cx-1);xx<=imn(63,cx+1);xx++)if(w.block_columns[xx+64*zz].n)return true;
  return false;
 }
+static float owned_lattice_height(const World&w,int x,int z){
+ int rx=x-w.owned_height_x+1,rz=z-w.owned_height_z+1,n=w.owned_height_size+2;
+ if(w.owned_height_size>0&&w.owned_height_seed==w.seed&&w.owned_heights.n==n*n&&rx>=0&&rz>=0&&rx<n&&rz<n)return w.owned_heights[rx+n*rz];
+ return w.height(float(x),float(z));
+}
 void shade_mesh(const World&w,Mesh&m,u32 expected_epoch){
  const u32 epoch=expected_epoch==0xffffffffu?terrain_build_epoch(&w):expected_epoch;
  if(cancelled(w,epoch))return;
  for(int i=0;i<m.v.n;i++){
   if((i&31)==0&&cancelled(w,epoch))return;
   Vertex&v=m.v[i];float h=w.height(v.p.x,v.p.z);
+  v.ore=w.generator_id>=3&&v.material<5?geological_weight(v.p,h,u32(w.seed)):0;
   v.substrate=eased(.15f,.65f,h-v.p.y);v.blend={};
   if(v.material<5){
    int x=fl(v.p.x),y=fl(v.p.y),z=fl(v.p.z);V3 f={v.p.x-x,v.p.y-y,v.p.z-z};float delta=0,total=0,original[8];V3 influence{};
    for(int k=0;k<8;k++){
-    int sx=x+(k&1),sy=y+((k>>1)&1),sz=z+((k>>2)&1);u8 mat=0;float current=w.sample(sx,sy,sz,&mat);
-    float base=float(quant(w.base({float(sx),float(sy),float(sz)},w.height(float(sx),float(sz)))))/SDF_SCALE;
+    int sx=x+(k&1),sy=y+((k>>1)&1),sz=z+((k>>2)&1);u8 mat=0;
+    float original_sample=w.base({float(sx),float(sy),float(sz)},owned_lattice_height(w,sx,sz));
+    float base=float(quant(original_sample))/SDF_SCALE;
+    float current=original_sample;
+    if(sx<0||sx>WORLD||sz<0||sz>WORLD||sy<0||sy>WORLD_Y)current=SDF_BAND;
+    else {int pi=w.pages_by_key.get(page_key(sx>>4,sy>>4,sz>>4));if(pi>=0){int at=(sx&15)+16*((sz&15)+16*(sy&15));current=float(w.pages[pi].d[at])/SDF_SCALE;mat=w.pages[pi].mat[at];}}
     original[k]=base;
     float weight=(k&1?f.x:1-f.x)*(k&2?f.y:1-f.y)*(k&4?f.z:1-f.z);float difference=current-base;
     delta+=difference*weight;
@@ -645,7 +743,7 @@ void encode_mesh(const Mesh&m,int ox,int oz,int size,int step,Bytes&out){
  // Packet v3: UV carries cached sky/sun transmission; UV2 identifies exact
  // blocks/LOD only. COLOR is continuous material weights + geological exposure.
  for(int i=0;i<m.v.n;i++){out.f(m.v[i].sky);out.f(m.v[i].sun);}
- for(int i=0;i<m.v.n;i++){out.f(m.v[i].material>=5?m.v[i].material:0.f);out.f(float(step));}
+ for(int i=0;i<m.v.n;i++){out.f(m.v[i].material>=5?m.v[i].material:m.v[i].ore);out.f(float(step));}
  for(int i=0;i<m.v.n;i++){out.vec(m.v[i].blend);out.f(m.v[i].substrate);}
  if(m.i.n)out.raw(m.i.p,m.i.n*4);
  for(int i=0;i<face_count;i++)out.vec(m.v[m.i[i]].p);
@@ -676,7 +774,7 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
  }
  else if(cmd==4){w.serialize(out);}
  else if(cmd==5){if(!w.deserialize(data+4,n-4))out.p[8]=1;out.u(w.revision);out.u(w.pages.n);out.u(w.blocks.n);}
- else if(cmd==6){int seed=int(r.u());if(!r.good){out.p[8]=1;return;}BuildControl *control=w.build_control;w.release();w=World{};w.build_control=control;w.init(seed);}
+ else if(cmd==6){int seed=int(r.u());u32 generator=n==12?r.u():1;if(!r.good||(n!=8&&n!=12)||generator<1||generator>4){out.p[8]=1;return;}BuildControl *control=w.build_control;w.release();w=World{};w.build_control=control;w.init(seed,generator);}
  else if(cmd==7){V3 p=r.vec();if(!r.good||!(ab(p.x)<=10000&&ab(p.y)<=10000&&ab(p.z)<=10000)){out.p[8]=1;return;}out.f(w.height(p.x,p.z));out.f(w.sample(fl(p.x),fl(p.y),fl(p.z)));}
  else if(cmd==8){ // Deterministic construction proof; not a replay list.
   int bx=1472,bz=1440,by=int(w.height(float(bx),float(bz)))+1;
@@ -756,7 +854,7 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
  }
  else if(cmd==21){if(n!=4){out.p[8]=1;return;}geometry_cache_stats(w,out);}
  else if(cmd==22){u32 budget=r.u();if(!r.good||n!=8||!configure_geometry_cache(w,budget)){out.p[8]=1;return;}}
- else if(cmd==23){
+ else if(cmd==23||cmd==24){
   // Opt-in density interaction query. The typed bridge serializes world access.
   // Request: from, to, max_cells, expected build epoch. No implicit retry.
   V3 from=r.vec(),to=r.vec();u32 budget=r.u(),epoch=r.u();
@@ -773,6 +871,27 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
   // fraction, position. The latter two are meaningful only for a hit.
   out.u(w.revision);out.u(hit.status==RayStatus::hit?0:(hit.status==RayStatus::miss?1:2));
   out.u(u32(hit.cells));out.f(float(hit.fraction));out.vec(hit.position);
+  if(cmd==24)out.vec(hit.normal);
+ }
+ else if(cmd==25){
+  if(n!=4){out.p[8]=1;return;}
+  out.u(w.generator_id);out.u(u32(w.seed));out.u(w.caves.n);
+  for(int i=0;i<w.caves.n;i++){out.vec(w.caves[i].a);out.vec(w.caves[i].b);out.f(w.caves[i].r);}
+ }
+ else if(cmd==26){
+  V3 point=r.vec();if(!r.good||n!=16||!(point.x>=0&&point.x<=WORLD&&point.z>=0&&point.z<=WORLD&&point.y>=0&&point.y<WORLD_Y)){out.p[8]=1;return;}
+  u8 material=0;float density=w.sample(fl(point.x),fl(point.y),fl(point.z),&material);
+  out.u(material);out.f(density);out.f(w.generator_id>=3?geological_weight(point,w.height(point.x,point.z),u32(w.seed)):0);
+ }
+ else if(cmd==27){
+  if(n!=4){out.p[8]=1;return;}
+  out.u(w.basin_count);
+  for(int i=0;i<w.basin_count;i++){
+   const auto &b=w.basins[i];
+   out.vec({b.x-28.f,float(fl(b.level))-12.f,b.z-28.f});
+   out.u(56);out.u(16);out.u(56);out.f(1.f);out.f(b.level);
+   out.vec({b.x,b.level-4.f,b.z});
+  }
  }
  else out.p[8]=1;
  if(tr_oom)out.p[8]=3;

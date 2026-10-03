@@ -20,7 +20,10 @@ class NativeLakeVolume : public godot::RefCounted {
     int status_ = -1;
     std::unique_ptr<float[]> density_;
     std::unique_ptr<uint8_t[]> wet_;
+    std::unique_ptr<uint8_t[]> column_top_;
     std::unique_ptr<uint32_t[]> queue_;
+    godot::Array smooth_surface_;
+    godot::Array build_smooth_surface() const;
     uint32_t index(int x, int y, int z) const;
     uint32_t node(int x, int y, int z) const;
     bool eligible(int x, int y, int z) const;
@@ -33,8 +36,10 @@ public:
     int bake_density(const godot::PackedFloat32Array &density);
     int sample_terrain(godot::Object *core, int64_t budget, int64_t revision, int64_t epoch);
     bool contains(const godot::Vector3 &point) const;
+    bool submerges_root(const godot::Vector3 &point) const;
     double depth_at(const godot::Vector3 &point) const;
     godot::Array surface_arrays() const;
+    godot::Array smooth_surface_arrays() const { return smooth_surface_.duplicate(); }
     godot::Dictionary statistics() const;
     godot::AABB bounds() const;
 };
