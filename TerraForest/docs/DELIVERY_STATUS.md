@@ -1,3 +1,13 @@
+## Dialog focus presentation hitch - 2026-10-03
+
+The presentation policy now sets VSync only when the reported mode is not already enabled. Previously, every window focus return reapplied the mode, including returns from embedded survey dialogs. The fix preserves enabled VSync and the requested fullscreen resolution.
+
+A short isolated dialog test compares four close/reopen cycles per policy in one 1920x1080 fullscreen Forward+ process capped at 60 FPS. Unconditional reapplication produced four close frames of 95.478, 98.850, 99.824 and 95.821 ms. The conditional policy had a maximum of 17.562 ms across 24 sampled intervals; both phases observed four focus returns and final VSync was enabled. This reproduces the specific presentation hitch without terrain or vegetation workloads. It does not prove physical display tearing behavior or sustained gameplay throughput.
+
+The world test now separates dialog closing/reopening, camera relocation and placement requests across draw boundaries. The probe records those actions, process/pre-draw/post-draw intervals, actual embedded-dialog state and available pipeline compilation counters. Before the fix, the isolated close frame was 112.366 ms, including 91.401 ms between pre-draw and post-draw with no compilation counter increase. After the fix its interval was 18.764 ms, including 2.006 ms in drawing. All 27 editor checks passed. Other CPU-side delays remain: the full after-capture still reached 104.308 ms, with only 1.743 ms in drawing. No broad stutter-resolution claim is warranted. The exploratory embedding toggle was removed because the runtime already embeds dialogs.
+
+Evidence: docs/evidence/dialog_presentation.
+
 ## Native vegetation selection - 2026-10-03
 
 The optional vegetation_runtime extension now performs neighborhood selection, visual/shadow decisions and camera-travel event scheduling in C++. The original scripted selector remains available with --scripted-vegetation-selection. The implementation uses existing scene-thread dictionaries; transition completion and instance flush remain scripted. Build-all and addon packaging include the new extension.

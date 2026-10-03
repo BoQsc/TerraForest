@@ -14,7 +14,9 @@ static func apply(window: Window) -> void:
 		restore_vsync()
 
 static func restore_vsync() -> void:
-	if DisplayServer.get_name() != "headless":
+	# Focus returns from embedded dialogs too. Reapplying an unchanged mode can
+	# stall presentation; only request a mode change when synchronization is off.
+	if DisplayServer.get_name() != "headless" and DisplayServer.window_get_vsync_mode() != DisplayServer.VSYNC_ENABLED:
 		DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_ENABLED)
 
 static func measurement(window: Window) -> Dictionary:

@@ -73,18 +73,22 @@ func run() -> void:
 	check(game.site_preparation.plan.paving_segments>0 and game.site_preparation.plan.segments[-1].material==4,"editor preparation includes asphalt after the stone foundation")
 	check(game.terrain.density_revision==revision+game.site_preparation.completed and game.structures.blocks.stats().cells==0,"preparation changes terrain only by its accepted edit count")
 	var prepared_target: Vector3i=game.site_preparation.plan.target
-	game.construction_palette.survey_dialog.hide()
-	game.construction_palette.preparation_status_requested.emit()
+	frame_probe.measure_action("hide completed dialog",func(): game.construction_palette.survey_dialog.hide())
+	await RenderingServer.frame_post_draw
+	frame_probe.measure_action("reopen completed dialog",func(): game.construction_palette.preparation_status_requested.emit())
+	await RenderingServer.frame_post_draw
 	check(game.construction_palette.place_prepared_button.visible,"completed site can be reopened for exact placement")
 	game.camera.global_position+=Vector3(20,0,0)
-	game.construction_palette.survey_dialog.custom_action.emit("place_prepared")
+	frame_probe._stage("test action: camera relocation",0.0)
+	await RenderingServer.frame_post_draw
+	frame_probe.measure_action("request prepared placement",func(): game.construction_palette.survey_dialog.custom_action.emit("place_prepared"))
 	frame_probe.phase="placement validation"
 	check(not game._foundation_placement.is_empty() and game._foundation_placement.target==prepared_target,"dialog placement captures prepared target despite changed aim")
 	await process_frame
-	game.construction_palette.survey_dialog.canceled.emit()
+	frame_probe.measure_action("cancel validation",func(): game.construction_palette.survey_dialog.canceled.emit())
 	check(game._foundation_placement.is_empty() and game.structures.blocks.stats().cells==0,"closing dialog cancels pending validation without inserting blocks")
-	game.construction_palette.preparation_status_requested.emit()
-	game.construction_palette.survey_dialog.custom_action.emit("place_prepared")
+	frame_probe.measure_action("reopen cancelled dialog",func(): game.construction_palette.preparation_status_requested.emit())
+	frame_probe.measure_action("retry prepared placement",func(): game.construction_palette.survey_dialog.custom_action.emit("place_prepared"))
 	deadline=Time.get_ticks_msec()+12000
 	while not game._foundation_placement.is_empty() and Time.get_ticks_msec()<deadline: await process_frame
 	check(game.foundation_check.status=="supported" and game.structures.blocks.stats().cells==asset.get_records().size()/4,"prepared site places exactly one prefab after full validation")
