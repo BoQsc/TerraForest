@@ -46,15 +46,28 @@ void NativeEntityStore::index_remove(uint32_t index) {
     slot.previous=slot.next=UINT32_MAX;
 }
 
+void NativeEntityStore::update_moving(uint32_t index) {
+    Slot &slot=slots_[index];
+    const bool moving=slot.active&&slot.velocity!=Vector3();
+    if(moving&&slot.moving_index==UINT32_MAX) {
+        slot.moving_index=moving_count_;moving_[moving_count_++]=index;
+    } else if(!moving&&slot.moving_index!=UINT32_MAX) {
+        uint32_t position=slot.moving_index,last=moving_[--moving_count_];
+        moving_[position]=last;slots_[last].moving_index=position;
+        slot.moving_index=UINT32_MAX;
+    }
+}
 bool NativeEntityStore::configure(int64_t capacity) {
     if (capacity < 1 || capacity > 262144 || count_ != 0) return false;
     // Commit only after every allocation succeeds; an allocation failure retains the old pool.
     std::unique_ptr<Slot[]> slots(new (std::nothrow) Slot[size_t(capacity)]);
     std::unique_ptr<uint32_t[]> dense(new (std::nothrow) uint32_t[size_t(capacity)]);
     std::unique_ptr<uint32_t[]> free(new (std::nothrow) uint32_t[size_t(capacity)]);
-    if (!slots || !dense || !free) return false;
+    std::unique_ptr<uint32_t[]> moving(new (std::nothrow) uint32_t[size_t(capacity)]);
+    if (!slots || !dense || !free || !moving) return false;
     for (uint32_t i = 0; i < uint32_t(capacity); ++i) free[i] = uint32_t(capacity) - i - 1;
     slots_ = std::move(slots); dense_ = std::move(dense); free_ = std::move(free);
+    moving_=std::move(moving);moving_count_=last_step_visited_=0;
     capacity_ = uint32_t(capacity); free_count_ = capacity_; ticks_ = 0;
     cell_heads_.clear();
     identity_slots_.clear();
@@ -74,6 +87,7 @@ int64_t NativeEntityStore::spawn_unchecked(const Vector3 &position, const Vector
     Slot &slot = slots_[index];
     slot.position = position; slot.velocity = velocity; slot.generation = next_generation_++;
     slot.dense_index = count_; slot.active = true; dense_[count_++] = index;
+    update_moving(index);
     slot.persistent_id = persistent_id ? persistent_id : next_persistent_id_++;
     identity_slots_[slot.persistent_id] = index;
     index_insert(index);
@@ -109,7 +123,7 @@ bool NativeEntityStore::despawn(int64_t id) {
     identity_slots_.erase(slot->persistent_id);
     uint32_t moved = dense_[--count_];
     dense_[dense_index] = moved; slots_[moved].dense_index = dense_index;
-    slot->active = false; free_[free_count_++] = index;
+    slot->active = false;update_moving(index);free_[free_count_++] = index;
     return true;
 }
 bool NativeEntityStore::contains(int64_t id) const { return resolve(id) != nullptr; }
@@ -127,18 +141,19 @@ Vector3 NativeEntityStore::get_position(int64_t id) const { auto *slot = resolve
 bool NativeEntityStore::set_velocity(int64_t id, const Vector3 &velocity) {
     Slot *slot = resolve(id);
     if (!slot || !velocity.is_finite()) return false;
-    slot->velocity = velocity; return true;
+    slot->velocity = velocity;update_moving(uint32_t(uint64_t(id)));return true;
 }
 bool NativeEntityStore::step(double seconds) {
+    last_step_visited_=0;
     if (!std::isfinite(seconds) || seconds <= 0.0 || seconds > 0.1) return false;
     const real_t dt = real_t(seconds);
     // Reject the entire tick before mutation if caller-supplied values would overflow.
-    for (uint32_t i = 0; i < count_; ++i) {
-        const Slot &slot = slots_[dense_[i]];
+    for (uint32_t i = 0; i < moving_count_; ++i) {
+        const Slot &slot = slots_[moving_[i]];++last_step_visited_;
         if (!(slot.position + slot.velocity * dt).is_finite()) return false;
     }
-    for (uint32_t i = 0; i < count_; ++i) {
-        uint32_t index=dense_[i];Slot &slot=slots_[index];Vector3 next=slot.position+slot.velocity*dt;
+    for (uint32_t i = 0; i < moving_count_; ++i) {
+        uint32_t index=moving_[i];Slot &slot=slots_[index];Vector3 next=slot.position+slot.velocity*dt;
         if(!(cell_for(slot.position)==cell_for(next))){index_remove(index);slot.position=next;index_insert(index);}
         else slot.position=next;
     }
@@ -159,7 +174,8 @@ PackedFloat32Array NativeEntityStore::multimesh_transforms() const {
 Dictionary NativeEntityStore::statistics() const {
     Dictionary result;
     result["capacity"] = capacity_; result["active"] = count_; result["free"] = free_count_;
-    result["ticks"] = int64_t(ticks_); result["pool_bytes"] = int64_t(capacity_) * int64_t(sizeof(Slot) + 2 * sizeof(uint32_t));
+    result["ticks"] = int64_t(ticks_); result["pool_bytes"] = int64_t(capacity_) * int64_t(sizeof(Slot) + 3 * sizeof(uint32_t));
+    result["moving"]=moving_count_;result["last_step_visited"]=last_step_visited_;
     result["native"] = true; result["collision_simulation"] = false;
     result["spatial_cells"]=int64_t(cell_heads_.size());result["spatial_cell_size"]=32;
     return result;

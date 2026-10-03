@@ -81,6 +81,7 @@ bool NativeEntityStore::restore_storage_snapshot(const PackedByteArray &data) {
                                 Vector3(read_float(row+12),read_float(row+16),read_float(row+20)),identity);
     }
     slots_.swap(staged->slots_);dense_.swap(staged->dense_);free_.swap(staged->free_);
+    moving_.swap(staged->moving_);moving_count_=staged->moving_count_;last_step_visited_=0;
     cell_heads_.swap(staged->cell_heads_);
     identity_slots_.swap(staged->identity_slots_);
     next_persistent_id_=staged->next_persistent_id_;

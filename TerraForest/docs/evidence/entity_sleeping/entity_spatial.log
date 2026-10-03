@@ -1,0 +1,26 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS moving entities cross positive and negative cell boundaries
+PASS indexed sphere agrees with exhaustive oracle 0
+PASS indexed sphere agrees with exhaustive oracle 1
+PASS indexed sphere agrees with exhaustive oracle 2
+PASS indexed sphere agrees with exhaustive oracle 3
+PASS indexed sphere agrees with exhaustive oracle 4
+PASS indexed sphere agrees with exhaustive oracle 5
+PASS indexed sphere agrees with exhaustive oracle 6
+PASS indexed sphere agrees with exhaustive oracle 7
+PASS indexed sphere agrees with exhaustive oracle 8
+PASS indexed sphere agrees with exhaustive oracle 9
+PASS indexed sphere agrees with exhaustive oracle 10
+PASS indexed sphere agrees with exhaustive oracle 11
+PASS slot reuse replaces generation-checked query handle
+PASS nonfinite queries rejected
+PASS overlarge cell footprint rejected before traversal
+PASS invalid output and work budgets rejected
+PASS local query visits at most eight candidates among 1024 entities
+PASS local query visits at most eight candidates among 100000 entities
+PASS dense neighborhood reports result truncation
+PASS dense neighborhood obeys candidate budget and reports incomplete
+PASS despawn removes empty spatial cells
+PASS empty reconfiguration retains no spatial entries
+SPATIAL_QUERY [{"cells":8,"population":1024,"query_us":8,"visited":4},{"cells":8,"population":100000,"query_us":27,"visited":4}]

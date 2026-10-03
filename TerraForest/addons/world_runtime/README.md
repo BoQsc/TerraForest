@@ -17,6 +17,15 @@ var transforms = store.multimesh_transforms()
 
 `step(seconds)` accepts finite durations in (0, 0.1]. It integrates constant velocity and maintains a 32-unit spatial grid. Slot links are preallocated; entering a previously empty spatial cell can allocate a hash-map entry. This is **kinematics**, not a collision/physics/vehicle solver. Nonfinite inputs and overflow-producing ticks are rejected before mutation. Handles do not alias recycled slots or reconfigured pools; after the positive generation namespace is exhausted, spawning fails instead of wrapping.
 
+Ticks iterate a preallocated dense set of nonzero-velocity entities. Exact zero
+velocity removes an entity from that set; changing velocity wakes it in O(1).
+Stationary entities remain in spatial queries, rendering and saves. Restoring a
+snapshot reconstructs moving membership from velocity without changing the save
+format. `moving` reports current moving membership; `last_step_visited` reports
+the number examined in the most recent tick's overflow preflight (zero for an
+invalid duration). Successful ticks perform a second pass over those movers.
+This is not contact-based physics sleeping or distance-based simulation LOD.
+
 `query_sphere(center, radius, result_limit=256, candidate_budget=4096)` returns
 `ok`, `complete`, generation-checked `ids`, `visited` candidate count and
 `cells_visited`. Queries support finite centers within ±10,000,000 per axis,

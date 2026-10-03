@@ -30,12 +30,16 @@ class NativeEntityStore : public godot::RefCounted {
         uint64_t persistent_id = 0;
         uint32_t generation = 0;
         uint32_t dense_index = 0;
+        uint32_t moving_index = UINT32_MAX;
         bool active = false;
         uint32_t previous=UINT32_MAX,next=UINT32_MAX;
     };
     std::unique_ptr<Slot[]> slots_;
     std::unique_ptr<uint32_t[]> dense_;
     std::unique_ptr<uint32_t[]> free_;
+    std::unique_ptr<uint32_t[]> moving_;
+    uint32_t moving_count_ = 0, last_step_visited_ = 0;
+    void update_moving(uint32_t index);
     uint32_t capacity_ = 0, count_ = 0, free_count_ = 0;
     uint32_t next_generation_ = 1;
     uint64_t ticks_ = 0;

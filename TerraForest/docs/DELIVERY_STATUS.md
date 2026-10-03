@@ -2,6 +2,16 @@
 
 ## Current delivery priority
 
+Native entity ticks now iterate only a preallocated dense list of nonzero-velocity
+entities instead of scanning the entire live population twice. Spawn, velocity
+changes, despawn and restore maintain membership; spatial queries and snapshots
+still include stationary entities. The 100,000-stationary fixture visits zero
+slots per tick; a mixed 100,003 population visits its three movers. Thirteen new
+lifecycle/scaling/overflow checks and 54 spatial/storage/identity regressions
+pass. Both world-runtime binaries rebuilt. Evidence: `evidence/entity_sleeping/`.
+This reduces CPU kinematic work only; physics contacts, AI, animations, entity
+paging, rendering cost and multiplayer simulation remain separate requirements.
+
 Road collision now has a targeted capsule traversal check. A native graded cut
 through a solid hill is meshed across adjacent 16 m regions; its native face
 arrays drive a Godot concave collider and the existing player capsule/movement.
