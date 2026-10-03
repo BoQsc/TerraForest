@@ -19,6 +19,7 @@ protected:
 public:
     bool configure(const PackedInt32Array &records);
     bool compose(const Array &sources,const PackedInt32Array &placements);
+    bool compose_frontage(const Array &sources,int64_t lots_per_side,int64_t street_width,int64_t gap,int64_t seed);
     void set_records(const PackedInt32Array &records);
     PackedInt32Array get_records() const;
     int get_cell_count() const { return int(cells.size()); }

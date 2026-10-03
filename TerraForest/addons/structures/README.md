@@ -315,3 +315,21 @@ The addon supplies editable block buildings, reusable block prefab assets, bound
 ## Authored region storage
 
 The native block world supports explicit 64-cell region packets with conditional capture/unload/reload, missing-region readiness and save guards. See [Block region transfers](../../docs/BLOCK_REGION_TRANSFERS.md) for the API and format. The independent `NativeBlockRegionStore` adds conditional batch disk publication, explicit backup recovery and bounded garbage collection; see [Block region catalog](../../docs/BLOCK_REGION_CATALOG.md). Its synchronous C++ API can run on a caller-owned I/O worker. [NativeBlockRegionIO](../../docs/BLOCK_REGION_IO.md) supplies a persistent native worker with bounded request and completion reservations, FIFO tickets and drain-on-stop ownership. Automatic travel paging and catalog-aware compound saves are not enabled in the demo.
+# Street-frontage prefab composition
+
+`NativeBlockPrefab.compose_frontage(sources, lots_per_side, street_width, gap, seed)`
+creates a deterministic pair of building rows using the existing prefab format.
+Source building fronts must face local +Z. The opposite row rotates by two
+quarter turns; each source's lower bound is aligned to ground Y=0, including
+assets with nonzero or negative local origins. Lots progress along +X, using the
+larger footprint of each facing pair plus the requested gap. The street is
+centered on Z=0 and remains empty, with an additional gap on each side.
+
+Limits: 1–64 lots per side, 1–256 nonempty sources, even street width 4–64,
+gap 1–32, unsigned 32-bit seed, and the existing 262,144-cell / ±4095-coordinate
+prefab limits. Version-1 building choice uses a fixed ordinal hash, independent
+of engine RNG state. Invalid or oversized compositions preserve the previous
+prefab. The result can use normal prefab placement, conflict checks and block
+world persistence. It does not stamp asphalt, grade terrain, validate support,
+generate navigation or provide a settlement editor. Those integration steps
+remain required before treating this as a complete town generator.

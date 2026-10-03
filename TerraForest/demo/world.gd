@@ -197,6 +197,12 @@ func _setup_prefabs() -> void:
 		if asset != null and asset.get_cell_count()>0:
 			structure_prefabs.append(asset)
 			asset.changed.connect(_invalidate_prefab_preview)
+	var frontage=ClassDB.instantiate("NativeBlockPrefab")
+	var cottage: Resource=load("res://addons/structures/prefabs/brick_cottage.tres")
+	if frontage.compose_frontage([cottage],2,8,3,1703):
+		frontage.resource_name="Street frontage · 4 cottages (ungraded)"
+		structure_prefabs.append(frontage)
+		frontage.changed.connect(_invalidate_prefab_preview)
 	structures.blocks.changed.connect(_invalidate_prefab_preview)
 	for asset: Resource in prefab_library.assets:
 		structure_prefabs.append(asset)

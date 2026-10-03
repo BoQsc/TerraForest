@@ -1,0 +1,19 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS four rotated modules compose in one native operation
+PASS composed resource uses ordinary world placement
+PASS shape rotation and material preserved 0
+PASS shape rotation and material preserved 1
+PASS shape rotation and material preserved 2
+PASS shape rotation and material preserved 3
+PASS overlapping modules rejected without changing asset
+PASS invalid source and rotation rejected
+PASS coordinate overflow rejected before mutation
+PASS self-source composition is staged safely
+PASS composition preserves source assets
+PASS missing assets and malformed placement rows rejected
+PASS sixteen authored tower floors compose
+PASS large assembly preserves every floor without per-module nodes
+PASS assembly cell limit rejects before replacing existing resource
+PASS composed prefab saves as reusable resource
+PASS composed prefab reloads exact geometry

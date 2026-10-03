@@ -1,0 +1,13 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS asymmetric source footprints configured
+PASS 128 lots compose through native prefab pipeline
+PASS street setback and common ground plane preserved for offset sources
+PASS same seed reproduces exact cell records
+PASS different seed changes building choices
+PASS invalid layout requests preserve previous prefab
+PASS generated frontage places in ordinary block world
+PASS generated blocks survive existing world snapshot format
+PASS occupied placement rejects atomically
+PASS sixteen authored cottages compose without per-building nodes
+FRONTAGE_COTTAGES { "cells": 7488, "composition_us": 4776, "bounds": [P: (0.0, 0.0, -20.0), S: (93.0, 11.0, 40.0)] }

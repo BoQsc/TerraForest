@@ -8,6 +8,7 @@ namespace terraforest {
 void NativeBlockPrefab::_bind_methods() {
     ClassDB::bind_method(D_METHOD("configure","records"),&NativeBlockPrefab::configure);
     ClassDB::bind_method(D_METHOD("compose","sources","placements"),&NativeBlockPrefab::compose);
+    ClassDB::bind_method(D_METHOD("compose_frontage","sources","lots_per_side","street_width","gap","seed"),&NativeBlockPrefab::compose_frontage);
     ClassDB::bind_method(D_METHOD("set_records","records"),&NativeBlockPrefab::set_records);
     ClassDB::bind_method(D_METHOD("get_records"),&NativeBlockPrefab::get_records);
     ClassDB::bind_method(D_METHOD("get_cell_count"),&NativeBlockPrefab::get_cell_count);
@@ -67,6 +68,36 @@ bool NativeBlockPrefab::compose(const Array &sources,const PackedInt32Array &pla
     // configure rejects any duplicated cells and commits only after validation;
     // this remains safe when this resource also occurs among the sources.
     return configure(records);
+}
+bool NativeBlockPrefab::compose_frontage(const Array &sources,int64_t lots,int64_t street,int64_t gap,int64_t seed) {
+    // v1: paired lots on a straight street; authored prefab fronts face +Z.
+    // Derive each choice from its ordinal, not an advancing global RNG.
+    if(sources.is_empty()||sources.size()>256||lots<1||lots>64||street<4||street>64||street%2||gap<1||gap>32||seed<0||seed>0xffffffffLL)return false;
+    std::vector<Ref<NativeBlockPrefab>> assets;
+    for(int i=0;i<sources.size();++i){
+        if(sources[i].get_type()!=Variant::OBJECT)return false;
+        Ref<NativeBlockPrefab> asset=sources[i];
+        if(asset.is_null()||asset->cells.empty())return false;
+        assets.push_back(asset);
+    }
+    PackedInt32Array placements;placements.resize(lots*2*5);
+    int x=0,at=0;int64_t total=0;
+    for(int lot=0;lot<lots;++lot){
+        int width=0;
+        for(int side=0;side<2;++side){
+            uint32_t h=uint32_t(seed)^uint32_t(lot*2+side+1)*0x9e3779b9u;
+            h^=h>>16;h*=0x85ebca6bu;h^=h>>13;h*=0xc2b2ae35u;h^=h>>16;
+            int index=int(h%assets.size()),turns=side*2;
+            total+=assets[index]->cells.size();if(total>262144)return false;
+            AABB b=assets[index]->placement_bounds(Vector3i(),turns);
+            int z=side==0?-int(street/2+gap)-int(b.get_end().z):int(street/2+gap)-int(b.position.z);
+            placements.set(at++,index);placements.set(at++,x-int(b.position.x));
+            placements.set(at++,-int(b.position.y));placements.set(at++,z);placements.set(at++,turns);
+            width=std::max(width,int(b.size.x));
+        }
+        x+=width+int(gap);
+    }
+    return compose(sources,placements); // Existing transactional cell validation.
 }
 PackedInt32Array NativeBlockPrefab::get_records() const {
     PackedInt32Array out;out.resize(cells.size()*4);int i=0;
