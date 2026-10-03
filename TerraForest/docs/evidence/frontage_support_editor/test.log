@@ -1,0 +1,23 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+[TerrainRewrite] New world
+[TerrainRewrite] New world
+[terrain-hitch] LOD coverage 97.66 ms at 12899
+[terrain-hitch] LOD schedule/cut/evict 104.15 ms at 12905
+[terrain-hitch] LOD coverage 76.34 ms at 16330
+[terrain-hitch] LOD schedule/cut/evict 180.26 ms at 16433
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+PASS world starts
+PASS fixture requires multiple worker batches
+[TerrainRewrite] Checking foundation support…
+[TerrainRewrite] Unsupported foundation; grade terrain first
+PASS unsupported frontage rejected without placing cells
+PASS foundation grading submitted
+PASS foundation grading submitted
+[TerrainRewrite] Checking foundation support…
+[TerrainRewrite] Placement cancelled
+PASS rotation change cancels deferred placement
+[TerrainRewrite] Checking foundation support…
+[TerrainRewrite] Six cottage test placed · F5 saves world
+PASS supported six-cottage frontage commits after multiple batches
+[TerrainRewrite] Temporary test world: save skipped

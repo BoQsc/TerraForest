@@ -353,6 +353,12 @@ base heights. Rotation matches integer block placement. Invalid rotation or
 out-of-range origin/band returns an empty array. Empty is not proof of support.
 
 These are screening probes, not structural analysis or full contact coverage.
-The world editor does not yet reject unsupported prefabs automatically. Terrain
+The world editor checks frontage-tagged prefabs before placement, in bounded worker batches. Ordinary modular prefabs are not subject to this ground-only rule. Terrain
 queries must use a consistent revision and placement must revalidate before
 commit; a result from older terrain cannot authorize a later placement.
+
+Frontage placement uses the normalized local base Y=0. Amber preview bounds
+indicate that ground support is checked on placement. Unsupported sites need
+grading first. Changing selection or rotation cancels pending placement;
+terrain changes require a fresh check. No terrain-interior clearance or
+structural stability guarantee follows from foundation centre probes.

@@ -41,6 +41,8 @@ var telemetry := Label.new()
 var _telemetry_time: float = 0.0
 var _lake_notice: String = ""
 var _lake_notice_until: int = 0
+var foundation_check=preload("res://addons/structures/foundation_check.gd").new()
+var _foundation_placement: Dictionary={}
 
 func _additional_motion_ready(delta: float) -> bool:
 	if structures.blocks == null:
@@ -90,6 +92,7 @@ func _ready() -> void:
 		get_tree().quit(2)
 		return
 	_setup_prefabs()
+	terrain.density_batch_ready.connect(foundation_check.receive)
 	structures.blocks.configure_history(16*1024*1024,128)
 	structures.blocks.configure_streaming(true,384,256,64*1024*1024,32*1024*1024)
 	structures.model("architecture/metal_beam/v1").configure_collision(beam.get_aabb(),64,512,8)
@@ -202,6 +205,7 @@ func _setup_prefabs() -> void:
 	var cottage: Resource=load("res://addons/structures/prefabs/brick_cottage.tres")
 	if frontage.compose_frontage([cottage],2,8,3,1703):
 		frontage.resource_name="Street frontage · 4 cottages (ungraded)"
+		frontage.set_meta("frontage_version",1)
 		structure_prefabs.append(frontage)
 		frontage.changed.connect(_invalidate_prefab_preview)
 	structures.blocks.changed.connect(_invalidate_prefab_preview)
@@ -238,6 +242,7 @@ func _prefab_player_clear(bounds: AABB) -> bool:
 
 func _invalidate_prefab_preview() -> void:
 	_prefab_preview_signature.clear()
+	if not _foundation_placement.is_empty(): foundation_check.status="Layout changed; place again"
 	_prefab_preview_timer=0.0
 
 func _update_prefab_preview(delta: float) -> void:
@@ -282,6 +287,8 @@ func _update_prefab_preview(delta: float) -> void:
 	prefab_preview.position=bounds.position
 	prefab_preview.scale=bounds.size
 	_prefab_preview_material.albedo_color=Color("66f2b3") if _prefab_preview_clear and _prefab_player_clear(bounds) else Color("ff705f")
+	if asset.has_meta("frontage_version") and _prefab_preview_clear and _prefab_player_clear(bounds):
+		_prefab_preview_material.albedo_color=Color("edc66a") # Support is checked on placement.
 	prefab_preview.show()
 
 func _message(text: String) -> void:
@@ -702,6 +709,9 @@ func _edit_structure(remove: bool) -> void:
 		if not _prefab_allowed(asset,target):
 			_show_lake_notice("Prefab blocked · clear existing blocks and move outside its bounds")
 			return
+		if asset.has_meta("frontage_version"):
+			_begin_frontage_placement(asset,target)
+			return
 		if structures.blocks.place_prefab(asset,target,structure_rotation):
 			_show_lake_notice("%s placed · F5 saves world" % asset.resource_name)
 		_prefab_preview_timer=0.0
@@ -713,6 +723,30 @@ func _edit_structure(remove: bool) -> void:
 	if structures.blocks.set_cells(PackedInt32Array([target.x,target.y,target.z,word])):
 		_show_lake_notice("Block removed · F5 saves world" if remove else "Block placed · F5 saves world")
 
+func _begin_frontage_placement(asset: Resource,target: Vector3i) -> void:
+	if not _foundation_placement.is_empty(): _show_lake_notice("Checking foundation support…");return
+	if foundation_check.begin(terrain,asset,target,structure_rotation):
+		_foundation_placement={"asset":asset,"target":target,"rotation":structure_rotation,"index":structure_prefab_index}
+		_show_lake_notice("Checking foundation support…")
+	else: _show_lake_notice("Foundation check unavailable; wait and place again")
+
+func _advance_frontage_placement() -> void:
+	if _foundation_placement.is_empty(): return
+	var request:=_foundation_placement
+	if loading_active or not app_focused or player_hud.inventory_open or world_vehicle.driving or not structure_mode or model_tool.active or request.index!=structure_prefab_index or request.rotation!=structure_rotation or structure_prefabs[structure_prefab_index]!=request.asset:
+		foundation_check.status="Placement cancelled"
+	foundation_check.tick(terrain)
+	if foundation_check.status=="checking": return
+	_foundation_placement={}
+	if foundation_check.status!="supported": _show_lake_notice(foundation_check.status);return
+	if terrain.pending_edit or terrain.foreground_brush or not terrain.world_ready or terrain.epoch!=foundation_check.epoch or terrain.density_revision!=foundation_check.revision or not _prefab_allowed(request.asset,request.target):
+		_show_lake_notice("Placement changed; place again");return
+	if world_vehicle.overlaps_edit(request.asset.placement_bounds(request.target,request.rotation)):
+		_show_lake_notice("Move the vehicle clear before placing frontage");return
+	if structures.blocks.place_prefab(request.asset,request.target,request.rotation):
+		_show_lake_notice("%s placed · F5 saves world" % request.asset.resource_name)
+	_prefab_preview_timer=0.0
+
 func _physics_process(delta: float) -> void:
 	if world_vehicle.driving:
 		return # The bound vehicle owns terrain focus and physics while occupied.
@@ -720,6 +754,7 @@ func _physics_process(delta: float) -> void:
 
 func _process(delta: float) -> void:
 	var frame_begin:=Time.get_ticks_usec()
+	_advance_frontage_placement()
 	world_vehicle.update(self,delta)
 	if world_vehicle.driving!=_vehicle_ui_active:
 		_vehicle_ui_active=world_vehicle.driving
