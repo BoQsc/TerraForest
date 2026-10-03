@@ -2,10 +2,16 @@
 #include "suspension.hpp"
 #include <godot_cpp/core/class_db.hpp>
 #include <algorithm>
+#include <cmath>
 using namespace godot;
 namespace terraforest {
 void NativeVehicleSuspension::_bind_methods(){
+    ClassDB::bind_method(D_METHOD("configure_gravity","acceleration"),&NativeVehicleSuspension::configure_gravity);
     ClassDB::bind_method(D_METHOD("sample_and_apply","body","rays"),&NativeVehicleSuspension::sample_and_apply);
+}
+bool NativeVehicleSuspension::configure_gravity(double acceleration){
+    if(!std::isfinite(acceleration)||acceleration<=0||acceleration>100)return false;
+    spring_scale=acceleration/9.8;damping_scale=std::sqrt(spring_scale);return true;
 }
 PackedFloat32Array NativeVehicleSuspension::sample_and_apply(RigidBody3D *body,const TypedArray<RayCast3D> &rays) const {
     PackedFloat32Array result;
@@ -26,7 +32,7 @@ PackedFloat32Array NativeVehicleSuspension::sample_and_apply(RigidBody3D *body,c
             double compression=.30-length;loaded=compression>.006;
             Vector3 velocity=body->get_linear_velocity()+body->get_angular_velocity().cross(point-center);
             double normal_speed=velocity.dot(normal);
-            force=std::clamp(std::max(compression,0.0)*45000-normal_speed*(normal_speed<0?6200:7600),0.0,12000.0);
+            force=std::clamp(std::max(compression,0.0)*45000*spring_scale-normal_speed*(normal_speed<0?6200:7600)*damping_scale,0.0,12000.0*spring_scale);
             body->apply_force(normal*real_t(force),point-body->get_global_position());
         }
         float *row=data+i*10;row[0]=contact?1:0;row[1]=loaded?1:0;row[2]=float(length);row[3]=float(force);

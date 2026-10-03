@@ -18,6 +18,13 @@ array. Automatic ray updates are disabled in the adapter. Effects and telemetry
 reuse the sampled contacts. A temporary four-wheel script adapter still copies
 the 160-byte result into the original visual state.
 
+configure_gravity(acceleration) scales suspension stiffness/force limits from
+the authored 9.8 m/s² reference and damping by the square root of that ratio.
+The adapter configures this once from project gravity times body gravity_scale.
+TerraForest's gravity of 20 otherwise bottoms out the original springs under
+the 1650 kg body. Runtime gravity areas and later mass/gravity changes are not
+automatically retuned; the current vehicle assumes fixed mass and gravity.
+
 NativeDrivingPolicy also applies the grounded bicycle velocity field, free-mode
 driving/braking forces, body stabilization torque and downforce. The adapter
 retains the original decisions about grounded/free mode and impact recovery.

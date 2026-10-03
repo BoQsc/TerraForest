@@ -1,0 +1,9 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.3.289 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce GTX 1060 with Max-Q Design
+
+Vehicle controller V3 ready: no-slip bicycle driving + no-pivot full-lock launch grip budget.
+Vehicle runtime visuals ready: 27 fixed body meshes + animated driver door + 4 wheel meshes.
+Visual mesh damage: enabled (F8 toggle, F9 repair).
+Mounted accessory motion: enabled (F10 toggle, 11 moving items).
+GROUND_DIAGNOSTIC { "position": (400.0, 180.3072, 404.9152), "normal": (0.0, 0.998053, -0.062378), "face_index": 1449, "collider_id": 35248932346, "collider": @StaticBody3D@3:<StaticBody3D#35248932346>, "shape": 0, "rid": RID(3766686318592) } wheel_points=[(400.8438, 180.3999, 406.398), (399.1562, 180.3999, 406.398), (400.8438, 180.2297, 403.6756), (399.1562, 180.2297, 403.6756)] wheel_normal=[(0.0, 0.998053, -0.062378), (0.0, 0.998053, -0.062378), (0.0, 0.998053, -0.062378), (0.0, 0.998053, -0.062378)]
+VEHICLE_TERRAIN { "passed": true, "start": (400.0, 180.8939, 404.9152), "end": (400.0, 182.865, 435.8119), "supported_ticks": 360, "ticks": 360, "min_chassis_clearance": 0.58829689025879, "speed_kph": 66.3061706542969, "triangles": 2964 }

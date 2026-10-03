@@ -34,6 +34,8 @@ func _ready() -> void:
 	GDExtensionManager.load_extension("res://addons/vehicle_runtime/vehicle_runtime.gdextension")
 	driving_policy=ClassDB.instantiate("NativeDrivingPolicy")
 	suspension=ClassDB.instantiate("NativeVehicleSuspension")
+	if not suspension.configure_gravity(float(ProjectSettings.get_setting("physics/3d/default_gravity",9.8))*gravity_scale):
+		push_error("Vehicle suspension gravity is outside supported range")
 	visual_damage=ClassDB.instantiate("NativeVehicleDamage")
 	accessories=ClassDB.instantiate("NativeVehicleAccessories")
 	super._ready()

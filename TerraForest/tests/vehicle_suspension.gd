@@ -20,6 +20,11 @@ func run() -> void:
 	var supported:=values.size()==40
 	for i in 4: supported=supported and values[i*10]==1 and values[i*10+1]==1 and absf(values[i*10+3]-2970)<2
 	check(supported,"disabled automatic rays still produce native load and original spring force")
+	check(native.configure_gravity(20),"world gravity configuration accepted")
+	values=native.sample_and_apply(body,rays)
+	check(absf(values[3]-2970*20/9.8)<2,"spring force scales with world gravity")
+	check(not native.configure_gravity(NAN) and not native.configure_gravity(0),"invalid gravity rejected")
+	native.configure_gravity(9.8)
 	body.linear_velocity=Vector3(0,-100,0)
 	values=native.sample_and_apply(body,rays)
 	check(values[3]==12000,"compression force is capped")

@@ -8,9 +8,11 @@
 namespace terraforest {
 class NativeVehicleSuspension : public godot::RefCounted {
     GDCLASS(NativeVehicleSuspension,godot::RefCounted)
+    double spring_scale=1,damping_scale=1;
 protected:
     static void _bind_methods();
 public:
+    bool configure_gravity(double acceleration);
     godot::PackedFloat32Array sample_and_apply(godot::RigidBody3D *body,const godot::TypedArray<godot::RayCast3D> &rays) const;
 };
 }

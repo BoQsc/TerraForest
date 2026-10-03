@@ -1,3 +1,7 @@
+## Vehicle on generated terrain: gravity integration fix - 2026-10-03
+
+A short fullscreen 1080p generated-road drive exposed bottomed-out suspension: project gravity is 20, whereas the authored vehicle used default 9.8. Native suspension now scales stiffness and force caps with gravity and damping with its square root. Same test changed from FAIL (minimum body-origin clearance 0.124 m) to PASS (0.588 m), crossing z=416 and z=432 mesh boundaries, reaching 66.306 km/h with at least three loaded wheels on all 360 measured ticks. Eight suspension checks passed. Screenshot inspected; evidence in evidence/vehicle_terrain/. This uses actual native generated terrain triangles published synchronously, not asynchronous streaming or a populated world. Runtime gravity areas/mass changes, vehicle world handoff and sustained performance remain unverified.
+
 ## Vehicle reset and reload during streaming holds - 2026-10-03
 
 Reset now discards retained momentum, including when invoked by the R key during a hold. Bound terrain reload holds without teleporting and clears drive speed, resuming at rest after readiness returns. Rebinding disconnects the previous reload signal. All 12 streaming checks passed, including injected reset input. Evidence updated in evidence/vehicle_streaming/. Main-world control handoff and actual streamed-world driving remain incomplete.
