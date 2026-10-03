@@ -46,7 +46,7 @@ struct World {
  float base(V3 p,float h)const;
  float sample(int x,int y,int z,u8*mat=nullptr)const;
  Page *ensure(int px,int py,int pz);
- bool edit(V3 a,V3 b,float radius,int shape,bool add,u8 material,V3 &lo,V3 &hi,int &changes);
+ bool edit(V3 a,V3 b,float radius,int shape,bool add,u8 material,V3 &lo,V3 &hi,int &changes,float depth=1.f);
  void serialize(Bytes &out)const;bool deserialize(const u8*p,int n);
 };
 struct Vertex {V3 p,n;float material=0; i32 cx=0,cy=0,cz=0;u32 mask=0; V3 blend{};float substrate=0,sky=1,sun=1,ore=0;};

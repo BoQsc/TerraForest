@@ -115,6 +115,16 @@ func edit(data: PackedByteArray, lo: Vector3, hi: Vector3, captured_us: int = 0,
 			var halo: Vector3 = Vector3.ONE * (radius + 5.0)
 			safe_lo = safe_lo.min(a.min(b) - halo)
 			safe_hi = safe_hi.max(a.max(b) + halo)
+		elif kind==28 and packet.size()==36:
+			var a:=Vector3(packet.decode_float(4),packet.decode_float(8),packet.decode_float(12))
+			var b:=Vector3(packet.decode_float(16),packet.decode_float(20),packet.decode_float(24))
+			var width: float=packet.decode_float(28);var depth: float=packet.decode_float(32)
+			var distance:=Vector2(b.x-a.x,b.z-a.z).length()
+			if not a.is_finite() or not b.is_finite() or not is_finite(width) or not is_finite(depth) or width<0.5 or width>16 or depth<1 or depth>8 or distance<1 or distance>128 or absf(b.y-a.y)>distance*0.25: return false
+			for point: Vector3 in [a,b]:
+				if point.x<width+5 or point.x>1995-width or point.z<width+5 or point.z>1995-width or point.y<depth+4 or point.y>250: return false
+			safe_lo=safe_lo.min(a.min(b)-Vector3(width+5,depth+5,width+5))
+			safe_hi=safe_hi.max(a.max(b)+Vector3(width+5,5,width+5))
 		elif kind == 3 and packet.size() == 20:
 			var cell := Vector3i(packet.decode_s32(4), packet.decode_s32(8), packet.decode_s32(12))
 			if cell.x < 0 or cell.x >= 2000 or cell.z < 0 or cell.z >= 2000 or cell.y < 2 or cell.y >= 255 or packet.decode_u32(16) > 3:
@@ -141,3 +151,6 @@ func sculpt_sphere(center: Vector3, radius: float, add: bool = false, material_i
 
 func set_block(cell: Vector3i, material_id: int) -> bool:
 	return edit(Codec.command(3, [cell.x, cell.y, cell.z, material_id]), Vector3(cell), Vector3(cell))
+
+func construct_road_bed(a: Vector3,b: Vector3,half_width: float=3.0,depth: float=2.0) -> bool:
+	return edit(Codec.road_bed(a,b,half_width,depth),a.min(b),a.max(b))
