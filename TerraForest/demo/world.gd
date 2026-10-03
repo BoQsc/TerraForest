@@ -675,6 +675,8 @@ func _road_action(action: String) -> void:
 	var hi:=a.max(b)+Vector3(road_palette.width.value,road_palette.clearance.value,road_palette.width.value)
 	var protection:=AABB(terrain.to_local(player.global_position)-Vector3(0.4,0,0.4),Vector3(0.8,1.8,0.8))
 	if AABB(lo,hi-lo).grow(0.5).intersects(protection): road_palette.status.text="Move clear of the road before building.";return
+	if world_vehicle.overlaps_edit(terrain.global_transform*AABB(lo,hi-lo).grow(0.5)):
+		road_palette.status.text="Move the vehicle clear before grading or paving.";return
 	var transforms: Array[Transform3D]=[terrain.global_transform]
 	var occupied: PackedByteArray=structures.overlap_mask(transforms,AABB(lo,hi-lo).grow(0.5))
 	if occupied.size()!=1 or occupied[0]!=0:

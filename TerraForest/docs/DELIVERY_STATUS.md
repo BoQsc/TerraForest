@@ -1,3 +1,7 @@
+## Parked vehicle grading protection - 2026-10-03
+
+Road and foundation submission now checks the vehicle envelope from the native driving policy, including suspension support beneath the chassis. Twenty-three full-world headless editor checks passed, including rejection of asphalt paving and stone grading through a parked vehicle before terrain mutation, followed by successful unobstructed edits. This guards submission against the currently present single vehicle; it does not cover general mining or a vehicle entering an already submitted asynchronous edit. Startup logged 50.58 ms world processing, 50.91 ms LOD requests and 189.08 ms LOD scheduling; no sustained frame-rate or thermal claim follows. Evidence: evidence/road_vehicle_guard/editor.log.
+
 ## Level foundation selection - 2026-10-03
 
 Added Level end to start height to the Roads / Foundations palette. It preserves horizontal endpoints, updates the preview and clearly states that terrain is unchanged until Build. The action shares the existing world/editor guards. Twenty full-world editor checks passed, including equal endpoint heights, unchanged terrain revision before Build and successful subsequent foundation publication. The 1920x1080 panel capture was inspected. This supplies manual level grading; automatic settlement siting and terrain support validation remain unfinished. Evidence: evidence/foundation_level_editor/.

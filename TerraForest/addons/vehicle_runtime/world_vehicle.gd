@@ -44,6 +44,12 @@ func _install_vehicle(world: Node,pose: Transform3D) -> void:
 	_camera_follow=ClassDB.instantiate("NativeVehicleCamera")
 func ready_bounds(world: Node,bounds: AABB) -> bool:
 	return world.terrain.is_collision_region_ready(bounds) and world.structures.is_collision_region_ready(bounds) and (not "vegetation" in world or world.vegetation.is_collision_region_ready(bounds))
+func overlaps_edit(world_bounds: AABB) -> bool:
+	if not is_instance_valid(car): return false
+	# Reuse the native orientation-independent chassis/suspension envelope.
+	# This includes the support immediately beneath the parked vehicle.
+	var bounds: AABB=car.driving_policy.travel_bounds(car.global_position,Vector3.ZERO,1.0/120.0)
+	return not bounds.position.is_finite() or bounds.intersects(world_bounds)
 func spawn(world: Node) -> String:
 	if is_instance_valid(car): return "Vehicle already placed · E nearby to enter"
 	var from: Vector3=world.camera.global_position

@@ -52,6 +52,15 @@ func run() -> void:
 		panel.action_requested.emit("build")
 		check(panel.status.text.begins_with("Road bounds overlap"),"road clearance protects building occupancy above pavement")
 		game.structures.blocks.set_cells(PackedInt32Array([416,187,400,0]))
+		var parked:=Transform3D(Basis.from_euler(Vector3(0,0.7,0)),Vector3(416,183,400))
+		check(game.world_vehicle.restore_snapshot(game.world_vehicle.storage.encode(parked)),"parked vehicle installed inside grading route")
+		var before_vehicle_guard: int=game.terrain.published_revision
+		panel.action_requested.emit("build")
+		check(panel.status.text.begins_with("Move the vehicle") and not game.terrain.pending_edit and game.terrain.published_revision==before_vehicle_guard,"paving through parked vehicle rejects before terrain mutation")
+		panel.surface.select(1);panel.surface.item_selected.emit(1);panel.action_requested.emit("build")
+		check(panel.status.text.begins_with("Move the vehicle") and not game.terrain.pending_edit,"stone grading protects parked vehicle too")
+		game.world_vehicle.restore_snapshot(PackedByteArray())
+		panel.surface.select(0);panel.surface.item_selected.emit(0)
 		panel.action_requested.emit("build")
 		check(panel.status.text.begins_with("Road submitted"),"road panel routes construction to terrain worker")
 		deadline=Time.get_ticks_msec()+10000
