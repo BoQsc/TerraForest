@@ -2,6 +2,15 @@
 
 ## Current delivery priority
 
+Road collision now has a targeted capsule traversal check. A native graded cut
+through a solid hill is meshed across adjacent 16 m regions; its native face
+arrays drive a Godot concave collider and the existing player capsule/movement.
+Six checks pass for construction, triangles, uphill traversal, continuous floor
+support, grade at the shared edge and downhill return. The uphill sample kept
+floor contact for all 140 measured ticks. Evidence: `evidence/road_traversal/`.
+This bypasses asynchronous collider publication and does not qualify streaming,
+vehicles, road joins or long-run frame performance.
+
 Roads now support an optional native clearance cut (0 disables; maximum 16 m)
 in the same density edit as bed construction. The editor exposes it, includes
 it in the outline, and protects player/building bounds throughout that height.
