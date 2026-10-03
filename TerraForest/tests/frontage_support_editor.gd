@@ -39,6 +39,12 @@ func run() -> void:
 		await wait_placement(game)
 		check(game.foundation_check.status=="Placement cancelled" and game.structures.blocks.can_place_prefab(asset,target,0),"rotation change cancels deferred placement")
 		game.structure_rotation=0
+		check(game.terrain.sculpt_sphere(Vector3(404,183,389),1,true,1),"interior obstruction submitted above supported foundation")
+		await wait_edit(game)
+		game._begin_frontage_placement(asset,target);await wait_placement(game)
+		check(game.foundation_check.status.begins_with("Terrain inside") and game.structures.blocks.can_place_prefab(asset,target,0),"terrain filling interior rejects placement despite supported floor")
+		check(game.terrain.construct_graded_bed(Vector3(400,180,387),Vector3(433,180,387),8,8,12,1),"interior clearance grading submitted")
+		await wait_edit(game)
 		game._begin_frontage_placement(asset,target);await wait_placement(game)
 		check(game.foundation_check.status=="supported" and not game.structures.blocks.can_place_prefab(asset,target,0),"supported six-cottage frontage commits after multiple batches")
 	game.terrain.shutdown();game.queue_free();await process_frame

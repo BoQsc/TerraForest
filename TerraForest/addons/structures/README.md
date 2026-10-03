@@ -362,3 +362,17 @@ indicate that ground support is checked on placement. Unsupported sites need
 grading first. Changing selection or rotation cancels pending placement;
 terrain changes require a fresh check. No terrain-interior clearance or
 structural stability guarantee follows from foundation centre probes.
+
+## Frontage terrain clearance
+
+After foundation support, frontage placement checks native column envelopes
+above local base Y=0. Each occupied X/Z column spans from its lowest cell
+(clamped to Y=1) through its highest cell, so enclosed room space between
+floor and roof is included. Empty street columns are excluded.
+clearance_sample_count reports the probe count; clearance_samples returns
+at most 512 probes from a numeric cursor. Prefix-indexed column spans avoid
+allocating a full voxel volume and avoid rescanning previous samples.
+
+This is conservative voxel-lattice screening, not exact triangle intersection
+or a guarantee for arbitrary authored spaces without floor/roof columns.
+Supported and clear must share the same terrain revision before placement.

@@ -15,6 +15,8 @@ class NativeBlockPrefab : public Resource {
     friend class NativeBlockWorld;
     std::vector<PrefabCell> cells;
     std::vector<PrefabCell> foundation_columns;
+    struct ClearanceColumn { int x,z,low,high; int64_t end; };
+    std::vector<ClearanceColumn> clearance_columns;
     AABB bounds;
 protected:
     static void _bind_methods();
@@ -28,5 +30,7 @@ public:
     AABB get_bounds() const { return bounds; }
     AABB placement_bounds(Vector3i origin,int quarter_turns) const;
     PackedVector3Array foundation_samples(Vector3i origin,int quarter_turns,int max_base_y) const;
+    int64_t clearance_sample_count() const { return clearance_columns.empty()?0:clearance_columns.back().end; }
+    PackedVector3Array clearance_samples(Vector3i origin,int quarter_turns,int64_t offset,int limit) const;
 };
 }

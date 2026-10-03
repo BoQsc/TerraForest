@@ -9,10 +9,17 @@ var revision:=0
 var deadline:=0
 var waiting:=false
 var status:="idle"
+var clearance:=false
+var checked_asset: Resource
+var checked_target:=Vector3i.ZERO
+var checked_rotation:=0
+var clearance_total:=0
 func begin(terrain: Node,asset: Resource,target: Vector3i,rotation: int) -> bool:
 	if status=="checking" or not terrain.world_ready or terrain.pending_edit: return false
 	points=asset.foundation_samples(target,rotation,0)
 	if points.is_empty(): status="No foundation probes";return false
+	checked_asset=asset;checked_target=target;checked_rotation=rotation
+	clearance=false;clearance_total=asset.clearance_sample_count()
 	epoch=terrain.epoch;revision=terrain.density_revision
 	offset=0;waiting=false;status="checking";deadline=Time.get_ticks_msec()+10000
 	return true
@@ -23,15 +30,22 @@ func tick(terrain: Node) -> void:
 	if Time.get_ticks_msec()>deadline: status="Terrain check timed out; place again";return
 	if waiting: return
 	token+=1
-	waiting=terrain.request_density_batch(points.slice(offset,mini(offset+512,points.size())),token)
+	var batch: PackedVector3Array=checked_asset.clearance_samples(checked_target,checked_rotation,offset,512) if clearance else points.slice(offset,mini(offset+512,points.size()))
+	waiting=terrain.request_density_batch(batch,token)
 func receive(result: Dictionary) -> void:
 	if status!="checking" or not waiting or result.token!=token: return
 	waiting=false
 	if result.status!="ok" or result.epoch!=epoch or result.revision!=revision:
 		status="Terrain changed; place again";return
 	var values: PackedFloat32Array=result.values
-	if values.size()!=mini(512,points.size()-offset): status="Invalid terrain check";return
+	if values.size()!=mini(512,(clearance_total if clearance else points.size())-offset): status="Invalid terrain check";return
 	for value in values:
-		if not is_finite(value) or value>=0: status="Unsupported foundation; grade terrain first";return
+		if not is_finite(value): status="Invalid terrain check";return
+		if clearance and value<0: status="Terrain inside building; clear or grade site first";return
+		if not clearance and value>=0: status="Unsupported foundation; grade terrain first";return
 	offset+=values.size()
-	if offset==points.size(): status="supported"
+	if clearance:
+		if offset==clearance_total: status="supported"
+	elif offset==points.size():
+		clearance=true;offset=0
+		if clearance_total==0: status="supported"

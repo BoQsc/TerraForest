@@ -1,0 +1,9 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS column envelope includes empty room beneath roof and isolated eave
+PASS rotation and interior sample positions match cell convention
+PASS cursor crosses column boundary without skipped probes
+PASS invalid cursor and oversized batch rejected
+PASS failed configuration preserves clearance cache
+PASS tall sparse column is paged without expanded volume storage
+PASS empty configuration clears envelopes

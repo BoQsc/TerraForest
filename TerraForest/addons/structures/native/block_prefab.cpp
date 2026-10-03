@@ -16,6 +16,8 @@ void NativeBlockPrefab::_bind_methods() {
     ClassDB::bind_method(D_METHOD("get_bounds"),&NativeBlockPrefab::get_bounds);
     ClassDB::bind_method(D_METHOD("placement_bounds","origin","quarter_turns"),&NativeBlockPrefab::placement_bounds);
     ClassDB::bind_method(D_METHOD("foundation_samples","origin","quarter_turns","max_base_y"),&NativeBlockPrefab::foundation_samples);
+    ClassDB::bind_method(D_METHOD("clearance_sample_count"),&NativeBlockPrefab::clearance_sample_count);
+    ClassDB::bind_method(D_METHOD("clearance_samples","origin","quarter_turns","offset","limit"),&NativeBlockPrefab::clearance_samples);
     ADD_PROPERTY(PropertyInfo(Variant::PACKED_INT32_ARRAY,"records"),"set_records","get_records");
 }
 bool NativeBlockPrefab::configure(const PackedInt32Array &records) {
@@ -35,13 +37,25 @@ bool NativeBlockPrefab::configure(const PackedInt32Array &records) {
     // Compute once on authoring changes, not by scanning every floor per preview.
     // Each occupied X/Z column contributes its lowest cell, including stepped bases.
     std::map<std::pair<int,int>,PrefabCell> columns;
+    std::map<std::pair<int,int>,int> tops;
     for(const auto &c:staged) {
         auto key=std::make_pair(c.x,c.z);
         auto found=columns.find(key);
         if(found==columns.end()||c.y<found->second.y)columns[key]=c;
+        auto top=tops.find(key);
+        if(top==tops.end()||c.y>top->second)tops[key]=c.y;
     }
     std::vector<PrefabCell> footprint;footprint.reserve(columns.size());
     for(const auto &entry:columns)footprint.push_back(entry.second);
+    std::vector<ClearanceColumn> clearance;int64_t count=0;
+    for(const auto &entry:columns) {
+        const auto &c=entry.second;
+        int low=std::max(1,c.y),high=tops[entry.first];
+        if(high<low)continue;
+        count+=high-low+1;
+        clearance.push_back({c.x,c.z,low,high,count});
+    }
+    clearance_columns=std::move(clearance);
     foundation_columns=std::move(footprint);
     cells=std::move(staged);bounds=cells.empty()?AABB():AABB(lo,hi-lo);emit_changed();return true;
 }
@@ -61,6 +75,22 @@ PackedVector3Array NativeBlockPrefab::foundation_samples(Vector3i origin,int tur
         // Cell-centred probe 0.25 m below the base. Sampling is a site-screening
         // input, not a proof that arbitrary slopes/overhangs are structurally safe.
         out.set(i++,Vector3(origin.x+x+0.5f,origin.y+c.y-0.25f,origin.z+z+0.5f));
+    }
+    return out;
+}
+PackedVector3Array NativeBlockPrefab::clearance_samples(Vector3i origin,int turns,int64_t offset,int limit) const {
+    PackedVector3Array out;
+    if(turns<0||turns>3||offset<0||limit<1||limit>512||offset>=clearance_sample_count())return out;
+    for(int a=0;a<3;++a)if(origin[a]<-1044480||origin[a]>1044480)return out;
+    const int count=int(std::min(int64_t(limit),clearance_sample_count()-offset));out.resize(count);
+    auto column=std::upper_bound(clearance_columns.begin(),clearance_columns.end(),offset,
+        [](int64_t value,const ClearanceColumn &c){return value<c.end;});
+    for(int i=0;i<count;i++,offset++) {
+        while(offset>=column->end)++column;
+        int x=column->x,z=column->z;
+        for(int r=0;r<turns;r++){int old=x;x=-z;z=old;}
+        int y=column->high-int(column->end-1-offset);
+        out.set(i,Vector3(origin.x+x+0.5f,origin.y+y+0.5f,origin.z+z+0.5f));
     }
     return out;
 }
