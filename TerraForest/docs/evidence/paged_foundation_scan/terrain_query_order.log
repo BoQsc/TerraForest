@@ -1,0 +1,10 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS one batch bypasses background work without discarding it
+PASS ray and batch queries preserve their relative order
+PASS query does not cross edit
+PASS query does not cross save
+PASS query does not cross load
+PASS query does not cross reset
+PASS query does not cross future_unknown
+PASS stopping leaves cancellation to shutdown

@@ -26,7 +26,7 @@ func run() -> void:
 		game.structure_prefabs.append(asset);game.structure_prefab_index=game.structure_prefabs.size()-1
 		game.construction_palette.configure(game.structure_prefabs)
 		asset.changed.connect(game._invalidate_prefab_preview)
-		check(asset.foundation_samples(Vector3i.ZERO,0,0).size()>512,"fixture requires multiple worker batches")
+		check(asset.foundation_samples(Vector3i.ZERO,0,0).size()>512,"fixture requires multiple native pages")
 		var target:=Vector3i(400,230,400)
 		game._begin_frontage_placement(asset,target);await wait_placement(game)
 		check(game.foundation_check.status.begins_with("Unsupported") and game.structures.blocks.can_place_prefab(asset,target,0),"unsupported frontage rejected without placing cells")
@@ -59,7 +59,7 @@ func run() -> void:
 		check(game.terrain.construct_graded_bed(Vector3(400,180,387),Vector3(433,180,387),8,8,12,1),"interior clearance grading submitted")
 		await wait_edit(game)
 		game._begin_frontage_placement(asset,target);await wait_placement(game)
-		check(game.foundation_check.status=="supported" and not game.structures.blocks.can_place_prefab(asset,target,0),"supported six-cottage frontage commits after multiple batches")
+		check(game.foundation_check.status=="supported" and not game.structures.blocks.can_place_prefab(asset,target,0),"supported six-cottage frontage commits after paged checks")
 		game.prefab_library.directory="user://frontage_editor_async_%d" % Time.get_ticks_usec()
 		game.structure_prefab_index=0
 		var previous_count: int=game.structure_prefabs.size()

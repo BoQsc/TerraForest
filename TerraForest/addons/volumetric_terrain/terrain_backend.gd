@@ -195,7 +195,9 @@ func start(use_temporary: bool) -> Error:
 var _site_pending:=0
 func submit(job: Dictionary, priority: bool = false) -> bool:
 	if job.get("kind","")=="density_batch":
-		if typeof(job.get("points"))!=TYPE_PACKED_VECTOR3_ARRAY or job.points.is_empty() or job.points.size()>512: return false
+		var paged: Variant=job.get("paged",false)
+		if typeof(paged)!=TYPE_BOOL: return false
+		if typeof(job.get("points"))!=TYPE_PACKED_VECTOR3_ARRAY or job.points.is_empty() or job.points.size()>(4096 if paged else 512): return false
 		for field in ["token","epoch","revision"]:
 			if typeof(job.get(field))!=TYPE_INT or job[field]<0: return false
 		var depth: Variant=job.get("support_depth",0)
@@ -533,16 +535,24 @@ func _service_lake_slice() -> void:
 	if not selected.is_empty(): _execute_lake_slice(selected)
 
 func _execute_density_batch(job: Dictionary) -> void:
-	var packet:=Codec.command(29,[job.revision,job.points.size()])
-	if job.support_depth>0: packet=Codec.command(30,[job.revision,job.points.size(),job.support_depth])
-	packet.append_array(job.points.to_byte_array())
-	var reply: PackedByteArray=_call(packet)
+	var started:=Time.get_ticks_usec()
 	var values:=PackedFloat32Array()
-	var status: String="error"
-	if Codec.reply_ok(reply) and reply.size()==20+job.points.size()*4 and reply.decode_u32(12)==job.revision and reply.decode_u32(16)==job.points.size():
-		values=reply.slice(20).to_float32_array();status="ok"
-	elif reply.size()>=12 and reply.decode_u32(8)==4: status="stale"
-	_push({"kind":"density_batch","token":job.token,"epoch":job.epoch,"revision":job.revision,"status":status,"values":values})
+	var status: String="ok"
+	# At most eight native pages per reservation. No mutation executes between
+	# pages; every reply must still match the captured revision. Never publish
+	# partial values if a later page is malformed or stale.
+	for offset in range(0,job.points.size(),512):
+		var page: PackedVector3Array=job.points.slice(offset,mini(offset+512,job.points.size()))
+		var packet:=Codec.command(29,[job.revision,page.size()])
+		if job.support_depth>0: packet=Codec.command(30,[job.revision,page.size(),job.support_depth])
+		packet.append_array(page.to_byte_array())
+		var reply: PackedByteArray=_call(packet)
+		if Codec.reply_ok(reply) and reply.size()==20+page.size()*4 and reply.decode_u32(12)==job.revision and reply.decode_u32(16)==page.size():
+			values.append_array(reply.slice(20).to_float32_array())
+		else:
+			status="stale" if reply.size()>=12 and reply.decode_u32(8)==4 else "error"
+			values.clear();break
+	_push({"kind":"density_batch","token":job.token,"epoch":job.epoch,"revision":job.revision,"status":status,"values":values,"worker_us":Time.get_ticks_usec()-started})
 
 func _service_density_query() -> void:
 	# Worker-only cooperative read point. Keep the current mesh's completed

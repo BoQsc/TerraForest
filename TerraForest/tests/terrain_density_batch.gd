@@ -51,4 +51,19 @@ func run() -> void:
 	terrain._receive({"kind":"density_batch","token":14,"epoch":terrain.epoch,"revision":terrain.density_revision,"status":"ok","values":PackedFloat32Array([-1.0])})
 	check(replies.size()==1 and replies[0].status=="stale" and replies[0].values.is_empty(),"unpublished edit invalidates apparently current support result")
 	terrain.pending_edit=false
+	replies.clear()
+	var scan:=PackedVector3Array();scan.resize(4096);scan.fill(points[0]);scan[4095]=points[1]
+	check(not terrain.request_density_batch(scan,20),"ordinary batch retains 512 limit")
+	check(terrain.request_density_scan(scan,21),"4096-point scan admitted")
+	check(not terrain.request_density_batch(points,22),"scan shares one outstanding reservation with ordinary batches")
+	deadline=Time.get_ticks_msec()+10000
+	while replies.is_empty() and Time.get_ticks_msec()<deadline: await process_frame
+	check(replies.size()==1 and replies[0].status=="ok" and replies[0].values.size()==4096 and replies[0].values[0]==reply.decode_float(20) and replies[0].values[4095]==reply.decode_float(24),"all eight pages preserve sample ordering and native values")
+	if not replies.is_empty(): print("SCAN_WORKER_US ",replies[0].get("worker_us",-1))
+	scan.append(points[0]);check(not terrain.request_density_scan(scan,23),"scan over 4096 rejected")
+	scan.resize(4096);scan[4095]=Vector3(NAN,0,0);replies.clear()
+	check(terrain.request_density_scan(scan,24),"late invalid-page fixture admitted to native validator")
+	deadline=Time.get_ticks_msec()+10000
+	while replies.is_empty() and Time.get_ticks_msec()<deadline: await process_frame
+	check(replies.size()==1 and replies[0].status=="error" and replies[0].values.is_empty(),"last-page failure discards all earlier page values")
 	terrain.shutdown();terrain.free();quit(1 if failures else 0)

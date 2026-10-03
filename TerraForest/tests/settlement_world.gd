@@ -38,6 +38,7 @@ func run() -> void:
 	game.structure_prefabs.append(asset);game.structure_prefab_index=game.structure_prefabs.size()-1
 	asset.changed.connect(game._invalidate_prefab_preview);game.construction_palette.configure(game.structure_prefabs)
 	game._begin_frontage_placement(asset,origin)
+	var validation_started:=Time.get_ticks_usec()
 	deadline=Time.get_ticks_msec()+12000
 	var next_trace:=0
 	while not game._foundation_placement.is_empty() and Time.get_ticks_msec()<deadline:
@@ -46,6 +47,7 @@ func run() -> void:
 			next_trace=Time.get_ticks_msec()+1000
 			print("FOUNDATION_PROGRESS ",{"offset":game.foundation_check.offset,"waiting":game.foundation_check.waiting,"deep":game.foundation_check.deep_support,"clearance":game.foundation_check.clearance,"queued":game.terrain.backend.queued(),"worker":game.terrain.backend.status(),"brush":game.terrain.foreground_brush})
 	check(game.foundation_check.status=="supported" and not game.structures.blocks.can_place_prefab(asset,origin,0),"sixteen cottages pass live terrain checks and place")
+	print("FOUNDATION_VALIDATION_MS ",(Time.get_ticks_usec()-validation_started)/1000.0)
 	game.camera.global_position=p+Vector3(115,60,75);game.camera.look_at(p+Vector3(42,3,0))
 	var intervals:=PackedFloat64Array();var previous:=Time.get_ticks_usec()
 	for frame in 180:

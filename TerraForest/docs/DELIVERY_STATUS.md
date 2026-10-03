@@ -1,3 +1,11 @@
+## Bounded multi-page foundation scans - 2026-10-03
+
+Foundation validation now submits up to 4096 points per reservation through request_density_scan. The worker executes at most eight existing native 512-point commands, with no intervening mutation. Every page must match the captured revision; any failed page discards the entire result. Ordinary request_density_batch keeps its 512 limit, and both APIs share the existing one-outstanding reservation through result consumption. No native ABI change or larger individual native command was introduced. Native clearance generation still uses its bounded cursor; infrequent authoring orchestration assembles at most eight pages.
+
+Twenty-three density query checks passed, including the shared reservation, 4096 limit, ordering of samples across pages, and rejection of partial results when the final page contains invalid data. The focused 4096-point worker query measured 937 microseconds; this is a warm point-query fixture, not a universal worst-case bound. Eight scheduling-order checks and sixteen full-world support/editor checks passed, including floating fill, intermediate air and interior obstruction rejection.
+
+The same graphical 16-cottage survey/grade/pave/place fixture completed validation in 864.848 ms, versus roughly nine seconds in the preceding recorded run. The ten-second timeout was unchanged. All 7488 cells published across 56 chunks. The short 180-frame post-placement sample had p95 16.686 ms and maximum 40.248 ms: frame spikes, broader scale and thermal headroom remain unresolved. Evidence: evidence/paged_foundation_scan/.
+
 ## Survey settlement grades and service support queries between mesh jobs - 2026-10-03
 
 A new read-only structures site survey samples the actual foundation footprint using native natural-surface queries. It proposes a grade within bounded cut/fill limits and rejects unavailable/stale surfaces; post-edit support and interior checks remain mandatory. The combined 16-cottage fixture surveys 1584 columns, selects Y=44 instead of player-derived Y=52, grades two rows and paves the street. This is an authoring API exercised by a test, not an editor-integrated automatic city planner, and cannot survey arbitrary edited surfaces.

@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: 0BSD
 extends RefCounted
+const SCAN_LIMIT:=4096
 # Orchestration only: footprint generation and density sampling are native.
 var points:=PackedVector3Array()
 var offset:=0
@@ -31,17 +32,21 @@ func tick(terrain: Node) -> void:
 	if Time.get_ticks_msec()>deadline: status="Terrain check timed out; place again";return
 	if waiting: return
 	token+=1
-	var batch: PackedVector3Array=checked_asset.clearance_samples(checked_target,checked_rotation,offset,512) if clearance else points.slice(offset,mini(offset+512,points.size()))
+	var batch:=PackedVector3Array()
+	if clearance:
+		for page_offset in range(offset,mini(offset+SCAN_LIMIT,clearance_total),512):
+			batch.append_array(checked_asset.clearance_samples(checked_target,checked_rotation,page_offset,512))
+	else: batch=points.slice(offset,mini(offset+SCAN_LIMIT,points.size()))
 	# Native column maximum checks every layer through the bounded fill depth.
 	var support_depth: int=mini(8,maxi(0,checked_target.y-4)) if deep_support and not clearance else 0
-	waiting=terrain.request_density_batch(batch,token,support_depth)
+	waiting=terrain.request_density_scan(batch,token,support_depth)
 func receive(result: Dictionary) -> void:
 	if status!="checking" or not waiting or result.token!=token: return
 	waiting=false
 	if result.status!="ok" or result.epoch!=epoch or result.revision!=revision:
 		status="Terrain changed; place again";return
 	var values: PackedFloat32Array=result.values
-	if values.size()!=mini(512,(clearance_total if clearance else points.size())-offset): status="Invalid terrain check";return
+	if values.size()!=mini(SCAN_LIMIT,(clearance_total if clearance else points.size())-offset): status="Invalid terrain check";return
 	for value in values:
 		if not is_finite(value): status="Invalid terrain check";return
 		if clearance and value<0: status="Terrain inside building; clear or grade site first";return

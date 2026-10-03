@@ -388,3 +388,9 @@ Frontage validation also checks every voxel layer through the maximum 8 m
 grading-fill depth, clamped at low altitude toward protected bedrock. Native
 column queries reject isolated slabs and intermediate air pockets. This is
 sampled-column continuity, not lateral stability or deeper structural analysis.
+
+Foundation checks assemble at most eight native 512-point pages per
+request_density_scan (4096 samples). Scans share the terrain batch reservation
+and revision checks, reducing repeated waits behind background meshing. A failed
+page discards all values from that scan; placement still requires every support
+and clearance scan to succeed at the captured terrain revision.

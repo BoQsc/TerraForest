@@ -161,6 +161,12 @@ func request_density_batch(points: PackedVector3Array,token: int,support_depth: 
 	if not world_ready or pending_edit or foreground_brush or stopping: return false
 	return backend.submit({"kind":"density_batch","points":points,"token":token,"epoch":epoch,"revision":density_revision,"support_depth":support_depth})
 
+func request_density_scan(points: PackedVector3Array,token: int,support_depth: int=0) -> bool:
+	# Infrequent authoring scan: up to 4096 samples, sharing the single batch
+	# reservation. Native evaluation remains in pages of at most 512 samples.
+	if not world_ready or pending_edit or foreground_brush or stopping: return false
+	return backend.submit({"kind":"density_batch","points":points,"token":token,"epoch":epoch,"revision":density_revision,"support_depth":support_depth,"paged":true})
+
 func sculpt_sphere(center: Vector3, radius: float, add: bool = false, material_id: int = 1) -> bool:
 	return edit(Codec.brush(center, center, radius, 0, add, material_id), center, center)
 
