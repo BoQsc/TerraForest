@@ -1,0 +1,33 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+Vehicle controller V3 ready: no-slip bicycle driving + no-pivot full-lock launch grip budget.
+Vehicle runtime visuals ready: 27 fixed body meshes + animated driver door + 4 wheel meshes.
+Visual mesh damage: enabled (F8 toggle, F9 repair).
+Mounted accessory motion: enabled (F10 toggle, 11 moving items).
+VEHICLE_HIGH_SPEED_COLLISION { "passed": true, "obstacle": "thin_wall", "speed_mps": 30.0, "speed_kph": 108.0, "max_center_z": -1.59779667854309, "final_velocity": (-0.463247, -1.625394, -1.578274), "peak_contacts": 4, "physics_hz": 120, "ticks": 40 }
+Vehicle controller V3 ready: no-slip bicycle driving + no-pivot full-lock launch grip budget.
+Vehicle runtime visuals ready: 27 fixed body meshes + animated driver door + 4 wheel meshes.
+Visual mesh damage: enabled (F8 toggle, F9 repair).
+Mounted accessory motion: enabled (F10 toggle, 11 moving items).
+VEHICLE_HIGH_SPEED_COLLISION { "passed": true, "obstacle": "thin_wall", "speed_mps": 60.0, "speed_kph": 216.0, "max_center_z": -1.5509569644928, "final_velocity": (-0.926491, -3.250788, -3.156547), "peak_contacts": 4, "physics_hz": 120, "ticks": 40 }
+Vehicle controller V3 ready: no-slip bicycle driving + no-pivot full-lock launch grip budget.
+Vehicle runtime visuals ready: 27 fixed body meshes + animated driver door + 4 wheel meshes.
+Visual mesh damage: enabled (F8 toggle, F9 repair).
+Mounted accessory motion: enabled (F10 toggle, 11 moving items).
+VEHICLE_HIGH_SPEED_COLLISION { "passed": true, "obstacle": "thin_wall", "speed_mps": 100.0, "speed_kph": 360.0, "max_center_z": -1.36699390411377, "final_velocity": (-1.544154, -5.417979, -5.260918), "peak_contacts": 4, "physics_hz": 120, "ticks": 40 }
+Vehicle controller V3 ready: no-slip bicycle driving + no-pivot full-lock launch grip budget.
+Vehicle runtime visuals ready: 27 fixed body meshes + animated driver door + 4 wheel meshes.
+Visual mesh damage: enabled (F8 toggle, F9 repair).
+Mounted accessory motion: enabled (F10 toggle, 11 moving items).
+VEHICLE_HIGH_SPEED_COLLISION { "passed": true, "obstacle": "trunk", "speed_mps": 30.0, "speed_kph": 108.0, "max_center_z": -2.08364915847778, "final_velocity": (-1.529765, -1.141637, -1.785194), "peak_contacts": 4, "physics_hz": 120, "ticks": 40 }
+Vehicle controller V3 ready: no-slip bicycle driving + no-pivot full-lock launch grip budget.
+Vehicle runtime visuals ready: 27 fixed body meshes + animated driver door + 4 wheel meshes.
+Visual mesh damage: enabled (F8 toggle, F9 repair).
+Mounted accessory motion: enabled (F10 toggle, 11 moving items).
+VEHICLE_HIGH_SPEED_COLLISION { "passed": true, "obstacle": "trunk", "speed_mps": 60.0, "speed_kph": 216.0, "max_center_z": -2.04369378089905, "final_velocity": (-3.059531, -2.283275, -3.570388), "peak_contacts": 4, "physics_hz": 120, "ticks": 40 }
+Vehicle controller V3 ready: no-slip bicycle driving + no-pivot full-lock launch grip budget.
+Vehicle runtime visuals ready: 27 fixed body meshes + animated driver door + 4 wheel meshes.
+Visual mesh damage: enabled (F8 toggle, F9 repair).
+Mounted accessory motion: enabled (F10 toggle, 11 moving items).
+VEHICLE_HIGH_SPEED_COLLISION { "passed": true, "obstacle": "trunk", "speed_mps": 100.0, "speed_kph": 360.0, "max_center_z": -1.36699390411377, "final_velocity": (-5.099218, -3.805457, -5.950647), "peak_contacts": 4, "physics_hz": 120, "ticks": 40 }
+VEHICLE_HIGH_SPEED_RESULT failures=0 cases=6 scope=ballistic_chassis_native_static_proxies

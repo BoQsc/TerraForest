@@ -1,3 +1,7 @@
+## High-speed chassis collision check - 2026-10-03
+
+Six headless ballistic tests passed using the real vehicle chassis and native static collision proxies: a 0.1 m thick wall and a 0.7 m trunk, each at 30, 60 and 100 m/s (108, 216 and 360 km/h), 120 Hz, 40 ticks per case. Each reported physical contacts, remained on the incoming side and lost forward velocity. Continuous collision detection was already enabled in the supplied vehicle scene; no production physics setting changed. Driving logic, wheel forces, gravity and visual damage were disabled to isolate chassis collision. This does not qualify grazing impacts, penetration depth, terrain impacts, streaming at these speeds, active driving responses or rendered frame time. Evidence: evidence/vehicle_high_speed/collision.log; reproducible fixture: tests/vehicle_high_speed_collision.gd.
+
 ## Vehicle forest readiness lifecycle - 2026-10-03
 
 Vehicle vegetation binding is now explicit and remains required after provider loss. A short headless test uses real native trunk collision to verify pending admission holds motion, publication restores velocity, moving a trunk invalidates stale readiness, republishing resumes, and tree removal leaves no hold. Rebinding while held is rejected. All 21 streaming checks and 15 world interaction/persistence checks passed. Logs are in evidence/trunk_collision/*forest_binding.log. These verify lifecycle correctness, not high-speed impact response or sustained performance.
