@@ -2,13 +2,22 @@
 
 ## Current delivery priority
 
+Road selection now has a bounded editor outline showing rounded ends, grade,
+width and depth. It rebuilds on selection/dimension changes only, has no
+collision or shadows, and hides outside terrain editing or during loading and
+inventory use. Green means parameter-valid, not obstacle-free; red indicates
+incomplete/invalid selection. Thirteen world checks pass, including aimed
+selection, player protection, color changes and no rebuild while unchanged.
+The 1920x1080 screenshot in `evidence/road_preview/` isolates the guide at the
+selected distant coordinates; it is not evidence of terrain publication there.
+
 The terrain-mode road panel now marks two aimed collision-surface points,
 configures half-width/depth and submits the native road command. Release the
 mouse with Esc while using a terrain tool to see the panel. Grade/length/world
 boundary validation gives feedback; inventory, loading, focus and mode gates
 apply; a conservative player-overlap box prevents building around the player.
 Selection is temporary; accepted density edits use normal world saving. This
-is an initial authoring interface: route preview, hill cutting, terrain undo,
+is an initial authoring interface: hill cutting, terrain undo,
 network authority and vegetation-clearing policy remain unfinished.
 
 Fixed a rendering regression introduced by asphalt commit `43cf536`: extracting

@@ -38,7 +38,10 @@ The demo provides a road panel while a terrain tool is equipped and the mouse
 is released (Esc). Aim, release the mouse, mark each endpoint, then build.
 Width/depth and endpoint selection live in `road_palette.gd`; density processing
 stays native. Selection is temporary, while accepted roads save with terrain.
-Route preview, hill cutting, terrain undo and network construction are pending.
+An editor outline shows the rounded footprint and depth, updating only on
+selection changes. Green indicates valid parameters, not route clearance; red
+indicates an incomplete/invalid selection. It follows normal depth testing.
+Hill cutting, terrain undo and network construction are pending.
 
 Signals:
 

@@ -27,9 +27,17 @@ func run() -> void:
 		game.camera.global_transform=camera_transform
 		panel.mark(true,Vector3(400,180,400));panel.mark(false,Vector3(432,184,400))
 		check(panel.validation_error().is_empty(),"graded selection accepted")
+		check(game.road_preview.outline.get_surface_count()==1 and game.road_preview.appearance.albedo_color==Color("50e6b5"),"valid route produces green outline")
+		var previous_rebuilds: int=game.road_preview.rebuilds
+		panel.width.value=4
+		check(game.road_preview.rebuilds==previous_rebuilds+1,"width control refreshes outline once")
+		panel.width.value=3
 		panel.finish.y=200
+		panel.selection_changed.emit()
+		check(game.road_preview.appearance.albedo_color==Color("ff705e"),"invalid grade produces red outline")
 		check(not panel.validation_error().is_empty(),"excessive grade explained before submission")
 		panel.finish.y=184
+		panel.selection_changed.emit()
 		game.player_hud.set_open(true);panel.action_requested.emit("clear")
 		check(panel.has_start,"inventory blocks road editor actions")
 		game.player_hud.set_open(false);game.app_focused=true
@@ -39,9 +47,14 @@ func run() -> void:
 		while game.terrain.pending_edit and Time.get_ticks_msec()<deadline: await process_frame
 		check(not game.terrain.pending_edit and game.terrain.latest_error.is_empty(),"editor road completes without worker error")
 		Input.mouse_mode=Input.MOUSE_MODE_VISIBLE
+		previous_rebuilds=game.road_preview.rebuilds
 		for frame in 3: await process_frame
+		check(game.road_preview.rebuilds==previous_rebuilds,"unchanged selection does not rebuild preview each frame")
 		check(panel.panel.visible and panel.panel.get_global_rect().end.y<900,"road panel visible and fits above toolbelt at 1080p")
 		if DisplayServer.get_name()!="headless":
+			game.camera.global_position=Vector3(440,205,428)
+			game.camera.look_at(Vector3(416,181,400))
+			for frame in 3: await process_frame
 			await RenderingServer.frame_post_draw
 			var screenshot:=root.get_texture().get_image()
 			game.terrain.shutdown()

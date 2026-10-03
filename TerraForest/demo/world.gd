@@ -19,6 +19,7 @@ var model_tool = preload("res://addons/structures/model_tool.gd").new()
 var structure_mode := false
 var construction_palette=preload("res://addons/structures/construction_palette.gd").new()
 var road_palette=preload("res://addons/volumetric_terrain/road_palette.gd").new()
+var road_preview=preload("res://addons/volumetric_terrain/road_preview.gd").new()
 var structure_shape := 1
 var structure_material := 0
 var structure_rotation := 0
@@ -100,6 +101,8 @@ func _ready() -> void:
 	add_child(construction_palette)
 	add_child(road_palette)
 	road_palette.action_requested.connect(_road_action)
+	terrain.add_child(road_preview)
+	road_palette.selection_changed.connect(_update_road_preview)
 	construction_palette.configure(structure_prefabs)
 	construction_palette.selection_requested.connect(_construction_selection)
 	construction_palette.capture_requested.connect(_capture_construction)
@@ -595,6 +598,13 @@ func _place_material_supply(item: int) -> void:
 		return
 	_show_lake_notice("%s supply placed · %s" % [pickups.ITEMS[item],"temporary world" if temporary_world else "F5 saves world"])
 
+func _update_road_preview() -> void:
+	if not road_palette.has_start and not road_palette.has_finish:
+		road_preview.clear();return
+	var a: Vector3=road_palette.start if road_palette.has_start else road_palette.finish
+	var b: Vector3=road_palette.finish if road_palette.has_finish else a
+	road_preview.update_selection(a,b,road_palette.width.value,road_palette.depth.value,road_palette.validation_error().is_empty())
+
 func _road_action(action: String) -> void:
 	if loading_active or shutdown_requested or benchmark_enabled or not app_focused or not terrain.world_ready or player_hud.inventory_open or structure_mode or model_tool.active: return
 	if action=="clear": road_palette.clear();return
@@ -647,6 +657,7 @@ func _process(delta: float) -> void:
 	var frame_begin:=Time.get_ticks_usec()
 	super._process(delta)
 	road_palette.panel.visible=not structure_mode and not model_tool.active and not loading_active and not shutdown_requested and not player_hud.inventory_open and Input.mouse_mode==Input.MOUSE_MODE_VISIBLE
+	road_preview.visible=not structure_mode and not model_tool.active and not loading_active and not shutdown_requested and not player_hud.inventory_open
 	water_camera.update()
 	pickups.update_view(delta,player.global_position,not loading_active and not shutdown_requested)
 	terrain._record_stage("controller process",(Time.get_ticks_usec()-frame_begin)/1000.0)

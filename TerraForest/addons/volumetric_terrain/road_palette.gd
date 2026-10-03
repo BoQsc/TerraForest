@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: 0BSD
 extends CanvasLayer
 signal action_requested(action: String)
+signal selection_changed
 var start: Vector3
 var finish: Vector3
 var has_start:=false
@@ -19,6 +20,8 @@ func _ready() -> void:
 	var hint:=Label.new();hint.text="Aim at terrain, then Esc to use controls.\nMark both ends, then build.\nRaises terrain; does not cut hills.";column.add_child(hint)
 	width=_number(column,"Half-width (m)",0.5,16,3)
 	depth=_number(column,"Depth (m)",1,8,2)
+	width.value_changed.connect(func(_value: float): selection_changed.emit())
+	depth.value_changed.connect(func(_value: float): selection_changed.emit())
 	for item in [["start","Mark start at aim"],["finish","Mark end at aim"],["build","Build asphalt road"],["clear","Clear selection"]]:
 		var button:=Button.new();button.text=item[1];button.focus_mode=Control.FOCUS_NONE;column.add_child(button)
 		button.pressed.connect(func(): action_requested.emit(item[0]))
@@ -31,8 +34,10 @@ func mark(first: bool,point: Vector3) -> void:
 	if first: start=point;has_start=true
 	else: finish=point;has_finish=true
 	status.text="Start: %s\nEnd: %s" % [str(start) if has_start else "unset",str(finish) if has_finish else "unset"]
+	selection_changed.emit()
 func clear() -> void:
 	has_start=false;has_finish=false;status.text="Road selection cleared."
+	selection_changed.emit()
 func validation_error() -> String:
 	if not has_start or not has_finish: return "Mark both ends first."
 	if not start.is_finite() or not finish.is_finite(): return "Invalid endpoint."
