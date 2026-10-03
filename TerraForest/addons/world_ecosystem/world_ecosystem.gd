@@ -89,8 +89,8 @@ func _step(delta: float) -> void:
 			continue
 		var candidates: Dictionary = _candidates(key)
 		if candidates["points"].is_empty():
-			resident[key] = true
-			_resample.erase(key)
+			var empty_transforms: Array[Transform3D]=[]
+			_replace_samples(key,PackedInt64Array(),empty_transforms)
 			break # Empty owners consume the same per-frame generation budget.
 		_token += 1
 		if terrain.request_surface_batch(candidates["points"], _token):
@@ -173,6 +173,10 @@ func _surface_ready(token: int, points: PackedVector3Array, normals: PackedVecto
 		var basis := Basis(Vector3.UP, request["rotations"][i]).scaled(Vector3.ONE * request["scales"][i])
 		ids.append(request["ids"][i])
 		transforms.append(Transform3D(basis, points[i] - Vector3(0.0, 0.2, 0.0)))
+	_replace_samples(key,ids,transforms)
+
+func _replace_samples(key: Vector2i,ids: PackedInt64Array,transforms: Array[Transform3D]) -> void:
+	# Empty results must retire previously accepted roots as well as their cache.
 	var previous: Dictionary = _samples.get(key, {})
 	_samples[key] = {"ids": ids, "transforms": transforms, "active": previous.get("active", PackedInt64Array()), "active_transforms": previous.get("active_transforms", []), "published": previous.get("published", false)}
 	_resample.erase(key)
@@ -180,6 +184,7 @@ func _surface_ready(token: int, points: PackedVector3Array, normals: PackedVecto
 
 func _structures_changed() -> void:
 	for key in _samples:
+		if _samples[key].transforms.is_empty(): continue
 		_reconcile[key] = true
 
 func _structure_region_changed(bounds: AABB) -> void:
@@ -187,11 +192,13 @@ func _structure_region_changed(bounds: AABB) -> void:
 		_structures_changed();return
 	for key in _samples:
 		var sample: Dictionary=_samples[key]
+		if sample.transforms.is_empty(): continue
 		if not sample.has("exclusion_bounds") or sample.exclusion_bounds.intersects(bounds):
 			_reconcile[key]=true
 
 func _water_changed(bounds: AABB) -> void:
 	for key: Vector2i in _samples:
+		if _samples[key].transforms.is_empty(): continue
 		var footprint:=AABB(Vector3(key.x*CELL_SIZE,bounds.position.y,key.y*CELL_SIZE),Vector3(CELL_SIZE,maxf(bounds.size.y,1.0),CELL_SIZE))
 		if footprint.intersects(bounds): _reconcile[key]=true
 
@@ -204,7 +211,7 @@ func _publish_samples(key: Vector2i) -> void:
 		for i in range(1,transforms.size()): bounds=bounds.merge(transforms[i]*prototype)
 		sample["exclusion_bounds"]=bounds
 	var mask := PackedByteArray()
-	if structures != null:
+	if structures != null and not transforms.is_empty():
 		mask = structures.overlap_mask(transforms, vegetation.placement_bounds())
 		if mask.size() != transforms.size():
 			rejected_batches += 1
@@ -212,7 +219,7 @@ func _publish_samples(key: Vector2i) -> void:
 			return
 	var ids := PackedInt64Array()
 	var water_mask:=PackedByteArray()
-	if water!=null:
+	if water!=null and not transforms.is_empty():
 		water_mask=water.placement_mask(transforms)
 		if water_mask.size()!=transforms.size():
 			rejected_batches+=1;_reconcile[key]=true;return

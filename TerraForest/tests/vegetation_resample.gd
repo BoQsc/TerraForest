@@ -4,6 +4,7 @@ class TerrainStub extends Node3D:
 	var epoch:=1
 	var published_revision:=1
 	var pending_edit:=false
+	var world_ready:=true
 var failures:=0
 func check(ok: bool,label: String) -> void:
 	print("PASS " if ok else "FAIL ",label)
@@ -33,5 +34,15 @@ func run() -> void:
 	check(is_equal_approx(vegetation.renderer.roots[1].t.origin.y,1) and is_equal_approx(vegetation.trunk_collision.get_instance(1)[7],1),"lowered support updates both representations too")
 	terrain.published_revision=2;sample(ecosystem,5,9)
 	check(ecosystem.stale_results==1 and is_equal_approx(vegetation.renderer.roots[1].t.origin.y,1),"stale support cannot replace the accepted transform")
-	ecosystem.free();terrain.free();vegetation.free()
+	var camera:=Camera3D.new();root.add_child(camera);ecosystem.camera=camera
+	ecosystem.density=0;ecosystem._last_cell=Vector2i.ZERO;ecosystem._scan_timer=1
+	ecosystem._resample[Vector2i.ZERO]=true;ecosystem._step(0)
+	check(vegetation.renderer.roots.is_empty() and vegetation.trunk_collision.get_ids().is_empty(),"zero-candidate resample retires existing renderer and trunk records")
+	check(ecosystem._samples[Vector2i.ZERO].ids.is_empty() and not ecosystem._resample.has(Vector2i.ZERO),"empty owner replaces stale sample cache and completes resampling")
+	ecosystem._publish_samples(Vector2i.ZERO)
+	check(vegetation.renderer.roots.is_empty(),"later exclusion reconciliation cannot resurrect retired candidates")
+	ecosystem._reconcile.clear()
+	ecosystem._structures_changed();ecosystem._structure_region_changed(AABB(Vector3.ZERO,Vector3(64,32,64)));ecosystem._water_changed(AABB(Vector3.ZERO,Vector3(64,32,64)))
+	check(ecosystem._reconcile.is_empty(),"empty candidate caches do not schedule pointless structure or water reconciliation")
+	ecosystem.free();camera.free();terrain.free();vegetation.free()
 	print("VEGETATION_RESAMPLE failures=",failures);quit(1 if failures else 0)

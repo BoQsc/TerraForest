@@ -1,3 +1,11 @@
+## Empty vegetation resample retirement - 2026-10-03
+
+Fixed the zero-candidate resampling branch, which previously marked the owner resident without replacing its cached candidates or removing previously published roots. Empty candidate batches now use the same sample replacement and publication path as surface results. This retires renderer roots and trunk records, preserves the one-owner-per-frame budget and prevents later exclusion reconciliation from restoring stale candidates. Empty caches skip structure/water overlap queries and invalidations because exclusions cannot introduce candidates. Terrain resampling can still populate them later. This does not add automatic live density-setting regeneration; it corrects an already scheduled resample.
+
+The regression reproduced three failures before the fix. All twelve resampling checks and fourteen existing native vegetation-exclusion checks now pass. These short headless checks validate membership and stored trunk transforms, not rendered appearance or physics contacts. No new frame-rate claim is made.
+
+Evidence: docs/evidence/vegetation_empty_resample.
+
 ## Tree support resampling correctness - 2026-10-03
 
 Fixed an ecosystem publication bug: matching stable IDs previously skipped publication even when authoritative surface samples moved their transforms. This left both renderer roots and native trunk records at the previous height. Each resident sample now retains its last accepted transforms and skips an owner update only when IDs and transforms both match. The renderer already preserves unchanged neighboring rows and their fade state. The extra comparison is bounded by the existing 36-candidate owner batch.
