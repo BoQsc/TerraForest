@@ -21,6 +21,12 @@ func run() -> void:
 		game.camera.look_at(game.player.global_position,Vector3.FORWARD)
 		panel.action_requested.emit("start")
 		check(panel.has_start,"mark button acquires terrain through actual physics ray")
+		var original_start: Vector3=panel.start
+		var blocker_cell:=Vector3i(game.player.global_position.floor())+Vector3i(0,5,0)
+		game.structures.blocks.set_cells(PackedInt32Array([blocker_cell.x,blocker_cell.y,blocker_cell.z,1]))
+		panel.action_requested.emit("start")
+		check(panel.start==original_start and panel.status.text.contains("structure blocks"),"road aim cannot mark terrain through a building")
+		game.structures.blocks.set_cells(PackedInt32Array([blocker_cell.x,blocker_cell.y,blocker_cell.z,0]))
 		panel.mark(false,panel.start+Vector3(10,0,0))
 		panel.action_requested.emit("build")
 		check(panel.status.text.begins_with("Move clear"),"road overlapping player is rejected")
@@ -41,6 +47,10 @@ func run() -> void:
 		game.player_hud.set_open(true);panel.action_requested.emit("clear")
 		check(panel.has_start,"inventory blocks road editor actions")
 		game.player_hud.set_open(false);game.app_focused=true
+		game.structures.blocks.set_cells(PackedInt32Array([416,181,400,1]))
+		panel.action_requested.emit("build")
+		check(panel.status.text.begins_with("Road bounds overlap"),"road volume cannot overwrite existing building occupancy")
+		game.structures.blocks.set_cells(PackedInt32Array([416,181,400,0]))
 		panel.action_requested.emit("build")
 		check(panel.status.text.begins_with("Road submitted"),"road panel routes construction to terrain worker")
 		deadline=Time.get_ticks_msec()+10000

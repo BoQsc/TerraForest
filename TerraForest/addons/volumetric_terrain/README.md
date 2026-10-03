@@ -42,6 +42,10 @@ An editor outline shows the rounded footprint and depth, updating only on
 selection changes. Green indicates valid parameters, not route clearance; red
 indicates an incomplete/invalid selection. It follows normal depth testing.
 Hill cutting, terrain undo and network construction are pending.
+The demo blocks endpoint selection through buildings and rejects road bounds
+overlapping native block/model occupancy or unavailable building regions.
+The clearance box includes a 0.5 m margin and may reject nearby diagonal routes
+conservatively. Direct native road commands do not enforce this editor policy.
 
 Signals:
 

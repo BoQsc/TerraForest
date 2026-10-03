@@ -2,6 +2,15 @@
 
 ## Current delivery priority
 
+Road editor aiming now uses the combined native structure/physics ray, rejecting
+building hits rather than marking terrain through them. Submission checks the
+native block/model overlap mask and rejects unavailable building regions.
+The road bounding box plus 0.5 m margin is conservative, particularly on diagonal
+routes; this is not exact capsule clearance. Fifteen world checks pass, including
+a building inserted before collider publication and removed before acceptance.
+Evidence: `evidence/road_structure_clearance/`. This is an editor admission rule,
+not a cross-system transaction or multiplayer authority guarantee.
+
 Road selection now has a bounded editor outline showing rounded ends, grade,
 width and depth. It rebuilds on selection/dimension changes only, has no
 collision or shadows, and hides outside terrain editing or during loading and

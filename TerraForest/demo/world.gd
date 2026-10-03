@@ -610,9 +610,10 @@ func _road_action(action: String) -> void:
 	if action=="clear": road_palette.clear();return
 	if action in ["start","finish"]:
 		var origin:=camera.global_position
-		var query:=PhysicsRayQueryParameters3D.create(origin,origin-camera.global_basis.z*48,1,[player.get_rid()])
-		var hit:=get_world_3d().direct_space_state.intersect_ray(query)
+		var hit: Dictionary=structures.blocks.raycast_scene(origin,origin-camera.global_basis.z*48,3,[player.get_rid()])
 		if hit.is_empty(): road_palette.status.text="Aim at nearby loaded terrain.";return
+		if hit.has("cell") or not hit.collider is CollisionObject3D or (hit.collider.collision_layer&1)==0:
+			road_palette.status.text="Road endpoints must be on terrain; a structure blocks the aim.";return
 		road_palette.mark(action=="start",terrain.to_local(hit.position)+Vector3(0,0.25,0))
 		return
 	if action!="build": return
@@ -623,6 +624,10 @@ func _road_action(action: String) -> void:
 	var hi:=a.max(b)+Vector3(road_palette.width.value,0,road_palette.width.value)
 	var protection:=AABB(terrain.to_local(player.global_position)-Vector3(0.4,0,0.4),Vector3(0.8,1.8,0.8))
 	if AABB(lo,hi-lo).grow(0.5).intersects(protection): road_palette.status.text="Move clear of the road before building.";return
+	var transforms: Array[Transform3D]=[terrain.global_transform]
+	var occupied: PackedByteArray=structures.overlap_mask(transforms,AABB(lo,hi-lo).grow(0.5))
+	if occupied.size()!=1 or occupied[0]!=0:
+		road_palette.status.text="Road bounds overlap a structure or unavailable building region. Choose a clear route.";return
 	var accepted: bool=terrain.construct_road_bed(a,b,road_palette.width.value,road_palette.depth.value)
 	road_palette.status.text=("Road submitted · %s. Terrain roads have no block undo." % ["temporary world" if temporary_world else "F5 saves world"]) if accepted else "Road not accepted; wait for terrain work to finish."
 
