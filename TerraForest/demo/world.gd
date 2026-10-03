@@ -127,6 +127,7 @@ func _ready() -> void:
 	construction_palette.supply_requested.connect(_place_material_supply)
 	construction_palette.stack_requested.connect(_stack_construction)
 	construction_palette.frontage_requested.connect(_frontage_construction)
+	construction_palette.frontage_sources_requested.connect(_frontage_sources_construction)
 	construction_palette.survey_requested.connect(_survey_construction)
 	construction_palette.preparation_requested.connect(_prepare_construction_site)
 	construction_palette.prepared_placement_requested.connect(_place_prepared_site)
@@ -475,6 +476,15 @@ func _frontage_construction(lots: int,width: int,gap: int,seed: int,title: Strin
 	if loading_active or shutdown_requested or benchmark_enabled or player_hud.inventory_open or not structure_mode or model_tool.active or structure_prefab_index<0: return
 	var result: Dictionary=prefab_library.begin_frontage(structure_prefabs[structure_prefab_index],lots,width,gap,seed,title)
 	construction_palette.capture_status.text="Generating frontage…" if result.ok else result.reason
+
+func _frontage_sources_construction(indices: PackedInt32Array,lots: int,width: int,gap: int,seed: int,title: String) -> void:
+	if loading_active or shutdown_requested or benchmark_enabled or player_hud.inventory_open or not structure_mode or model_tool.active: return
+	var sources: Array[Resource]=[]
+	for index in indices:
+		if index<0 or index>=structure_prefabs.size(): construction_palette.capture_status.text="Building selection changed; reopen the street tool";return
+		sources.append(structure_prefabs[index])
+	var result: Dictionary=prefab_library.begin_frontage_sources(sources,lots,width,gap,seed,title)
+	construction_palette.capture_status.text="Generating mixed frontage…" if result.ok else result.reason
 
 func _accept_composed_prefab(result: Dictionary) -> void:
 	if not result.ok:

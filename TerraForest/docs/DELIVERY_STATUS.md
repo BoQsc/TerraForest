@@ -1,3 +1,13 @@
+## Mixed building street authoring - 2026-10-03
+
+The street dialog now exposes a full unsigned-32-bit layout seed and an optional explicit prefab mix. Ctrl-click selects building types; single-prefab behavior remains available. The world routes mixed selections through begin_frontage_sources on the existing low-priority authoring worker. Input is bounded to 32 sources and 262144 total source blocks before snapshots are copied. Native composition still validates output limits. Saved resources include completed geometry, street metadata, source count and seed, without depending on mutable source assets.
+
+Fifteen worker checks passed, including immutable snapshots, deterministic geometry, empty/oversized mix rejection, persistence and compatibility with site grading/paving. The graphical palette check passed with maximum seed 4294967295, and its 1080p screenshot was inspected after widening the seed field. The mixed cottage/tower-floor fixture passed all 28 world editor checks, including survey, grading, asphalt, cancellation, support validation and exact insertion. A first run lost application focus and failed the foreground-cap check; focused retries passed. Final capture: 221 frames, p95 19.010 ms, max 49.267 ms. This is feature validation, not sustained-60-FPS certification.
+
+The final placement screenshot shows the mixed authored modules. The tower-floor source is an open structural module, not a finished tower. Layouts remain straight paired rows; junctions, city road networks and populated-city performance remain incomplete.
+
+Evidence: docs/evidence/frontage_mix.
+
 ## Native sparse vegetation updates - 2026-10-03
 
 The vegetation extension now runs sparse instance slot removal/insertion and transform/fade-data updates in C++. Full cell rebuilds, allocation and transition completion still use the existing renderer; dictionary-based scene-thread state remains. The original flush loop is available through --scripted-vegetation-flush for comparisons. Both native binaries were rebuilt against the prebuilt SDK.

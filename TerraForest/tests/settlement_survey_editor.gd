@@ -18,7 +18,12 @@ func run() -> void:
 	var asset: Resource
 	for candidate: Resource in game.structure_prefabs:
 		if candidate.resource_name.begins_with("Street frontage") and candidate.has_meta("frontage_version"): asset=candidate;break
-	check(asset!=null and asset.get_meta("street_width",0)==8,"built-in frontage supplies its real street metadata")
+	if "--mixed-frontage-fixture" in OS.get_cmdline_user_args():
+		asset=ClassDB.instantiate("NativeBlockPrefab")
+		check(asset.compose_frontage([load("res://addons/structures/prefabs/brick_cottage.tres"),load("res://addons/structures/prefabs/tower_floor.tres")],2,8,3,29),"mixed building fixture composed natively")
+		asset.set_meta("frontage_version",1);asset.set_meta("street_width",8);asset.set_meta("frontage_gap",3)
+		asset.resource_name="Mixed cottage and tower street"
+	check(asset!=null and asset.get_meta("street_width",0)==8,"frontage supplies its real street metadata")
 	if asset==null: game.terrain.shutdown();game.free();quit(1);return
 	game.structure_prefabs.append(asset);game.structure_prefab_index=game.structure_prefabs.size()-1
 	game.construction_palette.configure(game.structure_prefabs)
@@ -100,11 +105,12 @@ func run() -> void:
 	for frame in 60: await process_frame
 	print("SITE_FRAME_PROBE ",frame_probe.finish("res://reports/site_frame_probe.json"))
 	check(game.construction_palette.survey_dialog.has_focus() and Engine.max_fps==60,"focused survey dialog retains 60 FPS cap")
-	await RenderingServer.frame_post_draw
-	root.get_texture().get_image().save_png("res://reports/settlement_prepared_placement.png")
 	var placed_cells: int=game.structures.blocks.stats().cells
 	game.construction_palette.survey_dialog.custom_action.emit("place_prepared")
 	check(game.structures.blocks.stats().cells==placed_cells and game._foundation_placement.is_empty(),"repeated placement cannot duplicate the prepared building")
+	game.construction_palette.survey_dialog.hide()
+	await RenderingServer.frame_post_draw
+	root.get_texture().get_image().save_png("res://reports/settlement_prepared_placement.png")
 	game.player.global_position=original_player
 	game.construction_palette.survey_dialog.hide()
 	game.app_focused=true

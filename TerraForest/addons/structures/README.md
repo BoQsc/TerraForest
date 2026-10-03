@@ -317,6 +317,21 @@ The addon supplies editable block buildings, reusable block prefab assets, bound
 The native block world supports explicit 64-cell region packets with conditional capture/unload/reload, missing-region readiness and save guards. See [Block region transfers](../../docs/BLOCK_REGION_TRANSFERS.md) for the API and format. The independent `NativeBlockRegionStore` adds conditional batch disk publication, explicit backup recovery and bounded garbage collection; see [Block region catalog](../../docs/BLOCK_REGION_CATALOG.md). Its synchronous C++ API can run on a caller-owned I/O worker. [NativeBlockRegionIO](../../docs/BLOCK_REGION_IO.md) supplies a persistent native worker with bounded request and completion reservations, FIFO tickets and drain-on-stop ownership. Automatic travel paging and catalog-aware compound saves are not enabled in the demo.
 # Street-frontage prefab composition
 
+The frontage dialog offers a **Layout seed** and **Mix selected building types**.
+Enable the mix and Ctrl-click the desired prefab entries. An unchanged ordered
+source list and seed reproduce the same native layout. With mixing disabled,
+the current construction prefab is repeated as before. Building fronts must
+face local +Z; the generator aligns source bases to a common grade.
+
+`PrefabLibrary.begin_frontage_sources` accepts 1–32 source prefabs with at most
+262144 source blocks in total. It captures packed records before starting the
+low-priority worker, so later source edits cannot change the pending result.
+Composition, geometry validation and output cell limits remain native. Saved
+results contain complete block geometry plus seed and source-count metadata;
+they do not depend on the original sources to reload. Survey and prepare the
+result to grade its site and pave its street before placement. This remains a
+straight street layout, not an intersection or road-network generator.
+
 `NativeBlockPrefab.compose_frontage(sources, lots_per_side, street_width, gap, seed)`
 creates a deterministic pair of building rows using the existing prefab format.
 Source building fronts must face local +Z. The opposite row rotates by two

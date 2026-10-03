@@ -1,0 +1,18 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS maximum frontage worker admitted
+PASS outstanding work cannot be replaced
+PASS worker completes and persists result
+PASS editing source during generation does not alter captured layout
+PASS asynchronous geometry matches deterministic native reference
+PASS result consumed exactly once
+PASS next job admitted after consumption
+PASS shutdown drains and removes unpublished asset file
+PASS empty mix is rejected before scheduling
+PASS source-count bound is enforced
+PASS mixed source worker admitted
+PASS mixed source worker completes
+PASS mixed worker uses immutable source snapshots and deterministic native geometry
+PASS mixed geometry and generation metadata survive reload
+PASS mixed frontage supports existing grading and paving planner
+FRONTAGE_ASYNC { "submit_us": 251, "max_poll_and_save_us": 1143, "frames": 12 }

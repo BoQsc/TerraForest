@@ -5,6 +5,7 @@ signal capture_requested(action: String,title: String)
 signal supply_requested(item: int)
 signal stack_requested(count: int,title: String)
 signal frontage_requested(lots: int,width: int,gap: int,seed: int,title: String)
+signal frontage_sources_requested(indices: PackedInt32Array,lots: int,width: int,gap: int,seed: int,title: String)
 signal survey_requested
 signal preparation_requested
 signal preparation_stop_requested
@@ -22,6 +23,9 @@ var frontage_dialog: AcceptDialog
 var frontage_lots: SpinBox
 var frontage_width: SpinBox
 var frontage_gap: SpinBox
+var frontage_seed: SpinBox
+var frontage_mix: CheckBox
+var frontage_sources: ItemList
 var stack_count: SpinBox
 var stack_button: Button
 var supply: OptionButton
@@ -79,9 +83,14 @@ func _ready() -> void:
 	frontage_lots=_number(frontage_fields,"Buildings per side",1,64,2,1)
 	frontage_width=_number(frontage_fields,"Street width (m)",4,64,8,2)
 	frontage_gap=_number(frontage_fields,"Building gap / setback (m)",1,32,3,1)
+	frontage_seed=_number(frontage_fields,"Layout seed",0,4294967295,1703,1)
+	frontage_seed.custom_minimum_size.x=180
+	frontage_mix=CheckBox.new();frontage_mix.text="Mix selected building types";frontage_fields.add_child(frontage_mix)
+	frontage_sources=ItemList.new();frontage_sources.select_mode=ItemList.SELECT_MULTI;frontage_sources.custom_minimum_size=Vector2(500,120);frontage_fields.add_child(frontage_sources)
+	frontage_sources.tooltip_text="Ctrl-click to select multiple buildings. List order and seed determine the layout."
 	var notice:=Label.new();notice.text="Uses the prefab name entered in the construction panel.\nBuilding fronts must face local +Z.\nLayout only: terrain is not graded and asphalt is not laid.";frontage_fields.add_child(notice)
-	frontage_button.pressed.connect(func(): frontage_dialog.popup_centered(Vector2i(550,330)))
-	frontage_dialog.confirmed.connect(func(): frontage_requested.emit(int(frontage_lots.value),int(frontage_width.value),int(frontage_gap.value),1703,capture_name.text))
+	frontage_button.pressed.connect(func(): frontage_dialog.popup_centered(Vector2i(550,520)))
+	frontage_dialog.confirmed.connect(_request_frontage)
 	archive_button=Button.new();archive_button.text="Archive selected personal prefab";archive_button.focus_mode=Control.FOCUS_NONE;archive_button.disabled=true
 	archive_button.pressed.connect(func(): capture_requested.emit("archive",""));column.add_child(archive_button)
 	var restore:=Button.new();restore.text="Restore last archived prefab";restore.focus_mode=Control.FOCUS_NONE
@@ -109,6 +118,14 @@ func _number(parent: Control,title: String,lo: int,hi: int,value: int,step: int)
 func configure(assets: Array[Resource]) -> void:
 	prefab.clear();prefab.add_item("Single blocks")
 	for asset in assets: prefab.add_item(asset.resource_name)
+	frontage_sources.clear()
+	for asset in assets: frontage_sources.add_item(asset.resource_name)
+
+func _request_frontage() -> void:
+	if frontage_mix.button_pressed:
+		frontage_sources_requested.emit(frontage_sources.get_selected_items(),int(frontage_lots.value),int(frontage_width.value),int(frontage_gap.value),int(frontage_seed.value),capture_name.text)
+	else:
+		frontage_requested.emit(int(frontage_lots.value),int(frontage_width.value),int(frontage_gap.value),int(frontage_seed.value),capture_name.text)
 func synchronize(active: bool,shape_id: int,material_id: int,quarter_turn: int,prefab_index: int) -> void:
 	if panel==null: return
 	panel.visible=active
@@ -117,6 +134,7 @@ func synchronize(active: bool,shape_id: int,material_id: int,quarter_turn: int,p
 	material.disabled=prefab_index>=0
 	stack_button.disabled=prefab_index<0
 	frontage_button.disabled=prefab_index<0
+	if not frontage_dialog.visible and prefab_index>=0 and frontage_sources.get_selected_items().is_empty(): frontage_sources.select(prefab_index)
 	survey_button.disabled=prefab_index<0 or survey_busy
 	survey_button.text="Surveying ground…" if survey_busy else "Survey ground for selected prefab"
 	if not active: frontage_dialog.hide()
