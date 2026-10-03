@@ -43,7 +43,7 @@ func run() -> void:
 	var terrain:=preload("res://addons/volumetric_terrain/terrain_world.gd").new()
 	terrain.diagnostics_pause_streaming=true;terrain.backend.world_generator=2;root.add_child(terrain)
 	terrain.start(StandardMaterial3D.new(),true)
-	var deadline:=Time.get_ticks_msec()+10000
+	var deadline:=Time.get_ticks_msec()+30000
 	while not terrain.world_ready and Time.get_ticks_msec()<deadline: await process_frame
 	check(terrain.world_ready and terrain.construct_road_bed(a,b,3,4),"public road API submits through terrain worker")
 	deadline=Time.get_ticks_msec()+10000

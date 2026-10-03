@@ -175,7 +175,11 @@ bool World::edit(V3 a,V3 b,float radius,int shape,bool add,u8 material,V3&lo,V3&
    if(y<=3)value=old; // Preserve the bottom solid slab; excavation cannot open the world underside.
    // Bedrock and exterior remain outside the writable field.
    if(x==0||x==WORLD||z==0||z==WORLD||y<=1||y>=255)value=mx(value,0.f);
-   i16 q=quant(value),previous=quant(old);if(q==previous)continue;
+   i16 q=quant(value),previous=quant(old);
+   // Paving an already graded solid surface is still a material edit. Keep
+   // cut walls, air and protected bedrock outside this repaint operation.
+   bool repaint=shape==2&&brush<=0&&q<=0&&y>3&&(idx<0||pages[idx].mat[j]!=material);
+   if(q==previous&&!repaint)continue;
    if(idx<0){Page* page=ensure(x>>4,py,z>>4);if(!page)return false;idx=pages_by_key.get(page_key(x>>4,py,z>>4));}
    pages[idx].d[j]=q;
    // Cut walls retain their substrate; pavement is limited to the bed.
