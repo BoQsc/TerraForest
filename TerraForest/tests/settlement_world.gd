@@ -22,7 +22,7 @@ func run() -> void:
 	var origin:=Vector3i(ceili(game.player.position.x)+30,ceili(game.player.position.y)+2,ceili(game.player.position.z))
 	var p:=Vector3(origin)
 	for z in [-13,13]:
-		check(game.terrain.construct_graded_bed(p+Vector3(0,0,z),p+Vector3(93,0,z),8,8,12,1),"building row grading accepted")
+		check(game.terrain.construct_graded_bed(p+Vector3(0,0,z),p+Vector3(93,0,z),8,8,12,1,8),"building row grading accepted")
 		await wait_edit(game)
 	check(game.terrain.construct_road_bed(p,p+Vector3(93,0,0),5,8,12),"street paving accepted")
 	await wait_edit(game)

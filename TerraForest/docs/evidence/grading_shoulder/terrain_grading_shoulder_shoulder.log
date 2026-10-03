@@ -1,0 +1,15 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS sloped fill packet accepted
+PASS flat central grade retained
+PASS inner shoulder tapers below platform height
+PASS outer shoulder descends toward bounded fill bottom
+PASS capsule end also tapers
+PASS outside expanded footprint unchanged
+PASS repeated shoulder grading is idempotent
+PASS invalid shoulder preserves world
+PASS invalid shoulder preserves world
+PASS invalid shoulder preserves world
+PASS expanded grading admitted through worker facade
+PASS shoulder publishes through edit lifecycle
+[TerrainRewrite] Temporary test world: save skipped

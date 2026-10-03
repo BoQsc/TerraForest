@@ -145,18 +145,24 @@ Page* World::ensure(int px,int py,int pz){
  int idx=pages.push(page);pages_by_key.put(key,idx);edit_columns[px+NP*pz]|=(1u<<py);return &pages[idx];
 }
 static float box_distance(V3 p,V3 c,float r){V3 q={ab(p.x-c.x)-r,ab(p.y-c.y)-r,ab(p.z-c.z)-r};return length({mx(q.x,0),mx(q.y,0),mx(q.z,0)})+mn(mx(q.x,mx(q.y,q.z)),0);}
-static float road_bed_field(V3 p,V3 a,V3 b,float half_width,float depth){
+static float road_bed_field(V3 p,V3 a,V3 b,float half_width,float depth,float shoulder=0){
  V3 axis={b.x-a.x,0,b.z-a.z},offset={p.x-a.x,0,p.z-a.z};
  float t=clampf(dot(offset,axis)/dot(axis,axis),0.f,1.f);
  V3 nearest={a.x+axis.x*t,0,a.z+axis.z*t};
  float top=a.y+(b.y-a.y)*t;
- return mx(length(V3{p.x-nearest.x,0,p.z-nearest.z})-half_width,mx(p.y-top,top-depth-p.y));
+ float edge=length(V3{p.x-nearest.x,0,p.z-nearest.z})-half_width;
+ if(shoulder>0){
+  float drop=depth*clampf(edge/shoulder,0.f,1.f);
+  return mx(edge-shoulder,mx((p.y-top+drop)/__builtin_sqrtf(1.f+(depth/shoulder)*(depth/shoulder)),top-depth-p.y));
+ }
+ return mx(edge,mx(p.y-top,top-depth-p.y));
 }
-bool World::edit(V3 a,V3 b,float radius,int shape,bool add,u8 material,V3&lo,V3&hi,int&changes,float depth,float clearance){
+bool World::edit(V3 a,V3 b,float radius,int shape,bool add,u8 material,V3&lo,V3&hi,int&changes,float depth,float clearance,float shoulder){
  changes=0;radius=clampf(radius,0.5f,64.f);
  lo={mx(0,mn(a.x,b.x)-radius-SDF_BAND-1),mx(0,mn(a.y,b.y)-radius-SDF_BAND-1),mx(0,mn(a.z,b.z)-radius-SDF_BAND-1)};
  hi={mn(WORLD,mx(a.x,b.x)+radius+SDF_BAND+1),mn(255,mx(a.y,b.y)+radius+SDF_BAND+1),mn(WORLD,mx(a.z,b.z)+radius+SDF_BAND+1)};
  if(shape==2){lo.y=mx(0,mn(a.y,b.y)-depth-SDF_BAND-1);hi.y=mn(255,mx(a.y,b.y)+clearance+SDF_BAND+1);}
+ if(shape==2&&shoulder>0){lo.x=mx(0,lo.x-shoulder);lo.z=mx(0,lo.z-shoulder);hi.x=mn(WORLD,hi.x+shoulder);hi.z=mn(WORLD,hi.z+shoulder);}
  if(lo.x>hi.x||lo.y>hi.y||lo.z>hi.z)return false;
  // Capacity check before mutation: fail the edit, never silently discard terrain.
  int need=0;for(int py=fl(lo.y)/16;py<=fl(hi.y)/16;py++)for(int pz=fl(lo.z)/16;pz<=fl(hi.z)/16;pz++)for(int px=fl(lo.x)/16;px<=fl(hi.x)/16;px++)if(pages_by_key.get(page_key(px,py,pz))<0)need++;
@@ -165,7 +171,7 @@ bool World::edit(V3 a,V3 b,float radius,int shape,bool add,u8 material,V3&lo,V3&
  for(int z=z0;z<=z1;z++)for(int x=x0;x<=x1;x++){
   float h=height(float(x),float(z));int lastpy=-1,idx=-1;
   for(int y=y0;y<=y1;y++){
-   V3 p={float(x),float(y),float(z)};float brush=shape==2?road_bed_field(p,a,b,radius,depth):(shape==1?box_distance(p,b,radius):capsule(p,a,b,radius));
+   V3 p={float(x),float(y),float(z)};float brush=shape==2?road_bed_field(p,a,b,radius,depth,shoulder):(shape==1?box_distance(p,b,radius):capsule(p,a,b,radius));
    float cut=shape==2&&clearance>0?road_bed_field(p,a+V3{0,clearance,0},b+V3{0,clearance,0},radius,clearance):SDF_BAND+1;
    if(brush>SDF_BAND&&cut>SDF_BAND)continue;
    int py=y>>4;if(py!=lastpy){idx=pages_by_key.get(page_key(x>>4,py,z>>4));lastpy=py;}
@@ -780,10 +786,11 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
  }
  else if(cmd==2){V3 a=r.vec(),b=r.vec();float radius=r.f();int shape=int(r.u()),add=int(r.u()),mat=int(r.u());if(!r.good||!(radius>=.5f&&radius<=64.f)||shape<0||shape>1||mat<0||mat>3||!(ab(a.x)<=10000&&ab(b.x)<=10000&&ab(a.y)<=10000&&ab(b.y)<=10000&&ab(a.z)<=10000&&ab(b.z)<=10000)){out.p[8]=1;return;}V3 lo,hi;int changes;bool ok=w.edit(a,b,radius,shape,add!=0,u8(mat),lo,hi,changes);if(!ok)out.p[8]=2;out.u(w.revision);out.u(changes);out.u(w.pages.n);out.u(w.blocks.n);out.vec(lo);out.vec(hi);}
  else if(cmd==28){
-  V3 a=r.vec(),b=r.vec();float width=r.f(),depth=r.f(),clearance=n>=40?r.f():0;u32 material=n==44?r.u():4;V3 axis={b.x-a.x,0,b.z-a.z};float distance=length(axis);
-  if(!r.good||(n!=36&&n!=40&&n!=44)||material<1||material>4||!(clearance>=0&&clearance<=16&&mx(a.y,b.y)+clearance<=250&&width>=.5f&&width<=16.f&&depth>=1.f&&depth<=8.f&&distance>=1.f&&distance<=128.f)||
+  V3 a=r.vec(),b=r.vec();float width=r.f(),depth=r.f(),clearance=n>=40?r.f():0;u32 material=n>=44?r.u():4;float shoulder=n==48?r.f():0;V3 axis={b.x-a.x,0,b.z-a.z};float distance=length(axis);
+  if(!r.good||(n!=36&&n!=40&&n!=44&&n!=48)||material<1||material>4||!(shoulder>=0&&shoulder<=16)||!(clearance>=0&&clearance<=16&&mx(a.y,b.y)+clearance<=250&&width>=.5f&&width<=16.f&&depth>=1.f&&depth<=8.f&&distance>=1.f&&distance<=128.f)||
      !(a.x>=width+5&&a.x<=WORLD-width-5&&b.x>=width+5&&b.x<=WORLD-width-5&&a.z>=width+5&&a.z<=WORLD-width-5&&b.z>=width+5&&b.z<=WORLD-width-5&&a.y>=depth+4&&a.y<=250&&b.y>=depth+4&&b.y<=250&&ab(b.y-a.y)<=distance*.25f)){out.p[8]=1;return;}
-  V3 lo,hi;int changes;bool ok=w.edit(a,b,width,2,true,u8(material),lo,hi,changes,depth,clearance);
+  if(!(a.x>=width+shoulder+5&&a.x<=WORLD-width-shoulder-5&&b.x>=width+shoulder+5&&b.x<=WORLD-width-shoulder-5&&a.z>=width+shoulder+5&&a.z<=WORLD-width-shoulder-5&&b.z>=width+shoulder+5&&b.z<=WORLD-width-shoulder-5)){out.p[8]=1;return;}
+  V3 lo,hi;int changes;bool ok=w.edit(a,b,width,2,true,u8(material),lo,hi,changes,depth,clearance,shoulder);
   if(!ok)out.p[8]=2;out.u(w.revision);out.u(changes);out.u(w.pages.n);out.u(w.blocks.n);out.vec(lo);out.vec(hi);
  }
  else if(cmd==3){

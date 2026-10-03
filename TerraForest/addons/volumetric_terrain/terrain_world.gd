@@ -121,19 +121,21 @@ func edit(data: PackedByteArray, lo: Vector3, hi: Vector3, captured_us: int = 0,
 			var halo: Vector3 = Vector3.ONE * (radius + 5.0)
 			safe_lo = safe_lo.min(a.min(b) - halo)
 			safe_hi = safe_hi.max(a.max(b) + halo)
-		elif kind==28 and packet.size() in [36,40,44]:
+		elif kind==28 and packet.size() in [36,40,44,48]:
 			var a:=Vector3(packet.decode_float(4),packet.decode_float(8),packet.decode_float(12))
 			var b:=Vector3(packet.decode_float(16),packet.decode_float(20),packet.decode_float(24))
 			var width: float=packet.decode_float(28);var depth: float=packet.decode_float(32)
 			var clearance: float=packet.decode_float(36) if packet.size()>=40 else 0.0
-			if packet.size()==44 and (packet.decode_u32(40)<1 or packet.decode_u32(40)>4): return false
+			if packet.size()>=44 and (packet.decode_u32(40)<1 or packet.decode_u32(40)>4): return false
+			var shoulder: float=packet.decode_float(44) if packet.size()==48 else 0.0
+			if not is_finite(shoulder) or shoulder<0 or shoulder>16: return false
 			if not is_finite(clearance) or clearance<0 or clearance>16 or maxf(a.y,b.y)+clearance>250: return false
 			var distance:=Vector2(b.x-a.x,b.z-a.z).length()
 			if not a.is_finite() or not b.is_finite() or not is_finite(width) or not is_finite(depth) or width<0.5 or width>16 or depth<1 or depth>8 or distance<1 or distance>128 or absf(b.y-a.y)>distance*0.25: return false
 			for point: Vector3 in [a,b]:
-				if point.x<width+5 or point.x>1995-width or point.z<width+5 or point.z>1995-width or point.y<depth+4 or point.y>250: return false
-			safe_lo=safe_lo.min(a.min(b)-Vector3(width+5,depth+5,width+5))
-			safe_hi=safe_hi.max(a.max(b)+Vector3(width+5,clearance+5,width+5))
+				if point.x<width+shoulder+5 or point.x>1995-width-shoulder or point.z<width+shoulder+5 or point.z>1995-width-shoulder or point.y<depth+4 or point.y>250: return false
+			safe_lo=safe_lo.min(a.min(b)-Vector3(width+shoulder+5,depth+5,width+shoulder+5))
+			safe_hi=safe_hi.max(a.max(b)+Vector3(width+shoulder+5,clearance+5,width+shoulder+5))
 		elif kind == 3 and packet.size() == 20:
 			var cell := Vector3i(packet.decode_s32(4), packet.decode_s32(8), packet.decode_s32(12))
 			if cell.x < 0 or cell.x >= 2000 or cell.z < 0 or cell.z >= 2000 or cell.y < 2 or cell.y >= 255 or packet.decode_u32(16) > 3:
@@ -168,5 +170,8 @@ func set_block(cell: Vector3i, material_id: int) -> bool:
 func construct_road_bed(a: Vector3,b: Vector3,half_width: float=3.0,depth: float=2.0,clearance: float=0.0) -> bool:
 	return edit(Codec.road_bed(a,b,half_width,depth,clearance),a.min(b),a.max(b))
 
-func construct_graded_bed(a: Vector3,b: Vector3,half_width: float,depth: float,clearance: float,material_id: int=3) -> bool:
-	return edit(Codec.graded_bed(a,b,half_width,depth,clearance,material_id),a.min(b),a.max(b))
+func construct_graded_bed(a: Vector3,b: Vector3,half_width: float,depth: float,clearance: float,material_id: int=3,shoulder: float=0.0) -> bool:
+	var packet:=Codec.graded_bed(a,b,half_width,depth,clearance,material_id)
+	if shoulder!=0.0:
+		packet.resize(48);packet.encode_float(44,shoulder)
+	return edit(packet,a.min(b),a.max(b))

@@ -1,0 +1,20 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.3.289 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce GTX 1060 with Max-Q Design
+
+[TerrainRewrite] New world
+[TerrainRewrite] New world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+PASS combined world starts
+STARTUP_STATE { "reason": "Preparing destination", "ready": true, "error": "", "queued": 2, "worker": "mesh", "terrain_processing": true, "world_processing": true }
+PASS building row grading accepted
+PASS terrain edit publication finishes
+PASS building row grading accepted
+PASS terrain edit publication finishes
+PASS street paving accepted
+PASS terrain edit publication finishes
+[TerrainRewrite] Checking foundation support…
+[TerrainRewrite] Temporary test world: save skipped
+[TerrainRewrite] Combined world street placed · F5 saves world
+PASS sixteen cottages pass live terrain checks and place
+{"failures":0,"foundation_status":"supported","frame_max_ms":40.775,"frame_p95_ms":16.752,"origin":"(830, 52, 1310)","pending_vegetation_owners":0,"scope":"16 cottages on three live graded/paved terrain edits with live forest, followed by 180 graphical frames. No vehicle, populated-city or thermal guarantee.","structures":{"bake_lattice_16_chunks":4,"bake_lattice_32_chunks":12,"bake_lattice_64_chunks":12,"cell_bytes":229376,"cells":7488,"chunks":28,"collision_chunks":11,"dirty_chunks":0,"max_chunks":2048,"mesh_chunks":28,"published_bakes":28,"stale_bakes_rejected":0,"triangles":19008,"worker_jobs":0,"worker_jobs_submitted":28,"worker_results_consumed":28,"worker_threads_started":1},"vegetation_roots":2169}
+[TerrainRewrite] Temporary test world: save skipped
