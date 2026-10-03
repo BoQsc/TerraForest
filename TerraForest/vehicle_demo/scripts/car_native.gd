@@ -4,6 +4,19 @@ var driving_policy: RefCounted
 var suspension: RefCounted
 var visual_damage: RefCounted
 var accessories: RefCounted
+var streaming: RefCounted
+func bind_streamed_world(terrain: Node,structures: Node=null) -> bool:
+	if streaming!=null and streaming.waiting: return false
+	if not is_instance_valid(terrain): return false
+	streaming=load("res://addons/vehicle_runtime/vehicle_streaming.gd").new()
+	streaming.terrain=terrain;streaming.structures=structures
+	streaming.structures_required=structures!=null
+	return true
+func _physics_process(delta: float) -> void:
+	if streaming!=null and not streaming.update(self,driving_policy,delta): return
+	super._physics_process(delta)
+	# Recheck after controls change speed, before the physics integration step.
+	if streaming!=null: streaming.update(self,driving_policy,delta)
 func _ready() -> void:
 	GDExtensionManager.load_extension("res://addons/vehicle_runtime/vehicle_runtime.gdextension")
 	driving_policy=ClassDB.instantiate("NativeDrivingPolicy")

@@ -4,6 +4,7 @@
 #include <godot_cpp/classes/rigid_body3d.hpp>
 #include <godot_cpp/variant/vector3.hpp>
 #include <godot_cpp/variant/vector2.hpp>
+#include <godot_cpp/variant/aabb.hpp>
 namespace terraforest {
 class NativeDrivingPolicy : public godot::RefCounted {
     GDCLASS(NativeDrivingPolicy,godot::RefCounted)
@@ -11,6 +12,7 @@ class NativeDrivingPolicy : public godot::RefCounted {
 protected:
     static void _bind_methods();
 public:
+    godot::AABB travel_bounds(godot::Vector3 position,godot::Vector3 velocity,double delta) const;
     void reset();
     godot::Vector3 steering(double input,double speed,double delta);
     godot::Vector2 speed(double previous,double throttle,double reverse_brake,bool parked,double boost,double delta) const;

@@ -17,12 +17,21 @@ Vector3 forward(RigidBody3D *body,Vector3 up){
 }
 }
 void NativeDrivingPolicy::_bind_methods(){
+    ClassDB::bind_method(D_METHOD("travel_bounds","position","velocity","delta"),&NativeDrivingPolicy::travel_bounds);
     ClassDB::bind_method(D_METHOD("reset"),&NativeDrivingPolicy::reset);
     ClassDB::bind_method(D_METHOD("steering","input","speed","delta"),&NativeDrivingPolicy::steering);
     ClassDB::bind_method(D_METHOD("speed","previous","throttle","reverse_brake","parked","boost","delta"),&NativeDrivingPolicy::speed);
     ClassDB::bind_method(D_METHOD("apply_grounded","body","up","speed"),&NativeDrivingPolicy::apply_grounded);
     ClassDB::bind_method(D_METHOD("apply_free","body","up","throttle","reverse_brake","handbrake","parked","supported"),&NativeDrivingPolicy::apply_free);
     ClassDB::bind_method(D_METHOD("stabilize","body","up","supported","loaded_wheels"),&NativeDrivingPolicy::stabilize);
+}
+AABB NativeDrivingPolicy::travel_bounds(Vector3 position,Vector3 velocity,double delta) const {
+    if(!position.is_finite()||!velocity.is_finite()||!std::isfinite(delta)||delta<=0||delta>.1)return AABB(Vector3(INFINITY,INFINITY,INFINITY),Vector3());
+    // Supplied chassis and suspension fit within a 3 m sphere. An isotropic
+    // motion allowance also covers steering changes during the next tick.
+    double radius=3.25+velocity.length()*delta+30*delta*delta;
+    Vector3 extent{real_t(radius),real_t(radius),real_t(radius)};
+    return AABB(position-extent,extent*2);
 }
 void NativeDrivingPolicy::reset(){fraction_=angle_=sign_=0;cap_=26*radians;}
 double NativeDrivingPolicy::apply_grounded(RigidBody3D *body,Vector3 up,double speed) const {

@@ -43,3 +43,15 @@ vehicle velocities. Reset after teleport/vehicle reset. Configuration is
 transactional; mismatched arrays return false without replacing existing state.
 This moves mount animation calculations to C++; distance-based activation and
 rendering LOD remain future work.
+
+The demo car exposes bind_streamed_world(terrain, structures=null). Its optional
+streaming adapter updates terrain focus/travel velocity and checks native
+collision readiness before and after controls. Missing publication freezes the
+body, retains velocity for loading, and restores it when ready. Missing bound
+providers fail closed. This adapter assumes sole ownership of streaming focus;
+the walking controller must relinquish that ownership during driving.
+Native travel_bounds uses a 3 m envelope for this supplied chassis/suspension,
+plus travel and acceleration allowance. It is not a generic arbitrary-vehicle
+bound, smooth braking system, or guarantee against unbounded external impulses.
+World entry/exit, reload/reset during a hold, and multi-vehicle focus management
+still need integration. The ordinary standalone demo remains unbound.

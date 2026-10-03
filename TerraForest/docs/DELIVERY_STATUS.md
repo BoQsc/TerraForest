@@ -1,3 +1,7 @@
+## Vehicle streaming adapter - 2026-10-03
+
+The native demo vehicle now exposes optional streamed-world binding. It supplies terrain focus/travel velocity and checks terrain plus optional structure publication before/after control updates using native motion bounds. Missing readiness holds physics and retains momentum; ready publication resumes it. Eight targeted checks passed, including no drift over four physics steps and missing-provider handling. Evidence: evidence/vehicle_streaming/. These use real native readiness with controlled published-cell state, not a generated-world driving run. Main-world spawn/control handoff, smooth braking, reload/reset while held, and fleet focus remain incomplete.
+
 ## Directional terrain preloading - 2026-10-03
 
 Native requests_travel adds up to four lookahead samples at no more than 32 m spacing, covering two seconds of horizontal travel capped at 128 m. Current-position requests remain included and retain activation priority. TerrainStream consumes travel_velocity; the walking controller now supplies intended velocity, including when movement is blocked. Brush targeting retains precedence. Eight targeted checks and all 179 planner regressions passed. Evidence: evidence/terrain_travel/. This establishes request planning only: actual delivery latency, turns, braking and vehicle/world control handoff still require integration and measurement.
