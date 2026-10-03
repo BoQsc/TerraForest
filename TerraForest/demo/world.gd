@@ -658,6 +658,7 @@ func _update_road_preview() -> void:
 func _road_action(action: String) -> void:
 	if loading_active or shutdown_requested or benchmark_enabled or not app_focused or not terrain.world_ready or player_hud.inventory_open or structure_mode or model_tool.active: return
 	if action=="clear": road_palette.clear();return
+	if action=="level": road_palette.level_selection();return
 	if action in ["start","finish"]:
 		var origin:=camera.global_position
 		var hit: Dictionary=structures.blocks.raycast_scene(origin,origin-camera.global_basis.z*48,3,[player.get_rid()])

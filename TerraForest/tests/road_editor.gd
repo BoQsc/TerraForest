@@ -59,6 +59,11 @@ func run() -> void:
 		check(not game.terrain.pending_edit and game.terrain.latest_error.is_empty(),"editor road completes without worker error")
 		panel.surface.select(1);panel.surface.item_selected.emit(1)
 		check(panel.material_id()==1 and panel.build_button.text=="Grade stone foundation","foundation surface selects stone and updates action label")
+		var horizontal_end:=Vector2(panel.finish.x,panel.finish.z)
+		var revision: int=game.terrain.published_revision
+		game.app_focused=true;panel.action_requested.emit("level")
+		check(panel.finish.y==panel.start.y and Vector2(panel.finish.x,panel.finish.z)==horizontal_end,"level control aligns height while preserving horizontal endpoints")
+		check(not game.terrain.pending_edit and game.terrain.published_revision==revision and panel.status.text.contains("preview only"),"leveling selection does not mutate terrain before build")
 		game.app_focused=true;panel.action_requested.emit("build")
 		check(panel.status.text.begins_with("Foundation submitted"),"foundation panel routes grading through guarded world action")
 		deadline=Time.get_ticks_msec()+10000

@@ -33,7 +33,7 @@ func _ready() -> void:
 	clearance.value_changed.connect(func(_value: float): selection_changed.emit())
 	width.value_changed.connect(func(_value: float): selection_changed.emit())
 	depth.value_changed.connect(func(_value: float): selection_changed.emit())
-	for item in [["start","Mark start at aim"],["finish","Mark end at aim"],["build","Build asphalt road"],["clear","Clear selection"]]:
+	for item in [["start","Mark start at aim"],["finish","Mark end at aim"],["level","Level end to start height"],["build","Build asphalt road"],["clear","Clear selection"]]:
 		var button:=Button.new();button.text=item[1];button.focus_mode=Control.FOCUS_NONE;column.add_child(button)
 		if item[0]=="build": build_button=button
 		button.pressed.connect(func(): action_requested.emit(item[0]))
@@ -50,6 +50,15 @@ func mark(first: bool,point: Vector3) -> void:
 func clear() -> void:
 	has_start=false;has_finish=false;status.text="Road selection cleared."
 	selection_changed.emit()
+func level_selection() -> bool:
+	if not has_start or not has_finish:
+		status.text="Mark both ends before leveling.";return false
+	if not start.is_finite() or not finish.is_finite():
+		status.text="Invalid endpoint.";return false
+	var point:=finish;point.y=start.y
+	mark(false,point)
+	status.text+="\nLevel preview only · build to apply terrain grading."
+	return true
 func validation_error() -> String:
 	if not has_start or not has_finish: return "Mark both ends first."
 	if not start.is_finite() or not finish.is_finite(): return "Invalid endpoint."

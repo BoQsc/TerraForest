@@ -1,3 +1,7 @@
+## Level foundation selection - 2026-10-03
+
+Added Level end to start height to the Roads / Foundations palette. It preserves horizontal endpoints, updates the preview and clearly states that terrain is unchanged until Build. The action shares the existing world/editor guards. Twenty full-world editor checks passed, including equal endpoint heights, unchanged terrain revision before Build and successful subsequent foundation publication. The 1920x1080 panel capture was inspected. This supplies manual level grading; automatic settlement siting and terrain support validation remain unfinished. Evidence: evidence/foundation_level_editor/.
+
 ## Combined frontage and terrain grounding check - 2026-10-03
 
 A controlled solid-hill fixture now combines native stone grading for two building rows, asphalt paving and ordinary block-prefab placement. All 396 bottom-cell samples have solid support one metre below; all 1,476 upper-cell samples are outside solid terrain. Asphalt identity and placement passed. Terrain and building meshes rendered together at 1920x1080 fullscreen; image inspected. Initial render attempts supplied invalid vertical region spans; corrected to native 32 m bands. The resulting image deliberately retains surrounding hill mass: bounded local cuts form recessed rows, not a connected/landscaped town site. No automatic terrain planning, traffic access, complete collision qualification or performance claim is made. The fixture uses direct native commands on controlled terrain, not the streamed-world UI. Evidence: evidence/settlement_grounding/.

@@ -90,3 +90,7 @@ ends and set width, depth and clearance. Grade first; then choose Asphalt road
 and a narrower width to pave a street. Equal endpoint heights produce a level
 bed. Fill depth and clearance remain bounded; check that the site is supported.
 Terrain operations currently have no block-history undo.
+
+Use **Level end to start height** after marking both endpoints to create a
+level foundation preview. This changes the selection only; press the build
+button to submit grading. The chosen start elevation is retained.
