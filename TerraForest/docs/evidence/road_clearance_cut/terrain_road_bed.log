@@ -1,0 +1,27 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS graded volumetric bed accepted
+PASS bed has solid interior and bounded top and bottom
+PASS top follows endpoint grade at midpoint
+PASS outside field remains unchanged
+PASS repeated identical bed is idempotent
+PASS invalid road geometry rejected without mutation
+PASS invalid road geometry rejected without mutation
+PASS invalid road geometry rejected without mutation
+PASS invalid road geometry rejected without mutation
+PASS invalid road geometry rejected without mutation
+PASS bed density survives existing terrain snapshot format
+PASS ordinary mining edits road volume
+PASS bed uses existing native terrain meshing
+PASS saved asphalt reaches mesh as normalized continuous weights with LOD preserved
+PASS public road API submits through terrain worker
+PASS road edit completes through existing publication lifecycle
+PASS clearance fixture starts solid above road
+PASS road clears hill above pavement while retaining solid bed
+PASS cut preserves terrain outside corridor and beyond clearance cap
+PASS combined road cut is idempotent
+PASS invalid clearance rejected without mutation
+PASS invalid clearance rejected without mutation
+PASS invalid clearance rejected without mutation
+PASS legacy 36-byte road command remains accepted
+[TerrainRewrite] Temporary test world: save skipped

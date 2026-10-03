@@ -28,11 +28,12 @@ static func brush(a: Vector3, b: Vector3, radius: float, shape: int, add: bool, 
 	result.encode_u32(40, material)
 	return result
 
-static func road_bed(a: Vector3,b: Vector3,half_width: float,depth: float) -> PackedByteArray:
-	var packet:=PackedByteArray();packet.resize(36);packet.encode_u32(0,28)
+static func road_bed(a: Vector3,b: Vector3,half_width: float,depth: float,clearance: float=0.0) -> PackedByteArray:
+	var packet:=PackedByteArray();packet.resize(40);packet.encode_u32(0,28)
 	for axis in 3:
 		packet.encode_float(4+axis*4,a[axis]);packet.encode_float(16+axis*4,b[axis])
 	packet.encode_float(28,half_width);packet.encode_float(32,depth)
+	packet.encode_float(36,clearance)
 	return packet
 
 static func point_command(point: Vector3) -> PackedByteArray:

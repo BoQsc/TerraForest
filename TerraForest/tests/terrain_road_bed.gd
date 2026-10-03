@@ -49,6 +49,22 @@ func run() -> void:
 	deadline=Time.get_ticks_msec()+10000
 	while terrain.pending_edit and Time.get_ticks_msec()<deadline: await process_frame
 	check(not terrain.pending_edit and terrain.latest_error.is_empty(),"road edit completes through existing publication lifecycle")
+	# Isolated solid hill: test the cut against actual occupied density, not air.
+	var hill: RefCounted=ClassDB.instantiate("TerrainCore")
+	hill.execute(Codec.command(6,[1703,2]))
+	hill.execute(Codec.brush(Vector3(416,182,400),Vector3(416,182,400),8,1,true,1))
+	var untouched:=density(hill,Vector3(416,184,406))
+	var capped:=density(hill,Vector3(416,189,400))
+	check(density(hill,Vector3(416,184,400))<0,"clearance fixture starts solid above road")
+	var cut_packet:=Codec.road_bed(Vector3(400,180,400),Vector3(432,180,400),3,4,6)
+	check(Codec.reply_ok(hill.execute(cut_packet)) and density(hill,Vector3(416,184,400))>0 and density(hill,Vector3(416,179,400))<0,"road clears hill above pavement while retaining solid bed")
+	check(density(hill,Vector3(416,184,406))==untouched and density(hill,Vector3(416,189,400))==capped,"cut preserves terrain outside corridor and beyond clearance cap")
+	check(hill.execute(cut_packet).decode_u32(16)==0,"combined road cut is idempotent")
+	var cut_saved: PackedByteArray=hill.execute(Codec.command(4)).slice(12)
+	for invalid_clearance in [-1.0,17.0,NAN]:
+		check(not Codec.reply_ok(hill.execute(Codec.road_bed(a,b,3,4,invalid_clearance))) and hill.execute(Codec.command(4)).slice(12)==cut_saved,"invalid clearance rejected without mutation")
+	var legacy:=Codec.road_bed(a,b,3,4).slice(0,36)
+	check(Codec.reply_ok(hill.execute(legacy)),"legacy 36-byte road command remains accepted")
 	terrain.shutdown();terrain.free()
 	DirAccess.make_dir_recursive_absolute("res://reports")
 	var file:=FileAccess.open("res://reports/terrain_road_bed.json",FileAccess.WRITE)

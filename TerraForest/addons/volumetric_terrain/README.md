@@ -25,10 +25,13 @@ func _process(_delta):
 
 `sculpt_sphere(center, radius, add = false, material_id = 1) -> bool` submits a sphere edit. `set_block(cell, material_id) -> bool` writes/removes an exact cube. Both return false if not ready, busy, malformed or admission fails. Radius is 0.5–64 m. Material values are 0–3; block material 0 removes. Existing `edit(...)` supports bounded ordered groups of up to four native brush packets, with validation before mutation. Failed native multi-command groups are not rollback-atomic; saving is disabled on that failure path.
 
-`construct_road_bed(a, b, half_width = 3, depth = 2) -> bool` adds a graded,
+`construct_road_bed(a, b, half_width = 3, depth = 2, clearance = 0) -> bool` adds a graded,
 rounded asphalt volume through the same worker. Endpoints describe top height;
 horizontal length is 1–128 m, half-width 0.5–16 m, depth 1–8 m, grade at most
-25 percent. It unions with terrain and does not cut hills. Native packet 28
+25 percent. Optional clearance (0–16 m) subtracts the same graded corridor above
+the pavement. Zero disables cutting; terrain above the cap remains unchanged.
+Packet 28 accepts the legacy 36 bytes or 40 bytes with a trailing clearance float.
+Native packet 28
 stores density material 4; ordinary brushes retain their existing material API.
 Material weights use `UV2.y = integer_lod_step + asphalt_weight * 0.25`;
 the integer step is constant within each mesh. This retains the existing mesh
@@ -41,7 +44,7 @@ stays native. Selection is temporary, while accepted roads save with terrain.
 An editor outline shows the rounded footprint and depth, updating only on
 selection changes. Green indicates valid parameters, not route clearance; red
 indicates an incomplete/invalid selection. It follows normal depth testing.
-Hill cutting, terrain undo and network construction are pending.
+Terrain undo and network construction are pending.
 The demo blocks endpoint selection through buildings and rejects road bounds
 overlapping native block/model occupancy or unavailable building regions.
 The clearance box includes a 0.5 m margin and may reject nearby diagonal routes

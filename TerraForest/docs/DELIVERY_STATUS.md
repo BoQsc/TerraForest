@@ -2,6 +2,16 @@
 
 ## Current delivery priority
 
+Roads now support an optional native clearance cut (0 disables; maximum 16 m)
+in the same density edit as bed construction. The editor exposes it, includes
+it in the outline, and protects player/building bounds throughout that height.
+The cut follows the graded rounded corridor; material outside the pavement
+retains its substrate. Terrain above the cap remains, allowing a tunnel rather
+than guaranteeing an open cutting. Both terrain binaries rebuilt. Twenty-four
+native checks and fifteen world-editor checks pass; evidence and a 1920x1080
+guide capture are in `evidence/road_clearance_cut/`. Terrain undo, vegetation
+policy, road-network joins, collision traversal and scale qualification remain.
+
 Road editor aiming now uses the combined native structure/physics ray, rejecting
 building hits rather than marking terrain through them. Submission checks the
 native block/model overlap mask and rejects unavailable building regions.

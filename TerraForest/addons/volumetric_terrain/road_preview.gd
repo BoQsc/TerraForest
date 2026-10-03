@@ -9,7 +9,7 @@ func _init() -> void:
 	cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	appearance.shading_mode=BaseMaterial3D.SHADING_MODE_UNSHADED
 	material_override=appearance
-func update_selection(a: Vector3,b: Vector3,half_width: float,depth: float,valid: bool) -> void:
+func update_selection(a: Vector3,b: Vector3,half_width: float,depth: float,valid: bool,clearance: float=0.0) -> void:
 	outline.clear_surfaces();rebuilds+=1
 	if not a.is_finite() or not b.is_finite(): return
 	appearance.albedo_color=Color("50e6b5") if valid else Color("ff705e")
@@ -28,6 +28,9 @@ func update_selection(a: Vector3,b: Vector3,half_width: float,depth: float,valid
 		var next: int=(i+1)%ring.size()
 		_line(ring[i],ring[next])
 		_line(ring[i]-Vector3.UP*depth,ring[next]-Vector3.UP*depth)
+		if clearance>0:
+			_line(ring[i]+Vector3.UP*clearance,ring[next]+Vector3.UP*clearance)
+			if i%6==0: _line(ring[i],ring[i]+Vector3.UP*clearance)
 		if i%6==0: _line(ring[i],ring[i]-Vector3.UP*depth)
 	_line(a,b)
 	for center: Vector3 in [a,b]:

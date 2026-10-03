@@ -603,7 +603,7 @@ func _update_road_preview() -> void:
 		road_preview.clear();return
 	var a: Vector3=road_palette.start if road_palette.has_start else road_palette.finish
 	var b: Vector3=road_palette.finish if road_palette.has_finish else a
-	road_preview.update_selection(a,b,road_palette.width.value,road_palette.depth.value,road_palette.validation_error().is_empty())
+	road_preview.update_selection(a,b,road_palette.width.value,road_palette.depth.value,road_palette.validation_error().is_empty(),road_palette.clearance.value)
 
 func _road_action(action: String) -> void:
 	if loading_active or shutdown_requested or benchmark_enabled or not app_focused or not terrain.world_ready or player_hud.inventory_open or structure_mode or model_tool.active: return
@@ -621,14 +621,14 @@ func _road_action(action: String) -> void:
 	if not error.is_empty(): road_palette.status.text=error;return
 	var a: Vector3=road_palette.start;var b: Vector3=road_palette.finish
 	var lo:=a.min(b)-Vector3(road_palette.width.value,road_palette.depth.value,road_palette.width.value)
-	var hi:=a.max(b)+Vector3(road_palette.width.value,0,road_palette.width.value)
+	var hi:=a.max(b)+Vector3(road_palette.width.value,road_palette.clearance.value,road_palette.width.value)
 	var protection:=AABB(terrain.to_local(player.global_position)-Vector3(0.4,0,0.4),Vector3(0.8,1.8,0.8))
 	if AABB(lo,hi-lo).grow(0.5).intersects(protection): road_palette.status.text="Move clear of the road before building.";return
 	var transforms: Array[Transform3D]=[terrain.global_transform]
 	var occupied: PackedByteArray=structures.overlap_mask(transforms,AABB(lo,hi-lo).grow(0.5))
 	if occupied.size()!=1 or occupied[0]!=0:
 		road_palette.status.text="Road bounds overlap a structure or unavailable building region. Choose a clear route.";return
-	var accepted: bool=terrain.construct_road_bed(a,b,road_palette.width.value,road_palette.depth.value)
+	var accepted: bool=terrain.construct_road_bed(a,b,road_palette.width.value,road_palette.depth.value,road_palette.clearance.value)
 	road_palette.status.text=("Road submitted · %s. Terrain roads have no block undo." % ["temporary world" if temporary_world else "F5 saves world"]) if accepted else "Road not accepted; wait for terrain work to finish."
 
 func _block_player_clear(target: Vector3i) -> bool:

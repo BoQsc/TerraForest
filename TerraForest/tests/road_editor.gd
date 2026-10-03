@@ -47,10 +47,11 @@ func run() -> void:
 		game.player_hud.set_open(true);panel.action_requested.emit("clear")
 		check(panel.has_start,"inventory blocks road editor actions")
 		game.player_hud.set_open(false);game.app_focused=true
-		game.structures.blocks.set_cells(PackedInt32Array([416,181,400,1]))
+		panel.clearance.value=6
+		game.structures.blocks.set_cells(PackedInt32Array([416,187,400,1]))
 		panel.action_requested.emit("build")
-		check(panel.status.text.begins_with("Road bounds overlap"),"road volume cannot overwrite existing building occupancy")
-		game.structures.blocks.set_cells(PackedInt32Array([416,181,400,0]))
+		check(panel.status.text.begins_with("Road bounds overlap"),"road clearance protects building occupancy above pavement")
+		game.structures.blocks.set_cells(PackedInt32Array([416,187,400,0]))
 		panel.action_requested.emit("build")
 		check(panel.status.text.begins_with("Road submitted"),"road panel routes construction to terrain worker")
 		deadline=Time.get_ticks_msec()+10000
