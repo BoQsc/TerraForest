@@ -1,0 +1,7 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS disabled automatic rays still produce native load and original spring force
+PASS compression force is capped
+PASS rebound force never pulls body into ground
+PASS airborne wheel has no support force
+PASS incomplete wheel set rejected

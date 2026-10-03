@@ -24,6 +24,17 @@ func _update_wheel_contacts() -> void:
 		if _load_active[i]: loaded_wheels+=1
 func _apply_suspension_forces() -> void:
 	pass # Applied by the native contact pass exactly once per physics tick.
+func _apply_vehicle_motion(throttle: float,reverse_brake: float,handbrake: bool,parked: bool,delta: float) -> void:
+	handbrake_active=handbrake;drive_force_newtons=0;target_yaw_rate_degrees=0
+	if not _normal_mode or handbrake or _physics_override_time>0:
+		normal_drive_locked=false
+		driving_policy.apply_free(self,_support_normal(),throttle,reverse_brake,handbrake,parked,_has_drive_support())
+		return
+	_update_drive_speed_state(throttle,reverse_brake,parked,delta)
+	target_yaw_rate_degrees=rad_to_deg(driving_policy.apply_grounded(self,_support_normal(),_drive_speed))
+	normal_drive_locked=true
+func _apply_body_stability() -> void:
+	roll_degrees=driving_policy.stabilize(self,_support_normal(),_has_drive_support(),loaded_wheels)
 func _update_ground_state(handbrake: bool,delta: float) -> void:
 	var was_normal:=_normal_mode
 	super._update_ground_state(handbrake,delta)

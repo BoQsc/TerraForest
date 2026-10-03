@@ -1,0 +1,4 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+POLICY_PARITY { "samples": 3600, "max_steering_error_rad": 0.0000000074047, "max_speed_error_mps": 0.00000379192088 }
+PASS original vehicle steering and speed parity

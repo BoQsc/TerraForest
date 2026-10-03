@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: 0BSD
 #pragma once
 #include <godot_cpp/classes/ref_counted.hpp>
+#include <godot_cpp/classes/rigid_body3d.hpp>
 #include <godot_cpp/variant/vector3.hpp>
 #include <godot_cpp/variant/vector2.hpp>
 namespace terraforest {
@@ -13,5 +14,8 @@ public:
     void reset();
     godot::Vector3 steering(double input,double speed,double delta);
     godot::Vector2 speed(double previous,double throttle,double reverse_brake,bool parked,double boost,double delta) const;
+    double apply_grounded(godot::RigidBody3D *body,godot::Vector3 up,double speed) const;
+    void apply_free(godot::RigidBody3D *body,godot::Vector3 up,double throttle,double reverse_brake,bool handbrake,bool parked,bool supported) const;
+    double stabilize(godot::RigidBody3D *body,godot::Vector3 up,bool supported,int loaded_wheels) const;
 };
 }

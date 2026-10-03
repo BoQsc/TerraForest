@@ -1,3 +1,9 @@
+## Vehicle native motion migration — 2026-10-03
+
+Grounded bicycle velocity, free-mode drive/brake forces, stabilization and downforce now run in C++. Original mode transitions and visual/interaction scripts remain scripted. This is an isolated vehicle demo, not streamed-world integration.
+
+Validation: 3,600 steering/speed comparisons, 240 grounded-motion comparisons (maximum observed error 0), five suspension checks, and a short 1920x1080 fullscreen Forward+ drive at a 60 FPS cap and 120 Hz physics. Drive reached 49.019 km/h over 14.7135 m with four loaded wheels. Screenshot inspected. Evidence: vidence/vehicle_motion/. Free-mode impact/airborne trajectories, fleet scaling, sustained frame timing and thermals are not proven by these checks.
+
 # Original objective and completion evidence
 
 ## Current delivery priority

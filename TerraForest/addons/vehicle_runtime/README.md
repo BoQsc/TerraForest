@@ -18,8 +18,11 @@ array. Automatic ray updates are disabled in the adapter. Effects and telemetry
 reuse the sampled contacts. A temporary four-wheel script adapter still copies
 the 160-byte result into the original visual state.
 
-The vehicle_demo adapter retains original rigid-body motion integration,
-visual effects and interaction scripts pending migration. Neither the policy
+NativeDrivingPolicy also applies the grounded bicycle velocity field, free-mode
+driving/braking forces, body stabilization torque and downforce. The adapter
+retains the original decisions about grounded/free mode and impact recovery.
+The vehicle_demo adapter retains visual effects and interaction scripts
+pending migration. Neither the policy
 nor demo provides streamed collision readiness, vehicle persistence, authority
 or fleet activation/LOD. The simple CharacterBody controller was discarded
 before integration in favour of preserving the supplied vehicle behavior.
