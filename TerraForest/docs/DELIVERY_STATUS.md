@@ -1,3 +1,11 @@
+## Confirmed road-section continuation - 2026-10-03
+
+The road/foundation editor now tracks the exact epoch, ticket and expected revision of its accepted edit. A matching published or unchanged outcome unlocks Continue from completed end. This restores captured endpoint and section settings, clears the next endpoint and changes only the preview. Pending or mismatched edits cannot authorize continuation, later selection changes cannot redirect it, and world reload clears the remembered section. Terrain processing and protection checks remain in the existing native-backed path.
+
+Seven targeted outcome/continuation checks and all 28 graphical road-editor checks passed. The 1080p screenshot confirms the new control fits above the toolbelt; it is UI evidence, not rendered road or vehicle seam qualification. The last completed section is session-only. Connecting generated street entrances automatically, persistent road topology, intersections and city network generation remain incomplete. No performance claim is made from this feature check.
+
+Evidence: docs/evidence/road_continuation.
+
 ## Empty vegetation resample retirement - 2026-10-03
 
 Fixed the zero-candidate resampling branch, which previously marked the owner resident without replacing its cached candidates or removing previously published roots. Empty candidate batches now use the same sample replacement and publication path as surface results. This retires renderer roots and trunk records, preserves the one-owner-per-frame budget and prevents later exclusion reconciliation from restoring stale candidates. Empty caches skip structure/water overlap queries and invalidations because exclusions cannot introduce candidates. Terrain resampling can still populate them later. This does not add automatic live density-setting regeneration; it corrects an already scheduled resample.

@@ -41,6 +41,15 @@ The demo provides a road panel while a terrain tool is equipped and the mouse
 is released (Esc). Aim, release the mouse, mark each endpoint, then build.
 Width/depth and endpoint selection live in `road_palette.gd`; density processing
 stays native. Selection is temporary, while accepted roads save with terrain.
+
+After a matching terrain publication (or confirmed unchanged result), **Continue
+from completed end** starts a new selection at that section's exact endpoint
+and restores its width, depth, clearance, surface and shoulder settings. Mark
+the next endpoint and build; continuing alone does not edit terrain. Editing
+the preview while a section is pending does not change the captured endpoint.
+Failed or mismatched results cannot authorize a new continuation, and changing
+world epoch clears it. Only the last completed section is retained in memory;
+this is not a persistent road network or automatic street-junction planner.
 An editor outline shows the rounded footprint and depth, updating only on
 selection changes. Green indicates valid parameters, not route clearance; red
 indicates an incomplete/invalid selection. It follows normal depth testing.

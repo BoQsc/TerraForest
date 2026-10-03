@@ -695,6 +695,7 @@ func _road_action(action: String) -> void:
 	if loading_active or shutdown_requested or benchmark_enabled or not app_focused or not terrain.world_ready or player_hud.inventory_open or structure_mode or model_tool.active: return
 	if action=="clear": road_palette.clear();return
 	if action=="level": road_palette.level_selection();return
+	if action=="continue": road_palette.continue_selection(terrain);return
 	if action in ["start","finish"]:
 		var origin:=camera.global_position
 		var hit: Dictionary=structures.blocks.raycast_scene(origin,origin-camera.global_basis.z*48,3,[player.get_rid()])
@@ -704,6 +705,7 @@ func _road_action(action: String) -> void:
 		road_palette.mark(action=="start",terrain.to_local(hit.position)+Vector3(0,0.25,0))
 		return
 	if action!="build": return
+	if not road_palette.pending.is_empty(): road_palette.status.text="Wait for the submitted section to finish.";return
 	var error: String=road_palette.validation_error()
 	if not error.is_empty(): road_palette.status.text=error;return
 	var a: Vector3=road_palette.start;var b: Vector3=road_palette.finish
@@ -721,6 +723,7 @@ func _road_action(action: String) -> void:
 	var material: int=road_palette.material_id()
 	var accepted: bool=terrain.construct_road_bed(a,b,road_palette.width.value,road_palette.depth.value,road_palette.clearance.value) if material==4 else terrain.construct_graded_bed(a,b,road_palette.width.value,road_palette.depth.value,road_palette.clearance.value,material,road_palette.shoulder_width())
 	var kind: String="Road" if material==4 else "Foundation"
+	if accepted: road_palette.track_submission(terrain)
 	road_palette.status.text=("%s submitted · %s. Terrain grading has no block undo." % [kind,"temporary world" if temporary_world else "F5 saves world"]) if accepted else "%s not accepted; wait for terrain work to finish." % kind
 
 func _block_player_clear(target: Vector3i) -> bool:
@@ -898,6 +901,7 @@ func _physics_process(delta: float) -> void:
 
 func _process(delta: float) -> void:
 	var frame_begin:=Time.get_ticks_usec()
+	road_palette.poll_submission(terrain)
 	site_preview.visible=site_preview.vertices>0 and _site_selection_current() and _survey_plan.get("epoch",-1)==terrain.epoch and structure_mode and not model_tool.active and not world_vehicle.driving and not loading_active and not player_hud.inventory_open
 	var frontage_result: Dictionary=prefab_library.poll_frontage()
 	if not frontage_result.is_empty(): _accept_composed_prefab(frontage_result)

@@ -63,9 +63,16 @@ func run() -> void:
 		panel.surface.select(0);panel.surface.item_selected.emit(0)
 		panel.action_requested.emit("build")
 		check(panel.status.text.begins_with("Road submitted"),"road panel routes construction to terrain worker")
+		panel.mark(false,Vector3(900,180,900))
 		deadline=Time.get_ticks_msec()+10000
 		while game.terrain.pending_edit and Time.get_ticks_msec()<deadline: await process_frame
 		check(not game.terrain.pending_edit and game.terrain.latest_error.is_empty(),"editor road completes without worker error")
+		await process_frame
+		var completed_revision: int=game.terrain.density_revision
+		game.app_focused=true;panel.action_requested.emit("continue")
+		check(panel.has_start and not panel.has_finish and panel.start==Vector3(432,184,400),"continue action uses exact published endpoint despite changed selection")
+		check(game.terrain.density_revision==completed_revision and not game.terrain.pending_edit,"continue action does not submit terrain edits")
+		panel.mark(true,Vector3(400,180,400));panel.mark(false,Vector3(432,184,400))
 		panel.surface.select(1);panel.surface.item_selected.emit(1)
 		check(panel.material_id()==1 and panel.build_button.text=="Grade stone foundation","foundation surface selects stone and updates action label")
 		var horizontal_end:=Vector2(panel.finish.x,panel.finish.z)

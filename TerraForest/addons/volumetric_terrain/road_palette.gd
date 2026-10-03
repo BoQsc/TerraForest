@@ -14,6 +14,9 @@ var clearance: SpinBox
 var shoulder: SpinBox
 var surface: OptionButton
 var build_button: Button
+var continue_button: Button
+var pending: Dictionary={}
+var completed: Dictionary={}
 func material_id() -> int:
 	return 4 if surface.selected==0 else 1
 func shoulder_width() -> float:
@@ -39,9 +42,10 @@ func _ready() -> void:
 	clearance.value_changed.connect(func(_value: float): selection_changed.emit())
 	width.value_changed.connect(func(_value: float): selection_changed.emit())
 	depth.value_changed.connect(func(_value: float): selection_changed.emit())
-	for item in [["start","Mark start at aim"],["finish","Mark end at aim"],["level","Level end to start height"],["build","Build asphalt road"],["clear","Clear selection"]]:
+	for item in [["start","Mark start at aim"],["finish","Mark end at aim"],["level","Level end to start height"],["build","Build asphalt road"],["continue","Continue from completed end"],["clear","Clear selection"]]:
 		var button:=Button.new();button.text=item[1];button.focus_mode=Control.FOCUS_NONE;column.add_child(button)
 		if item[0]=="build": build_button=button
+		if item[0]=="continue": continue_button=button;continue_button.disabled=true
 		button.pressed.connect(func(): action_requested.emit(item[0]))
 	status=Label.new();status.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;status.text="Select two terrain points. Maximum length 128 m; maximum grade 25%.";column.add_child(status)
 	panel.hide()
@@ -65,6 +69,33 @@ func level_selection() -> bool:
 	mark(false,point)
 	status.text+="\nLevel preview only · build to apply terrain grading."
 	return true
+func track_submission(terrain: Node) -> void:
+	pending={"epoch":terrain.epoch,"ticket":terrain.edit_ticket,"revision":terrain.density_revision,"finish":finish,"width":width.value,"depth":depth.value,"clearance":clearance.value,"shoulder":shoulder_width(),"surface":surface.selected}
+	continue_button.disabled=true
+func poll_submission(terrain: Node) -> void:
+	if not completed.is_empty() and completed.epoch!=terrain.epoch:
+		completed={};continue_button.disabled=true
+	if pending.is_empty(): return
+	if terrain.epoch!=pending.epoch or terrain.stopping:
+		pending={};status.text="Road work interrupted by world change.";return
+	if terrain.pending_edit: return
+	var outcome: Dictionary=terrain.last_edit_outcome
+	var expected: int=pending.revision+(1 if outcome.get("status","")=="published" else 0)
+	if outcome.get("epoch",-1)==pending.epoch and outcome.get("ticket",-1)==pending.ticket and outcome.get("status","") in ["published","unchanged"] and outcome.get("revision",-1)==expected and terrain.density_revision==expected:
+		completed=pending.duplicate();continue_button.disabled=false
+		status.text="Section completed. Continue from its exact end, or mark a new route."
+	else:
+		status.text="Road section did not publish successfully. Check terrain before retrying."
+		continue_button.disabled=completed.is_empty()
+	pending={}
+func continue_selection(terrain: Node) -> bool:
+	if not pending.is_empty() or completed.is_empty() or completed.epoch!=terrain.epoch:
+		status.text="No completed section in this world to continue.";return false
+	start=completed.finish;has_start=true;has_finish=false
+	width.value=completed.width;depth.value=completed.depth;clearance.value=completed.clearance
+	surface.select(completed.surface);surface.item_selected.emit(completed.surface);shoulder.value=completed.shoulder
+	status.text="Start at completed end: %s\nMark the next end. Use Level to continue at this height." % str(start)
+	selection_changed.emit();return true
 func validation_error() -> String:
 	if not has_start or not has_finish: return "Mark both ends first."
 	if not start.is_finite() or not finish.is_finite(): return "Invalid endpoint."
