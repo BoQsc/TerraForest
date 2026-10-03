@@ -1063,6 +1063,10 @@ func _evict() -> void:
 func player_region_ready(point: Vector3) -> bool:
 	return world_ready and active_leaves.has(Vector2i(floori(point.x / float(FINE_SIZE)), floori(point.z / float(FINE_SIZE))))
 
+func is_collision_region_ready(bounds: AABB) -> bool:
+	# Publication readiness, not a solid-ground test. Empty columns are valid.
+	return world_ready and planner.collision_region_ready(bounds,active_leaves)
+
 func request_height(point: Vector3, token: int) -> void:
 	backend.submit({"kind": "height", "point": point, "token": token}, true)
 

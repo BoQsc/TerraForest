@@ -1,0 +1,12 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS body wholly inside ready cell
+PASS center-cell readiness cannot hide unloaded neighbor
+PASS seam ready once both cells published
+PASS far boundary cell required for swept bounds
+PASS complete swept corridor accepted
+PASS false publication flag rejected
+PASS outside world rejected
+PASS far world edge rejected
+PASS negative extent rejected
+PASS nonfinite bounds rejected

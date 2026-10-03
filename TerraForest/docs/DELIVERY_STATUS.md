@@ -1,3 +1,7 @@
+## Terrain collision region readiness - 2026-10-03
+
+TerrainStream.is_collision_region_ready now exposes a native all-cell bounds check over published fine collision columns. It requires every touched 16 m column, including the far boundary, and rejects nonfinite, negative-sized and out-of-world bounds. Published empty columns remain valid: this tests readiness, not solid ground. Ten targeted boundary/input cases and all 179 existing terrain planner checks passed. Evidence: evidence/terrain_collision_region/. This is an integration prerequisite; the vehicle demo does not yet call it, predictive loading/braking is not implemented, and no high-speed streamed-world claim is made.
+
 ## Native vehicle accessory motion - 2026-10-03
 
 Eleven mounted accessory springs now use native state, cached spring coefficients and one adapter call per physics tick. Disabled animation resets transforms once instead of every tick. A 600-tick comparison at 120/60 Hz, including toggles and reset, matched original mount transforms exactly; deleted-node handling and mismatched configuration were exercised. The short fullscreen 1080p Forward+ smoke drive also passed; screenshot inspected. Evidence: evidence/vehicle_accessories/. Fleet LOD, world integration and sustained performance remain incomplete.

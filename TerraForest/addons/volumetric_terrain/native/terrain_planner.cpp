@@ -149,11 +149,26 @@ void prioritize_coverage(Vector3 focus,bool collision,const State &state,const D
 }
 }
 void NativeTerrainPlanner::_bind_methods() {
+    ClassDB::bind_method(D_METHOD("collision_region_ready","bounds","active_leaves"),&NativeTerrainPlanner::collision_region_ready);
     ClassDB::bind_method(D_METHOD("requests","focus","require_collision","tiles","split_state","visible_cut"),&NativeTerrainPlanner::requests);
     ClassDB::bind_method(D_METHOD("requests_targeted","focus","require_collision","target","tiles","split_state","visible_cut"),&NativeTerrainPlanner::requests_targeted);
     ClassDB::bind_method(D_METHOD("coverage","tiles","split_state","visible_cut"),&NativeTerrainPlanner::coverage);
     ClassDB::bind_method(D_METHOD("coverage_available","tiles","split_state","visible_cut"),&NativeTerrainPlanner::coverage_available);
     ClassDB::bind_method(D_METHOD("eviction_candidates","tiles","visible_cut","requested_keys"),&NativeTerrainPlanner::eviction_candidates);
+}
+bool NativeTerrainPlanner::collision_region_ready(AABB bounds,const Dictionary &active_leaves) const {
+    Vector3 start=bounds.position,end=bounds.position+bounds.size;
+    if(!start.is_finite()||!bounds.size.is_finite()||!end.is_finite()||bounds.size.x<0||bounds.size.y<0||bounds.size.z<0)return false;
+    // Terrain columns span the vertical domain. Include the far boundary cell:
+    // a body touching a streaming seam must not rely on its center cell alone.
+    if(start.x<0||start.z<0||end.x>=2000||end.z>=2000)return false;
+    int x0=int(std::floor(start.x/16)),z0=int(std::floor(start.z/16));
+    int x1=int(std::floor(end.x/16)),z1=int(std::floor(end.z/16));
+    for(int z=z0;z<=z1;++z)for(int x=x0;x<=x1;++x){
+        Variant ready=active_leaves.get(Vector2i(x,z),false);
+        if(ready.get_type()!=Variant::BOOL||!bool(ready))return false;
+    }
+    return true;
 }
 static Dictionary plan_requests(Vector3 focus,bool collision,const Dictionary &tiles,const Dictionary &previous,const Array &visible,const Vector3 *target) {
     State state;if(!focus.is_finite()||(target&&!target->is_finite())||!state.load(tiles,previous,visible))return failure();
