@@ -1,0 +1,12 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+Vehicle controller V3 ready: no-slip bicycle driving + no-pivot full-lock launch grip budget.
+Vehicle runtime visuals ready: 27 fixed body meshes + animated driver door + 4 wheel meshes.
+Visual mesh damage: enabled (F8 toggle, F9 repair).
+Mounted accessory motion: enabled (F10 toggle, 11 moving items).
+Vehicle controller V3 ready: no-slip bicycle driving + no-pivot full-lock launch grip budget.
+Vehicle runtime visuals ready: 27 fixed body meshes + animated driver door + 4 wheel meshes.
+Visual mesh damage: enabled (F8 toggle, F9 repair).
+Mounted accessory motion: enabled (F10 toggle, 11 moving items).
+Visual vehicle dents repaired.
+VEHICLE_VISUAL_SHARING { "passed": true, "nodes_before": 98, "nodes_after": 63, "shared_mesh_instances": 32, "accessories": 11, "damage_meshes": 10 }
