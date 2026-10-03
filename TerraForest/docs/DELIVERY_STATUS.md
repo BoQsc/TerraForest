@@ -1,3 +1,7 @@
+## Frontage geometry and entrance visual check - 2026-10-03
+
+The actual four-cottage frontage rendered at 1920x1080 fullscreen through NativeBlockWorld: 1,872 cells, eight mesh chunks, 4,768 triangles. Independent cell checks verified both rows retain two-cell doorway openings with solid neighboring walls facing the reserved street. Overview and street-level images were inspected. The fixture explicitly labels screenshots as visual checks and suppresses stale/FPS HUD telemetry, which was contaminated by startup and PNG capture in the initial run. Mesh publication completed; the test does not wait for or qualify all collision, terrain support, asphalt, world integration or performance. Evidence: evidence/frontage_render/.
+
 ## Frontage authoring and personal-library integration - 2026-10-03
 
 The construction palette now opens a frontage dialog for buildings per side, street width and gap/setback. It uses the selected building prefab and entered name, calls native composition, saves through the personal library and selects the resulting asset through the existing placement workflow. Invalid composition leaves the library unchanged. Twenty-four library checks passed, including frontage geometry/metadata reload; a fullscreen 1920x1080 dialog fixture verified parameter submission and disabled/hidden state, and its screenshot was inspected. This test directly emits UI signals rather than simulating mouse clicks. World script loading passed; full-world frontage placement and terrain grading remain unverified/unfinished. Evidence: evidence/frontage_editor/.
