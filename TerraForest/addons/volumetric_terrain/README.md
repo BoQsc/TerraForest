@@ -83,3 +83,10 @@ now accepts a 44-byte form with a trailing material uint32; legacy 36/40-byte
 forms still default to asphalt. Invalid materials are rejected before mutation.
 A narrower road can subsequently pave the foundation without changing grade.
 Settlement-wide transactions and editor grading integration remain unfinished.
+
+The main-world Roads / Foundations panel exposes stone grading alongside asphalt.
+In terrain mode release the mouse with Esc, choose Stone foundation, mark both
+ends and set width, depth and clearance. Grade first; then choose Asphalt road
+and a narrower width to pave a street. Equal endpoint heights produce a level
+bed. Fill depth and clearance remain bounded; check that the site is supported.
+Terrain operations currently have no block-history undo.

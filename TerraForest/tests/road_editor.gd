@@ -57,6 +57,13 @@ func run() -> void:
 		deadline=Time.get_ticks_msec()+10000
 		while game.terrain.pending_edit and Time.get_ticks_msec()<deadline: await process_frame
 		check(not game.terrain.pending_edit and game.terrain.latest_error.is_empty(),"editor road completes without worker error")
+		panel.surface.select(1);panel.surface.item_selected.emit(1)
+		check(panel.material_id()==1 and panel.build_button.text=="Grade stone foundation","foundation surface selects stone and updates action label")
+		game.app_focused=true;panel.action_requested.emit("build")
+		check(panel.status.text.begins_with("Foundation submitted"),"foundation panel routes grading through guarded world action")
+		deadline=Time.get_ticks_msec()+10000
+		while game.terrain.pending_edit and Time.get_ticks_msec()<deadline: await process_frame
+		check(not game.terrain.pending_edit and game.terrain.latest_error.is_empty(),"editor foundation completes without worker error")
 		Input.mouse_mode=Input.MOUSE_MODE_VISIBLE
 		previous_rebuilds=game.road_preview.rebuilds
 		for frame in 3: await process_frame

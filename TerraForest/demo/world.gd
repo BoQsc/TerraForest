@@ -678,8 +678,10 @@ func _road_action(action: String) -> void:
 	var occupied: PackedByteArray=structures.overlap_mask(transforms,AABB(lo,hi-lo).grow(0.5))
 	if occupied.size()!=1 or occupied[0]!=0:
 		road_palette.status.text="Road bounds overlap a structure or unavailable building region. Choose a clear route.";return
-	var accepted: bool=terrain.construct_road_bed(a,b,road_palette.width.value,road_palette.depth.value,road_palette.clearance.value)
-	road_palette.status.text=("Road submitted · %s. Terrain roads have no block undo." % ["temporary world" if temporary_world else "F5 saves world"]) if accepted else "Road not accepted; wait for terrain work to finish."
+	var material: int=road_palette.material_id()
+	var accepted: bool=terrain.construct_road_bed(a,b,road_palette.width.value,road_palette.depth.value,road_palette.clearance.value) if material==4 else terrain.construct_graded_bed(a,b,road_palette.width.value,road_palette.depth.value,road_palette.clearance.value,material)
+	var kind: String="Road" if material==4 else "Foundation"
+	road_palette.status.text=("%s submitted · %s. Terrain grading has no block undo." % [kind,"temporary world" if temporary_world else "F5 saves world"]) if accepted else "%s not accepted; wait for terrain work to finish." % kind
 
 func _block_player_clear(target: Vector3i) -> bool:
 	return not _brush_overlaps_player(Vector3(target)+Vector3.ONE*0.5,0.87)

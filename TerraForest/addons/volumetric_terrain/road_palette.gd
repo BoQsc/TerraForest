@@ -11,14 +11,22 @@ var status: Label
 var width: SpinBox
 var depth: SpinBox
 var clearance: SpinBox
+var surface: OptionButton
+var build_button: Button
+func material_id() -> int:
+	return 4 if surface.selected==0 else 1
 func _ready() -> void:
 	layer=15
 	panel=PanelContainer.new();panel.position=Vector2(1500,36);panel.custom_minimum_size=Vector2(380,0);add_child(panel)
 	var margin:=MarginContainer.new();panel.add_child(margin)
 	for side in ["left","right","top","bottom"]: margin.add_theme_constant_override("margin_"+side,20)
 	var column:=VBoxContainer.new();column.add_theme_constant_override("separation",10);margin.add_child(column)
-	var title:=Label.new();title.text="ASPHALT ROAD";title.add_theme_font_size_override("font_size",22);column.add_child(title)
+	var title:=Label.new();title.text="ROADS / FOUNDATIONS";title.add_theme_font_size_override("font_size",22);column.add_child(title)
 	var hint:=Label.new();hint.text="Aim at terrain, then Esc to use controls.\nMark both ends, then build.\nClearance cuts terrain above the road.";column.add_child(hint)
+	surface=OptionButton.new();surface.focus_mode=Control.FOCUS_NONE;surface.add_item("Asphalt road");surface.add_item("Stone foundation");column.add_child(surface)
+	surface.item_selected.connect(func(_index: int):
+		build_button.text="Build asphalt road" if material_id()==4 else "Grade stone foundation"
+		selection_changed.emit())
 	width=_number(column,"Half-width (m)",0.5,16,3)
 	depth=_number(column,"Depth (m)",1,8,2)
 	clearance=_number(column,"Clearance cut (m; 0 disables)",0,16,0)
@@ -27,6 +35,7 @@ func _ready() -> void:
 	depth.value_changed.connect(func(_value: float): selection_changed.emit())
 	for item in [["start","Mark start at aim"],["finish","Mark end at aim"],["build","Build asphalt road"],["clear","Clear selection"]]:
 		var button:=Button.new();button.text=item[1];button.focus_mode=Control.FOCUS_NONE;column.add_child(button)
+		if item[0]=="build": build_button=button
 		button.pressed.connect(func(): action_requested.emit(item[0]))
 	status=Label.new();status.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;status.text="Select two terrain points. Maximum length 128 m; maximum grade 25%.";column.add_child(status)
 	panel.hide()

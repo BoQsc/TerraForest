@@ -1,0 +1,27 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.3.289 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce GTX 1060 with Max-Q Design
+
+[TerrainRewrite] New world
+[TerrainRewrite] New world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+[terrain-hitch] controller process 56.51 ms at 15588
+[terrain-hitch] world process 103.22 ms at 15634
+PASS world starts with road editor
+PASS mark button acquires terrain through actual physics ray
+PASS road aim cannot mark terrain through a building
+PASS road overlapping player is rejected
+PASS graded selection accepted
+PASS valid route produces green outline
+PASS width control refreshes outline once
+PASS invalid grade produces red outline
+PASS excessive grade explained before submission
+PASS inventory blocks road editor actions
+PASS road clearance protects building occupancy above pavement
+PASS road panel routes construction to terrain worker
+PASS editor road completes without worker error
+PASS foundation surface selects stone and updates action label
+PASS foundation panel routes grading through guarded world action
+PASS editor foundation completes without worker error
+PASS unchanged selection does not rebuild preview each frame
+PASS road panel visible and fits above toolbelt at 1080p
+[TerrainRewrite] Temporary test world: save skipped
