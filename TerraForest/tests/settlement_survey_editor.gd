@@ -51,9 +51,37 @@ func run() -> void:
 	while game.site_preparation.status=="running" and Time.get_ticks_msec()<deadline: await process_frame
 	check(game.site_preparation.status=="complete" and game.site_preparation.completed==game.site_preparation.plan.segments.size(),"all real terrain grading sections publish")
 	check(game.terrain.density_revision==revision+game.site_preparation.completed and game.structures.blocks.stats().cells==0,"preparation changes terrain only by its accepted edit count")
+	var prepared_target: Vector3i=game.site_preparation.plan.target
+	game.construction_palette.survey_dialog.hide()
+	game.construction_palette.preparation_status_requested.emit()
+	check(game.construction_palette.place_prepared_button.visible,"completed site can be reopened for exact placement")
+	game.camera.global_position+=Vector3(20,0,0)
+	game.construction_palette.survey_dialog.custom_action.emit("place_prepared")
+	check(not game._foundation_placement.is_empty() and game._foundation_placement.target==prepared_target,"dialog placement captures prepared target despite changed aim")
+	await process_frame
+	game.construction_palette.survey_dialog.canceled.emit()
+	check(game._foundation_placement.is_empty() and game.structures.blocks.stats().cells==0,"closing dialog cancels pending validation without inserting blocks")
+	game.construction_palette.preparation_status_requested.emit()
+	game.construction_palette.survey_dialog.custom_action.emit("place_prepared")
+	deadline=Time.get_ticks_msec()+12000
+	while not game._foundation_placement.is_empty() and Time.get_ticks_msec()<deadline: await process_frame
+	check(game.foundation_check.status=="supported" and game.structures.blocks.stats().cells==asset.get_records().size()/4,"prepared site places exactly one prefab after full validation")
+	game.camera.global_position=Vector3(prepared_target)+Vector3(45,35,45)
+	game.camera.look_at(Vector3(prepared_target)+Vector3(10,3,0))
+	for frame in 60: await process_frame
+	check(game.construction_palette.survey_dialog.has_focus() and Engine.max_fps==60,"focused survey dialog retains 60 FPS cap")
+	await RenderingServer.frame_post_draw
+	root.get_texture().get_image().save_png("res://reports/settlement_prepared_placement.png")
+	var placed_cells: int=game.structures.blocks.stats().cells
+	game.construction_palette.survey_dialog.custom_action.emit("place_prepared")
+	check(game.structures.blocks.stats().cells==placed_cells and game._foundation_placement.is_empty(),"repeated placement cannot duplicate the prepared building")
 	game.player.global_position=original_player
 	game.construction_palette.survey_dialog.hide()
+	game.app_focused=true
+	game.camera.global_position=original_player+Vector3(0,15,0)
+	game.camera.look_at(original_player+Vector3(10,-5,0))
 	game.construction_palette.survey_button.pressed.emit()
+	check(game.construction_palette.survey_busy,"replacement survey really starts before rotation invalidation")
 	game.structure_rotation=(game.structure_rotation+1)%4
 	deadline=Time.get_ticks_msec()+17000
 	while game.construction_palette.survey_busy and Time.get_ticks_msec()<deadline: await process_frame

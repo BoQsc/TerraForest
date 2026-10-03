@@ -127,9 +127,12 @@ func _ready() -> void:
 	construction_palette.frontage_requested.connect(_frontage_construction)
 	construction_palette.survey_requested.connect(_survey_construction)
 	construction_palette.preparation_requested.connect(_prepare_construction_site)
+	construction_palette.prepared_placement_requested.connect(_place_prepared_site)
+	construction_palette.preparation_status_requested.connect(_reopen_site_preparation)
 	construction_palette.preparation_stop_requested.connect(site_preparation.cancel)
-	construction_palette.survey_dialog.canceled.connect(site_preparation.cancel)
-	construction_palette.survey_dialog.confirmed.connect(site_preparation.cancel)
+	construction_palette.survey_dialog.canceled.connect(_cancel_site_actions)
+	construction_palette.survey_dialog.confirmed.connect(_cancel_site_actions)
+	construction_palette.survey_dialog.focus_exited.connect(func(): Engine.max_fps=background_fps)
 	player_hud.tool_requested.connect(_equip_player_tool)
 	player_hud.menu_changed.connect(func(_open: bool): _clear_motion())
 	_sync_player_tool()
@@ -760,6 +763,7 @@ func _survey_construction() -> void:
 	if not plan.ok: construction_palette.show_survey(plan.reason);return
 	plan["epoch"]=terrain.epoch;plan["revision"]=terrain.density_revision;plan["generation"]=generation;plan["asset"]=asset
 	_survey_plan=plan
+	construction_palette.preparation_status_button.show()
 	construction_palette.prepare_button.text="Prepare stone foundation"
 	construction_palette.show_survey("Origin X/Z: %d / %d · Rotation: %d°\nSuggested base Y: %d m (allowed %d–%d m)\nGround elevation: %.1f–%.1f m · %d foundation columns\n\nPrepare grades the whole rectangular site, including gaps,\nwith up to 8 m fill, 12 m cut and 8 m sloped fill shoulders.\nTerrain grading has no block undo. Buildings are not placed." % [target.x,target.z,rotation*90,result.grade,result.minimum_grade,result.maximum_grade,result.min_height,result.max_height,result.samples],true)
 
@@ -801,29 +805,71 @@ func _advance_site_preparation() -> void:
 	var message: String="Foundation prepared at Y=%d. Place the selected prefab at this height; frontage support and clearance are checked again." % site_preparation.plan.target.y if site_preparation.status=="complete" else site_preparation.reason
 	construction_palette.prepare_button.text="Resume foundation preparation"
 	construction_palette.show_survey(message+"\nCompleted: %d / %d sections. Terrain grading has no block undo." % [site_preparation.completed,site_preparation.plan.segments.size()],site_preparation.status=="stopped" and _site_selection_current())
+	construction_palette.place_prepared_button.visible=site_preparation.status=="complete" and _site_selection_current()
+	construction_palette.place_prepared_button.disabled=false
 
-func _begin_frontage_placement(asset: Resource,target: Vector3i) -> void:
+func _cancel_site_actions() -> void:
+	site_preparation.cancel()
+	if _foundation_placement.get("from_dialog",false):
+		foundation_check.status="Placement cancelled";_foundation_placement={}
+
+func _reopen_site_preparation() -> void:
+	if not _site_selection_current(): construction_palette.show_survey("Selection changed; survey again.");return
+	if site_preparation.status=="complete" and _preparation_matches_survey():
+		construction_palette.show_survey("Foundation prepared at Y=%d. Placement will recheck terrain support and room clearance." % site_preparation.plan.target.y)
+		construction_palette.place_prepared_button.show();construction_palette.place_prepared_button.disabled=false
+	elif site_preparation.status=="stopped" and _preparation_matches_survey():
+		construction_palette.prepare_button.text="Resume foundation preparation"
+		construction_palette.show_survey(site_preparation.reason+"\nCompleted: %d / %d sections." % [site_preparation.completed,site_preparation.plan.segments.size()],true)
+	else: construction_palette.survey_dialog.popup_centered()
+
+func _preparation_matches_survey() -> bool:
+	return not _survey_plan.is_empty() and site_preparation.plan.get("generation",-1)==_survey_plan.generation and site_preparation.plan.get("target")==_survey_plan.target and site_preparation.plan.get("asset")==_survey_plan.asset
+
+func _place_prepared_site() -> void:
+	if loading_active or shutdown_requested or player_hud.inventory_open or world_vehicle.driving or not structure_mode or model_tool.active or not _foundation_placement.is_empty(): return
+	if site_preparation.status!="complete" or not _site_selection_current() or not _preparation_matches_survey() or terrain.epoch!=site_preparation.epoch:
+		construction_palette.show_survey("Prepared site or selection changed. Survey again.");return
+	# Terrain may have changed since grading; the full foundation check captures
+	# its current revision and must succeed again before any blocks are inserted.
+	var plan: Dictionary=site_preparation.plan
+	if not _prefab_allowed(plan.asset,plan.target): construction_palette.show_survey("Placement blocked. Clear existing blocks and move outside the prefab.");return
+	_begin_frontage_placement(plan.asset,plan.target,true)
+	if _foundation_placement.is_empty():
+		construction_palette.survey_dialog.dialog_text="Foundation check unavailable; wait for terrain, then retry.";return
+	construction_palette.place_prepared_button.disabled=true
+	construction_palette.survey_dialog.dialog_text="Checking foundation, underground support and room clearance…"
+
+func _placement_notice(request: Dictionary,message: String,placed: bool=false) -> void:
+	_show_lake_notice(message)
+	if request.get("from_dialog",false):
+		construction_palette.show_survey(message)
+		construction_palette.place_prepared_button.visible=not placed and site_preparation.status=="complete" and _site_selection_current()
+		construction_palette.place_prepared_button.disabled=false
+
+func _begin_frontage_placement(asset: Resource,target: Vector3i,from_dialog: bool=false) -> void:
 	if not _foundation_placement.is_empty(): _show_lake_notice("Checking foundation support…");return
 	if foundation_check.begin(terrain,asset,target,structure_rotation):
-		_foundation_placement={"asset":asset,"target":target,"rotation":structure_rotation,"index":structure_prefab_index}
+		_foundation_placement={"asset":asset,"target":target,"rotation":structure_rotation,"index":structure_prefab_index,"from_dialog":from_dialog}
 		_show_lake_notice("Checking foundation support…")
 	else: _show_lake_notice("Foundation check unavailable; wait and place again")
 
 func _advance_frontage_placement() -> void:
 	if _foundation_placement.is_empty(): return
 	var request:=_foundation_placement
-	if loading_active or not app_focused or player_hud.inventory_open or world_vehicle.driving or not structure_mode or model_tool.active or request.index!=structure_prefab_index or request.rotation!=structure_rotation or structure_prefabs[structure_prefab_index]!=request.asset:
+	if loading_active or shutdown_requested or (not app_focused and not request.get("from_dialog",false)) or player_hud.inventory_open or world_vehicle.driving or not structure_mode or model_tool.active or request.index!=structure_prefab_index or request.rotation!=structure_rotation or structure_prefabs[structure_prefab_index]!=request.asset:
 		foundation_check.status="Placement cancelled"
 	foundation_check.tick(terrain)
 	if foundation_check.status=="checking": return
 	_foundation_placement={}
-	if foundation_check.status!="supported": _show_lake_notice(foundation_check.status);return
+	if foundation_check.status!="supported": _placement_notice(request,foundation_check.status);return
 	if terrain.pending_edit or terrain.foreground_brush or not terrain.world_ready or terrain.epoch!=foundation_check.epoch or terrain.density_revision!=foundation_check.revision or not _prefab_allowed(request.asset,request.target):
-		_show_lake_notice("Placement changed; place again");return
+		_placement_notice(request,"Placement changed; place again");return
 	if world_vehicle.overlaps_edit(request.asset.placement_bounds(request.target,request.rotation)):
-		_show_lake_notice("Move the vehicle clear before placing frontage");return
+		_placement_notice(request,"Move the vehicle clear before placing frontage");return
 	if structures.blocks.place_prefab(request.asset,request.target,request.rotation):
-		_show_lake_notice("%s placed · F5 saves world" % request.asset.resource_name)
+		_placement_notice(request,"%s placed · F5 saves world" % request.asset.resource_name,true)
+	else: _placement_notice(request,"Placement was not accepted; check site bounds and capacity")
 	_prefab_preview_timer=0.0
 
 func _physics_process(delta: float) -> void:
@@ -833,6 +879,8 @@ func _physics_process(delta: float) -> void:
 
 func _process(delta: float) -> void:
 	var frame_begin:=Time.get_ticks_usec()
+	# A focused native survey dialog belongs to this app, not the background.
+	if construction_palette.survey_dialog!=null and construction_palette.survey_dialog.visible and construction_palette.survey_dialog.has_focus(): Engine.max_fps=max_fps
 	var frontage_result: Dictionary=prefab_library.poll_frontage()
 	if not frontage_result.is_empty(): _accept_composed_prefab(frontage_result)
 	_advance_frontage_placement()

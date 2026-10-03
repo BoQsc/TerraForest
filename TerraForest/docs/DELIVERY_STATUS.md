@@ -1,3 +1,11 @@
+## Exact placement after editor site preparation - 2026-10-03
+
+Completed preparation now exposes Place prefab on prepared site and the panel can reopen its retained site dialog. Placement uses the captured origin/height/rotation, not the current camera aim. The existing complete foundation, deep support, clearance and final player/vehicle/block checks run before insertion. A changed terrain revision triggers fresh validation; a changed world, layout or survey cannot reuse an old prepared target. Closing the dialog cancels pending validation; reopening allows retry. Results are reported in the dialog and duplicate placement is rejected.
+
+Twenty graphical checks passed at 1920x1080 fullscreen, covering survey and real grading, moved camera aim, cancellation and retry, exact single-prefab insertion, duplicate prevention, actual replacement-survey invalidation and player/structure/vehicle protection. The expanded panel ends at Y=977. Screenshot inspection exposed the main-window focus policy throttling a focused native survey dialog to 15 FPS. Focused survey dialogs now retain the configured foreground cap; dialog focus loss uses the background cap. The test requires actual dialog focus and a 60 FPS cap. This fixes the intentional cap selection, not rendering cost or sustained frame-time headroom.
+
+Street paving, spatial grading preview, terrain undo and preparation recovery across reload remain unfinished. Evidence: evidence/prepared_placement/.
+
 ## Editor foundation preparation with guarded stop/resume - 2026-10-03
 
 The survey dialog now offers Prepare stone foundation. It captures the surveyed plan and checks the entire expanded site against the player, the native parked-vehicle envelope, structures and static objects before admission and between edits. A structures addon coordinator submits one graded terrain segment at a time and waits for publication. Accepted mutations are never presented as rolled back. Stop, closing the dialog, mode changes and changed selection stop further submissions after the accepted edit finishes. In-session resume applies only remaining sections and requires the captured epoch/revision and unchanged selection. Unrelated terrain changes reject continuation. Progress and partial completion are shown explicitly.

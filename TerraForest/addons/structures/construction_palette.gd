@@ -8,6 +8,10 @@ signal frontage_requested(lots: int,width: int,gap: int,seed: int,title: String)
 signal survey_requested
 signal preparation_requested
 signal preparation_stop_requested
+signal prepared_placement_requested
+signal preparation_status_requested
+var preparation_status_button: Button
+var place_prepared_button: Button
 var prepare_button: Button
 var stop_preparation_button: Button
 var survey_button: Button
@@ -44,12 +48,17 @@ func _ready() -> void:
 	prefab=_option(column,"Prefab",["Single blocks"],"prefab")
 	survey_button=Button.new();survey_button.text="Survey ground for selected prefab";survey_button.focus_mode=Control.FOCUS_NONE;column.add_child(survey_button)
 	survey_button.pressed.connect(func(): survey_requested.emit())
+	preparation_status_button=Button.new();preparation_status_button.text="Reopen site preparation";preparation_status_button.focus_mode=Control.FOCUS_NONE;column.add_child(preparation_status_button);preparation_status_button.hide()
+	preparation_status_button.pressed.connect(func(): preparation_status_requested.emit())
 	survey_dialog=AcceptDialog.new();survey_dialog.title="Building site survey";add_child(survey_dialog)
 	prepare_button=survey_dialog.add_button("Prepare stone foundation",false,"prepare");prepare_button.disabled=true
+	place_prepared_button=survey_dialog.add_button("Place prefab on prepared site",false,"place_prepared");place_prepared_button.hide()
 	stop_preparation_button=survey_dialog.add_button("Stop after current edit",false,"stop");stop_preparation_button.hide()
 	survey_dialog.custom_action.connect(func(action: String):
 		if action=="prepare": preparation_requested.emit()
 		elif action=="stop": preparation_stop_requested.emit())
+	survey_dialog.custom_action.connect(func(action: String):
+		if action=="place_prepared": prepared_placement_requested.emit())
 	var corners:=HBoxContainer.new();column.add_child(corners)
 	for action: String in ["a","b"]:
 		var button:=Button.new();button.text="Mark corner "+action.to_upper();button.focus_mode=Control.FOCUS_NONE
@@ -114,6 +123,7 @@ func synchronize(active: bool,shape_id: int,material_id: int,quarter_turn: int,p
 	if not active: survey_dialog.hide()
 
 func show_survey(message: String,can_prepare: bool=false) -> void:
+	place_prepared_button.hide()
 	prepare_button.disabled=not can_prepare
 	survey_dialog.dialog_text=message
 	survey_dialog.popup_centered(Vector2i(600,240))

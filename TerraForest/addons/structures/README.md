@@ -416,3 +416,10 @@ remain; resume applies only remaining sections at the same terrain revision.
 This in-memory workflow has no terrain undo or recovery across reload. It
 does not pave streets or place buildings, and frontage support checks remain
 mandatory after grading.
+
+After preparation, choose Place prefab on prepared site to validate and place
+at the captured coordinates. Reopen site preparation returns to the retained
+plan without surveying edited terrain again. Closing the dialog cancels pending
+placement validation; completed terrain edits remain. Placement always rechecks
+support, underground continuity, room clearance and current obstructions.
+Camera aim changes do not move the captured site. Street paving is still separate.
