@@ -1,0 +1,12 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS wide foundation grading accepted
+PASS foundation uses selected solid material
+PASS asphalt street stamps over graded foundation
+PASS street changes material without changing established grade
+PASS paving preserves foundation material outside street
+PASS invalid grading material rejected without mutation
+PASS invalid grading material rejected without mutation
+PASS invalid grading material rejected without mutation
+PASS foundation and street survive terrain snapshot
+PASS public grading API rejects invalid material before worker submission

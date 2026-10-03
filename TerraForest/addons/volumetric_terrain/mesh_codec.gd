@@ -73,6 +73,11 @@ static func decode_density_ray(reply: PackedByteArray) -> Dictionary:
 			result["normal"]=normal
 	return result
 
+static func graded_bed(a: Vector3,b: Vector3,half_width: float,depth: float,clearance: float,material: int) -> PackedByteArray:
+	var packet:=road_bed(a,b,half_width,depth,clearance)
+	packet.resize(44);packet.encode_u32(40,material)
+	return packet
+
 static func _packed_channel(source: PackedByteArray, offset: int, count: int, stride: int, type: int) -> Variant:
 	# Use Godot's native Variant decoder, NOT a per-vertex GDScript loop.
 	# TYPE_* constants come from this running engine, avoiding stale numeric type tables.

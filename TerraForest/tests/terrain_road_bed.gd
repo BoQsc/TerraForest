@@ -49,6 +49,10 @@ func run() -> void:
 	deadline=Time.get_ticks_msec()+10000
 	while terrain.pending_edit and Time.get_ticks_msec()<deadline: await process_frame
 	check(not terrain.pending_edit and terrain.latest_error.is_empty(),"road edit completes through existing publication lifecycle")
+	check(terrain.construct_graded_bed(a,b,6,4,6,3),"public grading API accepts extended material packet")
+	deadline=Time.get_ticks_msec()+10000
+	while terrain.pending_edit and Time.get_ticks_msec()<deadline: await process_frame
+	check(not terrain.pending_edit and terrain.latest_error.is_empty(),"graded foundation completes worker publication")
 	# Isolated solid hill: test the cut against actual occupied density, not air.
 	var hill: RefCounted=ClassDB.instantiate("TerrainCore")
 	hill.execute(Codec.command(6,[1703,2]))

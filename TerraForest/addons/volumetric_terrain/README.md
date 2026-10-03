@@ -69,3 +69,17 @@ Native sources and regression sources are included. `python tools/build_native.p
 The typed Windows `TerrainCore` has instance-owned cancellation and serialized access to each world's mutable state. Commands 12/13 access the owner cancellation counter without waiting for a running mesh operation. Reset/load preserve that counter. `supports_isolated_worlds()`, `build_variant()` and `executing_command()` expose native capabilities and diagnostics; `executing_command()` reports -1 when idle. Allocation-error flags are thread-local in this binding. Keep a strong reference until every caller has finished. The scene facade still admits only one active world pending cache/save ownership changes. This is a native prerequisite for multiple worlds, not a multiplayer implementation.
 
 The save/mesh packet formats and generator are retained. The derived cache fingerprint selects the actual debug/release library. See [terrain native validation](../../docs/TERRAIN_NATIVE_VALIDATION.md) for legacy byte comparisons, concurrent cancellation tests and known limits. Linked godot-cpp uses the accompanying MIT license.
+
+## Graded foundations
+
+construct_graded_bed(a, b, half_width, depth, clearance, material_id = 3)
+uses the native graded capsule footprint with a selected edit material (1-4).
+Material 4 is asphalt. It shares road bounds: length 1-128 m, half-width
+0.5-16 m, fill depth 1-8 m, clearance 0-16 m, maximum grade 25 percent,
+and the existing world/bedrock protections. This is a bounded fill-and-cut
+operation, not a guarantee that a deep valley becomes supported ground.
+It uses worker publication, invalidation and terrain persistence. Command 28
+now accepts a 44-byte form with a trailing material uint32; legacy 36/40-byte
+forms still default to asphalt. Invalid materials are rejected before mutation.
+A narrower road can subsequently pave the foundation without changing grade.
+Settlement-wide transactions and editor grading integration remain unfinished.
