@@ -1,0 +1,11 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS maximum frontage worker admitted
+PASS outstanding work cannot be replaced
+PASS worker completes and persists result
+PASS editing source during generation does not alter captured layout
+PASS asynchronous geometry matches deterministic native reference
+PASS result consumed exactly once
+PASS next job admitted after consumption
+PASS shutdown drains and removes unpublished asset file
+FRONTAGE_ASYNC { "submit_us": 3696, "max_poll_and_save_us": 39, "frames": 10 }

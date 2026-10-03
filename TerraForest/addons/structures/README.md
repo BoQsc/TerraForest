@@ -376,3 +376,10 @@ allocating a full voxel volume and avoid rescanning previous samples.
 This is conservative voxel-lattice screening, not exact triangle intersection
 or a guarantee for arbitrary authored spaces without floor/roof columns.
 Supported and clear must share the same terrain revision before placement.
+
+Frontage editor authoring uses begin_frontage/poll_frontage: one low-priority
+worker receives captured source records, builds private native resources and
+saves the result. Main-thread completion publishes it to the library. Call
+shutdown_frontage before releasing the library while work is outstanding; it
+joins and removes unpublished output. The demo connects this to tree exit.
+The synchronous frontage API remains available for offline tools/tests.

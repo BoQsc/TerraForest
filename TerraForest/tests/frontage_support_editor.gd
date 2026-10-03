@@ -47,5 +47,14 @@ func run() -> void:
 		await wait_edit(game)
 		game._begin_frontage_placement(asset,target);await wait_placement(game)
 		check(game.foundation_check.status=="supported" and not game.structures.blocks.can_place_prefab(asset,target,0),"supported six-cottage frontage commits after multiple batches")
+		game.prefab_library.directory="user://frontage_editor_async_%d" % Time.get_ticks_usec()
+		game.structure_prefab_index=0
+		var previous_count: int=game.structure_prefabs.size()
+		game._frontage_construction(64,8,3,1703,"Async editor frontage")
+		deadline=Time.get_ticks_msec()+10000
+		while game.structure_prefabs.size()==previous_count and Time.get_ticks_msec()<deadline: await process_frame
+		check(game.structure_prefabs.size()==previous_count+1 and game.structure_prefabs.back().get_cell_count()==59904,"world authoring action publishes maximum frontage from worker")
+		for file in DirAccess.get_files_at(game.prefab_library.directory): DirAccess.remove_absolute(game.prefab_library.directory.path_join(file))
+		DirAccess.remove_absolute(game.prefab_library.directory)
 	game.terrain.shutdown();game.queue_free();await process_frame
 	quit(1 if failures else 0)

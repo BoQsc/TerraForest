@@ -58,6 +58,7 @@ func _player_water_depth() -> float:
 	return lakes.depth_at(player.global_position+Vector3(0,1.1,0))
 
 func _ready() -> void:
+	tree_exiting.connect(prefab_library.shutdown_frontage)
 	add_child(world_vehicle)
 	add_child(pickups)
 	if not pickups.prepare(persistence):
@@ -454,8 +455,8 @@ func _stack_construction(count: int,title: String) -> void:
 
 func _frontage_construction(lots: int,width: int,gap: int,seed: int,title: String) -> void:
 	if loading_active or shutdown_requested or benchmark_enabled or player_hud.inventory_open or not structure_mode or model_tool.active or structure_prefab_index<0: return
-	var result: Dictionary=prefab_library.frontage(structure_prefabs[structure_prefab_index],lots,width,gap,seed,title)
-	_accept_composed_prefab(result)
+	var result: Dictionary=prefab_library.begin_frontage(structure_prefabs[structure_prefab_index],lots,width,gap,seed,title)
+	construction_palette.capture_status.text="Generating frontage…" if result.ok else result.reason
 
 func _accept_composed_prefab(result: Dictionary) -> void:
 	if not result.ok:
@@ -754,6 +755,8 @@ func _physics_process(delta: float) -> void:
 
 func _process(delta: float) -> void:
 	var frame_begin:=Time.get_ticks_usec()
+	var frontage_result: Dictionary=prefab_library.poll_frontage()
+	if not frontage_result.is_empty(): _accept_composed_prefab(frontage_result)
 	_advance_frontage_placement()
 	world_vehicle.update(self,delta)
 	if world_vehicle.driving!=_vehicle_ui_active:
