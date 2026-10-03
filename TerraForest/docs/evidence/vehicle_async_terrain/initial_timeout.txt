@@ -1,0 +1,1 @@
+First run: FAIL world initialization deadline (20 seconds). Process exited normally with code 1 and temporary save skipped. No stage diagnostics were captured in that first version. Adding failure diagnostics and rerunning passed; no loader implementation fix occurred. Initialization reliability remains unresolved.
