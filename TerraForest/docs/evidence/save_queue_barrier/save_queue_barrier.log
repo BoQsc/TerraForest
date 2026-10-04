@@ -1,0 +1,15 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS save captures original addon state before worker starts
+PASS later priority mutation admitted
+PASS priority edit cannot overtake captured save
+PASS real worker starts deterministic queued workload
+PASS save and later native edit both finish
+[TerrainRewrite] ERROR: save disabled after corrupt snapshot; original file protected
+PASS saved compound archive validates
+PASS queued save retains addon state from its own capture
+PASS saved terrain precedes later edit while live worker still applies it
+PASS edit retains priority over unrelated background mesh
+PASS load cannot reorder accepted mutation
+PASS reset stays behind last save barrier
+SAVE_QUEUE_BARRIER {"checks":11,"failures":0}

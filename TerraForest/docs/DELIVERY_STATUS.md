@@ -1,3 +1,22 @@
+## Save barriers in priority terrain queue - 2026-10-04
+
+A targeted regression reproduced a queue-ordering defect: a newly submitted
+priority edit jumped ahead of an already captured save. The resulting archive
+contained the later terrain revision and addon state rather than the earlier
+save request's state. Three assertions failed on the previous implementation.
+
+Priority edits, loads and resets now insert after the last queued save or world
+mutation. They still bypass unrelated background work after that barrier. This
+preserves accepted mutation order and snapshot meaning; an edit may have to
+wait for an earlier save rather than overtake its disk work. The extra queue
+scan is bounded by the existing 96-job admission limit.
+
+The deterministic test queues jobs before starting the real worker, reads the
+actual compound save, and verifies that live terrain still receives the later
+edit. All 11 barrier checks, eight manual-save checks and 25 mining/building
+save checks pass. Before/after evidence: `docs/evidence/save_queue_barrier`.
+This is a correctness fix, not a disk-latency or frame-rate improvement claim.
+
 ## Paid construction compound-save proof - 2026-10-04
 
 The live mining/crafting fixture now registers the real structures component,

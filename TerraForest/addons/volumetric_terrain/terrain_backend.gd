@@ -290,7 +290,14 @@ func submit(job: Dictionary, priority: bool = false) -> bool:
 	if job.get("kind","")=="lake_slice": _lake_pending+=1
 	if job.get("kind","")=="density_batch": _site_pending+=1
 	if priority:
-		jobs.push_front(job)
+		var insertion:=0
+		if str(job.get("kind","")) in ["edit","load","reset"]:
+			# Captured addon snapshots belong to their accepted world order.
+			# Prioritize over background work, never over a save or mutation.
+			for index in range(jobs.size()):
+				if str(jobs[index].get("kind","")) in ["save","edit","load","reset"]:
+					insertion=index+1
+		jobs.insert(insertion,job)
 	else:
 		jobs.push_back(job)
 	mutex.unlock()
