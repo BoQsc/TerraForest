@@ -1,3 +1,28 @@
+## Maintain canonical harvest order during mutation - 2026-10-05
+
+Native harvest state now uses an ordered set. Canonical save capture walks IDs
+directly without building and sorting a temporary vector. Membership/insertion
+are O(log n); unchanged cached captures remain constant-time. Serialized format
+and save compatibility are unchanged. A tested radix-sort alternative worsened
+maximum-capacity measurements and was discarded before committing.
+
+Seven changed-capture samples per case, using the debug DLL on this laptop:
+36,864 IDs improved from 1,811 to 410 microseconds median; 262,144 IDs from
+17,876 to 10,776 microseconds. Sparse wide IDs at that limit improved from
+18,732 to 10,998 microseconds. The measured maximum was 12,919 microseconds.
+Repeated captures remain about 1 microsecond. A 36-candidate mask averages
+2.4–3.2 microseconds at nonempty populations (1,000 calls, repeatedly querying
+the same candidates; this is a warm-cache microbenchmark).
+
+The current generator has at most 36,864 candidate IDs across its entire world.
+At the general store limit, capture still takes a material portion of a 60 FPS
+frame and needs a worker/regional design before larger-world qualification.
+The container change does not establish sustained gameplay FPS or memory usage.
+All 24 state checks, including an independent ordering oracle through INT64_MAX,
+and 11 fresh archive checks pass. Evidence: `ordered_before.log`,
+`ordered_capture.log`, `ordered_state.log`, `ordered_disk.log` under
+`docs/evidence/harvest_state`. Both DLL variants rebuilt; runtime tests use debug.
+
 ## Reuse unchanged harvest snapshots - 2026-10-05
 
 A short native capture benchmark reproduced repeated main-thread sorting work:

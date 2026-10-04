@@ -4,16 +4,14 @@
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/variant/packed_byte_array.hpp>
 #include <godot_cpp/variant/packed_int64_array.hpp>
-#include <algorithm>
-#include <unordered_set>
-#include <vector>
+#include <set>
 namespace terraforest {
 using namespace godot;
 // Main-thread state; validate_snapshot is pure and safe on the archive worker.
 // Stable generator IDs are tombstones, independent of resident render cells.
 class NativeHarvestState : public RefCounted {
     GDCLASS(NativeHarvestState,RefCounted)
-    std::unordered_set<int64_t> removed;
+    std::set<int64_t> removed;
     mutable PackedByteArray snapshot_cache;
     mutable bool snapshot_dirty=true;
     static constexpr size_t LIMIT=262144;
@@ -46,10 +44,9 @@ public:
         // PackedByteArray shares immutable storage until a caller writes to it.
         // Main-thread capture alone owns this cache; worker validation is pure.
         if(!snapshot_dirty)return snapshot_cache;
-        std::vector<int64_t> ids(removed.begin(),removed.end());std::sort(ids.begin(),ids.end());
-        PackedByteArray out;out.resize(16+ids.size()*8);auto *p=out.ptrw();
-        write(p,0x3154534556524148ULL);write(p+8,ids.size()); // HARVEST1
-        for(size_t i=0;i<ids.size();++i)write(p+16+i*8,ids[i]);
+        PackedByteArray out;out.resize(16+removed.size()*8);auto *p=out.ptrw();
+        write(p,0x3154534556524148ULL);write(p+8,removed.size()); // HARVEST1
+        size_t i=0;for(auto id:removed)write(p+16+(i++)*8,id);
         snapshot_cache=out;snapshot_dirty=false;return snapshot_cache;
     }
     bool validate_snapshot(const PackedByteArray &data) const{
@@ -62,7 +59,7 @@ public:
     }
     bool restore_storage_snapshot(const PackedByteArray &data){
         if(!validate_snapshot(data))return false;
-        std::unordered_set<int64_t> staged;const auto *p=data.ptr();const auto count=read(p+8);staged.reserve(count);
+        std::set<int64_t> staged;const auto *p=data.ptr();const auto count=read(p+8);
         for(uint64_t i=0;i<count;++i)staged.insert(int64_t(read(p+16+i*8)));
         removed.swap(staged);snapshot_cache=data;snapshot_dirty=false;return true;
     }

@@ -1,0 +1,3 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+HARVEST_CAPTURE_SCALING [{"bytes":16,"dirty_max_us":1,"dirty_median_us":1,"first_capture_us":14,"ids":0,"repeat_median_us":0,"repeat_p95_us":1,"wide_ids":false},{"bytes":294928,"dirty_max_us":3075,"dirty_median_us":1811,"first_capture_us":1809,"ids":36864,"repeat_median_us":1,"repeat_p95_us":1,"wide_ids":false},{"bytes":2097168,"dirty_max_us":25935,"dirty_median_us":17876,"first_capture_us":18163,"ids":262144,"repeat_median_us":1,"repeat_p95_us":1,"wide_ids":false},{"bytes":2097168,"dirty_max_us":19849,"dirty_median_us":18732,"first_capture_us":20716,"ids":262144,"repeat_median_us":1,"repeat_p95_us":9,"wide_ids":true}]
