@@ -55,7 +55,15 @@ func run() -> void:
 	check(dig(center),"repeated brush admitted")
 	await wait_edit()
 	check(hud.reward_inbox.get_pending()==pending,"mining the same empty space awards nothing")
-	check(hud.reward_inbox.claim(hud.inventory,PackedInt64Array([pending[0],1]),hud.inventory.snapshot().revision).ok,"mined resource can be claimed into inventory")
+	check(hud.reward_inbox.claim(hud.inventory,PackedInt64Array([pending[0],2]),hud.inventory.snapshot().revision).ok,"mined resource can be claimed into inventory")
+	var recipe: int=0 if pending[0]==201 else (2 if pending[0]==202 else 3)
+	check(preload("res://addons/player_runtime/crafting.gd").craft(hud.inventory,recipe,1,hud.inventory.snapshot().revision).ok,"actual mined resources craft into building supplies")
+	GDExtensionManager.load_extension("res://addons/structures/structures.gdextension")
+	var blocks=ClassDB.instantiate("NativeBlockWorld")
+	var construction=preload("res://addons/player_runtime/construction_inventory.gd").new();construction.gameplay=true
+	var word: int=1 if recipe==0 else 97
+	check(construction.place_block(blocks,hud.inventory,Vector3i(10,0,10),word) and blocks.get_cell(Vector3i(10,0,10))==word,"crafted supply participates in paid native block placement")
+	blocks.free()
 	var inventory_bytes: PackedByteArray=hud.capture_snapshot()
 	var reward_bytes: PackedByteArray=hud.reward_inbox.capture_storage_snapshot()
 	saved=false;terrain.save_world()

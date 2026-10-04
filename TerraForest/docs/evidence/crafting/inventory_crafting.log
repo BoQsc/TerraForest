@@ -1,0 +1,18 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS full output capacity preserves inputs and revision
+PASS consumed input slot can hold crafted output
+PASS exchange publishes one revision
+PASS invalid outputs cannot consume inputs
+PASS invalid outputs cannot consume inputs
+PASS invalid outputs cannot consume inputs
+PASS invalid outputs cannot consume inputs
+PASS insufficient ingredients change nothing
+PASS stale craft cannot replay
+PASS recipe and batch bounds enforced
+PASS starter recipe 0 succeeds
+PASS starter recipe 1 succeeds
+PASS starter recipe 2 succeeds
+PASS starter recipe 3 succeeds
+PASS recipes conserve specified inputs and outputs
+INVENTORY_CRAFTING {"checks":15,"failures":0}

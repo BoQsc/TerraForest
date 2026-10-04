@@ -1,3 +1,23 @@
+## Mining-to-building crafting loop - 2026-10-04
+
+The inventory now offers four starter recipes: 2 stone to brick, 3 stone to
+concrete, and 2 iron ore or 2 copper ore to metal. These are provisional game
+rules. Native `exchange_items` consumes inputs and grants outputs together,
+restoring original contents/revision on any failure. Outputs can use slots
+freed by consumption. A successful exchange advances revision once and the UI
+marks the world dirty for autosave. Recipe definitions and bounded batch
+selection remain moddable script; stack operations are native.
+
+Fifteen native/recipe checks pass. The 21-check live mining fixture now includes
+claiming actual excavation output, crafting and paid native block placement,
+then inventory/reward save reload. Its isolated block store is not included in
+that fixture's archive. Fourteen graphical checks pass at 1920x1080 fullscreen,
+covering crafting button behavior and layout; screenshot reviewed. Evidence:
+`docs/evidence/crafting` and updated `docs/evidence/reward_claim_ui`. World parsing
+and debug/release native builds pass. Stations, processing time, wood harvesting
+and authoritative multiplayer crafting remain unfinished; these correctness
+checks do not qualify sustained world performance.
+
 ## Gameplay mining to pending inventory - 2026-10-04
 
 Gameplay excavation now converts native removed lattice samples into pending

@@ -24,6 +24,7 @@ public:
     godot::Dictionary grant(int64_t item,int64_t count,int64_t expected);
     godot::Dictionary grant_items(const godot::PackedInt64Array &items,int64_t expected);
     godot::Dictionary can_receive(const godot::PackedInt64Array &items,int64_t expected);
+    godot::Dictionary exchange_items(const godot::PackedInt64Array &costs,const godot::PackedInt64Array &outputs,int64_t expected);
     godot::Dictionary consume(int64_t slot,int64_t count,int64_t expected);
     godot::Dictionary consume_items(const godot::PackedInt64Array &costs,int64_t expected);
     godot::Dictionary can_afford(const godot::PackedInt64Array &costs,int64_t expected);

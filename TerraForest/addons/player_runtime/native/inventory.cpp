@@ -11,6 +11,7 @@ void NativePlayerInventory::_bind_methods() {
     ClassDB::bind_method(D_METHOD("grant","item","count","expected_revision"),&NativePlayerInventory::grant);
     ClassDB::bind_method(D_METHOD("grant_items","items","expected_revision"),&NativePlayerInventory::grant_items);
     ClassDB::bind_method(D_METHOD("can_receive","items","expected_revision"),&NativePlayerInventory::can_receive);
+    ClassDB::bind_method(D_METHOD("exchange_items","costs","outputs","expected_revision"),&NativePlayerInventory::exchange_items);
     ClassDB::bind_method(D_METHOD("consume","slot","count","expected_revision"),&NativePlayerInventory::consume);
     ClassDB::bind_method(D_METHOD("consume_items","costs","expected_revision"),&NativePlayerInventory::consume_items);
     ClassDB::bind_method(D_METHOD("can_afford","costs","expected_revision"),&NativePlayerInventory::can_afford);
@@ -75,6 +76,19 @@ Dictionary NativePlayerInventory::apply_grants(const PackedInt64Array &items,int
 }
 Dictionary NativePlayerInventory::grant_items(const PackedInt64Array &items,int64_t expected) { return apply_grants(items,expected,true); }
 Dictionary NativePlayerInventory::can_receive(const PackedInt64Array &items,int64_t expected) { return apply_grants(items,expected,false); }
+Dictionary NativePlayerInventory::exchange_items(const PackedInt64Array &costs,const PackedInt64Array &outputs,int64_t expected) {
+    // These mutators are main-thread only and emit no callbacks. Retain the
+    // bounded original state until both operations succeed; freed input slots
+    // are available to outputs. Never expose intermediate revisions to callers.
+    const auto original=slots;const int64_t original_revision=revision;
+    Dictionary consumed=apply_costs(costs,expected,true);
+    if(!bool(consumed["ok"]))return consumed;
+    Dictionary granted=apply_grants(outputs,revision,true);
+    if(!bool(granted["ok"])){
+        slots=original;revision=original_revision;granted["revision"]=revision;return granted;
+    }
+    revision=original_revision+1;return result(true,"");
+}
 Dictionary NativePlayerInventory::apply_costs(const PackedInt64Array &costs,int64_t expected,bool commit) {
     if(expected!=revision)return result(false,"stale_revision");
     if(costs.is_empty()||costs.size()>64||costs.size()%2)return result(false,"invalid_costs");

@@ -1,0 +1,28 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS gameplay mining and persistence initialize
+PASS gameplay blocks free terrain creation before mutation
+PASS gameplay excavation accepted
+PASS worker edit settles with reward accounting
+PASS actual excavation produces raw-resource pending rewards
+PASS duplicate publication cannot repeat the receipt
+PASS repeated brush admitted
+PASS worker edit settles with reward accounting
+PASS mining the same empty space awards nothing
+PASS mined resource can be claimed into inventory
+PASS actual mined resources craft into building supplies
+PASS crafted supply participates in paid native block placement
+PASS mined and claimed state saves
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+PASS gameplay save opens in new worker
+PASS claimed resource and remaining receipt restore exactly
+PASS excavation admitted immediately before graceful close
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+PASS graceful close settles mining reward
+PASS graceful-close reward persists
+PASS excavation admitted immediately before direct teardown
+[TerrainRewrite] ERROR: save disabled after corrupt snapshot; original file protected
+PASS direct pending teardown preserves previous consistent save
+PASS saturated inbox rejects mining before terrain mutation
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+MINING_REWARDS {"checks":21,"failures":0}

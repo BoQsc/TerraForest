@@ -20,6 +20,10 @@ var message: Label
 var pending_choice: OptionButton
 var pending_amount: SpinBox
 var claim_button: Button
+var recipe_choice: OptionButton
+var craft_amount: SpinBox
+var craft_button: Button
+const Crafting=preload("res://addons/player_runtime/crafting.gd")
 var state: Dictionary={}
 var enabled:=true
 var default_loadout:=PackedByteArray()
@@ -107,6 +111,12 @@ func _ready() -> void:
 	pending_amount=SpinBox.new();pending_amount.min_value=1;pending_amount.max_value=32000000;pending_amount.value=1
 	pending_amount.custom_minimum_size.x=130;rewards.add_child(pending_amount)
 	claim_button=Button.new();claim_button.text="Claim";claim_button.pressed.connect(claim_pending);rewards.add_child(claim_button)
+	var crafting:=HBoxContainer.new();crafting.add_theme_constant_override("separation",12);column.add_child(crafting)
+	var craft_label:=Label.new();craft_label.text="Craft supplies";crafting.add_child(craft_label)
+	recipe_choice=OptionButton.new();recipe_choice.size_flags_horizontal=Control.SIZE_EXPAND_FILL;crafting.add_child(recipe_choice)
+	for recipe in Crafting.RECIPES: recipe_choice.add_item(recipe.title)
+	craft_amount=SpinBox.new();craft_amount.min_value=1;craft_amount.max_value=1000;craft_amount.value=1;craft_amount.custom_minimum_size.x=130;crafting.add_child(craft_amount)
+	craft_button=Button.new();craft_button.text="Craft";craft_button.pressed.connect(craft_selected);crafting.add_child(craft_button)
 	message.text="Click a filled slot, then a destination to move or swap. Tab / Esc closes."
 	column.add_child(message)
 	modal.hide();refresh()
@@ -162,6 +172,17 @@ func equip(slot: int) -> void:
 	state=inventory.snapshot()
 	var item: int=state.slots[slot].item
 	if item in CATALOG: tool_requested.emit(item)
+
+func craft_selected() -> void:
+	if not enabled or not inventory_open: return
+	var result: Dictionary=Crafting.craft(inventory,recipe_choice.selected,int(craft_amount.value),state.revision)
+	if result.ok:
+		message.text="Crafted supplies · "+("temporary world; not saved" if temporary_world else "F5 saves world")
+		inventory_changed.emit()
+	elif result.reason=="full": message.text="Not enough output space. Free a slot or craft fewer; inputs are retained."
+	elif result.reason=="insufficient_items": message.text="Not enough raw resources. Claim mined resources before crafting."
+	else: message.text="Craft rejected (%s). Inventory refreshed; try again."%result.reason
+	refresh()
 
 func select_slot(slot: int) -> void:
 	if selected_slot<0:

@@ -19,8 +19,8 @@ New gameplay inventories start with
 tools and 64 units of each construction material. This is the default for a
 missing loadout section, not a refill: saved inventories replace it exactly,
 including depleted stocks and existing editor loadouts. Further supplies must
-currently be prepared in the editor. Mining supplies raw resources, but crafting
-them into construction materials is unfinished. The
+currently be prepared in the editor or crafted from mined stone/ore, except
+wood, whose harvesting loop is unfinished. The
 mode is selected at launch, not stored in the world file or enforced by a
 multiplayer authority. Opening the gameplay slot in editor mode allows editing.
 
@@ -74,6 +74,16 @@ the previous consistent save; unsaved progress can be lost in that fallback.
 Receipt rejection likewise protects the prior save and stops further gameplay
 excavation. Abrupt process termination cannot save uncommitted progress. The
 free editor has no mining reward adapter or additive-edit restriction.
+
+The Craft supplies row converts claimed resources using starter recipes:
+2 stone → 1 brick, 3 stone → 1 concrete, and 2 iron ore or 2 copper ore → 1 metal.
+These are provisional game rules, not physical manufacturing ratios. Select
+1–1000 batches; `NativePlayerInventory.exchange_items` consumes inputs and
+grants outputs as one main-thread transaction with one revision. Rejected
+outputs restore all inputs and the original revision, and consumed input slots
+can hold outputs. Recipes live in `crafting.gd` for bounded modding/UI use;
+inventory work stays native. No crafting stations, timers or multiplayer recipe
+authority are implemented yet. Successful crafting marks the world for autosave.
 
 `construction_inventory.gd` coordinates synchronous main-thread native edits.
 It debits before placement so successful building change signals observe the
