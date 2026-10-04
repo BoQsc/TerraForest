@@ -1,4 +1,6 @@
 # SPDX-License-Identifier: 0BSD
+# Run graphically at fullscreen 1920x1080: the real E handler requires captured
+# mouse input, which the headless display backend does not provide.
 extends SceneTree
 var failures:=0
 var checks:=0

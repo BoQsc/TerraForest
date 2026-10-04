@@ -14,9 +14,12 @@ Cell reconciliation applies the persistent exclusion on subsequent publication.
 Native ray queries, inventory storage and harvest membership handle the data;
 GDScript coordinates one user action and one bounded owner reconciliation.
 
-Nineteen native/transaction checks and six headless main-scene checks pass,
+Nineteen native/transaction checks and six graphical main-scene checks pass,
 including the E-key handler, range, occlusion, reward and autosave notification.
 Evidence: `docs/evidence/harvest_state/action.log` and `interaction.log`.
+The E-handler check initially failed headless because mouse capture was not
+available. The passing run uses Forward+ fullscreen 1920x1080 with the existing
+60 FPS cap. The earlier direct-method headless check did not cover this gate.
 The scene fixture inserts a controlled tree above terrain; it does not establish
 visual polish, natural-tree targeting across a forest, a harvest-specific disk
 round trip, multiplayer authority or long-session performance. Tree-felling
