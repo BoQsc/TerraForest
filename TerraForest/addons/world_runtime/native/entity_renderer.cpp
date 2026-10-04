@@ -38,18 +38,24 @@ Dictionary NativeEntityRenderer::refresh(const Vector3 &center, double radius, i
     if (!bool(result["ok"])) { instances_->set_visible_instance_count(0); return result; }
     const PackedInt64Array ids = result["ids"];
     if (ids.is_empty()) { instances_->set_visible_instance_count(0); return result; }
-    float *out = buffer_.ptrw();
+    const float *current = buffer_.ptr();
+    float *out = nullptr;
     for (int64_t i = 0; i < ids.size(); ++i) {
         const Vector3 p = store_->get_position(ids[i]);
+        const float *old = current + i * 12;
+        if (old[0]==1 && old[5]==1 && old[10]==1 && old[3]==p.x && old[7]==p.y && old[11]==p.z) continue;
+        // Acquire writable storage only on the first changed row. An unchanged
+        // refresh neither detaches the packed array nor uploads its GPU buffer.
+        if (!out) { out=buffer_.ptrw(); current=out; }
         float *row = out + i * 12;
         row[0]=1; row[1]=0; row[2]=0; row[3]=p.x;
         row[4]=0; row[5]=1; row[6]=0; row[7]=p.y;
         row[8]=0; row[9]=0; row[10]=1; row[11]=p.z;
     }
-    instances_->set_buffer(buffer_);
+    if (out) instances_->set_buffer(buffer_);
     instances_->set_visible_instance_count(int(ids.size()));
     result["rendered"] = ids.size();
-    result["upload_bytes"] = int64_t(capacity_) * 48;
+    result["upload_bytes"] = out ? int64_t(capacity_) * 48 : 0;
     return result;
 }
 }

@@ -1,3 +1,11 @@
+## Reuse unchanged entity GPU transforms - 2026-10-04
+
+NativeEntityRenderer now compares selected positions against its retained transform rows. It acquires writable array storage and submits a MultiMesh buffer only when a visible row actually changes. Query budgets and generation-checked position lookup remain unchanged. Visibility still updates after empty/invalid queries, removals and selection-size changes; first-use rows initialize their identity basis even at the origin. No second retained buffer or per-entity node is added. Changed selections still upload the full fixed-capacity buffer; this is not sparse GPU upload or query-result caching.
+
+The 1920x1080 fullscreen Forward+ test passed 21 checks against a 100000-entity store, including 60 unchanged refreshes with zero transform upload bytes, movement/reuse, origin initialization, growing selections, visibility recovery, empty removal and external layout mutation. Actual MultiMesh transform readback matched selected entity positions. An initial headless run failed transform-readback assertions; graphical rendering is required for this renderer verification. The saved screenshot was inspected. Both native targets were rebuilt against the prebuilt SDK. No GPU-utilization, thermal or sustained-frame-rate claim is made.
+
+Evidence: docs/evidence/entity_renderer_reuse.
+
 ## Road vegetation with terrain streaming enabled - 2026-10-04
 
 road_vegetation_live.gd now accepts --streaming-fixture, enabling ordinary terrain mesh scheduling and checking that actual tiles were built and retained before paving. The report includes worker build and tile counts rather than treating an enabled flag alone as evidence of work. In the final thirteen-check headless run, builds increased from 30 to 36 and retained tiles from 30 to 33 across the edit/resample interval. Exactly one of 324 roots was removed; 323 neighbors retained transforms and trunk records. Repainting as stone restored all original memberships and transforms.

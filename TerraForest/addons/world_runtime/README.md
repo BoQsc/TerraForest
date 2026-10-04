@@ -78,8 +78,11 @@ excludes both identity-index and spatial-index allocations.
 `configure(store, mesh, capacity)` with capacity 1–4,096, then
 `refresh(center, radius, candidate_budget=4096)` after simulation as needed.
 Positions and centers use the renderer's local coordinate system. It submits a
-fixed `capacity * 48` byte transform buffer when results are nonempty, with only
-the returned rows visible. Empty/invalid queries hide previous instances without
+fixed `capacity * 48` byte transform buffer only when a selected transform row
+changes, with only the returned rows visible. Unchanged selections reuse the
+retained buffer without writable-array detachment or GPU transform upload.
+Queries and bounded row comparisons still run on each refresh.
+Empty/invalid queries hide previous instances without
 uploading a buffer. It does not automatically simulate or refresh.
 
 Refresh returns the spatial query fields plus `rendered` and `upload_bytes`.
