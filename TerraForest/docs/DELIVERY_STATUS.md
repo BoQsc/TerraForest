@@ -1,3 +1,13 @@
+## Vehicle traversal of joined road sections - 2026-10-04
+
+Added --joined-road-fixture to tests/vehicle_terrain.gd. Two independently constructed native road sections share their endpoint at a 16 m region boundary, with a constant 6.25 percent intended grade. The joined fixture uses eight separate collision bodies built from native region meshes, rather than combining them into one physics shape. Thirty-three vertical ray samples cover an 8 m window around the join at 0.25 m spacing, checking for holes, excessive height deviation and abrupt sampled steps. The vehicle must traverse the entire window.
+
+The final 1920x1080 fullscreen Forward+ test passed: 390/390 drive ticks had at least three loaded wheels, including 55/55 ticks in the join window. Minimum chassis clearance against the intended grade was 0.588 m. Maximum adjacent sampled height change was 0.0391 m; end speed was 70.06 km/h. Collision geometry contained 2964 triangles. The original one-section test also passed before separating region bodies in the joined branch. An initial 360-tick trial ended just short of the inspection window and failed; the joined test now drives 390 ticks to require a complete crossing.
+
+This is resident-collision proof for one straight uphill connection. It does not qualify turns, mismatched grades, arbitrary junctions, downhill travel, streaming at speed, or sustained frame rate. The screenshot uses a plain test material, not production asphalt shading.
+
+Evidence: docs/evidence/joined_road_vehicle.
+
 ## Prepared street entrance handoff - 2026-10-03
 
 Site planning now captures two street centerline endpoints using native prefab cell-center rotation conventions. Only completed preparation registers them with the road editor. Street end A / B transfers the captured endpoint, grade and street width into an asphalt preview; the user marks the connecting endpoint and uses existing guarded road construction. The handoff survives building placement and later plan mutation, but world reload clears it. Streets above the road tool maximum width of 32 m are explicitly rejected rather than narrowed. Coordinates remain authoring anchors, not certification against subsequent terrain edits.
