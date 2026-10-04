@@ -1,3 +1,9 @@
+## Entity nearest-query scaling evidence - 2026-10-04
+
+Added an 18-case short CPU fixture: populations 4096, 100000 and 262144, sparse versus tightly crowded placement, and candidate budgets 512, 4096 and 16384. Each case executes four warmup and 32 measured native nearest queries, returning at most 128 handles. All admission/count/completeness checks passed. Sparse local queries visited 256 candidates at every population and averaged 7.875..10.719 us. Crowded queries visited at most their budget; maximum observed query duration across cases was 464 us at budget 16384 and population 262144.
+
+The limiting behavior is explicit: all crowded 100000/262144 cases exhausted every tested budget, so their nearest result is only among visited candidates. CPU boundedness does not solve completeness or insertion-order bias under extreme same-cell occupancy. The current 32 m index remains unsuitable for claiming arbitrary crowd-density coverage without additional spatial subdivision or a different admission policy. Costs exclude population creation/index allocations, renderer uploads, simulation, physics and GPU work; this is not an entity-fleet or 60 FPS qualification. Evidence: docs/evidence/entity_query_scaling.
+
 ## Bounded nearest entity selection - 2026-10-04
 
 Added NativeEntityStore.query_sphere_nearest and switched the native renderer to it. Unlike the original gameplay query, it does not stop when output capacity fills: it scans up to the explicit candidate budget, retaining at most result_limit candidates in a native max heap, then sorts by distance with persistent identity as the tie-breaker. Existing cell-footprint, candidate and result bounds remain. selection_complete distinguishes a proven nearest subset after a full scan from a partial scan; complete still reports whether all matching entities were returned. Original query_sphere behavior remains unchanged for gameplay callers.
