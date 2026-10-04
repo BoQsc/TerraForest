@@ -1,3 +1,23 @@
+## Persistent pending reward storage - 2026-10-04
+
+Added `NativeRewardInbox` with 32 distinct-item capacity, a 10^12 per-item bound,
+and a fixed 400-byte save format. Receipts accrue atomically and must increase
+strictly; their saved watermark rejects duplicates after reload. Native partial
+claims commit pending deductions only after the inventory grant succeeds, so
+capacity/revision failure retains the complete unclaimed reward. Main-thread
+mutations emit no callbacks; save-worker validation reads only supplied bytes.
+
+The main world registers `pending_rewards` with an empty default for older
+saves. Thirty-one checks cover duplicate receipts, full-inventory retention,
+partial claims, malformed data, capacity limits and disk round trips, including
+a compound terrain/inventory/inbox archive. Thirteen loadout regression checks
+and world script parsing also passed. Evidence: `docs/evidence/reward_inbox`.
+Debug/release native builds use the prebuilt SDK.
+
+Mining receipt production, claim UI, inbox saturation handling and authority
+integration remain unfinished. This storage addition does not enable mining
+rewards or provide out-of-order/network delivery semantics.
+
 ## Atomic multi-material inventory grants - 2026-10-04
 
 Added native `grant_items` and nonmutating `can_receive` for up to 32 item/count

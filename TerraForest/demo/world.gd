@@ -87,6 +87,10 @@ func _ready() -> void:
 		push_error("Player loadout persistence initialization failed")
 		get_tree().quit(2)
 		return
+	if not persistence.register_component("pending_rewards",player_hud.reward_inbox.capture_storage_snapshot,player_hud.reward_inbox.restore_storage_snapshot,player_hud.reward_inbox,player_hud.reward_inbox.capture_storage_snapshot()):
+		push_error("Pending reward persistence initialization failed")
+		get_tree().quit(2)
+		return
 	player_pose=ClassDB.instantiate("NativePlayerPose")
 	if not persistence.register_component("player_pose",_capture_player_pose,_restore_player_pose,player_pose,PackedByteArray()):
 		push_error("Player pose persistence initialization failed")

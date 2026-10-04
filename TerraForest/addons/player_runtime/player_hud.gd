@@ -7,6 +7,7 @@ const CATALOG: Dictionary={1:"Sculpt sphere",2:"Sculpt cube",3:"Build blocks",4:
 const MATERIALS: Dictionary={101:"Brick",102:"Wood",103:"Concrete",104:"Metal"}
 const STARTER_MATERIAL_COUNT:=64
 var inventory: RefCounted
+var reward_inbox: RefCounted
 var inventory_open:=false
 var selected_slot: int=-1
 var previous_mouse: int=Input.MOUSE_MODE_CAPTURED
@@ -32,6 +33,7 @@ func prepare() -> bool:
 	if not ClassDB.class_exists("NativePlayerInventory"):
 		push_error("Player inventory extension unavailable");enabled=false;return false
 	inventory=ClassDB.instantiate("NativePlayerInventory")
+	reward_inbox=ClassDB.instantiate("NativeRewardInbox")
 	for id: int in CATALOG: inventory.register_item(id,1)
 	for id: int in MATERIALS: inventory.register_item(id,999)
 	for id: int in CATALOG: inventory.grant(id,1,inventory.snapshot().revision)

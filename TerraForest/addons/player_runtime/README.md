@@ -36,6 +36,23 @@ unchanged. Successful grants advance revision once. Starter supplies use this
 batch path. The caller must retain or otherwise handle an unaccepted reward;
 these operations do not create overflow storage or retry deliveries themselves.
 
+`NativeRewardInbox` provides bounded pending storage separately from the loadout.
+The world registers it as `pending_rewards`; older worlds receive an empty
+default. It holds at most 32 distinct item IDs and 10^12 units per item in a
+fixed 400-byte format. `accept(items, receipt)` stages the entire batch and
+requires a positive, strictly increasing receipt ID. The saved last receipt
+rejects duplicates and older receipts after reload. A caller must serialize
+one receipt stream per inbox; out-of-order delivery is not supported.
+
+`claim(inventory, items, expected_revision)` atomically transfers a requested
+portion through native `grant_items`. Capacity, catalog or revision failure
+preserves the pending stock. No callback or await splits the two mutations.
+Snapshot both components together using world persistence. Snapshot validation
+is structural; the outer compound archive supplies integrity checking.
+An inbox at its limit rejects new receipts without partial changes; callers
+must handle that rejection. Mining receipt production and claim UI are not yet
+connected, and this API does not itself establish multiplayer authority.
+
 `construction_inventory.gd` coordinates synchronous main-thread native edits.
 It debits before placement so successful building change signals observe the
 paid inventory. Native placement rejection does not alter blocks; the
