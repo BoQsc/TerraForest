@@ -1,6 +1,7 @@
 #include "entity_store.hpp"
 #include "entity_renderer.hpp"
 #include "world_archive.hpp"
+#include "road_anchors.hpp"
 #include <godot_cpp/godot.hpp>
 #include <godot_cpp/core/class_db.hpp>
 
@@ -10,6 +11,7 @@ static void initialize(ModuleInitializationLevel level) {
         GDREGISTER_CLASS(terraforest::NativeEntityStore);
         GDREGISTER_CLASS(terraforest::NativeEntityRenderer);
         GDREGISTER_CLASS(terraforest::NativeWorldArchive);
+        GDREGISTER_CLASS(terraforest::NativeRoadAnchors);
     }
 }
 static void terminate(ModuleInitializationLevel) {}

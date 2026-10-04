@@ -19,6 +19,28 @@ var pending: Dictionary={}
 var completed: Dictionary={}
 var prepared_street: Dictionary={}
 var street_controls: HBoxContainer
+var anchor_storage: RefCounted
+var anchor_terrain: Node
+func prepare_persistence(terrain: Node,persistence: RefCounted) -> bool:
+	if not ClassDB.class_exists("NativeRoadAnchors"):
+		GDExtensionManager.load_extension("res://addons/world_runtime/world_runtime.gdextension")
+	if not ClassDB.class_exists("NativeRoadAnchors"): return false
+	anchor_terrain=terrain
+	anchor_storage=ClassDB.instantiate("NativeRoadAnchors")
+	return anchor_storage!=null and persistence.register_component("road_anchors",capture_anchors,restore_anchors,anchor_storage,PackedByteArray())
+func capture_anchors() -> PackedByteArray:
+	if prepared_street.is_empty() or prepared_street.epoch!=anchor_terrain.epoch: return PackedByteArray()
+	var data: PackedByteArray=anchor_storage.encode(prepared_street.ends,prepared_street.width)
+	return PackedByteArray([0]) if data.is_empty() else data
+func restore_anchors(data: PackedByteArray) -> bool:
+	var decoded: Dictionary=anchor_storage.decode(data)
+	if not decoded.ok: return false
+	pending={};completed={};has_start=false;has_finish=false
+	prepared_street={"ends":decoded.ends,"width":decoded.width,"epoch":anchor_terrain.epoch} if decoded.present else {}
+	if is_instance_valid(street_controls): street_controls.visible=decoded.present
+	if is_instance_valid(continue_button): continue_button.disabled=true
+	selection_changed.emit()
+	return true
 func material_id() -> int:
 	return 4 if surface.selected==0 else 1
 func shoulder_width() -> float:
@@ -54,6 +76,7 @@ func _ready() -> void:
 		var button:=Button.new();button.text="Street end A" if end==0 else "Street end B";button.size_flags_horizontal=Control.SIZE_EXPAND_FILL;button.focus_mode=Control.FOCUS_NONE;street_controls.add_child(button)
 		button.pressed.connect(func(): action_requested.emit("street_a" if end==0 else "street_b"))
 	status=Label.new();status.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;status.text="Select two terrain points. Maximum length 128 m; maximum grade 25%.";column.add_child(status)
+	street_controls.visible=not prepared_street.is_empty()
 	panel.hide()
 func _number(parent: Control,title: String,minimum: float,maximum: float,value: float) -> SpinBox:
 	var label:=Label.new();label.text=title;parent.add_child(label)

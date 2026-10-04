@@ -118,3 +118,8 @@ to remove them. Physical settling, crafting/build-cost consumption and a surviva
 economy are still missing. Supplies can become unsupported after terrain edits.
 Interaction examines at most 64 candidates per type on keypress and fails visibly
 if query budgets are exceeded. This is not a multiplayer-authoritative transaction.
+
+NativeRoadAnchors validates the optional road_anchors compound-save section.
+Empty means no prepared street. Version 1 is exactly 64 bytes: magic TRA1,
+u32 version 1, six little-endian f64 endpoint coordinates, then f64 width.
+It stores only the last prepared street, not road topology or terrain validity.

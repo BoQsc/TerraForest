@@ -1,3 +1,11 @@
+## Saved prepared street entrances - 2026-10-04
+
+The last completed prepared street now retains its two entrance coordinates and width through the compound world save. NativeRoadAnchors supplies a versioned fixed 64-byte codec and stateless worker validation, rejecting nonfinite/out-of-world coordinates, widths outside 4..64 m, degenerate endpoints, unknown versions and trailing bytes. Missing sections preserve compatibility with older saves. UI restoration clears transient selections and pending/completed section state, binds the restored anchors to the current epoch and restores the entrance controls. Invalid data leaves current anchors untouched. Invalid live data rejects saving rather than silently dropping it.
+
+Nine targeted checks passed, including actual compound disk publication and restoration into a new terrain/palette instance, exact restored preview selection and legacy empty-section handling. All twelve road continuation checks and nineteen vehicle interaction checks passed. Both native binaries were rebuilt with the pinned prebuilt SDK; godot-cpp was not rebuilt. Main-world graphical startup and vehicle interaction also passed at 1920x1080 Forward+.
+
+This persists only the last prepared street, not a road graph, junction network, terrain undo or durable site preparation job. Anchors record authoring coordinates; later terrain edits may invalidate their physical suitability. Manual road continuation remains session-only. Evidence: docs/evidence/road_anchor_persistence.
+
 ## Vehicle startup logging stall - 2026-10-04
 
 Opt-in nested setup timing narrowed the previous attachment cost. Native helper initialization took 29 us; body construction 497 us, four wheel bindings 26 us total and door binding 7 us, while the full base setup interval was 37002 us. The four unconditional startup print calls were outside those measured visual operations. Vehicle startup messages are now controlled by the exported startup_logging option, default false. Errors remain enabled.

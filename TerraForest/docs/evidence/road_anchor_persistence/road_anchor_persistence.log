@@ -1,0 +1,13 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS bounded native anchor encoding
+PASS invalid coordinates cannot replace anchors
+PASS unknown version rejected
+PASS trailing bytes rejected
+PASS unsupported street width rejected
+PASS compound anchor save published
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+PASS new world restores anchors from disk
+PASS restored entrance selects exact preview endpoint
+PASS missing legacy section clears anchors
+[TerrainRewrite] World saved and verified; terrain and addon state published together

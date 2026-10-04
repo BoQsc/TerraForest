@@ -93,6 +93,10 @@ func _ready() -> void:
 		push_error("Vehicle persistence initialization failed")
 		get_tree().quit(2)
 		return
+	if not road_palette.prepare_persistence(terrain,persistence):
+		push_error("Road anchor persistence initialization failed")
+		get_tree().quit(2)
+		return
 	if not structures_ready or not lakes.prepare() or not persistence.register_component("structures", structures.capture_storage_snapshot, structures.restore_storage_snapshot, structures.snapshot_validator(), structures.empty_snapshot()) or not persistence.register_component("volumetric_water", lakes.capture_snapshot, lakes.restore_snapshot, lakes.snapshot_validator(), lakes.empty_snapshot()) or not persistence.enable_region_structures(true) or persistence.attach(terrain) != OK:
 		push_error("World persistence initialization failed")
 		get_tree().quit(2)
