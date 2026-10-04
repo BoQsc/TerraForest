@@ -1,3 +1,11 @@
+## Exact connectors between saved streets - 2026-10-04
+
+The street selector now includes Set start / Set end. Entrance buttons use that target through the normal world action handler. Setting an end retains the captured start and existing road settings, requires asphalt and matching destination width, and reports the existing length/grade/boundary validation result. Invalid preview geometry does not bypass guarded Build. Missing starts, pending edits, stale epochs and mismatched widths reject selection. Choosing endpoints only updates the preview.
+
+Sixteen continuation checks passed. The 27-check persistence fixture reopens two paved streets, selects an entrance from each, builds the connector through native road construction and verifies asphalt/clearance at its endpoints and midpoint across the gap. The 35-check 1080p mixed-site editor fixture verifies the actual end-target button routing and unchanged terrain revision; its screenshot was inspected. The graphical preview deliberately connects opposite ends of one prepared street to exercise the control; separate-street construction is covered by the native integration fixture. Frame capture reached 42.436 ms, so this is feature evidence only.
+
+This supplies manual straight connectors within the existing 128 m and 25 percent grade limits. It does not plan curved routes, grade transitions, junction topology or navigation. Evidence: docs/evidence/street_connector.
+
 ## Persistent prepared-street catalog - 2026-10-04
 
 Preparing another street now appends its entrance pair instead of replacing the previous one. A road-panel selector identifies streets by sequence and midpoint X/Z; selecting a street changes which entrance buttons are available without submitting terrain work. Exact repeated endpoint pairs update the existing width rather than duplicating entries. The catalog retains at most 256 streets and refuses additions at capacity without discarding existing records. It clears on unrelated epoch changes and restores with the selected index through compound saves.

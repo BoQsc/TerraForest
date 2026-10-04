@@ -1,0 +1,19 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS pending section cannot authorize continuation
+PASS matching published outcome authorizes continuation
+PASS continuation uses captured endpoint and width despite later selection changes
+PASS continuation only changes the preview
+PASS confirmed no-op section can be continued without revision increment
+PASS wrong ticket cannot replace last completed endpoint
+PASS world reload invalidates continuation
+PASS street buttons identify their distinct endpoints
+PASS prepared street endpoint transfers exact height and width into road preview
+PASS street entrance capture does not follow later plan mutation
+PASS another street supplies exact finish without moving start
+PASS street-to-street selection only changes preview
+PASS mismatched width rejects without replacing finish
+PASS end selection requires a start
+PASS oversized street does not silently narrow connecting road
+PASS world reload clears captured street entrances
+ROAD_CONTINUATION failures=0

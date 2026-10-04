@@ -700,7 +700,7 @@ func _road_action(action: String) -> void:
 	if action=="clear": road_palette.clear();return
 	if action=="level": road_palette.level_selection();return
 	if action=="continue": road_palette.continue_selection(terrain);return
-	if action in ["street_a","street_b"]: road_palette.select_street_end(0 if action=="street_a" else 1,terrain);return
+	if action in ["street_a","street_b"]: road_palette.select_street_end(0 if action=="street_a" else 1,terrain,road_palette.entrance_target.selected==1);return
 	if action in ["start","finish"]:
 		var origin:=camera.global_position
 		var hit: Dictionary=structures.blocks.raycast_scene(origin,origin-camera.global_basis.z*48,3,[player.get_rid()])

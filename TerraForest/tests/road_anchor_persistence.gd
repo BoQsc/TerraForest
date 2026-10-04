@@ -95,11 +95,19 @@ func run() -> void:
 	check(palette.capture_anchors()==snapshot and palette.street_controls.visible,"new world restores anchors from disk")
 	check(palette.prepared_streets.size()==2 and palette.selected_street==0,"catalog and selected earlier street restore together")
 	check(palette.select_street_end(1,terrain) and palette.start==ends[1] and not palette.has_finish,"restored entrance selects exact preview endpoint")
+	palette.select_street_end(0,terrain)
+	palette.select_prepared_street(1)
+	check(palette.select_street_end(0,terrain,true) and palette.start==ends[0] and palette.finish==second[0] and palette.validation_error().is_empty(),"restored catalog forms exact street-to-street connector")
+	accepted=terrain.construct_road_bed(palette.start,palette.finish,palette.width.value,palette.depth.value,palette.clearance.value)
+	edit_deadline=Time.get_ticks_msec()+15000
+	while terrain.pending_edit and Time.get_ticks_msec()<edit_deadline: await process_frame
+	check(accepted and not terrain.pending_edit and terrain.last_edit_outcome.get("status","")=="published","selected connector publishes through native road construction")
 	var restored_core: Object=terrain.backend.native
 	check(palette.restore_anchors(PackedByteArray()) and palette.prepared_street.is_empty() and not palette.street_controls.visible,"missing legacy section clears anchors")
 	close_world()
 	check(paved_at(restored_core,ends),"reopened terrain preserves asphalt and clearance at restored anchor coordinates")
 	check(paved_at(restored_core,second),"reopened terrain preserves second street too")
+	check(paved_at(restored_core,PackedVector3Array([ends[0],second[0]])),"connector supplies asphalt and clearance across gap between saved streets")
 	restored_core=null
 	var path:=ProjectSettings.globalize_path("user://worlds/"+slot+".trw")
 	for suffix in ["",".bak",".lock"]: DirAccess.remove_absolute(path+suffix)

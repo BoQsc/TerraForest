@@ -126,6 +126,10 @@ func run() -> void:
 	game.road_palette.action_requested.emit("street_b")
 	check(game.road_palette.has_start and not game.road_palette.has_finish and game.road_palette.start==game.site_preparation.plan.street_ends[1],"road editor captures prepared street end after building placement")
 	check(not game.terrain.pending_edit and game.terrain.density_revision==connector_revision,"street handoff changes preview only")
+	game.road_palette.entrance_target.select(1)
+	game.road_palette.street_controls.get_child(0).pressed.emit()
+	check(game.road_palette.finish==game.site_preparation.plan.street_ends[0] and game.road_palette.start==game.site_preparation.plan.street_ends[1] and game.road_palette.has_finish,"end-target control routes real entrance button into exact finish")
+	check(not game.terrain.pending_edit and game.terrain.density_revision==connector_revision,"end-target button remains preview-only")
 	await process_frame;await RenderingServer.frame_post_draw
 	check(game.road_palette.panel.visible and not game.construction_palette.panel.visible and game.road_palette.panel.get_global_rect().end.y<900,"street connection controls exclusively fit above the 1080p toolbelt")
 	root.get_texture().get_image().save_png("res://reports/settlement_street_handoff.png")

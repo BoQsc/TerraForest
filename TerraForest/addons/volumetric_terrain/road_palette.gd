@@ -20,6 +20,8 @@ var completed: Dictionary={}
 var prepared_street: Dictionary={}
 var prepared_streets: Array=[]
 var street_selector: OptionButton
+var entrance_target: OptionButton
+var street_choice: HBoxContainer
 var selected_street: int=-1
 var street_controls: HBoxContainer
 var anchor_storage: RefCounted
@@ -60,6 +62,7 @@ func _refresh_street_selector() -> void:
 		street_selector.add_item("Street %d · %.0f, %.0f" % [i+1,midpoint.x,midpoint.z])
 	if selected_street>=0: street_selector.select(selected_street)
 	street_selector.visible=not prepared_streets.is_empty()
+	street_choice.visible=not prepared_streets.is_empty()
 	street_controls.visible=not prepared_streets.is_empty()
 func select_prepared_street(index: int) -> bool:
 	if index<0 or index>=prepared_streets.size(): return false
@@ -96,7 +99,10 @@ func _ready() -> void:
 		if item[0]=="build": build_button=button
 		if item[0]=="continue": continue_button=button;continue_button.disabled=true
 		button.pressed.connect(func(): action_requested.emit(item[0]))
-	street_selector=OptionButton.new();street_selector.focus_mode=Control.FOCUS_NONE;column.add_child(street_selector);street_selector.hide()
+	street_choice=HBoxContainer.new();column.add_child(street_choice);street_choice.hide()
+	street_selector=OptionButton.new();street_selector.focus_mode=Control.FOCUS_NONE;street_selector.size_flags_horizontal=Control.SIZE_EXPAND_FILL;street_choice.add_child(street_selector);street_selector.hide()
+	entrance_target=OptionButton.new();entrance_target.focus_mode=Control.FOCUS_NONE;entrance_target.add_item("Set start");entrance_target.add_item("Set end");street_choice.add_child(entrance_target)
+	entrance_target.tooltip_text="Choose which road endpoint the Street end A / B buttons set."
 	street_selector.item_selected.connect(select_prepared_street)
 	street_controls=HBoxContainer.new();column.add_child(street_controls);street_controls.hide()
 	for end in 2:
@@ -167,11 +173,20 @@ func register_prepared_street(plan: Dictionary,epoch: int) -> void:
 	prepared_street={"ends":plan.street_ends.duplicate(),"width":plan.street_width,"epoch":epoch}
 	prepared_streets.append(prepared_street);selected_street=prepared_streets.size()-1
 	_refresh_street_selector()
-func select_street_end(index: int,terrain: Node) -> bool:
+func select_street_end(index: int,terrain: Node,as_finish: bool=false) -> bool:
 	if not pending.is_empty() or index<0 or index>1 or prepared_street.is_empty() or prepared_street.epoch!=terrain.epoch:
 		status.text="No prepared street in this world, or a road section is still pending.";return false
 	if prepared_street.width>32:
 		status.text="This street exceeds the road tool's 32 m width. Connect narrower lanes manually.";return false
+	if as_finish:
+		if not has_start:
+			status.text="Set the connecting road's start first.";return false
+		if material_id()!=4 or not is_equal_approx(width.value*2,prepared_street.width):
+			status.text="Use asphalt and match this street's %.1f m width before connecting." % prepared_street.width;return false
+		finish=prepared_street.ends[index];has_finish=true
+		var error:=validation_error()
+		status.text="Exact street connection preview · build to apply." if error.is_empty() else error
+		selection_changed.emit();return true
 	start=prepared_street.ends[index];has_start=true;has_finish=false
 	width.value=prepared_street.width*0.5;depth.value=8;clearance.value=12;shoulder.value=0
 	surface.select(0);surface.item_selected.emit(0)

@@ -40,6 +40,14 @@ func run() -> void:
 	check(panel.select_street_end(1,terrain) and panel.start==Vector3(540,50,500) and panel.width.value==4 and not panel.has_finish,"prepared street endpoint transfers exact height and width into road preview")
 	plan.street_ends[1]=Vector3.ZERO
 	check(panel.select_street_end(1,terrain) and panel.start==Vector3(540,50,500),"street entrance capture does not follow later plan mutation")
+	panel.register_prepared_street({"paving_segments":1,"street_width":8,"street_ends":PackedVector3Array([Vector3(580,52,500),Vector3(620,52,500)])},terrain.epoch)
+	var captured_start: Vector3=panel.start
+	check(panel.select_street_end(0,terrain,true) and panel.start==captured_start and panel.finish==Vector3(580,52,500) and panel.validation_error().is_empty(),"another street supplies exact finish without moving start")
+	check(terrain.density_revision==11 and panel.pending.is_empty(),"street-to-street selection only changes preview")
+	panel.width.value=3
+	check(not panel.select_street_end(1,terrain,true) and panel.finish==Vector3(580,52,500),"mismatched width rejects without replacing finish")
+	panel.width.value=4;panel.clear()
+	check(not panel.select_street_end(0,terrain,true) and not panel.has_finish,"end selection requires a start")
 	plan.street_width=64;panel.register_prepared_street(plan,terrain.epoch)
 	check(not panel.select_street_end(0,terrain),"oversized street does not silently narrow connecting road")
 	terrain.epoch+=1;panel.poll_submission(terrain)
