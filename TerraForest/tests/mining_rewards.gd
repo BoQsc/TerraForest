@@ -5,10 +5,11 @@ var terrain: Node
 var hud: Node
 var rewards: RefCounted
 var persistence: RefCounted
+var structures: Node
 var checks:=0
 var failures:=0
 var saved:=false
-var slot:="mining_rewards_%d"%OS.get_process_id()
+var slot:="mining_rewards_%d_%d"%[OS.get_process_id(),Time.get_ticks_usec()]
 func check(ok: bool,label: String) -> void:
 	checks+=1
 	if not ok: failures+=1
@@ -23,6 +24,8 @@ func open_world() -> bool:
 	persistence=preload("res://addons/world_runtime/world_persistence.gd").new()
 	if not persistence.register_component("player_loadout",hud.capture_snapshot,hud.restore_snapshot,hud.inventory,hud.default_loadout): return false
 	if not persistence.register_component("pending_rewards",hud.reward_inbox.capture_storage_snapshot,hud.reward_inbox.restore_storage_snapshot,hud.reward_inbox,hud.reward_inbox.capture_storage_snapshot()): return false
+	structures=preload("res://addons/structures/structures_world.gd").new();root.add_child(structures)
+	if not structures.prepare() or not persistence.register_component("structures",structures.capture_storage_snapshot,structures.restore_storage_snapshot,structures.snapshot_validator(),structures.empty_snapshot()) or not persistence.enable_region_structures(true): return false
 	rewards=preload("res://addons/player_runtime/mining_rewards.gd").new()
 	if not rewards.attach(terrain,hud) or persistence.attach(terrain)!=OK: return false
 	terrain.message_changed.connect(func(message: String):
@@ -30,9 +33,18 @@ func open_world() -> bool:
 	if terrain.start(StandardMaterial3D.new(),false)!=OK: return false
 	var deadline:=Time.get_ticks_msec()+10000
 	while not terrain.world_ready and Time.get_ticks_msec()<deadline: await process_frame
-	return terrain.world_ready
+	if not terrain.world_ready or not structures.enable_region_paging(terrain.backend.snapshot_codec): return false
+	# Match the main world's metadata-first archive and native region paging.
+	while Time.get_ticks_msec()<deadline:
+		if not structures.step_region_paging(Vector3(10,0,10)): return false
+		if structures.blocks.is_region_loaded(Vector3i.ZERO): return true
+		await process_frame
+	return false
 func close_nodes() -> void:
-	terrain.shutdown();terrain.free();hud.free();rewards=null;persistence=null
+	if structures!=null: structures.stop_region_paging()
+	terrain.shutdown();terrain.free();hud.free()
+	if structures!=null: structures.free();structures=null
+	rewards=null;persistence=null
 func dig(center: Vector3) -> bool:
 	return terrain.edit(Codec.brush(center,center,2,0,false,3),center-Vector3.ONE*8,center+Vector3.ONE*8)
 func wait_edit() -> void:
@@ -58,35 +70,45 @@ func run() -> void:
 	check(hud.reward_inbox.claim(hud.inventory,PackedInt64Array([pending[0],2]),hud.inventory.snapshot().revision).ok,"mined resource can be claimed into inventory")
 	var recipe: int=0 if pending[0]==201 else (2 if pending[0]==202 else 3)
 	check(preload("res://addons/player_runtime/crafting.gd").craft(hud.inventory,recipe,1,hud.inventory.snapshot().revision).ok,"actual mined resources craft into building supplies")
-	GDExtensionManager.load_extension("res://addons/structures/structures.gdextension")
-	var blocks=ClassDB.instantiate("NativeBlockWorld")
+	var blocks: Node=structures.blocks
 	var construction=preload("res://addons/player_runtime/construction_inventory.gd").new();construction.gameplay=true
 	var word: int=1 if recipe==0 else 97
 	check(construction.place_block(blocks,hud.inventory,Vector3i(10,0,10),word) and blocks.get_cell(Vector3i(10,0,10))==word,"crafted supply participates in paid native block placement")
-	blocks.free()
+	var building_bytes: PackedByteArray=blocks.capture_region(Vector3i.ZERO)
 	var inventory_bytes: PackedByteArray=hud.capture_snapshot()
 	var reward_bytes: PackedByteArray=hud.reward_inbox.capture_storage_snapshot()
 	saved=false;terrain.save_world()
 	var deadline:=Time.get_ticks_msec()+10000
 	while not saved and Time.get_ticks_msec()<deadline: await process_frame
 	check(saved,"mined and claimed state saves")
+	# Prove the explicit save itself: teardown must not replace it with a newer
+	# snapshot before the fresh-worker reload below.
+	terrain.backend.disable_snapshot_writes()
 	close_nodes()
 	check(await open_world(),"gameplay save opens in new worker")
 	check(hud.capture_snapshot()==inventory_bytes and hud.reward_inbox.capture_storage_snapshot()==reward_bytes,"claimed resource and remaining receipt restore exactly")
+	check(structures.blocks.get_cell(Vector3i(10,0,10))==word and structures.blocks.capture_region(Vector3i.ZERO)==building_bytes,"paid block restores exactly through metadata-first region archive and pager")
+	var denied_inventory: PackedByteArray=hud.capture_snapshot()
+	check(not construction.place_block(structures.blocks,hud.inventory,Vector3i(10,0,10),word) and hud.capture_snapshot()==denied_inventory,"reloaded occupancy rejects replacement without charging again")
 	check(dig(center+Vector3(12,0,0)),"excavation admitted immediately before graceful close")
 	check(await terrain.shutdown_after_edits(),"graceful close settles mining reward")
 	reward_bytes=hud.reward_inbox.capture_storage_snapshot()
 	var revision: int=terrain.density_revision
 	close_nodes()
 	check(await open_world() and hud.reward_inbox.capture_storage_snapshot()==reward_bytes,"graceful-close reward persists")
+	check(structures.blocks.capture_region(Vector3i.ZERO)==building_bytes,"graceful mining shutdown retains previously paid building region")
 	check(dig(center+Vector3(24,0,0)),"excavation admitted immediately before direct teardown")
 	close_nodes()
 	check(await open_world() and terrain.density_revision==revision and hud.reward_inbox.capture_storage_snapshot()==reward_bytes,"direct pending teardown preserves previous consistent save")
+	check(structures.blocks.capture_region(Vector3i.ZERO)==building_bytes,"protected save retains the same building region after direct teardown")
 	var full=ClassDB.instantiate("NativeRewardInbox");full.accept(PackedInt64Array([201,1000000000000]),999)
 	hud.reward_inbox.restore_storage_snapshot(full.capture_storage_snapshot())
 	check(not dig(center+Vector3(36,0,0)) and not terrain.pending_edit and terrain.density_revision==revision,"saturated inbox rejects mining before terrain mutation")
 	hud.reward_inbox.restore_storage_snapshot(reward_bytes)
 	close_nodes()
 	for suffix in [".trw",".trw.bak",".trw.lock"]: DirAccess.remove_absolute("user://worlds/"+slot+suffix)
+	var region_directory:="user://worlds/"+slot+".trw.regions"
+	for file in DirAccess.get_files_at(region_directory): DirAccess.remove_absolute(region_directory.path_join(file))
+	DirAccess.remove_absolute(region_directory)
 	print("MINING_REWARDS ",JSON.stringify({"checks":checks,"failures":failures}))
 	quit(1 if failures else 0)

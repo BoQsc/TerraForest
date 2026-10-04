@@ -1,3 +1,22 @@
+## Paid construction compound-save proof - 2026-10-04
+
+The live mining/crafting fixture now registers the real structures component,
+uses metadata-first regional persistence and restores through the native block
+pager, matching the main world's storage path. The paid block is no longer an
+unsaved isolated store. After explicit save, the fixture disables teardown
+writes so a later shutdown save cannot mask a faulty manual save.
+
+All 25 checks pass, including exact building-region bytes after fresh-worker
+reload, preserved inventory/pending receipt, rejecting replacement of an
+occupied restored cell without charging, and retaining the same building region
+through graceful close and protected direct teardown. Expected write-protection
+messages appear during the intentionally disabled shutdown saves. Evidence:
+`docs/evidence/mining_build_save/test.log`.
+
+This closes the earlier persistence verification gap for one constructed block.
+It does not establish populated-city throughput, large-region paging latency,
+building rendering performance or multiplayer consistency.
+
 ## Mining-to-building crafting loop - 2026-10-04
 
 The inventory now offers four starter recipes: 2 stone to brick, 3 stone to
