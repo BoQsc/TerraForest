@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: 0BSD
 extends Node3D
+signal changed
 ## Scene orchestration only: native stores, spatial queries and batched rendering.
 ## Static authored supplies; no per-pickup nodes or active rigid bodies.
 const ITEMS := {101: "Brick", 102: "Wood", 103: "Concrete", 104: "Metal"}
@@ -39,7 +40,9 @@ func _restore(data: PackedByteArray, item: int) -> bool:
 func spawn(item: int, point: Vector3) -> int:
 	if not stores.has(item): return 0
 	var handle: int = stores[item].spawn(point, Vector3.ZERO)
+	if handle == 0: return 0
 	_dirty = true
+	changed.emit()
 	return stores[item].persistent_id(handle)
 
 func update_view(delta: float, focus: Vector3, enabled: bool) -> void:
@@ -67,4 +70,6 @@ func collect_near(point: Vector3, inventory: RefCounted, reachable: Callable) ->
 	if not result.ok: return {"ok": false, "reason": "Inventory full or unavailable"}
 	# Single main-thread transaction: grant emits no callbacks; this handle is live.
 	stores[best_item].despawn(best_handle); _dirty = true
+	# Emit after both halves commit so observers capture a consistent world.
+	changed.emit()
 	return {"ok": true, "item": best_item, "reason": "Collected " + ITEMS[best_item]}

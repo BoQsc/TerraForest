@@ -1,3 +1,22 @@
+## Supply mutations trigger autosave - 2026-10-04
+
+Supply placement and collection previously changed persisted addon state without
+setting the terrain-owned autosave dirty flag. A player who only collected
+supplies could therefore miss periodic saves until another action dirtied the
+world (manual save and shutdown remained separate paths).
+
+The pickup addon now emits `changed` after successful spawn or complete
+inventory-grant/entity-removal transactions. The main world marks autosave dirty
+from that signal. Failed spawns, blocked/full-inventory collections and snapshot
+restoration emit no mutation notification. Work remains bounded to user actions;
+no polling or per-frame inventory scan was added.
+
+Sixteen pickup checks and six actual-scene lifecycle/wiring checks pass without
+leaked-object warnings. The tests cover consistent snapshot capture from the
+notification and autosave eligibility, not a timed autosave disk-write test.
+Evidence: `docs/evidence/pickup_autosave`. Wood harvesting remains unimplemented;
+starter wood and authored supply pickups are the existing sources.
+
 ## Actual gameplay scene integration check - 2026-10-04
 
 Added `tests/gameplay_scene.gd`, launched with the real main scene in temporary

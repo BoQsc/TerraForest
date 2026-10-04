@@ -12,6 +12,12 @@ func run() -> void:
 	while game.loading_active and Time.get_ticks_msec()<deadline: await process_frame
 	check(not game.loading_active and game.terrain.world_ready,"main scene finishes loading")
 	check(game.world_vehicle._scene_requested,"unused vehicle scene has an outstanding preload")
+	game.terrain.changed_since_save=false
+	var supply: int=game.pickups.spawn(102,Vector3(800,100,1310))
+	check(supply>0 and game.terrain.changed_since_save,"actual world marks supply placement for autosave")
+	game.terrain.changed_since_save=false
+	var collected: Dictionary=game.pickups.collect_near(Vector3(800,100,1310),game.player_hud.inventory,func(_point: Vector3): return true)
+	check(collected.ok and game.terrain.changed_since_save,"actual world marks collection for autosave")
 	game.shutdown_requested=true
 	check(await game.terrain.shutdown_after_edits(),"terrain drains on shutdown")
 	# Keep the child briefly to verify exit consumes the request. Also inspect
@@ -22,5 +28,5 @@ func run() -> void:
 	vehicle.free()
 	game.free()
 	for frame in range(2): await process_frame
-	print("SCENE_LIFETIME ",JSON.stringify({"checks":4,"failures":failures}))
+	print("SCENE_LIFETIME ",JSON.stringify({"checks":6,"failures":failures}))
 	quit(1 if failures else 0)

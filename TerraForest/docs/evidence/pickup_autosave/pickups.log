@@ -1,0 +1,33 @@
+WorkerThreadPool: 4 threads, 1 max low-priority.
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+TextServer: Added interface "Dummy"
+TextServer: Added interface "ICU / HarfBuzz / Graphite (Built-in)"
+Using "default" pen tablet driver...
+
+TextServer: Primary interface set to: "ICU / HarfBuzz / Graphite (Built-in)".
+CORE API HASH: 2004498165
+EDITOR API HASH: 1696660745
+Loading resource: res://tests/material_pickups.gd remapped: res://tests/material_pickups.gd
+Completed load for: 'res://tests/material_pickups.gd' remapped 'res://tests/material_pickups.gd' at thread -1
+SceneTreeFTI: traversal method DEFAULT
+MbedTLS: Some X509 certificates could not be parsed (1 certificates skipped).
+Loaded system CA certificates
+PASS four material stores register for world saving
+PASS valid material spawn returns persistent identity
+PASS only accepted spawn announces a save-relevant mutation
+PASS native renderer displays authored supply
+PASS occluded pickup remains in world
+PASS occluded pickup does not announce a mutation
+PASS collection removes entity after successful inventory grant
+PASS collected material appears in inventory without becoming a tool
+PASS inventory displays material quantity
+PASS collection announces both inventory and entity changes after commit
+PASS compound reload restores both uncollected supply and prior inventory
+PASS snapshot restoration does not dirty the loaded world
+PASS collected snapshot does not respawn supply
+PASS full inventory leaves pickup intact
+PASS rejected full-inventory collection does not announce a mutation
+PASS loading gate hides pickup rendering
+XR: Clearing primary interface
+XR: Removed interface "Native mobile"
+XR: Removed interface "OpenXR"
