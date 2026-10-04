@@ -1,3 +1,27 @@
+## Gameplay tree harvesting - 2026-10-05
+
+In gameplay construction mode, E now harvests an aimed trunk within 2.5 metres
+when no vehicle interaction takes precedence. The native scene ray includes
+terrain, structures, trunks and vehicles for occlusion. Harvesting is disabled
+while flying, loading, editing terrain or using the inventory, and editor mode
+retains its existing interactions. Four wood per tree is a provisional recipe.
+
+The synchronous adapter checks active generator ownership, native inventory
+capacity and native exclusion admission before removing the exact visual root
+and trunk collider. It announces a save-relevant change after the transaction.
+Duplicate attempts cannot grant again; a full inventory leaves the tree intact.
+Cell reconciliation applies the persistent exclusion on subsequent publication.
+Native ray queries, inventory storage and harvest membership handle the data;
+GDScript coordinates one user action and one bounded owner reconciliation.
+
+Nineteen native/transaction checks and six headless main-scene checks pass,
+including the E-key handler, range, occlusion, reward and autosave notification.
+Evidence: `docs/evidence/harvest_state/action.log` and `interaction.log`.
+The scene fixture inserts a controlled tree above terrain; it does not establish
+visual polish, natural-tree targeting across a forest, a harvest-specific disk
+round trip, multiplayer authority or long-session performance. Tree-felling
+animation and tool requirements are not implemented.
+
 ## Native harvested-tree persistence substrate - 2026-10-05
 
 The vegetation addon now stores harvested stable IDs separately from resident

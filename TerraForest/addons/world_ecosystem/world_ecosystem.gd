@@ -1,4 +1,5 @@
 extends Node
+signal harvested
 ## Optional coordinator; neither rendering addon imports this module.
 ## Candidate IDs and transforms depend only on world seed and cell, never visit order.
 const CELL_SIZE: float = 64.0
@@ -28,6 +29,36 @@ var _reconcile: Dictionary = {}
 var _resample: Dictionary = {}
 var last_process_us: int = 0
 var harvest_state: RefCounted
+var _harvesting:=false
+
+func harvest_root(id: int, inventory: RefCounted) -> Dictionary:
+	if _harvesting or harvest_state==null or vegetation==null or not vegetation.renderer.roots.has(id) or harvest_state.contains(id):
+		return {"ok":false,"reason":"Tree unavailable"}
+	# Current generator has exactly 36 stable IDs per owner. Never accept an
+	# unrelated authored vegetation ID into this generator's harvest state.
+	if id<1 or id>32*32*GRID*GRID: return {"ok":false,"reason":"Tree unavailable"}
+	var owner_index: int=(id-1)/(GRID*GRID)
+	var key:=Vector2i(owner_index%32,owner_index/32)
+	if not _samples.has(key) or not _samples[key].active.has(id): return {"ok":false,"reason":"Tree unavailable"}
+	var before: Dictionary=inventory.snapshot()
+	var wood:=PackedInt64Array([102,4])
+	if not inventory.can_receive(wood,before.revision).ok: return {"ok":false,"reason":"Make room for 4 wood"}
+	_harvesting=true
+	if not harvest_state.mark(id):
+		_harvesting=false;return {"ok":false,"reason":"Harvest storage full"}
+	var grant: Dictionary=inventory.grant_items(wood,before.revision)
+	if not grant.ok:
+		harvest_state.unmark(id);_harvesting=false
+		return {"ok":false,"reason":"Inventory changed; try again"}
+	if not vegetation.remove_root(id):
+		harvest_state.unmark(id)
+		if not inventory.restore(before,grant.revision).ok: push_error("Harvest inventory rollback failed")
+		_harvesting=false;return {"ok":false,"reason":"Tree removal failed"}
+	_reconcile[key]=true
+	# Observers see the exclusion, inventory grant and removal together.
+	harvested.emit()
+	_harvesting=false
+	return {"ok":true,"reason":"Harvested 4 wood"}
 
 func prepare_persistence(persistence: RefCounted) -> bool:
 	if harvest_state!=null: return false

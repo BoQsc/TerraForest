@@ -162,6 +162,7 @@ func _ready() -> void:
 	player_hud.menu_changed.connect(func(_open: bool): _clear_motion())
 	player_hud.inventory_changed.connect(func(): terrain.changed_since_save=true)
 	pickups.changed.connect(func(): terrain.changed_since_save=true)
+	ecosystem.harvested.connect(func(): terrain.changed_since_save=true)
 	_sync_player_tool()
 	DisplayServer.window_set_title("TerraForest | Living terrain")
 	vegetation.name = "Vegetation"
@@ -386,7 +387,7 @@ func _setup_hud() -> void:
 	status.hide()
 	help.text = "WASD  Move    Shift  Sprint    Space  Jump    G  Fly    Mouse  Look    Esc  Release\nB  Terrain / Blocks    LMB  Remove    RMB  Place    1–6  Shapes    P  Prefabs    T  Material    R  Rotate    Ctrl+Z / Y  Undo / Redo\nTerrain: Wheel  Brush size    1–3  Tools    L  Lake    F5  Save world    F9  Reload    F3  Diagnostics"
 	help.add_theme_font_size_override("font_size", 15)
-	help.text=help.text.replace("B  Terrain / Blocks", "B  Terrain / Blocks    M  Objects    E  Collect")
+	help.text=help.text.replace("B  Terrain / Blocks", "B  Terrain / Blocks    M  Objects    E  Collect / Harvest")
 	help.text+="\nV  Place vehicle    E  Enter / exit stopped vehicle    F5  Save world and vehicle"
 	help.offset_top = -108
 	help.add_theme_color_override("font_color", Color("e6eee9"))
@@ -572,6 +573,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			_clear_motion();_show_lake_notice("Driving · E exit when stopped · Space brake");return
 	if event is InputEventKey and event.pressed and not event.echo and event.physical_keycode==KEY_E and not fly:
 		if not loading_active and not shutdown_requested and app_focused and terrain.world_ready and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED:
+			if construction_inventory.gameplay and _harvest_aimed_tree(): return
 			var collected: Dictionary=pickups.collect_near(player.global_position+Vector3(0,0.5,0),player_hud.inventory,_pickup_reachable)
 			if collected.ok: player_hud.refresh()
 			_show_lake_notice(collected.reason)
@@ -993,6 +995,18 @@ func _process(delta: float) -> void:
 			activity="Waiting for terrain/building collision…" if world_vehicle.car.streaming.waiting else "Driving · %.0f km/h · E exit when stopped" % world_vehicle.car.speed_kph
 		telemetry.text = "%d FPS  ·  %s trees  ·  %d cells\n%s" % [Engine.get_frames_per_second(), str(vegetation.renderer.roots.size()), ecosystem.resident.size(), activity]
 	terrain._record_stage("world process",(Time.get_ticks_usec()-frame_begin)/1000.0)
+
+func _harvest_aimed_tree() -> bool:
+	if vegetation.trunk_collision==null or terrain.pending_edit: return false
+	var origin:=camera.global_position
+	# Native scene ray respects terrain, building, vehicle and trunk occlusion.
+	var hit: Dictionary=structures.blocks.raycast_scene(origin,origin-camera.global_basis.z*2.5,7,[player.get_rid()])
+	if hit.is_empty() or hit.collider!=vegetation.trunk_collision: return false
+	var id: int=vegetation.trunk_collision.placement_for_body(hit.rid)
+	var result: Dictionary=ecosystem.harvest_root(id,player_hud.inventory)
+	if result.ok: player_hud.refresh()
+	_show_lake_notice(result.reason)
+	return true
 
 func _pickup_reachable(point: Vector3) -> bool:
 	var query:=PhysicsRayQueryParameters3D.create(camera.global_position,point,3,[player.get_rid()])

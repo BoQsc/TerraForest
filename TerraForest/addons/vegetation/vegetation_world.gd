@@ -86,6 +86,12 @@ func placement_bounds() -> AABB:
 	# Maximum supported wind amplitude, before instance scale/rotation.
 	return assets.meshes[0].get_aabb().grow(2.0) if ready_to_render else AABB()
 
+func remove_root(id: int) -> bool:
+	if not renderer.roots.has(id): return false
+	if trunk_collision!=null and not trunk_collision.remove_instances(PackedInt64Array([id])): return false
+	renderer.remove_root(id)
+	return true
+
 func remove_roots_in_bounds(bounds: AABB) -> int:
 	# Spatial lookup touches only intersecting render cells. Surviving roots keep
 	# their current LOD/fade state and owner, avoiding cell-wide disappearance.
