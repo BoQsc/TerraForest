@@ -1,3 +1,20 @@
+## Manual-save ordering across edits - 2026-10-04
+
+Manual save requests now wait while a terrain edit is pending. Repeated requests
+coalesce into one request, and addon capture occurs after publication and its
+synchronous callbacks. Worker queue admission failure retains the request for
+the next frame. Unready/stopping worlds reject manual save; unresolved world
+errors cancel the deferred request. Autosave policy is unchanged.
+
+The eight-check `tests/manual_save_ordering.gd` fixture uses an isolated real
+compound save file: it requests save twice during native excavation, grants a
+test inventory item in the publication callback, waits for verified save, clears
+runtime inventory and reloads from disk. Both the edited terrain revision and
+post-publication inventory restore together. Evidence:
+`docs/evidence/manual_save_ordering/test.log`. This proves the manual-save path,
+not shutdown during a pending edit. Mining rewards remain disabled pending
+shutdown ordering and inventory overflow handling.
+
 ## Native excavation accounting - 2026-10-04
 
 Brush edits now count newly excavated density-lattice samples by their original

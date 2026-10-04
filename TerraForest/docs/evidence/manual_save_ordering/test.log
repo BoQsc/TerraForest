@@ -1,0 +1,12 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS real compound persistence attaches
+PASS isolated persistent world starts
+PASS native excavation admitted
+PASS manual saves do not capture inventory during pending edit
+PASS repeated requests coalesce and capture after publication callback
+PASS clear runtime inventory to distinguish actual disk restoration
+PASS compound save reload completes
+PASS disk save contains published terrain and post-publication inventory together
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+MANUAL_SAVE_ORDERING {"checks":8,"failures":0}

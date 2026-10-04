@@ -91,6 +91,7 @@ var schedule_timer: float = 0.0
 var autosave_timer: float = 0.0
 var last_interaction_us: int = 0
 var changed_since_save: bool = false
+var _manual_save_requested: bool = false
 var temporary: bool = false
 var stopping: bool = false
 var latest_error: String = ""
@@ -210,6 +211,7 @@ func _process(delta: float) -> void:
 	_retire_some()
 	if not world_ready:
 		return
+	_flush_manual_save()
 	schedule_timer -= delta
 	if schedule_timer <= 0.0 and foreground_brush and not pending_edit and not diagnostics_pause_streaming:
 		_schedule_urgent_collision()
@@ -1302,7 +1304,27 @@ func _mark_modified_columns() -> void:
 			shadow_columns[Vector2i(x, z)] = true
 
 func save_world() -> void:
-	backend.submit({"kind": "save"})
+	if stopping or not world_ready:
+		message_changed.emit("Wait for the world before saving")
+		return
+	_manual_save_requested=true
+	if pending_edit:
+		message_changed.emit("Save queued until the pending edit is published")
+		return
+	_flush_manual_save()
+
+func _flush_manual_save() -> void:
+	if not _manual_save_requested or pending_edit or stopping or not world_ready: return
+	if not latest_error.is_empty():
+		_manual_save_requested=false
+		message_changed.emit("Save cancelled because the world has an unresolved error")
+		return
+	# Capture addon state only after edit publication and its synchronous change
+	# callbacks. A full worker queue leaves one coalesced request for next frame.
+	if backend.submit({"kind":"save"}):
+		_manual_save_requested=false
+		autosave_timer=0.0
+		changed_since_save=false
 
 func reload_world(reset: bool = false) -> void:
 	if pending_edit:
