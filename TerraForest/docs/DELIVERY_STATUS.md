@@ -1,3 +1,9 @@
+## Compound paved-street restoration proof - 2026-10-04
+
+Strengthened road_anchor_persistence.gd beyond fabricated metadata. It constructs and waits for publication of a native 64 m asphalt section at y=180, registers its entrances only after the revision advances, and publishes the compound save. Before and after reopening, native point queries verify asphalt material with negative density one metre below both endpoints and the midpoint, plus positive density two metres above those points. Queries run only after joining the terrain worker, retaining its core reference to avoid concurrent native access. The fresh palette restores identical anchor bytes and selects the exact second entrance as its preview start. All twelve checks passed in the short headless test.
+
+This proves matching saved geometry and entrance metadata for the tested section, not arbitrary roads, interrupted-save fault recovery, full site grading or junction topology. Evidence: docs/evidence/road_anchor_terrain_persistence.
+
 ## Saved prepared street entrances - 2026-10-04
 
 The last completed prepared street now retains its two entrance coordinates and width through the compound world save. NativeRoadAnchors supplies a versioned fixed 64-byte codec and stateless worker validation, rejecting nonfinite/out-of-world coordinates, widths outside 4..64 m, degenerate endpoints, unknown versions and trailing bytes. Missing sections preserve compatibility with older saves. UI restoration clears transient selections and pending/completed section state, binds the restored anchors to the current epoch and restores the entrance controls. Invalid data leaves current anchors untouched. Invalid live data rejects saving rather than silently dropping it.
