@@ -25,6 +25,15 @@ func run() -> void:
 	var session=load("res://addons/vehicle_runtime/world_vehicle.gd").new();world.add_child(session)
 	var persistence=load("res://addons/world_runtime/world_persistence.gd").new()
 	check(session.prepare(world,persistence),"vehicle component registers with world persistence")
+	var resource_deadline:=Time.get_ticks_msec()+15000
+	var loading_preserved:=true
+	while not session.scene_ready() and Time.get_ticks_msec()<resource_deadline:
+		# A request is preview-free until its resource is ready. Do not assume
+		# two physics frames are enough to load the imported vehicle asset.
+		loading_preserved=loading_preserved and session.car==null and session.capture_snapshot().is_empty()
+		await process_frame
+	check(session.scene_ready() and loading_preserved,"vehicle resource becomes ready without creating a live vehicle")
+	if not session.scene_ready(): world.free();quit(1);return
 	await physics_frame;await physics_frame
 	world.terrain.available=false
 	check(session.spawn(world)=="Vehicle area is still loading" and session.car==null,"spawn rejects unavailable ground")

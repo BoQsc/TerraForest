@@ -10,17 +10,31 @@ func run() -> void:
 	var deadline:=Time.get_ticks_msec()+30000
 	while game.loading_active and Time.get_ticks_msec()<deadline: await process_frame
 	if game.loading_active: finish(game,false,"world startup deadline");return
+	deadline=Time.get_ticks_msec()+15000
+	while not game.world_vehicle.scene_ready() and Time.get_ticks_msec()<deadline: await process_frame
+	if not game.world_vehicle.scene_ready(): finish(game,false,"vehicle resource deadline");return
 	game.fly=false;game._clear_motion();Input.mouse_mode=Input.MOUSE_MODE_CAPTURED
 	var base: Vector3=game.player.position
 	var outcome: String="no suitable ground"
+	var placement_us:=0
+	var placement_begin:=0
 	for offset in [Vector3(0,0,-7),Vector3(7,0,0),Vector3(-7,0,0),Vector3(0,0,7)]:
 		var ray:=PhysicsRayQueryParameters3D.create(base+offset+Vector3.UP*8,base+offset-Vector3.UP*12,1)
 		var hit: Dictionary=game.get_world_3d().direct_space_state.intersect_ray(ray)
 		if hit.is_empty(): continue
 		game.camera.look_at(hit.position)
+		placement_begin=Time.get_ticks_usec()
 		outcome=game.world_vehicle.spawn(game)
+		placement_us=Time.get_ticks_usec()-placement_begin
 		if is_instance_valid(game.world_vehicle.car): break
 	if not is_instance_valid(game.world_vehicle.car): finish(game,false,"placement: "+outcome);return
+	var visible_intervals: Array=[]
+	var previous:=placement_begin
+	for frame in 8:
+		await RenderingServer.frame_post_draw
+		var now:=Time.get_ticks_usec()
+		visible_intervals.append((now-previous)/1000.0);previous=now
+	print("VEHICLE_FIRST_VISIBLE ",{"placement_us":placement_us,"intervals_ms":visible_intervals,"cap":Engine.max_fps,"size":root.size,"scope":"Whole world wall intervals including streaming and frame cap; first interval begins at placement, not previous frame."})
 	var car=game.world_vehicle.car
 	var walking_help: String=game.help.text
 	game.player.position=car.position+Vector3.RIGHT*2.8

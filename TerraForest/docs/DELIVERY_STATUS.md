@@ -1,3 +1,13 @@
+## Vehicle prefetch world validation - 2026-10-04
+
+Updated the interaction fixture to await explicit resource readiness rather than assuming two physics frames suffice. It also checks that resource preparation creates no live vehicle or saved vehicle record. All 19 interaction checks passed, including ground readiness, placement, entry/exit, reuse and invalid snapshot handling. The initial unadapted fixture failed its placement assumptions and exited while resource loading was still running; the bounded readiness wait removes that premature teardown.
+
+The full 1920x1080 Forward+ world fixture now records placement CPU time and eight post-draw intervals. Placement, driving, seated saving, exit and UI restoration passed. The captured car moved 4.04 m with 2724 renderer roots reported. The screenshot was inspected after completion. Placement took 54.039 ms and the first post-draw completed 63.031 ms after placement began; subsequent intervals were 6.025, 5.536, 8.884, 15.292, 19.956, 13.914 and 16.330 ms. These include world work and cap waiting and are not isolated GPU timings. The first interval starts at placement, not the previous frame boundary.
+
+The remaining first-placement hitch is confirmed, not resolved by threaded resource prefetch. Next investigation must separate scene setup/render-resource registration from first-visible rendering. This functional fixture simulates foreground input during driving and does not establish sustained 60 FPS or thermal headroom.
+
+Evidence: docs/evidence/vehicle_prefetch_world.
+
 ## Vehicle resource prefetch - 2026-10-04
 
 The world vehicle adapter now requests its PackedScene on the resource loader worker during prepare. Interactive placement polls readiness without waiting and asks for another V press if loading is incomplete. The retained PackedScene is reused. Snapshot restoration retains its synchronous contract during world loading, and installation reports failure if the resource is unavailable.
