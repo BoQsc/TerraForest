@@ -1,3 +1,29 @@
+## Native harvested-tree persistence substrate - 2026-10-05
+
+The vegetation addon now stores harvested stable IDs separately from resident
+render cells. `NativeHarvestState` supplies native hash lookup and bounded batch
+masks; ecosystem publication applies the mask before updating visual roots and
+trunk collision. The main scene registers `harvested_trees` in the compound
+archive, with an empty default for older saves. Resetting resident cells does
+not erase harvested IDs. Snapshot restoration replaces them atomically after
+validating version, size, positive IDs and strict sorted uniqueness.
+
+The store admits at most 262,144 IDs and refuses overflow without forgetting
+old entries. Serialized storage is 16 + 8 bytes per harvested ID (2,097,168 bytes
+at capacity); RAM includes hash-table overhead. Masks accept at most 4,096 IDs;
+current ecosystem owners have 36 candidates. This is a bounded whole-world
+store for the current generator, not regional paging for unlimited worlds.
+Stable-ID meaning must be preserved when changing the generator or migrating
+saves. Archive capture sorts the stored IDs; no large-world capture latency
+claim is made here.
+
+Fifteen native/filter/lifecycle checks and six actual-scene checks pass. Both
+native DLL variants rebuilt against the prebuilt SDK. Evidence:
+`docs/evidence/harvest_state`. The fixture checks compound provider restoration,
+not a harvest-specific disk round trip. Player targeting, inventory rewards,
+autosave notification for harvesting and player-facing controls remain to be
+implemented; this commit does not expose a harvest action yet.
+
 ## Supply autosave disk proof - 2026-10-05
 
 `tests/pickup_autosave.gd` now verifies the actual worker-owned archive. It saves

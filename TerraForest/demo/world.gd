@@ -70,6 +70,10 @@ func _ready() -> void:
 	tree_exiting.connect(prefab_library.shutdown_frontage)
 	add_child(world_vehicle)
 	add_child(pickups)
+	if not ecosystem.prepare_persistence(persistence):
+		push_error("Vegetation persistence initialization failed")
+		get_tree().quit(2)
+		return
 	if not pickups.prepare(persistence):
 		push_error("Material pickup initialization failed")
 		get_tree().quit(2)

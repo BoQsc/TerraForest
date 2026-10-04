@@ -1,0 +1,55 @@
+# SPDX-License-Identifier: 0BSD
+extends SceneTree
+var checks:=0
+var failures:=0
+func check(ok: bool,label: String) -> void:
+	checks+=1
+	if not ok: failures+=1
+	print(("PASS " if ok else "FAIL ")+label)
+func _initialize() -> void: call_deferred("run")
+func run() -> void:
+	GDExtensionManager.load_extension("res://addons/vegetation_runtime/vegetation_runtime.gdextension")
+	GDExtensionManager.load_extension("res://addons/structures/structures.gdextension")
+	var state=ClassDB.instantiate("NativeHarvestState")
+	var empty: PackedByteArray=state.capture_storage_snapshot()
+	check(empty.size()==16 and state.validate_snapshot(empty),"empty state has a canonical versioned snapshot")
+	check(not state.mark(0) and not state.mark(-1) and state.mark(2) and not state.mark(2),"stable IDs reject invalid and duplicate harvests")
+	check(state.mask(PackedInt64Array([1,2,3]))==PackedByteArray([0,1,0]),"native batch mask only excludes harvested IDs")
+	var saved: PackedByteArray=state.capture_storage_snapshot()
+	var invalid:=saved.duplicate();invalid.encode_u64(16,0)
+	check(not state.restore_storage_snapshot(invalid) and state.contains(2),"invalid restore leaves live exclusions intact")
+	check(state.unmark(2) and state.restore_storage_snapshot(saved) and state.contains(2),"rollback and snapshot restore preserve exact identity")
+	var huge:=PackedInt64Array();huge.resize(4097)
+	check(state.mask(huge).is_empty(),"oversized batches are rejected")
+	state.restore_storage_snapshot(empty)
+	for id in range(1,262145): state.mark(id)
+	check(not state.mark(262145) and state.contains(262144),"persistent exclusion capacity rejects overflow without evicting old IDs")
+	var full: PackedByteArray=state.capture_storage_snapshot()
+	check(full.size()==2097168 and state.validate_snapshot(full),"full capacity has bounded canonical storage")
+	full.encode_u64(24,1)
+	check(not state.validate_snapshot(full),"duplicate snapshot identities are rejected")
+	var ecosystem=load("res://addons/world_ecosystem/world_ecosystem.gd").new()
+	var persistence=load("res://addons/world_runtime/world_persistence.gd").new()
+	check(ecosystem.prepare_persistence(persistence),"harvest state registers in compound persistence")
+	var vegetation=load("res://addons/vegetation/vegetation_world.gd").new()
+	root.add_child(vegetation);vegetation.ready_to_render=true
+	check(vegetation.enable_trunk_collision(),"fixture uses actual native trunk collision")
+	ecosystem.vegetation=vegetation
+	var transforms: Array[Transform3D]=[Transform3D.IDENTITY,Transform3D(Basis.IDENTITY,Vector3(10,0,0))]
+	var key:=Vector2i.ZERO
+	ecosystem._replace_samples(key,PackedInt64Array([1,2]),transforms)
+	check(vegetation.renderer.roots.size()==2,"both unharvested roots publish")
+	ecosystem.harvest_state.mark(1)
+	ecosystem._publish_samples(key)
+	check(not vegetation.renderer.roots.has(1) and vegetation.renderer.roots.has(2) and vegetation.trunk_collision.get_ids()==PackedInt64Array([2]),"harvest mask removes exactly one visual root and collider")
+	var sections: Dictionary=persistence._capture().sections
+	ecosystem.reset()
+	ecosystem._replace_samples(key,PackedInt64Array([1,2]),transforms)
+	check(not vegetation.renderer.roots.has(1),"cell eviction and regeneration cannot respawn harvested ID")
+	ecosystem.harvest_state.unmark(1)
+	persistence._restore(sections,1)
+	ecosystem._publish_samples(key)
+	check(not vegetation.renderer.roots.has(1) and vegetation.renderer.roots.has(2),"compound provider restore reinstates only saved exclusions")
+	ecosystem.free();vegetation.free()
+	print("HARVEST_STATE ",JSON.stringify({"checks":checks,"failures":failures}))
+	quit(1 if failures else 0)

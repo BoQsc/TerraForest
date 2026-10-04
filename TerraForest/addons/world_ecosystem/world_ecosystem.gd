@@ -27,6 +27,20 @@ var _samples: Dictionary = {}
 var _reconcile: Dictionary = {}
 var _resample: Dictionary = {}
 var last_process_us: int = 0
+var harvest_state: RefCounted
+
+func prepare_persistence(persistence: RefCounted) -> bool:
+	if harvest_state!=null: return false
+	if not ClassDB.class_exists("NativeHarvestState"):
+		GDExtensionManager.load_extension("res://addons/vegetation_runtime/vegetation_runtime.gdextension")
+	if not ClassDB.class_exists("NativeHarvestState"): return false
+	harvest_state=ClassDB.instantiate("NativeHarvestState")
+	return persistence.register_component("harvested_trees",harvest_state.capture_storage_snapshot,_restore_harvest,harvest_state,harvest_state.capture_storage_snapshot())
+
+func _restore_harvest(data: PackedByteArray) -> bool:
+	if not harvest_state.restore_storage_snapshot(data): return false
+	_structures_changed()
+	return true
 
 func _ready() -> void:
 	if terrain == null or vegetation == null or camera == null:
@@ -224,7 +238,13 @@ func _publish_samples(key: Vector2i) -> void:
 		if water_mask.size()!=transforms.size():
 			rejected_batches+=1;_reconcile[key]=true;return
 	var accepted: Array[Transform3D] = []
+	var harvested:=PackedByteArray()
+	if harvest_state!=null:
+		harvested=harvest_state.mask(sample["ids"])
+		if harvested.size()!=transforms.size():
+			rejected_batches+=1;_reconcile[key]=true;return
 	for i in range(transforms.size()):
+		if harvest_state!=null and harvested[i]!=0: continue
 		if (structures == null or mask[i] == 0) and (water==null or water_mask[i]==0):
 			ids.append(sample["ids"][i])
 			accepted.append(transforms[i])
