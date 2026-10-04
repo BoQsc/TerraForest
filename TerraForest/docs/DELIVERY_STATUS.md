@@ -1,3 +1,11 @@
+## Asphalt vegetation support exclusion - 2026-10-04
+
+Native natural-root sampling now rejects support contributed by solid asphalt lattice corners. Previously command 17 only tested density support and natural slope, so paving at the original surface height could leave valid tree roots on asphalt. The material check reuses the lower support interpolation samples, skips zero-weight corners and returns the existing zero-normal rejection marker. Batch size remains bounded to 64 and the wire format is unchanged. It does not remove an entire vegetation owner or introduce scene-thread terrain queries.
+
+Twelve targeted checks passed: natural support, asphalt at unchanged height, unchanged same-owner neighbor, identical geometry repainted as stone, actual ecosystem publication, renderer/trunk removal for the paved root, preserved neighbor transition state, and restoration after stone repaint. Existing twelve resampling and fourteen building-exclusion checks passed. Both native targets were rebuilt with the pinned prebuilt SDK. This is native-query and ecosystem membership evidence; the fixture feeds native results into the ecosystem directly and does not qualify live async resampling latency, visible fade completion or physics contact. Asphalt support rejection is root-local, not a full canopy clearance corridor.
+
+Evidence: docs/evidence/road_vegetation.
+
 ## Exact connectors between saved streets - 2026-10-04
 
 The street selector now includes Set start / Set end. Entrance buttons use that target through the normal world action handler. Setting an end retains the captured start and existing road settings, requires asphalt and matching destination width, and reports the existing length/grade/boundary validation result. Invalid preview geometry does not bypass guarded Build. Missing starts, pending edits, stale epochs and mismatched widths reject selection. Choosing endpoints only updates the preview.

@@ -1,0 +1,15 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS native rendering and trunk records ready
+PASS initial surface publishes two roots
+PASS same stable ID follows changed terrain support
+PASS trunk placement follows changed terrain support
+PASS unchanged neighbor retains its transition state and transform
+PASS identical resample does not republish owner
+PASS lowered support updates both representations too
+PASS stale support cannot replace the accepted transform
+PASS zero-candidate resample retires existing renderer and trunk records
+PASS empty owner replaces stale sample cache and completes resampling
+PASS later exclusion reconciliation cannot resurrect retired candidates
+PASS empty candidate caches do not schedule pointless structure or water reconciliation
+VEGETATION_RESAMPLE failures=0

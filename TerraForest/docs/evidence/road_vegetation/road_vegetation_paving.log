@@ -1,0 +1,14 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS natural roots supported before paving
+PASS native asphalt edit accepted
+PASS asphalt root rejected even at unchanged natural surface height
+PASS neighbor in same 64 m owner retains exact support
+PASS same road geometry repainted stone
+PASS identical stone geometry allows root support again
+PASS neighbor remains unchanged after repaint
+PASS vegetation renderer and trunk collision initialize
+PASS natural samples publish both roots and trunks
+PASS asphalt resampling retires only paved root and trunk
+PASS same-owner neighbor retains renderer transition and trunk
+PASS stone repaint restores supported root and trunk

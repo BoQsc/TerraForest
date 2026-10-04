@@ -857,9 +857,15 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
    points[i]=r.vec();V3 p=points[i];
    if(!r.good||!(p.x>=2&&p.x<1998&&p.z>=2&&p.z<1998&&ab(p.y)<=10000)){out.p[8]=1;return;}
   }
-  auto density=[&](V3 p){
+  auto density=[&](V3 p,bool *paved=nullptr){
    int x=fl(p.x),y=fl(p.y),z=fl(p.z);float dx=p.x-x,dy=p.y-y,dz=p.z-z,value=0;
-   for(int k=0;k<8;k++)value+=w.sample(x+(k&1),y+((k>>1)&1),z+((k>>2)&1))*(k&1?dx:1-dx)*(k&2?dy:1-dy)*(k&4?dz:1-dz);
+   for(int k=0;k<8;k++){
+    float weight=(k&1?dx:1-dx)*(k&2?dy:1-dy)*(k&4?dz:1-dz);
+    if(weight<=0)continue;
+    u8 material=0;float sample=w.sample(x+(k&1),y+((k>>1)&1),z+((k>>2)&1),paved?&material:nullptr);
+    value+=sample*weight;
+    if(paved&&sample<0&&material==4)*paved=true;
+   }
    return value;
   };
   out.u(count);V3 normals[64];
@@ -868,8 +874,10 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
    float h00=w.height(float(x),float(z)),h10=w.height(float(x+1),float(z));
    float h01=w.height(float(x),float(z+1)),h11=w.height(float(x+1),float(z+1));
    p.y=(h00*(1-dx)+h10*dx)*(1-dz)+(h01*(1-dx)+h11*dx)*dz;
-   V3 normal{};
-   if(density(p+V3{0,-.35f,0})<0&&density(p+V3{0,.35f,0})>0){
+   V3 normal{};bool paved=false;
+   if(density(p+V3{0,-.35f,0},&paved)<0&&!paved&&density(p+V3{0,.35f,0})>0){
+    // Natural vegetation cannot root in asphalt. Inspect only contributing
+    // solid support corners, not the whole owner cell or unrelated air paint.
     normal=::normal(V3{(h00-h10)*(1-dz)+(h01-h11)*dz,1,(h00-h01)*(1-dx)+(h10-h11)*dx});
    }
    out.vec(p);normals[i]=normal;
