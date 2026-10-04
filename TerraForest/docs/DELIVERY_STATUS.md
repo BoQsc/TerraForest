@@ -1,3 +1,11 @@
+## Vehicle installation stage measurements - 2026-10-04
+
+Added opt-in install timing for scene instantiation, attachment/_ready and world binding. It is disabled by default and adds no per-frame instrumentation. The graphical world fixture enables it. Before the change, placement measured 29.200 ms: allocation 0.655 ms, attachment/setup 22.079 ms and binding 6.338 ms. This narrows the remaining hitch to setup plus a synchronous adapter script load.
+
+The native car adapter now preloads the streaming adapter as a script dependency, so its load occurs with vehicle resource preparation. The imported setup-only Model is hidden in the scene resource, rather than becoming hidden only at the end of setup. Afterward, placement measured 23.726 ms: allocation 0.505 ms, attachment/setup 23.030 ms and binding 0.077 ms. First post-draw completion was 28.966 ms after placement began. These are two observational world runs, not a statistically controlled benchmark; no attachment improvement is demonstrated by hiding the model. Setup remains above the 60 FPS frame budget and is unresolved.
+
+The 1080p Forward+ placement/driving/save/exit test and all 19 headless interaction checks passed. The resulting screenshot was inspected. Evidence: docs/evidence/vehicle_install_stages.
+
 ## Vehicle prefetch world validation - 2026-10-04
 
 Updated the interaction fixture to await explicit resource readiness rather than assuming two physics frames suffice. It also checks that resource preparation creates no live vehicle or saved vehicle record. All 19 interaction checks passed, including ground readiness, placement, entry/exit, reuse and invalid snapshot handling. The initial unadapted fixture failed its placement assumptions and exited while resource loading was still running; the bounded readiness wait removes that premature teardown.

@@ -13,6 +13,8 @@ var _world: Node
 const VEHICLE_SCENE_PATH: String="res://vehicle_demo/scenes/car.tscn"
 var _vehicle_scene: PackedScene
 var _scene_requested:=false
+var profile_install:=false
+var install_timings: Dictionary={}
 func request_scene() -> void:
 	if _vehicle_scene!=null or _scene_requested: return
 	_scene_requested=ResourceLoader.load_threaded_request(VEHICLE_SCENE_PATH,"PackedScene")==OK
@@ -53,14 +55,19 @@ func _install_vehicle(world: Node,pose: Transform3D) -> bool:
 		if _scene_requested: _vehicle_scene=ResourceLoader.load_threaded_get(VEHICLE_SCENE_PATH) as PackedScene
 		else: _vehicle_scene=load(VEHICLE_SCENE_PATH) as PackedScene
 	if _vehicle_scene==null: return false
+	var begin:=Time.get_ticks_usec() if profile_install else 0
 	car=_vehicle_scene.instantiate()
+	var allocated:=Time.get_ticks_usec() if profile_install else 0
 	car.transform=pose;car.collision_layer=4;car.collision_mask=3
 	world.add_child(car)
+	var attached:=Time.get_ticks_usec() if profile_install else 0
 	for wheel in car.wheel_rays: wheel.collision_mask=3
 	car.set_controls_enabled(false);car.freeze=true;car.set_physics_process(false)
 	car.bind_streamed_world(world.terrain,world.structures)
 	if "vegetation" in world: car.streaming.bind_vegetation(world.vegetation)
 	_camera_follow=ClassDB.instantiate("NativeVehicleCamera")
+	if profile_install:
+		install_timings={"instantiate_us":allocated-begin,"attach_ready_us":attached-allocated,"bind_us":Time.get_ticks_usec()-attached}
 	return true
 func ready_bounds(world: Node,bounds: AABB) -> bool:
 	return world.terrain.is_collision_region_ready(bounds) and world.structures.is_collision_region_ready(bounds) and (not "vegetation" in world or world.vegetation.is_collision_region_ready(bounds))

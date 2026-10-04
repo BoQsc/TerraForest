@@ -18,6 +18,7 @@ func run() -> void:
 	var outcome: String="no suitable ground"
 	var placement_us:=0
 	var placement_begin:=0
+	game.world_vehicle.profile_install=true
 	for offset in [Vector3(0,0,-7),Vector3(7,0,0),Vector3(-7,0,0),Vector3(0,0,7)]:
 		var ray:=PhysicsRayQueryParameters3D.create(base+offset+Vector3.UP*8,base+offset-Vector3.UP*12,1)
 		var hit: Dictionary=game.get_world_3d().direct_space_state.intersect_ray(ray)
@@ -34,7 +35,7 @@ func run() -> void:
 		await RenderingServer.frame_post_draw
 		var now:=Time.get_ticks_usec()
 		visible_intervals.append((now-previous)/1000.0);previous=now
-	print("VEHICLE_FIRST_VISIBLE ",{"placement_us":placement_us,"intervals_ms":visible_intervals,"cap":Engine.max_fps,"size":root.size,"scope":"Whole world wall intervals including streaming and frame cap; first interval begins at placement, not previous frame."})
+	print("VEHICLE_FIRST_VISIBLE ",{"placement_us":placement_us,"install":game.world_vehicle.install_timings,"intervals_ms":visible_intervals,"cap":Engine.max_fps,"size":root.size,"scope":"Whole world wall intervals including streaming and frame cap; first interval begins at placement, not previous frame."})
 	var car=game.world_vehicle.car
 	var walking_help: String=game.help.text
 	game.player.position=car.position+Vector3.RIGHT*2.8

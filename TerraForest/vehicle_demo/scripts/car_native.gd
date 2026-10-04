@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: 0BSD
 extends "res://vehicle_demo/scripts/car.gd"
+const STREAMING_ADAPTER=preload("res://addons/vehicle_runtime/vehicle_streaming.gd")
 var driving_policy: RefCounted
 var suspension: RefCounted
 var visual_damage: RefCounted
@@ -12,7 +13,7 @@ func bind_streamed_world(terrain: Node,structures: Node=null) -> bool:
 		var old: Node=streaming.terrain
 		if old.has_signal("reload_started") and old.reload_started.is_connected(_stream_reload_started):
 			old.reload_started.disconnect(_stream_reload_started)
-	streaming=load("res://addons/vehicle_runtime/vehicle_streaming.gd").new()
+	streaming=STREAMING_ADAPTER.new()
 	streaming.terrain=terrain;streaming.structures=structures
 	streaming.structures_required=structures!=null
 	if terrain.has_signal("reload_started"):

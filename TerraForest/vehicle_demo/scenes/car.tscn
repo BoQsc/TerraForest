@@ -32,6 +32,7 @@ rotation = Vector3(0, -1.570796327, 0)
 scale = Vector3(4.5, 4.5, 4.5)
 
 [node name="Model" parent="VehicleVisual" instance=ExtResource("2_model")]
+visible = false
 
 [node name="RuntimeBody" type="Node3D" parent="VehicleVisual"]
 
