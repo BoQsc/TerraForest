@@ -1,3 +1,20 @@
+## Supply autosave disk proof - 2026-10-05
+
+`tests/pickup_autosave.gd` now verifies the actual worker-owned archive. It saves
+an authored wood supply, collects it, waits through the production 15-second
+autosave interval without a manual save, disables further writes, deliberately
+changes live inventory/pickups, and reloads from disk. Reload restores the wood
+and leaves no pickup, including the unsaved replacement. All ten checks pass.
+Only the initial setup save timer is accelerated. Terrain rendering/streaming is
+paused in this headless fixture; this is persistence proof, not an FPS test.
+
+The first attempt exceeded a 10-second startup allowance; the fixture now allows
+30 seconds for initial load/reload and 20 seconds for each autosave. Evidence:
+`docs/evidence/pickup_autosave/disk.log`. Its shutdown message about a corrupt
+snapshot is the backend's generic writes-disabled message: this test explicitly
+disables writes to prevent shutdown from masking a missing autosave. No corrupt
+snapshot is injected here.
+
 ## Supply mutations trigger autosave - 2026-10-04
 
 Supply placement and collection previously changed persisted addon state without

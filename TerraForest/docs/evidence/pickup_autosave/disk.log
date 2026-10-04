@@ -1,0 +1,18 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS pickup and inventory providers attach to real disk persistence
+AUTOSAVE_FIXTURE New world
+PASS persistent fixture starts
+AUTOSAVE_FIXTURE World saved and verified; terrain and addon state published together
+PASS authored supply reaches canonical archive through autosave
+PASS collection marks the real autosave path dirty
+AUTOSAVE_FIXTURE World saved and verified; terrain and addon state published together
+PASS collection autosaves without manual save or shutdown
+PASS collection test waits through the production autosave interval
+PASS clear live inventory before disk reload
+AUTOSAVE_FIXTURE World loaded
+PASS autosaved compound archive reloads
+PASS disk reload restores collected wood
+PASS disk reload preserves pickup removal and discards unsaved replacement
+[TerrainRewrite] ERROR: save disabled after corrupt snapshot; original file protected
+PICKUP_AUTOSAVE {"checks":10,"failures":0}
