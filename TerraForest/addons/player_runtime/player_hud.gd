@@ -5,6 +5,7 @@ signal tool_requested(item: int)
 signal menu_changed(open: bool)
 const CATALOG: Dictionary={1:"Sculpt sphere",2:"Sculpt cube",3:"Build blocks",4:"Place objects"}
 const MATERIALS: Dictionary={101:"Brick",102:"Wood",103:"Concrete",104:"Metal"}
+const STARTER_MATERIAL_COUNT:=64
 var inventory: RefCounted
 var inventory_open:=false
 var selected_slot: int=-1
@@ -34,6 +35,10 @@ func prepare() -> bool:
 	for id: int in CATALOG: inventory.register_item(id,1)
 	for id: int in MATERIALS: inventory.register_item(id,999)
 	for id: int in CATALOG: inventory.grant(id,1,inventory.snapshot().revision)
+	# Only the default for a missing loadout section. Restoration replaces all
+	# slots, including an explicitly empty saved inventory; never top up on load.
+	if gameplay_construction:
+		for id: int in MATERIALS: inventory.grant(id,STARTER_MATERIAL_COUNT,inventory.snapshot().revision)
 	default_loadout=inventory.capture_storage_snapshot()
 	return true
 

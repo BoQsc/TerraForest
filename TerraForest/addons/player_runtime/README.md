@@ -14,9 +14,11 @@ supply spawning are disabled in this mode. Editor behavior is unchanged.
 
 This is the construction economy connection, not a complete survival mode:
 terrain tools, roads, static model placement and vehicle authoring are still
-editor features without material recipes. New inventories have tools but no
-materials; collect supplies prepared in a world before playing. There is no
-automatic starter-material grant or mining-to-inventory conversion yet. The
+editor features without material recipes. New gameplay inventories start with
+tools and 64 units of each construction material. This is the default for a
+missing loadout section, not a refill: saved inventories replace it exactly,
+including depleted stocks and existing editor loadouts. Further supplies must
+currently be prepared in the editor; mining-to-inventory conversion is unfinished. The
 mode is selected at launch, not stored in the world file or enforced by a
 multiplayer authority. Opening the gameplay slot in editor mode allows editing.
 
@@ -36,5 +38,5 @@ a conflicting inventory mutation during rejected placement is reported rather
 than overwritten. This is not a distributed transaction protocol.
 
 Targeted checks: `tests/player_inventory.gd` and
-`tests/construction_inventory.gd` (headless). These verify inventory correctness,
+`tests/construction_inventory.gd` and `tests/gameplay_loadout.gd` (headless). These verify inventory correctness,
 native prefab accounting and placement rollback, not rendering performance.

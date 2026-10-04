@@ -1,3 +1,18 @@
+## Gameplay starter inventory - 2026-10-04
+
+New gameplay construction loadouts receive 64 units of each building material,
+so the separate launcher permits initial building without preparing supplies
+in the editor. The grant is part of the registered default loadout, used only
+when the world has no player-loadout section. Saved contents replace that
+default exactly; repeated preparation/restoration does not replenish spent
+materials, and existing editor inventories remain unchanged.
+
+The 13-check `tests/gameplay_loadout.gd` fixture passed, covering all four
+materials, unchanged editor defaults, repeated preparation, native validation,
+disk-restored partial/depleted stocks and the actual persistence component
+restore path. Evidence: `docs/evidence/construction_inventory/gameplay_loadout.log`.
+Mining rewards and renewable gameplay resource acquisition remain unfinished.
+
 ## Separate gameplay construction costs - 2026-10-04
 
 The editor remains free. The new `Play Gameplay Construction.cmd` uses its own
