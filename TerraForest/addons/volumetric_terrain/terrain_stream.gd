@@ -94,6 +94,7 @@ var changed_since_save: bool = false
 var _manual_save_requested: bool = false
 var temporary: bool = false
 var stopping: bool = false
+var closing: bool = false
 var latest_error: String = ""
 var preparation: Dictionary = {}
 var paused_preparations: Array[Dictionary] = []
@@ -162,6 +163,19 @@ func start(terrain_material: Material, temporary_world: bool) -> Error:
 			roots.push_back(Vector3i(x, z, ROOT_SIZE))
 	return backend.start(temporary_world)
 
+func shutdown_after_edits() -> bool:
+	closing=true
+	set_brush_active(false)
+	var deadline:=Time.get_ticks_msec()+30000
+	while pending_edit and latest_error.is_empty() and not stopping and Time.get_ticks_msec()<deadline:
+		await get_tree().process_frame
+	var settled: bool=not pending_edit and latest_error.is_empty()
+	if not settled:
+		backend.disable_snapshot_writes()
+		message_changed.emit("Closing without a new save: pending edit did not publish; previous save retained")
+	shutdown()
+	return settled
+
 func shutdown() -> void:
 	if stopping:
 		return
@@ -209,6 +223,7 @@ func _process(delta: float) -> void:
 	_drain_staging()
 	_record_stage("staging frame", last_publish_frame_ms)
 	_retire_some()
+	if closing: return # Drain publication, but admit no new background work.
 	if not world_ready:
 		return
 	_flush_manual_save()
@@ -1220,7 +1235,7 @@ func loading_state(point: Vector3, flying: bool) -> Dictionary:
 		"queued": backend.queued(), "worker": backend.status()}
 
 func edit(data: PackedByteArray, lo: Vector3, hi: Vector3, captured_us: int = 0, commands: Array[PackedByteArray] = [], member_captures: Array[Dictionary] = []) -> bool:
-	if not world_ready or pending_edit or stopping:
+	if not world_ready or pending_edit or stopping or closing:
 		return false
 	if commands.is_empty():
 		commands = [data]
@@ -1327,6 +1342,7 @@ func _flush_manual_save() -> void:
 		changed_since_save=false
 
 func reload_world(reset: bool = false) -> void:
+	if closing or stopping: return
 	if pending_edit:
 		message_changed.emit("Wait for the pending edit before loading/resetting")
 		return

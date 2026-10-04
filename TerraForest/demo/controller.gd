@@ -814,5 +814,5 @@ func _notification(what: int) -> void:
 		shutdown_requested = true
 		_close_journal()
 		stroke_buffer.clear()
-		terrain.shutdown()
+		await terrain.shutdown_after_edits()
 		get_tree().quit()

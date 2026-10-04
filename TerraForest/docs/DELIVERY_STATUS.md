@@ -1,3 +1,24 @@
+## Graceful window-close save ordering - 2026-10-04
+
+The game window's close handler now awaits `shutdown_after_edits()`. Closing
+rejects new terrain edits/reloads, continues draining pending publication and
+its callbacks, then captures addon state and joins the worker for final save.
+Background scheduling stops during this drain. If publication reports an error
+or has not settled within 30 seconds, snapshot writes are disabled before
+shutdown, retaining the previous canonical save. Joining an already-running
+native job can still take additional time; this is not a hard process-exit bound.
+
+Thirteen checks cover closing immediately after admission, callback inventory
+capture, fresh-worker disk reload, idle close, and injected publication failure
+preserving the previous terrain/inventory pair. Eight manual-save regression
+checks and world/controller script parsing also pass. Evidence:
+`docs/evidence/shutdown_save_ordering`. The timeout itself was not exercised.
+
+This covers the normal window-close path. Direct synchronous `shutdown()` and
+forced scene/process teardown do not drain main-thread publication callbacks.
+Gameplay rewards remain disabled; inventory overflow and reward delivery across
+other teardown paths still need a defined policy.
+
 ## Manual-save ordering across edits - 2026-10-04
 
 Manual save requests now wait while a terrain edit is pending. Repeated requests
