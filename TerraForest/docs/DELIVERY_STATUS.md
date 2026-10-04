@@ -1,3 +1,13 @@
+## Persistent prepared-street catalog - 2026-10-04
+
+Preparing another street now appends its entrance pair instead of replacing the previous one. A road-panel selector identifies streets by sequence and midpoint X/Z; selecting a street changes which entrance buttons are available without submitting terrain work. Exact repeated endpoint pairs update the existing width rather than duplicating entries. The catalog retains at most 256 streets and refuses additions at capacity without discarding existing records. It clears on unrelated epoch changes and restores with the selected index through compound saves.
+
+The native codec retains version-one single-street compatibility and adds a version-two collection: 16-byte header (magic, version, count, selected index) followed by 1..256 validated 64-byte version-one records, at most 16400 bytes. Malformed counts, nested versions, selected indices and records reject the collection. Single-entry captures retain version-one encoding. Both native binaries were rebuilt against the prebuilt SDK.
+
+Twenty-four persistence checks passed, including two independently paved streets, exact selected-street disk restoration, legacy migration, duplicate registration, malformed input and the exact 256-record limit. Twelve continuation checks passed. The 33-check mixed-site graphical workflow initially exposed the added row intruding into the toolbelt; reducing vertical spacing fixed it, and the rerun passed. Its 1080p screenshot was inspected. The functional frame capture reached 38.783 ms and is not sustained-60-FPS evidence.
+
+This is a saved entrance catalog, not a connected road graph, routing, intersections or automatic city layout. Deletion/renaming and spatial catalog search remain future authoring work. Evidence: docs/evidence/street_catalog.
+
 ## Compound paved-street restoration proof - 2026-10-04
 
 Strengthened road_anchor_persistence.gd beyond fabricated metadata. It constructs and waits for publication of a native 64 m asphalt section at y=180, registers its entrances only after the revision advances, and publishes the compound save. Before and after reopening, native point queries verify asphalt material with negative density one metre below both endpoints and the midpoint, plus positive density two metres above those points. Queries run only after joining the terrain worker, retaining its core reference to avoid concurrent native access. The fresh palette restores identical anchor bytes and selects the exact second entrance as its preview start. All twelve checks passed in the short headless test.

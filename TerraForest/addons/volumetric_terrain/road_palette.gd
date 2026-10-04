@@ -18,6 +18,9 @@ var continue_button: Button
 var pending: Dictionary={}
 var completed: Dictionary={}
 var prepared_street: Dictionary={}
+var prepared_streets: Array=[]
+var street_selector: OptionButton
+var selected_street: int=-1
 var street_controls: HBoxContainer
 var anchor_storage: RefCounted
 var anchor_terrain: Node
@@ -30,16 +33,38 @@ func prepare_persistence(terrain: Node,persistence: RefCounted) -> bool:
 	return anchor_storage!=null and persistence.register_component("road_anchors",capture_anchors,restore_anchors,anchor_storage,PackedByteArray())
 func capture_anchors() -> PackedByteArray:
 	if prepared_street.is_empty() or prepared_street.epoch!=anchor_terrain.epoch: return PackedByteArray()
-	var data: PackedByteArray=anchor_storage.encode(prepared_street.ends,prepared_street.width)
+	var records:=PackedByteArray()
+	for street: Dictionary in prepared_streets:
+		var record: PackedByteArray=anchor_storage.encode(street.ends,street.width)
+		if record.is_empty() or street.epoch!=anchor_terrain.epoch: return PackedByteArray([0])
+		records.append_array(record)
+	var data: PackedByteArray=records if prepared_streets.size()==1 else anchor_storage.encode_collection(records,selected_street)
 	return PackedByteArray([0]) if data.is_empty() else data
 func restore_anchors(data: PackedByteArray) -> bool:
 	var decoded: Dictionary=anchor_storage.decode(data)
 	if not decoded.ok: return false
 	pending={};completed={};has_start=false;has_finish=false
-	prepared_street={"ends":decoded.ends,"width":decoded.width,"epoch":anchor_terrain.epoch} if decoded.present else {}
-	if is_instance_valid(street_controls): street_controls.visible=decoded.present
+	prepared_streets=decoded.streets
+	for street: Dictionary in prepared_streets: street["epoch"]=anchor_terrain.epoch
+	selected_street=decoded.selected
+	prepared_street=prepared_streets[selected_street] if decoded.present else {}
+	_refresh_street_selector()
 	if is_instance_valid(continue_button): continue_button.disabled=true
 	selection_changed.emit()
+	return true
+func _refresh_street_selector() -> void:
+	if not is_instance_valid(street_selector): return
+	street_selector.clear()
+	for i in prepared_streets.size():
+		var midpoint: Vector3=(prepared_streets[i].ends[0]+prepared_streets[i].ends[1])*0.5
+		street_selector.add_item("Street %d · %.0f, %.0f" % [i+1,midpoint.x,midpoint.z])
+	if selected_street>=0: street_selector.select(selected_street)
+	street_selector.visible=not prepared_streets.is_empty()
+	street_controls.visible=not prepared_streets.is_empty()
+func select_prepared_street(index: int) -> bool:
+	if index<0 or index>=prepared_streets.size(): return false
+	selected_street=index;prepared_street=prepared_streets[index]
+	if is_instance_valid(street_selector): street_selector.select(index)
 	return true
 func material_id() -> int:
 	return 4 if surface.selected==0 else 1
@@ -50,7 +75,7 @@ func _ready() -> void:
 	panel=PanelContainer.new();panel.position=Vector2(1500,36);panel.custom_minimum_size=Vector2(380,0);add_child(panel)
 	var margin:=MarginContainer.new();panel.add_child(margin)
 	for side in ["left","right","top","bottom"]: margin.add_theme_constant_override("margin_"+side,20)
-	var column:=VBoxContainer.new();column.add_theme_constant_override("separation",8);margin.add_child(column)
+	var column:=VBoxContainer.new();column.add_theme_constant_override("separation",6);margin.add_child(column)
 	var title:=Label.new();title.text="ROADS / FOUNDATIONS";title.add_theme_font_size_override("font_size",22);column.add_child(title)
 	var hint:=Label.new();hint.text="Aim at terrain, then Esc to use controls.\nMark both ends, then build.\nClearance cuts terrain above the road.";column.add_child(hint)
 	surface=OptionButton.new();surface.focus_mode=Control.FOCUS_NONE;surface.add_item("Asphalt road");surface.add_item("Stone foundation");column.add_child(surface)
@@ -71,12 +96,14 @@ func _ready() -> void:
 		if item[0]=="build": build_button=button
 		if item[0]=="continue": continue_button=button;continue_button.disabled=true
 		button.pressed.connect(func(): action_requested.emit(item[0]))
+	street_selector=OptionButton.new();street_selector.focus_mode=Control.FOCUS_NONE;column.add_child(street_selector);street_selector.hide()
+	street_selector.item_selected.connect(select_prepared_street)
 	street_controls=HBoxContainer.new();column.add_child(street_controls);street_controls.hide()
 	for end in 2:
 		var button:=Button.new();button.text="Street end A" if end==0 else "Street end B";button.size_flags_horizontal=Control.SIZE_EXPAND_FILL;button.focus_mode=Control.FOCUS_NONE;street_controls.add_child(button)
 		button.pressed.connect(func(): action_requested.emit("street_a" if end==0 else "street_b"))
 	status=Label.new();status.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;status.text="Select two terrain points. Maximum length 128 m; maximum grade 25%.";column.add_child(status)
-	street_controls.visible=not prepared_street.is_empty()
+	_refresh_street_selector()
 	panel.hide()
 func _number(parent: Control,title: String,minimum: float,maximum: float,value: float) -> SpinBox:
 	var label:=Label.new();label.text=title;parent.add_child(label)
@@ -103,7 +130,7 @@ func track_submission(terrain: Node) -> void:
 	continue_button.disabled=true
 func poll_submission(terrain: Node) -> void:
 	if not prepared_street.is_empty() and prepared_street.epoch!=terrain.epoch:
-		prepared_street={};street_controls.hide()
+		prepared_street={};prepared_streets=[];selected_street=-1;_refresh_street_selector()
 	if not completed.is_empty() and completed.epoch!=terrain.epoch:
 		completed={};continue_button.disabled=true
 	if pending.is_empty(): return
@@ -129,8 +156,17 @@ func continue_selection(terrain: Node) -> bool:
 	selection_changed.emit();return true
 func register_prepared_street(plan: Dictionary,epoch: int) -> void:
 	if plan.get("paving_segments",0)<=0 or not plan.has("street_ends"): return
+	if not prepared_street.is_empty() and prepared_street.epoch!=epoch:
+		prepared_streets=[];prepared_street={};selected_street=-1
+	for i in prepared_streets.size():
+		if prepared_streets[i].ends==plan.street_ends:
+			prepared_streets[i].width=plan.street_width
+			select_prepared_street(i);_refresh_street_selector();return
+	if prepared_streets.size()>=256:
+		status.text="Street entrance catalog is full (256). Existing entrances retained.";return
 	prepared_street={"ends":plan.street_ends.duplicate(),"width":plan.street_width,"epoch":epoch}
-	street_controls.show()
+	prepared_streets.append(prepared_street);selected_street=prepared_streets.size()-1
+	_refresh_street_selector()
 func select_street_end(index: int,terrain: Node) -> bool:
 	if not pending.is_empty() or index<0 or index>1 or prepared_street.is_empty() or prepared_street.epoch!=terrain.epoch:
 		status.text="No prepared street in this world, or a road section is still pending.";return false

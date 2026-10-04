@@ -1,0 +1,28 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS real native street publishes before anchors are registered
+PASS bounded native anchor encoding
+PASS legacy single-street record restores as catalog
+PASS native catalog accepts its exact 256-record bound
+PASS native catalog rejects 257 records
+PASS invalid coordinates cannot replace anchors
+PASS unknown version rejected
+PASS trailing bytes rejected
+PASS unsupported street width rejected
+PASS second street publishes
+PASS distinct streets retained and repeated registration deduplicated
+PASS earlier street remains selectable
+PASS two streets use bounded version-two collection
+PASS oversized catalog count rejected
+PASS invalid selected index leaves catalog unchanged
+PASS compound anchor save published
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+PASS saved street has asphalt support and open clearance at both entrances and midpoint
+PASS second saved street has asphalt and clearance
+PASS new world restores anchors from disk
+PASS catalog and selected earlier street restore together
+PASS restored entrance selects exact preview endpoint
+PASS missing legacy section clears anchors
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+PASS reopened terrain preserves asphalt and clearance at restored anchor coordinates
+PASS reopened terrain preserves second street too

@@ -5,6 +5,7 @@
 #include <godot_cpp/variant/packed_byte_array.hpp>
 #include <godot_cpp/variant/packed_vector3_array.hpp>
 #include <godot_cpp/variant/dictionary.hpp>
+#include <godot_cpp/variant/array.hpp>
 #include <cmath>
 namespace terraforest {
 class NativeRoadAnchors : public godot::RefCounted {
@@ -20,10 +21,22 @@ class NativeRoadAnchors : public godot::RefCounted {
 protected:
     static void _bind_methods() {
         godot::ClassDB::bind_method(godot::D_METHOD("encode","ends","width"), &NativeRoadAnchors::encode);
+        godot::ClassDB::bind_method(godot::D_METHOD("encode_collection","records","selected"), &NativeRoadAnchors::encode_collection);
         godot::ClassDB::bind_method(godot::D_METHOD("decode","data"), &NativeRoadAnchors::decode);
         godot::ClassDB::bind_method(godot::D_METHOD("validate_snapshot","data"), &NativeRoadAnchors::validate_snapshot);
     }
 public:
+    godot::PackedByteArray encode_collection(const godot::PackedByteArray &records,int selected) const {
+        godot::PackedByteArray out;
+        const int count=records.size()/64;
+        if(count<1 || count>256 || records.size()!=count*64 || selected<0 || selected>=count) return out;
+        for(int i=0;i<count;++i) {
+            auto record=records.slice(i*64,(i+1)*64);
+            if(record.decode_u32(4)!=1 || !validate_snapshot(record)) return out;
+        }
+        out.resize(16);out.encode_u32(0,0x31415254);out.encode_u32(4,2);
+        out.encode_u32(8,count);out.encode_u32(12,selected);out.append_array(records);return out;
+    }
     godot::PackedByteArray encode(const godot::PackedVector3Array &ends,double width) const {
         godot::PackedByteArray out;
         if (!valid(ends,width)) return out;
@@ -33,7 +46,20 @@ public:
     }
     godot::Dictionary decode(const godot::PackedByteArray &data) const {
         godot::Dictionary result;result["ok"]=false;
-        if(data.is_empty()) { result["ok"]=true;result["present"]=false;return result; }
+        if(data.is_empty()) { result["ok"]=true;result["present"]=false;result["streets"]=godot::Array();result["selected"]=-1;return result; }
+        if(data.size()>=16 && data.decode_u32(0)==0x31415254 && data.decode_u32(4)==2) {
+            const uint32_t count=data.decode_u32(8),selected=data.decode_u32(12);
+            if(count<1 || count>256 || selected>=count || data.size()!=16+count*64) return result;
+            godot::Array streets;
+            for(uint32_t i=0;i<count;++i) {
+                auto record=data.slice(16+i*64,16+(i+1)*64);
+                if(record.decode_u32(4)!=1) return result;
+                auto street=decode(record);
+                if(!bool(street["ok"])) return result;
+                godot::Dictionary item;item["ends"]=street["ends"];item["width"]=street["width"];streets.append(item);
+            }
+            result["ok"]=true;result["present"]=true;result["streets"]=streets;result["selected"]=selected;return result;
+        }
         if(data.size()!=64 || data.decode_u32(0)!=0x31415254 || data.decode_u32(4)!=1) return result;
         godot::PackedVector3Array ends;ends.resize(2);
         for(int i=0;i<2;++i) {
@@ -47,7 +73,9 @@ public:
         }
         double width=data.decode_double(56);
         if(!valid(ends,width)) return result;
-        result["ok"]=true;result["present"]=true;result["ends"]=ends;result["width"]=width;return result;
+        result["ok"]=true;result["present"]=true;result["ends"]=ends;result["width"]=width;
+        godot::Dictionary item;item["ends"]=ends;item["width"]=width;
+        godot::Array streets;streets.append(item);result["streets"]=streets;result["selected"]=0;return result;
     }
     bool validate_snapshot(const godot::PackedByteArray &data) const { return bool(decode(data)["ok"]); }
 };

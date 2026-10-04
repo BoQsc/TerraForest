@@ -122,4 +122,7 @@ if query budgets are exceeded. This is not a multiplayer-authoritative transacti
 NativeRoadAnchors validates the optional road_anchors compound-save section.
 Empty means no prepared street. Version 1 is exactly 64 bytes: magic TRA1,
 u32 version 1, six little-endian f64 endpoint coordinates, then f64 width.
-It stores only the last prepared street, not road topology or terrain validity.
+Version 2 stores a bounded catalog: a 16-byte header (magic, version, count,
+selected index) and 1..256 version-one records. Maximum size is 16400 bytes.
+Legacy single-street records remain readable. Neither format certifies current
+terrain validity or represents connected road topology.
