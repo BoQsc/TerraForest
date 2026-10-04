@@ -1,3 +1,26 @@
+## Reuse unchanged harvest snapshots - 2026-10-05
+
+A short native capture benchmark reproduced repeated main-thread sorting work:
+at 36,864 IDs the median unchanged capture was 1,553 microseconds; at the
+262,144-ID limit it was 18,645 microseconds (21 samples per population).
+The native store now caches canonical serialized bytes until a successful mark
+or unmark. A valid restore adopts the already canonical input using Godot's
+copy-on-write byte storage. Worker validation remains pure and does not touch
+the cache. Callers cannot mutate previously captured or cached state indirectly.
+
+The same benchmark measures 1 microsecond median at both populations after the
+change, with 2 microseconds p95 at maximum capacity. First capture remains
+2,400/18,418 microseconds respectively: this removes repeated unchanged work,
+not the large first-capture hitch after mutation. Cache memory adds up to about
+2 MiB, and rebuilding can temporarily retain older snapshots held by consumers.
+No sustained frame-rate claim follows from these microbenchmarks.
+
+All 23 state/transaction checks and 11 fresh disk-reload checks pass. Both DLL
+variants rebuilt against the prebuilt SDK; runtime checks used the debug DLL.
+Evidence: `docs/evidence/harvest_state/capture_before.log`, `capture_after.log`,
+`cached_state.log` and `cached_disk.log`. First-capture cost at larger world
+scales still needs worker-side serialization or regional persistence work.
+
 ## Harvest archive round trip - 2026-10-05
 
 `tests/harvest_persistence.gd` verifies a live harvest through the actual

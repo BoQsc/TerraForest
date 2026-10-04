@@ -1,0 +1,26 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS empty state has a canonical versioned snapshot
+PASS stable IDs reject invalid and duplicate harvests
+PASS native batch mask only excludes harvested IDs
+PASS caller mutation cannot corrupt cached canonical snapshot
+PASS mark invalidates cache without mutating previously captured bytes
+PASS unmark invalidates cache and restores canonical content
+PASS invalid restore leaves live exclusions intact
+PASS rollback and snapshot restore preserve exact identity
+PASS restored cache remains isolated from subsequent input mutation
+PASS oversized batches are rejected
+PASS persistent exclusion capacity rejects overflow without evicting old IDs
+PASS full capacity has bounded canonical storage
+PASS duplicate snapshot identities are rejected
+PASS harvest state registers in compound persistence
+PASS fixture uses actual native trunk collision
+PASS both unharvested roots publish
+PASS harvest mask removes exactly one visual root and collider
+PASS cell eviction and regeneration cannot respawn harvested ID
+PASS compound provider restore reinstates only saved exclusions
+PASS full inventory preserves tree and harvest state
+PASS harvesting grants wood and removes the active tree
+PASS harvest grants exactly four wood
+PASS repeated harvesting cannot duplicate wood
+HARVEST_STATE {"checks":23,"failures":0}

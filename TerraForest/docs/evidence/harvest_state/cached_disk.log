@@ -1,0 +1,16 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS new disk world starts with registered harvest and inventory providers
+PASS live harvest removes tree and grants wood
+PASS harvest autosave publishes a verified archive before shutdown
+[TerrainRewrite] ERROR: save disabled after corrupt snapshot; original file protected
+PASS fresh worker and fresh providers reopen the saved world
+PASS fresh inventory restores exactly the harvested wood
+PASS fresh harvest store restores exact disk exclusions
+PASS regenerated owner keeps harvested tree absent and neighbour present
+PASS regeneration does not recreate harvested trunk collision
+PASS physics ray passes through the harvested trunk location
+PASS reload cannot award the same tree twice
+PASS second region unload and regeneration preserves disk harvest
+[TerrainRewrite] ERROR: save disabled after corrupt snapshot; original file protected
+HARVEST_PERSISTENCE {"checks":11,"failures":0}

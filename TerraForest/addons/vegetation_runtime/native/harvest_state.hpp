@@ -14,6 +14,8 @@ using namespace godot;
 class NativeHarvestState : public RefCounted {
     GDCLASS(NativeHarvestState,RefCounted)
     std::unordered_set<int64_t> removed;
+    mutable PackedByteArray snapshot_cache;
+    mutable bool snapshot_dirty=true;
     static constexpr size_t LIMIT=262144;
     static uint64_t read(const uint8_t *p){uint64_t v=0;for(int i=0;i<8;++i)v|=uint64_t(p[i])<<(8*i);return v;}
     static void write(uint8_t *p,uint64_t v){for(int i=0;i<8;++i)p[i]=uint8_t(v>>(8*i));}
@@ -31,18 +33,24 @@ public:
     bool contains(int64_t id) const{return removed.count(id)!=0;}
     bool mark(int64_t id){
         if(id<=0||contains(id)||removed.size()>=LIMIT)return false;
-        return removed.insert(id).second;
+        const bool inserted=removed.insert(id).second;
+        if(inserted)snapshot_dirty=true;
+        return inserted;
     }
-    bool unmark(int64_t id){return removed.erase(id)!=0;}
+    bool unmark(int64_t id){const bool erased=removed.erase(id)!=0;if(erased)snapshot_dirty=true;return erased;}
     PackedByteArray mask(const PackedInt64Array &ids) const{
         PackedByteArray out;if(ids.size()>4096)return out;
         out.resize(ids.size());for(int64_t i=0;i<ids.size();++i)out.set(i,contains(ids[i])?1:0);return out;
     }
     PackedByteArray capture_storage_snapshot() const{
+        // PackedByteArray shares immutable storage until a caller writes to it.
+        // Main-thread capture alone owns this cache; worker validation is pure.
+        if(!snapshot_dirty)return snapshot_cache;
         std::vector<int64_t> ids(removed.begin(),removed.end());std::sort(ids.begin(),ids.end());
         PackedByteArray out;out.resize(16+ids.size()*8);auto *p=out.ptrw();
         write(p,0x3154534556524148ULL);write(p+8,ids.size()); // HARVEST1
-        for(size_t i=0;i<ids.size();++i)write(p+16+i*8,ids[i]);return out;
+        for(size_t i=0;i<ids.size();++i)write(p+16+i*8,ids[i]);
+        snapshot_cache=out;snapshot_dirty=false;return snapshot_cache;
     }
     bool validate_snapshot(const PackedByteArray &data) const{
         if(data.size()<16||data.size()>int64_t(16+LIMIT*8))return false;
@@ -56,7 +64,7 @@ public:
         if(!validate_snapshot(data))return false;
         std::unordered_set<int64_t> staged;const auto *p=data.ptr();const auto count=read(p+8);staged.reserve(count);
         for(uint64_t i=0;i<count;++i)staged.insert(int64_t(read(p+16+i*8)));
-        removed.swap(staged);return true;
+        removed.swap(staged);snapshot_cache=data;snapshot_dirty=false;return true;
     }
 };
 }
