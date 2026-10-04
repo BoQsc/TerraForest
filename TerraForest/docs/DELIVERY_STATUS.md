@@ -1,3 +1,9 @@
+## Live road/vegetation resampling regression - 2026-10-04
+
+Added a short integration fixture using TerrainWorld, its real worker/signals and the actual ecosystem scheduler with nine resident owners. It starts with 324 native-supported roots, selects an existing root, paves at its support height, waits for edit publication and lets the normal async surface batch retire it. Exactly one root and its trunk record disappear; all 323 other roots retain their transforms and trunk records. No batches were rejected or stale. In the final run edit completion was observed after 32.955 ms and resampling completed 16.669 ms later. These are one-run wall timings observed at process-frame boundaries.
+
+Repainting the identical geometry as stone through the worker restores all 324 original IDs/transforms and trunk memberships. All twelve checks passed. Terrain mesh streaming is intentionally paused to isolate worker-to-ecosystem behavior; the test does not qualify full-world latency under streaming load, visual fade completion, active collider proxy contact or sustained FPS. Evidence: docs/evidence/road_vegetation_live.
+
 ## Asphalt vegetation support exclusion - 2026-10-04
 
 Native natural-root sampling now rejects support contributed by solid asphalt lattice corners. Previously command 17 only tested density support and natural slope, so paving at the original surface height could leave valid tree roots on asphalt. The material check reuses the lower support interpolation samples, skips zero-weight corners and returns the existing zero-normal rejection marker. Batch size remains bounded to 64 and the wire format is unchanged. It does not remove an entire vegetation owner or introduce scene-thread terrain queries.

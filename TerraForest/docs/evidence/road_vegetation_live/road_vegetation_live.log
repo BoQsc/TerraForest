@@ -1,0 +1,16 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS renderer and trunk storage initialize
+PASS temporary worker world starts
+PASS live scheduler populates nine vegetation owners
+PASS paving at existing root accepted by live worker
+PASS road edit publishes
+PASS actual async surface result removes paved root and trunk
+PASS roots outside small road footprint retain transforms and trunk records
+PASS live resampling drains without rejected batches
+ROAD_VEGETATION_LIVE { "initial_roots": 324, "remaining_roots": 323, "verified_neighbors": 323, "edit_ms": 32.955, "after_publication_ms": 16.669, "stale_results": 0, "scope": "Nine owners, real worker and signals, terrain mesh streaming paused; record membership, not visible fade or collider proxy contact." }
+PASS stone repaint accepted by live worker
+PASS stone material edit publishes
+PASS live stone resampling restores original root membership
+PASS restored roots retain original transforms and collision membership
+[TerrainRewrite] Temporary test world: save skipped
