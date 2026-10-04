@@ -1,3 +1,18 @@
+## Inventory pending-material claim UI - 2026-10-04
+
+The inventory now lists pending materials with a quantity input and Claim
+button. Claims use the native atomic transfer, refresh the visible inventory
+and pending balances, and retain all pending stock on capacity or stale-state
+failure. Successful claims and slot transfers notify the world for autosave.
+Keyboard handling now permits GUI quantity entry and dropdown navigation.
+
+Ten graphical checks passed at 1920x1080 fullscreen Forward+, including actual
+keyboard input, button dispatch, partial/exhausted claims, full inventory,
+stale-state retry, panel bounds and presentation policy. The saved screenshot
+was visually reviewed. Evidence: `docs/evidence/reward_claim_ui`. This short UI
+fixture is not a sustained performance measurement. Mining still does not
+produce reward receipts; the test populates the inbox explicitly.
+
 ## Persistent pending reward storage - 2026-10-04
 
 Added `NativeRewardInbox` with 32 distinct-item capacity, a 10^12 per-item bound,

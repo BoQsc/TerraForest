@@ -3,6 +3,7 @@
 extends CanvasLayer
 signal tool_requested(item: int)
 signal menu_changed(open: bool)
+signal inventory_changed
 const CATALOG: Dictionary={1:"Sculpt sphere",2:"Sculpt cube",3:"Build blocks",4:"Place objects"}
 const MATERIALS: Dictionary={101:"Brick",102:"Wood",103:"Concrete",104:"Metal"}
 const STARTER_MATERIAL_COUNT:=64
@@ -15,6 +16,9 @@ var slots: Array[Button]=[]
 var belt: Array[Button]=[]
 var modal: Control
 var message: Label
+var pending_choice: OptionButton
+var pending_amount: SpinBox
+var claim_button: Button
 var state: Dictionary={}
 var enabled:=true
 var default_loadout:=PackedByteArray()
@@ -93,6 +97,14 @@ func _ready() -> void:
 		var button:=Button.new();button.custom_minimum_size=Vector2(110,75);button.focus_mode=Control.FOCUS_NONE
 		button.pressed.connect(func(): select_slot(i))
 		grid.add_child(button);slots.append(button)
+	var rewards:=HBoxContainer.new();rewards.add_theme_constant_override("separation",12)
+	column.add_child(rewards)
+	var reward_label:=Label.new();reward_label.text="Pending materials";rewards.add_child(reward_label)
+	pending_choice=OptionButton.new();pending_choice.size_flags_horizontal=Control.SIZE_EXPAND_FILL
+	rewards.add_child(pending_choice);pending_choice.item_selected.connect(func(_index: int): _select_pending())
+	pending_amount=SpinBox.new();pending_amount.min_value=1;pending_amount.max_value=32000000;pending_amount.value=1
+	pending_amount.custom_minimum_size.x=130;rewards.add_child(pending_amount)
+	claim_button=Button.new();claim_button.text="Claim";claim_button.pressed.connect(claim_pending);rewards.add_child(claim_button)
 	message.text="Click a filled slot, then a destination to move or swap. Tab / Esc closes."
 	column.add_child(message)
 	modal.hide();refresh()
@@ -107,6 +119,41 @@ func refresh() -> void:
 		if i<6:
 			belt[i].text="%d%s\n%s"%[i+1," •" if row.item!=0 and row.item==active_item else "",title]
 			belt[i].disabled=row.item not in CATALOG
+	_refresh_pending()
+
+func _refresh_pending() -> void:
+	var selected: int=int(pending_choice.get_item_metadata(pending_choice.selected)) if not pending_choice.disabled and pending_choice.selected>=0 else 0
+	pending_choice.clear()
+	var pending: PackedInt64Array=reward_inbox.get_pending()
+	for i in range(0,pending.size(),2):
+		var item: int=pending[i]
+		pending_choice.add_item("%s ×%d"%[MATERIALS.get(item,CATALOG.get(item,"Item %d"%item)),pending[i+1]])
+		pending_choice.set_item_metadata(i/2,item)
+		if item==selected: pending_choice.select(i/2)
+	pending_choice.disabled=pending.is_empty()
+	if pending.is_empty(): pending_choice.add_item("No pending materials")
+	_select_pending()
+
+func _select_pending() -> void:
+	claim_button.disabled=pending_choice.disabled
+	pending_amount.editable=not pending_choice.disabled
+	if pending_choice.disabled: return
+	var item: int=pending_choice.get_item_metadata(pending_choice.selected)
+	var pending: PackedInt64Array=reward_inbox.get_pending()
+	for i in range(0,pending.size(),2):
+		if pending[i]==item: pending_amount.max_value=mini(pending[i+1],32000000);return
+
+func claim_pending() -> void:
+	if not enabled or not inventory_open or pending_choice.disabled: return
+	var item: int=pending_choice.get_item_metadata(pending_choice.selected)
+	var amount:=int(pending_amount.value)
+	var result: Dictionary=reward_inbox.claim(inventory,PackedInt64Array([item,amount]),state.revision)
+	if result.ok:
+		message.text="Claimed %d · %s"%[amount,"temporary world; not saved" if temporary_world else "F5 saves world"]
+		inventory_changed.emit()
+	elif result.reason=="full": message.text="Not enough inventory space. Claim fewer or free a slot; pending materials are retained."
+	else: message.text="Claim rejected (%s). Inventory refreshed; try again."%result.reason
+	refresh()
 
 func equip(slot: int) -> void:
 	if not enabled or inventory==null or slot<0 or slot>=6: return
@@ -122,6 +169,7 @@ func select_slot(slot: int) -> void:
 	else:
 		var result: Dictionary=inventory.transfer(selected_slot,slot,state.slots[selected_slot].count,state.revision)
 		message.text=("Loadout updated · temporary world; changes are not saved." if temporary_world else "Loadout updated · close inventory and press F5 to save world.") if result.ok else "Move rejected: "+str(result.reason)
+		if result.ok: inventory_changed.emit()
 		selected_slot=-1
 	refresh()
 
@@ -145,4 +193,7 @@ func _input(event: InputEvent) -> void:
 			set_open(not inventory_open);get_viewport().set_input_as_handled();return
 		if event.alt_pressed and event.physical_keycode>=KEY_1 and event.physical_keycode<=KEY_6:
 			equip(event.physical_keycode-KEY_1);get_viewport().set_input_as_handled();return
-	if inventory_open and event is InputEventKey: get_viewport().set_input_as_handled()
+
+func _unhandled_key_input(_event: InputEvent) -> void:
+	# Let quantity entry and dropdown navigation receive GUI keyboard events.
+	if inventory_open: get_viewport().set_input_as_handled()

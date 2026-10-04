@@ -151,6 +151,7 @@ func _ready() -> void:
 		dialog.focus_exited.connect(func(): _refresh_frame_cap.call_deferred())
 	player_hud.tool_requested.connect(_equip_player_tool)
 	player_hud.menu_changed.connect(func(_open: bool): _clear_motion())
+	player_hud.inventory_changed.connect(func(): terrain.changed_since_save=true)
 	_sync_player_tool()
 	DisplayServer.window_set_title("TerraForest | Living terrain")
 	vegetation.name = "Vegetation"

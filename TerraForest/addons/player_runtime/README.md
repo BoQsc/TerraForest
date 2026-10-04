@@ -50,8 +50,13 @@ preserves the pending stock. No callback or await splits the two mutations.
 Snapshot both components together using world persistence. Snapshot validation
 is structural; the outer compound archive supplies integrity checking.
 An inbox at its limit rejects new receipts without partial changes; callers
-must handle that rejection. Mining receipt production and claim UI are not yet
-connected, and this API does not itself establish multiplayer authority.
+must handle that rejection. Mining receipt production is not yet connected,
+and this API does not itself establish multiplayer authority.
+
+The inventory's Pending materials row lists available rewards. Select an item,
+enter a quantity and press Claim. Full-inventory or stale-state failures retain
+the pending balance and explain how to retry. Successful claims and inventory
+transfers mark the world dirty for autosave; F5 also saves the paired state.
 
 `construction_inventory.gd` coordinates synchronous main-thread native edits.
 It debits before placement so successful building change signals observe the
