@@ -1,3 +1,21 @@
+## Harvest archive round trip - 2026-10-05
+
+`tests/harvest_persistence.gd` verifies a live harvest through the actual
+autosave worker and disk archive. It destroys the terrain worker, inventory,
+harvest provider and vegetation, then creates fresh instances using the same
+isolated save slot. Exact saved inventory and harvest bytes return. Regenerating
+the owner preserves its neighbour but not the harvested tree or trunk collider;
+a physics ray confirms the old trunk location is clear. Repeated harvesting
+after reload grants nothing, and a second unload/regeneration remains correct.
+
+All 11 checks pass in `docs/evidence/harvest_state/disk.log`. Shutdown writes are
+disabled before both teardowns so they cannot conceal a missing autosave. The
+backend's generic "save disabled after corrupt snapshot" message reflects that
+intentional guard; the fixture does not inject corruption. The autosave clock is
+advanced to its threshold, and rendering/terrain streaming is paused. This proves
+the disk transaction and fresh-instance restoration, not timing or FPS under
+active travel. The earlier supply test covers the unaccelerated 15-second clock.
+
 ## Gameplay tree harvesting - 2026-10-05
 
 In gameplay construction mode, E now harvests an aimed trunk within 2.5 metres
