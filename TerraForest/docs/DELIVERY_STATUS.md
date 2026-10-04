@@ -1,3 +1,27 @@
+## Native excavation accounting - 2026-10-04
+
+Brush edits now count newly excavated density-lattice samples by their original
+material in the existing native edit loop. A count requires a quantized sample
+to move from negative (solid) to nonnegative (air). Band-only changes, repeated
+cuts into air and additive edits do not count. This is lattice accounting, not
+exact removed volume; adding terrain and removing it again can count anew.
+No inventory rewards are enabled by this change.
+
+Command 2 preserves its 52-byte response prefix and appends sixteen u32 counts
+(116 bytes total). Failed and legacy replies decode as zero. The worker sums
+successful grouped brushes, clears accounting on group failure, and exposes
+the counts as `last_edit_outcome.removed_samples` alongside epoch/ticket/status.
+This field is diagnostic output, not a durable reward receipt. Road grading
+and the legacy separate cube store are excluded. Reward integration still
+needs save ordering, overflow policy and restrictions on free terrain creation.
+
+Validation: 18 native/codec checks use independent before/after material and
+density queries; eight live worker checks verify grouped duplicate brushes and
+no-op clearing. The 12 road/vegetation regression checks and world script parse
+also pass. Debug/release binaries built against the prebuilt SDK. Evidence:
+`docs/evidence/excavation_accounting`. No rendering or mining-latency improvement
+is claimed by these correctness tests.
+
 ## Gameplay starter inventory - 2026-10-04
 
 New gameplay construction loadouts receive 64 units of each building material,

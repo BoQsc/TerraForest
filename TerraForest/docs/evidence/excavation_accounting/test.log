@@ -1,0 +1,21 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS excavation exposes version-compatible histogram suffix
+PASS histogram matches independent before/after density and original-material oracle
+PASS solid removal is bounded by actual changed samples
+PASS underground edit includes band changes that must not count as removal
+PASS repeated excavation does not recount removed samples
+PASS excavation exposes version-compatible histogram suffix
+PASS histogram matches independent before/after density and original-material oracle
+PASS solid removal is bounded by actual changed samples
+PASS underground edit includes band changes that must not count as removal
+PASS repeated excavation does not recount removed samples
+PASS additive construction cannot produce excavation counts
+PASS excavation exposes version-compatible histogram suffix
+PASS histogram matches independent before/after density and original-material oracle
+PASS solid removal is bounded by actual changed samples
+PASS repeated excavation does not recount removed samples
+PASS rejected edits have no accounting
+PASS legacy reply cannot manufacture accounting
+PASS malformed reply yields no accounting
+EXCAVATION_ACCOUNTING {"checks":18,"failures":0}

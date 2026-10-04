@@ -73,7 +73,7 @@ func _receive(result: Dictionary) -> void:
 	if tracks_edit:
 		var outcome: String="building"
 		if result.kind=="edit": outcome="rejected" if not Codec.reply_ok(result.reply) else ("unchanged" if result.get("no_change",false) else "building")
-		last_edit_outcome={"epoch":epoch,"ticket":edit_ticket,"status":outcome}
+		last_edit_outcome={"epoch":epoch,"ticket":edit_ticket,"status":outcome,"removed_samples":result.get("removed_samples",PackedInt64Array()).duplicate()}
 	if result.get("kind", "") == "density_batch":
 		if result.epoch!=epoch or result.revision!=density_revision or pending_edit or foreground_brush or stopping or not world_ready:
 			result["status"]="stale";result["values"]=PackedFloat32Array()

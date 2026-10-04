@@ -157,7 +157,8 @@ static float road_bed_field(V3 p,V3 a,V3 b,float half_width,float depth,float sh
  }
  return mx(edge,mx(p.y-top,top-depth-p.y));
 }
-bool World::edit(V3 a,V3 b,float radius,int shape,bool add,u8 material,V3&lo,V3&hi,int&changes,float depth,float clearance,float shoulder){
+bool World::edit(V3 a,V3 b,float radius,int shape,bool add,u8 material,V3&lo,V3&hi,int&changes,float depth,float clearance,float shoulder,u32 *removed_samples){
+ if(removed_samples)zero_bytes(removed_samples,16*sizeof(u32));
  changes=0;radius=clampf(radius,0.5f,64.f);
  lo={mx(0,mn(a.x,b.x)-radius-SDF_BAND-1),mx(0,mn(a.y,b.y)-radius-SDF_BAND-1),mx(0,mn(a.z,b.z)-radius-SDF_BAND-1)};
  hi={mn(WORLD,mx(a.x,b.x)+radius+SDF_BAND+1),mn(255,mx(a.y,b.y)+radius+SDF_BAND+1),mn(WORLD,mx(a.z,b.z)+radius+SDF_BAND+1)};
@@ -187,6 +188,11 @@ bool World::edit(V3 a,V3 b,float radius,int shape,bool add,u8 material,V3&lo,V3&
    bool repaint=shape==2&&brush<=0&&q<=0&&y>3&&(idx<0||pages[idx].mat[j]!=material);
    if(q==previous&&!repaint)continue;
    if(idx<0){Page* page=ensure(x>>4,py,z>>4);if(!page)return false;idx=pages_by_key.get(page_key(x>>4,py,z>>4));}
+   // Count only newly excavated lattice samples, before material rewriting.
+   // Existing air, band reshaping, paving and additive edits yield nothing.
+   if(removed_samples&&!add&&shape<2&&previous<0&&q>=0){
+    u8 source=pages[idx].mat[j];if(source<16)removed_samples[source]++;
+   }
    pages[idx].d[j]=q;
    // Cut walls retain their substrate; pavement is limited to the bed.
    if((add||generator_id<3)&&!(shape==2&&clearance>0&&brush>0))pages[idx].mat[j]=material;
@@ -784,7 +790,7 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
   if(!build_patch(w,ox,oz,size,step,m,epoch,cmd==20)){out.p[8]=4;return;}
   out.u(w.revision);encode_mesh(m,ox,oz,size,step,out);m.release();
  }
- else if(cmd==2){V3 a=r.vec(),b=r.vec();float radius=r.f();int shape=int(r.u()),add=int(r.u()),mat=int(r.u());if(!r.good||!(radius>=.5f&&radius<=64.f)||shape<0||shape>1||mat<0||mat>3||!(ab(a.x)<=10000&&ab(b.x)<=10000&&ab(a.y)<=10000&&ab(b.y)<=10000&&ab(a.z)<=10000&&ab(b.z)<=10000)){out.p[8]=1;return;}V3 lo,hi;int changes;bool ok=w.edit(a,b,radius,shape,add!=0,u8(mat),lo,hi,changes);if(!ok)out.p[8]=2;out.u(w.revision);out.u(changes);out.u(w.pages.n);out.u(w.blocks.n);out.vec(lo);out.vec(hi);}
+ else if(cmd==2){V3 a=r.vec(),b=r.vec();float radius=r.f();int shape=int(r.u()),add=int(r.u()),mat=int(r.u());if(!r.good||!(radius>=.5f&&radius<=64.f)||shape<0||shape>1||mat<0||mat>3||!(ab(a.x)<=10000&&ab(b.x)<=10000&&ab(a.y)<=10000&&ab(b.y)<=10000&&ab(a.z)<=10000&&ab(b.z)<=10000)){out.p[8]=1;return;}V3 lo,hi;int changes;u32 removed[16]{};bool ok=w.edit(a,b,radius,shape,add!=0,u8(mat),lo,hi,changes,1.f,0.f,0.f,removed);if(!ok)out.p[8]=2;out.u(w.revision);out.u(changes);out.u(w.pages.n);out.u(w.blocks.n);out.vec(lo);out.vec(hi);for(u32 count:removed)out.u(ok?count:0);}
  else if(cmd==28){
   V3 a=r.vec(),b=r.vec();float width=r.f(),depth=r.f(),clearance=n>=40?r.f():0;u32 material=n>=44?r.u():4;float shoulder=n==48?r.f():0;V3 axis={b.x-a.x,0,b.z-a.z};float distance=length(axis);
   if(!r.good||(n!=36&&n!=40&&n!=44&&n!=48)||material<1||material>4||!(shoulder>=0&&shoulder<=16)||!(clearance>=0&&clearance<=16&&mx(a.y,b.y)+clearance<=250&&width>=.5f&&width<=16.f&&depth>=1.f&&depth<=8.f&&distance>=1.f&&distance<=128.f)||

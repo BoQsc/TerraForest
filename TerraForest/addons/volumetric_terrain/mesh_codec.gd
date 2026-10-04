@@ -46,6 +46,14 @@ static func point_command(point: Vector3) -> PackedByteArray:
 static func reply_ok(reply: PackedByteArray) -> bool:
 	return reply.size() >= 12 and reply.decode_u32(0) == REPLY_MAGIC and reply.decode_u32(8) == 0
 
+static func excavation_samples(reply: PackedByteArray) -> PackedInt64Array:
+	var counts:=PackedInt64Array();counts.resize(16)
+	# Command 2 preserves its original 52-byte prefix. Older replies and failed
+	# edits cannot be interpreted as material yield.
+	if not reply_ok(reply) or reply.size()!=116 or reply.decode_u32(4)!=2: return counts
+	for material in range(16): counts[material]=reply.decode_u32(52+material*4)
+	return counts
+
 static func density_ray_command(from: Vector3, to: Vector3, budget: int, epoch: int, with_normal: bool=false) -> PackedByteArray:
 	var packet := command(24 if with_normal else 23,[0,0,0,0,0,0,budget,epoch])
 	for axis in range(3):

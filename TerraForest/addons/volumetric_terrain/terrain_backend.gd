@@ -927,9 +927,12 @@ func _run() -> void:
 			var reply := PackedByteArray()
 			var commands: Array = job.get("commands", [job["command"]])
 			var member_changed: Array[bool] = []
+			var removed_samples:=PackedInt64Array();removed_samples.resize(16)
 			var revision_before: int = before_stats.decode_u32(12)
 			for command: PackedByteArray in commands:
 				reply = _call(command)
+				var removed:=Codec.excavation_samples(reply)
+				for material in range(16): removed_samples[material]+=removed[material]
 				var member_stats: PackedByteArray = _call(Codec.command(0))
 				var revision_after: int = member_stats.decode_u32(12)
 				member_changed.push_back(revision_after != revision_before)
@@ -939,6 +942,7 @@ func _run() -> void:
 					# Stop publishing/saving rather than overwrite the last valid save.
 					write_allowed = false
 					cache_valid = false
+					removed_samples.fill(0)
 					break
 			var edit_ms: float = float(Time.get_ticks_usec() - begin) / 1000.0
 			var after_stats: PackedByteArray = _call(Codec.command(0))
@@ -946,13 +950,13 @@ func _run() -> void:
 			if not Codec.reply_ok(reply) or no_change:
 				_push({"kind": "edit", "chunks": [], "reply": reply, "epoch": job["epoch"],
 					"ticket": job["ticket"], "edit_ms": edit_ms, "stats": after_stats,
-					"queue_ms": queue_ms, "no_change": no_change, "member_changed": member_changed, "worker_finished_us": Time.get_ticks_usec()})
+					"queue_ms": queue_ms, "no_change": no_change, "member_changed": member_changed, "removed_samples":removed_samples, "worker_finished_us": Time.get_ticks_usec()})
 			else:
 				cache_valid = false
 				latest_packets.clear()
 				latest_packet_bytes = 0
 				_push({"kind": "edit_begin", "epoch": job["epoch"], "ticket": job["ticket"],
-					"count": job["tiles"].size(), "edit_ms": edit_ms, "queue_ms": queue_ms, "stats": after_stats, "member_changed": member_changed})
+					"count": job["tiles"].size(), "edit_ms": edit_ms, "queue_ms": queue_ms, "stats": after_stats, "member_changed": member_changed, "removed_samples":removed_samples})
 				# Stream finished patches to main-thread staging immediately. Worker
 				# builds and resource preparation OVERLAP instead of running in series.
 				var build_total: float = 0.0
