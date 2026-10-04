@@ -1,3 +1,19 @@
+## Actual gameplay scene integration check - 2026-10-04
+
+Added `tests/gameplay_scene.gd`, launched with the real main scene in temporary
+gameplay mode, generator 3, Forward+ and fullscreen 1920x1080. Nine functional
+checks pass: startup/nearby collision readiness, mode wiring, starter supplies,
+streamed excavation and reward delivery, actual inventory claim/craft buttons,
+pointer availability and 60 FPS cap/presentation settings. The screenshot was
+visually reviewed. Mining is submitted through the terrain API in this fixture;
+it is not a mouse-driven mining-input or sustained performance qualification.
+
+Open teardown defect: Godot reports one leaked `RefCounted` with reference count
+zero on exit. Verbose reproduction confirms it; allowing two deferred cleanup
+frames does not remove the warning. Its owner/cause has not been identified.
+The functional pass must not be interpreted as clean teardown or proof of
+long-session memory stability. Evidence: `docs/evidence/gameplay_scene`.
+
 ## Save barriers in priority terrain queue - 2026-10-04
 
 A targeted regression reproduced a queue-ordering defect: a newly submitted

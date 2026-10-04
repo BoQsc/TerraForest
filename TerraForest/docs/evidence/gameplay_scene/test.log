@@ -1,0 +1,20 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.3.289 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce GTX 1060 with Max-Q Design
+
+[TerrainRewrite] New world
+[TerrainRewrite] New world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+PASS actual main scene completes gameplay startup
+PASS launcher mode wires construction, HUD and mining shutdown policy
+PASS actual scene receives starter supplies
+PASS main scene admits gameplay excavation
+[TerrainRewrite] Mined resources are available in inventory under Pending materials
+PASS streamed main-scene excavation publishes with reward callback
+PASS main-scene excavation reaches pending inventory
+PASS main-scene claim and crafting controls complete the resource conversion
+PASS inventory opens with usable pointer in main scene
+PASS main scene uses fullscreen 1920x1080 and 60 FPS cap
+[TerrainRewrite] Temporary test world: save skipped
+GAMEPLAY_SCENE {"checks":9,"failures":0,"scope":"main scene startup, streamed edit and UI integration; not sustained FPS qualification"}
+WARNING: 1 ObjectDB instance was leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
