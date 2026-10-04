@@ -1,3 +1,24 @@
+## Separate gameplay construction costs - 2026-10-04
+
+The editor remains free. The new `Play Gameplay Construction.cmd` uses its own
+save slot and enables material costs for blocks and prefabs, including deferred
+frontage placement. Native inventory deductions are atomic across stacks and
+materials; rejected native placements restore inventory contents. Prefab
+material totals are cached during authoring, avoiding per-cell script work at
+purchase time. The HUD names the mode. Free supply spawning and construction
+history are disabled in gameplay construction; removal has no refund.
+
+Validation: 22 new construction/inventory checks, 32 existing inventory checks,
+13 large-building checks (78,624 cells), 17 prefab composition checks and world
+script parsing passed. Both native addons have debug/release builds using the
+prebuilt SDK. Evidence: `docs/evidence/construction_inventory`. These are short
+correctness tests, not a frame-rate or multiplayer qualification.
+
+This is not a full survival ruleset: mining rewards, starter resources, road,
+vehicle and static-model recipes and authoritative multiplayer transactions
+remain open. Mode selection is a launch option; inventory uses existing world
+persistence. See `addons/player_runtime/README.md` for transaction boundaries.
+
 ## Entity nearest-query scaling evidence - 2026-10-04
 
 Added an 18-case short CPU fixture: populations 4096, 100000 and 262144, sparse versus tightly crowded placement, and candidate budgets 512, 4096 and 16384. Each case executes four warmup and 32 measured native nearest queries, returning at most 128 handles. All admission/count/completeness checks passed. Sparse local queries visited 256 candidates at every population and averaged 7.875..10.719 us. Crowded queries visited at most their budget; maximum observed query duration across cases was 464 us at budget 16384 and population 262144.

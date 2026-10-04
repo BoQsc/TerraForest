@@ -1,0 +1,16 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS 16-storey source building authored
+PASS maximum-volume selection captures every occupied building cell
+PASS large capture preserves source snapshot
+PASS building captured and saved through authoring library
+PASS large prefab disk roundtrip preserves exact records
+PASS reopened tower places across chunk boundaries
+PASS every rotated placed cell matches independent expected coordinates/material/shape
+PASS overlapping tower rejected atomically
+PASS whole-building undo accepted
+PASS whole-building undo restores exact source snapshot
+PASS whole-building redo accepted
+PASS whole-building redo restores exact placed snapshot
+PASS selection exceeding volume cap rejected
+{"asset_bytes":1258302,"cells":78624,"dimensions":[64,64,64],"failures":0,"floors":16,"history":{"byte_limit":16777216,"cell_capacity_bytes":2515968,"redo_steps":0,"step_limit":128,"undo_steps":2,"unrecorded_edits":0},"scope":"native building authoring; no rendering or physics baking","timings_ms":{"capture_and_save":60.414,"library_reload":16.17,"native_capture":26.003,"place":14.765,"redo":6.456,"source_write":7.724,"undo":8.057}}

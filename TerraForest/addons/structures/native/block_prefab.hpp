@@ -1,6 +1,7 @@
 #pragma once
 #include <godot_cpp/classes/resource.hpp>
 #include <godot_cpp/variant/packed_int32_array.hpp>
+#include <godot_cpp/variant/packed_int64_array.hpp>
 #include <godot_cpp/variant/aabb.hpp>
 #include <godot_cpp/variant/array.hpp>
 #include <godot_cpp/variant/packed_vector3_array.hpp>
@@ -14,6 +15,7 @@ class NativeBlockPrefab : public Resource {
     GDCLASS(NativeBlockPrefab,Resource)
     friend class NativeBlockWorld;
     std::vector<PrefabCell> cells;
+    int64_t material_counts[4]{};
     std::vector<PrefabCell> foundation_columns;
     struct ClearanceColumn { int x,z,low,high; int64_t end; };
     std::vector<ClearanceColumn> clearance_columns;
@@ -27,6 +29,7 @@ public:
     void set_records(const PackedInt32Array &records);
     PackedInt32Array get_records() const;
     int get_cell_count() const { return int(cells.size()); }
+    PackedInt64Array get_material_counts() const;
     AABB get_bounds() const { return bounds; }
     AABB placement_bounds(Vector3i origin,int quarter_turns) const;
     PackedVector3Array foundation_samples(Vector3i origin,int quarter_turns,int max_base_y) const;

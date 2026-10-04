@@ -18,6 +18,7 @@ var lakes = Lakes.new()
 var water_camera=preload("res://addons/volumetric_water/water_camera.gd").new()
 var structures = Structures.new()
 var player_hud=preload("res://addons/player_runtime/player_hud.gd").new()
+var construction_inventory=preload("res://addons/player_runtime/construction_inventory.gd").new()
 var model_tool = preload("res://addons/structures/model_tool.gd").new()
 var structure_mode := false
 var construction_palette=preload("res://addons/structures/construction_palette.gd").new()
@@ -63,6 +64,8 @@ func _player_water_depth() -> float:
 	return lakes.depth_at(player.global_position+Vector3(0,1.1,0))
 
 func _ready() -> void:
+	construction_inventory.gameplay="--gameplay-construction" in OS.get_cmdline_user_args()
+	player_hud.gameplay_construction=construction_inventory.gameplay
 	tree_exiting.connect(prefab_library.shutdown_frontage)
 	add_child(world_vehicle)
 	add_child(pickups)
@@ -635,6 +638,9 @@ func _update_edit(delta: float) -> void:
 	super._update_edit(delta)
 
 func _construction_history(forward: bool) -> void:
+	if construction_inventory.gameplay:
+		_show_lake_notice("Construction history is available in the free editor")
+		return
 	if not terrain.world_ready:
 		return
 	if (forward and not structures.blocks.can_redo()) or (not forward and not structures.blocks.can_undo()):
@@ -662,6 +668,9 @@ func _structure_target(remove: bool) -> Dictionary:
 	return {"target":target,"position":hit.position,"normal":hit.normal}
 
 func _place_material_supply(item: int) -> void:
+	if construction_inventory.gameplay:
+		_show_lake_notice("Supply spawning is available in the free editor")
+		return
 	if loading_active or shutdown_requested or benchmark_enabled or not app_focused or not terrain.world_ready or player_hud.inventory_open or not structure_mode or model_tool.active: return
 	if item not in pickups.ITEMS: return
 	var hit:=_structure_target(false)
@@ -750,16 +759,20 @@ func _edit_structure(remove: bool) -> void:
 		if asset.has_meta("frontage_version"):
 			_begin_frontage_placement(asset,target)
 			return
-		if structures.blocks.place_prefab(asset,target,structure_rotation):
+		if construction_inventory.place_prefab(structures.blocks,player_hud.inventory,asset,target,structure_rotation):
 			_show_lake_notice("%s placed · F5 saves world" % asset.resource_name)
+		else: _show_lake_notice(construction_inventory.reason)
+		player_hud.refresh()
 		_prefab_preview_timer=0.0
 		return
 	if not remove and not _block_player_clear(target):
 		_show_lake_notice("Block placement intersects the player")
 		return
 	var word := 0 if remove else structure_shape+(structure_rotation<<3)+(structure_material<<5)
-	if structures.blocks.set_cells(PackedInt32Array([target.x,target.y,target.z,word])):
+	if construction_inventory.place_block(structures.blocks,player_hud.inventory,target,word):
 		_show_lake_notice("Block removed · F5 saves world" if remove else "Block placed · F5 saves world")
+	else: _show_lake_notice(construction_inventory.reason)
+	player_hud.refresh()
 
 func _survey_construction() -> void:
 	if site_preparation.status=="running" or site_survey.busy or loading_active or shutdown_requested or not app_focused or player_hud.inventory_open or world_vehicle.driving or not structure_mode or model_tool.active or structure_prefab_index<0: return
@@ -896,9 +909,10 @@ func _advance_frontage_placement() -> void:
 		_placement_notice(request,"Placement changed; place again");return
 	if world_vehicle.overlaps_edit(request.asset.placement_bounds(request.target,request.rotation)):
 		_placement_notice(request,"Move the vehicle clear before placing frontage");return
-	if structures.blocks.place_prefab(request.asset,request.target,request.rotation):
+	if construction_inventory.place_prefab(structures.blocks,player_hud.inventory,request.asset,request.target,request.rotation):
 		_placement_notice(request,"%s placed · F5 saves world" % request.asset.resource_name,true)
-	else: _placement_notice(request,"Placement was not accepted; check site bounds and capacity")
+	else: _placement_notice(request,construction_inventory.reason)
+	player_hud.refresh()
 	_prefab_preview_timer=0.0
 
 func _physics_process(delta: float) -> void:

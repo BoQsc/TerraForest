@@ -10,6 +10,8 @@ void NativePlayerInventory::_bind_methods() {
     ClassDB::bind_method(D_METHOD("snapshot"),&NativePlayerInventory::snapshot);
     ClassDB::bind_method(D_METHOD("grant","item","count","expected_revision"),&NativePlayerInventory::grant);
     ClassDB::bind_method(D_METHOD("consume","slot","count","expected_revision"),&NativePlayerInventory::consume);
+    ClassDB::bind_method(D_METHOD("consume_items","costs","expected_revision"),&NativePlayerInventory::consume_items);
+    ClassDB::bind_method(D_METHOD("can_afford","costs","expected_revision"),&NativePlayerInventory::can_afford);
     ClassDB::bind_method(D_METHOD("transfer","from","to","count","expected_revision"),&NativePlayerInventory::transfer);
     ClassDB::bind_method(D_METHOD("restore","snapshot","expected_revision"),&NativePlayerInventory::restore);
     ClassDB::bind_method(D_METHOD("capture_storage_snapshot"),&NativePlayerInventory::capture_storage_snapshot);
@@ -49,6 +51,28 @@ Dictionary NativePlayerInventory::consume(int64_t slot,int64_t count,int64_t exp
     auto &s=slots[slot];s.count-=count;if(!s.count)s.item=0;
     ++revision;return result(true,"");
 }
+Dictionary NativePlayerInventory::apply_costs(const PackedInt64Array &costs,int64_t expected,bool commit) {
+    if(expected!=revision)return result(false,"stale_revision");
+    if(costs.is_empty()||costs.size()>64||costs.size()%2)return result(false,"invalid_costs");
+    // At most 32 item/count pairs and 32 slots; stage all deductions before
+    // publishing. Duplicate item rows consume cumulatively without overflow.
+    auto candidate=slots;
+    for(int64_t i=0;i<costs.size();i+=2){
+        const int64_t item=costs[i];int64_t remaining=costs[i+1];
+        if(limits.find(item)==limits.end()||remaining<=0||remaining>32000000)return result(false,"invalid_item_or_count");
+        for(auto &slot:candidate){
+            if(slot.item!=item)continue;
+            const int64_t amount=std::min(remaining,slot.count);
+            remaining-=amount;slot.count-=amount;if(!slot.count)slot.item=0;
+            if(!remaining)break;
+        }
+        if(remaining){auto out=result(false,"insufficient_items");out["item"]=item;out["missing"]=remaining;return out;}
+    }
+    if(commit){slots=candidate;++revision;}
+    return result(true,"");
+}
+Dictionary NativePlayerInventory::consume_items(const PackedInt64Array &costs,int64_t expected) { return apply_costs(costs,expected,true); }
+Dictionary NativePlayerInventory::can_afford(const PackedInt64Array &costs,int64_t expected) { return apply_costs(costs,expected,false); }
 Dictionary NativePlayerInventory::transfer(int64_t from,int64_t to,int64_t count,int64_t expected) {
     if(expected!=revision)return result(false,"stale_revision");
     if(from<0||from>=32||to<0||to>=32||from==to||count<=0||count>slots[from].count)return result(false,"invalid_transfer");

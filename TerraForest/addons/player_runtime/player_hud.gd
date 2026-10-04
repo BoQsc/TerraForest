@@ -18,6 +18,7 @@ var enabled:=true
 var default_loadout:=PackedByteArray()
 var temporary_world:=true
 var active_item:=0
+var gameplay_construction:=false
 
 func show_active_tool(item: int) -> void:
 	active_item=item
@@ -61,6 +62,7 @@ func _ready() -> void:
 		button.pressed.connect(func(): equip(i))
 		bar.add_child(button);belt.append(button)
 	var hint:=Label.new();hint.text="Alt + 1–6 equip    ·    Tab inventory"
+	hint.text += "    ·    " + ("Gameplay construction" if gameplay_construction else "Free editor")
 	hint.position=Vector2(620,970);add_child(hint)
 	add_child(modal);modal.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	var shade:=ColorRect.new();shade.color=Color(0.025,0.04,0.06,0.9)
@@ -73,6 +75,7 @@ func _ready() -> void:
 	var column:=VBoxContainer.new();column.add_theme_constant_override("separation",16);margin.add_child(column)
 	var title:=Label.new();title.text="INVENTORY";title.add_theme_font_size_override("font_size",28);column.add_child(title)
 	var detail:=Label.new();detail.text="Tools and materials · first six slots form the toolbelt"
+	if gameplay_construction: detail.text="Construction costs one material per block; removal gives no refund."
 	column.add_child(detail)
 	var grid:=GridContainer.new();grid.columns=8;grid.add_theme_constant_override("h_separation",8);grid.add_theme_constant_override("v_separation",8);column.add_child(grid)
 	for i in range(32):

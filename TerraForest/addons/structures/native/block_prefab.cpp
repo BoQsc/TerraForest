@@ -13,6 +13,7 @@ void NativeBlockPrefab::_bind_methods() {
     ClassDB::bind_method(D_METHOD("set_records","records"),&NativeBlockPrefab::set_records);
     ClassDB::bind_method(D_METHOD("get_records"),&NativeBlockPrefab::get_records);
     ClassDB::bind_method(D_METHOD("get_cell_count"),&NativeBlockPrefab::get_cell_count);
+    ClassDB::bind_method(D_METHOD("get_material_counts"),&NativeBlockPrefab::get_material_counts);
     ClassDB::bind_method(D_METHOD("get_bounds"),&NativeBlockPrefab::get_bounds);
     ClassDB::bind_method(D_METHOD("placement_bounds","origin","quarter_turns"),&NativeBlockPrefab::placement_bounds);
     ClassDB::bind_method(D_METHOD("foundation_samples","origin","quarter_turns","max_base_y"),&NativeBlockPrefab::foundation_samples);
@@ -57,7 +58,14 @@ bool NativeBlockPrefab::configure(const PackedInt32Array &records) {
     }
     clearance_columns=std::move(clearance);
     foundation_columns=std::move(footprint);
+    std::fill(std::begin(material_counts),std::end(material_counts),0);
+    for(const auto &cell:staged)++material_counts[cell.word>>5];
     cells=std::move(staged);bounds=cells.empty()?AABB():AABB(lo,hi-lo);emit_changed();return true;
+}
+PackedInt64Array NativeBlockPrefab::get_material_counts() const {
+    PackedInt64Array out;out.resize(4);
+    for(int i=0;i<4;++i)out.set(i,material_counts[i]);
+    return out;
 }
 PackedVector3Array NativeBlockPrefab::foundation_samples(Vector3i origin,int turns,int max_base_y) const {
     PackedVector3Array out;
