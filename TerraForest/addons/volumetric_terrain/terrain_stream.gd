@@ -95,6 +95,7 @@ var _manual_save_requested: bool = false
 var temporary: bool = false
 var stopping: bool = false
 var closing: bool = false
+var require_published_shutdown: bool = false
 var latest_error: String = ""
 var preparation: Dictionary = {}
 var paused_preparations: Array[Dictionary] = []
@@ -179,6 +180,10 @@ func shutdown_after_edits() -> bool:
 func shutdown() -> void:
 	if stopping:
 		return
+	if require_published_shutdown and pending_edit:
+		# Direct scene teardown cannot run publication callbacks. Keep the last
+		# consistent disk snapshot instead of saving unaccounted excavation.
+		backend.disable_snapshot_writes()
 	stopping = true
 	_cancel_partition()
 	_cancel_density_requests("cancelled")

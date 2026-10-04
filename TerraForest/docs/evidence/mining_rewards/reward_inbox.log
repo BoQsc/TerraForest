@@ -1,0 +1,34 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS receipt accumulates duplicate material rows
+PASS pending counts are exact
+PASS old or duplicate receipt cannot repeat a reward
+PASS old or duplicate receipt cannot repeat a reward
+PASS old or duplicate receipt cannot repeat a reward
+PASS old or duplicate receipt cannot repeat a reward
+PASS full inventory retains reward with no mutation
+PASS late claim capacity failure changes neither participant
+PASS partial claim transfers exact requested quantity
+PASS stale claim leaves pending rewards intact
+PASS duplicate claim rows cannot overdraw pending stock
+PASS invalid receipt tail cannot partly accrue or advance receipt
+PASS failed receipt can be corrected without losing its identity
+PASS fixed bounded format validates
+PASS malformed snapshot rejects atomically at 0
+PASS malformed snapshot rejects atomically at 4
+PASS malformed snapshot rejects atomically at 8
+PASS malformed snapshot rejects atomically at 16
+PASS malformed snapshot rejects atomically at 20
+PASS malformed snapshot rejects atomically at 388
+PASS malformed snapshot rejects atomically at 392
+PASS truncated save rejected
+PASS trailing data rejected
+PASS disk roundtrip preserves pending stock and receipt watermark
+PASS reload does not allow replaying last receipt
+PASS compound disk archive preserves terrain, inventory and pending rewards as one snapshot
+PASS claimed inventory and unclaimed remainder restore together
+PASS maximum per-item pending balance admitted
+PASS balance overflow cannot partly accrue another item
+PASS exact distinct-item capacity admitted
+PASS distinct-item overflow preserves prior balances and receipt
+REWARD_INBOX {"checks":31,"failures":0}

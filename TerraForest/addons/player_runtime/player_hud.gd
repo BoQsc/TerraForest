@@ -6,6 +6,7 @@ signal menu_changed(open: bool)
 signal inventory_changed
 const CATALOG: Dictionary={1:"Sculpt sphere",2:"Sculpt cube",3:"Build blocks",4:"Place objects"}
 const MATERIALS: Dictionary={101:"Brick",102:"Wood",103:"Concrete",104:"Metal"}
+const RESOURCES: Dictionary={201:"Stone",202:"Iron ore",203:"Copper ore"}
 const STARTER_MATERIAL_COUNT:=64
 var inventory: RefCounted
 var reward_inbox: RefCounted
@@ -40,6 +41,7 @@ func prepare() -> bool:
 	reward_inbox=ClassDB.instantiate("NativeRewardInbox")
 	for id: int in CATALOG: inventory.register_item(id,1)
 	for id: int in MATERIALS: inventory.register_item(id,999)
+	for id: int in RESOURCES: inventory.register_item(id,999)
 	for id: int in CATALOG: inventory.grant(id,1,inventory.snapshot().revision)
 	# Only the default for a missing loadout section. Restoration replaces all
 	# slots, including an explicitly empty saved inventory; never top up on load.
@@ -113,8 +115,8 @@ func refresh() -> void:
 	state=inventory.snapshot()
 	for i in range(32):
 		var row: Dictionary=state.slots[i]
-		var title: String=CATALOG.get(row.item,MATERIALS.get(row.item,"Empty"))
-		if row.item in MATERIALS: title += " ×%d" % row.count
+		var title: String=CATALOG.get(row.item,MATERIALS.get(row.item,RESOURCES.get(row.item,"Empty")))
+		if row.item in MATERIALS or row.item in RESOURCES: title += " ×%d" % row.count
 		slots[i].text="%02d%s\n%s"%[i+1," •" if i==selected_slot else "",title]
 		if i<6:
 			belt[i].text="%d%s\n%s"%[i+1," •" if row.item!=0 and row.item==active_item else "",title]
@@ -127,7 +129,7 @@ func _refresh_pending() -> void:
 	var pending: PackedInt64Array=reward_inbox.get_pending()
 	for i in range(0,pending.size(),2):
 		var item: int=pending[i]
-		pending_choice.add_item("%s ×%d"%[MATERIALS.get(item,CATALOG.get(item,"Item %d"%item)),pending[i+1]])
+		pending_choice.add_item("%s ×%d"%[MATERIALS.get(item,RESOURCES.get(item,CATALOG.get(item,"Item %d"%item))),pending[i+1]])
 		pending_choice.set_item_metadata(i/2,item)
 		if item==selected: pending_choice.select(i/2)
 	pending_choice.disabled=pending.is_empty()

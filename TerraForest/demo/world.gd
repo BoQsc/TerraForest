@@ -19,6 +19,7 @@ var water_camera=preload("res://addons/volumetric_water/water_camera.gd").new()
 var structures = Structures.new()
 var player_hud=preload("res://addons/player_runtime/player_hud.gd").new()
 var construction_inventory=preload("res://addons/player_runtime/construction_inventory.gd").new()
+var mining_rewards=preload("res://addons/player_runtime/mining_rewards.gd").new()
 var model_tool = preload("res://addons/structures/model_tool.gd").new()
 var structure_mode := false
 var construction_palette=preload("res://addons/structures/construction_palette.gd").new()
@@ -89,6 +90,10 @@ func _ready() -> void:
 		return
 	if not persistence.register_component("pending_rewards",player_hud.reward_inbox.capture_storage_snapshot,player_hud.reward_inbox.restore_storage_snapshot,player_hud.reward_inbox,player_hud.reward_inbox.capture_storage_snapshot()):
 		push_error("Pending reward persistence initialization failed")
+		get_tree().quit(2)
+		return
+	if construction_inventory.gameplay and not mining_rewards.attach(terrain,player_hud):
+		push_error("Mining reward initialization failed")
 		get_tree().quit(2)
 		return
 	player_pose=ClassDB.instantiate("NativePlayerPose")

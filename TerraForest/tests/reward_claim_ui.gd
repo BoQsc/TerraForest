@@ -37,7 +37,10 @@ func run() -> void:
 	check(hud.reward_inbox.capture_storage_snapshot()==before and changes==2 and hud.message.text.contains("refreshed"),"stale UI revision refreshes without changing pending stock")
 	hud.pending_amount.value=4;hud.claim_button.pressed.emit()
 	check(hud.reward_inbox.get_pending().is_empty() and hud.claim_button.disabled and changes==3,"retry after freeing capacity claims remainder exactly once")
-	hud.reward_inbox.accept(PackedInt64Array([103,64,104,1000000]),2);hud.refresh()
+	hud.reward_inbox.accept(PackedInt64Array([201,64,202,1000000,203,64]),2)
+	hud.inventory.consume(5,999,hud.inventory.snapshot().revision)
+	hud.inventory.grant(201,1,hud.inventory.snapshot().revision);hud.refresh()
+	check(hud.slots[5].text.contains("Stone ×1") and hud.pending_choice.get_item_text(0).contains("Stone") and hud.pending_choice.get_item_text(1).contains("Iron ore"),"raw mining resources have inventory and pending labels")
 	for i in range(4): await RenderingServer.frame_post_draw
 	var panel: Control=hud.modal.get_child(1)
 	check(panel.get_global_rect().encloses(hud.claim_button.get_global_rect()) and panel.get_global_rect().encloses(hud.message.get_global_rect()),"claim controls and feedback fit inside inventory panel")

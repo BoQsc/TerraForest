@@ -12,13 +12,15 @@ work even for large prefabs. Removal gives no refund. Occupied individual cells
 must be cleared before replacement. Construction undo/redo and free material
 supply spawning are disabled in this mode. Editor behavior is unchanged.
 
-This is the construction economy connection, not a complete survival mode:
-terrain tools, roads, static model placement and vehicle authoring are still
-editor features without material recipes. New gameplay inventories start with
+This is not a complete survival mode. Gameplay terrain tools excavate only;
+free terrain filling, grading and legacy terrain cubes are editor tools.
+Static model placement and vehicle authoring still lack material recipes.
+New gameplay inventories start with
 tools and 64 units of each construction material. This is the default for a
 missing loadout section, not a refill: saved inventories replace it exactly,
 including depleted stocks and existing editor loadouts. Further supplies must
-currently be prepared in the editor; mining-to-inventory conversion is unfinished. The
+currently be prepared in the editor. Mining supplies raw resources, but crafting
+them into construction materials is unfinished. The
 mode is selected at launch, not stored in the world file or enforced by a
 multiplayer authority. Opening the gameplay slot in editor mode allows editing.
 
@@ -50,13 +52,28 @@ preserves the pending stock. No callback or await splits the two mutations.
 Snapshot both components together using world persistence. Snapshot validation
 is structural; the outer compound archive supplies integrity checking.
 An inbox at its limit rejects new receipts without partial changes; callers
-must handle that rejection. Mining receipt production is not yet connected,
-and this API does not itself establish multiplayer authority.
+must handle that rejection. This API does not itself establish multiplayer authority.
 
 The inventory's Pending materials row lists available rewards. Select an item,
 enter a quantity and press Claim. Full-inventory or stale-state failures retain
 the pending balance and explain how to retry. Successful claims and inventory
 transfers mark the world dirty for autosave; F5 also saves the paired state.
+
+In gameplay, `mining_rewards.gd` maps native removed samples 0/1 to stone (201),
+8 to iron ore (202), and 9 to copper ore (203). One newly removed solid lattice
+sample yields one raw unit; this is not exact physical volume. Other painted
+materials yield nothing. Publication delivers one receipt identified by terrain
+density revision. No-op/repeated cuts do not accrue resources. The terrain
+admission callback rejects additive/road edits and conservatively checks inbox
+headroom before excavation. This is bounded orchestration over at most four
+commands and three reward types; accounting and inventory mutations are native.
+
+Normal window close drains publication before saving. Direct synchronous
+teardown with a pending gameplay edit disables new snapshot writes, retaining
+the previous consistent save; unsaved progress can be lost in that fallback.
+Receipt rejection likewise protects the prior save and stops further gameplay
+excavation. Abrupt process termination cannot save uncommitted progress. The
+free editor has no mining reward adapter or additive-edit restriction.
 
 `construction_inventory.gd` coordinates synchronous main-thread native edits.
 It debits before placement so successful building change signals observe the

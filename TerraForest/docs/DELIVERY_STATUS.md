@@ -1,3 +1,29 @@
+## Gameplay mining to pending inventory - 2026-10-04
+
+Gameplay excavation now converts native removed lattice samples into pending
+stone (201), iron ore (202) and copper ore (203), with one raw unit per removed
+sample. Terrain revision identifies the receipt. Repeated/no-op cuts do not
+award resources. The existing inventory UI claims them through native atomic
+transfer. Raw items have separate labels/catalog entries; starter building
+supplies remain unchanged. Crafting raw resources into building materials is
+not implemented yet.
+
+Gameplay edit admission rejects free terrain additions, grading and legacy
+terrain cubes, and checks conservative inbox capacity before mutation. Editor
+tools remain unchanged. Normal close drains rewards before saving; direct
+synchronous teardown during a pending gameplay edit protects the previous save.
+This fallback can lose unsaved progress rather than publish unaccounted terrain.
+Unexpected receipt failure protects the previous save and stops mining.
+
+Nineteen live worker/persistence checks pass for actual excavation, deduplication,
+claiming, fresh-worker reload, normal/direct teardown and saturated admission.
+Eleven graphical UI checks pass at fullscreen 1920x1080, including raw-resource
+labels; the screenshot was reviewed. The inbox/loadout/excavation worker suites
+add 52 passing checks. Evidence: `docs/evidence/mining_rewards` and the updated
+`docs/evidence/reward_claim_ui/inventory.png`. World parsing and both native
+builds passed. This demonstrates the reward path, not sustained mining FPS,
+precise volume economics or multiplayer authority.
+
 ## Inventory pending-material claim UI - 2026-10-04
 
 The inventory now lists pending materials with a quantity input and Claim

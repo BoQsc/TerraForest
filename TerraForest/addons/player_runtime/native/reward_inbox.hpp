@@ -20,6 +20,7 @@ class NativeRewardInbox : public RefCounted {
 protected:
     static void _bind_methods(){
         ClassDB::bind_method(D_METHOD("accept","items","receipt"),&NativeRewardInbox::accept);
+        ClassDB::bind_method(D_METHOD("can_accept","items","receipt"),&NativeRewardInbox::can_accept);
         ClassDB::bind_method(D_METHOD("claim","inventory","items","expected_revision"),&NativeRewardInbox::claim);
         ClassDB::bind_method(D_METHOD("get_pending"),&NativeRewardInbox::get_pending);
         ClassDB::bind_method(D_METHOD("get_last_receipt"),&NativeRewardInbox::get_last_receipt);
@@ -32,7 +33,9 @@ public:
     PackedInt64Array get_pending() const{
         PackedInt64Array out;for(auto e:pending)if(e.item){out.append(e.item);out.append(e.count);}return out;
     }
-    Dictionary accept(const PackedInt64Array &items,int64_t receipt){
+    Dictionary accept(const PackedInt64Array &items,int64_t receipt){return apply_receipt(items,receipt,true);}
+    Dictionary can_accept(const PackedInt64Array &items,int64_t receipt){return apply_receipt(items,receipt,false);}
+    Dictionary apply_receipt(const PackedInt64Array &items,int64_t receipt,bool commit){
         if(receipt<=last_receipt)return result(false,"stale_receipt");
         if(items.is_empty()||items.size()>64||items.size()%2)return result(false,"invalid_items");
         auto staged=pending;
@@ -45,7 +48,7 @@ public:
             if(!selected||count>LIMIT-selected->count)return result(false,"inbox_full");
             selected->item=id;selected->count+=count;
         }
-        pending=staged;last_receipt=receipt;return result(true,"");
+        if(commit){pending=staged;last_receipt=receipt;}return result(true,"");
     }
     Dictionary claim(const Ref<NativePlayerInventory> &inventory,const PackedInt64Array &items,int64_t expected){
         if(inventory.is_null()||items.is_empty()||items.size()>64||items.size()%2)return result(false,"invalid_claim");

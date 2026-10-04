@@ -14,6 +14,7 @@ var _started: bool = false
 var snapshot_restore_ok: bool = true
 var density_revision: int = 0
 var last_edit_outcome: Dictionary={}
+var edit_admission: Callable
 
 func _read_stats(data: PackedByteArray) -> void:
 	super._read_stats(data)
@@ -153,6 +154,7 @@ func edit(data: PackedByteArray, lo: Vector3, hi: Vector3, captured_us: int = 0,
 			safe_hi = safe_hi.max(Vector3(cell) + Vector3.ONE * 3.0)
 		else:
 			return false
+	if edit_admission.is_valid() and not edit_admission.call(selected): return false
 	var accepted: bool = super.edit(data, safe_lo, safe_hi, captured_us, selected, member_captures)
 	if accepted:
 		region_invalidated.emit(AABB(safe_lo, safe_hi - safe_lo))

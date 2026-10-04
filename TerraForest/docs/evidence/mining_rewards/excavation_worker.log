@@ -1,0 +1,12 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS temporary native worker starts
+PASS temporary world becomes ready
+PASS duplicate brushes admitted as one worker group
+PASS bounded edit wait completes
+PASS worker group and facade preserve exact counts without double counting
+PASS repeat brush admitted
+PASS bounded edit wait completes
+PASS unchanged async edit clears previous accounting
+[TerrainRewrite] Temporary test world: save skipped
+EXCAVATION_WORKER {"checks":8,"failures":0}
