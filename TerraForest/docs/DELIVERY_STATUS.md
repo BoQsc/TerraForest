@@ -8,11 +8,15 @@ pointer availability and 60 FPS cap/presentation settings. The screenshot was
 visually reviewed. Mining is submitted through the terrain API in this fixture;
 it is not a mouse-driven mining-input or sustained performance qualification.
 
-Open teardown defect: Godot reports one leaked `RefCounted` with reference count
-zero on exit. Verbose reproduction confirms it; allowing two deferred cleanup
-frames does not remove the warning. Its owner/cause has not been identified.
-The functional pass must not be interpreted as clean teardown or proof of
-long-session memory stability. Evidence: `docs/evidence/gameplay_scene`.
+The original run reported one leaked `RefCounted` at exit. This was isolated to
+the vehicle scene preload: startup requested a threaded load but never retrieved
+it when no vehicle was placed. The vehicle adapter now consumes each accepted
+request on use or tree exit. Early exit can wait for an unfinished resource load.
+The four-check startup/shutdown fixture and 19-check vehicle integration test
+pass without leaked-object warnings. The nine-check fullscreen gameplay test
+also passes without the leak; its Vulkan loader still reports missing Epic
+overlay JSON files on this machine. Evidence: `docs/evidence/scene_lifetime`.
+This resolves the reproduced teardown warning, not long-session memory stability.
 
 ## Save barriers in priority terrain queue - 2026-10-04
 

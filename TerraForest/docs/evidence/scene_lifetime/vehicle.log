@@ -1,0 +1,58 @@
+WorkerThreadPool: 4 threads, 1 max low-priority.
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+TextServer: Added interface "Dummy"
+TextServer: Added interface "ICU / HarfBuzz / Graphite (Built-in)"
+Using "default" pen tablet driver...
+
+TextServer: Primary interface set to: "ICU / HarfBuzz / Graphite (Built-in)".
+CORE API HASH: 2004498165
+EDITOR API HASH: 1696660745
+Loading resource: res://tests/world_vehicle.gd remapped: res://tests/world_vehicle.gd
+Completed load for: 'res://tests/world_vehicle.gd' remapped 'res://tests/world_vehicle.gd' at thread -1
+SceneTreeFTI: traversal method DEFAULT
+MbedTLS: Some X509 certificates could not be parsed (1 certificates skipped).
+Loaded system CA certificates
+Loading resource: res://demo/world.gd remapped: res://demo/world.gd
+Loading resource: res://addons/volumetric_water/water.gdshader remapped: res://addons/volumetric_water/water.gdshader
+Completed load for: 'res://addons/volumetric_water/water.gdshader' remapped 'res://addons/volumetric_water/water.gdshader' at thread -1
+Completed load for: 'res://demo/world.gd' remapped 'res://demo/world.gd' at thread -1
+PASS main-world script parses with vehicle integration
+PASS vehicle component registers with world persistence
+Loading resource: res://vehicle_demo/scenes/car.tscn remapped: res://vehicle_demo/scenes/car.tscn
+Loading resource: res://vehicle_demo/scripts/car_native.gd remapped: res://vehicle_demo/scripts/car_native.gd
+Completed load for: 'res://vehicle_demo/scripts/car_native.gd' remapped 'res://vehicle_demo/scripts/car_native.gd' at thread 0
+Loading resource: res://vehicle_demo/assets/Vehicle.glb remapped: res://vehicle_demo/assets/Vehicle.glb
+Loading resource: res://.godot/imported/Vehicle.glb-fccf4f7a5483e8c3448bacafb5477bf9.scn remapped: res://.godot/imported/Vehicle.glb-fccf4f7a5483e8c3448bacafb5477bf9.scn
+Loading resource: res://vehicle_demo/assets/Vehicle_Rebuilt_BaseColor.png remapped: res://vehicle_demo/assets/Vehicle_Rebuilt_BaseColor.png
+Loading resource: res://.godot/imported/Vehicle_Rebuilt_BaseColor.png-729bc40068856ff7af0941b59750d865.ctex remapped: res://.godot/imported/Vehicle_Rebuilt_BaseColor.png-729bc40068856ff7af0941b59750d865.ctex
+Completed load for: 'res://vehicle_demo/assets/Vehicle_Rebuilt_BaseColor.png' remapped 'res://vehicle_demo/assets/Vehicle_Rebuilt_BaseColor.png' at thread 0
+Loading resource: res://vehicle_demo/assets/Vehicle_Rebuilt_MetallicRoughness.png remapped: res://vehicle_demo/assets/Vehicle_Rebuilt_MetallicRoughness.png
+Loading resource: res://.godot/imported/Vehicle_Rebuilt_MetallicRoughness.png-cc94f791d81793dfc47eb7e4d4002013.ctex remapped: res://.godot/imported/Vehicle_Rebuilt_MetallicRoughness.png-cc94f791d81793dfc47eb7e4d4002013.ctex
+Completed load for: 'res://vehicle_demo/assets/Vehicle_Rebuilt_MetallicRoughness.png' remapped 'res://vehicle_demo/assets/Vehicle_Rebuilt_MetallicRoughness.png' at thread 0
+Loading resource: res://vehicle_demo/assets/Vehicle_Rebuilt_Normal.png remapped: res://vehicle_demo/assets/Vehicle_Rebuilt_Normal.png
+Loading resource: res://.godot/imported/Vehicle_Rebuilt_Normal.png-e98b377354fce42067b52e3021b31753.ctex remapped: res://.godot/imported/Vehicle_Rebuilt_Normal.png-e98b377354fce42067b52e3021b31753.ctex
+Completed load for: 'res://vehicle_demo/assets/Vehicle_Rebuilt_Normal.png' remapped 'res://vehicle_demo/assets/Vehicle_Rebuilt_Normal.png' at thread 0
+Completed load for: 'res://vehicle_demo/assets/Vehicle.glb' remapped 'res://vehicle_demo/assets/Vehicle.glb' at thread 0
+Completed load for: 'res://vehicle_demo/scenes/car.tscn' remapped 'res://vehicle_demo/scenes/car.tscn' at thread 0
+PASS vehicle resource becomes ready without creating a live vehicle
+PASS spawn rejects unavailable ground
+PASS spawn on clear loaded ground
+PASS entry rejected outside interaction range
+PASS entry transfers control and disables occupant collision
+PASS moving exit rejected
+PASS exit rejects unloaded building collision
+PASS clear loaded exit restores walking
+PASS camera physics rate and collision restored
+PASS world capture includes vehicle
+Visual vehicle dents repaired.
+PASS restore resets parked vehicle pose
+VEHICLE_REUSE_RESTORE_US 8912
+PASS reload reuses detailed vehicle model
+PASS reuse clears held momentum
+PASS reuse resets damage and door state
+PASS invalid restore leaves live vehicle untouched
+PASS invalid live pose rejects save instead of removing vehicle
+PASS absent section removes old vehicle
+XR: Clearing primary interface
+XR: Removed interface "Native mobile"
+XR: Removed interface "OpenXR"

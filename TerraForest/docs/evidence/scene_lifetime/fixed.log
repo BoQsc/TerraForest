@@ -1,0 +1,68 @@
+WorkerThreadPool: 4 threads, 1 max low-priority.
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+TextServer: Added interface "Dummy"
+TextServer: Added interface "ICU / HarfBuzz / Graphite (Built-in)"
+Using "default" pen tablet driver...
+
+TextServer: Primary interface set to: "ICU / HarfBuzz / Graphite (Built-in)".
+CORE API HASH: 2004498165
+EDITOR API HASH: 1696660745
+Loading resource: res://tests/scene_lifetime.gd remapped: res://tests/scene_lifetime.gd
+Completed load for: 'res://tests/scene_lifetime.gd' remapped 'res://tests/scene_lifetime.gd' at thread -1
+SceneTreeFTI: traversal method DEFAULT
+MbedTLS: Some X509 certificates could not be parsed (1 certificates skipped).
+Loaded system CA certificates
+Loading resource: res://demo/world.tscn remapped: res://demo/world.tscn
+Loading resource: res://demo/world.gd remapped: res://demo/world.gd
+Loading resource: res://addons/volumetric_water/water.gdshader remapped: res://addons/volumetric_water/water.gdshader
+Completed load for: 'res://addons/volumetric_water/water.gdshader' remapped 'res://addons/volumetric_water/water.gdshader' at thread -1
+Completed load for: 'res://demo/world.gd' remapped 'res://demo/world.gd' at thread -1
+Completed load for: 'res://demo/world.tscn' remapped 'res://demo/world.tscn' at thread -1
+Loading resource: res://addons/structures/prefabs/doorway_model.tres remapped: res://addons/structures/prefabs/doorway_model.tres
+Completed load for: 'res://addons/structures/prefabs/doorway_model.tres' remapped 'res://addons/structures/prefabs/doorway_model.tres' at thread -1
+Loading resource: res://vehicle_demo/scenes/car.tscn remapped: res://vehicle_demo/scenes/car.tscn
+Loading resource: res://addons/structures/prefabs/brick_cottage.tres remapped: res://addons/structures/prefabs/brick_cottage.tres
+Loading resource: res://vehicle_demo/scripts/car_native.gd remapped: res://vehicle_demo/scripts/car_native.gd
+Completed load for: 'res://addons/structures/prefabs/brick_cottage.tres' remapped 'res://addons/structures/prefabs/brick_cottage.tres' at thread -1
+Loading resource: res://addons/structures/prefabs/stair_flight.tres remapped: res://addons/structures/prefabs/stair_flight.tres
+Completed load for: 'res://addons/structures/prefabs/stair_flight.tres' remapped 'res://addons/structures/prefabs/stair_flight.tres' at thread -1
+Loading resource: res://addons/structures/prefabs/doorway_wall.tres remapped: res://addons/structures/prefabs/doorway_wall.tres
+Completed load for: 'res://addons/structures/prefabs/doorway_wall.tres' remapped 'res://addons/structures/prefabs/doorway_wall.tres' at thread -1
+Loading resource: res://addons/structures/prefabs/tower_floor.tres remapped: res://addons/structures/prefabs/tower_floor.tres
+Completed load for: 'res://addons/structures/prefabs/tower_floor.tres' remapped 'res://addons/structures/prefabs/tower_floor.tres' at thread -1
+Completed load for: 'res://vehicle_demo/scripts/car_native.gd' remapped 'res://vehicle_demo/scripts/car_native.gd' at thread 0
+Loading resource: res://vehicle_demo/assets/Vehicle.glb remapped: res://vehicle_demo/assets/Vehicle.glb
+Loading resource: res://.godot/imported/Vehicle.glb-fccf4f7a5483e8c3448bacafb5477bf9.scn remapped: res://.godot/imported/Vehicle.glb-fccf4f7a5483e8c3448bacafb5477bf9.scn
+Loading resource: res://vehicle_demo/assets/Vehicle_Rebuilt_BaseColor.png remapped: res://vehicle_demo/assets/Vehicle_Rebuilt_BaseColor.png
+Loading resource: res://.godot/imported/Vehicle_Rebuilt_BaseColor.png-729bc40068856ff7af0941b59750d865.ctex remapped: res://.godot/imported/Vehicle_Rebuilt_BaseColor.png-729bc40068856ff7af0941b59750d865.ctex
+Completed load for: 'res://vehicle_demo/assets/Vehicle_Rebuilt_BaseColor.png' remapped 'res://vehicle_demo/assets/Vehicle_Rebuilt_BaseColor.png' at thread 0
+Loading resource: res://vehicle_demo/assets/Vehicle_Rebuilt_MetallicRoughness.png remapped: res://vehicle_demo/assets/Vehicle_Rebuilt_MetallicRoughness.png
+Loading resource: res://.godot/imported/Vehicle_Rebuilt_MetallicRoughness.png-cc94f791d81793dfc47eb7e4d4002013.ctex remapped: res://.godot/imported/Vehicle_Rebuilt_MetallicRoughness.png-cc94f791d81793dfc47eb7e4d4002013.ctex
+Completed load for: 'res://vehicle_demo/assets/Vehicle_Rebuilt_MetallicRoughness.png' remapped 'res://vehicle_demo/assets/Vehicle_Rebuilt_MetallicRoughness.png' at thread 0
+Loading resource: res://vehicle_demo/assets/Vehicle_Rebuilt_Normal.png remapped: res://vehicle_demo/assets/Vehicle_Rebuilt_Normal.png
+Loading resource: res://.godot/imported/Vehicle_Rebuilt_Normal.png-e98b377354fce42067b52e3021b31753.ctex remapped: res://.godot/imported/Vehicle_Rebuilt_Normal.png-e98b377354fce42067b52e3021b31753.ctex
+Completed load for: 'res://vehicle_demo/assets/Vehicle_Rebuilt_Normal.png' remapped 'res://vehicle_demo/assets/Vehicle_Rebuilt_Normal.png' at thread 0
+Completed load for: 'res://vehicle_demo/assets/Vehicle.glb' remapped 'res://vehicle_demo/assets/Vehicle.glb' at thread 0
+Completed load for: 'res://vehicle_demo/scenes/car.tscn' remapped 'res://vehicle_demo/scenes/car.tscn' at thread 0
+Loading resource: res://addons/vegetation/bark.gdshader remapped: res://addons/vegetation/bark.gdshader
+Loading resource: res://addons/vegetation/fade.gdshaderinc remapped: res://addons/vegetation/fade.gdshaderinc
+Completed load for: 'res://addons/vegetation/fade.gdshaderinc' remapped 'res://addons/vegetation/fade.gdshaderinc' at thread -1
+Completed load for: 'res://addons/vegetation/bark.gdshader' remapped 'res://addons/vegetation/bark.gdshader' at thread -1
+Loading resource: res://addons/vegetation/surface.gdshader remapped: res://addons/vegetation/surface.gdshader
+Completed load for: 'res://addons/vegetation/surface.gdshader' remapped 'res://addons/vegetation/surface.gdshader' at thread -1
+Loading resource: res://addons/vegetation/proxy.gdshader remapped: res://addons/vegetation/proxy.gdshader
+Completed load for: 'res://addons/vegetation/proxy.gdshader' remapped 'res://addons/vegetation/proxy.gdshader' at thread -1
+Loading resource: res://addons/vegetation/surface6.gdshader remapped: res://addons/vegetation/surface6.gdshader
+Completed load for: 'res://addons/vegetation/surface6.gdshader' remapped 'res://addons/vegetation/surface6.gdshader' at thread -1
+[TerrainRewrite] New world
+[TerrainRewrite] New world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+PASS main scene finishes loading
+PASS unused vehicle scene has an outstanding preload
+[TerrainRewrite] Temporary test world: save skipped
+PASS terrain drains on shutdown
+PASS unused vehicle preload consumed on exit
+SCENE_LIFETIME {"checks":4,"failures":0}
+XR: Clearing primary interface
+XR: Removed interface "Native mobile"
+XR: Removed interface "OpenXR"

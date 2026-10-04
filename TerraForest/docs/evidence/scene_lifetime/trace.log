@@ -1,0 +1,114 @@
+WorkerThreadPool: 4 threads, 1 max low-priority.
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+TextServer: Added interface "Dummy"
+TextServer: Added interface "ICU / HarfBuzz / Graphite (Built-in)"
+Using "default" pen tablet driver...
+
+TextServer: Primary interface set to: "ICU / HarfBuzz / Graphite (Built-in)".
+CORE API HASH: 2004498165
+EDITOR API HASH: 1696660745
+Loading resource: res://tests/scene_lifetime.gd remapped: res://tests/scene_lifetime.gd
+Completed load for: 'res://tests/scene_lifetime.gd' remapped 'res://tests/scene_lifetime.gd' at thread -1
+SceneTreeFTI: traversal method DEFAULT
+MbedTLS: Some X509 certificates could not be parsed (1 certificates skipped).
+Loaded system CA certificates
+Loading resource: res://demo/world.tscn remapped: res://demo/world.tscn
+Loading resource: res://demo/world.gd remapped: res://demo/world.gd
+Loading resource: res://addons/volumetric_water/water.gdshader remapped: res://addons/volumetric_water/water.gdshader
+Completed load for: 'res://addons/volumetric_water/water.gdshader' remapped 'res://addons/volumetric_water/water.gdshader' at thread -1
+Completed load for: 'res://demo/world.gd' remapped 'res://demo/world.gd' at thread -1
+Completed load for: 'res://demo/world.tscn' remapped 'res://demo/world.tscn' at thread -1
+Loading resource: res://addons/structures/prefabs/doorway_model.tres remapped: res://addons/structures/prefabs/doorway_model.tres
+Completed load for: 'res://addons/structures/prefabs/doorway_model.tres' remapped 'res://addons/structures/prefabs/doorway_model.tres' at thread -1
+Loading resource: res://vehicle_demo/scenes/car.tscn remapped: res://vehicle_demo/scenes/car.tscn
+Loading resource: res://addons/structures/prefabs/brick_cottage.tres remapped: res://addons/structures/prefabs/brick_cottage.tres
+Loading resource: res://vehicle_demo/scripts/car_native.gd remapped: res://vehicle_demo/scripts/car_native.gd
+Completed load for: 'res://addons/structures/prefabs/brick_cottage.tres' remapped 'res://addons/structures/prefabs/brick_cottage.tres' at thread -1
+Loading resource: res://addons/structures/prefabs/stair_flight.tres remapped: res://addons/structures/prefabs/stair_flight.tres
+Completed load for: 'res://addons/structures/prefabs/stair_flight.tres' remapped 'res://addons/structures/prefabs/stair_flight.tres' at thread -1
+Loading resource: res://addons/structures/prefabs/doorway_wall.tres remapped: res://addons/structures/prefabs/doorway_wall.tres
+Completed load for: 'res://addons/structures/prefabs/doorway_wall.tres' remapped 'res://addons/structures/prefabs/doorway_wall.tres' at thread -1
+Loading resource: res://addons/structures/prefabs/tower_floor.tres remapped: res://addons/structures/prefabs/tower_floor.tres
+Completed load for: 'res://addons/structures/prefabs/tower_floor.tres' remapped 'res://addons/structures/prefabs/tower_floor.tres' at thread -1
+Completed load for: 'res://vehicle_demo/scripts/car_native.gd' remapped 'res://vehicle_demo/scripts/car_native.gd' at thread 0
+Loading resource: res://vehicle_demo/assets/Vehicle.glb remapped: res://vehicle_demo/assets/Vehicle.glb
+Loading resource: res://.godot/imported/Vehicle.glb-fccf4f7a5483e8c3448bacafb5477bf9.scn remapped: res://.godot/imported/Vehicle.glb-fccf4f7a5483e8c3448bacafb5477bf9.scn
+Loading resource: res://vehicle_demo/assets/Vehicle_Rebuilt_BaseColor.png remapped: res://vehicle_demo/assets/Vehicle_Rebuilt_BaseColor.png
+Loading resource: res://.godot/imported/Vehicle_Rebuilt_BaseColor.png-729bc40068856ff7af0941b59750d865.ctex remapped: res://.godot/imported/Vehicle_Rebuilt_BaseColor.png-729bc40068856ff7af0941b59750d865.ctex
+Completed load for: 'res://vehicle_demo/assets/Vehicle_Rebuilt_BaseColor.png' remapped 'res://vehicle_demo/assets/Vehicle_Rebuilt_BaseColor.png' at thread 0
+Loading resource: res://vehicle_demo/assets/Vehicle_Rebuilt_MetallicRoughness.png remapped: res://vehicle_demo/assets/Vehicle_Rebuilt_MetallicRoughness.png
+Loading resource: res://.godot/imported/Vehicle_Rebuilt_MetallicRoughness.png-cc94f791d81793dfc47eb7e4d4002013.ctex remapped: res://.godot/imported/Vehicle_Rebuilt_MetallicRoughness.png-cc94f791d81793dfc47eb7e4d4002013.ctex
+Completed load for: 'res://vehicle_demo/assets/Vehicle_Rebuilt_MetallicRoughness.png' remapped 'res://vehicle_demo/assets/Vehicle_Rebuilt_MetallicRoughness.png' at thread 0
+Loading resource: res://vehicle_demo/assets/Vehicle_Rebuilt_Normal.png remapped: res://vehicle_demo/assets/Vehicle_Rebuilt_Normal.png
+Loading resource: res://.godot/imported/Vehicle_Rebuilt_Normal.png-e98b377354fce42067b52e3021b31753.ctex remapped: res://.godot/imported/Vehicle_Rebuilt_Normal.png-e98b377354fce42067b52e3021b31753.ctex
+Completed load for: 'res://vehicle_demo/assets/Vehicle_Rebuilt_Normal.png' remapped 'res://vehicle_demo/assets/Vehicle_Rebuilt_Normal.png' at thread 0
+Completed load for: 'res://vehicle_demo/assets/Vehicle.glb' remapped 'res://vehicle_demo/assets/Vehicle.glb' at thread 0
+Completed load for: 'res://vehicle_demo/scenes/car.tscn' remapped 'res://vehicle_demo/scenes/car.tscn' at thread 0
+Loading resource: res://addons/vegetation/bark.gdshader remapped: res://addons/vegetation/bark.gdshader
+Loading resource: res://addons/vegetation/fade.gdshaderinc remapped: res://addons/vegetation/fade.gdshaderinc
+Completed load for: 'res://addons/vegetation/fade.gdshaderinc' remapped 'res://addons/vegetation/fade.gdshaderinc' at thread -1
+Completed load for: 'res://addons/vegetation/bark.gdshader' remapped 'res://addons/vegetation/bark.gdshader' at thread -1
+Loading resource: res://addons/vegetation/surface.gdshader remapped: res://addons/vegetation/surface.gdshader
+Completed load for: 'res://addons/vegetation/surface.gdshader' remapped 'res://addons/vegetation/surface.gdshader' at thread -1
+Loading resource: res://addons/vegetation/proxy.gdshader remapped: res://addons/vegetation/proxy.gdshader
+Completed load for: 'res://addons/vegetation/proxy.gdshader' remapped 'res://addons/vegetation/proxy.gdshader' at thread -1
+Loading resource: res://addons/vegetation/surface6.gdshader remapped: res://addons/vegetation/surface6.gdshader
+Completed load for: 'res://addons/vegetation/surface6.gdshader' remapped 'res://addons/vegetation/surface6.gdshader' at thread -1
+[TerrainRewrite] New world
+[TerrainRewrite] New world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+LIFETIME_REF -9223371994123205080 RefCounted game.persistence res://addons/world_runtime/world_persistence.gd
+LIFETIME_REF -9223371994542635530 RefCounted game.persistence._terrain.backend res://addons/volumetric_terrain/terrain_backend.gd
+LIFETIME_REF -9223371994525858309 Thread game.persistence._terrain.backend.thread native
+LIFETIME_REF -9223371994509081091 Mutex game.persistence._terrain.backend.mutex native
+LIFETIME_REF -9223371994492303819 Semaphore game.persistence._terrain.backend.semaphore native
+LIFETIME_REF -9223371988687386918 TerrainCore game.persistence._terrain.backend.native native
+LIFETIME_REF -9223371988670609701 NativeTerrainCollision game.persistence._terrain.backend.collision_recipes native
+LIFETIME_REF -9223371994475526658 RefCounted game.persistence._terrain.backend.disk_cache res://addons/volumetric_terrain/derived_cache.gd
+LIFETIME_REF -9223371991724063087 NativeRegionWorldArchive game.persistence._terrain.backend.snapshot_codec native
+LIFETIME_REF -9223371988704164136 NativeTerrainPlanner game.persistence._terrain.planner native
+LIFETIME_REF -9223371989543024949 ShaderMaterial game.persistence._terrain.material native
+LIFETIME_REF -9223371993452116391 ImmediateMesh game.persistence._terrain/@MeshInstance3D@342.outline native
+LIFETIME_REF -9223371993435339174 StandardMaterial3D game.persistence._terrain/@MeshInstance3D@342.appearance native
+LIFETIME_REF -9223371993133349268 ImmediateMesh game.persistence._terrain/@MeshInstance3D@343.outline native
+LIFETIME_REF -9223371993116572051 StandardMaterial3D game.persistence._terrain/@MeshInstance3D@343.appearance native
+LIFETIME_REF -9223371992009275766 NativePlayerPose game.player_pose native
+LIFETIME_REF -9223371991958944112 NativeVehicleStorage game.world_vehicle.storage native
+LIFETIME_REF -9223371993871546816 NativeVegetationSelection game.vegetation.renderer.native_selection native
+LIFETIME_REF -9223371972010833373 RefCounted game.vegetation.assets res://addons/vegetation/assets.gd
+LIFETIME_REF -9223371971994056156 RefCounted game.vegetation.assets.source res://addons/vegetation/source.gd
+LIFETIME_REF -9223371952314381391 Texture2DArray game.vegetation.assets.color_views native
+LIFETIME_REF -9223371946324916671 Texture2DArray game.vegetation.assets.normal_views native
+LIFETIME_REF -9223371940503221328 ImageTexture game.vegetation.assets.outline native
+LIFETIME_REF -9223371940603884621 Texture2DArray game.vegetation.assets.depth_views native
+LIFETIME_REF -9223371992294488442 NativeStructuresSnapshot game.ecosystem.structures._codec native
+LIFETIME_REF -9223371992277711227 NativeStructureQueries game.ecosystem.structures._queries native
+LIFETIME_REF -9223371993787660731 ShaderMaterial game.ecosystem.water._material native
+LIFETIME_REF -9223371991908612461 NativeLakeCatalog game.ecosystem.water._catalog native
+LIFETIME_REF -9223371992042830201 NativePlayerInventory game.player_hud.inventory native
+LIFETIME_REF -9223371992026052981 NativeRewardInbox game.player_hud.reward_inbox native
+LIFETIME_REF -9223371993720551863 RefCounted game.construction_inventory res://addons/player_runtime/construction_inventory.gd
+LIFETIME_REF -9223371993703774646 RefCounted game.mining_rewards res://addons/player_runtime/mining_rewards.gd
+LIFETIME_REF -9223371993586334127 StandardMaterial3D game.model_tool.preview_material native
+LIFETIME_REF -9223371988653832484 NativeStaticHistory game.model_tool.history native
+LIFETIME_REF -9223371991925389678 NativeRoadAnchors game.road_palette.anchor_storage native
+LIFETIME_REF -9223371993418561957 RefCounted game.prefab_library res://addons/structures/prefab_library.gd
+LIFETIME_REF -9223371993401784740 Thread game.prefab_library._frontage_thread native
+LIFETIME_REF -9223371993317898655 StandardMaterial3D game.capture_selection.bounds_material native
+LIFETIME_REF -9223371993267567004 StandardMaterial3D game._shape_preview_material native
+LIFETIME_REF -9223371993250789787 StandardMaterial3D game._prefab_preview_material native
+LIFETIME_REF -9223371993200458136 RefCounted game.foundation_check res://addons/structures/foundation_check.gd
+LIFETIME_REF -9223371993183680919 RefCounted game.site_survey res://addons/structures/site_survey.gd
+LIFETIME_REF -9223371993166903702 RefCounted game.site_preparation res://addons/structures/site_preparation.gd
+LIFETIME_REF -9223371994257422824 RefCounted game.controls res://demo/controller_state.gd
+LIFETIME_REF -9223371990365108573 NativePlayerMovement game.movement native
+LIFETIME_REF -9223371994223868388 RefCounted game.stroke_buffer res://demo/brush_stroke.gd
+[TerrainRewrite] Temporary test world: save skipped
+SCENE_LIFETIME freed
+XR: Clearing primary interface
+XR: Removed interface "Native mobile"
+XR: Removed interface "OpenXR"
+Leaked instance: RefCounted:9223372081717053071 - Reference count: 0
+Hint: Leaked instances typically happen when nodes are removed from the scene tree (with `remove_child()`) but not freed (with `free()` or `queue_free()`).
+WARNING: 1 ObjectDB instance was leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)

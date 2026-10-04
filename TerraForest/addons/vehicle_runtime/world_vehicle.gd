@@ -22,8 +22,12 @@ func scene_ready() -> bool:
 	if _vehicle_scene!=null: return true
 	if not _scene_requested: return false
 	if ResourceLoader.load_threaded_get_status(VEHICLE_SCENE_PATH)!=ResourceLoader.THREAD_LOAD_LOADED: return false
-	_vehicle_scene=ResourceLoader.load_threaded_get(VEHICLE_SCENE_PATH) as PackedScene
+	_take_requested_scene()
 	return _vehicle_scene!=null
+func _take_requested_scene() -> void:
+	if not _scene_requested: return
+	_vehicle_scene=ResourceLoader.load_threaded_get(VEHICLE_SCENE_PATH) as PackedScene
+	_scene_requested=false
 func prepare(world: Node,persistence: RefCounted) -> bool:
 	request_scene()
 	GDExtensionManager.load_extension("res://addons/vehicle_runtime/vehicle_runtime.gdextension")
@@ -52,7 +56,7 @@ func _install_vehicle(world: Node,pose: Transform3D) -> bool:
 	# Snapshot restoration is synchronous by contract; placement checks readiness
 	# first. Restore may wait for the in-flight request during world loading.
 	if _vehicle_scene==null:
-		if _scene_requested: _vehicle_scene=ResourceLoader.load_threaded_get(VEHICLE_SCENE_PATH) as PackedScene
+		if _scene_requested: _take_requested_scene()
 		else: _vehicle_scene=load(VEHICLE_SCENE_PATH) as PackedScene
 	if _vehicle_scene==null: return false
 	var begin:=Time.get_ticks_usec() if profile_install else 0
@@ -139,6 +143,9 @@ func exit_vehicle(world: Node) -> String:
 	world.terrain.focus=feet;world.terrain.travel_velocity=Vector3.ZERO
 	return "On foot · E nearby to enter vehicle"
 func _exit_tree() -> void:
+	# Every accepted threaded request needs a matching get, even if the player
+	# never places a vehicle. On early exit this can wait for the pending load.
+	_take_requested_scene()
 	if driving: Engine.physics_ticks_per_second=_physics_ticks
 func update(world: Node,delta: float) -> void:
 	if not driving or not is_instance_valid(car): return
