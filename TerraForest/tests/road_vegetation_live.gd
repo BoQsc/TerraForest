@@ -7,8 +7,9 @@ func check(ok: bool,label: String) -> void:
 func _initialize() -> void: call_deferred("run")
 func run() -> void:
 	Engine.max_fps=60
+	var streaming: bool="--streaming-fixture" in OS.get_cmdline_user_args()
 	var terrain=load("res://addons/volumetric_terrain/terrain_world.gd").new()
-	terrain.diagnostics_pause_streaming=true;terrain.backend.disk_cache.enabled=false
+	terrain.diagnostics_pause_streaming=not streaming;terrain.backend.disk_cache.enabled=false
 	terrain.backend.world_generator=2;terrain.focus=Vector3(800,60,1310);root.add_child(terrain)
 	var vegetation=load("res://addons/vegetation/vegetation_world.gd").new();root.add_child(vegetation)
 	var camera:=Camera3D.new();root.add_child(camera);camera.position=Vector3(800,60,1310)
@@ -31,6 +32,9 @@ func run() -> void:
 		if target<0 and Vector2(transform.origin.x-800,transform.origin.z-1310).length()<25: target=id
 	if target<0: target=before.keys()[0]
 	var center: Vector3=before[target].origin+Vector3(0,.2,0)
+	var builds_before: int=terrain.worker_builds
+	var tiles_before: int=terrain.tiles.size()
+	if streaming: check(builds_before>0 and tiles_before>0,"streaming fixture has built and retained real terrain tiles")
 	var submitted:=Time.get_ticks_usec()
 	check(terrain.construct_road_bed(center-Vector3(2,0,0),center+Vector3(2,0,0),2,8,12),"paving at existing root accepted by live worker")
 	deadline=Time.get_ticks_msec()+10000
@@ -50,7 +54,7 @@ func run() -> void:
 		intact=intact and vegetation.renderer.roots.has(id) and vegetation.renderer.roots[id].t==before[id] and vegetation.trunk_collision.get_ids().has(id)
 	check(neighbors>0 and intact,"roots outside small road footprint retain transforms and trunk records")
 	check(ecosystem.rejected_batches==0 and ecosystem._resample.is_empty(),"live resampling drains without rejected batches")
-	print("ROAD_VEGETATION_LIVE ",{"initial_roots":before.size(),"remaining_roots":vegetation.renderer.roots.size(),"verified_neighbors":neighbors,"edit_ms":(published-submitted)/1000.0,"after_publication_ms":(reconciled-published)/1000.0,"stale_results":ecosystem.stale_results,"scope":"Nine owners, real worker and signals, terrain mesh streaming paused; record membership, not visible fade or collider proxy contact."})
+	print("ROAD_VEGETATION_LIVE ",{"initial_roots":before.size(),"remaining_roots":vegetation.renderer.roots.size(),"verified_neighbors":neighbors,"edit_ms":(published-submitted)/1000.0,"after_publication_ms":(reconciled-published)/1000.0,"stale_results":ecosystem.stale_results,"streaming_enabled":streaming,"worker_queue":terrain.backend.queued(),"builds_before":builds_before,"builds_after":terrain.worker_builds,"tiles_before":tiles_before,"tiles_after":terrain.tiles.size(),"scope":"Nine owners, real worker and signals; record membership, not visible fade or collider proxy contact. Streaming mode does not establish sustained FPS."})
 	check(terrain.construct_graded_bed(center-Vector3(2,0,0),center+Vector3(2,0,0),2,8,12,1),"stone repaint accepted by live worker")
 	deadline=Time.get_ticks_msec()+10000
 	while terrain.pending_edit and Time.get_ticks_msec()<deadline: await process_frame

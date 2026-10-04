@@ -1,3 +1,9 @@
+## Road vegetation with terrain streaming enabled - 2026-10-04
+
+road_vegetation_live.gd now accepts --streaming-fixture, enabling ordinary terrain mesh scheduling and checking that actual tiles were built and retained before paving. The report includes worker build and tile counts rather than treating an enabled flag alone as evidence of work. In the final thirteen-check headless run, builds increased from 30 to 36 and retained tiles from 30 to 33 across the edit/resample interval. Exactly one of 324 roots was removed; 323 neighbors retained transforms and trunk records. Repainting as stone restored all original memberships and transforms.
+
+Observed edit completion was 32.853 ms, followed by 33.355 ms until resampling drained, with no stale results or rejected batches. Disk cache was disabled. This is a short stationary nine-owner streaming fixture, not worst-case queue contention, travel, visible rendering, collider contact or sustained-60-FPS evidence. Evidence: docs/evidence/road_vegetation_streaming.
+
 ## Live road/vegetation resampling regression - 2026-10-04
 
 Added a short integration fixture using TerrainWorld, its real worker/signals and the actual ecosystem scheduler with nine resident owners. It starts with 324 native-supported roots, selects an existing root, paves at its support height, waits for edit publication and lets the normal async surface batch retire it. Exactly one root and its trunk record disappear; all 323 other roots retain their transforms and trunk records. No batches were rejected or stale. In the final run edit completion was observed after 32.955 ms and resampling completed 16.669 ms later. These are one-run wall timings observed at process-frame boundaries.
