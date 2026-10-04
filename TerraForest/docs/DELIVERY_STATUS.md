@@ -1,3 +1,11 @@
+## Bounded nearest entity selection - 2026-10-04
+
+Added NativeEntityStore.query_sphere_nearest and switched the native renderer to it. Unlike the original gameplay query, it does not stop when output capacity fills: it scans up to the explicit candidate budget, retaining at most result_limit candidates in a native max heap, then sorts by distance with persistent identity as the tie-breaker. Existing cell-footprint, candidate and result bounds remain. selection_complete distinguishes a proven nearest subset after a full scan from a partial scan; complete still reports whether all matching entities were returned. Original query_sphere behavior remains unchanged for gameplay callers.
+
+Nine native checks passed, including an adversarial cell where the nearest entity is last in traversal, a distance oracle over 5101 entities, exact candidate-budget behavior, invalid regions, ties and deletion. All 21 graphical renderer checks passed at 1920x1080 Forward+, retaining unchanged-buffer reuse. Both native binaries were rebuilt. The new selection can examine more candidates than the old early-result-limit exit, bounded by the same explicit budget. No throughput or sustained-frame-rate improvement is claimed. Under candidate-budget exhaustion it is nearest only among visited candidates; spatial traversal order is unchanged.
+
+Evidence: docs/evidence/entity_nearest.
+
 ## Reuse unchanged entity GPU transforms - 2026-10-04
 
 NativeEntityRenderer now compares selected positions against its retained transform rows. It acquires writable array storage and submits a MultiMesh buffer only when a visible row actually changes. Query budgets and generation-checked position lookup remain unchanged. Visibility still updates after empty/invalid queries, removals and selection-size changes; first-use rows initialize their identity basis even at the origin. No second retained buffer or per-entity node is added. Changed selections still upload the full fixed-capacity buffer; this is not sparse GPU upload or query-result caching.

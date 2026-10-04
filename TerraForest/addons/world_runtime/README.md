@@ -40,6 +40,16 @@ do not change the existing unrestricted finite-position storage contract.
 overhead. Use `spatial_cells` to observe occupied cell count. The store is owned
 by one caller thread; concurrent mutation/query access is unsupported.
 
+`query_sphere_nearest` accepts the same arguments and limits. It scans up to the
+candidate budget and retains at most result_limit candidates in a native heap,
+then returns distance order, breaking ties by persistent identity. It does not
+stop scanning when the result limit fills. `selection_complete=true` means the
+entire query footprint was searched and the returned nearest subset is proven;
+`complete=false` can still indicate additional entities omitted by result_limit.
+If candidate_budget is exhausted, selection_complete is false: results are only
+nearest among visited candidates. Cells retain the ordinary traversal order.
+Temporary heap storage is bounded by result_limit; this is not paging or LOD.
+
 `multimesh_transforms()` produces one 12-float-per-instance buffer in dense live order. It does not submit GPU work. Use that output with a 3D MultiMesh configured without color/custom data. Dense order can change after removals; it is not a persistent entity ID. `statistics()` reports capacity, live count, ticks and reserved pool bytes.
 
 Entity storage uses `capture_storage_snapshot()`, `validate_snapshot(data)` and
@@ -86,8 +96,9 @@ Empty/invalid queries hide previous instances without
 uploading a buffer. It does not automatically simulate or refresh.
 
 Refresh returns the spatial query fields plus `rendered` and `upload_bytes`.
-Truncation is explicit: this is not nearest-first selection, LOD, occlusion or
-fair admission across overcrowded cells. One renderer shares one mesh and has
+The renderer uses query_sphere_nearest. Truncation is explicit; inspect
+selection_complete before assuming globally nearest selection. This is not LOD,
+occlusion or fair admission across overcrowded cells. One renderer shares one mesh and has
 aggregate MultiMesh culling; partitioning by archetype/region remains caller work.
 Do not modify its owned MultiMesh; detected layout/replacement changes fail closed
 and require reconfiguration. Use the supplied mesh/material for appearance.

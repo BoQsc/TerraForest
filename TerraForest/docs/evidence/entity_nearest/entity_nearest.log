@@ -1,0 +1,11 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS near entity wins despite being last in cell traversal
+PASS budget exhaustion never claims globally nearest selection
+PASS nearest 128 match independent full-population distance oracle
+PASS candidate and cell work remain bounded
+PASS empty region completes
+PASS nonfinite center rejected
+PASS oversized cell footprint rejected
+PASS equal-distance ties favor persistent identity
+PASS deleted nearest handle is not retained

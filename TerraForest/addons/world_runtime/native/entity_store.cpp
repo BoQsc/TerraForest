@@ -3,6 +3,8 @@
 #include <cmath>
 #include <limits>
 #include <new>
+#include <algorithm>
+#include <vector>
 
 using namespace godot;
 namespace terraforest {
@@ -23,6 +25,7 @@ void NativeEntityStore::_bind_methods() {
     ClassDB::bind_method(D_METHOD("validate_snapshot", "data"), &NativeEntityStore::validate_snapshot);
     ClassDB::bind_method(D_METHOD("restore_storage_snapshot", "data"), &NativeEntityStore::restore_storage_snapshot);
     ClassDB::bind_method(D_METHOD("query_sphere","center","radius","result_limit","candidate_budget"),&NativeEntityStore::query_sphere,DEFVAL(256),DEFVAL(4096));
+    ClassDB::bind_method(D_METHOD("query_sphere_nearest","center","radius","result_limit","candidate_budget"),&NativeEntityStore::query_sphere_nearest,DEFVAL(256),DEFVAL(4096));
 }
 
 NativeEntityStore::Cell NativeEntityStore::cell_for(const Vector3 &p) {
@@ -179,6 +182,36 @@ Dictionary NativeEntityStore::statistics() const {
     result["native"] = true; result["collision_simulation"] = false;
     result["spatial_cells"]=int64_t(cell_heads_.size());result["spatial_cell_size"]=32;
     return result;
+}
+Dictionary NativeEntityStore::query_sphere_nearest(const Vector3 &center,double radius,int result_limit,int candidate_budget) const {
+    Dictionary out;PackedInt64Array ids;out["ok"]=false;out["complete"]=false;out["selection_complete"]=false;out["ids"]=ids;out["visited"]=0;out["cells_visited"]=0;
+    if(!center.is_finite()||std::abs(center.x)>10000000||std::abs(center.y)>10000000||std::abs(center.z)>10000000||
+       !std::isfinite(radius)||radius<0||radius>1024||result_limit<1||result_limit>4096||candidate_budget<1||candidate_budget>16384){out["reason"]="invalid_query";return out;}
+    const Cell low=cell_for(center-Vector3(radius,radius,radius)),high=cell_for(center+Vector3(radius,radius,radius));
+    int64_t nx=int64_t(high.x-low.x)+1,ny=int64_t(high.y-low.y)+1,nz=int64_t(high.z-low.z)+1;
+    if(nx*ny*nz>4096){out["reason"]="region_too_large";return out;}
+    struct Candidate {double distance;uint64_t identity;int64_t handle;};
+    auto nearer=[](const Candidate &a,const Candidate &b){return a.distance<b.distance||(a.distance==b.distance&&a.identity<b.identity);};
+    std::vector<Candidate> heap;heap.reserve(result_limit);
+    int visited=0,cells=0,matched=0;bool scanned=true;
+    for(int64_t z=0;z<nz&&scanned;++z)for(int64_t y=0;y<ny&&scanned;++y)for(int64_t x=0;x<nx&&scanned;++x){
+        ++cells;auto entry=cell_heads_.find({real_t(low.x+x),real_t(low.y+y),real_t(low.z+z)});
+        if(entry==cell_heads_.end())continue;
+        for(uint32_t index=entry->second;index!=UINT32_MAX;index=slots_[index].next){
+            if(visited==candidate_budget){scanned=false;break;}++visited;
+            const Slot &slot=slots_[index];const double dx=double(slot.position.x)-center.x,dy=double(slot.position.y)-center.y,dz=double(slot.position.z)-center.z;
+            const double distance=dx*dx+dy*dy+dz*dz;if(distance>radius*radius)continue;++matched;
+            Candidate candidate{distance,slot.persistent_id,int64_t((uint64_t(slot.generation)<<32)|index)};
+            if(heap.size()<size_t(result_limit)){heap.push_back(candidate);std::push_heap(heap.begin(),heap.end(),nearer);}
+            else if(nearer(candidate,heap.front())){std::pop_heap(heap.begin(),heap.end(),nearer);heap.back()=candidate;std::push_heap(heap.begin(),heap.end(),nearer);}
+        }
+    }
+    std::sort(heap.begin(),heap.end(),nearer);ids.resize(heap.size());
+    for(size_t i=0;i<heap.size();++i)ids.set(i,heap[i].handle);
+    out["ok"]=true;out["complete"]=scanned&&matched<=result_limit;out["selection_complete"]=scanned;
+    out["ids"]=ids;out["visited"]=visited;out["cells_visited"]=cells;out["matched"]=matched;
+    if(!scanned)out["reason"]="candidate_budget";else if(matched>result_limit)out["reason"]="result_limit";
+    return out;
 }
 Dictionary NativeEntityStore::query_sphere(const Vector3 &center,double radius,int result_limit,int candidate_budget) const {
     Dictionary out;PackedInt64Array ids;out["ok"]=false;out["complete"]=false;out["ids"]=ids;out["visited"]=0;out["cells_visited"]=0;

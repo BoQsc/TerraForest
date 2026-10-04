@@ -33,7 +33,7 @@ Dictionary NativeEntityRenderer::refresh(const Vector3 &center, double radius, i
         set_multimesh(Ref<MultiMesh>());
         result["reason"] = "renderer_resource_modified"; return result;
     }
-    result = store_->query_sphere(center, radius, capacity_, candidate_budget);
+    result = store_->query_sphere_nearest(center, radius, capacity_, candidate_budget);
     result["rendered"] = 0; result["upload_bytes"] = 0;
     if (!bool(result["ok"])) { instances_->set_visible_instance_count(0); return result; }
     const PackedInt64Array ids = result["ids"];

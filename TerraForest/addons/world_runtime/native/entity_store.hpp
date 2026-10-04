@@ -68,5 +68,6 @@ public:
     bool validate_snapshot(const godot::PackedByteArray &data) const;
     bool restore_storage_snapshot(const godot::PackedByteArray &data);
     godot::Dictionary query_sphere(const godot::Vector3 &center,double radius,int result_limit=256,int candidate_budget=4096) const;
+    godot::Dictionary query_sphere_nearest(const godot::Vector3 &center,double radius,int result_limit=256,int candidate_budget=4096) const;
 };
 }
