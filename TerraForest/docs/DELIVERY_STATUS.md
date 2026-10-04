@@ -1,3 +1,11 @@
+## Vehicle startup logging stall - 2026-10-04
+
+Opt-in nested setup timing narrowed the previous attachment cost. Native helper initialization took 29 us; body construction 497 us, four wheel bindings 26 us total and door binding 7 us, while the full base setup interval was 37002 us. The four unconditional startup print calls were outside those measured visual operations. Vehicle startup messages are now controlled by the exported startup_logging option, default false. Errors remain enabled.
+
+The otherwise equivalent 1080p Forward+ world test then measured placement 1672 us, attachment/setup 852 us, native initialization 34 us and base visual setup 628 us. First post-draw completion was 5.881 ms after placement began. Placement, driving, seated saving and exit passed; all 19 headless interaction checks also passed and the screenshot was inspected. This identifies synchronous startup logging as the large setup stall in this redirected-output test configuration. It does not establish identical console behavior on every launch path or sustained world frame times; one later interval was 18.504 ms. The previous assumption that rendering construction itself consumed 23 ms is superseded by these finer measurements.
+
+Evidence: docs/evidence/vehicle_quiet_setup. Profiling remains opt-in with no per-frame sampling.
+
 ## Vehicle installation stage measurements - 2026-10-04
 
 Added opt-in install timing for scene instantiation, attachment/_ready and world binding. It is disabled by default and adds no per-frame instrumentation. The graphical world fixture enables it. Before the change, placement measured 29.200 ms: allocation 0.655 ms, attachment/setup 22.079 ms and binding 6.338 ms. This narrows the remaining hitch to setup plus a synchronous adapter script load.

@@ -269,6 +269,7 @@ var _accessory_motion_initialized: bool = false
 var _accessory_toggle_was_down: bool = false
 
 
+@export var startup_logging:=false
 func _ready() -> void:
 	wheel_rays.append(front_left_ray)
 	wheel_rays.append(front_right_ray)
@@ -293,10 +294,11 @@ func _ready() -> void:
 	_setup_visual_damage()
 
 	_spawn_transform = global_transform
-	print("Vehicle controller V3 ready: no-slip bicycle driving + no-pivot full-lock launch grip budget.")
-	print("Vehicle runtime visuals ready: ", body_mesh_count, " fixed body meshes + animated driver door + 4 wheel meshes.")
-	print("Visual mesh damage: ", "enabled" if visual_damage_enabled else "disabled", " (F8 toggle, F9 repair).")
-	print("Mounted accessory motion: ", "enabled" if accessory_motion_enabled else "disabled", " (F10 toggle, ", _accessory_mounts.size(), " moving items).")
+	if startup_logging:
+		print("Vehicle controller V3 ready: no-slip bicycle driving + no-pivot full-lock launch grip budget.")
+		print("Vehicle runtime visuals ready: ", body_mesh_count, " fixed body meshes + animated driver door + 4 wheel meshes.")
+		print("Visual mesh damage: ", "enabled" if visual_damage_enabled else "disabled", " (F8 toggle, F9 repair).")
+		print("Mounted accessory motion: ", "enabled" if accessory_motion_enabled else "disabled", " (F10 toggle, ", _accessory_mounts.size(), " moving items).")
 
 
 func _build_runtime_body_visuals() -> void:

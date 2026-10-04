@@ -6,6 +6,21 @@ var suspension: RefCounted
 var visual_damage: RefCounted
 var accessories: RefCounted
 var streaming: RefCounted
+var profile_setup:=false
+var setup_timings: Dictionary={}
+var visual_timings: Dictionary={}
+func _build_runtime_body_visuals() -> void:
+	var begin:=Time.get_ticks_usec() if profile_setup else 0
+	super._build_runtime_body_visuals()
+	if profile_setup: visual_timings["body_us"]=Time.get_ticks_usec()-begin
+func _bind_wheel_visual(visual: MeshInstance3D,source_name: String) -> void:
+	var begin:=Time.get_ticks_usec() if profile_setup else 0
+	super._bind_wheel_visual(visual,source_name)
+	if profile_setup: visual_timings[source_name]=Time.get_ticks_usec()-begin
+func _bind_driver_door_visual() -> void:
+	var begin:=Time.get_ticks_usec() if profile_setup else 0
+	super._bind_driver_door_visual()
+	if profile_setup: visual_timings["door_us"]=Time.get_ticks_usec()-begin
 func bind_streamed_world(terrain: Node,structures: Node=null) -> bool:
 	if streaming!=null and streaming.waiting: return false
 	if not is_instance_valid(terrain): return false
@@ -32,6 +47,7 @@ func _physics_process(delta: float) -> void:
 	# Recheck after controls change speed, before the physics integration step.
 	if streaming!=null: streaming.update(self,driving_policy,delta)
 func _ready() -> void:
+	var begin:=Time.get_ticks_usec() if profile_setup else 0
 	GDExtensionManager.load_extension("res://addons/vehicle_runtime/vehicle_runtime.gdextension")
 	driving_policy=ClassDB.instantiate("NativeDrivingPolicy")
 	suspension=ClassDB.instantiate("NativeVehicleSuspension")
@@ -39,7 +55,9 @@ func _ready() -> void:
 		push_error("Vehicle suspension gravity is outside supported range")
 	visual_damage=ClassDB.instantiate("NativeVehicleDamage")
 	accessories=ClassDB.instantiate("NativeVehicleAccessories")
+	var native_done:=Time.get_ticks_usec() if profile_setup else 0
 	super._ready()
+	var visuals_done:=Time.get_ticks_usec() if profile_setup else 0
 	if not accessories.configure(_accessory_mounts,PackedFloat32Array(_accessory_profiles)):
 		push_error("Vehicle accessory configuration failed")
 	for ray in wheel_rays: ray.enabled=false # Native pass explicitly updates once.
@@ -47,6 +65,8 @@ func _ready() -> void:
 	# hierarchy was only a setup template and needs no per-vehicle scene nodes.
 	model_instance.queue_free()
 	model_instance=null
+	if profile_setup:
+		setup_timings={"native_us":native_done-begin,"visuals_us":visuals_done-native_done,"finalize_us":Time.get_ticks_usec()-visuals_done,"visual_parts":visual_timings}
 func _reset_accessory_motion() -> void:
 	if accessories!=null: accessories.reset(linear_velocity,angular_velocity)
 func _update_accessory_motion(delta: float) -> void:

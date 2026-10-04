@@ -57,6 +57,7 @@ func _install_vehicle(world: Node,pose: Transform3D) -> bool:
 	if _vehicle_scene==null: return false
 	var begin:=Time.get_ticks_usec() if profile_install else 0
 	car=_vehicle_scene.instantiate()
+	car.profile_setup=profile_install
 	var allocated:=Time.get_ticks_usec() if profile_install else 0
 	car.transform=pose;car.collision_layer=4;car.collision_mask=3
 	world.add_child(car)
@@ -67,7 +68,7 @@ func _install_vehicle(world: Node,pose: Transform3D) -> bool:
 	if "vegetation" in world: car.streaming.bind_vegetation(world.vegetation)
 	_camera_follow=ClassDB.instantiate("NativeVehicleCamera")
 	if profile_install:
-		install_timings={"instantiate_us":allocated-begin,"attach_ready_us":attached-allocated,"bind_us":Time.get_ticks_usec()-attached}
+		install_timings={"instantiate_us":allocated-begin,"attach_ready_us":attached-allocated,"bind_us":Time.get_ticks_usec()-attached,"setup":car.setup_timings}
 	return true
 func ready_bounds(world: Node,bounds: AABB) -> bool:
 	return world.terrain.is_collision_region_ready(bounds) and world.structures.is_collision_region_ready(bounds) and (not "vegetation" in world or world.vegetation.is_collision_region_ready(bounds))
