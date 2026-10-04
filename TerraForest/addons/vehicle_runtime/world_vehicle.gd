@@ -10,7 +10,20 @@ var _physics_ticks:=60
 var _camera_follow: RefCounted
 var storage: RefCounted
 var _world: Node
+const VEHICLE_SCENE_PATH: String="res://vehicle_demo/scenes/car.tscn"
+var _vehicle_scene: PackedScene
+var _scene_requested:=false
+func request_scene() -> void:
+	if _vehicle_scene!=null or _scene_requested: return
+	_scene_requested=ResourceLoader.load_threaded_request(VEHICLE_SCENE_PATH,"PackedScene")==OK
+func scene_ready() -> bool:
+	if _vehicle_scene!=null: return true
+	if not _scene_requested: return false
+	if ResourceLoader.load_threaded_get_status(VEHICLE_SCENE_PATH)!=ResourceLoader.THREAD_LOAD_LOADED: return false
+	_vehicle_scene=ResourceLoader.load_threaded_get(VEHICLE_SCENE_PATH) as PackedScene
+	return _vehicle_scene!=null
 func prepare(world: Node,persistence: RefCounted) -> bool:
+	request_scene()
 	GDExtensionManager.load_extension("res://addons/vehicle_runtime/vehicle_runtime.gdextension")
 	storage=ClassDB.instantiate("NativeVehicleStorage");_world=world
 	return persistence.register_component("vehicles",capture_snapshot,restore_snapshot,storage,PackedByteArray())
@@ -31,10 +44,16 @@ func restore_snapshot(data: PackedByteArray) -> bool:
 		return true
 	if is_instance_valid(car): car.free()
 	car=null
-	if decoded.present: _install_vehicle(_world,decoded.pose)
+	if decoded.present: return _install_vehicle(_world,decoded.pose)
 	return true
-func _install_vehicle(world: Node,pose: Transform3D) -> void:
-	car=load("res://vehicle_demo/scenes/car.tscn").instantiate()
+func _install_vehicle(world: Node,pose: Transform3D) -> bool:
+	# Snapshot restoration is synchronous by contract; placement checks readiness
+	# first. Restore may wait for the in-flight request during world loading.
+	if _vehicle_scene==null:
+		if _scene_requested: _vehicle_scene=ResourceLoader.load_threaded_get(VEHICLE_SCENE_PATH) as PackedScene
+		else: _vehicle_scene=load(VEHICLE_SCENE_PATH) as PackedScene
+	if _vehicle_scene==null: return false
+	car=_vehicle_scene.instantiate()
 	car.transform=pose;car.collision_layer=4;car.collision_mask=3
 	world.add_child(car)
 	for wheel in car.wheel_rays: wheel.collision_mask=3
@@ -42,6 +61,7 @@ func _install_vehicle(world: Node,pose: Transform3D) -> void:
 	car.bind_streamed_world(world.terrain,world.structures)
 	if "vegetation" in world: car.streaming.bind_vegetation(world.vegetation)
 	_camera_follow=ClassDB.instantiate("NativeVehicleCamera")
+	return true
 func ready_bounds(world: Node,bounds: AABB) -> bool:
 	return world.terrain.is_collision_region_ready(bounds) and world.structures.is_collision_region_ready(bounds) and (not "vegetation" in world or world.vegetation.is_collision_region_ready(bounds))
 func overlaps_edit(world_bounds: AABB) -> bool:
@@ -52,6 +72,11 @@ func overlaps_edit(world_bounds: AABB) -> bool:
 	return not bounds.position.is_finite() or bounds.intersects(world_bounds)
 func spawn(world: Node) -> String:
 	if is_instance_valid(car): return "Vehicle already placed · E nearby to enter"
+	request_scene()
+	if not scene_ready():
+		if not _scene_requested or ResourceLoader.load_threaded_get_status(VEHICLE_SCENE_PATH)==ResourceLoader.THREAD_LOAD_FAILED:
+			return "Vehicle resource could not be loaded"
+		return "Vehicle is loading · press V again shortly"
 	var from: Vector3=world.camera.global_position
 	var ray:=PhysicsRayQueryParameters3D.create(from,from-world.camera.global_basis.z*12,3,[world.player.get_rid()])
 	var hit: Dictionary=world.get_world_3d().direct_space_state.intersect_ray(ray)
@@ -64,7 +89,7 @@ func spawn(world: Node) -> String:
 	# Keep the ground below the initial chassis and reject walls/objects/player.
 	if bounds.has_point(world.player.global_position): return "Place vehicle farther from the player"
 	if not world.get_world_3d().direct_space_state.intersect_shape(query,1).is_empty(): return "Vehicle space is obstructed"
-	_install_vehicle(world,Transform3D(Basis.IDENTITY,at))
+	if not _install_vehicle(world,Transform3D(Basis.IDENTITY,at)): return "Vehicle resource could not be loaded"
 	return "Vehicle placed · E nearby to enter · F5 saves world"
 func enter(world: Node) -> bool:
 	if driving or not is_instance_valid(car) or world.player.global_position.distance_to(car.position)>3.5: return false

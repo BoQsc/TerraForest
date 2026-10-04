@@ -6,8 +6,13 @@ with the original 120 Hz physics. See PROVENANCE.md for the user's 0BSD grant.
 
 The original car.gd remains a behavior reference. car_native.gd delegates
 steering, longitudinal control and suspension to the vehicle_runtime C++ addon.
-Impacts, motion integration, damage and accessories remain scripted pending migration. This scene
-does not yet integrate vehicles into the streamed world.
+Motion forces, cosmetic damage and accessory springs also use native helpers.
+The adapter retains impact-recovery decisions, interaction and visual effects.
+The standalone scene runs independently; the main TerraForest world integrates
+the same vehicle through vehicle_runtime, including collision-readiness holds,
+entry/exit and parked-pose persistence. See ../addons/vehicle_runtime/README.md
+for controls and current limits. Fleet scaling, multiplayer authority and
+sustained populated-world 60 FPS remain unproven.
 
 The ZIP intentionally contains no `.godot` cache and no generated `.import` files.
 On the first run, the launcher asks Godot to perform a headless import. Godot creates

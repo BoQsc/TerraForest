@@ -1,0 +1,25 @@
+{
+	"load_us": 306950,
+	"passed": true,
+	"samples": [
+		{
+			"body_meshes": 27,
+			"instantiate_us": 678,
+			"ready_us": 1317,
+			"trial": 0
+		},
+		{
+			"body_meshes": 27,
+			"instantiate_us": 358,
+			"ready_us": 694,
+			"trial": 1
+		},
+		{
+			"body_meshes": 27,
+			"instantiate_us": 437,
+			"ready_us": 844,
+			"trial": 2
+		}
+	],
+	"scope": "Headless CPU creation only; no GPU upload, compilation or first-visible-frame qualification."
+}

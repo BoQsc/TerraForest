@@ -1,3 +1,11 @@
+## Vehicle resource prefetch - 2026-10-04
+
+The world vehicle adapter now requests its PackedScene on the resource loader worker during prepare. Interactive placement polls readiness without waiting and asks for another V press if loading is incomplete. The retained PackedScene is reused. Snapshot restoration retains its synchronous contract during world loading, and installation reports failure if the resource is unavailable.
+
+A short headless creation probe measured 306950 us resource loading, compared with 678 us first instantiation and 1317 us first scene setup. The final threaded loader check passed repeated requests, readiness polling, retained resource identity and scene instantiation: request 46 us, maximum poll 51 us over 51 polls. Compound vehicle persistence passed save and restoration into a new world. These are CPU-only measurements; GPU uploads, pipeline compilation and first-visible-frame latency remain unqualified. No sustained frame-rate claim is made.
+
+Evidence: docs/evidence/vehicle_resource_prefetch.
+
 ## Vehicle traversal of joined road sections - 2026-10-04
 
 Added --joined-road-fixture to tests/vehicle_terrain.gd. Two independently constructed native road sections share their endpoint at a 16 m region boundary, with a constant 6.25 percent intended grade. The joined fixture uses eight separate collision bodies built from native region meshes, rather than combining them into one physics shape. Thirty-three vertical ray samples cover an 8 m window around the join at 0.25 m spacing, checking for holes, excessive height deviation and abrupt sampled steps. The vehicle must traverse the entire window.

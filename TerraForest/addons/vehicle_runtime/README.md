@@ -84,8 +84,10 @@ Cosmetic dents, momentum and occupied-seat state are not persisted. F5 works on
 foot and while seated through the compound world pipeline. Seated saves record
 a checked on-foot position beside the car; no clear, loaded position means the
 save is rejected. Temporary-world rules still apply. Existing vehicles are
-reused on restore, resetting pose, held momentum, damage and door state. First
-creation remains synchronous and has produced substantial loading hitches.
+reused on restore, resetting pose, held momentum, damage and door state. The scene resource is prefetched on a loader worker during world preparation.
+Placement polls readiness and reports loading rather than waiting; scene
+instantiation/setup remain synchronous. Snapshot restoration may wait during
+world loading. GPU upload and first-visible-frame hitches remain unqualified.
 
 After setup, the native adapter releases the hidden imported model hierarchy:
 35 fewer retained nodes per car. The 32 runtime mesh instances share their mesh
