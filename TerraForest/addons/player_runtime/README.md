@@ -28,6 +28,14 @@ Duplicate item rows are cumulative. Failure preserves both slots and revision;
 success advances revision once. `can_afford` performs the same validation
 without mutation. Neither method scans world content.
 
+`grant_items(items, expected_revision)` and `can_receive` provide the matching
+all-or-nothing grant/preflight operations. They accept 1–32 item/count pairs,
+reuse existing stacks before empty slots and treat duplicate rows cumulatively.
+An invalid row or insufficient capacity leaves all slots and the revision
+unchanged. Successful grants advance revision once. Starter supplies use this
+batch path. The caller must retain or otherwise handle an unaccepted reward;
+these operations do not create overflow storage or retry deliveries themselves.
+
 `construction_inventory.gd` coordinates synchronous main-thread native edits.
 It debits before placement so successful building change signals observe the
 paid inventory. Native placement rejection does not alter blocks; the

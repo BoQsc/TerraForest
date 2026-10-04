@@ -1,0 +1,20 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS capacity preflight does not mutate
+PASS mixed items and duplicate rows grant atomically
+PASS deterministic stacking conserves every item with one revision
+PASS replayed revision cannot grant again
+PASS invalid batch cannot partly grant earlier rows
+PASS invalid batch cannot partly grant earlier rows
+PASS invalid batch cannot partly grant earlier rows
+PASS invalid batch cannot partly grant earlier rows
+PASS invalid batch cannot partly grant earlier rows
+PASS invalid batch cannot partly grant earlier rows
+PASS batch row limit enforced
+PASS late capacity failure leaves earlier grant and revision untouched
+PASS duplicate rows compete for the same remaining capacity
+PASS exact remaining capacity succeeds
+PASS exact 32-slot maximum accepted
+PASS full inventory never overflows
+PASS multi-grant contents retain existing save compatibility
+INVENTORY_GRANTS {"checks":17,"failures":0}

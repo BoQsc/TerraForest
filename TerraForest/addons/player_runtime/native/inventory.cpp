@@ -9,6 +9,8 @@ void NativePlayerInventory::_bind_methods() {
     ClassDB::bind_method(D_METHOD("register_item","item","limit"),&NativePlayerInventory::register_item);
     ClassDB::bind_method(D_METHOD("snapshot"),&NativePlayerInventory::snapshot);
     ClassDB::bind_method(D_METHOD("grant","item","count","expected_revision"),&NativePlayerInventory::grant);
+    ClassDB::bind_method(D_METHOD("grant_items","items","expected_revision"),&NativePlayerInventory::grant_items);
+    ClassDB::bind_method(D_METHOD("can_receive","items","expected_revision"),&NativePlayerInventory::can_receive);
     ClassDB::bind_method(D_METHOD("consume","slot","count","expected_revision"),&NativePlayerInventory::consume);
     ClassDB::bind_method(D_METHOD("consume_items","costs","expected_revision"),&NativePlayerInventory::consume_items);
     ClassDB::bind_method(D_METHOD("can_afford","costs","expected_revision"),&NativePlayerInventory::can_afford);
@@ -51,6 +53,28 @@ Dictionary NativePlayerInventory::consume(int64_t slot,int64_t count,int64_t exp
     auto &s=slots[slot];s.count-=count;if(!s.count)s.item=0;
     ++revision;return result(true,"");
 }
+Dictionary NativePlayerInventory::apply_grants(const PackedInt64Array &items,int64_t expected,bool commit) {
+    if(expected!=revision)return result(false,"stale_revision");
+    if(items.is_empty()||items.size()>64||items.size()%2)return result(false,"invalid_items");
+    auto candidate=slots;
+    for(int64_t i=0;i<items.size();i+=2){
+        const int64_t item=items[i];int64_t count=items[i+1];
+        auto found=limits.find(item);
+        if(found==limits.end()||count<=0||count>32000000)return result(false,"invalid_item_or_count");
+        // Stage at most 32 rows over 32 slots. Duplicate rows see the prior
+        // staged result, without summing untrusted counts or allocating stacks.
+        for(int pass=0;pass<2&&count;++pass)for(auto &slot:candidate){
+            if((pass==0&&slot.item!=item)||(pass==1&&slot.item))continue;
+            const int64_t amount=std::min(count,found->second-slot.count);
+            if(amount){slot.item=item;slot.count+=amount;count-=amount;}
+        }
+        if(count){auto out=result(false,"full");out["item"]=item;out["missing_capacity"]=count;return out;}
+    }
+    if(commit){slots=candidate;++revision;}
+    return result(true,"");
+}
+Dictionary NativePlayerInventory::grant_items(const PackedInt64Array &items,int64_t expected) { return apply_grants(items,expected,true); }
+Dictionary NativePlayerInventory::can_receive(const PackedInt64Array &items,int64_t expected) { return apply_grants(items,expected,false); }
 Dictionary NativePlayerInventory::apply_costs(const PackedInt64Array &costs,int64_t expected,bool commit) {
     if(expected!=revision)return result(false,"stale_revision");
     if(costs.is_empty()||costs.size()>64||costs.size()%2)return result(false,"invalid_costs");

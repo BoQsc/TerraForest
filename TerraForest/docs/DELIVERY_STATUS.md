@@ -1,3 +1,18 @@
+## Atomic multi-material inventory grants - 2026-10-04
+
+Added native `grant_items` and nonmutating `can_receive` for up to 32 item/count
+pairs over the fixed 32 slots. All rows stage before commit: a late invalid row
+or capacity failure cannot partially award earlier materials. Duplicate rows
+share staged capacity, existing stacks fill first, and successful batches
+advance revision once. Gameplay starter stock now uses the batch API.
+
+Seventeen targeted checks passed, including stale revisions, malformed tails,
+late capacity failure, duplicate rows, exact remaining capacity and the maximum
+32-million-item inventory bound. The existing inventory, construction and
+loadout suites also passed (67 checks). Evidence: `docs/evidence/inventory_grants`.
+Both native builds use the prebuilt SDK. This provides atomic capacity handling,
+not overflow storage: durable mining reward retention/delivery remains unfinished.
+
 ## Graceful window-close save ordering - 2026-10-04
 
 The game window's close handler now awaits `shutdown_after_edits()`. Closing

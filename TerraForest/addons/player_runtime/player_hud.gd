@@ -38,7 +38,11 @@ func prepare() -> bool:
 	# Only the default for a missing loadout section. Restoration replaces all
 	# slots, including an explicitly empty saved inventory; never top up on load.
 	if gameplay_construction:
-		for id: int in MATERIALS: inventory.grant(id,STARTER_MATERIAL_COUNT,inventory.snapshot().revision)
+		var supplies:=PackedInt64Array()
+		for id: int in MATERIALS: supplies.append_array(PackedInt64Array([id,STARTER_MATERIAL_COUNT]))
+		if not inventory.grant_items(supplies,inventory.snapshot().revision).ok:
+			inventory=null
+			return false
 	default_loadout=inventory.capture_storage_snapshot()
 	return true
 

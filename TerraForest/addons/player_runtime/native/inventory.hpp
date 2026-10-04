@@ -15,12 +15,15 @@ class NativePlayerInventory : public godot::RefCounted {
     int64_t revision=0;
     godot::Dictionary result(bool ok,const char *reason) const;
     godot::Dictionary apply_costs(const godot::PackedInt64Array &costs,int64_t expected,bool commit);
+    godot::Dictionary apply_grants(const godot::PackedInt64Array &items,int64_t expected,bool commit);
 protected:
     static void _bind_methods();
 public:
     bool register_item(int64_t item,int64_t limit);
     godot::Dictionary snapshot() const;
     godot::Dictionary grant(int64_t item,int64_t count,int64_t expected);
+    godot::Dictionary grant_items(const godot::PackedInt64Array &items,int64_t expected);
+    godot::Dictionary can_receive(const godot::PackedInt64Array &items,int64_t expected);
     godot::Dictionary consume(int64_t slot,int64_t count,int64_t expected);
     godot::Dictionary consume_items(const godot::PackedInt64Array &costs,int64_t expected);
     godot::Dictionary can_afford(const godot::PackedInt64Array &costs,int64_t expected);
