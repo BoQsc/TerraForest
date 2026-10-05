@@ -1,3 +1,19 @@
+## Whole-world scatter compatibility - 2026-10-05
+
+Expanded native-generation verification to every cell of the current 32x32
+world grid across four seeds (including negative and INT64_MAX) and three
+densities. A frozen copy of `_candidates` from commit 2ad1c8a is kept solely as
+a test oracle in `tests/fixtures/legacy_scatter.gd`; runtime does not import it.
+All 49,152 packed-byte comparisons across 12,288 cell cases pass. IDs are also
+checked for uniqueness and membership in their owner's exact 36-ID range.
+
+For seed 1703 at density 0.82 the generator emits 6,519 candidate roots before
+terrain slope/support and structure/water/harvest exclusions. This is the current
+world's population, not proof of large-world or dense-city capacity. Surface
+sampling, transforms after support queries and render throughput are outside
+this test. Evidence: `docs/evidence/native_scatter/whole_world.log`; executable
+fixture: `tests/scatter_world_compatibility.gd`. Runtime used the debug DLL.
+
 ## Native seeded vegetation candidate generation - 2026-10-05
 
 Moved the ecosystem's per-cell RNG, biome mask, stable-ID generation and packed
