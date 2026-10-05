@@ -150,18 +150,10 @@ func _step(delta: float) -> void:
 		break
 
 func _refresh(center: Vector2i) -> void:
-	var candidates: Array[Vector2i] = []
-	var radius: int = ceili(stream_radius / CELL_SIZE)
-	for z in range(maxi(0, center.y - radius), mini(31, center.y + radius) + 1):
-		for x in range(maxi(0, center.x - radius), mini(31, center.x + radius) + 1):
-			candidates.append(Vector2i(x, z))
-	candidates.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
-		var da: int = (a - center).length_squared()
-		var db: int = (b - center).length_squared()
-		return da < db if da != db else (a.y * 32 + a.x < b.y * 32 + b.x))
+	var candidates: Array[Vector2i] = _scatter().wanted_cells(center, stream_radius, max_resident_cells)
 	_wanted.clear()
-	for i in range(mini(candidates.size(), max_resident_cells)):
-		_wanted[candidates[i]] = true
+	for key in candidates:
+		_wanted[key] = true
 	for key in resident.keys():
 		if not _wanted.has(key):
 			vegetation.remove_chunk(_owner(key))

@@ -13,6 +13,7 @@
 #include <godot_cpp/variant/transform3d.hpp>
 #include <unordered_set>
 #include <algorithm>
+#include <vector>
 #include <cmath>
 namespace terraforest {
 using namespace godot;
@@ -20,10 +21,32 @@ class NativeVegetationScatter : public RefCounted {
     GDCLASS(NativeVegetationScatter,RefCounted)
 protected:
     static void _bind_methods(){
+        ClassDB::bind_method(D_METHOD("wanted_cells","center","radius_world","limit"),&NativeVegetationScatter::wanted_cells);
         ClassDB::bind_method(D_METHOD("candidates","cell","seed","density"),&NativeVegetationScatter::candidates);
         ClassDB::bind_method(D_METHOD("place_surface","ids","points","normals","rotations","scales","min_up"),&NativeVegetationScatter::place_surface);
     }
 public:
+    TypedArray<Vector2i> wanted_cells(Vector2i center,double radius_world,int64_t limit) const {
+        TypedArray<Vector2i> out;
+        // The current world has 32 x 32 owners. Bound work before allocating.
+        if(!std::isfinite(radius_world)||radius_world<0||radius_world>768||limit<0||limit>625||limit==0)return out;
+        const int64_t radius=int64_t(std::ceil(radius_world/64.0));
+        const int64_t x0=std::max(int64_t(0),int64_t(center.x)-radius),x1=std::min(int64_t(31),int64_t(center.x)+radius);
+        const int64_t z0=std::max(int64_t(0),int64_t(center.y)-radius),z1=std::min(int64_t(31),int64_t(center.y)+radius);
+        if(x0>x1||z0>z1)return out;
+        struct Cell { Vector2i position; int64_t distance; int64_t id; };
+        std::vector<Cell> cells;cells.reserve((x1-x0+1)*(z1-z0+1));
+        for(int64_t z=z0;z<=z1;++z)for(int64_t x=x0;x<=x1;++x){
+            const int64_t dx=x-center.x,dz=z-center.y;
+            cells.push_back({Vector2i(x,z),dx*dx+dz*dz,z*32+x});
+        }
+        const auto count=std::min(size_t(limit),cells.size());
+        std::partial_sort(cells.begin(),cells.begin()+count,cells.end(),[](const Cell &a,const Cell &b){
+            return a.distance!=b.distance?a.distance<b.distance:a.id<b.id;
+        });
+        for(size_t i=0;i<count;++i)out.append(cells[i].position);
+        return out;
+    }
     Dictionary place_surface(const PackedInt64Array &ids,const PackedVector3Array &points,const PackedVector3Array &normals,const PackedFloat32Array &rotations,const PackedFloat32Array &scales,double min_up) const {
         Dictionary out;out["ok"]=false;
         const int64_t count=ids.size();

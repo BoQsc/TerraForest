@@ -1,0 +1,4 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PRIORITY microbenchmark 1000 calls: legacy_us=538027 native_us=10256
+PRIORITY cases=23131 failures=0

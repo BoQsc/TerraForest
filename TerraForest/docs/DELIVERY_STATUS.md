@@ -1,3 +1,25 @@
+## Native vegetation streaming priority - 2026-10-05
+
+Moved periodic nearby-cell enumeration and distance sorting from GDScript into
+the existing native vegetation addon. Native partial sorting retains the previous
+distance order and row-major tie-break; the facade still owns request admission,
+eviction and retries. Work is bounded to 625 candidates for the existing 32x32
+world, with radius at most 768 metres and at most 625 requested owners. Invalid
+arguments return an empty selection; extreme outside-world coordinates are
+rejected by range intersection before distance arithmetic.
+
+The frozen legacy comparison passes 23,131 cases, covering every world cell plus
+a one-cell border, five radii, four limits, invalid inputs, extreme coordinates
+and actual facade insertion order. The 19 integrated resampling checks also pass.
+Both Windows native targets were rebuilt against the existing prebuilt SDK.
+Evidence: `docs/evidence/native_scatter/priority.log` and `priority_resample.log`.
+
+A headless 1,000-call comparison measured 538,027 microseconds for the legacy
+selector and 10,256 for native selection (including the script/native boundary).
+This removes periodic script work; it is not evidence of better GPU use, sustained
+60 FPS, faster terrain mining or support for a larger world. No loading budget,
+terrain algorithm or gameplay/editor policy changed.
+
 ## Vegetation refresh rejection and recovery - 2026-10-05
 
 Expanded the integrated resampling fixture after the native placement migration.
