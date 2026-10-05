@@ -32,6 +32,8 @@ var harvest_state: RefCounted
 var _harvesting:=false
 
 func harvest_root(id: int, inventory: RefCounted) -> Dictionary:
+	if terrain!=null and (not terrain.world_ready or terrain.pending_edit or terrain.closing or terrain.stopping):
+		return {"ok":false,"reason":"World updating; try again"}
 	if _harvesting or harvest_state==null or vegetation==null or not vegetation.renderer.roots.has(id) or harvest_state.contains(id):
 		return {"ok":false,"reason":"Tree unavailable"}
 	# Current generator has exactly 36 stable IDs per owner. Never accept an
@@ -40,6 +42,8 @@ func harvest_root(id: int, inventory: RefCounted) -> Dictionary:
 	var owner_index: int=(id-1)/(GRID*GRID)
 	var key:=Vector2i(owner_index%32,owner_index/32)
 	if not _samples.has(key) or not _samples[key].active.has(id): return {"ok":false,"reason":"Tree unavailable"}
+	if _resample.has(key) or _pending_cells.has(key) or _reconcile.has(key):
+		return {"ok":false,"reason":"Vegetation updating; try again"}
 	var before: Dictionary=inventory.snapshot()
 	var wood:=PackedInt64Array([102,4])
 	if not inventory.can_receive(wood,before.revision).ok: return {"ok":false,"reason":"Make room for 4 wood"}
@@ -283,12 +287,14 @@ func _publish_samples(key: Vector2i) -> void:
 	# Compare the accepted transforms too, then let the renderer preserve each
 	# unchanged row and its LOD/fade state during an actual owner update.
 	if sample["published"] and ids == sample["active"] and accepted == sample.get("active_transforms", []):
+		_reconcile.erase(key)
 		return
 	if vegetation.upsert_chunk(_owner(key), ids, accepted):
 		sample["active"] = ids
 		sample["active_transforms"] = accepted
 		sample["published"] = true
 		resident[key] = true
+		_reconcile.erase(key)
 	else:
 		rejected_batches += 1
 		_reconcile[key] = true

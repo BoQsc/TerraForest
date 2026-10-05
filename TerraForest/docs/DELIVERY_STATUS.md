@@ -1,3 +1,24 @@
+## Harvest admission respects world and owner updates - 2026-10-05
+
+The ecosystem's harvest API now checks its bound terrain lifecycle directly,
+rather than relying solely on the main scene's input handler. It rejects during
+loading, pending edits, closing and stopping. It also rejects an owner awaiting
+surface resampling, an outstanding surface request or exclusion reconciliation,
+so retained visual trees cannot yield rewards from stale owner state. These
+checks precede changes to inventory, exclusions or render/collision roots.
+
+Successful owner publication, including an unchanged result, clears its
+reconciliation restriction. Other stable owners remain eligible once there is
+no global terrain edit. The user gets a retry message while their target owner
+updates. An ecosystem without a bound terrain retains standalone operation;
+this is local admission logic, not network authority or a multiplayer protocol.
+
+All 32 state/admission checks, 11 fresh disk-reload checks and six fullscreen
+1920x1080 scene interaction checks pass. The lifecycle tests set each gate
+independently and verify no mutation; they do not simulate network races.
+Evidence: `docs/evidence/harvest_state/admission.log`, `admission_disk.log` and
+`admission_scene.log`.
+
 ## Correction: saved HUD images do not substantiate missing glyphs - 2026-10-05
 
 Direct pixel analysis contradicts the earlier visual interpretation of missing

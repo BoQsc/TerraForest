@@ -2,6 +2,11 @@
 extends SceneTree
 var checks:=0
 var failures:=0
+class TerrainGate extends Node3D:
+	var world_ready:=true
+	var pending_edit:=false
+	var closing:=false
+	var stopping:=false
 func check(ok: bool,label: String) -> void:
 	checks+=1
 	if not ok: failures+=1
@@ -72,6 +77,22 @@ func run() -> void:
 	GDExtensionManager.load_extension("res://addons/player_runtime/player_runtime.gdextension")
 	var inventory=ClassDB.instantiate("NativePlayerInventory")
 	inventory.register_item(102,999)
+	var empty_inventory: PackedByteArray=inventory.capture_storage_snapshot()
+	var gate:=TerrainGate.new();ecosystem.terrain=gate
+	for field in ["world_ready","pending_edit","closing","stopping"]:
+		gate.set(field,field!="world_ready")
+		var denied: Dictionary=ecosystem.harvest_root(2,inventory)
+		check(not denied.ok and denied.reason=="World updating; try again" and vegetation.renderer.roots.has(2) and not ecosystem.harvest_state.contains(2) and inventory.capture_storage_snapshot()==empty_inventory,"addon rejects harvest during "+field+" gate without mutation")
+		gate.set(field,field=="world_ready")
+	for field in ["_resample","_pending_cells","_reconcile"]:
+		ecosystem.get(field)[key]=true
+		var denied: Dictionary=ecosystem.harvest_root(2,inventory)
+		check(not denied.ok and denied.reason=="Vegetation updating; try again" and vegetation.renderer.roots.has(2) and not ecosystem.harvest_state.contains(2) and inventory.capture_storage_snapshot()==empty_inventory,"addon rejects stale owner during "+field)
+		ecosystem.get(field).erase(key)
+	ecosystem._reconcile[key]=true
+	ecosystem._publish_samples(key)
+	check(not ecosystem._reconcile.has(key),"successful unchanged reconciliation clears harvest gate")
+	ecosystem.terrain=null;gate.free()
 	inventory.grant(102,32*999,inventory.snapshot().revision)
 	check(not ecosystem.harvest_root(2,inventory).ok and vegetation.renderer.roots.has(2) and not ecosystem.harvest_state.contains(2),"full inventory preserves tree and harvest state")
 	inventory.consume_items(PackedInt64Array([102,4]),inventory.snapshot().revision)
