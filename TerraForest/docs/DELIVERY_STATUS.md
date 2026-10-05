@@ -1,3 +1,30 @@
+## Inventory supplies can return to the world - 2026-10-05
+
+Added an inventory action to drop one selected construction material on clear
+ground ahead of the on-foot player. It uses the existing bounded native entity
+stores and static batched pickup renderer, without per-pickup nodes or physics
+bodies. The world adapter validates lifecycle, support, collision readiness,
+reach and nearby supplies. Native reservation precedes revision-checked slot
+consumption; capacity rejection preserves inventory contents and revision.
+Observers receive the existing autosave change signal after both sides commit.
+Editor inventory drops consume owned materials too; free editor authoring is
+unchanged. Raw ores and tools are not droppable yet.
+
+All 16 transaction checks pass, covering conservation on recollection, snapshot
+restoration of pickup identity, stale/invalid requests, nested drop rejection,
+atomic observer state and full-store rejection. Nine main-scene checks pass at
+1920x1080 fullscreen, including button wiring, real support physics, overlap and
+focus rejection, autosave dirtiness, reachable recollection and clean shutdown.
+The screenshot was inspected: the expanded inventory fits on screen.
+Evidence: `docs/evidence/inventory_drop`. The first scene run passed interaction
+checks but used a nonexistent test teardown method; its log is retained and the
+corrected rerun shuts down through the normal terrain drain.
+
+This is a local gameplay feature, not multiplayer authority, a new persistence
+format or a performance qualification. The scene fixture uses an elevated
+physics support platform in the real world to isolate drop placement from terrain
+shape variability; it does not test every natural slope or a full disk reload.
+
 ## Native vegetation streaming priority - 2026-10-05
 
 Moved periodic nearby-cell enumeration and distance sorting from GDScript into

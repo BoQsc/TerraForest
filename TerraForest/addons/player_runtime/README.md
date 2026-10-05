@@ -20,9 +20,25 @@ tools and 64 units of each construction material. This is the default for a
 missing loadout section, not a refill: saved inventories replace it exactly,
 including depleted stocks and existing editor loadouts. Further supplies must
 currently be prepared in the editor or crafted from mined stone/ore, except
-wood, whose harvesting loop is unfinished. The
+wood, which can also be harvested from reachable forest trunks with E. The
 mode is selected at launch, not stored in the world file or enforced by a
 multiplayer authority. Opening the gameplay slot in editor mode allows editing.
+
+In the inventory, select brick, wood, concrete or metal and press **Drop one
+selected supply**. On foot, this places one unit on clear supported ground in
+front of the player. It rejects unavailable collision, occupied positions and
+world updates without consuming the item. Tools and raw ores cannot be dropped
+yet. The editor uses the same paid inventory drop action; its separate free
+supply authoring tool remains available.
+
+Drops reuse the native bounded pickup stores and batched static renderer: no
+per-item node or active rigid body is created. The synchronous coordinator
+reserves a native pickup before consuming the selected inventory slot with its
+revision check; rejection retires that reservation. Change signals run only
+after both sides commit, marking the compound world for autosave. E recollects
+one unit through the existing reach/occlusion checks. This is local gameplay,
+not network authority. Targeted tests: `tests/inventory_drop.gd` and
+`tests/inventory_drop_scene.gd`.
 
 `NativePlayerInventory.consume_items(costs, expected_revision)` accepts 1–32
 item/count pairs and stages deductions across the fixed 32 inventory slots.

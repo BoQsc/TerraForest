@@ -4,6 +4,7 @@ extends CanvasLayer
 signal tool_requested(item: int)
 signal menu_changed(open: bool)
 signal inventory_changed
+signal drop_requested(slot: int, revision: int)
 const CATALOG: Dictionary={1:"Sculpt sphere",2:"Sculpt cube",3:"Build blocks",4:"Place objects"}
 const MATERIALS: Dictionary={101:"Brick",102:"Wood",103:"Concrete",104:"Metal"}
 const RESOURCES: Dictionary={201:"Stone",202:"Iron ore",203:"Copper ore"}
@@ -23,6 +24,7 @@ var claim_button: Button
 var recipe_choice: OptionButton
 var craft_amount: SpinBox
 var craft_button: Button
+var drop_button: Button
 const Crafting=preload("res://addons/player_runtime/crafting.gd")
 var state: Dictionary={}
 var enabled:=true
@@ -117,6 +119,7 @@ func _ready() -> void:
 	for recipe in Crafting.RECIPES: recipe_choice.add_item(recipe.title)
 	craft_amount=SpinBox.new();craft_amount.min_value=1;craft_amount.max_value=1000;craft_amount.value=1;craft_amount.custom_minimum_size.x=130;crafting.add_child(craft_amount)
 	craft_button=Button.new();craft_button.text="Craft";craft_button.pressed.connect(craft_selected);crafting.add_child(craft_button)
+	drop_button=Button.new();drop_button.text="Drop one selected supply";drop_button.pressed.connect(drop_selected);column.add_child(drop_button)
 	message.text="Click a filled slot, then a destination to move or swap. Tab / Esc closes."
 	column.add_child(message)
 	modal.hide();refresh()
@@ -132,6 +135,11 @@ func refresh() -> void:
 			belt[i].text="%d%s\n%s"%[i+1," •" if row.item!=0 and row.item==active_item else "",title]
 			belt[i].disabled=row.item not in CATALOG
 	_refresh_pending()
+	drop_button.disabled=selected_slot<0 or state.slots[selected_slot].item not in MATERIALS
+
+func drop_selected() -> void:
+	if not enabled or not inventory_open or selected_slot<0 or state.slots[selected_slot].item not in MATERIALS: return
+	drop_requested.emit(selected_slot,state.revision)
 
 func _refresh_pending() -> void:
 	var selected: int=int(pending_choice.get_item_metadata(pending_choice.selected)) if not pending_choice.disabled and pending_choice.selected>=0 else 0

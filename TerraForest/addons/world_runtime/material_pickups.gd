@@ -10,6 +10,34 @@ var renderers: Dictionary = {}
 var render_status: Dictionary = {}
 var _elapsed := 0.0
 var _dirty := true
+var _transferring := false
+
+func drop_one(inventory: RefCounted, slot: int, revision: int, point: Vector3) -> Dictionary:
+	if _transferring or inventory == null or not point.is_finite():
+		return {"ok":false,"reason":"Supply drop unavailable"}
+	var state: Dictionary = inventory.snapshot()
+	if state.revision != revision or slot < 0 or slot >= state.slots.size():
+		return {"ok":false,"reason":"Inventory changed; select the supply again"}
+	var item: int = state.slots[slot].item
+	if not stores.has(item) or state.slots[slot].count < 1:
+		return {"ok":false,"reason":"Select a construction material to drop"}
+	# Native calls emit no callbacks. Reserve the world record before debiting;
+	# capacity failure therefore leaves inventory contents AND revision intact.
+	_transferring = true
+	var handle: int = stores[item].spawn(point, Vector3.ZERO)
+	if handle == 0:
+		_transferring = false
+		return {"ok":false,"reason":"Supply capacity reached"}
+	var consumed: Dictionary = inventory.consume(slot, 1, revision)
+	if not consumed.ok:
+		stores[item].despawn(handle)
+		_transferring = false
+		return {"ok":false,"reason":"Inventory changed; drop cancelled"}
+	var id: int = stores[item].persistent_id(handle)
+	_dirty = true
+	changed.emit() # Observers see both sides committed; nested drops are rejected.
+	_transferring = false
+	return {"ok":true,"id":id,"item":item,"reason":"Dropped one " + ITEMS[item]}
 
 func prepare(persistence: RefCounted) -> bool:
 	if not stores.is_empty(): return true

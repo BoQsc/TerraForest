@@ -161,6 +161,7 @@ func _ready() -> void:
 	player_hud.tool_requested.connect(_equip_player_tool)
 	player_hud.menu_changed.connect(func(_open: bool): _clear_motion())
 	player_hud.inventory_changed.connect(func(): terrain.changed_since_save=true)
+	player_hud.drop_requested.connect(_drop_inventory_supply)
 	pickups.changed.connect(func(): terrain.changed_since_save=true)
 	ecosystem.harvested.connect(func(): terrain.changed_since_save=true)
 	_sync_player_tool()
@@ -1011,3 +1012,26 @@ func _harvest_aimed_tree() -> bool:
 func _pickup_reachable(point: Vector3) -> bool:
 	var query:=PhysicsRayQueryParameters3D.create(camera.global_position,point,3,[player.get_rid()])
 	return get_world_3d().direct_space_state.intersect_ray(query).is_empty()
+
+func _drop_inventory_supply(slot: int, revision: int) -> void:
+	var result := {"ok":false,"reason":"Stand on foot in a ready world to drop supplies"}
+	if player_hud.inventory_open and app_focused and not fly and not loading_active and not shutdown_requested and terrain.world_ready and not terrain.pending_edit and not world_vehicle.driving:
+		var forward := -player.global_basis.z
+		forward.y=0;forward=forward.normalized()
+		var start := player.global_position+forward*1.2+Vector3.UP*1.5
+		var query := PhysicsRayQueryParameters3D.create(start,start-Vector3.UP*3.0,3,[player.get_rid()])
+		var hit := get_world_3d().direct_space_state.intersect_ray(query)
+		result.reason="No reachable clear ground in front of the player"
+		if not hit.is_empty() and Vector3(hit.normal).y>=0.7:
+			var point: Vector3=hit.position+Vector3.UP*0.2
+			var bounds:=AABB(point-Vector3.ONE*0.2,Vector3.ONE*0.4)
+			if terrain.player_region_ready(point) and structures.is_collision_region_ready(bounds) and vegetation.is_collision_region_ready(bounds) and _pickup_reachable(point):
+				var shape:=BoxShape3D.new();shape.size=Vector3.ONE*0.35
+				var overlap:=PhysicsShapeQueryParameters3D.new();overlap.shape=shape;overlap.transform=Transform3D(Basis.IDENTITY,point);overlap.collision_mask=7
+				var clear:=get_world_3d().direct_space_state.intersect_shape(overlap,1).is_empty()
+				for store: RefCounted in pickups.stores.values():
+					var nearby: Dictionary=store.query_sphere(pickups.to_local(point),0.5,1,64)
+					clear=clear and nearby.ok and nearby.complete and nearby.ids.is_empty()
+				if clear: result=pickups.drop_one(player_hud.inventory,slot,revision,pickups.to_local(point))
+	player_hud.message.text=result.reason
+	player_hud.refresh()

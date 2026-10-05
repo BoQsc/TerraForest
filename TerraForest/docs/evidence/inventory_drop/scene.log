@@ -1,0 +1,18 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.3.289 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce GTX 1060 with Max-Q Design
+
+[TerrainRewrite] New world
+[TerrainRewrite] New world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+PASS world ready
+PASS selected material enables inventory drop button
+PASS unfocused drop rejected
+DROP_NOTICE Dropped one Brick
+PASS inventory button drops one supply on real physics support
+PASS drop marks combined world state for autosave
+PASS overlapping drop rejected without item loss
+PASS 1920x1080 fullscreen presentation
+PASS dropped supply is reachable and recollects in scene
+[TerrainRewrite] Temporary test world: save skipped
+PASS world drains cleanly after inventory interaction
+INVENTORY_DROP_SCENE failures=0
