@@ -1,3 +1,23 @@
+## Natural forest harvesting visual check - 2026-10-05
+
+`tests/natural_harvest_visual.gd` loads the actual generator-3 world, selects the
+nearest naturally generated root, positions the camera beside its trunk and
+invokes the E handler. Native ray targeting identifies tree 23488 at approximately
+(804.9953, 49.07021, 1305.7). Harvesting changes resident root count from 1,907 to
+1,906 while all other root identities and transforms remain unchanged. Inventory
+wood increases from 64 to 68. Six checks pass with Forward+ fullscreen 1920x1080
+and the 60 FPS cap; before/after images were inspected after exit.
+
+Evidence: `docs/evidence/natural_harvest`. The first attempt timed out at the
+fixture's 30-second readiness limit before testing harvesting. One retry with
+a 60-second limit passed; the initial timeout cause remains undiagnosed.
+Movement and new ecosystem scheduling are paused for the controlled visual
+comparison, with existing terrain work still running. This is not a walking
+playtest, sustained FPS/thermal result or animation-quality qualification.
+The tree disappears immediately; a felling animation is still absent. Some
+bottom help text appears clipped in the after capture and needs a separate
+UI/rendering check before claiming visual polish.
+
 ## Maintain canonical harvest order during mutation - 2026-10-05
 
 Native harvest state now uses an ordered set. Canonical save capture walks IDs
