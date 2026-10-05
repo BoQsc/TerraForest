@@ -3,6 +3,7 @@ extends SceneTree
 const Presentation=preload("res://addons/presentation/fullscreen_policy.gd")
 var failures:=0
 var checks:=0
+var output:="res://docs/evidence/natural_harvest"
 func check(ok: bool,label: String) -> void:
 	checks+=1
 	if not ok: failures+=1
@@ -10,9 +11,10 @@ func check(ok: bool,label: String) -> void:
 func _initialize() -> void: call_deferred("run")
 func picture(name: String) -> void:
 	for frame in range(6): await RenderingServer.frame_post_draw
-	root.get_texture().get_image().save_png("res://docs/evidence/natural_harvest/"+name+".png")
+	root.get_texture().get_image().save_png(output+"/"+name+".png")
 func run() -> void:
-	DirAccess.make_dir_recursive_absolute("res://docs/evidence/natural_harvest")
+	if "--transparent-text-probe" in OS.get_cmdline_user_args(): output="res://docs/evidence/transparent_text"
+	DirAccess.make_dir_recursive_absolute(output)
 	var game=load("res://demo/world.tscn").instantiate();game.temporary_world=true
 	root.add_child(game)
 	var deadline:=Time.get_ticks_msec()+60000
@@ -51,6 +53,10 @@ func run() -> void:
 		await picture("after_settled")
 		game.help.queue_redraw()
 		await picture("after_redraw")
+		if "--transparent-text-probe" in OS.get_cmdline_user_args():
+			for sample in range(12):
+				for frame in range(10): await RenderingServer.frame_post_draw
+				root.get_texture().get_image().get_region(Rect2i(0,995,1920,85)).save_png(output+"/help_%02d.png"%sample)
 		check(game.player_hud.inventory.can_afford(PackedInt64Array([102,68]),game.player_hud.inventory.snapshot().revision).ok,"natural harvest grants four wood")
 		check(Presentation.measurement(root).fair_graphical_sample and Engine.max_fps==60,"visual check uses fullscreen 1920x1080 and 60 FPS cap")
 		print("NATURAL_TARGET ",JSON.stringify({"id":selected,"root":str(tree.origin),"resident_before":previous.size(),"resident_after":game.vegetation.renderer.roots.size()}))

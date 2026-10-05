@@ -1,3 +1,25 @@
+## Correction: saved HUD images do not substantiate missing glyphs - 2026-10-05
+
+Direct pixel analysis contradicts the earlier visual interpretation of missing
+characters. In both archived native-flush images described below, all 1,108
+bright reference title pixels remain at the same locations (two additional
+pixels cross the threshold). The help strip retains all but 5 or 10 of 3,567
+reference bright pixels, with 23 additional pixels. These counts do not support
+the earlier claim of broad missing title/help characters or renderer corruption.
+That diagnosis is retracted; the older entries below are investigation history,
+not confirmed open defects. No runtime workaround is justified by this evidence.
+
+The latest probe captures the original transparent HUD without added labels or
+opaque backing. All 12 post-harvest bright help masks are identical. Its six
+gameplay checks pass. `tools/compare_hud_pixels.py` reproduces the comparison
+against the archived PNGs; results and source captures are under
+`docs/evidence/transparent_text`. The masks use minimum RGB thresholds of 210
+for help and 230 for the title. Background blending can move antialiased edge
+pixels across thresholds; this is not a full font-rendering correctness oracle.
+The cause of the misleading visual appearance in prior inspection is unknown.
+This closes the unsubstantiated glyph-corruption diagnosis, not a verified code
+defect, and makes no claim about the earlier startup timeout or runtime FPS.
+
 ## Automated text stability comparison - 2026-10-05
 
 Added `tests/world_text_stability.gd`: it renders four static text sizes on an

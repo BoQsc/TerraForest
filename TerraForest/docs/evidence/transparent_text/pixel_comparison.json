@@ -1,0 +1,59 @@
+{
+  "reference": "transparent_text\\before.png",
+  "comparison": [
+    {
+      "image": "natural_harvest\\native_flush\\after_settled.png",
+      "regions": {
+        "help": {
+          "threshold": 210,
+          "reference_bright_pixels": 3567,
+          "missing_reference_pixels": 5,
+          "additional_bright_pixels": 23
+        },
+        "title": {
+          "threshold": 230,
+          "reference_bright_pixels": 1108,
+          "missing_reference_pixels": 0,
+          "additional_bright_pixels": 2
+        }
+      }
+    },
+    {
+      "image": "natural_harvest\\native_flush\\after_redraw.png",
+      "regions": {
+        "help": {
+          "threshold": 210,
+          "reference_bright_pixels": 3567,
+          "missing_reference_pixels": 10,
+          "additional_bright_pixels": 23
+        },
+        "title": {
+          "threshold": 230,
+          "reference_bright_pixels": 1108,
+          "missing_reference_pixels": 0,
+          "additional_bright_pixels": 2
+        }
+      }
+    },
+    {
+      "image": "transparent_text\\after_settled.png",
+      "regions": {
+        "help": {
+          "threshold": 210,
+          "reference_bright_pixels": 3567,
+          "missing_reference_pixels": 10,
+          "additional_bright_pixels": 23
+        },
+        "title": {
+          "threshold": 230,
+          "reference_bright_pixels": 1108,
+          "missing_reference_pixels": 0,
+          "additional_bright_pixels": 2
+        }
+      }
+    }
+  ],
+  "transparent_help_samples": 12,
+  "changed_bright_masks_after_first_sample": 0,
+  "limitation": "Masks measure bright pixel retention, not complete glyph correctness; no timing or FPS claim."
+}
