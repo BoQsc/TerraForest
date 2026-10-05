@@ -172,7 +172,7 @@ func shutdown_after_edits() -> bool:
 		await get_tree().process_frame
 	var settled: bool=not pending_edit and latest_error.is_empty()
 	if not settled:
-		backend.disable_snapshot_writes()
+		backend.disable_snapshot_writes("pending edit did not publish before shutdown")
 		message_changed.emit("Closing without a new save: pending edit did not publish; previous save retained")
 	shutdown()
 	return settled
@@ -183,7 +183,7 @@ func shutdown() -> void:
 	if require_published_shutdown and pending_edit:
 		# Direct scene teardown cannot run publication callbacks. Keep the last
 		# consistent disk snapshot instead of saving unaccounted excavation.
-		backend.disable_snapshot_writes()
+		backend.disable_snapshot_writes("scene teardown interrupted pending edit publication")
 	stopping = true
 	_cancel_partition()
 	_cancel_density_requests("cancelled")

@@ -68,9 +68,14 @@ var _component_capture_valid: bool = true # Worker-owned; invalid live captures 
 var _capture_generation: int = 0 # Main-thread only.
 var _shutdown_snapshot: Dictionary = {}
 var _snapshot_writes_blocked: bool = false
+var _snapshot_block_reason: String = ""
 
-func disable_snapshot_writes() -> void:
+func disable_snapshot_writes(reason: String = "snapshot writes explicitly disabled") -> void:
 	mutex.lock()
+	# Preserve the first cause; teardown must not overwrite a prior failure.
+	if not _snapshot_writes_blocked:
+		_snapshot_block_reason = reason.strip_edges().left(240)
+		if _snapshot_block_reason.is_empty(): _snapshot_block_reason = "snapshot writes explicitly disabled"
 	_snapshot_writes_blocked = true
 	mutex.unlock()
 
@@ -79,6 +84,12 @@ func _snapshot_writable() -> bool:
 	var allowed: bool = not _snapshot_writes_blocked
 	mutex.unlock()
 	return allowed
+
+func _snapshot_write_block_reason() -> String:
+	mutex.lock()
+	var reason: String = _snapshot_block_reason
+	mutex.unlock()
+	return reason
 
 func _capture_snapshot() -> Dictionary:
 	if snapshot_codec == null or not snapshot_capture.is_valid():
@@ -366,8 +377,10 @@ func _call(data: PackedByteArray) -> PackedByteArray:
 func _save() -> String:
 	if temporary:
 		return "Temporary test world: save skipped"
-	if not write_allowed or not _snapshot_writable():
-		return "ERROR: save disabled after corrupt snapshot; original file protected"
+	if not _snapshot_writable():
+		return "ERROR: save blocked: %s; previous canonical snapshot retained" % _snapshot_write_block_reason()
+	if not write_allowed:
+		return "ERROR: save blocked by world initialization or snapshot validation failure; previous canonical snapshot retained"
 	if not _component_capture_valid:
 		return "ERROR: invalid addon capture; previous canonical snapshot retained"
 	var response: PackedByteArray = _call(Codec.command(4))

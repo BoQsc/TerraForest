@@ -1,3 +1,20 @@
+## Save protection reports its actual cause - 2026-10-05
+
+Removed the blanket assertion that every blocked save follows snapshot corruption.
+Explicit write protection now retains its first supplied reason under the existing
+mutex. Pending-edit shutdown, interrupted scene teardown, addon restoration and
+mining accounting supply specific reasons; a subsequent protection call cannot
+overwrite the original cause. Worker initialization/validation rejection reports
+that broader category without falsely diagnosing corrupt disk data. Existing
+save admission, temporary-world behavior and disk protection remain unchanged.
+
+Seven diagnostic checks, 13 fresh disk drop/recollection checks and 25 mining
+reward/persistence checks pass. The latter exercises direct teardown with a
+pending edit: the log now identifies interrupted publication and the prior saved
+inventory/building state is preserved. Evidence: `docs/evidence/save_block_reason`.
+Historical logs retain their original misleading message; no disk corruption is
+inferred from those intentionally protected test teardowns.
+
 ## Dropped supplies survive fresh disk reloads - 2026-10-05
 
 Added a 13-check disk test using the production compound capture, worker and

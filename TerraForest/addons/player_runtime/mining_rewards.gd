@@ -44,5 +44,5 @@ func published(_bounds: AABB,_revision: int) -> void:
 func _fail(reason: String) -> void:
 	failed=true
 	terrain.latest_error=reason
-	terrain.backend.disable_snapshot_writes()
+	terrain.backend.disable_snapshot_writes(reason)
 	terrain.message_changed.emit(reason+"; previous save protected")

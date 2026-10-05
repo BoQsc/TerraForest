@@ -1,0 +1,10 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS explicit block still prevents save admission
+PASS explicit block does not claim disk corruption
+PASS first blocking cause survives subsequent shutdown protection
+PASS worker validation gate reports its scope without asserting corruption
+PASS blank reason gets useful default
+PASS diagnostic reason is bounded
+PASS temporary world retains existing no-write behavior
+SAVE_BLOCK_REASON checks=7 failures=0

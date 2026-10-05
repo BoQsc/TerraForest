@@ -85,7 +85,7 @@ func _receive(result: Dictionary) -> void:
 			snapshot_restore_ok = true
 			snapshot_restored.emit(result.get("components", {}), epoch)
 			if not snapshot_restore_ok:
-				backend.disable_snapshot_writes()
+				backend.disable_snapshot_writes("addon restoration failed")
 				result["message"] = "ERROR: addon restoration failed; canonical save protected"
 	if result.get("kind", "") == "lake_slice":
 		lake_slice_ready.emit(result["token"], result["status"], result["epoch"], result["revision"])
