@@ -1,3 +1,26 @@
+## Gameplay model placement consumes inventory - 2026-10-05
+
+Connected the static-object tool to the existing synchronous native inventory
+coordinator. Provisional recipes charge 4 metal for a beam, 8 metal for a floor
+panel and 8 concrete for a doorway; costs appear in the object palette. Native
+placement failure rolls back the debit using the debit revision. Missing recipes
+reject gameplay placement. Gameplay object undo/redo and resizing are disabled
+to avoid bypassing costs; moving/rotating paid objects remains available. Removal
+does not refund. Editor placement, scaling and history remain unrestricted.
+
+The actual-scene check exposed missing world autosave notification for structure
+changes. Connected the existing structures changed signal to the terrain/world
+dirty flag. This covers model edits as well as block changes; the addon already
+invalidated its own snapshot cache. The initial failed scene log is retained.
+
+Seven model transaction/control checks, 22 existing block/prefab inventory checks,
+and eight actual-scene checks pass. The scene creates a beam using the real tool
+on an elevated test support, deducts exactly four metal, marks the world dirty,
+shows the recipe and refuses gameplay undo. Its 1920x1080 fullscreen screenshot
+was inspected. Evidence: `docs/evidence/model_inventory`. These checks establish
+local placement accounting and autosave notification, not a fresh paid-model disk
+reload, multiplayer authority, final recipe balance or large-city throughput.
+
 ## Pickup renderer pressure at all seven store limits - 2026-10-05
 
 The new targeted pressure fixture fills all seven native pickup stores to 4,096

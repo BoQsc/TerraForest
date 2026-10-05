@@ -14,7 +14,13 @@ supply spawning are disabled in this mode. Editor behavior is unchanged.
 
 This is not a complete survival mode. Gameplay terrain tools excavate only;
 free terrain filling, grading and legacy terrain cubes are editor tools.
-Static model placement and vehicle authoring still lack material recipes.
+Static models use provisional recipes: metal beam costs 4 metal, floor panel
+costs 8 metal, and doorway costs 8 concrete. The object palette shows the cost.
+Gameplay placement debits inventory before native insertion and refunds native
+rejection. Missing recipes reject placement. Object removal has no refund;
+gameplay object undo/redo and resizing are disabled, while moving and rotating
+existing objects remain available. Free editor placement and transform/history
+controls are unchanged. Vehicle authoring still lacks a material recipe.
 New gameplay inventories start with
 tools and 64 units of each construction material. This is the default for a
 missing loadout section, not a refill: saved inventories replace it exactly,

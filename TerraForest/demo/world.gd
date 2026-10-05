@@ -128,10 +128,12 @@ func _ready() -> void:
 	terrain.focus = pending_spawn
 	super._ready()
 	add_child(model_tool)
+	model_tool.gameplay=construction_inventory.gameplay
+	model_tool.paid_placement=_place_inventory_model
 	model_tool.configure(camera,player,[
-		{"title":"Metal beam","mesh":beam,"collection":structures.model("architecture/metal_beam/v1"),"scale":Vector3(4,0.2,0.2)},
-		{"title":"Floor panel","mesh":beam,"collection":structures.model("architecture/metal_beam/v1"),"scale":Vector3(4,0.25,4)},
-		{"title":"Doorway","mesh":doorway,"collection":door_models,"scale":Vector3.ONE}],help.get_parent(),structures.blocks)
+		{"title":"Metal beam","mesh":beam,"collection":structures.model("architecture/metal_beam/v1"),"scale":Vector3(4,0.2,0.2),"costs":PackedInt64Array([104,4]),"cost_label":"4 metal"},
+		{"title":"Floor panel","mesh":beam,"collection":structures.model("architecture/metal_beam/v1"),"scale":Vector3(4,0.25,4),"costs":PackedInt64Array([104,8]),"cost_label":"8 metal"},
+		{"title":"Doorway","mesh":doorway,"collection":door_models,"scale":Vector3.ONE,"costs":PackedInt64Array([103,8]),"cost_label":"8 concrete"}],help.get_parent(),structures.blocks)
 	model_tool.notice.connect(_show_lake_notice)
 	player_hud.temporary_world=temporary_world
 	add_child(player_hud)
@@ -163,6 +165,7 @@ func _ready() -> void:
 	player_hud.inventory_changed.connect(func(): terrain.changed_since_save=true)
 	player_hud.drop_requested.connect(_drop_inventory_supply)
 	pickups.changed.connect(func(): terrain.changed_since_save=true)
+	structures.changed.connect(func(): terrain.changed_since_save=true)
 	ecosystem.harvested.connect(func(): terrain.changed_since_save=true)
 	_sync_player_tool()
 	DisplayServer.window_set_title("TerraForest | Living terrain")
@@ -1012,6 +1015,12 @@ func _harvest_aimed_tree() -> bool:
 func _pickup_reachable(point: Vector3) -> bool:
 	var query:=PhysicsRayQueryParameters3D.create(camera.global_position,point,3,[player.get_rid()])
 	return get_world_3d().direct_space_state.intersect_ray(query).is_empty()
+
+func _place_inventory_model(history: RefCounted, collection: Node3D, transforms: PackedFloat32Array, protection: AABB, costs: PackedInt64Array) -> int:
+	var id: int=construction_inventory.place_model(history,collection,player_hud.inventory,transforms,protection,costs)
+	model_tool.placement_failure=construction_inventory.reason
+	player_hud.refresh()
+	return id
 
 func _drop_inventory_supply(slot: int, revision: int) -> void:
 	var result := {"ok":false,"reason":"Stand on foot in a ready world to drop supplies"}

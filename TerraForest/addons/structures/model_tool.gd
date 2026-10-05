@@ -22,6 +22,9 @@ var transforming := false
 var edit_available := false
 var transform_controls := VBoxContainer.new()
 var help := Label.new()
+var gameplay := false
+var paid_placement: Callable
+var placement_failure := ""
 
 func configure(view: Camera3D, actor: CharacterBody3D, entries: Array[Dictionary], ui: Node, blocks: Node3D = null) -> void:
 	camera=view
@@ -142,7 +145,7 @@ func pick() -> void:
 					picked_collection.changed.connect(_selected_changed)
 					transform_controls.show()
 					refresh()
-					notice.emit("Object selected · arrows move · R rotates · +/− scales")
+					notice.emit("Object selected · arrows move · R rotates" if gameplay else "Object selected · arrows move · R rotates · +/− scales")
 					return
 	notice.emit("Aim at a nearby placed model to select it")
 
@@ -157,6 +160,9 @@ func selected_transform() -> Dictionary:
 	return {"transform":picked_collection.global_transform*Transform3D(basis,Vector3(p[3],p[7],p[11]))}
 
 func transform_selected(offset: Vector3, angle: float, factor: float) -> bool:
+	if gameplay and factor!=1.0:
+		notice.emit("Resizing objects is available in the free editor")
+		return false
 	if not active or not edit_available:
 		return false
 	var current := selected_transform()
@@ -174,7 +180,7 @@ func transform_selected(offset: Vector3, angle: float, factor: float) -> bool:
 		clear_selection()
 	timer=0
 	refresh()
-	notice.emit("Object transformed · Ctrl+Z undoes" if accepted else "Transform blocked · move clear or check capacity")
+	notice.emit(("Object transformed" if gameplay else "Object transformed · Ctrl+Z undoes") if accepted else "Transform blocked · move clear or check capacity")
 	return accepted
 
 func ray() -> Dictionary:
@@ -212,6 +218,9 @@ func refresh() -> void:
 	if not selection.is_empty():
 		caption.text="OBJECT #%d · selected\nUndo %d · Redo %d" % [picked_id,status.undo_steps,status.redo_steps]
 		help.text="Arrows X/Z · PgUp/Dn Y · Shift fine\nR Rotate · +/− Scale · Q Clear\nCtrl+Z Undo · Ctrl+Y Redo · M Blocks"
+		if gameplay:
+			caption.text="OBJECT #%d · selected" % picked_id
+			help.text="Arrows X/Z · PgUp/Dn Y · Shift fine\nR Rotate · Q Clear · M Blocks\nNo resizing or undo/redo in gameplay"
 		preview.global_transform=selection.transform
 		preview_material.albedo_color=Color(1.0,0.72,0.2,0.35)
 		preview.show()
@@ -219,6 +228,9 @@ func refresh() -> void:
 	help.text="E Select · R Rotate · RMB Place · LMB Remove\nCtrl+Z Undo · Ctrl+Y / Ctrl+Shift+Z Redo\nM Blocks · F5 Save · Esc Use buttons"
 	var hit := target()
 	caption.text="OBJECTS · %s · %d°\nUndo %d · Redo %d" % [catalog[selected].title,quarter_turns*90,status.undo_steps,status.redo_steps]
+	if gameplay:
+		caption.text="OBJECTS · %s · %d°\nCost: %s" % [catalog[selected].title,quarter_turns*90,catalog[selected].get("cost_label","Recipe unavailable")]
+		help.text="E Select · R Rotate · RMB Place · LMB Remove\nNo removal refund · Undo/redo and resizing disabled\nM Blocks · F5 Save · Esc Use buttons"
 	if hit.is_empty():
 		preview.hide()
 		return
@@ -251,8 +263,13 @@ func edit(remove: bool) -> int:
 		notice.emit("Aim at a nearby upward-facing surface")
 		return 0
 	var collection: Node3D = catalog[selected].collection
-	var id: int = history.insert(collection,records(hit.transform,collection),protection())
-	notice.emit("%s placed · F5 saves world" % catalog[selected].title if id>0 else "Placement blocked · move clear or check capacity")
+	var id: int = 0
+	if gameplay:
+		placement_failure="Gameplay placement unavailable"
+		if paid_placement.is_valid(): id=paid_placement.call(history,collection,records(hit.transform,collection),protection(),catalog[selected].get("costs",PackedInt64Array()))
+	else:
+		id=history.insert(collection,records(hit.transform,collection),protection())
+	notice.emit("%s placed · F5 saves world" % catalog[selected].title if id>0 else (placement_failure if gameplay else "Placement blocked · move clear or check capacity"))
 	timer=0
 	return id
 
@@ -285,6 +302,9 @@ func handle_input(event: InputEvent) -> bool:
 				transform_selected(Vector3.ZERO,0.0,1.0/1.1 if event.physical_keycode in [KEY_MINUS,KEY_KP_SUBTRACT] else 1.1)
 				return true
 		if (event.ctrl_pressed or event.meta_pressed) and event.physical_keycode in [KEY_Z,KEY_Y]:
+			if gameplay:
+				notice.emit("Object undo/redo is available in the free editor")
+				return true
 			var forward: bool = event.physical_keycode==KEY_Y or event.shift_pressed
 			var accepted: bool = history.redo(protection()) if forward else history.undo(protection())
 			notice.emit(("Object redo" if forward else "Object undo")+ (" · F5 saves world" if accepted else " unavailable · move clear or check history"))

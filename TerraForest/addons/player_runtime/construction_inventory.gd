@@ -6,6 +6,16 @@ var gameplay := false
 var busy := false
 var reason := ""
 
+func place_model(history: RefCounted, collection: Node3D, inventory: RefCounted, transforms: PackedFloat32Array, protection: AABB, costs: PackedInt64Array) -> int:
+	if gameplay and costs.is_empty():
+		reason="This object has no gameplay recipe"
+		return 0
+	var created: Array[int]=[0]
+	var accepted:=_apply(inventory,costs,func() -> bool:
+		created[0]=history.insert(collection,transforms,protection)
+		return created[0]>0)
+	return created[0] if accepted else 0
+
 func place_block(blocks: Node, inventory: RefCounted, cell: Vector3i, word: int) -> bool:
 	if busy: return false
 	if gameplay and word != 0 and blocks.get_cell(cell)!=0:

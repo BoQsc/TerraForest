@@ -1,0 +1,18 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.3.289 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce GTX 1060 with Max-Q Design
+
+[TerrainRewrite] New world
+[TerrainRewrite] New world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+PASS world ready
+PASS gameplay world wires paid model placement
+[TerrainRewrite] Metal beam placed · F5 saves world
+PASS actual model tool charges four metal for beam
+FAIL model placement marks world save dirty
+PASS model palette displays recipe cost
+[TerrainRewrite] Object undo/redo is available in the free editor
+PASS gameplay undo cannot reverse paid placement independently of inventory
+PASS 1920x1080 fullscreen presentation
+[TerrainRewrite] Temporary test world: save skipped
+PASS world drains cleanly
+MODEL_INVENTORY_SCENE checks=8 failures=1
