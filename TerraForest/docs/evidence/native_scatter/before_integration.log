@@ -1,0 +1,19 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+FAIL legacy bytes 1703.0 0.0 20.0 0.82 points
+FAIL legacy bytes 1703.0 12.0 20.0 0.82 points
+FAIL legacy bytes 1703.0 0.0 20.0 1.0 points
+FAIL legacy bytes 1703.0 12.0 20.0 1.0 points
+FAIL legacy bytes 0.0 0.0 20.0 0.82 points
+FAIL legacy bytes 0.0 12.0 20.0 0.82 points
+FAIL legacy bytes 0.0 0.0 20.0 1.0 points
+FAIL legacy bytes 0.0 12.0 20.0 1.0 points
+FAIL legacy bytes -19.0 0.0 20.0 0.82 points
+FAIL legacy bytes -19.0 12.0 20.0 0.82 points
+FAIL legacy bytes -19.0 14.0 31.0 0.82 points
+FAIL legacy bytes -19.0 0.0 20.0 1.0 points
+FAIL legacy bytes -19.0 12.0 20.0 1.0 points
+FAIL legacy bytes -19.0 14.0 31.0 1.0 points
+FAIL legacy bytes 2147483647.0 0.0 20.0 0.82 points
+FAIL legacy bytes 2147483647.0 0.0 20.0 1.0 points
+NATIVE_SCATTER {"byte_checks":288,"facade_mean_us":33.32,"failures":16,"invalid_cases":8,"legacy_cases":72,"native_mean_us":13.871}

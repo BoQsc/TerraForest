@@ -1,3 +1,30 @@
+## Native seeded vegetation candidate generation - 2026-10-05
+
+Moved the ecosystem's per-cell RNG, biome mask, stable-ID generation and packed
+candidate-array construction into `NativeVegetationScatter`. The scene adapter
+now makes one native call per requested owner. Each call visits exactly 36
+candidate slots; invalid cells outside the existing 32x32 grid and nonfinite or
+out-of-range density return empty arrays. Species, world bounds and generation
+rules are unchanged. This does not add grass/plants or migrate the remaining
+ecosystem scheduling and publication loops.
+
+Before replacement, 72 cases were captured from the GDScript implementation at
+commit 2ad1c8a: four seeds including a negative seed, three densities and six
+cells spanning empty, biome-edge and populated regions. The checked-in fixture
+stores exact packed bytes for points, IDs, rotations and scales. All 576 direct
+and integrated byte comparisons plus eight invalid-input cases pass. An initial
+native float-promotion mismatch was caught and corrected before integration;
+the reference fixture was not regenerated to accommodate that mismatch.
+
+The short 1,000-call comparison measured about 37 microseconds per cell for the
+legacy adapter and 14 microseconds through the integrated native path. This is
+a bounded CPU microbenchmark, not an FPS or GPU-usage improvement measurement.
+Both native targets rebuilt using the pinned prebuilt SDK; runtime tests used
+the debug DLL. All 32 harvest-state checks and six fullscreen 1920x1080 scene
+checks pass. The headless scene attempt hit its readiness deadline; its failed
+log is retained, and startup variability remains open. Evidence:
+`docs/evidence/native_scatter`; fixture: `tests/scatter_reference.json`.
+
 ## Harvest admission respects world and owner updates - 2026-10-05
 
 The ecosystem's harvest API now checks its bound terrain lifecycle directly,

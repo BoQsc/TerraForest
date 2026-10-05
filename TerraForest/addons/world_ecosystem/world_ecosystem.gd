@@ -30,6 +30,7 @@ var _resample: Dictionary = {}
 var last_process_us: int = 0
 var harvest_state: RefCounted
 var _harvesting:=false
+var _native_scatter: RefCounted
 
 func harvest_root(id: int, inventory: RefCounted) -> Dictionary:
 	if terrain!=null and (not terrain.world_ready or terrain.pending_edit or terrain.closing or terrain.stopping):
@@ -177,27 +178,11 @@ func _refresh(center: Vector2i) -> void:
 			_resample.erase(key)
 
 func _candidates(key: Vector2i) -> Dictionary:
-	var rng := RandomNumberGenerator.new()
-	rng.seed = seed ^ ((key.y * 32 + key.x + 1) * 73856093)
-	var points := PackedVector3Array()
-	var ids := PackedInt64Array()
-	var rotations := PackedFloat32Array()
-	var scales := PackedFloat32Array()
-	for z in range(GRID):
-		for x in range(GRID):
-			var point := Vector3((key.x + (x + rng.randf_range(0.2, 0.8)) / GRID) * CELL_SIZE, 0.0, (key.y + (z + rng.randf_range(0.2, 0.8)) / GRID) * CELL_SIZE)
-			var roll: float = rng.randf()
-			var yaw: float = rng.randf_range(0.0, TAU)
-			var scale: float = rng.randf_range(0.7, 1.18)
-			# Ecological mask: grassy SW biome, tapered at the snow/sand boundaries.
-			var biome: float = clampf((1000.0 - point.x) / 100.0, 0.0, 1.0) * clampf((point.z - 1000.0) / 100.0, 0.0, 1.0)
-			if roll >= density * biome or point.x < 2.0 or point.z < 2.0 or point.x >= 1998.0 or point.z >= 1998.0:
-				continue
-			points.append(point)
-			ids.append(1 + (key.y * 32 + key.x) * GRID * GRID + z * GRID + x)
-			rotations.append(yaw)
-			scales.append(scale)
-	return {"points": points, "ids": ids, "rotations": rotations, "scales": scales}
+	if _native_scatter==null:
+		if not ClassDB.class_exists("NativeVegetationScatter"):
+			GDExtensionManager.load_extension("res://addons/vegetation_runtime/vegetation_runtime.gdextension")
+		_native_scatter=ClassDB.instantiate("NativeVegetationScatter")
+	return _native_scatter.candidates(key,seed,density)
 
 func _surface_ready(token: int, points: PackedVector3Array, normals: PackedVector3Array, epoch_id: int, revision: int) -> void:
 	if not _requests.has(token):

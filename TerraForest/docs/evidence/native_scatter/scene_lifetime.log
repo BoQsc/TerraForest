@@ -1,0 +1,12 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+[TerrainRewrite] New world
+[TerrainRewrite] New world
+FAIL main scene finishes loading
+PASS unused vehicle scene has an outstanding preload
+PASS actual world marks supply placement for autosave
+PASS actual world marks collection for autosave
+[TerrainRewrite] Temporary test world: save skipped
+PASS terrain drains on shutdown
+PASS unused vehicle preload consumed on exit
+SCENE_LIFETIME {"checks":6,"failures":1}
