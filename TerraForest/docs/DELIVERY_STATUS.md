@@ -1,3 +1,18 @@
+## Vegetation refresh rejection and recovery - 2026-10-05
+
+Expanded the integrated resampling fixture after the native placement migration.
+An invalid scale in a completed batch preserves live visual/collision support,
+keeps the owner marked for resampling and releases its request slot. A valid
+retry publishes new support and clears the retry flag. An unknown completion
+does not release another request. A completion received during a pending terrain
+edit preserves support and retry intent, then recovers after the edit settles.
+All 19 fixture checks pass, including the existing empty-owner and neighbouring
+tree checks. No runtime change was required for these scenarios.
+
+Evidence: `docs/evidence/native_scatter/retry.log`. The fixture injects callback
+completions into the actual ecosystem/renderer/trunk path; it does not simulate
+worker stalls, prove a retry deadline or qualify long-session behaviour.
+
 ## Native vegetation surface placement - 2026-10-05
 
 Moved slope filtering and yaw/scale/root-offset transform construction from

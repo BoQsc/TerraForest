@@ -34,6 +34,27 @@ func run() -> void:
 	check(is_equal_approx(vegetation.renderer.roots[1].t.origin.y,1) and is_equal_approx(vegetation.trunk_collision.get_instance(1)[7],1),"lowered support updates both representations too")
 	terrain.published_revision=2;sample(ecosystem,5,9)
 	check(ecosystem.stale_results==1 and is_equal_approx(vegetation.renderer.roots[1].t.origin.y,1),"stale support cannot replace the accepted transform")
+	terrain.published_revision=1
+	ecosystem._resample[Vector2i.ZERO]=true
+	ecosystem._requests[6]={"key":Vector2i.ZERO,"ids":PackedInt64Array([1,2]),"rotations":PackedFloat32Array([0,0]),"scales":PackedFloat32Array([1,NAN])}
+	ecosystem._pending_cells[Vector2i.ZERO]=6
+	ecosystem._surface_ready(6,PackedVector3Array([Vector3(10,20,10),Vector3(30,20,10)]),PackedVector3Array([Vector3.UP,Vector3.UP]),1,1)
+	check(ecosystem.rejected_batches==1 and ecosystem._resample.has(Vector2i.ZERO),"native rejection keeps owner scheduled for resampling")
+	check(not ecosystem._pending_cells.has(Vector2i.ZERO) and not ecosystem._requests.has(6),"rejected completion releases request admission for retry")
+	check(is_equal_approx(vegetation.renderer.roots[1].t.origin.y,1) and is_equal_approx(vegetation.trunk_collision.get_instance(1)[7],1) and vegetation.renderer.roots[2].time==123.0,"malformed batch preserves both live roots and collision support")
+	sample(ecosystem,7,2)
+	check(not ecosystem._resample.has(Vector2i.ZERO) and is_equal_approx(vegetation.renderer.roots[1].t.origin.y,2),"valid retry replaces retained support and clears resampling")
+	ecosystem._resample[Vector2i.ZERO]=true
+	ecosystem._requests[8]={"key":Vector2i.ZERO,"ids":PackedInt64Array([1,2]),"rotations":PackedFloat32Array([0,0]),"scales":PackedFloat32Array([1,1])}
+	ecosystem._pending_cells[Vector2i.ZERO]=8
+	ecosystem._surface_ready(999,PackedVector3Array(),PackedVector3Array(),1,1)
+	check(ecosystem._pending_cells[Vector2i.ZERO]==8 and ecosystem._requests.has(8),"unknown completion cannot release a live owner's request")
+	terrain.pending_edit=true
+	ecosystem._surface_ready(8,PackedVector3Array([Vector3(10,90,10),Vector3(30,90,10)]),PackedVector3Array([Vector3.UP,Vector3.UP]),1,1)
+	check(ecosystem._resample.has(Vector2i.ZERO) and is_equal_approx(vegetation.renderer.roots[1].t.origin.y,2),"completion during terrain edit retains old support and retry intent")
+	terrain.pending_edit=false
+	sample(ecosystem,9,3)
+	check(not ecosystem._resample.has(Vector2i.ZERO) and is_equal_approx(vegetation.renderer.roots[1].t.origin.y,3),"post-edit retry publishes updated support")
 	var camera:=Camera3D.new();root.add_child(camera);ecosystem.camera=camera
 	ecosystem.density=0;ecosystem._last_cell=Vector2i.ZERO;ecosystem._scan_timer=1
 	ecosystem._resample[Vector2i.ZERO]=true;ecosystem._step(0)
