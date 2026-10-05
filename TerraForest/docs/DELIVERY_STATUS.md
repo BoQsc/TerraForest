@@ -1,3 +1,24 @@
+## Native vegetation surface placement - 2026-10-05
+
+Moved slope filtering and yaw/scale/root-offset transform construction from
+the ecosystem callback into `NativeVegetationScatter.place_surface`. GDScript
+retains epoch/revision checks, request ownership and publication orchestration.
+The native API admits at most 4,096 samples (runtime owners currently contain
+at most 36), checks equal array lengths and validates unique positive IDs,
+finite rotations, renderer-supported scales and a finite slope cutoff before
+producing placements. Nonfinite surface points/normals and zero normals are
+skipped as unavailable support; the old loop did not explicitly reject NaN
+normals. Valid sample order and transforms are preserved.
+
+All 22 API checks pass, including exact agreement with legacy transforms for
+the valid fixture and acceptance at the slope boundary. Existing terrain
+resampling and road/vegetation tests add 24 passing checks; the fullscreen
+1920x1080 scene adds six. The whole-world candidate compatibility test still
+passes all 49,152 byte comparisons. Both native DLL targets rebuilt against
+the prebuilt SDK; runtime validation uses debug. Evidence is under
+`docs/evidence/native_scatter/surface*.log`. This is a native migration and
+validation improvement; no frame-rate or transform-throughput gain is claimed.
+
 ## Whole-world scatter compatibility - 2026-10-05
 
 Expanded native-generation verification to every cell of the current 32x32

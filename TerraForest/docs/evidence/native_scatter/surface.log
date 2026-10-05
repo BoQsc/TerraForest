@@ -1,0 +1,25 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS slope threshold accepts equality and rejects below cutoff
+PASS valid placements preserve legacy basis, scale and root offset exactly
+PASS nonfinite support samples are skipped without invalid transforms
+PASS mismatched ids array rejects complete batch
+PASS mismatched points array rejects complete batch
+PASS mismatched rotations array rejects complete batch
+PASS mismatched scales array rejects complete batch
+PASS duplicate identities reject batch
+PASS invalid identity rejects batch
+PASS invalid identity rejects batch
+PASS invalid scale rejects batch
+PASS invalid scale rejects batch
+PASS invalid scale rejects batch
+PASS invalid scale rejects batch
+PASS invalid scale rejects batch
+PASS nonfinite rotation rejects batch
+PASS invalid slope cutoff rejects batch
+PASS invalid slope cutoff rejects batch
+PASS invalid slope cutoff rejects batch
+PASS invalid slope cutoff rejects batch
+PASS empty support batch is valid
+PASS oversized batch rejects before work
+SCATTER_SURFACE {"checks":22,"failures":0}

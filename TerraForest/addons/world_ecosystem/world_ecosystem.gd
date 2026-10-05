@@ -178,11 +178,14 @@ func _refresh(center: Vector2i) -> void:
 			_resample.erase(key)
 
 func _candidates(key: Vector2i) -> Dictionary:
+	return _scatter().candidates(key,seed,density)
+
+func _scatter() -> RefCounted:
 	if _native_scatter==null:
 		if not ClassDB.class_exists("NativeVegetationScatter"):
 			GDExtensionManager.load_extension("res://addons/vegetation_runtime/vegetation_runtime.gdextension")
 		_native_scatter=ClassDB.instantiate("NativeVegetationScatter")
-	return _native_scatter.candidates(key,seed,density)
+	return _native_scatter
 
 func _surface_ready(token: int, points: PackedVector3Array, normals: PackedVector3Array, epoch_id: int, revision: int) -> void:
 	if not _requests.has(token):
@@ -195,19 +198,11 @@ func _surface_ready(token: int, points: PackedVector3Array, normals: PackedVecto
 	if not _wanted.has(key) or epoch_id != terrain.epoch or revision != terrain.published_revision or terrain.pending_edit:
 		stale_results += 1
 		return
-	if points.size() != request["ids"].size() or normals.size() != points.size():
+	var placed: Dictionary=_scatter().place_surface(request["ids"],points,normals,request["rotations"],request["scales"],cos(deg_to_rad(max_slope_degrees)))
+	if not placed.ok:
 		rejected_batches += 1
 		return
-	var ids := PackedInt64Array()
-	var transforms: Array[Transform3D] = []
-	var min_up: float = cos(deg_to_rad(max_slope_degrees))
-	for i in range(points.size()):
-		if not points[i].is_finite() or normals[i].y < min_up:
-			continue
-		var basis := Basis(Vector3.UP, request["rotations"][i]).scaled(Vector3.ONE * request["scales"][i])
-		ids.append(request["ids"][i])
-		transforms.append(Transform3D(basis, points[i] - Vector3(0.0, 0.2, 0.0)))
-	_replace_samples(key,ids,transforms)
+	_replace_samples(key,placed.ids,placed.transforms)
 
 func _replace_samples(key: Vector2i,ids: PackedInt64Array,transforms: Array[Transform3D]) -> void:
 	# Empty results must retire previously accepted roots as well as their cache.
