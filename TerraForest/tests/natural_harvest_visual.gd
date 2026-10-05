@@ -46,6 +46,11 @@ func run() -> void:
 			if id!=selected and (not game.vegetation.renderer.roots.has(id) or game.vegetation.renderer.roots[id].t!=previous[id]): unchanged=false
 		check(unchanged,"all other resident tree identities and transforms survive unchanged")
 		await picture("after")
+		print("HELP_LAYOUT ",JSON.stringify({"rect":str(game.help.get_global_rect()),"visible_characters":game.help.visible_characters,"clip_text":game.help.clip_text,"text":game.help.text}))
+		for frame in range(30): await RenderingServer.frame_post_draw
+		await picture("after_settled")
+		game.help.queue_redraw()
+		await picture("after_redraw")
 		check(game.player_hud.inventory.can_afford(PackedInt64Array([102,68]),game.player_hud.inventory.snapshot().revision).ok,"natural harvest grants four wood")
 		check(Presentation.measurement(root).fair_graphical_sample and Engine.max_fps==60,"visual check uses fullscreen 1920x1080 and 60 FPS cap")
 		print("NATURAL_TARGET ",JSON.stringify({"id":selected,"root":str(tree.origin),"resident_before":previous.size(),"resident_after":game.vegetation.renderer.roots.size()}))

@@ -1,3 +1,27 @@
+## HUD glyph diagnostic remains open - 2026-10-05
+
+Extended the natural-harvest capture with a 30-frame settling period and explicit
+help-label redraw. The native vegetation-upload run reproduced missing glyphs
+in help, title and toolbelt. Layout inspection reports the complete text,
+visible_characters=-1, clip_text=false and a help rectangle inside 1920x1080.
+Queueing a redraw did not fully remove the visual artifact. This is broader
+than the original report of clipped help text; ordinary label bounds do not
+explain the observed title characters disappearing.
+
+A separate `tests/text_render_probe.gd` with 20 labels and dynamic text updates,
+but no world, rendered cleanly using the same Forward+ GPU and resolution.
+A full-world comparison with the existing `--scripted-vegetation-flush` switch
+also produced readable help/title in the inspected capture. These are single
+comparison runs, not proof that native code corrupts rendering; timing and
+render workload differ. No production rendering switch or speculative redraw
+workaround was added. Further reproduction is required to isolate the cause.
+
+Evidence under `docs/evidence/natural_harvest`: `native_flush/`,
+`scripted_flush/`, `text_only.png`, `text_only.log` and `ui_check.log`.
+All six gameplay assertions pass in each world run, but those assertions do not
+detect missing glyphs. Screenshot readback/PNG writing stalls this diagnostic;
+its HUD FPS values are not usable gameplay performance samples.
+
 ## Natural forest harvesting visual check - 2026-10-05
 
 `tests/natural_harvest_visual.gd` loads the actual generator-3 world, selects the

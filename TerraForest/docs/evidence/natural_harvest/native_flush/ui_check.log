@@ -1,0 +1,18 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.3.289 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce GTX 1060 with Max-Q Design
+
+[TerrainRewrite] New world
+[TerrainRewrite] New world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+PASS natural forest and terrain become ready
+NATURAL_STARTUP {"error":"","loading":false,"queued":2,"trees":1924,"worker":"mesh","world_ready":true}
+PASS natural trunk is the nearest unobstructed interaction hit
+[TerrainRewrite] Harvested 4 wood
+PASS E harvests the naturally generated aimed tree
+PASS all other resident tree identities and transforms survive unchanged
+HELP_LAYOUT {"clip_text":false,"rect":"[P: (14.0, 972.0), S: (1906.0, 108.0)]","text":"WASD  Move    Shift  Sprint    Space  Jump    G  Fly    Mouse  Look    Esc  Release\nB  Terrain / Blocks    M  Objects    E  Collect / Harvest    LMB  Remove    RMB  Place    1–6  Shapes    P  Prefabs    T  Material    R  Rotate    Ctrl+Z / Y  Undo / Redo\nTerrain: Wheel  Brush size    1–3  Tools    L  Lake    F5  Save world    F9  Reload    F3  Diagnostics\nV  Place vehicle    E  Enter / exit stopped vehicle    F5  Save world and vehicle","visible_characters":-1}
+PASS natural harvest grants four wood
+PASS visual check uses fullscreen 1920x1080 and 60 FPS cap
+NATURAL_TARGET {"id":23488,"resident_after":1923,"resident_before":1924,"root":"(804.9953, 49.07021, 1305.7)"}
+[TerrainRewrite] Temporary test world: save skipped
+NATURAL_HARVEST {"checks":6,"failures":0}
