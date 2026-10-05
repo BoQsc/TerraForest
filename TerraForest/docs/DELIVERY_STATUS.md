@@ -1,3 +1,23 @@
+## Automated text stability comparison - 2026-10-05
+
+Added `tests/world_text_stability.gd`: it renders four static text sizes on an
+opaque panel, puts an opaque backing behind the actual bottom help label,
+harvests a natural tree and compares exact captured pixel bytes over 12 samples
+while telemetry text changes. Native vegetation uploads remain enabled.
+The final run reports zero changed panels and zero changed help strips, with a
+confirmed harvest. Reference crops were visually inspected and contain readable
+complete text. Evidence: `docs/evidence/text_stability/native.log` and `native/`.
+
+Earlier panel-only runs also stayed stable, with and without harvesting. This
+does not reproduce the transparent-HUD artifact, and weakens attribution to
+native vegetation uploads alone. Adding a backing and extra labels changes
+composition and timing; passing this diagnostic does not prove the original
+issue fixed. Production HUD and renderer settings are unchanged. The test runs
+at fullscreen 1920x1080 with the game's 60 FPS cap, but synchronous GPU readbacks
+make it unsuitable for performance measurements. Pixel equality detects change
+after the reference frame; it cannot establish correctness without inspecting
+that initial reference, nor cover text elsewhere outside the sampled rectangles.
+
 ## HUD glyph diagnostic remains open - 2026-10-05
 
 Extended the natural-harvest capture with a 30-frame settling period and explicit
