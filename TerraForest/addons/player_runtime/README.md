@@ -24,11 +24,12 @@ wood, which can also be harvested from reachable forest trunks with E. The
 mode is selected at launch, not stored in the world file or enforced by a
 multiplayer authority. Opening the gameplay slot in editor mode allows editing.
 
-In the inventory, select brick, wood, concrete or metal and press **Drop one
+In the inventory, select brick, wood, concrete, metal, stone, iron ore or copper
+ore and press **Drop one
 selected supply**. On foot, this places one unit on clear supported ground in
 front of the player. It rejects unavailable collision, occupied positions and
-world updates without consuming the item. Tools and raw ores cannot be dropped
-yet. The editor uses the same paid inventory drop action; its separate free
+world updates without consuming the item. Tools cannot be dropped.
+The editor uses the same paid inventory drop action; its separate free
 supply authoring tool remains available.
 
 Drops reuse the native bounded pickup stores and batched static renderer: no

@@ -1,0 +1,19 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS fresh disk world starts
+PASS drop marks compound world dirty
+PASS drop reaches verified disk archive before shutdown
+[TerrainRewrite] ERROR: save blocked: snapshot writes explicitly disabled; previous canonical snapshot retained
+PASS fresh worker and providers reopen dropped state
+PASS reopened inventory contains exactly four remaining resources
+PASS reopened world contains exactly the dropped supply
+PASS disk round trip preserves pickup identity and location
+PASS recollection after fresh load conserves all five units
+PASS repeated collection cannot duplicate supply
+PASS recollection reaches verified disk archive before shutdown
+[TerrainRewrite] ERROR: save blocked: snapshot writes explicitly disabled; previous canonical snapshot retained
+PASS second fresh reopen loads recollected state
+PASS second reopen preserves exact recovered inventory
+PASS second reopen cannot resurrect collected supply
+[TerrainRewrite] ERROR: save blocked: snapshot writes explicitly disabled; previous canonical snapshot retained
+INVENTORY_DROP_PERSISTENCE item=202 checks=13 failures=0

@@ -1,3 +1,24 @@
+## Raw mining resources support world drops - 2026-10-05
+
+Stone, iron ore and copper ore now support the same inventory drop/recollection
+path as construction materials. Native stores, spatial queries, batched rendering
+and compound persistence are reused. Pickup colors are keyed by item ID rather
+than assuming contiguous construction IDs. Tools remain nondroppable. Each of
+the seven item types has at most 4,096 stored pickups and 256 rendered nearby
+instances; adding the three types increases fixed store/renderer overhead and
+the bounded explicit collection search to at most 7 x 64 candidates. No active
+rigid bodies or per-pickup nodes were added. Visuals remain simple colored cubes.
+
+All 39 disk checks across the three new resources pass: drop, autosave, fresh
+reopen, recollection, second autosave and second fresh reopen conserve counts
+and identities without resurrecting collected pickups. The transaction fixture
+passes 17 checks including empty defaults for absent resource sections in legacy
+saves. Nine actual-scene copper-ore checks pass at 1920x1080 fullscreen; the
+inventory screenshot was inspected. Evidence: `docs/evidence/resource_drops`.
+The scene test grants fixture ore directly; generation/mining yields are covered
+separately by existing mining tests. Dense pickup rendering, multiplayer authority
+and runtime thermal headroom are not qualified by these checks.
+
 ## Save protection reports its actual cause - 2026-10-05
 
 Removed the blanket assertion that every blocked save follows snapshot corruption.

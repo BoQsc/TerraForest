@@ -38,6 +38,12 @@ func run() -> void:
 	check(restored.restore_storage_snapshot(saved_pickups) and restored.resolve_identity(result.id)>0,"dropped supply survives native snapshot round trip")
 	var collected: Dictionary=pickups.collect_near(Vector3(1,2,3),inventory,func(_p: Vector3): return true)
 	check(collected.ok and inventory.snapshot().slots[slot].count==64 and store.statistics().active==0,"recollection conserves supply count")
+	var legacy: Dictionary=persistence._capture().sections
+	for item in [201,202,203]:
+		legacy.erase("pickups_%d"%item)
+		pickups.spawn(item,Vector3.ZERO)
+	persistence._restore(legacy,1)
+	check(pickups.stores[201].statistics().active==0 and pickups.stores[202].statistics().active==0 and pickups.stores[203].statistics().active==0,"legacy sections restore absent resource pickups to empty defaults")
 	for i in range(4096): store.spawn(Vector3(i,0,0),Vector3.ZERO)
 	var revision: int=inventory.snapshot().revision
 	saved_inventory=inventory.capture_storage_snapshot()

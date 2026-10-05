@@ -3,8 +3,8 @@ extends Node3D
 signal changed
 ## Scene orchestration only: native stores, spatial queries and batched rendering.
 ## Static authored supplies; no per-pickup nodes or active rigid bodies.
-const ITEMS := {101: "Brick", 102: "Wood", 103: "Concrete", 104: "Metal"}
-const COLORS := [Color("b57052"), Color("b99563"), Color("b4bec4"), Color("729da9")]
+const ITEMS := {101: "Brick", 102: "Wood", 103: "Concrete", 104: "Metal", 201: "Stone", 202: "Iron ore", 203: "Copper ore"}
+const COLORS := {101: Color("b57052"), 102: Color("b99563"), 103: Color("b4bec4"), 104: Color("729da9"), 201: Color("7f858c"), 202: Color("965e43"), 203: Color("bc7950")}
 var stores: Dictionary = {}
 var renderers: Dictionary = {}
 var render_status: Dictionary = {}
@@ -20,7 +20,7 @@ func drop_one(inventory: RefCounted, slot: int, revision: int, point: Vector3) -
 		return {"ok":false,"reason":"Inventory changed; select the supply again"}
 	var item: int = state.slots[slot].item
 	if not stores.has(item) or state.slots[slot].count < 1:
-		return {"ok":false,"reason":"Select a construction material to drop"}
+		return {"ok":false,"reason":"Select a material or raw resource to drop"}
 	# Native calls emit no callbacks. Reserve the world record before debiting;
 	# capacity failure therefore leaves inventory contents AND revision intact.
 	_transferring = true
@@ -51,7 +51,7 @@ func prepare(persistence: RefCounted) -> bool:
 		if not persistence.register_component("pickups_%d" % item, store.capture_storage_snapshot, _restore.bind(item), store, store.capture_storage_snapshot()): return false
 		var mesh := BoxMesh.new(); mesh.size = Vector3.ONE * 0.35
 		var material := StandardMaterial3D.new()
-		material.albedo_color = COLORS[item - 101]; material.roughness = 0.8
+		material.albedo_color = COLORS[item]; material.roughness = 0.8
 		mesh.material = material
 		var renderer: MultiMeshInstance3D = ClassDB.instantiate("NativeEntityRenderer")
 		if not renderer.configure(store, mesh, 256):
@@ -83,7 +83,7 @@ func update_view(delta: float, focus: Vector3, enabled: bool) -> void:
 		render_status[item] = renderers[item].refresh(to_local(focus), 64.0, 4096)
 
 func collect_near(point: Vector3, inventory: RefCounted, reachable: Callable) -> Dictionary:
-	# Explicit keypress only; at most 4 x 64 candidates. Never a per-frame scan.
+	# Explicit keypress only; at most 7 x 64 candidates. Never a per-frame scan.
 	var best_item := 0; var best_handle := 0; var best_distance := INF
 	for item: int in stores:
 		var query: Dictionary = stores[item].query_sphere(to_local(point), 2.5, 64, 256)

@@ -135,10 +135,13 @@ func refresh() -> void:
 			belt[i].text="%d%s\n%s"%[i+1," •" if row.item!=0 and row.item==active_item else "",title]
 			belt[i].disabled=row.item not in CATALOG
 	_refresh_pending()
-	drop_button.disabled=selected_slot<0 or state.slots[selected_slot].item not in MATERIALS
+	drop_button.disabled=selected_slot<0 or not _droppable(state.slots[selected_slot].item)
+
+func _droppable(item: int) -> bool:
+	return item in MATERIALS or item in RESOURCES
 
 func drop_selected() -> void:
-	if not enabled or not inventory_open or selected_slot<0 or state.slots[selected_slot].item not in MATERIALS: return
+	if not enabled or not inventory_open or selected_slot<0 or not _droppable(state.slots[selected_slot].item): return
 	drop_requested.emit(selected_slot,state.revision)
 
 func _refresh_pending() -> void:
