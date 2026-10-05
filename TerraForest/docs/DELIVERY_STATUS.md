@@ -1,3 +1,25 @@
+## Pickup renderer pressure at all seven store limits - 2026-10-05
+
+The new targeted pressure fixture fills all seven native pickup stores to 4,096
+records each (28,672 total). Selection remains capped at 256 visible rows per
+type, or 1,792 combined. Initial transform submission is 86,016 bytes; thirty
+stationary refreshes submit zero transform bytes. Focus movement stays within
+the same caps; removing the selected stone population replaces its rows with
+live nearest positions, and leaving the populated area hides every batch.
+All 27 checks pass with Forward+ at 1920x1080 fullscreen.
+
+Thirty synchronous seven-store refresh calls measured CPU p50/p95/max of
+1.325/1.499/1.534 ms in the recorded final run. This is a deliberately dense
+API-level fixture, not a camera-rendered combined world, frame-time measurement,
+thermal test or endurance run. No renderer optimization was necessary: existing
+native row comparison already suppresses unchanged uploads. It still performs
+bounded selection work at the adapter's refresh frequency.
+
+The initial headless run failed transform readback, returning zero positions;
+the graphical renderer returned the expected positions. Both diagnostic logs
+are retained, and the fixture now explicitly requires a graphical renderer.
+Evidence: `docs/evidence/pickup_pressure`; test: `tests/pickup_render_pressure.gd`.
+
 ## Raw mining resources support world drops - 2026-10-05
 
 Stone, iron ore and copper ore now support the same inventory drop/recollection

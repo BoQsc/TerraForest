@@ -1,0 +1,32 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.3.289 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce GTX 1060 with Max-Q Design
+
+PASS 1920x1080 fullscreen presentation
+PASS seven pickup stores and renderers initialize
+PASS full store admitted: 101
+PASS full store admitted: 102
+PASS full store admitted: 103
+PASS full store admitted: 104
+PASS full store admitted: 201
+PASS full store admitted: 202
+PASS full store admitted: 203
+PASS bounded first selection and upload: 101
+PASS bounded first selection and upload: 102
+PASS bounded first selection and upload: 103
+PASS bounded first selection and upload: 104
+PASS bounded first selection and upload: 201
+PASS bounded first selection and upload: 202
+PASS bounded first selection and upload: 203
+PASS seven full stores respect combined visible and upload caps
+PASS thirty stationary full-population refreshes upload zero transform bytes
+PASS moving focus stays bounded: 101
+PASS moving focus stays bounded: 102
+PASS moving focus stays bounded: 103
+PASS moving focus stays bounded: 104
+PASS moving focus stays bounded: 201
+PASS moving focus stays bounded: 202
+PASS moving focus stays bounded: 203
+TRANSFORM_PROBE actual=(11.5, 0.0, 6.5) expected=(11.5, 0.0, 6.5)
+PASS removed visible population is replaced with live nearest positions
+PASS leaving populated area hides every pickup batch
+PICKUP_RENDER_PRESSURE population=28672 visible_cap=1792 first_upload_bytes=86016 idle_upload_bytes=0 refresh_cpu_us_p50=1325 p95=1499 max=1534 checks=27 failures=0
