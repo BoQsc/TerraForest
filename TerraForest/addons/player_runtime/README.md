@@ -38,7 +38,9 @@ revision check; rejection retires that reservation. Change signals run only
 after both sides commit, marking the compound world for autosave. E recollects
 one unit through the existing reach/occlusion checks. This is local gameplay,
 not network authority. Targeted tests: `tests/inventory_drop.gd` and
-`tests/inventory_drop_scene.gd`.
+`tests/inventory_drop_scene.gd`. `tests/inventory_drop_persistence.gd` verifies
+drop and recollection through two autosaves and fresh provider/worker reloads;
+shutdown writes are disabled so they cannot mask a failed autosave.
 
 `NativePlayerInventory.consume_items(costs, expected_revision)` accepts 1–32
 item/count pairs and stages deductions across the fixed 32 inventory slots.

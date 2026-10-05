@@ -1,3 +1,22 @@
+## Dropped supplies survive fresh disk reloads - 2026-10-05
+
+Added a 13-check disk test using the production compound capture, worker and
+archive path. It drops one of five wood units, autosaves, destroys the worker and
+providers, then reopens with four inventory units and exactly one pickup at the
+same persistent identity and location. Recollection restores five units; repeated
+collection is rejected. A second autosave and fresh reopen preserve all five
+inventory units and no world pickup. All checks pass in about seven seconds.
+
+The test accelerates only the autosave timer. Shutdown writes are disabled before
+each teardown, so shutdown cannot create the archive being verified. This invokes
+an existing misleading backend message about a corrupt snapshot; this fixture
+does not detect corruption and both archive reloads succeed. The test covers
+normal saved-state conservation, not process termination during writes, network
+authority or arbitrary filesystem failures. No runtime correction was needed.
+
+Evidence: `docs/evidence/inventory_drop/disk.log`; fixture:
+`tests/inventory_drop_persistence.gd`.
+
 ## Inventory supplies can return to the world - 2026-10-05
 
 Added an inventory action to drop one selected construction material on clear
