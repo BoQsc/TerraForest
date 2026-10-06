@@ -1,3 +1,20 @@
+## Disabled vehicle controls also block auxiliary shortcuts - 2026-10-07
+
+Vehicle reset (R), damage toggle (F8), repair (F9) and accessory toggle (F10)
+previously polled keys without checking controls_enabled. They now require
+enabled controls while still recording sampled key state, preventing shortcuts
+observed during disabled ticks from firing merely when controls resume. Throttle
+already used the control gate; no driving physics or braking policy changed.
+
+Seven checks with the real native vehicle scene and injected held-key state pass:
+disabled shortcuts preserve pose/damage/settings, sampled held keys remain inert
+on resumption, and release/new press restores normal behavior. The fixture
+explicitly flushes buffered input before checking held state; its initial attempt
+without that flush did not install the intended key state. Evidence:
+`docs/evidence/vehicle_admission/shortcuts.log`; test:
+`tests/vehicle_disabled_shortcuts.gd`. This covers shortcut polling, not OS focus
+event delivery, physical stopping distance or every frame scheduling sequence.
+
 ## Vehicle transitions respect live world interaction state - 2026-10-07
 
 Added an optional live admission callback to the vehicle adapter. Creation,

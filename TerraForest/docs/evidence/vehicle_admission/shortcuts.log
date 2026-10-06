@@ -1,0 +1,13 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS fixture installs actual held key state
+PASS disabled reset shortcut cannot teleport vehicle
+PASS disabled repair and damage toggle preserve vehicle state
+PASS disabled accessory toggle preserves setting
+PASS held shortcuts do not fire when controls resume
+Visual mesh damage DISABLED. Existing dents are unchanged.
+Visual vehicle dents repaired.
+Mounted accessory motion DISABLED.
+PASS fresh enabled reset and repair work
+PASS fresh enabled toggle presses work
+VEHICLE_DISABLED_SHORTCUTS checks=7 failures=0

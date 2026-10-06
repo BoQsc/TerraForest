@@ -358,7 +358,7 @@ func _register_accessory_mount(mount: Node3D, source_name: String) -> void:
 
 func _update_accessory_motion_controls() -> void:
 	var toggle_down: bool = Input.is_key_pressed(KEY_F10)
-	if toggle_down and not _accessory_toggle_was_down:
+	if controls_enabled and toggle_down and not _accessory_toggle_was_down:
 		accessory_motion_enabled = not accessory_motion_enabled
 		_reset_accessory_motion()
 		print("Mounted accessory motion ", "ENABLED" if accessory_motion_enabled else "DISABLED", ".")
@@ -606,13 +606,13 @@ func _build_dented_mesh(visual: MeshInstance3D, world_point: Vector3, dent_direc
 
 func _update_visual_damage_controls() -> void:
 	var toggle_down: bool = Input.is_key_pressed(KEY_F8)
-	if toggle_down and not _damage_toggle_was_down:
+	if controls_enabled and toggle_down and not _damage_toggle_was_down:
 		visual_damage_enabled = not visual_damage_enabled
 		print("Visual mesh damage ", "ENABLED" if visual_damage_enabled else "DISABLED", ". Existing dents are unchanged.")
 	_damage_toggle_was_down = toggle_down
 
 	var repair_down: bool = Input.is_key_pressed(KEY_F9)
-	if repair_down and not _damage_repair_was_down:
+	if controls_enabled and repair_down and not _damage_repair_was_down:
 		repair_visual_damage()
 	_damage_repair_was_down = repair_down
 
@@ -1251,7 +1251,7 @@ func _update_wheel_visuals(delta: float) -> void:
 
 func _update_reset() -> void:
 	var reset_down: bool = Input.is_key_pressed(KEY_R)
-	if reset_down and not _reset_was_down:
+	if controls_enabled and reset_down and not _reset_was_down:
 		reset_vehicle()
 	_reset_was_down = reset_down
 
