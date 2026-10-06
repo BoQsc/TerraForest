@@ -1,0 +1,16 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.3.289 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce GTX 1060 with Max-Q Design
+
+[TerrainRewrite] New world
+[TerrainRewrite] New world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+PASS main scene finishes loading
+SCENE_STARTUP {"completed_us":{"cache_configuration":51970,"cache_fingerprint":13196,"main_initialization":191,"native_configuration":37,"startup_metadata":38,"worker_launch":552,"world_load_or_generate":184},"elapsed_us":10397517,"pending_results":1,"phase":"published","phase_us":10331349}
+SCENE_CACHE {"accounting_complete":false,"cache_read_only":true,"corrupt":0,"disk_bytes":536870912,"enabled":true,"hits":0,"misses":380,"scan_entries":126,"write_failures":0,"writes":0}
+PASS unused vehicle scene has an outstanding preload
+PASS actual world marks supply placement for autosave
+PASS actual world marks collection for autosave
+[TerrainRewrite] Temporary test world: save skipped
+PASS terrain drains on shutdown
+PASS unused vehicle preload consumed on exit
+SCENE_LIFETIME {"checks":6,"failures":0}

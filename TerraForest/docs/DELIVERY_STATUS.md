@@ -1,3 +1,19 @@
+## Cache-enabled main-scene startup check - 2026-10-06
+
+The actual Forward+ main world passes all six startup, pickup-autosave notification
+and teardown checks at 1920x1080 fullscreen with derived caching enabled. Added
+startup phase output and worker-delivered cache counters to the scene fixture.
+The recorded cache inventory takes 51.970 ms, examines 126 entries and enters
+read-only mode with incomplete accounting. The reported 536,870,912-byte value is
+the conservative quota sentinel, not a measured disk total when
+`accounting_complete` is false. No cache writes occur in the recorded interval.
+
+Playable readiness is observed about 10.4 seconds after backend start. Worker
+startup publication preceded it by about 10.3 seconds: nearby terrain/collision
+preparation remains distinct from cache initialization. This successful short run
+does not establish a startup deadline, diagnose all past timeouts, or qualify
+frame rate. Evidence: `docs/evidence/cache_scan_budget/world_scene.log`.
+
 ## Cache-enabled startup uses bounded accounting - 2026-10-06
 
 Replaced recursive cache enumeration with an iterative scan limited to 2,048

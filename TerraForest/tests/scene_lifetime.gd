@@ -11,6 +11,10 @@ func run() -> void:
 	var deadline=Time.get_ticks_msec()+30000
 	while game.loading_active and Time.get_ticks_msec()<deadline: await process_frame
 	check(not game.loading_active and game.terrain.world_ready,"main scene finishes loading")
+	print("SCENE_STARTUP ",JSON.stringify(game.terrain.backend.startup_diagnostics()))
+	# Inspect cache state only after startup publication. The cache belongs to
+	# the worker; use counters delivered by terrain instead of reading it here.
+	print("SCENE_CACHE ",JSON.stringify(game.terrain.derived_metrics))
 	check(game.world_vehicle._scene_requested,"unused vehicle scene has an outstanding preload")
 	game.terrain.changed_since_save=false
 	var supply: int=game.pickups.spawn(102,Vector3(800,100,1310))
