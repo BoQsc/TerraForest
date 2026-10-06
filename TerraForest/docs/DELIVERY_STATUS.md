@@ -1,3 +1,23 @@
+## Paid model placement persists with its inventory debit - 2026-10-06
+
+Added a fresh-provider/worker disk test using the region-aware compound archive.
+Starting with eight metal, native paid placement creates one model and leaves
+four metal. Autosave publishes before teardown; shutdown writes are disabled.
+Fresh providers restore byte-identical inventory and model snapshots, including
+the placement identity and transform. Removing the model gives no refund; another
+autosave and fresh reopen preserve its absence and the original debit. All ten
+checks pass in the final run, which completed in about ten seconds.
+
+The first run missed its 30-second initial startup deadline and incorrectly
+continued dependent assertions; its log is retained as a fixture failure, not
+evidence of a persistence defect. The fixture now stops on setup failure, logs
+worker status and allows 60 seconds for initialization. Startup variability
+remains unexplained; the successful rerun does not resolve it. No runtime change
+was required. Evidence: `docs/evidence/model_inventory/disk.log` and
+`disk_initial_startup_failure.log`; fixture: `tests/model_inventory_persistence.gd`.
+This checks normal autosave/reload, not abrupt interruption during disk publication
+or multiplayer transactions.
+
 ## Gameplay model placement consumes inventory - 2026-10-05
 
 Connected the static-object tool to the existing synchronous native inventory

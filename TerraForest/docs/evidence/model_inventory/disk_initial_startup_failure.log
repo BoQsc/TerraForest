@@ -1,0 +1,14 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+FAIL persistent model and inventory providers initialize
+[TerrainRewrite] ERROR: save blocked: test teardown must not create the archive under verification; previous canonical snapshot retained
+PASS fresh worker and providers reopen paid placement
+FAIL reloaded inventory preserves exact debit
+FAIL reloaded model preserves exact identity and transform
+FAIL removal gives no inventory refund
+PASS model removal autosaves before teardown
+[TerrainRewrite] ERROR: save blocked: test teardown must not create the archive under verification; previous canonical snapshot retained
+PASS second fresh reopen succeeds
+FAIL removal remains saved without resurrecting object or materials
+[TerrainRewrite] ERROR: save blocked: test teardown must not create the archive under verification; previous canonical snapshot retained
+MODEL_INVENTORY_PERSISTENCE checks=8 failures=5
