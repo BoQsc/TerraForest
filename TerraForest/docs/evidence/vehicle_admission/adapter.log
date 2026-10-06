@@ -1,0 +1,26 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS main-world script parses with vehicle integration
+PASS vehicle component registers with world persistence
+PASS vehicle resource becomes ready without creating a live vehicle
+PASS spawn rejects unavailable ground
+PASS live admission rejects vehicle creation
+PASS spawn on clear loaded ground
+PASS entry rejected outside interaction range
+PASS blocked entry preserves player collision and physics rate
+PASS entry transfers control and disables occupant collision
+PASS blocked exit preserves vehicle occupancy
+PASS moving exit rejected
+PASS exit rejects unloaded building collision
+PASS clear loaded exit restores walking
+PASS camera physics rate and collision restored
+PASS world capture includes vehicle
+Visual vehicle dents repaired.
+PASS restore resets parked vehicle pose
+VEHICLE_REUSE_RESTORE_US 6382
+PASS reload reuses detailed vehicle model
+PASS reuse clears held momentum
+PASS reuse resets damage and door state
+PASS invalid restore leaves live vehicle untouched
+PASS invalid live pose rejects save instead of removing vehicle
+PASS absent section removes old vehicle

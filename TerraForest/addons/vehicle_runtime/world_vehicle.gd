@@ -15,6 +15,9 @@ var _vehicle_scene: PackedScene
 var _scene_requested:=false
 var profile_install:=false
 var install_timings: Dictionary={}
+var interaction_available: Callable
+func can_interact() -> bool:
+	return not interaction_available.is_valid() or interaction_available.call()
 func request_scene() -> void:
 	if _vehicle_scene!=null or _scene_requested: return
 	_scene_requested=ResourceLoader.load_threaded_request(VEHICLE_SCENE_PATH,"PackedScene")==OK
@@ -83,6 +86,7 @@ func overlaps_edit(world_bounds: AABB) -> bool:
 	var bounds: AABB=car.driving_policy.travel_bounds(car.global_position,Vector3.ZERO,1.0/120.0)
 	return not bounds.position.is_finite() or bounds.intersects(world_bounds)
 func spawn(world: Node) -> String:
+	if not can_interact(): return "Vehicle interaction unavailable"
 	if is_instance_valid(car): return "Vehicle already placed · E nearby to enter"
 	request_scene()
 	if not scene_ready():
@@ -104,6 +108,7 @@ func spawn(world: Node) -> String:
 	if not _install_vehicle(world,Transform3D(Basis.IDENTITY,at)): return "Vehicle resource could not be loaded"
 	return "Vehicle placed · E nearby to enter · F5 saves world"
 func enter(world: Node) -> bool:
+	if not can_interact(): return false
 	if driving or not is_instance_valid(car) or world.player.global_position.distance_to(car.position)>3.5: return false
 	var ray:=PhysicsRayQueryParameters3D.create(world.player.global_position+Vector3.UP,car.position,3,[world.player.get_rid(),car.get_rid()])
 	if not world.get_world_3d().direct_space_state.intersect_ray(ray).is_empty(): return false
@@ -131,6 +136,7 @@ func safe_exit_position(world: Node) -> Vector3:
 		return feet
 	return Vector3.INF
 func exit_vehicle(world: Node) -> String:
+	if not can_interact(): return "Vehicle interaction unavailable"
 	if not driving: return ""
 	if car.linear_velocity.length()>1.5: return "Stop the vehicle before exiting"
 	var feet:=safe_exit_position(world)
@@ -151,5 +157,5 @@ func update(world: Node,delta: float) -> void:
 	if not driving or not is_instance_valid(car): return
 	world.player.position=car.position # Existing vegetation/building focus follows the occupant.
 	world.player.velocity=Vector3.ZERO
-	car.set_controls_enabled(world.app_focused and not world.player_hud.inventory_open and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED)
+	car.set_controls_enabled(can_interact() and world.app_focused and not world.player_hud.inventory_open and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED)
 	_camera_follow.update(car,world.camera,delta)

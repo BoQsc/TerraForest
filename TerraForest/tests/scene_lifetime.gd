@@ -15,6 +15,24 @@ func run() -> void:
 	# Inspect cache state only after startup publication. The cache belongs to
 	# the worker; use counters delivered by terrain instead of reading it here.
 	print("SCENE_CACHE ",JSON.stringify(game.terrain.derived_metrics))
+	var prior_focus: bool=game.app_focused
+	Input.mouse_mode=Input.MOUSE_MODE_CAPTURED;game.app_focused=true
+	check(game.world_vehicle.can_interact(),"ready focused world admits vehicle interaction")
+	for flag in ["loading_active","shutdown_requested","benchmark_enabled"]:
+		game.set(flag,true)
+		check(not game.world_vehicle.can_interact(),"vehicle admission rejects "+flag)
+		game.set(flag,false)
+	game.terrain.pending_edit=true
+	check(not game.world_vehicle.can_interact(),"vehicle admission rejects pending terrain edit")
+	game.terrain.pending_edit=false
+	game.player_hud.set_open(true)
+	check(not game.world_vehicle.can_interact(),"vehicle admission rejects open inventory")
+	game.player_hud.set_open(false)
+	game.app_focused=false
+	check(not game.world_vehicle.can_interact(),"vehicle admission rejects unfocused window")
+	game.app_focused=true;Input.mouse_mode=Input.MOUSE_MODE_VISIBLE
+	check(not game.world_vehicle.can_interact(),"vehicle admission rejects released mouse")
+	game.app_focused=prior_focus
 	check(game.world_vehicle._scene_requested,"unused vehicle scene has an outstanding preload")
 	game.terrain.changed_since_save=false
 	var supply: int=game.pickups.spawn(102,Vector3(800,100,1310))
@@ -32,5 +50,5 @@ func run() -> void:
 	vehicle.free()
 	game.free()
 	for frame in range(2): await process_frame
-	print("SCENE_LIFETIME ",JSON.stringify({"checks":6,"failures":failures}))
+	print("SCENE_LIFETIME ",JSON.stringify({"checks":14,"failures":failures}))
 	quit(1 if failures else 0)

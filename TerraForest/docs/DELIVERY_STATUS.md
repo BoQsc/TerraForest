@@ -1,3 +1,21 @@
+## Vehicle transitions respect live world interaction state - 2026-10-07
+
+Added an optional live admission callback to the vehicle adapter. Creation,
+entry, exit and control enabling consult it. The main world supplies a policy
+requiring focus, captured mouse, closed inventory, ready terrain, and no loading,
+shutdown, benchmark or pending terrain edit. Standalone callers without a callback
+retain existing behavior. This closes the driving E path that previously could
+attempt exit while unfocused or during a world transition.
+
+The vehicle adapter fixture passes 22 checks, including blocked creation, entry
+without changing player collision/physics rate, and exit without losing occupancy.
+Existing speed, safe-ground, persistence and vehicle-reuse checks still pass.
+Fourteen main-scene lifecycle/admission checks pass at 1920x1080 fullscreen,
+covering the live callback against each configured state and clean shutdown.
+Evidence: `docs/evidence/vehicle_admission`. State gates are exercised directly;
+this does not qualify high-speed readiness, braking after focus loss, thermal
+headroom or multiplayer possession.
+
 ## Model buttons and history use live world admission - 2026-10-07
 
 Model pick, placement, transforms and undo/redo now consult a live availability

@@ -38,6 +38,9 @@ func run() -> void:
 	world.terrain.available=false
 	check(session.spawn(world)=="Vehicle area is still loading" and session.car==null,"spawn rejects unavailable ground")
 	world.terrain.available=true
+	session.interaction_available=func(): return false
+	check(session.spawn(world)=="Vehicle interaction unavailable" and session.car==null,"live admission rejects vehicle creation")
+	session.interaction_available=func(): return true
 	var result: String=session.spawn(world)
 	check(is_instance_valid(session.car) and result.begins_with("Vehicle placed"),"spawn on clear loaded ground")
 	if not is_instance_valid(session.car): world.free();quit(1);return
@@ -45,7 +48,13 @@ func run() -> void:
 	world.player.position=session.car.position+Vector3.RIGHT*2.8
 	var original_camera: Transform3D=world.camera.transform
 	var old_ticks:=Engine.physics_ticks_per_second
+	session.interaction_available=func(): return false
+	check(not session.enter(world) and not session.driving and world.player.collision_mask==1 and Engine.physics_ticks_per_second==old_ticks,"blocked entry preserves player collision and physics rate")
+	session.interaction_available=func(): return true
 	check(session.enter(world) and session.driving and world.player.collision_mask==0,"entry transfers control and disables occupant collision")
+	session.interaction_available=func(): return false
+	check(session.exit_vehicle(world)=="Vehicle interaction unavailable" and session.driving and world.player.collision_mask==0,"blocked exit preserves vehicle occupancy")
+	session.interaction_available=func(): return true
 	session.car.set_physics_process(false)
 	session.car.linear_velocity=Vector3(0,0,10)
 	check(session.exit_vehicle(world)=="Stop the vehicle before exiting" and session.driving,"moving exit rejected")

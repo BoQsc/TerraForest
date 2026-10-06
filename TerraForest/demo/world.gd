@@ -69,6 +69,7 @@ func _ready() -> void:
 	player_hud.gameplay_construction=construction_inventory.gameplay
 	tree_exiting.connect(prefab_library.shutdown_frontage)
 	add_child(world_vehicle)
+	world_vehicle.interaction_available=_vehicle_interaction_available
 	add_child(pickups)
 	if not ecosystem.prepare_persistence(persistence):
 		push_error("Vegetation persistence initialization failed")
@@ -1034,6 +1035,9 @@ func _place_inventory_model(history: RefCounted, collection: Node3D, transforms:
 
 func _model_edit_available() -> bool:
 	return not world_vehicle.driving and not loading_active and not shutdown_requested and not benchmark_enabled and not player_hud.inventory_open and app_focused and terrain.world_ready and not terrain.pending_edit
+
+func _vehicle_interaction_available() -> bool:
+	return not loading_active and not shutdown_requested and not benchmark_enabled and not player_hud.inventory_open and app_focused and terrain.world_ready and not terrain.pending_edit and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED
 
 func _drop_inventory_supply(slot: int, revision: int) -> void:
 	var result := {"ok":false,"reason":"Stand on foot in a ready world to drop supplies"}
