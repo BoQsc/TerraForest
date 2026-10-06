@@ -69,6 +69,25 @@ var _capture_generation: int = 0 # Main-thread only.
 var _shutdown_snapshot: Dictionary = {}
 var _snapshot_writes_blocked: bool = false
 var _snapshot_block_reason: String = ""
+var _startup_phase := "not_started"
+var _startup_phase_us := 0
+var _startup_started_us := 0
+var _startup_timings: Dictionary = {}
+
+func _startup_mark(phase: String) -> void:
+	var now:=Time.get_ticks_usec()
+	mutex.lock()
+	if _startup_phase_us>0: _startup_timings[_startup_phase]=now-_startup_phase_us
+	if _startup_started_us==0: _startup_started_us=now
+	_startup_phase=phase;_startup_phase_us=now
+	mutex.unlock()
+
+func startup_diagnostics() -> Dictionary:
+	var now:=Time.get_ticks_usec()
+	mutex.lock()
+	var result: Dictionary={"phase":_startup_phase,"phase_us":now-_startup_phase_us if _startup_phase_us>0 else 0,"elapsed_us":now-_startup_started_us if _startup_started_us>0 else 0,"completed_us":_startup_timings.duplicate(),"pending_results":results.size()}
+	mutex.unlock()
+	return result
 
 func disable_snapshot_writes(reason: String = "snapshot writes explicitly disabled") -> void:
 	mutex.lock()
@@ -165,6 +184,7 @@ func _flush_current_packets() -> void:
 
 
 func start(use_temporary: bool) -> Error:
+	_startup_mark("main_initialization")
 	temporary = use_temporary
 	for arg: String in OS.get_cmdline_user_args():
 		if arg == "--snapshot-readonly":
@@ -201,6 +221,7 @@ func start(use_temporary: bool) -> Error:
 		return ERR_INVALID_DATA
 	build_epoch = epoch_reply.decode_u32(12)
 	# One sleeping worker; normal priority prevents foreground edits being starved.
+	_startup_mark("worker_launch")
 	return thread.start(_run, Thread.PRIORITY_NORMAL)
 
 var _site_pending:=0
@@ -850,12 +871,21 @@ func _relight(item: Dictionary, expected_build_epoch: int) -> Dictionary:
 	return result
 
 func _run() -> void:
+	_startup_mark("world_load_or_generate")
 	var load_message: String = _load()
-	disk_cache.configure(_compatibility(), snapshot_id, surface_style, cache_path)
+	_startup_mark("cache_fingerprint")
+	var compatibility:=_compatibility()
+	_startup_mark("cache_configuration")
+	disk_cache.configure(compatibility, snapshot_id, surface_style, cache_path)
+	_startup_mark("native_configuration")
 	_call(Codec.command(14, [surface_style]))
 	if profile_regions: _call(Codec.command(18,[1]))
+	_startup_mark("startup_metadata")
+	var modified:=_call(Codec.command(10))
+	var stats:=_call(Codec.command(0))
 	_push({"kind": "startup", "message": load_message,
-		"components": components.duplicate(), "modified": _call(Codec.command(10)), "stats": _call(Codec.command(0))})
+		"components": components.duplicate(), "modified": modified, "stats": stats})
+	_startup_mark("published")
 	while true:
 		semaphore.wait()
 		# All meshing modes serve bounded queries before taking another background

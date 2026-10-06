@@ -30,9 +30,14 @@ func configure(compatibility: String, snapshot: String, style: int, path: String
 	base_path = path
 	signature = ("trm5:046:" + compatibility + ":" + str(style)).sha256_text()
 	set_snapshot(snapshot)
+	geometry_directories.clear()
+	geometry_index_complete = false
+	total_bytes = 0
+	# A disabled cache must not enumerate historical files or build an index.
+	# Re-enabling requires configure() again to restore quota accounting.
+	if not enabled: return
 	# Bounded derived disk use; reaching the cap disables writes, not gameplay.
 	total_bytes = _size(base_path)
-	geometry_directories.clear()
 	geometry_index_complete = true
 	var directory := DirAccess.open(base_path.path_join(signature).path_join("geometry_v1"))
 	if directory != null:

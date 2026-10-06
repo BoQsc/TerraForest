@@ -37,7 +37,7 @@ func open_world() -> bool:
 	if terrain.start(StandardMaterial3D.new(),false)!=OK: return false
 	var deadline:=Time.get_ticks_msec()+60000
 	while not terrain.world_ready and Time.get_ticks_msec()<deadline: await process_frame
-	if not terrain.world_ready: print("STARTUP_CONTEXT ",{"worker":terrain.backend.status(),"queued":terrain.backend.queued(),"error":terrain.latest_error})
+	print("STARTUP_CONTEXT ",JSON.stringify({"ready":terrain.world_ready,"worker":terrain.backend.status(),"queued":terrain.backend.queued(),"error":terrain.latest_error,"startup":terrain.backend.startup_diagnostics()}))
 	return terrain.world_ready
 func autosave() -> bool:
 	saved=false;terrain.autosave_timer=15.0

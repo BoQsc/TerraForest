@@ -1,0 +1,19 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+STARTUP_CONTEXT {"error":"","queued":0,"ready":true,"startup":{"completed_us":{"cache_configuration":29,"cache_fingerprint":12688,"main_initialization":32403,"native_configuration":29,"startup_metadata":35,"worker_launch":554,"world_load_or_generate":487},"elapsed_us":66192,"pending_results":0,"phase":"published","phase_us":19967},"worker":"idle"}
+PASS persistent model and inventory providers initialize
+PASS paid native placement charges materials and requests autosave
+PASS paid placement autosaves before teardown
+[TerrainRewrite] ERROR: save blocked: test teardown must not create the archive under verification; previous canonical snapshot retained
+STARTUP_CONTEXT {"error":"","queued":0,"ready":true,"startup":{"completed_us":{"cache_configuration":20,"cache_fingerprint":12754,"main_initialization":2652,"native_configuration":23,"startup_metadata":33,"worker_launch":201,"world_load_or_generate":817},"elapsed_us":36187,"pending_results":0,"phase":"published","phase_us":19687},"worker":"idle"}
+PASS fresh worker and providers reopen paid placement
+PASS reloaded inventory preserves exact debit
+PASS reloaded model preserves exact identity and transform
+PASS removal gives no inventory refund
+PASS model removal autosaves before teardown
+[TerrainRewrite] ERROR: save blocked: test teardown must not create the archive under verification; previous canonical snapshot retained
+STARTUP_CONTEXT {"error":"","queued":0,"ready":true,"startup":{"completed_us":{"cache_configuration":21,"cache_fingerprint":12940,"main_initialization":2707,"native_configuration":26,"startup_metadata":33,"worker_launch":165,"world_load_or_generate":838},"elapsed_us":36338,"pending_results":0,"phase":"published","phase_us":19608},"worker":"idle"}
+PASS second fresh reopen succeeds
+PASS removal remains saved without resurrecting object or materials
+[TerrainRewrite] ERROR: save blocked: test teardown must not create the archive under verification; previous canonical snapshot retained
+MODEL_INVENTORY_PERSISTENCE checks=10 failures=0

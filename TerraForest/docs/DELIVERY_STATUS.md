@@ -1,3 +1,26 @@
+## Disabled derived cache no longer scans historical files - 2026-10-06
+
+Startup phase diagnostics identified unnecessary recursive disk enumeration even
+when the derived cache was disabled. Three openings in the paid-model fixture
+spent 2.301/2.982/2.745 seconds in cache configuration, while world generation/load
+took under 2 ms. Disabled configuration now clears stale accounting/index state
+and returns before enumeration. Re-enabling requires explicit configure() to
+rebuild quota accounting. Enabled-cache behavior is unchanged.
+
+The same fixture after the change spent 29/20/21 microseconds in cache
+configuration and reported world readiness in 66/36/36 ms. Its ten persistence
+checks pass. A separate probe verifies no quota scan when disabled and restoration
+of accounting on enabled reconfiguration. These figures cover a headless fixture
+with streaming paused, not the full graphical game's loading time.
+
+The backend now exposes a mutex-protected startup phase, phase age, completed
+phase durations and pending-result count. It distinguishes native world load,
+cache fingerprinting, cache configuration, native setup and metadata publication.
+This is bounded startup-only instrumentation. Evidence is under
+`docs/evidence/startup_phases`. The earlier 30-second timeout was not reproduced
+or proven explained; enabled-cache recursive enumeration and full-scene startup
+variability remain open. No canonical world data or cache files were removed.
+
 ## Paid model placement persists with its inventory debit - 2026-10-06
 
 Added a fresh-provider/worker disk test using the region-aware compound archive.
