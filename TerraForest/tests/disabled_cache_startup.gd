@@ -4,6 +4,7 @@ class ProbeCache extends "res://addons/volumetric_terrain/derived_cache.gd":
 	var scans:=0
 	func _size(_path: String) -> int:
 		scans+=1
+		accounting_complete=true
 		return 12345
 func _initialize() -> void:
 	var cache:=ProbeCache.new()

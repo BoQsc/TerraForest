@@ -1,3 +1,26 @@
+## Cache-enabled startup uses bounded accounting - 2026-10-06
+
+Replaced recursive cache enumeration with an iterative scan limited to 2,048
+entries, 32 directory levels and a cooperative 50 ms deadline. Reaching a limit,
+the disk quota, or an unreadable file leaves accounting incomplete and blocks new
+derived-cache writes. Existing checksum-validated reads continue with direct
+lookup; no incomplete directory index suppresses them. Complete small inventories
+retain normal quota-checked writes. The geometry index also has entry/time bounds.
+No canonical save or existing cache data is deleted by configuration.
+
+A 2,100-file fixture stopped after 187 entries in 52.896 ms. Five checks verify
+bounded enumeration, refusal of writes with unknown usage, resumed writes after
+complete reconfiguration, and valid reads while read-only. Disabled-cache probes
+and all ten paid-model disk checks also pass. Evidence:
+`docs/evidence/cache_scan_budget`; fixture: `tests/cache_scan_budget.gd`.
+
+Tradeoff: large or slow caches become read-only until offline maintenance and
+reconfiguration produce a complete inventory. This is conservative admission,
+not background accounting, eviction or a persistent quota ledger. Individual OS
+filesystem calls are not preemptible, so 50 ms is not a hard wall-clock guarantee.
+Multiple writers and external changes still need cache ownership/accounting work.
+Full-game startup and the historical 30-second timeout remain unqualified.
+
 ## Disabled derived cache no longer scans historical files - 2026-10-06
 
 Startup phase diagnostics identified unnecessary recursive disk enumeration even

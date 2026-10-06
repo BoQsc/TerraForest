@@ -19,6 +19,10 @@ var signature: String = ""
 const INDEX_LIMIT: int = 262144
 var geometry_directories: Dictionary = {}
 var geometry_index_complete: bool = false
+const SCAN_ENTRY_LIMIT := 2048
+const SCAN_TIME_US := 50000
+var accounting_complete := false
+var scan_entries := 0
 
 static func digest(data: PackedByteArray) -> PackedByteArray:
 	var h := HashingContext.new()
@@ -33,17 +37,24 @@ func configure(compatibility: String, snapshot: String, style: int, path: String
 	geometry_directories.clear()
 	geometry_index_complete = false
 	total_bytes = 0
+	accounting_complete = false
 	# A disabled cache must not enumerate historical files or build an index.
 	# Re-enabling requires configure() again to restore quota accounting.
 	if not enabled: return
 	# Bounded derived disk use; reaching the cap disables writes, not gameplay.
 	total_bytes = _size(base_path)
+	# Unknown usage means read-only cache, never a partial quota estimate.
+	if not accounting_complete: return
 	geometry_index_complete = true
+	var index_deadline:=Time.get_ticks_usec()+SCAN_TIME_US
 	var directory := DirAccess.open(base_path.path_join(signature).path_join("geometry_v1"))
 	if directory != null:
 		directory.list_dir_begin()
 		var name := directory.get_next()
 		while not name.is_empty():
+			if Time.get_ticks_usec()>=index_deadline or geometry_directories.size()>=SCAN_ENTRY_LIMIT:
+				geometry_index_complete=false
+				break
 			if directory.current_is_dir() and name != "." and name != "..":
 				if geometry_directories.size() >= INDEX_LIMIT:
 					geometry_index_complete = false
@@ -53,18 +64,36 @@ func configure(compatibility: String, snapshot: String, style: int, path: String
 		directory.list_dir_end()
 
 func _size(path: String) -> int:
-	var d := DirAccess.open(path)
-	if d == null:
-		return 0
-	var n: int = 0
-	for name: String in d.get_files():
-		var f := FileAccess.open(path.path_join(name), FileAccess.READ)
-		if f != null:
-			n += f.get_length()
-			f.close()
-	for name: String in d.get_directories():
-		n += _size(path.path_join(name))
-	return n
+	scan_entries=0;accounting_complete=false
+	var deadline:=Time.get_ticks_usec()+SCAN_TIME_US
+	var pending: Array[Dictionary]=[{"path":path,"depth":0}]
+	var total:=0
+	while not pending.is_empty():
+		if Time.get_ticks_usec()>=deadline: return LIMIT_BYTES
+		var entry: Dictionary=pending.pop_back()
+		if entry.depth>32: return LIMIT_BYTES
+		var directory:=DirAccess.open(entry.path)
+		if directory==null or directory.list_dir_begin()!=OK: return LIMIT_BYTES
+		while true:
+			if scan_entries>=SCAN_ENTRY_LIMIT or Time.get_ticks_usec()>=deadline:
+				directory.list_dir_end();return LIMIT_BYTES
+			var name:=directory.get_next()
+			if name.is_empty(): break
+			if name=="." or name=="..": continue
+			scan_entries+=1
+			var child: String=entry.path.path_join(name)
+			if directory.current_is_dir():
+				pending.append({"path":child,"depth":entry.depth+1})
+			else:
+				var file:=FileAccess.open(child,FileAccess.READ)
+				if file==null:
+					directory.list_dir_end();return LIMIT_BYTES
+				total+=file.get_length();file.close()
+				if total>=LIMIT_BYTES:
+					directory.list_dir_end();return LIMIT_BYTES
+		directory.list_dir_end()
+	accounting_complete=true
+	return total
 
 func set_snapshot(snapshot: String) -> void:
 	cache_directory = base_path.path_join(signature).path_join(snapshot)
@@ -112,7 +141,7 @@ func store_packet(key: Vector3i, data: PackedByteArray, content: String = "") ->
 	if not enabled or data.size() < 36 or data.size() > MAX_PACKET:
 		return
 	var path: String = _name(key, content)
-	if total_bytes + data.size() + 40 > LIMIT_BYTES:
+	if not accounting_complete or total_bytes + data.size() + 40 > LIMIT_BYTES:
 		return
 	if FileAccess.file_exists(path):
 		return
@@ -146,4 +175,5 @@ func store_packet(key: Vector3i, data: PackedByteArray, content: String = "") ->
 
 func counters() -> Dictionary:
 	return {"hits": hits, "misses": misses, "writes": writes, "corrupt": corrupt,
-		"write_failures": write_failures, "disk_bytes": total_bytes, "enabled": enabled}
+		"write_failures": write_failures, "disk_bytes": total_bytes, "enabled": enabled,
+		"accounting_complete":accounting_complete,"scan_entries":scan_entries,"cache_read_only":enabled and not accounting_complete}
