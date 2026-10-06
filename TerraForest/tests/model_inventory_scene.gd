@@ -51,9 +51,15 @@ func run() -> void:
 		game._unhandled_input(select_event)
 		check(game.model_tool.picked_id==id,"on-foot E routes to active object selection")
 		check(game.pickups.stores[101].resolve_identity(supply)>0,"object selection leaves nearby pickup untouched")
+		var selected_pose: PackedFloat32Array=game.model_tool.picked_collection.get_instance(id)
+		game.player_hud.set_open(true)
+		check(not game.model_tool.transform_selected(Vector3.RIGHT,0,1) and game.model_tool.picked_collection.get_instance(id)==selected_pose,"inventory opening immediately blocks model transforms before next update")
+		game.player_hud.set_open(false)
+		game.model_tool.update(0,true)
+		check(game.model_tool.scale_buttons[0].disabled and game.model_tool.scale_buttons[1].disabled,"gameplay selection shows disabled resize buttons")
 		check(preload("res://addons/presentation/fullscreen_policy.gd").measurement(root).fair_graphical_sample,"1920x1080 fullscreen presentation")
 		await RenderingServer.frame_post_draw
-		root.get_texture().get_image().save_png("res://docs/evidence/interaction_routing/scene.png")
+		root.get_texture().get_image().save_png("res://docs/evidence/model_admission/scene.png")
 	game.shutdown_requested=true
 	check(await game.terrain.shutdown_after_edits(),"world drains cleanly")
 	game.free();await process_frame;await process_frame

@@ -1,0 +1,15 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS unaffordable model does not edit native history
+PASS missing recipe cannot create a free gameplay object
+PASS successful native model creation charges exact recipe
+PASS native rejection restores deducted materials
+PASS editor model placement remains free
+PASS gameplay input cannot undo paid model placements
+PASS gameplay refuses free resizing
+PASS gameplay scale buttons visibly disabled
+PASS live availability blocks editor undo despite previously available frame
+PASS live availability blocks button placement and transform
+PASS unavailable world disables model action buttons
+PASS free editor controls recover when available
+MODEL_INVENTORY checks=12 failures=0

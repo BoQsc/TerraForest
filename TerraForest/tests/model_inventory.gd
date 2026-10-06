@@ -34,11 +34,24 @@ func run() -> void:
 	root.add_child(camera);root.add_child(player);root.add_child(ui);root.add_child(tool)
 	var entries: Array[Dictionary]=[{"title":"Test","mesh":BoxMesh.new(),"collection":collection,"scale":Vector3.ONE}]
 	tool.configure(camera,player,entries,ui)
-	tool.gameplay=true;tool.active=true;tool.history=history
+	tool.gameplay=true;tool.active=true;tool.history=history;tool.edit_available=true
 	var count: int=history.stats().undo_steps
 	var undo:=InputEventKey.new();undo.pressed=true;undo.physical_keycode=KEY_Z;undo.ctrl_pressed=true
 	check(tool.handle_input(undo) and history.stats().undo_steps==count,"gameplay input cannot undo paid model placements")
 	check(not tool.transform_selected(Vector3.ZERO,0,2),"gameplay refuses free resizing")
+	tool.update(0,true)
+	check(tool.scale_buttons[0].disabled and tool.scale_buttons[1].disabled,"gameplay scale buttons visibly disabled")
+	tool.gameplay=false
+	tool.availability=func(): return false
+	check(tool.handle_input(undo) and history.stats().undo_steps==count,"live availability blocks editor undo despite previously available frame")
+	check(tool.edit(false)==0 and not tool.transform_selected(Vector3.RIGHT,0,1),"live availability blocks button placement and transform")
+	tool.update(0,true)
+	var disabled:=true
+	for button in tool.action_buttons: disabled=disabled and button.disabled
+	check(disabled,"unavailable world disables model action buttons")
+	tool.availability=func(): return true
+	tool.update(0,true)
+	check(not tool.scale_buttons[0].disabled and not tool.scale_buttons[1].disabled,"free editor controls recover when available")
 	tool.free();collection.free();camera.free();player.free();ui.free()
 	await process_frame
 	print("MODEL_INVENTORY checks=",checks," failures=",failures)

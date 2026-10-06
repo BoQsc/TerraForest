@@ -25,6 +25,12 @@ var help := Label.new()
 var gameplay := false
 var paid_placement: Callable
 var placement_failure := ""
+var availability: Callable
+var action_buttons: Array[Button]=[]
+var scale_buttons: Array[Button]=[]
+
+func can_edit() -> bool:
+	return active and edit_available and (not availability.is_valid() or availability.call())
 
 func configure(view: Camera3D, actor: CharacterBody3D, entries: Array[Dictionary], ui: Node, blocks: Node3D = null) -> void:
 	camera=view
@@ -80,8 +86,8 @@ func configure(view: Camera3D, actor: CharacterBody3D, entries: Array[Dictionary
 	var shape_row := HBoxContainer.new()
 	transform_controls.add_child(shape_row)
 	tool_button(shape_row,"Rotate 90°",transform_selected.bind(Vector3.ZERO,PI*0.5,1.0))
-	tool_button(shape_row,"Scale −",transform_selected.bind(Vector3.ZERO,0.0,1.0/1.1))
-	tool_button(shape_row,"Scale +",transform_selected.bind(Vector3.ZERO,0.0,1.1))
+	scale_buttons.append(tool_button(shape_row,"Scale −",transform_selected.bind(Vector3.ZERO,0.0,1.0/1.1)))
+	scale_buttons.append(tool_button(shape_row,"Scale +",transform_selected.bind(Vector3.ZERO,0.0,1.1)))
 	transform_controls.hide()
 	help.add_theme_font_size_override("font_size",13)
 	content.add_child(help)
@@ -105,13 +111,15 @@ func set_active(value: bool) -> void:
 	preview.hide()
 	timer=0
 
-func tool_button(row: Control, text: String, action: Callable) -> void:
+func tool_button(row: Control, text: String, action: Callable) -> Button:
 	var button := Button.new()
 	button.text=text
 	button.focus_mode=Control.FOCUS_NONE
 	button.size_flags_horizontal=Control.SIZE_EXPAND_FILL
 	button.pressed.connect(action)
 	row.add_child(button)
+	action_buttons.append(button)
+	return button
 
 func clear_selection() -> void:
 	if is_instance_valid(picked_collection) and picked_collection.changed.is_connected(_selected_changed):
@@ -130,7 +138,7 @@ func _selected_changed() -> void:
 		clear_selection()
 
 func pick() -> void:
-	if not active or not edit_available:
+	if not can_edit():
 		return
 	clear_selection()
 	var hit := ray()
@@ -163,7 +171,7 @@ func transform_selected(offset: Vector3, angle: float, factor: float) -> bool:
 	if gameplay and factor!=1.0:
 		notice.emit("Resizing objects is available in the free editor")
 		return false
-	if not active or not edit_available:
+	if not can_edit():
 		return false
 	var current := selected_transform()
 	if current.is_empty():
@@ -241,7 +249,7 @@ func refresh() -> void:
 	preview.show()
 
 func edit(remove: bool) -> int:
-	if not active or not edit_available:
+	if not can_edit():
 		return 0
 	if picked_id>0 and not remove:
 		notice.emit("Q clears selection and returns to placement")
@@ -302,6 +310,7 @@ func handle_input(event: InputEvent) -> bool:
 				transform_selected(Vector3.ZERO,0.0,1.0/1.1 if event.physical_keycode in [KEY_MINUS,KEY_KP_SUBTRACT] else 1.1)
 				return true
 		if (event.ctrl_pressed or event.meta_pressed) and event.physical_keycode in [KEY_Z,KEY_Y]:
+			if not can_edit(): return true
 			if gameplay:
 				notice.emit("Object undo/redo is available in the free editor")
 				return true
@@ -319,7 +328,10 @@ func handle_input(event: InputEvent) -> bool:
 
 func update(delta: float, available: bool) -> void:
 	edit_available=available
-	if not active or not available:
+	var allowed:=can_edit()
+	for button in action_buttons: button.disabled=not allowed
+	for button in scale_buttons: button.disabled=not allowed or gameplay
+	if not allowed:
 		preview.hide()
 		return
 	timer-=delta

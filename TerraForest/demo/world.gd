@@ -130,6 +130,7 @@ func _ready() -> void:
 	add_child(model_tool)
 	model_tool.gameplay=construction_inventory.gameplay
 	model_tool.paid_placement=_place_inventory_model
+	model_tool.availability=_model_edit_available
 	model_tool.configure(camera,player,[
 		{"title":"Metal beam","mesh":beam,"collection":structures.model("architecture/metal_beam/v1"),"scale":Vector3(4,0.2,0.2),"costs":PackedInt64Array([104,4]),"cost_label":"4 metal"},
 		{"title":"Floor panel","mesh":beam,"collection":structures.model("architecture/metal_beam/v1"),"scale":Vector3(4,0.25,4),"costs":PackedInt64Array([104,8]),"cost_label":"8 metal"},
@@ -972,7 +973,7 @@ func _process(delta: float) -> void:
 	pickups.update_view(delta,player.global_position,not loading_active and not shutdown_requested)
 	terrain._record_stage("controller process",(Time.get_ticks_usec()-frame_begin)/1000.0)
 	_update_prefab_preview(delta)
-	model_tool.update(delta,not world_vehicle.driving and not loading_active and app_focused and terrain.world_ready)
+	model_tool.update(delta,_model_edit_available())
 	if structures.blocks != null:
 		structures.blocks.set_focus(player.position)
 		if terrain.world_ready and (not temporary_world or terrain.backend.readonly_snapshot) and not shutdown_requested:
@@ -1023,10 +1024,16 @@ func _pickup_reachable(point: Vector3) -> bool:
 	return get_world_3d().direct_space_state.intersect_ray(query).is_empty()
 
 func _place_inventory_model(history: RefCounted, collection: Node3D, transforms: PackedFloat32Array, protection: AABB, costs: PackedInt64Array) -> int:
+	if not _model_edit_available():
+		model_tool.placement_failure="World interaction unavailable"
+		return 0
 	var id: int=construction_inventory.place_model(history,collection,player_hud.inventory,transforms,protection,costs)
 	model_tool.placement_failure=construction_inventory.reason
 	player_hud.refresh()
 	return id
+
+func _model_edit_available() -> bool:
+	return not world_vehicle.driving and not loading_active and not shutdown_requested and not benchmark_enabled and not player_hud.inventory_open and app_focused and terrain.world_ready and not terrain.pending_edit
 
 func _drop_inventory_supply(slot: int, revision: int) -> void:
 	var result := {"ok":false,"reason":"Stand on foot in a ready world to drop supplies"}

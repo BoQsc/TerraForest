@@ -1,3 +1,20 @@
+## Model buttons and history use live world admission - 2026-10-07
+
+Model pick, placement, transforms and undo/redo now consult a live availability
+callback as well as the cached scene state. The main world rejects these actions
+during loading, shutdown, benchmarks, driving, open inventory, loss of focus,
+unready terrain or pending terrain edits. This closes both a stale-frame button
+path and an editor history path that previously omitted edit availability.
+The paid-placement adapter repeats the live gate before charging inventory.
+
+Action buttons disable while unavailable. Gameplay resizing buttons also remain
+visibly disabled; free editor resizing recovers when available. Twelve focused
+transaction/control checks and thirteen actual-scene checks pass. The scene
+checks opening inventory and immediately requesting a selected-object transform
+before a frame update; the transform remains unchanged. The fullscreen 1920x1080
+capture was inspected. Evidence: `docs/evidence/model_admission`. This is local
+interaction admission, not server authorization or a complete editor command API.
+
 ## Object selection owns E while its tool is active - 2026-10-07
 
 Fixed an input-routing conflict: on-foot E was consumed by harvesting/pickup
