@@ -1,3 +1,19 @@
+## Object selection owns E while its tool is active - 2026-10-07
+
+Fixed an input-routing conflict: on-foot E was consumed by harvesting/pickup
+collection before the object tool could select the aimed model. Active object
+mode now handles E before vehicle entry and resource interactions, subject to
+focus, captured mouse, world readiness, shutdown/loading and benchmark gates.
+The existing model tool still checks edit availability. Driving retains its
+exit interaction; outside object mode, vehicle/harvest/pickup routing is unchanged.
+
+The expanded paid-model scene passes 11 checks, including on-foot selection of
+the placed beam, preservation of a nearby pickup and unfocused rejection. The
+selection screenshot was inspected. Six harvesting-scene checks also pass outside
+object mode, including range, wall occlusion and single reward delivery. Both run
+at 1920x1080 fullscreen. Evidence: `docs/evidence/interaction_routing`. This fixes
+one real routing conflict, not a complete unified interaction or multiplayer model.
+
 ## Cache-enabled main-scene startup check - 2026-10-06
 
 The actual Forward+ main world passes all six startup, pickup-autosave notification

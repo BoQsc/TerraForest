@@ -34,9 +34,26 @@ func run() -> void:
 		var undo:=InputEventKey.new();undo.pressed=true;undo.physical_keycode=KEY_Z;undo.ctrl_pressed=true
 		game.model_tool.handle_input(undo)
 		check(game.model_tool.history.stats().undo_steps==steps and game.player_hud.inventory.snapshot().slots[7].count==before-4,"gameplay undo cannot reverse paid placement independently of inventory")
+		game.fly=false
+		Input.mouse_mode=Input.MOUSE_MODE_CAPTURED
+		var pickup_point: Vector3=game.player.global_position+Vector3(0.8,0.5,0)
+		var supply: int=game.pickups.spawn(101,pickup_point)
+		var select_event:=InputEventKey.new();select_event.pressed=true;select_event.physical_keycode=KEY_E
+		deadline=Time.get_ticks_msec()+5000
+		while Time.get_ticks_msec()<deadline:
+			await physics_frame
+			var hit: Dictionary=game.model_tool.ray()
+			if not hit.is_empty() and hit.collider==game.model_tool.catalog[0].collection: break
+		game.app_focused=false
+		game._unhandled_input(select_event)
+		check(game.model_tool.picked_id==0,"unfocused object selection is rejected")
+		game.app_focused=true;game.model_tool.edit_available=true
+		game._unhandled_input(select_event)
+		check(game.model_tool.picked_id==id,"on-foot E routes to active object selection")
+		check(game.pickups.stores[101].resolve_identity(supply)>0,"object selection leaves nearby pickup untouched")
 		check(preload("res://addons/presentation/fullscreen_policy.gd").measurement(root).fair_graphical_sample,"1920x1080 fullscreen presentation")
 		await RenderingServer.frame_post_draw
-		root.get_texture().get_image().save_png("res://docs/evidence/model_inventory/scene.png")
+		root.get_texture().get_image().save_png("res://docs/evidence/interaction_routing/scene.png")
 	game.shutdown_requested=true
 	check(await game.terrain.shutdown_after_edits(),"world drains cleanly")
 	game.free();await process_frame;await process_frame

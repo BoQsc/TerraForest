@@ -570,6 +570,12 @@ func _unhandled_input(event: InputEvent) -> void:
 			elif event.physical_keycode==KEY_ESCAPE:
 				Input.mouse_mode=Input.MOUSE_MODE_VISIBLE if Input.mouse_mode==Input.MOUSE_MODE_CAPTURED else Input.MOUSE_MODE_CAPTURED
 		return
+	# Object mode owns E. Do not enter a vehicle, harvest or collect supplies
+	# while the player is using the advertised select-object action.
+	if model_tool.active and event is InputEventKey and event.pressed and not event.echo and event.physical_keycode==KEY_E:
+		if not loading_active and not shutdown_requested and not benchmark_enabled and app_focused and terrain.world_ready and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED:
+			model_tool.handle_input(event)
+		return
 	if event is InputEventKey and event.pressed and not event.echo and not loading_active and not shutdown_requested and app_focused and not fly and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED:
 		if event.physical_keycode==KEY_V:
 			_show_lake_notice(world_vehicle.spawn(self));return
