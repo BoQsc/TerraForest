@@ -1,4 +1,5 @@
 #include "block_world.hpp"
+#include "prefab_transaction.hpp"
 #include "static_batch.hpp"
 #include "structures_snapshot.hpp"
 #include "structure_queries.hpp"
@@ -15,6 +16,7 @@ using namespace godot;
 static void initialize(ModuleInitializationLevel level) {
     if(level==MODULE_INITIALIZATION_LEVEL_SCENE) {
         GDREGISTER_CLASS(terraforest::NativeBlockPrefab);
+        GDREGISTER_CLASS(terraforest::NativePrefabPlacement);
         GDREGISTER_CLASS(terraforest::NativeBlockWorld);
         GDREGISTER_CLASS(terraforest::NativeStaticBatch);
         GDREGISTER_CLASS(terraforest::NativeStructuresSnapshot);

@@ -105,7 +105,7 @@ bool NativeBlockWorld::set_cells(const PackedInt32Array &records) {
     if(changed)emit_signal("changed");
     return true;
 }
-bool NativeBlockWorld::apply_cells(const PackedInt32Array &records,bool record_history,bool &changed) {
+bool NativeBlockWorld::apply_cells(const PackedInt32Array &records,bool record_history,bool &changed,AABB *deferred_bounds) {
     changed=false;
     if(records.size()%4 || records.size()>4*262144) return false;
     const bool capture=record_history&&history_budget&&history_steps;
@@ -152,7 +152,8 @@ bool NativeBlockWorld::apply_cells(const PackedInt32Array &records,bool record_h
     if(changed) {
         if(record_history)remember_edit(std::move(changes));
         set_process(true);
-        emit_signal("cells_changed",changed_bounds);
+        if(deferred_bounds)*deferred_bounds=changed_bounds;
+        else emit_signal("cells_changed",changed_bounds);
     }
     return true;
 }

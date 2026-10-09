@@ -1,0 +1,46 @@
+{
+  "cells": 1896,
+  "generator": 4,
+  "lake_count": 4,
+  "presentation": {
+    "fair_graphical_sample": true,
+    "fullscreen": true,
+    "headless": false,
+    "render_scale": 1.0,
+    "viewport": [
+      1920,
+      1080
+    ],
+    "window_mode": 3,
+    "window_size": [
+      1920,
+      1080
+    ]
+  },
+  "road_count": 4,
+  "seed": 1703,
+  "slot": "generated_furnished_1791583427670724800",
+  "target": [
+    807,
+    47,
+    1310
+  ],
+  "scope": "Actual editor-generated furnished settlement: four 474-cell cottages with four tables, four chairs and four shelves; ground cover enabled. Normal archive save/reopen verifies exact terrain, blocks, models, lakes and roads. On-foot interior spawn saved. Not new-layout walking, rendered scale, travel, sustained frame-time or thermal qualification.",
+  "creation_frames": {
+    "count": 86,
+    "p95_ms": 20.754,
+    "max_ms": 52.725
+  },
+  "reopen_note": "The screenshot HUD reads 22 FPS during the camera relocation/startup check. This run does not establish settled or sustained 60 FPS.",
+  "native_checks_debug": 23,
+  "native_checks_release": 23,
+  "reproduce": "Run tests/settlement_survey_editor.gd with --connected-settlement-fixture --furnished-settlement-fixture --save-connected-world --world-generator=4 --world-seed=1703 --world-slot=NEW_UNIQUE_SLOT --ground-cover; then tests/connected_world_reopen.gd with --world-slot=THE_SAME_SLOT --ground-cover --furnished-settlement-fixture.",
+  "hashes": {
+    "addons/structures/native/prefab_transaction.cpp": "dc13e857e371f38cfdac0417a29f585084c4ef127306011b0b0508a295fc929f",
+    "addons/player_runtime/construction_inventory.gd": "a3670204b42bcaa438b7c854ad85387520bf47c072e9036dbaae095c6a848b50",
+    "addons/structures/furniture_catalog.gd": "295bc501958b1f33d39322d7ec3d82f0ce0f5283d3e316e873456678121f19a1",
+    "tests/prefab_transaction.gd": "b64b77f73be5adecd86975b82187fab7ecdd247b8f24ff6b9fa9460220a3634a",
+    "tests/connected_world_reopen.gd": "a24b20771354e358339d9628824dc4e5c00a7a5e03e887d031bb553b2410aa74",
+    "tools/play_connected_world.py": "035fc057a3e1a0fb59b1f66ee24aa79357993c89caf64156bd318f40c57b8c55"
+  }
+}

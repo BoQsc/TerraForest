@@ -25,6 +25,8 @@ bool NativeBlockWorld::can_place_prefab(const Ref<NativeBlockPrefab> &prefab,Vec
     return prefab_records(prefab,origin,turns,replace,nullptr);
 }
 bool NativeBlockWorld::place_prefab(const Ref<NativeBlockPrefab> &prefab,Vector3i origin,int turns,bool replace) {
+    // Attached models require the combined transaction; never silently drop them.
+    if(prefab.is_valid()&&!prefab->model_attachments.is_empty())return false;
     PackedInt32Array records;
     return prefab_records(prefab,origin,turns,replace,&records)&&set_cells(records);
 }

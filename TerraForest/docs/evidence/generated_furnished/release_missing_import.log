@@ -1,0 +1,78 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS structure world ready
+FAIL furniture collections registered
+PASS missing model refunds every cost without block insertion
+PASS protected player rejects complete transaction and refunds
+PASS rejected transactions preserve every model store
+FAIL paid furnished cottage places: Missing model asset
+FAIL block publication observes every committed model
+FAIL exact block materials plus 17 furniture wood deducted
+PASS repeated placement is rejected without partial changes
+FAIL editor rotated furnished cottage 1: Missing model asset
+FAIL editor rotated furnished cottage 2: Missing model asset
+FAIL editor rotated furnished cottage 3: Missing model asset
+PASS editor furnished placement is free
+PASS combined block and furniture snapshot round trip
+PREFAB_TRANSACTION checks=14 failures=7
+
+ERROR: Unable to open file: res://.godot/imported/wood_albedo.png-6663d36361a2f939d36c0c1003fdd0d9.ctex.
+   at: _load_data (scene/resources/compressed_texture.cpp:45)
+   GDScript backtrace (most recent call first):
+       [0] register (res://addons/structures/furniture_catalog.gd:7)
+       [1] run (res://tests/prefab_transaction.gd:16)
+ERROR: Failed loading resource: res://.godot/imported/wood_albedo.png-6663d36361a2f939d36c0c1003fdd0d9.ctex.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] register (res://addons/structures/furniture_catalog.gd:7)
+       [1] run (res://tests/prefab_transaction.gd:16)
+ERROR: Failed loading resource: res://addons/structures/textures/terraforest/wood_albedo.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] register (res://addons/structures/furniture_catalog.gd:7)
+       [1] run (res://tests/prefab_transaction.gd:16)
+ERROR: res://addons/structures/prefabs/table_model.tres:7 - Parse Error: [ext_resource] referenced non-existent resource at: res://addons/structures/textures/terraforest/wood_albedo.png.
+   at: _printerr (scene/resources/resource_format_text.cpp:41)
+   GDScript backtrace (most recent call first):
+       [0] register (res://addons/structures/furniture_catalog.gd:7)
+       [1] run (res://tests/prefab_transaction.gd:16)
+ERROR: res://addons/structures/prefabs/table_model.tres:7 - Parse Error: [ext_resource] referenced non-existent resource at: res://addons/structures/textures/terraforest/wood_albedo.png.
+   at: _printerr (scene/resources/resource_format_text.cpp:41)
+   GDScript backtrace (most recent call first):
+       [0] register (res://addons/structures/furniture_catalog.gd:7)
+       [1] run (res://tests/prefab_transaction.gd:16)
+ERROR: Failed loading resource: res://addons/structures/prefabs/table_model.tres.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] register (res://addons/structures/furniture_catalog.gd:7)
+       [1] run (res://tests/prefab_transaction.gd:16)
+ERROR: Unable to open file: res://.godot/imported/wood_albedo.png-6663d36361a2f939d36c0c1003fdd0d9.ctex.
+   at: _load_data (scene/resources/compressed_texture.cpp:45)
+   GDScript backtrace (most recent call first):
+       [0] register (res://addons/structures/furniture_catalog.gd:7)
+       [1] run (res://tests/prefab_transaction.gd:56)
+ERROR: Failed loading resource: res://.godot/imported/wood_albedo.png-6663d36361a2f939d36c0c1003fdd0d9.ctex.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] register (res://addons/structures/furniture_catalog.gd:7)
+       [1] run (res://tests/prefab_transaction.gd:56)
+ERROR: Failed loading resource: res://addons/structures/textures/terraforest/wood_albedo.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] register (res://addons/structures/furniture_catalog.gd:7)
+       [1] run (res://tests/prefab_transaction.gd:56)
+ERROR: res://addons/structures/prefabs/table_model.tres:7 - Parse Error: [ext_resource] referenced non-existent resource at: res://addons/structures/textures/terraforest/wood_albedo.png.
+   at: _printerr (scene/resources/resource_format_text.cpp:41)
+   GDScript backtrace (most recent call first):
+       [0] register (res://addons/structures/furniture_catalog.gd:7)
+       [1] run (res://tests/prefab_transaction.gd:56)
+ERROR: res://addons/structures/prefabs/table_model.tres:7 - Parse Error: [ext_resource] referenced non-existent resource at: res://addons/structures/textures/terraforest/wood_albedo.png.
+   at: _printerr (scene/resources/resource_format_text.cpp:41)
+   GDScript backtrace (most recent call first):
+       [0] register (res://addons/structures/furniture_catalog.gd:7)
+       [1] run (res://tests/prefab_transaction.gd:56)
+ERROR: Failed loading resource: res://addons/structures/prefabs/table_model.tres.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] register (res://addons/structures/furniture_catalog.gd:7)
+       [1] run (res://tests/prefab_transaction.gd:56)

@@ -5,6 +5,7 @@ extends RefCounted
 var gameplay := false
 var busy := false
 var reason := ""
+var prefab_transaction: RefCounted
 
 func place_model(history: RefCounted, collection: Node3D, inventory: RefCounted, transforms: PackedFloat32Array, protection: AABB, costs: PackedInt64Array) -> int:
 	if gameplay and costs.is_empty():
@@ -25,14 +26,28 @@ func place_block(blocks: Node, inventory: RefCounted, cell: Vector3i, word: int)
 	if word != 0: costs=PackedInt64Array([101+(word>>5),1])
 	return _apply(inventory,costs,blocks.set_cells.bind(PackedInt32Array([cell.x,cell.y,cell.z,word])))
 
-func place_prefab(blocks: Node, inventory: RefCounted, asset: Resource, cell: Vector3i, rotation: int) -> bool:
+func place_prefab(blocks: Node, inventory: RefCounted, asset: Resource, cell: Vector3i, rotation: int, models: Dictionary={}, recipes: Dictionary={}, protections: Array=[]) -> bool:
 	if busy: return false
+	if prefab_transaction==null: prefab_transaction=ClassDB.instantiate("NativePrefabPlacement")
+	var model_counts: Dictionary=prefab_transaction.model_counts(asset)
 	var costs:=PackedInt64Array()
 	if gameplay:
 		var counts: PackedInt64Array=asset.get_material_counts()
 		for material in range(4):
 			if counts[material]>0: costs.append_array(PackedInt64Array([101+material,counts[material]]))
-	return _apply(inventory,costs,blocks.place_prefab.bind(asset,cell,rotation))
+	if model_counts.is_empty(): return _apply(inventory,costs,blocks.place_prefab.bind(asset,cell,rotation))
+	if gameplay:
+		for key: String in model_counts:
+			var recipe: PackedInt64Array=recipes.get(key,PackedInt64Array())
+			if recipe.is_empty() or recipe.size()%2!=0:
+				reason="Attached model has no gameplay recipe";return false
+			for i in range(0,recipe.size(),2): costs.append_array(PackedInt64Array([recipe[i],recipe[i+1]*int(model_counts[key])]))
+	var response: Dictionary={}
+	var accepted:=_apply(inventory,costs,func() -> bool:
+		response.merge(prefab_transaction.place(blocks,asset,cell,rotation,models,protections),true)
+		return response.get("ok",false))
+	if not accepted and response.has("reason"): reason=response.reason
+	return accepted
 
 func _apply(inventory: RefCounted, costs: PackedInt64Array, placement: Callable) -> bool:
 	if busy: return false

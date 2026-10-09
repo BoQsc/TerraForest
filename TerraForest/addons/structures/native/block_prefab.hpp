@@ -13,6 +13,7 @@ struct PrefabCell { int32_t x,y,z,word; };
 // Authoring asset; instantiated blocks remain ordinary world cells, not nodes.
 class NativeBlockPrefab : public Resource {
     GDCLASS(NativeBlockPrefab,Resource)
+    friend class NativePrefabPlacement;
     friend class NativeBlockWorld;
     std::vector<PrefabCell> cells;
     int64_t material_counts[4]{};

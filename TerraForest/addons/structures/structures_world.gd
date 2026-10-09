@@ -323,3 +323,6 @@ func restore_snapshot(bytes: PackedByteArray) -> bool:
 	_cached_snapshot = bytes.duplicate()
 	_dirty = false
 	return true
+
+func model_collections() -> Dictionary:
+	return _models.duplicate()

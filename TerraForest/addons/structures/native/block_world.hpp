@@ -41,6 +41,7 @@ static_assert(sizeof(BlockChange)==16,"History cell accounting must match alloca
 // No SceneTree or Godot resources are touched by the bake worker.
 class NativeBlockWorld : public Node3D {
     GDCLASS(NativeBlockWorld,Node3D)
+    friend class NativePrefabPlacement;
     friend class NativeStructuresSnapshot;
     friend class NativeBlockPager;
     uint64_t storage_epoch=0,history_revision=0;
@@ -114,7 +115,7 @@ class NativeBlockWorld : public Node3D {
     std::deque<std::vector<BlockChange>> undo_edits,redo_edits;
     uint64_t history_bytes=0,history_budget=0,unrecorded_edits=0;
     int history_steps=0;
-    bool apply_cells(const PackedInt32Array &records,bool record_history,bool &changed);
+    bool apply_cells(const PackedInt32Array &records,bool record_history,bool &changed,AABB *deferred_bounds=nullptr);
     void remember_edit(std::vector<BlockChange> &&changes);
     void trim_history();
     bool replay_edit(bool backwards,const AABB &protected_bounds);

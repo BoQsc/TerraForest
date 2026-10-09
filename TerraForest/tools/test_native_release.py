@@ -13,7 +13,7 @@ parser=argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--godot',default=os.environ.get('GODOT_EXE') or shutil.which('godot'))
 parser.add_argument('--addon',choices=['world_runtime','volumetric_water','volumetric_terrain','structures','vegetation_runtime'],default='world_runtime')
 parser.add_argument('--region-storage',action='store_true',help='Exercise structure_persistence through the native region archive')
-parser.add_argument('--test',choices=['terrain_locality_probe','terrain_region_cache','terrain_mesh_pressure','native_runtime','water','world_archive','world_persistence','terrain_planner','terrain_collision','block_lattice','block_worker','block_texture_sets','building_collision_profile','building_collision_stream','building_readiness','block_regions','block_region_store','block_region_io','block_region_checkpoints','block_region_bootstrap','partial_region_storage','region_world_archive','region_archive_reads','region_checkpoint_retention','model_transfer_scheduler','model_scheduler_pressure','model_world_bootstrap','model_focus_paging','model_focus_discovery','block_pager','block_pager_stress','region_metadata','structures','static_placements','static_model_regions','model_region_store','model_region_metadata','model_admission_pressure','model_incremental_admission','model_admission_history','model_incremental_retirement','structure_persistence','model_paging_lifecycle','settlement_network','prefab_model_attachments','ground_scatter','ground_cover_state','ground_cover_picker','static_shadow_policy'])
+parser.add_argument('--test',choices=['terrain_locality_probe','terrain_region_cache','terrain_mesh_pressure','native_runtime','water','world_archive','world_persistence','terrain_planner','terrain_collision','block_lattice','block_worker','block_texture_sets','building_collision_profile','building_collision_stream','building_readiness','block_regions','block_region_store','block_region_io','block_region_checkpoints','block_region_bootstrap','partial_region_storage','region_world_archive','region_archive_reads','region_checkpoint_retention','model_transfer_scheduler','model_scheduler_pressure','model_world_bootstrap','model_focus_paging','model_focus_discovery','block_pager','block_pager_stress','region_metadata','structures','static_placements','static_model_regions','model_region_store','model_region_metadata','model_admission_pressure','model_incremental_admission','model_admission_history','model_incremental_retirement','structure_persistence','model_paging_lifecycle','settlement_network','prefab_model_attachments','prefab_transaction','ground_scatter','ground_cover_state','ground_cover_picker','static_shadow_policy'])
 args=parser.parse_args()
 if args.region_storage and args.test!='structure_persistence':parser.error('--region-storage requires --test structure_persistence')
 if not args.godot:parser.error('Specify --godot PATH')
@@ -49,6 +49,13 @@ with tempfile.TemporaryDirectory(prefix='release_smoke_',dir=build) as temporary
     if test=='terrain_collision':
         for name in ['mesh_codec.gd','collision_reuse.gd']:
             shutil.copy2(source/name,addon/name)
+    if test=='prefab_transaction':
+        for name in ['structures_world.gd','material_startup.gd','furniture_catalog.gd']:
+            shutil.copy2(source/name,addon/name)
+        destination=project/'addons/player_runtime'
+        shutil.copytree(ROOT/'addons/player_runtime',destination)
+        descriptor=destination/'player_runtime.gdextension'
+        descriptor.write_text(descriptor.read_text().replace('template_debug','template_release'))
     if test=='prefab_model_attachments':
         shutil.copy2(source/'prefab_library.gd',addon/'prefab_library.gd')
     if args.addon=='structures':
@@ -81,6 +88,9 @@ with tempfile.TemporaryDirectory(prefix='release_smoke_',dir=build) as temporary
             for name in ['terrain_core.gdextension','mesh_codec.gd']:
                 shutil.copy2(ROOT/'addons/volumetric_terrain'/name,terrain/name)
             shutil.copytree(ROOT/'addons/volumetric_terrain/bin',terrain/'bin')
+    if test=='prefab_transaction':
+        imported=subprocess.run([str(engine),'--headless','--editor','--path',str(project),'--import'],capture_output=True,text=True,timeout=60)
+        if imported.returncode:raise RuntimeError(imported.stdout+'\n'+imported.stderr)
     shutil.copy2(ROOT/'tests'/(test+'.gd'),project/'tests'/(test+'.gd'))
     display=['--windowed','--resolution','960x540','--rendering-method','forward_plus'] if test=='block_texture_sets' else ['--headless']
     command=[str(engine),*display,'--path',str(project),'--script',f'res://tests/{test}.gd']

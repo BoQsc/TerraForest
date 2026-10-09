@@ -19,6 +19,7 @@ using namespace godot;
 struct ModelCheckpointLease;
 class NativeStaticBatch : public Node3D {
     GDCLASS(NativeStaticBatch,Node3D)
+    friend class NativePrefabPlacement;
     friend class NativeModelTransferScheduler;
     std::shared_ptr<ModelCheckpointLease> paging_checkpoint;
     uint64_t paging_owner=0;

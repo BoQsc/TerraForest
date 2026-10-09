@@ -1,0 +1,27 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS structure world ready
+PASS furniture collections registered
+PASS block-only API refuses to discard attached models
+PASS prior block edit is undoable before combined placement
+PASS missing model refunds every cost without block insertion
+PASS protected player rejects complete transaction and refunds
+PASS rejected transactions preserve every model store
+PASS paid furnished cottage places: 
+PASS combined placement establishes block-history barrier
+PASS block publication observes every committed model
+PASS exact block materials plus 17 furniture wood deducted
+PASS repeated placement is rejected without partial changes
+PASS editor rotated furnished cottage 1: 
+PASS editor rotated furnished cottage 2: 
+PASS editor rotated furnished cottage 3: 
+PASS editor furnished placement is free
+PASS four placed objects for furniture/table/v1
+PASS four placed objects for furniture/chair/v1
+PASS four placed objects for furniture/shelf/v1
+PASS attachment outside surveyed envelope rejects without changes
+PASS attachment through prefab wall rejects without changes
+PASS exhausted collection identity rejects all stores
+PASS combined block and furniture snapshot round trip
+PREFAB_TRANSACTION checks=23 failures=0
+

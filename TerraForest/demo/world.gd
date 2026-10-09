@@ -277,6 +277,9 @@ func _setup_prefabs() -> void:
 		if asset != null and asset.get_cell_count()>0:
 			structure_prefabs.append(asset)
 			asset.changed.connect(_invalidate_prefab_preview)
+	var furnished: Resource=preload("res://addons/structures/furniture_catalog.gd").furnished_cottage()
+	if furnished!=null:
+		structure_prefabs.append(furnished);furnished.changed.connect(_invalidate_prefab_preview)
 	var frontage=ClassDB.instantiate("NativeBlockPrefab")
 	var cottage: Resource=load("res://addons/structures/prefabs/brick_cottage.tres")
 	if frontage.compose_frontage([cottage],2,8,3,1703):
@@ -844,8 +847,8 @@ func _edit_structure(remove: bool) -> void:
 		if asset.has_meta("frontage_version"):
 			_begin_frontage_placement(asset,target)
 			return
-		if construction_inventory.place_prefab(structures.blocks,player_hud.inventory,asset,target,structure_rotation):
-			_show_lake_notice("%s placed · F5 saves world" % asset.resource_name)
+		if _place_combined_prefab(asset,target,structure_rotation):
+			_show_lake_notice(_prefab_placement_text(asset))
 		else: _show_lake_notice(construction_inventory.reason)
 		player_hud.refresh()
 		_prefab_preview_timer=0.0
@@ -994,8 +997,8 @@ func _advance_frontage_placement() -> void:
 		_placement_notice(request,"Placement changed; place again");return
 	if world_vehicle.overlaps_edit(request.asset.placement_bounds(request.target,request.rotation)):
 		_placement_notice(request,"Move the vehicle clear before placing frontage");return
-	if construction_inventory.place_prefab(structures.blocks,player_hud.inventory,request.asset,request.target,request.rotation):
-		_placement_notice(request,"%s placed · F5 saves world" % request.asset.resource_name,true)
+	if _place_combined_prefab(request.asset,request.target,request.rotation):
+		_placement_notice(request,_prefab_placement_text(request.asset),true)
 	else: _placement_notice(request,construction_inventory.reason)
 	player_hud.refresh()
 	_prefab_preview_timer=0.0
@@ -1115,3 +1118,10 @@ func _drop_inventory_supply(slot: int, revision: int) -> void:
 				if clear: result=pickups.drop_one(player_hud.inventory,slot,revision,pickups.to_local(point))
 	player_hud.message.text=result.reason
 	player_hud.refresh()
+
+func _place_combined_prefab(asset: Resource,target: Vector3i,rotation: int) -> bool:
+	return construction_inventory.place_prefab(structures.blocks,player_hud.inventory,asset,target,rotation,structures.model_collections(),preload("res://addons/structures/furniture_catalog.gd").recipes(),[model_tool.protection()])
+
+func _prefab_placement_text(asset: Resource) -> String:
+	var attached: bool=not construction_inventory.prefab_transaction.model_counts(asset).is_empty()
+	return "%s placed - F5 saves%s" % [asset.resource_name,"; combined undo unavailable" if attached else ""]

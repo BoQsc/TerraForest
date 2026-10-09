@@ -26,7 +26,7 @@ func run() -> void:
 	if "--connected-settlement-fixture" in OS.get_cmdline_user_args():
 		game.prefab_library.directory="user://connected_editor_%d"%Time.get_ticks_usec()
 		for i in game.structure_prefabs.size():
-			if game.structure_prefabs[i].resource_name=="Brick cottage":game.structure_prefab_index=i;break
+			if game.structure_prefabs[i].resource_name==("Furnished cottage" if "--furnished-settlement-fixture" in OS.get_cmdline_user_args() else "Brick cottage"):game.structure_prefab_index=i;break
 		game._sync_construction_palette()
 		var palette: CanvasLayer=game.construction_palette
 		palette.capture_name.text="Connected cottage settlement"
