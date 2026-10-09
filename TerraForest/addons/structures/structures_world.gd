@@ -178,6 +178,11 @@ func prepare() -> bool:
 	_queries = ClassDB.instantiate("NativeStructureQueries")
 	return true
 
+func set_model_focus(world_position: Vector3) -> void:
+	for collection: Node3D in _models.values():
+		collection.set_collision_focus(world_position)
+		collection.set_render_focus(world_position)
+
 func register_model(asset_id: String, mesh: Mesh) -> Node3D:
 	if _sealed or _models.has(asset_id) or _models.size() >= 256 or not prepare():
 		return null

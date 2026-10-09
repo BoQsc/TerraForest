@@ -1,0 +1,22 @@
+{
+  "base_commit": "d0dba0c",
+  "command": "godot --path TerraForest --script res://tests/furniture_world.gd -- --gameplay-construction",
+  "fresh_process_extra": "--reopen-furniture",
+  "result": "Both final graphical runs pass; actual paid tool placement, exact structures snapshot restoration, native rendering and compound collision, open table leg gap. Fullscreen1080p cap60. Screenshots reviewed after enabling wood mipmaps.",
+  "limits": "Temporary world with elevated real block test platform; snapshot fixture, not full world archive or furnished settlement. No density, travel, performance or thermal qualification.",
+  "retained_failures": [
+    "Fixture Variant typing error",
+    "Untyped catalog concatenation rejected at runtime; fixed with typed array append",
+    "Furniture focus missing: six rendering/collision assertions failed; fixed by focusing all registered model collections"
+  ],
+  "hashes": {
+    "demo/world.gd": "e41ee92ac216caf858bcc2bad2d7b4fa2621eddff9cbd5f95b82226ef49cb951",
+    "addons/structures/structures_world.gd": "3873e47ca71e22378e9f79c4d8efed3b687399965e784fd14e5f0bcfbecb76c1",
+    "addons/structures/furniture_catalog.gd": "26e06f20efe1de0113f1b308660fdc9c59e856236fc2b6495e2bae0931e78a28",
+    "tools/bake_furniture.gd": "f89fc1067be317962285b5dbc800c8ecd9fb0971ccd962a3d52278d941903eae",
+    "tests/furniture_world.gd": "9bc257666d24824aae872cac8dff1daff8a53de8692f7e00561cb92869613701",
+    "addons/structures/prefabs/table_model.tres": "f823165dab7ccaf8974ed225466eea12e1fc005f303e0327c31077260fd9e04d",
+    "addons/structures/prefabs/chair_model.tres": "14bf6189bcc773ec5b42da20ce7256faff5dc66da99324eb29a7f7d0753611c3",
+    "addons/structures/prefabs/shelf_model.tres": "8bbbd8085d4a46a624599688707e05e40ed059b08723be7a3f3d96553c026ec5"
+  }
+}

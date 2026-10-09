@@ -99,6 +99,8 @@ func _ready() -> void:
 	var doorway: Mesh = load("res://addons/structures/prefabs/doorway_model.tres")
 	var door_models: Node3D = structures.register_model("architecture/doorway/v1",doorway)
 	structures_ready = structures_ready and door_models != null
+	var furniture: Array[Dictionary]=preload("res://addons/structures/furniture_catalog.gd").register(structures)
+	structures_ready = structures_ready and furniture.size()==3
 	if not player_hud.prepare() or not persistence.register_component("player_loadout", player_hud.capture_snapshot, player_hud.restore_snapshot, player_hud.inventory, player_hud.default_loadout):
 		push_error("Player loadout persistence initialization failed")
 		get_tree().quit(2)
@@ -142,10 +144,12 @@ func _ready() -> void:
 	model_tool.gameplay=construction_inventory.gameplay
 	model_tool.paid_placement=_place_inventory_model
 	model_tool.availability=_model_edit_available
-	model_tool.configure(camera,player,[
+	var object_entries: Array[Dictionary]=[
 		{"title":"Metal beam","mesh":beam,"collection":structures.model("architecture/metal_beam/v1"),"scale":Vector3(4,0.2,0.2),"costs":PackedInt64Array([104,4]),"cost_label":"4 metal"},
 		{"title":"Floor panel","mesh":beam,"collection":structures.model("architecture/metal_beam/v1"),"scale":Vector3(4,0.25,4),"costs":PackedInt64Array([104,8]),"cost_label":"8 metal"},
-		{"title":"Doorway","mesh":doorway,"collection":door_models,"scale":Vector3.ONE,"costs":PackedInt64Array([103,8]),"cost_label":"8 concrete"}],help.get_parent(),structures.blocks)
+		{"title":"Doorway","mesh":doorway,"collection":door_models,"scale":Vector3.ONE,"costs":PackedInt64Array([103,8]),"cost_label":"8 concrete"}]
+	object_entries.append_array(furniture)
+	model_tool.configure(camera,player,object_entries,help.get_parent(),structures.blocks)
 	model_tool.notice.connect(_show_lake_notice)
 	if model_region_paging and (not temporary_world or terrain.backend.readonly_snapshot):
 		model_paging=preload("res://addons/structures/model_paging_coordinator.gd").new()
@@ -1033,10 +1037,7 @@ func _process(delta: float) -> void:
 		if terrain.world_ready and (not temporary_world or terrain.backend.readonly_snapshot) and not shutdown_requested:
 			if structures.enable_region_paging(terrain.backend.snapshot_codec):
 				structures.step_region_paging(player.global_position)
-		structures.model("architecture/metal_beam/v1").set_collision_focus(player.position)
-		structures.model("architecture/doorway/v1").set_collision_focus(player.position)
-		structures.model("architecture/metal_beam/v1").set_render_focus(player.position)
-		structures.model("architecture/doorway/v1").set_render_focus(player.position)
+		structures.set_model_focus(player.global_position)
 	_telemetry_time += delta
 	if _telemetry_time >= 0.5 and vegetation.ready_to_render:
 		_telemetry_time = 0.0
