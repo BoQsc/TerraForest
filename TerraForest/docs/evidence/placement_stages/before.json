@@ -1,0 +1,87 @@
+{
+  "budget_us": 4000,
+  "failures": 2,
+  "rows": [
+    {
+      "blocks": 1896,
+      "compose_us": 2258,
+      "cottages": 4,
+      "models": 12,
+      "place_us": 456,
+      "result": {
+        "block_probes": 160,
+        "model_comparisons": 120,
+        "models": 12,
+        "ok": true,
+        "timing": {
+          "block_commit_us": 157,
+          "block_validation_us": 82,
+          "model_commit_us": 2,
+          "model_validation_us": 145,
+          "publication_us": 45
+        }
+      }
+    },
+    {
+      "blocks": 7584,
+      "compose_us": 3874,
+      "cottages": 16,
+      "models": 48,
+      "place_us": 1184,
+      "result": {
+        "block_probes": 640,
+        "model_comparisons": 480,
+        "models": 48,
+        "ok": true,
+        "timing": {
+          "block_commit_us": 418,
+          "block_validation_us": 251,
+          "model_commit_us": 13,
+          "model_validation_us": 433,
+          "publication_us": 50
+        }
+      }
+    },
+    {
+      "blocks": 30336,
+      "compose_us": 10171,
+      "cottages": 64,
+      "models": 192,
+      "place_us": 4844,
+      "result": {
+        "block_probes": 2560,
+        "model_comparisons": 1920,
+        "models": 192,
+        "ok": true,
+        "timing": {
+          "block_commit_us": 1770,
+          "block_validation_us": 1149,
+          "model_commit_us": 50,
+          "model_validation_us": 1695,
+          "publication_us": 148
+        }
+      }
+    },
+    {
+      "blocks": 60672,
+      "compose_us": 21224,
+      "cottages": 128,
+      "models": 384,
+      "place_us": 15987,
+      "result": {
+        "block_probes": 5120,
+        "model_comparisons": 3840,
+        "models": 384,
+        "ok": true,
+        "timing": {
+          "block_commit_us": 5482,
+          "block_validation_us": 4009,
+          "model_commit_us": 119,
+          "model_validation_us": 6005,
+          "publication_us": 303
+        }
+      }
+    }
+  ],
+  "scope": "One cold synchronous native placement per size in an empty structure world. Native validation and commit only; no rendering, terrain, inventory, steady-state, thermal or 60 FPS claim."
+}

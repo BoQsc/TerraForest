@@ -22,6 +22,12 @@ func run() -> void:
 		var result: Dictionary=transaction.place(world.blocks,asset,Vector3i(800,50,800),0,models,[])
 		var place_us:=Time.get_ticks_usec()-start
 		check(result.get("ok",false),"place %d cottages: %s"%[count,result.get("reason","")])
+		var measured:=0;var accounted:=true
+		var timing: Dictionary=result.get("timing",{})
+		for stage in ["block_validation_us","model_validation_us","block_commit_us","model_commit_us","publication_us"]:
+			accounted=accounted and timing.has(stage) and int(timing.get(stage,-1))>=0
+			measured+=int(timing.get(stage,0))
+		check(accounted and measured<=place_us,"stage accounting fits the synchronous call %d"%count)
 		var exact: bool=world.blocks.stats().cells==count*source.get_cell_count()
 		for collection in models.values():exact=exact and collection.get_ids().size()==count
 		check(exact,"exact block and furniture population %d"%count)

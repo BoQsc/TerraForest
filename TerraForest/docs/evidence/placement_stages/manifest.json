@@ -1,0 +1,10 @@
+{
+  "scope": "Diagnostic attribution of native synchronous placement. Five disjoint stages; outside-call time also includes return-value and local cleanup work. Empty structure worlds, one observation per size, no rendered-performance claim.",
+  "result": "64/128 still fail the declared 4ms budget. At 128: block validation 4009us, model validation 6005us, block commit 5482us, model commit 119us, publication 303us; external call15987us.",
+  "action": "Use bounded preparation of touched block chunks and models, then revision-checked atomic publication. Merely moving model validation to a worker leaves block commit over budget. No new meshing algorithm is implicated by this test.",
+  "validation": "26 debug and 26 clean-release correctness checks pass. Captured stage totals verified against all four external call times. Updated scale script parses; benchmark not rerun unchanged.",
+  "hashes": {
+    "addons/structures/native/prefab_transaction.cpp": "ea920444f9bdb5bf1e9e99fc6281db009f1018c2ba93c06bc0ea6088fd64c6a2",
+    "tests/furnished_placement_scale.gd": "6bab6040cf6e5c43aa264e180b02a356e1f431d5edd9c15729b1933f141782a8"
+  }
+}

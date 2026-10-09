@@ -3,6 +3,7 @@
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/core/object.hpp>
 #include <algorithm>
+#include <godot_cpp/classes/time.hpp>
 #include <cmath>
 namespace terraforest {
 void NativePrefabPlacement::_bind_methods() {
@@ -18,6 +19,7 @@ Dictionary NativePrefabPlacement::model_counts(const Ref<NativeBlockPrefab> &pre
     return counts;
 }
 Dictionary NativePrefabPlacement::place(NativeBlockWorld *blocks,const Ref<NativeBlockPrefab> &prefab,Vector3i origin,int turns,const Dictionary &models,const Array &protected_boxes) {
+    const auto started=Time::get_singleton()->get_ticks_usec();
     auto fail=[](const char *why){Dictionary d;d["ok"]=false;d["reason"]=why;return d;};
     if(busy||!blocks||prefab.is_null()||models.size()>256||protected_boxes.size()>16)return fail("Invalid or busy placement");
     // Main-world collections share world coordinates. Reject other frames until
@@ -25,6 +27,7 @@ Dictionary NativePrefabPlacement::place(NativeBlockWorld *blocks,const Ref<Nativ
     if((blocks->is_inside_tree()?blocks->get_global_transform():blocks->get_transform())!=Transform3D())return fail("Unsupported block frame");
     PackedInt32Array records;
     if(!blocks->prefab_records(prefab,origin,turns,false,&records))return fail("Blocks occupied, unavailable or over capacity");
+    const auto blocks_validated=Time::get_singleton()->get_ticks_usec();
     std::vector<AABB> protected_regions;
     for(int i=0;i<protected_boxes.size();++i) {
         if(protected_boxes[i].get_type()!=Variant::AABB)return fail("Invalid protection");
@@ -111,16 +114,19 @@ Dictionary NativePrefabPlacement::place(NativeBlockWorld *blocks,const Ref<Nativ
         }
         stage.values.emplace(++stage.next,packed);
     }
+    const auto models_validated=Time::get_singleton()->get_ticks_usec();
     const int committed_models=prefab->model_attachments.size();
     busy=true;bool changed=false;AABB changed_bounds;
     // All rejection paths end above. No signals or script calls occur between
     // the block mutation and authoritative model insertion.
     if(!blocks->apply_cells(records,false,changed,&changed_bounds)){busy=false;return fail("Block admission changed");}
+    const auto blocks_committed=Time::get_singleton()->get_ticks_usec();
     for(auto &entry:staged) {
         auto &s=entry.second;
         for(const auto &v:s.values){s.batch->placements.emplace(v);s.batch->groups[NativeStaticBatch::group_for(v.second)].insert(v.first);}
         ++s.batch->edit_revision;
     }
+    const auto models_committed=Time::get_singleton()->get_ticks_usec();
     // Until there is a shared journal, never allow block-only undo to erase half
     // of a furnished placement. Model history notices the new edit revisions.
     blocks->clear_history();
@@ -135,6 +141,6 @@ Dictionary NativePrefabPlacement::place(NativeBlockWorld *blocks,const Ref<Nativ
     if(changed)if(auto *live=ObjectDB::get_instance(block_id))live->emit_signal("cells_changed",changed_bounds);
     if(auto *live=ObjectDB::get_instance(block_id))live->emit_signal("changed");
     for(auto id:ids)if(auto *live=ObjectDB::get_instance(id))live->emit_signal("changed");
-    busy=false;Dictionary result;result["ok"]=true;result["models"]=committed_models;result["block_probes"]=probes;result["model_comparisons"]=comparisons;return result;
+    busy=false;Dictionary result;result["ok"]=true;result["models"]=committed_models;result["block_probes"]=probes;result["model_comparisons"]=comparisons;Dictionary timing;timing["block_validation_us"]=blocks_validated-started;timing["model_validation_us"]=models_validated-blocks_validated;timing["block_commit_us"]=blocks_committed-models_validated;timing["model_commit_us"]=models_committed-blocks_committed;timing["publication_us"]=Time::get_singleton()->get_ticks_usec()-models_committed;result["timing"]=timing;return result;
 }
 }
