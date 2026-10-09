@@ -2,8 +2,9 @@
 
 `NativeModelTransferScheduler` connects the world archive's strict checkpoint
 reads to history-owned incremental admission and retirement. It schedules multiple
-model collections with one aggregate scene-thread work budget. It does not yet
-select regions from player focus or run automatically in the game scene.
+model collections with one aggregate scene-thread work budget. Native focus
+selection and an explicit scene-adapter lifecycle are available; the default
+game scene does not yet activate them.
 
 ## Ownership and use
 
@@ -104,6 +105,52 @@ not a frame-budgeted sweep over all assets. No scene-thread file I/O is added. T
 future coordinator must invoke it at a drained per-asset save boundary, retry
 backpressure, and manage collection registration and focus selection. Default game
 paging is not activated by this API. See [handover evidence](MODEL_CHECKPOINT_HANDOVER.md).
+
+## Native focus selection and scene lifecycle
+
+`select_focus(world_focus, load_radius=384, unload_radius=512, max_scans=64,
+max_usec=250)` rotates through assets and their unavailable/resident bounds using
+persistent ordered-map cursors. It examines at most the requested number of
+entries/empty-collection visits, subject to a soft deadline, and queues work under
+the existing shared job/byte limits. Nearby admissions have higher priority than
+cold retirement. Radii are collection-local after transforming the world focus;
+the default world uses identity collection transforms.
+
+Both render and collision focus follow selection. Unavailable bounds include
+prototype extent; resident selection merges visual and collision bounds. Work
+outside the retained radius is cancelled, while small camera motion does not
+invalidate all jobs. History and active rendering prevent retirement selection;
+the native transfer guard additionally protects collision proxies. Failed regions
+have a 120-selection-call retry delay, cleared by successful checkpoint handover.
+Scene-thread statistics expose selection visits, queued requests and elapsed time.
+
+Selection performs an additional bounded pass over at most 64 existing jobs for
+cancellation. Its deadline is soft; this is not a hard timing guarantee or a
+spatial-tree nearest query. Discovering a destination can require a complete cursor
+pass as region/asset counts grow. Dense discovery/arrival latency needs a targeted
+scale check before default activation; the small lifecycle fixture does not qualify it.
+
+`structures_world.gd` now supplies these opt-in support methods:
+
+1. `enable_model_paging(archive, history)` registers saved collections with a running
+   shared archive service and the existing editor history. Unsaved new assets wait
+   for their first committed save.
+2. `step_model_paging(focus)` selects and advances native work, polls results and
+   reports failed transfers. GDScript does not scan regions or placements.
+3. `drain_model_paging()` pauses selection and cancels old jobs with a new epoch.
+   Continue stepping until `drained` is true before capturing a save or replacing
+   world state. Draining is idempotent and does not discard editor history.
+4. After successful publication, `resume_model_paging()` validates/adopts checkpoints
+   and registers newly saved assets. On failure it remains drained for caller handling.
+5. For reload/shutdown, `finish_model_paging()` unregisters only after draining.
+   Restore the new scene state and enable again as needed. Exceptional destruction
+   retains the scheduler's synchronous cleanup fallback.
+
+The normal game command/autosave/shutdown paths still need to call these barriers;
+do not enable metadata-only default startup before that integration. Run the short
+`model_focus_paging` release test for the scene-adapter route. Debug/release each
+pass 24 checks for multi-asset travel, exact edits, history pins, partial saves,
+new asset registration, reload and lease cleanup. [Evidence](evidence/model_focus_paging/).
 
 ## Targeted evidence and remaining gates
 

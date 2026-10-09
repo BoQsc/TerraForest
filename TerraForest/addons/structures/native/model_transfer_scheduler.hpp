@@ -14,7 +14,12 @@ struct ModelCheckpointLease {
 };
 class NativeModelTransferScheduler : public RefCounted {
     GDCLASS(NativeModelTransferScheduler,RefCounted)
-    struct Collection {uint64_t id=0;std::shared_ptr<ModelCheckpointLease> lease;};
+    struct Collection {
+        uint64_t id=0;std::shared_ptr<ModelCheckpointLease> lease;
+        std::map<BlockKey,PackedByteArray> versions;
+        std::map<BlockKey,int64_t> retry_after;
+        BlockKey cursor{};bool cursor_valid=false,select_resident=false;
+    };
     enum Stage {QUEUED,READING,READY,TRANSFERRING,DONE};
     struct Job {
         int64_t ticket=0,epoch=0,read_ticket=0,transfer_ticket=0;
@@ -35,6 +40,8 @@ class NativeModelTransferScheduler : public RefCounted {
     uint64_t serial=0;
     bool busy=false,stopping=false;
     int64_t ticks=0,last_records=0,last_bytes=0,last_operations=0,last_usec=0,peak_usec=0;
+    String selection_asset;
+    int64_t selection_tick=0,selection_scans=0,selection_requests=0,selection_usec=0;
     static constexpr int64_t PACKET_RESERVATION=5600232;
     static NativeStaticBatch *resolve(uint64_t id);
     void finish(Job &job,const String &result,const String &error=String());
@@ -48,6 +55,8 @@ public:
     bool register_collection(const String &asset,NativeStaticBatch *collection,const PackedByteArray &checkpoint);
     bool unregister_collection(const String &asset);
     bool refresh_checkpoint(const String &asset);
+    PackedByteArray get_checkpoint(const String &asset) const;
+    Dictionary select_focus(Vector3 world_focus,double load_radius=384,double unload_radius=512,int max_scans=64,int max_usec=250);
     int64_t request(const String &asset,Vector3i region,const PackedByteArray &expected,bool retire,int priority,int64_t request_epoch);
     bool cancel(int64_t ticket);
     bool set_epoch(int64_t value);

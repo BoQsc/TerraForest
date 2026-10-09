@@ -85,6 +85,13 @@ The current checkpoint is [Play Human Checkpoint.cmd](../Play%20Human%20Checkpoi
 
 M1 progress: [native saved-checkpoint handover](MODEL_CHECKPOINT_HANDOVER.md) now passes scene-adapter correctness checks, including dirty saves and exact edited-region retirement/readmission. Default automatic model paging remains inactive.
 
-Next implementation task under M1: connect the automatic model paging coordinator around focus selection, all-asset ownership and the new handover API at save/reload boundaries. Its proof must exercise the real game-facing integration through load, travel, edit, save and reload; another standalone scheduler benchmark does not close this task. Keep the current default path usable until that proof passes. Human checkpoint feedback can proceed in parallel and any concrete play-blocking defect takes precedence.
+Native focus selection and the structures scene adapter now pass a 24-check
+travel/edit/save/reload lifecycle in debug and release, including history pins and
+new asset registration. [Contract and limits](MODEL_TRANSFER_SCHEDULER.md). The
+fixture explicitly drains transfers; normal game commands, autosaves and shutdown
+still need that barrier. Ordered-cursor destination discovery also needs a scale
+check before default activation; bounded visits alone do not prove prompt arrival.
+
+Next implementation task under M1: connect the scene adapter's drain/resume barriers to normal game command, autosave and shutdown paths, and check destination discovery at many regions/assets. Its proof must exercise the actual world through load, travel, edit, save and reload; another standalone scheduler benchmark does not close this task. Keep the current default path usable until that proof passes. Human checkpoint feedback can proceed in parallel and any concrete play-blocking defect takes precedence.
 
 This task is bounded by the M1 disposition rule above. It must not indefinitely delay M2 or erase the remaining original coverage rows. No first-round completion, release date or percentage complete is claimed.

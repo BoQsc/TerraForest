@@ -3,6 +3,7 @@
 #include <chrono>
 #include <algorithm>
 #include <vector>
+#include <cmath>
 
 namespace terraforest {
 void NativeModelTransferScheduler::_bind_methods() {
@@ -10,6 +11,8 @@ void NativeModelTransferScheduler::_bind_methods() {
     ClassDB::bind_method(D_METHOD("register_collection","asset","collection","checkpoint"),&NativeModelTransferScheduler::register_collection);
     ClassDB::bind_method(D_METHOD("unregister_collection","asset"),&NativeModelTransferScheduler::unregister_collection);
     ClassDB::bind_method(D_METHOD("refresh_checkpoint","asset"),&NativeModelTransferScheduler::refresh_checkpoint);
+    ClassDB::bind_method(D_METHOD("get_checkpoint","asset"),&NativeModelTransferScheduler::get_checkpoint);
+    ClassDB::bind_method(D_METHOD("select_focus","world_focus","load_radius","unload_radius","max_scans","max_usec"),&NativeModelTransferScheduler::select_focus,DEFVAL(384.0),DEFVAL(512.0),DEFVAL(64),DEFVAL(250));
     ClassDB::bind_method(D_METHOD("request","asset","region","expected","retire","priority","epoch"),&NativeModelTransferScheduler::request);
     ClassDB::bind_method(D_METHOD("cancel","ticket"),&NativeModelTransferScheduler::cancel);
     ClassDB::bind_method(D_METHOD("set_epoch","epoch"),&NativeModelTransferScheduler::set_epoch);
@@ -34,7 +37,14 @@ bool NativeModelTransferScheduler::register_collection(const String &asset,Nativ
     const int64_t handle=archive->retain_read_checkpoint(asset,checkpoint);if(!handle)return false;
     auto lease=std::make_shared<ModelCheckpointLease>();lease->archive=archive;lease->checkpoint=checkpoint;lease->handle=handle;
     collection->paging_checkpoint=lease;collection->paging_owner=get_instance_id();
-    collections.emplace(asset,Collection{collection->get_instance_id(),std::move(lease)});return true;
+    Collection binding;binding.id=collection->get_instance_id();binding.lease=std::move(lease);
+    for(const auto &entry:collection->unloaded_regions)binding.versions.emplace(entry.first,entry.second.checksum);
+    Dictionary index=archive->published_model_index(asset);
+    if(!index.is_empty()&&PackedByteArray(index["checkpoint"])==checkpoint) {
+        PackedInt32Array keys=index["keys"];PackedByteArray checksums=index["checksums"];
+        for(int64_t i=0;i<keys.size()/3;++i)binding.versions[{keys[i*3],keys[i*3+1],keys[i*3+2]}]=checksums.slice(i*32,(i+1)*32);
+    }
+    collections.emplace(asset,std::move(binding));return true;
 }
 bool NativeModelTransferScheduler::unregister_collection(const String &asset) {
     if(busy)return false;
@@ -46,6 +56,9 @@ bool NativeModelTransferScheduler::unregister_collection(const String &asset) {
         if(collection->unloaded_regions.empty())collection->paging_checkpoint.reset();
     }
     collections.erase(found);return true;
+}
+PackedByteArray NativeModelTransferScheduler::get_checkpoint(const String &asset) const {
+    auto found=collections.find(asset);return found==collections.end()?PackedByteArray():found->second.lease->checkpoint;
 }
 bool NativeModelTransferScheduler::refresh_checkpoint(const String &asset) {
     if(busy||stopping||archive.is_null())return false;
@@ -76,7 +89,73 @@ bool NativeModelTransferScheduler::refresh_checkpoint(const String &asset) {
     }
     // Hold the new version before releasing either reference to the old lease.
     collection->paging_checkpoint=lease;found->second.lease=std::move(lease);
+    found->second.versions.clear();found->second.retry_after.clear();found->second.cursor_valid=false;
+    for(int64_t i=0;i<keys.size()/3;++i)found->second.versions.emplace(BlockKey{keys[i*3],keys[i*3+1],keys[i*3+2]},digests.slice(i*32,(i+1)*32));
     return true;
+}
+static double focus_distance(const AABB &box,const Vector3 &focus) {
+    const Vector3 end=box.get_end();
+    return focus.distance_squared_to(Vector3(std::clamp(focus.x,box.position.x,end.x),
+        std::clamp(focus.y,box.position.y,end.y),std::clamp(focus.z,box.position.z,end.z)));
+}
+Dictionary NativeModelTransferScheduler::select_focus(Vector3 world_focus,double load_radius,double unload_radius,int max_scans,int max_usec) {
+    if(busy||stopping||!world_focus.is_finite()||!std::isfinite(load_radius)||!std::isfinite(unload_radius)||
+       load_radius<0||unload_radius<=load_radius||unload_radius>32768||max_scans<1||max_scans>1024||max_usec<1||max_usec>2000)return stats();
+    const auto begin=std::chrono::steady_clock::now(),deadline=begin+std::chrono::microseconds(max_usec);
+    selection_scans=selection_requests=0;++selection_tick;
+    // The job set is already bounded by the shared scheduler capacity. Cancel
+    // only obsolete work; ordinary sub-region camera motion does not reset I/O.
+    for(auto &entry:jobs) {
+        auto &job=entry.second;if(job.stage==DONE||job.cancelled)continue;
+        auto *collection=resolve(collections.at(job.asset).id);if(!collection)continue;
+        const Transform3D transform=collection->is_inside_tree()?collection->get_global_transform():collection->get_transform();
+        if(!transform.is_finite()||std::abs(transform.basis.determinant())<1e-12)continue;
+        const Vector3 focus=transform.affine_inverse().xform(world_focus);
+        BlockKey key{job.region.x,job.region.y,job.region.z};
+        auto missing=collection->unloaded_regions.find(key);
+        AABB bounds;
+        if(missing!=collection->unloaded_regions.end())bounds=missing->second.bounds;
+        else {auto rendered=collection->render_bounds.find(key);if(rendered==collection->render_bounds.end())continue;bounds=rendered->second;
+            auto collision=collection->collision_bounds.find(key);if(collision!=collection->collision_bounds.end())bounds=bounds.merge(collision->second);}
+        const double distance=focus_distance(bounds,focus);
+        if((!job.retiring&&distance>unload_radius*unload_radius)||(job.retiring&&distance<=unload_radius*unload_radius))cancel_job(job);
+    }
+    while(!collections.empty()&&selection_scans<max_scans&&std::chrono::steady_clock::now()<deadline) {
+        auto next=collections.upper_bound(selection_asset);if(next==collections.end())next=collections.begin();
+        selection_asset=next->first;auto &binding=next->second;++selection_scans;
+        auto *collection=resolve(binding.id);if(!collection)continue;
+        const Transform3D transform=collection->is_inside_tree()?collection->get_global_transform():collection->get_transform();
+        if(!transform.is_finite()||std::abs(transform.basis.determinant())<1e-12)continue;
+        const Vector3 focus=transform.affine_inverse().xform(world_focus);if(!focus.is_finite())continue;
+        collection->set_render_focus(focus);collection->set_collision_focus(focus);
+        BlockKey key;AABB bounds;PackedByteArray expected;
+        if(!binding.select_resident) {
+            auto item=binding.cursor_valid?collection->unloaded_regions.upper_bound(binding.cursor):collection->unloaded_regions.begin();
+            if(item==collection->unloaded_regions.end()){binding.select_resident=true;binding.cursor_valid=false;continue;}
+            key=item->first;bounds=item->second.bounds;expected=item->second.checksum;
+        } else {
+            auto item=binding.cursor_valid?collection->render_bounds.upper_bound(binding.cursor):collection->render_bounds.begin();
+            if(item==collection->render_bounds.end()){binding.select_resident=false;binding.cursor_valid=false;continue;}
+            key=item->first;bounds=item->second;
+            auto collision=collection->collision_bounds.find(key);if(collision!=collection->collision_bounds.end())bounds=bounds.merge(collision->second);
+            auto version=binding.versions.find(key);if(version!=binding.versions.end())expected=version->second;
+        }
+        binding.cursor=key;binding.cursor_valid=true;
+        const double distance=focus_distance(bounds,focus);
+        const bool retiring=binding.select_resident;
+        if(expected.is_empty()||(!retiring&&distance>load_radius*load_radius)||(retiring&&distance<=unload_radius*unload_radius))continue;
+        auto retry=binding.retry_after.find(key);if(retry!=binding.retry_after.end()&&retry->second>selection_tick)continue;
+        if(retiring) {
+            // Skip renderer/proxy/history protection without starting disk reads.
+            auto drawn=collection->batches.lower_bound({key,0});
+            if(drawn!=collection->batches.end()&&!(key<drawn->first.first)&&!(drawn->first.first<key))continue;
+            if(history->region_has_history(collection,Vector3i(key.x,key.y,key.z)))continue;
+        }
+        const int priority=retiring?0:128+int(std::max(0.0,127.0-std::sqrt(distance)/32.0));
+        if(request(next->first,Vector3i(key.x,key.y,key.z),expected,retiring,priority,epoch)>0)++selection_requests;
+    }
+    selection_usec=std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now()-begin).count();
+    return stats();
 }
 int64_t NativeModelTransferScheduler::request(const String &asset,Vector3i region,const PackedByteArray &expected,bool retire,int priority,int64_t request_epoch) {
     if(busy||stopping||archive.is_null()||request_epoch!=epoch||expected.size()!=32||priority<0||priority>255||
@@ -88,6 +167,13 @@ int64_t NativeModelTransferScheduler::request(const String &asset,Vector3i regio
     const auto ticket=job.ticket;jobs.emplace(ticket,std::move(job));return ticket;
 }
 void NativeModelTransferScheduler::finish(Job &job,const String &result,const String &error) {
+    if(result=="failed") {
+        auto found=collections.find(job.asset);
+        if(found!=collections.end()) {
+            if(found->second.retry_after.size()>=4096)found->second.retry_after.clear();
+            found->second.retry_after[{job.region.x,job.region.y,job.region.z}]=selection_tick+120;
+        }
+    }
     job.stage=DONE;job.result=result;job.error=error;job.packet=PackedByteArray();
 }
 void NativeModelTransferScheduler::cancel_job(Job &job) {
@@ -184,6 +270,7 @@ Array NativeModelTransferScheduler::poll(int count) {
 Dictionary NativeModelTransferScheduler::stats() const {
     Dictionary out;int active=0,reading=0,completed=0;
     for(const auto &entry:jobs){active+=entry.second.stage==TRANSFERRING;reading+=entry.second.stage==READING;completed+=entry.second.stage==DONE;}
+    out["selection_scans"]=selection_scans;out["selection_requests"]=selection_requests;out["selection_usec"]=selection_usec;
     out["jobs"]=int(jobs.size());out["active"]=active;out["reading"]=reading;out["completed"]=completed;out["collections"]=int(collections.size());
     out["job_limit"]=job_limit;out["byte_limit"]=byte_limit;out["reserved_bytes"]=int64_t(jobs.size())*PACKET_RESERVATION;
     out["packet_reservation"]=PACKET_RESERVATION;out["epoch"]=epoch;out["stopping"]=stopping;out["busy"]=busy;out["ticks"]=ticks;

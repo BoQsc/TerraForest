@@ -2,6 +2,23 @@
 
 The [delivery plan and coverage register](PROJECT_PLAN.md) is the current reference for milestone order, original-scope coverage and deferred-work return triggers. Entries below preserve evidence at their recorded development stage. Older headings and the historical scope table are not current status; later implementations supersede some of their limitations. Correctness, integration, rendered performance and sustained qualification are separate gates.
 
+## Native focus paging through the structures scene adapter - 2026-10-09
+
+Added bounded native focus selection across registered model assets, with shared
+job budgets, admission/retirement hysteresis, obsolete-work cancellation, retry
+delay and retained version checks. The scene adapter exposes enable, step,
+drain, resume-after-save and finish-before-reload methods while retaining the
+external editor journal. Newly saved assets join on resume.
+
+Debug/release pass 24 lifecycle checks: automatic near/far travel across two assets,
+exact saved edits, history-pinned regions, a newly registered third asset, partial
+save/handover, pending-work drain, reload and final lease cleanup. Release regressions
+pass 44 bootstrap/handover and 42 scheduler checks. [Contract and evidence](MODEL_TRANSFER_SCHEDULER.md).
+The fixture is headless and explicitly invokes barriers. Normal game commands,
+autosave and shutdown do not yet invoke them; default activation remains off.
+Cursor discovery scales with region/asset count and is not qualified by this small
+fixture. No GPU, dense-arrival, frame-time or thermal improvement is claimed.
+
 ## Saved model checkpoint handover - 2026-10-09
 
 Added committed per-asset model indexes alongside the block publication notice and

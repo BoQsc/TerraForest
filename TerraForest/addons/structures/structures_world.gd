@@ -16,6 +16,94 @@ var _cached_storage := PackedByteArray()
 var _storage_checkpoint := PackedByteArray()
 var _model_checkpoints: Dictionary = {}
 var _pager: RefCounted
+var _model_scheduler: RefCounted
+var _model_paging_archive: RefCounted
+var _model_paging_draining := false
+var _model_paging_assets: Array[String] = []
+var _model_paging_failures := 0
+
+func enable_model_paging(archive: RefCounted, history: RefCounted) -> bool:
+	if _model_scheduler != null:
+		return not _model_paging_draining
+	if not seal() or archive == null or history == null or not archive.region_read_stats().running:
+		return false
+	var scheduler: RefCounted = ClassDB.instantiate("NativeModelTransferScheduler")
+	if not scheduler.configure(archive,history,8,64*1024*1024):
+		return false
+	var registered: Array[String] = []
+	for id: String in _models:
+		var checkpoint: PackedByteArray = _model_checkpoints.get(id,PackedByteArray())
+		var committed: Dictionary = archive.published_model_index(id)
+		if checkpoint.is_empty() and not committed.is_empty():
+			checkpoint = committed.checkpoint
+		if checkpoint.is_empty() and _models[id].region_stats().unloaded_regions == 0:
+			continue # Unsaved/new assets become eligible after their first save.
+		if not scheduler.register_collection(id,_models[id],checkpoint):
+			for previous: String in registered:
+				scheduler.unregister_collection(previous)
+			return false
+		registered.append(id)
+	_model_scheduler = scheduler
+	_model_paging_archive = archive
+	_model_paging_assets = registered
+	_model_paging_draining = false
+	return true
+
+func step_model_paging(world_focus: Vector3, load_radius: float = 384, unload_radius: float = 512) -> Dictionary:
+	if _model_scheduler == null:
+		return {"active":false,"drained":true,"failed_transfers":_model_paging_failures}
+	if not _model_paging_draining:
+		_model_scheduler.select_focus(world_focus,load_radius,unload_radius)
+	_model_scheduler.tick()
+	for result: Dictionary in _model_scheduler.poll(8):
+		if result.result == "failed":
+			_model_paging_failures += 1
+	var state: Dictionary = _model_scheduler.stats()
+	state["active"] = true
+	state["drained"] = _model_paging_draining and state.jobs == 0
+	state["failed_transfers"] = _model_paging_failures
+	return state
+
+func drain_model_paging() -> bool:
+	if _model_scheduler == null:
+		return true
+	if not _model_paging_draining:
+		if not _model_scheduler.set_epoch(_model_scheduler.stats().epoch+1):
+			return false
+		_model_paging_draining = true
+	return _model_scheduler.stats().jobs == 0
+
+func resume_model_paging() -> bool:
+	if _model_scheduler == null or not _model_paging_draining or _model_scheduler.stats().jobs != 0:
+		return false
+	# Called once at a save boundary, not per frame. No hot-path selection in script.
+	for id: String in _models:
+		var committed: Dictionary = _model_paging_archive.published_model_index(id)
+		if committed.is_empty():
+			continue
+		if not id in _model_paging_assets:
+			if not _model_scheduler.register_collection(id,_models[id],committed.checkpoint):
+				return false
+			_model_paging_assets.append(id)
+		if not _model_scheduler.refresh_checkpoint(id):
+			return false
+		_model_checkpoints[id] = _model_scheduler.get_checkpoint(id)
+	_model_paging_draining = false
+	return true
+
+func finish_model_paging() -> bool:
+	if _model_scheduler == null:
+		return true
+	if not _model_paging_draining or _model_scheduler.stats().jobs != 0:
+		return false
+	for id: String in _model_paging_assets:
+		_model_checkpoints[id] = _model_scheduler.get_checkpoint(id)
+		if not _model_scheduler.unregister_collection(id):
+			return false
+	_model_scheduler = null
+	_model_paging_archive = null
+	_model_paging_assets.clear()
+	return true
 
 func enable_region_paging(archive: RefCounted, load_radius: float = 384, unload_radius: float = 512, chunk_limit: int = 1536) -> bool:
 	if _pager != null:
@@ -50,6 +138,8 @@ func stop_region_paging() -> void:
 
 func _exit_tree() -> void:
 	stop_region_paging()
+	# Exceptional teardown only. Normal save/reload callers drain in frame slices.
+	_model_scheduler = null
 
 func _mark_dirty() -> void:
 	_dirty = true
