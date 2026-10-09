@@ -1,3 +1,20 @@
+## Model reads share the world archive worker - 2026-10-09
+
+The native archive read service now loads exact model-region versions through
+its existing catalog ownership and persistent worker. Blocks and models share
+request/byte limits; separate completion channels prevent the block pager from
+consuming model results. Asset registration, region bounds and digest lengths
+are checked before queue admission. Lazy model-store opening stays on the worker.
+
+Debug and isolated release pass 68 checks, including two assets with identical
+placement IDs, shared backpressure, checkpoint fallback, stale-region rejection,
+64 mixed reads during 16 compound publications, missing/corrupt storage, and
+draining shutdown/reopen. The existing release block pager passes 29 checks.
+Evidence: `docs/evidence/model_archive_reads`; contract: [model world archive](MODEL_WORLD_ARCHIVE.md).
+Automatic model selection/admission and metadata-first model loading remain
+unfinished. This removes a synchronous-I/O/per-asset-thread integration gap;
+it is not a frame-rate or startup-memory qualification.
+
 ## Partial model captures reach compound world saves - 2026-10-09
 
 The structures scene now captures resident static-object edits together with

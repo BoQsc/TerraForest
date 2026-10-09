@@ -26,6 +26,7 @@ class NativeRegionWorldArchive : public RefCounted {
     PackedByteArray published_checksums_,published_checkpoint_;
     struct RegionRead {
         int64_t ticket=0,epoch=0;
+        String asset;
         Vector3i region;
         PackedByteArray expected,checkpoint;
     };
@@ -34,11 +35,14 @@ class NativeRegionWorldArchive : public RefCounted {
     std::thread read_worker_;
     std::deque<RegionRead> read_pending_;
     std::deque<Dictionary> read_completed_;
+    std::deque<Dictionary> model_read_completed_;
     bool read_running_=false,read_stopping_=false,read_active_=false;
     int read_request_limit_=0,read_outstanding_=0,read_high_requests_=0;
     int64_t read_byte_limit_=0,read_reserved_=0,read_high_bytes_=0,read_next_ticket_=1;
     int64_t read_accepted_=0,read_finished_=0,read_rejected_=0,read_starts_=0;
     void run_region_reads(Ref<NativeBlockRegionStore> store);
+    int64_t request_read(const String &asset,Vector3i region,const PackedByteArray &expected,const PackedByteArray &checkpoint,int64_t epoch);
+    Array poll_reads(int max_results,bool models);
     bool reference_in_file(const String &path,std::set<String> &keep) const;
     bool retire_unreferenced();
 protected:
@@ -58,6 +62,8 @@ public:
     // Lifecycle calls have one owner; release drains and joins before closing.
     bool start_region_reads(int request_limit=8,int64_t byte_limit=8*(2*1024*1024+96));
     int64_t request_region_read(Vector3i region,const PackedByteArray &expected,const PackedByteArray &checkpoint,int64_t epoch);
+    int64_t request_model_region_read(const String &asset,Vector3i region,const PackedByteArray &expected,const PackedByteArray &checkpoint,int64_t epoch);
+    Array poll_model_region_reads(int max_results=4);
     Array poll_region_reads(int max_results=4);
     void stop_region_reads();
     void join_region_reads();

@@ -19,6 +19,7 @@ class NativeStructuresSnapshot : public godot::RefCounted {
 protected:
     static void _bind_methods();
 public:
+    bool has_asset(const godot::String &asset) const {return configured&&assets.count(asset);}
     godot::PackedByteArray encode_model_storage(const godot::PackedByteArray &resident,const godot::PackedInt32Array &keys,const godot::PackedByteArray &checksums) const;
     static bool parse_model_storage(const godot::PackedByteArray &bytes,godot::String &asset,godot::Dictionary *state=nullptr);
     static godot::PackedByteArray model_reference(const godot::String &asset,const godot::PackedByteArray &checkpoint);

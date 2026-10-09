@@ -1,0 +1,6 @@
+{
+  "checks": 29,
+  "failures": 0,
+  "scope": "Native automatic region selection, bounded admission, clean eviction, history protection and stale epoch rejection.",
+  "library": "structures.windows.template_release.x86_64.dll"
+}

@@ -21,6 +21,7 @@ public:
     PackedInt32Array list_regions() const{return store_->list_regions();}
     PackedByteArray checksum(Vector3i region) const{return store_->checksum(region);}
     Dictionary read_region(Vector3i region) const{return store_->read_region(region);}
+    Dictionary read_storage_region(Vector3i region,const PackedByteArray &expected,const PackedByteArray &checkpoint) const{return store_->read_storage_region(region,expected,checkpoint);}
     Dictionary publish_region(const PackedByteArray &bytes,const PackedByteArray &expected){return store_->publish_region(bytes,expected);}
     Dictionary publish_regions(const Array &bytes,const Array &expected){return store_->publish_regions(bytes,expected);}
     Dictionary remove_region(Vector3i region,const PackedByteArray &expected){return store_->remove_region(region,expected);}

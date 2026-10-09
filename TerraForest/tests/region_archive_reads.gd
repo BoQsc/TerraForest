@@ -1,5 +1,6 @@
 extends SceneTree
 const RESERVATION := 2*1024*1024+96
+const MODEL_RESERVATION := 5600232+96
 var checks := 0
 var failures := 0
 
@@ -156,8 +157,9 @@ func run() -> void:
 	archive.release()
 	check(archive.region_read_stats().outstanding==0 and archive.region_read_stats().reserved_bytes==0,"final shutdown leaves no reserved payloads")
 	check_destructor(directory,c,packet,digest)
+	await check_models(directory)
 	w.free()
-	var report := {"checks":checks,"failures":failures,"scope":"Bounded native region reads sharing the world archive store; automatic scene admission remains pending."}
+	var report := {"checks":checks,"failures":failures,"scope":"Bounded block/model reads sharing one world archive worker, concurrent publication, asset isolation and exact-version restore; automatic model admission remains pending."}
 	file=FileAccess.open("res://reports/region_archive_reads.json",FileAccess.WRITE)
 	file.store_string(JSON.stringify(report,"  "))
 	file.close()
@@ -183,3 +185,119 @@ func check_destructor(directory: String,c: RefCounted,packet: PackedByteArray,di
 		store.close()
 		raw.release()
 	check(ok,"12 destructor cycles join queued readers and relinquish both file leases")
+
+func model_pin(c: RefCounted,archive: RefCounted,path: String,asset: String) -> PackedByteArray:
+	var raw: RefCounted=ClassDB.instantiate("NativeWorldArchive")
+	var reference: PackedByteArray=c.decode_reference(raw.decode(archive.read(path)).sections.structures).models[asset]
+	var size: int=reference.decode_u32(8)
+	return reference.slice(12+size,44+size)
+
+func check_models(directory: String) -> void:
+	var c: RefCounted=ClassDB.instantiate("NativeStructuresSnapshot")
+	c.configure_assets(PackedStringArray(["test/one","test/two"]))
+	var archive := make_archive(c)
+	var path := directory.path_join("mixed.trw")
+	var batch: Node3D=ClassDB.instantiate("NativeStaticBatch")
+	var other: Node3D=ClassDB.instantiate("NativeStaticBatch")
+	batch.configure_asset("test/one",BoxMesh.new());other.configure_asset("test/two",BoxMesh.new())
+	batch.upsert_instances(PackedInt64Array([1,2]),PackedFloat32Array([1,0,0,-1,0,1,0,0,0,0,1,0,1,0,0,65,0,1,0,0,0,0,1,0]))
+	other.upsert_instances(PackedInt64Array([1]),PackedFloat32Array([1,0,0,-3,0,1,0,0,0,0,1,0]))
+	var w: Node3D=ClassDB.instantiate("NativeBlockWorld")
+	w.set_cells(PackedInt32Array([-1,0,0,1]))
+	var block_packet: PackedByteArray=w.capture_region(Vector3i(-1,0,0))
+	var packet: PackedByteArray=batch.capture_region(Vector3i(-1,0,0))
+	var other_packet: PackedByteArray=other.capture_region(Vector3i(-1,0,0))
+	var digest: PackedByteArray=packet.slice(packet.size()-32)
+	var sections: Dictionary={"terrain":PackedByteArray([1]),"structures":c.encode(w.capture_snapshot(),{"test/one":batch.capture_snapshot(),"test/two":other.capture_snapshot()})}
+	check(archive.acquire(path) and archive.publish(path,archive.encode(sections))==OK,"mixed reader fixture publishes block and two asset catalogs")
+	var pin := model_pin(c,archive,path,"test/one")
+	check(archive.start_region_reads(4,RESERVATION) and archive.request_model_region_read("test/one",Vector3i(-1,0,0),digest,pin,1)==0,"model read rejects a budget too small for its worst-case packet")
+	archive.join_region_reads()
+	check(archive.start_region_reads(4,RESERVATION+2*MODEL_RESERVATION),"one archive worker accepts a shared mixed-payload budget")
+	check(archive.request_model_region_read("",Vector3i.ZERO,digest,pin,1)==0 and archive.request_model_region_read("test/unknown",Vector3i.ZERO,digest,pin,1)==0,"empty and unregistered model assets reject before queue admission")
+	check(archive.request_model_region_read("test/one",Vector3i(32768,0,0),digest,pin,1)==0 and archive.request_model_region_read("test/one",Vector3i.ZERO,PackedByteArray(),pin,1)==0,"model region and checksum validation rejects malformed requests")
+	var exposed := digest.duplicate()
+	var first: int=archive.request_model_region_read("test/one",Vector3i(-1,0,0),exposed,pin,2)
+	exposed[0]^=1
+	var second: int=archive.request_region_read(Vector3i(-1,0,0),block_packet.slice(block_packet.size()-32),PackedByteArray(),3)
+	var third: int=archive.request_model_region_read("test/two",Vector3i(-1,0,0),other_packet.slice(other_packet.size()-32),PackedByteArray(),4)
+	check(first>0 and second>first and third>second,"block and model requests share monotonic tickets")
+	check(await until(func(): return archive.region_read_stats().completed==3),"mixed requests finish on the same persistent worker")
+	check(archive.region_read_stats().reserved_bytes==RESERVATION+2*MODEL_RESERVATION and archive.request_region_read(Vector3i(-1,0,0),digest,PackedByteArray(),5)==0,"unread mixed completions enforce shared byte backpressure")
+	var blocks: Array=archive.poll_region_reads(4)
+	check(blocks.size()==1 and blocks[0].ticket==second and blocks[0].bytes==block_packet,"block consumer never consumes model completions")
+	check(archive.poll_model_region_reads(0).is_empty() and archive.region_read_stats().reserved_bytes==2*MODEL_RESERVATION,"invalid model polling cannot release reservations")
+	var models: Array=archive.poll_model_region_reads(1)
+	check(models.size()==1 and models[0].ok and models[0].ticket==first and models[0].asset=="test/one" and models[0].epoch==2 and models[0].bytes==packet,"model completion retains asset epoch exact bytes and owned request data")
+	check(archive.region_read_stats().reserved_bytes==MODEL_RESERVATION,"model polling releases only its own payload reservation")
+	models=archive.poll_model_region_reads(4)
+	check(models.size()==1 and models[0].asset=="test/two" and models[0].bytes==other_packet and archive.region_read_stats().outstanding==0,"identical placement IDs and region coordinates remain isolated by asset")
+	batch.upsert_instances(PackedInt64Array([1]),PackedFloat32Array([1,0,0,-2,0,1,0,0,0,0,1,0]))
+	sections.structures=c.encode(w.capture_snapshot(),{"test/one":batch.capture_snapshot(),"test/two":other.capture_snapshot()})
+	check(archive.publish(path,archive.encode(sections))==OK,"model publication replaces active version while retaining compound backup")
+	archive.request_model_region_read("test/one",Vector3i(-1,0,0),digest,pin,6)
+	archive.request_model_region_read("test/one",Vector3i(-1,0,0),digest,PackedByteArray(),7)
+	await until(func(): return archive.region_read_stats().model_completed==2)
+	models=archive.poll_model_region_reads(4)
+	check(models.size()==2 and models[0].ok and models[0].bytes==packet and not models[1].ok,"exact old model version reads only through its retained checkpoint")
+	var current: PackedByteArray=batch.capture_region(Vector3i(-1,0,0))
+	batch.unload_region(current)
+	check(not batch.restore_region(models[0].bytes) and not batch.is_region_loaded(Vector3i(-1,0,0)),"stale successful read cannot overwrite a newer unloaded model version")
+	archive.request_model_region_read("test/one",Vector3i(-1,0,0),current.slice(current.size()-32),PackedByteArray(),8)
+	await until(func(): return archive.region_read_stats().model_completed==1)
+	models=archive.poll_model_region_reads(4)
+	check(models.size()==1 and models[0].ok and batch.restore_region(models[0].bytes),"current model region restores directly from archive-owned background read")
+	var generations: Array[PackedByteArray]=[]
+	for i in range(16):
+		batch.upsert_instances(PackedInt64Array([2]),PackedFloat32Array([1,0,0,65+i,0,1,0,0,0,0,1,0]))
+		sections.structures=c.encode(w.capture_snapshot(),{"test/one":batch.capture_snapshot(),"test/two":other.capture_snapshot()})
+		generations.append(archive.encode(sections))
+	var writer := Thread.new()
+	check(writer.start(func():
+		for bytes in generations:
+			if archive.publish(path,bytes)!=OK:return false
+		return true)==OK,"compound writer runs alongside model and block reads")
+	var accepted := 0
+	var completed := 0
+	var correct := true
+	var end := Time.get_ticks_msec()+15000
+	while (accepted<64 or completed<accepted) and Time.get_ticks_msec()<end:
+		if accepted<64:
+			var ticket: int=archive.request_model_region_read("test/one",Vector3i(-1,0,0),current.slice(current.size()-32),PackedByteArray(),9) if accepted%2==0 else archive.request_region_read(Vector3i(-1,0,0),block_packet.slice(block_packet.size()-32),PackedByteArray(),9)
+			if ticket>0:accepted+=1
+		for result in archive.poll_region_reads(4)+archive.poll_model_region_reads(4):
+			completed+=1
+			correct=correct and result.ok and result.epoch==9 and result.bytes==(current if result.has("asset") else block_packet)
+		await process_frame
+	check(writer.wait_to_finish() and accepted==64 and completed==64 and correct,"64 mixed exact reads coexist with 16 model catalog publications and cleanup")
+	check(archive.region_read_stats().high_bytes<=RESERVATION+2*MODEL_RESERVATION and archive.region_read_stats().outstanding==0 and archive.region_read_stats().worker_starts==2,"mixed workload stays bounded with no per-asset workers")
+	archive.request_model_region_read("test/one",Vector3i(-1,0,0),current.slice(current.size()-32),PackedByteArray(),10)
+	archive.request_region_read(Vector3i(-1,0,0),block_packet.slice(block_packet.size()-32),PackedByteArray(),10)
+	archive.release()
+	check(archive.region_read_stats().completed==2 and not archive.acquire(path),"release drains both read kinds before closing stores and refuses reuse with unread results")
+	blocks=archive.poll_region_reads(4);models=archive.poll_model_region_reads(4)
+	check(blocks.size()==1 and models.size()==1 and blocks[0].ok and models[0].ok and archive.region_read_stats().reserved_bytes==0,"both result channels survive release and release all accounting")
+	check(archive.acquire(path) and archive.start_region_reads(1,MODEL_RESERVATION),"model read service restarts after archive reacquisition")
+	archive.request_model_region_read("test/two",Vector3i(-1,0,0),other_packet.slice(other_packet.size()-32),PackedByteArray(),11)
+	await until(func(): return archive.region_read_stats().model_completed==1)
+	models=archive.poll_model_region_reads(4)
+	check(models.size()==1 and models[0].ok and models[0].bytes==other_packet,"worker lazily reopens persisted asset catalog without a scene-thread store open")
+	archive.release()
+	var model_dir := path+".models"
+	check(DirAccess.rename_absolute(model_dir,model_dir+".held")==OK,"missing model sidecar fixture temporarily removes saved catalogs")
+	archive.acquire(path);archive.start_region_reads(1,MODEL_RESERVATION)
+	archive.request_model_region_read("test/two",Vector3i(-1,0,0),other_packet.slice(other_packet.size()-32),PackedByteArray(),12)
+	await until(func(): return archive.region_read_stats().model_completed==1)
+	models=archive.poll_model_region_reads(4)
+	check(models.size()==1 and not models[0].ok and not models[0].has("bytes") and not DirAccess.dir_exists_absolute(model_dir),"missing model catalog fails on worker without inventing a replacement sidecar")
+	archive.release()
+	check(DirAccess.rename_absolute(model_dir+".held",model_dir)==OK,"missing sidecar fixture restores original catalogs")
+	var hash := HashingContext.new();hash.start(HashingContext.HASH_SHA256);hash.update("test/two".to_utf8_buffer())
+	var blob := model_dir.path_join(hash.finish().hex_encode()).path_join("blobs").path_join(other_packet.slice(other_packet.size()-32).hex_encode()+".tfrg")
+	var file := FileAccess.open(blob,FileAccess.WRITE);file.store_buffer(PackedByteArray([1,2,3]));file.close()
+	archive.acquire(path);archive.start_region_reads(1,MODEL_RESERVATION)
+	archive.request_model_region_read("test/two",Vector3i(-1,0,0),other_packet.slice(other_packet.size()-32),PackedByteArray(),13)
+	await until(func(): return archive.region_read_stats().model_completed==1)
+	models=archive.poll_model_region_reads(4)
+	check(models.size()==1 and not models[0].ok and not models[0].has("bytes") and archive.region_read_stats().reserved_bytes==0,"corrupt model blob yields failed completion without payload and releases its reservation")
+	archive.release();w.free();batch.free();other.free()

@@ -50,6 +50,31 @@ Automatic model admission/eviction, metadata bootstrap and distant proxies
 remain unfinished. Partial publication still reads unavailable records to validate
 collection-wide ID uniqueness on the save worker.
 
+## Background region reads
+
+`request_model_region_read(asset, region, expected_digest, checkpoint, epoch)`
+uses the archive's existing persistent region reader and leased catalogs.
+Registered assets only are accepted. The worker lazily opens existing model
+catalogs without creating missing sidecars; request/poll calls never perform disk
+I/O. Reads require the exact digest from the active or explicitly pinned catalog.
+They do not retain checkpoint pins themselves. A retired unavailable version
+produces a failed completion rather than substituting newer data.
+
+Blocks and models share FIFO submission, unique tickets and total request/byte
+limits. `poll_model_region_reads` returns only model completions (with asset,
+region, epoch and exact request digests); `poll_region_reads` remains block-only.
+Both channels must be consumed. Reservations include active and unread completed
+work: 2,097,248 bytes per block request and 5,600,328 per model request. A service
+configured below the model reservation rejects model requests. Limits exclude
+parser scratch, catalogs, containers and caller-owned results. There is no I/O
+preemption or priority scheduling; these limits do not guarantee latency.
+
+The lifecycle owner starts/stops this shared service once. Release drains and
+joins it before closing any catalogs, and unread results prevent reacquisition.
+The existing block pager still owns the service in the main scene; a future
+combined paging coordinator must own lifecycle and poll both result channels.
+This API does not yet enable automatic model eviction or metadata-first loading.
+
 ## Verification
 
 `tests/region_world_archive.gd` now includes compound model publication,
@@ -64,6 +89,12 @@ The partial model extension passes 82 archive checks in debug and isolated
 release, including actual scene capture, demolition with an unloaded region,
 exact backup/reopen and invalid-envelope rejection. The integrated release
 coordinator still passes 76 checks. Evidence: `docs/evidence/model_partial_world`.
+
+The shared reader fixture passes 68 checks in debug and release, including 64
+mixed reads during 16 compound saves, asset isolation, retained-version fallback,
+stale restoration rejection, shared backpressure, missing/corrupt blobs and
+shutdown/reopen. The release block pager passes its existing 29 checks. Evidence:
+`docs/evidence/model_archive_reads`.
 
 Tests use isolated fixtures, not the user's world. They are short headless
 correctness checks, not sustained FPS, disk-latency, power-loss-at-every-write
