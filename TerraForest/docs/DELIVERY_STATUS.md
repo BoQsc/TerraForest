@@ -1,3 +1,25 @@
+## Checked native model-region transfers - 2026-10-09
+
+Added asset-bound, checksummed transfer packets for indexed 32-metre model
+origin groups. Matching unload frees authored transforms and derived render/
+collision data, reserves stable IDs and retains unavailable bounds. Exact reload
+restores the same IDs. Unavailable data blocks incomplete full saves, unsafe
+authoring, collision readiness and vegetation regrowth through missing models.
+Transfers form a history barrier, so automatic eviction must account for undo.
+
+Debug and release builds pass 36 checks, including a 100,000-placement disk
+round trip with only 1,000 transforms resident between unload and restore.
+Existing static placement and region-backed compound persistence suites pass
+235 and 76 checks. Pinned Zig/prebuilt godot-cpp were installed and verified on
+the new host; no godot-cpp sources were rebuilt. See
+[model region transfers](STATIC_MODEL_REGION_TRANSFERS.md) for evidence and limits.
+
+This is the transfer foundation, not completed automatic paging. Persistent
+catalog/checkpoints, partial model saves, history-aware eviction and distant
+representation are still required before enabling it in the main world.
+Per-region capture/unload is synchronous; payload savings do not establish
+process-memory savings, frame-time performance or unrestricted world scale.
+
 ## Numeric model transforms in the free editor - 2026-10-09
 
 Selected objects now expose world position in metres, XYZ Euler rotation in

@@ -7,6 +7,12 @@
 namespace terraforest {
 NativeStaticBatch::NativeStaticBatch() {set_notify_transform(true);}
 void NativeStaticBatch::_bind_methods() {
+    ClassDB::bind_method(D_METHOD("capture_region","region"),&NativeStaticBatch::capture_region);
+    ClassDB::bind_method(D_METHOD("validate_region_snapshot","bytes"),&NativeStaticBatch::validate_region_snapshot);
+    ClassDB::bind_method(D_METHOD("unload_region","expected_snapshot"),&NativeStaticBatch::unload_region);
+    ClassDB::bind_method(D_METHOD("restore_region","bytes"),&NativeStaticBatch::restore_region);
+    ClassDB::bind_method(D_METHOD("is_region_loaded","region"),&NativeStaticBatch::is_region_loaded);
+    ClassDB::bind_method(D_METHOD("region_stats"),&NativeStaticBatch::region_stats);
     ClassDB::bind_method(D_METHOD("configure_collision_only"),&NativeStaticBatch::configure_collision_only);
     ClassDB::bind_method(D_METHOD("upsert_transforms","ids","transforms"),&NativeStaticBatch::upsert_transforms);
     ClassDB::bind_method(D_METHOD("overlap_mask","transforms","prototype_bounds"),&NativeStaticBatch::overlap_mask);
@@ -48,6 +54,7 @@ bool NativeStaticBatch::placement_clear(const PackedFloat32Array &transform,cons
     if(source_mesh.is_null()||transform.size()!=12||!valid_transform(transform.ptr())||!protection.position.is_finite()||!protection.size.is_finite()||
        protection.size.x<0||protection.size.y<0||protection.size.z<0)return false;
     Placement p;std::copy(transform.ptr(),transform.ptr()+12,p.begin());
+    if(unloaded_regions.count(group_for(p)))return false;
     if(protection.size.x>0&&protection.size.y>0&&protection.size.z>0) {
         Transform3D frame=is_inside_tree()?get_global_transform():get_transform();
         if(!frame.is_finite()||std::abs(frame.basis.determinant())<1e-12)return false;
@@ -59,14 +66,17 @@ bool NativeStaticBatch::placement_clear(const PackedFloat32Array &transform,cons
     return true;
 }
 bool NativeStaticBatch::can_insert_instance(const PackedFloat32Array &transform,const AABB &protection) const {
-    if(!placement_clear(transform,protection)||placements.size()>=100000||
-       (!placements.empty()&&placements.rbegin()->first==INT64_MAX))return false;
+    if(!placement_clear(transform,protection)||placements.size()+unloaded_ids.size()>=100000||
+       (!placements.empty()&&placements.rbegin()->first==INT64_MAX)||
+       (!unloaded_ids.empty()&&*unloaded_ids.rbegin()==INT64_MAX))return false;
     Placement p;std::copy(transform.ptr(),transform.ptr()+12,p.begin());
-    return groups.count(group_for(p))||groups.size()<4096;
+    return groups.count(group_for(p))||groups.size()+unloaded_regions.size()<4096;
 }
 int64_t NativeStaticBatch::insert_instance(const PackedFloat32Array &transform,const AABB &protection) {
     if(!can_insert_instance(transform,protection))return 0;
-    int64_t id=placements.empty()?1:placements.rbegin()->first+1;
+    int64_t id=placements.empty()?0:placements.rbegin()->first;
+    if(!unloaded_ids.empty())id=std::max(id,*unloaded_ids.rbegin());
+    ++id;
     PackedInt64Array ids;ids.push_back(id);
     return upsert_instances(ids,transform)?id:0;
 }
@@ -77,6 +87,7 @@ bool NativeStaticBatch::valid_asset(const String &id) {
     return true;
 }
 bool NativeStaticBatch::configure_asset(const String &id,const Ref<Mesh> &mesh) {
+    if(!unloaded_regions.empty()&&(id!=asset_id||mesh!=source_mesh))return false;
     if(!valid_asset(id)||mesh.is_null()||((asset_locked||!placements.empty())&&!asset_id.is_empty()&&asset_id!=id))return false;
     bool changed=asset_id!=id||source_mesh!=mesh;
     asset_id=id;source_mesh=mesh;
@@ -89,7 +100,7 @@ bool NativeStaticBatch::configure_asset(const String &id,const Ref<Mesh> &mesh) 
 }
 bool NativeStaticBatch::lock_asset_identity() {if(!valid_asset(asset_id)||source_mesh.is_null())return false;asset_locked=true;return true;}
 bool NativeStaticBatch::configure_collision_only(){
-    if(!placements.empty()||!batches.empty())return false;
+    if(!placements.empty()||!unloaded_regions.empty()||!batches.empty())return false;
     collision_only=true;set_process(false);return true;
 }
 bool NativeStaticBatch::upsert_transforms(const PackedInt64Array &ids,const TypedArray<Transform3D> &transforms){
@@ -123,15 +134,16 @@ bool NativeStaticBatch::upsert_instances(const PackedInt64Array &ids,const Packe
     auto delta=[&](BlockKey k,int n){auto it=counts.find(k);if(it==counts.end()){auto g=groups.find(k);it=counts.emplace(k,g==groups.end()?0:int(g->second.size())).first;}it->second+=n;};
     for(int64_t i=0;i<ids.size();i++) {
         int64_t id=ids[i];const float *t=transforms.ptr()+i*12;
-        if(id<=0||staged.count(id)||!valid_transform(t))return false;
+        if(id<=0||staged.count(id)||unloaded_ids.count(id)||!valid_transform(t))return false;
         Placement p;std::copy(t,t+12,p.begin());staged.emplace(id,p);
+        if(unloaded_regions.count(group_for(p)))return false;
         auto old=placements.find(id);
         if(old!=placements.end())delta(group_for(old->second),-1);else added++;
         delta(group_for(p),1);
     }
-    if(placements.size()+added>100000)return false;
+    if(placements.size()+unloaded_ids.size()+added>100000)return false;
     int group_count=int(groups.size());for(auto &e:counts)group_count+=(e.second>0)-(groups.count(e.first)>0);
-    if(group_count>4096)return false;
+    if(group_count+unloaded_regions.size()>4096)return false;
     std::set<BlockKey> touched;
     std::map<BlockKey,std::vector<int64_t>> local_updates;
     for(auto &e:staged) {
@@ -189,6 +201,7 @@ bool NativeStaticBatch::remove_instances(const PackedInt64Array &ids) {
     rebuild(touched);if(!touched.empty())publish_change();return true;
 }
 bool NativeStaticBatch::set_instances(const Ref<Mesh> &mesh,const PackedFloat32Array &transforms) {
+    if(!unloaded_regions.empty())return false;
     if(mesh.is_null()||transforms.size()%12||transforms.size()>1200000)return false;
     std::map<int64_t,Placement> staged;std::map<BlockKey,std::set<int64_t>> staged_groups;
     for(int64_t i=0;i<transforms.size()/12;i++) {
@@ -210,12 +223,16 @@ PackedFloat32Array NativeStaticBatch::get_instance(int64_t id) const {
 PackedInt64Array NativeStaticBatch::get_ids() const {PackedInt64Array out;out.resize(placements.size());int i=0;for(auto &e:placements)out.set(i++,e.first);return out;}
 static PackedByteArray checksum(const PackedByteArray &bytes) {Ref<HashingContext> h;h.instantiate();h->start(HashingContext::HASH_SHA256);h->update(bytes);return h->finish();}
 PackedByteArray NativeStaticBatch::capture_snapshot() const {
-    PackedByteArray result;if(!valid_asset(asset_id))return result;
+    if(!unloaded_regions.empty())return {};
+    return encode_placements(asset_id,placements);
+}
+PackedByteArray NativeStaticBatch::encode_placements(const String &id,const std::map<int64_t,Placement> &values) {
+    PackedByteArray result;if(!valid_asset(id))return result;
     std::vector<uint8_t> data={'T','F','S','I',1,0,0,0};
     auto write=[&](uint64_t n,int size){for(int i=0;i<size;i++)data.push_back(uint8_t(n>>(i*8)));};
-    auto asset=asset_id.to_utf8_buffer();write(asset.size(),4);write(placements.size(),4);
+    auto asset=id.to_utf8_buffer();write(asset.size(),4);write(values.size(),4);
     data.insert(data.end(),asset.ptr(),asset.ptr()+asset.size());
-    for(auto &e:placements) {write(uint64_t(e.first),8);for(float v:e.second){uint32_t bits;std::memcpy(&bits,&v,4);write(bits,4);}}
+    for(auto &e:values) {write(uint64_t(e.first),8);for(float v:e.second){uint32_t bits;std::memcpy(&bits,&v,4);write(bits,4);}}
     result.resize(data.size());std::memcpy(result.ptrw(),data.data(),data.size());result.append_array(checksum(result));return result;
 }
 bool NativeStaticBatch::parse(const PackedByteArray &bytes,String &asset,std::map<int64_t,Placement> *out) {
@@ -241,6 +258,7 @@ bool NativeStaticBatch::validate_snapshot(const PackedByteArray &bytes) const {S
 bool NativeStaticBatch::restore_snapshot(const PackedByteArray &bytes) {
     String asset;std::map<int64_t,Placement> restored;
     if(!parse(bytes,asset,&restored)||asset!=asset_id||source_mesh.is_null())return false;
+    unloaded_regions.clear();unloaded_ids.clear();
     std::set<BlockKey> touched;for(auto &e:groups)touched.insert(e.first);
     clear_proxies();collision_bounds.clear();collision_dirty=true;
     placements=std::move(restored);groups.clear();slots.clear();for(auto &e:placements){auto k=group_for(e.second);groups[k].insert(e.first);touched.insert(k);}

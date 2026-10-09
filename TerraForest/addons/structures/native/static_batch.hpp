@@ -20,6 +20,12 @@ class NativeStaticBatch : public Node3D {
     using Placement = std::array<float,12>;
     std::map<int64_t,Placement> placements;
     std::map<BlockKey,std::set<int64_t>> groups;
+    struct UnloadedRegion { PackedByteArray checksum; AABB bounds; size_t count=0; };
+    std::map<BlockKey,UnloadedRegion> unloaded_regions;
+    std::set<int64_t> unloaded_ids;
+    static PackedByteArray encode_placements(const String &asset,const std::map<int64_t,Placement> &values);
+    static bool parse_region(const PackedByteArray &bytes,String &asset,BlockKey &region,std::map<int64_t,Placement> &values);
+    static bool valid_model_region(BlockKey key);
     using RenderKey = std::pair<BlockKey,uint32_t>;
     std::map<RenderKey,MultiMeshInstance3D*> batches;
     std::map<int64_t,int> slots;
@@ -79,6 +85,12 @@ protected:
     static void _bind_methods();
     void _notification(int what);
 public:
+    PackedByteArray capture_region(Vector3i region) const;
+    bool validate_region_snapshot(const PackedByteArray &bytes) const;
+    bool unload_region(const PackedByteArray &expected_snapshot);
+    bool restore_region(const PackedByteArray &bytes);
+    bool is_region_loaded(Vector3i region) const;
+    Dictionary region_stats() const;
     bool configure_collision_only();
     bool upsert_transforms(const PackedInt64Array &ids,const TypedArray<Transform3D> &transforms);
     NativeStaticBatch();

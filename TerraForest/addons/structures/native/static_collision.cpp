@@ -10,12 +10,14 @@ bool NativeStaticBatch::is_collision_region_ready(const AABB &world_bounds) cons
     if(!world_bounds.position.is_finite()||!world_bounds.size.is_finite()||
        world_bounds.size.x<=0||world_bounds.size.y<=0||world_bounds.size.z<=0)return false;
     // Assets without collision metadata are intentionally decorative.
-    if(proxy_parts.empty()||placements.empty())return true;
+    if(proxy_parts.empty()||(placements.empty()&&unloaded_regions.empty()))return true;
     Transform3D current=is_inside_tree()?get_global_transform():get_transform();
     double determinant=current.basis.determinant();
     if(!current.is_finite()||!std::isfinite(determinant)||std::abs(determinant)<1e-9)return false;
     AABB local=current.affine_inverse().xform(world_bounds);
     if(!local.position.is_finite()||!local.size.is_finite()||!local.get_end().is_finite())return false;
+    for(const auto &entry:unloaded_regions)
+        if(entry.second.count&&entry.second.bounds.intersects(local))return false;
     // Bounds include full transformed proxy extents, even beyond origin groups.
     for(const auto &group:collision_bounds) {
         if(!group.second.intersects(local))continue;
@@ -64,6 +66,7 @@ bool NativeStaticBatch::configure_collision(const AABB &box,double radius,int64_
     return configure_compound_collision(boxes,radius,instance_limit,builds_per_tick,4096,64);
 }
 bool NativeStaticBatch::configure_compound_collision(const TypedArray<AABB> &boxes,double radius,int64_t instance_limit,int64_t builds_per_tick,int64_t shape_limit,int64_t shapes_per_tick) {
+    if(!unloaded_regions.empty())return false; // Retained bounds use the current prototype.
     if(boxes.is_empty()||boxes.size()>32||!std::isfinite(radius)||radius<0||radius>512||
        instance_limit<1||instance_limit>4096||builds_per_tick<1||builds_per_tick>64||
        shape_limit<boxes.size()||shape_limit>16384||shapes_per_tick<boxes.size()||shapes_per_tick>256)return false;
