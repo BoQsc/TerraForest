@@ -1,0 +1,6 @@
+{
+  "source_commit": "66cc4d8c521332ae1d4f8ca0b9d98f0364a28787",
+  "source_manifest": "docs/evidence/staged_placement/manifest.json",
+  "hardware": "NVIDIA GeForce RTX 4050 Laptop GPU",
+  "command": "godot --path TerraForest --script res://tests/generated_settlement_return.gd -- --world-slot=staged_furnished_1791584856787240500 --ground-cover"
+}
