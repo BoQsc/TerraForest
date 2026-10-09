@@ -1,0 +1,23 @@
+{
+  "actual_fps_cap": 60,
+  "fair_graphical_sample": true,
+  "fullscreen": true,
+  "headless": false,
+  "passed": true,
+  "ready": true,
+  "render_scale": 1.0,
+  "requested_fps_cap": 60,
+  "save_path": "C:/Users/LENOVO LOQ 15/AppData/Roaming/Godot/app_userdata/TerraForest/worlds/human_startup_20261009T172207548536.trw",
+  "scope": "Automatic real-scene startup/presentation check only; no human playtest or 60 FPS performance qualification.",
+  "slot": "human_startup_20261009T172207548536",
+  "viewport": [
+    1920,
+    1080
+  ],
+  "vsync": 1,
+  "window_mode": 3,
+  "window_size": [
+    1920,
+    1080
+  ]
+}

@@ -1,0 +1,9 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] New world
+[TerrainRewrite] New world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+HUMAN_PLAYTEST_READY {"fps_cap":60,"presentation":{"fair_graphical_sample":true,"fullscreen":true,"headless":false,"render_scale":1.0,"viewport":[1920,1080],"window_mode":3,"window_size":[1920,1080]},"regional_terrain":false,"save_path":"C:/Users/LENOVO LOQ 15/AppData/Roaming/Godot/app_userdata/TerraForest/worlds/human_startup_20261009T172207548536.trw","slot":"human_startup_20261009T172207548536","snapshot_terrain":false,"temporary":false,"vsync":1}
+PASS PLAYTEST_STARTUP {"actual_fps_cap":60,"fair_graphical_sample":true,"fullscreen":true,"headless":false,"passed":true,"ready":true,"render_scale":1.0,"requested_fps_cap":60,"save_path":"C:/Users/LENOVO LOQ 15/AppData/Roaming/Godot/app_userdata/TerraForest/worlds/human_startup_20261009T172207548536.trw","scope":"Automatic real-scene startup/presentation check only; no human playtest or 60 FPS performance qualification.","slot":"human_startup_20261009T172207548536","viewport":[1920,1080],"vsync":1,"window_mode":3,"window_size":[1920,1080]}
+[TerrainRewrite] World saved and verified; terrain and addon state published together

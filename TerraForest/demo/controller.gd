@@ -380,8 +380,8 @@ func _update_loading() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	_message("Ready: nearby coverage/collision active; distant terrain still streaming" if terrain.nearby_first and terrain.root_coverage < terrain.roots.size() else "Ready: map coverage and local collision are active")
 	if "--human-playtest" in OS.get_cmdline_user_args():
-		DisplayServer.window_set_title("TerraForest — Human playtest (temporary world)")
-		print("HUMAN_PLAYTEST_READY ", JSON.stringify({"presentation":Presentation.measurement(get_window()),"vsync":DisplayServer.window_get_vsync_mode(),"fps_cap":Engine.max_fps,"temporary":temporary_world,"snapshot_terrain":terrain.backend.snapshot_terrain}))
+		DisplayServer.window_set_title("TerraForest — Human checkpoint 2026-10-09" if "--playtest-checkpoint" in OS.get_cmdline_user_args() else "TerraForest — Human playtest (%s)" % ["temporary world" if temporary_world else "saved world"])
+		print("HUMAN_PLAYTEST_READY ", JSON.stringify({"presentation":Presentation.measurement(get_window()),"vsync":DisplayServer.window_get_vsync_mode(),"fps_cap":Engine.max_fps,"temporary":temporary_world,"slot":terrain.save_slot,"save_path":ProjectSettings.globalize_path(terrain.backend.save_path),"snapshot_terrain":terrain.backend.snapshot_terrain,"regional_terrain":terrain.backend.region_terrain}))
 
 func _consume_stroke() -> void:
 	if loading_active or shutdown_requested or terrain.pending_edit or not terrain.world_ready:
