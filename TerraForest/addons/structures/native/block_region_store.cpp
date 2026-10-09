@@ -408,6 +408,52 @@ Dictionary NativeBlockRegionStore::read_storage_region(Vector3i region,const Pac
 Dictionary NativeBlockRegionStore::publish_block_snapshot(const PackedByteArray &blocks) {
     return publish_storage_state(blocks,PackedInt32Array(),PackedByteArray());
 }
+Dictionary NativeBlockRegionStore::publish_model_snapshot(const PackedByteArray &snapshot) {
+    std::lock_guard<std::mutex> lock(mutex_);
+    if(!lease_||model_asset_.is_empty())return status(ERR_UNCONFIGURED,"Model store is closed.");
+    String asset;std::map<int64_t,NativeStaticBatch::Placement> values;
+    if(!NativeStaticBatch::parse(snapshot,asset,&values)||asset!=model_asset_)return status(ERR_INVALID_DATA,"Invalid or mismatched full model snapshot.");
+    if(!observed_files_unchanged())return status(ERR_BUSY,"Storage metadata changed outside this owner.");
+    std::map<BlockKey,std::map<int64_t,NativeStaticBatch::Placement>> regions;
+    for(auto &entry:values)regions[NativeStaticBatch::group_for(entry.second)].emplace(entry.first,std::move(entry.second));
+    Catalog next;
+    for(const auto &region:regions) {
+        auto payload=NativeStaticBatch::encode_placements(asset,region.second);PackedByteArray packet;packet.resize(24);
+        std::memcpy(packet.ptrw(),"TFMR\1\0\0\0",8);packet.encode_s32(8,region.first.x);packet.encode_s32(12,region.first.y);packet.encode_s32(16,region.first.z);
+        packet.encode_u32(20,payload.size());packet.append_array(payload);auto hash=digest(packet);packet.append_array(hash);
+        Entry entry;std::memcpy(entry.digest.data(),hash.ptr(),32);entry.size=uint32_t(packet.size());next.emplace(region.first,entry);
+        const String path=directory_.path_join("blobs").path_join(hash.hex_encode()+String(".tfrg"));
+        PackedByteArray existing;bool exists=false;
+        if(!read_file(path,blob_limit(),existing,exists))return status(ERR_FILE_CANT_READ,"Cannot inspect model blob.");
+        if(exists&&existing!=packet)return status(ERR_FILE_CORRUPT,"Existing model blob is corrupt.");
+        if(!exists) {
+            String temporary;if(!write_pending(path,packet,temporary))return status(ERR_FILE_CANT_WRITE,"Cannot flush model blob.");
+            if(!move_file(temporary,path,false)){delete_exact(temporary);return status(ERR_FILE_CANT_WRITE,"Cannot publish model blob.");}
+        }
+    }
+    bool unchanged=next.size()==entries_.size();
+    for(const auto &entry:next){auto old=entries_.find(entry.first);unchanged=unchanged&&old!=entries_.end()&&old->second.digest==entry.second.digest&&old->second.size==entry.second.size;}
+    if(unchanged&&!recovered_){Dictionary out=status(OK);out["unchanged"]=true;out["generation"]=int64_t(generation_);return out;}
+    return commit_catalog(std::move(next));
+}
+Dictionary NativeBlockRegionStore::read_model_checkpoint(const PackedByteArray &hash) const {
+    std::lock_guard<std::mutex> lock(mutex_);
+    if(!lease_||model_asset_.is_empty())return status(ERR_UNCONFIGURED,"Model store is closed.");
+    if(hash.size()!=32)return status(ERR_INVALID_PARAMETER,"Checkpoint identity must contain 32 bytes.");
+    Digest id{};std::memcpy(id.data(),hash.ptr(),32);auto checkpoint=checkpoints_.find(id);
+    if(checkpoint==checkpoints_.end())return status(ERR_DOES_NOT_EXIST,"Checkpoint is not pinned.");
+    if(checkpoint->second.entries.size()>4096)return status(ERR_OUT_OF_MEMORY,"Checkpoint exceeds collection region capacity.");
+    std::map<int64_t,NativeStaticBatch::Placement> values;
+    for(const auto &entry:checkpoint->second.entries) {
+        Dictionary read=read_entry(entry.first,entry.second,checkpoint->second.generation);
+        if(!bool(read["ok"]))return read;
+        String asset;BlockKey region;std::map<int64_t,NativeStaticBatch::Placement> decoded;
+        if(!NativeStaticBatch::parse_region(read["bytes"],asset,region,decoded)||asset!=model_asset_)return status(ERR_FILE_CORRUPT,"Invalid model checkpoint region.");
+        if(values.size()+decoded.size()>100000)return status(ERR_OUT_OF_MEMORY,"Checkpoint exceeds collection instance capacity.");
+        for(auto &value:decoded)if(!values.emplace(value.first,std::move(value.second)).second)return status(ERR_INVALID_DATA,"Model checkpoint has duplicate placement IDs across regions.");
+    }
+    Dictionary out=status(OK);out["snapshot"]=NativeStaticBatch::encode_placements(model_asset_,values);return out;
+}
 Dictionary NativeBlockRegionStore::publish_storage_state(const PackedByteArray &blocks,const PackedInt32Array &keys,const PackedByteArray &checksums,const PackedByteArray &checkpoint) {
     std::lock_guard<std::mutex> lock(mutex_);
     if(!lease_)return status(ERR_UNCONFIGURED,"Store is closed.");

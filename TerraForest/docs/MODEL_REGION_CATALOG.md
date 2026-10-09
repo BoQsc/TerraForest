@@ -60,3 +60,29 @@ collection manifest with IDs/bounds, metadata-only bootstrap, partial compound
 save publication, bounded model I/O and history-aware admission/eviction that
 preserves distant world representation. Main-world model storage remains fully
 resident until these are integrated.
+
+## Complete collection publication and reconstruction
+
+`publish_snapshot(snapshot)` accepts a complete, asset-matching TFSI collection
+snapshot and partitions it into TFMR region blobs natively. It publishes one
+replacement catalog after writing/verifying the blobs. Regions absent from the
+snapshot are removed, preserving demolition; unchanged content preserves the
+catalog generation. This is authoritative replacement by the store owner, not
+a conditional merge with concurrent gameplay edits. Capture order and latest
+save selection remain the caller's responsibility. Incomplete collection
+captures return empty bytes and are rejected. Late failures can leave orphan
+blobs but do not publish an incomplete replacement catalog.
+
+`read_checkpoint(checkpoint)` reconstructs the complete TFSI snapshot from a
+pinned catalog, validating every blob, asset identity and global placement-ID
+uniqueness. It rejects more than 4,096 catalog regions or 100,000 instances;
+there is no partial success on corruption or duplicate IDs. Empty checkpoints
+reconstruct a valid empty snapshot with the configured asset identity.
+
+These synchronous full-collection operations are a compatibility save/load
+path and a reference for future partial storage, not metadata-only loading.
+They allocate resident maps and process every referenced record. The updated
+43-check debug/release fixture includes a byte-exact 100,000-instance round
+trip, disk reopen, reduced/empty saves, retained old checkpoints, malformed
+snapshot rejection and cross-region duplicate-ID rejection. Evidence for this
+stage: `docs/evidence/model_snapshot_catalog/`.

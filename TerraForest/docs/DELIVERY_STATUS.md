@@ -1,3 +1,18 @@
+## Complete model snapshots through the region catalog - 2026-10-09
+
+The native model catalog now publishes complete collection snapshots as one
+replacement catalog and reconstructs complete snapshots from pinned checkpoints.
+Absent regions are removed on save, preserving demolition and empty worlds.
+Reconstruction rejects cross-region duplicate IDs and collection-capacity
+overflow rather than silently losing records. Existing unavailable-collection
+guards prevent publishing a truncated full save.
+
+The expanded model catalog fixture checks a 100,000-placement, 100-region
+byte-exact round trip after disk reopen, retained older saves, demolition and
+invalid input. Evidence: `docs/evidence/model_snapshot_catalog`; API and limits:
+[model catalog](MODEL_REGION_CATALOG.md). This full-resident path does not yet
+provide metadata bootstrap, partial compound saves or automatic model paging.
+
 ## Persistent native model-region catalog - 2026-10-09
 
 Added `NativeModelRegionStore`, an asset-bound facade over the shared native

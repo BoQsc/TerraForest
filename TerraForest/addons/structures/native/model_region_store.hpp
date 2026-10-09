@@ -15,6 +15,8 @@ public:
     Dictionary open_store(const String &path,const String &asset,bool recover_backup=false);
     void close(){std::lock_guard<std::mutex> lock(lifecycle_);store_->close();}
     Dictionary stats() const{return store_->stats();}
+    Dictionary publish_snapshot(const PackedByteArray &snapshot){return store_->publish_model_snapshot(snapshot);}
+    Dictionary read_checkpoint(const PackedByteArray &checkpoint) const{return store_->read_model_checkpoint(checkpoint);}
     PackedInt32Array list_regions() const{return store_->list_regions();}
     PackedByteArray checksum(Vector3i region) const{return store_->checksum(region);}
     Dictionary read_region(Vector3i region) const{return store_->read_region(region);}
