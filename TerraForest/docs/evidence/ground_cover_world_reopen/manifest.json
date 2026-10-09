@@ -1,0 +1,28 @@
+{
+  "slot": "ground_world_test_1791578165874958200",
+  "generator": 4,
+  "seed": 1703,
+  "presentation": "1920x1080 fullscreen, 100% scale, 60 FPS cap",
+  "create_script": "res://tests/ground_cover_interaction_world.gd",
+  "reopen_script": "res://tests/ground_cover_world_reopen.gd",
+  "create_user_args": [
+    "--world-slot=ground_world_test_1791578165874958200",
+    "--gameplay-construction",
+    "--world-generator=4",
+    "--world-seed=1703",
+    "--persist-ground",
+    "--ground-cover"
+  ],
+  "disabled_user_args": [
+    "--world-slot=ground_world_test_1791578165874958200",
+    "--gameplay-construction"
+  ],
+  "enabled_user_args": [
+    "--world-slot=ground_world_test_1791578165874958200",
+    "--gameplay-construction",
+    "--ground-cover"
+  ],
+  "reopen_checks_disabled": 13,
+  "reopen_checks_enabled": 15,
+  "failures": 0
+}

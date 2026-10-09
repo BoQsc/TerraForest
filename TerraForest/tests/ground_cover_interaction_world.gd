@@ -6,7 +6,8 @@ func check(ok: bool,label: String) -> void:
 	print(("PASS " if ok else "FAIL ")+label)
 func _initialize() -> void: call_deferred("run")
 func run() -> void:
-	var game=load("res://demo/world.tscn").instantiate();game.temporary_world=true
+	var persistent: bool="--persist-ground" in OS.get_cmdline_user_args()
+	var game=load("res://demo/world.tscn").instantiate();game.temporary_world=not persistent
 	root.add_child(game)
 	var deadline:=Time.get_ticks_msec()+60000
 	while game.loading_active and Time.get_ticks_msec()<deadline: await process_frame
@@ -58,6 +59,17 @@ func run() -> void:
 	root.get_texture().get_image().save_png("res://reports/ground_cover/interaction_world.png")
 	var file:=FileAccess.open("res://reports/ground_cover/interaction_world.json",FileAccess.WRITE)
 	file.store_string(JSON.stringify({"failures":failures,"population":count,"render":render,"presentation":presentation},"  "));file.close()
+	if persistent:
+		check(game.player_hud.inventory.grant_items(PackedInt64Array([204,3,205,5]),game.player_hud.inventory.snapshot().revision).ok,"seed non-default plant and grass inventory for archive verification")
+		var expected:={"slot":game.terrain.save_slot,"ground":cover.removed.capture_storage_snapshot(),"inventory":game.player_hud.inventory.capture_storage_snapshot(),"target":target,"natural_id":target_id,"species":target_species,"seed":game.terrain.backend.world_seed}
+		var saved: Array=[]
+		game.terrain.save_completed.connect(func(ok: bool):saved.append(ok))
+		game.terrain.changed_since_save=true;game.terrain.save_world()
+		deadline=Time.get_ticks_msec()+15000
+		while saved.is_empty() and Time.get_ticks_msec()<deadline: await process_frame
+		check(not saved.is_empty() and saved[0],"main-world manual save publishes ground edits and inventory")
+		var snapshot:=FileAccess.open("res://reports/ground_cover/"+game.terrain.save_slot+".expected",FileAccess.WRITE)
+		snapshot.store_var(expected);snapshot.close()
 	cover.set_process(false)
 	game.shutdown_requested=true
 	await game.terrain.shutdown_after_edits();game.free()
