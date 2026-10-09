@@ -1,0 +1,6 @@
+{
+  "addons/vegetation_runtime/native/ground_scatter.hpp": "b28bbe7779f4e4d6adbb275ae88a7a57085712c4ed2bd7a2ac188bdf5543d57a",
+  "addons/vegetation_runtime/bin/vegetation_runtime.windows.template_debug.x86_64.dll": "69d46106a5c516770f79f733ddc1427e1d125ac6c2bdfb4f8825cd485613dbbd",
+  "addons/vegetation_runtime/bin/vegetation_runtime.windows.template_release.x86_64.dll": "43b22e7914177e536cc0a2daf9014a00944642eea62abed28c890dfc705dbb07",
+  "tests/ground_scatter.gd": "d7c9baaa3a5b85c3d51e5ebc4c1b4b8af552d8fcbd6d743cdb6e29b88c46e0aa"
+}
