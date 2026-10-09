@@ -66,3 +66,11 @@ selection, budgeted admission/eviction and coordinated paging lifecycle must be
 connected before switching the main world to metadata-only model startup.
 This test establishes storage and bootstrap correctness, not game FPS, total
 process-memory savings, frame-time bounds or thermal qualification.
+
+The follow-up `model_admission_pressure.gd` density probe rejects synchronous
+whole-region transfers for runtime paging: a valid single region can hold all
+100,000 placements, and its scene-side capture/admission/eviction takes hundreds
+of milliseconds on the new host. The probe's provisional allowance is 2 ms per
+runtime transfer operation, leaving most of the 16.67 ms frame for other systems.
+It is a necessary CPU gate, not a 60 FPS guarantee. Keep automatic model paging
+disabled until transfer work is bounded independently of region density.

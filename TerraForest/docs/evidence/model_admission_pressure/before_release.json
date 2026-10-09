@@ -1,0 +1,118 @@
+{
+  "checks": 12,
+  "failures": 2,
+  "measurements": [
+    {
+      "capture_region_us": [
+        1470,
+        693,
+        668
+      ],
+      "logical_instances": 1000,
+      "metadata_bytes": 8178,
+      "packet_bytes": 56118,
+      "region_instances": 1000,
+      "restore_metadata_us": [
+        344,
+        159,
+        127
+      ],
+      "restore_region_max_us": 1834,
+      "restore_region_us": [
+        1834,
+        1254,
+        890
+      ],
+      "unload_region_us": [
+        2382,
+        1413,
+        1340
+      ]
+    },
+    {
+      "capture_region_us": [
+        8427,
+        9061,
+        7836
+      ],
+      "logical_instances": 10000,
+      "metadata_bytes": 80178,
+      "packet_bytes": 560118,
+      "region_instances": 10000,
+      "restore_metadata_us": [
+        1342,
+        1735,
+        1324
+      ],
+      "restore_region_max_us": 11178,
+      "restore_region_us": [
+        10475,
+        11178,
+        10276
+      ],
+      "unload_region_us": [
+        16745,
+        15930,
+        16920
+      ]
+    },
+    {
+      "capture_region_us": [
+        69,
+        41,
+        38
+      ],
+      "logical_instances": 100000,
+      "metadata_bytes": 94,
+      "packet_bytes": 5600118,
+      "region_instances": 100000,
+      "restore_metadata_us": [
+        7,
+        13,
+        6
+      ],
+      "restore_region_max_us": 90460,
+      "restore_region_us": [
+        87990,
+        90460,
+        79126
+      ],
+      "unload_region_us": [
+        41,
+        21,
+        21
+      ]
+    },
+    {
+      "capture_region_us": [
+        1278,
+        1766,
+        2226
+      ],
+      "logical_instances": 100000,
+      "metadata_bytes": 808494,
+      "packet_bytes": 56118,
+      "region_instances": 1000,
+      "restore_metadata_us": [
+        36065,
+        31217,
+        39198
+      ],
+      "restore_region_max_us": 2909,
+      "restore_region_us": [
+        2243,
+        1687,
+        2909
+      ],
+      "unload_region_us": [
+        2960,
+        4355,
+        4291
+      ]
+    }
+  ],
+  "runtime_admission_budget_us": 2000,
+  "runtime_admission_qualified": false,
+  "scope": "Headless release/native CPU lower bound; no GPU, render upload or physics body creation. Metadata installation is separately timed. Not FPS or cross-host comparison.",
+  "library": "structures.windows.template_release.x86_64.dll"
+}

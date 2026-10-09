@@ -1,3 +1,26 @@
+## Dense model transfer gate exposes save bug and runtime stalls - 2026-10-09
+
+A short density probe found that valid model blobs above 4 MiB failed publication:
+temporary-file verification incorrectly used the catalog size ceiling. Blob
+writers now use their own validated packet limit, retaining the catalog limit
+for metadata. Debug/release pass 13 transfer checks, including direct and whole
+collection publication of a 5,600,118-byte region. The block-store regression
+passes 65 checks.
+
+Runtime qualification remains RED. The release sample loaded a 100,000-object
+region in 163-267 ms and unloaded it in 394-438 ms, without rendering or physics
+body creation. A 1,000-object region inside a 100,000-object world reached 2.9 ms.
+The fixture separately reports correctness and performance and exits nonzero
+when any measured runtime capture/load/unload exceeds its provisional 2 ms CPU
+allowance. It must not qualify automatic paging merely because bytes round-trip.
+
+Evidence: `docs/evidence/model_admission_pressure`. The initial failed dense-save
+row is not a valid load-performance sample. These are new-host observations,
+not comparisons against the prior laptop. Before automatic model paging, region
+transfers need bounded subregion/page work or incremental publication; simply
+placing disk I/O on a worker is insufficient. Metadata installation also remains
+O(total IDs) and belongs behind a startup/load gate.
+
 ## Cached metadata bootstrap for model collections - 2026-10-09
 
 Native checkpoint manifests now retain exact region versions, all placement IDs

@@ -42,7 +42,8 @@ static bool move_file(const String &source,const String &target,bool replace) {
     return MoveFileExW(reinterpret_cast<LPCWSTR>(a.get_data()),reinterpret_cast<LPCWSTR>(b.get_data()),
         MOVEFILE_WRITE_THROUGH|(replace?MOVEFILE_REPLACE_EXISTING:0));
 }
-static bool write_pending(const String &target,const PackedByteArray &bytes,String &temporary) {
+static bool write_pending(const String &target,const PackedByteArray &bytes,String &temporary,int64_t limit=CATALOG_LIMIT) {
+    if(bytes.size()>limit)return false;
     static std::atomic<uint64_t> sequence{0};
     temporary=target+String(".pending.")+String::num_uint64(GetCurrentProcessId())+String(".")+String::num_uint64(++sequence);
     const auto name=temporary.utf16();
@@ -53,7 +54,7 @@ static bool write_pending(const String &target,const PackedByteArray &bytes,Stri
     bool ok=WriteFile(file,bytes.ptr(),DWORD(bytes.size()),&wrote,nullptr)&&wrote==DWORD(bytes.size())&&FlushFileBuffers(file);
     CloseHandle(file);
     PackedByteArray verified;bool exists=false;
-    ok=ok&&read_file(temporary,CATALOG_LIMIT,verified,exists)&&exists&&verified==bytes;
+    ok=ok&&read_file(temporary,limit,verified,exists)&&exists&&verified==bytes;
     if(!ok)delete_exact(temporary);
     return ok;
 }
@@ -238,7 +239,7 @@ Dictionary NativeBlockRegionStore::publish_regions(const Array &packets,const Ar
         if(!read_file(target,blob_limit(),existing,exists))return status(ERR_FILE_CANT_READ,"Cannot inspect content-addressed blob.");
         if(exists){if(existing!=item.bytes)return status(ERR_FILE_CORRUPT,"Existing immutable blob is corrupt; it was not overwritten.");continue;}
         String temporary;
-        if(!write_pending(target,item.bytes,temporary))return status(ERR_FILE_CANT_WRITE,"Cannot flush and verify region blob.");
+        if(!write_pending(target,item.bytes,temporary,blob_limit()))return status(ERR_FILE_CANT_WRITE,"Cannot flush and verify region blob.");
         if(!move_file(temporary,target,false)){delete_exact(temporary);return status(ERR_FILE_CANT_WRITE,"Cannot publish region blob.");}
     }
     if(!changed&&!recovered_) {Dictionary out=status(OK);out["generation"]=int64_t(generation_);out["unchanged"]=true;return out;}
@@ -460,7 +461,7 @@ Dictionary NativeBlockRegionStore::publish_model_storage(const PackedByteArray &
         if(!read_file(path,blob_limit(),existing,exists))return status(ERR_FILE_CANT_READ,"Cannot inspect model blob.");
         if(exists&&existing!=packet)return status(ERR_FILE_CORRUPT,"Existing model blob is corrupt.");
         if(!exists) {
-            String temporary;if(!write_pending(path,packet,temporary))return status(ERR_FILE_CANT_WRITE,"Cannot flush model blob.");
+            String temporary;if(!write_pending(path,packet,temporary,blob_limit()))return status(ERR_FILE_CANT_WRITE,"Cannot flush model blob.");
             if(!move_file(temporary,path,false)){delete_exact(temporary);return status(ERR_FILE_CANT_WRITE,"Cannot publish model blob.");}
         }
     }
@@ -568,7 +569,7 @@ Dictionary NativeBlockRegionStore::publish_storage_state(const PackedByteArray &
         if(!read_file(path,blob_limit(),existing,exists))return status(ERR_FILE_CANT_READ,"Cannot inspect region blob.");
         if(exists&&existing!=packet)return status(ERR_FILE_CORRUPT,"Existing region blob is corrupt.");
         if(!exists) {
-            String temporary;if(!write_pending(path,packet,temporary))return status(ERR_FILE_CANT_WRITE,"Cannot flush region blob.");
+            String temporary;if(!write_pending(path,packet,temporary,blob_limit()))return status(ERR_FILE_CANT_WRITE,"Cannot flush region blob.");
             if(!move_file(temporary,path,false)){delete_exact(temporary);return status(ERR_FILE_CANT_WRITE,"Cannot publish region blob.");}
         }
     }
