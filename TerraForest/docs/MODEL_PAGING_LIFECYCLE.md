@@ -60,10 +60,10 @@ Keep the opt-in path available, but do not enable it by default from these resul
 The earlier dense transfer timing failure remains open; see
 [scheduler evidence](MODEL_TRANSFER_SCHEDULER.md). [M1 disposition](M1_INTEGRATION_DISPOSITION.md) retains opt-in operation after a
 modest populated route passes. Broader activation still needs
-a short populated-world travel/edit/save/reload route with visual/collision arrival
-and frame-tail measurements. If that gate fails, retain the current default and
-record the limiting workload before proceeding with M2 content coverage. Do not
-turn this into another unlimited prerequisite for building missing world systems.
+representative detailed buildings and vegetation from M2, followed by the M4
+combined travel route with visual/collision arrival and frame-tail measurements.
+M2 content coverage proceeds with the current default. This remaining activation
+gate must not become an unlimited prerequisite for building missing world systems.
 
 This work does not resolve terrain mining latency, provide network replication,
 change the save format, or add a dependency. Project code remains 0BSD. Stable asset
