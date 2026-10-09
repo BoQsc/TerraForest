@@ -1,3 +1,17 @@
+## Model transfers preserve unrelated editor history - 2026-10-09
+
+The native model journal now offers history-aware region eligibility and
+unload/reload. Regions referenced by undo or redo remain resident, including
+both ends of a move and empty regions needed for deletion undo. Other region
+transfers preserve the journal and revision tracking. Reentrant history commands
+remain blocked; external callback mutations still invalidate stale history.
+
+Debug/release transfer fixtures pass 54 checks; existing static placements pass
+235 checks. Evidence: `docs/evidence/model_history_regions`; contract:
+[model region transfers](STATIC_MODEL_REGION_TRANSFERS.md). This supplies safe
+history-aware eviction primitives, not the automatic model pager. Main-world
+archive integration, metadata bootstrap and distant representation remain open.
+
 ## Bounded native background model storage - 2026-10-09
 
 Added `NativeModelRegionIO` using the shared persistent block I/O queue engine.

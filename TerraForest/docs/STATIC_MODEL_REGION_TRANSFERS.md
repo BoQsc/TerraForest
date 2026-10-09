@@ -30,6 +30,31 @@ external-change barrier for `NativeStaticHistory`; history is not preserved
 across transfers. Automatic paging will need history-aware admission before
 using this path during ordinary editing.
 
+### History-aware transfer path
+
+For editor-managed residency, use `NativeStaticHistory.region_has_history`,
+`unload_region(collection, packet)` and `restore_region(collection, packet)`.
+These check both undo and redo stacks for the collection, including the before
+and after origin groups of a move and the now-empty region of a deleted object.
+Pinned regions are refused. Unregistered collections, invalid coordinates and
+reentrant operations are conservatively ineligible. A caller must still ensure
+the packet is persisted before unloading it.
+
+Unrelated transfers preserve both stacks, advance the journal's revision cursor
+and emit the collection change notification through its existing guarded publish
+path. Selection can invalidate normally; observers cannot replay history during
+publication. External mutations in callbacks still create a history barrier.
+Region pins disappear when no retained edit references them, including after
+bounded history eviction. This policy scans at most the configured history
+limit (currently at most 1,024 records), not every placed model.
+
+The collection's direct transfer APIs retain their original history-barrier
+behavior. Use one owning editor journal for the history-aware path; it cannot
+preserve independent journals attached to the same collection. This protects
+editor undo but does not implement an automatic paging policy or disk ownership.
+The expanded transfer fixture passes 54 checks in debug/release; the static
+placement regression passes 235. Evidence: `docs/evidence/model_history_regions`.
+
 ## Correctness while records are unavailable
 
 - Whole `capture_snapshot()` returns empty bytes, so the existing compound

@@ -27,6 +27,8 @@ class NativeStaticBatch : public Node3D {
     static PackedByteArray encode_placements(const String &asset,const std::map<int64_t,Placement> &values);
     static bool parse_region(const PackedByteArray &bytes,String &asset,BlockKey &region,std::map<int64_t,Placement> &values);
     static bool valid_model_region(BlockKey key);
+    bool unload_region_impl(const PackedByteArray &packet);
+    bool restore_region_impl(const PackedByteArray &packet);
     using RenderKey = std::pair<BlockKey,uint32_t>;
     std::map<RenderKey,MultiMeshInstance3D*> batches;
     std::map<int64_t,int> slots;

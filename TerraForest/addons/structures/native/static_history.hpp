@@ -26,10 +26,15 @@ class NativeStaticHistory : public RefCounted {
     void remember(const Edit &edit);
     void publish(NativeStaticBatch *collection);
     bool replay(bool backwards,const AABB &protection);
+    bool region_referenced(uint64_t collection,BlockKey region) const;
+    bool transfer_region(NativeStaticBatch *collection,const PackedByteArray &packet,bool restore);
     static PackedFloat32Array packed(const NativeStaticBatch::Placement &value);
 protected:
     static void _bind_methods();
 public:
+    bool region_has_history(NativeStaticBatch *collection,Vector3i region);
+    bool unload_region(NativeStaticBatch *collection,const PackedByteArray &packet){return transfer_region(collection,packet,false);}
+    bool restore_region(NativeStaticBatch *collection,const PackedByteArray &packet){return transfer_region(collection,packet,true);}
     bool configure(const Array &collections,int64_t bytes,int64_t steps);
     bool clear_history();
     int64_t insert(NativeStaticBatch *collection,const PackedFloat32Array &transform,const AABB &protection);

@@ -47,6 +47,9 @@ bool NativeStaticBatch::validate_region_snapshot(const PackedByteArray &bytes) c
 }
 bool NativeStaticBatch::unload_region(const PackedByteArray &expected) {
     if(defer_change_signal)return false; // Never enter during a journal mutation.
+    return unload_region_impl(expected);
+}
+bool NativeStaticBatch::unload_region_impl(const PackedByteArray &expected) {
     BlockKey key;String asset;std::map<int64_t,Placement> values;
     if(!parse_region(expected,asset,key,values)||asset!=asset_id||unloaded_regions.count(key)||
        groups.size()+unloaded_regions.size()+(groups.count(key)?0:1)>4096||
@@ -63,7 +66,11 @@ bool NativeStaticBatch::unload_region(const PackedByteArray &expected) {
     groups.erase(key);rebuild({key});publish_change();return true;
 }
 bool NativeStaticBatch::restore_region(const PackedByteArray &bytes) {
-    if(defer_change_signal||source_mesh.is_null())return false;
+    if(defer_change_signal)return false;
+    return restore_region_impl(bytes);
+}
+bool NativeStaticBatch::restore_region_impl(const PackedByteArray &bytes) {
+    if(source_mesh.is_null())return false;
     BlockKey key;String asset;std::map<int64_t,Placement> values;
     if(!parse_region(bytes,asset,key,values)||asset!=asset_id)return false;
     auto missing=unloaded_regions.find(key);

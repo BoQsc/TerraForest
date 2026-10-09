@@ -3,6 +3,9 @@
 
 namespace terraforest {
 void NativeStaticHistory::_bind_methods() {
+    ClassDB::bind_method(D_METHOD("region_has_history","collection","region"),&NativeStaticHistory::region_has_history);
+    ClassDB::bind_method(D_METHOD("unload_region","collection","packet"),&NativeStaticHistory::unload_region);
+    ClassDB::bind_method(D_METHOD("restore_region","collection","packet"),&NativeStaticHistory::restore_region);
     ClassDB::bind_method(D_METHOD("configure","collections","byte_limit","step_limit"),&NativeStaticHistory::configure);
     ClassDB::bind_method(D_METHOD("clear_history"),&NativeStaticHistory::clear_history);
     ClassDB::bind_method(D_METHOD("insert","collection","transform","protected_bounds"),&NativeStaticHistory::insert,DEFVAL(AABB()));
@@ -120,5 +123,28 @@ Dictionary NativeStaticHistory::stats() {
     out["record_bytes"]=int64_t((undo_edits.size()+redo_edits.size())*sizeof(Edit));out["record_size"]=int(sizeof(Edit));
     out["byte_limit"]=int64_t(byte_limit);out["step_limit"]=step_limit;out["collections"]=int(revisions.size());
     out["barriers"]=int64_t(barriers);out["unrecorded_edits"]=int64_t(unrecorded);out["busy"]=busy;return out;
+}
+bool NativeStaticHistory::region_referenced(uint64_t collection,BlockKey region) const {
+    auto matches=[&](const NativeStaticBatch::Placement &placement){auto key=NativeStaticBatch::group_for(placement);return !(key<region)&&!(region<key);};
+    for(const auto *edits:{&undo_edits,&redo_edits})for(const auto &edit:*edits)
+        if(edit.collection==collection&&((edit.had_before&&matches(edit.before))||(edit.has_after&&matches(edit.after))))return true;
+    return false;
+}
+bool NativeStaticHistory::region_has_history(NativeStaticBatch *collection,Vector3i region) {
+    if(busy)return true;synchronize();
+    BlockKey key{region.x,region.y,region.z};
+    return !registered(collection)||!NativeStaticBatch::valid_model_region(key)||region_referenced(collection->get_instance_id(),key);
+}
+bool NativeStaticHistory::transfer_region(NativeStaticBatch *collection,const PackedByteArray &packet,bool restore) {
+    if(busy)return false;synchronize();
+    if(!registered(collection))return false;
+    String asset;BlockKey region;std::map<int64_t,NativeStaticBatch::Placement> values;
+    if(!NativeStaticBatch::parse_region(packet,asset,region,values)||asset!=collection->asset_id||region_referenced(collection->get_instance_id(),region))return false;
+    busy=true;collection->defer_change_signal=true;
+    bool ok=restore?collection->restore_region_impl(packet):collection->unload_region_impl(packet);
+    if(!ok){collection->defer_change_signal=false;busy=false;return false;}
+    // This is a residency transition, not an authored edit. Keep both journal
+    // stacks and publish the revision through the same reentrancy-safe path.
+    publish(collection);return true;
 }
 }
