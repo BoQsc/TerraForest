@@ -7,6 +7,7 @@ import ctypes
 import datetime
 import hashlib
 import json
+import re
 import subprocess
 import time
 
@@ -37,7 +38,8 @@ def main():
     prefix = folder/'world'
     command = [args.godot, '--path', str(ROOT), '--rendering-method', 'forward_plus', '--rendering-driver', 'vulkan',
                '--fullscreen', '--resolution', '1920x1080', '--max-fps', '60', '--script', 'res://tests/runtime_baseline.gd',
-               '--', '--benchmark', '--temporary', '--seconds=5', '--max-fps=60', '--world-generator=1', '--world-seed=1703', f'--out={prefix.as_posix()}']
+               '--', '--benchmark', '--temporary', '--seconds=5', '--max-fps=60', '--world-generator=1', '--world-seed=1703',
+               f'--derived-cache={(folder/"derived_cache").as_posix()}', f'--out={prefix.as_posix()}']
     hashes = {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest()
               for p in [ROOT/'project.godot', ROOT/'demo/benchmark.gd', ROOT/'tests/runtime_baseline.gd',
                         *sorted((ROOT/'addons').glob('*/bin/*.dll'))]}
@@ -48,7 +50,7 @@ def main():
                 'power_plan': capture(['powercfg', '/getactivescheme']), 'processor_policy': capture(['powercfg', '/query', 'SCHEME_CURRENT', 'SUB_PROCESSOR']),
                 'battery_before': battery(), 'nvidia_before': capture(['nvidia-smi', '--query-gpu=name,driver_version,pstate,power.draw,temperature.gpu,utilization.gpu', '--format=csv']),
                 'vendor_thermal_mode': 'unknown; user settings unchanged', 'windows_power_overlay': 'unknown; user settings unchanged',
-                'cache': 'Fresh temporary world; existing engine shader/import caches retained. Derived cache state recorded in observations.',
+                'cache': 'Fresh temporary world and isolated initially empty derived terrain cache per run; existing engine shader/import caches retained.',
                 'scope': 'Eight fixed 5-second phases after 3-second warmups; short reference, not endurance, multiplayer, large-city or thermal equilibrium qualification.'}
     (folder/'manifest.json').write_text(json.dumps(manifest, indent=2)+'\n')
     print('BASELINE_OUTPUT '+str(folder), flush=True)
@@ -68,10 +70,11 @@ def main():
     rows = list(csv.DictReader(summary_file.open())) if summary_file.exists() else []
     observations = [json.loads(line) for line in observations_file.read_text().splitlines()] if observations_file.exists() else []
     measured = [r for r in observations if r['state']=='measuring']
-    presentation_ok = bool(measured) and all(r['fair_graphical_sample'] and r['fps_cap_actual']==60 and r['vsync_mode']==1 and r['focused'] for r in measured)
-    complete = process.returncode==0 and not timed_out and len(rows)==8
+    presentation_ok = {r['phase'] for r in measured}==set(range(8)) and all(r['fair_graphical_sample'] and r['fps_cap_actual']==60 and r['vsync_mode']==1 and r['focused'] for r in measured)
+    errors = bool(re.search(r'(?m)^(SCRIPT ERROR|ERROR:|WARNING: ObjectDB instances leaked)', (folder/'engine.log').read_text(encoding='utf-8')))
+    complete = process.returncode==0 and not timed_out and len(rows)==8 and not errors
     result = {'complete': complete, 'exit': process.returncode, 'timed_out': timed_out, 'elapsed_s': time.monotonic()-start,
-              'presentation_samples_valid': presentation_ok, 'phases': rows, 'battery_after': battery(),
+              'presentation_samples_valid': presentation_ok, 'engine_errors': errors, 'phases': rows, 'battery_after': battery(),
               'note': 'GPU telemetry is whole-device, including other applications. Frame times include pacing; this is a reference measurement, not proof of spare performance or sustained cooling.'}
     (folder/'result.json').write_text(json.dumps(result, indent=2)+'\n')
     print(json.dumps(result, indent=2), flush=True)
