@@ -113,6 +113,14 @@ func run() -> void:
 	check(game._foundation_placement.is_empty() and game.structures.blocks.stats().cells==0,"closing dialog cancels pending validation without inserting blocks")
 	frame_probe.measure_action("reopen cancelled dialog",func(): game.construction_palette.preparation_status_requested.emit())
 	frame_probe.measure_action("retry prepared placement",func(): game.construction_palette.survey_dialog.custom_action.emit("place_prepared"))
+	if "--furnished-settlement-fixture" in OS.get_cmdline_user_args():
+		deadline=Time.get_ticks_msec()+12000
+		while not game._foundation_placement.is_empty() and not game._foundation_placement.get("preparing",false) and Time.get_ticks_msec()<deadline: await process_frame
+		check(game._foundation_placement.get("preparing",false) and game.structures.blocks.stats().cells==0,"editor reaches native preparation before publication")
+		game.construction_palette.survey_dialog.canceled.emit()
+		check(game._foundation_placement.is_empty() and game.construction_inventory.pending_prefab.is_empty() and game.structures.blocks.stats().cells==0,"dialog cancels native preparation without publishing")
+		game.construction_palette.preparation_status_requested.emit()
+		game.construction_palette.survey_dialog.custom_action.emit("place_prepared")
 	deadline=Time.get_ticks_msec()+12000
 	while not game._foundation_placement.is_empty() and Time.get_ticks_msec()<deadline: await process_frame
 	check(game.foundation_check.status=="supported" and game.structures.blocks.stats().cells==asset.get_records().size()/4,"prepared site places exactly one prefab after full validation")

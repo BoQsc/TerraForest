@@ -150,6 +150,7 @@ bool NativeBlockWorld::apply_cells(const PackedInt32Array &records,bool record_h
         invalidate({k.x,k.y,k.z-1}); invalidate({k.x,k.y,k.z+1});
     }
     if(changed) {
+        ++mutation_revision;
         if(record_history)remember_edit(std::move(changes));
         set_process(true);
         if(deferred_bounds)*deferred_bounds=changed_bounds;
@@ -560,7 +561,7 @@ bool NativeBlockWorld::restore_snapshot(const PackedByteArray &bytes) {
     replace_storage(std::move(restored),{});return true;
 }
 void NativeBlockWorld::replace_storage(std::map<BlockKey,BlockChunk> &&restored,std::map<BlockKey,PackedByteArray> &&unavailable) {
-    ++storage_epoch;unloaded_regions=std::move(unavailable);
+    ++mutation_revision;++storage_epoch;unloaded_regions=std::move(unavailable);
     std::set<BlockKey> affected;for(auto &e:chunks)affected.insert(e.first);for(auto &e:restored)affected.insert(e.first);
     for(auto &e:visuals)affected.insert(e.first);
     // Preserve pending keys so any in-flight publication receives a new ticket.

@@ -71,6 +71,7 @@ bool NativeBlockWorld::validate_region_snapshot(const PackedByteArray &bytes) co
     BlockKey region;std::map<BlockKey,BlockChunk> restored;return parse_region(bytes,region,restored);
 }
 void NativeBlockWorld::replace_region_chunks(BlockKey region,std::map<BlockKey,BlockChunk> &&restored,bool reset_history) {
+    ++mutation_revision;
     std::set<BlockKey> affected;
     for(int z=0;z<4;z++)for(int y=0;y<4;y++)for(int x=0;x<4;x++) {
         BlockKey key{region.x*4+x,region.y*4+y,region.z*4+z};
@@ -126,7 +127,7 @@ bool NativeBlockWorld::initialize_region_index(const PackedInt32Array &keys,cons
         selected.emplace(key,checksums.slice(i*32,(i+1)*32));previous=key;
     }
     if(selected.empty())return true;
-    ++storage_epoch;unloaded_regions=std::move(selected);clear_history();
+    ++mutation_revision;++storage_epoch;unloaded_regions=std::move(selected);clear_history();
     emit_signal("changed");return true;
 }
 bool NativeBlockWorld::restore_storage_state(const PackedByteArray &resident,const PackedInt32Array &keys,const PackedByteArray &checksums) {

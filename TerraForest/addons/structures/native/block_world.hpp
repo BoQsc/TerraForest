@@ -44,7 +44,7 @@ class NativeBlockWorld : public Node3D {
     friend class NativePrefabPlacement;
     friend class NativeStructuresSnapshot;
     friend class NativeBlockPager;
-    uint64_t storage_epoch=0,history_revision=0;
+    uint64_t storage_epoch=0,history_revision=0,mutation_revision=0;
     bool region_has_history(BlockKey region) const;
     bool restore_region_impl(const PackedByteArray &bytes,const PackedByteArray &expected,bool preserve_history);
     friend class NativeBlockRegionStore;

@@ -1,0 +1,25 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS affordability does not mutate
+PASS invalid or insufficient costs leave every slot and revision intact
+PASS invalid or insufficient costs leave every slot and revision intact
+PASS invalid or insufficient costs leave every slot and revision intact
+PASS invalid or insufficient costs leave every slot and revision intact
+PASS invalid or insufficient costs leave every slot and revision intact
+PASS invalid or insufficient costs leave every slot and revision intact
+PASS invalid or insufficient costs leave every slot and revision intact
+PASS stale debit rejected
+PASS multiple stacks and duplicate cost rows commit atomically
+PASS one revision and exact remaining contents
+PASS default editor places without materials
+PASS unaffordable gameplay block creates nothing
+PASS gameplay block consumes one matching material
+PASS occupied cell cannot charge twice
+PASS native placement rejection restores inventory
+PASS native prefab totals cover materials and shapes
+PASS rejected prefab reconfigure preserves cached costs
+PASS rejected multi-material prefab refunds every material
+PASS gameplay prefab accepted with all materials
+PASS prefab debits exact cached totals
+PASS removal is free without material duplication
+CONSTRUCTION_INVENTORY {"checks":22,"failures":0}

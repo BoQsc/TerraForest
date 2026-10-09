@@ -1,0 +1,92 @@
+{
+  "checks": 25,
+  "failures": 0,
+  "rows": [
+    {
+      "begin_us": 44,
+      "commit_us": 155,
+      "cottages": 4,
+      "max_step_us": 134,
+      "result": {
+        "block_probes": 160,
+        "model_comparisons": 120,
+        "models": 12,
+        "ok": true,
+        "status": "committed",
+        "timing": {
+          "block_commit_us": 13,
+          "block_validation_us": 70,
+          "model_commit_us": 2,
+          "model_validation_us": 130,
+          "publication_us": 125
+        }
+      },
+      "steps": 2
+    },
+    {
+      "begin_us": 26,
+      "commit_us": 113,
+      "cottages": 16,
+      "max_step_us": 206,
+      "result": {
+        "block_probes": 640,
+        "model_comparisons": 480,
+        "models": 48,
+        "ok": true,
+        "status": "committed",
+        "timing": {
+          "block_commit_us": 29,
+          "block_validation_us": 325,
+          "model_commit_us": 10,
+          "model_validation_us": 565,
+          "publication_us": 58
+        }
+      },
+      "steps": 7
+    },
+    {
+      "begin_us": 85,
+      "commit_us": 365,
+      "cottages": 64,
+      "max_step_us": 736,
+      "result": {
+        "block_probes": 2560,
+        "model_comparisons": 1920,
+        "models": 192,
+        "ok": true,
+        "status": "committed",
+        "timing": {
+          "block_commit_us": 70,
+          "block_validation_us": 3612,
+          "model_commit_us": 34,
+          "model_validation_us": 4035,
+          "publication_us": 212
+        }
+      },
+      "steps": 27
+    },
+    {
+      "begin_us": 42,
+      "commit_us": 470,
+      "cottages": 128,
+      "max_step_us": 198,
+      "result": {
+        "block_probes": 5120,
+        "model_comparisons": 3840,
+        "models": 384,
+        "ok": true,
+        "status": "committed",
+        "timing": {
+          "block_commit_us": 125,
+          "block_validation_us": 2316,
+          "model_commit_us": 66,
+          "model_validation_us": 3703,
+          "publication_us": 230
+        }
+      },
+      "steps": 54
+    }
+  ],
+  "scope": "One headless call-level sample per population; no rendering, terrain, dense pre-existing model population or sustained frame-time claim. Preparation target 1ms, at most2048 cells/16 models per call; admission/publication gate4ms.",
+  "library": "structures.windows.template_release.x86_64.dll"
+}

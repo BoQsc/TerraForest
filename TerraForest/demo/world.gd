@@ -76,6 +76,7 @@ func _ready() -> void:
 	construction_inventory.gameplay="--gameplay-construction" in OS.get_cmdline_user_args()
 	player_hud.gameplay_construction=construction_inventory.gameplay
 	tree_exiting.connect(prefab_library.shutdown_frontage)
+	tree_exiting.connect(construction_inventory.cancel_prefab)
 	add_child(world_vehicle)
 	world_vehicle.interaction_available=_vehicle_interaction_available
 	add_child(pickups)
@@ -941,6 +942,7 @@ func _advance_site_preparation() -> void:
 func _cancel_site_actions() -> void:
 	site_preparation.cancel()
 	if _foundation_placement.get("from_dialog",false):
+		construction_inventory.cancel_prefab()
 		foundation_check.status="Placement cancelled";_foundation_placement={}
 
 func _reopen_site_preparation() -> void:
@@ -989,6 +991,18 @@ func _advance_frontage_placement() -> void:
 	var request:=_foundation_placement
 	if loading_active or shutdown_requested or (not app_focused and not request.get("from_dialog",false)) or player_hud.inventory_open or world_vehicle.driving or not structure_mode or model_tool.active or request.index!=structure_prefab_index or request.rotation!=structure_rotation or structure_prefabs[structure_prefab_index]!=request.asset:
 		foundation_check.status="Placement cancelled"
+	if request.get("preparing",false):
+		var bounds: AABB=request.asset.placement_bounds(request.target,request.rotation)
+		if foundation_check.status!="supported" or terrain.pending_edit or terrain.foreground_brush or not terrain.world_ready or terrain.epoch!=request.terrain_epoch or terrain.density_revision!=request.terrain_revision or not _prefab_player_clear(bounds) or world_vehicle.overlaps_edit(bounds):
+			construction_inventory.cancel_prefab();_foundation_placement={}
+			_placement_notice(request,"Placement changed during preparation; place again");return
+		# Detach during publication so our own change signals do not cancel it.
+		_foundation_placement={}
+		var result: Dictionary=construction_inventory.advance_prefab([model_tool.protection()])
+		if result.ok and result.status=="preparing":
+			_foundation_placement=request;return
+		_placement_notice(request,_prefab_placement_text(request.asset) if result.ok else result.reason,result.ok)
+		player_hud.refresh();_prefab_preview_timer=0.0;return
 	foundation_check.tick(terrain)
 	if foundation_check.status=="checking": return
 	_foundation_placement={}
@@ -997,6 +1011,12 @@ func _advance_frontage_placement() -> void:
 		_placement_notice(request,"Placement changed; place again");return
 	if world_vehicle.overlaps_edit(request.asset.placement_bounds(request.target,request.rotation)):
 		_placement_notice(request,"Move the vehicle clear before placing frontage");return
+	if not request.asset.get_model_attachments().is_empty():
+		if construction_inventory.begin_prefab(structures.blocks,player_hud.inventory,request.asset,request.target,request.rotation,structures.model_collections(),preload("res://addons/structures/furniture_catalog.gd").recipes(),[model_tool.protection()]):
+			request.preparing=true;request.terrain_epoch=terrain.epoch;request.terrain_revision=terrain.density_revision
+			_foundation_placement=request;_show_lake_notice("Preparing furnished buildings...")
+		else:_placement_notice(request,construction_inventory.reason)
+		return
 	if _place_combined_prefab(request.asset,request.target,request.rotation):
 		_placement_notice(request,_prefab_placement_text(request.asset),true)
 	else: _placement_notice(request,construction_inventory.reason)

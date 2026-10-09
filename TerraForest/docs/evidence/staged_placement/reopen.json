@@ -1,0 +1,86 @@
+{
+  "checks": [
+    {
+      "label": "fresh process loads playable world",
+      "ok": true
+    },
+    {
+      "label": "fresh process opens the exact persistent slot",
+      "ok": true
+    },
+    {
+      "label": "geology/lake generator and seed survive reopen",
+      "ok": true
+    },
+    {
+      "label": "reopen uses 1080p fullscreen at 100 percent scale and 60 FPS cap",
+      "ok": true
+    },
+    {
+      "label": "exact blocks state survives fresh process",
+      "ok": true
+    },
+    {
+      "label": "exact models state survives fresh process",
+      "ok": true
+    },
+    {
+      "label": "exact lakes state survives fresh process",
+      "ok": true
+    },
+    {
+      "label": "exact roads state survives fresh process",
+      "ok": true
+    },
+    {
+      "label": "exact table state survives fresh process",
+      "ok": true
+    },
+    {
+      "label": "exact chair state survives fresh process",
+      "ok": true
+    },
+    {
+      "label": "exact shelf state survives fresh process",
+      "ok": true
+    },
+    {
+      "label": "all four saved lake definitions rebake into occupied water",
+      "ok": true
+    },
+    {
+      "label": "all connected roads restore in the editor catalog",
+      "ok": true
+    },
+    {
+      "label": "all four cottages restore as ordinary editable blocks",
+      "ok": true
+    },
+    {
+      "label": "four generated table objects restore",
+      "ok": true
+    },
+    {
+      "label": "four generated chair objects restore",
+      "ok": true
+    },
+    {
+      "label": "four generated shelf objects restore",
+      "ok": true
+    },
+    {
+      "label": "reopened world closes through normal save lifecycle",
+      "ok": true
+    },
+    {
+      "label": "exact generated and edited terrain survives fresh process",
+      "ok": true
+    },
+    {
+      "label": "saved streets retain asphalt at ends and midpoints",
+      "ok": true
+    }
+  ],
+  "failures": 0,
+  "scope": "Two actual graphical processes, generated terrain/geology/lakes, connected settlement, static prop and road catalog. Correctness and presentation; no performance or endurance claim."
+}

@@ -21,6 +21,7 @@ class NativeBlockPrefab : public Resource {
     struct ClearanceColumn { int x,z,low,high; int64_t end; };
     std::vector<ClearanceColumn> clearance_columns;
     AABB bounds;
+    uint64_t definition_revision=0;
     Array model_attachments;
     bool configure_impl(const PackedInt32Array &records,bool notify);
 protected:

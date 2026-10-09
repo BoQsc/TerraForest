@@ -54,7 +54,7 @@ bool valid_attachments(const Array &items) {
 }
 bool NativeBlockPrefab::configure_model_attachments(const Array &items) {
     if(!valid_attachments(items))return false;
-    model_attachments=items.duplicate(true);emit_changed();return true;
+    model_attachments=items.duplicate(true);++definition_revision;emit_changed();return true;
 }
 void NativeBlockPrefab::set_model_attachments(const Array &items) {
     ERR_FAIL_COND_MSG(!configure_model_attachments(items),"Invalid prefab model attachments; previous attachments preserved");
@@ -100,7 +100,7 @@ bool NativeBlockPrefab::configure_impl(const PackedInt32Array &records,bool noti
     foundation_columns=std::move(footprint);
     std::fill(std::begin(material_counts),std::end(material_counts),0);
     for(const auto &cell:staged)++material_counts[cell.word>>5];
-    model_attachments.clear();
+    ++definition_revision;model_attachments.clear();
     cells=std::move(staged);bounds=cells.empty()?AABB():AABB(lo,hi-lo);if(notify)emit_changed();return true;
 }
 PackedInt64Array NativeBlockPrefab::get_material_counts() const {

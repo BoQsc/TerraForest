@@ -1,0 +1,28 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS bounded preparation leaves live stores unchanged at 4 cottages
+PASS complete atomic population at 4 cottages
+PASS all calls <=4ms at 4 cottages (begin 40 / step 131 / commit 88 us)
+PASS bounded preparation leaves live stores unchanged at 16 cottages
+PASS complete atomic population at 16 cottages
+PASS all calls <=4ms at 16 cottages (begin 21 / step 146 / commit 99 us)
+PASS bounded preparation leaves live stores unchanged at 64 cottages
+PASS complete atomic population at 64 cottages
+PASS all calls <=4ms at 64 cottages (begin 29 / step 626 / commit 322 us)
+PASS bounded preparation leaves live stores unchanged at 128 cottages
+PASS complete atomic population at 128 cottages
+PASS all calls <=4ms at 128 cottages (begin 33 / step 193 / commit 495 us)
+PASS premature commit cannot expose partial state
+PASS second begin cannot replace active work
+PASS cancel leaves all stores untouched
+PASS intervening block edit invalidates preparation without losing that edit
+PASS changed source invalidates preparation
+PASS actor entering prepared bounds rejects at commit
+PASS intervening model edit invalidates preparation
+PASS preparation does not debit inventory
+PASS inventory change cancels prepared transaction without consuming or overwriting it
+PASS prepared touched chunk retains unrelated existing cell
+PASS last-cell deletion invalidates ready publication
+PASS deleted model collection cancels safely
+PASS deleted block world rejects publication safely
+{"checks":25,"failures":0,"rows":[{"begin_us":40,"commit_us":88,"cottages":4,"max_step_us":131,"result":{"block_probes":160,"model_comparisons":120,"models":12,"ok":true,"status":"committed","timing":{"block_commit_us":20,"block_validation_us":72,"model_commit_us":3,"model_validation_us":127,"publication_us":41}},"steps":2},{"begin_us":21,"commit_us":99,"cottages":16,"max_step_us":146,"result":{"block_probes":640,"model_comparisons":480,"models":48,"ok":true,"status":"committed","timing":{"block_commit_us":18,"block_validation_us":240,"model_commit_us":9,"model_validation_us":422,"publication_us":50}},"steps":7},{"begin_us":29,"commit_us":322,"cottages":64,"max_step_us":626,"result":{"block_probes":2560,"model_comparisons":1920,"models":192,"ok":true,"status":"committed","timing":{"block_commit_us":85,"block_validation_us":1734,"model_commit_us":40,"model_validation_us":1829,"publication_us":153}},"steps":27},{"begin_us":33,"commit_us":495,"cottages":128,"max_step_us":193,"result":{"block_probes":5120,"model_comparisons":3840,"models":384,"ok":true,"status":"committed","timing":{"block_commit_us":131,"block_validation_us":2232,"model_commit_us":67,"model_validation_us":3461,"publication_us":241}},"steps":54}],"scope":"One headless call-level sample per population; no rendering, terrain, dense pre-existing model population or sustained frame-time claim. Preparation target 1ms, at most2048 cells/16 models per call; admission/publication gate4ms."}
