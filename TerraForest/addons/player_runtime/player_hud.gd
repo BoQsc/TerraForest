@@ -33,13 +33,20 @@ var temporary_world:=true
 var active_item:=0
 var ground_species: int=-1
 var ground_hint: Label
+var ground_feedback: String=""
 var gameplay_construction:=false
 
 func show_active_tool(item: int) -> void:
 	active_item=item
 	if not slots.is_empty(): refresh()
 
+func show_ground_feedback(text: String) -> void:
+	if text==ground_feedback: return
+	ground_feedback=text
+	_refresh_ground_hint()
+
 func show_ground_tool(species: int) -> void:
+	ground_feedback=""
 	ground_species=species
 	if not slots.is_empty(): refresh()
 
@@ -57,6 +64,7 @@ func _refresh_ground_hint() -> void:
 		if row.item==items[ground_species]: available+=int(row.count)
 	var cost: String=("Place: 1 %s · have %d"%[names[ground_species],available]) if gameplay_construction else "Free placement · editor"
 	ground_hint.text="GROUND COVER  ·  "+"    /    ".join(choices)+"\n"+cost+"    ·    LMB / E "+("collect" if gameplay_construction else "remove")+"    ·    RMB place    ·    H exit"
+	if not ground_feedback.is_empty(): ground_hint.text+="\n"+ground_feedback
 
 func prepare() -> bool:
 	if inventory!=null: return true
@@ -99,7 +107,7 @@ func _ready() -> void:
 	bar.position=Vector2(620,900)
 	bar.add_theme_constant_override("separation",8)
 	add_child(bar)
-	ground_hint=Label.new();ground_hint.position=Vector2(500,830)
+	ground_hint=Label.new();ground_hint.position=Vector2(500,800)
 	ground_hint.add_theme_color_override("font_shadow_color",Color.BLACK)
 	ground_hint.add_theme_constant_override("shadow_offset_x",2);ground_hint.add_theme_constant_override("shadow_offset_y",2)
 	add_child(ground_hint)

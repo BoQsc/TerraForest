@@ -1,0 +1,90 @@
+{
+  "failures": 0,
+  "population": 3136,
+  "presentation": {
+    "fair_graphical_sample": true,
+    "fullscreen": true,
+    "headless": false,
+    "render_scale": 1.0,
+    "viewport": [
+      1920,
+      1080
+    ],
+    "window_mode": 3,
+    "window_size": [
+      1920,
+      1080
+    ]
+  },
+  "render": [
+    {
+      "authored_groups": 54,
+      "batch_limit": 128,
+      "budget_deferred": 0,
+      "byte_limit": 200000,
+      "bytes_per_tick": 8192,
+      "candidate_batches": 46,
+      "casts_shadows": true,
+      "enabled": true,
+      "evictions": 4,
+      "index_capacity_bytes": 2664,
+      "indexed_instances": 333,
+      "page_capacity": 170,
+      "pending_batches": 0,
+      "radius": 112.0,
+      "resident_batches": 46,
+      "resident_instances": 287,
+      "resident_transform_bytes": 13776,
+      "selection_pending": false,
+      "selection_queries": 59,
+      "uploaded_transform_bytes": 15312,
+      "uploads_per_tick": 2
+    },
+    {
+      "authored_groups": 54,
+      "batch_limit": 128,
+      "budget_deferred": 0,
+      "byte_limit": 200000,
+      "bytes_per_tick": 8192,
+      "candidate_batches": 39,
+      "casts_shadows": false,
+      "enabled": true,
+      "evictions": 3,
+      "index_capacity_bytes": 4784,
+      "indexed_instances": 598,
+      "page_capacity": 170,
+      "pending_batches": 0,
+      "radius": 96.0,
+      "resident_batches": 39,
+      "resident_instances": 457,
+      "resident_transform_bytes": 21936,
+      "selection_pending": false,
+      "selection_queries": 59,
+      "uploaded_transform_bytes": 23568,
+      "uploads_per_tick": 2
+    },
+    {
+      "authored_groups": 56,
+      "batch_limit": 128,
+      "budget_deferred": 0,
+      "byte_limit": 200000,
+      "bytes_per_tick": 8192,
+      "candidate_batches": 32,
+      "casts_shadows": false,
+      "enabled": true,
+      "evictions": 2,
+      "index_capacity_bytes": 17640,
+      "indexed_instances": 2205,
+      "page_capacity": 170,
+      "pending_batches": 0,
+      "radius": 80.0,
+      "resident_batches": 32,
+      "resident_instances": 1447,
+      "resident_transform_bytes": 69456,
+      "selection_pending": false,
+      "selection_queries": 61,
+      "uploaded_transform_bytes": 73824,
+      "uploads_per_tick": 2
+    }
+  ]
+}

@@ -19,6 +19,7 @@ var ecosystem = Ecosystem.new()
 var ground_cover=preload("res://addons/world_ecosystem/ground_cover.gd").new()
 var ground_interaction=preload("res://addons/world_ecosystem/ground_interaction.gd").new()
 var ground_enabled: bool="--ground-cover" in OS.get_cmdline_user_args()
+var ground_preview=preload("res://addons/world_ecosystem/ground_preview.gd").new()
 var ground_mode:=false
 var ground_species:=0
 var lakes = Lakes.new()
@@ -207,6 +208,7 @@ func _ready() -> void:
 	ground_cover.terrain=terrain;ground_cover.camera=camera;ground_cover.structures=structures;ground_cover.water=lakes
 	ground_cover.seed_source=func():return terrain.backend.world_seed
 	add_child(ground_cover);ground_cover.set_process(ground_enabled)
+	add_child(ground_preview)
 	ground_interaction.cover=ground_cover
 	ground_interaction.scene_ray=func(from: Vector3,to: Vector3):return structures.blocks.raycast_scene(from,to,7,[player.get_rid()])
 	ground_interaction.changed.connect(func():terrain.changed_since_save=true;player_hud.refresh())
@@ -1023,6 +1025,7 @@ func _process(delta: float) -> void:
 	water_camera.update()
 	pickups.update_view(delta,player.global_position,not loading_active and not shutdown_requested)
 	terrain._record_stage("controller process",(Time.get_ticks_usec()-frame_begin)/1000.0)
+	ground_preview.update(self,delta)
 	_update_prefab_preview(delta)
 	model_tool.update(delta,_model_edit_available())
 	if structures.blocks != null:

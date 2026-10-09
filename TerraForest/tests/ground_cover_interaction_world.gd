@@ -50,12 +50,26 @@ func run() -> void:
 	var click:=InputEventMouseButton.new();click.pressed=true;click.button_index=MOUSE_BUTTON_LEFT
 	game._unhandled_input(click)
 	check(cover.removed.contains(target_id),"normal LMB removes aimed natural ground cover")
+	var preview_ground: PackedByteArray=cover.removed.capture_storage_snapshot()
+	var saved_inventory: PackedByteArray=game.player_hud.inventory.capture_storage_snapshot()
+	game.ground_preview.update(game,1.0)
+	check(game.ground_preview.visible and game.ground_preview.result.ok,"supported empty position shows advisory placement outline")
+	check(cover.removed.capture_storage_snapshot()==preview_ground and game.player_hud.inventory.capture_storage_snapshot()==saved_inventory,"preview does not mutate ground or inventory")
+	game.player_hud.set_open(true);game.ground_preview.update(game,1.0)
+	check(not game.ground_preview.visible,"inventory suppresses placement outline")
+	game.player_hud.set_open(false);game.ground_preview.update(game,1.0)
+	await RenderingServer.frame_post_draw
+	DirAccess.make_dir_recursive_absolute("res://reports/ground_cover")
+	root.get_texture().get_image().save_png("res://reports/ground_cover/placement_candidate.png")
 	click.button_index=MOUSE_BUTTON_RIGHT;game._unhandled_input(click)
 	check(cover.removed.profile().placed==1,"normal RMB places selected ground cover on actual terrain")
 	check(game.player_hud.inventory.snapshot().slots==before_inventory.slots,"collect/place round trip preserves inventory contents in selected mode")
 	deadline=Time.get_ticks_msec()+5000
 	while not cover._dirty.is_empty() and Time.get_ticks_msec()<deadline: await process_frame
 	check(cover._dirty.is_empty(),"authored placement finishes terrain publication")
+	game.ground_preview.update(game,1.0)
+	check(not game.ground_preview.visible and not game.ground_preview.result.ok,"occupied position rejects another placement preview")
+
 	if "--disturb-ground" in OS.get_cmdline_user_args():
 		var record: PackedFloat32Array=cover.batches[target_species].get_instance(4294967296)
 		var point:=Vector3(record[3],record[7],record[11])

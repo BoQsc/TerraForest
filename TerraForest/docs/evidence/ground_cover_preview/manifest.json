@@ -1,0 +1,16 @@
+{
+  "base_commit": "e71c2b5",
+  "command": "godot --path TerraForest --script res://tests/ground_cover_interaction_world.gd -- --ground-cover --world-generator=4 --world-seed=1703",
+  "gameplay_extra": "--gameplay-construction",
+  "headless_regression": "tests/ground_cover_stream.gd: 83 checks, 0 failures",
+  "rendered_result": "Editor and gameplay passed with final wire-box marker; native 1920x1080 fullscreen, cap60. Candidate screenshot captured before placement. Preview non-mutation, inventory suppression, occupancy rejection and actual collect/place verified.",
+  "retained_failure": "Initial fixture parse error from a duplicate local variable; renamed test variable before successful runs.",
+  "limitations": "Advisory spatial marker; final native admission and asynchronous support still apply. No timing/thermal or human acceptance claim.",
+  "hashes": {
+    "addons/world_ecosystem/ground_preview.gd": "33d6092d320a0cdfad9278c013b62e4f9baf74d98fe2746cc0ef82f5e105eead",
+    "addons/world_ecosystem/ground_interaction.gd": "701106326fff4831c90a9877e836c40df9992421917b7e72bdb6740808d1b9bc",
+    "addons/player_runtime/player_hud.gd": "9597d88d49cc70af3de2f2de5b3a81b14c917bc2875922c9674440ed0785807b",
+    "demo/world.gd": "034c7be4e9b16c36ba2fe0db2b752bf6559a80342963290fde2d5efa9f1ccaf1",
+    "tests/ground_cover_interaction_world.gd": "fe6a9cbf32ba3d9735d4f5fa30e7fc11fbb4cf97a015f830945db75eeac8c858"
+  }
+}

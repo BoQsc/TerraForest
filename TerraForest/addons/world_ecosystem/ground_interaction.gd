@@ -45,7 +45,7 @@ func collect(from: Vector3,to: Vector3,inventory: RefCounted,gameplay: bool) -> 
 	changed.emit();busy=false
 	return {"ok":true,"reason":"Collected ground cover" if gameplay else "Ground cover removed","id":hit.id}
 
-func place(species: int,from: Vector3,to: Vector3,inventory: RefCounted,gameplay: bool) -> Dictionary:
+func placement_probe(species: int,from: Vector3,to: Vector3,inventory: RefCounted,gameplay: bool) -> Dictionary:
 	if not available() or not scene_ray.is_valid() or species<0 or species>2 or not from.is_finite() or not to.is_finite() or from.distance_squared_to(to)>64.01: return {"ok":false,"reason":"World interaction unavailable"}
 	var hit: Dictionary=scene_ray.call(from,to)
 	if hit.is_empty() or not hit.position.is_finite() or not hit.normal.is_finite() or hit.normal.normalized().y<0.82: return {"ok":false,"reason":"Aim at a supported surface"}
@@ -60,6 +60,19 @@ func place(species: int,from: Vector3,to: Vector3,inventory: RefCounted,gameplay
 		var mask: PackedByteArray=cover.water.placement_mask(poses)
 		if mask.size()!=1 or mask[0]: return {"ok":false,"reason":"Placement is underwater"}
 	if cover.picker.pick(point+Vector3.UP,point-Vector3.UP*0.3).hit: return {"ok":false,"reason":"Ground cover already occupies this spot"}
+	if gameplay:
+		var count:=0
+		for row: Dictionary in inventory.snapshot().slots:
+			if row.item==ITEMS[species]: count+=int(row.count)
+		if count<1: return {"ok":false,"reason":"Missing ground-cover item"}
+	return {"ok":true,"reason":"Candidate · final support checked after placement","pose":poses[0],"cell":key}
+
+func place(species: int,from: Vector3,to: Vector3,inventory: RefCounted,gameplay: bool) -> Dictionary:
+	# Always probe again on click. A displayed candidate can become stale.
+	var candidate:=placement_probe(species,from,to,inventory,gameplay)
+	if not candidate.ok: return candidate
+	var key: Vector2i=candidate.cell
+
 	busy=true
 	var before: Dictionary={};var revision: int=-1
 	if gameplay:
@@ -67,7 +80,7 @@ func place(species: int,from: Vector3,to: Vector3,inventory: RefCounted,gameplay
 		var debit: Dictionary=inventory.consume_items(PackedInt64Array([ITEMS[species],1]),before.revision)
 		if not debit.ok: busy=false;return {"ok":false,"reason":"Missing ground-cover item"}
 		revision=debit.revision
-	var id: int=cover.removed.add(species,poses[0])
+	var id: int=cover.removed.add(species,candidate.pose)
 	if id==0:
 		if revision>=0 and not inventory.restore(before,revision).ok: push_error("Ground-cover inventory rollback failed")
 		busy=false;return {"ok":false,"reason":"Ground-cover placement limit reached"}
