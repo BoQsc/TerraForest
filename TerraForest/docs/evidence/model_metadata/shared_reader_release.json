@@ -1,0 +1,6 @@
+{
+  "checks": 71,
+  "failures": 0,
+  "scope": "Bounded block/model reads sharing one world archive worker, concurrent publication, asset isolation and exact-version restore; automatic model admission remains pending.",
+  "library": "structures.windows.template_release.x86_64.dll"
+}

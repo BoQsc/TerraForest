@@ -2,11 +2,70 @@
 #include "static_batch.hpp"
 #include <godot_cpp/classes/hashing_context.hpp>
 #include <cstring>
+#include <cmath>
+#include <limits>
 
 namespace terraforest {
 static PackedByteArray region_digest(const PackedByteArray &bytes) {
     Ref<HashingContext> hash;hash.instantiate();hash->start(HashingContext::HASH_SHA256);
     hash->update(bytes);return hash->finish();
+}
+// TFMD v1: asset length, region count, checkpoint, asset; sorted regions each
+// contain xyz, packet digest, ID count, absolute basis maxima (row-major), IDs.
+// Translation lies inside the origin region. This bounds any registered mesh
+// or proxy without storing the transforms or baking prototype-specific bounds.
+bool NativeStaticBatch::parse_metadata(const PackedByteArray &bytes,String &asset,PackedByteArray &checkpoint,std::map<BlockKey,MetadataRegion> &regions,std::set<int64_t> &ids) {
+    if(bytes.size()<81||bytes.size()>1144272||std::memcmp(bytes.ptr(),"TFMD\1\0\0\0",8))return false;
+    const int64_t end=bytes.size()-32,length=bytes.decode_u32(8),count=bytes.decode_u32(12);
+    if(length<1||length>128||count>4096||48+length>end||region_digest(bytes.slice(0,end))!=bytes.slice(end))return false;
+    for(int64_t i=0;i<length;++i)if(bytes[48+i]<33||bytes[48+i]>126)return false;
+    asset=String::utf8(reinterpret_cast<const char*>(bytes.ptr()+48),length);checkpoint=bytes.slice(16,48);
+    int64_t at=48+length;BlockKey previous;
+    for(int64_t i=0;i<count;++i) {
+        if(end-at<84)return false;
+        BlockKey key{int(bytes.decode_s32(at)),int(bytes.decode_s32(at+4)),int(bytes.decode_s32(at+8))};
+        const int64_t n=bytes.decode_u32(at+44);
+        if(!valid_model_region(key)||(i&&!(previous<key))||n>100000-int64_t(ids.size())||n*8>end-at-84)return false;
+        MetadataRegion entry;entry.checksum=bytes.slice(at+12,at+44);
+        for(int j=0;j<9;++j){float value=bytes.decode_float(at+48+j*4);if(!std::isfinite(value)||value<0||value>1048575)return false;entry.basis_max[j]=value;}
+        at+=84;int64_t last=0;entry.ids.reserve(n);
+        for(int64_t j=0;j<n;++j){const uint64_t raw=bytes.decode_u64(at);at+=8;if(raw>uint64_t(INT64_MAX)||int64_t(raw)<=last||!ids.insert(int64_t(raw)).second)return false;last=int64_t(raw);entry.ids.push_back(last);}
+        regions.emplace(key,std::move(entry));previous=key;
+    }
+    return at==end;
+}
+bool NativeStaticBatch::validate_metadata(const PackedByteArray &bytes) const {
+    String asset;PackedByteArray checkpoint;std::map<BlockKey,MetadataRegion> regions;std::set<int64_t> ids;
+    return parse_metadata(bytes,asset,checkpoint,regions,ids)&&asset==asset_id;
+}
+bool NativeStaticBatch::restore_metadata(const PackedByteArray &bytes) {
+    if(source_mesh.is_null()||defer_change_signal)return false;
+    String asset;PackedByteArray checkpoint;std::map<BlockKey,MetadataRegion> regions;std::set<int64_t> ids;
+    if(!parse_metadata(bytes,asset,checkpoint,regions,ids)||asset!=asset_id)return false;
+    const AABB prototype=proxy_parts.empty()?source_mesh->get_aabb():proxy_box;
+    if(!prototype.position.is_finite()||!prototype.size.is_finite()||!prototype.get_end().is_finite())return false;
+    std::map<BlockKey,UnloadedRegion> staged;
+    for(const auto &entry:regions) {
+        UnloadedRegion missing;missing.checksum=entry.second.checksum;missing.count=entry.second.ids.size();
+        Vector3 low,extent;const int axes[3]={entry.first.x,entry.first.y,entry.first.z};
+        for(int row=0;row<3;++row) {
+            double reach=0;
+            for(int col=0;col<3;++col)reach+=double(entry.second.basis_max[row*3+col])*std::max(std::abs(double(prototype.position[col])),std::abs(double(prototype.get_end()[col])));
+            // Round outwards when converting the conservative double bounds to
+            // Godot's single precision vectors, including very large proxies.
+            low[row]=std::nextafter(float(axes[row]*32.0-reach),-std::numeric_limits<float>::infinity());
+            const float high=std::nextafter(float(axes[row]*32.0+32.0+reach),std::numeric_limits<float>::infinity());
+            extent[row]=std::nextafter(high-low[row],std::numeric_limits<float>::infinity());
+        }
+        missing.bounds=AABB(low,extent);if(!low.is_finite()||!extent.is_finite())return false;
+        staged.emplace(entry.first,std::move(missing));
+    }
+    // Validate all metadata and bounds before replacing live records or bodies.
+    std::set<BlockKey> touched;for(const auto &entry:groups)touched.insert(entry.first);
+    clear_proxies();collision_bounds.clear();collision_dirty=true;
+    placements.clear();groups.clear();slots.clear();
+    unloaded_regions=std::move(staged);unloaded_ids=std::move(ids);
+    rebuild(touched);publish_change();return true;
 }
 bool NativeStaticBatch::valid_model_region(BlockKey key) {
     for(int axis:{key.x,key.y,key.z})if(axis<-32768||axis>=32768)return false;

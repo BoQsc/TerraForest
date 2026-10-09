@@ -1,3 +1,22 @@
+## Cached metadata bootstrap for model collections - 2026-10-09
+
+Native checkpoint manifests now retain exact region versions, all placement IDs
+and prototype-independent transform bounds. A fresh collection can install
+unavailable state with no resident transforms, then admit exact regions normally.
+The first manifest build validates packets individually; subsequent cache hits
+read no region blobs. Metadata generation also runs on the shared archive reader.
+
+The 100,000-object fixture passes 27 checks in debug/release, including zero
+resident transforms at bootstrap, 1,000-object selective admission, partial save,
+byte-exact full reconstruction, conservative extended bounds, cache recovery and
+corruption rejection. The shared-reader release fixture passes 71 checks and
+existing model transfers/history pass 54. Evidence: `docs/evidence/model_metadata`;
+contract and limits: [model metadata](MODEL_METADATA.md).
+
+This is not enabled in the main-world decoder yet. Automatic selection/admission
+and shared paging lifecycle remain to be connected; full startup-memory and FPS
+qualification are still open.
+
 ## Model reads share the world archive worker - 2026-10-09
 
 The native archive read service now loads exact model-region versions through

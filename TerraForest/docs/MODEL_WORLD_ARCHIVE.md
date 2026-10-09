@@ -75,6 +75,12 @@ The existing block pager still owns the service in the main scene; a future
 combined paging coordinator must own lifecycle and poll both result channels.
 This API does not yet enable automatic model eviction or metadata-first loading.
 
+`request_model_metadata(asset, checkpoint, epoch)` now builds/loads the cached
+checkpoint manifest on the same worker. Its completion has `operation="metadata"`
+and can initialize a native collection without full transform reconstruction.
+See [model metadata](MODEL_METADATA.md) for cache, bounds and validation details.
+The main-world decoder has not switched to this bootstrap path yet.
+
 ## Verification
 
 `tests/region_world_archive.gd` now includes compound model publication,

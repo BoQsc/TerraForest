@@ -6,6 +6,7 @@
 #include <atomic>
 #include <cstring>
 #include <limits>
+#include <cmath>
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 #include <windows.h>
@@ -387,6 +388,7 @@ Dictionary NativeBlockRegionStore::release_checkpoint(const PackedByteArray &has
     checkpoints_.erase(checkpoint);
     const auto path=directory_.path_join("checkpoints").path_join(hash.hex_encode()+String(".tfrc")).utf16();
     bool removed=DeleteFileW(reinterpret_cast<LPCWSTR>(path.get_data()));
+    if(!model_asset_.is_empty())delete_exact(directory_.path_join("checkpoints").path_join(hash.hex_encode()+String(".tfmd")));
     Dictionary out=status(OK);out["checkpoint_file_removed"]=removed;return out;
 }
 Dictionary NativeBlockRegionStore::read_storage_region(Vector3i region,const PackedByteArray &expected,const PackedByteArray &checkpoint) const {
@@ -484,6 +486,51 @@ Dictionary NativeBlockRegionStore::read_model_checkpoint(const PackedByteArray &
         for(auto &value:decoded)if(!values.emplace(value.first,std::move(value.second)).second)return status(ERR_INVALID_DATA,"Model checkpoint has duplicate placement IDs across regions.");
     }
     Dictionary out=status(OK);out["snapshot"]=NativeStaticBatch::encode_placements(model_asset_,values);return out;
+}
+Dictionary NativeBlockRegionStore::read_model_metadata(const PackedByteArray &hash) const {
+    std::lock_guard<std::mutex> lock(mutex_);
+    if(!lease_||model_asset_.is_empty())return status(ERR_UNCONFIGURED,"Model store is closed.");
+    if(hash.size()!=32)return status(ERR_INVALID_PARAMETER,"Checkpoint identity must contain 32 bytes.");
+    Digest id{};std::memcpy(id.data(),hash.ptr(),32);auto checkpoint=checkpoints_.find(id);
+    if(checkpoint==checkpoints_.end())return status(ERR_DOES_NOT_EXIST,"Checkpoint is not pinned.");
+    const auto &catalog=checkpoint->second.entries;
+    if(catalog.size()>4096)return status(ERR_OUT_OF_MEMORY,"Checkpoint exceeds collection region capacity.");
+    const String path=directory_.path_join("checkpoints").path_join(hash.hex_encode()+String(".tfmd"));
+    PackedByteArray bytes;bool exists=false;
+    if(read_file(path,1144272,bytes,exists)&&exists) {
+        String asset;PackedByteArray cached_pin;std::map<BlockKey,NativeStaticBatch::MetadataRegion> regions;std::set<int64_t> ids;
+        bool valid=NativeStaticBatch::parse_metadata(bytes,asset,cached_pin,regions,ids)&&asset==model_asset_&&cached_pin==hash&&regions.size()==catalog.size();
+        auto region=regions.begin();
+        for(auto entry=catalog.begin();valid&&entry!=catalog.end();++entry,++region)
+            valid=!(entry->first<region->first)&&!(region->first<entry->first)&&pack_digest(entry->second.digest)==region->second.checksum;
+        if(valid){Dictionary out=status(OK);out["metadata"]=bytes;out["cache_hit"]=true;out["regions_read"]=0;return out;}
+    }
+    // First generation reads one packet at a time, never reconstructing a full
+    // transform map. IDs remain necessary to reject cross-region collisions.
+    bytes.resize(48);std::memcpy(bytes.ptrw(),"TFMD\1\0\0\0",8);
+    auto asset_bytes=model_asset_.to_utf8_buffer();bytes.encode_u32(8,asset_bytes.size());bytes.encode_u32(12,catalog.size());
+    std::memcpy(bytes.ptrw()+16,hash.ptr(),32);bytes.append_array(asset_bytes);
+    std::set<int64_t> identities;
+    for(const auto &entry:catalog) {
+        Dictionary read=read_entry(entry.first,entry.second,checkpoint->second.generation);if(!bool(read["ok"]))return read;
+        String asset;BlockKey key;std::map<int64_t,NativeStaticBatch::Placement> values;
+        if(!NativeStaticBatch::parse_region(read["bytes"],asset,key,values)||asset!=model_asset_)return status(ERR_FILE_CORRUPT,"Invalid model metadata source region.");
+        if(identities.size()+values.size()>100000)return status(ERR_OUT_OF_MEMORY,"Checkpoint exceeds collection instance capacity.");
+        std::array<float,9> maximum{};
+        for(const auto &value:values) {
+            if(!identities.insert(value.first).second)return status(ERR_INVALID_DATA,"Checkpoint contains duplicate placement identities.");
+            for(int row=0;row<3;++row)for(int col=0;col<3;++col)maximum[row*3+col]=std::max(maximum[row*3+col],std::abs(value.second[row*4+col]));
+        }
+        const int64_t at=bytes.size();bytes.resize(at+84+values.size()*8);
+        bytes.encode_s32(at,key.x);bytes.encode_s32(at+4,key.y);bytes.encode_s32(at+8,key.z);
+        std::memcpy(bytes.ptrw()+at+12,entry.second.digest.data(),32);bytes.encode_u32(at+44,values.size());
+        for(int j=0;j<9;++j)bytes.encode_float(at+48+j*4,maximum[j]);
+        int64_t offset=at+84;for(const auto &value:values){bytes.encode_u64(offset,value.first);offset+=8;}
+    }
+    bytes.append_array(digest(bytes));
+    String pending;bool cached=write_pending(path,bytes,pending);
+    if(cached){cached=move_file(pending,path,true);if(!cached)delete_exact(pending);}
+    Dictionary out=status(OK);out["metadata"]=bytes;out["cache_hit"]=false;out["cache_written"]=cached;out["regions_read"]=int(catalog.size());return out;
 }
 Dictionary NativeBlockRegionStore::publish_storage_state(const PackedByteArray &blocks,const PackedInt32Array &keys,const PackedByteArray &checksums,const PackedByteArray &checkpoint) {
     std::lock_guard<std::mutex> lock(mutex_);

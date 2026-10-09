@@ -29,6 +29,8 @@ void NativeStaticBatch::_bind_methods() {
     ClassDB::bind_method(D_METHOD("capture_snapshot"),&NativeStaticBatch::capture_snapshot);
     ClassDB::bind_method(D_METHOD("validate_snapshot","bytes"),&NativeStaticBatch::validate_snapshot);
     ClassDB::bind_method(D_METHOD("restore_snapshot","bytes"),&NativeStaticBatch::restore_snapshot);
+    ClassDB::bind_method(D_METHOD("validate_metadata","bytes"),&NativeStaticBatch::validate_metadata);
+    ClassDB::bind_method(D_METHOD("restore_metadata","bytes"),&NativeStaticBatch::restore_metadata);
     ClassDB::bind_method(D_METHOD("stats"),&NativeStaticBatch::stats);
     ClassDB::bind_method(D_METHOD("configure_render_streaming","enabled","radius","batch_limit","byte_limit","uploads_per_tick","bytes_per_tick"),&NativeStaticBatch::configure_render_streaming);
     ClassDB::bind_method(D_METHOD("set_render_focus","focus"),&NativeStaticBatch::set_render_focus);

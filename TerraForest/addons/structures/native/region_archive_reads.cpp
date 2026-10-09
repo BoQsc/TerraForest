@@ -37,18 +37,21 @@ int64_t NativeRegionWorldArchive::request_model_region_read(const String &asset,
     if(asset.is_empty()){std::lock_guard<std::mutex> lock(read_mutex_);++read_rejected_;return 0;}
     return request_read(asset,region,expected,checkpoint,epoch);
 }
-int64_t NativeRegionWorldArchive::request_read(const String &asset,Vector3i region,const PackedByteArray &expected,const PackedByteArray &checkpoint,int64_t epoch) {
+int64_t NativeRegionWorldArchive::request_model_metadata(const String &asset,const PackedByteArray &checkpoint,int64_t epoch) {
+    return request_read(asset,Vector3i(),PackedByteArray(),checkpoint,epoch,true);
+}
+int64_t NativeRegionWorldArchive::request_read(const String &asset,Vector3i region,const PackedByteArray &expected,const PackedByteArray &checkpoint,int64_t epoch,bool metadata) {
     std::lock_guard<std::mutex> lock(read_mutex_);
     const bool model=!asset.is_empty();
     const int bound=model?32768:16384;
     const int64_t reservation=model?MODEL_READ_BYTES:READ_BYTES;
     const bool valid_region=region.x>=-bound&&region.x<bound&&region.y>=-bound&&region.y<bound&&region.z>=-bound&&region.z<bound;
-    if((model&&(codec_.is_null()||!codec_->has_asset(asset)))||!valid_region||expected.size()!=32||(checkpoint.size()!=0&&checkpoint.size()!=32)||epoch<0||
+    if((metadata&&(!model||checkpoint.size()!=32))||(model&&(codec_.is_null()||!codec_->has_asset(asset)))||!valid_region||(!metadata&&expected.size()!=32)||(checkpoint.size()!=0&&checkpoint.size()!=32)||epoch<0||
        !read_running_||read_stopping_||read_outstanding_>=read_request_limit_||
        reservation>read_byte_limit_-read_reserved_||read_next_ticket_==INT64_MAX) {
         ++read_rejected_;return 0;
     }
-    RegionRead request;request.ticket=read_next_ticket_++;request.epoch=epoch;request.asset=asset;
+    RegionRead request;request.ticket=read_next_ticket_++;request.epoch=epoch;request.asset=asset;request.metadata=metadata;
     request.region=region;request.expected=expected;request.checkpoint=checkpoint;
     const int64_t ticket=request.ticket;
     read_pending_.push_back(std::move(request));++read_outstanding_;++read_accepted_;
@@ -73,9 +76,10 @@ void NativeRegionWorldArchive::run_region_reads(Ref<NativeBlockRegionStore> stor
         else {
             // Lazy opening happens only on this worker, never under read_mutex_.
             auto model=model_store(request.asset,false);
-            if(model.is_valid())result=model->read_storage_region(request.region,request.expected,request.checkpoint);
+            if(model.is_valid())result=request.metadata?model->read_metadata(request.checkpoint):model->read_storage_region(request.region,request.expected,request.checkpoint);
             else {result["ok"]=false;result["error"]=int(ERR_CANT_OPEN);}
             result["asset"]=request.asset;
+            result["operation"]=request.metadata?"metadata":"region";
         }
         result["ticket"]=request.ticket;result["epoch"]=request.epoch;result["region"]=request.region;
         result["expected_checksum"]=request.expected;result["checkpoint"]=request.checkpoint;

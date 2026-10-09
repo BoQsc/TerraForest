@@ -1,0 +1,6 @@
+{
+  "checks": 27,
+  "failures": 0,
+  "scope": "100000-placement metadata bootstrap, exact lazy restoration, conservative bounds and cached catalog manifests; not main-world automatic model paging.",
+  "library": "structures.windows.template_release.x86_64.dll"
+}

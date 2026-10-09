@@ -22,6 +22,8 @@ class NativeStaticBatch : public Node3D {
     std::map<int64_t,Placement> placements;
     std::map<BlockKey,std::set<int64_t>> groups;
     struct UnloadedRegion { PackedByteArray checksum; AABB bounds; size_t count=0; };
+    struct MetadataRegion { PackedByteArray checksum; std::array<float,9> basis_max{}; std::vector<int64_t> ids; };
+    static bool parse_metadata(const PackedByteArray &bytes,String &asset,PackedByteArray &checkpoint,std::map<BlockKey,MetadataRegion> &regions,std::set<int64_t> &ids);
     std::map<BlockKey,UnloadedRegion> unloaded_regions;
     std::set<int64_t> unloaded_ids;
     static PackedByteArray encode_placements(const String &asset,const std::map<int64_t,Placement> &values);
@@ -88,6 +90,8 @@ protected:
     static void _bind_methods();
     void _notification(int what);
 public:
+    bool validate_metadata(const PackedByteArray &bytes) const;
+    bool restore_metadata(const PackedByteArray &bytes);
     Dictionary capture_storage_state() const;
     PackedByteArray capture_region(Vector3i region) const;
     bool validate_region_snapshot(const PackedByteArray &bytes) const;

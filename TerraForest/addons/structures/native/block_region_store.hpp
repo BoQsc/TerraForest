@@ -15,6 +15,7 @@ class NativeBlockRegionStore : public RefCounted {
     Dictionary publish_model_snapshot(const PackedByteArray &snapshot);
     Dictionary publish_model_storage(const PackedByteArray &resident,const PackedInt32Array &keys,const PackedByteArray &checksums,const PackedByteArray &checkpoint);
     Dictionary read_model_checkpoint(const PackedByteArray &checkpoint) const;
+    Dictionary read_model_metadata(const PackedByteArray &checkpoint) const;
     int64_t blob_limit() const {return model_asset_.is_empty()?2*1024*1024:5600232;}
     using Digest=std::array<uint8_t,32>;
     struct Entry { Digest digest{}; uint32_t size=0; };

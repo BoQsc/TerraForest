@@ -282,6 +282,13 @@ func check_models(directory: String) -> void:
 	await until(func(): return archive.region_read_stats().model_completed==1)
 	models=archive.poll_model_region_reads(4)
 	check(models.size()==1 and models[0].ok and models[0].bytes==other_packet,"worker lazily reopens persisted asset catalog without a scene-thread store open")
+	var other_pin:=model_pin(c,archive,path,"test/two")
+	check(archive.request_model_metadata("",other_pin,12)==0 and archive.request_model_metadata("test/two",PackedByteArray(),12)==0,"metadata queue rejects missing asset and checkpoint")
+	var metadata_ticket: int=archive.request_model_metadata("test/two",other_pin,12)
+	await until(func(): return archive.region_read_stats().model_completed==1)
+	models=archive.poll_model_region_reads(4)
+	check(metadata_ticket>0 and models.size()==1 and models[0].ok and models[0].ticket==metadata_ticket and models[0].operation=="metadata" and models[0].asset=="test/two" and models[0].epoch==12 and other.restore_metadata(models[0].metadata),"shared archive worker returns checkpoint metadata for fresh scene bootstrap")
+	check(other.region_stats().resident_instances==0 and other.region_stats().reserved_ids==1 and other.restore_region(other_packet),"queued metadata permits exact region restoration without initial full snapshot")
 	archive.release()
 	var model_dir := path+".models"
 	check(DirAccess.rename_absolute(model_dir,model_dir+".held")==OK,"missing model sidecar fixture temporarily removes saved catalogs")
