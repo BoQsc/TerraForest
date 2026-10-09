@@ -33,6 +33,7 @@ protected:
 public:
     bool configure(const godot::Vector3 &origin, const godot::Vector3i &cells,
         double spacing, double fill_level, const godot::Vector3 &seed);
+    godot::PackedByteArray cache_identity(godot::Object *core, const godot::String &compatibility) const;
     godot::PackedByteArray capture_bake(const godot::PackedByteArray &identity) const;
     bool restore_bake(const godot::PackedByteArray &bytes, const godot::PackedByteArray &identity);
     int bake_density(const godot::PackedFloat32Array &density);

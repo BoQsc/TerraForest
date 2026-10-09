@@ -5,6 +5,7 @@
 #include <godot_cpp/variant/packed_vector2_array.hpp>
 #include <godot_cpp/variant/packed_int32_array.hpp>
 #include <godot_cpp/classes/time.hpp>
+#include <godot_cpp/classes/hashing_context.hpp>
 #include <algorithm>
 #include <array>
 #include <cmath>
@@ -14,6 +15,7 @@
 using namespace godot;
 namespace terraforest {
 void NativeLakeVolume::_bind_methods() {
+    ClassDB::bind_method(D_METHOD("cache_identity","core","compatibility"), &NativeLakeVolume::cache_identity);
     ClassDB::bind_method(D_METHOD("capture_bake","identity"), &NativeLakeVolume::capture_bake);
     ClassDB::bind_method(D_METHOD("restore_bake","bytes","identity"), &NativeLakeVolume::restore_bake);
     ClassDB::bind_method(D_METHOD("configure", "origin", "cells", "spacing", "fill_level", "seed"), &NativeLakeVolume::configure);

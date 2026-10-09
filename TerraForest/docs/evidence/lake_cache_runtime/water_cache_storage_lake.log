@@ -1,0 +1,8 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS incomplete accounting defers write
+PASS duplicate deferred bake does not grow queue
+PASS one deferred write flushes with exact quota accounting
+PASS shared disk quota prevents writes
+PASS deferred queue bounded to sixteen entries
+PASS disabled cache releases deferred buffers

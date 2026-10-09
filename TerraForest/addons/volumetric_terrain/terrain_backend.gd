@@ -51,6 +51,9 @@ var save_path: String = "user://world.trw"
 var surface_style: int = 0
 const DiskCache = preload("res://addons/volumetric_terrain/derived_cache.gd")
 var disk_cache = DiskCache.new()
+var _lake_compatibility: String=""
+var _lake_cache_token: int=0
+var _lake_cache_identity:=PackedByteArray()
 var snapshot_id: String = ""
 var cache_valid: bool = true
 var readonly_snapshot: bool = false
@@ -566,10 +569,28 @@ func _execute_density_query(job: Dictionary) -> void:
 
 func _execute_lake_slice(job: Dictionary) -> void:
 	var started:=Time.get_ticks_usec()
-	# Native sampling yields at 2 ms or 2048 points; final flood fill is bounded
-	# by the configured volume. Only the terrain worker touches this builder.
-	var status: int=job.builder.sample_terrain(native,2048,job.density_revision,job.build_epoch)
+	var status: int=-4
+	var cache_event:="disabled"
+	var info:=_call(Codec.command(0));var cancel:=_call(Codec.command(13))
+	if Codec.reply_ok(info) and Codec.reply_ok(cancel) and info.decode_u32(12)==job.density_revision and cancel.decode_u32(12)==job.build_epoch:
+		status=0
+		if _lake_cache_token!=job.token:
+			_lake_cache_token=job.token;_lake_cache_identity=PackedByteArray()
+			if disk_cache.enabled and not _lake_compatibility.is_empty():
+				_lake_cache_identity=job.builder.cache_identity(native,_lake_compatibility)
+				var data: PackedByteArray=disk_cache.load_lake(_lake_cache_identity)
+				cache_event="miss"
+				if not data.is_empty():
+					if job.builder.restore_bake(data,_lake_cache_identity):status=1;cache_event="hit";disk_cache.hits+=1
+					else:disk_cache.reject_lake(_lake_cache_identity);cache_event="rejected"
+		if status==0:
+			status=job.builder.sample_terrain(native,2048,job.density_revision,job.build_epoch)
+			if status==1 and not _lake_cache_identity.is_empty():
+				cache_event="stored" if disk_cache.store_lake(_lake_cache_identity,job.builder.capture_bake(_lake_cache_identity)) else "write_skipped"
+		cancel=_call(Codec.command(13))
+		if not Codec.reply_ok(cancel) or cancel.decode_u32(12)!=job.build_epoch:status=-4
 	_push({"kind":"lake_slice","status":status,"token":job.token,"epoch":job.epoch,"revision":job.revision,
+		"lake_cache":cache_event,"lake_identity":_lake_cache_identity.hex_encode(),
 		"queue_ms":(started-int(job.get("submitted_us",started)))/1000.0,"worker_ms":(Time.get_ticks_usec()-started)/1000.0})
 
 func _service_lake_slice() -> void:
@@ -885,6 +906,10 @@ func _run() -> void:
 	var load_message: String = _load()
 	_startup_mark("cache_fingerprint")
 	var compatibility:=_compatibility()
+	# Hash both supported water variants; absent binaries disable water reuse only.
+	var water_debug:=FileAccess.get_sha256("res://addons/volumetric_water/bin/volumetric_water.windows.template_debug.x86_64.dll") if FileAccess.file_exists("res://addons/volumetric_water/bin/volumetric_water.windows.template_debug.x86_64.dll") else ""
+	var water_release:=FileAccess.get_sha256("res://addons/volumetric_water/bin/volumetric_water.windows.template_release.x86_64.dll") if FileAccess.file_exists("res://addons/volumetric_water/bin/volumetric_water.windows.template_release.x86_64.dll") else ""
+	_lake_compatibility=compatibility+":"+water_debug+":"+water_release if not water_debug.is_empty() and not water_release.is_empty() else ""
 	_startup_mark("cache_configuration")
 	disk_cache.configure(compatibility, snapshot_id, surface_style, cache_path)
 	_startup_mark("native_configuration")

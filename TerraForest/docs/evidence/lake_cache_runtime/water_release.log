@@ -1,0 +1,53 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS independent water GDExtension registered
+PASS hard voxel cap rejects oversized allocation
+PASS nonfinite origin rejected
+PASS nonfinite spacing rejected
+PASS bounded lake builder configured
+PASS incomplete density field rejected without committing
+PASS nonfinite density rejected before mutation
+PASS connected sealed basin bakes
+PASS 3D occupancy and submerged depth agree
+PASS surface, solid floor and exterior are dry
+PASS invalid query positions are dry
+PASS published volume is immutable
+PASS bake scratch freed and occupancy remains bounded
+PASS rectangular basin reduces six strips to one quad
+PASS rectangle surface has exact nonoverlapping coverage, stable UVs and deterministic extraction
+PASS bounded lake builder configured
+PASS open boundary rejects entire lake without partial publication
+PASS bounded lake builder configured
+PASS flood fill does not fill disconnected neighboring basin
+PASS disconnected dry basin is absent from merged surface
+PASS bounded lake builder configured
+PASS connected water occupies below cave roof while solid ceiling stays dry
+PASS irregular cave roof remains absent from merged fill surface
+PASS bounded lake builder configured
+PASS connected lake around central island bakes
+PASS surface rectangles preserve central island hole without overlaps
+PASS bounded lake builder configured
+PASS blocked seed rejects publication
+PASS bounded lake builder configured
+PASS negative world coordinates preserve occupancy indexing
+PASS negative coordinates preserve merged surface coverage
+PASS scaled lattice with integer fill elevation bakes
+PASS scaled lattice and exact layer boundary preserve surface coverage and UVs
+PASS bounded lake builder configured
+PASS maximum configured cell budget bakes
+PASS 262144-cell lake frees all temporary scratch
+PASS maximum-cell rectangular basin reduces 62 strips to one quad
+PASS maximum-cell basin preserves exact surface coverage
+PASS actual terrain basin excavation accepted
+PASS bounded lake builder configured
+PASS bounded slices sample actual edited 3D terrain into water occupancy
+PASS bounded lake builder configured
+PASS terrain revision mismatch cancels bake
+PASS bounded lake builder configured
+PASS terrain cancellation epoch rejects stale bake
+PASS native local terrain dependency identity available
+PASS configured fresh worker builder accepts matching cache
+PASS remote edits retain local lake identity
+PASS local terrain edit invalidates old bake
+PASS implementation fingerprint invalidates cache
+

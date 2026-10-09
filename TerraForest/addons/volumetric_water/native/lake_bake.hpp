@@ -25,7 +25,7 @@ PackedByteArray NativeLakeVolume::capture_bake(const PackedByteArray &identity) 
 }
 bool NativeLakeVolume::restore_bake(const PackedByteArray &bytes,const PackedByteArray &identity) {
     // Reject before allocation, and never modify an existing/published instance.
-    if(count_||identity.size()!=32||bytes.size()<104||bytes.size()>6*1024*1024||bytes.decode_u32(0)!=0x31424c54||bytes.decode_u32(4)!=1||bytes.decode_u32(8)!=uint64_t(bytes.size()))return false;
+    if((count_&&(status_!=0||sampled_))||identity.size()!=32||bytes.size()<104||bytes.size()>6*1024*1024||bytes.decode_u32(0)!=0x31424c54||bytes.decode_u32(4)!=1||bytes.decode_u32(8)!=uint64_t(bytes.size()))return false;
     for(int i=0;i<32;++i)if(bytes[16+i]!=identity[i])return false;
     if(bytes.decode_u32(12)!=bake_checksum(bytes))return false;
     const uint32_t count=bytes.decode_u32(92),nv=bytes.decode_u32(96),ni=bytes.decode_u32(100);
@@ -34,6 +34,7 @@ bool NativeLakeVolume::restore_bake(const PackedByteArray &bytes,const PackedByt
     for(int a=0;a<3;++a){origin[a]=bytes.decode_float(48+a*4);size[a]=bytes.decode_u32(60+a*4);seed[a]=bytes.decode_float(80+a*4);}
     Ref<NativeLakeVolume> stage;stage.instantiate();
     if(!stage->configure(origin,size,bytes.decode_float(72),bytes.decode_float(76),seed)||stage->count_!=count)return false;
+    if(count_&&(origin_!=origin||seed_!=seed||size_!=size||spacing_!=stage->spacing_||level_!=stage->level_))return false;
     stage->column_top_.reset(new(std::nothrow) uint8_t[size_t(size.x)*size.z]());
     if(!stage->column_top_)return false;
     uint32_t wet_count=0;int64_t at=104;
@@ -59,6 +60,24 @@ bool NativeLakeVolume::restore_bake(const PackedByteArray &bytes,const PackedByt
     Array arrays;arrays.resize(Mesh::ARRAY_MAX);arrays[Mesh::ARRAY_VERTEX]=vertices;arrays[Mesh::ARRAY_NORMAL]=normals;arrays[Mesh::ARRAY_TEX_UV]=uv;arrays[Mesh::ARRAY_INDEX]=indices;
     origin_=stage->origin_;seed_=stage->seed_;size_=stage->size_;spacing_=stage->spacing_;level_=stage->level_;
     count_=count;node_count_=stage->node_count_;sampled_=0;wet_count_=wet_count;status_=1;
+    density_.reset();queue_.reset();
     wet_=std::move(stage->wet_);column_top_=std::move(stage->column_top_);smooth_surface_=arrays;
     return true;
+}
+
+PackedByteArray NativeLakeVolume::cache_identity(Object *core,const String &compatibility) const {
+    if(!count_||!core||!core->has_method("geometry_cache_key")||compatibility.is_empty()||origin_!=origin_.floor()||spacing_!=std::floor(spacing_)||origin_.x<0||origin_.y<1||origin_.z<0||bounds().get_end().x>2000||bounds().get_end().y>255||bounds().get_end().z>2000)return {};
+    Ref<HashingContext> hash;hash.instantiate();if(hash->start(HashingContext::HASH_SHA256)!=OK)return {};
+    PackedByteArray definition;definition.resize(44);
+    for(int a=0;a<3;++a){definition.encode_float(a*4,origin_[a]);definition.encode_u32(12+a*4,size_[a]);definition.encode_float(32+a*4,seed_[a]);}
+    definition.encode_float(24,spacing_);definition.encode_float(28,level_);
+    if(hash->update(String("lake-bake-v1:"+compatibility).to_utf8_buffer())!=OK||hash->update(definition)!=OK)return {};
+    // Cover the whole sampled X/Z domain, including endpoint lattice samples.
+    // Terrain keys include full vertical edit pages, generator, caves and blocks.
+    for(int z=int(origin_.z);z<int(bounds().get_end().z);z+=256)for(int x=int(origin_.x);x<int(bounds().get_end().x);x+=256){
+        const Dictionary key=core->call("geometry_cache_key",x,z,256,1);
+        const String digest=key.get("key",String());if(digest.length()!=64)return {};
+        if(hash->update(digest.to_utf8_buffer())!=OK)return {};
+    }
+    return hash->finish();
 }

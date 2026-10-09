@@ -1,0 +1,10 @@
+{
+  "source_commit": "53c4eb213e9708b72a71d7ca4768ce9d5cbecb96",
+  "slot": "staged_furnished_1791584856787240500",
+  "hardware": "NVIDIA GeForce RTX 4050 Laptop GPU",
+  "runs": "cold/warm/corrupt actual world headless; water_integration graphical fullscreen1080p cap60",
+  "water_binaries": {
+    "volumetric_water.windows.template_debug.x86_64.dll": "447181d43584906045da639f71005a46144726f33b070fecb92aeb27dbbe511e",
+    "volumetric_water.windows.template_release.x86_64.dll": "4f424528e8bff98492c44261cbd05b11fb20689f1a2f3732753254cad80f0ad7"
+  }
+}

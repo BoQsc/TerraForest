@@ -1,0 +1,48 @@
+{
+  "cache_directory": "C:/Users/LENOVO LOQ 15/AppData/Roaming/Godot/app_userdata/TerraForest/terrain_cache/5c0d574c515bdfdaad93da3a45fa81faf302beebabd466be89d899ff15f75ee0/lakes_v1",
+  "events": [
+    {
+      "event": "miss",
+      "identity": "0297c22028f211e28693c791746a8d2d62b055a338c5856f37693579a9823f9a"
+    },
+    {
+      "event": "stored",
+      "identity": "0297c22028f211e28693c791746a8d2d62b055a338c5856f37693579a9823f9a"
+    },
+    {
+      "event": "miss",
+      "identity": "0e190d88fd71996448146411921a13f9c1cd1c7cf2321e2a4b44a3b53bf12dbf"
+    },
+    {
+      "event": "stored",
+      "identity": "0e190d88fd71996448146411921a13f9c1cd1c7cf2321e2a4b44a3b53bf12dbf"
+    },
+    {
+      "event": "miss",
+      "identity": "30442d562180d4dfa4ac551a9a3c49aff4fea772e3171d9be651aa55b340072e"
+    },
+    {
+      "event": "stored",
+      "identity": "30442d562180d4dfa4ac551a9a3c49aff4fea772e3171d9be651aa55b340072e"
+    },
+    {
+      "event": "miss",
+      "identity": "b0222b260e02f9e85e0e08930a46d311e0062db53ffae4fb66f43a02c854977d"
+    },
+    {
+      "event": "stored",
+      "identity": "b0222b260e02f9e85e0e08930a46d311e0062db53ffae4fb66f43a02c854977d"
+    }
+  ],
+  "failures": 0,
+  "hashes": [
+    "e893dba770d0af23800747326d318a81d5f9b1ef33e34a63a1b7486a945998c6",
+    "d6be6e36de5e6bf5884427a236828b4246a36c849b4440bd616a2c0d2f77bc9c",
+    "bcfb4bc8bc55dc2ac3b09ee7988e31418dccc9e071fc71f4094ef7bc2d72ffb4",
+    "ba29489b57f89e63e6cc16c620e57d0939f2e90ca6e0501d1b59535d1f79a55c"
+  ],
+  "hits": 0,
+  "sampled": 220932,
+  "scope": "Four saved generated lakes through actual world worker and persistence; no frame or thermal qualification.",
+  "stores": 4
+}
