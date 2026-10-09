@@ -1,0 +1,12 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS ground-cover edit provider attaches to real terrain archive
+PASS terrain worker starts
+PASS world archive restore completes
+PASS restored generation profile matches world
+PASS new process restores exact profile removals placements and ID sequence
+PASS individual natural removal survives disk archive
+PASS authored stone survives fresh-process restore
+PASS next authored identity survives restore
+[TerrainRewrite] ERROR: save blocked: snapshot writes explicitly disabled; previous canonical snapshot retained
+GROUND_COVER_PERSISTENCE read failures=0

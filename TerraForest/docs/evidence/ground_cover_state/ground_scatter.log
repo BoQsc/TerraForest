@@ -1,0 +1,20 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS bounded nearest-first residency
+PASS residency distance order
+PASS far outside world rejects safely
+PASS world edge clips residency
+PASS all world candidates have unique owner identities and bounded positions
+PASS regeneration is deterministic
+PASS seed changes distribution within stable owner namespace
+PASS invalid owner or seed rejected
+PASS valid support preserves individual identities
+PASS missing nonfinite and steep support rejected regardless of normal magnitude
+PASS duplicate placement identities reject entire batch
+PASS individual procedural removal recorded
+PASS removal snapshot restores into new native state
+PASS packing keeps neighbours and exact transforms while excluding only removed identity
+PASS duplicate packed identities rejected
+PASS singular transform rejected before renderer mutation
+PASS mismatched exclusion mask rejected
+GROUND_SCATTER {"checks":17,"failures":0,"world_candidates":248982}

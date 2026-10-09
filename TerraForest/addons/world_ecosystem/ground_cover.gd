@@ -21,8 +21,8 @@ func prepare(persistence: RefCounted) -> bool:
 	for addon in ["vegetation_runtime","structures"]:
 		GDExtensionManager.load_extension("res://addons/%s/%s.gdextension"%[addon,addon])
 	native=ClassDB.instantiate("NativeGroundCover")
-	removed=ClassDB.instantiate("NativeHarvestState")
-	return persistence.register_component("ground_cover_removed_v1",removed.capture_storage_snapshot,_restore,removed,removed.capture_storage_snapshot())
+	removed=ClassDB.instantiate("NativeGroundCoverState")
+	return persistence.register_component("ground_cover_edits_v1",removed.capture_storage_snapshot,_restore,removed,removed.capture_storage_snapshot())
 
 func _restore(data: PackedByteArray) -> bool:
 	if not removed.restore_storage_snapshot(data): return false
@@ -83,6 +83,9 @@ func _retire(key: Vector2i) -> void:
 
 func _process(_delta: float) -> void:
 	if not terrain.world_ready or terrain.stopping: return
+	if not removed.bind_world(seed,1):
+		push_error("Ground-cover save belongs to a different generation profile")
+		set_process(false);return
 	for batch in batches: batch.set_render_focus(camera.global_position)
 	var center:=Vector2i(floori(camera.global_position.x/32.0),floori(camera.global_position.z/32.0))
 	if center!=_last_cell:
@@ -117,6 +120,10 @@ func _surface_ready(token: int,points: PackedVector3Array,normals: PackedVector3
 		if (structures!=null and structure_mask[i]) or (water!=null and water_mask[i]): mask[i]=1
 	var packed: Array=native.pack(placed.ids,placed.transforms,mask)
 	if packed.size()!=3: rejected_batches+=1;return
+	var authored: Array=removed.query(request.key)
+	for species in range(3):
+		packed[species].ids.append_array(authored[species].ids)
+		packed[species].transforms.append_array(authored[species].transforms)
 	if resident.get(request.key,[])==packed: _dirty.erase(request.key);return
 	var previous: Array=resident.get(request.key,[])
 	for species in range(3):
