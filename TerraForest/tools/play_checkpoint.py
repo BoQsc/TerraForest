@@ -12,6 +12,18 @@ from run import ROOT, parse_args, launch_details
 LABEL = 'Human checkpoint 2026-10-09'
 SLOT = 'human_checkpoint_20261009'
 
+def revision_metadata():
+    # Playing a local project must not require developer-only tools on PATH.
+    try:
+        revision = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT,
+                                           text=True, stderr=subprocess.PIPE, timeout=5).strip()
+        changes = subprocess.check_output(['git', 'status', '--porcelain'], cwd=ROOT,
+                                          text=True, stderr=subprocess.PIPE, timeout=5).splitlines()
+        return {'revision': revision, 'worktree_changes': changes, 'git_metadata_available': True}
+    except (OSError, subprocess.SubprocessError) as error:
+        return {'revision': None, 'worktree_changes': None, 'git_metadata_available': False,
+                'git_metadata_note': f'{type(error).__name__}: Git metadata unavailable; native hashes still recorded.'}
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--godot')
@@ -36,8 +48,7 @@ def main():
     if options.dry_run:
         print(json.dumps(details, indent=2));return 0
     folder.mkdir(parents=True)
-    details['revision'] = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip()
-    details['worktree_changes'] = subprocess.check_output(['git', 'status', '--porcelain'], cwd=ROOT, text=True).splitlines()
+    details.update(revision_metadata())
     details['native_sha256'] = {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest()
                                for p in sorted((ROOT / 'addons').glob('*/bin/*.dll'))}
     details['command'] = command

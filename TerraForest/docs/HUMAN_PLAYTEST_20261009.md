@@ -65,3 +65,13 @@ The short automatic check opened the real scene, verified 1920×1080 fullscreen,
 Its isolated startup-check slot saved successfully on shutdown. It did not perform
 this human route or establish steady 60 FPS, long-run thermals or correct scanout.
 [Evidence](evidence/human_checkpoint_20261009/).
+
+## Launcher correction
+
+Git is optional when launching from Explorer/CMD. The original launcher failed
+before Godot started if Git existed only in the development environment's PATH.
+The corrected launcher records unavailable revision metadata explicitly and still
+records native DLL hashes. The actual CMD was tested with all Codex PATH entries
+removed: startup passed, no engine errors were logged, and CMD returned exit 0.
+Failure exit codes are preserved across the CMD pause. Evidence is under
+`evidence/human_checkpoint_20261009/launcher_fix/`.
