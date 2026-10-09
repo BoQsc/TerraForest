@@ -4,6 +4,7 @@ signal selection_requested(field: String,value: int)
 signal capture_requested(action: String,title: String)
 signal supply_requested(item: int)
 signal stack_requested(count: int,title: String)
+signal settlement_requested(indices: PackedInt32Array,lots: int,width: int,gap: int,seed: int,title: String,streets: int)
 signal frontage_requested(lots: int,width: int,gap: int,seed: int,title: String)
 signal frontage_sources_requested(indices: PackedInt32Array,lots: int,width: int,gap: int,seed: int,title: String)
 signal survey_requested
@@ -20,6 +21,8 @@ var survey_dialog: AcceptDialog
 var survey_busy:=false
 var frontage_button: Button
 var frontage_dialog: AcceptDialog
+var _selected_prefab: int=-1
+var frontage_streets: SpinBox
 var frontage_lots: SpinBox
 var frontage_width: SpinBox
 var frontage_gap: SpinBox
@@ -77,9 +80,10 @@ func _ready() -> void:
 	stack_count=SpinBox.new();stack_count.custom_minimum_size=Vector2(130,0);stack_count.min_value=2;stack_count.max_value=32;stack_count.value=4;stack_count.step=1;stack_count.suffix="repeats";stack_row.add_child(stack_count)
 	stack_button=Button.new();stack_button.text="Stack selected prefab";stack_button.focus_mode=Control.FOCUS_NONE
 	stack_button.pressed.connect(func(): stack_requested.emit(int(stack_count.value),capture_name.text));stack_row.add_child(stack_button)
-	frontage_button=Button.new();frontage_button.text="Create street frontage from selected prefab";frontage_button.focus_mode=Control.FOCUS_NONE;column.add_child(frontage_button)
-	frontage_dialog=AcceptDialog.new();frontage_dialog.title="Street frontage";frontage_dialog.ok_button_text="Create and save";add_child(frontage_dialog)
+	frontage_button=Button.new();frontage_button.text="Create streets / settlement from prefabs";frontage_button.focus_mode=Control.FOCUS_NONE;column.add_child(frontage_button)
+	frontage_dialog=AcceptDialog.new();frontage_dialog.title="Street and settlement layout";frontage_dialog.ok_button_text="Create and save";add_child(frontage_dialog)
 	var frontage_fields:=VBoxContainer.new();frontage_dialog.add_child(frontage_fields)
+	frontage_streets=_number(frontage_fields,"Connected streets",1,8,1,1)
 	frontage_lots=_number(frontage_fields,"Buildings per side",1,64,2,1)
 	frontage_width=_number(frontage_fields,"Street width (m)",4,64,8,2)
 	frontage_gap=_number(frontage_fields,"Building gap / setback (m)",1,32,3,1)
@@ -122,6 +126,11 @@ func configure(assets: Array[Resource]) -> void:
 	for asset in assets: frontage_sources.add_item(asset.resource_name)
 
 func _request_frontage() -> void:
+	if int(frontage_streets.value)>1:
+		var selected: PackedInt32Array=frontage_sources.get_selected_items()
+		if not frontage_mix.button_pressed: selected=PackedInt32Array([_selected_prefab])
+		settlement_requested.emit(selected,int(frontage_lots.value),int(frontage_width.value),int(frontage_gap.value),int(frontage_seed.value),capture_name.text,int(frontage_streets.value))
+		return
 	if frontage_mix.button_pressed:
 		frontage_sources_requested.emit(frontage_sources.get_selected_items(),int(frontage_lots.value),int(frontage_width.value),int(frontage_gap.value),int(frontage_seed.value),capture_name.text)
 	else:
@@ -133,6 +142,7 @@ func synchronize(active: bool,shape_id: int,material_id: int,quarter_turn: int,p
 	shape.disabled=prefab_index>=0
 	material.disabled=prefab_index>=0
 	stack_button.disabled=prefab_index<0
+	_selected_prefab=prefab_index
 	frontage_button.disabled=prefab_index<0
 	if not frontage_dialog.visible and prefab_index>=0 and frontage_sources.get_selected_items().is_empty(): frontage_sources.select(prefab_index)
 	survey_button.disabled=prefab_index<0 or survey_busy

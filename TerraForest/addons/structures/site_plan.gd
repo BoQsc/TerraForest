@@ -9,39 +9,57 @@ static func prepare(asset: Resource,origin: Vector3i,rotation: int,grade: int) -
 	plan["foundation_segments"]=plan.segments.size();plan["paving_segments"]=0
 	if not asset.has_meta("frontage_version"): return plan
 	var street: Variant=asset.get_meta("street_width",null)
-	if asset.get_meta("frontage_version")!=1 or typeof(street)!=TYPE_INT or street<4 or street>64 or street%2!=0:
-		return {"ok":false,"reason":"Frontage lacks valid street layout metadata; regenerate the frontage"}
-	for point in asset.foundation_samples(Vector3i.ZERO,0,0):
-		if absf(point.z)<float(street)*0.5:
-			return {"ok":false,"reason":"Street corridor overlaps the building footprint; regenerate the frontage"}
+	var version: Variant=asset.get_meta("frontage_version")
+	if version not in [1,2] or typeof(street)!=TYPE_INT or street<4 or street>64 or street%2!=0:
+		return {"ok":false,"reason":"Layout lacks valid street metadata; regenerate it"}
 	var local: AABB=asset.placement_bounds(Vector3i.ZERO,0)
-	var columns:=ceili(local.size.x/120.0)
-	var rows:=ceili(float(street)/24.0)
-	if plan.segments.size()+columns*rows>MAX_SEGMENTS:
-		return {"ok":false,"reason":"Foundation and street exceed 256 sections; divide the layout"}
-	for row in rows:
-		for column in columns:
-			var z: float=-float(street)*0.5+float(street)*(row+0.5)/rows
-			var a:=Vector3(local.position.x+local.size.x*column/columns,0,z)
-			var b:=Vector3(local.position.x+local.size.x*(column+1)/columns,0,z)
-			for turn in rotation:
-				a=Vector3(1-a.z,0,a.x);b=Vector3(1-b.z,0,b.x)
-			a+=Vector3(plan.target);b+=Vector3(plan.target)
-			var half_width: float=float(street)/rows*0.5
-			var low:=a.min(b)-Vector3(half_width,8,half_width)
-			var high:=a.max(b)+Vector3(half_width,12,half_width)
-			if low.x<5 or low.z<5 or high.x>1995 or high.z>1995:
-				return {"ok":false,"reason":"Street paving reaches world boundary"}
-			var region:=AABB(low,high-low)
-			plan.bounds=plan.bounds.merge(region)
-			plan.segments.append({"start":a,"finish":b,"half_width":half_width,"depth":8.0,"clearance":12.0,"shoulder":0.0,"material":4,"bounds":region})
-	plan.paving_segments=columns*rows;plan["street_width"]=street
-	var ends:=PackedVector3Array([Vector3(local.position.x,0,0),Vector3(local.end.x,0,0)])
-	for i in 2:
-		var point:=ends[i]
-		for turn in rotation: point=Vector3(1-point.z,0,point.x)
-		ends[i]=point+Vector3(plan.target)
-	plan["street_ends"]=ends
+	var lines: PackedVector3Array
+	if version==1:
+		lines=PackedVector3Array([Vector3(local.position.x,0,0),Vector3(local.end.x,0,0)])
+	else:
+		var value: Variant=asset.get_meta("street_lines",null)
+		if typeof(value)!=TYPE_PACKED_VECTOR3_ARRAY or value.size()<8 or value.size()>20 or value.size()%2!=0:
+			return {"ok":false,"reason":"Invalid settlement street segments"}
+		lines=value
+	var support: PackedVector3Array=asset.foundation_samples(Vector3i.ZERO,0,0)
+	var world_lines:=PackedVector3Array()
+	for i in range(0,lines.size(),2):
+		var a:=lines[i];var b:=lines[i+1]
+		if not a.is_finite() or not b.is_finite() or maxf(maxf(absf(a.x),absf(a.z)),maxf(absf(b.x),absf(b.z)))>8192 or a.y!=0 or b.y!=0 or a.distance_to(b)<1 or (a.x!=b.x and a.z!=b.z):
+			return {"ok":false,"reason":"Settlement streets must be finite, level and axis-aligned"}
+		var direction:=b-a
+		for point in support:
+			point.y=0
+			var nearest:=a+direction*clampf((point-a).dot(direction)/direction.length_squared(),0,1)
+			if point.distance_to(nearest)<float(street)*0.5+0.5:
+				return {"ok":false,"reason":"Street corridor overlaps the building footprint; regenerate the layout"}
+		var columns:=ceili(a.distance_to(b)/120.0)
+		var strips:=ceili(float(street)/24.0)
+		if plan.segments.size()+columns*strips>MAX_SEGMENTS:
+			return {"ok":false,"reason":"Foundation and streets exceed 256 sections; divide the layout"}
+		var across:=Vector3(-direction.z,0,direction.x).normalized()
+		for strip in strips:
+			for column in columns:
+				var offset:=across*(-float(street)*0.5+float(street)*(strip+0.5)/strips)
+				var start:=a.lerp(b,float(column)/columns)+offset
+				var finish:=a.lerp(b,float(column+1)/columns)+offset
+				for turn in rotation:
+					start=Vector3(1-start.z,0,start.x);finish=Vector3(1-finish.z,0,finish.x)
+				start+=Vector3(plan.target);finish+=Vector3(plan.target)
+				var half_width: float=float(street)/strips*0.5
+				var low:=start.min(finish)-Vector3(half_width,8,half_width)
+				var high:=start.max(finish)+Vector3(half_width,12,half_width)
+				if low.x<5 or low.z<5 or high.x>1995 or high.z>1995:
+					return {"ok":false,"reason":"Street paving reaches world boundary"}
+				var region:=AABB(low,high-low)
+				plan.bounds=plan.bounds.merge(region)
+				plan.segments.append({"start":start,"finish":finish,"half_width":half_width,"depth":8.0,"clearance":12.0,"shoulder":0.0,"material":4,"bounds":region})
+		for point in [a,b]:
+			for turn in rotation: point=Vector3(1-point.z,0,point.x)
+			world_lines.append(point+Vector3(plan.target))
+	plan.paving_segments=plan.segments.size()-plan.foundation_segments
+	plan["street_width"]=street;plan["street_lines"]=world_lines
+	plan["street_ends"]=world_lines.slice(0,2)
 	return plan
 
 static func foundation(asset: Resource,origin: Vector3i,rotation: int,grade: int) -> Dictionary:

@@ -450,7 +450,11 @@ Version-1 frontages require valid street_width metadata for automatic paving.
 The plan grades first, then applies bounded asphalt strips using the captured
 rotation. Its corridor must not overlap foundation columns. Missing metadata
 requires regenerating the frontage; ordinary prefabs receive only a foundation.
-Road intersections and links between separate sites are not generated.
+Version-two connected settlement layouts now generate parallel streets and end
+connections. Use Connected streets in the construction layout dialog; native
+composition, guarded preparation and the road catalog support the whole network.
+Links between independently authored sites remain manual. See
+[connected settlements](../../docs/CONNECTED_SETTLEMENTS.md) for bounds and evidence.
 
 Preparation completion uses the exact terrain edit ticket and explicit
 published/unchanged outcome. Already graded sections complete without a

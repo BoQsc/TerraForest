@@ -23,6 +23,25 @@ func run() -> void:
 		check(asset.compose_frontage([load("res://addons/structures/prefabs/brick_cottage.tres"),load("res://addons/structures/prefabs/tower_floor.tres")],2,8,3,29),"mixed building fixture composed natively")
 		asset.set_meta("frontage_version",1);asset.set_meta("street_width",8);asset.set_meta("frontage_gap",3)
 		asset.resource_name="Mixed cottage and tower street"
+	if "--connected-settlement-fixture" in OS.get_cmdline_user_args():
+		game.prefab_library.directory="user://connected_editor_%d"%Time.get_ticks_usec()
+		for i in game.structure_prefabs.size():
+			if game.structure_prefabs[i].resource_name=="Brick cottage":game.structure_prefab_index=i;break
+		game._sync_construction_palette()
+		var palette: CanvasLayer=game.construction_palette
+		palette.capture_name.text="Connected cottage settlement"
+		palette.frontage_streets.value=2;palette.frontage_lots.value=1;palette.frontage_width.value=8
+		palette.frontage_mix.button_pressed=false
+		palette.frontage_button.pressed.emit()
+		await process_frame;await RenderingServer.frame_post_draw
+		root.get_texture().get_image().save_png("res://reports/connected_settlement_dialog.png")
+		var count: int=game.structure_prefabs.size()
+		palette.frontage_dialog.confirmed.emit();palette.frontage_dialog.hide()
+		deadline=Time.get_ticks_msec()+10000
+		while game.structure_prefabs.size()==count and Time.get_ticks_msec()<deadline:await process_frame
+		check(game.structure_prefabs.size()==count+1,"actual editor creates and selects a connected settlement")
+		asset=game.structure_prefabs[game.structure_prefab_index]
+		check(asset.get_meta("frontage_version",0)==2 and asset.get_meta("street_lines",PackedVector3Array()).size()==8,"editor result has two streets and two end connections")
 	check(asset!=null and asset.get_meta("street_width",0)==8,"frontage supplies its real street metadata")
 	if asset==null: game.terrain.shutdown();game.free();quit(1);return
 	game.structure_prefabs.append(asset);game.structure_prefab_index=game.structure_prefabs.size()-1
@@ -123,6 +142,9 @@ func run() -> void:
 	var connector_revision: int=game.terrain.density_revision
 	game.app_focused=true
 	check(game._set_player_tool_mode(false,false,0),"street handoff uses normal terrain tool switch")
+	if "--connected-settlement-fixture" in OS.get_cmdline_user_args():
+		check(game.road_palette.prepared_streets.size()==4,"completed settlement registers every road entrance pair")
+		game.road_palette.select_prepared_street(0)
 	game.road_palette.action_requested.emit("street_b")
 	check(game.road_palette.has_start and not game.road_palette.has_finish and game.road_palette.start==game.site_preparation.plan.street_ends[1],"road editor captures prepared street end after building placement")
 	check(not game.terrain.pending_edit and game.terrain.density_revision==connector_revision,"street handoff changes preview only")

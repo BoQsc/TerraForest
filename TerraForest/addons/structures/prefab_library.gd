@@ -15,7 +15,7 @@ var _frontage_thread:=Thread.new()
 func begin_frontage(source: Resource,lots: int,width: int,gap: int,seed: int,title: String) -> Dictionary:
 	return begin_frontage_sources([source],lots,width,gap,seed,title)
 
-func begin_frontage_sources(sources: Array,lots: int,width: int,gap: int,seed: int,title: String) -> Dictionary:
+func begin_frontage_sources(sources: Array,lots: int,width: int,gap: int,seed: int,title: String,streets: int=1) -> Dictionary:
 	if _frontage_thread.is_started(): return {"ok":false,"reason":"A frontage is already being generated"}
 	title=title.strip_edges()
 	if title.is_empty() or title.length()>48: return {"ok":false,"reason":"Use a name of 1–48 characters"}
@@ -31,19 +31,20 @@ func begin_frontage_sources(sources: Array,lots: int,width: int,gap: int,seed: i
 	var records: Array[PackedInt32Array]=[]
 	for source: Resource in sources: records.append(source.get_records())
 	var path:=directory.path_join("prefab_%d_%d.res" % [Time.get_unix_time_from_system()*1000000,Time.get_ticks_usec()])
-	var error:=_frontage_thread.start(_build_frontage.bind(records,lots,width,gap,seed,title,path),Thread.PRIORITY_LOW)
+	var error:=_frontage_thread.start(_build_frontage.bind(records,lots,width,gap,seed,title,path,streets),Thread.PRIORITY_LOW)
 	if error!=OK: return {"ok":false,"reason":"Could not start frontage worker"}
 	return {"ok":true}
 
-static func _build_frontage(records: Array[PackedInt32Array],lots: int,width: int,gap: int,seed: int,title: String,path: String) -> Dictionary:
+static func _build_frontage(records: Array[PackedInt32Array],lots: int,width: int,gap: int,seed: int,title: String,path: String,streets: int=1) -> Dictionary:
 	var sources: Array[Resource]=[]
 	for snapshot: PackedInt32Array in records:
 		var source: Resource=ClassDB.instantiate("NativeBlockPrefab")
 		if not source.configure(snapshot): return {"ok":false,"reason":"Invalid source prefab"}
 		sources.append(source)
 	var asset: Resource=ClassDB.instantiate("NativeBlockPrefab")
-	if not asset.compose_frontage(sources,lots,width,gap,seed): return {"ok":false,"reason":"Invalid layout or prefab cell/coordinate limit exceeded"}
-	asset.set_meta("frontage_version",1);asset.set_meta("street_width",width);asset.set_meta("frontage_gap",gap)
+	var ok: bool=asset.compose_frontage(sources,lots,width,gap,seed) if streets==1 else asset.compose_settlement(sources,lots,width,gap,seed,streets)
+	if not ok: return {"ok":false,"reason":"Invalid layout or prefab cell/coordinate limit exceeded"}
+	asset.set_meta("frontage_version",1 if streets==1 else 2);asset.set_meta("street_width",width);asset.set_meta("frontage_gap",gap)
 	asset.set_meta("frontage_seed",seed);asset.set_meta("frontage_source_count",sources.size())
 	asset.resource_name=title
 	if DirAccess.make_dir_recursive_absolute(path.get_base_dir())!=OK or FileAccess.file_exists(path): return {"ok":false,"reason":"Cannot create prefab file"}

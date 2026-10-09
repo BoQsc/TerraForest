@@ -2,6 +2,21 @@
 
 The [delivery plan and coverage register](PROJECT_PLAN.md) is the current reference for milestone order, original-scope coverage and deferred-work return triggers. Entries below preserve evidence at their recorded development stage. Older headings and the historical scope table are not current status; later implementations supersede some of their limitations. Correctness, integration, rendered performance and sustained qualification are separate gates.
 
+## Connected settlement layout and paving - 2026-10-09
+
+The actual construction editor now generates 2–8 building-lined streets with
+connections at both ends. Native deterministic composition runs on the existing
+authoring worker. Guarded survey/preparation validates and paves every road before
+placing ordinary editable blocks; all entrance pairs join the persistent catalog.
+Existing single-street resources remain supported.
+
+Debug/release each pass 26 connected-layout checks; existing paving, async authoring,
+continuation and compound-road checks pass. The actual 1080p editor creates, grades,
+paves and places four cottages on two streets. Inspected screenshots and a retained
+2,002.161 ms graphical outlier are feature evidence, not performance qualification.
+[Contract, usage and remaining scope](CONNECTED_SETTLEMENTS.md). M2 remains active;
+combined settlement save/reopen, richer interiors, vegetation and scale remain open.
+
 ## M1 disposition and M2 activation - 2026-10-09
 
 The actual main-world model route passes 27 checks with 768 placements at three

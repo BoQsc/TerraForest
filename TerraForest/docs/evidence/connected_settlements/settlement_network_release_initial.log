@@ -1,0 +1,39 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+
+ERROR: Cannot get class 'NativeBlockPrefab'.
+   at: _instantiate_internal (core/object/class_db.cpp:587)
+   GDScript backtrace (most recent call first):
+       [0] run (res://tests/settlement_network.gd:13)
+ERROR: res://addons/structures/prefabs/brick_cottage.tres:3 - Parse Error: Can't create sub resource of type 'NativeBlockPrefab'.
+   at: _printerr (scene/resources/resource_format_text.cpp:41)
+   GDScript backtrace (most recent call first):
+       [0] run (res://tests/settlement_network.gd:13)
+ERROR: Failed loading resource: res://addons/structures/prefabs/brick_cottage.tres.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] run (res://tests/settlement_network.gd:13)
+ERROR: Cannot get class 'NativeBlockPrefab'.
+   at: _instantiate_internal (core/object/class_db.cpp:587)
+   GDScript backtrace (most recent call first):
+       [0] run (res://tests/settlement_network.gd:14)
+ERROR: res://addons/structures/prefabs/tower_floor.tres:3 - Parse Error: Can't create sub resource of type 'NativeBlockPrefab'.
+   at: _printerr (scene/resources/resource_format_text.cpp:41)
+   GDScript backtrace (most recent call first):
+       [0] run (res://tests/settlement_network.gd:14)
+ERROR: Failed loading resource: res://addons/structures/prefabs/tower_floor.tres.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] run (res://tests/settlement_network.gd:14)
+ERROR: Cannot get class 'NativeBlockPrefab'.
+   at: _instantiate_internal (core/object/class_db.cpp:587)
+   GDScript backtrace (most recent call first):
+       [0] run (res://tests/settlement_network.gd:15)
+ERROR: Cannot get class 'NativeBlockPrefab'.
+   at: _instantiate_internal (core/object/class_db.cpp:587)
+   GDScript backtrace (most recent call first):
+       [0] run (res://tests/settlement_network.gd:16)
+SCRIPT ERROR: Invalid call. Nonexistent function 'compose_settlement' in base 'Nil'.
+   at: run (res://tests/settlement_network.gd:17)
+   GDScript backtrace (most recent call first):
+       [0] run (res://tests/settlement_network.gd:17)

@@ -1,0 +1,6 @@
+{
+  "checks": 26,
+  "failures": 0,
+  "scope": "Native connected layout, deterministic authoring/resource restore, all four rotations, terrain asphalt/clearance samples and editor street catalog. Not a navigation graph or city-scale performance qualification.",
+  "library": "structures.windows.template_release.x86_64.dll"
+}

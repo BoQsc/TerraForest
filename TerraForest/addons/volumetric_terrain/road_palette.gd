@@ -162,16 +162,21 @@ func continue_selection(terrain: Node) -> bool:
 	selection_changed.emit();return true
 func register_prepared_street(plan: Dictionary,epoch: int) -> void:
 	if plan.get("paving_segments",0)<=0 or not plan.has("street_ends"): return
-	if not prepared_street.is_empty() and prepared_street.epoch!=epoch:
-		prepared_streets=[];prepared_street={};selected_street=-1
-	for i in prepared_streets.size():
-		if prepared_streets[i].ends==plan.street_ends:
-			prepared_streets[i].width=plan.street_width
-			select_prepared_street(i);_refresh_street_selector();return
-	if prepared_streets.size()>=256:
-		status.text="Street entrance catalog is full (256). Existing entrances retained.";return
-	prepared_street={"ends":plan.street_ends.duplicate(),"width":plan.street_width,"epoch":epoch}
-	prepared_streets.append(prepared_street);selected_street=prepared_streets.size()-1
+	var lines: PackedVector3Array=plan.get("street_lines",plan.street_ends)
+	if lines.size()<2 or lines.size()>20 or lines.size()%2!=0: return
+	var next: Array=prepared_streets.duplicate(true) if prepared_street.is_empty() or prepared_street.epoch==epoch else []
+	var selected: int=-1
+	for offset in range(0,lines.size(),2):
+		var ends:=lines.slice(offset,offset+2)
+		selected=-1
+		for i in next.size():
+			if next[i].ends==ends: selected=i;break
+		if selected<0:
+			if next.size()>=256:
+				status.text="Street entrance catalog is full (256). Existing entrances retained.";return
+			selected=next.size();next.append({"ends":ends,"width":plan.street_width,"epoch":epoch})
+		else: next[selected].width=plan.street_width
+	prepared_streets.assign(next);selected_street=selected;prepared_street=prepared_streets[selected]
 	_refresh_street_selector()
 func select_street_end(index: int,terrain: Node,as_finish: bool=false) -> bool:
 	if not pending.is_empty() or index<0 or index>1 or prepared_street.is_empty() or prepared_street.epoch!=terrain.epoch:

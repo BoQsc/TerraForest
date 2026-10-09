@@ -10,6 +10,7 @@ void NativeBlockPrefab::_bind_methods() {
     ClassDB::bind_method(D_METHOD("configure","records"),&NativeBlockPrefab::configure);
     ClassDB::bind_method(D_METHOD("compose","sources","placements"),&NativeBlockPrefab::compose);
     ClassDB::bind_method(D_METHOD("compose_frontage","sources","lots_per_side","street_width","gap","seed"),&NativeBlockPrefab::compose_frontage);
+    ClassDB::bind_method(D_METHOD("compose_settlement","sources","lots_per_side","street_width","gap","seed","streets"),&NativeBlockPrefab::compose_settlement);
     ClassDB::bind_method(D_METHOD("set_records","records"),&NativeBlockPrefab::set_records);
     ClassDB::bind_method(D_METHOD("get_records"),&NativeBlockPrefab::get_records);
     ClassDB::bind_method(D_METHOD("get_cell_count"),&NativeBlockPrefab::get_cell_count);
@@ -168,6 +169,37 @@ bool NativeBlockPrefab::compose_frontage(const Array &sources,int64_t lots,int64
         x+=width+int(gap);
     }
     return compose(sources,placements); // Existing transactional cell validation.
+}
+bool NativeBlockPrefab::compose_settlement(const Array &sources,int64_t lots,int64_t street,int64_t gap,int64_t seed,int64_t streets) {
+    if(streets<2||streets>8||seed<0||seed>0xffffffffLL)return false;
+    Array rows;PackedInt32Array placements;PackedVector3Array centers;
+    int64_t total=0;int next_z=0;AABB combined;
+    for(int i=0;i<streets;++i) {
+        Ref<NativeBlockPrefab> row;row.instantiate();
+        const uint32_t row_seed=uint32_t(seed)+uint32_t(i)*0x9e3779b9u;
+        if(!row->compose_frontage(sources,lots,street,gap,row_seed))return false;
+        total+=row->get_cell_count();if(total>262144)return false;
+        const AABB b=row->get_bounds();
+        const int offset=i==0?0:next_z-int(b.position.z);
+        AABB placed=b;placed.position.z+=offset;
+        combined=i==0?placed:combined.merge(placed);
+        next_z=int(placed.get_end().z)+int(gap);
+        rows.push_back(row);
+        placements.append(i);placements.append(0);placements.append(0);placements.append(offset);placements.append(0);
+        centers.append(Vector3(0,0,offset));
+    }
+    // Connect the ends outside every building envelope; all streets share one
+    // grade. Runtime terrain validation remains the site's responsibility.
+    const real_t left=combined.position.x-real_t(gap+street/2);
+    const real_t right=combined.get_end().x+real_t(gap+street/2);
+    PackedVector3Array roads;
+    for(int i=0;i<streets;++i){roads.append(Vector3(left,0,centers[i].z));roads.append(Vector3(right,0,centers[i].z));}
+    roads.append(Vector3(left,0,centers[0].z));roads.append(Vector3(left,0,centers[streets-1].z));
+    roads.append(Vector3(right,0,centers[0].z));roads.append(Vector3(right,0,centers[streets-1].z));
+    if(!compose(rows,placements))return false;
+    set_meta("frontage_version",2);set_meta("street_width",street);set_meta("street_lines",roads);
+    set_meta("settlement_streets",streets);
+    return true;
 }
 PackedInt32Array NativeBlockPrefab::get_records() const {
     PackedInt32Array out;out.resize(cells.size()*4);int i=0;

@@ -1,0 +1,19 @@
+{
+  "base_commit": "4d6ab82ca84adb28391fd73d9eb7153fff3369d7",
+  "utc": "2026-10-09T19:53:42.255179+00:00",
+  "engine": "Godot 4.7.2 Steam ed1daf0bf",
+  "scope": "26 debug and release correctness checks; actual editor graphical integration, not performance acceptance; retained 2002.161 ms frame interval. Graphical world temporary, resource/catalog persistence checked separately.",
+  "sha256": {
+    "addons/structures/native/block_prefab.cpp": "3f6703b1578e59074d7f4b1d2f5169cfb0201768ffb045ac7e763fa69b78e479",
+    "addons/structures/native/block_prefab.hpp": "3513ed96671da3d5f04fc514819239a726d3f5582f0f7a2096f8fedefe38d28c",
+    "addons/structures/prefab_library.gd": "992fef0d9f17ec1223ef84f658a12a673d918a415ed9b2441e576418e58b491a",
+    "addons/structures/site_plan.gd": "9e7877cd2b961167f0e4b558426bf945d07b51ec59ae9899aaf125670891e026",
+    "addons/structures/construction_palette.gd": "3fcb324d52807e6f211897f25ce0d26aedb8cb5e8439733e242b404846ef4a07",
+    "addons/volumetric_terrain/road_palette.gd": "536a5e0bc8db7e8316d4db8ee17cecc21ab000b1d57aee4bee960a28d80a2e27",
+    "demo/world.gd": "4f8c746c77752f49bf8ba32c00de681c98ff824bbcd46f2ead1c36459914d311",
+    "tests/settlement_network.gd": "475c1c73f7f24b9592cbd809209c3eee941d3ffe53cfd5568b6864303d5ce6f3",
+    "tests/settlement_survey_editor.gd": "4ae8cb14607192dd8f9986cc34e06f78b7d64a05caeeff5a17120feadcb8863b",
+    "addons/structures/bin/structures.windows.template_debug.x86_64.dll": "a07517349ed0c586df9f1519d6171e8d76da6203e8761423459df102faf4c43b",
+    "addons/structures/bin/structures.windows.template_release.x86_64.dll": "00d428b5d475032e08cafbbcad29680b7abb88e9f8741e6b4b3430cb0bfbf5fe"
+  }
+}
