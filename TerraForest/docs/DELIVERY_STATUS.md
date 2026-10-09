@@ -1,3 +1,21 @@
+## Persistent native model-region catalog - 2026-10-09
+
+Added `NativeModelRegionStore`, an asset-bound facade over the shared native
+leased region-store engine. Model-specific catalog headers and packet validation
+reject other assets and block data. Conditional packet publication, immutable
+blobs, pinned checkpoints, bounded garbage collection and explicit backup
+recovery now work for model regions without duplicating the disk commit engine.
+
+Debug and release pass 28 checks, including a separate engine process reopening
+current and pinned model versions, corrupt-blob detection and backup recovery.
+The existing block store, checkpoint and partial-save suites also pass. See
+[model catalog](MODEL_REGION_CATALOG.md) and `docs/evidence/model_region_store`.
+
+The main world still does not page model records automatically. Collection-wide
+manifest validation, metadata bootstrap, partial compound saves, an I/O queue
+and history-aware eviction remain to be connected. This is storage correctness
+evidence, not new FPS, memory, endurance or large-city qualification.
+
 ## Checked native model-region transfers - 2026-10-09
 
 Added asset-bound, checksummed transfer packets for indexed 32-metre model

@@ -1,0 +1,31 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS new asset-bound model catalog opens
+PASS second writer cannot acquire directory lease
+PASS atomic publication admits two signed model regions
+PASS catalog reads exact checked model packet
+PASS unchanged publication avoids generation churn
+PASS model catalog checkpoint pins old region versions
+PASS stale expected checksum cannot overwrite committed region
+PASS matching expected checksum publishes new model version
+PASS checkpoint retains earlier packet after edit
+PASS mixed-asset batch rejects without partial publication
+PASS model catalog rejects block packets
+PASS conditional removal commits region deletion
+PASS bounded collection preserves checkpoint-only region
+PASS separate engine process reopens current and checkpoint model versions
+PASS reopening under another asset identity fails
+PASS block catalog reader rejects model catalog format
+PASS disk reopen restores committed model version
+PASS checkpoint retention survives disk reopen
+PASS checkpoint activation restores deleted region
+PASS live collection unloads its captured version
+PASS older checkpoint cannot overwrite live unloaded version
+PASS committed matching packet restores live unloaded records
+PASS corrupt immutable blob is detected on read
+PASS publication refuses to overwrite corrupted immutable data
+PASS corrupt primary catalog requires explicit recovery
+PASS explicit backup recovery reads prior committed catalog
+PASS recovered catalog can publish a new commit
+PASS checkpoint release is explicit
+MODEL_REGION_STORE checks=28 failures=0

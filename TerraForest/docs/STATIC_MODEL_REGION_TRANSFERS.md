@@ -60,7 +60,8 @@ not yet an arbitrary-scale compact persistent identity index.
 
 Automatic main-world model paging is deliberately not enabled. The native
 transfer and save/readiness guards are prerequisites for it, not a persistent
-catalog. Still required: asset-aware region catalog/checkpoints, metadata-only
+catalog. Asset-aware disk catalog/checkpoints are now available through
+[NativeModelRegionStore](MODEL_REGION_CATALOG.md). Still required: metadata-only
 bootstrap, partial compound saving, bounded I/O queue, history-aware eviction,
 and distance/visibility policy that preserves the requested distant world
 representation. Until these are connected, the main world retains its previous

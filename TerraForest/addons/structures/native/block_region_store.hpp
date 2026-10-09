@@ -7,6 +7,11 @@ namespace terraforest {
 // Synchronous native storage, intended for one I/O owner/worker. No scene nodes.
 class NativeBlockRegionStore : public RefCounted {
     GDCLASS(NativeBlockRegionStore,RefCounted)
+    friend class NativeModelRegionStore;
+    String model_asset_;
+    PackedByteArray model_asset_hash_;
+    bool set_model_asset(const String &asset);
+    int64_t blob_limit() const {return model_asset_.is_empty()?2*1024*1024:5600232;}
     using Digest=std::array<uint8_t,32>;
     struct Entry { Digest digest{}; uint32_t size=0; };
     using Catalog=std::map<BlockKey,Entry>;
@@ -22,9 +27,9 @@ class NativeBlockRegionStore : public RefCounted {
     PackedByteArray canonical_bytes_,backup_bytes_;
     bool canonical_exists_=false,backup_exists_=false,canonical_active_=false,backup_valid_=false,recovered_=false;
     uint64_t generation_=0,generation_floor_=0,deleted_=0;
-    static bool packet_entry(const PackedByteArray &bytes,BlockKey &key,Entry &entry);
-    static bool parse_catalog(const PackedByteArray &bytes,Catalog &entries,uint64_t &generation);
-    static PackedByteArray encode_catalog(const Catalog &entries,uint64_t generation);
+    bool packet_entry(const PackedByteArray &bytes,BlockKey &key,Entry &entry) const;
+    bool parse_catalog(const PackedByteArray &bytes,Catalog &entries,uint64_t &generation) const;
+    PackedByteArray encode_catalog(const Catalog &entries,uint64_t generation) const;
     static PackedByteArray pack_digest(const Digest &digest);
     bool observed_files_unchanged() const;
     bool open_checkpoints(bool allow_initialize);

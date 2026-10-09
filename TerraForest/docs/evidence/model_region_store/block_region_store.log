@@ -1,0 +1,71 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS closed store rejects publication and reads
+PASS store requires an absolute filesystem directory
+PASS new store commits an empty catalog before any blob publication
+PASS reopening an active instance cannot abandon its lease
+PASS exclusive OS lease rejects a second store owner
+PASS empty and mismatched publication batches rejected
+PASS non-byte packet input rejected
+PASS publication count is capped before validating or writing packets
+PASS duplicate region in one batch rejected before writes
+PASS invalid later packet rejects the entire batch without orphaning its earlier packet
+PASS two region blobs publish through one catalog generation
+PASS catalog keys are deterministic signed triples
+PASS catalog lookup verifies exact stored region bytes
+PASS absent catalog region is explicit rather than an empty packet
+PASS stale expected checksum cannot overwrite a committed region
+PASS identical publication verifies the blob without advancing the catalog
+PASS matching version condition advances a region
+PASS previous complete catalog is retained as backup
+PASS stale delete cannot remove a newer region
+PASS conditional removal preserves unrelated catalog entries
+PASS close releases in-memory catalog state
+PASS a new owner reopens persisted catalog state after lease release
+PASS cleanup inspection budget is bounded
+PASS incremental cleanup removes obsolete and uncommitted valid blobs
+PASS cleanup preserves current and backup catalog references
+PASS cleanup preserves unrelated, corrupt and incorrectly named files
+PASS cleanup does not change the current authored version
+PASS backup selection is explicit even when the primary catalog is valid
+PASS cleanup is disabled until selected recovery is committed
+PASS publishing selected recovery advances beyond both known catalog generations
+PASS cleanup uses recovered current and retained backup versions after commit
+PASS corrupt primary reports recovery availability without silently rolling back or rewriting files
+PASS explicit recovery reads the previous valid region version
+PASS new publication replaces corrupt primary after explicit recovery
+PASS recovery never backs up the corrupt primary over the valid backup
+PASS two invalid catalogs never produce an empty successful world
+PASS existing blobs with missing catalogs cannot be reinitialized as an empty world
+PASS lazy region read rejects a corrupted cataloged blob
+PASS valid packet under the wrong content-addressed filename is rejected
+PASS immutable blob corruption prevents publication without changing the catalog
+PASS cleanup preserves even a corrupt blob referenced by the catalog
+PASS missing cataloged blob is an explicit read failure
+PASS out-of-owner catalog changes stop publication and cleanup
+PASS external change rejection leaves files untouched
+PASS uncommitted pending catalog is ignored on reopening
+PASS late blob I/O failure leaves the entire committed catalog unchanged
+PASS failed batch orphan is collectible while a conflicting directory is preserved
+PASS batch can retry after the filesystem obstruction is removed
+PASS checksummed malformed catalog rejected: count/generation/key/order/size/framing case 0
+PASS checksummed malformed catalog rejected: count/generation/key/order/size/framing case 1
+PASS checksummed malformed catalog rejected: count/generation/key/order/size/framing case 2
+PASS checksummed malformed catalog rejected: count/generation/key/order/size/framing case 3
+PASS checksummed malformed catalog rejected: count/generation/key/order/size/framing case 4
+PASS checksummed malformed catalog rejected: count/generation/key/order/size/framing case 5
+PASS checksummed malformed catalog rejected: count/generation/key/order/size/framing case 6
+PASS checksummed malformed catalog rejected: count/generation/key/order/size/framing case 7
+PASS oversized catalog rejected before allocating its file contents
+PASS invalid backup blocks cleanup even with a valid primary
+PASS normal publication replaces an invalid backup with the verified previous primary
+PASS persisted catalog packets acknowledge resident authored-region eviction
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS fresh engine process disk reconstruction
+
+PASS separate engine process reconstructs the exact world from committed disk files
+PASS new store object reopens the committed catalog
+PASS fresh world reconstructs exact authored bytes from disk catalog and blobs
+PASS I/O worker owns the same exclusive store lease
+PASS native publication and verification execute successfully on an I/O worker

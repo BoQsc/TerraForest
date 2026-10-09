@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: 0BSD
 #include "block_region_store.hpp"
+#include "static_batch.hpp"
 #include <godot_cpp/classes/hashing_context.hpp>
 #include <godot_cpp/core/class_db.hpp>
 #include <atomic>
@@ -10,7 +11,7 @@
 #include <windows.h>
 
 namespace terraforest {
-static constexpr int64_t CATALOG_LIMIT=4*1024*1024, BLOB_LIMIT=2*1024*1024;
+static constexpr int64_t CATALOG_LIMIT=4*1024*1024;
 static constexpr size_t REGION_LIMIT=65536;
 static Dictionary status(Error error,const String &message=String()) {
     Dictionary out;out["ok"]=error==OK;out["error"]=int(error);out["message"]=message;return out;
@@ -80,31 +81,46 @@ void NativeBlockRegionStore::_bind_methods() {
 PackedByteArray NativeBlockRegionStore::pack_digest(const Digest &value) {
     PackedByteArray out;out.resize(32);std::memcpy(out.ptrw(),value.data(),32);return out;
 }
-bool NativeBlockRegionStore::packet_entry(const PackedByteArray &bytes,BlockKey &key,Entry &entry) {
-    std::map<BlockKey,BlockChunk> chunks;
-    if(!NativeBlockWorld::parse_region(bytes,key,chunks))return false;
+bool NativeBlockRegionStore::set_model_asset(const String &asset) {
+    std::lock_guard<std::mutex> lock(mutex_);
+    if(lease_||!NativeStaticBatch::valid_asset(asset))return false;
+    model_asset_=asset;model_asset_hash_=digest(asset.to_utf8_buffer());return true;
+}
+bool NativeBlockRegionStore::packet_entry(const PackedByteArray &bytes,BlockKey &key,Entry &entry) const {
+    if(model_asset_.is_empty()) {
+        std::map<BlockKey,BlockChunk> chunks;
+        if(!NativeBlockWorld::parse_region(bytes,key,chunks))return false;
+    } else {
+        String asset;std::map<int64_t,NativeStaticBatch::Placement> values;
+        if(!NativeStaticBatch::parse_region(bytes,asset,key,values)||asset!=model_asset_)return false;
+    }
     std::memcpy(entry.digest.data(),bytes.ptr()+bytes.size()-32,32);entry.size=uint32_t(bytes.size());return true;
 }
-bool NativeBlockRegionStore::parse_catalog(const PackedByteArray &bytes,Catalog &entries,uint64_t &generation) {
-    if(bytes.size()<52||bytes.size()>CATALOG_LIMIT||
-       (std::memcmp(bytes.ptr(),"TFRC\1\0\0\0",8)&&std::memcmp(bytes.ptr(),"TFRC\2\0\0\0",8)))return false;
+bool NativeBlockRegionStore::parse_catalog(const PackedByteArray &bytes,Catalog &entries,uint64_t &generation) const {
+    const bool models=!model_asset_.is_empty();const int64_t header=models?52:20;
+    if(bytes.size()<header+32||bytes.size()>CATALOG_LIMIT)return false;
+    if(models) {
+        if(std::memcmp(bytes.ptr(),"TFMC\2\0\0\0",8)||bytes.slice(20,52)!=model_asset_hash_)return false;
+    } else if(std::memcmp(bytes.ptr(),"TFRC\1\0\0\0",8)&&std::memcmp(bytes.ptr(),"TFRC\2\0\0\0",8))return false;
     uint64_t gen=bytes.decode_u64(8),count=bytes.decode_u32(16);
-    if(!gen||gen>uint64_t(INT64_MAX)||count>REGION_LIMIT||bytes.size()!=int64_t(52+48*count))return false;
+    if(!gen||gen>uint64_t(INT64_MAX)||count>REGION_LIMIT||bytes.size()!=int64_t(header+32+48*count))return false;
     if(digest(bytes.slice(0,bytes.size()-32))!=bytes.slice(bytes.size()-32))return false;
     Catalog parsed;BlockKey previous;
     for(uint64_t i=0;i<count;i++) {
-        int64_t at=20+48*i;
+        int64_t at=header+48*i;
         BlockKey key{int(bytes.decode_s32(at)),int(bytes.decode_s32(at+4)),int(bytes.decode_s32(at+8))};
-        if(!NativeBlockWorld::valid_region(key)||(i&&!(previous<key)))return false;
+        if(!(models?NativeStaticBatch::valid_model_region(key):NativeBlockWorld::valid_region(key))||(i&&!(previous<key)))return false;
         Entry entry;entry.size=uint32_t(bytes.decode_u32(at+44));
-        if(entry.size<100||entry.size>BLOB_LIMIT)return false;
+        if(entry.size<(models?105:100)||entry.size>blob_limit())return false;
         std::memcpy(entry.digest.data(),bytes.ptr()+at+12,32);parsed.emplace(key,entry);previous=key;
     }
     entries=std::move(parsed);generation=gen;return true;
 }
-PackedByteArray NativeBlockRegionStore::encode_catalog(const Catalog &entries,uint64_t generation) {
-    PackedByteArray out;out.resize(20+48*entries.size());std::memcpy(out.ptrw(),"TFRC\2\0\0\0",8);
-    out.encode_u64(8,generation);out.encode_u32(16,uint32_t(entries.size()));int64_t at=20;
+PackedByteArray NativeBlockRegionStore::encode_catalog(const Catalog &entries,uint64_t generation) const {
+    const bool models=!model_asset_.is_empty();const int64_t header=models?52:20;
+    PackedByteArray out;out.resize(header+48*entries.size());std::memcpy(out.ptrw(),models?"TFMC\2\0\0\0":"TFRC\2\0\0\0",8);
+    if(models)std::memcpy(out.ptrw()+20,model_asset_hash_.ptr(),32);
+    out.encode_u64(8,generation);out.encode_u32(16,uint32_t(entries.size()));int64_t at=header;
     for(const auto &entry:entries) {
         out.encode_s32(at,entry.first.x);out.encode_s32(at+4,entry.first.y);out.encode_s32(at+8,entry.first.z);
         std::memcpy(out.ptrw()+at+12,entry.second.digest.data(),32);out.encode_u32(at+44,entry.second.size);at+=48;
@@ -218,7 +234,7 @@ Dictionary NativeBlockRegionStore::publish_regions(const Array &packets,const Ar
     for(const auto &item:pending) {
         const String target=directory_.path_join("blobs").path_join(pack_digest(item.entry.digest).hex_encode()+String(".tfrg"));
         PackedByteArray existing;bool exists=false;
-        if(!read_file(target,BLOB_LIMIT,existing,exists))return status(ERR_FILE_CANT_READ,"Cannot inspect content-addressed blob.");
+        if(!read_file(target,blob_limit(),existing,exists))return status(ERR_FILE_CANT_READ,"Cannot inspect content-addressed blob.");
         if(exists){if(existing!=item.bytes)return status(ERR_FILE_CORRUPT,"Existing immutable blob is corrupt; it was not overwritten.");continue;}
         String temporary;
         if(!write_pending(target,item.bytes,temporary))return status(ERR_FILE_CANT_WRITE,"Cannot flush and verify region blob.");
@@ -248,7 +264,7 @@ Dictionary NativeBlockRegionStore::read_region(Vector3i region) const {
 }
 Dictionary NativeBlockRegionStore::read_entry(const BlockKey &key,const Entry &stored,uint64_t generation) const {
     const auto expected=pack_digest(stored.digest);PackedByteArray bytes;bool exists=false;BlockKey parsed;Entry entry;
-    if(!read_file(directory_.path_join("blobs").path_join(expected.hex_encode()+String(".tfrg")),BLOB_LIMIT,bytes,exists)||!exists||
+    if(!read_file(directory_.path_join("blobs").path_join(expected.hex_encode()+String(".tfrg")),blob_limit(),bytes,exists)||!exists||
        bytes.size()!=stored.size||!packet_entry(bytes,parsed,entry)||parsed<key||key<parsed||entry.digest!=stored.digest)return status(ERR_FILE_CORRUPT,"Cataloged blob is missing or corrupt.");
     Dictionary out=status(OK);out["bytes"]=bytes;out["checksum"]=expected;out["generation"]=int64_t(generation);return out;
 }
@@ -425,7 +441,7 @@ Dictionary NativeBlockRegionStore::publish_storage_state(const PackedByteArray &
         Entry entry;std::memcpy(entry.digest.data(),hash.ptr(),32);entry.size=uint32_t(packet.size());next.emplace(region.first,entry);
         const String path=directory_.path_join("blobs").path_join(hash.hex_encode()+String(".tfrg"));
         PackedByteArray existing;bool exists=false;
-        if(!read_file(path,BLOB_LIMIT,existing,exists))return status(ERR_FILE_CANT_READ,"Cannot inspect region blob.");
+        if(!read_file(path,blob_limit(),existing,exists))return status(ERR_FILE_CANT_READ,"Cannot inspect region blob.");
         if(exists&&existing!=packet)return status(ERR_FILE_CORRUPT,"Existing region blob is corrupt.");
         if(!exists) {
             String temporary;if(!write_pending(path,packet,temporary))return status(ERR_FILE_CANT_WRITE,"Cannot flush region blob.");
@@ -448,7 +464,7 @@ Dictionary NativeBlockRegionStore::read_block_checkpoint(const PackedByteArray &
         PackedByteArray bytes;bool exists=false;BlockKey region;std::map<BlockKey,BlockChunk> decoded;
         const auto expected=pack_digest(entry.second.digest);
         const String path=directory_.path_join("blobs").path_join(expected.hex_encode()+String(".tfrg"));
-        if(!read_file(path,BLOB_LIMIT,bytes,exists)||!exists||bytes.size()!=entry.second.size||
+        if(!read_file(path,blob_limit(),bytes,exists)||!exists||bytes.size()!=entry.second.size||
            bytes.slice(bytes.size()-32)!=expected||!NativeBlockWorld::parse_region(bytes,region,decoded)||region<entry.first||entry.first<region)
             return status(ERR_FILE_CORRUPT,"Checkpoint region is missing or corrupt.");
         if(chunks.size()+decoded.size()>2048)return status(ERR_OUT_OF_MEMORY,"Checkpoint exceeds full-resident restore capacity.");
@@ -479,7 +495,7 @@ Dictionary NativeBlockRegionStore::collect_garbage(int max_inspected) {
             for(int i=0;i<32;i++)id[i]=uint8_t((nibble(name[i*2])<<4)|nibble(name[i*2+1]));
             if(!retained_.count(id)&&!pinned_blobs_.count(id)) {
                 const String path=directory_.path_join("blobs").path_join(name);PackedByteArray bytes;bool exists=false;BlockKey key;Entry entry;
-                if(read_file(path,BLOB_LIMIT,bytes,exists)&&exists&&packet_entry(bytes,key,entry)&&entry.digest==id) {
+                if(read_file(path,blob_limit(),bytes,exists)&&exists&&packet_entry(bytes,key,entry)&&entry.digest==id) {
                     const auto file=path.utf16();if(DeleteFileW(reinterpret_cast<LPCWSTR>(file.get_data()))){++removed;++deleted_;}
                 }
             }

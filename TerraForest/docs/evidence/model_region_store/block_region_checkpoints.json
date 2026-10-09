@@ -1,0 +1,5 @@
+{
+  "checks": 46,
+  "failures": 0,
+  "scope": "Persistent checkpoint references and garbage-collection protection; not integrated whole-world roots or physical crash certification."
+}

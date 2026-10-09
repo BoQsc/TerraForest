@@ -17,6 +17,7 @@ class NativeStaticBatch : public Node3D {
     GDCLASS(NativeStaticBatch,Node3D)
     friend class NativeStructuresSnapshot;
     friend class NativeStaticHistory;
+    friend class NativeBlockRegionStore;
     using Placement = std::array<float,12>;
     std::map<int64_t,Placement> placements;
     std::map<BlockKey,std::set<int64_t>> groups;

@@ -1,0 +1,26 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS initial complete world persists both regions
+PASS persisted region unloads before partial capture
+PASS partial capture carries exact unavailable-region reference
+PASS legacy complete capture remains guarded during partial residency
+PASS partial publication combines edited resident regions with saved missing region
+PASS partial publication preserves exact unavailable packet
+PASS new checkpoint reconstructs unloaded data together with resident edits
+PASS previous checkpoint remains unchanged
+PASS identical partial state avoids unnecessary catalog revision
+PASS invalid resident data rejects without mutating captured world values
+PASS incomplete unavailable xyz rejected
+PASS incomplete unavailable digest rejected
+PASS duplicate unavailable keys rejected
+PASS out-of-range unavailable region rejected
+PASS resident and unavailable region overlap rejected
+PASS uncataloged unavailable region cannot be invented
+PASS stale unavailable digest cannot preserve a different catalog version
+PASS rejected partial states leave committed catalog byte-identical
+PASS resident demolition removes absent resident regions but preserves missing data
+PASS unpersisted empty-region unload cannot be saved as a valid catalog reference
+PASS partial save preserves unloaded region across disk reopen
+PASS unavailable region can still be admitted after partial save
+PASS fully resident storage-state capture remains compatible
+PASS closed store rejects partial publication
