@@ -727,6 +727,7 @@ func _build_regions(key: Vector3i, expected_build_epoch: int, selected: Array, f
 	return {"key":key,"step":step,"bricks":parts,"brick_partial":not selected.is_empty(),"bytes":bytes,"triangles":triangles,"worker_ms":(Time.get_ticks_usec()-begin)/1000.0,"region_parts":parts.size(),"geometry_cache_hits":hits,"region_stages":stages}
 
 func _build(key: Vector3i, allow_base_cache: bool, expected_build_epoch: int, relight_cache: bool = false, brick_bottoms: Array = [], foreground: bool=false) -> Dictionary:
+	if not foreground and not _input_active(): disk_cache.advance_accounting()
 	if region_terrain: return _build_regions(key,expected_build_epoch,brick_bottoms,foreground)
 	if brick_terrain and key.z<=32 and key.x+key.z<=2000 and key.y+key.z<=2000:
 		return _build_bricks(key,expected_build_epoch,brick_bottoms)
@@ -896,6 +897,7 @@ func _run() -> void:
 		"components": components.duplicate(), "modified": modified, "stats": stats})
 	_startup_mark("published")
 	while true:
+		_advance_cache_when_idle()
 		semaphore.wait()
 		# All meshing modes serve bounded queries before taking another background
 		# job. The selector cannot cross an already queued mutation or save.
@@ -1108,3 +1110,17 @@ func _run() -> void:
 		active_kind = "idle"
 		diagnostic_active={}
 		mutex.unlock()
+
+func _advance_cache_when_idle() -> void:
+	var advanced:=false
+	while disk_cache.accounting_pending():
+		mutex.lock()
+		var allowed: bool=not stopping and not active_input and jobs.is_empty()
+		if allowed: active_kind="cache_accounting"
+		mutex.unlock()
+		if not allowed: break
+		disk_cache.advance_accounting();advanced=true
+		# Observe submissions/cancellation between every bounded filesystem slice.
+	if advanced:
+		_push({"kind":"cache_accounting","cache_stats":disk_cache.counters()})
+		mutex.lock();active_kind="idle";mutex.unlock()

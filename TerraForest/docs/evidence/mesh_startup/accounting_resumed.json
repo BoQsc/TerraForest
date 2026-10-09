@@ -1,0 +1,7300 @@
+{
+  "cache": {
+    "accounting_complete": false,
+    "cache_read_only": true,
+    "corrupt": 0,
+    "disk_bytes": 536870912,
+    "enabled": true,
+    "hits": 0,
+    "misses": 584,
+    "scan_entries": 457,
+    "write_failures": 0,
+    "writes": 0
+  },
+  "events": [
+    {
+      "id": 1,
+      "ms": 4745.251
+    },
+    {
+      "id": 2,
+      "ms": 9595.31
+    },
+    {
+      "id": 3,
+      "ms": 20977.775
+    },
+    {
+      "id": 4,
+      "ms": 31377.86
+    }
+  ],
+  "final": {
+    "lakes": 4,
+    "outstanding_slices": 0,
+    "ready": 4,
+    "resident_occupancy_bytes": 200704
+  },
+  "mesh_jobs": [
+    {
+      "bytes": 48884,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 3481134,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        800,
+        1296,
+        16
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 614,
+      "worker_ms": 6.032
+    },
+    {
+      "bytes": 207340,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 3481162,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        896,
+        1280,
+        128
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 4736,
+      "worker_ms": 54.143
+    },
+    {
+      "bytes": 178188,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 3481175,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        768,
+        1408,
+        128
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 4052,
+      "worker_ms": 39.58
+    },
+    {
+      "bytes": 207444,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 3513335,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        896,
+        1408,
+        128
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 4740,
+      "worker_ms": 53.354
+    },
+    {
+      "bytes": 190740,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 3546588,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        832,
+        1280,
+        64
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 4566,
+      "worker_ms": 20.236
+    },
+    {
+      "bytes": 388164,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 3580110,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        768,
+        1344,
+        64
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 9482,
+      "worker_ms": 24.502
+    },
+    {
+      "bytes": 200132,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 3596463,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        832,
+        1344,
+        64
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 4784,
+      "worker_ms": 12.077
+    },
+    {
+      "bytes": 187220,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 3613208,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        768,
+        1280,
+        32
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2404,
+      "worker_ms": 8.854
+    },
+    {
+      "bytes": 195060,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 3646917,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        800,
+        1312,
+        32
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2516,
+      "worker_ms": 8.201
+    },
+    {
+      "bytes": 202060,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 3663437,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        768,
+        1312,
+        32
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2600,
+      "worker_ms": 9.804
+    },
+    {
+      "bytes": 52020,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 3679956,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        800,
+        1280,
+        16
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 656,
+      "worker_ms": 2.792
+    },
+    {
+      "bytes": 50692,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 3679987,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        816,
+        1296,
+        16
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 640,
+      "worker_ms": 2.781
+    },
+    {
+      "bytes": 49204,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 3697427,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        816,
+        1280,
+        16
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 616,
+      "worker_ms": 3.0
+    },
+    {
+      "bytes": 196212,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 3713634,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        800,
+        1280,
+        32
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2526,
+      "worker_ms": 6.731
+    },
+    {
+      "bytes": 49700,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 3730025,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        784,
+        1296,
+        16
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 624,
+      "worker_ms": 2.841
+    },
+    {
+      "bytes": 53980,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 3746531,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        800,
+        1312,
+        16
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 684,
+      "worker_ms": 2.688
+    },
+    {
+      "bytes": 44252,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 3780366,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        784,
+        1280,
+        16
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 556,
+      "worker_ms": 3.979
+    },
+    {
+      "bytes": 48828,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 3813319,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        768,
+        1296,
+        16
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 614,
+      "worker_ms": 2.057
+    },
+    {
+      "bytes": 48748,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 3813355,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        768,
+        1280,
+        16
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 610,
+      "worker_ms": 2.061
+    },
+    {
+      "bytes": 49628,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 3829816,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        816,
+        1312,
+        16
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 626,
+      "worker_ms": 2.695
+    },
+    {
+      "bytes": 49588,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 3863485,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        800,
+        1328,
+        16
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 624,
+      "worker_ms": 2.757
+    },
+    {
+      "bytes": 46228,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 3879805,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        816,
+        1328,
+        16
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 582,
+      "worker_ms": 2.539
+    },
+    {
+      "bytes": 54356,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 3896470,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        784,
+        1312,
+        16
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 686,
+      "worker_ms": 2.865
+    },
+    {
+      "bytes": 184564,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 3913135,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        800,
+        1248,
+        32
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2372,
+      "worker_ms": 6.092
+    },
+    {
+      "bytes": 47060,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 3929943,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        768,
+        1312,
+        16
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 590,
+      "worker_ms": 2.085
+    },
+    {
+      "bytes": 55476,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 3946813,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        784,
+        1328,
+        16
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 700,
+      "worker_ms": 2.833
+    },
+    {
+      "bytes": 49756,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 3963129,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        768,
+        1328,
+        16
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 624,
+      "worker_ms": 2.864
+    },
+    {
+      "bytes": 47916,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 3979808,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        800,
+        1264,
+        16
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 602,
+      "worker_ms": 2.953
+    },
+    {
+      "bytes": 177380,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 4046446,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        896,
+        1152,
+        128
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 4036,
+      "worker_ms": 36.257
+    },
+    {
+      "bytes": 184300,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 4113107,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        768,
+        1024,
+        128
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 4202,
+      "worker_ms": 41.223
+    },
+    {
+      "bytes": 183188,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 4146454,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        896,
+        1024,
+        128
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 4156,
+      "worker_ms": 34.412
+    },
+    {
+      "bytes": 163220,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 4179828,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        832,
+        1216,
+        64
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 3878,
+      "worker_ms": 13.93
+    },
+    {
+      "bytes": 136036,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 4213118,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        768,
+        1152,
+        64
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 3190,
+      "worker_ms": 11.401
+    },
+    {
+      "bytes": 134676,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 4229772,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        832,
+        1152,
+        64
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 3142,
+      "worker_ms": 10.127
+    },
+    {
+      "bytes": 189468,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 4246462,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        768,
+        1248,
+        32
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2438,
+      "worker_ms": 5.206
+    },
+    {
+      "bytes": 182820,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 4263218,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        800,
+        1216,
+        32
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2352,
+      "worker_ms": 5.142
+    },
+    {
+      "bytes": 188044,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 4296453,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        768,
+        1216,
+        32
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2420,
+      "worker_ms": 4.696
+    },
+    {
+      "bytes": 48332,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 4296488,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        816,
+        1264,
+        16
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 606,
+      "worker_ms": 2.306
+    },
+    {
+      "bytes": 48636,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 4313126,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        800,
+        1248,
+        16
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 610,
+      "worker_ms": 1.843
+    },
+    {
+      "bytes": 44548,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 4329871,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        816,
+        1248,
+        16
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 554,
+      "worker_ms": 3.058
+    },
+    {
+      "bytes": 186980,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 4346658,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        832,
+        1280,
+        32
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2406,
+      "worker_ms": 5.314
+    },
+    {
+      "bytes": 49172,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 4363133,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        832,
+        1296,
+        16
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 620,
+      "worker_ms": 2.342
+    },
+    {
+      "bytes": 49740,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 4379927,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        832,
+        1280,
+        16
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 626,
+      "worker_ms": 2.009
+    },
+    {
+      "bytes": 49244,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 4396453,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        784,
+        1264,
+        16
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 618,
+      "worker_ms": 2.411
+    },
+    {
+      "bytes": 177252,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 4446468,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        832,
+        1312,
+        32
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2278,
+      "worker_ms": 4.572
+    },
+    {
+      "bytes": 177844,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 4446511,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        864,
+        1280,
+        32
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2288,
+      "worker_ms": 3.955
+    },
+    {
+      "bytes": 187036,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 4463099,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        864,
+        1312,
+        32
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2406,
+      "worker_ms": 4.421
+    },
+    {
+      "bytes": 45580,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 4479795,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        832,
+        1312,
+        16
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 572,
+      "worker_ms": 1.869
+    },
+    {
+      "bytes": 46948,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 4513184,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        848,
+        1296,
+        16
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 590,
+      "worker_ms": 2.639
+    },
+    {
+      "bytes": 45540,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 4513247,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        848,
+        1280,
+        16
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 570,
+      "worker_ms": 1.894
+    },
+    {
+      "bytes": 1230588,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 4729913,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        768,
+        1280,
+        256
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 29900,
+      "worker_ms": 209.014
+    },
+    {
+      "bytes": 467588,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 4929777,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        768,
+        1024,
+        256
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 10860,
+      "worker_ms": 186.459
+    },
+    {
+      "bytes": 50212,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 4963232,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        768,
+        1264,
+        16
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 630,
+      "worker_ms": 1.973
+    },
+    {
+      "bytes": 47860,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 4979772,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        784,
+        1248,
+        16
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 602,
+      "worker_ms": 1.785
+    },
+    {
+      "bytes": 46796,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 4996443,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        768,
+        1248,
+        16
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 588,
+      "worker_ms": 2.19
+    },
+    {
+      "bytes": 341676,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 5263096,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        512,
+        1280,
+        256
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 7484,
+      "worker_ms": 251.17
+    },
+    {
+      "bytes": 42732,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 5296386,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        832,
+        1328,
+        16
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 536,
+      "worker_ms": 3.085
+    },
+    {
+      "bytes": 49188,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 5296424,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        848,
+        1312,
+        16
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 618,
+      "worker_ms": 2.176
+    },
+    {
+      "bytes": 43892,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 5313104,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        848,
+        1328,
+        16
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 552,
+      "worker_ms": 2.428
+    },
+    {
+      "bytes": 289436,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 5546372,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        512,
+        1024,
+        256
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 6374,
+      "worker_ms": 219.342
+    },
+    {
+      "bytes": 188748,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 5579721,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        832,
+        1248,
+        32
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2430,
+      "worker_ms": 4.914
+    },
+    {
+      "bytes": 49756,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 5579757,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        832,
+        1264,
+        16
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 624,
+      "worker_ms": 2.246
+    },
+    {
+      "bytes": 47292,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 5596409,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        832,
+        1248,
+        16
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 596,
+      "worker_ms": 2.254
+    },
+    {
+      "bytes": 49644,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 5613064,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        848,
+        1264,
+        16
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 624,
+      "worker_ms": 2.07
+    },
+    {
+      "bytes": 176836,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 5646453,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        736,
+        1280,
+        32
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2274,
+      "worker_ms": 8.245
+    },
+    {
+      "bytes": 48220,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 5663059,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        752,
+        1296,
+        16
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 606,
+      "worker_ms": 2.076
+    },
+    {
+      "bytes": 48524,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 5679702,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        752,
+        1280,
+        16
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 610,
+      "worker_ms": 2.071
+    },
+    {
+      "bytes": 177692,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 5679733,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        800,
+        1344,
+        32
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2286,
+      "worker_ms": 5.812
+    },
+    {
+      "bytes": 43796,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 5713197,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        800,
+        1344,
+        16
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 550,
+      "worker_ms": 4.855
+    },
+    {
+      "bytes": 46324,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 5713229,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        816,
+        1344,
+        16
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 584,
+      "worker_ms": 3.324
+    },
+    {
+      "bytes": 183844,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 5729718,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        736,
+        1312,
+        32
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2364,
+      "worker_ms": 5.122
+    },
+    {
+      "bytes": 47972,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 5746388,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        752,
+        1312,
+        16
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 602,
+      "worker_ms": 1.789
+    },
+    {
+      "bytes": 201964,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 5779762,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        768,
+        1344,
+        32
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2598,
+      "worker_ms": 5.982
+    },
+    {
+      "bytes": 50420,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 5796376,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        784,
+        1344,
+        16
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 632,
+      "worker_ms": 2.84
+    },
+    {
+      "bytes": 186140,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 5813051,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        736,
+        1248,
+        32
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2392,
+      "worker_ms": 4.773
+    },
+    {
+      "bytes": 47764,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 5829713,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        752,
+        1264,
+        16
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 600,
+      "worker_ms": 2.148
+    },
+    {
+      "bytes": 183620,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 5846691,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        832,
+        1344,
+        32
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2364,
+      "worker_ms": 5.315
+    },
+    {
+      "bytes": 46924,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 5846748,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        848,
+        1248,
+        16
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 586,
+      "worker_ms": 1.783
+    },
+    {
+      "bytes": 48236,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 5879708,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        752,
+        1328,
+        16
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 604,
+      "worker_ms": 1.998
+    },
+    {
+      "bytes": 52132,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 5879743,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        768,
+        1344,
+        16
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 656,
+      "worker_ms": 2.651
+    },
+    {
+      "bytes": 180940,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 5896390,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        832,
+        1216,
+        32
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2328,
+      "worker_ms": 4.866
+    },
+    {
+      "bytes": 180084,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 5913090,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        864,
+        1248,
+        32
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2316,
+      "worker_ms": 4.809
+    },
+    {
+      "bytes": 46492,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 5946415,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        752,
+        1248,
+        16
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 584,
+      "worker_ms": 2.36
+    },
+    {
+      "bytes": 42220,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 5946455,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        736,
+        1296,
+        16
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 530,
+      "worker_ms": 1.809
+    },
+    {
+      "bytes": 42236,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 5963104,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        736,
+        1280,
+        16
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 528,
+      "worker_ms": 1.781
+    },
+    {
+      "bytes": 45580,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 5996422,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        800,
+        1360,
+        16
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 572,
+      "worker_ms": 4.922
+    },
+    {
+      "bytes": 46076,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 6029932,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        816,
+        1360,
+        16
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 580,
+      "worker_ms": 3.512
+    },
+    {
+      "bytes": 46132,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 6046390,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        736,
+        1312,
+        16
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 580,
+      "worker_ms": 2.113
+    },
+    {
+      "bytes": 49548,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 6063125,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        784,
+        1360,
+        16
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 622,
+      "worker_ms": 3.547
+    },
+    {
+      "bytes": 205916,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 6079731,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        736,
+        1344,
+        32
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2650,
+      "worker_ms": 4.708
+    },
+    {
+      "bytes": 47100,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 6096592,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        736,
+        1264,
+        16
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 592,
+      "worker_ms": 1.883
+    },
+    {
+      "bytes": 45980,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 6113067,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        736,
+        1328,
+        16
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 578,
+      "worker_ms": 1.832
+    },
+    {
+      "bytes": 54676,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 6129714,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        768,
+        1360,
+        16
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 688,
+      "worker_ms": 2.169
+    },
+    {
+      "bytes": 183916,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 6146369,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        736,
+        1216,
+        32
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2362,
+      "worker_ms": 4.358
+    },
+    {
+      "bytes": 194908,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 6179708,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        864,
+        1344,
+        32
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2500,
+      "worker_ms": 4.784
+    },
+    {
+      "bytes": 49092,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 6196391,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        736,
+        1248,
+        16
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 616,
+      "worker_ms": 1.992
+    },
+    {
+      "bytes": 188292,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 6213022,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        864,
+        1216,
+        32
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2424,
+      "worker_ms": 5.206
+    },
+    {
+      "bytes": 177500,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 6229982,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        704,
+        1280,
+        32
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2282,
+      "worker_ms": 4.663
+    },
+    {
+      "bytes": 183540,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 6279738,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        800,
+        1376,
+        32
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2360,
+      "worker_ms": 7.986
+    },
+    {
+      "bytes": 185252,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 6296373,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        704,
+        1312,
+        32
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2384,
+      "worker_ms": 5.187
+    },
+    {
+      "bytes": 203932,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 6313036,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        768,
+        1376,
+        32
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2618,
+      "worker_ms": 5.906
+    },
+    {
+      "bytes": 192940,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 6329702,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        704,
+        1248,
+        32
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2480,
+      "worker_ms": 5.362
+    },
+    {
+      "bytes": 196908,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 6379735,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        832,
+        1376,
+        32
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2530,
+      "worker_ms": 8.095
+    },
+    {
+      "bytes": 187060,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 6396526,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        800,
+        1184,
+        32
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2410,
+      "worker_ms": 5.842
+    },
+    {
+      "bytes": 169692,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 6413012,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        896,
+        1280,
+        32
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2180,
+      "worker_ms": 4.721
+    },
+    {
+      "bytes": 187700,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 6429706,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        768,
+        1184,
+        32
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2414,
+      "worker_ms": 4.463
+    },
+    {
+      "bytes": 190628,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 6446515,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        896,
+        1312,
+        32
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2454,
+      "worker_ms": 5.208
+    },
+    {
+      "bytes": 189988,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 6463016,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        832,
+        1184,
+        32
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2436,
+      "worker_ms": 5.334
+    },
+    {
+      "bytes": 176228,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 6479698,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        896,
+        1248,
+        32
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2266,
+      "worker_ms": 4.995
+    },
+    {
+      "bytes": 220284,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 6496414,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        704,
+        1344,
+        32
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2828,
+      "worker_ms": 6.05
+    },
+    {
+      "bytes": 209612,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 6513180,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        736,
+        1376,
+        32
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2692,
+      "worker_ms": 5.032
+    },
+    {
+      "bytes": 186676,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 6529859,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        704,
+        1216,
+        32
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2402,
+      "worker_ms": 4.308
+    },
+    {
+      "bytes": 188228,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 6546363,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        864,
+        1376,
+        32
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2418,
+      "worker_ms": 6.174
+    },
+    {
+      "bytes": 187924,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 6579679,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        736,
+        1184,
+        32
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2414,
+      "worker_ms": 4.427
+    },
+    {
+      "bytes": 202972,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 6596465,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        896,
+        1344,
+        32
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2612,
+      "worker_ms": 5.818
+    },
+    {
+      "bytes": 183212,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 6613018,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        864,
+        1184,
+        32
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2352,
+      "worker_ms": 5.334
+    },
+    {
+      "bytes": 176116,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 6613049,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        896,
+        1216,
+        32
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2266,
+      "worker_ms": 3.923
+    },
+    {
+      "bytes": 238652,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 6646510,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        704,
+        1376,
+        32
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 3066,
+      "worker_ms": 6.273
+    },
+    {
+      "bytes": 179628,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 6663026,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        704,
+        1184,
+        32
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2310,
+      "worker_ms": 4.973
+    },
+    {
+      "bytes": 189916,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 6679763,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        896,
+        1376,
+        32
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2438,
+      "worker_ms": 4.127
+    },
+    {
+      "bytes": 189980,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 6679815,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        800,
+        1152,
+        32
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2444,
+      "worker_ms": 4.561
+    },
+    {
+      "bytes": 175276,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 6713191,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        928,
+        1280,
+        32
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2252,
+      "worker_ms": 4.432
+    },
+    {
+      "bytes": 194596,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 6729700,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        768,
+        1152,
+        32
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2504,
+      "worker_ms": 5.813
+    },
+    {
+      "bytes": 199612,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 6746346,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        928,
+        1312,
+        32
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2570,
+      "worker_ms": 5.662
+    },
+    {
+      "bytes": 193796,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 6763028,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        832,
+        1152,
+        32
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2492,
+      "worker_ms": 5.515
+    },
+    {
+      "bytes": 186068,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 6813012,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        928,
+        1248,
+        32
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2394,
+      "worker_ms": 5.616
+    },
+    {
+      "bytes": 178468,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 6829754,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        736,
+        1152,
+        32
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2294,
+      "worker_ms": 8.081
+    },
+    {
+      "bytes": 202868,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 6846331,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        928,
+        1344,
+        32
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2604,
+      "worker_ms": 5.343
+    },
+    {
+      "bytes": 177196,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 6863158,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        864,
+        1152,
+        32
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2278,
+      "worker_ms": 4.298
+    },
+    {
+      "bytes": 172524,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 6912989,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        928,
+        1216,
+        32
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2218,
+      "worker_ms": 6.737
+    },
+    {
+      "bytes": 177596,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 6929748,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        704,
+        1152,
+        32
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2284,
+      "worker_ms": 4.519
+    },
+    {
+      "bytes": 189140,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 6946342,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        928,
+        1376,
+        32
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2430,
+      "worker_ms": 4.999
+    },
+    {
+      "bytes": 1058956,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 7013004,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        768,
+        1280,
+        128
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 26032,
+      "worker_ms": 62.528
+    },
+    {
+      "bytes": 410500,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 7063034,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        768,
+        1280,
+        64
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 10046,
+      "worker_ms": 22.057
+    },
+    {
+      "bytes": 397332,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 7379650,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        1024,
+        1280,
+        256
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 8594,
+      "worker_ms": 304.252
+    },
+    {
+      "bytes": 871716,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 7662982,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        1024,
+        1024,
+        256
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 20798,
+      "worker_ms": 264.584
+    },
+    {
+      "bytes": 369804,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 7713163,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        768,
+        1152,
+        128
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 8834,
+      "worker_ms": 45.185
+    },
+    {
+      "bytes": 244460,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 7746298,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        768,
+        1216,
+        64
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 5902,
+      "worker_ms": 12.676
+    },
+    {
+      "bytes": 284692,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 7962950,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        768,
+        1536,
+        256
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 6282,
+      "worker_ms": 196.501
+    },
+    {
+      "bytes": 808204,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 8446273,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        512,
+        1536,
+        256
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 19122,
+      "worker_ms": 473.898
+    },
+    {
+      "bytes": 220604,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 8496246,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        640,
+        1280,
+        128
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 4992,
+      "worker_ms": 49.587
+    },
+    {
+      "bytes": 131420,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 8546256,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        704,
+        1280,
+        64
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 3076,
+      "worker_ms": 10.648
+    },
+    {
+      "bytes": 182116,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 8596824,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        640,
+        1152,
+        128
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 4146,
+      "worker_ms": 39.431
+    },
+    {
+      "bytes": 134084,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 8612915,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        704,
+        1216,
+        64
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 3144,
+      "worker_ms": 10.404
+    },
+    {
+      "bytes": 156308,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 8629584,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        704,
+        1344,
+        64
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 3652,
+      "worker_ms": 12.454
+    },
+    {
+      "bytes": 268172,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 8862911,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        768,
+        768,
+        256
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 5890,
+      "worker_ms": 195.938
+    },
+    {
+      "bytes": 269580,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 9063098,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        512,
+        768,
+        256
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 5914,
+      "worker_ms": 195.745
+    },
+    {
+      "bytes": 132836,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 9096296,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        896,
+        1280,
+        64
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 3110,
+      "worker_ms": 10.018
+    },
+    {
+      "bytes": 126908,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 9129605,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        896,
+        1216,
+        64
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2980,
+      "worker_ms": 10.126
+    },
+    {
+      "bytes": 129380,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 9146438,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        704,
+        1152,
+        64
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 3032,
+      "worker_ms": 11.074
+    },
+    {
+      "bytes": 139668,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 9162906,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        896,
+        1344,
+        64
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 3264,
+      "worker_ms": 10.253
+    },
+    {
+      "bytes": 331892,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 9496246,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        256,
+        1280,
+        256
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 7224,
+      "worker_ms": 321.174
+    },
+    {
+      "bytes": 319068,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 9762937,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        256,
+        1024,
+        256
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 7112,
+      "worker_ms": 257.666
+    },
+    {
+      "bytes": 165900,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 9796317,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        640,
+        1280,
+        64
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 3882,
+      "worker_ms": 12.905
+    },
+    {
+      "bytes": 141508,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 9829567,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        768,
+        1408,
+        64
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 3324,
+      "worker_ms": 20.842
+    },
+    {
+      "bytes": 131684,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 9846273,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        640,
+        1216,
+        64
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 3084,
+      "worker_ms": 9.747
+    },
+    {
+      "bytes": 128244,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 9879597,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        832,
+        1408,
+        64
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2998,
+      "worker_ms": 10.517
+    },
+    {
+      "bytes": 189868,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 9896565,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        640,
+        1344,
+        64
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 4428,
+      "worker_ms": 15.355
+    },
+    {
+      "bytes": 235972,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 9962942,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        640,
+        1408,
+        128
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 5316,
+      "worker_ms": 56.281
+    },
+    {
+      "bytes": 159596,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 10029575,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        704,
+        1408,
+        64
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 3730,
+      "worker_ms": 14.111
+    },
+    {
+      "bytes": 707596,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 10446216,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        1024,
+        1536,
+        256
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 16520,
+      "worker_ms": 413.205
+    },
+    {
+      "bytes": 128028,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 10479543,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        896,
+        1152,
+        64
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2994,
+      "worker_ms": 13.006
+    },
+    {
+      "bytes": 127156,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 10496197,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        640,
+        1152,
+        64
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2982,
+      "worker_ms": 10.613
+    },
+    {
+      "bytes": 125796,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 10513595,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        896,
+        1408,
+        64
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2948,
+      "worker_ms": 10.918
+    },
+    {
+      "bytes": 132628,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 10546195,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        768,
+        1088,
+        64
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 3116,
+      "worker_ms": 10.062
+    },
+    {
+      "bytes": 294644,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 10762945,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        1024,
+        768,
+        256
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 6416,
+      "worker_ms": 208.9
+    },
+    {
+      "bytes": 144500,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 10779536,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        960,
+        1280,
+        64
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 3396,
+      "worker_ms": 11.271
+    },
+    {
+      "bytes": 139492,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 10812837,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        832,
+        1088,
+        64
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 3268,
+      "worker_ms": 12.049
+    },
+    {
+      "bytes": 128724,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 10829510,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        960,
+        1216,
+        64
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 3024,
+      "worker_ms": 9.766
+    },
+    {
+      "bytes": 182476,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 10846364,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        640,
+        1408,
+        64
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 4260,
+      "worker_ms": 12.638
+    },
+    {
+      "bytes": 179092,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 10912846,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        640,
+        1024,
+        128
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 4062,
+      "worker_ms": 38.742
+    },
+    {
+      "bytes": 125276,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 10929558,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        704,
+        1088,
+        64
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2928,
+      "worker_ms": 10.364
+    },
+    {
+      "bytes": 166764,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 10946173,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        960,
+        1344,
+        64
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 3898,
+      "worker_ms": 12.119
+    },
+    {
+      "bytes": 126492,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 10962845,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        896,
+        1088,
+        64
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2964,
+      "worker_ms": 9.427
+    },
+    {
+      "bytes": 123756,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 10996570,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        960,
+        1152,
+        64
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2890,
+      "worker_ms": 9.075
+    },
+    {
+      "bytes": 262244,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 11062828,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        512,
+        1280,
+        128
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 5970,
+      "worker_ms": 56.561
+    },
+    {
+      "bytes": 196284,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 11079508,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        576,
+        1280,
+        64
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 4594,
+      "worker_ms": 13.561
+    },
+    {
+      "bytes": 123716,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 11112853,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        768,
+        1472,
+        64
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2896,
+      "worker_ms": 10.841
+    },
+    {
+      "bytes": 208092,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 11162819,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        512,
+        1152,
+        128
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 4752,
+      "worker_ms": 44.459
+    },
+    {
+      "bytes": 152308,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 11196165,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        576,
+        1216,
+        64
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 3566,
+      "worker_ms": 10.571
+    },
+    {
+      "bytes": 127764,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 11212815,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        832,
+        1472,
+        64
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 3000,
+      "worker_ms": 9.949
+    },
+    {
+      "bytes": 197348,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 11229497,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        576,
+        1344,
+        64
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 4622,
+      "worker_ms": 14.288
+    },
+    {
+      "bytes": 157380,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 11246152,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        704,
+        1472,
+        64
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 3676,
+      "worker_ms": 11.056
+    },
+    {
+      "bytes": 2352796,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 12479466,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        256,
+        1536,
+        256
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 57692,
+      "worker_ms": 1214.695
+    },
+    {
+      "bytes": 131612,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 12496092,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        640,
+        1088,
+        64
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 3078,
+      "worker_ms": 9.736
+    },
+    {
+      "bytes": 171316,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 12529544,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        960,
+        1408,
+        64
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 4030,
+      "worker_ms": 12.647
+    },
+    {
+      "bytes": 129412,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 12546128,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        576,
+        1152,
+        64
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 3030,
+      "worker_ms": 10.659
+    },
+    {
+      "bytes": 124996,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 12579682,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        896,
+        1472,
+        64
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2914,
+      "worker_ms": 13.008
+    },
+    {
+      "bytes": 246588,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 12646098,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        512,
+        1408,
+        128
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 5608,
+      "worker_ms": 60.746
+    },
+    {
+      "bytes": 194252,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 12662752,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        640,
+        1472,
+        64
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 4546,
+      "worker_ms": 13.828
+    },
+    {
+      "bytes": 271124,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 12879492,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        256,
+        768,
+        256
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 5954,
+      "worker_ms": 195.539
+    },
+    {
+      "bytes": 123748,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 12896086,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        960,
+        1088,
+        64
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2894,
+      "worker_ms": 9.768
+    },
+    {
+      "bytes": 130844,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 12946088,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        768,
+        1024,
+        64
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 3070,
+      "worker_ms": 9.349
+    },
+    {
+      "bytes": 317220,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 13012764,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        1024,
+        1280,
+        128
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 7224,
+      "worker_ms": 67.473
+    },
+    {
+      "bytes": 137924,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 13029417,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        832,
+        1024,
+        64
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 3240,
+      "worker_ms": 10.319
+    },
+    {
+      "bytes": 254420,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 13096077,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        1024,
+        1152,
+        128
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 5836,
+      "worker_ms": 54.125
+    },
+    {
+      "bytes": 128196,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 13129406,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        704,
+        1024,
+        64
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2994,
+      "worker_ms": 10.158
+    },
+    {
+      "bytes": 176748,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 13212761,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        512,
+        1024,
+        128
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 4016,
+      "worker_ms": 38.607
+    },
+    {
+      "bytes": 160044,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 13229416,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        960,
+        1472,
+        64
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 3772,
+      "worker_ms": 11.026
+    },
+    {
+      "bytes": 129044,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 13246199,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        896,
+        1024,
+        64
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 3018,
+      "worker_ms": 9.527
+    },
+    {
+      "bytes": 193108,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 13262740,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        512,
+        1280,
+        64
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 4516,
+      "worker_ms": 12.258
+    },
+    {
+      "bytes": 179132,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 13312741,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        768,
+        1536,
+        128
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 4070,
+      "worker_ms": 38.14
+    },
+    {
+      "bytes": 189348,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 13346141,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        512,
+        1216,
+        64
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 4464,
+      "worker_ms": 14.664
+    },
+    {
+      "bytes": 130612,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 13362769,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        640,
+        1024,
+        64
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 3060,
+      "worker_ms": 9.851
+    },
+    {
+      "bytes": 284380,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 13429420,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        1024,
+        1408,
+        128
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 6466,
+      "worker_ms": 58.103
+    },
+    {
+      "bytes": 180732,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 13462743,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        512,
+        1344,
+        64
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 4236,
+      "worker_ms": 12.682
+    },
+    {
+      "bytes": 245460,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 13579572,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        640,
+        1536,
+        128
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 5584,
+      "worker_ms": 63.516
+    },
+    {
+      "bytes": 126236,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 13596122,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        512,
+        1152,
+        64
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 2952,
+      "worker_ms": 11.636
+    },
+    {
+      "bytes": 200300,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 13662782,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        896,
+        1536,
+        128
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 4560,
+      "worker_ms": 50.37
+    },
+    {
+      "bytes": 137332,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 13696083,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        960,
+        1024,
+        64
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 3214,
+      "worker_ms": 11.778
+    },
+    {
+      "bytes": 186052,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 13779436,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        1024,
+        1024,
+        128
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 4222,
+      "worker_ms": 49.048
+    },
+    {
+      "bytes": 2295924,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 14996083,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        1280,
+        1280,
+        256
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 56322,
+      "worker_ms": 1207.473
+    },
+    {
+      "bytes": 365444,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 15295968,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        1280,
+        1024,
+        256
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 8144,
+      "worker_ms": 285.975
+    },
+    {
+      "bytes": 182924,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 15362703,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        768,
+        896,
+        128
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 4162,
+      "worker_ms": 43.545
+    },
+    {
+      "bytes": 181468,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 15412702,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        640,
+        896,
+        128
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 4120,
+      "worker_ms": 50.949
+    },
+    {
+      "bytes": 187868,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 15462663,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        896,
+        896,
+        128
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 4238,
+      "worker_ms": 40.211
+    },
+    {
+      "bytes": 684908,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 15612611,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        512,
+        1536,
+        128
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 16552,
+      "worker_ms": 127.854
+    },
+    {
+      "bytes": 999676,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 15812621,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        768,
+        1792,
+        256
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 24186,
+      "worker_ms": 203.17
+    },
+    {
+      "bytes": 1004548,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 16029286,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        512,
+        1792,
+        256
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 24074,
+      "worker_ms": 201.811
+    },
+    {
+      "bytes": 234908,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 16112619,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        384,
+        1280,
+        128
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 5330,
+      "worker_ms": 58.969
+    },
+    {
+      "bytes": 234140,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 16162609,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        384,
+        1152,
+        128
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 5378,
+      "worker_ms": 51.04
+    },
+    {
+      "bytes": 309484,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 16245968,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        1024,
+        1536,
+        128
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 7088,
+      "worker_ms": 68.415
+    },
+    {
+      "bytes": 202508,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 16312601,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        384,
+        1408,
+        128
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 4604,
+      "worker_ms": 45.202
+    },
+    {
+      "bytes": 448660,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 16629314,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        1280,
+        1536,
+        256
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 10090,
+      "worker_ms": 307.853
+    },
+    {
+      "bytes": 182372,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 16695936,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        512,
+        896,
+        128
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 4144,
+      "worker_ms": 53.492
+    },
+    {
+      "bytes": 334244,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 16945910,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        768,
+        512,
+        256
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 7224,
+      "worker_ms": 236.57
+    },
+    {
+      "bytes": 348020,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 17195904,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        512,
+        512,
+        256
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 7700,
+      "worker_ms": 247.95
+    },
+    {
+      "bytes": 183996,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 17245891,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        384,
+        1024,
+        128
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 4172,
+      "worker_ms": 37.686
+    },
+    {
+      "bytes": 1108588,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 17479291,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        1024,
+        1792,
+        256
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 26766,
+      "worker_ms": 212.402
+    },
+    {
+      "bytes": 260948,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 17545885,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        1152,
+        1280,
+        128
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 5848,
+      "worker_ms": 56.355
+    },
+    {
+      "bytes": 810660,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 17629220,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        1152,
+        1152,
+        128
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 19560,
+      "worker_ms": 75.62
+    },
+    {
+      "bytes": 341188,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 17896215,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        1280,
+        768,
+        256
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 7392,
+      "worker_ms": 259.955
+    },
+    {
+      "bytes": 191564,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 17945899,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        1024,
+        896,
+        128
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 4350,
+      "worker_ms": 43.924
+    },
+    {
+      "bytes": 1564716,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 18279265,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        0,
+        1280,
+        256
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 38018,
+      "worker_ms": 317.636
+    },
+    {
+      "bytes": 1408460,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 18529185,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        0,
+        1024,
+        256
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 34316,
+      "worker_ms": 232.321
+    },
+    {
+      "bytes": 218316,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 18595902,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        1152,
+        1408,
+        128
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 4862,
+      "worker_ms": 51.438
+    },
+    {
+      "bytes": 187908,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 18645863,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        768,
+        1664,
+        128
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 4288,
+      "worker_ms": 38.66
+    },
+    {
+      "bytes": 255108,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 18695849,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        640,
+        1664,
+        128
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 5758,
+      "worker_ms": 49.519
+    },
+    {
+      "bytes": 201236,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 18745875,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        1152,
+        1024,
+        128
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 4596,
+      "worker_ms": 43.765
+    },
+    {
+      "bytes": 347420,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 19012526,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        1024,
+        512,
+        256
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 7734,
+      "worker_ms": 242.364
+    },
+    {
+      "bytes": 178428,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 19062527,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        896,
+        1664,
+        128
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 4044,
+      "worker_ms": 42.12
+    },
+    {
+      "bytes": 892932,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 19312524,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        256,
+        1792,
+        256
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 21222,
+      "worker_ms": 240.315
+    },
+    {
+      "bytes": 272604,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 19379258,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        512,
+        1664,
+        128
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 6264,
+      "worker_ms": 59.931
+    },
+    {
+      "bytes": 1911380,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 19862478,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        0,
+        1536,
+        256
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 46728,
+      "worker_ms": 461.145
+    },
+    {
+      "bytes": 179780,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 19912500,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        768,
+        768,
+        128
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 4096,
+      "worker_ms": 38.488
+    },
+    {
+      "bytes": 178244,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 19962493,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        640,
+        768,
+        128
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 4052,
+      "worker_ms": 37.155
+    },
+    {
+      "bytes": 334964,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 20229166,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        256,
+        512,
+        256
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 7368,
+      "worker_ms": 247.656
+    },
+    {
+      "bytes": 179836,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 20279142,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        896,
+        768,
+        128
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 4096,
+      "worker_ms": 43.148
+    },
+    {
+      "bytes": 575068,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 20462429,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        1152,
+        1536,
+        128
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 13722,
+      "worker_ms": 184.005
+    },
+    {
+      "bytes": 1344084,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 20712569,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        0,
+        768,
+        256
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 32722,
+      "worker_ms": 237.325
+    },
+    {
+      "bytes": 258436,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 20795804,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        1024,
+        1664,
+        128
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 5886,
+      "worker_ms": 59.676
+    },
+    {
+      "bytes": 236764,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 20845756,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        256,
+        1280,
+        128
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 5340,
+      "worker_ms": 49.464
+    },
+    {
+      "bytes": 244916,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 20912414,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        256,
+        1152,
+        128
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 5646,
+      "worker_ms": 54.017
+    },
+    {
+      "bytes": 177540,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 20962464,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        1152,
+        896,
+        128
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 4012,
+      "worker_ms": 38.881
+    },
+    {
+      "bytes": 176316,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 21012467,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        512,
+        768,
+        128
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 3994,
+      "worker_ms": 40.451
+    },
+    {
+      "bytes": 198716,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 21079331,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        256,
+        1408,
+        128
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 4512,
+      "worker_ms": 47.644
+    },
+    {
+      "bytes": 176132,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 21129131,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        256,
+        1024,
+        128
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 4002,
+      "worker_ms": 42.621
+    },
+    {
+      "bytes": 185588,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 21195760,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        1024,
+        768,
+        128
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 4202,
+      "worker_ms": 42.606
+    },
+    {
+      "bytes": 1303844,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 21445780,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        1280,
+        1792,
+        256
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 31478,
+      "worker_ms": 239.889
+    },
+    {
+      "bytes": 317660,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 21512856,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        1152,
+        1664,
+        128
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 7214,
+      "worker_ms": 68.376
+    },
+    {
+      "bytes": 1638004,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 22379116,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        1280,
+        512,
+        256
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 39608,
+      "worker_ms": 846.124
+    },
+    {
+      "bytes": 798260,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 22862759,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        1536,
+        1280,
+        256
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 18732,
+      "worker_ms": 482.345
+    },
+    {
+      "bytes": 322436,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 23112336,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        1536,
+        1024,
+        256
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 7038,
+      "worker_ms": 227.047
+    },
+    {
+      "bytes": 220292,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 23162358,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        1152,
+        768,
+        128
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 5008,
+      "worker_ms": 48.81
+    },
+    {
+      "bytes": 2293332,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 23445689,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        0,
+        1792,
+        256
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 56358,
+      "worker_ms": 261.175
+    },
+    {
+      "bytes": 358604,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 23712300,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        1536,
+        1536,
+        256
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 7882,
+      "worker_ms": 252.422
+    },
+    {
+      "bytes": 1358284,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 23945656,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        0,
+        512,
+        256
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 33112,
+      "worker_ms": 225.154
+    },
+    {
+      "bytes": 342892,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 24195700,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        1536,
+        768,
+        256
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 7436,
+      "worker_ms": 239.266
+    },
+    {
+      "bytes": 746884,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 24612371,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        768,
+        256,
+        256
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 17540,
+      "worker_ms": 402.4
+    },
+    {
+      "bytes": 2409740,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 25762249,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        512,
+        256,
+        256
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 59194,
+      "worker_ms": 1139.615
+    },
+    {
+      "bytes": 364556,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 26012244,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        1024,
+        256,
+        256
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 8154,
+      "worker_ms": 239.688
+    },
+    {
+      "bytes": 701716,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 26462221,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        256,
+        256,
+        256
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 16310,
+      "worker_ms": 435.205
+    },
+    {
+      "bytes": 1320900,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 26662191,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        1536,
+        1792,
+        256
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 32176,
+      "worker_ms": 194.54
+    },
+    {
+      "bytes": 1000948,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 27178824,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        1536,
+        512,
+        256
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 23382,
+      "worker_ms": 509.073
+    },
+    {
+      "bytes": 452988,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 27512164,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        1280,
+        256,
+        256
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 9998,
+      "worker_ms": 310.348
+    },
+    {
+      "bytes": 1033636,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 27762161,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        0,
+        256,
+        256
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 25014,
+      "worker_ms": 237.795
+    },
+    {
+      "bytes": 1120100,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 28012182,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        1792,
+        1280,
+        256
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 27170,
+      "worker_ms": 241.544
+    },
+    {
+      "bytes": 1307692,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 28245475,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        1792,
+        1024,
+        256
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 31906,
+      "worker_ms": 220.102
+    },
+    {
+      "bytes": 869244,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 28462109,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        1792,
+        1536,
+        256
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 20942,
+      "worker_ms": 208.094
+    },
+    {
+      "bytes": 1389324,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 28678765,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        1792,
+        768,
+        256
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 33818,
+      "worker_ms": 208.076
+    },
+    {
+      "bytes": 1220452,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 28945453,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        768,
+        0,
+        256
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 29466,
+      "worker_ms": 245.7
+    },
+    {
+      "bytes": 1354652,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 29262083,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        512,
+        0,
+        256
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 32828,
+      "worker_ms": 308.516
+    },
+    {
+      "bytes": 1420332,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 29562164,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        1024,
+        0,
+        256
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 34624,
+      "worker_ms": 287.968
+    },
+    {
+      "bytes": 1146868,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 30195518,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        1536,
+        256,
+        256
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 27240,
+      "worker_ms": 608.727
+    },
+    {
+      "bytes": 1445356,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 30495445,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        256,
+        0,
+        256
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 35104,
+      "worker_ms": 291.789
+    },
+    {
+      "bytes": 1396916,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 30678692,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        1792,
+        1792,
+        256
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 34222,
+      "worker_ms": 179.471
+    },
+    {
+      "bytes": 1225276,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 30928686,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        1792,
+        512,
+        256
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 29546,
+      "worker_ms": 230.044
+    },
+    {
+      "bytes": 1454660,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 31212019,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        1280,
+        0,
+        256
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 35380,
+      "worker_ms": 280.747
+    },
+    {
+      "bytes": 1574836,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 31478661,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        0,
+        0,
+        256
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 38558,
+      "worker_ms": 255.747
+    },
+    {
+      "bytes": 1456556,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 31728679,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        1792,
+        256,
+        256
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 35342,
+      "worker_ms": 225.817
+    },
+    {
+      "bytes": 1462636,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 31995371,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        1536,
+        0,
+        256
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 35592,
+      "worker_ms": 269.249
+    },
+    {
+      "bytes": 2293436,
+      "cached": false,
+      "cancelled": false,
+      "derived_cached": false,
+      "engine_us": 32245308,
+      "error": "",
+      "geometry_cache_hits": 0,
+      "key": [
+        1792,
+        0,
+        256
+      ],
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "triangles": 56530,
+      "worker_ms": 234.337
+    }
+  ],
+  "outcomes": {
+    "0": 125,
+    "1": 4
+  },
+  "queue_max_ms": 1838.771,
+  "region_terrain": false,
+  "rows": [
+    {
+      "lake_ready": 2,
+      "lake_slices": 63,
+      "lake_total": 4,
+      "ms": 11177.962,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 64,
+      "lake_total": 4,
+      "ms": 11277.819,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 64,
+      "lake_total": 4,
+      "ms": 11377.765,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 64,
+      "lake_total": 4,
+      "ms": 11477.784,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 66,
+      "lake_total": 4,
+      "ms": 11577.761,
+      "queued": 5,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 66,
+      "lake_total": 4,
+      "ms": 11677.756,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 69,
+      "lake_total": 4,
+      "ms": 11777.764,
+      "queued": 5,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 70,
+      "lake_total": 4,
+      "ms": 11878.058,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 70,
+      "lake_total": 4,
+      "ms": 11977.799,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 72,
+      "lake_total": 4,
+      "ms": 12077.966,
+      "queued": 0,
+      "worker": "idle"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 74,
+      "lake_total": 4,
+      "ms": 12177.851,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 74,
+      "lake_total": 4,
+      "ms": 12277.746,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 75,
+      "lake_total": 4,
+      "ms": 12377.731,
+      "queued": 2,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 76,
+      "lake_total": 4,
+      "ms": 12477.744,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 76,
+      "lake_total": 4,
+      "ms": 12577.719,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 76,
+      "lake_total": 4,
+      "ms": 12677.723,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 76,
+      "lake_total": 4,
+      "ms": 12777.733,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 76,
+      "lake_total": 4,
+      "ms": 12877.711,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 76,
+      "lake_total": 4,
+      "ms": 12977.793,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 76,
+      "lake_total": 4,
+      "ms": 13077.71,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 76,
+      "lake_total": 4,
+      "ms": 13177.698,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 76,
+      "lake_total": 4,
+      "ms": 13277.733,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 76,
+      "lake_total": 4,
+      "ms": 13377.691,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 76,
+      "lake_total": 4,
+      "ms": 13477.735,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 76,
+      "lake_total": 4,
+      "ms": 13577.68,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 76,
+      "lake_total": 4,
+      "ms": 13677.918,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 76,
+      "lake_total": 4,
+      "ms": 13777.713,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 76,
+      "lake_total": 4,
+      "ms": 13877.672,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 77,
+      "lake_total": 4,
+      "ms": 13977.712,
+      "queued": 5,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 77,
+      "lake_total": 4,
+      "ms": 14077.665,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 77,
+      "lake_total": 4,
+      "ms": 14177.66,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 77,
+      "lake_total": 4,
+      "ms": 14277.882,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 77,
+      "lake_total": 4,
+      "ms": 14377.701,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 77,
+      "lake_total": 4,
+      "ms": 14477.647,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 77,
+      "lake_total": 4,
+      "ms": 14577.637,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 78,
+      "lake_total": 4,
+      "ms": 14677.636,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 78,
+      "lake_total": 4,
+      "ms": 14777.671,
+      "queued": 2,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 79,
+      "lake_total": 4,
+      "ms": 14877.636,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 79,
+      "lake_total": 4,
+      "ms": 14977.643,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 79,
+      "lake_total": 4,
+      "ms": 15077.619,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 79,
+      "lake_total": 4,
+      "ms": 15177.684,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 79,
+      "lake_total": 4,
+      "ms": 15277.684,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 80,
+      "lake_total": 4,
+      "ms": 15377.618,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 80,
+      "lake_total": 4,
+      "ms": 15477.908,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 80,
+      "lake_total": 4,
+      "ms": 15577.613,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 80,
+      "lake_total": 4,
+      "ms": 15677.669,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 80,
+      "lake_total": 4,
+      "ms": 15777.586,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 81,
+      "lake_total": 4,
+      "ms": 15877.6,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 81,
+      "lake_total": 4,
+      "ms": 15977.575,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 81,
+      "lake_total": 4,
+      "ms": 16077.591,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 81,
+      "lake_total": 4,
+      "ms": 16177.574,
+      "queued": 2,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 82,
+      "lake_total": 4,
+      "ms": 16277.589,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 82,
+      "lake_total": 4,
+      "ms": 16377.588,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 82,
+      "lake_total": 4,
+      "ms": 16477.659,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 82,
+      "lake_total": 4,
+      "ms": 16577.589,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 82,
+      "lake_total": 4,
+      "ms": 16677.609,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 82,
+      "lake_total": 4,
+      "ms": 16777.608,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 82,
+      "lake_total": 4,
+      "ms": 16877.56,
+      "queued": 2,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 83,
+      "lake_total": 4,
+      "ms": 16977.571,
+      "queued": 5,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 83,
+      "lake_total": 4,
+      "ms": 17077.55,
+      "queued": 5,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 83,
+      "lake_total": 4,
+      "ms": 17177.532,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 83,
+      "lake_total": 4,
+      "ms": 17277.533,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 84,
+      "lake_total": 4,
+      "ms": 17377.525,
+      "queued": 5,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 84,
+      "lake_total": 4,
+      "ms": 17477.531,
+      "queued": 5,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 84,
+      "lake_total": 4,
+      "ms": 17577.559,
+      "queued": 5,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 84,
+      "lake_total": 4,
+      "ms": 17677.548,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 84,
+      "lake_total": 4,
+      "ms": 17777.548,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 84,
+      "lake_total": 4,
+      "ms": 17877.528,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 84,
+      "lake_total": 4,
+      "ms": 17977.546,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 84,
+      "lake_total": 4,
+      "ms": 18077.615,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 84,
+      "lake_total": 4,
+      "ms": 18177.593,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 84,
+      "lake_total": 4,
+      "ms": 18277.523,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 84,
+      "lake_total": 4,
+      "ms": 18377.49,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 85,
+      "lake_total": 4,
+      "ms": 18477.484,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 85,
+      "lake_total": 4,
+      "ms": 18577.586,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 85,
+      "lake_total": 4,
+      "ms": 18677.532,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 85,
+      "lake_total": 4,
+      "ms": 18777.485,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 86,
+      "lake_total": 4,
+      "ms": 18877.446,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 86,
+      "lake_total": 4,
+      "ms": 18977.521,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 86,
+      "lake_total": 4,
+      "ms": 19077.461,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 86,
+      "lake_total": 4,
+      "ms": 19177.464,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 86,
+      "lake_total": 4,
+      "ms": 19277.463,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 87,
+      "lake_total": 4,
+      "ms": 19377.597,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 87,
+      "lake_total": 4,
+      "ms": 19477.484,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 88,
+      "lake_total": 4,
+      "ms": 19577.482,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 88,
+      "lake_total": 4,
+      "ms": 19677.554,
+      "queued": 1,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 89,
+      "lake_total": 4,
+      "ms": 19777.449,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 89,
+      "lake_total": 4,
+      "ms": 19877.439,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 89,
+      "lake_total": 4,
+      "ms": 19977.478,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 89,
+      "lake_total": 4,
+      "ms": 20077.445,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 89,
+      "lake_total": 4,
+      "ms": 20177.533,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 89,
+      "lake_total": 4,
+      "ms": 20277.409,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 89,
+      "lake_total": 4,
+      "ms": 20377.409,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 89,
+      "lake_total": 4,
+      "ms": 20477.434,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 89,
+      "lake_total": 4,
+      "ms": 20577.424,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 89,
+      "lake_total": 4,
+      "ms": 20694.067,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 89,
+      "lake_total": 4,
+      "ms": 20794.062,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 89,
+      "lake_total": 4,
+      "ms": 20894.118,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 90,
+      "lake_total": 4,
+      "ms": 20994.053,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 90,
+      "lake_total": 4,
+      "ms": 21094.058,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 90,
+      "lake_total": 4,
+      "ms": 21194.05,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 90,
+      "lake_total": 4,
+      "ms": 21294.149,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 90,
+      "lake_total": 4,
+      "ms": 21394.044,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 90,
+      "lake_total": 4,
+      "ms": 21494.082,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 90,
+      "lake_total": 4,
+      "ms": 21594.037,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 90,
+      "lake_total": 4,
+      "ms": 21694.061,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 91,
+      "lake_total": 4,
+      "ms": 21794.033,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 91,
+      "lake_total": 4,
+      "ms": 21894.029,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 91,
+      "lake_total": 4,
+      "ms": 21994.041,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 91,
+      "lake_total": 4,
+      "ms": 22094.017,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 91,
+      "lake_total": 4,
+      "ms": 22194.016,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 91,
+      "lake_total": 4,
+      "ms": 22294.039,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 92,
+      "lake_total": 4,
+      "ms": 22394.051,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 92,
+      "lake_total": 4,
+      "ms": 22494.021,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 92,
+      "lake_total": 4,
+      "ms": 22594.053,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 92,
+      "lake_total": 4,
+      "ms": 22693.989,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 92,
+      "lake_total": 4,
+      "ms": 22793.996,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 92,
+      "lake_total": 4,
+      "ms": 22893.984,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 92,
+      "lake_total": 4,
+      "ms": 22993.994,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 92,
+      "lake_total": 4,
+      "ms": 23094.049,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 92,
+      "lake_total": 4,
+      "ms": 23194.039,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 93,
+      "lake_total": 4,
+      "ms": 23294.051,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 93,
+      "lake_total": 4,
+      "ms": 23393.986,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 93,
+      "lake_total": 4,
+      "ms": 23493.943,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 93,
+      "lake_total": 4,
+      "ms": 23593.948,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 93,
+      "lake_total": 4,
+      "ms": 23693.964,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 93,
+      "lake_total": 4,
+      "ms": 23793.95,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 93,
+      "lake_total": 4,
+      "ms": 23893.936,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 93,
+      "lake_total": 4,
+      "ms": 23993.949,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 93,
+      "lake_total": 4,
+      "ms": 24093.951,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 93,
+      "lake_total": 4,
+      "ms": 24193.925,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 93,
+      "lake_total": 4,
+      "ms": 24293.92,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 93,
+      "lake_total": 4,
+      "ms": 24393.93,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 93,
+      "lake_total": 4,
+      "ms": 24493.907,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 93,
+      "lake_total": 4,
+      "ms": 24593.951,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 93,
+      "lake_total": 4,
+      "ms": 24693.912,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 93,
+      "lake_total": 4,
+      "ms": 24793.914,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 93,
+      "lake_total": 4,
+      "ms": 24893.946,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 93,
+      "lake_total": 4,
+      "ms": 24994.051,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 94,
+      "lake_total": 4,
+      "ms": 25093.981,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 94,
+      "lake_total": 4,
+      "ms": 25193.885,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 94,
+      "lake_total": 4,
+      "ms": 25293.947,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 94,
+      "lake_total": 4,
+      "ms": 25393.879,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 94,
+      "lake_total": 4,
+      "ms": 25493.882,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 94,
+      "lake_total": 4,
+      "ms": 25593.882,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 94,
+      "lake_total": 4,
+      "ms": 25693.859,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 94,
+      "lake_total": 4,
+      "ms": 25794.066,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 94,
+      "lake_total": 4,
+      "ms": 25893.854,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 94,
+      "lake_total": 4,
+      "ms": 25993.926,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 94,
+      "lake_total": 4,
+      "ms": 26093.858,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 95,
+      "lake_total": 4,
+      "ms": 26193.865,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 95,
+      "lake_total": 4,
+      "ms": 26293.907,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 95,
+      "lake_total": 4,
+      "ms": 26394.004,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 95,
+      "lake_total": 4,
+      "ms": 26493.972,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 95,
+      "lake_total": 4,
+      "ms": 26593.84,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 95,
+      "lake_total": 4,
+      "ms": 26693.844,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 95,
+      "lake_total": 4,
+      "ms": 26793.843,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 96,
+      "lake_total": 4,
+      "ms": 26893.888,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 96,
+      "lake_total": 4,
+      "ms": 26993.863,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 96,
+      "lake_total": 4,
+      "ms": 27093.812,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 96,
+      "lake_total": 4,
+      "ms": 27193.82,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 96,
+      "lake_total": 4,
+      "ms": 27293.792,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 96,
+      "lake_total": 4,
+      "ms": 27393.799,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 96,
+      "lake_total": 4,
+      "ms": 27493.789,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 97,
+      "lake_total": 4,
+      "ms": 27593.966,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 97,
+      "lake_total": 4,
+      "ms": 27693.779,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 97,
+      "lake_total": 4,
+      "ms": 27793.78,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 97,
+      "lake_total": 4,
+      "ms": 27893.776,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 97,
+      "lake_total": 4,
+      "ms": 27993.893,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 97,
+      "lake_total": 4,
+      "ms": 28093.913,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 97,
+      "lake_total": 4,
+      "ms": 28193.973,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 97,
+      "lake_total": 4,
+      "ms": 28293.822,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 97,
+      "lake_total": 4,
+      "ms": 28393.766,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 97,
+      "lake_total": 4,
+      "ms": 28493.782,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 97,
+      "lake_total": 4,
+      "ms": 28593.766,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 97,
+      "lake_total": 4,
+      "ms": 28693.743,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 97,
+      "lake_total": 4,
+      "ms": 28793.81,
+      "queued": 2,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 98,
+      "lake_total": 4,
+      "ms": 28893.753,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 98,
+      "lake_total": 4,
+      "ms": 28993.828,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 98,
+      "lake_total": 4,
+      "ms": 29093.744,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 98,
+      "lake_total": 4,
+      "ms": 29193.728,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 98,
+      "lake_total": 4,
+      "ms": 29293.727,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 98,
+      "lake_total": 4,
+      "ms": 29393.712,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 98,
+      "lake_total": 4,
+      "ms": 29493.73,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 99,
+      "lake_total": 4,
+      "ms": 29593.761,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 99,
+      "lake_total": 4,
+      "ms": 29693.728,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 99,
+      "lake_total": 4,
+      "ms": 29793.7,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 99,
+      "lake_total": 4,
+      "ms": 29893.701,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 99,
+      "lake_total": 4,
+      "ms": 29993.751,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 99,
+      "lake_total": 4,
+      "ms": 30093.702,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 99,
+      "lake_total": 4,
+      "ms": 30193.724,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 99,
+      "lake_total": 4,
+      "ms": 30293.682,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 100,
+      "lake_total": 4,
+      "ms": 30393.7,
+      "queued": 2,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 100,
+      "lake_total": 4,
+      "ms": 30493.77,
+      "queued": 2,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 100,
+      "lake_total": 4,
+      "ms": 30593.662,
+      "queued": 1,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 100,
+      "lake_total": 4,
+      "ms": 30693.67,
+      "queued": 1,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 100,
+      "lake_total": 4,
+      "ms": 30793.679,
+      "queued": 1,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 101,
+      "lake_total": 4,
+      "ms": 30893.674,
+      "queued": 1,
+      "worker": "save"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 105,
+      "lake_total": 4,
+      "ms": 30993.852,
+      "queued": 0,
+      "worker": "idle"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 111,
+      "lake_total": 4,
+      "ms": 31093.657,
+      "queued": 0,
+      "worker": "idle"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 117,
+      "lake_total": 4,
+      "ms": 31193.742,
+      "queued": 0,
+      "worker": "idle"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 123,
+      "lake_total": 4,
+      "ms": 31293.701,
+      "queued": 0,
+      "worker": "idle"
+    },
+    {
+      "lake_ready": 4,
+      "lake_slices": 129,
+      "lake_total": 4,
+      "ms": 31393.727,
+      "queued": 0,
+      "worker": "idle"
+    }
+  ],
+  "scope": "Startup attribution only: facade completion counts, published immutable volume stats, 10Hz worker status sampling. Status sampling does not measure worker CPU time. No changes to lake scheduling or persistent cache.",
+  "slices": 129,
+  "slot": "mesh_trace_1791581431797525600",
+  "volumes": [
+    {
+      "cells": "(56, 16, 56)",
+      "id": 1,
+      "statistics": {
+        "builder_bytes": 0,
+        "cells": 50176,
+        "dynamic_flow": false,
+        "fill_level": 36.4662971496582,
+        "query_index_bytes": 3136,
+        "resident_bytes": 50176,
+        "sampled_nodes": 55233,
+        "spacing": 1.0,
+        "status": 1,
+        "surface_bytes": 42400,
+        "total_nodes": 55233,
+        "wet_cells": 5636
+      }
+    },
+    {
+      "cells": "(56, 16, 56)",
+      "id": 2,
+      "statistics": {
+        "builder_bytes": 0,
+        "cells": 50176,
+        "dynamic_flow": false,
+        "fill_level": 72.1398773193359,
+        "query_index_bytes": 3136,
+        "resident_bytes": 50176,
+        "sampled_nodes": 55233,
+        "spacing": 1.0,
+        "status": 1,
+        "surface_bytes": 42400,
+        "total_nodes": 55233,
+        "wet_cells": 6156
+      }
+    },
+    {
+      "cells": "(56, 16, 56)",
+      "id": 3,
+      "statistics": {
+        "builder_bytes": 0,
+        "cells": 50176,
+        "dynamic_flow": false,
+        "fill_level": 38.8414192199707,
+        "query_index_bytes": 3136,
+        "resident_bytes": 50176,
+        "sampled_nodes": 55233,
+        "spacing": 1.0,
+        "status": 1,
+        "surface_bytes": 42400,
+        "total_nodes": 55233,
+        "wet_cells": 5180
+      }
+    },
+    {
+      "cells": "(56, 16, 56)",
+      "id": 4,
+      "statistics": {
+        "builder_bytes": 0,
+        "cells": 50176,
+        "dynamic_flow": false,
+        "fill_level": 112.570587158203,
+        "query_index_bytes": 3136,
+        "resident_bytes": 50176,
+        "sampled_nodes": 55233,
+        "spacing": 1.0,
+        "status": 1,
+        "surface_bytes": 42400,
+        "total_nodes": 55233,
+        "wet_cells": 5544
+      }
+    }
+  ],
+  "worker_max_ms": 2.998,
+  "worker_ms": 256.167,
+  "world_ready_ms": 11161.74
+}

@@ -23,6 +23,18 @@ const SCAN_ENTRY_LIMIT := 2048
 const SCAN_TIME_US := 50000
 var accounting_complete := false
 var scan_entries := 0
+var _scan_pending: Array[Dictionary]=[]
+var _scan_directory: DirAccess
+var _scan_path: String=""
+var _scan_depth:=0
+var _scan_total:=0
+var _scan_failed:=false
+
+func _close_scan() -> void:
+	if _scan_directory!=null: _scan_directory.list_dir_end()
+	_scan_directory=null
+	_scan_pending.clear()
+
 
 static func digest(data: PackedByteArray) -> PackedByteArray:
 	var h := HashingContext.new()
@@ -31,6 +43,7 @@ static func digest(data: PackedByteArray) -> PackedByteArray:
 	return h.finish()
 
 func configure(compatibility: String, snapshot: String, style: int, path: String = "user://derived_046") -> void:
+	_close_scan()
 	base_path = path
 	signature = ("trm5:046:" + compatibility + ":" + str(style)).sha256_text()
 	set_snapshot(snapshot)
@@ -64,36 +77,48 @@ func configure(compatibility: String, snapshot: String, style: int, path: String
 		directory.list_dir_end()
 
 func _size(path: String) -> int:
-	scan_entries=0;accounting_complete=false
-	var deadline:=Time.get_ticks_usec()+SCAN_TIME_US
-	var pending: Array[Dictionary]=[{"path":path,"depth":0}]
-	var total:=0
-	while not pending.is_empty():
-		if Time.get_ticks_usec()>=deadline: return LIMIT_BYTES
-		var entry: Dictionary=pending.pop_back()
-		if entry.depth>32: return LIMIT_BYTES
-		var directory:=DirAccess.open(entry.path)
-		if directory==null or directory.list_dir_begin()!=OK: return LIMIT_BYTES
-		while true:
-			if scan_entries>=SCAN_ENTRY_LIMIT or Time.get_ticks_usec()>=deadline:
-				directory.list_dir_end();return LIMIT_BYTES
-			var name:=directory.get_next()
-			if name.is_empty(): break
-			if name=="." or name=="..": continue
-			scan_entries+=1
-			var child: String=entry.path.path_join(name)
-			if directory.current_is_dir():
-				pending.append({"path":child,"depth":entry.depth+1})
-			else:
-				var file:=FileAccess.open(child,FileAccess.READ)
-				if file==null:
-					directory.list_dir_end();return LIMIT_BYTES
-				total+=file.get_length();file.close()
-				if total>=LIMIT_BYTES:
-					directory.list_dir_end();return LIMIT_BYTES
-		directory.list_dir_end()
-	accounting_complete=true
-	return total
+	_close_scan()
+	scan_entries=0;accounting_complete=false;_scan_total=0;_scan_failed=false
+	_scan_pending=[{"path":path,"depth":0}]
+	_scan_slice(SCAN_ENTRY_LIMIT,SCAN_TIME_US)
+	return _scan_total if accounting_complete else LIMIT_BYTES
+
+func accounting_pending() -> bool:
+	return enabled and not accounting_complete and not _scan_failed
+
+func advance_accounting() -> void:
+	# Called by the owning worker between non-interactive mesh jobs. A slice
+	# never authorizes writes from a partial total and never restarts at root.
+	if not enabled or accounting_complete or _scan_failed: return
+	_scan_slice(32,2000)
+	if accounting_complete: total_bytes=_scan_total
+
+func _scan_slice(entry_budget: int,time_budget_us: int) -> void:
+	var deadline:=Time.get_ticks_usec()+time_budget_us
+	var limit:=scan_entries+entry_budget
+	while scan_entries<limit and Time.get_ticks_usec()<deadline:
+		if _scan_directory==null:
+			if _scan_pending.is_empty(): accounting_complete=true;return
+			var entry: Dictionary=_scan_pending.pop_back()
+			_scan_path=entry.path;_scan_depth=entry.depth
+			if _scan_depth>32: _scan_failed=true;_close_scan();return
+			_scan_directory=DirAccess.open(_scan_path)
+			if _scan_directory==null or _scan_directory.list_dir_begin()!=OK:
+				_scan_failed=true;_close_scan();return
+		var name:=_scan_directory.get_next()
+		if name.is_empty():
+			_scan_directory.list_dir_end();_scan_directory=null;continue
+		if name=="." or name=="..":continue
+		scan_entries+=1
+		var child:=_scan_path.path_join(name)
+		if _scan_directory.current_is_dir():
+			if _scan_pending.size()>=INDEX_LIMIT: _scan_failed=true;_close_scan();return
+			_scan_pending.append({"path":child,"depth":_scan_depth+1})
+		else:
+			var file:=FileAccess.open(child,FileAccess.READ)
+			if file==null: _scan_failed=true;_close_scan();return
+			_scan_total+=file.get_length();file.close()
+			if _scan_total>=LIMIT_BYTES: _scan_failed=true;_close_scan();return
 
 func set_snapshot(snapshot: String) -> void:
 	cache_directory = base_path.path_join(signature).path_join(snapshot)

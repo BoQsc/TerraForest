@@ -1,0 +1,108 @@
+{
+  "base_commit": "250b9e7",
+  "findings": "Initial bounded 50ms/2048-entry accounting scan timed out and permanently prevented writes despite only 167412756 actual bytes in 1057 files. Baseline had 292 uncached mesh jobs and zero writes. Continuation between mesh jobs alone did not finish accounting; both unsuccessful runs retained. Idle-worker continuation plus job-boundary slices completes accounting and fresh-process cache hits now occur.",
+  "implementation": "Retain directory cursor and pending paths, at most 32 entries and 2ms target per continuation (individual filesystem operations can exceed target). Writes prohibited until exact accounting completes. Worker observes queued work/input/stopping between idle slices. Maximum depth/pending-directory bounds and quota/error read-only fallback retained. No eviction or canonical-save mutation.",
+  "runs": {
+    "trace": {
+      "cache": {
+        "accounting_complete": false,
+        "cache_read_only": true,
+        "corrupt": 0,
+        "disk_bytes": 536870912,
+        "enabled": true,
+        "hits": 0,
+        "misses": 584,
+        "scan_entries": 158,
+        "write_failures": 0,
+        "writes": 0
+      },
+      "mesh_jobs": 292,
+      "mesh_worker_ms": 25115.25,
+      "world_ready_ms": 9136.411,
+      "last_lake_ms": 28685.436
+    },
+    "accounting_resumed": {
+      "cache": {
+        "accounting_complete": false,
+        "cache_read_only": true,
+        "corrupt": 0,
+        "disk_bytes": 536870912,
+        "enabled": true,
+        "hits": 0,
+        "misses": 584,
+        "scan_entries": 457,
+        "write_failures": 0,
+        "writes": 0
+      },
+      "mesh_jobs": 292,
+      "mesh_worker_ms": 24909.367,
+      "world_ready_ms": 11161.74,
+      "last_lake_ms": 31377.86
+    },
+    "warm": {
+      "cache": {
+        "accounting_complete": false,
+        "cache_read_only": true,
+        "corrupt": 0,
+        "disk_bytes": 536870912,
+        "enabled": true,
+        "hits": 0,
+        "misses": 584,
+        "scan_entries": 1288,
+        "write_failures": 0,
+        "writes": 0
+      },
+      "mesh_jobs": 292,
+      "mesh_worker_ms": 25010.124,
+      "world_ready_ms": 10573.662,
+      "last_lake_ms": 31255.883
+    },
+    "idle_accounting": {
+      "cache": {
+        "accounting_complete": true,
+        "cache_read_only": false,
+        "corrupt": 0,
+        "disk_bytes": 362907500,
+        "enabled": true,
+        "hits": 0,
+        "misses": 584,
+        "scan_entries": 1598,
+        "write_failures": 0,
+        "writes": 542
+      },
+      "mesh_jobs": 292,
+      "mesh_worker_ms": 25891.729,
+      "world_ready_ms": 10002.099,
+      "last_lake_ms": 29799.762
+    },
+    "warm_after_idle": {
+      "cache": {
+        "accounting_complete": true,
+        "cache_read_only": false,
+        "corrupt": 0,
+        "disk_bytes": 367880352,
+        "enabled": true,
+        "hits": 292,
+        "misses": 21,
+        "scan_entries": 2432,
+        "write_failures": 0,
+        "writes": 18
+      },
+      "mesh_jobs": 292,
+      "mesh_worker_ms": 5872.985,
+      "world_ready_ms": 4279.469,
+      "last_lake_ms": 7112.253
+    }
+  },
+  "correctness": "All three headless accounting/admission tests pass. Real warm run reports completed accounting, 292 hits, 18 writes, no corruption/write failures and 367880352 accounted bytes.",
+  "timing_limits": "Startup traces, not frame/thermal benchmarks. Short headless correctness commands were issued during the final trace orchestration, so treat timing differences as observations, not a controlled speedup ratio. Cache-hit/write/quota outcomes are direct counters. Earlier furnished frame gates remain open.",
+  "next": "Keep default 60FPS and human checkpoint. Validate cold/warm startup in later combined qualification; full-cache eviction and disk-growth policy remain open. Resume M2 world coverage rather than repeat unchanged startup traces.",
+  "hashes": {
+    "addons/volumetric_terrain/derived_cache.gd": "5618d5ae843dc2e2cfc93ac9107cb973c936abbcab3d0fa3f5aba2b36c1816b7",
+    "addons/volumetric_terrain/terrain_backend.gd": "003a63cd3aa486a3b9b829f8adf1451ee352ab264f3d06f73894cb888203dc15",
+    "addons/volumetric_terrain/terrain_stream.gd": "053bed2f6df830baab74c5635cfa969cd72aede7f28c5f170faec12330c21f13",
+    "tests/cache_scan_budget.gd": "1f58fe805af3ad822994d3d310a8c6f4089d03db34c6df94b7f0a468cb7a71d5",
+    "tests/cache_idle_accounting.gd": "c1edfa59598ae6f40a582fcb0bf30cebe3d40d8aeadeb92671380f04f5f62dfb",
+    "tests/lake_startup_trace.gd": "3c8b24aa5bbd80f85dd16e6e3edf828d9f51580233867c681d0b8703d422b98a"
+  }
+}

@@ -355,7 +355,7 @@ func _receive(result: Dictionary) -> void:
 			"key": [key.x, key.y, key.z], "worker_ms": result.get("worker_ms", null),
 			"cached": result.get("cached", false), "derived_cached": result.get("derived_cached", false),
 			"bytes": result.get("bytes", null), "triangles": result.get("triangles", null),
-			"region_parts":result.get("region_parts",0),"region_stages":result.get("region_stages",{}),
+			"region_parts":result.get("region_parts",0),"geometry_cache_hits":result.get("geometry_cache_hits",0),"region_stages":result.get("region_stages",{}),
 			"cancelled": result.get("cancelled", false), "error": result.get("error", "")})
 	if result.has("cache_stats"):
 		derived_metrics = result["cache_stats"]

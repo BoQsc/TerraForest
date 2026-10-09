@@ -19,6 +19,16 @@ func _initialize() -> void:
 	packet.encode_u32(4,5)
 	cache.store_packet(Vector3i.ZERO,packet)
 	check(cache.writes==0 and not FileAccess.file_exists(cache._name(Vector3i.ZERO)),"incomplete accounting never authorizes new disk writes")
+	var completed:=false
+	for slice in range(2200):
+		var before: int=cache.scan_entries
+		cache.advance_accounting()
+		check(cache.scan_entries-before<=32,"continuation respects entry budget")
+		if cache.accounting_complete: completed=true;break
+	check(completed and cache.total_bytes==2100,"bounded continuations finish exact accounting without reconfiguration")
+	cache.store_packet(Vector3i.ZERO,packet)
+	check(cache.writes==1 and cache.total_bytes==2176,"completed background accounting restores quota-checked writes")
+	DirAccess.remove_absolute(cache._name(Vector3i.ZERO));cache.writes=0
 	# Reconfiguration after explicit cleanup restores writes only with full usage.
 	for i in range(2100): DirAccess.remove_absolute(path.path_join(str(i)))
 	cache.configure("fixture","snapshot",0,path)
