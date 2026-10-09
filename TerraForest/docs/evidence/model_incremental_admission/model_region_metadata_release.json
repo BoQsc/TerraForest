@@ -1,0 +1,20 @@
+{
+  "bootstrap": {
+    "logical_instances": 100000,
+    "region_edge_m": 32,
+    "reserved_id_payload_bytes": 800000,
+    "reserved_ids": 100000,
+    "resident_instances": 0,
+    "resident_regions": 0,
+    "resident_transform_bytes": 0,
+    "staged_instances": 0,
+    "unloaded_digest_bytes": 3200,
+    "unloaded_regions": 100
+  },
+  "checks": 27,
+  "failures": 0,
+  "full_snapshot_bytes": 5600061,
+  "metadata_bytes": 808493,
+  "scope": "100000-placement metadata bootstrap, exact lazy restoration, conservative bounds and cached catalog manifests; not main-world automatic model paging.",
+  "library": "structures.windows.template_release.x86_64.dll"
+}

@@ -9,6 +9,8 @@
 #include <map>
 #include <set>
 #include <vector>
+#include <memory>
+#include <godot_cpp/classes/hashing_context.hpp>
 namespace terraforest {
 using namespace godot;
 // One shared model per collection. Native spatial partitioning makes culling
@@ -31,6 +33,24 @@ class NativeStaticBatch : public Node3D {
     static bool valid_model_region(BlockKey key);
     bool unload_region_impl(const PackedByteArray &packet);
     bool restore_region_impl(const PackedByteArray &packet);
+    struct RegionAdmission {
+        enum Phase { OUTER_HASH, INNER_HASH, RECORDS, ROLLBACK } phase=OUTER_HASH;
+        BlockKey key;
+        PackedByteArray packet;
+        Ref<HashingContext> hash;
+        uint64_t offset=0,record_offset=0,count=0;
+        int64_t previous=0;
+        std::set<int64_t> ids;
+        std::vector<int64_t> ordered;
+        AABB collision,visual,prototype,mesh_bounds;
+        String error;
+    };
+    std::unique_ptr<RegionAdmission> admission;
+    String admission_result="idle",admission_error;
+    uint64_t admission_step_records=0,admission_step_bytes=0;
+    bool admission_busy=false;
+    size_t admitting_count() const { return admission?admission->ids.size():0; }
+    void fail_admission(const String &error);
     using RenderKey = std::pair<BlockKey,uint32_t>;
     std::map<RenderKey,MultiMeshInstance3D*> batches;
     std::map<int64_t,int> slots;
@@ -90,6 +110,10 @@ protected:
     static void _bind_methods();
     void _notification(int what);
 public:
+    bool begin_region_admission(const PackedByteArray &bytes);
+    Dictionary advance_region_admission(int64_t max_records,int64_t max_hash_bytes,int64_t max_usec);
+    bool cancel_region_admission();
+    Dictionary region_admission_stats() const;
     bool validate_metadata(const PackedByteArray &bytes) const;
     bool restore_metadata(const PackedByteArray &bytes);
     Dictionary capture_storage_state() const;

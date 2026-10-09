@@ -39,7 +39,7 @@ bool NativeStaticBatch::validate_metadata(const PackedByteArray &bytes) const {
     return parse_metadata(bytes,asset,checkpoint,regions,ids)&&asset==asset_id;
 }
 bool NativeStaticBatch::restore_metadata(const PackedByteArray &bytes) {
-    if(source_mesh.is_null()||defer_change_signal)return false;
+    if(source_mesh.is_null()||defer_change_signal||admission)return false;
     String asset;PackedByteArray checkpoint;std::map<BlockKey,MetadataRegion> regions;std::set<int64_t> ids;
     if(!parse_metadata(bytes,asset,checkpoint,regions,ids)||asset!=asset_id)return false;
     const AABB prototype=proxy_parts.empty()?source_mesh->get_aabb():proxy_box;
@@ -109,6 +109,7 @@ bool NativeStaticBatch::unload_region(const PackedByteArray &expected) {
     return unload_region_impl(expected);
 }
 bool NativeStaticBatch::unload_region_impl(const PackedByteArray &expected) {
+    if(admission)return false;
     BlockKey key;String asset;std::map<int64_t,Placement> values;
     if(!parse_region(expected,asset,key,values)||asset!=asset_id||unloaded_regions.count(key)||
        groups.size()+unloaded_regions.size()+(groups.count(key)?0:1)>4096)return false;
@@ -142,7 +143,7 @@ bool NativeStaticBatch::restore_region(const PackedByteArray &bytes) {
     return restore_region_impl(bytes);
 }
 bool NativeStaticBatch::restore_region_impl(const PackedByteArray &bytes) {
-    if(source_mesh.is_null())return false;
+    if(source_mesh.is_null()||admission)return false;
     BlockKey key;String asset;std::map<int64_t,Placement> values;
     if(!parse_region(bytes,asset,key,values)||asset!=asset_id)return false;
     auto missing=unloaded_regions.find(key);
@@ -157,10 +158,10 @@ bool NativeStaticBatch::restore_region_impl(const PackedByteArray &bytes) {
 }
 Dictionary NativeStaticBatch::region_stats() const {
     Dictionary out;out["region_edge_m"]=32;out["resident_regions"]=int(groups.size());
-    out["unloaded_regions"]=int(unloaded_regions.size());out["resident_instances"]=int(placements.size());
-    out["reserved_ids"]=int(unloaded_ids.size());out["logical_instances"]=int(placements.size()+unloaded_ids.size());
+    out["unloaded_regions"]=int(unloaded_regions.size());out["resident_instances"]=int(placements.size()-admitting_count());out["staged_instances"]=int(admitting_count());
+    out["reserved_ids"]=int(unloaded_ids.size()+admitting_count());out["logical_instances"]=int(placements.size()+unloaded_ids.size());
     out["resident_transform_bytes"]=int64_t(placements.size()*sizeof(Placement));
-    out["reserved_id_payload_bytes"]=int64_t(unloaded_ids.size()*sizeof(int64_t));
+    out["reserved_id_payload_bytes"]=int64_t((unloaded_ids.size()+admitting_count())*sizeof(int64_t));
     out["unloaded_digest_bytes"]=int64_t(unloaded_regions.size()*32);
     return out;
 }
@@ -172,7 +173,12 @@ Dictionary NativeStaticBatch::capture_storage_state() const {
         keys.set(index*3,entry.first.x);keys.set(index*3+1,entry.first.y);keys.set(index*3+2,entry.first.z);
         std::memcpy(checksums.ptrw()+index*32,entry.second.checksum.ptr(),32);++index;
     }
-    Dictionary out;out["resident"]=encode_placements(asset_id,placements);
+    // In-flight records remain represented by their unavailable disk region.
+    // Saves must never publish only the prefix installed so far.
+    std::map<int64_t,Placement> visible;
+    if(admission)for(const auto &entry:placements)
+        if(!unloaded_regions.count(group_for(entry.second)))visible.emplace(entry);
+    Dictionary out;out["resident"]=encode_placements(asset_id,admission?visible:placements);
     out["unavailable_keys"]=keys;out["unavailable_checksums"]=checksums;return out;
 }
 }

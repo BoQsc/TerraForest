@@ -1,0 +1,54 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS fixture admits 32 placements
+PASS fixture persists exact regions
+PASS metadata bootstrap succeeds
+PASS begin reserves one cooperative admission
+PASS second admission rejected without replacing active work
+PASS partially inserted region remains unavailable
+PASS partial records remain invisible to queries
+PASS partial records preserve logical count and reserved identities
+PASS save during admission retains whole unavailable disk region
+PASS staged identity cannot be removed or moved to a loaded region
+PASS unrelated loaded-region authoring remains available
+PASS whole replacement and synchronous admission reject active transfer
+PASS active transfer cannot switch to unbounded render publication
+PASS partial region remains collision unavailable
+PASS cancel begins bounded rollback
+PASS admission or rollback terminates within record and hash-byte budgets
+PASS rollback restores reservations and preserves unrelated authoring
+PASS admission or rollback terminates within record and hash-byte budgets
+PASS cancelled region can retry successfully
+PASS publication exposes every exact record together
+PASS admission or rollback terminates within record and hash-byte budgets
+PASS streaming collection accepts cooperative publication
+PASS published records enter existing render and collision admission
+PASS collision readiness opens only after proxy admission
+PASS admission or rollback terminates within record and hash-byte budgets
+PASS empty region publishes without phantom group indexes
+PASS fixture admits 100000 placements
+PASS fixture persists exact regions
+PASS metadata bootstrap succeeds
+PASS admission or rollback terminates within record and hash-byte budgets
+PASS 100000-object admission publishes byte-exact snapshot
+PASS publication installs prepared indexes and releases all reservations
+PASS metadata bootstrap succeeds
+PASS signed malformed packet enters bounded validation
+PASS admission or rollback terminates within record and hash-byte budgets
+PASS late malformed record rolls back all staged records without losing identities
+PASS metadata bootstrap succeeds
+PASS admission or rollback terminates within record and hash-byte budgets
+PASS corrupt payload fails incremental checksum before installation
+PASS metadata bootstrap succeeds
+PASS admission or rollback terminates within record and hash-byte budgets
+PASS valid outer checksum cannot bypass corrupt inner checksum
+ADMISSION_STEPS 1 max_us=13 result=cancelled
+ADMISSION_STEPS 1 max_us=72 result=complete
+ADMISSION_STEPS 1 max_us=66 result=complete
+ADMISSION_STEPS 1 max_us=14 result=complete
+ADMISSION_STEPS 562 max_us=1900 result=complete
+ADMISSION_STEPS 955 max_us=2540 result=failed
+ADMISSION_STEPS 1 max_us=20 result=failed
+ADMISSION_STEPS 1 max_us=51 result=failed
+MODEL_INCREMENTAL_ADMISSION checks=42 failures=0 dense_begin_us=67
+

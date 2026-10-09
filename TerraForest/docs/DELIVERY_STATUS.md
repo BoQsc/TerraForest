@@ -1,3 +1,25 @@
+## Native model admission now advances in bounded steps - 2026-10-09
+
+Added begin/advance/cancel admission to `NativeStaticBatch`. Hashing, transform
+validation, identity reservation, index/bounds construction and failure rollback
+advance under explicit record/byte limits and a cooperative time target. Partial
+records remain unavailable to editing, saves, rendering and collision queries;
+unrelated loaded-region editing remains usable. Final publication moves prepared
+indexes instead of rebuilding the dense region in one call. Raw publication
+retains the existing history-barrier semantics.
+
+Debug and release each pass 42 checks, including exact 100,000-object publication
+and rollback after an invalid final record. Release success used 562 calls,
+335 us p95 and 1,900 us maximum with 256-record/64-KiB/500-us requested limits.
+The 2 ms wall-time gate remains RED: release failure/rollback reached 2,540 us
+(debug 3,224 us). Existing release region/history 58 checks and metadata 27 checks
+pass. Evidence and limits: [cooperative admission](MODEL_INCREMENTAL_ADMISSION.md).
+
+Automatic world paging remains disconnected. Whole-region availability still
+waits for all records; bounded calls alone do not guarantee acceptable arrival
+latency. Capture/unload, dense render/collision selection, shared scheduling and
+history-preserving publication remain work before runtime paging qualification.
+
 ## Model unload removes duplicate serialization - 2026-10-09
 
 Native model-region unload now compares validated packet IDs and the exact live
