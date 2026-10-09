@@ -1,3 +1,18 @@
+## Bounded native background model storage - 2026-10-09
+
+Added `NativeModelRegionIO` using the shared persistent block I/O queue engine.
+An asset-bound store now handles model region operations, full checkpoint reads
+and partial saves on its worker. Request/packed-payload budgets include pending,
+active and unread completed work. FIFO checkpoint ordering, COW input ownership,
+draining shutdown and monotonic restart tickets are covered by the expanded
+82-check fixture; block queue and checkpoint regressions pass. Evidence:
+`docs/evidence/model_region_io`; contract: [model catalog](MODEL_REGION_CATALOG.md).
+
+This removes the need for callers to execute model disk operations on the scene
+thread, but main-world archive/pager integration is still pending. The payload
+budget does not bound temporary parser maps or total process memory, and active
+disk operations are not preemptible. No new game FPS or thermal claim is made.
+
 ## Partial model saves preserve unloaded records - 2026-10-09
 
 Native model collections now capture resident records and exact unavailable

@@ -9,13 +9,21 @@ namespace terraforest {
 // Scene-owner API; the worker owns the store and never accesses scene objects.
 class NativeBlockRegionIO : public RefCounted {
     GDCLASS(NativeBlockRegionIO,RefCounted)
-    enum Operation { OPEN, READ, PUBLISH, REMOVE, COLLECT, INDEX, PIN, PINS, PIN_INDEX, PIN_READ, PIN_ACTIVATE, PIN_RELEASE };
+    friend class NativeModelRegionIO;
+    bool model_mode_=false;
+    int64_t read_reservation() const {return model_mode_?5600232:2*1024*1024;}
+    int64_t start_impl(const String &path,int requests,int64_t bytes,bool recover,const String &asset);
+    int64_t publish_model_state(const PackedByteArray &resident,const PackedInt32Array &keys,const PackedByteArray &checksums,const PackedByteArray &checkpoint);
+    int64_t read_model_snapshot(const PackedByteArray &checkpoint);
+    enum Operation { OPEN, READ, PUBLISH, REMOVE, COLLECT, INDEX, PIN, PINS, PIN_INDEX, PIN_READ, PIN_ACTIVATE, PIN_RELEASE, MODEL_SAVE, MODEL_LOAD };
     struct Request {
         Operation operation=OPEN;
         int64_t ticket=0,reserved=0;
         Vector3i region;
         Array packets,expected;
         PackedByteArray checksum;
+        PackedByteArray resident,checksums;
+        PackedInt32Array keys;
         int budget=0;
     };
     struct Completion {Dictionary value;int64_t reserved=0;};
@@ -29,7 +37,7 @@ class NativeBlockRegionIO : public RefCounted {
     int64_t byte_limit_=0,reserved_=0,high_bytes_=0,next_ticket_=1;
     int64_t accepted_=0,finished_=0,rejected_=0,starts_=0;
     int64_t enqueue(Request request);
-    void run(String path,bool recover,Request opening);
+    void run(String path,bool recover,Request opening,String asset);
     static const char *operation_name(Operation operation);
 protected:
     static void _bind_methods();

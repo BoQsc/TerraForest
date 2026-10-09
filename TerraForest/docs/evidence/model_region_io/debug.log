@@ -1,0 +1,85 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS new asset-bound model catalog opens
+PASS second writer cannot acquire directory lease
+PASS atomic publication admits two signed model regions
+PASS catalog reads exact checked model packet
+PASS unchanged publication avoids generation churn
+PASS model catalog checkpoint pins old region versions
+PASS stale expected checksum cannot overwrite committed region
+PASS matching expected checksum publishes new model version
+PASS checkpoint retains earlier packet after edit
+PASS mixed-asset batch rejects without partial publication
+PASS model catalog rejects block packets
+PASS conditional removal commits region deletion
+PASS bounded collection preserves checkpoint-only region
+PASS separate engine process reopens current and checkpoint model versions
+PASS reopening under another asset identity fails
+PASS block catalog reader rejects model catalog format
+PASS disk reopen restores committed model version
+PASS checkpoint retention survives disk reopen
+PASS checkpoint activation restores deleted region
+PASS live collection unloads its captured version
+PASS older checkpoint cannot overwrite live unloaded version
+PASS committed matching packet restores live unloaded records
+PASS corrupt immutable blob is detected on read
+PASS publication refuses to overwrite corrupted immutable data
+PASS corrupt primary catalog requires explicit recovery
+PASS explicit backup recovery reads prior committed catalog
+PASS recovered catalog can publish a new commit
+PASS checkpoint release is explicit
+PASS full-snapshot store opens
+PASS full snapshot fixture has 100000 unique IDs in 100 regions
+PASS whole model snapshot publishes all regions in one catalog commit
+PASS unchanged full publication preserves generation
+PASS full checkpoint reconstruction is byte exact at 100000 placements
+PASS full checkpoint reconstructs after disk reopen
+PASS 100000-instance partial save commits with only 1000 transforms resident
+PASS large partial save preserves 99000 unloaded records and exact resident edit
+PASS authoritative full save removes demolished regions
+PASS demolition does not alter pinned full snapshot
+PASS partial collection cannot publish a truncated full save
+PASS malformed full snapshot preserves committed state
+PASS fixture publishes individually valid packet with cross-region duplicate ID
+PASS complete reconstruction rejects duplicate IDs across regions
+PASS empty full save commits total model demolition
+PASS empty checkpoint reconstructs valid asset-bound empty snapshot
+PASS full checkpoint read validates identity length
+PASS partial capture includes exact sorted unavailable references
+PASS partial storage capture does not weaken whole-save guard
+PASS partial save preserves unloaded region and removes resident demolition
+PASS partial save reconstructs exact edited logical collection
+PASS partial save preserves older pinned world
+PASS unchanged partial save avoids generation churn
+PASS partial save rejects malformed manifest lengths
+PASS partial save rejects duplicate region references
+PASS partial save rejects resident/unavailable overlap
+PASS stale references fail without changing catalog
+PASS partial save rejects resident ID colliding with unloaded ID
+PASS advanced active catalog cannot silently substitute unloaded version
+PASS explicit pinned checkpoint supplies exact older unloaded version
+PASS partial save validates checkpoint identity length
+PASS partial save and checkpoint survive disk reopen
+PASS live unloaded region restores from partial-save catalog without losing resident edits
+PASS fully resident capture uses the same storage API
+PASS partial save detects corrupt unavailable blob before publication
+PASS model worker rejects empty asset identity synchronously
+PASS model worker opens store with ticketed completion
+PASS background worker exclusively owns disk store
+PASS request cap includes accepted work and unread completions
+PASS worker owns immutable input and executes save before checkpoint
+PASS background full checkpoint reconstructs exact saved collection
+PASS stop rejects new requests
+PASS shutdown drains accepted partial save and checkpoint in FIFO order
+PASS poll releases all completion payload reservations after shutdown
+PASS restart preserves monotonically increasing tickets
+PASS restarted worker reopens saved catalog
+PASS byte cap reserves worst-case model packet across pending and unread work
+PASS unread completion retains reservation even after worker exit
+PASS restart cannot discard unread results
+PASS bounded read returns exact unloaded region packet
+PASS observed reservations stay within configured budgets
+PASS invalid nonempty asset receives asynchronous open result
+PASS failed worker open terminates cleanly and returns failure
+PASS worker shutdown and failed reopen release directory lease
+MODEL_REGION_STORE checks=82 failures=0

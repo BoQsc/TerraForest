@@ -4,13 +4,13 @@
 #include <limits>
 
 namespace terraforest {
-static constexpr int64_t READ_RESERVATION=2*1024*1024;
 static constexpr int64_t INDEX_RESERVATION=65536*3*sizeof(int32_t);
 const char *NativeBlockRegionIO::operation_name(Operation operation) {
     switch(operation){case OPEN:return "open";case READ:return "read";case PUBLISH:return "publish";
         case REMOVE:return "remove";case COLLECT:return "collect";case INDEX:return "index";
         case PIN:return "pin";case PINS:return "pins";case PIN_INDEX:return "checkpoint_index";
-        case PIN_READ:return "checkpoint_read";case PIN_ACTIVATE:return "checkpoint_activate";case PIN_RELEASE:return "checkpoint_release";}
+        case PIN_READ:return "checkpoint_read";case PIN_ACTIVATE:return "checkpoint_activate";case PIN_RELEASE:return "checkpoint_release";
+        case MODEL_SAVE:return "model_save";case MODEL_LOAD:return "model_load";}
     return "unknown";
 }
 void NativeBlockRegionIO::_bind_methods() {
@@ -33,8 +33,11 @@ void NativeBlockRegionIO::_bind_methods() {
 }
 NativeBlockRegionIO::~NativeBlockRegionIO(){join();}
 int64_t NativeBlockRegionIO::start(const String &path,int request_limit,int64_t byte_limit,bool recover) {
+    return start_impl(path,request_limit,byte_limit,recover,String());
+}
+int64_t NativeBlockRegionIO::start_impl(const String &path,int request_limit,int64_t byte_limit,bool recover,const String &asset) {
     if(!path.is_absolute_path()||path.begins_with("res://")||path.begins_with("user://")||
-       request_limit<1||request_limit>256||byte_limit<READ_RESERVATION||byte_limit>256*1024*1024)return 0;
+       request_limit<1||request_limit>256||byte_limit<(asset.is_empty()?2*1024*1024:5600232)||byte_limit>256*1024*1024)return 0;
     // Lifecycle calls belong to the scene owner, not concurrent producers.
     {std::lock_guard<std::mutex> lock(mutex_);if(running_||outstanding_||next_ticket_==INT64_MAX)return 0;}
     if(worker_.joinable())worker_.join();
@@ -42,10 +45,11 @@ int64_t NativeBlockRegionIO::start(const String &path,int request_limit,int64_t 
     {
         std::lock_guard<std::mutex> lock(mutex_);
         request_limit_=request_limit;byte_limit_=byte_limit;running_=active_=true;ready_=stopping_=false;
+        model_mode_=!asset.is_empty();
         opening.ticket=next_ticket_++;outstanding_=1;reserved_=opening.reserved;
         high_requests_=1;high_bytes_=reserved_;++accepted_;++starts_;
     }
-    worker_=std::thread(&NativeBlockRegionIO::run,this,path,recover,opening);
+    worker_=std::thread(&NativeBlockRegionIO::run,this,path,recover,opening,asset);
     return opening.ticket;
 }
 int64_t NativeBlockRegionIO::enqueue(Request request) {
@@ -58,7 +62,7 @@ int64_t NativeBlockRegionIO::enqueue(Request request) {
     pending_.push_back(std::move(request));wake_.notify_one();return ticket;
 }
 int64_t NativeBlockRegionIO::read_region(Vector3i region) {
-    Request request;request.operation=READ;request.region=region;request.reserved=READ_RESERVATION;return enqueue(std::move(request));
+    Request request;request.operation=READ;request.region=region;request.reserved=read_reservation();return enqueue(std::move(request));
 }
 int64_t NativeBlockRegionIO::publish_regions(const Array &packets,const Array &expected) {
     if(packets.is_empty()||packets.size()>64||packets.size()!=expected.size())return 0;
@@ -66,7 +70,7 @@ int64_t NativeBlockRegionIO::publish_regions(const Array &packets,const Array &e
     for(int64_t i=0;i<packets.size();++i) {
         if(packets[i].get_type()!=Variant::PACKED_BYTE_ARRAY||expected[i].get_type()!=Variant::PACKED_BYTE_ARRAY)return 0;
         PackedByteArray bytes=packets[i],checksum=expected[i];
-        if(bytes.size()>READ_RESERVATION||(checksum.size()!=0&&checksum.size()!=32))return 0;
+        if(bytes.size()>read_reservation()||(checksum.size()!=0&&checksum.size()!=32))return 0;
         request.reserved+=bytes.size()+checksum.size();
         if(request.reserved>64*1024*1024)return 0;
         // Independent Array containers pin COW byte values without retaining
@@ -98,7 +102,7 @@ int64_t NativeBlockRegionIO::checkpoint_regions(const PackedByteArray &checkpoin
 }
 int64_t NativeBlockRegionIO::read_checkpoint_region(const PackedByteArray &checkpoint,Vector3i region) {
     if(checkpoint.size()!=32)return 0;
-    Request request;request.operation=PIN_READ;request.checksum=checkpoint;request.region=region;request.reserved=READ_RESERVATION+32;return enqueue(std::move(request));
+    Request request;request.operation=PIN_READ;request.checksum=checkpoint;request.region=region;request.reserved=read_reservation()+32;return enqueue(std::move(request));
 }
 int64_t NativeBlockRegionIO::activate_checkpoint(const PackedByteArray &checkpoint) {
     if(checkpoint.size()!=32)return 0;
@@ -108,9 +112,21 @@ int64_t NativeBlockRegionIO::release_checkpoint(const PackedByteArray &checkpoin
     if(checkpoint.size()!=32)return 0;
     Request request;request.operation=PIN_RELEASE;request.checksum=checkpoint;request.reserved=32;return enqueue(std::move(request));
 }
-void NativeBlockRegionIO::run(String path,bool recover,Request opening) {
+int64_t NativeBlockRegionIO::publish_model_state(const PackedByteArray &resident,const PackedInt32Array &keys,const PackedByteArray &checksums,const PackedByteArray &checkpoint) {
+    if(!model_mode_||resident.size()>5600176||keys.size()%3||keys.size()>4096*3||checksums.size()!=keys.size()/3*32||(checkpoint.size()!=0&&checkpoint.size()!=32))return 0;
+    Request request;request.operation=MODEL_SAVE;request.resident=resident;request.keys=keys;request.checksums=checksums;request.checksum=checkpoint;
+    request.reserved=resident.size()+keys.size()*sizeof(int32_t)+checksums.size()+checkpoint.size();
+    return enqueue(std::move(request));
+}
+int64_t NativeBlockRegionIO::read_model_snapshot(const PackedByteArray &checkpoint) {
+    if(!model_mode_||checkpoint.size()!=32)return 0;
+    Request request;request.operation=MODEL_LOAD;request.checksum=checkpoint;request.reserved=5600176+32;return enqueue(std::move(request));
+}
+void NativeBlockRegionIO::run(String path,bool recover,Request opening,String asset) {
     Ref<NativeBlockRegionStore> store;store.instantiate();
-    Dictionary opened=store->open_store(path,recover);
+    Dictionary opened;
+    if(!asset.is_empty()&&!store->set_model_asset(asset)){opened["ok"]=false;opened["error"]=int(ERR_INVALID_PARAMETER);opened["message"]="Invalid model asset identity.";}
+    else opened=store->open_store(path,recover);
     bool ok=opened["ok"];
     if(ok)opened["keys"]=store->list_regions();
     opened["ticket"]=opening.ticket;opened["operation"]="open";
@@ -140,6 +156,8 @@ void NativeBlockRegionIO::run(String path,bool recover,Request opening) {
             case PIN_READ:result=store->read_checkpoint_region(request.checksum,request.region);break;
             case PIN_ACTIVATE:result=store->activate_checkpoint(request.checksum);break;
             case PIN_RELEASE:result=store->release_checkpoint(request.checksum);break;
+            case MODEL_SAVE:result=store->publish_model_storage(request.resident,request.keys,request.checksums,request.checksum);break;
+            case MODEL_LOAD:result=store->read_model_checkpoint(request.checksum);break;
             case OPEN:break;
         }
         result["ticket"]=request.ticket;result["operation"]=operation_name(request.operation);
@@ -147,6 +165,7 @@ void NativeBlockRegionIO::run(String path,bool recover,Request opening) {
         // Release input handles before exposing completion; reservation remains
         // charged until poll, even for failures and small successful replies.
         request.packets.clear();request.expected.clear();request.checksum=PackedByteArray();
+        request.resident=PackedByteArray();request.keys=PackedInt32Array();request.checksums=PackedByteArray();
         {
             std::lock_guard<std::mutex> lock(mutex_);
             completed_.push_back({result,request.reserved});++finished_;active_=false;

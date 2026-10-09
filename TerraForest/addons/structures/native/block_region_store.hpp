@@ -8,6 +8,7 @@ namespace terraforest {
 class NativeBlockRegionStore : public RefCounted {
     GDCLASS(NativeBlockRegionStore,RefCounted)
     friend class NativeModelRegionStore;
+    friend class NativeBlockRegionIO;
     String model_asset_;
     PackedByteArray model_asset_hash_;
     bool set_model_asset(const String &asset);

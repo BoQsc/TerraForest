@@ -125,3 +125,50 @@ references, demolition, unchanged saves, disk reopen, older checkpoint fallback,
 corrupt blobs, malformed/overlapping manifests and duplicate IDs. Evidence:
 `docs/evidence/model_partial_storage`. These APIs are not yet connected to the
 main-world compound archive, metadata bootstrap or automatic model pager.
+
+## Bounded background model I/O
+
+`NativeModelRegionIO` shares the block queue implementation, but opens an
+asset-bound model store. `start(path, asset_id, request_limit, byte_limit,
+recover_backup=false)` returns a ticket; poll its open result before submitting
+dependent work. Positive tickets mean accepted, not successful. Zero means
+rejected admission (invalid shape, lifecycle state or backpressure). Results
+contain `ticket`, `operation` and the synchronous store result.
+
+The queue exposes region read/publication/removal, region/checkpoint indexes,
+checkpoint pin/read/activate/release, garbage collection, partial storage-state
+publication and full checkpoint reconstruction. `publish_storage_state` takes
+the three captured fields plus an optional checkpoint; full-resident captures
+use empty unavailable arrays. The worker owns one store and accesses no scene
+nodes. FIFO ordering lets a checkpoint queued after a save capture its committed
+state; callers must still inspect each result because a failed save does not
+cancel later commands automatically.
+
+Use `poll(max_results=16)` to drain completions (1..64 per call). Request limits
+are 1..256 and payload budgets 5,600,232..268,435,456 bytes. Model region reads
+reserve 5,600,232 bytes, checkpoint region reads that amount plus their 32-byte
+input, and full checkpoint reads reserve 5,600,208 bytes. Writes reserve their
+retained packed input. Index calls retain the shared catalog's worst-case index
+reservation. Requests, active work and unread completions all remain charged
+until polled, including failures. Packed inputs use COW ownership and independent
+Array containers, so caller mutation cannot rewrite accepted work.
+
+`request_stop()` rejects new work and wakes the worker. Accepted commands drain
+before it closes the store. `join()` requests stop and waits; this can block on
+disk work and should be used for controlled teardown, not per-frame polling.
+Restart requires all old results to be polled; tickets remain monotonic.
+Lifecycle and submission belong to the scene owner. One persistent sleeping
+worker is used per queue, not a thread per request; large asset catalogs will
+need shared-worker scheduling before using one queue per asset.
+
+These budgets cover queued packed payloads, not temporary parser/ID maps,
+catalog memory, OS disk caches, result dictionary overhead or allocator costs.
+An active synchronous operation cannot be preempted. Main-thread collection
+capture is also not moved by this queue. The main world does not use this API
+yet, so no runtime frame-time or thermal improvement is claimed.
+
+The 82-check model catalog fixture includes worker save/load, partial saves,
+FIFO checkpoints, immutable inputs, both admission limits, draining shutdown,
+restart, unread reservations and failed-open lease release. Debug and release
+evidence plus block I/O/checkpoint regressions are retained in
+`docs/evidence/model_region_io/`.
