@@ -7,6 +7,7 @@
 namespace terraforest {
 NativeStaticBatch::NativeStaticBatch() {set_notify_transform(true);}
 void NativeStaticBatch::_bind_methods() {
+    ClassDB::bind_method(D_METHOD("capture_storage_state"),&NativeStaticBatch::capture_storage_state);
     ClassDB::bind_method(D_METHOD("capture_region","region"),&NativeStaticBatch::capture_region);
     ClassDB::bind_method(D_METHOD("validate_region_snapshot","bytes"),&NativeStaticBatch::validate_region_snapshot);
     ClassDB::bind_method(D_METHOD("unload_region","expected_snapshot"),&NativeStaticBatch::unload_region);

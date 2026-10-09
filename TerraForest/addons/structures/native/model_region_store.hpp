@@ -16,6 +16,7 @@ public:
     void close(){std::lock_guard<std::mutex> lock(lifecycle_);store_->close();}
     Dictionary stats() const{return store_->stats();}
     Dictionary publish_snapshot(const PackedByteArray &snapshot){return store_->publish_model_snapshot(snapshot);}
+    Dictionary publish_storage_state(const PackedByteArray &resident,const PackedInt32Array &keys,const PackedByteArray &checksums,const PackedByteArray &checkpoint=PackedByteArray()){return store_->publish_model_storage(resident,keys,checksums,checkpoint);}
     Dictionary read_checkpoint(const PackedByteArray &checkpoint) const{return store_->read_model_checkpoint(checkpoint);}
     PackedInt32Array list_regions() const{return store_->list_regions();}
     PackedByteArray checksum(Vector3i region) const{return store_->checksum(region);}

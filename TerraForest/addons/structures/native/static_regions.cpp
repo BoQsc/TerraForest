@@ -85,4 +85,15 @@ Dictionary NativeStaticBatch::region_stats() const {
     out["unloaded_digest_bytes"]=int64_t(unloaded_regions.size()*32);
     return out;
 }
+Dictionary NativeStaticBatch::capture_storage_state() const {
+    PackedInt32Array keys;PackedByteArray checksums;
+    keys.resize(unloaded_regions.size()*3);checksums.resize(unloaded_regions.size()*32);
+    int64_t index=0;
+    for(const auto &entry:unloaded_regions) {
+        keys.set(index*3,entry.first.x);keys.set(index*3+1,entry.first.y);keys.set(index*3+2,entry.first.z);
+        std::memcpy(checksums.ptrw()+index*32,entry.second.checksum.ptr(),32);++index;
+    }
+    Dictionary out;out["resident"]=encode_placements(asset_id,placements);
+    out["unavailable_keys"]=keys;out["unavailable_checksums"]=checksums;return out;
+}
 }

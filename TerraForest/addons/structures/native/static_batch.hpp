@@ -86,6 +86,7 @@ protected:
     static void _bind_methods();
     void _notification(int what);
 public:
+    Dictionary capture_storage_state() const;
     PackedByteArray capture_region(Vector3i region) const;
     bool validate_region_snapshot(const PackedByteArray &bytes) const;
     bool unload_region(const PackedByteArray &expected_snapshot);

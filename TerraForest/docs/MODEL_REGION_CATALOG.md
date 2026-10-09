@@ -86,3 +86,42 @@ They allocate resident maps and process every referenced record. The updated
 trip, disk reopen, reduced/empty saves, retained old checkpoints, malformed
 snapshot rejection and cross-region duplicate-ID rejection. Evidence for this
 stage: `docs/evidence/model_snapshot_catalog/`.
+
+## Partial model storage
+
+Capture `NativeStaticBatch.capture_storage_state()` on the collection owner
+thread. Transfer its `resident`, `unavailable_keys` and `unavailable_checksums`
+together to the I/O owner. The resident TFSI bytes intentionally exclude unloaded
+records; they are not a whole-world snapshot. `capture_snapshot()` continues to
+reject partial collections. Returned packed values do not mutate native state.
+
+`NativeModelRegionStore.publish_storage_state(resident, unavailable_keys,
+unavailable_checksums, checkpoint=empty)` commits the combined logical state.
+The unavailable keys are sorted unique signed XYZ triples, disjoint from all
+resident origin groups, with one 32-byte packet checksum per key. Each reference
+must match the active catalog or the explicitly supplied pinned checkpoint.
+Unknown/stale references reject the save instead of substituting another version.
+An explicitly supplied checkpoint must exist. Loaded regions omitted from both
+resident data and references are removed, preserving demolition.
+
+Before any new blob writes, publication reads and validates unavailable packets
+one at a time, checks global ID uniqueness against resident data and enforces
+the combined 100,000-instance / 4,096-region bounds. Corruption rejects the save.
+The catalog preserves unchanged unavailable blob references rather than
+rewriting their transforms. Old pinned checkpoints remain unchanged. This is
+an authoritative serialized save, not a merge protocol; callers must preserve
+capture/commit ordering and checkpoint ownership.
+
+This stage deliberately trades I/O for validated identity and capacity. It scans
+all unavailable records and holds an ID set plus resident maps; it is not yet
+constant-cost, dirty-only or metadata-only saving. Persistent identity manifests
+are still needed to remove that read amplification. It must execute on an I/O
+owner and is not suitable for a main-thread frame budget.
+
+The expanded `model_region_store.gd` fixture has 63 checks. A partial save with
+100,000 logical records and only 1,000 resident transforms preserves 99,000
+unloaded records plus an exact resident edit. Other checks exercise signed
+references, demolition, unchanged saves, disk reopen, older checkpoint fallback,
+corrupt blobs, malformed/overlapping manifests and duplicate IDs. Evidence:
+`docs/evidence/model_partial_storage`. These APIs are not yet connected to the
+main-world compound archive, metadata bootstrap or automatic model pager.

@@ -3,6 +3,7 @@
 #include <godot_cpp/core/class_db.hpp>
 namespace terraforest {
 void NativeModelRegionStore::_bind_methods() {
+    ClassDB::bind_method(D_METHOD("publish_storage_state","resident","unavailable_keys","unavailable_checksums","checkpoint"),&NativeModelRegionStore::publish_storage_state,DEFVAL(PackedByteArray()));
     ClassDB::bind_method(D_METHOD("publish_snapshot","snapshot"),&NativeModelRegionStore::publish_snapshot);
     ClassDB::bind_method(D_METHOD("read_checkpoint","checkpoint"),&NativeModelRegionStore::read_checkpoint);
     ClassDB::bind_method(D_METHOD("open_store","absolute_directory","asset_id","recover_backup"),&NativeModelRegionStore::open_store,DEFVAL(false));

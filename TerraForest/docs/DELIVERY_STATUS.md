@@ -1,3 +1,20 @@
+## Partial model saves preserve unloaded records - 2026-10-09
+
+Native model collections now capture resident records and exact unavailable
+region references together. The model store commits resident edits/demolition
+while retaining unloaded versions from the active or explicitly pinned catalog.
+It rejects malformed, overlapping, stale or corrupt references, duplicate IDs
+and combined-capacity overflow. The complete-snapshot guard remains unchanged.
+
+The expanded catalog fixture includes 100,000 logical placements with only
+1,000 resident transforms at save time, verifies the exact resident edit and all
+99,000 unavailable records, and checks checkpoint fallback and disk reopen.
+Evidence: `docs/evidence/model_partial_storage`; contract and costs:
+[model catalog](MODEL_REGION_CATALOG.md). Publication still reads unavailable
+records on the I/O owner to validate IDs; persistent manifests are needed to
+reduce this cost. Main-world compound integration and automatic paging remain
+unfinished. No FPS or total-memory improvement is claimed from this API test.
+
 ## Complete model snapshots through the region catalog - 2026-10-09
 
 The native model catalog now publishes complete collection snapshots as one

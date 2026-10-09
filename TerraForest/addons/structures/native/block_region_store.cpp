@@ -409,14 +409,45 @@ Dictionary NativeBlockRegionStore::publish_block_snapshot(const PackedByteArray 
     return publish_storage_state(blocks,PackedInt32Array(),PackedByteArray());
 }
 Dictionary NativeBlockRegionStore::publish_model_snapshot(const PackedByteArray &snapshot) {
+    return publish_model_storage(snapshot,PackedInt32Array(),PackedByteArray(),PackedByteArray());
+}
+Dictionary NativeBlockRegionStore::publish_model_storage(const PackedByteArray &snapshot,const PackedInt32Array &keys,const PackedByteArray &checksums,const PackedByteArray &checkpoint_hash) {
     std::lock_guard<std::mutex> lock(mutex_);
     if(!lease_||model_asset_.is_empty())return status(ERR_UNCONFIGURED,"Model store is closed.");
+    if(keys.size()%3||keys.size()/3>4096||checksums.size()!=keys.size()/3*32||
+       (checkpoint_hash.size()!=0&&checkpoint_hash.size()!=32))return status(ERR_INVALID_DATA,"Invalid model unavailable manifest lengths.");
     String asset;std::map<int64_t,NativeStaticBatch::Placement> values;
-    if(!NativeStaticBatch::parse(snapshot,asset,&values)||asset!=model_asset_)return status(ERR_INVALID_DATA,"Invalid or mismatched full model snapshot.");
+    if(!NativeStaticBatch::parse(snapshot,asset,&values)||asset!=model_asset_)return status(ERR_INVALID_DATA,"Invalid or mismatched resident model snapshot.");
     if(!observed_files_unchanged())return status(ERR_BUSY,"Storage metadata changed outside this owner.");
     std::map<BlockKey,std::map<int64_t,NativeStaticBatch::Placement>> regions;
     for(auto &entry:values)regions[NativeStaticBatch::group_for(entry.second)].emplace(entry.first,std::move(entry.second));
     Catalog next;
+    const Catalog *fallback=nullptr;
+    if(!checkpoint_hash.is_empty()) {
+        Digest id{};std::memcpy(id.data(),checkpoint_hash.ptr(),32);auto pin=checkpoints_.find(id);
+        if(pin==checkpoints_.end())return status(ERR_DOES_NOT_EXIST,"Specified model checkpoint is not pinned.");
+        fallback=&pin->second.entries;
+    }
+    if(regions.size()+keys.size()/3>4096)return status(ERR_OUT_OF_MEMORY,"Combined model region capacity exceeded.");
+    std::set<int64_t> identities;for(const auto &value:values)identities.insert(value.first);
+    BlockKey previous;
+    for(int64_t i=0;i<keys.size()/3;++i) {
+        BlockKey key{keys[i*3],keys[i*3+1],keys[i*3+2]};
+        if(!NativeStaticBatch::valid_model_region(key)||(i&&!(previous<key))||regions.count(key))return status(ERR_INVALID_DATA,"Unavailable model regions must be sorted, unique and disjoint from resident regions.");
+        const Entry *selected=nullptr;
+        auto current=entries_.find(key);
+        if(current!=entries_.end()&&!std::memcmp(current->second.digest.data(),checksums.ptr()+i*32,32))selected=&current->second;
+        if(!selected&&fallback){auto old=fallback->find(key);if(old!=fallback->end()&&!std::memcmp(old->second.digest.data(),checksums.ptr()+i*32,32))selected=&old->second;}
+        if(!selected)return status(ERR_BUSY,"Exact unavailable model version is not retained by the selected catalogs.");
+        // Until persistent ID manifests exist, verify one referenced region at a
+        // time on the I/O owner. Never admit cross-region identity collisions.
+        Dictionary read=read_entry(key,*selected,generation_);if(!bool(read["ok"]))return read;
+        String decoded_asset;BlockKey decoded_key;std::map<int64_t,NativeStaticBatch::Placement> decoded;
+        if(!NativeStaticBatch::parse_region(read["bytes"],decoded_asset,decoded_key,decoded))return status(ERR_FILE_CORRUPT,"Unavailable model region cannot be decoded.");
+        if(identities.size()+decoded.size()>100000)return status(ERR_OUT_OF_MEMORY,"Combined model instance capacity exceeded.");
+        for(const auto &value:decoded)if(!identities.insert(value.first).second)return status(ERR_INVALID_DATA,"Duplicate model identity across resident and unavailable regions.");
+        next.emplace(key,*selected);previous=key;
+    }
     for(const auto &region:regions) {
         auto payload=NativeStaticBatch::encode_placements(asset,region.second);PackedByteArray packet;packet.resize(24);
         std::memcpy(packet.ptrw(),"TFMR\1\0\0\0",8);packet.encode_s32(8,region.first.x);packet.encode_s32(12,region.first.y);packet.encode_s32(16,region.first.z);
