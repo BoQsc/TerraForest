@@ -1,0 +1,34 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] World loaded
+[TerrainRewrite] World loaded
+[TerrainRewrite] Lake ready · F5 saves world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+PASS disposable furnished world loaded
+PASS declared four cottages and ground cover active
+PASS four table objects loaded
+PASS four chair objects loaded
+PASS four shelf objects loaded
+[TerrainRewrite] Lake ready · F5 saves world
+[TerrainRewrite] Lake ready · F5 saves world
+FAIL interior settles for 60 frames before capture
+PASS interior meets unchanged short-route frame gates
+PASS interior has GPU measurements
+FAIL interior has no terrain work during capture
+FURNISHED_PHASE {"summary":{"draw_calls":{"max":515.0,"median":515.0,"p95":515.0,"p99":515.0},"frame_ms":{"max":20.331,"median":16.734,"p95":18.428,"p99":19.514},"gpu_ms":{"max":6.13299989700317,"median":3.42000007629395,"p95":4.82600021362305,"p99":5.38299989700317},"memory_bytes":{"max":274542204.0,"median":267148604.0,"p95":271163808.0,"p99":271179604.0},"primitives":{"max":1417721.0,"median":1417721.0,"p95":1417721.0,"p99":1417721.0},"render_cpu_ms":{"max":1.85399997234344,"median":0.894999980926514,"p95":1.65400004386902,"p99":1.77900004386902},"terrain_active":{"max":1.0,"median":1.0,"p95":1.0,"p99":1.0},"terrain_queued":{"max":4.0,"median":4.0,"p95":4.0,"p99":4.0}},"view":"interior"}
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+[TerrainRewrite] Lake ready · F5 saves world
+PASS entrance settles for 60 frames before capture
+FAIL entrance meets unchanged short-route frame gates
+PASS entrance has GPU measurements
+PASS entrance has no terrain work during capture
+FURNISHED_PHASE {"summary":{"draw_calls":{"max":529.0,"median":529.0,"p95":529.0,"p99":529.0},"frame_ms":{"max":20.679,"median":16.756,"p95":18.825,"p99":19.902},"gpu_ms":{"max":5.64200019836426,"median":4.15299987792969,"p95":5.16200017929077,"p99":5.47300004959106},"memory_bytes":{"max":227519893.0,"median":227327453.0,"p95":227495017.0,"p99":227509745.0},"primitives":{"max":2154020.0,"median":2154020.0,"p95":2154020.0,"p99":2154020.0},"render_cpu_ms":{"max":2.39199995994568,"median":1.35699999332428,"p95":1.67799997329712,"p99":2.14800000190735},"terrain_active":{"max":0.0,"median":0.0,"p95":0.0,"p99":0.0},"terrain_queued":{"max":0.0,"median":0.0,"p95":0.0,"p99":0.0}},"view":"entrance"}
+PASS overview settles for 60 frames before capture
+FAIL overview meets unchanged short-route frame gates
+PASS overview has GPU measurements
+PASS overview has no terrain work during capture
+FURNISHED_PHASE {"summary":{"draw_calls":{"max":667.0,"median":667.0,"p95":667.0,"p99":667.0},"frame_ms":{"max":21.186,"median":16.676,"p95":19.185,"p99":20.207},"gpu_ms":{"max":5.6560001373291,"median":4.38199996948242,"p95":5.21099996566772,"p99":5.59100008010864},"memory_bytes":{"max":228131857.0,"median":227939417.0,"p95":228106981.0,"p99":228121709.0},"primitives":{"max":1774993.0,"median":1774989.0,"p95":1774989.0,"p99":1774989.0},"render_cpu_ms":{"max":2.06900000572205,"median":1.59899997711182,"p95":1.9889999628067,"p99":2.03299999237061},"terrain_active":{"max":0.0,"median":0.0,"p95":0.0,"p99":0.0},"terrain_queued":{"max":0.0,"median":0.0,"p95":0.0,"p99":0.0}},"view":"overview"}
+PASS native fullscreen1080p cap60
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+FURNISHED_COST failures=4

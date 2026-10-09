@@ -1,0 +1,83 @@
+{
+  "base_commit": "81698c7",
+  "command": "godot --path TerraForest --script res://tests/furnished_cost.gd -- --world-slot=DISPOSABLE_FURNISHED_PROBE_SLOT --ground-cover",
+  "fixture": "Copy the furnished checkpoint .trw and matching .regions/.models directories to a new furnished_probe_ slot; the test mutates camera/player state and normal autosaving may write the copy. Never benchmark against the human slot.",
+  "hardware": {
+    "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU",
+    "cpu": "12th Gen Intel(R) Core(TM) i5-12450H"
+  },
+  "failures": 4,
+  "result": "Interior fails bounded idle preparation and remains contaminated by active terrain work (four queued). Entrance and overview idle throughout capture but fail unchanged p95<=18.5ms; p99<=25 and max<=50 pass. No gate relaxation or unchanged rerun.",
+  "measurements": {
+    "interior": {
+      "frame_ms": {
+        "max": 20.331,
+        "median": 16.734,
+        "p95": 18.428,
+        "p99": 19.514
+      },
+      "gpu_ms": {
+        "max": 6.13299989700317,
+        "median": 3.42000007629395,
+        "p95": 4.82600021362305,
+        "p99": 5.38299989700317
+      },
+      "render_cpu_ms": {
+        "max": 1.85399997234344,
+        "median": 0.894999980926514,
+        "p95": 1.65400004386902,
+        "p99": 1.77900004386902
+      },
+      "draw_calls": 515.0
+    },
+    "entrance": {
+      "frame_ms": {
+        "max": 20.679,
+        "median": 16.756,
+        "p95": 18.825,
+        "p99": 19.902
+      },
+      "gpu_ms": {
+        "max": 5.64200019836426,
+        "median": 4.15299987792969,
+        "p95": 5.16200017929077,
+        "p99": 5.47300004959106
+      },
+      "render_cpu_ms": {
+        "max": 2.39199995994568,
+        "median": 1.35699999332428,
+        "p95": 1.67799997329712,
+        "p99": 2.14800000190735
+      },
+      "draw_calls": 529.0
+    },
+    "overview": {
+      "frame_ms": {
+        "max": 21.186,
+        "median": 16.676,
+        "p95": 19.185,
+        "p99": 20.207
+      },
+      "gpu_ms": {
+        "max": 5.6560001373291,
+        "median": 4.38199996948242,
+        "p95": 5.21099996566772,
+        "p99": 5.59100008010864
+      },
+      "render_cpu_ms": {
+        "max": 2.06900000572205,
+        "median": 1.59899997711182,
+        "p95": 1.9889999628067,
+        "p99": 2.03299999237061
+      },
+      "draw_calls": 667.0
+    }
+  },
+  "limits": "Three stationary views, 180 post-draw intervals each; bounded small furnished settlement with forest/ground cover. Cap included in frame intervals. Viewport GPU time is not GPU usage, power or thermal proof. Not a travel, active simulation, dense-city or endurance test.",
+  "next_decision": "Keep small furnished checkpoint available. Investigate startup work ownership/lake bake reuse separately; no cause assigned from aggregate queue counts. Later controlled frame-pacing comparison must account for VSync/cap and background work before attributing jitter to furniture. Dense city and thermal gates remain open.",
+  "hashes": {
+    "tests/furnished_cost.gd": "cce00a8ccf470ad4cf0cb7c51834e685d6419083553ab5bbeb335877c2d946bc",
+    "demo/world.gd": "e41ee92ac216caf858bcc2bad2d7b4fa2621eddff9cbd5f95b82226ef49cb951",
+    "addons/structures/bin/structures.windows.template_debug.x86_64.dll": "490ca4d7af3139a9f292aa324c290e7307aafced15f56a83567294b7c7961f2e"
+  }
+}
