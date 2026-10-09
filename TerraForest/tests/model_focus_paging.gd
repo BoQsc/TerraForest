@@ -22,6 +22,9 @@ func drive(focus: Vector3, loaded: Vector3i, absent: Vector3i) -> bool:
         var ready:=true
         for id in assets:
             var batch: Node3D=live.model(id)
+            var residency: Dictionary=batch.region_stats()
+            if residency.unloaded_bounds_nodes!=residency.unloaded_regions:
+                check(false,"spatial index disagrees with region residency");return false
             ready=ready and batch.is_region_loaded(loaded) and not batch.is_region_loaded(absent)
         if ready and state.jobs==0:return true
         await process_frame

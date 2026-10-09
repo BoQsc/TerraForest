@@ -1,0 +1,38 @@
+{
+  "cases": [
+    {
+      "assets": 1,
+      "calls_to_first_request": 1,
+      "first_request_gate_calls": 4,
+      "peak_selection_usec": 83,
+      "queued": true,
+      "regions_per_asset": 64,
+      "visits": 64,
+      "wall_usec": 135
+    },
+    {
+      "assets": 1,
+      "calls_to_first_request": 64,
+      "first_request_gate_calls": 4,
+      "peak_selection_usec": 80,
+      "queued": true,
+      "regions_per_asset": 4096,
+      "visits": 4096,
+      "wall_usec": 2263
+    },
+    {
+      "assets": 32,
+      "calls_to_first_request": 2048,
+      "first_request_gate_calls": 4,
+      "peak_selection_usec": 622,
+      "queued": true,
+      "regions_per_asset": 4096,
+      "visits": 131049,
+      "wall_usec": 84699
+    }
+  ],
+  "checks": 12,
+  "failures": 2,
+  "scope": "Synthetic validated metadata selection only, no disk packets or scheduler ticks. Calls are not elapsed game frames; no actual arrival/FPS claim.",
+  "library": "structures.windows.template_release.x86_64.dll"
+}

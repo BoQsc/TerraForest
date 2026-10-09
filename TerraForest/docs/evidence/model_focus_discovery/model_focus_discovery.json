@@ -1,0 +1,111 @@
+{
+  "cases": [
+    {
+      "assets": 1,
+      "axis": 0,
+      "calls_to_first_request": 1,
+      "extended_visual_small_proxy": false,
+      "first_request_gate_calls": 4,
+      "offset": 0,
+      "peak_selection_usec": 31,
+      "queued": true,
+      "regions_per_asset": 64,
+      "visits": 64,
+      "wall_usec": 59
+    },
+    {
+      "assets": 1,
+      "axis": 0,
+      "calls_to_first_request": 1,
+      "extended_visual_small_proxy": false,
+      "first_request_gate_calls": 4,
+      "offset": 0,
+      "peak_selection_usec": 19,
+      "queued": true,
+      "regions_per_asset": 4096,
+      "visits": 64,
+      "wall_usec": 41
+    },
+    {
+      "assets": 32,
+      "axis": 0,
+      "calls_to_first_request": 1,
+      "extended_visual_small_proxy": false,
+      "first_request_gate_calls": 4,
+      "offset": 0,
+      "peak_selection_usec": 40,
+      "queued": true,
+      "regions_per_asset": 4096,
+      "visits": 64,
+      "wall_usec": 65
+    },
+    {
+      "assets": 1,
+      "axis": 1,
+      "calls_to_first_request": 1,
+      "extended_visual_small_proxy": false,
+      "first_request_gate_calls": 4,
+      "offset": -2048,
+      "peak_selection_usec": 30,
+      "queued": true,
+      "regions_per_asset": 4096,
+      "visits": 64,
+      "wall_usec": 113
+    },
+    {
+      "assets": 1,
+      "axis": 2,
+      "calls_to_first_request": 1,
+      "extended_visual_small_proxy": false,
+      "first_request_gate_calls": 4,
+      "offset": -2048,
+      "peak_selection_usec": 42,
+      "queued": true,
+      "regions_per_asset": 4096,
+      "visits": 64,
+      "wall_usec": 138
+    },
+    {
+      "assets": 1,
+      "axis": 0,
+      "calls_to_first_request": 1,
+      "extended_visual_small_proxy": false,
+      "first_request_gate_calls": 4,
+      "offset": 28672,
+      "peak_selection_usec": 27,
+      "queued": true,
+      "regions_per_asset": 4096,
+      "visits": 64,
+      "wall_usec": 61
+    },
+    {
+      "assets": 1,
+      "axis": 0,
+      "calls_to_first_request": 1,
+      "extended_visual_small_proxy": true,
+      "first_request_gate_calls": 4,
+      "offset": 0,
+      "peak_selection_usec": 66,
+      "queued": true,
+      "regions_per_asset": 4096,
+      "visits": 64,
+      "wall_usec": 107
+    },
+    {
+      "assets": 32,
+      "axis": 3,
+      "calls_to_first_request": 1,
+      "extended_visual_small_proxy": false,
+      "first_request_gate_calls": 4,
+      "offset": -8,
+      "peak_selection_usec": 42,
+      "queued": true,
+      "regions_per_asset": 4096,
+      "visits": 64,
+      "wall_usec": 65
+    }
+  ],
+  "checks": 50,
+  "failures": 0,
+  "scope": "Synthetic validated metadata selection only, no disk packets or scheduler ticks. Calls are not elapsed game frames; no actual arrival/FPS claim."
+}

@@ -19,6 +19,9 @@ class NativeModelTransferScheduler : public RefCounted {
         std::map<BlockKey,PackedByteArray> versions;
         std::map<BlockKey,int64_t> retry_after;
         BlockKey cursor{};bool cursor_valid=false,select_resident=false;
+        std::vector<uint64_t> frontier;
+        uint64_t bounds_revision=0;
+        Vector3 query_focus;double query_radius=-1;bool query_valid=false;
     };
     enum Stage {QUEUED,READING,READY,TRANSFERRING,DONE};
     struct Job {

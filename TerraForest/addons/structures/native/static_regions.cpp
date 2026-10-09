@@ -48,7 +48,7 @@ bool NativeStaticBatch::prepare_metadata(const PackedByteArray &bytes,std::map<B
     if(source_mesh.is_null())return false;
     String asset;PackedByteArray checkpoint;std::map<BlockKey,MetadataRegion> regions;
     if(!parse_metadata(bytes,asset,checkpoint,regions,ids)||asset!=asset_id)return false;
-    const AABB prototype=proxy_parts.empty()?source_mesh->get_aabb():proxy_box;
+    const AABB prototype=proxy_parts.empty()?source_mesh->get_aabb():source_mesh->get_aabb().merge(proxy_box);
     if(!prototype.position.is_finite()||!prototype.size.is_finite()||!prototype.get_end().is_finite())return false;
     for(const auto &entry:regions) {
         UnloadedRegion missing;missing.checksum=entry.second.checksum;missing.count=entry.second.ids.size();
@@ -73,6 +73,7 @@ void NativeStaticBatch::install_metadata(std::map<BlockKey,UnloadedRegion> &&sta
     clear_proxies();collision_bounds.clear();collision_dirty=true;
     placements.clear();groups.clear();slots.clear();
     unloaded_regions=std::move(staged);unloaded_ids=std::move(ids);
+    unloaded_bounds.clear();for(const auto &entry:unloaded_regions)unloaded_bounds.insert(entry.first,entry.second.bounds);
     rebuild(touched);publish_change();
 }
 bool NativeStaticBatch::valid_model_region(BlockKey key) {
@@ -136,10 +137,11 @@ bool NativeStaticBatch::unload_region_impl(const PackedByteArray &expected) {
         }
     }
     UnloadedRegion metadata;metadata.checksum=expected.slice(expected.size()-32);metadata.count=values.size();
-    if(!values.empty())metadata.bounds=collision_bounds.at(key);
+    if(!values.empty())metadata.bounds=collision_bounds.at(key).merge(render_bounds.at(key));
     // Publish unavailable metadata, reservations and record removal together,
     // before observers can query readiness or attempt new authoring.
     unloaded_regions.emplace(key,metadata);
+    unloaded_bounds.insert(key,metadata.bounds);
     for(const auto &entry:values) {
         unloaded_ids.insert(entry.first);invalidate_proxy(entry.first);
         placements.erase(entry.first);slots.erase(entry.first);
@@ -162,7 +164,7 @@ bool NativeStaticBatch::restore_region_impl(const PackedByteArray &bytes) {
         unloaded_ids.erase(entry.first);groups[key].insert(entry.first);
         placements.emplace(entry.first,std::move(entry.second));
     }
-    unloaded_regions.erase(missing);rebuild({key});publish_change();return true;
+    unloaded_regions.erase(missing);unloaded_bounds.erase(key);rebuild({key});publish_change();return true;
 }
 Dictionary NativeStaticBatch::region_stats() const {
     Dictionary out;out["region_edge_m"]=32;out["resident_regions"]=int(groups.size());
@@ -171,6 +173,7 @@ Dictionary NativeStaticBatch::region_stats() const {
     out["resident_transform_bytes"]=int64_t(placements.size()*sizeof(Placement));
     out["reserved_id_payload_bytes"]=int64_t((unloaded_ids.size()+hidden_record_count())*sizeof(int64_t));
     out["unloaded_digest_bytes"]=int64_t(unloaded_regions.size()*32);
+    out["unloaded_bounds_nodes"]=int64_t(unloaded_bounds.size());out["unloaded_bounds_height"]=unloaded_bounds.height();
     return out;
 }
 Dictionary NativeStaticBatch::capture_storage_state() const {

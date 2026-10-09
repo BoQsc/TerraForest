@@ -6,6 +6,7 @@
 #include <godot_cpp/variant/packed_int64_array.hpp>
 #include <godot_cpp/variant/packed_byte_array.hpp>
 #include "block_world.hpp"
+#include "model_bounds_index.hpp"
 #include <map>
 #include <set>
 #include <vector>
@@ -31,6 +32,7 @@ class NativeStaticBatch : public Node3D {
     struct MetadataRegion { PackedByteArray checksum; std::array<float,9> basis_max{}; std::vector<int64_t> ids; };
     static bool parse_metadata(const PackedByteArray &bytes,String &asset,PackedByteArray &checkpoint,std::map<BlockKey,MetadataRegion> &regions,std::set<int64_t> &ids);
     std::map<BlockKey,UnloadedRegion> unloaded_regions;
+    ModelBoundsIndex unloaded_bounds;
     std::set<int64_t> unloaded_ids;
     static PackedByteArray encode_placements(const String &asset,const std::map<int64_t,Placement> &values);
     static bool parse_region(const PackedByteArray &bytes,String &asset,BlockKey &region,std::map<int64_t,Placement> &values);

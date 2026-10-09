@@ -1,0 +1,28 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS saved multi-asset world opens one shared archive worker
+PASS scene restores unavailable model metadata
+PASS scene adapter registers all saved assets with the shared scheduler
+PASS invalid focus/radii enqueue no work and unsaved empty asset waits for first save
+PASS near focus automatically admits both assets without explicit region requests
+PASS travel automatically admits destination and retires old regions in both assets
+PASS return travel restores both original nearby regions
+PASS automatic travel preserves exact model transforms
+PASS scene adapter drains before editing and saving
+PASS editor journal changes a resident model
+PASS partial save and resume adopt current model checkpoints
+PASS save handover preserves the external editor journal
+PASS first save makes newly registered asset eligible for paging
+PASS automatic focus selection preserves resident region pinned by editor history
+PASS explicit user history clear releases region pin without recreating journal
+PASS saved edited region participates in automatic travel after its history pin is cleared
+PASS edited transforms survive automatic retirement and readmission
+PASS reload cannot detach a scheduler without first requesting drain
+PASS focus change with pending work drains and detaches before reload
+PASS saved scene reloads and reattaches native paging
+PASS reloaded world automatically admits the persisted edit
+PASS ordinary travel/save/reload produced no failed transfers
+PASS normal shutdown drains and detaches all collections
+PASS destroying scenes releases remaining unavailable-region backing leases
+MODEL_FOCUS_PAGING checks=24 failures=0
+

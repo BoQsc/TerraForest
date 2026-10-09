@@ -89,7 +89,7 @@ bool NativeModelTransferScheduler::refresh_checkpoint(const String &asset) {
     }
     // Hold the new version before releasing either reference to the old lease.
     collection->paging_checkpoint=lease;found->second.lease=std::move(lease);
-    found->second.versions.clear();found->second.retry_after.clear();found->second.cursor_valid=false;
+    found->second.versions.clear();found->second.retry_after.clear();found->second.cursor_valid=false;found->second.query_valid=false;
     for(int64_t i=0;i<keys.size()/3;++i)found->second.versions.emplace(BlockKey{keys[i*3],keys[i*3+1],keys[i*3+2]},digests.slice(i*32,(i+1)*32));
     return true;
 }
@@ -129,24 +129,49 @@ Dictionary NativeModelTransferScheduler::select_focus(Vector3 world_focus,double
         const Vector3 focus=transform.affine_inverse().xform(world_focus);if(!focus.is_finite())continue;
         collection->set_render_focus(focus);collection->set_collision_focus(focus);
         BlockKey key;AABB bounds;PackedByteArray expected;
+        auto &index=collection->unloaded_bounds;
+        if(!binding.query_valid||binding.bounds_revision!=index.revision()||binding.query_radius!=load_radius||binding.query_focus.distance_squared_to(focus)>16) {
+            binding.query_valid=true;binding.bounds_revision=index.revision();binding.query_radius=load_radius;binding.query_focus=focus;
+            binding.frontier.clear();if(index.root())binding.frontier.push_back(index.root()->code);
+            binding.select_resident=false;
+        }
         if(!binding.select_resident) {
-            auto item=binding.cursor_valid?collection->unloaded_regions.upper_bound(binding.cursor):collection->unloaded_regions.begin();
-            if(item==collection->unloaded_regions.end()){binding.select_resident=true;binding.cursor_valid=false;continue;}
-            key=item->first;bounds=item->second.bounds;expected=item->second.checksum;
+            bool candidate=false;
+            const double padded=(load_radius+4)*(load_radius+4);
+            // A small per-asset quantum follows nearby branches promptly without
+            // allowing one overlapping collection to monopolize the shared visit budget.
+            for(int visited=0;visited<16&&!binding.frontier.empty()&&selection_scans<max_scans&&std::chrono::steady_clock::now()<deadline;++visited) {
+                const auto code=binding.frontier.back();binding.frontier.pop_back();++selection_scans;
+                const auto *node=index.find(code);if(!node||focus_distance(node->bounds,binding.query_focus)>padded)continue;
+                const auto *first=node->left.get(),*second=node->right.get();
+                if(first&&second&&focus_distance(first->bounds,binding.query_focus)>focus_distance(second->bounds,binding.query_focus))std::swap(first,second);
+                // LIFO: visit the nearer child first, including true extended bounds.
+                if(second&&focus_distance(second->bounds,binding.query_focus)<=padded)binding.frontier.push_back(second->code);
+                if(first&&focus_distance(first->bounds,binding.query_focus)<=padded)binding.frontier.push_back(first->code);
+                if(focus_distance(node->box,focus)>load_radius*load_radius)continue;
+                auto item=collection->unloaded_regions.find(node->key);if(item==collection->unloaded_regions.end())continue;
+                key=item->first;bounds=item->second.bounds;expected=item->second.checksum;candidate=true;break;
+            }
+            if(!candidate) {
+                if(binding.frontier.empty()){binding.select_resident=true;binding.cursor_valid=false;}
+                continue;
+            }
         } else {
             auto item=binding.cursor_valid?collection->render_bounds.upper_bound(binding.cursor):collection->render_bounds.begin();
-            if(item==collection->render_bounds.end()){binding.select_resident=false;binding.cursor_valid=false;continue;}
+            if(item==collection->render_bounds.end()){binding.select_resident=false;binding.cursor_valid=false;
+                binding.frontier.clear();if(index.root())binding.frontier.push_back(index.root()->code);continue;}
             key=item->first;bounds=item->second;
             auto collision=collection->collision_bounds.find(key);if(collision!=collection->collision_bounds.end())bounds=bounds.merge(collision->second);
             auto version=binding.versions.find(key);if(version!=binding.versions.end())expected=version->second;
         }
-        binding.cursor=key;binding.cursor_valid=true;
+        if(binding.select_resident){binding.cursor=key;binding.cursor_valid=true;}
         const double distance=focus_distance(bounds,focus);
         const bool retiring=binding.select_resident;
         if(expected.is_empty()||(!retiring&&distance>load_radius*load_radius)||(retiring&&distance<=unload_radius*unload_radius))continue;
         auto retry=binding.retry_after.find(key);if(retry!=binding.retry_after.end()&&retry->second>selection_tick)continue;
         if(retiring) {
-            // Skip renderer/proxy/history protection without starting disk reads.
+            // Skip renderer/history protection without starting disk reads.
+            // Proxy protection is independently enforced by the transfer guard.
             auto drawn=collection->batches.lower_bound({key,0});
             if(drawn!=collection->batches.end()&&!(key<drawn->first.first)&&!(drawn->first.first<key))continue;
             if(history->region_has_history(collection,Vector3i(key.x,key.y,key.z)))continue;

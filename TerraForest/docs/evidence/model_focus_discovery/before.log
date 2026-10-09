@@ -1,0 +1,16 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS valid native metadata fixture: 64 regions across 1 assets
+PASS selection fixture acquires an archive without reading region packets
+PASS all metadata collections register
+PASS near destination discovered within four selection calls: 64 regions, 1 assets (actual 1)
+PASS valid native metadata fixture: 4096 regions across 1 assets
+PASS selection fixture acquires an archive without reading region packets
+PASS all metadata collections register
+FAIL near destination discovered within four selection calls: 4096 regions, 1 assets (actual 64)
+PASS valid native metadata fixture: 4096 regions across 32 assets
+PASS selection fixture acquires an archive without reading region packets
+PASS all metadata collections register
+FAIL near destination discovered within four selection calls: 4096 regions, 32 assets (actual 2048)
+MODEL_FOCUS_DISCOVERY [{"assets":1,"calls_to_first_request":1,"first_request_gate_calls":4,"peak_selection_usec":83,"queued":true,"regions_per_asset":64,"visits":64,"wall_usec":135},{"assets":1,"calls_to_first_request":64,"first_request_gate_calls":4,"peak_selection_usec":80,"queued":true,"regions_per_asset":4096,"visits":4096,"wall_usec":2263},{"assets":32,"calls_to_first_request":2048,"first_request_gate_calls":4,"peak_selection_usec":622,"queued":true,"regions_per_asset":4096,"visits":131049,"wall_usec":84699}]
+

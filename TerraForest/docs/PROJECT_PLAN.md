@@ -89,9 +89,12 @@ Native focus selection and the structures scene adapter now pass a 24-check
 travel/edit/save/reload lifecycle in debug and release, including history pins and
 new asset registration. [Contract and limits](MODEL_TRANSFER_SCHEDULER.md). The
 fixture explicitly drains transfers; normal game commands, autosaves and shutdown
-still need that barrier. Ordered-cursor destination discovery also needs a scale
-check before default activation; bounded visits alone do not prove prompt arrival.
+still need that barrier. The subsequent [discovery check](MODEL_FOCUS_DISCOVERY.md)
+found and corrected a linear scan: 4,096 regions across 32 assets now reach the
+first nearby request in one selection call instead of 2,048. Debug/release pass
+50 focused checks. Full arrival, overlapping layouts and runtime performance
+remain separate qualification requirements.
 
-Next implementation task under M1: connect the scene adapter's drain/resume barriers to normal game command, autosave and shutdown paths, and check destination discovery at many regions/assets. Its proof must exercise the actual world through load, travel, edit, save and reload; another standalone scheduler benchmark does not close this task. Keep the current default path usable until that proof passes. Human checkpoint feedback can proceed in parallel and any concrete play-blocking defect takes precedence.
+Next implementation task under M1: connect the scene adapter's drain/resume barriers to normal game command, autosave and shutdown paths. Its proof must exercise the actual world through load, travel, edit, save and reload; another standalone scheduler benchmark does not close this task. Keep the current default path usable until that proof passes. Human checkpoint feedback can proceed in parallel and any concrete play-blocking defect takes precedence.
 
 This task is bounded by the M1 disposition rule above. It must not indefinitely delay M2 or erase the remaining original coverage rows. No first-round completion, release date or percentage complete is claimed.

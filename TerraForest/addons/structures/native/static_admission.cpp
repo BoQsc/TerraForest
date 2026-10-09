@@ -129,11 +129,12 @@ Dictionary NativeStaticBatch::advance_region_admission_impl(int64_t max_records,
             if(!job.count&&groups.size()+unloaded_regions.size()>=4096) {fail_admission("capacity");continue;}
             UnloadedRegion missing;missing.checksum=job.packet.slice(job.packet.size()-32);missing.count=job.count;
             if(job.count) {
-                missing.bounds=collision_bounds.at(key);
+                missing.bounds=collision_bounds.at(key).merge(render_bounds.at(key));
                 job.ids=std::move(groups.at(key));groups.erase(key);
                 job.ordered=std::move(render_ids.at(key));render_ids.erase(key);
             }
             unloaded_regions.emplace(key,std::move(missing));
+            unloaded_bounds.insert(key,unloaded_regions.at(key).bounds);
             collision_bounds.erase(key);render_bounds.erase(key);
             job.phase=RegionAdmission::RETIRE_RECORDS;collision_dirty=true;render_dirty=true;
             // Publish availability before cleanup. Observers/save caches see the
@@ -148,7 +149,7 @@ Dictionary NativeStaticBatch::advance_region_admission_impl(int64_t max_records,
                 groups.emplace(key,std::move(job.ids));render_ids.emplace(key,std::move(job.ordered));
                 collision_bounds.emplace(key,job.collision);render_bounds.emplace(key,job.visual);
             }
-            unloaded_regions.erase(key);collision_dirty=true;render_dirty=true;
+            unloaded_regions.erase(key);unloaded_bounds.erase(key);collision_dirty=true;render_dirty=true;
             admission.reset();admission_result="complete";
             // Synchronous observers cannot start another admission inside this
             // publication. As with raw restore_region, this is a history barrier.

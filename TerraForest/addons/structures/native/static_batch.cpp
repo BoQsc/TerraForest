@@ -270,7 +270,7 @@ bool NativeStaticBatch::restore_snapshot(const PackedByteArray &bytes) {
     if(admission)return false;
     String asset;std::map<int64_t,Placement> restored;
     if(!parse(bytes,asset,&restored)||asset!=asset_id||source_mesh.is_null())return false;
-    unloaded_regions.clear();unloaded_ids.clear();
+    unloaded_regions.clear();unloaded_bounds.clear();unloaded_ids.clear();
     std::set<BlockKey> touched;for(auto &e:groups)touched.insert(e.first);
     clear_proxies();collision_bounds.clear();collision_dirty=true;
     placements=std::move(restored);groups.clear();slots.clear();for(auto &e:placements){auto k=group_for(e.second);groups[k].insert(e.first);touched.insert(k);}

@@ -1,0 +1,6 @@
+{
+  "checks": 24,
+  "failures": 0,
+  "scope": "Native automatic focus selection through scene adapter, partial save and explicit drain/reload. Headless; default game reload barrier and performance qualification remain open.",
+  "library": "structures.windows.template_release.x86_64.dll"
+}

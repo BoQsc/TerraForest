@@ -1,0 +1,54 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS valid native metadata fixture: 64 regions across 1 assets
+PASS unavailable bounds index contains exactly the regions and remains balanced
+PASS selection fixture acquires an archive without reading region packets
+PASS all metadata collections register
+PASS near destination discovered within four selection calls: 64 regions, 1 assets (actual 1)
+PASS empty distant query creates no false region requests
+PASS shuffled retirement maintains exact balanced bounds index
+PASS shuffled admissions remove stale bounds and preserve discovery of remaining regions and exact final data
+PASS valid native metadata fixture: 4096 regions across 1 assets
+PASS unavailable bounds index contains exactly the regions and remains balanced
+PASS selection fixture acquires an archive without reading region packets
+PASS all metadata collections register
+PASS near destination discovered within four selection calls: 4096 regions, 1 assets (actual 1)
+PASS empty distant query creates no false region requests
+PASS valid native metadata fixture: 4096 regions across 32 assets
+PASS unavailable bounds index contains exactly the regions and remains balanced
+PASS selection fixture acquires an archive without reading region packets
+PASS all metadata collections register
+PASS near destination discovered within four selection calls: 4096 regions, 32 assets (actual 1)
+PASS empty distant query creates no false region requests
+PASS valid native metadata fixture: 4096 regions across 1 assets
+PASS unavailable bounds index contains exactly the regions and remains balanced
+PASS selection fixture acquires an archive without reading region packets
+PASS all metadata collections register
+PASS near destination discovered within four selection calls: 4096 regions, 1 assets (actual 1)
+PASS empty distant query creates no false region requests
+PASS valid native metadata fixture: 4096 regions across 1 assets
+PASS unavailable bounds index contains exactly the regions and remains balanced
+PASS selection fixture acquires an archive without reading region packets
+PASS all metadata collections register
+PASS near destination discovered within four selection calls: 4096 regions, 1 assets (actual 1)
+PASS empty distant query creates no false region requests
+PASS valid native metadata fixture: 4096 regions across 1 assets
+PASS unavailable bounds index contains exactly the regions and remains balanced
+PASS selection fixture acquires an archive without reading region packets
+PASS all metadata collections register
+PASS near destination discovered within four selection calls: 4096 regions, 1 assets (actual 1)
+PASS empty distant query creates no false region requests
+PASS valid native metadata fixture: 4096 regions across 1 assets
+PASS unavailable bounds index contains exactly the regions and remains balanced
+PASS selection fixture acquires an archive without reading region packets
+PASS all metadata collections register
+PASS near destination discovered within four selection calls: 4096 regions, 1 assets (actual 1)
+PASS empty distant query creates no false region requests
+PASS valid native metadata fixture: 4096 regions across 32 assets
+PASS unavailable bounds index contains exactly the regions and remains balanced
+PASS selection fixture acquires an archive without reading region packets
+PASS all metadata collections register
+PASS near destination discovered within four selection calls: 4096 regions, 32 assets (actual 1)
+PASS empty distant query creates no false region requests
+MODEL_FOCUS_DISCOVERY [{"assets":1,"axis":0,"calls_to_first_request":1,"extended_visual_small_proxy":false,"first_request_gate_calls":4,"offset":0,"peak_selection_usec":30,"queued":true,"regions_per_asset":64,"visits":64,"wall_usec":55},{"assets":1,"axis":0,"calls_to_first_request":1,"extended_visual_small_proxy":false,"first_request_gate_calls":4,"offset":0,"peak_selection_usec":28,"queued":true,"regions_per_asset":4096,"visits":64,"wall_usec":59},{"assets":32,"axis":0,"calls_to_first_request":1,"extended_visual_small_proxy":false,"first_request_gate_calls":4,"offset":0,"peak_selection_usec":36,"queued":true,"regions_per_asset":4096,"visits":64,"wall_usec":59},{"assets":1,"axis":1,"calls_to_first_request":1,"extended_visual_small_proxy":false,"first_request_gate_calls":4,"offset":-2048,"peak_selection_usec":17,"queued":true,"regions_per_asset":4096,"visits":64,"wall_usec":37},{"assets":1,"axis":2,"calls_to_first_request":1,"extended_visual_small_proxy":false,"first_request_gate_calls":4,"offset":-2048,"peak_selection_usec":17,"queued":true,"regions_per_asset":4096,"visits":64,"wall_usec":36},{"assets":1,"axis":0,"calls_to_first_request":1,"extended_visual_small_proxy":false,"first_request_gate_calls":4,"offset":28672,"peak_selection_usec":19,"queued":true,"regions_per_asset":4096,"visits":64,"wall_usec":42},{"assets":1,"axis":0,"calls_to_first_request":1,"extended_visual_small_proxy":true,"first_request_gate_calls":4,"offset":0,"peak_selection_usec":62,"queued":true,"regions_per_asset":4096,"visits":64,"wall_usec":106},{"assets":32,"axis":3,"calls_to_first_request":1,"extended_visual_small_proxy":false,"first_request_gate_calls":4,"offset":-8,"peak_selection_usec":39,"queued":true,"regions_per_asset":4096,"visits":64,"wall_usec":63}]
+

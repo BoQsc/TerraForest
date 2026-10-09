@@ -2,6 +2,22 @@
 
 The [delivery plan and coverage register](PROJECT_PLAN.md) is the current reference for milestone order, original-scope coverage and deferred-work return triggers. Entries below preserve evidence at their recorded development stage. Older headings and the historical scope table are not current status; later implementations supersede some of their limitations. Correctness, integration, rendered performance and sustained qualification are separate gates.
 
+## Spatial model destination discovery - 2026-10-09
+
+A short selection-only check found that the linear admission cursor needed 64
+calls at 4,096 regions and 2,048 calls at 32 such assets before requesting a nearby
+destination. Replaced that scan with a native AVL bounds hierarchy maintained
+through metadata restore, admission and retirement. Unavailable bounds include
+both visuals and collision proxies; resident retirement remains a background scan.
+
+Debug/release pass 50 discovery/index checks. All eight discovery cases reach
+the first nearby request in one call, including the former failures, a 3D grid,
+negative/large coordinates and extended visual bounds. Release regressions pass
+24 scene lifecycle, 44 bootstrap, 27 metadata, 56 retirement and 42 scheduler checks.
+[Original failure, implementation and scoped evidence](MODEL_FOCUS_DISCOVERY.md).
+These are selection and correctness results, not disk-arrival, GPU, FPS or thermal
+qualification. Normal game lifecycle barriers and default activation remain open.
+
 ## Native focus paging through the structures scene adapter - 2026-10-09
 
 Added bounded native focus selection across registered model assets, with shared

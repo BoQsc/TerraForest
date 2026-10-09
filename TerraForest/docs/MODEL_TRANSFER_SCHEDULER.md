@@ -109,9 +109,10 @@ paging is not activated by this API. See [handover evidence](MODEL_CHECKPOINT_HA
 ## Native focus selection and scene lifecycle
 
 `select_focus(world_focus, load_radius=384, unload_radius=512, max_scans=64,
-max_usec=250)` rotates through assets and their unavailable/resident bounds using
-persistent ordered-map cursors. It examines at most the requested number of
-entries/empty-collection visits, subject to a soft deadline, and queues work under
+max_usec=250)` rotates through assets. Unavailable-region discovery traverses a
+native spatial bounds index; resident retirement uses a background ordered-map
+cursor. It examines at most the requested number of tree nodes/entries/collection
+visits, subject to a soft deadline, and queues work under
 the existing shared job/byte limits. Nearby admissions have higher priority than
 cold retirement. Radii are collection-local after transforming the world focus;
 the default world uses identity collection transforms.
@@ -125,10 +126,13 @@ have a 120-selection-call retry delay, cleared by successful checkpoint handover
 Scene-thread statistics expose selection visits, queued requests and elapsed time.
 
 Selection performs an additional bounded pass over at most 64 existing jobs for
-cancellation. Its deadline is soft; this is not a hard timing guarantee or a
-spatial-tree nearest query. Discovering a destination can require a complete cursor
-pass as region/asset counts grow. Dense discovery/arrival latency needs a targeted
-scale check before default activation; the small lifecycle fixture does not qualify it.
+cancellation. Its deadline is soft; this is not a hard timing guarantee or an
+exact globally nearest query. The earlier linear admission scan failed the targeted
+discovery gate and was replaced with an AVL bounds hierarchy. Debug/release now
+pass 50 focused checks, including 4,096 regions per asset across 32 assets and
+extended visual bounds. First-request discovery dropped from 2,048 calls to one
+in that fixture. [Evidence and remaining limits](MODEL_FOCUS_DISCOVERY.md).
+Whole-destination arrival and heavily overlapping bounds remain unqualified.
 
 `structures_world.gd` now supplies these opt-in support methods:
 
