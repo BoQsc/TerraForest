@@ -5,6 +5,7 @@ const Presentation=preload("res://addons/presentation/fullscreen_policy.gd")
 var game: Node
 var telemetry: FileAccess
 var next_sample:=0
+var last_stage:=""
 func _initialize() -> void:run.call_deferred()
 func run() -> void:
 	var prefix:=""
@@ -18,10 +19,13 @@ func run() -> void:
 func _process(_delta: float) -> bool:
 	if game==null or telemetry==null:return false
 	var now:=Time.get_ticks_msec()
-	if now<next_sample:return false
+	var stage:="%s:%s" % [game.benchmark.phase,game.benchmark.state]
+	if now<next_sample and stage==last_stage:return false
+	last_stage=stage
 	next_sample=now+1000
 	var row:=Presentation.measurement(root)
 	row["engine_ms"]=now;row["phase"]=game.benchmark.phase;row["state"]=game.benchmark.state
+	row["utc_unix_s"]=Time.get_unix_time_from_system()
 	row["fps_cap_actual"]=Engine.max_fps;row["vsync_mode"]=DisplayServer.window_get_vsync_mode()
 	row["focused"]=DisplayServer.window_is_focused();row["refresh_hz"]=DisplayServer.screen_get_refresh_rate()
 	row["adapter"]=RenderingServer.get_video_adapter_name();row["renderer"]=RenderingServer.get_current_rendering_method()
