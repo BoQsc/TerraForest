@@ -111,8 +111,21 @@ bool NativeStaticBatch::unload_region(const PackedByteArray &expected) {
 bool NativeStaticBatch::unload_region_impl(const PackedByteArray &expected) {
     BlockKey key;String asset;std::map<int64_t,Placement> values;
     if(!parse_region(expected,asset,key,values)||asset!=asset_id||unloaded_regions.count(key)||
-       groups.size()+unloaded_regions.size()+(groups.count(key)?0:1)>4096||
-       capture_region(Vector3i(key.x,key.y,key.z))!=expected)return false;
+       groups.size()+unloaded_regions.size()+(groups.count(key)?0:1)>4096)return false;
+    // parse_region already validated the canonical packet, both digests, IDs
+    // and transforms. Compare the exact live records without allocating and
+    // hashing another region packet. Float equality would miss signed-zero
+    // changes, so compare the stored IEEE bits as the serializer does.
+    auto group=groups.find(key);
+    if((group==groups.end()?0:group->second.size())!=values.size())return false;
+    if(group!=groups.end()) {
+        auto id=group->second.begin();
+        for(const auto &entry:values) {
+            if(*id++!=entry.first)return false;
+            const auto live=placements.find(entry.first);
+            if(live==placements.end()||std::memcmp(live->second.data(),entry.second.data(),sizeof(float)*12))return false;
+        }
+    }
     UnloadedRegion metadata;metadata.checksum=expected.slice(expected.size()-32);metadata.count=values.size();
     if(!values.empty())metadata.bounds=collision_bounds.at(key);
     // Publish unavailable metadata, reservations and record removal together,

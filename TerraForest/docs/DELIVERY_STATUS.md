@@ -1,3 +1,28 @@
+## Model unload removes duplicate serialization - 2026-10-09
+
+Native model-region unload now compares validated packet IDs and the exact live
+transform bits instead of constructing and hashing a second complete region
+packet. Both input checksums and all packet validation remain required. Count,
+sorted identity and bitwise transform equality are checked before any mutation;
+this preserves stale-edit rejection, including numerically equal signed-zero
+changes. The on-disk format and public transfer API are unchanged.
+
+Debug and isolated release each pass 58 model region/history checks, including
+four added checks for replaced identities and signed-zero round trips. The short
+release density probe passes all 13 correctness checks but intentionally fails
+runtime qualification. The 100,000-object region unload samples were 108-138 ms;
+restore was 133-140 ms. A 1,000-object region in a 100,000-object collection still
+unloaded in 2.16-2.27 ms, above the provisional 2 ms allowance. No percentage
+speedup is claimed from unmatched historical runs. Evidence, exact build hashes
+and logs: `docs/evidence/model_unload_comparison`.
+
+This removes a redundant allocation/serialization pass, not the region-size
+scaling limit. Capture, parse, record insertion/removal and resident-index rebuild
+remain synchronous. Automatic model paging is still disabled pending bounded
+record/page transfer and publication; a worker for disk reads alone cannot make
+these operations fit a frame. No additional graphical or thermal run was needed
+for this storage-only change.
+
 ## CPU baseline supplement retained - 2026-10-09
 
 Revision `fe2378f` adds process CPU/memory counters to the existing short graphical

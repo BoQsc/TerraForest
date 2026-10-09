@@ -1,0 +1,18 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS pressure fixture admits 1000 placements with 1000 per region
+PASS pressure fixture persists source regions
+PASS pressure transfers preserve every logical identity and exact region bytes
+PASS pressure fixture admits 10000 placements with 10000 per region
+PASS pressure fixture persists source regions
+PASS pressure transfers preserve every logical identity and exact region bytes
+PASS pressure fixture admits 100000 placements with 100000 per region
+PASS pressure fixture persists source regions
+PASS direct region publication also verifies blobs above the 4 MiB catalog ceiling
+PASS pressure transfers preserve every logical identity and exact region bytes
+PASS pressure fixture admits 100000 placements with 1000 per region
+PASS pressure fixture persists source regions
+PASS pressure transfers preserve every logical identity and exact region bytes
+MODEL_ADMISSION_PRESSURE {"checks":13,"failures":0,"measurements":[{"capture_region_us":[671,676,684],"logical_instances":1000,"metadata_bytes":8178,"packet_bytes":56118,"region_instances":1000,"restore_metadata_us":[119,129,124],"restore_region_max_us":977,"restore_region_us":[860,977,866],"unload_region_us":[723,764,707]},{"capture_region_us":[10650,17475,7948],"logical_instances":10000,"metadata_bytes":80178,"packet_bytes":560118,"region_instances":10000,"restore_metadata_us":[3034,1288,1434],"restore_region_max_us":10537,"restore_region_us":[10537,9877,9533],"unload_region_us":[9021,12724,8204]},{"capture_region_us":[90017,90688,100118],"logical_instances":100000,"metadata_bytes":800178,"packet_bytes":5600118,"region_instances":100000,"restore_metadata_us":[15883,25128,18387],"restore_region_max_us":140276,"restore_region_us":[140276,132866,135739],"unload_region_us":[126150,108121,138314]},{"capture_region_us":[1760,1829,2006],"logical_instances":100000,"metadata_bytes":808494,"packet_bytes":56118,"region_instances":1000,"restore_metadata_us":[34422,32295,34913],"restore_region_max_us":2739,"restore_region_us":[2739,2623,2677],"unload_region_us":[2159,2266,2270]}],"runtime_admission_budget_us":2000,"runtime_admission_qualified":false,"runtime_transfer_qualified":false,"scope":"Headless native CPU lower bound; no GPU, render upload or physics body creation. Metadata installation is separately timed. Not FPS or cross-host comparison."}
+RUNTIME_MODEL_PAGING_GATE FAIL: synchronous region transfer exceeds the 2 ms CPU allowance
+

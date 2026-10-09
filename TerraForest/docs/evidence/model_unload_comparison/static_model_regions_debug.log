@@ -1,0 +1,63 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS fixture spans positive and negative origin regions
+PASS region packet validates asset and checksum
+PASS out-of-range region rejected
+PASS corrupt packet cannot mutate collection
+PASS valid checksum cannot disguise records in the wrong region
+PASS stale capture cannot discard a newer edit
+PASS same-count region with replaced identity cannot accept stale capture
+PASS snapshot preserves signed-zero transform bits
+PASS numerically equal signed-zero change rejects byte-stale region capture
+PASS matching signed-zero region unload and restore remain byte exact
+PASS fixture admits native collision and render residency before unload
+PASS matching region unload succeeds
+PASS unload frees selected records and preserves neighboring region
+PASS unload immediately releases region bodies and render buffers
+PASS region transfer forms explicit history barrier
+PASS availability distinguishes unknown from resident regions
+PASS incomplete collection cannot masquerade as a full save
+PASS legacy full-set mutation cannot silently drop unloaded data
+PASS unloaded bounds prevent incompatible asset replacement
+PASS unloaded bounds prevent proxy reconfiguration
+PASS authoring in unloaded origin region rejected
+PASS reserved unloaded ID cannot be stolen in another region
+PASS unloaded extended model bounds block collision readiness beyond origin region
+PASS distant empty space remains collision ready
+PASS vegetation exclusion stays conservative for unloaded bounds
+PASS new placement IDs account for resident and reserved records
+PASS corrupt reload preserves unavailable state
+PASS exact packet restores stable IDs and transforms
+PASS duplicate restore cannot replace resident edits
+PASS restore releases reservations
+PASS restored records reenter bounded render and collision admission
+PASS whole snapshot round trips byte exactly
+PASS empty region round trip is explicit
+PASS explicit whole-world restore replaces reservations
+PASS 100000 placements admitted across 100 regions
+PASS 99 region packets survive disk readback before unload
+PASS pressure retains 1000 resident transforms and reserves 99000 unloaded IDs
+PASS transform payload shrinks from 4.8 MB to 48 KB and incomplete save is rejected
+PASS logical capacity includes unloaded instances
+REGION_PRESSURE { "stats": { "region_edge_m": 32, "resident_regions": 1, "unloaded_regions": 99, "resident_instances": 1000, "reserved_ids": 99000, "logical_instances": 100000, "resident_transform_bytes": 48000, "reserved_id_payload_bytes": 792000, "unloaded_digest_bytes": 3168 }, "max_packet_bytes": 56125, "capture_write_unload_us": 3879442 }
+PASS 100000-placement disk transfer restores byte-exact whole snapshot
+PASS history pins both source and destination of cross-region move
+PASS history-aware unload rejects pinned regions including empty move source
+PASS unrelated unload preserves undo and revision cursor
+PASS undo still works while unrelated region is unloaded
+PASS redo history keeps currently empty destination pinned
+PASS reload preserves redo stack
+PASS redo remains exact after unload and reload
+PASS rejected transfer preserves journal
+PASS same coordinates in another collection are not pinned
+PASS other collection reload preserves existing undo
+PASS erased object's signed region remains pinned for undo
+PASS deletion undo restores reserved history location
+PASS transfer observer sees intact history and cannot replay reentrantly
+PASS reload after observer succeeds
+PASS external callback mutation still invalidates history after residency transfer
+PASS history eviction releases region pin when no retained record refers to it
+PASS eviction-eligible region unload preserves remaining bounded undo
+PASS unregistered collection is conservatively ineligible
+STATIC_MODEL_REGIONS checks=58 failures=0
+
