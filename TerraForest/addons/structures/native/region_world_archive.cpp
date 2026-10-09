@@ -2,6 +2,7 @@
 #include "region_world_archive.hpp"
 #include <godot_cpp/classes/dir_access.hpp>
 #include <godot_cpp/classes/file_access.hpp>
+#include <godot_cpp/classes/hashing_context.hpp>
 #include <godot_cpp/core/class_db.hpp>
 
 namespace terraforest {
@@ -51,7 +52,20 @@ void NativeRegionWorldArchive::release() {
     join_region_reads();
     {std::lock_guard<std::mutex> lock(read_mutex_);published_keys_=PackedInt32Array();published_checksums_=PackedByteArray();published_checkpoint_=PackedByteArray();}
     if(store_.is_valid()){store_->close();store_.unref();}
+    {std::lock_guard<std::mutex> lock(model_mutex_);for(auto &entry:model_stores_)entry.second->close();model_stores_.clear();}
     if(!path_.is_empty()&&archive_.is_valid())archive_->call("release");path_=String();
+}
+Ref<NativeModelRegionStore> NativeRegionWorldArchive::model_store(const String &asset,bool create) const {
+    std::lock_guard<std::mutex> lock(model_mutex_);
+    auto found=model_stores_.find(asset);if(found!=model_stores_.end())return found->second;
+    if(path_.is_empty())return {};
+    Ref<HashingContext> hash;hash.instantiate();hash->start(HashingContext::HASH_SHA256);hash->update(asset.to_utf8_buffer());
+    const String folder=(path_+String(".models")).path_join(hash->finish().hex_encode());
+    if(!create&&!FileAccess::file_exists(folder.path_join("catalog.tfrc")))return {};
+    if(create&&DirAccess::make_dir_recursive_absolute(folder)!=OK)return {};
+    Ref<NativeModelRegionStore> model;model.instantiate();
+    if(!bool(model->open_store(folder,asset)["ok"]))return {};
+    model_stores_.emplace(asset,model);return model;
 }
 PackedByteArray NativeRegionWorldArchive::encode(const Dictionary &sections) const {
     if(archive_.is_null())return {};return archive_->call("encode",sections);
@@ -72,6 +86,13 @@ Dictionary NativeRegionWorldArchive::decode(const PackedByteArray &bytes) const 
     // Older saved bundles may omit newly registered model assets. Preserve that
     // schema behavior using the reference's own registered subset codec.
     Dictionary models=reference["models"];PackedStringArray ids;Array keys=models.keys();
+    for(int64_t i=0;i<keys.size();++i) {
+        String asset;PackedByteArray checkpoint;
+        if(!NativeStructuresSnapshot::parse_model_reference(models[keys[i]],asset,checkpoint))continue;
+        auto model=model_store(asset,false);if(model.is_null())return failed;
+        Dictionary restored_model=model->read_checkpoint(checkpoint);if(!bool(restored_model["ok"]))return failed;
+        models[keys[i]]=restored_model["snapshot"];
+    }
     for(int64_t i=0;i<keys.size();++i)ids.push_back(keys[i]);
     Ref<NativeStructuresSnapshot> subset;subset.instantiate();if(!subset->configure_assets(ids))return failed;
     PackedByteArray resident=metadata_first_?subset->encode_metadata(reference["checkpoint"],restored["keys"],restored["checksums"],models):subset->encode(restored["blocks"],models);
@@ -95,9 +116,34 @@ bool NativeRegionWorldArchive::reference_in_file(const String &path,std::set<Str
 bool NativeRegionWorldArchive::retire_unreferenced() {
     std::set<String> keep;
     if(!reference_in_file(path_,keep)||!reference_in_file(path_+String(".bak"),keep))return false;
+    std::map<String,std::set<String>> model_keep;
+    if(!model_references_in_file(path_,model_keep)||!model_references_in_file(path_+String(".bak"),model_keep))return false;
     const PackedByteArray pins=store_->list_checkpoints();
     for(int64_t i=0;i<pins.size();i+=32) {
         auto id=pins.slice(i,i+32);if(!keep.count(id.hex_encode())&&!bool(store_->release_checkpoint(id)["ok"]))return false;
+    }
+    std::lock_guard<std::mutex> model_lock(model_mutex_);
+    for(auto &entry:model_stores_) {
+        const auto pins=entry.second->list_checkpoints();
+        for(int64_t i=0;i<pins.size();i+=32){auto id=pins.slice(i,i+32);if(!model_keep[entry.first].count(id.hex_encode())&&!bool(entry.second->release_checkpoint(id)["ok"]))return false;}
+    }
+    return true;
+}
+bool NativeRegionWorldArchive::model_references_in_file(const String &path,std::map<String,std::set<String>> &keep) const {
+    if(!FileAccess::file_exists(path))return true;
+    PackedByteArray bytes=archive_->call("read",path);
+    if(bytes.size()>=4&&bytes.decode_u32(0)==0x32575254)return true;
+    Dictionary root=archive_->call("decode",bytes);if(!bool(root.get("ok",false)))return false;
+    Dictionary sections=root["sections"];if(!sections.has("structures"))return true;
+    Dictionary reference=codec_->decode_reference(sections["structures"]);
+    if(!bool(reference["ok"]))return codec_->validate_snapshot(sections["structures"]);
+    Dictionary models=reference["models"];Array keys=models.keys();
+    for(int64_t i=0;i<keys.size();++i) {
+        String asset;PackedByteArray checkpoint;
+        if(!NativeStructuresSnapshot::parse_model_reference(models[keys[i]],asset,checkpoint))continue;
+        auto model=model_store(asset,false);
+        if(model.is_null()||!bool(model->checkpoint_regions(checkpoint)["ok"]))return false;
+        keep[asset].insert(checkpoint.hex_encode());
     }
     return true;
 }
@@ -116,6 +162,12 @@ int64_t NativeRegionWorldArchive::publish(const String &path,const PackedByteArr
     Dictionary published=partial?store_->publish_storage_state(structure["resident"],structure["unavailable_keys"],structure["unavailable_checksums"],structure["checkpoint"]):store_->publish_block_snapshot(structure["blocks"]);if(!bool(published["ok"]))return published["error"];
     Dictionary pin=store_->pin_checkpoint();if(!bool(pin["ok"]))return pin["error"];
     Dictionary models=structure["models"];PackedStringArray ids;Array keys=models.keys();for(int64_t i=0;i<keys.size();++i)ids.push_back(keys[i]);
+    for(int64_t i=0;i<keys.size();++i) {
+        String asset=keys[i];auto model=model_store(asset,true);if(model.is_null())return ERR_CANT_OPEN;
+        Dictionary stored=model->publish_snapshot(models[asset]);if(!bool(stored["ok"]))return stored["error"];
+        Dictionary model_pin=model->pin_checkpoint();if(!bool(model_pin["ok"]))return model_pin["error"];
+        models[asset]=NativeStructuresSnapshot::model_reference(asset,model_pin["checkpoint"]);
+    }
     Ref<NativeStructuresSnapshot> subset;subset.instantiate();if(!subset->configure_assets(ids))return ERR_INVALID_DATA;
     PackedByteArray reference=subset->encode_reference(pin["checkpoint"],models);if(reference.is_empty())return ERR_INVALID_DATA;
     sections["structures"]=reference;PackedByteArray compact=archive_->call("encode",sections);if(compact.is_empty())return ERR_INVALID_DATA;
@@ -128,7 +180,11 @@ int64_t NativeRegionWorldArchive::publish(const String &path,const PackedByteArr
     }
     // Publication already succeeded. Cleanup failure must never masquerade as a
     // failed commit; retain safe excess data and retry on the next save.
-    if(retire_unreferenced())store_->collect_garbage(32);
+    if(retire_unreferenced()) {
+        store_->collect_garbage(32);
+        std::lock_guard<std::mutex> lock(model_mutex_);
+        for(auto &entry:model_stores_)entry.second->collect_garbage(32);
+    }
     return OK;
 }
 Dictionary NativeRegionWorldArchive::read_storage_region(Vector3i region,const PackedByteArray &expected,const PackedByteArray &checkpoint) const {
@@ -136,6 +192,9 @@ Dictionary NativeRegionWorldArchive::read_storage_region(Vector3i region,const P
     Dictionary failed;failed["ok"]=false;failed["error"]=int(ERR_UNCONFIGURED);return failed;
 }
 Dictionary NativeRegionWorldArchive::storage_stats() const {
-    Dictionary out;if(store_.is_valid())out=store_->stats();else out["open"]=false;return out;
+    Dictionary out;if(store_.is_valid())out=store_->stats();else out["open"]=false;
+    std::lock_guard<std::mutex> lock(model_mutex_);
+    int64_t pins=0;for(const auto &entry:model_stores_)pins+=int64_t(entry.second->stats()["checkpoints"]);
+    out["model_stores"]=int(model_stores_.size());out["model_checkpoints"]=pins;return out;
 }
 }

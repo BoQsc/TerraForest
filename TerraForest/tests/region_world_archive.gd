@@ -69,6 +69,7 @@ func run() -> void:
 	store.close()
 	check_adapter(path.path_join("world.trw"),original,newer,empty)
 	check_partial(path.path_join("partial.trw"))
+	check_models(path.path_join("models.trw"),empty)
 	var file := FileAccess.open("res://reports/region_world_archive.json",FileAccess.WRITE)
 	file.store_string(JSON.stringify({"checks":checks,"failures":failures,"scope":"Native full and partial structure envelopes, checkpoint references and world-root publication; automatic paging is not exercised."},"  "))
 	file.close()
@@ -125,6 +126,48 @@ func resign(bytes: PackedByteArray) -> PackedByteArray:
 	hash.start(HashingContext.HASH_SHA256)
 	hash.update(payload)
 	return payload+hash.finish()
+
+func check_models(path: String,blocks: PackedByteArray) -> void:
+	var raw=ClassDB.instantiate("NativeWorldArchive")
+	var codec=ClassDB.instantiate("NativeStructuresSnapshot");codec.configure_assets(PackedStringArray(["test/root_model"]))
+	var adapter=ClassDB.instantiate("NativeRegionWorldArchive");adapter.configure(raw,codec)
+	var batch=ClassDB.instantiate("NativeStaticBatch");batch.configure_collision_only();batch.configure_asset("test/root_model",BoxMesh.new())
+	batch.upsert_instances(PackedInt64Array([1]),PackedFloat32Array([1,0,0,1,0,1,0,0,0,0,1,0]))
+	var original: PackedByteArray=codec.encode(blocks,{"test/root_model":batch.capture_snapshot()})
+	check(adapter.acquire(path),"model archive owns compound root")
+	var sections: Dictionary={"terrain":PackedByteArray([8]),"structures":original}
+	check(adapter.publish(path,adapter.encode(sections))==OK,"compound save publishes model catalog and checkpoint")
+	var reference: Dictionary=codec.decode_reference(raw.decode(adapter.read(path)).sections.structures)
+	var model_ref: PackedByteArray=reference.models["test/root_model"]
+	check(model_ref.slice(0,4).get_string_from_ascii()=="TFMK" and DirAccess.dir_exists_absolute(path+".models"),"on-disk compound root holds asset-bound model reference")
+	check(not codec.validate_snapshot(codec.encode(blocks,reference.models)),"model references cannot be treated as resident snapshots")
+	check(adapter.decode(adapter.read(path)).sections.structures==original,"adapter reconstructs original scene-compatible model bytes")
+	var before: PackedByteArray=original
+	var all_ok:=true
+	for i in 20:
+		batch.upsert_instances(PackedInt64Array([1]),PackedFloat32Array([1,0,0,i+2,0,1,0,0,0,0,1,0]))
+		sections.structures=codec.encode(blocks,{"test/root_model":batch.capture_snapshot()})
+		all_ok=adapter.publish(path,adapter.encode(sections))==OK and all_ok
+		all_ok=adapter.decode(adapter.read(path+".bak")).sections.structures==before and adapter.storage_stats().model_checkpoints<=2 and all_ok
+		before=sections.structures
+	check(all_ok,"20 model saves preserve exact backup and retire only unreferenced model pins")
+	var canonical: PackedByteArray=adapter.read(path)
+	var guard:=FileAccess.open(path,FileAccess.READ)
+	batch.set_instances(BoxMesh.new(),PackedFloat32Array());sections.structures=codec.encode(blocks,{"test/root_model":batch.capture_snapshot()})
+	check(adapter.publish(path,adapter.encode(sections))!=OK and adapter.read(path)==canonical,"failed compound root replacement leaves prior model reference intact")
+	check(adapter.decode(canonical).sections.structures==before and adapter.decode(adapter.read(path+".bak")).ok,"failed save retains reconstructible current and backup model checkpoints")
+	guard.close()
+	check(adapter.publish(path,adapter.encode(sections))==OK and adapter.storage_stats().model_checkpoints<=2,"retry publishes model demolition and safely retires orphan checkpoint")
+	adapter.release()
+	check(adapter.acquire(path) and adapter.decode(adapter.read(path)).sections.structures==sections.structures,"compound model reference reopens with exact demolished state")
+	adapter.release()
+	var model_dir:=path+".models"
+	DirAccess.rename_absolute(model_dir,model_dir+".held")
+	check(adapter.acquire(path) and not adapter.decode(adapter.read(path)).ok,"missing model sidecar refuses restore instead of inventing empty model world")
+	check(adapter.publish(path,adapter.encode(sections))!=OK and not DirAccess.dir_exists_absolute(model_dir),"missing referenced model sidecar cannot be silently recreated by save")
+	adapter.release();DirAccess.rename_absolute(model_dir+".held",model_dir)
+	check(adapter.acquire(path) and adapter.decode(adapter.read(path)).ok,"restoring original model sidecar recovers load")
+	adapter.release();batch.free()
 
 func check_partial(path: String) -> void:
 	var raw: RefCounted = ClassDB.instantiate("NativeWorldArchive")

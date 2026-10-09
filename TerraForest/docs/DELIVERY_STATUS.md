@@ -1,3 +1,20 @@
+## Compound world saves own model checkpoints - 2026-10-09
+
+The region-backed world archive now saves static-model snapshots into per-asset
+catalogs and stores asset-bound checkpoint references in the compound root.
+Current and backup roots retain their matching model versions, including after
+a failed root replacement and retry. Loading resolves references back into the
+existing scene envelope; legacy inline-model saves remain readable. New saves
+require their `.models` directory as well as `.regions`, and older builds without
+model-reference support cannot read them.
+
+The archive fixture covers 20 saved model versions, exact backup retention,
+demolition, reopen and missing-sidecar rejection. The actual terrain/water/
+structures persistence coordinator passes 76 checks. Evidence:
+`docs/evidence/model_world_archive`; contract: [model world archive](MODEL_WORLD_ARCHIVE.md).
+Models remain fully resident at scene load. Partial model scene envelopes,
+metadata bootstrap and automatic model paging are still unfinished.
+
 ## Model transfers preserve unrelated editor history - 2026-10-09
 
 The native model journal now offers history-aware region eligibility and

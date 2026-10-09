@@ -19,6 +19,8 @@ class NativeStructuresSnapshot : public godot::RefCounted {
 protected:
     static void _bind_methods();
 public:
+    static godot::PackedByteArray model_reference(const godot::String &asset,const godot::PackedByteArray &checkpoint);
+    static bool parse_model_reference(const godot::PackedByteArray &bytes,godot::String &asset,godot::PackedByteArray &checkpoint);
     // Configure once on the main thread, then share the immutable schema with workers.
     bool configure_assets(const godot::PackedStringArray &ids);
     godot::PackedByteArray encode(const godot::PackedByteArray &blocks,const godot::Dictionary &models) const;

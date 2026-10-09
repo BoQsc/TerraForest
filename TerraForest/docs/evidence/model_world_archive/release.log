@@ -1,0 +1,73 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS closed store rejects whole-block conversion
+PASS complete snapshot splits into committed native regions
+PASS split uses signed floor region coordinates
+PASS checkpoint reconstructs byte-exact canonical block snapshot
+PASS identical complete snapshot avoids catalog revision churn
+PASS invalid complete snapshot preserves active catalog
+PASS replacement snapshot removes regions absent from newer state
+PASS replacement does not change pinned previous snapshot
+PASS empty snapshot clears active region index
+PASS empty checkpoint reconstructs valid empty block encoding
+PASS complete reconstruction survives store reopening
+PASS native reference bundle carries exact checkpoint identity
+PASS reference cannot be mistaken for resident building snapshot
+PASS resident bundle is not interpreted as checkpoint reference
+PASS reference encoding rejects invalid identity length
+PASS reference checksum protects checkpoint identity
+PASS reference model fixture binds an asset
+PASS reference preserves model snapshot and asset binding
+PASS checkpoint and model reference reconstruct ordinary validated structure bundle
+PASS unknown referenced model asset rejects before restore
+PASS region archive configuration is immutable
+PASS region archive owns world root and sibling region directory
+PASS region archive retains canonical world lease
+PASS adapter commits regions and pin before world root
+PASS world root stores reference while other sections remain exact
+PASS adapter reconstructs complete scene-compatible structures
+PASS second compound save publishes new checkpoint and terrain
+PASS world backup retains matching historical building checkpoint
+PASS 24 additional saves retire only unreferenced pins without exhausting checkpoint capacity
+PASS failed world-root replacement preserves prior canonical file
+PASS failed publication leaves both actual roots reconstructible
+PASS save retries after failed publication and retires orphan pin
+PASS release relinquishes canonical root lease
+PASS reopen reconstructs committed empty structure snapshot
+PASS corrupt root never produces restored addon state
+PASS partial archive acquires isolated root
+PASS partial fixture publishes all initial regions
+PASS native storage envelope round-trips resident cells and missing-region digests
+PASS partial capture is accepted only by storage-aware validation
+PASS unpublished partial envelope cannot be loaded as a complete world
+PASS world publication accepts partial structure capture
+PASS published root contains immutable checkpoint instead of partial envelope
+PASS published partial state reconstructs complete matching terrain and buildings
+PASS partial save preserves previous full checkpoint in backup
+PASS partial checksum corruption rejects
+PASS valid outer digest cannot hide excessive missing-region count
+PASS valid outer digest cannot hide invalid resident payload length
+PASS partial decoder rejects out-of-range region even with valid checksum
+PASS partial decoder rejects resident/unavailable overlap
+PASS encoder rejects truncated xyz manifest
+PASS encoder rejects truncated region digest
+PASS encoder rejects duplicate region references
+PASS encoder rejects unsorted region references
+PASS structurally valid stale reference cannot replace canonical world
+PASS uncommitted unloaded region cannot replace canonical world
+PASS partial demolition removes all resident regions while retaining unloaded data
+PASS partial demolition survives root and sidecar reopen
+PASS model archive owns compound root
+PASS compound save publishes model catalog and checkpoint
+PASS on-disk compound root holds asset-bound model reference
+PASS model references cannot be treated as resident snapshots
+PASS adapter reconstructs original scene-compatible model bytes
+PASS 20 model saves preserve exact backup and retire only unreferenced model pins
+PASS failed compound root replacement leaves prior model reference intact
+PASS failed save retains reconstructible current and backup model checkpoints
+PASS retry publishes model demolition and safely retires orphan checkpoint
+PASS compound model reference reopens with exact demolished state
+PASS missing model sidecar refuses restore instead of inventing empty model world
+PASS missing referenced model sidecar cannot be silently recreated by save
+PASS restoring original model sidecar recovers load
+

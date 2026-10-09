@@ -2,6 +2,7 @@
 #pragma once
 #include "block_region_store.hpp"
 #include "structures_snapshot.hpp"
+#include "model_region_store.hpp"
 #include <condition_variable>
 #include <deque>
 #include <thread>
@@ -15,6 +16,10 @@ class NativeRegionWorldArchive : public RefCounted {
     Ref<NativeStructuresSnapshot> codec_;
     Ref<NativeBlockRegionStore> store_;
     String path_;
+    mutable std::map<String,Ref<NativeModelRegionStore>> model_stores_;
+    mutable std::mutex model_mutex_;
+    Ref<NativeModelRegionStore> model_store(const String &asset,bool create) const;
+    bool model_references_in_file(const String &path,std::map<String,std::set<String>> &keep) const;
     bool metadata_first_=false;
     int64_t published_index_revision_=0;
     PackedInt32Array published_keys_;

@@ -8,6 +8,19 @@ namespace terraforest {
 using namespace godot;
 static constexpr int64_t LIMIT=64*1024*1024;
 static PackedByteArray digest(const PackedByteArray &bytes) {Ref<HashingContext> h;h.instantiate();h->start(HashingContext::HASH_SHA256);h->update(bytes);return h->finish();}
+PackedByteArray NativeStructuresSnapshot::model_reference(const String &asset,const PackedByteArray &checkpoint) {
+    if(!NativeStaticBatch::valid_asset(asset)||checkpoint.size()!=32)return {};
+    auto name=asset.to_utf8_buffer();PackedByteArray out;out.resize(12);std::memcpy(out.ptrw(),"TFMK\1\0\0\0",8);
+    out.encode_u32(8,name.size());out.append_array(name);out.append_array(checkpoint);out.append_array(digest(out));return out;
+}
+bool NativeStructuresSnapshot::parse_model_reference(const PackedByteArray &bytes,String &asset,PackedByteArray &checkpoint) {
+    if(bytes.size()<77||bytes.size()>204||std::memcmp(bytes.ptr(),"TFMK\1\0\0\0",8))return false;
+    const int64_t length=bytes.decode_u32(8);if(length<1||length>128||bytes.size()!=76+length)return false;
+    if(digest(bytes.slice(0,bytes.size()-32))!=bytes.slice(bytes.size()-32))return false;
+    for(int64_t i=0;i<length;++i)if(bytes[12+i]<33||bytes[12+i]>126)return false;
+    asset=String::utf8(reinterpret_cast<const char*>(bytes.ptr()+12),length);
+    checkpoint=bytes.slice(12+length,44+length);return true;
+}
 void NativeStructuresSnapshot::_bind_methods() {
     ClassDB::bind_method(D_METHOD("configure_assets","asset_ids"),&NativeStructuresSnapshot::configure_assets);
     ClassDB::bind_method(D_METHOD("encode","blocks","models"),&NativeStructuresSnapshot::encode);
@@ -38,7 +51,8 @@ PackedByteArray NativeStructuresSnapshot::encode_payload(const PackedByteArray &
     for(auto asset:assets) {
         if(!models.has(asset)||models[asset].get_type()!=Variant::PACKED_BYTE_ARRAY)return {};
         PackedByteArray value=models[asset];String parsed;
-        if(!NativeStaticBatch::parse(value,parsed,nullptr)||parsed!=asset)return {};
+        PackedByteArray checkpoint;
+        if((!NativeStaticBatch::parse(value,parsed,nullptr)&&!(mode==REFERENCE&&parse_model_reference(value,parsed,checkpoint)))||parsed!=asset)return {};
         size+=4+value.size();if(size>LIMIT)return {};
     }
     if(size>LIMIT)return {};
@@ -61,7 +75,8 @@ bool NativeStructuresSnapshot::parse(const PackedByteArray &bytes,Dictionary *re
     for(uint32_t i=0;i<count;i++) {
         if(p+4>n)return false;length=u32();if(length>n-p)return false;
         auto model=payload.slice(p,p+length);p+=length;String asset;
-        if(!NativeStaticBatch::parse(model,asset,nullptr)||!assets.count(asset)||(i&&!(previous<asset)))return false;
+        PackedByteArray checkpoint;
+        if((!NativeStaticBatch::parse(model,asset,nullptr)&&!(mode==REFERENCE&&parse_model_reference(model,asset,checkpoint)))||!assets.count(asset)||(i&&!(previous<asset)))return false;
         previous=asset;if(result)models[asset]=model;
     }
     if(p!=n)return false;

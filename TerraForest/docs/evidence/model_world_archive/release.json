@@ -1,0 +1,6 @@
+{
+  "checks": 70,
+  "failures": 0,
+  "scope": "Native full and partial structure envelopes, checkpoint references and world-root publication; automatic paging is not exercised.",
+  "library": "structures.windows.template_release.x86_64.dll"
+}
