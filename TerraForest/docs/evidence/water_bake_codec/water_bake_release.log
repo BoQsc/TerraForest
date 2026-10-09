@@ -1,0 +1,32 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS unfinished builder cannot produce cache
+PASS enclosed lake bakes
+PASS versioned native bake restores
+PASS deterministic byte round trip
+PASS exact shoreline geometry round trip
+PASS restore performs no density sampling and retains no builder buffers
+PASS all cell occupancy depth and root exclusions match
+PASS published volume immutable
+PASS terrain identity mismatch rejected
+PASS corruption rejects without poisoning fresh instance at 0
+PASS corruption rejects without poisoning fresh instance at 4
+PASS corruption rejects without poisoning fresh instance at 8
+PASS corruption rejects without poisoning fresh instance at 12
+PASS corruption rejects without poisoning fresh instance at 16
+PASS corruption rejects without poisoning fresh instance at 48
+PASS corruption rejects without poisoning fresh instance at 60
+PASS corruption rejects without poisoning fresh instance at 72
+PASS corruption rejects without poisoning fresh instance at 76
+PASS corruption rejects without poisoning fresh instance at 80
+PASS corruption rejects without poisoning fresh instance at 92
+PASS corruption rejects without poisoning fresh instance at 96
+PASS corruption rejects without poisoning fresh instance at 100
+PASS corruption rejects without poisoning fresh instance at 104
+PASS corruption rejects without poisoning fresh instance at 2967
+PASS truncation rejected
+PASS trailing data rejected
+PASS checksummed boundary occupancy rejected
+PASS checksummed nonfinite dimensions rejected
+PASS checksummed invalid mesh index rejected
+

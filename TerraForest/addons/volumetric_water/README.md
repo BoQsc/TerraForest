@@ -58,3 +58,6 @@ python tools/test_isolation.py
 ```
 
 See [initial water validation](../../docs/WATER_VALIDATION.md) and [native rectangle-mesh validation](../../docs/WATER_MESH_VALIDATION.md) for recorded evidence. Code license: 0BSD. Linked godot-cpp license: MIT, included beside this file.
+
+
+NativeLakeVolume now exposes capture_bake(identity) and restore_bake(bytes, identity). Version 1 retains occupancy plus shoreline vertices/indices, reconstructing normals, UVs and the column exclusion index. Identity must be a caller-derived 32-byte digest covering terrain content, lake definition and implementation version; a runtime revision alone is insufficient. Decode is bounded to 6 MiB, validates dimensions/finite coordinates/indices/occupancy and checks a corruption checksum before publishing. Restore requires a fresh instance and rejection leaves it reusable. This is a derived-data codec, not a connected disk cache or a network trust boundary. Worker identity derivation, cache storage/quota and main-world reuse remain to be implemented. Test: tests/water_bake.gd; clean release: python tools/test_native_release.py --addon volumetric_water --test water_bake.

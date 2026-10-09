@@ -14,10 +14,13 @@
 using namespace godot;
 namespace terraforest {
 void NativeLakeVolume::_bind_methods() {
+    ClassDB::bind_method(D_METHOD("capture_bake","identity"), &NativeLakeVolume::capture_bake);
+    ClassDB::bind_method(D_METHOD("restore_bake","bytes","identity"), &NativeLakeVolume::restore_bake);
     ClassDB::bind_method(D_METHOD("configure", "origin", "cells", "spacing", "fill_level", "seed"), &NativeLakeVolume::configure);
     ClassDB::bind_method(D_METHOD("bake_density", "density"), &NativeLakeVolume::bake_density);
     ClassDB::bind_method(D_METHOD("sample_terrain", "core", "budget", "revision", "epoch"), &NativeLakeVolume::sample_terrain);
     ClassDB::bind_method(D_METHOD("contains", "point"), &NativeLakeVolume::contains);
+    ClassDB::bind_method(D_METHOD("submerges_root", "point"), &NativeLakeVolume::submerges_root);
     ClassDB::bind_method(D_METHOD("depth_at", "point"), &NativeLakeVolume::depth_at);
     ClassDB::bind_method(D_METHOD("surface_arrays"), &NativeLakeVolume::surface_arrays);
     ClassDB::bind_method(D_METHOD("smooth_surface_arrays"), &NativeLakeVolume::smooth_surface_arrays);
@@ -174,6 +177,7 @@ Array NativeLakeVolume::surface_arrays() const {
     return arrays;
 }
 #include "lake_surface.hpp"
+#include "lake_bake.hpp"
 Dictionary NativeLakeVolume::statistics() const {
     Dictionary d; d["status"]=status_; d["cells"]=count_; d["sampled_nodes"]=sampled_; d["total_nodes"]=node_count_;
     d["wet_cells"]=wet_count_; d["resident_bytes"]=wet_ ? count_ : 0;

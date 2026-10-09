@@ -1,0 +1,12 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS unfinished builder cannot produce cache
+PASS enclosed lake bakes
+PASS versioned native bake restores
+PASS deterministic byte round trip
+PASS exact shoreline geometry round trip
+PASS restore performs no density sampling and retains no builder buffers
+SCRIPT ERROR: Invalid call. Nonexistent function 'submerges_root' in base 'NativeLakeVolume'.
+   at: run (res://tests/water_bake.gd:36)
+   GDScript backtrace (most recent call first):
+       [0] run (res://tests/water_bake.gd:36)
