@@ -1,0 +1,24 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] New world
+[TerrainRewrite] New world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+PASS 1920x1080 fullscreen at full scale
+FOUNDATION_PHASE held_flight_0
+FOUNDATION_RESULT {"build":{"count":18,"max_ms":62.216,"median_ms":33.572,"over_50ms":2,"p95_ms":62.216,"p99_ms":62.216},"frames":{"count":182,"max_ms":33.267,"median_ms":16.679,"over_50ms":0,"p95_ms":17.044,"p99_ms":17.396},"latency":{"count":18,"max_ms":101.917,"median_ms":68.914,"over_50ms":18,"p95_ms":101.917,"p99_ms":101.917},"pages":21,"phase":"held_flight_0"}
+PASS held-input workload valid: focused, captured and pressed
+PASS held input produces repeated visible changes
+PASS held capture-to-draw p95 <=150ms
+FAIL no gap between visible mining changes exceeds 150ms
+PASS frame p99 <=20ms and no frame >50ms
+FOUNDATION_PHASE held_flight_1
+FOUNDATION_RESULT {"build":{"count":24,"max_ms":98.162,"median_ms":22.9,"over_50ms":4,"p95_ms":83.696,"p99_ms":98.162},"frames":{"count":181,"max_ms":19.913,"median_ms":16.674,"over_50ms":0,"p95_ms":17.288,"p99_ms":17.551},"latency":{"count":24,"max_ms":101.26,"median_ms":36.589,"over_50ms":10,"p95_ms":100.587,"p99_ms":101.26},"pages":32,"phase":"held_flight_1"}
+PASS held-input workload valid: focused, captured and pressed
+PASS held input produces repeated visible changes
+PASS held capture-to-draw p95 <=150ms
+FAIL no gap between visible mining changes exceeds 150ms
+PASS frame p99 <=20ms and no frame >50ms
+PASS bounded observer writer retains all frames and progress reports
+[TerrainRewrite] Temporary test world: save skipped
+

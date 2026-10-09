@@ -1,0 +1,17 @@
+{
+  "base_commit": "5b244d18fcd266a5d27b2f0be0e71a2d33bbb9b5",
+  "utc": "2026-10-09T19:42:24.418996+00:00",
+  "scope": "Model final route 27 checks pass; initial route weaker collision check retained. Default-terrain held mining fails two continuity gates; do not infer sustained performance. Test-only additions, runtime unchanged.",
+  "sha256": {
+    "tests/model_world_route.gd": "df2aa73feb765cd696bfb192fd0b8c00a946ef67b2254ebb77d6da13c9779d7c",
+    "tests/held_mining_flight.gd": "05c76e689221db9ff160f636a4b69573fa4fe75dfe9fcda13fc2140f44ec6c0f",
+    "tests/foundation_mining.gd": "be04237cf7751e5f1f99979b031b1b9acfe0a9211785396a113cf3633928b301",
+    "demo/world.gd": "f172bf3bdba2d728bb25aa7a5f8e5daa5c748e47fec0b190867b30ce3449ae1f",
+    "demo/controller.gd": "1fad328adcda7c750e56c5b16a92fd90b0177df1656a210385075cde935ecd8d",
+    "addons/structures/model_paging_coordinator.gd": "26380fbe01f02ef3231f918c3554084099210cf90008a9623549e4b998682717",
+    "addons/structures/bin/structures.windows.template_debug.x86_64.dll": "5d8028ed09486e6a1e6b22aa01198b77dbfb3814f06812f05d604d41ab3bec18",
+    "addons/volumetric_terrain/terrain_backend.gd": "b11347633083d14755b17288e68139e69919a9eb806141f63203975334b015b9",
+    "addons/volumetric_terrain/terrain_stream.gd": "303fa2968963287781bd2c3493281002aaf8064e16b5ea88a5b9de9c543ccd4b",
+    "addons/volumetric_terrain/bin/terrain_core.windows.x86_64.dll": "fd286371d1cbf1bc5503fec123ec0e333501ac2e008c8057fe3607247248ed5f"
+  }
+}

@@ -58,7 +58,8 @@ structures --test model_paging_lifecycle --godot PATH`.
 
 Keep the opt-in path available, but do not enable it by default from these results.
 The earlier dense transfer timing failure remains open; see
-[scheduler evidence](MODEL_TRANSFER_SCHEDULER.md). The next activation decision needs
+[scheduler evidence](MODEL_TRANSFER_SCHEDULER.md). [M1 disposition](M1_INTEGRATION_DISPOSITION.md) retains opt-in operation after a
+modest populated route passes. Broader activation still needs
 a short populated-world travel/edit/save/reload route with visual/collision arrival
 and frame-tail measurements. If that gate fails, retain the current default and
 record the limiting workload before proceeding with M2 content coverage. Do not

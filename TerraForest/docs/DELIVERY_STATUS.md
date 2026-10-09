@@ -2,6 +2,19 @@
 
 The [delivery plan and coverage register](PROJECT_PLAN.md) is the current reference for milestone order, original-scope coverage and deferred-work return triggers. Entries below preserve evidence at their recorded development stage. Older headings and the historical scope table are not current status; later implementations supersede some of their limitations. Correctness, integration, rendered performance and sustained qualification are separate gates.
 
+## M1 disposition and M2 activation - 2026-10-09
+
+The actual main-world model route passes 27 checks with 768 placements at three
+sites: metadata reload, destination collision by exact physics ID, bounded resident
+records, travel, editing and save/reload. Arrival is 52-307 ms in this small fixture;
+short frame gates pass. Model paging stays opt-in pending detailed combined content.
+
+The separate default-terrain held-mining check still fails continuity: maximum
+visible-change gaps 328/281 ms exceed 150 ms, despite passing short frame timing.
+This failure is retained; it is not hidden by the model result. M1's integration
+disposition is recorded and M2 world-content coverage is active. Original scope,
+dense timing and mining failures remain open. [Results and evidence](M1_INTEGRATION_DISPOSITION.md).
+
 ## Normal-world model paging lifecycle - 2026-10-09
 
 Manual save, autosave, reload/reset and graceful shutdown now coordinate native
