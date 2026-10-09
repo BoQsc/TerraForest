@@ -1,0 +1,52 @@
+{
+  "cells": 1896,
+  "generator": 4,
+  "lake_count": 4,
+  "presentation": {
+    "fair_graphical_sample": true,
+    "fullscreen": true,
+    "headless": false,
+    "render_scale": 1.0,
+    "viewport": [
+      1920,
+      1080
+    ],
+    "window_mode": 3,
+    "window_size": [
+      1920,
+      1080
+    ]
+  },
+  "road_count": 4,
+  "seed": 1703,
+  "slot": "cottage_generation_1791582325798160700",
+  "target": [
+    807,
+    47,
+    1310
+  ],
+  "scope": "Current 474-cell cottage prefab: native composition/clearance/storage scale checks at 4, 16, 64 and 128 cottages; asynchronous immutable source checks; rotated site and connected network checks; actual editor generation of four cottages, grade/pave/validate/place/save; 14 fresh-process exact addon/terrain, road and lake checks. No new-layout walking, furnished interiors, high-speed travel or sustained performance qualification.",
+  "creation_frame_sample": {
+    "frames": 88,
+    "p95_ms": 21.906,
+    "max_ms": 31.23,
+    "scope": "Creation sample, not a 60 FPS pass; includes cap/wait."
+  },
+  "commands": [
+    "tests/settlement_scale.gd --headless",
+    "tests/frontage_async.gd --headless",
+    "tests/settlement_site_plan.gd --headless",
+    "tests/settlement_network.gd --headless",
+    "tests/settlement_survey_editor.gd -- --connected-settlement-fixture --save-connected-world --world-generator=4 --world-seed=1703 --world-slot=NEW_SLOT",
+    "tests/connected_world_reopen.gd -- --world-slot=THE_SAME_SLOT"
+  ],
+  "parse_only": [
+    "tests/frontage_support_editor.gd",
+    "tests/settlement_publication.gd"
+  ],
+  "hashes": {
+    "addons\\structures\\prefabs\\brick_cottage.tres": "cebf08cc87372370eb0efb9c4d63b385fb132775e2a204473b518377f21815b6",
+    "tests\\settlement_survey_editor.gd": "4dc869c59afa30755b2ac0fa61dd274038df115934fb5046fb33a755bd238c88",
+    "tests\\connected_world_reopen.gd": "368a1a1c0e3984ba5c08b020c1400c09308961880788d558337ede7d9c7735e4"
+  }
+}

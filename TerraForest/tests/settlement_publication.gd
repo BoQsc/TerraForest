@@ -28,11 +28,11 @@ func run() -> void:
 	var publication_ms: float=(Time.get_ticks_usec()-start)/1000.0
 	passed=passed and game.buildings.is_idle()
 	var stats: Dictionary=game.buildings.stats()
-	passed=passed and stats.cells==59904 and stats.mesh_chunks>0
+	passed=passed and stats.cells==asset.get_cell_count() and stats.mesh_chunks>0
 	intervals.sort()
 	var result:={"passed":passed,"insert_us":insert_us,"publication_ms":publication_ms,"publication_frames":intervals.size(),"max_upload_chunks_per_tick":max_chunks,"max_upload_us":max_upload_us,"frame_p95_ms":intervals[int((intervals.size()-1)*0.95)] if not intervals.is_empty() else 0,"frame_max_ms":intervals[-1] if not intervals.is_empty() else 0,"stats":stats,"scope":"128 cottage isolated structure fixture at 1920x1080 fullscreen Forward+, 60 FPS cap. Includes mesh publication; excludes terrain, vegetation, entities, sustained thermal qualification."}
 	result["slow_frames"]=slow_frames;result["uploads"]=game.buildings.streaming_stats();result["collision"]=game.buildings.collision_stats()
-	game.label.text="128 cottages · 59,904 cells\nIsolated structure publication test\nTerrain / forest / entities excluded"
+	game.label.text="128 cottages · %d cells\nIsolated structure publication test\nTerrain / forest / entities excluded" % asset.get_cell_count()
 	if DisplayServer.get_name()!="headless":
 		await process_frame;await RenderingServer.frame_post_draw
 		root.get_texture().get_image().save_png("res://reports/settlement_publication.png")

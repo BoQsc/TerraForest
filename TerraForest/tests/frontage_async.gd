@@ -23,7 +23,7 @@ func run() -> void:
 		frames+=1;await process_frame
 	check(not result.is_empty() and result.get("ok",false),"worker completes and persists result")
 	if result.get("ok",false):
-		check(result.asset.get_cell_count()==128*468,"editing source during generation does not alter captured layout")
+		check(result.asset.get_cell_count()==128*cottage.get_cell_count(),"editing source during generation does not alter captured layout")
 		var expected=ClassDB.instantiate("NativeBlockPrefab");expected.compose_frontage([cottage],64,8,3,1703)
 		check(expected.get_records()==result.asset.get_records(),"asynchronous geometry matches deterministic native reference")
 		check(library.poll_frontage().is_empty(),"result consumed exactly once")

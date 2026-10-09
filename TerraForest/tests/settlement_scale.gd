@@ -19,7 +19,7 @@ func _initialize() -> void:
 		var compose_us:=Time.get_ticks_usec()-start
 		var total: int=asset.clearance_sample_count()
 		if count==4: per_cottage_clearance=total/4
-		check(total==per_cottage_clearance*count and asset.get_cell_count()==468*count,"clearance and cells scale linearly at %d cottages" % count)
+		check(total==per_cottage_clearance*count and asset.get_cell_count()==cottage.get_cell_count()*count,"clearance and cells scale linearly at %d cottages" % count)
 		var cursor:=0;var batches:=0;var sample_us:=0;var query_us:=0;var max_query_us:=0;var max_sample_us:=0;var max_bytes:=0
 		while cursor<total:
 			start=Time.get_ticks_usec()

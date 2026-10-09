@@ -1,0 +1,23 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS compose 4 authored cottages
+PASS clearance and cells scale linearly at 4 cottages
+PASS all clearance probes consumed with fixed-size packets at 4 cottages
+PASS place 4 cottages in native block world
+PASS exact snapshot roundtrip at 4 cottages
+PASS compose 16 authored cottages
+PASS clearance and cells scale linearly at 16 cottages
+PASS all clearance probes consumed with fixed-size packets at 16 cottages
+PASS place 16 cottages in native block world
+PASS exact snapshot roundtrip at 16 cottages
+PASS compose 64 authored cottages
+PASS clearance and cells scale linearly at 64 cottages
+PASS all clearance probes consumed with fixed-size packets at 64 cottages
+PASS place 64 cottages in native block world
+PASS exact snapshot roundtrip at 64 cottages
+PASS compose 128 authored cottages
+PASS clearance and cells scale linearly at 128 cottages
+PASS all clearance probes consumed with fixed-size packets at 128 cottages
+PASS place 128 cottages in native block world
+PASS exact snapshot roundtrip at 128 cottages
+{"failures":0,"rows":[{"batches":7,"cells":1896,"clearance_probes":3252,"compose_us":2892,"cottages":4,"max_packet_bytes":8224,"max_query_us":84,"max_sample_us":20,"place_us":326,"query_us":431,"sample_us":43,"snapshot_bytes":7404,"snapshot_us":118},{"batches":26,"cells":7584,"clearance_probes":13008,"compose_us":4313,"cottages":16,"max_packet_bytes":8224,"max_query_us":480,"max_sample_us":17,"place_us":744,"query_us":1892,"sample_us":108,"snapshot_bytes":29196,"snapshot_us":260},{"batches":102,"cells":30336,"clearance_probes":52032,"compose_us":11710,"cottages":64,"max_packet_bytes":8224,"max_query_us":721,"max_sample_us":13,"place_us":6117,"query_us":7271,"sample_us":412,"snapshot_bytes":116652,"snapshot_us":1006},{"batches":204,"cells":60672,"clearance_probes":104064,"compose_us":20691,"cottages":128,"max_packet_bytes":8224,"max_query_us":191,"max_sample_us":30,"place_us":7491,"query_us":12634,"sample_us":877,"snapshot_bytes":233260,"snapshot_us":2296}],"scope":"CPU composition, native clearance sampling, native density queries, block insertion and storage only. No rendering, physics, worker queue latency, supported-site claim or 60 FPS claim."}
