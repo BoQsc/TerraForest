@@ -6,7 +6,7 @@
 
 namespace terraforest {
 bool NativeStaticBatch::begin_region_admission(const PackedByteArray &bytes) {
-    if(admission||admission_busy||defer_change_signal||source_mesh.is_null()||
+    if(admission||admission_busy||defer_change_signal||admission_ticket==uint64_t(INT64_MAX)||source_mesh.is_null()||
        (!collision_only&&!render_streaming)||bytes.size()<105||bytes.size()>5600232||
        std::memcmp(bytes.ptr(),"TFMR\1\0\0\0",8)||
        std::memcmp(bytes.ptr()+24,"TFSI\1\0\0\0",8)||
@@ -28,26 +28,36 @@ bool NativeStaticBatch::begin_region_admission(const PackedByteArray &bytes) {
     // Reserve once; subsequent per-record steps cannot trigger vector copying.
     staged->ordered.reserve(count);
     staged->hash.instantiate();staged->hash->start(HashingContext::HASH_SHA256);
-    admission=std::move(staged);admission_result="active";admission_error="";
+    ++admission_ticket;admission=std::move(staged);admission_result="active";admission_error="";
     admission_step_records=admission_step_bytes=0;return true;
 }
 void NativeStaticBatch::fail_admission(const String &error) {
     admission->phase=RegionAdmission::ROLLBACK;admission->error=error;
 }
+bool NativeStaticBatch::admission_owned() {
+    if(!admission||!admission->history_owner)return false;
+    if(ObjectDB::get_instance(admission->history_owner))return true;
+    // Weak owner was destroyed: raw cancellation/advancement is available again.
+    admission->history_owner=0;return false;
+}
 bool NativeStaticBatch::cancel_region_admission() {
-    if(!admission||admission_busy)return false;
+    if(!admission||admission_busy||defer_change_signal||admission_owned())return false;
     fail_admission("cancelled");return true;
 }
 Dictionary NativeStaticBatch::region_admission_stats() const {
-    Dictionary out;out["active"]=bool(admission);out["result"]=admission_result;
+    Dictionary out;out["ticket"]=int64_t(admission_ticket);out["active"]=bool(admission);out["result"]=admission_result;
     out["error"]=admission?admission->error:admission_error;
     out["staged_records"]=int64_t(admitting_count());
     out["step_records"]=int64_t(admission_step_records);out["step_hash_bytes"]=int64_t(admission_step_bytes);
     out["phase"]=admission?int(admission->phase):-1;return out;
 }
 Dictionary NativeStaticBatch::advance_region_admission(int64_t max_records,int64_t max_hash_bytes,int64_t max_usec) {
+    if(defer_change_signal||admission_owned())return region_admission_stats();
+    return advance_region_admission_impl(max_records,max_hash_bytes,max_usec);
+}
+Dictionary NativeStaticBatch::advance_region_admission_impl(int64_t max_records,int64_t max_hash_bytes,int64_t max_usec) {
     admission_step_records=admission_step_bytes=0;
-    if(!admission||admission_busy||defer_change_signal||max_records<1||max_records>1024||
+    if(!admission||admission_busy||max_records<1||max_records>1024||
        max_hash_bytes<1||max_hash_bytes>262144||max_usec<1||max_usec>2000)return region_admission_stats();
     admission_busy=true;
     const auto deadline=std::chrono::steady_clock::now()+std::chrono::microseconds(max_usec);

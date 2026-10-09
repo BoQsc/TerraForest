@@ -1,3 +1,24 @@
+## Cooperative model admission preserves editor history - 2026-10-09
+
+`NativeStaticHistory` now owns incremental admission through generation tickets.
+It retains unrelated undo/redo during loading, cancellation and checksum failure,
+and updates its revision before publication callbacks. Reentrant commands, raw
+advancement/cancellation of owned work, other journals and stale tickets cannot
+hijack a transfer. Ownership is weak: destroying the journal permits raw cleanup;
+destroying a collection does not leave the journal permanently locked. Synchronous
+journal transfers reject an active admission before parsing a full packet.
+
+Debug and release each pass 31 new checks. Existing release region/history
+checks pass 58; raw incremental admission passes all 42 correctness checks.
+The timing gate remains RED: this regression recorded 4.939 ms maximum dense
+success call and 2.297 ms failure/rollback call against a 2 ms allowance. Evidence:
+`docs/evidence/model_admission_history`; contract:
+[cooperative admission journal wrapper](MODEL_INCREMENTAL_ADMISSION.md#journal-owned-admission).
+
+Automatic world paging is still disconnected. Bounded unloading, shared scheduling,
+arrival latency and dense render/collision selection remain before qualification.
+No additional graphical or thermal run was performed for this integration.
+
 ## Native model admission now advances in bounded steps - 2026-10-09
 
 Added begin/advance/cancel admission to `NativeStaticBatch`. Hashing, transform

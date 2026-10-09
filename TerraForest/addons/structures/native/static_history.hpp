@@ -32,6 +32,9 @@ class NativeStaticHistory : public RefCounted {
 protected:
     static void _bind_methods();
 public:
+    int64_t begin_region_admission(NativeStaticBatch *collection,const PackedByteArray &packet);
+    Dictionary advance_region_admission(NativeStaticBatch *collection,int64_t ticket,int64_t max_records,int64_t max_hash_bytes,int64_t max_usec);
+    bool cancel_region_admission(NativeStaticBatch *collection,int64_t ticket);
     bool region_has_history(NativeStaticBatch *collection,Vector3i region);
     bool unload_region(NativeStaticBatch *collection,const PackedByteArray &packet){return transfer_region(collection,packet,false);}
     bool restore_region(NativeStaticBatch *collection,const PackedByteArray &packet){return transfer_region(collection,packet,true);}

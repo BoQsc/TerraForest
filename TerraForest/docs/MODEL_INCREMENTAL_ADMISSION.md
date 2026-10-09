@@ -45,8 +45,8 @@ Bounds and ordered render IDs are accumulated with the records. Final publicatio
 moves prepared containers into the live indexes; it does not reserialize the
 packet or rebuild all region bounds. Existing render/proxy admission then handles
 GPU buffers and physics objects. Publication emits the normal change signal and,
-like raw `restore_region`, creates a history barrier. A history-preserving pager
-must still integrate this lifecycle with the journal.
+like raw `restore_region`, creates a history barrier. For editor streaming, use the journal-owned wrapper described below to retain
+unrelated undo/redo.
 
 `resident_instances` excludes staging; `staged_instances` reports it explicitly.
 Transform-byte counters include staged allocations because that memory exists.
@@ -107,3 +107,53 @@ execution and is not an isolated performance comparison with release.
   live when cleanup must share a frame budget.
 - The implementation is project-owned 0BSD C++ and uses the pinned prebuilt
   godot-cpp SDK; no new third-party dependency or license was introduced.
+
+## Journal-owned admission
+
+`NativeStaticHistory` now wraps the same bounded admission engine:
+
+- `begin_region_admission(collection, packet)` returns a positive generation
+  ticket, or 0 on rejection. The collection must be registered, and the region
+  must not be referenced by retained undo/redo records. Header inspection is
+  bounded; the existing incremental validator still checks the packet contents.
+- `advance_region_admission(collection, ticket, records, hash_bytes, usec)`
+  returns the admission status plus `accepted: true` when ownership and ticket
+  match. Otherwise it returns `accepted: false` without advancing work. Advance
+  the same ticket until `active` becomes false.
+- `cancel_region_admission(collection, ticket)` requests bounded rollback;
+  continue advancing through the journal until it terminates.
+
+Only the owning journal can advance or cancel an owned transfer. Raw callers,
+other journals and stale tickets are rejected. Tickets increase per collection
+and remain visible in the batch's admission statistics after completion. A
+completed ticket cannot replay publication. There is no extra thread or duplicate
+record staging in the wrapper.
+
+Unrelated journal edits, undo and redo may execute between steps. On successful
+publication, the owner updates its revision cursor before emitting the change
+signal; both history stacks survive. Reentrant journal commands are blocked
+during the notification. External raw edits during that notification still create
+a history barrier, as they do for existing synchronous transfers. Cancellation
+and validation failure leave the journal stacks unchanged unless an independent
+external edit invalidates them.
+
+Journal reconfiguration is rejected while it owns a live transfer. Collection
+and journal ownership use weak Godot instance identities: freeing a collection
+does not leave a permanent configuration lock; freeing its journal allows raw
+advancement or cancellation again. Finishing such an orphan through the raw API
+has ordinary raw history-barrier semantics. A coordinator should normally cancel
+and drain before discarding its journal rather than depend on orphan recovery.
+
+This completes the native history-preserving admission wrapper, not automatic
+world paging or its performance qualification. The recorded density gate above
+remains failed; no graphical or thermal claim follows from this integration.
+
+Journal integration evidence: [reports and binary hashes](evidence/model_admission_history/).
+Debug and release each pass 31 checks, including undo/redo between steps,
+publication notification ordering, cross-journal exclusion, stale tickets,
+cancellation, checksum failure, external-edit barriers and orphan recovery.
+Existing release transfers/history pass 58 checks. The raw admission regression
+passes 42 correctness checks but again fails the 2 ms gate: dense success reached
+4,939 us and failure/rollback 2,297 us in this run. Preserve this variation alongside
+the earlier measurements; no performance improvement or timing qualification is
+claimed for the journal wrapper.

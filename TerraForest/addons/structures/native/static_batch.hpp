@@ -36,6 +36,7 @@ class NativeStaticBatch : public Node3D {
     struct RegionAdmission {
         enum Phase { OUTER_HASH, INNER_HASH, RECORDS, ROLLBACK } phase=OUTER_HASH;
         BlockKey key;
+        uint64_t history_owner=0;
         PackedByteArray packet;
         Ref<HashingContext> hash;
         uint64_t offset=0,record_offset=0,count=0;
@@ -49,6 +50,9 @@ class NativeStaticBatch : public Node3D {
     String admission_result="idle",admission_error;
     uint64_t admission_step_records=0,admission_step_bytes=0;
     bool admission_busy=false;
+    uint64_t admission_ticket=0;
+    bool admission_owned();
+    Dictionary advance_region_admission_impl(int64_t max_records,int64_t max_hash_bytes,int64_t max_usec);
     size_t admitting_count() const { return admission?admission->ids.size():0; }
     void fail_admission(const String &error);
     using RenderKey = std::pair<BlockKey,uint32_t>;

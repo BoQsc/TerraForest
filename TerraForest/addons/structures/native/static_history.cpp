@@ -3,6 +3,9 @@
 
 namespace terraforest {
 void NativeStaticHistory::_bind_methods() {
+    ClassDB::bind_method(D_METHOD("begin_region_admission","collection","packet"),&NativeStaticHistory::begin_region_admission);
+    ClassDB::bind_method(D_METHOD("advance_region_admission","collection","ticket","max_records","max_hash_bytes","max_usec"),&NativeStaticHistory::advance_region_admission);
+    ClassDB::bind_method(D_METHOD("cancel_region_admission","collection","ticket"),&NativeStaticHistory::cancel_region_admission);
     ClassDB::bind_method(D_METHOD("region_has_history","collection","region"),&NativeStaticHistory::region_has_history);
     ClassDB::bind_method(D_METHOD("unload_region","collection","packet"),&NativeStaticHistory::unload_region);
     ClassDB::bind_method(D_METHOD("restore_region","collection","packet"),&NativeStaticHistory::restore_region);
@@ -37,6 +40,11 @@ bool NativeStaticHistory::synchronize() {
 }
 bool NativeStaticHistory::configure(const Array &collections,int64_t bytes,int64_t steps) {
     if(busy||collections.size()>256||bytes<0||bytes>64*1024*1024||steps<0||steps>1024)return false;
+    // Reconfiguration must not orphan an in-flight journal-owned transfer.
+    for(const auto &entry:revisions) {
+        auto *collection=resolve(entry.first);
+        if(collection&&collection->admission&&collection->admission->history_owner==get_instance_id())return false;
+    }
     std::map<uint64_t,uint64_t> staged;
     for(int i=0;i<collections.size();++i) {
         Variant value=collections[i];if(value.get_type()!=Variant::OBJECT)return false;
@@ -124,6 +132,32 @@ Dictionary NativeStaticHistory::stats() {
     out["byte_limit"]=int64_t(byte_limit);out["step_limit"]=step_limit;out["collections"]=int(revisions.size());
     out["barriers"]=int64_t(barriers);out["unrecorded_edits"]=int64_t(unrecorded);out["busy"]=busy;return out;
 }
+int64_t NativeStaticHistory::begin_region_admission(NativeStaticBatch *collection,const PackedByteArray &packet) {
+    if(busy)return 0;synchronize();
+    if(!registered(collection)||packet.size()<24)return 0;
+    BlockKey region{int(packet.decode_s32(8)),int(packet.decode_s32(12)),int(packet.decode_s32(16))};
+    if(region_referenced(collection->get_instance_id(),region)||!collection->begin_region_admission(packet))return 0;
+    collection->admission->history_owner=get_instance_id();
+    return int64_t(collection->admission_ticket);
+}
+Dictionary NativeStaticHistory::advance_region_admission(NativeStaticBatch *collection,int64_t ticket,int64_t records,int64_t bytes,int64_t usec) {
+    Dictionary denied;denied["accepted"]=false;
+    if(busy)return denied;synchronize();
+    if(!registered(collection)||ticket<=0||uint64_t(ticket)!=collection->admission_ticket||
+       !collection->admission||collection->admission->history_owner!=get_instance_id())return denied;
+    busy=true;collection->defer_change_signal=true;
+    Dictionary result=collection->advance_region_admission_impl(records,bytes,usec);
+    result["accepted"]=true;
+    if(!collection->admission&&collection->admission_result=="complete")publish(collection);
+    else {collection->defer_change_signal=false;busy=false;}
+    return result;
+}
+bool NativeStaticHistory::cancel_region_admission(NativeStaticBatch *collection,int64_t ticket) {
+    if(busy)return false;synchronize();
+    if(!registered(collection)||ticket<=0||uint64_t(ticket)!=collection->admission_ticket||
+       !collection->admission||collection->admission->history_owner!=get_instance_id()||collection->admission_busy)return false;
+    collection->fail_admission("cancelled");return true;
+}
 bool NativeStaticHistory::region_referenced(uint64_t collection,BlockKey region) const {
     auto matches=[&](const NativeStaticBatch::Placement &placement){auto key=NativeStaticBatch::group_for(placement);return !(key<region)&&!(region<key);};
     for(const auto *edits:{&undo_edits,&redo_edits})for(const auto &edit:*edits)
@@ -137,7 +171,7 @@ bool NativeStaticHistory::region_has_history(NativeStaticBatch *collection,Vecto
 }
 bool NativeStaticHistory::transfer_region(NativeStaticBatch *collection,const PackedByteArray &packet,bool restore) {
     if(busy)return false;synchronize();
-    if(!registered(collection))return false;
+    if(!registered(collection)||collection->admission)return false;
     String asset;BlockKey region;std::map<int64_t,NativeStaticBatch::Placement> values;
     if(!NativeStaticBatch::parse_region(packet,asset,region,values)||asset!=collection->asset_id||region_referenced(collection->get_instance_id(),region))return false;
     busy=true;collection->defer_change_signal=true;
