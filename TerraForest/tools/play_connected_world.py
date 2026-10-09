@@ -15,12 +15,15 @@ def main():
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--furnished", action="store_true", help="Open the separate furnished checkpoint")
     parser.add_argument("--generated-furnished", action="store_true", help="Open the editor-generated furnished checkpoint")
+    parser.add_argument("--geology", action="store_true", help="Open the underground ore access checkpoint")
     args = parser.parse_args()
-    if args.furnished and args.generated_furnished:
+    if sum([args.furnished,args.generated_furnished,args.geology])>1:
         parser.error("Choose one checkpoint")
     relative = "docs/evidence/furnished_world/manifest.json" if args.furnished else "docs/evidence/connected_world/manifest.json"
     if args.generated_furnished:
         relative = "docs/evidence/generated_furnished/manifest.json"
+    if args.geology:
+        relative = "docs/evidence/geology_access/manifest.json"
     manifest = json.loads((ROOT / relative).read_text())
     slot = manifest["slot"]
     if not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]{0,47}", slot):
@@ -31,6 +34,8 @@ def main():
     launch_args = ["--slot", slot]
     if args.furnished or args.generated_furnished:
         launch_args += ["--ground-cover"]
+    if args.geology:
+        launch_args += ["--gameplay-construction", "--generator", str(manifest["generator"]), "--seed", str(manifest["seed"])]
     if args.godot:
         launch_args += ["--godot", args.godot]
     config, extra = parse_args(launch_args)

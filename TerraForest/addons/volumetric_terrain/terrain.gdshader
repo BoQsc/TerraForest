@@ -75,7 +75,9 @@ void fragment(){
   // Native continuous vein weight, zero outside isolated geological capsules.
   float ore=clamp(abs(exact_material),0.0,1.0)*exposed*(1.0-total);
   vec3 mineral=exact_material<0.0?vec3(0.43,0.19,0.075):vec3(0.19,0.23,0.27);
-  color=mix(color,mineral,ore);
+  // Retain the already-filtered rock texture in ore; no additional texture fetch.
+  float mineral_grain=clamp(dot(color,vec3(0.2126,0.7152,0.0722))*2.0,0.45,1.35);
+  color=mix(color,mineral*mineral_grain,ore);
   METALLIC=mix(METALLIC,0.55,ore);ROUGHNESS=mix(ROUGHNESS,0.65,ore);
  }
  ALBEDO=min(color,vec3(0.82));

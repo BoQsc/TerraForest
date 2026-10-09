@@ -1,0 +1,157 @@
+{
+  "failures": 0,
+  "routes": [
+    {
+      "a": "(324.0, 99.06683, 368.0)",
+      "b": "(361.5, 113.0, 368.0)",
+      "finish": "(359.5421, 109.7419, 367.998)",
+      "material": 8,
+      "ore": "(364.0, 113.0, 368.0)",
+      "path": [
+        {
+          "blocked": false,
+          "on_floor": false,
+          "position": "(324.0917, 97.56128, 368.0)"
+        },
+        {
+          "blocked": false,
+          "on_floor": true,
+          "position": "(326.8142, 97.58229, 367.998)"
+        },
+        {
+          "blocked": false,
+          "on_floor": true,
+          "position": "(329.5644, 98.60553, 367.998)"
+        },
+        {
+          "blocked": false,
+          "on_floor": true,
+          "position": "(332.3147, 99.62605, 367.998)"
+        },
+        {
+          "blocked": false,
+          "on_floor": true,
+          "position": "(335.0649, 100.6527, 367.998)"
+        },
+        {
+          "blocked": false,
+          "on_floor": true,
+          "position": "(337.8152, 101.663, 367.998)"
+        },
+        {
+          "blocked": false,
+          "on_floor": true,
+          "position": "(340.5654, 102.6924, 367.998)"
+        },
+        {
+          "blocked": false,
+          "on_floor": true,
+          "position": "(343.3156, 103.7231, 367.998)"
+        },
+        {
+          "blocked": false,
+          "on_floor": true,
+          "position": "(346.0659, 104.7286, 367.998)"
+        },
+        {
+          "blocked": false,
+          "on_floor": true,
+          "position": "(348.8161, 105.7573, 367.998)"
+        },
+        {
+          "blocked": false,
+          "on_floor": true,
+          "position": "(351.5664, 106.786, 367.998)"
+        },
+        {
+          "blocked": false,
+          "on_floor": true,
+          "position": "(354.3166, 107.7942, 367.998)"
+        },
+        {
+          "blocked": false,
+          "on_floor": true,
+          "position": "(357.0669, 108.8216, 367.998)"
+        }
+      ],
+      "walk_ms": 6468
+    },
+    {
+      "a": "(328.0, 90.28734, 332.0)",
+      "b": "(365.5, 109.0, 332.0)",
+      "finish": "(363.5488, 105.3762, 331.9974)",
+      "material": 9,
+      "ore": "(368.0, 109.0, 332.0)",
+      "path": [
+        {
+          "blocked": false,
+          "on_floor": false,
+          "position": "(328.0917, 88.78734, 332.0)"
+        },
+        {
+          "blocked": false,
+          "on_floor": true,
+          "position": "(330.8209, 88.94955, 331.9974)"
+        },
+        {
+          "blocked": false,
+          "on_floor": true,
+          "position": "(333.5711, 90.41167, 331.9974)"
+        },
+        {
+          "blocked": false,
+          "on_floor": true,
+          "position": "(336.3214, 91.78493, 331.9974)"
+        },
+        {
+          "blocked": false,
+          "on_floor": true,
+          "position": "(339.0716, 93.12125, 331.9974)"
+        },
+        {
+          "blocked": false,
+          "on_floor": true,
+          "position": "(341.8218, 94.53075, 331.9974)"
+        },
+        {
+          "blocked": false,
+          "on_floor": true,
+          "position": "(344.5721, 95.86913, 331.9974)"
+        },
+        {
+          "blocked": false,
+          "on_floor": true,
+          "position": "(347.3223, 97.27654, 331.9974)"
+        },
+        {
+          "blocked": false,
+          "on_floor": true,
+          "position": "(350.0726, 98.6498, 331.9974)"
+        },
+        {
+          "blocked": false,
+          "on_floor": true,
+          "position": "(352.8228, 99.94374, 331.9974)"
+        },
+        {
+          "blocked": false,
+          "on_floor": true,
+          "position": "(355.5731, 101.3963, 331.9974)"
+        },
+        {
+          "blocked": false,
+          "on_floor": true,
+          "position": "(358.3233, 102.7682, 331.9974)"
+        },
+        {
+          "blocked": false,
+          "on_floor": true,
+          "position": "(361.0735, 104.1038, 331.9974)"
+        }
+      ],
+      "walk_ms": 6468
+    }
+  ],
+  "scope": "Authored access tunnels to seeded ore, actual player controls and headlamp at fullscreen1080p cap60; no natural-cave discovery or performance claim.",
+  "slot": "geology_access_1791586170375323500"
+}

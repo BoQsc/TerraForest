@@ -27,6 +27,7 @@ var water_camera=preload("res://addons/volumetric_water/water_camera.gd").new()
 var structures = Structures.new()
 var player_hud=preload("res://addons/player_runtime/player_hud.gd").new()
 var construction_inventory=preload("res://addons/player_runtime/construction_inventory.gd").new()
+var headlamp=preload("res://addons/player_runtime/headlamp.gd").new()
 var mining_rewards=preload("res://addons/player_runtime/mining_rewards.gd").new()
 var model_tool = preload("res://addons/structures/model_tool.gd").new()
 var structure_mode := false
@@ -141,6 +142,7 @@ func _ready() -> void:
 	pending_spawn = Vector3(800, 0, 1310)
 	terrain.focus = pending_spawn
 	super._ready()
+	camera.add_child(headlamp)
 	add_child(model_tool)
 	model_tool.gameplay=construction_inventory.gameplay
 	model_tool.paid_placement=_place_inventory_model
@@ -427,7 +429,7 @@ func _setup_hud() -> void:
 	help.text = "WASD  Move    Shift  Sprint    Space  Jump    G  Fly    Mouse  Look    Esc  Release\nB  Terrain / Blocks    LMB  Remove    RMB  Place    1–6  Shapes    P  Prefabs    T  Material    R  Rotate    Ctrl+Z / Y  Undo / Redo\nTerrain: Wheel  Brush size    1–3  Tools    L  Lake    F5  Save world    F9  Reload    F3  Diagnostics"
 	help.add_theme_font_size_override("font_size", 15)
 	help.text=help.text.replace("B  Terrain / Blocks", "B  Terrain / Blocks    M  Objects    E  Collect / Harvest")
-	help.text+="\nV  Place vehicle    E  Enter / exit stopped vehicle    F5  Save world and vehicle"
+	help.text+="\nV  Place vehicle    E  Enter / exit stopped vehicle    F5  Save world and vehicle    F  Headlamp"
 	if ground_enabled: help.text+="    H Ground cover: 1 stone / 2 plant / 3 grass; LMB/E remove; RMB place"
 	help.offset_top = -108
 	help.add_theme_color_override("font_color", Color("e6eee9"))
@@ -598,6 +600,10 @@ func _set_player_tool_mode(building: bool,objects: bool,terrain_tool: int) -> bo
 
 func _unhandled_input(event: InputEvent) -> void:
 	if player_hud.inventory_open: return
+	if event is InputEventKey and event.pressed and not event.echo and event.physical_keycode==KEY_F:
+		if app_focused and not loading_active and not shutdown_requested and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED:
+			_show_lake_notice("Headlamp on" if headlamp.toggle() else "Headlamp off")
+		return
 	if world_vehicle.driving:
 		if event is InputEventKey and event.pressed and not event.echo:
 			if event.physical_keycode==KEY_F5 and app_focused and not loading_active and not shutdown_requested:
