@@ -1,3 +1,30 @@
+## Disabled vehicle braking regression completed - 2026-10-09
+
+Completed the remaining check after the vehicle control-admission and shortcut
+fixes. The real native vehicle scene runs on a flat static floor at both 60 and
+120 physics ticks per second, with controls disabled and W/A/Shift/Space held.
+All 24 assertions pass: loaded support, installed input state, ignored driving
+inputs, finite non-accelerating motion, stopping bounds and resumed throttle.
+From 30 m/s forward it stops within 2.5 seconds after 24.69-24.85 m; from 15 m/s
+reverse it stops after 6.11-6.18 m. No runtime code change was required.
+
+Test: `tests/vehicle_disabled_braking.gd`; evidence:
+`docs/evidence/vehicle_admission/disabled_braking_new_host.log`. An initial
+fixture parse error was corrected with an explicit float type before execution.
+This was a short headless physics check on the new machine with Godot
+4.7.2.stable.steam.ed1daf0bf, not an FPS or thermal comparison. It directly
+disables controls; OS focus delivery, airborne/slope behavior and streamed-world
+stopping remain outside its coverage. See [HARDWARE_BASELINE.md](HARDWARE_BASELINE.md).
+
+## Hardware migration: performance evidence boundary - 2026-10-09
+
+The development machine changed from the previously logged GTX 1060 Max-Q GPU
+to a Lenovo 82XV with i5-12450H, RTX 4050 Laptop GPU and 16 GiB RAM. Inventory,
+observed power settings and comparison rules are in [HARDWARE_BASELINE.md](HARDWARE_BASELINE.md).
+Cross-machine improvements must not be credited to software. The 1920x1080
+fullscreen / 60 FPS target remains unchanged. No load test or settings changes
+were performed; sustained performance and thermal headroom remain unqualified.
+
 ## Disabled vehicle controls also block auxiliary shortcuts - 2026-10-07
 
 Vehicle reset (R), damage toggle (F8), repair (F9) and accessory toggle (F10)

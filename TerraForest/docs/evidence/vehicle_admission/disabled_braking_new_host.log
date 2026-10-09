@@ -1,0 +1,31 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS fixture establishes loaded ground support
+PASS fixture holds driving inputs
+PASS disabled controls ignore throttle/steering/boost/handbrake keys
+PASS disabled motion remains finite and does not accelerate
+PASS grounded vehicle stops within time and distance bounds
+DISABLED_BRAKING { "physics_hz": 60, "initial_mps": 30.0, "final_mps": 0.0, "travel_m": 24.6943435668945, "peak_mps": 29.6331748962402 }
+PASS enabled throttle drives again after braking
+PASS fixture establishes loaded ground support
+PASS fixture holds driving inputs
+PASS disabled controls ignore throttle/steering/boost/handbrake keys
+PASS disabled motion remains finite and does not accelerate
+PASS grounded vehicle stops within time and distance bounds
+DISABLED_BRAKING { "physics_hz": 60, "initial_mps": -15.0, "final_mps": 0.0, "travel_m": 6.1112174987793, "peak_mps": 14.6669244766235 }
+PASS enabled throttle drives again after braking
+PASS fixture establishes loaded ground support
+PASS fixture holds driving inputs
+PASS disabled controls ignore throttle/steering/boost/handbrake keys
+PASS disabled motion remains finite and does not accelerate
+PASS grounded vehicle stops within time and distance bounds
+DISABLED_BRAKING { "physics_hz": 120, "initial_mps": 30.0, "final_mps": 0.0, "travel_m": 24.8470649719238, "peak_mps": 29.8164196014404 }
+PASS enabled throttle drives again after braking
+PASS fixture establishes loaded ground support
+PASS fixture holds driving inputs
+PASS disabled controls ignore throttle/steering/boost/handbrake keys
+PASS disabled motion remains finite and does not accelerate
+PASS grounded vehicle stops within time and distance bounds
+DISABLED_BRAKING { "physics_hz": 120, "initial_mps": -15.0, "final_mps": 0.0, "travel_m": 6.18055295944214, "peak_mps": 14.8332948684692 }
+PASS enabled throttle drives again after braking
+VEHICLE_DISABLED_BRAKING checks=24 failures=0
