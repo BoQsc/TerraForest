@@ -7,7 +7,7 @@ signal inventory_changed
 signal drop_requested(slot: int, revision: int)
 const CATALOG: Dictionary={1:"Sculpt sphere",2:"Sculpt cube",3:"Build blocks",4:"Place objects"}
 const MATERIALS: Dictionary={101:"Brick",102:"Wood",103:"Concrete",104:"Metal"}
-const RESOURCES: Dictionary={201:"Stone",202:"Iron ore",203:"Copper ore"}
+const RESOURCES: Dictionary={201:"Stone",202:"Iron ore",203:"Copper ore",204:"Plant",205:"Grass clump"}
 const STARTER_MATERIAL_COUNT:=64
 var inventory: RefCounted
 var reward_inbox: RefCounted

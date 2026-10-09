@@ -1,0 +1,10 @@
+{
+  "addons/world_ecosystem/ground_interaction.gd": "8c0c994eca9f4e4148d7acc2ef6a319aa654badc25023c78818685a6f73d4035",
+  "addons/world_ecosystem/ground_cover.gd": "dde0e561b241fb3eea857c215af8a119423cb5f5293beb31e068d5baea85b9d9",
+  "demo/world.gd": "3b2cfbeade5735dae3c276ec5c549a3eea525e0a59072d8cefaf9bf539527ddf",
+  "tests/ground_cover_interaction_world.gd": "d2b27c1251e0021181a9a7b0c49b64b5bf383e00c523a344ae350b769fcc75c0",
+  "tests/ground_cover_stream.gd": "b020db74ed94e294446dae7f702077380c671ddb95ab9c38d4f1186b4177cf1f",
+  "addons/vegetation_runtime/native/ground_picker.hpp": "ba8420829892dadd6eba8e0fecd195966a21ed26aa5c38239c80a17c37ed2719",
+  "addons/vegetation_runtime/bin/vegetation_runtime.windows.template_debug.x86_64.dll": "0bf8dc04ac60440fc66b174efa4f9ed30cf3005cd7cb319325e435c1fcea3f81",
+  "addons/vegetation_runtime/bin/vegetation_runtime.windows.template_release.x86_64.dll": "b996710fb218ca6a85cef5945bb3133692d45dd22d06d00cd733822fd7111247"
+}

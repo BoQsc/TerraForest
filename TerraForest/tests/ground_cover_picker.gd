@@ -28,6 +28,7 @@ func run() -> void:
 	check(not picker.pick(Vector3(967,21,970),Vector3(974,21,970)).hit,"parallel ray outside bounds misses")
 	check(picker.pick(Vector3(970,20,970),Vector3(971,20,970)).fraction==0.0,"ray starting inside proxy hits at zero")
 	check(not picker.pick(Vector3(NAN,20,970),Vector3(974,20,970)).hit and not picker.pick(Vector3.ZERO,Vector3(9,0,0)).hit,"nonfinite and over-reach rays rejected")
+	check(picker.pick(Vector3(967,20,970),Vector3(975.0001,20,970)).hit,"nominal reach tolerates sub-millimetre world-coordinate rounding")
 	var bad:=records(PackedInt64Array([3,3]),[a,b])
 	check(not picker.replace_cell(Vector2i(30,30),bad) and picker.pick(Vector3(967,20,970),Vector3(974,20,970)).id==3,"duplicate identity rejection preserves previous owner")
 	check(not picker.replace_cell(Vector2i(29,30),rows),"misowned transforms rejected")

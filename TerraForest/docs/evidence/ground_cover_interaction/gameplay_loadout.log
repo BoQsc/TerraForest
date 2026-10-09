@@ -1,0 +1,16 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS editor default has no starter material grant
+PASS gameplay loadout prepares
+PASS new gameplay gets 64 of material 101
+PASS new gameplay gets 64 of material 102
+PASS new gameplay gets 64 of material 103
+PASS new gameplay gets 64 of material 104
+PASS repeated prepare cannot duplicate starter stock
+PASS default passes persistence validation
+PASS spend mixed starter materials
+PASS disk-restored spent stock is not refilled
+PASS repeated world restore does not add supplies
+PASS existing editor save is not silently granted resources
+PASS missing loadout section receives the configured new-world default
+GAMEPLAY_LOADOUT {"checks":13,"failures":0}

@@ -1,0 +1,23 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS resident interaction owner accepted
+PASS nearest clump wins with exact proxy intersection
+PASS reverse ray selects opposite nearest clump
+PASS parallel ray outside bounds misses
+PASS ray starting inside proxy hits at zero
+PASS nonfinite and over-reach rays rejected
+PASS nominal reach tolerates sub-millimetre world-coordinate rounding
+PASS duplicate identity rejection preserves previous owner
+PASS misowned transforms rejected
+PASS rotated scaled grass proxy accepted
+PASS inverse transform preserves exact oriented intersection
+PASS boundary proxy accepted
+PASS cell padding finds protruding neighbour proxy
+PASS query visits local cells independently of all 49 resident owners
+PASS resident interaction owner cap enforced
+PASS retired render owner cannot be picked
+PASS maximum 15680 resident interaction records accepted within owner bounds
+PASS dense local query tests 320 records rather than scanning all 15680
+PASS coincident proxy ties choose stable lowest identity
+PASS oversized owner rejected before replacing existing queries
+GROUND_COVER_PICKER {"checks":20,"failures":0}

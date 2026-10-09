@@ -6,6 +6,7 @@ var camera: Camera3D
 var structures: Node3D
 var water: Node3D
 var seed: int=1703
+var seed_source: Callable
 var picker: RefCounted
 var native: RefCounted
 var removed: RefCounted
@@ -86,6 +87,7 @@ func _retire(key: Vector2i) -> void:
 
 func _process(_delta: float) -> void:
 	if not terrain.world_ready or terrain.stopping: return
+	if seed_source.is_valid(): seed=seed_source.call()
 	if not removed.bind_world(seed,1):
 		push_error("Ground-cover save belongs to a different generation profile")
 		set_process(false);return

@@ -42,10 +42,10 @@ public:
     void remove_cell(Vector2i key){if(valid_cell(key))cells.erase(key.y*63+key.x);}
     Dictionary pick(Vector3 from,Vector3 to) const{
         Dictionary out;out["hit"]=false;out["tested"]=0;out["cells"]=0;
-        if(!from.is_finite()||!to.is_finite()||from.distance_squared_to(to)>64||from==to||std::abs(from.x)>100000||std::abs(from.z)>100000)return out;
+        if(!from.is_finite()||!to.is_finite()||from.distance_squared_to(to)>64.01||from==to||std::abs(from.x)>100000||std::abs(from.z)>100000)return out;
         int x0=std::max(0,int(std::floor((std::min(from.x,to.x)-8)/32))),x1=std::min(62,int(std::floor((std::max(from.x,to.x)+8)/32)));
         int z0=std::max(0,int(std::floor((std::min(from.z,to.z)-8)/32))),z1=std::min(62,int(std::floor((std::max(from.z,to.z)+8)/32)));
-        double closest=2;int64_t selected=0;int selected_species=0,tested=0,visited=0;
+        double closest=2;int64_t selected=0;int selected_species=0,selected_owner=0,tested=0,visited=0;
         for(int z=z0;z<=z1;++z)for(int x=x0;x<=x1;++x){
             ++visited;auto found=cells.find(z*63+x);if(found==cells.end())continue;
             for(const auto &item:found->second){
@@ -56,11 +56,11 @@ public:
                     if(std::abs(direction[axis])<1e-9){if(start[axis]<low[axis]||start[axis]>high[axis]){hit=false;break;}}
                     else{double a=(low[axis]-start[axis])/direction[axis],b=(high[axis]-start[axis])/direction[axis];if(a>b)std::swap(a,b);enter=std::max(enter,a);leave=std::min(leave,b);if(enter>leave){hit=false;break;}}
                 }
-                if(hit&&(enter<closest||(enter==closest&&item.id<selected))){closest=enter;selected=item.id;selected_species=item.species;}
+                if(hit&&(enter<closest||(enter==closest&&item.id<selected))){closest=enter;selected=item.id;selected_species=item.species;selected_owner=z*63+x;}
             }
         }
         out["tested"]=tested;out["cells"]=visited;
-        if(selected){out["hit"]=true;out["id"]=selected;out["species"]=selected_species;out["fraction"]=closest;out["position"]=from+(to-from)*closest;}
+        if(selected){out["hit"]=true;out["id"]=selected;out["cell"]=Vector2i(selected_owner%63,selected_owner/63);out["species"]=selected_species;out["fraction"]=closest;out["position"]=from+(to-from)*closest;}
         return out;
     }
 };

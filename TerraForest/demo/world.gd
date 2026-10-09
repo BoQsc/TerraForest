@@ -16,6 +16,11 @@ var _saved_pose:=PackedByteArray()
 var _restored_pose: Dictionary={}
 var vegetation = Vegetation.new()
 var ecosystem = Ecosystem.new()
+var ground_cover=preload("res://addons/world_ecosystem/ground_cover.gd").new()
+var ground_interaction=preload("res://addons/world_ecosystem/ground_interaction.gd").new()
+var ground_enabled: bool="--ground-cover" in OS.get_cmdline_user_args()
+var ground_mode:=false
+var ground_species:=0
 var lakes = Lakes.new()
 var water_camera=preload("res://addons/volumetric_water/water_camera.gd").new()
 var structures = Structures.new()
@@ -73,6 +78,8 @@ func _ready() -> void:
 	add_child(world_vehicle)
 	world_vehicle.interaction_available=_vehicle_interaction_available
 	add_child(pickups)
+	if not ground_cover.prepare(persistence):
+		push_error("Ground-cover persistence initialization failed");get_tree().quit(2);return
 	if not ecosystem.prepare_persistence(persistence):
 		push_error("Vegetation persistence initialization failed")
 		get_tree().quit(2)
@@ -197,6 +204,12 @@ func _ready() -> void:
 	ecosystem.structures = structures
 	ecosystem.water = lakes
 	add_child(ecosystem)
+	ground_cover.terrain=terrain;ground_cover.camera=camera;ground_cover.structures=structures;ground_cover.water=lakes
+	ground_cover.seed_source=func():return terrain.backend.world_seed
+	add_child(ground_cover);ground_cover.set_process(ground_enabled)
+	ground_interaction.cover=ground_cover
+	ground_interaction.scene_ray=func(from: Vector3,to: Vector3):return structures.blocks.raycast_scene(from,to,7,[player.get_rid()])
+	ground_interaction.changed.connect(func():terrain.changed_since_save=true;player_hud.refresh())
 	lakes.name = "Lakes"
 	lakes.terrain = terrain
 	add_child(lakes)
@@ -405,6 +418,7 @@ func _setup_hud() -> void:
 	help.add_theme_font_size_override("font_size", 15)
 	help.text=help.text.replace("B  Terrain / Blocks", "B  Terrain / Blocks    M  Objects    E  Collect / Harvest")
 	help.text+="\nV  Place vehicle    E  Enter / exit stopped vehicle    F5  Save world and vehicle"
+	if ground_enabled: help.text+="    H Ground cover: 1 stone / 2 plant / 3 grass; LMB/E remove; RMB place"
 	help.offset_top = -108
 	help.add_theme_color_override("font_color", Color("e6eee9"))
 	var panel := PanelContainer.new()
@@ -563,6 +577,7 @@ func _set_player_tool_mode(building: bool,objects: bool,terrain_tool: int) -> bo
 	# Already accepted terrain edits finish independently; they do not lock equipment.
 	_clear_motion()
 	stroke_buffer.clear();held_previous=false
+	ground_mode=false
 	model_tool.set_active(objects)
 	structure_mode=building
 	tool=terrain_tool
@@ -582,6 +597,26 @@ func _unhandled_input(event: InputEvent) -> void:
 			elif event.physical_keycode==KEY_ESCAPE:
 				Input.mouse_mode=Input.MOUSE_MODE_VISIBLE if Input.mouse_mode==Input.MOUSE_MODE_CAPTURED else Input.MOUSE_MODE_CAPTURED
 		return
+	if ground_enabled and event is InputEventKey and event.pressed and not event.echo and event.physical_keycode==KEY_H:
+		var enable:=not ground_mode
+		if _set_player_tool_mode(false,false,tool):
+			ground_mode=enable
+			if enable: player_hud.show_active_tool(0)
+			if enable: _show_lake_notice("Ground cover: 1 stone / 2 plant / 3 grass; LMB or E remove; RMB place")
+		return
+	if ground_mode:
+		if event is InputEventKey and event.pressed and not event.echo and event.physical_keycode in [KEY_1,KEY_2,KEY_3]:
+			ground_species=event.physical_keycode-KEY_1
+			_show_lake_notice(["Stone","Plant","Grass clump"][ground_species]+"; LMB remove; RMB place");return
+		var remove_action: bool=event is InputEventKey and event.pressed and not event.echo and event.physical_keycode==KEY_E
+		var mouse_action: bool=event is InputEventMouseButton and event.button_index in [MOUSE_BUTTON_LEFT,MOUSE_BUTTON_RIGHT]
+		if remove_action or mouse_action:
+			if _model_edit_available() and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED and (remove_action or event.pressed):
+				var origin:=camera.global_position
+				var endpoint:=origin-camera.global_basis.z*(2.5 if construction_inventory.gameplay else 8.0)
+				var result: Dictionary=ground_interaction.collect(origin,endpoint,player_hud.inventory,construction_inventory.gameplay) if remove_action or event.button_index==MOUSE_BUTTON_LEFT else ground_interaction.place(ground_species,origin,endpoint,player_hud.inventory,construction_inventory.gameplay)
+				_show_lake_notice(result.reason)
+			return
 	# Object mode owns E. Do not enter a vehicle, harvest or collect supplies
 	# while the player is using the advertised select-object action.
 	if model_tool.active and event is InputEventKey and event.pressed and not event.echo and event.physical_keycode==KEY_E:
@@ -662,6 +697,8 @@ func _unhandled_input(event: InputEvent) -> void:
 	super._unhandled_input(event)
 
 func _update_edit(delta: float) -> void:
+	if ground_mode:
+		pointer.hide();terrain.set_brush_active(false);return
 	if world_vehicle.driving:
 		pointer.hide();terrain.set_brush_active(false);return
 	if player_hud.inventory_open:

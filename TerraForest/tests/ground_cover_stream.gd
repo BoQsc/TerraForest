@@ -65,6 +65,31 @@ func run() -> void:
 	cover._process(0.0);terrain.reply()
 	check(cover.resident.size()==1 and not cover.batches[2].get_ids().has(removed_id) and cover.batches[0].get_ids().has(authored_id),"return regeneration retains individual removal and authored placement")
 	check(cover.picker.pick(Vector3(970,20.1,970),Vector3(970,21,970)).get("id",0)==authored_id,"return restores same authored interaction identity")
+	GDExtensionManager.load_extension("res://addons/player_runtime/player_runtime.gdextension")
+	var interaction=load("res://addons/world_ecosystem/ground_interaction.gd").new()
+	interaction.cover=cover
+	var inventory=ClassDB.instantiate("NativePlayerInventory")
+	inventory.register_item(201,999);inventory.register_item(204,999);inventory.register_item(205,999)
+	interaction.scene_ray=func(_from,_to):return {"position":Vector3(970,21,970),"normal":Vector3.UP}
+	check(not interaction.collect(Vector3(970,22,970),Vector3(970,18,970),inventory,true).ok and cover.batches[0].get_ids().has(authored_id),"scene obstruction prevents collection through geometry")
+	interaction.scene_ray=func(_from,_to):return {}
+	var rejected_inventory=ClassDB.instantiate("NativePlayerInventory")
+	check(not interaction.collect(Vector3(970,22,970),Vector3(970,18,970),rejected_inventory,true).ok and cover.batches[0].get_ids().has(authored_id),"rejected inventory grant preserves authored object")
+	check(interaction.collect(Vector3(970,22,970),Vector3(970,18,970),inventory,true).ok and not cover.batches[0].get_ids().has(authored_id) and cover.removed.profile().placed==0,"collection immediately removes authored render query and durable record")
+	check(inventory.can_afford(PackedInt64Array([201,1]),inventory.snapshot().revision).ok and not interaction.collect(Vector3(970,22,970),Vector3(970,18,970),inventory,true).ok,"collection grants exactly one stone and cannot repeat")
+	interaction.scene_ray=func(_from,_to):return {"position":Vector3(974,20,974),"normal":Vector3.UP}
+	var placement: Dictionary=interaction.place(0,Vector3(974,22,974),Vector3(974,18,974),inventory,true)
+	check(placement.ok and not inventory.can_afford(PackedInt64Array([201,1]),inventory.snapshot().revision).ok,"gameplay placement consumes collected stone")
+	cover._process(0.0);terrain.reply()
+	check(cover.batches[0].get_ids().has(placement.get("id",0)),"placed stone reaches rendering through support publication")
+	check(not interaction.place(0,Vector3(974,22,974),Vector3(974,18,974),inventory,true).ok,"occupied spot rejects duplicate placement")
+	interaction.scene_ray=func(_from,_to):return {"position":Vector3(978,20,978),"normal":Vector3.UP}
+	check(not interaction.place(1,Vector3(978,22,978),Vector3(978,18,978),inventory,true).ok,"gameplay placement refuses missing plant item")
+	var before_inventory: PackedByteArray=inventory.capture_storage_snapshot()
+	check(interaction.place(1,Vector3(978,22,978),Vector3(978,18,978),inventory,false).ok and inventory.capture_storage_snapshot()==before_inventory,"editor placement stays free")
+	cover._process(0.0);terrain.reply()
+	interaction.scene_ray=func(_from,_to):return {}
+	check(interaction.collect(Vector3(978,22,978),Vector3(978,18,978),inventory,false).ok and inventory.capture_storage_snapshot()==before_inventory,"editor removal stays free and grants no gameplay resources")
 	cover.reset()
 	check(cover.resident.is_empty() and cover.batches[0].get_ids().is_empty() and cover.batches[1].get_ids().is_empty() and cover.batches[2].get_ids().is_empty(),"reset releases generated records")
 	cover.free();terrain.free();camera.free()

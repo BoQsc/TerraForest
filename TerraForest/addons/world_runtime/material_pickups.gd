@@ -3,8 +3,8 @@ extends Node3D
 signal changed
 ## Scene orchestration only: native stores, spatial queries and batched rendering.
 ## Static authored supplies; no per-pickup nodes or active rigid bodies.
-const ITEMS := {101: "Brick", 102: "Wood", 103: "Concrete", 104: "Metal", 201: "Stone", 202: "Iron ore", 203: "Copper ore"}
-const COLORS := {101: Color("b57052"), 102: Color("b99563"), 103: Color("b4bec4"), 104: Color("729da9"), 201: Color("7f858c"), 202: Color("965e43"), 203: Color("bc7950")}
+const ITEMS := {101: "Brick", 102: "Wood", 103: "Concrete", 104: "Metal", 201: "Stone", 202: "Iron ore", 203: "Copper ore", 204: "Plant", 205: "Grass clump"}
+const COLORS := {101: Color("b57052"), 102: Color("b99563"), 103: Color("b4bec4"), 104: Color("729da9"), 201: Color("7f858c"), 202: Color("965e43"), 203: Color("bc7950"), 204: Color("557538"), 205: Color("677e3e")}
 var stores: Dictionary = {}
 var renderers: Dictionary = {}
 var render_status: Dictionary = {}
