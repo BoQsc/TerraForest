@@ -20,9 +20,14 @@ class NativeBlockPrefab : public Resource {
     struct ClearanceColumn { int x,z,low,high; int64_t end; };
     std::vector<ClearanceColumn> clearance_columns;
     AABB bounds;
+    Array model_attachments;
+    bool configure_impl(const PackedInt32Array &records,bool notify);
 protected:
     static void _bind_methods();
 public:
+    bool configure_model_attachments(const Array &attachments);
+    void set_model_attachments(const Array &attachments);
+    Array get_model_attachments() const;
     bool configure(const PackedInt32Array &records);
     bool compose(const Array &sources,const PackedInt32Array &placements);
     bool compose_frontage(const Array &sources,int64_t lots_per_side,int64_t street_width,int64_t gap,int64_t seed);

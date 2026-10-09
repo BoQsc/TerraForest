@@ -467,3 +467,12 @@ The outline is visible through terrain/foliage and does not modify the world.
 It is an approximation for planning; native validation and conservative
 protection bounds remain authoritative. One mesh is rebuilt only for a new
 plan and hidden outside construction or after the plan is invalidated.
+
+
+### Model attachments in authoring prefabs
+
+`NativeBlockPrefab.configure_model_attachments(Array)` accepts at most 4096 dictionaries with exactly `model` (stable catalog key) and `transform` (`Transform3D` in prefab coordinates). Keys use lowercase letters, digits, `/`, `_` and `-`, up to 128 characters. Transforms must be finite, nonsingular, with origins within ±4096 and basis components within ±64. Returned arrays are independent copies. These records have no runtime instance IDs: placement must allocate authoritative identities from registered model collections.
+
+Native `compose`, `compose_frontage` and `compose_settlement` transform and retain attachments, including the half-cell correction used by rotated block addresses. Nested generation and saved `.res` resources retain them. Invalid input, cell overlaps and attachment-count/coordinate overflow preserve the prior asset. Replacing the block definition through `configure` clears old attachments; configure blocks before assigning attachments. Bounds, support samples and material counts still describe blocks only.
+
+The asynchronous prefab library captures attachments alongside immutable block records before starting its worker. This is authoring support, not completed furnished-world placement: block placement APIs still place blocks only. Do not enable attached prefabs in the player catalog until combined model admission, geometry/protection checks, inventory costs and rollback are implemented. Block-only capture likewise does not capture scene models. Models outside a building envelope must be considered by that future placement validation.

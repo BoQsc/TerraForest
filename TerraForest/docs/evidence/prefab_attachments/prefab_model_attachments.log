@@ -1,0 +1,30 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS authored model attachment accepted
+PASS input and output cannot mutate native ownership
+PASS compose attachment quarter turn 0
+PASS model follows cell-centred block rotation 0
+PASS compose attachment quarter turn 1
+PASS model follows cell-centred block rotation 1
+PASS compose attachment quarter turn 2
+PASS model follows cell-centred block rotation 2
+PASS compose attachment quarter turn 3
+PASS model follows cell-centred block rotation 3
+PASS overlapping block rejection preserves complete prefab
+PASS malformed attachment rejected without mutation
+PASS malformed attachment rejected without mutation
+PASS malformed attachment rejected without mutation
+PASS malformed attachment rejected without mutation
+PASS malformed attachment rejected without mutation
+PASS attachment count bound enforced
+PASS bounded dense source admitted
+PASS composition count overflow is transactional
+PASS maximum attachment count composes
+PASS transformed attachment outside coordinate bounds rejects atomically
+PASS combined resource saves
+PASS resource reload preserves exact models and blocks
+PASS worker admits attached sources
+PASS nested settlement composition retains captured attachments
+PASS worker-produced resource retains exact attachments
+PASS replacing block definition clears stale attachments
+PREFAB_ATTACHMENTS checks=27 failures=0

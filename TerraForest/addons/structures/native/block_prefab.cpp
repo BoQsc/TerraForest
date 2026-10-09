@@ -4,6 +4,9 @@
 #include <algorithm>
 #include <tuple>
 #include <map>
+#include <cmath>
+#include <godot_cpp/variant/transform3d.hpp>
+#include <godot_cpp/variant/dictionary.hpp>
 
 namespace terraforest {
 void NativeBlockPrefab::_bind_methods() {
@@ -20,9 +23,45 @@ void NativeBlockPrefab::_bind_methods() {
     ClassDB::bind_method(D_METHOD("foundation_samples","origin","quarter_turns","max_base_y"),&NativeBlockPrefab::foundation_samples);
     ClassDB::bind_method(D_METHOD("clearance_sample_count"),&NativeBlockPrefab::clearance_sample_count);
     ClassDB::bind_method(D_METHOD("clearance_samples","origin","quarter_turns","offset","limit"),&NativeBlockPrefab::clearance_samples);
+    ClassDB::bind_method(D_METHOD("configure_model_attachments","attachments"),&NativeBlockPrefab::configure_model_attachments);
+    ClassDB::bind_method(D_METHOD("set_model_attachments","attachments"),&NativeBlockPrefab::set_model_attachments);
+    ClassDB::bind_method(D_METHOD("get_model_attachments"),&NativeBlockPrefab::get_model_attachments);
     ADD_PROPERTY(PropertyInfo(Variant::PACKED_INT32_ARRAY,"records"),"set_records","get_records");
+    ADD_PROPERTY(PropertyInfo(Variant::ARRAY,"model_attachments"),"set_model_attachments","get_model_attachments");
 }
-bool NativeBlockPrefab::configure(const PackedInt32Array &records) {
+namespace {
+bool valid_attachments(const Array &items) {
+    if(items.size()>4096)return false;
+    for(int i=0;i<items.size();++i) {
+        if(items[i].get_type()!=Variant::DICTIONARY)return false;
+        const Dictionary item=items[i];
+        if(item.size()!=2||!item.has("model")||!item.has("transform")||item["model"].get_type()!=Variant::STRING||item["transform"].get_type()!=Variant::TRANSFORM3D)return false;
+        const String key=item["model"];
+        if(key.is_empty()||key.length()>128)return false;
+        for(int j=0;j<key.length();++j) {
+            const char32_t c=key[j];
+            if(!((c>='a'&&c<='z')||(c>='0'&&c<='9')||c=='/'||c=='_'||c=='-'))return false;
+        }
+        const Transform3D pose=item["transform"];
+        for(int axis=0;axis<3;++axis) {
+            if(!std::isfinite(pose.origin[axis])||std::abs(pose.origin[axis])>4096)return false;
+            for(int col=0;col<3;++col)if(!std::isfinite(pose.basis[axis][col])||std::abs(pose.basis[axis][col])>64)return false;
+        }
+        if(std::abs(pose.basis.determinant())<0.000001)return false;
+    }
+    return true;
+}
+}
+bool NativeBlockPrefab::configure_model_attachments(const Array &items) {
+    if(!valid_attachments(items))return false;
+    model_attachments=items.duplicate(true);emit_changed();return true;
+}
+void NativeBlockPrefab::set_model_attachments(const Array &items) {
+    ERR_FAIL_COND_MSG(!configure_model_attachments(items),"Invalid prefab model attachments; previous attachments preserved");
+}
+Array NativeBlockPrefab::get_model_attachments() const { return model_attachments.duplicate(true); }
+bool NativeBlockPrefab::configure(const PackedInt32Array &records) { return configure_impl(records,true); }
+bool NativeBlockPrefab::configure_impl(const PackedInt32Array &records,bool notify) {
     if(records.size()%4||records.size()>4*262144)return false;
     std::vector<PrefabCell> staged;
     staged.reserve(records.size()/4);
@@ -61,7 +100,8 @@ bool NativeBlockPrefab::configure(const PackedInt32Array &records) {
     foundation_columns=std::move(footprint);
     std::fill(std::begin(material_counts),std::end(material_counts),0);
     for(const auto &cell:staged)++material_counts[cell.word>>5];
-    cells=std::move(staged);bounds=cells.empty()?AABB():AABB(lo,hi-lo);emit_changed();return true;
+    model_attachments.clear();
+    cells=std::move(staged);bounds=cells.empty()?AABB():AABB(lo,hi-lo);if(notify)emit_changed();return true;
 }
 PackedInt64Array NativeBlockPrefab::get_material_counts() const {
     PackedInt64Array out;out.resize(4);
@@ -136,9 +176,30 @@ bool NativeBlockPrefab::compose(const Array &sources,const PackedInt32Array &pla
             records.set(at++,(c.word&~24)|((((c.word>>3)+turns)&3)<<3));
         }
     }
+    Array attached;
+    for(int64_t i=0;i<placements.size();i+=5) {
+        const Array &source=assets[placements[i]]->model_attachments;
+        if(attached.size()+source.size()>4096)return false;
+        Vector3 x_axis(1,0,0),z_axis(0,0,1);
+        for(int r=0;r<placements[i+4];++r) {
+            x_axis=Vector3(-x_axis.z,0,x_axis.x);z_axis=Vector3(-z_axis.z,0,z_axis.x);
+        }
+        const Basis rotation(x_axis,Vector3(0,1,0),z_axis);
+        // Blocks rotate integer cell addresses around their centres. Apply the
+        // same half-cell correction to continuous model transforms.
+        const Vector3 half(0.5,0,0.5);
+        const Transform3D placement(rotation,Vector3(placements[i+1],placements[i+2],placements[i+3])+half-rotation.xform(half));
+        for(int j=0;j<source.size();++j) {
+            Dictionary item=Dictionary(source[j]).duplicate(true);
+            const Transform3D pose=item["transform"];
+            item["transform"]=placement*pose;attached.append(item);
+        }
+    }
+    if(!valid_attachments(attached))return false;
     // configure rejects any duplicated cells and commits only after validation;
     // this remains safe when this resource also occurs among the sources.
-    return configure(records);
+    if(!configure_impl(records,false))return false;
+    model_attachments=attached;emit_changed();return true;
 }
 bool NativeBlockPrefab::compose_frontage(const Array &sources,int64_t lots,int64_t street,int64_t gap,int64_t seed) {
     // v1: paired lots on a straight street; authored prefab fronts face +Z.

@@ -1,0 +1,15 @@
+{
+  "scope": "Native prefab model-attachment authoring, bounded nested composition and resource persistence. No world placement, inventory transaction, rendering or performance qualification. Existing block-only player catalog unchanged.",
+  "checks_debug": 27,
+  "hashes": {
+    "addons/structures/native/block_prefab.cpp": "8b60444d190cb23256975fad7957c9f1ba89c5b70f130cfaeb0e9fbeabb0b0d4",
+    "addons/structures/native/block_prefab.hpp": "cf1ab84607686ac84738600d12ec14989fc2c9ef3b7b17a5a579976099ed5217",
+    "addons/structures/prefab_library.gd": "73b09ad60f8531f271d7866a8d356e13c516840250e95c67a82ee5f2e2bc325e",
+    "tests/prefab_model_attachments.gd": "525841543ea2431b39c19047d2f1077f7e59965bf6988881dc97c99064ac17b2"
+  },
+  "checks_release": 27,
+  "regressions": [
+    "frontage_async",
+    "settlement_network"
+  ]
+}

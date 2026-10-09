@@ -29,17 +29,22 @@ func begin_frontage_sources(sources: Array,lots: int,width: int,gap: int,seed: i
 	# Copy-on-write packed records cross the boundary; the worker never reads a
 	# live authoring resource and publishes its private result only after join.
 	var records: Array[PackedInt32Array]=[]
-	for source: Resource in sources: records.append(source.get_records())
+	var attachments: Array[Array]=[]
+	for source: Resource in sources:
+		records.append(source.get_records())
+		attachments.append(source.get_model_attachments())
 	var path:=directory.path_join("prefab_%d_%d.res" % [Time.get_unix_time_from_system()*1000000,Time.get_ticks_usec()])
-	var error:=_frontage_thread.start(_build_frontage.bind(records,lots,width,gap,seed,title,path,streets),Thread.PRIORITY_LOW)
+	var error:=_frontage_thread.start(_build_frontage.bind(records,lots,width,gap,seed,title,path,streets,attachments),Thread.PRIORITY_LOW)
 	if error!=OK: return {"ok":false,"reason":"Could not start frontage worker"}
 	return {"ok":true}
 
-static func _build_frontage(records: Array[PackedInt32Array],lots: int,width: int,gap: int,seed: int,title: String,path: String,streets: int=1) -> Dictionary:
+static func _build_frontage(records: Array[PackedInt32Array],lots: int,width: int,gap: int,seed: int,title: String,path: String,streets: int=1,attachments: Array[Array]=[]) -> Dictionary:
+	if not attachments.is_empty() and attachments.size()!=records.size(): return {"ok":false,"reason":"Attachment/source count mismatch"}
 	var sources: Array[Resource]=[]
 	for snapshot: PackedInt32Array in records:
 		var source: Resource=ClassDB.instantiate("NativeBlockPrefab")
 		if not source.configure(snapshot): return {"ok":false,"reason":"Invalid source prefab"}
+		if not attachments.is_empty() and not source.configure_model_attachments(attachments[sources.size()]): return {"ok":false,"reason":"Invalid model attachments"}
 		sources.append(source)
 	var asset: Resource=ClassDB.instantiate("NativeBlockPrefab")
 	var ok: bool=asset.compose_frontage(sources,lots,width,gap,seed) if streets==1 else asset.compose_settlement(sources,lots,width,gap,seed,streets)
