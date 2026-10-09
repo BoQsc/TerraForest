@@ -1,0 +1,87 @@
+{
+  "failures": 0,
+  "population": 3136,
+  "presentation": {
+    "fair_graphical_sample": true,
+    "fullscreen": true,
+    "headless": false,
+    "render_scale": 1.0,
+    "viewport": [
+      1920,
+      1080
+    ],
+    "window_mode": 3,
+    "window_size": [
+      1920,
+      1080
+    ]
+  },
+  "render": [
+    {
+      "authored_groups": 57,
+      "batch_limit": 128,
+      "budget_deferred": 0,
+      "byte_limit": 200000,
+      "bytes_per_tick": 8192,
+      "candidate_batches": 50,
+      "enabled": true,
+      "evictions": 4,
+      "index_capacity_bytes": 2808,
+      "indexed_instances": 351,
+      "page_capacity": 170,
+      "pending_batches": 0,
+      "radius": 112.0,
+      "resident_batches": 50,
+      "resident_instances": 305,
+      "resident_transform_bytes": 14640,
+      "selection_pending": false,
+      "selection_queries": 58,
+      "uploaded_transform_bytes": 15792,
+      "uploads_per_tick": 2
+    },
+    {
+      "authored_groups": 57,
+      "batch_limit": 128,
+      "budget_deferred": 0,
+      "byte_limit": 200000,
+      "bytes_per_tick": 8192,
+      "candidate_batches": 43,
+      "enabled": true,
+      "evictions": 2,
+      "index_capacity_bytes": 4696,
+      "indexed_instances": 587,
+      "page_capacity": 170,
+      "pending_batches": 0,
+      "radius": 96.0,
+      "resident_batches": 43,
+      "resident_instances": 451,
+      "resident_transform_bytes": 21648,
+      "selection_pending": false,
+      "selection_queries": 58,
+      "uploaded_transform_bytes": 23040,
+      "uploads_per_tick": 2
+    },
+    {
+      "authored_groups": 58,
+      "batch_limit": 128,
+      "budget_deferred": 0,
+      "byte_limit": 200000,
+      "bytes_per_tick": 8192,
+      "candidate_batches": 35,
+      "enabled": true,
+      "evictions": 0,
+      "index_capacity_bytes": 17584,
+      "indexed_instances": 2198,
+      "page_capacity": 170,
+      "pending_batches": 0,
+      "radius": 80.0,
+      "resident_batches": 35,
+      "resident_instances": 1437,
+      "resident_transform_bytes": 68976,
+      "selection_pending": false,
+      "selection_queries": 58,
+      "uploaded_transform_bytes": 68976,
+      "uploads_per_tick": 2
+    }
+  ]
+}

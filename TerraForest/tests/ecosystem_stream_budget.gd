@@ -8,6 +8,8 @@ class Terrain extends Node3D:
 class Forest extends Node3D:
 	var ready_to_render:=true
 	var removed: Array=[]
+	func upsert_chunk(_owner: String,ids: PackedInt64Array,poses: Array[Transform3D]) -> bool:
+		return ids.is_empty() and poses.is_empty()
 	func remove_chunk(owner: String) -> void: removed.append(owner)
 var failures:=0
 func check(value: bool,label: String) -> void:

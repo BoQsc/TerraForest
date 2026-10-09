@@ -1,0 +1,67 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS removal provider registers with world persistence
+PASS three native species render collections initialized
+PASS one outstanding support batch 0
+PASS one outstanding support batch 1
+PASS one outstanding support batch 2
+PASS one outstanding support batch 3
+PASS one outstanding support batch 4
+PASS one outstanding support batch 5
+PASS one outstanding support batch 6
+PASS one outstanding support batch 7
+PASS one outstanding support batch 8
+PASS one outstanding support batch 9
+PASS one outstanding support batch 10
+PASS one outstanding support batch 11
+PASS one outstanding support batch 12
+PASS one outstanding support batch 13
+PASS one outstanding support batch 14
+PASS one outstanding support batch 15
+PASS one outstanding support batch 16
+PASS one outstanding support batch 17
+PASS one outstanding support batch 18
+PASS one outstanding support batch 19
+PASS one outstanding support batch 20
+PASS one outstanding support batch 21
+PASS one outstanding support batch 22
+PASS one outstanding support batch 23
+PASS one outstanding support batch 24
+PASS one outstanding support batch 25
+PASS one outstanding support batch 26
+PASS one outstanding support batch 27
+PASS one outstanding support batch 28
+PASS one outstanding support batch 29
+PASS one outstanding support batch 30
+PASS one outstanding support batch 31
+PASS one outstanding support batch 32
+PASS one outstanding support batch 33
+PASS one outstanding support batch 34
+PASS one outstanding support batch 35
+PASS one outstanding support batch 36
+PASS one outstanding support batch 37
+PASS one outstanding support batch 38
+PASS one outstanding support batch 39
+PASS one outstanding support batch 40
+PASS one outstanding support batch 41
+PASS one outstanding support batch 42
+PASS one outstanding support batch 43
+PASS one outstanding support batch 44
+PASS one outstanding support batch 45
+PASS one outstanding support batch 46
+PASS one outstanding support batch 47
+PASS one outstanding support batch 48
+PASS 49 owners publish without rejection
+PASS ground cover creates no physics bodies
+PASS ground cover creates no physics bodies
+PASS ground cover creates no physics bodies
+PASS bounded 3136 individual candidates resident
+PASS individual removal persists separately from rendering
+PASS small interior disturbance invalidates one owner
+PASS individual removal preserves neighbour owners
+PASS teleport retires old owners and submits one destination batch
+PASS teleport does not multiply outstanding jobs
+PASS obsolete destination reply does not publish
+PASS return regeneration retains individual removal
+PASS reset releases generated records
+GROUND_COVER_STREAM {"checks":64,"failures":0}

@@ -18,6 +18,7 @@ var resident: Dictionary = {}
 var _wanted: Dictionary = {}
 var _requests: Dictionary = {}
 var _pending_cells: Dictionary = {}
+const SurfaceTokens=preload("res://addons/volumetric_terrain/surface_tokens.gd")
 var _token: int = 0
 var _scan_timer: float = 0.0
 var _last_cell := Vector2i(-9999, -9999)
@@ -142,7 +143,7 @@ func _step(delta: float) -> void:
 			var empty_transforms: Array[Transform3D]=[]
 			_replace_samples(key,PackedInt64Array(),empty_transforms)
 			break # Empty owners consume the same per-frame generation budget.
-		_token += 1
+		_token = SurfaceTokens.allocate()
 		if terrain.request_surface_batch(candidates["points"], _token):
 			candidates["key"] = key
 			_requests[_token] = candidates

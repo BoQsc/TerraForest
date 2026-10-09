@@ -1,0 +1,27 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS departed roots do not remain in renderer LOD selection
+SCRIPT ERROR: Invalid call. Nonexistent function 'upsert_chunk' in base 'Node3D (Forest)'.
+   at: _publish_samples (res://addons/world_ecosystem/world_ecosystem.gd:265)
+   GDScript backtrace (most recent call first):
+       [0] _publish_samples (res://addons/world_ecosystem/world_ecosystem.gd:265)
+       [1] _replace_samples (res://addons/world_ecosystem/world_ecosystem.gd:205)
+       [2] _step (res://addons/world_ecosystem/world_ecosystem.gd:144)
+       [3] run (res://tests/ecosystem_stream_budget.gd:35)
+FAIL barren arrival generates one empty candidate owner per frame
+SCRIPT ERROR: Invalid call. Nonexistent function 'upsert_chunk' in base 'Node3D (Forest)'.
+   at: _publish_samples (res://addons/world_ecosystem/world_ecosystem.gd:265)
+   GDScript backtrace (most recent call first):
+       [0] _publish_samples (res://addons/world_ecosystem/world_ecosystem.gd:265)
+       [1] _replace_samples (res://addons/world_ecosystem/world_ecosystem.gd:205)
+       [2] _step (res://addons/world_ecosystem/world_ecosystem.gd:144)
+       [3] run (res://tests/ecosystem_stream_budget.gd:37)
+FAIL barren generation makes bounded progress on the next frame
+SCRIPT ERROR: Invalid call. Nonexistent function 'upsert_chunk' in base 'Node3D (Forest)'.
+   at: _publish_samples (res://addons/world_ecosystem/world_ecosystem.gd:265)
+   GDScript backtrace (most recent call first):
+       [0] _publish_samples (res://addons/world_ecosystem/world_ecosystem.gd:265)
+       [1] _replace_samples (res://addons/world_ecosystem/world_ecosystem.gd:205)
+       [2] _step (res://addons/world_ecosystem/world_ecosystem.gd:144)
+       [3] run (res://tests/ecosystem_stream_budget.gd:40)
+FAIL candidate admission preserves residency cap

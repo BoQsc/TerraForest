@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: 0BSD
 extends RefCounted
 # Infrequent authoring coordinator; density/surface evaluation stays native.
-static var next_token: int=-1
+const SurfaceTokens=preload("res://addons/volumetric_terrain/surface_tokens.gd")
 var busy:=false
 var token:=0
 var reply: Dictionary={}
@@ -17,7 +17,7 @@ func assess(terrain: Node,asset: Resource,origin: Vector3i,rotation: int,fill_de
 	var deadline:=Time.get_ticks_msec()+15000
 	var low:=INF;var high:=-INF;var count:=0;var failure:=""
 	for offset in range(0,points.size(),64):
-		token=next_token;next_token-=1;reply={}
+		token=SurfaceTokens.allocate();reply={}
 		var batch:=points.slice(offset,mini(offset+64,points.size()))
 		var submitted:=false
 		while Time.get_ticks_msec()<deadline:
