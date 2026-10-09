@@ -1,5 +1,7 @@
 # TerraForest
 
+See the [delivery plan and coverage register](docs/PROJECT_PLAN.md) for current milestones, original-scope gaps and explicit return points for deferred work. Historical validation documents describe their recorded builds, not completion of the whole project.
+
 ## Independent building showcase
 
 Run `python tools/run.py --scene structures --godot PATH` to inspect the separate native block construction addon. It includes textured cubes, slabs, stairs, slopes, posts and spheres; chunked native mesh baking; nearby collision; a house and tower frame; and separate static-model MultiMesh batches. See [structures API](addons/structures/README.md) and [validation](docs/STRUCTURES_VALIDATION.md). The terrain demo remains the default scene.
@@ -27,7 +29,7 @@ The project now renders at **1920×1080 in fullscreen**, with 100% 3D scale. F11
 
 WASD moves, mouse looks, Shift sprints, Space jumps, G flies, Escape releases the mouse. Left mouse digs; right mouse builds. The wheel changes brush size; 1–3 select tools. F3 opens detailed diagnostics. The inherited controller also supports save/load and biome travel; see `demo/controller.gd` for its complete shortcuts.
 
-**L** carves a basin at the aimed terrain and bakes static voxel water. Terrain and lake definitions now save together and restore on reopening. Use `--temporary` for disposable experiments. No swimming, flow simulation or underwater effects are implemented yet. See [world storage](docs/WORLD_STORAGE.md).
+**L** carves a basin at the aimed terrain and bakes static voxel water. Terrain and lake definitions save together and restore on reopening. Basic swimming and camera-local underwater feedback are implemented; flowing/draining fluid simulation is not. Use `--temporary` for disposable experiments. See [world storage](docs/WORLD_STORAGE.md).
 
 ## Addons
 

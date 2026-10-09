@@ -1,3 +1,11 @@
+# Delivery history
+
+The [delivery plan and coverage register](PROJECT_PLAN.md) is the current reference for milestone order, original-scope coverage and deferred-work return triggers. Entries below preserve evidence at their recorded development stage. Older headings and the historical scope table are not current status; later implementations supersede some of their limitations. Correctness, integration, rendered performance and sustained qualification are separate gates.
+
+## Coverage plan reconciliation - 2026-10-09
+
+Recorded the original feature scope, first-round completion criteria, ordered delivery milestones and deferred-work triggers in PROJECT_PLAN.md. Corrected stale root/project README summaries for roads, vehicle/player functionality, block shape controls and basic water integration. Automatic model paging remains opt-in infrastructure; mining/travel consistency, dense transfer timing, combined-world scale, old-laptop thermals and multiplayer remain open. This documentation change closes no implementation or performance gate.
+
 ## Opt-in model metadata world startup - 2026-10-09
 
 The archive can now return model metadata instead of reconstructing all placement
@@ -2396,6 +2404,8 @@ Player/vehicle collision readiness and model collision residency remain separate
 outstanding work.
 
 The original scope remains active. This project must not be called fully game-ready based on the implemented subset below. Each remaining item needs working implementation and evidence at its actual scope, not merely a class, API stub or narrow benchmark.
+
+**Historical scope snapshot — superseded by [the current coverage register](PROJECT_PLAN.md).** This table predates roads, vehicle integration, native movement, later storage work and other entries above. It is retained as history, not a current pending-work checklist.
 
 | Requested outcome | Current state | Evidence still needed for completion |
 | --- | --- | --- |

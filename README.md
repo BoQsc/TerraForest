@@ -2,7 +2,7 @@
 
 An editable volumetric terrain and streamed vegetation project for Godot, organized as modular addons. Includes native static volumetric lakes, block structures, static model placement, a native entity foundation, and compound world saves with checksums, backups and Windows file locking.
 
-**Development integration — not a production-ready world engine.** Roads, cities, vehicles, complete inventory and multiplayer are pending. Performance evidence is scoped to the tests documented below; large multiplayer and long-running production workloads are not certified.
+**Development integration — not a production-ready world engine.** Roads, a single vehicle, inventory/gameplay construction and street authoring have integrated implementations. Complete city generation, richer entity simulation, fleets and multiplayer remain unfinished. Performance evidence is scoped to recorded tests; large multiplayer and long-running production workloads are not certified. The [delivery plan and coverage register](TerraForest/docs/PROJECT_PLAN.md) tracks the full original scope, deferred work and completion gates.
 
 ## Start
 
@@ -14,7 +14,7 @@ python TerraForest/tools/run.py
 
 Use `--temporary` for a disposable world. WASD moves, mouse looks, Space jumps, Shift sprints, G flies, and Escape releases the mouse. Left/right mouse dig/build. L creates a basin with static water; F5 saves the world and F9 reloads it.
 
-In the terrain world, **B** switches to independent block construction: left mouse removes, right mouse places, **1–5** select shapes, **T** changes material and **R** rotates. F5/F9 now save/load terrain, water, blocks and registered static-model placements together. Vegetation exclusion around buildings and high-speed structure collision readiness remain unfinished.
+In the terrain world, **B** switches to independent block construction: left mouse removes, right mouse places, **1–6** select shapes, **T** changes material and **R** rotates. F5/F9 save/load terrain, water, blocks and registered static-model placements together. Building/road vegetation reconciliation and collision-readiness handling exist; dense combined worlds and sustained high-speed travel remain unqualified.
 
 The **separate block construction showcase** contains a textured house, tower frame, stairs, slopes, fences and ladder. Its C++ structures addon stores and meshes buildings independently of terrain, with a separate spatial MultiMesh path for static models:
 
@@ -27,6 +27,7 @@ See the [structures API and limitations](TerraForest/addons/structures/README.md
 ## Documentation
 
 - [Project guide and addon layout](TerraForest/README.md)
+- [Delivery plan, coverage gates and deferred work](TerraForest/docs/PROJECT_PLAN.md)
 - [Delivered features and remaining work](TerraForest/docs/DELIVERY_STATUS.md)
 - [Architecture](TerraForest/docs/ARCHITECTURE.md)
 - [Native development with Zig and prebuilt godot-cpp](TerraForest/docs/NATIVE_DEVELOPMENT.md)
