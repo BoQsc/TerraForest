@@ -1,0 +1,8 @@
+{
+  "addons/vegetation_runtime/native/ground_picker.hpp": "695215f66f1099aadf8a674f00a54217c79ceab3f19202e80ab0d2fabf43b9dd",
+  "addons/vegetation_runtime/bin/vegetation_runtime.windows.template_debug.x86_64.dll": "a89f6d8e0961685433a313ddb71fa2cd595fe4df7168ab3482ee9f5105797185",
+  "addons/vegetation_runtime/bin/vegetation_runtime.windows.template_release.x86_64.dll": "7cf47d3e3d6e6a0db60730cfd2ccedbedeaa9f5748448f1620b23601f8e05804",
+  "addons/world_ecosystem/ground_cover.gd": "60a59252753c2cb1a38a6c586d53f799325fde002cb071aceee855aa07e16a68",
+  "tests/ground_cover_picker.gd": "616f71c1fa6b69c53616a852a956d87a39d374ae072da5d489717bf654d1c64c",
+  "tests/ground_cover_stream.gd": "51b8c88701da106cdf4fd9d692384a0f2d4ac4e3733229074f3ec3b589c93998"
+}

@@ -6,6 +6,7 @@ var camera: Camera3D
 var structures: Node3D
 var water: Node3D
 var seed: int=1703
+var picker: RefCounted
 var native: RefCounted
 var removed: RefCounted
 var batches: Array[Node3D]=[]
@@ -21,6 +22,7 @@ func prepare(persistence: RefCounted) -> bool:
 	for addon in ["vegetation_runtime","structures"]:
 		GDExtensionManager.load_extension("res://addons/%s/%s.gdextension"%[addon,addon])
 	native=ClassDB.instantiate("NativeGroundCover")
+	picker=ClassDB.instantiate("NativeGroundCoverPicker")
 	removed=ClassDB.instantiate("NativeGroundCoverState")
 	return persistence.register_component("ground_cover_edits_v1",removed.capture_storage_snapshot,_restore,removed,removed.capture_storage_snapshot())
 
@@ -78,6 +80,7 @@ func reset() -> void:
 	_last_cell=Vector2i(-999,-999)
 
 func _retire(key: Vector2i) -> void:
+	picker.remove_cell(key)
 	for species in range(3):
 		batches[species].remove_instances(resident[key][species].ids)
 
@@ -126,9 +129,12 @@ func _surface_ready(token: int,points: PackedVector3Array,normals: PackedVector3
 		packed[species].transforms.append_array(authored[species].transforms)
 	if resident.get(request.key,[])==packed: _dirty.erase(request.key);return
 	var previous: Array=resident.get(request.key,[])
+	if not picker.replace_cell(request.key,packed): rejected_batches+=1;return
 	for species in range(3):
 		if not batches[species].upsert_instances(packed[species].ids,packed[species].transforms):
-			# Restore all three collections if any publication fails.
+			# Restore interaction and all collections if any publication fails.
+			if previous.is_empty(): picker.remove_cell(request.key)
+			else: picker.replace_cell(request.key,previous)
 			for rollback in range(3):
 				batches[rollback].remove_instances(packed[rollback].ids)
 				if not previous.is_empty(): batches[rollback].upsert_instances(previous[rollback].ids,previous[rollback].transforms)
