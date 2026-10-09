@@ -61,7 +61,9 @@ guards and vegetation clearance; and exercises all four road catalog entries.
 The screenshots were inspected. This graphical fixture uses a temporary world;
 its generated resource and catalog codec are tested separately for persistence,
 and existing compound road persistence is retained as regression evidence.
-A fresh-process combined settlement save/reload checkpoint remains required.
+The subsequent [combined world checkpoint](CONNECTED_WORLD_CHECKPOINT.md) now
+passes fresh-process save/reopen with generated lakes and a static prop; broader
+content and performance qualification remain open.
 
 The graphical trace records p95 19.911 ms and a **2,002.161 ms maximum** frame interval,
 with 1,975.924 ms inside the draw-to-post-draw interval. The cause is not established

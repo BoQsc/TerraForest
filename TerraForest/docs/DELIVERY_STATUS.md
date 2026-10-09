@@ -2,6 +2,20 @@
 
 The [delivery plan and coverage register](PROJECT_PLAN.md) is the current reference for milestone order, original-scope coverage and deferred-work return triggers. Entries below preserve evidence at their recorded development stage. Older headings and the historical scope table are not current status; later implementations supersede some of their limitations. Correctness, integration, rendered performance and sustained qualification are separate gates.
 
+## Combined settlement world survives a fresh process - 2026-10-09
+
+The actual editor creates and saves four cottages, connected roads and a static
+prop in a generator-4 world with four lakes. A separate graphical process passes
+14 checks for byte-exact structures, model, lake definitions, road catalog and
+edited terrain; occupied rebaked water; sampled asphalt; and normal shutdown.
+Both use 1920x1080 fullscreen. No runtime/save-format change was necessary.
+
+[Checkpoint instructions and retained evidence](CONNECTED_WORLD_CHECKPOINT.md).
+Play Connected Settlement.cmd opens the local verified slot for human feedback.
+Persistence integration is verified for this fixture; furnished interiors,
+vegetation diversity, dense scale, mining continuity and sustained performance
+remain open. The earlier graphical outlier is retained.
+
 ## Connected settlement layout and paving - 2026-10-09
 
 The actual construction editor now generates 2–8 building-lined streets with

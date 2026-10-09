@@ -1,0 +1,13 @@
+{
+  "base_commit": "76ea31f28de851ec3eef0ab19ddaf21e49a03d2b",
+  "utc": "2026-10-09T20:02:30.466682+00:00",
+  "scope": "Actual graphical create/save/close and fresh-process reopen; 14 reopen checks pass. Runtime code unchanged. No frame or thermal acceptance.",
+  "sha256": {
+    "tests/settlement_survey_editor.gd": "4dc869c59afa30755b2ac0fa61dd274038df115934fb5046fb33a755bd238c88",
+    "tests/connected_world_reopen.gd": "caaa69f1324621f4f0b88c1fb846899a3b2ec22d6c26944a5d3a4c5a94efb8ee",
+    "addons/structures/bin/structures.windows.template_debug.x86_64.dll": "a07517349ed0c586df9f1519d6171e8d76da6203e8761423459df102faf4c43b",
+    "addons/volumetric_terrain/bin/terrain_core.windows.x86_64.dll": "fd286371d1cbf1bc5503fec123ec0e333501ac2e008c8057fe3607247248ed5f",
+    "addons/volumetric_water/bin/volumetric_water.windows.template_debug.x86_64.dll": "9113ff3ab26fe4fe4b814e3637e116423f0e2f7fbdef180824a0966b16a56567",
+    "demo/world.gd": "4f8c746c77752f49bf8ba32c00de681c98ff824bbcd46f2ead1c36459914d311"
+  }
+}

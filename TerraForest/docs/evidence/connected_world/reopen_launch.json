@@ -1,0 +1,14 @@
+[
+  "C:/Program Files (x86)/Steam/steamapps/common/Godot Engine/godot.windows.opt.tools.64.exe",
+  "--path",
+  "C:\\Users\\LENOVO LOQ 15\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+  "--fullscreen",
+  "--resolution",
+  "1920x1080",
+  "--max-fps",
+  "60",
+  "--script",
+  "res://tests/connected_world_reopen.gd",
+  "--",
+  "--world-slot=connected_world_1791575954752530900"
+]

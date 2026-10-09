@@ -7,7 +7,7 @@ func check(ok: bool,label: String) -> void:
 func _initialize() -> void: call_deferred("run")
 func run() -> void:
 	Engine.max_fps=60
-	var game=load("res://demo/world.tscn").instantiate();game.temporary_world=true
+	var game=load("res://demo/world.tscn").instantiate();game.temporary_world="--save-connected-world" not in OS.get_cmdline_user_args()
 	game.terrain.backend.world_generator=2;root.add_child(game)
 	var deadline:=Time.get_ticks_msec()+30000
 	while game.loading_active and Time.get_ticks_msec()<deadline: await process_frame
@@ -139,6 +139,9 @@ func run() -> void:
 	game.construction_palette.survey_dialog.hide()
 	await RenderingServer.frame_post_draw
 	root.get_texture().get_image().save_png("res://reports/settlement_prepared_placement.png")
+	if "--save-connected-world" in OS.get_cmdline_user_args():
+		check(await preload("res://tests/connected_world_reopen.gd").capture(game,prepared_target),"combined settlement, model, roads and generated lakes save through normal lifecycle")
+		quit(1 if failures else 0);return
 	var connector_revision: int=game.terrain.density_revision
 	game.app_focused=true
 	check(game._set_player_tool_mode(false,false,0),"street handoff uses normal terrain tool switch")
