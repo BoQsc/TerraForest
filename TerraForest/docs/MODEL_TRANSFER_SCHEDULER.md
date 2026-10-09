@@ -69,8 +69,9 @@ A checkpoint lease is shared with the weakly registered collection. Unregisterin
 or destroying the scheduler does not release the backing version of a still-live
 unavailable collection. Destroying that collection releases its final lease. A
 replacement scheduler can adopt the same checkpoint. Rebinding to a different
-checkpoint while unavailable records still rely on the previous one is rejected;
-validated version handover remains future coordinator work. All-resident detached
+checkpoint while unavailable records still rely on the previous one is rejected
+by registration; the validated `refresh_checkpoint(asset)` path below supports
+handover after a successful save. All-resident detached
 collections can release their lease. The archive must remain acquired while those
 versions are needed: explicit archive release invalidates all retention guarantees.
 
@@ -78,6 +79,31 @@ Scheduler mutation is scene-thread-only and rejects reentrant changes during
 publication callbacks. Collections are weak IDs, so destroying a collection does
 not leave a dereferenceable stale pointer. The supplied history remains external;
 the scheduler never resets or reconfigures the user's undo/redo journal.
+
+## Saved checkpoint handover
+
+`NativeRegionWorldArchive.published_model_index(asset, after_revision=0, retain=false)`
+returns sorted region keys, checksums, checkpoint and the publication revision.
+Block and model notices become visible under one lock only after the compound root
+is committed. A rejected save leaves the previous notices unchanged; release clears
+them. They describe saves published by this archive instance, not a disk-load index.
+With `retain=true`, the notice and a `lease` handle are acquired atomically against
+cleanup. The caller must release that handle with `release_read_checkpoint`.
+Retention pressure or active cleanup returns an empty result and can be retried.
+
+`refresh_checkpoint(asset)` uses that atomic retained notice. It rejects pending,
+active or unpolled jobs for the asset and any active collection transfer. Every
+unavailable region must appear with the same checksum in the new committed index.
+Failure releases the candidate lease and leaves the previous binding intact. Success
+replaces both collection and scheduler leases, retaining the new version before
+releasing the old one. Resident edits after the save are allowed; later retirement
+still checks exact saved bytes and history/render/collision eligibility.
+
+This is a scene-thread operation over at most 4,096 region entries per collection,
+not a frame-budgeted sweep over all assets. No scene-thread file I/O is added. The
+future coordinator must invoke it at a drained per-asset save boundary, retry
+backpressure, and manage collection registration and focus selection. Default game
+paging is not activated by this API. See [handover evidence](MODEL_CHECKPOINT_HANDOVER.md).
 
 ## Targeted evidence and remaining gates
 

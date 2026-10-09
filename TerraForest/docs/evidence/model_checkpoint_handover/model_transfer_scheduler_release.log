@@ -1,0 +1,46 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS two saved collections share one archive read worker
+PASS ticket-specific polling rejects unknown tickets without consuming shared results
+PASS mixed pending/active/completed discards preserve other owners and release all reservations
+PASS discarded or consumed tickets cannot affect later requests
+PASS scheduler validates shared job and payload budgets
+PASS collections reserve checkpoint leases
+PASS two schedulers cannot control one collection
+PASS one shared byte budget rejects fourth job across asset collections
+PASS unpolled completion records retain bounded queue reservations
+PASS poll releases scheduler reservations
+PASS in-flight read cancellation discards only its owned ticket
+PASS discarded asynchronous read eventually releases archive byte and checkpoint references
+PASS requested jobs terminate within short fixture timeout
+PASS history-pinned region cannot be retired even with verified saved bytes
+PASS duplicate region jobs are rejected with monotonic tickets
+PASS higher-priority collection starts before earlier lower-priority request
+PASS scheduler leaves another consumer's metadata completion untouched
+PASS requested jobs terminate within short fixture timeout
+PASS both collections retire under one global records/hash/operations budget
+PASS publication callbacks cannot mutate scheduler jobs or budgets reentrantly
+PASS unrelated editor undo/redo survives shared retirement
+PASS new focus epoch cancels an admission after partial staging
+PASS requested jobs terminate within short fixture timeout
+PASS cancelled staging rolls back both collections without losing reserved IDs
+PASS stale focus epoch cannot enqueue new work
+PASS requested jobs terminate within short fixture timeout
+PASS new epoch restores exact saved transforms in both collections
+PASS cancellation can arrive after logical retirement commits
+PASS requested jobs terminate within short fixture timeout
+PASS committed retirement finishes bounded cleanup instead of pretending to roll back
+PASS destroyed-collection cleanup consumes the shared operation budget
+PASS requested jobs terminate within short fixture timeout
+PASS weak collection destruction terminates queued work without dereferencing freed nodes
+PASS stop cancels queued work and rejects new jobs without stopping shared archive worker
+PASS unregister retains backing lease only for the unavailable collection
+PASS later world save publishes while detached collection retains old checkpoint
+PASS later world save publishes while detached collection retains old checkpoint
+PASS later world save publishes while detached collection retains old checkpoint
+PASS collection-owned lease survives scheduler destruction and root rotations
+PASS replacement scheduler adopts retained collection checkpoint
+PASS exceptional scheduler destruction rolls back owned staging and leaves backing lease with collection
+PASS collection destruction releases the final checkpoint lease
+MODEL_TRANSFER_SCHEDULER checks=42 failures=0 max_tick_usec=364
+

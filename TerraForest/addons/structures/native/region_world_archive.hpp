@@ -24,6 +24,8 @@ class NativeRegionWorldArchive : public RefCounted {
     int64_t published_index_revision_=0;
     PackedInt32Array published_keys_;
     PackedByteArray published_checksums_,published_checkpoint_;
+    struct PublishedModelIndex {PackedInt32Array keys;PackedByteArray checksums,checkpoint;};
+    std::map<String,PublishedModelIndex> published_models_;
     struct RegionRead {
         int64_t ticket=0,epoch=0;
         String asset;
@@ -88,6 +90,7 @@ public:
     void join_region_reads();
     Dictionary region_read_stats() const;
     Dictionary published_region_index(int64_t after_revision=0) const;
+    Dictionary published_model_index(const String &asset,int64_t after_revision=0,bool retain=false);
     bool validate_snapshot(const PackedByteArray &bytes) const {return codec_.is_valid()&&(codec_->validate_storage_snapshot(bytes)||(model_metadata_first_&&codec_->validate_bootstrap(bytes)));}
 };
 }

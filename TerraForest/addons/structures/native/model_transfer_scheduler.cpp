@@ -9,6 +9,7 @@ void NativeModelTransferScheduler::_bind_methods() {
     ClassDB::bind_method(D_METHOD("configure","archive","history","max_jobs","max_bytes"),&NativeModelTransferScheduler::configure);
     ClassDB::bind_method(D_METHOD("register_collection","asset","collection","checkpoint"),&NativeModelTransferScheduler::register_collection);
     ClassDB::bind_method(D_METHOD("unregister_collection","asset"),&NativeModelTransferScheduler::unregister_collection);
+    ClassDB::bind_method(D_METHOD("refresh_checkpoint","asset"),&NativeModelTransferScheduler::refresh_checkpoint);
     ClassDB::bind_method(D_METHOD("request","asset","region","expected","retire","priority","epoch"),&NativeModelTransferScheduler::request);
     ClassDB::bind_method(D_METHOD("cancel","ticket"),&NativeModelTransferScheduler::cancel);
     ClassDB::bind_method(D_METHOD("set_epoch","epoch"),&NativeModelTransferScheduler::set_epoch);
@@ -45,6 +46,37 @@ bool NativeModelTransferScheduler::unregister_collection(const String &asset) {
         if(collection->unloaded_regions.empty())collection->paging_checkpoint.reset();
     }
     collections.erase(found);return true;
+}
+bool NativeModelTransferScheduler::refresh_checkpoint(const String &asset) {
+    if(busy||stopping||archive.is_null())return false;
+    auto found=collections.find(asset);if(found==collections.end())return false;
+    // Completed results must also be consumed before changing their provenance.
+    for(const auto &entry:jobs)if(entry.second.asset==asset)return false;
+    auto *collection=resolve(found->second.id);
+    if(!collection||collection->admission||collection->paging_owner!=get_instance_id())return false;
+    // Read the publication notice and retain it under one archive queue lock,
+    // so concurrent save cleanup cannot remove it between observation and lease.
+    Dictionary index=archive->published_model_index(asset,0,true);
+    if(index.is_empty())return false;
+    PackedByteArray checkpoint=index["checkpoint"],digests=index["checksums"];
+    PackedInt32Array keys=index["keys"];
+    auto lease=std::make_shared<ModelCheckpointLease>();lease->archive=archive;lease->checkpoint=checkpoint;lease->handle=index["lease"];
+    // The notice is produced only after root publication, not from caller bytes.
+    // Every unavailable region must survive unchanged in the new saved version.
+    int64_t cursor=0;
+    for(const auto &entry:collection->unloaded_regions) {
+        while(cursor<keys.size()/3) {
+            BlockKey key{keys[cursor*3],keys[cursor*3+1],keys[cursor*3+2]};
+            if(!(key<entry.first))break;
+            ++cursor;
+        }
+        if(cursor==keys.size()/3)return false;
+        BlockKey key{keys[cursor*3],keys[cursor*3+1],keys[cursor*3+2]};
+        if(entry.first<key||digests.slice(cursor*32,(cursor+1)*32)!=entry.second.checksum)return false;
+    }
+    // Hold the new version before releasing either reference to the old lease.
+    collection->paging_checkpoint=lease;found->second.lease=std::move(lease);
+    return true;
 }
 int64_t NativeModelTransferScheduler::request(const String &asset,Vector3i region,const PackedByteArray &expected,bool retire,int priority,int64_t request_epoch) {
     if(busy||stopping||archive.is_null()||request_epoch!=epoch||expected.size()!=32||priority<0||priority>255||

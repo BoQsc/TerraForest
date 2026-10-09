@@ -199,6 +199,21 @@ Dictionary NativeRegionWorldArchive::published_region_index(int64_t after_revisi
     out["revision"]=published_index_revision_;out["keys"]=published_keys_;
     out["checksums"]=published_checksums_;out["checkpoint"]=published_checkpoint_;return out;
 }
+Dictionary NativeRegionWorldArchive::published_model_index(const String &asset,int64_t after_revision,bool retain) {
+    std::lock_guard<std::mutex> lock(read_mutex_);Dictionary out;
+    auto found=published_models_.find(asset);
+    if(found==published_models_.end()||published_index_revision_<=after_revision)return out;
+    if(retain) {
+        if(checkpoint_sweep_active_){++read_checkpoint_busy_rejections_;return out;}
+        if(read_checkpoint_leases_.size()>=size_t(read_checkpoint_lease_limit_)||read_next_lease_==INT64_MAX)return out;
+        const ReadCheckpointKey key{asset,found->second.checkpoint.hex_encode()};
+        const int64_t lease=read_next_lease_++;read_checkpoint_leases_.emplace(lease,key);
+        ++read_checkpoint_refs_[key];out["lease"]=lease;
+    }
+    out["revision"]=published_index_revision_;out["keys"]=found->second.keys;
+    out["checksums"]=found->second.checksums;out["checkpoint"]=found->second.checkpoint;
+    return out;
+}
 Dictionary NativeRegionWorldArchive::region_read_stats() const {
     std::lock_guard<std::mutex> lock(read_mutex_);Dictionary out;
     out["running"]=read_running_;out["stopping"]=read_stopping_;out["active"]=read_active_;

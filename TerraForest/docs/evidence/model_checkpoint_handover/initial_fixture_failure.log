@@ -1,0 +1,47 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS model metadata option requires block metadata startup
+PASS fixture saves compact checkpoint-root world
+PASS cold world decode builds model manifests from individual regions
+PASS cached world decode reads no model region payloads
+PASS startup envelope is compact and accepted by opted-in load validator
+PASS startup metadata cannot masquerade as resident or partial save state
+PASS legacy resident world remains readable with model metadata option enabled
+PASS legacy checkpoint root with inline models falls back to compatible resident model decode
+PASS bootstrap encoder rejects metadata belonging to another registered asset
+PASS publishing raw startup envelope rejects before changing canonical root
+PASS corrupt startup cannot partially replace scene
+PASS late collection prototype failure leaves blocks and every earlier collection intact
+PASS scene coordinator installs block/model metadata in one validated native transaction
+PASS observers see all collections installed and reject recursive bootstrap
+PASS 12000 model transforms remain unloaded after world startup
+PASS newly registered asset absent from older save restores empty
+PASS captured partial save is validated against full current asset schema
+PASS metadata-only scene saves through ordinary partial-model storage envelope
+PASS saved partial scene reloads into metadata without restoring all transforms
+PASS metadata-started scene connects to retained shared scheduler
+PASS active scheduler ownership blocks world replacement before mutation
+PASS one requested nearby region loads exact saved transforms through scheduler
+PASS selective admission leaves other regions and assets unloaded
+PASS committed model notice exposes exact version and filters unchanged or unknown assets
+PASS caller mutation cannot alter stored publication notice
+PASS dirty resident region saves while other model regions remain unavailable
+PASS block and model publication notices share the successful root revision
+PASS checkpoint handover rejects pending jobs
+PASS unconsumed completion prevents checkpoint handover
+PASS handover backpressure preserves old lease when replacement cannot be reserved
+PASS compatible saved checkpoint replaces old lease without accumulating retention
+FAIL updated region uses new checkpoint for retirement
+FAIL updated region uses new checkpoint for readmission
+PASS edit survives save, checkpoint handover, retirement and readmission exactly
+PASS publication notice and explicit retention can be acquired atomically
+PASS rejected save does not advance model publication notice
+PASS incompatible saved version changes an unavailable region
+PASS incompatible checkpoint rejects without leaking new lease or discarding old backing
+PASS failed handover still admits exact original transforms through retained checkpoint
+PASS scene can save and hand over again after restoring its original region
+PASS mixed resident/unavailable model scene remains saveable
+PASS archive release clears model publication notices
+PASS default block-only metadata loader remains compatible and reconstructs all model transforms
+MODEL_WORLD_BOOTSTRAP checks=43 failures=2
+

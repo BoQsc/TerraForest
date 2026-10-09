@@ -90,10 +90,56 @@ func run() -> void:
         scheduler.tick(256,65536,500,4);results=scheduler.poll(4);await process_frame
     check(ticket>0 and results.size()==1 and results[0].result=="complete" and a.capture_region(Vector3i.ZERO)==packet,"one requested nearby region loads exact saved transforms through scheduler")
     check(a.region_stats().resident_instances==1000 and a.region_stats().reserved_ids==5000 and b.region_stats().resident_instances==0,"selective admission leaves other regions and assets unloaded")
+    var initial_index: Dictionary=archive.published_model_index(assets[0])
+    check(initial_index.checkpoint==live._model_checkpoints[assets[0]] and initial_index.keys.size()==18 and archive.published_model_index(assets[0],initial_index.revision).is_empty() and archive.published_model_index("missing").is_empty(),"committed model notice exposes exact version and filters unchanged or unknown assets")
+    var exposed_keys: PackedInt32Array=initial_index.keys;exposed_keys[0]=999
+    check(archive.published_model_index(assets[0]).keys[0]==0,"caller mutation cannot alter stored publication notice")
+    a.upsert_instances(PackedInt64Array([1]),pose(2))
+    storage=live.capture_storage_snapshot()
+    check(archive.publish(path,archive.encode({"terrain":PackedByteArray([1]),"structures":storage}))==OK,"dirty resident region saves while other model regions remain unavailable")
+    var next_index: Dictionary=archive.published_model_index(assets[0],initial_index.revision)
+    check(not next_index.is_empty() and next_index.checkpoint!=initial_index.checkpoint and archive.published_region_index().revision==next_index.revision,"block and model publication notices share the successful root revision")
+    var far_packet: PackedByteArray=source.model(assets[0]).capture_region(Vector3i(1,0,0))
+    var busy_ticket: int=scheduler.request(assets[0],Vector3i(1,0,0),far_packet.slice(far_packet.size()-32),false,0,0)
+    check(busy_ticket>0 and not scheduler.refresh_checkpoint(assets[0]),"checkpoint handover rejects pending jobs")
+    scheduler.cancel(busy_ticket)
+    check(not scheduler.refresh_checkpoint(assets[0]),"unconsumed completion prevents checkpoint handover")
+    scheduler.poll(4)
+    check(archive.configure_checkpoint_retention(1) and not scheduler.refresh_checkpoint(assets[0]) and archive.region_read_stats().checkpoint_leases==1,"handover backpressure preserves old lease when replacement cannot be reserved")
+    archive.configure_checkpoint_retention(1024)
+    check(scheduler.refresh_checkpoint(assets[0]) and archive.region_read_stats().checkpoint_leases==1,"compatible saved checkpoint replaces old lease without accumulating retention")
+    var edited_packet: PackedByteArray=a.capture_region(Vector3i.ZERO)
+    # Travel releases render/physics residency before cold-record retirement.
+    a.set_render_focus(Vector3(5000,0,0));a.set_collision_focus(Vector3(5000,0,0))
+    for frame in 10:await physics_frame
+    check(a.render_stats().resident_instances==0 and a.collision_stats().resident_bodies==0,"travel releases render and collision resources before model retirement")
+    for retire in [true,false]:
+        ticket=scheduler.request(assets[0],Vector3i.ZERO,edited_packet.slice(edited_packet.size()-32),retire,0,0)
+        results=[];end=Time.get_ticks_msec()+5000
+        while results.is_empty() and Time.get_ticks_msec()<end:
+            scheduler.tick(256,65536,500,4);results=scheduler.poll(4);await process_frame
+        check(ticket>0 and results.size()==1 and results[0].result=="complete","updated region uses new checkpoint for "+("retirement" if retire else "readmission"))
+    check(a.capture_region(Vector3i.ZERO)==edited_packet,"edit survives save, checkpoint handover, retirement and readmission exactly")
+    var retain_notice: Dictionary=archive.published_model_index(assets[0],0,true)
+    check(retain_notice.lease>0 and archive.region_read_stats().checkpoint_leases==2 and archive.release_read_checkpoint(retain_notice.lease),"publication notice and explicit retention can be acquired atomically")
+    check(archive.publish(path,PackedByteArray([1,2,3]))!=OK and archive.published_model_index(assets[0]).revision==next_index.revision,"rejected save does not advance model publication notice")
+    # Publish a different world's version at an unavailable coordinate. This
+    # must not authorize replacing the live world's retained backing checkpoint.
+    source.model(assets[0]).upsert_instances(PackedInt64Array([2]),pose(35))
+    check(archive.publish(path,archive.encode({"terrain":PackedByteArray([1]),"structures":source.capture_snapshot()}))==OK,"incompatible saved version changes an unavailable region")
+    check(not scheduler.refresh_checkpoint(assets[0]) and archive.region_read_stats().checkpoint_leases==1,"incompatible checkpoint rejects without leaking new lease or discarding old backing")
+    ticket=scheduler.request(assets[0],Vector3i(1,0,0),far_packet.slice(far_packet.size()-32),false,0,0)
+    results=[];end=Time.get_ticks_msec()+5000
+    while results.is_empty() and Time.get_ticks_msec()<end:
+        scheduler.tick(256,65536,500,4);results=scheduler.poll(4);await process_frame
+    check(ticket>0 and results.size()==1 and results[0].result=="complete" and a.capture_region(Vector3i(1,0,0))==far_packet,"failed handover still admits exact original transforms through retained checkpoint")
+    storage=live.capture_storage_snapshot()
+    check(archive.publish(path,archive.encode({"terrain":PackedByteArray([1]),"structures":storage}))==OK and scheduler.refresh_checkpoint(assets[0]),"scene can save and hand over again after restoring its original region")
     scheduler.stop();scheduler=null
     storage=live.capture_storage_snapshot()
     check(archive.publish(path,archive.encode({"terrain":PackedByteArray([1]),"structures":storage}))==OK,"mixed resident/unavailable model scene remains saveable")
     archive.release()
+    check(archive.published_model_index(assets[0]).is_empty(),"archive release clears model publication notices")
     var legacy: RefCounted=ClassDB.instantiate("NativeRegionWorldArchive");legacy.configure(raw,live.snapshot_validator(),true);legacy.acquire(path)
     var full: Dictionary=legacy.decode(legacy.read(path))
     check(full.ok and live.restore_storage_snapshot(full.sections.structures) and a.region_stats().resident_instances==6000 and b.region_stats().resident_instances==6000,"default block-only metadata loader remains compatible and reconstructs all model transforms")

@@ -43,7 +43,7 @@ In the demo, aim at ground and press **L** to carve a radius-12 m basin and bake
 
 The shader uses opaque water, animated lighting normals and a grazing-angle color adjustment. This avoids screen-reading refraction and transparency sorting, but is not a physically complete water renderer. Shorelines are voxel-stepped. The integrated player has basic depth-based swimming/passive buoyancy, and `water_camera.gd` supplies camera-local underwater environment feedback. These are not general rigid-body buoyancy or finished underwater presentation. No water collision body, flow/pressure solver, draining or cross-region fluid exchange is included.
 
-There is no baked-water disk cache, replication or automatic lake placement yet. Fixed fill elevation can create/remove water volume on rebake; this is a static basin model, not a mass-conserving fluid solver. Those limitations must remain explicit in any published feature list. Compound persistence and its limits are documented in `docs/WORLD_STORAGE.md`.
+Generator 4 supplies four deterministic lake basins in the integrated world; `Play Lake World.cmd` selects that profile. Generated-lake readiness and combined rendering remain unqualified. There is no baked-water disk cache or replication yet. Fixed fill elevation can create/remove water volume on rebake; this is a static basin model, not a mass-conserving fluid solver. Those limitations must remain explicit in any published feature list. Compound persistence and its limits are documented in `docs/WORLD_STORAGE.md`.
 
 ## Build and verify
 

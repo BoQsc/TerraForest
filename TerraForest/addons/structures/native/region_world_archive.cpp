@@ -33,6 +33,7 @@ void NativeRegionWorldArchive::_bind_methods() {
     ClassDB::bind_method(D_METHOD("join_region_reads"),&NativeRegionWorldArchive::join_region_reads);
     ClassDB::bind_method(D_METHOD("region_read_stats"),&NativeRegionWorldArchive::region_read_stats);
     ClassDB::bind_method(D_METHOD("published_region_index","after_revision"),&NativeRegionWorldArchive::published_region_index,DEFVAL(0));
+    ClassDB::bind_method(D_METHOD("published_model_index","asset","after_revision","retain"),&NativeRegionWorldArchive::published_model_index,DEFVAL(0),DEFVAL(false));
     ClassDB::bind_method(D_METHOD("storage_stats"),&NativeRegionWorldArchive::storage_stats);
 }
 NativeRegionWorldArchive::~NativeRegionWorldArchive(){release();}
@@ -61,7 +62,7 @@ bool NativeRegionWorldArchive::acquire(const String &path) {
 }
 void NativeRegionWorldArchive::release() {
     join_region_reads();
-    {std::lock_guard<std::mutex> lock(read_mutex_);published_keys_=PackedInt32Array();published_checksums_=PackedByteArray();published_checkpoint_=PackedByteArray();read_checkpoint_leases_.clear();read_checkpoint_refs_.clear();}
+    {std::lock_guard<std::mutex> lock(read_mutex_);published_keys_=PackedInt32Array();published_checksums_=PackedByteArray();published_checkpoint_=PackedByteArray();published_models_.clear();read_checkpoint_leases_.clear();read_checkpoint_refs_.clear();}
     if(store_.is_valid()){store_->close();store_.unref();}
     {std::lock_guard<std::mutex> lock(model_mutex_);for(auto &entry:model_stores_)entry.second->close();model_stores_.clear();}
     if(!path_.is_empty()&&archive_.is_valid())archive_->call("release");path_=String();
@@ -196,6 +197,7 @@ int64_t NativeRegionWorldArchive::publish(const String &path,const PackedByteArr
     Dictionary published=partial?store_->publish_storage_state(structure["resident"],structure["unavailable_keys"],structure["unavailable_checksums"],structure["checkpoint"]):store_->publish_block_snapshot(structure["blocks"]);if(!bool(published["ok"]))return published["error"];
     Dictionary pin=store_->pin_checkpoint();if(!bool(pin["ok"]))return pin["error"];
     Dictionary models=structure["models"];PackedStringArray ids;Array keys=models.keys();for(int64_t i=0;i<keys.size();++i)ids.push_back(keys[i]);
+    std::map<String,PublishedModelIndex> model_indexes;
     for(int64_t i=0;i<keys.size();++i) {
         String asset=keys[i];auto model=model_store(asset,true);if(model.is_null())return ERR_CANT_OPEN;
         String parsed_asset;Dictionary state;
@@ -203,16 +205,20 @@ int64_t NativeRegionWorldArchive::publish(const String &path,const PackedByteArr
             model->publish_storage_state(state["resident"],state["unavailable_keys"],state["unavailable_checksums"]):model->publish_snapshot(models[asset]);
         if(!bool(stored["ok"]))return stored["error"];
         Dictionary model_pin=model->pin_checkpoint();if(!bool(model_pin["ok"]))return model_pin["error"];
+        Dictionary model_index=model->checkpoint_regions(model_pin["checkpoint"]);if(!bool(model_index["ok"]))return model_index["error"];
+        model_indexes.emplace(asset,PublishedModelIndex{model_index["keys"],model_index["checksums"],model_pin["checkpoint"]});
         models[asset]=NativeStructuresSnapshot::model_reference(asset,model_pin["checkpoint"]);
     }
     Ref<NativeStructuresSnapshot> subset;subset.instantiate();if(!subset->configure_assets(ids))return ERR_INVALID_DATA;
     PackedByteArray reference=subset->encode_reference(pin["checkpoint"],models);if(reference.is_empty())return ERR_INVALID_DATA;
     sections["structures"]=reference;PackedByteArray compact=archive_->call("encode",sections);if(compact.is_empty())return ERR_INVALID_DATA;
-    int64_t error=archive_->call("publish",path,compact);if(error!=OK)return error;
     Dictionary index=store_->checkpoint_regions(pin["checkpoint"]);
+    if(!bool(index["ok"]))return index["error"];
+    int64_t error=archive_->call("publish",path,compact);if(error!=OK)return error;
     if(bool(index["ok"])) {
         std::lock_guard<std::mutex> lock(read_mutex_);
         published_keys_=index["keys"];published_checksums_=index["checksums"];published_checkpoint_=pin["checkpoint"];
+        published_models_=std::move(model_indexes);
         ++published_index_revision_;
     }
     // Publication already succeeded. Cleanup failure must never masquerade as a

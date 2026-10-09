@@ -1,0 +1,19 @@
+{
+  "bootstrap_bytes": 97428,
+  "checks": 44,
+  "cold": {
+    "assets": 2,
+    "cache_hits": 0,
+    "metadata_bytes": 97200,
+    "regions_read": 12
+  },
+  "failures": 0,
+  "full_bundle_bytes": 672268,
+  "scope": "Opt-in archive/scene model metadata bootstrap, transactional validation, selective scheduler admission and partial save compatibility. Not default game paging or frame/thermal qualification.",
+  "warm": {
+    "assets": 2,
+    "cache_hits": 2,
+    "metadata_bytes": 97200,
+    "regions_read": 0
+  }
+}

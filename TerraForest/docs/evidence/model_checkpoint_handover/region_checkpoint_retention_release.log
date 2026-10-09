@@ -1,0 +1,38 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS lease budget is configurable and bounded without imposing a 64-asset default ceiling
+PASS closed archive cannot retain and fixture acquires storage
+PASS fixture starts one shared read worker
+PASS block and metadata completions remain unread
+PASS outstanding reads retain both checkpoint namespaces
+PASS unread results protect old pins after multiple root rotations
+PASS protected old model checkpoint still serves exact region bytes
+PASS old block, model and metadata reads survive cleanup
+PASS polling releases automatic retention and next publication reclaims old pins
+PASS already retired checkpoint fails explicitly and does not leak retention
+PASS explicit leases have distinct monotonic handles
+PASS invalid lease requests cannot alter retention
+PASS 64-handle bound applies even when leases share the same pin
+PASS lowering lease budget cannot revoke active holders
+PASS explicit leases retain old versions after results have been consumed
+PASS leased exact versions remain readable across new saves
+PASS strict reads reject missing checkpoint and empty model identity
+PASS strict checkpoint mismatch cannot return newer active bytes or expose unwanted payload
+PASS fallback API remains compatible but does not certify checkpoint ownership
+PASS strict reads certify exact older bytes in retained checkpoints
+PASS absent checkpoint fails even when active catalog contains requested bytes
+PASS releasing one handle cannot drop another holder's pin
+PASS last explicit release allows later cleanup in both stores
+PASS reservation cannot resurrect an absent checkpoint or manufacture a successful read
+PASS save worker starts checkpoint rotation during retained reads
+PASS 64 retained reads coexist with 16 saves and checkpoint cleanup
+PASS concurrent readers release temporary references without dropping explicit leases
+PASS failed root validation leaves canonical save intact and releases retention gate
+PASS retention admission resumes after failed cleanup
+PASS restored backup permits publication after failed cleanup
+PASS archive release ends disk-retention leases without reusing their handles
+PASS unread completion still blocks world reuse after release
+PASS completed payload survives release but its disk lease does not
+PASS new lifecycle cannot be affected by stale lease releases
+REGION_CHECKPOINT_RETENTION checks=34 failures=0
+

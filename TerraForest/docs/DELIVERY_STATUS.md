@@ -2,6 +2,23 @@
 
 The [delivery plan and coverage register](PROJECT_PLAN.md) is the current reference for milestone order, original-scope coverage and deferred-work return triggers. Entries below preserve evidence at their recorded development stage. Older headings and the historical scope table are not current status; later implementations supersede some of their limitations. Correctness, integration, rendered performance and sustained qualification are separate gates.
 
+## Saved model checkpoint handover - 2026-10-09
+
+Added committed per-asset model indexes alongside the block publication notice and
+atomic notice/lease acquisition. The shared scheduler validates unavailable-region
+checksums before replacing a collection's saved backing checkpoint, with explicit
+rejection for pending work, incompatible saved state and retention pressure.
+
+The scene/bootstrap fixture passes 44 checks in debug and release, including dirty
+partial saves and byte-exact edited-region retirement/readmission. Release regressions
+pass 82 archive, 42 scheduler and 34 checkpoint checks. The initial test attempted
+to retire a still-rendered region and correctly failed; the corrected fixture moves
+focus away first. [Contract and evidence](MODEL_CHECKPOINT_HANDOVER.md).
+Automatic focus selection and scene/save/reload lifecycle coordination remain open;
+the default game path is unchanged. No runtime performance improvement is claimed.
+Also corrected the coverage register's water row: generator 4 lake placement already
+exists, while readiness, combined rendering and bake caching remain unfinished.
+
 ## Coverage plan reconciliation - 2026-10-09
 
 Recorded the original feature scope, first-round completion criteria, ordered delivery milestones and deferred-work triggers in PROJECT_PLAN.md. Corrected stale root/project README summaries for roads, vehicle/player functionality, block shape controls and basic water integration. Automatic model paging remains opt-in infrastructure; mining/travel consistency, dense transfer timing, combined-world scale, old-laptop thermals and multiplayer remain open. This documentation change closes no implementation or performance gate.

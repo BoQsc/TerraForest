@@ -47,6 +47,7 @@ public:
     bool configure(const Ref<NativeRegionWorldArchive> &source,const Ref<NativeStaticHistory> &journal,int max_jobs,int64_t max_bytes);
     bool register_collection(const String &asset,NativeStaticBatch *collection,const PackedByteArray &checkpoint);
     bool unregister_collection(const String &asset);
+    bool refresh_checkpoint(const String &asset);
     int64_t request(const String &asset,Vector3i region,const PackedByteArray &expected,bool retire,int priority,int64_t request_epoch);
     bool cancel(int64_t ticket);
     bool set_epoch(int64_t value);
