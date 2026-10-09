@@ -1,0 +1,6 @@
+{
+  "tests/ground_cover_interaction_world.gd": "eca84cdba196603a304dd78936ea6a902a559e04c7f61d59a5dc7f84872a3411",
+  "tests/ground_cover_world_reopen.gd": "3de8c2d3415c59c83e073b7ce6aa227ca32568121324b7d16077c9ec046541aa",
+  "addons/world_ecosystem/ground_cover.gd": "f9c7af91f35c3221af745f299f5c0370de2456833e0a306b4ae8411f0b9c364b",
+  "addons/vegetation_runtime/bin/vegetation_runtime.windows.template_debug.x86_64.dll": "6227865a76bd8afd0dafc06f8367d0cc8774fa5e696852434fa3c9773a7569a2"
+}

@@ -32,7 +32,7 @@ func run() -> void:
 		while game.ground_cover.resident.size()<49 and Time.get_ticks_msec()<deadline: await process_frame
 		check(game.ground_cover.resident.size()==49,"saved area repopulates bounded residency")
 		check(not game.ground_cover.batches[expected.species].get_ids().has(expected.natural_id),"removed natural object is not recreated by streaming")
-		check(game.ground_cover.batches[expected.species].get_ids().has(4294967296),"saved authored replacement renders with same identity")
+		check(game.ground_cover.batches[expected.species].get_ids().has(4294967296)==expected.get("active",true),"saved authored replacement respects persisted terrain support")
 	else:
 		check(game.ground_cover.resident.is_empty(),"disabled rendering keeps generated records unloaded")
 	var old_epoch: int=game.terrain.epoch
@@ -43,6 +43,27 @@ func run() -> void:
 	while (game.terrain.epoch==old_epoch or not game.terrain.world_ready or game.loading_active) and Time.get_ticks_msec()<deadline: await process_frame
 	check(game.terrain.epoch>old_epoch and game.terrain.world_ready,"normal F9 reload completes")
 	verify(game,expected)
+	if game.ground_enabled:
+		await settle_ground(game)
+		check(game.ground_cover.batches[expected.species].get_ids().has(4294967296)==expected.get("active",true),"F9 rebuild respects authored support state")
+	if "--restore-support" in OS.get_cmdline_user_args():
+		var owner:=Vector2i(floori(expected.target.x/32.0),floori(expected.target.z/32.0))
+		var poses: Array[Transform3D]=game.ground_cover.removed.sample_transforms(owner)
+		check(poses.size()==1,"inactive authored placement remains stored")
+		var point: Vector3=poses[0].origin
+		check(game.terrain.sculpt_sphere(point-Vector3.UP*7.95,8.0,true),"terrain fill to restore support accepted")
+		deadline=Time.get_ticks_msec()+20000
+		while game.terrain.pending_edit and Time.get_ticks_msec()<deadline: await process_frame
+		check(not game.terrain.pending_edit,"restored terrain publishes")
+		await settle_ground(game)
+		var restored: bool=game.ground_cover.batches[expected.species].get_ids().has(4294967296)
+		check(restored,"restoring terrain support reactivates original authored identity")
+		check(game.ground_cover.picker.pick(point+Vector3.UP*0.3,point).get("id",0)==4294967296,"restored placement is individually pickable again")
+		verify(game,expected)
+		if restored:
+			expected.active=true
+			var updated:=FileAccess.open("res://reports/ground_cover/"+slot+".expected",FileAccess.WRITE)
+			updated.store_var(expected);updated.close()
 	var saved: Array=[]
 	game.terrain.save_completed.connect(func(ok: bool):saved.append(ok))
 	game.terrain.save_world();deadline=Time.get_ticks_msec()+15000
@@ -54,3 +75,9 @@ func run() -> void:
 	for frame in range(2): await process_frame
 	print("GROUND_COVER_WORLD_REOPEN ",JSON.stringify({"checks":checks,"failures":failures}))
 	quit(1 if failures else 0)
+
+func settle_ground(game: Node) -> void:
+	var cover: Node=game.ground_cover
+	var deadline:=Time.get_ticks_msec()+15000
+	while (cover.resident.size()<49 or not cover._dirty.is_empty() or not cover._requests.is_empty() or not cover._support_job.is_empty()) and Time.get_ticks_msec()<deadline: await process_frame
+	check(cover.resident.size()==49 and cover._dirty.is_empty() and cover._requests.is_empty() and cover._support_job.is_empty(),"ground-cover support settles after reload or edit")

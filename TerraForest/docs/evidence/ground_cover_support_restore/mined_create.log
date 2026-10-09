@@ -1,0 +1,38 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] New world
+[TerrainRewrite] New world
+[TerrainRewrite] Lake ready · F5 saves world
+[TerrainRewrite] Lake ready · F5 saves world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+PASS actual world becomes ready
+PASS normal-world ground cover enabled
+PASS real support and exclusion masks publish 49 cells
+PASS real terrain has bounded ground-cover population
+[TerrainRewrite] Sculpt sphere
+[TerrainRewrite] Ground cover: 1 stone / 2 plant / 3 grass; LMB or E remove; RMB place
+PASS H activates normal-world ground-cover tool
+[TerrainRewrite] Grass clump; LMB remove; RMB place
+[TerrainRewrite] Collected ground cover
+PASS normal LMB removes aimed natural ground cover
+[TerrainRewrite] Ground cover placed
+PASS normal RMB places selected ground cover on actual terrain
+PASS collect/place round trip preserves inventory contents in selected mode
+PASS authored placement finishes terrain publication
+PASS actual mining edit accepted beneath authored item
+[TerrainRewrite] Mined resources are available in inventory under Pending materials
+PASS mining publishes before support revalidation
+PASS local exclusion update completes
+PASS mined-away support removes floating authored item from rendering
+PASS mined-away support removes interaction proxy
+PASS mining preserves authored record and distant resident identities
+PASS species has bounded GPU residency
+PASS species has bounded GPU residency
+PASS species has bounded GPU residency
+PASS fullscreen 1080p with 60 FPS cap
+PASS seed non-default plant and grass inventory for archive verification
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+PASS main-world manual save publishes ground edits and inventory
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+GROUND_COVER_INTERACTION_WORLD failures=0

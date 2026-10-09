@@ -1,0 +1,48 @@
+{
+  "slot": "ground_world_test_1791578902948511300",
+  "generator": 4,
+  "seed": 1703,
+  "presentation": "1920x1080 fullscreen, 100% scale, 60 FPS cap",
+  "phases": [
+    {
+      "name": "mined_create",
+      "script": "ground_cover_interaction_world.gd",
+      "extra": [
+        "--ground-cover",
+        "--gameplay-construction",
+        "--persist-ground",
+        "--mine-ground",
+        "--world-generator=4",
+        "--world-seed=1703"
+      ]
+    },
+    {
+      "name": "unsupported_reopen",
+      "script": "ground_cover_world_reopen.gd",
+      "extra": [
+        "--ground-cover",
+        "--gameplay-construction"
+      ],
+      "checks": 17
+    },
+    {
+      "name": "support_restore",
+      "script": "ground_cover_world_reopen.gd",
+      "extra": [
+        "--ground-cover",
+        "--restore-support"
+      ],
+      "checks": 27
+    },
+    {
+      "name": "restored_reopen",
+      "script": "ground_cover_world_reopen.gd",
+      "extra": [
+        "--ground-cover",
+        "--gameplay-construction"
+      ],
+      "checks": 17
+    }
+  ],
+  "note": "All phases use --world-slot=ground_world_test_1791578902948511300. The initial restoration attempt used gameplay and correctly rejected filling; retry used the editor. Final expected.bin has active=true."
+}

@@ -115,7 +115,7 @@ func run() -> void:
 	file.store_string(JSON.stringify({"failures":failures,"population":count,"render":render,"presentation":presentation},"  "));file.close()
 	if persistent:
 		check(game.player_hud.inventory.grant_items(PackedInt64Array([204,3,205,5]),game.player_hud.inventory.snapshot().revision).ok,"seed non-default plant and grass inventory for archive verification")
-		var expected:={"slot":game.terrain.save_slot,"ground":cover.removed.capture_storage_snapshot(),"inventory":game.player_hud.inventory.capture_storage_snapshot(),"target":target,"natural_id":target_id,"species":target_species,"seed":game.terrain.backend.world_seed}
+		var expected:={"slot":game.terrain.save_slot,"ground":cover.removed.capture_storage_snapshot(),"inventory":game.player_hud.inventory.capture_storage_snapshot(),"target":target,"natural_id":target_id,"species":target_species,"seed":game.terrain.backend.world_seed,"active":not "--mine-ground" in OS.get_cmdline_user_args()}
 		var saved: Array=[]
 		game.terrain.save_completed.connect(func(ok: bool):saved.append(ok))
 		game.terrain.changed_since_save=true;game.terrain.save_world()
