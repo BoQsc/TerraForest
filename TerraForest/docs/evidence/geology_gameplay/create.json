@@ -1,0 +1,67 @@
+{
+  "failures": 0,
+  "rows": [
+    {
+      "material": 8,
+      "pending": {
+        "202": 33
+      },
+      "point": [
+        332.0,
+        8.0,
+        364.0
+      ],
+      "removed": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        33,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "material": 9,
+      "pending": {
+        "201": 12,
+        "202": 33,
+        "203": 21
+      },
+      "point": [
+        332.0,
+        52.0,
+        332.0
+      ],
+      "removed": [
+        12,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        21,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    }
+  ],
+  "scope": "Actual gameplay worker mines seeded iron and copper, claims/crafts rewards and reloads saved inventory. Fixture locates buried veins directly; natural discovery, visible ore face and access route remain unqualified.",
+  "slot": "geology_gameplay_1791585913200859800"
+}

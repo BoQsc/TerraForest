@@ -1,0 +1,8 @@
+{
+  "source_commit": "0f0eac997b5beaa4d82520946f9d45db4bc9c954",
+  "presentation": "headless actual demo/world.tscn and worker; no visual or performance claim",
+  "generator": 4,
+  "seed": 1703,
+  "test": "tests/geology_gameplay.gd --gameplay-construction; fresh process --reopen-geology",
+  "slot": "geology_gameplay_1791585913200859800"
+}
