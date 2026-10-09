@@ -1,0 +1,1681 @@
+{
+  "events": [
+    {
+      "id": 1,
+      "ms": 4737.042
+    },
+    {
+      "id": 2,
+      "ms": 9802.474
+    },
+    {
+      "id": 3,
+      "ms": 17218.678
+    },
+    {
+      "id": 4,
+      "ms": 28585.195
+    }
+  ],
+  "final": {
+    "lakes": 4,
+    "outstanding_slices": 0,
+    "ready": 4,
+    "resident_occupancy_bytes": 200704
+  },
+  "outcomes": {
+    "0": 141,
+    "1": 4
+  },
+  "queue_max_ms": 1891.765,
+  "rows": [
+    {
+      "lake_ready": 1,
+      "lake_slices": 49,
+      "lake_total": 4,
+      "ms": 9119.001,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 1,
+      "lake_slices": 54,
+      "lake_total": 4,
+      "ms": 9219.027,
+      "queued": 0,
+      "worker": "idle"
+    },
+    {
+      "lake_ready": 1,
+      "lake_slices": 55,
+      "lake_total": 4,
+      "ms": 9318.794,
+      "queued": 6,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 1,
+      "lake_slices": 55,
+      "lake_total": 4,
+      "ms": 9418.75,
+      "queued": 6,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 1,
+      "lake_slices": 55,
+      "lake_total": 4,
+      "ms": 9518.728,
+      "queued": 0,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 1,
+      "lake_slices": 59,
+      "lake_total": 4,
+      "ms": 9618.783,
+      "queued": 5,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 1,
+      "lake_slices": 60,
+      "lake_total": 4,
+      "ms": 9718.914,
+      "queued": 0,
+      "worker": "idle"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 66,
+      "lake_total": 4,
+      "ms": 9818.811,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 67,
+      "lake_total": 4,
+      "ms": 9919.024,
+      "queued": 0,
+      "worker": "idle"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 68,
+      "lake_total": 4,
+      "ms": 10018.736,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 70,
+      "lake_total": 4,
+      "ms": 10118.711,
+      "queued": 0,
+      "worker": "idle"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 73,
+      "lake_total": 4,
+      "ms": 10218.721,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 73,
+      "lake_total": 4,
+      "ms": 10318.751,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 73,
+      "lake_total": 4,
+      "ms": 10418.703,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 73,
+      "lake_total": 4,
+      "ms": 10518.714,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 73,
+      "lake_total": 4,
+      "ms": 10618.729,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 73,
+      "lake_total": 4,
+      "ms": 10718.727,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 73,
+      "lake_total": 4,
+      "ms": 10818.742,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 73,
+      "lake_total": 4,
+      "ms": 10918.684,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 73,
+      "lake_total": 4,
+      "ms": 11018.715,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 73,
+      "lake_total": 4,
+      "ms": 11118.69,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 73,
+      "lake_total": 4,
+      "ms": 11218.726,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 73,
+      "lake_total": 4,
+      "ms": 11318.733,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 73,
+      "lake_total": 4,
+      "ms": 11418.729,
+      "queued": 0,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 74,
+      "lake_total": 4,
+      "ms": 11518.712,
+      "queued": 6,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 74,
+      "lake_total": 4,
+      "ms": 11618.66,
+      "queued": 6,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 75,
+      "lake_total": 4,
+      "ms": 11718.658,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 76,
+      "lake_total": 4,
+      "ms": 11818.886,
+      "queued": 1,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 76,
+      "lake_total": 4,
+      "ms": 11918.645,
+      "queued": 0,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 77,
+      "lake_total": 4,
+      "ms": 12018.653,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 78,
+      "lake_total": 4,
+      "ms": 12118.835,
+      "queued": 1,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 78,
+      "lake_total": 4,
+      "ms": 12218.631,
+      "queued": 6,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 79,
+      "lake_total": 4,
+      "ms": 12318.643,
+      "queued": 5,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 79,
+      "lake_total": 4,
+      "ms": 12418.64,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 80,
+      "lake_total": 4,
+      "ms": 12518.806,
+      "queued": 1,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 84,
+      "lake_total": 4,
+      "ms": 12618.839,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 84,
+      "lake_total": 4,
+      "ms": 12718.615,
+      "queued": 6,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 84,
+      "lake_total": 4,
+      "ms": 12818.735,
+      "queued": 6,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 84,
+      "lake_total": 4,
+      "ms": 12918.601,
+      "queued": 5,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 84,
+      "lake_total": 4,
+      "ms": 13018.618,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 84,
+      "lake_total": 4,
+      "ms": 13118.595,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 84,
+      "lake_total": 4,
+      "ms": 13218.59,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 84,
+      "lake_total": 4,
+      "ms": 13318.674,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 84,
+      "lake_total": 4,
+      "ms": 13418.611,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 85,
+      "lake_total": 4,
+      "ms": 13518.993,
+      "queued": 1,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 86,
+      "lake_total": 4,
+      "ms": 13618.578,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 86,
+      "lake_total": 4,
+      "ms": 13718.577,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 86,
+      "lake_total": 4,
+      "ms": 13818.616,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 86,
+      "lake_total": 4,
+      "ms": 13918.555,
+      "queued": 1,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 87,
+      "lake_total": 4,
+      "ms": 14018.644,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 87,
+      "lake_total": 4,
+      "ms": 14118.559,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 87,
+      "lake_total": 4,
+      "ms": 14218.548,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 88,
+      "lake_total": 4,
+      "ms": 14318.55,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 88,
+      "lake_total": 4,
+      "ms": 14418.542,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 88,
+      "lake_total": 4,
+      "ms": 14518.632,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 88,
+      "lake_total": 4,
+      "ms": 14618.65,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 88,
+      "lake_total": 4,
+      "ms": 14735.2,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 88,
+      "lake_total": 4,
+      "ms": 14835.191,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 89,
+      "lake_total": 4,
+      "ms": 14935.237,
+      "queued": 2,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 90,
+      "lake_total": 4,
+      "ms": 15035.194,
+      "queued": 2,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 90,
+      "lake_total": 4,
+      "ms": 15135.294,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 90,
+      "lake_total": 4,
+      "ms": 15235.177,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 91,
+      "lake_total": 4,
+      "ms": 15335.181,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 91,
+      "lake_total": 4,
+      "ms": 15435.185,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 91,
+      "lake_total": 4,
+      "ms": 15535.185,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 91,
+      "lake_total": 4,
+      "ms": 15635.166,
+      "queued": 2,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 91,
+      "lake_total": 4,
+      "ms": 15735.172,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 91,
+      "lake_total": 4,
+      "ms": 15835.161,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 91,
+      "lake_total": 4,
+      "ms": 15935.208,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 92,
+      "lake_total": 4,
+      "ms": 16035.148,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 92,
+      "lake_total": 4,
+      "ms": 16135.262,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 92,
+      "lake_total": 4,
+      "ms": 16235.265,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 92,
+      "lake_total": 4,
+      "ms": 16335.136,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 93,
+      "lake_total": 4,
+      "ms": 16435.239,
+      "queued": 2,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 93,
+      "lake_total": 4,
+      "ms": 16535.159,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 93,
+      "lake_total": 4,
+      "ms": 16635.153,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 93,
+      "lake_total": 4,
+      "ms": 16735.184,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 94,
+      "lake_total": 4,
+      "ms": 16835.113,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 94,
+      "lake_total": 4,
+      "ms": 16935.127,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 95,
+      "lake_total": 4,
+      "ms": 17035.118,
+      "queued": 1,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 2,
+      "lake_slices": 96,
+      "lake_total": 4,
+      "ms": 17135.209,
+      "queued": 2,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 97,
+      "lake_total": 4,
+      "ms": 17235.321,
+      "queued": 2,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 97,
+      "lake_total": 4,
+      "ms": 17335.106,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 97,
+      "lake_total": 4,
+      "ms": 17435.11,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 98,
+      "lake_total": 4,
+      "ms": 17535.216,
+      "queued": 5,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 98,
+      "lake_total": 4,
+      "ms": 17635.203,
+      "queued": 5,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 98,
+      "lake_total": 4,
+      "ms": 17735.12,
+      "queued": 5,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 98,
+      "lake_total": 4,
+      "ms": 17835.086,
+      "queued": 5,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 98,
+      "lake_total": 4,
+      "ms": 17935.124,
+      "queued": 5,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 98,
+      "lake_total": 4,
+      "ms": 18035.087,
+      "queued": 5,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 98,
+      "lake_total": 4,
+      "ms": 18135.235,
+      "queued": 5,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 98,
+      "lake_total": 4,
+      "ms": 18235.178,
+      "queued": 5,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 98,
+      "lake_total": 4,
+      "ms": 18335.058,
+      "queued": 5,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 98,
+      "lake_total": 4,
+      "ms": 18435.076,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 98,
+      "lake_total": 4,
+      "ms": 18535.074,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 98,
+      "lake_total": 4,
+      "ms": 18635.11,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 98,
+      "lake_total": 4,
+      "ms": 18735.319,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 98,
+      "lake_total": 4,
+      "ms": 18835.056,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 98,
+      "lake_total": 4,
+      "ms": 18935.057,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 98,
+      "lake_total": 4,
+      "ms": 19035.103,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 98,
+      "lake_total": 4,
+      "ms": 19135.182,
+      "queued": 2,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 98,
+      "lake_total": 4,
+      "ms": 19235.025,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 98,
+      "lake_total": 4,
+      "ms": 19335.134,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 99,
+      "lake_total": 4,
+      "ms": 19435.108,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 99,
+      "lake_total": 4,
+      "ms": 19535.047,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 99,
+      "lake_total": 4,
+      "ms": 19635.078,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 99,
+      "lake_total": 4,
+      "ms": 19735.009,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 99,
+      "lake_total": 4,
+      "ms": 19835.016,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 99,
+      "lake_total": 4,
+      "ms": 19934.993,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 99,
+      "lake_total": 4,
+      "ms": 20034.999,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 99,
+      "lake_total": 4,
+      "ms": 20135.089,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 100,
+      "lake_total": 4,
+      "ms": 20234.985,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 100,
+      "lake_total": 4,
+      "ms": 20334.981,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 100,
+      "lake_total": 4,
+      "ms": 20435.208,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 100,
+      "lake_total": 4,
+      "ms": 20534.981,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 100,
+      "lake_total": 4,
+      "ms": 20635.011,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 100,
+      "lake_total": 4,
+      "ms": 20734.974,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 100,
+      "lake_total": 4,
+      "ms": 20834.957,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 100,
+      "lake_total": 4,
+      "ms": 20934.961,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 100,
+      "lake_total": 4,
+      "ms": 21034.966,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 100,
+      "lake_total": 4,
+      "ms": 21135.09,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 100,
+      "lake_total": 4,
+      "ms": 21234.946,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 100,
+      "lake_total": 4,
+      "ms": 21334.983,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 100,
+      "lake_total": 4,
+      "ms": 21434.941,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 100,
+      "lake_total": 4,
+      "ms": 21534.946,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 100,
+      "lake_total": 4,
+      "ms": 21635.068,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 100,
+      "lake_total": 4,
+      "ms": 21734.925,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 100,
+      "lake_total": 4,
+      "ms": 21834.926,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 100,
+      "lake_total": 4,
+      "ms": 21934.942,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 101,
+      "lake_total": 4,
+      "ms": 22034.922,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 101,
+      "lake_total": 4,
+      "ms": 22135.149,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 101,
+      "lake_total": 4,
+      "ms": 22234.931,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 101,
+      "lake_total": 4,
+      "ms": 22335.195,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 101,
+      "lake_total": 4,
+      "ms": 22435.277,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 101,
+      "lake_total": 4,
+      "ms": 22534.901,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 101,
+      "lake_total": 4,
+      "ms": 22634.883,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 101,
+      "lake_total": 4,
+      "ms": 22734.918,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 101,
+      "lake_total": 4,
+      "ms": 22834.887,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 101,
+      "lake_total": 4,
+      "ms": 22935.138,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 101,
+      "lake_total": 4,
+      "ms": 23034.906,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 102,
+      "lake_total": 4,
+      "ms": 23134.977,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 102,
+      "lake_total": 4,
+      "ms": 23234.958,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 102,
+      "lake_total": 4,
+      "ms": 23334.903,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 102,
+      "lake_total": 4,
+      "ms": 23434.853,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 102,
+      "lake_total": 4,
+      "ms": 23534.849,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 102,
+      "lake_total": 4,
+      "ms": 23634.871,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 102,
+      "lake_total": 4,
+      "ms": 23734.847,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 102,
+      "lake_total": 4,
+      "ms": 23834.875,
+      "queued": 3,
+      "worker": "lake_slice"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 103,
+      "lake_total": 4,
+      "ms": 23934.951,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 103,
+      "lake_total": 4,
+      "ms": 24034.941,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 103,
+      "lake_total": 4,
+      "ms": 24134.983,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 103,
+      "lake_total": 4,
+      "ms": 24234.855,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 103,
+      "lake_total": 4,
+      "ms": 24334.917,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 103,
+      "lake_total": 4,
+      "ms": 24434.833,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 103,
+      "lake_total": 4,
+      "ms": 24534.815,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 104,
+      "lake_total": 4,
+      "ms": 24634.855,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 104,
+      "lake_total": 4,
+      "ms": 24734.803,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 104,
+      "lake_total": 4,
+      "ms": 24834.84,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 104,
+      "lake_total": 4,
+      "ms": 24934.808,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 104,
+      "lake_total": 4,
+      "ms": 25034.8,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 104,
+      "lake_total": 4,
+      "ms": 25134.919,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 104,
+      "lake_total": 4,
+      "ms": 25234.918,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 105,
+      "lake_total": 4,
+      "ms": 25334.832,
+      "queued": 5,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 105,
+      "lake_total": 4,
+      "ms": 25434.855,
+      "queued": 5,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 105,
+      "lake_total": 4,
+      "ms": 25534.77,
+      "queued": 5,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 105,
+      "lake_total": 4,
+      "ms": 25634.766,
+      "queued": 5,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 105,
+      "lake_total": 4,
+      "ms": 25734.763,
+      "queued": 5,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 105,
+      "lake_total": 4,
+      "ms": 25834.842,
+      "queued": 5,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 105,
+      "lake_total": 4,
+      "ms": 25934.752,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 105,
+      "lake_total": 4,
+      "ms": 26034.746,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 105,
+      "lake_total": 4,
+      "ms": 26134.8,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 105,
+      "lake_total": 4,
+      "ms": 26234.742,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 105,
+      "lake_total": 4,
+      "ms": 26334.792,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 105,
+      "lake_total": 4,
+      "ms": 26434.95,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 105,
+      "lake_total": 4,
+      "ms": 26534.746,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 105,
+      "lake_total": 4,
+      "ms": 26634.741,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 105,
+      "lake_total": 4,
+      "ms": 26734.757,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 105,
+      "lake_total": 4,
+      "ms": 26834.738,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 106,
+      "lake_total": 4,
+      "ms": 26934.733,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 106,
+      "lake_total": 4,
+      "ms": 27034.734,
+      "queued": 4,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 106,
+      "lake_total": 4,
+      "ms": 27134.745,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 106,
+      "lake_total": 4,
+      "ms": 27234.711,
+      "queued": 3,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 106,
+      "lake_total": 4,
+      "ms": 27334.721,
+      "queued": 2,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 106,
+      "lake_total": 4,
+      "ms": 27434.718,
+      "queued": 2,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 106,
+      "lake_total": 4,
+      "ms": 27534.691,
+      "queued": 2,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 107,
+      "lake_total": 4,
+      "ms": 27634.697,
+      "queued": 1,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 107,
+      "lake_total": 4,
+      "ms": 27734.693,
+      "queued": 1,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 107,
+      "lake_total": 4,
+      "ms": 27834.795,
+      "queued": 1,
+      "worker": "mesh"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 108,
+      "lake_total": 4,
+      "ms": 27934.734,
+      "queued": 1,
+      "worker": "save"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 111,
+      "lake_total": 4,
+      "ms": 28034.718,
+      "queued": 0,
+      "worker": "idle"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 117,
+      "lake_total": 4,
+      "ms": 28134.76,
+      "queued": 0,
+      "worker": "idle"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 123,
+      "lake_total": 4,
+      "ms": 28234.765,
+      "queued": 0,
+      "worker": "idle"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 129,
+      "lake_total": 4,
+      "ms": 28334.792,
+      "queued": 0,
+      "worker": "idle"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 135,
+      "lake_total": 4,
+      "ms": 28434.72,
+      "queued": 0,
+      "worker": "idle"
+    },
+    {
+      "lake_ready": 3,
+      "lake_slices": 141,
+      "lake_total": 4,
+      "ms": 28534.744,
+      "queued": 0,
+      "worker": "idle"
+    },
+    {
+      "lake_ready": 4,
+      "lake_slices": 145,
+      "lake_total": 4,
+      "ms": 28634.768,
+      "queued": 0,
+      "worker": "idle"
+    }
+  ],
+  "scope": "Startup attribution only: facade completion counts, published immutable volume stats, 10Hz worker status sampling. Status sampling does not measure worker CPU time. No changes to lake scheduling or persistent cache.",
+  "slices": 145,
+  "slot": "lake_trace_1791581131073308300",
+  "volumes": [
+    {
+      "cells": "(56, 16, 56)",
+      "id": 1,
+      "statistics": {
+        "builder_bytes": 0,
+        "cells": 50176,
+        "dynamic_flow": false,
+        "fill_level": 36.4662971496582,
+        "query_index_bytes": 3136,
+        "resident_bytes": 50176,
+        "sampled_nodes": 55233,
+        "spacing": 1.0,
+        "status": 1,
+        "surface_bytes": 42400,
+        "total_nodes": 55233,
+        "wet_cells": 5636
+      }
+    },
+    {
+      "cells": "(56, 16, 56)",
+      "id": 2,
+      "statistics": {
+        "builder_bytes": 0,
+        "cells": 50176,
+        "dynamic_flow": false,
+        "fill_level": 72.1398773193359,
+        "query_index_bytes": 3136,
+        "resident_bytes": 50176,
+        "sampled_nodes": 55233,
+        "spacing": 1.0,
+        "status": 1,
+        "surface_bytes": 42400,
+        "total_nodes": 55233,
+        "wet_cells": 6156
+      }
+    },
+    {
+      "cells": "(56, 16, 56)",
+      "id": 3,
+      "statistics": {
+        "builder_bytes": 0,
+        "cells": 50176,
+        "dynamic_flow": false,
+        "fill_level": 38.8414192199707,
+        "query_index_bytes": 3136,
+        "resident_bytes": 50176,
+        "sampled_nodes": 55233,
+        "spacing": 1.0,
+        "status": 1,
+        "surface_bytes": 42400,
+        "total_nodes": 55233,
+        "wet_cells": 5180
+      }
+    },
+    {
+      "cells": "(56, 16, 56)",
+      "id": 4,
+      "statistics": {
+        "builder_bytes": 0,
+        "cells": 50176,
+        "dynamic_flow": false,
+        "fill_level": 112.570587158203,
+        "query_index_bytes": 3136,
+        "resident_bytes": 50176,
+        "sampled_nodes": 55233,
+        "spacing": 1.0,
+        "status": 1,
+        "surface_bytes": 42400,
+        "total_nodes": 55233,
+        "wet_cells": 5544
+      }
+    }
+  ],
+  "worker_max_ms": 2.705,
+  "worker_ms": 291.216,
+  "world_ready_ms": 9102.676
+}

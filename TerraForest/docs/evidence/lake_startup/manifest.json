@@ -1,0 +1,22 @@
+{
+  "base_commit": "b6a508b",
+  "command": "godot --path TerraForest --script res://tests/lake_startup_trace.gd -- --world-slot=DISPOSABLE_COPY --ground-cover",
+  "fixture": "Separate copies of furnished checkpoint plus both regional sidecar directories; source save untouched. Native fullscreen1080p project settings, cap60; startup attribution, not frame qualification.",
+  "result": {
+    "slices": 145,
+    "total_worker_ms": 291.216,
+    "max_worker_ms": 2.705,
+    "max_queue_ms": 1891.765,
+    "world_ready_ms": 9102.676,
+    "last_lake_ready_ms": 28585.195,
+    "density_samples": 220932
+  },
+  "interpretation": "Lake definitions currently rebake on every restore; no bake bytes persisted. About 291ms of slice processing does not account for ~19.5s after playable startup. Waiting/scheduling dominates lake availability. Worker status mesh includes opportunistically serviced lake slices, so 10Hz status counts alone cannot apportion work. Bake reuse can remove repeated sampling and lake wait, but cannot claim elimination of background mesh workload.",
+  "next": "Inspect mesh stage timings/cache hits and bounded worker scheduling; preserve existing frame failures. Versioned lake bake reuse remains an independent M2 coverage requirement.",
+  "hashes": {
+    "tests/lake_startup_trace.gd": "1922bc0f6f55d8fe017c5c40dd29849408ab48c933ab4829a7affb1eacf78775",
+    "addons/volumetric_terrain/terrain_world.gd": "197e8dd14efabaa0901e24411f8fdfebfb5ea351e7e419a40f11c3416c39fbfe",
+    "addons/volumetric_terrain/terrain_backend.gd": "b11347633083d14755b17288e68139e69919a9eb806141f63203975334b015b9",
+    "addons/volumetric_water/native/lake_volume.cpp": "e3d843d4769ad41223401e2f6407a811dfd0bb8e6125c80816fd5396b0c25fbd"
+  }
+}

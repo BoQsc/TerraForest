@@ -6,6 +6,7 @@ signal surface_batch_ready(token: int, points: PackedVector3Array, normals: Pack
 signal region_changed(bounds: AABB, revision: int)
 signal region_invalidated(bounds: AABB)
 signal lake_slice_ready(token: int, status: int, epoch_id: int, revision: int)
+signal lake_slice_profiled(worker_ms: float, queue_ms: float, status: int)
 signal density_batch_ready(result: Dictionary)
 signal snapshot_restored(sections: Dictionary, epoch_id: int)
 const TerrainAssets = preload("res://addons/volumetric_terrain/runtime_assets.gd")
@@ -88,6 +89,7 @@ func _receive(result: Dictionary) -> void:
 				backend.disable_snapshot_writes("addon restoration failed")
 				result["message"] = "ERROR: addon restoration failed; canonical save protected"
 	if result.get("kind", "") == "lake_slice":
+		lake_slice_profiled.emit(float(result.get("worker_ms",0)),float(result.get("queue_ms",0)),int(result["status"]))
 		lake_slice_ready.emit(result["token"], result["status"], result["epoch"], result["revision"])
 		return
 	if result.get("kind", "") == "surface_batch":
