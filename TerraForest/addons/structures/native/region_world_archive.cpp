@@ -10,7 +10,7 @@ void NativeRegionWorldArchive::_bind_methods() {
     ClassDB::bind_method(D_METHOD("configure_checkpoint_retention","lease_limit"),&NativeRegionWorldArchive::configure_checkpoint_retention);
     ClassDB::bind_method(D_METHOD("retain_read_checkpoint","asset","checkpoint"),&NativeRegionWorldArchive::retain_read_checkpoint);
     ClassDB::bind_method(D_METHOD("release_read_checkpoint","lease"),&NativeRegionWorldArchive::release_read_checkpoint);
-    ClassDB::bind_method(D_METHOD("configure","archive","structures_codec","metadata_first"),&NativeRegionWorldArchive::configure,DEFVAL(false));
+    ClassDB::bind_method(D_METHOD("configure","archive","structures_codec","metadata_first","model_metadata_first"),&NativeRegionWorldArchive::configure,DEFVAL(false),DEFVAL(false));
     ClassDB::bind_method(D_METHOD("acquire","absolute_path"),&NativeRegionWorldArchive::acquire);
     ClassDB::bind_method(D_METHOD("release"),&NativeRegionWorldArchive::release);
     ClassDB::bind_method(D_METHOD("encode","sections"),&NativeRegionWorldArchive::encode);
@@ -36,9 +36,10 @@ void NativeRegionWorldArchive::_bind_methods() {
     ClassDB::bind_method(D_METHOD("storage_stats"),&NativeRegionWorldArchive::storage_stats);
 }
 NativeRegionWorldArchive::~NativeRegionWorldArchive(){release();}
-bool NativeRegionWorldArchive::configure(const Ref<RefCounted> &archive,const Ref<NativeStructuresSnapshot> &codec,bool metadata_first) {
+bool NativeRegionWorldArchive::configure(const Ref<RefCounted> &archive,const Ref<NativeStructuresSnapshot> &codec,bool metadata_first,bool model_metadata_first) {
     if(archive_.is_valid()||archive.is_null()||codec.is_null()||archive->get_class()!=StringName("NativeWorldArchive"))return false;
-    archive_=archive;codec_=codec;metadata_first_=metadata_first;return true;
+    if(model_metadata_first&&!metadata_first)return false;
+    archive_=archive;codec_=codec;metadata_first_=metadata_first;model_metadata_first_=model_metadata_first;return true;
 }
 bool NativeRegionWorldArchive::acquire(const String &path) {
     if(archive_.is_null()||!path_.is_empty()||!path.is_absolute_path()||path.begins_with("res://")||path.begins_with("user://"))return false;
@@ -96,18 +97,25 @@ Dictionary NativeRegionWorldArchive::decode(const PackedByteArray &bytes) const 
     // Older saved bundles may omit newly registered model assets. Preserve that
     // schema behavior using the reference's own registered subset codec.
     Dictionary models=reference["models"];PackedStringArray ids;Array keys=models.keys();
+    bool bootstrap=model_metadata_first_;
+    int64_t metadata_reads=0,metadata_hits=0,metadata_bytes=0;
+    // Legacy inline model payloads retain the existing resident decode path.
+    for(int64_t i=0;i<keys.size();++i) {String asset;PackedByteArray pin;if(!NativeStructuresSnapshot::parse_model_reference(models[keys[i]],asset,pin))bootstrap=false;}
     for(int64_t i=0;i<keys.size();++i) {
         String asset;PackedByteArray checkpoint;
         if(!NativeStructuresSnapshot::parse_model_reference(models[keys[i]],asset,checkpoint))continue;
         auto model=model_store(asset,false);if(model.is_null())return failed;
-        Dictionary restored_model=model->read_checkpoint(checkpoint);if(!bool(restored_model["ok"]))return failed;
-        models[keys[i]]=restored_model["snapshot"];
+        Dictionary restored_model=bootstrap?model->read_metadata(checkpoint):model->read_checkpoint(checkpoint);if(!bool(restored_model["ok"]))return failed;
+        models[keys[i]]=restored_model[bootstrap?"metadata":"snapshot"];
+        if(bootstrap){metadata_reads+=int64_t(restored_model.get("regions_read",0));metadata_hits+=bool(restored_model.get("cache_hit",false));metadata_bytes+=PackedByteArray(restored_model["metadata"]).size();}
     }
     for(int64_t i=0;i<keys.size();++i)ids.push_back(keys[i]);
     Ref<NativeStructuresSnapshot> subset;subset.instantiate();if(!subset->configure_assets(ids))return failed;
-    PackedByteArray resident=metadata_first_?subset->encode_metadata(reference["checkpoint"],restored["keys"],restored["checksums"],models):subset->encode(restored["blocks"],models);
-    if(resident.is_empty()||!codec_->validate_storage_snapshot(resident))return failed;
-    sections["structures"]=resident;root["sections"]=sections;return root;
+    PackedByteArray resident=bootstrap?subset->encode_bootstrap(reference["checkpoint"],restored["keys"],restored["checksums"],models):metadata_first_?subset->encode_metadata(reference["checkpoint"],restored["keys"],restored["checksums"],models):subset->encode(restored["blocks"],models);
+    if(resident.is_empty()||!(bootstrap?codec_->validate_bootstrap(resident):codec_->validate_storage_snapshot(resident)))return failed;
+    sections["structures"]=resident;root["sections"]=sections;
+    if(bootstrap){Dictionary stats;stats["assets"]=keys.size();stats["regions_read"]=metadata_reads;stats["cache_hits"]=metadata_hits;stats["metadata_bytes"]=metadata_bytes;root["model_bootstrap"]=stats;}
+    return root;
 }
 bool NativeRegionWorldArchive::reference_in_file(const String &path,std::set<String> &keep) const {
     if(!FileAccess::file_exists(path))return true;

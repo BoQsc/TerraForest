@@ -20,7 +20,7 @@ class NativeRegionWorldArchive : public RefCounted {
     mutable std::mutex model_mutex_;
     Ref<NativeModelRegionStore> model_store(const String &asset,bool create) const;
     bool model_references_in_file(const String &path,std::map<String,std::set<String>> &keep) const;
-    bool metadata_first_=false;
+    bool metadata_first_=false,model_metadata_first_=false;
     int64_t published_index_revision_=0;
     PackedInt32Array published_keys_;
     PackedByteArray published_checksums_,published_checkpoint_;
@@ -59,7 +59,7 @@ protected:
     static void _bind_methods();
 public:
     ~NativeRegionWorldArchive();
-    bool configure(const Ref<RefCounted> &archive,const Ref<NativeStructuresSnapshot> &codec,bool metadata_first=false);
+    bool configure(const Ref<RefCounted> &archive,const Ref<NativeStructuresSnapshot> &codec,bool metadata_first=false,bool model_metadata_first=false);
     bool acquire(const String &absolute_path);
     void release();
     PackedByteArray encode(const Dictionary &sections) const;
@@ -88,6 +88,6 @@ public:
     void join_region_reads();
     Dictionary region_read_stats() const;
     Dictionary published_region_index(int64_t after_revision=0) const;
-    bool validate_snapshot(const PackedByteArray &bytes) const {return codec_.is_valid()&&codec_->validate_storage_snapshot(bytes);}
+    bool validate_snapshot(const PackedByteArray &bytes) const {return codec_.is_valid()&&(codec_->validate_storage_snapshot(bytes)||(model_metadata_first_&&codec_->validate_bootstrap(bytes)));}
 };
 }

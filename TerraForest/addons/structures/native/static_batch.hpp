@@ -35,6 +35,8 @@ class NativeStaticBatch : public Node3D {
     static PackedByteArray encode_placements(const String &asset,const std::map<int64_t,Placement> &values);
     static bool parse_region(const PackedByteArray &bytes,String &asset,BlockKey &region,std::map<int64_t,Placement> &values);
     static bool valid_model_region(BlockKey key);
+    bool prepare_metadata(const PackedByteArray &bytes,std::map<BlockKey,UnloadedRegion> &staged,std::set<int64_t> &ids) const;
+    void install_metadata(std::map<BlockKey,UnloadedRegion> &&staged,std::set<int64_t> &&ids);
     bool unload_region_impl(const PackedByteArray &packet);
     bool restore_region_impl(const PackedByteArray &packet);
     struct RegionAdmission {

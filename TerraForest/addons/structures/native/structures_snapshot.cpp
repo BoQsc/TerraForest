@@ -22,6 +22,10 @@ bool NativeStructuresSnapshot::parse_model_reference(const PackedByteArray &byte
     checkpoint=bytes.slice(12+length,44+length);return true;
 }
 void NativeStructuresSnapshot::_bind_methods() {
+    ClassDB::bind_method(D_METHOD("encode_bootstrap","checkpoint","keys","checksums","models"),&NativeStructuresSnapshot::encode_bootstrap);
+    ClassDB::bind_method(D_METHOD("decode_bootstrap","bytes"),&NativeStructuresSnapshot::decode_bootstrap);
+    ClassDB::bind_method(D_METHOD("validate_bootstrap","bytes"),&NativeStructuresSnapshot::validate_bootstrap);
+    ClassDB::bind_method(D_METHOD("restore_bootstrap","bytes","blocks","collections"),&NativeStructuresSnapshot::restore_bootstrap);
     ClassDB::bind_method(D_METHOD("encode_model_storage","resident","unavailable_keys","unavailable_checksums"),&NativeStructuresSnapshot::encode_model_storage);
     ClassDB::bind_method(D_METHOD("configure_assets","asset_ids"),&NativeStructuresSnapshot::configure_assets);
     ClassDB::bind_method(D_METHOD("encode","blocks","models"),&NativeStructuresSnapshot::encode);
@@ -76,7 +80,7 @@ PackedByteArray NativeStructuresSnapshot::encode_payload(const PackedByteArray &
         if(!models.has(asset)||models[asset].get_type()!=Variant::PACKED_BYTE_ARRAY)return {};
         PackedByteArray value=models[asset];String parsed;
         PackedByteArray checkpoint;
-        if((!NativeStaticBatch::parse(value,parsed,nullptr)&&!(mode==REFERENCE&&parse_model_reference(value,parsed,checkpoint))&& !((mode==STORAGE||mode==CHECKPOINT_STORAGE)&&parse_model_storage(value,parsed)))||parsed!=asset)return {};
+        if((!(mode==BOOTSTRAP?parse_model_metadata(value,parsed):NativeStaticBatch::parse(value,parsed,nullptr))&&!(mode==REFERENCE&&parse_model_reference(value,parsed,checkpoint))&& !((mode==STORAGE||mode==CHECKPOINT_STORAGE)&&parse_model_storage(value,parsed)))||parsed!=asset)return {};
         size+=4+value.size();if(size>LIMIT)return {};
     }
     if(size>LIMIT)return {};
@@ -100,21 +104,21 @@ bool NativeStructuresSnapshot::parse(const PackedByteArray &bytes,Dictionary *re
         if(p+4>n)return false;length=u32();if(length>n-p)return false;
         auto model=payload.slice(p,p+length);p+=length;String asset;
         PackedByteArray checkpoint;
-        if((!NativeStaticBatch::parse(model,asset,nullptr)&&!(mode==REFERENCE&&parse_model_reference(model,asset,checkpoint))&&!((mode==STORAGE||mode==CHECKPOINT_STORAGE)&&parse_model_storage(model,asset)))||!assets.count(asset)||(i&&!(previous<asset)))return false;
+        if((!(mode==BOOTSTRAP?parse_model_metadata(model,asset):NativeStaticBatch::parse(model,asset,nullptr))&&!(mode==REFERENCE&&parse_model_reference(model,asset,checkpoint))&&!((mode==STORAGE||mode==CHECKPOINT_STORAGE)&&parse_model_storage(model,asset)))||!assets.count(asset)||(i&&!(previous<asset)))return false;
         previous=asset;if(result)models[asset]=model;
     }
     if(p!=n)return false;
-    if(result){if(mode==STORAGE||mode==CHECKPOINT_STORAGE)*result=storage;else (*result)[mode==REFERENCE?"checkpoint":"blocks"]=blocks;(*result)["ok"]=true;(*result)["models"]=models;}
+    if(result){if(mode==STORAGE||mode==CHECKPOINT_STORAGE||mode==BOOTSTRAP)*result=storage;else (*result)[mode==REFERENCE?"checkpoint":"blocks"]=blocks;(*result)["ok"]=true;(*result)["models"]=models;}
     return true;
 }
 const char *NativeStructuresSnapshot::magic(Mode mode) {
-    switch(mode){case RESIDENT:return "TFSB\1\0\0\0";case REFERENCE:return "TFSR\1\0\0\0";case STORAGE:return "TFSP\1\0\0\0";case CHECKPOINT_STORAGE:return "TFSQ\1\0\0\0";}
+    switch(mode){case RESIDENT:return "TFSB\1\0\0\0";case REFERENCE:return "TFSR\1\0\0\0";case STORAGE:return "TFSP\1\0\0\0";case CHECKPOINT_STORAGE:return "TFSQ\1\0\0\0";case BOOTSTRAP:return "TFSU\1\0\0\0";}
     return "";
 }
 bool NativeStructuresSnapshot::parse_block_payload(const PackedByteArray &bytes,Dictionary *result,Mode mode) const {
     if(mode==RESIDENT)return NativeBlockWorld::parse(bytes,nullptr);
     if(mode==REFERENCE)return bytes.size()==32;
-    const bool based=mode==CHECKPOINT_STORAGE;
+    const bool based=mode==CHECKPOINT_STORAGE||mode==BOOTSTRAP;
     if(based&&bytes.size()<32)return false;
     if(!parse_storage(based?bytes.slice(32):bytes,result))return false;
     if(result)(*result)["checkpoint"]=based?bytes.slice(0,32):PackedByteArray();

@@ -1,0 +1,28 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS model metadata option requires block metadata startup
+PASS fixture saves compact checkpoint-root world
+PASS cold world decode builds model manifests from individual regions
+PASS cached world decode reads no model region payloads
+PASS startup envelope is compact and accepted by opted-in load validator
+PASS startup metadata cannot masquerade as resident or partial save state
+PASS legacy resident world remains readable with model metadata option enabled
+PASS legacy checkpoint root with inline models falls back to compatible resident model decode
+PASS bootstrap encoder rejects metadata belonging to another registered asset
+PASS publishing raw startup envelope rejects before changing canonical root
+PASS corrupt startup cannot partially replace scene
+PASS late collection prototype failure leaves blocks and every earlier collection intact
+PASS scene coordinator installs block/model metadata in one validated native transaction
+PASS observers see all collections installed and reject recursive bootstrap
+PASS 12000 model transforms remain unloaded after world startup
+PASS newly registered asset absent from older save restores empty
+PASS captured partial save is validated against full current asset schema
+PASS metadata-only scene saves through ordinary partial-model storage envelope
+PASS saved partial scene reloads into metadata without restoring all transforms
+PASS metadata-started scene connects to retained shared scheduler
+PASS active scheduler ownership blocks world replacement before mutation
+PASS one requested nearby region loads exact saved transforms through scheduler
+PASS selective admission leaves other regions and assets unloaded
+PASS mixed resident/unavailable model scene remains saveable
+PASS default block-only metadata loader remains compatible and reconstructs all model transforms
+MODEL_WORLD_BOOTSTRAP checks=25 failures=0

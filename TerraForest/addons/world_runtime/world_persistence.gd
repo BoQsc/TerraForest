@@ -6,10 +6,14 @@ var _providers: Dictionary = {}
 var _restored_epoch: int = -1
 var _region_structures := false
 var _metadata_first := false
+var _model_metadata_first := false
 
-func enable_region_structures(metadata_first: bool = false) -> bool:
+func enable_region_structures(metadata_first: bool = false, model_metadata_first: bool = false) -> bool:
 	if _terrain != null or not _providers.has("structures") or not ClassDB.class_exists("NativeRegionWorldArchive"):
 		return false
+	if model_metadata_first and not metadata_first:
+		return false
+	_model_metadata_first = model_metadata_first
 	_region_structures = true
 	_metadata_first = metadata_first
 	return true
@@ -32,7 +36,7 @@ func attach(terrain: Node) -> Error:
 	var archive: RefCounted = ClassDB.instantiate("NativeWorldArchive")
 	if _region_structures:
 		var adapter: RefCounted = ClassDB.instantiate("NativeRegionWorldArchive")
-		if not adapter.configure(archive,_providers["structures"]["validator"],_metadata_first):
+		if not adapter.configure(archive,_providers["structures"]["validator"],_metadata_first,_model_metadata_first):
 			return ERR_INVALID_PARAMETER
 		archive = adapter
 	_terrain = terrain

@@ -1,0 +1,30 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS 100000 reflected scaled and sheared placements span 100 origin regions
+PASS large collection publishes into immutable region catalog
+PASS first metadata build verifies region packets individually and persists derived manifest
+PASS manifest stores IDs and region basis bounds instead of all instance transforms
+PASS cached metadata reuses exact checkpoint manifest without region reads
+PASS fresh scene bootstraps from validated checkpoint metadata
+PASS bootstrap reserves 100000 identities with zero resident transforms
+PASS unloaded bootstrap cannot masquerade as a complete snapshot
+PASS metadata-reserved identity cannot be stolen in an empty region
+PASS conservative reflected/sheared bounds block readiness far outside origin region
+PASS empty distant space remains ready with all objects unloaded
+PASS vegetation exclusion uses bootstrap bounds before any model region admission
+PASS one exact region admits only 1000 nearby transforms from metadata bootstrap
+PASS bootstrapped partial collection can save while 99000 transforms remain unloaded
+PASS corrupt manifest fails before replacing existing resident state
+PASS valid checksum cannot admit nonfinite basis bounds
+PASS manifest rejects duplicate identities across different regions
+PASS manifest rejects out-of-range origin regions
+PASS checkpoint metadata cannot restore into a different asset
+PASS all 100 regions reconstruct byte-exact original after metadata-only startup
+PASS catalog reopens from disk
+PASS cached manifest survives store reopen
+PASS corrupt derived cache regenerates from authoritative region blobs
+PASS low-level fixture creates a cross-region duplicate ID catalog
+PASS metadata generation refuses globally duplicate IDs even from valid individual packets
+PASS uncached bootstrap fails on corrupt authoritative region without writing a manifest
+PASS retiring checkpoint removes derived manifest and prevents stale metadata reads
+

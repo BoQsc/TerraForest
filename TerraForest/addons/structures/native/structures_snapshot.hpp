@@ -6,19 +6,26 @@
 #include <godot_cpp/variant/packed_int32_array.hpp>
 #include <set>
 namespace terraforest {
+class NativeBlockWorld;
 class NativeStructuresSnapshot : public godot::RefCounted {
     GDCLASS(NativeStructuresSnapshot,godot::RefCounted)
-    enum Mode { RESIDENT, REFERENCE, STORAGE, CHECKPOINT_STORAGE };
+    enum Mode { RESIDENT, REFERENCE, STORAGE, CHECKPOINT_STORAGE, BOOTSTRAP };
     bool parse_block_payload(const godot::PackedByteArray &bytes,godot::Dictionary *result,Mode mode) const;
     static const char *magic(Mode mode);
+    bool restore_busy=false;
     bool configured=false;
     std::set<godot::String> assets;
     bool parse(const godot::PackedByteArray &bytes,godot::Dictionary *result,Mode mode=RESIDENT) const;
     godot::PackedByteArray encode_payload(const godot::PackedByteArray &blocks,const godot::Dictionary &models,Mode mode) const;
+    bool parse_model_metadata(const godot::PackedByteArray &bytes,godot::String &asset) const;
     bool parse_storage(const godot::PackedByteArray &payload,godot::Dictionary *result) const;
 protected:
     static void _bind_methods();
 public:
+    godot::PackedByteArray encode_bootstrap(const godot::PackedByteArray &checkpoint,const godot::PackedInt32Array &keys,const godot::PackedByteArray &checksums,const godot::Dictionary &models) const;
+    godot::Dictionary decode_bootstrap(const godot::PackedByteArray &bytes) const;
+    bool validate_bootstrap(const godot::PackedByteArray &bytes) const {return parse(bytes,nullptr,BOOTSTRAP);}
+    bool restore_bootstrap(const godot::PackedByteArray &bytes,NativeBlockWorld *blocks,const godot::Dictionary &collections);
     bool has_asset(const godot::String &asset) const {return configured&&assets.count(asset);}
     godot::PackedByteArray encode_model_storage(const godot::PackedByteArray &resident,const godot::PackedInt32Array &keys,const godot::PackedByteArray &checksums) const;
     static bool parse_model_storage(const godot::PackedByteArray &bytes,godot::String &asset,godot::Dictionary *state=nullptr);

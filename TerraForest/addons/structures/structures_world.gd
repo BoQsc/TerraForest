@@ -14,6 +14,7 @@ var _dirty := true
 var _cached_snapshot := PackedByteArray()
 var _cached_storage := PackedByteArray()
 var _storage_checkpoint := PackedByteArray()
+var _model_checkpoints: Dictionary = {}
 var _pager: RefCounted
 
 func enable_region_paging(archive: RefCounted, load_radius: float = 384, unload_radius: float = 512, chunk_limit: int = 1536) -> bool:
@@ -172,6 +173,21 @@ func restore_storage_snapshot(bytes: PackedByteArray) -> bool:
 		return false
 	if _codec.validate_snapshot(bytes):
 		return restore_snapshot(bytes)
+	var bootstrap: Dictionary = _codec.decode_bootstrap(bytes)
+	if bootstrap.get("ok",false):
+		var previous: Array=[_storage_checkpoint,_model_checkpoints,_cached_storage,_cached_snapshot,_dirty]
+		_storage_checkpoint = bootstrap.checkpoint
+		_model_checkpoints = {}
+		for id: String in bootstrap.models:
+			_model_checkpoints[id] = bootstrap.models[id].slice(16,48)
+		_cached_storage = PackedByteArray()
+		_cached_snapshot = PackedByteArray()
+		_dirty = true
+		if not _codec.restore_bootstrap(bytes,blocks,_models):
+			_storage_checkpoint=previous[0];_model_checkpoints=previous[1]
+			_cached_storage=previous[2];_cached_snapshot=previous[3];_dirty=previous[4]
+			return false
+		return true
 	var decoded: Dictionary = _codec.decode_storage(bytes)
 	if not decoded.get("ok",false):
 		return false
@@ -186,6 +202,7 @@ func restore_storage_snapshot(bytes: PackedByteArray) -> bool:
 	for id: String in _models:
 		if not _models[id].restore_snapshot(decoded.models.get(id,_empty_models[id])):
 			return false
+	_model_checkpoints.clear()
 	_storage_checkpoint = decoded.checkpoint
 	_cached_storage = bytes.duplicate()
 	_cached_snapshot = PackedByteArray()
@@ -206,6 +223,7 @@ func restore_snapshot(bytes: PackedByteArray) -> bool:
 		if not _models[id].restore_snapshot(decoded.models.get(id,_empty_models[id])):
 			return false
 	_cached_storage = PackedByteArray()
+	_model_checkpoints.clear()
 	_storage_checkpoint = PackedByteArray()
 	_cached_snapshot = bytes.duplicate()
 	_dirty = false

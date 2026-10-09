@@ -1,3 +1,26 @@
+## Opt-in model metadata world startup - 2026-10-09
+
+The archive can now return model metadata instead of reconstructing all placement
+transforms. A distinct TFSU startup envelope prevents accidental publication as
+save data. Native scene installation prevalidates every collection and prototype
+before replacing blocks/models, suppresses intermediate change observations, and
+preserves newly registered/legacy asset behavior. The existing scene/persistence
+glue tracks checkpoint identities and captures normal partial saves afterward.
+
+Debug and release pass 25 end-to-end checks. In the 12,000-placement fixture the
+full 672,268-byte structure payload becomes a 97,428-byte startup envelope. Cached
+decode reads zero model-region packets. One requested 1,000-placement region loads
+exactly through the shared scheduler while the remainder stay unavailable. Both
+metadata-only and mixed-residency scenes save and reload. Existing release suites
+pass 82 compound archive, 27 metadata and 42 scheduler checks.
+
+This is opt-in; automatic focus selection, all-asset lifetime coordination and
+checkpoint handover after dirty saves are still required before default game
+activation. Metadata/ID installation is a synchronous startup operation, not a
+bounded per-frame transfer. Dense arrival latency and timing gates remain open;
+no GPU, thermal or 60 FPS improvement is claimed. Contract and evidence:
+[model world bootstrap](MODEL_WORLD_BOOTSTRAP.md).
+
 ## Shared native model transfer scheduling - 2026-10-09
 
 Added NativeModelTransferScheduler: multiple collections share one records/hash

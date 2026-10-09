@@ -40,11 +40,16 @@ bool NativeStaticBatch::validate_metadata(const PackedByteArray &bytes) const {
 }
 bool NativeStaticBatch::restore_metadata(const PackedByteArray &bytes) {
     if(source_mesh.is_null()||defer_change_signal||admission)return false;
-    String asset;PackedByteArray checkpoint;std::map<BlockKey,MetadataRegion> regions;std::set<int64_t> ids;
+    std::map<BlockKey,UnloadedRegion> staged;std::set<int64_t> ids;
+    if(!prepare_metadata(bytes,staged,ids))return false;
+    install_metadata(std::move(staged),std::move(ids));return true;
+}
+bool NativeStaticBatch::prepare_metadata(const PackedByteArray &bytes,std::map<BlockKey,UnloadedRegion> &staged,std::set<int64_t> &ids) const {
+    if(source_mesh.is_null())return false;
+    String asset;PackedByteArray checkpoint;std::map<BlockKey,MetadataRegion> regions;
     if(!parse_metadata(bytes,asset,checkpoint,regions,ids)||asset!=asset_id)return false;
     const AABB prototype=proxy_parts.empty()?source_mesh->get_aabb():proxy_box;
     if(!prototype.position.is_finite()||!prototype.size.is_finite()||!prototype.get_end().is_finite())return false;
-    std::map<BlockKey,UnloadedRegion> staged;
     for(const auto &entry:regions) {
         UnloadedRegion missing;missing.checksum=entry.second.checksum;missing.count=entry.second.ids.size();
         Vector3 low,extent;const int axes[3]={entry.first.x,entry.first.y,entry.first.z};
@@ -60,12 +65,15 @@ bool NativeStaticBatch::restore_metadata(const PackedByteArray &bytes) {
         missing.bounds=AABB(low,extent);if(!low.is_finite()||!extent.is_finite())return false;
         staged.emplace(entry.first,std::move(missing));
     }
-    // Validate all metadata and bounds before replacing live records or bodies.
+    return true;
+}
+void NativeStaticBatch::install_metadata(std::map<BlockKey,UnloadedRegion> &&staged,std::set<int64_t> &&ids) {
+    // All validation and prototype bounds are prepared before scene publication.
     std::set<BlockKey> touched;for(const auto &entry:groups)touched.insert(entry.first);
     clear_proxies();collision_bounds.clear();collision_dirty=true;
     placements.clear();groups.clear();slots.clear();
     unloaded_regions=std::move(staged);unloaded_ids=std::move(ids);
-    rebuild(touched);publish_change();return true;
+    rebuild(touched);publish_change();
 }
 bool NativeStaticBatch::valid_model_region(BlockKey key) {
     for(int axis:{key.x,key.y,key.z})if(axis<-32768||axis>=32768)return false;
