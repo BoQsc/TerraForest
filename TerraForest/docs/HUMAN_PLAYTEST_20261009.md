@@ -28,7 +28,8 @@ Keep its associated region/model sidecar directories with it when backing it up.
    the saved test world.
 
 Optional afterward: M enters object placement; V places the vehicle while on foot,
-E enters/exits a stopped vehicle, and L opens the lake tool. These need not delay
+E enters/exits a stopped vehicle, and L carves a lake where you aim at nearby
+terrain. These need not delay
 feedback on the core route. Escape releases/captures the mouse. F3 toggles diagnostics.
 
 ## What is active
