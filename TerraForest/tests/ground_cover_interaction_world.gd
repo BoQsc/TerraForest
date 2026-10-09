@@ -49,6 +49,44 @@ func run() -> void:
 	deadline=Time.get_ticks_msec()+5000
 	while not cover._dirty.is_empty() and Time.get_ticks_msec()<deadline: await process_frame
 	check(cover._dirty.is_empty(),"authored placement finishes terrain publication")
+	if "--disturb-ground" in OS.get_cmdline_user_args():
+		var record: PackedFloat32Array=cover.batches[target_species].get_instance(4294967296)
+		var point:=Vector3(record[3],record[7],record[11])
+		var cell:=Vector3i(floori(point.x),floori(point.y),floori(point.z))
+		var previous_word: int=game.structures.blocks.get_cell(cell)
+		var saved_ground: PackedByteArray=cover.removed.capture_storage_snapshot()
+		var far_key:=Vector2i(-1,-1)
+		for owner: Vector2i in cover.resident:
+			if Vector2(owner.x*32+16,owner.y*32+16).distance_to(Vector2(point.x,point.z))>70: far_key=owner;break
+		var far_before: Array=cover.resident[far_key].duplicate(true)
+		check(game.structures.blocks.set_cells(PackedInt32Array([cell.x,cell.y,cell.z,1])),"actual block overlaps authored ground-cover position")
+		await settle_cover(cover)
+		check(not cover.batches[target_species].get_ids().has(4294967296),"building overlap excludes authored item from rendering")
+		check(not cover.picker.pick(point+Vector3.UP*0.3,point).hit,"building overlap excludes authored item from interaction")
+		check(cover.resident[far_key]==far_before and cover.removed.capture_storage_snapshot()==saved_ground,"local block change preserves distant owner and durable authored state")
+		check(game.structures.blocks.set_cells(PackedInt32Array([cell.x,cell.y,cell.z,previous_word])),"overlapping block removed")
+		await settle_cover(cover)
+		check(cover.batches[target_species].get_ids().has(4294967296),"removing block restores authored item under original identity")
+		# Controlled baked volume exercises the real lake publication/mask path.
+		var origin:=point-Vector3(2.5,0.5,2.5)
+		var volume: RefCounted=ClassDB.instantiate("NativeLakeVolume")
+		volume.configure(origin,Vector3i(8,6,8),1.0,origin.y+3.5,origin+Vector3(2.5,2.5,2.5))
+		var field:=PackedFloat32Array()
+		for z in range(9):
+			for y in range(7):
+				for x in range(9): field.append(-1.0 if x==0 or x==8 or z==0 or z==8 or y==0 else 1.0)
+		check(volume.bake_density(field)==1,"controlled native water volume bakes")
+		game.lakes.set_process(false)
+		game.lakes._install_lake(9001,origin,Vector3i(8,6,8),1.0,origin.y+3.5,origin+Vector3(2.5,2.5,2.5),volume)
+		game.lakes._busy_id=9001;game.lakes._token=9001
+		game.lakes._slice_ready(9001,1,game.terrain.epoch,game.terrain.published_revision)
+		await settle_cover(cover)
+		check(not cover.batches[target_species].get_ids().has(4294967296),"published water excludes submerged authored item")
+		check(cover.resident[far_key]==far_before and cover.removed.capture_storage_snapshot()==saved_ground,"water exclusion preserves distant owner and durable authored state")
+		game.lakes.remove_lake(9001)
+		await settle_cover(cover)
+		check(cover.batches[target_species].get_ids().has(4294967296),"removing water restores same authored item")
+		game.lakes.set_process(true)
 	var render:=[]
 	for batch in cover.batches:
 		var stats: Dictionary=batch.render_stats();render.append(stats)
@@ -76,3 +114,8 @@ func run() -> void:
 	for frame in range(2): await process_frame
 	print("GROUND_COVER_INTERACTION_WORLD failures=",failures)
 	quit(1 if failures else 0)
+
+func settle_cover(cover: Node) -> void:
+	var deadline:=Time.get_ticks_msec()+10000
+	while (not cover._dirty.is_empty() or not cover._requests.is_empty()) and Time.get_ticks_msec()<deadline: await process_frame
+	check(cover._dirty.is_empty() and cover._requests.is_empty(),"local exclusion update completes")

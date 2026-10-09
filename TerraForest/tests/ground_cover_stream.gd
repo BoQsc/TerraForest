@@ -49,7 +49,7 @@ func run() -> void:
 	check(cover.removed.mark(removed_id),"individual removal persists separately from rendering")
 	var authored_id: int=cover.removed.add(0,Transform3D(Basis.IDENTITY,Vector3(970,20,970)))
 	check(authored_id>0,"authored stone gets independent durable identity")
-	cover._exclusion_changed(AABB(Vector3(961,-1,961),Vector3(1,2,1)))
+	cover._exclusion_changed(AABB(Vector3(976,-1,976),Vector3(1,2,1)))
 	check(cover._dirty.size()==1,"small interior disturbance invalidates one owner")
 	cover._process(0.0);terrain.reply()
 	check(not cover.batches[2].get_ids().has(removed_id) and cover.resident.size()==49,"individual removal preserves neighbour owners")

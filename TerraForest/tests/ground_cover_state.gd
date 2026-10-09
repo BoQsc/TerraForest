@@ -49,6 +49,16 @@ func run() -> void:
 	var invalid:=pose;invalid.origin.x=-1
 	check(full.add(0,invalid)==0 and full.add(3,pose)==0,"invalid positions and species rejected")
 	check(fresh.restore_storage_snapshot(empty) and fresh.bind_world(1704,1) and fresh.profile().placed==0,"explicit empty-world restore clears old edit ownership")
+	var filtered=ClassDB.instantiate("NativeGroundCoverState");filtered.bind_world(1703,1)
+	var keys:=[]
+	for species in [2,0,1]: keys.append(filtered.add(species,Transform3D(Basis.IDENTITY,Vector3(970+species,20,970))))
+	var samples: Array[Transform3D]=filtered.sample_transforms(Vector2i(30,30))
+	check(samples.size()==3 and samples[0].origin.x==970 and samples[1].origin.x==971 and samples[2].origin.x==972,"authored samples use the same species order as packed queries")
+	var source: PackedByteArray=filtered.capture_storage_snapshot()
+	var visible: Array=filtered.query_filtered(Vector2i(30,30),PackedByteArray([1,0,0]),PackedByteArray([0,0,1]))
+	check(visible.size()==3 and visible[0].ids.is_empty() and visible[2].ids.is_empty() and visible[1].ids==PackedInt64Array([keys[2]]),"structure and water masks exclude exact authored identities")
+	check(filtered.capture_storage_snapshot()==source and filtered.query_filtered(Vector2i(30,30),PackedByteArray([0,0,0]),PackedByteArray([0,0,0]))==filtered.query(Vector2i(30,30)),"exclusion preserves durable records and removing exclusion restores originals")
+	check(filtered.query_filtered(Vector2i(30,30),PackedByteArray(),PackedByteArray([0,0,0])).is_empty(),"mismatched authored exclusion mask rejects rather than publishing partial data")
 	DirAccess.make_dir_recursive_absolute("res://reports")
 	var report:={"checks":checks,"failures":failures}
 	var file:=FileAccess.open("res://reports/ground_cover_state.json",FileAccess.WRITE)

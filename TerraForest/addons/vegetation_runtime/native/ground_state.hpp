@@ -45,6 +45,8 @@ protected:
         ClassDB::bind_method(D_METHOD("add","species","transform"),&NativeGroundCoverState::add);
         ClassDB::bind_method(D_METHOD("erase","id"),&NativeGroundCoverState::erase);
         ClassDB::bind_method(D_METHOD("query","cell"),&NativeGroundCoverState::query);
+        ClassDB::bind_method(D_METHOD("sample_transforms","cell"),&NativeGroundCoverState::sample_transforms);
+        ClassDB::bind_method(D_METHOD("query_filtered","cell","blocked","water"),&NativeGroundCoverState::query_filtered);
         ClassDB::bind_method(D_METHOD("capture_storage_snapshot"),&NativeGroundCoverState::capture_storage_snapshot);
         ClassDB::bind_method(D_METHOD("validate_snapshot","data"),&NativeGroundCoverState::validate_snapshot);
         ClassDB::bind_method(D_METHOD("restore_storage_snapshot","data"),&NativeGroundCoverState::restore_storage_snapshot);
@@ -82,6 +84,32 @@ public:
         auto found=cells.find(key.y*63+key.x);
         if(found!=cells.end())for(auto id:found->second){const auto &p=placed.at(id);ids[p.species].append(id);for(float v:p.t)transforms[p.species].append(v);}
         for(int i=0;i<3;++i){Dictionary d;d["ids"]=ids[i];d["transforms"]=transforms[i];out.append(d);}return out;
+    }
+    TypedArray<Transform3D> sample_transforms(Vector2i key) const{
+        TypedArray<Transform3D> out;
+        if(key.x<0||key.y<0||key.x>=63||key.y>=63)return out;
+        auto found=cells.find(key.y*63+key.x);if(found==cells.end())return out;
+        for(int species=0;species<3;++species)for(auto id:found->second){
+            const auto &p=placed.at(id);if(p.species!=species)continue;
+            Transform3D t;for(int r=0;r<3;++r){for(int c=0;c<3;++c)t.basis[r][c]=p.t[r*4+c];t.origin[r]=p.t[r*4+3];}out.append(t);
+        }
+        return out;
+    }
+    Array query_filtered(Vector2i key,const PackedByteArray &blocked,const PackedByteArray &water) const{
+        if(key.x<0||key.y<0||key.x>=63||key.y>=63)return Array();
+        auto found=cells.find(key.y*63+key.x);size_t count=found==cells.end()?0:found->second.size();
+        if(blocked.size()!=int64_t(count)||water.size()!=int64_t(count))return Array();
+        Array out;size_t index=0;
+        for(int species=0;species<3;++species){
+            PackedInt64Array ids;PackedFloat32Array transforms;
+            if(found!=cells.end())for(auto id:found->second){
+                const auto &p=placed.at(id);if(p.species!=species)continue;
+                bool excluded=blocked[index]||water[index];++index;if(excluded)continue;
+                ids.append(id);for(float v:p.t)transforms.append(v);
+            }
+            Dictionary row;row["ids"]=ids;row["transforms"]=transforms;out.append(row);
+        }
+        return out;
     }
     PackedByteArray capture_storage_snapshot() const{
         if(!dirty)return cache;

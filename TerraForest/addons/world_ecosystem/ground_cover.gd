@@ -125,7 +125,13 @@ func _surface_ready(token: int,points: PackedVector3Array,normals: PackedVector3
 		if (structures!=null and structure_mask[i]) or (water!=null and water_mask[i]): mask[i]=1
 	var packed: Array=native.pack(placed.ids,placed.transforms,mask)
 	if packed.size()!=3: rejected_batches+=1;return
-	var authored: Array=removed.query(request.key)
+	var authored_poses: Array[Transform3D]=removed.sample_transforms(request.key)
+	var authored_blocked:=PackedByteArray();authored_blocked.resize(authored_poses.size())
+	var authored_water:=PackedByteArray();authored_water.resize(authored_poses.size())
+	if structures!=null: authored_blocked=structures.overlap_mask(authored_poses,AABB(Vector3(-0.4,0,-0.4),Vector3(0.8,0.8,0.8)))
+	if water!=null: authored_water=water.placement_mask(authored_poses)
+	var authored: Array=removed.query_filtered(request.key,authored_blocked,authored_water)
+	if authored.size()!=3: rejected_batches+=1;return
 	for species in range(3):
 		packed[species].ids.append_array(authored[species].ids)
 		packed[species].transforms.append_array(authored[species].transforms)
@@ -152,5 +158,5 @@ func _surface_ready(token: int,points: PackedVector3Array,normals: PackedVector3
 func _terrain_changed(bounds: AABB,_revision: int) -> void: _exclusion_changed(bounds)
 func _exclusion_changed(bounds: AABB) -> void:
 	for key: Vector2i in _wanted:
-		var owner:=AABB(Vector3(key.x*32,bounds.position.y,key.y*32),Vector3(32,maxf(1,bounds.size.y),32)).grow(1.0)
+		var owner:=AABB(Vector3(key.x*32,bounds.position.y,key.y*32),Vector3(32,maxf(1,bounds.size.y),32)).grow(8.0)
 		if bounds.size==Vector3.ZERO or owner.intersects(bounds): _dirty[key]=true
