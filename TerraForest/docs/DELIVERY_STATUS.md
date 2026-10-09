@@ -1,3 +1,16 @@
+## CPU baseline supplement retained - 2026-10-09
+
+Revision `fe2378f` adds process CPU/memory counters to the existing short graphical
+baseline. The game averaged 1.2-3.0% of this host's 12-logical-processor CPU capacity
+per phase; system CPU averaged 15-31%. Peak working set was 1,083 MiB and private
+commit 1,959 MiB. CPU watts/temperature remain unknown. These CPU-time percentages
+are not directly comparable to the old laptop's remembered Task Manager readings.
+
+The control phase fell to 52.91 FPS (52.37 ms frame p99), while the other seven
+means were near 60 FPS. Both baseline runs are preserved; stability and sustained
+cooling are not qualified. No runtime feature or rendering changes were made.
+See [baseline and raw evidence](RUNTIME_BASELINE_LENOVO_20261009.md#cpu-and-process-memory-supplement).
+
 ## New-host runtime reference recorded - 2026-10-09
 
 Recorded the missing graphical baseline at revision `d8cd97a`, labeled

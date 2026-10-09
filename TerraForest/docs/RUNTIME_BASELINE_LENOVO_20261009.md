@@ -78,3 +78,60 @@ of those change. Preserve frame-time tails and startup/transition duration rathe
 than crediting an unchanged capped average as extra headroom. Repeated matched
 runs are required for small optimization claims; this short reference alone
 does not establish variance or long-run stability.
+
+## CPU and process-memory supplement
+
+Measured revision `fe2378f`, run `20261009T145956Z`: the same workload and
+presentation conditions with added Windows process/system CPU counters and
+process-memory sampling. No game runtime code changed. Raw evidence:
+[results](evidence/runtime_baseline_lenovo_20261009/cpu_supplement/result.json),
+[manifest](evidence/runtime_baseline_lenovo_20261009/cpu_supplement/manifest.json),
+[CPU/GPU samples](evidence/runtime_baseline_lenovo_20261009/cpu_supplement/gpu.jsonl).
+The original reference tag remains unchanged.
+
+The 91.65-second run completed without engine errors, with valid CPU samples
+and verified 1920x1080 fullscreen, VSync, focus and 60 FPS cap.
+
+| Phase | Mean FPS | Frame p99 ms | Game CPU mean % | System CPU mean % | CPU intervals |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| display_only_control | 52.91 | 52.37 | 1.24 | 30.60 | 2 |
+| moving_surface | 60.05 | 20.08 | 2.41 | 25.26 | 2 |
+| underground | 60.00 | 20.35 | 2.65 | 29.51 | 2 |
+| construction | 60.07 | 20.98 | 2.71 | 21.69 | 3 |
+| pre_dig | 60.03 | 20.73 | 3.03 | 18.69 | 3 |
+| continuous_dig | 60.02 | 23.63 | 2.72 | 22.42 | 3 |
+| post_dig | 60.04 | 20.81 | 2.55 | 17.08 | 3 |
+| whole_map | 60.04 | 19.37 | 1.84 | 15.24 | 3 |
+
+CPU values use Windows cumulative CPU-time deltas. Game percentages are
+normalized to this host's 12 logical processors; they are not frequency-weighted
+Task Manager utilization. Only complete sampling intervals inside measured phase
+windows are included (2-3 per phase). These coarse averages cannot exclude short
+CPU spikes or a main-thread bottleneck. The recorded one-core-equivalent value
+sums all process threads; it is not a measurement of the busiest individual core.
+CPU package power and temperature remain unavailable.
+
+Peak process working set was 1,083.47 MiB and private commit 1,959.38 MiB across
+the full run. Working set includes shared resident pages; private commit is not
+all resident. Neither is VRAM. These measurements are more comprehensive than
+Godot's static-memory counter, which excludes some native/driver allocations.
+
+The display-only control averaged 52.91 FPS with 52.37 ms frame p99, unlike the
+original run. This result is retained, not discarded. The cause is not established;
+higher total-system CPU load does not prove that background activity caused it.
+The other seven phase means were approximately 60 FPS, with continuous-dig frame
+p99 23.63 ms and edit-publication p95 35.45 ms for 30 published edits. Instrumentation
+and run conditions can influence results; this pair does not establish a software
+speedup or regression. Stable frame pacing remains unproven.
+
+The CPU sampler's controlled idle/busy child-process check passed before this
+run (idle 0 ms CPU versus busy 359.375 ms; 12 logical processors). The harness now
+requires valid CPU intervals in all eight phases in addition to presentation
+validation. No additional thermal stress run was performed.
+
+These results do not establish that halving CPU/GPU utilization is necessary or
+sufficient on older laptops. Older-host thermal sustainability requires matched
+workload measurements on that host, including frame-time tails and available
+power/temperature/throttling telemetry. Keep the 60 FPS target and use this
+reference to evaluate subsequent planned work; do not infer a need for a custom
+renderer or engine from utilization percentages alone.

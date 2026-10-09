@@ -1,0 +1,212 @@
+{
+  "complete": true,
+  "exit": 0,
+  "timed_out": false,
+  "elapsed_s": 91.65270279999822,
+  "presentation_samples_valid": true,
+  "engine_errors": false,
+  "phases": [
+    {
+      "phase": "display_only_control",
+      "frames": "266",
+      "mean_frame_ms": "18.8998796992481",
+      "mean_fps": "52.9103896909874",
+      "p50_ms": "16.851",
+      "p95_ms": "33.576",
+      "p99_ms": "52.367",
+      "viewport_gpu_median_ms": "4.47200012207031",
+      "viewport_gpu_p95_ms": "5.92399978637695",
+      "published_edits": "0",
+      "edit_publish_p95_ms": "-1.0",
+      "sdf_pages": "0",
+      "exact_blocks": "0",
+      "cache_estimate_mib": "107.265266418457"
+    },
+    {
+      "phase": "moving_surface",
+      "frames": "301",
+      "mean_frame_ms": "16.6515880398671",
+      "mean_fps": "60.0543322117871",
+      "p50_ms": "16.675",
+      "p95_ms": "19.373",
+      "p99_ms": "20.076",
+      "viewport_gpu_median_ms": "5.27600002288818",
+      "viewport_gpu_p95_ms": "5.7020001411438",
+      "published_edits": "0",
+      "edit_publish_p95_ms": "-1.0",
+      "sdf_pages": "0",
+      "exact_blocks": "0",
+      "cache_estimate_mib": "107.265266418457"
+    },
+    {
+      "phase": "underground",
+      "frames": "300",
+      "mean_frame_ms": "16.6669066666667",
+      "mean_fps": "59.9991360124415",
+      "p50_ms": "16.639",
+      "p95_ms": "19.262",
+      "p99_ms": "20.35",
+      "viewport_gpu_median_ms": "4.70900011062622",
+      "viewport_gpu_p95_ms": "5.30100011825562",
+      "published_edits": "0",
+      "edit_publish_p95_ms": "-1.0",
+      "sdf_pages": "0",
+      "exact_blocks": "0",
+      "cache_estimate_mib": "130.220260620117"
+    },
+    {
+      "phase": "construction",
+      "frames": "300",
+      "mean_frame_ms": "16.6472133333333",
+      "mean_fps": "60.0701138368704",
+      "p50_ms": "16.584",
+      "p95_ms": "20.045",
+      "p99_ms": "20.982",
+      "viewport_gpu_median_ms": "4.69299983978271",
+      "viewport_gpu_p95_ms": "5.34999990463257",
+      "published_edits": "0",
+      "edit_publish_p95_ms": "-1.0",
+      "sdf_pages": "0",
+      "exact_blocks": "0",
+      "cache_estimate_mib": "128.563575744629"
+    },
+    {
+      "phase": "pre_dig",
+      "frames": "301",
+      "mean_frame_ms": "16.6588671096345",
+      "mean_fps": "60.0280915514151",
+      "p50_ms": "16.67",
+      "p95_ms": "20.056",
+      "p99_ms": "20.731",
+      "viewport_gpu_median_ms": "5.32499980926514",
+      "viewport_gpu_p95_ms": "5.75400018692017",
+      "published_edits": "0",
+      "edit_publish_p95_ms": "-1.0",
+      "sdf_pages": "0",
+      "exact_blocks": "0",
+      "cache_estimate_mib": "119.53524017334"
+    },
+    {
+      "phase": "continuous_dig",
+      "frames": "301",
+      "mean_frame_ms": "16.6608405315615",
+      "mean_fps": "60.0209814208142",
+      "p50_ms": "16.716",
+      "p95_ms": "20.701",
+      "p99_ms": "23.628",
+      "viewport_gpu_median_ms": "5.05900001525879",
+      "viewport_gpu_p95_ms": "5.74900007247925",
+      "published_edits": "30",
+      "edit_publish_p95_ms": "35.447",
+      "sdf_pages": "6",
+      "exact_blocks": "0",
+      "cache_estimate_mib": "119.569114685059"
+    },
+    {
+      "phase": "post_dig",
+      "frames": "301",
+      "mean_frame_ms": "16.6546378737542",
+      "mean_fps": "60.0433349304993",
+      "p50_ms": "16.634",
+      "p95_ms": "20.177",
+      "p99_ms": "20.811",
+      "viewport_gpu_median_ms": "5.69199991226196",
+      "viewport_gpu_p95_ms": "6.21600008010864",
+      "published_edits": "0",
+      "edit_publish_p95_ms": "-1.0",
+      "sdf_pages": "6",
+      "exact_blocks": "0",
+      "cache_estimate_mib": "119.569114685059"
+    },
+    {
+      "phase": "whole_map",
+      "frames": "300",
+      "mean_frame_ms": "16.6558166666667",
+      "mean_fps": "60.0390854446245",
+      "p50_ms": "16.636",
+      "p95_ms": "18.983",
+      "p99_ms": "19.374",
+      "viewport_gpu_median_ms": "5.46099996566772",
+      "viewport_gpu_p95_ms": "6.1269998550415",
+      "published_edits": "0",
+      "edit_publish_p95_ms": "-1.0",
+      "sdf_pages": "6",
+      "exact_blocks": "0",
+      "cache_estimate_mib": "119.972938537598"
+    }
+  ],
+  "battery_after": {
+    "ac": 1,
+    "battery_percent": 97
+  },
+  "cpu_samples_valid": true,
+  "cpu_phases": [
+    {
+      "phase": "display_only_control",
+      "samples": 2,
+      "process_machine_mean_percent": 1.243415949128822,
+      "process_machine_max_percent": 1.548368068462457,
+      "process_one_core_max_percent": 18.580416821549484,
+      "system_busy_mean_percent": 30.60490062859731
+    },
+    {
+      "phase": "moving_surface",
+      "samples": 2,
+      "process_machine_mean_percent": 2.4079075213152787,
+      "process_machine_max_percent": 2.4823440935788907,
+      "process_one_core_max_percent": 29.78812912294669,
+      "system_busy_mean_percent": 25.25941823637273
+    },
+    {
+      "phase": "underground",
+      "samples": 2,
+      "process_machine_mean_percent": 2.649983827039335,
+      "process_machine_max_percent": 2.9756167092706214,
+      "process_one_core_max_percent": 35.70740051124746,
+      "system_busy_mean_percent": 29.50790095806893
+    },
+    {
+      "phase": "construction",
+      "samples": 3,
+      "process_machine_mean_percent": 2.714383511152697,
+      "process_machine_max_percent": 3.2912302608115884,
+      "process_one_core_max_percent": 39.49476312973906,
+      "system_busy_mean_percent": 21.685834925985564
+    },
+    {
+      "phase": "pre_dig",
+      "samples": 3,
+      "process_machine_mean_percent": 3.0262345971892715,
+      "process_machine_max_percent": 3.362781390860252,
+      "process_one_core_max_percent": 40.353376690323024,
+      "system_busy_mean_percent": 18.68510750454543
+    },
+    {
+      "phase": "continuous_dig",
+      "samples": 3,
+      "process_machine_mean_percent": 2.7237557277519073,
+      "process_machine_max_percent": 3.031099883143496,
+      "process_one_core_max_percent": 36.37319859772195,
+      "system_busy_mean_percent": 22.424968477381213
+    },
+    {
+      "phase": "post_dig",
+      "samples": 3,
+      "process_machine_mean_percent": 2.5487834558301237,
+      "process_machine_max_percent": 2.584773113990523,
+      "process_one_core_max_percent": 31.017277367886276,
+      "system_busy_mean_percent": 17.08398473366135
+    },
+    {
+      "phase": "whole_map",
+      "samples": 3,
+      "process_machine_mean_percent": 1.8372338154342807,
+      "process_machine_max_percent": 2.102871155970241,
+      "process_one_core_max_percent": 25.23445387164289,
+      "system_busy_mean_percent": 15.241441340935284
+    }
+  ],
+  "process_working_set_peak_mib": 1083.46875,
+  "process_private_commit_peak_mib": 1959.375,
+  "note": "GPU telemetry is whole-device, including other applications. Frame times include pacing; this is a reference measurement, not proof of spare performance or sustained cooling."
+}

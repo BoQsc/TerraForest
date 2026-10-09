@@ -1,0 +1,51 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] BENCHMARK: temporary world; actual 1080p; waiting for complete starting coverage
+[TerrainRewrite] New world
+[TerrainRewrite] New world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+[TerrainRewrite] BENCHMARK 1/8: display_only_control (waiting for collision/LOD cache)
+BENCHMARK_PHASE display_only_control
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+BENCHMARK_MEASURING display_only_control
+[TerrainRewrite] Temporary test world: save skipped
+BENCHMARK_RESULT ["display_only_control", 266, 18.8998796992481, 52.9103896909874, 16.851, 33.576, 52.367, 4.47200012207031, 5.92399978637695, 0, -1.0, 0, 0, 107.265266418457]
+[TerrainRewrite] BENCHMARK 2/8: moving_surface (waiting for collision/LOD cache)
+BENCHMARK_PHASE moving_surface
+[TerrainRewrite] Ready: map coverage and local collision are active
+BENCHMARK_MEASURING moving_surface
+BENCHMARK_RESULT ["moving_surface", 301, 16.6515880398671, 60.0543322117871, 16.675, 19.373, 20.076, 5.27600002288818, 5.7020001411438, 0, -1.0, 0, 0, 107.265266418457]
+[TerrainRewrite] BENCHMARK 3/8: underground (waiting for collision/LOD cache)
+BENCHMARK_PHASE underground
+[TerrainRewrite] Ready: map coverage and local collision are active
+BENCHMARK_MEASURING underground
+BENCHMARK_RESULT ["underground", 300, 16.6669066666667, 59.9991360124415, 16.639, 19.262, 20.35, 4.70900011062622, 5.30100011825562, 0, -1.0, 0, 0, 130.220260620117]
+[TerrainRewrite] BENCHMARK 4/8: construction (waiting for collision/LOD cache)
+BENCHMARK_PHASE construction
+[TerrainRewrite] Ready: map coverage and local collision are active
+BENCHMARK_MEASURING construction
+BENCHMARK_RESULT ["construction", 300, 16.6472133333333, 60.0701138368704, 16.584, 20.045, 20.982, 4.69299983978271, 5.34999990463257, 0, -1.0, 0, 0, 128.563575744629]
+[TerrainRewrite] BENCHMARK 5/8: pre_dig (waiting for collision/LOD cache)
+BENCHMARK_PHASE pre_dig
+[TerrainRewrite] Ready: map coverage and local collision are active
+BENCHMARK_MEASURING pre_dig
+BENCHMARK_RESULT ["pre_dig", 301, 16.6588671096345, 60.0280915514151, 16.67, 20.056, 20.731, 5.32499980926514, 5.75400018692017, 0, -1.0, 0, 0, 119.53524017334]
+[TerrainRewrite] BENCHMARK 6/8: continuous_dig (waiting for collision/LOD cache)
+BENCHMARK_PHASE continuous_dig
+[TerrainRewrite] Ready: map coverage and local collision are active
+BENCHMARK_MEASURING continuous_dig
+BENCHMARK_RESULT ["continuous_dig", 301, 16.6608405315615, 60.0209814208142, 16.716, 20.701, 23.628, 5.05900001525879, 5.74900007247925, 30, 35.447, 6, 0, 119.569114685059]
+[TerrainRewrite] BENCHMARK 7/8: post_dig (waiting for collision/LOD cache)
+BENCHMARK_PHASE post_dig
+[TerrainRewrite] Ready: map coverage and local collision are active
+[TerrainRewrite] Temporary test world: save skipped
+BENCHMARK_MEASURING post_dig
+BENCHMARK_RESULT ["post_dig", 301, 16.6546378737542, 60.0433349304993, 16.634, 20.177, 20.811, 5.69199991226196, 6.21600008010864, 0, -1.0, 6, 0, 119.569114685059]
+[TerrainRewrite] BENCHMARK 8/8: whole_map (waiting for collision/LOD cache)
+BENCHMARK_PHASE whole_map
+[TerrainRewrite] Ready: map coverage and local collision are active
+BENCHMARK_MEASURING whole_map
+BENCHMARK_RESULT ["whole_map", 300, 16.6558166666667, 60.0390854446245, 16.636, 18.983, 19.374, 5.46099996566772, 6.1269998550415, 0, -1.0, 6, 0, 119.972938537598]
+BENCHMARK COMPLETE C:/Users/LENOVO LOQ 15/Documents/ChatGPT/Godot Terrain/TerraForest/reports/runtime_baseline/20261009T145956Z/world.summary.csv
+[TerrainRewrite] Temporary test world: save skipped
