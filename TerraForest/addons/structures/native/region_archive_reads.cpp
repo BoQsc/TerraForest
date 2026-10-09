@@ -42,6 +42,7 @@ int64_t NativeRegionWorldArchive::request_model_metadata(const String &asset,con
 }
 int64_t NativeRegionWorldArchive::request_read(const String &asset,Vector3i region,const PackedByteArray &expected,const PackedByteArray &checkpoint,int64_t epoch,bool metadata) {
     std::lock_guard<std::mutex> lock(read_mutex_);
+    if(checkpoint.size()==32&&checkpoint_sweep_active_) {++read_rejected_;++read_checkpoint_busy_rejections_;return 0;}
     const bool model=!asset.is_empty();
     const int bound=model?32768:16384;
     const int64_t reservation=model?MODEL_READ_BYTES:READ_BYTES;
@@ -54,6 +55,7 @@ int64_t NativeRegionWorldArchive::request_read(const String &asset,Vector3i regi
     RegionRead request;request.ticket=read_next_ticket_++;request.epoch=epoch;request.asset=asset;request.metadata=metadata;
     request.region=region;request.expected=expected;request.checkpoint=checkpoint;
     const int64_t ticket=request.ticket;
+    if(checkpoint.size()==32)++read_checkpoint_refs_[{asset,checkpoint.hex_encode()}];
     read_pending_.push_back(std::move(request));++read_outstanding_;++read_accepted_;
     read_reserved_+=reservation;read_high_requests_=std::max(read_high_requests_,read_outstanding_);
     read_high_bytes_=std::max(read_high_bytes_,read_reserved_);
@@ -104,10 +106,38 @@ Array NativeRegionWorldArchive::poll_reads(int max_results,bool models) {
     std::lock_guard<std::mutex> lock(read_mutex_);
     auto &completed=models?model_read_completed_:read_completed_;
     while(!completed.empty()&&results.size()<max_results) {
-        results.push_back(completed.front());completed.pop_front();
+        const Dictionary &result=completed.front();PackedByteArray checkpoint=result["checkpoint"];
+        if(checkpoint.size()==32)release_checkpoint_ref_locked({String(result.get("asset",String())),checkpoint.hex_encode()});
+        results.push_back(result);completed.pop_front();
         --read_outstanding_;read_reserved_-=models?MODEL_READ_BYTES:READ_BYTES;
     }
     return results;
+}
+
+void NativeRegionWorldArchive::release_checkpoint_ref_locked(const ReadCheckpointKey &key) {
+    auto found=read_checkpoint_refs_.find(key);
+    // release() invalidates disk retention before unread completions are polled.
+    if(found!=read_checkpoint_refs_.end()&&!--found->second)read_checkpoint_refs_.erase(found);
+}
+bool NativeRegionWorldArchive::configure_checkpoint_retention(int limit) {
+    std::lock_guard<std::mutex> lock(read_mutex_);
+    if(limit<1||limit>4096||read_checkpoint_leases_.size()>size_t(limit))return false;
+    read_checkpoint_lease_limit_=limit;return true;
+}
+int64_t NativeRegionWorldArchive::retain_read_checkpoint(const String &asset,const PackedByteArray &checkpoint) {
+    std::lock_guard<std::mutex> lock(read_mutex_);
+    if(checkpoint_sweep_active_) {++read_checkpoint_busy_rejections_;return 0;}
+    if(path_.is_empty()||store_.is_null()||checkpoint.size()!=32||
+       (!asset.is_empty()&&(codec_.is_null()||!codec_->has_asset(asset)))||
+       read_checkpoint_leases_.size()>=size_t(read_checkpoint_lease_limit_)||read_next_lease_==INT64_MAX)return 0;
+    const ReadCheckpointKey key{asset,checkpoint.hex_encode()};
+    const int64_t lease=read_next_lease_++;read_checkpoint_leases_.emplace(lease,key);
+    ++read_checkpoint_refs_[key];return lease;
+}
+bool NativeRegionWorldArchive::release_read_checkpoint(int64_t lease) {
+    std::lock_guard<std::mutex> lock(read_mutex_);
+    auto found=read_checkpoint_leases_.find(lease);if(found==read_checkpoint_leases_.end())return false;
+    release_checkpoint_ref_locked(found->second);read_checkpoint_leases_.erase(found);return true;
 }
 
 void NativeRegionWorldArchive::stop_region_reads() {
@@ -131,6 +161,9 @@ Dictionary NativeRegionWorldArchive::region_read_stats() const {
     out["request_limit"]=read_request_limit_;out["byte_limit"]=read_byte_limit_;
     out["reservation_per_request"]=READ_BYTES;out["high_requests"]=read_high_requests_;out["high_bytes"]=read_high_bytes_;
     out["model_reservation_per_request"]=MODEL_READ_BYTES;
+    out["checkpoint_leases"]=int(read_checkpoint_leases_.size());out["checkpoint_lease_limit"]=read_checkpoint_lease_limit_;
+    out["retained_checkpoint_keys"]=int(read_checkpoint_refs_.size());out["checkpoint_sweep_active"]=checkpoint_sweep_active_;
+    out["checkpoint_busy_rejections"]=read_checkpoint_busy_rejections_;
     out["accepted"]=read_accepted_;out["finished"]=read_finished_;out["rejected"]=read_rejected_;out["worker_starts"]=read_starts_;
     return out;
 }

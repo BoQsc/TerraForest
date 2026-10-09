@@ -32,6 +32,13 @@ class NativeRegionWorldArchive : public RefCounted {
         PackedByteArray expected,checkpoint;
     };
     mutable std::mutex read_mutex_;
+    using ReadCheckpointKey = std::pair<String,String>; // asset (empty for blocks), hex digest
+    std::map<ReadCheckpointKey,uint32_t> read_checkpoint_refs_;
+    std::map<int64_t,ReadCheckpointKey> read_checkpoint_leases_;
+    int read_checkpoint_lease_limit_=1024;
+    int64_t read_next_lease_=1,read_checkpoint_busy_rejections_=0;
+    bool checkpoint_sweep_active_=false;
+    void release_checkpoint_ref_locked(const ReadCheckpointKey &key);
     std::condition_variable read_wake_;
     std::thread read_worker_;
     std::deque<RegionRead> read_pending_;
@@ -65,6 +72,9 @@ public:
     int64_t request_region_read(Vector3i region,const PackedByteArray &expected,const PackedByteArray &checkpoint,int64_t epoch);
     int64_t request_model_region_read(const String &asset,Vector3i region,const PackedByteArray &expected,const PackedByteArray &checkpoint,int64_t epoch);
     int64_t request_model_metadata(const String &asset,const PackedByteArray &checkpoint,int64_t epoch);
+    bool configure_checkpoint_retention(int lease_limit);
+    int64_t retain_read_checkpoint(const String &asset,const PackedByteArray &checkpoint);
+    bool release_read_checkpoint(int64_t lease);
     Array poll_model_region_reads(int max_results=4);
     Array poll_region_reads(int max_results=4);
     void stop_region_reads();

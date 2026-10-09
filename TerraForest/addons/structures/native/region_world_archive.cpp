@@ -7,6 +7,9 @@
 
 namespace terraforest {
 void NativeRegionWorldArchive::_bind_methods() {
+    ClassDB::bind_method(D_METHOD("configure_checkpoint_retention","lease_limit"),&NativeRegionWorldArchive::configure_checkpoint_retention);
+    ClassDB::bind_method(D_METHOD("retain_read_checkpoint","asset","checkpoint"),&NativeRegionWorldArchive::retain_read_checkpoint);
+    ClassDB::bind_method(D_METHOD("release_read_checkpoint","lease"),&NativeRegionWorldArchive::release_read_checkpoint);
     ClassDB::bind_method(D_METHOD("configure","archive","structures_codec","metadata_first"),&NativeRegionWorldArchive::configure,DEFVAL(false));
     ClassDB::bind_method(D_METHOD("acquire","absolute_path"),&NativeRegionWorldArchive::acquire);
     ClassDB::bind_method(D_METHOD("release"),&NativeRegionWorldArchive::release);
@@ -53,7 +56,7 @@ bool NativeRegionWorldArchive::acquire(const String &path) {
 }
 void NativeRegionWorldArchive::release() {
     join_region_reads();
-    {std::lock_guard<std::mutex> lock(read_mutex_);published_keys_=PackedInt32Array();published_checksums_=PackedByteArray();published_checkpoint_=PackedByteArray();}
+    {std::lock_guard<std::mutex> lock(read_mutex_);published_keys_=PackedInt32Array();published_checksums_=PackedByteArray();published_checkpoint_=PackedByteArray();read_checkpoint_leases_.clear();read_checkpoint_refs_.clear();}
     if(store_.is_valid()){store_->close();store_.unref();}
     {std::lock_guard<std::mutex> lock(model_mutex_);for(auto &entry:model_stores_)entry.second->close();model_stores_.clear();}
     if(!path_.is_empty()&&archive_.is_valid())archive_->call("release");path_=String();
@@ -118,8 +121,24 @@ bool NativeRegionWorldArchive::reference_in_file(const String &path,std::set<Str
 }
 bool NativeRegionWorldArchive::retire_unreferenced() {
     std::set<String> keep;
-    if(!reference_in_file(path_,keep)||!reference_in_file(path_+String(".bak"),keep))return false;
     std::map<String,std::set<String>> model_keep;
+    {
+        std::lock_guard<std::mutex> lock(read_mutex_);
+        if(checkpoint_sweep_active_)return false;
+        checkpoint_sweep_active_=true;
+        for(const auto &entry:read_checkpoint_refs_) {
+            if(entry.first.first.is_empty())keep.insert(entry.first.second);
+            else model_keep[entry.first.first].insert(entry.first.second);
+        }
+    }
+    // Never hold the queue lock over disk work. A checkpoint request/lease
+    // arriving during this decision returns backpressure, closing the gap
+    // between sampling retention references and releasing durable pins.
+    struct SweepGuard {
+        std::mutex &mutex;bool &active;
+        ~SweepGuard(){std::lock_guard<std::mutex> lock(mutex);active=false;}
+    } guard{read_mutex_,checkpoint_sweep_active_};
+    if(!reference_in_file(path_,keep)||!reference_in_file(path_+String(".bak"),keep))return false;
     if(!model_references_in_file(path_,model_keep)||!model_references_in_file(path_+String(".bak"),model_keep))return false;
     const PackedByteArray pins=store_->list_checkpoints();
     for(int64_t i=0;i<pins.size();i+=32) {

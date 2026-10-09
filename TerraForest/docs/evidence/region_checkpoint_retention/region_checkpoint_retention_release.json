@@ -1,0 +1,7 @@
+{
+  "checkpoint_busy_rejections": 12,
+  "checks": 29,
+  "failures": 0,
+  "scope": "Automatic outstanding-read retention and bounded explicit block/model checkpoint leases; concurrent saves, cleanup and lifecycle. No rendering/performance qualification.",
+  "library": "structures.windows.template_release.x86_64.dll"
+}

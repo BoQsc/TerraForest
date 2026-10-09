@@ -1,3 +1,30 @@
+## Read checkpoint lifetimes survive save cleanup - 2026-10-09
+
+World-archive cleanup now retains existing checkpoint pins referenced by queued,
+active or unread block/model/metadata reads. Explicit checkpoint leases extend
+retention across future scene/pager work. A configurable bounded handle budget
+(default 1,024; range 1-4,096) supports the 256-asset schema and overlapping
+versions without silently revoking holders. Duplicate holders are independent;
+stale handles cannot release another lifecycle's lease.
+
+Cleanup snapshots retention under the queue mutex, then releases that mutex for
+disk work. New checkpoint requests/leases receive backpressure while the sweep
+is active, preventing a late acquisition from racing pin deletion. Polling and
+lease release do no disk I/O. Closing the archive invalidates retention leases;
+leases do not resurrect already missing versions and require successful exact
+reads before scene installation.
+
+Debug and release each pass 29 checks, including old versions across root
+rotations, 64 reads alongside 16 saves, duplicate/capacity accounting, failed
+cleanup recovery and release/reacquire. The runs exercised 14/12 sweep-busy
+rejections and completed correctly after retry. Existing release suites pass 71
+shared-reader and 82 compound-save checks. Contract and evidence:
+[read checkpoint retention](REGION_CHECKPOINT_RETENTION.md).
+
+Automatic model paging remains unconnected. Shared scheduling, scene handover,
+dirty-save preparation and the unresolved transfer/render timing gates remain;
+this correctness change makes no GPU, frame-time or thermal qualification claim.
+
 ## Cold model regions now retire in bounded native steps - 2026-10-09
 
 Added cooperative retirement for exact saved regions with no active render batch

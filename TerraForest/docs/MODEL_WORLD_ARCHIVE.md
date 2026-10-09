@@ -20,8 +20,8 @@ builds lacking TFMK support cannot read new reference-based model saves.
 2. Publish each model snapshot and pin its exact catalog; pin the block catalog.
 3. Encode the compound root using the block checkpoint and asset-bound model
    references, then atomically publish that root through `NativeWorldArchive`.
-4. Retain all checkpoints named by the actual current and backup roots. Retire
-   other pins only after validating both roots. Inspect at most 32 garbage blob
+4. Retain checkpoints named by current/backup roots, outstanding reads and
+   explicit read leases. Retire other pins only after validating both roots. Inspect at most 32 garbage blob
    entries per open catalog after successful publication.
 
 If root replacement fails after catalog updates, previous current/backup roots
@@ -57,8 +57,11 @@ uses the archive's existing persistent region reader and leased catalogs.
 Registered assets only are accepted. The worker lazily opens existing model
 catalogs without creating missing sidecars; request/poll calls never perform disk
 I/O. Reads require the exact digest from the active or explicitly pinned catalog.
-They do not retain checkpoint pins themselves. A retired unavailable version
-produces a failed completion rather than substituting newer data.
+Checkpoint-bearing requests now retain existing pins until their results are
+polled. Explicit leases extend protection across scene/paging work; request
+admission returns backpressure while cleanup selects removable pins. Already
+retired versions still fail rather than substituting newer data. See
+[checkpoint retention and lease handover](REGION_CHECKPOINT_RETENTION.md).
 
 Blocks and models share FIFO submission, unique tickets and total request/byte
 limits. `poll_model_region_reads` returns only model completions (with asset,
