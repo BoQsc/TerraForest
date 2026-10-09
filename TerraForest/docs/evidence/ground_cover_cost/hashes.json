@@ -1,0 +1,8 @@
+{
+  "tests/ground_cover_cost.gd": "65994b486a7d65a59d163743c8915815ec2a377335d266703d1ba5664b027ca0",
+  "tests/static_shadow_policy.gd": "3bc993c7c39cea5c8e0bfe55bead7bbc72aced5d53c67eb2b69a9061953b277a",
+  "addons/world_ecosystem/ground_cover.gd": "032e38a6aef7393deca149831a16bb7cec5bbfce500c212d7897f73b3ac59128",
+  "addons/structures/native/static_streaming.cpp": "72058d2cb0eebeb6a9ac1be16fcf4e7a84a86b8cd1e58437cd29f425d3d83ce6",
+  "addons/structures/bin/structures.windows.template_debug.x86_64.dll": "490ca4d7af3139a9f292aa324c290e7307aafced15f56a83567294b7c7961f2e",
+  "addons/structures/bin/structures.windows.template_release.x86_64.dll": "0abd5882568b399d617232311453aecdf3667c6702c9b952eeb99058e2b5f4b2"
+}

@@ -43,6 +43,7 @@ func _ready() -> void:
 		add_child(batch)
 		if not batch.configure_asset("ground_cover/%d/v1"%species,_mesh(species)) or not batch.configure_render_streaming(true,[112.0,96.0,80.0][species],128,200000,2,8192):
 			push_error("Ground cover renderer initialization failed");set_process(false);return
+		batch.set_casts_shadows(species==0)
 		batches.append(batch)
 	terrain.surface_batch_ready.connect(_surface_ready)
 	terrain.density_batch_ready.connect(_density_ready)

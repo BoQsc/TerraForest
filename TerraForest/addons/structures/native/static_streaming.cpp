@@ -47,6 +47,7 @@ void NativeStaticBatch::upload_batch(RenderKey page) {
     }
     multi->set_instance_count(count);multi->set_buffer(buffer);
     auto *instance=memnew(MultiMeshInstance3D);instance->set_multimesh(multi);
+    instance->set_cast_shadows_setting(casts_shadows?GeometryInstance3D::SHADOW_CASTING_SETTING_ON:GeometryInstance3D::SHADOW_CASTING_SETTING_OFF);
     instance->set_position(Vector3(key.x*32,key.y*32,key.z*32));
     add_child(instance);batches.emplace(page,instance);
     render_bytes+=count*48;render_uploaded_bytes+=count*48;++uploads;
@@ -126,8 +127,12 @@ void NativeStaticBatch::_process(double) {
         render_pending.pop_back();upload_batch(key);uploaded+=cost;++count;
     }
 }
+void NativeStaticBatch::set_casts_shadows(bool enabled) {
+    casts_shadows=enabled;
+    for(auto &entry:batches)entry.second->set_cast_shadows_setting(enabled?GeometryInstance3D::SHADOW_CASTING_SETTING_ON:GeometryInstance3D::SHADOW_CASTING_SETTING_OFF);
+}
 Dictionary NativeStaticBatch::render_stats() const {
-    Dictionary d;d["enabled"]=render_streaming;d["radius"]=render_radius;
+    Dictionary d;d["enabled"]=render_streaming;d["casts_shadows"]=casts_shadows;d["radius"]=render_radius;
     d["batch_limit"]=render_batch_limit;d["byte_limit"]=int64_t(render_byte_limit);
     d["uploads_per_tick"]=render_upload_limit;d["bytes_per_tick"]=int64_t(render_tick_bytes);
     d["resident_batches"]=int(batches.size());d["resident_instances"]=int(slots.size());

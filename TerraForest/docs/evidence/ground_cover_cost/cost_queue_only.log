@@ -1,0 +1,32 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] New world
+[TerrainRewrite] New world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+PASS world ready
+PASS disabled_a reaches settled workload
+PASS disabled_a has no terrain jobs during stationary capture
+FAIL disabled_a meets existing short-route frame gates
+PASS disabled_a GPU timer is available
+GROUND_COST_PHASE {"arrival_ms":781.332,"phase":"disabled_a","summary":{"draw_calls":{"max":487.0,"median":487.0,"p95":487.0,"p99":487.0},"frame_ms":{"max":20.461,"median":16.699,"p95":19.052,"p99":19.83},"primitives":{"max":2775206.0,"median":2775206.0,"p95":2775206.0,"p99":2775206.0},"process_ms":{"max":15.345,"median":5.77,"p95":15.345,"p99":15.345},"queued":{"max":0.0,"median":0.0,"p95":0.0,"p99":0.0},"render_cpu_ms":{"max":2.00999999046326,"median":1.06599998474121,"p95":1.53900003433228,"p99":1.87100005149841},"render_gpu_ms":{"max":5.53299999237061,"median":4.13500022888184,"p95":5.28700017929077,"p99":5.43599987030029},"static_memory":{"max":216086135.0,"median":215893695.0,"p95":216061259.0,"p99":216075987.0}}}
+PASS enabled_a reaches settled workload
+PASS enabled_a has no terrain jobs during stationary capture
+FAIL enabled_a meets existing short-route frame gates
+PASS enabled_a GPU timer is available
+GROUND_COST_PHASE {"arrival_ms":843.152,"phase":"enabled_a","summary":{"draw_calls":{"max":806.0,"median":806.0,"p95":806.0,"p99":806.0},"frame_ms":{"max":20.378,"median":16.625,"p95":18.948,"p99":19.404},"primitives":{"max":2845110.0,"median":2845110.0,"p95":2845110.0,"p99":2845110.0},"process_ms":{"max":13.864,"median":7.002,"p95":13.864,"p99":13.864},"queued":{"max":0.0,"median":0.0,"p95":0.0,"p99":0.0},"render_cpu_ms":{"max":2.98300004005432,"median":1.67400002479553,"p95":2.12400007247925,"p99":2.7960000038147},"render_gpu_ms":{"max":5.60699987411499,"median":4.17799997329712,"p95":5.375,"p99":5.59100008010864},"static_memory":{"max":218217362.0,"median":218024922.0,"p95":218192486.0,"p99":218207214.0}}}
+PASS enabled_b reaches settled workload
+PASS enabled_b has no terrain jobs during stationary capture
+PASS enabled_b meets existing short-route frame gates
+PASS enabled_b GPU timer is available
+GROUND_COST_PHASE {"arrival_ms":0.018,"phase":"enabled_b","summary":{"draw_calls":{"max":806.0,"median":806.0,"p95":806.0,"p99":806.0},"frame_ms":{"max":20.426,"median":16.675,"p95":18.488,"p99":19.033},"primitives":{"max":2845110.0,"median":2845110.0,"p95":2845110.0,"p99":2845110.0},"process_ms":{"max":7.929,"median":6.817,"p95":7.929,"p99":7.929},"queued":{"max":0.0,"median":0.0,"p95":0.0,"p99":0.0},"render_cpu_ms":{"max":2.76699995994568,"median":1.39900004863739,"p95":1.95899999141693,"p99":2.22300004959106},"render_gpu_ms":{"max":5.26900005340576,"median":4.26300001144409,"p95":5.24399995803833,"p99":5.25899982452393},"static_memory":{"max":218655890.0,"median":218463450.0,"p95":218631014.0,"p99":218645742.0}}}
+PASS disabled_b reaches settled workload
+[TerrainRewrite] Temporary test world: save skipped
+PASS disabled_b has no terrain jobs during stationary capture
+FAIL disabled_b meets existing short-route frame gates
+PASS disabled_b GPU timer is available
+GROUND_COST_PHASE {"arrival_ms":0.021,"phase":"disabled_b","summary":{"draw_calls":{"max":487.0,"median":487.0,"p95":487.0,"p99":487.0},"frame_ms":{"max":20.334,"median":16.586,"p95":19.054,"p99":19.785},"primitives":{"max":2775232.0,"median":2775232.0,"p95":2775232.0,"p99":2775232.0},"process_ms":{"max":7.765,"median":5.715,"p95":7.765,"p99":7.765},"queued":{"max":0.0,"median":0.0,"p95":0.0,"p99":0.0},"render_cpu_ms":{"max":1.83800005912781,"median":1.03400003910065,"p95":1.46899998188019,"p99":1.79700005054474},"render_gpu_ms":{"max":6.88100004196167,"median":4.21999979019165,"p95":5.12099981307983,"p99":5.25299978256226},"static_memory":{"max":217757174.0,"median":217564734.0,"p95":217732298.0,"p99":217747026.0}}}
+PASS fullscreen 1920x1080 at native scale and 60 FPS cap
+PASS tree workload remains identical across paired phases
+[TerrainRewrite] Temporary test world: save skipped
+GROUND_COVER_COST failures=3

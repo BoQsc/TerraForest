@@ -1,0 +1,61 @@
+{
+  "base_commit": "2a2f808",
+  "engine": "4.7.2.stable.steam.ed1daf0bf",
+  "command": "godot --path TerraForest --script res://tests/ground_cover_cost.gd",
+  "generator": 1,
+  "seed": 1703,
+  "temporary_world": true,
+  "hardware": {
+    "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU",
+    "cpu": "12th Gen Intel(R) Core(TM) i5-12450H",
+    "logical_cpus": 12
+  },
+  "presentation": {
+    "fair_graphical_sample": true,
+    "fullscreen": true,
+    "headless": false,
+    "render_scale": 1.0,
+    "viewport": [
+      1920,
+      1080
+    ],
+    "window_mode": 3,
+    "window_size": [
+      1920,
+      1080
+    ]
+  },
+  "correctness": {
+    "shadow_policy_debug": {
+      "checks": 7,
+      "failures": 0
+    },
+    "shadow_policy_clean_release": {
+      "checks": 7,
+      "failures": 0
+    },
+    "ground_cover_stream": {
+      "checks": 83,
+      "failures": 0
+    }
+  },
+  "runs": [
+    {
+      "file": "cost_queue_only.json",
+      "failures": 3,
+      "limitation": "Queue-only idle test missed active terrain worker; 30 warmup frames."
+    },
+    {
+      "file": "cost_before_shadows.json",
+      "failures": 5,
+      "limitation": "Active-worker check added; disabled_a still had terrain work during capture; 30 warmup frames."
+    },
+    {
+      "file": "cost.json",
+      "failures": 2,
+      "change": "Plants and grass stop casting shadows; stones still cast. Warmup requires 60 consecutive settled frames; all captures had no queued or active terrain work."
+    }
+  ],
+  "result": "Total enabled draw calls 806 to 640; disabled 487 in all runs. Ground-cover increment 319 to 153 (~52% fewer). GPU/CPU timing varies; no proven thermal or sustained-60-FPS improvement. Post-change disabled_a and enabled_b fail unchanged frame gates. No additional unchanged reruns.",
+  "scope": "Stationary natural cover, 49 owners, same 2724 trees. Not dense authored support, travel, first-visible latency or endurance qualification. Screenshot captured outside timing."
+}

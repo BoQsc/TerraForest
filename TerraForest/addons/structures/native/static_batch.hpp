@@ -75,6 +75,7 @@ class NativeStaticBatch : public Node3D {
     std::vector<RenderKey> render_pending;
     bool render_streaming=false,render_dirty=true;
     bool collision_only=false;
+    bool casts_shadows=true;
     Vector3 render_focus,render_selection_focus;
     double render_radius=384;
     int render_batch_limit=128,render_upload_limit=2,render_candidates=0,render_blocked=0;
@@ -153,6 +154,7 @@ public:
     bool configure_render_streaming(bool enabled,double radius,int64_t batch_limit,int64_t byte_limit,int64_t uploads_per_tick,int64_t bytes_per_tick);
     void set_render_focus(Vector3 focus);
     Dictionary render_stats() const;
+    void set_casts_shadows(bool enabled);
     bool configure_collision(const AABB &box,double radius,int64_t instance_limit,int64_t builds_per_tick);
     bool configure_compound_collision(const TypedArray<AABB> &boxes,double radius,int64_t instance_limit,int64_t builds_per_tick,int64_t shape_limit,int64_t shapes_per_tick);
     void set_collision_focus(Vector3 focus);

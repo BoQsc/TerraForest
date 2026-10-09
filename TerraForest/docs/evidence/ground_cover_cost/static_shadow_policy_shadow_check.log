@@ -1,0 +1,10 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS native renderer configured
+PASS initial instance accepted
+PASS existing model default still casts shadows
+PASS policy changes existing draw pages without modifying placements
+PASS second spatial group accepted
+PASS newly streamed pages inherit disabled casting
+PASS policy can restore casting on all live pages
+STATIC_SHADOW_POLICY {"checks":7,"failures":0}
