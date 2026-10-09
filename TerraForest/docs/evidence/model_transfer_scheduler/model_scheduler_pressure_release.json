@@ -1,0 +1,28 @@
+{
+  "checks": 17,
+  "collections": 2,
+  "failures": 0,
+  "max_usec": 4235,
+  "p95_usec": 560,
+  "p99_usec": 880,
+  "phases": {
+    "admit": {
+      "elapsed_ms": 7907,
+      "hash_bytes": 22400216,
+      "records": 200000,
+      "ticks": 1146
+    },
+    "retire": {
+      "elapsed_ms": 13313,
+      "hash_bytes": 22400216,
+      "records": 400000,
+      "ticks": 1932
+    }
+  },
+  "records_per_collection": 100000,
+  "scope": "Headless shared transfer stress; fixture creation/save excluded, no renderer, frame pacing, power or thermal qualification.",
+  "ticks": 3078,
+  "timing_limit_usec": 2000,
+  "timing_passed": false,
+  "library": "structures.windows.template_release.x86_64.dll"
+}

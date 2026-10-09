@@ -44,6 +44,8 @@ class NativeRegionWorldArchive : public RefCounted {
     std::deque<RegionRead> read_pending_;
     std::deque<Dictionary> read_completed_;
     std::deque<Dictionary> model_read_completed_;
+    int64_t read_active_model_ticket_=0;
+    bool read_discard_active_=false;
     bool read_running_=false,read_stopping_=false,read_active_=false;
     int read_request_limit_=0,read_outstanding_=0,read_high_requests_=0;
     int64_t read_byte_limit_=0,read_reserved_=0,read_high_bytes_=0,read_next_ticket_=1;
@@ -78,6 +80,8 @@ public:
     bool configure_checkpoint_retention(int lease_limit);
     int64_t retain_read_checkpoint(const String &asset,const PackedByteArray &checkpoint);
     bool release_read_checkpoint(int64_t lease);
+    Dictionary take_model_region_read(int64_t ticket);
+    bool discard_model_region_read(int64_t ticket);
     Array poll_model_region_reads(int max_results=4);
     Array poll_region_reads(int max_results=4);
     void stop_region_reads();

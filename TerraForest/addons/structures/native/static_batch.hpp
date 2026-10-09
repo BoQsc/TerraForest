@@ -15,8 +15,12 @@ namespace terraforest {
 using namespace godot;
 // One shared model per collection. Native spatial partitioning makes culling
 // local; authoring does not create a node for every fence, rung, or prop.
+struct ModelCheckpointLease;
 class NativeStaticBatch : public Node3D {
     GDCLASS(NativeStaticBatch,Node3D)
+    friend class NativeModelTransferScheduler;
+    std::shared_ptr<ModelCheckpointLease> paging_checkpoint;
+    uint64_t paging_owner=0;
     friend class NativeStructuresSnapshot;
     friend class NativeStaticHistory;
     friend class NativeBlockRegionStore;

@@ -1,3 +1,26 @@
+## Shared native model transfer scheduling - 2026-10-09
+
+Added NativeModelTransferScheduler: multiple collections share one records/hash
+bytes/operation/deadline budget, bounded packet/job reservations, strict checkpoint
+reads, priority ordering, focus epochs, cancellation and history-owned transfers.
+Ticket-specific polling/discard avoids consuming other clients' model results.
+Collection-held checkpoint leases survive scheduler replacement; stale callbacks,
+collection destruction and committed-retirement cleanup have explicit handling.
+
+Debug and release pass 42 targeted correctness checks. Existing release regressions
+pass 71 archive-reader, 34 checkpoint and 31 history-admission checks. The separate
+200,000-record pressure test passes 17 correctness checks and preserves exact bytes,
+but FAILS the 2 ms timing gate: maximum 4.235 ms, p95 0.560 ms, p99 0.880 ms.
+Retirement requires 1,932 ticks and admission 1,146 ticks under the shared budget.
+Earlier small release tests also exceeded 2 ms; final debug maximum was 7.413 ms.
+The final small release's 0.303 ms maximum does not establish stable timing.
+
+This scheduler is an explicit native API, not yet automatic game-scene paging.
+Dense arrival latency, time tails, focus selection, metadata-first scene bootstrap,
+checkpoint handover after dirty saves and renderer/collision costs remain open.
+No FPS, GPU usage or thermal improvement is claimed. Contract and exact evidence:
+[shared model scheduler](MODEL_TRANSFER_SCHEDULER.md).
+
 ## Strict checkpoint ownership for region reads - 2026-10-09
 
 Added native block/model checkpoint-only read APIs. Unlike the existing

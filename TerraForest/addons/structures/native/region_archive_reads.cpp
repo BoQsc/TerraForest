@@ -77,6 +77,7 @@ void NativeRegionWorldArchive::run_region_reads(Ref<NativeBlockRegionStore> stor
             read_wake_.wait(lock,[this]{return read_stopping_||!read_pending_.empty();});
             if(read_pending_.empty())break;
             request=std::move(read_pending_.front());read_pending_.pop_front();read_active_=true;
+            read_active_model_ticket_=request.asset.is_empty()?0:request.ticket;read_discard_active_=false;
         }
         // Store locking serializes exact-version reads with catalog mutation and
         // garbage collection. Do not hold the queue mutex across any disk work.
@@ -102,7 +103,12 @@ void NativeRegionWorldArchive::run_region_reads(Ref<NativeBlockRegionStore> stor
         request.expected=PackedByteArray();request.checkpoint=PackedByteArray();
         {
             std::lock_guard<std::mutex> lock(read_mutex_);
-            (request.asset.is_empty()?read_completed_:model_read_completed_).push_back(std::move(result));++read_finished_;read_active_=false;
+            if(read_discard_active_) {
+                PackedByteArray pin=result["checkpoint"];
+                if(pin.size()==32)release_checkpoint_ref_locked({request.asset,pin.hex_encode()});
+                --read_outstanding_;read_reserved_-=MODEL_READ_BYTES;
+            } else (request.asset.is_empty()?read_completed_:model_read_completed_).push_back(std::move(result));
+            ++read_finished_;read_active_=false;read_active_model_ticket_=0;read_discard_active_=false;
         }
     }
     store.unref();
@@ -126,6 +132,33 @@ Array NativeRegionWorldArchive::poll_reads(int max_results,bool models) {
         --read_outstanding_;read_reserved_-=models?MODEL_READ_BYTES:READ_BYTES;
     }
     return results;
+}
+
+// Ticket-specific consumption shares the existing queue accounting and never
+// removes a metadata/region completion owned by a different consumer.
+Dictionary NativeRegionWorldArchive::take_model_region_read(int64_t ticket) {
+    std::lock_guard<std::mutex> lock(read_mutex_);
+    for(auto it=model_read_completed_.begin();it!=model_read_completed_.end();++it)if(int64_t((*it)["ticket"])==ticket) {
+        Dictionary result=*it;PackedByteArray pin=result["checkpoint"];
+        if(pin.size()==32)release_checkpoint_ref_locked({String(result["asset"]),pin.hex_encode()});
+        model_read_completed_.erase(it);--read_outstanding_;read_reserved_-=MODEL_READ_BYTES;return result;
+    }
+    return {};
+}
+bool NativeRegionWorldArchive::discard_model_region_read(int64_t ticket) {
+    if(ticket<=0)return false;
+    std::lock_guard<std::mutex> lock(read_mutex_);
+    for(auto it=read_pending_.begin();it!=read_pending_.end();++it)if(it->ticket==ticket&&!it->asset.is_empty()) {
+        if(it->checkpoint.size()==32)release_checkpoint_ref_locked({it->asset,it->checkpoint.hex_encode()});
+        read_pending_.erase(it);--read_outstanding_;read_reserved_-=MODEL_READ_BYTES;return true;
+    }
+    for(auto it=model_read_completed_.begin();it!=model_read_completed_.end();++it)if(int64_t((*it)["ticket"])==ticket) {
+        PackedByteArray pin=(*it)["checkpoint"];
+        if(pin.size()==32)release_checkpoint_ref_locked({String((*it)["asset"]),pin.hex_encode()});
+        model_read_completed_.erase(it);--read_outstanding_;read_reserved_-=MODEL_READ_BYTES;return true;
+    }
+    if(read_active_model_ticket_==ticket) {read_discard_active_=true;return true;}
+    return false;
 }
 
 void NativeRegionWorldArchive::release_checkpoint_ref_locked(const ReadCheckpointKey &key) {

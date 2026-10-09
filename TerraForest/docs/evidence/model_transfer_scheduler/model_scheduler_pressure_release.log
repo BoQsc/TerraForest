@@ -1,0 +1,21 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS 100000-record collection prepared outside measured ticks
+PASS 100000-record collection prepared outside measured ticks
+PASS dense data persisted and shared reader started outside measured ticks
+PASS dense collection registered
+PASS dense collection registered
+PASS dense job accepted
+PASS dense job accepted
+PASS two dense collections finish with one aggregate budget
+PASS dense logical residency agrees with operation
+PASS dense logical residency agrees with operation
+PASS dense job accepted
+PASS dense job accepted
+PASS two dense collections finish with one aggregate budget
+PASS dense logical residency agrees with operation
+PASS dense logical residency agrees with operation
+PASS 100000-record region restored byte-exactly
+PASS 100000-record region restored byte-exactly
+{"checks":17,"collections":2,"failures":0,"max_usec":4235,"p95_usec":560,"p99_usec":880,"phases":{"admit":{"elapsed_ms":7907,"hash_bytes":22400216,"records":200000,"ticks":1146},"retire":{"elapsed_ms":13313,"hash_bytes":22400216,"records":400000,"ticks":1932}},"records_per_collection":100000,"scope":"Headless shared transfer stress; fixture creation/save excluded, no renderer, frame pacing, power or thermal qualification.","ticks":3078,"timing_limit_usec":2000,"timing_passed":false}
+

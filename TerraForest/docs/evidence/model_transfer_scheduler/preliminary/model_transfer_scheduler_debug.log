@@ -1,0 +1,30 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS two saved collections share one archive read worker
+PASS scheduler validates shared job and payload budgets
+PASS collections reserve checkpoint leases
+PASS two schedulers cannot control one collection
+PASS duplicate region jobs are rejected with monotonic tickets
+PASS higher-priority collection starts before earlier lower-priority request
+PASS scheduler leaves another consumer's metadata completion untouched
+PASS requested jobs terminate within short fixture timeout
+PASS both collections retire under one global records/hash/operations budget
+PASS unrelated editor undo/redo survives shared retirement
+PASS new focus epoch cancels an admission after partial staging
+PASS requested jobs terminate within short fixture timeout
+PASS cancelled staging rolls back both collections without losing reserved IDs
+PASS stale focus epoch cannot enqueue new work
+PASS requested jobs terminate within short fixture timeout
+PASS new epoch restores exact saved transforms in both collections
+PASS cancellation can arrive after logical retirement commits
+PASS requested jobs terminate within short fixture timeout
+PASS committed retirement finishes bounded cleanup instead of pretending to roll back
+PASS unregister retains backing lease only for the unavailable collection
+PASS later world save publishes while detached collection retains old checkpoint
+PASS later world save publishes while detached collection retains old checkpoint
+PASS later world save publishes while detached collection retains old checkpoint
+PASS collection-owned lease survives scheduler destruction and root rotations
+PASS replacement scheduler adopts retained collection checkpoint
+PASS exceptional scheduler destruction rolls back owned staging and leaves backing lease with collection
+PASS collection destruction releases the final checkpoint lease
+MODEL_TRANSFER_SCHEDULER checks=27 failures=0 max_tick_usec=2230

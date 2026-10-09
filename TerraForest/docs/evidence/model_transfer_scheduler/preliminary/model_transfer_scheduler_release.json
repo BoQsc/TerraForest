@@ -1,0 +1,9 @@
+{
+  "checks": 41,
+  "failures": 0,
+  "maximum_observed_tick_usec": 5364,
+  "scope": "Shared native model transfer correctness and aggregate work budgets; not rendered frame or thermal qualification.",
+  "tick_observation_limit_usec": 2000,
+  "tick_observation_passed": false,
+  "library": "structures.windows.template_release.x86_64.dll"
+}

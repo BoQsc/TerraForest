@@ -1,0 +1,4 @@
+{
+  "library_sha256": "2b008e3f2be8b8c97eae467f1699c61f03c68d0a9aed46975e9616b70051daa4",
+  "note": "Pressure test and archived regressions used this release build. Final code subsequently counts destroyed-collection cleanup toward the operations budget and simplifies registration condition; live-collection pressure transfer path is unchanged. Earlier correctness release outliers are retained under preliminary."
+}

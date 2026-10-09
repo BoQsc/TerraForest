@@ -1,0 +1,35 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS fixture has dense region and two unrelated loaded regions
+PASS journal registers collection
+PASS fixture retains both undo and redo stacks
+PASS unreferenced region unload preserves history
+PASS journal admission returns generation ticket
+PASS journal cannot reconfigure away from an owned transfer
+PASS raw callers cannot advance or cancel journal-owned work
+PASS wrong ticket cannot advance or cancel active generation
+PASS another registered journal cannot steal ownership
+PASS journal advance preserves hidden partial state
+PASS unrelated undo and redo remain usable between admission steps
+PASS journal-owned admission or rollback terminates
+PASS owned admission publishes exact region
+PASS publication observer sees intact stacks and rejects reentrant journal commands
+PASS undo and redo remain exact after publication
+PASS completed ticket cannot replay publication
+PASS stale generation cannot advance replacement admission
+PASS journal-owned admission or rollback terminates
+PASS journal cancellation drains through bounded rollback
+PASS cancelled transfer preserves both stacks and identities
+PASS journal-owned admission or rollback terminates
+PASS checksum failure preserves both journal stacks
+PASS journal-owned admission or rollback terminates
+PASS external mutation during publication still creates a history barrier
+PASS orphan fixture unloads
+PASS destroyed journal releases raw cancellation capability
+PASS orphan rollback preserves stored-region reservations
+PASS raw transfer can start after orphan cleanup
+PASS journal cannot adopt an unrelated raw transfer
+PASS remaining journal can start its own transfer
+PASS destroyed collection does not pin journal configuration
+MODEL_ADMISSION_HISTORY checks=31 failures=0
+

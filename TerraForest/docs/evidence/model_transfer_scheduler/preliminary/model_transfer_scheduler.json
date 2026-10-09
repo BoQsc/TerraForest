@@ -1,0 +1,6 @@
+{
+  "checks": 27,
+  "failures": 0,
+  "maximum_observed_tick_usec": 2230,
+  "scope": "Shared native model transfer correctness and aggregate work budgets; not rendered frame or thermal qualification."
+}

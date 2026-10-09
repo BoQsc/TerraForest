@@ -97,8 +97,9 @@ python TerraForest/tools/test_native_release.py --godot <engine.exe> --addon str
 
 Evidence: [reports and exact build hashes](evidence/region_checkpoint_retention/).
 This is storage correctness/lifetime validation, not a frame-time or sustained
-thermal test. Automatic model paging remains unconnected: shared scheduling,
-scene handover, dirty-save preparation and transfer/renderer timing gates remain.
+thermal test. Automatic model paging remains unconnected. The [shared scheduler](MODEL_TRANSFER_SCHEDULER.md)
+now supports explicit model transfers; scene handover, dirty-save preparation
+and transfer/renderer timing gates remain.
 No file format or licensing changes were introduced; the added implementation is
 project-owned 0BSD C++ using the existing pinned prebuilt godot-cpp toolchain.
 
