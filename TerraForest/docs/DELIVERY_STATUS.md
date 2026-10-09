@@ -1,3 +1,18 @@
+## New-host runtime reference recorded - 2026-10-09
+
+Recorded the missing graphical baseline at revision `d8cd97a`, labeled
+`baseline/lenovo-rtx4050-20261009`. Eight existing scripted world phases completed
+at actual 1920x1080 fullscreen, VSync and 60 FPS cap on the RTX 4050, with an
+isolated initially empty terrain cache. All phase means were approximately
+60 FPS; continuous digging frame p99 was 25.41 ms. Whole-device GPU power was
+9.67 W median / 19.32 W peak, with 42 C peak temperature over the 91-second run.
+No sustained thermal, dense-city or broad performance qualification is implied.
+
+The preceding hardware inventory alone was not a runtime baseline. This new
+reference includes work completed since migration and must not be used as a
+retroactive before-measurement or a software speedup against the old laptop.
+See [conditions, measurements and repeat command](RUNTIME_BASELINE_LENOVO_20261009.md).
+
 ## Dense model transfer gate exposes save bug and runtime stalls - 2026-10-09
 
 A short density probe found that valid model blobs above 4 MiB failed publication:

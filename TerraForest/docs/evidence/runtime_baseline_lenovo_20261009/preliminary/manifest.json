@@ -1,0 +1,94 @@
+{
+  "utc": "20261009T144440Z",
+  "revision": {
+    "exit": 0,
+    "stdout": "9cb72ca94431ed962ac97c5004308857e5e82c0a",
+    "stderr": ""
+  },
+  "worktree": {
+    "exit": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\godot.windows.opt.tools.64.exe",
+    "--path",
+    "C:\\Users\\LENOVO LOQ 15\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+    "--rendering-method",
+    "forward_plus",
+    "--rendering-driver",
+    "vulkan",
+    "--fullscreen",
+    "--resolution",
+    "1920x1080",
+    "--max-fps",
+    "60",
+    "--script",
+    "res://tests/runtime_baseline.gd",
+    "--",
+    "--benchmark",
+    "--temporary",
+    "--seconds=5",
+    "--max-fps=60",
+    "--world-generator=1",
+    "--world-seed=1703",
+    "--out=C:/Users/LENOVO LOQ 15/Documents/ChatGPT/Godot Terrain/TerraForest/reports/runtime_baseline/20261009T144440Z/world"
+  ],
+  "source_and_dll_sha256": {
+    "project.godot": "73f96ea3b899c39a2ef03b617aab848f8540e7ccf267ccfdd6131993bdf14a88",
+    "demo\\benchmark.gd": "6c42bfa174375fec757ba0cb5408fbd16803b04816a873077b33e8d217da744f",
+    "tests\\runtime_baseline.gd": "c733add061f901e228e6fa5887f3569ff64ac3e603128dcb7a8208a6856af558",
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "6cc7bd2a903f2fcda6cd4aab01837c21e6d863e92bff4845997a3775558bdccd",
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "6411d5e5d7e3a7c1eda47fc2e6e38aec08c68f332548f3c0512008250cecb77a",
+    "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "1c063d954d06d3e3a8ee694e71514ab0d8183382e880f4a12ae8fddaf74c6384",
+    "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "082b1c26f67870c21c5f0036a4ddbdc1c7d0727ae13c72d174671719ac15d56d",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "fe71cc8f3774b21597a5a9f5bee49180d7b1dbb4413ff3df18c453f4c42a20a3",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "4ada673d54fe3263c0f0673db603f373d38ff2c4569d23cff3127fb90bea5f36",
+    "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "7cc91fec7fa7c41f58717c09293956175e607cf503f96fdcb478948ce6aa2bf0",
+    "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "572d8a31e5978fd321a1e6ab103fb34b2961ede2252dc4beebefc6177f912e10",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "273b1c42a1ef55f2441338efbb700ce411357423bd2c8a74fedc7540d124f79d",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "fd286371d1cbf1bc5503fec123ec0e333501ac2e008c8057fe3607247248ed5f",
+    "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "9113ff3ab26fe4fe4b814e3637e116423f0e2f7fbdef180824a0966b16a56567",
+    "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "04f6040c29d8f0cebb80cb5e8734de9f38881a2cbf788284295d55360e1b44e0",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "074c14e3ec40b2214530b48841fd96c1e44cd7118ba33b39f5baf8150c40d85f",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "c9b32f740a79f448caceb0514e0e59d206913f8e33aba193a1f09ee72a2015a3"
+  },
+  "engine_version": {
+    "exit": 0,
+    "stdout": "4.7.2.stable.steam.ed1daf0bf",
+    "stderr": ""
+  },
+  "cpu": {
+    "exit": 0,
+    "stdout": "{\n    \"Name\":  \"12th Gen Intel(R) Core(TM) i5-12450H\",\n    \"NumberOfCores\":  8,\n    \"NumberOfLogicalProcessors\":  12\n}",
+    "stderr": ""
+  },
+  "ram": {
+    "exit": 0,
+    "stdout": "[\n    {\n        \"Capacity\":  8589934592,\n        \"ConfiguredClockSpeed\":  4800\n    },\n    {\n        \"Capacity\":  8589934592,\n        \"ConfiguredClockSpeed\":  4800\n    }\n]",
+    "stderr": ""
+  },
+  "power_plan": {
+    "exit": 0,
+    "stdout": "Power Scheme GUID: 381b4222-f694-41f0-9685-ff5bb260df2e  (Balanced)",
+    "stderr": ""
+  },
+  "processor_policy": {
+    "exit": 0,
+    "stdout": "Power Scheme GUID: 381b4222-f694-41f0-9685-ff5bb260df2e  (Balanced)\n  GUID Alias: SCHEME_BALANCED\n  Subgroup GUID: 54533251-82be-4824-96c1-47b60b740d00  (Processor power management)\n    GUID Alias: SUB_PROCESSOR\n    Power Setting GUID: 893dee8e-2bef-41e0-89c6-b55d0929964c  (Minimum processor state)\n      GUID Alias: PROCTHROTTLEMIN\n      Minimum Possible Setting: 0x00000000\n      Maximum Possible Setting: 0x00000064\n      Possible Settings increment: 0x00000001\n      Possible Settings units: %\n    Current AC Power Setting Index: 0x00000005\n    Current DC Power Setting Index: 0x00000005\n\n    Power Setting GUID: bc5038f7-23e0-4960-96da-33abaf5935ec  (Maximum processor state)\n      GUID Alias: PROCTHROTTLEMAX\n      Minimum Possible Setting: 0x00000000\n      Maximum Possible Setting: 0x00000064\n      Possible Settings increment: 0x00000001\n      Possible Settings units: %\n    Current AC Power Setting Index: 0x00000064\n    Current DC Power Setting Index: 0x00000064",
+    "stderr": ""
+  },
+  "battery_before": {
+    "ac": 1,
+    "battery_percent": 97
+  },
+  "nvidia_before": {
+    "exit": 0,
+    "stdout": "name, driver_version, pstate, power.draw [W], temperature.gpu, utilization.gpu [%]\nNVIDIA GeForce RTX 4050 Laptop GPU, 617.14, P8, 2.67 W, 39, 19 %",
+    "stderr": ""
+  },
+  "vendor_thermal_mode": "unknown; user settings unchanged",
+  "windows_power_overlay": "unknown; user settings unchanged",
+  "cache": "Fresh temporary world; existing engine shader/import caches retained. Derived cache state recorded in observations.",
+  "scope": "Eight fixed 5-second phases after 3-second warmups; short reference, not endurance, multiplayer, large-city or thermal equilibrium qualification."
+}

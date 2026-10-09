@@ -49,5 +49,7 @@ attribute cross-machine differences to code changes.
   prove the old machine meets the target or establish long-session stability.
 
 This inventory is a provenance record, not a performance benchmark. A controlled
-new-machine runtime baseline remains to be measured when the next relevant
-test is run.
+short runtime baseline was subsequently recorded at revision `d8cd97a`, with
+raw evidence and the label `baseline/lenovo-rtx4050-20261009`. See
+[new-host runtime baseline](RUNTIME_BASELINE_LENOVO_20261009.md) for measured
+frame times, power/temperature, repeat conditions and qualification limits.

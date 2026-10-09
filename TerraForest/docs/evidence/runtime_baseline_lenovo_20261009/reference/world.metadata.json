@@ -1,0 +1,22 @@
+{
+	"engine": {
+		"build": "steam",
+		"hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+		"hex": 263938,
+		"major": 4,
+		"minor": 7,
+		"patch": 2,
+		"status": "stable",
+		"string": "4.7.2-stable (steam)",
+		"timestamp": 0
+	},
+	"fps_cap": 60,
+	"gpu_timer_note": "Unavailable/zero timers are not evidence of zero GPU work; external device power CSV is separate.",
+	"msaa": 1,
+	"project_version": "1.0.0-dev",
+	"render_method": "forward_plus",
+	"shadows": true,
+	"temporary_world": true,
+	"video_adapter": "NVIDIA GeForce RTX 4050 Laptop GPU",
+	"viewport": "1920x1080"
+}

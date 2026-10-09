@@ -1,0 +1,46 @@
+{
+  "power_w": {
+    "samples": 82,
+    "min": 6.5,
+    "median": 9.67,
+    "p95": 16.19,
+    "max": 19.32
+  },
+  "temperature_c": {
+    "samples": 82,
+    "min": 40.0,
+    "median": 41.0,
+    "p95": 42.0,
+    "max": 42.0
+  },
+  "utilization_percent": {
+    "samples": 82,
+    "min": 0.0,
+    "median": 37.0,
+    "p95": 41.0,
+    "max": 57.0
+  },
+  "vram_mib": {
+    "samples": 82,
+    "min": 757.0,
+    "median": 1633.0,
+    "p95": 1659.0,
+    "max": 1662.0
+  },
+  "graphics_clock_mhz": {
+    "samples": 82,
+    "min": 450.0,
+    "median": 780.0,
+    "p95": 2130.0,
+    "max": 2130.0
+  },
+  "max_measured_frame_ms": 25.983,
+  "measured_frames": 2406,
+  "godot_static_memory_peak_mib": 355.0938835144043,
+  "measured_tree_range": [
+    0,
+    1793
+  ],
+  "ac_connected_all_samples": true,
+  "scope": "GPU aggregate covers the entire 91-second run and other applications; frame samples cover measured phases only. Godot static memory is not process RSS."
+}
