@@ -1,0 +1,36 @@
+{
+  "cells": 1872,
+  "generator": 4,
+  "lake_count": 4,
+  "presentation": {
+    "fair_graphical_sample": true,
+    "fullscreen": true,
+    "headless": false,
+    "render_scale": 1.0,
+    "viewport": [
+      1920,
+      1080
+    ],
+    "window_mode": 3,
+    "window_size": [
+      1920,
+      1080
+    ]
+  },
+  "road_count": 4,
+  "seed": 1703,
+  "slot": "furnished_world_1791580614470719600",
+  "target": [
+    807,
+    47,
+    1310
+  ],
+  "source_slot": "connected_world_1791575954752530900",
+  "scope": "Four cottages, 12 static furniture objects, connected roads, original generated terrain/lake definitions, forest and opt-in ground cover. Cloned source archive plus matching .regions/.models sidecars into fresh slot; source checkpoint unchanged. Fixture authoring uses native editor history insertion. Whole-world manual save and fresh-process exact addon checks pass; central aisle capsule sweeps pass in all four rooms. Not general navigation or combined performance qualification.",
+  "reproduce": "Create a separate copy of the source slot and both sidecar directories, write its new slot into reports/furnished_world/manifest.json, then run tests/furnished_world.gd -- --world-slot=NEW_SLOT --ground-cover; repeat with --reopen-furnished. Never run creation against a populated furniture slot.",
+  "hashes": {
+    "tests/furnished_world.gd": "914d204424fe897925275b7aaeccec34e697d779055e9f03c37859284a582922",
+    "tools/play_connected_world.py": "474a0a997aea3a6c46c52a2cc0ba74610568d527f76dc20ae7de3a220b65ec92",
+    "Play Furnished Settlement.cmd": "f5b21be2241d03039936be9800db0660395e6003c86c2bb32260e97ebed74175"
+  }
+}

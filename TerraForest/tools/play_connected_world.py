@@ -13,8 +13,10 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--godot")
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--furnished", action="store_true", help="Open the separate furnished checkpoint")
     args = parser.parse_args()
-    manifest = json.loads((ROOT / "docs/evidence/connected_world/manifest.json").read_text())
+    relative = "docs/evidence/furnished_world/manifest.json" if args.furnished else "docs/evidence/connected_world/manifest.json"
+    manifest = json.loads((ROOT / relative).read_text())
     slot = manifest["slot"]
     if not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]{0,47}", slot):
         parser.error("Checkpoint manifest has an invalid slot")
@@ -22,6 +24,8 @@ def main():
     if not save.is_file():
         parser.error("This locally generated checkpoint save is missing. See docs/CONNECTED_WORLD_CHECKPOINT.md; the repository does not contain user saves.")
     launch_args = ["--slot", slot]
+    if args.furnished:
+        launch_args += ["--ground-cover"]
     if args.godot:
         launch_args += ["--godot", args.godot]
     config, extra = parse_args(launch_args)

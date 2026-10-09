@@ -52,3 +52,9 @@ M2 continues with vegetation variety, richer building/interior content and a
 representative combined performance checkpoint. Mining continuity, dense streaming,
 multiplayer and endurance remain tracked separately. No runtime or save-format
 change was required to pass this persistence check.
+
+## Furnished checkpoint
+
+Run [Play Furnished Settlement.cmd](../Play%20Furnished%20Settlement.cmd) for the separate furnished copy, with ground cover enabled. It starts on foot inside the first cottage. All four cottages contain a table, chair and shelf; the original checkpoint remains unchanged. Use M for the object tool, E to select, and F5 to save. The furniture is static: sitting and container storage are not implemented.
+
+The local slot and source-copy provenance are in [the furnished manifest](evidence/furnished_world/manifest.json). As with the original checkpoint, user saves are not distributed in Git. Creation and fresh-process reload checks verify exact furniture and other addon snapshots plus central aisle capsule clearance. These checks do not establish general navigation, travel or mixed-workload performance.

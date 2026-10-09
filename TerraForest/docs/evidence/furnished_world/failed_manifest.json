@@ -1,0 +1,29 @@
+{
+  "cells": 1872,
+  "generator": 4,
+  "lake_count": 4,
+  "presentation": {
+    "fair_graphical_sample": true,
+    "fullscreen": true,
+    "headless": false,
+    "render_scale": 1.0,
+    "viewport": [
+      1920,
+      1080
+    ],
+    "window_mode": 3,
+    "window_size": [
+      1920,
+      1080
+    ]
+  },
+  "road_count": 4,
+  "seed": 1703,
+  "slot": "furnished_world_1791580478791403000",
+  "target": [
+    807,
+    47,
+    1310
+  ],
+  "source_slot": "connected_world_1791575954752530900"
+}
