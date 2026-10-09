@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: 0BSD
 extends RefCounted
 const SCAN_LIMIT:=4096
+const SurfaceTokens=preload("res://addons/volumetric_terrain/surface_tokens.gd")
 # Orchestration only: footprint generation and density sampling are native.
 var points:=PackedVector3Array()
 var offset:=0
@@ -31,7 +32,7 @@ func tick(terrain: Node) -> void:
 		status="Terrain changed; place again";return
 	if Time.get_ticks_msec()>deadline: status="Terrain check timed out; place again";return
 	if waiting: return
-	token+=1
+	token=SurfaceTokens.allocate()
 	var batch:=PackedVector3Array()
 	if clearance:
 		for page_offset in range(offset,mini(offset+SCAN_LIMIT,clearance_total),512):

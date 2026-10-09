@@ -59,6 +59,10 @@ func run() -> void:
 	check(visible.size()==3 and visible[0].ids.is_empty() and visible[2].ids.is_empty() and visible[1].ids==PackedInt64Array([keys[2]]),"structure and water masks exclude exact authored identities")
 	check(filtered.capture_storage_snapshot()==source and filtered.query_filtered(Vector2i(30,30),PackedByteArray([0,0,0]),PackedByteArray([0,0,0]))==filtered.query(Vector2i(30,30)),"exclusion preserves durable records and removing exclusion restores originals")
 	check(filtered.query_filtered(Vector2i(30,30),PackedByteArray(),PackedByteArray([0,0,0])).is_empty(),"mismatched authored exclusion mask rejects rather than publishing partial data")
+	check(filtered.support_points(Vector2i(30,30)).size()==6,"authored support generates two bounded density probes per item")
+	check(filtered.support_mask(PackedFloat32Array([-1,1,1,1,-1,-1]),PackedByteArray([0,0,0]))==PackedByteArray([0,1,1]),"support mask distinguishes supported floating and buried placements")
+	check(filtered.support_mask(PackedFloat32Array([1,1,1,-1,NAN,1]),PackedByteArray([1,1,1]))==PackedByteArray([0,1,1]),"structure support permits floor placement but not terrain burial or invalid samples")
+	check(filtered.support_mask(PackedFloat32Array([1]),PackedByteArray([0])).is_empty(),"partial density reply rejected")
 	DirAccess.make_dir_recursive_absolute("res://reports")
 	var report:={"checks":checks,"failures":failures}
 	var file:=FileAccess.open("res://reports/ground_cover_state.json",FileAccess.WRITE)

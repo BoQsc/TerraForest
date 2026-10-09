@@ -1,0 +1,15 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS stepped and elevated columns accepted
+PASS lowest cell per column and below-base centre probes
+PASS rotation follows integer cell placement
+PASS half turn preserves stepped base heights
+PASS three quarter turn follows cell-centred convention
+PASS explicit base band excludes elevated columns
+PASS rejected configure preserves cached footprint
+PASS invalid placement rejects without overflow
+PASS four cottage frontage composed
+PASS frontage retains 396 actual foundation columns without street probes
+PASS actual graded terrain supports all foundation centre probes
+PASS local excavation exposes unsupported foundation probes
+PASS empty reconfiguration clears cached footprint

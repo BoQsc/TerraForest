@@ -1,0 +1,29 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS unbound empty snapshot is valid
+PASS unbound state cannot accept edits
+PASS matching generation profile binds idempotently
+PASS different seed or generator is rejected
+PASS natural removal range and duplicates validated
+PASS authored identity is separate from all natural identities
+PASS cell query returns only requested species and owner
+PASS other and invalid cells do not expose record
+PASS fresh native state restores exact profile removals and placements
+PASS restored state cannot silently apply to a different seed
+PASS malformed header counts IDs species transforms and lengths reject without mutation
+PASS deleted authored IDs are never reused
+PASS other state edits do not mutate captured snapshot
+PASS per-cell limit rejects atomically at 256 authored placements
+PASS full cell does not prevent placement in another cell
+PASS invalid positions and species rejected
+PASS explicit empty-world restore clears old edit ownership
+PASS authored samples use the same species order as packed queries
+PASS structure and water masks exclude exact authored identities
+PASS exclusion preserves durable records and removing exclusion restores originals
+PASS mismatched authored exclusion mask rejects rather than publishing partial data
+PASS authored support generates two bounded density probes per item
+PASS support mask distinguishes supported floating and buried placements
+PASS structure support permits floor placement but not terrain burial or invalid samples
+PASS partial density reply rejected
+GROUND_COVER_STATE {"checks":25,"failures":0}
+

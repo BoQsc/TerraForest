@@ -87,6 +87,22 @@ func run() -> void:
 		await settle_cover(cover)
 		check(cover.batches[target_species].get_ids().has(4294967296),"removing water restores same authored item")
 		game.lakes.set_process(true)
+	if "--mine-ground" in OS.get_cmdline_user_args():
+		var record: PackedFloat32Array=cover.batches[target_species].get_instance(4294967296)
+		var point:=Vector3(record[3],record[7],record[11])
+		var before_edits: PackedByteArray=cover.removed.capture_storage_snapshot()
+		var distant:=Vector2i(-1,-1)
+		for owner: Vector2i in cover.resident:
+			if Vector2(owner.x*32+16,owner.y*32+16).distance_to(Vector2(point.x,point.z))>70: distant=owner;break
+		var before_distant: Array=cover.resident[distant].duplicate(true)
+		check(game.terrain.sculpt_sphere(point,2.5,false),"actual mining edit accepted beneath authored item")
+		deadline=Time.get_ticks_msec()+20000
+		while game.terrain.pending_edit and Time.get_ticks_msec()<deadline: await process_frame
+		check(not game.terrain.pending_edit,"mining publishes before support revalidation")
+		await settle_cover(cover)
+		check(not cover.batches[target_species].get_ids().has(4294967296),"mined-away support removes floating authored item from rendering")
+		check(not cover.picker.pick(point+Vector3.UP*0.3,point).hit,"mined-away support removes interaction proxy")
+		check(cover.removed.capture_storage_snapshot()==before_edits and cover.resident[distant]==before_distant,"mining preserves authored record and distant resident identities")
 	var render:=[]
 	for batch in cover.batches:
 		var stats: Dictionary=batch.render_stats();render.append(stats)
@@ -117,5 +133,5 @@ func run() -> void:
 
 func settle_cover(cover: Node) -> void:
 	var deadline:=Time.get_ticks_msec()+10000
-	while (not cover._dirty.is_empty() or not cover._requests.is_empty()) and Time.get_ticks_msec()<deadline: await process_frame
-	check(cover._dirty.is_empty() and cover._requests.is_empty(),"local exclusion update completes")
+	while (not cover._dirty.is_empty() or not cover._requests.is_empty() or not cover._support_job.is_empty()) and Time.get_ticks_msec()<deadline: await process_frame
+	check(cover._dirty.is_empty() and cover._requests.is_empty() and cover._support_job.is_empty(),"local exclusion update completes")

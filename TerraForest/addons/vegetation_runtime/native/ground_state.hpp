@@ -46,6 +46,8 @@ protected:
         ClassDB::bind_method(D_METHOD("erase","id"),&NativeGroundCoverState::erase);
         ClassDB::bind_method(D_METHOD("query","cell"),&NativeGroundCoverState::query);
         ClassDB::bind_method(D_METHOD("sample_transforms","cell"),&NativeGroundCoverState::sample_transforms);
+        ClassDB::bind_method(D_METHOD("support_points","cell"),&NativeGroundCoverState::support_points);
+        ClassDB::bind_method(D_METHOD("support_mask","values","structures"),&NativeGroundCoverState::support_mask);
         ClassDB::bind_method(D_METHOD("query_filtered","cell","blocked","water"),&NativeGroundCoverState::query_filtered);
         ClassDB::bind_method(D_METHOD("capture_storage_snapshot"),&NativeGroundCoverState::capture_storage_snapshot);
         ClassDB::bind_method(D_METHOD("validate_snapshot","data"),&NativeGroundCoverState::validate_snapshot);
@@ -94,6 +96,15 @@ public:
             Transform3D t;for(int r=0;r<3;++r){for(int c=0;c<3;++c)t.basis[r][c]=p.t[r*4+c];t.origin[r]=p.t[r*4+3];}out.append(t);
         }
         return out;
+    }
+    PackedVector3Array support_points(Vector2i key) const{
+        PackedVector3Array out;auto poses=sample_transforms(key);
+        for(int64_t i=0;i<poses.size();++i){Transform3D t=poses[i];out.append(t.origin-Vector3(0,.35,0));out.append(t.origin+Vector3(0,.35,0));}return out;
+    }
+    PackedByteArray support_mask(const PackedFloat32Array &values,const PackedByteArray &structures) const{
+        PackedByteArray out;if(structures.size()>256||values.size()!=structures.size()*2)return out;
+        out.resize(structures.size());
+        for(int64_t i=0;i<structures.size();++i){float below=values[i*2],above=values[i*2+1];out.set(i,!std::isfinite(below)||!std::isfinite(above)||above<0||(below>=0&&!structures[i]));}return out;
     }
     Array query_filtered(Vector2i key,const PackedByteArray &blocked,const PackedByteArray &water) const{
         if(key.x<0||key.y<0||key.x>=63||key.y>=63)return Array();

@@ -1,0 +1,10 @@
+{
+  "addons/vegetation_runtime/native/ground_state.hpp": "cb63d045ddd2658559f31b14830b8105d1641c82260bcfc13789cfeb56218c1c",
+  "addons/vegetation_runtime/bin/vegetation_runtime.windows.template_debug.x86_64.dll": "6227865a76bd8afd0dafc06f8367d0cc8774fa5e696852434fa3c9773a7569a2",
+  "addons/vegetation_runtime/bin/vegetation_runtime.windows.template_release.x86_64.dll": "f3d877739ecdd4e95b51d4862b1b9582f129e7625d5d246aae816e9fa83bdc8b",
+  "addons/world_ecosystem/ground_cover.gd": "f9c7af91f35c3221af745f299f5c0370de2456833e0a306b4ae8411f0b9c364b",
+  "addons/structures/foundation_check.gd": "d47c49ef737cf817b3efeaa2648434a7798ee72dfc53745d63b99600dc48e9cf",
+  "tests/ground_cover_interaction_world.gd": "fe2ac35707b6793899e9678288cbe316869636a0b861b59fc00db340517a7fd0",
+  "tests/ground_cover_stream.gd": "992100e5399b72890e66813992a777667896788ac35f4cfb8dd8dd0aba6b579d",
+  "tests/ground_cover_state.gd": "ea3ab93c2b3b85be6c1fadba966a00514f0d5d8800bfd5946bee73d759a2b598"
+}

@@ -18,6 +18,8 @@ var _pending: Dictionary={}
 var _dirty: Dictionary={}
 var _last_cell:=Vector2i(-999,-999)
 var rejected_batches:=0
+var _support_job: Dictionary={}
+var _exclusion_revision:=0
 
 func prepare(persistence: RefCounted) -> bool:
 	for addon in ["vegetation_runtime","structures"]:
@@ -43,6 +45,7 @@ func _ready() -> void:
 			push_error("Ground cover renderer initialization failed");set_process(false);return
 		batches.append(batch)
 	terrain.surface_batch_ready.connect(_surface_ready)
+	terrain.density_batch_ready.connect(_density_ready)
 	terrain.region_changed.connect(_terrain_changed)
 	terrain.reload_started.connect(reset)
 	if structures!=null: structures.vegetation_changed.connect(_exclusion_changed)
@@ -77,7 +80,7 @@ func _mesh(species: int) -> Mesh:
 
 func reset() -> void:
 	for key in resident: _retire(key)
-	resident.clear();_wanted.clear();_dirty.clear();_pending.clear();_requests.clear()
+	resident.clear();_wanted.clear();_dirty.clear();_pending.clear();_requests.clear();_support_job.clear()
 	_last_cell=Vector2i(-999,-999)
 
 func _retire(key: Vector2i) -> void:
@@ -100,6 +103,10 @@ func _process(_delta: float) -> void:
 			if not _wanted.has(key):
 				_retire(key);resident.erase(key);_dirty.erase(key)
 	if terrain.pending_edit or _requests.size()>=1: return
+	if not _support_job.is_empty():
+		if not _support_job.waiting:
+			_support_job.waiting=terrain.request_density_batch(_support_job.points,_support_job.token)
+		return
 	for key in _wanted:
 		if (resident.has(key) and not _dirty.has(key)) or _pending.has(key): continue
 		var data: Dictionary=native.candidates(key,seed)
@@ -126,23 +133,45 @@ func _surface_ready(token: int,points: PackedVector3Array,normals: PackedVector3
 	var packed: Array=native.pack(placed.ids,placed.transforms,mask)
 	if packed.size()!=3: rejected_batches+=1;return
 	var authored_poses: Array[Transform3D]=removed.sample_transforms(request.key)
+	if authored_poses.is_empty():
+		_publish(request.key,packed,authored_poses,PackedByteArray());return
+	_support_job={"key":request.key,"packed":packed,"poses":authored_poses,"points":removed.support_points(request.key),"token":Tokens.allocate(),"waiting":false,"epoch":epoch,"revision":revision,"density_revision":terrain.density_revision,"exclusion_revision":_exclusion_revision}
+	_pending[request.key]=-1
+
+func _density_ready(result: Dictionary) -> void:
+	if _support_job.is_empty() or result.token!=_support_job.token: return
+	var job:=_support_job;_support_job={};_pending.erase(job.key)
+	if job.exclusion_revision!=_exclusion_revision or not _wanted.has(job.key) or result.status!="ok" or result.epoch!=terrain.epoch or job.epoch!=terrain.epoch or result.revision!=job.density_revision or terrain.density_revision!=job.density_revision or terrain.published_revision!=job.revision or terrain.pending_edit: return
+	var structure_support:=PackedByteArray();structure_support.resize(job.poses.size())
+	if structures!=null:
+		var probes: Array[Transform3D]=[]
+		for pose: Transform3D in job.poses: probes.append(Transform3D(Basis.IDENTITY,pose.origin-Vector3.UP*0.05))
+		structure_support=structures.overlap_mask(probes,AABB(Vector3.ONE*-0.03,Vector3.ONE*0.06))
+	var unsupported: PackedByteArray=removed.support_mask(result.values,structure_support)
+	if unsupported.size()!=job.poses.size(): rejected_batches+=1;return
+	_publish(job.key,job.packed,job.poses,unsupported)
+
+func _publish(key: Vector2i,packed: Array,authored_poses: Array[Transform3D],unsupported: PackedByteArray) -> void:
 	var authored_blocked:=PackedByteArray();authored_blocked.resize(authored_poses.size())
 	var authored_water:=PackedByteArray();authored_water.resize(authored_poses.size())
 	if structures!=null: authored_blocked=structures.overlap_mask(authored_poses,AABB(Vector3(-0.4,0,-0.4),Vector3(0.8,0.8,0.8)))
 	if water!=null: authored_water=water.placement_mask(authored_poses)
-	var authored: Array=removed.query_filtered(request.key,authored_blocked,authored_water)
+	if authored_blocked.size()!=unsupported.size(): rejected_batches+=1;return
+	for i in range(unsupported.size()):
+		if unsupported[i]: authored_blocked[i]=1
+	var authored: Array=removed.query_filtered(key,authored_blocked,authored_water)
 	if authored.size()!=3: rejected_batches+=1;return
 	for species in range(3):
 		packed[species].ids.append_array(authored[species].ids)
 		packed[species].transforms.append_array(authored[species].transforms)
-	if resident.get(request.key,[])==packed: _dirty.erase(request.key);return
-	var previous: Array=resident.get(request.key,[])
-	if not picker.replace_cell(request.key,packed): rejected_batches+=1;return
+	if resident.get(key,[])==packed: _dirty.erase(key);return
+	var previous: Array=resident.get(key,[])
+	if not picker.replace_cell(key,packed): rejected_batches+=1;return
 	for species in range(3):
 		if not batches[species].upsert_instances(packed[species].ids,packed[species].transforms):
 			# Restore interaction and all collections if any publication fails.
-			if previous.is_empty(): picker.remove_cell(request.key)
-			else: picker.replace_cell(request.key,previous)
+			if previous.is_empty(): picker.remove_cell(key)
+			else: picker.replace_cell(key,previous)
 			for rollback in range(3):
 				batches[rollback].remove_instances(packed[rollback].ids)
 				if not previous.is_empty(): batches[rollback].upsert_instances(previous[rollback].ids,previous[rollback].transforms)
@@ -153,10 +182,11 @@ func _surface_ready(token: int,points: PackedVector3Array,normals: PackedVector3
 			for id in previous[species].ids:
 				if not packed[species].ids.has(id): retired.append(id)
 			batches[species].remove_instances(retired)
-	resident[request.key]=packed;_dirty.erase(request.key)
+	resident[key]=packed;_dirty.erase(key)
 
 func _terrain_changed(bounds: AABB,_revision: int) -> void: _exclusion_changed(bounds)
 func _exclusion_changed(bounds: AABB) -> void:
 	for key: Vector2i in _wanted:
 		var owner:=AABB(Vector3(key.x*32,bounds.position.y,key.y*32),Vector3(32,maxf(1,bounds.size.y),32)).grow(8.0)
-		if bounds.size==Vector3.ZERO or owner.intersects(bounds): _dirty[key]=true
+		if bounds.size==Vector3.ZERO or owner.intersects(bounds):
+			_dirty[key]=true;_exclusion_revision+=1
