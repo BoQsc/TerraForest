@@ -66,7 +66,7 @@ bool NativeStaticBatch::configure_collision(const AABB &box,double radius,int64_
     return configure_compound_collision(boxes,radius,instance_limit,builds_per_tick,4096,64);
 }
 bool NativeStaticBatch::configure_compound_collision(const TypedArray<AABB> &boxes,double radius,int64_t instance_limit,int64_t builds_per_tick,int64_t shape_limit,int64_t shapes_per_tick) {
-    if(!unloaded_regions.empty())return false; // Retained bounds use the current prototype.
+    if(admission||!unloaded_regions.empty())return false; // Retained bounds use the current prototype.
     if(boxes.is_empty()||boxes.size()>32||!std::isfinite(radius)||radius<0||radius>512||
        instance_limit<1||instance_limit>4096||builds_per_tick<1||builds_per_tick>64||
        shape_limit<boxes.size()||shape_limit>16384||shapes_per_tick<boxes.size()||shapes_per_tick>256)return false;
@@ -121,7 +121,7 @@ void NativeStaticBatch::select_proxies() {
     collision_dirty=false;selection_focus=collision_focus;proxy_queries++;invalid_proxies=0;
     std::vector<std::pair<double,int64_t>> candidates;
     double range=(proxy_radius+4)*(proxy_radius+4);
-    for(auto &group:collision_bounds)if(box_distance_squared(group.second,collision_focus)<=range) {
+    for(auto &group:collision_bounds)if(!retirement_locks(group.first)&&box_distance_squared(group.second,collision_focus)<=range) {
         for(auto id:groups.at(group.first)) {
             double distance=box_distance_squared(placement_transform(placements.at(id)).xform(proxy_box),collision_focus);
             if(distance<=range)candidates.emplace_back(distance,id);
@@ -149,7 +149,9 @@ void NativeStaticBatch::_physics_process(double) {
     int build_limit=std::min(proxy_build_limit,proxy_shapes_per_tick/int(proxy_parts.size()));
     for(int i=0;i<build_limit&&!collision_pending.empty();i++) {
         int64_t id=collision_pending.back();collision_pending.pop_back();
-        Transform3D world=current*placement_transform(placements.at(id));
+        auto pending=placements.find(id);
+        if(pending==placements.end()||retirement_locks(group_for(pending->second)))continue;
+        Transform3D world=current*placement_transform(pending->second);
         std::vector<PackedVector3Array> hulls;
         bool finite=world.origin.is_finite();
         for(const AABB &part:proxy_parts) {

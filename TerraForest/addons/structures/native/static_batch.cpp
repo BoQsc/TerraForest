@@ -7,6 +7,9 @@
 namespace terraforest {
 NativeStaticBatch::NativeStaticBatch() {set_notify_transform(true);}
 void NativeStaticBatch::_bind_methods() {
+    ClassDB::bind_method(D_METHOD("begin_region_retirement","bytes"),&NativeStaticBatch::begin_region_retirement);
+    ClassDB::bind_method(D_METHOD("advance_region_retirement","max_records","max_hash_bytes","max_usec"),&NativeStaticBatch::advance_region_retirement);
+    ClassDB::bind_method(D_METHOD("cancel_region_retirement"),&NativeStaticBatch::cancel_region_retirement);
     ClassDB::bind_method(D_METHOD("begin_region_admission","bytes"),&NativeStaticBatch::begin_region_admission);
     ClassDB::bind_method(D_METHOD("advance_region_admission","max_records","max_hash_bytes","max_usec"),&NativeStaticBatch::advance_region_admission);
     ClassDB::bind_method(D_METHOD("cancel_region_admission"),&NativeStaticBatch::cancel_region_admission);
@@ -61,7 +64,7 @@ bool NativeStaticBatch::placement_clear(const PackedFloat32Array &transform,cons
     if(source_mesh.is_null()||transform.size()!=12||!valid_transform(transform.ptr())||!protection.position.is_finite()||!protection.size.is_finite()||
        protection.size.x<0||protection.size.y<0||protection.size.z<0)return false;
     Placement p;std::copy(transform.ptr(),transform.ptr()+12,p.begin());
-    if(unloaded_regions.count(group_for(p)))return false;
+    if(unloaded_regions.count(group_for(p))||retirement_locks(group_for(p)))return false;
     if(protection.size.x>0&&protection.size.y>0&&protection.size.z>0) {
         Transform3D frame=is_inside_tree()?get_global_transform():get_transform();
         if(!frame.is_finite()||std::abs(frame.basis.determinant())<1e-12)return false;
@@ -94,6 +97,7 @@ bool NativeStaticBatch::valid_asset(const String &id) {
     return true;
 }
 bool NativeStaticBatch::configure_asset(const String &id,const Ref<Mesh> &mesh) {
+    if(admission)return false;
     if(!unloaded_regions.empty()&&(id!=asset_id||mesh!=source_mesh))return false;
     if(!valid_asset(id)||mesh.is_null()||((asset_locked||!placements.empty())&&!asset_id.is_empty()&&asset_id!=id))return false;
     bool changed=asset_id!=id||source_mesh!=mesh;
@@ -143,9 +147,9 @@ bool NativeStaticBatch::upsert_instances(const PackedInt64Array &ids,const Packe
         int64_t id=ids[i];const float *t=transforms.ptr()+i*12;
         if(id<=0||staged.count(id)||unloaded_ids.count(id)||!valid_transform(t))return false;
         Placement p;std::copy(t,t+12,p.begin());staged.emplace(id,p);
-        if(unloaded_regions.count(group_for(p)))return false;
+        if(unloaded_regions.count(group_for(p))||retirement_locks(group_for(p)))return false;
         auto old=placements.find(id);
-        if(old!=placements.end()) {if(unloaded_regions.count(group_for(old->second)))return false;delta(group_for(old->second),-1);}else added++;
+        if(old!=placements.end()) {if(unloaded_regions.count(group_for(old->second))||retirement_locks(group_for(old->second)))return false;delta(group_for(old->second),-1);}else added++;
         delta(group_for(p),1);
     }
     if(placements.size()+unloaded_ids.size()+added>100000)return false;
@@ -198,7 +202,7 @@ bool NativeStaticBatch::upsert_instances(const PackedInt64Array &ids,const Packe
 }
 bool NativeStaticBatch::remove_instances(const PackedInt64Array &ids) {
     if(ids.size()>100000)return false;std::set<int64_t> unique;
-    for(int64_t id:ids)if(id<=0||!placements.count(id)||unloaded_regions.count(group_for(placements.at(id)))||!unique.insert(id).second)return false;
+    for(int64_t id:ids)if(id<=0||!placements.count(id)||unloaded_regions.count(group_for(placements.at(id)))||retirement_locks(group_for(placements.at(id)))||!unique.insert(id).second)return false;
     std::set<BlockKey> touched;
     for(auto id:unique) {
         invalidate_proxy(id);
@@ -208,7 +212,7 @@ bool NativeStaticBatch::remove_instances(const PackedInt64Array &ids) {
     rebuild(touched);if(!touched.empty())publish_change();return true;
 }
 bool NativeStaticBatch::set_instances(const Ref<Mesh> &mesh,const PackedFloat32Array &transforms) {
-    if(!unloaded_regions.empty())return false;
+    if(admission||!unloaded_regions.empty())return false;
     if(mesh.is_null()||transforms.size()%12||transforms.size()>1200000)return false;
     std::map<int64_t,Placement> staged;std::map<BlockKey,std::set<int64_t>> staged_groups;
     for(int64_t i=0;i<transforms.size()/12;i++) {
@@ -227,7 +231,7 @@ PackedFloat32Array NativeStaticBatch::get_instance(int64_t id) const {
     PackedFloat32Array result;auto it=placements.find(id);if(it==placements.end()||unloaded_regions.count(group_for(it->second)))return result;
     result.resize(12);std::copy(it->second.begin(),it->second.end(),result.ptrw());return result;
 }
-PackedInt64Array NativeStaticBatch::get_ids() const {PackedInt64Array out;out.resize(placements.size()-admitting_count());int i=0;for(auto &e:placements)if(!unloaded_regions.count(group_for(e.second)))out.set(i++,e.first);return out;}
+PackedInt64Array NativeStaticBatch::get_ids() const {PackedInt64Array out;out.resize(placements.size()-hidden_record_count());int i=0;for(auto &e:placements)if(!unloaded_regions.count(group_for(e.second)))out.set(i++,e.first);return out;}
 static PackedByteArray checksum(const PackedByteArray &bytes) {Ref<HashingContext> h;h.instantiate();h->start(HashingContext::HASH_SHA256);h->update(bytes);return h->finish();}
 PackedByteArray NativeStaticBatch::capture_snapshot() const {
     if(!unloaded_regions.empty())return {};
@@ -273,7 +277,7 @@ bool NativeStaticBatch::restore_snapshot(const PackedByteArray &bytes) {
     rebuild(touched);publish_change();return true;
 }
 Dictionary NativeStaticBatch::stats() const {
-    Dictionary d;d["instances"]=int(placements.size()-admitting_count());d["staged_instances"]=int(admitting_count());d["spatial_batches"]=int(batches.size());d["transform_bytes"]=int(placements.size())*48;
+    Dictionary d;d["instances"]=int(placements.size()-hidden_record_count());d["staged_instances"]=int(admission_retiring?0:hidden_record_count());d["retiring_instances"]=int(admission_retiring?hidden_record_count():0);d["spatial_batches"]=int(batches.size());d["transform_bytes"]=int(placements.size())*48;
     d["asset_id"]=asset_id;d["batch_uploads"]=int64_t(uploads);d["instance_updates"]=int64_t(instance_updates);d["slot_entries"]=int(slots.size());return d;
 }
 }

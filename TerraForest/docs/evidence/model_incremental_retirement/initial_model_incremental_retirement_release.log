@@ -1,0 +1,54 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS fixture creates 32 cold records
+PASS journal starts cold region retirement
+PASS admission APIs cannot drive or cancel retirement ticket
+PASS raw caller cannot replace or cancel journal-owned retirement
+PASS validation keeps whole live region readable
+PASS validation locks removals, moves and insertions in target region
+PASS whole replacement and prototype mutation cannot invalidate validation
+PASS unrelated journal editing remains usable during validation
+PASS retirement terminates within record/hash work limits
+PASS prepublication cancellation preserves all live records
+PASS availability publishes once with hidden records and intact history
+PASS all retiring records remain logically reserved before cleanup
+PASS save during cleanup references whole exact disk region and only unrelated live records
+PASS published retirement must finish cleanup before reload
+PASS unrelated undo and redo remain usable during cleanup
+PASS retirement terminates within record/hash work limits
+PASS bounded cleanup removes every target transform
+PASS cleanup does not add another history barrier
+PASS retired region reloads byte exactly with history intact
+PASS journal-pinned region cannot retire
+PASS retirement terminates within record/hash work limits
+PASS stale packet cannot discard newer transform
+PASS fixture creates 32 cold records
+PASS retirement terminates within record/hash work limits
+PASS signed invalid final record leaves entire live region unchanged
+PASS retirement terminates within record/hash work limits
+PASS corrupt checksum cannot retire live data
+PASS retirement terminates within record/hash work limits
+PASS bitwise signed-zero change rejects stale retirement
+PASS fixture creates 32 cold records
+PASS active rendered region cannot retire
+PASS physics residency independently prevents retirement
+PASS region becomes eligible after render and physics owners release it
+PASS focus movement cannot readmit resources into locked retirement
+PASS retirement terminates within record/hash work limits
+PASS cold region can cancel when focus returns
+PASS cancelled retirement permits render and physics admission again
+PASS fixture creates 100000 cold records
+PASS dense fixture persists and reads back exact region before retirement
+PASS retirement terminates within record/hash work limits
+PASS 100000-record retirement removes all transforms without losing identities
+PASS disk reload reconstructs dense retired region byte exactly
+RETIREMENT_STEPS retire steps=1 max_us=17
+RETIREMENT_STEPS retire steps=32 max_us=9
+RETIREMENT_STEPS retire steps=1 max_us=33
+RETIREMENT_STEPS retire steps=1 max_us=33
+RETIREMENT_STEPS retire steps=1 max_us=35
+RETIREMENT_STEPS retire steps=1 max_us=39
+RETIREMENT_STEPS retire steps=1 max_us=14
+RETIREMENT_STEPS dense steps=955 max_us=3556
+MODEL_INCREMENTAL_RETIREMENT checks=42 failures=0 qualified=false
+

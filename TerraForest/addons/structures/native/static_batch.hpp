@@ -34,9 +34,10 @@ class NativeStaticBatch : public Node3D {
     bool unload_region_impl(const PackedByteArray &packet);
     bool restore_region_impl(const PackedByteArray &packet);
     struct RegionAdmission {
-        enum Phase { OUTER_HASH, INNER_HASH, RECORDS, ROLLBACK } phase=OUTER_HASH;
+        enum Phase { OUTER_HASH, INNER_HASH, RECORDS, ROLLBACK, RETIRE_RECORDS } phase=OUTER_HASH;
         BlockKey key;
-        uint64_t history_owner=0;
+        uint64_t history_owner=0,validated_records=0;
+        bool retiring=false;
         PackedByteArray packet;
         Ref<HashingContext> hash;
         uint64_t offset=0,record_offset=0,count=0;
@@ -49,11 +50,13 @@ class NativeStaticBatch : public Node3D {
     std::unique_ptr<RegionAdmission> admission;
     String admission_result="idle",admission_error;
     uint64_t admission_step_records=0,admission_step_bytes=0;
-    bool admission_busy=false;
+    bool admission_busy=false,admission_retiring=false;
+    bool begin_region_transfer(const PackedByteArray &bytes,bool retiring);
+    bool retirement_locks(BlockKey key) const;
     uint64_t admission_ticket=0;
     bool admission_owned();
     Dictionary advance_region_admission_impl(int64_t max_records,int64_t max_hash_bytes,int64_t max_usec);
-    size_t admitting_count() const { return admission?admission->ids.size():0; }
+    size_t hidden_record_count() const { return admission?admission->ids.size():0; }
     void fail_admission(const String &error);
     using RenderKey = std::pair<BlockKey,uint32_t>;
     std::map<RenderKey,MultiMeshInstance3D*> batches;
@@ -115,6 +118,9 @@ protected:
     void _notification(int what);
 public:
     bool begin_region_admission(const PackedByteArray &bytes);
+    bool begin_region_retirement(const PackedByteArray &bytes);
+    Dictionary advance_region_retirement(int64_t max_records,int64_t max_hash_bytes,int64_t max_usec);
+    bool cancel_region_retirement();
     Dictionary advance_region_admission(int64_t max_records,int64_t max_hash_bytes,int64_t max_usec);
     bool cancel_region_admission();
     Dictionary region_admission_stats() const;

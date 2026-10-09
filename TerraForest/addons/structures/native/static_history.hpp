@@ -27,11 +27,17 @@ class NativeStaticHistory : public RefCounted {
     void publish(NativeStaticBatch *collection);
     bool replay(bool backwards,const AABB &protection);
     bool region_referenced(uint64_t collection,BlockKey region) const;
+    int64_t begin_owned_transfer(NativeStaticBatch *collection,const PackedByteArray &packet,bool retiring);
+    Dictionary advance_owned_transfer(NativeStaticBatch *collection,int64_t ticket,int64_t records,int64_t bytes,int64_t usec,bool retiring);
+    bool cancel_owned_transfer(NativeStaticBatch *collection,int64_t ticket,bool retiring);
     bool transfer_region(NativeStaticBatch *collection,const PackedByteArray &packet,bool restore);
     static PackedFloat32Array packed(const NativeStaticBatch::Placement &value);
 protected:
     static void _bind_methods();
 public:
+    int64_t begin_region_retirement(NativeStaticBatch *collection,const PackedByteArray &packet);
+    Dictionary advance_region_retirement(NativeStaticBatch *collection,int64_t ticket,int64_t max_records,int64_t max_hash_bytes,int64_t max_usec);
+    bool cancel_region_retirement(NativeStaticBatch *collection,int64_t ticket);
     int64_t begin_region_admission(NativeStaticBatch *collection,const PackedByteArray &packet);
     Dictionary advance_region_admission(NativeStaticBatch *collection,int64_t ticket,int64_t max_records,int64_t max_hash_bytes,int64_t max_usec);
     bool cancel_region_admission(NativeStaticBatch *collection,int64_t ticket);

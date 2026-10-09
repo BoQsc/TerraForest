@@ -3,6 +3,9 @@
 
 namespace terraforest {
 void NativeStaticHistory::_bind_methods() {
+    ClassDB::bind_method(D_METHOD("begin_region_retirement","collection","packet"),&NativeStaticHistory::begin_region_retirement);
+    ClassDB::bind_method(D_METHOD("advance_region_retirement","collection","ticket","max_records","max_hash_bytes","max_usec"),&NativeStaticHistory::advance_region_retirement);
+    ClassDB::bind_method(D_METHOD("cancel_region_retirement","collection","ticket"),&NativeStaticHistory::cancel_region_retirement);
     ClassDB::bind_method(D_METHOD("begin_region_admission","collection","packet"),&NativeStaticHistory::begin_region_admission);
     ClassDB::bind_method(D_METHOD("advance_region_admission","collection","ticket","max_records","max_hash_bytes","max_usec"),&NativeStaticHistory::advance_region_admission);
     ClassDB::bind_method(D_METHOD("cancel_region_admission","collection","ticket"),&NativeStaticHistory::cancel_region_admission);
@@ -132,30 +135,38 @@ Dictionary NativeStaticHistory::stats() {
     out["byte_limit"]=int64_t(byte_limit);out["step_limit"]=step_limit;out["collections"]=int(revisions.size());
     out["barriers"]=int64_t(barriers);out["unrecorded_edits"]=int64_t(unrecorded);out["busy"]=busy;return out;
 }
-int64_t NativeStaticHistory::begin_region_admission(NativeStaticBatch *collection,const PackedByteArray &packet) {
+int64_t NativeStaticHistory::begin_region_admission(NativeStaticBatch *collection,const PackedByteArray &packet) {return begin_owned_transfer(collection,packet,false);}
+int64_t NativeStaticHistory::begin_region_retirement(NativeStaticBatch *collection,const PackedByteArray &packet) {return begin_owned_transfer(collection,packet,true);}
+int64_t NativeStaticHistory::begin_owned_transfer(NativeStaticBatch *collection,const PackedByteArray &packet,bool retiring) {
     if(busy)return 0;synchronize();
     if(!registered(collection)||packet.size()<24)return 0;
     BlockKey region{int(packet.decode_s32(8)),int(packet.decode_s32(12)),int(packet.decode_s32(16))};
-    if(region_referenced(collection->get_instance_id(),region)||!collection->begin_region_admission(packet))return 0;
+    if(region_referenced(collection->get_instance_id(),region)||!collection->begin_region_transfer(packet,retiring))return 0;
     collection->admission->history_owner=get_instance_id();
     return int64_t(collection->admission_ticket);
 }
-Dictionary NativeStaticHistory::advance_region_admission(NativeStaticBatch *collection,int64_t ticket,int64_t records,int64_t bytes,int64_t usec) {
+Dictionary NativeStaticHistory::advance_region_admission(NativeStaticBatch *collection,int64_t ticket,int64_t records,int64_t bytes,int64_t usec) {return advance_owned_transfer(collection,ticket,records,bytes,usec,false);}
+Dictionary NativeStaticHistory::advance_region_retirement(NativeStaticBatch *collection,int64_t ticket,int64_t records,int64_t bytes,int64_t usec) {return advance_owned_transfer(collection,ticket,records,bytes,usec,true);}
+Dictionary NativeStaticHistory::advance_owned_transfer(NativeStaticBatch *collection,int64_t ticket,int64_t records,int64_t bytes,int64_t usec,bool retiring) {
     Dictionary denied;denied["accepted"]=false;
     if(busy)return denied;synchronize();
     if(!registered(collection)||ticket<=0||uint64_t(ticket)!=collection->admission_ticket||
-       !collection->admission||collection->admission->history_owner!=get_instance_id())return denied;
+       !collection->admission||collection->admission->retiring!=retiring||collection->admission->history_owner!=get_instance_id())return denied;
     busy=true;collection->defer_change_signal=true;
+    const uint64_t revision=collection->edit_revision;
     Dictionary result=collection->advance_region_admission_impl(records,bytes,usec);
     result["accepted"]=true;
-    if(!collection->admission&&collection->admission_result=="complete")publish(collection);
+    if(collection->edit_revision!=revision)publish(collection);
     else {collection->defer_change_signal=false;busy=false;}
     return result;
 }
-bool NativeStaticHistory::cancel_region_admission(NativeStaticBatch *collection,int64_t ticket) {
+bool NativeStaticHistory::cancel_region_admission(NativeStaticBatch *collection,int64_t ticket) {return cancel_owned_transfer(collection,ticket,false);}
+bool NativeStaticHistory::cancel_region_retirement(NativeStaticBatch *collection,int64_t ticket) {return cancel_owned_transfer(collection,ticket,true);}
+bool NativeStaticHistory::cancel_owned_transfer(NativeStaticBatch *collection,int64_t ticket,bool retiring) {
     if(busy)return false;synchronize();
     if(!registered(collection)||ticket<=0||uint64_t(ticket)!=collection->admission_ticket||
-       !collection->admission||collection->admission->history_owner!=get_instance_id()||collection->admission_busy)return false;
+       !collection->admission||collection->admission->retiring!=retiring||collection->admission->phase==NativeStaticBatch::RegionAdmission::RETIRE_RECORDS||
+       collection->admission->history_owner!=get_instance_id()||collection->admission_busy)return false;
     collection->fail_admission("cancelled");return true;
 }
 bool NativeStaticHistory::region_referenced(uint64_t collection,BlockKey region) const {

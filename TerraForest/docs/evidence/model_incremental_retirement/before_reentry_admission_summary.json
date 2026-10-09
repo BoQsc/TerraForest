@@ -1,0 +1,8 @@
+{
+  "source": "Earlier release validation tool output in this task, before the raw reentry counter guard; full per-call file was superseded by final regression.",
+  "checks": 42,
+  "failures": 0,
+  "runtime_admission_qualified": false,
+  "dense_success_max_us": 3214,
+  "late_failure_max_us": 7395
+}

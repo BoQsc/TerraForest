@@ -1,3 +1,26 @@
+## Cold model regions now retire in bounded native steps - 2026-10-09
+
+Added cooperative retirement for exact saved regions with no active render batch
+or physics proxy. It validates checksums and live records in steps, locks only the
+target region against authoring, publishes unavailable metadata once, and removes
+hidden transforms under a record budget. Unrelated editing and undo/redo survive.
+Cancellation before publication restores eligibility; after publication cleanup
+must finish before reload. Save captures never include a surviving record prefix.
+
+Debug and release each pass 56 checks, including 100,000-record disk round trip,
+render/physics eligibility, returning focus, signed-zero stale data, empty regions,
+capacity changes, reentrant observers and orphan cleanup. Existing release suites
+pass 58 region/history, 31 admission-history and 42 admission correctness checks.
+The final release retirement sample has 262 us p95 and 2,967 us maximum per call;
+its 2 ms timing gate remains RED. The final debug gate passed, but earlier failed
+samples are preserved and no stability qualification is claimed.
+
+Contract, remaining costs and raw evidence:
+[cold-model retirement](MODEL_INCREMENTAL_RETIREMENT.md).
+Automatic world paging remains disconnected pending shared scheduling, storage
+lifetime/dirty-save handling, latency and dense renderer/physics qualification.
+No additional graphical or thermal run was performed.
+
 ## Cooperative model admission preserves editor history - 2026-10-09
 
 `NativeStaticHistory` now owns incremental admission through generation tickets.

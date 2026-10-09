@@ -158,10 +158,10 @@ bool NativeStaticBatch::restore_region_impl(const PackedByteArray &bytes) {
 }
 Dictionary NativeStaticBatch::region_stats() const {
     Dictionary out;out["region_edge_m"]=32;out["resident_regions"]=int(groups.size());
-    out["unloaded_regions"]=int(unloaded_regions.size());out["resident_instances"]=int(placements.size()-admitting_count());out["staged_instances"]=int(admitting_count());
-    out["reserved_ids"]=int(unloaded_ids.size()+admitting_count());out["logical_instances"]=int(placements.size()+unloaded_ids.size());
+    out["unloaded_regions"]=int(unloaded_regions.size());out["resident_instances"]=int(placements.size()-hidden_record_count());out["staged_instances"]=int(admission_retiring?0:hidden_record_count());out["retiring_instances"]=int(admission_retiring?hidden_record_count():0);
+    out["reserved_ids"]=int(unloaded_ids.size()+hidden_record_count());out["logical_instances"]=int(placements.size()+unloaded_ids.size());
     out["resident_transform_bytes"]=int64_t(placements.size()*sizeof(Placement));
-    out["reserved_id_payload_bytes"]=int64_t((unloaded_ids.size()+admitting_count())*sizeof(int64_t));
+    out["reserved_id_payload_bytes"]=int64_t((unloaded_ids.size()+hidden_record_count())*sizeof(int64_t));
     out["unloaded_digest_bytes"]=int64_t(unloaded_regions.size()*32);
     return out;
 }

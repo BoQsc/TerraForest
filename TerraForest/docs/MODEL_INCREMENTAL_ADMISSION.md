@@ -98,8 +98,10 @@ execution and is not an isolated performance comparison with release.
   9.4 seconds before the entire dense region becomes available. This is an
   arithmetic illustration, not a measured streaming latency. Prefetch and/or
   smaller independently usable pages are needed for high-speed travel.
-- Dense capture/unload, metadata installation and storage saves remain
-  synchronous. Disk workers alone cannot remove their main-thread cost.
+- Snapshot capture, metadata installation and storage saves remain synchronous.
+  Cold records now have [cooperative retirement](MODEL_INCREMENTAL_RETIREMENT.md);
+  legacy synchronous unload remains for explicit non-runtime use. Disk workers
+  alone cannot remove the remaining main-thread costs.
 - Render and collision candidate selection still traverse region contents.
   Cooperative record installation does not qualify those subsequent operations.
 - Destruction releases the collection's state normally; it is not a bounded

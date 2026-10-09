@@ -32,7 +32,7 @@ void NativeStaticBatch::release_group(BlockKey key) {
 }
 void NativeStaticBatch::upload_batch(RenderKey page) {
     auto key=page.first;uint64_t count=render_page_size(page);
-    if(!count||source_mesh.is_null())return;
+    if(!count||source_mesh.is_null()||retirement_locks(key))return;
     const auto &ordered=render_ids.at(key);
     uint64_t start=uint64_t(page.second)*render_page_capacity();
     Ref<MultiMesh> multi;multi.instantiate();
@@ -79,6 +79,7 @@ void NativeStaticBatch::select_render_batches() {
     std::vector<Candidate> candidates;
     const double range=(render_radius+4)*(render_radius+4);
     for(const auto &entry:render_bounds) {
+        if(retirement_locks(entry.first))continue;
         const auto &box=entry.second;Vector3 end=box.position+box.size;
         Vector3 nearest(std::clamp(render_focus.x,box.position.x,end.x),
                         std::clamp(render_focus.y,box.position.y,end.y),
