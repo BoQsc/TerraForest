@@ -1,5 +1,5 @@
 {
-  "cells": 1872,
+  "cells": 1896,
   "generator": 4,
   "lake_count": 4,
   "presentation": {
@@ -19,18 +19,20 @@
   },
   "road_count": 4,
   "seed": 1703,
-  "slot": "furnished_world_1791580614470719600",
+  "slot": "walk_probe_1791581867452784300",
   "target": [
     807,
     47,
     1310
   ],
-  "source_slot": "connected_world_1791575954752530900",
-  "scope": "Four cottages, 12 static furniture objects, connected roads, original generated terrain/lake definitions, forest and opt-in ground cover. Cloned source archive plus matching .regions/.models sidecars into fresh slot; source checkpoint unchanged. Fixture authoring uses native editor history insertion. Whole-world manual save and fresh-process exact addon checks pass; central aisle capsule sweeps pass in all four rooms. Not general navigation or combined performance qualification.",
-  "reproduce": "Create a separate copy of the source slot and both sidecar directories, write its new slot into reports/furnished_world/manifest.json, then run tests/furnished_world.gd -- --world-slot=NEW_SLOT --ground-cover; repeat with --reopen-furnished. Never run creation against a populated furniture slot.",
+  "source_slot": "furnished_world_1791580614470719600",
+  "scope": "Repaired copy of the furnished checkpoint: 24 support/stair blocks added at the existing four entrances. Four walking routes pass without jumping, and exact repaired block snapshot restores in a fresh process. Earlier furniture lifecycle evidence belongs to the retained source slot. Source saves unchanged; no general navigation or performance qualification.",
+  "reproduce": "For this legacy layout, clone the original furnished slot and its .regions/.models sidecars into a new slot. Write reports/settlement_walk/source.json with slot and source_slot. Run tests/settlement_walk.gd with --world-slot=NEW_SLOT --ground-cover --repair-entrances, then repeat without --repair-entrances. Never target a user save directly. Current brick_cottage prefab includes these six extra blocks; future generated layouts may use different frontage offsets.",
   "hashes": {
     "tests/furnished_world.gd": "914d204424fe897925275b7aaeccec34e697d779055e9f03c37859284a582922",
     "tools/play_connected_world.py": "474a0a997aea3a6c46c52a2cc0ba74610568d527f76dc20ae7de3a220b65ec92",
-    "Play Furnished Settlement.cmd": "f5b21be2241d03039936be9800db0660395e6003c86c2bb32260e97ebed74175"
-  }
+    "Play Furnished Settlement.cmd": "f5b21be2241d03039936be9800db0660395e6003c86c2bb32260e97ebed74175",
+    "tests/settlement_walk.gd": "427fe5d76590910ae15e6f2f71875b9c4108233c973344f3a2310396a1ed7c4b"
+  },
+  "entrance_evidence": "docs/evidence/settlement_walk"
 }

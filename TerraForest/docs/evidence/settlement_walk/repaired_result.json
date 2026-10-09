@@ -1,0 +1,209 @@
+{
+  "failures": 0,
+  "routes": [
+    {
+      "finish": "(811.5, 49.00767, 1298.921)",
+      "local_finish": "(0.0, 0.007668, 2.421021)",
+      "path": [
+        {
+          "blocked": false,
+          "loading": false,
+          "on_floor": true,
+          "position": "(811.5, 47.00019, 1305.408)"
+        },
+        {
+          "blocked": false,
+          "loading": false,
+          "on_floor": true,
+          "position": "(811.5, 47.14594, 1304.245)"
+        },
+        {
+          "blocked": false,
+          "loading": false,
+          "on_floor": true,
+          "position": "(811.5, 47.92168, 1303.484)"
+        },
+        {
+          "blocked": false,
+          "loading": false,
+          "on_floor": false,
+          "position": "(811.5, 48.63834, 1302.764)"
+        },
+        {
+          "blocked": false,
+          "loading": false,
+          "on_floor": true,
+          "position": "(811.5, 49.00767, 1301.855)"
+        },
+        {
+          "blocked": false,
+          "loading": false,
+          "on_floor": true,
+          "position": "(811.5, 49.00767, 1300.479)"
+        },
+        {
+          "blocked": false,
+          "loading": false,
+          "on_floor": true,
+          "position": "(811.5, 49.00767, 1299.104)"
+        }
+      ],
+      "side": 0,
+      "start": "(811.5, 47.1, 1305.5)",
+      "street": 0
+    },
+    {
+      "finish": "(811.5, 49.00792, 1321.091)",
+      "local_finish": "(0.0, 0.007923, 2.408813)",
+      "path": [
+        {
+          "blocked": false,
+          "loading": false,
+          "on_floor": true,
+          "position": "(811.5, 47.00019, 1314.592)"
+        },
+        {
+          "blocked": false,
+          "loading": false,
+          "on_floor": true,
+          "position": "(811.5, 47.14541, 1315.755)"
+        },
+        {
+          "blocked": false,
+          "loading": false,
+          "on_floor": true,
+          "position": "(811.5, 47.92239, 1316.517)"
+        },
+        {
+          "blocked": false,
+          "loading": false,
+          "on_floor": true,
+          "position": "(811.5, 48.65509, 1317.263)"
+        },
+        {
+          "blocked": false,
+          "loading": false,
+          "on_floor": true,
+          "position": "(811.5, 49.00792, 1318.249)"
+        },
+        {
+          "blocked": false,
+          "loading": false,
+          "on_floor": true,
+          "position": "(811.5, 49.00792, 1319.624)"
+        },
+        {
+          "blocked": false,
+          "loading": false,
+          "on_floor": true,
+          "position": "(811.5, 49.00792, 1321.0)"
+        }
+      ],
+      "side": 1,
+      "start": "(811.5, 47.1, 1314.5)",
+      "street": 0
+    },
+    {
+      "finish": "(811.5, 49.00758, 1341.923)",
+      "local_finish": "(0.0, 0.007584, 2.422607)",
+      "path": [
+        {
+          "blocked": false,
+          "loading": false,
+          "on_floor": true,
+          "position": "(811.5, 47.00019, 1348.408)"
+        },
+        {
+          "blocked": false,
+          "loading": false,
+          "on_floor": true,
+          "position": "(811.5, 47.14597, 1347.245)"
+        },
+        {
+          "blocked": false,
+          "loading": false,
+          "on_floor": true,
+          "position": "(811.5, 47.92195, 1346.484)"
+        },
+        {
+          "blocked": false,
+          "loading": false,
+          "on_floor": false,
+          "position": "(811.5, 48.63802, 1345.764)"
+        },
+        {
+          "blocked": false,
+          "loading": false,
+          "on_floor": true,
+          "position": "(811.5, 49.00758, 1344.765)"
+        },
+        {
+          "blocked": false,
+          "loading": false,
+          "on_floor": true,
+          "position": "(811.5, 49.00758, 1343.389)"
+        },
+        {
+          "blocked": false,
+          "loading": false,
+          "on_floor": true,
+          "position": "(811.5, 49.00758, 1342.014)"
+        }
+      ],
+      "side": 0,
+      "start": "(811.5, 47.1, 1348.5)",
+      "street": 1
+    },
+    {
+      "finish": "(811.5, 49.00792, 1364.091)",
+      "local_finish": "(0.0, 0.007923, 2.408691)",
+      "path": [
+        {
+          "blocked": false,
+          "loading": false,
+          "on_floor": true,
+          "position": "(811.5, 47.00019, 1357.592)"
+        },
+        {
+          "blocked": false,
+          "loading": false,
+          "on_floor": true,
+          "position": "(811.5, 47.14684, 1358.755)"
+        },
+        {
+          "blocked": false,
+          "loading": false,
+          "on_floor": true,
+          "position": "(811.5, 47.92273, 1359.517)"
+        },
+        {
+          "blocked": false,
+          "loading": false,
+          "on_floor": true,
+          "position": "(811.5, 48.65376, 1360.263)"
+        },
+        {
+          "blocked": false,
+          "loading": false,
+          "on_floor": true,
+          "position": "(811.5, 49.00792, 1361.249)"
+        },
+        {
+          "blocked": false,
+          "loading": false,
+          "on_floor": true,
+          "position": "(811.5, 49.00792, 1362.625)"
+        },
+        {
+          "blocked": false,
+          "loading": false,
+          "on_floor": true,
+          "position": "(811.5, 49.00792, 1364.0)"
+        }
+      ],
+      "side": 1,
+      "start": "(811.5, 47.1, 1357.5)",
+      "street": 1
+    }
+  ]
+}

@@ -53,7 +53,7 @@ func run() -> void:
     for name: String in snapshots(game):check(snapshots(game)[name]==FileAccess.get_file_as_bytes(DIR+name+".bin"),"exact "+name+" state survives fresh process")
     check(ready_lakes(game),"all four saved lake definitions rebake into occupied water")
     check(game.road_palette.prepared_streets.size()==4,"all connected roads restore in the editor catalog")
-    check(game.structures.blocks.stats().cells==1872,"all four cottages restore as ordinary editable blocks")
+    check(game.structures.blocks.stats().cells==int(manifest.cells),"all four cottages restore as ordinary editable blocks")
     var target:=Vector3(manifest.target[0],manifest.target[1],manifest.target[2])
     game.fly=true;game.player.position=target+Vector3(40,35,40);game.needs_floor_spawn=false
     game.camera.look_at(target+Vector3(5,2,12))

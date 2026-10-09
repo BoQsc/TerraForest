@@ -41,6 +41,8 @@ def main():
                     cabin[x, y, z] = 1
     for x in range(-1, 2):
         cabin[x, 0, 6] = 3 + (2 << 3) + 64
+        cabin[x, -1, 6] = 65  # Support the upper stair above the site grade.
+        cabin[x, -1, 7] = 3 + (2 << 3) + 64  # Start at grade, not one metre above it.
     save('brick_cottage', 'Brick cottage', cabin)
 
     staircase = {}
