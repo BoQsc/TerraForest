@@ -48,10 +48,10 @@ func run() -> void:
 	check(archive.retain_read_checkpoint(ASSET,PackedByteArray())==0 and archive.acquire(path),"closed archive cannot retain and fixture acquires storage")
 	check(archive.publish(path,sections(0))==OK and archive.start_region_reads(8,32*1024*1024),"fixture starts one shared read worker")
 	var original:=pins();var block_packet: PackedByteArray=world.capture_region(Vector3i.ZERO);var model_packet: PackedByteArray=batch.capture_region(Vector3i.ZERO)
-	check(archive.request_region_read(Vector3i.ZERO,block_packet.slice(block_packet.size()-32),original.block,1)>0 and archive.request_model_metadata(ASSET,original.model,1)>0 and await until(2),"block and metadata completions remain unread")
+	check(archive.request_checkpoint_region_read(Vector3i.ZERO,block_packet.slice(block_packet.size()-32),original.block,1)>0 and archive.request_model_metadata(ASSET,original.model,1)>0 and await until(2),"block and metadata completions remain unread")
 	check(archive.region_read_stats().retained_checkpoint_keys==2,"outstanding reads retain both checkpoint namespaces")
 	check(publish_range(1,3) and pin_exists(original.block,false) and pin_exists(original.model,true),"unread results protect old pins after multiple root rotations")
-	check(archive.request_model_region_read(ASSET,Vector3i.ZERO,model_packet.slice(model_packet.size()-32),original.model,1)>0 and await until(3),"protected old model checkpoint still serves exact region bytes")
+	check(archive.request_model_checkpoint_region_read(ASSET,Vector3i.ZERO,model_packet.slice(model_packet.size()-32),original.model,1)>0 and await until(3),"protected old model checkpoint still serves exact region bytes")
 	var blocks: Array=archive.poll_region_reads(8);var models: Array=archive.poll_model_region_reads(8)
 	check(blocks.size()==1 and blocks[0].ok and blocks[0].bytes==block_packet and models.size()==2 and models[0].ok and models[1].ok and models[1].bytes==model_packet,"old block, model and metadata reads survive cleanup")
 	check(archive.region_read_stats().retained_checkpoint_keys==0 and archive.publish(path,sections(4))==OK and not pin_exists(original.block,false) and not pin_exists(original.model,true),"polling releases automatic retention and next publication reclaims old pins")
@@ -73,6 +73,27 @@ func run() -> void:
 	archive.request_model_region_read(ASSET,Vector3i.ZERO,model_packet.slice(model_packet.size()-32),kept.model,3)
 	await until(2);blocks=archive.poll_region_reads(8);models=archive.poll_model_region_reads(8)
 	check(blocks.size()==1 and blocks[0].ok and blocks[0].bytes==block_packet and models.size()==1 and models[0].ok and models[0].bytes==model_packet,"leased exact versions remain readable across new saves")
+	# Active catalog has newer bytes. A retained old pin must not certify them.
+	var active_block: PackedByteArray=world.capture_region(Vector3i.ZERO)
+	var active_model: PackedByteArray=batch.capture_region(Vector3i.ZERO)
+	check(archive.request_checkpoint_region_read(Vector3i.ZERO,active_block.slice(active_block.size()-32),PackedByteArray(),30)==0 and archive.request_model_checkpoint_region_read("",Vector3i.ZERO,active_model.slice(active_model.size()-32),kept.model,30)==0,"strict reads reject missing checkpoint and empty model identity")
+	archive.request_checkpoint_region_read(Vector3i.ZERO,active_block.slice(active_block.size()-32),kept.block,30)
+	archive.request_model_checkpoint_region_read(ASSET,Vector3i.ZERO,active_model.slice(active_model.size()-32),kept.model,30)
+	await until(2);blocks=archive.poll_region_reads(8);models=archive.poll_model_region_reads(8)
+	check(blocks.size()==1 and models.size()==1 and not blocks[0].ok and not models[0].ok and not blocks[0].has("bytes") and not models[0].has("bytes") and not blocks[0].checkpoint_verified and not models[0].checkpoint_verified,"strict checkpoint mismatch cannot return newer active bytes or expose unwanted payload")
+	archive.request_region_read(Vector3i.ZERO,active_block.slice(active_block.size()-32),kept.block,31)
+	archive.request_model_region_read(ASSET,Vector3i.ZERO,active_model.slice(active_model.size()-32),kept.model,31)
+	await until(2);blocks=archive.poll_region_reads(8);models=archive.poll_model_region_reads(8)
+	check(blocks.size()==1 and models.size()==1 and blocks[0].ok and models[0].ok and blocks[0].bytes==active_block and models[0].bytes==active_model and not blocks[0].checkpoint_verified and not models[0].checkpoint_verified,"fallback API remains compatible but does not certify checkpoint ownership")
+	archive.request_checkpoint_region_read(Vector3i.ZERO,block_packet.slice(block_packet.size()-32),kept.block,32)
+	archive.request_model_checkpoint_region_read(ASSET,Vector3i.ZERO,model_packet.slice(model_packet.size()-32),kept.model,32)
+	await until(2);blocks=archive.poll_region_reads(8);models=archive.poll_model_region_reads(8)
+	check(blocks.size()==1 and models.size()==1 and blocks[0].ok and models[0].ok and blocks[0].bytes==block_packet and models[0].bytes==model_packet and blocks[0].checkpoint_verified and models[0].checkpoint_verified and models[0].epoch==32,"strict reads certify exact older bytes in retained checkpoints")
+	var nonexistent:=PackedByteArray();nonexistent.resize(32)
+	archive.request_checkpoint_region_read(Vector3i.ZERO,active_block.slice(active_block.size()-32),nonexistent,33)
+	archive.request_model_checkpoint_region_read(ASSET,Vector3i.ZERO,active_model.slice(active_model.size()-32),nonexistent,33)
+	await until(2);blocks=archive.poll_region_reads(8);models=archive.poll_model_region_reads(8)
+	check(blocks.size()==1 and models.size()==1 and not blocks[0].ok and not models[0].ok and not blocks[0].has("bytes") and not models[0].has("bytes"),"absent checkpoint fails even when active catalog contains requested bytes")
 	check(archive.release_read_checkpoint(model_lease) and not archive.release_read_checkpoint(model_lease) and archive.publish(path,sections(9))==OK and pin_exists(kept.model,true),"releasing one handle cannot drop another holder's pin")
 	check(archive.release_read_checkpoint(duplicate_lease) and archive.release_read_checkpoint(block_lease) and archive.publish(path,sections(10))==OK and not pin_exists(kept.model,true) and not pin_exists(kept.block,false),"last explicit release allows later cleanup in both stores")
 	# Retention is not existence validation. A caller must verify a read after
@@ -93,7 +114,7 @@ func run() -> void:
 	var accepted:=0;var completed:=0;var correct:=true;var end:=Time.get_ticks_msec()+15000
 	while (accepted<64 or completed<accepted) and Time.get_ticks_msec()<end:
 		if accepted<64:
-			var ticket: int=archive.request_model_metadata(ASSET,kept.model,5) if accepted%2 else archive.request_region_read(Vector3i.ZERO,block_packet.slice(block_packet.size()-32),kept.block,5)
+			var ticket: int=archive.request_model_metadata(ASSET,kept.model,5) if accepted%2 else archive.request_checkpoint_region_read(Vector3i.ZERO,block_packet.slice(block_packet.size()-32),kept.block,5)
 			if ticket>0:accepted+=1
 		for result in archive.poll_region_reads(8)+archive.poll_model_region_reads(8):
 			completed+=1;correct=correct and result.ok and result.epoch==5

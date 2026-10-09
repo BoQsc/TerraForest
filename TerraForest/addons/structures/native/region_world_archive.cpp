@@ -22,6 +22,8 @@ void NativeRegionWorldArchive::_bind_methods() {
     ClassDB::bind_method(D_METHOD("start_region_reads","request_limit","byte_limit"),&NativeRegionWorldArchive::start_region_reads,DEFVAL(8),DEFVAL(int64_t(8)*(2*1024*1024+96)));
     ClassDB::bind_method(D_METHOD("request_region_read","region","expected","checkpoint","epoch"),&NativeRegionWorldArchive::request_region_read);
     ClassDB::bind_method(D_METHOD("request_model_region_read","asset","region","expected","checkpoint","epoch"),&NativeRegionWorldArchive::request_model_region_read);
+    ClassDB::bind_method(D_METHOD("request_checkpoint_region_read","region","expected","checkpoint","epoch"),&NativeRegionWorldArchive::request_checkpoint_region_read);
+    ClassDB::bind_method(D_METHOD("request_model_checkpoint_region_read","asset","region","expected","checkpoint","epoch"),&NativeRegionWorldArchive::request_model_checkpoint_region_read);
     ClassDB::bind_method(D_METHOD("request_model_metadata","asset","checkpoint","epoch"),&NativeRegionWorldArchive::request_model_metadata);
     ClassDB::bind_method(D_METHOD("poll_model_region_reads","max_results"),&NativeRegionWorldArchive::poll_model_region_reads,DEFVAL(4));
     ClassDB::bind_method(D_METHOD("poll_region_reads","max_results"),&NativeRegionWorldArchive::poll_region_reads,DEFVAL(4));

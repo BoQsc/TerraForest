@@ -46,7 +46,7 @@ sequence is:
 
 1. Obtain the checkpoint identity from the selected world version.
 2. Retain it before submitting metadata/region reads; retry later on backpressure.
-3. Verify successful exact read results before installing scene metadata.
+3. Verify successful strict checkpoint reads before installing scene metadata.
 4. Keep the lease while pending work or unavailable scene records need that
    historical version. Handover to a successor must establish and verify its
    retention before releasing the previous lease.
@@ -107,3 +107,27 @@ encountered 14 debug / 12 release sweep-busy rejections, retried them, and compl
 all 64 reads correctly. Existing release regressions pass 71 shared-reader checks
 and 82 compound archive/save checks. The native transfer timing gates retain their
 previous unresolved results; this storage change does not qualify automatic paging.
+
+## Strict region provenance
+
+`request_checkpoint_region_read(region, expected, checkpoint, epoch)` and
+`request_model_checkpoint_region_read(asset, region, expected, checkpoint, epoch)`
+require a 32-byte checkpoint. They read only that checkpoint and validate its
+packet digest against `expected`. Missing pins/regions and mismatched digests
+fail without a region payload. Successful results set `checkpoint_verified`.
+Metadata reads also certify their nominated checkpoint on success.
+
+The original region-read APIs retain active-catalog-first, checkpoint-fallback
+behavior. Their `checkpoint_verified` is false even on success: retaining the
+fallback checkpoint does not prove it protects the active packet returned.
+Consumers retiring resident records must use strict reads and retain an explicit
+lease through the entire unavailable-record lifetime. Automatic request retention
+ends at polling. Closing the archive also ends all lease protection.
+
+These APIs use the same bounded worker, queue, byte reservations and retention
+accounting; they introduce no extra worker or scene-thread disk access.
+
+Strict-read validation passes 34 checks in both debug and release, including
+active/new versus retained/old mismatches, absent pins, legacy fallback behavior,
+and exact old-version success. Existing shared-reader release regression passes
+71 checks. Evidence: [strict checkpoint provenance](evidence/region_checkpoint_provenance/).

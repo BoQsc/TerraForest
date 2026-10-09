@@ -37,22 +37,29 @@ int64_t NativeRegionWorldArchive::request_model_region_read(const String &asset,
     if(asset.is_empty()){std::lock_guard<std::mutex> lock(read_mutex_);++read_rejected_;return 0;}
     return request_read(asset,region,expected,checkpoint,epoch);
 }
+int64_t NativeRegionWorldArchive::request_checkpoint_region_read(Vector3i region,const PackedByteArray &expected,const PackedByteArray &checkpoint,int64_t epoch) {
+    return request_read(String(),region,expected,checkpoint,epoch,false,true);
+}
+int64_t NativeRegionWorldArchive::request_model_checkpoint_region_read(const String &asset,Vector3i region,const PackedByteArray &expected,const PackedByteArray &checkpoint,int64_t epoch) {
+    if(asset.is_empty()){std::lock_guard<std::mutex> lock(read_mutex_);++read_rejected_;return 0;}
+    return request_read(asset,region,expected,checkpoint,epoch,false,true);
+}
 int64_t NativeRegionWorldArchive::request_model_metadata(const String &asset,const PackedByteArray &checkpoint,int64_t epoch) {
     return request_read(asset,Vector3i(),PackedByteArray(),checkpoint,epoch,true);
 }
-int64_t NativeRegionWorldArchive::request_read(const String &asset,Vector3i region,const PackedByteArray &expected,const PackedByteArray &checkpoint,int64_t epoch,bool metadata) {
+int64_t NativeRegionWorldArchive::request_read(const String &asset,Vector3i region,const PackedByteArray &expected,const PackedByteArray &checkpoint,int64_t epoch,bool metadata,bool strict_checkpoint) {
     std::lock_guard<std::mutex> lock(read_mutex_);
     if(checkpoint.size()==32&&checkpoint_sweep_active_) {++read_rejected_;++read_checkpoint_busy_rejections_;return 0;}
     const bool model=!asset.is_empty();
     const int bound=model?32768:16384;
     const int64_t reservation=model?MODEL_READ_BYTES:READ_BYTES;
     const bool valid_region=region.x>=-bound&&region.x<bound&&region.y>=-bound&&region.y<bound&&region.z>=-bound&&region.z<bound;
-    if((metadata&&(!model||checkpoint.size()!=32))||(model&&(codec_.is_null()||!codec_->has_asset(asset)))||!valid_region||(!metadata&&expected.size()!=32)||(checkpoint.size()!=0&&checkpoint.size()!=32)||epoch<0||
+    if((strict_checkpoint&&checkpoint.size()!=32)||(metadata&&(!model||checkpoint.size()!=32))||(model&&(codec_.is_null()||!codec_->has_asset(asset)))||!valid_region||(!metadata&&expected.size()!=32)||(checkpoint.size()!=0&&checkpoint.size()!=32)||epoch<0||
        !read_running_||read_stopping_||read_outstanding_>=read_request_limit_||
        reservation>read_byte_limit_-read_reserved_||read_next_ticket_==INT64_MAX) {
         ++read_rejected_;return 0;
     }
-    RegionRead request;request.ticket=read_next_ticket_++;request.epoch=epoch;request.asset=asset;request.metadata=metadata;
+    RegionRead request;request.ticket=read_next_ticket_++;request.epoch=epoch;request.asset=asset;request.metadata=metadata;request.strict_checkpoint=strict_checkpoint;
     request.region=region;request.expected=expected;request.checkpoint=checkpoint;
     const int64_t ticket=request.ticket;
     if(checkpoint.size()==32)++read_checkpoint_refs_[{asset,checkpoint.hex_encode()}];
@@ -74,12 +81,19 @@ void NativeRegionWorldArchive::run_region_reads(Ref<NativeBlockRegionStore> stor
         // Store locking serializes exact-version reads with catalog mutation and
         // garbage collection. Do not hold the queue mutex across any disk work.
         Dictionary result;
-        if(request.asset.is_empty())result=store->read_storage_region(request.region,request.expected,request.checkpoint);
+        if(request.asset.is_empty())result=request.strict_checkpoint?store->read_checkpoint_region(request.checkpoint,request.region):store->read_storage_region(request.region,request.expected,request.checkpoint);
         else {
             // Lazy opening happens only on this worker, never under read_mutex_.
             auto model=model_store(request.asset,false);
-            if(model.is_valid())result=request.metadata?model->read_metadata(request.checkpoint):model->read_storage_region(request.region,request.expected,request.checkpoint);
+            if(model.is_valid())result=request.metadata?model->read_metadata(request.checkpoint):(request.strict_checkpoint?model->read_checkpoint_region(request.checkpoint,request.region):model->read_storage_region(request.region,request.expected,request.checkpoint));
             else {result["ok"]=false;result["error"]=int(ERR_CANT_OPEN);}
+        }
+        if(request.strict_checkpoint&&bool(result.get("ok",false))&&PackedByteArray(result.get("checksum",PackedByteArray()))!=request.expected) {
+            // Never expose a valid but unwanted checkpoint packet on failure.
+            result.clear();result["ok"]=false;result["error"]=int(ERR_BUSY);
+        }
+        result["checkpoint_verified"]=(request.strict_checkpoint||request.metadata)&&bool(result.get("ok",false));
+        if(!request.asset.is_empty()) {
             result["asset"]=request.asset;
             result["operation"]=request.metadata?"metadata":"region";
         }

@@ -1,3 +1,17 @@
+## Strict checkpoint ownership for region reads - 2026-10-09
+
+Added native block/model checkpoint-only read APIs. Unlike the existing
+active-first fallback reads, these certify that the nominated retained checkpoint
+contains the requested digest. Missing checkpoints and mismatched digests fail
+without a payload; `checkpoint_verified` distinguishes successful strict reads
+from compatible fallback results. No extra workers or scene-thread I/O.
+
+Debug and release pass 34 checkpoint checks; the existing shared-reader release
+suite passes 71 checks. [Contract and evidence](REGION_CHECKPOINT_RETENTION.md).
+This closes a storage-provenance prerequisite for safe retirement, not the shared
+scheduler itself. Automatic model paging and transfer/render timing gates remain
+unfinished; no FPS or thermal improvement is claimed.
+
 ## Read checkpoint lifetimes survive save cleanup - 2026-10-09
 
 World-archive cleanup now retains existing checkpoint pins referenced by queued,
