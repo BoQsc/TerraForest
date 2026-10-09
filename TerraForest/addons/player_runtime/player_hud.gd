@@ -31,11 +31,32 @@ var enabled:=true
 var default_loadout:=PackedByteArray()
 var temporary_world:=true
 var active_item:=0
+var ground_species: int=-1
+var ground_hint: Label
 var gameplay_construction:=false
 
 func show_active_tool(item: int) -> void:
 	active_item=item
 	if not slots.is_empty(): refresh()
+
+func show_ground_tool(species: int) -> void:
+	ground_species=species
+	if not slots.is_empty(): refresh()
+
+func _refresh_ground_hint() -> void:
+	if ground_hint==null: return
+	ground_hint.visible=ground_species>=0 and not inventory_open
+	if ground_species<0: return
+	var names: Array[String]=["Stone","Plant","Grass clump"]
+	var items: Array[int]=[201,204,205]
+	var choices: Array[String]=[]
+	var available:=0
+	for i in range(3):
+		choices.append("%d %s%s"%[i+1,names[i]," [selected]" if i==ground_species else ""])
+	for row: Dictionary in state.slots:
+		if row.item==items[ground_species]: available+=int(row.count)
+	var cost: String=("Place: 1 %s · have %d"%[names[ground_species],available]) if gameplay_construction else "Free placement · editor"
+	ground_hint.text="GROUND COVER  ·  "+"    /    ".join(choices)+"\n"+cost+"    ·    LMB / E "+("collect" if gameplay_construction else "remove")+"    ·    RMB place    ·    H exit"
 
 func prepare() -> bool:
 	if inventory!=null: return true
@@ -78,6 +99,10 @@ func _ready() -> void:
 	bar.position=Vector2(620,900)
 	bar.add_theme_constant_override("separation",8)
 	add_child(bar)
+	ground_hint=Label.new();ground_hint.position=Vector2(500,830)
+	ground_hint.add_theme_color_override("font_shadow_color",Color.BLACK)
+	ground_hint.add_theme_constant_override("shadow_offset_x",2);ground_hint.add_theme_constant_override("shadow_offset_y",2)
+	add_child(ground_hint)
 	for i in range(6):
 		var button:=Button.new()
 		button.custom_minimum_size=Vector2(106,64)
@@ -134,6 +159,7 @@ func refresh() -> void:
 		if i<6:
 			belt[i].text="%d%s\n%s"%[i+1," •" if row.item!=0 and row.item==active_item else "",title]
 			belt[i].disabled=row.item not in CATALOG
+	_refresh_ground_hint()
 	_refresh_pending()
 	drop_button.disabled=selected_slot<0 or not _droppable(state.slots[selected_slot].item)
 
@@ -217,6 +243,7 @@ func set_open(value: bool) -> void:
 	else:
 		Input.mouse_mode=previous_mouse
 		selected_slot=-1
+	_refresh_ground_hint()
 	modal.visible=value
 	menu_changed.emit(value)
 

@@ -1,0 +1,12 @@
+{
+  "base_commit": "ec7bf27",
+  "command": "godot --path TerraForest --script res://tests/ground_cover_interaction_world.gd -- --ground-cover --world-generator=4 --world-seed=1703",
+  "gameplay_extra": "--gameplay-construction",
+  "result": "Both rendered temporary-world runs passed; screenshots inspected at 1920x1080. Controls remain visible during ground interaction, hide for inventory and tool exit, show selected species and mode-specific costs. Collection and placement round trip unchanged.",
+  "limits": "Presentation and interaction checks; not performance qualification, finalized vegetation art, placement preview or human acceptance.",
+  "hashes": {
+    "addons/player_runtime/player_hud.gd": "c93781da4c9a71c551a967aeb971b04726854c478a5178e8f0e24ebfd65dd224",
+    "demo/world.gd": "2262fc31fccb530764b14d4e8194682de3015115aa0b0d6de36e1f3e3a542d0a",
+    "tests/ground_cover_interaction_world.gd": "2862c2006e2615035e97be17749443a5b927aae3810ad41213449cd6e07c86fd"
+  }
+}

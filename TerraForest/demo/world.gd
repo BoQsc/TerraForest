@@ -578,6 +578,7 @@ func _set_player_tool_mode(building: bool,objects: bool,terrain_tool: int) -> bo
 	_clear_motion()
 	stroke_buffer.clear();held_previous=false
 	ground_mode=false
+	player_hud.show_ground_tool(-1)
 	model_tool.set_active(objects)
 	structure_mode=building
 	tool=terrain_tool
@@ -601,12 +602,14 @@ func _unhandled_input(event: InputEvent) -> void:
 		var enable:=not ground_mode
 		if _set_player_tool_mode(false,false,tool):
 			ground_mode=enable
+			player_hud.show_ground_tool(ground_species if enable else -1)
 			if enable: player_hud.show_active_tool(0)
 			if enable: _show_lake_notice("Ground cover: 1 stone / 2 plant / 3 grass; LMB or E remove; RMB place")
 		return
 	if ground_mode:
 		if event is InputEventKey and event.pressed and not event.echo and event.physical_keycode in [KEY_1,KEY_2,KEY_3]:
 			ground_species=event.physical_keycode-KEY_1
+			player_hud.show_ground_tool(ground_species)
 			_show_lake_notice(["Stone","Plant","Grass clump"][ground_species]+"; LMB remove; RMB place");return
 		var remove_action: bool=event is InputEventKey and event.pressed and not event.echo and event.physical_keycode==KEY_E
 		var mouse_action: bool=event is InputEventMouseButton and event.button_index in [MOUSE_BUTTON_LEFT,MOUSE_BUTTON_RIGHT]

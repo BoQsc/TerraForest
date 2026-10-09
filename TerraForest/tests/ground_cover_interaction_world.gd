@@ -38,8 +38,15 @@ func run() -> void:
 	var key:=InputEventKey.new();key.physical_keycode=KEY_H;key.pressed=true
 	game._unhandled_input(key)
 	check(game.ground_mode,"H activates normal-world ground-cover tool")
+	check(game.player_hud.ground_hint.visible and "[selected]" in game.player_hud.ground_hint.text,"ground tool keeps its selected species visible")
+	game.player_hud.set_open(true)
+	check(not game.player_hud.ground_hint.visible,"inventory hides ground controls")
+	game.player_hud.set_open(false)
+	check(game.player_hud.ground_hint.visible,"closing inventory restores ground controls")
 	var before_inventory: Dictionary=game.player_hud.inventory.snapshot()
 	key.physical_keycode=KEY_1+target_species;game._unhandled_input(key)
+	check(game.player_hud.ground_species==target_species,"number key updates persistent selection")
+	check(("Place: 1" in game.player_hud.ground_hint.text) if game.construction_inventory.gameplay else ("Free placement" in game.player_hud.ground_hint.text),"ground controls distinguish inventory cost from free editor")
 	var click:=InputEventMouseButton.new();click.pressed=true;click.button_index=MOUSE_BUTTON_LEFT
 	game._unhandled_input(click)
 	check(cover.removed.contains(target_id),"normal LMB removes aimed natural ground cover")
@@ -124,6 +131,8 @@ func run() -> void:
 		check(not saved.is_empty() and saved[0],"main-world manual save publishes ground edits and inventory")
 		var snapshot:=FileAccess.open("res://reports/ground_cover/"+game.terrain.save_slot+".expected",FileAccess.WRITE)
 		snapshot.store_var(expected);snapshot.close()
+	key.physical_keycode=KEY_H;game._unhandled_input(key)
+	check(not game.ground_mode and not game.player_hud.ground_hint.visible,"leaving ground mode removes contextual controls")
 	cover.set_process(false)
 	game.shutdown_requested=true
 	await game.terrain.shutdown_after_edits();game.free()
