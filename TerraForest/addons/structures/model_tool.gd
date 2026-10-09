@@ -28,6 +28,9 @@ var placement_failure := ""
 var availability: Callable
 var action_buttons: Array[Button]=[]
 var scale_buttons: Array[Button]=[]
+var numeric_controls:=VBoxContainer.new()
+var numeric_fields: Array[SpinBox]=[]
+var numeric_apply: Button
 
 func can_edit() -> bool:
 	return active and edit_available and (not availability.is_valid() or availability.call())
@@ -52,10 +55,11 @@ func configure(view: Camera3D, actor: CharacterBody3D, entries: Array[Dictionary
 	preview.hide()
 	ui.add_child(panel)
 	panel.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_RIGHT)
-	panel.offset_left=-360
-	panel.offset_top=-430
+	panel.offset_left=-440
+	panel.offset_top=-630
 	panel.offset_right=-24
 	panel.offset_bottom=-106
+	panel.grow_vertical=Control.GROW_DIRECTION_BEGIN
 	var style := StyleBoxFlat.new()
 	style.bg_color=Color(0.03,0.065,0.06,0.94)
 	style.content_margin_left=16
@@ -88,6 +92,20 @@ func configure(view: Camera3D, actor: CharacterBody3D, entries: Array[Dictionary
 	tool_button(shape_row,"Rotate 90°",transform_selected.bind(Vector3.ZERO,PI*0.5,1.0))
 	scale_buttons.append(tool_button(shape_row,"Scale −",transform_selected.bind(Vector3.ZERO,0.0,1.0/1.1)))
 	scale_buttons.append(tool_button(shape_row,"Scale +",transform_selected.bind(Vector3.ZERO,0.0,1.1)))
+	transform_controls.add_child(numeric_controls)
+	var numeric_title:=Label.new();numeric_title.text="World transform · Esc to edit values"
+	numeric_controls.add_child(numeric_title)
+	for group in ["Position (m)","Rotation (°)","Scale"]:
+		var label:=Label.new();label.text=group;numeric_controls.add_child(label)
+		var row:=HBoxContainer.new();numeric_controls.add_child(row)
+		for axis in ["X","Y","Z"]:
+			var field:=SpinBox.new();field.prefix=axis
+			field.min_value=0.01 if group=="Scale" else -1000000.0
+			field.max_value=100.0 if group=="Scale" else 1000000.0
+			field.step=0.01;field.custom_minimum_size.x=120
+			field.size_flags_horizontal=Control.SIZE_EXPAND_FILL
+			row.add_child(field);numeric_fields.append(field)
+	numeric_apply=tool_button(numeric_controls,"Apply transform",apply_numeric_transform)
 	transform_controls.hide()
 	help.add_theme_font_size_override("font_size",13)
 	content.add_child(help)
@@ -152,6 +170,7 @@ func pick() -> void:
 					preview.mesh=entry.mesh
 					picked_collection.changed.connect(_selected_changed)
 					transform_controls.show()
+					sync_numeric_transform()
 					refresh()
 					notice.emit("Object selected · arrows move · R rotates" if gameplay else "Object selected · arrows move · R rotates · +/− scales")
 					return
@@ -179,6 +198,11 @@ func transform_selected(offset: Vector3, angle: float, factor: float) -> bool:
 	var t: Transform3D = current.transform
 	t.origin+=offset
 	t.basis=Basis(Vector3.UP,angle)*t.basis*factor
+	return commit_transform(t)
+
+func commit_transform(t: Transform3D) -> bool:
+	if not can_edit() or selected_transform().is_empty() or not t.is_finite():
+		return false
 	var requested := records(t,picked_collection)
 	var prior_barriers: int = history.stats().barriers
 	transforming=true
@@ -187,9 +211,33 @@ func transform_selected(offset: Vector3, angle: float, factor: float) -> bool:
 	if not is_instance_valid(picked_collection) or history.stats().barriers!=prior_barriers:
 		clear_selection()
 	timer=0
+	if accepted: sync_numeric_transform()
 	refresh()
 	notice.emit(("Object transformed" if gameplay else "Object transformed · Ctrl+Z undoes") if accepted else "Transform blocked · move clear or check capacity")
 	return accepted
+
+func sync_numeric_transform() -> void:
+	var current:=selected_transform()
+	if current.is_empty(): return
+	var t: Transform3D=current.transform
+	var scale:=t.basis.get_scale()
+	var rotation:=t.basis.orthonormalized().get_euler()*180.0/PI
+	var values: Array[Vector3]=[t.origin,rotation,scale]
+	for group in 3:
+		for axis in 3: numeric_fields[group*3+axis].set_value_no_signal(values[group][axis])
+
+func apply_numeric_transform() -> bool:
+	if gameplay or not can_edit(): return false
+	# Only the focused field can contain uncommitted text. Applying untouched
+	# fields can parse stale LineEdit text before their deferred display refresh.
+	for field in numeric_fields:
+		if field.get_line_edit().has_focus(): field.apply()
+	var position:=Vector3(numeric_fields[0].value,numeric_fields[1].value,numeric_fields[2].value)
+	var rotation:=Vector3(numeric_fields[3].value,numeric_fields[4].value,numeric_fields[5].value)*PI/180.0
+	var scale:=Vector3(numeric_fields[6].value,numeric_fields[7].value,numeric_fields[8].value)
+	if not position.is_finite() or not rotation.is_finite() or not scale.is_finite() or scale.x<=0 or scale.y<=0 or scale.z<=0:
+		return false
+	return commit_transform(Transform3D(Basis.from_euler(rotation)*Basis.from_scale(scale),position))
 
 func ray() -> Dictionary:
 	if is_instance_valid(block_world):
@@ -331,6 +379,9 @@ func update(delta: float, available: bool) -> void:
 	var allowed:=can_edit()
 	for button in action_buttons: button.disabled=not allowed
 	for button in scale_buttons: button.disabled=not allowed or gameplay
+	numeric_controls.visible=not gameplay
+	for field in numeric_fields: field.editable=allowed and not gameplay
+	numeric_apply.disabled=not allowed or gameplay
 	if not allowed:
 		preview.hide()
 		return

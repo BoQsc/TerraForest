@@ -1,0 +1,19 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+PASS native placement fixture created
+PASS selection populates world transform fields
+PASS preview refresh preserves pending numeric draft
+PASS apply button commits position rotation and nonuniform scale
+PASS numeric apply creates one native undo step
+PASS live admission rejects stale numeric apply
+PASS unavailable editor disables fields and apply
+PASS gameplay hides and rejects numeric resizing
+PASS native player protection rejects overlapping transform without mutation
+PASS rejected transforms leave undo history unchanged
+PASS undo restores exact original record
+PASS undo clears stale selection
+PASS redo restores exact numeric record
+PASS apply commits text still focused in numeric field
+PASS 1920x1080 fullscreen presentation
+MODEL_NUMERIC_TRANSFORM checks=15 failures=0

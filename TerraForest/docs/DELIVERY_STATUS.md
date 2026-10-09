@@ -1,3 +1,23 @@
+## Numeric model transforms in the free editor - 2026-10-09
+
+Selected objects now expose world position in metres, XYZ Euler rotation in
+degrees and independent XYZ scale. Release the mouse with Esc, edit values and
+click Apply transform. One apply uses the existing native validation/history
+transaction, so player protection, change notification and undo/redo remain
+shared with incremental transforms. Preview refresh does not overwrite a draft;
+accepted edits refresh the fields and external changes invalidate selection.
+Fields and Apply respect live world admission. Gameplay hides these controls
+and rejects the numeric path, retaining its resizing and material-cost rules.
+
+The 1920x1080 fullscreen Forward+ fixture passes 15 checks, including the actual
+Apply signal, focused text entry, nonuniform scale/rotation, exact native
+undo/redo, player-overlap rejection and gameplay/admission restrictions. The
+capture was inspected for field readability and clipping. The first fixture
+exposed stale deferred SpinBox text when applying every field; only the focused
+field now commits its pending text. Evidence: `docs/evidence/model_numeric_transform`;
+fixture: `tests/model_numeric_transform.gd`. This adds single-object numeric
+editing, not multi-selection, drag handles or city-scale performance evidence.
+
 ## Disabled vehicle braking regression completed - 2026-10-09
 
 Completed the remaining check after the vehicle control-admission and shortcut

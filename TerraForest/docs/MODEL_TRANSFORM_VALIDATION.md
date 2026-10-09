@@ -27,7 +27,22 @@ the amber selected object, active ID, history counts, buttons and hints are visi
 without clipping. Evidence is in `evidence/model_transform/`.
 
 This is discrete single-object editing, not a complete CAD-style editor. There
-are no drag handles, numeric transform entry, multi-selection or per-axis scale
-yet. Inter-object/terrain overlap and unsupported placements remain allowed;
+are no drag handles or multi-selection. Inter-object/terrain overlap and unsupported placements remain allowed;
 player protection uses the existing conservative native proxy tests. The short
 graphical test makes no new FPS, dense-city or endurance claim.
+
+## Numeric editing added 2026-10-09
+
+In the free editor, select an object with E, release the pointer with Esc, then
+enter world XYZ position (metres), XYZ rotation (degrees, Godot YXZ Euler order)
+and XYZ scale. Apply transform submits one native history update. Ctrl+Z/Ctrl+Y
+work after leaving text-field focus; a focused field owns its text undo. Scale
+fields accept positive values from 0.01 to 100. These fields represent ordinary
+rotation/scale transforms, not authored shear or reflection. Gameplay hides and
+rejects numeric editing; its incremental movement and rotation remain available.
+
+`tests/model_numeric_transform.gd` checks native record equality, one-step undo,
+exact redo, pending/focused input, live admission, gameplay restrictions and
+player-overlap rejection. The short fullscreen fixture runs at 1920x1080 on the
+new RTX 4050 host; it is UI/correctness evidence, not a performance comparison.
+Logs and inspected capture: `docs/evidence/model_numeric_transform/`.
