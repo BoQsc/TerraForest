@@ -33,9 +33,17 @@ Dictionary NativePrefabPlacement::place(NativeBlockWorld *blocks,const Ref<Nativ
     }
     const AABB envelope=prefab->placement_bounds(origin,turns);
     for(const auto &b:protected_regions)if(b.intersects(envelope))return fail("Protected actor overlaps building");
-    // Coordinate index of this insertion only, never a full-world snapshot.
-    std::set<std::tuple<int,int,int>> occupied;
-    for(int i=0;i<records.size();i+=4)occupied.emplace(records[i],records[i+1],records[i+2]);
+    // Reuse the prefab's sorted authoritative cells. Invert the integer lattice
+    // placement for each local collision probe instead of allocating a tree node
+    // for every block on every insertion (60k nodes for a 128-cottage frontage).
+    auto proposed_cell=[&](int x,int y,int z) {
+        x-=origin.x;y-=origin.y;z-=origin.z;
+        for(int r=0;r<turns;++r){int old=x;x=z;z=-old;}
+        const PrefabCell key{x,y,z,0};
+        const auto &cells=prefab->cells;
+        auto it=std::lower_bound(cells.begin(),cells.end(),key,[](const PrefabCell &a,const PrefabCell &b){return std::tie(a.x,a.y,a.z)<std::tie(b.x,b.y,b.z);});
+        return it!=cells.end()&&it->x==x&&it->y==y&&it->z==z;
+    };
     struct Stage {NativeStaticBatch *batch=nullptr;std::map<int64_t,NativeStaticBatch::Placement> values;std::set<BlockKey> touched;int64_t next=0;};
     std::map<String,Stage> staged;
     Vector3 x_axis(1,0,0),z_axis(0,0,1);
@@ -86,7 +94,7 @@ Dictionary NativePrefabPlacement::place(NativeBlockWorld *blocks,const Ref<Nativ
             Vector3i lo=box.position.floor(),hi=box.get_end().floor();
             uint64_t volume=uint64_t(hi.x-lo.x+1)*(hi.y-lo.y+1)*(hi.z-lo.z+1);
             probes+=volume;if(probes>262144)return fail("Model block-validation budget exceeded");
-            for(int z=lo.z;z<=hi.z;++z)for(int y=lo.y;y<=hi.y;++y)for(int x=lo.x;x<=hi.x;++x)if(occupied.count({x,y,z}))return fail("Model overlaps prefab blocks");
+            for(int z=lo.z;z<=hi.z;++z)for(int y=lo.y;y<=hi.y;++y)for(int x=lo.x;x<=hi.x;++x)if(proposed_cell(x,y,z))return fail("Model overlaps prefab blocks");
             const Vector3i grid_lo=(box.position/4).floor(),grid_hi=(box.get_end()/4).floor();
             for(int z=grid_lo.z;z<=grid_hi.z;++z)for(int y=grid_lo.y;y<=grid_hi.y;++y)for(int x=grid_lo.x;x<=grid_hi.x;++x) {
                 auto found=inserted_parts.find({x,y,z});if(found==inserted_parts.end())continue;

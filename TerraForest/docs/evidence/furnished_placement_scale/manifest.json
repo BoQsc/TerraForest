@@ -1,0 +1,13 @@
+{
+  "scope": "One cold synchronous native placement per population in empty structure worlds; no terrain, rendering, thermal or sustained-frame claim. 4ms placement budget declared before running. Both 64- and 128-cottage cases fail before and after the change.",
+  "change": "Replace temporary per-block tree allocation with inverse lattice transform and binary search of already-sorted authoritative prefab cells.",
+  "checks_debug": 26,
+  "checks_release": 26,
+  "reproduce": "godot --headless --path TerraForest --script res://tests/furnished_placement_scale.gd",
+  "next": "Profile and move expensive large-layout preparation off the interactive frame with revision revalidation; bound publication without weakening all-or-nothing block/model/inventory behavior. Do not repeat the unchanged test.",
+  "hashes": {
+    "addons/structures/native/prefab_transaction.cpp": "fc291d0de4784326b2246ceb5420d987d8cb074391fd4be5ed56c107b3a8836a",
+    "tests/prefab_transaction.gd": "68289c9c5dfece71707bd7b32e0e31b0acfd6446ca220f0cd06e496582188c44",
+    "tests/furnished_placement_scale.gd": "864d503500651da9ceca6add007efa12745e670127c12d8b4cddb097d71bc322"
+  }
+}

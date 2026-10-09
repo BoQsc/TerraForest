@@ -1,0 +1,59 @@
+{
+  "budget_us": 4000,
+  "failures": 2,
+  "rows": [
+    {
+      "blocks": 1896,
+      "compose_us": 2386,
+      "cottages": 4,
+      "models": 12,
+      "place_us": 715,
+      "result": {
+        "block_probes": 160,
+        "model_comparisons": 120,
+        "models": 12,
+        "ok": true
+      }
+    },
+    {
+      "blocks": 7584,
+      "compose_us": 5045,
+      "cottages": 16,
+      "models": 48,
+      "place_us": 2673,
+      "result": {
+        "block_probes": 640,
+        "model_comparisons": 480,
+        "models": 48,
+        "ok": true
+      }
+    },
+    {
+      "blocks": 30336,
+      "compose_us": 11054,
+      "cottages": 64,
+      "models": 192,
+      "place_us": 10421,
+      "result": {
+        "block_probes": 2560,
+        "model_comparisons": 1920,
+        "models": 192,
+        "ok": true
+      }
+    },
+    {
+      "blocks": 60672,
+      "compose_us": 42011,
+      "cottages": 128,
+      "models": 384,
+      "place_us": 26813,
+      "result": {
+        "block_probes": 5120,
+        "model_comparisons": 3840,
+        "models": 384,
+        "ok": true
+      }
+    }
+  ],
+  "scope": "One cold synchronous native placement per size in an empty structure world. Native validation and commit only; no rendering, terrain, inventory, steady-state, thermal or 60 FPS claim."
+}

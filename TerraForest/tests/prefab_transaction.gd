@@ -62,7 +62,8 @@ func run() -> void:
 	var retained: PackedByteArray=world.capture_snapshot()
 	check(not coordinator.place_prefab(world.blocks,inventory,invalid,Vector3i(200,40,40),0,models,{},[]) and world.capture_snapshot()==retained,"attachment outside surveyed envelope rejects without changes")
 	invalid_items[0].transform.origin=Vector3(-4,1,0);invalid.configure_model_attachments(invalid_items)
-	check(not coordinator.place_prefab(world.blocks,inventory,invalid,Vector3i(200,40,40),0,models,{},[]) and world.capture_snapshot()==retained,"attachment through prefab wall rejects without changes")
+	for turn in range(4):
+		check(not coordinator.place_prefab(world.blocks,inventory,invalid,Vector3i(200,40,40),turn,models,{},[]) and world.capture_snapshot()==retained,"attachment through rotated prefab wall rejects without changes %d"%turn)
 	var table: Node3D=models["furniture/table/v1"]
 	table.upsert_instances(PackedInt64Array([9223372036854775807]),PackedFloat32Array([1,0,0,500,0,1,0,40,0,0,1,500]))
 	retained=world.capture_snapshot()
