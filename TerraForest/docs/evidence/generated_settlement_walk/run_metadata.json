@@ -1,0 +1,8 @@
+{
+  "source_commit": "f51345bed74be05abad82467f59ee6a3f9fc2044",
+  "test": "tests/settlement_walk.gd --generated-layout",
+  "slot": "staged_furnished_1791584856787240500",
+  "presentation": "1920x1080 fullscreen, render scale 1, cap 60",
+  "hardware": "NVIDIA GeForce RTX 4050 Laptop GPU",
+  "scope": "Four approach-to-interior routes on a disposable saved generated settlement. Exact block reload checked. No cross-region travel, sustained frame or thermal qualification."
+}
