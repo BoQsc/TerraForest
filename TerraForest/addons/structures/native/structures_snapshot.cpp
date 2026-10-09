@@ -22,6 +22,7 @@ bool NativeStructuresSnapshot::parse_model_reference(const PackedByteArray &byte
     checkpoint=bytes.slice(12+length,44+length);return true;
 }
 void NativeStructuresSnapshot::_bind_methods() {
+    ClassDB::bind_method(D_METHOD("encode_model_storage","resident","unavailable_keys","unavailable_checksums"),&NativeStructuresSnapshot::encode_model_storage);
     ClassDB::bind_method(D_METHOD("configure_assets","asset_ids"),&NativeStructuresSnapshot::configure_assets);
     ClassDB::bind_method(D_METHOD("encode","blocks","models"),&NativeStructuresSnapshot::encode);
     ClassDB::bind_method(D_METHOD("decode","bytes"),&NativeStructuresSnapshot::decode);
@@ -39,6 +40,29 @@ bool NativeStructuresSnapshot::configure_assets(const PackedStringArray &ids) {
     for(auto id:ids)if(!NativeStaticBatch::valid_asset(id)||!selected.insert(id).second)return false;
     assets=std::move(selected);configured=true;return true;
 }
+PackedByteArray NativeStructuresSnapshot::encode_model_storage(const PackedByteArray &resident,const PackedInt32Array &keys,const PackedByteArray &checksums) const {
+    if(keys.size()%3||keys.size()/3>4096||checksums.size()!=keys.size()/3*32||resident.size()>5600176)return {};
+    PackedByteArray out;out.resize(16);std::memcpy(out.ptrw(),"TFMP\1\0\0\0",8);
+    out.encode_u32(8,resident.size());out.encode_u32(12,keys.size()/3);out.append_array(resident);
+    for(int64_t i=0;i<keys.size()/3;++i){int64_t at=out.size();out.resize(at+44);for(int j=0;j<3;++j)out.encode_s32(at+j*4,keys[i*3+j]);std::memcpy(out.ptrw()+at+12,checksums.ptr()+i*32,32);}
+    out.append_array(digest(out));String asset;
+    return configured&&parse_model_storage(out,asset)&&assets.count(asset)?out:PackedByteArray();
+}
+bool NativeStructuresSnapshot::parse_model_storage(const PackedByteArray &bytes,String &asset,Dictionary *state) {
+    if(bytes.size()<97||bytes.size()>5780448||std::memcmp(bytes.ptr(),"TFMP\1\0\0\0",8))return false;
+    int64_t length=bytes.decode_u32(8),count=bytes.decode_u32(12);
+    if(count>4096||length>5600176||48+length+count*44!=bytes.size()||digest(bytes.slice(0,bytes.size()-32))!=bytes.slice(bytes.size()-32))return false;
+    auto resident=bytes.slice(16,16+length);std::map<int64_t,NativeStaticBatch::Placement> values;
+    if(!NativeStaticBatch::parse(resident,asset,&values))return false;
+    std::set<BlockKey> occupied;for(const auto &value:values)occupied.insert(NativeStaticBatch::group_for(value.second));
+    if(occupied.size()+count>4096)return false;
+    PackedInt32Array keys;PackedByteArray checksums;if(state){keys.resize(count*3);checksums.resize(count*32);}
+    BlockKey previous;
+    for(int64_t i=0;i<count;++i){int64_t at=16+length+i*44;BlockKey key{int(bytes.decode_s32(at)),int(bytes.decode_s32(at+4)),int(bytes.decode_s32(at+8))};
+        if(!NativeStaticBatch::valid_model_region(key)||(i&&!(previous<key))||occupied.count(key))return false;
+        previous=key;if(state){keys.set(i*3,key.x);keys.set(i*3+1,key.y);keys.set(i*3+2,key.z);std::memcpy(checksums.ptrw()+i*32,bytes.ptr()+at+12,32);}}
+    if(state){(*state)["resident"]=resident;(*state)["unavailable_keys"]=keys;(*state)["unavailable_checksums"]=checksums;}return true;
+}
 PackedByteArray NativeStructuresSnapshot::encode(const PackedByteArray &blocks,const Dictionary &models) const {
     return encode_payload(blocks,models,RESIDENT);
 }
@@ -52,7 +76,7 @@ PackedByteArray NativeStructuresSnapshot::encode_payload(const PackedByteArray &
         if(!models.has(asset)||models[asset].get_type()!=Variant::PACKED_BYTE_ARRAY)return {};
         PackedByteArray value=models[asset];String parsed;
         PackedByteArray checkpoint;
-        if((!NativeStaticBatch::parse(value,parsed,nullptr)&&!(mode==REFERENCE&&parse_model_reference(value,parsed,checkpoint)))||parsed!=asset)return {};
+        if((!NativeStaticBatch::parse(value,parsed,nullptr)&&!(mode==REFERENCE&&parse_model_reference(value,parsed,checkpoint))&& !((mode==STORAGE||mode==CHECKPOINT_STORAGE)&&parse_model_storage(value,parsed)))||parsed!=asset)return {};
         size+=4+value.size();if(size>LIMIT)return {};
     }
     if(size>LIMIT)return {};
@@ -76,7 +100,7 @@ bool NativeStructuresSnapshot::parse(const PackedByteArray &bytes,Dictionary *re
         if(p+4>n)return false;length=u32();if(length>n-p)return false;
         auto model=payload.slice(p,p+length);p+=length;String asset;
         PackedByteArray checkpoint;
-        if((!NativeStaticBatch::parse(model,asset,nullptr)&&!(mode==REFERENCE&&parse_model_reference(model,asset,checkpoint)))||!assets.count(asset)||(i&&!(previous<asset)))return false;
+        if((!NativeStaticBatch::parse(model,asset,nullptr)&&!(mode==REFERENCE&&parse_model_reference(model,asset,checkpoint))&&!((mode==STORAGE||mode==CHECKPOINT_STORAGE)&&parse_model_storage(model,asset)))||!assets.count(asset)||(i&&!(previous<asset)))return false;
         previous=asset;if(result)models[asset]=model;
     }
     if(p!=n)return false;

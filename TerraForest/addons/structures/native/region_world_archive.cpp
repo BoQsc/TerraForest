@@ -164,7 +164,10 @@ int64_t NativeRegionWorldArchive::publish(const String &path,const PackedByteArr
     Dictionary models=structure["models"];PackedStringArray ids;Array keys=models.keys();for(int64_t i=0;i<keys.size();++i)ids.push_back(keys[i]);
     for(int64_t i=0;i<keys.size();++i) {
         String asset=keys[i];auto model=model_store(asset,true);if(model.is_null())return ERR_CANT_OPEN;
-        Dictionary stored=model->publish_snapshot(models[asset]);if(!bool(stored["ok"]))return stored["error"];
+        String parsed_asset;Dictionary state;
+        Dictionary stored=NativeStructuresSnapshot::parse_model_storage(models[asset],parsed_asset,&state)?
+            model->publish_storage_state(state["resident"],state["unavailable_keys"],state["unavailable_checksums"]):model->publish_snapshot(models[asset]);
+        if(!bool(stored["ok"]))return stored["error"];
         Dictionary model_pin=model->pin_checkpoint();if(!bool(model_pin["ok"]))return model_pin["error"];
         models[asset]=NativeStructuresSnapshot::model_reference(asset,model_pin["checkpoint"]);
     }

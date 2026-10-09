@@ -145,7 +145,10 @@ func capture_storage_snapshot() -> PackedByteArray:
 	if not seal():
 		return PackedByteArray()
 	# Retain the ordinary bundle for fully resident worlds and legacy consumers.
-	if blocks.region_stats().whole_snapshot_available:
+	var fully_resident: bool=blocks.region_stats().whole_snapshot_available
+	for collection: Node3D in _models.values():
+		fully_resident=fully_resident and collection.region_stats().unloaded_regions==0
+	if fully_resident:
 		return capture_snapshot()
 	if not _cached_storage.is_empty():
 		return _cached_storage.duplicate()
@@ -154,6 +157,9 @@ func capture_storage_snapshot() -> PackedByteArray:
 	var byte_count: int = 56+_storage_checkpoint.size()+state.resident.size()+state.unavailable_keys.size()/3*44
 	for id: String in _models:
 		var bytes: PackedByteArray = _models[id].capture_snapshot()
+		if _models[id].region_stats().unloaded_regions>0:
+			var model_state: Dictionary=_models[id].capture_storage_state()
+			bytes=_codec.encode_model_storage(model_state.resident,model_state.unavailable_keys,model_state.unavailable_checksums)
 		byte_count += 4+bytes.size()
 		if bytes.is_empty() or byte_count > 64*1024*1024:
 			return PackedByteArray()
@@ -169,6 +175,11 @@ func restore_storage_snapshot(bytes: PackedByteArray) -> bool:
 	var decoded: Dictionary = _codec.decode_storage(bytes)
 	if not decoded.get("ok",false):
 		return false
+	# Save envelopes with partial models must first resolve through the archive.
+	# Reject before mutating blocks or any other model collection.
+	for id: String in _models:
+		if not _models[id].validate_snapshot(decoded.models.get(id,_empty_models[id])):
+			return false
 	# Native replacement validates both maps before changing either of them.
 	if not blocks.restore_storage_state(decoded.resident,decoded.unavailable_keys,decoded.unavailable_checksums):
 		return false

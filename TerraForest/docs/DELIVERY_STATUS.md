@@ -1,3 +1,18 @@
+## Partial model captures reach compound world saves - 2026-10-09
+
+The structures scene now captures resident static-object edits together with
+exact references to unloaded model regions. The compound archive resolves those
+references through the model catalog before publishing its new root. This also
+works when all block terrain is resident. Direct scene restoration rejects an
+unresolved partial model envelope before changing blocks or model collections.
+
+Debug and isolated release archive fixtures pass 82 checks, including actual
+scene capture, resident demolition, preserved unloaded objects, exact backup,
+disk reopen, and malformed/corrupt envelope rejection. The release terrain/water/
+structures coordinator passes 76 checks. Evidence: `docs/evidence/model_partial_world`.
+Automatic model paging and metadata-first model loading remain future work;
+this completes partial-save integration, not performance qualification.
+
 ## Compound world saves own model checkpoints - 2026-10-09
 
 The region-backed world archive now saves static-model snapshots into per-asset

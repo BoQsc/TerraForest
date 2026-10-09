@@ -52,6 +52,9 @@ with tempfile.TemporaryDirectory(prefix='release_smoke_',dir=build) as temporary
     if args.addon=='structures':
         shutil.copytree(source/'prefabs',addon/'prefabs')
         shutil.copytree(source/'textures',addon/'textures')
+        if test=='region_world_archive':
+            for name in ['structures_world.gd','material_startup.gd']:
+                shutil.copy2(source/name,addon/name)
     if test in ['block_lattice','block_texture_sets']:
         shutil.copytree(ROOT/'tests/fixtures',project/'tests/fixtures')
     if test in ['region_world_archive','region_archive_reads','block_pager','block_pager_stress']:
