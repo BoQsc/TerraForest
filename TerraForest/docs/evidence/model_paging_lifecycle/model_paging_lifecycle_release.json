@@ -1,0 +1,6 @@
+{
+  "checks": 23,
+  "failures": 0,
+  "scope": "Actual terrain worker/manual save/autosave/reload/shutdown lifecycle with native model paging; headless correctness, not rendered performance.",
+  "library": "structures.windows.template_release.x86_64.dll"
+}

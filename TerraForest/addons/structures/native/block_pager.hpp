@@ -9,6 +9,7 @@ class NativeBlockPager : public RefCounted {
     GDCLASS(NativeBlockPager,RefCounted)
     ObjectID world_id_;
     Ref<NativeRegionWorldArchive> archive_;
+    bool owns_read_service_=false;
     struct Pending {BlockKey key;PackedByteArray checksum;};
     std::map<int64_t,Pending> pending_;
     std::set<BlockKey> pending_keys_;

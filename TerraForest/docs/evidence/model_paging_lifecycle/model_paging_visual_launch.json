@@ -1,0 +1,24 @@
+{
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\godot.windows.opt.tools.64.exe",
+    "--path",
+    "C:\\Users\\LENOVO LOQ 15\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+    "--rendering-method",
+    "forward_plus",
+    "--fullscreen",
+    "--resolution",
+    "1920x1080",
+    "--max-fps",
+    "60",
+    "--script",
+    "res://tests/playtest_startup.gd",
+    "--",
+    "--world-slot=model_paging_visual_1791574318447756100",
+    "--world-generator=1",
+    "--world-seed=1703",
+    "--human-playtest",
+    "--model-region-paging",
+    "--max-fps=60"
+  ],
+  "slot": "model_paging_visual_1791574318447756100"
+}

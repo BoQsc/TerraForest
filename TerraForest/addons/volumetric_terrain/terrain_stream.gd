@@ -30,6 +30,10 @@ func set_brush_active(active: bool) -> void:
 	if active:
 		note_interaction()
 signal reload_started
+signal save_completed(success: bool)
+var lifecycle_ready: Callable
+var _reload_requested := false
+var _reload_reset := false
 const Backend = preload("res://addons/volumetric_terrain/terrain_backend.gd")
 const Codec = preload("res://addons/volumetric_terrain/mesh_codec.gd")
 const ROOT_SIZE: int = 256
@@ -171,15 +175,21 @@ func shutdown_after_edits() -> bool:
 	while pending_edit and latest_error.is_empty() and not stopping and Time.get_ticks_msec()<deadline:
 		await get_tree().process_frame
 	var settled: bool=not pending_edit and latest_error.is_empty()
+	while lifecycle_ready.is_valid() and not lifecycle_ready.call("shutdown") and not stopping and Time.get_ticks_msec()<deadline:
+		await get_tree().process_frame
+	if lifecycle_ready.is_valid() and not lifecycle_ready.call("shutdown"):
+		settled = false
 	if not settled:
-		backend.disable_snapshot_writes("pending edit did not publish before shutdown")
-		message_changed.emit("Closing without a new save: pending edit did not publish; previous save retained")
+		backend.disable_snapshot_writes("world state did not settle before shutdown")
+		message_changed.emit("Closing without a new save: world state did not settle; previous save retained")
 	shutdown()
 	return settled
 
 func shutdown() -> void:
 	if stopping:
 		return
+	if lifecycle_ready.is_valid() and not lifecycle_ready.call("shutdown"):
+		backend.disable_snapshot_writes("scene teardown interrupted addon transfers")
 	if require_published_shutdown and pending_edit:
 		# Direct scene teardown cannot run publication callbacks. Keep the last
 		# consistent disk snapshot instead of saving unaccounted excavation.
@@ -229,6 +239,8 @@ func _process(delta: float) -> void:
 	_record_stage("staging frame", last_publish_frame_ms)
 	_retire_some()
 	if closing: return # Drain publication, but admit no new background work.
+	if _reload_requested:
+		reload_world(_reload_reset)
 	if not world_ready:
 		return
 	_flush_manual_save()
@@ -389,6 +401,7 @@ func _receive(result: Dictionary) -> void:
 		if Codec.reply_ok(reply) and reply.size() >= 16:
 			height_received.emit(result["point"], reply.decode_float(12), int(result["token"]))
 	elif kind == "message":
+		if result.get("operation","")=="save": save_completed.emit(result.get("success",false))
 		message_changed.emit(str(result["message"]))
 	elif kind == "mesh":
 		var key: Vector3i = result.get("key", Vector3i.ZERO)
@@ -1351,6 +1364,12 @@ func reload_world(reset: bool = false) -> void:
 	if pending_edit:
 		message_changed.emit("Wait for the pending edit before loading/resetting")
 		return
+	if lifecycle_ready.is_valid() and not lifecycle_ready.call("reset" if reset else "reload"):
+		if not _reload_requested: message_changed.emit("Waiting for addon transfers before loading")
+		_reload_requested = true
+		_reload_reset = reset
+		return
+	_reload_requested = false
 	_cancel_partition()
 	reload_started.emit()
 	epoch += 1

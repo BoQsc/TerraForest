@@ -1,0 +1,19 @@
+{
+  "base_commit": "bb8e286aff639b2771158e4a396420b4c1c7e4e5",
+  "recorded_utc": "2026-10-09T19:37:19.079450+00:00",
+  "engine": "Godot 4.7.2 stable Steam ed1daf0bf",
+  "graphics": "RTX 4050 Laptop GPU, Forward+, 1920x1080 fullscreen, 100% scale, VSync, 60 FPS cap",
+  "scope": "23 debug and 23 release headless lifecycle checks; 29 block and 76 persistence release regressions; separate graphical main-scene startup/shutdown only. No dense-arrival, mining, thermal or sustained-FPS qualification.",
+  "sha256": {
+    "addons/structures/bin/structures.windows.template_debug.x86_64.dll": "5d8028ed09486e6a1e6b22aa01198b77dbfb3814f06812f05d604d41ab3bec18",
+    "addons/structures/bin/structures.windows.template_release.x86_64.dll": "c2da9a57337f6a505d86cb518e1815baeb6fa3e4cb930757c7cc6a27d212cfd4",
+    "addons/structures/model_paging_coordinator.gd": "26380fbe01f02ef3231f918c3554084099210cf90008a9623549e4b998682717",
+    "addons/structures/native/block_pager.cpp": "f116ebfaefc83ca01eb535997e7a4886a9091a0dec324228daf2040e64359f15",
+    "addons/structures/native/block_pager.hpp": "e8d056029105967792189d3d511b841967608e3c396159f5229aa267e5a81aa1",
+    "addons/volumetric_terrain/terrain_backend.gd": "b11347633083d14755b17288e68139e69919a9eb806141f63203975334b015b9",
+    "addons/volumetric_terrain/terrain_stream.gd": "303fa2968963287781bd2c3493281002aaf8064e16b5ea88a5b9de9c543ccd4b",
+    "demo/world.gd": "f172bf3bdba2d728bb25aa7a5f8e5daa5c748e47fec0b190867b30ce3449ae1f",
+    "tests/model_paging_lifecycle.gd": "7e01b517dc554d576cfc245540666869e6fb299562b36ed4e6c38684e93a068d",
+    "tests/playtest_startup.gd": "d834001c758d4210b3c08c1bbb99b522e1a8228ec6731e82b78ef458ae0d47ec"
+  }
+}

@@ -22,7 +22,7 @@ Statuses below distinguish **integrated partial** (usable but coverage gates rem
 | Block shapes, prefabs and static model objects | Integrated partial: cubes, slabs, stairs, slopes, posts, spheres, placement/transforms/history and persistence | Author a usable building with interior objects and access features; verify selection, collisions, undo where supported, and persistence through travel |
 | Large buildings, towns and cities | Integrated partial: house/tower examples and street-frontage authoring | Implement a reproducible settlement generation/authoring workflow with connected roads, supported buildings and usable interiors; measure representative detailed structures, not just empty shells |
 | World generator and editor | Integrated partial: generation, terrain editing, construction and site preparation | One reproducible workflow creates, edits, revisits and reloads the combined world; rejected operations leave consistent state |
-| Loading, baking and caching | Integrated partial for terrain/blocks; native partial for automatic model paging | Automatic model region selection, safe save/checkpoint handover and lifetime handling; correct edit invalidation and warm reuse; demonstrate bounded residency and arrival behavior |
+| Loading, baking and caching | Integrated partial for terrain/blocks; opt-in main-world model paging with lifecycle barriers | Automatic model region selection, safe save/checkpoint handover and lifetime handling; correct edit invalidation and warm reuse; demonstrate bounded residency and arrival behavior |
 | Player, toolbelt, inventory and unified interaction | Integrated partial: movement, UI, pickups/resources and paid gameplay construction separate from free editor | Complete a coherent gather/build/use/save/reload loop across terrain, buildings and objects; verify input focus and unavailable-region behavior |
 | Vegetation including stones, plants and grass | Integrated partial for trees and native selection/sparse updates | Add representative small stones, plants and grass with density/LOD tiers and appropriate persistence; verify local mining/building disturbance and combined rendering costs |
 | Efficient world representation and storage | Integrated partial: versioned compound snapshots, regional structures, checksums/recovery and derived caches | Demonstrate bounded memory/disk behavior under edit, travel, save and reload; distinguish authoritative records from disposable caches; retain unresolved terrain addressing/delta/compaction requirements |
@@ -88,13 +88,17 @@ M1 progress: [native saved-checkpoint handover](MODEL_CHECKPOINT_HANDOVER.md) no
 Native focus selection and the structures scene adapter now pass a 24-check
 travel/edit/save/reload lifecycle in debug and release, including history pins and
 new asset registration. [Contract and limits](MODEL_TRANSFER_SCHEDULER.md). The
-fixture explicitly drains transfers; normal game commands, autosaves and shutdown
-still need that barrier. The subsequent [discovery check](MODEL_FOCUS_DISCOVERY.md)
+fixture explicitly drains transfers; the subsequent normal-world integration
+described below now supplies that barrier. The subsequent [discovery check](MODEL_FOCUS_DISCOVERY.md)
 found and corrected a linear scan: 4,096 regions across 32 assets now reach the
 first nearby request in one selection call instead of 2,048. Debug/release pass
 50 focused checks. Full arrival, overlapping layouts and runtime performance
 remain separate qualification requirements.
 
-Next implementation task under M1: connect the scene adapter's drain/resume barriers to normal game command, autosave and shutdown paths. Its proof must exercise the actual world through load, travel, edit, save and reload; another standalone scheduler benchmark does not close this task. Keep the current default path usable until that proof passes. Human checkpoint feedback can proceed in parallel and any concrete play-blocking defect takes precedence.
+Normal manual saves, autosaves, reload/reset and shutdown now invoke those barriers through an opt-in main-world coordinator. Debug/release each pass 23 actual-worker lifecycle checks; the main scene passes automated 1080p startup/shutdown. [Contract, evidence and remaining decision](MODEL_PAGING_LIFECYCLE.md).
+
+Next bounded M1 decision: use a short populated-world travel/edit/save/reload route to assess arrival correctness and frame tails, including the existing near/far mining check. Enable model paging by default only if the declared workload passes; otherwise retain the current default and the explicit arrival limitation, then proceed to M2. Ordinary play-blocking defects take priority. This decision is not a demand to solve arbitrary city scale before adding missing content.
+
+M2 starts with a reproducible saved-world content route: generated terrain/geology/lake, a connected road and authored building with interior props, followed by vegetation variety and settlement generation coverage. Each change must identify which original-scope gate it closes and include a short check and a human checkpoint. M3 adds representative entity behavior and bounded vehicle populations. Review stable identity, command authority and persistence boundaries throughout; networking implementation stays later.
 
 This task is bounded by the M1 disposition rule above. It must not indefinitely delay M2 or erase the remaining original coverage rows. No first-round completion, release date or percentage complete is claimed.

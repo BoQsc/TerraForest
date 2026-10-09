@@ -1,0 +1,32 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS pager rejects unsupported radius and hysteresis configuration
+PASS pager validates resident chunk bound and starts native read ownership
+PASS active pager rejects a second configuration
+PASS nearby positive and negative regions load automatically from metadata
+PASS pager admits exact nearby cells while distant region stays unloaded
+PASS native scan and region transfer work remain bounded per tick
+PASS travel loads a new region and evicts an unchanged committed distant region
+PASS distant unsaved edit and its undo survive unrelated paging
+PASS undo remains usable after another region was admitted and evicted
+PASS partially paged world publishes resident state and unavailable references together
+PASS saved region referenced by redo remains pinned
+PASS clearing history permits clean distant eviction after successful publication
+PASS pager consumes successful publication metadata without disk reads on the scene
+PASS return travel reloads previously evicted region
+PASS dirty distant region stays resident even when undo recording is disabled
+PASS fixture forces world-root replacement failure
+PASS failed root replacement cannot advertise uncommitted region versions
+PASS pager does not evict dirty cells using a failed-save catalog
+PASS retry commits edited distant region
+PASS successful retry makes matching distant cells eligible for eviction
+PASS whole-world restore advances pager epoch and discards accepted old-scene results
+PASS reload keeps admission and request budgets bounded
+PASS pager stop drains and consumes its owned read completions
+PASS dense fixture starts with a two-region resident budget
+PASS dense nearby regions fill but do not exceed configured resident capacity
+PASS memory pressure trades farther committed regions for nearer requested regions
+PASS stable focus does not thrash regions inside the loading radius at capacity
+PASS dense travel respects scan transfer and cell residency bounds
+PASS dense paged state remains saveable without loading all source chunks
+

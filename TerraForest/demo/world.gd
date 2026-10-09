@@ -5,6 +5,8 @@ const Lakes = preload("res://addons/volumetric_water/lake_world.gd")
 const Persistence = preload("res://addons/world_runtime/world_persistence.gd")
 const Structures = preload("res://addons/structures/structures_world.gd")
 var persistence = Persistence.new()
+var model_paging: Node
+var model_region_paging := "--model-region-paging" in OS.get_cmdline_user_args()
 var pickups = preload("res://addons/world_runtime/material_pickups.gd").new()
 var player_pose: RefCounted
 var world_vehicle=preload("res://addons/vehicle_runtime/world_vehicle.gd").new()
@@ -114,7 +116,7 @@ func _ready() -> void:
 		push_error("Road anchor persistence initialization failed")
 		get_tree().quit(2)
 		return
-	if not structures_ready or not lakes.prepare() or not persistence.register_component("structures", structures.capture_storage_snapshot, structures.restore_storage_snapshot, structures.snapshot_validator(), structures.empty_snapshot()) or not persistence.register_component("volumetric_water", lakes.capture_snapshot, lakes.restore_snapshot, lakes.snapshot_validator(), lakes.empty_snapshot()) or not persistence.enable_region_structures(true) or persistence.attach(terrain) != OK:
+	if not structures_ready or not lakes.prepare() or not persistence.register_component("structures", structures.capture_storage_snapshot, structures.restore_storage_snapshot, structures.snapshot_validator(), structures.empty_snapshot()) or not persistence.register_component("volumetric_water", lakes.capture_snapshot, lakes.restore_snapshot, lakes.snapshot_validator(), lakes.empty_snapshot()) or not persistence.enable_region_structures(true,model_region_paging) or persistence.attach(terrain) != OK:
 		push_error("World persistence initialization failed")
 		get_tree().quit(2)
 		return
@@ -137,6 +139,13 @@ func _ready() -> void:
 		{"title":"Floor panel","mesh":beam,"collection":structures.model("architecture/metal_beam/v1"),"scale":Vector3(4,0.25,4),"costs":PackedInt64Array([104,8]),"cost_label":"8 metal"},
 		{"title":"Doorway","mesh":doorway,"collection":door_models,"scale":Vector3.ONE,"costs":PackedInt64Array([103,8]),"cost_label":"8 concrete"}],help.get_parent(),structures.blocks)
 	model_tool.notice.connect(_show_lake_notice)
+	if model_region_paging and (not temporary_world or terrain.backend.readonly_snapshot):
+		model_paging=preload("res://addons/structures/model_paging_coordinator.gd").new()
+		add_child(model_paging)
+		if not model_paging.attach(terrain,structures,model_tool.history,func():return player.global_position):
+			push_error("Model paging lifecycle initialization failed")
+			get_tree().quit(2)
+			return
 	player_hud.temporary_world=temporary_world
 	add_child(player_hud)
 	add_child(construction_palette)

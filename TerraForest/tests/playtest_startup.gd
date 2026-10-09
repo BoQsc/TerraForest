@@ -18,6 +18,11 @@ func run() -> void:
     state["vsync"]=DisplayServer.window_get_vsync_mode()
     state["slot"]=game.terrain.save_slot
     state["save_path"]=ProjectSettings.globalize_path(game.terrain.backend.save_path)
+    state["model_region_paging"]=game.model_region_paging
+    if game.model_region_paging:
+        state["model_paging_active"]=game.model_paging!=null and game.model_paging.last_state.get("active",false)
+        passed=passed and state.model_paging_active
+        state["passed"]=passed
     state["scope"]="Automatic real-scene startup/presentation check only; no human playtest or 60 FPS performance qualification."
     var report:=FileAccess.open("res://reports/playtest_startup.json",FileAccess.WRITE);report.store_string(JSON.stringify(state,"  "));report.close()
     root.get_texture().get_image().save_png("res://reports/playtest_startup.png")

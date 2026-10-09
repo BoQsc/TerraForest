@@ -24,7 +24,8 @@ double NativeBlockPager::distance_squared(BlockKey key,Vector3 point) {
 }
 bool NativeBlockPager::configure(NativeBlockWorld *blocks,const Ref<NativeRegionWorldArchive> &archive,double load,double unload,int limit) {
     if(archive_.is_valid()||!blocks||archive.is_null()||!std::isfinite(load)||!std::isfinite(unload)||load<64||load>512||unload<load+64||unload>768||limit<64||limit>2048)return false;
-    if(!archive->start_region_reads(REQUESTS,int64_t(REQUESTS)*(2*1024*1024+96)))return false;
+    owns_read_service_=!bool(archive->region_read_stats()["running"]);
+    if(owns_read_service_&&!archive->start_region_reads(REQUESTS,int64_t(REQUESTS)*(2*1024*1024+96)))return false;
     world_id_=blocks->get_instance_id();archive_=archive;load_radius_=load;unload_radius_=unload;chunk_limit_=limit;
     const int reach=int(std::ceil(load/64))+1;
     for(int x=-reach;x<=reach;++x)for(int y=-reach;y<=reach;++y)for(int z=-reach;z<=reach;++z)offsets_.push_back({x,y,z});
@@ -139,7 +140,8 @@ bool NativeBlockPager::step(Vector3 world_focus,const PackedByteArray &restore_c
     last_ms_=(Time::get_singleton()->get_ticks_usec()-begin)/1000.0;max_ms_=std::max(max_ms_,last_ms_);return true;
 }
 void NativeBlockPager::stop() {
-    if(archive_.is_valid()){archive_->join_region_reads();archive_->poll_region_reads(64);archive_.unref();}
+    if(archive_.is_valid()){if(owns_read_service_){archive_->join_region_reads();archive_->poll_region_reads(64);}archive_.unref();}
+    owns_read_service_=false;
     world_id_=ObjectID();pending_.clear();pending_keys_.clear();offsets_.clear();initialized_=false;
 }
 Dictionary NativeBlockPager::stats() const {

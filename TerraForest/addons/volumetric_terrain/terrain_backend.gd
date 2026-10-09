@@ -60,6 +60,9 @@ var latest_packet_bytes: int = 0
 var active_input: bool = false
 var snapshot_codec: RefCounted
 var snapshot_capture: Callable
+var snapshot_ready: Callable
+signal snapshot_save_submitted
+var _last_save_success := false
 var snapshot_validators: Dictionary = {}
 var components: Dictionary = {} # Worker-owned; unknown addon sections survive round trips.
 var component_epoch: int = 0
@@ -226,6 +229,8 @@ func start(use_temporary: bool) -> Error:
 
 var _site_pending:=0
 func submit(job: Dictionary, priority: bool = false) -> bool:
+	if job.get("kind","")=="save" and snapshot_ready.is_valid() and not snapshot_ready.call("save"):
+		return false
 	if job.get("kind","")=="density_batch":
 		var paged: Variant=job.get("paged",false)
 		if typeof(paged)!=TYPE_BOOL: return false
@@ -334,6 +339,7 @@ func submit(job: Dictionary, priority: bool = false) -> bool:
 		jobs.push_back(job)
 	mutex.unlock()
 	semaphore.post()
+	if job.get("kind","")=="save": snapshot_save_submitted.emit()
 	return true
 
 func cancel_stale_meshes(wanted: Dictionary, current_epoch: int, versions: Dictionary) -> Array[Dictionary]:
@@ -396,6 +402,7 @@ func _call(data: PackedByteArray) -> PackedByteArray:
 	return native.call("execute", data)
 
 func _save() -> String:
+	_last_save_success = false
 	if temporary:
 		return "Temporary test world: save skipped"
 	if not _snapshot_writable():
@@ -416,6 +423,7 @@ func _save() -> String:
 			return "ERROR: compound save failed; previous canonical snapshot retained"
 		_set_cache_snapshot(DiskCache.digest(payload).hex_encode())
 		_flush_current_packets()
+		_last_save_success = true
 		return "World saved and verified; terrain and addon state published together"
 	var tmp: String = save_path + ".tmp.%d" % OS.get_process_id()
 	var file: FileAccess = FileAccess.open(tmp, FileAccess.WRITE)
@@ -453,6 +461,7 @@ func _save() -> String:
 		return "ERROR: cannot publish save (%d); original restored" % publish_error
 	_set_cache_snapshot(DiskCache.digest(payload).hex_encode())
 	_flush_current_packets()
+	_last_save_success = true
 	return "World saved and verified; previous snapshot retained as .bak"
 
 func _initialize_generated_components() -> bool:
@@ -1049,7 +1058,8 @@ func _run() -> void:
 			_push(update)
 		elif kind == "save":
 			_apply_components(job.get("component_snapshot", {}))
-			_push({"kind": "message", "message": _save()})
+			var saved_message: String = _save()
+			_push({"kind": "message", "message": saved_message,"operation":"save","success":_last_save_success})
 		elif kind == "load" or kind == "reset":
 			component_epoch = int(job["epoch"])
 			component_generation = -1

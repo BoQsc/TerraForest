@@ -31,6 +31,12 @@ WASD moves, mouse looks, Shift sprints, Space jumps, G flies, Escape releases th
 
 **L** carves a basin at the aimed terrain and bakes static voxel water. Terrain and lake definitions save together and restore on reopening. Basic swimming and camera-local underwater feedback are implemented; flowing/draining fluid simulation is not. Use `--temporary` for disposable experiments. See [world storage](docs/WORLD_STORAGE.md).
 
+Automatic model region paging is available for integration qualification with
+`python tools/run.py --slot model_paging_trial --model-region-paging`. It remains
+opt-in; the default/human-checkpoint path is unchanged. See the
+[lifecycle contract and evidence](docs/MODEL_PAGING_LIFECYCLE.md) before interpreting
+this as dense-world performance support.
+
 ## Addons
 
 | Folder | Responsibility | Dependencies |

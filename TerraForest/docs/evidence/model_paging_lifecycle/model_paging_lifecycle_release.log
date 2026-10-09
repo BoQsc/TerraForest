@@ -1,0 +1,29 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS real terrain worker attaches model lifecycle coordinator
+PASS persistent world starts
+PASS normal manual save publishes and automatically resumes paging
+PASS coordinator retires far saved models without test-driven transfer calls
+PASS block and model paging share one coordinator-owned archive service
+PASS travel creates pending model work
+PASS manual save waits at transfer boundary instead of dropping the request
+PASS queued manual save finishes and paging resumes automatically
+PASS nearby models return after save-boundary cancellation
+PASS player-style model edit updates resident state
+PASS normal autosave uses the same drain/publication/resume boundary
+PASS rejected save releases the lifecycle wait
+PASS invalid capture preserves previous canonical save
+PASS valid follow-up save enters worker publication
+PASS reload queues behind in-flight save without replacing live collections
+PASS normal reload detaches, restores and automatically reattaches model paging
+PASS reloaded world accepts another edit for shutdown persistence
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+PASS normal asynchronous shutdown drains paging and saves the last edit
+PASS fresh process-equivalent world instance loads shutdown save
+PASS shutdown edit survives fresh archive and scene reconstruction
+PASS normal reset restores and reattaches paging
+PASS reset removes prior model placements
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+PASS reopened world shuts down cleanly
+MODEL_PAGING_LIFECYCLE checks=23 failures=0
+

@@ -2,6 +2,20 @@
 
 The [delivery plan and coverage register](PROJECT_PLAN.md) is the current reference for milestone order, original-scope coverage and deferred-work return triggers. Entries below preserve evidence at their recorded development stage. Older headings and the historical scope table are not current status; later implementations supersede some of their limitations. Correctness, integration, rendered performance and sustained qualification are separate gates.
 
+## Normal-world model paging lifecycle - 2026-10-09
+
+Manual save, autosave, reload/reset and graceful shutdown now coordinate native
+model transfers through an opt-in main-world adapter. Saves report structured
+completion; failed capture protects the prior canonical save and releases the
+wait. Block and model paging share one archive read service without restarting it.
+
+Debug/release each pass 23 actual-worker lifecycle checks. Release regressions pass
+29 block-pager and 76 regional-persistence checks. The actual main scene passes
+1920x1080 fullscreen startup/shutdown with the flag and active coordinator.
+[Contract, retained evidence and activation limits](MODEL_PAGING_LIFECYCLE.md).
+Default activation, populated-world arrival and dense timing remain unqualified.
+This closes lifecycle wiring only; it does not close mining or thermal failures.
+
 ## Spatial model destination discovery - 2026-10-09
 
 A short selection-only check found that the linear admission cursor needed 64

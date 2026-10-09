@@ -1,0 +1,25 @@
+{
+  "actual_fps_cap": 60,
+  "fair_graphical_sample": true,
+  "fullscreen": true,
+  "headless": false,
+  "model_paging_active": true,
+  "model_region_paging": true,
+  "passed": true,
+  "ready": true,
+  "render_scale": 1.0,
+  "requested_fps_cap": 60,
+  "save_path": "C:/Users/LENOVO LOQ 15/AppData/Roaming/Godot/app_userdata/TerraForest/worlds/model_paging_visual_1791574318447756100.trw",
+  "scope": "Automatic real-scene startup/presentation check only; no human playtest or 60 FPS performance qualification.",
+  "slot": "model_paging_visual_1791574318447756100",
+  "viewport": [
+    1920,
+    1080
+  ],
+  "vsync": 1,
+  "window_mode": 3,
+  "window_size": [
+    1920,
+    1080
+  ]
+}

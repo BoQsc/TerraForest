@@ -150,8 +150,9 @@ Whole-destination arrival and heavily overlapping bounds remain unqualified.
    Restore the new scene state and enable again as needed. Exceptional destruction
    retains the scheduler's synchronous cleanup fallback.
 
-The normal game command/autosave/shutdown paths still need to call these barriers;
-do not enable metadata-only default startup before that integration. Run the short
+The normal game command/autosave/shutdown paths now use these barriers behind
+`--model-region-paging`; see [lifecycle integration](MODEL_PAGING_LIFECYCLE.md).
+Default activation remains deferred pending populated-world qualification. Run the short
 `model_focus_paging` release test for the scene-adapter route. Debug/release each
 pass 24 checks for multi-asset travel, exact edits, history pins, partial saves,
 new asset registration, reload and lease cleanup. [Evidence](evidence/model_focus_paging/).
@@ -184,9 +185,10 @@ rate, which must not be presented as game-frame arrival times.
 
 The earlier small correctness run also observed a 5.364 ms release tick (and a
 preliminary debug run 2.230 ms). Preserve these outliers; subsequent faster samples
-do not establish stability. Automatic focus selection, metadata-first scene
-installation, version handover after dirty saves, renderer/collision selection
-costs, and dense transfer latency/tails remain unfinished. This change provides
+do not establish stability. Subsequent focus selection, metadata-first scene
+installation and saved-version handover now have correctness evidence; see the
+lifecycle integration above. Renderer/collision selection costs and dense transfer
+latency/tails remain unqualified. This change provides
 shared bounded work scheduling, not runtime GPU savings or large-city qualification.
 
 The implementation is project-owned 0BSD C++ using the pinned Zig/prebuilt
