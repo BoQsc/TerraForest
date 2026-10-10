@@ -17,6 +17,17 @@ func run() -> void:
 	game.set_physics_process(false);game._clear_motion();game.fly=false;game.needs_floor_spawn=false
 	var street: Dictionary=game.road_palette.prepared_streets[0]
 	var a: Vector3=street.ends[0];var b: Vector3=street.ends[1];var direction: Vector3=(b-a).normalized()
+	var streamed: bool="--streamed-road" in OS.get_cmdline_user_args()
+	if streamed:
+		game.terrain.backend.disable_snapshot_writes()
+		direction=-direction
+		for section in 5:
+			if not game.terrain.construct_road_bed(a+direction*section*64,a+direction*(section+1)*64,4,4,12):
+				check(false,"extended road admitted");game.terrain.shutdown();game.free();quit(1);return
+			deadline=Time.get_ticks_msec()+30000
+			while game.terrain.pending_edit and Time.get_ticks_msec()<deadline:await process_frame
+			if game.terrain.pending_edit:
+				check(false,"extended road published");game.terrain.shutdown();game.free();quit(1);return
 	var start: Vector3=a+direction*5
 	game.yaw=atan2(-direction.x,-direction.z);game.player.rotation.y=game.yaw
 	game.player.position=start-direction*6+Vector3.UP*1.0
@@ -34,6 +45,9 @@ func run() -> void:
 	check(game.world_vehicle.enter(game),"enter vehicle on loaded settlement road")
 	game.set_physics_process(true)
 	for tick in 60:await physics_frame
+	if streamed:
+		await streamed_drive(game,car,direction)
+		game.terrain.shutdown();game.free();await process_frame;quit(1 if failures else 0);return
 	if "--junction-turn" in OS.get_cmdline_user_args():
 		await junction_turn(game,car,b)
 		game.terrain.backend.disable_snapshot_writes();game.terrain.shutdown();game.free();await process_frame;quit(1 if failures else 0);return
@@ -117,3 +131,33 @@ func junction_turn(game: Node,car: RigidBody3D,junction: Vector3) -> void:
 	await RenderingServer.frame_post_draw
 	root.get_texture().get_image().save_png(DIR+"junction.png")
 	var f:=FileAccess.open(DIR+"junction.json",FileAccess.WRITE);f.store_string(JSON.stringify({"failures":failures,"waypoints_reached":next,"max_speed_kph":max_speed,"max_deviation":max_deviation,"held_ticks":held,"rows":rows,"scope":"Keyboard-controlled right turn on loaded saved settlement roads. No physics pose correction, no streamed-boundary or frame-performance claim."},"  "));f.close()
+
+func streamed_drive(game: Node,car: RigidBody3D,direction: Vector3) -> void:
+	var initial: Vector3=car.position
+	var target: Vector3=initial+direction*245
+	var initially_ready: bool=game.world_vehicle.ready_bounds(game,AABB(target-Vector3.ONE*4,Vector3.ONE*8))
+	var rows: Array=[];var holds: Array=[];var held:=0;var was_waiting:=false
+	var max_speed:=0.0;var supported:=0;var ticks:=0
+	var deadline:=Time.get_ticks_msec()+40000
+	for tick in 3600:
+		game.app_focused=true;Input.mouse_mode=Input.MOUSE_MODE_CAPTURED
+		key_state(KEY_W,true);Input.flush_buffered_events();await physics_frame
+		ticks+=1;max_speed=maxf(max_speed,car.speed_kph)
+		if car.loaded_wheels>=3:supported+=1
+		if car.streaming.waiting:held+=1
+		if car.streaming.waiting!=was_waiting:
+			var velocity: Vector3=car.streaming._linear if car.streaming.waiting else car.linear_velocity
+			var bounds: AABB=car.driving_policy.travel_bounds(car.position,velocity,1.0/120)
+			holds.append({"tick":tick,"position":car.position,"waiting":car.streaming.waiting,"terrain":game.terrain.is_collision_region_ready(bounds),"structures":game.structures.is_collision_region_ready(bounds),"vegetation":game.vegetation.is_collision_region_ready(bounds)})
+			was_waiting=car.streaming.waiting
+		if tick%60==0:rows.append({"position":car.position,"speed":car.speed_kph,"waiting":car.streaming.waiting,"wheels":car.loaded_wheels})
+		if (car.position-initial).dot(direction)>=245 or car.position.y<initial.y-4 or Time.get_ticks_msec()>deadline:break
+	key_state(KEY_W,false);Input.flush_buffered_events()
+	var distance: float=(car.position-initial).dot(direction)
+	check(not initially_ready,"destination begins outside combined ready coverage")
+	check(distance>=245 and car.position.y>initial.y-3,"combined world vehicle reaches road destination without falling")
+	check(held==0,"combined world travel has zero readiness holds")
+	check(supported>=ticks*0.95,"wheel support observed through route")
+	await RenderingServer.frame_post_draw;root.get_texture().get_image().save_png(DIR+"streamed.png")
+	var result:={"failures":failures,"initial":initial,"end":car.position,"distance":distance,"initially_ready":initially_ready,"held_ticks":held,"ticks":ticks,"supported_ticks":supported,"max_speed_kph":max_speed,"holds":holds,"rows":rows,"scope":"Main-world driving with forest, ground cover, buildings and lakes loaded; temporary authored road extension; original save preserved. No sustained frame/thermal or city-scale qualification."}
+	var file:=FileAccess.open(DIR+"streamed.json",FileAccess.WRITE);file.store_string(JSON.stringify(result,"  "));file.close()

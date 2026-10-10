@@ -1,0 +1,10 @@
+{
+  "source_commit": "403a557",
+  "source_slot": "staged_furnished_1791584856787240500",
+  "command": "godot --path TerraForest --script res://tests/settlement_driving.gd -- --world-slot=staged_furnished_1791584856787240500 --ground-cover --streamed-road",
+  "fixture_sha256": "6270692bd69d5e1a59265994e84c6781b8cc1a4664105bfca0cd334fd0e80135",
+  "result": "Seven checks pass: actual spawn/entry, initially unready destination, 245.017 m travel, zero holds, wheel support observed on all 1244 ticks. Peak 131.038 km/h.",
+  "visual_review": "Fixed height 47 m road cuts beneath rising terrain. Endpoint is a dark tunnel; does not establish readable open-surface road visuals or direct vegetation encounter along the full route. Forest, ground cover, buildings and lake systems remain active.",
+  "limits": "One short rendered run. No frame time, thermal, city or fleet qualification. Follow with terrain-following surface route; do not label this as complete mixed-world travel coverage.",
+  "save": "Snapshot writes disabled before all road edits; expected save-blocked teardown log preserves the source slot."
+}
