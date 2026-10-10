@@ -1,0 +1,115 @@
+{
+  "distance": -7.08294677734375,
+  "failures": 1,
+  "held_ticks": 0,
+  "lateral": 0.41650390625,
+  "max_speed_kph": 35.3756435394287,
+  "road": {
+    "ends": "[(800.0, 47.0, 1310.0), (823.0, 47.0, 1310.0)]",
+    "epoch": 0,
+    "width": 8.0
+  },
+  "rows": [
+    {
+      "position": "(805.0008, 47.62358, 1310.0)",
+      "speed_kph": 0.26954500079155,
+      "waiting": false
+    },
+    {
+      "position": "(804.7056, 47.62577, 1310.0)",
+      "speed_kph": 7.89872274398804,
+      "waiting": false
+    },
+    {
+      "position": "(803.8999, 47.62582, 1310.0)",
+      "speed_kph": 15.017699432373,
+      "waiting": false
+    },
+    {
+      "position": "(802.6171, 47.62579, 1310.0)",
+      "speed_kph": 21.6722248077393,
+      "waiting": false
+    },
+    {
+      "position": "(800.8882, 47.62575, 1310.0)",
+      "speed_kph": 27.9058639526367,
+      "waiting": false
+    },
+    {
+      "position": "(798.7407, 47.62571, 1310.0)",
+      "speed_kph": 33.7571685791016,
+      "waiting": false
+    },
+    {
+      "position": "(797.9468, 47.6428, 1310.574)",
+      "speed_kph": 15.2575326919556,
+      "waiting": false
+    },
+    {
+      "position": "(797.9636, 47.62675, 1311.134)",
+      "speed_kph": 11.2101187705994,
+      "waiting": false
+    },
+    {
+      "position": "(798.002, 47.62611, 1311.38)",
+      "speed_kph": 0.291719627380371,
+      "waiting": false
+    },
+    {
+      "position": "(797.9442, 47.62302, 1311.256)",
+      "speed_kph": 3.90802788734436,
+      "waiting": false
+    },
+    {
+      "position": "(797.9594, 47.62109, 1311.123)",
+      "speed_kph": 1.69415627717972,
+      "waiting": false
+    },
+    {
+      "position": "(797.9692, 47.62093, 1311.018)",
+      "speed_kph": 2.8522411108017,
+      "waiting": false
+    },
+    {
+      "position": "(797.9741, 47.62042, 1310.925)",
+      "speed_kph": 2.1887115240097,
+      "waiting": false
+    },
+    {
+      "position": "(797.9744, 47.62067, 1310.829)",
+      "speed_kph": 1.60059149265289,
+      "waiting": false
+    },
+    {
+      "position": "(797.9695, 47.62366, 1310.732)",
+      "speed_kph": 2.19542005062103,
+      "waiting": false
+    },
+    {
+      "position": "(797.9613, 47.62299, 1310.642)",
+      "speed_kph": 2.60946707725525,
+      "waiting": false
+    },
+    {
+      "position": "(797.9441, 47.62248, 1310.55)",
+      "speed_kph": 2.07018105983734,
+      "waiting": false
+    },
+    {
+      "position": "(797.9255, 47.62175, 1310.448)",
+      "speed_kph": 2.51427526473999,
+      "waiting": false
+    },
+    {
+      "position": "(797.9211, 47.62172, 1310.422)",
+      "speed_kph": 0.0667707704007626,
+      "waiting": false
+    },
+    {
+      "position": "(797.9204, 47.62294, 1310.419)",
+      "speed_kph": 0.53581035733223,
+      "waiting": false
+    }
+  ],
+  "scope": "Short real vehicle drive in saved furnished settlement with terrain/forest. No region-boundary, high-speed, dense fleet, frame or thermal qualification."
+}

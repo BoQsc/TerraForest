@@ -1,0 +1,6 @@
+{
+  "presentation": "1920x1080 fullscreen cap60; real vehicle physics at120Hz",
+  "hardware": "NVIDIA GeForce RTX 4050 Laptop GPU",
+  "slot_manifest": "docs/evidence/staged_placement/manifest.json",
+  "save_note": "The fixture explicitly disables snapshot writes before teardown to preserve the input save. The recorded save-blocked message is expected for this read-only run, not a failed gameplay save."
+}

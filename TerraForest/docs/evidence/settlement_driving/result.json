@@ -1,0 +1,60 @@
+{
+  "distance": 15.0868530273438,
+  "failures": 0,
+  "held_ticks": 0,
+  "lateral": 0.0,
+  "max_speed_kph": 49.4962062835693,
+  "road": {
+    "ends": "[(800.0, 47.0, 1310.0), (823.0, 47.0, 1310.0)]",
+    "epoch": 0,
+    "width": 8.0
+  },
+  "rows": [
+    {
+      "position": "(804.9992, 47.62358, 1310.0)",
+      "speed_kph": 0.26954502761364,
+      "waiting": false
+    },
+    {
+      "position": "(805.2944, 47.62577, 1310.0)",
+      "speed_kph": 7.89872274398804,
+      "waiting": false
+    },
+    {
+      "position": "(806.1001, 47.62582, 1310.0)",
+      "speed_kph": 15.017699432373,
+      "waiting": false
+    },
+    {
+      "position": "(807.3829, 47.62579, 1310.0)",
+      "speed_kph": 21.6722248077393,
+      "waiting": false
+    },
+    {
+      "position": "(809.1118, 47.62575, 1310.0)",
+      "speed_kph": 27.9058639526367,
+      "waiting": false
+    },
+    {
+      "position": "(811.2593, 47.62571, 1310.0)",
+      "speed_kph": 33.7571685791016,
+      "waiting": false
+    },
+    {
+      "position": "(813.8002, 47.62566, 1310.0)",
+      "speed_kph": 39.2601139068604,
+      "waiting": false
+    },
+    {
+      "position": "(816.7111, 47.62561, 1310.0)",
+      "speed_kph": 44.4447715759277,
+      "waiting": false
+    },
+    {
+      "position": "(819.971, 47.62556, 1310.0)",
+      "speed_kph": 49.337841796875,
+      "waiting": false
+    }
+  ],
+  "scope": "Short real vehicle drive in saved furnished settlement with terrain/forest. No region-boundary, high-speed, dense fleet, frame or thermal qualification."
+}

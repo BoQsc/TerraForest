@@ -41,9 +41,11 @@ func run() -> void:
 	session.interaction_available=func(): return false
 	check(session.spawn(world)=="Vehicle interaction unavailable" and session.car==null,"live admission rejects vehicle creation")
 	session.interaction_available=func(): return true
+	world.player.rotation.y=PI/4
 	var result: String=session.spawn(world)
 	check(is_instance_valid(session.car) and result.begins_with("Vehicle placed"),"spawn on clear loaded ground")
 	if not is_instance_valid(session.car): world.free();quit(1);return
+	check(session.car.global_basis.z.dot(-world.player.global_basis.z)>0.999,"spawn converts player -Z view into vehicle +Z heading")
 	check(not session.enter(world),"entry rejected outside interaction range")
 	world.player.position=session.car.position+Vector3.RIGHT*2.8
 	var original_camera: Transform3D=world.camera.transform

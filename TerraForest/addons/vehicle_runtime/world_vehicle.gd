@@ -100,12 +100,14 @@ func spawn(world: Node) -> String:
 	var at: Vector3=hit.position+Vector3.UP*0.85
 	var bounds:=AABB(at-Vector3(3.25,1,3.25),Vector3(6.5,3,6.5))
 	if not ready_bounds(world,bounds): return "Vehicle area is still loading"
+	# Vehicle art/physics use +Z forward; player view uses -Z.
+	var heading:=Basis(Vector3.UP,world.player.global_rotation.y+PI)
 	var box:=BoxShape3D.new();box.size=Vector3(2.2,1.8,4.4)
-	var query:=PhysicsShapeQueryParameters3D.new();query.shape=box;query.transform=Transform3D(Basis.IDENTITY,at+Vector3.UP*0.3);query.collision_mask=3
+	var query:=PhysicsShapeQueryParameters3D.new();query.shape=box;query.transform=Transform3D(heading,at+Vector3.UP*0.3);query.collision_mask=3
 	# Keep the ground below the initial chassis and reject walls/objects/player.
 	if bounds.has_point(world.player.global_position): return "Place vehicle farther from the player"
 	if not world.get_world_3d().direct_space_state.intersect_shape(query,1).is_empty(): return "Vehicle space is obstructed"
-	if not _install_vehicle(world,Transform3D(Basis.IDENTITY,at)): return "Vehicle resource could not be loaded"
+	if not _install_vehicle(world,Transform3D(heading,at)): return "Vehicle resource could not be loaded"
 	return "Vehicle placed · E nearby to enter · F5 saves world"
 func enter(world: Node) -> bool:
 	if not can_interact(): return false

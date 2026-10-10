@@ -1,0 +1,20 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] World loaded
+[TerrainRewrite] World loaded
+[TerrainRewrite] Lake ready · F5 saves world
+[TerrainRewrite] Lake ready · F5 saves world
+[TerrainRewrite] Lake ready · F5 saves world
+[TerrainRewrite] Lake ready · F5 saves world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+PASS place vehicle on authored street: Vehicle placed · E nearby to enter · F5 saves world
+PASS vehicle faces player's road heading
+PASS enter vehicle on loaded settlement road
+Visual dent #1 severity=1.0 radius=0.58m depth=0.055m
+Visual dent #2 severity=0.07 radius=0.32m depth=0.015m
+FAIL drive fifteen metres continuously along street
+PASS vehicle remains supported by asphalt road
+PASS driver and camera remain attached
+PASS no collision-readiness holds on short loaded street
+[TerrainRewrite] ERROR: save blocked: snapshot writes explicitly disabled; previous canonical snapshot retained
