@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-10",
+  "checks": {
+    "fleet_graphical": 12,
+    "legacy_interaction": 23
+  },
+  "command": "godot --path TerraForest --script res://tests/vehicle_fleet_activation.gd -- --world-slot=staged_furnished_1791584856787240500 --ground-cover --vehicle-fleet",
+  "result": "Five stored vehicles,at most four allocated bodies. Departure disables parked collision/rendering; return reuses all bodies. Entry selects identity2; occupied vehicle is pinned. Restore retires residency while retaining all records.",
+  "limits": "Opt-in. No distant visual representation for nonresident vehicles; overflow records are invisible/noncolliding. No autonomous driving,damage persistence or multi-driver support. Selection5Hz admits at most one body per tick; setup cost and actual driving among parked cars remain unqualified. Fixture manually advances selection, retains frozen cars for lifecycle assertions and inhibits source writes. Large edit bounds/incomplete occupancy queries conservatively block edits. No performance or thermal qualification."
+}

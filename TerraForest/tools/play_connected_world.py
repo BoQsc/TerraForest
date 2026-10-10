@@ -18,6 +18,7 @@ def main():
     parser.add_argument("--generated-furnished", action="store_true", help="Open the editor-generated furnished checkpoint")
     parser.add_argument("--geology", action="store_true", help="Open the underground ore access checkpoint")
     parser.add_argument("--actors", action="store_true", help="Enable nearby actor simulation and free-editor controls")
+    parser.add_argument("--vehicle-fleet", action="store_true", help="Enable bounded nearby vehicle activation")
     args = parser.parse_args()
     if sum([args.furnished,args.generated_furnished,args.geology])>1:
         parser.error("Choose one checkpoint")
@@ -42,13 +43,15 @@ def main():
         launch_args += ["--godot", args.godot]
     if args.actors:
         launch_args += ["--actors"]
+    if args.vehicle_fleet:
+        launch_args += ["--vehicle-fleet"]
     config, extra = parse_args(launch_args)
     details = launch_details(config, extra)
     stamp = datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')
     folder = ROOT / 'reports' / 'playtests' / stamp
     details['command'][1:1] = ['--log-file', str(folder / 'engine.log')]
     details.update(label='Saved world checkpoint', utc=stamp, checkpoint_manifest=relative,
-                   actors_enabled=args.actors, ground_cover_enabled=args.furnished or args.generated_furnished,
+                   actors_enabled=args.actors, vehicle_fleet_enabled=args.vehicle_fleet, ground_cover_enabled=args.furnished or args.generated_furnished,
                    notes='Existing local save is edited in place. 60 FPS is a target, not qualification.')
     if args.dry_run:
         print(json.dumps(details, indent=2))
