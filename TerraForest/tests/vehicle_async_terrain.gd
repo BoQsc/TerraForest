@@ -46,9 +46,13 @@ func run() -> void:
 	var builds_before: int=terrain.worker_builds
 	var held:=0;var supported:=0;var ticks:=0;var max_hold:=0;var current_hold:=0;var max_speed:=0.0
 	var rows: Array=[]
+	var holds: Array=[];var was_waiting:=false
 	for tick in (3600 if crossing else 480):
 		await physics_frame
 		ticks+=1
+		if car.streaming.waiting!=was_waiting:
+			holds.append(capture_hold(car,tick))
+			was_waiting=car.streaming.waiting
 		if car.streaming.waiting: held+=1;current_hold+=1
 		else: current_hold=0
 		max_hold=maxi(max_hold,current_hold);max_speed=maxf(max_speed,car.speed_kph)
@@ -60,10 +64,24 @@ func run() -> void:
 	Input.parse_input_event(release);Input.flush_buffered_events()
 	var passed: bool=car.position.is_finite() and car.position.z>432 and car.position.y>180 and absf(car.position.x-400)<1
 	if crossing: passed=passed and car.position.z>=650 and not target_initially_ready and terrain.worker_builds>builds_before and held==0 and supported>=ticks*0.95
-	var result: Dictionary={"passed":passed,"start":start,"end":car.position,"initial_wait_ticks":waited,"held_ticks":held,"supported_ticks":supported,"ticks":ticks,"max_hold_ticks":max_hold,"max_speed_kph":max_speed,"target_initially_ready":target_initially_ready,"builds_before":builds_before,"rows":rows,"speed_kph":car.speed_kph,"worker_builds":terrain.worker_builds}
+	var result: Dictionary={"passed":passed,"start":start,"end":car.position,"initial_wait_ticks":waited,"held_ticks":held,"supported_ticks":supported,"ticks":ticks,"max_hold_ticks":max_hold,"max_speed_kph":max_speed,"target_initially_ready":target_initially_ready,"builds_before":builds_before,"rows":rows,"holds":holds,"speed_kph":car.speed_kph,"worker_builds":terrain.worker_builds}
 	print("ASYNC_VEHICLE_TERRAIN ",result)
 	var file:=FileAccess.open("res://reports/vehicle_async_terrain.json",FileAccess.WRITE);file.store_string(JSON.stringify(result,"  "));file.close()
 	await process_frame;await RenderingServer.frame_post_draw
 	root.get_texture().get_image().save_png("res://reports/vehicle_async_terrain.png")
 	car.free();terrain.shutdown();terrain.free();camera.free();light.free()
 	quit(0 if passed else 1)
+
+func capture_hold(car: RigidBody3D,tick: int) -> Dictionary:
+	var velocity: Vector3=car.streaming._linear if car.streaming.waiting else car.linear_velocity
+	var bounds: AABB=car.driving_policy.travel_bounds(car.position,velocity,1.0/120)
+	var missing: Array=[];var related: Dictionary={}
+	for z in range(floori(bounds.position.z/16),floori(bounds.end.z/16)+1):
+		for x in range(floori(bounds.position.x/16),floori(bounds.end.x/16)+1):
+			if terrain.active_leaves.get(Vector2i(x,z),false):continue
+			missing.append(Vector2i(x,z))
+			for size in [16,32,64,128,256]:
+				var key:=Vector3i(floori(float(x*16)/size)*size,floori(float(z*16)/size)*size,size)
+				var entry: Dictionary=terrain.tiles.get(key,{})
+				related[str(key)]={"present":not entry.is_empty(),"dirty":entry.get("dirty",false),"visible":terrain.visible_cut.has(key),"requested":terrain.requested_keys.has(key),"in_flight":terrain.in_flight.has(key),"staging":terrain.staging_versions.has(key),"split":terrain.split_state.get(key,false)}
+	return {"tick":tick,"wall_usec":Time.get_ticks_usec(),"position":car.position,"velocity":velocity,"waiting":car.streaming.waiting,"bounds":bounds,"missing":missing,"related":related,"worker":terrain.backend.status(),"queued":terrain.backend.queued()}

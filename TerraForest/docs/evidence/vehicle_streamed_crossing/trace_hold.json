@@ -1,0 +1,277 @@
+{
+  "builds_before": 33,
+  "end": "(400.0, 180.6239, 650.0154)",
+  "held_ticks": 53,
+  "holds": [
+    {
+      "bounds": "[P: (396.5117, 177.1364, 505.1735), S: (6.97649, 6.97649, 6.97649)]",
+      "missing": [
+        "(24, 32)",
+        "(25, 32)"
+      ],
+      "position": "(400.0, 180.6247, 508.6618)",
+      "queued": 4,
+      "related": {
+        "(256, 512, 256)": {
+          "dirty": false,
+          "in_flight": false,
+          "present": true,
+          "requested": true,
+          "split": true,
+          "staging": false,
+          "visible": true
+        },
+        "(384, 512, 128)": {
+          "dirty": false,
+          "in_flight": false,
+          "present": true,
+          "requested": true,
+          "split": true,
+          "staging": false,
+          "visible": false
+        },
+        "(384, 512, 16)": {
+          "dirty": false,
+          "in_flight": false,
+          "present": true,
+          "requested": true,
+          "split": false,
+          "staging": false,
+          "visible": false
+        },
+        "(384, 512, 32)": {
+          "dirty": false,
+          "in_flight": false,
+          "present": true,
+          "requested": true,
+          "split": true,
+          "staging": false,
+          "visible": false
+        },
+        "(384, 512, 64)": {
+          "dirty": false,
+          "in_flight": false,
+          "present": true,
+          "requested": true,
+          "split": true,
+          "staging": false,
+          "visible": false
+        },
+        "(400, 512, 16)": {
+          "dirty": false,
+          "in_flight": false,
+          "present": true,
+          "requested": true,
+          "split": false,
+          "staging": false,
+          "visible": false
+        }
+      },
+      "tick": 726,
+      "velocity": "(0.0, -0.000847, 28.33937)",
+      "waiting": true,
+      "wall_usec": 9653852,
+      "worker": "mesh"
+    },
+    {
+      "bounds": "[P: (396.5116, 177.1363, 505.4097), S: (6.976834, 6.976834, 6.976834)]",
+      "missing": [],
+      "position": "(400.0, 180.6247, 508.8981)",
+      "queued": 4,
+      "related": {},
+      "tick": 779,
+      "velocity": "(0.0, -0.000863, 28.36007)",
+      "waiting": false,
+      "wall_usec": 10087584,
+      "worker": "mesh"
+    }
+  ],
+  "initial_wait_ticks": 0,
+  "max_hold_ticks": 53,
+  "max_speed_kph": 131.038233947754,
+  "passed": false,
+  "rows": [
+    {
+      "position": "(400.0, 180.3579, 404.9844)",
+      "queued": 4,
+      "tick": 0,
+      "waiting": false,
+      "wheels": 4,
+      "worker": "mesh"
+    },
+    {
+      "position": "(400.0, 180.5325, 406.0862)",
+      "queued": 0,
+      "tick": 60,
+      "waiting": false,
+      "wheels": 4,
+      "worker": "idle"
+    },
+    {
+      "position": "(400.0, 180.6209, 409.1113)",
+      "queued": 4,
+      "tick": 120,
+      "waiting": false,
+      "wheels": 4,
+      "worker": "mesh"
+    },
+    {
+      "position": "(400.0, 180.6257, 413.8003)",
+      "queued": 3,
+      "tick": 180,
+      "waiting": false,
+      "wheels": 4,
+      "worker": "mesh"
+    },
+    {
+      "position": "(400.0, 180.6256, 419.9712)",
+      "queued": 4,
+      "tick": 240,
+      "waiting": false,
+      "wheels": 4,
+      "worker": "mesh"
+    },
+    {
+      "position": "(400.0, 180.6255, 427.4624)",
+      "queued": 4,
+      "tick": 300,
+      "waiting": false,
+      "wheels": 4,
+      "worker": "mesh"
+    },
+    {
+      "position": "(400.0, 180.6254, 436.1367)",
+      "queued": 4,
+      "tick": 360,
+      "waiting": false,
+      "wheels": 4,
+      "worker": "mesh"
+    },
+    {
+      "position": "(400.0, 180.6253, 445.8774)",
+      "queued": 4,
+      "tick": 420,
+      "waiting": false,
+      "wheels": 4,
+      "worker": "mesh"
+    },
+    {
+      "position": "(400.0, 180.6252, 456.5837)",
+      "queued": 1,
+      "tick": 480,
+      "waiting": false,
+      "wheels": 4,
+      "worker": "mesh"
+    },
+    {
+      "position": "(400.0, 180.625, 468.1688)",
+      "queued": 4,
+      "tick": 540,
+      "waiting": false,
+      "wheels": 4,
+      "worker": "mesh"
+    },
+    {
+      "position": "(400.0, 180.6249, 480.5565)",
+      "queued": 4,
+      "tick": 600,
+      "waiting": false,
+      "wheels": 4,
+      "worker": "mesh"
+    },
+    {
+      "position": "(400.0, 180.6248, 493.6808)",
+      "queued": 4,
+      "tick": 660,
+      "waiting": false,
+      "wheels": 4,
+      "worker": "mesh"
+    },
+    {
+      "position": "(400.0, 180.6247, 507.4827)",
+      "queued": 4,
+      "tick": 720,
+      "waiting": false,
+      "wheels": 4,
+      "worker": "mesh"
+    },
+    {
+      "position": "(400.0, 180.6247, 509.1346)",
+      "queued": 4,
+      "tick": 780,
+      "waiting": false,
+      "wheels": 4,
+      "worker": "mesh"
+    },
+    {
+      "position": "(400.0, 180.6246, 523.6321)",
+      "queued": 2,
+      "tick": 840,
+      "waiting": false,
+      "wheels": 4,
+      "worker": "mesh"
+    },
+    {
+      "position": "(400.0, 180.6245, 538.7039)",
+      "queued": 4,
+      "tick": 900,
+      "waiting": false,
+      "wheels": 4,
+      "worker": "mesh"
+    },
+    {
+      "position": "(400.0, 180.6244, 554.3091)",
+      "queued": 0,
+      "tick": 960,
+      "waiting": false,
+      "wheels": 4,
+      "worker": "idle"
+    },
+    {
+      "position": "(400.0, 180.6243, 570.411)",
+      "queued": 4,
+      "tick": 1020,
+      "waiting": false,
+      "wheels": 4,
+      "worker": "mesh"
+    },
+    {
+      "position": "(400.0, 180.6242, 586.9764)",
+      "queued": 4,
+      "tick": 1080,
+      "waiting": false,
+      "wheels": 4,
+      "worker": "mesh"
+    },
+    {
+      "position": "(400.0, 180.6241, 603.9758)",
+      "queued": 2,
+      "tick": 1140,
+      "waiting": false,
+      "wheels": 4,
+      "worker": "mesh"
+    },
+    {
+      "position": "(400.0, 180.624, 621.3816)",
+      "queued": 0,
+      "tick": 1200,
+      "waiting": false,
+      "wheels": 4,
+      "worker": "idle"
+    },
+    {
+      "position": "(400.0, 180.624, 639.1691)",
+      "queued": 3,
+      "tick": 1260,
+      "waiting": false,
+      "wheels": 4,
+      "worker": "mesh"
+    }
+  ],
+  "speed_kph": 131.038233947754,
+  "start": "(400.0, 180.3544, 404.9839)",
+  "supported_ticks": 1297,
+  "target_initially_ready": false,
+  "ticks": 1297,
+  "worker_builds": 362
+}

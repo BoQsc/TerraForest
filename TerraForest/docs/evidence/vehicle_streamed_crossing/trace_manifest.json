@@ -1,0 +1,10 @@
+{
+  "fixture_sha256": "2d4128fba916191e30e89af512d2d47d33803cd927362249df0cbe2dc093454c",
+  "runs": [
+    "trace_no_hold.json",
+    "trace_hold.json"
+  ],
+  "finding": "Timing-dependent activation gap at z=512: both required 16 m tiles and their ancestors present and clean, fine tiles hidden, 256 m ancestor visible. 53 held ticks; transition wall time 433732 us. One prior unchanged run had no hold.",
+  "next": "Prioritize ahead-of-travel coverage dependencies, retaining safe complete replacement and current-position priority. Add a synthetic planner regression then rerun the unchanged crossing gate.",
+  "limits": "Trace snapshots occur after physics ticks; transition wall time approximates the observed hold. Individual missing sibling dependencies are not yet enumerated."
+}
