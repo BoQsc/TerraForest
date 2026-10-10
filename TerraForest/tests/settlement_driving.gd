@@ -2,6 +2,7 @@
 extends SceneTree
 const DIR="res://reports/settlement_driving/"
 var failures:=0
+var road_profile:=PackedVector3Array()
 func check(ok: bool,label: String) -> void:
 	if not ok:failures+=1
 	print("PASS " if ok else "FAIL ",label)
@@ -21,14 +22,25 @@ func run() -> void:
 	if streamed:
 		game.terrain.backend.disable_snapshot_writes()
 		direction=-direction
-		for section in 5:
-			if not game.terrain.construct_road_bed(a+direction*section*64,a+direction*(section+1)*64,4,4,12):
-				check(false,"extended road admitted");game.terrain.shutdown();game.free();quit(1);return
+		for section in 6:road_profile.append(a+direction*section*64)
+		if "--surface-road" in OS.get_cmdline_user_args():
+			road_profile=await sample_road(game,a,direction)
+			if road_profile.size()!=21:
+				check(false,"surface route samples ready");game.terrain.shutdown();game.free();quit(1);return
+			road_profile[0]=a
+			print("SURFACE_PROFILE ",road_profile)
+			road_profile=grade_profile(road_profile)
+			if road_profile.is_empty():
+				check(false,"surface route fits grade and earthwork limits");game.terrain.shutdown();game.free();quit(1);return
+		for section in road_profile.size()-1:
+			if not game.terrain.construct_road_bed(road_profile[section],road_profile[section+1],4,4,16 if "--surface-road" in OS.get_cmdline_user_args() else 12):
+				check(false,"extended road admitted section "+str(section));game.terrain.shutdown();game.free();quit(1);return
 			deadline=Time.get_ticks_msec()+30000
 			while game.terrain.pending_edit and Time.get_ticks_msec()<deadline:await process_frame
 			if game.terrain.pending_edit:
 				check(false,"extended road published");game.terrain.shutdown();game.free();quit(1);return
 	var start: Vector3=a+direction*5
+	if streamed:start.y=road_height(start)
 	game.yaw=atan2(-direction.x,-direction.z);game.player.rotation.y=game.yaw
 	game.player.position=start-direction*6+Vector3.UP*1.0
 	game.terrain.focus=start
@@ -135,6 +147,7 @@ func junction_turn(game: Node,car: RigidBody3D,junction: Vector3) -> void:
 func streamed_drive(game: Node,car: RigidBody3D,direction: Vector3) -> void:
 	var initial: Vector3=car.position
 	var target: Vector3=initial+direction*245
+	target.y=road_height(target)
 	var initially_ready: bool=game.world_vehicle.ready_bounds(game,AABB(target-Vector3.ONE*4,Vector3.ONE*8))
 	var rows: Array=[];var holds: Array=[];var held:=0;var was_waiting:=false
 	var max_speed:=0.0;var supported:=0;var ticks:=0
@@ -151,13 +164,53 @@ func streamed_drive(game: Node,car: RigidBody3D,direction: Vector3) -> void:
 			holds.append({"tick":tick,"position":car.position,"waiting":car.streaming.waiting,"terrain":game.terrain.is_collision_region_ready(bounds),"structures":game.structures.is_collision_region_ready(bounds),"vegetation":game.vegetation.is_collision_region_ready(bounds)})
 			was_waiting=car.streaming.waiting
 		if tick%60==0:rows.append({"position":car.position,"speed":car.speed_kph,"waiting":car.streaming.waiting,"wheels":car.loaded_wheels})
-		if (car.position-initial).dot(direction)>=245 or car.position.y<initial.y-4 or Time.get_ticks_msec()>deadline:break
+		if (car.position-initial).dot(direction)>=245 or car.position.y<road_height(car.position)-4 or Time.get_ticks_msec()>deadline:break
 	key_state(KEY_W,false);Input.flush_buffered_events()
 	var distance: float=(car.position-initial).dot(direction)
 	check(not initially_ready,"destination begins outside combined ready coverage")
-	check(distance>=245 and car.position.y>initial.y-3,"combined world vehicle reaches road destination without falling")
+	check(distance>=245 and car.position.y>road_height(car.position)-3,"combined world vehicle reaches road destination without falling")
 	check(held==0,"combined world travel has zero readiness holds")
 	check(supported>=ticks*0.95,"wheel support observed through route")
 	await RenderingServer.frame_post_draw;root.get_texture().get_image().save_png(DIR+"streamed.png")
-	var result:={"failures":failures,"initial":initial,"end":car.position,"distance":distance,"initially_ready":initially_ready,"held_ticks":held,"ticks":ticks,"supported_ticks":supported,"max_speed_kph":max_speed,"holds":holds,"rows":rows,"scope":"Main-world driving with forest, ground cover, buildings and lakes loaded; temporary authored road extension; original save preserved. No sustained frame/thermal or city-scale qualification."}
+	var result:={"failures":failures,"road_profile":road_profile,"initial":initial,"end":car.position,"distance":distance,"initially_ready":initially_ready,"held_ticks":held,"ticks":ticks,"supported_ticks":supported,"max_speed_kph":max_speed,"holds":holds,"rows":rows,"scope":"Main-world driving with forest, ground cover, buildings and lakes loaded; temporary authored road extension; original save preserved. No sustained frame/thermal or city-scale qualification."}
 	var file:=FileAccess.open(DIR+"streamed.json",FileAccess.WRITE);file.store_string(JSON.stringify(result,"  "));file.close()
+
+func sample_road(game: Node,a: Vector3,direction: Vector3) -> PackedVector3Array:
+	var token: int=preload("res://addons/volumetric_terrain/surface_tokens.gd").allocate()
+	var received: Dictionary={}
+	var callback:=func(id: int,points: PackedVector3Array,_normals: PackedVector3Array,_epoch: int,_revision: int):
+		if id==token:received.points=points
+	game.terrain.surface_batch_ready.connect(callback)
+	var points:=PackedVector3Array()
+	for i in 21:points.append(a+direction*i*16)
+	var deadline:=Time.get_ticks_msec()+15000
+	while not game.terrain.request_surface_batch(points,token):
+		if Time.get_ticks_msec()>deadline:break
+		await process_frame
+	while received.is_empty() and Time.get_ticks_msec()<deadline:await process_frame
+	game.terrain.surface_batch_ready.disconnect(callback)
+	return received.get("points",PackedVector3Array())
+func road_height(point: Vector3) -> float:
+	if road_profile.size()<2:return point.y
+	var along:=road_profile[0].x-point.x
+	var spacing:=absf(road_profile[1].x-road_profile[0].x)
+	var index:=clampi(floori(along/spacing),0,road_profile.size()-2)
+	return lerpf(road_profile[index].y,road_profile[index+1].y,clampf((along-index*spacing)/spacing,0,1))
+
+func grade_profile(samples: PackedVector3Array) -> PackedVector3Array:
+	# Fixture-only interval feasibility: <=25% grade, <=15 m cut and <=3 m
+	# fill. The production road admission constraints remain unchanged.
+	var low:=PackedFloat64Array([samples[0].y]);var high:=low.duplicate()
+	for i in range(1,samples.size()):
+		low.append(maxf(samples[i].y-15,low[i-1]-4))
+		high.append(minf(samples[i].y+3,high[i-1]+4))
+		# Keep a level entrance for the existing upright parked-vehicle admission.
+		if i==1:
+			if samples[0].y<low[i] or samples[0].y>high[i]:return PackedVector3Array()
+			low[i]=samples[0].y;high[i]=samples[0].y
+		if low[i]>high[i]:return PackedVector3Array()
+	var result:=samples.duplicate()
+	result[-1].y=clampf(samples[-1].y,low[-1],high[-1])
+	for i in range(samples.size()-2,-1,-1):
+		result[i].y=clampf(samples[i].y,maxf(low[i],result[i+1].y-4),minf(high[i],result[i+1].y+4))
+	return result

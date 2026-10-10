@@ -1,0 +1,178 @@
+{
+  "distance": 245.135559082031,
+  "end": "(549.8658, 93.12818, 1310.0)",
+  "failures": 1,
+  "held_ticks": 0,
+  "holds": [],
+  "initial": "(795.0014, 47.6234, 1310.0)",
+  "initially_ready": false,
+  "max_speed_kph": 92.4271545410156,
+  "road_profile": "[(800.0, 47.0, 1310.0), (784.0, 47.0, 1310.0), (768.0, 51.0, 1310.0), (752.0, 54.38694, 1310.0), (736.0, 54.49004, 1310.0), (720.0, 54.00453, 1310.0), (704.0, 54.51068, 1310.0), (688.0, 57.96295, 1310.0), (672.0, 61.96295, 1310.0), (656.0, 65.96295, 1310.0), (640.0, 69.96295, 1310.0), (624.0, 73.96295, 1310.0), (608.0, 77.96295, 1310.0), (592.0, 81.96295, 1310.0), (576.0, 85.96295, 1310.0), (560.0, 89.96295, 1310.0), (544.0, 93.96295, 1310.0), (528.0, 97.96295, 1310.0), (512.0, 101.963, 1310.0), (496.0, 105.963, 1310.0), (480.0, 109.963, 1310.0)]",
+  "rows": [
+    {
+      "position": "(795.0008, 47.62358, 1310.0)",
+      "speed": 0.26954500079155,
+      "waiting": false,
+      "wheels": 4
+    },
+    {
+      "position": "(793.8999, 47.62582, 1310.0)",
+      "speed": 15.017699432373,
+      "waiting": false,
+      "wheels": 4
+    },
+    {
+      "position": "(790.8882, 47.62575, 1310.0)",
+      "speed": 27.9058639526367,
+      "waiting": false,
+      "wheels": 4
+    },
+    {
+      "position": "(786.1998, 47.62566, 1310.0)",
+      "speed": 39.2601139068604,
+      "waiting": false,
+      "wheels": 4
+    },
+    {
+      "position": "(780.1945, 48.54419, 1310.0)",
+      "speed": 49.4097610473633,
+      "waiting": false,
+      "wheels": 4
+    },
+    {
+      "position": "(772.9485, 50.4302, 1310.0)",
+      "speed": 57.5434169769287,
+      "waiting": false,
+      "wheels": 4
+    },
+    {
+      "position": "(764.5445, 52.76682, 1310.0)",
+      "speed": 62.2800659179687,
+      "waiting": false,
+      "wheels": 0
+    },
+    {
+      "position": "(756.5016, 54.28602, 1310.0)",
+      "speed": 62.2459396362305,
+      "waiting": false,
+      "wheels": 4
+    },
+    {
+      "position": "(747.6593, 56.31584, 1310.0)",
+      "speed": 64.5730499267578,
+      "waiting": false,
+      "wheels": 0
+    },
+    {
+      "position": "(739.1515, 54.81527, 1310.0)",
+      "speed": 60.6887443542481,
+      "waiting": false,
+      "wheels": 4
+    },
+    {
+      "position": "(730.0724, 54.80866, 1310.0)",
+      "speed": 69.2314178466797,
+      "waiting": false,
+      "wheels": 4
+    },
+    {
+      "position": "(719.9657, 54.598, 1310.0)",
+      "speed": 76.0547103881836,
+      "waiting": false,
+      "wheels": 4
+    },
+    {
+      "position": "(708.9422, 55.00164, 1310.0)",
+      "speed": 82.3213394165039,
+      "waiting": false,
+      "wheels": 4
+    },
+    {
+      "position": "(697.2384, 56.46413, 1310.0)",
+      "speed": 88.480810546875,
+      "waiting": false,
+      "wheels": 4
+    },
+    {
+      "position": "(684.9501, 59.95509, 1310.0)",
+      "speed": 91.1433265686035,
+      "waiting": false,
+      "wheels": 0
+    },
+    {
+      "position": "(672.9068, 62.7183, 1310.0)",
+      "speed": 89.0866172790527,
+      "waiting": false,
+      "wheels": 2
+    },
+    {
+      "position": "(660.8849, 65.40165, 1310.0)",
+      "speed": 84.6718505859375,
+      "waiting": false,
+      "wheels": 4
+    },
+    {
+      "position": "(649.0191, 68.52736, 1310.0)",
+      "speed": 83.193482208252,
+      "waiting": false,
+      "wheels": 2
+    },
+    {
+      "position": "(637.5915, 71.77372, 1310.0)",
+      "speed": 85.212419128418,
+      "waiting": false,
+      "wheels": 0
+    },
+    {
+      "position": "(626.4264, 74.20313, 1310.0)",
+      "speed": 80.9914855957031,
+      "waiting": false,
+      "wheels": 2
+    },
+    {
+      "position": "(615.2078, 76.83027, 1310.0)",
+      "speed": 77.0762878417969,
+      "waiting": false,
+      "wheels": 4
+    },
+    {
+      "position": "(604.2868, 80.0046, 1310.0)",
+      "speed": 80.6768165588379,
+      "waiting": false,
+      "wheels": 0
+    },
+    {
+      "position": "(593.7844, 82.46504, 1310.0)",
+      "speed": 79.6564201354981,
+      "waiting": false,
+      "wheels": 2
+    },
+    {
+      "position": "(583.0362, 84.85944, 1310.0)",
+      "speed": 73.970686340332,
+      "waiting": false,
+      "wheels": 4
+    },
+    {
+      "position": "(572.5497, 87.92433, 1310.0)",
+      "speed": 77.6304862976074,
+      "waiting": false,
+      "wheels": 0
+    },
+    {
+      "position": "(562.4474, 90.24168, 1310.0)",
+      "speed": 75.0036209106445,
+      "waiting": false,
+      "wheels": 2
+    },
+    {
+      "position": "(551.9771, 92.64764, 1310.0)",
+      "speed": 70.6379699707031,
+      "waiting": false,
+      "wheels": 4
+    }
+  ],
+  "scope": "Main-world driving with forest, ground cover, buildings and lakes loaded; temporary authored road extension; original save preserved. No sustained frame/thermal or city-scale qualification.",
+  "supported_ticks": 883,
+  "ticks": 1574
+}

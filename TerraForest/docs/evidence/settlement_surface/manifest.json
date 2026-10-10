@@ -1,0 +1,10 @@
+{
+  "status": "failed wheel support gate",
+  "command": "godot --path TerraForest --script res://tests/settlement_driving.gd -- --world-slot=staged_furnished_1791584856787240500 --ground-cover --streamed-road --surface-road",
+  "result": "245.136 m completed; zero loading holds; peak 92.427 km/h. >=3 wheel support in 883/1574 ticks (56.1%), below unchanged 95% gate.",
+  "route": "Fixture samples real terrain every 16 m, fits <=25% grades, <=15 m cut and <=3 m fill with 16 m clearance. Level entrance accommodates existing upright vehicle placement; steep spawn rejection retained. Road profile retained in result.",
+  "visual": "Sky visible over deep open cutting; visibly stepped road. Not accepted as polished road visuals.",
+  "next": "Sample actual collision heights/normals along a graded section and correlate wheel contact losses, before deciding road meshing versus suspension correction. Sloped spawn remains open.",
+  "scope": "Short mixed-world integration correctness; not sustained performance, city or fleet qualification. Source save writes disabled before mutations.",
+  "fixture_sha256": "84be710af484b264ac00f8001ab219196c08e88a5565e6372966c344d454e229"
+}
