@@ -1,0 +1,7 @@
+{
+  "date": "2026-10-10",
+  "checks_per_build": 10,
+  "implementation": "Native node owns one MultiMesh per visual prototype part;1..64 parts and1..256 vehicle rows. Shared mesh/material references, composed pose/local transforms, explicit active-ID exclusion, bounded native fleet query, zero transform upload when unchanged.",
+  "validation": "Graphical Vulkan debug and clean release verify transformed MultiMesh readback, material identity, exclusion, budget failure, retirement and external resource corruption. Test uses two BoxMesh prototype parts, not extracted actual vehicle art.",
+  "limits": "Not main-world connected; no parked collision, detail transition or reduced-detail mesh. Full-detail source geometry is retained and each part has aggregate culling bounds, so increased GPU work and culling cost need measurement. Fleet pose coordinates are renderer-local; normal world owner must use identity transform."
+}
