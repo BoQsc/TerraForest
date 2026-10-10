@@ -1,0 +1,30 @@
+{
+  "base_commit": "9fb784eb68a0271bee50043bc8d77f494e51bece",
+  "working_changes": [
+    "addons/vehicle_runtime/fleet_activation.gd",
+    "tests/vehicle_fleet_activation.gd",
+    "tests/vehicle_fleet_cost.gd"
+  ],
+  "engine": "Godot 4.7.2.stable.steam.ed1daf0bf",
+  "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU",
+  "commands": [
+    "godot --path TerraForest --script res://tests/vehicle_fleet_activation.gd -- --world-slot=staged_furnished_1791584856787240500 --ground-cover --vehicle-fleet",
+    "godot --path TerraForest --script res://tests/vehicle_fleet_cost.gd -- --world-slot=staged_furnished_1791584856787240500 --ground-cover --vehicle-fleet --parked-overflow"
+  ],
+  "dll_sha256": {
+    "vehicle_runtime.windows.template_debug.x86_64.dll": "4e26fb367e7aaa92f00e8d0772a5ed986b32ebbf8077994107b640611ddf2706",
+    "vehicle_runtime.windows.template_release.x86_64.dll": "7165d04acb9624a886c0e5d44124b4367f197b0cedf5e6c6d408f9fabde06566"
+  },
+  "initial": {
+    "pass": 25,
+    "fail": 6
+  },
+  "staged": {
+    "pass": 26,
+    "fail": 5
+  },
+  "activation": {
+    "pass": 18,
+    "fail": 0
+  }
+}

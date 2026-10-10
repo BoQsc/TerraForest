@@ -1,0 +1,51 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] World loaded
+[TerrainRewrite] World loaded
+[TerrainRewrite] Lake ready · F5 saves world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+[TerrainRewrite] Lake ready · F5 saves world
+[TerrainRewrite] Lake ready · F5 saves world
+[TerrainRewrite] ERROR: save blocked: snapshot writes explicitly disabled; previous canonical snapshot retained
+[TerrainRewrite] Lake ready · F5 saves world
+PASS world settles before fleet cost comparison
+PASS empty all records represented within four-body cap
+PASS empty activation call max<=4ms
+PASS empty representation and body bounds hold throughout
+PASS empty terrain and cover settled throughout measurement
+PASS empty steady fleet p95<=1ms max<=2ms
+FAIL empty frame p95<=18.5ms
+empty {"draw_calls":{"max":541.0,"median":541.0,"p95":541.0},"fleet_ms":{"max":0.173,"median":0.019,"p95":0.097},"frame_ms":{"max":20.306,"median":16.725,"p95":18.694},"gpu_ms":{"max":4.96000003814697,"median":4.73999977111816,"p95":4.81799983978271},"primitives":{"max":1432083.0,"median":1432083.0,"p95":1432083.0}} admission_max_ms=0.0
+Visual vehicle dents repaired.
+PASS parked1 all records represented within four-body cap
+FAIL parked1 activation call max<=4ms
+PASS parked1 representation and body bounds hold throughout
+PASS parked1 terrain and cover settled throughout measurement
+PASS parked1 steady fleet p95<=1ms max<=2ms
+FAIL parked1 frame p95<=18.5ms
+parked1 {"draw_calls":{"max":637.0,"median":637.0,"p95":637.0},"fleet_ms":{"max":0.273,"median":0.019,"p95":0.18},"frame_ms":{"max":20.622,"median":16.767,"p95":18.653},"gpu_ms":{"max":4.78599977493286,"median":4.37599992752075,"p95":4.77600002288818},"primitives":{"max":1521465.0,"median":1521465.0,"p95":1521465.0}} admission_max_ms=5.474
+PASS parked4 all records represented within four-body cap
+PASS parked4 activation call max<=4ms
+PASS parked4 representation and body bounds hold throughout
+PASS parked4 terrain and cover settled throughout measurement
+PASS parked4 steady fleet p95<=1ms max<=2ms
+FAIL parked4 frame p95<=18.5ms
+parked4 {"draw_calls":{"max":877.0,"median":877.0,"p95":877.0},"fleet_ms":{"max":0.339,"median":0.018,"p95":0.147},"frame_ms":{"max":20.319,"median":16.714,"p95":18.684},"gpu_ms":{"max":5.1230001449585,"median":4.97599983215332,"p95":5.04400014877319},"primitives":{"max":1950001.0,"median":1950001.0,"p95":1950001.0}} admission_max_ms=2.631
+Visual vehicle dents repaired.
+Visual vehicle dents repaired.
+PASS parked16 all records represented within four-body cap
+PASS parked16 activation call max<=4ms
+PASS parked16 representation and body bounds hold throughout
+PASS parked16 terrain and cover settled throughout measurement
+PASS parked16 steady fleet p95<=1ms max<=2ms
+FAIL parked16 frame p95<=18.5ms
+parked16 {"draw_calls":{"max":910.0,"median":910.0,"p95":910.0},"fleet_ms":{"max":0.341,"median":0.018,"p95":0.206},"frame_ms":{"max":23.005,"median":16.705,"p95":18.62},"gpu_ms":{"max":5.47599983215332,"median":5.12099981307983,"p95":5.3270001411438},"primitives":{"max":1989679.0,"median":1989679.0,"p95":1989679.0}} admission_max_ms=2.854
+PASS parked64 all records represented within four-body cap
+PASS parked64 activation call max<=4ms
+PASS parked64 representation and body bounds hold throughout
+PASS parked64 terrain and cover settled throughout measurement
+PASS parked64 steady fleet p95<=1ms max<=2ms
+FAIL parked64 frame p95<=18.5ms
+parked64 {"draw_calls":{"max":910.0,"median":910.0,"p95":910.0},"fleet_ms":{"max":0.68,"median":0.019,"p95":0.555},"frame_ms":{"max":21.104,"median":16.684,"p95":18.913},"gpu_ms":{"max":5.33400011062622,"median":5.22100019454956,"p95":5.32600021362305},"primitives":{"max":1989679.0,"median":1989679.0,"p95":1989679.0}} admission_max_ms=0.783
+[TerrainRewrite] ERROR: save blocked: snapshot writes explicitly disabled; previous canonical snapshot retained

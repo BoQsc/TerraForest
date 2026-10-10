@@ -21,6 +21,8 @@ func run() -> void:
 	deadline=Time.get_ticks_msec()+15000
 	while not session.scene_ready() and Time.get_ticks_msec()<deadline:await process_frame
 	game.terrain.focus=start-direction*90;activation.timer=0;activation.update(game,0.2)
+	check(activation.bodies.size()==1 and activation.parked_view==null,"cold template creation yields before parked batch setup")
+	await process_frame;activation.timer=0;activation.update(game,0.2)
 	check(activation.residents.is_empty() and activation.parked_status.get("rendered",0)==5,"distant-only saved fleet renders without driving-body admission")
 	game.terrain.focus=start
 	deadline=Time.get_ticks_msec()+20000

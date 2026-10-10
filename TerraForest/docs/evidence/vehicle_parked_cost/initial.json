@@ -1,0 +1,6181 @@
+{
+  "failures": 6,
+  "phases": [
+    {
+      "admission_ms": [],
+      "phase": "empty",
+      "rows": [
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.173,
+          "frame_ms": 20.017,
+          "gpu_ms": 4.96000003814697,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 18.621,
+          "gpu_ms": 4.95800018310547,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 14.318,
+          "gpu_ms": 4.94500017166138,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.774,
+          "gpu_ms": 4.73400020599365,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.889,
+          "gpu_ms": 4.73999977111816,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 17.983,
+          "gpu_ms": 4.74700021743774,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 15.917,
+          "gpu_ms": 4.75299978256226,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.013,
+          "frame_ms": 15.534,
+          "gpu_ms": 4.72900009155273,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 20.306,
+          "gpu_ms": 4.73999977111816,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 12.228,
+          "gpu_ms": 4.74700021743774,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 17.576,
+          "gpu_ms": 4.75600004196167,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 17.052,
+          "gpu_ms": 4.73099994659424,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.43,
+          "gpu_ms": 4.73699998855591,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.097,
+          "frame_ms": 17.248,
+          "gpu_ms": 4.72700023651123,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.527,
+          "gpu_ms": 4.75799989700317,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 18.131,
+          "gpu_ms": 4.73600006103516,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 14.882,
+          "gpu_ms": 4.75099992752075,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 17.001,
+          "gpu_ms": 4.75400018692017,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.285,
+          "gpu_ms": 4.73999977111816,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.757,
+          "gpu_ms": 4.73400020599365,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.904,
+          "gpu_ms": 4.7350001335144,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 16.32,
+          "gpu_ms": 4.72700023651123,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 18.846,
+          "gpu_ms": 4.73699998855591,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 14.859,
+          "gpu_ms": 4.73899984359741,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.308,
+          "gpu_ms": 4.72800016403198,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.777,
+          "gpu_ms": 4.75400018692017,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.099,
+          "frame_ms": 16.7,
+          "gpu_ms": 4.73199987411499,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.324,
+          "gpu_ms": 4.74200010299683,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 17.124,
+          "gpu_ms": 4.73799991607666,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 18.263,
+          "gpu_ms": 4.73099994659424,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 14.693,
+          "gpu_ms": 4.73400020599365,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 16.687,
+          "gpu_ms": 4.75600004196167,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 17.092,
+          "gpu_ms": 4.74399995803833,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.35,
+          "gpu_ms": 4.7350001335144,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.73,
+          "gpu_ms": 4.7350001335144,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 17.041,
+          "gpu_ms": 4.74100017547607,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 18.326,
+          "gpu_ms": 4.74300003051758,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 14.586,
+          "gpu_ms": 4.75899982452393,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.993,
+          "gpu_ms": 4.75299978256226,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.092,
+          "frame_ms": 16.272,
+          "gpu_ms": 4.75099992752075,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.576,
+          "gpu_ms": 4.7350001335144,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 17.049,
+          "gpu_ms": 4.73400020599365,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 17.286,
+          "gpu_ms": 4.74700021743774,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 18.016,
+          "gpu_ms": 4.7480001449585,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 14.817,
+          "gpu_ms": 4.76100015640259,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.242,
+          "gpu_ms": 4.73699998855591,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.862,
+          "gpu_ms": 4.74900007247925,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.651,
+          "gpu_ms": 4.74100017547607,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 17.009,
+          "gpu_ms": 4.75699996948242,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.342,
+          "gpu_ms": 4.73699998855591,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 18.481,
+          "gpu_ms": 4.73099994659424,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.011,
+          "frame_ms": 14.368,
+          "gpu_ms": 4.73699998855591,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.096,
+          "frame_ms": 16.874,
+          "gpu_ms": 4.74900007247925,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.016,
+          "frame_ms": 16.925,
+          "gpu_ms": 4.73299980163574,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.482,
+          "gpu_ms": 4.74900007247925,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.89,
+          "gpu_ms": 4.72900009155273,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.626,
+          "gpu_ms": 4.75099992752075,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 18.397,
+          "gpu_ms": 4.75699996948242,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 14.578,
+          "gpu_ms": 4.7350001335144,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.021,
+          "frame_ms": 17.12,
+          "gpu_ms": 4.73400020599365,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 16.905,
+          "gpu_ms": 4.72599983215332,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.106,
+          "gpu_ms": 4.74700021743774,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.836,
+          "gpu_ms": 4.73699998855591,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.701,
+          "gpu_ms": 4.7519998550415,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 18.569,
+          "gpu_ms": 4.73400020599365,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.097,
+          "frame_ms": 15.058,
+          "gpu_ms": 4.73400020599365,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.014,
+          "frame_ms": 15.808,
+          "gpu_ms": 4.73099994659424,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.012,
+          "frame_ms": 16.748,
+          "gpu_ms": 4.75099992752075,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 17.042,
+          "gpu_ms": 4.7480001449585,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.667,
+          "gpu_ms": 4.76599979400635,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.596,
+          "gpu_ms": 4.73199987411499,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 17.182,
+          "gpu_ms": 4.73299980163574,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.011,
+          "frame_ms": 14.631,
+          "gpu_ms": 4.73400020599365,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 18.479,
+          "gpu_ms": 4.74700021743774,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 17.109,
+          "gpu_ms": 4.7350001335144,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 15.942,
+          "gpu_ms": 4.73999977111816,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.968,
+          "gpu_ms": 4.73799991607666,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.627,
+          "gpu_ms": 4.72300004959106,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.098,
+          "frame_ms": 18.694,
+          "gpu_ms": 4.73400020599365,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 14.469,
+          "gpu_ms": 4.73299980163574,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.684,
+          "gpu_ms": 4.73400020599365,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.69,
+          "gpu_ms": 4.73299980163574,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.572,
+          "gpu_ms": 4.75400018692017,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 17.035,
+          "gpu_ms": 4.72499990463257,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.327,
+          "gpu_ms": 4.73799991607666,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.016,
+          "frame_ms": 18.437,
+          "gpu_ms": 4.75400018692017,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 15.117,
+          "gpu_ms": 4.76399993896484,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.648,
+          "gpu_ms": 4.74300003051758,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.221,
+          "gpu_ms": 4.7519998550415,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 17.39,
+          "gpu_ms": 4.7649998664856,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.075,
+          "gpu_ms": 4.75400018692017,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.094,
+          "frame_ms": 16.976,
+          "gpu_ms": 4.74900007247925,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 18.952,
+          "gpu_ms": 4.73299980163574,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 14.414,
+          "gpu_ms": 4.73400020599365,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.251,
+          "gpu_ms": 4.72599983215332,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.015,
+          "frame_ms": 16.588,
+          "gpu_ms": 4.76200008392334,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.984,
+          "gpu_ms": 4.73899984359741,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.725,
+          "gpu_ms": 4.73699998855591,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 16.309,
+          "gpu_ms": 4.7350001335144,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 18.963,
+          "gpu_ms": 4.74200010299683,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 14.447,
+          "gpu_ms": 4.73799991607666,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 18.566,
+          "gpu_ms": 4.77799987792969,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.013,
+          "frame_ms": 13.802,
+          "gpu_ms": 4.72700023651123,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 17.95,
+          "gpu_ms": 4.78000020980835,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.101,
+          "frame_ms": 16.763,
+          "gpu_ms": 4.72800016403198,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.369,
+          "gpu_ms": 4.75,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 18.855,
+          "gpu_ms": 4.7350001335144,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 14.616,
+          "gpu_ms": 4.73699998855591,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.953,
+          "gpu_ms": 4.74100017547607,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.189,
+          "gpu_ms": 4.73699998855591,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 17.209,
+          "gpu_ms": 4.73699998855591,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 17.103,
+          "gpu_ms": 4.76399993896484,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 15.772,
+          "gpu_ms": 4.83300018310547,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 18.694,
+          "gpu_ms": 4.80100011825562,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.024,
+          "frame_ms": 15.176,
+          "gpu_ms": 4.80399990081787,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.183,
+          "gpu_ms": 4.80299997329712,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 17.736,
+          "gpu_ms": 4.8270001411438,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.098,
+          "frame_ms": 15.837,
+          "gpu_ms": 4.81799983978271,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.398,
+          "gpu_ms": 4.8289999961853,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.689,
+          "gpu_ms": 4.7960000038147,
+          "primitives": 1432083.0,
+          "represented": 0,
+          "settled": true
+        }
+      ],
+      "summary": {
+        "draw_calls": {
+          "max": 541.0,
+          "median": 541.0,
+          "p95": 541.0
+        },
+        "fleet_ms": {
+          "max": 0.173,
+          "median": 0.019,
+          "p95": 0.097
+        },
+        "frame_ms": {
+          "max": 20.306,
+          "median": 16.725,
+          "p95": 18.694
+        },
+        "gpu_ms": {
+          "max": 4.96000003814697,
+          "median": 4.73999977111816,
+          "p95": 4.81799983978271
+        },
+        "primitives": {
+          "max": 1432083.0,
+          "median": 1432083.0,
+          "p95": 1432083.0
+        }
+      }
+    },
+    {
+      "admission_ms": [
+        5.474
+      ],
+      "phase": "parked1",
+      "rows": [
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.023,
+          "frame_ms": 20.622,
+          "gpu_ms": 4.36899995803833,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.165,
+          "gpu_ms": 4.36999988555908,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.539,
+          "gpu_ms": 4.35699987411499,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.867,
+          "gpu_ms": 4.37400007247925,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 18.588,
+          "gpu_ms": 4.37599992752075,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 14.352,
+          "gpu_ms": 4.38899993896484,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.613,
+          "gpu_ms": 4.36899995803833,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 16.951,
+          "gpu_ms": 4.36800003051758,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.915,
+          "gpu_ms": 4.38600015640259,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.367,
+          "gpu_ms": 4.37400007247925,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 17.701,
+          "gpu_ms": 4.36600017547607,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.016,
+          "frame_ms": 16.073,
+          "gpu_ms": 4.36399984359741,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.18,
+          "frame_ms": 15.838,
+          "gpu_ms": 4.38700008392334,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.016,
+          "frame_ms": 16.422,
+          "gpu_ms": 4.37599992752075,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 17.191,
+          "gpu_ms": 4.37799978256226,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.798,
+          "gpu_ms": 4.37599992752075,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.021,
+          "frame_ms": 17.23,
+          "gpu_ms": 4.36299991607666,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 16.38,
+          "gpu_ms": 4.41200017929077,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 18.306,
+          "gpu_ms": 4.3730001449585,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 14.575,
+          "gpu_ms": 4.36999988555908,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.743,
+          "gpu_ms": 4.36700010299683,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.576,
+          "gpu_ms": 4.3769998550415,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 17.196,
+          "gpu_ms": 4.36999988555908,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.242,
+          "gpu_ms": 4.38399982452393,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.85,
+          "gpu_ms": 4.36899995803833,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.2,
+          "frame_ms": 18.78,
+          "gpu_ms": 4.38100004196167,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 14.205,
+          "gpu_ms": 4.38500022888184,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.048,
+          "frame_ms": 17.173,
+          "gpu_ms": 4.36800003051758,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.236,
+          "gpu_ms": 4.36800003051758,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 17.909,
+          "gpu_ms": 4.37400007247925,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 15.289,
+          "gpu_ms": 4.36700010299683,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.995,
+          "gpu_ms": 4.37099981307983,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.021,
+          "frame_ms": 18.72,
+          "gpu_ms": 4.38800001144409,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 14.617,
+          "gpu_ms": 4.375,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.553,
+          "gpu_ms": 4.39099979400635,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.53,
+          "gpu_ms": 4.38800001144409,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.773,
+          "gpu_ms": 4.35799980163574,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 17.22,
+          "gpu_ms": 4.37400007247925,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.149,
+          "frame_ms": 15.785,
+          "gpu_ms": 4.38299989700317,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.015,
+          "frame_ms": 18.237,
+          "gpu_ms": 4.37400007247925,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 14.965,
+          "gpu_ms": 4.38500022888184,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 17.012,
+          "gpu_ms": 4.38800001144409,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 17.14,
+          "gpu_ms": 4.36999988555908,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.518,
+          "gpu_ms": 4.37599992752075,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 17.04,
+          "gpu_ms": 4.38899993896484,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.534,
+          "gpu_ms": 4.36399984359741,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 18.132,
+          "gpu_ms": 4.3600001335144,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 15.087,
+          "gpu_ms": 4.36100006103516,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.331,
+          "gpu_ms": 4.36299991607666,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.635,
+          "gpu_ms": 4.37400007247925,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.774,
+          "gpu_ms": 4.37400007247925,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.273,
+          "frame_ms": 17.288,
+          "gpu_ms": 4.36199998855591,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.829,
+          "gpu_ms": 4.36100006103516,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 18.398,
+          "gpu_ms": 4.37900018692017,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.014,
+          "frame_ms": 13.447,
+          "gpu_ms": 4.38100004196167,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 17.511,
+          "gpu_ms": 4.3730001449585,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.016,
+          "frame_ms": 16.266,
+          "gpu_ms": 4.37400007247925,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 17.328,
+          "gpu_ms": 4.37400007247925,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.455,
+          "gpu_ms": 4.37599992752075,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.523,
+          "gpu_ms": 4.38800001144409,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 18.627,
+          "gpu_ms": 4.36800003051758,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 14.911,
+          "gpu_ms": 4.36100006103516,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.397,
+          "gpu_ms": 4.39300012588501,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.7,
+          "gpu_ms": 4.36499977111816,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.189,
+          "frame_ms": 17.061,
+          "gpu_ms": 4.36700010299683,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 16.044,
+          "gpu_ms": 4.37200021743774,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.043,
+          "frame_ms": 16.897,
+          "gpu_ms": 4.37599992752075,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 18.598,
+          "gpu_ms": 4.36800003051758,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 14.805,
+          "gpu_ms": 4.38000011444092,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.582,
+          "gpu_ms": 4.36700010299683,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.634,
+          "gpu_ms": 4.36299991607666,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.474,
+          "gpu_ms": 4.39099979400635,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 17.02,
+          "gpu_ms": 4.36800003051758,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.598,
+          "gpu_ms": 4.36700010299683,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 18.405,
+          "gpu_ms": 4.375,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.021,
+          "frame_ms": 15.031,
+          "gpu_ms": 4.36700010299683,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.021,
+          "frame_ms": 16.805,
+          "gpu_ms": 4.36399984359741,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.197,
+          "frame_ms": 16.824,
+          "gpu_ms": 4.38199996948242,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.146,
+          "gpu_ms": 4.37200021743774,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 16.857,
+          "gpu_ms": 4.37400007247925,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 16.37,
+          "gpu_ms": 4.39300012588501,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 18.72,
+          "gpu_ms": 4.36899995803833,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 14.977,
+          "gpu_ms": 4.36800003051758,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.431,
+          "gpu_ms": 4.3769998550415,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.921,
+          "gpu_ms": 4.38899993896484,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.015,
+          "frame_ms": 15.394,
+          "gpu_ms": 4.36700010299683,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.016,
+          "frame_ms": 17.409,
+          "gpu_ms": 4.38299989700317,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.013,
+          "frame_ms": 15.699,
+          "gpu_ms": 4.36399984359741,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.013,
+          "frame_ms": 18.237,
+          "gpu_ms": 4.37900018692017,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.011,
+          "frame_ms": 14.677,
+          "gpu_ms": 4.38500022888184,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.127,
+          "frame_ms": 16.936,
+          "gpu_ms": 4.36399984359741,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.014,
+          "frame_ms": 16.767,
+          "gpu_ms": 4.36999988555908,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 19.531,
+          "gpu_ms": 4.36800003051758,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 15.135,
+          "gpu_ms": 4.77099990844727,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 17.008,
+          "gpu_ms": 4.76200008392334,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 18.653,
+          "gpu_ms": 4.77899980545044,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 14.239,
+          "gpu_ms": 4.7649998664856,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 17.091,
+          "gpu_ms": 4.76599979400635,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.01,
+          "frame_ms": 14.882,
+          "gpu_ms": 4.7810001373291,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 17.629,
+          "gpu_ms": 4.76200008392334,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 17.332,
+          "gpu_ms": 4.76300001144409,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.451,
+          "gpu_ms": 4.77199983596802,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.021,
+          "frame_ms": 19.094,
+          "gpu_ms": 4.76599979400635,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.195,
+          "frame_ms": 14.455,
+          "gpu_ms": 4.76200008392334,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.321,
+          "gpu_ms": 4.78200006484985,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.805,
+          "gpu_ms": 4.76700019836426,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.483,
+          "gpu_ms": 4.75299978256226,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.799,
+          "gpu_ms": 4.76800012588501,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.901,
+          "gpu_ms": 4.7649998664856,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 18.605,
+          "gpu_ms": 4.76399993896484,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.016,
+          "frame_ms": 14.491,
+          "gpu_ms": 4.7649998664856,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.799,
+          "gpu_ms": 4.76000022888184,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 17.063,
+          "gpu_ms": 4.76000022888184,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.15,
+          "gpu_ms": 4.78399991989136,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 17.04,
+          "gpu_ms": 4.76200008392334,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.523,
+          "gpu_ms": 4.76900005340576,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.208,
+          "frame_ms": 18.355,
+          "gpu_ms": 4.78200006484985,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 14.795,
+          "gpu_ms": 4.78599977493286,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.016,
+          "frame_ms": 16.763,
+          "gpu_ms": 4.75699996948242,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.196,
+          "gpu_ms": 4.77600002288818,
+          "primitives": 1521465.0,
+          "represented": 1,
+          "settled": true
+        }
+      ],
+      "summary": {
+        "draw_calls": {
+          "max": 637.0,
+          "median": 637.0,
+          "p95": 637.0
+        },
+        "fleet_ms": {
+          "max": 0.273,
+          "median": 0.019,
+          "p95": 0.18
+        },
+        "frame_ms": {
+          "max": 20.622,
+          "median": 16.767,
+          "p95": 18.653
+        },
+        "gpu_ms": {
+          "max": 4.78599977493286,
+          "median": 4.37599992752075,
+          "p95": 4.77600002288818
+        },
+        "primitives": {
+          "max": 1521465.0,
+          "median": 1521465.0,
+          "p95": 1521465.0
+        }
+      }
+    },
+    {
+      "admission_ms": [
+        2.631,
+        2.154,
+        2.039
+      ],
+      "phase": "parked4",
+      "rows": [
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 20.319,
+          "gpu_ms": 5.03200006484985,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 16.834,
+          "gpu_ms": 5.04300022125244,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.672,
+          "gpu_ms": 5.02600002288818,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 18.122,
+          "gpu_ms": 5.03599977493286,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.014,
+          "frame_ms": 14.921,
+          "gpu_ms": 5.05399990081787,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.016,
+          "frame_ms": 18.184,
+          "gpu_ms": 5.03499984741211,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 15.081,
+          "gpu_ms": 5.0479998588562,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.957,
+          "gpu_ms": 5.03800010681152,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.157,
+          "gpu_ms": 5.03499984741211,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.053,
+          "frame_ms": 17.27,
+          "gpu_ms": 5.05200004577637,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.764,
+          "gpu_ms": 5.02500009536743,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.609,
+          "gpu_ms": 5.02600002288818,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.22,
+          "frame_ms": 18.387,
+          "gpu_ms": 5.04400014877319,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 14.661,
+          "gpu_ms": 5.02600002288818,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.558,
+          "gpu_ms": 5.03399991989136,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.779,
+          "gpu_ms": 5.02799987792969,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 17.298,
+          "gpu_ms": 5.02299976348877,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.236,
+          "gpu_ms": 5.02699995040894,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.016,
+          "frame_ms": 16.292,
+          "gpu_ms": 5.03399991989136,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 18.758,
+          "gpu_ms": 5.04099988937378,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 14.533,
+          "gpu_ms": 5.03000020980835,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 17.061,
+          "gpu_ms": 5.02699995040894,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.708,
+          "gpu_ms": 5.03299999237061,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.388,
+          "gpu_ms": 5.03399991989136,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.774,
+          "gpu_ms": 5.02699995040894,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.214,
+          "frame_ms": 16.936,
+          "gpu_ms": 5.0310001373291,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 18.295,
+          "gpu_ms": 5.03700017929077,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 14.641,
+          "gpu_ms": 5.04099988937378,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.644,
+          "gpu_ms": 5.03900003433228,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 16.853,
+          "gpu_ms": 5.0460000038147,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 17.363,
+          "gpu_ms": 5.03200006484985,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 15.833,
+          "gpu_ms": 5.03499984741211,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.735,
+          "gpu_ms": 5.03800010681152,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 18.86,
+          "gpu_ms": 5.03399991989136,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 14.642,
+          "gpu_ms": 5.02600002288818,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.494,
+          "gpu_ms": 5.03900003433228,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.476,
+          "gpu_ms": 5.03299999237061,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 17.077,
+          "gpu_ms": 5.04400014877319,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.339,
+          "frame_ms": 17.301,
+          "gpu_ms": 5.02699995040894,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 15.912,
+          "gpu_ms": 5.03299999237061,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 18.215,
+          "gpu_ms": 5.1230001449585,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 15.209,
+          "gpu_ms": 5.05100011825562,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 16.751,
+          "gpu_ms": 5.03599977493286,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.015,
+          "frame_ms": 15.768,
+          "gpu_ms": 5.02899980545044,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 17.297,
+          "gpu_ms": 5.04400014877319,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.819,
+          "gpu_ms": 5.0310001373291,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.713,
+          "gpu_ms": 5.03800010681152,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 18.449,
+          "gpu_ms": 5.03000020980835,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 14.341,
+          "gpu_ms": 4.95699977874756,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 17.26,
+          "gpu_ms": 4.96700000762939,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.211,
+          "gpu_ms": 4.96199989318848,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.205,
+          "frame_ms": 16.898,
+          "gpu_ms": 4.98600006103516,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.679,
+          "gpu_ms": 4.96299982070923,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.819,
+          "gpu_ms": 4.97200012207031,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 18.109,
+          "gpu_ms": 4.96700000762939,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 15.087,
+          "gpu_ms": 4.97200012207031,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.367,
+          "gpu_ms": 4.95699977874756,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 17.058,
+          "gpu_ms": 4.96999979019165,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.011,
+          "frame_ms": 16.643,
+          "gpu_ms": 4.96199989318848,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 17.369,
+          "gpu_ms": 4.97900009155273,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 15.845,
+          "gpu_ms": 4.96700000762939,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 18.613,
+          "gpu_ms": 4.97300004959106,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 14.732,
+          "gpu_ms": 4.96999979019165,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.521,
+          "gpu_ms": 4.96199989318848,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.144,
+          "frame_ms": 16.097,
+          "gpu_ms": 4.95900011062622,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.014,
+          "frame_ms": 16.954,
+          "gpu_ms": 4.95499992370605,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 17.089,
+          "gpu_ms": 4.96000003814697,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.991,
+          "gpu_ms": 4.96199989318848,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 17.998,
+          "gpu_ms": 4.96000003814697,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 15.196,
+          "gpu_ms": 4.96500015258789,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.276,
+          "gpu_ms": 4.94999980926514,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.989,
+          "gpu_ms": 4.97300004959106,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.714,
+          "gpu_ms": 4.9539999961853,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 17.328,
+          "gpu_ms": 4.96500015258789,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.041,
+          "gpu_ms": 4.9539999961853,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 18.319,
+          "gpu_ms": 4.97499990463257,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 14.92,
+          "gpu_ms": 4.96700000762939,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.226,
+          "frame_ms": 16.641,
+          "gpu_ms": 4.94999980926514,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.024,
+          "frame_ms": 16.271,
+          "gpu_ms": 4.97599983215332,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 17.059,
+          "gpu_ms": 4.95699977874756,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.534,
+          "gpu_ms": 4.97200012207031,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.622,
+          "gpu_ms": 4.95900011062622,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 18.684,
+          "gpu_ms": 4.96999979019165,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.057,
+          "frame_ms": 14.868,
+          "gpu_ms": 4.95800018310547,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.604,
+          "gpu_ms": 4.97100019454956,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 16.553,
+          "gpu_ms": 4.96400022506714,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.512,
+          "gpu_ms": 4.96199989318848,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 17.002,
+          "gpu_ms": 4.96500015258789,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.731,
+          "gpu_ms": 4.96299982070923,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 16.538,
+          "gpu_ms": 4.9689998626709,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.121,
+          "frame_ms": 15.177,
+          "gpu_ms": 4.97399997711182,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.014,
+          "frame_ms": 17.313,
+          "gpu_ms": 4.97800016403198,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.012,
+          "frame_ms": 16.628,
+          "gpu_ms": 4.98199987411499,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.022,
+          "frame_ms": 16.257,
+          "gpu_ms": 4.98000001907349,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 18.033,
+          "gpu_ms": 4.96299982070923,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.016,
+          "frame_ms": 15.928,
+          "gpu_ms": 4.96799993515015,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 19.131,
+          "gpu_ms": 4.96199989318848,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.011,
+          "frame_ms": 13.943,
+          "gpu_ms": 4.9689998626709,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.667,
+          "gpu_ms": 4.96199989318848,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.023,
+          "frame_ms": 16.328,
+          "gpu_ms": 4.96400022506714,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.016,
+          "frame_ms": 16.866,
+          "gpu_ms": 4.96500015258789,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.013,
+          "frame_ms": 16.728,
+          "gpu_ms": 4.97399997711182,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.025,
+          "frame_ms": 17.88,
+          "gpu_ms": 4.9689998626709,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.166,
+          "frame_ms": 17.994,
+          "gpu_ms": 4.98400020599365,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.016,
+          "frame_ms": 13.993,
+          "gpu_ms": 4.97900009155273,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.012,
+          "frame_ms": 16.538,
+          "gpu_ms": 4.96099996566772,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 17.877,
+          "gpu_ms": 4.95499992370605,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.493,
+          "gpu_ms": 4.96500015258789,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.021,
+          "frame_ms": 17.051,
+          "gpu_ms": 4.96000003814697,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 17.111,
+          "gpu_ms": 4.96600008010864,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.012,
+          "frame_ms": 15.817,
+          "gpu_ms": 4.96799993515015,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.024,
+          "frame_ms": 16.891,
+          "gpu_ms": 4.98400020599365,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.011,
+          "frame_ms": 15.561,
+          "gpu_ms": 4.97499990463257,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 17.745,
+          "gpu_ms": 4.96400022506714,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.013,
+          "frame_ms": 15.103,
+          "gpu_ms": 4.98199987411499,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 19.31,
+          "gpu_ms": 4.99300003051758,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.147,
+          "frame_ms": 14.788,
+          "gpu_ms": 4.96700000762939,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 19.586,
+          "gpu_ms": 4.97499990463257,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.013,
+          "frame_ms": 13.72,
+          "gpu_ms": 4.97200012207031,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 877.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 17.133,
+          "gpu_ms": 4.98899984359741,
+          "primitives": 1950001.0,
+          "represented": 4,
+          "settled": true
+        }
+      ],
+      "summary": {
+        "draw_calls": {
+          "max": 877.0,
+          "median": 877.0,
+          "p95": 877.0
+        },
+        "fleet_ms": {
+          "max": 0.339,
+          "median": 0.018,
+          "p95": 0.147
+        },
+        "frame_ms": {
+          "max": 20.319,
+          "median": 16.714,
+          "p95": 18.684
+        },
+        "gpu_ms": {
+          "max": 5.1230001449585,
+          "median": 4.97599983215332,
+          "p95": 5.04400014877319
+        },
+        "primitives": {
+          "max": 1950001.0,
+          "median": 1950001.0,
+          "p95": 1950001.0
+        }
+      }
+    },
+    {
+      "admission_ms": [
+        2.854,
+        2.363
+      ],
+      "phase": "parked16",
+      "rows": [
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 23.005,
+          "gpu_ms": 5.3270001411438,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 14.642,
+          "gpu_ms": 5.31500005722046,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.715,
+          "gpu_ms": 5.32000017166138,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.331,
+          "gpu_ms": 5.32100009918213,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.556,
+          "gpu_ms": 5.32499980926514,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 17.056,
+          "gpu_ms": 5.33599996566772,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.474,
+          "gpu_ms": 5.33400011062622,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 18.755,
+          "gpu_ms": 5.33300018310547,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 14.561,
+          "gpu_ms": 5.3289999961853,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.774,
+          "gpu_ms": 5.32000017166138,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.683,
+          "gpu_ms": 5.31899976730347,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.666,
+          "gpu_ms": 5.3270001411438,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.323,
+          "frame_ms": 16.63,
+          "gpu_ms": 5.31099987030029,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.021,
+          "frame_ms": 16.936,
+          "gpu_ms": 5.32200002670288,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 18.418,
+          "gpu_ms": 5.32200002670288,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 14.546,
+          "gpu_ms": 5.3270001411438,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.493,
+          "gpu_ms": 5.13100004196167,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.022,
+          "frame_ms": 17.386,
+          "gpu_ms": 5.12900018692017,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 15.86,
+          "gpu_ms": 5.12400007247925,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.021,
+          "frame_ms": 16.988,
+          "gpu_ms": 5.11600017547607,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.032,
+          "frame_ms": 17.367,
+          "gpu_ms": 5.1269998550415,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 17.061,
+          "gpu_ms": 5.11800003051758,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 15.506,
+          "gpu_ms": 5.11600017547607,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.161,
+          "gpu_ms": 5.12200021743774,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.011,
+          "frame_ms": 15.266,
+          "gpu_ms": 5.11299991607666,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.167,
+          "frame_ms": 18.17,
+          "gpu_ms": 5.12900018692017,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.807,
+          "gpu_ms": 5.11899995803833,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.023,
+          "frame_ms": 15.816,
+          "gpu_ms": 5.125,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.016,
+          "frame_ms": 18.673,
+          "gpu_ms": 5.11499977111816,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 14.611,
+          "gpu_ms": 5.11999988555908,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.012,
+          "frame_ms": 17.596,
+          "gpu_ms": 5.12599992752075,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.012,
+          "frame_ms": 16.297,
+          "gpu_ms": 5.12200021743774,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.015,
+          "frame_ms": 15.316,
+          "gpu_ms": 5.11499977111816,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 18.135,
+          "gpu_ms": 5.11700010299683,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 16.119,
+          "gpu_ms": 5.11800003051758,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.013,
+          "frame_ms": 17.605,
+          "gpu_ms": 5.12099981307983,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.046,
+          "frame_ms": 16.007,
+          "gpu_ms": 5.125,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 15.723,
+          "gpu_ms": 5.125,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.206,
+          "frame_ms": 17.919,
+          "gpu_ms": 5.12400007247925,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 15.989,
+          "gpu_ms": 5.1269998550415,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.012,
+          "frame_ms": 16.684,
+          "gpu_ms": 5.13600015640259,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 17.743,
+          "gpu_ms": 5.12799978256226,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 17.336,
+          "gpu_ms": 5.11199998855591,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.016,
+          "frame_ms": 15.665,
+          "gpu_ms": 5.11899995803833,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.012,
+          "frame_ms": 16.274,
+          "gpu_ms": 5.13299989700317,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 17.248,
+          "gpu_ms": 5.11999988555908,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 17.399,
+          "gpu_ms": 5.12099981307983,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 14.473,
+          "gpu_ms": 5.11800003051758,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.011,
+          "frame_ms": 17.514,
+          "gpu_ms": 5.1399998664856,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 17.938,
+          "gpu_ms": 5.11600017547607,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.012,
+          "frame_ms": 14.423,
+          "gpu_ms": 5.11800003051758,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.18,
+          "frame_ms": 17.633,
+          "gpu_ms": 5.12099981307983,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.012,
+          "frame_ms": 15.821,
+          "gpu_ms": 5.1230001449585,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 18.62,
+          "gpu_ms": 5.11899995803833,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.014,
+          "frame_ms": 16.214,
+          "gpu_ms": 5.11499977111816,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.705,
+          "gpu_ms": 5.12599992752075,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.016,
+          "frame_ms": 18.185,
+          "gpu_ms": 5.12099981307983,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 15.256,
+          "gpu_ms": 5.11700010299683,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 15.733,
+          "gpu_ms": 5.11999988555908,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.814,
+          "gpu_ms": 5.13000011444092,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.011,
+          "frame_ms": 16.839,
+          "gpu_ms": 5.11700010299683,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 16.691,
+          "gpu_ms": 5.12599992752075,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 15.623,
+          "gpu_ms": 5.11899995803833,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 20.183,
+          "gpu_ms": 5.12200021743774,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.305,
+          "frame_ms": 14.847,
+          "gpu_ms": 5.12200021743774,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 17.258,
+          "gpu_ms": 5.12099981307983,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.015,
+          "frame_ms": 15.432,
+          "gpu_ms": 5.1230001449585,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.012,
+          "frame_ms": 15.185,
+          "gpu_ms": 5.12599992752075,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.013,
+          "frame_ms": 17.171,
+          "gpu_ms": 5.12400007247925,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 18.253,
+          "gpu_ms": 5.11899995803833,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 18.526,
+          "gpu_ms": 5.11999988555908,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 14.464,
+          "gpu_ms": 5.11600017547607,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.869,
+          "gpu_ms": 5.11399984359741,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.016,
+          "frame_ms": 16.683,
+          "gpu_ms": 5.11999988555908,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.852,
+          "gpu_ms": 5.10900020599365,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 16.591,
+          "gpu_ms": 5.12799978256226,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 17.513,
+          "gpu_ms": 5.12400007247925,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.267,
+          "frame_ms": 17.21,
+          "gpu_ms": 5.11800003051758,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 15.064,
+          "gpu_ms": 5.12099981307983,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.905,
+          "gpu_ms": 5.11600017547607,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.485,
+          "gpu_ms": 5.10599994659424,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.016,
+          "frame_ms": 17.157,
+          "gpu_ms": 5.11700010299683,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.021,
+          "frame_ms": 16.338,
+          "gpu_ms": 5.11899995803833,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.535,
+          "gpu_ms": 5.13199996948242,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 19.943,
+          "gpu_ms": 5.12099981307983,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.016,
+          "frame_ms": 13.433,
+          "gpu_ms": 5.12400007247925,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.513,
+          "gpu_ms": 5.125,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.857,
+          "gpu_ms": 5.13100004196167,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.796,
+          "gpu_ms": 5.12099981307983,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 15.589,
+          "gpu_ms": 5.12400007247925,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.296,
+          "frame_ms": 18.393,
+          "gpu_ms": 5.12400007247925,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 18.596,
+          "gpu_ms": 5.1269998550415,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 14.422,
+          "gpu_ms": 5.47599983215332,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 15.645,
+          "gpu_ms": 5.10799980163574,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.011,
+          "frame_ms": 15.954,
+          "gpu_ms": 5.13000011444092,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.014,
+          "frame_ms": 17.787,
+          "gpu_ms": 5.12599992752075,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 16.789,
+          "gpu_ms": 5.1269998550415,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.021,
+          "frame_ms": 16.82,
+          "gpu_ms": 5.12200021743774,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 18.384,
+          "gpu_ms": 5.11999988555908,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.016,
+          "frame_ms": 14.577,
+          "gpu_ms": 5.13399982452393,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.719,
+          "gpu_ms": 5.06199979782104,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.016,
+          "frame_ms": 16.882,
+          "gpu_ms": 5.05499982833862,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 16.326,
+          "gpu_ms": 5.05800008773804,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.341,
+          "frame_ms": 17.512,
+          "gpu_ms": 5.05200004577637,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.254,
+          "gpu_ms": 5.06300020217896,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 17.333,
+          "gpu_ms": 5.06699991226196,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.016,
+          "frame_ms": 15.776,
+          "gpu_ms": 5.05900001525879,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.916,
+          "gpu_ms": 5.05499982833862,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.317,
+          "gpu_ms": 5.0479998588562,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.964,
+          "gpu_ms": 5.06099987030029,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.487,
+          "gpu_ms": 5.06799983978271,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 16.694,
+          "gpu_ms": 5.05900001525879,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 18.469,
+          "gpu_ms": 5.07000017166138,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 14.942,
+          "gpu_ms": 5.05399990081787,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.652,
+          "gpu_ms": 5.06799983978271,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 16.744,
+          "gpu_ms": 5.05700016021729,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.324,
+          "frame_ms": 16.792,
+          "gpu_ms": 5.05399990081787,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.548,
+          "gpu_ms": 5.06500005722046,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.294,
+          "gpu_ms": 5.05800008773804,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 19.488,
+          "gpu_ms": 5.06400012969971,
+          "primitives": 1989679.0,
+          "represented": 16,
+          "settled": true
+        }
+      ],
+      "summary": {
+        "draw_calls": {
+          "max": 910.0,
+          "median": 910.0,
+          "p95": 910.0
+        },
+        "fleet_ms": {
+          "max": 0.341,
+          "median": 0.018,
+          "p95": 0.206
+        },
+        "frame_ms": {
+          "max": 23.005,
+          "median": 16.705,
+          "p95": 18.62
+        },
+        "gpu_ms": {
+          "max": 5.47599983215332,
+          "median": 5.12099981307983,
+          "p95": 5.3270001411438
+        },
+        "primitives": {
+          "max": 1989679.0,
+          "median": 1989679.0,
+          "p95": 1989679.0
+        }
+      }
+    },
+    {
+      "admission_ms": [
+        0.783
+      ],
+      "phase": "parked64",
+      "rows": [
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 21.104,
+          "gpu_ms": 5.21799993515015,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.676,
+          "gpu_ms": 5.21299982070923,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.103,
+          "gpu_ms": 5.21299982070923,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.013,
+          "frame_ms": 18.089,
+          "gpu_ms": 5.22100019454956,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 14.845,
+          "gpu_ms": 5.22300004959106,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.023,
+          "frame_ms": 17.068,
+          "gpu_ms": 5.22499990463257,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 16.942,
+          "gpu_ms": 5.21799993515015,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.755,
+          "gpu_ms": 5.21299982070923,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.165,
+          "gpu_ms": 5.22100019454956,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 17.055,
+          "gpu_ms": 5.22800016403198,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 18.665,
+          "gpu_ms": 5.22100019454956,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 14.556,
+          "gpu_ms": 5.22300004959106,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.642,
+          "frame_ms": 17.356,
+          "gpu_ms": 5.21400022506714,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.093,
+          "gpu_ms": 5.22100019454956,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 18.051,
+          "gpu_ms": 5.21999979019165,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 15.056,
+          "gpu_ms": 5.22100019454956,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.016,
+          "frame_ms": 16.037,
+          "gpu_ms": 5.21799993515015,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 19.396,
+          "gpu_ms": 5.21700000762939,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 15.099,
+          "gpu_ms": 5.22100019454956,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.262,
+          "gpu_ms": 5.21999979019165,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.747,
+          "gpu_ms": 5.2189998626709,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.016,
+          "frame_ms": 15.465,
+          "gpu_ms": 5.21999979019165,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.015,
+          "frame_ms": 16.711,
+          "gpu_ms": 5.22599983215332,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.015,
+          "frame_ms": 17.56,
+          "gpu_ms": 5.23199987411499,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 18.775,
+          "gpu_ms": 5.22499990463257,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.591,
+          "frame_ms": 15.29,
+          "gpu_ms": 5.22800016403198,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.042,
+          "frame_ms": 16.043,
+          "gpu_ms": 5.21299982070923,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.653,
+          "gpu_ms": 5.21199989318848,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.407,
+          "gpu_ms": 5.22200012207031,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.011,
+          "frame_ms": 17.285,
+          "gpu_ms": 5.22399997711182,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.618,
+          "gpu_ms": 5.22700023651123,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 18.295,
+          "gpu_ms": 5.21700000762939,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.016,
+          "frame_ms": 14.691,
+          "gpu_ms": 5.21799993515015,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.878,
+          "gpu_ms": 5.21999979019165,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 17.035,
+          "gpu_ms": 5.22300004959106,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 15.975,
+          "gpu_ms": 5.21999979019165,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.78,
+          "gpu_ms": 5.25500011444092,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.021,
+          "frame_ms": 16.73,
+          "gpu_ms": 5.20900011062622,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.649,
+          "frame_ms": 19.336,
+          "gpu_ms": 5.22599983215332,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.024,
+          "frame_ms": 14.034,
+          "gpu_ms": 5.22599983215332,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.021,
+          "frame_ms": 16.367,
+          "gpu_ms": 5.22499990463257,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.021,
+          "frame_ms": 17.085,
+          "gpu_ms": 5.21700000762939,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.403,
+          "gpu_ms": 5.21799993515015,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.851,
+          "gpu_ms": 5.2189998626709,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.569,
+          "gpu_ms": 5.22100019454956,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 18.74,
+          "gpu_ms": 5.21299982070923,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 14.232,
+          "gpu_ms": 5.22200012207031,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 16.776,
+          "gpu_ms": 5.22100019454956,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 17.225,
+          "gpu_ms": 5.22700023651123,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.09,
+          "gpu_ms": 5.21400022506714,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.898,
+          "gpu_ms": 5.21700000762939,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.587,
+          "frame_ms": 17.206,
+          "gpu_ms": 5.21600008010864,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 18.531,
+          "gpu_ms": 5.21299982070923,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 14.211,
+          "gpu_ms": 5.22100019454956,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.022,
+          "frame_ms": 16.899,
+          "gpu_ms": 5.22300004959106,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.812,
+          "gpu_ms": 5.22200012207031,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.358,
+          "gpu_ms": 5.21799993515015,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.554,
+          "gpu_ms": 5.2350001335144,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.021,
+          "frame_ms": 17.385,
+          "gpu_ms": 5.21999979019165,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 19.191,
+          "gpu_ms": 5.22800016403198,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 13.506,
+          "gpu_ms": 5.22300004959106,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.016,
+          "frame_ms": 15.011,
+          "gpu_ms": 5.21999979019165,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.011,
+          "frame_ms": 16.381,
+          "gpu_ms": 5.2189998626709,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 16.99,
+          "gpu_ms": 5.21600008010864,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.488,
+          "frame_ms": 18.913,
+          "gpu_ms": 5.22499990463257,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.144,
+          "gpu_ms": 5.22800016403198,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 18.434,
+          "gpu_ms": 5.21500015258789,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 14.716,
+          "gpu_ms": 5.2189998626709,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.856,
+          "gpu_ms": 5.22399997711182,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.405,
+          "gpu_ms": 5.22300004959106,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 17.064,
+          "gpu_ms": 5.22499990463257,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.576,
+          "gpu_ms": 5.22300004959106,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.013,
+          "frame_ms": 15.192,
+          "gpu_ms": 5.22100019454956,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 19.783,
+          "gpu_ms": 5.21400022506714,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.016,
+          "frame_ms": 14.978,
+          "gpu_ms": 5.2189998626709,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.896,
+          "gpu_ms": 5.2189998626709,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.021,
+          "frame_ms": 16.684,
+          "gpu_ms": 5.2189998626709,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.555,
+          "frame_ms": 16.366,
+          "gpu_ms": 5.2189998626709,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.016,
+          "frame_ms": 15.993,
+          "gpu_ms": 5.21700000762939,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 17.552,
+          "gpu_ms": 5.22200012207031,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 18.448,
+          "gpu_ms": 5.21600008010864,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 14.827,
+          "gpu_ms": 5.21600008010864,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.021,
+          "frame_ms": 16.79,
+          "gpu_ms": 5.21999979019165,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.381,
+          "gpu_ms": 5.22300004959106,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.509,
+          "gpu_ms": 5.21999979019165,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.859,
+          "gpu_ms": 5.21999979019165,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.739,
+          "gpu_ms": 5.21400022506714,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 18.463,
+          "gpu_ms": 5.21799993515015,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 15.722,
+          "gpu_ms": 5.21400022506714,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 15.575,
+          "gpu_ms": 5.21700000762939,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.68,
+          "frame_ms": 17.483,
+          "gpu_ms": 5.22200012207031,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.201,
+          "gpu_ms": 5.22399997711182,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 16.43,
+          "gpu_ms": 5.21400022506714,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.811,
+          "gpu_ms": 5.21999979019165,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 18.87,
+          "gpu_ms": 5.22100019454956,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 14.318,
+          "gpu_ms": 5.21500015258789,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.642,
+          "gpu_ms": 5.22100019454956,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.657,
+          "gpu_ms": 5.21400022506714,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.92,
+          "gpu_ms": 5.22200012207031,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.573,
+          "gpu_ms": 5.21600008010864,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.897,
+          "gpu_ms": 5.21500015258789,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 18.257,
+          "gpu_ms": 5.25899982452393,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 14.372,
+          "gpu_ms": 5.21799993515015,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.636,
+          "frame_ms": 17.622,
+          "gpu_ms": 5.21700000762939,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.342,
+          "gpu_ms": 5.22100019454956,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.43,
+          "gpu_ms": 5.32800006866455,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.889,
+          "gpu_ms": 5.3270001411438,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.27,
+          "gpu_ms": 5.32200002670288,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 19.073,
+          "gpu_ms": 5.32499980926514,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 14.325,
+          "gpu_ms": 5.32299995422363,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 17.273,
+          "gpu_ms": 5.32399988174438,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.021,
+          "frame_ms": 16.188,
+          "gpu_ms": 5.33099985122681,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 17.058,
+          "gpu_ms": 5.32299995422363,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.212,
+          "gpu_ms": 5.3289999961853,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 16.504,
+          "gpu_ms": 5.3270001411438,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 18.124,
+          "gpu_ms": 5.33400011062622,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.513,
+          "frame_ms": 15.391,
+          "gpu_ms": 5.32000017166138,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 17.462,
+          "gpu_ms": 5.31899976730347,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.0,
+          "gpu_ms": 5.32600021362305,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 910.0,
+          "fleet_ms": 0.012,
+          "frame_ms": 15.301,
+          "gpu_ms": 5.31899976730347,
+          "primitives": 1989679.0,
+          "represented": 64,
+          "settled": true
+        }
+      ],
+      "summary": {
+        "draw_calls": {
+          "max": 910.0,
+          "median": 910.0,
+          "p95": 910.0
+        },
+        "fleet_ms": {
+          "max": 0.68,
+          "median": 0.019,
+          "p95": 0.555
+        },
+        "frame_ms": {
+          "max": 21.104,
+          "median": 16.684,
+          "p95": 18.913
+        },
+        "gpu_ms": {
+          "max": 5.33400011062622,
+          "median": 5.22100019454956,
+          "p95": 5.32600021362305
+        },
+        "primitives": {
+          "max": 1989679.0,
+          "median": 1989679.0,
+          "p95": 1989679.0
+        }
+      }
+    }
+  ]
+}
