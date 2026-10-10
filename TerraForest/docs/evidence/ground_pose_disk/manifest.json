@@ -1,0 +1,40 @@
+{
+  "slot": "ground_world_test_1791669224511954900",
+  "commands": [
+    [
+      "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\godot.windows.opt.tools.64.exe",
+      "--path",
+      "TerraForest",
+      "--script",
+      "res://tests/ground_cover_interaction_world.gd",
+      "--",
+      "--world-slot=ground_world_test_1791669224511954900",
+      "--ground-cover",
+      "--world-generator=4",
+      "--world-seed=1703",
+      "--gameplay-construction",
+      "--persist-ground",
+      "--persist-ground-pose"
+    ],
+    [
+      "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\godot.windows.opt.tools.64.exe",
+      "--path",
+      "TerraForest",
+      "--script",
+      "res://tests/ground_cover_world_reopen.gd",
+      "--",
+      "--world-slot=ground_world_test_1791669224511954900",
+      "--ground-cover",
+      "--world-generator=4",
+      "--world-seed=1703",
+      "--gameplay-construction"
+    ]
+  ],
+  "last_exit": 0,
+  "base_commit": "9014c53",
+  "scope": "Fresh unique test slot, manual save with grass equipped; shutdown writes inhibited in producer. Separate consumer checks exact pose bytes, actual spawn position, inventory and vegetation edits, then normal F9 reload.",
+  "checks": {
+    "save": 44,
+    "reopen": 23
+  }
+}

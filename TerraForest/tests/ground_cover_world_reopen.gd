@@ -12,6 +12,10 @@ func verify(game: Node,expected: Dictionary) -> void:
 	check(game.player_hud.inventory.capture_storage_snapshot()==expected.inventory,"plant grass and other inventory restores exactly")
 	check(game.ground_cover.removed.contains(expected.natural_id),"removed natural identity remains absent")
 	check(game.terrain.backend.world_seed==expected.seed,"saved seed owns restored edits")
+	if expected.has("pose"):
+		check(game._saved_pose==expected.pose,"exact player pose survives ground-resource disk save")
+		check(game.player.global_position.distance_to(game.player_pose.decode(expected.pose).position)<0.05,"player spawns at saved position")
+		check(not game.ground_mode and game.player_hud.ground_species==-1,"reload clears transient resource selection")
 func run() -> void:
 	var slot:=""
 	for arg in OS.get_cmdline_user_args():

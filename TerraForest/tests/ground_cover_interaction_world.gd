@@ -163,6 +163,11 @@ func run() -> void:
 	if persistent:
 		check(game.player_hud.inventory.grant_items(PackedInt64Array([204,3,205,5]),game.player_hud.inventory.snapshot().revision).ok,"seed non-default plant and grass inventory for archive verification")
 		var expected:={"slot":game.terrain.save_slot,"ground":cover.removed.capture_storage_snapshot(),"inventory":game.player_hud.inventory.capture_storage_snapshot(),"target":target,"natural_id":target_id,"species":target_species,"seed":game.terrain.backend.world_seed,"active":not "--mine-ground" in OS.get_cmdline_user_args()}
+		if "--persist-ground-pose" in OS.get_cmdline_user_args():
+			game.fly=true;game.player.position=Vector3(805,110,1315);game.waiting_spawn=false
+			check(game._activate_ground_tool(2),"grass placement active during disk save")
+			expected["pose"]=game._capture_player_pose()
+			check(game.player_pose.decode(expected.pose).get("position",Vector3.ZERO)==game.player.position,"saved pose fixture contains new position")
 		var saved: Array=[]
 		game.terrain.save_completed.connect(func(ok: bool):saved.append(ok))
 		game.terrain.changed_since_save=true;game.terrain.save_world()
@@ -171,6 +176,7 @@ func run() -> void:
 		check(not saved.is_empty() and saved[0],"main-world manual save publishes ground edits and inventory")
 		var snapshot:=FileAccess.open("res://reports/ground_cover/"+game.terrain.save_slot+".expected",FileAccess.WRITE)
 		snapshot.store_var(expected);snapshot.close()
+		if "--persist-ground-pose" in OS.get_cmdline_user_args():game.terrain.backend.disable_snapshot_writes()
 	key.physical_keycode=KEY_H;game._unhandled_input(key)
 	check(not game.ground_mode and not game.player_hud.ground_hint.visible,"leaving ground mode removes contextual controls")
 	cover.set_process(false)
