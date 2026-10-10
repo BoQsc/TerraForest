@@ -1,0 +1,9 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS graded road cut constructed through solid hill
+PASS native terrain collision triangles produced
+TRAVERSAL { "position": (422.0094, 182.7558, 400.0), "min_height": 181.265655517578, "max_height": 182.755767822266, "grounded_ticks": 140 }
+PASS capsule traverses graded cut across native mesh boundary
+PASS capsule remains supported without falling or jumping
+PASS native collision follows road grade at shared chunk edge
+PASS capsule descends cut and remains supported across boundary

@@ -1,0 +1,12 @@
+{
+  "change": "Extended native road command evaluates shared C1 cubic profile through section overlaps; existing straight packet formats remain valid. Counts <=64; finite coefficients, continuous joins, endpoint agreement and analytic grade/height extrema validated before mutation. Scene invalidation conservatively encloses curved heights.",
+  "collision": "Curved profile debug/release: max height error 0.000824 m, normal error 0.079 degrees, no missing ray hits. Invalid NaN/count/discontinuous packets rejected with unchanged geometry key. Straight profile and walking regressions pass.",
+  "drive": "Main-world source checkpoint with forest/ground cover/buildings/lakes active; 245.051 m, 1261/1261 ticks with >=3 wheels supported, zero loading holds, initially unready destination, peak 131.74 km/h. Suspension unchanged.",
+  "limits": "One short rendered route; deep cut-wall visuals remain provisional. Editor preview/construction UI and fresh-process save/reload of curved roads remain open. Route construction is currently sequential section edits, not whole-route atomic authoring. No sustained performance, city/fleet or thermal qualification.",
+  "command": "godot --path TerraForest --script res://tests/settlement_driving.gd -- --world-slot=staged_furnished_1791584856787240500 --ground-cover --streamed-road --surface-road --smooth-road",
+  "next": "Editor authoring integration with stale-source guards, curved preview and persistence verification; do not repeat unchanged passing driving fixture.",
+  "binary_hashes": {
+    "terrain_core.windows.template_release.x86_64.dll": "e6ef812e023524ffb50cec809029fee237d98c0782ddb7b86aead8d6112dfc07",
+    "terrain_core.windows.x86_64.dll": "7b7450123b44e460bdaaf6057d75fd71b0ec4794bc821c8a1de9e7ebd65de935"
+  }
+}

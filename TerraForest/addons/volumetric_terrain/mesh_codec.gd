@@ -158,3 +158,11 @@ static func encode_decoded_mesh(mesh: Dictionary) -> PackedByteArray:
 	bytes.append_array(indices.to_byte_array())
 	bytes.append_array(faces.to_byte_array())
 	return bytes
+
+static func curved_road_bed(a: Vector3,b: Vector3,half_width: float,depth: float,clearance: float,coefficients: PackedFloat64Array,index: int) -> PackedByteArray:
+	if coefficients.size()<4 or coefficients.size()>256 or coefficients.size()%4!=0 or index<0 or index>=coefficients.size()/4:return PackedByteArray()
+	var packet:=road_bed(a,b,half_width,depth,clearance)
+	packet.resize(56+coefficients.size()*4);packet.encode_u32(40,4);packet.encode_float(44,0)
+	packet.encode_u32(48,coefficients.size()/4);packet.encode_u32(52,index)
+	for i in coefficients.size():packet.encode_float(56+i*4,coefficients[i])
+	return packet

@@ -3,6 +3,7 @@ extends SceneTree
 const DIR="res://reports/settlement_driving/"
 var failures:=0
 var road_profile:=PackedVector3Array()
+var smooth_coefficients:=PackedFloat64Array()
 func check(ok: bool,label: String) -> void:
 	if not ok:failures+=1
 	print("PASS " if ok else "FAIL ",label)
@@ -29,11 +30,21 @@ func run() -> void:
 				check(false,"surface route samples ready");game.terrain.shutdown();game.free();quit(1);return
 			road_profile[0]=a
 			print("SURFACE_PROFILE ",road_profile)
-			road_profile=grade_profile(road_profile)
+			if "--smooth-road" in OS.get_cmdline_user_args():
+				var fitter=ClassDB.instantiate("NativeRoadProfile")
+				var fitted: Dictionary=fitter.fit(road_profile,0.25,0.008,15,3)
+				if fitted.ok:
+					smooth_coefficients=fitted.coefficients
+					for i in road_profile.size()-1:road_profile[i].y=smooth_coefficients[i*4+3]
+					var end:=smooth_coefficients.size()-4
+					road_profile[-1].y=smooth_coefficients[end]+smooth_coefficients[end+1]+smooth_coefficients[end+2]+smooth_coefficients[end+3]
+				else:road_profile=PackedVector3Array()
+			else:road_profile=grade_profile(road_profile)
 			if road_profile.is_empty():
 				check(false,"surface route fits grade and earthwork limits");game.terrain.shutdown();game.free();quit(1);return
 		for section in road_profile.size()-1:
-			if not game.terrain.construct_road_bed(road_profile[section],road_profile[section+1],4,4,16 if "--surface-road" in OS.get_cmdline_user_args() else 12):
+			var admitted: bool=game.terrain.construct_curved_road_bed(road_profile[section],road_profile[section+1],smooth_coefficients,section) if not smooth_coefficients.is_empty() else game.terrain.construct_road_bed(road_profile[section],road_profile[section+1],4,4,16 if "--surface-road" in OS.get_cmdline_user_args() else 12)
+			if not admitted:
 				check(false,"extended road admitted section "+str(section));game.terrain.shutdown();game.free();quit(1);return
 			deadline=Time.get_ticks_msec()+30000
 			while game.terrain.pending_edit and Time.get_ticks_msec()<deadline:await process_frame
@@ -181,7 +192,7 @@ func streamed_drive(game: Node,car: RigidBody3D,direction: Vector3) -> void:
 	check(held==0,"combined world travel has zero readiness holds")
 	check(supported>=ticks*0.95,"wheel support observed through route")
 	await RenderingServer.frame_post_draw;root.get_texture().get_image().save_png(DIR+"streamed.png")
-	var result:={"failures":failures,"support_segments":support_segments,"unsupported":unsupported,"road_profile":road_profile,"initial":initial,"end":car.position,"distance":distance,"initially_ready":initially_ready,"held_ticks":held,"ticks":ticks,"supported_ticks":supported,"max_speed_kph":max_speed,"holds":holds,"rows":rows,"scope":"Main-world driving with forest, ground cover, buildings and lakes loaded; temporary authored road extension; original save preserved. No sustained frame/thermal or city-scale qualification."}
+	var result:={"failures":failures,"support_segments":support_segments,"unsupported":unsupported,"road_profile":road_profile,"smooth_coefficients":smooth_coefficients,"initial":initial,"end":car.position,"distance":distance,"initially_ready":initially_ready,"held_ticks":held,"ticks":ticks,"supported_ticks":supported,"max_speed_kph":max_speed,"holds":holds,"rows":rows,"scope":"Main-world driving with forest, ground cover, buildings and lakes loaded; temporary authored road extension; original save preserved. No sustained frame/thermal or city-scale qualification."}
 	var file:=FileAccess.open(DIR+"streamed.json",FileAccess.WRITE);file.store_string(JSON.stringify(result,"  "));file.close()
 
 func sample_road(game: Node,a: Vector3,direction: Vector3) -> PackedVector3Array:
@@ -204,7 +215,11 @@ func road_height(point: Vector3) -> float:
 	var along:=road_profile[0].x-point.x
 	var spacing:=absf(road_profile[1].x-road_profile[0].x)
 	var index:=clampi(floori(along/spacing),0,road_profile.size()-2)
-	return lerpf(road_profile[index].y,road_profile[index+1].y,clampf((along-index*spacing)/spacing,0,1))
+	var t:=clampf((along-index*spacing)/spacing,0,1)
+	if not smooth_coefficients.is_empty():
+		var k:=index*4
+		return ((smooth_coefficients[k]*t+smooth_coefficients[k+1])*t+smooth_coefficients[k+2])*t+smooth_coefficients[k+3]
+	return lerpf(road_profile[index].y,road_profile[index+1].y,t)
 
 func grade_profile(samples: PackedVector3Array) -> PackedVector3Array:
 	# Fixture-only interval feasibility: <=25% grade, <=15 m cut and <=3 m

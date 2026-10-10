@@ -14,6 +14,7 @@ parser.add_argument('--godot',default=os.environ.get('GODOT_EXE') or shutil.whic
 parser.add_argument('--addon',choices=['world_runtime','volumetric_water','volumetric_terrain','structures','vegetation_runtime'],default='world_runtime')
 parser.add_argument('--region-storage',action='store_true',help='Exercise structure_persistence through the native region archive')
 parser.add_argument('--test',choices=['road_profile','road_surface_profile','terrain_locality_probe','terrain_region_cache','terrain_mesh_pressure','native_runtime','water','water_bake','world_archive','world_persistence','terrain_planner','terrain_collision','block_lattice','block_worker','block_texture_sets','building_collision_profile','building_collision_stream','building_readiness','block_regions','block_region_store','block_region_io','block_region_checkpoints','block_region_bootstrap','partial_region_storage','region_world_archive','region_archive_reads','region_checkpoint_retention','model_transfer_scheduler','model_scheduler_pressure','model_world_bootstrap','model_focus_paging','model_focus_discovery','block_pager','block_pager_stress','region_metadata','structures','static_placements','static_model_regions','model_region_store','model_region_metadata','model_admission_pressure','model_incremental_admission','model_admission_history','model_incremental_retirement','structure_persistence','model_paging_lifecycle','settlement_network','prefab_model_attachments','prefab_transaction','prefab_staged','ground_scatter','ground_cover_state','ground_cover_picker','static_shadow_policy'])
+parser.add_argument('--curved-road',action='store_true')
 args=parser.parse_args()
 if args.region_storage and args.test!='structure_persistence':parser.error('--region-storage requires --test structure_persistence')
 if not args.godot:parser.error('Specify --godot PATH')
@@ -94,12 +95,15 @@ with tempfile.TemporaryDirectory(prefix='release_smoke_',dir=build) as temporary
     shutil.copy2(ROOT/'tests'/(test+'.gd'),project/'tests'/(test+'.gd'))
     display=['--windowed','--resolution','960x540','--rendering-method','forward_plus'] if test=='block_texture_sets' else ['--headless']
     command=[str(engine),*display,'--path',str(project),'--script',f'res://tests/{test}.gd']
+    if args.curved_road and (args.region_storage or test!='road_surface_profile'):raise SystemExit('--curved-road requires road_surface_profile without region storage')
     if args.region_storage:command+=['--','--region-storage']
+    elif args.curved_road:command+=['--','--curved']
     run=subprocess.run(command,capture_output=True,text=True,timeout=180 if args.region_storage else 120)
     log=run.stdout+'\n'+run.stderr
     print(log)
     result_test='structure_region_persistence' if args.region_storage else test
     report_name={'water':'water_release','native_runtime':'native_release'}.get(result_test,result_test+'_release')
+    if args.curved_road:report_name='road_surface_profile_curved_release'
     (ROOT/'reports'/(report_name+'.log')).write_text(log,encoding='utf-8')
     report=json.loads((project/'reports'/(result_test+'.json')).read_text())
     report['library']=library

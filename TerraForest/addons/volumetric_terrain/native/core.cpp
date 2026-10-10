@@ -145,7 +145,7 @@ Page* World::ensure(int px,int py,int pz){
  int idx=pages.push(page);pages_by_key.put(key,idx);edit_columns[px+NP*pz]|=(1u<<py);return &pages[idx];
 }
 static float box_distance(V3 p,V3 c,float r){V3 q={ab(p.x-c.x)-r,ab(p.y-c.y)-r,ab(p.z-c.z)-r};return length({mx(q.x,0),mx(q.y,0),mx(q.z,0)})+mn(mx(q.x,mx(q.y,q.z)),0);}
-static float road_bed_field(V3 p,V3 a,V3 b,float half_width,float depth,float shoulder=0){
+static float road_bed_field(V3 p,V3 a,V3 b,float half_width,float depth,float shoulder=0,const float *curve=nullptr,int curve_count=0,int curve_index=0,float curve_offset=0){
  V3 axis={b.x-a.x,0,b.z-a.z},offset={p.x-a.x,0,p.z-a.z};
  float along=dot(offset,axis)/dot(axis,axis);
  float t=clampf(along,0.f,1.f);
@@ -153,6 +153,13 @@ static float road_bed_field(V3 p,V3 a,V3 b,float half_width,float depth,float sh
  // Keep the grade plane through the rounded footprint caps. Clamping the
  // elevation flattened each cap, leaving ledges at joined sloping sections.
  float top=a.y+(b.y-a.y)*along;
+ if(curve){
+  float position=along+curve_index;int section=imx(0,imn(curve_count-1,fl(position)));float t=position-section;const float*c=curve+section*4;
+  if(position<0)top=c[3]+c[2]*position;
+  else if(position>curve_count)top=c[0]+c[1]+c[2]+c[3]+(3*c[0]+2*c[1]+c[2])*(position-curve_count);
+  else top=((c[0]*t+c[1])*t+c[2])*t+c[3];
+  top+=curve_offset;
+ }
  float edge=length(V3{p.x-nearest.x,0,p.z-nearest.z})-half_width;
  if(shoulder>0){
   float drop=depth*clampf(edge/shoulder,0.f,1.f);
@@ -160,12 +167,12 @@ static float road_bed_field(V3 p,V3 a,V3 b,float half_width,float depth,float sh
  }
  return mx(edge,mx(p.y-top,top-depth-p.y));
 }
-bool World::edit(V3 a,V3 b,float radius,int shape,bool add,u8 material,V3&lo,V3&hi,int&changes,float depth,float clearance,float shoulder,u32 *removed_samples){
+bool World::edit(V3 a,V3 b,float radius,int shape,bool add,u8 material,V3&lo,V3&hi,int&changes,float depth,float clearance,float shoulder,u32 *removed_samples,const float *curve,int curve_count,int curve_index){
  if(removed_samples)zero_bytes(removed_samples,16*sizeof(u32));
  changes=0;radius=clampf(radius,0.5f,64.f);
  lo={mx(0,mn(a.x,b.x)-radius-SDF_BAND-1),mx(0,mn(a.y,b.y)-radius-SDF_BAND-1),mx(0,mn(a.z,b.z)-radius-SDF_BAND-1)};
  hi={mn(WORLD,mx(a.x,b.x)+radius+SDF_BAND+1),mn(255,mx(a.y,b.y)+radius+SDF_BAND+1),mn(WORLD,mx(a.z,b.z)+radius+SDF_BAND+1)};
- if(shape==2){float cap_rise=ab(b.y-a.y)*(radius+shoulder)/length(V3{b.x-a.x,0,b.z-a.z});lo.y=mx(0,mn(a.y,b.y)-cap_rise-depth-SDF_BAND-1);hi.y=mn(255,mx(a.y,b.y)+cap_rise+clearance+SDF_BAND+1);}
+ if(shape==2){float span=length(V3{b.x-a.x,0,b.z-a.z});float cap_rise=curve?.25f*(span+radius+shoulder):ab(b.y-a.y)*(radius+shoulder)/span;lo.y=mx(0,mn(a.y,b.y)-cap_rise-depth-SDF_BAND-1);hi.y=mn(255,mx(a.y,b.y)+cap_rise+clearance+SDF_BAND+1);}
  if(shape==2&&shoulder>0){lo.x=mx(0,lo.x-shoulder);lo.z=mx(0,lo.z-shoulder);hi.x=mn(WORLD,hi.x+shoulder);hi.z=mn(WORLD,hi.z+shoulder);}
  if(lo.x>hi.x||lo.y>hi.y||lo.z>hi.z)return false;
  // Capacity check before mutation: fail the edit, never silently discard terrain.
@@ -175,8 +182,8 @@ bool World::edit(V3 a,V3 b,float radius,int shape,bool add,u8 material,V3&lo,V3&
  for(int z=z0;z<=z1;z++)for(int x=x0;x<=x1;x++){
   float h=height(float(x),float(z));int lastpy=-1,idx=-1;
   for(int y=y0;y<=y1;y++){
-   V3 p={float(x),float(y),float(z)};float brush=shape==2?road_bed_field(p,a,b,radius,depth,shoulder):(shape==1?box_distance(p,b,radius):capsule(p,a,b,radius));
-   float cut=shape==2&&clearance>0?road_bed_field(p,a+V3{0,clearance,0},b+V3{0,clearance,0},radius,clearance):SDF_BAND+1;
+   V3 p={float(x),float(y),float(z)};float brush=shape==2?road_bed_field(p,a,b,radius,depth,shoulder,curve,curve_count,curve_index):(shape==1?box_distance(p,b,radius):capsule(p,a,b,radius));
+   float cut=shape==2&&clearance>0?road_bed_field(p,a+V3{0,clearance,0},b+V3{0,clearance,0},radius,clearance,0,curve,curve_count,curve_index,clearance):SDF_BAND+1;
    if(brush>SDF_BAND&&cut>SDF_BAND)continue;
    int py=y>>4;if(py!=lastpy){idx=pages_by_key.get(page_key(x>>4,py,z>>4));lastpy=py;}
    int j=(x&15)+16*((z&15)+16*(y&15));float old=idx<0?base(p,h):float(pages[idx].d[j])/SDF_SCALE;
@@ -795,11 +802,30 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
  }
  else if(cmd==2){V3 a=r.vec(),b=r.vec();float radius=r.f();int shape=int(r.u()),add=int(r.u()),mat=int(r.u());if(!r.good||!(radius>=.5f&&radius<=64.f)||shape<0||shape>1||mat<0||mat>3||!(ab(a.x)<=10000&&ab(b.x)<=10000&&ab(a.y)<=10000&&ab(b.y)<=10000&&ab(a.z)<=10000&&ab(b.z)<=10000)){out.p[8]=1;return;}V3 lo,hi;int changes;u32 removed[16]{};bool ok=w.edit(a,b,radius,shape,add!=0,u8(mat),lo,hi,changes,1.f,0.f,0.f,removed);if(!ok)out.p[8]=2;out.u(w.revision);out.u(changes);out.u(w.pages.n);out.u(w.blocks.n);out.vec(lo);out.vec(hi);for(u32 count:removed)out.u(ok?count:0);}
  else if(cmd==28){
-  V3 a=r.vec(),b=r.vec();float width=r.f(),depth=r.f(),clearance=n>=40?r.f():0;u32 material=n>=44?r.u():4;float shoulder=n==48?r.f():0;V3 axis={b.x-a.x,0,b.z-a.z};float distance=length(axis);
-  if(!r.good||(n!=36&&n!=40&&n!=44&&n!=48)||material<1||material>4||!(shoulder>=0&&shoulder<=16)||!(clearance>=0&&clearance<=16&&mx(a.y,b.y)+clearance<=250&&width>=.5f&&width<=16.f&&depth>=1.f&&depth<=8.f&&distance>=1.f&&distance<=128.f)||
+  V3 a=r.vec(),b=r.vec();float width=r.f(),depth=r.f(),clearance=n>=40?r.f():0;u32 material=n>=44?r.u():4;float shoulder=n>=48?r.f():0;V3 axis={b.x-a.x,0,b.z-a.z};float distance=length(axis);
+  float coefficients[256];int curve_count=0,curve_index=0;
+  if(n>=72){
+   curve_count=int(r.u());curve_index=int(r.u());
+   if(curve_count<1||curve_count>64||curve_index<0||curve_index>=curve_count||n!=56+16*curve_count){out.p[8]=1;return;}
+   for(int i=0;i<curve_count*4;i++){coefficients[i]=r.f();if(!(ab(coefficients[i])<10000)){out.p[8]=1;return;}}
+   for(int i=0;i<curve_count;i++){
+    const float*c=coefficients+i*4;
+    float tests[5]={0,1,0,0,0};int count=2;
+    if(ab(c[0])>1e-8f){float t=-c[1]/(3*c[0]);if(t>0&&t<1)tests[count++]=t;}
+    float disc=4*c[1]*c[1]-12*c[0]*c[2];
+    if(ab(c[0])>1e-8f&&disc>=0){for(int sign=-1;sign<=1;sign+=2){float t=(-2*c[1]+sign*__builtin_sqrtf(disc))/(6*c[0]);if(t>0&&t<1)tests[count++]=t;}}
+    else if(ab(c[1])>1e-8f){float t=-c[2]/(2*c[1]);if(t>0&&t<1)tests[count++]=t;}
+    for(int j=0;j<count;j++){float t=tests[j],height=((c[0]*t+c[1])*t+c[2])*t+c[3],slope=(3*c[0]*t*t+2*c[1]*t+c[2])/distance;
+     if(!(height>=depth+4&&height+clearance<=250&&ab(slope)<=.25001f)){out.p[8]=1;return;}}
+    if(i+1<curve_count&&(ab(c[0]+c[1]+c[2]+c[3]-c[7])>.001f||ab(3*c[0]+2*c[1]+c[2]-c[6])>.001f)){out.p[8]=1;return;}
+   }
+   const float*c=coefficients+curve_index*4;
+   if(ab(a.y-c[3])>.001f||ab(b.y-(c[0]+c[1]+c[2]+c[3]))>.001f){out.p[8]=1;return;}
+  }
+  if(!r.good||(n!=36&&n!=40&&n!=44&&n!=48&&!curve_count)||material<1||material>4||!(shoulder>=0&&shoulder<=16)||!(clearance>=0&&clearance<=16&&mx(a.y,b.y)+clearance<=250&&width>=.5f&&width<=16.f&&depth>=1.f&&depth<=8.f&&distance>=1.f&&distance<=128.f)||
      !(a.x>=width+5&&a.x<=WORLD-width-5&&b.x>=width+5&&b.x<=WORLD-width-5&&a.z>=width+5&&a.z<=WORLD-width-5&&b.z>=width+5&&b.z<=WORLD-width-5&&a.y>=depth+4&&a.y<=250&&b.y>=depth+4&&b.y<=250&&ab(b.y-a.y)<=distance*.25f)){out.p[8]=1;return;}
   if(!(a.x>=width+shoulder+5&&a.x<=WORLD-width-shoulder-5&&b.x>=width+shoulder+5&&b.x<=WORLD-width-shoulder-5&&a.z>=width+shoulder+5&&a.z<=WORLD-width-shoulder-5&&b.z>=width+shoulder+5&&b.z<=WORLD-width-shoulder-5)){out.p[8]=1;return;}
-  V3 lo,hi;int changes;bool ok=w.edit(a,b,width,2,true,u8(material),lo,hi,changes,depth,clearance,shoulder);
+  V3 lo,hi;int changes;bool ok=w.edit(a,b,width,2,true,u8(material),lo,hi,changes,depth,clearance,shoulder,nullptr,curve_count?coefficients:nullptr,curve_count,curve_index);
   if(!ok)out.p[8]=2;out.u(w.revision);out.u(changes);out.u(w.pages.n);out.u(w.blocks.n);out.vec(lo);out.vec(hi);
  }
  else if(cmd==3){
