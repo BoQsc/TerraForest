@@ -1,0 +1,13 @@
+{
+  "addon": "volumetric_terrain",
+  "archive_sha256": "41867e2366518c4332bd195becbb54dd0e357405dac02081176f2cb438485c50",
+  "steps": [
+    {
+      "phase": "import",
+      "exit_code": 3221225477,
+      "ok": false
+    }
+  ],
+  "resource_count": 20,
+  "ok": false
+}

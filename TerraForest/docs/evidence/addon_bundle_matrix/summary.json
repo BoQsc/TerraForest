@@ -1,0 +1,21 @@
+{
+  "base_commit": "36fcea5f8468e82eb0f92e8b3e0e083e1a36ffa2",
+  "engine": "Godot 4.7.2.stable.steam.ed1daf0bf Windows x86-64",
+  "passed": [
+    "presentation",
+    "structures",
+    "vehicle_runtime",
+    "world_ecosystem"
+  ],
+  "failed": [
+    "player_runtime",
+    "vegetation",
+    "vegetation_runtime",
+    "volumetric_terrain",
+    "volumetric_water",
+    "world_runtime"
+  ],
+  "failure": "All six failed imports exited 3221225477 (0xC0000005), without script errors. Three sampled Windows Application events identify Godot module offset 0x53fd842; cause is not established.",
+  "followup": "world_runtime import reproduced access violation; subsequent separate runtime resource load exited0, four resources loaded. Still a failed clean-install gate.",
+  "scope": "Headless import and script/scene/resource loading only; plugins are not enabled and scenes are not instantiated by the matrix. Existing separate vehicle instantiation evidence remains available. No gameplay, performance or clean-install guarantee beyond tested bundles."
+}

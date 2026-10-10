@@ -1,0 +1,13 @@
+{
+  "addon": "player_runtime",
+  "archive_sha256": "66b19d507efbe15898d99d8ea552d11757b9004a64f3b99cb52f0b087861fe46",
+  "steps": [
+    {
+      "phase": "import",
+      "exit_code": 3221225477,
+      "ok": false
+    }
+  ],
+  "resource_count": 5,
+  "ok": false
+}

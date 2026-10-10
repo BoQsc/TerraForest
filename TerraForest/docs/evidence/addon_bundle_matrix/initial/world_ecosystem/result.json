@@ -1,0 +1,18 @@
+{
+  "addon": "world_ecosystem",
+  "archive_sha256": "81bb57dc9565945dab905a6fb66523b15b7f5c989039574acf93facc90850969",
+  "steps": [
+    {
+      "phase": "import",
+      "exit_code": 0,
+      "ok": true
+    },
+    {
+      "phase": "load",
+      "exit_code": 0,
+      "ok": true
+    }
+  ],
+  "resource_count": 52,
+  "ok": true
+}

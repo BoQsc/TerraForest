@@ -1,0 +1,18 @@
+{
+  "addon": "presentation",
+  "archive_sha256": "1ccd28760a6e124f5e7d656c57f0b44032bbd65ae4f8c5e8f28a1ca77dade84a",
+  "steps": [
+    {
+      "phase": "import",
+      "exit_code": 0,
+      "ok": true
+    },
+    {
+      "phase": "load",
+      "exit_code": 0,
+      "ok": true
+    }
+  ],
+  "resource_count": 1,
+  "ok": true
+}

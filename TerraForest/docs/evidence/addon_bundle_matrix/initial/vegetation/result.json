@@ -1,0 +1,13 @@
+{
+  "addon": "vegetation",
+  "archive_sha256": "fc36b5bfe906736b3c69f57c73b720b52ad9303831d647bff600f9d65b5b6892",
+  "steps": [
+    {
+      "phase": "import",
+      "exit_code": 3221225477,
+      "ok": false
+    }
+  ],
+  "resource_count": 27,
+  "ok": false
+}

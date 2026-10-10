@@ -1,0 +1,18 @@
+{
+  "addon": "vehicle_runtime",
+  "archive_sha256": "4d48787439f4d6763d626d5730676c002c1ebdea5b892304ae831002932dc1ea",
+  "steps": [
+    {
+      "phase": "import",
+      "exit_code": 0,
+      "ok": true
+    },
+    {
+      "phase": "load",
+      "exit_code": 0,
+      "ok": true
+    }
+  ],
+  "resource_count": 17,
+  "ok": true
+}
