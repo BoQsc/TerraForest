@@ -1,0 +1,8 @@
+{
+  "date": "2026-10-10",
+  "checks": 10,
+  "command": "godot --path TerraForest --script res://tests/vehicle_fleet_driving.gd -- --world-slot=staged_furnished_1791584856787240500 --ground-cover --vehicle-fleet",
+  "result": "Normal main-world updates admit both vehicles. Keyboard-driven approach8.53m reaches38.90km/h, reports contact with parked body and does not pass through it. Handbrake stops below0.15m/s, safe exit succeeds, capture retains both poses. Zero readiness holds.",
+  "initial_failure": "Initial fixture held S after contact; S transitions to reverse and caused stop/exit failures. Retained logs. Final fixture uses documented Space handbrake with unchanged stopping threshold; production controls unchanged.",
+  "limits": "Short loaded road with one driven and one frozen parked car. No active-active vehicle collision, high-speed arrival, large-fleet timings, distant representation, disk roundtrip of these exact moved poses or thermal evidence. Screenshot telemetry may retain last driving text briefly after exit. Source save writes inhibited."
+}

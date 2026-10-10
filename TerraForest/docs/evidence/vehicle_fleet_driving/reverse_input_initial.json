@@ -1,0 +1,39 @@
+{
+  "contact": true,
+  "distance": 8.53045654296875,
+  "failures": 2,
+  "held_ticks": 0,
+  "max_speed_kph": 38.9034702301025,
+  "rows": [
+    {
+      "contact": false,
+      "position": "(804.9992, 47.62358, 1310.0)",
+      "speed_kph": 0.26954500079155
+    },
+    {
+      "contact": false,
+      "position": "(805.2944, 47.62577, 1310.0)",
+      "speed_kph": 7.89872274398804
+    },
+    {
+      "contact": false,
+      "position": "(806.1001, 47.62582, 1310.0)",
+      "speed_kph": 15.017699432373
+    },
+    {
+      "contact": false,
+      "position": "(807.3829, 47.62579, 1310.0)",
+      "speed_kph": 21.6722248077393
+    },
+    {
+      "contact": false,
+      "position": "(809.1118, 47.62575, 1310.0)",
+      "speed_kph": 27.9058639526367
+    },
+    {
+      "contact": false,
+      "position": "(811.2593, 47.62571, 1310.0)",
+      "speed_kph": 33.7571685791016
+    }
+  ]
+}
