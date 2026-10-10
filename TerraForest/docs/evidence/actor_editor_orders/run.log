@@ -1,0 +1,34 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] World loaded
+[TerrainRewrite] World loaded
+[TerrainRewrite] Lake ready · F5 saves world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+[TerrainRewrite] Actor placed · F5 saves world.
+PASS J places an actor on clear loaded road: Actor placed · F5 saves world.
+[TerrainRewrite] Place actors on static ground or floors, not moving bodies.
+PASS occupied actor position rejects duplicate placement
+[TerrainRewrite] Actor placement is available in the free editor only.
+PASS gameplay mode rejects free actor removal
+[TerrainRewrite] Actor editing unavailable right now.
+PASS released input rejects actor edits
+[TerrainRewrite] Actor removed · F5 saves world.
+PASS Shift+J removes the aimed actor: Actor removed · F5 saves world.
+[TerrainRewrite] Actor placed · F5 saves world.
+PASS placement works again after proxy retirement
+[TerrainRewrite] Actor selected · aim at ground and press K to move; Shift+K stops.
+PASS K selects aimed actor by persistent identity
+[TerrainRewrite] Actor moving directly toward destination; obstacles can stop it · F5 saves.
+PASS K issues destination order on clear ground: Actor moving directly toward destination; obstacles can stop it · F5 saves.
+[TerrainRewrite] Lake ready · F5 saves world
+PASS editor-issued order moves actor through native simulation
+[TerrainRewrite] Actor placement is available in the free editor only.
+PASS gameplay mode cannot clear editor order
+[TerrainRewrite] Actor stopped · F5 saves world.
+PASS Shift+K clears selected actor order
+PASS stop halts horizontal movement
+[TerrainRewrite] Select an actor with K first.
+PASS selection from prior world epoch is discarded
+PASS editor controls appear in HUD
+[TerrainRewrite] ERROR: save blocked: snapshot writes explicitly disabled; previous canonical snapshot retained

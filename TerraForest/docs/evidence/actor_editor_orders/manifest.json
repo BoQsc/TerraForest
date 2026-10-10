@@ -1,0 +1,13 @@
+{
+  "date": "2026-10-10",
+  "checks": 14,
+  "command": "godot --path TerraForest --script res://tests/actor_editor.gd -- --world-slot=staged_furnished_1791584856787240500 --ground-cover --actors",
+  "scope": "Real key handlers select persistent identity, issue destination, native movement over2m, clear/stop, gameplay rejection and prior-epoch selection invalidation. Fullscreen1080p screenshot inspected.",
+  "launcher": "Play Actors.cmd opens existing generated_furnished_1791583427670724800 checkpoint, not a copied save. Dry-run verified arguments only.",
+  "limits": [
+    "Direct movement only; obstacles can stop actors, no navigation.",
+    "Capsule placeholder,10Hz render refresh, no animation/interpolation qualification.",
+    "No editor undo or destination/selection highlight yet.",
+    "This input fixture inhibits source writes; persistence proven by preceding actor_orders evidence."
+  ]
+}

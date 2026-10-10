@@ -1,0 +1,27 @@
+{
+  "slot": "generated_furnished_1791583427670724800",
+  "new_world_generator": 1,
+  "new_world_seed": 1703,
+  "temporary": false,
+  "existing_save_takes_precedence": true,
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\godot.windows.opt.tools.64.exe",
+    "--path",
+    "C:\\Users\\LENOVO LOQ 15\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+    "--rendering-method",
+    "forward_plus",
+    "--fullscreen",
+    "--resolution",
+    "1920x1080",
+    "--max-fps",
+    "60",
+    "res://demo/world.tscn",
+    "--",
+    "--world-generator=1",
+    "--world-seed=1703",
+    "--world-slot=generated_furnished_1791583427670724800",
+    "--ground-cover",
+    "--actors",
+    "--max-fps=60"
+  ]
+}
