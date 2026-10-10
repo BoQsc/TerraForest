@@ -1,0 +1,32 @@
+{
+  "target": "template_debug",
+  "compiled_extension_sources": [
+    "accessories.cpp",
+    "camera.cpp",
+    "damage.cpp",
+    "driving.cpp",
+    "register_types.cpp",
+    "storage.cpp",
+    "suspension.cpp"
+  ],
+  "godot_cpp_sources_compiled": 0,
+  "linked": true,
+  "seconds": 15.085485999996308,
+  "output": "C:\\Users\\LENOVO LOQ 15\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll",
+  "sha256": "fc1cf51a9bbd8a8ea22b4f88d2a22c48c9e9c6f10fa70d6526b073ab82259d23",
+  "sdk": {
+    "api_version": "4.7",
+    "godot_cpp_sha": "d7b6162249ed52796a8301d216c24ee71d68c2bf",
+    "variant": "windows-x86_64-zig",
+    "compiler": "zig-0.16.0",
+    "platform": "windows",
+    "arch": "x86_64",
+    "targets": [
+      "template_debug",
+      "template_release"
+    ],
+    "precision": "single",
+    "created_unix": 1786965830
+  },
+  "addon": "vehicle_runtime"
+}

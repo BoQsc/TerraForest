@@ -113,3 +113,5 @@ against wall/trunk proxies at 120 Hz with driving forces disabled. It does not
 qualify world streaming at those speeds. See `docs/DELIVERY_STATUS.md` for saved
 evidence. Sustained populated-world 60 FPS, laptop thermal headroom, fleet LOD,
 multiplayer authority and complete high-speed terrain traversal remain unproven.
+
+Fleet archive prerequisite: NativeVehicleStorage also exposes encode_fleet, decode_fleet and validate_fleet_snapshot. Version2 carries sorted positive identity/pose records and next_identity, capped at65536. Decoding legacy single-car data assigns identity1,next2. This separate API is not yet used by world_vehicle; its legacy validator rejects fleet data to prevent silent truncation. Poses inherit current world bounds; fleet damage, velocity, types and activation are absent. Maximum encoding is bulk work (about68ms in one release sample), not an interactive-frame operation. See tests/vehicle_fleet_storage.gd.

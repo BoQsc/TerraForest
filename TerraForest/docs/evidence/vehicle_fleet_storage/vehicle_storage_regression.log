@@ -1,0 +1,12 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS full vehicle pose round trip
+PASS old saves default to no vehicle
+PASS truncated pose rejected
+PASS nonfinite vehicle position rejected
+PASS invalid quaternion rejected
+PASS unknown schema rejected
+PASS outside world rejected on capture
+PASS singular rotation rejected without normalization
+PASS compound archive preserves vehicle section
+PASS compound checksum detects changed vehicle bytes

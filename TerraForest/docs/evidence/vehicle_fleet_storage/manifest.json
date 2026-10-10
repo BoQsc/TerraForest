@@ -1,0 +1,13 @@
+{
+  "date": "2026-10-10",
+  "checks": {
+    "fleet_debug": 18,
+    "fleet_clean_release": 18,
+    "legacy_storage_regression": 10
+  },
+  "format": "v2 24-byte header,64-byte identity/position/quaternion rows,strictly increasing positive IDs,next identity retained after removal,maximum65536. Legacy empty/single-car payloads migrate on decode.",
+  "ownership": "Separate fleet validator; existing single-car world owner deliberately rejects fleet payload rather than dropping records. Not yet connected to world persistence.",
+  "cost": "Maximum4194328-byte encode observed72.918ms debug and67.899ms final release. Indivisible bulk work, no interactive frame-budget claim. Worker-owned immutable snapshot encoding or incremental capture required before large runtime integration.",
+  "limits": "Pose only: no velocity, damage, type registry, active ownership or spatial activation. Current2000m-world position constraints inherited. Outer world archive must supply checksum.",
+  "verification_note": "Initial clean-release process passed18 checks but harness lacked test JSON; fixture report added and clean-release rerun passed."
+}

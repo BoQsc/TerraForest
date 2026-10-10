@@ -1,0 +1,21 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS legacy absence migrates to empty fleet
+PASS legacy car migrates with stable identity and pose
+PASS sparse identities and next counter round trip
+PASS legacy single-car owner rejects fleet instead of truncating
+PASS empty fleet preserves nonreuse counter
+PASS next counter cannot reuse existing identity
+PASS unsorted identities rejected
+PASS duplicate identities rejected
+PASS floating identity rejected
+PASS wrong pose type rejected
+PASS truncated fleet rejected
+PASS trailing bytes rejected
+PASS reserved header rejected
+PASS duplicate serialized identity rejected
+PASS nonfinite pose rejected without partial decoded records
+PASS invalid quaternion rejected
+PASS maximum65536 records remain bounded and validate
+PASS over-capacity rejected
+Maximum archive encode_us=72918 bytes=4194328 (not a runtime frame-budget qualification)
