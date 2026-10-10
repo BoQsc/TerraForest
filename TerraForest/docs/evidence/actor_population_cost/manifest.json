@@ -1,0 +1,21 @@
+{
+  "date": "2026-10-10",
+  "command": "godot --path TerraForest --script res://tests/actor_population_cost.gd -- --world-slot=staged_furnished_1791584856787240500 --ground-cover --actors",
+  "workload": "120 measured frames each empty,16 moving,64 nearby; fixed16 bodies, existing saved settlement, forest/ground cover active; fullscreen1920x1080 cap60",
+  "thresholds": {
+    "actor_p95_ms": 1,
+    "actor_max_ms": 2,
+    "frame_p95_ms": 18.5
+  },
+  "result": "Five failures: all3 frame p95 gates and both populated actor-time gates. Terrain queue0 and worker idle throughout measured phases.",
+  "findings": {
+    "moving16_actor_p95_ms": 2.46,
+    "moving16_actor_max_ms": 10.835,
+    "nearby64_actor_p95_ms": 2.784,
+    "nearby64_distinct_simulated": 38,
+    "nearby64_activation_entries": 106
+  },
+  "limits": "Short workload, prototype capsules, no mutual actor collision, animation or navigation. 106 entries includes initial admissions; this is churn evidence, not a duration-based fairness proof. No thermal or sustained scale claim.",
+  "next": "Bound selection churn with retention/hysteresis, then attribute native collision versus readiness cost. Do not add animation load before disposition of these failures.",
+  "source_save": "writes inhibited"
+}
