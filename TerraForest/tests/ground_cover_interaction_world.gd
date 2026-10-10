@@ -44,11 +44,20 @@ func run() -> void:
 		game.player_hud._input(belt_key)
 		check(game.ground_mode and game.ground_species==game.player_hud.GROUND_ITEMS[item] and game.player_hud.active_item==item,"Alt+1 equips ground resource %d"%item)
 		check(game.player_hud.capture_snapshot()==before,"equipping does not consume ground resource %d"%item)
+		var old_position: Vector3=game.player.position
+		var old_waiting: bool=game.waiting_spawn
+		game.waiting_spawn=false;game.player.position=Vector3(800,100,1300)
+		var pose: PackedByteArray=game._capture_player_pose()
+		var decoded_pose: Dictionary=game.player_pose.decode(pose)
+		check(decoded_pose.get("position",Vector3.ZERO)==game.player.position and decoded_pose.get("tool",-1)==0,"ground selection saves current pose with compatible tool %d"%item)
+		game.player.position=old_position;game.waiting_spawn=old_waiting
 		check(not game.player_hud.belt[0].disabled,"ground resource belt button enabled %d"%item)
 		if item==205:
 			await RenderingServer.frame_post_draw
 			DirAccess.make_dir_recursive_absolute("res://reports/ground_cover")
 			root.get_texture().get_image().save_png("res://reports/ground_cover/belt.png")
+	check(game._restore_player_pose(game._saved_pose) and not game.ground_mode and game.player_hud.ground_species==-1,"pose restore clears transient ground interaction")
+	game._restored_pose.clear()
 	game.ground_enabled=false;game._set_player_tool_mode(false,false,3);game.player_hud._input(belt_key)
 	check(not game.ground_mode,"disabled ground cover cannot be activated by belt")
 	game.ground_enabled=true;game.player_hud.restore_snapshot(original_loadout);game._set_player_tool_mode(false,false,3)

@@ -245,19 +245,23 @@ func _show_lake_notice(text: String) -> void:
 	_message(text)
 
 func _capture_player_pose() -> PackedByteArray:
+	# Resource placement is transient; the v1 pose stores only original tool IDs.
+	var saved_tool: int=player_hud.active_item if player_hud.active_item in player_hud.CATALOG else 0
 	if world_vehicle.driving:
 		var feet:=world_vehicle.safe_exit_position(self)
-		var captured: PackedByteArray=player_pose.encode(feet,wrapf(yaw,-PI,PI),pitch,false,player_hud.active_item) if feet.is_finite() else PackedByteArray()
+		var captured: PackedByteArray=player_pose.encode(feet,wrapf(yaw,-PI,PI),pitch,false,saved_tool) if feet.is_finite() else PackedByteArray()
 		# Reject the compound save if no safe on-foot restore point exists.
 		return captured if not captured.is_empty() else PackedByteArray([0])
 	if not loading_active and not waiting_spawn and not world_vehicle.driving:
-		var captured: PackedByteArray=player_pose.encode(player.position,wrapf(yaw,-PI,PI),pitch,fly,player_hud.active_item)
+		var captured: PackedByteArray=player_pose.encode(player.position,wrapf(yaw,-PI,PI),pitch,fly,saved_tool)
 		if not captured.is_empty(): _saved_pose=captured
 	return _saved_pose
 
 func _restore_player_pose(data: PackedByteArray) -> bool:
 	var decoded: Dictionary=player_pose.decode(data)
 	if not decoded.ok: return false
+	ground_mode=false
+	player_hud.show_ground_tool(-1)
 	_saved_pose=data
 	_restored_pose=decoded
 	return true

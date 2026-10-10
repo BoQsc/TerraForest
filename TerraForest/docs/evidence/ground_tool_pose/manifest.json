@@ -1,0 +1,7 @@
+{
+  "base_commit": "d92c785",
+  "command": "godot --path TerraForest --script res://tests/ground_cover_interaction_world.gd -- --ground-cover --world-generator=4 --world-seed=1703 --gameplay-construction",
+  "exit_code": 0,
+  "passes": 40,
+  "scope": "Actual temporary world, fullscreen1080p cap60; direct capture/decode verifies current pose for each ground resource selection and restore clears transient mode. No disk-save or timing qualification in this fixture."
+}
