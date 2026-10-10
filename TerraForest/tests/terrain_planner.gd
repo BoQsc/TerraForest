@@ -74,6 +74,7 @@ func run() -> void:
 		equivalent(reference,"seeded travel %d" % step)
 	check_boundaries()
 	check_targeted()
+	check_travel_activation()
 	check_available()
 	check_invalid()
 	benchmark()
@@ -222,3 +223,17 @@ func finish() -> void:
 	file.close()
 	print("TERRAIN_PLANNER_RESULT ",JSON.stringify(result))
 	quit(1 if failures else 0)
+
+func check_travel_activation() -> void:
+	var focus:=Vector3(400,180,470)
+	var current: Dictionary=planner.requests_travel(focus,true,Vector3(0,0,30),{}, {},[])
+	var plain: Dictionary=planner.requests(focus,true,{}, {},[])
+	check(current.ok and current.requests[0]==plain.requests[0],"travel preserves current-position activation priority")
+	# Across the 512 m root boundary: ready fine detail remains hidden beneath
+	# a parent until its sibling coverage is built.
+	var tiles: Dictionary={Vector3i(256,512,256):{"dirty":false},Vector3i(384,512,16):{"dirty":false},Vector3i(400,512,16):{"dirty":false}}
+	var planned: Dictionary=planner.requests_travel(focus,true,Vector3(0,0,30),tiles,{},[Vector3i(256,512,256)])
+	var bridge:=Vector3i(256,512,128)
+	var detail:=Vector3i(432,528,16)
+	check(planned.requests.has(bridge) and planned.requests.has(detail) and planned.requests.find(bridge)<planned.requests.find(detail),"ahead activation bridge precedes unrelated hidden fine detail")
+	check(not planner.requests_travel(focus,true,Vector3(NAN,0,0),{}, {},[]).ok,"nonfinite travel rejected")

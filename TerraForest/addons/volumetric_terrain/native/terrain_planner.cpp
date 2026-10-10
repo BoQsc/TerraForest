@@ -107,7 +107,7 @@ bool cover(Vector3i key,const State &state,std::vector<Vector3i> &out,bool avail
     }
     return false;
 }
-void prioritize_coverage(Vector3 focus,bool collision,const State &state,const Dictionary &wanted,std::vector<Request> &pending) {
+void prioritize_coverage(Vector3 focus,bool collision,const State &state,const Dictionary &wanted,std::vector<Request> &pending,double bias=0) {
     // Finish one nearby activation path before accumulating more hidden detail.
     // Sibling coverage at every ancestor is required by cover(); the old
     // distance-only order deferred those 64/128m bridges behind distant detail.
@@ -127,7 +127,7 @@ void prioritize_coverage(Vector3 focus,bool collision,const State &state,const D
         if(rank<best){best=rank;target=key;}
     }
     if(target.x<0)return;
-    for(auto &request:pending)if(request.key==target)request.priority=-12000;
+    for(auto &request:pending)if(request.key==target)request.priority=std::min(request.priority,-12000+bias);
     std::vector<Vector3i> covered;
     for(Vector3i child=target;child.z<256;) {
         int size=child.z*2;
@@ -142,7 +142,7 @@ void prioritize_coverage(Vector3 focus,bool collision,const State &state,const D
                 auto key=request.key;
                 if(key.z<=sibling.z&&key.x>=sibling.x&&key.y>=sibling.y&&
                    key.x+key.z<=sibling.x+sibling.z&&key.y+key.z<=sibling.y+sibling.z)
-                    request.priority=-11000-key.z+distance(key,focus,collision)*0.01;
+                    request.priority=std::min(request.priority,-11000-key.z+distance(key,focus,collision)*0.01+bias);
             }
         }
         child=parent;
@@ -178,6 +178,11 @@ static Dictionary plan_requests(Vector3 focus,bool collision,const Dictionary &t
     std::vector<Request> pending;pending.reserve(512);
     for(int z=0;z<2048;z+=256)for(int x=0;x<2048;x+=256)collect(Vector3i(x,z,256),focus,collision,state,split,wanted,pending,target,travel);
     prioritize_coverage(target?*target:focus,target?true:collision,state,wanted,pending);
+    // Ahead detail is unusable until its sibling coverage can replace the
+    // visible ancestor. Finish those dependencies before accumulating more
+    // hidden fine meshes, with current-position activation always first.
+    if(travel)for(size_t i=0;i<travel->size();++i)
+        prioritize_coverage((*travel)[i],collision,state,wanted,pending,2000.0+100.0*i);
     std::stable_sort(pending.begin(),pending.end(),[](const Request &a,const Request &b){return a.priority<b.priority;});
     TypedArray<Vector3i> keys;keys.resize(pending.size());Dictionary activation;
     for(size_t i=0;i<pending.size();i++) {

@@ -1,0 +1,10 @@
+{
+  "change": "Prioritize sibling coverage dependencies at bounded travel samples after current-position dependencies, before unrelated fine detail. Complete replacement policy unchanged.",
+  "validation": "Planner debug/release 182 checks pass. Three short rendered drives: two zero-hold passes; third retains a failing 5-tick startup hold at z=405, before acceleration. All three crossed z=512 without a hold.",
+  "status": "Travel-boundary result improved; overall continuity gate remains failed.",
+  "next": "Investigate current-position coverage regression during startup refinement; retain the zero-hold gate and original failures. Then mixed main-world travel remains required.",
+  "hashes": {
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "243bf913286dfecee045fa03356130e6931785d6d3be7cbe1f31fad019c08164",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "92bb1de4b16ddb2d2a233c2cf7183482db34872d0b6e9c4652920ffcfe092f9b"
+  }
+}

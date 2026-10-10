@@ -1,0 +1,13 @@
+{
+  "checks": 182,
+  "failures": 0,
+  "timing": {
+    "legacy_median_ms": 8.961,
+    "legacy_p95_ms": 12.784,
+    "native_median_ms": 0.749,
+    "native_p95_ms": 1.145,
+    "scope": "Matched headless request + coverage CPU calls, 80 samples; excludes scene publication, backend locks and rendering.",
+    "tiles": 197
+  },
+  "library": "terrain_core.windows.template_release.x86_64.dll"
+}
