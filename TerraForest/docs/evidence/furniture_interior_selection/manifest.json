@@ -1,0 +1,11 @@
+{
+  "base_commit": "7bc9b6f",
+  "command": "godot --path TerraForest --script res://tests/furniture_interior_selection.gd -- --world-slot=generated_furnished_1791583427670724800 --ground-cover",
+  "engine_exit": 0,
+  "checks": 11,
+  "scope": "Four saved generated furnished cottages; an unobstructed 2m cardinal view selects each table, and a 12m cardinal view hitting the cottage blocks selection/removal. All structure snapshot bytes unchanged; snapshot writes inhibited. Frame configuration verified, no timing claim.",
+  "fixture_repairs": [
+    "Explicit Vector3 type required for dynamic collection transform.",
+    "Python console printing of completed log failed on U+2212 in cp1257; engine exit0 and full UTF8 log inspected directly."
+  ]
+}
