@@ -8,6 +8,8 @@ signal drop_requested(slot: int, revision: int)
 const CATALOG: Dictionary={1:"Sculpt sphere",2:"Sculpt cube",3:"Build blocks",4:"Place objects"}
 const MATERIALS: Dictionary={101:"Brick",102:"Wood",103:"Concrete",104:"Metal"}
 const RESOURCES: Dictionary={201:"Stone",202:"Iron ore",203:"Copper ore",204:"Plant",205:"Grass clump"}
+const GROUND_ITEMS: Dictionary={201:0,204:1,205:2}
+var ground_tools_enabled:=false
 const STARTER_MATERIAL_COUNT:=64
 var inventory: RefCounted
 var reward_inbox: RefCounted
@@ -166,7 +168,7 @@ func refresh() -> void:
 		slots[i].text="%02d%s\n%s"%[i+1," •" if i==selected_slot else "",title]
 		if i<6:
 			belt[i].text="%d%s\n%s"%[i+1," •" if row.item!=0 and row.item==active_item else "",title]
-			belt[i].disabled=row.item not in CATALOG
+			belt[i].disabled=not _equippable(row.item)
 	_refresh_ground_hint()
 	_refresh_pending()
 	drop_button.disabled=selected_slot<0 or not _droppable(state.slots[selected_slot].item)
@@ -212,11 +214,14 @@ func claim_pending() -> void:
 	else: message.text="Claim rejected (%s). Inventory refreshed; try again."%result.reason
 	refresh()
 
+func _equippable(item: int) -> bool:
+	return item in CATALOG or (ground_tools_enabled and item in GROUND_ITEMS)
+
 func equip(slot: int) -> void:
 	if not enabled or inventory==null or slot<0 or slot>=6: return
 	state=inventory.snapshot()
 	var item: int=state.slots[slot].item
-	if item in CATALOG: tool_requested.emit(item)
+	if _equippable(item): tool_requested.emit(item)
 
 func craft_selected() -> void:
 	if not enabled or not inventory_open: return

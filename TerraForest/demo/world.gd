@@ -111,6 +111,7 @@ func _ready() -> void:
 	structures_ready = structures_ready and door_models != null
 	var furniture: Array[Dictionary]=preload("res://addons/structures/furniture_catalog.gd").register(structures)
 	structures_ready = structures_ready and furniture.size()==3
+	player_hud.ground_tools_enabled=ground_enabled
 	if not player_hud.prepare() or not persistence.register_component("player_loadout", player_hud.capture_snapshot, player_hud.restore_snapshot, player_hud.inventory, player_hud.default_loadout):
 		push_error("Player loadout persistence initialization failed")
 		get_tree().quit(2)
@@ -478,9 +479,19 @@ func _setup_hud() -> void:
 	status.position = Vector2(26, 570)
 
 func _equip_player_tool(item: int) -> void:
+	if item in player_hud.GROUND_ITEMS:
+		_activate_ground_tool(player_hud.GROUND_ITEMS[item]);return
 	if item not in player_hud.CATALOG: return
 	_set_player_tool_mode(item==3 or item==4,item==4,3 if item==1 else (1 if item==2 else tool))
 
+func _activate_ground_tool(species: int) -> bool:
+	if not ground_enabled or world_vehicle.driving or species<0 or species>2:return false
+	if not _set_player_tool_mode(false,false,tool):return false
+	ground_mode=true;ground_species=species
+	player_hud.show_ground_tool(species)
+	player_hud.show_active_tool([201,204,205][species])
+	_show_lake_notice(["Stone","Plant","Grass clump"][species]+"; LMB/E remove; RMB place")
+	return true
 func _sync_player_tool() -> void:
 	_sync_construction_palette()
 	player_hud.show_active_tool(4 if model_tool.active else (3 if structure_mode else (1 if tool==3 else (2 if tool==1 else 0))))
@@ -629,17 +640,14 @@ func _unhandled_input(event: InputEvent) -> void:
 				Input.mouse_mode=Input.MOUSE_MODE_VISIBLE if Input.mouse_mode==Input.MOUSE_MODE_CAPTURED else Input.MOUSE_MODE_CAPTURED
 		return
 	if ground_enabled and event is InputEventKey and event.pressed and not event.echo and event.physical_keycode==KEY_H:
-		var enable:=not ground_mode
-		if _set_player_tool_mode(false,false,tool):
-			ground_mode=enable
-			player_hud.show_ground_tool(ground_species if enable else -1)
-			if enable: player_hud.show_active_tool(0)
-			if enable: _show_lake_notice("Ground cover: 1 stone / 2 plant / 3 grass; LMB or E remove; RMB place")
+		if ground_mode:_set_player_tool_mode(false,false,tool)
+		else:_activate_ground_tool(ground_species)
 		return
 	if ground_mode:
 		if event is InputEventKey and event.pressed and not event.echo and event.physical_keycode in [KEY_1,KEY_2,KEY_3]:
 			ground_species=event.physical_keycode-KEY_1
 			player_hud.show_ground_tool(ground_species)
+			player_hud.show_active_tool([201,204,205][ground_species])
 			_show_lake_notice(["Stone","Plant","Grass clump"][ground_species]+"; LMB remove; RMB place");return
 		var remove_action: bool=event is InputEventKey and event.pressed and not event.echo and event.physical_keycode==KEY_E
 		var mouse_action: bool=event is InputEventMouseButton and event.button_index in [MOUSE_BUTTON_LEFT,MOUSE_BUTTON_RIGHT]

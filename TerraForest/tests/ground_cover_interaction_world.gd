@@ -35,6 +35,23 @@ func run() -> void:
 	game.camera.look_at(target+Vector3(0,0.2,0))
 	for frame in range(60): await RenderingServer.frame_post_draw
 	game.app_focused=true;Input.mouse_mode=Input.MOUSE_MODE_CAPTURED
+	var original_loadout: PackedByteArray=game.player_hud.capture_snapshot()
+	var belt_key:=InputEventKey.new();belt_key.physical_keycode=KEY_1;belt_key.pressed=true;belt_key.alt_pressed=true
+	for item: int in [201,204,205]:
+		var fixture: RefCounted=ClassDB.instantiate("NativePlayerInventory");fixture.register_item(item,999);fixture.grant(item,1,fixture.snapshot().revision)
+		check(game.player_hud.restore_snapshot(fixture.capture_storage_snapshot()),"ground resource fixture admitted %d"%item)
+		var before: PackedByteArray=game.player_hud.capture_snapshot()
+		game.player_hud._input(belt_key)
+		check(game.ground_mode and game.ground_species==game.player_hud.GROUND_ITEMS[item] and game.player_hud.active_item==item,"Alt+1 equips ground resource %d"%item)
+		check(game.player_hud.capture_snapshot()==before,"equipping does not consume ground resource %d"%item)
+		check(not game.player_hud.belt[0].disabled,"ground resource belt button enabled %d"%item)
+		if item==205:
+			await RenderingServer.frame_post_draw
+			DirAccess.make_dir_recursive_absolute("res://reports/ground_cover")
+			root.get_texture().get_image().save_png("res://reports/ground_cover/belt.png")
+	game.ground_enabled=false;game._set_player_tool_mode(false,false,3);game.player_hud._input(belt_key)
+	check(not game.ground_mode,"disabled ground cover cannot be activated by belt")
+	game.ground_enabled=true;game.player_hud.restore_snapshot(original_loadout);game._set_player_tool_mode(false,false,3)
 	var key:=InputEventKey.new();key.physical_keycode=KEY_H;key.pressed=true
 	game._unhandled_input(key)
 	check(game.ground_mode,"H activates normal-world ground-cover tool")

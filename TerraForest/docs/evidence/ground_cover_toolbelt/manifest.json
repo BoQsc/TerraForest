@@ -1,0 +1,12 @@
+{
+  "base_commit": "8ccf931cddb1a8bba9f825c505898cbb0d8855a5",
+  "commands": [
+    "godot --path TerraForest --script res://tests/ground_cover_interaction_world.gd -- --ground-cover --world-generator=4 --world-seed=1703",
+    "same command plus --gameplay-construction"
+  ],
+  "passed": {
+    "editor": 36,
+    "gameplay": 33
+  },
+  "scope": "Temporary generated graphical worlds at fullscreen1080p cap60. Original loadout restored after targeted resource-belt fixtures; no user world saved. Editor rerun includes enabled-button checks after shared eligibility fix; earlier gameplay run covers keyboard equip and collection/placement transaction. Screenshot reviewed. No frame-time qualification."
+}
