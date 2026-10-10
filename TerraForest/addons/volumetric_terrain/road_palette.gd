@@ -24,6 +24,7 @@ var entrance_target: OptionButton
 var street_choice: HBoxContainer
 var selected_street: int=-1
 var street_controls: HBoxContainer
+var settings_storage: RefCounted
 var anchor_storage: RefCounted
 var anchor_terrain: Node
 func prepare_persistence(terrain: Node,persistence: RefCounted) -> bool:
@@ -32,7 +33,22 @@ func prepare_persistence(terrain: Node,persistence: RefCounted) -> bool:
 	if not ClassDB.class_exists("NativeRoadAnchors"): return false
 	anchor_terrain=terrain
 	anchor_storage=ClassDB.instantiate("NativeRoadAnchors")
+	settings_storage=ClassDB.instantiate("NativeRoadEditorSettings")
+	if settings_storage==null or not persistence.register_component("road_editor",capture_settings,restore_settings,settings_storage,PackedByteArray()): return false
 	return anchor_storage!=null and persistence.register_component("road_anchors",capture_anchors,restore_anchors,anchor_storage,PackedByteArray())
+func capture_settings() -> PackedByteArray:
+	var data: PackedByteArray=settings_storage.encode(surface.selected,width.value,depth.value,clearance.value,shoulder.value)
+	return PackedByteArray([0]) if data.is_empty() else data
+func restore_settings(data: PackedByteArray) -> bool:
+	var decoded: Dictionary=settings_storage.decode(data)
+	if not decoded.ok:return false
+	for control in [width,depth,clearance,shoulder]:control.set_block_signals(true)
+	surface.select(decoded.surface);width.value=decoded.width;depth.value=decoded.depth;clearance.value=decoded.clearance;shoulder.value=decoded.shoulder
+	for control in [width,depth,clearance,shoulder]:control.set_block_signals(false)
+	build_button.text="Build asphalt road" if material_id()==4 else "Grade stone foundation"
+	shoulder.editable=material_id()==1
+	selection_changed.emit()
+	return true
 func capture_anchors() -> PackedByteArray:
 	if prepared_street.is_empty() or prepared_street.epoch!=anchor_terrain.epoch: return PackedByteArray()
 	var records:=PackedByteArray()

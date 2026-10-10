@@ -1,0 +1,29 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS bounded settings roundtrip
+PASS exact settings decode
+PASS legacy empty default
+PASS invalid header 0
+PASS invalid header 4
+PASS invalid header 8
+PASS invalid header 12
+PASS invalid numeric 16 nan
+PASS invalid numeric 16 inf
+PASS invalid numeric 16 -1.0
+PASS invalid numeric 16 100.0
+PASS invalid numeric 24 nan
+PASS invalid numeric 24 inf
+PASS invalid numeric 24 -1.0
+PASS invalid numeric 24 100.0
+PASS invalid numeric 32 nan
+PASS invalid numeric 32 inf
+PASS invalid numeric 32 -1.0
+PASS invalid numeric 32 100.0
+PASS invalid numeric 40 nan
+PASS invalid numeric 40 inf
+PASS invalid numeric 40 -1.0
+PASS invalid numeric 40 100.0
+PASS exact length enforced
+PASS inclusive bounds
+PASS invalid encoding rejected
+

@@ -82,6 +82,16 @@ func run() -> void:
 	check(not palette.anchor_storage.validate_snapshot(bad),"oversized catalog count rejected")
 	bad=snapshot.duplicate();bad.encode_u32(12,2)
 	check(not palette.restore_anchors(bad) and palette.capture_anchors()==snapshot,"invalid selected index leaves catalog unchanged")
+	palette.surface.select(1);palette.width.value=5.5;palette.depth.value=7;palette.clearance.value=11;palette.shoulder.value=3.5
+	var settings: PackedByteArray=palette.capture_settings()
+	check(settings.size()==48 and palette.settings_storage.validate_snapshot(settings),"road editor settings have bounded native encoding")
+	for offset in [16,24,32,40]:
+		var invalid:=settings.duplicate();invalid.encode_double(offset,NAN)
+		check(not palette.restore_settings(invalid) and palette.capture_settings()==settings,"invalid numeric setting rejects atomically at %d"%offset)
+	var invalid_surface:=settings.duplicate();invalid_surface.encode_u32(8,2)
+	check(not palette.restore_settings(invalid_surface) and palette.capture_settings()==settings,"unknown surface leaves editor settings unchanged")
+	check(palette.restore_settings(PackedByteArray()) and palette.width.value==3 and palette.depth.value==2 and palette.clearance.value==0 and palette.shoulder.value==0 and palette.surface.selected==0,"legacy missing settings restores defaults")
+	check(palette.restore_settings(settings) and palette.shoulder.editable and palette.build_button.text=="Grade stone foundation","restored settings refresh mode-specific controls")
 	messages.clear();terrain.save_world()
 	var deadline:=Time.get_ticks_msec()+15000
 	while not messages.any(func(m):return m.begins_with("World saved and verified")) and Time.get_ticks_msec()<deadline: await process_frame
@@ -93,6 +103,7 @@ func run() -> void:
 	original_core=null
 	if not create_world() or not await wait_ready(): close_world();quit(1);return
 	check(palette.capture_anchors()==snapshot and palette.street_controls.visible,"new world restores anchors from disk")
+	check(palette.capture_settings()==settings and palette.shoulder.editable,"fresh world restores exact road authoring settings from compound disk save")
 	check(palette.prepared_streets.size()==2 and palette.selected_street==0,"catalog and selected earlier street restore together")
 	check(palette.select_street_end(1,terrain) and palette.start==ends[1] and not palette.has_finish,"restored entrance selects exact preview endpoint")
 	palette.select_street_end(0,terrain)

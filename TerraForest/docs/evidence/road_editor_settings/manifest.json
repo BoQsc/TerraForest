@@ -1,0 +1,19 @@
+{
+  "base_commit": "57f0b1315ad14f12d2a11199603584b7b9fe0b96",
+  "commands": [
+    "python TerraForest/tools/build_native.py --addon world_runtime --target all",
+    "godot --headless --path TerraForest --script res://tests/road_anchor_persistence.gd",
+    "python TerraForest/tools/test_native_release.py --addon world_runtime --test road_editor_settings --godot ENGINE"
+  ],
+  "integration_passes": 36,
+  "release_codec_passes": 26,
+  "scope": "Headless compound disk save, destroyed/recreated world in same process; release codec loaded in separate clean project. No graphical or performance claim.",
+  "fixture_repairs": [
+    "Initial integration script had mixed indentation; corrected before passing run.",
+    "Initial release codec checks passed but omitted required JSON report; report output added and harness rerun successfully."
+  ],
+  "dll_sha256": {
+    "world_runtime.windows.template_debug.x86_64.dll": "cc10814f9810dd95b655aa088ee686f2460d4f6e8df3ec7d7ac50a7519951852",
+    "world_runtime.windows.template_release.x86_64.dll": "790e12fbde2d53db7b6115f5d1fac143aaf2dadf13099356969628d55872f738"
+  }
+}
