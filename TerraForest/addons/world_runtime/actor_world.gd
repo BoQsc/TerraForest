@@ -58,3 +58,5 @@ func update_simulation(delta: float,focus: Vector3,available: bool,readiness: Ca
 	simulation_status=pool.settle(delta,readiness)
 	if _render_time<=0:
 		renderer.refresh(focus,64,4096);_render_time=0.1
+	else:
+		renderer.refresh_positions()

@@ -4,6 +4,7 @@
 using namespace godot;
 namespace terraforest {
 void NativeEntityRenderer::_bind_methods() {
+    ClassDB::bind_method(D_METHOD("refresh_positions"), &NativeEntityRenderer::refresh_positions);
     ClassDB::bind_method(D_METHOD("configure", "store", "mesh", "capacity"), &NativeEntityRenderer::configure);
     ClassDB::bind_method(D_METHOD("refresh", "center", "radius", "candidate_budget"), &NativeEntityRenderer::refresh, DEFVAL(4096));
 }
@@ -16,14 +17,25 @@ bool NativeEntityRenderer::configure(const Ref<NativeEntityStore> &store, const 
     next->set_visible_instance_count(0);
     buffer_.resize(int64_t(capacity) * 12);
     buffer_.fill(0);
+    selected_.clear();
     store_ = store; instances_ = next; capacity_ = capacity;
     set_multimesh(instances_);
     return true;
 }
 Dictionary NativeEntityRenderer::refresh(const Vector3 &center, double radius, int candidate_budget) {
     Dictionary result;
-    result["ok"] = false; result["complete"] = false; result["rendered"] = 0; result["upload_bytes"] = 0;
-    if (store_.is_null()) { result["reason"] = "not_configured"; return result; }
+    if(store_.is_valid())result=store_->query_sphere_nearest(center,radius,capacity_,candidate_budget);
+    selected_=bool(result.get("ok",false))?PackedInt64Array(result["ids"]):PackedInt64Array();
+    return publish(result);
+}
+Dictionary NativeEntityRenderer::refresh_positions(){
+    Dictionary result;result["ok"]=true;result["complete"]=false;
+    result["positions_only"]=true;result["visited"]=0;result["ids"]=selected_;
+    return publish(result);
+}
+Dictionary NativeEntityRenderer::publish(Dictionary result){
+    result["rendered"]=0;result["upload_bytes"]=0;
+    if(store_.is_null()){result["ok"]=false;result["reason"]="not_configured";return result;}
     // The MultiMesh is owned by this adapter. Detect external mutation instead of
     // submitting a wrongly sized buffer or continuing to display stale entities.
     if (get_multimesh() != instances_ || instances_->get_instance_count() != capacity_ ||
@@ -31,12 +43,15 @@ Dictionary NativeEntityRenderer::refresh(const Vector3 &center, double radius, i
         instances_->is_using_colors() || instances_->is_using_custom_data()) {
         instances_->set_visible_instance_count(0);
         set_multimesh(Ref<MultiMesh>());
-        result["reason"] = "renderer_resource_modified"; return result;
+        selected_.clear();result["ok"]=false;result["reason"] = "renderer_resource_modified"; return result;
     }
-    result = store_->query_sphere_nearest(center, radius, capacity_, candidate_budget);
     result["rendered"] = 0; result["upload_bytes"] = 0;
     if (!bool(result["ok"])) { instances_->set_visible_instance_count(0); return result; }
     const PackedInt64Array ids = result["ids"];
+    for(int64_t i=0;i<ids.size();++i)if(!store_->contains(ids[i])){
+        selected_.clear();instances_->set_visible_instance_count(0);
+        result["ok"]=false;result["reason"]="stale_selection";return result;
+    }
     if (ids.is_empty()) { instances_->set_visible_instance_count(0); return result; }
     const float *current = buffer_.ptr();
     float *out = nullptr;

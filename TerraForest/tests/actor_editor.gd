@@ -45,9 +45,12 @@ func run() -> void:
 	check(game.actors.orders.get_target(identity).present,"K issues destination order on clear ground: "+game._lake_notice)
 	var handle: int=game.actors.store.resolve_identity(identity)
 	var initial: Vector3=game.actors.store.get_position(handle)
+	var render_tracks:=true
 	for i in 60:
 		await physics_frame
 		game.actors.update_simulation(1.0/60,point,true,game._actor_collision_ready)
+		render_tracks=render_tracks and game.actors.renderer.multimesh.get_instance_transform(0).origin.is_equal_approx(game.actors.store.get_position(handle))
+	check(render_tracks,"rendered position follows every simulated movement tick")
 	check(game.actors.store.get_position(handle).x>initial.x+2,"editor-issued order moves actor through native simulation")
 	var snapshot: PackedByteArray=game.actors.orders.capture_storage_snapshot()
 	game.construction_inventory.gameplay=true;press(game,true,KEY_K)

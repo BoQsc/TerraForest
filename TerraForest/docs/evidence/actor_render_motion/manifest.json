@@ -1,0 +1,16 @@
+{
+  "date": "2026-10-10",
+  "passed_checks": {
+    "entity_renderer_debug.log": 24,
+    "entity_renderer_release.log": 24,
+    "actor_render_motion.log": 15
+  },
+  "scope": "Native cached-selection position publication each physics tick, fixed renderer capacity, zero stationary upload, stale-handle hiding, saved-world editor-issued movement with per-tick visual/store equality.",
+  "presentation": "Graphical debug/release and world tests fullscreen1920x1080. Initial headless MultiMesh readback failure retained; headless renderer cannot provide these transform checks.",
+  "limits": [
+    "Physics-rate publication is not render interpolation or skeletal animation.",
+    "Selection remains10Hz; newly visible actors can take up to selection interval to appear.",
+    "Changed positions upload fixed-capacity buffer: actor capacity256 means12288 bytes per changed tick.",
+    "No combined crowd frame-time or GPU/thermal pass claimed."
+  ]
+}

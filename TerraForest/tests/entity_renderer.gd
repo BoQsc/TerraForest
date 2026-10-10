@@ -67,7 +67,17 @@ func run() -> void:
 	var new_rows_ok: bool=probe_result.rendered==2 and probe_result.upload_bytes==192
 	for i in probe_result.ids.size(): new_rows_ok=new_rows_ok and probe.multimesh.get_instance_transform(i).origin==tiny.get_position(probe_result.ids[i])
 	check(new_rows_ok,"growing selection initializes newly visible rows correctly")
+	var selected_ids: PackedInt64Array=probe_result.ids
+	var follows:=true
+	for tick in 60:
+		tiny.set_position(new_id,Vector3(40+tick*0.05,0,0))
+		var positions: Dictionary=probe.refresh_positions()
+		follows=follows and positions.ok and positions.visited==0 and positions.ids==selected_ids
+		for i in selected_ids.size():follows=follows and probe.multimesh.get_instance_transform(i).origin.is_equal_approx(tiny.get_position(selected_ids[i]))
+	check(follows,"sixty position-only updates follow movement without reselection")
+	check(probe.refresh_positions().upload_bytes==0,"stationary cached selection uploads no transform buffer")
 	tiny.despawn(origin_id);tiny.despawn(new_id)
+	check(not probe.refresh_positions().ok and probe.multimesh.visible_instance_count==0,"stale cached selection hides removed entities before reselection")
 	probe_result=probe.refresh(Vector3.ZERO,100)
 	check(probe_result.upload_bytes==0 and probe.multimesh.visible_instance_count==0,"removing all entities hides old buffer without upload")
 	probe.free()
