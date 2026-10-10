@@ -1,0 +1,7 @@
+{
+  "base_commit": "835aba7",
+  "test": "godot --headless --path TerraForest --script res://tests/road_authoring_lifecycle.gd",
+  "before_failures": 3,
+  "after_passes": 16,
+  "scope": "Controlled scene coordinator with real native fit thread and terrain submission stub. No actual driving/reload graphical run or timing claim."
+}

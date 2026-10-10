@@ -60,6 +60,22 @@ func run() -> void:
 	world.terrain.last_edit_outcome={"ticket":world.terrain.edit_ticket,"epoch":world.terrain.epoch-1,"status":"published"}
 	job._process(0)
 	check(world.terrain.submissions==1 and p.prepared_street.is_empty(),"late section completion cannot submit next section or register route")
+	for boundary in ["loading","shutdown","driving"]:
+		job.prepare();job._process(0)
+		var request_token: int=job.token
+		var request_points: PackedVector3Array=job.points.duplicate()
+		if boundary=="loading":world.loading_active=true
+		elif boundary=="shutdown":world.shutdown_requested=true
+		else:world.world_vehicle.driving=true
+		job._process(0)
+		job.receive(request_token,request_points,PackedVector3Array(),world.terrain.epoch,world.terrain.density_revision)
+		check(job.phase.is_empty() and job.worker==null,"%s cancels sampling before late result can fit"%boundary)
+		job.prepare()
+		check(job.phase.is_empty(),"%s rejects new authoring request"%boundary)
+		world.loading_active=false;world.shutdown_requested=false;world.world_vehicle.driving=false
+		job.cancel()
+		var deadline_cleanup:=Time.get_ticks_msec()+5000
+		while job.worker!=null and Time.get_ticks_msec()<deadline_cleanup:job._process(0);await process_frame
 	job.prepare();job._process(0);job.receive(job.token,job.points.duplicate(),PackedVector3Array(),world.terrain.epoch,1)
 	world.free()
 	check(not is_instance_valid(job),"teardown joins outstanding native fit")

@@ -14,6 +14,8 @@ var deadline:=0
 var section:=0
 var ticket:=-1
 var revision:=0
+func unavailable() -> bool:
+	return world.loading_active or world.shutdown_requested or world.world_vehicle.driving
 func selection() -> Array:
 	var p=world.road_palette
 	return [p.has_start,p.has_finish,p.start,p.finish,p.width.value,p.depth.value,p.clearance.value,p.surface.selected,p.shoulder_width()]
@@ -26,6 +28,7 @@ func cancel(reason: String="") -> void:
 		world.road_palette.build_button.text="Build asphalt road" if world.road_palette.material_id()==4 else "Grade stone foundation"
 		if active and not reason.is_empty():world.road_palette.status.text=reason
 func prepare() -> void:
+	if unavailable():cancel("Road authoring unavailable while loading or driving.");return
 	if worker!=null and worker.is_alive():return
 	if worker!=null:worker.wait_to_finish();worker=null
 	cancel()
@@ -46,7 +49,7 @@ func start_build() -> bool:
 	world.road_palette.status.text="Building smooth road in sections. Completed sections remain if interrupted; F5 saves."
 	return true
 func valid_source() -> bool:
-	return not source.is_empty() and selection()==source.selection and world.terrain.epoch==source.epoch and (world.terrain.density_revision==revision or (phase=="building" and ticket>=0 and world.terrain.pending_edit and world.terrain.density_revision==revision+1)) and not world.terrain.stopping
+	return not unavailable() and not source.is_empty() and selection()==source.selection and world.terrain.epoch==source.epoch and (world.terrain.density_revision==revision or (phase=="building" and ticket>=0 and world.terrain.pending_edit and world.terrain.density_revision==revision+1)) and not world.terrain.stopping
 func receive(id: int,samples: PackedVector3Array,_normals: PackedVector3Array,epoch: int,_published: int) -> void:
 	if phase!="sampling" or id!=token:return
 	if not valid_source() or epoch!=source.epoch or samples.size()!=points.size():cancel("Terrain changed while preparing the road.");return
@@ -61,6 +64,7 @@ func _process(_delta: float) -> void:
 	if phase.is_empty() and worker!=null and not worker.is_alive():
 		worker.wait_to_finish();worker=null;solver=null
 	if not is_instance_valid(world) or phase.is_empty():return
+	if unavailable():cancel("Road construction interrupted; accepted sections may finish, but no further sections will start.");return
 	var terrain=world.terrain;var p=world.road_palette
 	if phase=="building" and ticket>=0 and not terrain.pending_edit:
 		var outcome: Dictionary=terrain.last_edit_outcome
