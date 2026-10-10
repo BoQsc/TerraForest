@@ -1,0 +1,19 @@
+{
+  "addon": "volumetric_water",
+  "archive_sha256": "7b76756bb46df36661468746423b80c9c300c64a51e2873df40f25f0bac2a7c4",
+  "steps": [
+    {
+      "phase": "import",
+      "exit_code": 0,
+      "ok": true
+    },
+    {
+      "phase": "load",
+      "exit_code": 0,
+      "ok": true
+    }
+  ],
+  "import_frame_delay_ms": 1000,
+  "resource_count": 4,
+  "ok": true
+}

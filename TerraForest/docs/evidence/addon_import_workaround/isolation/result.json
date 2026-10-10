@@ -1,0 +1,31 @@
+[
+  {
+    "case": "empty_import",
+    "native": false,
+    "args": [
+      "--import"
+    ],
+    "exit_code": 0,
+    "seconds": 4.581382599993958
+  },
+  {
+    "case": "native_editor_frames",
+    "native": true,
+    "args": [
+      "--editor",
+      "--quit-after",
+      "30"
+    ],
+    "exit_code": 3221225477,
+    "seconds": 10.875714000008884
+  },
+  {
+    "case": "native_import",
+    "native": true,
+    "args": [
+      "--import"
+    ],
+    "exit_code": 3221225477,
+    "seconds": 10.18033769998874
+  }
+]

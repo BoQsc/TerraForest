@@ -1,0 +1,16 @@
+{
+  "base_commit": "55ec0235d7a3eac38bb3c2f5ec6d1fb293145352",
+  "engine": "Godot4.7.2.stable.steam.ed1daf0bf Windows x86-64",
+  "upstream_reference": "https://github.com/godotengine/godot/issues/111048",
+  "inference": "Minimal native-only failure plus success with upstream import-delay workaround is consistent with documentation cleanup race. No local symbolized native stack was captured; exact cause is not proven.",
+  "workaround": "--import-frame-delay-ms 1000 passes --frame-delay 1000 to import process only; runtime resource load has no delay. Default verification remains unmodified.",
+  "passed": [
+    "vegetation_runtime",
+    "player_runtime",
+    "world_runtime",
+    "volumetric_water",
+    "volumetric_terrain",
+    "vegetation"
+  ],
+  "limits": "Ordinary immediate import remains a known failing path. Fixed delay is a tested mitigation, not engine repair or a timing-independent guarantee. No game runtime settings or binaries changed."
+}

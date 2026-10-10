@@ -1,0 +1,19 @@
+{
+  "addon": "player_runtime",
+  "archive_sha256": "66b19d507efbe15898d99d8ea552d11757b9004a64f3b99cb52f0b087861fe46",
+  "steps": [
+    {
+      "phase": "import",
+      "exit_code": 0,
+      "ok": true
+    },
+    {
+      "phase": "load",
+      "exit_code": 0,
+      "ok": true
+    }
+  ],
+  "import_frame_delay_ms": 1000,
+  "resource_count": 6,
+  "ok": true
+}

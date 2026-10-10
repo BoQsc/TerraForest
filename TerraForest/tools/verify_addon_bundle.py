@@ -10,12 +10,14 @@ import tempfile
 import zipfile
 from package import ROOT, DEPENDENCIES
 
-def verify(addon, engine):
+def verify(addon, engine, import_frame_delay_ms=0):
     source=ROOT/'dist'/(addon+'.zip')
     output=ROOT/'reports/addon_bundles'/addon
+    if import_frame_delay_ms:
+        output=output/('delay_'+str(import_frame_delay_ms))
     output.mkdir(parents=True,exist_ok=True)
     (ROOT/'.build').mkdir(exist_ok=True)
-    result={'addon':addon,'archive_sha256':hashlib.sha256(source.read_bytes()).hexdigest(), 'steps':[]}
+    result={'addon':addon,'archive_sha256':hashlib.sha256(source.read_bytes()).hexdigest(), 'steps':[], 'import_frame_delay_ms':import_frame_delay_ms}
     with tempfile.TemporaryDirectory(prefix='addon_'+addon+'_',dir=ROOT/'.build') as temporary:
         project=Path(temporary).resolve()
         with zipfile.ZipFile(source) as archive:
@@ -34,13 +36,15 @@ def verify(addon, engine):
             archive.extractall(project)
         if (project/'.godot').exists():
             raise ValueError('Bundle contains editor cache')
-        paths=sorted('res://'+p.relative_to(project).as_posix() for p in project.rglob('*') if p.suffix in {'.gd','.tscn','.tres','.gdshader'})
+        paths=sorted('res://'+p.relative_to(project).as_posix() for p in project.rglob('*') if p.suffix in {'.gd','.tscn','.tres','.gdshader','.gdextension'})
         result['resource_count']=len(paths)
         (project/'project.godot').write_text('config_version=5\n[application]\nconfig/name="Addon Bundle Check"\n',encoding='utf-8')
-        script='extends SceneTree\nfunc _initialize() -> void:\n var failures:=0\n for path in '+json.dumps(paths)+':\n  if load(path)==null:\n   print("FAIL resource ",path);failures+=1\n print("BUNDLE_RESOURCES ",'+str(len(paths))+'," failures=",failures)\n quit(1 if failures else 0)\n'
+        script='extends SceneTree\nfunc _initialize() -> void:\n var failures:=0\n for path in '+json.dumps(paths)+':\n  if (path.ends_with(".gdextension") and not GDExtensionManager.is_extension_loaded(path)) or load(path)==null:\n   print("FAIL resource ",path);failures+=1\n print("BUNDLE_RESOURCES ",'+str(len(paths))+'," failures=",failures)\n quit(1 if failures else 0)\n'
         (project/'bundle_check.gd').write_text(script,encoding='utf-8')
         for label,extra in [('import',['--editor','--import']),('load',['--script','res://bundle_check.gd'])]:
             command=[str(engine),'--headless','--path',str(project),*extra]
+            if label=='import' and import_frame_delay_ms:
+                command += ['--frame-delay',str(import_frame_delay_ms)]
             run=subprocess.run(command,capture_output=True,text=True,encoding='utf-8',errors='replace',timeout=90)
             log=run.stdout+'\n'+run.stderr
             (output/(label+'.log')).write_text(log,encoding='utf-8')
@@ -57,7 +61,8 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--addon',choices=sorted(DEPENDENCIES),required=True)
     parser.add_argument('--godot',type=Path,required=True)
+    parser.add_argument('--import-frame-delay-ms',type=int,default=0,choices=range(0,2001),metavar='0..2000',help='Explicit import-only workaround for Godot issue111048; default preserves ordinary import behavior')
     args=parser.parse_args()
-    return 0 if verify(args.addon,args.godot) else 1
+    return 0 if verify(args.addon,args.godot,args.import_frame_delay_ms) else 1
 if __name__=='__main__':
     raise SystemExit(main())

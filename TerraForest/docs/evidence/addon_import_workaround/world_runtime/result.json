@@ -1,0 +1,19 @@
+{
+  "addon": "world_runtime",
+  "archive_sha256": "a504a31bca382c334e4aae349a715e9ad36b64f38d33c0b5300a0d0786f9fa8b",
+  "steps": [
+    {
+      "phase": "import",
+      "exit_code": 0,
+      "ok": true
+    },
+    {
+      "phase": "load",
+      "exit_code": 0,
+      "ok": true
+    }
+  ],
+  "import_frame_delay_ms": 1000,
+  "resource_count": 5,
+  "ok": true
+}
