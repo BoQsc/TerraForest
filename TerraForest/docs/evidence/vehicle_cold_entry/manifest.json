@@ -1,0 +1,9 @@
+{
+  "base_commit": "14e10acddf033d632fe9c197aa0623f46a5f05c0",
+  "command": "godot --path TerraForest --script res://tests/vehicle_fleet_activation.gd -- --world-slot=staged_furnished_1791584856787240500 --ground-cover --vehicle-fleet",
+  "before_exit": 1,
+  "after_exit": 0,
+  "before_failures": 2,
+  "after_passes": 20,
+  "scope": "Actual-world lifecycle; normal world processing disabled for deterministic activation. Source snapshot writes inhibited. No timing or sustained-performance claim."
+}

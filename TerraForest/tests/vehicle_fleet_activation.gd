@@ -20,8 +20,12 @@ func run() -> void:
 	for i in 5:session.fleet.spawn(Transform3D(Basis.IDENTITY,start+direction*i*6))
 	deadline=Time.get_ticks_msec()+15000
 	while not session.scene_ready() and Time.get_ticks_msec()<deadline:await process_frame
+	activation.select_for_entry(start+Vector3.RIGHT*2.8)
+	check(activation.bodies.is_empty() and activation.parked_view==null and session.car==null,"cold entry cannot bypass staged initialization")
 	game.terrain.focus=start-direction*90;activation.timer=0;activation.update(game,0.2)
 	check(activation.bodies.size()==1 and activation.parked_view==null,"cold template creation yields before parked batch setup")
+	activation.select_for_entry(start+Vector3.RIGHT*2.8)
+	check(activation.bodies.size()==1 and activation.parked_view==null and session.car==null,"entry between setup stages leaves template dormant")
 	await process_frame;activation.timer=0;activation.update(game,0.2)
 	check(activation.residents.is_empty() and activation.parked_status.get("rendered",0)==5,"distant-only saved fleet renders without driving-body admission")
 	game.terrain.focus=start

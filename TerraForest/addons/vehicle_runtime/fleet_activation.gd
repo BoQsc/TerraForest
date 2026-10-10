@@ -91,6 +91,8 @@ func place(world: Node,pose: Transform3D) -> String:
 	if not admit(world,id):owner.fleet.remove(id);return "Vehicle activation unavailable."
 	return "Vehicle placed · E nearby to enter · F5 saves world"
 func select_for_entry(point: Vector3) -> void:
+	if parked_view==null:
+		owner.car=null;owner.car_identity=0;timer=0;return
 	var query: Dictionary=owner.fleet.query_near(point,3.5,1,4096)
 	if query.ok and query.complete and not query.ids.is_empty() and not residents.has(query.ids[0]):
 		if sync_records():
