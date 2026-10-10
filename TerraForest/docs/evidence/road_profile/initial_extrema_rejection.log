@@ -1,0 +1,9 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS flat route preserved
+FAIL actual uphill terrain admits bounded smooth profile
+PASS planning does not mutate input terrain samples
+PASS invalid curvature rejected
+PASS uncertified route returns no partial construction profile
+PASS nonuniform route rejected explicitly
+ROAD_PROFILE {"failures":1,"fit_us":2046,"profile":{"max_curvature":0.00800000054618882,"max_cut":13.2976402487332,"max_fill":3.00000011247484,"max_grade":0.250022306924507,"ok":false,"reason":"no_certified_profile_within_iteration_budget","residual":0.0000000993532651705209},"scope":"Native cubic profile correctness only; not yet terrain construction or driving."}

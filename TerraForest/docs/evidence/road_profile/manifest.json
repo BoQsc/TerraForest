@@ -1,0 +1,11 @@
+{
+  "status": "native profile primitive verified; construction and editor integration open",
+  "limits": "3..65 uniform collinear XZ samples, 4..32 m spacing, <=2048 solver iterations. C1 cubic vertical profile, flat entrance tangent; analytic continuous extrema checks enforce grade, second derivative and cut/fill against linearly interpolated input terrain, within stated numerical tolerances.",
+  "validation": "Eight debug/release checks pass, including the actual uphill terrain sample sequence, C1 joins, independent dense bounds sampling, invalid input and no partial output on failure.",
+  "qualification": "One fit took about 4.9 ms debug / 3.8 ms release on current hardware. Not a performance bound; run through background authoring workflow, not per frame. Failure within budget does not prove mathematical infeasibility.",
+  "next": "Consume cubic profile in native terrain road construction and preview, preserving source epoch/revision and save semantics, then verify final collision and unchanged 95% driving support gate. Linear microsegment substitution alone does not establish continuous slope.",
+  "binary_hashes": {
+    "terrain_core.windows.template_release.x86_64.dll": "da23ce502e66ab8cab54b3ecaa819022faeed4a4700b73432b67983eeb9f9df6",
+    "terrain_core.windows.x86_64.dll": "8d07dca98803f4ef2348beb23eb65a6ed2216fe3fcafdf19284ee4800c106052"
+  }
+}
