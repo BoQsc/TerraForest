@@ -60,6 +60,7 @@ public:
     int64_t persistent_id(int64_t handle) const;
     int64_t resolve_identity(int64_t identity) const;
     godot::Vector3 get_position(int64_t id) const;
+    bool set_position(int64_t id, const godot::Vector3 &position);
     bool set_velocity(int64_t id, const godot::Vector3 &velocity);
     bool step(double seconds);
     godot::PackedFloat32Array multimesh_transforms() const;

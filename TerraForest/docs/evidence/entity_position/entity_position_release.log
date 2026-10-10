@@ -1,0 +1,14 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS cross-cell correction accepted
+PASS spatial ownership follows corrected position
+PASS correction preserves persistent identity and handle
+PASS correction preserves velocity and moving membership
+PASS relocating stationary entity does not wake it
+PASS within-cell correction updates query position
+PASS nonfinite correction rejects without mutation
+PASS stale handle cannot relocate reused slot
+PASS corrected position survives snapshot restore
+PASS pre-restore handle cannot modify restored entity
+ENTITY_POSITION failures=0
+

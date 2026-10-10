@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: 0BSD
 extends SceneTree
+const Extension=preload("res://addons/world_runtime/world_runtime.gdextension")
 var failures:=0
 func check(ok: bool,label: String) -> void:
 	print(("PASS " if ok else "FAIL ")+label)
@@ -43,4 +44,7 @@ func run() -> void:
 	overflow.spawn(Vector3(3.4e38,0,0),Vector3(3.4e38,0,0))
 	var before: PackedByteArray=overflow.capture_storage_snapshot()
 	check(not overflow.step(0.1) and overflow.capture_storage_snapshot()==before and overflow.statistics().ticks==0,"overflow rejects all moving entities before any position mutation")
+	DirAccess.make_dir_recursive_absolute("res://reports")
+	var report:=FileAccess.open("res://reports/entity_sleeping.json",FileAccess.WRITE)
+	report.store_string(JSON.stringify({"failures":failures}));report.close()
 	quit(1 if failures else 0)

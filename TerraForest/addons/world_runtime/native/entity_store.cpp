@@ -17,6 +17,7 @@ void NativeEntityStore::_bind_methods() {
     ClassDB::bind_method(D_METHOD("persistent_id", "handle"), &NativeEntityStore::persistent_id);
     ClassDB::bind_method(D_METHOD("resolve_identity", "identity"), &NativeEntityStore::resolve_identity);
     ClassDB::bind_method(D_METHOD("get_position", "id"), &NativeEntityStore::get_position);
+    ClassDB::bind_method(D_METHOD("set_position", "id", "position"), &NativeEntityStore::set_position);
     ClassDB::bind_method(D_METHOD("set_velocity", "id", "velocity"), &NativeEntityStore::set_velocity);
     ClassDB::bind_method(D_METHOD("step", "seconds"), &NativeEntityStore::step);
     ClassDB::bind_method(D_METHOD("multimesh_transforms"), &NativeEntityStore::multimesh_transforms);
@@ -141,6 +142,16 @@ int64_t NativeEntityStore::resolve_identity(int64_t identity) const {
     return int64_t((uint64_t(slot.generation)<<32)|found->second);
 }
 Vector3 NativeEntityStore::get_position(int64_t id) const { auto *slot = resolve(id); return slot ? slot->position : Vector3(); }
+// Collision/authority corrections preserve handles, persistent identity and velocity.
+bool NativeEntityStore::set_position(int64_t id, const Vector3 &position) {
+    Slot *slot=resolve(id);
+    if (!slot || !position.is_finite()) return false;
+    const uint32_t index=uint32_t(uint64_t(id));
+    if (!(cell_for(slot->position)==cell_for(position))) {
+        index_remove(index);slot->position=position;index_insert(index);
+    } else slot->position=position;
+    return true;
+}
 bool NativeEntityStore::set_velocity(int64_t id, const Vector3 &velocity) {
     Slot *slot = resolve(id);
     if (!slot || !velocity.is_finite()) return false;

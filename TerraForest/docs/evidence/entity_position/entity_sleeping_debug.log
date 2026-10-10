@@ -1,0 +1,16 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS large mixed store configured
+PASS 100000 stationary entities stay outside moving set
+STATIC_100_TICKS_US 58
+PASS static ticks visit no entity slots and preserve position
+PASS tick visits three movers among 100003 entities
+PASS swap removal preserves remaining mover and sleeping position
+PASS reused slot remains asleep and stale handle cannot wake it
+PASS repeated wake does not double integrate
+PASS snapshot restore rebuilds moving membership from velocity
+PASS restored mover continues integration
+PASS sleeping entities remain in spatial queries
+PASS restored mover can sleep
+PASS removing last mover restores constant-work static tick
+PASS overflow rejects all moving entities before any position mutation
