@@ -11,6 +11,7 @@ void NativeEntityActivation::_bind_methods(){
     ClassDB::bind_method(D_METHOD("configure","store","capacity"),&NativeEntityActivation::configure);
     ClassDB::bind_method(D_METHOD("select","center","radius","candidate_budget"),&NativeEntityActivation::select,DEFVAL(4096));
     ClassDB::bind_method(D_METHOD("tick","targets","delta","ready"),&NativeEntityActivation::tick);
+    ClassDB::bind_method(D_METHOD("settle","delta","readiness"),&NativeEntityActivation::settle);
     ClassDB::bind_method(D_METHOD("active_handles"),&NativeEntityActivation::active_handles);
 }
 bool NativeEntityActivation::configure(const Ref<NativeEntityStore> &store,int capacity){
@@ -57,4 +58,22 @@ bool NativeEntityActivation::tick(const PackedVector3Array &targets,double delta
     }
     return true;
 }
+Dictionary NativeEntityActivation::settle(double delta,const Callable &readiness){
+    Dictionary out;out["ok"]=false;out["visited"]=0;out["held"]=0;
+    if(store_.is_null()||!is_inside_tree()||!readiness.is_valid()||!std::isfinite(delta)||delta<=0||delta>0.1)return out;
+    int visited=0,held=0;
+    for(auto &p:proxies_){
+        if(!p.handle)continue;
+        if(!store_->contains(p.handle)){sleep_all();return out;}
+        const Vector3 position=store_->get_position(p.handle);
+        // Include capsule, floor snap, current travel and next gravity increment.
+        const real_t travel=real_t(p.body->get_velocity().length()*delta+20*delta*delta+0.05);
+        AABB bounds(position-Vector3(0.35,1.15,0.35),Vector3(0.7,2.05,0.7));bounds=bounds.grow(travel);
+        const Variant answer=readiness.call(bounds);
+        const bool ready=answer.get_type()==Variant::BOOL && bool(answer);
+        p.body->tick(position,delta,ready);++visited;if(!ready)++held;
+    }
+    out["ok"]=true;out["visited"]=visited;out["held"]=held;return out;
+}
+
 }

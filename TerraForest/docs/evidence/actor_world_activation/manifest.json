@@ -1,0 +1,14 @@
+{
+  "date": "2026-10-10",
+  "command": "godot --path TerraForest --script res://tests/actor_world_activation.gd -- --world-slot=staged_furnished_1791584856787240500 --ground-cover --actors",
+  "world_checks": 9,
+  "native_checks_per_build": 15,
+  "behavior": "Opt-in automatic nearest selection every0.2s, render refresh every0.1s, native idle grounding each physics tick.16 reusable bodies,48m activation radius,64m render radius. Native callback checks capsule plus current travel, gravity increment and floor-snap coverage against terrain/structures/forest.",
+  "limits": [
+    "No steering, navigation or animation in automatic loop yet.",
+    "Visual updates currently10Hz; movement interpolation needs qualification before animated characters.",
+    "Candidate overload suspends pool; status exposed on adapter but no player-facing warning yet.",
+    "No combined population frame-time or thermal qualification.",
+    "Source writes disabled for the test."
+  ]
+}

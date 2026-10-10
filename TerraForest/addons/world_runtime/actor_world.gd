@@ -5,6 +5,10 @@ var store: RefCounted
 var pool: Node3D
 var renderer: MultiMeshInstance3D
 var status: Dictionary={}
+var simulation_status: Dictionary={}
+var _selection_time:=0.0
+var _render_time:=0.0
+var _suspended:=true
 func prepare(persistence: RefCounted) -> bool:
 	if store!=null:return false
 	if not ClassDB.class_exists("NativeEntityStore"):
@@ -24,7 +28,7 @@ func enable(capacity: int=16) -> bool:
 func suspend() -> void:
 	if pool!=null:pool.select(Vector3(NAN,0,0),0,1)
 	if renderer!=null:renderer.refresh(Vector3(NAN,0,0),0,1)
-	status={}
+	status={};simulation_status={};_suspended=true;_selection_time=0;_render_time=0
 func _restore(data: PackedByteArray) -> bool:
 	if not store.validate_snapshot(data):return false
 	suspend()
@@ -38,3 +42,15 @@ func spawn(point: Vector3) -> int:
 	if store==null:return 0
 	var handle: int=store.spawn(point,Vector3.ZERO)
 	return store.persistent_id(handle) if handle!=0 else 0
+
+func update_simulation(delta: float,focus: Vector3,available: bool,readiness: Callable) -> void:
+	if pool==null:return
+	if not available:
+		if not _suspended:suspend()
+		return
+	_selection_time-=delta;_render_time-=delta
+	if _suspended or _selection_time<=0:
+		status=pool.select(focus,48,4096);_selection_time=0.2;_suspended=false
+	simulation_status=pool.settle(delta,readiness)
+	if _render_time<=0:
+		renderer.refresh(focus,64,4096);_render_time=0.1

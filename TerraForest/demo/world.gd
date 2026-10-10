@@ -86,6 +86,8 @@ func _ready() -> void:
 	add_child(actors)
 	if not actors.prepare(persistence):
 		push_error("Actor persistence initialization failed");get_tree().quit(2);return
+	if "--actors" in OS.get_cmdline_user_args() and not actors.enable():
+		push_error("Actor activation initialization failed");get_tree().quit(2);return
 	if not ground_cover.prepare(persistence):
 		push_error("Ground-cover persistence initialization failed");get_tree().quit(2);return
 	if not ecosystem.prepare_persistence(persistence):
@@ -1043,7 +1045,11 @@ func _advance_frontage_placement() -> void:
 	player_hud.refresh()
 	_prefab_preview_timer=0.0
 
+func _actor_collision_ready(bounds: AABB) -> bool:
+	return terrain.is_collision_region_ready(bounds) and structures.is_collision_region_ready(bounds) and vegetation.is_collision_region_ready(bounds)
+
 func _physics_process(delta: float) -> void:
+	actors.update_simulation(delta,terrain.focus,not loading_active and not shutdown_requested and terrain.world_ready and not terrain.pending_edit,_actor_collision_ready)
 	if world_vehicle.driving:
 		return # The bound vehicle owns terrain focus and physics while occupied.
 	super._physics_process(delta)
