@@ -1,0 +1,15 @@
+{
+  "slot": "curved_road_test_1791611691608355900",
+  "checks": {
+    "create": 39,
+    "reopen": 37
+  },
+  "scope": "Two separate headless processes using real terrain worker and on-disk archive. Four curved sections publish, manual save verifies; second process loads, performs normal reload and saves. After joining worker, compare 24 exact native collision mesh packet hashes plus asphalt/air density probes.",
+  "shutdown": "Snapshot writes disabled only after manual save verification; expected save-blocked teardown message prevents shutdown from manufacturing tested archive.",
+  "limits": "Proves persisted terrain result. Parametric curve controls, editor preview and resumable multi-section authoring are not yet integrated or persisted. Does not repeat driving or establish frame/thermal performance.",
+  "commands": [
+    "godot --headless --path TerraForest --script res://tests/curved_road_persistence.gd -- --road-slot=curved_road_test_1791611691608355900",
+    "godot --headless --path TerraForest --script res://tests/curved_road_persistence.gd -- --road-slot=curved_road_test_1791611691608355900 --reopen-road"
+  ],
+  "fixture_sha256": "619b1d53e3f83b78f231f6b7b528e0b2038506aa3c3a28b2afa9b7ea45dbb666"
+}

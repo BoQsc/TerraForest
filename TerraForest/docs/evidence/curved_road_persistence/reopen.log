@@ -1,0 +1,40 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS persistent terrain worker starts
+PASS persistent terrain ready
+PASS normal reload completes before persistence comparison
+PASS manual save verified
+[TerrainRewrite] ERROR: save blocked: snapshot writes explicitly disabled; previous canonical snapshot retained
+PASS saved collision mesh valid (576, 32, 1296)
+PASS saved collision mesh valid (576, 64, 1296)
+PASS saved collision mesh valid (576, 96, 1296)
+PASS saved collision mesh valid (576, 32, 1312)
+PASS saved collision mesh valid (576, 64, 1312)
+PASS saved collision mesh valid (576, 96, 1312)
+PASS saved collision mesh valid (592, 32, 1296)
+PASS saved collision mesh valid (592, 64, 1296)
+PASS saved collision mesh valid (592, 96, 1296)
+PASS saved collision mesh valid (592, 32, 1312)
+PASS saved collision mesh valid (592, 64, 1312)
+PASS saved collision mesh valid (592, 96, 1312)
+PASS saved collision mesh valid (608, 32, 1296)
+PASS saved collision mesh valid (608, 64, 1296)
+PASS saved collision mesh valid (608, 96, 1296)
+PASS saved collision mesh valid (608, 32, 1312)
+PASS saved collision mesh valid (608, 64, 1312)
+PASS saved collision mesh valid (608, 96, 1312)
+PASS saved collision mesh valid (624, 32, 1296)
+PASS saved collision mesh valid (624, 64, 1296)
+PASS saved collision mesh valid (624, 96, 1296)
+PASS saved collision mesh valid (624, 32, 1312)
+PASS saved collision mesh valid (624, 64, 1312)
+PASS saved collision mesh valid (624, 96, 1312)
+PASS asphalt support and open clearance
+PASS asphalt support and open clearance
+PASS asphalt support and open clearance
+PASS asphalt support and open clearance
+PASS asphalt support and open clearance
+PASS asphalt support and open clearance
+PASS asphalt support and open clearance
+PASS asphalt support and open clearance
+PASS fresh process plus reload preserves exact collision geometry materials and densities
