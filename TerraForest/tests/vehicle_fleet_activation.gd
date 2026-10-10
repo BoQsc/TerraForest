@@ -18,6 +18,11 @@ func run() -> void:
 	var start: Vector3=ends[0]+direction*3+Vector3.UP*0.85
 	game.terrain.focus=start;game.player.position=start+Vector3(0,3,8)
 	for i in 5:session.fleet.spawn(Transform3D(Basis.IDENTITY,start+direction*i*6))
+	deadline=Time.get_ticks_msec()+15000
+	while not session.scene_ready() and Time.get_ticks_msec()<deadline:await process_frame
+	game.terrain.focus=start-direction*90;activation.timer=0;activation.update(game,0.2)
+	check(activation.residents.is_empty() and activation.parked_status.get("rendered",0)==5,"distant-only saved fleet renders without driving-body admission")
+	game.terrain.focus=start
 	deadline=Time.get_ticks_msec()+20000
 	while activation.residents.size()<4 and Time.get_ticks_msec()<deadline:
 		await process_frame;activation.timer=0;activation.update(game,0.2)
@@ -30,6 +35,17 @@ func run() -> void:
 		for wheel in body.wheel_rays:
 			wheel.force_raycast_update();wheel_clear=wheel_clear and wheel.get_collider()!=body
 	check(wheel_clear,"fleet wheel rays exclude their own chassis")
+	check(activation.parked_view!=null and activation.parked_status.ids.has(5),"fifth vehicle has native parked representation: "+str(activation.parked_status))
+	var fifth: Vector3=session.fleet.get_record(5).pose.origin
+	await physics_frame;await physics_frame
+	var ray:=PhysicsRayQueryParameters3D.create(fifth+Vector3.UP*4,fifth-Vector3.UP*2,4)
+	var hit: Dictionary=game.get_world_3d().direct_space_state.intersect_ray(ray)
+	check(not hit.is_empty() and hit.collider==activation.parked_view,"fifth parked vehicle has static chassis collision")
+	activation.select_for_entry(fifth+Vector3.RIGHT*2.8)
+	check(session.car_identity==5 and activation.residents.has(5) and not activation.parked_status.ids.has(5),"parked fifth identity promotes without duplicate visual")
+	await physics_frame;await physics_frame
+	hit=game.get_world_3d().direct_space_state.intersect_ray(ray)
+	check(not hit.is_empty() and hit.collider==session.car,"promotion replaces parked collider with live chassis")
 	var captured: PackedByteArray=session.capture_snapshot()
 	check(session.fleet.statistics().records==5,"unadmitted fifth identity remains stored")
 	game.terrain.focus=start+Vector3(800,0,0);activation.timer=0;activation.update(game,0.2)

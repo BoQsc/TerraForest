@@ -2,16 +2,29 @@
 #include "parked_renderer.hpp"
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/classes/material.hpp>
+#include <godot_cpp/classes/physics_server3d.hpp>
+#include <godot_cpp/classes/world3d.hpp>
 #include <set>
 #include <cmath>
 #include <godot_cpp/classes/mesh.hpp>
 using namespace godot;
 namespace terraforest {
 void NativeParkedVehicleRenderer::_bind_methods(){
+ ClassDB::bind_method(D_METHOD("configure_collision","shape","local"),&NativeParkedVehicleRenderer::configure_collision);
  ClassDB::bind_method(D_METHOD("configure","fleet","parts","capacity"),&NativeParkedVehicleRenderer::configure);
  ClassDB::bind_method(D_METHOD("refresh","center","radius","excluded","budget"),&NativeParkedVehicleRenderer::refresh);
 }
-void NativeParkedVehicleRenderer::hide_all(){for(auto &part:parts_){part.mesh->set_visible_instance_count(0);auto *node=Object::cast_to<MultiMeshInstance3D>(ObjectDB::get_instance(part.node));if(node)node->hide();}}
+NativeParkedVehicleRenderer::~NativeParkedVehicleRenderer(){auto *server=PhysicsServer3D::get_singleton();if(server)for(auto body:bodies_)server->free_rid(body);}
+void NativeParkedVehicleRenderer::_notification(int what){if(what==NOTIFICATION_EXIT_TREE){hide_all();auto *server=PhysicsServer3D::get_singleton();if(server)for(auto body:bodies_)server->body_set_space(body,RID());}}
+bool NativeParkedVehicleRenderer::configure_collision(const Ref<Shape3D> &shape,const Transform3D &local){
+ if(!capacity_||!bodies_.empty()||shape.is_null()||!local.is_finite()||std::abs(local.basis.determinant())<0.000001)return false;
+ collision_shape_=shape;collision_local_=local;auto *server=PhysicsServer3D::get_singleton();
+ for(int i=0;i<capacity_;++i){RID body=server->body_create();server->body_set_mode(body,PhysicsServer3D::BODY_MODE_STATIC);server->body_add_shape(body,shape->get_rid());server->body_set_collision_layer(body,0);server->body_set_collision_mask(body,0);server->body_attach_object_instance_id(body,get_instance_id());server->body_set_param(body,PhysicsServer3D::BODY_PARAM_FRICTION,0.78);server->body_set_param(body,PhysicsServer3D::BODY_PARAM_BOUNCE,0.055);bodies_.push_back(body);body_poses_.push_back(Transform3D());body_enabled_.push_back(false);}
+ return true;
+}
+void NativeParkedVehicleRenderer::hide_all(){
+ auto *server=PhysicsServer3D::get_singleton();if(server)for(size_t i=0;i<bodies_.size();++i){server->body_set_collision_layer(bodies_[i],0);body_enabled_[i]=false;}
+for(auto &part:parts_){part.mesh->set_visible_instance_count(0);auto *node=Object::cast_to<MultiMeshInstance3D>(ObjectDB::get_instance(part.node));if(node)node->hide();}}
 bool NativeParkedVehicleRenderer::configure(const Ref<NativeVehicleFleet> &fleet,const Array &parts,int capacity){
  if(capacity_||fleet.is_null()||capacity<1||capacity>256||parts.is_empty()||parts.size()>64)return false;
  for(int i=0;i<parts.size();++i){
@@ -20,7 +33,7 @@ bool NativeParkedVehicleRenderer::configure(const Ref<NativeVehicleFleet> &fleet
   if(mesh.get_type()!=Variant::OBJECT||local.get_type()!=Variant::TRANSFORM3D)return false;
   Ref<Mesh> source=mesh;if(source.is_null())return false;
   Transform3D transform=local;if(!transform.is_finite()||std::abs(transform.basis.determinant())<0.000001)return false;
-  if(material.get_type()!=Variant::NIL){if(material.get_type()!=Variant::OBJECT)return false;Ref<Material> value=material;if(value.is_null())return false;}
+  if(material.get_type()!=Variant::NIL){if(material.get_type()!=Variant::OBJECT)return false;Object *value=material;if(value&&!Object::cast_to<Material>(value))return false;}
  }
  fleet_=fleet;capacity_=capacity;
  for(int i=0;i<parts.size();++i){
@@ -58,6 +71,15 @@ Dictionary NativeParkedVehicleRenderer::refresh(const Vector3 &center,double rad
   if(changed){part.mesh->set_buffer(part.buffer);uploaded+=capacity_*48;}
   part.mesh->set_visible_instance_count(poses.size());
   auto *node=Object::cast_to<MultiMeshInstance3D>(ObjectDB::get_instance(part.node));if(node)node->show();
+ }
+ if(!bodies_.empty()){
+  auto *server=PhysicsServer3D::get_singleton();
+  for(size_t i=0;i<bodies_.size();++i){
+   bool enabled=is_inside_tree()&&i<poses.size();
+   if(enabled){Transform3D pose=get_global_transform()*poses[i]*collision_local_;if(!body_enabled_[i]||pose!=body_poses_[i]){server->body_set_state(bodies_[i],PhysicsServer3D::BODY_STATE_TRANSFORM,pose);body_poses_[i]=pose;}server->body_set_space(bodies_[i],get_world_3d()->get_space());}
+   if(enabled!=body_enabled_[i])server->body_set_collision_layer(bodies_[i],enabled?4:0);
+   body_enabled_[i]=enabled;
+  }
  }
  result["ids"]=visible;result["rendered"]=int64_t(poses.size());result["upload_bytes"]=uploaded;return result;
 }

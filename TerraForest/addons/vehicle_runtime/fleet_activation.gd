@@ -7,6 +7,8 @@ var residents: Dictionary={}
 var bodies: Array[RigidBody3D]=[]
 var timer:=0.0
 var status: Dictionary={}
+var parked_view: Node3D
+var parked_status: Dictionary={}
 func _init(session: Node) -> void:owner=session
 func sync_records() -> bool:
 	for id: int in residents:
@@ -19,6 +21,7 @@ func retire(id: int) -> void:
 	body.collision_layer=0;body.collision_mask=0;body.hide();residents.erase(id)
 	if owner.car==body:owner.car=null;owner.car_identity=0
 func reset() -> void:
+	if is_instance_valid(parked_view):parked_view.refresh(Vector3(NAN,0,0),0,PackedInt64Array(),1)
 	for id: int in residents.keys():retire(id)
 	timer=0
 func admit(world: Node,id: int) -> bool:
@@ -43,7 +46,32 @@ func admit(world: Node,id: int) -> bool:
 	body.collision_layer=4;body.collision_mask=7
 	for wheel in body.wheel_rays:
 		wheel.collision_mask=7;wheel.add_exception(body)
-	body.show();residents[id]=body;return true
+	body.show();residents[id]=body
+	if parked_view==null:prepare_parked_view(world,body)
+	return true
+func prepare_parked_view(world: Node,body: RigidBody3D) -> void:
+	var parts: Array=[]
+	var inverse: Transform3D=body.global_transform.affine_inverse()
+	for node: MeshInstance3D in body.find_children("*","MeshInstance3D",true,false):
+		if node.mesh!=null and node.is_visible_in_tree():parts.append({"mesh":node.mesh,"transform":inverse*node.global_transform,"material":node.material_override})
+	var view: Node3D=ClassDB.instantiate("NativeParkedVehicleRenderer");world.add_child(view)
+	var chassis: CollisionShape3D=body.get_node("ChassisCollision")
+	if not view.configure(owner.fleet,parts,64) or not view.configure_collision(chassis.shape,chassis.transform):parked_status={"ok":false,"reason":"prototype_configuration","parts":parts.size()};view.free();return
+	parked_view=view
+func prepare_from_saved(world: Node) -> void:
+	if parked_view!=null or not bodies.is_empty() or not owner.scene_ready():return
+	var nearby: Dictionary=owner.fleet.query_near(world.terrain.focus,128,1,4096)
+	if not nearby.ok or not nearby.complete or nearby.ids.is_empty():return
+	var id: int=nearby.ids[0]
+	var previous: RigidBody3D=owner.car;var previous_id: int=owner.car_identity
+	owner.car_identity=id
+	if owner._install_vehicle(world,owner.fleet.get_record(id).pose):
+		var template: RigidBody3D=owner.car
+		prepare_parked_view(world,template)
+		template.collision_layer=0;template.collision_mask=0;template.hide();bodies.append(template)
+	owner.car=previous;owner.car_identity=previous_id
+func refresh_parked(world: Node) -> void:
+	if parked_view!=null:parked_status=parked_view.refresh(world.terrain.focus,128,PackedInt64Array(residents.keys()),4096)
 func place(world: Node,pose: Transform3D) -> String:
 	if residents.size()>=CAPACITY:return "Nearby vehicle capacity reached; move farther before placing another."
 	var nearby: Dictionary=owner.fleet.query_near(pose.origin,7,256,4096)
@@ -56,6 +84,16 @@ func place(world: Node,pose: Transform3D) -> String:
 	if not admit(world,id):owner.fleet.remove(id);return "Vehicle activation unavailable."
 	return "Vehicle placed · E nearby to enter · F5 saves world"
 func select_for_entry(point: Vector3) -> void:
+	var query: Dictionary=owner.fleet.query_near(point,3.5,1,4096)
+	if query.ok and query.complete and not query.ids.is_empty() and not residents.has(query.ids[0]):
+		if sync_records():
+			if residents.size()>=CAPACITY:
+				var farthest:=0;var distance:=-1.0
+				for id: int in residents:
+					var candidate: float=residents[id].global_position.distance_squared_to(point)
+					if candidate>distance:distance=candidate;farthest=id
+				retire(farthest)
+			admit(owner._world,query.ids[0]);refresh_parked(owner._world)
 	var nearest:=3.5;var chosen:=0
 	for id: int in residents:
 		var distance: float=residents[id].global_position.distance_to(point)
@@ -76,6 +114,7 @@ func update(world: Node,delta: float) -> void:
 	if timer>0:return
 	timer=0.2
 	if not sync_records():status={"ok":false,"reason":"invalid_live_pose"};return
+	prepare_from_saved(world)
 	status=owner.fleet.query_near(world.terrain.focus,64,CAPACITY,4096)
 	if not status.ok or not status.complete:return
 	var wanted: PackedInt64Array=status.ids
@@ -87,3 +126,4 @@ func update(world: Node,delta: float) -> void:
 	# At most one expensive model instantiation/admission per selection tick.
 	for id: int in wanted:
 		if not residents.has(id):admit(world,id);break
+	refresh_parked(world)

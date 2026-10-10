@@ -1,0 +1,12 @@
+{
+  "date": "2026-10-10",
+  "checks": {
+    "native_debug": 14,
+    "native_release": 14,
+    "actual_world": 17
+  },
+  "implementation": "Actual32 runtime vehicle mesh parts extracted once into native batches. Up to64 selected records within128m, excluding full-body residents; fixed64 static server bodies share exact chassis box/offset. No per-parked-car scene nodes. Entry can replace a full slot with parked identity; old static visual/collider excluded in same refresh.",
+  "result": "Fifth car visible and ray-collidable; promotion replaces static chassis with driving body while four-body cap stays intact. Five distant-only records render without driving-body admission. Source save writes inhibited; screenshot inspected.",
+  "initial_failure": "Explicit null material override was rejected; validator corrected to preserve mesh material fallback and regression added. Initial failing world log retained.",
+  "limits": "Full geometry, aggregate per-part culling, no simplified distant LOD. Beyond128m or64 selected records remains unrepresented. Dense candidate overflow can hide batch. Whole prototype setup, static collider publication, full-capacity cost and high-speed encounters with static proxies remain unqualified. No damage/door/wheel state persistence. Keep opt-in."
+}
