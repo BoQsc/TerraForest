@@ -1,0 +1,14 @@
+{
+  "date": "2026-10-10",
+  "command": "godot --path TerraForest --script res://tests/road_construction_cost.gd -- --world-slot=staged_furnished_1791584856787240500 --ground-cover --trace-loading",
+  "sample_period_ms": 250,
+  "sampled_distinct_kind_and_tile": 63,
+  "sampled_repeated_start_keys": [],
+  "sampled_max_stage_ms": {
+    "receive_ms": 0.813,
+    "publish_ms": 2.888,
+    "schedule_ms": 2.371
+  },
+  "interpretation": "Sampled jobs advance across distinct near and distant terrain tiles; baseline is ongoing world coverage generation, not observed repeated same-key work. Sampling may miss short repeated jobs; does not prove no repeats. Sparse last-stage timers are not worst-case stage profiling.",
+  "limits": "Four unchanged failures retained. After p95 18.792ms; frame pacing root cause remains unproven. No render algorithm change warranted by queue trace. Original source save remains write inhibited."
+}
