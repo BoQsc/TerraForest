@@ -1,0 +1,19 @@
+{
+  "date": "2026-10-10",
+  "command": "godot --path TerraForest --script res://tests/entity_actor_world.gd -- --world-slot=staged_furnished_1791584856787240500 --ground-cover",
+  "checks": 15,
+  "active_bodies": 4,
+  "stored_entities": 100004,
+  "physics_ticks": 180,
+  "supported_actor_ticks": 708,
+  "held_actor_ticks": 0,
+  "source_save": "writes disabled before fixture entities; expected save-blocked teardown",
+  "scope": "Actual saved terrain/structures/forest readiness and collision, native batched rendering, in-memory exact record snapshot round-trip. Fullscreen1920x1080 cap60; screenshot inspected.",
+  "limits": [
+    "Four capsule meshes are placeholders, not character art or animation.",
+    "Fixture owns activation and targets; no main-world actor lifecycle or persistent addon component yet.",
+    "Collision mask excludes other actors; no crowd avoidance or actor-to-actor collision claim.",
+    "100000 distant stationary records are not 100000 simulated characters.",
+    "No timing gate or thermal qualification in this correctness fixture."
+  ]
+}
