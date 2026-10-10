@@ -1,0 +1,3350 @@
+{
+  "failures": 3,
+  "phases": [
+    {
+      "admission_ms": [],
+      "phase": "empty",
+      "rows": [
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.066,
+          "frame_ms": 19.609,
+          "gpu_ms": 4.87799978256226,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.927,
+          "gpu_ms": 4.89499998092651,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.292,
+          "gpu_ms": 4.89499998092651,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 19.294,
+          "gpu_ms": 4.53800010681152,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 14.089,
+          "gpu_ms": 4.55000019073486,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 17.073,
+          "gpu_ms": 4.52199983596802,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.528,
+          "gpu_ms": 4.52299976348877,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.568,
+          "gpu_ms": 4.54199981689453,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.553,
+          "gpu_ms": 4.5479998588562,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.95,
+          "gpu_ms": 4.54300022125244,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 19.174,
+          "gpu_ms": 4.51599979400635,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 13.826,
+          "gpu_ms": 4.53599977493286,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.873,
+          "gpu_ms": 4.55399990081787,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.073,
+          "frame_ms": 16.598,
+          "gpu_ms": 4.52799987792969,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.33,
+          "gpu_ms": 4.54500007629395,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 17.085,
+          "gpu_ms": 4.52899980545044,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 17.851,
+          "gpu_ms": 4.52699995040894,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 17.23,
+          "gpu_ms": 4.5310001373291,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 15.205,
+          "gpu_ms": 4.54699993133545,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.131,
+          "gpu_ms": 4.53299999237061,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.013,
+          "frame_ms": 15.486,
+          "gpu_ms": 4.54500007629395,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 18.021,
+          "gpu_ms": 4.54500007629395,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.058,
+          "frame_ms": 16.629,
+          "gpu_ms": 4.55299997329712,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 17.159,
+          "gpu_ms": 4.53599977493286,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 17.977,
+          "gpu_ms": 4.52199983596802,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 14.927,
+          "gpu_ms": 4.5460000038147,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.066,
+          "frame_ms": 16.715,
+          "gpu_ms": 4.52799987792969,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 17.218,
+          "gpu_ms": 4.54300022125244,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 15.975,
+          "gpu_ms": 4.52600002288818,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.701,
+          "gpu_ms": 4.52699995040894,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.476,
+          "gpu_ms": 4.51999998092651,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 19.208,
+          "gpu_ms": 4.54300022125244,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.016,
+          "frame_ms": 14.46,
+          "gpu_ms": 4.55000019073486,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 16.772,
+          "gpu_ms": 4.53800010681152,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.288,
+          "gpu_ms": 4.52899980545044,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.014,
+          "frame_ms": 15.853,
+          "gpu_ms": 4.52899980545044,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.022,
+          "frame_ms": 17.468,
+          "gpu_ms": 4.53999996185303,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.016,
+          "frame_ms": 16.231,
+          "gpu_ms": 4.54500007629395,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.013,
+          "frame_ms": 17.703,
+          "gpu_ms": 4.56199979782104,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.052,
+          "frame_ms": 15.356,
+          "gpu_ms": 4.54199981689453,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.013,
+          "frame_ms": 16.848,
+          "gpu_ms": 4.5310001373291,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.013,
+          "frame_ms": 16.385,
+          "gpu_ms": 4.53499984741211,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.022,
+          "frame_ms": 17.587,
+          "gpu_ms": 4.54699993133545,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.014,
+          "frame_ms": 15.732,
+          "gpu_ms": 4.53299999237061,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.016,
+          "frame_ms": 17.126,
+          "gpu_ms": 4.55200004577637,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 19.327,
+          "gpu_ms": 4.53999996185303,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 14.486,
+          "gpu_ms": 4.55600023269653,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 17.085,
+          "gpu_ms": 4.5310001373291,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.505,
+          "gpu_ms": 4.54099988937378,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.606,
+          "gpu_ms": 4.54899978637695,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.015,
+          "frame_ms": 16.162,
+          "gpu_ms": 4.52699995040894,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 17.238,
+          "gpu_ms": 4.5310001373291,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.052,
+          "frame_ms": 17.691,
+          "gpu_ms": 4.54500007629395,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.014,
+          "frame_ms": 14.576,
+          "gpu_ms": 4.53499984741211,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.021,
+          "frame_ms": 16.751,
+          "gpu_ms": 4.55399990081787,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 17.547,
+          "gpu_ms": 4.55299997329712,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.574,
+          "gpu_ms": 4.53900003433228,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.691,
+          "gpu_ms": 4.5310001373291,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.593,
+          "gpu_ms": 4.53800010681152,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.028,
+          "frame_ms": 18.741,
+          "gpu_ms": 4.55900001525879,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.024,
+          "frame_ms": 14.808,
+          "gpu_ms": 4.52299976348877,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.405,
+          "gpu_ms": 4.55000019073486,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.693,
+          "gpu_ms": 4.52299976348877,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.024,
+          "frame_ms": 17.041,
+          "gpu_ms": 4.55600023269653,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.353,
+          "gpu_ms": 4.53299999237061,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.067,
+          "frame_ms": 16.612,
+          "gpu_ms": 4.54699993133545,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 18.985,
+          "gpu_ms": 4.53000020980835,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 14.493,
+          "gpu_ms": 4.54500007629395,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.824,
+          "gpu_ms": 4.55900001525879,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.562,
+          "gpu_ms": 4.54300022125244,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.393,
+          "gpu_ms": 4.52299976348877,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.938,
+          "gpu_ms": 4.53000020980835,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.028,
+          "frame_ms": 16.856,
+          "gpu_ms": 4.53700017929077,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 19.381,
+          "gpu_ms": 4.53599977493286,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 13.64,
+          "gpu_ms": 4.54500007629395,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.677,
+          "gpu_ms": 4.53800010681152,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.021,
+          "frame_ms": 16.965,
+          "gpu_ms": 4.53000020980835,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 16.499,
+          "gpu_ms": 4.53000020980835,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.076,
+          "frame_ms": 17.025,
+          "gpu_ms": 4.55000019073486,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.269,
+          "gpu_ms": 4.53999996185303,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 17.67,
+          "gpu_ms": 4.52600002288818,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 15.763,
+          "gpu_ms": 4.54699993133545,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.416,
+          "gpu_ms": 4.52600002288818,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.641,
+          "gpu_ms": 4.5310001373291,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 18.043,
+          "gpu_ms": 4.52799987792969,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 15.193,
+          "gpu_ms": 4.56599998474121,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.013,
+          "frame_ms": 16.128,
+          "gpu_ms": 4.52600002288818,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 19.814,
+          "gpu_ms": 4.52699995040894,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 14.318,
+          "gpu_ms": 4.53999996185303,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.021,
+          "frame_ms": 16.88,
+          "gpu_ms": 4.5479998588562,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.725,
+          "gpu_ms": 4.52899980545044,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.072,
+          "frame_ms": 16.408,
+          "gpu_ms": 4.54500007629395,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 16.404,
+          "gpu_ms": 4.56799983978271,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.028,
+          "frame_ms": 16.817,
+          "gpu_ms": 4.55299997329712,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 19.024,
+          "gpu_ms": 4.52500009536743,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 14.224,
+          "gpu_ms": 4.54400014877319,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.021,
+          "frame_ms": 17.208,
+          "gpu_ms": 4.53299999237061,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.01,
+          "gpu_ms": 4.55000019073486,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.016,
+          "frame_ms": 16.728,
+          "gpu_ms": 4.5460000038147,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 17.222,
+          "gpu_ms": 4.52899980545044,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.302,
+          "gpu_ms": 4.5479998588562,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 18.35,
+          "gpu_ms": 4.53599977493286,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.015,
+          "frame_ms": 14.511,
+          "gpu_ms": 4.53800010681152,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.016,
+          "frame_ms": 16.482,
+          "gpu_ms": 4.52500009536743,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.067,
+          "frame_ms": 17.226,
+          "gpu_ms": 4.5479998588562,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.68,
+          "gpu_ms": 4.5310001373291,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 17.071,
+          "gpu_ms": 4.53999996185303,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.136,
+          "gpu_ms": 4.53900003433228,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.021,
+          "frame_ms": 19.184,
+          "gpu_ms": 4.55299997329712,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 14.303,
+          "gpu_ms": 4.55700016021729,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.014,
+          "frame_ms": 17.151,
+          "gpu_ms": 4.54500007629395,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 15.296,
+          "gpu_ms": 4.66499996185303,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.016,
+          "frame_ms": 17.273,
+          "gpu_ms": 4.72499990463257,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.011,
+          "frame_ms": 15.429,
+          "gpu_ms": 4.7350001335144,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 18.229,
+          "gpu_ms": 4.73000001907349,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 18.447,
+          "gpu_ms": 4.76100015640259,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 14.686,
+          "gpu_ms": 4.73999977111816,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.074,
+          "frame_ms": 16.859,
+          "gpu_ms": 4.73799991607666,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.68,
+          "gpu_ms": 4.73999977111816,
+          "primitives": 1432083.0,
+          "settled": true
+        },
+        {
+          "bodies": 0,
+          "draw_calls": 541.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.442,
+          "gpu_ms": 4.75899982452393,
+          "primitives": 1432083.0,
+          "settled": true
+        }
+      ],
+      "summary": {
+        "draw_calls": {
+          "max": 541.0,
+          "median": 541.0,
+          "p95": 541.0
+        },
+        "fleet_ms": {
+          "max": 0.076,
+          "median": 0.019,
+          "p95": 0.066
+        },
+        "frame_ms": {
+          "max": 19.814,
+          "median": 16.68,
+          "p95": 19.184
+        },
+        "gpu_ms": {
+          "max": 4.89499998092651,
+          "median": 4.54099988937378,
+          "p95": 4.73999977111816
+        },
+        "primitives": {
+          "max": 1432083.0,
+          "median": 1432083.0,
+          "p95": 1432083.0
+        }
+      }
+    },
+    {
+      "admission_ms": [
+        2.328
+      ],
+      "phase": "parked1",
+      "rows": [
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 19.876,
+          "gpu_ms": 4.76900005340576,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.759,
+          "gpu_ms": 4.75500011444092,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.014,
+          "frame_ms": 15.603,
+          "gpu_ms": 4.77699995040894,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 17.187,
+          "gpu_ms": 4.75899982452393,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.015,
+          "frame_ms": 16.603,
+          "gpu_ms": 4.77099990844727,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 17.808,
+          "gpu_ms": 4.7810001373291,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 18.723,
+          "gpu_ms": 4.77199983596802,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 13.955,
+          "gpu_ms": 4.7649998664856,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.823,
+          "gpu_ms": 4.76300001144409,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.704,
+          "gpu_ms": 4.75500011444092,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.442,
+          "gpu_ms": 4.75899982452393,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 17.25,
+          "gpu_ms": 4.79099988937378,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.1,
+          "frame_ms": 16.545,
+          "gpu_ms": 4.76399993896484,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 18.091,
+          "gpu_ms": 4.78299999237061,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 15.13,
+          "gpu_ms": 4.78999996185303,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.043,
+          "frame_ms": 16.427,
+          "gpu_ms": 4.76800012588501,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 17.12,
+          "gpu_ms": 4.75600004196167,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 15.962,
+          "gpu_ms": 4.77799987792969,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.014,
+          "frame_ms": 16.051,
+          "gpu_ms": 4.77600002288818,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 17.73,
+          "gpu_ms": 4.78999996185303,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 18.55,
+          "gpu_ms": 4.77699995040894,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 14.199,
+          "gpu_ms": 4.77400016784668,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 16.91,
+          "gpu_ms": 4.76900005340576,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 15.926,
+          "gpu_ms": 4.78000020980835,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 16.701,
+          "gpu_ms": 4.76700019836426,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.062,
+          "frame_ms": 16.107,
+          "gpu_ms": 4.77199983596802,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 18.387,
+          "gpu_ms": 4.76700019836426,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 18.05,
+          "gpu_ms": 4.76599979400635,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 14.749,
+          "gpu_ms": 4.76000022888184,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.934,
+          "gpu_ms": 4.78999996185303,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.021,
+          "frame_ms": 16.76,
+          "gpu_ms": 4.77899980545044,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.41,
+          "gpu_ms": 4.77199983596802,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 17.106,
+          "gpu_ms": 4.70900011062622,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.021,
+          "frame_ms": 16.653,
+          "gpu_ms": 4.69500017166138,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 18.505,
+          "gpu_ms": 4.70100021362305,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 14.739,
+          "gpu_ms": 4.69999980926514,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.553,
+          "gpu_ms": 4.70100021362305,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.38,
+          "gpu_ms": 4.70699977874756,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.104,
+          "frame_ms": 16.878,
+          "gpu_ms": 4.71500015258789,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.594,
+          "gpu_ms": 4.70699977874756,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.712,
+          "gpu_ms": 4.69799995422363,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 18.65,
+          "gpu_ms": 4.70499992370605,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 14.558,
+          "gpu_ms": 4.69600009918213,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.012,
+          "frame_ms": 15.332,
+          "gpu_ms": 4.69600009918213,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.014,
+          "frame_ms": 17.625,
+          "gpu_ms": 4.67999982833862,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.936,
+          "gpu_ms": 4.69899988174438,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 16.719,
+          "gpu_ms": 4.69299983978271,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.015,
+          "frame_ms": 16.237,
+          "gpu_ms": 4.7189998626709,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.016,
+          "frame_ms": 18.545,
+          "gpu_ms": 4.71199989318848,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.012,
+          "frame_ms": 14.838,
+          "gpu_ms": 4.69299983978271,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.015,
+          "frame_ms": 17.172,
+          "gpu_ms": 4.71999979019165,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.095,
+          "frame_ms": 16.235,
+          "gpu_ms": 4.71400022506714,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.964,
+          "gpu_ms": 4.70800018310547,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.015,
+          "frame_ms": 16.699,
+          "gpu_ms": 4.72200012207031,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.012,
+          "frame_ms": 15.273,
+          "gpu_ms": 4.69899988174438,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 19.987,
+          "gpu_ms": 4.69099998474121,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 14.769,
+          "gpu_ms": 4.72399997711182,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.275,
+          "gpu_ms": 4.69799995422363,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.803,
+          "gpu_ms": 4.68900012969971,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.774,
+          "gpu_ms": 4.71999979019165,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.012,
+          "frame_ms": 15.793,
+          "gpu_ms": 4.68800020217896,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.013,
+          "frame_ms": 16.893,
+          "gpu_ms": 4.70300006866455,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 19.828,
+          "gpu_ms": 4.70900011062622,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 14.542,
+          "gpu_ms": 4.68900012969971,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.098,
+          "frame_ms": 16.763,
+          "gpu_ms": 4.69199991226196,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.565,
+          "gpu_ms": 4.70699977874756,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.649,
+          "gpu_ms": 4.69399976730347,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.691,
+          "gpu_ms": 4.69600009918213,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.022,
+          "frame_ms": 16.449,
+          "gpu_ms": 4.69500017166138,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.03,
+          "frame_ms": 19.004,
+          "gpu_ms": 4.73400020599365,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 14.368,
+          "gpu_ms": 4.69299983978271,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 17.021,
+          "gpu_ms": 4.70800018310547,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.33,
+          "gpu_ms": 4.69799995422363,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.879,
+          "gpu_ms": 4.70900011062622,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.936,
+          "gpu_ms": 4.71199989318848,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 16.505,
+          "gpu_ms": 4.70100021362305,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 18.584,
+          "gpu_ms": 4.71199989318848,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.105,
+          "frame_ms": 16.99,
+          "gpu_ms": 4.71799993515015,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 13.689,
+          "gpu_ms": 4.70100021362305,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 17.265,
+          "gpu_ms": 4.69999980926514,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.021,
+          "frame_ms": 16.924,
+          "gpu_ms": 4.71700000762939,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.074,
+          "gpu_ms": 4.69799995422363,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 16.158,
+          "gpu_ms": 4.70599985122681,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.015,
+          "frame_ms": 19.001,
+          "gpu_ms": 4.71199989318848,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 14.822,
+          "gpu_ms": 4.69399976730347,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.021,
+          "frame_ms": 16.91,
+          "gpu_ms": 4.69500017166138,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.84,
+          "gpu_ms": 4.71400022506714,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.021,
+          "frame_ms": 16.398,
+          "gpu_ms": 4.70599985122681,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.83,
+          "gpu_ms": 4.69399976730347,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.673,
+          "gpu_ms": 4.7020001411438,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.107,
+          "frame_ms": 18.977,
+          "gpu_ms": 4.70300006866455,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 14.161,
+          "gpu_ms": 4.71000003814697,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 17.102,
+          "gpu_ms": 4.7189998626709,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.412,
+          "gpu_ms": 4.71099996566772,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.395,
+          "gpu_ms": 4.70100021362305,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.022,
+          "frame_ms": 17.079,
+          "gpu_ms": 4.71400022506714,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.413,
+          "gpu_ms": 4.70800018310547,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 18.61,
+          "gpu_ms": 4.70900011062622,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 14.859,
+          "gpu_ms": 4.69099998474121,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.418,
+          "gpu_ms": 4.70300006866455,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.015,
+          "frame_ms": 16.098,
+          "gpu_ms": 4.68800020217896,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 17.441,
+          "gpu_ms": 4.73199987411499,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.574,
+          "gpu_ms": 4.70900011062622,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.108,
+          "frame_ms": 16.817,
+          "gpu_ms": 4.69500017166138,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 18.59,
+          "gpu_ms": 4.68800020217896,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 15.861,
+          "gpu_ms": 4.68599987030029,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 15.609,
+          "gpu_ms": 4.69799995422363,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.473,
+          "gpu_ms": 4.69899988174438,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.021,
+          "frame_ms": 16.764,
+          "gpu_ms": 4.70800018310547,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.737,
+          "gpu_ms": 4.69899988174438,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.021,
+          "frame_ms": 17.008,
+          "gpu_ms": 4.71400022506714,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 18.396,
+          "gpu_ms": 4.69899988174438,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 14.315,
+          "gpu_ms": 4.69600009918213,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 17.23,
+          "gpu_ms": 4.72399997711182,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.353,
+          "gpu_ms": 4.69500017166138,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.449,
+          "gpu_ms": 4.69000005722046,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.131,
+          "frame_ms": 17.099,
+          "gpu_ms": 4.71400022506714,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.242,
+          "gpu_ms": 4.71199989318848,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 18.371,
+          "gpu_ms": 4.69000005722046,
+          "primitives": 1521465.0,
+          "settled": true
+        },
+        {
+          "bodies": 1,
+          "draw_calls": 637.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 15.299,
+          "gpu_ms": 4.71400022506714,
+          "primitives": 1521465.0,
+          "settled": true
+        }
+      ],
+      "summary": {
+        "draw_calls": {
+          "max": 637.0,
+          "median": 637.0,
+          "p95": 637.0
+        },
+        "fleet_ms": {
+          "max": 0.131,
+          "median": 0.019,
+          "p95": 0.098
+        },
+        "frame_ms": {
+          "max": 19.987,
+          "median": 16.704,
+          "p95": 18.723
+        },
+        "gpu_ms": {
+          "max": 4.79099988937378,
+          "median": 4.70900011062622,
+          "p95": 4.78000020980835
+        },
+        "primitives": {
+          "max": 1521465.0,
+          "median": 1521465.0,
+          "p95": 1521465.0
+        }
+      }
+    },
+    {
+      "admission_ms": [
+        1.962,
+        1.904,
+        2.245
+      ],
+      "phase": "parked4",
+      "rows": [
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 22.126,
+          "gpu_ms": 4.75099992752075,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 14.785,
+          "gpu_ms": 4.74700021743774,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.87,
+          "gpu_ms": 4.75600004196167,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.279,
+          "gpu_ms": 4.7519998550415,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.483,
+          "gpu_ms": 4.76599979400635,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 17.227,
+          "gpu_ms": 4.76300001144409,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.021,
+          "frame_ms": 16.369,
+          "gpu_ms": 4.74399995803833,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 18.208,
+          "gpu_ms": 4.76900005340576,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 14.706,
+          "gpu_ms": 4.75099992752075,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.994,
+          "gpu_ms": 4.7480001449585,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.702,
+          "gpu_ms": 4.74900007247925,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 17.289,
+          "gpu_ms": 4.76200008392334,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.116,
+          "frame_ms": 16.428,
+          "gpu_ms": 4.76100015640259,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.012,
+          "frame_ms": 14.717,
+          "gpu_ms": 4.75400018692017,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.021,
+          "frame_ms": 20.724,
+          "gpu_ms": 4.77099990844727,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 14.341,
+          "gpu_ms": 4.76999998092651,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.522,
+          "gpu_ms": 4.75600004196167,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.022,
+          "frame_ms": 17.132,
+          "gpu_ms": 4.74100017547607,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.013,
+          "frame_ms": 14.901,
+          "gpu_ms": 4.75600004196167,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 17.473,
+          "gpu_ms": 4.74100017547607,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 18.059,
+          "gpu_ms": 4.75500011444092,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 17.96,
+          "gpu_ms": 4.74700021743774,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 14.774,
+          "gpu_ms": 4.74399995803833,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.021,
+          "frame_ms": 16.726,
+          "gpu_ms": 4.74700021743774,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.262,
+          "gpu_ms": 4.7649998664856,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.118,
+          "frame_ms": 17.169,
+          "gpu_ms": 4.76599979400635,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.613,
+          "gpu_ms": 4.75099992752075,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.977,
+          "gpu_ms": 4.75500011444092,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 18.29,
+          "gpu_ms": 4.76700019836426,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 15.082,
+          "gpu_ms": 4.75099992752075,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.147,
+          "gpu_ms": 4.75600004196167,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.523,
+          "gpu_ms": 4.74499988555908,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.925,
+          "gpu_ms": 4.75699996948242,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.103,
+          "gpu_ms": 4.75,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 17.011,
+          "gpu_ms": 4.77299976348877,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 18.586,
+          "gpu_ms": 4.76100015640259,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 14.644,
+          "gpu_ms": 4.75799989700317,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.601,
+          "gpu_ms": 4.75899982452393,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.111,
+          "frame_ms": 17.269,
+          "gpu_ms": 4.7480001449585,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.237,
+          "gpu_ms": 4.75500011444092,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.701,
+          "gpu_ms": 4.75400018692017,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.667,
+          "gpu_ms": 4.75600004196167,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 17.776,
+          "gpu_ms": 4.7519998550415,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 15.765,
+          "gpu_ms": 4.76900005340576,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 17.04,
+          "gpu_ms": 4.77500009536743,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.373,
+          "gpu_ms": 4.7649998664856,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.289,
+          "gpu_ms": 4.75899982452393,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.06,
+          "frame_ms": 17.341,
+          "gpu_ms": 4.7649998664856,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 14.945,
+          "gpu_ms": 4.76300001144409,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.015,
+          "frame_ms": 19.348,
+          "gpu_ms": 4.76000022888184,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.012,
+          "frame_ms": 13.346,
+          "gpu_ms": 4.7649998664856,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.102,
+          "frame_ms": 18.337,
+          "gpu_ms": 4.76200008392334,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.604,
+          "gpu_ms": 4.79099988937378,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.012,
+          "frame_ms": 15.206,
+          "gpu_ms": 4.76399993896484,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.015,
+          "frame_ms": 19.28,
+          "gpu_ms": 4.7480001449585,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.015,
+          "frame_ms": 15.851,
+          "gpu_ms": 4.76700019836426,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 18.248,
+          "gpu_ms": 4.7519998550415,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 13.929,
+          "gpu_ms": 4.73899984359741,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 17.509,
+          "gpu_ms": 4.75400018692017,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 17.146,
+          "gpu_ms": 5.23899984359741,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.149,
+          "gpu_ms": 4.6729998588562,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.737,
+          "gpu_ms": 4.69799995422363,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.703,
+          "gpu_ms": 4.66900014877319,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 19.065,
+          "gpu_ms": 4.68400001525879,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.114,
+          "frame_ms": 14.24,
+          "gpu_ms": 4.66900014877319,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.8,
+          "gpu_ms": 4.68800020217896,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.391,
+          "gpu_ms": 4.68900012969971,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.767,
+          "gpu_ms": 4.66400003433228,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.022,
+          "frame_ms": 16.947,
+          "gpu_ms": 4.67999982833862,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 17.819,
+          "gpu_ms": 4.69199991226196,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 17.564,
+          "gpu_ms": 4.67199993133545,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 14.364,
+          "gpu_ms": 5.24900007247925,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.713,
+          "gpu_ms": 4.68400001525879,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.706,
+          "gpu_ms": 4.67399978637695,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.755,
+          "gpu_ms": 4.67500019073486,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.353,
+          "gpu_ms": 4.67500019073486,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.816,
+          "gpu_ms": 4.69600009918213,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.121,
+          "frame_ms": 18.773,
+          "gpu_ms": 4.67199993133545,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 14.658,
+          "gpu_ms": 4.67600011825562,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.774,
+          "gpu_ms": 4.68100023269653,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.021,
+          "frame_ms": 16.757,
+          "gpu_ms": 4.67500019073486,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 16.508,
+          "gpu_ms": 5.69700002670288,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.365,
+          "gpu_ms": 4.69500017166138,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.955,
+          "gpu_ms": 4.67399978637695,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 18.318,
+          "gpu_ms": 4.68800020217896,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 14.907,
+          "gpu_ms": 4.67899990081787,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.957,
+          "gpu_ms": 4.66900014877319,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.549,
+          "gpu_ms": 4.68599987030029,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.501,
+          "gpu_ms": 4.68400001525879,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.863,
+          "gpu_ms": 4.68200016021729,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.126,
+          "frame_ms": 16.325,
+          "gpu_ms": 4.6710000038147,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 18.303,
+          "gpu_ms": 4.67799997329712,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 15.014,
+          "gpu_ms": 4.70499992370605,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.531,
+          "gpu_ms": 4.67999982833862,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.021,
+          "frame_ms": 17.022,
+          "gpu_ms": 4.67600011825562,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.366,
+          "gpu_ms": 4.67799997329712,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.865,
+          "gpu_ms": 4.67500019073486,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.761,
+          "gpu_ms": 4.67700004577637,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 18.724,
+          "gpu_ms": 4.69399976730347,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 14.676,
+          "gpu_ms": 4.68499994277954,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.767,
+          "gpu_ms": 4.70100021362305,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.013,
+          "frame_ms": 16.087,
+          "gpu_ms": 4.70800018310547,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.022,
+          "frame_ms": 15.676,
+          "gpu_ms": 4.68499994277954,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.203,
+          "frame_ms": 18.243,
+          "gpu_ms": 4.67199993133545,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 17.224,
+          "gpu_ms": 4.68400001525879,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 18.362,
+          "gpu_ms": 4.67799997329712,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.015,
+          "frame_ms": 14.544,
+          "gpu_ms": 4.67799997329712,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.021,
+          "frame_ms": 16.174,
+          "gpu_ms": 4.68499994277954,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.028,
+          "frame_ms": 15.603,
+          "gpu_ms": 4.68699979782104,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.017,
+          "frame_ms": 17.102,
+          "gpu_ms": 5.26399993896484,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.013,
+          "frame_ms": 17.033,
+          "gpu_ms": 4.67999982833862,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.018,
+          "frame_ms": 16.981,
+          "gpu_ms": 4.67799997329712,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 18.522,
+          "gpu_ms": 4.67199993133545,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 15.062,
+          "gpu_ms": 4.67700004577637,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.8,
+          "gpu_ms": 4.68599987030029,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.02,
+          "frame_ms": 16.217,
+          "gpu_ms": 4.69000005722046,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.121,
+          "frame_ms": 17.198,
+          "gpu_ms": 4.68400001525879,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.021,
+          "frame_ms": 16.282,
+          "gpu_ms": 4.68499994277954,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 16.582,
+          "gpu_ms": 4.68200016021729,
+          "primitives": 1837617.0,
+          "settled": true
+        },
+        {
+          "bodies": 4,
+          "draw_calls": 749.0,
+          "fleet_ms": 0.019,
+          "frame_ms": 18.67,
+          "gpu_ms": 4.67999982833862,
+          "primitives": 1837617.0,
+          "settled": true
+        }
+      ],
+      "summary": {
+        "draw_calls": {
+          "max": 749.0,
+          "median": 749.0,
+          "p95": 749.0
+        },
+        "fleet_ms": {
+          "max": 0.203,
+          "median": 0.02,
+          "p95": 0.114
+        },
+        "frame_ms": {
+          "max": 22.126,
+          "median": 16.726,
+          "p95": 18.724
+        },
+        "gpu_ms": {
+          "max": 5.69700002670288,
+          "median": 4.74399995803833,
+          "p95": 4.77299976348877
+        },
+        "primitives": {
+          "max": 1837617.0,
+          "median": 1837617.0,
+          "p95": 1837617.0
+        }
+      }
+    }
+  ]
+}

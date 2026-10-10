@@ -1,0 +1,14 @@
+{
+  "date": "2026-10-10",
+  "base_commit": "e2ce1e0b88273f20aa75d113c0a4340053d966fd",
+  "command": "godot --path TerraForest --script res://tests/vehicle_fleet_cost.gd -- --world-slot=staged_furnished_1791584856787240500 --ground-cover --vehicle-fleet",
+  "hardware": "NVIDIA GeForce RTX4050 Laptop GPU, Vulkan Forward+, Godot4.7.2, fullscreen1920x1080 cap60",
+  "checks": "13 pass,3 frame gates fail. All360 measured rows report terrain/cover settled.",
+  "result": "Admission max2.328ms; four-car steady update p95.114ms/max.203ms pass declared budgets. Empty/one/four framep95=19.184/18.723/18.724ms all fail18.5ms. Draw calls541/637/749; primitives1432083/1521465/1837617.",
+  "limits": "One sequential stationary view with occlusion. Main-world process disabled and adapter manually called at nominal60Hz; measures parked adapter/render workload, not full gameplay frame behavior, driving, streaming arrivals, GPU upload spikes during admission or thermals. No statistical speedup claim.",
+  "decision": "Keep four full-detail bodies and opt-in. Do not tune already-small parked update costs or increase full-detail capacity. Next address absent distant/overflow representation with bounded visual/collision ownership; preserve global frame gate failure for combined qualification.",
+  "native_sha256": {
+    "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "9850814a00694c9bf2b42a27f96b525ae73e52ac2dc9255e54fa891841ad6db4",
+    "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "f7ee4264003ea309a4633a311b98e6824ab88e21bc18c756622af86fac41d4a9"
+  }
+}

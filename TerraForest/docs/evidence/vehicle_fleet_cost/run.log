@@ -1,0 +1,31 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] World loaded
+[TerrainRewrite] World loaded
+[TerrainRewrite] Lake ready · F5 saves world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+[TerrainRewrite] Lake ready · F5 saves world
+[TerrainRewrite] Lake ready · F5 saves world
+[TerrainRewrite] ERROR: save blocked: snapshot writes explicitly disabled; previous canonical snapshot retained
+[TerrainRewrite] Lake ready · F5 saves world
+PASS world settles before fleet cost comparison
+PASS empty expected resident count
+PASS empty activation call max<=4ms
+PASS empty terrain and cover settled throughout measurement
+PASS empty steady fleet p95<=1ms max<=2ms
+FAIL empty frame p95<=18.5ms
+empty {"draw_calls":{"max":541.0,"median":541.0,"p95":541.0},"fleet_ms":{"max":0.076,"median":0.019,"p95":0.066},"frame_ms":{"max":19.814,"median":16.68,"p95":19.184},"gpu_ms":{"max":4.89499998092651,"median":4.54099988937378,"p95":4.73999977111816},"primitives":{"max":1432083.0,"median":1432083.0,"p95":1432083.0}} admission_max_ms=0.0
+PASS parked1 expected resident count
+PASS parked1 activation call max<=4ms
+PASS parked1 terrain and cover settled throughout measurement
+PASS parked1 steady fleet p95<=1ms max<=2ms
+FAIL parked1 frame p95<=18.5ms
+parked1 {"draw_calls":{"max":637.0,"median":637.0,"p95":637.0},"fleet_ms":{"max":0.131,"median":0.019,"p95":0.098},"frame_ms":{"max":19.987,"median":16.704,"p95":18.723},"gpu_ms":{"max":4.79099988937378,"median":4.70900011062622,"p95":4.78000020980835},"primitives":{"max":1521465.0,"median":1521465.0,"p95":1521465.0}} admission_max_ms=2.328
+PASS parked4 expected resident count
+PASS parked4 activation call max<=4ms
+PASS parked4 terrain and cover settled throughout measurement
+PASS parked4 steady fleet p95<=1ms max<=2ms
+FAIL parked4 frame p95<=18.5ms
+parked4 {"draw_calls":{"max":749.0,"median":749.0,"p95":749.0},"fleet_ms":{"max":0.203,"median":0.02,"p95":0.114},"frame_ms":{"max":22.126,"median":16.726,"p95":18.724},"gpu_ms":{"max":5.69700002670288,"median":4.74399995803833,"p95":4.77299976348877},"primitives":{"max":1837617.0,"median":1837617.0,"p95":1837617.0}} admission_max_ms=2.245
+[TerrainRewrite] ERROR: save blocked: snapshot writes explicitly disabled; previous canonical snapshot retained
