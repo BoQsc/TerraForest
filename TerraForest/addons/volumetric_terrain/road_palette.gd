@@ -94,7 +94,7 @@ func _ready() -> void:
 	clearance.value_changed.connect(func(_value: float): selection_changed.emit())
 	width.value_changed.connect(func(_value: float): selection_changed.emit())
 	depth.value_changed.connect(func(_value: float): selection_changed.emit())
-	for item in [["start","Mark start at aim"],["finish","Mark end at aim"],["level","Level end to start height"],["build","Build asphalt road"],["continue","Continue from completed end"],["clear","Clear selection"]]:
+	for item in [["start","Mark start at aim"],["finish","Mark end at aim"],["level","Level end to start height"],["smooth","Preview smooth terrain road"],["build","Build asphalt road"],["continue","Continue from completed end"],["clear","Clear selection"]]:
 		var button:=Button.new();button.text=item[1];button.focus_mode=Control.FOCUS_NONE;column.add_child(button)
 		if item[0]=="build": build_button=button
 		if item[0]=="continue": continue_button=button;continue_button.disabled=true

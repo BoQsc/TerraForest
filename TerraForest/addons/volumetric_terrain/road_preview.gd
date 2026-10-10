@@ -11,6 +11,7 @@ func _init() -> void:
 	material_override=appearance
 func update_selection(a: Vector3,b: Vector3,half_width: float,depth: float,valid: bool,clearance: float=0.0,shoulder: float=0.0) -> void:
 	outline.clear_surfaces();rebuilds+=1
+	appearance.no_depth_test=false
 	if not a.is_finite() or not b.is_finite(): return
 	appearance.albedo_color=Color("50e6b5") if valid else Color("ff705e")
 	var axis:=Vector3(b.x-a.x,0,b.z-a.z).normalized()
@@ -46,3 +47,17 @@ func _line(a: Vector3,b: Vector3) -> void:
 	outline.surface_add_vertex(a);outline.surface_add_vertex(b)
 func clear() -> void:
 	outline.clear_surfaces()
+
+func update_curve(points: PackedVector3Array,half_width: float) -> void:
+	outline.clear_surfaces();rebuilds+=1
+	# Authoring overlay must remain visible where the proposed cut is underground.
+	appearance.no_depth_test=true
+	if points.size()<2:return
+	appearance.albedo_color=Color("50e6b5")
+	var axis:=points[-1]-points[0];axis.y=0;axis=axis.normalized()
+	var side:=Vector3(-axis.z,0,axis.x)*half_width
+	outline.surface_begin(Mesh.PRIMITIVE_LINES)
+	for i in points.size()-1:
+		_line(points[i],points[i+1]);_line(points[i]+side,points[i+1]+side);_line(points[i]-side,points[i+1]-side)
+	_line(points[0]-side,points[0]+side);_line(points[-1]-side,points[-1]+side)
+	outline.surface_end()

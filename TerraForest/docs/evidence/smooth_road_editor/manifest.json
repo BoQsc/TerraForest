@@ -1,0 +1,26 @@
+{
+  "date": "2026-10-10",
+  "source_slot": "staged_furnished_1791584856787240500",
+  "source_writes": "disabled before edits; teardown save-blocked message expected",
+  "tests": {
+    "smooth_road_editor": 11,
+    "road_continuation": 16,
+    "road_editor": 28
+  },
+  "command": "godot --path TerraForest --script res://tests/smooth_road_editor.gd -- --world-slot=staged_furnished_1791584856787240500 --ground-cover",
+  "limits": [
+    "Construction is sequential, not route-atomic; completed sections remain after interruption.",
+    "Fit controls are not persisted; resulting terrain and street entrances use existing world save.",
+    "Mid-fit/mid-build reload and teardown race coverage remains open.",
+    "Built screenshot is immediate publication, not settled vegetation or rendering readiness; HUD reads 14 FPS during construction. No performance pass is claimed.",
+    "Smooth roads use registered street-end controls; ordinary Continue control is not connected to smooth completion."
+  ],
+  "sha256": {
+    "built.png": "fef29d4c34a1f7cc66281e29d01c433e1d428571522403487955a00159875224",
+    "preview.png": "676ec137a036c0dc34225f6f7aad9f740a3709b2faa45145cb13eda38bd7a076",
+    "result.json": "05d6eb9ce8cc73082be07129670e0d3122f40c91826084e57e6bff9bfcdf29d5",
+    "road_continuation.log": "da3fa5e64a43677fd8c4da191a7daf85b999715008c02866d619b09d5d17b21c",
+    "road_editor.log": "8c2a63872e6ee28ce303a4c00731f0d5379f0c566e37b6070d4768d4485f57a4",
+    "smooth_road_editor.log": "97bcdbca1936b68594d9908dd5667318438cc97c03945bad01a313dce58692fa"
+  }
+}

@@ -33,6 +33,7 @@ var model_tool = preload("res://addons/structures/model_tool.gd").new()
 var structure_mode := false
 var construction_palette=preload("res://addons/structures/construction_palette.gd").new()
 var road_palette=preload("res://addons/volumetric_terrain/road_palette.gd").new()
+var road_authoring=preload("res://addons/volumetric_terrain/road_authoring.gd").new()
 var road_preview=preload("res://addons/volumetric_terrain/road_preview.gd").new()
 var structure_shape := 1
 var structure_material := 0
@@ -167,6 +168,8 @@ func _ready() -> void:
 	add_child(road_palette)
 	road_palette.action_requested.connect(_road_action)
 	terrain.add_child(road_preview)
+	road_authoring.world=self;add_child(road_authoring)
+	terrain.surface_batch_ready.connect(road_authoring.receive)
 	terrain.add_child(site_preview)
 	road_palette.selection_changed.connect(_update_road_preview)
 	construction_palette.configure(structure_prefabs)
@@ -793,6 +796,7 @@ func _place_material_supply(item: int) -> void:
 	_show_lake_notice("%s supply placed · %s" % [pickups.ITEMS[item],"temporary world" if temporary_world else "F5 saves world"])
 
 func _update_road_preview() -> void:
+	road_authoring.cancel("Road selection changed; prepare the smooth preview again.")
 	if not road_palette.has_start and not road_palette.has_finish:
 		road_preview.clear();return
 	var a: Vector3=road_palette.start if road_palette.has_start else road_palette.finish
@@ -801,6 +805,9 @@ func _update_road_preview() -> void:
 
 func _road_action(action: String) -> void:
 	if loading_active or shutdown_requested or benchmark_enabled or not app_focused or not terrain.world_ready or player_hud.inventory_open or structure_mode or model_tool.active: return
+	if action=="smooth":road_authoring.prepare();return
+	if action=="build" and road_authoring.start_build():return
+	if not road_authoring.phase.is_empty() and action=="build":return
 	if action=="clear": road_palette.clear();return
 	if action=="level": road_palette.level_selection();return
 	if action=="continue": road_palette.continue_selection(terrain);return
@@ -821,19 +828,22 @@ func _road_action(action: String) -> void:
 	var extent: float=road_palette.width.value+road_palette.shoulder_width()
 	var lo:=a.min(b)-Vector3(extent,road_palette.depth.value,extent)
 	var hi:=a.max(b)+Vector3(extent,road_palette.clearance.value,extent)
-	var protection:=AABB(terrain.to_local(player.global_position)-Vector3(0.4,0,0.4),Vector3(0.8,1.8,0.8))
-	if AABB(lo,hi-lo).grow(0.5).intersects(protection): road_palette.status.text="Move clear of the road before building.";return
-	if world_vehicle.overlaps_edit(terrain.global_transform*AABB(lo,hi-lo).grow(0.5)):
-		road_palette.status.text="Move the vehicle clear before grading or paving.";return
-	var transforms: Array[Transform3D]=[terrain.global_transform]
-	var occupied: PackedByteArray=structures.overlap_mask(transforms,AABB(lo,hi-lo).grow(0.5))
-	if occupied.size()!=1 or occupied[0]!=0:
-		road_palette.status.text="Road bounds overlap a structure or unavailable building region. Choose a clear route.";return
+	var protection_error:=_road_protection_error(AABB(lo,hi-lo))
+	if not protection_error.is_empty():road_palette.status.text=protection_error;return
 	var material: int=road_palette.material_id()
 	var accepted: bool=terrain.construct_road_bed(a,b,road_palette.width.value,road_palette.depth.value,road_palette.clearance.value) if material==4 else terrain.construct_graded_bed(a,b,road_palette.width.value,road_palette.depth.value,road_palette.clearance.value,material,road_palette.shoulder_width())
 	var kind: String="Road" if material==4 else "Foundation"
 	if accepted: road_palette.track_submission(terrain)
 	road_palette.status.text=("%s submitted · %s. Terrain grading has no block undo." % [kind,"temporary world" if temporary_world else "F5 saves world"]) if accepted else "%s not accepted; wait for terrain work to finish." % kind
+
+func _road_protection_error(bounds: AABB) -> String:
+	var protection:=AABB(terrain.to_local(player.global_position)-Vector3(0.4,0,0.4),Vector3(0.8,1.8,0.8))
+	if bounds.grow(0.5).intersects(protection):return "Move clear of the road before building."
+	if world_vehicle.overlaps_edit(terrain.global_transform*bounds.grow(0.5)):return "Move the vehicle clear before grading or paving."
+	var transforms: Array[Transform3D]=[terrain.global_transform]
+	var occupied: PackedByteArray=structures.overlap_mask(transforms,bounds.grow(0.5))
+	if occupied.size()!=1 or occupied[0]!=0:return "Road bounds overlap a structure or unavailable building region."
+	return ""
 
 func _block_player_clear(target: Vector3i) -> bool:
 	return not _brush_overlaps_player(Vector3(target)+Vector3.ONE*0.5,0.87)
