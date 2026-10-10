@@ -84,6 +84,12 @@ void collect(Vector3i key,Vector3 focus,bool collision,State &state,Dictionary &
     }
     if(divide)for(auto child:children(key))collect(child,focus,collision,state,split,wanted,requests,target,travel);
 }
+bool visible_descendant(Vector3i key,const State &state) {
+    if(key.z<=16)return false;
+    for(auto child:children(key))
+        if((state.flags[index_for(child)]&VISIBLE)||visible_descendant(child,state))return true;
+    return false;
+}
 bool cover(Vector3i key,const State &state,std::vector<Vector3i> &out,bool available=false) {
     if(key.x>=2000||key.y>=2000)return true;
     auto flag=state.flags[index_for(key)];size_t start=out.size();
@@ -93,6 +99,10 @@ bool cover(Vector3i key,const State &state,std::vector<Vector3i> &out,bool avail
         for(auto child:children(key))if(!cover(child,state,out,available)){complete=false;if(!available)break;}
         if(complete)return true;
         if(!available)out.resize(start);
+        // A late coarse arrival must not downgrade an already published fine
+        // cut while refinement is still requested. Keep its disjoint partial
+        // descendants until complete replacement coverage exists.
+        else if(!(flag&VISIBLE)&&visible_descendant(key,state))return false;
     }
     // Keep dirty live collision/visuals until their edit transaction publishes;
     // never resurrect a dirty hidden parent while its replacement is pending.

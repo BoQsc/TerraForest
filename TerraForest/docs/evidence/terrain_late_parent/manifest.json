@@ -1,0 +1,11 @@
+{
+  "change": "During requested refinement, retain published descendants when incomplete child coverage would otherwise be replaced by a newly arrived hidden coarse parent. Completed replacement and intentional distance coarsening remain allowed.",
+  "regression": "Late-parent fixture fails on previous binary; fixed debug/release pass 184 checks including 341 shuffled arrivals preserving fine coverage and disjoint surfaces.",
+  "driving": "Three separate rendered 245 m crossings pass the unchanged zero-hold gate with initially unready destination, at up to 131.04 km/h.",
+  "tradeoff": "An incomplete region may retain its previous partial coverage rather than exposing a newly arrived coarse parent; missing surrounding coverage must finish through normal scheduling. No new overlap or loss of existing coverage in the arrival regression.",
+  "limits": "Isolated terrain/vehicle fixture, excludes forest/buildings/main-world lifecycle, sustained performance and thermal qualification. Next is combined-world travel.",
+  "binary_hashes": {
+    "terrain_core.windows.template_release.x86_64.dll": "bca37c45dc8bd70c677f4bb84c9e1227cccbc7e8d56b031cf9df3684eb15a359",
+    "terrain_core.windows.x86_64.dll": "866fdf1013a3ef1f14eaf20d21ee8a7ba79fd3e8fa35492829162c8e6a4bf335"
+  }
+}

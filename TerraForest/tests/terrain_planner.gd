@@ -99,6 +99,12 @@ func check_available() -> void:
 	check(result["keys"]==[target],"dirty hidden parent cannot suppress or replace current local geometry")
 	tiles[target].dirty=true
 	check(planner.coverage_available(tiles,split,[])["keys"].is_empty(),"dirty hidden local geometry is not exposed")
+	var retained:=Vector3i(384,400,16)
+	var late_parent:=Vector3i(384,384,64)
+	var late_tiles: Dictionary={retained:{"dirty":false},late_parent:{"dirty":false}}
+	var late_split: Dictionary={Vector3i(256,256,256):true,Vector3i(384,384,128):true,late_parent:true,Vector3i(384,384,32):true}
+	var late: Dictionary=planner.coverage_available(late_tiles,late_split,[retained])
+	check(late["keys"].has(retained) and not late["keys"].has(late_parent),"late coarse parent cannot withdraw active fine collision while refinement is requested")
 	# Arrival order adversary: adding clean meshes must never remove coverage
 	# already visible, nor select overlapping parents and descendants.
 	tiles.clear();split.clear()
@@ -116,6 +122,7 @@ func check_available() -> void:
 	var visible: Array=[]
 	var previous: Dictionary={}
 	var monotonic:=true
+	var fine_monotonic:=true
 	var disjoint:=true
 	for key: Vector3i in arrivals:
 		tiles[key]={"dirty":false}
@@ -127,9 +134,12 @@ func check_available() -> void:
 				for x in range(owner.x,owner.x+owner.z,16):
 					var cell:=Vector2i(x,z)
 					disjoint=disjoint and not cells.has(cell)
-					cells[cell]=true
-		for cell in previous: monotonic=monotonic and cells.has(cell)
+					cells[cell]=owner.z
+		for cell in previous:
+			monotonic=monotonic and cells.has(cell)
+			if previous[cell]<=32:fine_monotonic=fine_monotonic and cells.get(cell,256)<=32
 		previous=cells
+	check(fine_monotonic,"341 shuffled arrivals retain fine collision coverage while refining")
 	check(monotonic,"341 shuffled arrivals never remove previously covered space")
 	check(disjoint,"341 shuffled arrivals never overlap parent and child surfaces")
 	check(result.root_coverage==1 and visible.size()==256,"completed root converges to full fine coverage")

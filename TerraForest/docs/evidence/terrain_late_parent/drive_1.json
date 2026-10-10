@@ -1,0 +1,186 @@
+{
+  "builds_before": 35,
+  "end": "(400.0, 180.6239, 650.0154)",
+  "held_ticks": 0,
+  "holds": [],
+  "initial_wait_ticks": 0,
+  "max_hold_ticks": 0,
+  "max_speed_kph": 131.038233947754,
+  "passed": true,
+  "rows": [
+    {
+      "position": "(400.0, 180.4625, 404.9816)",
+      "queued": 4,
+      "tick": 0,
+      "waiting": false,
+      "wheels": 4,
+      "worker": "mesh"
+    },
+    {
+      "position": "(400.0, 180.5807, 406.0932)",
+      "queued": 0,
+      "tick": 60,
+      "waiting": false,
+      "wheels": 4,
+      "worker": "mesh"
+    },
+    {
+      "position": "(400.0, 180.6257, 409.1121)",
+      "queued": 4,
+      "tick": 120,
+      "waiting": false,
+      "wheels": 4,
+      "worker": "mesh"
+    },
+    {
+      "position": "(400.0, 180.6257, 413.8003)",
+      "queued": 0,
+      "tick": 180,
+      "waiting": false,
+      "wheels": 4,
+      "worker": "idle"
+    },
+    {
+      "position": "(400.0, 180.6256, 419.9712)",
+      "queued": 4,
+      "tick": 240,
+      "waiting": false,
+      "wheels": 4,
+      "worker": "mesh"
+    },
+    {
+      "position": "(400.0, 180.6255, 427.4624)",
+      "queued": 4,
+      "tick": 300,
+      "waiting": false,
+      "wheels": 4,
+      "worker": "mesh"
+    },
+    {
+      "position": "(400.0, 180.6254, 436.1367)",
+      "queued": 4,
+      "tick": 360,
+      "waiting": false,
+      "wheels": 4,
+      "worker": "mesh"
+    },
+    {
+      "position": "(400.0, 180.6253, 445.8774)",
+      "queued": 4,
+      "tick": 420,
+      "waiting": false,
+      "wheels": 4,
+      "worker": "mesh"
+    },
+    {
+      "position": "(400.0, 180.6252, 456.5837)",
+      "queued": 4,
+      "tick": 480,
+      "waiting": false,
+      "wheels": 4,
+      "worker": "mesh"
+    },
+    {
+      "position": "(400.0, 180.625, 468.1688)",
+      "queued": 4,
+      "tick": 540,
+      "waiting": false,
+      "wheels": 4,
+      "worker": "mesh"
+    },
+    {
+      "position": "(400.0, 180.6249, 480.5565)",
+      "queued": 4,
+      "tick": 600,
+      "waiting": false,
+      "wheels": 4,
+      "worker": "mesh"
+    },
+    {
+      "position": "(400.0, 180.6248, 493.6808)",
+      "queued": 1,
+      "tick": 660,
+      "waiting": false,
+      "wheels": 4,
+      "worker": "mesh"
+    },
+    {
+      "position": "(400.0, 180.6247, 507.4827)",
+      "queued": 3,
+      "tick": 720,
+      "waiting": false,
+      "wheels": 4,
+      "worker": "mesh"
+    },
+    {
+      "position": "(400.0, 180.6246, 521.9103)",
+      "queued": 4,
+      "tick": 780,
+      "waiting": false,
+      "wheels": 4,
+      "worker": "mesh"
+    },
+    {
+      "position": "(400.0, 180.6245, 536.9172)",
+      "queued": 0,
+      "tick": 840,
+      "waiting": false,
+      "wheels": 4,
+      "worker": "idle"
+    },
+    {
+      "position": "(400.0, 180.6244, 552.4622)",
+      "queued": 3,
+      "tick": 900,
+      "waiting": false,
+      "wheels": 4,
+      "worker": "mesh"
+    },
+    {
+      "position": "(400.0, 180.6243, 568.508)",
+      "queued": 3,
+      "tick": 960,
+      "waiting": false,
+      "wheels": 4,
+      "worker": "mesh"
+    },
+    {
+      "position": "(400.0, 180.6242, 585.0209)",
+      "queued": 2,
+      "tick": 1020,
+      "waiting": false,
+      "wheels": 4,
+      "worker": "mesh"
+    },
+    {
+      "position": "(400.0, 180.6241, 601.9711)",
+      "queued": 4,
+      "tick": 1080,
+      "waiting": false,
+      "wheels": 4,
+      "worker": "mesh"
+    },
+    {
+      "position": "(400.0, 180.6241, 619.3307)",
+      "queued": 4,
+      "tick": 1140,
+      "waiting": false,
+      "wheels": 4,
+      "worker": "mesh"
+    },
+    {
+      "position": "(400.0, 180.624, 637.075)",
+      "queued": 4,
+      "tick": 1200,
+      "waiting": false,
+      "wheels": 4,
+      "worker": "mesh"
+    }
+  ],
+  "speed_kph": 131.038233947754,
+  "start": "(400.0, 180.4591, 404.9811)",
+  "supported_ticks": 1244,
+  "target_initially_ready": false,
+  "ticks": 1244,
+  "worker_builds": 350
+}
