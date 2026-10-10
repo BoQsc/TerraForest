@@ -82,6 +82,6 @@ func run() -> void:
 	var id: int=session.car.get_instance_id()
 	check(not session.restore_snapshot(PackedByteArray([0])) and session.car.get_instance_id()==id,"invalid restore leaves live vehicle untouched")
 	session.car.position.x=-1
-	check(not session.storage.validate_snapshot(session.capture_snapshot()),"invalid live pose rejects save instead of removing vehicle")
+	check(not session.fleet.validate_snapshot(session.capture_snapshot()),"invalid live pose rejects save instead of removing vehicle")
 	check(session.restore_snapshot(PackedByteArray()) and session.car==null,"absent section removes old vehicle")
 	world.free();quit(0 if failures==0 else 1)

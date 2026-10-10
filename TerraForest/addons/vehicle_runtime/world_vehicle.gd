@@ -9,6 +9,8 @@ var _player_mask:=0
 var _physics_ticks:=60
 var _camera_follow: RefCounted
 var storage: RefCounted
+var fleet: RefCounted
+var car_identity:=0
 var _world: Node
 const VEHICLE_SCENE_PATH: String="res://vehicle_demo/scenes/car.tscn"
 var _vehicle_scene: PackedScene
@@ -35,25 +37,33 @@ func prepare(world: Node,persistence: RefCounted) -> bool:
 	request_scene()
 	GDExtensionManager.load_extension("res://addons/vehicle_runtime/vehicle_runtime.gdextension")
 	storage=ClassDB.instantiate("NativeVehicleStorage");_world=world
-	return persistence.register_component("vehicles",capture_snapshot,restore_snapshot,storage,PackedByteArray())
+	fleet=ClassDB.instantiate("NativeVehicleFleet")
+	return persistence.register_component("vehicles",capture_snapshot,restore_snapshot,fleet,PackedByteArray())
 func capture_snapshot() -> PackedByteArray:
-	if not is_instance_valid(car): return PackedByteArray()
-	var data: PackedByteArray=storage.encode(car.global_transform)
-	# Invalid live state must reject the compound save, not silently delete a car.
-	return PackedByteArray([0]) if data.is_empty() else data
+	if is_instance_valid(car):
+		if car_identity==0:car_identity=fleet.spawn(car.global_transform)
+		if car_identity==0 or not fleet.set_pose(car_identity,car.global_transform):return PackedByteArray([0])
+	var info: Dictionary=fleet.statistics()
+	if info.records==0 and info.next_identity==1:return PackedByteArray()
+	return fleet.capture_storage_snapshot()
 func restore_snapshot(data: PackedByteArray) -> bool:
-	var decoded: Dictionary=storage.decode(data)
-	if not decoded.ok: return false
+	var decoded: Dictionary=storage.decode_fleet(data)
+	if not decoded.ok:return false
+	if not fleet.restore_storage_snapshot(data):return false
 	if driving:
 		_world.player.collision_layer=_player_layer;_world.player.collision_mask=_player_mask
 		_world.camera.transform=_camera_local;Engine.physics_ticks_per_second=_physics_ticks
 		driving=false
-	if decoded.present and is_instance_valid(car):
-		car.restore_parked(decoded.pose)
+	# Preserve every parked record while the scene still has one live slot.
+	# Multiple-body activation will replace this explicit first-record policy.
+	var present: bool=not decoded.records.is_empty()
+	car_identity=decoded.records[0].identity if present else 0
+	if present and is_instance_valid(car):
+		car.restore_parked(decoded.records[0].pose)
 		return true
-	if is_instance_valid(car): car.free()
+	if is_instance_valid(car):car.free()
 	car=null
-	if decoded.present: return _install_vehicle(_world,decoded.pose)
+	if present:return _install_vehicle(_world,decoded.records[0].pose)
 	return true
 func _install_vehicle(world: Node,pose: Transform3D) -> bool:
 	# Snapshot restoration is synchronous by contract; placement checks readiness
@@ -71,6 +81,7 @@ func _install_vehicle(world: Node,pose: Transform3D) -> bool:
 	var attached:=Time.get_ticks_usec() if profile_install else 0
 	for wheel in car.wheel_rays: wheel.collision_mask=3
 	car.set_controls_enabled(false);car.freeze=true;car.set_physics_process(false)
+	if car_identity==0:car_identity=fleet.spawn(pose)
 	car.bind_streamed_world(world.terrain,world.structures)
 	if "vegetation" in world: car.streaming.bind_vegetation(world.vegetation)
 	_camera_follow=ClassDB.instantiate("NativeVehicleCamera")
@@ -87,12 +98,12 @@ func overlaps_edit(world_bounds: AABB) -> bool:
 	return not bounds.position.is_finite() or bounds.intersects(world_bounds)
 func spawn(world: Node) -> String:
 	if not can_interact(): return "Vehicle interaction unavailable"
-	if is_instance_valid(car): return "Vehicle already placed · E nearby to enter"
+	if is_instance_valid(car): return "Vehicle already placed Ā· E nearby to enter"
 	request_scene()
 	if not scene_ready():
 		if not _scene_requested or ResourceLoader.load_threaded_get_status(VEHICLE_SCENE_PATH)==ResourceLoader.THREAD_LOAD_FAILED:
 			return "Vehicle resource could not be loaded"
-		return "Vehicle is loading · press V again shortly"
+		return "Vehicle is loading Ā· press V again shortly"
 	var from: Vector3=world.camera.global_position
 	var ray:=PhysicsRayQueryParameters3D.create(from,from-world.camera.global_basis.z*12,3,[world.player.get_rid()])
 	var hit: Dictionary=world.get_world_3d().direct_space_state.intersect_ray(ray)
@@ -108,7 +119,7 @@ func spawn(world: Node) -> String:
 	if bounds.has_point(world.player.global_position): return "Place vehicle farther from the player"
 	if not world.get_world_3d().direct_space_state.intersect_shape(query,1).is_empty(): return "Vehicle space is obstructed"
 	if not _install_vehicle(world,Transform3D(heading,at)): return "Vehicle resource could not be loaded"
-	return "Vehicle placed · E nearby to enter · F5 saves world"
+	return "Vehicle placed Ā· E nearby to enter Ā· F5 saves world"
 func enter(world: Node) -> bool:
 	if not can_interact(): return false
 	if driving or not is_instance_valid(car) or world.player.global_position.distance_to(car.position)>3.5: return false
@@ -149,7 +160,7 @@ func exit_vehicle(world: Node) -> String:
 	world.camera.transform=_camera_local;driving=false
 	Engine.physics_ticks_per_second=_physics_ticks
 	world.terrain.focus=feet;world.terrain.travel_velocity=Vector3.ZERO
-	return "On foot · E nearby to enter vehicle"
+	return "On foot Ā· E nearby to enter vehicle"
 func _exit_tree() -> void:
 	# Every accepted threaded request needs a matching get, even if the player
 	# never places a vehicle. On early exit this can wait for the pending load.

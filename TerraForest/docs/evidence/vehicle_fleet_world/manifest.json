@@ -1,0 +1,13 @@
+{
+  "date": "2026-10-10",
+  "slot": "fleet_world_test_1791616694425294700",
+  "checks": {
+    "world_vehicle_fleet_regression.log": 23,
+    "fleet_world_create.log": 9,
+    "fleet_world_reopen.log": 7
+  },
+  "command": "godot --path TerraForest --script res://tests/vehicle_fleet_world.gd -- --world-slot=NEW_fleet_world_test_SLOT; repeat with --reopen-fleet using same slot",
+  "result": "Real compound save and fresh-process load preserve both exact vehicle records; one live body reuses on reload. Legacy single car migrates to identity1; uninstantiated identity2 retained.",
+  "limits": "Scene still exposes one live vehicle (lowest saved identity). Multiple visible parked cars and driver-pinned activation are next. Capture/restore still synchronous bulk; large fleets are not qualified. Test uses new disposable world, teardown writes inhibited.",
+  "compatibility": "Existing v1 saves read. Subsequent vehicle-containing saves use v2 and cannot be loaded by older single-car-only validators."
+}
