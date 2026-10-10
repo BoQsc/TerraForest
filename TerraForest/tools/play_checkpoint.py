@@ -47,6 +47,10 @@ def main():
                    notes='60 FPS is the target/cap, not a measured guarantee; no hardware or power settings are changed.')
     if options.dry_run:
         print(json.dumps(details, indent=2));return 0
+    return record_and_run(details, folder, LABEL, options.smoke)
+
+def record_and_run(details, folder, label, smoke=False):
+    command = details['command']
     folder.mkdir(parents=True)
     details.update(revision_metadata())
     details['native_sha256'] = {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest()
@@ -54,7 +58,7 @@ def main():
     details['command'] = command
     manifest = folder / 'launch.json'
     manifest.write_text(json.dumps(details, indent=2)+'\n', encoding='utf-8')
-    print(f'{LABEL}: 1920x1080 fullscreen, VSync, 60 FPS cap.', flush=True)
+    print(f'{label}: 1920x1080 fullscreen, VSync, 60 FPS cap.', flush=True)
     print(f'Saved-world slot: {details["slot"]}. F5 saves; F9 reloads.', flush=True)
     print(f'Log and launch record: {folder}', flush=True)
     with (folder / 'console.log').open('w', encoding='utf-8') as output:
@@ -63,10 +67,10 @@ def main():
         details['pid'] = process.pid
         manifest.write_text(json.dumps(details, indent=2)+'\n', encoding='utf-8')
         try:
-            code = process.wait(timeout=90 if options.smoke else None)
+            code = process.wait(timeout=90 if smoke else None)
         except subprocess.TimeoutExpired:
             process.kill();process.wait();code = 124
-    if options.smoke and code == 0:
+    if smoke and code == 0:
         log = (folder / 'console.log').read_text(encoding='utf-8', errors='replace')
         if re.search(r'(?m)^(?:SCRIPT ERROR|ERROR:|FAIL |WARNING: ObjectDB instances leaked)', log) or 'PASS PLAYTEST_STARTUP ' not in log:
             code = 1

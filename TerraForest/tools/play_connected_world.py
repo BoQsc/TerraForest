@@ -1,12 +1,13 @@
 # SPDX-License-Identifier: 0BSD
 """Open the verified local connected-settlement save without regenerating it."""
 import argparse
+import datetime
 import json
 import os
 from pathlib import Path
 import re
-import subprocess
 from run import ROOT, parse_args, launch_details
+from play_checkpoint import record_and_run
 
 
 def main():
@@ -43,10 +44,16 @@ def main():
         launch_args += ["--actors"]
     config, extra = parse_args(launch_args)
     details = launch_details(config, extra)
+    stamp = datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')
+    folder = ROOT / 'reports' / 'playtests' / stamp
+    details['command'][1:1] = ['--log-file', str(folder / 'engine.log')]
+    details.update(label='Saved world checkpoint', utc=stamp, checkpoint_manifest=relative,
+                   actors_enabled=args.actors, ground_cover_enabled=args.furnished or args.generated_furnished,
+                   notes='Existing local save is edited in place. 60 FPS is a target, not qualification.')
     if args.dry_run:
         print(json.dumps(details, indent=2))
         return 0
-    return subprocess.call(details["command"])
+    return record_and_run(details, folder, 'Saved world checkpoint')
 
 
 if __name__ == "__main__":

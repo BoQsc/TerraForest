@@ -1,6 +1,6 @@
 # TerraForest delivery plan and coverage register
 
-Updated 2026-10-09. TerraForest is an integrated development world, not a completed game-ready world engine. The next objective is first-round coverage of the original scope, followed by combined scale and endurance qualification. A coherent playable area demonstrates integration; it does not replace missing systems or reduce the large-world goal.
+Updated 2026-10-10. TerraForest is an integrated development world, not a completed game-ready world engine. The next objective is first-round coverage of the original scope, followed by combined scale and endurance qualification. A coherent playable area demonstrates integration; it does not replace missing systems or reduce the large-world goal.
 
 This is the current delivery-order and coverage reference. [Delivery history](DELIVERY_STATUS.md) records evidence at the time of each change; older entries are not current status. [World systems design](WORLD_SYSTEMS_DESIGN.md) retains the broader architecture contract. A documentation update alone closes no implementation gate.
 
@@ -80,6 +80,12 @@ Every milestone report lists coverage gates closed, playable changes, evidence a
 Hardware changes establish new baselines. Measurements must record build/binary identity, hardware and presentation settings; headless correctness, rendered performance and sustained thermals remain separate evidence. Preserve the 0BSD project license and dependency notices. Do not replace a working build or retag a checkpoint as good without matching evidence.
 
 ## Next concrete work
+
+Current combined human checkpoint: [Play Actors.cmd](../Play%20Actors.cmd) opens the generated furnished settlement with interactive ground cover and native actors. [Current route, save ownership and explicit limits](CONNECTED_WORLD_CHECKPOINT.md#current-combined-actor-and-vegetation-checkpoint--2026-10-10). Saved-world launchers now capture build identity and logs. Human acceptance is pending; no automatic test substitutes for it.
+
+Actor collision investigation has reached its bounded disposition: measured budgets remain failed, and four modest terrain collision pieces do not justify a wholesale terrain rewrite. Preserve these failures for M3/M4 and ordinary-play blockers. Continue first-round content/gameplay coverage; animation, navigation, fair activation and multiple-vehicle simulation remain missing. M2 remains open and no scope row is certified complete.
+
+### Earlier checkpoint and integration disposition
 
 The current checkpoint is [Play Human Checkpoint.cmd](../Play%20Human%20Checkpoint.cmd), with [route and save-slot instructions](HUMAN_PLAYTEST_20261009.md). The launcher fix is commit `4ec4a08`; the older `playtest/human-20261009` tag does not include that fix.
 
