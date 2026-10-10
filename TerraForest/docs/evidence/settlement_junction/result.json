@@ -1,0 +1,213 @@
+{
+  "failures": 0,
+  "held_ticks": 0,
+  "max_deviation": 2.9073486328125,
+  "max_speed_kph": 15.2288034439087,
+  "rows": [
+    {
+      "angle": 0.0000000754987965478902,
+      "position": "(804.9992, 47.62358, 1310.0)",
+      "speed_kph": 0.26954502761364,
+      "waiting": false,
+      "waypoint": 0
+    },
+    {
+      "angle": 0.0000000754969420313499,
+      "position": "(805.2944, 47.62577, 1310.0)",
+      "speed_kph": 7.89872274398804,
+      "waiting": false,
+      "waypoint": 0
+    },
+    {
+      "angle": 0.0000000754975317818206,
+      "position": "(806.1001, 47.62582, 1310.0)",
+      "speed_kph": 15.017699432373,
+      "waiting": false,
+      "waypoint": 0
+    },
+    {
+      "angle": 0.0000000754975317818206,
+      "position": "(807.1473, 47.62582, 1310.0)",
+      "speed_kph": 15.0758411407471,
+      "waiting": false,
+      "waypoint": 0
+    },
+    {
+      "angle": 0.0000000754975317818206,
+      "position": "(808.1943, 47.62582, 1310.0)",
+      "speed_kph": 15.1340103149414,
+      "waiting": false,
+      "waypoint": 0
+    },
+    {
+      "angle": 0.0000000754975317818206,
+      "position": "(809.2408, 47.62582, 1310.0)",
+      "speed_kph": 15.1922086715698,
+      "waiting": false,
+      "waypoint": 0
+    },
+    {
+      "angle": 0.0000000754975317818206,
+      "position": "(810.2876, 47.62582, 1310.0)",
+      "speed_kph": 14.977702331543,
+      "waiting": false,
+      "waypoint": 0
+    },
+    {
+      "angle": 0.0000000754975317818206,
+      "position": "(811.3347, 47.62582, 1310.0)",
+      "speed_kph": 15.0358972549438,
+      "waiting": false,
+      "waypoint": 0
+    },
+    {
+      "angle": 0.0000000754975317818206,
+      "position": "(812.3819, 47.62582, 1310.0)",
+      "speed_kph": 15.0940252304077,
+      "waiting": false,
+      "waypoint": 0
+    },
+    {
+      "angle": -0.088816222118733,
+      "position": "(813.4251, 47.62582, 1310.118)",
+      "speed_kph": 15.1520433425903,
+      "waiting": false,
+      "waypoint": 1
+    },
+    {
+      "angle": 0.0411590586003694,
+      "position": "(814.4456, 47.62582, 1310.392)",
+      "speed_kph": 15.2103704452515,
+      "waiting": false,
+      "waypoint": 1
+    },
+    {
+      "angle": 0.0532214730959136,
+      "position": "(815.4765, 47.62582, 1310.573)",
+      "speed_kph": 14.9958932876587,
+      "waiting": false,
+      "waypoint": 1
+    },
+    {
+      "angle": 0.059259240272362,
+      "position": "(816.511, 47.62582, 1310.739)",
+      "speed_kph": 15.0539817810059,
+      "waiting": false,
+      "waypoint": 1
+    },
+    {
+      "angle": -0.328980268337376,
+      "position": "(817.5132, 47.62582, 1311.057)",
+      "speed_kph": 15.1122676849365,
+      "waiting": false,
+      "waypoint": 2
+    },
+    {
+      "angle": -0.144386999996993,
+      "position": "(818.4135, 47.62582, 1311.641)",
+      "speed_kph": 15.1705432891846,
+      "waiting": false,
+      "waypoint": 2
+    },
+    {
+      "angle": 0.0363283197032189,
+      "position": "(819.2305, 47.62582, 1312.323)",
+      "speed_kph": 15.2284378051758,
+      "waiting": false,
+      "waypoint": 2
+    },
+    {
+      "angle": -0.528783202808577,
+      "position": "(820.0927, 47.62582, 1312.917)",
+      "speed_kph": 15.0140327453613,
+      "waiting": false,
+      "waypoint": 3
+    },
+    {
+      "angle": -0.447237062759737,
+      "position": "(820.8112, 47.62582, 1313.695)",
+      "speed_kph": 15.0721126556396,
+      "waiting": false,
+      "waypoint": 3
+    },
+    {
+      "angle": -0.289224829703203,
+      "position": "(821.3398, 47.62582, 1314.628)",
+      "speed_kph": 15.130326461792,
+      "waiting": false,
+      "waypoint": 3
+    },
+    {
+      "angle": -0.093584074019376,
+      "position": "(821.686, 47.62582, 1315.644)",
+      "speed_kph": 15.1884355545044,
+      "waiting": false,
+      "waypoint": 3
+    },
+    {
+      "angle": 0.055765678377353,
+      "position": "(821.9682, 47.62582, 1316.662)",
+      "speed_kph": 14.9739463806152,
+      "waiting": false,
+      "waypoint": 3
+    },
+    {
+      "angle": -0.201730750998235,
+      "position": "(822.2043, 47.62582, 1317.686)",
+      "speed_kph": 15.0320812225342,
+      "waiting": false,
+      "waypoint": 4
+    },
+    {
+      "angle": -0.012124693800578,
+      "position": "(822.1714, 47.62582, 1318.755)",
+      "speed_kph": 15.0902452468872,
+      "waiting": false,
+      "waypoint": 4
+    },
+    {
+      "angle": 0.0298901952837083,
+      "position": "(822.2076, 47.62582, 1319.802)",
+      "speed_kph": 15.1484642028809,
+      "waiting": false,
+      "waypoint": 4
+    },
+    {
+      "angle": 0.0341939550635591,
+      "position": "(822.2772, 47.62582, 1320.846)",
+      "speed_kph": 15.2065938949585,
+      "waiting": false,
+      "waypoint": 4
+    },
+    {
+      "angle": 0.0399613259547485,
+      "position": "(822.3467, 47.62582, 1321.891)",
+      "speed_kph": 14.9921545028687,
+      "waiting": false,
+      "waypoint": 4
+    },
+    {
+      "angle": 0.0480827860857636,
+      "position": "(822.4163, 47.62582, 1322.936)",
+      "speed_kph": 15.0502859115601,
+      "waiting": false,
+      "waypoint": 4
+    },
+    {
+      "angle": 0.0603504208913766,
+      "position": "(822.4861, 47.62582, 1323.98)",
+      "speed_kph": 15.1084516525269,
+      "waiting": false,
+      "waypoint": 4
+    },
+    {
+      "angle": 0.0599719200998129,
+      "position": "(822.58, 47.62582, 1325.023)",
+      "speed_kph": 15.1666362762451,
+      "waiting": false,
+      "waypoint": 4
+    }
+  ],
+  "scope": "Keyboard-controlled right turn on loaded saved settlement roads. No physics pose correction, no streamed-boundary or frame-performance claim.",
+  "waypoints_reached": 5
+}

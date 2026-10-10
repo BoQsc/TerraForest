@@ -34,6 +34,9 @@ func run() -> void:
 	check(game.world_vehicle.enter(game),"enter vehicle on loaded settlement road")
 	game.set_physics_process(true)
 	for tick in 60:await physics_frame
+	if "--junction-turn" in OS.get_cmdline_user_args():
+		await junction_turn(game,car,b)
+		game.terrain.backend.disable_snapshot_writes();game.terrain.shutdown();game.free();await process_frame;quit(1 if failures else 0);return
 	var brake_exit: bool="--brake-exit" in OS.get_cmdline_user_args()
 	var initial: Vector3=car.position;var rows: Array=[];var held:=0;var max_speed:=0.0
 	var press:=InputEventKey.new();press.keycode=KEY_W;press.physical_keycode=KEY_W;press.pressed=true
@@ -79,3 +82,38 @@ func run() -> void:
 	var f:=FileAccess.open(DIR+"result.json",FileAccess.WRITE);f.store_string(JSON.stringify(report,"  "));f.close()
 	# Preserve the fixture input save; shutdown intentionally reports save blocked.
 	game.terrain.backend.disable_snapshot_writes();game.terrain.shutdown();game.free();await process_frame;quit(1 if failures else 0)
+
+func key_state(code: int,pressed: bool) -> void:
+	var event:=InputEventKey.new();event.keycode=code;event.physical_keycode=code;event.pressed=pressed
+	Input.parse_input_event(event)
+func junction_turn(game: Node,car: RigidBody3D,junction: Vector3) -> void:
+	# This fixture's first street runs +X, and the connecting street runs +Z.
+	# Only keyboard controls are applied; no pose or velocity correction.
+	var points: Array[Vector3]=[junction+Vector3(-8,0,0),junction+Vector3(-4,0,1),junction+Vector3(-1,0,4),junction+Vector3(0,0,9),junction+Vector3(0,0,18)]
+	var next:=0;var held:=0;var rows: Array=[];var max_speed:=0.0;var max_deviation:=0.0
+	for tick in 1800:
+		var here: Vector3=car.position;here.y=junction.y
+		if here.distance_to(points[next])<2.5:
+			next+=1
+			if next==points.size():break
+		var desired: Vector3=(points[next]-here).normalized()
+		var forward: Vector3=car.global_basis.z;forward.y=0;forward=forward.normalized()
+		var angle:=atan2(forward.cross(desired).y,forward.dot(desired))
+		game.app_focused=true;Input.mouse_mode=Input.MOUSE_MODE_CAPTURED
+		key_state(KEY_W,car.speed_kph<15);key_state(KEY_S,car.speed_kph>19)
+		key_state(KEY_A,angle>0.06);key_state(KEY_D,angle< -0.06);Input.flush_buffered_events()
+		await physics_frame
+		if car.streaming.waiting:held+=1
+		max_speed=maxf(max_speed,car.speed_kph)
+		var deviation: float=minf(absf(car.position.z-junction.z),absf(car.position.x-junction.x))
+		max_deviation=maxf(max_deviation,deviation)
+		if tick%30==0:rows.append({"position":car.position,"speed_kph":car.speed_kph,"waypoint":next,"angle":angle,"waiting":car.streaming.waiting})
+	for code in [KEY_W,KEY_S,KEY_A,KEY_D]:key_state(code,false)
+	Input.flush_buffered_events()
+	check(next==points.size(),"keyboard-driven right turn reaches connecting street")
+	check(max_deviation<3 and absf(car.position.y-junction.y)<2,"turn remains on the authored road surface")
+	check(held==0,"junction crossing has no collision readiness holds")
+	check(car.global_basis.z.dot(Vector3.BACK)>0.8,"vehicle leaves junction facing connecting street")
+	await RenderingServer.frame_post_draw
+	root.get_texture().get_image().save_png(DIR+"junction.png")
+	var f:=FileAccess.open(DIR+"junction.json",FileAccess.WRITE);f.store_string(JSON.stringify({"failures":failures,"waypoints_reached":next,"max_speed_kph":max_speed,"max_deviation":max_deviation,"held_ticks":held,"rows":rows,"scope":"Keyboard-controlled right turn on loaded saved settlement roads. No physics pose correction, no streamed-boundary or frame-performance claim."},"  "));f.close()

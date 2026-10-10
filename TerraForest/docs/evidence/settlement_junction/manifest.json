@@ -1,0 +1,10 @@
+{
+  "source_commit": "e4f42ba",
+  "fixture_sha256": "88a265c28953e9523101d7fb10d739304171436286e3d89983d158ff6cdcd027",
+  "source_slot": "staged_furnished_1791584856787240500",
+  "command": "godot --path TerraForest --script res://tests/settlement_driving.gd -- --world-slot=staged_furnished_1791584856787240500 --ground-cover --junction-turn",
+  "engine": "4.7.2.stable.steam.ed1daf0bf",
+  "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU",
+  "scope": "Rendered keyboard-controlled turn on already loaded roads; no pose or velocity correction during driving. Centerline deviation and final chassis height are checked, not continuous wheel contact or swept body containment. No streamed-boundary, frame-time or thermal qualification.",
+  "teardown": "Snapshot writes explicitly disabled to preserve source slot; the save-blocked log is expected."
+}
