@@ -37,9 +37,9 @@ func sample(label: String) -> void:
 		prior=active
 		await RenderingServer.frame_post_draw
 		var now:=Time.get_ticks_usec()
-		rows.append({"frame_ms":(now-previous)/1000.0,"actor_ms":cost,"readiness_ms":game.actors.simulation_status.get("readiness_us",0)/1000.0,"collision_ms":game.actors.simulation_status.get("collision_us",0)/1000.0,"active":active.size(),"held":game.actors.simulation_status.get("held",0),"gpu_ms":RenderingServer.viewport_get_measured_render_time_gpu(viewport),"draw_calls":Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME),"queued":game.terrain.backend.queued(),"worker_busy":0 if game.terrain.backend.status()=="idle" else 1,"settled":settled()});previous=now
+		rows.append({"frame_ms":(now-previous)/1000.0,"actor_ms":cost,"transform_ms":game.actors.simulation_status.get("transform_us",0)/1000.0,"motion_ms":game.actors.simulation_status.get("motion_us",0)/1000.0,"store_ms":game.actors.simulation_status.get("store_us",0)/1000.0,"readiness_ms":game.actors.simulation_status.get("readiness_us",0)/1000.0,"collision_ms":game.actors.simulation_status.get("collision_us",0)/1000.0,"active":active.size(),"held":game.actors.simulation_status.get("held",0),"gpu_ms":RenderingServer.viewport_get_measured_render_time_gpu(viewport),"draw_calls":Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME),"queued":game.terrain.backend.queued(),"worker_busy":0 if game.terrain.backend.status()=="idle" else 1,"settled":settled()});previous=now
 	var result:={"phase":label,"stored_near":ids.size(),"distinct_simulated":visited.size(),"activation_entries":changes,"rows":rows,"summary":{}}
-	for field in ["frame_ms","actor_ms","readiness_ms","collision_ms","active","held","gpu_ms","draw_calls","queued","worker_busy"]:result.summary[field]=summary(rows,field)
+	for field in ["frame_ms","actor_ms","transform_ms","motion_ms","store_ms","readiness_ms","collision_ms","active","held","gpu_ms","draw_calls","queued","worker_busy"]:result.summary[field]=summary(rows,field)
 	phases.append(result)
 	check(result.summary.active.max<=16 and game.actors.pool.get_child_count()==16,label+" maintains fixed16 physics cap")
 	check(result.summary.held.max==0,label+" no collision-readiness holds")

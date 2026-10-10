@@ -1,0 +1,8 @@
+{
+  "date": "2026-10-10",
+  "native_checks_per_build": 8,
+  "change": "Avoid reassigning global position when it already equals the authoritative record. Opt-in timers split transform correction, engine movement and store publication.",
+  "result": "Four populated timing gates fail; empty frame gate passes this run only. moving16 actor p95=2.388ms max9.891ms; engine movement p95=1.619ms max9.311ms. nearby64 actor p95=2.885ms engine2.163ms. Transform/store p95=.009ms each in both populated phases.",
+  "scope": "motion timer wraps set_velocity and move_and_slide; timings include instrumentation. Source slot write inhibited. No robust speedup claim from median variation.",
+  "decision": "Stop wrapper tuning after two cycles without closing populated timing gates. Next bounded comparison is identical movement over simple and terrain collision geometry to inform collision representation, while preserving tested character behavior."
+}

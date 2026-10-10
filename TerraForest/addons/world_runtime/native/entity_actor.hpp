@@ -12,6 +12,8 @@ class NativeEntityActor : public godot::CharacterBody3D {
 protected:
     static void _bind_methods();
 public:
+    bool profile_tick=false;
+    uint64_t transform_us=0,motion_us=0,store_us=0;
     bool bind_entity(const godot::Ref<NativeEntityStore> &store,int64_t handle);
     bool tick(const godot::Vector3 &target,double delta,bool collision_ready);
 };

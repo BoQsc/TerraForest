@@ -81,7 +81,7 @@ bool NativeEntityActivation::tick(const PackedVector3Array &targets,double delta
 Dictionary NativeEntityActivation::settle(double delta,const Callable &readiness){
     Dictionary out;out["ok"]=false;out["visited"]=0;out["held"]=0;
     if(store_.is_null()||!is_inside_tree()||!readiness.is_valid()||!std::isfinite(delta)||delta<=0||delta>0.1)return out;
-    int visited=0,held=0;uint64_t readiness_us=0,collision_us=0;
+    int visited=0,held=0;uint64_t readiness_us=0,collision_us=0,transform_us=0,motion_us=0,store_us=0;
     for(auto &p:proxies_){
         if(!p.handle)continue;
         if(!store_->contains(p.handle)){sleep_all();return out;}
@@ -95,10 +95,13 @@ Dictionary NativeEntityActivation::settle(double delta,const Callable &readiness
         if(profiling_)readiness_us+=ready_done-begin;
         const bool ready=answer.get_type()==Variant::BOOL && bool(answer);
         const Vector3 target=orders_.is_valid()?orders_->target_for(store_->persistent_id(p.handle),position):position;
-        p.body->tick(target,delta,ready);++visited;if(!ready)++held;
+        p.body->profile_tick=profiling_;
+        p.body->tick(target,delta,ready);
+        transform_us+=p.body->transform_us;motion_us+=p.body->motion_us;store_us+=p.body->store_us;
+        ++visited;if(!ready)++held;
         if(profiling_)collision_us+=Time::get_singleton()->get_ticks_usec()-ready_done;
     }
-    if(profiling_){out["readiness_us"]=int64_t(readiness_us);out["collision_us"]=int64_t(collision_us);}
+    if(profiling_){out["readiness_us"]=int64_t(readiness_us);out["collision_us"]=int64_t(collision_us);out["transform_us"]=int64_t(transform_us);out["motion_us"]=int64_t(motion_us);out["store_us"]=int64_t(store_us);}
     out["ok"]=true;out["visited"]=visited;out["held"]=held;return out;
 }
 

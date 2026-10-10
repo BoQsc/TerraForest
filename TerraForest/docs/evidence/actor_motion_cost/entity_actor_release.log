@@ -1,0 +1,11 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS near-field proxy binds persistent store record
+PASS entity walks on floor and stops against real wall
+PASS collision result returns to store without duplicate integration
+PASS unready collision freezes proxy and authoritative position
+PASS invalid target or timestep does not mutate
+PASS external authority position correction reaches collision proxy
+PASS 100000 distant stationary records require no kinematic iteration
+PASS despawned handle stops proxy movement
+
