@@ -1,0 +1,235 @@
+{
+  "date": "2026-10-10",
+  "base_commit": "70d15bc34b126d8137ce2ae9b968e1115b03ca09",
+  "command": "godot --path TerraForest --script res://tests/actor_population_cost.gd -- --world-slot=staged_furnished_1791584856787240500 --ground-cover --actors --compare-contact",
+  "design": "Same restored 16 actor records and orders, terrain_a / box / terrain_b, 120 ticks each. Invisible 40x1x40 box at road height. Box phase uses mask128; existing-world phases mask1. Same rendering and readiness callbacks. Source archive writes inhibited.",
+  "result": "13 checks pass, 6 timing gates fail. Every actor travels over4m and retains ground height. All360 rows active16, held0, queued0, worker idle and settled.",
+  "limits": "Contact masks also exclude other world geometry in box phase. Does not isolate triangle count, broadphase partitioning or prove causation from terrain alone. Short instrumented run, not sustained performance. Screenshot is final terrain phase only.",
+  "decision": "Do not replace volumetric collision with boxes or tune wrapper code further. Before changing production collision, inspect overlapping/resident world shapes and the concave collision partition along this route. Any candidate must retain caves, edits, slopes and dynamic obstruction correctness, and pass the same total actor budget. Box total p95 still fails, so collision simplification alone is insufficient evidence of scalability.",
+  "summaries": [
+    {
+      "activation_entries": 16,
+      "distinct_simulated": 16,
+      "phase": "terrain_a",
+      "stored_near": 16,
+      "summary": {
+        "active": {
+          "max": 16.0,
+          "median": 16.0,
+          "p95": 16.0
+        },
+        "actor_ms": {
+          "max": 11.241,
+          "median": 1.877,
+          "p95": 2.31
+        },
+        "collision_ms": {
+          "max": 10.453,
+          "median": 1.364,
+          "p95": 1.718
+        },
+        "draw_calls": {
+          "max": 728.0,
+          "median": 728.0,
+          "p95": 728.0
+        },
+        "frame_ms": {
+          "max": 27.476,
+          "median": 16.727,
+          "p95": 19.809
+        },
+        "gpu_ms": {
+          "max": 5.58099985122681,
+          "median": 4.97399997711182,
+          "p95": 5.21600008010864
+        },
+        "held": {
+          "max": 0.0,
+          "median": 0.0,
+          "p95": 0.0
+        },
+        "motion_ms": {
+          "max": 10.417,
+          "median": 1.339,
+          "p95": 1.686
+        },
+        "queued": {
+          "max": 0.0,
+          "median": 0.0,
+          "p95": 0.0
+        },
+        "readiness_ms": {
+          "max": 0.664,
+          "median": 0.378,
+          "p95": 0.512
+        },
+        "store_ms": {
+          "max": 0.014,
+          "median": 0.005,
+          "p95": 0.01
+        },
+        "transform_ms": {
+          "max": 0.011,
+          "median": 0.006,
+          "p95": 0.01
+        },
+        "worker_busy": {
+          "max": 0.0,
+          "median": 0.0,
+          "p95": 0.0
+        }
+      }
+    },
+    {
+      "activation_entries": 16,
+      "distinct_simulated": 16,
+      "phase": "box",
+      "stored_near": 16,
+      "summary": {
+        "active": {
+          "max": 16.0,
+          "median": 16.0,
+          "p95": 16.0
+        },
+        "actor_ms": {
+          "max": 1.744,
+          "median": 1.121,
+          "p95": 1.335
+        },
+        "collision_ms": {
+          "max": 0.929,
+          "median": 0.585,
+          "p95": 0.703
+        },
+        "draw_calls": {
+          "max": 728.0,
+          "median": 728.0,
+          "p95": 728.0
+        },
+        "frame_ms": {
+          "max": 22.691,
+          "median": 16.728,
+          "p95": 18.79
+        },
+        "gpu_ms": {
+          "max": 5.61700010299683,
+          "median": 4.76999998092651,
+          "p95": 5.18400001525879
+        },
+        "held": {
+          "max": 0.0,
+          "median": 0.0,
+          "p95": 0.0
+        },
+        "motion_ms": {
+          "max": 0.904,
+          "median": 0.561,
+          "p95": 0.682
+        },
+        "queued": {
+          "max": 0.0,
+          "median": 0.0,
+          "p95": 0.0
+        },
+        "readiness_ms": {
+          "max": 0.754,
+          "median": 0.392,
+          "p95": 0.454
+        },
+        "store_ms": {
+          "max": 0.077,
+          "median": 0.005,
+          "p95": 0.008
+        },
+        "transform_ms": {
+          "max": 0.059,
+          "median": 0.007,
+          "p95": 0.009
+        },
+        "worker_busy": {
+          "max": 0.0,
+          "median": 0.0,
+          "p95": 0.0
+        }
+      }
+    },
+    {
+      "activation_entries": 16,
+      "distinct_simulated": 16,
+      "phase": "terrain_b",
+      "stored_near": 16,
+      "summary": {
+        "active": {
+          "max": 16.0,
+          "median": 16.0,
+          "p95": 16.0
+        },
+        "actor_ms": {
+          "max": 4.347,
+          "median": 2.401,
+          "p95": 2.738
+        },
+        "collision_ms": {
+          "max": 3.722,
+          "median": 1.871,
+          "p95": 2.159
+        },
+        "draw_calls": {
+          "max": 728.0,
+          "median": 728.0,
+          "p95": 728.0
+        },
+        "frame_ms": {
+          "max": 25.752,
+          "median": 16.737,
+          "p95": 18.945
+        },
+        "gpu_ms": {
+          "max": 5.58400011062622,
+          "median": 4.99300003051758,
+          "p95": 5.27400016784668
+        },
+        "held": {
+          "max": 0.0,
+          "median": 0.0,
+          "p95": 0.0
+        },
+        "motion_ms": {
+          "max": 3.697,
+          "median": 1.842,
+          "p95": 2.125
+        },
+        "queued": {
+          "max": 0.0,
+          "median": 0.0,
+          "p95": 0.0
+        },
+        "readiness_ms": {
+          "max": 0.732,
+          "median": 0.397,
+          "p95": 0.517
+        },
+        "store_ms": {
+          "max": 0.161,
+          "median": 0.006,
+          "p95": 0.011
+        },
+        "transform_ms": {
+          "max": 0.011,
+          "median": 0.006,
+          "p95": 0.01
+        },
+        "worker_busy": {
+          "max": 0.0,
+          "median": 0.0,
+          "p95": 0.0
+        }
+      }
+    }
+  ],
+  "sha256": {
+    "actor_collision_comparison.log": "cd56eb7505527fb38ddd8ac1c495f6a3a6753226ce8977bf1552254c3754b588",
+    "result.json": "a4e51c00d00b5f1ee395444563589daa5a428549b13fadb127b4dd1241c1dde5",
+    "world.png": "a857d069a6b3d66e2fb7ba38ade1be448365999653e8d3ef4c3a7e0dfb89a8f1"
+  }
+}

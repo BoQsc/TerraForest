@@ -46,6 +46,26 @@ func sample(label: String) -> void:
 	check(result.summary.actor_ms.p95<=1 and result.summary.actor_ms.max<=2,label+" actor adapter p95<=1ms max<=2ms")
 	check(result.summary.frame_ms.p95<=18.5,label+" frame p95<=18.5ms")
 	print(label," ",JSON.stringify(result.summary)," distinct=",visited.size()," entries=",changes)
+func compare_contact() -> void:
+	add_until(16)
+	var snapshot: PackedByteArray=game.actors.store.capture_storage_snapshot()
+	var floor_body:=StaticBody3D.new();floor_body.collision_layer=128;floor_body.collision_mask=0
+	var collision:=CollisionShape3D.new();var shape:=BoxShape3D.new();shape.size=Vector3(40,1,40);collision.shape=shape
+	floor_body.add_child(collision);floor_body.position=start+direction*6-Vector3.UP*1.45;game.add_child(floor_body)
+	await physics_frame;await physics_frame
+	for label in ["terrain_a","box","terrain_b"]:
+		check(game.actors._restore(snapshot),label+" resets exact same actor records")
+		game.actors.select_near(start)
+		for body in game.actors.pool.get_children():body.collision_mask=128 if label=="box" else 1
+		await physics_frame;await physics_frame
+		await sample(label)
+		var correct:=true
+		for i in ids.size():
+			var position: Vector3=game.actors.store.get_position(game.actors.store.resolve_identity(ids[i]))
+			var original:=start+direction*(i/4)*0.8+side*(i%4-1.5)*1.0
+			correct=correct and (position-original).dot(direction)>4 and absf(position.y-start.y)<0.15
+		check(correct,label+" all16 actors move over4m and retain ground height")
+	floor_body.free()
 func _initialize() -> void:run.call_deferred()
 func run() -> void:
 	game=load("res://demo/world.tscn").instantiate();root.add_child(game)
@@ -60,10 +80,14 @@ func run() -> void:
 	var idle:=0;deadline=Time.get_ticks_msec()+30000
 	while idle<60 and Time.get_ticks_msec()<deadline:await process_frame;idle=idle+1 if settled() else 0
 	check(idle==60,"world reaches60 idle frames before measurement")
-	await sample("empty")
-	add_until(16);await sample("moving16")
-	add_until(64);await sample("nearby64")
-	DirAccess.make_dir_recursive_absolute("res://reports/actor_population_cost")
-	var file:=FileAccess.open("res://reports/actor_population_cost/result.json",FileAccess.WRITE);file.store_string(JSON.stringify({"failures":failures,"phases":phases},"  "));file.close()
-	root.get_texture().get_image().save_png("res://reports/actor_population_cost/world.png")
+	var comparison: bool="--compare-contact" in OS.get_cmdline_user_args()
+	if comparison:await compare_contact()
+	else:
+		await sample("empty")
+		add_until(16);await sample("moving16")
+		add_until(64);await sample("nearby64")
+	var folder:="res://reports/actor_collision_comparison" if comparison else "res://reports/actor_population_cost"
+	DirAccess.make_dir_recursive_absolute(folder)
+	var file:=FileAccess.open(folder+"/result.json",FileAccess.WRITE);file.store_string(JSON.stringify({"failures":failures,"phases":phases},"  "));file.close()
+	root.get_texture().get_image().save_png(folder+"/world.png")
 	game.terrain.shutdown();game.free();await process_frame;quit(1 if failures else 0)

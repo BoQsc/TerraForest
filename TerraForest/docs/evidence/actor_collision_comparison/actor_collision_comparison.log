@@ -1,0 +1,34 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] World loaded
+[TerrainRewrite] World loaded
+[TerrainRewrite] Lake ready · F5 saves world
+[TerrainRewrite] Lake ready · F5 saves world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+[TerrainRewrite] Lake ready · F5 saves world
+[TerrainRewrite] ERROR: save blocked: snapshot writes explicitly disabled; previous canonical snapshot retained
+[TerrainRewrite] Lake ready · F5 saves world
+PASS world reaches60 idle frames before measurement
+PASS terrain_a resets exact same actor records
+PASS terrain_a maintains fixed16 physics cap
+PASS terrain_a no collision-readiness holds
+FAIL terrain_a actor adapter p95<=1ms max<=2ms
+FAIL terrain_a frame p95<=18.5ms
+terrain_a {"active":{"max":16.0,"median":16.0,"p95":16.0},"actor_ms":{"max":11.241,"median":1.877,"p95":2.31},"collision_ms":{"max":10.453,"median":1.364,"p95":1.718},"draw_calls":{"max":728.0,"median":728.0,"p95":728.0},"frame_ms":{"max":27.476,"median":16.727,"p95":19.809},"gpu_ms":{"max":5.58099985122681,"median":4.97399997711182,"p95":5.21600008010864},"held":{"max":0.0,"median":0.0,"p95":0.0},"motion_ms":{"max":10.417,"median":1.339,"p95":1.686},"queued":{"max":0.0,"median":0.0,"p95":0.0},"readiness_ms":{"max":0.664,"median":0.378,"p95":0.512},"store_ms":{"max":0.014,"median":0.005,"p95":0.01},"transform_ms":{"max":0.011,"median":0.006,"p95":0.01},"worker_busy":{"max":0.0,"median":0.0,"p95":0.0}} distinct=16 entries=16
+PASS terrain_a all16 actors move over4m and retain ground height
+PASS box resets exact same actor records
+PASS box maintains fixed16 physics cap
+PASS box no collision-readiness holds
+FAIL box actor adapter p95<=1ms max<=2ms
+FAIL box frame p95<=18.5ms
+box {"active":{"max":16.0,"median":16.0,"p95":16.0},"actor_ms":{"max":1.744,"median":1.121,"p95":1.335},"collision_ms":{"max":0.929,"median":0.585,"p95":0.703},"draw_calls":{"max":728.0,"median":728.0,"p95":728.0},"frame_ms":{"max":22.691,"median":16.728,"p95":18.79},"gpu_ms":{"max":5.61700010299683,"median":4.76999998092651,"p95":5.18400001525879},"held":{"max":0.0,"median":0.0,"p95":0.0},"motion_ms":{"max":0.904,"median":0.561,"p95":0.682},"queued":{"max":0.0,"median":0.0,"p95":0.0},"readiness_ms":{"max":0.754,"median":0.392,"p95":0.454},"store_ms":{"max":0.077,"median":0.005,"p95":0.008},"transform_ms":{"max":0.059,"median":0.007,"p95":0.009},"worker_busy":{"max":0.0,"median":0.0,"p95":0.0}} distinct=16 entries=16
+PASS box all16 actors move over4m and retain ground height
+PASS terrain_b resets exact same actor records
+PASS terrain_b maintains fixed16 physics cap
+PASS terrain_b no collision-readiness holds
+FAIL terrain_b actor adapter p95<=1ms max<=2ms
+FAIL terrain_b frame p95<=18.5ms
+terrain_b {"active":{"max":16.0,"median":16.0,"p95":16.0},"actor_ms":{"max":4.347,"median":2.401,"p95":2.738},"collision_ms":{"max":3.722,"median":1.871,"p95":2.159},"draw_calls":{"max":728.0,"median":728.0,"p95":728.0},"frame_ms":{"max":25.752,"median":16.737,"p95":18.945},"gpu_ms":{"max":5.58400011062622,"median":4.99300003051758,"p95":5.27400016784668},"held":{"max":0.0,"median":0.0,"p95":0.0},"motion_ms":{"max":3.697,"median":1.842,"p95":2.125},"queued":{"max":0.0,"median":0.0,"p95":0.0},"readiness_ms":{"max":0.732,"median":0.397,"p95":0.517},"store_ms":{"max":0.161,"median":0.006,"p95":0.011},"transform_ms":{"max":0.011,"median":0.006,"p95":0.01},"worker_busy":{"max":0.0,"median":0.0,"p95":0.0}} distinct=16 entries=16
+PASS terrain_b all16 actors move over4m and retain ground height
+[TerrainRewrite] ERROR: save blocked: snapshot writes explicitly disabled; previous canonical snapshot retained
