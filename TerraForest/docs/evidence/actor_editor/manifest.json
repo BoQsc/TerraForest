@@ -1,0 +1,14 @@
+{
+  "date": "2026-10-10",
+  "checks": 7,
+  "command": "godot --path TerraForest --script res://tests/actor_editor.gd -- --world-slot=staged_furnished_1791584856787240500 --ground-cover --actors",
+  "fix": "Initial fixture reproduced placing an actor atop another actor. Placement now rejects CharacterBody3D/RigidBody3D support. Later fixture aim failure after mouse recapture fixed by explicitly restoring camera aim for each input. Both failing logs retained.",
+  "limits": [
+    "Actor art remains capsule placeholder.",
+    "Free-editor J/Shift+J only; no terrain/block undo for actor edits.",
+    "Storage uses previously verified world_actors component, but this input fixture does not itself save/reopen.",
+    "Crowd overload UX and inactive actor selection remain open.",
+    "No navigation or animation yet."
+  ],
+  "source_save": "snapshot writes inhibited"
+}

@@ -5,6 +5,7 @@ const Lakes = preload("res://addons/volumetric_water/lake_world.gd")
 const Persistence = preload("res://addons/world_runtime/world_persistence.gd")
 const Structures = preload("res://addons/structures/structures_world.gd")
 var persistence = Persistence.new()
+var actor_authoring=preload("res://addons/world_runtime/actor_authoring.gd").new()
 var actors=preload("res://addons/world_runtime/actor_world.gd").new()
 var model_paging: Node
 var model_region_paging := "--model-region-paging" in OS.get_cmdline_user_args()
@@ -609,6 +610,8 @@ func _set_player_tool_mode(building: bool,objects: bool,terrain_tool: int) -> bo
 
 func _unhandled_input(event: InputEvent) -> void:
 	if player_hud.inventory_open: return
+	if event is InputEventKey and event.pressed and not event.echo and event.physical_keycode==KEY_J:
+		_show_lake_notice(actor_authoring.apply(self,event.shift_pressed));return
 	if event is InputEventKey and event.pressed and not event.echo and event.physical_keycode==KEY_F:
 		if app_focused and not loading_active and not shutdown_requested and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED:
 			_show_lake_notice("Headlamp on" if headlamp.toggle() else "Headlamp off")
@@ -1109,6 +1112,7 @@ func _process(delta: float) -> void:
 		if world_vehicle.driving:
 			activity="Waiting for terrain/building collision…" if world_vehicle.car.streaming.waiting else "Driving · %.0f km/h · E exit when stopped" % world_vehicle.car.speed_kph
 		telemetry.text = "%d FPS  ·  %s trees  ·  %d cells\n%s" % [Engine.get_frames_per_second(), str(vegetation.renderer.roots.size()), ecosystem.resident.size(), activity]
+		if actors.pool!=null and not construction_inventory.gameplay:telemetry.text+="\nJ Place actor · Shift+J Remove actor"
 	terrain._record_stage("world process",(Time.get_ticks_usec()-frame_begin)/1000.0)
 
 func _harvest_aimed_tree() -> bool:
