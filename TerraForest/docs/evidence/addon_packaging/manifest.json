@@ -1,0 +1,17 @@
+{
+  "base_commit": "a1ad2c5c7392637e8f33abe94e1b96f01ddf454b",
+  "archive": "vehicle_runtime.zip",
+  "archive_sha256": "4d48787439f4d6763d626d5730676c002c1ebdea5b892304ae831002932dc1ea",
+  "archive_bytes": 10535804,
+  "checks": [
+    "4 Python packaging tests passed; literal existing resource closure checked for all 10 addons",
+    "Vehicle ZIP extracted into temporary empty project with no .godot cache",
+    "Godot 4.7.2 headless editor import exit0",
+    "Separate headless process instantiated actual vehicle with 32 visible mesh parts and created native fleet record, exit0"
+  ],
+  "limits": [
+    "Static resource audit cannot discover constructed paths or host callback dependencies",
+    "Only vehicle bundle received clean engine import/instantiation in this change",
+    "No graphical, driving, multiplayer, performance or other-platform qualification"
+  ]
+}
