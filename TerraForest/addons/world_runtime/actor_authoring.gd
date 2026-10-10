@@ -13,7 +13,9 @@ func apply(world: Node,remove: bool) -> String:
 		if hit.collider.get_parent()!=world.actors.pool:return "Aim directly at an active actor to remove it."
 		var query: Dictionary=world.actors.store.query_sphere_nearest(hit.collider.global_position,0.01,1,64)
 		if not query.ok or not query.complete or query.ids.size()!=1:return "Actor selection is ambiguous; try again."
+		var identity: int=world.actors.store.persistent_id(query.ids[0])
 		if not world.actors.store.despawn(query.ids[0]):return "Actor changed; try again."
+		world.actors.orders.clear_target(identity)
 		world.actors.select_near(world.terrain.focus)
 		return "Actor removed · F5 saves world."
 	if hit.collider is CharacterBody3D or hit.collider is RigidBody3D:return "Place actors on static ground or floors, not moving bodies."

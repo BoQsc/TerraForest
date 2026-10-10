@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: 0BSD
 extends Node3D
 # Persistent ownership is always registered, independently of simulation activation.
+var orders: RefCounted
 var store: RefCounted
 var pool: Node3D
 var renderer: MultiMeshInstance3D
@@ -15,11 +16,14 @@ func prepare(persistence: RefCounted) -> bool:
 		GDExtensionManager.load_extension("res://addons/world_runtime/world_runtime.gdextension")
 	store=ClassDB.instantiate("NativeEntityStore")
 	if not store.configure(1024):return false
-	return persistence.register_component("world_actors",store.capture_storage_snapshot,_restore,store,store.capture_storage_snapshot())
+	if not persistence.register_component("world_actors",store.capture_storage_snapshot,_restore,store,store.capture_storage_snapshot()):return false
+	orders=ClassDB.instantiate("NativeActorOrders")
+	return orders.configure(store) and persistence.register_component("actor_orders",orders.capture_storage_snapshot,orders.restore_storage_snapshot,orders,orders.capture_storage_snapshot())
 func enable(capacity: int=16) -> bool:
 	if store==null or pool!=null or not is_inside_tree():return false
 	pool=ClassDB.instantiate("NativeEntityActivation");add_child(pool)
 	if not pool.configure(store,capacity):pool.free();pool=null;return false
+	if not pool.set_orders(orders):pool.free();pool=null;return false
 	renderer=ClassDB.instantiate("NativeEntityRenderer");add_child(renderer)
 	var mesh:=CapsuleMesh.new();mesh.radius=0.35;mesh.height=1.8
 	var material:=StandardMaterial3D.new();material.albedo_color=Color("edb35a");mesh.material=material

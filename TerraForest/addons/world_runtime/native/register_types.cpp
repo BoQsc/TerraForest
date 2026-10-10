@@ -12,6 +12,7 @@ static void initialize(ModuleInitializationLevel level) {
     if (level == MODULE_INITIALIZATION_LEVEL_SCENE) {
         GDREGISTER_CLASS(terraforest::NativeEntityStore);
         GDREGISTER_CLASS(terraforest::NativeEntityActor);
+        GDREGISTER_CLASS(terraforest::NativeActorOrders);
         GDREGISTER_CLASS(terraforest::NativeEntityActivation);
         GDREGISTER_CLASS(terraforest::NativeEntityRenderer);
         GDREGISTER_CLASS(terraforest::NativeWorldArchive);

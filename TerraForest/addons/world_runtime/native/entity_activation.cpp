@@ -8,6 +8,7 @@
 using namespace godot;
 namespace terraforest {
 void NativeEntityActivation::_bind_methods(){
+    ClassDB::bind_method(D_METHOD("set_orders","orders"),&NativeEntityActivation::set_orders);
     ClassDB::bind_method(D_METHOD("configure","store","capacity"),&NativeEntityActivation::configure);
     ClassDB::bind_method(D_METHOD("select","center","radius","candidate_budget"),&NativeEntityActivation::select,DEFVAL(4096));
     ClassDB::bind_method(D_METHOD("tick","targets","delta","ready"),&NativeEntityActivation::tick);
@@ -67,11 +68,12 @@ Dictionary NativeEntityActivation::settle(double delta,const Callable &readiness
         if(!store_->contains(p.handle)){sleep_all();return out;}
         const Vector3 position=store_->get_position(p.handle);
         // Include capsule, floor snap, current travel and next gravity increment.
-        const real_t travel=real_t(p.body->get_velocity().length()*delta+20*delta*delta+0.05);
+        const real_t travel=real_t(std::max(double(p.body->get_velocity().length()),2.5)*delta+20*delta*delta+0.05);
         AABB bounds(position-Vector3(0.35,1.15,0.35),Vector3(0.7,2.05,0.7));bounds=bounds.grow(travel);
         const Variant answer=readiness.call(bounds);
         const bool ready=answer.get_type()==Variant::BOOL && bool(answer);
-        p.body->tick(position,delta,ready);++visited;if(!ready)++held;
+        const Vector3 target=orders_.is_valid()?orders_->target_for(store_->persistent_id(p.handle),position):position;
+        p.body->tick(target,delta,ready);++visited;if(!ready)++held;
     }
     out["ok"]=true;out["visited"]=visited;out["held"]=held;return out;
 }

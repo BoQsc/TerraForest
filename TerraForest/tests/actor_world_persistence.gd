@@ -26,11 +26,13 @@ func run() -> void:
 	var expected:=PackedByteArray()
 	if not reopen:
 		check(actors.spawn(Vector3(800,50,1300))>0 and actors.spawn(Vector3(802,50,1300))>0,"author two persistent actors")
+		check(actors.orders.set_target(1,Vector3(810,50,1300)),"assign persistent actor destination")
 		expected=actors.store.capture_storage_snapshot()
 		var file:=FileAccess.open(path,FileAccess.WRITE);file.store_buffer(expected);file.close()
 	else:
 		expected=FileAccess.get_file_as_bytes(path)
 		check(actors.store.capture_storage_snapshot()==expected,"fresh process restores exact actors while simulation disabled")
+	if reopen:check(actors.orders.get_target(1).get("target",Vector3.ZERO)==Vector3(810,50,1300),"fresh process restores destination")
 	check(actors.enable(4) and actors.select_near(Vector3(800,50,1300)).active==2,"explicit activation binds restored records")
 	var before: PackedInt64Array=actors.pool.active_handles()
 	if not reopen:
@@ -44,4 +46,5 @@ func run() -> void:
 	check(actors.pool.active_handles().is_empty() and actors.renderer.multimesh.visible_instance_count==0,"reload retires old proxies and visible instances")
 	check(actors.store.capture_storage_snapshot()==expected and not actors.store.contains(before[0]),"reload preserves records and invalidates old handles")
 	check(actors.select_near(Vector3(800,50,1300)).active==2,"pool reactivates new handles after reload")
+	check(actors.orders.get_target(1).get("target",Vector3.ZERO)==Vector3(810,50,1300),"normal reload preserves destination")
 	game.terrain.backend.disable_snapshot_writes();game.terrain.shutdown();game.free();await process_frame;quit(1 if failures else 0)

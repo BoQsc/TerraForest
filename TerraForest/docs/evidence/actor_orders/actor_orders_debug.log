@@ -1,0 +1,12 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS order ownership configured once
+PASS unknown identity and invalid target rejected
+PASS persistent identity receives movement target
+PASS malformed order snapshot rejects atomically
+PASS orphan destination rejects against actor owner
+PASS orders survive handle regeneration
+PASS activation pool binds matching order owner
+PASS native automatic simulation executes stored target
+PASS stop clears target
+PASS cleared order stops horizontal movement

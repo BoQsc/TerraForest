@@ -1,0 +1,15 @@
+{
+  "date": "2026-10-10",
+  "slot": "actor_world_test_1791614077721809300",
+  "native_checks_per_build": 10,
+  "create_checks": 11,
+  "reopen_checks": 10,
+  "scope": "Native persistent-ID target storage, bounded automatic execution, malformed/orphan atomic rejection, clear/stop; real compound archive save/reopen/reload with simulation disabled.",
+  "limits": [
+    "No pathfinding, obstacle avoidance, unreachable-target status or animation.",
+    "Destinations currently issued by API; editor command UI next.",
+    "Orders remain until explicitly changed/cleared even after reaching target.",
+    "World actor component restores before actor_orders; addon standalone owners must preserve this dependency.",
+    "Direct store despawn must clear matching order; editor removal does so."
+  ]
+}
