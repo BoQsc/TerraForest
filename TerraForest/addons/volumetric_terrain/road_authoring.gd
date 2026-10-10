@@ -57,6 +57,9 @@ func receive(id: int,samples: PackedVector3Array,_normals: PackedVector3Array,ep
 	if error!=OK:worker=null;cancel("Road planner unavailable.");return
 	phase="fitting"
 func _process(_delta: float) -> void:
+	# Cancellation discards results; reap finished work without blocking the editor.
+	if phase.is_empty() and worker!=null and not worker.is_alive():
+		worker.wait_to_finish();worker=null;solver=null
 	if not is_instance_valid(world) or phase.is_empty():return
 	var terrain=world.terrain;var p=world.road_palette
 	if phase=="building" and ticket>=0 and not terrain.pending_edit:

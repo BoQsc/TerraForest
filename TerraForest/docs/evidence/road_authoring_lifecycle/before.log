@@ -1,0 +1,13 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS late samples after cancellation cannot start fitting
+PASS previous request token cannot satisfy new request
+PASS reload epoch rejects old sampling result
+PASS actual native fit starts in worker
+FAIL cancelled fit is reaped without publishing or retaining worker
+PASS new preview succeeds after cancelled fit
+PASS first section submitted once
+PASS reload cancels route while section is pending
+PASS late section completion cannot submit next section or register route
+PASS teardown joins outstanding native fit
+ROAD_AUTHORING_LIFECYCLE failures=1

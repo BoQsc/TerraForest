@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-10",
+  "command": "godot --headless --path TerraForest --script res://tests/road_authoring_lifecycle.gd",
+  "checks": 10,
+  "before_failures": 1,
+  "after_failures": 0,
+  "scope": "Real native fitting worker and real palette/preview, deterministic terrain/world stubs for pending edits and epoch changes. This verifies coordinator lifecycle, not full-world F9 or rendering performance.",
+  "fix": "Reap canceled worker and release solver once worker finishes, without blocking editor or publishing canceled results.",
+  "remaining": "Actual-world reload during construction, construction frame cost and settled vegetation readiness remain open."
+}
