@@ -1,0 +1,21 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] World loaded
+[TerrainRewrite] World loaded
+[TerrainRewrite] Lake ready · F5 saves world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+PASS world loaded
+[TerrainRewrite] Lake ready · F5 saves world
+[TerrainRewrite] Lake ready · F5 saves world
+FAIL baseline reaches 60 idle frames
+PASS smooth preview ready
+PASS all road sections published
+[TerrainRewrite] ERROR: save blocked: snapshot writes explicitly disabled; previous canonical snapshot retained
+[TerrainRewrite] Lake ready · F5 saves world
+PASS terrain and vegetation recover to 60 idle frames
+FAIL baseline frame p95 <=18.5 ms
+FAIL build frame p95 <=18.5 ms
+FAIL after frame p95 <=18.5 ms
+{"after":{"elapsed_ms":1999.062,"frames":120,"max_ms":19.622,"p95_ms":18.974},"baseline":{"elapsed_ms":1983.214,"frames":120,"max_ms":19.746,"p95_ms":18.88},"build":{"elapsed_ms":324.683,"frames":20,"max_ms":20.687,"p95_ms":19.666},"prepare":{"elapsed_ms":929.365,"frames":55,"max_ms":29.853,"p95_ms":19.257},"recovery":{"elapsed_ms":4130.375,"frames":248,"max_ms":21.399,"p95_ms":19.441}}
+[TerrainRewrite] ERROR: save blocked: snapshot writes explicitly disabled; previous canonical snapshot retained

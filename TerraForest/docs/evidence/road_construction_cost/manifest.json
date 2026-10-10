@@ -1,0 +1,9 @@
+{
+  "date": "2026-10-10",
+  "command": "godot --path TerraForest --script res://tests/road_construction_cost.gd -- --world-slot=staged_furnished_1791584856787240500 --ground-cover",
+  "source_writes": "disabled; save-blocked messages expected",
+  "result": "4 failed gates: baseline idle timeout and baseline/build/after p95 >18.5ms",
+  "interpretation": "No 14 FPS reproduction in sampled intervals. Build 324.683ms/20 frames, max20.687ms. Recovery 4130.375ms includes 60 idle confirmation frames. All120 after frames settled with zero queued terrain work. Baseline retained 4 queued mesh tasks, so incremental road cost is not isolated. GPU median after4.348ms versus baseline4.609ms does not prove thermal headroom.",
+  "visual": "Settled 1080p screenshot inspected. Forest remains around road; instance-level exclusion correctness is not established by this image or aggregate counts.",
+  "next": "Attribute baseline queued mesh work and frame pacing with existing native publication diagnostics before changing algorithms. Retain original M3 scope; this short check does not authorize another open-ended optimization detour."
+}
