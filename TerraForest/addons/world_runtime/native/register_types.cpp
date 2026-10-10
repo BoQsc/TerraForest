@@ -1,5 +1,6 @@
 #include "entity_store.hpp"
 #include "entity_actor.hpp"
+#include "entity_activation.hpp"
 #include "entity_renderer.hpp"
 #include "world_archive.hpp"
 #include "road_anchors.hpp"
@@ -11,6 +12,7 @@ static void initialize(ModuleInitializationLevel level) {
     if (level == MODULE_INITIALIZATION_LEVEL_SCENE) {
         GDREGISTER_CLASS(terraforest::NativeEntityStore);
         GDREGISTER_CLASS(terraforest::NativeEntityActor);
+        GDREGISTER_CLASS(terraforest::NativeEntityActivation);
         GDREGISTER_CLASS(terraforest::NativeEntityRenderer);
         GDREGISTER_CLASS(terraforest::NativeWorldArchive);
         GDREGISTER_CLASS(terraforest::NativeRoadAnchors);

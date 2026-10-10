@@ -1,0 +1,19 @@
+{
+  "date": "2026-10-10",
+  "checks_per_build": 13,
+  "stored_entities": 100006,
+  "fixture_body_capacity": 3,
+  "api_capacity_range": [
+    1,
+    64
+  ],
+  "scope": "Native pool allocation, nearest-selection saturation, candidate exhaustion, readiness validation, focus change and snapshot-handle invalidation. Correctness, not frame-time scaling.",
+  "contract": "World-coordinate store; call select outside physics queries, active_handles determines target/readiness array order, tick once per physics step. Pool owns child bodies. Caller supplies swept collision readiness and behavior targets. Do not kinematically integrate active records separately.",
+  "limits": [
+    "Candidate exhaustion sleeps entire pool; requires visible diagnostic/retry policy in world adapter.",
+    "Population beyond capacity remains frozen; no distant catch-up simulation.",
+    "Nearest set has no hysteresis yet.",
+    "Current masks do not collide actors with one another.",
+    "World save ownership, addon activation and behavior integration remain open."
+  ]
+}
