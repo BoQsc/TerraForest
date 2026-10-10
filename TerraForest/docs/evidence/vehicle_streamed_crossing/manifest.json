@@ -1,0 +1,8 @@
+{
+  "status": "failed continuity gate",
+  "command": "godot --path TerraForest --script res://tests/vehicle_async_terrain.gd -- --streamed-crossing",
+  "fixture_sha256": "819b258aff92f10380eab9b6808dfa8174d518d5e43e926ec848ff6e3efc9900",
+  "scope": "Isolated generator-2 live terrain worker and real vehicle physics, five connected 64 m graded sections, cache disabled, 120 Hz physics, 60 FPS cap. Rendered 1920x1080 screenshot. No buildings, forest, inventory, main-world lifecycle or thermal qualification.",
+  "result": "Reached initially unready target after approximately 245 m; 44 consecutive held physics ticks (0.367 simulation seconds); peak 131.04 km/h. Safety guard prevented falling but continuous driving failed. Wheel count during frozen ticks may retain last physics observation.",
+  "next": "Capture hold transitions and requested collision bounds with planner/worker state near z=512 to distinguish scheduling, publication and missing coverage. Keep zero-hold gate unchanged."
+}
