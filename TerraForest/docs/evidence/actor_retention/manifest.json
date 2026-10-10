@@ -1,0 +1,14 @@
+{
+  "date": "2026-10-10",
+  "native_checks_per_build": 18,
+  "selection_policy": "2m distance advantage for incumbents, same hard radius/cap and candidate budget. NearestK union existingK bounded sort.",
+  "comparison": {
+    "prior_entries": 106,
+    "new_entries": 34,
+    "new_distinct": 34,
+    "seconds": 2
+  },
+  "timing": "Five timing gates still fail. moving16 collision p95=1.691ms readiness=.490ms actor total2.277ms; collision max10.167ms. nearby64 collision p95=2.266ms readiness=.551ms actor total2.877ms.",
+  "limits": "Opt-in timer overhead included. Collision bucket includes target lookup, actor movement and position-store publication; not engine-only instrumentation. Reduced churn does not guarantee fairness;30 of64 actors never admitted during this short phase.",
+  "next": "Inspect redundant transform updates and profile collision substeps before another algorithm change. Preserve fixed timestep and readiness checks."
+}

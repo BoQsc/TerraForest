@@ -5,9 +5,11 @@
 #include <godot_cpp/core/class_db.hpp>
 #include <algorithm>
 #include <cmath>
+#include <godot_cpp/classes/time.hpp>
 using namespace godot;
 namespace terraforest {
 void NativeEntityActivation::_bind_methods(){
+    ClassDB::bind_method(D_METHOD("set_profiling","enabled"),&NativeEntityActivation::set_profiling);
     ClassDB::bind_method(D_METHOD("set_orders","orders"),&NativeEntityActivation::set_orders);
     ClassDB::bind_method(D_METHOD("configure","store","capacity"),&NativeEntityActivation::configure);
     ClassDB::bind_method(D_METHOD("select","center","radius","candidate_budget"),&NativeEntityActivation::select,DEFVAL(4096));
@@ -37,6 +39,23 @@ Dictionary NativeEntityActivation::select(const Vector3 &center,double radius,in
     // An incomplete candidate scan cannot certify which actors are nearest.
     if(!bool(result["ok"])||!bool(result["selection_complete"])){sleep_all();return result;}
     PackedInt64Array ids=result["ids"];
+    // Keep incumbents unless a challenger is more than 2m closer. Unioning the
+    // nearest K with at most K incumbents is sufficient for the biased top K.
+    struct Candidate{int64_t handle,identity;double score;};
+    std::vector<Candidate> candidates;candidates.reserve(ids.size()+active_.size());
+    for(int64_t i=0;i<ids.size();++i){
+        const double distance=store_->get_position(ids[i]).distance_to(center);
+        candidates.push_back({ids[i],store_->persistent_id(ids[i]),distance-(active_.has(ids[i])?2.0:0.0)});
+    }
+    for(int64_t i=0;i<active_.size();++i){
+        const int64_t handle=active_[i];if(ids.has(handle)||!store_->contains(handle))continue;
+        const double distance=store_->get_position(handle).distance_to(center);
+        if(distance<=radius)candidates.push_back({handle,store_->persistent_id(handle),distance-2.0});
+    }
+    std::sort(candidates.begin(),candidates.end(),[](const Candidate &a,const Candidate &b){return a.score<b.score||(a.score==b.score&&a.identity<b.identity);});
+    ids.resize(std::min(candidates.size(),proxies_.size()));
+    for(int64_t i=0;i<ids.size();++i)ids.set(i,candidates[i].handle);
+    result["ids"]=ids;result["retention_margin_m"]=2.0;
     for(auto &p:proxies_)if(p.handle&& !ids.has(p.handle)){
         p.handle=0;p.body->set_collision_layer(0);p.body->set_collision_mask(0);p.body->set_velocity(Vector3());
     }
@@ -62,7 +81,7 @@ bool NativeEntityActivation::tick(const PackedVector3Array &targets,double delta
 Dictionary NativeEntityActivation::settle(double delta,const Callable &readiness){
     Dictionary out;out["ok"]=false;out["visited"]=0;out["held"]=0;
     if(store_.is_null()||!is_inside_tree()||!readiness.is_valid()||!std::isfinite(delta)||delta<=0||delta>0.1)return out;
-    int visited=0,held=0;
+    int visited=0,held=0;uint64_t readiness_us=0,collision_us=0;
     for(auto &p:proxies_){
         if(!p.handle)continue;
         if(!store_->contains(p.handle)){sleep_all();return out;}
@@ -70,11 +89,16 @@ Dictionary NativeEntityActivation::settle(double delta,const Callable &readiness
         // Include capsule, floor snap, current travel and next gravity increment.
         const real_t travel=real_t(std::max(double(p.body->get_velocity().length()),2.5)*delta+20*delta*delta+0.05);
         AABB bounds(position-Vector3(0.35,1.15,0.35),Vector3(0.7,2.05,0.7));bounds=bounds.grow(travel);
+        const uint64_t begin=profiling_?Time::get_singleton()->get_ticks_usec():0;
         const Variant answer=readiness.call(bounds);
+        const uint64_t ready_done=profiling_?Time::get_singleton()->get_ticks_usec():0;
+        if(profiling_)readiness_us+=ready_done-begin;
         const bool ready=answer.get_type()==Variant::BOOL && bool(answer);
         const Vector3 target=orders_.is_valid()?orders_->target_for(store_->persistent_id(p.handle),position):position;
         p.body->tick(target,delta,ready);++visited;if(!ready)++held;
+        if(profiling_)collision_us+=Time::get_singleton()->get_ticks_usec()-ready_done;
     }
+    if(profiling_){out["readiness_us"]=int64_t(readiness_us);out["collision_us"]=int64_t(collision_us);}
     out["ok"]=true;out["visited"]=visited;out["held"]=held;return out;
 }
 

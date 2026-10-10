@@ -46,5 +46,17 @@ func run() -> void:
 	for child in pool.get_children():after.append(child.get_instance_id())
 	check(after==nodes and pool.get_child_count()==3,"travel saturation and restore reuse fixed body allocation")
 	pool.free();await process_frame
+	var small: RefCounted=ClassDB.instantiate("NativeEntityStore");small.configure(2)
+	var incumbent: int=small.spawn(Vector3(3,0,0),Vector3.ZERO)
+	var challenger: int=small.spawn(Vector3(3.1,0,0),Vector3.ZERO)
+	var retained: Node3D=ClassDB.instantiate("NativeEntityActivation");root.add_child(retained);retained.configure(small,1)
+	retained.select(Vector3.ZERO,10,16);small.set_position(challenger,Vector3(2.9,0,0))
+	retained.select(Vector3.ZERO,10,16)
+	check(retained.active_handles()==PackedInt64Array([incumbent]),"small distance crossing retains incumbent")
+	small.set_position(challenger,Vector3(0.5,0,0));retained.select(Vector3.ZERO,10,16)
+	check(retained.active_handles()==PackedInt64Array([challenger]),"challenger more than2m closer replaces incumbent")
+	small.set_position(challenger,Vector3(11,0,0));retained.select(Vector3.ZERO,10,16)
+	check(retained.active_handles()==PackedInt64Array([incumbent]),"retention never keeps actors outside radius")
+	retained.free();await process_frame
 	DirAccess.make_dir_recursive_absolute("res://reports")
 	var file:=FileAccess.open("res://reports/entity_activation.json",FileAccess.WRITE);file.store_string(JSON.stringify({"failures":failures}));file.close();quit(1 if failures else 0)

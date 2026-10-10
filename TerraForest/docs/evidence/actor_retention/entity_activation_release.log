@@ -1,0 +1,21 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS pool capacity bounded and immutable
+PASS nearest three activate with explicit population truncation
+PASS nearest identities selected deterministically
+PASS native readiness callback holds every unready actor
+PASS invalid readiness callback rejects simulation
+PASS unready active entities remain unchanged
+PASS mismatched readiness rejects before mutation
+PASS invalid last target rejects whole batch
+PASS native batch advances selected actors
+PASS focus change retires distant actor and activates nearer identity
+PASS empty interest region disables every collision proxy
+PASS exhausted candidate budget cannot activate uncertified nearest subset
+PASS restore invalidates old active handles
+PASS selection rebinds restored identities using fresh handles
+PASS travel saturation and restore reuse fixed body allocation
+PASS small distance crossing retains incumbent
+PASS challenger more than2m closer replaces incumbent
+PASS retention never keeps actors outside radius
+

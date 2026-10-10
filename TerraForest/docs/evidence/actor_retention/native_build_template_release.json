@@ -1,0 +1,32 @@
+{
+  "target": "template_release",
+  "compiled_extension_sources": [
+    "entity_activation.cpp",
+    "entity_actor.cpp",
+    "entity_renderer.cpp",
+    "entity_storage.cpp",
+    "entity_store.cpp",
+    "register_types.cpp",
+    "world_archive.cpp"
+  ],
+  "godot_cpp_sources_compiled": 0,
+  "linked": true,
+  "seconds": 10.04239790000429,
+  "output": "C:\\Users\\LENOVO LOQ 15\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll",
+  "sha256": "1b48677fe5d5cc47fadc0d695a7803894767d808fbdc0d3dffa3afc4845e22ff",
+  "sdk": {
+    "api_version": "4.7",
+    "godot_cpp_sha": "d7b6162249ed52796a8301d216c24ee71d68c2bf",
+    "variant": "windows-x86_64-zig",
+    "compiler": "zig-0.16.0",
+    "platform": "windows",
+    "arch": "x86_64",
+    "targets": [
+      "template_debug",
+      "template_release"
+    ],
+    "precision": "single",
+    "created_unix": 1786965830
+  },
+  "addon": "world_runtime"
+}

@@ -37,9 +37,9 @@ func sample(label: String) -> void:
 		prior=active
 		await RenderingServer.frame_post_draw
 		var now:=Time.get_ticks_usec()
-		rows.append({"frame_ms":(now-previous)/1000.0,"actor_ms":cost,"active":active.size(),"held":game.actors.simulation_status.get("held",0),"gpu_ms":RenderingServer.viewport_get_measured_render_time_gpu(viewport),"draw_calls":Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME),"queued":game.terrain.backend.queued(),"worker_busy":0 if game.terrain.backend.status()=="idle" else 1,"settled":settled()});previous=now
+		rows.append({"frame_ms":(now-previous)/1000.0,"actor_ms":cost,"readiness_ms":game.actors.simulation_status.get("readiness_us",0)/1000.0,"collision_ms":game.actors.simulation_status.get("collision_us",0)/1000.0,"active":active.size(),"held":game.actors.simulation_status.get("held",0),"gpu_ms":RenderingServer.viewport_get_measured_render_time_gpu(viewport),"draw_calls":Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME),"queued":game.terrain.backend.queued(),"worker_busy":0 if game.terrain.backend.status()=="idle" else 1,"settled":settled()});previous=now
 	var result:={"phase":label,"stored_near":ids.size(),"distinct_simulated":visited.size(),"activation_entries":changes,"rows":rows,"summary":{}}
-	for field in ["frame_ms","actor_ms","active","held","gpu_ms","draw_calls","queued","worker_busy"]:result.summary[field]=summary(rows,field)
+	for field in ["frame_ms","actor_ms","readiness_ms","collision_ms","active","held","gpu_ms","draw_calls","queued","worker_busy"]:result.summary[field]=summary(rows,field)
 	phases.append(result)
 	check(result.summary.active.max<=16 and game.actors.pool.get_child_count()==16,label+" maintains fixed16 physics cap")
 	check(result.summary.held.max==0,label+" no collision-readiness holds")
@@ -51,6 +51,7 @@ func run() -> void:
 	game=load("res://demo/world.tscn").instantiate();root.add_child(game)
 	var deadline:=Time.get_ticks_msec()+60000
 	while game.loading_active and Time.get_ticks_msec()<deadline:await process_frame
+	game.actors.pool.set_profiling(true)
 	game.terrain.backend.disable_snapshot_writes();game.set_physics_process(false);game._clear_motion();game.app_focused=true
 	var ends: PackedVector3Array=game.road_palette.prepared_streets[0].ends
 	direction=(ends[1]-ends[0]).normalized();side=Vector3(-direction.z,0,direction.x);start=ends[0]+direction*5+Vector3.UP*0.95
