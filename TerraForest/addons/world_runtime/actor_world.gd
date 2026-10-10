@@ -10,6 +10,7 @@ var status: Dictionary={}
 var simulation_status: Dictionary={}
 var _selection_time:=0.0
 var _render_time:=0.0
+var simulation_steps:=0
 var _suspended:=true
 func prepare(persistence: RefCounted) -> bool:
 	if store!=null:return false
@@ -62,7 +63,9 @@ func update_simulation(delta: float,focus: Vector3,available: bool,readiness: Ca
 	_selection_time-=delta;_render_time-=delta
 	if _suspended or _selection_time<=0:
 		status=pool.select(focus,48,4096);_selection_time=0.2;_suspended=false
-	simulation_status=pool.settle(delta,readiness)
+	# CharacterBody movement uses the engine timestep; skipping120Hz calls
+	# while passing1/60 here halves travel. Keep cadence aligned until replaced.
+	simulation_status=pool.settle(delta,readiness);simulation_steps+=1
 	if _render_time<=0:
 		renderer.refresh(focus,64,4096);_render_time=0.1
 	else:

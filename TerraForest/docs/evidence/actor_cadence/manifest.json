@@ -1,0 +1,8 @@
+{
+  "date": "2026-10-10",
+  "command": "godot --path TerraForest --script res://tests/actor_cadence.gd -- --world-slot=staged_furnished_1791584856787240500 --ground-cover --actors",
+  "result": "9 checks pass at existing engine-aligned cadence. One second at engine60 and120 produces matching positions within1cm, over2m movement,60 and120 native updates respectively.",
+  "rejected_change": "60Hz accumulator at120Hz engine failed travel and parity checks. Removed before publication: CharacterBody move_and_slide uses engine delta, not the supplied actor integration delta.",
+  "decision": "Retain engine-aligned actor updates for correctness. Vehicle entry globally raises physics to120Hz and doubles actor update frequency. Fleet design and future actor solver changes must account for this shared cost; do not decimate calls without replacing or explicitly controlling movement integration.",
+  "limits": "Direct engine rate transition fixture, not actual seated vehicle interaction, timing improvement, fleet qualification or endurance. Source save writes disabled."
+}
