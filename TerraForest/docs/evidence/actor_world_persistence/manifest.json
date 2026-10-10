@@ -1,0 +1,16 @@
+{
+  "date": "2026-10-10",
+  "slot": "actor_world_test_1791613477915523200",
+  "create_checks": 9,
+  "reopen_checks": 8,
+  "command": "godot --path TerraForest --script res://tests/actor_world_persistence.gd -- --world-slot=<new actor_world_test_ identifier> --world-generator=2",
+  "reopen": "same command plus --reopen-actors in a separate process; do not reuse evidence slot for creation",
+  "scope": "Real main-world compound archive manual save, fresh-process reopen, normal reload with active pool, exact actor bytes and stale handle retirement.",
+  "limits": [
+    "Default actor capacity1024; no claim of large-population resident storage qualification.",
+    "No automatic tick, spawn controls, behavior target persistence or animation yet.",
+    "Activation/rendering requires explicit enable; persistence registration always occurs.",
+    "Test actors were not walked; previous rendered movement evidence is separate.",
+    "Shutdown writes disabled after verification; save-blocked messages expected."
+  ]
+}

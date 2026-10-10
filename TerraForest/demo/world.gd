@@ -5,6 +5,7 @@ const Lakes = preload("res://addons/volumetric_water/lake_world.gd")
 const Persistence = preload("res://addons/world_runtime/world_persistence.gd")
 const Structures = preload("res://addons/structures/structures_world.gd")
 var persistence = Persistence.new()
+var actors=preload("res://addons/world_runtime/actor_world.gd").new()
 var model_paging: Node
 var model_region_paging := "--model-region-paging" in OS.get_cmdline_user_args()
 var pickups = preload("res://addons/world_runtime/material_pickups.gd").new()
@@ -82,6 +83,9 @@ func _ready() -> void:
 	add_child(world_vehicle)
 	world_vehicle.interaction_available=_vehicle_interaction_available
 	add_child(pickups)
+	add_child(actors)
+	if not actors.prepare(persistence):
+		push_error("Actor persistence initialization failed");get_tree().quit(2);return
 	if not ground_cover.prepare(persistence):
 		push_error("Ground-cover persistence initialization failed");get_tree().quit(2);return
 	if not ecosystem.prepare_persistence(persistence):
