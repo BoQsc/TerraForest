@@ -10,6 +10,7 @@ class NativeVehicleStorage : public godot::RefCounted {
     GDCLASS(NativeVehicleStorage,godot::RefCounted)
 protected: static void _bind_methods();
 public:
+    static bool valid_pose(const godot::Transform3D &pose);
     bool validate_fleet_snapshot(const godot::PackedByteArray &data) const;
     godot::PackedByteArray encode_fleet(const godot::Array &records, int64_t next_identity) const;
     godot::Dictionary decode_fleet(const godot::PackedByteArray &data) const;

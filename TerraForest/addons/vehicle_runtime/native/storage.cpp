@@ -21,8 +21,11 @@ bool NativeVehicleStorage::validate_snapshot(const PackedByteArray &data) const 
     double norm=0;for(int i=0;i<4;++i){double q=data.decode_double(40+i*8);norm+=q*q;}
     return std::abs(norm-1)<.00001;
 }
+bool NativeVehicleStorage::valid_pose(const Transform3D &pose) {
+    return pose.is_finite() && pose.origin.x>=2 && pose.origin.x<=1998 && pose.origin.z>=2 && pose.origin.z<=1998 && pose.origin.y>=0 && pose.origin.y<=600 && std::abs(pose.basis.determinant()-1)<=.00001 && pose.basis.is_equal_approx(pose.basis.orthonormalized());
+}
 PackedByteArray NativeVehicleStorage::encode(Transform3D pose) const {
-    if(!pose.is_finite()||std::abs(pose.basis.determinant()-1)>.00001||!pose.basis.is_equal_approx(pose.basis.orthonormalized()))return {};
+    if(!valid_pose(pose))return {};
     Quaternion q=pose.basis.get_rotation_quaternion().normalized();
     PackedByteArray data;data.resize(72);data.encode_u32(0,0x31564654);data.encode_u32(4,1);data.encode_u64(8,1);
     for(int i=0;i<3;++i)data.encode_double(16+i*8,pose.origin[i]);

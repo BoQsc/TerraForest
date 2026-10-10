@@ -1,0 +1,18 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS fresh records receive monotonic identities
+PASS nearest ties use identity and cap is explicit
+PASS candidate exhaustion publishes no misleading nearest subset
+PASS removal retires identity
+PASS removed identity is not reused
+PASS pose correction updates spatial membership
+PASS old cell no longer contains moved record
+PASS invalid correction leaves records intact
+PASS snapshot restores identities poses and allocation counter
+PASS invalid restore is atomic
+PASS invalid or unbounded query rejected
+PASS distant finite query avoids integer conversion overflow
+PASS legacy single car migrates into live ownership
+PASS large parked population restores without scene bodies
+PASS local selection visits1 record with10000 distant vehicles
+PASS empty spatial cell is retired

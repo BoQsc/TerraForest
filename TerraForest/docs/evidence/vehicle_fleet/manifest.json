@@ -1,0 +1,11 @@
+{
+  "date": "2026-10-10",
+  "checks": {
+    "fleet_debug": 16,
+    "fleet_release": 16,
+    "legacy_debug": 10
+  },
+  "result": "10001 parked records restored. Query visits1 local record with10000 distant; hard candidate exhaustion returns no partial nearest selection. IDs are monotonic; invalid restore leaves existing state intact.",
+  "architecture": "Native scene-thread map ownership plus32m cells. Query radius<=128m, result<=256, candidate budget<=65536. Pose changes validate without codec allocation. Snapshot codec is bulk work; no per-record scene bodies.",
+  "limits": "Not main-world integrated. No activation pool, driver pinning, damage/types/velocity, fair admission, distant rendering or multiplayer ownership. Current world coordinate bounds remain. Snapshot capture/restore still bulk and must be scheduled appropriately. Native record lookup is logarithmic, not constant time."
+}
