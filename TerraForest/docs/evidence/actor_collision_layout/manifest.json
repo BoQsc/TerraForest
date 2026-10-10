@@ -1,0 +1,7 @@
+{
+  "date": "2026-10-10",
+  "command": "godot --path TerraForest --script res://tests/actor_collision_layout.gd -- --world-slot=staged_furnished_1791584856787240500 --ground-cover --actors",
+  "result": "2 checks pass. 105 active terrain bodies,15 inactive. Four AABB candidate pieces along route,614/626/640/684 triangles; no exact ordered duplicates among candidates.",
+  "limits": "Read-only one-time scene-node terrain census. Excludes non-terrain and server-only shapes. AABB intersections overestimate actual contacts; exact ordered duplicates do not detect all geometric overlap. No performance measurement or proof of overlap absence.",
+  "decision": "Excessive terrain piece count is not supported on this route. Do not pursue wholesale repartitioning from these results. If collision qualification continues, compare equivalent triangle geometry/contact backend behavior before selecting a production representation; retain box and real-world timing failures."
+}

@@ -1,0 +1,15 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] World loaded
+[TerrainRewrite] World loaded
+[TerrainRewrite] Lake ready · F5 saves world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+[TerrainRewrite] Lake ready · F5 saves world
+[TerrainRewrite] Lake ready · F5 saves world
+[TerrainRewrite] ERROR: save blocked: snapshot writes explicitly disabled; previous canonical snapshot retained
+[TerrainRewrite] Lake ready · F5 saves world
+PASS world settled before collision census
+PASS route intersects active terrain collision pieces
+{"active_terrain_bodies":105,"exact_ordered_duplicate_triangles":0,"failures":0,"inactive_terrain_bodies":15,"route_candidate_pieces":[{"body":"/root/TerraForest/@Node3D@80/Patch_816_1312_16/MatchingCollision","bounds_position":"(815.5, 46.67188, 1311.45)","bounds_size":"(16.40698, 1.264404, 16.05005)","triangles":626},{"body":"/root/TerraForest/@Node3D@80/Patch_800_1312_16/MatchingCollision","bounds_position":"(799.5, 47.0, 1311.5)","bounds_size":"(16.0, 2.200684, 16.0)","triangles":684},{"body":"/root/TerraForest/@Node3D@80/Patch_816_1296_16/MatchingCollision","bounds_position":"(815.5, 46.17334, 1295.5)","bounds_size":"(16.0, 2.074707, 16.25)","triangles":640},{"body":"/root/TerraForest/@Node3D@80/Patch_800_1296_16/MatchingCollision","bounds_position":"(799.5, 47.0, 1295.5)","bounds_size":"(16.0, 2.596436, 16.0)","triangles":614}],"scope":"AABB candidates, not exact contact counts. Duplicate check requires identical world vertices and order; nonidentical overlapping triangles are not detected."}
+[TerrainRewrite] ERROR: save blocked: snapshot writes explicitly disabled; previous canonical snapshot retained
