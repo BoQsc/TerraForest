@@ -22,6 +22,8 @@ func apply(world: Node,remove: bool) -> String:
 		if not query.ok or not query.complete or query.ids.size()!=1:return "Actor selection is ambiguous; try again."
 		var identity: int=world.actors.store.persistent_id(query.ids[0])
 		if not world.actors.store.despawn(query.ids[0]):return "Actor changed; try again."
+		if identity==selected_identity:
+			selected_identity=0;world.actors.renderer.set_selection_marker(world.actors.selection_marker,0)
 		world.actors.orders.clear_target(identity)
 		world.actors.select_near(world.terrain.focus)
 		return "Actor removed · F5 saves world."
@@ -43,7 +45,8 @@ func apply(world: Node,remove: bool) -> String:
 func command(world: Node,stop: bool) -> String:
 	var blocked:=unavailable(world)
 	if not blocked.is_empty():return blocked
-	if selected_epoch!=world.terrain.epoch or world.actors.store.resolve_identity(selected_identity)==0:selected_identity=0
+	if selected_epoch!=world.terrain.epoch or world.actors.store.resolve_identity(selected_identity)==0:
+		selected_identity=0;world.actors.renderer.set_selection_marker(world.actors.selection_marker,0)
 	if stop:
 		if selected_identity==0:return "Select an actor with K first."
 		world.actors.orders.clear_target(selected_identity)
@@ -56,6 +59,7 @@ func command(world: Node,stop: bool) -> String:
 		var query: Dictionary=world.actors.store.query_sphere_nearest(hit.collider.global_position,0.01,1,64)
 		if not query.ok or not query.complete or query.ids.size()!=1:return "Actor selection is ambiguous."
 		selected_identity=world.actors.store.persistent_id(query.ids[0]);selected_epoch=world.terrain.epoch
+		world.actors.renderer.set_selection_marker(world.actors.selection_marker,selected_identity)
 		return "Actor selected · aim at ground and press K to move; Shift+K stops."
 	if selected_identity==0:return "Aim at an actor and press K first."
 	if hit.collider is CharacterBody3D or hit.collider is RigidBody3D or hit.normal.dot(Vector3.UP)<0.8:return "Choose a level static destination."

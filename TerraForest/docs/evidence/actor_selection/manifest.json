@@ -1,0 +1,15 @@
+{
+  "date": "2026-10-10",
+  "checks": {
+    "renderer_debug": 30,
+    "renderer_release": 30,
+    "actual_world_editor": 17
+  },
+  "implementation": "One optional shared unshadowed selection marker follows persistent identity through native renderer publication. No per-entity nodes or GDScript tracking loop. Marker disappears outside rendered selection, on stale records, suspension and epoch-invalid command. Deleted marker references resolve safely by ObjectID.",
+  "scope": "Visual/editor correctness only; existing actor timing and mixed-frame failures remain open. Marker can be occluded by geometry. No navigation, animation or crowd qualification.",
+  "commands": [
+    "godot --path TerraForest --script res://tests/entity_renderer.gd",
+    "python TerraForest/tools/test_native_release.py --addon world_runtime --test entity_renderer --godot ENGINE",
+    "godot --path TerraForest --script res://tests/actor_editor.gd -- --world-slot=staged_furnished_1791584856787240500 --ground-cover --actors"
+  ]
+}

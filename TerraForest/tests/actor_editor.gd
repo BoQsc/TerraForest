@@ -40,6 +40,7 @@ func run() -> void:
 	press(game,false,KEY_K)
 	var identity: int=game.actor_authoring.selected_identity
 	check(identity>0,"K selects aimed actor by persistent identity")
+	check(game.actors.selection_marker.visible,"selected actor has a visible marker")
 	aim=point+Vector3(5,0,0)
 	press(game,false,KEY_K)
 	check(game.actors.orders.get_target(identity).present,"K issues destination order on clear ground: "+game._lake_notice)
@@ -51,6 +52,7 @@ func run() -> void:
 		game.actors.update_simulation(1.0/60,point,true,game._actor_collision_ready)
 		render_tracks=render_tracks and game.actors.renderer.multimesh.get_instance_transform(0).origin.is_equal_approx(game.actors.store.get_position(handle))
 	check(render_tracks,"rendered position follows every simulated movement tick")
+	check(game.actors.selection_marker.global_position.is_equal_approx(game.actors.store.get_position(handle)+Vector3.UP*1.08),"selection marker follows native movement")
 	check(game.actors.store.get_position(handle).x>initial.x+2,"editor-issued order moves actor through native simulation")
 	var snapshot: PackedByteArray=game.actors.orders.capture_storage_snapshot()
 	game.construction_inventory.gameplay=true;press(game,true,KEY_K)
@@ -62,8 +64,12 @@ func run() -> void:
 		await physics_frame
 		game.actors.update_simulation(1.0/60,point,true,game._actor_collision_ready)
 	check(absf(game.actors.store.get_position(handle).x-stopped.x)<0.001,"stop halts horizontal movement")
+	game.camera.global_position=point+Vector3(3,2,5);game.camera.look_at(stopped+Vector3.UP*0.4)
+	await RenderingServer.frame_post_draw
+	DirAccess.make_dir_recursive_absolute("res://reports/actor_selection")
+	root.get_texture().get_image().save_png("res://reports/actor_selection/selected.png")
 	game.actor_authoring.selected_epoch=-1;press(game,true,KEY_K)
-	check(game.actor_authoring.selected_identity==0,"selection from prior world epoch is discarded")
+	check(game.actor_authoring.selected_identity==0 and not game.actors.selection_marker.visible,"selection from prior world epoch is discarded and hidden")
 	game.camera.global_position=point+Vector3(3,2,5);game.camera.look_at(point+Vector3.UP)
 	await create_timer(0.6).timeout;await RenderingServer.frame_post_draw
 	check(game.telemetry.text.contains("J Place actor"),"editor controls appear in HUD")

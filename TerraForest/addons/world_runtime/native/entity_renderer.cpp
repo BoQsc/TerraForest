@@ -4,9 +4,17 @@
 using namespace godot;
 namespace terraforest {
 void NativeEntityRenderer::_bind_methods() {
+    ClassDB::bind_method(D_METHOD("set_selection_marker", "marker", "identity"), &NativeEntityRenderer::set_selection_marker);
     ClassDB::bind_method(D_METHOD("refresh_positions"), &NativeEntityRenderer::refresh_positions);
     ClassDB::bind_method(D_METHOD("configure", "store", "mesh", "capacity"), &NativeEntityRenderer::configure);
     ClassDB::bind_method(D_METHOD("refresh", "center", "radius", "candidate_budget"), &NativeEntityRenderer::refresh, DEFVAL(4096));
+}
+void NativeEntityRenderer::set_selection_marker(Node3D *marker, int64_t identity) {
+    auto *old=Object::cast_to<Node3D>(ObjectDB::get_instance(marker_id_));
+    if(old)old->hide();
+    marker_id_=marker?uint64_t(marker->get_instance_id()):0;
+    highlighted_identity_=identity;
+    refresh_positions();
 }
 bool NativeEntityRenderer::configure(const Ref<NativeEntityStore> &store, const Ref<Mesh> &mesh, int capacity) {
     if (store.is_null() || mesh.is_null() || capacity < 1 || capacity > 4096) return false;
@@ -34,6 +42,8 @@ Dictionary NativeEntityRenderer::refresh_positions(){
     return publish(result);
 }
 Dictionary NativeEntityRenderer::publish(Dictionary result){
+    auto *marker=Object::cast_to<Node3D>(ObjectDB::get_instance(marker_id_));
+    if(marker)marker->hide();
     result["rendered"]=0;result["upload_bytes"]=0;
     if(store_.is_null()){result["ok"]=false;result["reason"]="not_configured";return result;}
     // The MultiMesh is owned by this adapter. Detect external mutation instead of
@@ -57,6 +67,10 @@ Dictionary NativeEntityRenderer::publish(Dictionary result){
     float *out = nullptr;
     for (int64_t i = 0; i < ids.size(); ++i) {
         const Vector3 p = store_->get_position(ids[i]);
+        if(marker && marker->is_inside_tree() && is_inside_tree() && store_->persistent_id(ids[i])==highlighted_identity_) {
+            marker->set_global_position(get_global_transform().xform(p)+Vector3(0,1.08,0));
+            marker->show();
+        }
         const float *old = current + i * 12;
         if (old[0]==1 && old[5]==1 && old[10]==1 && old[3]==p.x && old[7]==p.y && old[11]==p.z) continue;
         // Acquire writable storage only on the first changed row. An unchanged

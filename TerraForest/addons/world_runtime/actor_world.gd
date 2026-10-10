@@ -4,6 +4,7 @@ extends Node3D
 var orders: RefCounted
 var store: RefCounted
 var pool: Node3D
+var selection_marker: MeshInstance3D
 var renderer: MultiMeshInstance3D
 var status: Dictionary={}
 var simulation_status: Dictionary={}
@@ -28,10 +29,16 @@ func enable(capacity: int=16) -> bool:
 	var mesh:=CapsuleMesh.new();mesh.radius=0.35;mesh.height=1.8
 	var material:=StandardMaterial3D.new();material.albedo_color=Color("edb35a");mesh.material=material
 	if not renderer.configure(store,mesh,256):renderer.free();renderer=null;pool.free();pool=null;return false
+	selection_marker=MeshInstance3D.new();selection_marker.name="ActorSelection";add_child(selection_marker)
+	var ring:=TorusMesh.new();ring.inner_radius=0.38;ring.outer_radius=0.46;ring.rings=16;ring.ring_segments=6
+	var highlight:=StandardMaterial3D.new();highlight.shading_mode=BaseMaterial3D.SHADING_MODE_UNSHADED;highlight.albedo_color=Color("65ffe0");ring.material=highlight
+	selection_marker.mesh=ring;selection_marker.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_OFF;selection_marker.hide()
 	return true
 func suspend() -> void:
 	if pool!=null:pool.select(Vector3(NAN,0,0),0,1)
-	if renderer!=null:renderer.refresh(Vector3(NAN,0,0),0,1)
+	if renderer!=null:
+		renderer.set_selection_marker(selection_marker,0)
+		renderer.refresh(Vector3(NAN,0,0),0,1)
 	status={};simulation_status={};_suspended=true;_selection_time=0;_render_time=0
 func _restore(data: PackedByteArray) -> bool:
 	if not store.validate_snapshot(data):return false

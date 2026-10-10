@@ -1,0 +1,33 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+PASS unconfigured renderer rejects refresh
+PASS fixed capacity renderer configured
+PASS local entities selected from 100000 population
+PASS upload and candidate work bounded independently of population
+PASS uploaded transforms match generation checked handles
+PASS sixty unchanged refreshes perform zero transform uploads
+PASS moving one selected entity uploads changed transforms
+PASS stopping movement resumes buffer reuse
+PASS invalid reconfiguration preserves resource
+PASS overflow is explicit and never grows GPU capacity
+PASS candidate budget preserved by renderer
+PASS invalid query hides stale instances
+PASS empty area hides instances without upload
+PASS returning from empty query restores visibility
+PASS removal reuse and movement publish current entity only
+PASS external resource mutation fails closed
+PASS first origin row initializes identity basis despite zero translation
+PASS unchanged buffer restores visibility after empty selection without upload
+PASS growing selection initializes newly visible rows correctly
+PASS sixty position-only updates follow movement without reselection
+PASS stationary cached selection uploads no transform buffer
+PASS identity marker follows selected rendered actor
+PASS marker hides when selected identity leaves render selection
+PASS marker returns with same identity
+PASS clearing selection hides marker
+PASS stale cached selection hides removed entities before reselection
+PASS removing all entities hides old buffer without upload
+PASS despawn hides stale identity marker
+PASS deleted marker is safely ignored
+PASS one rendering node without per entity scene nodes
