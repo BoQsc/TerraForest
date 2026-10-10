@@ -1,0 +1,8 @@
+{
+  "status": "support gate remains failed; cause narrowed",
+  "finding": "All <3-wheel-load observations occur in first six 16 m sections (x>704). Later constant 25% climb has >=3 loaded wheels every sampled tick. Crest near x=746.75: chassis clearance 2.026 m, 73.275 km/h, zero loaded wheels and zero wheel ray hits. No streaming holds.",
+  "interpretation": "Evidence supports launch over abrupt convex grade change; do not increase adhesion or weaken support criteria to hide road profile design. Constant-grade road join defect is independently fixed.",
+  "next": "Add bounded native vertical-profile smoothing for road authoring with explicit maximum grade and curvature plus cut/fill feasibility; reject infeasible routes. Integrate it with route preview/construction, then repeat the same support and collision checks.",
+  "limits": "The current road-height comparison uses intended profile; direct collision proof currently covers collinear constant grade, not every grade transition. Initial two-wheel load redistribution alone does not imply airborne motion.",
+  "scope": "Rendered main-world diagnostic; existing checkpoint preserved. Original broad scope and performance gates remain open."
+}

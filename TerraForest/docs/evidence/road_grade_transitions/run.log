@@ -1,0 +1,19 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] World loaded
+[TerrainRewrite] World loaded
+[TerrainRewrite] Lake ready · F5 saves world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+SURFACE_PROFILE [(800.0, 47.0, 1310.0), (784.0, 50.86719, 1310.0), (768.0, 52.5065, 1310.0), (752.0, 54.38694, 1310.0), (736.0, 54.49004, 1310.0), (720.0, 54.00453, 1310.0), (704.0, 54.51068, 1310.0), (688.0, 55.72586, 1310.0), (672.0, 58.96295, 1310.0), (656.0, 64.58889, 1310.0), (640.0, 71.58327, 1310.0), (624.0, 77.87991, 1310.0), (608.0, 84.17345, 1310.0), (592.0, 90.59405, 1310.0), (576.0, 96.38563, 1310.0), (560.0, 102.0208, 1310.0), (544.0, 107.1831, 1310.0), (528.0, 109.9728, 1310.0), (512.0, 111.9581, 1310.0), (496.0, 115.8535, 1310.0), (480.0, 119.5132, 1310.0)]
+PASS place vehicle on authored street: Vehicle placed · E nearby to enter · F5 saves world
+PASS vehicle faces player's road heading
+PASS enter vehicle on loaded settlement road
+[TerrainRewrite] Lake ready · F5 saves world
+[TerrainRewrite] Lake ready · F5 saves world
+[TerrainRewrite] Lake ready · F5 saves world
+PASS destination begins outside combined ready coverage
+PASS combined world vehicle reaches road destination without falling
+PASS combined world travel has zero readiness holds
+FAIL wheel support observed through route
+[TerrainRewrite] ERROR: save blocked: snapshot writes explicitly disabled; previous canonical snapshot retained

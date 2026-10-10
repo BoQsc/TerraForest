@@ -150,6 +150,7 @@ func streamed_drive(game: Node,car: RigidBody3D,direction: Vector3) -> void:
 	target.y=road_height(target)
 	var initially_ready: bool=game.world_vehicle.ready_bounds(game,AABB(target-Vector3.ONE*4,Vector3.ONE*8))
 	var rows: Array=[];var holds: Array=[];var held:=0;var was_waiting:=false
+	var support_segments: Dictionary={};var unsupported: Array=[]
 	var max_speed:=0.0;var supported:=0;var ticks:=0
 	var deadline:=Time.get_ticks_msec()+40000
 	for tick in 3600:
@@ -157,6 +158,14 @@ func streamed_drive(game: Node,car: RigidBody3D,direction: Vector3) -> void:
 		key_state(KEY_W,true);Input.flush_buffered_events();await physics_frame
 		ticks+=1;max_speed=maxf(max_speed,car.speed_kph)
 		if car.loaded_wheels>=3:supported+=1
+		var segment:=clampi(floori((road_profile[0].x-car.position.x)/absf(road_profile[1].x-road_profile[0].x)),0,road_profile.size()-2)
+		if not support_segments.has(segment):support_segments[segment]={"ticks":0,"loaded":0,"no_load":0,"max_clearance":0.0}
+		var tally: Dictionary=support_segments[segment];tally.ticks+=1
+		if car.loaded_wheels>=3:tally.loaded+=1
+		if car.loaded_wheels==0:tally.no_load+=1
+		tally.max_clearance=maxf(tally.max_clearance,car.position.y-road_height(car.position))
+		if car.loaded_wheels<3:
+			unsupported.append({"tick":tick,"segment":segment,"position":car.position,"velocity":car.linear_velocity,"speed":car.speed_kph,"loaded":car.loaded_wheels,"ray_hits":car.grounded_wheels,"springs":car._spring_lengths.duplicate(),"clearance":car.position.y-road_height(car.position)})
 		if car.streaming.waiting:held+=1
 		if car.streaming.waiting!=was_waiting:
 			var velocity: Vector3=car.streaming._linear if car.streaming.waiting else car.linear_velocity
@@ -172,7 +181,7 @@ func streamed_drive(game: Node,car: RigidBody3D,direction: Vector3) -> void:
 	check(held==0,"combined world travel has zero readiness holds")
 	check(supported>=ticks*0.95,"wheel support observed through route")
 	await RenderingServer.frame_post_draw;root.get_texture().get_image().save_png(DIR+"streamed.png")
-	var result:={"failures":failures,"road_profile":road_profile,"initial":initial,"end":car.position,"distance":distance,"initially_ready":initially_ready,"held_ticks":held,"ticks":ticks,"supported_ticks":supported,"max_speed_kph":max_speed,"holds":holds,"rows":rows,"scope":"Main-world driving with forest, ground cover, buildings and lakes loaded; temporary authored road extension; original save preserved. No sustained frame/thermal or city-scale qualification."}
+	var result:={"failures":failures,"support_segments":support_segments,"unsupported":unsupported,"road_profile":road_profile,"initial":initial,"end":car.position,"distance":distance,"initially_ready":initially_ready,"held_ticks":held,"ticks":ticks,"supported_ticks":supported,"max_speed_kph":max_speed,"holds":holds,"rows":rows,"scope":"Main-world driving with forest, ground cover, buildings and lakes loaded; temporary authored road extension; original save preserved. No sustained frame/thermal or city-scale qualification."}
 	var file:=FileAccess.open(DIR+"streamed.json",FileAccess.WRITE);file.store_string(JSON.stringify(result,"  "));file.close()
 
 func sample_road(game: Node,a: Vector3,direction: Vector3) -> PackedVector3Array:
