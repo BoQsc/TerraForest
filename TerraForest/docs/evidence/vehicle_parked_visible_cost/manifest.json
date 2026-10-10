@@ -1,0 +1,16 @@
+{
+  "base_commit": "99e7302110fcefc2c5670b5df02258059d1e13f4",
+  "command": "\"C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\godot.windows.opt.tools.64.exe\" --path TerraForest --script res://tests/vehicle_parked_visible_cost.gd",
+  "exit_code": 0,
+  "resolution": [
+    1920,
+    1080
+  ],
+  "fps_cap": 60,
+  "gpu": "RTX 4050 Laptop GPU",
+  "scope": "Isolated orthographic parked visual batch with directional shadows, no terrain, buildings, vegetation, activation or driving. 120 frames per count after 30 warm-up frames. Screenshots reviewed; all 64 vehicles unobstructed. Primitive monitor is not interpreted as total instanced geometry.",
+  "dll_sha256": {
+    "vehicle_runtime.windows.template_debug.x86_64.dll": "4e26fb367e7aaa92f00e8d0772a5ed986b32ebbf8077994107b640611ddf2706",
+    "vehicle_runtime.windows.template_release.x86_64.dll": "7165d04acb9624a886c0e5d44124b4367f197b0cedf5e6c6d408f9fabde06566"
+  }
+}
