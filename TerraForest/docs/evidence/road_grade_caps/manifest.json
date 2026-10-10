@@ -1,0 +1,11 @@
+{
+  "fix": "Extrapolate grade plane through rounded road footprint caps instead of flattening endpoint elevations. Native edit bounds and scene invalidation include cap rise. Existing stored terrain is not migrated; regrading is needed for existing ledges.",
+  "profile": "Before: 0.96295 m maximum height error, 53.51 degree normal error, 0.593 m step error. After: 0.0000594 m height error, zero measured normal/step error, zero missing ray hits. Debug and release pass; existing walking traversal passes.",
+  "drive": "Final main-world 245.2 m uphill drive has zero loading holds and peak 128.51 km/h. >=3-wheel support improves from 883/1574 (56.1%) to 1152/1328 (86.7%), still fails unchanged 95% gate.",
+  "next": "Correlate remaining wheel losses with road grade transitions versus suspension dynamics; constant-grade joins now have passing direct collision evidence. No overall driving closure.",
+  "limits": "Collinear constant-grade collision regression; sharp turns and grade-transition smoothing remain unqualified. Visual cut walls still show stepping/shadows. No thermal or sustained performance claim.",
+  "binary_hashes": {
+    "terrain_core.windows.template_release.x86_64.dll": "3033b0111e19a54066fdf60749f009cb18c93312f215cf5af0e80c0bca1247d7",
+    "terrain_core.windows.x86_64.dll": "3a2c5345044cd9739bb058e9dc21ec03803dad98231f2bfb3b6577a5cde9e74e"
+  }
+}

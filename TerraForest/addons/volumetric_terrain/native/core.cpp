@@ -147,9 +147,12 @@ Page* World::ensure(int px,int py,int pz){
 static float box_distance(V3 p,V3 c,float r){V3 q={ab(p.x-c.x)-r,ab(p.y-c.y)-r,ab(p.z-c.z)-r};return length({mx(q.x,0),mx(q.y,0),mx(q.z,0)})+mn(mx(q.x,mx(q.y,q.z)),0);}
 static float road_bed_field(V3 p,V3 a,V3 b,float half_width,float depth,float shoulder=0){
  V3 axis={b.x-a.x,0,b.z-a.z},offset={p.x-a.x,0,p.z-a.z};
- float t=clampf(dot(offset,axis)/dot(axis,axis),0.f,1.f);
+ float along=dot(offset,axis)/dot(axis,axis);
+ float t=clampf(along,0.f,1.f);
  V3 nearest={a.x+axis.x*t,0,a.z+axis.z*t};
- float top=a.y+(b.y-a.y)*t;
+ // Keep the grade plane through the rounded footprint caps. Clamping the
+ // elevation flattened each cap, leaving ledges at joined sloping sections.
+ float top=a.y+(b.y-a.y)*along;
  float edge=length(V3{p.x-nearest.x,0,p.z-nearest.z})-half_width;
  if(shoulder>0){
   float drop=depth*clampf(edge/shoulder,0.f,1.f);
@@ -162,7 +165,7 @@ bool World::edit(V3 a,V3 b,float radius,int shape,bool add,u8 material,V3&lo,V3&
  changes=0;radius=clampf(radius,0.5f,64.f);
  lo={mx(0,mn(a.x,b.x)-radius-SDF_BAND-1),mx(0,mn(a.y,b.y)-radius-SDF_BAND-1),mx(0,mn(a.z,b.z)-radius-SDF_BAND-1)};
  hi={mn(WORLD,mx(a.x,b.x)+radius+SDF_BAND+1),mn(255,mx(a.y,b.y)+radius+SDF_BAND+1),mn(WORLD,mx(a.z,b.z)+radius+SDF_BAND+1)};
- if(shape==2){lo.y=mx(0,mn(a.y,b.y)-depth-SDF_BAND-1);hi.y=mn(255,mx(a.y,b.y)+clearance+SDF_BAND+1);}
+ if(shape==2){float cap_rise=ab(b.y-a.y)*(radius+shoulder)/length(V3{b.x-a.x,0,b.z-a.z});lo.y=mx(0,mn(a.y,b.y)-cap_rise-depth-SDF_BAND-1);hi.y=mn(255,mx(a.y,b.y)+cap_rise+clearance+SDF_BAND+1);}
  if(shape==2&&shoulder>0){lo.x=mx(0,lo.x-shoulder);lo.z=mx(0,lo.z-shoulder);hi.x=mn(WORLD,hi.x+shoulder);hi.z=mn(WORLD,hi.z+shoulder);}
  if(lo.x>hi.x||lo.y>hi.y||lo.z>hi.z)return false;
  // Capacity check before mutation: fail the edit, never silently discard terrain.

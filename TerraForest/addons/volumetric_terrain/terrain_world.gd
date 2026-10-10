@@ -148,8 +148,9 @@ func edit(data: PackedByteArray, lo: Vector3, hi: Vector3, captured_us: int = 0,
 			if not a.is_finite() or not b.is_finite() or not is_finite(width) or not is_finite(depth) or width<0.5 or width>16 or depth<1 or depth>8 or distance<1 or distance>128 or absf(b.y-a.y)>distance*0.25: return false
 			for point: Vector3 in [a,b]:
 				if point.x<width+shoulder+5 or point.x>1995-width-shoulder or point.z<width+shoulder+5 or point.z>1995-width-shoulder or point.y<depth+4 or point.y>250: return false
-			safe_lo=safe_lo.min(a.min(b)-Vector3(width+shoulder+5,depth+5,width+shoulder+5))
-			safe_hi=safe_hi.max(a.max(b)+Vector3(width+shoulder+5,clearance+5,width+shoulder+5))
+			var cap_rise: float=absf(b.y-a.y)*(width+shoulder)/distance
+			safe_lo=safe_lo.min(a.min(b)-Vector3(width+shoulder+5,depth+cap_rise+5,width+shoulder+5))
+			safe_hi=safe_hi.max(a.max(b)+Vector3(width+shoulder+5,clearance+cap_rise+5,width+shoulder+5))
 		elif kind == 3 and packet.size() == 20:
 			var cell := Vector3i(packet.decode_s32(4), packet.decode_s32(8), packet.decode_s32(12))
 			if cell.x < 0 or cell.x >= 2000 or cell.z < 0 or cell.z >= 2000 or cell.y < 2 or cell.y >= 255 or packet.decode_u32(16) > 3:
