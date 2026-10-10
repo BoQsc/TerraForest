@@ -1,0 +1,13 @@
+{
+  "date": "2026-10-10",
+  "debug_command": "godot --headless --path TerraForest --script res://tests/entity_actor.gd",
+  "release_command": "python TerraForest/tools/test_native_release.py --addon world_runtime --test entity_actor --godot <engine>",
+  "checks_per_build": 8,
+  "workload": "120 physics ticks, one active capsule, floor and wall, 100000 stationary distant records",
+  "limitations": [
+    "Headless correctness only; no rendered crowd, animation, main-world terrain integration or runtime-cost qualification.",
+    "Caller must pool bodies, select nearby entities, establish collision readiness and invoke tick once per physics step.",
+    "Target seeking stops against obstacles; no pathfinding or stair stepping.",
+    "Store coordinates must be world coordinates for this proxy. Active body owns integration; caller must not set a nonzero store velocity for the same entity."
+  ]
+}
