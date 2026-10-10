@@ -53,6 +53,21 @@ func run() -> void:
 	await RenderingServer.frame_post_draw
 	root.get_texture().get_image().save_png(dir+("reopen.png" if reopen else "placed.png"))
 	check(preload("res://addons/presentation/fullscreen_policy.gd").measurement(root).fair_graphical_sample and Engine.max_fps==60,"1080p fullscreen cap60")
+	var before_removal: PackedByteArray=game.player_hud.capture_snapshot()
+	for i in range(3):
+		var entry: Dictionary=game.model_tool.catalog[3+i]
+		var point:=base+Vector3(i*2-2,0,-2)
+		game.camera.global_position=point+Vector3.UP*3
+		game.camera.look_at(point,Vector3.FORWARD)
+		game.model_tool.update(0,true);game.model_tool.pick()
+		check(game.model_tool.picked_collection==entry.collection and game.model_tool.picked_id>0,"object tool selects "+entry.title)
+		var identity: int=game.model_tool.picked_id
+		check(game.model_tool.edit(true)==identity and identity>0,"object tool removes selected "+entry.title)
+		await physics_frame;await physics_frame
+		check(entry.collection.get_ids().is_empty() and game.model_tool.picked_id==0,"removal clears identity and selection for "+entry.title)
+		var remaining_hit: Dictionary=game.structures.blocks.raycast_scene(point+Vector3.UP*3,point,2,[])
+		check(remaining_hit.is_empty() or remaining_hit.collider!=entry.collection,"removed furniture leaves no collision for "+entry.title)
+	check(game.player_hud.capture_snapshot()==before_removal,"furniture removal does not silently refund or charge inventory")
 	game.shutdown_requested=true;check(await game.terrain.shutdown_after_edits(),"world drains normally")
 	game.free();await process_frame;await process_frame
 	print("FURNITURE_WORLD failures=",failures);quit(1 if failures else 0)

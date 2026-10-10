@@ -1,0 +1,8 @@
+{
+  "base_commit": "d093ab0",
+  "command": "godot --path TerraForest --script res://tests/furniture_world.gd -- --gameplay-construction",
+  "exit_code": 0,
+  "checks": 31,
+  "scope": "Temporary actual world, authored block floor; table/chair/shelf paid placement, selection, removal, identity invalidation and no stale furniture ray collider. Inventory unchanged by removal. Fullscreen1080p cap60 configuration, not a timing qualification. No cottage interior occlusion or deletion persistence proof.",
+  "fixture_correction": "Initial ray expected empty but also intersects supporting block floor; final check excludes removed collection instead."
+}

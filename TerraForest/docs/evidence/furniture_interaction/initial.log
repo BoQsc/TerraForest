@@ -1,0 +1,49 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] New world
+[TerrainRewrite] New world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+PASS main world ready
+PASS all furniture available through normal object catalog
+PASS real editable block floor supports interior fixture
+[TerrainRewrite] Place objects
+[TerrainRewrite] Wooden table placed · F5 saves world
+PASS normal paid object tool places Wooden table
+[TerrainRewrite] Wooden chair placed · F5 saves world
+PASS normal paid object tool places Wooden chair
+[TerrainRewrite] Wooden shelf placed · F5 saves world
+PASS normal paid object tool places Wooden shelf
+PASS one durable identity for Wooden table
+PASS native render residency for Wooden table
+PASS native compound collider matches Wooden table
+PASS one durable identity for Wooden chair
+PASS native render residency for Wooden chair
+PASS native compound collider matches Wooden chair
+PASS one durable identity for Wooden shelf
+PASS native render residency for Wooden shelf
+PASS native compound collider matches Wooden shelf
+PASS table leg gap is not filled by a bounding-box collider
+PASS 1080p fullscreen cap60
+[TerrainRewrite] Object selected · arrows move · R rotates
+PASS object tool selects Wooden table
+[TerrainRewrite] Object removed · F5 saves world
+PASS object tool removes selected Wooden table
+PASS removal clears identity and selection for Wooden table
+FAIL removed furniture leaves no collision for Wooden table
+[TerrainRewrite] Object selected · arrows move · R rotates
+PASS object tool selects Wooden chair
+[TerrainRewrite] Object removed · F5 saves world
+PASS object tool removes selected Wooden chair
+PASS removal clears identity and selection for Wooden chair
+FAIL removed furniture leaves no collision for Wooden chair
+[TerrainRewrite] Object selected · arrows move · R rotates
+PASS object tool selects Wooden shelf
+[TerrainRewrite] Object removed · F5 saves world
+PASS object tool removes selected Wooden shelf
+PASS removal clears identity and selection for Wooden shelf
+FAIL removed furniture leaves no collision for Wooden shelf
+PASS furniture removal does not silently refund or charge inventory
+[TerrainRewrite] Temporary test world: save skipped
+PASS world drains normally
+FURNITURE_WORLD failures=3
