@@ -1,0 +1,6 @@
+{
+  "hardware": "NVIDIA GeForce RTX 4050 Laptop GPU",
+  "presentation": "1920x1080 fullscreen, cap60, vehicle physics120Hz then walking60Hz",
+  "test": "tests/settlement_driving.gd --brake-exit --ground-cover",
+  "scope": "Loaded-road braking exit and resumed walking, not streaming or performance qualification. Intentional teardown write inhibition preserves the source save and emits the recorded save-blocked message."
+}
