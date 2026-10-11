@@ -161,6 +161,7 @@ func _ready() -> void:
 	add_child(model_tool)
 	model_tool.gameplay=construction_inventory.gameplay
 	model_tool.paid_placement=_place_inventory_model
+	model_tool.gameplay_removal=_remove_inventory_model
 	model_tool.availability=_model_edit_available
 	var object_entries: Array[Dictionary]=[
 		{"title":"Metal beam","mesh":beam,"collection":structures.model("architecture/metal_beam/v1"),"scale":Vector3(4,0.2,0.2),"costs":PackedInt64Array([104,4]),"cost_label":"4 metal"},
@@ -1169,6 +1170,18 @@ func _place_inventory_model(history: RefCounted, collection: Node3D, transforms:
 	model_tool.placement_failure=construction_inventory.reason
 	player_hud.refresh()
 	return id
+
+func _remove_inventory_model(history: RefCounted, collection: Node3D, identity: int) -> bool:
+	if not _model_edit_available():
+		model_tool.placement_failure="World interaction unavailable";return false
+	var recipes: Dictionary=preload("res://addons/structures/furniture_catalog.gd").salvage_recipes()
+	for key: String in recipes:
+		if structures.model(key)==collection:
+			var removed: bool=construction_inventory.salvage_model(history,collection,player_hud.inventory,identity,recipes[key])
+			model_tool.placement_failure=construction_inventory.reason;player_hud.refresh();return removed
+	var removed: bool=history.erase(collection,identity)
+	model_tool.placement_failure="Object removed; no salvage recipe" if removed else "Object removal rejected"
+	return removed
 
 func _model_edit_available() -> bool:
 	return not world_vehicle.driving and not loading_active and not shutdown_requested and not benchmark_enabled and not player_hud.inventory_open and app_focused and terrain.world_ready and not terrain.pending_edit

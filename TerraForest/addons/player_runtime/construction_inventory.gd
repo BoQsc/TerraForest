@@ -116,3 +116,26 @@ func _apply(inventory: RefCounted, costs: PackedInt64Array, placement: Callable)
 			push_error(reason)
 	busy=false
 	return accepted
+
+# Bounded event coordination; native inventory and model stores perform mutations.
+func salvage_model(history: RefCounted, collection: Node3D, inventory: RefCounted, identity: int, rewards: PackedInt64Array) -> bool:
+	if busy or not gameplay:return false
+	if identity<=0 or collection.get_instance(identity).is_empty() or collection.is_removal_protected(identity):
+		reason="Object is unavailable or contains stored items";return false
+	busy=true
+	var before: Dictionary=inventory.snapshot()
+	var granted: Dictionary=inventory.grant_items(rewards,before.revision)
+	if not granted.ok:
+		reason="Make room in your inventory before dismantling";busy=false;return false
+	# No await. Removal observers see the reward already committed. A rejected
+	# native removal emits no mutation signal; roll back only our own revision.
+	var removed: bool=collection.remove_instances(PackedInt64Array([identity]))
+	if not removed:
+		if not inventory.restore(before,granted.revision).ok:push_error("Salvage rollback rejected after inventory changed")
+		reason="Object removal rejected; no salvage taken"
+	else:
+		# The direct native edit invalidates prior history. Never permit undo to
+		# recreate the rewarded object and harvest it repeatedly.
+		history.clear_history();reason="Furniture dismantled; wood collected"
+	busy=false
+	return removed

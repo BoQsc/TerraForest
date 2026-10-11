@@ -29,3 +29,7 @@ static func furnished_cottage(with_storage: bool=false) -> Resource:
 		if not asset.configure_model_attachments(attachments): return null
 	asset.resource_name="Furnished cottage with storage" if with_storage else "Furnished cottage"
 	return asset
+
+# Provisional dismantling yield: partial recovery, not a full construction refund.
+static func salvage_recipes() -> Dictionary:
+	return {"furniture/table/v1":PackedInt64Array([102,3]),"furniture/chair/v1":PackedInt64Array([102,1]),"furniture/shelf/v1":PackedInt64Array([102,4])}

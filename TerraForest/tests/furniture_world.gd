@@ -1,6 +1,11 @@
 # SPDX-License-Identifier: 0BSD
 extends SceneTree
 var failures:=0
+func wood_count(inventory: RefCounted) -> int:
+	var count:=0
+	for row in inventory.snapshot().slots:
+		if row.item==102:count+=row.count
+	return count
 func check(ok: bool,label: String) -> void:
 	if not ok: failures+=1
 	print(("PASS " if ok else "FAIL ")+label)
@@ -54,6 +59,11 @@ func run() -> void:
 	root.get_texture().get_image().save_png(dir+("reopen.png" if reopen else "placed.png"))
 	check(preload("res://addons/presentation/fullscreen_policy.gd").measurement(root).fair_graphical_sample and Engine.max_fps==60,"1080p fullscreen cap60")
 	var before_removal: PackedByteArray=game.player_hud.capture_snapshot()
+	var before_wood:=wood_count(game.player_hud.inventory)
+	if game.construction_inventory.gameplay:
+		game.camera.global_position=base+Vector3(-2,6,-2);game.camera.look_at(base+Vector3(-2,0,-2),Vector3.FORWARD)
+		check(game.model_tool.edit(true)==0 and game.model_tool.catalog[3].collection.get_ids().size()==1 and wood_count(game.player_hud.inventory)==before_wood,"distant furniture cannot be dismantled for resources")
+
 	for i in range(3):
 		var entry: Dictionary=game.model_tool.catalog[3+i]
 		var point:=base+Vector3(i*2-2,0,-2)
@@ -67,7 +77,7 @@ func run() -> void:
 		check(entry.collection.get_ids().is_empty() and game.model_tool.picked_id==0,"removal clears identity and selection for "+entry.title)
 		var remaining_hit: Dictionary=game.structures.blocks.raycast_scene(point+Vector3.UP*3,point,2,[])
 		check(remaining_hit.is_empty() or remaining_hit.collider!=entry.collection,"removed furniture leaves no collision for "+entry.title)
-	check(game.player_hud.capture_snapshot()==before_removal,"furniture removal does not silently refund or charge inventory")
+	check(wood_count(game.player_hud.inventory)==before_wood+8 if game.construction_inventory.gameplay else game.player_hud.capture_snapshot()==before_removal,"gameplay dismantles table/chair/shelf for 3/1/4 wood; editor removal yields nothing")
 	game.shutdown_requested=true;check(await game.terrain.shutdown_after_edits(),"world drains normally")
 	game.free();await process_frame;await process_frame
 	print("FURNITURE_WORLD failures=",failures);quit(1 if failures else 0)

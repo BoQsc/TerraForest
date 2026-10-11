@@ -98,7 +98,7 @@ Road editor settings now save with the world: surface, half-width, depth, cleara
 
 Ground-cover toolbelt: if you have Stone, Plant or Grass clump stacks, move one into any of the first six inventory slots and equip it with Alt+1 through Alt+6 (or its belt button). This selects the matching placement species without spending an item. Gameplay placement still consumes one resource; free-editor placement remains free. H remains available for collection and free editing without a stack. Selecting a normal tool leaves ground-cover mode. This requires ground cover enabled by the launcher.
 
-Furniture editing: in object mode (M), aim at a table/chair/shelf and use E to select; LMB removes the aimed object. Gameplay removal currently gives no material refund. Free-editor undo is available; gameplay object undo is disabled. These objects remain static furniture, with no sitting or salvage rewards. Storage uses a separate wooden chest.
+Furniture editing: in object mode (M), aim at a table/chair/shelf and use E to select; LMB removes the aimed object. Gameplay dismantling within three metres returns 3 wood for a table, 1 for a chair and 4 for a shelf; insufficient inventory space leaves the object intact. Free-editor undo is available; gameplay object undo is disabled. These objects remain furniture, with no sitting or whole-object inventory pickup. Storage uses a separate wooden chest.
 
 ## Wooden chest and ladder checkpoint
 

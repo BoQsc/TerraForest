@@ -24,6 +24,7 @@ var transform_controls := VBoxContainer.new()
 var help := Label.new()
 var gameplay := false
 var paid_placement: Callable
+var gameplay_removal: Callable
 var placement_failure := ""
 var availability: Callable
 var action_buttons: Array[Button]=[]
@@ -304,6 +305,8 @@ func edit(remove: bool) -> int:
 		return 0
 	if remove:
 		var hit := ray()
+		if gameplay and not hit.is_empty() and camera.global_position.distance_to(hit.position)>3.0:
+			notice.emit("Move within three metres to dismantle this object");return 0
 		if not hit.is_empty():
 			for entry in catalog:
 				var collection: Node3D = entry.collection
@@ -312,6 +315,10 @@ func edit(remove: bool) -> int:
 					if id>0 and collection.is_removal_protected(id):
 						notice.emit("Empty stored contents before removing this object")
 						return 0
+					if id>0 and gameplay and gameplay_removal.is_valid():
+						var removed: bool=gameplay_removal.call(history,collection,id)
+						notice.emit(placement_failure)
+						return id if removed else 0
 					if id>0 and history.erase(collection,id):
 						notice.emit("Object removed · F5 saves world")
 						return id

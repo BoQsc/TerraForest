@@ -483,3 +483,13 @@ world checks pass; legacy furniture-only placement still passes. Evidence:
 [evidence/storage_interior](evidence/storage_interior/README.md). Existing saved
 houses are unchanged. Full-scene model capture, salvage, human acceptance and
 performance qualification remain open; the short screenshot HUD reads 56 FPS.
+
+### 2026-10-11: furniture dismantling yields wood
+
+Gameplay object removal now dismantles shelves/tables/chairs for provisional
+4/3/1 wood, provided the complete reward fits. Three-metre reach and native removal
+protection apply. Successful salvage clears history to prevent undo duplication;
+free-editor removal yields nothing. Eight native-backed checks and the actual
+1080p object-tool route pass. [Evidence](evidence/furniture_salvage/README.md).
+Loose books, whole-furniture pickup, damage/break animation and human acceptance
+remain open. This adds a usable gather/build interaction without a per-object tick.

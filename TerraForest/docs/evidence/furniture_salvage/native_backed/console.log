@@ -1,0 +1,11 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS full inventory retains shelf and every item
+PASS partial space cannot consume object for partial reward
+PASS protected object cannot yield salvage
+PASS shelf dismantles with exact capacity available
+PASS four wood visible before removal publication
+PASS salvage cannot be undone to duplicate resources
+PASS repeated salvage of deleted ID yields nothing
+PASS free editor does not grant gameplay rewards
+FURNITURE_SALVAGE {"checks":8,"failures":0}

@@ -1,0 +1,8 @@
+{
+  "addons/player_runtime/construction_inventory.gd": "ad655ee753ea22fdb2f038f6fe081c52e3eae380638d987ba460d5413fb76a03",
+  "addons/structures/furniture_catalog.gd": "6384228824fea70ed948926023e922989a7071d262d65ae34d5ec647688d1cf8",
+  "addons/structures/model_tool.gd": "94ac9975bbcfb89ea6e70e3df875c14d0436255fc6a87159cd196a85d9eea3c1",
+  "demo/world.gd": "fb5fc3485fca418780530b88dc6644d26c8aef09194023d36098e6541b83b3cd",
+  "tests/furniture_salvage.gd": "d06f40ad13b8efa08aed2618cf7b6cc740c18dd254f52e7341a37955685f3a7c",
+  "tests/furniture_world.gd": "6a3d548c620142099bbd58760c04ccf25abae6fbf391f324803ca442be3d2683"
+}
