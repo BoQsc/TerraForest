@@ -1,0 +1,7 @@
+{
+  "tests/ground_cover_interaction_world.gd": "f4ebafab2953f4a78e8045c47306d06180c8327721abe1a0e524342ca276b146",
+  "addons/world_ecosystem/ground_interaction.gd": "701106326fff4831c90a9877e836c40df9992421917b7e72bdb6740808d1b9bc",
+  "addons/world_ecosystem/ground_cover.gd": "032e38a6aef7393deca149831a16bb7cec5bbfce500c212d7897f73b3ac59128",
+  "addons/player_runtime/bin/player_runtime.windows.template_debug.x86_64.dll": "6cc7bd2a903f2fcda6cd4aab01837c21e6d863e92bff4845997a3775558bdccd",
+  "addons/vegetation_runtime/bin/vegetation_runtime.windows.template_debug.x86_64.dll": "6227865a76bd8afd0dafc06f8367d0cc8774fa5e696852434fa3c9773a7569a2"
+}

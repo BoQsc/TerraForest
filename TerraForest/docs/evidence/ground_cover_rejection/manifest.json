@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-11",
+  "base_commit": "ffcdef4fad12bc4be1ef82bab3abb68976a92c24",
+  "checks": 66,
+  "failures": 0,
+  "command": "godot --path TerraForest --fullscreen --resolution 1920x1080 --script res://tests/ground_cover_interaction_world.gd -- --ground-cover --gameplay-construction --reject-ground --disturb-ground",
+  "world": "New temporary world; no saved slot modified",
+  "scope": "Actual main-world input, native inventory/picking/rendering/storage, selected naturally generated grass clump. Tests all three resource toolbelt mappings; collection rejection and placement checks exercise one selected clump. Real block overlap and controlled native baked lake publication test exclusion/restoration and a distant unchanged owner. Not a new disk-persistence, density, frame-time or thermal qualification.",
+  "fixture_correction": "Initial two failures read ground-preview feedback instead of the actual action notification. Corrected assertions inspect the action notice; no runtime behavior was changed. Retained original log. JSON result now written after all checks rather than before optional save and mode-exit checks."
+}

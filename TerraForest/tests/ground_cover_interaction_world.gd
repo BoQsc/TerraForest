@@ -74,6 +74,21 @@ func run() -> void:
 	check(game.player_hud.ground_species==target_species,"number key updates persistent selection")
 	check(("Place: 1" in game.player_hud.ground_hint.text) if game.construction_inventory.gameplay else ("Free placement" in game.player_hud.ground_hint.text),"ground controls distinguish inventory cost from free editor")
 	var click:=InputEventMouseButton.new();click.pressed=true;click.button_index=MOUSE_BUTTON_LEFT
+	if "--reject-ground" in OS.get_cmdline_user_args():
+		check(game.construction_inventory.gameplay,"rejection fixture uses paid gameplay interactions")
+		var full: RefCounted=ClassDB.instantiate("NativePlayerInventory")
+		full.register_item(102,999)
+		check(full.grant(102,32*999,0).ok and game.player_hud.restore_snapshot(full.capture_storage_snapshot()),"all 32 inventory slots filled for actual collection check")
+		var state: Dictionary=game.player_hud.inventory.snapshot()
+		var edits: PackedByteArray=cover.removed.capture_storage_snapshot()
+		var owners: Dictionary=cover.resident.duplicate(true)
+		game._unhandled_input(click)
+		check(game._lake_notice.contains("room"),"full inventory gives actionable collection feedback")
+		check(game.player_hud.inventory.snapshot()==state and cover.removed.capture_storage_snapshot()==edits and cover.resident==owners,"rejected collection preserves exact inventory revision and all resident records")
+		check(cover.batches[target_species].get_ids().has(target_id),"rejected collection keeps original rendered identity")
+		var pick: Dictionary=cover.picker.pick(game.camera.global_position,game.camera.global_position-game.camera.global_basis.z*8)
+		check(pick.hit and pick.id==target_id,"rejected collection keeps original pickable identity")
+		check(game.player_hud.restore_snapshot(original_loadout),"original inventory restored after full-capacity rejection")
 	game._unhandled_input(click)
 	check(cover.removed.contains(target_id),"normal LMB removes aimed natural ground cover")
 	var preview_ground: PackedByteArray=cover.removed.capture_storage_snapshot()
@@ -87,9 +102,25 @@ func run() -> void:
 	await RenderingServer.frame_post_draw
 	DirAccess.make_dir_recursive_absolute("res://reports/ground_cover")
 	root.get_texture().get_image().save_png("res://reports/ground_cover/placement_candidate.png")
-	click.button_index=MOUSE_BUTTON_RIGHT;game._unhandled_input(click)
+	click.button_index=MOUSE_BUTTON_RIGHT
+	if "--reject-ground" in OS.get_cmdline_user_args():
+		var empty: RefCounted=ClassDB.instantiate("NativePlayerInventory")
+		check(game.player_hud.restore_snapshot(empty.capture_storage_snapshot()),"empty inventory fixture admitted")
+		var state: Dictionary=game.player_hud.inventory.snapshot()
+		var edits: PackedByteArray=cover.removed.capture_storage_snapshot()
+		var owners: Dictionary=cover.resident.duplicate(true)
+		game._unhandled_input(click)
+		check(game._lake_notice.contains("Missing"),"stale successful preview cannot place after inventory emptied")
+		check(game.player_hud.inventory.snapshot()==state and cover.removed.capture_storage_snapshot()==edits and cover.resident==owners,"unaffordable placement preserves exact inventory and ground state")
+		check(game.player_hud.restore_snapshot(saved_inventory),"collected item restored for normal placement")
+	game._unhandled_input(click)
 	check(cover.removed.profile().placed==1,"normal RMB places selected ground cover on actual terrain")
 	check(game.player_hud.inventory.snapshot().slots==before_inventory.slots,"collect/place round trip preserves inventory contents in selected mode")
+	if "--reject-ground" in OS.get_cmdline_user_args():
+		var state: Dictionary=game.player_hud.inventory.snapshot()
+		var edits: PackedByteArray=cover.removed.capture_storage_snapshot()
+		game._unhandled_input(click)
+		check(game.player_hud.inventory.snapshot()==state and cover.removed.capture_storage_snapshot()==edits and cover.removed.profile().placed==1,"repeated click during publication cannot duplicate placement or payment")
 	deadline=Time.get_ticks_msec()+5000
 	while not cover._dirty.is_empty() and Time.get_ticks_msec()<deadline: await process_frame
 	check(cover._dirty.is_empty(),"authored placement finishes terrain publication")
@@ -158,8 +189,6 @@ func run() -> void:
 	check(presentation.fair_graphical_sample and Engine.max_fps==60,"fullscreen 1080p with 60 FPS cap")
 	DirAccess.make_dir_recursive_absolute("res://reports/ground_cover")
 	root.get_texture().get_image().save_png("res://reports/ground_cover/interaction_world.png")
-	var file:=FileAccess.open("res://reports/ground_cover/interaction_world.json",FileAccess.WRITE)
-	file.store_string(JSON.stringify({"failures":failures,"population":count,"render":render,"presentation":presentation},"  "));file.close()
 	if persistent:
 		check(game.player_hud.inventory.grant_items(PackedInt64Array([204,3,205,5]),game.player_hud.inventory.snapshot().revision).ok,"seed non-default plant and grass inventory for archive verification")
 		var expected:={"slot":game.terrain.save_slot,"ground":cover.removed.capture_storage_snapshot(),"inventory":game.player_hud.inventory.capture_storage_snapshot(),"target":target,"natural_id":target_id,"species":target_species,"seed":game.terrain.backend.world_seed,"active":not "--mine-ground" in OS.get_cmdline_user_args()}
@@ -183,6 +212,8 @@ func run() -> void:
 	game.shutdown_requested=true
 	await game.terrain.shutdown_after_edits();game.free()
 	for frame in range(2): await process_frame
+	var file:=FileAccess.open("res://reports/ground_cover/interaction_world.json",FileAccess.WRITE)
+	file.store_string(JSON.stringify({"failures":failures,"population":count,"render":render,"presentation":presentation},"  "));file.close()
 	print("GROUND_COVER_INTERACTION_WORLD failures=",failures)
 	quit(1 if failures else 0)
 
