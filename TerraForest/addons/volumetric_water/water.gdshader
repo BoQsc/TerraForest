@@ -1,8 +1,11 @@
 // SPDX-License-Identifier: 0BSD
 shader_type spatial;
-render_mode cull_disabled, depth_draw_never;
+render_mode cull_disabled, depth_draw_always;
 
-// One opaque-depth lookup; no screen-color copy, SSR, or geometry displacement.
+// Resolve transmission from the opaque scene once per pixel. Writing depth
+// prevents stacked water faces from repeatedly tinting the same scene color.
+// No SSR, second camera, refraction distortion, or geometry displacement.
+uniform sampler2D scene_color : hint_screen_texture, repeat_disable, filter_nearest;
 uniform sampler2D scene_depth : hint_depth_texture, repeat_disable, filter_nearest;
 uniform vec3 water_color : source_color = vec3(0.055, 0.19, 0.17);
 uniform float absorption : hint_range(0.05, 2.0) = 0.32;
@@ -33,10 +36,13 @@ void fragment() {
     if (!FRONT_FACING) NORMAL = -NORMAL;
     float facing = clamp(abs(dot(NORMAL, VIEW)), 0.0, 1.0);
     float fresnel = 0.02 + 0.98 * pow(1.0 - facing, 5.0);
-    ALBEDO = water_color;
+    float through = transmission * (1.0 - fresnel);
+    ALBEDO = water_color * (1.0 - through);
+    EMISSION = textureLod(scene_color, SCREEN_UV, 0.0).rgb * through;
     METALLIC = 0.0;
     ROUGHNESS = 0.24;
     SPECULAR = 0.5;
     // Clear shallows, progressively absorbed deep water, reflected grazing light.
-    ALPHA = clamp(1.0 - transmission * (1.0 - fresnel), 0.0, 0.98);
+    // Deliberately no alpha blending: nearest depth wins regardless of region
+    // draw order. Transmission is already included in the resolved color.
 }

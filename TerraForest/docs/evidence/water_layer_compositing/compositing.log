@@ -1,0 +1,10 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+PASS rear water face cannot double-tint nearest surface
+PASS water compositing independent of region draw order
+PASS water contributes visible depth absorption
+PASS underwater floor colour remains visible through water
+PASS shallow water absorbs less than deeper water
+PASS opaque object above water remains visible and untinted
+WATER_COMPOSITING failures=0

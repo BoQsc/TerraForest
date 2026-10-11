@@ -4,7 +4,7 @@ One C++ water runtime: `NativeRegionalWater`. `NativeWaterTerrainPatch` samples 
 
 The static-lake and basin-network implementations are deleted. Git history retains previous versions; they are not included in the addon or built DLLs.
 
-See [current integration and limitations](../../docs/WATER_GAMEPLAY.md). Square shorelines and transparency overlap artifacts are unfinished. Depth-dependent transparency is implemented but not visually accepted. Functional tests do not establish visual acceptance or sustained 60 FPS.
+See [current integration and limitations](../../docs/WATER_GAMEPLAY.md). Depth-aware transmission now resolves the nearest surface, removing repeated water-face tinting. Stepped shores and smaller geometry discontinuities remain unfinished. Functional tests do not establish visual acceptance or sustained 60 FPS.
 
 Build: `python tools/build_native.py --addon volumetric_water --target all`
 
@@ -16,4 +16,4 @@ Runtime guard: `python tools/run_godot_check.py water_single_runtime --headless 
 
 License: 0BSD. Uses the pinned Zig and prebuilt godot-cpp toolchain.
 
-Connected same-layer surface cells now share corners across region boundaries; see [mesh evidence and remaining failures](../../docs/evidence/water_surface_continuity/README.md).
+Connected surface cells share corners across region and adjacent height-layer boundaries; see [current rendering evidence and limitations](../../docs/evidence/water_layer_compositing/README.md).

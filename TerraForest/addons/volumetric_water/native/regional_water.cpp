@@ -104,11 +104,12 @@ void NativeRegionalWater::wake(const Vector3i &p){
 }
 void NativeRegionalWater::changed(const Vector3i &p){
     ++changes;wake(p);Key k=region_key(p);if(mesh_set.insert(k).second)meshes.push_back(k);
-    // Only a cell at both regional edges can affect a diagonal region.
-    int rx=p.x&7,rz=p.z&7;
-    if((rx==0||rx==7)&&(rz==0||rz==7)){
-        Vector3i n=p+Vector3i(rx==0?-1:1,0,rz==0?-1:1);
-        if(in_domain(n)){Key other=region_key(n);if(regions.count(other)&&mesh_set.insert(other).second)meshes.push_back(other);}}
+    // Surface components span three layer changes plus the full cell below.
+    // Dirty that bounded halo, including diagonal and vertical region corners.
+    Vector3i lo=position(region_key(Vector3i(std::max(p.x-1,0),std::max(p.y-4,0),std::max(p.z-1,0))));
+    Vector3i hi=position(region_key(Vector3i(std::min(p.x+1,3999),std::min(p.y+4,508),std::min(p.z+1,3999))));
+    for(int z=lo.z;z<=hi.z;++z)for(int y=lo.y;y<=hi.y;++y)for(int x=lo.x;x<=hi.x;++x){Key other=key(Vector3i(x,y,z));
+        if(other!=k&&regions.count(other)&&mesh_set.insert(other).second)meshes.push_back(other);}
     for(const Vector3i &d:directions){Vector3i n=p+d;if(!in_domain(n))continue;wake(n);Key other=region_key(n);
         if(other!=k&&regions.count(other)&&mesh_set.insert(other).second)meshes.push_back(other);}
 }
@@ -321,14 +322,43 @@ Dictionary NativeRegionalWater::next_mesh(){
         return int64_t(ra->floor[ia])*250+int64_t(ra->water[ia])>opening*250 &&
                int64_t(rb->floor[ib])*250+int64_t(rb->water[ib])>opening*250;
     };
+    auto surface_joined=[&](const Vector3i &a,const Vector3i &b)->bool {
+        if(a.y==b.y)return joined(a,b);
+        if(std::abs(a.y-b.y)!=1)return false;
+        Vector3i high=a.y>b.y?a:b,low=a.y>b.y?b:a,under=high+Vector3i(0,-1,0);
+        const Region *h=get(high),*u=get(under);if(!h||!u||h->floor[index(high)]!=0)return false;
+        int i=index(under);uint64_t cap=uint64_t(u->ceiling[i]-u->floor[i])*250;
+        return cap>0&&u->ceiling[i]==500&&u->water[i]>=cap&&joined(under,low);
+    };
+    // Cache each owner/corner result on this mesh's bounded halo. No per-corner
+    // heap allocation, global surface search, or dependency on iteration order.
+    Vector3i mesh_base=position(k)*8;
+    std::array<double,9*9*14*4> corner_cache;corner_cache.fill(NAN);
+    auto cache_index=[&](const Vector3i &owner,int cx,int cz)->int {
+        int x=cx-mesh_base.x,z=cz-mesh_base.z,y=owner.y-mesh_base.y+3;
+        int quadrant=(owner.x==cx?1:0)+(owner.z==cz?2:0);
+        return x>=0&&x<9&&z>=0&&z<9&&y>=0&&y<14?x+9*z+81*y+81*14*quadrant:-1;
+    };
     auto corner=[&](const Vector3i &owner,int cx,int cz,double fallback)->double {
-        Vector3i cells[4];double heights[4]{};bool valid[4]{},seen[4]{};int first=-1;
-        for(int n=0;n<4;++n){cells[n]=Vector3i(cx-1+(n&1),owner.y,cz-1+(n>>1));valid[n]=surface(cells[n],heights[n]);if(cells[n]==owner)first=n;}
-        if(first<0||!valid[first])return fallback;
-        int queue[4],head=0,tail=1;queue[0]=first;seen[first]=true;double sum=0;int count=0;
-        while(head<tail){int n=queue[head++];sum+=heights[n];++count;
-            for(int m:{n^1,n^2})if(!seen[m]&&valid[m]&&joined(cells[n],cells[m])){seen[m]=true;queue[tail++]=m;}}
-        return sum/count;
+        int cached=cache_index(owner,cx,cz);if(cached>=0&&std::isfinite(corner_cache[cached]))return corner_cache[cached];
+        Vector3i cells[4];double heights[4];bool columns[4]{};int head=0,tail=1;bool ambiguous=false;
+        cells[0]=owner;heights[0]=fallback;columns[(owner.x==cx?1:0)+(owner.z==cz?2:0)]=true;
+        while(head<tail&&!ambiguous){Vector3i current=cells[head++];
+            Vector3i neighbours[2]={Vector3i(current.x==cx?cx-1:cx,current.y,current.z),Vector3i(current.x,current.y,current.z==cz?cz-1:cz)};
+            for(Vector3i q:neighbours)for(int dy=-1;dy<=1;++dy){Vector3i candidate=q+Vector3i(0,dy,0);double height=0;
+                bool seen=false;for(int i=0;i<tail;++i)if(cells[i]==candidate){seen=true;break;}
+                if(seen||!surface(candidate,height)||!surface_joined(current,candidate))continue;
+                int column=(candidate.x==cx?1:0)+(candidate.z==cz?2:0);
+                // Multiple surfaces in one column indicate an overhang/stacked
+                // body: retain distinct interfaces rather than collapsing them.
+                if(columns[column]||tail==4){ambiguous=true;break;}
+                columns[column]=true;cells[tail]=candidate;heights[tail++]=height;
+            }
+        }
+        double value=fallback;if(!ambiguous){value=0;for(int i=0;i<tail;++i)value+=heights[i];value/=tail;}
+        if(!ambiguous)for(int i=0;i<tail;++i){int index=cache_index(cells[i],cx,cz);if(index>=0)corner_cache[index]=value;}
+        else if(cached>=0)corner_cache[cached]=fallback;
+        return value;
     };
     auto triangle=[&](Vector3 a,Vector3 b,Vector3 c){Vector3 n=(c-a).cross(b-a).normalized();
         for(Vector3 p:{a,b,c}){vertices.push_back(p);normals.push_back(n);uv.push_back(Vector2(p.x,p.z));}};
@@ -346,9 +376,22 @@ Dictionary NativeRegionalWater::next_mesh(){
         }
         for(int d=1;d<=4;++d){Vector3i q=p+directions[d];const Region *neighbour=get(q);double low=bottom;
             if(neighbour){int j=index(q);if(neighbour->floor[j]==neighbour->ceiling[j])continue;low=std::max(low,q.y*0.5+neighbour->floor[j]*0.001+std::min(neighbour->water[j],uint64_t(neighbour->ceiling[j]-neighbour->floor[j])*250)/250000.0);}
-            double neighbour_top=0;
-            if(!covered&&surface(q,neighbour_top)&&joined(p,q))continue;
             if(top-low<0.00001)continue;
+            // An upper surface can close a side belonging to its full cell
+            // below. Resolve both ends of that edge before dropping the wall.
+            Vector3i owner=p;double owner_height=top;bool has_surface=!covered;
+            if(covered){owner=p+Vector3i(0,1,0);has_surface=surface(owner,owner_height);}
+            bool shared=false;
+            if(has_surface){
+                int cx0=p.x+(d==1?1:0),cz0=p.z+(d==3?1:0);
+                int cx1=cx0+(d>=3?1:0),cz1=cz0+(d<=2?1:0);
+                for(int dy=-1;dy<=1&&!shared;++dy){Vector3i other(q.x,owner.y+dy,q.z);double height=0;
+                    if(!surface(other,height)||!surface_joined(owner,other))continue;
+                    shared=std::abs(corner(owner,cx0,cz0,owner_height)-corner(other,cx0,cz0,height))<0.000001&&
+                           std::abs(corner(owner,cx1,cz1,owner_height)-corner(other,cx1,cz1,height))<0.000001;
+                }
+            }
+            if(shared)continue;
             if(d==1)face(Vector3(x+0.5,low,z),Vector3(x+0.5,h10,z),Vector3(x+0.5,h11,z+0.5),Vector3(x+0.5,low,z+0.5),Vector3(1,0,0));
             if(d==2)face(Vector3(x,low,z+0.5),Vector3(x,h01,z+0.5),Vector3(x,h00,z),Vector3(x,low,z),Vector3(-1,0,0));
             if(d==3)face(Vector3(x+0.5,low,z+0.5),Vector3(x+0.5,h11,z+0.5),Vector3(x,h01,z+0.5),Vector3(x,low,z+0.5),Vector3(0,0,1));

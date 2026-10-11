@@ -1,4 +1,4 @@
-> Architecture cleanup: static-lake and basin-network implementations are removed from source and registration. NativeRegionalWater is the only water owner; NativeWaterTerrainPatch samples terrain on its worker. NativeLakeCatalog only encodes metadata and reads older saves. Historical evidence is not an alternate supported runtime. Shoreline reconstruction remains unfinished; depth transparency is implemented but exposes overlapping cell faces; this cleanup does not establish visual quality or sustained 60 FPS.
+> Architecture cleanup: static-lake and basin-network implementations are removed from source and registration. NativeRegionalWater is the only water owner; NativeWaterTerrainPatch samples terrain on its worker. NativeLakeCatalog only encodes metadata and reads older saves. Historical evidence is not an alternate supported runtime. Shoreline reconstruction remains unfinished; nearest-surface depth transmission resolves overlapping-face tinting; stepped shores still fail visual acceptance; this cleanup does not establish visual quality or sustained 60 FPS.
 
 # Regional water in the playable world
 
