@@ -1,0 +1,152 @@
+{
+  "checks": 58,
+  "costs": [
+    {
+      "budget": 512,
+      "calls": 92,
+      "max_call_us": 325,
+      "statistics": {
+        "buffer_bytes": 836120,
+        "error": "",
+        "leaves": 1,
+        "max_depth": 0,
+        "merges": 0,
+        "nodes": 6030,
+        "phase": 7,
+        "portals": 0,
+        "roots": 1,
+        "status": 1,
+        "work_units_total": 46810
+      }
+    },
+    {
+      "budget": 512,
+      "calls": 91,
+      "max_call_us": 1933,
+      "statistics": {
+        "buffer_bytes": 829056,
+        "error": "",
+        "leaves": 2,
+        "max_depth": 1,
+        "merges": 1,
+        "nodes": 5974,
+        "phase": 7,
+        "portals": 0,
+        "roots": 1,
+        "status": 1,
+        "work_units_total": 46284
+      }
+    },
+    {
+      "budget": 1,
+      "calls": 46284,
+      "max_call_us": 4168,
+      "statistics": {
+        "buffer_bytes": 829056,
+        "error": "",
+        "leaves": 2,
+        "max_depth": 1,
+        "merges": 1,
+        "nodes": 5974,
+        "phase": 7,
+        "portals": 0,
+        "roots": 1,
+        "status": 1,
+        "work_units_total": 46284
+      }
+    },
+    {
+      "budget": 512,
+      "calls": 1,
+      "max_call_us": 8,
+      "statistics": {
+        "buffer_bytes": 229768,
+        "error": "",
+        "leaves": 4,
+        "max_depth": 2,
+        "merges": 3,
+        "nodes": 5,
+        "phase": 7,
+        "portals": 0,
+        "roots": 1,
+        "status": 1,
+        "work_units_total": 56
+      }
+    },
+    {
+      "budget": 512,
+      "calls": 2,
+      "max_call_us": 19,
+      "statistics": {
+        "buffer_bytes": 236028,
+        "error": "",
+        "leaves": 70,
+        "max_depth": 69,
+        "merges": 69,
+        "nodes": 70,
+        "phase": 7,
+        "portals": 0,
+        "roots": 1,
+        "status": 1,
+        "work_units_total": 842
+      }
+    },
+    {
+      "budget": 512,
+      "calls": 1,
+      "max_call_us": 7,
+      "statistics": {
+        "buffer_bytes": 229540,
+        "error": "",
+        "leaves": 2,
+        "max_depth": 1,
+        "merges": 1,
+        "nodes": 2,
+        "phase": 7,
+        "portals": 1,
+        "roots": 1,
+        "status": 1,
+        "work_units_total": 27
+      }
+    },
+    {
+      "budget": 512,
+      "calls": 1,
+      "max_call_us": 4,
+      "statistics": {
+        "buffer_bytes": 229460,
+        "error": "",
+        "leaves": 2,
+        "max_depth": 0,
+        "merges": 0,
+        "nodes": 2,
+        "phase": 7,
+        "portals": 0,
+        "roots": 2,
+        "status": 1,
+        "work_units_total": 20
+      }
+    },
+    {
+      "budget": 2048,
+      "calls": 73,
+      "max_call_us": 3312,
+      "statistics": {
+        "buffer_bytes": 2097104,
+        "error": "",
+        "leaves": 1,
+        "max_depth": 0,
+        "merges": 0,
+        "nodes": 24576,
+        "phase": 7,
+        "portals": 0,
+        "roots": 1,
+        "status": 1,
+        "work_units_total": 147464
+      }
+    }
+  ],
+  "failures": 0,
+  "scope": "Regional merge forest and ownership; real terrain storage profiles, world stitching, fluid gameplay and thermal qualification remain open.",
+  "library": "volumetric_water.windows.template_release.x86_64.dll"
+}

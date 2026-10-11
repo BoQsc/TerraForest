@@ -27,8 +27,19 @@ func _initialize():
     var seed_id: int=(16+32*(10+20*16))*6
     ok=ok and graph.ok and graph.ids.has(seed_id) and not graph.edges.is_empty()
     if graph.ok and graph.ids.has(seed_id):ok=ok and graph.floors_mm[graph.ids.find(seed_id)]<=roundi((center.y-6)*1000)
+    var basins=ClassDB.instantiate("NativeWaterBasins")
+    ok=ok and basins.begin(graph)
+    var basin_calls:=0;var basin_peak:=0
+    while basins.statistics().status==0 and basin_calls<10000:
+        var start:=Time.get_ticks_usec();var progress:Dictionary=basins.advance(512)
+        basin_peak=maxi(basin_peak,Time.get_ticks_usec()-start);basin_calls+=1
+        ok=ok and progress.work_units<=512
+    var hierarchy:Dictionary=basins.hierarchy()
+    ok=ok and hierarchy.ok and hierarchy.owners.size()==graph.ids.size()
+    ok=ok and hierarchy.requires_stitching and not hierarchy.settling_compatible
+    ok=ok and hierarchy.portals.size()/3==task.statistics().portals
     DirAccess.make_dir_recursive_absolute("res://reports")
     var file=FileAccess.open("res://reports/water_topology_terrain.json",FileAccess.WRITE)
-    file.store_string(JSON.stringify({"failures":0 if ok else 1,"source":"actual native terrain density after sphere excavation","terrain_slices":slices,"graph_calls":calls,"max_graph_call_us":peak,"graph":task.statistics(),"scope":"Headless in-memory terrain integration; not a saved-world flow test."},"  "));file.close()
-    print(("PASS " if ok else "FAIL ")+"regional graph extracts connected seed and portals from actual excavated native terrain")
+    file.store_string(JSON.stringify({"failures":0 if ok else 1,"source":"actual native terrain density after sphere excavation","terrain_slices":slices,"graph_calls":calls,"max_graph_call_us":peak,"graph":task.statistics(),"basins":basins.statistics(),"basin_calls":basin_calls,"max_basin_call_us":basin_peak,"scope":"Headless in-memory terrain integration; not a saved-world flow test."},"  "));file.close()
+    print(("PASS " if ok else "FAIL ")+"regional graph and basin forest preserve seed and outgoing ports in actual excavated native terrain")
     print("WATER_TOPOLOGY_TERRAIN failures=",0 if ok else 1);quit(0 if ok else 1)

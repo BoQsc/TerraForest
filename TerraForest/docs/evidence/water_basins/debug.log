@@ -1,0 +1,61 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS terrain volume configured
+PASS terrain fixture bakes
+PASS terrain topology begins
+PASS regional hierarchy begins
+PASS partial results and invalid budget do not publish or mutate
+PASS hierarchy completes within operation budgets
+PASS completed hierarchy performs zero further work
+PASS thousands of flat connected tetrahedra collapse to one basin
+PASS terrain volume configured
+PASS terrain fixture bakes
+PASS terrain topology begins
+PASS regional hierarchy begins
+PASS partial results and invalid budget do not publish or mutate
+PASS hierarchy completes within operation budgets
+PASS completed hierarchy performs zero further work
+PASS sampled ridge reduces to exactly two basins joining at three metres
+PASS closed sampled basin hierarchy is eligible for storage-profile integration
+PASS regional hierarchy begins
+PASS partial results and invalid budget do not publish or mutate
+PASS hierarchy completes within operation budgets
+PASS completed hierarchy performs zero further work
+PASS one-operation scheduling preserves complete hierarchy exactly
+PASS published arrays cannot mutate native ownership
+PASS regional hierarchy begins
+PASS partial results and invalid budget do not publish or mutate
+PASS hierarchy completes within operation budgets
+PASS completed hierarchy performs zero further work
+PASS nested basin hierarchy retains distinct lower minima
+PASS 250 independent graph flood comparisons match hierarchy around all opening heights
+PASS 20592 independent random-graph flood comparisons and edge-order permutations preserve connectivity
+PASS regional hierarchy begins
+PASS partial results and invalid budget do not publish or mutate
+PASS hierarchy completes within operation budgets
+PASS completed hierarchy performs zero further work
+PASS hierarchies deeper than solver limit are explicitly ineligible
+PASS compiled nested entries pass native settling ownership validation
+PASS compiled hierarchy accepts finite water addition
+PASS terrain-independent profile handoff conserves all input water
+PASS regional hierarchy begins
+PASS partial results and invalid budget do not publish or mutate
+PASS hierarchy completes within operation budgets
+PASS completed hierarchy performs zero further work
+PASS external opening survives and prevents false closed-lake publication
+PASS regional hierarchy begins
+PASS partial results and invalid budget do not publish or mutate
+PASS hierarchy completes within operation budgets
+PASS completed hierarchy performs zero further work
+PASS disconnected regions remain a forest instead of inventing a connection
+PASS unordered identity rejected
+PASS opening below air floor rejected
+PASS unowned edge rejected
+PASS self edge rejected
+PASS too many isolated minima fail without publishing a partial hierarchy
+PASS regional hierarchy begins
+PASS partial results and invalid budget do not publish or mutate
+PASS hierarchy completes within operation budgets
+PASS completed hierarchy performs zero further work
+PASS maximum regional plateau compacts to one basin
+WATER_BASINS failures=0

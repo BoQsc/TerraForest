@@ -66,7 +66,7 @@ These items remain open. Deferral is a scheduling choice, never a passing result
 | Entity animation, AI, collision and vehicle populations | Storage/kinematic throughput omits much of game simulation | M3 representative behavior; M4/M5 stated populations with activation/sleeping and measured CPU/GPU costs |
 | Older-laptop thermal sustainability | New hardware utilization is not comparable, and short runs cannot prove sustained thermals | M5 with target hardware available or explicitly unqualified support. Keep the 60 FPS target; measure watts, temperatures, clocks and frame times where available, not utilization alone |
 | Multiplayer authority and multi-world ownership | User prefers later networking implementation | Review boundaries in every relevant milestone. M6 requires real session/fault/scale tests; current single-world scene/cache ownership remains a recorded constraint |
-| Fluid flow, drainage and cross-region exchange | Current water is a static connected basin model | Review after M2 static-water coverage. Keep absent capabilities explicit; do not claim mass conservation or dynamic fluid simulation. Additional fluid scope needs a deliberate design decision |
+| Fluid flow, drainage and cross-region exchange | Explicitly requested; active native foundation, playable lakes still static | Follow finite-water gates: terrain storage profiles, regional exchange, edit remapping, bucket/save integration and measured conservation. No whole-fluid or performance completion claim |
 | Visual refinement and release support | Working geometry and local binaries are insufficient for a supported release | Visual feedback at each checkpoint; M5 clean-machine packaging, license notices, platform matrix and final visual regression review |
 
 ## Rules against indefinite detours
@@ -204,9 +204,11 @@ fill/spill/merge, withdrawal/split, independent unequal-basin oracle and4096-lea
 bounded processing. See [settling evidence](evidence/water_settling/README.md).
 This does not close terrain-derived redistribution. The regional3D graph stage now
 passes42 debug/release checks plus actual native-terrain excavation integration;
-see [topology evidence](evidence/water_topology/README.md). Next compact its height
-connectivity into basin groups/storage profiles and add raw-terrain open-region
-ports, then quantity-preserving edit remapping and bucket/save transactions. Transient flow and pressure/velocity fields are not
+see [topology evidence](evidence/water_topology/README.md). Native basin reduction
+now passes58 debug/release checks plus actual terrain integration, compacting
+flat connected geometry while preserving outgoing ports. See
+[basin evidence](evidence/water_basins/README.md). Next compile terrain storage
+profiles and add raw-terrain open-region ports, then quantity-preserving edit remapping and bucket/save transactions. Transient flow and pressure/velocity fields are not
 implemented, and current playable lakes still use static fill levels. Next prove terrain-connected redistribution and conservation under a
 bounded native work budget, then integrate bucket item ownership and world saves.
 Retain the previous finalization/hitch failures; do not increase water caps or claim

@@ -1,0 +1,32 @@
+{
+  "basin_calls": 181,
+  "basins": {
+    "buffer_bytes": 1438472,
+    "error": "",
+    "leaves": 1,
+    "max_depth": 0,
+    "merges": 0,
+    "nodes": 11636,
+    "phase": 7,
+    "portals": 640,
+    "roots": 1,
+    "status": 1,
+    "work_units_total": 92422
+  },
+  "failures": 0,
+  "graph": {
+    "buffer_bytes": 368620,
+    "cells": 4096,
+    "edges": 22961,
+    "nodes": 11636,
+    "portals": 640,
+    "processed_cells": 4096,
+    "status": 1
+  },
+  "graph_calls": 64,
+  "max_basin_call_us": 103,
+  "max_graph_call_us": 65,
+  "scope": "Headless in-memory terrain integration; not a saved-world flow test.",
+  "source": "actual native terrain density after sphere excavation",
+  "terrain_slices": 45
+}

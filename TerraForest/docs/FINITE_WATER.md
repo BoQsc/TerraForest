@@ -105,9 +105,13 @@ regional boundary stitching, budget independence and cache restoration. A separa
 actual native-terrain excavation integration passes. See
 [topology evidence](evidence/water_topology/README.md).
 
-This is the graph stage, not yet a basin hierarchy or capacity-profile compiler.
-Next reduce its connectivity events into compact basin groups and storage curves,
-then connect those to settling. The current input uses a ready closed lake's
+The graph now feeds `NativeWaterBasins`, a resumable plateau-aware merge-forest
+compiler. 58 debug/release checks and actual native-terrain integration pass; see
+[basin evidence](evidence/water_basins/README.md). Flat terrain compacts to one
+basin; a ridge yields two basins with the measured sill. External ports survive,
+and incomplete/deep forests cannot silently enter the closed settling solver.
+Terrain-derived capacity profiles are still missing. Compile storage curves next,
+then connect the terrain-derived profiles to settling. The current input uses a ready closed lake's
 potential region: raw-terrain open-region admission with outgoing ports is also
 required before world-scale routing. Node IDs are local to one immutable source
 grid; region/edit ownership checks must be explicit. Keep intermediate memory and
