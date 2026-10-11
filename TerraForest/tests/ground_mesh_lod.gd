@@ -50,7 +50,7 @@ func run() -> void:
 		# multiplies by instance_count when LOD is disabled (lines 995-1017).
 		# Compare the same branch, with every page in view; retain raw counters.
 		check(far_full==near_full and far_lod>0 and far_lod<=near_lod*0.55,"species %d far per-page primitives reduced: %d -> %d"%[species,near_lod,far_lod])
-		check(near_lod==batch.get_child_count()*[360,1512,504][species] and far_lod==batch.get_child_count()*[48,392,72][species],"species %d native near/far LOD counts match both mesh tiers"%species)
+		check(near_lod==batch.get_child_count()*[360,1512,468][species] and far_lod==batch.get_child_count()*[48,392,72][species],"species %d native near/far LOD counts match both mesh tiers"%species)
 		check(batch.capture_snapshot()==snapshot and batch.get_ids()==ids,"LOD leaves all identities and placement bytes unchanged")
 		rows.append({"species":species,"near_full":near_full,"near_lod":near_lod,"far_full":far_full,"far_lod":far_lod})
 		batch.free()

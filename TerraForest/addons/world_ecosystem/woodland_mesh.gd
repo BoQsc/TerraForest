@@ -85,50 +85,64 @@ func fern(low: bool) -> void:
 				ribbon(leaf,leaf_widths,cross_axis,Color("46713b").lerp(Color("789649"),t*0.55+0.08*sin(frond)),0.22)
 
 func grass(low: bool) -> void:
-	var blades: int=12 if low else 28
+	# Several off-centre crowns: broad arched woodland leaves, not a single fan.
+	var blades: int=12 if low else 26
 	for blade in blades:
-		var angle: float=blade*2.399963
+		var angle: float=blade*2.399963+0.35*sin(blade*1.71)
 		var direction:=Vector3(cos(angle),0,sin(angle));var side:=Vector3(-direction.z,0,direction.x)
-		var height: float=0.20+0.29*(0.5+0.5*sin(blade*1.71+0.5))
-		var lean: float=0.07+0.16*(0.5+0.5*cos(blade*2.13))
+		var crown_angle: float=(blade%5)*2.399963
+		var base:=Vector3(cos(crown_angle),0,sin(crown_angle))*(0.025+0.065*(0.5+0.5*sin(blade*3.1)))
+		var outer: bool=blade%3==0
+		var height: float=(0.14 if outer else 0.26)+0.21*(0.5+0.5*sin(blade*1.71+0.5))
+		var lean: float=0.17+0.10*(0.5+0.5*cos(blade*2.13))
 		var segments: int=2 if low else 5
 		var points: Array[Vector3]=[];var widths: Array[float]=[]
 		for j in range(segments+1):
 			var t: float=float(j)/segments
-			points.append(direction*(0.025+lean*t*t)+Vector3.UP*(0.005+height*(t-0.14*t*t*t)))
-			widths.append(0.007*(1.0-t)*(.7+.3*sin(blade*1.3+0.7)))
-		var tint:=Color("858255") if blade%7==0 else Color("4b713b").lerp(Color("85984e"),0.5+0.5*sin(blade*2.17))
+			points.append(base+direction*(lean*t*t)+side*(0.014*sin(t*PI))*sin(blade)+Vector3.UP*(0.005+height*sin(t*1.9)))
+			widths.append((0.023+0.012*(0.5+0.5*sin(blade*2.7)))*(0.32+sin(t*PI)*0.68)*(1.0-t))
+		var tint:=Color("52693a").lerp(Color("83904c"),0.5+0.5*sin(blade*2.17))
 		ribbon(points,widths,side,tint,0.35)
 
 func twig_branch(a: Vector3,b: Vector3,width: float) -> void:
-	var side: Vector3=(b-a).cross(Vector3.UP).normalized()*width
-	if side.length_squared()<0.000001: side=Vector3.RIGHT*width
-	var up:=Vector3.UP*width
-	var tint:=Color("82715a")
-	tri(a-side,b-side,b+side,tint);tri(a-side,b+side,a+side,tint)
-	tri(a-up,b-up,b+up,tint);tri(a-up,b+up,a+up,tint)
+	# Tapered solid pentagonal wood: visible volume from every view.
+	var axis: Vector3=(b-a).normalized()
+	var side: Vector3=axis.cross(Vector3.UP).normalized()
+	if side.length_squared()<0.001: side=Vector3.RIGHT
+	var up: Vector3=axis.cross(side).normalized()
+	for face in 5:
+		var angle: float=TAU*face/5.0;var next: float=TAU*(face+1)/5.0
+		var u: Vector3=side*cos(angle)+up*sin(angle);var v: Vector3=side*cos(next)+up*sin(next)
+		var tint:=Color("77634a").lerp(Color("a28b66"),float(face)/5)
+		tri(a+u*width,b+u*width*0.35,b+v*width*0.35,tint)
+		tri(a+u*width,b+v*width*0.35,a+v*width,tint)
 
 func twigs(low: bool) -> void:
-	for i in (3 if low else 5):
+	# Standing dry understory, rooted stems and forked branches with curled leaves.
+	for i in (4 if low else 6):
 		var angle: float=i*2.399963
-		var direction:=Vector3(cos(angle),0,sin(angle))
-		var start: Vector3=-direction*0.20+Vector3.UP*(0.035+i*0.014)
-		var end: Vector3=direction*0.28+Vector3.UP*(0.06+i*0.025)
-		twig_branch(start,end,0.008)
-		if not low: twig_branch(start.lerp(end,0.6),end+Vector3(-direction.z,0.05,direction.x)*0.12,0.004)
+		var direction:=Vector3(cos(angle),0,sin(angle));var side:=Vector3(-direction.z,0,direction.x)
+		var base: Vector3=direction*0.035+Vector3.UP*0.006
+		var elbow: Vector3=direction*0.085+Vector3.UP*(0.23+0.055*sin(i))
+		var end: Vector3=direction*0.19+Vector3.UP*(0.51+0.12*sin(i*1.7))
+		twig_branch(base,elbow,0.014);twig_branch(elbow,end,0.008)
+		for j in (1 if low else 3):
+			var root_point: Vector3=elbow.lerp(end,0.25+j*0.23)
+			var tip: Vector3=root_point+side*(0.11 if j%2==0 else -0.11)+direction*0.055+Vector3.UP*0.06
+			twig_branch(root_point,tip,0.005)
+			ribbon([tip,tip+direction*0.045+Vector3.UP*0.035,tip+direction*0.08-Vector3.UP*0.025],[0.0,0.026,0.0],side,Color("9d8050").lerp(Color("685638"),float(i)/6),0.6)
 
 func bush(low: bool) -> void:
-	for i in (5 if low else 9):
+	for i in (7 if low else 11):
 		var angle: float=i*2.399963
-		var axis:=Vector3(cos(angle),0,sin(angle))
-		var side:=Vector3(-axis.z,0,axis.x)
-		var end: Vector3=axis*0.20+Vector3.UP*(0.38+0.11*sin(i*1.7))
-		twig_branch(Vector3.UP*0.015,end,0.006)
-		for j in (3 if low else 5):
-			var root_point: Vector3=end*(0.4+j*0.12)
+		var axis:=Vector3(cos(angle),0,sin(angle));var side:=Vector3(-axis.z,0,axis.x)
+		var end: Vector3=axis*(0.12+0.04*sin(i))+Vector3.UP*(0.53+0.09*sin(i*1.7))
+		twig_branch(Vector3.UP*0.006,end,0.012)
+		for j in (4 if low else 6):
+			var root_point: Vector3=end*(0.35+j*0.11)
 			for sign_value in [-1.0,1.0]:
-				var tip: Vector3=root_point+side*sign_value*0.11+axis*0.04+Vector3.UP*0.04
-				ribbon([root_point,root_point.lerp(tip,0.5)+Vector3.UP*0.02,tip],[0.0,0.037,0.0],axis,Color("426342").lerp(Color("77904a"),float(j)/8),0.25)
+				var tip: Vector3=root_point+side*sign_value*(0.15+0.015*sin(i+j))+axis*0.05+Vector3.UP*0.065
+				ribbon([root_point,root_point.lerp(tip,0.5)+Vector3.UP*0.035,tip],[0.0,0.062,0.0],axis,Color("395539").lerp(Color("87964f"),0.25+0.4*(0.5+0.5*sin(i*1.7+j))),0.3)
 
 func flower(low: bool,tint: Color,petals: int) -> void:
 	for i in (2 if low else 3):

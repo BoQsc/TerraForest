@@ -6,8 +6,10 @@ uniform sampler2D stone_color : source_color, filter_linear_mipmap_anisotropic, 
 uniform sampler2D stone_normal : hint_normal, filter_linear_mipmap_anisotropic, repeat_enable;
 uniform float wind_strength : hint_range(0.0, 1.0) = 1.0;
 varying float variation;
+varying float root_shade;
 void vertex() {
     vec3 origin = MODEL_MATRIX[3].xyz;
+    root_shade = mix(0.64, 1.0, smoothstep(0.015, 0.19, VERTEX.y));
     float phase = dot(origin.xz, vec2(0.71, 0.43));
     variation = 0.95 + 0.05 * sin(phase * 3.7);
     if (!stone) {
@@ -31,6 +33,7 @@ void fragment() {
         float vein = 1.0 - smoothstep(width, width * 2.0, abs(UV.x - 0.5));
         float ribs = 0.96 + 0.04 * sin((UV.y - abs(UV.x - 0.5) * 0.35) * 95.0);
         ALBEDO = COLOR.rgb * variation * mix(1.0, 0.79, edge * edge) * ribs + COLOR.rgb * vein * 0.16;
+        ALBEDO *= root_shade;
         ROUGHNESS = 0.84;
         SPECULAR = 0.2;
         BACKLIGHT = COLOR.rgb * 0.18;

@@ -56,3 +56,7 @@ gate failure.
 
 Latest accent preview and checks: `docs/evidence/woodland_accents`. Earlier measurements
 and the support-fix history below/above remain historical evidence.
+
+The latest shape revision replaces narrow grass fans and crossed dry sticks with
+leafier grass and standing woody scrub, and fills out bush crowns. See
+`docs/evidence/woodland_shape_review` for matching camera captures and costs.

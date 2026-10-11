@@ -331,3 +331,11 @@ the native ground-cover pipeline and disposable dense preview. Existing save
 versions migrate on write; removal identities remain stable. See
 `evidence/woodland_accents/README.md`. This is content coverage, not closure of
 the open frame-time/thermal gates or final vegetation art acceptance.
+
+### 2026-10-11: human vegetation shape feedback
+
+Reworked grass fans into broader leafy clumps, crossed dry sticks into standing
+woody scrub, and enlarged bush crowns. See `evidence/woodland_shape_review`.
+Same population and interaction bounds; native LOD checks pass, grass retains
+its 72-triangle distant budget. Terrain integration and final art acceptance
+remain open; short GPU time increased and the frame-time gate remains open.

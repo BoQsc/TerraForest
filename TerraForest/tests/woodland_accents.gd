@@ -19,6 +19,7 @@ class CoverStub extends Node3D:
 	var batches: Array=[]
 var failures:=0
 var checks:=0
+var mesh_counts: Array=[]
 func check(ok: bool,label: String) -> void:
 	checks+=1
 	if not ok: failures+=1
@@ -34,6 +35,13 @@ func run() -> void:
 		var mesh:=Asset.build(species);var arrays:=mesh.surface_get_arrays(0)
 		var valid:=true;var bounds:=mesh.custom_aabb
 		for point: Vector3 in arrays[Mesh.ARRAY_VERTEX]: valid=valid and point.is_finite() and bounds.has_point(point)
+		var full:=Asset.build(species,false)
+		var near_count: int=full.surface_get_array_len(0)
+		var all_points: PackedVector3Array=arrays[Mesh.ARRAY_VERTEX]
+		var far_count: int=all_points.size()-near_count
+		check(far_count>0 and far_count<near_count and full.get_faces()==mesh.get_faces(),"LOD keeps near shape and reduces triangles %d"%species)
+		for i in range(near_count,all_points.size(),3):valid=valid and (all_points[i+1]-all_points[i]).cross(all_points[i+2]-all_points[i]).length_squared()>1e-15
+		mesh_counts.append({"species":species,"near_triangles":near_count/3,"far_triangles":far_count/3})
 		var faces:=mesh.get_faces()
 		for i in range(0,faces.size(),3):valid=valid and (faces[i+1]-faces[i]).cross(faces[i+2]-faces[i]).length_squared()>1e-15
 		check(valid,"bounded nondegenerate geometry %d"%species)
@@ -76,5 +84,5 @@ func run() -> void:
 	check(gathered.ok and gathered.id==twig_id and wood==1 and cover.removed.profile().placed==0,"gameplay twig collection grants wood and erases exact authored record")
 	check(not interaction.collect(Vector3(970,22,970),Vector3(970,19,970),inventory,true).ok,"same twig cannot be gathered twice")
 	cover.free()
-	print("WOODLAND_ACCENTS ",JSON.stringify({"checks":checks,"failures":failures,"counts":counts}))
+	print("WOODLAND_ACCENTS ",JSON.stringify({"checks":checks,"failures":failures,"counts":counts,"meshes":mesh_counts}))
 	quit(1 if failures else 0)
