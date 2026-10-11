@@ -75,6 +75,8 @@ func configure(view: Camera3D, actor: CharacterBody3D, entries: Array[Dictionary
 	for i in range(catalog.size()):
 		var button := Button.new()
 		button.text=catalog[i].title
+		button.icon=preload("res://addons/player_runtime/item_icons.gd").texture("Wooden ladder" if catalog[i].title.begins_with("Wooden ladder") else catalog[i].title)
+		button.expand_icon=true;button.add_theme_constant_override("icon_max_width",32)
 		button.focus_mode=Control.FOCUS_NONE
 		button.pressed.connect(select.bind(i))
 		content.add_child(button)

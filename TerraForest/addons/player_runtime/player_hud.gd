@@ -131,23 +131,23 @@ func _ready() -> void:
 	modal=Control.new()
 	message=Label.new()
 	var bar:=HBoxContainer.new()
-	bar.position=Vector2(370,948)
+	bar.position=Vector2(370,940)
 	bar.add_theme_constant_override("separation",8)
 	add_child(bar)
-	action_hint=Label.new();action_hint.position=Vector2(370,920);add_child(action_hint)
+	action_hint=Label.new();action_hint.position=Vector2(370,912);add_child(action_hint)
 	ground_hint=Label.new();ground_hint.position=Vector2(500,800)
 	ground_hint.add_theme_color_override("font_shadow_color",Color.BLACK)
 	ground_hint.add_theme_constant_override("shadow_offset_x",2);ground_hint.add_theme_constant_override("shadow_offset_y",2)
 	add_child(ground_hint)
 	for i in range(10):
 		var button=preload("res://addons/player_runtime/inventory_slot.gd").new();button.controller=self;button.slot=i
-		button.custom_minimum_size=Vector2(110,64)
+		button.custom_minimum_size=Vector2(110,84)
 		button.focus_mode=Control.FOCUS_NONE
 		button.pressed.connect(func(): select_slot(i) if inventory_open and not developer_belt else equip(i))
 		bar.add_child(button);belt.append(button)
 	var hint:=Label.new();mode_hint=hint;hint.text="1–9 / 0 / Wheel equip    ·    Tab inventory    ·    Esc menu"
 	hint.text += "    ·    " + ("Gameplay construction" if gameplay_construction else "Free editor")
-	hint.position=Vector2(370,1032);add_child(hint)
+	hint.position=Vector2(370,1040);add_child(hint)
 	add_child(modal);modal.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	# Panels intercept UI input; the toolbelt remains reachable below them.
 	modal.mouse_filter=Control.MOUSE_FILTER_IGNORE
@@ -220,19 +220,18 @@ func refresh() -> void:
 		var row: Dictionary=state.slots[i]
 		var title: String=CATALOG.get(row.item,MATERIALS.get(row.item,RESOURCES.get(row.item,"Empty")))
 		if row.item in MATERIALS or row.item in RESOURCES: title += " ×%d" % row.count
+		var item_name: String=CATALOG.get(row.item,MATERIALS.get(row.item,RESOURCES.get(row.item,"Empty")))
 		if i>=10:
 			slots[i].set_appearance(row.count==0,false,i==selected_slot)
-			slots[i].tooltip_text=("Durability: %d / %d"%[row.durability,row.max_durability]) if row.get("max_durability",0)>0 else ""
-			slots[i].text="%02d%s\n%s"%[i-9," *" if i==selected_slot else "",title]
+			slots[i].present(row,item_name)
 		if i<10:
-			belt[i].text="%d%s\n%s"%[(i+1)%10," •" if i==active_slot else "",title]
 			belt[i].disabled=false
-			belt[i].tooltip_text=("Durability: %d / %d"%[row.durability,row.max_durability]) if row.get("max_durability",0)>0 else ""
-			if row.get("max_durability",0)>0:belt[i].text+="\n%d%%"%roundi(100.0*row.durability/row.max_durability)
+			belt[i].present(row,item_name,str((i+1)%10))
 			belt[i].set_appearance(row.count==0,i==active_slot,inventory_open and i==selected_slot)
 			if developer_belt:
+				belt[i].clear_presentation()
 				belt[i].text="%d\n%s"%[(i+1)%10,DEV_TOOLS[i]]
-				belt[i].tooltip_text=""
+				belt[i].tooltip_text=DEV_TOOLS[i]
 				belt[i].set_appearance(i>=8,i==developer_slot,false)
 	_refresh_ground_hint()
 	_refresh_pending()

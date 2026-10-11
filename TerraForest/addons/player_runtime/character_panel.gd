@@ -17,7 +17,7 @@ func refresh() -> void:
 	var state: Dictionary=hud.equipment.snapshot(1)
 	for i in 3:
 		var item: int=state.slots[i].item
-		buttons[i].text=NAMES[i]+"\n"+hud.RESOURCES.get(item,"Empty")
+		buttons[i].present(state.slots[i],hud.RESOURCES.get(item,"Empty"),NAMES[i])
 		buttons[i].set_appearance(item==0,item!=0,false)
 func drag_data(_side: String,slot: int) -> Dictionary:
 	var state: Dictionary=hud.equipment.snapshot(1)

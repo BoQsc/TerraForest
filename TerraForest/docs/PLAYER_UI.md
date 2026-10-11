@@ -159,3 +159,8 @@ palettes remain available through their buttons and Escape. Inventory/menu panel
 hide the compact panel temporarily. These editor actions do not wear gameplay tools.
 
 [Attack, durability and development HUD evidence](evidence/world_attack/README.md).
+
+
+## Baked item icons
+
+Carried items use shared prerendered icons in the toolbelt, backpack, chest and character slots. Stack quantities remain in the upper right. Tools show a small green/amber/red durability line; hovering with the inventory open shows their name and exact remaining durability. Developer slots clear gameplay visuals. Recipe-based furniture has matching icons in the placement picker. See [icon evidence and rebaking](evidence/item_icons/README.md).

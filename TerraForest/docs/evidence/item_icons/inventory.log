@@ -1,0 +1,57 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] New world
+[TerrainRewrite] New world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+PASS main world ready
+PASS backpack excludes all ten belt slots
+[TerrainRewrite] Pickaxe
+[TerrainRewrite] Pickaxe: hold left mouse to attack or dig. Most effective on stone.
+PASS every carried item has a baked icon
+PASS icons share cached regions and one atlas
+PASS occupied icon and empty slot presentation
+PASS low durability red bar
+PASS hover identifies tool and exact remaining durability
+PASS medium durability amber bar
+PASS full durability green bar
+PASS developer presentation clears icon and durability
+PASS empty belt slots are translucent
+PASS only equipped slot has prominent active border
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Empty hands - E interacts
+PASS empty slot remains selectable
+[TerrainRewrite] Pickaxe
+[TerrainRewrite] Pickaxe: hold left mouse to attack or dig. Most effective on stone.
+PASS recipe cards reflect available ingredients
+PASS recipe shows owned and required amounts
+PASS equipped and selected slots have distinct highlights
+PASS crafting is separate left panel and both fit 1080p
+PASS one real mouse click crafts exactly one batch
+PASS craft updates all recipe availability immediately
+PASS disabled recipe click cannot consume materials
+PASS stale revision refuses craft and refreshes without losing inputs
+PASS another recipe crafts directly without selecting a dropdown
+PASS no fullscreen dimmer or input-blocking overlay
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Empty hands - E interacts
+PASS real belt-to-inventory drag puts away equipped tool
+PASS drag transfers icon and durability without stale source presentation
+[TerrainRewrite] Pickaxe
+[TerrainRewrite] Pickaxe: hold left mouse to attack or dig. Most effective on stone.
+PASS real inventory-to-belt drag restores equipped tool
+[TerrainRewrite] Hatchet
+[TerrainRewrite] Hatchet: hold left mouse to attack or dig. Most effective on wood.
+PASS occupied belt drop swaps items through native transaction
+PASS Shift-drag splits belt stack into inventory
+PASS inventory-to-belt merge preserves total materials
+[TerrainRewrite] Pickaxe
+[TerrainRewrite] Pickaxe: hold left mouse to attack or dig. Most effective on stone.
+PASS equipping backpack item moves it into empty belt slot
+[TerrainRewrite] Hatchet
+[TerrainRewrite] Hatchet: hold left mouse to attack or dig. Most effective on wood.
+PASS closing inventory removes selection styling from equipped belt slot
+PASS closing inventory closes crafting and restores gameplay capture
+PASS fullscreen 1920x1080
+[TerrainRewrite] Temporary test world: save skipped
+INVENTORY_PRESENTATION checks=33 failures=0
