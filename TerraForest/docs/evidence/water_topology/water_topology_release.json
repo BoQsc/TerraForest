@@ -1,0 +1,113 @@
+{
+  "checks": 42,
+  "costs": [
+    {
+      "budget": 32,
+      "calls": 64,
+      "max_call_us": 47,
+      "peak_buffers": 688128,
+      "result": {
+        "buffer_bytes": 181904,
+        "cells": 2048,
+        "edges": 11176,
+        "nodes": 5974,
+        "portals": 0,
+        "processed_cells": 2048,
+        "status": 1
+      }
+    },
+    {
+      "budget": 1,
+      "calls": 2048,
+      "max_call_us": 132,
+      "peak_buffers": 688128,
+      "result": {
+        "buffer_bytes": 181904,
+        "cells": 2048,
+        "edges": 11176,
+        "nodes": 5974,
+        "portals": 0,
+        "processed_cells": 2048,
+        "status": 1
+      }
+    },
+    {
+      "budget": 32,
+      "calls": 32,
+      "max_call_us": 17,
+      "peak_buffers": 344064,
+      "result": {
+        "buffer_bytes": 91356,
+        "cells": 1024,
+        "edges": 5621,
+        "nodes": 2988,
+        "portals": 63,
+        "processed_cells": 1024,
+        "status": 1
+      }
+    },
+    {
+      "budget": 32,
+      "calls": 32,
+      "max_call_us": 17,
+      "peak_buffers": 344064,
+      "result": {
+        "buffer_bytes": 91304,
+        "cells": 1024,
+        "edges": 5618,
+        "nodes": 2986,
+        "portals": 63,
+        "processed_cells": 1024,
+        "status": 1
+      }
+    },
+    {
+      "budget": 32,
+      "calls": 64,
+      "max_call_us": 20,
+      "peak_buffers": 688128,
+      "result": {
+        "buffer_bytes": 133512,
+        "cells": 2048,
+        "edges": 8186,
+        "nodes": 4410,
+        "portals": 0,
+        "processed_cells": 2048,
+        "status": 1
+      }
+    },
+    {
+      "budget": 32,
+      "calls": 64,
+      "max_call_us": 19,
+      "peak_buffers": 688128,
+      "result": {
+        "buffer_bytes": 156912,
+        "cells": 2048,
+        "edges": 9616,
+        "nodes": 5190,
+        "portals": 0,
+        "processed_cells": 2048,
+        "status": 1
+      }
+    },
+    {
+      "budget": 32,
+      "calls": 64,
+      "max_call_us": 22,
+      "peak_buffers": 688128,
+      "result": {
+        "buffer_bytes": 181904,
+        "cells": 2048,
+        "edges": 11176,
+        "nodes": 5974,
+        "portals": 0,
+        "processed_cells": 2048,
+        "status": 1
+      }
+    }
+  ],
+  "failures": 0,
+  "scope": "Regional tetrahedral graph from sampled 3D density. Depression hierarchy reduction and storage-profile compilation not yet implemented.",
+  "library": "volumetric_water.windows.template_release.x86_64.dll"
+}

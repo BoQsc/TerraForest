@@ -97,6 +97,22 @@ configuration is still synchronous. Geometry remapping, mass displacement, save
 ownership and atomic bucket/world publication remain open. No full velocity/pressure
 field or transient water presentation is provided by this component.
 
+## Terrain connectivity compiler: regional intermediate
+
+`NativeWaterTopology` now extracts regional tetrahedral connectivity and opening
+heights from sampled3D terrain.42 debug/release checks cover ridges, stacked caves,
+regional boundary stitching, budget independence and cache restoration. A separate
+actual native-terrain excavation integration passes. See
+[topology evidence](evidence/water_topology/README.md).
+
+This is the graph stage, not yet a basin hierarchy or capacity-profile compiler.
+Next reduce its connectivity events into compact basin groups and storage curves,
+then connect those to settling. The current input uses a ready closed lake's
+potential region: raw-terrain open-region admission with outgoing ports is also
+required before world-scale routing. Node IDs are local to one immutable source
+grid; region/edit ownership checks must be explicit. Keep intermediate memory and
+concurrency bounded; do not retain one simulated body per tetrahedron.
+
 ## Gates and remaining work, in order
 
 1. **Quantity contract:** exact scoop/pour, partial fill, over-capacity rejection,

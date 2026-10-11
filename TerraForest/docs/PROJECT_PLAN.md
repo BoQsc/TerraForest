@@ -202,9 +202,11 @@ rejection and exact cache/quantity restoration. See
 whole-cell flood and its queue were removed. A native supplied-profile settling hierarchy now passes73 debug/release checks:
 fill/spill/merge, withdrawal/split, independent unequal-basin oracle and4096-leaf
 bounded processing. See [settling evidence](evidence/water_settling/README.md).
-This does not close terrain-derived redistribution: next implement the bounded3D
-terrain hierarchy/profile compiler, then quantity-preserving edit remapping and
-bucket/save transactions. Transient flow and pressure/velocity fields are not
+This does not close terrain-derived redistribution. The regional3D graph stage now
+passes42 debug/release checks plus actual native-terrain excavation integration;
+see [topology evidence](evidence/water_topology/README.md). Next compact its height
+connectivity into basin groups/storage profiles and add raw-terrain open-region
+ports, then quantity-preserving edit remapping and bucket/save transactions. Transient flow and pressure/velocity fields are not
 implemented, and current playable lakes still use static fill levels. Next prove terrain-connected redistribution and conservation under a
 bounded native work budget, then integrate bucket item ownership and world saves.
 Retain the previous finalization/hitch failures; do not increase water caps or claim

@@ -1,22 +1,5 @@
 // SPDX-License-Identifier: 0BSD
 // Included inside terraforest. Six consistent tetrahedra share cube diagonal 0--7.
-struct LakeFaceLink {int x=0,y=0,z=0,t=-1;};
-static const std::array<std::array<LakeFaceLink,4>,6> &lake_links(){
- static const auto links=[](){
-  std::array<std::array<LakeFaceLink,4>,6> out{};
-  const Vector3i shifts[]={Vector3i(),Vector3i(1,0,0),Vector3i(-1,0,0),Vector3i(0,1,0),Vector3i(0,-1,0),Vector3i(0,0,1),Vector3i(0,0,-1)};
-  for(int t=0;t<6;++t)for(int f=0;f<4;++f){
-   for(const auto &shift:shifts)for(int nt=0;nt<6;++nt)for(int nf=0;nf<4;++nf){
-    if(shift==Vector3i() && nt==t)continue;
-    int matches=0;
-    for(int a=0;a<4;++a)if(a!=f)for(int b=0;b<4;++b)if(b!=nf)
-     if(lake_corner(lake_tets[t][a])==shift+lake_corner(lake_tets[nt][b]))++matches;
-    if(matches==3)out[t][f]={shift.x,shift.y,shift.z,nt};
-   }
-  }
-  return out;
- }();return links;
-}
 static int lake_tetra(const Vector3 &p,float *weights){
  std::array<int,3> axes={0,1,2};
  std::sort(axes.begin(),axes.end(),[&](int a,int b){return p[a]>p[b] || (p[a]==p[b] && a<b);});

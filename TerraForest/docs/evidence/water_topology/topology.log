@@ -1,0 +1,45 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS sampled three-dimensional terrain fixture bakes
+PASS bounded regional graph begins
+PASS partial graph and invalid budgets cannot publish
+PASS graph extraction respects resumable cell budget
+PASS completed graph does no further cell work
+PASS actual sampled ridge blocks cross-basin connectivity below sill
+PASS actual sampled ridge connects basins above three-metre sill
+PASS bounded regional graph begins
+PASS partial graph and invalid budgets cannot publish
+PASS graph extraction respects resumable cell budget
+PASS completed graph does no further cell work
+PASS scheduler budgets preserve exact graph output
+PASS bounded regional graph begins
+PASS partial graph and invalid budgets cannot publish
+PASS graph extraction respects resumable cell budget
+PASS completed graph does no further cell work
+PASS bounded regional graph begins
+PASS partial graph and invalid budgets cannot publish
+PASS graph extraction respects resumable cell budget
+PASS completed graph does no further cell work
+PASS regional portals reconstruct whole-domain edge set exactly
+PASS caller graph edits do not alter published native graph
+PASS sampled three-dimensional terrain fixture bakes
+PASS bounded regional graph begins
+PASS partial graph and invalid budgets cannot publish
+PASS graph extraction respects resumable cell budget
+PASS completed graph does no further cell work
+PASS sealed lower chamber excluded while upper water remains present
+PASS sampled three-dimensional terrain fixture bakes
+PASS bounded regional graph begins
+PASS partial graph and invalid budgets cannot publish
+PASS graph extraction respects resumable cell budget
+PASS completed graph does no further cell work
+PASS side shaft connects stacked three-dimensional spaces
+PASS connecting shaft does not erase the solid roof
+PASS oversized or out-of-domain regional allocations rejected
+PASS terrain-connected source cache restores
+PASS bounded regional graph begins
+PASS partial graph and invalid budgets cannot publish
+PASS graph extraction respects resumable cell budget
+PASS completed graph does no further cell work
+PASS cache restore preserves node floors and spill portals
+WATER_TOPOLOGY failures=0

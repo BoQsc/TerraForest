@@ -109,3 +109,8 @@ change water levels or simulate flow. See `docs/evidence/water_capacity`.
 withdrawal/split on supplied storage profiles and a basin hierarchy. It is not
 yet connected to terrain hierarchy extraction or the playable world. See
 `docs/evidence/water_settling` for tests, bounds and outstanding obligations.
+
+`NativeWaterTopology` extracts bounded regional tetrahedral graphs and opening
+elevations from a ready immutable volume. It shares adjacency with lake flooding.
+This is an intermediate for the unfinished terrain-to-basin compiler; it does not
+route quantities or simulate flow. See `docs/evidence/water_topology`.
