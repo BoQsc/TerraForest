@@ -27,4 +27,3 @@ static func build(species: int) -> Mesh:
 	var mesh:=ArrayMesh.new();mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES,arrays)
 	mesh.surface_set_material(0,material)
 	return mesh
-
