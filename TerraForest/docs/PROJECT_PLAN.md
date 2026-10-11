@@ -42,12 +42,12 @@ Only one delivery milestone is active. Supporting work must name the coverage ro
 
 | Milestone | Deliverable | Exit decision |
 | --- | --- | --- |
-| M1 Current integration closure — disposition recorded | Dependable human checkpoint and a concrete disposition for opt-in model streaming | Address checkpoint defects as found. Complete automatic model paging/save lifetime integration with targeted evidence, or explicitly retain the existing path and register its limitation and return trigger. Do not enable incomplete paging merely to claim integration |
-| M2 World content coverage — open, remaining work retained | Generation, water, roads, structures/static props, vegetation variety and settlement workflow in the same saved world | Close the applicable coverage gates above; report any remaining gap instead of silently moving it to qualification |
-| M3 Gameplay and simulation coverage — active actor-navigation slice | Gather/build/use loop, representative active entities and multiple-vehicle activation | Actual rendered behavior, persistence and bounded simulation are demonstrated; an entity count in a native store is insufficient |
+| M1 Current integration closure ā€” disposition recorded | Dependable human checkpoint and a concrete disposition for opt-in model streaming | Address checkpoint defects as found. Complete automatic model paging/save lifetime integration with targeted evidence, or explicitly retain the existing path and register its limitation and return trigger. Do not enable incomplete paging merely to claim integration |
+| M2 World content coverage ā€” open, remaining work retained | Generation, water, roads, structures/static props, vegetation variety and settlement workflow in the same saved world | Close the applicable coverage gates above; report any remaining gap instead of silently moving it to qualification |
+| M3 Gameplay and simulation coverage ā€” active actor-navigation slice | Gather/build/use loop, representative active entities and multiple-vehicle activation | Actual rendered behavior, persistence and bounded simulation are demonstrated; an entity count in a native store is insufficient |
 | M4 Combined area qualification | Forested settlement, interiors/props, underground terrain, lake, roads, entities and driving | Human checkpoint plus short automated mixed-workload tests; declared scene counts, travel route and frame/resource budgets precede performance runs |
 | M5 Scale and release qualification | Increased density/distance, endurance, recovery and distributable build | Stated workloads sustain target behavior; memory/VRAM/disk growth and failures are measured; clean-machine release checks pass |
-| M6 Multiplayer implementation and qualification | Authoritative session with interest-managed world/entity state | Server plus two clients and network fault tests first, then measured scaling. Architectural readiness remains a requirement throughout M1–M5 |
+| M6 Multiplayer implementation and qualification | Authoritative session with interest-managed world/entity state | Server plus two clients and network fault tests first, then measured scaling. Architectural readiness remains a requirement throughout M1ā€“M5 |
 
 M6 is not authorization to market earlier milestones as completing the large-multiplayer goal. Reassess its placement after M4 before release scope is finalized. Likewise, a successful M4 scene does not prove an arbitrary city size.
 
@@ -136,8 +136,8 @@ handover fixes the player/actor capsule-corner stall. See
 [cottage and player stair evidence](evidence/actor_cottage_navigation/README.md).
 This is an authored-building route, not the full settlement navigation slice.
 
-Sixteen simultaneous clear routes now become usable in 0.267–0.283 seconds,
-versus the retained 2.22–2.23 second failure, with the same shared work cap.
+Sixteen simultaneous clear routes now become usable in 0.267ā€“0.283 seconds,
+versus the retained 2.22ā€“2.23 second failure, with the same shared work cap.
 Actor-component disk reload preserves destinations and replans after recreation.
 See [latency and reload evidence](evidence/actor_planning_latency/README.md).
 
@@ -178,13 +178,19 @@ at2m. These are sample counts, not area percentages. Cold/restored bakes agree.
 The failing test and cross-section are retained in
 [shoreline evidence](evidence/water_shoreline_queries/README.md).
 
-Next: implement native connected partial-cell water queries, preserving solid and
-disconnected-cave rejection plus bounded memory/query cost. Follow
-[boundary requirements](WATER_BOUNDARY_QUERIES.md); do not substitute surface-column
-extrusion or regress the smooth mesh. This is an open correctness issue, not a
-completed water gate. Other original-scope coverage remains open.
-No multiplayer implementation, large-city certification or sustained-performance
-claim follows from the current integration checks.
+Native connected partial-cell water queries now resolve that measured mismatch.
+Smooth mesh, immersion and root queries use the same tetrahedral connectivity;
+version2 caches preserve it and old derived bakes rebuild. Analytic, topology,
+codec (debug/release), vegetation and generated cave/save/reopen checks pass.
+Cold four-lake gate passes at5.368s. See
+[boundary correction evidence](evidence/water_boundary_queries/README.md).
+Cost:64-cubed volume retains1.55MiB plus surface/index; measured bake96.102ms,
+maximum cold worker slice39.132ms. Finalization is not time-sliced; a66.82ms terrain
+receive hitch during restore remains. This closes the measured query mismatch,
+not whole-water performance or static-fluid limits. Next return to broader M2
+coverage (geology discovery/material rewards and continuous road traversal), while
+retaining maximum-size water finalization as an explicit performance qualification
+item. Do not increase water caps or claim sustained60FPS from these checks.
 
 Current combined gameplay launcher: [Play Combined Gameplay.cmd](../Play%20Combined%20Gameplay.cmd)
 uses the separate gameplay copy of the furnished editor world. The existing

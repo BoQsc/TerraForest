@@ -28,7 +28,7 @@ func volume(origin := Vector3.ZERO, cells := Vector3i(8, 6, 8), level: float = 3
 
 # Independent geometric coverage oracle: every grid-cell center is covered once
 # iff its volume reaches the fill-level layer. Also check area, indices and UVs.
-func exact_surface(v: RefCounted, label: String) -> void:
+func exact_surface(v: RefCounted, label: String, samples: PackedFloat32Array = PackedFloat32Array()) -> void:
 	var arrays: Array = v.surface_arrays()
 	var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
 	var indices: PackedInt32Array = arrays[Mesh.ARRAY_INDEX]
@@ -51,11 +51,20 @@ func exact_surface(v: RefCounted, label: String) -> void:
 		for k in range(4):
 			var p: Vector3 = vertices[first+k]
 			valid = valid and is_equal_approx(p.y,level) and normals[first+k] == Vector3.UP and uv[first+k] == Vector2(p.x,p.z)
+	# Legacy rectangle extraction deliberately covers only wholly empty cells.
+	# Smooth boundary coverage is tested separately against the true volume.
+	var dims: Vector3i = Vector3i((bounds.size / spacing).round())
+	if samples.is_empty(): samples = field(dims)
+	var layer: int = ceili((level-bounds.position.y)/spacing)-1
 	var wet_cells: int = 0
 	for z in range(roundi(bounds.size.z/spacing)):
 		for x in range(roundi(bounds.size.x/spacing)):
 			var p := Vector3(bounds.position.x+(x+0.5)*spacing,level-0.001,bounds.position.z+(z+0.5)*spacing)
 			var expected: int = 1 if v.contains(p) else 0
+			for dz in 2:
+				for dy in 2:
+					for dx in 2:
+						if samples[x+dx+(dims.x+1)*(layer+dy+(dims.y+1)*(z+dz))]<=0: expected=0
 			wet_cells += expected
 			var covered: int = 0
 			for first in range(0,vertices.size(),4):
@@ -87,7 +96,7 @@ func run() -> void:
 	check(not v.contains(Vector3(2.5, 3.5, 2.5)) and not v.contains(Vector3(2.5,0.5,2.5)) and not v.contains(Vector3(-1,2,2)), "surface, solid floor and exterior are dry")
 	check(not v.contains(Vector3.INF) and v.depth_at(Vector3(NAN,0,0)) == 0, "invalid query positions are dry")
 	check(not v.configure(Vector3.ZERO,Vector3i(8,6,8),1,3,Vector3(2,2,2)) and v.bake_density(data) == -1, "published volume is immutable")
-	check(v.statistics()["builder_bytes"] == 0 and v.statistics()["resident_bytes"] == 384, "bake scratch freed and occupancy remains bounded")
+	check(v.statistics()["builder_bytes"] == 0 and v.statistics()["resident_bytes"] == 2*384+4*9*7*9, "bake scratch freed and occupancy remains bounded")
 	var mesh: Array = v.surface_arrays()
 	check(mesh[Mesh.ARRAY_VERTEX].size() == 4 and mesh[Mesh.ARRAY_INDEX].size() == 6, "rectangular basin reduces six strips to one quad")
 	exact_surface(v,"rectangle surface has exact nonoverlapping coverage, stable UVs and deterministic extraction")
@@ -95,20 +104,20 @@ func run() -> void:
 	check(edge.bake_density(field(Vector3i(8,6,8),true)) == -3 and not edge.contains(Vector3(2.5,2.5,2.5)), "open boundary rejects entire lake without partial publication")
 	var wall: RefCounted = volume()
 	check(wall.bake_density(field(Vector3i(8,6,8),false,true)) == 1 and not wall.contains(Vector3(5.5,2.5,2.5)), "flood fill does not fill disconnected neighboring basin")
-	exact_surface(wall,"disconnected dry basin is absent from merged surface")
+	exact_surface(wall,"disconnected dry basin is absent from merged surface",field(Vector3i(8,6,8),false,true))
 	var roof_field: PackedFloat32Array = data.duplicate()
 	for z in range(2,7):
 		for x in range(4,7):
 			roof_field[x+9*(3+7*z)] = -1.0
 	var cave: RefCounted = volume()
 	check(cave.bake_density(roof_field)==1 and cave.contains(Vector3(4.5,1.5,4.5)) and not cave.contains(Vector3(4.5,2.5,4.5)), "connected water occupies below cave roof while solid ceiling stays dry")
-	exact_surface(cave,"irregular cave roof remains absent from merged fill surface")
+	exact_surface(cave,"irregular cave roof remains absent from conservative merged surface",roof_field)
 	var island_field: PackedFloat32Array = data.duplicate()
 	for y in range(7):
 		island_field[4+9*(y+7*4)] = -1.0
 	var island: RefCounted = volume()
 	check(island.bake_density(island_field)==1,"connected lake around central island bakes")
-	exact_surface(island,"surface rectangles preserve central island hole without overlaps")
+	exact_surface(island,"conservative surface rectangles preserve central island hole without overlaps",island_field)
 	var blocked: RefCounted = volume(Vector3.ZERO,Vector3i(8,6,8),3.5,Vector3(0.5,0.5,0.5))
 	check(blocked.bake_density(data)==-2 and not blocked.contains(Vector3(2.5,2.5,2.5)), "blocked seed rejects publication")
 	var shifted: RefCounted = volume(Vector3(-20,-10,-30),Vector3i(8,6,8),-6.5,Vector3(-17.5,-7.5,-27.5))
@@ -122,7 +131,7 @@ func run() -> void:
 	var begin: int = Time.get_ticks_usec()
 	check(large.bake_density(large_field) == 1, "maximum configured cell budget bakes")
 	var bake_ms: float = (Time.get_ticks_usec()-begin)/1000.0
-	check(large.statistics()["resident_bytes"] == 262144 and large.statistics()["builder_bytes"] == 0, "262144-cell lake frees all temporary scratch")
+	check(large.statistics()["resident_bytes"] == 2*262144+4*65*65*65 and large.statistics()["builder_bytes"] == 0, "262144-cell lake frees all temporary scratch")
 	check(large.surface_arrays()[Mesh.ARRAY_VERTEX].size()==4,"maximum-cell rectangular basin reduces 62 strips to one quad")
 	exact_surface(large,"maximum-cell basin preserves exact surface coverage")
 	# Exercise real native terrain density including an excavated sphere.

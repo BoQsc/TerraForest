@@ -57,6 +57,6 @@ func _initialize() -> void:
 				var solid:=x==0 or x==8 or z==0 or z==8 or y==0
 				if x==3 and z==0 and y in [3,4]: solid=false
 				field.append(-1.0 if solid else 1.0)
-	check(narrow.bake_density(field)==1,"conservative volume excludes sub-cell boundary opening")
-	check(narrow.smooth_surface_arrays()==narrow.surface_arrays(),"surface reaching volume boundary falls back without drawing a leak")
+	check(narrow.bake_density(field)==-3,"connected sub-cell boundary opening rejects entire lake")
+	check(not narrow.contains(Vector3(2.5,2.5,2.5)),"rejected leaking volume publishes no water")
 	quit(1 if failures else 0)

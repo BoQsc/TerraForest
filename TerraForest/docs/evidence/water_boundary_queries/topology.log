@@ -1,0 +1,20 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS sealed partial-cell lake bakes above closed chamber
+PASS boundary topology restores
+PASS partial shoreline air is wet
+PASS partial shoreline solid is dry
+PASS sealed chamber is dry for immersion and vegetation
+PASS thin dividing wall and disconnected basin are dry
+PASS shared cell faces remain continuous
+PASS fill boundary is strict
+PASS submerged ground contact excludes vegetation
+PASS partial shoreline air is wet
+PASS partial shoreline solid is dry
+PASS sealed chamber is dry for immersion and vegetation
+PASS thin dividing wall and disconnected basin are dry
+PASS shared cell faces remain continuous
+PASS fill boundary is strict
+PASS submerged ground contact excludes vegetation
+PASS repeated partial-cell queries are stable
+WATER_BOUNDARY_TOPOLOGY failures=0

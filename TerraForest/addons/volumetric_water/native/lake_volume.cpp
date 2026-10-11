@@ -54,8 +54,8 @@ bool NativeLakeVolume::configure(const Vector3 &origin, const Vector3i &cells, d
 }
 bool NativeLakeVolume::eligible(int x, int y, int z) const {
     if (origin_.y + y*spacing_ >= level_) return false;
-    // All eight corners must be air. This deliberately leaves a dry shoreline
-    // margin of up to a voxel; no surface is knowingly drawn through solid cells.
+    // Conservative fast path: all eight corners must be air. Boundary queries
+    // and the smooth mesh separately include connected partial cells.
     for (int dz=0;dz<2;++dz) for(int dy=0;dy<2;++dy) for(int dx=0;dx<2;++dx)
         if (density_[node(x+dx,y+dy,z+dz)] <= 0) return false;
     return true;
@@ -98,6 +98,7 @@ int NativeLakeVolume::sample_terrain(Object *core, int64_t budget, int64_t revis
     if (!reply_ok(after,16) || after.decode_u32(12)!=uint64_t(epoch)) return status_=-4;
     return sampled_==node_count_ ? finish() : 0;
 }
+#include "lake_boundary.hpp"
 int NativeLakeVolume::finish() {
     const Vector3 local=(seed_-origin_)/spacing_;
     const int sx=int(std::floor(local.x)), sy=int(std::floor(local.y)), sz=int(std::floor(local.z));
@@ -118,6 +119,8 @@ int NativeLakeVolume::finish() {
             if (!wet_[next] && eligible(nx,ny,nz)) { wet_[next]=1; queue_[tail++]=next; }
         }
     }
+    const int boundary_status=build_boundary_volume();
+    if(boundary_status!=1){status_=boundary_status;wet_.reset();boundary_mask_.reset();density_.reset();queue_.reset();return status_;}
     column_top_.reset(new(std::nothrow) uint8_t[size_t(size_.x)*size_.z]());
     if(!column_top_){status_=-1;wet_.reset();density_.reset();queue_.reset();return status_;}
     for(uint32_t i=0;i<tail;++i){
@@ -126,22 +129,22 @@ int NativeLakeVolume::finish() {
     }
     wet_count_=tail; status_=1;
     smooth_surface_=build_smooth_surface();
-    density_.reset(); queue_.reset();
+    query_density_=std::move(density_); queue_.reset();
     return status_;
 }
 bool NativeLakeVolume::contains(const Vector3 &p) const {
     if(status_!=1 || !p.is_finite() || p.y>=level_)return false;
     const Vector3 v=(p-origin_)/spacing_;
     if(v.x<0||v.y<0||v.z<0||v.x>=size_.x||v.y>=size_.y||v.z>=size_.z)return false;
-    return wet_[index(int(std::floor(v.x)),int(std::floor(v.y)),int(std::floor(v.z)))]!=0;
+    if(wet_[index(int(v.x),int(v.y),int(v.z))])return true;
+    return boundary_contains(p);
 }
 double NativeLakeVolume::depth_at(const Vector3 &point) const { return contains(point) ? level_-point.y : 0.0; }
 bool NativeLakeVolume::submerges_root(const Vector3 &p) const {
     if(status_!=1||!p.is_finite()||p.y>=level_||p.y<origin_.y)return false;
-    const Vector3 v=(p-origin_)/spacing_;
-    if(v.x<0||v.z<0||v.x>=size_.x||v.z>=size_.z)return false;
-    const uint8_t top=column_top_[int(std::floor(v.x))+size_.x*int(std::floor(v.z))];
-    return top && p.y<std::min(level_,origin_.y+top*spacing_);
+    // Root contact uses the same connected volume, with the existing 35cm
+    // ground-cover support tolerance. Never extrude surface water through a cave.
+    return contains(p) || contains(Vector3(p.x,std::min(float(p.y+.35),level_-.0001f),p.z));
 }
 AABB NativeLakeVolume::bounds() const { return AABB(origin_,Vector3(size_)*spacing_); }
 Array NativeLakeVolume::surface_arrays() const {
@@ -182,9 +185,10 @@ Array NativeLakeVolume::surface_arrays() const {
 #include "lake_bake.hpp"
 Dictionary NativeLakeVolume::statistics() const {
     Dictionary d; d["status"]=status_; d["cells"]=count_; d["sampled_nodes"]=sampled_; d["total_nodes"]=node_count_;
-    d["wet_cells"]=wet_count_; d["resident_bytes"]=wet_ ? count_ : 0;
+    d["wet_cells"]=wet_count_; d["resident_bytes"]=wet_ ? count_*2+node_count_*sizeof(float) : 0;
     d["builder_bytes"]=(density_ ? node_count_*sizeof(float):0)+(queue_ ? count_*sizeof(uint32_t):0);
     d["query_index_bytes"]=column_top_ ? size_.x*size_.z : 0;
+    d["boundary_bytes"]=boundary_mask_ ? count_+node_count_*sizeof(float) : 0;
     d["surface_bytes"]=smooth_surface_.size()==Mesh::ARRAY_MAX ?
         PackedVector3Array(smooth_surface_[Mesh::ARRAY_VERTEX]).size()*32+PackedInt32Array(smooth_surface_[Mesh::ARRAY_INDEX]).size()*4 : 0;
     d["fill_level"]=level_; d["spacing"]=spacing_; d["dynamic_flow"]=false; return d;

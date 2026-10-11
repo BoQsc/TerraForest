@@ -303,7 +303,7 @@ func load_lake(identity: PackedByteArray) -> PackedByteArray:
 	var file:=FileAccess.open(_lake_name(identity),FileAccess.READ)
 	if file==null:misses+=1;return PackedByteArray()
 	var length:=file.get_length()
-	if length<144 or length>6*1024*1024+40:
+	if length<144 or length>8*1024*1024+40:
 		file.close();reject_lake(identity);return PackedByteArray()
 	var header:=file.get_buffer(40);var data:=file.get_buffer(length-40);file.close()
 	if header.size()!=40 or header.decode_u32(0)!=0x31434c54 or header.decode_u32(4)!=data.size() or digest(data)!=header.slice(8,40):
@@ -311,7 +311,7 @@ func load_lake(identity: PackedByteArray) -> PackedByteArray:
 	if _lease_owned:_cache_owner.touch(ProjectSettings.globalize_path(_lake_name(identity)))
 	return data
 func store_lake(identity: PackedByteArray,data: PackedByteArray) -> bool:
-	if not enabled or not _lease_owned or identity.size()!=32 or data.size()<104 or data.size()>6*1024*1024:return false
+	if not enabled or not _lease_owned or identity.size()!=32 or data.size()<104 or data.size()>8*1024*1024:return false
 	if not accounting_complete:
 		_queue_lake(identity,data)
 		return false

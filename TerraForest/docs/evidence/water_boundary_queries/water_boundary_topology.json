@@ -1,0 +1,20 @@
+{
+  "failures": 0,
+  "queries": 100000,
+  "query_us_including_script_dispatch": 42918,
+  "statistics": {
+    "boundary_bytes": 23748,
+    "builder_bytes": 0,
+    "cells": 4096,
+    "dynamic_flow": false,
+    "fill_level": 12.5,
+    "query_index_bytes": 256,
+    "resident_bytes": 27844,
+    "sampled_nodes": 4913,
+    "spacing": 1.0,
+    "status": 1,
+    "surface_bytes": 16980,
+    "total_nodes": 4913,
+    "wet_cells": 336
+  }
+}

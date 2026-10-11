@@ -10,7 +10,7 @@
 
 namespace terraforest {
 // Builder is worker-owned until ready. Published volumes are immutable.
-// Discrete conservative occupancy, not a pressure/flow solver.
+// Connected piecewise-linear static occupancy, not a pressure/flow solver.
 class NativeLakeVolume : public godot::RefCounted {
     GDCLASS(NativeLakeVolume, godot::RefCounted)
     godot::Vector3 origin_, seed_;
@@ -20,6 +20,10 @@ class NativeLakeVolume : public godot::RefCounted {
     int status_ = -1;
     std::unique_ptr<float[]> density_;
     std::unique_ptr<uint8_t[]> wet_;
+    std::unique_ptr<uint8_t[]> boundary_mask_;
+    std::unique_ptr<float[]> query_density_;
+    int build_boundary_volume();
+    bool boundary_contains(const godot::Vector3 &point) const;
     std::unique_ptr<uint8_t[]> column_top_;
     std::unique_ptr<uint32_t[]> queue_;
     godot::Array smooth_surface_;

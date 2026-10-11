@@ -23,7 +23,11 @@ func run():
  var editor=game.session_menu.pages.Water.get_child(0)
  for i in 4:await process_frame
  check(editor.rows.get_child_count()==4 and game.session_menu.pages.Water.visible,"Water page lists four lakes")
- var entries: Array[Dictionary]=game.lakes.descriptions();var first: Dictionary=entries[0]
+ var entries: Array[Dictionary]=game.lakes.descriptions()
+ if entries.size()!=4:
+  game.shutdown_requested=true;await game.terrain.shutdown_after_edits();game.free();await process_frame
+  print("LAKE_EDITOR failures=",failures);quit(1);return
+ var first: Dictionary=entries[0]
  check(first.state=="Ready" and not game.lakes.retry_lake(first.id),"ready water reports usable state and cannot queue redundant bake")
  var saved: PackedByteArray=game.lakes.capture_snapshot();var revision: int=game.terrain.published_revision
  var record: Dictionary=game.lakes._lakes[first.id];var seed: Vector3=record.seed

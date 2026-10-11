@@ -13,7 +13,9 @@ func _initialize():
  for z in 33:
   for y in 13:
    for x in 33:field.append(density(Vector3(x,y,z)))
+ var bake_start:=Time.get_ticks_usec()
  check(lake.bake_density(field)==1,"bake analytic basin")
+ var bake_us:=Time.get_ticks_usec()-bake_start
  var arrays: Array=lake.smooth_surface_arrays()
  var vertices: PackedVector3Array=arrays[Mesh.ARRAY_VERTEX];var indices: PackedInt32Array=arrays[Mesh.ARRAY_INDEX]
  var identity=PackedByteArray();identity.resize(32)
@@ -45,7 +47,8 @@ func _initialize():
   for x in 128:
    var point=Vector3((x+.5)*.25,6.9,(z+.5)*.25)
    grid.append(0 if density(point)<=.05 else 1 if lake.contains(point) else 2)
- var report={"failures":failures,"rows":rows,"grid":{"width":128,"depth_below_surface":1.1,"step_m":.25,"values":grid},"examples":examples,"stats":lake.statistics(),"scope":"Analytic curved basin, triangle samples in free space; diagnostic sample counts are not area percentages or full-world performance evidence"}
+ check(grid.count(2)==0,"fixed cross-section free-space samples are wet")
+ var report={"bake_us":bake_us,"failures":failures,"rows":rows,"grid":{"width":128,"depth_below_surface":1.1,"step_m":.25,"values":grid},"examples":examples,"stats":lake.statistics(),"scope":"Analytic curved basin, triangle samples in free space; diagnostic sample counts are not area percentages or full-world performance evidence"}
  DirAccess.make_dir_recursive_absolute("res://reports/water_shoreline_queries")
  var file=FileAccess.open("res://reports/water_shoreline_queries/result.json",FileAccess.WRITE);file.store_string(JSON.stringify(report,"  "));file.close()
  print(JSON.stringify(report));print("WATER_SHORELINE_QUERIES failures=",failures);quit(1 if failures else 0)

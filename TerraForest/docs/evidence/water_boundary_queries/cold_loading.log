@@ -1,0 +1,29 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] New world
+[TerrainRewrite] New world
+[TerrainRewrite] Lake ready · temporary world
+[TerrainRewrite] Lake ready · temporary world
+[TerrainRewrite] Lake ready · temporary world
+[TerrainRewrite] Lake ready · temporary world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+LAKE_STARTUP {"events":[{"id":1,"ms":2284},{"id":2,"ms":3336},{"id":3,"ms":4218},{"id":4,"ms":5368}],"profile":{"max_queue_ms":310.014,"max_worker_ms":39.132,"queue_ms":3358.132,"slices":123,"worker_ms":355.134},"queued":4,"state":{"lakes":4,"outstanding_slices":0,"ready":4,"resident_occupancy_bytes":1285136},"worker":"mesh"}
+PASS four generated lakes ready in main world
+PASS Water page lists four lakes
+PASS ready water reports usable state and cannot queue redundant bake
+PASS selected lake seed is occupied before removal
+PASS Remove water button removes occupancy and updates list
+PASS removing water does not sculpt terrain
+PASS existing persistence restores removed definition
+[TerrainRewrite] Lake ready · temporary world
+[TerrainRewrite] Lake ready · temporary world
+[TerrainRewrite] Lake ready · temporary world
+[terrain-hitch] receive 66.82 ms at 16507
+[TerrainRewrite] Lake ready · temporary world
+PASS restored water republishes and UI retains stable identities
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Empty hands - left mouse punches, E interacts
+PASS gameplay hides water editor and rejects its actions
+[TerrainRewrite] Temporary test world: save skipped
+LAKE_EDITOR failures=0

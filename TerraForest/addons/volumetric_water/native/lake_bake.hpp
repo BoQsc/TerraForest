@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: 0BSD
-// Included by lake_volume.cpp inside terraforest. Version 1, little-endian.
+// Included by lake_volume.cpp inside terraforest. Version 2, little-endian.
 // Identity is a caller-supplied 256-bit terrain/content digest, not a revision counter.
 static uint32_t bake_checksum(const PackedByteArray &bytes) {
     uint32_t hash=2166136261u;
@@ -11,29 +11,32 @@ PackedByteArray NativeLakeVolume::capture_bake(const PackedByteArray &identity) 
     const PackedVector3Array vertices=smooth_surface_[Mesh::ARRAY_VERTEX];
     const PackedInt32Array indices=smooth_surface_[Mesh::ARRAY_INDEX];
     if(vertices.size()>262144||indices.size()>786432)return out;
-    out.resize(104+count_+vertices.size()*8+indices.size()*4);
-    out.encode_u32(0,0x31424c54);out.encode_u32(4,1);out.encode_u32(8,out.size());
+    out.resize(104+count_*2+node_count_*4+vertices.size()*8+indices.size()*4);
+    out.encode_u32(0,0x31424c54);out.encode_u32(4,2);out.encode_u32(8,out.size());
     for(int i=0;i<32;++i)out.set(16+i,identity[i]);
     for(int a=0;a<3;++a){out.encode_float(48+a*4,origin_[a]);out.encode_u32(60+a*4,size_[a]);out.encode_float(80+a*4,seed_[a]);}
     out.encode_float(72,spacing_);out.encode_float(76,level_);out.encode_u32(92,count_);
     out.encode_u32(96,vertices.size());out.encode_u32(100,indices.size());
     int64_t at=104;
     for(uint32_t i=0;i<count_;++i)out.set(at++,wet_[i]);
+    for(uint32_t i=0;i<count_;++i)out.set(at++,boundary_mask_[i]);
+    for(uint32_t i=0;i<node_count_;++i){out.encode_float(at,query_density_[i]);at+=4;}
     for(int64_t i=0;i<vertices.size();++i){out.encode_float(at,vertices[i].x);out.encode_float(at+4,vertices[i].z);at+=8;}
     for(int64_t i=0;i<indices.size();++i){out.encode_u32(at,indices[i]);at+=4;}
     out.encode_u32(12,bake_checksum(out));return out;
 }
 bool NativeLakeVolume::restore_bake(const PackedByteArray &bytes,const PackedByteArray &identity) {
     // Reject before allocation, and never modify an existing/published instance.
-    if((count_&&(status_!=0||sampled_))||identity.size()!=32||bytes.size()<104||bytes.size()>6*1024*1024||bytes.decode_u32(0)!=0x31424c54||bytes.decode_u32(4)!=1||bytes.decode_u32(8)!=uint64_t(bytes.size()))return false;
+    if((count_&&(status_!=0||sampled_))||identity.size()!=32||bytes.size()<104||bytes.size()>8*1024*1024||bytes.decode_u32(0)!=0x31424c54||bytes.decode_u32(4)!=2||bytes.decode_u32(8)!=uint64_t(bytes.size()))return false;
     for(int i=0;i<32;++i)if(bytes[16+i]!=identity[i])return false;
     if(bytes.decode_u32(12)!=bake_checksum(bytes))return false;
     const uint32_t count=bytes.decode_u32(92),nv=bytes.decode_u32(96),ni=bytes.decode_u32(100);
-    if(count>262144||nv>262144||ni>786432||ni%3||104ull+count+uint64_t(nv)*8+uint64_t(ni)*4!=uint64_t(bytes.size()))return false;
+    if(count>262144||nv>262144||ni>786432||ni%3)return false;
     Vector3 origin,seed;Vector3i size;
     for(int a=0;a<3;++a){origin[a]=bytes.decode_float(48+a*4);size[a]=bytes.decode_u32(60+a*4);seed[a]=bytes.decode_float(80+a*4);}
     Ref<NativeLakeVolume> stage;stage.instantiate();
     if(!stage->configure(origin,size,bytes.decode_float(72),bytes.decode_float(76),seed)||stage->count_!=count)return false;
+    if(104ull+count*2ull+uint64_t(stage->node_count_)*4+uint64_t(nv)*8+uint64_t(ni)*4!=uint64_t(bytes.size()))return false;
     if(count_&&(origin_!=origin||seed_!=seed||size_!=size||spacing_!=stage->spacing_||level_!=stage->level_))return false;
     stage->column_top_.reset(new(std::nothrow) uint8_t[size_t(size.x)*size.z]());
     if(!stage->column_top_)return false;
@@ -49,6 +52,12 @@ bool NativeLakeVolume::restore_bake(const PackedByteArray &bytes,const PackedByt
     }
     const Vector3 local=(seed-origin)/stage->spacing_;
     if(!wet_count||!stage->wet_[stage->index(int(local.x),int(local.y),int(local.z))])return false;
+    stage->boundary_mask_.reset(new(std::nothrow) uint8_t[count]);
+    if(!stage->boundary_mask_)return false;
+    for(uint32_t i=0;i<count;++i){const uint8_t mask=bytes[at++];if(mask>63 || (stage->wet_[i]&&mask!=63))return false;stage->boundary_mask_[i]=mask;}
+    for(uint32_t i=0;i<stage->node_count_;++i){const float d=bytes.decode_float(at);at+=4;if(!std::isfinite(d))return false;stage->density_[i]=d;}
+    stage->query_density_=std::move(stage->density_);
+    if(!stage->boundary_contains(seed))return false;
     PackedVector3Array vertices,normals;PackedVector2Array uv;PackedInt32Array indices;
     vertices.resize(nv);normals.resize(nv);uv.resize(nv);indices.resize(ni);
     for(uint32_t i=0;i<nv;++i){
@@ -61,6 +70,7 @@ bool NativeLakeVolume::restore_bake(const PackedByteArray &bytes,const PackedByt
     origin_=stage->origin_;seed_=stage->seed_;size_=stage->size_;spacing_=stage->spacing_;level_=stage->level_;
     count_=count;node_count_=stage->node_count_;sampled_=0;wet_count_=wet_count;status_=1;
     density_.reset();queue_.reset();
+    boundary_mask_=std::move(stage->boundary_mask_);query_density_=std::move(stage->query_density_);
     wet_=std::move(stage->wet_);column_top_=std::move(stage->column_top_);smooth_surface_=arrays;
     return true;
 }
@@ -71,7 +81,7 @@ PackedByteArray NativeLakeVolume::cache_identity(Object *core,const String &comp
     PackedByteArray definition;definition.resize(44);
     for(int a=0;a<3;++a){definition.encode_float(a*4,origin_[a]);definition.encode_u32(12+a*4,size_[a]);definition.encode_float(32+a*4,seed_[a]);}
     definition.encode_float(24,spacing_);definition.encode_float(28,level_);
-    if(hash->update(String("lake-bake-v1:"+compatibility).to_utf8_buffer())!=OK||hash->update(definition)!=OK)return {};
+    if(hash->update(String("lake-bake-v2:"+compatibility).to_utf8_buffer())!=OK||hash->update(definition)!=OK)return {};
     // Cover the whole sampled X/Z domain, including endpoint lattice samples.
     // Terrain keys include full vertical edit pages, generator, caves and blocks.
     for(int z=int(origin_.z);z<int(bounds().get_end().z);z+=256)for(int x=int(origin_.x);x<int(bounds().get_end().x);x+=256){

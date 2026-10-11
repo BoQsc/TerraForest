@@ -1,7 +1,9 @@
 # Water boundary-query correction
 
-Status: required native implementation, not completed. The retained analytic
-regression proves dry answers beneath visible water, including at1.1m and2m depth.
+Status: native boundary correction implemented; focused analytic, cache and generated-world
+cave/reopen checks pass. Retained-memory and indivisible worker-finalization costs
+remain explicit limitations. See [verification](evidence/water_boundary_queries/README.md).
+The original regression proved dry answers beneath visible water, including at1.1m and2m depth.
 Evidence: [shoreline baseline](evidence/water_shoreline_queries/README.md).
 
 ## Required behavior
@@ -13,7 +15,7 @@ and vegetation exclusion must derive from compatible connectivity. Cache restore
 must reproduce the same classifications. No live terrain read or per-frame mesh
 scan is acceptable for a point query.
 
-## Next implementation
+## Implemented representation and design requirements
 
 Use a bounded piecewise-linear subdivision of mixed cells with explicit face
 connectivity (a consistent tetrahedral decomposition is the candidate). Track which

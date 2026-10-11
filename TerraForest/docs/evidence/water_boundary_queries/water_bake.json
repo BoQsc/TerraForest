@@ -1,0 +1,6 @@
+{
+  "bytes": 6676,
+  "checks": 32,
+  "failures": 0,
+  "scope": "Native codec only; worker cache admission, terrain identity derivation, disk lifecycle and main-world reuse not yet connected."
+}
