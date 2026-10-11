@@ -33,7 +33,11 @@ void vertex(){
 }
 void fragment(){
  vec3 n=normalize(wn);
- vec3 w=pow(abs(n),vec3(4.0));w/=max(dot(w,vec3(1.0)),0.0001);
+ // Project from the triangle plane, not the smoothed lighting normal, which
+ // can point upward on a vertical excavation face and stretch the XZ texture.
+ // This adds no texture fetches or passes. Lighting keeps its smooth normals.
+ vec3 face_normal=normalize(cross(dFdx(wp),dFdy(wp)));
+ vec3 w=pow(abs(face_normal),vec3(4.0));w/=max(dot(w,vec3(1.0)),0.0001);
  vec3 p=wp/5.0;
  vec3 dx=dFdx(p),dy=dFdy(p);
  float exact_material=UV2.x;

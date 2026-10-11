@@ -107,10 +107,12 @@ func dock_palettes() -> void:
 	ready_to_dock=true;sync_panels()
 func visible_ui() -> bool:return opened or workspace
 func set_open(value: bool) -> void:
+	var changing_focus: bool=value or visible_ui() or game.storage.opened or game.player_hud.inventory_open
 	game.storage.close();game.player_hud.set_open(false)
 	workspace=false;opened=value;panel.visible=value
 	game.player_hud.inventory_open=value;game.player_hud.enabled=not value
-	game._clear_motion();Input.mouse_mode=Input.MOUSE_MODE_VISIBLE if value else Input.MOUSE_MODE_CAPTURED
+	if changing_focus:game._clear_motion()
+	Input.mouse_mode=Input.MOUSE_MODE_VISIBLE if value else Input.MOUSE_MODE_CAPTURED
 	if value:current_page="Session"
 	refresh();sync_panels()
 func show_page(title: String) -> void:
@@ -174,7 +176,7 @@ func toggle_developer() -> void:
 	refresh()
 func toggle_flight() -> void:
 	if not developer or game.world_vehicle.driving:return
-	game.fly=not game.fly;game._clear_motion();refresh()
+	game.fly=not game.fly;game.player.velocity=Vector3.ZERO;game._cancel_edit_input();refresh()
 func confirm(text: String,action: Callable) -> void:
 	pending_action=action;confirmation.dialog_text=text;confirmation.popup_centered(Vector2i(450,160))
 func save_world() -> void:
@@ -185,6 +187,13 @@ func run_command(key: int,shift: bool=false) -> void:
 	if not developer:return
 	set_open(false);var event:=InputEventKey.new();event.pressed=true;event.physical_keycode=key;event.shift_pressed=shift;game._unhandled_input(event)
 func _input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.pressed and event.button_index in [MOUSE_BUTTON_WHEEL_UP,MOUSE_BUTTON_WHEEL_DOWN]:
+		if not visible_ui() and not game.player_hud.inventory_open and not game.storage.opened and not game.world_vehicle.driving and not game.loading_active and game.app_focused and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED:
+			var slot: int=game.player_hud.active_slot
+			var step:=1 if event.button_index==MOUSE_BUTTON_WHEEL_DOWN else -1
+			game.player_hud.equip(posmod(slot+step,10) if slot>=0 and slot<10 else (0 if step>0 else 9))
+			get_viewport().set_input_as_handled()
+		return
 	if not event is InputEventKey or event.echo:return
 	if event.physical_keycode==KEY_QUOTELEFT:
 		if event.pressed:tilde_down=Time.get_ticks_msec();tilde_chord=false
@@ -198,6 +207,8 @@ func _input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled();return
 	# Consume chords before gameplay input; F must never reach the headlamp.
 	if tilde_down>=0:
+		# Movement releases must reach the controller while the chord is held.
+		if event.physical_keycode in [KEY_W,KEY_A,KEY_S,KEY_D,KEY_SPACE,KEY_SHIFT,KEY_CTRL]:return
 		if event.pressed:
 			tilde_chord=true
 			if event.physical_keycode==KEY_F:

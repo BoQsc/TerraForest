@@ -133,7 +133,7 @@ func _ready() -> void:
 		button.focus_mode=Control.FOCUS_NONE
 		button.pressed.connect(func(): equip(i))
 		bar.add_child(button);belt.append(button)
-	var hint:=Label.new();mode_hint=hint;hint.text="1–9 / 0 equip    ·    Tab inventory    ·    Esc menu"
+	var hint:=Label.new();mode_hint=hint;hint.text="1–9 / 0 / Wheel equip    ·    Tab inventory    ·    Esc menu"
 	hint.text += "    ·    " + ("Gameplay construction" if gameplay_construction else "Free editor")
 	hint.position=Vector2(370,1032);add_child(hint)
 	add_child(modal);modal.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -182,7 +182,7 @@ func _ready() -> void:
 func refresh() -> void:
 	if action_hint!=null:
 		action_hint.text=editor_hint if not editor_hint.is_empty() else {0:"Empty hands | E interact",1:"Pickaxe | Hold left mouse: mine nearby terrain",2:"Hatchet | Left mouse: chop tree",3:"Building hammer | Right mouse: build | Left mouse: remove | Esc: shape, material, rotation",4:"Assembly tool | Right mouse: place | Left mouse: dismantle | Esc: object and transform settings"}.get(active_item,"Holding "+MATERIALS.get(active_item,RESOURCES.get(active_item,"item"))+" | E interact")
-	if mode_hint!=null:mode_hint.text="1–9 / 0"+" equip · Tab inventory · Esc menu · "+("Gameplay" if gameplay_construction else "Development")
+	if mode_hint!=null:mode_hint.text="1–9 / 0"+" / Wheel equip · Tab inventory · Esc menu · "+("Gameplay" if gameplay_construction else "Development")
 	var latest: Dictionary=inventory.snapshot()
 	var inventory_changed_since_view: bool=latest.revision!=state.get("revision",-1)
 	state=latest

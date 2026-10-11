@@ -80,3 +80,9 @@ coordination; no new per-item simulation or physics bodies were introduced.
 Evidence: [unified tools](evidence/unified_tools/README.md) and the earlier
 [native drag transaction checks](evidence/player_ui/README.md). Human usability
 and sustained frame-time qualification remain open.
+
+Toolbelt selection also accepts the mouse wheel (down: next, up: previous),
+including empty slots and wrapping between 0 and 1. Menu and inventory scrolling
+does not change equipment. Tool selection and development/flight switches preserve
+held movement keys; opening actual menus still stops movement.
+Regression: [input and terrain projection](evidence/input_surface_regression/README.md).

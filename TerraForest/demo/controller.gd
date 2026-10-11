@@ -495,6 +495,10 @@ func _clear_motion() -> void:
 	controls.clear(Time.get_ticks_usec())
 	player.velocity = Vector3.ZERO
 	input_vector = Vector3.ZERO
+	_cancel_edit_input()
+
+func _cancel_edit_input() -> void:
+	# Equipment changes cancel strokes without discarding held movement keys.
 	stroke_valid = false
 	stroke_buffer.cancel_continuous()
 	terrain.set_brush_active(false)

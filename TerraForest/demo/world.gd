@@ -635,7 +635,7 @@ func _set_player_tool_mode(building: bool,objects: bool,terrain_tool: int) -> bo
 	if loading_active or benchmark_enabled or shutdown_requested or not app_focused or not terrain.world_ready: return false
 	# All tool entry points cancel unsubmitted strokes before changing mode.
 	# Already accepted terrain edits finish independently; they do not lock equipment.
-	_clear_motion()
+	_cancel_edit_input()
 	stroke_buffer.clear();held_previous=false
 	ground_mode=false
 	player_hud.show_ground_tool(-1)
