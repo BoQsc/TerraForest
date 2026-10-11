@@ -1,0 +1,81 @@
+{
+  "checks": 49,
+  "costs": [
+    {
+      "amount_ml": 276500000,
+      "budget": 1,
+      "calls": 384,
+      "cells": 384,
+      "m3": 276.5,
+      "max_call_us": 14,
+      "total_us": 6683
+    },
+    {
+      "amount_ml": 276500000,
+      "budget": 2048,
+      "calls": 1,
+      "cells": 384,
+      "m3": 276.5,
+      "max_call_us": 141,
+      "total_us": 3669
+    },
+    {
+      "amount_ml": 134500000,
+      "budget": 32,
+      "calls": 12,
+      "cells": 384,
+      "m3": 134.5,
+      "max_call_us": 44,
+      "total_us": 4249
+    },
+    {
+      "amount_ml": 175000000,
+      "budget": 32,
+      "calls": 12,
+      "cells": 384,
+      "m3": 175.0,
+      "max_call_us": 26,
+      "total_us": 3005
+    },
+    {
+      "amount_ml": 2212000000,
+      "budget": 32,
+      "calls": 12,
+      "cells": 384,
+      "m3": 2212.0,
+      "max_call_us": 324,
+      "total_us": 3067
+    },
+    {
+      "amount_ml": 333016443,
+      "budget": 32,
+      "calls": 96,
+      "cells": 3072,
+      "m3": 333.016443062964,
+      "max_call_us": 16,
+      "total_us": 2968
+    },
+    {
+      "amount_ml": 333016443,
+      "budget": 127,
+      "calls": 25,
+      "cells": 3072,
+      "m3": 333.016443062964,
+      "max_call_us": 16,
+      "total_us": 3498
+    },
+    {
+      "amount_ml": 198544500000,
+      "budget": 256,
+      "calls": 1024,
+      "cells": 262144,
+      "m3": 198544.5,
+      "max_call_us": 1407,
+      "total_us": 23073
+    }
+  ],
+  "curved_m3": 333.016443062964,
+  "failures": 0,
+  "reference_m3": 331.90625,
+  "scope": "Resumable geometric volume measurement only, not flow or water-level response."
+}

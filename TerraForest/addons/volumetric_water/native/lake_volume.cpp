@@ -1,4 +1,5 @@
 #include "lake_volume.hpp"
+#include "water_geometry.hpp"
 #include <godot_cpp/classes/mesh.hpp>
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/variant/packed_vector3_array.hpp>

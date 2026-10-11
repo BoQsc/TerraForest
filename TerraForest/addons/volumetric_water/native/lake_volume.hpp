@@ -13,6 +13,7 @@ namespace terraforest {
 // Connected piecewise-linear static occupancy, not a pressure/flow solver.
 class NativeLakeVolume : public godot::RefCounted {
     GDCLASS(NativeLakeVolume, godot::RefCounted)
+    friend class NativeWaterCapacity;
     godot::Vector3 origin_, seed_;
     godot::Vector3i size_;
     float spacing_ = 1, level_ = 0;

@@ -99,3 +99,8 @@ and bounded versioned snapshots. It is registered in the same native addon but i
 not yet connected to lake levels, spatial flow, world saves or player buckets.
 The current playable lakes still have fixed fill elevations. The expanded required
 behavior and remaining gates are in `docs/FINITE_WATER.md`.
+
+`NativeWaterCapacity` measures a ready immutable volume with resumable cell budgets.
+It clips the same tetrahedra used by queries and rounds to millilitres on completion.
+This supports future one-time finite-quantity initialization; it does not itself
+change water levels or simulate flow. See `docs/evidence/water_capacity`.

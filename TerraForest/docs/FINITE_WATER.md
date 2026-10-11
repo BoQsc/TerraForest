@@ -65,6 +65,20 @@ store. The checksum detects corruption, not malicious forgery. Store commands mu
 be serialized by their owner; revisions do not make it thread-safe. This is not yet
 wired into world snapshots or inventory item metadata.
 
+## Geometric quantity measurement
+
+`NativeWaterCapacity` now measures connected positive-density tetrahedra below the
+fill surface in resumable native cell-budget steps. It shares geometry with the
+lake renderer and queries; full cells have a cheap path. Round once to millilitres
+when initializing authoritative quantities, not on every future flow update.
+49 debug/release checks pass; see [capacity evidence](evidence/water_capacity/README.md).
+This supplies geometric measurement only, not a spatial redistribution solver.
+
+A new shallow-source regression currently fails: a positive-air seed in a2cm-deep
+puddle is rejected by the old all-eight-corners-air admission policy. Finite pours
+must work in partial cells; remove that dependency with solid/open-edge/cache tests
+before assuming the existing builder can represent bucket-scale water.
+
 ## Gates and remaining work, in order
 
 1. **Quantity contract:** exact scoop/pour, partial fill, over-capacity rejection,
@@ -72,7 +86,9 @@ wired into world snapshots or inventory item metadata.
    Implemented; debug and clean-release checks pass. See evidence below.
 2. **Spatial conservation:** isolated two-basin/dam/cave fixture with real terrain
    capacity and bounded native updates. Assert total quantity at every step, correct
-   final levels, no solid penetration, drain/split/merge and displaced water. Report
+   final levels, no solid penetration, drain/split/merge and displaced water. Include
+   shallow partial-cell puddles, a submerged connection between unequal basins, a
+   high dry sill that must not teleport water, and stacked/disconnected caves. Report
    work counts, peak queue/memory, settling latency and budget exhaustion. Compare
    a second update budget to detect scheduling-dependent volume errors. Not done.
 3. **Sleeping/scaling:** many settled bodies plus a local change; measure zero solver

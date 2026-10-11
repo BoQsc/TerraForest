@@ -1,7 +1,5 @@
 // SPDX-License-Identifier: 0BSD
 // Included inside terraforest. Six consistent tetrahedra share cube diagonal 0--7.
-static constexpr int lake_tets[6][4]={{0,1,3,7},{0,1,5,7},{0,2,3,7},{0,2,6,7},{0,4,5,7},{0,4,6,7}};
-static Vector3i lake_corner(int c){return Vector3i(c&1,(c>>1)&1,(c>>2)&1);}
 struct LakeFaceLink {int x=0,y=0,z=0,t=-1;};
 static const std::array<std::array<LakeFaceLink,4>,6> &lake_links(){
  static const auto links=[](){

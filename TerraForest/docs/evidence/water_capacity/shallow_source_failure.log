@@ -1,0 +1,4 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+FAIL shallow connected free-space seed admits finite pour source; status=-2
+WATER_SHALLOW_SOURCE failures=1

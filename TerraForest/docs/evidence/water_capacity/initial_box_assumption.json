@@ -1,0 +1,65 @@
+{
+  "checks": 49,
+  "costs": [
+    {
+      "budget": 1,
+      "calls": 384,
+      "cells": 384,
+      "max_call_us": 10,
+      "total_us": 5996
+    },
+    {
+      "budget": 2048,
+      "calls": 1,
+      "cells": 384,
+      "max_call_us": 92,
+      "total_us": 3855
+    },
+    {
+      "budget": 32,
+      "calls": 12,
+      "cells": 384,
+      "max_call_us": 10,
+      "total_us": 2237
+    },
+    {
+      "budget": 32,
+      "calls": 12,
+      "cells": 384,
+      "max_call_us": 13,
+      "total_us": 1978
+    },
+    {
+      "budget": 32,
+      "calls": 12,
+      "cells": 384,
+      "max_call_us": 18,
+      "total_us": 1854
+    },
+    {
+      "budget": 32,
+      "calls": 96,
+      "cells": 3072,
+      "max_call_us": 10,
+      "total_us": 2173
+    },
+    {
+      "budget": 127,
+      "calls": 25,
+      "cells": 3072,
+      "max_call_us": 32,
+      "total_us": 3149
+    },
+    {
+      "budget": 256,
+      "calls": 1024,
+      "cells": 262144,
+      "max_call_us": 373,
+      "total_us": 18807
+    }
+  ],
+  "curved_m3": 333.016443062964,
+  "failures": 5,
+  "reference_m3": 331.90625,
+  "scope": "Resumable geometric volume measurement only, not flow or water-level response."
+}

@@ -193,8 +193,11 @@ User requirement now explicitly includes finite manipulable volumetric water and
 bucket interaction. Static fixed-height lakes do not satisfy it. Follow
 [finite water requirements](FINITE_WATER.md) before returning to the deferred
 geology/road coverage. Native finite-quantity transfers and persistence now pass
-focused debug/release checks, but they are not integrated gameplay or a spatial
-solver. Next prove terrain-connected redistribution and conservation under a
+focused debug/release checks. Bounded geometric quantity measurement also passes49
+debug/release checks, including exact capacity, cache restore and budget independence.
+These are not integrated gameplay or a spatial solver. The new shallow-source
+regression fails: the full-cell seed requirement rejects a valid2cm-deep puddle.
+Remove that admission dependency before assuming bucket-scale pours work. Next prove terrain-connected redistribution and conservation under a
 bounded native work budget, then integrate bucket item ownership and world saves.
 Retain the previous finalization/hitch failures; do not increase water caps or claim
 sustained60FPS from these checks.

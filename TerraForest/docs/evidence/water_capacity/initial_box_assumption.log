@@ -1,0 +1,52 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS unfinished volume rejected
+PASS analytic tank bakes
+PASS capacity measurement retains ready immutable source
+PASS invalid work budgets preserve progress
+PASS measurement resumes under declared cell budget without publishing partial quantity
+PASS completed measurement does no further work
+PASS capacity measurement retains ready immutable source
+PASS invalid work budgets preserve progress
+PASS measurement resumes under declared cell budget without publishing partial quantity
+PASS completed measurement does no further work
+FAIL analytic eight-by-eight tank contains exact 4.5m fill
+PASS different scheduler budgets produce identical quantity
+PASS analytic tank bakes
+PASS capacity measurement retains ready immutable source
+PASS invalid work budgets preserve progress
+PASS measurement resumes under declared cell budget without publishing partial quantity
+PASS completed measurement does no further work
+FAIL disconnected basin contributes no quantity
+PASS analytic tank bakes
+PASS capacity measurement retains ready immutable source
+PASS invalid work budgets preserve progress
+PASS measurement resumes under declared cell budget without publishing partial quantity
+PASS completed measurement does no further work
+FAIL solid roof prevents counting disconnected air above it
+PASS analytic tank bakes
+PASS capacity measurement retains ready immutable source
+PASS invalid work budgets preserve progress
+PASS measurement resumes under declared cell budget without publishing partial quantity
+PASS completed measurement does no further work
+FAIL scaled grid uses cubic physical units
+PASS curved sampled terrain capacity fixture bakes
+PASS capacity measurement retains ready immutable source
+PASS invalid work budgets preserve progress
+PASS measurement resumes under declared cell budget without publishing partial quantity
+PASS completed measurement does no further work
+PASS clipped tetrahedron volume agrees with independent quarter-metre point integration within 0.5 percent
+PASS geometry cache restores
+PASS capacity measurement retains ready immutable source
+PASS invalid work budgets preserve progress
+PASS measurement resumes under declared cell budget without publishing partial quantity
+PASS completed measurement does no further work
+PASS restored connectivity and density reproduce quantity exactly
+PASS measured terrain quantity initializes conserved scoop transaction
+PASS maximum-cell capacity fixture bakes
+PASS capacity measurement retains ready immutable source
+PASS invalid work budgets preserve progress
+PASS measurement resumes under declared cell budget without publishing partial quantity
+PASS completed measurement does no further work
+FAIL maximum-cell tank has exact geometric quantity
+WATER_CAPACITY failures=5
