@@ -6,6 +6,7 @@ var opened:=false
 var workspace:=false
 var developer:=false
 var gameplay_slot:=-1
+var developer_hud: CanvasLayer
 var tilde_down:=-1
 var tilde_chord:=false
 var panel: PanelContainer
@@ -26,7 +27,7 @@ var scroll: ScrollContainer
 var content: VBoxContainer
 var ready_to_dock:=false
 var brush_radius: SpinBox
-const DESCRIPTIONS={1:"Pickaxe: hold left mouse to excavate nearby terrain. No filling or brush modes.",2:"Hatchet: left mouse chops a reachable tree for wood.",3:"Building hammer: right mouse builds the selected shape; left mouse removes a block. Materials are consumed in gameplay.",4:"Assembly tool: right mouse places the selected object; left mouse dismantles it. Furniture recipes and chest protection apply."}
+const DESCRIPTIONS={1:"Pickaxe: hold left mouse to attack or dig. Most effective on stone.",2:"Hatchet: hold left mouse to attack or dig. Most effective on wood.",3:"Building hammer: left mouse attacks the aimed target; right mouse builds the selected shape.",4:"Assembly tool: left mouse attacks the aimed target; right mouse places the selected object."}
 func button(parent: Node,text: String,action: Callable) -> Button:
 	var out:=Button.new();out.text=text;out.custom_minimum_size.y=40;out.pressed.connect(action);parent.add_child(out);return out
 func label(parent: Node,text: String) -> Label:
@@ -100,6 +101,7 @@ func _ready() -> void:
 	game.player_hud.actions_requested.connect(func():set_open(true))
 	game.player_hud.developer_tool_requested.connect(activate_developer_slot)
 	game.player_hud.developer_belt=developer;game.player_hud.refresh()
+	developer_hud=preload("res://addons/player_runtime/developer_hud.gd").new();developer_hud.game=game;add_child(developer_hud)
 	panel.hide();refresh();dock_palettes.call_deferred()
 func dock_palettes() -> void:
 	for pair in [["Building",game.construction_palette.panel],["Objects",game.model_tool.panel],["Roads",game.road_palette.panel]]:
@@ -108,6 +110,7 @@ func dock_palettes() -> void:
 		source.position=Vector2.ZERO;source.size=Vector2.ZERO;source.custom_minimum_size=Vector2.ZERO;source.size_flags_horizontal=Control.SIZE_EXPAND_FILL
 		docked[pair[0]]=source
 	ready_to_dock=true;sync_panels()
+	developer_hud.displayed_slot=-1;developer_hud.refresh()
 func visible_ui() -> bool:return opened or workspace
 func set_open(value: bool) -> void:
 	var changing_focus: bool=value or visible_ui() or game.storage.opened or game.player_hud.inventory_open
@@ -140,6 +143,7 @@ func sync_panels() -> void:
 	for title in docked:docked[title].visible=workspace and title==current_page
 	for control in game.construction_palette.editor_controls:control.visible=developer
 func refresh() -> void:
+	if developer_hud!=null:developer_hud.refresh()
 	mode_label.text=("DEVELOPMENT / free authoring" if developer else "GAMEPLAY / items and material costs")+"    |    Headlamp: "+("on" if game.headlamp.visible else "off")
 	mode_button.text="Return to gameplay" if developer else "Enter development (~)"
 	fly_button.text="Flight: "+("on" if game.fly else "off")
@@ -249,7 +253,7 @@ func _input(event: InputEvent) -> void:
 		elif not visible_ui() and developer and game.player_hud.developer_slot in [6,7]:show_page("Roads" if game.player_hud.developer_slot==6 else "Development")
 		else:set_open(not visible_ui())
 		get_viewport().set_input_as_handled();return
-	if visible_ui():return
+	if visible_ui() or (developer_hud.mouse_access and Input.mouse_mode!=Input.MOUSE_MODE_CAPTURED):return
 	if event.pressed and not game.player_hud.inventory_open:
 		if event.physical_keycode in [KEY_1,KEY_2,KEY_3,KEY_4,KEY_5,KEY_6,KEY_7,KEY_8,KEY_9,KEY_0]:
 			game.player_hud.equip(9 if event.physical_keycode==KEY_0 else event.physical_keycode-KEY_1);get_viewport().set_input_as_handled()

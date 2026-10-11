@@ -29,7 +29,7 @@ func _initialize() -> void:
 	check(not store.deposit(10,player,0,1,player.snapshot().revision,first_revision).ok,"empty-recreated identity cannot accept prior nonempty token")
 	check(move(store,player,30,2).ok and store.get_ids()==PackedInt64Array([20,30]),"freed capacity is reusable with sorted stable identities")
 	before=store.capture_storage_snapshot()
-	check(before.size()==560,"two inventories use 16 plus two fixed 272-byte records")
+	check(before.size()==816,"two inventories use 16 plus two fixed 400-byte records")
 	var restored: RefCounted=ClassDB.instantiate("NativeContainerStore");restored.configure(player,2)
 	check(restored.restore_storage_snapshot(before) and restored.capture_storage_snapshot()==before,"binary roundtrip exactly preserves contents")
 	var old_token: int=restored.snapshot(20).store_revision
@@ -40,7 +40,7 @@ func _initialize() -> void:
 			0:damaged[0]^=1
 			1:damaged.encode_u64(8,3)
 			2:damaged.encode_u64(16,0)
-			3:damaged.encode_u64(288,20)
+			3:damaged.encode_u64(416,20)
 			4:damaged.encode_u32(32,999)
 			5:damaged.resize(damaged.size()-1)
 		check(not restored.validate_snapshot(damaged) and not restored.restore_storage_snapshot(damaged) and restored.capture_storage_snapshot()==before,"malformed snapshot rejects without partial restore: "+str(kind))
@@ -57,7 +57,7 @@ func _initialize() -> void:
 		if not result.ok:break
 		player_revision=result.player_revision;store_revision=result.store_revision
 	var bytes: PackedByteArray=large.capture_storage_snapshot()
-	check(filled and large.get_ids().size()==4096 and bytes.size()==1114128,"configured 4096 nonempty containers fit exact bounded representation")
+	check(filled and large.get_ids().size()==4096 and bytes.size()==1638416,"configured 4096 nonempty containers fit exact bounded representation")
 	check(not large.deposit(4097,supply,0,1,player_revision,store_revision).ok and supply.snapshot().slots[0].count==1,"full-size capacity rejects without losing remaining supply")
 	var large_copy: RefCounted=ClassDB.instantiate("NativeContainerStore");large_copy.configure(supply,4096)
 	check(large_copy.restore_storage_snapshot(bytes) and large_copy.capture_storage_snapshot()==bytes,"full-capacity snapshot roundtrips without identity or content changes")

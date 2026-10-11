@@ -50,7 +50,9 @@ func prepare(persistence: RefCounted) -> bool:
 	if not ClassDB.class_exists("NativeEntityRenderer"): return false
 	if not ClassDB.class_exists("NativePlayerInventory"):GDExtensionManager.load_extension("res://addons/player_runtime/player_runtime.gdextension")
 	var schema: RefCounted=ClassDB.instantiate("NativePlayerInventory")
-	for item: int in ITEMS:schema.register_item(item,1 if item<100 or item>=301 else 999)
+	for item: int in ITEMS:
+		schema.register_item(item,1 if item<100 or item>=301 else 999)
+		if item in [1,2,3,4]:schema.register_durable(item,200)
 	for item: int in ITEMS:
 		var stack: RefCounted=ClassDB.instantiate("NativeContainerStore")
 		if not stack.configure(schema,4096):return false

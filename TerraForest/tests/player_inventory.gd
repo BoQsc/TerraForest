@@ -41,7 +41,7 @@ func run() -> void:
 	check(inventory.snapshot()==before,"returned snapshot cannot mutate native state")
 	check(not inventory.transfer(-1,0,1,before.revision).ok and not inventory.consume(32,1,before.revision).ok,"invalid slot bounds rejected")
 	var packed: PackedByteArray=inventory.capture_storage_snapshot()
-	check(packed.size()==264 and inventory.validate_snapshot(packed),"bounded native save format validates")
+	check(packed.size()==392 and inventory.validate_snapshot(packed),"bounded native save format validates")
 	check(inventory.consume(0,1,before.revision).ok and inventory.restore_storage_snapshot(packed),"binary load restores after mutation")
 	check(inventory.snapshot().slots==before.slots,"binary roundtrip preserves all slots")
 	before=inventory.snapshot()

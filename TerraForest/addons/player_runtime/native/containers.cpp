@@ -21,7 +21,7 @@ Ref<NativePlayerInventory> NativeContainerStore::empty_inventory() const {
 }
 bool NativeContainerStore::configure(const Ref<NativePlayerInventory> &prototype,int64_t max_containers) {
     if(schema.is_valid()||prototype.is_null()||prototype->catalog().empty()||max_containers<1||max_containers>65536)return false;
-    schema.instantiate();schema->limits=prototype->catalog();capacity=max_containers;return true;
+    schema.instantiate();schema->limits=prototype->catalog();schema->durability=prototype->durable_catalog();capacity=max_containers;return true;
 }
 Dictionary NativeContainerStore::snapshot(int64_t id) const {
     Dictionary out;out["ok"]=false;if(schema.is_null()||id<=0)return out;
@@ -63,13 +63,15 @@ Dictionary NativeContainerStore::drag_slots(int64_t id,const Ref<NativePlayerInv
         if(!a.item||count>a.count)return out;
         auto limit=target->catalog().find(a.item);
         if(limit==target->catalog().end()){out["reason"]="invalid_item";return out;}
-        if(b.item&&b.item!=a.item) {
+        if(source->max_durability(a.item)!=target->max_durability(a.item)){out["reason"]="durability_schema_mismatch";return out;}
+        if(b.item&&source->max_durability(b.item)!=target->max_durability(b.item)){out["reason"]="durability_schema_mismatch";return out;}
+        if(b.item&&(b.item!=a.item||source->max_durability(a.item))) {
             auto back=source->catalog().find(b.item);
             if(count!=a.count||a.count>limit->second||back==source->catalog().end()||b.count>back->second){out["reason"]="partial_swap";return out;}
             std::swap(a,b);
         } else {
             if(count>limit->second-b.count){out["reason"]="stack_full";return out;}
-            b.item=a.item;b.count+=count;a.count-=count;if(!a.count)a.item=0;
+            b.item=a.item;b.wear=a.wear;b.count+=count;a.count-=count;if(!a.count)a={};
         }
         // No callbacks between either commit. Invalid targets preserve both sides.
         source->slots[from]=a;target->slots[to]=b;++source->revision;++target->revision;
@@ -83,33 +85,35 @@ Dictionary NativeContainerStore::drag_slots(int64_t id,const Ref<NativePlayerInv
 }
 PackedByteArray NativeContainerStore::capture_storage_snapshot() const {
     if(schema.is_null())return {};
-    PackedByteArray out;out.resize(16+contents.size()*272);
-    std::memcpy(out.ptrw(),"TFCS\1\0\0\0",8);out.encode_u64(8,contents.size());
+    PackedByteArray out;out.resize(16+contents.size()*400);
+    std::memcpy(out.ptrw(),"TFCS\2\0\0\0",8);out.encode_u64(8,contents.size());
     int64_t at=16;for(const auto &entry:contents) {
         out.encode_u64(at,entry.first);auto bytes=entry.second->capture_storage_snapshot();
-        std::memcpy(out.ptrw()+at+8,bytes.ptr(),264);at+=272;
+        std::memcpy(out.ptrw()+at+8,bytes.ptr(),392);at+=400;
     }
     return out;
 }
 bool NativeContainerStore::validate_snapshot(const PackedByteArray &bytes) const {
-    if(schema.is_null()||bytes.size()<16||std::memcmp(bytes.ptr(),"TFCS\1\0\0\0",8))return false;
+    if(schema.is_null()||bytes.size()<16||(std::memcmp(bytes.ptr(),"TFCS\1\0\0\0",8)&&std::memcmp(bytes.ptr(),"TFCS\2\0\0\0",8)))return false;
+    const int stride=bytes[4]==1?272:400;
     uint64_t count=bytes.decode_u64(8),last=0;
-    if(count>uint64_t(capacity)||uint64_t(bytes.size())!=16+count*272)return false;
+    if(count>uint64_t(capacity)||uint64_t(bytes.size())!=16+count*stride)return false;
     for(uint64_t i=0;i<count;++i) {
-        int64_t at=16+i*272;uint64_t id=bytes.decode_u64(at);
+        int64_t at=16+i*stride;uint64_t id=bytes.decode_u64(at);
         if(id<=last||id>uint64_t(INT64_MAX))return false;last=id;
-        auto inventory=bytes.slice(at+8,at+272);if(!schema->validate_snapshot(inventory))return false;
-        bool nonempty=false;for(int slot=0;slot<32;++slot)nonempty=nonempty||inventory.decode_u32(12+slot*8)>0;
+        auto inventory=bytes.slice(at+8,at+stride);if(!schema->validate_snapshot(inventory))return false;
+        bool nonempty=false;for(int slot=0;slot<32;++slot)nonempty=nonempty||inventory.decode_u32(12+slot*(stride==272?8:12))>0;
         if(!nonempty)return false;
     }
     return true;
 }
 bool NativeContainerStore::restore_storage_snapshot(const PackedByteArray &bytes) {
     if(!validate_snapshot(bytes))return false;
+    const int stride=bytes[4]==1?272:400;
     decltype(contents) staged;uint64_t count=bytes.decode_u64(8);int64_t next_revision=revision+1;
     for(uint64_t i=0;i<count;++i) {
-        int64_t at=16+i*272;auto inventory=empty_inventory();
-        inventory->restore_storage_snapshot(bytes.slice(at+8,at+272));inventory->revision=++next_revision;staged.emplace(bytes.decode_u64(at),inventory);
+        int64_t at=16+i*stride;auto inventory=empty_inventory();
+        inventory->restore_storage_snapshot(bytes.slice(at+8,at+stride));inventory->revision=++next_revision;staged.emplace(bytes.decode_u64(at),inventory);
     }
     contents=std::move(staged);revision=next_revision;return true;
 }

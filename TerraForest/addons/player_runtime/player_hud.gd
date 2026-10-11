@@ -85,7 +85,7 @@ func _refresh_ground_hint() -> void:
 	for row: Dictionary in state.slots:
 		if row.item==items[ground_species]: available+=int(row.count)
 	var cost: String=("Place: 1 %s · have %d"%[MATERIALS.get(items[ground_species],names[ground_species]),available]) if gameplay_construction else "Free placement · editor"
-	ground_hint.text=names[ground_species]+" · "+cost+"\nLMB / E "+("collect" if gameplay_construction else "remove")+" · RMB place · Esc to choose another plant"
+	ground_hint.text=names[ground_species]+" · "+cost+"\n"+("E collect" if gameplay_construction else "LMB / E remove")+" · RMB place · Esc to choose another plant"
 	if not ground_feedback.is_empty(): ground_hint.text+="\n"+ground_feedback
 
 func prepare() -> bool:
@@ -96,7 +96,9 @@ func prepare() -> bool:
 		push_error("Player inventory extension unavailable");enabled=false;return false
 	inventory=ClassDB.instantiate("NativePlayerInventory")
 	reward_inbox=ClassDB.instantiate("NativeRewardInbox")
-	for id: int in CATALOG: inventory.register_item(id,1)
+	for id: int in CATALOG:
+		inventory.register_item(id,1)
+		inventory.register_durable(id,200)
 	for id: int in MATERIALS: inventory.register_item(id,999)
 	for id: int in RESOURCES: inventory.register_item(id,1 if id>=301 else 999)
 	equipment=ClassDB.instantiate("NativeContainerStore")
@@ -129,7 +131,7 @@ func _ready() -> void:
 	modal=Control.new()
 	message=Label.new()
 	var bar:=HBoxContainer.new()
-	bar.position=Vector2(370,960)
+	bar.position=Vector2(370,948)
 	bar.add_theme_constant_override("separation",8)
 	add_child(bar)
 	action_hint=Label.new();action_hint.position=Vector2(370,920);add_child(action_hint)
@@ -207,7 +209,7 @@ func _ready() -> void:
 
 func refresh() -> void:
 	if action_hint!=null:
-		action_hint.text=editor_hint if not editor_hint.is_empty() else {0:"Empty hands | E interact",1:"Pickaxe | Hold left mouse: mine nearby terrain",2:"Hatchet | Left mouse: chop tree",3:"Building hammer | Right mouse: build | Left mouse: remove | Esc: shape, material, rotation",4:"Assembly tool | Right mouse: place | Left mouse: dismantle | Esc: object and transform settings"}.get(active_item,"Holding "+MATERIALS.get(active_item,RESOURCES.get(active_item,"item"))+" | E interact")
+		action_hint.text=editor_hint if not editor_hint.is_empty() else {0:"Empty hands | E interact",1:"Pickaxe | Hold left mouse: attack / dig | Best against stone",2:"Hatchet | Hold left mouse: attack / dig | Best against wood",3:"Building hammer | Right mouse: build | Left mouse: attack | Esc: shape, material, rotation",4:"Assembly tool | Right mouse: place | Left mouse: attack | Esc: object and transform settings"}.get(active_item,"Holding "+MATERIALS.get(active_item,RESOURCES.get(active_item,"item"))+" | E interact")
 	if mode_hint!=null:mode_hint.text="1–9 / 0"+" / Wheel equip · Tab inventory · Esc menu · "+("Gameplay" if gameplay_construction else "Development")
 	var latest: Dictionary=inventory.snapshot()
 	var inventory_changed_since_view: bool=latest.revision!=state.get("revision",-1)
@@ -220,13 +222,17 @@ func refresh() -> void:
 		if row.item in MATERIALS or row.item in RESOURCES: title += " ×%d" % row.count
 		if i>=10:
 			slots[i].set_appearance(row.count==0,false,i==selected_slot)
+			slots[i].tooltip_text=("Durability: %d / %d"%[row.durability,row.max_durability]) if row.get("max_durability",0)>0 else ""
 			slots[i].text="%02d%s\n%s"%[i-9," *" if i==selected_slot else "",title]
 		if i<10:
 			belt[i].text="%d%s\n%s"%[(i+1)%10," •" if i==active_slot else "",title]
 			belt[i].disabled=false
+			belt[i].tooltip_text=("Durability: %d / %d"%[row.durability,row.max_durability]) if row.get("max_durability",0)>0 else ""
+			if row.get("max_durability",0)>0:belt[i].text+="\n%d%%"%roundi(100.0*row.durability/row.max_durability)
 			belt[i].set_appearance(row.count==0,i==active_slot,inventory_open and i==selected_slot)
 			if developer_belt:
 				belt[i].text="%d\n%s"%[(i+1)%10,DEV_TOOLS[i]]
+				belt[i].tooltip_text=""
 				belt[i].set_appearance(i>=8,i==developer_slot,false)
 	_refresh_ground_hint()
 	_refresh_pending()

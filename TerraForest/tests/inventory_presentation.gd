@@ -50,7 +50,7 @@ func run() -> void:
 	for i in 4:await RenderingServer.frame_post_draw
 	root.get_texture().get_image().save_png("res://reports/inventory_presentation/toolbelt.png")
 	hud.inventory.grant(201,3,hud.inventory.snapshot().revision);hud.set_open(true)
-	check(hud.recipe_buttons.size()==7 and not hud.recipe_buttons[0].disabled and not hud.recipe_buttons[1].disabled and hud.recipe_buttons[2].disabled,"recipe cards reflect available ingredients")
+	check(hud.recipe_buttons.size()==11 and not hud.recipe_buttons[0].disabled and not hud.recipe_buttons[1].disabled and hud.recipe_buttons[2].disabled,"recipe cards reflect available ingredients")
 	check(hud.recipe_buttons[0].text.contains("3 / 2"),"recipe shows owned and required amounts")
 	hud.select_slot(10)
 	check(hud.belt[0].get_theme_stylebox("normal").border_color!=hud.slots[10].get_theme_stylebox("normal").border_color,"equipped and selected slots have distinct highlights")

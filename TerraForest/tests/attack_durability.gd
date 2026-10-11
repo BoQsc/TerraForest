@@ -1,0 +1,57 @@
+# SPDX-License-Identifier: 0BSD
+extends SceneTree
+var failures:=0
+var checks:=0
+func check(ok: bool,label: String) -> void:
+	checks+=1
+	if not ok:failures+=1
+	print(("PASS " if ok else "FAIL ")+label)
+func inventory() -> RefCounted:
+	var out: RefCounted=ClassDB.instantiate("NativePlayerInventory")
+	out.register_item(1,1);out.register_durable(1,200);out.register_item(2,1);out.register_durable(2,200)
+	out.register_item(101,999);return out
+func _initialize() -> void:run.call_deferred()
+func run() -> void:
+	GDExtensionManager.load_extension("res://addons/player_runtime/player_runtime.gdextension")
+	check(load("res://demo/world.gd")!=null,"world scripts parse")
+	var inv:=inventory();inv.grant(1,1,0);inv.grant(2,1,1)
+	check(inv.wear_tool(0,37,2).ok and inv.snapshot().slots[0].durability==163,"native tool wear")
+	check(not inv.wear_tool(0,1,2).ok,"stale wear rejected")
+	inv.transfer(0,10,1,inv.snapshot().revision)
+	check(inv.snapshot().slots[10].wear==37 and inv.snapshot().slots[0].wear==0,"wear moves with belt to backpack drag")
+	var chest: RefCounted=ClassDB.instantiate("NativeContainerStore");chest.configure(inv,8)
+	check(chest.deposit(1,inv,10,1,inv.snapshot().revision,chest.snapshot(1).store_revision).ok,"worn tool deposits")
+	var packed: PackedByteArray=chest.capture_storage_snapshot();chest.restore_storage_snapshot(packed)
+	check(chest.snapshot(1).slots[0].wear==37,"chest save restores wear")
+	check(chest.withdraw(1,inv,0,1,inv.snapshot().revision,chest.snapshot(1).store_revision).ok and inv.snapshot().slots[0].wear==37,"withdraw preserves wear")
+	var other:=inventory();other.grant(1,1,0);other.wear_tool(0,80,1)
+	var box: RefCounted=ClassDB.instantiate("NativeContainerStore");box.configure(inv,8)
+	box.deposit(2,other,0,1,other.snapshot().revision,box.snapshot(2).store_revision)
+	check(box.drag_slots(2,inv,false,true,0,0,1,inv.snapshot().revision,box.snapshot(2).store_revision).ok and inv.snapshot().slots[0].wear==80 and box.snapshot(2).slots[0].wear==37,"same-type worn tools swap without repairing")
+	var legacy:=PackedByteArray();legacy.resize(264);legacy.encode_u32(0,0x31564654);legacy.encode_u32(4,32);legacy.encode_u32(8,1);legacy.encode_u32(12,1)
+	check(inv.restore_storage_snapshot(legacy) and inv.snapshot().slots[0].durability==200,"legacy tools load at full durability")
+	var old_box:=PackedByteArray();old_box.resize(16);old_box.encode_u32(0,0x53434654);old_box.encode_u32(4,1);old_box.encode_u64(8,1)
+	var id:=PackedByteArray();id.resize(8);id.encode_u64(0,7);old_box.append_array(id);old_box.append_array(legacy)
+	check(box.restore_storage_snapshot(old_box) and box.snapshot(7).slots[0].durability==200,"legacy chest migrates without loss")
+	var saved: PackedByteArray=inv.capture_storage_snapshot();var bad:=saved.duplicate();bad.encode_u32(16,200)
+	check(not inv.restore_storage_snapshot(bad) and inv.capture_storage_snapshot()==saved,"invalid wear rejected atomically")
+	check(inv.wear_tool(0,200,inv.snapshot().revision).broken and inv.snapshot().slots[0].item==0,"exhausted tool breaks and clears slot")
+	var health: RefCounted=ClassDB.instantiate("NativeWorldDurability")
+	check(health.record_count()==0,"untouched world allocates no health records")
+	check(health.hit("tree:5",90,30).remaining==60 and health.hit("tree:6",90,10).remaining==80,"independent target durability")
+	var damage: PackedByteArray=health.capture_storage_snapshot()
+	check(health.restore_storage_snapshot(damage) and health.hit("tree:5",90,30).remaining==30,"partial damage survives save")
+	check(health.hit("tree:5",90,30).destroyed,"lethal hit requests destruction")
+	health.forget("tree:5");check(health.record_count()==1,"destroyed target releases record")
+	var corrupt:=damage.duplicate();corrupt.resize(9);var before: PackedByteArray=health.capture_storage_snapshot()
+	check(not health.restore_storage_snapshot(corrupt) and health.capture_storage_snapshot()==before,"bad damage save preserves live state")
+	for i in 10000:health.hit("block:%d"%i,90,1)
+	check(health.record_count()==10001 and health.validate_snapshot(health.capture_storage_snapshot()),"ten thousand damaged targets persist sparsely")
+	var begin:=Time.get_ticks_usec()
+	for i in 1000:health.hit("block:%d"%(i%10000),90,1)
+	print("DAMAGE_1000_HITS_AT_10000_RECORDS_US=",Time.get_ticks_usec()-begin)
+	for i in range(10000,65535):health.hit("block:%d"%i,90,1)
+	var full: PackedByteArray=health.capture_storage_snapshot()
+	check(health.record_count()==65536 and not health.hit("overflow",90,1).ok and health.capture_storage_snapshot()==full,"damage capacity fails without erasing existing health")
+	check(health.hit("block:0",90,1).ok,"existing targets remain damageable at capacity")
+	print("ATTACK_DURABILITY checks=",checks," failures=",failures);quit(1 if failures else 0)

@@ -13,7 +13,7 @@ func wheel(button: int) -> void:
 	var e:=InputEventMouseButton.new();e.button_index=button;e.pressed=true;Input.parse_input_event(e);Input.flush_buffered_events()
 func _initialize() -> void:run.call_deferred()
 func run() -> void:
-	var game=load("res://demo/world.tscn").instantiate();game.temporary_world=true;root.add_child(game)
+	var game=load("res://demo/world.tscn").instantiate();game.temporary_world=true;game.max_fps=60;game.background_fps=60;root.add_child(game)
 	var deadline:=Time.get_ticks_msec()+45000
 	while game.loading_active and Time.get_ticks_msec()<deadline:await process_frame
 	check(not game.loading_active,"world ready")

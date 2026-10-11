@@ -6,6 +6,8 @@
 namespace terraforest {
 using namespace godot;
 void NativePlayerInventory::_bind_methods() {
+    ClassDB::bind_method(D_METHOD("register_durable","item","maximum"),&NativePlayerInventory::register_durable);
+    ClassDB::bind_method(D_METHOD("wear_tool","slot","amount","expected_revision"),&NativePlayerInventory::wear_tool);
     ClassDB::bind_method(D_METHOD("register_item","item","limit"),&NativePlayerInventory::register_item);
     ClassDB::bind_method(D_METHOD("snapshot"),&NativePlayerInventory::snapshot);
     ClassDB::bind_method(D_METHOD("grant","item","count","expected_revision"),&NativePlayerInventory::grant);
@@ -25,13 +27,26 @@ void NativePlayerInventory::_bind_methods() {
 Dictionary NativePlayerInventory::result(bool ok,const char *reason) const {
     Dictionary out;out["ok"]=ok;out["reason"]=reason;out["revision"]=revision;return out;
 }
+int64_t NativePlayerInventory::max_durability(int64_t item) const {
+    auto found=durable_catalog().find(item);return found==durable_catalog().end()?0:found->second;
+}
+bool NativePlayerInventory::register_durable(int64_t item,int64_t maximum) {
+    if(catalog_owner.is_valid()||revision||!limits.count(item)||limits.at(item)!=1||maximum<1||maximum>1000000)return false;
+    durability[item]=maximum;return true;
+}
+Dictionary NativePlayerInventory::wear_tool(int64_t slot,int64_t amount,int64_t expected) {
+    if(expected!=revision)return result(false,"stale_revision");
+    if(slot<0||slot>=32||amount<1||amount>1000000||!max_durability(slots[slot].item))return result(false,"invalid_tool");
+    auto &s=slots[slot];s.wear+=amount;bool broken=s.wear>=max_durability(s.item);
+    if(broken)s={};++revision;auto out=result(true,"");out["broken"]=broken;return out;
+}
 bool NativePlayerInventory::register_item(int64_t item,int64_t limit) {
     if(catalog_owner.is_valid()||revision||item<=0||item>INT32_MAX||limit<1||limit>1000000||catalog().size()>=256||catalog().count(item))return false;
     limits[item]=limit;return true;
 }
 Dictionary NativePlayerInventory::snapshot() const {
     Dictionary out;out["schema"]=1;out["revision"]=revision;Array rows;
-    for(auto s:slots){Dictionary row;row["item"]=s.item;row["count"]=s.count;rows.push_back(row);}
+    for(auto s:slots){Dictionary row;row["item"]=s.item;row["count"]=s.count;row["wear"]=s.wear;row["durability"]=max_durability(s.item)-s.wear;row["max_durability"]=max_durability(s.item);rows.push_back(row);}
     out["slots"]=rows;return out;
 }
 Dictionary NativePlayerInventory::grant(int64_t item,int64_t count,int64_t expected) {
@@ -52,7 +67,7 @@ Dictionary NativePlayerInventory::grant(int64_t item,int64_t count,int64_t expec
 Dictionary NativePlayerInventory::consume(int64_t slot,int64_t count,int64_t expected) {
     if(expected!=revision)return result(false,"stale_revision");
     if(slot<0||slot>=32||count<=0||count>slots[slot].count)return result(false,"invalid_count_or_slot");
-    auto &s=slots[slot];s.count-=count;if(!s.count)s.item=0;
+    auto &s=slots[slot];s.count-=count;if(!s.count)s={};
     ++revision;return result(true,"");
 }
 Dictionary NativePlayerInventory::apply_grants(const PackedInt64Array &items,int64_t expected,bool commit) {
@@ -102,7 +117,7 @@ Dictionary NativePlayerInventory::apply_costs(const PackedInt64Array &costs,int6
         for(auto &slot:candidate){
             if(slot.item!=item)continue;
             const int64_t amount=std::min(remaining,slot.count);
-            remaining-=amount;slot.count-=amount;if(!slot.count)slot.item=0;
+            remaining-=amount;slot.count-=amount;if(!slot.count)slot={};
             if(!remaining)break;
         }
         if(remaining){auto out=result(false,"insufficient_items");out["item"]=item;out["missing"]=remaining;return out;}
@@ -116,12 +131,12 @@ Dictionary NativePlayerInventory::transfer(int64_t from,int64_t to,int64_t count
     if(expected!=revision)return result(false,"stale_revision");
     if(from<0||from>=32||to<0||to>=32||from==to||count<=0||count>slots[from].count)return result(false,"invalid_transfer");
     auto &a=slots[from];auto &b=slots[to];
-    if(b.item&&b.item!=a.item){
+    if(b.item&&(b.item!=a.item||max_durability(a.item))){
         if(count!=a.count)return result(false,"partial_swap");
         std::swap(a,b);
     }else{
         if(count>catalog().at(a.item)-b.count)return result(false,"stack_full");
-        b.item=a.item;b.count+=count;a.count-=count;if(!a.count)a.item=0;
+        b.item=a.item;b.wear=a.wear;b.count+=count;a.count-=count;if(!a.count)a={};
     }
     ++revision;return result(true,"");
 }
@@ -135,11 +150,15 @@ Dictionary NativePlayerInventory::transfer_to(const Ref<NativePlayerInventory> &
     if(expected_source!=revision||expected_destination!=target->revision)return result(false,"stale_revision");
     if(slot<0||slot>=32||count<=0||count>slots[slot].count)return result(false,"invalid_count_or_slot");
     const int64_t item=slots[slot].item;
+    if(max_durability(item)!=target->max_durability(item))return result(false,"durability_schema_mismatch");
+    int target_slot=-1;
+    if(max_durability(item))for(int i=0;i<32;++i)if(!target->slots[i].item){target_slot=i;break;}
     Dictionary granted=target->grant(item,count,expected_destination);
     if(!bool(granted["ok"])) {
         Dictionary failed=result(false,"destination_rejected");failed["detail"]=granted["reason"];return failed;
     }
-    auto &source=slots[slot];source.count-=count;if(!source.count)source.item=0;
+    if(target_slot>=0)target->slots[target_slot].wear=slots[slot].wear;
+    auto &source=slots[slot];source.count-=count;if(!source.count)source={};
     ++revision;
     Dictionary completed=result(true,"");completed["destination_revision"]=target->revision;
     completed["item"]=item;completed["count"]=count;return completed;
@@ -156,7 +175,11 @@ Dictionary NativePlayerInventory::restore(const Dictionary &data,int64_t expecte
         if(item.get_type()!=Variant::INT||count.get_type()!=Variant::INT)return result(false,"invalid_snapshot");
         int64_t id=item,n=count;
         if((id==0&&n!=0)||(id!=0&&(catalog().find(id)==catalog().end()||n<=0||n>catalog().at(id))))return result(false,"invalid_snapshot");
-        candidate[i]={id,n};
+        Variant wear=row.get("wear",int64_t(0));
+        if(wear.get_type()!=Variant::INT)return result(false,"invalid_wear");
+        int64_t w=wear;
+        if(w<0||(w>0&&(!max_durability(id)||w>=max_durability(id))))return result(false,"invalid_wear");
+        candidate[i]={id,n,w};
     }
     slots=candidate;++revision;return result(true,"");
 }
@@ -169,27 +192,22 @@ void write_u32(uint8_t *p,uint32_t n) {
 }
 }
 PackedByteArray NativePlayerInventory::capture_storage_snapshot() const {
-    PackedByteArray data;data.resize(264);auto *p=data.ptrw();
-    write_u32(p,0x31564654);write_u32(p+4,32); // TFV1, fixed slot count.
-    for(int i=0;i<32;++i){write_u32(p+8+i*8,uint32_t(slots[i].item));write_u32(p+12+i*8,uint32_t(slots[i].count));}
-    return data;
+    PackedByteArray data;data.resize(392);data.encode_u32(0,0x32564654);data.encode_u32(4,32);
+    for(int i=0;i<32;++i){data.encode_u32(8+i*12,slots[i].item);data.encode_u32(12+i*12,slots[i].count);data.encode_u32(16+i*12,slots[i].wear);}return data;
 }
 bool NativePlayerInventory::validate_snapshot(const PackedByteArray &data) const {
-    // Worker-safe after catalog registration: never inspect mutable slots/revision.
-    if(data.size()!=264)return false;
-    const auto *p=data.ptr();
-    if(read_u32(p)!=0x31564654||read_u32(p+4)!=32)return false;
+    const bool old=data.size()==264;const int stride=old?8:12;
+    if((!old&&data.size()!=392)||data.decode_u32(0)!=(old?0x31564654:0x32564654)||data.decode_u32(4)!=32)return false;
     for(int i=0;i<32;++i){
-        auto id=read_u32(p+8+i*8),n=read_u32(p+12+i*8);
+        auto id=data.decode_u32(8+i*stride),n=data.decode_u32(12+i*stride),w=old?0:data.decode_u32(16+i*stride);
         auto found=catalog().find(id);
         if(id==0 ? n!=0 : found==catalog().end()||n==0||n>found->second)return false;
-    }
-    return true;
+        if(w&&(!max_durability(id)||w>=max_durability(id)))return false;
+    }return true;
 }
 bool NativePlayerInventory::restore_storage_snapshot(const PackedByteArray &data) {
-    if(!validate_snapshot(data))return false;
-    const auto *p=data.ptr();
-    for(int i=0;i<32;++i)slots[i]={read_u32(p+8+i*8),read_u32(p+12+i*8)};
+    if(!validate_snapshot(data))return false;const bool old=data.size()==264;const int stride=old?8:12;
+    for(int i=0;i<32;++i)slots[i]={data.decode_u32(8+i*stride),data.decode_u32(12+i*stride),old?0:data.decode_u32(16+i*stride)};
     ++revision;return true;
 }
 }

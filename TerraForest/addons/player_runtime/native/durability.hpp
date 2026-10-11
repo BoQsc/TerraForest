@@ -1,0 +1,23 @@
+// SPDX-License-Identifier: 0BSD
+#pragma once
+#include <godot_cpp/classes/ref_counted.hpp>
+#include <godot_cpp/variant/dictionary.hpp>
+#include <godot_cpp/variant/packed_byte_array.hpp>
+#include <map>
+#include <string>
+namespace terraforest {
+class NativeWorldDurability : public godot::RefCounted {
+    GDCLASS(NativeWorldDurability,godot::RefCounted)
+    struct Entry {int health,damage;};
+    std::map<std::string,Entry> damaged;
+    static bool decode(const godot::PackedByteArray &,std::map<std::string,Entry> *);
+protected: static void _bind_methods();
+public:
+    godot::Dictionary hit(godot::String key,int64_t maximum,int64_t amount);
+    void forget(godot::String key);
+    int64_t record_count() const {return damaged.size();}
+    godot::PackedByteArray capture_storage_snapshot() const;
+    bool validate_snapshot(const godot::PackedByteArray &b) const {return decode(b,nullptr);}
+    bool restore_storage_snapshot(const godot::PackedByteArray &);
+};
+}

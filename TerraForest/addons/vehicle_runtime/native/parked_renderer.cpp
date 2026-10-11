@@ -9,7 +9,9 @@
 #include <godot_cpp/classes/mesh.hpp>
 using namespace godot;
 namespace terraforest {
+int64_t NativeParkedVehicleRenderer::identity_for_body(RID body) const {for(size_t i=0;i<bodies_.size();++i)if(bodies_[i]==body&&body_enabled_[i]&&i<size_t(visible_ids_.size()))return visible_ids_[i];return 0;}
 void NativeParkedVehicleRenderer::_bind_methods(){
+ ClassDB::bind_method(D_METHOD("identity_for_body","body"),&NativeParkedVehicleRenderer::identity_for_body);
  ClassDB::bind_method(D_METHOD("configure_collision","shape","local"),&NativeParkedVehicleRenderer::configure_collision);
  ClassDB::bind_method(D_METHOD("configure","fleet","parts","capacity"),&NativeParkedVehicleRenderer::configure);
  ClassDB::bind_method(D_METHOD("refresh","center","radius","excluded","budget"),&NativeParkedVehicleRenderer::refresh);
@@ -23,6 +25,7 @@ bool NativeParkedVehicleRenderer::configure_collision(const Ref<Shape3D> &shape,
  return true;
 }
 void NativeParkedVehicleRenderer::hide_all(){
+ visible_ids_.clear();
  auto *server=PhysicsServer3D::get_singleton();if(server)for(size_t i=0;i<bodies_.size();++i){server->body_set_collision_layer(bodies_[i],0);body_enabled_[i]=false;}
 for(auto &part:parts_){part.mesh->set_visible_instance_count(0);auto *node=Object::cast_to<MultiMeshInstance3D>(ObjectDB::get_instance(part.node));if(node)node->hide();}}
 bool NativeParkedVehicleRenderer::configure(const Ref<NativeVehicleFleet> &fleet,const Array &parts,int capacity){
@@ -81,6 +84,6 @@ Dictionary NativeParkedVehicleRenderer::refresh(const Vector3 &center,double rad
    body_enabled_[i]=enabled;
   }
  }
- result["ids"]=visible;result["rendered"]=int64_t(poses.size());result["upload_bytes"]=uploaded;return result;
+ visible_ids_=visible;result["ids"]=visible;result["rendered"]=int64_t(poses.size());result["upload_bytes"]=uploaded;return result;
 }
 }

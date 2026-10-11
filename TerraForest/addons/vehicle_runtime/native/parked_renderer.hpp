@@ -18,11 +18,13 @@ class NativeParkedVehicleRenderer : public godot::Node3D {
  std::vector<godot::RID> bodies_;
  std::vector<godot::Transform3D> body_poses_;
  std::vector<bool> body_enabled_;
+ godot::PackedInt64Array visible_ids_;
  void hide_all();
 protected: static void _bind_methods();
  void _notification(int what);
 public:
  ~NativeParkedVehicleRenderer();
+ int64_t identity_for_body(godot::RID body) const;
  bool configure_collision(const godot::Ref<godot::Shape3D> &shape,const godot::Transform3D &local);
  bool configure(const godot::Ref<NativeVehicleFleet> &fleet,const godot::Array &parts,int capacity);
  godot::Dictionary refresh(const godot::Vector3 &center,double radius,const godot::PackedInt64Array &excluded,int budget);

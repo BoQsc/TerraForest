@@ -2,7 +2,7 @@
 
 Open **Play Combined Gameplay.cmd** for resource-cost gameplay, or
 **Play Combined World.cmd** for free development. Existing save slots and
-inventory/chest bytes are preserved.
+inventory/chest contents are preserved; old records migrate on save.
 
 ## One Actions window
 
@@ -30,16 +30,25 @@ panels. No M/B/H mode switching is required or active through normal input.
 
 | Item | Gameplay use |
 | --- | --- |
-| Pickaxe | Hold left mouse to excavate terrain within 3.5 m using a fixed 0.65 m rounded cut. Cannot fill terrain or change brush shape. |
-| Hatchet | Left mouse chops a tree within 2.5 m, respecting occlusion and native harvest identity/accounting. |
-| Building hammer | Right mouse places the selected block/prefab and consumes materials; left mouse removes blocks. Configure shapes, materials and rotation through Building. Local block targeting is limited to 4 m. |
-| Assembly tool | Right mouse places a selected object using its recipe; left mouse dismantles it. Furniture salvage and nonempty-chest protection remain. Local placement/selection is limited to 4 m; dismantling retains its 3 m limit. |
-| Empty hands / material stack | Does not activate terrain, building or object editing. E still interacts. |
+| Pickaxe | Hold left mouse to attack any supported solid target; strongest against stone. Terrain cuts use a fixed 0.65 m radius. |
+| Hatchet | Hold left mouse to attack or dig; strongest against wood. |
+| Building hammer | Left mouse attacks the aimed target; right mouse builds using the selected recipe. |
+| Assembly tool | Left mouse attacks the aimed target; right mouse places an object using its recipe. |
+| Empty hands / material or placeable stack | Does not attack. E still interacts; owned ground-cover stacks use right mouse to place. |
 
-These are reusable starter tools with simple original held meshes and short use
-animations. Durability, tool crafting/repair, polished hand animation and combat
-are not implemented. Tools can be rearranged or stored in chests; world dropping
-still applies only to supported material/resource items.
+All four tools share one occlusion-aware 3.5 m attack query with a 250 ms cooldown.
+Targets are terrain patches, building blocks, trees, ground cover, furniture/static
+models, active actors and vehicles. Partial damage persists through saves. Nonempty
+containers remain protected; failed destruction cannot discard their contents.
+Untouched targets require no individual health records or update loops.
+
+Tools start with 200 durability. Accepted hits cost one point and break the tool
+at zero. Misses and rejected interactions cost nothing. Wear follows native item
+records through backpack/belt moves, swaps, chests, drops and save/load. Older
+inventory/chest saves migrate with full-durability tools. Toolbelt percentages and
+inventory hover text show condition. Four replacement-tool recipes use hand-
+gatherable stone and wood. Repair, damage-stage art, collapse physics and combat
+balance are not implemented by this change. Existing held meshes remain simple.
 
 The former selector IDs 1-4 now represent pickaxe, hatchet, building hammer and
 assembly tool. Existing inventory and chest placements keep their exact slots
@@ -137,3 +146,16 @@ Switch back to gameplay to manage its belt items.
 Selecting Roads or World tools does not open a modal or interrupt movement.
 Press Esc to open the selected workspace. Other settings remain accessible
 through the session menu. Evidence: [development belt checks](evidence/developer_belt/README.md).
+
+
+## Persistent development HUD and durability evidence
+
+In development mode a compact panel stays visible beside the world and changes
+with the selected development tool. **F1** hides/shows it; **hold Alt** to release
+the cursor and click its controls, then release Alt to resume aiming. Brush radius
+and materials, block shape/material/rotation, object choice, vegetation species,
+road endpoints/width, and world actions have contextual controls. Detailed authoring
+palettes remain available through their buttons and Escape. Inventory/menu panels
+hide the compact panel temporarily. These editor actions do not wear gameplay tools.
+
+[Attack, durability and development HUD evidence](evidence/world_attack/README.md).

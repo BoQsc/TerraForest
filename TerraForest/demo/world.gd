@@ -31,6 +31,7 @@ var player_hud=preload("res://addons/player_runtime/player_hud.gd").new()
 var session_menu=preload("res://addons/player_runtime/session_menu.gd").new()
 var storage=preload("res://addons/player_runtime/storage.gd").new()
 var construction_inventory=preload("res://addons/player_runtime/construction_inventory.gd").new()
+var world_attack=preload("res://addons/player_runtime/world_attack.gd").new()
 var equipped_tool:=0
 var editor_tool_active:=false
 var tool_view=preload("res://addons/player_runtime/tool_view.gd").new()
@@ -126,6 +127,8 @@ func _ready() -> void:
 		push_error("Player loadout persistence initialization failed")
 		get_tree().quit(2)
 		return
+	if not world_attack.prepare(self):
+		push_error("World durability initialization failed");get_tree().quit(2);return
 	if not persistence.register_component("player_equipment",player_hud.equipment.capture_storage_snapshot,player_hud.equipment.restore_storage_snapshot,player_hud.equipment,player_hud.equipment.capture_storage_snapshot()):
 		push_error("Character equipment persistence initialization failed");get_tree().quit(2);return
 	if not persistence.register_component("pending_rewards",player_hud.reward_inbox.capture_storage_snapshot,player_hud.reward_inbox.restore_storage_snapshot,player_hud.reward_inbox,player_hud.reward_inbox.capture_storage_snapshot()):
@@ -670,15 +673,9 @@ func _unhandled_input(event: InputEvent) -> void:
 			elif event.physical_keycode==KEY_ESCAPE:
 				Input.mouse_mode=Input.MOUSE_MODE_VISIBLE if Input.mouse_mode==Input.MOUSE_MODE_CAPTURED else Input.MOUSE_MODE_CAPTURED
 		return
-	if not editor_tool_active and event is InputEventMouseButton and event.pressed and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED:
-		if equipped_tool in [3,4] and event.button_index in [MOUSE_BUTTON_LEFT,MOUSE_BUTTON_RIGHT] and _model_edit_available():tool_view.swing()
-		if equipped_tool==2 and event.button_index==MOUSE_BUTTON_LEFT:
-			if _model_edit_available() and Time.get_ticks_msec()>=tool_use_after:
-				tool_use_after=Time.get_ticks_msec()+400;tool_view.swing()
-				if not _harvest_aimed_tree():_show_lake_notice("Aim the hatchet at a tree within 2.5 metres")
-			return
-		if event.button_index in [MOUSE_BUTTON_LEFT,MOUSE_BUTTON_RIGHT] and equipped_tool not in [1,3,4] and not ground_mode:return
-		if event.button_index in [MOUSE_BUTTON_WHEEL_UP,MOUSE_BUTTON_WHEEL_DOWN]:return
+	if not session_menu.developer and event is InputEventMouseButton and event.button_index==MOUSE_BUTTON_LEFT and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED:
+		if event.pressed:world_attack.attack()
+		return
 	if ground_enabled and event is InputEventKey and event.pressed and not event.echo and event.physical_keycode==KEY_F7:
 		if ground_cover.set_grass_texture(not ground_cover.grass_texture_enabled):
 			_show_lake_notice("Grass texture: "+("subtle" if ground_cover.grass_texture_enabled else "off"))
@@ -701,6 +698,7 @@ func _unhandled_input(event: InputEvent) -> void:
 				var origin:=camera.global_position
 				var endpoint:=origin-camera.global_basis.z*(2.5 if construction_inventory.gameplay else 8.0)
 				var result: Dictionary=ground_interaction.collect(origin,endpoint,player_hud.inventory,construction_inventory.gameplay) if remove_action or event.button_index==MOUSE_BUTTON_LEFT else ground_interaction.place(ground_species,origin,endpoint,player_hud.inventory,construction_inventory.gameplay)
+				if result.ok and result.has("id"):world_attack.durability.forget("cover:%d"%result.id)
 				_show_lake_notice(result.reason)
 			return
 	if event is InputEventKey and event.pressed and not event.echo and not loading_active and not shutdown_requested and app_focused and not fly and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED:
@@ -712,10 +710,10 @@ func _unhandled_input(event: InputEvent) -> void:
 			if storage.try_open(): return
 			if world_vehicle.enter(self):
 				_clear_motion();_show_lake_notice("Driving · E exit when stopped · Space brake");return
-			if equipped_tool==2 and construction_inventory.gameplay and _harvest_aimed_tree(): return
+			# Attacks exclusively use left mouse; E remains interaction.
 			if ground_enabled:
 				var ground_result: Dictionary=ground_interaction.collect(camera.global_position,camera.global_position-camera.global_basis.z*2.5,player_hud.inventory,construction_inventory.gameplay)
-				if ground_result.ok:player_hud.refresh();_show_lake_notice(ground_result.reason);return
+				if ground_result.ok:world_attack.durability.forget("cover:%d"%ground_result.id);player_hud.refresh();_show_lake_notice(ground_result.reason);return
 			var collected: Dictionary=pickups.collect_near(player.global_position+Vector3(0,0.5,0),player_hud.inventory,_pickup_reachable)
 			if collected.ok: player_hud.refresh()
 			_show_lake_notice(collected.reason)
@@ -782,7 +780,12 @@ func _unhandled_input(event: InputEvent) -> void:
 	super._unhandled_input(event)
 
 func _update_edit(delta: float) -> void:
-	if not editor_tool_active and equipped_tool!=1:
+	if not session_menu.developer:
+		if input_vector!=Vector3.ZERO:terrain.note_interaction()
+		pointer.hide();terrain.set_brush_active(false)
+		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):world_attack.attack()
+		return
+	if not editor_tool_active:
 		pointer.hide();terrain.set_brush_active(false);return
 	if session_menu.visible_ui():
 		pointer.hide();terrain.set_brush_active(false);return
@@ -945,6 +948,7 @@ func _edit_structure(remove: bool) -> void:
 		return
 	var word := 0 if remove else structure_shape+(structure_rotation<<3)+(structure_material<<5)
 	if construction_inventory.place_block(structures.blocks,player_hud.inventory,target,word):
+		world_attack.durability.forget(world_attack.block_key(target))
 		_show_lake_notice("Block removed · F5 saves world" if remove else "Block placed · F5 saves world")
 	else: _show_lake_notice(construction_inventory.reason)
 	player_hud.refresh()

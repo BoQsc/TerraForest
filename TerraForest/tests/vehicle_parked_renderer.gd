@@ -21,6 +21,7 @@ func run() -> void:
 	await physics_frame;await physics_frame
 	var ray:=PhysicsRayQueryParameters3D.create(Vector3(810,55,1300),Vector3(810,45,1300),4)
 	check(not renderer.get_world_3d().direct_space_state.intersect_ray(ray).is_empty(),"parked representation has static chassis collision")
+	check(renderer.identity_for_body(renderer.get_world_3d().direct_space_state.intersect_ray(ray).rid)==second,"parked collider resolves stable damage identity")
 	var batch: MultiMeshInstance3D=renderer.get_child(0)
 	check(result.rendered==2 and batch.multimesh.get_instance_transform(0).is_equal_approx(pose*local),"batched prototype preserves rotated scaled part transform")
 	check(batch.material_override==material and renderer.get_child_count()==2,"materials shared with one node per part,not per vehicle")
