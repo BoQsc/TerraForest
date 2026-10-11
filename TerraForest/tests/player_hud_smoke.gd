@@ -21,6 +21,8 @@ func run() -> void:
 	check(not game.loading_active,"world ready")
 	if game.loading_active:
 		game.terrain.shutdown();game.free();quit(1);return
+	# This fixture exercises gameplay items, independently of the editor launcher.
+	if game.session_menu.developer:game.session_menu.toggle_developer()
 	var hud=game.player_hud
 	var original_fly: bool=game.fly
 	var original_position: Vector3=game.player.position
@@ -60,7 +62,7 @@ func run() -> void:
 		DirAccess.make_dir_recursive_absolute("res://reports/player_runtime")
 		root.get_texture().get_image().save_png("res://reports/player_runtime/construction.png")
 	game.session_menu.show_page("Objects")
-	check(game.model_tool.active and game.editor_tool_active,"Objects navigation opens development palette without an inventory selector")
+	check(game.model_tool.active and not game.editor_tool_active and hud.active_item==4,"Objects navigation equips gameplay assembly tool")
 	check(not palette.panel.visible,"construction palette hides for object placement")
 	game.session_menu.set_open(false)
 	await press(KEY_1,true)

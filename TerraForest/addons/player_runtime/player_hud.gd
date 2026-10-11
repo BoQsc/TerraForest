@@ -2,6 +2,10 @@
 # Presentation only. Stack rules and mutations live in NativePlayerInventory.
 extends CanvasLayer
 signal tool_requested(item: int)
+signal developer_tool_requested(slot: int)
+const DEV_TOOLS=["Sculpt sphere","Sculpt box","Voxel cube","Build blocks","Place objects","Vegetation","Roads","World tools","Empty","Empty"]
+var developer_belt:=false
+var developer_slot:=8
 signal actions_requested
 signal menu_changed(open: bool)
 signal inventory_changed
@@ -137,7 +141,7 @@ func _ready() -> void:
 		var button=preload("res://addons/player_runtime/inventory_slot.gd").new();button.controller=self;button.slot=i
 		button.custom_minimum_size=Vector2(110,64)
 		button.focus_mode=Control.FOCUS_NONE
-		button.pressed.connect(func(): select_slot(i) if inventory_open else equip(i))
+		button.pressed.connect(func(): select_slot(i) if inventory_open and not developer_belt else equip(i))
 		bar.add_child(button);belt.append(button)
 	var hint:=Label.new();mode_hint=hint;hint.text="1–9 / 0 / Wheel equip    ·    Tab inventory    ·    Esc menu"
 	hint.text += "    ·    " + ("Gameplay construction" if gameplay_construction else "Free editor")
@@ -221,10 +225,14 @@ func refresh() -> void:
 			belt[i].text="%d%s\n%s"%[(i+1)%10," •" if i==active_slot else "",title]
 			belt[i].disabled=false
 			belt[i].set_appearance(row.count==0,i==active_slot,inventory_open and i==selected_slot)
+			if developer_belt:
+				belt[i].text="%d\n%s"%[(i+1)%10,DEV_TOOLS[i]]
+				belt[i].set_appearance(i>=8,i==developer_slot,false)
 	_refresh_ground_hint()
 	_refresh_pending()
 	_refresh_recipes()
 	character_panel.refresh()
+	if developer_belt:mode_hint.text="Development toolbelt | 1-9 / 0 / Wheel select | Esc configure | ~ gameplay"
 
 func show_side(tab: String) -> void:
 	crafting_content.visible=tab=="Crafting";character_panel.visible=tab=="Character"
@@ -269,6 +277,8 @@ func _equippable(item: int) -> bool:
 
 func equip(slot: int) -> void:
 	if slot<0 or slot>=10:return
+	if developer_belt:
+		developer_slot=slot;developer_tool_requested.emit(slot);refresh();return
 	equip_inventory(slot)
 
 func equip_inventory(slot: int) -> void:
@@ -355,13 +365,13 @@ func _unhandled_key_input(_event: InputEvent) -> void:
 	if inventory_open: get_viewport().set_input_as_handled()
 
 func drag_data(_side: String,slot: int) -> Dictionary:
-	if not enabled or not inventory_open:return {}
+	if not enabled or not inventory_open or (developer_belt and slot<10):return {}
 	var row: Dictionary=state.slots[slot]
 	if row.count==0:return {}
 	selected_slot=-1
 	return {"owner":get_instance_id(),"side":"player","equipment_revision":equipment.snapshot(1).store_revision,"slot":slot,"count":maxi(1,int(row.count)/2) if Input.is_key_pressed(KEY_SHIFT) else row.count,"revision":state.revision}
 func accepts_drag(_side: String,_slot: int,data: Variant) -> bool:
-	return enabled and inventory_open and data is Dictionary and data.get("owner",0)==get_instance_id()
+	return enabled and inventory_open and not (developer_belt and _slot<10) and data is Dictionary and data.get("owner",0)==get_instance_id()
 func drop_stack(side: String,slot: int,data: Variant) -> void:
 	if not accepts_drag(side,slot,data):return
 	var result: Dictionary

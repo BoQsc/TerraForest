@@ -5,6 +5,7 @@ var game: Node
 var opened:=false
 var workspace:=false
 var developer:=false
+var gameplay_slot:=-1
 var tilde_down:=-1
 var tilde_chord:=false
 var panel: PanelContainer
@@ -97,6 +98,8 @@ func _ready() -> void:
 	confirmation=ConfirmationDialog.new();confirmation.confirmed.connect(func():pending_action.call());add_child(confirmation)
 	game.terrain.save_completed.connect(func(ok: bool):message.text="World saved" if ok else "Save failed; check world status")
 	game.player_hud.actions_requested.connect(func():set_open(true))
+	game.player_hud.developer_tool_requested.connect(activate_developer_slot)
+	game.player_hud.developer_belt=developer;game.player_hud.refresh()
 	panel.hide();refresh();dock_palettes.call_deferred()
 func dock_palettes() -> void:
 	for pair in [["Building",game.construction_palette.panel],["Objects",game.model_tool.panel],["Roads",game.road_palette.panel]]:
@@ -122,7 +125,7 @@ func show_page(title: String) -> void:
 		if game.world_vehicle.driving:message.text="Exit the vehicle before choosing building tools.";return
 		set_open(false)
 		if developer:
-			game.player_hud.active_slot=-1;game.player_hud.active_item=0;game.editor_tool_active=true;game.equipped_tool=0;game.tool_view.equip(0)
+			game.player_hud.developer_slot={"Building":3,"Objects":4,"Roads":6}[title];game.player_hud.active_slot=-1;game.player_hud.active_item=0;game.editor_tool_active=true;game.equipped_tool=0;game.tool_view.equip(0)
 			if game.structure_mode!=(title!="Roads") or game.model_tool.active!=(title=="Objects"):
 				game._set_player_tool_mode(title!="Roads",title=="Objects",game.tool)
 		elif game.equipped_tool!=(3 if title=="Building" else 4) and not game.player_hud.equip_item(3 if title=="Building" else 4):
@@ -147,6 +150,7 @@ func refresh() -> void:
 	for i in belt_choices.size():
 		var item: int=state.slots[i].item
 		belt_choices[i].text="%d  %s"%[(i+1)%10,game.player_hud.CATALOG.get(item,game.player_hud.MATERIALS.get(item,game.player_hud.RESOURCES.get(item,"Empty hands")))]
+		if developer:belt_choices[i].text="%d  %s"%[(i+1)%10,game.player_hud.DEV_TOOLS[i]]
 		belt_choices[i].disabled=game.world_vehicle.driving
 func choose_slot(slot: int) -> void:
 	set_open(false);game.player_hud.equip(slot)
@@ -155,25 +159,48 @@ func choose_plant(species: int) -> void:
 	set_open(false)
 	if developer:
 		game.player_hud.active_slot=-1;game.player_hud.active_item=0;game.equipped_tool=0;game.tool_view.equip(0)
-		game.editor_tool_active=true;game._activate_ground_tool(species)
+		game.player_hud.developer_slot=5;game.editor_tool_active=true;game._activate_ground_tool(species)
 	elif not game.player_hud.equip_item(game.player_hud.GroundCatalog.ITEMS[species]):
 		set_open(true);message.text="Gather this plant or stone first; its stack must be in your inventory."
 func editor_tool(tool: int) -> void:
 	if not developer:return
 	set_open(false);game.player_hud.active_slot=-1;game.player_hud.active_item=0;game.editor_tool_active=true;game.equipped_tool=0;game.tool_view.equip(0)
-	game.radius=brush_radius.value;game._set_player_tool_mode(false,false,tool)
+	game.player_hud.developer_slot={3:0,2:1,1:2}.get(tool,0);game.radius=brush_radius.value;game._set_player_tool_mode(false,false,tool)
 func open_inventory() -> void:
 	if game.world_vehicle.driving:message.text="Exit the vehicle before opening inventory.";return
 	set_open(false);game.player_hud.set_open(true)
 func toggle_developer() -> void:
 	if game.loading_active or game.shutdown_requested or game.site_preparation.status=="running" or game.site_survey.busy or not game._foundation_placement.is_empty() or not game.road_palette.pending.is_empty() or not game.road_authoring.phase.is_empty() or game.terrain.pending_edit or game.construction_inventory.busy or not game.construction_inventory.pending_prefab.is_empty():
 		message.text="Wait for the current world edit to finish.";return
+	if not developer:gameplay_slot=game.player_hud.active_slot
 	developer=not developer
 	game.construction_inventory.gameplay=not developer;game.model_tool.gameplay=not developer;game.player_hud.gameplay_construction=not developer;game.mining_rewards.enabled=not developer
 	if not developer:game.fly=false
-	var had_ui:=visible_ui();set_open(false);game.player_hud.active_slot=-1;game.player_hud.active_item=0;game._equip_player_tool(0);game.player_hud.refresh()
+	var had_ui:=visible_ui();set_open(false)
+	game.player_hud.developer_belt=developer;game.player_hud.active_slot=-1;game.player_hud.active_item=0;game._equip_player_tool(0)
+	if developer:activate_developer_slot(game.player_hud.developer_slot)
+	elif gameplay_slot>=0:game.player_hud.equip(gameplay_slot)
+	game.player_hud.refresh()
 	if had_ui:set_open(true)
 	refresh()
+func activate_developer_slot(slot: int) -> void:
+	if not developer or game.world_vehicle.driving:return
+	game.player_hud.developer_slot=slot
+	match slot:
+		0:editor_tool(3)
+		1:editor_tool(2)
+		2:editor_tool(1)
+		3,4:
+			set_open(false);game.editor_tool_active=true;game.equipped_tool=0;game.tool_view.equip(0)
+			game._set_player_tool_mode(true,slot==4,game.tool)
+		5:choose_plant(maxi(0,game.player_hud.ground_species))
+		6,7:
+			set_open(false);game._equip_player_tool(0)
+			game.player_hud.editor_hint="DEVELOPMENT | "+("Roads" if slot==6 else "World tools")+" | Esc: configure"
+		_:
+			set_open(false);game._equip_player_tool(0)
+	game.player_hud.refresh();refresh()
+
 func toggle_flight() -> void:
 	if not developer or game.world_vehicle.driving:return
 	game.fly=not game.fly;game.player.velocity=Vector3.ZERO;game._cancel_edit_input();refresh()
@@ -189,7 +216,7 @@ func run_command(key: int,shift: bool=false) -> void:
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index in [MOUSE_BUTTON_WHEEL_UP,MOUSE_BUTTON_WHEEL_DOWN]:
 		if not visible_ui() and not game.player_hud.inventory_open and not game.storage.opened and not game.world_vehicle.driving and not game.loading_active and game.app_focused and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED:
-			var slot: int=game.player_hud.active_slot
+			var slot: int=game.player_hud.developer_slot if developer else game.player_hud.active_slot
 			var step:=1 if event.button_index==MOUSE_BUTTON_WHEEL_DOWN else -1
 			game.player_hud.equip(posmod(slot+step,10) if slot>=0 and slot<10 else (0 if step>0 else 9))
 			get_viewport().set_input_as_handled()
@@ -219,6 +246,7 @@ func _input(event: InputEvent) -> void:
 		if confirmation.visible:confirmation.hide()
 		elif game.storage.opened:game.storage.close()
 		elif game.player_hud.inventory_open and not opened:game.player_hud.set_open(false)
+		elif not visible_ui() and developer and game.player_hud.developer_slot in [6,7]:show_page("Roads" if game.player_hud.developer_slot==6 else "Development")
 		else:set_open(not visible_ui())
 		get_viewport().set_input_as_handled();return
 	if visible_ui():return

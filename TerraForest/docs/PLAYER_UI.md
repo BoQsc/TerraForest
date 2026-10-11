@@ -51,7 +51,7 @@ placing a tool in a chest cannot leave it usable in the player's hands.
 ## Input and inventory
 
 - **1-9 / 0** select belt slots in both modes; these keys no longer change editor
-  shapes or object recipes. The Equipment page provides the same choices by mouse.
+  shapes or object recipes. The Toolbelt page provides the same choices by mouse.
 - **E** interacts independently of the equipped placement tool: aimed chest first,
   then vehicle/harvesting/collectibles. Object selection is a visible Objects action.
 - **Tab** opens inventory. Clicking selects an item or empty slot without moving
@@ -65,7 +65,7 @@ placing a tool in a chest cannot leave it usable in the player's hands.
   Development page has a Flight button; Session has the Headlamp button. Plain F
   remains an optional headlamp shortcut.
 - Development terrain brushes, radius and material choices live in Development,
-  outside inventory. Returning to gameplay puts tools away, disables flight and
+  outside inventory. Returning to gameplay restores its selected belt slot, disables flight and
   restores costs/mining rewards. Mode changes wait for pending authoring work.
 
 Menus stop player input while the world simulation continues. Development is a
@@ -112,3 +112,28 @@ Shift-drag drops half. Invalid/blocked drops preserve items. Each dropped stack
 is one world pickup; E recollects its contents. Pickup quantity and equipment
 use native transactions and world snapshots. The old Equip/Drop buttons are gone.
 [Character and drop evidence](evidence/character_drops/README.md).
+
+
+## Separate development toolbelt
+
+Tapping `~` swaps the visible gameplay belt for development actions. Each mode
+remembers its selection during the session; gameplay stacks stay untouched.
+Numbers and mouse wheel select the currently visible belt, including empty slots.
+Development actions cannot be dragged into inventory or receive item stacks.
+Switch back to gameplay to manage its belt items.
+
+| Key | Development action |
+| --- | --- |
+| 1 | Sculpt sphere |
+| 2 | Sculpt box |
+| 3 | Voxel cube |
+| 4 | Build blocks |
+| 5 | Place objects |
+| 6 | Vegetation |
+| 7 | Roads settings via Esc |
+| 8 | World tools via Esc |
+| 9 / 0 | Empty |
+
+Selecting Roads or World tools does not open a modal or interrupt movement.
+Press Esc to open the selected workspace. Other settings remain accessible
+through the session menu. Evidence: [development belt checks](evidence/developer_belt/README.md).
