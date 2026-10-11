@@ -38,6 +38,10 @@ with tempfile.TemporaryDirectory(prefix='release_smoke_',dir=build) as temporary
     (project/'project.godot').write_text('config_version=5\n[application]\nconfig/name="TerraForest Native Release Test"\n')
     (project/'tests').mkdir()
     test=args.test or {'volumetric_water':'water_single_runtime','volumetric_terrain':'terrain_planner','structures':'structures'}.get(args.addon,'native_runtime')
+    if test=='water_shore_clipping':
+        player=project/'addons/player_runtime';(player/'bin').mkdir(parents=True)
+        shutil.copy2(ROOT/'addons/player_runtime/bin/player_runtime.windows.template_release.x86_64.dll',player/'bin')
+        (player/'player_runtime.gdextension').write_text((ROOT/'addons/player_runtime/player_runtime.gdextension').read_text().replace('template_debug','template_release'))
     if test=='ladder_traversal':
         if args.addon!='player_runtime':parser.error('ladder_traversal requires player_runtime')
         structure=project/'addons/structures'

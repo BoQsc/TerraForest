@@ -1,0 +1,9 @@
+# Shoreline geometry and gameplay share one calculation
+
+The native shoreline clipper now returns bounded triangles with connected owner cells. Rendering, bucket targeting and nearest-surface queries consume that same result. Scooping debits the connected owner and its local wet neighbours through the existing exact inventory transaction. Pouring returns water to the owner. Depth queries recognize the reconstructed wedge only where the cached terrain density is air. No second water model, physics nodes, per-frame terrain sampling, or save-format change was added.
+
+Fifteen native release assertions pass, including real NativePlayerInventory transfers at the rendered edge, conservation, stale revision rejection, dry/solid/above-water depth rejection and solid-side targeting. The actual generated-world test explicitly locates a rendered shoreline target whose local saved cell owns zero water, then invokes the real mouse-input path for scoop and pour. All 37 world assertions pass, including save/reload and zero warm-cache terrain resampling.
+
+This closes the tested shoreline targeting/depth mismatch. It does not establish exact geometric volume integration: the visual wedge still reconstructs the conservative discrete volume. Smoothed interior-surface queries, moving-edge shape, large-world streaming and sustained performance still need qualification. The existing 5 cm maximum ray-march spacing may miss a very narrow cell crossing, although analytic plane intersection catches thin vertical puddles and the tested shore. No broader exact-ray claim is made.
+
+Final actual-world gameplay frame p50/p95/max: 16.664/17.001/58.843 ms, screenshot capture excluded. Maximum native region mesh generation before save: 1.243 ms, still above the 1 ms presentation target before upload. Laptop thermal suitability remains unproven. Native/test/shader hashes are in run.json.

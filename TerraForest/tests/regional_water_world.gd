@@ -69,6 +69,27 @@ func run():
  var inventory=game.player_hud.inventory
  check(game.player_hud.equip_item(401),"Gameplay equips normal bucket")
  var slot:int=game.player_hud.active_slot
+ # Locate a rendered sub-cell shore with zero locally owned amount. Read the
+ # saved store only in this diagnostic so the check cannot accidentally target
+ # an ordinary wet cell and claim to cover shoreline interaction.
+ var store:PackedByteArray=game.lakes.capture_snapshot()
+ var shore:=Vector3.INF
+ for sample in 24:
+  var q:Vector3=game.lakes.water.surface_near(center+Vector3(10.5+sample*0.125,-0.75,0.0),0.2)
+  if q.is_finite() and stored_amount(store,q-Vector3.UP*0.0001)==0:shore=q;break
+ check(shore.is_finite(),"Actual lake exposes a terrain-clipped shoreline target outside owned wet cells")
+ if not shore.is_finite():await finish();return
+ print("SHORE_TARGET ",shore)
+ game.app_focused=true;Input.mouse_mode=Input.MOUSE_MODE_CAPTURED
+ game.pitch=-PI/2;game.camera.global_position=shore+Vector3.UP*1.0;game.camera.look_at(shore,Vector3.FORWARD)
+ var shore_click:=InputEventMouseButton.new();shore_click.button_index=MOUSE_BUTTON_LEFT;shore_click.pressed=true
+ game._unhandled_input(shore_click)
+ check(inventory.snapshot().slots[slot].item==402 and game.lakes.statistics().water_ml==quantity-1000,"Real left-click at rendered shore conserves world plus bucket water")
+ shore_click.button_index=MOUSE_BUTTON_RIGHT;game._unhandled_input(shore_click)
+ check(inventory.snapshot().slots[slot].item==401 and game.lakes.statistics().water_ml==quantity,"Real right-click at shore returns litre without creating a detached puddle")
+ Input.mouse_mode=Input.MOUSE_MODE_VISIBLE
+ if failures:await finish();return
+
  game.camera.global_position=probe+Vector3.UP*1.5;game.camera.look_at(probe,Vector3.FORWARD);game.app_focused=true;Input.mouse_mode=Input.MOUSE_MODE_CAPTURED
  print("INPUT_STATE ",game.session_menu.developer," ",game.equipped_tool," ",game._model_edit_available()," ",Input.mouse_mode," ",game.player_hud.active_item)
  var click:=InputEventMouseButton.new();click.button_index=MOUSE_BUTTON_LEFT;click.pressed=true;game._unhandled_input(click);Input.mouse_mode=Input.MOUSE_MODE_VISIBLE
@@ -169,6 +190,17 @@ func run():
   await capture_visual("regional_water_world")
  await render_comparison()
  await finish()
+func stored_amount(bytes:PackedByteArray,point:Vector3) -> int:
+ if bytes.size()<32 or bytes.decode_u32(0)!=0x31575256:return -1
+ var cell:=Vector3i((point*2.0).floor());var region:=Vector3i(cell.x/8,cell.y/8,cell.z/8)
+ var key:int=(region.x<<24)|(region.y<<12)|region.z
+ var size:=9076 if bytes.decode_u32(4)==2 else 6160
+ for r in bytes.decode_u32(12):
+  var offset:int=32+bytes.decode_u32(8)+r*size
+  if bytes.decode_u64(offset)==key:
+   var index:int=(cell.x&7)+8*(cell.y&7)+64*(cell.z&7)
+   return bytes.decode_u64(offset+16+index*12+4)&0x7fffffffffffffff
+ return -1
 func render_comparison():
  # Freeze gameplay state for paired rendering attribution; same camera/resolution.
  var running:bool=game.lakes.is_processing()

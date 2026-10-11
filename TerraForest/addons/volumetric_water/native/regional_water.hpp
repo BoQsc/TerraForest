@@ -73,6 +73,14 @@ class NativeRegionalWater : public godot::RefCounted {
     void process_cell(const godot::Vector3i &p);
     void process_fill();
     void move(const godot::Vector3i &a,const godot::Vector3i &b,uint64_t amount);
+    struct ShoreMesh {
+        std::array<godot::Vector3,24> vertices{};
+        std::array<godot::Vector3i,8> owners{};
+        int triangles=0;
+    };
+    bool exposed_surface(const godot::Vector3i &p,double &height) const;
+    ShoreMesh shoreline(const godot::Vector3i &p) const;
+    bool shoreline_point(const godot::Vector3 &point,const ShoreMesh &mesh,godot::Vector3i &owner) const;
     bool decode(const godot::PackedByteArray &data,bool install);
 protected: static void _bind_methods();
 public:
