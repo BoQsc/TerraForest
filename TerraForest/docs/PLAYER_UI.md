@@ -93,3 +93,9 @@ of materials. Claim pending materials before crafting. Empty slots are transluce
 the equipped slot has a mint outline and lower accent, and the selected inventory
 slot has a gold outline. Container slots share the empty/selected styling.
 Evidence: [inventory presentation](evidence/inventory_presentation/README.md).
+
+Inventory leaves the world undimmed and the toolbelt accessible. Drag between the
+inventory grid and belt in either direction, including swaps, merges and Shift
+half-stack moves. The belt is a view of the first ten inventory slots, not separate
+storage. While inventory is open, clicking a belt slot selects it for inventory
+actions. [Drag regression evidence](evidence/inventory_belt_drag/README.md).

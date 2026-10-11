@@ -131,14 +131,14 @@ func _ready() -> void:
 		var button=preload("res://addons/player_runtime/inventory_slot.gd").new();button.controller=self;button.slot=i
 		button.custom_minimum_size=Vector2(110,64)
 		button.focus_mode=Control.FOCUS_NONE
-		button.pressed.connect(func(): equip(i))
+		button.pressed.connect(func(): select_slot(i) if inventory_open else equip(i))
 		bar.add_child(button);belt.append(button)
 	var hint:=Label.new();mode_hint=hint;hint.text="1–9 / 0 / Wheel equip    ·    Tab inventory    ·    Esc menu"
 	hint.text += "    ·    " + ("Gameplay construction" if gameplay_construction else "Free editor")
 	hint.position=Vector2(370,1032);add_child(hint)
 	add_child(modal);modal.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	var shade:=ColorRect.new();shade.color=Color(0.025,0.04,0.06,0.9)
-	modal.add_child(shade);shade.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	# Panels intercept UI input; the toolbelt remains reachable below them.
+	modal.mouse_filter=Control.MOUSE_FILTER_IGNORE
 	var panel:=PanelContainer.new();panel.position=Vector2(660,200);panel.size=Vector2(1040,650)
 	modal.add_child(panel)
 	var margin:=MarginContainer.new()
@@ -210,7 +210,7 @@ func refresh() -> void:
 		if i<10:
 			belt[i].text="%d%s\n%s"%[(i+1)%10," •" if i==active_slot else "",title]
 			belt[i].disabled=false
-			belt[i].set_appearance(row.count==0,i==active_slot,false)
+			belt[i].set_appearance(row.count==0,i==active_slot,inventory_open and i==selected_slot)
 	_refresh_ground_hint()
 	_refresh_pending()
 	_refresh_recipes()
@@ -314,11 +314,10 @@ func set_open(value: bool) -> void:
 	if value:
 		previous_mouse=Input.mouse_mode
 		Input.mouse_mode=Input.MOUSE_MODE_VISIBLE
-		refresh()
 	else:
 		Input.mouse_mode=previous_mouse
 		selected_slot=-1
-	_refresh_ground_hint()
+	refresh()
 	modal.visible=value
 	menu_changed.emit(value)
 

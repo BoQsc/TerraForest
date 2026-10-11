@@ -48,7 +48,7 @@ func run() -> void:
 	hud.recipe_buttons[0].pressed.emit()
 	check(hud.slots[5].text.contains("Brick ×1") and changes==4,"craft button commits supplies and marks world dirty")
 	for i in range(4): await RenderingServer.frame_post_draw
-	var panel: Control=hud.modal.get_child(1)
+	var panel: Control=hud.modal.get_child(0)
 	check(panel.get_global_rect().encloses(hud.claim_button.get_global_rect()) and panel.get_global_rect().encloses(hud.message.get_global_rect()),"claim controls and feedback fit inside inventory panel")
 	check(hud.crafting_panel.get_global_rect().encloses(hud.recipe_buttons[0].get_global_rect()) and hud.crafting_panel.get_global_rect().end.x < panel.position.x and Rect2(Vector2.ZERO,Vector2(1920,1080)).encloses(panel.get_global_rect()),"separate crafting panel sits left of inventory within fullscreen bounds")
 	check(Presentation.measurement(root).fair_graphical_sample,"fair 1920x1080 fullscreen presentation")
