@@ -15,6 +15,8 @@ var help := Label.new()
 var pointer := MeshInstance3D.new()
 var tool: int = 3
 var radius: float = 4.0
+var edit_reach: float=120.0
+var allow_terrain_add:=true
 var material_id: int = 1
 var fly: bool = false
 var waiting_spawn: bool = true
@@ -669,7 +671,7 @@ func _update_edit(delta: float) -> void:
 	if input_vector != Vector3.ZERO or (captured and (Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) or Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT))):
 		terrain.note_interaction()
 	var mining: bool = captured and Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT)
-	var building: bool = captured and Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT)
+	var building: bool = allow_terrain_add and captured and Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT)
 	terrain.set_brush_active(mining or building)
 	var continuous: bool = held_previous
 	held_previous = mining or building
@@ -684,7 +686,7 @@ func _update_edit(delta: float) -> void:
 		terrain.set_interaction_target(Vector3.INF)
 		return
 	var start: Vector3 = camera.global_position
-	var end: Vector3 = start - camera.global_basis.z * 120.0
+	var end: Vector3 = start - camera.global_basis.z * edit_reach
 	var query := PhysicsRayQueryParameters3D.create(start, end, 1)
 	query.hit_back_faces = false
 	latest_hit = get_world_3d().direct_space_state.intersect_ray(query)

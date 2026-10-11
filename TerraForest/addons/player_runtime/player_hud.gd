@@ -2,10 +2,11 @@
 # Presentation only. Stack rules and mutations live in NativePlayerInventory.
 extends CanvasLayer
 signal tool_requested(item: int)
+signal actions_requested
 signal menu_changed(open: bool)
 signal inventory_changed
 signal drop_requested(slot: int, revision: int)
-const CATALOG: Dictionary={1:"Sculpt sphere",2:"Sculpt cube",3:"Build blocks",4:"Place objects"}
+const CATALOG: Dictionary={1:"Pickaxe",2:"Hatchet",3:"Building hammer",4:"Assembly tool"}
 const MATERIALS: Dictionary={101:"Brick",102:"Wood",103:"Concrete",104:"Metal"}
 # UI metadata is local so this addon remains independently loadable.
 # woodland_accents checks it against the ecosystem catalog.
@@ -40,9 +41,12 @@ var enabled:=true
 var default_loadout:=PackedByteArray()
 var temporary_world:=true
 var active_item:=0
+var active_slot: int=-1
 var ground_species: int=-1
 var ground_hint: Label
 var mode_hint: Label
+var action_hint: Label
+var editor_hint: String=""
 var ground_feedback: String=""
 var gameplay_construction:=false
 
@@ -105,6 +109,7 @@ func capture_snapshot() -> PackedByteArray:
 func restore_snapshot(data: PackedByteArray) -> bool:
 	if not inventory.restore_storage_snapshot(data): return false
 	selected_slot=-1
+	active_slot=-1;active_item=0
 	if not slots.is_empty(): refresh()
 	return true
 
@@ -117,6 +122,7 @@ func _ready() -> void:
 	bar.position=Vector2(370,960)
 	bar.add_theme_constant_override("separation",8)
 	add_child(bar)
+	action_hint=Label.new();action_hint.position=Vector2(370,920);add_child(action_hint)
 	ground_hint=Label.new();ground_hint.position=Vector2(500,800)
 	ground_hint.add_theme_color_override("font_shadow_color",Color.BLACK)
 	ground_hint.add_theme_constant_override("shadow_offset_x",2);ground_hint.add_theme_constant_override("shadow_offset_y",2)
@@ -140,6 +146,7 @@ func _ready() -> void:
 	panel.add_child(margin)
 	var column:=VBoxContainer.new();column.add_theme_constant_override("separation",16);margin.add_child(column)
 	var title:=Label.new();title.text="INVENTORY";title.add_theme_font_size_override("font_size",28);var title_row:=HBoxContainer.new();title.size_flags_horizontal=Control.SIZE_EXPAND_FILL;title_row.add_child(title)
+	var actions_button:=Button.new();actions_button.text="Actions";actions_button.pressed.connect(func():set_open(false);actions_requested.emit());title_row.add_child(actions_button)
 	var close_button:=Button.new();close_button.text="Close";close_button.pressed.connect(func():set_open(false));title_row.add_child(close_button);column.add_child(title_row)
 	var detail:=Label.new();detail.text="Tools and materials · first ten slots form the toolbelt"
 	if gameplay_construction: detail.text="First ten slots are your toolbelt. Drag to move; Shift-drag to split."
@@ -163,22 +170,32 @@ func _ready() -> void:
 	for recipe in Crafting.RECIPES: recipe_choice.add_item(recipe.title)
 	craft_amount=SpinBox.new();craft_amount.min_value=1;craft_amount.max_value=1000;craft_amount.value=1;craft_amount.custom_minimum_size.x=130;crafting.add_child(craft_amount)
 	craft_button=Button.new();craft_button.text="Craft";craft_button.pressed.connect(craft_selected);crafting.add_child(craft_button)
+	var equip_button:=Button.new();equip_button.text="Equip selected item / empty hands";equip_button.pressed.connect(func():
+		if selected_slot>=0:
+			var chosen:=selected_slot;set_open(false);equip_inventory(chosen)
+	);column.add_child(equip_button)
 	drop_button=Button.new();drop_button.text="Drop one selected supply";drop_button.pressed.connect(drop_selected);column.add_child(drop_button)
 	message.text="Drag stacks to move, merge or swap. Shift-drag moves half. Tab / Esc closes."
 	column.add_child(message)
 	modal.hide();refresh()
 
 func refresh() -> void:
-	if mode_hint!=null:mode_hint.text=("1–9 / 0" if gameplay_construction else "Alt + 1–9 / 0")+" equip · Tab inventory · Esc menu · "+("Gameplay" if gameplay_construction else "Development")
-	state=inventory.snapshot()
+	if action_hint!=null:
+		action_hint.text=editor_hint if not editor_hint.is_empty() else {0:"Empty hands | E interact",1:"Pickaxe | Hold left mouse: mine nearby terrain",2:"Hatchet | Left mouse: chop tree",3:"Building hammer | Right mouse: build | Left mouse: remove | Esc: shape, material, rotation",4:"Assembly tool | Right mouse: place | Left mouse: dismantle | Esc: object and transform settings"}.get(active_item,"Holding "+MATERIALS.get(active_item,RESOURCES.get(active_item,"item"))+" | E interact")
+	if mode_hint!=null:mode_hint.text="1–9 / 0"+" equip · Tab inventory · Esc menu · "+("Gameplay" if gameplay_construction else "Development")
+	var latest: Dictionary=inventory.snapshot()
+	var inventory_changed_since_view: bool=latest.revision!=state.get("revision",-1)
+	state=latest
+	if inventory_changed_since_view and active_slot>=0 and active_item!=int(state.slots[active_slot].item):
+		active_item=int(state.slots[active_slot].item);tool_requested.emit(active_item)
 	for i in range(32):
 		var row: Dictionary=state.slots[i]
 		var title: String=CATALOG.get(row.item,MATERIALS.get(row.item,RESOURCES.get(row.item,"Empty")))
 		if row.item in MATERIALS or row.item in RESOURCES: title += " ×%d" % row.count
 		slots[i].text="%02d%s\n%s"%[i+1," •" if i==selected_slot else "",title]
 		if i<10:
-			belt[i].text="%d%s\n%s"%[(i+1)%10," •" if row.item!=0 and row.item==active_item else "",title]
-			belt[i].disabled=not _equippable(row.item)
+			belt[i].text="%d%s\n%s"%[(i+1)%10," •" if i==active_slot else "",title]
+			belt[i].disabled=false
 	_refresh_ground_hint()
 	_refresh_pending()
 	drop_button.disabled=selected_slot<0 or not _droppable(state.slots[selected_slot].item)
@@ -228,10 +245,19 @@ func _equippable(item: int) -> bool:
 	return item in CATALOG or (ground_tools_enabled and item in GROUND_ITEMS)
 
 func equip(slot: int) -> void:
-	if not enabled or inventory==null or slot<0 or slot>=10: return
+	if slot<0 or slot>=10:return
+	equip_inventory(slot)
+
+func equip_inventory(slot: int) -> void:
+	if not enabled or inventory==null or slot<0 or slot>=32:return
+	state=inventory.snapshot();active_slot=slot;active_item=int(state.slots[slot].item)
+	tool_requested.emit(active_item);refresh()
+
+func equip_item(item: int) -> bool:
 	state=inventory.snapshot()
-	var item: int=state.slots[slot].item
-	if _equippable(item): tool_requested.emit(item)
+	for i in 32:
+		if state.slots[i].item==item:equip_inventory(i);return true
+	return false
 
 func craft_selected() -> void:
 	if not enabled or not inventory_open: return
@@ -245,15 +271,8 @@ func craft_selected() -> void:
 	refresh()
 
 func select_slot(slot: int) -> void:
-	if selected_slot<0:
-		if state.slots[slot].item!=0: selected_slot=slot
-	elif selected_slot==slot:
-		selected_slot=-1
-	else:
-		var result: Dictionary=inventory.transfer(selected_slot,slot,state.slots[selected_slot].count,state.revision)
-		message.text=("Loadout updated · temporary world; changes are not saved." if temporary_world else "Loadout updated · close inventory and press F5 to save world.") if result.ok else "Move rejected: "+str(result.reason)
-		if result.ok: inventory_changed.emit()
-		selected_slot=-1
+	# Click selects; dragging moves. Selection must never relocate an item.
+	selected_slot=-1 if selected_slot==slot else slot
 	refresh()
 
 func set_open(value: bool) -> void:

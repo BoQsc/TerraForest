@@ -31,6 +31,10 @@ var player_hud=preload("res://addons/player_runtime/player_hud.gd").new()
 var session_menu=preload("res://addons/player_runtime/session_menu.gd").new()
 var storage=preload("res://addons/player_runtime/storage.gd").new()
 var construction_inventory=preload("res://addons/player_runtime/construction_inventory.gd").new()
+var equipped_tool:=0
+var editor_tool_active:=false
+var tool_view=preload("res://addons/player_runtime/tool_view.gd").new()
+var tool_use_after:=0
 var headlamp=preload("res://addons/player_runtime/headlamp.gd").new()
 var mining_rewards=preload("res://addons/player_runtime/mining_rewards.gd").new()
 var model_tool = preload("res://addons/structures/model_tool.gd").new()
@@ -160,6 +164,7 @@ func _ready() -> void:
 	super._ready()
 	movement.configure_ladders(ladder.collection)
 	camera.add_child(headlamp)
+	camera.add_child(tool_view)
 	add_child(model_tool)
 	model_tool.gameplay=construction_inventory.gameplay
 	model_tool.paid_placement=_place_inventory_model
@@ -185,6 +190,7 @@ func _ready() -> void:
 	add_child(player_hud)
 	add_child(storage)
 	session_menu.game=self;add_child(session_menu)
+	construction_palette.history_requested.connect(_construction_history)
 	add_child(construction_palette)
 	add_child(road_palette)
 	road_palette.action_requested.connect(_road_action)
@@ -273,7 +279,7 @@ func _capture_player_pose() -> PackedByteArray:
 func _restore_player_pose(data: PackedByteArray) -> bool:
 	var decoded: Dictionary=player_pose.decode(data)
 	if not decoded.ok: return false
-	ground_mode=false
+	ground_mode=false;equipped_tool=0;editor_tool_active=false
 	player_hud.show_ground_tool(-1)
 	_saved_pose=data
 	_restored_pose=decoded
@@ -283,17 +289,14 @@ func _terrain_initialized(text: String) -> void:
 	if _restored_pose.has("position"):
 		pending_spawn=_restored_pose.position
 		spawn_override_y=pending_spawn.y
-		fly=_restored_pose.fly
+		fly=_restored_pose.fly and session_menu.developer
 		yaw=_restored_pose.yaw
 		pitch=_restored_pose.pitch
 		player.rotation.y=yaw
 		camera.rotation.x=pitch
-		var item: int=_restored_pose.tool
-		structure_mode=item in [3,4]
-		model_tool.set_active(item==4)
-		if item==1: tool=3
-		elif item==2: tool=1
-		_sync_player_tool()
+		# Loading always starts with empty hands; old mode selectors never reactivate editing.
+		equipped_tool=0;editor_tool_active=false;structure_mode=false;model_tool.set_active(false);tool_view.equip(0)
+		player_hud.active_slot=-1;player_hud.show_active_tool(0)
 	else:
 		pending_spawn=Vector3(800,0,1310)
 		spawn_override_y=-1.0
@@ -496,10 +499,15 @@ func _setup_hud() -> void:
 	status.position = Vector2(26, 570)
 
 func _equip_player_tool(item: int) -> void:
-	if item in player_hud.GROUND_ITEMS:
-		_activate_ground_tool(player_hud.GROUND_ITEMS[item]);return
-	if item not in player_hud.CATALOG: return
-	_set_player_tool_mode(item==3 or item==4,item==4,3 if item==1 else (1 if item==2 else tool))
+	if world_vehicle.driving:return
+	editor_tool_active=false;equipped_tool=item
+	_set_player_tool_mode(item in [3,4],item==4,3)
+	if item in player_hud.GROUND_ITEMS:_activate_ground_tool(player_hud.GROUND_ITEMS[item])
+	if item==1:radius=0.65
+	edit_reach=3.5;allow_terrain_add=false
+	tool_view.equip(item if item in player_hud.CATALOG else 0)
+	player_hud.show_active_tool(item)
+	_show_lake_notice(session_menu.DESCRIPTIONS.get(item,"Empty hands - E interacts" if item==0 else "Holding "+player_hud.MATERIALS.get(item,player_hud.RESOURCES.get(item,"item"))))
 
 func _activate_ground_tool(species: int) -> bool:
 	if not ground_enabled or world_vehicle.driving or species<0 or species>=player_hud.GroundCatalog.COUNT:return false
@@ -510,13 +518,15 @@ func _activate_ground_tool(species: int) -> bool:
 	_show_lake_notice(player_hud.GroundCatalog.NAMES[species]+"; LMB/E remove; RMB place")
 	return true
 func _sync_player_tool() -> void:
+	player_hud.editor_hint=("DEVELOPMENT | "+("Object editor" if model_tool.active else ("Block editor" if structure_mode else "Terrain brush"))+" | Esc: settings | Left mouse: remove | Right mouse: place / fill") if editor_tool_active else ""
 	_sync_construction_palette()
-	player_hud.show_active_tool(4 if model_tool.active else (3 if structure_mode else (1 if tool==3 else (2 if tool==1 else 0))))
+	player_hud.show_active_tool(equipped_tool)
 
 func _sync_construction_palette() -> void:
 	construction_palette.synchronize(structure_mode and not model_tool.active,structure_shape,structure_material,structure_rotation,structure_prefab_index)
 	if construction_palette.archive_button!=null:
 		construction_palette.archive_button.disabled=structure_prefab_index<0 or not prefab_library.owns(structure_prefabs[structure_prefab_index])
+	session_menu.sync_panels()
 
 func _capture_construction(action: String,title: String) -> void:
 	if loading_active or shutdown_requested or benchmark_enabled or player_hud.inventory_open or not structure_mode or model_tool.active: return
@@ -637,13 +647,14 @@ func _set_player_tool_mode(building: bool,objects: bool,terrain_tool: int) -> bo
 	return true
 
 func _unhandled_input(event: InputEvent) -> void:
-	if session_menu.opened:return
+	if session_menu.visible_ui():return
 	if player_hud.inventory_open: return
 	if event is InputEventKey and event.pressed and not event.echo and event.physical_keycode==KEY_K:
 		_show_lake_notice(actor_authoring.command(self,event.shift_pressed));return
 	if event is InputEventKey and event.pressed and not event.echo and event.physical_keycode==KEY_J:
 		_show_lake_notice(actor_authoring.apply(self,event.shift_pressed));return
 	if event is InputEventKey and event.pressed and not event.echo and event.physical_keycode==KEY_F:
+		if session_menu.tilde_down>=0:return
 		if app_focused and not loading_active and not shutdown_requested and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED:
 			_show_lake_notice("Headlamp on" if headlamp.toggle() else "Headlamp off")
 		return
@@ -657,6 +668,15 @@ func _unhandled_input(event: InputEvent) -> void:
 			elif event.physical_keycode==KEY_ESCAPE:
 				Input.mouse_mode=Input.MOUSE_MODE_VISIBLE if Input.mouse_mode==Input.MOUSE_MODE_CAPTURED else Input.MOUSE_MODE_CAPTURED
 		return
+	if not editor_tool_active and event is InputEventMouseButton and event.pressed and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED:
+		if equipped_tool in [3,4] and event.button_index in [MOUSE_BUTTON_LEFT,MOUSE_BUTTON_RIGHT] and _model_edit_available():tool_view.swing()
+		if equipped_tool==2 and event.button_index==MOUSE_BUTTON_LEFT:
+			if _model_edit_available() and Time.get_ticks_msec()>=tool_use_after:
+				tool_use_after=Time.get_ticks_msec()+400;tool_view.swing()
+				if not _harvest_aimed_tree():_show_lake_notice("Aim the hatchet at a tree within 2.5 metres")
+			return
+		if event.button_index in [MOUSE_BUTTON_LEFT,MOUSE_BUTTON_RIGHT] and equipped_tool not in [1,3,4] and not ground_mode:return
+		if event.button_index in [MOUSE_BUTTON_WHEEL_UP,MOUSE_BUTTON_WHEEL_DOWN]:return
 	if ground_enabled and event is InputEventKey and event.pressed and not event.echo and event.physical_keycode==KEY_F7:
 		if ground_cover.set_grass_texture(not ground_cover.grass_texture_enabled):
 			_show_lake_notice("Grass texture: "+("subtle" if ground_cover.grass_texture_enabled else "off"))
@@ -674,19 +694,13 @@ func _unhandled_input(event: InputEvent) -> void:
 			_show_lake_notice(player_hud.GroundCatalog.NAMES[ground_species]+"; LMB remove; RMB place");return
 		var remove_action: bool=event is InputEventKey and event.pressed and not event.echo and event.physical_keycode==KEY_E
 		var mouse_action: bool=event is InputEventMouseButton and event.button_index in [MOUSE_BUTTON_LEFT,MOUSE_BUTTON_RIGHT]
-		if remove_action or mouse_action:
+		if mouse_action:
 			if _model_edit_available() and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED and (remove_action or event.pressed):
 				var origin:=camera.global_position
 				var endpoint:=origin-camera.global_basis.z*(2.5 if construction_inventory.gameplay else 8.0)
 				var result: Dictionary=ground_interaction.collect(origin,endpoint,player_hud.inventory,construction_inventory.gameplay) if remove_action or event.button_index==MOUSE_BUTTON_LEFT else ground_interaction.place(ground_species,origin,endpoint,player_hud.inventory,construction_inventory.gameplay)
 				_show_lake_notice(result.reason)
 			return
-	# Object mode owns E. Do not enter a vehicle, harvest or collect supplies
-	# while the player is using the advertised select-object action.
-	if model_tool.active and event is InputEventKey and event.pressed and not event.echo and event.physical_keycode==KEY_E:
-		if not loading_active and not shutdown_requested and not benchmark_enabled and app_focused and terrain.world_ready and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED:
-			model_tool.handle_input(event)
-		return
 	if event is InputEventKey and event.pressed and not event.echo and not loading_active and not shutdown_requested and app_focused and not fly and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED:
 		if event.physical_keycode==KEY_V:
 			_show_lake_notice(world_vehicle.spawn(self));return
@@ -696,7 +710,10 @@ func _unhandled_input(event: InputEvent) -> void:
 			if storage.try_open(): return
 			if world_vehicle.enter(self):
 				_clear_motion();_show_lake_notice("Driving · E exit when stopped · Space brake");return
-			if construction_inventory.gameplay and _harvest_aimed_tree(): return
+			if equipped_tool==2 and construction_inventory.gameplay and _harvest_aimed_tree(): return
+			if ground_enabled:
+				var ground_result: Dictionary=ground_interaction.collect(camera.global_position,camera.global_position-camera.global_basis.z*2.5,player_hud.inventory,construction_inventory.gameplay)
+				if ground_result.ok:player_hud.refresh();_show_lake_notice(ground_result.reason);return
 			var collected: Dictionary=pickups.collect_near(player.global_position+Vector3(0,0.5,0),player_hud.inventory,_pickup_reachable)
 			if collected.ok: player_hud.refresh()
 			_show_lake_notice(collected.reason)
@@ -763,6 +780,12 @@ func _unhandled_input(event: InputEvent) -> void:
 	super._unhandled_input(event)
 
 func _update_edit(delta: float) -> void:
+	if not editor_tool_active and equipped_tool!=1:
+		pointer.hide();terrain.set_brush_active(false);return
+	if session_menu.visible_ui():
+		pointer.hide();terrain.set_brush_active(false);return
+	edit_reach=120.0 if editor_tool_active else 3.5
+	allow_terrain_add=editor_tool_active
 	if ground_mode:
 		pointer.hide();terrain.set_brush_active(false);return
 	if world_vehicle.driving:
@@ -778,6 +801,7 @@ func _update_edit(delta: float) -> void:
 		terrain.set_brush_active(false)
 		return
 	super._update_edit(delta)
+	if equipped_tool==1 and terrain.pending_edit and not editor_tool_active:tool_view.swing()
 
 func _construction_history(forward: bool) -> void:
 	if construction_inventory.gameplay:
@@ -794,7 +818,7 @@ func _construction_history(forward: bool) -> void:
 
 func _structure_target(remove: bool) -> Dictionary:
 	var origin := camera.global_position
-	var hit: Dictionary = structures.blocks.raycast_scene(origin,origin-camera.global_basis.z*48,3,[player.get_rid()])
+	var hit: Dictionary = structures.blocks.raycast_scene(origin,origin-camera.global_basis.z*(4.0 if construction_inventory.gameplay else 48.0),3,[player.get_rid()])
 	if hit.is_empty():
 		return {}
 	var building_hit: bool = hit.has("cell") and hit.collider==structures.blocks
@@ -1111,7 +1135,7 @@ func _process(delta: float) -> void:
 			help.text="W / S  Accelerate / Brake or reverse    A / D  Steer    Space  Handbrake    Shift  Boost\nE  Exit when stopped    R  Reset vehicle    Esc  Release mouse\nF5 Save · reload on foot beside the parked vehicle. Cosmetic dents are not saved."
 		else: help.text=_walking_help
 	super._process(delta)
-	road_palette.panel.visible=session_menu.developer and not world_vehicle.driving and not structure_mode and not model_tool.active and not loading_active and not shutdown_requested and not player_hud.inventory_open and Input.mouse_mode==Input.MOUSE_MODE_VISIBLE
+	road_palette.panel.visible=session_menu.workspace and session_menu.current_page=="Roads" and session_menu.developer
 	road_preview.visible=not world_vehicle.driving and not structure_mode and not model_tool.active and not loading_active and not shutdown_requested and not player_hud.inventory_open
 	water_camera.update()
 	pickups.update_view(delta,player.global_position,not loading_active and not shutdown_requested)
@@ -1119,6 +1143,7 @@ func _process(delta: float) -> void:
 	ground_preview.update(self,delta)
 	_update_prefab_preview(delta)
 	model_tool.update(delta,_model_edit_available())
+	tool_view.visible=not session_menu.visible_ui() and not player_hud.inventory_open and not world_vehicle.driving
 	if structures.blocks != null:
 		structures.blocks.set_focus(player.position)
 		if terrain.world_ready and (not temporary_world or terrain.backend.readonly_snapshot) and not shutdown_requested:
@@ -1147,7 +1172,7 @@ func _process(delta: float) -> void:
 		if world_vehicle.driving:
 			activity="Waiting for terrain/building collision…" if world_vehicle.car.streaming.waiting else "Driving · %.0f km/h · E exit when stopped" % world_vehicle.car.speed_kph
 		telemetry.text = "%d FPS  ·  %s trees  ·  %d cells\n%s" % [Engine.get_frames_per_second(), str(vegetation.renderer.roots.size()), ecosystem.resident.size(), activity]
-		if actors.pool!=null and not construction_inventory.gameplay:telemetry.text+="\nJ Place actor · Shift+J Remove actor\nK Select / send · Shift+K Stop"
+		if actors.pool!=null and session_menu.visible_ui() and session_menu.current_page=="Development":telemetry.text+="\nJ Place actor · Shift+J Remove actor\nK Select / send · Shift+K Stop"
 	terrain._record_stage("world process",(Time.get_ticks_usec()-frame_begin)/1000.0)
 
 func _harvest_aimed_tree() -> bool:

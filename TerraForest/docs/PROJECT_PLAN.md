@@ -511,3 +511,15 @@ GUI drag-and-drop. The keyboard instruction wall is hidden. Gameplay/editor
 accounting remains distinct and chest persistence regressions pass. See
 [UI guide](PLAYER_UI.md) and [scoped evidence](evidence/player_ui/README.md).
 Human usability acceptance and sustained performance remain open; M2 stays active.
+
+
+2026-10-11: Follow-up to human UI confusion: Actions now docks the complete
+building/object/road palettes, with explicit development-only authoring. The
+old four selector IDs become pickaxe, hatchet, building hammer and assembly
+tool items with local gameplay actions and held meshes. Empty belt slots and
+material stacks cannot retain an editor; E interaction is independent of
+placement tools; tilde+F no longer reaches the headlamp. Existing inventory
+formats/slots are preserved. See [updated controls](PLAYER_UI.md) and
+[functional evidence](evidence/unified_tools/README.md). This supports the
+player/inventory coverage row and human checkpoint; M2 remains active. Tool
+art/balancing and sustained combined performance are not claimed complete.

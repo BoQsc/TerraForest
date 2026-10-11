@@ -1,0 +1,97 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] New world
+[TerrainRewrite] New world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+PASS main world ready
+PASS supply paid interior fixture
+PASS normal palette furnished cottage includes chest
+PASS normal paid prefab route places furnished storage interior
+[TerrainRewrite] Terrain editing
+PASS E reaches chest inside furnished cottage
+PASS interior chest accepts wood through normal UI
+PASS real mouse drag withdraws to exact player slot
+PASS real mouse drag deposits to exact chest slot and protects contents
+PASS real mouse drag rearranges chest slots
+PASS real Shift-drag splits chest stack in half
+PASS Escape closes chest before opening menu
+PASS Escape menu owns input and releases cursor
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Empty hands - E interacts
+PASS development mode enables free authoring without mining rewards
+PASS development flight button works
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Empty hands - E interacts
+PASS leaving development restores gameplay and walking
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Empty hands - E interacts
+HOLD_STATE true true 
+PASS holding tilde enters development and toggles flight
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Empty hands - E interacts
+PASS legacy flight shortcut is blocked in gameplay
+PASS ten toolbelt slots
+PASS real inventory drag swaps tool into tenth belt slot
+[TerrainRewrite] Pickaxe
+[TerrainRewrite] Pickaxe: hold left mouse to excavate nearby terrain. No filling or brush modes.
+PASS zero key equips tenth belt slot
+PASS saved item IDs now identify four distinct gameplay tools
+PASS move equipped pickaxe out of belt
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Empty hands - E interacts
+PASS moving the equipped tool away puts it down
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Empty hands - E interacts
+PASS empty tenth slot selects empty hands and clears placement
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Brick
+PASS holding material does not enable an editor
+PASS M no longer silently changes modes
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Empty hands - E interacts
+PASS tilde plus F toggles flight once without toggling headlamp
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Empty hands - E interacts
+PASS return from development resets flight and equipment
+GUI_CLICK Equipment (364.0, 240.0) ["down", "up"]
+PASS equipment page exposes all belt slots
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Empty hands - E interacts
+GUI_CLICK 0  Empty hands (1202.0, 476.0) ["down", "up"]
+PASS clicking empty equipment slot returns to world with empty hands
+[TerrainRewrite] Building hammer
+[TerrainRewrite] Building hammer: right mouse builds the selected shape; left mouse removes a block. Materials are consumed in gameplay.
+GUI_CLICK Building (364.0, 284.0) ["down", "up"]
+PASS Building page equips owned hammer and exposes paid controls
+PASS gameplay building shows shape/material/rotation/prefab without editor generation
+[TerrainRewrite] Assembly tool
+[TerrainRewrite] Assembly tool: right mouse places the selected object; left mouse dismantles it. Furniture recipes and chest protection apply.
+GUI_CLICK Objects (364.0, 328.0) ["down", "up"]
+PASS Objects page equips assembly tool with full allowed gameplay controls
+PASS assembly tool does not steal chest interaction
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Empty hands - E interacts
+[TerrainRewrite] Terrain editing
+PASS development keeps settlement and prefab capture details in the same window
+[TerrainRewrite] Terrain editing
+PASS road tools share the actions window
+[TerrainRewrite] Assembly tool
+[TerrainRewrite] Assembly tool: right mouse places the selected object; left mouse dismantles it. Furniture recipes and chest protection apply.
+[TerrainRewrite] Terrain editing
+PASS developer brush is separate from inventory equipment
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Empty hands - E interacts
+PASS leaving development cannot retain a brush
+PASS nearby terrain available for tool input check
+[TerrainRewrite] Pickaxe
+[TerrainRewrite] Pickaxe: hold left mouse to excavate nearby terrain. No filling or brush modes.
+PASS pickaxe mouse input publishes real native excavation
+PASS pickaxe has fixed local reach and cannot fill terrain
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Empty hands - E interacts
+PASS empty hands cannot continue mining
+PASS fullscreen1080p cap60
+[TerrainRewrite] Temporary test world: save skipped
+PASS normal shutdown
+UNIFIED_TOOLS failures=0

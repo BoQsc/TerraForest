@@ -32,6 +32,7 @@ var scale_buttons: Array[Button]=[]
 var numeric_controls:=VBoxContainer.new()
 var numeric_fields: Array[SpinBox]=[]
 var numeric_apply: Button
+var history_controls: HBoxContainer
 
 func can_edit() -> bool:
 	return active and edit_available and (not availability.is_valid() or availability.call())
@@ -73,15 +74,19 @@ func configure(view: Camera3D, actor: CharacterBody3D, entries: Array[Dictionary
 	content.add_child(caption)
 	for i in range(catalog.size()):
 		var button := Button.new()
-		button.text="%d  %s" % [i+1,catalog[i].title]
+		button.text=catalog[i].title
 		button.focus_mode=Control.FOCUS_NONE
 		button.pressed.connect(select.bind(i))
 		content.add_child(button)
 		choices.append(button)
 	var selection_row := HBoxContainer.new()
 	content.add_child(selection_row)
-	tool_button(selection_row,"Select aimed (E)",pick)
-	tool_button(selection_row,"Clear (Q)",clear_selection)
+	tool_button(selection_row,"Select aimed object",pick)
+	tool_button(selection_row,"Clear selection",clear_selection)
+	tool_button(selection_row,"Rotate placement",func():quarter_turns=(quarter_turns+1)%4;timer=0)
+	var history_row:=HBoxContainer.new();history_controls=history_row;content.add_child(history_row)
+	tool_button(history_row,"Undo (development)",menu_history.bind(false))
+	tool_button(history_row,"Redo (development)",menu_history.bind(true))
 	content.add_child(transform_controls)
 	var move_row := HBoxContainer.new()
 	transform_controls.add_child(move_row)
@@ -94,7 +99,7 @@ func configure(view: Camera3D, actor: CharacterBody3D, entries: Array[Dictionary
 	scale_buttons.append(tool_button(shape_row,"Scale −",transform_selected.bind(Vector3.ZERO,0.0,1.0/1.1)))
 	scale_buttons.append(tool_button(shape_row,"Scale +",transform_selected.bind(Vector3.ZERO,0.0,1.1)))
 	transform_controls.add_child(numeric_controls)
-	var numeric_title:=Label.new();numeric_title.text="World transform · Esc to edit values"
+	var numeric_title:=Label.new();numeric_title.text="World transform · use fields below"
 	numeric_controls.add_child(numeric_title)
 	for group in ["Position (m)","Rotation (°)","Scale"]:
 		var label:=Label.new();label.text=group;numeric_controls.add_child(label)
@@ -139,6 +144,10 @@ func tool_button(row: Control, text: String, action: Callable) -> Button:
 	row.add_child(button)
 	action_buttons.append(button)
 	return button
+
+func menu_history(forward: bool) -> void:
+	var event:=InputEventKey.new();event.pressed=true;event.ctrl_pressed=true;event.physical_keycode=KEY_Y if forward else KEY_Z
+	handle_input(event)
 
 func clear_selection() -> void:
 	if is_instance_valid(picked_collection) and picked_collection.changed.is_connected(_selected_changed):
@@ -242,8 +251,8 @@ func apply_numeric_transform() -> bool:
 
 func ray() -> Dictionary:
 	if is_instance_valid(block_world):
-		return block_world.raycast_scene(camera.global_position,camera.global_position-camera.global_basis.z*48,3,[player.get_rid()])
-	var query := PhysicsRayQueryParameters3D.create(camera.global_position,camera.global_position-camera.global_basis.z*48,3)
+		return block_world.raycast_scene(camera.global_position,camera.global_position-camera.global_basis.z*(4.0 if gameplay else 48.0),3,[player.get_rid()])
+	var query := PhysicsRayQueryParameters3D.create(camera.global_position,camera.global_position-camera.global_basis.z*(4.0 if gameplay else 48.0),3)
 	query.exclude=[player.get_rid()]
 	return get_world_3d().direct_space_state.intersect_ray(query)
 
@@ -274,20 +283,20 @@ func refresh() -> void:
 	var selection := selected_transform()
 	if not selection.is_empty():
 		caption.text="OBJECT #%d · selected\nUndo %d · Redo %d" % [picked_id,status.undo_steps,status.redo_steps]
-		help.text="Arrows X/Z · PgUp/Dn Y · Shift fine\nR Rotate · +/− Scale · Q Clear\nCtrl+Z Undo · Ctrl+Y Redo · M Blocks"
+		help.text="Arrows X/Z · PgUp/Dn Y · Shift fine\nR Rotate · +/− Scale · Q Clear\nCtrl+Z Undo · Ctrl+Y Redo · Actions / Building"
 		if gameplay:
 			caption.text="OBJECT #%d · selected" % picked_id
-			help.text="Arrows X/Z · PgUp/Dn Y · Shift fine\nR Rotate · Q Clear · M Blocks\nNo resizing or undo/redo in gameplay"
+			help.text="Arrows X/Z · PgUp/Dn Y · Shift fine\nR Rotate · Q Clear · Actions / Building\nNo resizing or undo/redo in gameplay"
 		preview.global_transform=selection.transform
 		preview_material.albedo_color=Color(1.0,0.72,0.2,0.35)
 		preview.show()
 		return
-	help.text="E Select · R Rotate · RMB Place · LMB Remove\nCtrl+Z Undo · Ctrl+Y / Ctrl+Shift+Z Redo\nM Blocks · F5 Save · Esc Use buttons"
+	help.text="Select aimed object in Actions · R Rotate · RMB Place · LMB Remove\nCtrl+Z Undo · Ctrl+Y / Ctrl+Shift+Z Redo\nActions / Building · F5 Save · Esc Actions"
 	var hit := target()
 	caption.text="OBJECTS · %s · %d°\nUndo %d · Redo %d" % [catalog[selected].title,quarter_turns*90,status.undo_steps,status.redo_steps]
 	if gameplay:
 		caption.text="OBJECTS · %s · %d°\nCost: %s" % [catalog[selected].title,quarter_turns*90,catalog[selected].get("cost_label","Recipe unavailable")]
-		help.text="E Select · R Rotate · RMB Place · LMB Remove\nNo removal refund · Undo/redo and resizing disabled\nM Blocks · F5 Save · Esc Use buttons"
+		help.text="Select aimed object in Actions · R Rotate · RMB Place · LMB Remove\nFurniture dismantles for wood · Undo/redo and resizing disabled\nActions / Building · F5 Save · Esc Actions"
 	if hit.is_empty():
 		preview.hide()
 		return
@@ -390,6 +399,7 @@ func update(delta: float, available: bool) -> void:
 	for button in action_buttons: button.disabled=not allowed
 	for button in scale_buttons: button.disabled=not allowed or gameplay
 	numeric_controls.visible=not gameplay
+	history_controls.visible=not gameplay
 	for field in numeric_fields: field.editable=allowed and not gameplay
 	numeric_apply.disabled=not allowed or gameplay
 	if not allowed:

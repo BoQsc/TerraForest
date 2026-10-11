@@ -1,0 +1,12 @@
+{
+  "addons\\player_runtime\\player_hud.gd": "2012e33384f82cdabb3845dc9490ea8d097263e69bbcdb07c992d98ecf109578",
+  "addons\\player_runtime\\session_menu.gd": "0c86e004dd05d7712c4a1cc7d0e7c0a8a0e31872a3341e1de30fd1ecbbfc7b3e",
+  "addons\\structures\\construction_palette.gd": "43462403bfc1c26177337fa5c044220fe31e4b591a0ec9afb0c2eee19589bb06",
+  "addons\\structures\\model_tool.gd": "d03bc60a274bc4ddc22f86cbc968c356f63cd75743bc5a739d8ce888443ffeea",
+  "demo\\controller.gd": "1c6949e1230f09d97254bd919524b0b24d75f3d253fb7d915faea695175187d1",
+  "demo\\world.gd": "dfc0dffc637dc30a0bb02dd6c4d32ca76d26ced5f151cc502360bc3751577b82",
+  "tests\\harvesting_scene.gd": "c734f0ddc9bef68cce4892675b5f0dc25d41dd676a73e9071704d06f66e226eb",
+  "tests\\player_hud_smoke.gd": "7e5e560dd6c432bdbd80af757ad026330bfc6916b8b4c477d31eae3a63b66734",
+  "addons\\player_runtime\\tool_view.gd": "dd0b3377b85d6d2777f309c9239e34fcefc01a12c89f24bbf3faab7c0126cdc8",
+  "tests\\unified_tools.gd": "d322d3e55ae7c72725dbbd5a60ba9acb4d82da6b9ba4134b6cbe4c97ed19b8f3"
+}

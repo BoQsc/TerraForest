@@ -96,7 +96,7 @@ Launcher verification: the actual Play Combined World.cmd --dry-run exits succes
 
 Road editor settings now save with the world: surface, half-width, depth, clearance and foundation shoulder. Change settings, F5 and wait for completion, then change them again and F9; the saved values should return. Older saves without this section use defaults. Unbuilt endpoint selections and previews are cleared on reload.
 
-Ground-cover toolbelt: if you have Stone, Plant or Grass clump stacks, move one into any of the first ten inventory slots and equip it with 1-9/0 in gameplay or Alt+1-9/Alt+0 in development (or its belt button). This selects the matching placement species without spending an item. Gameplay placement still consumes one resource; free-editor placement remains free. H remains available for collection and free editing without a stack. Selecting a normal tool leaves ground-cover mode. This requires ground cover enabled by the launcher.
+Ground-cover toolbelt: if you have Stone, Plant or Grass clump stacks, move one into any of the first ten inventory slots and equip it with 1-9/0 in either mode (or the Equipment page) (or its belt button). This selects the matching placement species without spending an item. Gameplay placement still consumes one resource; free-editor placement remains free. H remains available for collection and free editing without a stack. Selecting a normal tool leaves ground-cover mode. This requires ground cover enabled by the launcher.
 
 Furniture editing: in object mode (M), aim at a table/chair/shelf and use E to select; LMB removes the aimed object. Gameplay dismantling within three metres returns 3 wood for a table, 1 for a chair and 4 for a shelf; insufficient inventory space leaves the object intact. Free-editor undo is available; gameplay object undo is disabled. These objects remain furniture, with no sitting or whole-object inventory pickup. Storage uses a separate wooden chest.
 
@@ -136,3 +136,5 @@ Stop at the first meaningful issue and report it with the printed launch-log fol
 [Launcher copy/startup evidence](evidence/combined_gameplay_launcher/README.md).
 
 Player menus: Escape now provides clickable actions; see [the UI guide](PLAYER_UI.md) for development mode and drag-and-drop chest/inventory controls.
+
+The current Actions window supersedes historical M/B/H and shape-number instructions above. See [current controls](PLAYER_UI.md); all recipes and development authoring details are available through its sidebar.

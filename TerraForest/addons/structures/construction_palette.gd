@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: 0BSD
 extends CanvasLayer
 signal selection_requested(field: String,value: int)
+signal history_requested(forward: bool)
 signal capture_requested(action: String,title: String)
 signal supply_requested(item: int)
 signal stack_requested(count: int,title: String)
@@ -41,6 +42,7 @@ var material: OptionButton
 var rotation_choice: OptionButton
 var prefab: OptionButton
 var panel: PanelContainer
+var editor_controls: Array[Control]=[]
 func _ready() -> void:
 	layer=15
 	panel=PanelContainer.new();panel.position=Vector2(1500,36);panel.custom_minimum_size=Vector2(380,0);add_child(panel)
@@ -105,7 +107,11 @@ func _ready() -> void:
 	supply_row.add_child(supply)
 	supply_button=Button.new();supply_button.text="Place supply at aim";supply_button.focus_mode=Control.FOCUS_NONE
 	supply_button.pressed.connect(func(): supply_requested.emit(101+supply.selected));supply_row.add_child(supply_button)
-	var hint:=Label.new();hint.text="[ / ] mark aimed corners A / B\nEsc releases / captures mouse\nLMB removes · RMB places\nCtrl+Z / Ctrl+Y undo / redo";column.add_child(hint)
+	var hint:=Label.new();hint.text="[ / ] mark aimed corners A / B\nActions menu configures / Return to world resumes\nLMB removes · RMB places\nCtrl+Z / Ctrl+Y undo / redo";column.add_child(hint)
+	var history_row:=HBoxContainer.new();column.add_child(history_row)
+	for forward in [false,true]:
+		var history_button:=Button.new();history_button.text="Redo" if forward else "Undo";history_button.pressed.connect(func():history_requested.emit(forward));history_row.add_child(history_button)
+	for child in column.get_children().slice(9):editor_controls.append(child)
 	panel.hide()
 func _option(parent: Control,title: String,values: Array,field: String) -> OptionButton:
 	var label:=Label.new();label.text=title;parent.add_child(label)

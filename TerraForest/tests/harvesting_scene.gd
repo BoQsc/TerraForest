@@ -37,9 +37,10 @@ func run() -> void:
 		game.terrain.changed_since_save=false
 		game.fly=false;game.app_focused=true
 		Input.mouse_mode=Input.MOUSE_MODE_CAPTURED
-		var interaction:=InputEventKey.new();interaction.physical_keycode=KEY_E;interaction.pressed=true
+		game.player_hud.equip_item(2)
+		var interaction:=InputEventMouseButton.new();interaction.button_index=MOUSE_BUTTON_LEFT;interaction.pressed=true
 		game._unhandled_input(interaction)
-		check(game.ecosystem.harvest_state.contains(1),"E interaction resolves aimed trunk to stable harvested identity")
+		check(game.ecosystem.harvest_state.contains(1),"Hatchet mouse action resolves aimed trunk to stable harvested identity")
 		check(game.terrain.changed_since_save and game.player_hud.inventory.can_afford(PackedInt64Array([102,68]),game.player_hud.inventory.snapshot().revision).ok,"harvest grants four wood over starter supply and marks autosave")
 		check(not game._harvest_aimed_tree(),"removed collider cannot be harvested again")
 	game.shutdown_requested=true

@@ -1,7 +1,9 @@
 # Player inventory and construction
 
 The [player UI guide](../../docs/PLAYER_UI.md) covers the Escape menu, development
-mode, ten-slot belt and player/chest drag-and-drop controls.
+mode, gameplay tools, selectable empty belt slots and player/chest drag-and-drop
+controls. Existing IDs 1-4 now identify pickaxe, hatchet, building hammer and
+assembly tool; inventory bytes and slots are unchanged.
 
 Default world launches remain the free editor. `Play Gameplay Construction.cmd`
 selects a separate `gameplay_construction` save slot and passes

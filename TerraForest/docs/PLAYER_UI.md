@@ -1,40 +1,82 @@
-# Player menus and inventory
+# Actions, gameplay tools and development
 
-Use **Play Combined Gameplay.cmd** for the resource-cost gameplay world, or
-**Play Combined World.cmd** for the free editor. Both keep their existing save
-slots. The UI changes do not reset inventory or chest contents.
+Open **Play Combined Gameplay.cmd** for resource-cost gameplay, or
+**Play Combined World.cmd** for free development. Existing save slots and
+inventory/chest bytes are preserved.
 
-- **Escape** opens a clickable menu: resume, inventory, save/load, object and
-  block selection, vegetation selection, mining, headlamp, and save-and-quit.
-  Escape first closes an open inventory, chest or confirmation dialog.
-- **1–9 and 0** equip the ten belt slots in gameplay. These are the first ten
-  inventory slots. Development mode retains the editing number shortcuts;
-  **Alt+1–9 / Alt+0** equips its belt. Belt buttons also equip tools.
-- **Tab** opens inventory. Drag full stacks to move, merge or swap them.
-  **Shift-drag** moves half (rounded down, minimum one). Full-stack swaps work
-  across player and chest inventories; partial swaps between unlike items and
-  merges that exceed a stack limit are rejected without changing either side.
-- **E** opens a reachable, aimed chest. Its two grids support direct dragging
-  in either direction and rearrangement within either inventory. Quantity
-  transfer buttons remain available. A nonempty chest remains protected from
-  removal; an empty chest releases that protection.
-- Tap the **` / ~ key** to toggle development mode. Hold it for at least
-  0.45 seconds and release to toggle flight, entering development if needed.
-  Flight is also a button in the development section of the Escape menu.
-  Development exposes roads, settlement editing, diagnostics and vehicle
-  placement. Returning to gameplay turns flight off, restores resource costs
-  and enables mining rewards. Mode changes wait for pending authoring work.
+## One Actions window
 
-The menu stops player input; the world simulation continues. Development mode
-is a local session choice, not multiplayer authorization. Free edits can be
-saved, so use the separate editor slot when preserving gameplay progression
-matters. The launcher's mode is restored on the next launch.
+**Escape** opens Actions. The sidebar is the shared entry point:
 
-Inventory rules and cross-container transactions run in the native player
-addon. The script controls only presentation, input and bounded orchestration.
-The transaction validates both revision tokens and exact target slots before
-committing, with no callbacks between the two inventory mutations. Persistence
-formats and sparse container capacity remain unchanged.
+- **Equipment:** click any of the ten belt slots, including empty slots.
+- **Building:** equips an owned building hammer and shows shape, material,
+  rotation and prefab choices. Return to world to aim and place.
+- **Objects:** equips an owned assembly tool and shows every object recipe,
+  selection, rotation and allowed transform controls.
+- **Vegetation:** choose an owned plant/stone stack to place; development
+  allows free placement. E gathers reachable ground cover without a special mode.
+- **Inventory / crafting:** rearrange items, equip a selected inventory slot,
+  claim mined resources and craft. Its Actions button returns to the shared UI.
+- **Session:** save/load, headlamp, mode switching and save-and-quit.
+- **Development / Roads:** appear only in development mode.
 
-Automated checks and screenshots: [UI evidence](evidence/player_ui/README.md).
-This is the first integrated UI pass; human usability acceptance remains open.
+Building, object and road panels are the existing detailed controls docked into
+this window. Development Building retains prefab capture, stacking, settlement
+composition, site survey/preparation, supply authoring and history. Development
+Objects retains numeric transforms, scaling and history. Scroll to reach longer
+panels. No M/B/H mode switching is required or active through normal input.
+
+## Actual inventory tools
+
+| Item | Gameplay use |
+| --- | --- |
+| Pickaxe | Hold left mouse to excavate terrain within 3.5 m using a fixed 0.65 m rounded cut. Cannot fill terrain or change brush shape. |
+| Hatchet | Left mouse chops a tree within 2.5 m, respecting occlusion and native harvest identity/accounting. |
+| Building hammer | Right mouse places the selected block/prefab and consumes materials; left mouse removes blocks. Configure shapes, materials and rotation through Building. Local block targeting is limited to 4 m. |
+| Assembly tool | Right mouse places a selected object using its recipe; left mouse dismantles it. Furniture salvage and nonempty-chest protection remain. Local placement/selection is limited to 4 m; dismantling retains its 3 m limit. |
+| Empty hands / material stack | Does not activate terrain, building or object editing. E still interacts. |
+
+These are reusable starter tools with simple original held meshes and short use
+animations. Durability, tool crafting/repair, polished hand animation and combat
+are not implemented. Tools can be rearranged or stored in chests; world dropping
+still applies only to supported material/resource items.
+
+The former selector IDs 1-4 now represent pickaxe, hatchet, building hammer and
+assembly tool. Existing inventory and chest placements keep their exact slots
+and quantities, with the new item definitions. No refill or save reset occurs.
+World loading starts with tools put away, so saved legacy editor-mode IDs cannot
+reactivate editing. Selecting a slot or moving its item away updates equipment;
+placing a tool in a chest cannot leave it usable in the player's hands.
+
+## Input and inventory
+
+- **1-9 / 0** select belt slots in both modes; these keys no longer change editor
+  shapes or object recipes. The Equipment page provides the same choices by mouse.
+- **E** interacts independently of the equipped placement tool: aimed chest first,
+  then vehicle/harvesting/collectibles. Object selection is a visible Objects action.
+- **Tab** opens inventory. Clicking selects an item or empty slot without moving
+  anything; use Equip selected to hold it. Drag to move, merge or swap. **Shift-drag** moves half
+  (rounded down, minimum one). Chest grids support the same exact-slot actions.
+  Invalid or stale transactions preserve both inventories; nonempty chests stay
+  protected from removal.
+- **Tap the ` / ~ key** to switch development mode. Hold at least 0.45 seconds
+  and release to toggle flight; **~+F** is also a flight chord. The chord consumes
+  F and does not toggle the headlamp or toggle flight again on release. The
+  Development page has a Flight button; Session has the Headlamp button. Plain F
+  remains an optional headlamp shortcut.
+- Development terrain brushes, radius and material choices live in Development,
+  outside inventory. Returning to gameplay puts tools away, disables flight and
+  restores costs/mining rewards. Mode changes wait for pending authoring work.
+
+Menus stop player input while the world simulation continues. Development is a
+local session setting, not multiplayer authorization; free edits can be saved.
+Use the separate editor slot to protect gameplay progression. The launcher sets
+the mode for the next session.
+
+Inventory, terrain edits, construction and harvest accounting still use the
+existing native stores. UI/held-mesh scripts do bounded presentation and input
+coordination; no new per-item simulation or physics bodies were introduced.
+
+Evidence: [unified tools](evidence/unified_tools/README.md) and the earlier
+[native drag transaction checks](evidence/player_ui/README.md). Human usability
+and sustained frame-time qualification remain open.

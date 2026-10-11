@@ -1,122 +1,221 @@
 # SPDX-License-Identifier: 0BSD
 extends CanvasLayer
+# One entry point and dock for gameplay equipment and development authoring.
 var game: Node
 var opened:=false
+var workspace:=false
 var developer:=false
 var tilde_down:=-1
+var tilde_chord:=false
 var panel: PanelContainer
-var dev_box: VBoxContainer
 var mode_label: Label
+var message: Label
 var fly_button: Button
 var inventory_button: Button
 var mode_button: Button
-var instructions: Label
-var objects: OptionButton
-var shapes: OptionButton
-var vegetation: OptionButton
-var materials: OptionButton
-var message: Label
+var dev_box: VBoxContainer
 var confirmation: ConfirmationDialog
 var pending_action: Callable
+var pages: Dictionary={}
+var navigation: Dictionary={}
+var belt_choices: Array[Button]=[]
+var docked: Dictionary={}
+var current_page:="Session"
+var scroll: ScrollContainer
+var content: VBoxContainer
+var ready_to_dock:=false
+var brush_radius: SpinBox
+const DESCRIPTIONS={1:"Pickaxe: hold left mouse to excavate nearby terrain. No filling or brush modes.",2:"Hatchet: left mouse chops a reachable tree for wood.",3:"Building hammer: right mouse builds the selected shape; left mouse removes a block. Materials are consumed in gameplay.",4:"Assembly tool: right mouse places the selected object; left mouse dismantles it. Furniture recipes and chest protection apply."}
 func button(parent: Node,text: String,action: Callable) -> Button:
-	var out:=Button.new();out.text=text;out.custom_minimum_size.y=42;out.pressed.connect(action);parent.add_child(out);return out
+	var out:=Button.new();out.text=text;out.custom_minimum_size.y=40;out.pressed.connect(action);parent.add_child(out);return out
+func label(parent: Node,text: String) -> Label:
+	var out:=Label.new();out.text=text;out.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;parent.add_child(out);return out
+func page(title: String) -> VBoxContainer:
+	var out:=VBoxContainer.new();out.add_theme_constant_override("separation",12);content.add_child(out);pages[title]=out;out.hide();return out
 func _ready() -> void:
 	layer=40;developer=not game.construction_inventory.gameplay;game.help.hide()
-	panel=PanelContainer.new();panel.position=Vector2(580,110);panel.size=Vector2(760,830);add_child(panel)
+	panel=PanelContainer.new();panel.position=Vector2(220,65);panel.size=Vector2(1480,860);add_child(panel)
 	var style:=StyleBoxFlat.new();style.bg_color=Color(0.025,0.045,0.05,0.98)
 	for edge in [SIDE_LEFT,SIDE_RIGHT,SIDE_TOP,SIDE_BOTTOM]:style.set_content_margin(edge,24)
 	panel.add_theme_stylebox_override("panel",style)
-	var column:=VBoxContainer.new();column.add_theme_constant_override("separation",10);panel.add_child(column)
-	var title:=Label.new();title.text="TERRAFOREST";title.add_theme_font_size_override("font_size",28);column.add_child(title)
-	mode_label=Label.new();column.add_child(mode_label)
-	var row:=HBoxContainer.new();column.add_child(row)
-	button(row,"Resume",func():set_open(false));inventory_button=button(row,"Inventory",func():set_open(false);game.player_hud.set_open(true))
-	button(row,"Save world",save_world);button(row,"Load saved world",func():confirm("Discard unsaved changes and reload?",reload_world))
-	var label:=Label.new();label.text="BUILD & PLACE";column.add_child(label)
-	objects=OptionButton.new();for entry in game.model_tool.catalog:objects.add_item(entry.title)
-	column.add_child(objects);button(column,"Place selected object",func():set_open(false);game._set_player_tool_mode(true,true,game.tool);game.model_tool.select(objects.selected))
-	row=HBoxContainer.new();column.add_child(row)
-	shapes=OptionButton.new();for name in ["Cube","Slab","Stairs","Slope","Post","Sphere"]:shapes.add_item(name)
-	materials=OptionButton.new();for name in ["Brick","Wood","Concrete","Metal"]:materials.add_item(name)
-	row.add_child(shapes);row.add_child(materials)
-	button(row,"Build selected shape",func():set_open(false);game._set_player_tool_mode(true,false,game.tool);game.structure_shape=shapes.selected+1;game.structure_material=materials.selected;game.structure_prefab_index=-1;game._sync_construction_palette())
-	row=HBoxContainer.new();column.add_child(row)
-	button(row,"Mine terrain",func():set_open(false);game._set_player_tool_mode(false,false,1))
-	vegetation=OptionButton.new()
-	for name in game.player_hud.GroundCatalog.NAMES:vegetation.add_item(name)
-	row.add_child(vegetation)
-	button(row,"Gather / place",func():set_open(false);game._activate_ground_tool(vegetation.selected))
-	button(row,"Headlamp",func():game.headlamp.toggle())
-	instructions=Label.new();instructions.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;column.add_child(instructions)
-	dev_box=VBoxContainer.new();column.add_child(dev_box)
-	label=Label.new();label.text="DEVELOPMENT TOOLS";dev_box.add_child(label)
+	var root:=VBoxContainer.new();root.add_theme_constant_override("separation",14);panel.add_child(root)
+	label(root,"TERRAFOREST / ACTIONS").add_theme_font_size_override("font_size",26)
+	mode_label=label(root,"")
+	var columns:=HBoxContainer.new();columns.size_flags_vertical=Control.SIZE_EXPAND_FILL;columns.add_theme_constant_override("separation",24);root.add_child(columns)
+	var sidebar:=VBoxContainer.new();sidebar.custom_minimum_size.x=240;columns.add_child(sidebar)
+	for title in ["Session","Equipment","Building","Objects","Vegetation","Development","Roads"]:
+		navigation[title]=button(sidebar,title,show_page.bind(title))
+	button(sidebar,"Inventory / crafting",open_inventory)
+	button(sidebar,"Return to world",func():set_open(false))
+	scroll=ScrollContainer.new();scroll.size_flags_horizontal=Control.SIZE_EXPAND_FILL;scroll.size_flags_vertical=Control.SIZE_EXPAND_FILL;columns.add_child(scroll)
+	content=VBoxContainer.new();content.size_flags_horizontal=Control.SIZE_EXPAND_FILL;scroll.add_child(content)
+	var session:=page("Session")
+	label(session,"Your world").add_theme_font_size_override("font_size",22)
+	label(session,"Choose equipment or configure an action here, then return to the world to aim and use it. Building and Objects keep their detailed settings in this same window.")
+	button(session,"Save world",save_world)
+	button(session,"Load saved world",func():confirm("Discard unsaved changes and reload?",reload_world))
+	inventory_button=button(session,"Inventory / crafting",open_inventory)
+	button(session,"Headlamp on / off",func():game.headlamp.toggle();refresh())
+	mode_button=button(session,"Development mode",toggle_developer)
+	button(session,"Save and quit",func():confirm("Save this world and quit?",func():game._notification(NOTIFICATION_WM_CLOSE_REQUEST)))
+	var equipment:=page("Equipment")
+	label(equipment,"Equipment and empty hands").add_theme_font_size_override("font_size",22)
+	label(equipment,"Every belt slot is selectable. Empty slots put your tools away. Materials can be held without activating an editor. Use Inventory to drag items into the ten belt slots.")
+	var grid:=GridContainer.new();grid.columns=2;equipment.add_child(grid)
+	for i in 10:
+		var choice:=button(grid,"",choose_slot.bind(i));choice.custom_minimum_size.x=460;belt_choices.append(choice)
+	for id in DESCRIPTIONS:label(equipment,DESCRIPTIONS[id])
+	label(equipment,"E always interacts with the aimed chest, vehicle or collectible. Tool actions use the mouse; menus configure them.")
+	var nature:=page("Vegetation")
+	label(nature,"Plants and stones").add_theme_font_size_override("font_size",22)
+	label(nature,"E gathers reachable ground cover with empty hands or any tool. Select an owned stack below to place it; right mouse plants/places one. Development permits free placement.")
+	for i in game.player_hud.GroundCatalog.COUNT:button(nature,game.player_hud.GroundCatalog.NAMES[i],choose_plant.bind(i))
+	dev_box=page("Development")
+	label(dev_box,"Editor controls - separate from inventory").add_theme_font_size_override("font_size",22)
+	label(dev_box,"Choose a terrain brush here. Building and Objects open the full editor palettes; Roads retains grading and street controls. None of these controls occupies an inventory slot.")
+	var row:=HBoxContainer.new();dev_box.add_child(row)
+	button(row,"Sculpt sphere",editor_tool.bind(3));button(row,"Sculpt box",editor_tool.bind(4));button(row,"Voxel cube",editor_tool.bind(1));button(row,"Grid box",editor_tool.bind(2))
+	button(row,"Blocks / shapes",show_page.bind("Building"));button(row,"Objects / transforms",show_page.bind("Objects"))
+	var radius:=SpinBox.new();brush_radius=radius;radius.min_value=0.25;radius.max_value=64;radius.step=0.25;radius.value=game.radius;radius.prefix="Brush radius (m) ";dev_box.add_child(radius)
+	radius.value_changed.connect(func(value: float):game.radius=value)
+	var material:=OptionButton.new();for title in ["Stone","Wood","Metal"]:material.add_item(title)
+	dev_box.add_child(material);material.item_selected.connect(func(index: int):game.material_id=index+1)
 	row=HBoxContainer.new();dev_box.add_child(row)
 	fly_button=button(row,"Flight",toggle_flight)
-	button(row,"Diagnostics",func():set_open(false);dispatch(KEY_F3))
-	button(row,"Road editor",func():set_open(false);game._set_player_tool_mode(false,false,game.tool);Input.mouse_mode=Input.MOUSE_MODE_VISIBLE)
-	button(row,"Place vehicle",func():set_open(false);dispatch(KEY_V))
-	button(dev_box,"Building / settlement editor",func():set_open(false);game._set_player_tool_mode(true,false,game.tool);Input.mouse_mode=Input.MOUSE_MODE_VISIBLE)
-	mode_button=button(column,"Development mode (~)",toggle_developer)
-	mode_button.tooltip_text="Tap the ` / ~ key to switch modes. Hold for 0.45 seconds and release to toggle development flight."
-	message=Label.new();message.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;column.add_child(message)
-	button(column,"Save and quit",func():confirm("Save this world and quit?",func():game._notification(NOTIFICATION_WM_CLOSE_REQUEST)))
-	game.terrain.save_completed.connect(func(ok: bool):message.text="World saved" if ok else "Save failed; check world status")
+	button(row,"Diagnostics",func():run_command(KEY_F3))
+	button(row,"Place vehicle",func():run_command(KEY_V))
+	button(row,"Carve lake at aim",func():run_command(KEY_L))
+	row=HBoxContainer.new();dev_box.add_child(row)
+	button(row,"Place actor",func():run_command(KEY_J));button(row,"Select / send actor",func():run_command(KEY_K))
+	button(row,"Remove actor",func():run_command(KEY_J,true));button(row,"Stop actor",func():run_command(KEY_K,true))
+	var options:=GridContainer.new();options.columns=3;dev_box.add_child(options)
+	for entry in [["Next test site",KEY_F2],["Next biome",KEY_F4],["LOD colours",KEY_F6],["Grass texture",KEY_F7],["Debug light",KEY_F8],["Terrain visualization",KEY_F10]]:
+		button(options,entry[0],run_command.bind(entry[1]))
+	button(dev_box,"Reset world...",func():confirm("Erase this world state and generate it again?",func():set_open(false);game.terrain.reload_world(true)))
+	button(dev_box,"Return to gameplay",toggle_developer)
+	message=label(root,"")
 	confirmation=ConfirmationDialog.new();confirmation.confirmed.connect(func():pending_action.call());add_child(confirmation)
-	panel.hide();refresh()
-func confirm(text: String,action: Callable) -> void:
-	pending_action=action;confirmation.dialog_text=text;confirmation.popup_centered(Vector2i(450,160))
-func refresh() -> void:
-	inventory_button.disabled=game.world_vehicle.driving
-	mode_label.text="DEVELOPMENT · free editing" if developer else "GAMEPLAY · resource costs enabled"
-	mode_button.text="Return to gameplay (~)" if developer else "Enter development mode (~)"
-	instructions.text="Drag inventory stacks to arrange the ten-slot belt. Shift-drag splits a stack.\nE interacts · "+("Alt + 1–9 / 0" if developer else "1–9 / 0")+" equip · Tab inventory · Esc menu"
-	dev_box.visible=developer;fly_button.text="Flight: "+("on" if game.fly else "off")
+	game.terrain.save_completed.connect(func(ok: bool):message.text="World saved" if ok else "Save failed; check world status")
+	game.player_hud.actions_requested.connect(func():set_open(true))
+	panel.hide();refresh();dock_palettes.call_deferred()
+func dock_palettes() -> void:
+	for pair in [["Building",game.construction_palette.panel],["Objects",game.model_tool.panel],["Roads",game.road_palette.panel]]:
+		var host:=page(pair[0]);label(host,"Configure here, then Return to world to aim and use the mouse.")
+		var source: Control=pair[1];source.reparent(host);source.set_anchors_and_offsets_preset(Control.PRESET_TOP_LEFT)
+		source.position=Vector2.ZERO;source.size=Vector2.ZERO;source.custom_minimum_size=Vector2.ZERO;source.size_flags_horizontal=Control.SIZE_EXPAND_FILL
+		docked[pair[0]]=source
+	ready_to_dock=true;sync_panels()
+func visible_ui() -> bool:return opened or workspace
 func set_open(value: bool) -> void:
-	if opened==value:return
-	if value:
-		game.storage.close();game.player_hud.set_open(false)
-	opened=value;panel.visible=value
+	game.storage.close();game.player_hud.set_open(false)
+	workspace=false;opened=value;panel.visible=value
 	game.player_hud.inventory_open=value;game.player_hud.enabled=not value
 	game._clear_motion();Input.mouse_mode=Input.MOUSE_MODE_VISIBLE if value else Input.MOUSE_MODE_CAPTURED
-	refresh()
+	if value:current_page="Session"
+	refresh();sync_panels()
+func show_page(title: String) -> void:
+	if title in ["Development","Roads"] and not developer:return
+	if title in ["Building","Objects","Roads"]:
+		if not ready_to_dock:return
+		if game.world_vehicle.driving:message.text="Exit the vehicle before choosing building tools.";return
+		set_open(false)
+		if developer:
+			game.player_hud.active_slot=-1;game.player_hud.active_item=0;game.editor_tool_active=true;game.equipped_tool=0;game.tool_view.equip(0)
+			if game.structure_mode!=(title!="Roads") or game.model_tool.active!=(title=="Objects"):
+				game._set_player_tool_mode(title!="Roads",title=="Objects",game.tool)
+		elif game.equipped_tool!=(3 if title=="Building" else 4) and not game.player_hud.equip_item(3 if title=="Building" else 4):
+			set_open(true);message.text="You need a "+game.player_hud.CATALOG[3 if title=="Building" else 4]+" in your inventory.";return
+		workspace=true;opened=false;panel.show();game.player_hud.enabled=false;Input.mouse_mode=Input.MOUSE_MODE_VISIBLE;game._clear_motion()
+	else:
+		if not opened:set_open(true)
+	current_page=title;refresh();sync_panels()
+func sync_panels() -> void:
+	if not ready_to_dock:return
+	for title in pages:pages[title].visible=visible_ui() and title==current_page
+	for title in docked:docked[title].visible=workspace and title==current_page
+	for control in game.construction_palette.editor_controls:control.visible=developer
+func refresh() -> void:
+	mode_label.text=("DEVELOPMENT / free authoring" if developer else "GAMEPLAY / items and material costs")+"    |    Headlamp: "+("on" if game.headlamp.visible else "off")
+	mode_button.text="Return to gameplay" if developer else "Enter development (~)"
+	fly_button.text="Flight: "+("on" if game.fly else "off")
+	for title in ["Development","Roads"]:navigation[title].visible=developer
+	for title in navigation:navigation[title].modulate=Color(0.65,1,0.8) if title==current_page else Color.WHITE
+	inventory_button.disabled=game.world_vehicle.driving
+	var state: Dictionary=game.player_hud.inventory.snapshot()
+	for i in belt_choices.size():
+		var item: int=state.slots[i].item
+		belt_choices[i].text="%d  %s"%[(i+1)%10,game.player_hud.CATALOG.get(item,game.player_hud.MATERIALS.get(item,game.player_hud.RESOURCES.get(item,"Empty hands")))]
+		belt_choices[i].disabled=game.world_vehicle.driving
+func choose_slot(slot: int) -> void:
+	set_open(false);game.player_hud.equip(slot)
+func choose_plant(species: int) -> void:
+	if not game.ground_enabled:message.text="Ground cover is disabled in this launch.";return
+	set_open(false)
+	if developer:
+		game.player_hud.active_slot=-1;game.player_hud.active_item=0;game.equipped_tool=0;game.tool_view.equip(0)
+		game.editor_tool_active=true;game._activate_ground_tool(species)
+	elif not game.player_hud.equip_item(game.player_hud.GroundCatalog.ITEMS[species]):
+		set_open(true);message.text="Gather this plant or stone first; its stack must be in your inventory."
+func editor_tool(tool: int) -> void:
+	if not developer:return
+	set_open(false);game.player_hud.active_slot=-1;game.player_hud.active_item=0;game.editor_tool_active=true;game.equipped_tool=0;game.tool_view.equip(0)
+	game.radius=brush_radius.value;game._set_player_tool_mode(false,false,tool)
+func open_inventory() -> void:
+	if game.world_vehicle.driving:message.text="Exit the vehicle before opening inventory.";return
+	set_open(false);game.player_hud.set_open(true)
 func toggle_developer() -> void:
-	if game.loading_active or game.shutdown_requested or game.site_preparation.status=="running" or game.site_survey.busy or not game._foundation_placement.is_empty() or not game.road_palette.pending.is_empty() or game.terrain.pending_edit or game.construction_inventory.busy or not game.construction_inventory.pending_prefab.is_empty():
+	if game.loading_active or game.shutdown_requested or game.site_preparation.status=="running" or game.site_survey.busy or not game._foundation_placement.is_empty() or not game.road_palette.pending.is_empty() or not game.road_authoring.phase.is_empty() or game.terrain.pending_edit or game.construction_inventory.busy or not game.construction_inventory.pending_prefab.is_empty():
 		message.text="Wait for the current world edit to finish.";return
 	developer=not developer
-	game.construction_inventory.gameplay=not developer;game.model_tool.gameplay=not developer;game.player_hud.gameplay_construction=not developer
-	game.mining_rewards.enabled=not developer
-	if not developer:game.fly=false;game._clear_motion()
-	game.player_hud.refresh();refresh()
+	game.construction_inventory.gameplay=not developer;game.model_tool.gameplay=not developer;game.player_hud.gameplay_construction=not developer;game.mining_rewards.enabled=not developer
+	if not developer:game.fly=false
+	var had_ui:=visible_ui();set_open(false);game.player_hud.active_slot=-1;game.player_hud.active_item=0;game._equip_player_tool(0);game.player_hud.refresh()
+	if had_ui:set_open(true)
+	refresh()
 func toggle_flight() -> void:
 	if not developer or game.world_vehicle.driving:return
 	game.fly=not game.fly;game._clear_motion();refresh()
+func confirm(text: String,action: Callable) -> void:
+	pending_action=action;confirmation.dialog_text=text;confirmation.popup_centered(Vector2i(450,160))
 func save_world() -> void:
 	if game.world_vehicle.driving and not game.world_vehicle.safe_exit_position(game).is_finite():message.text="Park beside clear ground before saving.";return
-	game.terrain.save_world();message.text="Saving…"
-func reload_world() -> void:
-	set_open(false);game.terrain.reload_world(false)
-func dispatch(key: int) -> void:
-	var event:=InputEventKey.new();event.pressed=true;event.physical_keycode=key;game._unhandled_input(event)
+	game.terrain.save_world();message.text="Saving..."
+func reload_world() -> void:set_open(false);game.terrain.reload_world(false)
+func run_command(key: int,shift: bool=false) -> void:
+	if not developer:return
+	set_open(false);var event:=InputEventKey.new();event.pressed=true;event.physical_keycode=key;event.shift_pressed=shift;game._unhandled_input(event)
 func _input(event: InputEvent) -> void:
 	if not event is InputEventKey or event.echo:return
 	if event.physical_keycode==KEY_QUOTELEFT:
-		if event.pressed:tilde_down=Time.get_ticks_msec()
+		if event.pressed:tilde_down=Time.get_ticks_msec();tilde_chord=false
 		elif tilde_down>=0:
-			if Time.get_ticks_msec()-tilde_down>=450:
+			if not tilde_chord:
+				if Time.get_ticks_msec()-tilde_down>=450:
+					if not developer:toggle_developer()
+					toggle_flight()
+				else:toggle_developer()
+			tilde_down=-1;tilde_chord=false
+		get_viewport().set_input_as_handled();return
+	# Consume chords before gameplay input; F must never reach the headlamp.
+	if tilde_down>=0:
+		if event.pressed:
+			tilde_chord=true
+			if event.physical_keycode==KEY_F:
 				if not developer:toggle_developer()
 				toggle_flight()
-			else:toggle_developer()
-			tilde_down=-1
 		get_viewport().set_input_as_handled();return
 	if event.pressed and event.physical_keycode==KEY_ESCAPE:
 		if confirmation.visible:confirmation.hide()
 		elif game.storage.opened:game.storage.close()
 		elif game.player_hud.inventory_open and not opened:game.player_hud.set_open(false)
-		else:set_open(not opened)
+		else:set_open(not visible_ui())
 		get_viewport().set_input_as_handled();return
-	if opened:return
-	if not developer and event.pressed and not game.player_hud.inventory_open:
+	if visible_ui():return
+	if event.pressed and not game.player_hud.inventory_open:
 		if event.physical_keycode in [KEY_1,KEY_2,KEY_3,KEY_4,KEY_5,KEY_6,KEY_7,KEY_8,KEY_9,KEY_0]:
 			game.player_hud.equip(9 if event.physical_keycode==KEY_0 else event.physical_keycode-KEY_1);get_viewport().set_input_as_handled()
-		elif event.physical_keycode in [KEY_G,KEY_F2,KEY_F3,KEY_F4,KEY_F6,KEY_F7,KEY_F8,KEY_F10,KEY_J,KEY_K,KEY_V,KEY_L] or (event.ctrl_pressed and event.physical_keycode==KEY_R):
+		elif (event.ctrl_pressed and event.physical_keycode==KEY_R) or event.physical_keycode in [KEY_M,KEY_B,KEY_H,KEY_P,KEY_T,KEY_G] or (not developer and event.physical_keycode in [KEY_F2,KEY_F3,KEY_F4,KEY_F6,KEY_F7,KEY_F8,KEY_F10,KEY_J,KEY_K,KEY_V,KEY_L]):
 			get_viewport().set_input_as_handled()
+
+func _notification(what: int) -> void:
+	if what==NOTIFICATION_APPLICATION_FOCUS_OUT:tilde_down=-1;tilde_chord=false
