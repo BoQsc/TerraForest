@@ -15,7 +15,7 @@ static func register(world: Node3D) -> Array[Dictionary]:
 static func recipes() -> Dictionary:
 	return {"furniture/table/v1":PackedInt64Array([102,6]),"furniture/chair/v1":PackedInt64Array([102,3]),"furniture/shelf/v1":PackedInt64Array([102,8])}
 
-static func furnished_cottage() -> Resource:
+static func furnished_cottage(with_storage: bool=false) -> Resource:
 	var source: Resource=load("res://addons/structures/prefabs/brick_cottage.tres")
 	var asset: Resource=ClassDB.instantiate("NativeBlockPrefab")
 	if not asset.configure(source.get_records()): return null
@@ -23,5 +23,9 @@ static func furnished_cottage() -> Resource:
 		{"model":"furniture/table/v1","transform":Transform3D(Basis.IDENTITY,Vector3(-1.3,1,0))},
 		{"model":"furniture/chair/v1","transform":Transform3D(Basis.IDENTITY,Vector3(-1.3,1,1.5))},
 		{"model":"furniture/shelf/v1","transform":Transform3D(Basis(Vector3.UP,PI),Vector3(2.5,1,-2.3))}]): return null
-	asset.resource_name="Furnished cottage"
+	if with_storage:
+		var attachments: Array=asset.get_model_attachments()
+		attachments.append({"model":"storage/wooden_chest/v1","transform":Transform3D(Basis.IDENTITY,Vector3(2.5,1,0))})
+		if not asset.configure_model_attachments(attachments): return null
+	asset.resource_name="Furnished cottage with storage" if with_storage else "Furnished cottage"
 	return asset

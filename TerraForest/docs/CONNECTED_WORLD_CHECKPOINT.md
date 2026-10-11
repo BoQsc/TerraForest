@@ -113,3 +113,8 @@ placement; wait for confirmation before F9 reload. Existing shelves stay furnitu
 For ladders, approach the front and use W/S; Space jumps away. Upright unit-scale
 ladders support approximately three-metre landings. Neither feature has received
 human acceptance yet. [Storage evidence and explicit limits](evidence/chest_storage/README.md).
+
+Newly placed **Furnished cottage with storage** prefabs include a usable chest
+beside the existing furniture. The old saved settlement is not retrofitted; add a
+chest with M/8 or place a new furnished cottage. Gameplay pays its normal block
+materials plus 25 wood for table, chair, shelf and chest. Each chest starts empty.

@@ -473,3 +473,13 @@ vehicle-entry probe through the actual world input dispatcher and chest physics
 picking, rather than spawning another vehicle simulation. Retained before/after
 results live in evidence/chest_interaction_priority. This is input arbitration
 coverage, not vehicle driving or combined performance qualification.
+
+### 2026-10-11: furnished storage integration
+
+New main-world furnished cottages include an independent wooden chest alongside
+the existing shelf. Both paid prefab routes now use chest/ladder recipes shared
+with individual placement. Thirty-two native-backed prefab checks and eight real
+world checks pass; legacy furniture-only placement still passes. Evidence:
+[evidence/storage_interior](evidence/storage_interior/README.md). Existing saved
+houses are unchanged. Full-scene model capture, salvage, human acceptance and
+performance qualification remain open; the short screenshot HUD reads 56 FPS.

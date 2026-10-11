@@ -1,0 +1,9 @@
+{
+  "addons/structures/construction_catalog.gd": "ab261e586669061949589006051372819bcac63f7ccd82476d43ff72b568e883",
+  "addons/structures/furniture_catalog.gd": "0b82921c6ab7fdd04d985eec838e55ff09731a78e52976261a38a6ff9b43b98e",
+  "addons/structures/storage_catalog.gd": "4c455cf8a34d2992be6986de9af5abe48626d9063e989b665f9a3e60503778c9",
+  "addons/structures/ladder_catalog.gd": "b6178e56dd76cda80e3ebc5fa117b37fc7e6407bab395d8c545df9c291eab499",
+  "demo/world.gd": "fa1f708d1dd939d5320e7d38cbd253d930b66c2171650160324ebcf28d35599d",
+  "tests/storage_prefab.gd": "e901191a529089cabb37b5643120041f0b89ce50f0a29cce31c1fb7ade8b6a0b",
+  "tests/storage_interior.gd": "7a527a488a242642fc8f6142f6e14b44636379d9aeec66cbf2917dd7ee5d1f09"
+}

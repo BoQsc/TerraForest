@@ -304,7 +304,7 @@ func _setup_prefabs() -> void:
 		if asset != null and asset.get_cell_count()>0:
 			structure_prefabs.append(asset)
 			asset.changed.connect(_invalidate_prefab_preview)
-	var furnished: Resource=preload("res://addons/structures/furniture_catalog.gd").furnished_cottage()
+	var furnished: Resource=preload("res://addons/structures/furniture_catalog.gd").furnished_cottage(true)
 	if furnished!=null:
 		structure_prefabs.append(furnished);furnished.changed.connect(_invalidate_prefab_preview)
 	var frontage=ClassDB.instantiate("NativeBlockPrefab")
@@ -1067,7 +1067,7 @@ func _advance_frontage_placement() -> void:
 	if world_vehicle.overlaps_edit(request.asset.placement_bounds(request.target,request.rotation)):
 		_placement_notice(request,"Move the vehicle clear before placing frontage");return
 	if not request.asset.get_model_attachments().is_empty():
-		if construction_inventory.begin_prefab(structures.blocks,player_hud.inventory,request.asset,request.target,request.rotation,structures.model_collections(),preload("res://addons/structures/furniture_catalog.gd").recipes(),[model_tool.protection()]):
+		if construction_inventory.begin_prefab(structures.blocks,player_hud.inventory,request.asset,request.target,request.rotation,structures.model_collections(),preload("res://addons/structures/construction_catalog.gd").recipes(),[model_tool.protection()]):
 			request.preparing=true;request.terrain_epoch=terrain.epoch;request.terrain_revision=terrain.density_revision
 			_foundation_placement=request;_show_lake_notice("Preparing furnished buildings...")
 		else:_placement_notice(request,construction_inventory.reason)
@@ -1200,7 +1200,7 @@ func _drop_inventory_supply(slot: int, revision: int) -> void:
 	player_hud.refresh()
 
 func _place_combined_prefab(asset: Resource,target: Vector3i,rotation: int) -> bool:
-	return construction_inventory.place_prefab(structures.blocks,player_hud.inventory,asset,target,rotation,structures.model_collections(),preload("res://addons/structures/furniture_catalog.gd").recipes(),[model_tool.protection()])
+	return construction_inventory.place_prefab(structures.blocks,player_hud.inventory,asset,target,rotation,structures.model_collections(),preload("res://addons/structures/construction_catalog.gd").recipes(),[model_tool.protection()])
 
 func _prefab_placement_text(asset: Resource) -> String:
 	var attached: bool=not construction_inventory.prefab_transaction.model_counts(asset).is_empty()
