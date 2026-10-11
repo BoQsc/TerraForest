@@ -43,3 +43,7 @@ manual LOD scheduler or custom renderer is introduced.
 Next art decisions should follow a human view in the combined scene: silhouettes,
 scale, colour, fine-blade aliasing, stone texture style, and useful species/shape
 variants. The current population and coverage are not a finished forest floor.
+
+The woodland mesh factory also authors three sparse flower colours, low bushes and
+dry twig clusters. These are original 0BSD geometry; no external asset sources.
+See `docs/evidence/woodland_accents` for interactions, rarity and save compatibility.

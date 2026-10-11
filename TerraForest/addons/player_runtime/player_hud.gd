@@ -7,8 +7,15 @@ signal inventory_changed
 signal drop_requested(slot: int, revision: int)
 const CATALOG: Dictionary={1:"Sculpt sphere",2:"Sculpt cube",3:"Build blocks",4:"Place objects"}
 const MATERIALS: Dictionary={101:"Brick",102:"Wood",103:"Concrete",104:"Metal"}
-const RESOURCES: Dictionary={201:"Stone",202:"Iron ore",203:"Copper ore",204:"Plant",205:"Grass clump"}
-const GROUND_ITEMS: Dictionary={201:0,204:1,205:2}
+# UI metadata is local so this addon remains independently loadable.
+# woodland_accents checks it against the ecosystem catalog.
+class GroundCatalog:
+	const COUNT:=8
+	const ITEMS: Array[int]=[201,204,205,206,207,208,209,210]
+	const COSTS: Array[int]=[201,204,205,206,207,208,209,102]
+	const NAMES: Array[String]=["Stone","Fern","Grass clump","White wildflower","Golden wildflower","Violet wildflower","Low bush","Dry twigs"]
+const RESOURCES: Dictionary={201:"Stone",202:"Iron ore",203:"Copper ore",204:"Plant",205:"Grass clump",206:"White wildflower",207:"Golden wildflower",208:"Violet wildflower",209:"Low bush",210:"Dry twigs"}
+const GROUND_ITEMS: Dictionary={201:0,204:1,205:2,206:3,207:4,208:5,209:6,210:7}
 var ground_tools_enabled:=false
 const STARTER_MATERIAL_COUNT:=64
 var inventory: RefCounted
@@ -56,16 +63,16 @@ func _refresh_ground_hint() -> void:
 	if ground_hint==null: return
 	ground_hint.visible=ground_species>=0 and not inventory_open
 	if ground_species<0: return
-	var names: Array[String]=["Stone","Plant","Grass clump"]
-	var items: Array[int]=[201,204,205]
+	var names: Array[String]=GroundCatalog.NAMES
+	var items: Array[int]=GroundCatalog.COSTS
 	var choices: Array[String]=[]
 	var available:=0
-	for i in range(3):
+	for i in range(GroundCatalog.COUNT):
 		choices.append("%d %s%s"%[i+1,names[i]," [selected]" if i==ground_species else ""])
 	for row: Dictionary in state.slots:
 		if row.item==items[ground_species]: available+=int(row.count)
-	var cost: String=("Place: 1 %s · have %d"%[names[ground_species],available]) if gameplay_construction else "Free placement · editor"
-	ground_hint.text="GROUND COVER  ·  "+"    /    ".join(choices)+"\n"+cost+"    ·    LMB / E "+("collect" if gameplay_construction else "remove")+"    ·    RMB place    ·    H exit"
+	var cost: String=("Place: 1 %s · have %d"%[MATERIALS.get(items[ground_species],names[ground_species]),available]) if gameplay_construction else "Free placement · editor"
+	ground_hint.text="GROUND COVER  ·  "+"  /  ".join(choices.slice(0,4))+"\n"+"  /  ".join(choices.slice(4))+"\n"+cost+"    ·    LMB / E "+("collect" if gameplay_construction else "remove")+"    ·    RMB place    ·    H exit"
 	if not ground_feedback.is_empty(): ground_hint.text+="\n"+ground_feedback
 
 func prepare() -> bool:

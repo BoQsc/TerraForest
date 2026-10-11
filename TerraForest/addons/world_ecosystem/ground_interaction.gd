@@ -1,7 +1,8 @@
 # SPDX-License-Identifier: 0BSD
 extends RefCounted
 signal changed
-const ITEMS: Array[int]=[201,204,205]
+const Catalog=preload("res://addons/world_ecosystem/ground_catalog.gd")
+const ITEMS=Catalog.COSTS
 var cover: Node3D
 # The normal scene ray must include terrain, buildings, trunks and vehicles.
 var scene_ray: Callable
@@ -29,7 +30,7 @@ func collect(from: Vector3,to: Vector3,inventory: RefCounted,gameplay: bool) -> 
 	var before: Dictionary={};var revision: int=-1
 	if gameplay:
 		before=inventory.snapshot()
-		var grant: Dictionary=inventory.grant_items(PackedInt64Array([ITEMS[hit.species],1]),before.revision)
+		var grant: Dictionary=inventory.grant_items(PackedInt64Array([Catalog.REWARDS[hit.species],1]),before.revision)
 		if not grant.ok: busy=false;return {"ok":false,"reason":"Make room in inventory"}
 		revision=grant.revision
 	var applied: bool=cover.picker.replace_cell(key,next)
@@ -46,7 +47,7 @@ func collect(from: Vector3,to: Vector3,inventory: RefCounted,gameplay: bool) -> 
 	return {"ok":true,"reason":"Collected ground cover" if gameplay else "Ground cover removed","id":hit.id}
 
 func placement_probe(species: int,from: Vector3,to: Vector3,inventory: RefCounted,gameplay: bool) -> Dictionary:
-	if not available() or not scene_ray.is_valid() or species<0 or species>2 or not from.is_finite() or not to.is_finite() or from.distance_squared_to(to)>64.01: return {"ok":false,"reason":"World interaction unavailable"}
+	if not available() or not scene_ray.is_valid() or species<0 or species>=Catalog.COUNT or not from.is_finite() or not to.is_finite() or from.distance_squared_to(to)>64.01: return {"ok":false,"reason":"World interaction unavailable"}
 	var hit: Dictionary=scene_ray.call(from,to)
 	if hit.is_empty() or not hit.position.is_finite() or not hit.normal.is_finite() or hit.normal.normalized().y<0.82: return {"ok":false,"reason":"Aim at a supported surface"}
 	var point: Vector3=hit.position+Vector3.UP*0.02

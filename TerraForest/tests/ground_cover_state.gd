@@ -47,7 +47,7 @@ func run() -> void:
 	pose.origin.x+=32
 	check(full.add(0,pose)!=0,"full cell does not prevent placement in another cell")
 	var invalid:=pose;invalid.origin.x=-1
-	check(full.add(0,invalid)==0 and full.add(3,pose)==0,"invalid positions and species rejected")
+	check(full.add(0,invalid)==0 and full.add(8,pose)==0,"invalid positions and species rejected")
 	check(fresh.restore_storage_snapshot(empty) and fresh.bind_world(1704,1) and fresh.profile().placed==0,"explicit empty-world restore clears old edit ownership")
 	var filtered=ClassDB.instantiate("NativeGroundCoverState");filtered.bind_world(1703,1)
 	var keys:=[]
@@ -56,13 +56,20 @@ func run() -> void:
 	check(samples.size()==3 and samples[0].origin.x==970 and samples[1].origin.x==971 and samples[2].origin.x==972,"authored samples use the same species order as packed queries")
 	var source: PackedByteArray=filtered.capture_storage_snapshot()
 	var visible: Array=filtered.query_filtered(Vector2i(30,30),PackedByteArray([1,0,0]),PackedByteArray([0,0,1]))
-	check(visible.size()==3 and visible[0].ids.is_empty() and visible[2].ids.is_empty() and visible[1].ids==PackedInt64Array([keys[2]]),"structure and water masks exclude exact authored identities")
+	check(visible.size()==8 and visible[0].ids.is_empty() and visible[2].ids.is_empty() and visible[1].ids==PackedInt64Array([keys[2]]),"structure and water masks exclude exact authored identities")
 	check(filtered.capture_storage_snapshot()==source and filtered.query_filtered(Vector2i(30,30),PackedByteArray([0,0,0]),PackedByteArray([0,0,0]))==filtered.query(Vector2i(30,30)),"exclusion preserves durable records and removing exclusion restores originals")
 	check(filtered.query_filtered(Vector2i(30,30),PackedByteArray(),PackedByteArray([0,0,0])).is_empty(),"mismatched authored exclusion mask rejects rather than publishing partial data")
 	check(filtered.support_points(Vector2i(30,30)).size()==6,"authored support generates two bounded density probes per item")
 	check(filtered.support_mask(PackedFloat32Array([-1,1,1,1,-1,-1]),PackedByteArray([0,0,0]))==PackedByteArray([0,1,1]),"support mask distinguishes supported floating and buried placements")
 	check(filtered.support_mask(PackedFloat32Array([1,1,1,-1,NAN,1]),PackedByteArray([1,1,1]))==PackedByteArray([0,1,1]),"structure support permits floor placement but not terrain burial or invalid samples")
 	check(filtered.support_mask(PackedFloat32Array([1]),PackedByteArray([0])).is_empty(),"partial density reply rejected")
+	var accents=ClassDB.instantiate("NativeGroundCoverState");accents.bind_world(1703,1)
+	var accent_ok:=true
+	for species in range(3,8): accent_ok=accent_ok and accents.add(species,pose)>0
+	var accent_data: PackedByteArray=accents.capture_storage_snapshot()
+	check(accent_ok and accent_data.decode_u64(8)==2 and fresh.restore_storage_snapshot(accent_data) and fresh.query(Vector2i(31,30))==accents.query(Vector2i(31,30)),"expanded species persist with explicit version 2")
+	var legacy:=saved.duplicate();legacy.encode_u64(8,1)
+	check(fresh.restore_storage_snapshot(legacy) and fresh.contains(1) and fresh.query(Vector2i(30,30))==rows,"version 1 restores legacy identity and removals")
 	DirAccess.make_dir_recursive_absolute("res://reports")
 	var report:={"checks":checks,"failures":failures}
 	var file:=FileAccess.open("res://reports/ground_cover_state.json",FileAccess.WRITE)

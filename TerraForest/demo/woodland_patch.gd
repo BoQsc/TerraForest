@@ -55,7 +55,7 @@ func run() -> void:
 	deadline=Time.get_ticks_msec()+10000
 	while not cover._requests.is_empty() and Time.get_ticks_msec()<deadline:await process_frame
 	var rng:=RandomNumberGenerator.new();rng.seed=1703
-	var counts: Array[int]=[0,0,0];var placed_ids:=PackedInt64Array();var owners: Dictionary={}
+	var counts: Array[int]=[0,0,0,0,0,0,0,0];var placed_ids:=PackedInt64Array();var owners: Dictionary={}
 	for row in 32:
 		var points:=PackedVector3Array()
 		for col in 32:
@@ -72,6 +72,11 @@ func run() -> void:
 			var species: int=1 if clustered and rng.randf()<0.42 else (0 if rng.randf()<0.025 else 2)
 			var scale: float=rng.randf_range(0.85,1.4)
 			var pose:=Transform3D(Basis(Vector3.UP,rng.randf()*TAU).scaled(Vector3.ONE*scale),point-Vector3.UP*0.03)
+			var accent: float=rng.randf()
+			if species==2:
+				if accent<0.015: species=3+rng.randi_range(0,2)
+				elif accent<0.04: species=6
+				elif accent<0.07: species=7
 			var id: int=cover.removed.add(species,pose)
 			if id==0:check(false,"authored patch stays within capacity");await stop();return
 			counts[species]+=1;placed_ids.append(id)
@@ -90,6 +95,7 @@ func run() -> void:
 	if heights.is_empty():check(false,"viewpoint sampling completed");await stop();return
 	var label:=Label.new();label.position=Vector2(400,32);label.add_theme_font_size_override("font_size",22)
 	label.text="WOODLAND DENSITY REVIEW / disposable world\n%d grass clumps · %d plants · %d stones / 14.4 × 14.4 m\nWASD move · mouse look · H remove/place · G fly"%[counts[2],counts[1],counts[0]]
+	label.text+="\n%d rare flowers / %d bushes / %d twig clusters"%[counts[3]+counts[4]+counts[5],counts[6],counts[7]]
 	root.add_child(label)
 	DirAccess.make_dir_recursive_absolute("res://reports/woodland_patch")
 	for view in 2:
@@ -109,7 +115,7 @@ func run() -> void:
 		var now:=Time.get_ticks_usec();frames.append((now-previous)/1000.0);previous=now
 		gpu.append(RenderingServer.viewport_get_measured_render_time_gpu(root.get_viewport_rid()))
 	frames.sort();gpu.sort()
-	var result:={"checks":checks,"failures":failures,"counts_stone_plant_grass":counts,"authored":placed_ids.size(),"published_authored":published_authored,"area_m2":14.4*14.4,"owners":owners.size(),"center":[center.x,center.z],"presentation":presentation,"scope":"Dense visual review on actual forest terrain, interactive authored identities. Published count is supported resident records, not a count of pixels or frustum visibility. Not a global density change or performance qualification."}
+	var result:={"checks":checks,"failures":failures,"counts_by_species":counts,"authored":placed_ids.size(),"published_authored":published_authored,"area_m2":14.4*14.4,"owners":owners.size(),"center":[center.x,center.z],"presentation":presentation,"scope":"Dense visual review on actual forest terrain, interactive authored identities. Published count is supported resident records, not a count of pixels or frustum visibility. Not a global density change or performance qualification."}
 	result["short_cost"]={"frames":120,"frame_p95_ms":frames[113],"frame_max_ms":frames[119],"gpu_p95_ms":gpu[113],"frame_p95_gate_ms":18.5,"frame_gate_pass":frames[113]<=18.5,"gpu":RenderingServer.get_video_adapter_name(),"cpu":OS.get_processor_name()}
 	var file:=FileAccess.open("res://reports/woodland_patch/result.json",FileAccess.WRITE);file.store_string(JSON.stringify(result,"  "));file.close()
 	print("WOODLAND_PATCH ",JSON.stringify(result))

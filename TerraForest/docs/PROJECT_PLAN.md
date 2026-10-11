@@ -323,3 +323,11 @@ Ground-cover mesh LOD now uses native ArrayMesh index tiers: stone54->12, plant2
 User-directed vegetation art pass: natural temperate woodland sample now replaces the simple main-world stone/plant/grass assets. Original0BSD mesh authoring, reproducible stone colour/normal maps, folded leaflets/stems, curved green/dry blades and restrained shader wind provide a more representative visual workload. Near triangles360/1512/504, distant48/392/72; this is higher detail, not an optimization claim. Visual14, native LOD28, actual-world interaction/exclusion66 and packaging4 checks pass. Evidence: docs/evidence/woodland_art. World screenshot HUD51FPS retained; sustained60FPS remains unqualified. One shape per category, fine-blade aliasing, sparse distribution, art refinement and human acceptance remain open. Next prioritize user visual review and representative species/shape variants before further vegetation performance tuning.
 
 Dense woodland review responds to sparse-art feedback: Play Woodland Preview.cmd creates a disposable14.4m-square authored patch (858grass,66plants,21stones), with normal interaction and no saved-world writes. Player-height screenshots and handoff check retained in docs/evidence/woodland_patch; guide docs/WOODLAND_PREVIEW.md. It exposed authored support rounding:945accepted/170published before,945published after a native interpolated density query plus validated worker handoff. Existing integer/depth probe semantics remain. Native debug/release10each, streaming83 and actual-world interaction/exclusion/mined-support checks pass. The120-frame combined sample still fails18.5ms p95 at18.774ms (max20.949, GPU p95 5.811ms), not sustained60FPS or vegetation-only attribution. Fine-blade aliasing, repeated forms, global density/biome design, final art acceptance and sustained headroom remain open. No global density increase or saved-world migration.
+
+### 2026-10-11: sparse woodland accents
+
+Added three collectible flower colours, low bushes and dry wood-yielding twigs to
+the native ground-cover pipeline and disposable dense preview. Existing save
+versions migrate on write; removal identities remain stable. See
+`evidence/woodland_accents/README.md`. This is content coverage, not closure of
+the open frame-time/thermal gates or final vegetation art acceptance.

@@ -6,14 +6,14 @@ The preview creates a fresh derived cache and blocks snapshot writes. Closing
 discards edits; F5 does not make a persistent version of this preview. The cache
 and launch logs are retained. Use the normal window close action to exit.
 
-The default generator1/seed1703 patch contains858 grass clumps,66 plants and21
-stones in14.4 by14.4 metres, across four existing placement owners. A curved gap
+The current generator1/seed1703 patch contains 818 grass clumps, 63 ferns, 18
+stones, 12 flowers, 16 bushes and 19 twig clusters in14.4 by14.4 metres, across four existing placement owners. A curved gap
 leaves a walking path, with clustered plants beside it. It uses the same native
 ground-cover state, support checks, picker and rendering batches as gameplay.
 This is a local authored preview, not a global vegetation density increase.
 
-WASD/mouse control the normal player. H enables removal/placement;1/2/3 chooses
-stone/plant/grass. LMB/E removes and RMB places in the free editor. G toggles flight.
+WASD/mouse control the normal player. H enables removal/placement; keys 1-8 choose
+stone, fern, grass, white/gold/violet flowers, bush and dry twigs. LMB/E removes and RMB places in the free editor. G toggles flight.
 The launcher starts fullscreen1920x1080, cap60, with the normal15FPS unfocused cap
 restored after preparation. Automated screenshots/checks keep cap60 throughout.
 
@@ -53,3 +53,6 @@ The first release invocation passed native assertions but its wrapper required
 a JSON report the fixture did not yet write; the fixture now writes it and the
 complete release invocation passes. These are separate from the retained frame
 gate failure.
+
+Latest accent preview and checks: `docs/evidence/woodland_accents`. Earlier measurements
+and the support-fix history below/above remain historical evidence.

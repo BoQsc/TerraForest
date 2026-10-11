@@ -1,0 +1,139 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] New world
+[TerrainRewrite] New world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+PASS actual world becomes ready
+PASS normal-world ground cover enabled
+PASS real support and exclusion masks publish 49 cells
+PASS real terrain has bounded ground-cover population
+PASS ground resource fixture admitted 201
+[TerrainRewrite] Sculpt sphere
+[TerrainRewrite] Stone; LMB/E remove; RMB place
+PASS Alt+1 equips ground resource 201
+PASS equipping does not consume ground resource 201
+PASS ground selection saves current pose with compatible tool 201
+PASS ground resource belt button enabled 201
+PASS ground resource fixture admitted 204
+[TerrainRewrite] Sculpt sphere
+[TerrainRewrite] Fern; LMB/E remove; RMB place
+PASS Alt+1 equips ground resource 204
+PASS equipping does not consume ground resource 204
+PASS ground selection saves current pose with compatible tool 204
+PASS ground resource belt button enabled 204
+PASS ground resource fixture admitted 205
+[TerrainRewrite] Sculpt sphere
+[TerrainRewrite] Grass clump; LMB/E remove; RMB place
+PASS Alt+1 equips ground resource 205
+PASS equipping does not consume ground resource 205
+PASS ground selection saves current pose with compatible tool 205
+PASS ground resource belt button enabled 205
+PASS ground resource fixture admitted 206
+[TerrainRewrite] Sculpt sphere
+[TerrainRewrite] White wildflower; LMB/E remove; RMB place
+PASS Alt+1 equips ground resource 206
+PASS equipping does not consume ground resource 206
+PASS ground selection saves current pose with compatible tool 206
+PASS ground resource belt button enabled 206
+PASS ground resource fixture admitted 207
+[TerrainRewrite] Sculpt sphere
+[TerrainRewrite] Golden wildflower; LMB/E remove; RMB place
+PASS Alt+1 equips ground resource 207
+PASS equipping does not consume ground resource 207
+PASS ground selection saves current pose with compatible tool 207
+PASS ground resource belt button enabled 207
+PASS ground resource fixture admitted 208
+[TerrainRewrite] Sculpt sphere
+[TerrainRewrite] Violet wildflower; LMB/E remove; RMB place
+PASS Alt+1 equips ground resource 208
+PASS equipping does not consume ground resource 208
+PASS ground selection saves current pose with compatible tool 208
+PASS ground resource belt button enabled 208
+PASS ground resource fixture admitted 209
+[TerrainRewrite] Sculpt sphere
+[TerrainRewrite] Low bush; LMB/E remove; RMB place
+PASS Alt+1 equips ground resource 209
+PASS equipping does not consume ground resource 209
+PASS ground selection saves current pose with compatible tool 209
+PASS ground resource belt button enabled 209
+PASS ground resource fixture admitted 210
+[TerrainRewrite] Sculpt sphere
+[TerrainRewrite] Dry twigs; LMB/E remove; RMB place
+PASS Alt+1 equips ground resource 210
+PASS equipping does not consume ground resource 210
+PASS ground selection saves current pose with compatible tool 210
+PASS ground resource belt button enabled 210
+PASS pose restore clears transient ground interaction
+[TerrainRewrite] Sculpt sphere
+PASS disabled ground cover cannot be activated by belt
+[TerrainRewrite] Sculpt sphere
+[TerrainRewrite] Sculpt sphere
+[TerrainRewrite] Dry twigs; LMB/E remove; RMB place
+PASS H activates normal-world ground-cover tool
+PASS ground tool keeps its selected species visible
+PASS inventory hides ground controls
+PASS closing inventory restores ground controls
+[TerrainRewrite] Grass clump; LMB remove; RMB place
+PASS number key updates persistent selection
+PASS ground controls distinguish inventory cost from free editor
+PASS rejection fixture uses paid gameplay interactions
+PASS all 32 inventory slots filled for actual collection check
+[TerrainRewrite] Make room in inventory
+PASS full inventory gives actionable collection feedback
+PASS rejected collection preserves exact inventory revision and all resident records
+PASS rejected collection keeps original rendered identity
+PASS rejected collection keeps original pickable identity
+PASS original inventory restored after full-capacity rejection
+[TerrainRewrite] Collected ground cover
+PASS normal LMB removes aimed natural ground cover
+PASS supported empty position shows advisory placement outline
+PASS preview does not mutate ground or inventory
+PASS inventory suppresses placement outline
+PASS empty inventory fixture admitted
+[TerrainRewrite] Missing ground-cover item
+PASS stale successful preview cannot place after inventory emptied
+PASS unaffordable placement preserves exact inventory and ground state
+PASS collected item restored for normal placement
+[TerrainRewrite] Ground cover placed
+PASS normal RMB places selected ground cover on actual terrain
+PASS collect/place round trip preserves inventory contents in selected mode
+[TerrainRewrite] Ground cover updating
+PASS repeated click during publication cannot duplicate placement or payment
+PASS authored placement finishes terrain publication
+PASS occupied position rejects another placement preview
+PASS actual block overlaps authored ground-cover position
+PASS local exclusion update completes
+PASS building overlap excludes authored item from rendering
+PASS building overlap excludes authored item from interaction
+PASS local block change preserves distant owner and durable authored state
+PASS overlapping block removed
+PASS local exclusion update completes
+PASS removing block restores authored item under original identity
+PASS controlled native water volume bakes
+[TerrainRewrite] Lake ready · temporary world
+PASS local exclusion update completes
+PASS published water excludes submerged authored item
+PASS water exclusion preserves distant owner and durable authored state
+PASS local exclusion update completes
+PASS removing water restores same authored item
+PASS actual mining edit accepted beneath authored item
+[TerrainRewrite] Mined resources are available in inventory under Pending materials
+PASS mining publishes before support revalidation
+PASS local exclusion update completes
+PASS mined-away support removes floating authored item from rendering
+PASS mined-away support removes interaction proxy
+PASS mining preserves authored record and distant resident identities
+PASS species has bounded GPU residency
+PASS species has bounded GPU residency
+PASS species has bounded GPU residency
+PASS species has bounded GPU residency
+PASS species has bounded GPU residency
+PASS species has bounded GPU residency
+PASS species has bounded GPU residency
+PASS species has bounded GPU residency
+PASS fullscreen 1080p with 60 FPS cap
+[TerrainRewrite] Sculpt sphere
+PASS leaving ground mode removes contextual controls
+[TerrainRewrite] Temporary test world: save skipped
+GROUND_COVER_INTERACTION_WORLD failures=0

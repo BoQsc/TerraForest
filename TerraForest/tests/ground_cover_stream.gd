@@ -42,7 +42,7 @@ func run() -> void:
 	var persistence=load("res://addons/world_runtime/world_persistence.gd").new()
 	check(cover.prepare(persistence),"removal provider registers with world persistence")
 	root.add_child(cover);cover.set_process(false)
-	check(cover.batches.size()==3,"three native species render collections initialized")
+	check(cover.batches.size()==8,"eight native species render collections initialized")
 	for i in range(49):
 		cover._process(0.0)
 		check(terrain.requests.size()==1,"one outstanding support batch %d"%i)

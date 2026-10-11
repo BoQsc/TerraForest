@@ -17,11 +17,11 @@ protected:
     }
 public:
     bool replace_cell(Vector2i key,const Array &species){
-        if(!valid_cell(key)||species.size()!=3)return false;
+        if(!valid_cell(key)||species.size()!=8)return false;
         int owner=key.y*63+key.x;
         if(!cells.count(owner)&&cells.size()>=49)return false;
         std::vector<Item> staged;std::unordered_set<int64_t> seen;
-        for(int s=0;s<3;++s){
+        for(int s=0;s<8;++s){
             if(species[s].get_type()!=Variant::DICTIONARY)return false;
             Dictionary row=species[s];
             if(!row.has("ids")||!row.has("transforms")||row["ids"].get_type()!=Variant::PACKED_INT64_ARRAY||row["transforms"].get_type()!=Variant::PACKED_FLOAT32_ARRAY)return false;

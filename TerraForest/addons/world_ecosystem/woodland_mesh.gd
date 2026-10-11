@@ -100,10 +100,62 @@ func grass(low: bool) -> void:
 		var tint:=Color("858255") if blade%7==0 else Color("4b713b").lerp(Color("85984e"),0.5+0.5*sin(blade*2.17))
 		ribbon(points,widths,side,tint,0.35)
 
+func twig_branch(a: Vector3,b: Vector3,width: float) -> void:
+	var side: Vector3=(b-a).cross(Vector3.UP).normalized()*width
+	if side.length_squared()<0.000001: side=Vector3.RIGHT*width
+	var up:=Vector3.UP*width
+	var tint:=Color("82715a")
+	tri(a-side,b-side,b+side,tint);tri(a-side,b+side,a+side,tint)
+	tri(a-up,b-up,b+up,tint);tri(a-up,b+up,a+up,tint)
+
+func twigs(low: bool) -> void:
+	for i in (3 if low else 5):
+		var angle: float=i*2.399963
+		var direction:=Vector3(cos(angle),0,sin(angle))
+		var start: Vector3=-direction*0.20+Vector3.UP*(0.035+i*0.014)
+		var end: Vector3=direction*0.28+Vector3.UP*(0.06+i*0.025)
+		twig_branch(start,end,0.008)
+		if not low: twig_branch(start.lerp(end,0.6),end+Vector3(-direction.z,0.05,direction.x)*0.12,0.004)
+
+func bush(low: bool) -> void:
+	for i in (5 if low else 9):
+		var angle: float=i*2.399963
+		var axis:=Vector3(cos(angle),0,sin(angle))
+		var side:=Vector3(-axis.z,0,axis.x)
+		var end: Vector3=axis*0.20+Vector3.UP*(0.38+0.11*sin(i*1.7))
+		twig_branch(Vector3.UP*0.015,end,0.006)
+		for j in (3 if low else 5):
+			var root_point: Vector3=end*(0.4+j*0.12)
+			for sign_value in [-1.0,1.0]:
+				var tip: Vector3=root_point+side*sign_value*0.11+axis*0.04+Vector3.UP*0.04
+				ribbon([root_point,root_point.lerp(tip,0.5)+Vector3.UP*0.02,tip],[0.0,0.037,0.0],axis,Color("426342").lerp(Color("77904a"),float(j)/8),0.25)
+
+func flower(low: bool,tint: Color,petals: int) -> void:
+	for i in (2 if low else 3):
+		var angle: float=i*2.399963
+		var axis:=Vector3(cos(angle),0,sin(angle))
+		var side:=Vector3(-axis.z,0,axis.x)
+		var top: Vector3=axis*0.10+Vector3.UP*(0.36+i*0.07)
+		ribbon([axis*0.02+Vector3.UP*0.01,top],[0.005,0.002],side,Color("507042"),0.0)
+		for sign_value in [-1.0,1.0]:
+			var base: Vector3=top*0.45
+			ribbon([base,base+side*sign_value*0.075+Vector3.UP*0.03,base+side*sign_value*0.14+Vector3.UP*0.04],[0.0,0.026,0.0],axis,Color("4b773f"),0.2)
+		for petal in petals:
+			var a: float=TAU*petal/petals
+			var direction:=Vector3(cos(a),0,sin(a));var across:=Vector3(-direction.z,0,direction.x)
+			var middle: Vector3=top+direction*0.043+Vector3.UP*0.018
+			tri(top,middle-across*0.019,middle+direction*0.032,tint)
+			tri(top,middle+direction*0.032,middle+across*0.019,tint)
+			tri(top+Vector3.UP*0.008,top+direction*0.015,top+Vector3(cos(a+TAU/petals),0,sin(a+TAU/petals))*0.015,Color("c5a14a"))
+
+func white_flower(low: bool) -> void: flower(low,Color("eee8d3"),7)
+func gold_flower(low: bool) -> void: flower(low,Color("d5b94c"),5)
+func violet_flower(low: bool) -> void: flower(low,Color("9984bb"),5)
+
 static func build(species: int,with_lod: bool=true) -> ArrayMesh:
-	if species<0 or species>2:return null
+	if species<0 or species>7:return null
 	var asset=load("res://addons/world_ecosystem/woodland_mesh.gd").new()
-	var method: String=["stone_mesh","fern","grass"][species]
+	var method: String=["stone_mesh","fern","grass","white_flower","gold_flower","violet_flower","bush","twigs"][species]
 	asset.call(method,false)
 	var full_count: int=asset.vertices.size();var indices:=PackedInt32Array()
 	for i in full_count:indices.append(i)
@@ -112,13 +164,14 @@ static func build(species: int,with_lod: bool=true) -> ArrayMesh:
 		asset.call(method,true)
 		var distant:=PackedInt32Array()
 		for i in range(full_count,asset.vertices.size()):distant.append(i)
-		lods[[0.03,0.025,0.02][species]]=distant
+		lods[[0.03,0.025,0.02,0.02,0.02,0.02,0.025,0.02][species]]=distant
 	var arrays:=[];arrays.resize(Mesh.ARRAY_MAX)
 	arrays[Mesh.ARRAY_VERTEX]=asset.vertices;arrays[Mesh.ARRAY_NORMAL]=asset.normals;arrays[Mesh.ARRAY_COLOR]=asset.colors;arrays[Mesh.ARRAY_TEX_UV]=asset.uvs;arrays[Mesh.ARRAY_INDEX]=indices
 	arrays[Mesh.ARRAY_TANGENT]=asset.tangents
 	var mesh:=ArrayMesh.new();mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES,arrays,[],lods)
 	mesh.custom_aabb=AABB(Vector3(-0.4,-0.2 if species==0 else 0,-0.4),Vector3(0.8,0.4 if species==0 else 0.75,0.8))
 	var material:=ShaderMaterial.new();material.shader=preload("res://addons/world_ecosystem/woodland.gdshader");material.set_shader_parameter("stone",species==0)
+	if species==7: material.set_shader_parameter("wind_strength",0.0)
 	if species==0:
 		for channel in ["color","normal"]:
 			var image:=Image.new()

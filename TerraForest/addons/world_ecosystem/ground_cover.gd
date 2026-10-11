@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: 0BSD
 extends Node3D
+const Catalog=preload("res://addons/world_ecosystem/ground_catalog.gd")
 const Tokens=preload("res://addons/volumetric_terrain/surface_tokens.gd")
 var terrain: Node3D
 var camera: Camera3D
@@ -38,10 +39,10 @@ func _ready() -> void:
 	if native==null or terrain==null or camera==null:
 		push_error("Ground cover requires prepared persistence, terrain and camera")
 		set_process(false);return
-	for species in range(3):
+	for species in range(Catalog.COUNT):
 		var batch: Node3D=ClassDB.instantiate("NativeStaticBatch")
 		add_child(batch)
-		if not batch.configure_asset("ground_cover/%d/v1"%species,_mesh(species)) or not batch.configure_render_streaming(true,[112.0,96.0,80.0][species],128,200000,2,8192):
+		if not batch.configure_asset("ground_cover/%d/v1"%species,_mesh(species)) or not batch.configure_render_streaming(true,Catalog.DISTANCES[species],128,200000,2,8192):
 			push_error("Ground cover renderer initialization failed");set_process(false);return
 		batch.set_casts_shadows(species==0)
 		batches.append(batch)
@@ -62,7 +63,7 @@ func reset() -> void:
 
 func _retire(key: Vector2i) -> void:
 	picker.remove_cell(key)
-	for species in range(3):
+	for species in range(Catalog.COUNT):
 		batches[species].remove_instances(resident[key][species].ids)
 
 func _process(_delta: float) -> void:
@@ -108,7 +109,7 @@ func _surface_ready(token: int,points: PackedVector3Array,normals: PackedVector3
 	for i in range(mask.size()):
 		if (structures!=null and structure_mask[i]) or (water!=null and water_mask[i]): mask[i]=1
 	var packed: Array=native.pack(placed.ids,placed.transforms,mask)
-	if packed.size()!=3: rejected_batches+=1;return
+	if packed.size()!=Catalog.COUNT: rejected_batches+=1;return
 	var authored_poses: Array[Transform3D]=removed.sample_transforms(request.key)
 	if authored_poses.is_empty():
 		_publish(request.key,packed,authored_poses,PackedByteArray());return
@@ -137,24 +138,24 @@ func _publish(key: Vector2i,packed: Array,authored_poses: Array[Transform3D],uns
 	for i in range(unsupported.size()):
 		if unsupported[i]: authored_blocked[i]=1
 	var authored: Array=removed.query_filtered(key,authored_blocked,authored_water)
-	if authored.size()!=3: rejected_batches+=1;return
-	for species in range(3):
+	if authored.size()!=Catalog.COUNT: rejected_batches+=1;return
+	for species in range(Catalog.COUNT):
 		packed[species].ids.append_array(authored[species].ids)
 		packed[species].transforms.append_array(authored[species].transforms)
 	if resident.get(key,[])==packed: _dirty.erase(key);return
 	var previous: Array=resident.get(key,[])
 	if not picker.replace_cell(key,packed): rejected_batches+=1;return
-	for species in range(3):
+	for species in range(Catalog.COUNT):
 		if not batches[species].upsert_instances(packed[species].ids,packed[species].transforms):
 			# Restore interaction and all collections if any publication fails.
 			if previous.is_empty(): picker.remove_cell(key)
 			else: picker.replace_cell(key,previous)
-			for rollback in range(3):
+			for rollback in range(Catalog.COUNT):
 				batches[rollback].remove_instances(packed[rollback].ids)
 				if not previous.is_empty(): batches[rollback].upsert_instances(previous[rollback].ids,previous[rollback].transforms)
 			rejected_batches+=1;return
 	if not previous.is_empty():
-		for species in range(3):
+		for species in range(Catalog.COUNT):
 			var retired:=PackedInt64Array()
 			for id in previous[species].ids:
 				if not packed[species].ids.has(id): retired.append(id)

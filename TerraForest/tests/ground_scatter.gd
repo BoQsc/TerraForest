@@ -58,7 +58,7 @@ func run() -> void:
 	check(fresh.restore_storage_snapshot(state.capture_storage_snapshot()),"removal snapshot restores into new native state")
 	var packed: Array=scatter.pack(placed.ids,placed.transforms,fresh.mask(placed.ids))
 	var count:=0
-	var correct:=packed.size()==3
+	var correct:=packed.size()==8
 	for species in packed:
 		count+=species.ids.size()
 		correct=correct and not species.ids.has(data.ids[5]) and species.transforms.size()==species.ids.size()*12

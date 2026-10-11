@@ -40,7 +40,7 @@ func run() -> void:
 	game.app_focused=true;Input.mouse_mode=Input.MOUSE_MODE_CAPTURED
 	var original_loadout: PackedByteArray=game.player_hud.capture_snapshot()
 	var belt_key:=InputEventKey.new();belt_key.physical_keycode=KEY_1;belt_key.pressed=true;belt_key.alt_pressed=true
-	for item: int in [201,204,205]:
+	for item: int in game.player_hud.GroundCatalog.ITEMS:
 		var fixture: RefCounted=ClassDB.instantiate("NativePlayerInventory");fixture.register_item(item,999);fixture.grant(item,1,fixture.snapshot().revision)
 		check(game.player_hud.restore_snapshot(fixture.capture_storage_snapshot()),"ground resource fixture admitted %d"%item)
 		var before: PackedByteArray=game.player_hud.capture_snapshot()

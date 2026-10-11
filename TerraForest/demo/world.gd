@@ -445,7 +445,7 @@ func _setup_hud() -> void:
 	help.add_theme_font_size_override("font_size", 15)
 	help.text=help.text.replace("B  Terrain / Blocks", "B  Terrain / Blocks    M  Objects    E  Collect / Harvest")
 	help.text+="\nV  Place vehicle    E  Enter / exit stopped vehicle    F5  Save world and vehicle    F  Headlamp"
-	if ground_enabled: help.text+="    H Ground cover: 1 stone / 2 plant / 3 grass; LMB/E remove; RMB place"
+	if ground_enabled: help.text+="    H Ground cover: 1-8 select; LMB/E remove; RMB place"
 	help.offset_top = -108
 	help.add_theme_color_override("font_color", Color("e6eee9"))
 	var panel := PanelContainer.new()
@@ -489,12 +489,12 @@ func _equip_player_tool(item: int) -> void:
 	_set_player_tool_mode(item==3 or item==4,item==4,3 if item==1 else (1 if item==2 else tool))
 
 func _activate_ground_tool(species: int) -> bool:
-	if not ground_enabled or world_vehicle.driving or species<0 or species>2:return false
+	if not ground_enabled or world_vehicle.driving or species<0 or species>=player_hud.GroundCatalog.COUNT:return false
 	if not _set_player_tool_mode(false,false,tool):return false
 	ground_mode=true;ground_species=species
 	player_hud.show_ground_tool(species)
-	player_hud.show_active_tool([201,204,205][species])
-	_show_lake_notice(["Stone","Plant","Grass clump"][species]+"; LMB/E remove; RMB place")
+	player_hud.show_active_tool(player_hud.GroundCatalog.ITEMS[species])
+	_show_lake_notice(player_hud.GroundCatalog.NAMES[species]+"; LMB/E remove; RMB place")
 	return true
 func _sync_player_tool() -> void:
 	_sync_construction_palette()
@@ -648,11 +648,11 @@ func _unhandled_input(event: InputEvent) -> void:
 		else:_activate_ground_tool(ground_species)
 		return
 	if ground_mode:
-		if event is InputEventKey and event.pressed and not event.echo and event.physical_keycode in [KEY_1,KEY_2,KEY_3]:
+		if event is InputEventKey and event.pressed and not event.echo and event.physical_keycode in [KEY_1,KEY_2,KEY_3,KEY_4,KEY_5,KEY_6,KEY_7,KEY_8]:
 			ground_species=event.physical_keycode-KEY_1
 			player_hud.show_ground_tool(ground_species)
-			player_hud.show_active_tool([201,204,205][ground_species])
-			_show_lake_notice(["Stone","Plant","Grass clump"][ground_species]+"; LMB remove; RMB place");return
+			player_hud.show_active_tool(player_hud.GroundCatalog.ITEMS[ground_species])
+			_show_lake_notice(player_hud.GroundCatalog.NAMES[ground_species]+"; LMB remove; RMB place");return
 		var remove_action: bool=event is InputEventKey and event.pressed and not event.echo and event.physical_keycode==KEY_E
 		var mouse_action: bool=event is InputEventMouseButton and event.button_index in [MOUSE_BUTTON_LEFT,MOUSE_BUTTON_RIGHT]
 		if remove_action or mouse_action:
