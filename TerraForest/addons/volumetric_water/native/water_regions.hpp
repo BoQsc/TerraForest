@@ -6,6 +6,7 @@ namespace terraforest {
 // Serialized active-region ownership and reciprocal geometry gate. No liquid ledger.
 class NativeWaterRegions : public godot::RefCounted {
     friend class NativeWaterNetwork;
+    friend class NativeWaterRemapPlan;
     GDCLASS(NativeWaterRegions,godot::RefCounted)
     using RegionKey=std::array<int32_t,3>;
     using PortKey=std::array<int32_t,8>;

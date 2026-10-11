@@ -8,6 +8,7 @@ namespace terraforest {
 // Worker-owned, resumable regional merge forest. No fluid quantity is stored here.
 class NativeWaterBasins : public godot::RefCounted {
     friend class NativeWaterNetwork;
+    friend class NativeWaterRemapPlan;
     GDCLASS(NativeWaterBasins,godot::RefCounted)
     friend class NativeWaterProfiles;
     struct Event { int height,type,a,b; };

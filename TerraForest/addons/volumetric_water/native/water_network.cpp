@@ -122,11 +122,11 @@ int NativeWaterNetwork::target(const Vector3i &coordinate,int64_t leaf) const {
     if(status!=1||!current())return -1;const auto it=indices.find({coordinate.x,coordinate.y,coordinate.z});if(it==indices.end())return -1;
     const auto &p=pieces[it->second];if(leaf<0||leaf>=p.profiles->leaves)return -1;return mapping[p.offset+leaf];
 }
-bool NativeWaterNetwork::begin_add(const Vector3i &coordinate,int64_t leaf,int64_t amount){const int id=target(coordinate,leaf);return id>=0&&solver->begin_add(id,amount);}
-bool NativeWaterNetwork::begin_remove(const Vector3i &coordinate,int64_t leaf,int64_t amount){const int id=target(coordinate,leaf);return id>=0&&solver->begin_remove(id,amount);}
+bool NativeWaterNetwork::begin_add(const Vector3i &coordinate,int64_t leaf,int64_t amount){const int id=target(coordinate,leaf);if(id<0||!solver->begin_add(id,amount))return false;++water_revision;return true;}
+bool NativeWaterNetwork::begin_remove(const Vector3i &coordinate,int64_t leaf,int64_t amount){const int id=target(coordinate,leaf);if(id<0||!solver->begin_remove(id,amount))return false;++water_revision;return true;}
 Dictionary NativeWaterNetwork::advance_settling(int64_t budget){
     if(status!=1||!current()){Dictionary out;if(solver.is_valid())out=solver->statistics();out["ok"]=false;out["work_events"]=0;return out;}
-    return solver->advance(budget);
+    Dictionary out=solver->advance(budget);if(int64_t(out.get("work_events",0))>0)++water_revision;return out;
 }
 Dictionary NativeWaterNetwork::inspect(const Vector3i &coordinate,int64_t leaf) const {
     const int id=target(coordinate,leaf);if(id>=0)return solver->inspect(id);Dictionary out;out["ok"]=false;return out;

@@ -178,3 +178,10 @@ Spatial query checkpoint (2026-10-11): `NativeWaterNetwork.probe` resolves settl
 water against actual tetrahedral void geometry and refuses busy/stale state.
 76 debug/release network checks pass; this does not complete terrain-edit remapping.
 See [query evidence](evidence/water_probe/README.md).
+
+Geometric remap checkpoint (2026-10-11): `NativeWaterRemapPlan` measures old wet
+geometry against edited voids and assigns canonical ml to replacement leaves or
+explicit displacement. 141 debug/release network checks, 2,462 analytic clipping
+cases and actual repeated TerrainCore excavation pass. The plan does not transfer
+ownership: atomic settlement/retirement and displaced-water routing remain open.
+See [remap evidence](evidence/water_remap/README.md).

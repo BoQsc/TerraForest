@@ -1,0 +1,452 @@
+{
+  "checks": 141,
+  "costs": [
+    {
+      "budget": 128,
+      "calls": 9,
+      "max_call_us": 380,
+      "statistics": {
+        "current": true,
+        "error": "",
+        "global_leaves": 2,
+        "local_leaves": 2,
+        "phase": 7,
+        "regions": 2,
+        "status": 1,
+        "water": {
+          "busy": false,
+          "events": 0,
+          "frames": 0,
+          "moved_ml": 0,
+          "nodes": 3,
+          "pending_ml": 0,
+          "profile_bytes": 264,
+          "ready": true,
+          "requested_ml": 0,
+          "roots": 1,
+          "total_ml": 0
+        },
+        "work_units_total": 1104
+      }
+    },
+    {
+      "budget": 128,
+      "calls": 9,
+      "max_call_us": 551,
+      "statistics": {
+        "current": true,
+        "error": "",
+        "global_leaves": 2,
+        "local_leaves": 2,
+        "phase": 7,
+        "regions": 2,
+        "status": 1,
+        "water": {
+          "busy": false,
+          "events": 0,
+          "frames": 0,
+          "moved_ml": 0,
+          "nodes": 3,
+          "pending_ml": 0,
+          "profile_bytes": 264,
+          "ready": true,
+          "requested_ml": 0,
+          "roots": 1,
+          "total_ml": 0
+        },
+        "work_units_total": 1104
+      }
+    },
+    {
+      "budget": 128,
+      "calls": 9,
+      "max_call_us": 535,
+      "statistics": {
+        "current": true,
+        "error": "",
+        "global_leaves": 2,
+        "local_leaves": 2,
+        "phase": 7,
+        "regions": 2,
+        "status": 1,
+        "water": {
+          "busy": false,
+          "events": 0,
+          "frames": 0,
+          "moved_ml": 0,
+          "nodes": 3,
+          "pending_ml": 0,
+          "profile_bytes": 264,
+          "ready": true,
+          "requested_ml": 0,
+          "roots": 1,
+          "total_ml": 0
+        },
+        "work_units_total": 1104
+      }
+    },
+    {
+      "budget": 128,
+      "calls": 139,
+      "max_call_us": 223,
+      "remap": {
+        "current": true,
+        "displaced_ml": 0,
+        "error": "",
+        "geometric_source_ml": 1248000000.0,
+        "mapped_ml": 1248000000,
+        "overlap_entries": 2,
+        "phase": 3,
+        "profile_geometry_difference_ml": 0.0,
+        "source_ml": 1248000000,
+        "status": 1,
+        "work_units_total": 17759
+      }
+    },
+    {
+      "budget": 128,
+      "calls": 8,
+      "max_call_us": 329,
+      "statistics": {
+        "current": true,
+        "error": "",
+        "global_leaves": 2,
+        "local_leaves": 2,
+        "phase": 7,
+        "regions": 2,
+        "status": 1,
+        "water": {
+          "busy": false,
+          "events": 0,
+          "frames": 0,
+          "moved_ml": 0,
+          "nodes": 3,
+          "pending_ml": 0,
+          "profile_bytes": 264,
+          "ready": true,
+          "requested_ml": 0,
+          "roots": 1,
+          "total_ml": 0
+        },
+        "work_units_total": 931
+      }
+    },
+    {
+      "budget": 128,
+      "calls": 139,
+      "max_call_us": 124,
+      "remap": {
+        "current": true,
+        "displaced_ml": 334666667,
+        "error": "",
+        "geometric_source_ml": 1248000000.0,
+        "mapped_ml": 913333333,
+        "overlap_entries": 3,
+        "phase": 3,
+        "profile_geometry_difference_ml": 0.0,
+        "source_ml": 1248000000,
+        "status": 1,
+        "work_units_total": 17760
+      }
+    },
+    {
+      "budget": 1,
+      "calls": 17760,
+      "max_call_us": 376,
+      "remap": {
+        "current": true,
+        "displaced_ml": 334666667,
+        "error": "",
+        "geometric_source_ml": 1248000000.0,
+        "mapped_ml": 913333333,
+        "overlap_entries": 3,
+        "phase": 3,
+        "profile_geometry_difference_ml": 0.0,
+        "source_ml": 1248000000,
+        "status": 1,
+        "work_units_total": 17760
+      }
+    },
+    {
+      "budget": 128,
+      "calls": 9,
+      "max_call_us": 671,
+      "statistics": {
+        "current": true,
+        "error": "",
+        "global_leaves": 2,
+        "local_leaves": 2,
+        "phase": 7,
+        "regions": 2,
+        "status": 1,
+        "water": {
+          "busy": false,
+          "events": 0,
+          "frames": 0,
+          "moved_ml": 0,
+          "nodes": 3,
+          "pending_ml": 0,
+          "profile_bytes": 264,
+          "ready": true,
+          "requested_ml": 0,
+          "roots": 1,
+          "total_ml": 0
+        },
+        "work_units_total": 1109
+      }
+    },
+    {
+      "budget": 128,
+      "calls": 139,
+      "max_call_us": 374,
+      "remap": {
+        "current": true,
+        "displaced_ml": 0,
+        "error": "",
+        "geometric_source_ml": 1248000000.0,
+        "mapped_ml": 1248000000,
+        "overlap_entries": 2,
+        "phase": 3,
+        "profile_geometry_difference_ml": 0.0,
+        "source_ml": 1248000000,
+        "status": 1,
+        "work_units_total": 17759
+      }
+    },
+    {
+      "budget": 128,
+      "calls": 1,
+      "max_call_us": 164,
+      "statistics": {
+        "current": true,
+        "error": "",
+        "global_leaves": 2,
+        "local_leaves": 2,
+        "phase": 7,
+        "regions": 2,
+        "status": 1,
+        "water": {
+          "busy": false,
+          "events": 0,
+          "frames": 0,
+          "moved_ml": 0,
+          "nodes": 2,
+          "pending_ml": 0,
+          "profile_bytes": 176,
+          "ready": true,
+          "requested_ml": 0,
+          "roots": 2,
+          "total_ml": 0
+        },
+        "work_units_total": 72
+      }
+    },
+    {
+      "budget": 128,
+      "calls": 139,
+      "max_call_us": 120,
+      "remap": {
+        "current": true,
+        "displaced_ml": 1248000000,
+        "error": "",
+        "geometric_source_ml": 1248000000.0,
+        "mapped_ml": 0,
+        "overlap_entries": 1,
+        "phase": 3,
+        "profile_geometry_difference_ml": 0.0,
+        "source_ml": 1248000000,
+        "status": 1,
+        "work_units_total": 17758
+      }
+    },
+    {
+      "budget": 1,
+      "calls": 1104,
+      "max_call_us": 135,
+      "statistics": {
+        "current": true,
+        "error": "",
+        "global_leaves": 2,
+        "local_leaves": 2,
+        "phase": 7,
+        "regions": 2,
+        "status": 1,
+        "water": {
+          "busy": false,
+          "events": 0,
+          "frames": 0,
+          "moved_ml": 0,
+          "nodes": 3,
+          "pending_ml": 0,
+          "profile_bytes": 264,
+          "ready": true,
+          "requested_ml": 0,
+          "roots": 1,
+          "total_ml": 0
+        },
+        "work_units_total": 1104
+      }
+    },
+    {
+      "budget": 128,
+      "calls": 9,
+      "max_call_us": 418,
+      "statistics": {
+        "current": true,
+        "error": "",
+        "global_leaves": 2,
+        "local_leaves": 2,
+        "phase": 7,
+        "regions": 2,
+        "status": 1,
+        "water": {
+          "busy": false,
+          "events": 0,
+          "frames": 0,
+          "moved_ml": 0,
+          "nodes": 3,
+          "pending_ml": 0,
+          "profile_bytes": 264,
+          "ready": true,
+          "requested_ml": 0,
+          "roots": 1,
+          "total_ml": 0
+        },
+        "work_units_total": 1104
+      }
+    },
+    {
+      "budget": 128,
+      "calls": 139,
+      "max_call_us": 68,
+      "remap": {
+        "current": true,
+        "displaced_ml": 325949478,
+        "error": "",
+        "geometric_source_ml": 912310093.845774,
+        "mapped_ml": 586383855,
+        "overlap_entries": 4,
+        "phase": 3,
+        "profile_geometry_difference_ml": 23239.1542259455,
+        "source_ml": 912333333,
+        "status": 1,
+        "work_units_total": 17761
+      }
+    },
+    {
+      "budget": 128,
+      "calls": 9,
+      "max_call_us": 433,
+      "statistics": {
+        "current": true,
+        "error": "",
+        "global_leaves": 3,
+        "local_leaves": 3,
+        "phase": 7,
+        "regions": 2,
+        "status": 1,
+        "water": {
+          "busy": false,
+          "events": 0,
+          "frames": 0,
+          "moved_ml": 0,
+          "nodes": 5,
+          "pending_ml": 0,
+          "profile_bytes": 440,
+          "ready": true,
+          "requested_ml": 0,
+          "roots": 1,
+          "total_ml": 0
+        },
+        "work_units_total": 1139
+      }
+    },
+    {
+      "budget": 128,
+      "calls": 10,
+      "max_call_us": 313,
+      "statistics": {
+        "current": true,
+        "error": "",
+        "global_leaves": 4,
+        "local_leaves": 4,
+        "phase": 7,
+        "regions": 2,
+        "status": 1,
+        "water": {
+          "busy": false,
+          "events": 0,
+          "frames": 0,
+          "moved_ml": 0,
+          "nodes": 7,
+          "pending_ml": 0,
+          "profile_bytes": 616,
+          "ready": true,
+          "requested_ml": 0,
+          "roots": 1,
+          "total_ml": 0
+        },
+        "work_units_total": 1174
+      }
+    },
+    {
+      "budget": 128,
+      "calls": 1,
+      "max_call_us": 96,
+      "statistics": {
+        "current": true,
+        "error": "",
+        "global_leaves": 2,
+        "local_leaves": 2,
+        "phase": 7,
+        "regions": 1,
+        "status": 1,
+        "water": {
+          "busy": false,
+          "events": 0,
+          "frames": 0,
+          "moved_ml": 0,
+          "nodes": 2,
+          "pending_ml": 0,
+          "profile_bytes": 176,
+          "ready": true,
+          "requested_ml": 0,
+          "roots": 2,
+          "total_ml": 0
+        },
+        "work_units_total": 68
+      }
+    },
+    {
+      "budget": 128,
+      "calls": 1,
+      "max_call_us": 77,
+      "statistics": {
+        "current": true,
+        "error": "",
+        "global_leaves": 2,
+        "local_leaves": 2,
+        "phase": 7,
+        "regions": 1,
+        "status": 1,
+        "water": {
+          "busy": false,
+          "events": 0,
+          "frames": 0,
+          "moved_ml": 0,
+          "nodes": 2,
+          "pending_ml": 0,
+          "profile_bytes": 176,
+          "ready": true,
+          "requested_ml": 0,
+          "roots": 2,
+          "total_ml": 0
+        },
+        "work_units_total": 68
+      }
+    }
+  ],
+  "cross_region_amount_ml": 1248000000,
+  "failures": 0,
+  "scope": "Finite hydrostatic settling across a fully ready closed active set of independent terrain regions. Runtime/remapping/save and transient flow remain open."
+}

@@ -6,6 +6,7 @@
 namespace terraforest {
 // Immutable compiled geometry plus finite equilibrium state for a closed active set.
 class NativeWaterNetwork : public godot::RefCounted {
+    friend class NativeWaterRemapPlan;
     GDCLASS(NativeWaterNetwork,godot::RefCounted)
     using Key=std::array<int32_t,3>;
     struct Piece {godot::Vector3i coordinate;int64_t generation=0;int offset=0;godot::Ref<NativeWaterProfiles> profiles;};
@@ -18,6 +19,7 @@ class NativeWaterNetwork : public godot::RefCounted {
     godot::PackedInt64Array levels;
     std::vector<godot::PackedInt64Array> rows;
     int status=-1,phase=0,piece=0,cursor=0,anchor=0,local_leaves=0,edge_count=0,global_leaves=0;
+    uint64_t water_revision=0;
     int64_t work_total=0;
     godot::String error;
     bool current() const;

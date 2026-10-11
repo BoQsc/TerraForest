@@ -9,6 +9,7 @@ namespace terraforest {
 class NativeWaterField : public godot::RefCounted {
     friend class NativeWaterRegions;
     friend class NativeWaterNetwork;
+    friend class NativeWaterRemapPlan;
     GDCLASS(NativeWaterField,godot::RefCounted)
     friend class NativeWaterTopology;
     godot::PackedFloat32Array density;

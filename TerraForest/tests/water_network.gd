@@ -15,6 +15,9 @@ func region(x:int,kind:=0):
             for xx in 19:
                 var p:=Vector3(origin+Vector3i(xx,y,z))
                 var floor_height:float=1+maxf(0,3-absf(p.x-16)*1.5)
+                if kind==5:floor_height-=0.5*maxf(0,1-absf(p.x-8)/3)
+                if kind==4:floor_height+=1
+                if kind==6:floor_height+=6
                 if kind==2:floor_height=maxf(floor_height,1+maxf(0,2-absf(p.x-8)*1.5))
                 if kind==3:floor_height=maxf(floor_height,maxf(1+maxf(0,1-absf(p.x-6)*1.5),1+maxf(0,2-absf(p.x-11)*1.5)))
                 var d:float=minf(p.y-floor_height,minf(p.x-2,minf(30-p.x,minf(p.z-2,14-p.z))))
@@ -54,6 +57,19 @@ func settle(n,initial:int,adding:bool)->bool:
         if not s.ok:return false
         ok=ok and (s.total_ml+s.pending_ml==initial+s.requested_ml if adding else s.total_ml+s.moved_ml==initial)
     return ok
+func compile_remap(a,b,budget:=128):
+    var plan=ClassDB.instantiate("NativeWaterRemapPlan")
+    check(plan.begin(a,b),"geometric remap accepts frozen source and empty destination")
+    var before:Dictionary=plan.statistics()
+    check(not plan.advance(0).ok and plan.statistics()==before,"invalid remap budget leaves state unchanged")
+    var calls:=0;var bounded:=true;var peak:=0
+    while plan.statistics().status==0 and calls<300000:
+        var start:=Time.get_ticks_usec();var state:Dictionary=plan.advance(budget)
+        peak=maxi(peak,Time.get_ticks_usec()-start);calls+=1
+        bounded=bounded and state.work_units>0 and state.work_units<=budget
+    check(bounded and plan.plan().ok,"geometric overlap and exact apportionment complete within work budgets")
+    costs.append({"remap":plan.statistics(),"budget":budget,"calls":calls,"max_call_us":peak})
+    return plan
 func _initialize():
     GDExtensionManager.load_extension("res://addons/volumetric_water/volumetric_water.gdextension")
     var a:Array=region(0);var b:Array=region(1)
@@ -72,9 +88,49 @@ func _initialize():
     check(not n.probe(Vector3(8,5,8)).wet and not n.probe(Vector3(8,6,8)).wet,"surface and air above the water remain dry")
     check(not n.probe(Vector3(-1,2,8)).ok and not n.probe(Vector3(INF,2,8)).ok,"unowned and nonfinite point queries are rejected")
     check(absf(n.probe(Vector3(8,2,8)).depth_m-3)<.001,"query reports water depth from the actual settled level")
+    var unfilled=network(r,[a[2],b[2]])
+    var empty_destination=network(r,[a[2],b[2]])
+    var empty_plan=ClassDB.instantiate("NativeWaterRemapPlan")
+    check(empty_plan.begin(unfilled,empty_destination) and empty_plan.plan().ok and empty_plan.advance(128).work_units==0,"empty source remap performs no geometry scan")
+    var occupied_target=ClassDB.instantiate("NativeWaterRemapPlan")
+    check(not occupied_target.begin(unfilled,n),"existing destination water cannot be overwritten by a remap plan")
+    var identity=compile_remap(n,unfilled)
+    check(identity.plan().mapped_ml==amount and identity.plan().displaced_ml==0,"unchanged geometry preserves all canonical millilitres")
+    check(n.statistics().water.total_ml==amount and unfilled.statistics().water.total_ml==0,"remap planning never duplicates or transfers authoritative water")
+    check(identity.advance(128).work_units==0,"completed remap sleeps")
+    var raised_a:Array=region(0,4);var raised_b:Array=region(1,4)
+    var raised_r=ClassDB.instantiate("NativeWaterRegions");raised_r.configure(7,1)
+    publish(raised_r,Vector3i.ZERO,raised_a[0]);publish(raised_r,Vector3i(1,0,0),raised_b[0])
+    var raised=network(raised_r,[raised_a[2],raised_b[2]])
+    var migrated=compile_remap(n,raised)
+    var new_capacity:int=raised_a[2].profiles().profiles_ml[0][5]+raised_b[2].profiles().profiles_ml[0][5]
+    check(migrated.plan().mapped_ml==new_capacity and migrated.plan().displaced_ml==amount-new_capacity,"raising terrain retains exact geometric overlap and explicitly accounts for displaced water")
+    check(compile_remap(n,raised,1).plan().transfers==migrated.plan().transfers,"one-unit remap budget preserves deterministic allocations")
+    var dug_a:Array=region(0,5);var dug_b:Array=region(1,5)
+    var dug_r=ClassDB.instantiate("NativeWaterRegions");dug_r.configure(7,1)
+    publish(dug_r,Vector3i.ZERO,dug_a[0]);publish(dug_r,Vector3i(1,0,0),dug_b[0])
+    var dug=network(dug_r,[dug_a[2],dug_b[2]])
+    var excavation=compile_remap(n,dug)
+    check(excavation.plan().mapped_ml==amount and excavation.plan().displaced_ml==0,"excavation maps every old water millilitre without inventing new water in added space")
+    var destination_changed=ClassDB.instantiate("NativeWaterRemapPlan");destination_changed.begin(n,dug);destination_changed.advance(1)
+    dug_r.reserve_region(Vector3i.ZERO,1,0,1)
+    check(destination_changed.advance(128).status==-2 and not excavation.plan().ok,"replacement destination ownership invalidates remap results")
+    var blocked_a:Array=region(0,6);var blocked_b:Array=region(1,6)
+    var blocked_r=ClassDB.instantiate("NativeWaterRegions");blocked_r.configure(7,1)
+    publish(blocked_r,Vector3i.ZERO,blocked_a[0]);publish(blocked_r,Vector3i(1,0,0),blocked_b[0])
+    var blocked=network(blocked_r,[blocked_a[2],blocked_b[2]])
+    var displaced=compile_remap(n,blocked)
+    check(displaced.plan().mapped_ml==0 and displaced.plan().displaced_ml==amount,"solid replacement retains all water as explicit displacement")
+    var changing=ClassDB.instantiate("NativeWaterRemapPlan");changing.begin(n,unfilled);changing.advance(1)
     var at_sill:int=pa.profiles_ml[0][4]+pb.profiles_ml[0][4]
     var take:int=amount-at_sill+1000000
     check(n.begin_remove(Vector3i.ZERO,0,take) and settle(n,amount,false),"withdrawal conserves retained and removed quantities across regional split")
+    check(changing.advance(128).status==-2 and not changing.plan().ok and not identity.plan().ok,"source water mutations invalidate unfinished and completed remap plans")
+    var receiving_change=ClassDB.instantiate("NativeWaterRemapPlan");receiving_change.begin(n,empty_destination)
+    empty_destination.begin_add(Vector3i.ZERO,0,1)
+    check(receiving_change.advance(1).status==-2,"destination water mutation cancels an overlap plan")
+    var unsettled_plan=ClassDB.instantiate("NativeWaterRemapPlan")
+    check(not unsettled_plan.begin(empty_destination,unfilled),"in-flight source pour cannot be partially remapped")
     check(n.inspect(Vector3i.ZERO,0).level_mm<4000 and absf(n.inspect(Vector3i(1,0,0),0).level_mm-4000)<.001,"opposite region keeps its water behind the physical four-metre sill")
     check(n.advance_settling(128).work_events==0 and n.advance(128).work_units==0,"settled network performs no background solver or compiler work")
     var other=network(r,[b[2],a[2]],1)
@@ -100,6 +156,8 @@ func _initialize():
     check(replacement.ok and not n.statistics().current and not n.begin_add(Vector3i.ZERO,0,1) and not n.advance_settling(1).ok,"changed region freezes stale network operations")
     check(n.statistics().water.total_ml==saved and not n.inspect(Vector3i.ZERO,0).ok,"stale geometry retains finite quantity while refusing stale level queries")
     check(not in_flight.advance_settling(1).ok and in_flight.statistics().water.total_ml+in_flight.statistics().water.pending_ml==amount,"invalidation freezes a partly settled pour without losing either quantity portion")
+    var frozen_plan=compile_remap(n,raised)
+    check(frozen_plan.plan().source_ml==saved and frozen_plan.plan().mapped_ml+frozen_plan.plan().displaced_ml==saved,"stale source geometry remains usable for conserved edit remapping")
     check(not n.probe(Vector3(8,2,8)).ok,"invalidated geometry refuses spatial queries")
     var pending=ClassDB.instantiate("NativeWaterNetwork")
     check(not pending.begin(r,[a[2],b[2]]),"stale regional profiles cannot enter a new network")

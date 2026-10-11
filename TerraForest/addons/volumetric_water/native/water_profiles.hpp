@@ -7,6 +7,7 @@
 namespace terraforest {
 class NativeWaterProfiles : public godot::RefCounted {
     friend class NativeWaterNetwork;
+    friend class NativeWaterRemapPlan;
     GDCLASS(NativeWaterProfiles,godot::RefCounted)
     godot::Ref<NativeWaterTopology> topology;
     godot::Ref<NativeWaterBasins> basins;
