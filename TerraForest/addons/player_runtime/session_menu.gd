@@ -43,7 +43,7 @@ func _ready() -> void:
 	mode_label=label(root,"")
 	var columns:=HBoxContainer.new();columns.size_flags_vertical=Control.SIZE_EXPAND_FILL;columns.add_theme_constant_override("separation",24);root.add_child(columns)
 	var sidebar:=VBoxContainer.new();sidebar.custom_minimum_size.x=240;columns.add_child(sidebar)
-	for title in ["Session","Equipment","Building","Objects","Vegetation","Development","Roads"]:
+	for title in ["Session","Toolbelt","Building","Objects","Vegetation","Development","Roads"]:
 		navigation[title]=button(sidebar,title,show_page.bind(title))
 	button(sidebar,"Inventory / crafting",open_inventory)
 	button(sidebar,"Return to world",func():set_open(false))
@@ -58,8 +58,8 @@ func _ready() -> void:
 	button(session,"Headlamp on / off",func():game.headlamp.toggle();refresh())
 	mode_button=button(session,"Development mode",toggle_developer)
 	button(session,"Save and quit",func():confirm("Save this world and quit?",func():game._notification(NOTIFICATION_WM_CLOSE_REQUEST)))
-	var equipment:=page("Equipment")
-	label(equipment,"Equipment and empty hands").add_theme_font_size_override("font_size",22)
+	var equipment:=page("Toolbelt")
+	label(equipment,"Quick-use tools and items").add_theme_font_size_override("font_size",22)
 	label(equipment,"Every belt slot is selectable. Empty slots put your tools away. Materials can be held without activating an editor. Use Inventory to drag items into the ten belt slots.")
 	var grid:=GridContainer.new();grid.columns=2;equipment.add_child(grid)
 	for i in 10:

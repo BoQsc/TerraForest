@@ -135,8 +135,8 @@ func run() -> void:
 	key(KEY_QUOTELEFT);await process_frame
 	check(not game.fly and not game.session_menu.developer,"return from development resets flight and equipment")
 	key(KEY_ESCAPE);await process_frame
-	await click_control(game.session_menu.navigation.Equipment)
-	check(game.session_menu.current_page=="Equipment" and game.session_menu.belt_choices.size()==10,"equipment page exposes all belt slots")
+	await click_control(game.session_menu.navigation.Toolbelt)
+	check(game.session_menu.current_page=="Toolbelt" and game.session_menu.belt_choices.size()==10,"equipment page exposes all belt slots")
 	for i in 3:await RenderingServer.frame_post_draw
 	root.get_texture().get_image().save_png("res://reports/unified_tools/equipment.png")
 	await click_control(game.session_menu.belt_choices[9])

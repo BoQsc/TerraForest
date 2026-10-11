@@ -27,16 +27,16 @@ func run() -> void:
 			game.player_hud.inventory.grant(item,5,game.player_hud.inventory.snapshot().revision)
 			selected=8
 		game.player_hud.set_open(true);game.player_hud.select_slot(selected)
-		check(not game.player_hud.drop_button.disabled,"selected material enables inventory drop button")
+		check(game.player_hud.inventory_open,"inventory enables outside drop requests")
 		var before: int=game.player_hud.inventory.snapshot().slots[selected].count
-		game.app_focused=false;game.player_hud.drop_button.pressed.emit()
+		game.app_focused=false;game.player_hud.drop_requested.emit(selected,game.player_hud.state.revision,1)
 		check(game.player_hud.inventory.snapshot().slots[selected].count==before,"unfocused drop rejected")
 		game.app_focused=true;game.terrain.changed_since_save=false
-		game.player_hud.drop_button.pressed.emit()
+		game.player_hud.drop_requested.emit(selected,game.player_hud.state.revision,1)
 		print("DROP_NOTICE ",game.player_hud.message.text)
-		check(game.player_hud.inventory.snapshot().slots[selected].count==before-1 and game.pickups.stores[item].statistics().active==1,"inventory button drops one supply on real physics support")
+		check(game.player_hud.inventory.snapshot().slots[selected].count==before-1 and game.pickups.stores[item].statistics().active==1,"world drop request places one supply on real physics support")
 		check(game.terrain.changed_since_save,"drop marks combined world state for autosave")
-		game.player_hud.drop_button.pressed.emit()
+		game.player_hud.drop_requested.emit(selected,game.player_hud.state.revision,1)
 		check(game.player_hud.inventory.snapshot().slots[selected].count==before-1 and game.pickups.stores[item].statistics().active==1,"overlapping drop rejected without item loss")
 		check(preload("res://addons/presentation/fullscreen_policy.gd").measurement(root).fair_graphical_sample,"1920x1080 fullscreen presentation")
 		await RenderingServer.frame_post_draw

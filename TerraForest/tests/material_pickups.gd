@@ -28,7 +28,7 @@ func run() -> void:
 	var result: Dictionary=pickups.collect_near(Vector3.ZERO,hud.inventory,func(_p: Vector3): return true)
 	hud.refresh()
 	check(result.ok and pickups.stores[101].resolve_identity(id)==0,"collection removes entity after successful inventory grant")
-	check(hud.state.slots[4].item==101 and hud.state.slots[4].count==1 and hud.belt[4].disabled,"collected material appears in inventory without becoming a tool")
+	check(hud.state.slots[4].item==101 and hud.state.slots[4].count==1 and not hud.belt[4].disabled,"collected material appears in inventory without becoming a tool")
 	check(hud.belt[4].text.contains("×1"),"inventory displays material quantity")
 	var after: Dictionary=provider._capture().sections
 	check(changes==2 and captured==after,"collection announces both inventory and entity changes after commit")

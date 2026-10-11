@@ -8,14 +8,14 @@ inventory/chest bytes are preserved.
 
 **Escape** opens Actions. The sidebar is the shared entry point:
 
-- **Equipment:** click any of the ten belt slots, including empty slots.
+- **Toolbelt:** click any of the ten belt slots, including empty slots.
 - **Building:** equips an owned building hammer and shows shape, material,
   rotation and prefab choices. Return to world to aim and place.
 - **Objects:** equips an owned assembly tool and shows every object recipe,
   selection, rotation and allowed transform controls.
 - **Vegetation:** choose an owned plant/stone stack to place; development
   allows free placement. E gathers reachable ground cover without a special mode.
-- **Inventory / crafting:** rearrange items, equip a selected inventory slot,
+- **Inventory / crafting:** rearrange items, move items to quick-use slots,
   claim mined resources and craft. Its Actions button returns to the shared UI.
 - **Session:** save/load, headlamp, mode switching and save-and-quit.
 - **Development / Roads:** appear only in development mode.
@@ -55,7 +55,7 @@ placing a tool in a chest cannot leave it usable in the player's hands.
 - **E** interacts independently of the equipped placement tool: aimed chest first,
   then vehicle/harvesting/collectibles. Object selection is a visible Objects action.
 - **Tab** opens inventory. Clicking selects an item or empty slot without moving
-  anything; use Equip selected to hold it. Drag to move, merge or swap. **Shift-drag** moves half
+  anything; drag it to the toolbelt to hold it. Drag to move, merge or swap. **Shift-drag** moves half
   (rounded down, minimum one). Chest grids support the same exact-slot actions.
   Invalid or stale transactions preserve both inventories; nonempty chests stay
   protected from removal.
@@ -101,7 +101,14 @@ slot ranges; each item appears in only one container. While inventory is open,
 clicking a belt slot selects it for inventory
 actions. [Drag regression evidence](evidence/inventory_belt_drag/README.md).
 
-Equip selected moves a backpack stack into an empty belt slot, or swaps with the
-active belt slot when the belt is full. Crafting counts supplies carried in either
-container. Existing total capacity and saved contents are preserved.
-[Separate backpack evidence](evidence/separate_backpack/README.md).
+Crafting and Character buttons above the left panel switch between recipes and
+character clothing. Drag woven hood, vest or footwraps to matching Head, Body or
+Feet slots; drag back into carried storage to remove. Equipment saves separately.
+The initial clothing has no armor bonuses or worn-model art yet.
+
+Release a dragged backpack/belt item outside UI panels and the belt to drop it
+on clear ground in front of the player. Normal drag drops the whole stack;
+Shift-drag drops half. Invalid/blocked drops preserve items. Each dropped stack
+is one world pickup; E recollects its contents. Pickup quantity and equipment
+use native transactions and world snapshots. The old Equip/Drop buttons are gone.
+[Character and drop evidence](evidence/character_drops/README.md).

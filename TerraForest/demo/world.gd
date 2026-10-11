@@ -126,6 +126,8 @@ func _ready() -> void:
 		push_error("Player loadout persistence initialization failed")
 		get_tree().quit(2)
 		return
+	if not persistence.register_component("player_equipment",player_hud.equipment.capture_storage_snapshot,player_hud.equipment.restore_storage_snapshot,player_hud.equipment,player_hud.equipment.capture_storage_snapshot()):
+		push_error("Character equipment persistence initialization failed");get_tree().quit(2);return
 	if not persistence.register_component("pending_rewards",player_hud.reward_inbox.capture_storage_snapshot,player_hud.reward_inbox.restore_storage_snapshot,player_hud.reward_inbox,player_hud.reward_inbox.capture_storage_snapshot()):
 		push_error("Pending reward persistence initialization failed")
 		get_tree().quit(2)
@@ -1218,7 +1220,7 @@ func _model_edit_available() -> bool:
 func _vehicle_interaction_available() -> bool:
 	return not loading_active and not shutdown_requested and not benchmark_enabled and not player_hud.inventory_open and app_focused and terrain.world_ready and not terrain.pending_edit and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED
 
-func _drop_inventory_supply(slot: int, revision: int) -> void:
+func _drop_inventory_supply(slot: int, revision: int, count: int=1) -> void:
 	var result := {"ok":false,"reason":"Stand on foot in a ready world to drop supplies"}
 	if player_hud.inventory_open and app_focused and not fly and not loading_active and not shutdown_requested and terrain.world_ready and not terrain.pending_edit and not world_vehicle.driving:
 		var forward := -player.global_basis.z
@@ -1237,7 +1239,7 @@ func _drop_inventory_supply(slot: int, revision: int) -> void:
 				for store: RefCounted in pickups.stores.values():
 					var nearby: Dictionary=store.query_sphere(pickups.to_local(point),0.5,1,64)
 					clear=clear and nearby.ok and nearby.complete and nearby.ids.is_empty()
-				if clear: result=pickups.drop_one(player_hud.inventory,slot,revision,pickups.to_local(point))
+				if clear: result=pickups.drop_stack(player_hud.inventory,slot,revision,pickups.to_local(point),count)
 	player_hud.message.text=result.reason
 	player_hud.refresh()
 

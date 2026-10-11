@@ -5,7 +5,7 @@ signal tool_requested(item: int)
 signal actions_requested
 signal menu_changed(open: bool)
 signal inventory_changed
-signal drop_requested(slot: int, revision: int)
+signal drop_requested(slot: int, revision: int, count: int)
 const CATALOG: Dictionary={1:"Pickaxe",2:"Hatchet",3:"Building hammer",4:"Assembly tool"}
 const MATERIALS: Dictionary={101:"Brick",102:"Wood",103:"Concrete",104:"Metal"}
 # UI metadata is local so this addon remains independently loadable.
@@ -15,7 +15,7 @@ class GroundCatalog:
 	const ITEMS: Array[int]=[201,204,205,206,207,208,209,210]
 	const COSTS: Array[int]=[201,204,205,206,207,208,209,102]
 	const NAMES: Array[String]=["Stone","Fern","Grass clump","White wildflower","Golden wildflower","Violet wildflower","Low bush","Dry twigs"]
-const RESOURCES: Dictionary={201:"Stone",202:"Iron ore",203:"Copper ore",204:"Plant",205:"Grass clump",206:"White wildflower",207:"Golden wildflower",208:"Violet wildflower",209:"Low bush",210:"Dry twigs"}
+const RESOURCES: Dictionary={201:"Stone",202:"Iron ore",203:"Copper ore",204:"Plant",205:"Grass clump",206:"White wildflower",207:"Golden wildflower",208:"Violet wildflower",209:"Low bush",210:"Dry twigs",301:"Woven hood",302:"Woven vest",303:"Woven footwraps"}
 const GROUND_ITEMS: Dictionary={201:0,204:1,205:2,206:3,207:4,208:5,209:6,210:7}
 var ground_tools_enabled:=false
 const STARTER_MATERIAL_COUNT:=64
@@ -34,7 +34,11 @@ var claim_button: Button
 var recipe_buttons: Array[Button]=[]
 var crafting_panel: PanelContainer
 var crafting_message: Label
-var drop_button: Button
+var equipment: RefCounted
+var character_panel: Control
+var crafting_content: Control
+var side_tabs: HBoxContainer
+var drop_layer: CanvasLayer
 const Crafting=preload("res://addons/player_runtime/crafting.gd")
 var state: Dictionary={}
 var enabled:=true
@@ -90,7 +94,9 @@ func prepare() -> bool:
 	reward_inbox=ClassDB.instantiate("NativeRewardInbox")
 	for id: int in CATALOG: inventory.register_item(id,1)
 	for id: int in MATERIALS: inventory.register_item(id,999)
-	for id: int in RESOURCES: inventory.register_item(id,999)
+	for id: int in RESOURCES: inventory.register_item(id,1 if id>=301 else 999)
+	equipment=ClassDB.instantiate("NativeContainerStore")
+	if not equipment.configure(inventory,1):return false
 	for id: int in CATALOG: inventory.grant(id,1,inventory.snapshot().revision)
 	# Only the default for a missing loadout section. Restoration replaces all
 	# slots, including an explicitly empty saved inventory; never top up on load.
@@ -165,10 +171,18 @@ func _ready() -> void:
 	pending_amount.custom_minimum_size.x=130;rewards.add_child(pending_amount)
 	claim_button=Button.new();claim_button.text="Claim";claim_button.pressed.connect(claim_pending);rewards.add_child(claim_button)
 	crafting_panel=PanelContainer.new();crafting_panel.position=Vector2(220,200);crafting_panel.size=Vector2(420,650);modal.add_child(crafting_panel)
+	drop_layer=CanvasLayer.new();drop_layer.layer=19;add_child(drop_layer)
+	var drop_target=preload("res://addons/player_runtime/world_drop_target.gd").new();drop_target.hud=self;drop_layer.add_child(drop_target);drop_target.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT);drop_layer.hide()
+	side_tabs=HBoxContainer.new();side_tabs.position=Vector2(220,148);side_tabs.add_theme_constant_override("separation",10);modal.add_child(side_tabs)
+	for tab in ["Crafting","Character"]:
+		var button:=Button.new();button.text=tab;button.custom_minimum_size=Vector2(205,42);button.pressed.connect(show_side.bind(tab));side_tabs.add_child(button)
 	var craft_margin:=MarginContainer.new()
 	for side in ["left","right","top","bottom"]:craft_margin.add_theme_constant_override("margin_"+side,20)
 	crafting_panel.add_child(craft_margin)
-	var recipes:=VBoxContainer.new();recipes.add_theme_constant_override("separation",14);craft_margin.add_child(recipes)
+	var side_host:=VBoxContainer.new();craft_margin.add_child(side_host)
+	var scroll:=ScrollContainer.new();scroll.size_flags_vertical=Control.SIZE_EXPAND_FILL;scroll.horizontal_scroll_mode=ScrollContainer.SCROLL_MODE_DISABLED;side_host.add_child(scroll);crafting_content=scroll
+	var recipes:=VBoxContainer.new();recipes.size_flags_horizontal=Control.SIZE_EXPAND_FILL;recipes.add_theme_constant_override("separation",14);scroll.add_child(recipes)
+	character_panel=preload("res://addons/player_runtime/character_panel.gd").new();character_panel.hud=self;side_host.add_child(character_panel);character_panel.hide()
 	var craft_label:=Label.new();craft_label.text="CRAFTING";craft_label.add_theme_font_size_override("font_size",26);recipes.add_child(craft_label)
 	var craft_help:=Label.new();craft_help.text="Click a recipe to craft one batch.";recipes.add_child(craft_help)
 	for i in Crafting.RECIPES.size():
@@ -182,15 +196,10 @@ func _ready() -> void:
 		button.pressed.connect(craft_recipe.bind(i));recipes.add_child(button);recipe_buttons.append(button)
 	crafting_message=Label.new();crafting_message.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;crafting_message.size_flags_horizontal=Control.SIZE_EXPAND_FILL
 	crafting_message.text="Recipes use materials in your inventory. Claim pending mined materials first.";recipes.add_child(crafting_message)
-	var equip_button:=Button.new();equip_button.text="Equip selected item / empty hands";equip_button.pressed.connect(func():
-		if selected_slot>=0:
-			var chosen:=selected_slot;set_open(false);equip_inventory(chosen)
-	);column.add_child(equip_button)
-	drop_button=Button.new();drop_button.text="Drop one selected supply";drop_button.pressed.connect(drop_selected);column.add_child(drop_button)
-	message.text="Drag stacks to move, merge or swap. Shift-drag moves half. Tab / Esc closes."
+	message.text="Drag to move. Release outside panels and belt to drop. Shift-drag: half stack."
 	message.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;message.custom_minimum_size.y=42
 	column.add_child(message)
-	modal.hide();refresh()
+	show_side("Crafting");modal.hide();refresh()
 
 func refresh() -> void:
 	if action_hint!=null:
@@ -215,14 +224,11 @@ func refresh() -> void:
 	_refresh_ground_hint()
 	_refresh_pending()
 	_refresh_recipes()
-	drop_button.disabled=selected_slot<0 or not _droppable(state.slots[selected_slot].item)
+	character_panel.refresh()
 
-func _droppable(item: int) -> bool:
-	return item in MATERIALS or item in RESOURCES
-
-func drop_selected() -> void:
-	if not enabled or not inventory_open or selected_slot<0 or not _droppable(state.slots[selected_slot].item): return
-	drop_requested.emit(selected_slot,state.revision)
+func show_side(tab: String) -> void:
+	crafting_content.visible=tab=="Crafting";character_panel.visible=tab=="Character"
+	for button in side_tabs.get_children():button.modulate=Color(0.55,1,0.8) if button.text==tab else Color.WHITE
 
 func _refresh_pending() -> void:
 	var selected: int=int(pending_choice.get_item_metadata(pending_choice.selected)) if not pending_choice.disabled and pending_choice.selected>=0 else 0
@@ -333,6 +339,7 @@ func set_open(value: bool) -> void:
 		selected_slot=-1
 	refresh()
 	modal.visible=value
+	drop_layer.visible=value
 	menu_changed.emit(value)
 
 func _input(event: InputEvent) -> void:
@@ -352,12 +359,18 @@ func drag_data(_side: String,slot: int) -> Dictionary:
 	var row: Dictionary=state.slots[slot]
 	if row.count==0:return {}
 	selected_slot=-1
-	return {"owner":get_instance_id(),"side":"player","slot":slot,"count":maxi(1,int(row.count)/2) if Input.is_key_pressed(KEY_SHIFT) else row.count,"revision":state.revision}
+	return {"owner":get_instance_id(),"side":"player","equipment_revision":equipment.snapshot(1).store_revision,"slot":slot,"count":maxi(1,int(row.count)/2) if Input.is_key_pressed(KEY_SHIFT) else row.count,"revision":state.revision}
 func accepts_drag(_side: String,_slot: int,data: Variant) -> bool:
 	return enabled and inventory_open and data is Dictionary and data.get("owner",0)==get_instance_id()
 func drop_stack(side: String,slot: int,data: Variant) -> void:
 	if not accepts_drag(side,slot,data):return
-	var result: Dictionary=inventory.transfer(data.slot,slot,data.count,data.revision)
+	var result: Dictionary
+	if data.get("side","")=="equipment":
+		# Clothing may leave the character only into an empty or compatible carried slot.
+		var target: Dictionary=inventory.snapshot().slots[slot]
+		if target.item!=0 and preload("res://addons/player_runtime/character_panel.gd").TYPES.get(int(target.item),-1)!=data.slot:return
+		result=equipment.drag_slots(1,inventory,true,false,data.slot,slot,1,data.revision,data.equipment_revision)
+	else:result=inventory.transfer(data.slot,slot,data.count,data.revision)
 	if result.ok:inventory_changed.emit()
 	message.text="Stack moved" if result.ok else "Cannot move that stack; inventory refreshed"
 	selected_slot=-1;refresh()

@@ -3,9 +3,10 @@ extends Node3D
 signal changed
 ## Scene orchestration only: native stores, spatial queries and batched rendering.
 ## Static authored supplies; no per-pickup nodes or active rigid bodies.
-const ITEMS := {101: "Brick", 102: "Wood", 103: "Concrete", 104: "Metal", 201: "Stone", 202: "Iron ore", 203: "Copper ore", 204: "Plant", 205: "Grass clump"}
+const ITEMS := {1:"Pickaxe",2:"Hatchet",3:"Building hammer",4:"Assembly tool",101:"Brick",102:"Wood",103:"Concrete",104:"Metal",201:"Stone",202:"Iron ore",203:"Copper ore",204:"Plant",205:"Grass clump",206:"White wildflower",207:"Golden wildflower",208:"Violet wildflower",209:"Low bush",210:"Dry twigs",301:"Woven hood",302:"Woven vest",303:"Woven footwraps"}
 const COLORS := {101: Color("b57052"), 102: Color("b99563"), 103: Color("b4bec4"), 104: Color("729da9"), 201: Color("7f858c"), 202: Color("965e43"), 203: Color("bc7950"), 204: Color("557538"), 205: Color("677e3e")}
 var stores: Dictionary = {}
+var stacks: Dictionary = {}
 var renderers: Dictionary = {}
 var render_status: Dictionary = {}
 var _elapsed := 0.0
@@ -13,14 +14,17 @@ var _dirty := true
 var _transferring := false
 
 func drop_one(inventory: RefCounted, slot: int, revision: int, point: Vector3) -> Dictionary:
+	return drop_stack(inventory,slot,revision,point,1)
+
+func drop_stack(inventory: RefCounted, slot: int, revision: int, point: Vector3, count: int) -> Dictionary:
 	if _transferring or inventory == null or not point.is_finite():
 		return {"ok":false,"reason":"Supply drop unavailable"}
 	var state: Dictionary = inventory.snapshot()
 	if state.revision != revision or slot < 0 or slot >= state.slots.size():
 		return {"ok":false,"reason":"Inventory changed; select the supply again"}
 	var item: int = state.slots[slot].item
-	if not stores.has(item) or state.slots[slot].count < 1:
-		return {"ok":false,"reason":"Select a material or raw resource to drop"}
+	if not stores.has(item) or count<1 or state.slots[slot].count < count:
+		return {"ok":false,"reason":"Select a carried item to drop"}
 	# Native calls emit no callbacks. Reserve the world record before debiting;
 	# capacity failure therefore leaves inventory contents AND revision intact.
 	_transferring = true
@@ -28,30 +32,37 @@ func drop_one(inventory: RefCounted, slot: int, revision: int, point: Vector3) -
 	if handle == 0:
 		_transferring = false
 		return {"ok":false,"reason":"Supply capacity reached"}
-	var consumed: Dictionary = inventory.consume(slot, 1, revision)
+	var id: int = stores[item].persistent_id(handle)
+	var consumed: Dictionary = stacks[item].deposit(id,inventory,slot,count,revision,stacks[item].snapshot(id).store_revision)
 	if not consumed.ok:
 		stores[item].despawn(handle)
 		_transferring = false
 		return {"ok":false,"reason":"Inventory changed; drop cancelled"}
-	var id: int = stores[item].persistent_id(handle)
 	_dirty = true
 	changed.emit() # Observers see both sides committed; nested drops are rejected.
 	_transferring = false
-	return {"ok":true,"id":id,"item":item,"reason":"Dropped one " + ITEMS[item]}
+	return {"ok":true,"id":id,"item":item,"reason":"Dropped %d %s"%[count,ITEMS[item]]}
 
 func prepare(persistence: RefCounted) -> bool:
 	if not stores.is_empty(): return true
 	if not ClassDB.class_exists("NativeEntityStore"):
 		GDExtensionManager.load_extension("res://addons/world_runtime/world_runtime.gdextension")
 	if not ClassDB.class_exists("NativeEntityRenderer"): return false
+	if not ClassDB.class_exists("NativePlayerInventory"):GDExtensionManager.load_extension("res://addons/player_runtime/player_runtime.gdextension")
+	var schema: RefCounted=ClassDB.instantiate("NativePlayerInventory")
+	for item: int in ITEMS:schema.register_item(item,1 if item<100 or item>=301 else 999)
 	for item: int in ITEMS:
+		var stack: RefCounted=ClassDB.instantiate("NativeContainerStore")
+		if not stack.configure(schema,4096):return false
+		stacks[item]=stack
+		if not persistence.register_component("pickup_stacks_%d"%item,stack.capture_storage_snapshot,stack.restore_storage_snapshot,stack,stack.capture_storage_snapshot()):return false
 		var store: RefCounted = ClassDB.instantiate("NativeEntityStore")
 		if not store.configure(4096): return false
 		stores[item] = store
 		if not persistence.register_component("pickups_%d" % item, store.capture_storage_snapshot, _restore.bind(item), store, store.capture_storage_snapshot()): return false
 		var mesh := BoxMesh.new(); mesh.size = Vector3.ONE * 0.35
 		var material := StandardMaterial3D.new()
-		material.albedo_color = COLORS[item]; material.roughness = 0.8
+		material.albedo_color = COLORS.get(item,Color("91a184")); material.roughness = 0.8
 		mesh.material = material
 		var renderer: MultiMeshInstance3D = ClassDB.instantiate("NativeEntityRenderer")
 		if not renderer.configure(store, mesh, 256):
@@ -83,7 +94,7 @@ func update_view(delta: float, focus: Vector3, enabled: bool) -> void:
 		render_status[item] = renderers[item].refresh(to_local(focus), 64.0, 4096)
 
 func collect_near(point: Vector3, inventory: RefCounted, reachable: Callable) -> Dictionary:
-	# Explicit keypress only; at most 7 x 64 candidates. Never a per-frame scan.
+	# Explicit keypress only; at most ITEMS.size() x 64 candidates. Never a per-frame scan.
 	var best_item := 0; var best_handle := 0; var best_distance := INF
 	for item: int in stores:
 		var query: Dictionary = stores[item].query_sphere(to_local(point), 2.5, 64, 256)
@@ -94,7 +105,12 @@ func collect_near(point: Vector3, inventory: RefCounted, reachable: Callable) ->
 			if distance < best_distance and reachable.call(position):
 				best_item = item; best_handle = handle; best_distance = distance
 	if best_handle == 0: return {"ok": false, "reason": "No reachable material within 2.5 m"}
-	var result: Dictionary = inventory.grant(best_item, 1, inventory.snapshot().revision)
+	var id: int=stores[best_item].persistent_id(best_handle)
+	var box: Dictionary=stacks[best_item].snapshot(id)
+	var result: Dictionary
+	if stacks[best_item].has_contents(id):
+		result=stacks[best_item].withdraw(id,inventory,0,box.slots[0].count,inventory.snapshot().revision,box.store_revision)
+	else:result=inventory.grant(best_item,1,inventory.snapshot().revision) # Legacy/authored single pickup.
 	if not result.ok: return {"ok": false, "reason": "Inventory full or unavailable"}
 	# Single main-thread transaction: grant emits no callbacks; this handle is live.
 	stores[best_item].despawn(best_handle); _dirty = true

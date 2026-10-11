@@ -30,8 +30,8 @@ func run() -> void:
 	check(store.get_position(store.resolve_identity(result.id))==Vector3(1,2,3),"drop retains exact local position and persistent identity")
 	check(not pickups.drop_one(inventory,slot,before.revision,Vector3.ZERO).ok,"stale selection cannot drop again")
 	var saved_inventory: PackedByteArray=inventory.capture_storage_snapshot()
-	for args in [[-1,Vector3.ZERO],[32,Vector3.ZERO],[0,Vector3.ZERO],[slot,Vector3(NAN,0,0)]]:
-		check(not pickups.drop_one(inventory,args[0],inventory.snapshot().revision,args[1]).ok,"invalid slot/tool/position rejected")
+	for args in [[-1,Vector3.ZERO],[32,Vector3.ZERO],[slot,Vector3(NAN,0,0)]]:
+		check(not pickups.drop_one(inventory,args[0],inventory.snapshot().revision,args[1]).ok,"invalid slot/position rejected")
 	check(inventory.capture_storage_snapshot()==saved_inventory and store.statistics().active==1,"rejections preserve both sides")
 	var saved_pickups: PackedByteArray=store.capture_storage_snapshot()
 	var restored: RefCounted=ClassDB.instantiate("NativeEntityStore");restored.configure(4096)

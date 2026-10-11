@@ -50,7 +50,7 @@ func run() -> void:
 	for i in 4:await RenderingServer.frame_post_draw
 	root.get_texture().get_image().save_png("res://reports/inventory_presentation/toolbelt.png")
 	hud.inventory.grant(201,3,hud.inventory.snapshot().revision);hud.set_open(true)
-	check(hud.recipe_buttons.size()==4 and not hud.recipe_buttons[0].disabled and not hud.recipe_buttons[1].disabled and hud.recipe_buttons[2].disabled,"recipe cards reflect available ingredients")
+	check(hud.recipe_buttons.size()==7 and not hud.recipe_buttons[0].disabled and not hud.recipe_buttons[1].disabled and hud.recipe_buttons[2].disabled,"recipe cards reflect available ingredients")
 	check(hud.recipe_buttons[0].text.contains("3 / 2"),"recipe shows owned and required amounts")
 	hud.select_slot(10)
 	check(hud.belt[0].get_theme_stylebox("normal").border_color!=hud.slots[10].get_theme_stylebox("normal").border_color,"equipped and selected slots have distinct highlights")
@@ -71,7 +71,7 @@ func run() -> void:
 	check(count_item(hud,201)==3 and count_item(hud,101)==bricks+1 and hud.crafting_message.text.contains("refreshed"),"stale revision refuses craft and refreshes without losing inputs")
 	await click(hud.recipe_buttons[1])
 	check(count_item(hud,201)==0 and hud.crafting_message.text.begins_with("Crafted"),"another recipe crafts directly without selecting a dropdown")
-	check(hud.modal.mouse_filter==Control.MOUSE_FILTER_IGNORE and hud.modal.get_child_count()==2,"no fullscreen dimmer or input-blocking overlay")
+	check(hud.modal.mouse_filter==Control.MOUSE_FILTER_IGNORE and hud.modal.get_child_count()==3,"no fullscreen dimmer or input-blocking overlay")
 	await drag(hud.belt[0],hud.slots[20])
 	check(hud.state.slots[20].item==1 and hud.state.slots[0].item==0 and game.equipped_tool==0,"real belt-to-inventory drag puts away equipped tool")
 	await drag(hud.slots[20],hud.belt[0])
