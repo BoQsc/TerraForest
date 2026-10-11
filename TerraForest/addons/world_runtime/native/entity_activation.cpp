@@ -6,9 +6,13 @@
 #include <algorithm>
 #include <cmath>
 #include <godot_cpp/classes/time.hpp>
+#include <godot_cpp/classes/world3d.hpp>
 using namespace godot;
 namespace terraforest {
 void NativeEntityActivation::_bind_methods(){
+    ClassDB::bind_method(D_METHOD("enable_navigation","admission"),&NativeEntityActivation::enable_navigation,DEFVAL(Callable()));
+    ClassDB::bind_method(D_METHOD("invalidate_navigation","bounds"),&NativeEntityActivation::invalidate_navigation,DEFVAL(AABB()));
+    ClassDB::bind_method(D_METHOD("navigation_status","handle"),&NativeEntityActivation::navigation_status);
     ClassDB::bind_method(D_METHOD("set_profiling","enabled"),&NativeEntityActivation::set_profiling);
     ClassDB::bind_method(D_METHOD("set_orders","orders"),&NativeEntityActivation::set_orders);
     ClassDB::bind_method(D_METHOD("configure","store","capacity"),&NativeEntityActivation::configure);
@@ -16,6 +20,18 @@ void NativeEntityActivation::_bind_methods(){
     ClassDB::bind_method(D_METHOD("tick","targets","delta","ready"),&NativeEntityActivation::tick);
     ClassDB::bind_method(D_METHOD("settle","delta","readiness"),&NativeEntityActivation::settle);
     ClassDB::bind_method(D_METHOD("active_handles"),&NativeEntityActivation::active_handles);
+}
+void NativeEntityActivation::enable_navigation(const Callable &admission){
+    admission_=admission;navigation_=true;
+    route_ray_.instantiate();route_ray_->set_collision_mask(3);
+    route_shape_.instantiate();Ref<CapsuleShape3D> capsule;capsule.instantiate();capsule->set_radius(.35);capsule->set_height(1.8);
+    route_shape_->set_shape(capsule);route_shape_->set_collision_mask(3);route_shape_->set_margin(.001);
+    invalidate_navigation();
+}
+void NativeEntityActivation::invalidate_navigation(const AABB &bounds){for(auto &p:proxies_)p.route.invalidate(bounds);}
+Dictionary NativeEntityActivation::navigation_status(int64_t handle) const {
+    for(const auto &p:proxies_)if(p.handle && p.handle==handle)return p.route.status();
+    Dictionary out;out["state"]="sleeping";return out;
 }
 bool NativeEntityActivation::configure(const Ref<NativeEntityStore> &store,int capacity){
     if(!is_inside_tree()||store.is_null()||!proxies_.empty()||capacity<1||capacity>64)return false;
@@ -64,7 +80,7 @@ Dictionary NativeEntityActivation::select(const Vector3 &center,double radius,in
         if(found!=proxies_.end())continue;
         auto empty=std::find_if(proxies_.begin(),proxies_.end(),[](const Proxy &p){return p.handle==0;});
         if(empty==proxies_.end()||!empty->body->bind_entity(store_,ids[i])){sleep_all();result["ok"]=false;return result;}
-        empty->handle=ids[i];// Actors occupy a dedicated layer; terrain (1) and authored structures (2)
+        empty->route=ActorRoute();empty->handle=ids[i];// Actors occupy a dedicated layer; terrain (1) and authored structures (2)
         // both constrain movement. Actor-to-actor avoidance remains a separate policy.
         empty->body->set_collision_layer(8);empty->body->set_collision_mask(3);
     }
@@ -76,6 +92,7 @@ bool NativeEntityActivation::tick(const PackedVector3Array &targets,double delta
     for(int64_t i=0;i<active_.size();++i){
         auto p=std::find_if(proxies_.begin(),proxies_.end(),[&](const Proxy &p){return p.handle==active_[i];});
         if(p==proxies_.end())return false;
+        p->body->arrival_distance=.15;
         p->body->tick(targets[i],delta,ready[i]!=0);
     }
     return true;
@@ -83,6 +100,25 @@ bool NativeEntityActivation::tick(const PackedVector3Array &targets,double delta
 Dictionary NativeEntityActivation::settle(double delta,const Callable &readiness){
     Dictionary out;out["ok"]=false;out["visited"]=0;out["held"]=0;
     if(store_.is_null()||!is_inside_tree()||!readiness.is_valid()||!std::isfinite(delta)||delta<=0||delta>0.1)return out;
+    // Fair round-robin admission: <=12 candidate edges and a cooperative 750us
+    // deadline across the whole pool, not a separate budget per actor.
+    int route_work=0;const uint64_t plan_begin=Time::get_singleton()->get_ticks_usec();
+    if(navigation_){
+        for(auto &p:proxies_)if(p.handle && store_->contains(p.handle)){
+            Vector3 position=store_->get_position(p.handle);
+            p.route.prepare(position,orders_.is_valid()?orders_->target_for(store_->persistent_id(p.handle),position):position,delta);
+        }
+        auto *space=get_world_3d()->get_direct_space_state();
+        size_t idle=0;
+        while(space && !proxies_.empty() && route_work<12 && idle<proxies_.size()){
+            auto &p=proxies_[route_cursor_++%proxies_.size()];
+            if(!p.handle || p.route.state!=ActorRoute::PLANNING){++idle;continue;}
+            idle=0;p.route.step(space,readiness,admission_,route_ray_,route_shape_);++route_work;
+            if(Time::get_singleton()->get_ticks_usec()-plan_begin>=750)break;
+        }
+    }
+    out["route_work"]=route_work;out["route_work_limit"]=12;
+    out["route_planning_us"]=int64_t(Time::get_singleton()->get_ticks_usec()-plan_begin);
     int visited=0,held=0;uint64_t readiness_us=0,collision_us=0,transform_us=0,motion_us=0,store_us=0;
     for(auto &p:proxies_){
         if(!p.handle)continue;
@@ -96,9 +132,11 @@ Dictionary NativeEntityActivation::settle(double delta,const Callable &readiness
         const uint64_t ready_done=profiling_?Time::get_singleton()->get_ticks_usec():0;
         if(profiling_)readiness_us+=ready_done-begin;
         const bool ready=answer.get_type()==Variant::BOOL && bool(answer);
-        const Vector3 target=orders_.is_valid()?orders_->target_for(store_->persistent_id(p.handle),position):position;
+        const Vector3 target=navigation_?p.route.target(position):(orders_.is_valid()?orders_->target_for(store_->persistent_id(p.handle),position):position);
         p.body->profile_tick=profiling_;
+        p.body->arrival_distance=navigation_?.025:.15;
         p.body->tick(target,delta,ready);
+        if(navigation_){if(!ready && (p.route.state==ActorRoute::FOLLOWING || p.route.state==ActorRoute::ARRIVED))p.route.invalidate();p.route.moved(store_->get_position(p.handle),delta);}
         transform_us+=p.body->transform_us;motion_us+=p.body->motion_us;store_us+=p.body->store_us;
         ++visited;if(!ready)++held;
         if(profiling_)collision_us+=Time::get_singleton()->get_ticks_usec()-ready_done;

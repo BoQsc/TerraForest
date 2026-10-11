@@ -227,8 +227,17 @@ func _ready() -> void:
 	player_hud.inventory_changed.connect(func(): terrain.changed_since_save=true)
 	player_hud.drop_requested.connect(_drop_inventory_supply)
 	pickups.changed.connect(func(): terrain.changed_since_save=true)
-	structures.changed.connect(func(): terrain.changed_since_save=true)
-	ecosystem.harvested.connect(func(): terrain.changed_since_save=true)
+	structures.changed.connect(func():
+		terrain.changed_since_save=true
+		if actors.pool!=null:actors.pool.invalidate_navigation())
+	terrain.region_changed.connect(func(bounds: AABB,_revision: int):
+		if actors.pool!=null:actors.pool.invalidate_navigation(bounds))
+	lakes.exclusion_changed.connect(func(bounds: AABB):
+		if actors.pool!=null:actors.pool.invalidate_navigation(bounds))
+	actors.set_navigation_admission(func(point: Vector3):return lakes.depth_at(point-Vector3.UP*0.8)<=0)
+	ecosystem.harvested.connect(func():
+		terrain.changed_since_save=true
+		if actors.pool!=null:actors.pool.invalidate_navigation())
 	_sync_player_tool()
 	DisplayServer.window_set_title("TerraForest | Living terrain")
 	vegetation.name = "Vegetation"
@@ -1183,6 +1192,9 @@ func _process(delta: float) -> void:
 		if world_vehicle.driving:
 			activity="Waiting for terrain/building collision…" if world_vehicle.car.streaming.waiting else "Driving · %.0f km/h · E exit when stopped" % world_vehicle.car.speed_kph
 		telemetry.text = "%d FPS  ·  %s trees  ·  %d cells\n%s" % [Engine.get_frames_per_second(), str(vegetation.renderer.roots.size()), ecosystem.resident.size(), activity]
+		if actors.pool!=null and actor_authoring.selected_identity!=0:
+			var actor_handle: int=actors.store.resolve_identity(actor_authoring.selected_identity)
+			telemetry.text+="\nActor route: "+str(actors.pool.navigation_status(actor_handle).state).replace("_"," ")
 		if actors.pool!=null and session_menu.visible_ui() and session_menu.current_page=="Development":telemetry.text+="\nJ Place actor · Shift+J Remove actor\nK Select / send · Shift+K Stop"
 	terrain._record_stage("world process",(Time.get_ticks_usec()-frame_begin)/1000.0)
 

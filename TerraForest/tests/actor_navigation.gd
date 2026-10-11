@@ -9,6 +9,9 @@ var elapsed:=0.0
 var frames:=0
 var peak_tick_us:=0
 var peak_active:=0
+var peak_route_work:=0
+var peak_planning_us:=0
+var route_ready_seconds: Array=[-1.0,-1.0]
 var traces: Array=[[],[]]
 var handles: Array[int]=[]
 func check(ok: bool,label: String) -> void:
@@ -36,7 +39,7 @@ func run() -> void:
 	var goals: Array[Vector3]=[Vector3(3,0.93,0),Vector3(3,0.93,5)]
 	for i in 2:
 		var id: int=actors.spawn(Vector3(-3,0.93,i*5));handles.append(actors.store.resolve_identity(id));actors.orders.set_target(id,goals[i])
-		box(scene,goals[i]-Vector3.UP*0.87,Vector3(0.7,0.08,0.7),Color("75dba1"))
+		box(scene,goals[i]-Vector3.UP*0.87,Vector3(0.7,0.08,0.7),Color("75dba1"),0)
 		var label:=Label3D.new();label.text="AROUND WALL" if i==0 else "CLEAR ROUTE";label.position=goals[i]+Vector3.UP*0.6;label.billboard=BaseMaterial3D.BILLBOARD_ENABLED;label.font_size=40;scene.add_child(label)
 	for i in 3:await physics_frame
 	var delta:=1.0/Engine.physics_ticks_per_second
@@ -45,6 +48,10 @@ func run() -> void:
 		var begin:=Time.get_ticks_usec()
 		actors.update_simulation(delta,Vector3(0,1,2),true,func(_bounds: AABB):return true)
 		peak_tick_us=maxi(peak_tick_us,Time.get_ticks_usec()-begin);peak_active=maxi(peak_active,int(actors.status.get("active",0)))
+		peak_route_work=maxi(peak_route_work,int(actors.simulation_status.route_work))
+		peak_planning_us=maxi(peak_planning_us,int(actors.simulation_status.route_planning_us))
+		for i in 2:
+			if route_ready_seconds[i]<0 and actors.pool.navigation_status(handles[i]).state in ["following","arrived"]:route_ready_seconds[i]=elapsed
 		frames+=1;elapsed+=delta
 		if frames%12==0:
 			for i in 2:
@@ -61,6 +68,6 @@ func run() -> void:
 	var output="res://reports/actor_navigation";DirAccess.make_dir_recursive_absolute(output)
 	for i in 3:await RenderingServer.frame_post_draw
 	root.get_texture().get_image().save_png(output+"/route.png")
-	var report={"checks":checks,"failures":failures,"simulation_seconds":elapsed,"physics_ticks":frames,"physics_hz":Engine.physics_ticks_per_second,"active_limit":2,"peak_active":peak_active,"peak_adapter_tick_us":peak_tick_us,"wall_end":[wall_end.x,wall_end.y,wall_end.z],"clear_end":[clear_end.x,clear_end.y,clear_end.z],"traces":traces,"scope":"Actual actor-world adapter and native activation/movement, static collision wall and floor; no main-world streaming, navigation planner, population or thermal qualification"}
+	var report={"checks":checks,"failures":failures,"simulation_seconds":elapsed,"physics_ticks":frames,"physics_hz":Engine.physics_ticks_per_second,"active_limit":2,"peak_active":peak_active,"peak_adapter_tick_us":peak_tick_us,"peak_route_work":peak_route_work,"peak_planning_us":peak_planning_us,"route_ready_simulation_seconds":route_ready_seconds,"wall_end":[wall_end.x,wall_end.y,wall_end.z],"clear_end":[clear_end.x,clear_end.y,clear_end.z],"traces":traces,"scope":"Actual actor-world adapter and native activation/movement, static collision wall and floor; bounded local native planner; no main-world streaming, population or thermal qualification"}
 	var file:=FileAccess.open(output+"/result.json",FileAccess.WRITE);file.store_string(JSON.stringify(report,"  "));file.close()
 	scene.free();await process_frame;print("ACTOR_NAVIGATION checks=",checks," failures=",failures);quit(1 if failures else 0)

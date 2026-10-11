@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: 0BSD
 extends Node3D
 # Persistent ownership is always registered, independently of simulation activation.
+var navigation_admission: Callable
 var orders: RefCounted
 var store: RefCounted
 var pool: Node3D
@@ -26,6 +27,7 @@ func enable(capacity: int=16) -> bool:
 	pool=ClassDB.instantiate("NativeEntityActivation");add_child(pool)
 	if not pool.configure(store,capacity):pool.free();pool=null;return false
 	if not pool.set_orders(orders):pool.free();pool=null;return false
+	pool.enable_navigation(navigation_admission)
 	renderer=ClassDB.instantiate("NativeEntityRenderer");add_child(renderer)
 	var mesh=preload("res://addons/world_runtime/actor_mesh.gd").build()
 	if not renderer.configure(store,mesh,256,true):renderer.free();renderer=null;pool.free();pool=null;return false
@@ -34,6 +36,9 @@ func enable(capacity: int=16) -> bool:
 	var highlight:=StandardMaterial3D.new();highlight.shading_mode=BaseMaterial3D.SHADING_MODE_UNSHADED;highlight.albedo_color=Color("65ffe0");ring.material=highlight
 	selection_marker.mesh=ring;selection_marker.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_OFF;selection_marker.hide()
 	return true
+func set_navigation_admission(admission: Callable) -> void:
+	navigation_admission=admission
+	if pool!=null:pool.enable_navigation(admission)
 func suspend() -> void:
 	if pool!=null:pool.select(Vector3(NAN,0,0),0,1)
 	if renderer!=null:

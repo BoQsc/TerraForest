@@ -26,7 +26,7 @@ Statuses below distinguish **integrated partial** (usable but coverage gates rem
 | Player, toolbelt, inventory and unified interaction | Integrated partial: movement, UI, pickups/resources and paid gameplay construction separate from free editor | Complete a coherent gather/build/use/save/reload loop across terrain, buildings and objects; verify input focus and unavailable-region behavior |
 | Vegetation including stones, plants and grass | Integrated partial: trees plus interactive, persistent stones/plants/grass clumps; native picking and batched ground-cover rendering | Add representative small stones, plants and grass with density/LOD tiers; individual stones, plants and grass clumps must support removal and placement, survive travel/save/reload, and follow gameplay inventory rules while editor placement stays free; verify local mining/building disturbance and combined rendering costs |
 | Efficient world representation and storage | Integrated partial: versioned compound snapshots, regional structures, checksums/recovery and derived caches | Demonstrate bounded memory/disk behavior under edit, travel, save and reload; distinguish authoritative records from disposable caches; retain unresolved terrain addressing/delta/compaction requirements |
-| High amounts of entities | Integrated partial: persistent actor orders, editor selection, rendered proxies and bounded native activation; animation/navigation absent | Integrate representative rendered, interacting entities with activation/sleeping and representative animation/collision work; measure actual work at stated populations |
+| High amounts of entities | Integrated partial: persistent actor orders, editor selection, rendered gait, bounded native activation and local walking routes; settlement/crowd navigation unqualified | Integrate representative rendered, interacting entities with activation/sleeping and representative animation/collision work; measure actual work at stated populations |
 | Vehicles and high-speed travel | Integrated partial: native driving, persistent fleet identities, opt-in four-body activation and bounded parked visual/static collision batches | Exercise drive/park/reload and repeated travel through combined content; establish bounded activation for multiple vehicles and safe collision arrival behavior |
 | Large multiplayer world | Planned implementation; some storage/identity prerequisites exist | During coverage work, audit authority/identity/command boundaries and record violations. Later gate: server plus two clients, edits, late join, loss/reorder, bounded interest/traffic and measured scaling |
 | Professional visuals, resilience and headroom | Partial: materials/LOD, lifecycle checks and short graphical evidence | Inspect combined terrain, buildings, vegetation and water; fix visible defects; then qualify frame tails, resource growth and long sessions at documented workloads |
@@ -99,7 +99,7 @@ combined gameplay or performance gates have all passed.
 
 The current actor path already has saved identities/orders, native movement,
 bounded physics activation, batched visuals and basic limb gait. Reuse these.
-The missing capability is reaching destinations around obstacles; more population
+The coverage gap is navigating actual settlement geometry; more population
 counters or another empty-ground movement demo would not close it.
 
 The next implementation slice supports the original high-entity-count requirement
@@ -123,13 +123,18 @@ leave/return test in representative world geometry. Record planning latency,
 per-frame work, active versus stored actor counts and queue bounds before expanding
 population. Include a visible human checkpoint. Stop and reassess after two failed
 bounded design cycles rather than reopening an unbounded terrain research detour.
-The first short actor route test now exposes the missing navigation and remains
-failing. A prerequisite native collision mask defect is fixed: active actors now
-collide with both terrain and authored buildings. See
-[baseline and collision evidence](evidence/actor_navigation/README.md).
+The first wall-route failure is now resolved by bounded native local A* walking
+routes. The original [failing baseline](evidence/actor_navigation/README.md) remains
+retained. Wall detours, sealed areas, edit invalidation, unavailable collision,
+leave/return and world signal wiring have targeted checks; see
+[local route evidence and limits](evidence/actor_local_routes/README.md).
 
-Detailed navigation design and implementation remain outstanding; this entry is
-sequencing, not an implementation result or a completed coverage gate.
+This closes the small obstacle-route gate, not the settlement navigation slice.
+Next: test usable doorways and a route through actual authored settlement geometry,
+then saved-order reload and declared active-population planning latency. Stairs,
+crowd avoidance, routes beyond the local search extent and shared regional routing
+remain absent. Do not expand the population or claim navigation coverage before
+those representative checks.
 
 After that slice, reassess water/lake completeness and settlement generation with
 usable interiors against the coverage register. Do not quietly leave either behind.

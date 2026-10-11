@@ -169,3 +169,45 @@ interpolation, navigation or dense-crowd qualification. See
 ### Derived cache ownership
 
 `NativeDerivedCacheIndex` is a Windows, single-worker helper used by the terrain cache adapter. It owns an exclusive root lease, pins the directory, keeps at most 65,536 recognized packet records in native maps/ordered recency, and deletes at most one candidate per `evict_one()` call after identity/size/time revalidation. `acquire`, `track`, `touch`, `forget`, `safe_directory`, `count` and `release` support worker coordination. `evict_one` returns `ok`, `bytes` and `reason` (`evicted`, `empty`, `busy`, `changed`). It is not a general filesystem cleaner or world-save store. Complete byte accounting, admission and idle scheduling belong to `volumetric_terrain/derived_cache.gd`. See `docs/TERRAIN_CACHE_MAINTENANCE.md` for scope and limits.
+
+
+## Local actor walking routes
+
+`NativeEntityActivation.enable_navigation(admission=Callable())` enables a native,
+main-thread incremental local A* planner for `settle`. `actor_world.gd` enables it
+by default; the legacy explicit-target `tick` API remains direct motion. Destinations
+still live in `NativeActorOrders`. Routes are disposable and recomputed after proxy
+reuse; they are not part of the save format.
+
+The planner samples a 0.5 m horizontal grid with support rays, capsule occupancy and
+sweeps against terrain/structure layers 1 and 2. It admits conservative walking
+edges (height difference <=0.16 m, floor normal Y >=0.85); it does not implement
+step-up, jumping or reliable multistorey connectivity. Two support samples per edge
+and swept capsule clearance reject obvious gaps and corner cutting. Fine openings
+can be missed by the grid. `blocked` means no path in this sampled local graph,
+not a proof that every possible continuous/world-scale route is impossible.
+
+Each proxy retains <=2,048 nodes, with a search extent of +/-16 m on each horizontal
+axis from its start. All active proxies share twelve work units per `settle` with
+round-robin scheduling and a cooperative 750 microsecond deadline. One unit tests
+at most one edge (four physics queries) or removes up to twelve stale queue entries.
+A query/callback and bounded route reset/reconstruction can exceed the deadline;
+this is not a hard real-time or total actor-frame guarantee. The priority queue is
+bounded by outgoing relaxations (eight per expanded node). Inactive stored actors
+have no planner work or extra physics bodies.
+
+`navigation_status(handle)` reports `idle`, `planning`, `following`, `arrived`,
+`blocked`, `unavailable`, `search_limit`, or `sleeping`, plus search counts.
+Unavailable coverage retries after 0.5 seconds; exhausted/blocked searches remain
+stopped until an edit/new order. Stalled movement permits two replans before stopping.
+`invalidate_navigation(bounds=AABB())` invalidates intersecting search/route bounds;
+an empty box invalidates all proxies. Call it on geometry changes. The demo hooks
+terrain publication, structure edits, harvesting and lake changes, supplies dry-ground
+admission and displays selected actor status in the HUD. Structure/harvest invalidation
+currently covers all active routes. Later actor activation retains the admission callback.
+
+No crowd avoidance, dynamic-obstacle policy, region graph, shared route cache or
+large-population qualification is supplied by this local planner. Bodies on the
+queried world layers can cause conservative blockage. The next gate is authored
+settlement routes and measured planning latency under a declared active population.
+See `docs/evidence/actor_local_routes/README.md`.

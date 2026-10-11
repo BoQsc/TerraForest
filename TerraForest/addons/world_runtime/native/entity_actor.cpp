@@ -27,7 +27,7 @@ bool NativeEntityActor::tick(const Vector3 &target,double delta,bool collision_r
     Vector3 direction=target-get_global_position();direction.y=0;
     const real_t distance=direction.length();
     Vector3 velocity;
-    if(distance>0.15)velocity=direction/distance*real_t(std::min(2.5,double(distance)/delta));
+    if(distance>arrival_distance)velocity=direction/distance*real_t(std::min(2.5,double(distance)/delta));
     velocity.y=is_on_floor()?0:get_velocity().y-real_t(20.0*delta);
     const uint64_t motion_begin=profile_tick?Time::get_singleton()->get_ticks_usec():0;
     set_velocity(velocity);move_and_slide();

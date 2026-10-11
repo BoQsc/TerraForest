@@ -2540,3 +2540,22 @@ Offline terrain cache inventory and verified quota cleanup are available via
 `tools/maintain_terrain_cache.py`; see TERRAIN_CACHE_MAINTENANCE.md. This does not
 replace the pending native runtime cache ownership, eviction and disk-reserve
 work. Live-cache cleanup has not been applied while the editor/game are running.
+
+
+## 2026-10-11 — bounded local actor route checkpoint
+
+Following the user's decision to pause optional item/UI/art polish, implemented native
+local walking routes using the existing actor identities, orders, physics pool and
+renderer. The previously failing wall route now passes. Fourteen contract checks cover
+edits, sealed paths, reopening, unavailable collision, leave/return and bounds. Six
+main-world wiring checks and existing collision/activation regressions pass. Debug and
+release DLLs rebuilt; these checks ran against debug. Evidence and explicit limits:
+[evidence/actor_local_routes](evidence/actor_local_routes/README.md).
+
+The main actor world enables local planning, retains dry-ground admission across later
+activation, invalidates terrain/building/harvest/lake edits and displays selected-actor
+route state. No saved-state format change. Legacy explicit-target native tick stays
+available. No crowd, stair, multistorey or regional routing claim. Next gate: usable
+openings and actual settlement geometry, then saved orders and simultaneous-planning
+cost. This is a bounded obstacle-route implementation checkpoint, not full navigation
+or large-entity-count qualification. M2 water/interior work remains scheduled afterward.

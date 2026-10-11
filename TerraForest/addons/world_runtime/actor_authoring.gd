@@ -70,4 +70,4 @@ func command(world: Node,stop: bool) -> String:
 	var query:=PhysicsShapeQueryParameters3D.new();query.shape=shape;query.transform=Transform3D(Basis(),point);query.collision_mask=0xFFFFFFFF
 	if not world.get_world_3d().direct_space_state.intersect_shape(query,1).is_empty():return "Destination space is occupied."
 	if not world.actors.orders.set_target(selected_identity,point):return "Actor changed; select it again."
-	return "Actor moving directly toward destination; obstacles can stop it · F5 saves."
+	return "Planning a local walking route; status is shown in the HUD · F5 saves."
