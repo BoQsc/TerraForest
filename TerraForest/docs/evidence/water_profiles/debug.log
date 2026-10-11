@@ -1,0 +1,47 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS sampled terrain volume bakes
+PASS terrain hierarchy is closed and solver-compatible
+PASS profile compilation begins
+PASS partial profiles and invalid work budgets cannot publish
+PASS profile compiler completes within operation budgets
+PASS finished profiles perform no additional work
+PASS ridge has two actual terrain storage curves
+PASS partitioned full capacity matches independent whole-volume integration to one millilitre
+PASS target points map to separate below-sill bodies
+PASS sampled terrain volume bakes
+PASS left below-sill profile equals separately flooded terrain capacity
+PASS sampled terrain volume bakes
+PASS right below-sill profile equals separately flooded terrain capacity
+PASS profile compilation begins
+PASS partial profiles and invalid work budgets cannot publish
+PASS profile compiler completes within operation budgets
+PASS finished profiles perform no additional work
+PASS one-operation scheduling preserves exact terrain capacity curves
+PASS caller cannot mutate retained native capacity curves
+PASS actual terrain profiles configure native settling
+PASS finite pour conserves total plus pending quantity during every terrain-basin spill step
+PASS sufficient pour merges both actual terrain basins at four metres
+PASS withdrawal conserves retained plus removed water every step
+PASS withdrawal splits actual terrain basins and retains water behind the sill
+PASS settled terrain water has no further solver work
+PASS sampled terrain volume bakes
+PASS off-anchor geometry deviation stays inside declared conservative interpolation bound
+PASS profile compilation begins
+PASS partial profiles and invalid work budgets cannot publish
+PASS profile compiler completes within operation budgets
+PASS finished profiles perform no additional work
+PASS two-centimetre anchors sharply reduce measured off-anchor capacity error
+PASS fine profile declares its twenty-millimetre interpolation interval
+PASS missing sill anchor cannot silently interpolate spill capacity
+PASS initial anchor above lowest exact air floor rejected
+PASS capacity above source ceiling rejected
+PASS hierarchy from mismatched opening data rejected
+PASS sampled terrain volume bakes
+PASS terrain hierarchy is closed and solver-compatible
+PASS profile compilation begins
+PASS partial profiles and invalid work budgets cannot publish
+PASS profile compiler completes within operation budgets
+PASS finished profiles perform no additional work
+PASS stacked cave profiles count three-dimensional voids without counting solid roof
+WATER_PROFILES failures=0

@@ -110,8 +110,14 @@ compiler. 58 debug/release checks and actual native-terrain integration pass; se
 [basin evidence](evidence/water_basins/README.md). Flat terrain compacts to one
 basin; a ridge yields two basins with the measured sill. External ports survive,
 and incomplete/deep forests cannot silently enter the closed settling solver.
-Terrain-derived capacity profiles are still missing. Compile storage curves next,
-then connect the terrain-derived profiles to settling. The current input uses a ready closed lake's
+`NativeWaterProfiles` now compiles actual terrain storage curves into settling.
+44 debug/release checks pass, including finite cross-sill pour and withdrawal with
+conservation at each event, plus actual native-terrain crater integration. See
+[profile evidence](evidence/water_profiles/README.md). Coarse one-metre anchors
+show unacceptable interpolation error; two-centimetre anchors improve the measured
+fixture, but adaptive/error-controlled selection remains open for tall domains.
+Next admit/stitch raw terrain regions and preserve quantities through edits before
+world/item/save integration. The current input uses a ready closed lake's
 potential region: raw-terrain open-region admission with outgoing ports is also
 required before world-scale routing. Node IDs are local to one immutable source
 grid; region/edit ownership checks must be explicit. Keep intermediate memory and
@@ -129,8 +135,9 @@ concurrency bounded; do not retain one simulated body per tetrahedron.
    high dry sill that must not teleport water, and stacked/disconnected caves. Report
    work counts, peak queue/memory, settling latency and budget exhaustion. Compare
    a second update budget to detect scheduling-dependent volume errors. Shallow-source
-   admission passes; supplied-profile settling passes. Terrain-derived redistribution
-   and displacement remain unimplemented.
+   admission passes; supplied-profile settling passes. Terrain-derived regional equilibrium now passes finite pour/withdrawal checks.
+   Dynamic terrain-edit displacement/remapping, cross-region exchange and actual
+   gameplay remain unimplemented; interpolation accuracy requires explicit control.
 3. **Sleeping/scaling:** many settled bodies plus a local change; measure zero solver
    work for sleeping bodies, localized wake-up and fair progress under pressure.
    Preserve failures. Do not infer performance from the accounting tests. Do not instantiate one independently simulated lake per poured bucket; connect

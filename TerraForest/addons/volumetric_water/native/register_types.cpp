@@ -5,6 +5,7 @@
 #include "water_settling.hpp"
 #include "water_topology.hpp"
 #include "water_basins.hpp"
+#include "water_profiles.hpp"
 #include <godot_cpp/godot.hpp>
 #include <godot_cpp/core/class_db.hpp>
 using namespace godot;
@@ -17,6 +18,7 @@ static void initialize(ModuleInitializationLevel level) {
         GDREGISTER_CLASS(terraforest::NativeWaterSettling);
         GDREGISTER_CLASS(terraforest::NativeWaterTopology);
         GDREGISTER_CLASS(terraforest::NativeWaterBasins);
+        GDREGISTER_CLASS(terraforest::NativeWaterProfiles);
     }
 }
 static void terminate(ModuleInitializationLevel) {}

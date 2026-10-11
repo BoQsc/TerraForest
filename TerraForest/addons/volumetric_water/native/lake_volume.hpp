@@ -14,6 +14,7 @@ namespace terraforest {
 class NativeLakeVolume : public godot::RefCounted {
     GDCLASS(NativeLakeVolume, godot::RefCounted)
     friend class NativeWaterCapacity;
+    friend class NativeWaterProfiles;
     friend class NativeWaterTopology;
     godot::Vector3 origin_, seed_;
     godot::Vector3i size_;

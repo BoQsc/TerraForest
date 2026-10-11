@@ -1,0 +1,33 @@
+{
+  "basins": {
+    "buffer_bytes": 269300,
+    "error": "",
+    "leaves": 1,
+    "max_depth": 0,
+    "merges": 0,
+    "nodes": 418,
+    "phase": 7,
+    "portals": 0,
+    "roots": 1,
+    "status": 1,
+    "work_units_total": 3198
+  },
+  "capacity_ml": 39843474,
+  "failures": 0,
+  "max_profile_call_us": 76,
+  "profile_calls": 110,
+  "profiles": {
+    "anchors": 61,
+    "buffer_bytes": 1952,
+    "error": "",
+    "leaves": 1,
+    "max_leaf_interval_ml": 3633122,
+    "max_level_step_mm": 100,
+    "phase": 5,
+    "status": 1,
+    "total_anchor_rounding_bound_ml": 0.5,
+    "work_units_total": 28112
+  },
+  "retained_ml": 39842474,
+  "scope": "Actual native terrain excavation, capacity compilation and conserved finite pour/withdrawal. Not item or saved-world integration."
+}

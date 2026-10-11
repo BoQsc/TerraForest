@@ -207,8 +207,11 @@ passes42 debug/release checks plus actual native-terrain excavation integration;
 see [topology evidence](evidence/water_topology/README.md). Native basin reduction
 now passes58 debug/release checks plus actual terrain integration, compacting
 flat connected geometry while preserving outgoing ports. See
-[basin evidence](evidence/water_basins/README.md). Next compile terrain storage
-profiles and add raw-terrain open-region ports, then quantity-preserving edit remapping and bucket/save transactions. Transient flow and pressure/velocity fields are not
+[basin evidence](evidence/water_basins/README.md). Terrain storage profiles now feed
+finite settling, with44 debug/release checks plus actual native-terrain integration;
+see [profile evidence](evidence/water_profiles/README.md). Coarse interpolation is
+not adequate; adaptive accuracy and larger-domain support remain open. Next add
+raw-terrain open-region ports, then quantity-preserving edit remapping and bucket/save transactions. Transient flow and pressure/velocity fields are not
 implemented, and current playable lakes still use static fill levels. Next prove terrain-connected redistribution and conservation under a
 bounded native work budget, then integrate bucket item ownership and world saves.
 Retain the previous finalization/hitch failures; do not increase water caps or claim
