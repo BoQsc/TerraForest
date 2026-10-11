@@ -1,0 +1,24 @@
+{
+  "date": "2026-10-11",
+  "base_commit": "5f44215ad3167c0471d637b4ec7914a3b0e34ee6",
+  "checks": {
+    "native_adapter_debug": 23,
+    "native_adapter_release": 23,
+    "child_process_each": 3,
+    "junction_checks": 4,
+    "actual_world": 9,
+    "scan_regression": "passed; per-slice check count depends on filesystem timing",
+    "idle_preemption": "passed",
+    "disabled_startup": "passed",
+    "packaging_contracts": 4
+  },
+  "commands": [
+    "godot --headless --path TerraForest --script res://tests/cache_eviction.gd",
+    "python TerraForest/tools/test_native_release.py --addon world_runtime --test cache_eviction --godot ENGINE",
+    "godot --headless --path TerraForest --script res://tests/cache_eviction_links.gd -- ABSOLUTE_FIXTURE_ROOT",
+    "godot --path TerraForest --fullscreen --resolution 1920x1080 --script res://tests/cache_eviction_world.gd -- --derived-cache=user://cache_eviction_world_UNIQUE"
+  ],
+  "link_fixture": "root/a*64/b*64 is a Windows directory junction to outside containing a checksum-corrupt typed TRC file; linked_root is another junction to outside. Fixture created in .build; SHA256 unchanged after test. Symbolic-link creation lacked privilege; junction creation succeeded.",
+  "scope": "Capacity recovery, exclusive updated-process ownership, candidate safety and real worker integration. Logical byte quota, not disk reserve/metadata quota or hard I/O deadline. Unknown/temp files and empty directories retained; external/old writers unsupported. No mining or thermal/performance gate closed.",
+  "incident": "First world fixture path overwritten by terrain facade: 535330268 bytes of recognized rebuildable files evicted from normal user://terrain_cache at 2MiB test budget. Temporary-world log confirms save skipped. Original path_failure.json path is intended, not actual. Fixed fixture requires fresh command-line override before scene creation; subsequent tests use only disposable cache roots."
+}

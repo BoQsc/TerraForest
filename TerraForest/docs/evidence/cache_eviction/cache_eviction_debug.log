@@ -1,0 +1,31 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS hidden unknown file participates in quota fixture
+PASS exclusive owner obtains complete initial accounting
+PASS three packets fit with canonical and unknown bytes counted
+PASS read touches oldest packet
+PASS full-quota foreground request schedules eviction without deleting
+PASS idle eviction preserves recently read packet and removes older cold packet
+PASS new cache writes resume after eviction
+PASS continued travel-sized writes maintain byte/index bounds and remain readable
+PASS lake payload waits in bounded queue under quota pressure
+PASS idle eviction publishes queued lake without rebaking
+PASS unsafe cache component is rejected
+PASS canonical and unknown files remain byte-identical
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS competing process stays read-only without maintenance spin
+PASS competing process retains valid cache reads
+PASS competing process cannot write
+
+PASS separate-process lease/read-only checks pass
+PASS reader-contention candidate indexed
+PASS busy reader preserves packet and accounting without idle spin
+PASS eviction succeeds after reader closes
+PASS single eviction candidate tracked
+PASS changed candidate is retained and accounting fails closed
+PASS released lease can be reacquired and inventory rebuilt
+PASS unknown over-quota bytes are preserved without writes or repeated eviction
+PASS over-quota startup finishes full accounting before deleting
+PASS over-quota startup recovers bounded writable cache
+PASS startup recovery accepts new packet

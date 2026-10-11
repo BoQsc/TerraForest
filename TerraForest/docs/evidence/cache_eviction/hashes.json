@@ -1,0 +1,12 @@
+{
+  "addons/world_runtime/native/derived_cache_index.cpp": "957590d4b7306605ce7fb82f85b8acac93396d6451d1ec8a1afd482f2339fd39",
+  "addons/world_runtime/native/derived_cache_index.hpp": "3de9fabd92a07ac6c291a38b8870d2c233d510a48c2720bfc4d701e1afdf1733",
+  "addons/world_runtime/native/register_types.cpp": "b37c3da199705d3393d0cb11390a31b46ab4449881b5f9c40f608dc88f2d1e80",
+  "addons/world_runtime/bin/world_runtime.windows.template_debug.x86_64.dll": "1a11bbf3e9f30cfa2dc80eea235b19a074858be0b8df08bf6a5aa7f2f3341207",
+  "addons/world_runtime/bin/world_runtime.windows.template_release.x86_64.dll": "0447fd4ddf35d80d63371b22f43c2beb7792a8239366f233b62a0e2e7f3db5f4",
+  "addons/volumetric_terrain/derived_cache.gd": "8dc56eee036693121d6bd149a848ec51d47412e1505007ce5422d1c8bd0cfcf4",
+  "tests/cache_eviction.gd": "7fe9c29d2102f3b2df558b161a1d335fc4678dd5e4ebe3d947b42b171222cbc9",
+  "tests/cache_eviction_links.gd": "6a241fe423d9e76a90526e7474aa9ee1484d73346c48e9df81fb8d1f298be14c",
+  "tests/cache_eviction_world.gd": "98e8b7c19bde53235d31df1194db92eacd718f9ca71179aab36a1e3d8f73b042",
+  "tools/test_native_release.py": "28f42e67d977fa5aa294e69f243c446992c8f75f80ff709d8f5e5b6dfcccdeea"
+}

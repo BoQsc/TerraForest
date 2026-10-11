@@ -1,0 +1,55 @@
+{
+  "before": {
+    "accounting_complete": true,
+    "byte_limit": 2097152,
+    "cache_read_only": false,
+    "corrupt": 0,
+    "disk_bytes": 1822536,
+    "enabled": true,
+    "evicted_bytes": 19721448,
+    "eviction_pending": true,
+    "evictions": 166,
+    "hits": 0,
+    "lease_owned": true,
+    "misses": 349,
+    "scan_entries": 6,
+    "write_failures": 0,
+    "writes": 176
+  },
+  "failures": 0,
+  "final": {
+    "accounting_complete": true,
+    "byte_limit": 2097152,
+    "cache_read_only": false,
+    "corrupt": 0,
+    "disk_bytes": 2055368,
+    "enabled": true,
+    "evicted_bytes": 20230900,
+    "eviction_pending": true,
+    "evictions": 169,
+    "hits": 0,
+    "lease_owned": true,
+    "misses": 358,
+    "scan_entries": 6,
+    "write_failures": 0,
+    "writes": 183
+  },
+  "path": "C:/Users/LENOVO LOQ 15/AppData/Roaming/Godot/app_userdata/TerraForest/cache_eviction_world_1791697560744659700",
+  "presentation": {
+    "fair_graphical_sample": true,
+    "fullscreen": true,
+    "headless": false,
+    "render_scale": 1.0,
+    "viewport": [
+      1920,
+      1080
+    ],
+    "window_mode": 3,
+    "window_size": [
+      1920,
+      1080
+    ]
+  },
+  "scope": "Actual world worker, generated geometry and small disposable cache quota. No manual save, no mining/frame-time/endurance qualification.",
+  "seeded_bytes": 2667032
+}

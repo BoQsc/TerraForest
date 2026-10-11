@@ -1,0 +1,23 @@
+{
+  "cache": {
+    "accounting_complete": true,
+    "byte_limit": 4096,
+    "cache_read_only": false,
+    "corrupt": 0,
+    "disk_bytes": 2113,
+    "enabled": true,
+    "evicted_bytes": 23920,
+    "eviction_pending": false,
+    "evictions": 23,
+    "hits": 41,
+    "lease_owned": true,
+    "misses": 0,
+    "scan_entries": 7,
+    "write_failures": 0,
+    "writes": 25
+  },
+  "checks": 23,
+  "failures": 0,
+  "root": "C:/Users/LENOVO LOQ 15/AppData/Roaming/Godot/app_userdata/TerraForest/cache_eviction_62148_295419",
+  "scope": "Disposable 4KiB quota, real native Windows lease/checked deletion and worker cache adapter. Not a mixed-world latency, disk-pressure or endurance qualification."
+}

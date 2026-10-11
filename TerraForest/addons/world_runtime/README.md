@@ -164,3 +164,8 @@ uploads the full fixed-capacity buffer; unchanged idle rows cause no upload.
 This is basic locomotion presentation, not authored character animation,
 interpolation, navigation or dense-crowd qualification. See
 `docs/evidence/actor_gait` for scoped checks and CPU-call measurements.
+
+
+### Derived cache ownership
+
+`NativeDerivedCacheIndex` is a Windows, single-worker helper used by the terrain cache adapter. It owns an exclusive root lease, pins the directory, keeps at most 65,536 recognized packet records in native maps/ordered recency, and deletes at most one candidate per `evict_one()` call after identity/size/time revalidation. `acquire`, `track`, `touch`, `forget`, `safe_directory`, `count` and `release` support worker coordination. `evict_one` returns `ok`, `bytes` and `reason` (`evicted`, `empty`, `busy`, `changed`). It is not a general filesystem cleaner or world-save store. Complete byte accounting, admission and idle scheduling belong to `volumetric_terrain/derived_cache.gd`. See `docs/TERRAIN_CACHE_MAINTENANCE.md` for scope and limits.

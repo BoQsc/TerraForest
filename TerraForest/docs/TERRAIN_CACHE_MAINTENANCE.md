@@ -1,10 +1,32 @@
 # Offline terrain cache maintenance
 
-The current terrain worker admits derived meshes up to 512 MiB based on an
-instance-local startup inventory. It does not evict old snapshots. Once full,
-the cache stops accepting new meshes; terrain generation continues normally.
-Concurrent processes do not share a quota transaction. This remains a runtime
-architecture limitation, not a hard cross-process disk guarantee.
+The terrain worker now uses a native exclusive Windows cache lease and a bounded
+recency index. The default logical file-byte quota remains 512 MiB. After complete
+accounting, a full cache schedules one checked packet eviction per idle worker
+call, freeing at least the requested space or one eighth of the budget. Mesh
+requests never synchronously delete a batch of files. Uncached meshes still
+render; a packet rejected for space can be cached on a later request. Lake
+payloads have a bounded deferred queue (16 entries / 16 MiB).
+
+The native index holds at most 65,536 recognized terrain/lake packets. Initial
+ordering uses file write time; successful reads update in-memory recency only.
+Recency is not persisted. Deletion rechecks file identity, size and timestamp,
+then deletes by the opened handle. A competing updated process remains read-only.
+A temporary reader conflict defers eviction until a later space request without
+invalidating accounting or spinning in idle maintenance; pending lake cache
+copies may be dropped in that case, leaving their live volumes unaffected.
+External candidate changes invalidate accounting and stop writes/eviction until
+reconfiguration. Root/ancestor reparse points and directory junctions are rejected.
+
+Canonical saves, unknown files and temporary files are not eviction candidates.
+Unknown/hidden file bytes count toward the quota; an unknown-only full directory
+therefore remains read-only. Accounting is capped at 262,144 visited entries and
+32 directory levels. Empty directories are retained. The quota is for logical
+file bytes, not filesystem metadata, a disk-free reserve or a hard I/O deadline.
+It coordinates updated cache owners only: old builds, offline tools and external
+file writers do not participate in the lease. Canonical world data stays separate.
+See `docs/evidence/cache_eviction` for scoped validation and the retained world-test
+path mistake; sustained travel/mining and disk-pressure qualification remain open.
 
 `tools/maintain_terrain_cache.py` provides offline cleanup of these rebuildable
 meshes. It defaults to a read-only inventory and a 384 MiB retention budget:
@@ -26,8 +48,8 @@ python tools/maintain_terrain_cache.py "PATH/TO/terrain_cache" --budget-mib 384 
 
 `--offline` is the operator's assertion, not process detection or an acquired
 runtime lock. Maintenance must not run concurrently with writers or directory
-replacement. A future native cache owner must coordinate reads, writes, eviction,
-reservations and cross-process ownership.
+replacement. The runtime owner coordinates updated game instances, but this offline tool does not
+acquire its lease. Keep the offline requirement; do not run cleanup beside a game.
 
 The tool enumerates only the expected signature/snapshot/tile hierarchy. It
 checks the TRC header, mesh version and signed tile coordinates, then selects
