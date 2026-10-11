@@ -1,0 +1,127 @@
+{
+  "checks": 73,
+  "costs": [
+    {
+      "budget": 1,
+      "calls": 1,
+      "events": 1,
+      "max_call_us": 6,
+      "nodes": 3,
+      "profile_bytes": 120
+    },
+    {
+      "budget": 1,
+      "calls": 3,
+      "events": 3,
+      "max_call_us": 11,
+      "nodes": 3,
+      "profile_bytes": 120
+    },
+    {
+      "budget": 1,
+      "calls": 3,
+      "events": 3,
+      "max_call_us": 5,
+      "nodes": 3,
+      "profile_bytes": 120
+    },
+    {
+      "budget": 1,
+      "calls": 2,
+      "events": 2,
+      "max_call_us": 5,
+      "nodes": 3,
+      "profile_bytes": 120
+    },
+    {
+      "budget": 2,
+      "calls": 2,
+      "events": 3,
+      "max_call_us": 5,
+      "nodes": 3,
+      "profile_bytes": 120
+    },
+    {
+      "budget": 1,
+      "calls": 3,
+      "events": 3,
+      "max_call_us": 32,
+      "nodes": 3,
+      "profile_bytes": 96
+    },
+    {
+      "budget": 256,
+      "calls": 1,
+      "events": 3,
+      "max_call_us": 6,
+      "nodes": 3,
+      "profile_bytes": 120
+    },
+    {
+      "budget": 256,
+      "calls": 1,
+      "events": 2,
+      "max_call_us": 12,
+      "nodes": 3,
+      "profile_bytes": 120
+    },
+    {
+      "budget": 1,
+      "calls": 3,
+      "events": 3,
+      "max_call_us": 11,
+      "nodes": 7,
+      "profile_bytes": 392
+    },
+    {
+      "budget": 1,
+      "calls": 5,
+      "events": 5,
+      "max_call_us": 6,
+      "nodes": 7,
+      "profile_bytes": 392
+    },
+    {
+      "budget": 1,
+      "calls": 5,
+      "events": 5,
+      "max_call_us": 4,
+      "nodes": 7,
+      "profile_bytes": 392
+    },
+    {
+      "budget": 1,
+      "calls": 2,
+      "events": 2,
+      "max_call_us": 4,
+      "nodes": 7,
+      "profile_bytes": 392
+    },
+    {
+      "budget": 1,
+      "calls": 7,
+      "events": 7,
+      "max_call_us": 5,
+      "nodes": 7,
+      "profile_bytes": 112
+    },
+    {
+      "budget": 1,
+      "calls": 3,
+      "events": 3,
+      "max_call_us": 5,
+      "nodes": 3,
+      "profile_bytes": 120
+    },
+    {
+      "budget": 32,
+      "calls": 256,
+      "events": 8191,
+      "max_call_us": 8,
+      "nodes": 8191,
+      "profile_bytes": 982920
+    }
+  ],
+  "failures": 0,
+  "scope": "Native hierarchy equilibrium on supplied storage profiles; terrain hierarchy compilation, active transient flow, migration and bucket gameplay not integrated."
+}

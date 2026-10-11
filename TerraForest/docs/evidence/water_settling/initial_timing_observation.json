@@ -1,0 +1,9 @@
+{
+  "source": "Transcribed from tools read of reports/water_settling.json after initial run 20261011T161940471885Z; original timing JSON subsequently overwritten.",
+  "nodes": 8191,
+  "event_budget": 32,
+  "calls": 256,
+  "events": 8191,
+  "max_call_us": 2044,
+  "profile_bytes": 982920
+}

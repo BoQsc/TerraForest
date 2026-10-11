@@ -2,6 +2,7 @@
 #include "lake_catalog.hpp"
 #include "water_quantity.hpp"
 #include "water_capacity.hpp"
+#include "water_settling.hpp"
 #include <godot_cpp/godot.hpp>
 #include <godot_cpp/core/class_db.hpp>
 using namespace godot;
@@ -11,6 +12,7 @@ static void initialize(ModuleInitializationLevel level) {
         GDREGISTER_CLASS(terraforest::NativeLakeCatalog);
         GDREGISTER_CLASS(terraforest::NativeWaterQuantity);
         GDREGISTER_CLASS(terraforest::NativeWaterCapacity);
+        GDREGISTER_CLASS(terraforest::NativeWaterSettling);
     }
 }
 static void terminate(ModuleInitializationLevel) {}

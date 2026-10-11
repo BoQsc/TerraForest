@@ -81,6 +81,22 @@ tetrahedra now determine admission and full-cell occupancy is only a fast path.
 See [shallow-source evidence](evidence/water_shallow_source/README.md). This proves
 small-source geometry, not quantity-driven level changes or playable pouring.
 
+## Native settling component
+
+`NativeWaterSettling` now consumes supplied cumulative storage curves and a basin
+hierarchy. Fill/spill/merge and withdrawal/split run through a persistent bounded
+work stack; settled state requires no solver tick.73 debug/release checks pass,
+including nested/dry-sill cases,2000 unequal-area oracle commands, budget independence
+and4096 leaves. See [settling evidence](evidence/water_settling/README.md).
+
+This is hydrostatic equilibrium on supplied topology, not yet terrain-driven flow.
+The next required implementation is bounded3D terrain hierarchy/profile extraction,
+including correct spill contacts, stacked caves and an explicit approximation bound.
+Do not assume a2D height-field depression hierarchy alone handles overhangs. Tree
+configuration is still synchronous. Geometry remapping, mass displacement, save
+ownership and atomic bucket/world publication remain open. No full velocity/pressure
+field or transient water presentation is provided by this component.
+
 ## Gates and remaining work, in order
 
 1. **Quantity contract:** exact scoop/pour, partial fill, over-capacity rejection,
@@ -93,7 +109,8 @@ small-source geometry, not quantity-driven level changes or playable pouring.
    high dry sill that must not teleport water, and stacked/disconnected caves. Report
    work counts, peak queue/memory, settling latency and budget exhaustion. Compare
    a second update budget to detect scheduling-dependent volume errors. Shallow-source
-   admission passes; redistribution and displacement remain unimplemented.
+   admission passes; supplied-profile settling passes. Terrain-derived redistribution
+   and displacement remain unimplemented.
 3. **Sleeping/scaling:** many settled bodies plus a local change; measure zero solver
    work for sleeping bodies, localized wake-up and fair progress under pressure.
    Preserve failures. Do not infer performance from the accounting tests. Do not instantiate one independently simulated lake per poured bucket; connect

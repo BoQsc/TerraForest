@@ -104,3 +104,8 @@ behavior and remaining gates are in `docs/FINITE_WATER.md`.
 It clips the same tetrahedra used by queries and rounds to millilitres on completion.
 This supports future one-time finite-quantity initialization; it does not itself
 change water levels or simulate flow. See `docs/evidence/water_capacity`.
+
+`NativeWaterSettling` provides event-budgeted hydrostatic fill/spill/merge and
+withdrawal/split on supplied storage profiles and a basin hierarchy. It is not
+yet connected to terrain hierarchy extraction or the playable world. See
+`docs/evidence/water_settling` for tests, bounds and outstanding obligations.

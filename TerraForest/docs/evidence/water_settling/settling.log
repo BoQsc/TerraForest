@@ -1,0 +1,76 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS two supplied-profile basins configured
+PASS finite input admitted
+PASS settling finishes within per-call event budget
+PASS every published progress step preserves exact quantity
+PASS dry raised sill prevents teleporting into neighbor
+PASS finite input admitted
+PASS settling finishes within per-call event budget
+PASS every published progress step preserves exact quantity
+PASS overflow fills neighbor while donor stays at sill
+PASS finite input admitted
+PASS settling finishes within per-call event budget
+PASS every published progress step preserves exact quantity
+PASS both filled basins merge at equal level
+PASS withdrawal admitted
+PASS settling finishes within per-call event budget
+PASS every published progress step preserves exact quantity
+PASS withdrawal splits at sill and preserves disconnected remainder
+PASS two supplied-profile basins configured
+PASS finite input admitted
+PASS settling finishes within per-call event budget
+PASS every published progress step preserves exact quantity
+PASS submerged connection produces shared equilibrium level
+PASS spill elevation may lie between storage profile anchors
+PASS finite input admitted
+PASS settling finishes within per-call event budget
+PASS every published progress step preserves exact quantity
+PASS interpolated spill elevation preserves held and transferred quantities
+PASS two supplied-profile basins configured
+PASS finite input admitted
+PASS settling finishes within per-call event budget
+PASS every published progress step preserves exact quantity
+PASS withdrawal admitted
+PASS settling finishes within per-call event budget
+PASS every published progress step preserves exact quantity
+PASS different event budgets yield identical final distribution
+PASS nested hierarchy configured
+PASS finite input admitted
+PASS settling finishes within per-call event budget
+PASS every published progress step preserves exact quantity
+PASS nested dry sill keeps other branch dry
+PASS finite input admitted
+PASS settling finishes within per-call event budget
+PASS every published progress step preserves exact quantity
+PASS nested spill reaches selected receiving branch
+PASS finite input admitted
+PASS settling finishes within per-call event budget
+PASS every published progress step preserves exact quantity
+PASS nested merge shares aggregate storage profile
+PASS withdrawal admitted
+PASS settling finishes within per-call event budget
+PASS every published progress step preserves exact quantity
+PASS nested withdrawal splits correct branch
+PASS equal-elevation nested connections admit millilitre quantization
+PASS finite input admitted
+PASS settling finishes within per-call event budget
+PASS every published progress step preserves exact quantity
+PASS tiny nested merged quantities preserve exact volume
+PASS two supplied-profile basins configured
+PASS finite input admitted
+PASS settling finishes within per-call event budget
+PASS every published progress step preserves exact quantity
+PASS outside capacity remains explicit unaccepted water
+PASS settled bodies do zero solver work
+PASS invalid commands preserve state
+PASS invalid topology rejects without partial configuration
+PASS unequal basin storage profiles configured
+PASS 2000 unequal-basin scoop/pour commands match independent arithmetic oracle
+PASS 4096 storage leaves and 8191 hierarchy nodes configured
+PASS finite input admitted
+PASS settling finishes within per-call event budget
+PASS every published progress step preserves exact quantity
+PASS large hierarchy settles at expected conserved level
+PASS large settled hierarchy performs no further events
+WATER_SETTLING failures=0
