@@ -42,7 +42,7 @@ public:
     void invalidate(){state=IDLE;}
     void invalidate(const godot::AABB &bounds){if(!has_bounds_ || bounds.size==godot::Vector3() || bounds_.intersects(bounds))invalidate();}
     void prepare(const godot::Vector3 &position,const godot::Vector3 &goal,double delta);
-    // Exactly one candidate edge per call (at most 24 physics queries with stair clearance).
+    // Exactly one candidate edge per call (at most 33 physics queries with stair clearance).
     void step(godot::PhysicsDirectSpaceState3D *space,const godot::Callable &readiness,
         const godot::Callable &admission,const godot::Ref<godot::PhysicsRayQueryParameters3D> &ray,
         const godot::Ref<godot::PhysicsShapeQueryParameters3D> &shape);

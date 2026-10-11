@@ -2593,3 +2593,17 @@ position and saved destination, retire old handles, and replan to arrival. Evide
 `docs/evidence/actor_planning_latency`. Adapter peak 8.04 ms remains material;
 no total-frame, crowd, full-world reload or population qualification. Next remains
 a furnished-settlement route and integrated saved-order continuation. M3 stays active.
+
+
+### 2026-10-11: furnished actor route continues after world reload
+
+The actual furnished settlement exposed a saved-position-dependent stair planning
+failure despite successful authoritative-state restoration. A three-origin cottage
+fixture isolated it. Native planner clearance now matches the existing 0.30 m step
+limit instead of stopping at 0.15 m; collision/support checks remain. All three
+origins, eight integrated save/reload/arrival checks, fourteen route-contract checks
+and the 16-active/1,000-sleeping latency fixture pass. Source save unchanged; evidence
+and screenshots: `docs/evidence/actor_settlement_navigation`. Worst-case stair-edge
+query bound rises from 24 to 33; flat path and shared scheduler unchanged. One actor
+and one furnished cottage route are covered, not crowds or arbitrary city interiors.
+Resume the wider first-round coverage plan with water/lake and settlement gaps.

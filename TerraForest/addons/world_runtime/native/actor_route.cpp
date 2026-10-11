@@ -56,7 +56,7 @@ bool ActorRoute::edge(PhysicsDirectSpaceState3D *space,const Vector3 &from,Vecto
     Vector3 poses[3]={from,middle,to};
     for(auto &pose:poses){
         bool valid=false;
-        for(int lift=0;lift<=3;++lift){Vector3 raised=pose+Vector3(0,lift*.05,0);if(clear(raised)){pose=raised;valid=true;break;}}
+        for(int lift=0;lift<=6;++lift){Vector3 raised=pose+Vector3(0,lift*.05,0);if(clear(raised)){pose=raised;valid=true;break;}}
         if(!valid)return false;
     }
     for(int i=0;i<2;++i){

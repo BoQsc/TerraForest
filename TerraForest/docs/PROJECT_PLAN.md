@@ -141,15 +141,23 @@ versus the retained 2.22–2.23 second failure, with the same shared work cap.
 Actor-component disk reload preserves destinations and replans after recreation.
 See [latency and reload evidence](evidence/actor_planning_latency/README.md).
 
-Next: a furnished-settlement route and integrated saved-order continuation.
-Crowd avoidance, regional routes beyond the local search extent, shared routing
-data and general multistorey connectivity remain absent/unqualified. Do not expand
-the population or claim navigation coverage before those checks.
+One real furnished-settlement approach now passes normal save/reload and arrival
+inside its cottage. The check exposed a stair-origin-dependent planner failure;
+matching clearance to the existing 30 cm movement limit fixes it. Three starting
+phases and obstacle/work-budget regressions pass. See
+[settlement route evidence](evidence/actor_settlement_navigation/README.md).
 
-After that slice, reassess water/lake completeness and settlement generation with
-usable interiors against the coverage register. Do not quietly leave either behind.
+This closes the bounded route/reload slice, not the entity coverage row. Crowd
+avoidance, regional routes, shared routing data, arbitrary furniture layouts,
+multistorey connectivity and combined population performance remain open. Human
+actor usability feedback remains separate. Do not expand populations based on
+these checks alone.
+
+Next: reassess water/lake completeness and settlement generation with usable
+interiors against the coverage register, then implement the next missing first-round
+path. Retain actor limits for M3/M4 rather than indefinitely extending navigation.
 No multiplayer implementation, large-city certification or sustained-performance
-claim follows from the current UI acceptance.
+claim follows from the current integration checks.
 
 Current combined gameplay launcher: [Play Combined Gameplay.cmd](../Play%20Combined%20Gameplay.cmd)
 uses the separate gameplay copy of the furnished editor world. The existing

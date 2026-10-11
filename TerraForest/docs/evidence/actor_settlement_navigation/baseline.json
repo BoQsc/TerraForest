@@ -1,0 +1,220 @@
+{
+  "failures": 1,
+  "goal": "(811.5, 49.93, 1298.0)",
+  "peak_work": 12,
+  "slot": "actor_settlement_20261011T143941434998Z",
+  "start": "(811.5, 47.93, 1304.5)",
+  "trace": [
+    {
+      "navigation": {
+        "state": "sleeping"
+      },
+      "position": "(811.5, 47.93, 1304.5)",
+      "tick": 0
+    },
+    {
+      "navigation": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "following",
+        "waypoints": 14
+      },
+      "position": "(811.5, 47.90094, 1303.792)",
+      "tick": 30
+    },
+    {
+      "navigation": {
+        "expansions": 2,
+        "node_limit": 2048,
+        "nodes": 7,
+        "radius_m": 16,
+        "state": "planning",
+        "waypoints": 0
+      },
+      "position": "(811.5, 47.90094, 1303.667)",
+      "reload_tick": 0
+    },
+    {
+      "navigation": {
+        "expansions": 41,
+        "node_limit": 2048,
+        "nodes": 70,
+        "radius_m": 16,
+        "state": "planning",
+        "waypoints": 0
+      },
+      "position": "(811.5, 47.90094, 1303.667)",
+      "reload_tick": 30
+    },
+    {
+      "navigation": {
+        "expansions": 81,
+        "node_limit": 2048,
+        "nodes": 116,
+        "radius_m": 16,
+        "state": "planning",
+        "waypoints": 0
+      },
+      "position": "(811.5, 47.90094, 1303.667)",
+      "reload_tick": 60
+    },
+    {
+      "navigation": {
+        "expansions": 118,
+        "node_limit": 2048,
+        "nodes": 144,
+        "radius_m": 16,
+        "state": "planning",
+        "waypoints": 0
+      },
+      "position": "(811.5, 47.90094, 1303.667)",
+      "reload_tick": 90
+    },
+    {
+      "navigation": {
+        "expansions": 158,
+        "node_limit": 2048,
+        "nodes": 184,
+        "radius_m": 16,
+        "state": "planning",
+        "waypoints": 0
+      },
+      "position": "(811.5, 47.90094, 1303.667)",
+      "reload_tick": 120
+    },
+    {
+      "navigation": {
+        "expansions": 198,
+        "node_limit": 2048,
+        "nodes": 228,
+        "radius_m": 16,
+        "state": "planning",
+        "waypoints": 0
+      },
+      "position": "(811.5, 47.90094, 1303.667)",
+      "reload_tick": 150
+    },
+    {
+      "navigation": {
+        "expansions": 238,
+        "node_limit": 2048,
+        "nodes": 274,
+        "radius_m": 16,
+        "state": "planning",
+        "waypoints": 0
+      },
+      "position": "(811.5, 47.90094, 1303.667)",
+      "reload_tick": 180
+    },
+    {
+      "navigation": {
+        "expansions": 277,
+        "node_limit": 2048,
+        "nodes": 317,
+        "radius_m": 16,
+        "state": "planning",
+        "waypoints": 0
+      },
+      "position": "(811.5, 47.90094, 1303.667)",
+      "reload_tick": 210
+    },
+    {
+      "navigation": {
+        "expansions": 316,
+        "node_limit": 2048,
+        "nodes": 364,
+        "radius_m": 16,
+        "state": "planning",
+        "waypoints": 0
+      },
+      "position": "(811.5, 47.90094, 1303.667)",
+      "reload_tick": 240
+    },
+    {
+      "navigation": {
+        "expansions": 356,
+        "node_limit": 2048,
+        "nodes": 408,
+        "radius_m": 16,
+        "state": "planning",
+        "waypoints": 0
+      },
+      "position": "(811.5, 47.90094, 1303.667)",
+      "reload_tick": 270
+    },
+    {
+      "navigation": {
+        "expansions": 396,
+        "node_limit": 2048,
+        "nodes": 451,
+        "radius_m": 16,
+        "state": "planning",
+        "waypoints": 0
+      },
+      "position": "(811.5, 47.90094, 1303.667)",
+      "reload_tick": 300
+    },
+    {
+      "navigation": {
+        "expansions": 434,
+        "node_limit": 2048,
+        "nodes": 493,
+        "radius_m": 16,
+        "state": "planning",
+        "waypoints": 0
+      },
+      "position": "(811.5, 47.90094, 1303.667)",
+      "reload_tick": 330
+    },
+    {
+      "navigation": {
+        "expansions": 474,
+        "node_limit": 2048,
+        "nodes": 537,
+        "radius_m": 16,
+        "state": "planning",
+        "waypoints": 0
+      },
+      "position": "(811.5, 47.90094, 1303.667)",
+      "reload_tick": 360
+    },
+    {
+      "navigation": {
+        "expansions": 514,
+        "node_limit": 2048,
+        "nodes": 581,
+        "radius_m": 16,
+        "state": "planning",
+        "waypoints": 0
+      },
+      "position": "(811.5, 47.90094, 1303.667)",
+      "reload_tick": 390
+    },
+    {
+      "navigation": {
+        "expansions": 553,
+        "node_limit": 2048,
+        "nodes": 625,
+        "radius_m": 16,
+        "state": "planning",
+        "waypoints": 0
+      },
+      "position": "(811.5, 47.90094, 1303.667)",
+      "reload_tick": 420
+    },
+    {
+      "navigation": {
+        "expansions": 593,
+        "node_limit": 2048,
+        "nodes": 667,
+        "radius_m": 16,
+        "state": "planning",
+        "waypoints": 0
+      },
+      "position": "(811.5, 47.90094, 1303.667)",
+      "reload_tick": 450
+    }
+  ]
+}

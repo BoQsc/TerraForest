@@ -1,0 +1,88 @@
+{
+  "failures": 0,
+  "goal": "(811.5, 49.93, 1298.0)",
+  "peak_work": 6,
+  "slot": "actor_settlement_20261011T144342506070Z",
+  "start": "(811.5, 47.93, 1304.5)",
+  "trace": [
+    {
+      "navigation": {
+        "state": "sleeping"
+      },
+      "position": "(811.5, 47.93, 1304.5)",
+      "tick": 0
+    },
+    {
+      "navigation": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "following",
+        "waypoints": 14
+      },
+      "position": "(811.5, 47.90094, 1303.792)",
+      "tick": 30
+    },
+    {
+      "navigation": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "planning",
+        "waypoints": 7
+      },
+      "position": "(811.5, 47.90094, 1303.667)",
+      "reload_tick": 0
+    },
+    {
+      "navigation": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "following",
+        "waypoints": 13
+      },
+      "position": "(811.5, 48.69549, 1302.569)",
+      "reload_tick": 30
+    },
+    {
+      "navigation": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "following",
+        "waypoints": 13
+      },
+      "position": "(811.5, 49.77425, 1301.52)",
+      "reload_tick": 60
+    },
+    {
+      "navigation": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "following",
+        "waypoints": 13
+      },
+      "position": "(811.5, 49.90045, 1300.282)",
+      "reload_tick": 90
+    },
+    {
+      "navigation": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "following",
+        "waypoints": 13
+      },
+      "position": "(811.5, 49.90045, 1299.033)",
+      "reload_tick": 120
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS stair origin 4294967296 end=(0.5, 1.900943, 2.6281) status={ "state": "arrived", "nodes": 1, "expansions": 0, "waypoints": 14, "node_limit": 2048, "radius_m": 16 }
+PASS stair origin 8589934593 end=(0.5, 1.900799, 2.640315) status={ "state": "arrived", "nodes": 1, "expansions": 0, "waypoints": 13, "node_limit": 2048, "radius_m": 16 }
+PASS stair origin 12884901890 end=(0.5, 1.90044, 2.655095) status={ "state": "arrived", "nodes": 1, "expansions": 0, "waypoints": 13, "node_limit": 2048, "radius_m": 16 }
+ACTOR_STAIR_ORIGINS failures=0

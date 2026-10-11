@@ -1,0 +1,27 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] World loaded
+[TerrainRewrite] World loaded
+[TerrainRewrite] Lake ready · F5 saves world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+PASS saved furnished world loads with native actors
+PASS all four furnished cottage tables are present
+[TerrainRewrite] Lake ready · F5 saves world
+PASS actor begins the authored furnished-settlement route
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+PASS normal world save verifies the in-progress destination
+Visual vehicle dents repaired.
+[TerrainRewrite] World loaded
+[TerrainRewrite] World loaded
+[TerrainRewrite] Lake ready · F5 saves world
+[TerrainRewrite] Lake ready · F5 saves world
+[TerrainRewrite] Lake ready · F5 saves world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+PASS world reload retires old actor physics handles
+PASS world reload restores exact actor position and destination
+[TerrainRewrite] Lake ready · F5 saves world
+PASS saved actor climbs entrance and reaches furnished interior
+PASS integrated navigation retains shared planner work cap
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+ACTOR_SETTLEMENT_NAVIGATION failures=0

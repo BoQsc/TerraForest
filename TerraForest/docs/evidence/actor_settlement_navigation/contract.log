@@ -1,0 +1,18 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS native planner finds initial clear route
+PASS intersecting edit invalidates disposable route
+PASS actor replans and arrives around new wall
+PASS arrival matches saved destination
+PASS leaving activation area discards active simulation
+PASS return uses identity and starts a fresh route
+PASS unknown collision is reported separately from a blocked route
+PASS unknown collision holds actual actor position
+PASS distant target reports local search limit
+PASS sealed enclosure terminates with blocked status
+PASS blocked route does not restart every frame
+PASS opening enclosure permits route after invalidation
+PASS shared planner never exceeds twelve work units per tick
+PASS per-actor node storage remains capped
+planning_peak_us=2162 work_peak=12 (cooperative 750us deadline, not a hard real-time guarantee)
+ACTOR_ROUTE_CONTRACT checks=14 failures=0

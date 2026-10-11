@@ -192,7 +192,7 @@ not a proof that every possible continuous/world-scale route is impossible.
 Each proxy retains <=2,048 nodes, with a search extent of +/-16 m on each horizontal
 axis from its start. All active proxies share twelve work units per `settle` with
 round-robin scheduling and a cooperative 750 microsecond deadline. One unit tests
-at most one edge (four physics queries for clear flat edges, up to 24 with stair
+at most one edge (four physics queries for clear flat edges, up to 33 with stair
 clearance fallback) or removes up to twelve stale queue entries.
 A query/callback and bounded route reset/reconstruction can exceed the deadline;
 this is not a hard real-time or total actor-frame guarantee. The priority queue is
@@ -221,3 +221,8 @@ unit) under those same safety checks and limits, then fall back to A* if any seg
 fails. Sixteen clear routes and actor-component destination reload have targeted
 evidence in `docs/evidence/actor_planning_latency/README.md`; neither qualifies
 furnished-settlement navigation or whole-world frame rate.
+
+Stair clearance uses up to the movement-compatible 0.30 m lift. Starting near tread
+edges and continuing a saved route through one real furnished cottage are checked
+in `docs/evidence/actor_settlement_navigation/README.md`. This closes that bounded
+integration check, not all furnished routes or large-population qualification.
