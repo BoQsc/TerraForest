@@ -81,3 +81,12 @@ mutation/save barrier. The four-lake generator4/seed1703 case improved from 2/4 
 at30s to all four at5.889s with fresh caches; see
 `docs/evidence/lake_startup_scheduling/README.md`. This does not qualify all generated
 worlds, maximum lake sizes or overall frame/thermal behavior.
+
+
+Actual generated lake/cave coverage: a disconnected excavated pocket remains dry;
+a submerged connecting tunnel fills it after rebake. Player/camera queries and the
+vegetation mask agree, and normal reload plus fresh-process reopening retain6m
+water depth. Reproduce with `tools/run_lake_cave_check.py` and `--reopen`; evidence
+in `docs/evidence/lake_cave_world`. This is one static connected basin, not flow or
+unbounded regional water. Visible shoreline versus conservative occupancy remains
+an explicit precision limit.

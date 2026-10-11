@@ -165,10 +165,17 @@ edit/rebake/removal regressions pass. See
 [loading evidence](evidence/lake_startup_scheduling/README.md). Other seeds, maximum
 sizes and total frame/thermal behavior remain unqualified.
 
-Next: integrated shoreline/cave occupancy under terrain edits and world reload,
-using cached generated water and checking actual player/vegetation interaction.
-Do not expand into fluid flow or repeat unchanged startup tests. Settlement interiors
-and the rest of the coverage register remain open.
+Actual generated-world cave integration now passes17 checks: disconnected pocket
+dry, connected pocket flooded after real excavation, immediate invalidation,
+player/camera immersion, vegetation mask and normal save/reload. A fresh process
+passes3 more checks with retained6m depth and terrain roof. See
+[cave water evidence](evidence/lake_cave_world/README.md). Rendered vegetation,
+full underwater traversal and startup hitches remain separate.
+
+Next: measure the known conservative occupancy versus smooth visible shoreline
+mismatch at shallow points before choosing a bounded representation change. Do not
+claim dynamic flow or complete water coverage from the cave result. Settlement
+interiors and the rest of the coverage register remain open.
 No multiplayer implementation, large-city certification or sustained-performance
 claim follows from the current integration checks.
 

@@ -2636,3 +2636,17 @@ the graphical terrain-edit/swimming/rebake/removal integration pass. Evidence:
 indivisible identity/cache/finalization work still reached21.5ms. No total-frame,
 all-seed, maximum-lake, thermal or full water coverage claim. Next: integrated
 shoreline/cave edits and reload with actual world interactions.
+
+
+### 2026-10-11: generated-lake cave connectivity and persistence verified
+
+Added actual-world fixture on a unique copied furnished save: excavate a sealed
+pocket beside generated lake1, verify it remains dry, connect it with a submerged
+tunnel, verify invalidation/rebake and six-metre water depth. Player/camera immersion,
+vegetation placement mask, normal compound save/reload pass17 checks. Fresh-process
+reopen passes3 checks, including retained depth and terrain roof; underground image
+inspected. No runtime change needed. Source canonical save unchanged. Evidence:
+`docs/evidence/lake_cave_world`. Startup80–83ms hitches retained, not60FPS-qualified.
+This closes one cave/edit/persistence integration gate, not shoreline precision,
+rendered vegetation, natural cave discovery, flowing water or thermal performance.
+Next quantify visual shoreline versus conservative occupancy before implementation.

@@ -1,0 +1,16 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] World loaded
+[TerrainRewrite] World loaded
+[TerrainRewrite] Lake ready · F5 saves world
+[TerrainRewrite] Lake ready · F5 saves world
+[TerrainRewrite] Lake ready · F5 saves world
+[TerrainRewrite] Lake ready · F5 saves world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+PASS fresh process loads the exact copied cave world
+PASS fresh process retains flooded pocket depth
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+PASS restored cave roof and actual player immersion agree
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+LAKE_CAVE_REOPEN failures=0
