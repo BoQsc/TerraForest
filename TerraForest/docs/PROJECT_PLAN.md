@@ -172,10 +172,17 @@ passes3 more checks with retained6m depth and terrain roof. See
 [cave water evidence](evidence/lake_cave_world/README.md). Rendered vegetation,
 full underwater traversal and startup hitches remain separate.
 
-Next: measure the known conservative occupancy versus smooth visible shoreline
-mismatch at shallow points before choosing a bounded representation change. Do not
-claim dynamic flow or complete water coverage from the cave result. Settlement
-interiors and the rest of the coverage register remain open.
+Shoreline measurement now confirms a runtime mismatch: in an analytic curved basin,
+36 of84 free-space samples beneath visible water report dry at1.1m depth, and14 of62
+at2m. These are sample counts, not area percentages. Cold/restored bakes agree.
+The failing test and cross-section are retained in
+[shoreline evidence](evidence/water_shoreline_queries/README.md).
+
+Next: implement native connected partial-cell water queries, preserving solid and
+disconnected-cave rejection plus bounded memory/query cost. Follow
+[boundary requirements](WATER_BOUNDARY_QUERIES.md); do not substitute surface-column
+extrusion or regress the smooth mesh. This is an open correctness issue, not a
+completed water gate. Other original-scope coverage remains open.
 No multiplayer implementation, large-city certification or sustained-performance
 claim follows from the current integration checks.
 

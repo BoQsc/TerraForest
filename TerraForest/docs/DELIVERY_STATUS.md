@@ -2650,3 +2650,16 @@ inspected. No runtime change needed. Source canonical save unchanged. Evidence:
 This closes one cave/edit/persistence integration gate, not shoreline precision,
 rendered vegetation, natural cave discovery, flowing water or thermal performance.
 Next quantify visual shoreline versus conservative occupancy before implementation.
+
+
+### 2026-10-11: shoreline representation failure measured, unresolved
+
+Short native analytic fixture confirms partial boundary cells report dry beneath
+smooth visible water:36/84 qualifying triangle samples at1.1m depth,14/62 at2m.
+Counts are not area percentages. Cold/restored bakes agree; solid/outside controls
+pass. Uniform cross-section and failing regression retained in
+`docs/evidence/water_shoreline_queries`. No runtime fix or completion claim.
+`docs/WATER_BOUNDARY_QUERIES.md` records the next bounded native representation
+change and topology/cache/cost gates. Surface extrusion is excluded because it
+would flood solid terrain and disconnected cavities. Next implementation must
+preserve the already verified real-world cave connectivity and persistence.
