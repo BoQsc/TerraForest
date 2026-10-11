@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: 0BSD
 #pragma once
 #include "water_network.hpp"
+#include <deque>
 namespace terraforest {
 // Source owns quantity until validated private settlement is atomically committed.
 class NativeWaterRemapPlan : public godot::RefCounted {
@@ -17,6 +18,13 @@ class NativeWaterRemapPlan : public godot::RefCounted {
     std::map<int,Component> components;
     std::map<std::pair<int,int>,Sum> overlaps;
     std::map<std::pair<int,int>,Sum>::iterator next;
+    struct Displaced {int piece,index,component,slot,seed=-1;double volume;std::array<int,4> neighbours{{-1,-1,-1,-1}};};
+    std::deque<Displaced> displaced;
+    std::deque<int> routes,queue;
+    std::vector<int> route_offsets;
+    int route_cursor=0;
+    Sum routed_volume;
+    int neighbour_slot(const Displaced &node,int face) const;
     Sum measured_volume;
     godot::PackedInt64Array transfers;
     int status=-1,phase=0,cursor=0,piece=0;

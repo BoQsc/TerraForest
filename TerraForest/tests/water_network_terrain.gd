@@ -59,9 +59,12 @@ func _initialize():
         while network.statistics().water.busy:
             var s:Dictionary=network.advance_settling(1);ok=ok and s.ok and s.total_ml+s.moved_ml==quantity
         ok=ok and network.statistics().water.total_ml==quantity-1000
-    var remap_result:Dictionary={}
-    if ok:
-        ok=Codec.reply_ok(core.execute(Codec.brush(center,center,5,0,false,1)))
+    var remap_result:Dictionary={};var edits:Array=[]
+    for edit in 2:
+        if not ok:break
+        var old_level:float=network.inspect(base,0).level_mm
+        var brush_point:Vector3=center if edit==0 else center-Vector3(0,3,0)
+        ok=Codec.reply_ok(core.execute(Codec.brush(brush_point,brush_point,5 if edit==0 else 2,0,edit==1,1)))
         var edited_revision:int=core.execute(Codec.command(0)).decode_u32(12)
         var edited_epoch:int=core.execute(Codec.command(13)).decode_u32(12)
         var new_graphs:Array=[];var new_basins:Array=[];var new_levels:Array=[];var new_profiles:Array=[]
@@ -84,6 +87,7 @@ func _initialize():
             var ticket:Dictionary=registry.reserve_region(coordinate,edited_revision,edited_epoch,generations[x])
             ok=ok and ticket.ok and registry.begin_publish(graph,ticket.generation)
             while registry.statistics().busy:registry.advance(512)
+            generations[x]=ticket.generation
             new_graphs.append(graph);new_basins.append(basin)
         new_levels.sort()
         for x in 2:
@@ -102,10 +106,14 @@ func _initialize():
         while remapping.statistics().settlement_status==0:remapping.advance_settlement(128)
         ok=ok and remapping.commit()
         ok=ok and network.statistics().retired and network.statistics().owned_ml==0 and replacement.statistics().owned_ml==quantity-1000
-        ok=ok and replacement.inspect(base,0).level_mm<center.y*1000 and replacement.probe(center-Vector3(0,3,0)).wet
+        var new_level:float=replacement.inspect(base,0).level_mm
+        if edit==0:ok=ok and new_level<old_level and replacement.probe(center-Vector3(0,3,0)).wet
+        else:ok=ok and new_level>old_level and not replacement.probe(brush_point).wet and remap_result.routed_geometric_ml>0
+        remap_result["old_level_mm"]=old_level;remap_result["new_level_mm"]=new_level
         remap_result["after_handoff"]=replacement.statistics()
         remap_result["committed"]=remapping.statistics().settlement_status==2
+        edits.append(remap_result);network=replacement
     DirAccess.make_dir_recursive_absolute("res://reports")
     var file=FileAccess.open("res://reports/water_network_terrain.json",FileAccess.WRITE)
-    file.store_string(JSON.stringify({"failures":0 if ok else 1,"center":center,"sample_calls":sample_calls,"anchors":levels.size(),"quantity_ml":quantity,"network_calls":calls,"max_network_call_us":peak,"network":network.statistics(),"remap":remap_result,"scope":"Actual native excavation across two independently sampled owned regions, finite pour/withdrawal, then larger excavation and conserved geometric remap plan. Not a saved-world or rendered flow test."},"  "));file.close()
+    file.store_string(JSON.stringify({"failures":0 if ok else 1,"center":center,"sample_calls":sample_calls,"anchors":levels.size(),"quantity_ml":quantity,"network_calls":calls,"max_network_call_us":peak,"network":network.statistics(),"remap":remap_result,"edits":edits,"scope":"Actual native excavation across two independently sampled owned regions, finite pour/withdrawal, then larger excavation and conserved geometric remap plan. Not a saved-world or rendered flow test."},"  "));file.close()
     print("WATER_NETWORK_TERRAIN failures=",0 if ok else 1);quit(0 if ok else 1)

@@ -1,0 +1,246 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS regional storage compilation accepts explicit open/forest topology
+PASS regional storage curves compile
+PASS regional storage compilation accepts explicit open/forest topology
+PASS regional storage curves compile
+PASS fixture has an actual open boundary in both independent density snapshots
+PASS region geometry publishes under ownership ticket
+PASS region geometry publishes under ownership ticket
+PASS network compilation begins with ready matching owners
+PASS invalid network budget preserves state
+PASS network compilation completes in bounded work units
+PASS real ridge remains two minima in one connected regional water body
+PASS pour crosses validated independent region boundary with exact conservation every event
+PASS both real terrain regions reach the correct five-metre equilibrium
+PASS spatial query finds settled water in both independently owned regions
+PASS shared boundary query respects the solid ridge
+PASS surface and air above the water remain dry
+PASS unowned and nonfinite point queries are rejected
+PASS query reports water depth from the actual settled level
+PASS network compilation begins with ready matching owners
+PASS invalid network budget preserves state
+PASS network compilation completes in bounded work units
+PASS network compilation begins with ready matching owners
+PASS invalid network budget preserves state
+PASS network compilation completes in bounded work units
+PASS empty source remap performs no geometry scan
+PASS existing destination water cannot be overwritten by a remap plan
+PASS geometric remap accepts frozen source and empty destination
+PASS invalid remap budget leaves state unchanged
+PASS geometric overlap and exact apportionment complete within work budgets
+PASS unchanged geometry preserves all canonical millilitres
+PASS remap planning never duplicates or transfers authoritative water
+PASS completed remap sleeps
+PASS regional storage compilation accepts explicit open/forest topology
+PASS regional storage curves compile
+PASS regional storage compilation accepts explicit open/forest topology
+PASS regional storage curves compile
+PASS region geometry publishes under ownership ticket
+PASS region geometry publishes under ownership ticket
+PASS network compilation begins with ready matching owners
+PASS invalid network budget preserves state
+PASS network compilation completes in bounded work units
+PASS geometric remap accepts frozen source and empty destination
+PASS invalid remap budget leaves state unchanged
+PASS geometric overlap and exact apportionment complete within work budgets
+PASS raising terrain routes displaced volume through previously wet space with exact quantity conservation
+PASS geometric remap accepts frozen source and empty destination
+PASS invalid remap budget leaves state unchanged
+PASS geometric overlap and exact apportionment complete within work budgets
+PASS one-unit remap budget preserves deterministic allocations
+PASS regional storage compilation accepts explicit open/forest topology
+PASS regional storage curves compile
+PASS regional storage compilation accepts explicit open/forest topology
+PASS regional storage curves compile
+PASS region geometry publishes under ownership ticket
+PASS region geometry publishes under ownership ticket
+PASS network compilation begins with ready matching owners
+PASS invalid network budget preserves state
+PASS network compilation completes in bounded work units
+PASS geometric remap accepts frozen source and empty destination
+PASS invalid remap budget leaves state unchanged
+PASS geometric overlap and exact apportionment complete within work budgets
+PASS excavation maps every old water millilitre without inventing new water in added space
+PASS replacement destination ownership invalidates remap results
+PASS regional storage compilation accepts explicit open/forest topology
+PASS regional storage curves compile
+PASS regional storage compilation accepts explicit open/forest topology
+PASS regional storage curves compile
+PASS region geometry publishes under ownership ticket
+PASS region geometry publishes under ownership ticket
+PASS network compilation begins with ready matching owners
+PASS invalid network budget preserves state
+PASS network compilation completes in bounded work units
+PASS geometric remap accepts frozen source and empty destination
+PASS invalid remap budget leaves state unchanged
+PASS geometric overlap and exact apportionment complete within work budgets
+PASS solid replacement retains all water as explicit displacement
+PASS withdrawal conserves retained and removed quantities across regional split
+PASS source water mutations invalidate unfinished and completed remap plans
+PASS destination water mutation cancels an overlap plan
+PASS in-flight source pour cannot be partially remapped
+PASS opposite region keeps its water behind the physical four-metre sill
+PASS settled network performs no background solver or compiler work
+PASS network compilation begins with ready matching owners
+PASS invalid network budget preserves state
+PASS network compilation completes in bounded work units
+PASS input order and one-unit compilation preserve regional equilibrium
+PASS omitted connected region cannot be silently treated as a sealed wall
+PASS new cross-region sill cannot silently use an interpolated storage threshold
+PASS network compilation begins with ready matching owners
+PASS invalid network budget preserves state
+PASS network compilation completes in bounded work units
+PASS invalidation fixture reaches a partly settled cross-region pour
+PASS partly settled water cannot publish a spatial result
+PASS changed region freezes stale network operations
+PASS stale geometry retains finite quantity while refusing stale level queries
+PASS invalidation freezes a partly settled pour without losing either quantity portion
+PASS geometric remap accepts frozen source and empty destination
+PASS invalid remap budget leaves state unchanged
+PASS geometric overlap and exact apportionment complete within work budgets
+PASS stale source geometry remains usable for conserved edit remapping
+PASS invalidated geometry refuses spatial queries
+PASS stale regional profiles cannot enter a new network
+PASS regional storage compilation accepts explicit open/forest topology
+PASS regional storage curves compile
+PASS regional storage compilation accepts explicit open/forest topology
+PASS regional storage curves compile
+PASS region geometry publishes under ownership ticket
+PASS region geometry publishes under ownership ticket
+PASS network compilation begins with ready matching owners
+PASS invalid network budget preserves state
+PASS network compilation completes in bounded work units
+PASS nested regional spill preserves quantity
+PASS incoming spill follows the adjacent catchment instead of teleporting over an internal dry ridge
+PASS regional storage compilation accepts explicit open/forest topology
+PASS regional storage curves compile
+PASS regional storage compilation accepts explicit open/forest topology
+PASS regional storage curves compile
+PASS region geometry publishes under ownership ticket
+PASS region geometry publishes under ownership ticket
+PASS network compilation begins with ready matching owners
+PASS invalid network budget preserves state
+PASS network compilation completes in bounded work units
+PASS three-minimum region conserves a cascading incoming spill
+PASS internal merge entry follows its witnessed downhill catchment, leaving the farther basin dry
+PASS regional storage compilation accepts explicit open/forest topology
+PASS regional storage curves compile
+PASS region geometry publishes under ownership ticket
+PASS network compilation begins with ready matching owners
+PASS invalid network budget preserves state
+PASS network compilation completes in bounded work units
+PASS disconnected raw caves remain separate solver roots
+PASS independent cave additions conserve aggregate quantity
+PASS overdraw only removes water available in the targeted cave
+PASS overdraw cannot steal quantity from disconnected cave
+PASS spatial queries distinguish drained and filled caves
+PASS solid cave roof is not a water column
+PASS network compilation begins with ready matching owners
+PASS invalid network budget preserves state
+PASS network compilation completes in bounded work units
+PASS generation change cancels unfinished network compilation
+PASS invalidation preserves accepted-plus-pending accounting for an unfinished pour
+PASS region geometry publishes under ownership ticket
+PASS region geometry publishes under ownership ticket
+PASS network compilation begins with ready matching owners
+PASS invalid network budget preserves state
+PASS network compilation completes in bounded work units
+PASS handoff fixture fills source water
+PASS network compilation begins with ready matching owners
+PASS invalid network budget preserves state
+PASS network compilation completes in bounded work units
+PASS geometric remap accepts frozen source and empty destination
+PASS invalid remap budget leaves state unchanged
+PASS geometric overlap and exact apportionment complete within work budgets
+PASS remap starts private replacement settlement
+PASS invalid settlement budget preserves staging
+PASS private settlement finishes within work budgets
+PASS insufficient profile capacity retains solver overflow separately from geometric displacement
+PASS overflow cannot publish an incomplete replacement
+PASS geometric remap accepts frozen source and empty destination
+PASS invalid remap budget leaves state unchanged
+PASS geometric overlap and exact apportionment complete within work budgets
+PASS destination invalidation cancels staging without touching original ownership
+PASS geometric remap accepts frozen source and empty destination
+PASS invalid remap budget leaves state unchanged
+PASS geometric overlap and exact apportionment complete within work budgets
+PASS remap starts private replacement settlement
+PASS invalid settlement budget preserves staging
+PASS private settlement finishes within work budgets
+PASS private settlement retains explicit displaced quantity
+PASS unresolved displacement blocks handoff without changing either owner
+PASS geometric remap accepts frozen source and empty destination
+PASS invalid remap budget leaves state unchanged
+PASS geometric overlap and exact apportionment complete within work budgets
+PASS remap starts private replacement settlement
+PASS invalid settlement budget preserves staging
+PASS private settlement finishes within work budgets
+PASS routed terrain displacement settles completely in surviving storage
+PASS regional storage compilation accepts explicit open/forest topology
+PASS regional storage curves compile
+PASS regional storage compilation accepts explicit open/forest topology
+PASS regional storage curves compile
+PASS region geometry publishes under ownership ticket
+PASS region geometry publishes under ownership ticket
+PASS network compilation begins with ready matching owners
+PASS invalid network budget preserves state
+PASS network compilation completes in bounded work units
+PASS geometric remap accepts frozen source and empty destination
+PASS invalid remap budget leaves state unchanged
+PASS geometric overlap and exact apportionment complete within work budgets
+PASS remap starts private replacement settlement
+PASS invalid settlement budget preserves staging
+PASS private settlement finishes within work budgets
+PASS new solid barrier divides displaced water between surviving sides without sending everything to one basin
+PASS both sides receive displaced water in addition to their retained overlap
+PASS newly separated basins retain all displaced quantity in private settlement
+PASS region geometry publishes under ownership ticket
+PASS region geometry publishes under ownership ticket
+PASS network compilation begins with ready matching owners
+PASS invalid network budget preserves state
+PASS network compilation completes in bounded work units
+PASS geometric remap accepts frozen source and empty destination
+PASS invalid remap budget leaves state unchanged
+PASS geometric overlap and exact apportionment complete within work budgets
+PASS remap starts private replacement settlement
+PASS invalid settlement budget preserves staging
+PASS private settlement finishes within work budgets
+PASS settled replacement remains private until publication
+PASS network compilation begins with ready matching owners
+PASS invalid network budget preserves state
+PASS network compilation completes in bounded work units
+PASS geometric remap accepts frozen source and empty destination
+PASS invalid remap budget leaves state unchanged
+PASS geometric overlap and exact apportionment complete within work budgets
+PASS remap starts private replacement settlement
+PASS invalid settlement budget preserves staging
+PASS private settlement finishes within work budgets
+PASS commit retires original owner and publishes all water exactly once
+PASS replay, competing source plan and retired source writes are rejected
+PASS excavation handoff lowers water into added space and publishes wet geometry
+PASS committed settlement performs no further work
+PASS network compilation begins with ready matching owners
+PASS invalid network budget preserves state
+PASS network compilation completes in bounded work units
+PASS geometric remap accepts frozen source and empty destination
+PASS invalid remap budget leaves state unchanged
+PASS geometric overlap and exact apportionment complete within work budgets
+PASS source mutation fixture starts a new pour during staging
+PASS source mutation cancels staging and preserves the newer accepted pour
+PASS region geometry publishes under ownership ticket
+PASS network compilation begins with ready matching owners
+PASS invalid network budget preserves state
+PASS network compilation completes in bounded work units
+PASS regional storage compilation accepts explicit open/forest topology
+PASS regional storage curves compile
+PASS region geometry publishes under ownership ticket
+PASS network compilation begins with ready matching owners
+PASS invalid network budget preserves state
+PASS network compilation completes in bounded work units
+PASS geometric remap accepts frozen source and empty destination
+PASS invalid remap budget leaves state unchanged
+PASS geometric overlap and exact apportionment complete within work budgets
+PASS fully filled isolated cave cannot teleport its displaced water through solid rock into another cave
+WATER_NETWORK failures=0
+

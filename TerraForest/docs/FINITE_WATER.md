@@ -192,3 +192,10 @@ checks and actual repeated TerrainCore excavation verify conserved ownership and
 lowered water level. Displacement/overflow still prevent commit until routed; live
 world, bucket, rendering and persistent transactions remain open.
 See [handoff evidence](evidence/water_handoff/README.md).
+
+Displacement routing checkpoint (2026-10-11): remapping now routes through original
+wet tetrahedral adjacency to surviving storage. 242 debug/release checks plus actual
+TerrainCore excavation and underwater solid placement conserve quantity through
+committed handoffs. Completely isolated displacement and capacity overflow still
+block commit; live terrain/water transaction integration remains open.
+See [displacement evidence](evidence/water_displacement/README.md).

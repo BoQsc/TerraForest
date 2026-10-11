@@ -27,7 +27,8 @@ bool NativeWaterRemapPlan::begin(const Ref<NativeWaterNetwork> &a,const Ref<Nati
     // A stale source is intentional: its pinned geometry describes water before the edit.
     source=a;destination=b;source_revision=a->water_revision;destination_revision=b->water_revision;
     source_ml=sa["total_ml"];
-    if(source_ml==0){status=1;phase=3;return true;}
+    if(source_ml==0){status=1;phase=7;return true;}
+    int offset=0;for(const auto &p:a->pieces){route_offsets.push_back(offset);offset+=p.profiles->topology->ids.size();}
     states.resize(a->global_leaves);status=0;return true;
 }
 void NativeWaterRemapPlan::accumulate(int component,int target,double volume){
@@ -39,6 +40,33 @@ void NativeWaterRemapPlan::accumulate(int component,int target,double volume){
     }
     at->second.add(volume);
 }
+int NativeWaterRemapPlan::neighbour_slot(const Displaced &node,int face) const {
+    const auto &p=source->pieces[node.piece];const auto &g=*p.profiles->topology.ptr();const auto view=g.view();
+    const int id=g.ids[node.index],cell=id/6,t=id%6;
+    const Vector3i local(cell%view.size.x,(cell/view.size.x)%view.size.y,cell/(view.size.x*view.size.y));
+    const auto link=lake_links()[t][face];
+    const Vector3i world=local+g.field->origin+Vector3i(link.x,link.y,link.z);
+    auto floor_region=[](int v){return (v-(v<0?15:0))/16;};
+    const auto found=source->indices.find({floor_region(world.x),floor_region(world.y),floor_region(world.z)});
+    if(found==source->indices.end())return -1;
+    const auto &other=source->pieces[found->second];const auto &ng=*other.profiles->topology.ptr();const auto nv=ng.view();
+    const Vector3i nl=world-ng.field->origin;const int nid=nv.cell(nl.x,nl.y,nl.z)*6+link.t;
+    const auto begin=ng.ids.ptr(),end=begin+ng.ids.size(),at=std::lower_bound(begin,end,nid);
+    if(at==end||*at!=nid)return -1;
+    const int index=at-begin,slot=route_offsets[found->second]+index;if(routes[slot]==-1)return -1;
+    const auto state=states[source->mapping[other.offset+other.profiles->basins->owners[index]]];
+    if(state.component!=node.component)return -1;
+    // Shared face must contain positive old void strictly below the old water head.
+    double height[3],density[3];int n=0;
+    for(int k=0;k<4;++k)if(k!=face){const auto c=lake_corner(lake_tets[t][k]);const auto v=local+c;
+        height[n]=view.origin.y+(local.y+c.y)*view.spacing;density[n++]=view.density[view.node(v.x,v.y,v.z)];}
+    double bottom=INFINITY;
+    for(int a=0;a<3;++a)if(density[a]>0){
+        bottom=std::min(bottom,height[a]);
+        for(int b=0;b<3;++b)if(density[b]<=0){const double weight=density[a]/(density[a]-density[b]);bottom=std::min(bottom,height[a]+weight*(height[b]-height[a]));}
+    }
+    return bottom<state.level?slot:-1;
+}
 void NativeWaterRemapPlan::unit(){
     if(phase==0){
         if(cursor==source->global_leaves){phase=1;cursor=0;return;}
@@ -49,10 +77,10 @@ void NativeWaterRemapPlan::unit(){
         return;
     }
     if(phase==1){
-        if(piece==int(source->pieces.size())){phase=2;next=overlaps.begin();return;}
+        if(piece==int(source->pieces.size())){phase=2;return;}
         const auto &p=source->pieces[piece];const auto &g=*p.profiles->topology.ptr();
         if(cursor==g.ids.size()){++piece;cursor=0;return;}
-        const int index=cursor++,id=g.ids[index],cell=id/6,t=id%6;
+        const int index=cursor++,id=g.ids[index],cell=id/6,t=id%6;routes.push_back(-1);
         const int owner=source->mapping[p.offset+p.profiles->basins->owners[index]];
         const auto state=states[owner];auto comp=components.find(state.component);if(comp==components.end())return;
         const auto old=g.view();const Vector3i local(cell%old.size.x,(cell/old.size.x)%old.size.y,cell/(old.size.x*old.size.y));
@@ -83,12 +111,52 @@ void NativeWaterRemapPlan::unit(){
         if(surviving>volume+1e-10){fail("Clipped overlap exceeds original wet volume.");return;}
         surviving=std::min(volume,surviving);comp->second.volume.add(volume);
         measured_volume.add(volume*old.spacing*old.spacing*old.spacing*1000000.0);
-        accumulate(state.component,target,surviving);accumulate(state.component,-1,volume-surviving);return;
+        if(volume<=0)return;
+        const int slot=route_offsets[piece]+index;
+        if(surviving>0){
+            // The wet and replacement half-spaces within a tetrahedron are convex.
+            // Water removed here can reach this surviving portion locally.
+            routes[slot]=target;accumulate(state.component,target,volume);
+            routed_volume.add((volume-surviving)*old.spacing*old.spacing*old.spacing*1000000.0);
+        }else{
+            const int node=displaced.size();routes[slot]=-node-2;
+            displaced.push_back({piece,index,state.component,slot,-1,volume});
+        }
+        return;
     }
     if(phase==2){
+        if(route_cursor==int(displaced.size())){phase=3;route_cursor=0;return;}
+        auto &node=displaced[route_cursor++];
+        for(int face=0;face<4;++face){
+            const int slot=neighbour_slot(node,face);node.neighbours[face]=slot;
+            if(slot>=0&&routes[slot]>=0&&(node.seed<0||routes[slot]<node.seed))node.seed=routes[slot];
+        }
+        return;
+    }
+    if(phase==3){
+        if(route_cursor==int(displaced.size())){phase=4;route_cursor=0;return;}
+        const int index=route_cursor++;const auto &node=displaced[index];
+        if(node.seed>=0){routes[node.slot]=node.seed;queue.push_back(index);}return;
+    }
+    if(phase==4){
+        if(queue.empty()){phase=5;return;}
+        const auto &node=displaced[queue.front()];queue.pop_front();
+        for(int slot:node.neighbours)if(slot>=0&&routes[slot]<-1){
+            const int index=-routes[slot]-2;routes[slot]=routes[node.slot];queue.push_back(index);
+        }
+        return;
+    }
+    if(phase==5){
+        if(route_cursor==int(displaced.size())){phase=6;next=overlaps.begin();return;}
+        const auto &node=displaced[route_cursor++];const int target=routes[node.slot];
+        accumulate(node.component,target>=0?target:-1,node.volume);
+        if(target>=0){const double scale=source->registry->spacing;routed_volume.add(node.volume*scale*scale*scale*1000000.0);}
+        return;
+    }
+    if(phase==6){
         if(next==overlaps.end()){
             if(mapped_ml+displaced_ml!=source_ml){fail("Some canonical water has no resolved geometric measure.");return;}
-            status=1;phase=3;return;
+            status=1;phase=7;return;
         }
         const auto key=next->first;const double weight=next->second.value;auto &comp=components[key.first];++next;
         comp.cumulative+=weight;
@@ -160,6 +228,7 @@ Dictionary NativeWaterRemapPlan::statistics() const {
     out["settlement_status"]=settlement_status;out["settlement_work_total"]=settlement_work;out["unresolved_ml"]=unresolved_ml;
     out["staged_ml"]=staged.is_valid()?staged->total_ml:int64_t(0);
     out["source_ml"]=source_ml;out["mapped_ml"]=mapped_ml;out["displaced_ml"]=displaced_ml;
+    out["routing_nodes"]=int64_t(displaced.size());out["routing_slots"]=int64_t(routes.size());out["routed_geometric_ml"]=routed_volume.value;
     out["geometric_source_ml"]=measured_volume.value;out["profile_geometry_difference_ml"]=source_ml-measured_volume.value;
     out["overlap_entries"]=int64_t(overlaps.size());out["error"]=error;return out;
 }
