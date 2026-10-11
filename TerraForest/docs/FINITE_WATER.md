@@ -173,3 +173,8 @@ of completion. Dynamic fluid simulation is not identical to solid terrain meshin
 we must prove its additional conservation and scheduling obligations explicitly.
 
 Evidence: [quantity contract](evidence/water_quantity/README.md).
+
+Spatial query checkpoint (2026-10-11): `NativeWaterNetwork.probe` resolves settled
+water against actual tetrahedral void geometry and refuses busy/stale state.
+76 debug/release network checks pass; this does not complete terrain-edit remapping.
+See [query evidence](evidence/water_probe/README.md).

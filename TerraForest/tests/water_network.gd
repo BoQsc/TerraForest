@@ -67,6 +67,11 @@ func _initialize():
     var amount:int=pa.profiles_ml[0][5]+pb.profiles_ml[0][5]
     check(n.begin_add(Vector3i.ZERO,0,amount) and settle(n,0,true),"pour crosses validated independent region boundary with exact conservation every event")
     check(absf(n.inspect(Vector3i.ZERO,0).level_mm-5000)<.001 and absf(n.inspect(Vector3i(1,0,0),0).level_mm-5000)<.001,"both real terrain regions reach the correct five-metre equilibrium")
+    check(n.probe(Vector3(8,2,8)).wet and n.probe(Vector3(24,2,8)).wet,"spatial query finds settled water in both independently owned regions")
+    check(n.probe(Vector3(16,4.5,8)).wet and not n.probe(Vector3(16,3,8)).wet,"shared boundary query respects the solid ridge")
+    check(not n.probe(Vector3(8,5,8)).wet and not n.probe(Vector3(8,6,8)).wet,"surface and air above the water remain dry")
+    check(not n.probe(Vector3(-1,2,8)).ok and not n.probe(Vector3(INF,2,8)).ok,"unowned and nonfinite point queries are rejected")
+    check(absf(n.probe(Vector3(8,2,8)).depth_m-3)<.001,"query reports water depth from the actual settled level")
     var at_sill:int=pa.profiles_ml[0][4]+pb.profiles_ml[0][4]
     var take:int=amount-at_sill+1000000
     check(n.begin_remove(Vector3i.ZERO,0,take) and settle(n,amount,false),"withdrawal conserves retained and removed quantities across regional split")
@@ -89,11 +94,13 @@ func _initialize():
     var in_flight=network(r,[a[2],b[2]])
     in_flight.begin_add(Vector3i.ZERO,0,amount);in_flight.advance_settling(1)
     check(in_flight.statistics().water.busy and in_flight.statistics().water.total_ml>0 and in_flight.statistics().water.pending_ml>0,"invalidation fixture reaches a partly settled cross-region pour")
+    check(not in_flight.probe(Vector3(8,2,8)).ok,"partly settled water cannot publish a spatial result")
     var saved:int=n.statistics().water.total_ml
     var replacement:Dictionary=r.reserve_region(Vector3i(1,0,0),1,0,bg)
     check(replacement.ok and not n.statistics().current and not n.begin_add(Vector3i.ZERO,0,1) and not n.advance_settling(1).ok,"changed region freezes stale network operations")
     check(n.statistics().water.total_ml==saved and not n.inspect(Vector3i.ZERO,0).ok,"stale geometry retains finite quantity while refusing stale level queries")
     check(not in_flight.advance_settling(1).ok and in_flight.statistics().water.total_ml+in_flight.statistics().water.pending_ml==amount,"invalidation freezes a partly settled pour without losing either quantity portion")
+    check(not n.probe(Vector3(8,2,8)).ok,"invalidated geometry refuses spatial queries")
     var pending=ClassDB.instantiate("NativeWaterNetwork")
     check(not pending.begin(r,[a[2],b[2]]),"stale regional profiles cannot enter a new network")
     var nested_left:Array=region(0,2);var nested_right:Array=region(1,2)
@@ -123,6 +130,8 @@ func _initialize():
     check(cn.begin_add(Vector3i.ZERO,0,1000000) and settle(cn,0,true) and cn.begin_add(Vector3i.ZERO,1,2000000) and settle(cn,1000000,true),"independent cave additions conserve aggregate quantity")
     check(cn.begin_remove(Vector3i.ZERO,0,2000000) and settle(cn,3000000,false),"overdraw only removes water available in the targeted cave")
     check(cn.statistics().water.total_ml==2000000 and cn.statistics().water.pending_ml==1000000 and cn.inspect(Vector3i.ZERO,1).component_amount_ml==2000000,"overdraw cannot steal quantity from disconnected cave")
+    check(not cn.probe(Vector3(4,3.25,8)).wet and cn.probe(Vector3(12,3.25,8)).wet,"spatial queries distinguish drained and filled caves")
+    check(not cn.probe(Vector3(12,7.5,8)).wet,"solid cave roof is not a water column")
     var busy=network(cr,[caves[2]])
     var compiling=ClassDB.instantiate("NativeWaterNetwork");compiling.begin(cr,[caves[2]])
     busy.begin_add(Vector3i.ZERO,0,1000000)

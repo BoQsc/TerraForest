@@ -2,10 +2,21 @@
 #pragma once
 #include <godot_cpp/variant/vector3i.hpp>
 #include <array>
+#include <algorithm>
+#include <godot_cpp/variant/vector3.hpp>
 namespace terraforest {
 // Shared by connectivity, rendering, point queries and volume integration.
 inline constexpr int lake_tets[6][4]={{0,1,3,7},{0,1,5,7},{0,2,3,7},{0,2,6,7},{0,4,5,7},{0,4,6,7}};
 inline godot::Vector3i lake_corner(int c){return godot::Vector3i(c&1,(c>>1)&1,(c>>2)&1);}
+inline int lake_tetra(const godot::Vector3 &p,float *weights){
+ std::array<int,3> axes={0,1,2};
+ std::sort(axes.begin(),axes.end(),[&](int a,int b){return p[a]>p[b] || (p[a]==p[b] && a<b);});
+ const int a=1<<axes[0],b=a|(1<<axes[1]);
+ weights[0]=1-p[axes[0]];weights[1]=p[axes[0]]-p[axes[1]];
+ weights[2]=p[axes[1]]-p[axes[2]];weights[3]=p[axes[2]];
+ for(int t=0;t<6;++t)if(lake_tets[t][1]==a&&lake_tets[t][2]==b)return t;
+ return 0;
+}
 struct LakeFaceLink {int x=0,y=0,z=0,t=-1;};
 inline const std::array<std::array<LakeFaceLink,4>,6> &lake_links(){
  static const auto links=[](){

@@ -34,6 +34,7 @@ public:
     bool begin_remove(const godot::Vector3i &coordinate,int64_t local_leaf,int64_t amount_ml);
     godot::Dictionary advance_settling(int64_t event_budget);
     godot::Dictionary inspect(const godot::Vector3i &coordinate,int64_t local_leaf) const;
+    godot::Dictionary probe(const godot::Vector3 &point) const;
     godot::Dictionary statistics() const;
 };
 }

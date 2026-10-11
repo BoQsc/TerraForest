@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: 0BSD
 #include "water_network.hpp"
+#include "water_geometry.hpp"
+#include <cmath>
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/classes/time.hpp>
 #include <algorithm>
@@ -12,6 +14,7 @@ void NativeWaterNetwork::_bind_methods(){
     ClassDB::bind_method(D_METHOD("begin_remove","coordinate","local_leaf","amount_ml"),&NativeWaterNetwork::begin_remove);
     ClassDB::bind_method(D_METHOD("advance_settling","event_budget"),&NativeWaterNetwork::advance_settling);
     ClassDB::bind_method(D_METHOD("inspect","coordinate","local_leaf"),&NativeWaterNetwork::inspect);
+    ClassDB::bind_method(D_METHOD("probe","point"),&NativeWaterNetwork::probe);
     ClassDB::bind_method(D_METHOD("statistics"),&NativeWaterNetwork::statistics);
 }
 bool NativeWaterNetwork::begin(const Ref<NativeWaterRegions> &owners,const Array &profiles){
@@ -127,6 +130,33 @@ Dictionary NativeWaterNetwork::advance_settling(int64_t budget){
 }
 Dictionary NativeWaterNetwork::inspect(const Vector3i &coordinate,int64_t leaf) const {
     const int id=target(coordinate,leaf);if(id>=0)return solver->inspect(id);Dictionary out;out["ok"]=false;return out;
+}
+Dictionary NativeWaterNetwork::probe(const Vector3 &point) const {
+    Dictionary out;out["ok"]=false;out["wet"]=false;
+    if(status!=1||!current())return out;
+    for(int a=0;a<3;++a)if(!std::isfinite(point[a])||std::abs(point[a])>100000)return out;
+    // Refuse every spatial result during a partially applied pour or withdrawal.
+    if(bool(solver->statistics()["busy"]))return out;
+    const Vector3 grid=point/double(registry->spacing);
+    const Vector3i cell(grid.floor());
+    const Vector3i coordinate((grid/16.0).floor());
+    const auto it=indices.find({coordinate.x,coordinate.y,coordinate.z});
+    if(it==indices.end())return out;
+    const auto &p=pieces[it->second];const auto &g=*p.profiles->topology.ptr();const auto view=g.view();
+    const Vector3i local=cell-g.field->origin;float weights[4];const int tet=lake_tetra(grid-Vector3(cell),weights);
+    double density=0;
+    for(int k=0;k<4;++k){const auto c=local+lake_corner(lake_tets[tet][k]);density+=weights[k]*view.density[view.node(c.x,c.y,c.z)];}
+    out["ok"]=true;out["region"]=coordinate;
+    if(density<=0)return out;
+    const int32_t address[]={cell.x,cell.y,cell.z,tet};const int owner=owner_at(p,address);
+    if(owner<0)return out; // Positive air above the compiled ceiling has no water owner.
+    const Dictionary state=solver->inspect(mapping[owner]);
+    if(!bool(state.get("ok",false))){out["ok"]=false;return out;}
+    const double level=double(state["level_mm"])/1000.0;
+    const bool wet=int64_t(state["component_amount_ml"])>0&&point.y<level;
+    out["wet"]=wet;out["level_m"]=level;out["depth_m"]=wet?level-point.y:0.0;
+    out["local_leaf"]=owner-p.offset;out["component"]=state["component"];
+    return out;
 }
 Dictionary NativeWaterNetwork::statistics() const {
     Dictionary out;out["status"]=status;out["phase"]=phase;out["current"]=current();out["regions"]=int64_t(pieces.size());out["local_leaves"]=local_leaves;out["global_leaves"]=global_leaves;

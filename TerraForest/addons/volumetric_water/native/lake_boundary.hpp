@@ -1,14 +1,5 @@
 // SPDX-License-Identifier: 0BSD
 // Included inside terraforest. Six consistent tetrahedra share cube diagonal 0--7.
-static int lake_tetra(const Vector3 &p,float *weights){
- std::array<int,3> axes={0,1,2};
- std::sort(axes.begin(),axes.end(),[&](int a,int b){return p[a]>p[b] || (p[a]==p[b] && a<b);});
- const int a=1<<axes[0],b=a|(1<<axes[1]);
- weights[0]=1-p[axes[0]];weights[1]=p[axes[0]]-p[axes[1]];
- weights[2]=p[axes[1]]-p[axes[2]];weights[3]=p[axes[2]];
- for(int t=0;t<6;++t)if(lake_tets[t][1]==a&&lake_tets[t][2]==b)return t;
- return 0;
-}
 int NativeLakeVolume::build_boundary_volume(){
  boundary_mask_.reset(new(std::nothrow) uint8_t[count_]());
  std::unique_ptr<uint32_t[]> pending(new(std::nothrow) uint32_t[size_t(count_)*6]);
