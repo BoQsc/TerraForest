@@ -43,8 +43,8 @@ Only one delivery milestone is active. Supporting work must name the coverage ro
 | Milestone | Deliverable | Exit decision |
 | --- | --- | --- |
 | M1 Current integration closure — disposition recorded | Dependable human checkpoint and a concrete disposition for opt-in model streaming | Address checkpoint defects as found. Complete automatic model paging/save lifetime integration with targeted evidence, or explicitly retain the existing path and register its limitation and return trigger. Do not enable incomplete paging merely to claim integration |
-| M2 World content coverage — active | Generation, water, roads, structures/static props, vegetation variety and settlement workflow in the same saved world | Close the applicable coverage gates above; report any remaining gap instead of silently moving it to qualification |
-| M3 Gameplay and simulation coverage | Gather/build/use loop, representative active entities and multiple-vehicle activation | Actual rendered behavior, persistence and bounded simulation are demonstrated; an entity count in a native store is insufficient |
+| M2 World content coverage — open, remaining work retained | Generation, water, roads, structures/static props, vegetation variety and settlement workflow in the same saved world | Close the applicable coverage gates above; report any remaining gap instead of silently moving it to qualification |
+| M3 Gameplay and simulation coverage — active actor-navigation slice | Gather/build/use loop, representative active entities and multiple-vehicle activation | Actual rendered behavior, persistence and bounded simulation are demonstrated; an entity count in a native store is insufficient |
 | M4 Combined area qualification | Forested settlement, interiors/props, underground terrain, lake, roads, entities and driving | Human checkpoint plus short automated mixed-workload tests; declared scene counts, travel route and frame/resource budgets precede performance runs |
 | M5 Scale and release qualification | Increased density/distance, endurance, recovery and distributable build | Stated workloads sustain target behavior; memory/VRAM/disk growth and failures are measured; clean-machine release checks pass |
 | M6 Multiplayer implementation and qualification | Authoritative session with interest-managed world/entity state | Server plus two clients and network fault tests first, then measured scaling. Architectural readiness remains a requirement throughout M1–M5 |
@@ -89,16 +89,59 @@ exposes a visual blocker. Compare one replacement mesh against the accepted asse
 with the same population and measured rendering budget; no vegetation-system rewrite
 is implied. Neither art acceptance nor this default change closes performance gates.
 
-Next coverage gate: the combined furnished-world gather/build/use/save/reload route
-needs a human checkpoint. Earned-resource construction, placeable ladder access and
-a dedicated inventory-connected wooden chest now have bounded integration evidence.
-Shelves remain furniture; furniture salvage and loose item pickup remain separate
-unfinished interactions. Retain M2 as active and preserve the larger M3-M6 scope.
-Do not start another vegetation-polish cycle before a combined gameplay checkpoint.
+2026-10-11 user disposition: the current item/UI/interaction work is good enough
+for now; move toward less-developed systems. Pause optional inventory, grass,
+hand-model and tool-art refinement. Fix ordinary-play blockers when reported.
+This is permission to move development forward, not a declaration that the
+combined gameplay or performance gates have all passed.
 
-Current combined human checkpoint: [Play Combined World.cmd](../Play%20Combined%20World.cmd) opens the generated furnished settlement with interactive ground cover, native actors and opt-in vehicle fleet. It shares and edits the existing Play Actors save; it does not copy it. [Current route, save ownership and explicit limits](CONNECTED_WORLD_CHECKPOINT.md#current-combined-actor-and-vegetation-checkpoint--2026-10-10). Saved-world launchers now capture build identity and logs. Human acceptance is pending; no automatic test substitutes for it.
+## Next development slice: actors navigating the existing settlement
 
-Actor collision investigation has reached its bounded disposition: measured budgets remain failed, and four modest terrain collision pieces do not justify a wholesale terrain rewrite. Preserve these failures for M3/M4 and ordinary-play blockers. Continue first-round content/gameplay coverage; basic native/shader limb gait is now integrated; navigation, fair actor activation, richer character animation and simultaneous traffic simulation remain missing. Bounded parked-fleet activation and entry are now integrated; parked cars are not autonomous traffic. M2 remains open and no scope row is certified complete.
+The current actor path already has saved identities/orders, native movement,
+bounded physics activation, batched visuals and basic limb gait. Reuse these.
+The missing capability is reaching destinations around obstacles; more population
+counters or another empty-ground movement demo would not close it.
+
+The next implementation slice supports the original high-entity-count requirement
+and M3 simulation coverage while outstanding M2 content gates remain open:
+
+- Give actors a usable destination command through the development UI.
+- Navigate a representative existing settlement route around walls and through
+  usable openings on supported terrain. Report unreachable targets explicitly.
+- Invalidate affected route data after terrain/building edits; stop safely when
+  collision or navigation coverage is unavailable. Derived routes must not become
+  authoritative saved world state.
+- Keep route planning, scheduling and repeated simulation work native, with explicit
+  per-update budgets, bounded queues and activation limits. Do not give every stored
+  actor permanent active physics or rebuild navigation for the whole world.
+- Retain persistent actor identity and destination through travel/save/reload;
+  recompute disposable route data as required. Keep commands suitable for later
+  server validation without claiming that networking is implemented.
+
+First evidence: a short obstacle route, sealed destination, mid-route edit and
+leave/return test in representative world geometry. Record planning latency,
+per-frame work, active versus stored actor counts and queue bounds before expanding
+population. Include a visible human checkpoint. Stop and reassess after two failed
+bounded design cycles rather than reopening an unbounded terrain research detour.
+Detailed navigation design and implementation remain outstanding; this entry is
+sequencing, not an implementation result or a completed coverage gate.
+
+After that slice, reassess water/lake completeness and settlement generation with
+usable interiors against the coverage register. Do not quietly leave either behind.
+No multiplayer implementation, large-city certification or sustained-performance
+claim follows from the current UI acceptance.
+
+Current combined gameplay launcher: [Play Combined Gameplay.cmd](../Play%20Combined%20Gameplay.cmd)
+uses the separate gameplay copy of the furnished editor world. The existing
+[Play Combined World.cmd](../Play%20Combined%20World.cmd) remains the editor-world
+checkpoint and shares the Play Actors save. Recent gathering, drops, empty-hand
+attacks and controls are documented in [the UI guide](PLAYER_UI.md) and
+[gameplay item evidence](evidence/gameplay_items/README.md). Full combined-route
+human acceptance remains distinct from acceptance of the recent feature slice.
+
+Actor collision investigation retains its recorded failed budgets. Navigation
+work must account for those limits, without treating them as authorization for a
+wholesale terrain rewrite. Parked fleet activation is not autonomous traffic.
 
 ### Earlier checkpoint and integration disposition
 
