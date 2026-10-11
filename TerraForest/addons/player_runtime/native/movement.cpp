@@ -2,6 +2,7 @@
 #include "movement.hpp"
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/classes/world3d.hpp>
+#include <godot_cpp/classes/engine.hpp>
 #include <godot_cpp/classes/physics_direct_space_state3d.hpp>
 namespace terraforest {
 using namespace godot;
@@ -67,7 +68,11 @@ bool NativePlayerMovement::move_grounded(CharacterBody3D *body,double delta) {
     const Vector3 velocity=body->get_velocity();
     const Vector3 horizontal=Vector3(velocity.x,0,velocity.z)*real_t(delta);
     bool stepped=false;
-    if(body->is_on_floor()&&velocity.y<=0&&horizontal.length_squared()>0.000001&&horizontal.length()<=0.5) {
+    // Capsule/riser contact can momentarily report a wall after a verified step.
+    // Preserve that support for one tick only; jumping still rejects via velocity.y.
+    const uint64_t frame=Engine::get_singleton()->get_physics_frames();
+    const bool recent_step=uint64_t(step_body_)==body->get_instance_id() && frame>=step_frame_ && frame-step_frame_<=1;
+    if((body->is_on_floor()||recent_step)&&velocity.y<=0&&horizontal.length_squared()>0.000001&&horizontal.length()<=0.5) {
         const Transform3D start=body->get_global_transform();
         const float margin=body->get_safe_margin();
         // Four bounded sweeps: obstacle, head clearance, raised travel, landing.
@@ -97,7 +102,7 @@ bool NativePlayerMovement::move_grounded(CharacterBody3D *body,double delta) {
                         raised.origin=landing;body->set_global_transform(raised);
                         body->set_velocity(Vector3(0,-1,0));body->move_and_slide();
                         body->set_velocity(Vector3(velocity.x,body->get_velocity().y,velocity.z));
-                        stepped=true;
+                        stepped=true;step_frame_=frame;step_body_=body->get_instance_id();
                     }
                 }
             }

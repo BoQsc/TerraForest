@@ -92,7 +92,7 @@ bool NativeEntityActivation::tick(const PackedVector3Array &targets,double delta
     for(int64_t i=0;i<active_.size();++i){
         auto p=std::find_if(proxies_.begin(),proxies_.end(),[&](const Proxy &p){return p.handle==active_[i];});
         if(p==proxies_.end())return false;
-        p->body->arrival_distance=.15;
+        p->body->arrival_distance=.15;p->body->stairs_enabled=false;
         p->body->tick(targets[i],delta,ready[i]!=0);
     }
     return true;
@@ -126,7 +126,7 @@ Dictionary NativeEntityActivation::settle(double delta,const Callable &readiness
         const Vector3 position=store_->get_position(p.handle);
         // Include capsule, floor snap, current travel and next gravity increment.
         const real_t travel=real_t(std::max(double(p.body->get_velocity().length()),2.5)*delta+20*delta*delta+0.05);
-        AABB bounds(position-Vector3(0.35,1.15,0.35),Vector3(0.7,2.05,0.7));bounds=bounds.grow(travel);
+        AABB bounds(position-Vector3(0.35,1.15,0.35),Vector3(0.7,navigation_?2.4:2.05,0.7));bounds=bounds.grow(travel);
         const uint64_t begin=profiling_?Time::get_singleton()->get_ticks_usec():0;
         const Variant answer=readiness.call(bounds);
         const uint64_t ready_done=profiling_?Time::get_singleton()->get_ticks_usec():0;
@@ -134,7 +134,7 @@ Dictionary NativeEntityActivation::settle(double delta,const Callable &readiness
         const bool ready=answer.get_type()==Variant::BOOL && bool(answer);
         const Vector3 target=navigation_?p.route.target(position):(orders_.is_valid()?orders_->target_for(store_->persistent_id(p.handle),position):position);
         p.body->profile_tick=profiling_;
-        p.body->arrival_distance=navigation_?.025:.15;
+        p.body->arrival_distance=navigation_?.025:.15;p.body->stairs_enabled=navigation_;
         p.body->tick(target,delta,ready);
         if(navigation_){if(!ready && (p.route.state==ActorRoute::FOLLOWING || p.route.state==ActorRoute::ARRIVED))p.route.invalidate();p.route.moved(store_->get_position(p.handle),delta);}
         transform_us+=p.body->transform_us;motion_us+=p.body->motion_us;store_us+=p.body->store_us;

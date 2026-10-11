@@ -14,6 +14,8 @@ namespace terraforest {
 class NativePlayerMovement : public godot::RefCounted {
     GDCLASS(NativePlayerMovement,godot::RefCounted)
     godot::Ref<godot::KinematicCollision3D> step_collision_;
+    uint64_t step_frame_=0;
+    godot::ObjectID step_body_;
     godot::Ref<godot::PhysicsRayQueryParameters3D> step_support_;
     godot::Ref<godot::PhysicsRayQueryParameters3D> ladder_probe_;
     godot::ObjectID ladder_collection_;

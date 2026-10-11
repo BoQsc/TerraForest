@@ -11,7 +11,7 @@
 #include <vector>
 
 namespace terraforest {
-// Disposable, local walking route. This deliberately does not promise stairs,
+// Disposable, local walking route. This deliberately supports bounded walking/stairs, but does not promise
 // jumping, crowd avoidance, arbitrary distance, or multi-storey connectivity.
 class ActorRoute {
     struct Node {godot::Vector3 p; int x,z,parent; double g; bool closed=false;};
@@ -41,7 +41,7 @@ public:
     void invalidate(){state=IDLE;}
     void invalidate(const godot::AABB &bounds){if(!has_bounds_ || bounds.size==godot::Vector3() || bounds_.intersects(bounds))invalidate();}
     void prepare(const godot::Vector3 &position,const godot::Vector3 &goal,double delta);
-    // Exactly one candidate edge per call (at most four physics queries).
+    // Exactly one candidate edge per call (at most 24 physics queries with stair clearance).
     void step(godot::PhysicsDirectSpaceState3D *space,const godot::Callable &readiness,
         const godot::Callable &admission,const godot::Ref<godot::PhysicsRayQueryParameters3D> &ray,
         const godot::Ref<godot::PhysicsShapeQueryParameters3D> &shape);

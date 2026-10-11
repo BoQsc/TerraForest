@@ -129,12 +129,17 @@ retained. Wall detours, sealed areas, edit invalidation, unavailable collision,
 leave/return and world signal wiring have targeted checks; see
 [local route evidence and limits](evidence/actor_local_routes/README.md).
 
-This closes the small obstacle-route gate, not the settlement navigation slice.
-Next: test usable doorways and a route through actual authored settlement geometry,
-then saved-order reload and declared active-population planning latency. Stairs,
-crowd avoidance, routes beyond the local search extent and shared regional routing
-remain absent. Do not expand the population or claim navigation coverage before
-those representative checks.
+The unchanged brick cottage now has passing native actor traversal through its
+entrance stairs and one-metre doorway, plus player walking/running checks at 60 and
+120 physics ticks and rejection of tall obstacles/low ceilings. A one-tick support
+handover fixes the player/actor capsule-corner stall. See
+[cottage and player stair evidence](evidence/actor_cottage_navigation/README.md).
+This is an authored-building route, not the full settlement navigation slice.
+
+Next: a furnished-settlement route, saved-order reload, and declared active-population
+planning latency. Crowd avoidance, regional routes beyond the local search extent,
+shared routing data and general multistorey connectivity remain absent/unqualified.
+Do not expand the population or claim navigation coverage before those checks.
 
 After that slice, reassess water/lake completeness and settlement generation with
 usable interiors against the coverage register. Do not quietly leave either behind.

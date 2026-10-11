@@ -181,8 +181,10 @@ reuse; they are not part of the save format.
 
 The planner samples a 0.5 m horizontal grid with support rays, capsule occupancy and
 sweeps against terrain/structure layers 1 and 2. It admits conservative walking
-edges (height difference <=0.16 m, floor normal Y >=0.85); it does not implement
-step-up, jumping or reliable multistorey connectivity. Two support samples per edge
+edges with quarter-metre intermediate tread samples and <=0.30 m risers (floor
+normal Y >=0.85). Capsule clearance is checked around stair corners; native movement
+uses a bounded 0.30 m up/forward/landing sweep. Jumping and general multistorey
+connectivity remain unsupported. Two support samples per edge
 and swept capsule clearance reject obvious gaps and corner cutting. Fine openings
 can be missed by the grid. `blocked` means no path in this sampled local graph,
 not a proof that every possible continuous/world-scale route is impossible.
@@ -190,7 +192,8 @@ not a proof that every possible continuous/world-scale route is impossible.
 Each proxy retains <=2,048 nodes, with a search extent of +/-16 m on each horizontal
 axis from its start. All active proxies share twelve work units per `settle` with
 round-robin scheduling and a cooperative 750 microsecond deadline. One unit tests
-at most one edge (four physics queries) or removes up to twelve stale queue entries.
+at most one edge (four physics queries for clear flat edges, up to 24 with stair
+clearance fallback) or removes up to twelve stale queue entries.
 A query/callback and bounded route reset/reconstruction can exceed the deadline;
 this is not a hard real-time or total actor-frame guarantee. The priority queue is
 bounded by outgoing relaxations (eight per expanded node). Inactive stored actors
@@ -210,4 +213,5 @@ No crowd avoidance, dynamic-obstacle policy, region graph, shared route cache or
 large-population qualification is supplied by this local planner. Bodies on the
 queried world layers can cause conservative blockage. The next gate is authored
 settlement routes and measured planning latency under a declared active population.
-See `docs/evidence/actor_local_routes/README.md`.
+See `docs/evidence/actor_local_routes/README.md` and the later
+`docs/evidence/actor_cottage_navigation/README.md` for stair/doorway evidence.

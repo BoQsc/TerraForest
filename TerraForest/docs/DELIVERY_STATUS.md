@@ -2559,3 +2559,24 @@ available. No crowd, stair, multistorey or regional routing claim. Next gate: us
 openings and actual settlement geometry, then saved orders and simultaneous-planning
 cost. This is a bounded obstacle-route implementation checkpoint, not full navigation
 or large-entity-count qualification. M2 water/interior work remains scheduled afterward.
+
+
+## 2026-10-11 — cottage stairs, doorway and player support handover
+
+The unchanged brick-cottage prefab exposed two missing actor capabilities: quarter
+metre stair support/capsule corner clearance in planning, and native step traversal.
+Added bounded native support sampling and collision-checked 0.30 m stepping. The actor
+now reaches the interior through the actual one-metre doorway; the asset is unchanged.
+
+The user raised player stair traversal as a concern, then clarified it was not a
+reported playtest failure. Testing found the player already passed walk/run at 60
+physics ticks but stalled at 120 ticks and at a slower 2.5 m/s. Preserving verified step
+support for exactly the next physics tick fixes that contact handover; jump/upward
+velocity still rejects stepping. The same correction applies to actors. Tall obstacle
+and low-ceiling checks retain collision rejection. Step height was not increased.
+
+Evidence and limits: [cottage stair checks](evidence/actor_cottage_navigation/README.md).
+The test uses real prefab/native collision and production player motor settings, not
+the whole main-world input/streaming path. General stairs, a full furnished-settlement
+route, saved navigation orders, population latency and sustained performance remain
+separate gates. Native debug/release binaries rebuilt; retained checks exercise debug.

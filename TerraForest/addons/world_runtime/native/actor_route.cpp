@@ -23,32 +23,49 @@ void ActorRoute::prepare(const Vector3 &position,const Vector3 &goal,double delt
 bool ActorRoute::edge(PhysicsDirectSpaceState3D *space,const Vector3 &from,Vector3 &to,
     const Callable &readiness,const Callable &admission,const Ref<PhysicsRayQueryParameters3D> &ray,
     const Ref<PhysicsShapeQueryParameters3D> &shape){
-    // Includes the support ray, capsule clearance and entire swept edge.
-    AABB region(from-Vector3(.4,1.25,.4),Vector3(.8,2.4,.8));
-    region=region.merge(AABB(to-Vector3(.4,1.25,.4),Vector3(.8,2.4,.8)));include(region);
+    // Include the full capsule, support rays and bounded stair clearance.
+    AABB region(from-Vector3(.4,1.9,.4),Vector3(.8,3.7,.8));
+    region=region.merge(AABB(to-Vector3(.4,1.9,.4),Vector3(.8,3.7,.8)));include(region);
     Variant ready=readiness.call(region);
     if(ready.get_type()!=Variant::BOOL || !bool(ready)){unknown_=true;return false;}
-    // Conservative walking only: at most 15cm height change over a half metre.
-    // No fake step-up: a real capsule sweep must still clear the edge.
-    ray->set_from(Vector3(to.x,from.y-.70,to.z));ray->set_to(Vector3(to.x,from.y-1.08,to.z));
-    Dictionary hit=space->intersect_ray(ray);if(hit.is_empty())return false;
-    Vector3 floor=hit["position"],normal=hit["normal"];
-    if(normal.y<.85)return false;
-    to.y=floor.y+.93;
-    if(std::abs(to.y-from.y)>.16)return false;
+    // Half-metre graph edges have a quarter-metre intermediate tread sample.
+    // Each half must fit the same 30cm riser limit as actual movement.
     Vector3 middle=(from+to)*.5;
-    ray->set_from(middle-Vector3(0,.70,0));ray->set_to(middle-Vector3(0,1.08,0));
-    Dictionary support=space->intersect_ray(ray);if(support.is_empty() || Vector3(support["normal"]).y<.85)return false;
+    auto support=[&](Vector3 &point,real_t base)->bool {
+        ray->set_from(Vector3(point.x,base-.28,point.z));ray->set_to(Vector3(point.x,base-1.5,point.z));
+        Dictionary hit=space->intersect_ray(ray);if(hit.is_empty() || Vector3(hit["normal"]).y<.85)return false;
+        point.y=Vector3(hit["position"]).y+.93;return true;
+    };
+    if(!support(middle,from.y) || std::abs(middle.y-from.y)>.33)return false;
+    if(!support(to,middle.y) || std::abs(to.y-middle.y)>.301)return false;
     if(admission.is_valid()){
         for(const Vector3 &point:{to,middle}){Variant allowed=admission.call(point);if(allowed.get_type()!=Variant::BOOL || !bool(allowed))return false;}
     }
-    shape->set_transform(Transform3D(Basis(),to));shape->set_motion(Vector3());
-    if(!space->intersect_shape(shape,1).is_empty())return false;
-    // Initial overlap is ignored by cast_motion, so destination occupancy is
-    // checked separately above. Both endpoints come from checked supported cells.
-    shape->set_transform(Transform3D(Basis(),from+Vector3(0,.03,0)));shape->set_motion(to-from);
-    PackedFloat32Array travel=space->cast_motion(shape);
-    return travel.size()==2 && travel[0]>.999;
+    auto clear=[&](const Vector3 &point)->bool {
+        shape->set_transform(Transform3D(Basis(),point));shape->set_motion(Vector3());
+        return space->intersect_shape(shape,1).is_empty();
+    };
+    auto sweep=[&](const Vector3 &a,const Vector3 &b)->bool {
+        shape->set_transform(Transform3D(Basis(),a));shape->set_motion(b-a);
+        PackedFloat32Array travel=space->cast_motion(shape);return travel.size()==2 && travel[0]>.999;
+    };
+    // Flat/open edges retain the cheap path. Riser corners require extra capsule
+    // clearance; sample it instead of treating the actor as a point on the tread.
+    if(std::abs(to.y-from.y)<.16 && clear(to) && sweep(from+Vector3(0,.03,0),to+Vector3(0,.03,0)))return true;
+    Vector3 poses[3]={from,middle,to};
+    for(auto &pose:poses){
+        bool valid=false;
+        for(int lift=0;lift<=3;++lift){Vector3 raised=pose+Vector3(0,lift*.05,0);if(clear(raised)){pose=raised;valid=true;break;}}
+        if(!valid)return false;
+    }
+    for(int i=0;i<2;++i){
+        Vector3 a=poses[i],b=poses[i+1];
+        if(sweep(a,b))continue;
+        Vector3 up=a;up.y=std::max(a.y,b.y)+.001;
+        Vector3 over=b;over.y=up.y;
+        if(!sweep(a,up) || !sweep(up,over) || !sweep(over,b))return false;
+    }
+    return true;
 }
 void ActorRoute::step(PhysicsDirectSpaceState3D *space,const Callable &readiness,const Callable &admission,
     const Ref<PhysicsRayQueryParameters3D> &ray,const Ref<PhysicsShapeQueryParameters3D> &shape){

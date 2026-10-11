@@ -1,0 +1,18 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+{ "z": 8.0, "floor": -0.75, "clear": [false, false, false, true] }
+{ "z": 7.75, "floor": -0.5, "clear": [false, false, false, true] }
+{ "z": 7.5, "floor": -0.25, "clear": [false, false, false, true] }
+{ "z": 7.25, "floor": 0.0, "clear": [false, false, false, true] }
+{ "z": 7.0, "floor": 0.25, "clear": [false, false, false, true] }
+{ "z": 6.75, "floor": 0.49999976158142, "clear": [false, false, false, true] }
+{ "z": 6.5, "floor": 0.75, "clear": [false, false, false, true] }
+{ "z": 6.25, "floor": 1.0, "clear": [true, true, true, true] }
+{ "z": 6.0, "floor": 1.0, "clear": [true, true, true, true] }
+{ "z": 5.75, "floor": 1.0, "clear": [true, true, true, true] }
+{ "z": 5.5, "floor": 1.0, "clear": [true, true, true, true] }
+{ "z": 5.25, "floor": 1.0, "clear": [true, true, true, true] }
+{ "z": 5.0, "floor": 1.0, "clear": [true, true, true, true] }
+{ "z": 4.75, "floor": 1.0, "clear": [true, true, true, true] }
+{ "z": 4.5, "floor": 1.0, "clear": [true, true, true, true] }
+STAIR_PROBE_DONE
