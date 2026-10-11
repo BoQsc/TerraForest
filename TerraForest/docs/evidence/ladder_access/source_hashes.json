@@ -1,0 +1,12 @@
+{
+  "addons/player_runtime/native/movement.cpp": "4b3a705ac3c5e162b28c03ec69b8167ebaf6ef4f055d196c86e02540fae92843",
+  "addons/player_runtime/native/movement.hpp": "3b78be739fb8b2eaa77ae40e3cbb1b984c4ad29697cc35fc815153c9a9558909",
+  "demo/controller.gd": "8b17329b33edddd9221117e52a70aee997f0f16815a3908adc6c687833a47754",
+  "demo/world.gd": "875d14b52ab2794b72abb79324defe2cf9dfdd7fd17b77f57d6235831fa98326",
+  "addons/structures/ladder_catalog.gd": "0a7f0741fe6963a50793f46ef33909797e9558c3f2c0bf990645af2c21973dd4",
+  "addons/structures/prefabs/ladder_model.tres": "9a3baec672409481133b750a42a49bd50b26a895bd285c9542e6979892596ec8",
+  "tests/ladder_traversal.gd": "5e0c339328feaa67a0f502036b52e848f07506a43135a3d7a7e7d70cce92e58a",
+  "tests/ladder_world.gd": "ceb34a2ee4c213810e9f932b06a4b39b71100d3d7a2064323a39c3df3a721978",
+  "tools/check_ladder_world.py": "1141d0e77b98507588030fab2bbd2b2e617336941b7fcfce02de8c3e3e24561b",
+  "tools/test_native_release.py": "ca3923524cca65a5952aec01f548ced9943bca8b4853226d4a02cff853d399d5"
+}

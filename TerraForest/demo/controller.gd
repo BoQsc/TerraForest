@@ -635,16 +635,18 @@ func _physics_process(delta: float) -> void:
 		else:
 			travel_blocked_s = 0.0
 			var water_depth: float=_player_water_depth()
+			var climbing: bool=false
 			if water_depth>0.0:
 				var vertical: float=controls.vertical() if app_focused and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED else 0.0
 				player.velocity=movement.swimming_velocity(direction,player.velocity,vertical,water_depth,delta,controls.sprint())
 			else:
 				player.velocity=movement.walking_velocity(direction,player.velocity,delta,controls.sprint(),player.is_on_floor(),controls.held.has(KEY_SPACE))
+				climbing=movement.ladder_velocity(player,direction,delta,controls.held.has(KEY_SPACE))
 			structure_motion_blocked = not _additional_motion_ready(delta)
 			if structure_motion_blocked:
 				player.velocity = Vector3.ZERO
 			else:
-				if water_depth>0.0: player.move_and_slide()
+				if water_depth>0.0 or climbing: player.move_and_slide()
 				else: movement.move_grounded(player,delta)
 	var displacement: Vector3 = player.position - before_motion
 	planar_speed = Vector2(displacement.x, displacement.z).length() / maxf(delta, 0.000001)

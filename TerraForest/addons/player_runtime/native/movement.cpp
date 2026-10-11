@@ -6,10 +6,61 @@
 namespace terraforest {
 using namespace godot;
 void NativePlayerMovement::_bind_methods() {
+    ClassDB::bind_method(D_METHOD("configure_ladders","collection"),&NativePlayerMovement::configure_ladders);
+    ClassDB::bind_method(D_METHOD("ladder_velocity","body","direction","delta","jump"),&NativePlayerMovement::ladder_velocity);
     ClassDB::bind_method(D_METHOD("move_grounded","body","delta"),&NativePlayerMovement::move_grounded);
     ClassDB::bind_method(D_METHOD("swimming_velocity","direction","previous","vertical","depth","delta","sprint"),&NativePlayerMovement::swimming_velocity);
     ClassDB::bind_method(D_METHOD("walking_velocity","direction","previous","delta","sprint","grounded","jump"),&NativePlayerMovement::walking_velocity);
     ClassDB::bind_method(D_METHOD("flight_displacement","direction","vertical","delta","sprint"),&NativePlayerMovement::flight_displacement);
+}
+void NativePlayerMovement::configure_ladders(Node3D *collection) {
+    ladder_collection_=collection?collection->get_instance_id():ObjectID();
+    ladder_detach_=0;
+}
+bool NativePlayerMovement::ladder_velocity(CharacterBody3D *body,Vector3 direction,double delta,bool jump) {
+    if(!body||!body->is_inside_tree()||!valid(delta,direction))return false;
+    ladder_detach_=std::max(0.0,ladder_detach_-delta);
+    auto *collection=Object::cast_to<Node3D>(ObjectDB::get_instance(ladder_collection_));
+    if(!collection||ladder_detach_>0)return false;
+    // At most two short rays, independent of total world placement count. The
+    // first collider also prevents attaching through walls or unloaded proxies.
+    Vector3 forward=-body->get_global_basis().get_column(2);forward.y=0;
+    if(forward.length_squared()<0.5)return false;
+    forward.normalize();
+    if(ladder_probe_.is_null())ladder_probe_.instantiate();
+    Vector3 from=body->get_global_position()+Vector3(0,0.15,0);
+    ladder_probe_->set_from(from);ladder_probe_->set_to(from+forward*0.85);
+    ladder_probe_->set_collision_mask(body->get_collision_mask());
+    TypedArray<RID> exclude;exclude.push_back(body->get_rid());ladder_probe_->set_exclude(exclude);
+    Dictionary hit=body->get_world_3d()->get_direct_space_state()->intersect_ray(ladder_probe_);
+    // The lower probe keeps the last rung reachable while stepping above it.
+    if(hit.is_empty()) {
+        from.y-=0.45;ladder_probe_->set_from(from);ladder_probe_->set_to(from+forward*0.85);
+        hit=body->get_world_3d()->get_direct_space_state()->intersect_ray(ladder_probe_);
+    }
+    Object *collider=hit.get("collider",Variant());
+    if(collider!=collection)return false;
+    int64_t id=collection->call("placement_for_body",hit["rid"]);
+    PackedFloat32Array p=collection->call("get_instance",id);
+    if(p.size()!=12)return false;
+    Transform3D frame(Basis(p[0],p[1],p[2],p[4],p[5],p[6],p[8],p[9],p[10]),Vector3(p[3],p[7],p[11]));
+    frame=collection->get_global_transform()*frame;
+    // This first ladder asset is upright and unit scale; arbitrary resized or
+    // tilted copies remain ordinary static props, never unsafe climb surfaces.
+    if(!frame.is_finite()||frame.basis.get_column(1).distance_to(Vector3(0,1,0))>0.001||
+       std::abs(frame.basis.determinant()-1)>0.001||
+       std::abs(frame.basis.get_column(0).length()-1)>0.001||
+       std::abs(frame.basis.get_column(2).length()-1)>0.001)return false;
+    Vector3 local=frame.affine_inverse().xform(body->get_global_position());
+    Vector3 normal=frame.basis.get_column(2),side=frame.basis.get_column(0);
+    if(std::abs(local.x)>0.44||local.y<-.15||local.y>3.85||local.z<0.30||local.z>0.9||forward.dot(-normal)<0.5)return false;
+    if(jump) {body->set_velocity(normal*3+Vector3(0,5,0));ladder_detach_=0.35;return true;}
+    double rise=std::clamp(double(direction.dot(-normal)),-1.0,1.0);
+    Vector3 velocity=side*real_t(std::clamp(double(direction.dot(side)),-1.0,1.0)*2)+Vector3(0,rise*2,0);
+    // Above the landing, continue inward while collision still resolves walls
+    // and ceilings. No teleport or collision bypass is used for the exit.
+    if(local.y>3.05&&rise>0)velocity-=normal*2;
+    body->set_velocity(velocity);return true;
 }
 bool NativePlayerMovement::move_grounded(CharacterBody3D *body,double delta) {
     if(!body||!body->is_inside_tree()||!valid(delta,body->get_velocity()))return false;

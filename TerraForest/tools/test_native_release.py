@@ -11,9 +11,9 @@ from bootstrap_native import ROOT
 
 parser=argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--godot',default=os.environ.get('GODOT_EXE') or shutil.which('godot'))
-parser.add_argument('--addon',choices=['vehicle_runtime','world_runtime','volumetric_water','volumetric_terrain','structures','vegetation_runtime'],default='world_runtime')
+parser.add_argument('--addon',choices=['player_runtime','vehicle_runtime','world_runtime','volumetric_water','volumetric_terrain','structures','vegetation_runtime'],default='world_runtime')
 parser.add_argument('--region-storage',action='store_true',help='Exercise structure_persistence through the native region archive')
-parser.add_argument('--test',choices=['ground_support_surface','cache_eviction','entity_gait','road_editor_settings','vehicle_parked_renderer','vehicle_fleet','vehicle_fleet_storage','entity_renderer','actor_orders','entity_activation','entity_actor','entity_position','entity_sleeping','road_profile','road_surface_profile','terrain_locality_probe','terrain_region_cache','terrain_mesh_pressure','native_runtime','water','water_bake','world_archive','world_persistence','terrain_planner','terrain_collision','block_lattice','block_worker','block_texture_sets','building_collision_profile','building_collision_stream','building_readiness','block_regions','block_region_store','block_region_io','block_region_checkpoints','block_region_bootstrap','partial_region_storage','region_world_archive','region_archive_reads','region_checkpoint_retention','model_transfer_scheduler','model_scheduler_pressure','model_world_bootstrap','model_focus_paging','model_focus_discovery','block_pager','block_pager_stress','region_metadata','structures','static_placements','static_model_regions','model_region_store','model_region_metadata','model_admission_pressure','model_incremental_admission','model_admission_history','model_incremental_retirement','structure_persistence','model_paging_lifecycle','settlement_network','prefab_model_attachments','prefab_transaction','prefab_staged','ground_scatter','ground_cover_state','ground_cover_picker','static_shadow_policy'])
+parser.add_argument('--test',choices=['ladder_traversal','ground_support_surface','cache_eviction','entity_gait','road_editor_settings','vehicle_parked_renderer','vehicle_fleet','vehicle_fleet_storage','entity_renderer','actor_orders','entity_activation','entity_actor','entity_position','entity_sleeping','road_profile','road_surface_profile','terrain_locality_probe','terrain_region_cache','terrain_mesh_pressure','native_runtime','water','water_bake','world_archive','world_persistence','terrain_planner','terrain_collision','block_lattice','block_worker','block_texture_sets','building_collision_profile','building_collision_stream','building_readiness','block_regions','block_region_store','block_region_io','block_region_checkpoints','block_region_bootstrap','partial_region_storage','region_world_archive','region_archive_reads','region_checkpoint_retention','model_transfer_scheduler','model_scheduler_pressure','model_world_bootstrap','model_focus_paging','model_focus_discovery','block_pager','block_pager_stress','region_metadata','structures','static_placements','static_model_regions','model_region_store','model_region_metadata','model_admission_pressure','model_incremental_admission','model_admission_history','model_incremental_retirement','structure_persistence','model_paging_lifecycle','settlement_network','prefab_model_attachments','prefab_transaction','prefab_staged','ground_scatter','ground_cover_state','ground_cover_picker','static_shadow_policy'])
 parser.add_argument('--curved-road',action='store_true')
 args=parser.parse_args()
 if args.region_storage and args.test!='structure_persistence':parser.error('--region-storage requires --test structure_persistence')
@@ -38,6 +38,23 @@ with tempfile.TemporaryDirectory(prefix='release_smoke_',dir=build) as temporary
     (project/'project.godot').write_text('config_version=5\n[application]\nconfig/name="TerraForest Native Release Test"\n')
     (project/'tests').mkdir()
     test=args.test or {'volumetric_water':'water','volumetric_terrain':'terrain_planner','structures':'structures'}.get(args.addon,'native_runtime')
+    if test=='ladder_traversal':
+        if args.addon!='player_runtime':parser.error('ladder_traversal requires player_runtime')
+        structure=project/'addons/structures'
+        (structure/'bin').mkdir(parents=True)
+        shutil.copy2(ROOT/'addons/structures/bin/structures.windows.template_release.x86_64.dll',structure/'bin')
+        (structure/'structures.gdextension').write_text((ROOT/'addons/structures/structures.gdextension').read_text().replace('template_debug','template_release'))
+        for relative in ['prefabs/ladder_model.tres','textures/terraforest/wood_albedo.png']:
+            dest=structure/relative;dest.parent.mkdir(parents=True,exist_ok=True)
+            shutil.copy2(ROOT/'addons/structures'/relative,dest)
+        # Reuse the authored texture's imported resource; no editor boot is
+        # needed for this release-DLL physics test.
+        remap=ROOT/'addons/structures/textures/terraforest/wood_albedo.png.import'
+        shutil.copy2(remap,structure/'textures/terraforest/wood_albedo.png.import')
+        imported_path=re.search(r'^path="res://([^"\n]+)"',remap.read_text(),re.M).group(1)
+        if not imported_path.startswith('.godot/imported/'):raise RuntimeError('Unexpected texture import path')
+        destination=project/imported_path;destination.parent.mkdir(parents=True,exist_ok=True)
+        shutil.copy2(ROOT/imported_path,destination)
     if test=='cache_eviction':
         terrain=project/'addons/volumetric_terrain';terrain.mkdir(parents=True)
         for name in ['derived_cache.gd','mesh_codec.gd']:

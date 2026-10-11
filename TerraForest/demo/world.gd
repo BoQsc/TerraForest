@@ -111,6 +111,8 @@ func _ready() -> void:
 	structures_ready = structures_ready and door_models != null
 	var furniture: Array[Dictionary]=preload("res://addons/structures/furniture_catalog.gd").register(structures)
 	structures_ready = structures_ready and furniture.size()==3
+	var ladder: Dictionary=preload("res://addons/structures/ladder_catalog.gd").register(structures)
+	structures_ready = structures_ready and not ladder.is_empty()
 	player_hud.ground_tools_enabled=ground_enabled
 	if not player_hud.prepare() or not persistence.register_component("player_loadout", player_hud.capture_snapshot, player_hud.restore_snapshot, player_hud.inventory, player_hud.default_loadout):
 		push_error("Player loadout persistence initialization failed")
@@ -151,6 +153,7 @@ func _ready() -> void:
 	pending_spawn = Vector3(800, 0, 1310)
 	terrain.focus = pending_spawn
 	super._ready()
+	movement.configure_ladders(ladder.collection)
 	camera.add_child(headlamp)
 	add_child(model_tool)
 	model_tool.gameplay=construction_inventory.gameplay
@@ -161,6 +164,7 @@ func _ready() -> void:
 		{"title":"Floor panel","mesh":beam,"collection":structures.model("architecture/metal_beam/v1"),"scale":Vector3(4,0.25,4),"costs":PackedInt64Array([104,8]),"cost_label":"8 metal"},
 		{"title":"Doorway","mesh":doorway,"collection":door_models,"scale":Vector3.ONE,"costs":PackedInt64Array([103,8]),"cost_label":"8 concrete"}]
 	object_entries.append_array(furniture)
+	object_entries.append(ladder)
 	model_tool.configure(camera,player,object_entries,help.get_parent(),structures.blocks)
 	model_tool.notice.connect(_show_lake_notice)
 	if model_region_paging and (not temporary_world or terrain.backend.readonly_snapshot):

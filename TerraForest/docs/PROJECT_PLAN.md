@@ -89,9 +89,10 @@ exposes a visual blocker. Compare one replacement mesh against the accepted asse
 with the same population and measured rendering budget; no vegetation-system rewrite
 is implied. Neither art acceptance nor this default change closes performance gates.
 
-Next coverage gate: exercise the coherent gather/build/use/save/reload loop in the
-combined furnished world, identify the first missing usable interaction, and implement
-that gap. Retain M2 as active and preserve the larger M3-M6 scope. Do not start another
+Next coverage gate: extend usable building interiors beyond static furniture, starting
+with an inventory-connected storage interaction. Earned-resource construction and
+placeable ladder access now have bounded integration evidence; the complete combined
+furnished-world gameplay route still needs a human checkpoint. Retain M2 as active and preserve the larger M3-M6 scope. Do not start another
 vegetation-polish cycle before a combined gameplay checkpoint.
 
 Current combined human checkpoint: [Play Combined World.cmd](../Play%20Combined%20World.cmd) opens the generated furnished settlement with interactive ground cover, native actors and opt-in vehicle fleet. It shares and edits the existing Play Actors save; it does not copy it. [Current route, save ownership and explicit limits](CONNECTED_WORLD_CHECKPOINT.md#current-combined-actor-and-vegetation-checkpoint--2026-10-10). Saved-world launchers now capture build identity and logs. Human acceptance is pending; no automatic test substitutes for it.
@@ -386,3 +387,22 @@ Next audit and implementation target: usable building access and interiors,
 including the originally requested ladders. Static furniture, shell generation
 and this single-block check do not satisfy that requirement. Retain M2 as active;
 no additional grass-polish iteration is scheduled.
+
+
+### 2026-10-11: usable ladder access
+
+A shared 168-triangle wooden ladder is available as object 7. Six wood in gameplay,
+free in the editor; stable native placement identities use existing history, storage
+and streaming. Native climbing uses at most two short physics rays per tick, W/S
+ascent/descent, idle hold and Space jump-off with recapture cooldown. Standard
+capsule collision resolves ceiling, wall and top landing; no teleport. Nearby
+collision residency is capped at 128 one-shape ladder proxies. Upright unit-scale
+ladders only; resizing/tilting creates an ordinary non-climbable prop.
+
+Nineteen traversal checks pass in debug and clean release; existing walking/swim
+and tower-stair checks pass. Normal main-world paid placement, controller ascent
+onto a three-metre block landing, save and fresh-process reload pass 21 checks total
+at fullscreen 1080p with cap60. Evidence: evidence/ladder_access. Test inventory
+setup errors and an editor-import process failure are documented there. These
+checks do not qualify sustained performance, arbitrary-height access, multiplayer,
+or a complete playable settlement. M2 remains active.

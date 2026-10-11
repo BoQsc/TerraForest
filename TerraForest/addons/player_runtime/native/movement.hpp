@@ -15,12 +15,17 @@ class NativePlayerMovement : public godot::RefCounted {
     GDCLASS(NativePlayerMovement,godot::RefCounted)
     godot::Ref<godot::KinematicCollision3D> step_collision_;
     godot::Ref<godot::PhysicsRayQueryParameters3D> step_support_;
+    godot::Ref<godot::PhysicsRayQueryParameters3D> ladder_probe_;
+    godot::ObjectID ladder_collection_;
+    double ladder_detach_=0;
     static bool valid(double delta,const godot::Vector3 &v) {
         return std::isfinite(delta)&&delta>0&&delta<=0.25&&v.is_finite();
     }
 protected:
     static void _bind_methods();
 public:
+    void configure_ladders(godot::Node3D *collection);
+    bool ladder_velocity(godot::CharacterBody3D *body,godot::Vector3 direction,double delta,bool jump);
     bool move_grounded(godot::CharacterBody3D *body,double delta);
     godot::Vector3 swimming_velocity(godot::Vector3 direction,godot::Vector3 previous,double vertical,double depth,double delta,bool sprint) const {
         if(!valid(delta,direction)||!previous.is_finite()||!std::isfinite(vertical)||!std::isfinite(depth)||depth<=0)return {};
