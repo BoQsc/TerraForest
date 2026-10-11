@@ -20,7 +20,10 @@ class NativeWaterSettling : public godot::RefCounted {
     std::vector<Node> nodes;
     std::vector<int64_t> heights;
     std::vector<Frame> frames;
-    int leaves=0,root=-1,source=-1,mode=0;
+    int leaves=0,root=-1,source=-1,mode=0,root_count=0;
+    std::vector<int> leaf_roots;
+    int64_t total_ml=0;
+    bool configure_impl(const godot::PackedInt64Array &,const godot::Array &,const godot::PackedInt32Array &,bool);
     int64_t requested=0,pending=0,moved=0,events=0;
     static constexpr int64_t maximum=9007199254740991LL;
     int active_node(int leaf,int stop) const;
@@ -30,6 +33,7 @@ protected:
     static void _bind_methods();
 public:
     bool configure(const godot::PackedInt64Array &levels,const godot::Array &profiles,const godot::PackedInt32Array &merges);
+    bool configure_forest(const godot::PackedInt64Array &levels,const godot::Array &profiles,const godot::PackedInt32Array &merges);
     bool begin_add(int64_t leaf,int64_t amount_ml);
     bool begin_remove(int64_t leaf,int64_t amount_ml);
     godot::Dictionary advance(int64_t event_budget);

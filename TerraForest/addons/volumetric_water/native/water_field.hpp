@@ -8,6 +8,7 @@ namespace terraforest {
 // Immutable raw density snapshot including an explicit one-cell sampling border.
 class NativeWaterField : public godot::RefCounted {
     friend class NativeWaterRegions;
+    friend class NativeWaterNetwork;
     GDCLASS(NativeWaterField,godot::RefCounted)
     friend class NativeWaterTopology;
     godot::PackedFloat32Array density;

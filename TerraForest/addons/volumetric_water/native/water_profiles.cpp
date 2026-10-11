@@ -8,19 +8,22 @@ using namespace godot;
 namespace terraforest {
 void NativeWaterProfiles::_bind_methods(){
     ClassDB::bind_method(D_METHOD("begin","graph","hierarchy","levels_mm"),&NativeWaterProfiles::begin);
+    ClassDB::bind_method(D_METHOD("begin_region","graph","hierarchy","levels_mm"),&NativeWaterProfiles::begin_region);
     ClassDB::bind_method(D_METHOD("advance","work_budget"),&NativeWaterProfiles::advance);
     ClassDB::bind_method(D_METHOD("statistics"),&NativeWaterProfiles::statistics);
     ClassDB::bind_method(D_METHOD("profiles"),&NativeWaterProfiles::profiles);
 }
 void NativeWaterProfiles::fail(const char *why){status=-2;error=why;}
-bool NativeWaterProfiles::begin(const Ref<NativeWaterTopology> &graph,const Ref<NativeWaterBasins> &hierarchy,const PackedInt64Array &heights){
-    if(status!=-1||graph.is_null()||hierarchy.is_null()||graph->status!=1||hierarchy->status!=1||hierarchy->port_count||hierarchy->root_count!=1||hierarchy->max_depth>64)return false;
+bool NativeWaterProfiles::begin(const Ref<NativeWaterTopology> &graph,const Ref<NativeWaterBasins> &hierarchy,const PackedInt64Array &heights){return begin_impl(graph,hierarchy,heights,false);}
+bool NativeWaterProfiles::begin_region(const Ref<NativeWaterTopology> &graph,const Ref<NativeWaterBasins> &hierarchy,const PackedInt64Array &heights){return begin_impl(graph,hierarchy,heights,true);}
+bool NativeWaterProfiles::begin_impl(const Ref<NativeWaterTopology> &graph,const Ref<NativeWaterBasins> &hierarchy,const PackedInt64Array &heights,bool open){
+    if(status!=-1||graph.is_null()||hierarchy.is_null()||graph->status!=1||hierarchy->status!=1||(!open&&(hierarchy->port_count||hierarchy->root_count!=1))||hierarchy->max_depth>64)return false;
     if(heights.size()<2||heights.size()>256||graph->ids.size()!=hierarchy->ids.size()||graph->edges.size()!=hierarchy->edges.size())return false;
     for(int i=0;i<heights.size();++i){
         if(heights[i]<-100000000||heights[i]>100000000||(i&&heights[i]<=heights[i-1]))return false;
     }
     if(double(heights[heights.size()-1])/1000.0>graph->view().ceiling)return false;
-    topology=graph;basins=hierarchy;levels=heights;leaves=hierarchy->leaf_count;
+    regional=open;topology=graph;basins=hierarchy;levels=heights;leaves=hierarchy->leaf_count;
     sums.resize(leaves*levels.size(),0);correction.resize(sums.size(),0);rows.resize(leaves);
     for(int i=1;i<levels.size();++i)max_step_mm=std::max(max_step_mm,levels[i]-levels[i-1]);
     status=0;return true;
@@ -65,7 +68,7 @@ void NativeWaterProfiles::unit(){
         if(++anchor==levels.size()){anchor=0;++cursor;}return;
     }
     if(phase==4){
-        if(cursor==leaves){status=1;phase=5;return;}
+        if(cursor==leaves){std::vector<double>().swap(sums);std::vector<double>().swap(correction);status=1;phase=5;return;}
         if(anchor==0)rows[cursor].resize(levels.size());
         const double value=sums[cursor*levels.size()+anchor];
         if(!std::isfinite(value)||value<0||value>9007199254740991.0){fail("Capacity exceeds exact quantity range.");return;}
@@ -90,6 +93,7 @@ Dictionary NativeWaterProfiles::statistics() const {
 Dictionary NativeWaterProfiles::profiles() const {
     Dictionary out;out["ok"]=status==1;if(status!=1)return out;
     Array output;output.resize(leaves);for(int i=0;i<leaves;++i)output[i]=rows[i];
+    out["regional"]=regional;out["requires_stitching"]=basins->port_count>0;out["roots"]=basins->roots;
     out["levels_mm"]=levels;out["profiles_ml"]=output;out["merges"]=basins->merges;
     // Monotonic exact geometric capacities and linear interpolation both lie
     // between an interval's endpoints. This is conservative, not a tight error estimate.

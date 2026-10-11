@@ -1,0 +1,33 @@
+{
+  "anchors": 26,
+  "center": "(800.0, 24.0, 1304.0)",
+  "failures": 0,
+  "max_network_call_us": 484,
+  "network": {
+    "current": true,
+    "error": "",
+    "global_leaves": 1,
+    "local_leaves": 2,
+    "phase": 7,
+    "regions": 2,
+    "status": 1,
+    "water": {
+      "busy": false,
+      "events": 1,
+      "frames": 0,
+      "moved_ml": 1000,
+      "nodes": 1,
+      "pending_ml": 0,
+      "profile_bytes": 208,
+      "ready": true,
+      "requested_ml": 1000,
+      "roots": 1,
+      "total_ml": 129856198
+    },
+    "work_units_total": 1004
+  },
+  "network_calls": 8,
+  "quantity_ml": 129857198,
+  "sample_calls": 28,
+  "scope": "Actual native excavation across two independently sampled owned regions, finite pour/withdrawal. Not a saved-world or rendered flow test."
+}

@@ -6,14 +6,17 @@ using namespace godot;
 namespace terraforest {
 void NativeWaterSettling::_bind_methods(){
     ClassDB::bind_method(D_METHOD("configure","levels_mm","profiles_ml","merges"),&NativeWaterSettling::configure);
+    ClassDB::bind_method(D_METHOD("configure_forest","levels_mm","profiles_ml","merges"),&NativeWaterSettling::configure_forest);
     ClassDB::bind_method(D_METHOD("begin_add","leaf","amount_ml"),&NativeWaterSettling::begin_add);
     ClassDB::bind_method(D_METHOD("begin_remove","leaf","amount_ml"),&NativeWaterSettling::begin_remove);
     ClassDB::bind_method(D_METHOD("advance","event_budget"),&NativeWaterSettling::advance);
     ClassDB::bind_method(D_METHOD("statistics"),&NativeWaterSettling::statistics);
     ClassDB::bind_method(D_METHOD("inspect","leaf"),&NativeWaterSettling::inspect);
 }
-bool NativeWaterSettling::configure(const PackedInt64Array &levels,const Array &profiles,const PackedInt32Array &merges){
-    if(root>=0||profiles.size()<1||profiles.size()>4096||levels.size()<2||levels.size()>256||merges.size()!=(profiles.size()-1)*4)return false;
+bool NativeWaterSettling::configure(const PackedInt64Array &levels,const Array &profiles,const PackedInt32Array &merges){return configure_impl(levels,profiles,merges,false);}
+bool NativeWaterSettling::configure_forest(const PackedInt64Array &levels,const Array &profiles,const PackedInt32Array &merges){return configure_impl(levels,profiles,merges,true);}
+bool NativeWaterSettling::configure_impl(const PackedInt64Array &levels,const Array &profiles,const PackedInt32Array &merges,bool forest){
+    if(root>=0||profiles.size()<1||profiles.size()>4096||levels.size()<2||levels.size()>256||merges.size()%4||merges.size()>(profiles.size()-1)*4||(!forest&&merges.size()!=(profiles.size()-1)*4))return false;
     for(int i=0;i<levels.size();++i)if(levels[i]<-100000000||levels[i]>100000000||(i&&levels[i]<=levels[i-1]))return false;
     std::vector<Node> staged;staged.reserve(profiles.size()*2-1);
     for(int i=0;i<profiles.size();++i){
@@ -39,15 +42,18 @@ bool NativeWaterSettling::configure(const PackedInt64Array &levels,const Array &
         staged[a].capacity=capacity_at(staged[a]);staged[b].capacity=capacity_at(staged[b]);
         node.base=staged[a].capacity+staged[b].capacity;staged.push_back(std::move(node));
     }
-    const int r=staged.size()-1;staged[r].capacity=staged[r].profile.back();
+    const int r=staged.size()-1;int roots=0;
+    for(auto &node:staged)if(node.parent<0){node.capacity=node.profile.back();++roots;}
+    std::vector<int> ownership(profiles.size());
     // Validate a connected, bounded-depth tree and each spill entry's ownership.
     for(int n=0;n<int(staged.size());++n){
         int at=n,depth=0;while(staged[at].parent>=0&&depth<=64){at=staged[at].parent;++depth;}
-        if(at!=r||depth>64||staged[n].capacity<staged[n].base)return false;
+        if((!forest&&at!=r)||depth>64||staged[n].capacity<staged[n].base)return false;
+        if(n<profiles.size())ownership[n]=at;
         at=staged[n].entry;depth=0;while(at!=n&&staged[at].parent>=0&&depth<=64){at=staged[at].parent;++depth;}
         if(at!=n)return false;
     }
-    nodes.swap(staged);heights.assign(levels.ptr(),levels.ptr()+levels.size());leaves=profiles.size();root=r;frames.reserve(65);return true;
+    leaf_roots.swap(ownership);root_count=roots;nodes.swap(staged);heights.assign(levels.ptr(),levels.ptr()+levels.size());leaves=profiles.size();root=r;frames.reserve(65);return true;
 }
 int NativeWaterSettling::active_node(int leaf,int stop) const {
     int chosen=leaf;
@@ -55,13 +61,14 @@ int NativeWaterSettling::active_node(int leaf,int stop) const {
     return chosen;
 }
 void NativeWaterSettling::change(int node,int64_t amount){
+    total_ml+=amount;
     nodes[node].local+=amount;
     for(int at=node;at>=0;at=nodes[at].parent)nodes[at].total+=amount;
 }
 bool NativeWaterSettling::begin_add(int64_t leaf,int64_t amount){
-    if(root<0||mode||leaf<0||leaf>=leaves||amount<=0||amount>maximum-nodes[root].total)return false;
+    if(root<0||mode||leaf<0||leaf>=leaves||amount<=0||amount>maximum-total_ml)return false;
     source=leaf;requested=pending=amount;moved=events=0;mode=1;
-    frames.push_back({root,active_node(leaf,root),amount});return true;
+    const int target=leaf_roots[leaf];frames.push_back({target,active_node(leaf,target),amount});return true;
 }
 bool NativeWaterSettling::begin_remove(int64_t leaf,int64_t amount){
     if(root<0||mode||leaf<0||leaf>=leaves||amount<=0||amount>maximum)return false;
@@ -78,7 +85,7 @@ Dictionary NativeWaterSettling::advance(int64_t budget){
     while(mode&&work<budget){
         ++work;++events;
         if(mode==2){
-            const int at=active_node(source,root);const int64_t take=std::min(pending,nodes[at].local);
+            const int at=active_node(source,leaf_roots[source]);const int64_t take=std::min(pending,nodes[at].local);
             change(at,-take);moved+=take;pending-=take;
             if(!pending||!take)mode=0;
             continue;
@@ -99,14 +106,14 @@ Dictionary NativeWaterSettling::advance(int64_t budget){
     Dictionary out=statistics();out["ok"]=root>=0;out["work_events"]=work;return out;
 }
 Dictionary NativeWaterSettling::statistics() const {
-    Dictionary out;out["ready"]=root>=0;out["busy"]=mode!=0;out["total_ml"]=root>=0?nodes[root].total:int64_t(0);
+    Dictionary out;out["ready"]=root>=0;out["busy"]=mode!=0;out["total_ml"]=total_ml;
     out["requested_ml"]=requested;out["pending_ml"]=pending;out["moved_ml"]=moved;out["events"]=events;
-    out["nodes"]=int64_t(nodes.size());out["frames"]=int64_t(frames.size());out["profile_bytes"]=int64_t(nodes.size()*heights.size()*sizeof(int64_t));return out;
+    out["roots"]=root_count;out["nodes"]=int64_t(nodes.size());out["frames"]=int64_t(frames.size());out["profile_bytes"]=int64_t(nodes.size()*heights.size()*sizeof(int64_t));return out;
 }
 Dictionary NativeWaterSettling::inspect(int64_t leaf) const {
     Dictionary out;out["ok"]=false;
     if(leaf<0||leaf>=leaves||mode)return out;
-    const int at=active_node(leaf,root);const Node &node=nodes[at];
+    const int at=active_node(leaf,leaf_roots[leaf]);const Node &node=nodes[at];
     const auto upper=std::lower_bound(node.profile.begin(),node.profile.end(),node.total);
     size_t j=upper-node.profile.begin();double level=heights[0];
     if(j>=heights.size())level=heights.back();

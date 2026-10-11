@@ -7,15 +7,20 @@
 namespace terraforest {
 // Worker-owned, resumable regional merge forest. No fluid quantity is stored here.
 class NativeWaterBasins : public godot::RefCounted {
+    friend class NativeWaterNetwork;
     GDCLASS(NativeWaterBasins,godot::RefCounted)
     friend class NativeWaterProfiles;
     struct Event { int height,type,a,b; };
-    struct Draft { int left=-1,right=-1,height=0,entry=-1,rep=-1,depth=0; };
+    struct Draft { int left=-1,right=-1,height=0,entry=-1,rep=-1,depth=0,parent=-1,witness_a=INT32_MAX,witness_b=INT32_MAX; };
+    struct Adjacent {int node,next,height;};
     static bool later(const Event &a,const Event &b);
     godot::PackedInt32Array ids,floors,edges,owners,leaf_floors,merges,roots,ports;
     std::vector<Event> heap;
     std::vector<int> parent,sizes,basin,owner,activated,remap;
     std::vector<Draft> drafts;
+    std::vector<Adjacent> adjacency;
+    std::vector<int> heads,drain_queue;
+    int edge_scan=-1,queue_cursor=0,best_owner=-1,best_floor=INT32_MAX;
     int status=-1,phase=0,cursor=0,level=0,leaf_count=0,merge_count=0,root_count=0,port_count=0,max_depth=0;
     bool has_level=false;
     int64_t events=0;

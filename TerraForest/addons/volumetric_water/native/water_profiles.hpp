@@ -6,6 +6,7 @@
 #include <godot_cpp/variant/packed_int64_array.hpp>
 namespace terraforest {
 class NativeWaterProfiles : public godot::RefCounted {
+    friend class NativeWaterNetwork;
     GDCLASS(NativeWaterProfiles,godot::RefCounted)
     godot::Ref<NativeWaterTopology> topology;
     godot::Ref<NativeWaterBasins> basins;
@@ -16,12 +17,15 @@ class NativeWaterProfiles : public godot::RefCounted {
     int air_count=0,phase=0,cursor=0,anchor=0,status=-1,leaves=0;
     int64_t work_total=0,max_interval_ml=0,max_step_mm=0;
     godot::String error;
+    bool regional=false;
+    bool begin_impl(const godot::Ref<NativeWaterTopology> &,const godot::Ref<NativeWaterBasins> &,const godot::PackedInt64Array &,bool);
     void unit();
     void fail(const char *why);
 protected:
     static void _bind_methods();
 public:
     bool begin(const godot::Ref<NativeWaterTopology> &graph,const godot::Ref<NativeWaterBasins> &hierarchy,const godot::PackedInt64Array &levels_mm);
+    bool begin_region(const godot::Ref<NativeWaterTopology> &graph,const godot::Ref<NativeWaterBasins> &hierarchy,const godot::PackedInt64Array &levels_mm);
     godot::Dictionary advance(int64_t work_budget);
     godot::Dictionary statistics() const;
     godot::Dictionary profiles() const;

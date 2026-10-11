@@ -1,0 +1,71 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS regional storage compilation accepts explicit open/forest topology
+PASS regional storage curves compile
+PASS regional storage compilation accepts explicit open/forest topology
+PASS regional storage curves compile
+PASS fixture has an actual open boundary in both independent density snapshots
+PASS region geometry publishes under ownership ticket
+PASS region geometry publishes under ownership ticket
+PASS network compilation begins with ready matching owners
+PASS invalid network budget preserves state
+PASS network compilation completes in bounded work units
+PASS real ridge remains two minima in one connected regional water body
+PASS pour crosses validated independent region boundary with exact conservation every event
+PASS both real terrain regions reach the correct five-metre equilibrium
+PASS withdrawal conserves retained and removed quantities across regional split
+PASS opposite region keeps its water behind the physical four-metre sill
+PASS settled network performs no background solver or compiler work
+PASS network compilation begins with ready matching owners
+PASS invalid network budget preserves state
+PASS network compilation completes in bounded work units
+PASS input order and one-unit compilation preserve regional equilibrium
+PASS omitted connected region cannot be silently treated as a sealed wall
+PASS new cross-region sill cannot silently use an interpolated storage threshold
+PASS network compilation begins with ready matching owners
+PASS invalid network budget preserves state
+PASS network compilation completes in bounded work units
+PASS invalidation fixture reaches a partly settled cross-region pour
+PASS changed region freezes stale network operations
+PASS stale geometry retains finite quantity while refusing stale level queries
+PASS invalidation freezes a partly settled pour without losing either quantity portion
+PASS stale regional profiles cannot enter a new network
+PASS regional storage compilation accepts explicit open/forest topology
+PASS regional storage curves compile
+PASS regional storage compilation accepts explicit open/forest topology
+PASS regional storage curves compile
+PASS region geometry publishes under ownership ticket
+PASS region geometry publishes under ownership ticket
+PASS network compilation begins with ready matching owners
+PASS invalid network budget preserves state
+PASS network compilation completes in bounded work units
+PASS nested regional spill preserves quantity
+PASS incoming spill follows the adjacent catchment instead of teleporting over an internal dry ridge
+PASS regional storage compilation accepts explicit open/forest topology
+PASS regional storage curves compile
+PASS regional storage compilation accepts explicit open/forest topology
+PASS regional storage curves compile
+PASS region geometry publishes under ownership ticket
+PASS region geometry publishes under ownership ticket
+PASS network compilation begins with ready matching owners
+PASS invalid network budget preserves state
+PASS network compilation completes in bounded work units
+PASS three-minimum region conserves a cascading incoming spill
+PASS internal merge entry follows its witnessed downhill catchment, leaving the farther basin dry
+PASS regional storage compilation accepts explicit open/forest topology
+PASS regional storage curves compile
+PASS region geometry publishes under ownership ticket
+PASS network compilation begins with ready matching owners
+PASS invalid network budget preserves state
+PASS network compilation completes in bounded work units
+PASS disconnected raw caves remain separate solver roots
+PASS independent cave additions conserve aggregate quantity
+PASS overdraw only removes water available in the targeted cave
+PASS overdraw cannot steal quantity from disconnected cave
+PASS network compilation begins with ready matching owners
+PASS invalid network budget preserves state
+PASS network compilation completes in bounded work units
+PASS generation change cancels unfinished network compilation
+PASS invalidation preserves accepted-plus-pending accounting for an unfinished pour
+WATER_NETWORK failures=0
+

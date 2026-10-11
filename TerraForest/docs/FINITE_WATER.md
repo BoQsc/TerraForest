@@ -127,8 +127,13 @@ NativeWaterRegions now gates reciprocal boundary readiness with generation ticke
 exact face samples and bounded publish/retire work. 38 debug/release checks cover
 cancellation, stale completion, unloading, vertical boundaries and endpoint pressure;
 see [region evidence](evidence/water_regions/README.md). It does not transfer liquid.
-Next implement open-region storage/solver coupling and conservative exchange,
-then quantity-preserving edits and world/item/save integration. Local graph IDs remain
+NativeWaterNetwork now couples open-region profiles through validated boundaries
+and performs conserved finite settling over a closed active set. 67 debug/release
+checks and actual two-region terrain excavation pass; see [network evidence](evidence/water_network/README.md).
+A nested-ridge check exposed and fixed wrong receiving-catchment routing. Disconnected
+roots remain separate, and stale geometry freezes quantities instead of discarding them.
+Next implement quantity-preserving edit remapping and unloaded-boundary summaries,
+then world/item/save integration. Local graph IDs remain
 snapshot-scoped; world IDs and coordinates do not by themselves authorize exchange. Keep intermediate memory and
 concurrency bounded; do not retain one simulated body per tetrahedron.
 
@@ -145,7 +150,8 @@ concurrency bounded; do not retain one simulated body per tetrahedron.
    work counts, peak queue/memory, settling latency and budget exhaustion. Compare
    a second update budget to detect scheduling-dependent volume errors. Shallow-source
    admission passes; supplied-profile settling passes. Terrain-derived regional equilibrium now passes finite pour/withdrawal checks.
-   Dynamic terrain-edit displacement/remapping, cross-region exchange and actual
+   Finite equilibrium across a fully ready closed set of independent regions now passes.
+   Dynamic terrain-edit displacement/remapping, unloaded-boundary handling and actual
    gameplay remain unimplemented; interpolation accuracy requires explicit control.
 3. **Sleeping/scaling:** many settled bodies plus a local change; measure zero solver
    work for sleeping bodies, localized wake-up and fair progress under pressure.

@@ -212,17 +212,19 @@ finite settling, with44 debug/release checks plus actual native-terrain integrat
 see [profile evidence](evidence/water_profiles/README.md). Coarse interpolation is
 not adequate; adaptive accuracy and larger-domain support remain open. Same-snapshot regional joins now pass36
 debug/release checks with identical whole-area storage and settling; see
-[join evidence](evidence/water_join/README.md). Independent world-region exchange
+[join evidence](evidence/water_join/README.md). Exchange involving unloaded world regions
 remains open. Raw density admission and world-addressed ports now pass36 debug/
 release checks plus11 actual-terrain sampling/cancellation checks; see
 [raw-field evidence](evidence/water_field/README.md). Native region ownership now passes38
 debug/release checks, including stale-job rejection, exact boundary samples, vertical
 neighbours and endpoint pressure/recovery; see [region evidence](evidence/water_regions/README.md).
-This is geometry readiness, not liquid exchange. Next add open-region storage/solver
-coupling and conservative exchange, then quantity-preserving edit
-remapping and bucket/save transactions. Transient flow and pressure/velocity fields are not
-implemented, and current playable lakes still use static fill levels. Next prove terrain-connected redistribution and conservation under a
-bounded native work budget, then integrate bucket item ownership and world saves.
+NativeWaterNetwork now adds finite equilibrium across independently sampled regions,
+with67 debug/release checks and actual two-region excavation. A nested-ridge test
+found and fixed incorrect receiving-catchment routing; see [network evidence](evidence/water_network/README.md).
+Next implement quantity-preserving edit remapping, unloaded-boundary summaries and
+controlled profile accuracy, then worker/rendering integration and bucket/save transactions. Transient flow and pressure/velocity fields are not
+implemented, and current playable lakes still use static fill levels. Mining-driven
+redistribution, transient presentation, item ownership and saves remain open.
 Retain the previous finalization/hitch failures; do not increase water caps or claim
 sustained60FPS from these checks.
 

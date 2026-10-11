@@ -1,0 +1,176 @@
+{
+  "checks": 56,
+  "costs": [
+    {
+      "budget": 128,
+      "calls": 6,
+      "max_call_us": 306,
+      "statistics": {
+        "current": true,
+        "error": "",
+        "global_leaves": 2,
+        "local_leaves": 2,
+        "phase": 7,
+        "regions": 2,
+        "status": 1,
+        "water": {
+          "busy": false,
+          "events": 0,
+          "frames": 0,
+          "moved_ml": 0,
+          "nodes": 3,
+          "pending_ml": 0,
+          "profile_bytes": 264,
+          "ready": true,
+          "requested_ml": 0,
+          "roots": 1,
+          "total_ml": 0
+        },
+        "work_units_total": 649
+      }
+    },
+    {
+      "budget": 1,
+      "calls": 649,
+      "max_call_us": 80,
+      "statistics": {
+        "current": true,
+        "error": "",
+        "global_leaves": 2,
+        "local_leaves": 2,
+        "phase": 7,
+        "regions": 2,
+        "status": 1,
+        "water": {
+          "busy": false,
+          "events": 0,
+          "frames": 0,
+          "moved_ml": 0,
+          "nodes": 3,
+          "pending_ml": 0,
+          "profile_bytes": 264,
+          "ready": true,
+          "requested_ml": 0,
+          "roots": 1,
+          "total_ml": 0
+        },
+        "work_units_total": 649
+      }
+    },
+    {
+      "budget": 128,
+      "calls": 6,
+      "max_call_us": 680,
+      "statistics": {
+        "current": true,
+        "error": "",
+        "global_leaves": 2,
+        "local_leaves": 2,
+        "phase": 7,
+        "regions": 2,
+        "status": 1,
+        "water": {
+          "busy": false,
+          "events": 0,
+          "frames": 0,
+          "moved_ml": 0,
+          "nodes": 3,
+          "pending_ml": 0,
+          "profile_bytes": 264,
+          "ready": true,
+          "requested_ml": 0,
+          "roots": 1,
+          "total_ml": 0
+        },
+        "work_units_total": 649
+      }
+    },
+    {
+      "budget": 128,
+      "calls": 6,
+      "max_call_us": 591,
+      "statistics": {
+        "current": true,
+        "error": "",
+        "global_leaves": 3,
+        "local_leaves": 3,
+        "phase": 7,
+        "regions": 2,
+        "status": 1,
+        "water": {
+          "busy": false,
+          "events": 0,
+          "frames": 0,
+          "moved_ml": 0,
+          "nodes": 5,
+          "pending_ml": 0,
+          "profile_bytes": 440,
+          "ready": true,
+          "requested_ml": 0,
+          "roots": 1,
+          "total_ml": 0
+        },
+        "work_units_total": 676
+      }
+    },
+    {
+      "budget": 128,
+      "calls": 1,
+      "max_call_us": 81,
+      "statistics": {
+        "current": true,
+        "error": "",
+        "global_leaves": 2,
+        "local_leaves": 2,
+        "phase": 7,
+        "regions": 1,
+        "status": 1,
+        "water": {
+          "busy": false,
+          "events": 0,
+          "frames": 0,
+          "moved_ml": 0,
+          "nodes": 2,
+          "pending_ml": 0,
+          "profile_bytes": 176,
+          "ready": true,
+          "requested_ml": 0,
+          "roots": 2,
+          "total_ml": 0
+        },
+        "work_units_total": 58
+      }
+    },
+    {
+      "budget": 128,
+      "calls": 1,
+      "max_call_us": 59,
+      "statistics": {
+        "current": true,
+        "error": "",
+        "global_leaves": 2,
+        "local_leaves": 2,
+        "phase": 7,
+        "regions": 1,
+        "status": 1,
+        "water": {
+          "busy": false,
+          "events": 0,
+          "frames": 0,
+          "moved_ml": 0,
+          "nodes": 2,
+          "pending_ml": 0,
+          "profile_bytes": 176,
+          "ready": true,
+          "requested_ml": 0,
+          "roots": 2,
+          "total_ml": 0
+        },
+        "work_units_total": 58
+      }
+    }
+  ],
+  "cross_region_amount_ml": 1248000000,
+  "failures": 1,
+  "scope": "Finite hydrostatic settling across a fully ready closed active set of independent terrain regions. Runtime/remapping/save and transient flow remain open."
+}
