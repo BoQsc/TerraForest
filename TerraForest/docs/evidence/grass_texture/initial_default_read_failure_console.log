@@ -1,0 +1,47 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS standalone UI catalog matches ecosystem
+PASS LOD keeps near shape and reduces triangles 0
+PASS bounded nondegenerate geometry 0
+PASS authored identity and picker 0
+PASS individual selection 0
+PASS LOD keeps near shape and reduces triangles 1
+PASS bounded nondegenerate geometry 1
+PASS authored identity and picker 1
+PASS individual selection 1
+PASS LOD keeps near shape and reduces triangles 2
+PASS bounded nondegenerate geometry 2
+PASS authored identity and picker 2
+PASS individual selection 2
+PASS LOD keeps near shape and reduces triangles 3
+PASS bounded nondegenerate geometry 3
+PASS authored identity and picker 3
+PASS individual selection 3
+PASS LOD keeps near shape and reduces triangles 4
+PASS bounded nondegenerate geometry 4
+PASS authored identity and picker 4
+PASS individual selection 4
+PASS LOD keeps near shape and reduces triangles 5
+PASS bounded nondegenerate geometry 5
+PASS authored identity and picker 5
+PASS individual selection 5
+PASS LOD keeps near shape and reduces triangles 6
+PASS bounded nondegenerate geometry 6
+PASS authored identity and picker 6
+PASS individual selection 6
+PASS LOD keeps near shape and reduces triangles 7
+PASS bounded nondegenerate geometry 7
+PASS authored identity and picker 7
+PASS individual selection 7
+PASS v2 roundtrip retains all eight types
+PASS v1 saves retain authored grass and removals
+PASS v1 cannot smuggle expanded species and failure is atomic
+FAIL generated grass texture defaults off
+PASS generated texture loads without editor import
+PASS shared grass texture has bounded resolution and mipmaps
+PASS texture toggle restores off without geometry changes
+PASS rare accents over 16384 deterministic candidates
+PASS twig wood cost and reward conserve resource
+PASS gameplay twig collection grants wood and erases exact authored record
+PASS same twig cannot be gathered twice
+WOODLAND_ACCENTS {"checks":44,"counts":[1640,3224,10731,63,54,48,288,336],"failures":1,"meshes":[{"far_triangles":48,"near_triangles":360,"species":0},{"far_triangles":392,"near_triangles":1512,"species":1},{"far_triangles":72,"near_triangles":468,"species":2},{"far_triangles":66,"near_triangles":99,"species":3},{"far_triangles":54,"near_triangles":81,"species":4},{"far_triangles":54,"near_triangles":81,"species":5},{"far_triangles":294,"near_triangles":638,"species":6},{"far_triangles":136,"near_triangles":372,"species":7}]}

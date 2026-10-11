@@ -2,6 +2,19 @@
 extends RefCounted
 # Original temperate woodland sample. Shared startup authoring only;
 # all runtime transforms, identity and rendering remain in native batches.
+static var _grass_detail: ImageTexture
+
+static func set_grass_detail(material: ShaderMaterial,enabled: bool) -> bool:
+	if enabled and _grass_detail==null:
+		var image:=Image.new()
+		if image.load_png_from_buffer(FileAccess.get_file_as_bytes("res://addons/world_ecosystem/art/grass_detail_v1.trtex"))!=OK:return false
+		image.resize(256,256,Image.INTERPOLATE_LANCZOS)
+		image.generate_mipmaps()
+		_grass_detail=ImageTexture.create_from_image(image)
+	if enabled:material.set_shader_parameter("grass_detail",_grass_detail)
+	material.set_shader_parameter("grass_detail_strength",0.35 if enabled else 0.0)
+	return true
+
 var vertices:=PackedVector3Array()
 var normals:=PackedVector3Array()
 var colors:=PackedColorArray()
@@ -185,6 +198,7 @@ static func build(species: int,with_lod: bool=true) -> ArrayMesh:
 	var mesh:=ArrayMesh.new();mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES,arrays,[],lods)
 	mesh.custom_aabb=AABB(Vector3(-0.4,-0.2 if species==0 else 0,-0.4),Vector3(0.8,0.4 if species==0 else 0.75,0.8))
 	var material:=ShaderMaterial.new();material.shader=preload("res://addons/world_ecosystem/woodland.gdshader");material.set_shader_parameter("stone",species==0)
+	material.set_shader_parameter("grass_detail_strength",0.0)
 	if species==7: material.set_shader_parameter("wind_strength",0.0)
 	if species==0:
 		for channel in ["color","normal"]:

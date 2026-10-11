@@ -117,6 +117,25 @@ func run() -> void:
 	frames.sort();gpu.sort()
 	var result:={"checks":checks,"failures":failures,"counts_by_species":counts,"authored":placed_ids.size(),"published_authored":published_authored,"area_m2":14.4*14.4,"owners":owners.size(),"center":[center.x,center.z],"presentation":presentation,"scope":"Dense visual review on actual forest terrain, interactive authored identities. Published count is supported resident records, not a count of pixels or frustum visibility. Not a global density change or performance qualification."}
 	result["short_cost"]={"frames":120,"frame_p95_ms":frames[113],"frame_max_ms":frames[119],"gpu_p95_ms":gpu[113],"frame_p95_gate_ms":18.5,"frame_gate_pass":frames[113]<=18.5,"gpu":RenderingServer.get_video_adapter_name(),"cpu":OS.get_processor_name()}
+	if "--grass-texture-compare" in OS.get_cmdline_user_args():
+		var before: PackedByteArray=cover.removed.capture_storage_snapshot()
+		var comparisons: Array=[]
+		cover.grass_material.set_shader_parameter("wind_strength",0.0)
+		for mode in [false,true,false]:
+			check(cover.set_grass_texture(mode),"optional grass material toggles")
+			label.text="GRASS TEXTURE REVIEW / "+("SUBTLE" if mode else "OFF")+" / F7 toggles in play preview"
+			for frame in 40:await RenderingServer.frame_post_draw
+			root.get_texture().get_image().save_png("res://reports/woodland_patch/texture_%d.png"%comparisons.size())
+			for frame in 20:await RenderingServer.frame_post_draw
+			var costs: Array[float]=[]
+			for frame in 90:
+				await RenderingServer.frame_post_draw
+				costs.append(RenderingServer.viewport_get_measured_render_time_gpu(root.get_viewport_rid()))
+			costs.sort();comparisons.append({"enabled":mode,"gpu_p50_ms":costs[44],"gpu_p95_ms":costs[85]})
+		check(cover.removed.capture_storage_snapshot()==before and not cover.grass_texture_enabled,"texture comparison preserves placements and restores default off")
+		cover.grass_material.set_shader_parameter("wind_strength",1.0)
+		result["texture_comparison"]=comparisons
+		result["checks"]=checks;result["failures"]=failures
 	var file:=FileAccess.open("res://reports/woodland_patch/result.json",FileAccess.WRITE);file.store_string(JSON.stringify(result,"  "));file.close()
 	print("WOODLAND_PATCH ",JSON.stringify(result))
 	if (not inspect and not smoke) or failures:label.free();await stop();return

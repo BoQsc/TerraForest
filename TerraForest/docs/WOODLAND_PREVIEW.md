@@ -60,3 +60,7 @@ and the support-fix history below/above remain historical evidence.
 The latest shape revision replaces narrow grass fans and crossed dry sticks with
 leafier grass and standing woody scrub, and fills out bush crowns. See
 `docs/evidence/woodland_shape_review` for matching camera captures and costs.
+
+F7 toggles the optional generated grass texture at subtle strength. It starts
+off each session and does not change saves or geometry. Comparison captures and
+short GPU observations: `docs/evidence/grass_texture`.

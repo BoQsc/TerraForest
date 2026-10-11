@@ -2,6 +2,8 @@
 shader_type spatial;
 render_mode cull_disabled, diffuse_burley;
 uniform bool stone = false;
+uniform float grass_detail_strength : hint_range(0.0, 0.5) = 0.0;
+uniform sampler2D grass_detail : source_color, filter_linear_mipmap_anisotropic, repeat_disable;
 uniform sampler2D stone_color : source_color, filter_linear_mipmap_anisotropic, repeat_enable;
 uniform sampler2D stone_normal : hint_normal, filter_linear_mipmap_anisotropic, repeat_enable;
 uniform float wind_strength : hint_range(0.0, 1.0) = 1.0;
@@ -34,6 +36,12 @@ void fragment() {
         float ribs = 0.96 + 0.04 * sin((UV.y - abs(UV.x - 0.5) * 0.35) * 95.0);
         ALBEDO = COLOR.rgb * variation * mix(1.0, 0.79, edge * edge) * ribs + COLOR.rgb * vein * 0.16;
         ALBEDO *= root_shade;
+        if (grass_detail_strength > 0.0) {
+            // UV.y runs root to tip; image top is the warm tip.
+            vec3 detail = texture(grass_detail, vec2(UV.x, 1.0 - UV.y)).rgb;
+            vec3 modulation = clamp(detail / vec3(0.15, 0.22, 0.065), vec3(0.65), vec3(1.35));
+            ALBEDO *= mix(vec3(1.0), modulation, grass_detail_strength);
+        }
         ROUGHNESS = 0.84;
         SPECULAR = 0.2;
         BACKLIGHT = COLOR.rgb * 0.18;

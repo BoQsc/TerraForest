@@ -58,6 +58,13 @@ func run() -> void:
 	check(restored.restore_storage_snapshot(v1) and restored.contains(32) and restored.query(Vector2i(30,30))[2].ids.size()==1,"v1 saves retain authored grass and removals")
 	var corrupt:=saved.duplicate();corrupt.encode_u64(8,1)
 	check(not restored.restore_storage_snapshot(corrupt) and restored.capture_storage_snapshot()==v1,"v1 cannot smuggle expanded species and failure is atomic")
+	var grass:=Asset.build(2);var material: ShaderMaterial=grass.surface_get_material(0)
+	var original_faces:=grass.get_faces()
+	check(material.get_shader_parameter("grass_detail_strength")==0.0,"generated grass texture defaults off")
+	check(Asset.set_grass_detail(material,true),"generated texture loads without editor import")
+	var texture: Texture2D=material.get_shader_parameter("grass_detail")
+	check(texture.get_size()==Vector2(256,256) and texture.get_image().has_mipmaps(),"shared grass texture has bounded resolution and mipmaps")
+	check(Asset.set_grass_detail(material,false) and material.get_shader_parameter("grass_detail_strength")==0.0 and original_faces==grass.get_faces(),"texture toggle restores off without geometry changes")
 	var scatter=ClassDB.instantiate("NativeGroundCover");var counts: Array[int]=[0,0,0,0,0,0,0,0]
 	for owner in 256:
 		var data: Dictionary=scatter.candidates(Vector2i(owner%16+20,owner/16+20),1703)

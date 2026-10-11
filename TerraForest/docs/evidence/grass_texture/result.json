@@ -1,0 +1,65 @@
+{
+  "area_m2": 207.36,
+  "authored": 946,
+  "center": [
+    800.0,
+    1312.0
+  ],
+  "checks": 8,
+  "counts_by_species": [
+    18,
+    63,
+    818,
+    3,
+    5,
+    4,
+    16,
+    19
+  ],
+  "failures": 0,
+  "owners": 4,
+  "presentation": {
+    "fair_graphical_sample": true,
+    "fullscreen": true,
+    "headless": false,
+    "render_scale": 1.0,
+    "viewport": [
+      1920,
+      1080
+    ],
+    "window_mode": 3,
+    "window_size": [
+      1920,
+      1080
+    ]
+  },
+  "published_authored": 946,
+  "scope": "Dense visual review on actual forest terrain, interactive authored identities. Published count is supported resident records, not a count of pixels or frustum visibility. Not a global density change or performance qualification.",
+  "short_cost": {
+    "cpu": "12th Gen Intel(R) Core(TM) i5-12450H",
+    "frame_gate_pass": false,
+    "frame_max_ms": 22.961,
+    "frame_p95_gate_ms": 18.5,
+    "frame_p95_ms": 18.827,
+    "frames": 120,
+    "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU",
+    "gpu_p95_ms": 6.46600008010864
+  },
+  "texture_comparison": [
+    {
+      "enabled": false,
+      "gpu_p50_ms": 6.2039999961853,
+      "gpu_p95_ms": 6.27600002288818
+    },
+    {
+      "enabled": true,
+      "gpu_p50_ms": 6.11499977111816,
+      "gpu_p95_ms": 6.1710000038147
+    },
+    {
+      "enabled": false,
+      "gpu_p50_ms": 6.28800010681152,
+      "gpu_p95_ms": 7.27299976348877
+    }
+  ]
+}

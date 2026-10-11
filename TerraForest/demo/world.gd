@@ -445,7 +445,7 @@ func _setup_hud() -> void:
 	help.add_theme_font_size_override("font_size", 15)
 	help.text=help.text.replace("B  Terrain / Blocks", "B  Terrain / Blocks    M  Objects    E  Collect / Harvest")
 	help.text+="\nV  Place vehicle    E  Enter / exit stopped vehicle    F5  Save world and vehicle    F  Headlamp"
-	if ground_enabled: help.text+="    H Ground cover: 1-8 select; LMB/E remove; RMB place"
+	if ground_enabled: help.text+="    H Ground cover: 1-8 select; LMB/E remove; RMB place; F7 Grass texture"
 	help.offset_top = -108
 	help.add_theme_color_override("font_color", Color("e6eee9"))
 	var panel := PanelContainer.new()
@@ -642,6 +642,11 @@ func _unhandled_input(event: InputEvent) -> void:
 				_show_lake_notice(world_vehicle.exit_vehicle(self));_clear_motion()
 			elif event.physical_keycode==KEY_ESCAPE:
 				Input.mouse_mode=Input.MOUSE_MODE_VISIBLE if Input.mouse_mode==Input.MOUSE_MODE_CAPTURED else Input.MOUSE_MODE_CAPTURED
+		return
+	if ground_enabled and event is InputEventKey and event.pressed and not event.echo and event.physical_keycode==KEY_F7:
+		if ground_cover.set_grass_texture(not ground_cover.grass_texture_enabled):
+			_show_lake_notice("Grass texture: "+("subtle" if ground_cover.grass_texture_enabled else "off"))
+		else:_show_lake_notice("Grass texture could not load")
 		return
 	if ground_enabled and event is InputEventKey and event.pressed and not event.echo and event.physical_keycode==KEY_H:
 		if ground_mode:_set_player_tool_mode(false,false,tool)

@@ -339,3 +339,9 @@ woody scrub, and enlarged bush crowns. See `evidence/woodland_shape_review`.
 Same population and interaction bounds; native LOD checks pass, grass retains
 its 72-triangle distant budget. Terrain integration and final art acceptance
 remain open; short GPU time increased and the frame-time gate remains open.
+
+### 2026-10-11: optional generated grass texture
+
+Added an image-generated leaf surface as a grass-only, default-off F7 toggle.
+Short off/on/off review and evidence are in `evidence/grass_texture`. Shapes and
+density unchanged. User acceptance pending; no sustained-performance claim.

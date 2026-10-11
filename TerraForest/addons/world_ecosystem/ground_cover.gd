@@ -11,6 +11,8 @@ var seed_source: Callable
 var picker: RefCounted
 var native: RefCounted
 var removed: RefCounted
+var grass_material: ShaderMaterial
+var grass_texture_enabled:=false
 var batches: Array[Node3D]=[]
 var resident: Dictionary={}
 var _wanted: Dictionary={}
@@ -54,7 +56,15 @@ func _ready() -> void:
 	if water!=null: water.exclusion_changed.connect(_exclusion_changed)
 
 func _mesh(species: int) -> Mesh:
-	return preload("res://addons/world_ecosystem/woodland_mesh.gd").build(species)
+	var mesh:=preload("res://addons/world_ecosystem/woodland_mesh.gd").build(species)
+	if species==2:grass_material=mesh.surface_get_material(0)
+	return mesh
+
+func set_grass_texture(enabled: bool) -> bool:
+	if grass_material==null:return false
+	if not preload("res://addons/world_ecosystem/woodland_mesh.gd").set_grass_detail(grass_material,enabled):return false
+	grass_texture_enabled=enabled
+	return true
 
 func reset() -> void:
 	for key in resident: _retire(key)
