@@ -119,6 +119,7 @@ func run() -> void:
 	result["short_cost"]={"frames":120,"frame_p95_ms":frames[113],"frame_max_ms":frames[119],"gpu_p95_ms":gpu[113],"frame_p95_gate_ms":18.5,"frame_gate_pass":frames[113]<=18.5,"gpu":RenderingServer.get_video_adapter_name(),"cpu":OS.get_processor_name()}
 	if "--grass-texture-compare" in OS.get_cmdline_user_args():
 		var before: PackedByteArray=cover.removed.capture_storage_snapshot()
+		var previous_texture: bool=cover.grass_texture_enabled
 		var comparisons: Array=[]
 		cover.grass_material.set_shader_parameter("wind_strength",0.0)
 		for mode in [false,true,false]:
@@ -132,7 +133,7 @@ func run() -> void:
 				await RenderingServer.frame_post_draw
 				costs.append(RenderingServer.viewport_get_measured_render_time_gpu(root.get_viewport_rid()))
 			costs.sort();comparisons.append({"enabled":mode,"gpu_p50_ms":costs[44],"gpu_p95_ms":costs[85]})
-		check(cover.removed.capture_storage_snapshot()==before and not cover.grass_texture_enabled,"texture comparison preserves placements and restores default off")
+		check(cover.set_grass_texture(previous_texture) and cover.removed.capture_storage_snapshot()==before and cover.grass_texture_enabled==previous_texture,"texture comparison preserves placements and restores prior setting")
 		cover.grass_material.set_shader_parameter("wind_strength",1.0)
 		result["texture_comparison"]=comparisons
 		result["checks"]=checks;result["failures"]=failures

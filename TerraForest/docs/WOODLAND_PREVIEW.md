@@ -72,3 +72,8 @@ The preferred untextured appearance remains default; F7 retains the v1 trial.
 F7 now offers the v3 grain/mottling trial: matte leaves, small weathering marks,
 and a softened central rib. Default remains off. Inspect nearby grass, then
 walk to check motion and distance. Evidence: `docs/evidence/grass_texture_v3`.
+
+Current default (2026-10-11): user accepted v3 textured grass as a first pass.
+Worlds now start with it enabled; F7 toggles it off/on for comparison. Earlier
+default-off entries above record the experiment history. Final mesh realism is
+deferred to a later bounded art checkpoint; the broader project work resumes.

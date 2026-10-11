@@ -48,6 +48,7 @@ func _ready() -> void:
 			push_error("Ground cover renderer initialization failed");set_process(false);return
 		batch.set_casts_shadows(species==0)
 		batches.append(batch)
+	if not set_grass_texture(true):push_warning("Grass detail unavailable; using untextured material")
 	terrain.surface_batch_ready.connect(_surface_ready)
 	terrain.density_batch_ready.connect(_density_ready)
 	terrain.region_changed.connect(_terrain_changed)

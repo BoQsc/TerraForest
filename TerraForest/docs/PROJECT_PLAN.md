@@ -81,6 +81,19 @@ Hardware changes establish new baselines. Measurements must record build/binary 
 
 ## Next concrete work
 
+2026-10-11 human vegetation disposition: v3 textured grass is accepted as the
+first-pass default, not final realism. Stop texture iterations. Keep F7 available
+for comparison. Revisit mesh curvature, smooth leaf shading, blade asymmetry and
+terrain contact at the next representative art checkpoint or when ordinary play
+exposes a visual blocker. Compare one replacement mesh against the accepted asset
+with the same population and measured rendering budget; no vegetation-system rewrite
+is implied. Neither art acceptance nor this default change closes performance gates.
+
+Next coverage gate: exercise the coherent gather/build/use/save/reload loop in the
+combined furnished world, identify the first missing usable interaction, and implement
+that gap. Retain M2 as active and preserve the larger M3-M6 scope. Do not start another
+vegetation-polish cycle before a combined gameplay checkpoint.
+
 Current combined human checkpoint: [Play Combined World.cmd](../Play%20Combined%20World.cmd) opens the generated furnished settlement with interactive ground cover, native actors and opt-in vehicle fleet. It shares and edits the existing Play Actors save; it does not copy it. [Current route, save ownership and explicit limits](CONNECTED_WORLD_CHECKPOINT.md#current-combined-actor-and-vegetation-checkpoint--2026-10-10). Saved-world launchers now capture build identity and logs. Human acceptance is pending; no automatic test substitutes for it.
 
 Actor collision investigation has reached its bounded disposition: measured budgets remain failed, and four modest terrain collision pieces do not justify a wholesale terrain rewrite. Preserve these failures for M3/M4 and ordinary-play blockers. Continue first-round content/gameplay coverage; basic native/shader limb gait is now integrated; navigation, fair actor activation, richer character animation and simultaneous traffic simulation remain missing. Bounded parked-fleet activation and entry are now integrated; parked cars are not autonomous traffic. M2 remains open and no scope row is certified complete.

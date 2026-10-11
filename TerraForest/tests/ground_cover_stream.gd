@@ -42,6 +42,9 @@ func run() -> void:
 	var persistence=load("res://addons/world_runtime/world_persistence.gd").new()
 	check(cover.prepare(persistence),"removal provider registers with world persistence")
 	root.add_child(cover);cover.set_process(false)
+	check(cover.grass_texture_enabled and cover.grass_material.get_shader_parameter("grass_detail_strength")==0.8,"accepted grass texture enabled in world coordinator")
+	var initial: PackedByteArray=cover.removed.capture_storage_snapshot()
+	check(cover.set_grass_texture(false) and not cover.grass_texture_enabled and cover.set_grass_texture(true) and cover.removed.capture_storage_snapshot()==initial,"texture toggle preserves world records")
 	check(cover.batches.size()==8,"eight native species render collections initialized")
 	for i in range(49):
 		cover._process(0.0)
