@@ -123,6 +123,11 @@ leave/return test in representative world geometry. Record planning latency,
 per-frame work, active versus stored actor counts and queue bounds before expanding
 population. Include a visible human checkpoint. Stop and reassess after two failed
 bounded design cycles rather than reopening an unbounded terrain research detour.
+The first short actor route test now exposes the missing navigation and remains
+failing. A prerequisite native collision mask defect is fixed: active actors now
+collide with both terrain and authored buildings. See
+[baseline and collision evidence](evidence/actor_navigation/README.md).
+
 Detailed navigation design and implementation remain outstanding; this entry is
 sequencing, not an implementation result or a completed coverage gate.
 

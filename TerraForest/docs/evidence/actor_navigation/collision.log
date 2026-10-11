@@ -1,0 +1,9 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS active actor stops against authored-structure collision layer
+PASS authored-structure floor supports actor
+PASS actors use separate membership and terrain/structure mask
+PASS sleeping proxy has no collision membership
+PASS reactivation restores both world collision layers
+PASS unavailable collision still holds actor
+ACTOR_STRUCTURE_COLLISION failures=0

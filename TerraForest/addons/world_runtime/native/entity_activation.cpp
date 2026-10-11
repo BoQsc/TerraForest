@@ -64,7 +64,9 @@ Dictionary NativeEntityActivation::select(const Vector3 &center,double radius,in
         if(found!=proxies_.end())continue;
         auto empty=std::find_if(proxies_.begin(),proxies_.end(),[](const Proxy &p){return p.handle==0;});
         if(empty==proxies_.end()||!empty->body->bind_entity(store_,ids[i])){sleep_all();result["ok"]=false;return result;}
-        empty->handle=ids[i];empty->body->set_collision_layer(2);empty->body->set_collision_mask(1);
+        empty->handle=ids[i];// Actors occupy a dedicated layer; terrain (1) and authored structures (2)
+        // both constrain movement. Actor-to-actor avoidance remains a separate policy.
+        empty->body->set_collision_layer(8);empty->body->set_collision_mask(3);
     }
     active_=ids;result["active"]=ids.size();return result;
 }
