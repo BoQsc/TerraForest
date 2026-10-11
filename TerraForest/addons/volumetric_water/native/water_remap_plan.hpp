@@ -2,13 +2,16 @@
 #pragma once
 #include "water_network.hpp"
 namespace terraforest {
-// Geometric migration plan only: source remains the sole quantity owner.
+// Source owns quantity until validated private settlement is atomically committed.
 class NativeWaterRemapPlan : public godot::RefCounted {
     GDCLASS(NativeWaterRemapPlan,godot::RefCounted)
     struct Sum {double value=0,error=0;void add(double v){double a=v-error,n=value+a;error=(n-value)-a;value=n;}};
     struct Component {int64_t amount=0,assigned=0;Sum volume;double cumulative=0;};
     struct State {int component=-1;double level=0;};
     godot::Ref<NativeWaterNetwork> source,destination;
+    godot::Ref<NativeWaterSettling> staged,previous_source,previous_destination;
+    int settlement_status=-1,settlement_cursor=0,settlement_phase=0;
+    int64_t settlement_work=0,unresolved_ml=0;
     uint64_t source_revision=0,destination_revision=0;
     std::vector<State> states;
     std::map<int,Component> components;
@@ -30,5 +33,8 @@ public:
     godot::Dictionary advance(int64_t work_budget);
     godot::Dictionary statistics() const;
     godot::Dictionary plan() const;
+    bool begin_settlement();
+    godot::Dictionary advance_settlement(int64_t work_budget);
+    bool commit();
 };
 }

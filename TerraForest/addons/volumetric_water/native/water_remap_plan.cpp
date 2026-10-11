@@ -10,6 +10,9 @@ void NativeWaterRemapPlan::_bind_methods(){
     ClassDB::bind_method(D_METHOD("advance","work_budget"),&NativeWaterRemapPlan::advance);
     ClassDB::bind_method(D_METHOD("statistics"),&NativeWaterRemapPlan::statistics);
     ClassDB::bind_method(D_METHOD("plan"),&NativeWaterRemapPlan::plan);
+    ClassDB::bind_method(D_METHOD("begin_settlement"),&NativeWaterRemapPlan::begin_settlement);
+    ClassDB::bind_method(D_METHOD("advance_settlement","work_budget"),&NativeWaterRemapPlan::advance_settlement);
+    ClassDB::bind_method(D_METHOD("commit"),&NativeWaterRemapPlan::commit);
 }
 bool NativeWaterRemapPlan::current() const {
     return source.is_valid()&&destination.is_valid()&&source->water_revision==source_revision&&
@@ -108,8 +111,54 @@ Dictionary NativeWaterRemapPlan::advance(int64_t budget){
     while(status==0&&work<budget){unit();++work;++work_total;if(work%16==0&&Time::get_singleton()->get_ticks_usec()-start>=2000)break;}
     Dictionary out=statistics();out["ok"]=status>=0&&current();out["work_units"]=work;return out;
 }
+bool NativeWaterRemapPlan::begin_settlement(){
+    if(status!=1||settlement_status!=-1||!current())return false;
+    const auto &empty=*destination->solver.ptr();
+    staged.instantiate();staged->heights=empty.heights;staged->leaf_roots=empty.leaf_roots;
+    staged->leaves=empty.leaves;staged->root_count=empty.root_count;
+    staged->nodes.reserve(empty.nodes.size());staged->frames.reserve(65);
+    unresolved_ml=displaced_ml;settlement_status=0;return true;
+}
+Dictionary NativeWaterRemapPlan::advance_settlement(int64_t budget){
+    int64_t work=0;
+    if(budget<1||budget>2048){Dictionary out=statistics();out["ok"]=false;out["work_units"]=0;return out;}
+    if(settlement_status==0&&!current()){settlement_status=-2;error="Water or ownership changed during private settlement.";}
+    const uint64_t start=Time::get_singleton()->get_ticks_usec();
+    while(settlement_status==0&&work<budget){
+        ++work;++settlement_work;
+        if(settlement_phase==0){
+            const auto &empty=*destination->solver.ptr();
+            if(settlement_cursor<int(empty.nodes.size())){
+                staged->nodes.push_back(empty.nodes[settlement_cursor++]);
+                staged->nodes.back().total=staged->nodes.back().local=0;
+            }else{staged->root=empty.root;settlement_cursor=0;settlement_phase=1;}
+        }else if(staged->mode){
+            staged->advance(1);
+            if(!staged->mode)unresolved_ml+=staged->pending;
+        }else if(settlement_cursor<transfers.size()){
+            const int target=transfers[settlement_cursor+1];const int64_t amount=transfers[settlement_cursor+2];settlement_cursor+=3;
+            if(target>=0&&!staged->begin_add(target,amount)){settlement_status=-2;error="Replacement solver rejected a conserved allocation.";}
+        }else{
+            if(staged->total_ml+unresolved_ml!=source_ml){settlement_status=-2;error="Private settlement failed conservation.";}
+            else settlement_status=1;
+        }
+        if(work%16==0&&Time::get_singleton()->get_ticks_usec()-start>=2000)break;
+    }
+    Dictionary out=statistics();out["ok"]=settlement_status>=0&&current();out["work_units"]=work;return out;
+}
+bool NativeWaterRemapPlan::commit(){
+    if(status!=1||settlement_status!=1||!current()||unresolved_ml||staged->mode||staged->total_ml!=source_ml)return false;
+    // Serialized no-callback commit. Keep retired allocations alive here so destructors
+    // cannot turn publication into a bulk free on the frame-critical path.
+    previous_source=source->solver;previous_destination=destination->solver;
+    destination->solver=staged;staged.unref();++destination->water_revision;
+    source->solver.unref();source->status=2;++source->water_revision;
+    settlement_status=2;return true;
+}
 Dictionary NativeWaterRemapPlan::statistics() const {
     Dictionary out;out["status"]=status;out["phase"]=phase;out["current"]=current();out["work_units_total"]=work_total;
+    out["settlement_status"]=settlement_status;out["settlement_work_total"]=settlement_work;out["unresolved_ml"]=unresolved_ml;
+    out["staged_ml"]=staged.is_valid()?staged->total_ml:int64_t(0);
     out["source_ml"]=source_ml;out["mapped_ml"]=mapped_ml;out["displaced_ml"]=displaced_ml;
     out["geometric_source_ml"]=measured_volume.value;out["profile_geometry_difference_ml"]=source_ml-measured_volume.value;
     out["overlap_entries"]=int64_t(overlaps.size());out["error"]=error;return out;

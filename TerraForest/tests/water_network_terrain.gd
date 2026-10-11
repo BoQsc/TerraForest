@@ -98,6 +98,13 @@ func _initialize():
         remap_result=remapping.plan()
         ok=ok and remap_result.ok and remap_result.mapped_ml==quantity-1000 and remap_result.displaced_ml==0
         ok=ok and network.statistics().water.total_ml==quantity-1000 and replacement.statistics().water.total_ml==0
+        ok=ok and remapping.begin_settlement()
+        while remapping.statistics().settlement_status==0:remapping.advance_settlement(128)
+        ok=ok and remapping.commit()
+        ok=ok and network.statistics().retired and network.statistics().owned_ml==0 and replacement.statistics().owned_ml==quantity-1000
+        ok=ok and replacement.inspect(base,0).level_mm<center.y*1000 and replacement.probe(center-Vector3(0,3,0)).wet
+        remap_result["after_handoff"]=replacement.statistics()
+        remap_result["committed"]=remapping.statistics().settlement_status==2
     DirAccess.make_dir_recursive_absolute("res://reports")
     var file=FileAccess.open("res://reports/water_network_terrain.json",FileAccess.WRITE)
     file.store_string(JSON.stringify({"failures":0 if ok else 1,"center":center,"sample_calls":sample_calls,"anchors":levels.size(),"quantity_ml":quantity,"network_calls":calls,"max_network_call_us":peak,"network":network.statistics(),"remap":remap_result,"scope":"Actual native excavation across two independently sampled owned regions, finite pour/withdrawal, then larger excavation and conserved geometric remap plan. Not a saved-world or rendered flow test."},"  "));file.close()

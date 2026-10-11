@@ -185,3 +185,10 @@ explicit displacement. 141 debug/release network checks, 2,462 analytic clipping
 cases and actual repeated TerrainCore excavation pass. The plan does not transfer
 ownership: atomic settlement/retirement and displaced-water routing remain open.
 See [remap evidence](evidence/water_remap/README.md).
+
+Atomic handoff checkpoint (2026-10-11): remap plans now privately settle replacement
+water and atomically retire/publish in serialized native code. 203 debug/release
+checks and actual repeated TerrainCore excavation verify conserved ownership and
+lowered water level. Displacement/overflow still prevent commit until routed; live
+world, bucket, rendering and persistent transactions remain open.
+See [handoff evidence](evidence/water_handoff/README.md).

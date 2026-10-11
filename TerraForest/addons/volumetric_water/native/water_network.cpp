@@ -39,7 +39,7 @@ bool NativeWaterNetwork::begin(const Ref<NativeWaterRegions> &owners,const Array
     ids.resize(leaves);floors.resize(leaves);edges.resize(links*3);status=0;return true;
 }
 bool NativeWaterNetwork::current() const {
-    if(registry.is_null())return false;
+    if(status==2||registry.is_null())return false;
     for(const auto &p:pieces){const auto it=registry->regions.find({p.coordinate.x,p.coordinate.y,p.coordinate.z});
         if(it==registry->regions.end()||!it->second.ready||it->second.generation!=p.generation||it->second.graph!=p.profiles->topology)return false;
     }return true;
@@ -160,6 +160,7 @@ Dictionary NativeWaterNetwork::probe(const Vector3 &point) const {
 }
 Dictionary NativeWaterNetwork::statistics() const {
     Dictionary out;out["status"]=status;out["phase"]=phase;out["current"]=current();out["regions"]=int64_t(pieces.size());out["local_leaves"]=local_leaves;out["global_leaves"]=global_leaves;
+    out["retired"]=status==2;out["owned_ml"]=(status==1&&solver.is_valid())?int64_t(solver->statistics()["total_ml"]):int64_t(0);
     out["work_units_total"]=work_total;out["error"]=error;if(solver.is_valid())out["water"]=solver->statistics();return out;
 }
 }

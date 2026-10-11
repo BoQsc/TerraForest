@@ -1,0 +1,783 @@
+{
+  "checks": 203,
+  "costs": [
+    {
+      "budget": 128,
+      "calls": 9,
+      "max_call_us": 327,
+      "statistics": {
+        "current": true,
+        "error": "",
+        "global_leaves": 2,
+        "local_leaves": 2,
+        "owned_ml": 0,
+        "phase": 7,
+        "regions": 2,
+        "retired": false,
+        "status": 1,
+        "water": {
+          "busy": false,
+          "events": 0,
+          "frames": 0,
+          "moved_ml": 0,
+          "nodes": 3,
+          "pending_ml": 0,
+          "profile_bytes": 264,
+          "ready": true,
+          "requested_ml": 0,
+          "roots": 1,
+          "total_ml": 0
+        },
+        "work_units_total": 1104
+      }
+    },
+    {
+      "budget": 128,
+      "calls": 9,
+      "max_call_us": 311,
+      "statistics": {
+        "current": true,
+        "error": "",
+        "global_leaves": 2,
+        "local_leaves": 2,
+        "owned_ml": 0,
+        "phase": 7,
+        "regions": 2,
+        "retired": false,
+        "status": 1,
+        "water": {
+          "busy": false,
+          "events": 0,
+          "frames": 0,
+          "moved_ml": 0,
+          "nodes": 3,
+          "pending_ml": 0,
+          "profile_bytes": 264,
+          "ready": true,
+          "requested_ml": 0,
+          "roots": 1,
+          "total_ml": 0
+        },
+        "work_units_total": 1104
+      }
+    },
+    {
+      "budget": 128,
+      "calls": 9,
+      "max_call_us": 310,
+      "statistics": {
+        "current": true,
+        "error": "",
+        "global_leaves": 2,
+        "local_leaves": 2,
+        "owned_ml": 0,
+        "phase": 7,
+        "regions": 2,
+        "retired": false,
+        "status": 1,
+        "water": {
+          "busy": false,
+          "events": 0,
+          "frames": 0,
+          "moved_ml": 0,
+          "nodes": 3,
+          "pending_ml": 0,
+          "profile_bytes": 264,
+          "ready": true,
+          "requested_ml": 0,
+          "roots": 1,
+          "total_ml": 0
+        },
+        "work_units_total": 1104
+      }
+    },
+    {
+      "budget": 128,
+      "calls": 139,
+      "max_call_us": 70,
+      "remap": {
+        "current": true,
+        "displaced_ml": 0,
+        "error": "",
+        "geometric_source_ml": 1248000000.0,
+        "mapped_ml": 1248000000,
+        "overlap_entries": 2,
+        "phase": 3,
+        "profile_geometry_difference_ml": 0.0,
+        "settlement_status": -1,
+        "settlement_work_total": 0,
+        "source_ml": 1248000000,
+        "staged_ml": 0,
+        "status": 1,
+        "unresolved_ml": 0,
+        "work_units_total": 17759
+      }
+    },
+    {
+      "budget": 128,
+      "calls": 8,
+      "max_call_us": 321,
+      "statistics": {
+        "current": true,
+        "error": "",
+        "global_leaves": 2,
+        "local_leaves": 2,
+        "owned_ml": 0,
+        "phase": 7,
+        "regions": 2,
+        "retired": false,
+        "status": 1,
+        "water": {
+          "busy": false,
+          "events": 0,
+          "frames": 0,
+          "moved_ml": 0,
+          "nodes": 3,
+          "pending_ml": 0,
+          "profile_bytes": 264,
+          "ready": true,
+          "requested_ml": 0,
+          "roots": 1,
+          "total_ml": 0
+        },
+        "work_units_total": 931
+      }
+    },
+    {
+      "budget": 128,
+      "calls": 139,
+      "max_call_us": 67,
+      "remap": {
+        "current": true,
+        "displaced_ml": 334666667,
+        "error": "",
+        "geometric_source_ml": 1248000000.0,
+        "mapped_ml": 913333333,
+        "overlap_entries": 3,
+        "phase": 3,
+        "profile_geometry_difference_ml": 0.0,
+        "settlement_status": -1,
+        "settlement_work_total": 0,
+        "source_ml": 1248000000,
+        "staged_ml": 0,
+        "status": 1,
+        "unresolved_ml": 0,
+        "work_units_total": 17760
+      }
+    },
+    {
+      "budget": 1,
+      "calls": 17760,
+      "max_call_us": 2191,
+      "remap": {
+        "current": true,
+        "displaced_ml": 334666667,
+        "error": "",
+        "geometric_source_ml": 1248000000.0,
+        "mapped_ml": 913333333,
+        "overlap_entries": 3,
+        "phase": 3,
+        "profile_geometry_difference_ml": 0.0,
+        "settlement_status": -1,
+        "settlement_work_total": 0,
+        "source_ml": 1248000000,
+        "staged_ml": 0,
+        "status": 1,
+        "unresolved_ml": 0,
+        "work_units_total": 17760
+      }
+    },
+    {
+      "budget": 128,
+      "calls": 9,
+      "max_call_us": 306,
+      "statistics": {
+        "current": true,
+        "error": "",
+        "global_leaves": 2,
+        "local_leaves": 2,
+        "owned_ml": 0,
+        "phase": 7,
+        "regions": 2,
+        "retired": false,
+        "status": 1,
+        "water": {
+          "busy": false,
+          "events": 0,
+          "frames": 0,
+          "moved_ml": 0,
+          "nodes": 3,
+          "pending_ml": 0,
+          "profile_bytes": 264,
+          "ready": true,
+          "requested_ml": 0,
+          "roots": 1,
+          "total_ml": 0
+        },
+        "work_units_total": 1109
+      }
+    },
+    {
+      "budget": 128,
+      "calls": 139,
+      "max_call_us": 72,
+      "remap": {
+        "current": true,
+        "displaced_ml": 0,
+        "error": "",
+        "geometric_source_ml": 1248000000.0,
+        "mapped_ml": 1248000000,
+        "overlap_entries": 2,
+        "phase": 3,
+        "profile_geometry_difference_ml": 0.0,
+        "settlement_status": -1,
+        "settlement_work_total": 0,
+        "source_ml": 1248000000,
+        "staged_ml": 0,
+        "status": 1,
+        "unresolved_ml": 0,
+        "work_units_total": 17759
+      }
+    },
+    {
+      "budget": 128,
+      "calls": 1,
+      "max_call_us": 165,
+      "statistics": {
+        "current": true,
+        "error": "",
+        "global_leaves": 2,
+        "local_leaves": 2,
+        "owned_ml": 0,
+        "phase": 7,
+        "regions": 2,
+        "retired": false,
+        "status": 1,
+        "water": {
+          "busy": false,
+          "events": 0,
+          "frames": 0,
+          "moved_ml": 0,
+          "nodes": 2,
+          "pending_ml": 0,
+          "profile_bytes": 176,
+          "ready": true,
+          "requested_ml": 0,
+          "roots": 2,
+          "total_ml": 0
+        },
+        "work_units_total": 72
+      }
+    },
+    {
+      "budget": 128,
+      "calls": 139,
+      "max_call_us": 439,
+      "remap": {
+        "current": true,
+        "displaced_ml": 1248000000,
+        "error": "",
+        "geometric_source_ml": 1248000000.0,
+        "mapped_ml": 0,
+        "overlap_entries": 1,
+        "phase": 3,
+        "profile_geometry_difference_ml": 0.0,
+        "settlement_status": -1,
+        "settlement_work_total": 0,
+        "source_ml": 1248000000,
+        "staged_ml": 0,
+        "status": 1,
+        "unresolved_ml": 0,
+        "work_units_total": 17758
+      }
+    },
+    {
+      "budget": 1,
+      "calls": 1104,
+      "max_call_us": 31,
+      "statistics": {
+        "current": true,
+        "error": "",
+        "global_leaves": 2,
+        "local_leaves": 2,
+        "owned_ml": 0,
+        "phase": 7,
+        "regions": 2,
+        "retired": false,
+        "status": 1,
+        "water": {
+          "busy": false,
+          "events": 0,
+          "frames": 0,
+          "moved_ml": 0,
+          "nodes": 3,
+          "pending_ml": 0,
+          "profile_bytes": 264,
+          "ready": true,
+          "requested_ml": 0,
+          "roots": 1,
+          "total_ml": 0
+        },
+        "work_units_total": 1104
+      }
+    },
+    {
+      "budget": 128,
+      "calls": 9,
+      "max_call_us": 302,
+      "statistics": {
+        "current": true,
+        "error": "",
+        "global_leaves": 2,
+        "local_leaves": 2,
+        "owned_ml": 0,
+        "phase": 7,
+        "regions": 2,
+        "retired": false,
+        "status": 1,
+        "water": {
+          "busy": false,
+          "events": 0,
+          "frames": 0,
+          "moved_ml": 0,
+          "nodes": 3,
+          "pending_ml": 0,
+          "profile_bytes": 264,
+          "ready": true,
+          "requested_ml": 0,
+          "roots": 1,
+          "total_ml": 0
+        },
+        "work_units_total": 1104
+      }
+    },
+    {
+      "budget": 128,
+      "calls": 139,
+      "max_call_us": 71,
+      "remap": {
+        "current": true,
+        "displaced_ml": 325949478,
+        "error": "",
+        "geometric_source_ml": 912310093.845774,
+        "mapped_ml": 586383855,
+        "overlap_entries": 4,
+        "phase": 3,
+        "profile_geometry_difference_ml": 23239.1542259455,
+        "settlement_status": -1,
+        "settlement_work_total": 0,
+        "source_ml": 912333333,
+        "staged_ml": 0,
+        "status": 1,
+        "unresolved_ml": 0,
+        "work_units_total": 17761
+      }
+    },
+    {
+      "budget": 128,
+      "calls": 9,
+      "max_call_us": 292,
+      "statistics": {
+        "current": true,
+        "error": "",
+        "global_leaves": 3,
+        "local_leaves": 3,
+        "owned_ml": 0,
+        "phase": 7,
+        "regions": 2,
+        "retired": false,
+        "status": 1,
+        "water": {
+          "busy": false,
+          "events": 0,
+          "frames": 0,
+          "moved_ml": 0,
+          "nodes": 5,
+          "pending_ml": 0,
+          "profile_bytes": 440,
+          "ready": true,
+          "requested_ml": 0,
+          "roots": 1,
+          "total_ml": 0
+        },
+        "work_units_total": 1139
+      }
+    },
+    {
+      "budget": 128,
+      "calls": 10,
+      "max_call_us": 292,
+      "statistics": {
+        "current": true,
+        "error": "",
+        "global_leaves": 4,
+        "local_leaves": 4,
+        "owned_ml": 0,
+        "phase": 7,
+        "regions": 2,
+        "retired": false,
+        "status": 1,
+        "water": {
+          "busy": false,
+          "events": 0,
+          "frames": 0,
+          "moved_ml": 0,
+          "nodes": 7,
+          "pending_ml": 0,
+          "profile_bytes": 616,
+          "ready": true,
+          "requested_ml": 0,
+          "roots": 1,
+          "total_ml": 0
+        },
+        "work_units_total": 1174
+      }
+    },
+    {
+      "budget": 128,
+      "calls": 1,
+      "max_call_us": 62,
+      "statistics": {
+        "current": true,
+        "error": "",
+        "global_leaves": 2,
+        "local_leaves": 2,
+        "owned_ml": 0,
+        "phase": 7,
+        "regions": 1,
+        "retired": false,
+        "status": 1,
+        "water": {
+          "busy": false,
+          "events": 0,
+          "frames": 0,
+          "moved_ml": 0,
+          "nodes": 2,
+          "pending_ml": 0,
+          "profile_bytes": 176,
+          "ready": true,
+          "requested_ml": 0,
+          "roots": 2,
+          "total_ml": 0
+        },
+        "work_units_total": 68
+      }
+    },
+    {
+      "budget": 128,
+      "calls": 1,
+      "max_call_us": 59,
+      "statistics": {
+        "current": true,
+        "error": "",
+        "global_leaves": 2,
+        "local_leaves": 2,
+        "owned_ml": 0,
+        "phase": 7,
+        "regions": 1,
+        "retired": false,
+        "status": 1,
+        "water": {
+          "busy": false,
+          "events": 0,
+          "frames": 0,
+          "moved_ml": 0,
+          "nodes": 2,
+          "pending_ml": 0,
+          "profile_bytes": 176,
+          "ready": true,
+          "requested_ml": 0,
+          "roots": 2,
+          "total_ml": 0
+        },
+        "work_units_total": 68
+      }
+    },
+    {
+      "budget": 128,
+      "calls": 9,
+      "max_call_us": 339,
+      "statistics": {
+        "current": true,
+        "error": "",
+        "global_leaves": 2,
+        "local_leaves": 2,
+        "owned_ml": 0,
+        "phase": 7,
+        "regions": 2,
+        "retired": false,
+        "status": 1,
+        "water": {
+          "busy": false,
+          "events": 0,
+          "frames": 0,
+          "moved_ml": 0,
+          "nodes": 3,
+          "pending_ml": 0,
+          "profile_bytes": 264,
+          "ready": true,
+          "requested_ml": 0,
+          "roots": 1,
+          "total_ml": 0
+        },
+        "work_units_total": 1104
+      }
+    },
+    {
+      "budget": 128,
+      "calls": 9,
+      "max_call_us": 293,
+      "statistics": {
+        "current": true,
+        "error": "",
+        "global_leaves": 2,
+        "local_leaves": 2,
+        "owned_ml": 0,
+        "phase": 7,
+        "regions": 2,
+        "retired": false,
+        "status": 1,
+        "water": {
+          "busy": false,
+          "events": 0,
+          "frames": 0,
+          "moved_ml": 0,
+          "nodes": 3,
+          "pending_ml": 0,
+          "profile_bytes": 120,
+          "ready": true,
+          "requested_ml": 0,
+          "roots": 1,
+          "total_ml": 0
+        },
+        "work_units_total": 1092
+      }
+    },
+    {
+      "budget": 128,
+      "calls": 140,
+      "max_call_us": 4889,
+      "remap": {
+        "current": true,
+        "displaced_ml": 0,
+        "error": "",
+        "geometric_source_ml": 1248000000.0,
+        "mapped_ml": 1248000000,
+        "overlap_entries": 2,
+        "phase": 3,
+        "profile_geometry_difference_ml": 0.0,
+        "settlement_status": -1,
+        "settlement_work_total": 0,
+        "source_ml": 1248000000,
+        "staged_ml": 0,
+        "status": 1,
+        "unresolved_ml": 0,
+        "work_units_total": 17759
+      }
+    },
+    {
+      "budget": 128,
+      "calls": 139,
+      "max_call_us": 67,
+      "remap": {
+        "current": true,
+        "displaced_ml": 0,
+        "error": "",
+        "geometric_source_ml": 1248000000.0,
+        "mapped_ml": 1248000000,
+        "overlap_entries": 2,
+        "phase": 3,
+        "profile_geometry_difference_ml": 0.0,
+        "settlement_status": -1,
+        "settlement_work_total": 0,
+        "source_ml": 1248000000,
+        "staged_ml": 0,
+        "status": 1,
+        "unresolved_ml": 0,
+        "work_units_total": 17759
+      }
+    },
+    {
+      "budget": 128,
+      "calls": 139,
+      "max_call_us": 67,
+      "remap": {
+        "current": true,
+        "displaced_ml": 334666667,
+        "error": "",
+        "geometric_source_ml": 1248000000.0,
+        "mapped_ml": 913333333,
+        "overlap_entries": 3,
+        "phase": 3,
+        "profile_geometry_difference_ml": 0.0,
+        "settlement_status": -1,
+        "settlement_work_total": 0,
+        "source_ml": 1248000000,
+        "staged_ml": 0,
+        "status": 1,
+        "unresolved_ml": 0,
+        "work_units_total": 17760
+      }
+    },
+    {
+      "budget": 128,
+      "calls": 9,
+      "max_call_us": 296,
+      "statistics": {
+        "current": true,
+        "error": "",
+        "global_leaves": 2,
+        "local_leaves": 2,
+        "owned_ml": 0,
+        "phase": 7,
+        "regions": 2,
+        "retired": false,
+        "status": 1,
+        "water": {
+          "busy": false,
+          "events": 0,
+          "frames": 0,
+          "moved_ml": 0,
+          "nodes": 3,
+          "pending_ml": 0,
+          "profile_bytes": 264,
+          "ready": true,
+          "requested_ml": 0,
+          "roots": 1,
+          "total_ml": 0
+        },
+        "work_units_total": 1109
+      }
+    },
+    {
+      "budget": 128,
+      "calls": 139,
+      "max_call_us": 102,
+      "remap": {
+        "current": true,
+        "displaced_ml": 0,
+        "error": "",
+        "geometric_source_ml": 1248000000.0,
+        "mapped_ml": 1248000000,
+        "overlap_entries": 2,
+        "phase": 3,
+        "profile_geometry_difference_ml": 0.0,
+        "settlement_status": -1,
+        "settlement_work_total": 0,
+        "source_ml": 1248000000,
+        "staged_ml": 0,
+        "status": 1,
+        "unresolved_ml": 0,
+        "work_units_total": 17759
+      }
+    },
+    {
+      "budget": 128,
+      "calls": 9,
+      "max_call_us": 486,
+      "statistics": {
+        "current": true,
+        "error": "",
+        "global_leaves": 2,
+        "local_leaves": 2,
+        "owned_ml": 0,
+        "phase": 7,
+        "regions": 2,
+        "retired": false,
+        "status": 1,
+        "water": {
+          "busy": false,
+          "events": 0,
+          "frames": 0,
+          "moved_ml": 0,
+          "nodes": 3,
+          "pending_ml": 0,
+          "profile_bytes": 264,
+          "ready": true,
+          "requested_ml": 0,
+          "roots": 1,
+          "total_ml": 0
+        },
+        "work_units_total": 1109
+      }
+    },
+    {
+      "budget": 128,
+      "calls": 139,
+      "max_call_us": 167,
+      "remap": {
+        "current": true,
+        "displaced_ml": 0,
+        "error": "",
+        "geometric_source_ml": 1248000000.0,
+        "mapped_ml": 1248000000,
+        "overlap_entries": 2,
+        "phase": 3,
+        "profile_geometry_difference_ml": 0.0,
+        "settlement_status": -1,
+        "settlement_work_total": 0,
+        "source_ml": 1248000000,
+        "staged_ml": 0,
+        "status": 1,
+        "unresolved_ml": 0,
+        "work_units_total": 17759
+      }
+    },
+    {
+      "budget": 128,
+      "calls": 9,
+      "max_call_us": 464,
+      "statistics": {
+        "current": true,
+        "error": "",
+        "global_leaves": 3,
+        "local_leaves": 3,
+        "owned_ml": 0,
+        "phase": 7,
+        "regions": 2,
+        "retired": false,
+        "status": 1,
+        "water": {
+          "busy": false,
+          "events": 0,
+          "frames": 0,
+          "moved_ml": 0,
+          "nodes": 5,
+          "pending_ml": 0,
+          "profile_bytes": 440,
+          "ready": true,
+          "requested_ml": 0,
+          "roots": 1,
+          "total_ml": 0
+        },
+        "work_units_total": 1139
+      }
+    },
+    {
+      "budget": 128,
+      "calls": 139,
+      "max_call_us": 1397,
+      "remap": {
+        "current": true,
+        "displaced_ml": 0,
+        "error": "",
+        "geometric_source_ml": 454156255.271509,
+        "mapped_ml": 454407407,
+        "overlap_entries": 2,
+        "phase": 3,
+        "profile_geometry_difference_ml": 251151.728491187,
+        "settlement_status": -1,
+        "settlement_work_total": 0,
+        "source_ml": 454407407,
+        "staged_ml": 0,
+        "status": 1,
+        "unresolved_ml": 0,
+        "work_units_total": 17716
+      }
+    }
+  ],
+  "cross_region_amount_ml": 1248000000,
+  "failures": 0,
+  "scope": "Finite hydrostatic settling across a fully ready closed active set of independent terrain regions. Runtime/remapping/save and transient flow remain open.",
+  "library": "volumetric_water.windows.template_release.x86_64.dll"
+}
