@@ -462,3 +462,14 @@ Twenty-three native checks pass in debug/release, including full-capacity encodi
 screenshots and logs: [chest storage evidence](evidence/chest_storage/README.md).
 This is one usable interior interaction, not dense performance or complete M2
 coverage. Combined human feedback is the next checkpoint, not more isolated polish.
+
+### 2026-10-11: chest/vehicle interaction priority
+
+Combined-route review found E attempted proximity-based vehicle entry before
+opening an aimed chest. Input now opens a reachable aimed chest first; if none
+is targeted, normal nearby vehicle entry remains available. Object-mode selection
+and ground-cover mode still own their advertised E actions. The test offers a
+vehicle-entry probe through the actual world input dispatcher and chest physics
+picking, rather than spawning another vehicle simulation. Retained before/after
+results live in evidence/chest_interaction_priority. This is input arbitration
+coverage, not vehicle driving or combined performance qualification.

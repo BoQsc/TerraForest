@@ -1,5 +1,10 @@
 # SPDX-License-Identifier: 0BSD
 extends SceneTree
+class NearbyVehicleProbe extends RefCounted:
+	var driving:=false
+	var attempts:=0
+	func enter(_world: Node) -> bool:
+		attempts+=1;return true
 var game: Node
 var checks:=0
 var failures:=0
@@ -56,7 +61,15 @@ func run() -> void:
 	aim(base)
 	for i in 10:await RenderingServer.frame_post_draw
 	root.get_texture().get_image().save_png(dir+slot+("_reopen_exterior.png" if reopening else "_build_exterior.png"))
+	# Offer a nearby vehicle through the real input dispatcher; aiming at a chest
+	# must win before proximity-based vehicle entry can consume E.
+	var actual_vehicle=game.world_vehicle
+	var vehicle_probe:=NearbyVehicleProbe.new();game.world_vehicle=vehicle_probe
 	use()
+	check(game.storage.opened and vehicle_probe.attempts==0,"aimed chest wins over nearby vehicle entry")
+	game.storage.close();vehicle_probe.attempts=0;game.camera.look_at(base+Vector3(0,4,0));use()
+	check(vehicle_probe.attempts==1 and not game.storage.opened,"vehicle entry remains available when no chest is aimed")
+	game.world_vehicle=actual_vehicle;aim(base);use()
 	check(game.storage.opened and game.player_hud.inventory_open and Input.mouse_mode==Input.MOUSE_MODE_VISIBLE,"normal E opens reachable chest and blocks player controls")
 	if not game.storage.opened:
 		game.shutdown_requested=true;await game.terrain.shutdown_after_edits();game.free();quit(1);return

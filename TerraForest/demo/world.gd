@@ -685,11 +685,12 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo and not loading_active and not shutdown_requested and app_focused and not fly and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED:
 		if event.physical_keycode==KEY_V:
 			_show_lake_notice(world_vehicle.spawn(self));return
-		if event.physical_keycode==KEY_E and world_vehicle.enter(self):
-			_clear_motion();_show_lake_notice("Driving · E exit when stopped · Space brake");return
 	if event is InputEventKey and event.pressed and not event.echo and event.physical_keycode==KEY_E and not fly:
 		if not loading_active and not shutdown_requested and app_focused and terrain.world_ready and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED:
+			# A directly aimed container takes priority over proximity-based entry.
 			if storage.try_open(): return
+			if world_vehicle.enter(self):
+				_clear_motion();_show_lake_notice("Driving · E exit when stopped · Space brake");return
 			if construction_inventory.gameplay and _harvest_aimed_tree(): return
 			var collected: Dictionary=pickups.collect_near(player.global_position+Vector3(0,0.5,0),player_hud.inventory,_pickup_reachable)
 			if collected.ok: player_hud.refresh()
