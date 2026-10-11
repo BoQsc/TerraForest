@@ -8,6 +8,9 @@ func _initialize() -> void: call_deferred("run")
 func run() -> void:
 	var persistent: bool="--persist-ground" in OS.get_cmdline_user_args()
 	var game=load("res://demo/world.tscn").instantiate();game.temporary_world=not persistent
+	# Automation can lose OS focus while evidence is inspected. Keep the full
+	# workload at 60 throughout this check, rather than the normal idle cap.
+	game.max_fps=60;game.background_fps=60
 	root.add_child(game)
 	var deadline:=Time.get_ticks_msec()+60000
 	while game.loading_active and Time.get_ticks_msec()<deadline: await process_frame

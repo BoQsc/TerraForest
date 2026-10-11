@@ -1,0 +1,28 @@
+{
+  "checks": 28,
+  "failures": 0,
+  "rows": [
+    {
+      "far_full": 13824,
+      "far_lod": 24,
+      "near_full": 13824,
+      "near_lod": 108,
+      "species": 0
+    },
+    {
+      "far_full": 7168,
+      "far_lod": 28,
+      "near_full": 7168,
+      "near_lod": 56,
+      "species": 1
+    },
+    {
+      "far_full": 3840,
+      "far_lod": 10,
+      "near_full": 3840,
+      "near_lod": 30,
+      "species": 2
+    }
+  ],
+  "scope": "Native batched draw-count/identity regression. Not GPU speedup, density, mixed-world or endurance qualification. Gallery back high/front forced distant LOD."
+}
