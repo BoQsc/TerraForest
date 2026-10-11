@@ -35,7 +35,7 @@ bool NativeStructuresSnapshot::restore_bootstrap(const PackedByteArray &bytes,Na
     for(const auto &asset:assets) {
         if(!collections.has(asset))return false;
         Object *object=collections[asset];auto *batch=Object::cast_to<NativeStaticBatch>(object);
-        if(!batch||batch->asset_id!=asset||batch->source_mesh.is_null()||batch->admission||batch->defer_change_signal||
+        if(!batch||batch->asset_id!=asset||batch->source_mesh.is_null()||batch->admission||batch->defer_change_signal||!batch->removal_protected.empty()||
            (batch->paging_owner&&ObjectDB::get_instance(batch->paging_owner)))return false;
         Prepared stage;stage.batch=batch;stage.object_id=batch->get_instance_id();stage.blocked=batch->is_blocking_signals();
         if(models.has(asset)&&!batch->prepare_metadata(models[asset],stage.regions,stage.ids))return false;

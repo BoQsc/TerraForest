@@ -1,0 +1,39 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS placement owner enables removal protection
+PASS protection is idempotent
+PASS invalid or unknown placement cannot be protected
+PASS undo cannot delete protected insertion or consume history
+PASS journal removal respects ownership
+PASS mixed removal preflights all IDs before deleting any
+PASS unrelated unprotected insertion can still be undone
+PASS unrelated redo remains available
+PASS movement retains protected identity
+PASS transform undo retains protected contents owner
+PASS legacy bulk replacement cannot reassign owned IDs
+PASS whole snapshot restore requires explicit ownership handoff
+PASS stream retirement preserves ownership while releasing placement residency
+PASS unloaded reserved identity remains protectable
+PASS unloaded protected identity cannot be stolen
+PASS stream admission restores placement with ownership intact
+PASS restored protected placement still rejects deletion
+PASS incremental retirement accepts protected cold region
+PASS ownership cannot be released during an active region transfer
+PASS incremental retirement retains ownership after freeing resident records
+PASS incremental admission accepts protected reserved identity
+PASS incremental admission restores exact geometry and preserves ownership
+PASS incrementally restored placement rejects deletion
+PASS fixture publishes model ownership geometry
+PASS valid metadata cannot bypass ownership protection
+PASS combined bootstrap rejects before changing either blocks or models
+PASS content owner explicitly releases protection
+PASS empty released container may be deleted through history
+PASS restoring empty geometry does not fabricate contents ownership
+PASS whole snapshot restore succeeds after ownership handoff
+PASS metadata bootstrap succeeds after ownership handoff
+PASS content owner can rebuild protection against startup reserved IDs
+PASS startup admission keeps rebuilt protection
+PASS scene full restore preflights ownership before touching blocks
+PASS scene storage restore preflights ownership before touching blocks
+PASS coordinated restore works after content owner releases protection
+MODEL_REMOVAL_PROTECTION {"checks":36,"failures":0,"scope":"runtime model ownership interlock; contents store and UI not integrated"}

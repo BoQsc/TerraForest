@@ -7,6 +7,8 @@
 namespace terraforest {
 NativeStaticBatch::NativeStaticBatch() {set_notify_transform(true);}
 void NativeStaticBatch::_bind_methods() {
+    ClassDB::bind_method(D_METHOD("set_removal_protected","id","enabled"),&NativeStaticBatch::set_removal_protected);
+    ClassDB::bind_method(D_METHOD("is_removal_protected","id"),&NativeStaticBatch::is_removal_protected);
     ClassDB::bind_method(D_METHOD("begin_region_retirement","bytes"),&NativeStaticBatch::begin_region_retirement);
     ClassDB::bind_method(D_METHOD("advance_region_retirement","max_records","max_hash_bytes","max_usec"),&NativeStaticBatch::advance_region_retirement);
     ClassDB::bind_method(D_METHOD("cancel_region_retirement"),&NativeStaticBatch::cancel_region_retirement);
@@ -201,9 +203,15 @@ bool NativeStaticBatch::upsert_instances(const PackedInt64Array &ids,const Packe
     }
     if(!touched.empty()||!local_updates.empty())publish_change();return true;
 }
+bool NativeStaticBatch::set_removal_protected(int64_t id,bool enabled) {
+    if(admission||id<=0)return false;
+    if(!enabled){removal_protected.erase(id);return true;}
+    if(!placements.count(id)&&!unloaded_ids.count(id))return false;
+    removal_protected.insert(id);return true;
+}
 bool NativeStaticBatch::remove_instances(const PackedInt64Array &ids) {
     if(ids.size()>100000)return false;std::set<int64_t> unique;
-    for(int64_t id:ids)if(id<=0||!placements.count(id)||unloaded_regions.count(group_for(placements.at(id)))||retirement_locks(group_for(placements.at(id)))||!unique.insert(id).second)return false;
+    for(int64_t id:ids)if(id<=0||removal_protected.count(id)||!placements.count(id)||unloaded_regions.count(group_for(placements.at(id)))||retirement_locks(group_for(placements.at(id)))||!unique.insert(id).second)return false;
     std::set<BlockKey> touched;
     for(auto id:unique) {
         invalidate_proxy(id);
@@ -213,7 +221,7 @@ bool NativeStaticBatch::remove_instances(const PackedInt64Array &ids) {
     rebuild(touched);if(!touched.empty())publish_change();return true;
 }
 bool NativeStaticBatch::set_instances(const Ref<Mesh> &mesh,const PackedFloat32Array &transforms) {
-    if(admission||!unloaded_regions.empty())return false;
+    if(admission||!unloaded_regions.empty()||!removal_protected.empty())return false;
     if(mesh.is_null()||transforms.size()%12||transforms.size()>1200000)return false;
     std::map<int64_t,Placement> staged;std::map<BlockKey,std::set<int64_t>> staged_groups;
     for(int64_t i=0;i<transforms.size()/12;i++) {
@@ -268,7 +276,7 @@ bool NativeStaticBatch::parse(const PackedByteArray &bytes,String &asset,std::ma
 }
 bool NativeStaticBatch::validate_snapshot(const PackedByteArray &bytes) const {String asset;return parse(bytes,asset,nullptr);}
 bool NativeStaticBatch::restore_snapshot(const PackedByteArray &bytes) {
-    if(admission)return false;
+    if(admission||!removal_protected.empty())return false;
     String asset;std::map<int64_t,Placement> restored;
     if(!parse(bytes,asset,&restored)||asset!=asset_id||source_mesh.is_null())return false;
     unloaded_regions.clear();unloaded_bounds.clear();unloaded_ids.clear();
@@ -278,7 +286,7 @@ bool NativeStaticBatch::restore_snapshot(const PackedByteArray &bytes) {
     rebuild(touched);publish_change();return true;
 }
 Dictionary NativeStaticBatch::stats() const {
-    Dictionary d;d["instances"]=int(placements.size()-hidden_record_count());d["staged_instances"]=int(admission_retiring?0:hidden_record_count());d["retiring_instances"]=int(admission_retiring?hidden_record_count():0);d["spatial_batches"]=int(batches.size());d["transform_bytes"]=int(placements.size())*48;
+    Dictionary d;d["removal_protected"]=int(removal_protected.size());d["instances"]=int(placements.size()-hidden_record_count());d["staged_instances"]=int(admission_retiring?0:hidden_record_count());d["retiring_instances"]=int(admission_retiring?hidden_record_count():0);d["spatial_batches"]=int(batches.size());d["transform_bytes"]=int(placements.size())*48;
     d["asset_id"]=asset_id;d["batch_uploads"]=int64_t(uploads);d["instance_updates"]=int64_t(instance_updates);d["slot_entries"]=int(slots.size());return d;
 }
 }

@@ -39,7 +39,7 @@ bool NativeStaticBatch::validate_metadata(const PackedByteArray &bytes) const {
     return parse_metadata(bytes,asset,checkpoint,regions,ids)&&asset==asset_id;
 }
 bool NativeStaticBatch::restore_metadata(const PackedByteArray &bytes) {
-    if(source_mesh.is_null()||defer_change_signal||admission)return false;
+    if(source_mesh.is_null()||defer_change_signal||admission||!removal_protected.empty())return false;
     std::map<BlockKey,UnloadedRegion> staged;std::set<int64_t> ids;
     if(!prepare_metadata(bytes,staged,ids))return false;
     install_metadata(std::move(staged),std::move(ids));return true;

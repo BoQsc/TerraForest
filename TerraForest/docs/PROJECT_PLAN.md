@@ -426,3 +426,21 @@ region unload/reload and fresh-process restore of both sides before calling the
 container usable. Avoid one script or active physics body per stored item, and
 keep container residency/save growth explicit; large-world storage qualification
 remains open. The broader M2-M6 plan is unchanged.
+
+
+### 2026-10-11: model ownership deletion interlock
+
+NativeStaticBatch now supports explicit per-ID removal protection for contents
+owners. Protected IDs reject normal deletion, undo deletion, mixed bulk deletion
+and whole replacement. Transform changes retain identity. Synchronous and
+incremental streaming retirement/admission preserve protection while releasing
+placement residency; reserved IDs cannot be stolen. Whole-world restore preflights
+all collections before changing blocks, including native bootstrap. Protection is
+runtime-only, not a substitute for saved contents. Existing worlds enable none.
+
+Thirty-six checks pass against debug and release DLLs; existing static-model-region
+regression passes. Evidence: evidence/model_removal_protection (including a failed
+cold-retirement fixture corrected to release rendering residency). No performance
+or usable-container claim. Next implement contents ownership/persistence and UI
+using the verified transfer and removal interlocks, with explicit handoff on reload;
+then test the complete place/deposit/withdraw/save/reopen route. M2 remains active.

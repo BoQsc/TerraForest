@@ -28,6 +28,9 @@ class NativeStaticBatch : public Node3D {
     friend class NativeBlockRegionStore;
     using Placement = std::array<float,12>;
     std::map<int64_t,Placement> placements;
+    // Runtime ownership interlock (e.g. nonempty container contents). Rebuilt
+    // by the owner on load; streaming retirement is not object destruction.
+    std::set<int64_t> removal_protected;
     std::map<BlockKey,std::set<int64_t>> groups;
     struct UnloadedRegion { PackedByteArray checksum; AABB bounds; size_t count=0; };
     struct MetadataRegion { PackedByteArray checksum; std::array<float,9> basis_max{}; std::vector<int64_t> ids; };
@@ -127,6 +130,8 @@ protected:
     static void _bind_methods();
     void _notification(int what);
 public:
+    bool set_removal_protected(int64_t id,bool enabled);
+    bool is_removal_protected(int64_t id) const {return removal_protected.count(id)!=0;}
     bool begin_region_admission(const PackedByteArray &bytes);
     bool begin_region_retirement(const PackedByteArray &bytes);
     Dictionary advance_region_retirement(int64_t max_records,int64_t max_hash_bytes,int64_t max_usec);

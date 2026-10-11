@@ -1,0 +1,9 @@
+{
+  "addons/structures/native/static_batch.cpp": "aa9d8ca7694f58068aa750c58cc45e361ce21e983d4d430c613c9187c8005a36",
+  "addons/structures/native/static_batch.hpp": "0aca5ec2be8d0d6f5679017108249e57558ce06a5cbf65878ca9fa65d1658080",
+  "addons/structures/native/static_regions.cpp": "0f5d906b0a017ff5e5b794aac901a82d52732889f4da271633764c95045e2e54",
+  "addons/structures/native/structures_bootstrap.cpp": "f16aa29a87ce988a086f432697a0f5f68bf280d5cf0659d5b79fe8c44d24eb01",
+  "addons/structures/structures_world.gd": "879abf68671bde8827d9adaa744c973572b953f64fb5aa4d8479b8c39a351063",
+  "tests/model_removal_protection.gd": "7eed7b25f305d7bc70047aac3cb303f2f5cb2538bf959cb35ba943c98f642ccd",
+  "tools/test_native_release.py": "e60c6619457d21b5a0097c5ec4cec34aa5fd0ce1f53252e6f9226ec6f6975959"
+}

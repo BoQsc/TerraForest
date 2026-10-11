@@ -266,6 +266,10 @@ func capture_storage_snapshot() -> PackedByteArray:
 func restore_storage_snapshot(bytes: PackedByteArray) -> bool:
 	if not seal():
 		return false
+	# Content owners must hand off protection before replacing a whole world.
+	# Reject before changing blocks, caches, or any other model collection.
+	for collection: Node3D in _models.values():
+		if collection.stats().removal_protected>0: return false
 	if _codec.validate_snapshot(bytes):
 		return restore_snapshot(bytes)
 	var bootstrap: Dictionary = _codec.decode_bootstrap(bytes)
@@ -307,6 +311,8 @@ func restore_storage_snapshot(bytes: PackedByteArray) -> bool:
 func restore_snapshot(bytes: PackedByteArray) -> bool:
 	if not seal():
 		return false
+	for collection: Node3D in _models.values():
+		if collection.stats().removal_protected>0: return false
 	var decoded: Dictionary = _codec.decode(bytes)
 	if not decoded.get("ok",false):
 		return false
