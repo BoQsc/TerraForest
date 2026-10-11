@@ -35,7 +35,7 @@ Builders belong to one thread at a time. Never query or mutate a builder while a
 
 `LakeWorld.terrain` accepts the TerraForest public terrain facade. `add_lake(origin, cells, spacing, level, seed)` returns a session handle; `remove_lake(handle)` releases it. Coordinates are world coordinates and LakeWorld must retain an identity transform.
 
-Terrain retains ownership of its native object. The worker samples in C++, with at most 512 nodes per scene-adapter request and a roughly 2 ms sampling deadline checked every 32 nodes. Flood-fill finalization is a separate bounded operation, not subject to that sampling deadline. Editing takes admission priority. Revision and cancellation checks discard stale results. Accepted edits immediately hide overlapping water volumes and surfaces; publication triggers a new bake. World epoch changes invalidate all lakes.
+Terrain retains ownership of its native object. The worker samples in C++, with at most 2048 nodes per scene-adapter request and a roughly 2 ms sampling deadline checked every 32 nodes. Flood-fill finalization is a separate bounded operation, not subject to that sampling deadline. Editing takes admission priority. Revision and cancellation checks discard stale results. Accepted edits immediately hide overlapping water volumes and surfaces; publication triggers a new bake. World epoch changes invalidate all lakes.
 
 In the demo, aim at ground and press **L** to carve a radius-12 m basin and bake a lake. This changes terrain. Lake definitions and their persistent ID cursor are now stored with terrain in the compound world snapshot; occupancy and surface meshes rebake on load. Use `python tools/run.py --temporary` for disposable experiments. `prepare`, `snapshot_validator`, `empty_snapshot`, `capture_snapshot` and `restore_snapshot` connect the optional runtime persistence adapter; the water addon still works independently with caller-managed density and storage.
 
@@ -73,3 +73,11 @@ tool HUD links to the same page. `LakeWorld.catalog_changed`, `descriptions()` a
 builders. Retries retain persistent IDs/definitions and cannot duplicate pending or
 ready work. Existing compound snapshots retain edits; terrain carving is unaffected
 by removing a definition. No new native or per-frame simulation path is introduced.
+
+
+Cold loading service is available before each background worker job in every terrain
+meshing mode, as well as between regional mesh pieces. It cannot cross a queued
+mutation/save barrier. The four-lake generator4/seed1703 case improved from 2/4 ready
+at30s to all four at5.889s with fresh caches; see
+`docs/evidence/lake_startup_scheduling/README.md`. This does not qualify all generated
+worlds, maximum lake sizes or overall frame/thermal behavior.

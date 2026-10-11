@@ -1,0 +1,14 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS lake read does not cross edit
+PASS lake read does not cross save
+PASS lake read does not cross load
+PASS lake read does not cross reset
+PASS lake read does not cross partition
+PASS lake read does not cross unknown
+PASS one slice advances while background work remains queued
+PASS shutdown prevents opportunistic lake reads
+PASS only one lake reservation is admitted
+PASS unconsumed completion retains reservation
+PASS consuming completion releases reservation
+PASS invalid lake builder rejected

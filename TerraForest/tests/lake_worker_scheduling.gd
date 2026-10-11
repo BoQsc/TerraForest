@@ -17,6 +17,11 @@ func _initialize() -> void:
 	worker.jobs.assign([{"kind":"mesh"},{"kind":"surface_batch"},{"kind":"lake_slice","token":1},{"kind":"lake_slice","token":2}])
 	worker._service_lake_slice()
 	check(worker.served==[1] and worker.jobs.size()==3 and worker.jobs[0].kind=="mesh","one slice advances while background work remains queued")
+	worker.served.clear()
+	worker.jobs.assign([{"kind":"lake_slice","token":3}])
+	worker.stopping=true;worker._service_lake_slice()
+	check(worker.served.is_empty() and worker.jobs.size()==1,"shutdown prevents opportunistic lake reads")
+	worker.stopping=false
 	worker.jobs.clear()
 	var volume: RefCounted=ClassDB.instantiate("NativeLakeVolume")
 	var job: Dictionary={"kind":"lake_slice","builder":volume,"token":volume.get_instance_id(),"epoch":0,"revision":0,"density_revision":0}

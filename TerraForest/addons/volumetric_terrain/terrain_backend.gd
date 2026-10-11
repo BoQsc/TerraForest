@@ -929,6 +929,10 @@ func _run() -> void:
 		# All meshing modes serve bounded queries before taking another background
 		# job. The selector cannot cross an already queued mutation or save.
 		_service_density_query()
+		# Whole-column meshing also admits one bounded water slice here.
+		# Selection preserves mutation/save barriers; region builds retain
+		# their finer cooperative points inside _build_regions.
+		_service_lake_slice()
 		mutex.lock()
 		var should_stop: bool = stopping
 		var job: Dictionary = {}

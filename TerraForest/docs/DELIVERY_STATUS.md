@@ -2622,3 +2622,17 @@ at 30 s. Final telemetry reports ready at 3.699/11.733 s, one pending slice and 
 queued jobs with mesh work active. Evidence: docs/evidence/lake_editor. No water
 readiness, frame-time, full persistence or human acceptance closure. Next inspect
 slice/mesh scheduling attribution for this retained gate before changing priorities.
+
+
+### 2026-10-11: cold lake startup queue starvation resolved in declared case
+
+Attribution retained 28.128 s queued versus227 ms worker time across94 lake slices
+with only2/4 generated lakes ready at30s. Default whole-column meshing lacked the
+lake service points already present in regional meshing. Calling the same bounded
+selector before each worker job brings all four ready at5.889s with fresh cache;
+max queue wait falls2538 to264ms. Twelve barrier/reservation/shutdown checks and
+the graphical terrain-edit/swimming/rebake/removal integration pass. Evidence:
+`docs/evidence/lake_startup_scheduling`. Sampling cap and cancellation rules unchanged;
+indivisible identity/cache/finalization work still reached21.5ms. No total-frame,
+all-seed, maximum-lake, thermal or full water coverage claim. Next: integrated
+shoreline/cave edits and reload with actual world interactions.
