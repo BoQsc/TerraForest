@@ -1,0 +1,6 @@
+{
+  "checks": 29,
+  "failures": 0,
+  "scope": "atomic native cross-inventory mutation; no container UI or world persistence integration",
+  "library": "player_runtime.windows.template_release.x86_64.dll"
+}

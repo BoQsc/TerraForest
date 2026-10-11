@@ -1,0 +1,6 @@
+{
+  "addons/player_runtime/native/inventory.cpp": "d578dd3feb44fffb1b2ce882105705f45437db742b56bbabe153fbabc552c31e",
+  "addons/player_runtime/native/inventory.hpp": "9c8b24abad6ec5e178de9fb6d3d2967358c23840453930e46c4acfbdc8ff7fb2",
+  "tests/inventory_transfer.gd": "8f5dd54767d01fc4bcd9c1659b5c2757bcc95af9bd9338512ca05a012515e9c6",
+  "tools/test_native_release.py": "5db03872e6c86a460e2c5aec52c3b33cb81dd1b240cf9c8c69ad9f766f21f609"
+}

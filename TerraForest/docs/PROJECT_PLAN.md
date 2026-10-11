@@ -406,3 +406,23 @@ at fullscreen 1080p with cap60. Evidence: evidence/ladder_access. Test inventory
 setup errors and an editor-import process failure are documented there. These
 checks do not qualify sustained performance, arbitrary-height access, multiplayer,
 or a complete playable settlement. M2 remains active.
+
+
+### 2026-10-11: storage transaction prerequisite
+
+NativePlayerInventory now provides atomic transfer_to between two inventories,
+with expected revisions for both sides. Full destinations, unsupported items,
+invalid amounts and stale commands leave contents and revisions unchanged;
+success advances each side once. Destination work is bounded by 32 slots.
+Twenty-nine checks pass against debug and release DLLs, including 1000 deposit/
+withdraw cycles, mixed stack limits and post-transfer binary roundtrips. Existing
+player inventory checks pass. Evidence: evidence/inventory_transfer.
+
+This is a storage prerequisite, not a usable-container deliverable. Next wire
+container contents to stable model identity and normal world persistence, enforce
+nonempty removal/undo protection at the native placement boundary, then add the
+reachable interaction and transfer UI. Explicitly test deletion, undo, ID reuse,
+region unload/reload and fresh-process restore of both sides before calling the
+container usable. Avoid one script or active physics body per stored item, and
+keep container residency/save growth explicit; large-world storage qualification
+remains open. The broader M2-M6 plan is unchanged.

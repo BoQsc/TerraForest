@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: 0BSD
 #pragma once
 #include <godot_cpp/classes/ref_counted.hpp>
+#include <godot_cpp/classes/ref.hpp>
 #include <godot_cpp/variant/dictionary.hpp>
 #include <godot_cpp/variant/packed_byte_array.hpp>
 #include <godot_cpp/variant/packed_int64_array.hpp>
@@ -29,6 +30,7 @@ public:
     godot::Dictionary consume_items(const godot::PackedInt64Array &costs,int64_t expected);
     godot::Dictionary can_afford(const godot::PackedInt64Array &costs,int64_t expected);
     godot::Dictionary transfer(int64_t from,int64_t to,int64_t count,int64_t expected);
+    godot::Dictionary transfer_to(const godot::Ref<NativePlayerInventory> &destination,int64_t slot,int64_t count,int64_t expected_source,int64_t expected_destination);
     godot::Dictionary restore(const godot::Dictionary &snapshot,int64_t expected);
     godot::PackedByteArray capture_storage_snapshot() const;
     bool validate_snapshot(const godot::PackedByteArray &data) const;

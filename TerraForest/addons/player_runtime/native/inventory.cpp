@@ -16,6 +16,7 @@ void NativePlayerInventory::_bind_methods() {
     ClassDB::bind_method(D_METHOD("consume_items","costs","expected_revision"),&NativePlayerInventory::consume_items);
     ClassDB::bind_method(D_METHOD("can_afford","costs","expected_revision"),&NativePlayerInventory::can_afford);
     ClassDB::bind_method(D_METHOD("transfer","from","to","count","expected_revision"),&NativePlayerInventory::transfer);
+    ClassDB::bind_method(D_METHOD("transfer_to","destination","slot","count","expected_source_revision","expected_destination_revision"),&NativePlayerInventory::transfer_to);
     ClassDB::bind_method(D_METHOD("restore","snapshot","expected_revision"),&NativePlayerInventory::restore);
     ClassDB::bind_method(D_METHOD("capture_storage_snapshot"),&NativePlayerInventory::capture_storage_snapshot);
     ClassDB::bind_method(D_METHOD("validate_snapshot","data"),&NativePlayerInventory::validate_snapshot);
@@ -123,6 +124,25 @@ Dictionary NativePlayerInventory::transfer(int64_t from,int64_t to,int64_t count
         b.item=a.item;b.count+=count;a.count-=count;if(!a.count)a.item=0;
     }
     ++revision;return result(true,"");
+}
+Dictionary NativePlayerInventory::transfer_to(const Ref<NativePlayerInventory> &destination,int64_t slot,int64_t count,int64_t expected_source,int64_t expected_destination) {
+    // Main-thread authority operation. No signals/callbacks between the two
+    // commits. Preflight rejects stale views and capacity/catalog mismatches;
+    // failures preserve both contents AND revisions. Source reads are O(1),
+    // destination grant visits at most 32 fixed slots (no world-size scan).
+    auto *target=destination.ptr();
+    if(!target||target==this)return result(false,"invalid_destination");
+    if(expected_source!=revision||expected_destination!=target->revision)return result(false,"stale_revision");
+    if(slot<0||slot>=32||count<=0||count>slots[slot].count)return result(false,"invalid_count_or_slot");
+    const int64_t item=slots[slot].item;
+    Dictionary granted=target->grant(item,count,expected_destination);
+    if(!bool(granted["ok"])) {
+        Dictionary failed=result(false,"destination_rejected");failed["detail"]=granted["reason"];return failed;
+    }
+    auto &source=slots[slot];source.count-=count;if(!source.count)source.item=0;
+    ++revision;
+    Dictionary completed=result(true,"");completed["destination_revision"]=target->revision;
+    completed["item"]=item;completed["count"]=count;return completed;
 }
 Dictionary NativePlayerInventory::restore(const Dictionary &data,int64_t expected) {
     if(expected!=revision)return result(false,"stale_revision");
