@@ -31,9 +31,9 @@ var message: Label
 var pending_choice: OptionButton
 var pending_amount: SpinBox
 var claim_button: Button
-var recipe_choice: OptionButton
-var craft_amount: SpinBox
-var craft_button: Button
+var recipe_buttons: Array[Button]=[]
+var crafting_panel: PanelContainer
+var crafting_message: Label
 var drop_button: Button
 const Crafting=preload("res://addons/player_runtime/crafting.gd")
 var state: Dictionary={}
@@ -139,7 +139,7 @@ func _ready() -> void:
 	add_child(modal);modal.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	var shade:=ColorRect.new();shade.color=Color(0.025,0.04,0.06,0.9)
 	modal.add_child(shade);shade.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	var panel:=PanelContainer.new();panel.position=Vector2(460,235);panel.size=Vector2(1000,570)
+	var panel:=PanelContainer.new();panel.position=Vector2(660,200);panel.size=Vector2(1040,650)
 	modal.add_child(panel)
 	var margin:=MarginContainer.new()
 	for side in ["left","right","top","bottom"]: margin.add_theme_constant_override("margin_"+side,24)
@@ -164,18 +164,31 @@ func _ready() -> void:
 	pending_amount=SpinBox.new();pending_amount.min_value=1;pending_amount.max_value=32000000;pending_amount.value=1
 	pending_amount.custom_minimum_size.x=130;rewards.add_child(pending_amount)
 	claim_button=Button.new();claim_button.text="Claim";claim_button.pressed.connect(claim_pending);rewards.add_child(claim_button)
-	var crafting:=HBoxContainer.new();crafting.add_theme_constant_override("separation",12);column.add_child(crafting)
-	var craft_label:=Label.new();craft_label.text="Craft supplies";crafting.add_child(craft_label)
-	recipe_choice=OptionButton.new();recipe_choice.size_flags_horizontal=Control.SIZE_EXPAND_FILL;crafting.add_child(recipe_choice)
-	for recipe in Crafting.RECIPES: recipe_choice.add_item(recipe.title)
-	craft_amount=SpinBox.new();craft_amount.min_value=1;craft_amount.max_value=1000;craft_amount.value=1;craft_amount.custom_minimum_size.x=130;crafting.add_child(craft_amount)
-	craft_button=Button.new();craft_button.text="Craft";craft_button.pressed.connect(craft_selected);crafting.add_child(craft_button)
+	crafting_panel=PanelContainer.new();crafting_panel.position=Vector2(220,200);crafting_panel.size=Vector2(420,650);modal.add_child(crafting_panel)
+	var craft_margin:=MarginContainer.new()
+	for side in ["left","right","top","bottom"]:craft_margin.add_theme_constant_override("margin_"+side,20)
+	crafting_panel.add_child(craft_margin)
+	var recipes:=VBoxContainer.new();recipes.add_theme_constant_override("separation",14);craft_margin.add_child(recipes)
+	var craft_label:=Label.new();craft_label.text="CRAFTING";craft_label.add_theme_font_size_override("font_size",26);recipes.add_child(craft_label)
+	var craft_help:=Label.new();craft_help.text="Click a recipe to craft one batch.";recipes.add_child(craft_help)
+	for i in Crafting.RECIPES.size():
+		var button:=Button.new();button.custom_minimum_size=Vector2(370,94);button.alignment=HORIZONTAL_ALIGNMENT_LEFT;button.focus_mode=Control.FOCUS_NONE
+		for visual in ["normal","hover","pressed","disabled"]:
+			var style:=StyleBoxFlat.new();style.bg_color=Color("203a34") if visual in ["hover","pressed"] else Color("142420")
+			style.border_color=Color("608d79") if visual!="disabled" else Color("33413c");style.set_border_width_all(1);style.set_corner_radius_all(6)
+			for edge in [SIDE_LEFT,SIDE_RIGHT,SIDE_TOP,SIDE_BOTTOM]:style.set_content_margin(edge,12)
+			button.add_theme_stylebox_override(visual,style)
+		button.add_theme_color_override("font_disabled_color",Color("879b93"))
+		button.pressed.connect(craft_recipe.bind(i));recipes.add_child(button);recipe_buttons.append(button)
+	crafting_message=Label.new();crafting_message.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;crafting_message.size_flags_horizontal=Control.SIZE_EXPAND_FILL
+	crafting_message.text="Recipes use materials in your inventory. Claim pending mined materials first.";recipes.add_child(crafting_message)
 	var equip_button:=Button.new();equip_button.text="Equip selected item / empty hands";equip_button.pressed.connect(func():
 		if selected_slot>=0:
 			var chosen:=selected_slot;set_open(false);equip_inventory(chosen)
 	);column.add_child(equip_button)
 	drop_button=Button.new();drop_button.text="Drop one selected supply";drop_button.pressed.connect(drop_selected);column.add_child(drop_button)
 	message.text="Drag stacks to move, merge or swap. Shift-drag moves half. Tab / Esc closes."
+	message.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;message.custom_minimum_size.y=42
 	column.add_child(message)
 	modal.hide();refresh()
 
@@ -192,12 +205,15 @@ func refresh() -> void:
 		var row: Dictionary=state.slots[i]
 		var title: String=CATALOG.get(row.item,MATERIALS.get(row.item,RESOURCES.get(row.item,"Empty")))
 		if row.item in MATERIALS or row.item in RESOURCES: title += " ×%d" % row.count
+		slots[i].set_appearance(row.count==0,i==active_slot,i==selected_slot)
 		slots[i].text="%02d%s\n%s"%[i+1," •" if i==selected_slot else "",title]
 		if i<10:
 			belt[i].text="%d%s\n%s"%[(i+1)%10," •" if i==active_slot else "",title]
 			belt[i].disabled=false
+			belt[i].set_appearance(row.count==0,i==active_slot,false)
 	_refresh_ground_hint()
 	_refresh_pending()
+	_refresh_recipes()
 	drop_button.disabled=selected_slot<0 or not _droppable(state.slots[selected_slot].item)
 
 func _droppable(item: int) -> bool:
@@ -259,15 +275,32 @@ func equip_item(item: int) -> bool:
 		if state.slots[i].item==item:equip_inventory(i);return true
 	return false
 
-func craft_selected() -> void:
+func _refresh_recipes() -> void:
+	var counts: Dictionary={}
+	for row: Dictionary in state.slots:counts[row.item]=int(counts.get(row.item,0))+int(row.count)
+	for i in recipe_buttons.size():
+		var recipe: Dictionary=Crafting.RECIPES[i]
+		var requirements: PackedStringArray=[]
+		var affordable:=true
+		for j in range(0,recipe.costs.size(),2):
+			var item: int=recipe.costs[j];var cost: int=recipe.costs[j+1];var have: int=counts.get(item,0)
+			requirements.append("%s %d / %d"%[RESOURCES.get(item,MATERIALS.get(item,"Item")),have,cost])
+			affordable=affordable and have>=cost
+		var output: int=recipe.outputs[0]
+		recipe_buttons[i].text="%s x%d\n%s\n%s"%[MATERIALS.get(output,RESOURCES.get(output,"Item")),recipe.outputs[1]," | ".join(requirements),"Click to craft" if affordable else "Need more materials"]
+		recipe_buttons[i].disabled=not affordable
+		recipe_buttons[i].tooltip_text="Owned / required. One click crafts one batch; output space is checked before consuming materials."
+
+func craft_recipe(recipe: int) -> void:
 	if not enabled or not inventory_open: return
-	var result: Dictionary=Crafting.craft(inventory,recipe_choice.selected,int(craft_amount.value),state.revision)
+	var result: Dictionary=Crafting.craft(inventory,recipe,1,state.revision)
 	if result.ok:
 		message.text="Crafted supplies · "+("temporary world; not saved" if temporary_world else "F5 saves world")
 		inventory_changed.emit()
 	elif result.reason=="full": message.text="Not enough output space. Free a slot or craft fewer; inputs are retained."
 	elif result.reason=="insufficient_items": message.text="Not enough raw resources. Claim mined resources before crafting."
 	else: message.text="Craft rejected (%s). Inventory refreshed; try again."%result.reason
+	crafting_message.text=message.text
 	refresh()
 
 func select_slot(slot: int) -> void:

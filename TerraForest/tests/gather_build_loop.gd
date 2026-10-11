@@ -68,7 +68,7 @@ func run() -> void:
 			if gathered.size()==3:break
 		check(gathered.size()==3 and amount(201)==3,"three reachable natural stones grant exactly three stone")
 		if failures:await finish();return
-		game.player_hud.set_open(true);game.player_hud.recipe_choice.select(0);game.player_hud.craft_amount.value=1;game.player_hud.craft_button.pressed.emit()
+		game.player_hud.set_open(true);game.player_hud.recipe_buttons[0].pressed.emit()
 		check(game.player_hud.message.text.begins_with("Crafted supplies") and amount(201)==1 and amount(101)==1,"inventory UI converts two gathered stone into one brick")
 		game.player_hud.set_open(false)
 		var cell:=Vector3i(floori(position.x),floori(position.y),floori(position.z))

@@ -88,7 +88,7 @@ func refresh() -> void:
 		var list: GridContainer=pair[0];var state: Dictionary=pair[1];list.clear()
 		for i in 32:
 			var item: Dictionary=state.slots[i]
-			list.add_item("%02d  %s"%[i+1,"Empty" if item.count==0 else "%s  x%d"%[names.get(item.item,str(item.item)),item.count]])
+			list.add_item("%02d  %s"%[i+1,"Empty" if item.count==0 else "%s  x%d"%[names.get(item.item,str(item.item)),item.count]],item.count==0)
 	message.text="F5 saves after closing. Contents remain attached when the chest is moved."
 func move_selected(deposit: bool) -> bool:
 	if not opened or not allowed() or aimed_id()!=identity:

@@ -32,8 +32,7 @@ func run() -> void:
 			game.player_hud.claim_button.pressed.emit()
 			var item: int=pending[0]
 			var recipe:=0 if item==201 else (2 if item==202 else 3)
-			game.player_hud.recipe_choice.select(recipe)
-			game.player_hud.craft_button.pressed.emit()
+			game.player_hud.recipe_buttons[recipe].pressed.emit()
 			check(game.player_hud.message.text.begins_with("Crafted supplies"),"main-scene claim and crafting controls complete the resource conversion")
 		check(game.player_hud.inventory_open and Input.mouse_mode==Input.MOUSE_MODE_VISIBLE,"inventory opens with usable pointer in main scene")
 		for frame in range(6): await RenderingServer.frame_post_draw

@@ -86,3 +86,10 @@ including empty slots and wrapping between 0 and 1. Menu and inventory scrolling
 does not change equipment. Tool selection and development/flight switches preserve
 held movement keys; opening actual menus still stops movement.
 Regression: [input and terrain projection](evidence/input_surface_regression/README.md).
+
+Opening inventory also opens a separate crafting panel on the left. Click a recipe
+to craft one batch; cards show owned / required ingredients and disable when short
+of materials. Claim pending materials before crafting. Empty slots are translucent,
+the equipped slot has a mint outline and lower accent, and the selected inventory
+slot has a gold outline. Container slots share the empty/selected styling.
+Evidence: [inventory presentation](evidence/inventory_presentation/README.md).
