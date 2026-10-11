@@ -110,6 +110,19 @@ func _initialize():
         if edit==0:ok=ok and new_level<old_level and replacement.probe(center-Vector3(0,3,0)).wet
         else:ok=ok and new_level>old_level and not replacement.probe(brush_point).wet and remap_result.routed_geometric_ml>0
         remap_result["old_level_mm"]=old_level;remap_result["new_level_mm"]=new_level
+        var surface_counts:Array=[]
+        for region_x in 2:
+            var surface=ClassDB.instantiate("NativeWaterSurface")
+            ok=ok and surface.begin(replacement,base+Vector3i(region_x,0,0))
+            while surface.statistics().status==0:surface.advance(128)
+            var arrays:Array=surface.surface_arrays();ok=ok and arrays.size()==Mesh.ARRAY_MAX
+            var positions:PackedVector3Array=arrays[Mesh.ARRAY_VERTEX]
+            ok=ok and positions.size()>0
+            for position:Vector3 in positions:ok=ok and absf(position.y-new_level/1000)<.0001
+            var mesh=ArrayMesh.new();mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES,arrays)
+            ok=ok and mesh.get_surface_count()==1
+            surface_counts.append(surface.statistics())
+        remap_result["surfaces"]=surface_counts
         remap_result["after_handoff"]=replacement.statistics()
         remap_result["committed"]=remapping.statistics().settlement_status==2
         edits.append(remap_result);network=replacement

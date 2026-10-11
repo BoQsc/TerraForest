@@ -82,6 +82,23 @@ func stage_remap(plan,budget:=1):
         bounded=bounded and step.work_units>0 and step.work_units<=budget
     check(bounded and plan.statistics().settlement_status==1,"private settlement finishes within work budgets")
     return plan.statistics()
+func mesh_water(water,coordinate:Vector3i,budget:=128):
+    var builder=ClassDB.instantiate("NativeWaterSurface")
+    check(builder.begin(water,coordinate),"finite-water region surface begins from settled state")
+    var before:Dictionary=builder.statistics()
+    check(not builder.advance(0).ok and builder.statistics()==before,"invalid surface budget preserves builder state")
+    var calls:=0;var bounded:=true
+    while builder.statistics().status==0 and calls<200000:
+        var step:Dictionary=builder.advance(budget);calls+=1
+        bounded=bounded and step.work_units>0 and step.work_units<=budget
+    check(bounded and builder.statistics().status==1,"water surface completes in bounded work units")
+    costs.append({"surface":builder.statistics(),"budget":budget,"calls":calls})
+    return builder
+func mesh_area(builder)->float:
+    var arrays:Array=builder.surface_arrays();var vertices:PackedVector3Array=arrays[Mesh.ARRAY_VERTEX]
+    var area:=0.0
+    for i in range(0,vertices.size(),3):area+=(vertices[i+1]-vertices[i]).cross(vertices[i+2]-vertices[i]).length()*0.5
+    return area
 func _initialize():
     GDExtensionManager.load_extension("res://addons/volumetric_water/volumetric_water.gdextension")
     var a:Array=region(0);var b:Array=region(1)
@@ -100,7 +117,22 @@ func _initialize():
     check(not n.probe(Vector3(8,5,8)).wet and not n.probe(Vector3(8,6,8)).wet,"surface and air above the water remain dry")
     check(not n.probe(Vector3(-1,2,8)).ok and not n.probe(Vector3(INF,2,8)).ok,"unowned and nonfinite point queries are rejected")
     check(absf(n.probe(Vector3(8,2,8)).depth_m-3)<.001,"query reports water depth from the actual settled level")
+    var surface_left=mesh_water(n,Vector3i.ZERO);var surface_right=mesh_water(n,Vector3i(1,0,0))
+    check(absf(mesh_area(surface_left)+mesh_area(surface_right)-335)<.001,"surface area matches the 28 by 12 extent minus two half-cell zero-density corner triangles")
+    var surface_vertices:PackedVector3Array=surface_left.surface_arrays()[Mesh.ARRAY_VERTEX]
+    var surface_valid:=true
+    for vertex:Vector3 in surface_vertices:surface_valid=surface_valid and absf(vertex.y-5)<.00001
+    for i in range(0,surface_vertices.size(),3):
+        var va:Vector3=surface_vertices[i];var vb:Vector3=surface_vertices[i+1];var vc:Vector3=surface_vertices[i+2]
+        surface_valid=surface_valid and (vb-va).cross(vc-va).y<0 and n.probe((va+vb+vc)/3-Vector3(0,.001,0)).wet
+    check(surface_valid,"visible surface triangles have correct height, upward-facing winding and wet interior")
+    check(surface_left.statistics().vertices<2000 and surface_left.advance(128).work_units==0,"flat water coalesces into rectangles and completed meshing sleeps")
+    check(mesh_water(n,Vector3i.ZERO,1).surface_arrays()[Mesh.ARRAY_VERTEX]==surface_vertices,"surface output is identical with a one-unit budget")
+    var invalidated_surface=ClassDB.instantiate("NativeWaterSurface");invalidated_surface.begin(n,Vector3i.ZERO);invalidated_surface.advance(1)
     var unfilled=network(r,[a[2],b[2]])
+    var dry_surface=mesh_water(unfilled,Vector3i.ZERO)
+    check(dry_surface.statistics().vertices==0 and dry_surface.statistics().work_units_total==0,"empty water state creates no geometry and performs no cell scan")
+    check(not n.probe(Vector3(29.8,4.999,2.2)).wet and not n.probe(Vector3(2.2,4.999,13.8)).wet,"omitted opposite corner triangles are actually zero-density terrain in the shared tetrahedral field")
     var empty_destination=network(r,[a[2],b[2]])
     var empty_plan=ClassDB.instantiate("NativeWaterRemapPlan")
     check(empty_plan.begin(unfilled,empty_destination) and empty_plan.plan().ok and empty_plan.advance(128).work_units==0,"empty source remap performs no geometry scan")
@@ -137,6 +169,7 @@ func _initialize():
     var at_sill:int=pa.profiles_ml[0][4]+pb.profiles_ml[0][4]
     var take:int=amount-at_sill+1000000
     check(n.begin_remove(Vector3i.ZERO,0,take) and settle(n,amount,false),"withdrawal conserves retained and removed quantities across regional split")
+    check(invalidated_surface.advance(128).status==-2 and surface_left.surface_arrays().is_empty(),"water mutations invalidate unfinished and completed surface snapshots")
     check(changing.advance(128).status==-2 and not changing.plan().ok and not identity.plan().ok,"source water mutations invalidate unfinished and completed remap plans")
     var receiving_change=ClassDB.instantiate("NativeWaterRemapPlan");receiving_change.begin(n,empty_destination)
     empty_destination.begin_add(Vector3i.ZERO,0,1)
@@ -202,6 +235,13 @@ func _initialize():
     check(cn.statistics().water.total_ml==2000000 and cn.statistics().water.pending_ml==1000000 and cn.inspect(Vector3i.ZERO,1).component_amount_ml==2000000,"overdraw cannot steal quantity from disconnected cave")
     check(not cn.probe(Vector3(4,3.25,8)).wet and cn.probe(Vector3(12,3.25,8)).wet,"spatial queries distinguish drained and filled caves")
     check(not cn.probe(Vector3(12,7.5,8)).wet,"solid cave roof is not a water column")
+    var cave_surface=mesh_water(cn,Vector3i.ZERO)
+    var cave_vertices:PackedVector3Array=cave_surface.surface_arrays()[Mesh.ARRAY_VERTEX]
+    var cave_mesh_ok:=cave_vertices.size()>0
+    for i in range(0,cave_vertices.size(),3):
+        var midpoint:Vector3=(cave_vertices[i]+cave_vertices[i+1]+cave_vertices[i+2])/3
+        cave_mesh_ok=cave_mesh_ok and midpoint.x>10 and absf(midpoint.y-cn.inspect(Vector3i.ZERO,1).level_mm/1000)<.0001 and cn.probe(midpoint-Vector3(0,.000001,0)).wet
+    check(cave_mesh_ok,"fractional cave water surface stays inside its wet cave and omits the drained cave")
     var busy=network(cr,[caves[2]])
     var compiling=ClassDB.instantiate("NativeWaterNetwork");compiling.begin(cr,[caves[2]])
     busy.begin_add(Vector3i.ZERO,0,1000000)

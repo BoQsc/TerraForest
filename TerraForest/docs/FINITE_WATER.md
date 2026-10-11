@@ -199,3 +199,9 @@ TerrainCore excavation and underwater solid placement conserve quantity through
 committed handoffs. Completely isolated displacement and capacity overflow still
 block commit; live terrain/water transaction integration remains open.
 See [displacement evidence](evidence/water_displacement/README.md).
+
+Finite surface checkpoint (2026-10-11): `NativeWaterSurface` builds bounded regional
+free-surface meshes from settled heads and tetrahedral terrain, with rectangle
+coalescing and stale-state rejection. 265 debug/release checks and actual TerrainCore
+edit-to-ArrayMesh checks pass. This is not yet main-world rendering integration or
+visual/frame-time acceptance. See [surface evidence](evidence/water_surface/README.md).

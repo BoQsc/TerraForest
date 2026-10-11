@@ -13,6 +13,7 @@ class NativeWaterTopology : public godot::RefCounted {
     friend class NativeWaterRegions;
     friend class NativeWaterNetwork;
     friend class NativeWaterRemapPlan;
+    friend class NativeWaterSurface;
     GDCLASS(NativeWaterTopology,godot::RefCounted)
     friend class NativeWaterProfiles;
     godot::Ref<NativeLakeVolume> source;

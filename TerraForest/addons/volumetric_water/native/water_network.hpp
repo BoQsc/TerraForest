@@ -7,6 +7,7 @@ namespace terraforest {
 // Immutable compiled geometry plus finite equilibrium state for a closed active set.
 class NativeWaterNetwork : public godot::RefCounted {
     friend class NativeWaterRemapPlan;
+    friend class NativeWaterSurface;
     GDCLASS(NativeWaterNetwork,godot::RefCounted)
     using Key=std::array<int32_t,3>;
     struct Piece {godot::Vector3i coordinate;int64_t generation=0;int offset=0;godot::Ref<NativeWaterProfiles> profiles;};

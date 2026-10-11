@@ -9,6 +9,7 @@ namespace terraforest {
 class NativeWaterBasins : public godot::RefCounted {
     friend class NativeWaterNetwork;
     friend class NativeWaterRemapPlan;
+    friend class NativeWaterSurface;
     GDCLASS(NativeWaterBasins,godot::RefCounted)
     friend class NativeWaterProfiles;
     struct Event { int height,type,a,b; };
