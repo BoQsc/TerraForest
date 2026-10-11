@@ -1,0 +1,7 @@
+{
+  "addons/world_ecosystem/ground_mesh.gd": "a9ae4ac38290002e555a12b9b781fbff16570c2daf4d434df22b9e5a0898de5c",
+  "addons/world_ecosystem/ground_cover.gd": "2ecc5049043eace2fe7dba6b69b5d9d1a5dd611ca7df00175e9861d5a5bdf829",
+  "tests/ground_mesh.gd": "2ba745319f6da02a38ace88daba39edb9cef46fe4353629ecd6cac3ebdc642b2",
+  "tests/fixtures/ground_cover_mesh_v1.gd": "2dddd81d4d9eaa046d96c4429e232806c6d13c418406fb1b4d90c48608d8832c",
+  "tests/ground_cover_interaction_world.gd": "f4ebafab2953f4a78e8045c47306d06180c8327721abe1a0e524342ca276b146"
+}

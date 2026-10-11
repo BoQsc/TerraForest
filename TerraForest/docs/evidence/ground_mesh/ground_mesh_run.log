@@ -1,0 +1,22 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+PASS species 0 has finite geometry/normals inside existing interaction bounds
+PASS species 0 stays within declared triangle budget
+PASS species 0 uses opaque material
+PASS species 1 has finite geometry/normals inside existing interaction bounds
+PASS species 1 stays within declared triangle budget
+PASS species 1 uses opaque material
+PASS species 2 has finite geometry/normals inside existing interaction bounds
+PASS species 2 stays within declared triangle budget
+PASS species 2 uses opaque material
+PASS GPU timer available
+PASS version 0 frame p95 17.521 ms <=18.5
+PASS GPU timer available
+PASS version 1 frame p95 17.642 ms <=18.5
+PASS GPU timer available
+PASS version 1 frame p95 17.544 ms <=18.5
+PASS GPU timer available
+PASS version 0 frame p95 17.360 ms <=18.5
+FAIL conservative new-vs-baseline GPU p95 difference 2.539 ms <=0.5 ms
+PASS fullscreen1080p

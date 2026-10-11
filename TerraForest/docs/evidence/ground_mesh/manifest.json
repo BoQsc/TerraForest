@@ -1,0 +1,26 @@
+{
+  "date": "2026-10-11",
+  "base_commit": "6213d78fb458327f5a22d61f022102186144885d",
+  "checks": {
+    "asset_and_render": {
+      "total": 19,
+      "failed": 1
+    },
+    "world": {
+      "total": 66,
+      "failed": 0
+    },
+    "packaging": {
+      "total": 4,
+      "failed": 0
+    }
+  },
+  "commands": [
+    "godot --path TerraForest --fullscreen --resolution 1920x1080 --script res://tests/ground_mesh.gd",
+    "godot --path TerraForest --fullscreen --resolution 1920x1080 --script res://tests/ground_cover_interaction_world.gd -- --ground-cover --gameplay-construction --reject-ground --disturb-ground",
+    "python TerraForest/tools/test_package.py"
+  ],
+  "limits": "Static provisional geometry, three shared meshes, no density/LOD change. Isolated GPU gate failed; baseline drift precludes causal speedup/regression attribution. Existing mixed-frame/thermal failures remain. No user saved world changed.",
+  "visual_review": "Gallery back row previous/front row new; corrected pale vertex colours through explicit sRGB. World screenshot inspected with the same grass clump remaining pickable after water/building restoration.",
+  "superseded_run": "initial.json used max-old p95 comparison and pale linear colours. Final gate uses min-old against max-new, avoiding a slow baseline hiding additional cost; do not cite initial pass as performance qualification."
+}
