@@ -957,7 +957,7 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
   u8 material=0;float density=w.sample(fl(point.x),fl(point.y),fl(point.z),&material);
   out.u(material);out.f(density);out.f(w.generator_id>=3?geological_weight(point,w.height(point.x,point.z),u32(w.seed)):0);
  }
- else if(cmd==29||cmd==30){
+ else if(cmd==29||cmd==30||cmd==31){
   // Bounded read-only site probes. The worker owns the density field; never
   // sample it from the scene thread. Revision mismatch publishes no values.
   u32 revision=r.u(),count=r.u(),depth=cmd==30?r.u():0;
@@ -970,7 +970,16 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
   if(revision!=w.revision){out.p[8]=4;return;}
   out.u(w.revision);out.u(count);
   for(u32 i=0;i<count;i++){
-   const V3 &p=points[i];float value=w.sample(fl(p.x),fl(p.y),fl(p.z));
+   const V3 &p=points[i];float value=0;
+   if(cmd==31){
+    // Authored vegetation must use the same interpolated lattice as natural
+    // roots (command17), not a floor-rounded nearest corner (command29).
+    int x=fl(p.x),y=fl(p.y),z=fl(p.z);float dx=p.x-x,dy=p.y-y,dz=p.z-z;
+    for(int k=0;k<8;k++){
+     float weight=(k&1?dx:1-dx)*(k&2?dy:1-dy)*(k&4?dz:1-dz);
+     if(weight>0)value+=weight*w.sample(x+(k&1),y+((k>>1)&1),z+((k>>2)&1));
+    }
+   }else value=w.sample(fl(p.x),fl(p.y),fl(p.z));
    for(u32 down=1;down<=depth;down++)value=mx(value,w.sample(fl(p.x),int(mx(3.f,float(fl(p.y))-down)),fl(p.z)));
    out.f(value);
   }

@@ -1,0 +1,12 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] New world
+[TerrainRewrite] New world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+PASS temporary forest world ready
+PASS dense patch admitted within four bounded owners
+FAIL all patch items publish through normal support, picking and render batches
+PASS full resolution1080p cap60
+WOODLAND_PATCH {"area_m2":207.36,"authored":945,"center":[800.0,1312.0],"checks":4,"counts_stone_plant_grass":[21,66,858],"failures":1,"owners":4,"presentation":{"fair_graphical_sample":true,"fullscreen":true,"headless":false,"render_scale":1.0,"viewport":[1920,1080],"window_mode":3,"window_size":[1920,1080]},"scope":"Dense visual review on actual forest terrain, interactive authored identities. Not a global density change or performance qualification.","visible_authored":170}
+[TerrainRewrite] Temporary test world: save skipped

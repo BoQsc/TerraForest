@@ -15,7 +15,7 @@ class Terrain extends Node3D:
 	var requests: Array=[]
 	func request_surface_batch(points: PackedVector3Array,token: int) -> bool:
 		requests.append({"points":points,"token":token});return true
-	func request_density_batch(points: PackedVector3Array,token: int) -> bool:
+	func request_interpolated_density_batch(points: PackedVector3Array,token: int) -> bool:
 		density_requests.append({"points":points,"token":token});return true
 	func reply_density() -> void:
 		var request: Dictionary=density_requests.pop_front()

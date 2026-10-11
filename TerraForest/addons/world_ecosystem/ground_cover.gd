@@ -82,7 +82,7 @@ func _process(_delta: float) -> void:
 	if terrain.pending_edit or _requests.size()>=1: return
 	if not _support_job.is_empty():
 		if not _support_job.waiting:
-			_support_job.waiting=terrain.request_density_batch(_support_job.points,_support_job.token)
+			_support_job.waiting=terrain.request_interpolated_density_batch(_support_job.points,_support_job.token)
 		return
 	for key in _wanted:
 		if (resident.has(key) and not _dirty.has(key)) or _pending.has(key): continue

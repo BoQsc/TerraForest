@@ -242,7 +242,9 @@ func submit(job: Dictionary, priority: bool = false) -> bool:
 			if typeof(job.get(field))!=TYPE_INT or job[field]<0: return false
 		var depth: Variant=job.get("support_depth",0)
 		if typeof(depth)!=TYPE_INT or depth<0 or depth>8: return false
-		job={"kind":"density_batch","points":job.points.duplicate(),"token":job.token,"epoch":job.epoch,"revision":job.revision,"support_depth":depth}
+		var interpolated: Variant=job.get("interpolated",false)
+		if typeof(interpolated)!=TYPE_BOOL or (interpolated and depth!=0):return false
+		job={"kind":"density_batch","points":job.points.duplicate(),"token":job.token,"epoch":job.epoch,"revision":job.revision,"support_depth":depth,"interpolated":interpolated}
 		priority=false
 	if job.get("kind","")=="lake_slice":
 		if not is_instance_valid(job.get("builder")) or job.builder.get_class()!="NativeLakeVolume": return false
@@ -614,7 +616,7 @@ func _execute_density_batch(job: Dictionary) -> void:
 	# partial values if a later page is malformed or stale.
 	for offset in range(0,job.points.size(),512):
 		var page: PackedVector3Array=job.points.slice(offset,mini(offset+512,job.points.size()))
-		var packet:=Codec.command(29,[job.revision,page.size()])
+		var packet:=Codec.command(31 if job.get("interpolated",false) else 29,[job.revision,page.size()])
 		if job.support_depth>0: packet=Codec.command(30,[job.revision,page.size(),job.support_depth])
 		packet.append_array(page.to_byte_array())
 		var reply: PackedByteArray=_call(packet)

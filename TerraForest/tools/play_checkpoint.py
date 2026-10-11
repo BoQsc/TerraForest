@@ -59,7 +59,10 @@ def record_and_run(details, folder, label, smoke=False):
     manifest = folder / 'launch.json'
     manifest.write_text(json.dumps(details, indent=2)+'\n', encoding='utf-8')
     print(f'{label}: 1920x1080 fullscreen, VSync, 60 FPS cap.', flush=True)
-    print(f'Saved-world slot: {details["slot"]}. F5 saves; F9 reloads.', flush=True)
+    if details.get('temporary', False):
+        print('Temporary session: edits are not saved.', flush=True)
+    else:
+        print(f'Saved-world slot: {details["slot"]}. F5 saves; F9 reloads.', flush=True)
     print(f'Log and launch record: {folder}', flush=True)
     with (folder / 'console.log').open('w', encoding='utf-8') as output:
         process = subprocess.Popen(command, cwd=ROOT, stdout=output, stderr=subprocess.STDOUT,
