@@ -54,11 +54,6 @@ func run() -> void:
 		cache.store_packet(Vector3i(i,0,0),packet(Vector3i(i,0,0)))
 		bounded=bounded and cache.total_bytes<=4096 and cache._cache_owner.count()<=3 and cache.load_packet(Vector3i(i,0,0))==packet(Vector3i(i,0,0))
 	check(bounded and cache.evictions==21,"continued travel-sized writes maintain byte/index bounds and remain readable")
-	var lake_id: PackedByteArray=Cache.digest("lake".to_utf8_buffer())
-	var lake_data:=PackedByteArray();lake_data.resize(1000)
-	check(not cache.store_lake(lake_id,lake_data) and cache._pending_lakes.size()==1,"lake payload waits in bounded queue under quota pressure")
-	drain(cache)
-	check(cache.load_lake(lake_id)==lake_data and cache._pending_lakes.is_empty() and cache.total_bytes<=4096,"idle eviction publishes queued lake without rebaking")
 	var before: int=cache.writes
 	cache.store_packet(Vector3i.ZERO,packet(Vector3i.ZERO),"../../outside")
 	check(cache.writes==before and cache.load_packet(Vector3i.ZERO,"../../outside").is_empty(),"unsafe cache component is rejected")
@@ -69,7 +64,6 @@ func run() -> void:
 	check(code==0,"separate-process lease/read-only checks pass")
 	# The reader's Windows handle denies delete sharing until close.
 	for i in 24:cache._cache_owner.forget(ProjectSettings.globalize_path(cache._name(Vector3i(i,0,0))))
-	cache._cache_owner.forget(ProjectSettings.globalize_path(cache._lake_name(lake_id)))
 	var held_path: String=cache._name(Vector3i(23,0,0))
 	check(cache._cache_owner.track(ProjectSettings.globalize_path(held_path)),"reader-contention candidate indexed")
 	var reader:=FileAccess.open(held_path,FileAccess.READ)

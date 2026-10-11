@@ -29,8 +29,6 @@ var _scan_path: String=""
 var _scan_depth:=0
 var _scan_total:=0
 var _scan_failed:=false
-var _pending_lakes: Dictionary={}
-var _pending_lake_bytes:=0
 # Native index owns the cross-process lease and one-file checked eviction.
 var _cache_owner: RefCounted
 var _lease_owned:=false
@@ -54,7 +52,6 @@ static func digest(data: PackedByteArray) -> PackedByteArray:
 
 func configure(compatibility: String, snapshot: String, style: int, path: String = "user://derived_046") -> void:
 	_close_scan()
-	_pending_lakes.clear();_pending_lake_bytes=0
 	if _cache_owner!=null:_cache_owner.release()
 	_cache_owner=null;_lease_owned=false;_eviction_target=-1;_eviction_exhausted=false
 	base_path = path
@@ -106,13 +103,13 @@ func _size(path: String) -> int:
 	return _scan_total if accounting_complete else LIMIT_BYTES
 
 func accounting_pending() -> bool:
-	return enabled and _lease_owned and ((not accounting_complete and not _scan_failed) or _eviction_target>=0 or not _pending_lakes.is_empty())
+	return enabled and _lease_owned and ((not accounting_complete and not _scan_failed) or _eviction_target>=0)
 
 func advance_accounting() -> void:
 	# Called by the owning worker between non-interactive mesh jobs. A slice
 	# never authorizes writes from a partial total and never restarts at root.
 	if not enabled or not _lease_owned or _scan_failed:
-		_pending_lakes.clear();_pending_lake_bytes=0;return
+		return
 	if accounting_complete:
 		if _eviction_target>=0:
 			if total_bytes<=_eviction_target:_eviction_target=-1;return
@@ -124,16 +121,10 @@ func advance_accounting() -> void:
 				# Another reader can temporarily deny delete sharing. Retry on the
 				# next space request, not in a hot idle loop; accounting is intact.
 				_eviction_target=-1
-				_pending_lakes.clear();_pending_lake_bytes=0
 			else:
 				# External changes invalidate accounting. Stop writes and eviction.
 				_eviction_target=-1;_scan_failed=true;accounting_complete=false
 			return
-		if not _pending_lakes.is_empty():
-			var key: String=_pending_lakes.keys()[0]
-			var data: PackedByteArray=_pending_lakes[key]
-			_pending_lakes.erase(key);_pending_lake_bytes-=data.size()
-			store_lake(key.hex_decode(),data)
 		return
 	_scan_slice(32,2000)
 	if accounting_complete:
@@ -285,57 +276,3 @@ func counters() -> Dictionary:
 		"write_failures": write_failures, "disk_bytes": total_bytes, "enabled": enabled,
 		"accounting_complete":accounting_complete,"scan_entries":scan_entries,"cache_read_only":enabled and (not accounting_complete or not _lease_owned or total_bytes>=byte_limit),
 		"lease_owned":_lease_owned,"evictions":evictions,"evicted_bytes":evicted_bytes,"eviction_pending":_eviction_target>=0,"byte_limit":byte_limit}
-
-# Lake payloads share the existing worker-owned quota/accounting and atomic writes.
-func _lake_name(identity: PackedByteArray) -> String:
-	return base_path.path_join(signature).path_join("lakes_v1").path_join(identity.hex_encode()+".trl")
-func reject_lake(identity: PackedByteArray) -> void:
-	if identity.size()!=32:return
-	var path:=_lake_name(identity)
-	var file:=FileAccess.open(path,FileAccess.READ)
-	var length:=file.get_length() if file!=null else 0
-	if file!=null:file.close()
-	corrupt+=1
-	if accounting_complete and not _scan_failed and _writable_parent(path) and DirAccess.remove_absolute(ProjectSettings.globalize_path(path))==OK:
-		total_bytes=maxi(0,total_bytes-length);_cache_owner.forget(ProjectSettings.globalize_path(path))
-func load_lake(identity: PackedByteArray) -> PackedByteArray:
-	if not enabled or identity.size()!=32:return PackedByteArray()
-	var file:=FileAccess.open(_lake_name(identity),FileAccess.READ)
-	if file==null:misses+=1;return PackedByteArray()
-	var length:=file.get_length()
-	if length<144 or length>8*1024*1024+40:
-		file.close();reject_lake(identity);return PackedByteArray()
-	var header:=file.get_buffer(40);var data:=file.get_buffer(length-40);file.close()
-	if header.size()!=40 or header.decode_u32(0)!=0x31434c54 or header.decode_u32(4)!=data.size() or digest(data)!=header.slice(8,40):
-		reject_lake(identity);return PackedByteArray()
-	if _lease_owned:_cache_owner.touch(ProjectSettings.globalize_path(_lake_name(identity)))
-	return data
-func store_lake(identity: PackedByteArray,data: PackedByteArray) -> bool:
-	if not enabled or not _lease_owned or identity.size()!=32 or data.size()<104 or data.size()>8*1024*1024:return false
-	if not accounting_complete:
-		_queue_lake(identity,data)
-		return false
-	var path:=_lake_name(identity)
-	if FileAccess.file_exists(path):return true
-	if not _request_space(data.size()+40):
-		if _eviction_target>=0:_queue_lake(identity,data)
-		return false
-	if not _writable_parent(path):return false
-	if DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(path.get_base_dir()))!=OK:write_failures+=1;return false
-	var header:=PackedByteArray();header.resize(8);header.encode_u32(0,0x31434c54);header.encode_u32(4,data.size());header.append_array(digest(data))
-	var temp:=path+".tmp.%d"%OS.get_process_id()
-	if FileAccess.file_exists(temp) or DirAccess.open(temp.get_base_dir()).is_link(temp.get_file()):write_failures+=1;return false
-	var file:=FileAccess.open(temp,FileAccess.WRITE)
-	if file==null:write_failures+=1;return false
-	file.store_buffer(header);file.store_buffer(data);file.flush()
-	var ok:=file.get_error()==OK and file.get_length()==data.size()+40;file.close()
-	if ok and DirAccess.rename_absolute(ProjectSettings.globalize_path(temp),ProjectSettings.globalize_path(path))==OK:
-		total_bytes+=data.size()+40;writes+=1
-		_cache_owner.track(ProjectSettings.globalize_path(path));_eviction_exhausted=false
-		return true
-	write_failures+=1;DirAccess.remove_absolute(ProjectSettings.globalize_path(temp));return false
-
-func _queue_lake(identity: PackedByteArray,data: PackedByteArray) -> void:
-	var key:=identity.hex_encode()
-	if not _scan_failed and not _pending_lakes.has(key) and _pending_lakes.size()<16 and _pending_lake_bytes+data.size()<=16*1024*1024:
-		_pending_lakes[key]=data;_pending_lake_bytes+=data.size()

@@ -19,10 +19,15 @@ func fixture(floor_b:int,ceiling_b:int) -> RefCounted:
  for i in 4:water.advance(2048)
  return water
 func _initialize():
+ GDExtensionManager.load_extension("res://addons/volumetric_water/volumetric_water.gdextension")
  var disconnected=fixture(0,200);var connected=fixture(250,500)
  var failures:=0
  var ok:bool=disconnected!=null and disconnected.statistics().water_ml==37500 and disconnected.depth_at(Vector3(42.25,41.6,41.75))==0
  print("PASS " if ok else "FAIL ","Disconnected air intervals cannot create water across a solid gap");failures+=int(not ok)
  ok=connected!=null and connected.statistics().water_ml==87500 and connected.depth_at(Vector3(42.25,41.9,41.75))>0
  print("PASS " if ok else "FAIL ","An actual shared opening fills both cells with exact capacity");failures+=int(not ok)
- print("REGIONAL_CONNECTIVITY failures=",failures);quit(failures)
+ print("REGIONAL_CONNECTIVITY failures=",failures)
+ DirAccess.make_dir_recursive_absolute("res://reports")
+ var report=FileAccess.open("res://reports/regional_water_connectivity.json",FileAccess.WRITE)
+ report.store_string(JSON.stringify({"failures":failures}));report.close()
+ quit(failures)

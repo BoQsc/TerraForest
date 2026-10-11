@@ -148,23 +148,27 @@ func run() -> void:
 		check(game.structures.blocks.set_cells(PackedInt32Array([cell.x,cell.y,cell.z,previous_word])),"overlapping block removed")
 		await settle_cover(cover)
 		check(cover.batches[target_species].get_ids().has(4294967296),"removing block restores authored item under original identity")
-		# Controlled baked volume exercises the real lake publication/mask path.
-		var origin:=point-Vector3(2.5,0.5,2.5)
-		var volume: RefCounted=ClassDB.instantiate("NativeLakeVolume")
-		volume.configure(origin,Vector3i(8,6,8),1.0,origin.y+3.5,origin+Vector3(2.5,2.5,2.5))
-		var field:=PackedFloat32Array()
-		for z in range(9):
-			for y in range(7):
-				for x in range(9): field.append(-1.0 if x==0 or x==8 or z==0 or z==8 or y==0 else 1.0)
-		check(volume.bake_density(field)==1,"controlled native water volume bakes")
+		# Exercise the sole regional water store with a bounded codec fixture.
+		var original_water: PackedByteArray=game.lakes.capture_snapshot()
+		var catalog: PackedByteArray=ClassDB.instantiate("NativeLakeCatalog").encode([])
+		var data:=PackedByteArray();data.resize(32+catalog.size()+16+512*12);data.fill(0)
+		data.encode_u32(0,0x31575256);data.encode_u32(4,1);data.encode_u32(8,catalog.size());data.encode_u32(12,1)
+		data.encode_u64(16,64000000)
+		for i in catalog.size():data[32+i]=catalog[i]
+		var region:=Vector3i(floori(point.x/4),floori(point.y/4),floori(point.z/4))
+		var offset:int=32+catalog.size()
+		data.encode_u64(offset,(region.x<<24)|(region.y<<12)|region.z);data.encode_u32(offset+8,1);offset+=16
+		for i in 512:
+			data.encode_u16(offset+i*12+2,500);data.encode_u64(offset+i*12+4,125000)
 		game.lakes.set_process(false)
-		game.lakes._install_lake(9001,origin,Vector3i(8,6,8),1.0,origin.y+3.5,origin+Vector3(2.5,2.5,2.5),volume)
-		game.lakes._busy_id=9001;game.lakes._token=9001
-		game.lakes._slice_ready(9001,1,game.terrain.epoch,game.terrain.published_revision)
+		check(game.lakes.restore_snapshot(data),"regional water fixture restores")
+		var water_bounds:=AABB(Vector3(region)*4,Vector3.ONE*4)
+		game.lakes.exclusion_changed.emit(water_bounds)
 		await settle_cover(cover)
 		check(not cover.batches[target_species].get_ids().has(4294967296),"published water excludes submerged authored item")
 		check(cover.resident[far_key]==far_before and cover.removed.capture_storage_snapshot()==saved_ground,"water exclusion preserves distant owner and durable authored state")
-		game.lakes.remove_lake(9001)
+		check(game.lakes.restore_snapshot(original_water),"original regional water restored")
+		game.lakes.exclusion_changed.emit(water_bounds)
 		await settle_cover(cover)
 		check(cover.batches[target_species].get_ids().has(4294967296),"removing water restores same authored item")
 		game.lakes.set_process(true)

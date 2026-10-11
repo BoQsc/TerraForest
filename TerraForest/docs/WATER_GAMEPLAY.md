@@ -1,3 +1,5 @@
+> Architecture cleanup: static-lake and basin-network implementations are removed from source and registration. NativeRegionalWater is the only water owner; NativeWaterTerrainPatch samples terrain on its worker. NativeLakeCatalog only encodes metadata and reads older saves. Historical evidence is not an alternate supported runtime. Shoreline reconstruction and depth-aware rendering remain unfinished; this cleanup does not establish visual quality or sustained 60 FPS.
+
 # Regional water in the playable world
 
 The normal world now uses `NativeRegionalWater` for editable water. The earlier fixed-basin network is retained as native reference code, not the gameplay water owner. Terrain edits are no longer blocked around filled lakes.

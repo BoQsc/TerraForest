@@ -14,6 +14,5 @@ public:
     godot::PackedByteArray encode(const godot::Array &records, int64_t next_id=0) const;
     godot::Dictionary decode(const godot::PackedByteArray &bytes) const;
     bool validate_snapshot(const godot::PackedByteArray &bytes) const;
-    godot::PackedByteArray placement_mask(const godot::Array &volumes,const godot::TypedArray<godot::Transform3D> &transforms) const;
 };
 }

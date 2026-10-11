@@ -38,14 +38,10 @@ func _initialize():
     call_deferred("run")
 func run():
     GDExtensionManager.load_extension("res://addons/volumetric_water/volumetric_water.gdextension")
-    var water = ClassDB.instantiate("NativeLakeVolume")
-    var success = water.configure(Vector3.ZERO,Vector3i(8,8,8),1,4.5,Vector3(3,3,3))
-    var density = PackedFloat32Array()
-    for z in range(9):
-        for y in range(9):
-            for x in range(9):
-                density.append(-1 if x==0 or z==0 or y==0 or x==8 or z==8 else 1)
-    success = success and water.bake_density(density)==1 and water.contains(Vector3(3,3,3))
+    var water = ClassDB.instantiate("NativeRegionalWater")
+    var catalog = ClassDB.instantiate("NativeLakeCatalog").encode([])
+    var snapshot = water.capture_snapshot(catalog)
+    var success = water.validate_snapshot(snapshot) and water.restore_snapshot(snapshot)
     water = null
     print("ISOLATION_OK" if success else "ISOLATION_FAIL")
     quit(0 if success else 1)

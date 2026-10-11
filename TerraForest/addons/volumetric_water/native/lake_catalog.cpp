@@ -1,6 +1,4 @@
-#include "water_network.hpp"
 #include "lake_catalog.hpp"
-#include "lake_volume.hpp"
 #include <array>
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/variant/vector3.hpp>
@@ -12,24 +10,6 @@ void NativeLakeCatalog::_bind_methods() {
     ClassDB::bind_method(D_METHOD("encode","records","next_id"),&NativeLakeCatalog::encode,DEFVAL(0));
     ClassDB::bind_method(D_METHOD("decode","bytes"),&NativeLakeCatalog::decode);
     ClassDB::bind_method(D_METHOD("validate_snapshot","bytes"),&NativeLakeCatalog::validate_snapshot);
-    ClassDB::bind_method(D_METHOD("placement_mask","volumes","transforms"),&NativeLakeCatalog::placement_mask);
-}
-PackedByteArray NativeLakeCatalog::placement_mask(const Array &volumes,const TypedArray<Transform3D> &transforms) const {
-    if(volumes.size()>16||transforms.size()>512)return {};
-    std::array<NativeLakeVolume*,16> lakes{};
-    std::array<NativeWaterNetwork*,16> networks{};
-    for(int i=0;i<volumes.size();++i){
-        if(volumes[i].get_type()!=Variant::OBJECT)return {};
-        lakes[i]=Object::cast_to<NativeLakeVolume>(static_cast<Object*>(volumes[i]));
-        networks[i]=Object::cast_to<NativeWaterNetwork>(static_cast<Object*>(volumes[i]));
-        if(!lakes[i]&&!networks[i])return {};
-    }
-    PackedByteArray result;result.resize(transforms.size());result.fill(0);
-    for(int i=0;i<transforms.size();++i){
-        const Transform3D transform=transforms[i];if(!transform.origin.is_finite())return {};
-        for(int j=0;j<volumes.size();++j)if((lakes[j]&&lakes[j]->submerges_root(transform.origin))||(networks[j]&&bool(networks[j]->probe(transform.origin).get("wet",false)))){result.set(i,1);break;}
-    }
-    return result;
 }
 static bool valid(const Dictionary &r) {
     if(r.get("id",Variant()).get_type()!=Variant::INT || r.get("origin",Variant()).get_type()!=Variant::VECTOR3 ||
