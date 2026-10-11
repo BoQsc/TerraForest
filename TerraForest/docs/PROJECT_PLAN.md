@@ -345,3 +345,10 @@ remain open; short GPU time increased and the frame-time gate remains open.
 Added an image-generated leaf surface as a grass-only, default-off F7 toggle.
 Short off/on/off review and evidence are in `evidence/grass_texture`. Shapes and
 density unchanged. User acceptance pending; no sustained-performance claim.
+
+### 2026-10-11: grass texture readability feedback
+
+Generated a stronger texture and corrected uniform dimming, but human review
+rejected it as cartoonish/unrealistic. Archived at `evidence/grass_texture_v2`,
+including its implementation and measurements. Live material restored to v1,
+untextured by default. Numeric checks do not constitute visual acceptance.

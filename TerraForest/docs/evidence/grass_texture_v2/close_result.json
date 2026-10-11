@@ -1,0 +1,8 @@
+{
+  "checks": 7,
+  "failures": 0,
+  "linear_brightness_ratio": 0.993314718875716,
+  "relative_absolute_difference": 0.0965349136563642,
+  "sampled_foreground_pixels": 6603,
+  "scope": "Static close-up appearance test, not a world GPU or thermal benchmark"
+}

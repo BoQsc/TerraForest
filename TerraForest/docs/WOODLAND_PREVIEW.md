@@ -64,3 +64,7 @@ leafier grass and standing woody scrub, and fills out bush crowns. See
 F7 toggles the optional generated grass texture at subtle strength. It starts
 off each session and does not change saves or geometry. Comparison captures and
 short GPU observations: `docs/evidence/grass_texture`.
+
+Texture v2 was rejected in human review as cartoonish. It is archived at
+`docs/evidence/grass_texture_v2`; it is not wired into the live preview.
+The preferred untextured appearance remains default; F7 retains the v1 trial.

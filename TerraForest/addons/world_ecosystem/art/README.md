@@ -52,3 +52,7 @@ Optional grass_detail_v1.trtex is an image generated with the built-in image_gen
 tool, stored as PNG bytes under the project image convention. Its exact prompt
 and provenance are in grass_detail_v1.prompt.json; no external stock was used.
 Runtime shares one 256x256 mipmapped texture. Default off; F7 toggles.
+
+Grass detail v2 is a rejected image-generated experiment: human review found it
+cartoonish. Source PNG bytes and exact prompt remain versioned for provenance.
+The live F7 material retains v1; default rendering stays untextured.
