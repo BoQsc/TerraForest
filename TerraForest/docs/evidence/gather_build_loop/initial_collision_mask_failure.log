@@ -1,0 +1,27 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] New world
+[TerrainRewrite] New world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+PASS persistent gameplay starts in dedicated slot
+PASS paid construction and gather path enabled
+PASS natural gathering area loaded
+PASS clear starter stock through loadout restore
+PASS no free materials can fund the fixture
+PASS three reachable natural stones grant exactly three stone
+PASS inventory UI converts two gathered stone into one brick
+PASS paid construction accepts earned brick
+PASS construction consumes exactly one brick
+PASS unaffordable second block changes neither world nor inventory
+[TerrainRewrite] Headlamp on
+PASS normal use input toggles headlamp after inventory and building
+[TerrainRewrite] Headlamp off
+PASS second use restores light state
+FAIL earned block provides reachable scene collision
+PASS fullscreen1080p cap60
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+PASS normal world save commits earned state
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+PASS normal world shutdown completes
+GATHER_BUILD_LOOP {"checks":16,"failures":1,"reopen":false,"slot":"gather_loop_05a25b6530584f5a96cbc55eec9f4479"}

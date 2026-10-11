@@ -372,3 +372,17 @@ Added optional v3 generated leaf grain and matte shading after rejection of
 strong vein bands. Corrected narrow-blade UV proportions. Same texture and
 geometry budgets; human visual/motion acceptance pending. Evidence at
 `evidence/grass_texture_v3`; broader performance gates stay open.
+
+### 2026-10-11: connected earned-resource persistence evidence
+
+The new `tools/check_gather_build_loop.py` uses a fresh isolated main-world save:
+three natural stones -> UI crafting -> paid brick -> rejected unaffordable second
+block -> normal save -> exact fresh-process restore.32 checks pass, including
+collision at the placed block and normal headlamp use input. Evidence:
+`evidence/gather_build_loop`. No runtime defect found; this closes only the tested
+resource/persistence path, not full combined-settlement or gameplay coverage.
+
+Next audit and implementation target: usable building access and interiors,
+including the originally requested ladders. Static furniture, shell generation
+and this single-block check do not satisfy that requirement. Retain M2 as active;
+no additional grass-polish iteration is scheduled.
