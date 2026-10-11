@@ -28,6 +28,7 @@ var lakes = Lakes.new()
 var water_camera=preload("res://addons/volumetric_water/water_camera.gd").new()
 var structures = Structures.new()
 var player_hud=preload("res://addons/player_runtime/player_hud.gd").new()
+var session_menu=preload("res://addons/player_runtime/session_menu.gd").new()
 var storage=preload("res://addons/player_runtime/storage.gd").new()
 var construction_inventory=preload("res://addons/player_runtime/construction_inventory.gd").new()
 var headlamp=preload("res://addons/player_runtime/headlamp.gd").new()
@@ -125,7 +126,8 @@ func _ready() -> void:
 		push_error("Pending reward persistence initialization failed")
 		get_tree().quit(2)
 		return
-	if construction_inventory.gameplay and not mining_rewards.attach(terrain,player_hud):
+	mining_rewards.enabled=construction_inventory.gameplay
+	if not mining_rewards.attach(terrain,player_hud):
 		push_error("Mining reward initialization failed")
 		get_tree().quit(2)
 		return
@@ -182,6 +184,7 @@ func _ready() -> void:
 	player_hud.temporary_world=temporary_world
 	add_child(player_hud)
 	add_child(storage)
+	session_menu.game=self;add_child(session_menu)
 	add_child(construction_palette)
 	add_child(road_palette)
 	road_palette.action_requested.connect(_road_action)
@@ -634,6 +637,7 @@ func _set_player_tool_mode(building: bool,objects: bool,terrain_tool: int) -> bo
 	return true
 
 func _unhandled_input(event: InputEvent) -> void:
+	if session_menu.opened:return
 	if player_hud.inventory_open: return
 	if event is InputEventKey and event.pressed and not event.echo and event.physical_keycode==KEY_K:
 		_show_lake_notice(actor_authoring.command(self,event.shift_pressed));return
@@ -1107,7 +1111,7 @@ func _process(delta: float) -> void:
 			help.text="W / S  Accelerate / Brake or reverse    A / D  Steer    Space  Handbrake    Shift  Boost\nE  Exit when stopped    R  Reset vehicle    Esc  Release mouse\nF5 Save · reload on foot beside the parked vehicle. Cosmetic dents are not saved."
 		else: help.text=_walking_help
 	super._process(delta)
-	road_palette.panel.visible=not world_vehicle.driving and not structure_mode and not model_tool.active and not loading_active and not shutdown_requested and not player_hud.inventory_open and Input.mouse_mode==Input.MOUSE_MODE_VISIBLE
+	road_palette.panel.visible=session_menu.developer and not world_vehicle.driving and not structure_mode and not model_tool.active and not loading_active and not shutdown_requested and not player_hud.inventory_open and Input.mouse_mode==Input.MOUSE_MODE_VISIBLE
 	road_preview.visible=not world_vehicle.driving and not structure_mode and not model_tool.active and not loading_active and not shutdown_requested and not player_hud.inventory_open
 	water_camera.update()
 	pickups.update_view(delta,player.global_position,not loading_active and not shutdown_requested)

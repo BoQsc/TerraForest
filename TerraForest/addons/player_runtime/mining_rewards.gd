@@ -5,6 +5,7 @@ extends RefCounted
 var terrain: Node
 var hud: Node
 var failed:=false
+var enabled:=true
 func attach(world: Node,player_hud: Node) -> bool:
 	if terrain!=null or world.edit_admission.is_valid(): return false
 	terrain=world;hud=player_hud
@@ -13,6 +14,7 @@ func attach(world: Node,player_hud: Node) -> bool:
 	terrain.region_changed.connect(published)
 	return true
 func admit(commands: Array) -> bool:
+	if not enabled:return true
 	if failed: return false
 	for packet: PackedByteArray in commands:
 		if packet.size()!=44 or packet.decode_u32(0)!=2 or packet.decode_u32(36)!=0:
@@ -26,6 +28,7 @@ func admit(commands: Array) -> bool:
 		return false
 	return true
 func published(_bounds: AABB,_revision: int) -> void:
+	if not enabled:return
 	var outcome: Dictionary=terrain.last_edit_outcome
 	if failed or outcome.get("status")!="published" or outcome.get("epoch")!=terrain.epoch: return
 	var receipt: int=outcome.get("revision",0)

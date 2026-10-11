@@ -1,5 +1,8 @@
 # Player inventory and construction
 
+The [player UI guide](../../docs/PLAYER_UI.md) covers the Escape menu, development
+mode, ten-slot belt and player/chest drag-and-drop controls.
+
 Default world launches remain the free editor. `Play Gameplay Construction.cmd`
 selects a separate `gameplay_construction` save slot and passes
 `--gameplay-construction`. The HUD identifies the active construction mode.
@@ -27,7 +30,7 @@ missing loadout section, not a refill: saved inventories replace it exactly,
 including depleted stocks and existing editor loadouts. Further supplies must
 currently be prepared in the editor or crafted from mined stone/ore, except
 wood, which can also be harvested from reachable forest trunks with E. The
-mode is selected at launch, not stored in the world file or enforced by a
+mode defaults at launch and can be changed through the development menu; it is not stored in the world file or enforced by a
 multiplayer authority. Opening the gameplay slot in editor mode allows editing.
 
 In the inventory, select brick, wood, concrete, metal, stone, iron ore or copper

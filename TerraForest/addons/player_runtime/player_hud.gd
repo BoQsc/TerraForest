@@ -42,6 +42,7 @@ var temporary_world:=true
 var active_item:=0
 var ground_species: int=-1
 var ground_hint: Label
+var mode_hint: Label
 var ground_feedback: String=""
 var gameplay_construction:=false
 
@@ -72,7 +73,7 @@ func _refresh_ground_hint() -> void:
 	for row: Dictionary in state.slots:
 		if row.item==items[ground_species]: available+=int(row.count)
 	var cost: String=("Place: 1 %s · have %d"%[MATERIALS.get(items[ground_species],names[ground_species]),available]) if gameplay_construction else "Free placement · editor"
-	ground_hint.text="GROUND COVER  ·  "+"  /  ".join(choices.slice(0,4))+"\n"+"  /  ".join(choices.slice(4))+"\n"+cost+"    ·    LMB / E "+("collect" if gameplay_construction else "remove")+"    ·    RMB place    ·    H exit"
+	ground_hint.text=names[ground_species]+" · "+cost+"\nLMB / E "+("collect" if gameplay_construction else "remove")+" · RMB place · Esc to choose another plant"
 	if not ground_feedback.is_empty(): ground_hint.text+="\n"+ground_feedback
 
 func prepare() -> bool:
@@ -113,22 +114,22 @@ func _ready() -> void:
 	modal=Control.new()
 	message=Label.new()
 	var bar:=HBoxContainer.new()
-	bar.position=Vector2(620,900)
+	bar.position=Vector2(370,960)
 	bar.add_theme_constant_override("separation",8)
 	add_child(bar)
 	ground_hint=Label.new();ground_hint.position=Vector2(500,800)
 	ground_hint.add_theme_color_override("font_shadow_color",Color.BLACK)
 	ground_hint.add_theme_constant_override("shadow_offset_x",2);ground_hint.add_theme_constant_override("shadow_offset_y",2)
 	add_child(ground_hint)
-	for i in range(6):
-		var button:=Button.new()
-		button.custom_minimum_size=Vector2(106,64)
+	for i in range(10):
+		var button=preload("res://addons/player_runtime/inventory_slot.gd").new();button.controller=self;button.slot=i
+		button.custom_minimum_size=Vector2(110,64)
 		button.focus_mode=Control.FOCUS_NONE
 		button.pressed.connect(func(): equip(i))
 		bar.add_child(button);belt.append(button)
-	var hint:=Label.new();hint.text="Alt + 1–6 equip    ·    Tab inventory"
+	var hint:=Label.new();mode_hint=hint;hint.text="1–9 / 0 equip    ·    Tab inventory    ·    Esc menu"
 	hint.text += "    ·    " + ("Gameplay construction" if gameplay_construction else "Free editor")
-	hint.position=Vector2(620,970);add_child(hint)
+	hint.position=Vector2(370,1032);add_child(hint)
 	add_child(modal);modal.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	var shade:=ColorRect.new();shade.color=Color(0.025,0.04,0.06,0.9)
 	modal.add_child(shade);shade.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -138,13 +139,14 @@ func _ready() -> void:
 	for side in ["left","right","top","bottom"]: margin.add_theme_constant_override("margin_"+side,24)
 	panel.add_child(margin)
 	var column:=VBoxContainer.new();column.add_theme_constant_override("separation",16);margin.add_child(column)
-	var title:=Label.new();title.text="INVENTORY";title.add_theme_font_size_override("font_size",28);column.add_child(title)
-	var detail:=Label.new();detail.text="Tools and materials · first six slots form the toolbelt"
-	if gameplay_construction: detail.text="Construction costs one material per block; removal gives no refund."
+	var title:=Label.new();title.text="INVENTORY";title.add_theme_font_size_override("font_size",28);var title_row:=HBoxContainer.new();title.size_flags_horizontal=Control.SIZE_EXPAND_FILL;title_row.add_child(title)
+	var close_button:=Button.new();close_button.text="Close";close_button.pressed.connect(func():set_open(false));title_row.add_child(close_button);column.add_child(title_row)
+	var detail:=Label.new();detail.text="Tools and materials · first ten slots form the toolbelt"
+	if gameplay_construction: detail.text="First ten slots are your toolbelt. Drag to move; Shift-drag to split."
 	column.add_child(detail)
 	var grid:=GridContainer.new();grid.columns=8;grid.add_theme_constant_override("h_separation",8);grid.add_theme_constant_override("v_separation",8);column.add_child(grid)
 	for i in range(32):
-		var button:=Button.new();button.custom_minimum_size=Vector2(110,75);button.focus_mode=Control.FOCUS_NONE
+		var button=preload("res://addons/player_runtime/inventory_slot.gd").new();button.controller=self;button.slot=i;button.custom_minimum_size=Vector2(110,75);button.focus_mode=Control.FOCUS_NONE
 		button.pressed.connect(func(): select_slot(i))
 		grid.add_child(button);slots.append(button)
 	var rewards:=HBoxContainer.new();rewards.add_theme_constant_override("separation",12)
@@ -162,19 +164,20 @@ func _ready() -> void:
 	craft_amount=SpinBox.new();craft_amount.min_value=1;craft_amount.max_value=1000;craft_amount.value=1;craft_amount.custom_minimum_size.x=130;crafting.add_child(craft_amount)
 	craft_button=Button.new();craft_button.text="Craft";craft_button.pressed.connect(craft_selected);crafting.add_child(craft_button)
 	drop_button=Button.new();drop_button.text="Drop one selected supply";drop_button.pressed.connect(drop_selected);column.add_child(drop_button)
-	message.text="Click a filled slot, then a destination to move or swap. Tab / Esc closes."
+	message.text="Drag stacks to move, merge or swap. Shift-drag moves half. Tab / Esc closes."
 	column.add_child(message)
 	modal.hide();refresh()
 
 func refresh() -> void:
+	if mode_hint!=null:mode_hint.text=("1–9 / 0" if gameplay_construction else "Alt + 1–9 / 0")+" equip · Tab inventory · Esc menu · "+("Gameplay" if gameplay_construction else "Development")
 	state=inventory.snapshot()
 	for i in range(32):
 		var row: Dictionary=state.slots[i]
 		var title: String=CATALOG.get(row.item,MATERIALS.get(row.item,RESOURCES.get(row.item,"Empty")))
 		if row.item in MATERIALS or row.item in RESOURCES: title += " ×%d" % row.count
 		slots[i].text="%02d%s\n%s"%[i+1," •" if i==selected_slot else "",title]
-		if i<6:
-			belt[i].text="%d%s\n%s"%[i+1," •" if row.item!=0 and row.item==active_item else "",title]
+		if i<10:
+			belt[i].text="%d%s\n%s"%[(i+1)%10," •" if row.item!=0 and row.item==active_item else "",title]
 			belt[i].disabled=not _equippable(row.item)
 	_refresh_ground_hint()
 	_refresh_pending()
@@ -225,7 +228,7 @@ func _equippable(item: int) -> bool:
 	return item in CATALOG or (ground_tools_enabled and item in GROUND_ITEMS)
 
 func equip(slot: int) -> void:
-	if not enabled or inventory==null or slot<0 or slot>=6: return
+	if not enabled or inventory==null or slot<0 or slot>=10: return
 	state=inventory.snapshot()
 	var item: int=state.slots[slot].item
 	if _equippable(item): tool_requested.emit(item)
@@ -272,9 +275,24 @@ func _input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo:
 		if event.physical_keycode==KEY_TAB or (inventory_open and event.physical_keycode==KEY_ESCAPE):
 			set_open(not inventory_open);get_viewport().set_input_as_handled();return
-		if event.alt_pressed and event.physical_keycode>=KEY_1 and event.physical_keycode<=KEY_6:
-			equip(event.physical_keycode-KEY_1);get_viewport().set_input_as_handled();return
+		if event.alt_pressed and event.physical_keycode in [KEY_1,KEY_2,KEY_3,KEY_4,KEY_5,KEY_6,KEY_7,KEY_8,KEY_9,KEY_0]:
+			equip(9 if event.physical_keycode==KEY_0 else event.physical_keycode-KEY_1);get_viewport().set_input_as_handled();return
 
 func _unhandled_key_input(_event: InputEvent) -> void:
 	# Let quantity entry and dropdown navigation receive GUI keyboard events.
 	if inventory_open: get_viewport().set_input_as_handled()
+
+func drag_data(_side: String,slot: int) -> Dictionary:
+	if not enabled or not inventory_open:return {}
+	var row: Dictionary=state.slots[slot]
+	if row.count==0:return {}
+	selected_slot=-1
+	return {"owner":get_instance_id(),"side":"player","slot":slot,"count":maxi(1,int(row.count)/2) if Input.is_key_pressed(KEY_SHIFT) else row.count,"revision":state.revision}
+func accepts_drag(_side: String,_slot: int,data: Variant) -> bool:
+	return enabled and inventory_open and data is Dictionary and data.get("owner",0)==get_instance_id()
+func drop_stack(side: String,slot: int,data: Variant) -> void:
+	if not accepts_drag(side,slot,data):return
+	var result: Dictionary=inventory.transfer(data.slot,slot,data.count,data.revision)
+	if result.ok:inventory_changed.emit()
+	message.text="Stack moved" if result.ok else "Cannot move that stack; inventory refreshed"
+	selected_slot=-1;refresh()

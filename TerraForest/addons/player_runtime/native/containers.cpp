@@ -5,6 +5,7 @@
 namespace terraforest {
 using namespace godot;
 void NativeContainerStore::_bind_methods() {
+    ClassDB::bind_method(D_METHOD("drag_slots","id","player","source_chest","target_chest","from","to","count","player_revision","store_revision"),&NativeContainerStore::drag_slots);
     ClassDB::bind_method(D_METHOD("configure","prototype","max_containers"),&NativeContainerStore::configure);
     ClassDB::bind_method(D_METHOD("snapshot","id"),&NativeContainerStore::snapshot);
     ClassDB::bind_method(D_METHOD("get_ids"),&NativeContainerStore::get_ids);
@@ -44,6 +45,41 @@ Dictionary NativeContainerStore::move(int64_t id,const Ref<NativePlayerInventory
     ++revision;box->revision=revision;
     if(nonempty)contents[id]=box;else contents.erase(id);
     out["store_revision"]=revision;out["player_revision"]=player->revision;return out;
+}
+Dictionary NativeContainerStore::drag_slots(int64_t id,const Ref<NativePlayerInventory> &player,bool source_chest,bool target_chest,int64_t from,int64_t to,int64_t count,int64_t player_revision,int64_t store_revision) {
+    Dictionary out;out["ok"]=false;out["reason"]="invalid_drag";
+    if(schema.is_null()||player.is_null()||id<=0||from<0||from>=32||to<0||to>=32||count<=0)return out;
+    auto found=contents.find(id);
+    if(player->revision!=player_revision||store_revision!=(found==contents.end()?revision:found->second->revision)){out["reason"]="stale_revision";return out;}
+    if(source_chest&&found==contents.end())return out;
+    if(target_chest&&found==contents.end()&&int64_t(contents.size())>=capacity){out["reason"]="container_capacity";return out;}
+    auto box=found==contents.end()?empty_inventory():found->second;
+    auto source=source_chest?box:player;auto target=target_chest?box:player;
+    if(source==target) {
+        out=source->transfer(from,to,count,source->revision);
+        if(!bool(out["ok"]))return out;
+    } else {
+        auto a=source->slots[from],b=target->slots[to];
+        if(!a.item||count>a.count)return out;
+        auto limit=target->catalog().find(a.item);
+        if(limit==target->catalog().end()){out["reason"]="invalid_item";return out;}
+        if(b.item&&b.item!=a.item) {
+            auto back=source->catalog().find(b.item);
+            if(count!=a.count||a.count>limit->second||back==source->catalog().end()||b.count>back->second){out["reason"]="partial_swap";return out;}
+            std::swap(a,b);
+        } else {
+            if(count>limit->second-b.count){out["reason"]="stack_full";return out;}
+            b.item=a.item;b.count+=count;a.count-=count;if(!a.count)a.item=0;
+        }
+        // No callbacks between either commit. Invalid targets preserve both sides.
+        source->slots[from]=a;target->slots[to]=b;++source->revision;++target->revision;
+    }
+    if(source_chest||target_chest) {
+        bool nonempty=false;for(const auto &item:box->slots)nonempty=nonempty||item.count>0;
+        ++revision;box->revision=revision;
+        if(nonempty)contents[id]=box;else contents.erase(id);
+    }
+    out["ok"]=true;out["reason"]="";return out;
 }
 PackedByteArray NativeContainerStore::capture_storage_snapshot() const {
     if(schema.is_null())return {};

@@ -1,0 +1,18 @@
+{
+  "addons\\player_runtime\\construction_inventory.gd": "ad655ee753ea22fdb2f038f6fe081c52e3eae380638d987ba460d5413fb76a03",
+  "addons\\player_runtime\\crafting.gd": "4faf2eb1a408d6c201774a11136ff4087998c6be388a1b05c9533ce3df0eee1b",
+  "addons\\player_runtime\\headlamp.gd": "7dcb72d95d933c8387900908a2c42977b479dfc8f8aeeea2561436d8a39038e4",
+  "addons\\player_runtime\\inventory_grid.gd": "455476bf0d752206c1b53df46d1282cfb83a43f01a0bcb369897e287433c874d",
+  "addons\\player_runtime\\inventory_slot.gd": "14dadef8137a4d42147c40c39f472db1a76614e4c650034bf4dec47fd9f33696",
+  "addons\\player_runtime\\mining_rewards.gd": "127449ecbb1db2879d0484b6931b9d4a9796c2c4ec4fa5be724d13791add8b2b",
+  "addons\\player_runtime\\player_hud.gd": "91ba9c466bf17869aeea1beb709edd5b10b9409726823238f175c882d71d607a",
+  "addons\\player_runtime\\session_menu.gd": "aee3c3e087f69a5220d29bed1fa4ae04ddd1db74a72924a3e3eeb8951d81923d",
+  "addons\\player_runtime\\storage.gd": "55106b4639df913355d5f1c4755f8b7c3f0928e2ad473577d04110b0cac2cb38",
+  "addons\\player_runtime\\native\\containers.cpp": "243f9e4d734e625211ea715ea6ff3c3d4a6c7b84656d9f5a2308fd6ee656f749",
+  "addons\\player_runtime\\native\\containers.hpp": "ae84f568f30ec4ebd07e82301d5320175ae2071619b9f569cebbb291c6c2d115",
+  "tests\\player_ui.gd": "79d7ed7af6b84edf89517bfb9417afd6d9f03a6a48e9f8cebfc45b728b660b62",
+  "tests\\container_drag.gd": "00672eb2c9ad19db628b4cd453a089f9c7359f8a5aba34892ad61af51788c5f7",
+  "demo\\world.gd": "edc4793c51a705792b77cd40b12da6a7a14ede6a8e2dd8985eb1d439d818729f",
+  "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "cc77e7dea7ab89dc67e468a1900f2a5e7f6e2b5940b8dbc753ad8aa72763a643",
+  "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "fbd532350d7f94b1f42be580e9ecd222da4a5a81ece8ad2a44203fd7f999f124"
+}

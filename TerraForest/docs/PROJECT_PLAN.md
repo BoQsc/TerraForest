@@ -502,3 +502,12 @@ fleet. Later launches preserve gameplay progress; the editor slot is untouched.
 A 40-file real-copy/startup check passes with unchanged source hashes, alongside
 copy refusal/no-overwrite checks. Evidence: evidence/combined_gameplay_launcher.
 Human feedback remains the next coverage gate; no performance gate is closed.
+
+
+2026-10-11: User-requested UI integration supporting the player/toolbelt/inventory
+coverage row and the combined human checkpoint: Escape action menu, explicit local
+development mode, ten belt slots, native exact-slot chest transactions and real
+GUI drag-and-drop. The keyboard instruction wall is hidden. Gameplay/editor
+accounting remains distinct and chest persistence regressions pass. See
+[UI guide](PLAYER_UI.md) and [scoped evidence](evidence/player_ui/README.md).
+Human usability acceptance and sustained performance remain open; M2 stays active.

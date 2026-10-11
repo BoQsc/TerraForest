@@ -8,8 +8,8 @@ var pending_restore:=PackedByteArray()
 var opened:=false
 var identity:=0
 var panel: PanelContainer
-var player_list: ItemList
-var storage_list: ItemList
+var player_list: GridContainer
+var storage_list: GridContainer
 var quantity: SpinBox
 var message: Label
 var player_state: Dictionary={}
@@ -58,19 +58,21 @@ func close() -> void:
 	game._clear_motion();Input.mouse_mode=prior_mouse
 func _ready() -> void:
 	layer=20
-	panel=PanelContainer.new();panel.position=Vector2(390,180);panel.size=Vector2(1140,720);add_child(panel);panel.hide()
+	panel=PanelContainer.new();panel.position=Vector2(390,100);panel.size=Vector2(1140,820);add_child(panel);panel.hide()
+	var style:=StyleBoxFlat.new();style.bg_color=Color(0.025,0.045,0.05,0.98);style.set_corner_radius_all(8);panel.add_theme_stylebox_override("panel",style)
 	var margin:=MarginContainer.new()
 	for side in ["left","right","top","bottom"]: margin.add_theme_constant_override("margin_"+side,24)
 	panel.add_child(margin)
 	var column:=VBoxContainer.new();column.add_theme_constant_override("separation",14);margin.add_child(column)
 	var title:=Label.new();title.text="WOODEN CHEST / STORAGE";title.add_theme_font_size_override("font_size",26);column.add_child(title)
-	var instructions:=Label.new();instructions.text="Select a stack and quantity to move. Empty the chest before removing it.";column.add_child(instructions)
+	var instructions:=Label.new();instructions.text="Drag between inventories. Shift-drag moves half. Empty the chest before removal.";column.add_child(instructions)
 	var headings:=HBoxContainer.new();headings.add_theme_constant_override("separation",18);column.add_child(headings)
 	for text in ["YOUR INVENTORY","CHEST CONTENTS"]:
 		var heading:=Label.new();heading.text=text;heading.size_flags_horizontal=Control.SIZE_EXPAND_FILL;headings.add_child(heading)
 	var row:=HBoxContainer.new();row.size_flags_vertical=Control.SIZE_EXPAND_FILL;row.add_theme_constant_override("separation",18);column.add_child(row)
-	player_list=ItemList.new();storage_list=ItemList.new()
-	for list: ItemList in [player_list,storage_list]:
+	player_list=preload("res://addons/player_runtime/inventory_grid.gd").new();storage_list=preload("res://addons/player_runtime/inventory_grid.gd").new()
+	player_list.configure(self,"player");storage_list.configure(self,"chest")
+	for list: GridContainer in [player_list,storage_list]:
 		list.size_flags_horizontal=Control.SIZE_EXPAND_FILL;list.custom_minimum_size=Vector2(500,440);row.add_child(list)
 	var buttons:=HBoxContainer.new();buttons.add_theme_constant_override("separation",16);column.add_child(buttons)
 	quantity=SpinBox.new();quantity.min_value=1;quantity.max_value=1000000;quantity.value=1;buttons.add_child(quantity)
@@ -83,7 +85,7 @@ func refresh() -> void:
 	player_state=game.player_hud.inventory.snapshot();box_state=store.snapshot(identity)
 	var names: Dictionary=game.player_hud.CATALOG.duplicate();names.merge(game.player_hud.MATERIALS);names.merge(game.player_hud.RESOURCES)
 	for pair in [[player_list,player_state],[storage_list,box_state]]:
-		var list: ItemList=pair[0];var state: Dictionary=pair[1];list.clear()
+		var list: GridContainer=pair[0];var state: Dictionary=pair[1];list.clear()
 		for i in 32:
 			var item: Dictionary=state.slots[i]
 			list.add_item("%02d  %s"%[i+1,"Empty" if item.count==0 else "%s  x%d"%[names.get(item.item,str(item.item)),item.count]])
@@ -91,8 +93,8 @@ func refresh() -> void:
 func move_selected(deposit: bool) -> bool:
 	if not opened or not allowed() or aimed_id()!=identity:
 		close();return false
-	var list: ItemList=player_list if deposit else storage_list
-	var selected:=list.get_selected_items()
+	var list: GridContainer=player_list if deposit else storage_list
+	var selected: PackedInt32Array=list.get_selected_items()
 	if selected.is_empty(): message.text="Select a stack first.";return false
 	quantity.apply()
 	var existed: bool=store.has_contents(identity)
@@ -109,3 +111,20 @@ func move_selected(deposit: bool) -> bool:
 func _input(event: InputEvent) -> void:
 	if opened and event is InputEventKey and event.pressed and not event.echo and event.physical_keycode in [KEY_ESCAPE,KEY_TAB]:
 		close();get_viewport().set_input_as_handled()
+
+func drag_data(side: String,slot: int) -> Dictionary:
+	if not opened:return {}
+	var row: Dictionary=(player_state if side=="player" else box_state).slots[slot]
+	if row.count==0:return {}
+	return {"owner":get_instance_id(),"identity":identity,"side":side,"slot":slot,"count":maxi(1,int(row.count)/2) if Input.is_key_pressed(KEY_SHIFT) else row.count,"player_revision":player_state.revision,"store_revision":box_state.store_revision}
+func accepts_drag(_side: String,_slot: int,data: Variant) -> bool:
+	return opened and data is Dictionary and data.get("owner",0)==get_instance_id() and data.get("identity",0)==identity
+func drop_stack(side: String,slot: int,data: Variant) -> void:
+	if not accepts_drag(side,slot,data):return
+	if not allowed() or aimed_id()!=identity:close();return
+	if not collection.set_removal_protected(identity,true):return
+	var result: Dictionary=store.drag_slots(identity,game.player_hud.inventory,data.side=="chest",side=="chest",data.slot,slot,data.count,data.player_revision,data.store_revision)
+	if not store.has_contents(identity):collection.set_removal_protected(identity,false)
+	if result.ok:game.terrain.changed_since_save=true
+	refresh();game.player_hud.refresh()
+	message.text="Stack moved" if result.ok else "Cannot move that stack; inventories refreshed"

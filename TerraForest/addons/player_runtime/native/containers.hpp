@@ -21,6 +21,7 @@ public:
     bool has_contents(int64_t id) const {return contents.count(id)!=0;}
     godot::Dictionary deposit(int64_t id,const godot::Ref<NativePlayerInventory> &player,int64_t slot,int64_t count,int64_t player_revision,int64_t store_revision) {return move(id,player,slot,count,player_revision,store_revision,true);}
     godot::Dictionary withdraw(int64_t id,const godot::Ref<NativePlayerInventory> &player,int64_t slot,int64_t count,int64_t player_revision,int64_t store_revision) {return move(id,player,slot,count,player_revision,store_revision,false);}
+    godot::Dictionary drag_slots(int64_t id,const godot::Ref<NativePlayerInventory> &player,bool source_chest,bool target_chest,int64_t from,int64_t to,int64_t count,int64_t player_revision,int64_t store_revision);
     godot::PackedByteArray capture_storage_snapshot() const;
     bool validate_snapshot(const godot::PackedByteArray &bytes) const;
     bool restore_storage_snapshot(const godot::PackedByteArray &bytes);
