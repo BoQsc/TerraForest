@@ -1,0 +1,40 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] New world
+[TerrainRewrite] New world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+PASS Normal combined world loads
+PASS World terrain supplies lake location
+PASS Ordinary lake authoring uses shallow elongated excavation
+[TerrainRewrite] Mined resources added to inventory
+[TerrainRewrite] Lake ready · F5 saves world
+PASS Actual world water builds and publishes
+COLD_STATS { "water_ml": 514832000, "active_cells": 0, "regions": 48, "pending_regions": 0, "dirty_meshes": 0, "fill_active": false, "fill_remaining_ml": -1, "sampled_nodes": 34992, "cache_hits": 0, "cached_region_rebuilds": 0, "cell_steps": 4873, "changes": 4873, "step_us": 166, "max_step_us": 781, "mesh_us": 15, "max_mesh_us": 232, "capacity_reached": false, "resident_cell_bytes": 295296, &"lakes": 1, &"ready": 1, &"outstanding_slices": 0, &"resident_occupancy_bytes": 295296, &"render_ready": true }
+PASS Undisturbed lake sleeps with no active water cells
+PASS Sleeping lake performs zero flow cell steps
+PASS Lake is visibly filled and swimming query is wet
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Bucket · 0/10 L
+PASS Gameplay equips normal bucket
+INPUT_STATE false 401 true 2 401
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Bucket · 1/10 L
+[TerrainRewrite] Scooped 1 L
+PASS Real bucket left-click conserves lake + inventory water
+PASS Stale bucket action cannot remove or create water
+PASS Separate hole is carved into actual terrain, not empty air
+PASS Mine a separate hole outside lake definitions
+[TerrainRewrite] Mined resources added to inventory
+PASS Separate hole terrain edit publishes
+[TerrainRewrite] Preparing water at this location
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Bucket · 0/10 L
+[TerrainRewrite] Poured 1 L
+PASS Real right-click creates water outside lake with exact bucket debit
+PASS Poured water settles to a queryable surface in the dug hole
+PUDDLE_AIM (827.75, 44.276, 1291.75) START (827.75, 45.776, 1291.75) END (827.75, 45.42658, 1288.267) HIT { "position": (827.75, 45.62314, 1290.226), "normal": (0.0, 0.515056, 0.857157), "face_index": 436, "collider_id": 355777648304, "collider": MatchingCollision:<StaticBody3D#355777648304>, "shape": 0, "rid": RID(90598040142062) }
+[TerrainRewrite] Aim at nearby water containing at least one litre
+FAIL One-litre puddle can be scooped back through real gameplay
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+REGIONAL_WATER_WORLD failures=1

@@ -10,15 +10,12 @@ func run():
  var ok:bool=game.lakes.statistics().ready==1 and game.equipped_tool==401 and not game.session_menu.developer
  var icon:Texture2D=preload("res://addons/player_runtime/item_icons.gd").texture(401)
  ok=ok and icon!=null and not icon.get_image().get_used_rect().size==Vector2i.ZERO
- var scene_ready:=false
- for item:Dictionary in game.lakes._lakes.values():
-  while not item.scene.statistics().ready and Time.get_ticks_msec()<deadline:await process_frame
-  scene_ready=item.scene.statistics().ready
+ var scene_ready:bool=game.lakes.statistics().render_ready
  ok=ok and scene_ready
  # Position near the waterline, aiming down: exercise the real right/left click routing.
  if ok:
-  var center:Vector3=game.lakes._lakes.values()[0].seed+Vector3(0,6,0)
-  game.fly=true;game.player.global_position=center+Vector3(0,-2,10);game.camera.global_position=center+Vector3(0,-2,10);game.camera.look_at(center+Vector3(0,-4,8));game.app_focused=true;Input.mouse_mode=Input.MOUSE_MODE_CAPTURED
+  var center:Vector3=game.lakes._lakes.values()[0].seed+Vector3(0,2,0)
+  game.fly=true;game.player.global_position=center+Vector3(0,0,3);game.camera.global_position=center+Vector3(0,0,3);game.camera.look_at(center+Vector3(0,-2,2));game.app_focused=true;Input.mouse_mode=Input.MOUSE_MODE_CAPTURED
   var click:=InputEventMouseButton.new();click.button_index=MOUSE_BUTTON_LEFT;click.pressed=true;game._unhandled_input(click)
   var slot:int=game.player_hud.active_slot
   ok=game.player_hud.inventory.snapshot().slots[slot].item==402

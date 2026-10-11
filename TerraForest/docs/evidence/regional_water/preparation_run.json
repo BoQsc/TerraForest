@@ -1,0 +1,62 @@
+{
+  "slot": "check_88d680c6bcf94fa5a89fc7d2fe2c1ae7",
+  "runs": [
+    {
+      "timed_out": false,
+      "launch_error": null,
+      "pid": 42184,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 24.79586559999734,
+      "passed": true,
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\godot.windows.opt.tools.64.exe",
+        "--path",
+        "C:\\Users\\LENOVO LOQ 15\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--log-file",
+        "C:\\Users\\LENOVO LOQ 15\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\checks\\prepare_20261011T202113397591Z\\cold\\engine.log",
+        "--max-fps",
+        "60",
+        "--headless",
+        "--script",
+        "res://tools/prepare_water_world.gd",
+        "--",
+        "--world-slot=check_88d680c6bcf94fa5a89fc7d2fe2c1ae7",
+        "--derived-cache=user://water_prepare_88d680c6bcf94fa5a89fc7d2fe2c1ae7",
+        "--water-gameplay",
+        "--gameplay-construction"
+      ]
+    },
+    {
+      "timed_out": false,
+      "launch_error": null,
+      "pid": 104256,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 10.036635900003603,
+      "passed": true,
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\godot.windows.opt.tools.64.exe",
+        "--path",
+        "C:\\Users\\LENOVO LOQ 15\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--log-file",
+        "C:\\Users\\LENOVO LOQ 15\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\checks\\prepare_20261011T202113397591Z\\warm\\engine.log",
+        "--max-fps",
+        "60",
+        "--fullscreen",
+        "--resolution",
+        "1920x1080",
+        "--script",
+        "res://tests/water_prepared_reopen.gd",
+        "--",
+        "--world-slot=check_88d680c6bcf94fa5a89fc7d2fe2c1ae7",
+        "--derived-cache=user://water_prepare_88d680c6bcf94fa5a89fc7d2fe2c1ae7",
+        "--water-gameplay",
+        "--gameplay-construction"
+      ]
+    }
+  ],
+  "water_debug_sha256": "cd6e2cbdfa4f21d0828f7fd1233b82193bd43607dba3849901f14c46a63ef59b"
+}

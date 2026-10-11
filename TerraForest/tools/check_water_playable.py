@@ -10,7 +10,7 @@ folder=ROOT/'reports/checks'/datetime.datetime.now(datetime.timezone.utc).strfti
 command,cache=command_for(engine,'water_playable',folder,['--gameplay-construction'],args.headless)
 command.remove('--temporary')
 slot=next(a.split('=',1)[1] for a in command if a.startswith('--world-slot='))
-result=execute(command,folder,90,'WATER_PLAYABLE failures=0')
+result=execute(command,folder,90,'REGIONAL_WATER_WORLD failures=0')
 (folder/'run.json').write_text(json.dumps(result,indent=2))
 print(('PASS ' if result['passed'] else 'FAIL ')+str(folder))
 # Only the unique test-owned files; keep failures for diagnosis.

@@ -1,3 +1,4 @@
+#include "regional_water.hpp"
 #include "lake_volume.hpp"
 #include "lake_catalog.hpp"
 #include "water_quantity.hpp"
@@ -32,6 +33,8 @@ static void initialize(ModuleInitializationLevel level) {
         GDREGISTER_CLASS(terraforest::NativeWaterSurface);
         GDREGISTER_CLASS(terraforest::NativeWaterScene);
         GDREGISTER_CLASS(terraforest::NativeWaterRuntime);
+        GDREGISTER_CLASS(terraforest::NativeWaterTerrainPatch);
+        GDREGISTER_CLASS(terraforest::NativeRegionalWater);
         GDREGISTER_CLASS(terraforest::NativeWaterRemapPlan);
     }
 }

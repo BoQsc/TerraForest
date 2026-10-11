@@ -1,166 +1,179 @@
 # SPDX-License-Identifier: 0BSD
 extends Node3D
-# Main-thread presentation only. Finite compilation/sampling runs on terrain worker.
+# Native store/flow/meshing. Script only coordinates worker hand-off, scene and UI.
+signal bucket_completed(slot:int)
 signal catalog_changed
-signal lake_ready(id: int)
-signal lake_failed(id: int,status: int)
-signal exclusion_changed(bounds: AABB)
-@export var terrain: Node3D
-@export_range(1,16) var max_lakes: int=8
-var _lakes: Dictionary={}
+signal lake_ready(id:int)
+signal lake_failed(id:int,status:int)
+signal exclusion_changed(bounds:AABB)
+@export var terrain:Node3D
+@export_range(1,16) var max_lakes:int=16
+var _lakes:Dictionary={}
 var _next_id:=1
+var _catalog:RefCounted
+var water:RefCounted
+var _builder:RefCounted
+var _busy:=false
+var _revision:=-1
 var _token:=0
-var _busy_id:=0
 var _epoch:=-1
-var _catalog: RefCounted
+var _filling_id:=0
+var _meshes:Dictionary={}
 var _material:=ShaderMaterial.new()
-var _discard_completion:=false
-var _surface_cursor:=0
+var _pending_bucket:Dictionary={}
+var _pending_dev:Dictionary={}
+var _last_changes:=0
+var _notify_seconds:=0.0
+var _changed_bounds:=AABB()
+var _have_bounds:=false
+var _capacity_reported:=false
 func prepare() -> bool:
- if not ClassDB.class_exists("NativeWaterRuntime"):GDExtensionManager.load_extension("res://addons/volumetric_water/volumetric_water.gdextension")
- if not ClassDB.class_exists("NativeWaterRuntime"):return false
+ if not ClassDB.class_exists("NativeRegionalWater"):GDExtensionManager.load_extension("res://addons/volumetric_water/volumetric_water.gdextension")
+ if not ClassDB.class_exists("NativeRegionalWater"):return false
  if _catalog==null:_catalog=ClassDB.instantiate("NativeLakeCatalog")
+ if water==null:water=ClassDB.instantiate("NativeRegionalWater")
  return true
-func snapshot_validator() -> RefCounted:return _catalog
-func empty_snapshot() -> PackedByteArray:return _catalog.encode([])
+func snapshot_validator() -> RefCounted:return water
+func empty_snapshot() -> PackedByteArray:
+ var empty=ClassDB.instantiate("NativeRegionalWater")
+ return empty.capture_snapshot(_catalog.encode([]))
 func capture_snapshot() -> PackedByteArray:
+ # Do not silently save a partially authored/generated lake as a completed one.
+ for item:Dictionary in _lakes.values():
+  if item.dirty:return PackedByteArray()
  var records:Array=[]
- var ids:=_lakes.keys();ids.sort()
- for id:int in ids:
-  var item:Dictionary=_lakes[id]
-  if item.volume!=null:item.water_state=item.volume.capture_state()
-  records.append({"id":id,"origin":item.origin,"cells":item.cells,"spacing":item.spacing,"level":item.level,"seed":item.seed,"water_state":item.water_state})
- return _catalog.encode(records,_next_id)
+ for item:Dictionary in _lakes.values():records.append({"id":item.id,"origin":item.origin,"cells":item.cells,"spacing":item.spacing,"level":item.level,"seed":item.seed})
+ return water.capture_snapshot(_catalog.encode(records,_next_id))
 func restore_snapshot(bytes:PackedByteArray) -> bool:
- var decoded:Dictionary=_catalog.decode(bytes)
- if not decoded.get("ok",false):return false
- clear();_next_id=decoded.next_id;max_lakes=maxi(max_lakes,decoded.records.size())
- for record:Dictionary in decoded.records:_install(record)
- return true
+ var catalog_bytes:PackedByteArray=water.snapshot_catalog(bytes)
+ if catalog_bytes.is_empty():return false
+ var decoded:Dictionary=_catalog.decode(catalog_bytes)
+ if not decoded.ok:return false
+ clear();_next_id=decoded.next_id
+ var cached:bool=bytes.decode_u32(0)==0x31575256
+ if cached and not water.restore_snapshot(bytes):return false
+ for record:Dictionary in decoded.records:
+  record.dirty=not cached;record.failure=""
+  var state:PackedByteArray=record.get("water_state",PackedByteArray())
+  record.amount=-1 if state.is_empty() else int(state.decode_u64(16))
+  _lakes[record.id]=record
+ catalog_changed.emit();return true
 func _ready() -> void:
- if terrain==null or transform!=Transform3D.IDENTITY or global_transform!=Transform3D.IDENTITY or not prepare():set_process(false);return
+ if terrain==null or not prepare():set_process(false);return
  _material.shader=preload("res://addons/volumetric_water/water.gdshader")
  terrain.lake_slice_ready.connect(_slice_ready);terrain.region_invalidated.connect(_invalidate)
- terrain.water_edit_admission=allows_edit
+ # Mining is admitted normally. Invalid regions retain their water and wait for
+ # the committed terrain worker samples; they never flow against stale solids.
+ terrain.water_edit_admission=Callable()
  _epoch=terrain.epoch
 func add_lake(origin:Vector3,cells:Vector3i,spacing:float,level:float,seed:Vector3) -> int:
- if _catalog==null or _lakes.size()>=mini(max_lakes,16):return 0
- var definition:Dictionary={"id":_next_id,"origin":origin,"cells":cells,"spacing":spacing,"level":level,"seed":seed}
- if _catalog.encode([definition]).is_empty():return 0
- var bounds:=owned_bounds(definition)
- for item:Dictionary in _lakes.values():
-  if item.owned_bounds.intersects(bounds):return 0
- var builder=ClassDB.instantiate("NativeWaterRuntime")
- if not builder.configure(origin,cells,spacing,level,seed,PackedByteArray()):return 0
- _next_id+=1;_install(definition);return definition.id
-func _install(record:Dictionary) -> void:
- var item:=record.duplicate()
- item.bounds=AABB(item.origin,Vector3(item.cells)*item.spacing)
- item.owned_bounds=owned_bounds(item)
- item.water_state=item.get("water_state",PackedByteArray());item.volume=null;item.builder=null
- item.dirty=true;item.revision=-1;item.failure="";item.scene=ClassDB.instantiate("NativeWaterScene")
- add_child(item.scene);item.scene.set_keep_previous_surface(true);item.scene.set_process(false)
- for existing:Dictionary in _lakes.values():
-  if existing.owned_bounds.intersects(item.owned_bounds):
-   existing.dirty=false;item.dirty=false
-   existing.failure="Overlapping finite lake regions; remove one definition before retrying";item.failure=existing.failure
- _lakes[item.id]=item;catalog_changed.emit()
+ if _lakes.size()>=max_lakes:return 0
+ var record:Dictionary={"id":_next_id,"origin":origin,"cells":cells,"spacing":spacing,"level":level,"seed":seed}
+ if _catalog.encode([record]).is_empty():return 0
+ record.dirty=true;record.failure="";record.amount=-1
+ _lakes[_next_id]=record;_next_id+=1;catalog_changed.emit();return record.id
 func remove_lake(id:int) -> void:
- if not _lakes.has(id):return
- if id==_busy_id:_discard_completion=true
- var item:Dictionary=_lakes[id];item.scene.queue_free();_lakes.erase(id)
- if is_instance_valid(terrain):terrain.changed_since_save=true
- catalog_changed.emit();exclusion_changed.emit(item.bounds)
-func clear() -> void:
- for id:int in _lakes.keys():remove_lake(id)
-func owned_bounds(item:Dictionary) -> AABB:
- var size:float=16.0*item.spacing
- var lo:Vector3=(item.origin/size).floor()*size
- var hi:Vector3=((item.origin+Vector3(item.cells)*item.spacing)/size).ceil()*size
- hi.y=minf(hi.y,(floorf(item.level/size)+1)*size)
- return AABB(lo,hi-lo)
-func allows_edit(bounds:AABB) -> bool:
- for item:Dictionary in _lakes.values():
-  # Include sampling halo and complete owned regions, not just authored bounds.
-  if (item.volume!=null or not item.water_state.is_empty()) and item.owned_bounds.grow(item.spacing).intersects(bounds):
-   terrain.message_changed.emit("Finite lake protected: remove its water in Development > Water before reshaping this basin.");return false
- return true
-func _invalidate(bounds:AABB) -> void:
- for item:Dictionary in _lakes.values():
-  if item.bounds.intersects(bounds) and item.volume==null:item.builder=null;item.dirty=true
-func _process(_delta:float) -> void:
- if not is_instance_valid(terrain):return
- if _epoch!=terrain.epoch:_epoch=terrain.epoch
- var ids:=_lakes.keys()
- for index in ids.size():
-  _surface_cursor=(_surface_cursor+1)%ids.size()
-  var item:Dictionary=_lakes[ids[_surface_cursor]]
-  var state:Dictionary=item.scene.statistics()
-  if item.volume!=null and not state.ready and state.status!=0 and not state.retiring:
-   item.scene.begin_publish(item.volume,_material);item.scene.set_process(false);state=item.scene.statistics()
-  if state.status==0 or state.retiring:
-   item.scene.advance(2048);break # Shared soft 2ms budget / at most one regional upload.
- if _busy_id!=0 or not terrain.world_ready or terrain.pending_edit:return
- for id:int in _lakes:
-  var item:Dictionary=_lakes[id]
-  if not item.dirty:continue
-  if item.builder==null or item.revision!=terrain.published_revision:
-   item.builder=ClassDB.instantiate("NativeWaterRuntime")
-   if not item.builder.configure(item.origin,item.cells,item.spacing,item.level,item.seed,item.water_state):
-    item.failure="Lake exceeds finite water bounds";item.builder=null;item.dirty=false;catalog_changed.emit();lake_failed.emit(id,-2);return
-   item.revision=terrain.published_revision
-  _token=item.builder.get_instance_id()
-  if terrain.request_lake_slice(item.builder,_token):_busy_id=id
-  return
-func _slice_ready(token:int,status:int,epoch_id:int,revision:int) -> void:
- if token!=_token or _busy_id==0:return
- var id:=_busy_id;_busy_id=0
- if _discard_completion:_discard_completion=false;return
- if not _lakes.has(id):return
+ if not _lakes.has(id) or _filling_id!=0:return
  var item:Dictionary=_lakes[id]
- if item.builder==null or epoch_id!=terrain.epoch or revision!=terrain.published_revision or terrain.pending_edit or status==-4:item.builder=null;return
+ water.remove_bounds(AABB(item.origin,Vector3(item.cells)*item.spacing))
+ _lakes.erase(id);terrain.changed_since_save=true;catalog_changed.emit()
+func clear() -> void:
+ _lakes.clear();_filling_id=0;_pending_bucket.clear();_pending_dev.clear()
+ for mesh:MeshInstance3D in _meshes.values():mesh.queue_free()
+ _meshes.clear();water=ClassDB.instantiate("NativeRegionalWater");_builder=null
+ _have_bounds=false;_last_changes=0
+func _invalidate(bounds:AABB) -> void:
+ water.invalidate(bounds)
+ _builder=null
+func _process(delta:float) -> void:
+ if terrain==null or not terrain.world_ready or terrain.pending_edit:return
+ if _epoch!=terrain.epoch:_epoch=terrain.epoch;_builder=null
+ var before:Dictionary=water.statistics()
+ if _filling_id!=0 and not before.fill_active:
+  var id:=_filling_id;_filling_id=0
+  if _lakes.has(id):_lakes[id].dirty=false;lake_ready.emit(id);catalog_changed.emit()
+ if _filling_id==0:
+  for item:Dictionary in _lakes.values():
+   if not item.dirty:continue
+   if water.begin_fill(AABB(item.origin,Vector3(item.cells)*item.spacing),item.level,item.seed,item.amount):_filling_id=item.id
+   else:item.dirty=false;item.failure="Water authoring bounds unavailable";lake_failed.emit(item.id,-2);catalog_changed.emit()
+   break
+ # Prepare during loading, but do not advance an already restored moving world
+ # while the player is waiting for its meshes and collision.
+ if _filling_id!=0 or not get_parent().get("loading_active"):water.advance(2048)
+ if not _busy:
+  var request:Dictionary=water.next_request()
+  if not request.is_empty():
+   if _builder==null or _revision!=terrain.published_revision:
+    _builder=ClassDB.instantiate("NativeWaterTerrainPatch");_builder.configure(request.coordinate);_revision=terrain.published_revision
+   _token=_builder.get_instance_id()
+   if terrain.request_lake_slice(_builder,_token):_busy=true
+ if not _pending_bucket.is_empty():
+  var p:=_pending_bucket
+  var result:Dictionary=water.transfer_litre(p.from,p.to,p.pour,p.inventory,p.slot,p.revision)
+  if result.ok or not result.pending or Time.get_ticks_msec()>p.deadline:
+   _pending_bucket={}
+   if result.ok:terrain.changed_since_save=true;bucket_completed.emit(p.slot)
+   terrain.message_changed.emit(result.reason)
+ if not _pending_dev.is_empty():
+  var p:=_pending_dev
+  if water.brush(p.point,0.0,p.amount)>0:terrain.changed_since_save=true;_pending_dev={}
+  elif Time.get_ticks_msec()>p.deadline:_pending_dev={};terrain.message_changed.emit("Aim the water brush into open space above terrain")
+ # Share a 1 ms presentation target and at most four small regional uploads.
+ var mesh_started:=Time.get_ticks_usec()
+ for publication in 4:
+  var update:Dictionary=water.next_mesh()
+  if update.is_empty():break
+  else:
+   var coordinate:Vector3i=update.coordinate
+   if not _meshes.has(coordinate):
+    var node:=MeshInstance3D.new();node.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_OFF;node.material_override=_material;add_child(node);_meshes[coordinate]=node
+   var mesh:MeshInstance3D=_meshes[coordinate]
+   if update.vertices==0:mesh.mesh=null
+   else:
+    var geometry:=ArrayMesh.new();geometry.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES,update.arrays);mesh.mesh=geometry
+   var bounds:=AABB(Vector3(coordinate)*4,Vector3(4,4,4))
+   _changed_bounds=_changed_bounds.merge(bounds) if _have_bounds else bounds;_have_bounds=true
+  if Time.get_ticks_usec()-mesh_started>=1000:break
+ var after:Dictionary=water.statistics()
+ if after.capacity_reached and not _capacity_reported:
+  _capacity_reported=true;terrain.message_changed.emit("Water resident-region limit reached; quantities retained, expansion paused")
+ if after.changes!=_last_changes:terrain.changed_since_save=true;_last_changes=after.changes
+ _notify_seconds+=delta
+ if _have_bounds and _notify_seconds>=0.25:
+  _notify_seconds=0;_have_bounds=false;exclusion_changed.emit(_changed_bounds)
+func _slice_ready(token:int,status:int,epoch_id:int,revision:int) -> void:
+ if token!=_token:return
+ _busy=false
+ if _builder==null or epoch_id!=terrain.epoch or revision!=terrain.published_revision or terrain.pending_edit or status==-4:_builder=null;return
  if status==0:return
- item.dirty=false
- if status!=1:
-  item.failure=item.builder.statistics().error;item.builder=null;catalog_changed.emit();lake_failed.emit(id,status);return
- item.volume=item.builder.get_network();item.water_state=item.volume.capture_state();item.builder=null
- item.scene.begin_publish(item.volume,_material);item.scene.set_process(false)
- catalog_changed.emit();lake_ready.emit(id);exclusion_changed.emit(item.bounds)
-func placement_mask(transforms:Array[Transform3D]) -> PackedByteArray:
- var volumes:Array=[]
- for item:Dictionary in _lakes.values():
-  if item.volume!=null:volumes.append(item.volume)
- return _catalog.placement_mask(volumes,transforms) if _catalog!=null else PackedByteArray()
-func depth_at(point:Vector3) -> float:
- var depth:=0.0
- for item:Dictionary in _lakes.values():
-  if item.volume!=null:depth=maxf(depth,float(item.volume.probe(point).get("depth_m",0.0)))
- return depth
+ if status==1:water.accept_patch(_builder)
+ else:terrain.message_changed.emit("Water terrain sampling failed; quantities retained")
+ _builder=null
 func bucket(from:Vector3,to:Vector3,pour:bool,inventory:RefCounted,slot:int,revision:int) -> Dictionary:
- if not terrain.world_ready or terrain.pending_edit:return {"ok":false,"reason":"Wait for terrain to finish loading"}
- for item:Dictionary in _lakes.values():
-  if item.volume==null:continue
-  var hit:Dictionary=item.volume.ray_probe(from,to,not pour)
-  if hit.is_empty():continue
-  if not item.volume.transfer_litre(hit.point,pour,inventory,slot,revision):return {"ok":false,"reason":"Bucket full / empty, or less than one litre can be transferred"}
-  item.scene.refresh();item.scene.begin_publish(item.volume,_material);item.scene.set_process(false)
-  item.water_state=item.volume.capture_state();terrain.changed_since_save=true
-  exclusion_changed.emit(item.bounds);catalog_changed.emit()
-  return {"ok":true,"reason":"Poured 1 L" if pour else "Scooped 1 L"}
- return {"ok":false,"reason":"Aim within reach at water or inside an existing lake basin"}
+ if not terrain.world_ready or terrain.pending_edit:return {"ok":false,"reason":"Wait for the terrain edit to finish"}
+ var result:Dictionary=water.transfer_litre(from,to,pour,inventory,slot,revision)
+ if result.pending:_pending_bucket={"from":from,"to":to,"pour":pour,"inventory":inventory,"slot":slot,"revision":revision,"deadline":Time.get_ticks_msec()+5000}
+ if result.ok:terrain.changed_since_save=true
+ return result
+func dev_brush(point:Vector3,remove:bool,radius:float=2.0) -> void:
+ if terrain.pending_edit:return
+ if remove:water.brush(point,radius,-0x10000000000000);terrain.changed_since_save=true
+ elif water.brush(point,0.0,1000000)==0:_pending_dev={"point":point,"amount":1000000,"deadline":Time.get_ticks_msec()+5000}
+ else:terrain.changed_since_save=true
+func placement_mask(transforms:Array[Transform3D]) -> PackedByteArray:return water.placement_mask(transforms)
+func depth_at(point:Vector3) -> float:return water.depth_at(point)
 func statistics() -> Dictionary:
- var ready:=0;var amount:=0
+ var s:Dictionary=water.statistics();s.lakes=_lakes.size();s.ready=0;s.outstanding_slices=int(_busy);s.resident_occupancy_bytes=s.resident_cell_bytes
  for item:Dictionary in _lakes.values():
-  if item.volume!=null:ready+=1;amount+=int(item.volume.statistics().owned_ml)
- return {"lakes":_lakes.size(),"ready":ready,"resident_occupancy_bytes":0,"outstanding_slices":int(_busy_id!=0),"water_ml":amount}
+  if not item.dirty and item.failure.is_empty():s.ready+=1
+ s.render_ready=s.dirty_meshes==0 and s.pending_regions==0 and not s.fill_active
+ return s
 func descriptions() -> Array[Dictionary]:
  var rows:Array[Dictionary]=[]
- for id:int in _lakes:
-  var item:Dictionary=_lakes[id]
-  rows.append({"id":id,"state":"Baking" if item.dirty else "Ready" if item.volume!=null else "Failed","reason":item.failure,"level":item.level,"origin":item.origin})
+ for item:Dictionary in _lakes.values():rows.append({"id":item.id,"state":"Preparing" if item.dirty else "Ready" if item.failure.is_empty() else "Failed","reason":item.failure,"level":item.level,"origin":item.origin})
  return rows
 func retry_lake(id:int) -> bool:
  if not _lakes.has(id) or _lakes[id].dirty:return false
- for other:int in _lakes:
-  if other!=id and _lakes[other].owned_bounds.intersects(_lakes[id].owned_bounds):return false
- _lakes[id].builder=null;_lakes[id].dirty=true;_lakes[id].failure="";catalog_changed.emit();return true
+ if _lakes[id].failure.is_empty():return false
+ _lakes[id].dirty=true;_lakes[id].failure="";return true

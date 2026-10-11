@@ -1,0 +1,20 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+[TerrainRewrite] New world
+[TerrainRewrite] New world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+PASS Normal combined world loads
+PASS World terrain supplies lake location
+PASS Ordinary lake authoring uses shallow elongated excavation
+[TerrainRewrite] Mined resources added to inventory
+[TerrainRewrite] Lake ready · F5 saves world
+PASS Actual world water builds and publishes
+COLD_STATS { "water_ml": 514832000, "active_cells": 0, "regions": 48, "pending_regions": 0, "dirty_meshes": 0, "fill_active": false, "fill_remaining_ml": -1, "sampled_nodes": 34992, "cache_hits": 0, "cell_steps": 4873, "changes": 4873, "step_us": 0, "max_step_us": 1008, "mesh_us": 10, "max_mesh_us": 253, "capacity_reached": false, "resident_cell_bytes": 295296, &"lakes": 1, &"ready": 1, &"outstanding_slices": 0, &"resident_occupancy_bytes": 295296, &"render_ready": true }
+PASS Lake is visibly filled and swimming query is wet
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Bucket · 0/10 L
+PASS Gameplay equips normal bucket
+INPUT_STATE false 401 true 0 401
+FAIL Real bucket left-click conserves lake + inventory water
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+REGIONAL_WATER_WORLD failures=1

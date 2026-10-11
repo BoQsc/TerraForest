@@ -263,6 +263,9 @@ func _ready() -> void:
 	ground_interaction.cover=ground_cover
 	ground_interaction.scene_ray=func(from: Vector3,to: Vector3):return structures.blocks.raycast_scene(from,to,7,[player.get_rid()])
 	ground_interaction.changed.connect(func():terrain.changed_since_save=true;player_hud.refresh())
+	lakes.bucket_completed.connect(func(slot:int):
+		if player_hud.active_slot==slot:player_hud.equip_inventory(slot);tool_view.swing()
+		else:player_hud.refresh())
 	lakes.name = "Lakes"
 	lakes.terrain = terrain
 	add_child(lakes)
@@ -438,10 +441,12 @@ func create_lake(point: Vector3) -> int:
 	if terrain.pending_edit or not terrain.world_ready:
 		return 0
 	var center: Vector3 = point.floor()
-	var id: int = lakes.add_lake(center - Vector3(16,16,16), Vector3i(32,20,32), 1.0, center.y-3.0, center-Vector3(0,6,0))
+	var id: int = lakes.add_lake(center - Vector3(20,8,12), Vector3i(40,12,24), 1.0, center.y-0.75, center-Vector3(0,2,0))
 	if id == 0:
 		return 0
-	if not terrain.sculpt_sphere(center, 12.0):
+	var a:=center+Vector3(-6,1.5,0)
+	var b:=center+Vector3(6,1.5,0)
+	if not terrain.edit(Codec.brush(a,b,6.0,0,false,1),a,b):
 		lakes.remove_lake(id)
 		return 0
 	return id
@@ -1285,3 +1290,12 @@ func _place_combined_prefab(asset: Resource,target: Vector3i,rotation: int) -> b
 func _prefab_placement_text(asset: Resource) -> String:
 	var attached: bool=not construction_inventory.prefab_transaction.model_counts(asset).is_empty()
 	return "%s placed - F5 saves%s" % [asset.resource_name,"; combined undo unavailable" if attached else ""]
+
+# Cached water surfaces must be visible before entering the playable world.
+func _additional_loading_ready() -> bool:
+	if lakes.water==null:return false
+	var state:Dictionary=lakes.statistics()
+	if not state.render_ready or state.ready!=state.lakes:
+		loading_label.text+="\nPreparing water: %d cached regions, %d pending, %d surfaces"%[state.cache_hits,state.pending_regions,state.dirty_meshes]
+		return false
+	return true

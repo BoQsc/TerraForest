@@ -175,7 +175,7 @@ func edit(data: PackedByteArray, lo: Vector3, hi: Vector3, captured_us: int = 0,
 
 func request_lake_slice(builder: RefCounted, token: int) -> bool:
 	# Optional native addon protocol: terrain has no dependency on its renderer.
-	if builder == null or builder.get_class() not in ["NativeLakeVolume","NativeWaterRuntime"]:
+	if builder == null or builder.get_class() not in ["NativeLakeVolume","NativeWaterRuntime","NativeWaterTerrainPatch"]:
 		return false
 	if not world_ready or pending_edit or foreground_brush or stopping:
 		return false

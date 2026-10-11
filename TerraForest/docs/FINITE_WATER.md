@@ -1,3 +1,5 @@
+> Historical basin/network implementation notes. The playable world now uses the regional finite-volume path described in [WATER_GAMEPLAY.md](WATER_GAMEPLAY.md). Earlier passing basin fixtures do not qualify that replacement.
+
 # Finite volumetric water: required gameplay foundation
 
 User requirement, 2026-10-11: real manipulable volumetric water, efficient enough

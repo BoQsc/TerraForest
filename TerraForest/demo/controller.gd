@@ -354,6 +354,9 @@ func _begin_loading(reason: String) -> void:
 	_clear_motion()
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 
+func _additional_loading_ready() -> bool:
+	return true
+
 func _update_loading() -> void:
 	if not loading_active:
 		return
@@ -368,7 +371,7 @@ func _update_loading() -> void:
 	if terrain.latest_error != "":
 		loading_label.text = "Loading failed\n" + terrain.latest_error + "\nRead the startup log in reports."
 		return
-	if bool(state["ready"]) and not waiting_spawn:
+	if bool(state["ready"]) and not waiting_spawn and _additional_loading_ready():
 		loading_ready_frames += 1
 	else:
 		loading_ready_frames = 0

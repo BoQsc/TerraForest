@@ -1,0 +1,58 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] New world
+[TerrainRewrite] New world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+PASS Normal combined world loads
+PASS World terrain supplies lake location
+PASS Ordinary lake authoring uses shallow elongated excavation
+[TerrainRewrite] Mined resources added to inventory
+[TerrainRewrite] Lake ready · F5 saves world
+PASS Actual world water builds and publishes
+COLD_STATS { "water_ml": 514832000, "active_cells": 0, "regions": 48, "pending_regions": 0, "dirty_meshes": 0, "fill_active": false, "fill_remaining_ml": -1, "sampled_nodes": 34992, "cache_hits": 0, "cell_steps": 4873, "changes": 4873, "step_us": 0, "max_step_us": 933, "mesh_us": 29, "max_mesh_us": 151, "capacity_reached": false, "resident_cell_bytes": 295296, &"lakes": 1, &"ready": 1, &"outstanding_slices": 0, &"resident_occupancy_bytes": 295296, &"render_ready": true }
+PASS Undisturbed lake sleeps with no active water cells
+PASS Sleeping lake performs zero flow cell steps
+PASS Lake is visibly filled and swimming query is wet
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Bucket · 0/10 L
+PASS Gameplay equips normal bucket
+INPUT_STATE false 401 true 2 401
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Bucket · 1/10 L
+[TerrainRewrite] Scooped 1 L
+PASS Real bucket left-click conserves lake + inventory water
+PASS Stale bucket action cannot remove or create water
+PASS Mine a separate hole outside lake definitions
+PASS Separate hole terrain edit publishes
+[TerrainRewrite] Preparing water at this location
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Bucket · 0/10 L
+[TerrainRewrite] Poured 1 L
+PASS Real right-click creates water outside lake with exact bucket debit
+PASS Future outlet starts dry
+PASS Mining beside filled water is accepted through ordinary terrain path
+[TerrainRewrite] Mined resources added to inventory
+PASS Outlet terrain edit publishes
+PASS Water flows into mined outlet in actual world
+PASS Mining and flowing conserve every millilitre
+PASS Flowing outlet receives a visible regional mesh within 2 seconds
+PASS Snapshot validates quantities and cached occupancy
+PASS Snapshot rejects inconsistent total quantity
+PASS Snapshot rejects truncated cache without replacing live state
+PASS Fixture owns a disposable real saved world
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+PASS Normal world save publishes terrain, water cache and bucket together
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+[TerrainRewrite] World loaded
+[TerrainRewrite] World loaded
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+PASS Saved combined world reopens
+PASS Saved outlet surface republishes within 2 seconds
+PASS Disk reopening preserves world and bucket quantity
+REOPEN_STATS { "water_ml": 514832000, "active_cells": 1527, "regions": 92, "pending_regions": 0, "dirty_meshes": 46, "fill_active": false, "fill_remaining_ml": -1, "sampled_nodes": 21141, "cache_hits": 63, "cell_steps": 364288, "changes": 926016, "step_us": 1022, "max_step_us": 1057, "mesh_us": 6, "max_mesh_us": 231, "capacity_reached": false, "resident_cell_bytes": 565984, &"lakes": 1, &"ready": 1, &"outstanding_slices": 0, &"resident_occupancy_bytes": 565984, &"render_ready": false }
+FAIL Warm water load reuses occupancy: zero terrain samples
+PASS Mined outlet remains wet after reopening
+PASS Developer water brush removes water locally
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+REGIONAL_WATER_WORLD failures=1

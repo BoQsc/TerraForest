@@ -21,8 +21,8 @@ func _process(_delta:float) -> void:
   for entry in game.lakes.descriptions():
    if entry.id!=lake_id:continue
    if entry.state=="Failed":game._show_lake_notice(entry.reason);queue_free();return
-   if entry.state=="Ready" and game.lakes._lakes[entry.id].scene.statistics().ready:
-    game.player.global_position=center+Vector3(0,-2.4,11.5);game.needs_floor_spawn=false;game.fly=false;game.yaw=0;game.pitch=-0.8;game.player.rotation.y=0;game.camera.rotation.x=game.pitch;game._clear_motion()
+   if entry.state=="Ready" and game.lakes.statistics().render_ready:
+    game.player.global_position=center+Vector3(0,1.0,8.0);game.needs_floor_spawn=false;game.fly=false;game.yaw=0;game.pitch=-0.8;game.player.rotation.y=0;game.camera.rotation.x=game.pitch;game._clear_motion()
     game.player_hud.equip_item(401);game.terrain.save_world()
     game._show_lake_notice("Finite lake ready · Bucket: left scoop 1 L / right pour 1 L · Esc: Save world")
     queue_free();return
