@@ -17,7 +17,7 @@ Statuses below distinguish **integrated partial** (usable but coverage gates rem
 | New combined project and independently usable addons | Integrated partial: terrain, forest and companion addons; source projects preserved | Verify documented dependencies, addon isolation and supported Windows build/install paths; retain a full support matrix |
 | Volumetric terrain, large caves and mountains | Integrated partial: editable terrain and seeded generation paths | Generate and traverse representative above/below-ground regions; mine nearby and after travel with visual and collision correctness, save and reload |
 | Underground materials and veins | Integrated partial: seeded geology and excavation accounting | Demonstrate discoverable material variation, correct appearance/rewards and reproducibility after reload in the playable world |
-| Volumetric water and lakes | Integrated partial: static connected occupancy, edit rebakes, saved definitions, basic swimming/underwater feedback and generator 4 lake placement | Qualify generated-lake readiness and combined rendering, add versioned bake reuse, and test shoreline/cave occupancy, editing and reload; explicitly retain static-basin limits |
+| Volumetric water and lakes | Integrated partial: static connected occupancy, edit rebakes, saved definitions, versioned bake reuse, basic swimming, generator 4 lakes and development lake controls | Resolve cold four-lake readiness failure (2/4 at 30 seconds); qualify combined rendering, shoreline/cave editing and reload; retain static-basin limits and human UI checkpoint |
 | Asphalt roads | Integrated partial: native grading/paving and connected street authoring | Drive connected roads across loaded region boundaries, edit/save/reload them, and verify terrain, buildings and vegetation remain consistent |
 | Block shapes, prefabs and static model objects | Integrated partial: cubes, slabs, stairs, slopes, posts, spheres, placement/transforms/history and persistence | Author a usable building with interior objects and access features; verify selection, collisions, undo where supported, and persistence through travel |
 | Large buildings, towns and cities | Integrated partial: house/tower examples and native connected multi-street settlement authoring | Implement a reproducible settlement generation/authoring workflow with connected roads, supported buildings and usable interiors; measure representative detailed structures, not just empty shells |
@@ -153,9 +153,15 @@ multistorey connectivity and combined population performance remain open. Human
 actor usability feedback remains separate. Do not expand populations based on
 these checks alone.
 
-Next: reassess water/lake completeness and settlement generation with usable
-interiors against the coverage register, then implement the next missing first-round
-path. Retain actor limits for M3/M4 rather than indefinitely extending navigation.
+Water coverage review confirmed cache/occupancy/swimming paths already exist.
+Development now has a unified Water page for lifecycle status, retry and water-only
+removal. Functional checks pass, but both cold generated-world checks had only two
+of four lakes ready at 30 seconds. See [lake editor evidence](evidence/lake_editor/README.md).
+
+Next: bounded attribution of lake slice wait/execution versus terrain mesh work
+around that startup gap, preserving edit and current-player loading priority. Keep
+the failing readiness gate; do not expand fluid scope or repeat unchanged runs.
+Settlement interiors and the rest of the coverage register remain open.
 No multiplayer implementation, large-city certification or sustained-performance
 claim follows from the current integration checks.
 

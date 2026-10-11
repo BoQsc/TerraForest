@@ -174,3 +174,15 @@ Mining grants Stone, Iron ore, Copper ore and Topsoil directly when the terrain 
 Dropped stacks use 22 baked, single-surface item meshes from the icon baker, including stone, ores and topsoil. Existing native spatial stores and MultiMesh rendering remain in charge: no per-drop nodes, live baking, animations or rigid bodies. Tools retain their wear when dropped. Simple hands appear in an empty slot and animate on the common attack path.
 
 The developer overlay does not own Space: jumping remains available while Alt exposes the mouse, and releasing Alt clears keyboard focus and closes option popups. See [gameplay item evidence](evidence/gameplay_items/README.md).
+
+
+## Water editing
+
+In development mode (~), open Escape > Water, or choose World tools on the
+development belt and click Water / lakes while holding Alt. The page lists each
+lake's Ready, Baking or Failed state and its water elevation. Carve lake at aim
+uses the existing terrain carving action. Remove water deletes only that water
+definition and its published volume, leaving carved terrain unchanged. Save world
+to retain the removal. Failed bakes show a reason and Retry bake; repair the terrain
+first if the basin is open or its seed is blocked. These are static basins, not
+flowing fluids. The page and mutation actions are unavailable in gameplay mode.

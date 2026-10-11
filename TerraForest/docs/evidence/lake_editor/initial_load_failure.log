@@ -1,0 +1,19 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+SCRIPT ERROR: Parse Error: Could not preload resource script "res://addons/volumetric_water/lake_world.gd".
+   at: GDScript::reload (res://demo/world.gd:4)
+   GDScript backtrace (most recent call first):
+       [0] run (res://tests/lake_editor.gd:9)
+SCRIPT ERROR: Parse Error: Could not resolve script "res://addons/volumetric_water/lake_world.gd".
+   at: GDScript::reload (res://demo/world.gd:4)
+   GDScript backtrace (most recent call first):
+       [0] run (res://tests/lake_editor.gd:9)
+ERROR: Failed to load script "res://demo/world.gd" with error "Parse error".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+   GDScript backtrace (most recent call first):
+       [0] run (res://tests/lake_editor.gd:9)
+SCRIPT ERROR: Invalid assignment of property or key 'background_fps' with value of type 'int' on a base object of type 'Node3D'.
+   at: run (res://tests/lake_editor.gd:9)
+   GDScript backtrace (most recent call first):
+       [0] run (res://tests/lake_editor.gd:9)

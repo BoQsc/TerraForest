@@ -71,6 +71,7 @@ Esc opens the complete road editor.")
 		7:
 			button("Flight on / off",game.session_menu.toggle_flight)
 			button("Save world",game.session_menu.save_world)
+			button("Water / lakes",func():game.session_menu.show_page("Water"))
 			button("World / generation settings",func():game.session_menu.show_page("Development"))
 		_:
 			label("No development tool selected.")

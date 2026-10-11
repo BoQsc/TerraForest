@@ -1,6 +1,7 @@
 extends Node3D
 ## Thin scene/worker orchestration. Density sampling, flood fill, mesh generation
 ## and occupancy queries are C++. One bounded worker slice is outstanding.
+signal catalog_changed
 signal lake_ready(id: int)
 signal lake_failed(id: int, status: int)
 signal exclusion_changed(bounds: AABB)
@@ -91,7 +92,8 @@ func _install_lake(id: int, origin: Vector3, cells: Vector3i, spacing: float, le
 	add_child(mesh)
 	_lakes[id] = {"origin": origin, "cells": cells, "spacing": spacing, "level": level, "seed": seed,
 		"bounds": builder.bounds(), "builder": builder, "volume": null, "mesh": mesh,
-		"dirty": true, "revision": -1}
+		"dirty": true, "revision": -1, "failure": 0}
+	catalog_changed.emit()
 
 func remove_lake(id: int) -> void:
 	if not _lakes.has(id):
@@ -101,6 +103,7 @@ func remove_lake(id: int) -> void:
 	var bounds: AABB=_lakes[id]["bounds"]
 	_lakes[id]["mesh"].queue_free()
 	_lakes.erase(id)
+	catalog_changed.emit()
 	exclusion_changed.emit(bounds)
 
 func clear() -> void:
@@ -116,7 +119,9 @@ func _invalidate(bounds: AABB) -> void:
 			item["mesh"].mesh = null
 			item["builder"] = null
 			item["dirty"] = true
-	if changed: exclusion_changed.emit(bounds)
+	if changed:
+		exclusion_changed.emit(bounds)
+		catalog_changed.emit()
 
 func _process(_delta: float) -> void:
 	if not _available or not is_instance_valid(terrain):
@@ -128,6 +133,7 @@ func _process(_delta: float) -> void:
 			item["mesh"].mesh = null
 			item["builder"] = null
 			item["dirty"] = true
+		catalog_changed.emit()
 	if _busy_id != 0 or not terrain.world_ready or terrain.pending_edit:
 		return
 	for id: int in _lakes:
@@ -138,6 +144,8 @@ func _process(_delta: float) -> void:
 			var builder: RefCounted = ClassDB.instantiate("NativeLakeVolume")
 			if not builder.configure(item["origin"], item["cells"], item["spacing"], item["level"], item["seed"]):
 				item["dirty"] = false
+				item["failure"]=-1
+				catalog_changed.emit()
 				lake_failed.emit(id, -1)
 				return
 			item["builder"] = builder
@@ -166,6 +174,8 @@ func _slice_ready(token: int, status: int, epoch_id: int, revision: int) -> void
 	item["dirty"] = false
 	if status != 1:
 		item["builder"] = null
+		item["failure"]=status
+		catalog_changed.emit()
 		lake_failed.emit(id, status)
 		exclusion_changed.emit(item["bounds"])
 		return
@@ -177,6 +187,8 @@ func _slice_ready(token: int, status: int, epoch_id: int, revision: int) -> void
 		var mesh := ArrayMesh.new()
 		mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
 		item["mesh"].mesh = mesh
+	item["failure"]=0
+	catalog_changed.emit()
 	lake_ready.emit(id)
 	exclusion_changed.emit(item["bounds"])
 
@@ -211,3 +223,21 @@ func _exit_tree() -> void:
 			terrain.lake_slice_ready.disconnect(_slice_ready)
 		if terrain.region_invalidated.is_connected(_invalidate):
 			terrain.region_invalidated.disconnect(_invalidate)
+
+# Bounded editor-only metadata. Never inspect a worker-owned builder.
+func descriptions() -> Array[Dictionary]:
+	var rows: Array[Dictionary]=[]
+	for id: int in _lakes:
+		var item: Dictionary=_lakes[id]
+		var state: String="Baking" if item.dirty else "Ready" if item.volume!=null else "Failed"
+		var reason: String={-1:"Invalid definition",-2:"Seed is inside solid terrain",-3:"Basin opens beyond its bounds",-4:"Terrain changed"}.get(item.get("failure",0),"")
+		rows.append({"id":id,"state":state,"reason":reason if state=="Failed" else "","level":item.level,"origin":item.origin})
+	return rows
+
+func retry_lake(id: int) -> bool:
+	if not _lakes.has(id) or _lakes[id].dirty or not is_instance_valid(terrain) or not terrain.world_ready or terrain.pending_edit:return false
+	var item: Dictionary=_lakes[id]
+	if item.volume!=null:return false
+	item.builder=null;item.dirty=true;item.failure=0
+	catalog_changed.emit()
+	return true

@@ -61,3 +61,15 @@ See [initial water validation](../../docs/WATER_VALIDATION.md) and [native recta
 
 
 NativeLakeVolume now exposes capture_bake(identity) and restore_bake(bytes, identity). Version 1 retains occupancy plus shoreline vertices/indices, reconstructing normals, UVs and the column exclusion index. Identity must be a caller-derived 32-byte digest covering terrain content, lake definition and implementation version; a runtime revision alone is insufficient. Decode is bounded to 6 MiB, validates dimensions/finite coordinates/indices/occupancy and checks a corruption checksum before publishing. Restore requires a fresh or identically configured unsampled instance and rejection leaves it reusable. The terrain worker derives identity from native local terrain content keys, the full lake definition and terrain/water binary fingerprints. Lake files share the 512 MiB derived cache quota and atomic publication policy. Up to 16 completed bakes / 16 MiB may wait for accounting; cache failure falls back to baking. This is rebuildable local data, not a network trust boundary. Cold, fresh-process warm and corrupt-entry fallback checks cover four generated lakes. Windows binaries are fingerprinted; other platforms currently fall back to baking. Cache I/O and identity queries are worker-owned but not individually time-sliced; maximum-size latency and eviction policy remain open. Test: tests/water_bake.gd; clean release: python tools/test_native_release.py --addon volumetric_water --test water_bake.
+
+
+## Optional development UI
+
+`lake_editor.gd` is a bounded, event-driven integration with TerraForest's session
+menu; it is not required by NativeLakeVolume. Escape > Water (development mode)
+shows lifecycle state, failed-bake reasons, retry and water-only removal. The World
+tool HUD links to the same page. `LakeWorld.catalog_changed`, `descriptions()` and
+`retry_lake(id)` expose metadata and controlled retry without reading worker-owned
+builders. Retries retain persistent IDs/definitions and cannot duplicate pending or
+ready work. Existing compound snapshots retain edits; terrain carving is unaffected
+by removing a definition. No new native or per-frame simulation path is introduced.

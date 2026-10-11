@@ -1,0 +1,9 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS new lake reports baking and rejects duplicate work
+PASS real blocked-seed bake exposes actionable failure
+PASS retry waits for terrain publication
+PASS retry retains authoritative definition and identity
+PASS retry publishes valid native volume
+PASS removal during bake discards late completion
+LAKE_EDITOR_LIFECYCLE failures=0

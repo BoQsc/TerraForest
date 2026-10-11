@@ -45,7 +45,7 @@ func _ready() -> void:
 	mode_label=label(root,"")
 	var columns:=HBoxContainer.new();columns.size_flags_vertical=Control.SIZE_EXPAND_FILL;columns.add_theme_constant_override("separation",24);root.add_child(columns)
 	var sidebar:=VBoxContainer.new();sidebar.custom_minimum_size.x=240;columns.add_child(sidebar)
-	for title in ["Session","Toolbelt","Building","Objects","Vegetation","Development","Roads"]:
+	for title in ["Session","Toolbelt","Building","Objects","Vegetation","Development","Roads","Water"]:
 		navigation[title]=button(sidebar,title,show_page.bind(title))
 	button(sidebar,"Inventory / crafting",open_inventory)
 	button(sidebar,"Return to world",func():set_open(false))
@@ -72,6 +72,7 @@ func _ready() -> void:
 	label(nature,"Plants and stones").add_theme_font_size_override("font_size",22)
 	label(nature,"E gathers reachable ground cover with empty hands or any tool. Select an owned stack below to place it; right mouse plants/places one. Development permits free placement.")
 	for i in game.player_hud.GroundCatalog.COUNT:button(nature,game.player_hud.GroundCatalog.NAMES[i],choose_plant.bind(i))
+	var water_editor=preload("res://addons/volumetric_water/lake_editor.gd").new();water_editor.game=game;page("Water").add_child(water_editor)
 	dev_box=page("Development")
 	label(dev_box,"Editor controls - separate from inventory").add_theme_font_size_override("font_size",22)
 	label(dev_box,"Choose a terrain brush here. Building and Objects open the full editor palettes; Roads retains grading and street controls. None of these controls occupies an inventory slot.")
@@ -97,7 +98,7 @@ func _ready() -> void:
 	button(dev_box,"Return to gameplay",toggle_developer)
 	message=label(root,"")
 	confirmation=ConfirmationDialog.new();confirmation.confirmed.connect(func():pending_action.call());add_child(confirmation)
-	game.terrain.save_completed.connect(func(ok: bool):message.text="World saved" if ok else "Save failed; check world status")
+	game.terrain.save_completed.connect(func(ok: bool):message.text="World saved" if ok else "Temporary world; changes are not saved" if game.temporary_world else "Save failed; check world status")
 	game.player_hud.actions_requested.connect(func():set_open(true))
 	game.player_hud.developer_tool_requested.connect(activate_developer_slot)
 	game.player_hud.developer_belt=developer;game.player_hud.refresh()
@@ -122,7 +123,7 @@ func set_open(value: bool) -> void:
 	if value:current_page="Session"
 	refresh();sync_panels()
 func show_page(title: String) -> void:
-	if title in ["Development","Roads"] and not developer:return
+	if title in ["Development","Roads","Water"] and not developer:return
 	if title in ["Building","Objects","Roads"]:
 		if not ready_to_dock:return
 		if game.world_vehicle.driving:message.text="Exit the vehicle before choosing building tools.";return
@@ -147,7 +148,7 @@ func refresh() -> void:
 	mode_label.text=("DEVELOPMENT / free authoring" if developer else "GAMEPLAY / items and material costs")+"    |    Headlamp: "+("on" if game.headlamp.visible else "off")
 	mode_button.text="Return to gameplay" if developer else "Enter development (~)"
 	fly_button.text="Flight: "+("on" if game.fly else "off")
-	for title in ["Development","Roads"]:navigation[title].visible=developer
+	for title in ["Development","Roads","Water"]:navigation[title].visible=developer
 	for title in navigation:navigation[title].modulate=Color(0.65,1,0.8) if title==current_page else Color.WHITE
 	inventory_button.disabled=game.world_vehicle.driving
 	var state: Dictionary=game.player_hud.inventory.snapshot()

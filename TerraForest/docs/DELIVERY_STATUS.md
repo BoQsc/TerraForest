@@ -2607,3 +2607,18 @@ and screenshots: `docs/evidence/actor_settlement_navigation`. Worst-case stair-e
 query bound rises from 24 to 33; flat path and shared scheduler unchanged. One actor
 and one furnished cottage route are covered, not crowds or arbitrary city interiors.
 Resume the wider first-round coverage plan with water/lake and settlement gaps.
+
+
+### 2026-10-11: usable lake management with startup failure retained
+
+Added development-only Water page and World tools HUD link: carve, Ready/Baking/
+Failed state, specific failure reasons, controlled retry and water-only removal.
+Metadata refresh is event-driven and bounded to sixteen definitions. Six native-
+backed lifecycle checks and eight main-world functional checks pass; removal leaves
+terrain revision unchanged, catalog restoration retains IDs, gameplay denies UI
+mutations. Visual review fixed a misleading temporary-world Save failed message.
+The overall graphical test remains failing: two cold runs had only 2/4 lakes ready
+at 30 s. Final telemetry reports ready at 3.699/11.733 s, one pending slice and four
+queued jobs with mesh work active. Evidence: docs/evidence/lake_editor. No water
+readiness, frame-time, full persistence or human acceptance closure. Next inspect
+slice/mesh scheduling attribution for this retained gate before changing priorities.
