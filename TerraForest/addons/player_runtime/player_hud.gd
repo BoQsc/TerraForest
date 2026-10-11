@@ -19,7 +19,7 @@ class GroundCatalog:
 	const ITEMS: Array[int]=[201,204,205,206,207,208,209,210]
 	const COSTS: Array[int]=[201,204,205,206,207,208,209,102]
 	const NAMES: Array[String]=["Stone","Fern","Grass clump","White wildflower","Golden wildflower","Violet wildflower","Low bush","Dry twigs"]
-const RESOURCES: Dictionary={201:"Stone",202:"Iron ore",203:"Copper ore",204:"Plant",205:"Grass clump",206:"White wildflower",207:"Golden wildflower",208:"Violet wildflower",209:"Low bush",210:"Dry twigs",211:"Topsoil",301:"Woven hood",302:"Woven vest",303:"Woven footwraps"}
+const RESOURCES: Dictionary={201:"Stone",202:"Iron ore",203:"Copper ore",204:"Plant",205:"Grass clump",206:"White wildflower",207:"Golden wildflower",208:"Violet wildflower",209:"Low bush",210:"Dry twigs",211:"Topsoil",301:"Woven hood",302:"Woven vest",303:"Woven footwraps",401:"Bucket · 0/10 L",402:"Bucket · 1/10 L",403:"Bucket · 2/10 L",404:"Bucket · 3/10 L",405:"Bucket · 4/10 L",406:"Bucket · 5/10 L",407:"Bucket · 6/10 L",408:"Bucket · 7/10 L",409:"Bucket · 8/10 L",410:"Bucket · 9/10 L",411:"Bucket · 10/10 L"}
 const GROUND_ITEMS: Dictionary={201:0,204:1,205:2,206:3,207:4,208:5,209:6,210:7}
 var ground_tools_enabled:=false
 const STARTER_MATERIAL_COUNT:=64
@@ -109,6 +109,7 @@ func prepare() -> bool:
 		if not inventory.grant_items(supplies,inventory.snapshot().revision).ok:
 			inventory=null
 			return false
+	inventory.grant(401,1,inventory.snapshot().revision)
 	default_loadout=inventory.capture_storage_snapshot()
 	return true
 
@@ -201,6 +202,7 @@ func refresh() -> void:
 	deliver_mining_rewards()
 	if action_hint!=null:
 		action_hint.text=editor_hint if not editor_hint.is_empty() else {0:"Empty hands | Left mouse: punch / dig | E interact",1:"Pickaxe | Hold left mouse: attack / dig | Best against stone",2:"Hatchet | Hold left mouse: attack / dig | Best against wood",3:"Building hammer | Right mouse: build | Left mouse: attack | Esc: shape, material, rotation",4:"Assembly tool | Right mouse: place | Left mouse: attack | Esc: object and transform settings"}.get(active_item,"Holding "+MATERIALS.get(active_item,RESOURCES.get(active_item,"item"))+(" | Right mouse: place | G drop" if active_item in MATERIALS or active_item in GROUND_ITEMS else " | G drop | E interact"))
+		if active_item>=401 and active_item<=411 and not developer_belt:action_hint.text="Bucket · %d/10 L | Left mouse: scoop 1 L | Right mouse: pour 1 L | G drop"%(active_item-401)
 	if mode_hint!=null:mode_hint.text="1–9 / 0"+" / Wheel equip · Tab inventory · Esc menu · "+("Gameplay" if gameplay_construction else "Development")
 	var latest: Dictionary=inventory.snapshot()
 	var inventory_changed_since_view: bool=latest.revision!=state.get("revision",-1)

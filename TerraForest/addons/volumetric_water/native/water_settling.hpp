@@ -11,6 +11,7 @@ namespace terraforest {
 // Geometry supplies cumulative storage profiles and verified spill connections.
 class NativeWaterSettling : public godot::RefCounted {
     friend class NativeWaterRemapPlan;
+    friend class NativeWaterNetwork;
     GDCLASS(NativeWaterSettling,godot::RefCounted)
     struct Node {
         int parent=-1,left=-1,right=-1,entry=-1,merge=0;

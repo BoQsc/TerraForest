@@ -3,7 +3,7 @@ extends Node3D
 signal changed
 ## Scene orchestration only: native stores, spatial queries and batched rendering.
 ## Static authored supplies; no per-pickup nodes or active rigid bodies.
-const ITEMS := {1:"Pickaxe",2:"Hatchet",3:"Building hammer",4:"Assembly tool",101:"Brick",102:"Wood",103:"Concrete",104:"Metal",201:"Stone",202:"Iron ore",203:"Copper ore",204:"Plant",205:"Grass clump",206:"White wildflower",207:"Golden wildflower",208:"Violet wildflower",209:"Low bush",210:"Dry twigs",211:"Topsoil",301:"Woven hood",302:"Woven vest",303:"Woven footwraps"}
+const ITEMS := {1:"Pickaxe",2:"Hatchet",3:"Building hammer",4:"Assembly tool",101:"Brick",102:"Wood",103:"Concrete",104:"Metal",201:"Stone",202:"Iron ore",203:"Copper ore",204:"Plant",205:"Grass clump",206:"White wildflower",207:"Golden wildflower",208:"Violet wildflower",209:"Low bush",210:"Dry twigs",211:"Topsoil",301:"Woven hood",302:"Woven vest",303:"Woven footwraps",401:"Water bucket"}
 const COLORS := {101: Color("b57052"), 102: Color("b99563"), 103: Color("b4bec4"), 104: Color("729da9"), 201: Color("7f858c"), 202: Color("965e43"), 203: Color("bc7950"), 204: Color("557538"), 205: Color("677e3e")}
 var stores: Dictionary = {}
 var stacks: Dictionary = {}
@@ -23,6 +23,7 @@ func drop_stack(inventory: RefCounted, slot: int, revision: int, point: Vector3,
 	if state.revision != revision or slot < 0 or slot >= state.slots.size():
 		return {"ok":false,"reason":"Inventory changed; select the supply again"}
 	var item: int = state.slots[slot].item
+	if item>=401 and item<=411:item=401
 	if not stores.has(item) or count<1 or state.slots[slot].count < count:
 		return {"ok":false,"reason":"Select a carried item to drop"}
 	# Native calls emit no callbacks. Reserve the world record before debiting;
@@ -50,6 +51,7 @@ func prepare(persistence: RefCounted) -> bool:
 	if not ClassDB.class_exists("NativeEntityRenderer"): return false
 	if not ClassDB.class_exists("NativePlayerInventory"):GDExtensionManager.load_extension("res://addons/player_runtime/player_runtime.gdextension")
 	var schema: RefCounted=ClassDB.instantiate("NativePlayerInventory")
+	for bucket_id in range(402,412):schema.register_item(bucket_id,1)
 	for item: int in ITEMS:
 		schema.register_item(item,1 if item<100 or item>=301 else 999)
 		if item in [1,2,3,4]:schema.register_durable(item,200)
@@ -62,7 +64,7 @@ func prepare(persistence: RefCounted) -> bool:
 		if not store.configure(4096): return false
 		stores[item] = store
 		if not persistence.register_component("pickups_%d" % item, store.capture_storage_snapshot, _restore.bind(item), store, store.capture_storage_snapshot()): return false
-		var mesh: Mesh=load("res://addons/player_runtime/art/drops/%d.res"%item)
+		var mesh: Mesh=preload("res://addons/volumetric_water/bucket_model.gd").mesh() if item==401 else load("res://addons/player_runtime/art/drops/%d.res"%item)
 		if mesh==null:return false
 		var renderer: MultiMeshInstance3D = ClassDB.instantiate("NativeEntityRenderer")
 		if not renderer.configure(store, mesh, 256):

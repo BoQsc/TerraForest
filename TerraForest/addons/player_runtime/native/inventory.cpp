@@ -6,6 +6,7 @@
 namespace terraforest {
 using namespace godot;
 void NativePlayerInventory::_bind_methods() {
+    ClassDB::bind_method(D_METHOD("exchange_bucket","slot","pour","revision"),&NativePlayerInventory::exchange_bucket);
     ClassDB::bind_method(D_METHOD("register_durable","item","maximum"),&NativePlayerInventory::register_durable);
     ClassDB::bind_method(D_METHOD("wear_tool","slot","amount","expected_revision"),&NativePlayerInventory::wear_tool);
     ClassDB::bind_method(D_METHOD("register_item","item","limit"),&NativePlayerInventory::register_item);
@@ -209,5 +210,13 @@ bool NativePlayerInventory::restore_storage_snapshot(const PackedByteArray &data
     if(!validate_snapshot(data))return false;const bool old=data.size()==264;const int stride=old?8:12;
     for(int i=0;i<32;++i)slots[i]={data.decode_u32(8+i*stride),data.decode_u32(12+i*stride),old?0:data.decode_u32(16+i*stride)};
     ++revision;return true;
+}
+}
+
+namespace terraforest {
+bool NativePlayerInventory::exchange_bucket(int64_t slot,bool pour,int64_t expected){
+    if(expected!=revision||slot<0||slot>=32)return false;
+    auto &s=slots[slot];if(s.count!=1||s.item<401||s.item>411||(pour?s.item==401:s.item==411))return false;
+    const int64_t next=s.item+(pour?-1:1);if(!catalog().count(next))return false;s.item=next;++revision;return true;
 }
 }

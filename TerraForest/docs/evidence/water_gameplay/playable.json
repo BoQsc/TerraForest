@@ -1,0 +1,129 @@
+{
+  "checks": [
+    {
+      "name": "Actual world loads with bucket catalog and all persistence providers",
+      "pass": true
+    },
+    {
+      "name": "Lake target has terrain collision",
+      "pass": true
+    },
+    {
+      "name": "Author lake in actual world",
+      "pass": true
+    },
+    {
+      "name": "Terrain worker compiles finite lake in actual world",
+      "pass": true
+    },
+    {
+      "name": "Swimming queries use finite lake",
+      "pass": true
+    },
+    {
+      "name": "Game starts with gameplay toolbelt",
+      "pass": true
+    },
+    {
+      "name": "Scooping moves exactly 1 L into the selected bucket",
+      "pass": true
+    },
+    {
+      "name": "Bucket litre 2",
+      "pass": true
+    },
+    {
+      "name": "Bucket litre 3",
+      "pass": true
+    },
+    {
+      "name": "Bucket litre 4",
+      "pass": true
+    },
+    {
+      "name": "Bucket litre 5",
+      "pass": true
+    },
+    {
+      "name": "Bucket litre 6",
+      "pass": true
+    },
+    {
+      "name": "Bucket litre 7",
+      "pass": true
+    },
+    {
+      "name": "Bucket litre 8",
+      "pass": true
+    },
+    {
+      "name": "Bucket litre 9",
+      "pass": true
+    },
+    {
+      "name": "Bucket litre 10",
+      "pass": true
+    },
+    {
+      "name": "Full bucket cannot remove more water",
+      "pass": true
+    },
+    {
+      "name": "Chest storage preserves bucket quantity",
+      "pass": true
+    },
+    {
+      "name": "Bucket withdraws through normal container inventory",
+      "pass": true
+    },
+    {
+      "name": "Stale inventory action leaves both quantities unchanged",
+      "pass": true
+    },
+    {
+      "name": "Finite water snapshot validates",
+      "pass": true
+    },
+    {
+      "name": "This test owns a unique real save slot",
+      "pass": true
+    },
+    {
+      "name": "Normal world save writes terrain, finite water and bucket together",
+      "pass": true
+    },
+    {
+      "name": "Fresh world instance restores terrain and finite water from disk",
+      "pass": true
+    },
+    {
+      "name": "Reload retains withdrawn water and filled bucket",
+      "pass": true
+    },
+    {
+      "name": "Pour restores exactly the withdrawn quantity",
+      "pass": true
+    },
+    {
+      "name": "Empty bucket cannot create water",
+      "pass": true
+    },
+    {
+      "name": "Basin editing guard prevents mismatched saved quantities",
+      "pass": true
+    },
+    {
+      "name": "Filled bucket drops through batched normal item path",
+      "pass": true
+    },
+    {
+      "name": "Recollecting bucket retains its litre of water",
+      "pass": true
+    },
+    {
+      "name": "Updated finite surface publishes in the real world",
+      "pass": true
+    }
+  ],
+  "failures": 0
+}

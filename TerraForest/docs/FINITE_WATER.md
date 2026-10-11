@@ -211,3 +211,31 @@ publishes matching finite-water depth queries, hides stale state and retires old
 regions separately. Native scene checks, camera immersion and one 1920x1080 render
 check pass. Main-world scheduling, persistence and migration are still open.
 See [scene evidence](evidence/water_scene/README.md).
+
+
+## Playable-world integration (2026-10-11)
+
+The actual world now compiles finite lakes on the terrain worker, renders native
+surfaces, queries them for swimming, and saves canonical water quantities with
+terrain and bucket inventories. `Play Water Gameplay.cmd` provides a saved normal
+world with first-visit lake authoring and a starter bucket. Bucket transactions
+transfer exact litres, including inventory failure rollback, full/empty limits,
+chest transfers and batched dropped items. Version 1 lake definitions remain
+readable; version 2 validates saved quantities against rebuilt storage geometry.
+
+A compatibility check caught two issues in the initial coordinator: collecting
+every boundary-face elevation exhausted the 256-anchor cap, and disconnected
+exterior air falsely made generated basins appear open. The native coordinator
+now selects the seed-connected component before publication and uses the minimum
+opening per pair of local basin owners. Higher parallel faces do not change the
+spill hierarchy. It retains every local merge and effective cross-region opening
+as an exact profile anchor; it does not round away spill elevations or increase
+memory limits. All four generated lakes for seed 1703 compile and contain water.
+
+This closes the initial playable bucket/save hookup, not water-system completion.
+Terrain edits near established water are guarded until rollback-safe combined
+terrain/water transactions are integrated. Pouring targets existing basins only.
+Old surfaces may remain visible while small bucket changes remesh; quantity
+changes are immediate. Compilation caching, unloaded-region flow, adaptive storage
+accuracy and long-session/thermal/frame-time qualification remain open. See
+[water gameplay and checks](WATER_GAMEPLAY.md) and [evidence](evidence/water_gameplay/README.md).

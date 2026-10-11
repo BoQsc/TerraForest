@@ -8,6 +8,11 @@
 using namespace godot;
 namespace terraforest {
 void NativeWaterNetwork::_bind_methods(){
+    ClassDB::bind_method(D_METHOD("ray_probe","from","to","wet_only"), &NativeWaterNetwork::ray_probe);
+    ClassDB::bind_method(D_METHOD("capture_state"), &NativeWaterNetwork::capture_state);
+    ClassDB::bind_method(D_METHOD("restore_state","bytes"), &NativeWaterNetwork::restore_state);
+    ClassDB::bind_method(D_METHOD("fill_to_level","point","level_mm"), &NativeWaterNetwork::fill_to_level);
+    ClassDB::bind_method(D_METHOD("transfer_litre","point","pour","inventory","slot","revision"), &NativeWaterNetwork::transfer_litre);
     ClassDB::bind_method(D_METHOD("begin","registry","regional_profiles"),&NativeWaterNetwork::begin);
     ClassDB::bind_method(D_METHOD("advance","work_budget"),&NativeWaterNetwork::advance);
     ClassDB::bind_method(D_METHOD("begin_add","coordinate","local_leaf","amount_ml"),&NativeWaterNetwork::begin_add);
@@ -162,5 +167,62 @@ Dictionary NativeWaterNetwork::statistics() const {
     Dictionary out;out["status"]=status;out["phase"]=phase;out["current"]=current();out["regions"]=int64_t(pieces.size());out["local_leaves"]=local_leaves;out["global_leaves"]=global_leaves;
     out["retired"]=status==2;out["owned_ml"]=(status==1&&solver.is_valid())?int64_t(solver->statistics()["total_ml"]):int64_t(0);
     out["work_units_total"]=work_total;out["error"]=error;if(solver.is_valid())out["water"]=solver->statistics();return out;
+}
+}
+
+namespace terraforest {
+// Stable geometry signature prevents applying quantities to a different hierarchy.
+static uint64_t mix_water(uint64_t h,uint64_t v){for(int i=0;i<8;++i){h^=(v>>(i*8))&255;h*=1099511628211ULL;}return h;}
+PackedByteArray NativeWaterNetwork::capture_state() const {
+    PackedByteArray out;if(status!=1||solver.is_null()||solver->mode)return out;
+    uint64_t hash=1469598103934665603ULL;
+    for(auto h:solver->heights)hash=mix_water(hash,h);
+    for(const auto &n:solver->nodes){hash=mix_water(hash,n.parent);hash=mix_water(hash,n.left);hash=mix_water(hash,n.right);hash=mix_water(hash,n.entry);hash=mix_water(hash,n.merge);hash=mix_water(hash,n.capacity);for(auto v:n.profile)hash=mix_water(hash,v);}
+    out.resize(24+solver->nodes.size()*8);out.encode_u32(0,0x31514657);out.encode_u32(4,solver->nodes.size());out.encode_u64(8,hash);out.encode_u64(16,solver->total_ml);
+    for(int i=0;i<int(solver->nodes.size());++i)out.encode_u64(24+i*8,solver->nodes[i].local);return out;
+}
+bool NativeWaterNetwork::restore_state(const PackedByteArray &bytes){
+    if(status!=1||!current()||solver->mode)return false;
+    const auto empty=capture_state();if(bytes.size()!=empty.size()||bytes.size()<24||bytes.decode_u32(0)!=0x31514657||bytes.decode_u32(4)!=solver->nodes.size()||bytes.decode_u64(8)!=empty.decode_u64(8))return false;
+    auto staged=solver->nodes;int64_t total=0;
+    for(int i=0;i<int(staged.size());++i){auto &n=staged[i];const uint64_t local=bytes.decode_u64(24+i*8);if(local>uint64_t(n.capacity-n.base)||local>uint64_t(9007199254740991LL-total))return false;n.local=local;n.total=local;total+=local;
+        if(n.left>=0){n.total+=staged[n.left].total+staged[n.right].total;if(local&&(staged[n.left].total!=staged[n.left].capacity||staged[n.right].total!=staged[n.right].capacity))return false;}
+        if(n.total>n.capacity)return false;
+    }
+    if(uint64_t(total)!=bytes.decode_u64(16))return false;solver->nodes.swap(staged);solver->total_ml=total;++water_revision;return true;
+}
+bool NativeWaterNetwork::fill_to_level(const Vector3 &point,int64_t height){
+    if(status!=1||!current()||solver->mode||solver->total_ml)return false;
+    const Dictionary p=probe(point);if(!p.has("local_leaf"))return false;
+    const int leaf=target(p["region"],p["local_leaf"]);int at=leaf;
+    while(solver->nodes[at].parent>=0&&solver->nodes[solver->nodes[at].parent].merge<=height)at=solver->nodes[at].parent;
+    auto it=std::lower_bound(solver->heights.begin(),solver->heights.end(),height);if(it==solver->heights.end()||*it!=height)return false;
+    const int64_t amount=solver->nodes[at].profile[it-solver->heights.begin()];
+    return amount==0||begin_add(p["region"],p["local_leaf"],amount);
+}
+bool NativeWaterNetwork::transfer_litre(const Vector3 &point,bool pour,Object *inventory,int64_t slot,int64_t revision){
+    if(!inventory||!inventory->has_method("exchange_bucket")||status!=1||!current()||solver->mode)return false;
+    const Dictionary p=probe(point);if(!p.has("local_leaf")||(!pour&&!bool(p["wet"])))return false;
+    const int leaf=target(p["region"],p["local_leaf"]);
+    // Stage only mutable quantities: the geometry/profiles remain shared and untouched.
+    std::vector<std::pair<int64_t,int64_t>> previous;previous.reserve(solver->nodes.size());for(const auto &n:solver->nodes)previous.push_back({n.local,n.total});
+    const int64_t old_total=solver->total_ml;
+    const bool begun=pour?solver->begin_add(leaf,1000):solver->begin_remove(leaf,1000);
+    if(!begun)return false;
+    // A 4096-leaf bounded hierarchy needs fewer than 32768 events for one transaction.
+    for(int i=0;i<16&&solver->mode;++i)solver->advance(2048);
+    bool accepted=!solver->mode&&solver->moved==1000;
+    if(accepted)accepted=bool(inventory->call("exchange_bucket",slot,pour,revision));
+    if(!accepted){for(int i=0;i<int(previous.size());++i){solver->nodes[i].local=previous[i].first;solver->nodes[i].total=previous[i].second;}solver->total_ml=old_total;solver->mode=0;solver->frames.clear();solver->pending=solver->requested=solver->moved=0;return false;}
+    ++water_revision;return true;
+}
+}
+
+namespace terraforest {
+Dictionary NativeWaterNetwork::ray_probe(const Vector3 &from,const Vector3 &to,bool wet_only) const {
+ Dictionary out;if(!from.is_finite()||!to.is_finite()||from.distance_to(to)>5)return out;
+ for(int i=0;i<=100;++i){const Vector3 point=from.lerp(to,double(i)/100);Dictionary p=probe(point);
+  if(p.has("local_leaf")&&(!wet_only||bool(p["wet"]))){p["point"]=point;return p;}}
+ return out;
 }
 }

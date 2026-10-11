@@ -16,6 +16,7 @@ class NativeWaterScene : public godot::Node3D {
     int64_t work_total=0,publications=0;
     bool valid(const godot::Ref<NativeWaterNetwork> &,uint64_t) const;
     bool identity() const;
+    bool keep_previous=false;
     void cancel();
 protected:
     static void _bind_methods();
@@ -23,6 +24,7 @@ public:
     bool begin_publish(const godot::Ref<NativeWaterNetwork> &water,const godot::Ref<godot::Material> &water_material);
     godot::Dictionary advance(int64_t work_budget);
     void refresh();
+    void set_keep_previous_surface(bool enabled){keep_previous=enabled;refresh();}
     void _process(double delta) override;
     godot::Dictionary probe(const godot::Vector3 &point);
     double depth_at(const godot::Vector3 &point);

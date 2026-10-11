@@ -1,0 +1,63 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] New world
+[TerrainRewrite] New world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+PASS Actual world loads with bucket catalog and all persistence providers
+PASS Lake target has terrain collision
+PASS Author lake in actual world
+[TerrainRewrite] Mined resources added to inventory
+[TerrainRewrite] Lake ready · F5 saves world
+PASS Terrain worker compiles finite lake in actual world
+WATER_BUILD_MS 3212
+PASS Swimming queries use finite lake
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Bucket · 0/10 L
+PASS Game starts with gameplay toolbelt
+WARNING: Target and up vectors are colinear. This is not advised as it may cause unwanted rotation around local Z axis.
+   at: looking_at (core/math/basis.cpp:1045)
+   GDScript backtrace (most recent call first):
+       [0] run (res://tests/water_playable.gd:43)
+       [1] wait_ready (res://tests/water_playable.gd:14)
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Bucket · 1/10 L
+[TerrainRewrite] Scooped 1 L
+PASS Scooping moves exactly 1 L into the selected bucket
+PASS Bucket litre 2
+PASS Bucket litre 3
+PASS Bucket litre 4
+PASS Bucket litre 5
+PASS Bucket litre 6
+PASS Bucket litre 7
+PASS Bucket litre 8
+PASS Bucket litre 9
+PASS Bucket litre 10
+PASS Full bucket cannot remove more water
+PASS Chest storage preserves bucket quantity
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Bucket · 1/10 L
+PASS Bucket withdraws through normal container inventory
+PASS Stale inventory action leaves both quantities unchanged
+PASS Finite water snapshot validates
+PASS This test owns a unique real save slot
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+PASS Normal world save writes terrain, finite water and bucket together
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+[TerrainRewrite] World loaded
+[TerrainRewrite] World loaded
+[TerrainRewrite] Lake ready · F5 saves world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+PASS Fresh world instance restores terrain and finite water from disk
+PASS Reload retains withdrawn water and filled bucket
+PASS Pour restores exactly the withdrawn quantity
+PASS Empty bucket cannot create water
+[TerrainRewrite] Finite lake protected: remove its water in Development > Water before reshaping this basin.
+PASS Basin editing guard prevents mismatched saved quantities
+PASS Filled bucket drops through batched normal item path
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Bucket · 1/10 L
+PASS Recollecting bucket retains its litre of water
+PASS Updated finite surface publishes in the real world
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+WATER_PLAYABLE failures=0

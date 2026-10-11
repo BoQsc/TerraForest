@@ -11,6 +11,7 @@
 #include "water_network.hpp"
 #include "water_surface.hpp"
 #include "water_scene.hpp"
+#include "water_runtime.hpp"
 #include "water_remap_plan.hpp"
 #include <godot_cpp/godot.hpp>
 #include <godot_cpp/core/class_db.hpp>
@@ -30,6 +31,7 @@ static void initialize(ModuleInitializationLevel level) {
         GDREGISTER_CLASS(terraforest::NativeWaterNetwork);
         GDREGISTER_CLASS(terraforest::NativeWaterSurface);
         GDREGISTER_CLASS(terraforest::NativeWaterScene);
+        GDREGISTER_CLASS(terraforest::NativeWaterRuntime);
         GDREGISTER_CLASS(terraforest::NativeWaterRemapPlan);
     }
 }

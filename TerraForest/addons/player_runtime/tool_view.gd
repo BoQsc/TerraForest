@@ -34,6 +34,11 @@ func _ready() -> void:
 			part(root,Vector3(0.12,0.045,0.06),Vector3(0,0.18,0),Color("939b9c"))
 			for x in [-0.05,0.05]:part(root,Vector3(0.035,0.09,0.06),Vector3(x,0.23,0),Color("939b9c"))
 func equip(id: int) -> void:
+	if id>=401 and id<=411:
+		id=401
+		if not tools.has(401):
+			var bucket:=MeshInstance3D.new();bucket.mesh=preload("res://addons/volumetric_water/bucket_model.gd").mesh();bucket.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_OFF;add_child(bucket);tools[401]=bucket
+
 	current=id
 	if motion!=null:motion.kill()
 	rotation=Vector3.ZERO if id==0 else Vector3(-0.2,0.15,-0.28)

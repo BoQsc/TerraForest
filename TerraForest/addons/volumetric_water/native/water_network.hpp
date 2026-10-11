@@ -29,6 +29,12 @@ class NativeWaterNetwork : public godot::RefCounted {
     void unit();
     int owner_at(const Piece &p,const int32_t *address) const;
     int target(const godot::Vector3i &coordinate,int64_t leaf) const;
+public:
+    godot::Dictionary ray_probe(const godot::Vector3 &from,const godot::Vector3 &to,bool wet_only) const;
+    godot::PackedByteArray capture_state() const;
+    bool restore_state(const godot::PackedByteArray &bytes);
+    bool fill_to_level(const godot::Vector3 &point, int64_t level_mm);
+    bool transfer_litre(const godot::Vector3 &point, bool pour, godot::Object *inventory, int64_t slot, int64_t revision);
 protected:
     static void _bind_methods();
 public:

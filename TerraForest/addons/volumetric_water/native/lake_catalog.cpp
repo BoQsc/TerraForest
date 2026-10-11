@@ -1,3 +1,4 @@
+#include "water_network.hpp"
 #include "lake_catalog.hpp"
 #include "lake_volume.hpp"
 #include <array>
@@ -16,15 +17,17 @@ void NativeLakeCatalog::_bind_methods() {
 PackedByteArray NativeLakeCatalog::placement_mask(const Array &volumes,const TypedArray<Transform3D> &transforms) const {
     if(volumes.size()>16||transforms.size()>512)return {};
     std::array<NativeLakeVolume*,16> lakes{};
+    std::array<NativeWaterNetwork*,16> networks{};
     for(int i=0;i<volumes.size();++i){
         if(volumes[i].get_type()!=Variant::OBJECT)return {};
         lakes[i]=Object::cast_to<NativeLakeVolume>(static_cast<Object*>(volumes[i]));
-        if(!lakes[i])return {};
+        networks[i]=Object::cast_to<NativeWaterNetwork>(static_cast<Object*>(volumes[i]));
+        if(!lakes[i]&&!networks[i])return {};
     }
     PackedByteArray result;result.resize(transforms.size());result.fill(0);
     for(int i=0;i<transforms.size();++i){
         const Transform3D transform=transforms[i];if(!transform.origin.is_finite())return {};
-        for(int j=0;j<volumes.size();++j)if(lakes[j]->submerges_root(transform.origin)){result.set(i,1);break;}
+        for(int j=0;j<volumes.size();++j)if((lakes[j]&&lakes[j]->submerges_root(transform.origin))||(networks[j]&&bool(networks[j]->probe(transform.origin).get("wet",false)))){result.set(i,1);break;}
     }
     return result;
 }
@@ -53,7 +56,7 @@ PackedByteArray NativeLakeCatalog::encode(const Array &records,int64_t next_id) 
     if(next_id==0)next_id=minimum_next;
     if(next_id<minimum_next||next_id>9007199254740992ll)return {};
     PackedByteArray out;out.resize(20+records.size()*56);out.fill(0);
-    out.encode_u32(0,0x314c5754);out.encode_u32(4,1);out.encode_u32(8,uint32_t(records.size()));
+    out.encode_u32(0,0x314c5754);out.encode_u32(4,2);out.encode_u32(8,uint32_t(records.size()));
     out.encode_u64(12,next_id);
     for(int64_t i=0;i<records.size();++i) {
         const Dictionary r=records[i];const int64_t off=20+i*56;
@@ -62,13 +65,17 @@ PackedByteArray NativeLakeCatalog::encode(const Array &records,int64_t next_id) 
         for(int j=0;j<3;++j){out.encode_float(off+8+j*4,origin[j]);out.encode_u32(off+20+j*4,cells[j]);out.encode_float(off+40+j*4,seed[j]);}
         out.encode_float(off+32,double(r["spacing"]));out.encode_float(off+36,double(r["level"]));
     }
+    for(int64_t i=0;i<records.size();++i){
+        const Dictionary r=records[i];const Variant v=r.get("water_state",PackedByteArray());if(v.get_type()!=Variant::PACKED_BYTE_ARRAY)return {};
+        const PackedByteArray state=v;if(state.size()>65552)return {};const int off=out.size();out.resize(off+4);out.encode_u32(off,state.size());out.append_array(state);
+    }
     // Reject values that become invalid when rounded to the on-disk float32 ABI.
     return validate_snapshot(out) ? out : PackedByteArray();
 }
 Dictionary NativeLakeCatalog::decode(const PackedByteArray &bytes) const {
     Dictionary result;result["ok"]=false;
-    if(bytes.size()<20||bytes.decode_u32(0)!=0x314c5754||bytes.decode_u32(4)!=1)return result;
-    const uint32_t count=bytes.decode_u32(8);if(count>16||bytes.size()!=20+count*56)return result;
+    if(bytes.size()<20||bytes.decode_u32(0)!=0x314c5754||(bytes.decode_u32(4)!=1&&bytes.decode_u32(4)!=2))return result;
+    const uint32_t count=bytes.decode_u32(8);if(count>16||bytes.size()<20+count*56||(bytes.decode_u32(4)==1&&bytes.size()!=20+count*56))return result;
     const uint64_t next_id=bytes.decode_u64(12);if(next_id<1||next_id>9007199254740992ull)return result;
     Array records;Dictionary ids;
     for(uint32_t i=0;i<count;++i){
@@ -78,6 +85,18 @@ Dictionary NativeLakeCatalog::decode(const PackedByteArray &bytes) const {
         r["id"]=int64_t(bytes.decode_u64(off));r["origin"]=origin;r["seed"]=seed;r["cells"]=cells;r["spacing"]=bytes.decode_float(off+32);r["level"]=bytes.decode_float(off+36);
         if(!valid(r)||ids.has(r["id"])||uint64_t(int64_t(r["id"]))>=next_id)return result;
         ids[r["id"]]=true;records.push_back(r);
+    }
+    if(bytes.decode_u32(4)==2){
+        int64_t off=20+count*56;
+        for(uint32_t i=0;i<count;++i){if(off+4>bytes.size())return result;const uint32_t length=bytes.decode_u32(off);off+=4;
+            if(length>65552||off+length>bytes.size())return result;
+            PackedByteArray state=bytes.slice(off,off+length);off+=length;
+            if(length){if(length<24||state.decode_u32(0)!=0x31514657||state.decode_u32(4)>8191||length!=24+state.decode_u32(4)*8)return result;
+                uint64_t sum=0;for(int j=24;j<int(length);j+=8){const auto q=state.decode_u64(j);if(q>9007199254740991ULL-sum)return result;sum+=q;}if(sum!=state.decode_u64(16))return result;
+            }
+            Dictionary r=records[i];r["water_state"]=state;records[i]=r;
+        }
+        if(off!=bytes.size())return result;
     }
     result["ok"]=true;result["records"]=records;result["next_id"]=int64_t(next_id);return result;
 }

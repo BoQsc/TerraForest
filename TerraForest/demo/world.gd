@@ -268,6 +268,8 @@ func _ready() -> void:
 	add_child(lakes)
 	add_child(water_camera)
 	water_camera.configure(camera,lakes)
+	if "--water-gameplay" in OS.get_cmdline_user_args():
+		var start_water=preload("res://addons/volumetric_water/water_start.gd").new();start_water.game=self;add_child(start_water)
 	lakes.lake_ready.connect(func(_id: int): _show_lake_notice("Lake ready · temporary world" if temporary_world else "Lake ready · F5 saves world"))
 	lakes.lake_failed.connect(func(_id: int, code: int): _show_lake_notice("Lake rejected (%d): open basin or blocked seed" % code))
 
@@ -521,7 +523,7 @@ func _equip_player_tool(item: int) -> void:
 	if item in player_hud.GROUND_ITEMS:_activate_ground_tool(player_hud.GROUND_ITEMS[item])
 	if item==1:radius=0.65
 	edit_reach=3.5;allow_terrain_add=false
-	tool_view.equip(item if item in player_hud.CATALOG else 0)
+	tool_view.equip(item if item in player_hud.CATALOG or (item>=401 and item<=411) else 0)
 	player_hud.show_active_tool(item)
 	_show_lake_notice(session_menu.DESCRIPTIONS.get(item,"Empty hands - left mouse punches, E interacts" if item==0 else "Holding "+player_hud.MATERIALS.get(item,player_hud.RESOURCES.get(item,"item"))))
 
@@ -686,6 +688,16 @@ func _unhandled_input(event: InputEvent) -> void:
 				_show_lake_notice(world_vehicle.exit_vehicle(self));_clear_motion()
 			elif event.physical_keycode==KEY_ESCAPE:
 				Input.mouse_mode=Input.MOUSE_MODE_VISIBLE if Input.mouse_mode==Input.MOUSE_MODE_CAPTURED else Input.MOUSE_MODE_CAPTURED
+		return
+	if not session_menu.developer and equipped_tool>=401 and equipped_tool<=411 and event is InputEventMouseButton and event.button_index in [MOUSE_BUTTON_LEFT,MOUSE_BUTTON_RIGHT] and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED:
+		if event.pressed and _model_edit_available():
+			var start:Vector3=camera.global_position
+			var end:Vector3=start-camera.global_basis.z*3.5
+			var hit:Dictionary=structures.blocks.raycast_scene(start,end,0xFFFFFFFF,[player.get_rid()])
+			if not hit.is_empty():end=hit.position+hit.normal*0.01
+			var result:Dictionary=lakes.bucket(start,end,event.button_index==MOUSE_BUTTON_RIGHT,player_hud.inventory,player_hud.active_slot,player_hud.inventory.snapshot().revision)
+			if result.ok:player_hud.equip_inventory(player_hud.active_slot);tool_view.swing()
+			_show_lake_notice(result.reason)
 		return
 	if not session_menu.developer and event is InputEventMouseButton and event.button_index==MOUSE_BUTTON_LEFT and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED:
 		if event.pressed:world_attack.attack()

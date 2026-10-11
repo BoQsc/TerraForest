@@ -9,6 +9,7 @@ namespace terraforest {
 void NativeWaterScene::_bind_methods(){
     ClassDB::bind_method(D_METHOD("begin_publish","network","material"),&NativeWaterScene::begin_publish);
     ClassDB::bind_method(D_METHOD("advance","work_budget"),&NativeWaterScene::advance);
+    ClassDB::bind_method(D_METHOD("set_keep_previous_surface","enabled"),&NativeWaterScene::set_keep_previous_surface);
     ClassDB::bind_method(D_METHOD("refresh"),&NativeWaterScene::refresh);
     ClassDB::bind_method(D_METHOD("probe","point"),&NativeWaterScene::probe);
     ClassDB::bind_method(D_METHOD("depth_at","point"),&NativeWaterScene::depth_at);
@@ -22,7 +23,7 @@ bool NativeWaterScene::begin_publish(const Ref<NativeWaterNetwork> &water,const 
     staging=memnew(Node3D);staging->set_name("FiniteWaterStaging");staging->set_visible(false);add_child(staging);
     status=0;set_process(true);return true;
 }
-void NativeWaterScene::refresh(){if(shown)shown->set_visible(valid(active,active_revision));}
+void NativeWaterScene::refresh(){if(shown)shown->set_visible(valid(active,active_revision)||(keep_previous&&active.is_valid()&&valid(active,active->water_revision)));}
 void NativeWaterScene::cancel(){
     status=-2;surface.unref();pending.unref();material.unref();
     if(staging){retiring=staging;staging=nullptr;}
@@ -70,7 +71,7 @@ Dictionary NativeWaterScene::advance(int64_t budget){
     }
     Dictionary out=statistics();out["ok"]=status>=0;out["work_units"]=work;return out;
 }
-void NativeWaterScene::_process(double){refresh();if(status==0||retiring)advance(128);}
+void NativeWaterScene::_process(double){refresh();if(status==0||retiring)advance(2048);}
 Dictionary NativeWaterScene::probe(const Vector3 &point){
     refresh();if(valid(active,active_revision))return active->probe(point);
     Dictionary out;out["ok"]=false;out["wet"]=false;return out;

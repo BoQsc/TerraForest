@@ -247,7 +247,7 @@ func submit(job: Dictionary, priority: bool = false) -> bool:
 		job={"kind":"density_batch","points":job.points.duplicate(),"token":job.token,"epoch":job.epoch,"revision":job.revision,"support_depth":depth,"interpolated":interpolated}
 		priority=false
 	if job.get("kind","")=="lake_slice":
-		if not is_instance_valid(job.get("builder")) or job.builder.get_class()!="NativeLakeVolume": return false
+		if not is_instance_valid(job.get("builder")) or job.builder.get_class() not in ["NativeLakeVolume","NativeWaterRuntime"]: return false
 		# RefCounted instance IDs may use the signed integer's high bit.
 		if typeof(job.get("token"))!=TYPE_INT: return false
 		for field in ["epoch","revision","density_revision"]:
@@ -575,20 +575,23 @@ func _execute_lake_slice(job: Dictionary) -> void:
 	var cache_event:="disabled"
 	var info:=_call(Codec.command(0));var cancel:=_call(Codec.command(13))
 	if Codec.reply_ok(info) and Codec.reply_ok(cancel) and info.decode_u32(12)==job.density_revision and cancel.decode_u32(12)==job.build_epoch:
-		status=0
-		if _lake_cache_token!=job.token:
-			_lake_cache_token=job.token;_lake_cache_identity=PackedByteArray()
-			if disk_cache.enabled and not _lake_compatibility.is_empty():
-				_lake_cache_identity=job.builder.cache_identity(native,_lake_compatibility)
-				var data: PackedByteArray=disk_cache.load_lake(_lake_cache_identity)
-				cache_event="miss"
-				if not data.is_empty():
-					if job.builder.restore_bake(data,_lake_cache_identity):status=1;cache_event="hit";disk_cache.hits+=1
-					else:disk_cache.reject_lake(_lake_cache_identity);cache_event="rejected"
-		if status==0:
-			status=job.builder.sample_terrain(native,2048,job.density_revision,job.build_epoch)
-			if status==1 and not _lake_cache_identity.is_empty():
-				cache_event="stored" if disk_cache.store_lake(_lake_cache_identity,job.builder.capture_bake(_lake_cache_identity)) else "write_skipped"
+		if job.builder.get_class()=="NativeWaterRuntime":
+			status=job.builder.sample_terrain(native,512,job.density_revision,job.build_epoch)
+		else:
+			status=0
+			if _lake_cache_token!=job.token:
+				_lake_cache_token=job.token;_lake_cache_identity=PackedByteArray()
+				if disk_cache.enabled and not _lake_compatibility.is_empty():
+					_lake_cache_identity=job.builder.cache_identity(native,_lake_compatibility)
+					var data: PackedByteArray=disk_cache.load_lake(_lake_cache_identity)
+					cache_event="miss"
+					if not data.is_empty():
+						if job.builder.restore_bake(data,_lake_cache_identity):status=1;cache_event="hit";disk_cache.hits+=1
+						else:disk_cache.reject_lake(_lake_cache_identity);cache_event="rejected"
+			if status==0:
+				status=job.builder.sample_terrain(native,2048,job.density_revision,job.build_epoch)
+				if status==1 and not _lake_cache_identity.is_empty():
+					cache_event="stored" if disk_cache.store_lake(_lake_cache_identity,job.builder.capture_bake(_lake_cache_identity)) else "write_skipped"
 		cancel=_call(Codec.command(13))
 		if not Codec.reply_ok(cancel) or cancel.decode_u32(12)!=job.build_epoch:status=-4
 	_push({"kind":"lake_slice","status":status,"token":job.token,"epoch":job.epoch,"revision":job.revision,

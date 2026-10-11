@@ -8,9 +8,15 @@ func _ready() -> void:
  add_theme_constant_override("separation",12)
  var menu=game.session_menu
  menu.label(self,"Water / lakes").add_theme_font_size_override("font_size",22)
- menu.label(self,"Carve creates a basin at your aim. Removing water keeps the carved terrain. These are static lakes; opening a basin beyond its bounds prevents it from filling.")
+ menu.label(self,"Carve creates a basin at your aim. Removing water keeps the carved terrain. Lakes hold finite water. Craft a bucket in Inventory: left mouse scoops 1 L; right mouse pours 1 L. Saved quantities persist. Remove water here before reshaping an established basin.")
  menu.button(self,"Carve lake at aim",func():
   if menu.developer:menu.run_command(KEY_L))
+ menu.button(self,"Give empty bucket (development)",func():
+  if not menu.developer:return
+  var inventory=game.player_hud.inventory
+  var result:Dictionary=inventory.grant(401,1,inventory.snapshot().revision)
+  if result.ok:game.player_hud.refresh();game.terrain.changed_since_save=true
+  menu.message.text="Bucket added to inventory" if result.ok else "Inventory full")
  rows=VBoxContainer.new();rows.add_theme_constant_override("separation",12);add_child(rows)
  game.lakes.catalog_changed.connect(schedule_refresh)
  rebuild()
