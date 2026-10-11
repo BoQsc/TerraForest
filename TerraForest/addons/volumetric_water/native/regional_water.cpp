@@ -104,6 +104,11 @@ void NativeRegionalWater::wake(const Vector3i &p){
 }
 void NativeRegionalWater::changed(const Vector3i &p){
     ++changes;wake(p);Key k=region_key(p);if(mesh_set.insert(k).second)meshes.push_back(k);
+    // Only a cell at both regional edges can affect a diagonal region.
+    int rx=p.x&7,rz=p.z&7;
+    if((rx==0||rx==7)&&(rz==0||rz==7)){
+        Vector3i n=p+Vector3i(rx==0?-1:1,0,rz==0?-1:1);
+        if(in_domain(n)){Key other=region_key(n);if(regions.count(other)&&mesh_set.insert(other).second)meshes.push_back(other);}}
     for(const Vector3i &d:directions){Vector3i n=p+d;if(!in_domain(n))continue;wake(n);Key other=region_key(n);
         if(other!=k&&regions.count(other)&&mesh_set.insert(other).second)meshes.push_back(other);}
 }
@@ -294,22 +299,64 @@ Dictionary NativeRegionalWater::next_mesh(){
     Dictionary result;if(meshes.empty())return result;uint64_t start=Time::get_singleton()->get_ticks_usec();Key k=meshes.front();meshes.pop_front();mesh_set.erase(k);
     result["coordinate"]=position(k);Array arrays;arrays.resize(Mesh::ARRAY_MAX);
     PackedVector3Array vertices,normals;PackedVector2Array uv;
-    auto face=[&](Vector3 a,Vector3 b,Vector3 c,Vector3 d,Vector3 n){for(Vector3 p:{a,b,c,a,c,d}){vertices.push_back(p);normals.push_back(n);uv.push_back(Vector2(p.x,p.z));}};
+    int top_count=0,side_count=0,tiny_count=0,small_count=0,medium_count=0,large_count=0;double max_side=0;
+    auto face=[&](Vector3 a,Vector3 b,Vector3 c,Vector3 d,Vector3 n){
+        ++side_count;double height=std::max({a.y,b.y,c.y,d.y})-std::min({a.y,b.y,c.y,d.y});max_side=std::max(max_side,height);
+        if(height<0.0011)++tiny_count;else if(height<0.01)++small_count;else if(height<0.1)++medium_count;else ++large_count;
+        for(Vector3 p:{a,b,c,a,c,d}){vertices.push_back(p);normals.push_back(n);uv.push_back(Vector2(p.x,p.z));}};
+    // Reconstruct one shared corner from face-connected surface cells. The
+    // component is selected through wet openings, never merely diagonal contact.
+    // No state mutation or terrain sampling: this is the regional volume's mesh.
+    auto surface=[&](const Vector3i &p,double &height)->bool {
+        const Region *r=get(p);if(!r)return false;int i=index(p);
+        if(!r->water[i]||r->floor[i]==r->ceiling[i])return false;
+        height=p.y*0.5+r->floor[i]*0.001+std::min(r->water[i],uint64_t(r->ceiling[i]-r->floor[i])*250)/250000.0;
+        Vector3i q=p+Vector3i(0,1,0);const Region *above=get(q);
+        return !(height>=(p.y+1)*0.5-0.00001&&above&&above->floor[index(q)]==0&&above->water[index(q)]);
+    };
+    auto joined=[&](const Vector3i &a,const Vector3i &b)->bool {
+        const Region *ra=get(a),*rb=get(b);if(!ra||!rb)return false;
+        int ia=index(a),ib=index(b);int opening=std::max(ra->floor[ia],rb->floor[ib]);
+        if(opening>=std::min(ra->ceiling[ia],rb->ceiling[ib]))return false;
+        return int64_t(ra->floor[ia])*250+int64_t(ra->water[ia])>opening*250 &&
+               int64_t(rb->floor[ib])*250+int64_t(rb->water[ib])>opening*250;
+    };
+    auto corner=[&](const Vector3i &owner,int cx,int cz,double fallback)->double {
+        Vector3i cells[4];double heights[4]{};bool valid[4]{},seen[4]{};int first=-1;
+        for(int n=0;n<4;++n){cells[n]=Vector3i(cx-1+(n&1),owner.y,cz-1+(n>>1));valid[n]=surface(cells[n],heights[n]);if(cells[n]==owner)first=n;}
+        if(first<0||!valid[first])return fallback;
+        int queue[4],head=0,tail=1;queue[0]=first;seen[first]=true;double sum=0;int count=0;
+        while(head<tail){int n=queue[head++];sum+=heights[n];++count;
+            for(int m:{n^1,n^2})if(!seen[m]&&valid[m]&&joined(cells[n],cells[m])){seen[m]=true;queue[tail++]=m;}}
+        return sum/count;
+    };
+    auto triangle=[&](Vector3 a,Vector3 b,Vector3 c){Vector3 n=(c-a).cross(b-a).normalized();
+        for(Vector3 p:{a,b,c}){vertices.push_back(p);normals.push_back(n);uv.push_back(Vector2(p.x,p.z));}};
     auto it=regions.find(k);Vector3i base=position(k)*8;
     if(it!=regions.end()&&it->second.valid)for(int i=0;i<512;++i){const Region &r=it->second;if(!r.water[i]||r.floor[i]==r.ceiling[i])continue;
         Vector3i p=base+Vector3i(i%8,(i/8)%8,i/64);double x=p.x*0.5,z=p.z*0.5,bottom=p.y*0.5+r.floor[i]*0.001;
         double top=bottom+std::min(r.water[i],uint64_t(r.ceiling[i]-r.floor[i])*250)/250000.0;
         const Region *above=get(p+Vector3i(0,1,0));bool covered=top>=(p.y+1)*0.5-0.00001&&above&&above->floor[index(p+Vector3i(0,1,0))]==0&&above->water[index(p+Vector3i(0,1,0))];
-        if(!covered)face(Vector3(x,top,z),Vector3(x+0.5,top,z),Vector3(x+0.5,top,z+0.5),Vector3(x,top,z+0.5),Vector3(0,1,0));
+        double h00=top,h10=top,h11=top,h01=top;
+        if(!covered){
+            ++top_count;h00=corner(p,p.x,p.z,top);h10=corner(p,p.x+1,p.z,top);
+            h11=corner(p,p.x+1,p.z+1,top);h01=corner(p,p.x,p.z+1,top);
+            triangle(Vector3(x,h00,z),Vector3(x+0.5,h10,z),Vector3(x+0.5,h11,z+0.5));
+            triangle(Vector3(x,h00,z),Vector3(x+0.5,h11,z+0.5),Vector3(x,h01,z+0.5));
+        }
         for(int d=1;d<=4;++d){Vector3i q=p+directions[d];const Region *neighbour=get(q);double low=bottom;
             if(neighbour){int j=index(q);if(neighbour->floor[j]==neighbour->ceiling[j])continue;low=std::max(low,q.y*0.5+neighbour->floor[j]*0.001+std::min(neighbour->water[j],uint64_t(neighbour->ceiling[j]-neighbour->floor[j])*250)/250000.0);}
+            double neighbour_top=0;
+            if(!covered&&surface(q,neighbour_top)&&joined(p,q))continue;
             if(top-low<0.00001)continue;
-            if(d==1)face(Vector3(x+0.5,low,z),Vector3(x+0.5,top,z),Vector3(x+0.5,top,z+0.5),Vector3(x+0.5,low,z+0.5),Vector3(1,0,0));
-            if(d==2)face(Vector3(x,low,z+0.5),Vector3(x,top,z+0.5),Vector3(x,top,z),Vector3(x,low,z),Vector3(-1,0,0));
-            if(d==3)face(Vector3(x+0.5,low,z+0.5),Vector3(x+0.5,top,z+0.5),Vector3(x,top,z+0.5),Vector3(x,low,z+0.5),Vector3(0,0,1));
-            if(d==4)face(Vector3(x,low,z),Vector3(x,top,z),Vector3(x+0.5,top,z),Vector3(x+0.5,low,z),Vector3(0,0,-1));
+            if(d==1)face(Vector3(x+0.5,low,z),Vector3(x+0.5,h10,z),Vector3(x+0.5,h11,z+0.5),Vector3(x+0.5,low,z+0.5),Vector3(1,0,0));
+            if(d==2)face(Vector3(x,low,z+0.5),Vector3(x,h01,z+0.5),Vector3(x,h00,z),Vector3(x,low,z),Vector3(-1,0,0));
+            if(d==3)face(Vector3(x+0.5,low,z+0.5),Vector3(x+0.5,h11,z+0.5),Vector3(x,h01,z+0.5),Vector3(x,low,z+0.5),Vector3(0,0,1));
+            if(d==4)face(Vector3(x,low,z),Vector3(x,h00,z),Vector3(x+0.5,h10,z),Vector3(x+0.5,low,z),Vector3(0,0,-1));
         }
     }
+    Dictionary faces;faces["top"]=top_count;faces["side"]=side_count;faces["side_under_1mm"]=tiny_count;
+    faces["side_under_1cm"]=small_count;faces["side_under_10cm"]=medium_count;faces["side_larger"]=large_count;faces["max_side_height"]=max_side;result["faces"]=faces;
     arrays[Mesh::ARRAY_VERTEX]=vertices;arrays[Mesh::ARRAY_NORMAL]=normals;arrays[Mesh::ARRAY_TEX_UV]=uv;result["arrays"]=arrays;result["vertices"]=vertices.size();
     mesh_us=Time::get_singleton()->get_ticks_usec()-start;max_mesh_us=std::max(max_mesh_us,mesh_us);return result;
 }

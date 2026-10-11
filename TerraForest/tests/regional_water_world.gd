@@ -163,13 +163,20 @@ func run():
  for frame in 30:await process_frame
  game.fly=true;game.needs_floor_spawn=false;game.player.global_position=center+Vector3(0,3,5);game.yaw=0;game.pitch=-0.65;game.player.rotation.y=0;game.camera.rotation.x=game.pitch;game._clear_motion()
  if DisplayServer.get_name()!="headless":
-  await RenderingServer.frame_post_draw;root.get_texture().get_image().save_png("res://reports/regional_water_world.png")
+  await capture_visual("regional_water_world")
  await render_comparison()
  await finish()
 func render_comparison():
  # Freeze gameplay state for paired rendering attribution; same camera/resolution.
  var running:bool=game.lakes.is_processing()
  game.lakes.set_process(false)
+ var faces:Dictionary={"top":0,"side":0,"side_under_1mm":0,"side_under_1cm":0,"side_under_10cm":0,"side_larger":0,"max_side_height":0.0}
+ for counts:Dictionary in game.lakes._mesh_faces.values():
+  for key:String in faces:
+   if key=="max_side_height":faces[key]=maxf(faces[key],counts[key])
+   else:faces[key]+=counts[key]
+ timings.water_mesh_faces=faces
+ print("WATER_MESH_FACES ",JSON.stringify(faces))
  var results:Array=[]
  for shown in [false,true,true,false]:
   game.lakes.visible=shown
@@ -181,12 +188,22 @@ func render_comparison():
    cpu.append(RenderingServer.viewport_get_measured_render_time_cpu(root.get_viewport_rid()))
   gpu.sort();cpu.sort()
   results.append({"water_visible":shown,"samples":gpu.size(),"gpu_p50_ms":gpu[24],"gpu_p95_ms":gpu[45],"cpu_p50_ms":cpu[24],"cpu_p95_ms":cpu[45]})
-  if shown:
-   await RenderingServer.frame_post_draw
-   root.get_texture().get_image().save_png("res://reports/water_depth_close.png")
- game.lakes.visible=true;game.lakes.set_process(running)
+ game.lakes.visible=true
+ for frame in 60:await process_frame
+ await capture_visual("water_depth_close")
+ game.lakes.set_process(running)
  timings.water_render_comparison=results
  print("WATER_RENDER_COMPARISON ",JSON.stringify(results))
+func capture_visual(name:String):
+ # GPU readback/PNG encoding is diagnostic I/O, not runtime gameplay latency.
+ var was_measuring:=measuring;measuring=false
+ await RenderingServer.frame_post_draw
+ var started:=Time.get_ticks_usec()
+ root.get_texture().get_image().save_png("res://reports/"+name+".png")
+ timings[name+"_capture_ms"]=(Time.get_ticks_usec()-started)/1000.0
+ previous_frame=0
+ await process_frame
+ measuring=was_measuring
 func finish():
  if not frames.is_empty():
   frames.sort();timings.frame_ms={"p50":frames[int(frames.size()*0.5)],"p95":frames[int(frames.size()*0.95)],"max":frames.back(),"samples":frames.size()}

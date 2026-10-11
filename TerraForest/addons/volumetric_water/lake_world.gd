@@ -19,6 +19,7 @@ var _token:=0
 var _epoch:=-1
 var _filling_id:=0
 var _meshes:Dictionary={}
+var _mesh_faces:Dictionary={}
 var _material:=ShaderMaterial.new()
 var _pending_bucket:Dictionary={}
 var _pending_dev:Dictionary={}
@@ -80,7 +81,7 @@ func remove_lake(id:int) -> void:
 func clear() -> void:
  _lakes.clear();_filling_id=0;_pending_bucket.clear();_pending_dev.clear()
  for mesh:MeshInstance3D in _meshes.values():mesh.queue_free()
- _meshes.clear();water=ClassDB.instantiate("NativeRegionalWater");_builder=null
+ _meshes.clear();_mesh_faces.clear();water=ClassDB.instantiate("NativeRegionalWater");_builder=null
  _have_bounds=false;_last_changes=0
 func _invalidate(bounds:AABB) -> void:
  water.invalidate(bounds)
@@ -128,6 +129,7 @@ func _process(delta:float) -> void:
    var coordinate:Vector3i=update.coordinate
    if not _meshes.has(coordinate):
     var node:=MeshInstance3D.new();node.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_OFF;node.material_override=_material;add_child(node);_meshes[coordinate]=node
+   _mesh_faces[coordinate]=update.faces
    var mesh:MeshInstance3D=_meshes[coordinate]
    if update.vertices==0:mesh.mesh=null
    else:

@@ -15,3 +15,5 @@ Cached loading: `python tools/check_water_preparation.py`
 Runtime guard: `python tools/run_godot_check.py water_single_runtime --headless --timeout 15 --require "WATER_SINGLE_RUNTIME failures=0"`
 
 License: 0BSD. Uses the pinned Zig and prebuilt godot-cpp toolchain.
+
+Connected same-layer surface cells now share corners across region boundaries; see [mesh evidence and remaining failures](../../docs/evidence/water_surface_continuity/README.md).
