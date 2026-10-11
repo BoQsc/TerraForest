@@ -39,7 +39,7 @@ In the inventory, select brick, wood, concrete, metal, stone, iron ore or copper
 ore and press **Drop one
 selected supply**. On foot, this places one unit on clear supported ground in
 front of the player. It rejects unavailable collision, occupied positions and
-world updates without consuming the item. Tools cannot be dropped.
+world updates without consuming the item. Tools can be dropped; native stack metadata preserves their wear.
 The editor uses the same paid inventory drop action; its separate free
 supply authoring tool remains available.
 
@@ -84,13 +84,10 @@ is structural; the outer compound archive supplies integrity checking.
 An inbox at its limit rejects new receipts without partial changes; callers
 must handle that rejection. This API does not itself establish multiplayer authority.
 
-The inventory's Pending materials row lists available rewards. Select an item,
-enter a quantity and press Claim. Full-inventory or stale-state failures retain
-the pending balance and explain how to retry. Successful claims and inventory
-transfers mark the world dirty for autosave; F5 also saves the paired state.
+Mining automatically transfers receipts into available inventory space; there is no player-facing Claim UI. The persisted inbox remains an internal safety journal and overflow buffer. Existing saved receipts also deliver automatically. Full inventories retain excess without loss and pause further mining until room is available. Successful automatic delivery marks the world dirty for autosave.
 
 In gameplay, `mining_rewards.gd` maps native removed samples 0/1 to stone (201),
-8 to iron ore (202), and 9 to copper ore (203). One newly removed solid lattice
+8 to iron ore (202), 9 to copper ore (203), and receipt category 10 to Topsoil (211). Natural unpainted samples within two metres of original surface height classify as Topsoil during removal accounting; terrain material IDs and existing mesh shading are unchanged. One newly removed solid lattice
 sample yields one raw unit; this is not exact physical volume. Other painted
 materials yield nothing. Publication delivers one receipt identified by terrain
 density revision. No-op/repeated cuts do not accrue resources. The terrain

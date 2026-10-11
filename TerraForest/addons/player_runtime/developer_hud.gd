@@ -20,7 +20,7 @@ func label(text: String) -> Label:
 func button(text: String,action: Callable) -> void:
 	var out:=Button.new();out.text=text;out.focus_mode=Control.FOCUS_NONE;out.pressed.connect(action);content.add_child(out)
 func option(text: String,values: Array,index: int,action: Callable) -> void:
-	label(text);var out:=OptionButton.new()
+	label(text);var out:=OptionButton.new();out.focus_mode=Control.FOCUS_NONE
 	for entry in values:out.add_item(str(entry))
 	out.select(maxi(0,index));out.item_selected.connect(action);content.add_child(out)
 func number(text: String,value: float,minimum: float,maximum: float,step: float,action: Callable) -> void:
@@ -76,11 +76,17 @@ Esc opens the complete road editor.")
 			label("No development tool selected.")
 func _input(event: InputEvent) -> void:
 	if not game.session_menu.developer:return
+	if event is InputEventKey and event.physical_keycode==KEY_SPACE and not game.session_menu.visible_ui() and not game.player_hud.inventory_open:
+		game.controls.set_key(KEY_SPACE,event.pressed,Time.get_ticks_usec());get_viewport().set_input_as_handled();return
 	if event is InputEventKey and event.physical_keycode==KEY_F1 and event.pressed and not event.echo:
 		hidden_by_user=not hidden_by_user;refresh();get_viewport().set_input_as_handled()
 	if event is InputEventKey and event.physical_keycode==KEY_ALT and not event.echo and not game.session_menu.visible_ui() and not game.player_hud.inventory_open:
 		mouse_access=event.pressed
-		if mouse_access:game._clear_motion()
+		if not mouse_access:
+			var focus:=get_viewport().gui_get_focus_owner()
+			if focus!=null:focus.release_focus()
+			for child in content.get_children():
+				if child is OptionButton:child.get_popup().hide()
 		Input.mouse_mode=Input.MOUSE_MODE_VISIBLE if mouse_access else Input.MOUSE_MODE_CAPTURED
 		get_viewport().set_input_as_handled()
 

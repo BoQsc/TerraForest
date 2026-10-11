@@ -11,6 +11,8 @@ func _initialize() -> void:run.call_deferred()
 func pending(hud: Node) -> Dictionary:
 	var out: Dictionary={};var raw: PackedInt64Array=hud.reward_inbox.get_pending()
 	for i in range(0,raw.size(),2):out[int(raw[i])]=int(raw[i+1])
+	for row in hud.inventory.snapshot().slots:
+		if row.count>0:out[row.item]=out.get(row.item,0)+row.count
 	return out
 func run() -> void:
 	DirAccess.make_dir_recursive_absolute(DIR)
@@ -60,14 +62,14 @@ func run() -> void:
 			var after:=pending(game.player_hud);var exact:=counts.size()==16
 			if exact:
 				for pair in [[201,counts[0]+counts[1]],[202,counts[8]],[203,counts[9]]]:exact=exact and after.get(pair[0],0)-before.get(pair[0],0)==pair[1]
-			check(exact,"reward inbox receives exact native material counts")
+			check(exact,"inventory receives exact native material counts")
 			rows.append({"material":material,"point":[point.x,point.y,point.z],"removed":counts,"pending":after})
 		for item in [202,203]:
-			check(game.player_hud.reward_inbox.claim(game.player_hud.inventory,PackedInt64Array([item,2]),game.player_hud.inventory.snapshot().revision).ok,"claim mined ore %d"%item)
+			check(game.player_hud.inventory.can_afford(PackedInt64Array([item,2]),game.player_hud.inventory.snapshot().revision).ok,"mined ore immediately available %d"%item)
 			check(preload("res://addons/player_runtime/crafting.gd").craft(game.player_hud.inventory,2 if item==202 else 3,1,game.player_hud.inventory.snapshot().revision).ok,"craft mined ore into metal")
 		var f:=FileAccess.open(DIR+"rewards.bin",FileAccess.WRITE);f.store_buffer(game.player_hud.reward_inbox.capture_storage_snapshot());f.close()
 		f=FileAccess.open(DIR+"inventory.bin",FileAccess.WRITE);f.store_buffer(game.player_hud.capture_snapshot());f.close()
 	game.shutdown_requested=true;check(await game.terrain.shutdown_after_edits(),"normal combined save completes")
-	var report:={"failures":failures,"rows":rows,"slot":game.terrain.save_slot,"scope":"Actual gameplay worker mines seeded iron and copper, claims/crafts rewards and reloads saved inventory. Fixture locates buried veins directly; natural discovery, visible ore face and access route remain unqualified."}
+	var report:={"failures":failures,"rows":rows,"slot":game.terrain.save_slot,"scope":"Actual gameplay worker mines seeded iron and copper, automatically receives and crafts rewards and reloads saved inventory. Fixture locates buried veins directly; natural discovery, visible ore face and access route remain unqualified."}
 	var f:=FileAccess.open(DIR+("reopen.json" if reopen else "create.json"),FileAccess.WRITE);f.store_string(JSON.stringify(report,"  "));f.close()
 	game.free();await process_frame;quit(1 if failures else 0)

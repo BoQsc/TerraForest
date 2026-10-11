@@ -470,6 +470,9 @@ func _edited(_latency: float) -> void:
 	# For smooth filling, also reject the entire brush against the capsule before submission.
 	pass
 
+func _movement_input_available() -> bool:
+	return Input.mouse_mode==Input.MOUSE_MODE_CAPTURED
+
 func _input(event: InputEvent) -> void:
 	if benchmark_enabled or shutdown_requested:
 		return
@@ -483,7 +486,7 @@ func _input(event: InputEvent) -> void:
 		terrain.note_interaction()
 		var code: int = event.physical_keycode if event.physical_keycode != 0 else event.keycode
 		# Observe releases before GUI handling. A menu cannot swallow key-up.
-		if not event.pressed or (app_focused and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED):
+		if not event.pressed or (app_focused and _movement_input_available()):
 			controls.set_key(code, event.pressed, Time.get_ticks_usec())
 			if controls.direction() == Vector3.ZERO:
 				player.velocity.x = 0.0
@@ -617,7 +620,7 @@ func _physics_process(delta: float) -> void:
 		if not floor_hit.is_empty():
 			player.position.y = floor_hit["position"].y + 0.08
 			needs_floor_spawn = false
-	var input: Vector3 = controls.direction() if app_focused and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED else Vector3.ZERO
+	var input: Vector3 = controls.direction() if app_focused and _movement_input_available() else Vector3.ZERO
 	input_vector = input
 	var speed: float = 9.9 if controls.sprint() else 5.5
 	var direction: Vector3 = player.basis * input
@@ -626,7 +629,7 @@ func _physics_process(delta: float) -> void:
 	structure_motion_blocked = false
 	if fly:
 		direction = camera.global_basis * input
-		var vertical: float=controls.vertical() if app_focused and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED else 0.0
+		var vertical: float=controls.vertical() if app_focused and _movement_input_available() else 0.0
 		player.velocity = Vector3.ZERO
 		player.position += movement.flight_displacement(direction,vertical,delta,controls.sprint())
 	else:
@@ -643,7 +646,7 @@ func _physics_process(delta: float) -> void:
 			var water_depth: float=_player_water_depth()
 			var climbing: bool=false
 			if water_depth>0.0:
-				var vertical: float=controls.vertical() if app_focused and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED else 0.0
+				var vertical: float=controls.vertical() if app_focused and _movement_input_available() else 0.0
 				player.velocity=movement.swimming_velocity(direction,player.velocity,vertical,water_depth,delta,controls.sprint())
 			else:
 				player.velocity=movement.walking_velocity(direction,player.velocity,delta,controls.sprint(),player.is_on_floor(),controls.held.has(KEY_SPACE))

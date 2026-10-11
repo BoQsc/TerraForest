@@ -19,7 +19,7 @@ class GroundCatalog:
 	const ITEMS: Array[int]=[201,204,205,206,207,208,209,210]
 	const COSTS: Array[int]=[201,204,205,206,207,208,209,102]
 	const NAMES: Array[String]=["Stone","Fern","Grass clump","White wildflower","Golden wildflower","Violet wildflower","Low bush","Dry twigs"]
-const RESOURCES: Dictionary={201:"Stone",202:"Iron ore",203:"Copper ore",204:"Plant",205:"Grass clump",206:"White wildflower",207:"Golden wildflower",208:"Violet wildflower",209:"Low bush",210:"Dry twigs",301:"Woven hood",302:"Woven vest",303:"Woven footwraps"}
+const RESOURCES: Dictionary={201:"Stone",202:"Iron ore",203:"Copper ore",204:"Plant",205:"Grass clump",206:"White wildflower",207:"Golden wildflower",208:"Violet wildflower",209:"Low bush",210:"Dry twigs",211:"Topsoil",301:"Woven hood",302:"Woven vest",303:"Woven footwraps"}
 const GROUND_ITEMS: Dictionary={201:0,204:1,205:2,206:3,207:4,208:5,209:6,210:7}
 var ground_tools_enabled:=false
 const STARTER_MATERIAL_COUNT:=64
@@ -32,9 +32,6 @@ var slots: Dictionary={} # Backpack controls keyed by native storage slot (10..3
 var belt: Array[Button]=[]
 var modal: Control
 var message: Label
-var pending_choice: OptionButton
-var pending_amount: SpinBox
-var claim_button: Button
 var recipe_buttons: Array[Button]=[]
 var crafting_panel: PanelContainer
 var crafting_message: Label
@@ -168,14 +165,7 @@ func _ready() -> void:
 		var button=preload("res://addons/player_runtime/inventory_slot.gd").new();button.controller=self;button.slot=i;button.custom_minimum_size=Vector2(110,75);button.focus_mode=Control.FOCUS_NONE
 		button.pressed.connect(func(): select_slot(i))
 		grid.add_child(button);slots[i]=button
-	var rewards:=HBoxContainer.new();rewards.add_theme_constant_override("separation",12)
-	column.add_child(rewards)
-	var reward_label:=Label.new();reward_label.text="Pending materials";rewards.add_child(reward_label)
-	pending_choice=OptionButton.new();pending_choice.size_flags_horizontal=Control.SIZE_EXPAND_FILL
-	rewards.add_child(pending_choice);pending_choice.item_selected.connect(func(_index: int): _select_pending())
-	pending_amount=SpinBox.new();pending_amount.min_value=1;pending_amount.max_value=32000000;pending_amount.value=1
-	pending_amount.custom_minimum_size.x=130;rewards.add_child(pending_amount)
-	claim_button=Button.new();claim_button.text="Claim";claim_button.pressed.connect(claim_pending);rewards.add_child(claim_button)
+
 	crafting_panel=PanelContainer.new();crafting_panel.position=Vector2(220,200);crafting_panel.size=Vector2(420,650);modal.add_child(crafting_panel)
 	drop_layer=CanvasLayer.new();drop_layer.layer=19;add_child(drop_layer)
 	var drop_target=preload("res://addons/player_runtime/world_drop_target.gd").new();drop_target.hud=self;drop_layer.add_child(drop_target);drop_target.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT);drop_layer.hide()
@@ -201,15 +191,16 @@ func _ready() -> void:
 		button.add_theme_color_override("font_disabled_color",Color("879b93"))
 		button.pressed.connect(craft_recipe.bind(i));recipes.add_child(button);recipe_buttons.append(button)
 	crafting_message=Label.new();crafting_message.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;crafting_message.size_flags_horizontal=Control.SIZE_EXPAND_FILL
-	crafting_message.text="Recipes use materials in your inventory. Claim pending mined materials first.";recipes.add_child(crafting_message)
+	crafting_message.text="Recipes use materials in your inventory. Mining adds resources directly.";recipes.add_child(crafting_message)
 	message.text="Drag to move. Release outside panels and belt to drop. Shift-drag: half stack."
 	message.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;message.custom_minimum_size.y=42
 	column.add_child(message)
 	show_side("Crafting");modal.hide();refresh()
 
 func refresh() -> void:
+	deliver_mining_rewards()
 	if action_hint!=null:
-		action_hint.text=editor_hint if not editor_hint.is_empty() else {0:"Empty hands | E interact",1:"Pickaxe | Hold left mouse: attack / dig | Best against stone",2:"Hatchet | Hold left mouse: attack / dig | Best against wood",3:"Building hammer | Right mouse: build | Left mouse: attack | Esc: shape, material, rotation",4:"Assembly tool | Right mouse: place | Left mouse: attack | Esc: object and transform settings"}.get(active_item,"Holding "+MATERIALS.get(active_item,RESOURCES.get(active_item,"item"))+" | E interact")
+		action_hint.text=editor_hint if not editor_hint.is_empty() else {0:"Empty hands | Left mouse: punch / dig | E interact",1:"Pickaxe | Hold left mouse: attack / dig | Best against stone",2:"Hatchet | Hold left mouse: attack / dig | Best against wood",3:"Building hammer | Right mouse: build | Left mouse: attack | Esc: shape, material, rotation",4:"Assembly tool | Right mouse: place | Left mouse: attack | Esc: object and transform settings"}.get(active_item,"Holding "+MATERIALS.get(active_item,RESOURCES.get(active_item,"item"))+(" | Right mouse: place | G drop" if active_item in MATERIALS or active_item in GROUND_ITEMS else " | G drop | E interact"))
 	if mode_hint!=null:mode_hint.text="1–9 / 0"+" / Wheel equip · Tab inventory · Esc menu · "+("Gameplay" if gameplay_construction else "Development")
 	var latest: Dictionary=inventory.snapshot()
 	var inventory_changed_since_view: bool=latest.revision!=state.get("revision",-1)
@@ -234,7 +225,7 @@ func refresh() -> void:
 				belt[i].tooltip_text=DEV_TOOLS[i]
 				belt[i].set_appearance(i>=8,i==developer_slot,false)
 	_refresh_ground_hint()
-	_refresh_pending()
+
 	_refresh_recipes()
 	character_panel.refresh()
 	if developer_belt:mode_hint.text="Development toolbelt | 1-9 / 0 / Wheel select | Esc configure | ~ gameplay"
@@ -243,39 +234,24 @@ func show_side(tab: String) -> void:
 	crafting_content.visible=tab=="Crafting";character_panel.visible=tab=="Character"
 	for button in side_tabs.get_children():button.modulate=Color(0.55,1,0.8) if button.text==tab else Color.WHITE
 
-func _refresh_pending() -> void:
-	var selected: int=int(pending_choice.get_item_metadata(pending_choice.selected)) if not pending_choice.disabled and pending_choice.selected>=0 else 0
-	pending_choice.clear()
+# Bounded event-driven delivery. The persisted inbox is an internal safety journal,
+# not a second inventory; legacy rewards and full-inventory overflow retry on changes.
+func deliver_mining_rewards() -> int:
+	if reward_inbox==null or inventory==null:return 0
+	var delivered:=0
 	var pending: PackedInt64Array=reward_inbox.get_pending()
 	for i in range(0,pending.size(),2):
-		var item: int=pending[i]
-		pending_choice.add_item("%s ×%d"%[MATERIALS.get(item,RESOURCES.get(item,CATALOG.get(item,"Item %d"%item))),pending[i+1]])
-		pending_choice.set_item_metadata(i/2,item)
-		if item==selected: pending_choice.select(i/2)
-	pending_choice.disabled=pending.is_empty()
-	if pending.is_empty(): pending_choice.add_item("No pending materials")
-	_select_pending()
-
-func _select_pending() -> void:
-	claim_button.disabled=pending_choice.disabled
-	pending_amount.editable=not pending_choice.disabled
-	if pending_choice.disabled: return
-	var item: int=pending_choice.get_item_metadata(pending_choice.selected)
-	var pending: PackedInt64Array=reward_inbox.get_pending()
-	for i in range(0,pending.size(),2):
-		if pending[i]==item: pending_amount.max_value=mini(pending[i+1],32000000);return
-
-func claim_pending() -> void:
-	if not enabled or not inventory_open or pending_choice.disabled: return
-	var item: int=pending_choice.get_item_metadata(pending_choice.selected)
-	var amount:=int(pending_amount.value)
-	var result: Dictionary=reward_inbox.claim(inventory,PackedInt64Array([item,amount]),state.revision)
-	if result.ok:
-		message.text="Claimed %d · %s"%[amount,"temporary world; not saved" if temporary_world else "F5 saves world"]
-		inventory_changed.emit()
-	elif result.reason=="full": message.text="Not enough inventory space. Claim fewer or free a slot; pending materials are retained."
-	else: message.text="Claim rejected (%s). Inventory refreshed; try again."%result.reason
-	refresh()
+		var id: int=pending[i]
+		if not (id in CATALOG or id in MATERIALS or id in RESOURCES):continue
+		var limit:=1 if id in CATALOG or id>=301 else 999
+		var current: Dictionary=inventory.snapshot();var space:=0
+		for row: Dictionary in current.slots:
+			if row.count==0:space+=limit
+			elif row.item==id:space+=maxi(0,limit-int(row.count))
+		var amount:=mini(space,pending[i+1])
+		if amount>0 and reward_inbox.claim(inventory,PackedInt64Array([id,amount]),current.revision).ok:delivered+=amount
+	if delivered>0:inventory_changed.emit()
+	return delivered
 
 func _equippable(item: int) -> bool:
 	return item in CATALOG or (ground_tools_enabled and item in GROUND_ITEMS)

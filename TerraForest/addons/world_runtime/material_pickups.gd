@@ -3,7 +3,7 @@ extends Node3D
 signal changed
 ## Scene orchestration only: native stores, spatial queries and batched rendering.
 ## Static authored supplies; no per-pickup nodes or active rigid bodies.
-const ITEMS := {1:"Pickaxe",2:"Hatchet",3:"Building hammer",4:"Assembly tool",101:"Brick",102:"Wood",103:"Concrete",104:"Metal",201:"Stone",202:"Iron ore",203:"Copper ore",204:"Plant",205:"Grass clump",206:"White wildflower",207:"Golden wildflower",208:"Violet wildflower",209:"Low bush",210:"Dry twigs",301:"Woven hood",302:"Woven vest",303:"Woven footwraps"}
+const ITEMS := {1:"Pickaxe",2:"Hatchet",3:"Building hammer",4:"Assembly tool",101:"Brick",102:"Wood",103:"Concrete",104:"Metal",201:"Stone",202:"Iron ore",203:"Copper ore",204:"Plant",205:"Grass clump",206:"White wildflower",207:"Golden wildflower",208:"Violet wildflower",209:"Low bush",210:"Dry twigs",211:"Topsoil",301:"Woven hood",302:"Woven vest",303:"Woven footwraps"}
 const COLORS := {101: Color("b57052"), 102: Color("b99563"), 103: Color("b4bec4"), 104: Color("729da9"), 201: Color("7f858c"), 202: Color("965e43"), 203: Color("bc7950"), 204: Color("557538"), 205: Color("677e3e")}
 var stores: Dictionary = {}
 var stacks: Dictionary = {}
@@ -62,10 +62,8 @@ func prepare(persistence: RefCounted) -> bool:
 		if not store.configure(4096): return false
 		stores[item] = store
 		if not persistence.register_component("pickups_%d" % item, store.capture_storage_snapshot, _restore.bind(item), store, store.capture_storage_snapshot()): return false
-		var mesh := BoxMesh.new(); mesh.size = Vector3.ONE * 0.35
-		var material := StandardMaterial3D.new()
-		material.albedo_color = COLORS.get(item,Color("91a184")); material.roughness = 0.8
-		mesh.material = material
+		var mesh: Mesh=load("res://addons/player_runtime/art/drops/%d.res"%item)
+		if mesh==null:return false
 		var renderer: MultiMeshInstance3D = ClassDB.instantiate("NativeEntityRenderer")
 		if not renderer.configure(store, mesh, 256):
 			renderer.free(); return false

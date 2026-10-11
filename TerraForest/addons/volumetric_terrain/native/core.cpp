@@ -201,7 +201,11 @@ bool World::edit(V3 a,V3 b,float radius,int shape,bool add,u8 material,V3&lo,V3&
    // Count only newly excavated lattice samples, before material rewriting.
    // Existing air, band reshaping, paving and additive edits yield nothing.
    if(removed_samples&&!add&&shape<2&&previous<0&&q>=0){
-    u8 source=pages[idx].mat[j];if(source<16)removed_samples[source]++;
+    u8 source=pages[idx].mat[j];
+    // Receipt-only classification: preserve terrain storage/shading identities.
+    // Natural surface soil occupies the upper two metres; explicit rock and ore stay distinct.
+    if(source==0 && float(y)>=h-2.f)source=10;
+    if(source<16)removed_samples[source]++;
    }
    pages[idx].d[j]=q;
    // Cut walls retain their substrate; pavement is limited to the bed.

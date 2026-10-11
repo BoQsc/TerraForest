@@ -24,16 +24,15 @@ func run() -> void:
 		deadline=Time.get_ticks_msec()+15000
 		while game.terrain.pending_edit and Time.get_ticks_msec()<deadline: await process_frame
 		check(not game.terrain.pending_edit and not game.mining_rewards.failed,"streamed main-scene excavation publishes with reward callback")
-		var pending: PackedInt64Array=game.player_hud.reward_inbox.get_pending()
-		check(not pending.is_empty(),"main-scene excavation reaches pending inventory")
+		check(game.player_hud.reward_inbox.get_pending().is_empty(),"mining automatically delivers resources")
 		game.player_hud.set_open(true)
-		if not pending.is_empty():
-			game.player_hud.pending_amount.value=2
-			game.player_hud.claim_button.pressed.emit()
-			var item: int=pending[0]
-			var recipe:=0 if item==201 else (2 if item==202 else 3)
-			game.player_hud.recipe_buttons[recipe].pressed.emit()
-			check(game.player_hud.message.text.begins_with("Crafted supplies"),"main-scene claim and crafting controls complete the resource conversion")
+		var raw:=0
+		for row in game.player_hud.inventory.snapshot().slots:
+			if row.item in [201,202,203] and row.count>=2:raw=row.item;break
+		check(raw!=0,"mined materials are usable inventory stacks")
+		if raw!=0:
+			game.player_hud.recipe_buttons[0 if raw==201 else (2 if raw==202 else 3)].pressed.emit()
+			check(game.player_hud.message.text.begins_with("Crafted"),"mined inventory resources craft directly")
 		check(game.player_hud.inventory_open and Input.mouse_mode==Input.MOUSE_MODE_VISIBLE,"inventory opens with usable pointer in main scene")
 		for frame in range(6): await RenderingServer.frame_post_draw
 		check(Presentation.measurement(root).fair_graphical_sample and Engine.max_fps==60,"main scene uses fullscreen 1920x1080 and 60 FPS cap")

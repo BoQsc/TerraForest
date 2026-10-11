@@ -255,6 +255,10 @@ func _input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled();return
 	if visible_ui() or (developer_hud.mouse_access and Input.mouse_mode!=Input.MOUSE_MODE_CAPTURED):return
 	if event.pressed and not game.player_hud.inventory_open:
+		if event.physical_keycode==KEY_G:
+			if not developer and game.player_hud.active_slot>=0 and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED:
+				game._drop_inventory_supply(game.player_hud.active_slot,game.player_hud.inventory.snapshot().revision,1)
+			get_viewport().set_input_as_handled();return
 		if event.physical_keycode in [KEY_1,KEY_2,KEY_3,KEY_4,KEY_5,KEY_6,KEY_7,KEY_8,KEY_9,KEY_0]:
 			game.player_hud.equip(9 if event.physical_keycode==KEY_0 else event.physical_keycode-KEY_1);get_viewport().set_input_as_handled()
 		elif (event.ctrl_pressed and event.physical_keycode==KEY_R) or event.physical_keycode in [KEY_M,KEY_B,KEY_H,KEY_P,KEY_T,KEY_G] or (not developer and event.physical_keycode in [KEY_F2,KEY_F3,KEY_F4,KEY_F6,KEY_F7,KEY_F8,KEY_F10,KEY_J,KEY_K,KEY_V,KEY_L]):

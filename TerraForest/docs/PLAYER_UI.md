@@ -34,9 +34,10 @@ panels. No M/B/H mode switching is required or active through normal input.
 | Hatchet | Hold left mouse to attack or dig; strongest against wood. |
 | Building hammer | Left mouse attacks the aimed target; right mouse builds using the selected recipe. |
 | Assembly tool | Left mouse attacks the aimed target; right mouse places an object using its recipe. |
-| Empty hands / material or placeable stack | Does not attack. E still interacts; owned ground-cover stacks use right mouse to place. |
+| Empty hands | Left mouse punches/digs using the shared attack path, at 5 damage per hit; no tool wear. |
+| Material or placeable stack | Does not attack. Right mouse places held building materials as cubes or owned ground cover. E interacts. |
 
-All four tools share one occlusion-aware 3.5 m attack query with a 250 ms cooldown.
+Hands and all four tools share one occlusion-aware 3.5 m attack query with a 250 ms cooldown.
 Targets are terrain patches, building blocks, trees, ground cover, furniture/static
 models, active actors and vehicles. Partial damage persists through saves. Nonempty
 containers remain protected; failed destruction cannot discard their contents.
@@ -45,7 +46,7 @@ Untouched targets require no individual health records or update loops.
 Tools start with 200 durability. Accepted hits cost one point and break the tool
 at zero. Misses and rejected interactions cost nothing. Wear follows native item
 records through backpack/belt moves, swaps, chests, drops and save/load. Older
-inventory/chest saves migrate with full-durability tools. Toolbelt percentages and
+inventory/chest saves migrate with full-durability tools. Toolbelt colored durability bars and
 inventory hover text show condition. Four replacement-tool recipes use hand-
 gatherable stone and wood. Repair, damage-stage art, collapse physics and combat
 balance are not implemented by this change. Existing held meshes remain simple.
@@ -98,7 +99,7 @@ Regression: [input and terrain projection](evidence/input_surface_regression/REA
 
 Opening inventory also opens a separate crafting panel on the left. Click a recipe
 to craft one batch; cards show owned / required ingredients and disable when short
-of materials. Claim pending materials before crafting. Empty slots are translucent,
+of materials. Mining delivers materials directly into inventory. Empty slots are translucent,
 the equipped slot has a mint outline and lower accent, and the selected inventory
 slot has a gold outline. Container slots share the empty/selected styling.
 Evidence: [inventory presentation](evidence/inventory_presentation/README.md).
@@ -117,7 +118,7 @@ The initial clothing has no armor bonuses or worn-model art yet.
 
 Release a dragged backpack/belt item outside UI panels and the belt to drop it
 on clear ground in front of the player. Normal drag drops the whole stack;
-Shift-drag drops half. Invalid/blocked drops preserve items. Each dropped stack
+Shift-drag drops half. G drops one currently held item during gameplay; it does not toggle flight. Invalid/blocked drops preserve items. Each dropped stack
 is one world pickup; E recollects its contents. Pickup quantity and equipment
 use native transactions and world snapshots. The old Equip/Drop buttons are gone.
 [Character and drop evidence](evidence/character_drops/README.md).
@@ -164,3 +165,12 @@ hide the compact panel temporarily. These editor actions do not wear gameplay to
 ## Baked item icons
 
 Carried items use shared prerendered icons in the toolbelt, backpack, chest and character slots. Stack quantities remain in the upper right. Tools show a small green/amber/red durability line; hovering with the inventory open shows their name and exact remaining durability. Developer slots clear gameplay visuals. Recipe-based furniture has matching icons in the placement picker. See [icon evidence and rebaking](evidence/item_icons/README.md).
+
+
+## Gathering and dropped models
+
+Mining grants Stone, Iron ore, Copper ore and Topsoil directly when the terrain edit publishes. Topsoil (item 211) is natural unpainted terrain within two metres of the original surface; deeper unpainted terrain remains Stone. This is a provisional soil-depth rule, not biome-specific geology. There is no Claim row. If inventory fills during excavation, a persisted internal receipt retains excess and transfers it automatically when space opens; further mining pauses until it clears. Old saved pending rewards use this same automatic delivery.
+
+Dropped stacks use 22 baked, single-surface item meshes from the icon baker, including stone, ores and topsoil. Existing native spatial stores and MultiMesh rendering remain in charge: no per-drop nodes, live baking, animations or rigid bodies. Tools retain their wear when dropped. Simple hands appear in an empty slot and animate on the common attack path.
+
+The developer overlay does not own Space: jumping remains available while Alt exposes the mouse, and releasing Alt clears keyboard focus and closes option popups. See [gameplay item evidence](evidence/gameplay_items/README.md).

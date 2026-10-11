@@ -506,13 +506,15 @@ func _setup_hud() -> void:
 func _equip_player_tool(item: int) -> void:
 	if world_vehicle.driving:return
 	editor_tool_active=false;equipped_tool=item
-	_set_player_tool_mode(item in [3,4],item==4,3)
+	_set_player_tool_mode(item in [3,4] or item in player_hud.MATERIALS,item==4,3)
+	if item in player_hud.MATERIALS:
+		structure_shape=1;structure_prefab_index=-1;structure_material=item-101;_sync_construction_palette()
 	if item in player_hud.GROUND_ITEMS:_activate_ground_tool(player_hud.GROUND_ITEMS[item])
 	if item==1:radius=0.65
 	edit_reach=3.5;allow_terrain_add=false
 	tool_view.equip(item if item in player_hud.CATALOG else 0)
 	player_hud.show_active_tool(item)
-	_show_lake_notice(session_menu.DESCRIPTIONS.get(item,"Empty hands - E interacts" if item==0 else "Holding "+player_hud.MATERIALS.get(item,player_hud.RESOURCES.get(item,"item"))))
+	_show_lake_notice(session_menu.DESCRIPTIONS.get(item,"Empty hands - left mouse punches, E interacts" if item==0 else "Holding "+player_hud.MATERIALS.get(item,player_hud.RESOURCES.get(item,"item"))))
 
 func _activate_ground_tool(species: int) -> bool:
 	if not ground_enabled or world_vehicle.driving or species<0 or species>=player_hud.GroundCatalog.COUNT:return false
@@ -650,6 +652,9 @@ func _set_player_tool_mode(building: bool,objects: bool,terrain_tool: int) -> bo
 	_sync_player_tool()
 	_show_lake_notice(player_hud.CATALOG.get(player_hud.active_item,"Terrain editing"))
 	return true
+
+func _movement_input_available() -> bool:
+	return super._movement_input_available() or (session_menu!=null and session_menu.developer_hud!=null and session_menu.developer_hud.mouse_access and not session_menu.visible_ui() and not player_hud.inventory_open)
 
 func _unhandled_input(event: InputEvent) -> void:
 	if session_menu.visible_ui():return
@@ -1226,25 +1231,28 @@ func _vehicle_interaction_available() -> bool:
 
 func _drop_inventory_supply(slot: int, revision: int, count: int=1) -> void:
 	var result := {"ok":false,"reason":"Stand on foot in a ready world to drop supplies"}
-	if player_hud.inventory_open and app_focused and not fly and not loading_active and not shutdown_requested and terrain.world_ready and not terrain.pending_edit and not world_vehicle.driving:
+	if (player_hud.inventory_open or Input.mouse_mode==Input.MOUSE_MODE_CAPTURED) and app_focused and not fly and not loading_active and not shutdown_requested and terrain.world_ready and not terrain.pending_edit and not world_vehicle.driving:
 		var forward := -player.global_basis.z
 		forward.y=0;forward=forward.normalized()
-		var start := player.global_position+forward*1.2+Vector3.UP*1.5
-		var query := PhysicsRayQueryParameters3D.create(start,start-Vector3.UP*3.0,3,[player.get_rid()])
-		var hit := get_world_3d().direct_space_state.intersect_ray(query)
-		result.reason="No reachable clear ground in front of the player"
-		if not hit.is_empty() and Vector3(hit.normal).y>=0.7:
-			var point: Vector3=hit.position+Vector3.UP*0.2
-			var bounds:=AABB(point-Vector3.ONE*0.2,Vector3.ONE*0.4)
-			if terrain.player_region_ready(point) and structures.is_collision_region_ready(bounds) and vegetation.is_collision_region_ready(bounds) and _pickup_reachable(point):
-				var shape:=BoxShape3D.new();shape.size=Vector3.ONE*0.35
-				var overlap:=PhysicsShapeQueryParameters3D.new();overlap.shape=shape;overlap.transform=Transform3D(Basis.IDENTITY,point);overlap.collision_mask=7
-				var clear:=get_world_3d().direct_space_state.intersect_shape(overlap,1).is_empty()
-				for store: RefCounted in pickups.stores.values():
-					var nearby: Dictionary=store.query_sphere(pickups.to_local(point),0.5,1,64)
-					clear=clear and nearby.ok and nearby.complete and nearby.ids.is_empty()
-				if clear: result=pickups.drop_stack(player_hud.inventory,slot,revision,pickups.to_local(point),count)
+		for offset: float in [0.0,0.55,-0.55,1.1,-1.1]:
+			var start := player.global_position+forward*1.2+Vector3.UP*1.5+player.global_basis.x*offset
+			var query := PhysicsRayQueryParameters3D.create(start,start-Vector3.UP*3.0,3,[player.get_rid()])
+			var hit := get_world_3d().direct_space_state.intersect_ray(query)
+			result.reason="No reachable clear ground in front of the player"
+			if not hit.is_empty() and Vector3(hit.normal).y>=0.7:
+				var point: Vector3=hit.position+Vector3.UP*0.2
+				var bounds:=AABB(point-Vector3.ONE*0.2,Vector3.ONE*0.4)
+				if terrain.player_region_ready(point) and structures.is_collision_region_ready(bounds) and vegetation.is_collision_region_ready(bounds) and _pickup_reachable(point):
+					var shape:=BoxShape3D.new();shape.size=Vector3.ONE*0.35
+					var overlap:=PhysicsShapeQueryParameters3D.new();overlap.shape=shape;overlap.transform=Transform3D(Basis.IDENTITY,point);overlap.collision_mask=7
+					var clear:=get_world_3d().direct_space_state.intersect_shape(overlap,1).is_empty()
+					for store: RefCounted in pickups.stores.values():
+						var nearby: Dictionary=store.query_sphere(pickups.to_local(point),0.5,1,64)
+						clear=clear and nearby.ok and nearby.complete and nearby.ids.is_empty()
+					if clear: result=pickups.drop_stack(player_hud.inventory,slot,revision,pickups.to_local(point),count)
+			if result.ok:break
 	player_hud.message.text=result.reason
+	_show_lake_notice(result.reason)
 	player_hud.refresh()
 
 func _place_combined_prefab(asset: Resource,target: Vector3i,rotation: int) -> bool:

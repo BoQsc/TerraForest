@@ -20,7 +20,7 @@ func run() -> void:
 		button.set_appearance(false,i==0)
 		if i==0:first=button
 		var image: Image=icons.texture(key).get_image();occupied=occupied and image.get_used_rect().size!=Vector2i.ZERO
-	check(occupied,"all 29 baked tiles contain visible pixels")
+	check(occupied,"all baked tiles contain visible pixels")
 	check(icons.texture(99999)==null,"unknown identity has safe missing-icon fallback")
 	var image: Image=icons.atlas.get_image()
 	check(image.get_size()==Vector2i(1024,512) and image.get_pixel(0,0).a==0,"transparent bounded 2 MiB RGBA atlas")

@@ -1,0 +1,164 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] New world
+[TerrainRewrite] New world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+PASS world ready
+PASS wood block fixture 0
+[TerrainRewrite] Pickaxe
+[TerrainRewrite] Pickaxe: hold left mouse to attack or dig. Most effective on stone.
+PASS tool 0 targets nearest block
+[TerrainRewrite] Building block: 50 / 60 durability
+PASS tool 0 damages block and wears without instant removal
+[TerrainRewrite] Building block: 40 / 60 durability
+[TerrainRewrite] Building block: 30 / 60 durability
+[TerrainRewrite] Building block: 20 / 60 durability
+[TerrainRewrite] Building block: 10 / 60 durability
+[TerrainRewrite] Building block destroyed
+PASS tool 0 eventually destroys block
+PASS wood block fixture 1
+[TerrainRewrite] Hatchet
+[TerrainRewrite] Hatchet: hold left mouse to attack or dig. Most effective on wood.
+PASS tool 1 targets nearest block
+[TerrainRewrite] Building block: 30 / 60 durability
+PASS tool 1 damages block and wears without instant removal
+[TerrainRewrite] Building block destroyed
+PASS tool 1 eventually destroys block
+PASS wood block fixture 2
+[TerrainRewrite] Building hammer
+[TerrainRewrite] Building hammer: left mouse attacks the aimed target; right mouse builds the selected shape.
+PASS tool 2 targets nearest block
+[TerrainRewrite] Building block: 45 / 60 durability
+PASS tool 2 damages block and wears without instant removal
+[TerrainRewrite] Building block: 30 / 60 durability
+[TerrainRewrite] Building block: 15 / 60 durability
+[TerrainRewrite] Building block destroyed
+PASS tool 2 eventually destroys block
+PASS wood block fixture 3
+[TerrainRewrite] Assembly tool
+[TerrainRewrite] Assembly tool: left mouse attacks the aimed target; right mouse places the selected object.
+PASS tool 3 targets nearest block
+[TerrainRewrite] Building block: 45 / 60 durability
+PASS tool 3 damages block and wears without instant removal
+[TerrainRewrite] Building block: 30 / 60 durability
+[TerrainRewrite] Building block: 15 / 60 durability
+[TerrainRewrite] Building block destroyed
+PASS tool 3 eventually destroys block
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Brick
+PASS placeable material never attacks
+[TerrainRewrite] Pickaxe
+[TerrainRewrite] Pickaxe: hold left mouse to attack or dig. Most effective on stone.
+[TerrainRewrite] Tree: 80 / 90 durability
+PASS pickaxe damages a real tree without immediate harvest
+[TerrainRewrite] Hatchet
+[TerrainRewrite] Hatchet: hold left mouse to attack or dig. Most effective on wood.
+[TerrainRewrite] Tree: 50 / 90 durability
+[TerrainRewrite] Tree: 20 / 90 durability
+[TerrainRewrite] Tree destroyed
+PASS axe finishes the same damaged tree
+PASS furniture participates in shared nearest hit query
+[TerrainRewrite] Empty stored contents before damaging this container
+PASS protected container/object consumes no wear or items
+[TerrainRewrite] Shelf: 60 / 90 durability
+[TerrainRewrite] Shelf: 30 / 90 durability
+[TerrainRewrite] Shelf destroyed
+PASS shared attack destroys furniture through salvage transaction
+PASS actor pool enables for damage fixture
+PASS active actor resolves stable damage target
+[TerrainRewrite] Actor: 85 / 100 durability
+[TerrainRewrite] Actor: 70 / 100 durability
+[TerrainRewrite] Actor: 55 / 100 durability
+[TerrainRewrite] Actor: 40 / 100 durability
+[TerrainRewrite] Actor: 25 / 100 durability
+[TerrainRewrite] Actor: 10 / 100 durability
+[TerrainRewrite] Actor destroyed
+PASS actor destruction retires persistent entity
+PASS vehicle damage fixture installs
+PASS vehicle resolves stable damage target
+[TerrainRewrite] Vehicle: 285 / 300 durability
+[TerrainRewrite] Vehicle: 270 / 300 durability
+[TerrainRewrite] Vehicle: 255 / 300 durability
+[TerrainRewrite] Vehicle: 240 / 300 durability
+[TerrainRewrite] Vehicle: 225 / 300 durability
+[TerrainRewrite] Vehicle: 210 / 300 durability
+[TerrainRewrite] Vehicle: 195 / 300 durability
+[TerrainRewrite] Vehicle: 180 / 300 durability
+[TerrainRewrite] Vehicle: 165 / 300 durability
+[TerrainRewrite] Vehicle: 150 / 300 durability
+[TerrainRewrite] Vehicle: 135 / 300 durability
+[TerrainRewrite] Vehicle: 120 / 300 durability
+[TerrainRewrite] Vehicle: 105 / 300 durability
+[TerrainRewrite] Vehicle: 90 / 300 durability
+[TerrainRewrite] Vehicle: 75 / 300 durability
+[TerrainRewrite] Vehicle: 60 / 300 durability
+[TerrainRewrite] Vehicle: 45 / 300 durability
+[TerrainRewrite] Vehicle: 30 / 300 durability
+[TerrainRewrite] Vehicle: 15 / 300 durability
+[TerrainRewrite] Vehicle destroyed
+PASS vehicle destruction removes body and saved identity
+PASS world save includes sparse durability
+PASS worn tool drops into world
+PASS recollecting tool cannot repair it
+PASS natural ground-cover damage fixture available
+[TerrainRewrite] Hatchet
+[TerrainRewrite] Hatchet: hold left mouse to attack or dig. Most effective on wood.
+PASS natural ground cover participates in nearest-target attack
+[TerrainRewrite] Grass clump destroyed
+PASS ground-cover destruction persists removal
+[TerrainRewrite] Pickaxe
+[TerrainRewrite] Pickaxe: hold left mouse to attack or dig. Most effective on stone.
+PASS tool 0 can aim at terrain
+[TerrainRewrite] Terrain destroyed
+PASS tool 0 submits excavation through shared attack
+[TerrainRewrite] Mined resources added to inventory
+PASS excavation publishes
+[TerrainRewrite] Hatchet
+[TerrainRewrite] Hatchet: hold left mouse to attack or dig. Most effective on wood.
+PASS tool 1 can aim at terrain
+[TerrainRewrite] Terrain: 20 / 30 durability
+[TerrainRewrite] Terrain: 10 / 30 durability
+[TerrainRewrite] Terrain destroyed
+PASS tool 1 submits excavation through shared attack
+[TerrainRewrite] Mined resources added to inventory
+PASS excavation publishes
+[TerrainRewrite] Building hammer
+[TerrainRewrite] Building hammer: left mouse attacks the aimed target; right mouse builds the selected shape.
+PASS tool 2 can aim at terrain
+[TerrainRewrite] Terrain: 15 / 30 durability
+[TerrainRewrite] Terrain destroyed
+PASS tool 2 submits excavation through shared attack
+[TerrainRewrite] Mined resources added to inventory
+PASS excavation publishes
+[TerrainRewrite] Assembly tool
+[TerrainRewrite] Assembly tool: left mouse attacks the aimed target; right mouse places the selected object.
+PASS tool 3 can aim at terrain
+[TerrainRewrite] Terrain: 20 / 30 durability
+[TerrainRewrite] Terrain: 10 / 30 durability
+[TerrainRewrite] Terrain destroyed
+PASS tool 3 submits excavation through shared attack
+[TerrainRewrite] Mined resources added to inventory
+PASS excavation publishes
+PASS replacement pickaxe crafts without a metal dependency
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Empty hands - left mouse punches, E interacts
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Empty hands - left mouse punches, E interacts
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Empty hands - left mouse punches, E interacts
+PASS empty development slot disables terrain editing
+[TerrainRewrite] Terrain editing
+PASS persistent context HUD follows selected developer tool
+PASS F1 hides development panel
+PASS Alt exposes mouse for on-screen controls
+PASS Alt release returns to aiming
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Empty hands - left mouse punches, E interacts
+[TerrainRewrite] Assembly tool
+[TerrainRewrite] Assembly tool: left mouse attacks the aimed target; right mouse places the selected object.
+[TerrainRewrite] Pickaxe
+[TerrainRewrite] Pickaxe: hold left mouse to attack or dig. Most effective on stone.
+[TerrainRewrite] Temporary test world: save skipped
+WORLD_ATTACK checks=53 failures=0

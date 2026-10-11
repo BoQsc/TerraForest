@@ -5,7 +5,7 @@ var game: Node
 var durability: RefCounted
 var next_attack:=0
 var rejection_reason:=""
-const TOOLS={1:{"stone":30,"wood":10,"other":15},2:{"stone":10,"wood":30,"other":15},3:{"stone":15,"wood":15,"other":20},4:{"stone":10,"wood":15,"other":15}}
+const TOOLS={0:{"stone":5,"wood":5,"other":5},1:{"stone":30,"wood":10,"other":15},2:{"stone":10,"wood":30,"other":15},3:{"stone":15,"wood":15,"other":20},4:{"stone":10,"wood":15,"other":15}}
 func prepare(world: Node) -> bool:
 	game=world;durability=ClassDB.instantiate("NativeWorldDurability")
 	return game.persistence.register_component("world_durability",durability.capture_storage_snapshot,durability.restore_storage_snapshot,durability,durability.capture_storage_snapshot())
@@ -63,7 +63,7 @@ func attack() -> bool:
 func apply_target(t: Dictionary) -> bool:
 	var hud=game.player_hud
 	var item: int=game.equipped_tool
-	if not TOOLS.has(item) or hud.active_slot<0:return false
+	if not TOOLS.has(item) or (item!=0 and hud.active_slot<0):return false
 	if t.kind=="cover" and (game.ground_cover._dirty.has(t.cell) or game.ground_cover._pending.has(t.cell)):return false
 	if t.kind=="model" and t.collection.is_removal_protected(t.id):
 		game._show_lake_notice("Empty stored contents before damaging this container");return false
@@ -76,7 +76,7 @@ func apply_target(t: Dictionary) -> bool:
 	if not accepted:
 		game._show_lake_notice(rejection_reason if not rejection_reason.is_empty() else "Destruction blocked; make inventory room or wait for the world");return false
 	if result.destroyed:durability.forget(t.key)
-	var wear: Dictionary=hud.inventory.wear_tool(hud.active_slot,1,hud.inventory.snapshot().revision)
+	var wear: Dictionary=hud.inventory.wear_tool(hud.active_slot,1,hud.inventory.snapshot().revision) if item!=0 else {}
 	hud.refresh()
 	game._show_lake_notice("Tool broke" if wear.get("broken",false) else (t.name+" destroyed" if result.destroyed else "%s: %d / %d durability"%[t.name,result.remaining,result.maximum]))
 	return true

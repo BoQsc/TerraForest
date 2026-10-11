@@ -60,15 +60,19 @@ func run() -> void:
 	check(dig(center),"gameplay excavation accepted")
 	await wait_edit()
 	var pending: PackedInt64Array=hud.reward_inbox.get_pending()
-	check(not pending.is_empty() and pending[0] in [201,202,203] and pending[1]>0,"actual excavation produces raw-resource pending rewards")
+	var raw:=0
+	for row in hud.inventory.snapshot().slots:
+		if row.item in [201,202,203] and row.count>=2:raw=row.item;break
+	var mined_inventory: PackedByteArray=hud.capture_snapshot()
+	check(pending.is_empty() and raw!=0,"actual excavation delivers raw resources directly to inventory")
 	var receipt: int=hud.reward_inbox.get_last_receipt()
 	rewards.published(AABB(),terrain.published_revision)
-	check(hud.reward_inbox.get_pending()==pending and hud.reward_inbox.get_last_receipt()==receipt,"duplicate publication cannot repeat the receipt")
+	check(hud.reward_inbox.get_pending()==pending and hud.reward_inbox.get_last_receipt()==receipt and hud.capture_snapshot()==mined_inventory,"duplicate publication cannot repeat the receipt")
 	check(dig(center),"repeated brush admitted")
 	await wait_edit()
-	check(hud.reward_inbox.get_pending()==pending,"mining the same empty space awards nothing")
-	check(hud.reward_inbox.claim(hud.inventory,PackedInt64Array([pending[0],2]),hud.inventory.snapshot().revision).ok,"mined resource can be claimed into inventory")
-	var recipe: int=0 if pending[0]==201 else (2 if pending[0]==202 else 3)
+	check(hud.reward_inbox.get_pending()==pending and hud.capture_snapshot()==mined_inventory,"mining the same empty space awards nothing")
+	check(hud.inventory.can_afford(PackedInt64Array([raw,2]),hud.inventory.snapshot().revision).ok,"mined resource is immediately usable")
+	var recipe: int=0 if raw==201 else (2 if raw==202 else 3)
 	check(preload("res://addons/player_runtime/crafting.gd").craft(hud.inventory,recipe,1,hud.inventory.snapshot().revision).ok,"actual mined resources craft into building supplies")
 	var blocks: Node=structures.blocks
 	var construction=preload("res://addons/player_runtime/construction_inventory.gd").new();construction.gameplay=true

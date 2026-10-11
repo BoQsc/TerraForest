@@ -16,8 +16,14 @@ func point(parent: Node3D,at: Vector3,angle: float) -> void:
 	node.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_OFF;parent.add_child(node)
 func _ready() -> void:
 	position=Vector3(0.34,-0.32,-0.65);rotation=Vector3(-0.2,0.15,-0.28)
-	for id in [1,2,3,4]:
+	for id in [0,1,2,3,4]:
 		var root:=Node3D.new();add_child(root);tools[id]=root;root.hide()
+		if id==0:
+			for x in [0.0,-0.68]:
+				part(root,Vector3(0.095,0.09,0.12),Vector3(x,-0.03,0),Color("b98b6e"),0.12)
+				for finger in 4:part(root,Vector3(0.023,0.055,0.065),Vector3(x-0.035+finger*0.024,0.005,-0.045),Color("ca997a"))
+				part(root,Vector3(0.09,0.24,0.10),Vector3(x,-0.18,0.06),Color("384944"))
+			continue
 		part(root,Vector3(0.045,0.42,0.045),Vector3.ZERO,Color("62472f"))
 		if id==1:
 			part(root,Vector3(0.19,0.055,0.055),Vector3(0,0.2,0),Color("777e83"))
@@ -30,8 +36,9 @@ func _ready() -> void:
 func equip(id: int) -> void:
 	current=id
 	if motion!=null:motion.kill()
-	rotation.x=-0.2
+	rotation=Vector3.ZERO if id==0 else Vector3(-0.2,0.15,-0.28)
+	position=Vector3(0.34,-0.40,-0.75) if id==0 else Vector3(0.34,-0.32,-0.65)
 	for key in tools:tools[key].visible=key==id
 func swing() -> void:
-	if current==0 or (motion!=null and motion.is_running()):return
-	motion=create_tween();motion.tween_property(self,"rotation:x",-0.85,0.1);motion.tween_property(self,"rotation:x",-0.2,0.18)
+	if motion!=null and motion.is_running():return
+	motion=create_tween();motion.tween_property(self,"rotation:x",-0.85,0.1);motion.tween_property(self,"rotation:x",0.0 if current==0 else -0.2,0.18)
