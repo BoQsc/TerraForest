@@ -1,0 +1,577 @@
+{
+  "checks": 38,
+  "costs": [
+    {
+      "budget": 128,
+      "calls": 10,
+      "max_call_us": 43,
+      "statistics": {
+        "busy": false,
+        "endpoints": 1152,
+        "next_generation": 3,
+        "port_keys": 1152,
+        "ready_regions": 1,
+        "regions": 2,
+        "work_total": 1153,
+        "world_id": 7
+      }
+    },
+    {
+      "budget": 1,
+      "calls": 1152,
+      "max_call_us": 112,
+      "statistics": {
+        "busy": false,
+        "endpoints": 2304,
+        "next_generation": 3,
+        "port_keys": 2016,
+        "ready_regions": 2,
+        "regions": 2,
+        "work_total": 2306,
+        "world_id": 7
+      }
+    },
+    {
+      "budget": 128,
+      "calls": 19,
+      "max_call_us": 50,
+      "statistics": {
+        "busy": false,
+        "endpoints": 2304,
+        "next_generation": 4,
+        "port_keys": 2016,
+        "ready_regions": 2,
+        "regions": 2,
+        "work_total": 4611,
+        "world_id": 7
+      }
+    },
+    {
+      "budget": 128,
+      "calls": 10,
+      "max_call_us": 30,
+      "statistics": {
+        "busy": false,
+        "endpoints": 2304,
+        "next_generation": 6,
+        "port_keys": 2016,
+        "ready_regions": 2,
+        "regions": 2,
+        "work_total": 6980,
+        "world_id": 7
+      }
+    },
+    {
+      "budget": 128,
+      "calls": 10,
+      "max_call_us": 51,
+      "statistics": {
+        "busy": false,
+        "endpoints": 1152,
+        "next_generation": 6,
+        "port_keys": 1152,
+        "ready_regions": 1,
+        "regions": 1,
+        "work_total": 8133,
+        "world_id": 7
+      }
+    },
+    {
+      "budget": 128,
+      "calls": 10,
+      "max_call_us": 34,
+      "statistics": {
+        "busy": false,
+        "endpoints": 2304,
+        "next_generation": 7,
+        "port_keys": 2016,
+        "ready_regions": 2,
+        "regions": 2,
+        "work_total": 9286,
+        "world_id": 7
+      }
+    },
+    {
+      "budget": 128,
+      "calls": 20,
+      "max_call_us": 60,
+      "statistics": {
+        "busy": false,
+        "endpoints": 2432,
+        "next_generation": 8,
+        "port_keys": 2144,
+        "ready_regions": 2,
+        "regions": 2,
+        "work_total": 11719,
+        "world_id": 7
+      }
+    },
+    {
+      "budget": 128,
+      "calls": 11,
+      "max_call_us": 797,
+      "statistics": {
+        "busy": false,
+        "endpoints": 1152,
+        "next_generation": 9,
+        "port_keys": 1152,
+        "ready_regions": 2,
+        "regions": 2,
+        "work_total": 13000,
+        "world_id": 7
+      }
+    },
+    {
+      "budget": 128,
+      "calls": 20,
+      "max_call_us": 76,
+      "statistics": {
+        "busy": false,
+        "endpoints": 2432,
+        "next_generation": 3,
+        "port_keys": 2432,
+        "ready_regions": 1,
+        "regions": 2,
+        "work_total": 2433,
+        "world_id": 7
+      }
+    },
+    {
+      "budget": 128,
+      "calls": 21,
+      "max_call_us": 143,
+      "statistics": {
+        "busy": false,
+        "endpoints": 4992,
+        "next_generation": 3,
+        "port_keys": 4480,
+        "ready_regions": 2,
+        "regions": 2,
+        "work_total": 4994,
+        "world_id": 7
+      }
+    },
+    {
+      "budget": 512,
+      "calls": 5,
+      "max_call_us": 313,
+      "statistics": {
+        "busy": false,
+        "endpoints": 2432,
+        "next_generation": 2,
+        "port_keys": 2432,
+        "ready_regions": 1,
+        "regions": 1,
+        "work_total": 2433,
+        "world_id": 7
+      }
+    },
+    {
+      "budget": 512,
+      "calls": 5,
+      "max_call_us": 167,
+      "statistics": {
+        "busy": false,
+        "endpoints": 4864,
+        "next_generation": 3,
+        "port_keys": 4384,
+        "ready_regions": 2,
+        "regions": 2,
+        "work_total": 4866,
+        "world_id": 7
+      }
+    },
+    {
+      "budget": 512,
+      "calls": 5,
+      "max_call_us": 192,
+      "statistics": {
+        "busy": false,
+        "endpoints": 7296,
+        "next_generation": 4,
+        "port_keys": 6336,
+        "ready_regions": 3,
+        "regions": 3,
+        "work_total": 7299,
+        "world_id": 7
+      }
+    },
+    {
+      "budget": 512,
+      "calls": 5,
+      "max_call_us": 181,
+      "statistics": {
+        "busy": false,
+        "endpoints": 9728,
+        "next_generation": 5,
+        "port_keys": 8288,
+        "ready_regions": 4,
+        "regions": 4,
+        "work_total": 9732,
+        "world_id": 7
+      }
+    },
+    {
+      "budget": 512,
+      "calls": 5,
+      "max_call_us": 175,
+      "statistics": {
+        "busy": false,
+        "endpoints": 12160,
+        "next_generation": 6,
+        "port_keys": 10240,
+        "ready_regions": 5,
+        "regions": 5,
+        "work_total": 12165,
+        "world_id": 7
+      }
+    },
+    {
+      "budget": 512,
+      "calls": 5,
+      "max_call_us": 219,
+      "statistics": {
+        "busy": false,
+        "endpoints": 14592,
+        "next_generation": 7,
+        "port_keys": 12192,
+        "ready_regions": 6,
+        "regions": 6,
+        "work_total": 14598,
+        "world_id": 7
+      }
+    },
+    {
+      "budget": 512,
+      "calls": 5,
+      "max_call_us": 220,
+      "statistics": {
+        "busy": false,
+        "endpoints": 17024,
+        "next_generation": 8,
+        "port_keys": 14144,
+        "ready_regions": 7,
+        "regions": 7,
+        "work_total": 17031,
+        "world_id": 7
+      }
+    },
+    {
+      "budget": 512,
+      "calls": 5,
+      "max_call_us": 175,
+      "statistics": {
+        "busy": false,
+        "endpoints": 19456,
+        "next_generation": 9,
+        "port_keys": 16096,
+        "ready_regions": 8,
+        "regions": 8,
+        "work_total": 19464,
+        "world_id": 7
+      }
+    },
+    {
+      "budget": 512,
+      "calls": 5,
+      "max_call_us": 174,
+      "statistics": {
+        "busy": false,
+        "endpoints": 21888,
+        "next_generation": 10,
+        "port_keys": 18048,
+        "ready_regions": 9,
+        "regions": 9,
+        "work_total": 21897,
+        "world_id": 7
+      }
+    },
+    {
+      "budget": 512,
+      "calls": 5,
+      "max_call_us": 189,
+      "statistics": {
+        "busy": false,
+        "endpoints": 24320,
+        "next_generation": 11,
+        "port_keys": 20000,
+        "ready_regions": 10,
+        "regions": 10,
+        "work_total": 24330,
+        "world_id": 7
+      }
+    },
+    {
+      "budget": 512,
+      "calls": 5,
+      "max_call_us": 187,
+      "statistics": {
+        "busy": false,
+        "endpoints": 26752,
+        "next_generation": 12,
+        "port_keys": 21952,
+        "ready_regions": 11,
+        "regions": 11,
+        "work_total": 26763,
+        "world_id": 7
+      }
+    },
+    {
+      "budget": 512,
+      "calls": 5,
+      "max_call_us": 196,
+      "statistics": {
+        "busy": false,
+        "endpoints": 29184,
+        "next_generation": 13,
+        "port_keys": 23904,
+        "ready_regions": 12,
+        "regions": 12,
+        "work_total": 29196,
+        "world_id": 7
+      }
+    },
+    {
+      "budget": 512,
+      "calls": 5,
+      "max_call_us": 182,
+      "statistics": {
+        "busy": false,
+        "endpoints": 31616,
+        "next_generation": 14,
+        "port_keys": 25856,
+        "ready_regions": 13,
+        "regions": 13,
+        "work_total": 31629,
+        "world_id": 7
+      }
+    },
+    {
+      "budget": 512,
+      "calls": 5,
+      "max_call_us": 298,
+      "statistics": {
+        "busy": false,
+        "endpoints": 34048,
+        "next_generation": 15,
+        "port_keys": 27808,
+        "ready_regions": 14,
+        "regions": 14,
+        "work_total": 34062,
+        "world_id": 7
+      }
+    },
+    {
+      "budget": 512,
+      "calls": 5,
+      "max_call_us": 190,
+      "statistics": {
+        "busy": false,
+        "endpoints": 36480,
+        "next_generation": 16,
+        "port_keys": 29760,
+        "ready_regions": 15,
+        "regions": 15,
+        "work_total": 36495,
+        "world_id": 7
+      }
+    },
+    {
+      "budget": 512,
+      "calls": 5,
+      "max_call_us": 204,
+      "statistics": {
+        "busy": false,
+        "endpoints": 38912,
+        "next_generation": 17,
+        "port_keys": 31712,
+        "ready_regions": 16,
+        "regions": 16,
+        "work_total": 38928,
+        "world_id": 7
+      }
+    },
+    {
+      "budget": 512,
+      "calls": 5,
+      "max_call_us": 198,
+      "statistics": {
+        "busy": false,
+        "endpoints": 41344,
+        "next_generation": 18,
+        "port_keys": 33664,
+        "ready_regions": 17,
+        "regions": 17,
+        "work_total": 41361,
+        "world_id": 7
+      }
+    },
+    {
+      "budget": 512,
+      "calls": 5,
+      "max_call_us": 222,
+      "statistics": {
+        "busy": false,
+        "endpoints": 43776,
+        "next_generation": 19,
+        "port_keys": 35616,
+        "ready_regions": 18,
+        "regions": 18,
+        "work_total": 43794,
+        "world_id": 7
+      }
+    },
+    {
+      "budget": 512,
+      "calls": 5,
+      "max_call_us": 192,
+      "statistics": {
+        "busy": false,
+        "endpoints": 46208,
+        "next_generation": 20,
+        "port_keys": 37568,
+        "ready_regions": 19,
+        "regions": 19,
+        "work_total": 46227,
+        "world_id": 7
+      }
+    },
+    {
+      "budget": 512,
+      "calls": 5,
+      "max_call_us": 274,
+      "statistics": {
+        "busy": false,
+        "endpoints": 48640,
+        "next_generation": 21,
+        "port_keys": 39520,
+        "ready_regions": 20,
+        "regions": 20,
+        "work_total": 48660,
+        "world_id": 7
+      }
+    },
+    {
+      "budget": 512,
+      "calls": 5,
+      "max_call_us": 191,
+      "statistics": {
+        "busy": false,
+        "endpoints": 51072,
+        "next_generation": 22,
+        "port_keys": 41472,
+        "ready_regions": 21,
+        "regions": 21,
+        "work_total": 51093,
+        "world_id": 7
+      }
+    },
+    {
+      "budget": 512,
+      "calls": 5,
+      "max_call_us": 205,
+      "statistics": {
+        "busy": false,
+        "endpoints": 53504,
+        "next_generation": 23,
+        "port_keys": 43424,
+        "ready_regions": 22,
+        "regions": 22,
+        "work_total": 53526,
+        "world_id": 7
+      }
+    },
+    {
+      "budget": 512,
+      "calls": 5,
+      "max_call_us": 212,
+      "statistics": {
+        "busy": false,
+        "endpoints": 55936,
+        "next_generation": 24,
+        "port_keys": 45376,
+        "ready_regions": 23,
+        "regions": 23,
+        "work_total": 55959,
+        "world_id": 7
+      }
+    },
+    {
+      "budget": 512,
+      "calls": 5,
+      "max_call_us": 204,
+      "statistics": {
+        "busy": false,
+        "endpoints": 58368,
+        "next_generation": 25,
+        "port_keys": 47328,
+        "ready_regions": 24,
+        "regions": 24,
+        "work_total": 58392,
+        "world_id": 7
+      }
+    },
+    {
+      "budget": 512,
+      "calls": 5,
+      "max_call_us": 207,
+      "statistics": {
+        "busy": false,
+        "endpoints": 60800,
+        "next_generation": 26,
+        "port_keys": 49280,
+        "ready_regions": 25,
+        "regions": 25,
+        "work_total": 60825,
+        "world_id": 7
+      }
+    },
+    {
+      "budget": 512,
+      "calls": 5,
+      "max_call_us": 345,
+      "statistics": {
+        "busy": false,
+        "endpoints": 63232,
+        "next_generation": 27,
+        "port_keys": 51232,
+        "ready_regions": 26,
+        "regions": 26,
+        "work_total": 63258,
+        "world_id": 7
+      }
+    },
+    {
+      "budget": 512,
+      "calls": 5,
+      "max_call_us": 203,
+      "statistics": {
+        "busy": false,
+        "endpoints": 60800,
+        "next_generation": 28,
+        "port_keys": 49280,
+        "ready_regions": 25,
+        "regions": 26,
+        "work_total": 65691,
+        "world_id": 7
+      }
+    },
+    {
+      "budget": 512,
+      "calls": 5,
+      "max_call_us": 143,
+      "statistics": {
+        "busy": false,
+        "endpoints": 63232,
+        "next_generation": 28,
+        "port_keys": 51232,
+        "ready_regions": 26,
+        "regions": 26,
+        "work_total": 68124,
+        "world_id": 7
+      }
+    }
+  ],
+  "failures": 0,
+  "scope": "Active region ownership and reciprocal boundary eligibility. Does not transfer liquid or integrate world runtime."
+}

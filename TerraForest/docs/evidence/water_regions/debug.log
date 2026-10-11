@@ -1,0 +1,41 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS fixture locates an actual shared boundary face
+PASS world registry configures
+PASS region reservations receive distinct monotonic tickets
+PASS invalid budget preserves registry state
+PASS first region publishes under bounded work
+PASS reserved but unpublished neighbour blocks exchange eligibility
+PASS neighbour publication begins
+PASS partial neighbour publication cannot authorize exchange
+PASS one-operation publication completes
+PASS reciprocal ready geometry authorizes exact neighbour generation
+PASS idle registry performs zero background work
+PASS invalidation immediately disables old boundary links
+PASS old ticket and old geometry cannot satisfy replacement reservation
+PASS new revision replaces old endpoint records
+PASS matching opening elevation does not conceal different face samples
+PASS replacement can start after geometry mismatch
+PASS cancellation fixture reaches partially inserted new endpoints
+PASS invalidation cancels partially published replacement without exposing its links
+PASS cancelled completion cannot reactivate previous ticket
+PASS cancelled endpoint debris is retired before the next publication
+PASS replacement restores matching links without leaking endpoint records
+PASS older revision cannot reserve a current region
+PASS foreign world cannot satisfy an otherwise matching unpublished reservation
+PASS stale generation cannot unload current owner
+PASS current owner can begin retirement
+PASS retirement disables links immediately and completes incrementally
+PASS retirement preserves neighbour records and frees region slot
+PASS unload/reload cannot reuse an old generation ticket
+PASS reloaded region reconnects through its new ticket
+PASS different ceiling snapshot can be published for explicit compatibility evaluation
+PASS different water compilation ceilings cannot silently exchange
+PASS solid neighbour snapshot publishes without boundary openings
+PASS ready neighbour with no reciprocal opening is distinct from an unloaded neighbour
+PASS vertically stacked regions compile and publish under one shared ceiling above lower region
+PASS all vertical shared faces connect with reciprocal geometry samples
+PASS active region capacity rejects further reservations instead of growing unbounded
+PASS endpoint quota rejects overflow atomically under many actual region graphs
+PASS retirement frees endpoint capacity and rejected publication can retry
+WATER_REGIONS failures=0

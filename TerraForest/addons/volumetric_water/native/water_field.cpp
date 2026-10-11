@@ -15,7 +15,8 @@ void NativeWaterField::_bind_methods(){
 bool NativeWaterField::metadata(int64_t id,int64_t rev,const Vector3i &start,const Vector3i &size,int64_t scale,int64_t top){
     if(status!=-1||id<1||rev<0||scale<1||scale>8||top<-100000000||top>100000000)return false;
     for(int a=0;a<3;++a)if(size[a]<3||size[a]>18||int64_t(start[a])*scale<-100000|| (int64_t(start[a])+size[a])*scale>100000)return false;
-    if(top<=int64_t(start.y)*scale*1000||top>int64_t(start.y+size.y)*scale*1000)return false;
+    // A shared world ceiling may be above or below this local region.
+    // Clipping belongs to topology; vertical neighbours must share the same head range.
     world=id;revision=rev;origin=start;cells=size;spacing=scale;ceiling=top;return true;
 }
 bool NativeWaterField::configure(int64_t id,int64_t rev,const Vector3i &start,const Vector3i &size,int64_t scale,int64_t top,const PackedFloat32Array &samples){

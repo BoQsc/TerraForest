@@ -7,6 +7,7 @@
 #include "water_basins.hpp"
 #include "water_profiles.hpp"
 #include "water_field.hpp"
+#include "water_regions.hpp"
 #include <godot_cpp/godot.hpp>
 #include <godot_cpp/core/class_db.hpp>
 using namespace godot;
@@ -21,6 +22,7 @@ static void initialize(ModuleInitializationLevel level) {
         GDREGISTER_CLASS(terraforest::NativeWaterBasins);
         GDREGISTER_CLASS(terraforest::NativeWaterProfiles);
         GDREGISTER_CLASS(terraforest::NativeWaterField);
+        GDREGISTER_CLASS(terraforest::NativeWaterRegions);
     }
 }
 static void terminate(ModuleInitializationLevel) {}

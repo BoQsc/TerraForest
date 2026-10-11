@@ -10,6 +10,7 @@
 namespace terraforest {
 // Immutable regional air graph below the source's ceiling. Not a liquid state.
 class NativeWaterTopology : public godot::RefCounted {
+    friend class NativeWaterRegions;
     GDCLASS(NativeWaterTopology,godot::RefCounted)
     friend class NativeWaterProfiles;
     godot::Ref<NativeLakeVolume> source;

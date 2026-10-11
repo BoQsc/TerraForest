@@ -215,8 +215,11 @@ debug/release checks with identical whole-area storage and settling; see
 [join evidence](evidence/water_join/README.md). Independent world-region exchange
 remains open. Raw density admission and world-addressed ports now pass36 debug/
 release checks plus11 actual-terrain sampling/cancellation checks; see
-[raw-field evidence](evidence/water_field/README.md). Next add authoritative region/
-port ownership and open-region storage/exchange, then quantity-preserving edit
+[raw-field evidence](evidence/water_field/README.md). Native region ownership now passes38
+debug/release checks, including stale-job rejection, exact boundary samples, vertical
+neighbours and endpoint pressure/recovery; see [region evidence](evidence/water_regions/README.md).
+This is geometry readiness, not liquid exchange. Next add open-region storage/solver
+coupling and conservative exchange, then quantity-preserving edit
 remapping and bucket/save transactions. Transient flow and pressure/velocity fields are not
 implemented, and current playable lakes still use static fill levels. Next prove terrain-connected redistribution and conservation under a
 bounded native work budget, then integrate bucket item ownership and world saves.
