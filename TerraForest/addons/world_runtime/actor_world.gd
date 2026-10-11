@@ -27,9 +27,8 @@ func enable(capacity: int=16) -> bool:
 	if not pool.configure(store,capacity):pool.free();pool=null;return false
 	if not pool.set_orders(orders):pool.free();pool=null;return false
 	renderer=ClassDB.instantiate("NativeEntityRenderer");add_child(renderer)
-	var mesh:=CapsuleMesh.new();mesh.radius=0.35;mesh.height=1.8
-	var material:=StandardMaterial3D.new();material.albedo_color=Color("edb35a");mesh.material=material
-	if not renderer.configure(store,mesh,256):renderer.free();renderer=null;pool.free();pool=null;return false
+	var mesh=preload("res://addons/world_runtime/actor_mesh.gd").build()
+	if not renderer.configure(store,mesh,256,true):renderer.free();renderer=null;pool.free();pool=null;return false
 	selection_marker=MeshInstance3D.new();selection_marker.name="ActorSelection";add_child(selection_marker)
 	var ring:=TorusMesh.new();ring.inner_radius=0.38;ring.outer_radius=0.46;ring.rings=16;ring.ring_segments=6
 	var highlight:=StandardMaterial3D.new();highlight.shading_mode=BaseMaterial3D.SHADING_MODE_UNSHADED;highlight.albedo_color=Color("65ffe0");ring.material=highlight
@@ -68,5 +67,4 @@ func update_simulation(delta: float,focus: Vector3,available: bool,readiness: Ca
 	simulation_status=pool.settle(delta,readiness);simulation_steps+=1
 	if _render_time<=0:
 		renderer.refresh(focus,64,4096);_render_time=0.1
-	else:
-		renderer.refresh_positions()
+	renderer.refresh_animated_positions(delta)

@@ -1,0 +1,25 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+PASS shared six-part mesh has 72 triangles
+PASS animated instance layout configured
+PASS idle actor uploads nothing
+PASS actual displacement drives bounded phase and stride
+PASS actor faces movement direction
+PASS stopped actor returns to idle
+PASS settled idle does not repeatedly upload
+PASS invalid animation delta rejected
+PASS teleport resets gait without exaggerated stride
+PASS readmission starts clean gait state
+PASS walking limbs visibly differ from idle at identical position and camera: 5239 samples
+PASS animated population has no per-actor scene nodes
+PASS separate population store configured
+PASS population fixture allocated all identities
+PASS gait memory follows current render selection across 1024 identities
+PASS cost fixture has exactly 256 rendered actors
+PASS 256 selected/0 moving renderer CPU p95 0.098 ms max 0.166 ms (1/2 ms gates)
+PASS unchanged idle skips uploads; motion stays within fixed buffer budget
+PASS 256 selected/16 moving renderer CPU p95 0.119 ms max 0.208 ms (1/2 ms gates)
+PASS unchanged idle skips uploads; motion stays within fixed buffer budget
+PASS 256 selected/256 moving renderer CPU p95 0.113 ms max 0.273 ms (1/2 ms gates)
+PASS unchanged idle skips uploads; motion stays within fixed buffer budget

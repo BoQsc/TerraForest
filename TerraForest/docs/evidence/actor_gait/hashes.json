@@ -1,0 +1,12 @@
+{
+  "addons/world_runtime/native/entity_renderer.cpp": "8b6ef2da816c7b01163843ffd31b27ccc8b68f60c6d7466663780b5dd8348f13",
+  "addons/world_runtime/native/entity_renderer.hpp": "1c9ab532954f380a76308423d3053f055a6318e56c0dc79a75fe57794f4bcda9",
+  "addons/world_runtime/actor_world.gd": "13e753baf33dbeeddd5298e29eddeebb9be7574d1f6284edb6bbdee56506556e",
+  "addons/world_runtime/actor_mesh.gd": "ecc682b6f1bcbbb65ef746d7bab51ed95bcc8125a4a616bb43b241c057b1a31f",
+  "addons/world_runtime/actor_gait.gdshader": "fbbf91e6439bc11c490171dff99a1256c35d4e7496b0daef08036c1154810d5a",
+  "addons/world_runtime/bin/world_runtime.windows.template_debug.x86_64.dll": "4a745831fea7fe26110b8af9ca20ad8f21066a6d78fe9cb073082eda4d37064e",
+  "addons/world_runtime/bin/world_runtime.windows.template_release.x86_64.dll": "c04016cd9b37967d39f4cb5e7e26a91555a2936f8fb7882f33c8b216e28c0d24",
+  "tests/entity_gait.gd": "89e0b1951f6784ff59a60112da013566d48abba4ca66ef08b4bcf532ba1bca12",
+  "tests/actor_editor.gd": "754620ac1b99de24f680a20c3b3004303c118d00088a7e0f7e22f45b90c77722",
+  "tools/test_native_release.py": "1fc175011f8352a39a9323afbe7e8a70a9c5469c09c58b38c9e980975396c0e0"
+}

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: 0BSD
 #pragma once
 #include "entity_store.hpp"
+#include <unordered_map>
 #include <godot_cpp/classes/multi_mesh_instance3d.hpp>
 #include <godot_cpp/classes/multi_mesh.hpp>
 #include <godot_cpp/classes/mesh.hpp>
@@ -14,6 +15,10 @@ class NativeEntityRenderer : public godot::MultiMeshInstance3D {
     godot::Ref<godot::MultiMesh> instances_;
     godot::PackedFloat32Array buffer_;
     int capacity_ = 0;
+    bool animated_=false;
+    double animation_delta_=0;
+    struct Gait { godot::Vector3 position; double yaw=0,phase=0,amplitude=0; };
+    std::unordered_map<int64_t,Gait> gait_;
     uint64_t marker_id_ = 0;
     int64_t highlighted_identity_ = 0;
     godot::PackedInt64Array selected_;
@@ -22,8 +27,9 @@ protected:
     static void _bind_methods();
 public:
     void set_selection_marker(godot::Node3D *marker, int64_t identity);
-    bool configure(const godot::Ref<NativeEntityStore> &store, const godot::Ref<godot::Mesh> &mesh, int capacity);
+    bool configure(const godot::Ref<NativeEntityStore> &store, const godot::Ref<godot::Mesh> &mesh, int capacity, bool animated=false);
     godot::Dictionary refresh_positions();
+    godot::Dictionary refresh_animated_positions(double delta);
     godot::Dictionary refresh(const godot::Vector3 &center, double radius, int candidate_budget = 4096);
 };
 }

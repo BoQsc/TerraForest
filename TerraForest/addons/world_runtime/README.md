@@ -140,3 +140,27 @@ Version 2 stores a bounded catalog: a 16-byte header (magic, version, count,
 selected index) and 1..256 version-one records. Maximum size is 16400 bytes.
 Legacy single-street records remain readable. Neither format certifies current
 terrain validity or represents connected road topology.
+
+
+### Optional actor gait
+
+`configure(store, mesh, capacity, true)` enables a 16-float transform/custom-data
+layout (64 bytes per capacity slot). Use the shared `actor_mesh.gd` asset with
+`actor_gait.gdshader`, then call `refresh_animated_positions(delta)` once after
+each simulation tick. This accepts finite delta in (0, 0.1]. Horizontal measured
+displacement drives facing, phase (four radians per metre), and stride amplitude
+(clamped at 2.5 m/s). Vertical grounding does not animate walking; a horizontal
+jump over one metre in a tick resets stride. Stopping returns to idle. Selection
+refreshes retain gait by generation-checked handle and discard departed handles,
+so state remains bounded by render capacity. Gait/facing are presentation state
+and reset on readmission/reload; they are not saved entity orientation.
+
+The supplied 72-triangle mannequin uses six rigid parts in one shared mesh, one
+material and native per-instance data. Its startup mesh construction is script;
+per-instance gait and vertex deformation are C++/shader. No individual animation
+nodes or skeletons are created. The main actor adapter enables this path with
+256 render slots and retains its existing 16-body simulation cap. A moving row
+uploads the full fixed-capacity buffer; unchanged idle rows cause no upload.
+This is basic locomotion presentation, not authored character animation,
+interpolation, navigation or dense-crowd qualification. See
+`docs/evidence/actor_gait` for scoped checks and CPU-call measurements.

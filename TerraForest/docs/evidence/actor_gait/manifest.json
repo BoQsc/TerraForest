@@ -1,0 +1,20 @@
+{
+  "date": "2026-10-11",
+  "base_commit": "06b47c005114eafd4b19478136144c7d2bbcc6b6",
+  "checks": {
+    "gait_debug": 22,
+    "gait_release": 22,
+    "world_editor": 19,
+    "ordinary_renderer_release": 30,
+    "packaging": 4
+  },
+  "presentation": "1920x1080 fullscreen, cap 60; no frame-time qualification",
+  "commands": [
+    "godot --path TerraForest --fullscreen --resolution 1920x1080 --script res://tests/entity_gait.gd",
+    "python TerraForest/tools/test_native_release.py --addon world_runtime --test entity_gait --godot ENGINE",
+    "godot --path TerraForest --fullscreen --resolution 1920x1080 --script res://tests/actor_editor.gd -- --world-slot=staged_furnished_1791584856787240500 --ground-cover --actors"
+  ],
+  "save_safety": "World fixture inhibits snapshot writes; expected save-blocked notice is present. No manual save requested.",
+  "scope": "Basic gait only. CPU call timing excludes store writes, selection, collision simulation, GPU execution and full frames. Performance sample does not represent a fully visible crowd. No older-laptop, endurance or human acceptance claim.",
+  "retained_failures": "Before fix: nonzero gait survived invalid selection/readmission and walking screenshot equaled idle. Fixture error: reconfigure rejected live store, spawn returned empty, index failed; first run timed out at 60s, second stopped after captured error. Corrected fixture uses and verifies separate population store."
+}

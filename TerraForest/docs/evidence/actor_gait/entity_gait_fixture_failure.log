@@ -1,0 +1,19 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+PASS shared six-part mesh has 72 triangles
+PASS animated instance layout configured
+PASS idle actor uploads nothing
+PASS actual displacement drives bounded phase and stride
+PASS actor faces movement direction
+PASS stopped actor returns to idle
+PASS settled idle does not repeatedly upload
+PASS invalid animation delta rejected
+PASS teleport resets gait without exaggerated stride
+PASS readmission starts clean gait state
+PASS walking limbs visibly differ from idle at identical position and camera: 5239 samples
+PASS animated population has no per-actor scene nodes
+SCRIPT ERROR: Out of bounds get index '0' (on base: 'PackedInt64Array')
+   at: run (res://tests/entity_gait.gd:58)
+   GDScript backtrace (most recent call first):
+       [0] run (res://tests/entity_gait.gd:58)

@@ -47,11 +47,15 @@ func run() -> void:
 	var handle: int=game.actors.store.resolve_identity(identity)
 	var initial: Vector3=game.actors.store.get_position(handle)
 	var render_tracks:=true
+	var visible_gait:=false
 	for i in 60:
 		await physics_frame
 		game.actors.update_simulation(1.0/60,point,true,game._actor_collision_ready)
 		render_tracks=render_tracks and game.actors.renderer.multimesh.get_instance_transform(0).origin.is_equal_approx(game.actors.store.get_position(handle))
+		var gait: Color=game.actors.renderer.multimesh.get_instance_custom_data(0)
+		visible_gait=visible_gait or (gait.r>0.1 and gait.g>0.1)
 	check(render_tracks,"rendered position follows every simulated movement tick")
+	check(visible_gait,"actual world movement drives native limb animation")
 	check(game.actors.selection_marker.global_position.is_equal_approx(game.actors.store.get_position(handle)+Vector3.UP*1.08),"selection marker follows native movement")
 	check(game.actors.store.get_position(handle).x>initial.x+2,"editor-issued order moves actor through native simulation")
 	var snapshot: PackedByteArray=game.actors.orders.capture_storage_snapshot()
@@ -64,6 +68,7 @@ func run() -> void:
 		await physics_frame
 		game.actors.update_simulation(1.0/60,point,true,game._actor_collision_ready)
 	check(absf(game.actors.store.get_position(handle).x-stopped.x)<0.001,"stop halts horizontal movement")
+	check(game.actors.renderer.multimesh.get_instance_custom_data(0).g==0,"world stop returns visible actor to idle")
 	game.camera.global_position=point+Vector3(3,2,5);game.camera.look_at(stopped+Vector3.UP*0.4)
 	await RenderingServer.frame_post_draw
 	DirAccess.make_dir_recursive_absolute("res://reports/actor_selection")
