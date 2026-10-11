@@ -161,10 +161,32 @@ func run():
  game.lakes.dev_brush(outlet,true,1.0)
  check(game.lakes.statistics().water_ml<before,"Developer water brush removes water locally")
  for frame in 30:await process_frame
- game.fly=true;game.needs_floor_spawn=false;game.player.global_position=center+Vector3(0,8,14);game.yaw=0;game.pitch=-0.65;game.player.rotation.y=0;game.camera.rotation.x=game.pitch;game._clear_motion()
+ game.fly=true;game.needs_floor_spawn=false;game.player.global_position=center+Vector3(0,3,5);game.yaw=0;game.pitch=-0.65;game.player.rotation.y=0;game.camera.rotation.x=game.pitch;game._clear_motion()
  if DisplayServer.get_name()!="headless":
   await RenderingServer.frame_post_draw;root.get_texture().get_image().save_png("res://reports/regional_water_world.png")
+ await render_comparison()
  await finish()
+func render_comparison():
+ # Freeze gameplay state for paired rendering attribution; same camera/resolution.
+ var running:bool=game.lakes.is_processing()
+ game.lakes.set_process(false)
+ var results:Array=[]
+ for shown in [false,true,true,false]:
+  game.lakes.visible=shown
+  for warmup in 12:await process_frame
+  var gpu:Array[float]=[];var cpu:Array[float]=[]
+  for frame in 48:
+   await process_frame
+   gpu.append(RenderingServer.viewport_get_measured_render_time_gpu(root.get_viewport_rid()))
+   cpu.append(RenderingServer.viewport_get_measured_render_time_cpu(root.get_viewport_rid()))
+  gpu.sort();cpu.sort()
+  results.append({"water_visible":shown,"samples":gpu.size(),"gpu_p50_ms":gpu[24],"gpu_p95_ms":gpu[45],"cpu_p50_ms":cpu[24],"cpu_p95_ms":cpu[45]})
+  if shown:
+   await RenderingServer.frame_post_draw
+   root.get_texture().get_image().save_png("res://reports/water_depth_close.png")
+ game.lakes.visible=true;game.lakes.set_process(running)
+ timings.water_render_comparison=results
+ print("WATER_RENDER_COMPARISON ",JSON.stringify(results))
 func finish():
  if not frames.is_empty():
   frames.sort();timings.frame_ms={"p50":frames[int(frames.size()*0.5)],"p95":frames[int(frames.size()*0.95)],"max":frames.back(),"samples":frames.size()}

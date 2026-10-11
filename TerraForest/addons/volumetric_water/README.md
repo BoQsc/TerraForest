@@ -4,7 +4,7 @@ One C++ water runtime: `NativeRegionalWater`. `NativeWaterTerrainPatch` samples 
 
 The static-lake and basin-network implementations are deleted. Git history retains previous versions; they are not included in the addon or built DLLs.
 
-See [current integration and limitations](../../docs/WATER_GAMEPLAY.md). Square shorelines and opaque shading are unfinished. Functional tests do not establish visual acceptance or sustained 60 FPS.
+See [current integration and limitations](../../docs/WATER_GAMEPLAY.md). Square shorelines and transparency overlap artifacts are unfinished. Depth-dependent transparency is implemented but not visually accepted. Functional tests do not establish visual acceptance or sustained 60 FPS.
 
 Build: `python tools/build_native.py --addon volumetric_water --target all`
 

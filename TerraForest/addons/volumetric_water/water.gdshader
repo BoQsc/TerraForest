@@ -1,15 +1,42 @@
+// SPDX-License-Identifier: 0BSD
 shader_type spatial;
-render_mode cull_disabled;
-uniform vec3 water_color : source_color = vec3(0.035, 0.22, 0.25);
+render_mode cull_disabled, depth_draw_never;
+
+// One opaque-depth lookup; no screen-color copy, SSR, or geometry displacement.
+uniform sampler2D scene_depth : hint_depth_texture, repeat_disable, filter_nearest;
+uniform vec3 water_color : source_color = vec3(0.055, 0.19, 0.17);
+uniform float absorption : hint_range(0.05, 2.0) = 0.32;
+uniform float ripple_strength : hint_range(0.0, 0.12) = 0.035;
+varying vec3 surface_world_normal;
+
+void vertex() {
+    surface_world_normal = normalize(MODEL_NORMAL_MATRIX * NORMAL);
+}
+
 void fragment() {
-    // Normal-only ripples keep the rendered mean surface at the queried fill level.
-    float a = dot(UV, vec2(0.32, 0.21)) + TIME * 0.7;
-    float b = dot(UV, vec2(-0.19, 0.37)) - TIME * 0.48;
-    vec3 wave_normal = normalize(vec3(cos(a) * 0.12, 1.0, cos(b) * 0.09));
-    NORMAL = normalize((VIEW_MATRIX * vec4(wave_normal, 0.0)).xyz);
-    float grazing = pow(1.0 - clamp(dot(NORMAL, VIEW), 0.0, 1.0), 4.0);
-    ALBEDO = mix(water_color * (0.96 + 0.04 * sin(a + b)), vec3(0.34, 0.52, 0.60), grazing * 0.65);
-    METALLIC = 0.15;
-    ROUGHNESS = 0.18;
-    SPECULAR = 0.8;
+    float depth = textureLod(scene_depth, SCREEN_UV, 0.0).r;
+    vec3 ndc = vec3(SCREEN_UV * 2.0 - 1.0, depth);
+#if CURRENT_RENDERER == RENDERER_COMPATIBILITY
+    ndc.z = depth * 2.0 - 1.0;
+#endif
+    vec4 behind = INV_PROJECTION_MATRIX * vec4(ndc, 1.0);
+    behind.xyz /= behind.w;
+    // Distance through the water along this view ray, not nonlinear depth.
+    float thickness = clamp(length(behind.xyz) - length(VERTEX), 0.0, 40.0);
+    float transmission = exp(-absorption * thickness);
+    vec3 n = normalize(surface_world_normal);
+    float a = dot(UV, vec2(1.7, 1.1)) + TIME * 0.65;
+    float b = dot(UV, vec2(-1.3, 2.2)) - TIME * 0.48;
+    // Preserve vertical side normals; ripples perturb horizontal surfaces only.
+    n = normalize(n + vec3(cos(a), 0.0, cos(b)) * ripple_strength * abs(n.y));
+    NORMAL = normalize((VIEW_MATRIX * vec4(n, 0.0)).xyz);
+    if (!FRONT_FACING) NORMAL = -NORMAL;
+    float facing = clamp(abs(dot(NORMAL, VIEW)), 0.0, 1.0);
+    float fresnel = 0.02 + 0.98 * pow(1.0 - facing, 5.0);
+    ALBEDO = water_color;
+    METALLIC = 0.0;
+    ROUGHNESS = 0.24;
+    SPECULAR = 0.5;
+    // Clear shallows, progressively absorbed deep water, reflected grazing light.
+    ALPHA = clamp(1.0 - transmission * (1.0 - fresnel), 0.0, 0.98);
 }

@@ -11,7 +11,7 @@ folder=ROOT/'reports/checks'/datetime.datetime.now(datetime.timezone.utc).strfti
 command,cache=command_for(engine,'regional_water_world',folder,['--gameplay-construction'],args.headless)
 command.remove('--temporary')
 slot=next(a.split('=',1)[1] for a in command if a.startswith('--world-slot='))
-provenance={'command':command,'slot':slot,'cache':cache,'engine_sha256':hashlib.sha256(Path(engine).read_bytes()).hexdigest(),'test_sha256':hashlib.sha256((ROOT/'tests/regional_water_world.gd').read_bytes()).hexdigest(),'native_sha256':hashlib.sha256((ROOT/'addons/volumetric_water/bin/volumetric_water.windows.template_debug.x86_64.dll').read_bytes()).hexdigest()}
+provenance={'command':command,'slot':slot,'cache':cache,'engine_sha256':hashlib.sha256(Path(engine).read_bytes()).hexdigest(),'test_sha256':hashlib.sha256((ROOT/'tests/regional_water_world.gd').read_bytes()).hexdigest(),'shader_sha256':hashlib.sha256((ROOT/'addons/volumetric_water/water.gdshader').read_bytes()).hexdigest(),'native_sha256':hashlib.sha256((ROOT/'addons/volumetric_water/bin/volumetric_water.windows.template_debug.x86_64.dll').read_bytes()).hexdigest()}
 result=execute(command,folder,90,'REGIONAL_WATER_WORLD failures=0')
 result['provenance']=provenance
 (folder/'run.json').write_text(json.dumps(result,indent=2))
