@@ -53,7 +53,7 @@ func _ready() -> void:
 	if water!=null: water.exclusion_changed.connect(_exclusion_changed)
 
 func _mesh(species: int) -> Mesh:
-	return preload("res://addons/world_ecosystem/ground_mesh.gd").build(species)
+	return preload("res://addons/world_ecosystem/woodland_mesh.gd").build(species)
 
 func reset() -> void:
 	for key in resident: _retire(key)

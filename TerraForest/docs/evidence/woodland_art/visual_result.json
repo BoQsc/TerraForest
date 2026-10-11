@@ -1,0 +1,22 @@
+{
+  "checks": 14,
+  "failures": 0,
+  "meshes": [
+    {
+      "distant_triangles": 48,
+      "near_triangles": 360,
+      "species": 0
+    },
+    {
+      "distant_triangles": 392,
+      "near_triangles": 1512,
+      "species": 1
+    },
+    {
+      "distant_triangles": 72,
+      "near_triangles": 504,
+      "species": 2
+    }
+  ],
+  "scope": "Visual asset/geometry regression; no GPU-time, final-art approval or combined density qualification."
+}
