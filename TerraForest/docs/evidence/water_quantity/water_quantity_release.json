@@ -1,0 +1,9 @@
+{
+  "checks": 20,
+  "failures": 0,
+  "max_record_snapshot_bytes": 98352,
+  "scope": "Native finite-quantity transactions only; no spatial flow, bucket gameplay or world-save integration yet.",
+  "stress_commands": 20000,
+  "stress_us_including_script_oracle": 577935,
+  "library": "volumetric_water.windows.template_release.x86_64.dll"
+}

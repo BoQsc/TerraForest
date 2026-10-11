@@ -187,10 +187,17 @@ Cold four-lake gate passes at5.368s. See
 Cost:64-cubed volume retains1.55MiB plus surface/index; measured bake96.102ms,
 maximum cold worker slice39.132ms. Finalization is not time-sliced; a66.82ms terrain
 receive hitch during restore remains. This closes the measured query mismatch,
-not whole-water performance or static-fluid limits. Next return to broader M2
-coverage (geology discovery/material rewards and continuous road traversal), while
-retaining maximum-size water finalization as an explicit performance qualification
-item. Do not increase water caps or claim sustained60FPS from these checks.
+not whole-water performance or static-fluid limits.
+
+User requirement now explicitly includes finite manipulable volumetric water and
+bucket interaction. Static fixed-height lakes do not satisfy it. Follow
+[finite water requirements](FINITE_WATER.md) before returning to the deferred
+geology/road coverage. Native finite-quantity transfers and persistence now pass
+focused debug/release checks, but they are not integrated gameplay or a spatial
+solver. Next prove terrain-connected redistribution and conservation under a
+bounded native work budget, then integrate bucket item ownership and world saves.
+Retain the previous finalization/hitch failures; do not increase water caps or claim
+sustained60FPS from these checks.
 
 Current combined gameplay launcher: [Play Combined Gameplay.cmd](../Play%20Combined%20Gameplay.cmd)
 uses the separate gameplay copy of the furnished editor world. The existing

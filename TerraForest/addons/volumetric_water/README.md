@@ -91,3 +91,11 @@ water depth. Reproduce with `tools/run_lake_cave_check.py` and `--reopen`; evide
 in `docs/evidence/lake_cave_world`. This is one static connected basin, not flow or
 unbounded regional water. The boundary correction and its measured memory/bake costs are documented in
 `docs/WATER_BOUNDARY_QUERIES.md`. Lattice precision and static-fill limits remain.
+
+## Finite water work in progress
+
+`NativeWaterQuantity` provides exact integer-millilitre transfers, stable identities
+and bounded versioned snapshots. It is registered in the same native addon but is
+not yet connected to lake levels, spatial flow, world saves or player buckets.
+The current playable lakes still have fixed fill elevations. The expanded required
+behavior and remaining gates are in `docs/FINITE_WATER.md`.

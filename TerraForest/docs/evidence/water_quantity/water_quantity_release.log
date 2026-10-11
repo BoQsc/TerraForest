@@ -1,0 +1,24 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS finite lake and empty ten-litre container admitted
+PASS overfull scoop is atomic rejection
+PASS scoop subtracts exactly what container receives
+PASS replayed revision cannot duplicate water
+PASS filled container cannot discard its water
+PASS partial pour retains container remainder
+PASS invalid transfers preserve both sides and revision
+PASS empty container removal preserves lake quantity
+PASS removed identities are not reused
+PASS exact deterministic save and restore
+PASS live ledger rejects save replay
+PASS twenty thousand transfers match integer oracle with exact conservation
+PASS stressed balances and identities persist exactly
+PASS corrupt snapshots reject without poisoning fresh store
+PASS checksummed inconsistent total rejected
+PASS checksummed duplicate identity rejected
+PASS checksummed over-capacity amount rejected
+PASS truncated snapshot rejected
+PASS record cap rejects atomically at 4096
+PASS aggregate quantity overflow rejected
+WATER_QUANTITY failures=0
+
