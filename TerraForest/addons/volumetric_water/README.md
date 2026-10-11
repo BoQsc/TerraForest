@@ -8,7 +8,7 @@ This implementation stores a **three-dimensional connected water volume**, not a
 
 - Finite voxel grid; maximum 262,144 cells per lake, dimensions up to 128Ć—64Ć—128 within that total.
 - Density nodes use X-fastest indexing: `x + (width+1) * (y + (height+1) * z)`. Positive density is air.
-- Each cell uses six consistently connected tetrahedra with linearly interpolated density. Flooding includes connected positive-density subregions below fill elevation. Features thinner than the sample spacing remain unresolved; seed admission still requires eight air corners.
+- Each cell uses six consistently connected tetrahedra with linearly interpolated density. Flooding includes connected positive-density subregions below fill elevation. Features thinner than the sample spacing remain unresolved. Seeds may lie in partial cells when interpolated density is positive and they are below fill elevation.
 - Face connectivity from an explicit submerged seed selects a single component. Disconnected chambers stay dry. Connected cave cells can be occupied below the fill elevation.
 - Reaching any lateral or bottom boundary rejects the entire bake. Water is never silently truncated at an unsealed region edge. The top is above the fill level by configuration.
 - Successful volumes retain two bytes per cell plus four bytes per density node, excluding surface channels and a one-byte-per-column legacy index. The 64-cubed fixture retains 1,622,788 volume bytes. Flood queues are freed; density is retained for local boundary queries. Published volumes are immutable.
@@ -28,7 +28,7 @@ This implementation stores a **three-dimensional connected water volume**, not a
 | `surface_arrays()` | Legacy conservative whole-cell rectangle mesh |
 | `statistics()` / `bounds()` | Budget, bake state and AABB information |
 
-Status codes: `0` needs another slice, `1` ready, `-1` invalid input/protocol, `-2` seed cell is blocked, `-3` unsealed boundary, `-4` stale terrain revision/cancellation epoch. A filled seed cell after editing can cause a rebake to fail; changing the basin definition/seed is then required.
+Status codes: `0` needs another slice, `1` ready, `-1` invalid input/protocol, `-2` seed lies in solid terrain, `-3` unsealed boundary, `-4` stale terrain revision/cancellation epoch. A seed inside solid terrain after editing can cause a rebake to fail; changing the basin definition/seed is then required.
 
 Builders belong to one thread at a time. Never query or mutate a builder while a worker owns a slice. The scene adapter submits one slice at a time and only publishes a ready immutable volume after the matching completion. Read-only published queries can be shared if the owner retains the volume.
 

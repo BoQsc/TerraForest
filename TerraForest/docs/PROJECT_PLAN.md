@@ -195,9 +195,12 @@ bucket interaction. Static fixed-height lakes do not satisfy it. Follow
 geology/road coverage. Native finite-quantity transfers and persistence now pass
 focused debug/release checks. Bounded geometric quantity measurement also passes49
 debug/release checks, including exact capacity, cache restore and budget independence.
-These are not integrated gameplay or a spatial solver. The new shallow-source
-regression fails: the full-cell seed requirement rejects a valid2cm-deep puddle.
-Remove that admission dependency before assuming bucket-scale pours work. Next prove terrain-connected redistribution and conservation under a
+These are not integrated gameplay or a spatial solver. Shallow-source admission now
+passes:2cm-deep533ml water, no wholly empty cells required, with solid/open-boundary
+rejection and exact cache/quantity restoration. See
+[shallow-source evidence](evidence/water_shallow_source/README.md). The obsolete
+whole-cell flood and its queue were removed. Quantity-driven levels and actual
+bucket interaction still need implementation. Next prove terrain-connected redistribution and conservation under a
 bounded native work budget, then integrate bucket item ownership and world saves.
 Retain the previous finalization/hitch failures; do not increase water caps or claim
 sustained60FPS from these checks.

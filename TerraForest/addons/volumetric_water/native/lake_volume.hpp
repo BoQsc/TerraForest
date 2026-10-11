@@ -26,7 +26,6 @@ class NativeLakeVolume : public godot::RefCounted {
     int build_boundary_volume();
     bool boundary_contains(const godot::Vector3 &point) const;
     std::unique_ptr<uint8_t[]> column_top_;
-    std::unique_ptr<uint32_t[]> queue_;
     godot::Array smooth_surface_;
     godot::Array build_smooth_surface() const;
     uint32_t index(int x, int y, int z) const;

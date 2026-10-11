@@ -50,8 +50,6 @@ bool NativeLakeVolume::restore_bake(const PackedByteArray &bytes,const PackedByt
         }
         stage->wet_[i]=wet;
     }
-    const Vector3 local=(seed-origin)/stage->spacing_;
-    if(!wet_count||!stage->wet_[stage->index(int(local.x),int(local.y),int(local.z))])return false;
     stage->boundary_mask_.reset(new(std::nothrow) uint8_t[count]);
     if(!stage->boundary_mask_)return false;
     for(uint32_t i=0;i<count;++i){const uint8_t mask=bytes[at++];if(mask>63 || (stage->wet_[i]&&mask!=63))return false;stage->boundary_mask_[i]=mask;}
@@ -69,7 +67,7 @@ bool NativeLakeVolume::restore_bake(const PackedByteArray &bytes,const PackedByt
     Array arrays;arrays.resize(Mesh::ARRAY_MAX);arrays[Mesh::ARRAY_VERTEX]=vertices;arrays[Mesh::ARRAY_NORMAL]=normals;arrays[Mesh::ARRAY_TEX_UV]=uv;arrays[Mesh::ARRAY_INDEX]=indices;
     origin_=stage->origin_;seed_=stage->seed_;size_=stage->size_;spacing_=stage->spacing_;level_=stage->level_;
     count_=count;node_count_=stage->node_count_;sampled_=0;wet_count_=wet_count;status_=1;
-    density_.reset();queue_.reset();
+    density_.reset();
     boundary_mask_=std::move(stage->boundary_mask_);query_density_=std::move(stage->query_density_);
     wet_=std::move(stage->wet_);column_top_=std::move(stage->column_top_);smooth_surface_=arrays;
     return true;

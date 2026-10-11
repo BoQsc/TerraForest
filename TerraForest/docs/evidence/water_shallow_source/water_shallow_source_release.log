@@ -1,0 +1,14 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS shallow positive-density seed admits two-centimetre puddle
+PASS puddle needs no completely air-filled cells
+PASS ground and air above water stay dry
+PASS partial-cell puddle has visible surface geometry
+PASS geometric partial-cell quantity is sub-litre and matches analytic integral
+PASS cache admits connected volume with zero full cells
+PASS shallow queries and quantity survive exact cache round trip
+PASS seed inside terrain still rejected
+PASS partial-cell opening at domain edge rejects entire puddle
+PASS sub-litre body quantity can transfer exactly to container ledger
+WATER_SHALLOW_SOURCE failures=0
+

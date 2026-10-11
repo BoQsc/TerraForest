@@ -46,11 +46,10 @@ bool NativeLakeVolume::configure(const Vector3 &origin, const Vector3i &cells, d
     if (local.x<0 || local.y<0 || local.z<0 || local.x>=cells.x || local.y>=cells.y || local.z>=cells.z || seed.y>=level) return false;
     std::unique_ptr<float[]> density(new(std::nothrow) float[size_t(nodes)]);
     std::unique_ptr<uint8_t[]> wet(new(std::nothrow) uint8_t[size_t(count)]());
-    std::unique_ptr<uint32_t[]> queue(new(std::nothrow) uint32_t[size_t(count)]);
-    if (!density || !wet || !queue) return false;
+    if (!density || !wet) return false;
     origin_=origin; seed_=seed; size_=cells; spacing_=float(spacing); level_=float(level);
     count_=uint32_t(count); node_count_=uint32_t(nodes); status_=0;
-    density_=std::move(density); wet_=std::move(wet); queue_=std::move(queue);
+    density_=std::move(density); wet_=std::move(wet);
     return true;
 }
 bool NativeLakeVolume::eligible(int x, int y, int z) const {
@@ -101,36 +100,22 @@ int NativeLakeVolume::sample_terrain(Object *core, int64_t budget, int64_t revis
 }
 #include "lake_boundary.hpp"
 int NativeLakeVolume::finish() {
-    const Vector3 local=(seed_-origin_)/spacing_;
-    const int sx=int(std::floor(local.x)), sy=int(std::floor(local.y)), sz=int(std::floor(local.z));
-    if (!eligible(sx,sy,sz)) { status_=-2; density_.reset(); queue_.reset(); return status_; }
-    uint32_t head=0, tail=1;
-    queue_[0]=index(sx,sy,sz); wet_[queue_[0]]=1;
-    constexpr int delta[6][3]={{-1,0,0},{1,0,0},{0,-1,0},{0,1,0},{0,0,-1},{0,0,1}};
-    while(head<tail) {
-        const uint32_t id=queue_[head++];
-        const int x=id%size_.x, y=(id/size_.x)%size_.y, z=id/(size_.x*size_.y);
-        if (x==0 || z==0 || y==0 || x==size_.x-1 || z==size_.z-1) {
-            status_=-3; wet_.reset(); density_.reset(); queue_.reset(); return status_;
-        }
-        for (const auto &d:delta) {
-            const int nx=x+d[0],ny=y+d[1],nz=z+d[2];
-            if(nx<0||ny<0||nz<0||nx>=size_.x||ny>=size_.y||nz>=size_.z)continue;
-            const uint32_t next=index(nx,ny,nz);
-            if (!wet_[next] && eligible(nx,ny,nz)) { wet_[next]=1; queue_[tail++]=next; }
-        }
-    }
+    // Admission and connectivity belong to the actual positive-density region,
+    // including partial seed cells. Full-cell occupancy is only a query fast path.
     const int boundary_status=build_boundary_volume();
-    if(boundary_status!=1){status_=boundary_status;wet_.reset();boundary_mask_.reset();density_.reset();queue_.reset();return status_;}
+    if(boundary_status!=1){status_=boundary_status;wet_.reset();boundary_mask_.reset();density_.reset();return status_;}
     column_top_.reset(new(std::nothrow) uint8_t[size_t(size_.x)*size_.z]());
-    if(!column_top_){status_=-1;wet_.reset();density_.reset();queue_.reset();return status_;}
-    for(uint32_t i=0;i<tail;++i){
-        const uint32_t id=queue_[i];const int x=id%size_.x,y=(id/size_.x)%size_.y,z=id/(size_.x*size_.y);
+    if(!column_top_){status_=-1;wet_.reset();boundary_mask_.reset();density_.reset();return status_;}
+    wet_count_=0;
+    for(uint32_t id=0;id<count_;++id){
+        if(boundary_mask_[id]!=63)continue;
+        const int x=id%size_.x,y=(id/size_.x)%size_.y,z=id/(size_.x*size_.y);
+        if(!eligible(x,y,z))continue;
+        wet_[id]=1;++wet_count_;
         auto &top=column_top_[x+size_.x*z];top=std::max(top,uint8_t(y+1));
     }
-    wet_count_=tail; status_=1;
-    smooth_surface_=build_smooth_surface();
-    query_density_=std::move(density_); queue_.reset();
+    status_=1;smooth_surface_=build_smooth_surface();
+    query_density_=std::move(density_);
     return status_;
 }
 bool NativeLakeVolume::contains(const Vector3 &p) const {
@@ -187,7 +172,7 @@ Array NativeLakeVolume::surface_arrays() const {
 Dictionary NativeLakeVolume::statistics() const {
     Dictionary d; d["status"]=status_; d["cells"]=count_; d["sampled_nodes"]=sampled_; d["total_nodes"]=node_count_;
     d["wet_cells"]=wet_count_; d["resident_bytes"]=wet_ ? count_*2+node_count_*sizeof(float) : 0;
-    d["builder_bytes"]=(density_ ? node_count_*sizeof(float):0)+(queue_ ? count_*sizeof(uint32_t):0);
+    d["builder_bytes"]=(density_ ? node_count_*sizeof(float):0);
     d["query_index_bytes"]=column_top_ ? size_.x*size_.z : 0;
     d["boundary_bytes"]=boundary_mask_ ? count_+node_count_*sizeof(float) : 0;
     d["surface_bytes"]=smooth_surface_.size()==Mesh::ARRAY_MAX ?

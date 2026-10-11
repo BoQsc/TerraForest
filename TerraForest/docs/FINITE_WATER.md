@@ -74,10 +74,12 @@ when initializing authoritative quantities, not on every future flow update.
 49 debug/release checks pass; see [capacity evidence](evidence/water_capacity/README.md).
 This supplies geometric measurement only, not a spatial redistribution solver.
 
-A new shallow-source regression currently fails: a positive-air seed in a2cm-deep
-puddle is rejected by the old all-eight-corners-air admission policy. Finite pours
-must work in partial cells; remove that dependency with solid/open-edge/cache tests
-before assuming the existing builder can represent bucket-scale water.
+The shallow-source gate now passes: a2cm-deep,533ml puddle with zero wholly empty
+cells is admitted, measured and restored from cache. Solid seeds and open boundary
+connections still reject. The obsolete full-cell flood/queue was removed; connected
+tetrahedra now determine admission and full-cell occupancy is only a fast path.
+See [shallow-source evidence](evidence/water_shallow_source/README.md). This proves
+small-source geometry, not quantity-driven level changes or playable pouring.
 
 ## Gates and remaining work, in order
 
@@ -90,10 +92,12 @@ before assuming the existing builder can represent bucket-scale water.
    shallow partial-cell puddles, a submerged connection between unequal basins, a
    high dry sill that must not teleport water, and stacked/disconnected caves. Report
    work counts, peak queue/memory, settling latency and budget exhaustion. Compare
-   a second update budget to detect scheduling-dependent volume errors. Not done.
+   a second update budget to detect scheduling-dependent volume errors. Shallow-source
+   admission passes; redistribution and displacement remain unimplemented.
 3. **Sleeping/scaling:** many settled bodies plus a local change; measure zero solver
    work for sleeping bodies, localized wake-up and fair progress under pressure.
-   Preserve failures. Do not infer performance from the accounting tests. Not done.
+   Preserve failures. Do not infer performance from the accounting tests. Do not instantiate one independently simulated lake per poured bucket; connect
+   pours to shared spatial ownership. Not done.
 4. **Playable bucket:** actual item/model/icon, toolbelt actions, targeting feedback,
    partial contents, drops/storage and atomic world/item save integration. Test
    scoop, carry, pour, destroy/open barrier, travel away/back and restart. Not done.

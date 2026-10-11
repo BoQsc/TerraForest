@@ -1,0 +1,6 @@
+{
+  "amount_ml": 533,
+  "checks": 10,
+  "failures": 0,
+  "scope": "Partial-cell admission/geometry/cache/quantity only; no live bucket, drainage or level response."
+}
