@@ -1,0 +1,26 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] New world
+[TerrainRewrite] New world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+PASS isolated persistent world ready
+PASS fixture clears starter loadout
+PASS fixture grants shelf materials and storable stone
+PASS block floor placed
+[TerrainRewrite] Place objects
+[TerrainRewrite] Wooden shelf placed · F5 saves world
+PASS normal paid object tool places storage shelf
+[TerrainRewrite] Sculpt cube
+PASS normal E opens reachable shelf and blocks player controls
+PASS UI deposits seven stone
+FAIL deposit creates contents and native protection
+PASS filled shelf cannot be removed or placement-undone
+FAIL UI withdraws part of a stack
+PASS fullscreen1080p cap60
+PASS closing storage returns normal inventory and controls
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+PASS normal save publishes shelf and player contents together
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+PASS normal shutdown drains
+STORAGE_WORLD {"checks":14,"failures":2,"reopen":false}

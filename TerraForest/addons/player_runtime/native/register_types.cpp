@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: 0BSD
 #include "inventory.hpp"
+#include "containers.hpp"
 #include "reward_inbox.hpp"
 #include "movement.hpp"
 #include "pose.hpp"
@@ -9,6 +10,7 @@ using namespace godot;
 static void initialize(ModuleInitializationLevel level) {
     if(level==MODULE_INITIALIZATION_LEVEL_SCENE){
         GDREGISTER_CLASS(terraforest::NativePlayerInventory);
+        GDREGISTER_CLASS(terraforest::NativeContainerStore);
         GDREGISTER_CLASS(terraforest::NativeRewardInbox);
         GDREGISTER_CLASS(terraforest::NativePlayerMovement);
         GDREGISTER_CLASS(terraforest::NativePlayerPose);

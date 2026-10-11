@@ -89,11 +89,12 @@ exposes a visual blocker. Compare one replacement mesh against the accepted asse
 with the same population and measured rendering budget; no vegetation-system rewrite
 is implied. Neither art acceptance nor this default change closes performance gates.
 
-Next coverage gate: extend usable building interiors beyond static furniture, starting
-with an inventory-connected storage interaction. Earned-resource construction and
-placeable ladder access now have bounded integration evidence; the complete combined
-furnished-world gameplay route still needs a human checkpoint. Retain M2 as active and preserve the larger M3-M6 scope. Do not start another
-vegetation-polish cycle before a combined gameplay checkpoint.
+Next coverage gate: the combined furnished-world gather/build/use/save/reload route
+needs a human checkpoint. Earned-resource construction, placeable ladder access and
+a dedicated inventory-connected wooden chest now have bounded integration evidence.
+Shelves remain furniture; furniture salvage and loose item pickup remain separate
+unfinished interactions. Retain M2 as active and preserve the larger M3-M6 scope.
+Do not start another vegetation-polish cycle before a combined gameplay checkpoint.
 
 Current combined human checkpoint: [Play Combined World.cmd](../Play%20Combined%20World.cmd) opens the generated furnished settlement with interactive ground cover, native actors and opt-in vehicle fleet. It shares and edits the existing Play Actors save; it does not copy it. [Current route, save ownership and explicit limits](CONNECTED_WORLD_CHECKPOINT.md#current-combined-actor-and-vegetation-checkpoint--2026-10-10). Saved-world launchers now capture build identity and logs. Human acceptance is pending; no automatic test substitutes for it.
 
@@ -444,3 +445,20 @@ cold-retirement fixture corrected to release rendering residency). No performanc
 or usable-container claim. Next implement contents ownership/persistence and UI
 using the verified transfer and removal interlocks, with explicit handoff on reload;
 then test the complete place/deposit/withdraw/save/reopen route. M2 remains active.
+
+### 2026-10-11: usable wooden chest storage
+
+Object 8 is a dedicated wooden chest: eight wood in gameplay, free in the editor.
+E on foot opens its 32-slot inventory; bounded native atomic transfers, stable
+placement ownership and normal compound saves connect it to the player inventory.
+Filled chests reject removal; emptying releases ownership. Shelves are furniture,
+not containers. Salvage rewards and independent book/item pickup remain unfinished.
+
+Nonempty contents are sparse and capped at 4,096 chests, sharing one immutable
+item catalog; geometry uses normal native static batching and nearby box collision.
+There is no per-chest script or idle inventory tick. Cold contents remain resident.
+Twenty-three native checks pass in debug/release, including full-capacity encoding;
+36 actual-world create/reopen checks pass with 1080p fullscreen and cap60. Retained
+screenshots and logs: [chest storage evidence](evidence/chest_storage/README.md).
+This is one usable interior interaction, not dense performance or complete M2
+coverage. Combined human feedback is the next checkpoint, not more isolated polish.

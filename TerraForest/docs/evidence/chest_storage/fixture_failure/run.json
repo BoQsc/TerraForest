@@ -1,0 +1,68 @@
+{
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\godot.windows.opt.tools.64.exe",
+    "--path",
+    "C:\\Users\\LENOVO LOQ 15\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+    "--log-file",
+    "C:\\Users\\LENOVO LOQ 15\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\storage_world\\20261011T082700697752Z\\build\\engine.log",
+    "--fullscreen",
+    "--resolution",
+    "1920x1080",
+    "--max-fps",
+    "60",
+    "--script",
+    "res://tests/storage_world.gd",
+    "--",
+    "--world-slot=storage_world_726c178c1a604daca1d086eb1cfe1a9e",
+    "--derived-cache=user://storage_world_726c178c1a604daca1d086eb1cfe1a9e",
+    "--gameplay-construction"
+  ],
+  "phase": "build",
+  "slot": "storage_world_726c178c1a604daca1d086eb1cfe1a9e",
+  "cache": "user://storage_world_726c178c1a604daca1d086eb1cfe1a9e",
+  "engine_sha256": "12310c74bdda7dcd43f28e971f33047dcecadd436b68169d61ce41009006df38",
+  "test_sha256": "29af1fbab7f78ece3f92e824129a056863b52632bb31a535b5c5047146dddd58",
+  "native_sha256": {
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "46dc5838d2eef07d5b128bd10e2237d77f85b6e8b28974483d04fbac2e3add1b",
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "5873a1b00e6c71512a4db926575cd59e27de4636c9f9f441ae750210fce0d6fb",
+    "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "2093381ed06d0918ae5083475181e42f253505dcff89d56f5899179abb5fe132",
+    "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "758cca1718d8d1ce3a80a471a701e49d422bedceea7b43bfb50cf3bed4753b15",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "0742e44096e00e13acd013a151ca4cbd7d52b5d3ac3703485a7a3d656a9a9b6f",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "13f455564dba3ebddce1f4f4a0fa470dad07ce80ef0d4097ce48527427046e04",
+    "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "4e26fb367e7aaa92f00e8d0772a5ed986b32ebbf8077994107b640611ddf2706",
+    "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "7165d04acb9624a886c0e5d44124b4367f197b0cedf5e6c6d408f9fabde06566",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "c8ebc7f93869a8944ec67d355af7b869cbad59abfe49f06166bddc444dbd5dd6",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "8400da876169a1ac7158a40503f7b5c19fc5312f558666b34d92af1d60279eaa",
+    "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "447181d43584906045da639f71005a46144726f33b070fecb92aeb27dbbe511e",
+    "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "4f424528e8bff98492c44261cbd05b11fb20689f1a2f3732753254cad80f0ad7",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "1a11bbf3e9f30cfa2dc80eea235b19a074858be0b8df08bf6a5aa7f2f3341207",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "0447fd4ddf35d80d63371b22f43c2beb7792a8239366f233b62a0e2e7f3db5f4"
+  },
+  "revision": "7045c69dd2c0b53bd6271f7094c5008bc0ad3aa0",
+  "worktree_changes": [
+    " M TerraForest/addons/player_runtime/bin/player_runtime.windows.template_debug.x86_64.dll",
+    " M TerraForest/addons/player_runtime/bin/player_runtime.windows.template_release.x86_64.dll",
+    " M TerraForest/addons/player_runtime/native/inventory.hpp",
+    " M TerraForest/addons/player_runtime/native/register_types.cpp",
+    " M TerraForest/demo/world.gd",
+    "?? TerraForest/addons/player_runtime/native/containers.cpp",
+    "?? TerraForest/addons/player_runtime/native/containers.hpp",
+    "?? TerraForest/addons/player_runtime/storage.gd",
+    "?? TerraForest/tests/storage_world.gd",
+    "?? TerraForest/tools/check_storage_world.py"
+  ],
+  "git_metadata_available": true,
+  "result": {
+    "timed_out": false,
+    "launch_error": null,
+    "pid": 86860,
+    "exit_code": 1,
+    "diagnostics": [
+      "FAIL UI withdraws part of a stack",
+      "FAIL deposit creates contents and native protection"
+    ],
+    "required_text_found": true,
+    "elapsed_seconds": 16.77657889999682,
+    "passed": false
+  }
+}

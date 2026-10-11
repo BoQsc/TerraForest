@@ -26,7 +26,7 @@ Dictionary NativePlayerInventory::result(bool ok,const char *reason) const {
     Dictionary out;out["ok"]=ok;out["reason"]=reason;out["revision"]=revision;return out;
 }
 bool NativePlayerInventory::register_item(int64_t item,int64_t limit) {
-    if(revision||item<=0||item>INT32_MAX||limit<1||limit>1000000||limits.size()>=256||limits.count(item))return false;
+    if(catalog_owner.is_valid()||revision||item<=0||item>INT32_MAX||limit<1||limit>1000000||catalog().size()>=256||catalog().count(item))return false;
     limits[item]=limit;return true;
 }
 Dictionary NativePlayerInventory::snapshot() const {
@@ -36,8 +36,8 @@ Dictionary NativePlayerInventory::snapshot() const {
 }
 Dictionary NativePlayerInventory::grant(int64_t item,int64_t count,int64_t expected) {
     if(expected!=revision)return result(false,"stale_revision");
-    auto found=limits.find(item);
-    if(found==limits.end()||count<=0)return result(false,"invalid_item_or_count");
+    auto found=catalog().find(item);
+    if(found==catalog().end()||count<=0)return result(false,"invalid_item_or_count");
     int64_t capacity=0;
     for(auto s:slots)if(!s.item||s.item==item)capacity+=found->second-s.count;
     if(count>capacity)return result(false,"full");
@@ -61,8 +61,8 @@ Dictionary NativePlayerInventory::apply_grants(const PackedInt64Array &items,int
     auto candidate=slots;
     for(int64_t i=0;i<items.size();i+=2){
         const int64_t item=items[i];int64_t count=items[i+1];
-        auto found=limits.find(item);
-        if(found==limits.end()||count<=0||count>32000000)return result(false,"invalid_item_or_count");
+        auto found=catalog().find(item);
+        if(found==catalog().end()||count<=0||count>32000000)return result(false,"invalid_item_or_count");
         // Stage at most 32 rows over 32 slots. Duplicate rows see the prior
         // staged result, without summing untrusted counts or allocating stacks.
         for(int pass=0;pass<2&&count;++pass)for(auto &slot:candidate){
@@ -98,7 +98,7 @@ Dictionary NativePlayerInventory::apply_costs(const PackedInt64Array &costs,int6
     auto candidate=slots;
     for(int64_t i=0;i<costs.size();i+=2){
         const int64_t item=costs[i];int64_t remaining=costs[i+1];
-        if(limits.find(item)==limits.end()||remaining<=0||remaining>32000000)return result(false,"invalid_item_or_count");
+        if(catalog().find(item)==catalog().end()||remaining<=0||remaining>32000000)return result(false,"invalid_item_or_count");
         for(auto &slot:candidate){
             if(slot.item!=item)continue;
             const int64_t amount=std::min(remaining,slot.count);
@@ -120,7 +120,7 @@ Dictionary NativePlayerInventory::transfer(int64_t from,int64_t to,int64_t count
         if(count!=a.count)return result(false,"partial_swap");
         std::swap(a,b);
     }else{
-        if(count>limits.at(a.item)-b.count)return result(false,"stack_full");
+        if(count>catalog().at(a.item)-b.count)return result(false,"stack_full");
         b.item=a.item;b.count+=count;a.count-=count;if(!a.count)a.item=0;
     }
     ++revision;return result(true,"");
@@ -155,7 +155,7 @@ Dictionary NativePlayerInventory::restore(const Dictionary &data,int64_t expecte
         Dictionary row=rows[i];Variant item=row.get("item",Variant()),count=row.get("count",Variant());
         if(item.get_type()!=Variant::INT||count.get_type()!=Variant::INT)return result(false,"invalid_snapshot");
         int64_t id=item,n=count;
-        if((id==0&&n!=0)||(id!=0&&(limits.find(id)==limits.end()||n<=0||n>limits.at(id))))return result(false,"invalid_snapshot");
+        if((id==0&&n!=0)||(id!=0&&(catalog().find(id)==catalog().end()||n<=0||n>catalog().at(id))))return result(false,"invalid_snapshot");
         candidate[i]={id,n};
     }
     slots=candidate;++revision;return result(true,"");
@@ -181,8 +181,8 @@ bool NativePlayerInventory::validate_snapshot(const PackedByteArray &data) const
     if(read_u32(p)!=0x31564654||read_u32(p+4)!=32)return false;
     for(int i=0;i<32;++i){
         auto id=read_u32(p+8+i*8),n=read_u32(p+12+i*8);
-        auto found=limits.find(id);
-        if(id==0 ? n!=0 : found==limits.end()||n==0||n>found->second)return false;
+        auto found=catalog().find(id);
+        if(id==0 ? n!=0 : found==catalog().end()||n==0||n>found->second)return false;
     }
     return true;
 }

@@ -22,7 +22,7 @@ func run() -> void:
 	while game.loading_active and Time.get_ticks_msec()<deadline: await process_frame
 	check(not game.loading_active and game.terrain.world_ready and game.terrain.save_slot==slot,"isolated persistent main world ready")
 	game.set_physics_process(false);game._clear_motion();game.app_focused=true;Input.mouse_mode=Input.MOUSE_MODE_CAPTURED
-	check(game.model_tool.catalog.size()==7 and game.construction_inventory.gameplay,"ladder catalog enabled in paid gameplay")
+	check(game.model_tool.catalog.size()==8 and game.construction_inventory.gameplay,"ladder catalog enabled in paid gameplay")
 	var entry: Dictionary=game.model_tool.catalog[6]
 	var expected: Dictionary={}
 	var base: Vector3=game.player.position.snapped(Vector3.ONE)+Vector3.UP*12

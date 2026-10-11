@@ -309,6 +309,9 @@ func edit(remove: bool) -> int:
 				var collection: Node3D = entry.collection
 				if hit.collider==collection:
 					var id: int = collection.placement_for_body(hit.rid)
+					if id>0 and collection.is_removal_protected(id):
+						notice.emit("Empty stored contents before removing this object")
+						return 0
 					if id>0 and history.erase(collection,id):
 						notice.emit("Object removed · F5 saves world")
 						return id

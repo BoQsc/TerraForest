@@ -1,0 +1,15 @@
+{
+  "addons/player_runtime/native/containers.cpp": "6bc8f309ebcb8ac7d04a6918a5771feed8da4ae88732d95b8a973cf51d8b61f0",
+  "addons/player_runtime/native/containers.hpp": "3be2af5cb27ee234092cb567df35b5a25156341fb7cf384b12af9b94636a7f55",
+  "addons/player_runtime/native/inventory.cpp": "e30251de2822206f7afa17e2be6c273bcc2817a8a5487ea9ebb1ff79178e6068",
+  "addons/player_runtime/native/inventory.hpp": "6676a8c83f01e513d727f1a019453df2a3c7289f597c727e5993d06a2586bbf6",
+  "addons/player_runtime/storage.gd": "6238c8359d525e97fca73f7ad6aa108aadf898b8a75e70ab231f82cbfda38ffd",
+  "addons/structures/storage_catalog.gd": "248162524c03ff9dd99c081e3f00967c896302fa5c90ec278e4cb3a9fa9ebba4",
+  "addons/structures/prefabs/storage_chest_model.tres": "932b19fbaa3bbe4477f94d5fa9e4539b6c91b60fe8901f69deca46ad23656b86",
+  "addons/structures/model_tool.gd": "a727a1598f5490fabda4de78940dc7adfc57a4c99ecbcc603b3ce2ae8bfb44e7",
+  "demo/world.gd": "b4a08cdb74d30eecfc24102de42479d1b25b2d5285cf3bd65c1616d5cab3b398",
+  "tests/container_store.gd": "2b157b3dc339d59ecf38c6e406f360b95b5ec79cdab2ec558a61b2834149fba0",
+  "tests/storage_world.gd": "1bc3523fb02ee1a1562842b8a7d34ea10ca75a4e8e792b804be1403686536e2d",
+  "tools/check_storage_world.py": "fbe97d6ae6d506be8e00e05bea147f2b526e79c3baea8123d8c08054326cefb1",
+  "tools/bake_storage_chest.gd": "e0a0a2eb59e86631f61de8bb6da75073e3e16a32453a86f7751357ea8d249666"
+}

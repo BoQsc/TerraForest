@@ -10,9 +10,14 @@
 namespace terraforest {
 class NativePlayerInventory : public godot::RefCounted {
     GDCLASS(NativePlayerInventory,godot::RefCounted)
+    friend class NativeContainerStore;
     struct Stack {int64_t item=0,count=0;};
     std::array<Stack,32> slots{};
     std::unordered_map<int64_t,int64_t> limits;
+    // Containers share one private immutable schema instead of copying its
+    // hash table into every stored inventory. Ordinary player inventories own it.
+    godot::Ref<NativePlayerInventory> catalog_owner;
+    const std::unordered_map<int64_t,int64_t> &catalog() const {return catalog_owner.is_valid()?catalog_owner->limits:limits;}
     int64_t revision=0;
     godot::Dictionary result(bool ok,const char *reason) const;
     godot::Dictionary apply_costs(const godot::PackedInt64Array &costs,int64_t expected,bool commit);

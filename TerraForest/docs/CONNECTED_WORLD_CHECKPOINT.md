@@ -55,7 +55,7 @@ change was required to pass this persistence check.
 
 ## Furnished checkpoint
 
-Run [Play Furnished Settlement.cmd](../Play%20Furnished%20Settlement.cmd) for the separate furnished copy, with ground cover enabled. It starts on foot inside the first cottage. All four cottages contain a table, chair and shelf; the original checkpoint remains unchanged. Use M for the object tool, E to select, and F5 to save. The furniture is static: sitting and container storage are not implemented.
+Run [Play Furnished Settlement.cmd](../Play%20Furnished%20Settlement.cmd) for the separate furnished copy, with ground cover enabled. It starts on foot inside the first cottage. All four cottages contain a table, chair and shelf; the original checkpoint remains unchanged. Use M for the object tool, E to select, and F5 to save. The furniture is static; sitting is not implemented. Separate wooden chests now support storage (see below).
 
 The local slot and source-copy provenance are in [the furnished manifest](evidence/furnished_world/manifest.json). As with the original checkpoint, user saves are not distributed in Git. Creation and fresh-process reload checks verify exact furniture and other addon snapshots plus central aisle capsule clearance. These checks do not establish general navigation, travel or mixed-workload performance.
 
@@ -75,7 +75,7 @@ Run [Play Actors.cmd](../Play%20Actors.cmd). This opens the existing generated f
 
 A short route through the current integration:
 
-1. Walk out of a furnished cottage and check the stairs, doorway and interior objects. The furniture is static; sitting and container storage remain absent.
+1. Walk out of a furnished cottage and check the stairs, doorway and interior objects. The furniture is static; sitting remains absent. Separate wooden chests support storage (see below).
 2. Press H for ground cover. Keys 1/2/3 select stone/plant/grass. Remove one item with LMB or E and place one with RMB. Nearby unrelated items should remain. Grass interaction is per clump. This launcher uses the free editor; inventory costs are exercised separately in gameplay mode.
 3. On clear road, J places an actor. K aimed at the actor selects it and displays a cyan marker. Aim at nearby clear ground and press K again to move it; Shift+K stops it. Shift+J removes an aimed active actor. Movement is direct and may stop at obstacles; actors now show a simple movement-driven limb gait. There is no pathfinding or actor-to-actor avoidance yet.
 4. F5 saves; wait for confirmation before F9 reload. Check edited ground cover and actor records/orders. Editor selection itself is transient, so select again after reload.
@@ -98,4 +98,18 @@ Road editor settings now save with the world: surface, half-width, depth, cleara
 
 Ground-cover toolbelt: if you have Stone, Plant or Grass clump stacks, move one into any of the first six inventory slots and equip it with Alt+1 through Alt+6 (or its belt button). This selects the matching placement species without spending an item. Gameplay placement still consumes one resource; free-editor placement remains free. H remains available for collection and free editing without a stack. Selecting a normal tool leaves ground-cover mode. This requires ground cover enabled by the launcher.
 
-Furniture editing: in object mode (M), aim at a table/chair/shelf and use E to select; LMB removes the aimed object. Gameplay removal currently gives no material refund. Free-editor undo is available; gameplay object undo is disabled. These objects are static furniture, without sitting/container gameplay yet.
+Furniture editing: in object mode (M), aim at a table/chair/shelf and use E to select; LMB removes the aimed object. Gameplay removal currently gives no material refund. Free-editor undo is available; gameplay object undo is disabled. These objects remain static furniture, with no sitting or salvage rewards. Storage uses a separate wooden chest.
+
+## Wooden chest and ladder checkpoint
+
+In object mode (M), key 7 selects the climbable wooden ladder and key 8 selects
+the wooden storage chest. RMB places the selected object. Gameplay construction
+charges six/eight wood respectively; the combined free-editor launcher stays free.
+Exit object and ground-cover modes before using storage. On foot, aim at a chest
+within three metres and press E. Select a stack/quantity, Deposit or Take, then
+Esc/Tab to close. Filled chests cannot be deleted. F5 saves both inventories and
+placement; wait for confirmation before F9 reload. Existing shelves stay furniture.
+
+For ladders, approach the front and use W/S; Space jumps away. Upright unit-scale
+ladders support approximately three-metre landings. Neither feature has received
+human acceptance yet. [Storage evidence and explicit limits](evidence/chest_storage/README.md).

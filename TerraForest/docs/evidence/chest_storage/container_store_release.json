@@ -1,0 +1,6 @@
+{
+  "checks": 23,
+  "failures": 0,
+  "serialized_capacity_bytes": 1114128,
+  "library": "player_runtime.windows.template_release.x86_64.dll"
+}

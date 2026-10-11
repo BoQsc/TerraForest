@@ -12,7 +12,7 @@ func run() -> void:
 	while game.loading_active and Time.get_ticks_msec()<deadline: await process_frame
 	check(not game.loading_active,"main world ready")
 	game.set_physics_process(false);game._clear_motion();game.app_focused=true
-	check(game.model_tool.catalog.size()==7,"all furniture available through normal object catalog")
+	check(game.model_tool.catalog.size()==8,"all furniture available through normal object catalog")
 	var base: Vector3=game.player.position.snapped(Vector3.ONE)+Vector3.UP*12
 	var dir:="res://reports/furniture/"
 	DirAccess.make_dir_recursive_absolute(dir)

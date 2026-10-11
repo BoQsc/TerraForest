@@ -122,3 +122,19 @@ than overwritten. This is not a distributed transaction protocol.
 Targeted checks: `tests/player_inventory.gd` and
 `tests/construction_inventory.gd` and `tests/gameplay_loadout.gd` (headless). These verify inventory correctness,
 native prefab accounting and placement rollback, not rendering performance.
+
+## Wooden chest storage
+
+`NativeContainerStore` supplies sparse 32-slot inventories keyed by placement ID
+within one asset collection. Configure once from a registered player inventory;
+nonempty entries share a private immutable item catalog. `snapshot(id)` returns a
+`store_revision`; deposit/withdraw require that token plus the player's revision.
+Successful transfers update both sides atomically. Empty views allocate no records;
+withdrawing the final stack frees its contents row. Malformed snapshots reject
+before mutation. Mutations are main-thread only; configured validation is immutable.
+
+`storage.gd` connects the native store to the wooden chest model, E interaction,
+reach/occlusion checks, inventory UI, native removal protection and compound saves.
+The world cap is 4,096 nonempty chests; serialized size is 16 + 272*N bytes. Cold
+contents remain resident. Accounting/encoding are native; UI is event-driven.
+See [usage, verification and limits](../../docs/evidence/chest_storage/README.md).

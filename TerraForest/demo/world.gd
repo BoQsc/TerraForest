@@ -28,6 +28,7 @@ var lakes = Lakes.new()
 var water_camera=preload("res://addons/volumetric_water/water_camera.gd").new()
 var structures = Structures.new()
 var player_hud=preload("res://addons/player_runtime/player_hud.gd").new()
+var storage=preload("res://addons/player_runtime/storage.gd").new()
 var construction_inventory=preload("res://addons/player_runtime/construction_inventory.gd").new()
 var headlamp=preload("res://addons/player_runtime/headlamp.gd").new()
 var mining_rewards=preload("res://addons/player_runtime/mining_rewards.gd").new()
@@ -113,6 +114,8 @@ func _ready() -> void:
 	structures_ready = structures_ready and furniture.size()==3
 	var ladder: Dictionary=preload("res://addons/structures/ladder_catalog.gd").register(structures)
 	structures_ready = structures_ready and not ladder.is_empty()
+	var chest: Dictionary=preload("res://addons/structures/storage_catalog.gd").register(structures)
+	structures_ready = structures_ready and not chest.is_empty()
 	player_hud.ground_tools_enabled=ground_enabled
 	if not player_hud.prepare() or not persistence.register_component("player_loadout", player_hud.capture_snapshot, player_hud.restore_snapshot, player_hud.inventory, player_hud.default_loadout):
 		push_error("Player loadout persistence initialization failed")
@@ -139,7 +142,7 @@ func _ready() -> void:
 		push_error("Road anchor persistence initialization failed")
 		get_tree().quit(2)
 		return
-	if not structures_ready or not lakes.prepare() or not persistence.register_component("structures", structures.capture_storage_snapshot, structures.restore_storage_snapshot, structures.snapshot_validator(), structures.empty_snapshot()) or not persistence.register_component("volumetric_water", lakes.capture_snapshot, lakes.restore_snapshot, lakes.snapshot_validator(), lakes.empty_snapshot()) or not persistence.enable_region_structures(true,model_region_paging) or persistence.attach(terrain) != OK:
+	if not storage.prepare(self,persistence) or not structures_ready or not lakes.prepare() or not persistence.register_component("structures", structures.capture_storage_snapshot, storage.restore_structures, structures.snapshot_validator(), structures.empty_snapshot()) or not persistence.register_component("volumetric_water", lakes.capture_snapshot, lakes.restore_snapshot, lakes.snapshot_validator(), lakes.empty_snapshot()) or not persistence.enable_region_structures(true,model_region_paging) or persistence.attach(terrain) != OK:
 		push_error("World persistence initialization failed")
 		get_tree().quit(2)
 		return
@@ -165,6 +168,7 @@ func _ready() -> void:
 		{"title":"Doorway","mesh":doorway,"collection":door_models,"scale":Vector3.ONE,"costs":PackedInt64Array([103,8]),"cost_label":"8 concrete"}]
 	object_entries.append_array(furniture)
 	object_entries.append(ladder)
+	object_entries.append(chest)
 	model_tool.configure(camera,player,object_entries,help.get_parent(),structures.blocks)
 	model_tool.notice.connect(_show_lake_notice)
 	if model_region_paging and (not temporary_world or terrain.backend.readonly_snapshot):
@@ -176,6 +180,7 @@ func _ready() -> void:
 			return
 	player_hud.temporary_world=temporary_world
 	add_child(player_hud)
+	add_child(storage)
 	add_child(construction_palette)
 	add_child(road_palette)
 	road_palette.action_requested.connect(_road_action)
@@ -447,7 +452,7 @@ func _setup_hud() -> void:
 	status.hide()
 	help.text = "WASD  Move    Shift  Sprint    Space  Jump    G  Fly    Mouse  Look    Esc  Release\nB  Terrain / Blocks    LMB  Remove    RMB  Place    1–6  Shapes    P  Prefabs    T  Material    R  Rotate    Ctrl+Z / Y  Undo / Redo\nTerrain: Wheel  Brush size    1–3  Tools    L  Lake    F5  Save world    F9  Reload    F3  Diagnostics"
 	help.add_theme_font_size_override("font_size", 15)
-	help.text=help.text.replace("B  Terrain / Blocks", "B  Terrain / Blocks    M  Objects    E  Collect / Harvest")
+	help.text=help.text.replace("B  Terrain / Blocks", "B  Terrain / Blocks    M  Objects    E  Collect / Harvest / Open chest")
 	help.text+="\nV  Place vehicle    E  Enter / exit stopped vehicle    F5  Save world and vehicle    F  Headlamp"
 	if ground_enabled: help.text+="    H Ground cover: 1-8 select; LMB/E remove; RMB place; F7 Grass texture"
 	help.offset_top = -108
@@ -684,6 +689,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			_clear_motion();_show_lake_notice("Driving · E exit when stopped · Space brake");return
 	if event is InputEventKey and event.pressed and not event.echo and event.physical_keycode==KEY_E and not fly:
 		if not loading_active and not shutdown_requested and app_focused and terrain.world_ready and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED:
+			if storage.try_open(): return
 			if construction_inventory.gameplay and _harvest_aimed_tree(): return
 			var collected: Dictionary=pickups.collect_near(player.global_position+Vector3(0,0.5,0),player_hud.inventory,_pickup_reachable)
 			if collected.ok: player_hud.refresh()

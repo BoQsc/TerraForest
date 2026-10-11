@@ -1,0 +1,32 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS fixture creates split source and partly occupied destination
+PASS partial stack transfers between inventories
+PASS destination fills existing stack before an empty slot
+PASS successful transfer conserves items
+PASS both revisions advance once
+PASS replayed stale request cannot duplicate or lose items
+PASS stale destination alone rejects both writes
+PASS stale source alone rejects both writes
+PASS invalid slot preserves both inventories: -1
+PASS invalid slot preserves both inventories: 32
+PASS invalid slot preserves both inventories: 9223372036854775807
+PASS invalid count preserves both inventories: -1
+PASS invalid count preserves both inventories: 0
+PASS invalid count preserves both inventories: 4
+PASS invalid count preserves both inventories: 9223372036854775807
+PASS empty source slot cannot produce an item
+PASS self transfer rejected without mutation
+PASS null destination rejected
+PASS destination without matching catalog item rejects transfer
+PASS full destination rejects without source debit
+PASS insufficient partial capacity rejects whole transfer
+PASS exact last capacity accepts transfer
+PASS different destination stack limit respected across slots
+PASS one-item stacks remain bounded
+PASS withdrawal uses the same native operation
+PASS both post-transfer inventories restore through existing binary codec
+PASS restored contents exactly match both committed sides
+PASS 1000 deposit-withdraw cycles conserve all items
+PASS repeat-cycle revisions track both commits without extra writes
+INVENTORY_TRANSFER {"checks":29,"failures":0,"scope":"atomic native cross-inventory mutation; no container UI or world persistence integration"}
