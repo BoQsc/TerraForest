@@ -1,0 +1,53 @@
+{
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\godot.windows.opt.tools.64.exe",
+    "--log-file",
+    "C:\\Users\\LENOVO LOQ 15\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\gameplay_copy\\20261011T090148348770Z\\engine.log",
+    "--path",
+    "C:\\Users\\LENOVO LOQ 15\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+    "--rendering-method",
+    "forward_plus",
+    "--fullscreen",
+    "--resolution",
+    "1920x1080",
+    "--max-fps",
+    "60",
+    "--script",
+    "res://tests/playtest_startup.gd",
+    "--",
+    "--world-generator=1",
+    "--world-seed=1703",
+    "--world-slot=gameplay_copy_c2bf702487254533b9204b19f30497c1",
+    "--gameplay-construction",
+    "--ground-cover",
+    "--actors",
+    "--vehicle-fleet",
+    "--max-fps=60"
+  ],
+  "copy": {
+    "created": true,
+    "slot": "gameplay_copy_c2bf702487254533b9204b19f30497c1",
+    "source_slot": "generated_furnished_1791583427670724800",
+    "source_sha256": "4547d3d3b68bcd4409422532b801a47de6cdd3af5525d265d15a6f11e03d854c"
+  },
+  "copied_files": 40,
+  "revision": "ce4db3c62e63888b61fe26ca2928363a2a37b518",
+  "worktree_changes": [
+    " M TerraForest/tools/play_connected_world.py",
+    "?? \"TerraForest/Play Combined Gameplay.cmd\"",
+    "?? TerraForest/tools/check_gameplay_copy.py",
+    "?? TerraForest/tools/clone_world.py"
+  ],
+  "git_metadata_available": true,
+  "result": {
+    "timed_out": false,
+    "launch_error": null,
+    "pid": 91320,
+    "exit_code": 0,
+    "diagnostics": [],
+    "required_text_found": true,
+    "elapsed_seconds": 14.415179100004025,
+    "passed": true
+  },
+  "source_unchanged": true
+}

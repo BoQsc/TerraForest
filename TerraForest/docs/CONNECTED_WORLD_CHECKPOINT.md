@@ -118,3 +118,19 @@ Newly placed **Furnished cottage with storage** prefabs include a usable chest
 beside the existing furniture. The old saved settlement is not retrofitted; add a
 chest with M/8 or place a new furnished cottage. Gameplay pays its normal block
 materials plus 25 wood for table, chair, shelf and chest. Each chest starts empty.
+
+## Separate combined gameplay checkpoint
+
+Run [Play Combined Gameplay.cmd](../Play%20Combined%20Gameplay.cmd) for gameplay
+costs, gathering, chest storage and furniture salvage in the furnished settlement.
+On first launch it copies the current free-editor checkpoint into `combined_gameplay`;
+later launches retain that separate world's progress. It also copies current
+inventory and world edits: this is a development checkpoint, not a balanced new-game
+loadout. The editor save stays separate. Existing houses keep their original layout;
+new furnished cottages include chests, or place one with M/8/RMB.
+
+A short route: dismantle a shelf with M/LMB nearby (four wood), gather more wood if
+needed, place a chest (eight wood), leave object mode and press E on the chest,
+deposit/withdraw a stack, close and F5 save. Wait for confirmation before F9 reload.
+Stop at the first meaningful issue and report it with the printed launch-log folder.
+[Launcher copy/startup evidence](evidence/combined_gameplay_launcher/README.md).

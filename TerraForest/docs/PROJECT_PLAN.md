@@ -493,3 +493,12 @@ free-editor removal yields nothing. Eight native-backed checks and the actual
 1080p object-tool route pass. [Evidence](evidence/furniture_salvage/README.md).
 Loose books, whole-furniture pickup, damage/break animation and human acceptance
 remain open. This adds a usable gather/build interaction without a per-object tick.
+
+### 2026-10-11: accessible combined gameplay checkpoint
+
+Play Combined Gameplay.cmd now creates a one-time separate copy of the furnished
+editor world and enables gameplay construction alongside ground cover, actors and
+fleet. Later launches preserve gameplay progress; the editor slot is untouched.
+A 40-file real-copy/startup check passes with unchanged source hashes, alongside
+copy refusal/no-overwrite checks. Evidence: evidence/combined_gameplay_launcher.
+Human feedback remains the next coverage gate; no performance gate is closed.
