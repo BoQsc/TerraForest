@@ -1,0 +1,6 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS capture a moving actor before arrival
+PASS only authoritative actor records and orders are captured
+FAIL publish actor component archive to isolated disk file
+FAIL decode saved archive

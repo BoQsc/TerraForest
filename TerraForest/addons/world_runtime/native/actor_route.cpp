@@ -9,6 +9,7 @@ void ActorRoute::include(const AABB &b){bounds_=has_bounds_?bounds_.merge(b):b;h
 void ActorRoute::start(const Vector3 &position,const Vector3 &goal){
     nodes_.clear();lookup_.clear();open_={};path_.clear();waypoint_=0;
     expanding_=-1;neighbour_=0;limited_=unknown_=false;has_bounds_=false;expansions=0;
+    direct_=true;path_.push_back(position);
     origin_=expected_=position;goal_=goal;retry_=stuck_=0;state=PLANNING;
     nodes_.push_back({position,0,0,-1,0});lookup_[{0,0,0}]=0;
     open_.push({horizontal(position,goal),0});
@@ -70,6 +71,24 @@ bool ActorRoute::edge(PhysicsDirectSpaceState3D *space,const Vector3 &from,Vecto
 void ActorRoute::step(PhysicsDirectSpaceState3D *space,const Callable &readiness,const Callable &admission,
     const Ref<PhysicsRayQueryParameters3D> &ray,const Ref<PhysicsShapeQueryParameters3D> &shape){
     if(state!=PLANNING || !space)return;
+    // Validate a straight corridor incrementally before exploring a grid. Each
+    // segment uses the identical support, clearance and readiness contract and
+    // consumes one shared scheduler unit. Failed candidates fall back to A*.
+    if(direct_){
+        const Vector3 from=path_.back();
+        const double remaining=horizontal(from,goal_);
+        Vector3 next=goal_;next.y=from.y;
+        if(remaining>.5)next=from+(next-from)*(.5/remaining);
+        const bool final_segment=remaining<=.5;
+        if(edge(space,from,next,readiness,admission,ray,shape) &&
+            (!final_segment || std::abs(next.y-goal_.y)<.3)){
+            path_.push_back(next);
+            if(final_segment){waypoint_=1;state=FOLLOWING;}
+            return;
+        }
+        direct_=false;path_.clear();
+        return;
+    }
     if(expanding_<0){
         // Bound stale priority-queue cleanup as well as physics work.
         int stale=0;

@@ -215,3 +215,9 @@ queried world layers can cause conservative blockage. The next gate is authored
 settlement routes and measured planning latency under a declared active population.
 See `docs/evidence/actor_local_routes/README.md` and the later
 `docs/evidence/actor_cottage_navigation/README.md` for stair/doorway evidence.
+
+Clear destinations first try an incremental straight corridor (<=0.5 m per work
+unit) under those same safety checks and limits, then fall back to A* if any segment
+fails. Sixteen clear routes and actor-component destination reload have targeted
+evidence in `docs/evidence/actor_planning_latency/README.md`; neither qualifies
+furnished-settlement navigation or whole-world frame rate.

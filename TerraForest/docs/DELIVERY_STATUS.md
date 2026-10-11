@@ -2580,3 +2580,16 @@ The test uses real prefab/native collision and production player motor settings,
 the whole main-world input/streaming path. General stairs, a full furnished-settlement
 route, saved navigation orders, population latency and sustained performance remain
 separate gates. Native debug/release binaries rebuilt; retained checks exercise debug.
+
+
+### 2026-10-11: bounded simultaneous route readiness
+
+A short 16-active/1,000-sleeping actor test exposed 2.22–2.23 s clear-route planning
+latency. Incremental direct-corridor validation now reaches 0.267–0.283 s without
+raising the 12-work-unit cap or bypassing support/capsule/readiness tests. Failed
+corridors fall back to A*. Fourteen route-contract and six cottage checks pass;
+seven actor-component archive/recreation checks preserve a moving actor's exact
+position and saved destination, retire old handles, and replan to arrival. Evidence:
+`docs/evidence/actor_planning_latency`. Adapter peak 8.04 ms remains material;
+no total-frame, crowd, full-world reload or population qualification. Next remains
+a furnished-settlement route and integrated saved-order continuation. M3 stays active.

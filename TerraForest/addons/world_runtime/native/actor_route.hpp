@@ -23,6 +23,7 @@ class ActorRoute {
     size_t waypoint_=0;
     int expanding_=-1, neighbour_=0;
     bool limited_=false, unknown_=false;
+    bool direct_=true;
     godot::Vector3 origin_,goal_,expected_;
     godot::AABB bounds_;
     bool has_bounds_=false;

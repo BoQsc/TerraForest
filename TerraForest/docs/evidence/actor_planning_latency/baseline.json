@@ -1,0 +1,27 @@
+{
+  "active": 16,
+  "failures": 1,
+  "first_ready_seconds": [
+    2.23333333333333,
+    2.23333333333333,
+    2.23333333333333,
+    2.21666666666667,
+    2.21666666666667,
+    2.21666666666667,
+    2.21666666666667,
+    2.21666666666667,
+    2.21666666666667,
+    2.21666666666667,
+    2.21666666666667,
+    2.21666666666667,
+    2.21666666666667,
+    2.23333333333333,
+    2.23333333333333,
+    2.23333333333333
+  ],
+  "peak_adapter_us": 9376,
+  "peak_planning_us": 915,
+  "peak_work": 12,
+  "scope": "Headless clear-path latency and activation fixture; no render, crowd avoidance, settlement or thermal qualification",
+  "stored": 1016
+}

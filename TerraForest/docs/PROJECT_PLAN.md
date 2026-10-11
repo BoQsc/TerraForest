@@ -136,10 +136,15 @@ handover fixes the player/actor capsule-corner stall. See
 [cottage and player stair evidence](evidence/actor_cottage_navigation/README.md).
 This is an authored-building route, not the full settlement navigation slice.
 
-Next: a furnished-settlement route, saved-order reload, and declared active-population
-planning latency. Crowd avoidance, regional routes beyond the local search extent,
-shared routing data and general multistorey connectivity remain absent/unqualified.
-Do not expand the population or claim navigation coverage before those checks.
+Sixteen simultaneous clear routes now become usable in 0.267–0.283 seconds,
+versus the retained 2.22–2.23 second failure, with the same shared work cap.
+Actor-component disk reload preserves destinations and replans after recreation.
+See [latency and reload evidence](evidence/actor_planning_latency/README.md).
+
+Next: a furnished-settlement route and integrated saved-order continuation.
+Crowd avoidance, regional routes beyond the local search extent, shared routing
+data and general multistorey connectivity remain absent/unqualified. Do not expand
+the population or claim navigation coverage before those checks.
 
 After that slice, reassess water/lake completeness and settlement generation with
 usable interiors against the coverage register. Do not quietly leave either behind.
