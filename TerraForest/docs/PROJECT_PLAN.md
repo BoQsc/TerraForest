@@ -352,3 +352,10 @@ Generated a stronger texture and corrected uniform dimming, but human review
 rejected it as cartoonish/unrealistic. Archived at `evidence/grass_texture_v2`,
 including its implementation and measurements. Live material restored to v1,
 untextured by default. Numeric checks do not constitute visual acceptance.
+
+### 2026-10-11: grain-based grass art review
+
+Added optional v3 generated leaf grain and matte shading after rejection of
+strong vein bands. Corrected narrow-blade UV proportions. Same texture and
+geometry budgets; human visual/motion acceptance pending. Evidence at
+`evidence/grass_texture_v3`; broader performance gates stay open.

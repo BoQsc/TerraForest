@@ -2,7 +2,8 @@
 shader_type spatial;
 render_mode cull_disabled, diffuse_burley;
 uniform bool stone = false;
-uniform float grass_detail_strength : hint_range(0.0, 0.5) = 0.0;
+uniform float grass_detail_strength : hint_range(0.0, 1.0) = 0.0;
+uniform vec3 grass_detail_mean = vec3(1.0);
 uniform sampler2D grass_detail : source_color, filter_linear_mipmap_anisotropic, repeat_disable;
 uniform sampler2D stone_color : source_color, filter_linear_mipmap_anisotropic, repeat_enable;
 uniform sampler2D stone_normal : hint_normal, filter_linear_mipmap_anisotropic, repeat_enable;
@@ -38,13 +39,18 @@ void fragment() {
         ALBEDO *= root_shade;
         if (grass_detail_strength > 0.0) {
             // UV.y runs root to tip; image top is the warm tip.
-            vec3 detail = texture(grass_detail, vec2(UV.x, 1.0 - UV.y)).rgb;
-            vec3 modulation = clamp(detail / vec3(0.15, 0.22, 0.065), vec3(0.65), vec3(1.35));
-            ALBEDO *= mix(vec3(1.0), modulation, grass_detail_strength);
+            // A blade is much narrower than it is long: sample a narrow surface strip.
+            // Whole-square mapping stretches fine grain into painted vertical lines.
+            float strip_start = clamp((variation - 0.95) * 14.0, 0.0, 0.7);
+            vec3 detail = texture(grass_detail, vec2(strip_start + UV.x * 0.20, 1.0 - UV.y)).rgb;
+            vec3 modulation = detail / max(grass_detail_mean, vec3(0.01));
+            // Textured mode softens the old painted central rib instead of stacking it.
+            vec3 textured = COLOR.rgb * variation * root_shade * modulation * 0.90;
+            ALBEDO = mix(ALBEDO, textured, grass_detail_strength);
         }
-        ROUGHNESS = 0.84;
-        SPECULAR = 0.2;
-        BACKLIGHT = COLOR.rgb * 0.18;
+        ROUGHNESS = mix(0.84, 0.94, grass_detail_strength);
+        SPECULAR = mix(0.2, 0.12, grass_detail_strength);
+        BACKLIGHT = COLOR.rgb * mix(0.18, 0.10, grass_detail_strength);
         if (!FRONT_FACING) { NORMAL = -NORMAL; }
     }
 }

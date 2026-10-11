@@ -68,3 +68,7 @@ short GPU observations: `docs/evidence/grass_texture`.
 Texture v2 was rejected in human review as cartoonish. It is archived at
 `docs/evidence/grass_texture_v2`; it is not wired into the live preview.
 The preferred untextured appearance remains default; F7 retains the v1 trial.
+
+F7 now offers the v3 grain/mottling trial: matte leaves, small weathering marks,
+and a softened central rib. Default remains off. Inspect nearby grass, then
+walk to check motion and distance. Evidence: `docs/evidence/grass_texture_v3`.

@@ -3,16 +3,26 @@ extends RefCounted
 # Original temperate woodland sample. Shared startup authoring only;
 # all runtime transforms, identity and rendering remain in native batches.
 static var _grass_detail: ImageTexture
+static var _grass_detail_mean:=Vector3.ONE
 
 static func set_grass_detail(material: ShaderMaterial,enabled: bool) -> bool:
 	if enabled and _grass_detail==null:
 		var image:=Image.new()
-		if image.load_png_from_buffer(FileAccess.get_file_as_bytes("res://addons/world_ecosystem/art/grass_detail_v1.trtex"))!=OK:return false
+		if image.load_png_from_buffer(FileAccess.get_file_as_bytes("res://addons/world_ecosystem/art/grass_detail_v3.trtex"))!=OK:return false
 		image.resize(256,256,Image.INTERPOLATE_LANCZOS)
+		# One-time asset calibration, not a per-frame or per-instance operation.
+		var average:=Vector3.ZERO
+		for y in range(4,256,8):
+			for x in range(4,256,8):
+				var color: Color=image.get_pixel(x,y).srgb_to_linear()
+				average+=Vector3(color.r,color.g,color.b)
+		_grass_detail_mean=average/1024.0
 		image.generate_mipmaps()
 		_grass_detail=ImageTexture.create_from_image(image)
-	if enabled:material.set_shader_parameter("grass_detail",_grass_detail)
-	material.set_shader_parameter("grass_detail_strength",0.35 if enabled else 0.0)
+	if enabled:
+		material.set_shader_parameter("grass_detail",_grass_detail)
+		material.set_shader_parameter("grass_detail_mean",_grass_detail_mean)
+	material.set_shader_parameter("grass_detail_strength",0.8 if enabled else 0.0)
 	return true
 
 var vertices:=PackedVector3Array()

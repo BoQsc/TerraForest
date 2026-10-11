@@ -56,3 +56,7 @@ Runtime shares one 256x256 mipmapped texture. Default off; F7 toggles.
 Grass detail v2 is a rejected image-generated experiment: human review found it
 cartoonish. Source PNG bytes and exact prompt remain versioned for provenance.
 The live F7 material retains v1; default rendering stays untextured.
+
+Optional F7 texture v3 is generated botanical grain with small aged marks.
+Source and exact prompt are stored beside v1. It replaces the active v1 trial,
+retains default-off rendering, and samples a narrow strip to fit blade proportions.
