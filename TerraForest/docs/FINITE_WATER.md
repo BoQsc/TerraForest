@@ -205,3 +205,9 @@ free-surface meshes from settled heads and tetrahedral terrain, with rectangle
 coalescing and stale-state rejection. 265 debug/release checks and actual TerrainCore
 edit-to-ArrayMesh checks pass. This is not yet main-world rendering integration or
 visual/frame-time acceptance. See [surface evidence](evidence/water_surface/README.md).
+
+Scene adapter checkpoint (2026-10-11): `NativeWaterScene` stages regional meshes,
+publishes matching finite-water depth queries, hides stale state and retires old
+regions separately. Native scene checks, camera immersion and one 1920x1080 render
+check pass. Main-world scheduling, persistence and migration are still open.
+See [scene evidence](evidence/water_scene/README.md).

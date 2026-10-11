@@ -8,6 +8,7 @@ namespace terraforest {
 class NativeWaterNetwork : public godot::RefCounted {
     friend class NativeWaterRemapPlan;
     friend class NativeWaterSurface;
+    friend class NativeWaterScene;
     GDCLASS(NativeWaterNetwork,godot::RefCounted)
     using Key=std::array<int32_t,3>;
     struct Piece {godot::Vector3i coordinate;int64_t generation=0;int offset=0;godot::Ref<NativeWaterProfiles> profiles;};

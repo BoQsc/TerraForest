@@ -99,6 +99,15 @@ func mesh_area(builder)->float:
     var area:=0.0
     for i in range(0,vertices.size(),3):area+=(vertices[i+1]-vertices[i]).cross(vertices[i+2]-vertices[i]).length()*0.5
     return area
+func publish_scene(view,water):
+    var material=StandardMaterial3D.new();material.albedo_color=Color(0.035,0.22,0.25)
+    check(view.begin_publish(water,material),"native scene begins staged finite-water publication")
+    var calls:=0;var bounded:=true
+    while view.statistics().status==0 and calls<200000:
+        var step:Dictionary=view.advance(128);calls+=1
+        bounded=bounded and step.work_units>0 and step.work_units<=128
+    check(bounded and view.statistics().ready,"native scene publishes matching water queries and all regional meshes")
+    return view.statistics()
 func _initialize():
     GDExtensionManager.load_extension("res://addons/volumetric_water/volumetric_water.gdextension")
     var a:Array=region(0);var b:Array=region(1)
@@ -129,6 +138,10 @@ func _initialize():
     check(surface_left.statistics().vertices<2000 and surface_left.advance(128).work_units==0,"flat water coalesces into rectangles and completed meshing sleeps")
     check(mesh_water(n,Vector3i.ZERO,1).surface_arrays()[Mesh.ARRAY_VERTEX]==surface_vertices,"surface output is identical with a one-unit budget")
     var invalidated_surface=ClassDB.instantiate("NativeWaterSurface");invalidated_surface.begin(n,Vector3i.ZERO);invalidated_surface.advance(1)
+    var scene=ClassDB.instantiate("NativeWaterScene");root.add_child(scene);scene.set_process(false)
+    publish_scene(scene,n);scene.set_process(false)
+    check(scene.get_child_count()==1 and scene.get_child(0).visible and scene.get_child(0).get_child_count()==2 and absf(scene.depth_at(Vector3(8,2,8))-3)<.001,"scene exposes visible regional meshes and matching immersion depth")
+    check(scene.advance(128).work_units==0,"published scene performs no further mesh work")
     var unfilled=network(r,[a[2],b[2]])
     var dry_surface=mesh_water(unfilled,Vector3i.ZERO)
     check(dry_surface.statistics().vertices==0 and dry_surface.statistics().work_units_total==0,"empty water state creates no geometry and performs no cell scan")
@@ -170,6 +183,14 @@ func _initialize():
     var take:int=amount-at_sill+1000000
     check(n.begin_remove(Vector3i.ZERO,0,take) and settle(n,amount,false),"withdrawal conserves retained and removed quantities across regional split")
     check(invalidated_surface.advance(128).status==-2 and surface_left.surface_arrays().is_empty(),"water mutations invalidate unfinished and completed surface snapshots")
+    scene.refresh()
+    check(not scene.statistics().ready and not scene.get_child(0).visible and scene.depth_at(Vector3(8,2,8))==0,"changed water hides old surface and refuses mismatched immersion queries")
+    publish_scene(scene,n);scene.set_process(false)
+    check(scene.statistics().retiring and scene.depth_at(Vector3(8,2,8))<2,"scene replacement publishes the lowered level before bounded retirement")
+    var retire_calls:=0
+    while scene.statistics().retiring and retire_calls<10:scene.advance(128);retire_calls+=1
+    check(retire_calls==3 and scene.get_child_count()==1,"two previous regional meshes and their group retire separately")
+    scene.free()
     check(changing.advance(128).status==-2 and not changing.plan().ok and not identity.plan().ok,"source water mutations invalidate unfinished and completed remap plans")
     var receiving_change=ClassDB.instantiate("NativeWaterRemapPlan");receiving_change.begin(n,empty_destination)
     empty_destination.begin_add(Vector3i.ZERO,0,1)
@@ -197,7 +218,15 @@ func _initialize():
     check(in_flight.statistics().water.busy and in_flight.statistics().water.total_ml>0 and in_flight.statistics().water.pending_ml>0,"invalidation fixture reaches a partly settled cross-region pour")
     check(not in_flight.probe(Vector3(8,2,8)).ok,"partly settled water cannot publish a spatial result")
     var saved:int=n.statistics().water.total_ml
+    var cancelled_scene=ClassDB.instantiate("NativeWaterScene");root.add_child(cancelled_scene)
+    var cancelled_material=StandardMaterial3D.new()
+    check(cancelled_scene.begin_publish(n,cancelled_material),"cancellation fixture starts a scene publication")
+    cancelled_scene.set_process(false);cancelled_scene.advance(1)
     var replacement:Dictionary=r.reserve_region(Vector3i(1,0,0),1,0,bg)
+    check(cancelled_scene.advance(128).status==-2 and not cancelled_scene.statistics().ready and cancelled_scene.depth_at(Vector3(8,2,8))==0,"invalidated staging never exposes partial meshes or water queries")
+    while cancelled_scene.statistics().retiring:cancelled_scene.advance(128)
+    check(cancelled_scene.get_child_count()==0,"cancelled hidden scene resources retire completely")
+    cancelled_scene.free()
     check(replacement.ok and not n.statistics().current and not n.begin_add(Vector3i.ZERO,0,1) and not n.advance_settling(1).ok,"changed region freezes stale network operations")
     check(n.statistics().water.total_ml==saved and not n.inspect(Vector3i.ZERO,0).ok,"stale geometry retains finite quantity while refusing stale level queries")
     check(not in_flight.advance_settling(1).ok and in_flight.statistics().water.total_ml+in_flight.statistics().water.pending_ml==amount,"invalidation freezes a partly settled pour without losing either quantity portion")

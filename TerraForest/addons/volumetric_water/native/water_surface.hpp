@@ -5,6 +5,7 @@
 namespace terraforest {
 // One region's finite-water free surface. No per-frame rebuild or fluid tick.
 class NativeWaterSurface : public godot::RefCounted {
+    friend class NativeWaterScene;
     GDCLASS(NativeWaterSurface,godot::RefCounted)
     godot::Ref<NativeWaterNetwork> network;
     uint64_t revision=0;

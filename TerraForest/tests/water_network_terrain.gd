@@ -1,7 +1,8 @@
 # SPDX-License-Identifier: 0BSD
 extends SceneTree
 const Codec=preload("res://addons/volumetric_terrain/mesh_codec.gd")
-func _initialize():
+func _initialize(): call_deferred("run")
+func run():
     GDExtensionManager.load_extension("res://addons/volumetric_terrain/terrain_core.gdextension")
     GDExtensionManager.load_extension("res://addons/volumetric_water/volumetric_water.gdextension")
     var core=ClassDB.instantiate("TerrainCore")
@@ -126,6 +127,37 @@ func _initialize():
         remap_result["after_handoff"]=replacement.statistics()
         remap_result["committed"]=remapping.statistics().settlement_status==2
         edits.append(remap_result);network=replacement
+    var water_scene=ClassDB.instantiate("NativeWaterScene");root.add_child(water_scene)
+    var water_material=ShaderMaterial.new();water_material.shader=load("res://addons/volumetric_water/water.gdshader")
+    ok=ok and water_scene.begin_publish(network,water_material);water_scene.set_process(false)
+    while water_scene.statistics().status==0:water_scene.advance(128)
+    var wet_point:=center+Vector3(3,-3,0)
+    ok=ok and water_scene.statistics().ready and water_scene.depth_at(wet_point)>0
+    var camera=Camera3D.new();root.add_child(camera);camera.position=wet_point
+    var original_environment=Environment.new();camera.environment=original_environment
+    var camera_effect=load("res://addons/volumetric_water/water_camera.gd").new();root.add_child(camera_effect)
+    camera_effect.configure(camera,water_scene);camera_effect.update()
+    ok=ok and camera_effect.underwater and camera.environment!=original_environment
+    camera.position=center+Vector3(0,4,0);camera_effect.update()
+    ok=ok and not camera_effect.underwater and camera.environment==original_environment
+    remap_result["scene"]=water_scene.statistics()
+    if DisplayServer.get_name()!="headless":
+        var environment=WorldEnvironment.new();environment.environment=Environment.new()
+        environment.environment.background_mode=Environment.BG_COLOR;environment.environment.background_color=Color("202d37")
+        environment.environment.ambient_light_source=Environment.AMBIENT_SOURCE_COLOR
+        environment.environment.ambient_light_color=Color.WHITE;environment.environment.ambient_light_energy=.7
+        root.add_child(environment);camera.environment=null
+        var light=DirectionalLight3D.new();root.add_child(light);light.rotation_degrees=Vector3(-55,-25,0)
+        camera.position=center+Vector3(0,8,9);camera.look_at(center-Vector3(0,2,0));camera.current=true
+        var label=Label.new();label.text="FINITE WATER SCENE / isolated surface check\nActual edited cavity surface, 129,856,198 ml\nTerrain mesh omitted; not a performance benchmark"
+        label.position=Vector2(30,30);label.add_theme_font_size_override("font_size",24);root.add_child(label)
+        await RenderingServer.frame_post_draw
+        await RenderingServer.frame_post_draw
+        var screenshot=root.get_texture().get_image()
+        ok=ok and screenshot.get_width()==1920 and screenshot.get_height()==1080
+        screenshot.save_png("res://reports/water_finite_scene.png")
+        environment.free();light.free();label.free()
+    camera_effect.free();camera.free();water_scene.free()
     DirAccess.make_dir_recursive_absolute("res://reports")
     var file=FileAccess.open("res://reports/water_network_terrain.json",FileAccess.WRITE)
     file.store_string(JSON.stringify({"failures":0 if ok else 1,"center":center,"sample_calls":sample_calls,"anchors":levels.size(),"quantity_ml":quantity,"network_calls":calls,"max_network_call_us":peak,"network":network.statistics(),"remap":remap_result,"edits":edits,"scope":"Actual native excavation across two independently sampled owned regions, finite pour/withdrawal, then larger excavation and conserved geometric remap plan. Not a saved-world or rendered flow test."},"  "));file.close()
