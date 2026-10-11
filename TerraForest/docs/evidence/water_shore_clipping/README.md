@@ -1,0 +1,11 @@
+# Cached terrain shoreline reconstruction
+
+The same regional water store retains the 729 terrain samples already produced by each terrain-worker patch. No new sampler or simulator is added. Version 2 snapshots add 2916 bytes per region (9076 bytes per record), with finite-value checks and exact-length validation. Version 1 quantities/occupancy still restore; the worker queues a one-time shape-cache upgrade. Version 2 warm loading uses the saved samples with zero new terrain samples in the actual-world test.
+
+For a dry cell directly adjacent to wet surfaces at consistent levels (within 2 mm), a four-triangle fan clips against cached terrain density at that level. Connectivity starts at wet edges; isolated pieces and fully solid/dry-open-air cells are excluded. This provides a terrain-conforming visual reconstruction of the conservative cell boundary. It does NOT change the conservative fluid-capacity or gameplay-query model. The added sub-cell wedge is not separately owned volume: exact volume-integral agreement and bucket picking at that reconstructed edge remain unproven. Cells next to strongly differing flow levels are deliberately not extended; the far-right flowing boundary is still visibly stepped. Overall visual/physical acceptance remains incomplete.
+
+Seven targeted native release assertions pass: sloped contour intersection and area, immutable amounts/cache, nonfinite/truncated rejection, and no false water extension into dry open air. Twelve prior continuity assertions passed with the version-2 decoder. Actual-world test passes all 34 mining/bucket/save/cache checks and now captures both the settled and draining lake at the same camera.
+
+Final native region mesh max before save: 1.432 ms, excluding Godot upload; this exceeds the soft 1 ms presentation target and needs attention. Resident region data in the test: 525712 bytes. Final gameplay frame p50/p95/max: 16.667/17.069/44.843 ms excluding separately measured screenshot capture. These observations do not qualify sustained 60 FPS, large-world limits or laptop thermals.
+
+This is one runtime and one compound-world save path. Current executable, test, shader and native hashes are recorded in run.json.

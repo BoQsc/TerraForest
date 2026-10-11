@@ -38,7 +38,8 @@ class NativeRegionalWater : public godot::RefCounted {
     struct Region {
         std::array<uint16_t,512> floor{},ceiling{};
         std::array<uint64_t,512> water{};
-        bool valid=false;
+        std::array<float,729> density{};
+        bool valid=false,has_density=false;
     };
     static constexpr size_t MAX_REGIONS=4096;
     static constexpr uint64_t MAX_TOTAL=uint64_t(1)<<52;

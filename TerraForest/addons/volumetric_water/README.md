@@ -17,3 +17,5 @@ Runtime guard: `python tools/run_godot_check.py water_single_runtime --headless 
 License: 0BSD. Uses the pinned Zig and prebuilt godot-cpp toolchain.
 
 Connected surface cells share corners across region and adjacent height-layer boundaries; see [current rendering evidence and limitations](../../docs/evidence/water_layer_compositing/README.md).
+
+The same regional cache now retains terrain samples for clipped shore geometry. [Shoreline evidence](../../docs/evidence/water_shore_clipping/README.md) records cache migration, correctness checks and remaining representation/performance limits.

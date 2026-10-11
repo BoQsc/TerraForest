@@ -1,0 +1,11 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS terrain samples and quantities restore from version 2 cache
+PASS shore triangles reach sloped terrain contour without entering solid half-cell
+PASS shore reconstruction preserves exact authoritative volume and terrain cache
+PASS non-finite cached terrain rejected without replacing live water
+PASS truncated terrain cache rejected
+PASS open-air control cache restores
+PASS shore reconstruction never paints water into fully dry open-air cells
+WATER_SHORE_CLIPPING failures=0
+

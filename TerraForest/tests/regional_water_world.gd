@@ -63,6 +63,9 @@ func run():
  for frame in 12:await process_frame
  check(game.lakes.statistics().cell_steps==idle_steps,"Sleeping lake performs zero flow cell steps")
  check(quantity>10000 and game.lakes.depth_at(probe)>0,"Lake is visibly filled and swimming query is wet")
+ game.player.global_position=center+Vector3(0,3,5);game.yaw=0;game.pitch=-0.65;game.player.rotation.y=0;game.camera.rotation.x=game.pitch;game._clear_motion()
+ for frame in 12:await process_frame
+ await capture_visual("water_settled_close")
  var inventory=game.player_hud.inventory
  check(game.player_hud.equip_item(401),"Gameplay equips normal bucket")
  var slot:int=game.player_hud.active_slot
@@ -170,7 +173,7 @@ func render_comparison():
  # Freeze gameplay state for paired rendering attribution; same camera/resolution.
  var running:bool=game.lakes.is_processing()
  game.lakes.set_process(false)
- var faces:Dictionary={"top":0,"side":0,"side_under_1mm":0,"side_under_1cm":0,"side_under_10cm":0,"side_larger":0,"max_side_height":0.0}
+ var faces:Dictionary={"top":0,"shore_triangles":0,"side":0,"side_under_1mm":0,"side_under_1cm":0,"side_under_10cm":0,"side_larger":0,"max_side_height":0.0}
  for counts:Dictionary in game.lakes._mesh_faces.values():
   for key:String in faces:
    if key=="max_side_height":faces[key]=maxf(faces[key],counts[key])

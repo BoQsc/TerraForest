@@ -1,0 +1,36 @@
+{
+  "timed_out": false,
+  "launch_error": null,
+  "pid": 75248,
+  "exit_code": 0,
+  "diagnostics": [],
+  "required_text_found": true,
+  "elapsed_seconds": 34.52321730001131,
+  "passed": true,
+  "provenance": {
+    "command": [
+      "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\godot.windows.opt.tools.64.exe",
+      "--path",
+      "C:\\Users\\LENOVO LOQ 15\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+      "--log-file",
+      "C:\\Users\\LENOVO LOQ 15\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\checks\\20261011T213449915498Z\\engine.log",
+      "--fullscreen",
+      "--resolution",
+      "1920x1080",
+      "--max-fps",
+      "60",
+      "--script",
+      "res://tests/regional_water_world.gd",
+      "--",
+      "--world-slot=check_47d4aa456cc34f16b3e467b31016df9d",
+      "--derived-cache=user://regional_water_world_47d4aa456cc34f16b3e467b31016df9d",
+      "--gameplay-construction"
+    ],
+    "slot": "check_47d4aa456cc34f16b3e467b31016df9d",
+    "cache": "user://regional_water_world_47d4aa456cc34f16b3e467b31016df9d",
+    "engine_sha256": "12310c74bdda7dcd43f28e971f33047dcecadd436b68169d61ce41009006df38",
+    "test_sha256": "db4283d6d78411f516afa7a1d100112d291a34600e6c5b7d558e4d487bba0289",
+    "shader_sha256": "97c388ae26ff49cd92133b5d4a0f4c74485a0ddce8bbb1d10bd3022bc56dbf42",
+    "native_sha256": "1a1e8afcf06cbdc7ba16e60b3d3d6bc3a07d6a25963c2bf725f11c3a224aeee4"
+  }
+}
