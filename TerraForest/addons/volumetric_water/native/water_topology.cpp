@@ -26,6 +26,8 @@ double bottom(const double *height,const double *density,int n){
 void NativeWaterTopology::_bind_methods(){
     ClassDB::bind_method(D_METHOD("begin","volume","first_cell","cells"),&NativeWaterTopology::begin);
     ClassDB::bind_method(D_METHOD("advance","cell_budget"),&NativeWaterTopology::advance);
+    ClassDB::bind_method(D_METHOD("begin_join","regions"),&NativeWaterTopology::begin_join);
+    ClassDB::bind_method(D_METHOD("advance_join","work_budget"),&NativeWaterTopology::advance_join);
     ClassDB::bind_method(D_METHOD("statistics"),&NativeWaterTopology::statistics);
     ClassDB::bind_method(D_METHOD("graph"),&NativeWaterTopology::graph);
 }
@@ -39,7 +41,7 @@ bool NativeWaterTopology::begin(const Ref<NativeLakeVolume> &volume,const Vector
 }
 Dictionary NativeWaterTopology::statistics() const {
     Dictionary out;out["status"]=status;out["processed_cells"]=cursor;out["cells"]=count;
-    out["nodes"]=node_count;out["edges"]=edge_count;out["portals"]=portals;
+    out["nodes"]=node_count;out["edges"]=edge_count;out["portals"]=portals;out["joined"]=joined;out["join_work_total"]=join_work;
     out["buffer_bytes"]=int64_t((ids.size()+floors.size()+edges.size())*sizeof(int32_t));return out;
 }
 Dictionary NativeWaterTopology::graph() const {
@@ -47,7 +49,7 @@ Dictionary NativeWaterTopology::graph() const {
     out["ids"]=ids;out["floors_mm"]=floors;out["edges"]=edges;return out;
 }
 Dictionary NativeWaterTopology::advance(int64_t budget){
-    if(budget<1||budget>256){Dictionary out=statistics();out["ok"]=false;out["work_cells"]=0;return out;}
+    if(joined||budget<1||budget>256){Dictionary out=statistics();out["ok"]=false;out["work_cells"]=0;return out;}
     const uint32_t start=cursor;const uint64_t begun=Time::get_singleton()->get_ticks_usec();
     if(status==0){
         const auto &lake=*source.ptr();const auto &links=lake_links();

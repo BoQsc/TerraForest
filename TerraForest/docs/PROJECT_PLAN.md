@@ -210,8 +210,10 @@ flat connected geometry while preserving outgoing ports. See
 [basin evidence](evidence/water_basins/README.md). Terrain storage profiles now feed
 finite settling, with44 debug/release checks plus actual native-terrain integration;
 see [profile evidence](evidence/water_profiles/README.md). Coarse interpolation is
-not adequate; adaptive accuracy and larger-domain support remain open. Next add
-raw-terrain open-region ports, then quantity-preserving edit remapping and bucket/save transactions. Transient flow and pressure/velocity fields are not
+not adequate; adaptive accuracy and larger-domain support remain open. Same-snapshot regional joins now pass36
+debug/release checks with identical whole-area storage and settling; see
+[join evidence](evidence/water_join/README.md). Independent world-region exchange
+remains open. Next add raw-terrain open-region ports, then quantity-preserving edit remapping and bucket/save transactions. Transient flow and pressure/velocity fields are not
 implemented, and current playable lakes still use static fill levels. Next prove terrain-connected redistribution and conservation under a
 bounded native work budget, then integrate bucket item ownership and world saves.
 Retain the previous finalization/hitch failures; do not increase water caps or claim

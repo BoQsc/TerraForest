@@ -116,8 +116,11 @@ conservation at each event, plus actual native-terrain crater integration. See
 [profile evidence](evidence/water_profiles/README.md). Coarse one-metre anchors
 show unacceptable interpolation error; two-centimetre anchors improve the measured
 fixture, but adaptive/error-controlled selection remains open for tall domains.
-Next admit/stitch raw terrain regions and preserve quantities through edits before
-world/item/save integration. The current input uses a ready closed lake's
+Same-snapshot regional compilation now joins through a bounded native path:
+36 debug/release checks reproduce whole-domain geometry, basins, profiles and finite
+settling. See [join evidence](evidence/water_join/README.md). This is not exchange
+between independent world regions. Next admit raw open terrain with world-scoped
+ownership and preserve quantities through edits before world/item/save integration. The current input uses a ready closed lake's
 potential region: raw-terrain open-region admission with outgoing ports is also
 required before world-scale routing. Node IDs are local to one immutable source
 grid; region/edit ownership checks must be explicit. Keep intermediate memory and

@@ -1,0 +1,39 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS sampled ridge bakes
+PASS separate regions expose unresolved cross-boundary openings
+PASS disjoint same-source regions admitted
+PASS invalid API/budget cannot mutate or publish partial join
+PASS join obeys resumable work budget
+PASS completed join performs zero work
+PASS joined nodes and deduplicated openings equal whole-domain geometry
+PASS internal matched openings no longer counted as external ports
+PASS disjoint same-source regions admitted
+PASS invalid API/budget cannot mutate or publish partial join
+PASS join obeys resumable work budget
+PASS completed join performs zero work
+PASS input order and scheduler budget preserve canonical joined graph
+PASS disjoint same-source regions admitted
+PASS invalid API/budget cannot mutate or publish partial join
+PASS join obeys resumable work budget
+PASS completed join performs zero work
+PASS unmatched outer openings survive partial join
+PASS separately compiled regions produce identical basin ownership and spill hierarchy
+PASS joined topology feeds terrain profile compiler
+PASS joined topology feeds terrain profile compiler
+PASS joined terrain capacities and spill thresholds equal whole-domain profiles
+PASS joined profiles configure finite settling
+PASS finite pour across compiled region boundary conserves quantity and reaches common level
+PASS overlapping source regions rejected before mutation
+PASS sampled ridge bakes
+PASS separate immutable snapshots rejected even when numerical geometry matches
+PASS nested and empty joins cannot bypass region bounds
+PASS sampled ridge bakes
+PASS total cell budget rejects oversized joined allocation
+PASS too many or unfinished pieces rejected
+PASS disjoint same-source regions admitted
+PASS invalid API/budget cannot mutate or publish partial join
+PASS join obeys resumable work budget
+PASS completed join performs zero work
+PASS four-way partition produces same canonical graph
+WATER_JOIN failures=0

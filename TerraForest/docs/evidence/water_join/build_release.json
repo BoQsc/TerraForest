@@ -1,0 +1,35 @@
+{
+  "target": "template_release",
+  "compiled_extension_sources": [
+    "lake_catalog.cpp",
+    "lake_volume.cpp",
+    "register_types.cpp",
+    "water_basins.cpp",
+    "water_capacity.cpp",
+    "water_join.cpp",
+    "water_profiles.cpp",
+    "water_quantity.cpp",
+    "water_settling.cpp",
+    "water_topology.cpp"
+  ],
+  "godot_cpp_sources_compiled": 0,
+  "linked": true,
+  "seconds": 11.901766900002258,
+  "output": "C:\\Users\\LENOVO LOQ 15\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll",
+  "sha256": "c13e47c271969aedd5d4ba7f346e0d9383e806d89e3a0f87430077a0cd3b07bc",
+  "sdk": {
+    "api_version": "4.7",
+    "godot_cpp_sha": "d7b6162249ed52796a8301d216c24ee71d68c2bf",
+    "variant": "windows-x86_64-zig",
+    "compiler": "zig-0.16.0",
+    "platform": "windows",
+    "arch": "x86_64",
+    "targets": [
+      "template_debug",
+      "template_release"
+    ],
+    "precision": "single",
+    "created_unix": 1786965830
+  },
+  "addon": "volumetric_water"
+}
