@@ -106,7 +106,7 @@ func run() -> void:
 	game.player_hud.set_open(true)
 	for i in 3:await process_frame
 	check(game.player_hud.belt.size()==10,"ten toolbelt slots")
-	await drag(game.player_hud.slots[0],game.player_hud.slots[9])
+	await drag(game.player_hud.belt[0],game.player_hud.belt[9])
 	check(inv.snapshot().slots[9].item==1,"real inventory drag swaps tool into tenth belt slot")
 	for i in 3:await RenderingServer.frame_post_draw
 	root.get_texture().get_image().save_png("res://reports/unified_tools/inventory.png")

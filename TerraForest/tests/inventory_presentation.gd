@@ -39,6 +39,7 @@ func run() -> void:
 	while game.loading_active and Time.get_ticks_msec()<deadline:await process_frame
 	check(not game.loading_active,"main world ready")
 	var hud=game.player_hud
+	check(hud.slots.size()==22 and not hud.slots.has(0) and not hud.slots.has(9) and hud.slots.has(10),"backpack excludes all ten belt slots")
 	hud.equip(0)
 	check(hud.belt[9].get_theme_stylebox("normal").bg_color.a<hud.belt[1].get_theme_stylebox("normal").bg_color.a,"empty belt slots are translucent")
 	check(hud.belt[0].get_theme_stylebox("normal").border_width_bottom==4 and hud.belt[1].get_theme_stylebox("normal").border_width_bottom==1,"only equipped slot has prominent active border")
@@ -51,8 +52,8 @@ func run() -> void:
 	hud.inventory.grant(201,3,hud.inventory.snapshot().revision);hud.set_open(true)
 	check(hud.recipe_buttons.size()==4 and not hud.recipe_buttons[0].disabled and not hud.recipe_buttons[1].disabled and hud.recipe_buttons[2].disabled,"recipe cards reflect available ingredients")
 	check(hud.recipe_buttons[0].text.contains("3 / 2"),"recipe shows owned and required amounts")
-	hud.select_slot(1)
-	check(hud.slots[0].get_theme_stylebox("normal").border_color!=hud.slots[1].get_theme_stylebox("normal").border_color,"equipped and selected slots have distinct highlights")
+	hud.select_slot(10)
+	check(hud.belt[0].get_theme_stylebox("normal").border_color!=hud.slots[10].get_theme_stylebox("normal").border_color,"equipped and selected slots have distinct highlights")
 	for i in 4:await RenderingServer.frame_post_draw
 	var screen:=Rect2(Vector2.ZERO,Vector2(1920,1080))
 	var inventory_panel: Control=hud.modal.get_child(0)
@@ -87,6 +88,9 @@ func run() -> void:
 	check(hud.state.slots[5].count==64 and hud.state.slots[22].count==0 and count_item(hud,102)==wood,"inventory-to-belt merge preserves total materials")
 	for i in 3:await RenderingServer.frame_post_draw
 	root.get_texture().get_image().save_png("res://reports/inventory_presentation/inventory_belt_drag.png")
+	hud.equip_inventory(21)
+	check(hud.active_slot==1 and hud.state.slots[21].item==0 and hud.active_item==1,"equipping backpack item moves it into empty belt slot")
+	hud.equip(0);hud.select_slot(0)
 	hud.set_open(false)
 	check(hud.belt[0].appearance==2,"closing inventory removes selection styling from equipped belt slot")
 	check(not hud.modal.visible and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED,"closing inventory closes crafting and restores gameplay capture")

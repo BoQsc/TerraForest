@@ -96,6 +96,12 @@ Evidence: [inventory presentation](evidence/inventory_presentation/README.md).
 
 Inventory leaves the world undimmed and the toolbelt accessible. Drag between the
 inventory grid and belt in either direction, including swaps, merges and Shift
-half-stack moves. The belt is a view of the first ten inventory slots, not separate
-storage. While inventory is open, clicking a belt slot selects it for inventory
+half-stack moves. Backpack (22 slots) and toolbelt (10 slots) occupy separate
+slot ranges; each item appears in only one container. While inventory is open,
+clicking a belt slot selects it for inventory
 actions. [Drag regression evidence](evidence/inventory_belt_drag/README.md).
+
+Equip selected moves a backpack stack into an empty belt slot, or swaps with the
+active belt slot when the belt is full. Crafting counts supplies carried in either
+container. Existing total capacity and saved contents are preserved.
+[Separate backpack evidence](evidence/separate_backpack/README.md).

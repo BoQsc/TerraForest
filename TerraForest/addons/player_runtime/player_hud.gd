@@ -24,7 +24,7 @@ var reward_inbox: RefCounted
 var inventory_open:=false
 var selected_slot: int=-1
 var previous_mouse: int=Input.MOUSE_MODE_CAPTURED
-var slots: Array[Button]=[]
+var slots: Dictionary={} # Backpack controls keyed by native storage slot (10..31).
 var belt: Array[Button]=[]
 var modal: Control
 var message: Label
@@ -148,14 +148,14 @@ func _ready() -> void:
 	var title:=Label.new();title.text="INVENTORY";title.add_theme_font_size_override("font_size",28);var title_row:=HBoxContainer.new();title.size_flags_horizontal=Control.SIZE_EXPAND_FILL;title_row.add_child(title)
 	var actions_button:=Button.new();actions_button.text="Actions";actions_button.pressed.connect(func():set_open(false);actions_requested.emit());title_row.add_child(actions_button)
 	var close_button:=Button.new();close_button.text="Close";close_button.pressed.connect(func():set_open(false));title_row.add_child(close_button);column.add_child(title_row)
-	var detail:=Label.new();detail.text="Tools and materials · first ten slots form the toolbelt"
-	if gameplay_construction: detail.text="First ten slots are your toolbelt. Drag to move; Shift-drag to split."
+	var detail:=Label.new();detail.text="Backpack: 22 slots. Toolbelt: 10 separate slots below."
+	if gameplay_construction: detail.text="Backpack and toolbelt are separate. Drag to move; Shift-drag to split."
 	column.add_child(detail)
 	var grid:=GridContainer.new();grid.columns=8;grid.add_theme_constant_override("h_separation",8);grid.add_theme_constant_override("v_separation",8);column.add_child(grid)
-	for i in range(32):
+	for i in range(10,32):
 		var button=preload("res://addons/player_runtime/inventory_slot.gd").new();button.controller=self;button.slot=i;button.custom_minimum_size=Vector2(110,75);button.focus_mode=Control.FOCUS_NONE
 		button.pressed.connect(func(): select_slot(i))
-		grid.add_child(button);slots.append(button)
+		grid.add_child(button);slots[i]=button
 	var rewards:=HBoxContainer.new();rewards.add_theme_constant_override("separation",12)
 	column.add_child(rewards)
 	var reward_label:=Label.new();reward_label.text="Pending materials";rewards.add_child(reward_label)
@@ -205,8 +205,9 @@ func refresh() -> void:
 		var row: Dictionary=state.slots[i]
 		var title: String=CATALOG.get(row.item,MATERIALS.get(row.item,RESOURCES.get(row.item,"Empty")))
 		if row.item in MATERIALS or row.item in RESOURCES: title += " ×%d" % row.count
-		slots[i].set_appearance(row.count==0,i==active_slot,i==selected_slot)
-		slots[i].text="%02d%s\n%s"%[i+1," •" if i==selected_slot else "",title]
+		if i>=10:
+			slots[i].set_appearance(row.count==0,false,i==selected_slot)
+			slots[i].text="%02d%s\n%s"%[i-9," *" if i==selected_slot else "",title]
 		if i<10:
 			belt[i].text="%d%s\n%s"%[(i+1)%10," •" if i==active_slot else "",title]
 			belt[i].disabled=false
@@ -266,7 +267,20 @@ func equip(slot: int) -> void:
 
 func equip_inventory(slot: int) -> void:
 	if not enabled or inventory==null or slot<0 or slot>=32:return
-	state=inventory.snapshot();active_slot=slot;active_item=int(state.slots[slot].item)
+	state=inventory.snapshot()
+	if slot>=10:
+		# Equip from the backpack by moving/swapping into an actual belt slot.
+		var destination: int=active_slot if active_slot>=0 and active_slot<10 else 0
+		for i in 10:
+			if state.slots[i].count==0:destination=i;break
+		if state.slots[slot].count>0:
+			var result: Dictionary=inventory.transfer(slot,destination,state.slots[slot].count,state.revision)
+			if not result.ok:message.text="Cannot equip that stack; inventory refreshed";refresh();return
+			inventory_changed.emit();state=inventory.snapshot()
+		else:
+			active_slot=-1;active_item=0;tool_requested.emit(0);refresh();return
+		slot=destination
+	active_slot=slot;active_item=int(state.slots[slot].item)
 	tool_requested.emit(active_item);refresh()
 
 func equip_item(item: int) -> bool:
