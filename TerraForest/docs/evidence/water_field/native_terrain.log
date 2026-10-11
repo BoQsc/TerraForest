@@ -1,0 +1,14 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS native raw sampler starts on open outdoor terrain
+PASS partially sampled terrain cannot enter graph compiler
+PASS invalid sample budget leaves builder unchanged
+PASS native terrain sampling completes within node budgets
+PASS real outdoor terrain preserves open outgoing boundaries
+PASS terrain excavation changes source while sampling is incomplete
+PASS edit cancels partial density instead of mixing terrain revisions
+PASS cancelled mixed-revision source cannot publish topology
+PASS sampler cannot switch terrain owners between slices
+PASS fresh snapshot accepts edited native terrain revision
+PASS new immutable snapshot completes while previous snapshot remains unchanged
+WATER_FIELD_TERRAIN failures=0

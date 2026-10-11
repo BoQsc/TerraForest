@@ -1,0 +1,121 @@
+{
+  "checks": 36,
+  "costs": [
+    {
+      "budget": 128,
+      "calls": 32,
+      "max_call_us": 579,
+      "statistics": {
+        "buffer_bytes": 484608,
+        "cells": 4096,
+        "edges": 27712,
+        "join_work_total": 0,
+        "joined": false,
+        "nodes": 13824,
+        "portals": 1152,
+        "processed_cells": 4096,
+        "status": 1
+      }
+    },
+    {
+      "budget": 128,
+      "calls": 32,
+      "max_call_us": 119,
+      "statistics": {
+        "buffer_bytes": 484608,
+        "cells": 4096,
+        "edges": 27712,
+        "join_work_total": 0,
+        "joined": false,
+        "nodes": 13824,
+        "portals": 1152,
+        "processed_cells": 4096,
+        "status": 1
+      }
+    },
+    {
+      "budget": 128,
+      "calls": 32,
+      "max_call_us": 189,
+      "statistics": {
+        "buffer_bytes": 484608,
+        "cells": 4096,
+        "edges": 27712,
+        "join_work_total": 0,
+        "joined": false,
+        "nodes": 13824,
+        "portals": 1152,
+        "processed_cells": 4096,
+        "status": 1
+      }
+    },
+    {
+      "budget": 128,
+      "calls": 32,
+      "max_call_us": 195,
+      "statistics": {
+        "buffer_bytes": 66960,
+        "cells": 4096,
+        "edges": 4116,
+        "join_work_total": 0,
+        "joined": false,
+        "nodes": 2196,
+        "portals": 0,
+        "processed_cells": 4096,
+        "status": 1
+      }
+    },
+    {
+      "budget": 128,
+      "calls": 32,
+      "max_call_us": 150,
+      "statistics": {
+        "buffer_bytes": 19008,
+        "cells": 4096,
+        "edges": 1152,
+        "join_work_total": 0,
+        "joined": false,
+        "nodes": 648,
+        "portals": 0,
+        "processed_cells": 4096,
+        "status": 1
+      }
+    },
+    {
+      "budget": 128,
+      "calls": 32,
+      "max_call_us": 136,
+      "statistics": {
+        "buffer_bytes": 66960,
+        "cells": 4096,
+        "edges": 4116,
+        "join_work_total": 0,
+        "joined": false,
+        "nodes": 2196,
+        "portals": 0,
+        "processed_cells": 4096,
+        "status": 1
+      }
+    },
+    {
+      "budget": 1,
+      "calls": 4096,
+      "max_call_us": 38,
+      "statistics": {
+        "buffer_bytes": 484608,
+        "cells": 4096,
+        "edges": 27712,
+        "join_work_total": 0,
+        "joined": false,
+        "nodes": 13824,
+        "portals": 1152,
+        "processed_cells": 4096,
+        "status": 1
+      }
+    }
+  ],
+  "failures": 0,
+  "matched_face_ports": 288,
+  "scope": "Raw immutable density admission and world-addressed openings; ownership exchange and world fluid runtime remain open.",
+  "library": "volumetric_water.windows.template_release.x86_64.dll"
+}

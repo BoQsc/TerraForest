@@ -119,11 +119,13 @@ fixture, but adaptive/error-controlled selection remains open for tall domains.
 Same-snapshot regional compilation now joins through a bounded native path:
 36 debug/release checks reproduce whole-domain geometry, basins, profiles and finite
 settling. See [join evidence](evidence/water_join/README.md). This is not exchange
-between independent world regions. Next admit raw open terrain with world-scoped
-ownership and preserve quantities through edits before world/item/save integration. The current input uses a ready closed lake's
-potential region: raw-terrain open-region admission with outgoing ports is also
-required before world-scale routing. Node IDs are local to one immutable source
-grid; region/edit ownership checks must be explicit. Keep intermediate memory and
+between independent world regions. NativeWaterField now admits raw open terrain,
+including a native sampler with revision/epoch and terrain-owner checks. 36 debug/
+release checks and 11 actual-terrain checks pass; see [raw-field evidence](evidence/water_field/README.md).
+World-addressed reciprocal ports and disconnected caves survive compilation.
+Next implement the authoritative region/port registry and open-region storage/exchange,
+then quantity-preserving edits and world/item/save integration. Local graph IDs remain
+snapshot-scoped; world IDs and coordinates do not by themselves authorize exchange. Keep intermediate memory and
 concurrency bounded; do not retain one simulated body per tetrahedron.
 
 ## Gates and remaining work, in order

@@ -1,0 +1,75 @@
+{
+  "checks": 36,
+  "costs": [
+    {
+      "budget": 256,
+      "calls": 112,
+      "max_call_us": 74,
+      "scratch_bytes": 134868,
+      "statistics": {
+        "buffer_bytes": 181904,
+        "cells": 2048,
+        "edges": 11176,
+        "join_work_total": 28457,
+        "joined": true,
+        "nodes": 5974,
+        "portals": 0,
+        "processed_cells": 2048,
+        "status": 1
+      }
+    },
+    {
+      "budget": 1,
+      "calls": 28457,
+      "max_call_us": 4414,
+      "scratch_bytes": 134868,
+      "statistics": {
+        "buffer_bytes": 181904,
+        "cells": 2048,
+        "edges": 11176,
+        "join_work_total": 28457,
+        "joined": true,
+        "nodes": 5974,
+        "portals": 0,
+        "processed_cells": 2048,
+        "status": 1
+      }
+    },
+    {
+      "budget": 256,
+      "calls": 56,
+      "max_call_us": 47,
+      "scratch_bytes": 67452,
+      "statistics": {
+        "buffer_bytes": 91356,
+        "cells": 1024,
+        "edges": 5621,
+        "join_work_total": 14234,
+        "joined": true,
+        "nodes": 2988,
+        "portals": 63,
+        "processed_cells": 1024,
+        "status": 1
+      }
+    },
+    {
+      "budget": 256,
+      "calls": 113,
+      "max_call_us": 83,
+      "scratch_bytes": 136380,
+      "statistics": {
+        "buffer_bytes": 181904,
+        "cells": 2048,
+        "edges": 11176,
+        "join_work_total": 28711,
+        "joined": true,
+        "nodes": 5974,
+        "portals": 0,
+        "processed_cells": 2048,
+        "status": 1
+      }
+    }
+  ],
+  "failures": 0,
+  "scope": "Bounded same-source regional compilation join, not independent world-region fluid exchange."
+}

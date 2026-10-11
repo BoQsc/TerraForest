@@ -1,0 +1,40 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS raw density snapshot publishes without a closed-lake seed
+PASS raw density snapshot publishes without a closed-lake seed
+PASS owned region with complete sampled border begins
+PASS raw region extraction respects cell budget
+PASS owned region with complete sampled border begins
+PASS raw region extraction respects cell budget
+PASS published graph carries explicit world, snapshot and lattice metadata
+PASS independently sampled adjacent regions agree on reciprocal world-space openings
+PASS every outgoing edge has a world-addressed boundary record
+PASS open raw terrain cannot masquerade as a sealed basin
+PASS missing border and oversized coordinates rejected safely
+PASS legacy same-source join cannot accidentally merge separate raw snapshots
+PASS raw density snapshot publishes without a closed-lake seed
+PASS owned region with complete sampled border begins
+PASS raw region extraction respects cell budget
+PASS recompiled snapshot has a distinct revision even with unchanged geometry
+PASS raw density snapshot publishes without a closed-lake seed
+PASS owned region with complete sampled border begins
+PASS raw region extraction respects cell budget
+PASS enclosed raw cave produces a finite closed storage component
+PASS raw geometry enters existing storage compiler
+PASS raw cave compiles positive finite capacity
+PASS raw cave accepts finite water
+PASS raw cave retains exactly the supplied water quantity
+PASS raw density snapshot publishes without a closed-lake seed
+PASS owned region with complete sampled border begins
+PASS raw region extraction respects cell budget
+PASS raw input preserves both disconnected caves without seed-based exclusion
+PASS owned region with complete sampled border begins
+PASS raw region extraction respects cell budget
+PASS caller mutation cannot alter published density snapshot
+PASS nonfinite density rejected
+PASS published density cannot be overwritten
+PASS owned region with complete sampled border begins
+PASS raw region extraction respects cell budget
+PASS raw graph and boundary records are scheduler-independent
+WATER_FIELD failures=0
+

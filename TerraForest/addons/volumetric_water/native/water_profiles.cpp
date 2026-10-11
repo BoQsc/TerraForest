@@ -19,7 +19,7 @@ bool NativeWaterProfiles::begin(const Ref<NativeWaterTopology> &graph,const Ref<
     for(int i=0;i<heights.size();++i){
         if(heights[i]<-100000000||heights[i]>100000000||(i&&heights[i]<=heights[i-1]))return false;
     }
-    if(double(heights[heights.size()-1])/1000.0>double(graph->source->level_))return false;
+    if(double(heights[heights.size()-1])/1000.0>graph->view().ceiling)return false;
     topology=graph;basins=hierarchy;levels=heights;leaves=hierarchy->leaf_count;
     sums.resize(leaves*levels.size(),0);correction.resize(sums.size(),0);rows.resize(leaves);
     for(int i=1;i<levels.size();++i)max_step_mm=std::max(max_step_mm,levels[i]-levels[i-1]);
@@ -47,18 +47,18 @@ void NativeWaterProfiles::unit(){
     }
     if(phase==3){
         if(cursor==topology->ids.size()){cursor=0;anchor=0;phase=4;return;}
-        const auto &lake=*topology->source.ptr();
+        const auto lake=topology->view();
         const int id=topology->ids[cursor],cell=id/6,t=id%6;
-        const int x=cell%lake.size_.x,y=(cell/lake.size_.x)%lake.size_.y,z=cell/(lake.size_.x*lake.size_.y);
+        const int x=cell%lake.size.x,y=(cell/lake.size.x)%lake.size.y,z=cell/(lake.size.x*lake.size.y);
         if(anchor==0){
             water_clip::Tet input;
-            for(int k=0;k<4;++k){const auto p=lake_corner(lake_tets[t][k]);input[k]={double(p.x),double(p.y),double(p.z),double(lake.query_density_[lake.node(x+p.x,y+p.y,z+p.z)])};}
+            for(int k=0;k<4;++k){const auto p=lake_corner(lake_tets[t][k]);input[k]={double(p.x),double(p.y),double(p.z),double(lake.density[lake.node(x+p.x,y+p.y,z+p.z)])};}
             air_count=water_clip::clip(input,air,true,0);
         }
-        const double fill=(double(levels[anchor])/1000.0-double(lake.origin_.y))/lake.spacing_-y;
+        const double fill=(double(levels[anchor])/1000.0-double(lake.origin.y))/lake.spacing-y;
         double amount=0;std::array<water_clip::Tet,3> water;
         for(int i=0;i<air_count;++i){const int n=water_clip::clip(air[i],water,false,fill);for(int j=0;j<n;++j)amount+=water_clip::volume(water[j]);}
-        amount*=double(lake.spacing_)*lake.spacing_*lake.spacing_*1000000.0;
+        amount*=double(lake.spacing)*lake.spacing*lake.spacing*1000000.0;
         const int offset=basins->owners[cursor]*levels.size()+anchor;
         const double adjusted=amount-correction[offset],next=sums[offset]+adjusted;
         correction[offset]=(next-sums[offset])-adjusted;sums[offset]=next;

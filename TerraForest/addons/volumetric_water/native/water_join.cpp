@@ -5,11 +5,11 @@
 using namespace godot;
 namespace terraforest {
 bool NativeWaterTopology::begin_join(const Array &regions){
-    if(source.is_valid()||regions.size()<1||regions.size()>8)return false;
+    if(source.is_valid()||field.is_valid()||regions.size()<1||regions.size()>8)return false;
     std::vector<Ref<NativeWaterTopology>> staged;uint32_t cells=0,nodes=0,links=0;
     for(int i=0;i<regions.size();++i){
         const Ref<NativeWaterTopology> p=regions[i];
-        if(p.is_null()||p->status!=1||p->joined)return false;
+        if(p.is_null()||p->status!=1||p->joined||p->field.is_valid())return false;
         if(i&&p->source!=staged[0]->source)return false;
         for(const auto &q:staged){
             bool overlap=true;

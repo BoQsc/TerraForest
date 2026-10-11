@@ -1,0 +1,31 @@
+{
+  "checks": 11,
+  "failures": 0,
+  "field": {
+    "cancel_epoch": 0,
+    "ceiling_mm": 57000,
+    "cells": "(18, 18, 18)",
+    "density_bytes": 27436,
+    "grid_origin": "(791, 40, 1301)",
+    "ready": true,
+    "revision": 0,
+    "sampled_nodes": 6859,
+    "spacing": 1,
+    "status": 1,
+    "world_id": 9
+  },
+  "graph": {
+    "buffer_bytes": 419784,
+    "cells": 4096,
+    "edges": 23967,
+    "join_work_total": 0,
+    "joined": false,
+    "nodes": 12000,
+    "portals": 1005,
+    "processed_cells": 4096,
+    "status": 1
+  },
+  "max_sample_call_us": 375,
+  "sample_calls": 27,
+  "scope": "Native open-terrain sampling and snapshot cancellation; no water quantity remapping or runtime exchange."
+}

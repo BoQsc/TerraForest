@@ -1,0 +1,78 @@
+{
+  "checks": 44,
+  "costs": [
+    {
+      "budget": 256,
+      "calls": 295,
+      "max_call_us": 30,
+      "statistics": {
+        "anchors": 6,
+        "buffer_bytes": 336,
+        "error": "",
+        "leaves": 2,
+        "max_leaf_interval_ml": 210465211,
+        "max_level_step_mm": 1000,
+        "phase": 5,
+        "status": 1,
+        "total_anchor_rounding_bound_ml": 1.0,
+        "work_units_total": 75364
+      }
+    },
+    {
+      "budget": 1,
+      "calls": 75364,
+      "max_call_us": 4208,
+      "statistics": {
+        "anchors": 6,
+        "buffer_bytes": 336,
+        "error": "",
+        "leaves": 2,
+        "max_leaf_interval_ml": 210465211,
+        "max_level_step_mm": 1000,
+        "phase": 5,
+        "status": 1,
+        "total_anchor_rounding_bound_ml": 1.0,
+        "work_units_total": 75364
+      }
+    },
+    {
+      "budget": 256,
+      "calls": 6017,
+      "max_call_us": 3412,
+      "statistics": {
+        "anchors": 251,
+        "buffer_bytes": 14056,
+        "error": "",
+        "leaves": 2,
+        "max_leaf_interval_ml": 4240009,
+        "max_level_step_mm": 20,
+        "phase": 5,
+        "status": 1,
+        "total_anchor_rounding_bound_ml": 1.0,
+        "work_units_total": 1539484
+      }
+    },
+    {
+      "budget": 256,
+      "calls": 296,
+      "max_call_us": 92,
+      "statistics": {
+        "anchors": 8,
+        "buffer_bytes": 256,
+        "error": "",
+        "leaves": 1,
+        "max_leaf_interval_ml": 201108239,
+        "max_level_step_mm": 1000,
+        "phase": 5,
+        "status": 1,
+        "total_anchor_rounding_bound_ml": 0.5,
+        "work_units_total": 75571
+      }
+    }
+  ],
+  "declared_error_bound_ml": 210465212.0,
+  "failures": 0,
+  "fine_off_anchor_error_ml": 475.5,
+  "off_anchor_error_ml": 1172093.75,
+  "scope": "Terrain-derived regional storage and finite settling; no world runtime, edit remapping, bucket/save integration or performance qualification."
+}
