@@ -77,6 +77,11 @@ func _initialize():
      edge_count+=1;valid=valid and abs(v[i].y-41.8)<0.00001
   check(valid and edge_count==6 and triangles==4,"adjacent regions share identical surface edge without internal wall")
   check(water.capture_snapshot(catalog)==before,"mesh reconstruction preserves exact quantities and cached state")
+ var invalidated=fixture(false)
+ invalidated.invalidate(AABB(Vector3(45,41,41),Vector3.ONE*0.1))
+ var dirty_before:int=invalidated.statistics().dirty_meshes
+ check(invalidated.next_mesh().is_empty(),"invalid neighbour defers surface publication instead of exposing internal walls")
+ check(invalidated.statistics().dirty_meshes==dirty_before and invalidated.statistics().water_ml==150000,"deferred meshes and water quantities survive terrain invalidation")
  var separate=fixture(true)
  var mesh:Dictionary=separate.next_mesh();var v:PackedVector3Array=mesh.arrays[Mesh.ARRAY_VERTEX]
  var levels:Dictionary={}

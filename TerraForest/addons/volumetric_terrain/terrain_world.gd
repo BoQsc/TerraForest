@@ -177,7 +177,7 @@ func request_lake_slice(builder: RefCounted, token: int) -> bool:
 	# Optional native addon protocol: terrain has no dependency on its renderer.
 	if builder == null or builder.get_class() not in ["NativeWaterTerrainPatch"]:
 		return false
-	if not world_ready or pending_edit or foreground_brush or stopping:
+	if not world_ready or pending_edit or stopping:
 		return false
 	return backend.submit({"kind": "lake_slice", "builder": builder, "token": token, "epoch": epoch, "revision": published_revision, "density_revision": density_revision})
 

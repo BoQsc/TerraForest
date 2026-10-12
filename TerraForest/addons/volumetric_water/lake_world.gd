@@ -87,7 +87,7 @@ func _invalidate(bounds:AABB) -> void:
  water.invalidate(bounds)
  _builder=null
 func _process(delta:float) -> void:
- if terrain==null or not terrain.world_ready or terrain.pending_edit:return
+ if terrain==null or not terrain.world_ready:return
  if _epoch!=terrain.epoch:_epoch=terrain.epoch;_builder=null
  var before:Dictionary=water.statistics()
  if _filling_id!=0 and not before.fill_active:
@@ -102,7 +102,9 @@ func _process(delta:float) -> void:
  # Prepare during loading, but do not advance an already restored moving world
  # while the player is waiting for its meshes and collision.
  if _filling_id!=0 or not get_parent().get("loading_active"):water.advance(2048)
- if not _busy:
+ # Invalid regions already refuse flow in native code. Keep unaffected water
+ # moving while edits publish; only terrain sampling needs a stable revision.
+ if not _busy and not terrain.pending_edit:
   var request:Dictionary=water.next_request()
   if not request.is_empty():
    if _builder==null or _revision!=terrain.published_revision:

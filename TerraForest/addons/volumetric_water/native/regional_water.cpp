@@ -363,7 +363,23 @@ PackedByteArray NativeRegionalWater::placement_mask(const TypedArray<Transform3D
     PackedByteArray result;if(transforms.size()>512)return result;result.resize(transforms.size());for(int i=0;i<transforms.size();++i){Transform3D t=transforms[i];result.set(i,depth_at(t.origin)>0?1:0);}return result;
 }
 Dictionary NativeRegionalWater::next_mesh(){
-    Dictionary result;if(meshes.empty())return result;uint64_t start=Time::get_singleton()->get_ticks_usec();Key k=meshes.front();meshes.pop_front();mesh_set.erase(k);
+    Dictionary result;if(meshes.empty())return result;uint64_t start=Time::get_singleton()->get_ticks_usec();
+    // Invalid occupancy is unknown, not empty space. Retain the last published
+    // surface until its bounded reconstruction neighbourhood is sampled again.
+    // Rotate only a bounded number of entries so blocked shores do not starve
+    // independent water or turn a frame into an unbounded queue scan.
+    Key k=0;bool ready=false;const size_t attempts=std::min<size_t>(meshes.size(),8);
+    for(size_t attempt=0;attempt<attempts;++attempt){
+        k=meshes.front();meshes.pop_front();Vector3i c=position(k);bool valid=true;
+        for(int z=-1;z<=1&&valid;++z)for(int y=-1;y<=1&&valid;++y)for(int x=-1;x<=1;++x){
+            Vector3i n=c+Vector3i(x,y,z);if(n.x<0||n.y<0||n.z<0)continue;
+            auto neighbour=regions.find(key(n));
+            if(neighbour!=regions.end()&&!neighbour->second.valid){valid=false;break;}
+        }
+        if(valid){ready=true;mesh_set.erase(k);break;}
+        meshes.push_back(k);
+    }
+    if(!ready)return result;
     result["coordinate"]=position(k);Array arrays;arrays.resize(Mesh::ARRAY_MAX);
     PackedVector3Array vertices,normals;PackedVector2Array uv;
     int top_count=0,side_count=0,tiny_count=0,small_count=0,medium_count=0,large_count=0;double max_side=0;

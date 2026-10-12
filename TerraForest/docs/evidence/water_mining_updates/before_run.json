@@ -1,0 +1,38 @@
+{
+  "timed_out": false,
+  "launch_error": null,
+  "pid": 10404,
+  "exit_code": 1,
+  "diagnostics": [
+    "FAIL Water flows into mined outlet while mining button remains held"
+  ],
+  "required_text_found": false,
+  "elapsed_seconds": 27.159353899999928,
+  "passed": false,
+  "provenance": {
+    "command": [
+      "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\godot.windows.opt.tools.64.exe",
+      "--path",
+      "C:\\Users\\LENOVO LOQ 15\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+      "--log-file",
+      "C:\\Users\\LENOVO LOQ 15\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\checks\\20261012T052423823369Z\\engine.log",
+      "--fullscreen",
+      "--resolution",
+      "1920x1080",
+      "--max-fps",
+      "60",
+      "--script",
+      "res://tests/regional_water_world.gd",
+      "--",
+      "--world-slot=check_082ef9bd4172489d93fcf45d2659be4c",
+      "--derived-cache=user://regional_water_world_082ef9bd4172489d93fcf45d2659be4c",
+      "--gameplay-construction"
+    ],
+    "slot": "check_082ef9bd4172489d93fcf45d2659be4c",
+    "cache": "user://regional_water_world_082ef9bd4172489d93fcf45d2659be4c",
+    "engine_sha256": "12310c74bdda7dcd43f28e971f33047dcecadd436b68169d61ce41009006df38",
+    "test_sha256": "f5cae6a52e54b3926c7973adff40a82060f2bc20d93081e0d50883232f81513a",
+    "shader_sha256": "97c388ae26ff49cd92133b5d4a0f4c74485a0ddce8bbb1d10bd3022bc56dbf42",
+    "native_sha256": "d03fe02c7a2806c3563710384821a40fc5d168d43eaff1c65e260543d812eab0"
+  }
+}

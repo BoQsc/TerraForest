@@ -136,10 +136,17 @@ func run():
  start=Time.get_ticks_msec()
  check(game.terrain.edit(Codec.brush(a,outlet,2.0,0,false,1),a,outlet),"Mining beside filled water is accepted through ordinary terrain path")
  check(await ready_world(),"Outlet terrain edit publishes")
+ # Keep the ordinary held-brush admission state through the flow check.
+ # Pause only the controller that otherwise overwrites this diagnostic input;
+ # terrain and water children continue processing normally.
+ game.set_process(false);game.set_physics_process(false);game.terrain.set_brush_active(true)
  deadline=Time.get_ticks_msec()+10000
  while game.lakes.depth_at(outlet)<=0 and Time.get_ticks_msec()<deadline:await process_frame
  timings.outlet_response_ms=Time.get_ticks_msec()-start
- check(game.lakes.depth_at(outlet)>0,"Water flows into mined outlet in actual world")
+ check(game.lakes.depth_at(outlet)>0,"Water flows into mined outlet while mining button remains held")
+ check(game.terrain.foreground_brush,"Held mining admission remains active throughout flow check")
+ game.terrain.set_brush_active(false);game.set_process(true);game.set_physics_process(true)
+ if failures:await finish();return
  check(game.lakes.statistics().water_ml==quantity,"Mining and flowing conserve every millilitre")
  var outlet_region:=Vector3i((outlet/4.0).floor())
  deadline=Time.get_ticks_msec()+2000
@@ -147,6 +154,26 @@ func run():
   if game.lakes._meshes.has(outlet_region) and game.lakes._meshes[outlet_region].mesh!=null:break
   await process_frame
  check(game.lakes._meshes.has(outlet_region) and game.lakes._meshes[outlet_region].mesh!=null,"Flowing outlet receives a visible regional mesh within 2 seconds")
+ # Three adjacent mining edits before waiting for water recovery. The old
+ # single-outlet test never covered repeated invalidation while holding mining.
+ game.set_process(false);game.set_physics_process(false);game.terrain.set_brush_active(true)
+ for stroke in 3:
+  var end:Vector3=outlet+Vector3(0,-0.25*(stroke+1),stroke+1)
+  check(game.terrain.edit(Codec.brush(outlet,end,1.25,0,false,1),outlet,end),"Repeated shoreline mining stroke %d accepted"%stroke)
+  check(await ready_world(),"Repeated shoreline mining stroke %d publishes"%stroke)
+ var extension:Vector3=outlet+Vector3(0,-0.75,3)
+ deadline=Time.get_ticks_msec()+10000
+ while game.lakes.depth_at(extension)<=0 and Time.get_ticks_msec()<deadline:await process_frame
+ check(game.lakes.depth_at(extension)>0 and game.terrain.foreground_brush,"Water reaches repeatedly excavated extension before mining is released")
+ check(game.lakes.statistics().water_ml==quantity,"Repeated mining preserves water quantity")
+ game.terrain.set_brush_active(false);game.set_process(true);game.set_physics_process(true)
+ game.player.global_position=outlet+Vector3(0,4,5);game.camera.position=Vector3(0,1.68,0);game.yaw=0;game.pitch=-0.8;game.player.rotation.y=0;game.camera.rotation.x=game.pitch;game._clear_motion()
+ for frame in 30:await process_frame
+ await capture_visual("water_repeated_mining")
+ game.lakes.visible=false
+ for frame in 2:await process_frame
+ await capture_visual("water_repeated_mining_terrain_only")
+ game.lakes.visible=true
  var s:Dictionary=game.lakes.statistics();timings.runtime_before_save=s
  var data:PackedByteArray=game.lakes.capture_snapshot()
  check(not data.is_empty() and game.lakes.snapshot_validator().validate_snapshot(data),"Snapshot validates quantities and cached occupancy")
