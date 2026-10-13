@@ -1,0 +1,30 @@
+2026-10-13: REJECTED WATER SURFACE; REPLACEMENT NOT COMPLETE
+
+The user screenshot shows sheets, slivers and seams. A contact-only passing
+check was insufficient evidence of usable water. Do not use those historical
+passes as water acceptance.
+
+Same captured world, same complete-envelope diagnostic, no simulation:
+                         triangles  unpaired edges  unmatched midpoints >1mm
+Before clipping (ee657c4)      6620              38                        35
+Clipping (fe12811)            26734            8009                      1340
+Clipping removed              6620              38                        35
+
+Exact edge mismatches include T-junctions and float mismatches. The additional
+midpoint check searches collinear neighbouring boundary segments within 1mm;
+it still fails, so this is not just exact-bit comparison noise. It is not an
+exhaustive proof of visible cracks or a reproduction of the exact screenshot.
+The closed envelope includes otherwise hidden terrain-contact faces. Its
+remaining defects must be distinguished from exposed-interface defects.
+
+The clipping stage and its source header have been removed. This rejects a
+regression, not completion of the requested terrain-style density extraction.
+Both debug and release DLLs rebuilt. The six controlled volume cases pass.
+The captured terrain-contact test now fails again: two sampled penetrating
+triangles, worst 1.7mm. This failure remains explicit; it is not waived.
+
+NEXT REQUIRED: consistent volumetric material-field representation and terrain
+density extraction, without per-triangle post-clipping. Resolve sub-grid thin
+water coherently rather than hiding it, deleting quantities, or inflating it.
+Remaining gates: exposed continuity, general terrain contacts, scoop/pour
+response, bounded local flow, saved/cached gameplay and sustained performance.
