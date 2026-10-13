@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: 0BSD
 extends Node3D
+const PublicationBudget=preload("res://addons/volumetric_water/publication_budget.gd")
 # Native store/flow/meshing. Script only coordinates worker hand-off, scene and UI.
 signal bucket_completed(slot:int)
 signal catalog_changed
@@ -22,6 +23,8 @@ var _meshes:Dictionary={}
 var _staged_meshes:Dictionary={}
 var _mesh_batch_id:int=0
 var _published_mesh_batch_id:int=0
+var _mesh_publish_us:int=0
+var _mesh_max_publish_us:int=0
 var _mesh_commit_us:int=0
 var _mesh_max_commit_us:int=0
 var _mesh_faces:Dictionary={}
@@ -139,7 +142,7 @@ func _publish_meshes() -> void:
  # Build/upload within the existing soft budget; only a complete immutable
  # batch becomes visible. Flow may advance between calls without mixed edges.
  var mesh_started:=Time.get_ticks_usec()
- for publication in 4:
+ for publication in PublicationBudget.MAX_PACKETS:
   var update:Dictionary=water.next_mesh_batch()
   if update.is_empty():break
   if update.batch!=_mesh_batch_id:
@@ -163,7 +166,8 @@ func _publish_meshes() -> void:
    _published_mesh_batch_id=update.batch
    _staged_meshes.clear()
    _mesh_commit_us=Time.get_ticks_usec()-commit_started;_mesh_max_commit_us=maxi(_mesh_max_commit_us,_mesh_commit_us)
-  if Time.get_ticks_usec()-mesh_started>=1000:break
+  if Time.get_ticks_usec()-mesh_started>=PublicationBudget.SOFT_TIME_US:break
+ _mesh_publish_us=Time.get_ticks_usec()-mesh_started;_mesh_max_publish_us=maxi(_mesh_max_publish_us,_mesh_publish_us)
 func _slice_ready(token:int,status:int,epoch_id:int,revision:int) -> void:
  if token!=_token:return
  _busy=false
@@ -189,6 +193,7 @@ func statistics() -> Dictionary:
  var s:Dictionary=water.statistics();s.lakes=_lakes.size();s.ready=0;s.outstanding_slices=int(_busy);s.resident_occupancy_bytes=s.resident_cell_bytes
  for item:Dictionary in _lakes.values():
   if not item.dirty and item.failure.is_empty():s.ready+=1
+ s.mesh_publish_us=_mesh_publish_us;s.max_mesh_publish_us=_mesh_max_publish_us
  s.mesh_commit_us=_mesh_commit_us;s.max_mesh_commit_us=_mesh_max_commit_us;s.staged_meshes=_staged_meshes.size()
  s.render_ready=_staged_meshes.is_empty() and s.dirty_meshes==0 and s.pending_regions==0 and not s.fill_active
  return s

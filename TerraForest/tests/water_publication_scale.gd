@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: 0BSD
 extends SceneTree
+const PublicationBudget=preload("res://addons/volumetric_water/publication_budget.gd")
 # Supplies solid terrain outside the cached synthetic lake. Without answering
 # these requests, a headless flow test measures a missing worker, not settling.
 class SolidTerrain extends RefCounted:
@@ -66,7 +67,8 @@ func connected_run(count:int,repeated:bool=false):
    var patch=ClassDB.instantiate("NativeWaterTerrainPatch");patch.configure(request.coordinate)
    while patch.sample_terrain(terrain,729,0,0)==0:pass
    check(water.accept_patch(patch),"Connected fixture answers terrain occupancy request")
-  for slot in 4:
+  var publish_started:=Time.get_ticks_usec()
+  for slot in PublicationBudget.MAX_PACKETS:
    start=Time.get_ticks_usec()
    var packet:Dictionary=water.next_mesh_batch()
    var elapsed:=Time.get_ticks_usec()-start;mesh_us+=elapsed;max_call_us=maxi(max_call_us,elapsed)
@@ -77,6 +79,7 @@ func connected_run(count:int,repeated:bool=false):
     max_batch_frames=maxi(max_batch_frames,frames-batch_start_frame+1);batch_start_frame=0
     if not water.commit_mesh_batch(packet.batch):check(false,"Connected batch acknowledgement")
     if first_commit==0 and packets>0:first_commit=frames
+   if Time.get_ticks_usec()-publish_started>=PublicationBudget.SOFT_TIME_US:break
   var stats:Dictionary=water.statistics();max_dirty=maxi(max_dirty,stats.dirty_meshes)
   if (not repeated or frame>=60) and stats.active_cells==0 and stats.pending_vertical==0 and stats.dirty_meshes==0 and not stats.mesh_publish_pending:break
  var final:Dictionary=water.statistics()

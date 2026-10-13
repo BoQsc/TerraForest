@@ -1,0 +1,9 @@
+Publication budget experiment, 2026-10-13
+
+Shared configuration now keeps the runtime and headless publication test on the same packet cap and soft elapsed-time budget. Runtime telemetry includes the entire publication call (native work, mesh uploads, scene commit), not just final scene assignment. Default remains FOUR packets and 1000 microseconds, unchanged.
+
+Rejected experiment: raising only the cap to 32 under the same soft time budget reduced worst repeated-edit native batch duration from seven simulated frames to two, but increased mesh packets from 291 to 1140, and measured native mesh work from 18003 to 53868 microseconds. Runs use time-sliced simulation, so they are comparative observations, not identical-step deterministic benchmarks. More frequent publication loses coalescing and repeatedly reconstructs changing regions.
+
+Cap-32 actual-world test passed all 51 assertions at 1920x1080 fullscreen capped60. Maximum observed full publication call was 1358 microseconds, maximum final commit 559 microseconds. This does not prove GPU upload efficiency; the native packet increase is reason enough not to adopt the cap change. Cap4 was restored and the connected/repeated native tests pass. The graphical result here belongs to the rejected cap32 experiment, not an additional default-cap graphical verification.
+
+Next work must reduce repeated reconstruction/upload work or improve scheduling while preserving surface consistency. Simply spending more publication budget is not accepted as the efficiency solution. Large connected batch latency and sustained GPU/thermal acceptance remain open.
