@@ -1,0 +1,4 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+{"after_mean_rgb_error":0.54972002568687,"before_mean_rgb_error":10.7328609041278,"failures":0,"reference":"Same underwater fog and camera, water meshes hidden; lake-floor ROI excludes free surface and UI","scope":"One fixed underwater viewpoint, not all viewing angles or edited topology"}
+WATER_UNDERWATER_PIXELS failures=0

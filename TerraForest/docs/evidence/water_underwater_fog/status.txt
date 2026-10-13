@@ -1,0 +1,11 @@
+Underwater contact-face fog regression - 2026-10-13
+
+The user's reported underwater bands and patchy triangles were reproduced in the real disposable lake. The water shader resolves transmission from opaque scene colour, which already contains environment fog. Default material fog applied fog again to the resolved water/contact faces, revealing those faces against the lake floor. Adding fog_disabled prevents this second application; opaque underwater terrain retains its environment fog.
+
+The visual check holds the camera and underwater environment fixed, captures the previous shader behavior, installed corrected shader, and a reference with water meshes hidden. The lake-floor region excludes the actual water/air surface and UI. Mean RGB error against the reference falls from 10.73286 to 0.54972 on the 0-255 scale. Before/after images were also inspected. This is a rendering correction, with no new simulation, textures, sampling or mesh work.
+
+Reproduce from the project directory:
+python tools/run_godot_check.py water_underwater_visual --timeout 50 --require "WATER_UNDERWATER_VISUAL failures=0" -- --gameplay-construction --water-gameplay --water-bucket-review
+python tools/run_godot_check.py water_underwater_pixels --headless --timeout 15 --require "WATER_UNDERWATER_PIXELS failures=0"
+
+Scope: one fixed underwater viewpoint. This does not certify every viewing angle or edited mesh. A separate actual-world mining test remains failing: the first floor excavation produces four edges with four incident triangles. That topology issue is not fixed by this shader change. Prior quantity/save checks did not cover the reported underwater rendering defect and were insufficient to declare visual readiness.

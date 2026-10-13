@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: 0BSD
 shader_type spatial;
-render_mode cull_disabled, depth_draw_always;
+render_mode cull_disabled, depth_draw_always, fog_disabled;
 
+// Screen colour already includes environment fog. Applying fog to this resolved
+// transmission again exposes submerged contact triangles as bands and patches.
 // Resolve transmission from the opaque scene once per pixel. Writing depth
 // prevents stacked water faces from repeatedly tinting the same scene color.
 // No SSR, second camera, refraction distortion, or geometry displacement.
