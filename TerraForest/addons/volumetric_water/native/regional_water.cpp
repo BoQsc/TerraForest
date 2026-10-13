@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: 0BSD
+#include <map>
 #include "regional_water.hpp"
 #include "../../volumetric_terrain/native/density_surface.hpp"
 #include "lake_catalog.hpp"
@@ -808,14 +809,15 @@ NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool s
         vertices.push_back({x,y,z,component,p});
         });
     }
+    std::map<int,int> face_vertices;
     int triangles=0,tops=0,bottoms=0,sides=0;
     connect_material_surface(int(vertices.size()),{0,N,0,N,0,N},
         [&](int i)->const Vertex&{return vertices[i];},
-        [&](int x,int y,int z,int ax,int ay,int az){
+        [&](int x,int y,int z,int ax,int ay,int az,int axis){
             if(x< -1||x>=N||y< -1||y>=N||z< -1||z>=N)return -1;
-            int first=ids[vertex_index(x,y,z)];unsigned corner=1u<<((ax-x)+2*(ay-y)+4*(az-z));
+            int first=ids[vertex_index(x,y,z)];unsigned edge=1u<<(8+terraforest::density_edge_index((ax-x)+2*(ay-y)+4*(az-z),axis));
             for(int i=first;i>=0&&i<int(vertices.size());i++){const auto &v=vertices[i];
-                if(v.cx!=x||v.cy!=y||v.cz!=z)break;if(v.mask&corner)return i;}
+                if(v.cx!=x||v.cy!=y||v.cz!=z)break;if(v.mask&edge)return i;}
             return -1;
         },
         // A contact-labelled lattice endpoint does not prove its entire dual
@@ -823,14 +825,23 @@ NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool s
         // Keep the closed material boundary; normal terrain depth occludes
         // genuinely buried faces without inventing a second diagnostic mesh.
         [&](int,int,int,int){return true;},
-        [&](int a,int b,int c,int d,bool reverse){
-            const auto &v=vertices[c];
+        [&](int x,int y,int z,int axis,int ex,int ey,int ez,int edge_axis,int left,int right){
+            unsigned arc=0;V3 local=density_face_arc(x,y,z,axis,ex,ey,ez,edge_axis,
+                [&](int xx,int yy,int zz){return field[node_index(xx,yy,zz)].density;},arc);
+            int key=(vertex_index(x,y,z)*3+axis)*4+arc;auto found=face_vertices.find(key);if(found!=face_vertices.end())return found->second;
+            Vector3 p((base.x*2+.5f+local.x)*STEP,(base.y*2+.5f+local.y)*STEP,(base.z*2+.5f+local.z)*STEP);
+            int id=int(vertices.size());vertices.push_back({x,y,z,0,p});face_vertices[key]=id;return id;
+        },
+        [&](int a,int b,int c,int d,bool reverse,const int *middle){
+            const auto v=vertices[c];
             int axis=(vertices[a].cx==v.cx&&vertices[b].cx==v.cx&&vertices[d].cx==v.cx)?0:
                      (vertices[a].cy==v.cy&&vertices[b].cy==v.cy&&vertices[d].cy==v.cy)?1:2;
             Vector3i next(v.cx,v.cy,v.cz);next[axis]++;
             const Node &first=field[node_index(v.cx,v.cy,v.cz)],&second=field[node_index(next.x,next.y,next.z)];
             Vector3i owner=first.density<0?first.owner:second.owner;
-            surface_quad(a,b,c,d,reverse,[&](int i){return vertices[i].position;},[&](int a,int b,int c){
+            surface_split_quad(a,b,c,d,reverse,middle,[&](int i){return vertices[i].position;},
+                [&](int a,int b,int c,int d){Vector3 p=(vertices[a].position+vertices[b].position+vertices[c].position+vertices[d].position)*.25f;
+                    int id=int(vertices.size());vertices.push_back({v.cx,v.cy,v.cz,0,p});return id;},[&](int a,int b,int c){
                 Vector3 p=vertices[a].position,q=vertices[b].position,r=vertices[c].position;
                 Vector3 normal=(r-p).cross(q-p).normalized();if(normal.length_squared()<.5)return;
                 for(auto point:{p,q,r}){output.vertices.push_back(point);output.normals.push_back(normal);output.uv.push_back(Vector2(point.x,point.z));}

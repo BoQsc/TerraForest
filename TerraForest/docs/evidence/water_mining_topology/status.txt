@@ -11,3 +11,5 @@ python tools/run_godot_check.py water_mining_mesh --headless --timeout 15 --requ
 python tools/run_godot_check.py water_mining_topology --timeout 60 --require "WATER_MINING_TOPOLOGY failures=0" -- --gameplay-construction --water-gameplay --water-bucket-review
 
 Keep the fixture replay failing until corrected; then rerun the actual-world mining test and the existing placed-pool recovery tests. A passing fixture alone cannot prove the whole interactive path or visual result.
+
+Resolution update - 2026-10-14: the preserved failing fixture now passes after the shared boundary correction. See ../water_boundary_fix/status.txt for actual-world checks, bounded configuration coverage and limitations. The baseline failure and fixture remain preserved above.

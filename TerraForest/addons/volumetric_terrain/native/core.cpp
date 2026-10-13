@@ -464,18 +464,29 @@ static bool extract_vertices(const World&w,int ox,int oz,int size,Mesh&m,u32 epo
  heights.release();return true;
 }
 
-static void connect_patch(int ox,int oz,int size,Mesh&m,int y_begin=0,int y_end=WORLD_Y){
- Map ids;
+static void connect_patch(const World&w,int ox,int oz,int size,Mesh&m,int y_begin=0,int y_end=WORLD_Y){
+ Map ids,face_vertices;
  for(int j=0;j<m.v.n;j++){const Vertex&v=m.v[j];u32 k=cell_key(v.cx-ox,v.cy,v.cz-oz,size);if(ids.get(k)<0)ids.put(k,j);}
  terraforest::connect_material_surface(m.v.n,{ox,ox+size,y_begin,y_end,oz,oz+size},
   [&](int j)->const Vertex&{return m.v[j];},
-  [&](int x,int y,int z,int ax,int ay,int az){
-   if(y<0)return -1;int first=ids.get(cell_key(x-ox,y,z-oz,size));unsigned corner=1u<<((ax-x)+2*(ay-y)+4*(az-z));
-   for(int i=first;i>=0&&i<m.v.n;i++){const auto &v=m.v[i];if(v.cx!=x||v.cy!=y||v.cz!=z)break;if(v.mask&corner)return i;}return -1;
+  [&](int x,int y,int z,int ax,int ay,int az,int axis){
+   if(y<0)return -1;int first=ids.get(cell_key(x-ox,y,z-oz,size));unsigned edge=1u<<(8+terraforest::density_edge_index((ax-x)+2*(ay-y)+4*(az-z),axis));
+   for(int i=first;i>=0&&i<m.v.n;i++){const auto &v=m.v[i];if(v.cx!=x||v.cy!=y||v.cz!=z)break;if(v.mask&edge)return i;}return -1;
   },
   [&](int axis,int x,int y,int z){return !((axis==0&&(y<1||z<oz))||(axis==2&&y<1));},
-  [&](int a,int b,int c,int d,bool reverse){quad(m,a,b,c,d,reverse);});
- ids.release();
+  [&](int x,int y,int z,int axis,int ex,int ey,int ez,int edge_axis,int left,int right){
+   unsigned arc=0;V3 p=terraforest::density_face_arc(x,y,z,axis,ex,ey,ez,edge_axis,
+    [&](int xx,int yy,int zz){return float(quant(w.sample(xx,yy,zz)))/SDF_SCALE;},arc);
+   u32 key=(cell_key(x-ox,y,z-oz,size)*3+axis)*4+arc;int found=face_vertices.get(key);if(found>=0)return found;
+   Vertex v=m.v[left];v.p=p;v.n=normal(m.v[left].n+m.v[right].n);v.mask=0;
+   int id=m.v.push(v);face_vertices.put(key,id);return id;
+  },
+  [&](int a,int b,int c,int d,bool reverse,const int *middle){
+   terraforest::surface_split_quad(a,b,c,d,reverse,middle,[&](int i){return m.v[i].p;},
+    [&](int a,int b,int c,int d){Vertex v=m.v[a];v.p=(m.v[a].p+m.v[b].p+m.v[c].p+m.v[d].p)*.25f;
+     v.n=normal(m.v[a].n+m.v[b].n+m.v[c].n+m.v[d].n);v.mask=0;return m.v.push(v);},
+    [&](int a,int b,int c){m.i.push(a);m.i.push(b);m.i.push(c);});});
+ ids.release();face_vertices.release();
 }
 
 bool measure_material_surface(const World&w,int x,int z,int size,int y_begin,int y_end,double&integral,int&triangles,bool&closed){
@@ -483,7 +494,7 @@ bool measure_material_surface(const World&w,int x,int z,int size,int y_begin,int
  if(w.generator_id!=MATERIAL_FIELD_GENERATOR_ID||x<0||z<0||size<1||size>32||x+size>WORLD||z+size>WORLD||y_begin<1||y_end>255||y_end<=y_begin||y_end-y_begin>32)return false;
  const u32 epoch=terrain_build_epoch(&w);Mesh mesh;
  if(!extract_vertices(w,x,z,size,mesh,epoch,y_begin,y_end)){mesh.release();return false;}
- connect_patch(x,z,size,mesh,y_begin,y_end);
+ connect_patch(w,x,z,size,mesh,y_begin,y_end);
  if(tr_oom||cancelled(w,epoch)||mesh.v.n>=65535){mesh.release();return false;}
  struct Edge{int count=0,balance=0;};Map ids;List<Edge> edges;
  for(int i=0;i<mesh.i.n;i+=3){
@@ -512,7 +523,7 @@ bool build_patch(const World&w,int ox,int oz,int size,int step,Mesh&m,u32 expect
  if(cancelled(w,epoch))return false;
  bool ok=region_cache?cached_vertices(w,ox,oz,size,m,epoch):extract_vertices(w,ox,oz,size,m,epoch);
  if(!ok){m.release();return false;}
- connect_patch(ox,oz,size,m);
+ connect_patch(w,ox,oz,size,m);
  if(w.profile_mesh){double now=mesh_clock_ms();w.mesh_stage_ms[0]=float(now-mark);mark=now;}
  simplify(w,m,ox,oz,size,step,epoch);
  if(w.profile_mesh){double now=mesh_clock_ms();w.mesh_stage_ms[1]=float(now-mark);mark=now;}
@@ -544,7 +555,7 @@ bool build_owned_region(const World&w,int ox,int oz,int size,int step,int y_begi
   w.owned_height_x=ox;w.owned_height_z=oz;w.owned_height_seed=w.seed;w.owned_height_size=size;
  }
  if(cancelled(w,epoch)||!extract_vertices(w,ox,oz,size,m,epoch,y_begin,y_end,w.owned_heights.p)){m.release();return false;}
- connect_patch(ox,oz,size,m,y_begin,y_end);
+ connect_patch(w,ox,oz,size,m,y_begin,y_end);
  if(w.profile_mesh){double now=mesh_clock_ms();w.mesh_stage_ms[0]=float(now-mark);mark=now;}
  simplify(w,m,ox,oz,size,step,epoch,true);
  if(w.profile_mesh){double now=mesh_clock_ms();w.mesh_stage_ms[1]=float(now-mark);mark=now;}
@@ -1021,7 +1032,7 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
   Mesh m;int ox=imx(0,x-1),oz=imx(0,z-1),yb=imx(0,y-1),ye=imn(WORLD_Y,y+5);
   // One-cell ownership halo retains faces crossing the requested region.
   if(!extract_vertices(w,ox,oz,6,m,epoch,yb,ye)){m.release();out.p[8]=4;return;}
-  connect_patch(ox,oz,6,m,yb,ye);
+  connect_patch(w,ox,oz,6,m,yb,ye);
   if(cancelled(w,epoch)){m.release();out.p[8]=4;return;}
   out.u(w.revision);out.u(epoch);out.u(m.v.n);out.u(m.i.n);
   for(int i=0;i<m.v.n;i++)out.vec(m.v[i].p);

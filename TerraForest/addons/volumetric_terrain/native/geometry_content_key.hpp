@@ -35,7 +35,7 @@ static godot::Dictionary geometry_content_key(const World &w,int x,int z,int siz
         }
     };
     auto number=[&](u32 value){u8 b[4]={u8(value),u8(value>>8),u8(value>>16),u8(value>>24)};feed(b,4);};
-    number(4);number(w.generator_id);number(w.seed);number(w.surface_style);number(x);number(z);number(size);number(step);
+    number(5);number(w.generator_id);number(w.seed);number(w.surface_style);number(x);number(z);number(size);number(step);
     number(w.caves.n);
     for(int i=0;i<w.caves.n;i++){
         const Cave &c=w.caves[i];float values[]={c.a.x,c.a.y,c.a.z,c.b.x,c.b.y,c.b.z,c.r};

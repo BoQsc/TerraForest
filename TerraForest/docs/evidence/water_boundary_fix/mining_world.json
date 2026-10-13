@@ -1,0 +1,25 @@
+{
+  "failures": 0,
+  "stages": [
+    {
+      "components": 1,
+      "triangles": 21132,
+      "unpaired_edges": 0
+    },
+    {
+      "components": 1,
+      "triangles": 22036,
+      "unpaired_edges": 0
+    },
+    {
+      "components": 1,
+      "triangles": 22068,
+      "unpaired_edges": 0
+    },
+    {
+      "components": 1,
+      "triangles": 22528,
+      "unpaired_edges": 0
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+{
+  "checks": 31,
+  "failures": 0,
+  "scope": "Actual TerrainCore edit, extraction, cache and archive paths on an empty field. Not lake integration, flow or bucket conservation."
+}

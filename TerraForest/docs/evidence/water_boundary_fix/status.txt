@@ -1,0 +1,22 @@
+Shared boundary reconstruction correction - 2026-10-14
+
+The preserved excavation fixture previously produced four edges with four incident triangles. Occupied-corner components alone merge distinct air-side boundaries. The shared terrain/water extractor now partitions crossing-edge loops with a consistent face-saddle decision, and neighbour lookup selects the actual crossing edge. Distinct contour arcs on checkerboard faces retain separate intermediate vertices; otherwise even correctly separated loops can collapse two arcs onto one dual edge. Ordinary faces retain the previous two-triangle triangulation. Only faces touching an ambiguous contour receive additional triangles. Storage, bucket units and static/no-flow behavior are unchanged.
+
+Both terrain and water adapters use the shared correction. Terrain geometry cache content version advances to 5; cached representative ordering follows the crossing-edge component order. Debug and release DLLs rebuilt with the pinned prebuilt SDK.
+
+Evidence:
+- Preserved mining snapshot replay: zero invalid edges, formerly four.
+- Actual-world three successive excavations: every stage is one closed component, zero invalid edges, unchanged water quantities. Triangle counts: 21132 initially, then 22036, 22068, 22528. First excavation was previously 21748 triangles with four invalid edges; correction adds 288 triangles (about 1.3 percent).
+- Native density probe: 765 enclosed fields (all 255 nonempty eight-corner sign configurations at three magnitude patterns), zero non-two-incident edges, consistent winding, finite vertices, and no zero-area triangles. Intermediate development without distinct face arcs failed 92 cases; these checks remain mandatory.
+- Actual-world six bucket placements, snapshot restore, and six recovery transfers: all quantities/topology checks pass. Max native bucket operation 1.240 ms, input dispatch 7.365 ms, publication 115.400 ms, measured frame interval 16.761 ms. One short 1920x1080 run; not an endurance test or proof of a universal 60 FPS floor.
+- Terrain material-field check passes. Terrain region-cache check passes all 293 assertions, including exact cached/uncached geometry, collision and shading parity.
+- Release DLL: water_pool_topology and water_surface_topology pass; complete captured lake has no unmatched edges, inconsistent winding or degenerate triangles.
+- Underwater images captured after each excavation and final capture inspected. Prior broad floor stripes remain absent. Static water can expose its lower surface when support is excavated; these tests do not certify every contact appearance or every possible edit.
+
+Commands:
+python tools/check_density_boundary.py
+python tools/run_godot_check.py water_mining_mesh --headless --timeout 15 --require "WATER_MINING_MESH failures=0"
+python tools/run_godot_check.py water_mining_topology --timeout 60 --require "WATER_MINING_TOPOLOGY failures=0" -- --gameplay-construction --water-gameplay --water-bucket-review
+python tools/run_godot_check.py water_pool_gameplay --timeout 60 --require "WATER_POOL_GAMEPLAY failures=0" -- --gameplay-construction --water-gameplay --water-bucket-review
+
+Limitations: this fixes the reproduced boundary-topology defect. It does not claim arbitrary-field manifold certification after all terrain simplification/LOD operations, complete migration of water storage into TerrainCore, or that all remaining world/interaction/art issues are complete. Water remains static as requested.

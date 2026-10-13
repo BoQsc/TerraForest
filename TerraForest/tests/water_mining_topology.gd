@@ -11,6 +11,9 @@ func run():
  var center:=Vector3(entry.seed.x,entry.level,entry.seed.z)
  var before:=amounts(game.lakes.capture_snapshot())
  results.stages=[]
+ game.camera.global_position=center+Vector3(0,-1.3,4)
+ game.camera.look_at(center+Vector3(0,-2,-4),Vector3.UP)
+ game.water_camera.update()
  var first:=pool_topology(center,INF);results.stages.append(first)
  check(first.triangles>0 and first.unpaired_edges==0 and first.components==1,"Initial complete lake mesh is closed and connected")
  for offset:Vector3 in [Vector3(3,0,0),Vector3(4,0,0),Vector3(0,0,5)]:
@@ -27,6 +30,9 @@ func run():
   check(amounts(game.lakes.capture_snapshot())==before,"Mining preserves every water-cell quantity")
   var topology:=pool_topology(center,INF);results.stages.append(topology)
   check(topology.triangles>0 and topology.unpaired_edges==0 and topology.components==1,"Dig leaves one closed lake surface without detached fragments")
+  for frame in 3:await process_frame
+  await RenderingServer.frame_post_draw
+  root.get_texture().get_image().save_png("res://reports/water_mining_stage_%d.png"%results.stages.size())
   if failures:await finish();return
  await finish()
 func finish():
