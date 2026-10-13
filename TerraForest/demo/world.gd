@@ -703,7 +703,9 @@ func _unhandled_input(event: InputEvent) -> void:
 			var start:Vector3=camera.global_position
 			var end:Vector3=start-camera.global_basis.z*3.5
 			var hit:Dictionary=structures.blocks.raycast_scene(start,end,0xFFFFFFFF,[player.get_rid()])
-			if not hit.is_empty():end=hit.position+hit.normal*0.01
+			# Placement clearance is only for pours. Applying it to a scoop
+			# cuts off visible water shallower than 1 cm before the ray reaches it.
+			if not hit.is_empty():end=hit.position+hit.normal*(0.01 if event.button_index==MOUSE_BUTTON_RIGHT else 0.0)
 			var result:Dictionary=lakes.bucket(start,end,event.button_index==MOUSE_BUTTON_RIGHT,player_hud.inventory,player_hud.active_slot,player_hud.inventory.snapshot().revision)
 			if result.ok:player_hud.equip_inventory(player_hud.active_slot);tool_view.swing()
 			_show_lake_notice(result.reason)

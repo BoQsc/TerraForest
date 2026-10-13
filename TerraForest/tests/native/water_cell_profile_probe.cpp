@@ -20,5 +20,8 @@ int main(){
     float slope[8]={0,-1,1,1,0,-1,1,1};
     auto cut=WaterCellProfile::make(slope,true,250,500);
     require(cut.cut&&cut.capacity()==93750&&!cut.open_bottom,"cached floor crossings recover partial capacity without opening solid bottom");
+    float crossing_top[8]={-0.4f,-0.6f,0.1f,-0.1f,-0.4f,-0.6f,0.1f,-0.1f};
+    auto partial=WaterCellProfile::make(crossing_top,true,500,500);
+    require(partial.cut&&std::abs(double(partial.capacity())-6250)<2,"floor crossing the cell top retains its partial air wedge");
     std::puts("WATER_CELL_PROFILE failures=0");
 }

@@ -1,0 +1,14 @@
+PASS sloped half-cell capacity is 62.5 litres
+PASS quarter-height wedge integrates to 15.625 litres
+PASS head inversion conserves sub-litre and full-cell quantities
+PASS head inversion conserves sub-litre and full-cell quantities
+PASS head inversion conserves sub-litre and full-cell quantities
+PASS head inversion conserves sub-litre and full-cell quantities
+PASS head inversion conserves sub-litre and full-cell quantities
+PASS wetted centroid excludes the dry half of the slope
+PASS opposite floor faces have distinct spill heights
+PASS flat cells retain their exact constant-area behavior
+PASS ambiguous walls retain conservative closure
+PASS cached floor crossings recover partial capacity without opening solid bottom
+PASS floor crossing the cell top retains its partial air wedge
+WATER_CELL_PROFILE failures=0

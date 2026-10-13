@@ -8,6 +8,7 @@ var timings:Dictionary={}
 var frames:Array[float]=[]
 var gpu_times:Array[float]=[]
 var cpu_render_times:Array[float]=[]
+var diagnostic_brush_held:=false
 var measuring:=false
 var previous_frame:=0
 var restored_stats:Dictionary={}
@@ -15,6 +16,9 @@ func _initialize():
  process_frame.connect(record_frame)
  call_deferred("run")
 func record_frame():
+ # This fixture injects held admission, not OS input. Desktop focus changes
+ # must not silently release that diagnostic state while the controller is paused.
+ if diagnostic_brush_held and is_instance_valid(game):game.terrain.set_brush_active(true)
  var now:=Time.get_ticks_usec()
  if measuring and previous_frame>0:
   frames.append((now-previous_frame)/1000.0)
@@ -107,7 +111,7 @@ func run():
 
  game.camera.global_position=probe+Vector3.UP*1.5;game.camera.look_at(probe,Vector3.FORWARD);game.app_focused=true;Input.mouse_mode=Input.MOUSE_MODE_CAPTURED
  print("INPUT_STATE ",game.session_menu.developer," ",game.equipped_tool," ",game._model_edit_available()," ",Input.mouse_mode," ",game.player_hud.active_item)
- var click:=InputEventMouseButton.new();click.button_index=MOUSE_BUTTON_LEFT;click.pressed=true;game._unhandled_input(click);Input.mouse_mode=Input.MOUSE_MODE_VISIBLE
+ var click:=InputEventMouseButton.new();click.button_index=MOUSE_BUTTON_LEFT;click.pressed=true;game.app_focused=true;game._unhandled_input(click);Input.mouse_mode=Input.MOUSE_MODE_VISIBLE
  check(inventory.snapshot().slots[slot].item==411 and game.lakes.statistics().water_ml==quantity-10000,"Real bucket left-click conserves lake + inventory water")
  var stale:Dictionary=game.lakes.bucket(probe+Vector3.UP,probe,false,inventory,slot,-1)
  check(not stale.ok and game.lakes.statistics().water_ml==quantity-10000,"Stale bucket action cannot remove or create water")
@@ -122,7 +126,7 @@ func run():
  check(await ready_world(),"Separate hole terrain edit publishes")
  var target:Vector3=hole-Vector3(0,1,0)
  game.camera.global_position=target+Vector3.UP*1.4;game.camera.look_at(target,Vector3.FORWARD);game.app_focused=true;Input.mouse_mode=Input.MOUSE_MODE_CAPTURED
- click.button_index=MOUSE_BUTTON_RIGHT;game._unhandled_input(click);Input.mouse_mode=Input.MOUSE_MODE_VISIBLE
+ click.button_index=MOUSE_BUTTON_RIGHT;game.app_focused=true;game._unhandled_input(click);Input.mouse_mode=Input.MOUSE_MODE_VISIBLE
  var deadline:=Time.get_ticks_msec()+6000
  while inventory.snapshot().slots[slot].item!=401 and Time.get_ticks_msec()<deadline:await process_frame
  check(inventory.snapshot().slots[slot].item==401 and game.lakes.statistics().water_ml==quantity,"Real right-click creates water outside lake with exact full-bucket debit")
@@ -159,12 +163,12 @@ func run():
  var puddle_end:Vector3=puddle_start-game.camera.global_basis.z*3.5
  var puddle_hit:Dictionary=game.structures.blocks.raycast_scene(puddle_start,puddle_end,0xFFFFFFFF,[game.player.get_rid()])
  print("PUDDLE_AIM ",puddle," START ",puddle_start," END ",puddle_end," HIT ",puddle_hit)
- click.button_index=MOUSE_BUTTON_LEFT;game._unhandled_input(click);Input.mouse_mode=Input.MOUSE_MODE_VISIBLE
+ click.button_index=MOUSE_BUTTON_LEFT;game.app_focused=true;game._unhandled_input(click);Input.mouse_mode=Input.MOUSE_MODE_VISIBLE
  check(inventory.snapshot().slots[slot].item==411 and game.lakes.statistics().water_ml==quantity-10000,"Ten-litre puddle can be scooped back through real gameplay")
  if failures:await finish();return
  check(await wait_water(3.0,true),"Scooped puddle removal publishes")
  await capture_visual("water_bucket_scooped")
- Input.mouse_mode=Input.MOUSE_MODE_CAPTURED;click.button_index=MOUSE_BUTTON_RIGHT;game._unhandled_input(click);Input.mouse_mode=Input.MOUSE_MODE_VISIBLE
+ Input.mouse_mode=Input.MOUSE_MODE_CAPTURED;click.button_index=MOUSE_BUTTON_RIGHT;game.app_focused=true;game._unhandled_input(click);Input.mouse_mode=Input.MOUSE_MODE_VISIBLE
  check(inventory.snapshot().slots[slot].item==401 and game.lakes.statistics().water_ml==quantity,"Puddle pour-back conserves the same ten litres")
  if failures:await finish();return
  # Open an underground outlet connected to the lake's right bank.
@@ -177,13 +181,14 @@ func run():
  # Keep the ordinary held-brush admission state through the flow check.
  # Pause only the controller that otherwise overwrites this diagnostic input;
  # terrain and water children continue processing normally.
- game.set_process(false);game.set_physics_process(false);game.terrain.set_brush_active(true)
+ game.set_process(false);game.set_physics_process(false);diagnostic_brush_held=true;game.terrain.set_brush_active(true)
  deadline=Time.get_ticks_msec()+10000
  while game.lakes.depth_at(outlet)<=0 and Time.get_ticks_msec()<deadline:await process_frame
  timings.outlet_response_ms=Time.get_ticks_msec()-start
+ print("OUTLET_STATE ",{"depth":game.lakes.depth_at(outlet),"held":game.terrain.foreground_brush,"water":game.lakes.statistics()})
  check(game.lakes.depth_at(outlet)>0,"Water flows into mined outlet while mining button remains held")
  check(game.terrain.foreground_brush,"Held mining admission remains active throughout flow check")
- game.terrain.set_brush_active(false);game.set_process(true);game.set_physics_process(true)
+ diagnostic_brush_held=false;game.terrain.set_brush_active(false);game.set_process(true);game.set_physics_process(true)
  if failures:await finish();return
  check(game.lakes.statistics().water_ml==quantity,"Mining and flowing conserve every millilitre")
  var outlet_region:=Vector3i((outlet/4.0).floor())
@@ -194,7 +199,7 @@ func run():
  check(game.lakes._meshes.has(outlet_region) and game.lakes._meshes[outlet_region].mesh!=null,"Flowing outlet receives a visible regional mesh within 2 seconds")
  # Three adjacent mining edits before waiting for water recovery. The old
  # single-outlet test never covered repeated invalidation while holding mining.
- game.set_process(false);game.set_physics_process(false);game.terrain.set_brush_active(true)
+ game.set_process(false);game.set_physics_process(false);diagnostic_brush_held=true;game.terrain.set_brush_active(true)
  for stroke in 3:
   var end:Vector3=outlet+Vector3(0,-0.25*(stroke+1),stroke+1)
   check(game.terrain.edit(Codec.brush(outlet,end,1.25,0,false,1),outlet,end),"Repeated shoreline mining stroke %d accepted"%stroke)
@@ -202,9 +207,10 @@ func run():
  var extension:Vector3=outlet+Vector3(0,-0.75,3)
  deadline=Time.get_ticks_msec()+10000
  while game.lakes.depth_at(extension)<=0 and Time.get_ticks_msec()<deadline:await process_frame
+ print("EXTENSION_STATE ",{"depth":game.lakes.depth_at(extension),"held":game.terrain.foreground_brush,"focused":game.app_focused,"water":game.lakes.statistics()})
  check(game.lakes.depth_at(extension)>0 and game.terrain.foreground_brush,"Water reaches repeatedly excavated extension before mining is released")
  check(game.lakes.statistics().water_ml==quantity,"Repeated mining preserves water quantity")
- game.terrain.set_brush_active(false);game.set_process(true);game.set_physics_process(true)
+ diagnostic_brush_held=false;game.terrain.set_brush_active(false);game.set_process(true);game.set_physics_process(true)
  game.player.global_position=outlet+Vector3(0,4,5);game.camera.position=Vector3(0,1.68,0);game.yaw=0;game.pitch=-0.8;game.player.rotation.y=0;game.camera.rotation.x=game.pitch;game._clear_motion()
  for frame in 30:await process_frame
  # Freeze one published state for visual attribution; diagnostic materials

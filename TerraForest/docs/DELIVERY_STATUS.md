@@ -2,6 +2,17 @@
 
 The [delivery plan and coverage register](PROJECT_PLAN.md) is the current reference for milestone order, original-scope coverage and deferred-work return triggers. Entries below preserve evidence at their recorded development stage. Older headings and the historical scope table are not current status; later implementations supersede some of their limitations. Correctness, integration, rendered performance and sustained qualification are separate gates.
 
+## Ground bucket interaction and flow limits - 2026-10-13
+
+Untouched-ground pouring and shallow scooping now pass with exact quantities.
+The generated ripple normal map remains shared and mipmapped. Native lateral
+flow is rate-limited, partial-top capacity and v4 save migration are tested.
+A full 55-check world pass is recorded alongside a prior outlet-deadline failure;
+flow timing stability and strip-like shallow runoff are still open. This is not
+sustained performance or final visual acceptance.
+
+[Evidence and retained failure](evidence/water_ground_flow/status.txt).
+
 ## Water floor contact and finite bucket volume - 2026-10-13
 
 Terrain-shaped floor capacity replaces the highest-corner slab for floor cells

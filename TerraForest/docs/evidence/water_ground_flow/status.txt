@@ -1,0 +1,43 @@
+Water ground pour and bounded lateral transfer - 2026-10-13
+
+Implemented in the existing NativeRegionalWater runtime; shared terrain surface
+reconstruction and exact integer millilitre quantities remain authoritative.
+
+- Partial top openings now retain terrain-shaped floor capacity rather than a
+  conservative completely solid cell. Ambiguous walls and ceilings still use
+  conservative intervals; arbitrary terrain topology is not qualified.
+- Lateral transfer is capped by elapsed time, gravity head and a shallow-flow
+  bed-resistance approximation. Deep and shallow water use the same path.
+  The roughness value 0.06 is a gameplay choice, not calibrated hydraulics.
+  Formula reference: USACE HEC-RAS Uniform Flow Computations,
+  https://www.hec.usace.army.mil/confluence/rasdocs/ras1dtechref/latest/stable-channel-design-functions/uniform-flow-computations
+- Scoop rays reach terrain, rather than stopping 1 cm above it and missing
+  visible shallow water. The placement clearance remains on pours.
+- Save version 4 reads versions 1-3. Changed cached cut capacities wake without
+  terrain resampling or changing stored quantity. Old binaries cannot read v4.
+
+Evidence:
+- Natural untouched-ground gameplay: full 10 L scoop, full pour, 2 seconds of
+  ordinary simulation, visible near-target water, successful scoop with exact
+  inventory/world debit. Read water_ground_pour.json for recovered amount.
+  New-wet-cell rows are diagnostics, not tagged fluid after mixing.
+- Flow clock fixture: first frame 344 ml; half-second transfer 5285 ml at 30 Hz
+  versus 5206 ml at 120 Hz; exact total preserved; invalid dt no-op; 50 ms cap.
+- Cut-cell migration, volume inversion, cached publication and bucket tests pass.
+- One full-world run passes all 55 checks, including mining and cache roundtrip.
+  Outlet response was 9504 ms; an earlier run exceeded the 10-second gate.
+  Keep that failure: deadline stability is NOT established by the later pass.
+- The graphical fixture now maintains its explicitly injected held admission
+  across desktop focus changes. It does not test physical OS focus/input.
+
+Remaining limits:
+- Very shallow runoff renders as strip-like patches; visual acceptance remains
+  open. A ripple texture cannot repair a geometry/contact representation issue.
+- Transfer receives frame time, but active cells can wait behind the bounded work
+  queue. Large active fronts can therefore slow simulation. Vertical repair is
+  still prioritized and not a fully time-integrated fluid solver. One-ml rounding
+  permits tiny droplets to advance faster than bulk. Not calibrated physics.
+- Flow deadline stability, large connected publication latency, arbitrary cut
+  topology, water paging and sustained laptop GPU/thermal behavior remain open.
+- Screenshots stall frames. Their HUD FPS and these checks are not GPU-cost or
+  sustained-60-FPS qualification. No additional renderer or water store added.

@@ -22,8 +22,18 @@ func run():
  var geometry:Dictionary=water.cell_geometry(Vector3(41.75,41.75,41.75))
  check(geometry.cut and geometry.capacity_ml==93750 and abs(geometry.head-(41.5+sqrt(20000.0)*0.001))<0.00001,"Runtime cut-cell level follows wedge volume instead of highest corner")
  check(water.statistics().active_cells>0 and water.statistics().pending_regions==0,"Version 2 upgrade wakes changed cut capacity using cached terrain")
+ # Version 3 also needs to wake the newly supported partially open top cell.
+ var previous:=bytes.duplicate();previous.encode_u32(4,3)
+ for i in 729:
+  var x:float=40+(i%9)*0.5;var y:float=40+((i/9)%9)*0.5
+  previous.encode_float(base+6160+i*4,y-(41.9+(x-41.5)*0.4))
+ previous.encode_u16(base+16+index*12,500)
+ var migrated=ClassDB.instantiate("NativeRegionalWater")
+ check(migrated.restore_snapshot(previous),"Version 3 partial-top archive restores")
+ var partial:Dictionary=migrated.cell_geometry(Vector3(41.75,41.75,41.75))
+ check(partial.cut and abs(partial.capacity_ml-6250)<=2 and migrated.statistics().active_cells>0 and migrated.statistics().pending_regions==0 and migrated.statistics().water_ml==10000,"Version 3 partial-top migration wakes cached water without losing volume")
  var upgraded:PackedByteArray=water.capture_snapshot(catalog)
- check(upgraded.decode_u32(4)==3 and water.statistics().water_ml==10000,"Version 3 upgrade preserves every millilitre")
+ check(upgraded.decode_u32(4)==4 and water.statistics().water_ml==10000,"Version 4 upgrade preserves every millilitre")
  var reopened=ClassDB.instantiate("NativeRegionalWater")
  check(reopened.restore_snapshot(upgraded) and reopened.capture_snapshot(catalog)==upgraded,"Cut-cell archive roundtrip preserves cached data and pending work")
  check(water.depth_at(Vector3(41.55,41.55,41.75))>0.09 and water.depth_at(Vector3(41.9,41.55,41.75))==0,"Depth query distinguishes wet and dry parts inside one cut cell")

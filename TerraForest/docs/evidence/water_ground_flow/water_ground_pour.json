@@ -1,0 +1,4863 @@
+{
+  "after_two_seconds": {
+    "active_cells": 381,
+    "cache_hits": 0,
+    "cached_region_rebuilds": 0,
+    "capacity_reached": false,
+    "cell_steps": 15509,
+    "changes": 31176,
+    "dirty_meshes": 52,
+    "fill_active": false,
+    "fill_remaining_ml": -1,
+    "lakes": 1,
+    "max_mesh_commit_us": 391,
+    "max_mesh_publish_us": 1676,
+    "max_mesh_us": 761,
+    "max_step_us": 1059,
+    "mesh_batch_active": true,
+    "mesh_commit_us": 276,
+    "mesh_publish_pending": false,
+    "mesh_publish_us": 604,
+    "mesh_snapshot_bytes": 244728,
+    "mesh_us": 73,
+    "outstanding_slices": 1,
+    "pending_regions": 1,
+    "pending_vertical": 0,
+    "published_mesh_batch": 177,
+    "query_builds": 0,
+    "query_cache_bytes": 418368,
+    "query_cache_hits": 12,
+    "ready": 1,
+    "regions": 78,
+    "render_ready": false,
+    "resident_cell_bytes": 706992,
+    "resident_occupancy_bytes": 706992,
+    "sampled_nodes": 56133,
+    "staged_meshes": 31,
+    "step_us": 1024,
+    "vertical_steps": 3277,
+    "water_ml": 556131961
+  },
+  "displacement_m": 0.431645780801773,
+  "failures": 0,
+  "recovered_litres": 4,
+  "scoop_aim": {
+    "from": "(802.3381, 51.07208, 1306.232)",
+    "geometry": {
+      "bottom": 49.4696044921875,
+      "capacity_ml": 7548,
+      "cut": true,
+      "head": 49.4741911989695,
+      "wet_centroid": "(802.3405, 49.46311, 1306.232)"
+    },
+    "nearby_now": "(802.3381, 49.47106, 1306.232)",
+    "statistics": {
+      "active_cells": 393,
+      "cache_hits": 0,
+      "cached_region_rebuilds": 0,
+      "capacity_reached": false,
+      "cell_steps": 16353,
+      "changes": 33276,
+      "dirty_meshes": 83,
+      "fill_active": false,
+      "fill_remaining_ml": -1,
+      "lakes": 1,
+      "max_mesh_commit_us": 391,
+      "max_mesh_publish_us": 1676,
+      "max_mesh_us": 761,
+      "max_step_us": 1059,
+      "mesh_batch_active": true,
+      "mesh_commit_us": 338,
+      "mesh_publish_pending": false,
+      "mesh_publish_us": 821,
+      "mesh_snapshot_bytes": 280984,
+      "mesh_us": 217,
+      "outstanding_slices": 1,
+      "pending_regions": 1,
+      "pending_vertical": 0,
+      "published_mesh_batch": 178,
+      "query_builds": 0,
+      "query_cache_bytes": 431808,
+      "query_cache_hits": 20,
+      "ready": 1,
+      "regions": 81,
+      "render_ready": false,
+      "resident_cell_bytes": 734184,
+      "resident_occupancy_bytes": 734184,
+      "sampled_nodes": 58320,
+      "staged_meshes": 8,
+      "step_us": 1010,
+      "vertical_steps": 3329,
+      "water_ml": 556131961
+    },
+    "terrain_point": "(802.3381, 49.4626, 1306.232)",
+    "water": {
+      "cell": "(1604, 98, 2612)",
+      "hit": true,
+      "normal": "(0.033825, 0.999301, -0.015917)",
+      "point": "(802.3381, 49.47106, 1306.232)"
+    }
+  },
+  "slope_degrees": 4.19497982237762,
+  "target": [
+    802.0,
+    49.49169921875,
+    1306.5
+  ],
+  "water_delta": {
+    "new_wet_cells": [
+      {
+        "cell": [
+          1606,
+          98,
+          2597
+        ],
+        "distance_m": 7.85387897491455,
+        "geometry": {
+          "bottom": 49.254721587559,
+          "capacity_ml": 61000,
+          "cut": true,
+          "head": 49.2341295448082,
+          "wet_centroid": "(803.4728, 49.23341, 1298.511)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1607,
+          98,
+          2598
+        ],
+        "distance_m": 7.46213245391846,
+        "geometry": {
+          "bottom": 49.257568359375,
+          "capacity_ml": 60577,
+          "cut": true,
+          "head": 49.2447430619213,
+          "wet_centroid": "(803.9875, 49.24422, 1299.034)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1606,
+          98,
+          2600
+        ],
+        "distance_m": 6.37835550308228,
+        "geometry": {
+          "bottom": 49.2972412109375,
+          "capacity_ml": 50659,
+          "cut": true,
+          "head": 49.2829749630764,
+          "wet_centroid": "(803.4872, 49.2824, 1300.03)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1605,
+          98,
+          2602
+        ],
+        "distance_m": 5.3088059425354,
+        "geometry": {
+          "bottom": 49.341064453125,
+          "capacity_ml": 39703,
+          "cut": true,
+          "head": 49.3260121262865,
+          "wet_centroid": "(802.9872, 49.32541, 1301.029)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1606,
+          98,
+          2602
+        ],
+        "distance_m": 5.40216779708862,
+        "geometry": {
+          "bottom": 49.3167724609375,
+          "capacity_ml": 45756,
+          "cut": true,
+          "head": 49.3020240006299,
+          "wet_centroid": "(803.4879, 49.30145, 1301.032)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1607,
+          98,
+          2603
+        ],
+        "distance_m": 5.06788110733032,
+        "geometry": {
+          "bottom": 49.3006591796875,
+          "capacity_ml": 49784,
+          "cut": true,
+          "head": 49.2858565281203,
+          "wet_centroid": "(803.9889, 49.2853, 1301.536)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1604,
+          98,
+          2604
+        ],
+        "distance_m": 4.26420211791992,
+        "geometry": {
+          "bottom": 49.3873291015625,
+          "capacity_ml": 28116,
+          "cut": true,
+          "head": 49.3714732989465,
+          "wet_centroid": "(802.4877, 49.37086, 1302.029)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1607,
+          98,
+          2604
+        ],
+        "distance_m": 4.6025447845459,
+        "geometry": {
+          "bottom": 49.308837890625,
+          "capacity_ml": 47749,
+          "cut": true,
+          "head": 49.2936594831117,
+          "wet_centroid": "(803.9894, 49.2931, 1302.038)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1605,
+          98,
+          2605
+        ],
+        "distance_m": 3.83189487457275,
+        "geometry": {
+          "bottom": 49.3717041015625,
+          "capacity_ml": 32023,
+          "cut": true,
+          "head": 49.3558023100923,
+          "wet_centroid": "(802.9885, 49.3552, 1302.532)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1607,
+          98,
+          2605
+        ],
+        "distance_m": 4.14528846740723,
+        "geometry": {
+          "bottom": 49.316650390625,
+          "capacity_ml": 45796,
+          "cut": true,
+          "head": 49.3010040370136,
+          "wet_centroid": "(803.9897, 49.30044, 1302.538)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1606,
+          98,
+          2606
+        ],
+        "distance_m": 3.49047541618347,
+        "geometry": {
+          "bottom": 49.3531494140625,
+          "capacity_ml": 36661,
+          "cut": true,
+          "head": 49.3371816763829,
+          "wet_centroid": "(803.4869, 49.33644, 1303.046)"
+        },
+        "ml": 2
+      },
+      {
+        "cell": [
+          1606,
+          98,
+          2607
+        ],
+        "distance_m": 3.03041553497314,
+        "geometry": {
+          "bottom": 49.36181640625,
+          "capacity_ml": 34495,
+          "cut": true,
+          "head": 49.3452697748216,
+          "wet_centroid": "(803.4873, 49.34452, 1303.547)"
+        },
+        "ml": 2
+      },
+      {
+        "cell": [
+          1607,
+          98,
+          2607
+        ],
+        "distance_m": 3.26854991912842,
+        "geometry": {
+          "bottom": 49.3316650390625,
+          "capacity_ml": 42032,
+          "cut": true,
+          "head": 49.3156087357493,
+          "wet_centroid": "(803.988, 49.3149, 1303.552)"
+        },
+        "ml": 2
+      },
+      {
+        "cell": [
+          1604,
+          98,
+          2608
+        ],
+        "distance_m": 2.27671217918396,
+        "geometry": {
+          "bottom": 49.4305419921875,
+          "capacity_ml": 17313,
+          "cut": true,
+          "head": 49.4135074035439,
+          "wet_centroid": "(802.4865, 49.41272, 1304.042)"
+        },
+        "ml": 2
+      },
+      {
+        "cell": [
+          1605,
+          98,
+          2608
+        ],
+        "distance_m": 2.38399219512939,
+        "geometry": {
+          "bottom": 49.400634765625,
+          "capacity_ml": 24790,
+          "cut": true,
+          "head": 49.3836363966984,
+          "wet_centroid": "(802.9897, 49.38304, 1304.036)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1607,
+          98,
+          2608
+        ],
+        "distance_m": 2.86066746711731,
+        "geometry": {
+          "bottom": 49.3388671875,
+          "capacity_ml": 40242,
+          "cut": true,
+          "head": 49.3224209065083,
+          "wet_centroid": "(803.9886, 49.32172, 1304.055)"
+        },
+        "ml": 2
+      },
+      {
+        "cell": [
+          1604,
+          98,
+          2609
+        ],
+        "distance_m": 1.78421366214752,
+        "geometry": {
+          "bottom": 49.440673828125,
+          "capacity_ml": 14780,
+          "cut": true,
+          "head": 49.4261652383211,
+          "wet_centroid": "(802.4699, 49.42433, 1304.596)"
+        },
+        "ml": 24
+      },
+      {
+        "cell": [
+          1605,
+          98,
+          2609
+        ],
+        "distance_m": 1.91922342777252,
+        "geometry": {
+          "bottom": 49.4095458984375,
+          "capacity_ml": 22562,
+          "cut": true,
+          "head": 49.3927690063283,
+          "wet_centroid": "(802.9856, 49.39189, 1304.553)"
+        },
+        "ml": 3
+      },
+      {
+        "cell": [
+          1607,
+          98,
+          2609
+        ],
+        "distance_m": 2.48664808273315,
+        "geometry": {
+          "bottom": 49.345703125,
+          "capacity_ml": 38533,
+          "cut": true,
+          "head": 49.3283511252521,
+          "wet_centroid": "(803.9911, 49.32779, 1304.544)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1603,
+          98,
+          2610
+        ],
+        "distance_m": 1.29746615886688,
+        "geometry": {
+          "bottom": 49.482421875,
+          "capacity_ml": 4351,
+          "cut": true,
+          "head": 49.4638775901112,
+          "wet_centroid": "(801.9894, 49.46322, 1305.032)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1604,
+          98,
+          2610
+        ],
+        "distance_m": 1.29746615886688,
+        "geometry": {
+          "bottom": 49.4505615234375,
+          "capacity_ml": 12308,
+          "cut": true,
+          "head": 49.4444440249499,
+          "wet_centroid": "(802.4177, 49.43921, 1305.211)"
+        },
+        "ml": 401
+      },
+      {
+        "cell": [
+          1605,
+          98,
+          2610
+        ],
+        "distance_m": 1.47763955593109,
+        "geometry": {
+          "bottom": 49.418212890625,
+          "capacity_ml": 20395,
+          "cut": true,
+          "head": 49.4086775009055,
+          "wet_centroid": "(802.9438, 49.40511, 1305.198)"
+        },
+        "ml": 178
+      },
+      {
+        "cell": [
+          1606,
+          98,
+          2610
+        ],
+        "distance_m": 1.78421366214752,
+        "geometry": {
+          "bottom": 49.3853759765625,
+          "capacity_ml": 28605,
+          "cut": true,
+          "head": 49.3697899060062,
+          "wet_centroid": "(803.4793, 49.36843, 1305.103)"
+        },
+        "ml": 13
+      },
+      {
+        "cell": [
+          1607,
+          98,
+          2610
+        ],
+        "distance_m": 2.1641206741333,
+        "geometry": {
+          "bottom": 49.35205078125,
+          "capacity_ml": 36936,
+          "cut": true,
+          "head": 49.3350433699961,
+          "wet_centroid": "(803.9896, 49.33437, 1305.063)"
+        },
+        "ml": 2
+      },
+      {
+        "cell": [
+          1603,
+          98,
+          2611
+        ],
+        "distance_m": 0.826691329479218,
+        "geometry": {
+          "bottom": 49.4932861328125,
+          "capacity_ml": 2037,
+          "cut": true,
+          "head": 49.4746741588897,
+          "wet_centroid": "(801.9869, 49.47384, 1305.541)"
+        },
+        "ml": 2
+      },
+      {
+        "cell": [
+          1604,
+          98,
+          2611
+        ],
+        "distance_m": 0.826691329479218,
+        "geometry": {
+          "bottom": 49.460205078125,
+          "capacity_ml": 9897,
+          "cut": true,
+          "head": 49.4623141264819,
+          "wet_centroid": "(802.357, 49.45276, 1305.728)"
+        },
+        "ml": 1331
+      },
+      {
+        "cell": [
+          1605,
+          98,
+          2611
+        ],
+        "distance_m": 1.08785045146942,
+        "geometry": {
+          "bottom": 49.4266357421875,
+          "capacity_ml": 18290,
+          "cut": true,
+          "head": 49.4261726802215,
+          "wet_centroid": "(802.8766, 49.41795, 1305.728)"
+        },
+        "ml": 989
+      },
+      {
+        "cell": [
+          1606,
+          98,
+          2611
+        ],
+        "distance_m": 1.47763955593109,
+        "geometry": {
+          "bottom": 49.392578125,
+          "capacity_ml": 26804,
+          "cut": true,
+          "head": 49.383961067615,
+          "wet_centroid": "(803.4353, 49.37956, 1305.717)"
+        },
+        "ml": 270
+      },
+      {
+        "cell": [
+          1607,
+          98,
+          2611
+        ],
+        "distance_m": 1.91922342777252,
+        "geometry": {
+          "bottom": 49.3580322265625,
+          "capacity_ml": 35441,
+          "cut": true,
+          "head": 49.3425841651479,
+          "wet_centroid": "(803.9794, 49.34118, 1305.63)"
+        },
+        "ml": 17
+      },
+      {
+        "cell": [
+          1603,
+          98,
+          2612
+        ],
+        "distance_m": 0.428273886442184,
+        "geometry": {
+          "bottom": 49.50390625,
+          "capacity_ml": 635,
+          "cut": true,
+          "head": 49.4936815029359,
+          "wet_centroid": "(801.9426, 49.48987, 1306.186)"
+        },
+        "ml": 183
+      },
+      {
+        "cell": [
+          1604,
+          98,
+          2612
+        ],
+        "distance_m": 0.428273886442184,
+        "geometry": {
+          "bottom": 49.4696044921875,
+          "capacity_ml": 7548,
+          "cut": true,
+          "head": 49.4745323759562,
+          "wet_centroid": "(802.3381, 49.46328, 1306.232)"
+        },
+        "ml": 1786
+      },
+      {
+        "cell": [
+          1605,
+          98,
+          2612
+        ],
+        "distance_m": 0.826691329479218,
+        "geometry": {
+          "bottom": 49.434814453125,
+          "capacity_ml": 16245,
+          "cut": true,
+          "head": 49.4386654512491,
+          "wet_centroid": "(802.8464, 49.42799, 1306.234)"
+        },
+        "ml": 1612
+      },
+      {
+        "cell": [
+          1606,
+          98,
+          2612
+        ],
+        "distance_m": 1.29746615886688,
+        "geometry": {
+          "bottom": 49.3995361328125,
+          "capacity_ml": 25065,
+          "cut": true,
+          "head": 49.3962860036409,
+          "wet_centroid": "(803.3969, 49.38898, 1306.231)"
+        },
+        "ml": 739
+      },
+      {
+        "cell": [
+          1607,
+          98,
+          2612
+        ],
+        "distance_m": 1.78421366214752,
+        "geometry": {
+          "bottom": 49.36376953125,
+          "capacity_ml": 34006,
+          "cut": true,
+          "head": 49.3524889769033,
+          "wet_centroid": "(803.953, 49.34918, 1306.217)"
+        },
+        "ml": 148
+      },
+      {
+        "cell": [
+          1604,
+          98,
+          2613
+        ],
+        "distance_m": 0.428273886442184,
+        "geometry": {
+          "bottom": 49.478759765625,
+          "capacity_ml": 5260,
+          "cut": true,
+          "head": 49.4763213343322,
+          "wet_centroid": "(802.3897, 49.46845, 1306.726)"
+        },
+        "ml": 842
+      },
+      {
+        "cell": [
+          1605,
+          98,
+          2613
+        ],
+        "distance_m": 0.826691329479218,
+        "geometry": {
+          "bottom": 49.4427490234375,
+          "capacity_ml": 14261,
+          "cut": true,
+          "head": 49.4381208961277,
+          "wet_centroid": "(802.9055, 49.43139, 1306.726)"
+        },
+        "ml": 618
+      },
+      {
+        "cell": [
+          1606,
+          98,
+          2613
+        ],
+        "distance_m": 1.29746615886688,
+        "geometry": {
+          "bottom": 49.40625,
+          "capacity_ml": 23386,
+          "cut": true,
+          "head": 49.3954272827177,
+          "wet_centroid": "(803.4465, 49.39153, 1306.715)"
+        },
+        "ml": 197
+      },
+      {
+        "cell": [
+          1607,
+          98,
+          2613
+        ],
+        "distance_m": 1.78421366214752,
+        "geometry": {
+          "bottom": 49.3692626953125,
+          "capacity_ml": 32633,
+          "cut": true,
+          "head": 49.3528822041408,
+          "wet_centroid": "(803.9805, 49.35147, 1306.645)"
+        },
+        "ml": 18
+      },
+      {
+        "cell": [
+          1604,
+          98,
+          2614
+        ],
+        "distance_m": 0.826691329479218,
+        "geometry": {
+          "bottom": 49.4874267578125,
+          "capacity_ml": 3246,
+          "cut": true,
+          "head": 49.4750632370269,
+          "wet_centroid": "(802.4539, 49.47169, 1307.197)"
+        },
+        "ml": 137
+      },
+      {
+        "cell": [
+          1605,
+          98,
+          2614
+        ],
+        "distance_m": 1.08785045146942,
+        "geometry": {
+          "bottom": 49.4501953125,
+          "capacity_ml": 12400,
+          "cut": true,
+          "head": 49.436130872491,
+          "wet_centroid": "(802.9656, 49.43361, 1307.188)"
+        },
+        "ml": 73
+      },
+      {
+        "cell": [
+          1606,
+          98,
+          2614
+        ],
+        "distance_m": 1.47763955593109,
+        "geometry": {
+          "bottom": 49.41259765625,
+          "capacity_ml": 21809,
+          "cut": true,
+          "head": 49.3943505409552,
+          "wet_centroid": "(803.4857, 49.39327, 1307.1)"
+        },
+        "ml": 7
+      },
+      {
+        "cell": [
+          1605,
+          98,
+          2615
+        ],
+        "distance_m": 1.47763955593109,
+        "geometry": {
+          "bottom": 49.4571533203125,
+          "capacity_ml": 10660,
+          "cut": true,
+          "head": 49.4368516707473,
+          "wet_centroid": "(802.9921, 49.43625, 1307.547)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1615,
+          97,
+          2595
+        ],
+        "distance_m": 10.4964332580566,
+        "geometry": {
+          "bottom": 48.7795102218467,
+          "capacity_ml": 47626,
+          "cut": true,
+          "head": 48.5195033285717,
+          "wet_centroid": "(807.5134, 48.51529, 1297.504)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1608,
+          98,
+          2596
+        ],
+        "distance_m": 8.55473041534424,
+        "geometry": {
+          "bottom": 49.1993204646296,
+          "capacity_ml": 74772,
+          "cut": true,
+          "head": 49.190451165789,
+          "wet_centroid": "(804.4533, 49.19006, 1298.012)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1610,
+          98,
+          2596
+        ],
+        "distance_m": 8.8703670501709,
+        "geometry": {
+          "bottom": 49.1770800989017,
+          "capacity_ml": 80666,
+          "cut": true,
+          "head": 49.1656164110378,
+          "wet_centroid": "(805.4866, 49.16504, 1298.058)"
+        },
+        "ml": 2
+      },
+      {
+        "cell": [
+          1611,
+          98,
+          2596
+        ],
+        "distance_m": 9.06550693511963,
+        "geometry": {
+          "bottom": 49.1549452093016,
+          "capacity_ml": 86198,
+          "cut": true,
+          "head": 49.1440960033215,
+          "wet_centroid": "(805.9882, 49.14359, 1298.074)"
+        },
+        "ml": 2
+      },
+      {
+        "cell": [
+          1614,
+          98,
+          2596
+        ],
+        "distance_m": 9.78178977966309,
+        "geometry": {
+          "bottom": 49.0802001953125,
+          "capacity_ml": 104919,
+          "cut": true,
+          "head": 49.0669507146667,
+          "wet_centroid": "(807.4936, 49.0666, 1298.101)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1615,
+          98,
+          2596
+        ],
+        "distance_m": 10.0589971542358,
+        "geometry": {
+          "bottom": 49.052978515625,
+          "capacity_ml": 111724,
+          "cut": true,
+          "head": 49.0399195107166,
+          "wet_centroid": "(807.9947, 49.03963, 1298.146)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1612,
+          98,
+          2597
+        ],
+        "distance_m": 8.84213924407959,
+        "geometry": {
+          "bottom": 49.134765625,
+          "capacity_ml": 91288,
+          "cut": true,
+          "head": 49.1218185907201,
+          "wet_centroid": "(806.4921, 49.12141, 1298.569)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1613,
+          98,
+          2598
+        ],
+        "distance_m": 8.67083740234375,
+        "geometry": {
+          "bottom": 49.1123046875,
+          "capacity_ml": 96893,
+          "cut": true,
+          "head": 49.0992755206535,
+          "wet_centroid": "(806.9896, 49.09874, 1299.079)"
+        },
+        "ml": 2
+      },
+      {
+        "cell": [
+          1608,
+          98,
+          2599
+        ],
+        "distance_m": 7.11922883987427,
+        "geometry": {
+          "bottom": 49.242919921875,
+          "capacity_ml": 64239,
+          "cut": true,
+          "head": 49.2293627687395,
+          "wet_centroid": "(804.4886, 49.22884, 1299.537)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1613,
+          98,
+          2599
+        ],
+        "distance_m": 8.25732517242432,
+        "geometry": {
+          "bottom": 49.1160888671875,
+          "capacity_ml": 95947,
+          "cut": true,
+          "head": 49.1023714539042,
+          "wet_centroid": "(806.9919, 49.10194, 1299.563)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1614,
+          98,
+          2599
+        ],
+        "distance_m": 8.55473041534424,
+        "geometry": {
+          "bottom": 49.087890625,
+          "capacity_ml": 102996,
+          "cut": true,
+          "head": 49.073574413902,
+          "wet_centroid": "(807.4911, 49.07306, 1299.596)"
+        },
+        "ml": 2
+      },
+      {
+        "cell": [
+          1609,
+          98,
+          2600
+        ],
+        "distance_m": 6.83252668380737,
+        "geometry": {
+          "bottom": 49.226318359375,
+          "capacity_ml": 68379,
+          "cut": true,
+          "head": 49.2129249793943,
+          "wet_centroid": "(804.9861, 49.21226, 1300.048)"
+        },
+        "ml": 2
+      },
+      {
+        "cell": [
+          1610,
+          98,
+          2600
+        ],
+        "distance_m": 7.04864645004272,
+        "geometry": {
+          "bottom": 49.2010498046875,
+          "capacity_ml": 74707,
+          "cut": true,
+          "head": 49.1866178405617,
+          "wet_centroid": "(805.4899, 49.1861, 1300.043)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1612,
+          98,
+          2600
+        ],
+        "distance_m": 7.56197166442871,
+        "geometry": {
+          "bottom": 49.147705078125,
+          "capacity_ml": 88033,
+          "cut": true,
+          "head": 49.1332593427796,
+          "wet_centroid": "(806.4913, 49.13279, 1300.054)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1613,
+          98,
+          2600
+        ],
+        "distance_m": 7.85387897491455,
+        "geometry": {
+          "bottom": 49.119873046875,
+          "capacity_ml": 94991,
+          "cut": true,
+          "head": 49.105801198486,
+          "wet_centroid": "(806.992, 49.10537, 1300.064)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1614,
+          98,
+          2600
+        ],
+        "distance_m": 8.16599178314209,
+        "geometry": {
+          "bottom": 49.0909423828125,
+          "capacity_ml": 102233,
+          "cut": true,
+          "head": 49.0762729039561,
+          "wet_centroid": "(807.4912, 49.07575, 1300.097)"
+        },
+        "ml": 2
+      },
+      {
+        "cell": [
+          1615,
+          98,
+          2600
+        ],
+        "distance_m": 8.4960823059082,
+        "geometry": {
+          "bottom": 49.060791015625,
+          "capacity_ml": 109771,
+          "cut": true,
+          "head": 49.0463300438714,
+          "wet_centroid": "(807.9921, 49.04586, 1300.12)"
+        },
+        "ml": 2
+      },
+      {
+        "cell": [
+          1609,
+          98,
+          2601
+        ],
+        "distance_m": 6.37835550308228,
+        "geometry": {
+          "bottom": 49.233642578125,
+          "capacity_ml": 66548,
+          "cut": true,
+          "head": 49.2193720755458,
+          "wet_centroid": "(804.9893, 49.21884, 1300.539)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1610,
+          98,
+          2601
+        ],
+        "distance_m": 6.6093430519104,
+        "geometry": {
+          "bottom": 49.20751953125,
+          "capacity_ml": 73089,
+          "cut": true,
+          "head": 49.1927359253095,
+          "wet_centroid": "(805.4902, 49.19221, 1300.543)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1611,
+          98,
+          2601
+        ],
+        "distance_m": 6.8690185546875,
+        "geometry": {
+          "bottom": 49.1805419921875,
+          "capacity_ml": 79833,
+          "cut": true,
+          "head": 49.1664509325492,
+          "wet_centroid": "(805.9881, 49.16582, 1300.559)"
+        },
+        "ml": 2
+      },
+      {
+        "cell": [
+          1614,
+          98,
+          2601
+        ],
+        "distance_m": 7.78995609283447,
+        "geometry": {
+          "bottom": 49.093994140625,
+          "capacity_ml": 101470,
+          "cut": true,
+          "head": 49.0789711830512,
+          "wet_centroid": "(807.4914, 49.07845, 1300.598)"
+        },
+        "ml": 2
+      },
+      {
+        "cell": [
+          1615,
+          98,
+          2601
+        ],
+        "distance_m": 8.13531875610352,
+        "geometry": {
+          "bottom": 49.0631103515625,
+          "capacity_ml": 109191,
+          "cut": true,
+          "head": 49.048294626642,
+          "wet_centroid": "(807.9922, 49.04782, 1300.621)"
+        },
+        "ml": 2
+      },
+      {
+        "cell": [
+          1610,
+          98,
+          2602
+        ],
+        "distance_m": 6.17927312850952,
+        "geometry": {
+          "bottom": 49.21337890625,
+          "capacity_ml": 71614,
+          "cut": true,
+          "head": 49.1987398955389,
+          "wet_centroid": "(805.491, 49.19825, 1301.05)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1611,
+          98,
+          2602
+        ],
+        "distance_m": 6.45626974105835,
+        "geometry": {
+          "bottom": 49.185546875,
+          "capacity_ml": 78572,
+          "cut": true,
+          "head": 49.1716462094919,
+          "wet_centroid": "(805.9895, 49.17107, 1301.074)"
+        },
+        "ml": 2
+      },
+      {
+        "cell": [
+          1612,
+          98,
+          2602
+        ],
+        "distance_m": 6.75895118713379,
+        "geometry": {
+          "bottom": 49.1568603515625,
+          "capacity_ml": 85754,
+          "cut": true,
+          "head": 49.1422714483924,
+          "wet_centroid": "(806.4907, 49.14172, 1301.086)"
+        },
+        "ml": 2
+      },
+      {
+        "cell": [
+          1614,
+          98,
+          2602
+        ],
+        "distance_m": 7.42855405807495,
+        "geometry": {
+          "bottom": 49.0966796875,
+          "capacity_ml": 100809,
+          "cut": true,
+          "head": 49.0812138167094,
+          "wet_centroid": "(807.494, 49.08083, 1301.097)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1615,
+          98,
+          2602
+        ],
+        "distance_m": 7.78995609283447,
+        "geometry": {
+          "bottom": 49.065185546875,
+          "capacity_ml": 108683,
+          "cut": true,
+          "head": 49.0498599821585,
+          "wet_centroid": "(807.9945, 49.04951, 1301.117)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1610,
+          98,
+          2603
+        ],
+        "distance_m": 5.76050519943237,
+        "geometry": {
+          "bottom": 49.21875,
+          "capacity_ml": 70271,
+          "cut": true,
+          "head": 49.2036400639627,
+          "wet_centroid": "(805.4912, 49.20314, 1301.551)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1611,
+          98,
+          2603
+        ],
+        "distance_m": 6.05668354034424,
+        "geometry": {
+          "bottom": 49.18994140625,
+          "capacity_ml": 77473,
+          "cut": true,
+          "head": 49.1755727439304,
+          "wet_centroid": "(805.9897, 49.17499, 1301.574)"
+        },
+        "ml": 2
+      },
+      {
+        "cell": [
+          1612,
+          98,
+          2603
+        ],
+        "distance_m": 6.37835550308228,
+        "geometry": {
+          "bottom": 49.160400390625,
+          "capacity_ml": 84869,
+          "cut": true,
+          "head": 49.1454588885026,
+          "wet_centroid": "(806.4908, 49.14491, 1301.587)"
+        },
+        "ml": 2
+      },
+      {
+        "cell": [
+          1613,
+          98,
+          2603
+        ],
+        "distance_m": 6.72186136245728,
+        "geometry": {
+          "bottom": 49.1300048828125,
+          "capacity_ml": 92468,
+          "cut": true,
+          "head": 49.1152905718336,
+          "wet_centroid": "(806.9916, 49.11478, 1301.604)"
+        },
+        "ml": 2
+      },
+      {
+        "cell": [
+          1615,
+          98,
+          2603
+        ],
+        "distance_m": 7.46213245391846,
+        "geometry": {
+          "bottom": 49.06689453125,
+          "capacity_ml": 108256,
+          "cut": true,
+          "head": 49.0513301604224,
+          "wet_centroid": "(807.9946, 49.05098, 1301.618)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1608,
+          98,
+          2604
+        ],
+        "distance_m": 4.81491613388062,
+        "geometry": {
+          "bottom": 49.28125,
+          "capacity_ml": 54646,
+          "cut": true,
+          "head": 49.2661993918737,
+          "wet_centroid": "(804.4878, 49.26552, 1302.054)"
+        },
+        "ml": 2
+      },
+      {
+        "cell": [
+          1609,
+          98,
+          2604
+        ],
+        "distance_m": 5.06788110733032,
+        "geometry": {
+          "bottom": 49.2529296875,
+          "capacity_ml": 61726,
+          "cut": true,
+          "head": 49.2378590036533,
+          "wet_centroid": "(804.9908, 49.23735, 1302.047)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1610,
+          98,
+          2604
+        ],
+        "distance_m": 5.35569047927856,
+        "geometry": {
+          "bottom": 49.2239990234375,
+          "capacity_ml": 68969,
+          "cut": true,
+          "head": 49.2085142444121,
+          "wet_centroid": "(805.4916, 49.20802, 1302.053)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1611,
+          98,
+          2604
+        ],
+        "distance_m": 5.6730432510376,
+        "geometry": {
+          "bottom": 49.1943359375,
+          "capacity_ml": 76385,
+          "cut": true,
+          "head": 49.1794988223701,
+          "wet_centroid": "(805.99, 49.17891, 1302.075)"
+        },
+        "ml": 2
+      },
+      {
+        "cell": [
+          1612,
+          98,
+          2604
+        ],
+        "distance_m": 6.01526546478271,
+        "geometry": {
+          "bottom": 49.163818359375,
+          "capacity_ml": 84004,
+          "cut": true,
+          "head": 49.1486020383745,
+          "wet_centroid": "(806.4911, 49.14806, 1302.093)"
+        },
+        "ml": 2
+      },
+      {
+        "cell": [
+          1613,
+          98,
+          2604
+        ],
+        "distance_m": 6.37835550308228,
+        "geometry": {
+          "bottom": 49.132568359375,
+          "capacity_ml": 91817,
+          "cut": true,
+          "head": 49.1176343380648,
+          "wet_centroid": "(806.9923, 49.11716, 1302.121)"
+        },
+        "ml": 2
+      },
+      {
+        "cell": [
+          1614,
+          98,
+          2604
+        ],
+        "distance_m": 6.75895118713379,
+        "geometry": {
+          "bottom": 49.1005859375,
+          "capacity_ml": 99812,
+          "cut": true,
+          "head": 49.0848950623185,
+          "wet_centroid": "(807.4953, 49.08459, 1302.155)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1608,
+          98,
+          2605
+        ],
+        "distance_m": 4.37988805770874,
+        "geometry": {
+          "bottom": 49.2880859375,
+          "capacity_ml": 52937,
+          "cut": true,
+          "head": 49.2721450623067,
+          "wet_centroid": "(804.4905, 49.2716, 1302.543)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1609,
+          98,
+          2605
+        ],
+        "distance_m": 4.65654563903809,
+        "geometry": {
+          "bottom": 49.2587890625,
+          "capacity_ml": 60262,
+          "cut": true,
+          "head": 49.2436503060017,
+          "wet_centroid": "(804.9887, 49.243, 1302.561)"
+        },
+        "ml": 2
+      },
+      {
+        "cell": [
+          1611,
+          98,
+          2605
+        ],
+        "distance_m": 5.3088059425354,
+        "geometry": {
+          "bottom": 49.1986083984375,
+          "capacity_ml": 75317,
+          "cut": true,
+          "head": 49.1830526351114,
+          "wet_centroid": "(805.9922, 49.18258, 1302.56)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1612,
+          98,
+          2605
+        ],
+        "distance_m": 5.6730432510376,
+        "geometry": {
+          "bottom": 49.167236328125,
+          "capacity_ml": 83150,
+          "cut": true,
+          "head": 49.1515487957076,
+          "wet_centroid": "(806.4913, 49.151, 1302.594)"
+        },
+        "ml": 2
+      },
+      {
+        "cell": [
+          1613,
+          98,
+          2605
+        ],
+        "distance_m": 6.05668354034424,
+        "geometry": {
+          "bottom": 49.135009765625,
+          "capacity_ml": 91206,
+          "cut": true,
+          "head": 49.1193056523625,
+          "wet_centroid": "(806.994, 49.11893, 1302.597)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1609,
+          98,
+          2606
+        ],
+        "distance_m": 4.26420211791992,
+        "geometry": {
+          "bottom": 49.264404296875,
+          "capacity_ml": 58858,
+          "cut": true,
+          "head": 49.2489815073495,
+          "wet_centroid": "(804.9893, 49.24834, 1303.065)"
+        },
+        "ml": 2
+      },
+      {
+        "cell": [
+          1611,
+          98,
+          2606
+        ],
+        "distance_m": 4.96824073791504,
+        "geometry": {
+          "bottom": 49.202392578125,
+          "capacity_ml": 74361,
+          "cut": true,
+          "head": 49.1871762580122,
+          "wet_centroid": "(805.9911, 49.18663, 1303.093)"
+        },
+        "ml": 2
+      },
+      {
+        "cell": [
+          1612,
+          98,
+          2606
+        ],
+        "distance_m": 5.35569047927856,
+        "geometry": {
+          "bottom": 49.170166015625,
+          "capacity_ml": 82417,
+          "cut": true,
+          "head": 49.1542849468096,
+          "wet_centroid": "(806.4926, 49.1538, 1303.124)"
+        },
+        "ml": 2
+      },
+      {
+        "cell": [
+          1613,
+          98,
+          2606
+        ],
+        "distance_m": 5.76050519943237,
+        "geometry": {
+          "bottom": 49.136962890625,
+          "capacity_ml": 90718,
+          "cut": true,
+          "head": 49.1210324652784,
+          "wet_centroid": "(806.9954, 49.12073, 1303.156)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1614,
+          98,
+          2606
+        ],
+        "distance_m": 6.17927312850952,
+        "geometry": {
+          "bottom": 49.10302734375,
+          "capacity_ml": 99202,
+          "cut": true,
+          "head": 49.0864604578819,
+          "wet_centroid": "(807.4962, 49.0862, 1303.25)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1615,
+          98,
+          2606
+        ],
+        "distance_m": 6.6093430519104,
+        "geometry": {
+          "bottom": 49.068359375,
+          "capacity_ml": 107869,
+          "cut": true,
+          "head": 49.0517102134181,
+          "wet_centroid": "(807.9955, 49.0514, 1303.341)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1609,
+          98,
+          2607
+        ],
+        "distance_m": 3.89659070968628,
+        "geometry": {
+          "bottom": 49.269775390625,
+          "capacity_ml": 57515,
+          "cut": true,
+          "head": 49.2538849812117,
+          "wet_centroid": "(804.9896, 49.25324, 1303.566)"
+        },
+        "ml": 2
+      },
+      {
+        "cell": [
+          1611,
+          98,
+          2607
+        ],
+        "distance_m": 4.65654563903809,
+        "geometry": {
+          "bottom": 49.205810546875,
+          "capacity_ml": 73506,
+          "cut": true,
+          "head": 49.1901230179647,
+          "wet_centroid": "(805.9913, 49.18958, 1303.594)"
+        },
+        "ml": 2
+      },
+      {
+        "cell": [
+          1614,
+          98,
+          2607
+        ],
+        "distance_m": 5.93156099319458,
+        "geometry": {
+          "bottom": 49.103515625,
+          "capacity_ml": 99080,
+          "cut": true,
+          "head": 49.0864678618964,
+          "wet_centroid": "(807.4962, 49.0862, 1303.75)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1608,
+          98,
+          2608
+        ],
+        "distance_m": 3.19114685058594,
+        "geometry": {
+          "bottom": 49.30712890625,
+          "capacity_ml": 48177,
+          "cut": true,
+          "head": 49.2901736026251,
+          "wet_centroid": "(804.4916, 49.28964, 1304.05)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1609,
+          98,
+          2608
+        ],
+        "distance_m": 3.56137871742249,
+        "geometry": {
+          "bottom": 49.27490234375,
+          "capacity_ml": 56233,
+          "cut": true,
+          "head": 49.2587206485041,
+          "wet_centroid": "(804.9901, 49.25809, 1304.072)"
+        },
+        "ml": 2
+      },
+      {
+        "cell": [
+          1612,
+          98,
+          2608
+        ],
+        "distance_m": 4.81491613388062,
+        "geometry": {
+          "bottom": 49.174560546875,
+          "capacity_ml": 81319,
+          "cut": true,
+          "head": 49.1579159277462,
+          "wet_centroid": "(806.4942, 49.15751, 1304.191)"
+        },
+        "ml": 2
+      },
+      {
+        "cell": [
+          1615,
+          98,
+          2608
+        ],
+        "distance_m": 6.17927312850952,
+        "geometry": {
+          "bottom": 49.067138671875,
+          "capacity_ml": 108184,
+          "cut": true,
+          "head": 49.0494231330667,
+          "wet_centroid": "(807.995, 49.04906, 1304.377)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1608,
+          98,
+          2609
+        ],
+        "distance_m": 2.86066746711731,
+        "geometry": {
+          "bottom": 49.31298828125,
+          "capacity_ml": 46712,
+          "cut": true,
+          "head": 49.2955609301862,
+          "wet_centroid": "(804.4918, 49.29502, 1304.55)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1610,
+          98,
+          2609
+        ],
+        "distance_m": 3.69911050796509,
+        "geometry": {
+          "bottom": 49.245849609375,
+          "capacity_ml": 63486,
+          "cut": true,
+          "head": 49.2286673290437,
+          "wet_centroid": "(805.4933, 49.22821, 1304.572)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1611,
+          98,
+          2609
+        ],
+        "distance_m": 4.14528846740723,
+        "geometry": {
+          "bottom": 49.2113037109375,
+          "capacity_ml": 72123,
+          "cut": true,
+          "head": 49.1945267127012,
+          "wet_centroid": "(805.9943, 49.19414, 1304.6)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1613,
+          98,
+          2609
+        ],
+        "distance_m": 5.06788110733032,
+        "geometry": {
+          "bottom": 49.139892578125,
+          "capacity_ml": 89986,
+          "cut": true,
+          "head": 49.1226043562929,
+          "wet_centroid": "(806.9963, 49.12234, 1304.75)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1609,
+          98,
+          2610
+        ],
+        "distance_m": 3.03041553497314,
+        "geometry": {
+          "bottom": 49.283935546875,
+          "capacity_ml": 53965,
+          "cut": true,
+          "head": 49.2673045587726,
+          "wet_centroid": "(804.9917, 49.26675, 1305.096)"
+        },
+        "ml": 2
+      },
+      {
+        "cell": [
+          1610,
+          98,
+          2610
+        ],
+        "distance_m": 3.49047541618347,
+        "geometry": {
+          "bottom": 49.2490234375,
+          "capacity_ml": 62703,
+          "cut": true,
+          "head": 49.2316499281442,
+          "wet_centroid": "(805.4944, 49.23125, 1305.101)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1612,
+          98,
+          2610
+        ],
+        "distance_m": 4.43659973144531,
+        "geometry": {
+          "bottom": 49.1771240234375,
+          "capacity_ml": 80688,
+          "cut": true,
+          "head": 49.1593501414609,
+          "wet_centroid": "(806.4963, 49.15908, 1305.231)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1613,
+          98,
+          2610
+        ],
+        "distance_m": 4.91766405105591,
+        "geometry": {
+          "bottom": 49.14013671875,
+          "capacity_ml": 89935,
+          "cut": true,
+          "head": 49.1223488382384,
+          "wet_centroid": "(806.9962, 49.12207, 1305.289)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1611,
+          98,
+          2611
+        ],
+        "distance_m": 3.83189487457275,
+        "geometry": {
+          "bottom": 49.21484375,
+          "capacity_ml": 71248,
+          "cut": true,
+          "head": 49.1972351668228,
+          "wet_centroid": "(805.9956, 49.19692, 1305.661)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1614,
+          98,
+          2611
+        ],
+        "distance_m": 5.3088059425354,
+        "geometry": {
+          "bottom": 49.1015625,
+          "capacity_ml": 99568,
+          "cut": true,
+          "head": 49.0826501807751,
+          "wet_centroid": "(807.4952, 49.08228, 1305.874)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1608,
+          98,
+          2612
+        ],
+        "distance_m": 2.27671217918396,
+        "geometry": {
+          "bottom": 49.32763671875,
+          "capacity_ml": 43050,
+          "cut": true,
+          "head": 49.3097832235799,
+          "wet_centroid": "(804.49, 49.30906, 1306.092)"
+        },
+        "ml": 3
+      },
+      {
+        "cell": [
+          1609,
+          98,
+          2612
+        ],
+        "distance_m": 2.77189803123474,
+        "geometry": {
+          "bottom": 49.291015625,
+          "capacity_ml": 52205,
+          "cut": true,
+          "head": 49.2728488927823,
+          "wet_centroid": "(804.9937, 49.27239, 1306.078)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1612,
+          98,
+          2612
+        ],
+        "distance_m": 4.26420211791992,
+        "geometry": {
+          "bottom": 49.1781005859375,
+          "capacity_ml": 80423,
+          "cut": true,
+          "head": 49.1596051544839,
+          "wet_centroid": "(806.4963, 49.15933, 1306.269)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1615,
+          98,
+          2612
+        ],
+        "distance_m": 5.76050519943237,
+        "geometry": {
+          "bottom": 49.060302734375,
+          "capacity_ml": 109893,
+          "cut": true,
+          "head": 49.0404693481978,
+          "wet_centroid": "(807.9941, 49.04, 1306.42)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1610,
+          98,
+          2613
+        ],
+        "distance_m": 3.26854991912842,
+        "geometry": {
+          "bottom": 49.25634765625,
+          "capacity_ml": 60872,
+          "cut": true,
+          "head": 49.2375412404654,
+          "wet_centroid": "(805.4947, 49.23714, 1306.604)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1614,
+          98,
+          2613
+        ],
+        "distance_m": 5.26150321960449,
+        "geometry": {
+          "bottom": 49.098388671875,
+          "capacity_ml": 100372,
+          "cut": true,
+          "head": 49.0784343287523,
+          "wet_centroid": "(807.4947, 49.07801, 1306.902)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1608,
+          98,
+          2614
+        ],
+        "distance_m": 2.38399219512939,
+        "geometry": {
+          "bottom": 49.3360595703125,
+          "capacity_ml": 40934,
+          "cut": true,
+          "head": 49.3168559057813,
+          "wet_centroid": "(804.4938, 49.31638, 1307.075)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1613,
+          98,
+          2614
+        ],
+        "distance_m": 4.81491613388062,
+        "geometry": {
+          "bottom": 49.137451171875,
+          "capacity_ml": 90606,
+          "cut": true,
+          "head": 49.1174497776374,
+          "wet_centroid": "(806.9949, 49.11703, 1307.394)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1615,
+          98,
+          2616
+        ],
+        "distance_m": 6.01526546478271,
+        "geometry": {
+          "bottom": 49.04736328125,
+          "capacity_ml": 113118,
+          "cut": true,
+          "head": 49.0251527989749,
+          "wet_centroid": "(807.9933, 49.02458, 1308.441)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1616,
+          97,
+          2595
+        ],
+        "distance_m": 10.7784557342529,
+        "geometry": {
+          "bottom": 48.8382897161238,
+          "capacity_ml": 32055,
+          "cut": true,
+          "head": 48.6754128270796,
+          "wet_centroid": "(808.0116, 48.67156, 1297.506)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1617,
+          97,
+          2596
+        ],
+        "distance_m": 10.6852760314941,
+        "geometry": {
+          "bottom": 48.9955334716256,
+          "capacity_ml": 1596,
+          "cut": true,
+          "head": 48.9806990344223,
+          "wet_centroid": "(808.9958, 48.98044, 1298.293)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1620,
+          97,
+          2596
+        ],
+        "distance_m": 11.6908130645752,
+        "geometry": {
+          "bottom": 48.897705078125,
+          "capacity_ml": 25553,
+          "cut": true,
+          "head": 48.8804679003515,
+          "wet_centroid": "(810.4949, 48.88011, 1298.378)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1617,
+          97,
+          2597
+        ],
+        "distance_m": 10.3041315078735,
+        "geometry": {
+          "bottom": 48.9950680044457,
+          "capacity_ml": 1672,
+          "cut": true,
+          "head": 48.9802111453319,
+          "wet_centroid": "(808.9958, 48.97995, 1298.793)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1618,
+          97,
+          2597
+        ],
+        "distance_m": 10.6383790969849,
+        "geometry": {
+          "bottom": 48.96337890625,
+          "capacity_ml": 9145,
+          "cut": true,
+          "head": 48.9476073473197,
+          "wet_centroid": "(809.4957, 48.94733, 1298.816)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1616,
+          98,
+          2597
+        ],
+        "distance_m": 9.95908737182617,
+        "geometry": {
+          "bottom": 49.025146484375,
+          "capacity_ml": 118682,
+          "cut": true,
+          "head": 49.010821435666,
+          "wet_centroid": "(808.4942, 49.01047, 1298.735)"
+        },
+        "ml": 2
+      },
+      {
+        "cell": [
+          1617,
+          97,
+          2598
+        ],
+        "distance_m": 9.93353462219238,
+        "geometry": {
+          "bottom": 48.995361328125,
+          "capacity_ml": 1623,
+          "cut": true,
+          "head": 48.980622897594,
+          "wet_centroid": "(808.9938, 48.98024, 1299.187)"
+        },
+        "ml": 2
+      },
+      {
+        "cell": [
+          1618,
+          97,
+          2598
+        ],
+        "distance_m": 10.2798404693604,
+        "geometry": {
+          "bottom": 48.9632568359375,
+          "capacity_ml": 9155,
+          "cut": true,
+          "head": 48.9474061335641,
+          "wet_centroid": "(809.496, 48.94715, 1299.23)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1619,
+          97,
+          2598
+        ],
+        "distance_m": 10.6383790969849,
+        "geometry": {
+          "bottom": 48.93017578125,
+          "capacity_ml": 17425,
+          "cut": true,
+          "head": 48.9143102296075,
+          "wet_centroid": "(809.9959, 48.91404, 1299.291)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1616,
+          98,
+          2598
+        ],
+        "distance_m": 9.57514572143555,
+        "geometry": {
+          "bottom": 49.0263671875,
+          "capacity_ml": 118387,
+          "cut": true,
+          "head": 49.0112803689699,
+          "wet_centroid": "(808.4944, 49.01094, 1299.117)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1620,
+          97,
+          2599
+        ],
+        "distance_m": 10.6852760314941,
+        "geometry": {
+          "bottom": 48.894775390625,
+          "capacity_ml": 26285,
+          "cut": true,
+          "head": 48.8769270183693,
+          "wet_centroid": "(810.4957, 48.87661, 1299.838)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1621,
+          97,
+          2599
+        ],
+        "distance_m": 11.0758800506592,
+        "geometry": {
+          "bottom": 48.85791015625,
+          "capacity_ml": 35502,
+          "cut": true,
+          "head": 48.8399552401679,
+          "wet_centroid": "(810.9951, 48.83959, 1299.876)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1619,
+          97,
+          2600
+        ],
+        "distance_m": 9.98374271392822,
+        "geometry": {
+          "bottom": 48.929931640625,
+          "capacity_ml": 17496,
+          "cut": true,
+          "head": 48.9133454115217,
+          "wet_centroid": "(809.996, 48.91307, 1300.29)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1621,
+          97,
+          2600
+        ],
+        "distance_m": 10.7784557342529,
+        "geometry": {
+          "bottom": 48.856689453125,
+          "capacity_ml": 35807,
+          "cut": true,
+          "head": 48.8384952094202,
+          "wet_centroid": "(810.9951, 48.83813, 1300.376)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1620,
+          97,
+          2601
+        ],
+        "distance_m": 10.0834083557129,
+        "geometry": {
+          "bottom": 48.893310546875,
+          "capacity_ml": 26652,
+          "cut": true,
+          "head": 48.8749822609534,
+          "wet_centroid": "(810.4957, 48.87466, 1300.836)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1616,
+          98,
+          2601
+        ],
+        "distance_m": 8.4960823059082,
+        "geometry": {
+          "bottom": 49.03125,
+          "capacity_ml": 117156,
+          "cut": true,
+          "head": 49.0156434226301,
+          "wet_centroid": "(808.4937, 49.01523, 1300.669)"
+        },
+        "ml": 2
+      },
+      {
+        "cell": [
+          1617,
+          97,
+          2602
+        ],
+        "distance_m": 8.583420753479,
+        "geometry": {
+          "bottom": 48.9990234375,
+          "capacity_ml": 1158,
+          "cut": true,
+          "head": 48.9829372923705,
+          "wet_centroid": "(808.9961, 48.98268, 1301.25)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1619,
+          97,
+          2602
+        ],
+        "distance_m": 9.39016056060791,
+        "geometry": {
+          "bottom": 48.928955078125,
+          "capacity_ml": 17730,
+          "cut": true,
+          "head": 48.9117179947352,
+          "wet_centroid": "(809.9949, 48.91136, 1301.378)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1622,
+          97,
+          2602
+        ],
+        "distance_m": 10.6618537902832,
+        "geometry": {
+          "bottom": 48.8143310546875,
+          "capacity_ml": 46386,
+          "cut": true,
+          "head": 48.7941754381245,
+          "wet_centroid": "(811.494, 48.79369, 1301.424)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1618,
+          97,
+          2603
+        ],
+        "distance_m": 8.69914436340332,
+        "geometry": {
+          "bottom": 48.964111328125,
+          "capacity_ml": 8941,
+          "cut": true,
+          "head": 48.9466594564583,
+          "wet_centroid": "(809.4959, 48.94637, 1301.812)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1619,
+          97,
+          2603
+        ],
+        "distance_m": 9.12003898620605,
+        "geometry": {
+          "bottom": 48.9278564453125,
+          "capacity_ml": 18005,
+          "cut": true,
+          "head": 48.9105414793303,
+          "wet_centroid": "(809.9937, 48.91009, 1301.845)"
+        },
+        "ml": 2
+      },
+      {
+        "cell": [
+          1621,
+          97,
+          2603
+        ],
+        "distance_m": 9.98374271392822,
+        "geometry": {
+          "bottom": 48.8515625,
+          "capacity_ml": 37089,
+          "cut": true,
+          "head": 48.8327085569326,
+          "wet_centroid": "(810.9929, 48.83216, 1301.887)"
+        },
+        "ml": 2
+      },
+      {
+        "cell": [
+          1619,
+          97,
+          2604
+        ],
+        "distance_m": 8.86989974975586,
+        "geometry": {
+          "bottom": 48.926025390625,
+          "capacity_ml": 18463,
+          "cut": true,
+          "head": 48.9076212989166,
+          "wet_centroid": "(809.9938, 48.90716, 1302.422)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1622,
+          97,
+          2604
+        ],
+        "distance_m": 10.2066211700439,
+        "geometry": {
+          "bottom": 48.8082275390625,
+          "capacity_ml": 47932,
+          "cut": true,
+          "head": 48.7870056331085,
+          "wet_centroid": "(811.4935, 48.78647, 1302.436)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1616,
+          98,
+          2604
+        ],
+        "distance_m": 7.56197166442871,
+        "geometry": {
+          "bottom": 49.0340576171875,
+          "capacity_ml": 116455,
+          "cut": true,
+          "head": 49.0172060844707,
+          "wet_centroid": "(808.4958, 49.01692, 1302.313)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1623,
+          97,
+          2605
+        ],
+        "distance_m": 10.4725885391235,
+        "geometry": {
+          "bottom": 48.7623291015625,
+          "capacity_ml": 59407,
+          "cut": true,
+          "head": 48.7408971474797,
+          "wet_centroid": "(811.9935, 48.74035, 1302.938)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1616,
+          98,
+          2605
+        ],
+        "distance_m": 7.29269599914551,
+        "geometry": {
+          "bottom": 49.03369140625,
+          "capacity_ml": 116546,
+          "cut": true,
+          "head": 49.016479682643,
+          "wet_centroid": "(808.4959, 49.01619, 1302.812)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1622,
+          97,
+          2606
+        ],
+        "distance_m": 9.832350730896,
+        "geometry": {
+          "bottom": 48.799560546875,
+          "capacity_ml": 50089,
+          "cut": true,
+          "head": 48.777635496328,
+          "wet_centroid": "(811.493, 48.77705, 1303.445)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1619,
+          97,
+          2607
+        ],
+        "distance_m": 8.25682258605957,
+        "geometry": {
+          "bottom": 48.91748046875,
+          "capacity_ml": 20609,
+          "cut": true,
+          "head": 48.8979529828648,
+          "wet_centroid": "(809.9937, 48.89746, 1303.928)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1621,
+          97,
+          2607
+        ],
+        "distance_m": 9.20190811157227,
+        "geometry": {
+          "bottom": 48.8363037109375,
+          "capacity_ml": 40893,
+          "cut": true,
+          "head": 48.8151618946285,
+          "wet_centroid": "(810.9932, 48.8146, 1303.942)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1623,
+          97,
+          2607
+        ],
+        "distance_m": 10.1575155258179,
+        "geometry": {
+          "bottom": 48.751708984375,
+          "capacity_ml": 62052,
+          "cut": true,
+          "head": 48.729354370822,
+          "wet_centroid": "(811.9929, 48.72875, 1303.948)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1616,
+          98,
+          2607
+        ],
+        "distance_m": 6.83252668380737,
+        "geometry": {
+          "bottom": 49.031494140625,
+          "capacity_ml": 117095,
+          "cut": true,
+          "head": 49.0133551195177,
+          "wet_centroid": "(808.4948, 49.01297, 1303.888)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1617,
+          97,
+          2608
+        ],
+        "distance_m": 7.15367841720581,
+        "geometry": {
+          "bottom": 48.991943359375,
+          "capacity_ml": 2388,
+          "cut": true,
+          "head": 48.9730630343256,
+          "wet_centroid": "(808.9939, 48.9726, 1304.421)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1618,
+          97,
+          2608
+        ],
+        "distance_m": 7.62726163864136,
+        "geometry": {
+          "bottom": 48.9532470703125,
+          "capacity_ml": 11657,
+          "cut": true,
+          "head": 48.9333941358564,
+          "wet_centroid": "(809.4936, 48.93289, 1304.431)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1620,
+          97,
+          2608
+        ],
+        "distance_m": 8.583420753479,
+        "geometry": {
+          "bottom": 48.873291015625,
+          "capacity_ml": 31656,
+          "cut": true,
+          "head": 48.8517926513596,
+          "wet_centroid": "(810.4932, 48.85123, 1304.442)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1621,
+          97,
+          2608
+        ],
+        "distance_m": 9.06504917144775,
+        "geometry": {
+          "bottom": 48.83154296875,
+          "capacity_ml": 42093,
+          "cut": true,
+          "head": 48.8098552413721,
+          "wet_centroid": "(810.993, 48.80927, 1304.446)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1617,
+          97,
+          2609
+        ],
+        "distance_m": 7.01249742507935,
+        "geometry": {
+          "bottom": 48.9893798828125,
+          "capacity_ml": 2880,
+          "cut": true,
+          "head": 48.9701422499493,
+          "wet_centroid": "(808.994, 48.96968, 1304.921)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1621,
+          97,
+          2610
+        ],
+        "distance_m": 8.86989974975586,
+        "geometry": {
+          "bottom": 48.820556640625,
+          "capacity_ml": 44830,
+          "cut": true,
+          "head": 48.7978100782202,
+          "wet_centroid": "(810.9926, 48.79717, 1305.453)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1623,
+          97,
+          2610
+        ],
+        "distance_m": 9.85774421691895,
+        "geometry": {
+          "bottom": 48.732421875,
+          "capacity_ml": 66884,
+          "cut": true,
+          "head": 48.7085275694699,
+          "wet_centroid": "(811.9926, 48.70787, 1305.455)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1620,
+          97,
+          2611
+        ],
+        "distance_m": 8.31715774536133,
+        "geometry": {
+          "bottom": 48.857666015625,
+          "capacity_ml": 35552,
+          "cut": true,
+          "head": 48.8348589314555,
+          "wet_centroid": "(810.4929, 48.83424, 1305.949)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1622,
+          97,
+          2611
+        ],
+        "distance_m": 9.30994701385498,
+        "geometry": {
+          "bottom": 48.77001953125,
+          "capacity_ml": 57484,
+          "cut": true,
+          "head": 48.7466174665024,
+          "wet_centroid": "(811.4908, 48.74579, 1305.942)"
+        },
+        "ml": 2
+      },
+      {
+        "cell": [
+          1618,
+          97,
+          2612
+        ],
+        "distance_m": 7.29212713241577,
+        "geometry": {
+          "bottom": 48.9371337890625,
+          "capacity_ml": 15686,
+          "cut": true,
+          "head": 48.9151133132182,
+          "wet_centroid": "(809.4929, 48.91452, 1306.447)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1619,
+          97,
+          2612
+        ],
+        "distance_m": 7.78942346572876,
+        "geometry": {
+          "bottom": 48.894775390625,
+          "capacity_ml": 26275,
+          "cut": true,
+          "head": 48.8729461052426,
+          "wet_centroid": "(809.9907, 48.87217, 1306.438)"
+        },
+        "ml": 2
+      },
+      {
+        "cell": [
+          1621,
+          97,
+          2612
+        ],
+        "distance_m": 8.78493690490723,
+        "geometry": {
+          "bottom": 48.807373046875,
+          "capacity_ml": 48136,
+          "cut": true,
+          "head": 48.7837161086936,
+          "wet_centroid": "(810.9925, 48.78305, 1306.455)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1617,
+          97,
+          2613
+        ],
+        "distance_m": 6.79522752761841,
+        "geometry": {
+          "bottom": 48.974365234375,
+          "capacity_ml": 6368,
+          "cut": true,
+          "head": 48.9528675441979,
+          "wet_centroid": "(808.9932, 48.9523, 1306.942)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1618,
+          97,
+          2613
+        ],
+        "distance_m": 7.29212713241577,
+        "geometry": {
+          "bottom": 48.931884765625,
+          "capacity_ml": 16998,
+          "cut": true,
+          "head": 48.9099745193234,
+          "wet_centroid": "(809.4912, 48.90922, 1306.933)"
+        },
+        "ml": 2
+      },
+      {
+        "cell": [
+          1623,
+          97,
+          2613
+        ],
+        "distance_m": 9.78136539459229,
+        "geometry": {
+          "bottom": 48.7088623046875,
+          "capacity_ml": 72753,
+          "cut": true,
+          "head": 48.6837699734024,
+          "wet_centroid": "(811.9922, 48.68306, 1306.96)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1617,
+          97,
+          2614
+        ],
+        "distance_m": 6.83191919326782,
+        "geometry": {
+          "bottom": 48.969482421875,
+          "capacity_ml": 7588,
+          "cut": true,
+          "head": 48.9476006731857,
+          "wet_centroid": "(808.9911, 48.94683, 1307.435)"
+        },
+        "ml": 2
+      },
+      {
+        "cell": [
+          1616,
+          97,
+          2615
+        ],
+        "distance_m": 6.41678380966187,
+        "geometry": {
+          "bottom": 49.008056640625,
+          "capacity_ml": 541,
+          "cut": true,
+          "head": 48.9860559815279,
+          "wet_centroid": "(808.4917, 48.98533, 1307.926)"
+        },
+        "ml": 2
+      },
+      {
+        "cell": [
+          1622,
+          97,
+          2615
+        ],
+        "distance_m": 9.36349964141846,
+        "geometry": {
+          "bottom": 48.738525390625,
+          "capacity_ml": 65358,
+          "cut": true,
+          "head": 48.7130606442224,
+          "wet_centroid": "(811.4924, 48.71235, 1307.959)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1621,
+          97,
+          2616
+        ],
+        "distance_m": 8.95405578613281,
+        "geometry": {
+          "bottom": 48.7763671875,
+          "capacity_ml": 55887,
+          "cut": true,
+          "head": 48.751710267301,
+          "wet_centroid": "(810.9903, 48.75081, 1308.449)"
+        },
+        "ml": 2
+      },
+      {
+        "cell": [
+          1620,
+          97,
+          2617
+        ],
+        "distance_m": 8.583420753479,
+        "geometry": {
+          "bottom": 48.814453125,
+          "capacity_ml": 46366,
+          "cut": true,
+          "head": 48.7892089733505,
+          "wet_centroid": "(810.4925, 48.78851, 1308.958)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1619,
+          97,
+          2618
+        ],
+        "distance_m": 8.25682258605957,
+        "geometry": {
+          "bottom": 48.85302734375,
+          "capacity_ml": 36712,
+          "cut": true,
+          "head": 48.8277837432834,
+          "wet_centroid": "(809.9925, 48.82708, 1309.458)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1618,
+          97,
+          2619
+        ],
+        "distance_m": 7.97966909408569,
+        "geometry": {
+          "bottom": 48.892578125,
+          "capacity_ml": 26824,
+          "cut": true,
+          "head": 48.8678133921348,
+          "wet_centroid": "(809.4909, 48.86695, 1309.943)"
+        },
+        "ml": 2
+      },
+      {
+        "cell": [
+          1622,
+          97,
+          2619
+        ],
+        "distance_m": 9.832350730896,
+        "geometry": {
+          "bottom": 48.701171875,
+          "capacity_ml": 74696,
+          "cut": true,
+          "head": 48.6741439853795,
+          "wet_centroid": "(811.4922, 48.67339, 1309.962)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1623,
+          97,
+          2620
+        ],
+        "distance_m": 10.4725885391235,
+        "geometry": {
+          "bottom": 48.641845703125,
+          "capacity_ml": 89518,
+          "cut": true,
+          "head": 48.6147929010476,
+          "wet_centroid": "(811.9899, 48.6138, 1310.456)"
+        },
+        "ml": 2
+      },
+      {
+        "cell": [
+          1631,
+          96,
+          2596
+        ],
+        "distance_m": 16.083122253418,
+        "geometry": {
+          "bottom": 48.4208679199219,
+          "capacity_ml": 19782,
+          "cut": true,
+          "head": 48.3945505167548,
+          "wet_centroid": "(815.9946, 48.39398, 1298.428)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1624,
+          97,
+          2596
+        ],
+        "distance_m": 13.1785850524902,
+        "geometry": {
+          "bottom": 48.74755859375,
+          "capacity_ml": 63090,
+          "cut": true,
+          "head": 48.7270097171131,
+          "wet_centroid": "(812.4942, 48.72654, 1298.419)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1627,
+          97,
+          2596
+        ],
+        "distance_m": 14.37619972229,
+        "geometry": {
+          "bottom": 48.618408203125,
+          "capacity_ml": 95397,
+          "cut": true,
+          "head": 48.5957828622632,
+          "wet_centroid": "(813.9943, 48.59527, 1298.425)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1629,
+          96,
+          2599
+        ],
+        "distance_m": 14.4798765182495,
+        "geometry": {
+          "bottom": 48.512451171875,
+          "capacity_ml": 368,
+          "cut": true,
+          "head": 48.4879162443685,
+          "wet_centroid": "(814.9946, 48.48739, 1299.923)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1631,
+          96,
+          2599
+        ],
+        "distance_m": 15.3677206039429,
+        "geometry": {
+          "bottom": 48.4096503257751,
+          "capacity_ml": 22584,
+          "cut": true,
+          "head": 48.3834104008239,
+          "wet_centroid": "(815.9948, 48.38286, 1299.923)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1625,
+          97,
+          2599
+        ],
+        "distance_m": 12.7151527404785,
+        "geometry": {
+          "bottom": 48.6973876953125,
+          "capacity_ml": 75642,
+          "cut": true,
+          "head": 48.6762422485917,
+          "wet_centroid": "(812.9943, 48.67576, 1299.918)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1630,
+          96,
+          2600
+        ],
+        "distance_m": 14.7026128768921,
+        "geometry": {
+          "bottom": 48.4582238197327,
+          "capacity_ml": 10443,
+          "cut": true,
+          "head": 48.4318210971673,
+          "wet_centroid": "(815.4946, 48.43126, 1300.428)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1624,
+          97,
+          2600
+        ],
+        "distance_m": 12.02809715271,
+        "geometry": {
+          "bottom": 48.7373046875,
+          "capacity_ml": 65653,
+          "cut": true,
+          "head": 48.7161992572946,
+          "wet_centroid": "(812.4947, 48.71575, 1300.407)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1628,
+          97,
+          2600
+        ],
+        "distance_m": 13.7722597122192,
+        "geometry": {
+          "bottom": 48.5577392578125,
+          "capacity_ml": 110555,
+          "cut": true,
+          "head": 48.5331193968814,
+          "wet_centroid": "(814.4944, 48.53258, 1300.426)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1626,
+          97,
+          2602
+        ],
+        "distance_m": 12.4368448257446,
+        "geometry": {
+          "bottom": 48.6436767578125,
+          "capacity_ml": 89070,
+          "cut": true,
+          "head": 48.6201308937962,
+          "wet_centroid": "(813.4938, 48.61956, 1301.438)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1630,
+          96,
+          2603
+        ],
+        "distance_m": 14.1303510665894,
+        "geometry": {
+          "bottom": 48.4449262619019,
+          "capacity_ml": 13764,
+          "cut": true,
+          "head": 48.4180642346815,
+          "wet_centroid": "(815.4941, 48.41745, 1301.938)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1624,
+          97,
+          2603
+        ],
+        "distance_m": 11.3214445114136,
+        "geometry": {
+          "bottom": 48.72802734375,
+          "capacity_ml": 67982,
+          "cut": true,
+          "head": 48.7057346091315,
+          "wet_centroid": "(812.4938, 48.70519, 1301.934)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1625,
+          97,
+          2603
+        ],
+        "distance_m": 11.7760400772095,
+        "geometry": {
+          "bottom": 48.6842041015625,
+          "capacity_ml": 78938,
+          "cut": true,
+          "head": 48.6622533710906,
+          "wet_centroid": "(812.992, 48.66155, 1301.92)"
+        },
+        "ml": 2
+      },
+      {
+        "cell": [
+          1629,
+          96,
+          2604
+        ],
+        "distance_m": 13.4969186782837,
+        "geometry": {
+          "bottom": 48.490234375,
+          "capacity_ml": 3008,
+          "cut": true,
+          "head": 48.4643612792279,
+          "wet_centroid": "(814.9934, 48.46371, 1302.448)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1624,
+          97,
+          2604
+        ],
+        "distance_m": 11.1209316253662,
+        "geometry": {
+          "bottom": 48.7236328125,
+          "capacity_ml": 69071,
+          "cut": true,
+          "head": 48.7013952849666,
+          "wet_centroid": "(812.4918, 48.70067, 1302.426)"
+        },
+        "ml": 2
+      },
+      {
+        "cell": [
+          1626,
+          97,
+          2604
+        ],
+        "distance_m": 12.0488634109497,
+        "geometry": {
+          "bottom": 48.6341552734375,
+          "capacity_ml": 91451,
+          "cut": true,
+          "head": 48.6099967794362,
+          "wet_centroid": "(813.4934, 48.60938, 1302.445)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1631,
+          96,
+          2605
+        ],
+        "distance_m": 14.3061809539795,
+        "geometry": {
+          "bottom": 48.3806738853455,
+          "capacity_ml": 29835,
+          "cut": true,
+          "head": 48.3533578338083,
+          "wet_centroid": "(815.9937, 48.3527, 1302.946)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1629,
+          96,
+          2607
+        ],
+        "distance_m": 13.1021690368652,
+        "geometry": {
+          "bottom": 48.4700927734375,
+          "capacity_ml": 7466,
+          "cut": true,
+          "head": 48.443471053266,
+          "wet_centroid": "(814.9931, 48.44278, 1303.953)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1630,
+          96,
+          2607
+        ],
+        "distance_m": 13.5892171859741,
+        "geometry": {
+          "bottom": 48.418984413147,
+          "capacity_ml": 20257,
+          "cut": true,
+          "head": 48.3913243460216,
+          "wet_centroid": "(815.4933, 48.39063, 1303.952)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1626,
+          97,
+          2607
+        ],
+        "distance_m": 11.6049604415894,
+        "geometry": {
+          "bottom": 48.6162109375,
+          "capacity_ml": 95937,
+          "cut": true,
+          "head": 48.5913093278214,
+          "wet_centroid": "(813.4931, 48.59066, 1303.951)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1628,
+          96,
+          2608
+        ],
+        "distance_m": 12.5166616439819,
+        "geometry": {
+          "bottom": 48.5128173828125,
+          "capacity_ml": 391,
+          "cut": true,
+          "head": 48.4857765731358,
+          "wet_centroid": "(814.4929, 48.48507, 1304.456)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1629,
+          96,
+          2608
+        ],
+        "distance_m": 13.0064144134521,
+        "geometry": {
+          "bottom": 48.462646484375,
+          "capacity_ml": 9348,
+          "cut": true,
+          "head": 48.4357059794711,
+          "wet_centroid": "(814.993, 48.435, 1304.455)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1624,
+          97,
+          2608
+        ],
+        "distance_m": 10.520224571228,
+        "geometry": {
+          "bottom": 48.7012939453125,
+          "capacity_ml": 74666,
+          "cut": true,
+          "head": 48.6770253646173,
+          "wet_centroid": "(812.4927, 48.67636, 1304.453)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1625,
+          97,
+          2608
+        ],
+        "distance_m": 11.0079574584961,
+        "geometry": {
+          "bottom": 48.65576171875,
+          "capacity_ml": 86049,
+          "cut": true,
+          "head": 48.6319131337659,
+          "wet_centroid": "(812.9908, 48.63107, 1304.443)"
+        },
+        "ml": 2
+      },
+      {
+        "cell": [
+          1624,
+          97,
+          2609
+        ],
+        "distance_m": 10.4247360229492,
+        "geometry": {
+          "bottom": 48.6943359375,
+          "capacity_ml": 76405,
+          "cut": true,
+          "head": 48.6699488098966,
+          "wet_centroid": "(812.4928, 48.66929, 1304.953)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1627,
+          97,
+          2609
+        ],
+        "distance_m": 11.902735710144,
+        "geometry": {
+          "bottom": 48.553466796875,
+          "capacity_ml": 111612,
+          "cut": true,
+          "head": 48.5275120254955,
+          "wet_centroid": "(813.9926, 48.5268, 1304.957)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1626,
+          97,
+          2610
+        ],
+        "distance_m": 11.3435049057007,
+        "geometry": {
+          "bottom": 48.5936279296875,
+          "capacity_ml": 101582,
+          "cut": true,
+          "head": 48.5673342832379,
+          "wet_centroid": "(813.4926, 48.56662, 1305.458)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1629,
+          96,
+          2611
+        ],
+        "distance_m": 12.832257270813,
+        "geometry": {
+          "bottom": 48.4368896484375,
+          "capacity_ml": 15767,
+          "cut": true,
+          "head": 48.409460752242,
+          "wet_centroid": "(814.9926, 48.40871, 1305.96)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1630,
+          96,
+          2611
+        ],
+        "distance_m": 13.3291721343994,
+        "geometry": {
+          "bottom": 48.3858432769775,
+          "capacity_ml": 28547,
+          "cut": true,
+          "head": 48.3574324841021,
+          "wet_centroid": "(815.4928, 48.35668, 1305.959)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1625,
+          97,
+          2611
+        ],
+        "distance_m": 10.80162525177,
+        "geometry": {
+          "bottom": 48.6328125,
+          "capacity_ml": 91776,
+          "cut": true,
+          "head": 48.6081140883034,
+          "wet_centroid": "(812.9905, 48.60723, 1305.947)"
+        },
+        "ml": 2
+      },
+      {
+        "cell": [
+          1626,
+          97,
+          2611
+        ],
+        "distance_m": 11.2993412017822,
+        "geometry": {
+          "bottom": 48.585205078125,
+          "capacity_ml": 103688,
+          "cut": true,
+          "head": 48.5587929792819,
+          "wet_centroid": "(813.4926, 48.55807, 1305.958)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1628,
+          96,
+          2612
+        ],
+        "distance_m": 12.3153085708618,
+        "geometry": {
+          "bottom": 48.4779052734375,
+          "capacity_ml": 5555,
+          "cut": true,
+          "head": 48.4502553293933,
+          "wet_centroid": "(814.4926, 48.4495, 1306.46)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1629,
+          96,
+          2612
+        ],
+        "distance_m": 12.8127603530884,
+        "geometry": {
+          "bottom": 48.427490234375,
+          "capacity_ml": 18117,
+          "cut": true,
+          "head": 48.3997373615566,
+          "wet_centroid": "(814.9925, 48.39898, 1306.461)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1631,
+          96,
+          2612
+        ],
+        "distance_m": 13.8082160949707,
+        "geometry": {
+          "bottom": 48.3243284225464,
+          "capacity_ml": 43920,
+          "cut": true,
+          "head": 48.2957680543884,
+          "wet_centroid": "(815.9927, 48.295, 1306.46)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1624,
+          97,
+          2612
+        ],
+        "distance_m": 10.2798404693604,
+        "geometry": {
+          "bottom": 48.6712646484375,
+          "capacity_ml": 82173,
+          "cut": true,
+          "head": 48.6460403436868,
+          "wet_centroid": "(812.4903, 48.64513, 1306.45)"
+        },
+        "ml": 2
+      },
+      {
+        "cell": [
+          1625,
+          97,
+          2612
+        ],
+        "distance_m": 10.7784557342529,
+        "geometry": {
+          "bottom": 48.624267578125,
+          "capacity_ml": 93922,
+          "cut": true,
+          "head": 48.5983774009947,
+          "wet_centroid": "(812.9922, 48.59765, 1306.461)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1626,
+          97,
+          2614
+        ],
+        "distance_m": 11.2993412017822,
+        "geometry": {
+          "bottom": 48.557373046875,
+          "capacity_ml": 110636,
+          "cut": true,
+          "head": 48.5301238190004,
+          "wet_centroid": "(813.4922, 48.52936, 1307.463)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1628,
+          96,
+          2615
+        ],
+        "distance_m": 12.3760585784912,
+        "geometry": {
+          "bottom": 48.447998046875,
+          "capacity_ml": 13010,
+          "cut": true,
+          "head": 48.4198149416625,
+          "wet_centroid": "(814.4923, 48.41904, 1307.963)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1625,
+          97,
+          2615
+        ],
+        "distance_m": 10.8478164672852,
+        "geometry": {
+          "bottom": 48.59619140625,
+          "capacity_ml": 100931,
+          "cut": true,
+          "head": 48.5702046124788,
+          "wet_centroid": "(812.9902, 48.56926, 1307.952)"
+        },
+        "ml": 2
+      },
+      {
+        "cell": [
+          1626,
+          97,
+          2615
+        ],
+        "distance_m": 11.3435049057007,
+        "geometry": {
+          "bottom": 48.54736328125,
+          "capacity_ml": 113138,
+          "cut": true,
+          "head": 48.5198774997261,
+          "wet_centroid": "(813.4922, 48.51911, 1307.963)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1627,
+          96,
+          2616
+        ],
+        "distance_m": 11.9443216323853,
+        "geometry": {
+          "bottom": 48.4873046875,
+          "capacity_ml": 3571,
+          "cut": true,
+          "head": 48.4593729142798,
+          "wet_centroid": "(813.9922, 48.45859, 1308.464)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1624,
+          97,
+          2616
+        ],
+        "distance_m": 10.4247360229492,
+        "geometry": {
+          "bottom": 48.6346435546875,
+          "capacity_ml": 91328,
+          "cut": true,
+          "head": 48.607526087093,
+          "wet_centroid": "(812.4921, 48.60676, 1308.463)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1625,
+          97,
+          2616
+        ],
+        "distance_m": 10.9167356491089,
+        "geometry": {
+          "bottom": 48.586181640625,
+          "capacity_ml": 103444,
+          "cut": true,
+          "head": 48.5589598083752,
+          "wet_centroid": "(812.992, 48.55819, 1308.464)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1631,
+          96,
+          2617
+        ],
+        "distance_m": 13.9880962371826,
+        "geometry": {
+          "bottom": 48.2726283073425,
+          "capacity_ml": 56848,
+          "cut": true,
+          "head": 48.2435889593763,
+          "wet_centroid": "(815.9923, 48.24279, 1308.964)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1630,
+          96,
+          2618
+        ],
+        "distance_m": 13.5892171859741,
+        "geometry": {
+          "bottom": 48.3130435943604,
+          "capacity_ml": 46743,
+          "cut": true,
+          "head": 48.2837939532513,
+          "wet_centroid": "(815.4922, 48.28298, 1309.465)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1629,
+          96,
+          2619
+        ],
+        "distance_m": 13.216157913208,
+        "geometry": {
+          "bottom": 48.3525390625,
+          "capacity_ml": 36865,
+          "cut": true,
+          "head": 48.3243459260848,
+          "wet_centroid": "(814.99, 48.32333, 1309.957)"
+        },
+        "ml": 2
+      },
+      {
+        "cell": [
+          1631,
+          96,
+          2619
+        ],
+        "distance_m": 14.18332862854,
+        "geometry": {
+          "bottom": 48.2497940063477,
+          "capacity_ml": 62556,
+          "cut": true,
+          "head": 48.2206507391508,
+          "wet_centroid": "(815.9922, 48.21984, 1309.965)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1624,
+          97,
+          2619
+        ],
+        "distance_m": 10.7784557342529,
+        "geometry": {
+          "bottom": 48.603271484375,
+          "capacity_ml": 99161,
+          "cut": true,
+          "head": 48.5755775480357,
+          "wet_centroid": "(812.4921, 48.5748, 1309.964)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1628,
+          96,
+          2620
+        ],
+        "distance_m": 12.8711624145508,
+        "geometry": {
+          "bottom": 48.391357421875,
+          "capacity_ml": 27160,
+          "cut": true,
+          "head": 48.3629620236316,
+          "wet_centroid": "(814.4898, 48.36193, 1310.458)"
+        },
+        "ml": 2
+      },
+      {
+        "cell": [
+          1630,
+          96,
+          2620
+        ],
+        "distance_m": 13.8263092041016,
+        "geometry": {
+          "bottom": 48.289487361908,
+          "capacity_ml": 52633,
+          "cut": true,
+          "head": 48.260147661445,
+          "wet_centroid": "(815.492, 48.25933, 1310.466)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1627,
+          96,
+          2621
+        ],
+        "distance_m": 12.5565452575684,
+        "geometry": {
+          "bottom": 48.4298095703125,
+          "capacity_ml": 17537,
+          "cut": true,
+          "head": 48.4008937862236,
+          "wet_centroid": "(813.9919, 48.40007, 1310.966)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1627,
+          96,
+          2623
+        ],
+        "distance_m": 12.9293012619019,
+        "geometry": {
+          "bottom": 48.4050960540771,
+          "capacity_ml": 23723,
+          "cut": true,
+          "head": 48.3759086064842,
+          "wet_centroid": "(813.9919, 48.37508, 1311.967)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1631,
+          96,
+          2627
+        ],
+        "distance_m": 15.593807220459,
+        "geometry": {
+          "bottom": 48.1504282951355,
+          "capacity_ml": 87400,
+          "cut": true,
+          "head": 48.121288452846,
+          "wet_centroid": "(815.9918, 48.12046, 1313.968)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1639,
+          95,
+          2600
+        ],
+        "distance_m": 18.8986377716064,
+        "geometry": {
+          "bottom": 47.9402160644531,
+          "capacity_ml": 14960,
+          "cut": true,
+          "head": 47.9094285222233,
+          "wet_centroid": "(819.996, 47.90894, 1300.386)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1639,
+          95,
+          2603
+        ],
+        "distance_m": 18.4569358825684,
+        "geometry": {
+          "bottom": 47.9318614006042,
+          "capacity_ml": 17051,
+          "cut": true,
+          "head": 47.9013710790343,
+          "wet_centroid": "(819.9955, 47.90082, 1301.909)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1639,
+          95,
+          2607
+        ],
+        "distance_m": 18.0460109710693,
+        "geometry": {
+          "bottom": 47.9149751663208,
+          "capacity_ml": 21276,
+          "cut": true,
+          "head": 47.8853237342248,
+          "wet_centroid": "(819.9934, 47.88454, 1303.914)"
+        },
+        "ml": 2
+      },
+      {
+        "cell": [
+          1638,
+          95,
+          2608
+        ],
+        "distance_m": 17.4830913543701,
+        "geometry": {
+          "bottom": 47.96852684021,
+          "capacity_ml": 7890,
+          "cut": true,
+          "head": 47.9381805871743,
+          "wet_centroid": "(819.4943, 47.93751, 1304.442)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1639,
+          95,
+          2610
+        ],
+        "distance_m": 17.8789958953857,
+        "geometry": {
+          "bottom": 47.898530960083,
+          "capacity_ml": 25390,
+          "cut": true,
+          "head": 47.8686637845562,
+          "wet_centroid": "(819.9942, 47.86799, 1305.443)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1637,
+          95,
+          2611
+        ],
+        "distance_m": 16.8570022583008,
+        "geometry": {
+          "bottom": 48.0059866905212,
+          "capacity_ml": 1100,
+          "cut": true,
+          "head": 47.9764728053059,
+          "wet_centroid": "(818.9937, 47.97577, 1305.95)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1638,
+          95,
+          2611
+        ],
+        "distance_m": 17.3539199829102,
+        "geometry": {
+          "bottom": 47.9494590759277,
+          "capacity_ml": 12658,
+          "cut": true,
+          "head": 47.919647477575,
+          "wet_centroid": "(819.494, 47.91896, 1305.946)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1636,
+          95,
+          2615
+        ],
+        "distance_m": 16.3908061981201,
+        "geometry": {
+          "bottom": 48.0282764434814,
+          "capacity_ml": 3,
+          "cut": true,
+          "head": 47.9990051127276,
+          "wet_centroid": "(818.4931, 47.99826, 1307.957)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1637,
+          95,
+          2615
+        ],
+        "distance_m": 16.8866367340088,
+        "geometry": {
+          "bottom": 47.9741430282593,
+          "capacity_ml": 6499,
+          "cut": true,
+          "head": 47.9456480786387,
+          "wet_centroid": "(818.9915, 47.94473, 1307.943)"
+        },
+        "ml": 2
+      },
+      {
+        "cell": [
+          1639,
+          95,
+          2615
+        ],
+        "distance_m": 17.8789958953857,
+        "geometry": {
+          "bottom": 47.8651013374329,
+          "capacity_ml": 33750,
+          "cut": true,
+          "head": 47.8362444799426,
+          "wet_centroid": "(819.9937, 47.83555, 1307.95)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1636,
+          95,
+          2616
+        ],
+        "distance_m": 16.4364986419678,
+        "geometry": {
+          "bottom": 48.0191283226013,
+          "capacity_ml": 158,
+          "cut": true,
+          "head": 47.990479067445,
+          "wet_centroid": "(818.4911, 47.98952, 1308.448)"
+        },
+        "ml": 2
+      },
+      {
+        "cell": [
+          1636,
+          95,
+          2623
+        ],
+        "distance_m": 17.165620803833,
+        "geometry": {
+          "bottom": 47.9489717483521,
+          "capacity_ml": 12780,
+          "cut": true,
+          "head": 47.9211023731577,
+          "wet_centroid": "(818.4923, 47.92033, 1311.963)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1637,
+          95,
+          2623
+        ],
+        "distance_m": 17.639684677124,
+        "geometry": {
+          "bottom": 47.8991680145264,
+          "capacity_ml": 25231,
+          "cut": true,
+          "head": 47.872129302085,
+          "wet_centroid": "(818.9905, 47.87118, 1311.951)"
+        },
+        "ml": 2
+      },
+      {
+        "cell": [
+          1639,
+          95,
+          2623
+        ],
+        "distance_m": 18.5918941497803,
+        "geometry": {
+          "bottom": 47.8002510070801,
+          "capacity_ml": 49965,
+          "cut": true,
+          "head": 47.773384202107,
+          "wet_centroid": "(819.9928, 47.77267, 1311.957)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1635,
+          95,
+          2624
+        ],
+        "distance_m": 16.8570022583008,
+        "geometry": {
+          "bottom": 47.9878005981445,
+          "capacity_ml": 3496,
+          "cut": true,
+          "head": 47.9595966921518,
+          "wet_centroid": "(817.9921, 47.95881, 1312.464)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1636,
+          95,
+          2624
+        ],
+        "distance_m": 17.3250827789307,
+        "geometry": {
+          "bottom": 47.9382996559143,
+          "capacity_ml": 15449,
+          "cut": true,
+          "head": 47.9106062270209,
+          "wet_centroid": "(818.4922, 47.90984, 1312.463)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1632,
+          96,
+          2596
+        ],
+        "distance_m": 16.5126266479492,
+        "geometry": {
+          "bottom": 48.367030620575,
+          "capacity_ml": 33245,
+          "cut": true,
+          "head": 48.3389921941994,
+          "wet_centroid": "(816.4948, 48.33841, 1298.426)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1634,
+          96,
+          2596
+        ],
+        "distance_m": 17.3829460144043,
+        "geometry": {
+          "bottom": 48.2544221878052,
+          "capacity_ml": 61400,
+          "cut": true,
+          "head": 48.2250736983104,
+          "wet_centroid": "(817.4951, 48.2245, 1298.422)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1638,
+          96,
+          2596
+        ],
+        "distance_m": 19.1615962982178,
+        "geometry": {
+          "bottom": 48.0231628417969,
+          "capacity_ml": 119338,
+          "cut": true,
+          "head": 48.0006086677313,
+          "wet_centroid": "(819.4967, 48.00031, 1298.25)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1633,
+          96,
+          2599
+        ],
+        "distance_m": 16.2685832977295,
+        "geometry": {
+          "bottom": 48.3004236221313,
+          "capacity_ml": 49896,
+          "cut": true,
+          "head": 48.2726367227098,
+          "wet_centroid": "(816.995, 48.27208, 1299.919)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1637,
+          96,
+          2599
+        ],
+        "distance_m": 18.1015701293945,
+        "geometry": {
+          "bottom": 48.0663866996765,
+          "capacity_ml": 108413,
+          "cut": true,
+          "head": 48.03641539009,
+          "wet_centroid": "(818.9957, 48.03589, 1299.901)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1633,
+          96,
+          2600
+        ],
+        "distance_m": 16.067569732666,
+        "geometry": {
+          "bottom": 48.2967796325684,
+          "capacity_ml": 50808,
+          "cut": true,
+          "head": 48.2689030307231,
+          "wet_centroid": "(816.9948, 48.26833, 1300.425)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1636,
+          96,
+          2600
+        ],
+        "distance_m": 17.4547080993652,
+        "geometry": {
+          "bottom": 48.1235575675964,
+          "capacity_ml": 94121,
+          "cut": true,
+          "head": 48.093541974015,
+          "wet_centroid": "(818.4954, 48.09299, 1300.412)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1633,
+          96,
+          2603
+        ],
+        "distance_m": 15.5456371307373,
+        "geometry": {
+          "bottom": 48.2836446762085,
+          "capacity_ml": 54093,
+          "cut": true,
+          "head": 48.2555013525428,
+          "wet_centroid": "(816.9944, 48.25488, 1301.936)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1636,
+          96,
+          2603
+        ],
+        "distance_m": 16.9754772186279,
+        "geometry": {
+          "bottom": 48.11217212677,
+          "capacity_ml": 96970,
+          "cut": true,
+          "head": 48.0822366450398,
+          "wet_centroid": "(818.4949, 48.08163, 1301.927)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1637,
+          96,
+          2603
+        ],
+        "distance_m": 17.4547080993652,
+        "geometry": {
+          "bottom": 48.0529909133911,
+          "capacity_ml": 111765,
+          "cut": true,
+          "head": 48.023165223237,
+          "wet_centroid": "(818.9951, 48.02258, 1301.923)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1632,
+          96,
+          2604
+        ],
+        "distance_m": 14.9220247268677,
+        "geometry": {
+          "bottom": 48.3331618309021,
+          "capacity_ml": 41714,
+          "cut": true,
+          "head": 48.3046310286635,
+          "wet_centroid": "(816.494, 48.30397, 1302.445)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1636,
+          96,
+          2604
+        ],
+        "distance_m": 16.8424110412598,
+        "geometry": {
+          "bottom": 48.1074070930481,
+          "capacity_ml": 98162,
+          "cut": true,
+          "head": 48.0772892239092,
+          "wet_centroid": "(818.4946, 48.07664, 1302.437)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1637,
+          96,
+          2604
+        ],
+        "distance_m": 17.3253231048584,
+        "geometry": {
+          "bottom": 48.0485572814941,
+          "capacity_ml": 112875,
+          "cut": true,
+          "head": 48.0185689535494,
+          "wet_centroid": "(818.9947, 48.01794, 1302.433)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1633,
+          96,
+          2607
+        ],
+        "distance_m": 15.0554580688477,
+        "geometry": {
+          "bottom": 48.2588663101196,
+          "capacity_ml": 60289,
+          "cut": true,
+          "head": 48.2302085845403,
+          "wet_centroid": "(816.9937, 48.22952, 1303.949)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1634,
+          96,
+          2607
+        ],
+        "distance_m": 15.5456371307373,
+        "geometry": {
+          "bottom": 48.2035236358643,
+          "capacity_ml": 74130,
+          "cut": true,
+          "head": 48.1741390897939,
+          "wet_centroid": "(817.4938, 48.17345, 1303.948)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1636,
+          96,
+          2607
+        ],
+        "distance_m": 16.527759552002,
+        "geometry": {
+          "bottom": 48.0903778076172,
+          "capacity_ml": 102421,
+          "cut": true,
+          "head": 48.0604641103176,
+          "wet_centroid": "(818.4942, 48.05979, 1303.943)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1632,
+          96,
+          2608
+        ],
+        "distance_m": 14.4798765182495,
+        "geometry": {
+          "bottom": 48.3058896064758,
+          "capacity_ml": 48534,
+          "cut": true,
+          "head": 48.2768853916101,
+          "wet_centroid": "(816.4933, 48.27616, 1304.454)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1633,
+          96,
+          2608
+        ],
+        "distance_m": 14.9722013473511,
+        "geometry": {
+          "bottom": 48.2515058517456,
+          "capacity_ml": 62130,
+          "cut": true,
+          "head": 48.2225719650399,
+          "wet_centroid": "(816.9934, 48.22185, 1304.453)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1635,
+          96,
+          2608
+        ],
+        "distance_m": 15.9582834243774,
+        "geometry": {
+          "bottom": 48.1404733657837,
+          "capacity_ml": 89894,
+          "cut": true,
+          "head": 48.1110030907755,
+          "wet_centroid": "(817.9937, 48.11029, 1304.45)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1632,
+          96,
+          2611
+        ],
+        "distance_m": 14.3236455917358,
+        "geometry": {
+          "bottom": 48.2807197570801,
+          "capacity_ml": 54828,
+          "cut": true,
+          "head": 48.2516410231109,
+          "wet_centroid": "(816.493, 48.25089, 1305.957)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1634,
+          96,
+          2611
+        ],
+        "distance_m": 15.3188390731812,
+        "geometry": {
+          "bottom": 48.1725082397461,
+          "capacity_ml": 81886,
+          "cut": true,
+          "head": 48.1430531421733,
+          "wet_centroid": "(817.4933, 48.14231, 1305.955)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1633,
+          96,
+          2612
+        ],
+        "distance_m": 14.8042840957642,
+        "geometry": {
+          "bottom": 48.2179107666016,
+          "capacity_ml": 70531,
+          "cut": true,
+          "head": 48.1887058356813,
+          "wet_centroid": "(816.9929, 48.18795, 1306.459)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1636,
+          96,
+          2612
+        ],
+        "distance_m": 16.2992877960205,
+        "geometry": {
+          "bottom": 48.0540714263916,
+          "capacity_ml": 111501,
+          "cut": true,
+          "head": 48.0243319561056,
+          "wet_centroid": "(818.4934, 48.0236, 1306.454)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1633,
+          96,
+          2615
+        ],
+        "distance_m": 14.8548583984375,
+        "geometry": {
+          "bottom": 48.1888971328735,
+          "capacity_ml": 77785,
+          "cut": true,
+          "head": 48.1597395471725,
+          "wet_centroid": "(816.9927, 48.15897, 1307.961)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1632,
+          96,
+          2616
+        ],
+        "distance_m": 14.4106492996216,
+        "geometry": {
+          "bottom": 48.2313365936279,
+          "capacity_ml": 67176,
+          "cut": true,
+          "head": 48.2019433966774,
+          "wet_centroid": "(816.4925, 48.20115, 1308.463)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1635,
+          96,
+          2616
+        ],
+        "distance_m": 15.8954973220825,
+        "geometry": {
+          "bottom": 48.0725021362305,
+          "capacity_ml": 106890,
+          "cut": true,
+          "head": 48.0432870283324,
+          "wet_centroid": "(817.9927, 48.04252, 1308.46)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1635,
+          96,
+          2617
+        ],
+        "distance_m": 15.9582834243774,
+        "geometry": {
+          "bottom": 48.0626330375671,
+          "capacity_ml": 109357,
+          "cut": true,
+          "head": 48.0336072899657,
+          "wet_centroid": "(817.9927, 48.03284, 1308.96)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1634,
+          96,
+          2618
+        ],
+        "distance_m": 15.5456371307373,
+        "geometry": {
+          "bottom": 48.104932308197,
+          "capacity_ml": 98783,
+          "cut": true,
+          "head": 48.075728334794,
+          "wet_centroid": "(817.4925, 48.07494, 1309.463)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1632,
+          96,
+          2624
+        ],
+        "distance_m": 15.416446685791,
+        "geometry": {
+          "bottom": 48.1382446289063,
+          "capacity_ml": 90452,
+          "cut": true,
+          "head": 48.109235939088,
+          "wet_centroid": "(816.4919, 48.10842, 1312.467)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1632,
+          96,
+          2626
+        ],
+        "distance_m": 15.8166627883911,
+        "geometry": {
+          "bottom": 48.113217830658,
+          "capacity_ml": 96709,
+          "cut": true,
+          "head": 48.0844239152615,
+          "wet_centroid": "(816.4918, 48.0836, 1313.467)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1641,
+          95,
+          2603
+        ],
+        "distance_m": 19.4205684661865,
+        "geometry": {
+          "bottom": 47.8071980476379,
+          "capacity_ml": 48220,
+          "cut": true,
+          "head": 47.7761221988469,
+          "wet_centroid": "(820.9962, 47.77564, 1301.881)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1641,
+          95,
+          2604
+        ],
+        "distance_m": 19.3043651580811,
+        "geometry": {
+          "bottom": 47.8045644760132,
+          "capacity_ml": 48881,
+          "cut": true,
+          "head": 47.7735331653088,
+          "wet_centroid": "(820.9957, 47.773, 1302.402)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1641,
+          95,
+          2605
+        ],
+        "distance_m": 19.2004814147949,
+        "geometry": {
+          "bottom": 47.8015594482422,
+          "capacity_ml": 49632,
+          "cut": true,
+          "head": 47.7707952758509,
+          "wet_centroid": "(820.9957, 47.77026, 1302.903)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1640,
+          95,
+          2606
+        ],
+        "distance_m": 18.618766784668,
+        "geometry": {
+          "bottom": 47.8593802452087,
+          "capacity_ml": 35179,
+          "cut": true,
+          "head": 47.8284761321931,
+          "wet_centroid": "(820.4951, 47.82788, 1303.424)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1646,
+          94,
+          2608
+        ],
+        "distance_m": 21.486047744751,
+        "geometry": {
+          "bottom": 47.4824733734131,
+          "capacity_ml": 4800,
+          "cut": true,
+          "head": 47.4513750721228,
+          "wet_centroid": "(823.4972, 47.45102, 1304.25)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1641,
+          95,
+          2608
+        ],
+        "distance_m": 18.9646644592285,
+        "geometry": {
+          "bottom": 47.7905874252319,
+          "capacity_ml": 52379,
+          "cut": true,
+          "head": 47.7602591143554,
+          "wet_centroid": "(820.9951, 47.75966, 1304.425)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1644,
+          95,
+          2608
+        ],
+        "distance_m": 20.4489250183105,
+        "geometry": {
+          "bottom": 47.6073250770569,
+          "capacity_ml": 98202,
+          "cut": true,
+          "head": 47.5765422531827,
+          "wet_centroid": "(822.4963, 47.57609, 1304.366)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1647,
+          94,
+          2610
+        ],
+        "distance_m": 21.9009170532227,
+        "geometry": {
+          "bottom": 47.4200496673584,
+          "capacity_ml": 20026,
+          "cut": true,
+          "head": 47.389815143359,
+          "wet_centroid": "(823.9971, 47.38945, 1305.213)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1646,
+          94,
+          2611
+        ],
+        "distance_m": 21.3810710906982,
+        "geometry": {
+          "bottom": 47.4806175231934,
+          "capacity_ml": 5118,
+          "cut": true,
+          "head": 47.4508625697632,
+          "wet_centroid": "(823.4971, 47.45051, 1305.77)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1647,
+          94,
+          2611
+        ],
+        "distance_m": 21.8780765533447,
+        "geometry": {
+          "bottom": 47.420193195343,
+          "capacity_ml": 19990,
+          "cut": true,
+          "head": 47.3904218684308,
+          "wet_centroid": "(823.997, 47.39006, 1305.712)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1641,
+          95,
+          2611
+        ],
+        "distance_m": 18.8456497192383,
+        "geometry": {
+          "bottom": 47.7768931388855,
+          "capacity_ml": 55804,
+          "cut": true,
+          "head": 47.7473165706119,
+          "wet_centroid": "(820.9947, 47.7467, 1305.932)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1643,
+          95,
+          2611
+        ],
+        "distance_m": 19.8408298492432,
+        "geometry": {
+          "bottom": 47.6595978736877,
+          "capacity_ml": 85132,
+          "cut": true,
+          "head": 47.6300937494149,
+          "wet_centroid": "(821.9954, 47.62955, 1305.91)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1640,
+          95,
+          2612
+        ],
+        "distance_m": 18.3346252441406,
+        "geometry": {
+          "bottom": 47.8291130065918,
+          "capacity_ml": 42750,
+          "cut": true,
+          "head": 47.7994155081924,
+          "wet_centroid": "(820.4943, 47.79875, 1306.442)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1642,
+          95,
+          2612
+        ],
+        "distance_m": 19.3302478790283,
+        "geometry": {
+          "bottom": 47.7141170501709,
+          "capacity_ml": 71504,
+          "cut": true,
+          "head": 47.6845728213615,
+          "wet_centroid": "(821.4949, 47.68397, 1306.428)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1645,
+          95,
+          2612
+        ],
+        "distance_m": 20.8244686126709,
+        "geometry": {
+          "bottom": 47.5387849807739,
+          "capacity_ml": 115340,
+          "cut": true,
+          "head": 47.5096692112487,
+          "wet_centroid": "(822.9963, 47.50923, 1306.364)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1647,
+          94,
+          2615
+        ],
+        "distance_m": 21.9009170532227,
+        "geometry": {
+          "bottom": 47.4194107055664,
+          "capacity_ml": 20189,
+          "cut": true,
+          "head": 47.3915987962755,
+          "wet_centroid": "(823.997, 47.39126, 1307.743)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1645,
+          95,
+          2615
+        ],
+        "distance_m": 20.8604526519775,
+        "geometry": {
+          "bottom": 47.5321221351624,
+          "capacity_ml": 117008,
+          "cut": true,
+          "head": 47.5042679268547,
+          "wet_centroid": "(822.9959, 47.50381, 1307.881)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1645,
+          95,
+          2616
+        ],
+        "distance_m": 20.8963756561279,
+        "geometry": {
+          "bottom": 47.5295934677124,
+          "capacity_ml": 117641,
+          "cut": true,
+          "head": 47.5021193441885,
+          "wet_centroid": "(822.9957, 47.50164, 1308.392)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1641,
+          95,
+          2619
+        ],
+        "distance_m": 19.1091213226318,
+        "geometry": {
+          "bottom": 47.7298541069031,
+          "capacity_ml": 67568,
+          "cut": true,
+          "head": 47.7024855601297,
+          "wet_centroid": "(820.9937, 47.70183, 1309.947)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1643,
+          95,
+          2619
+        ],
+        "distance_m": 20.0912551879883,
+        "geometry": {
+          "bottom": 47.6255459785461,
+          "capacity_ml": 93650,
+          "cut": true,
+          "head": 47.5987998288498,
+          "wet_centroid": "(821.9944, 47.59821, 1309.933)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1640,
+          95,
+          2620
+        ],
+        "distance_m": 18.7125225067139,
+        "geometry": {
+          "bottom": 47.7744860649109,
+          "capacity_ml": 56411,
+          "cut": true,
+          "head": 47.7470630739677,
+          "wet_centroid": "(820.4933, 47.74637, 1310.452)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1642,
+          95,
+          2620
+        ],
+        "distance_m": 19.6890449523926,
+        "geometry": {
+          "bottom": 47.6718473434448,
+          "capacity_ml": 82075,
+          "cut": true,
+          "head": 47.6450951765806,
+          "wet_centroid": "(821.4938, 47.64446, 1310.443)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1641,
+          95,
+          2621
+        ],
+        "distance_m": 19.3043651580811,
+        "geometry": {
+          "bottom": 47.7162699699402,
+          "capacity_ml": 70965,
+          "cut": true,
+          "head": 47.6895490384856,
+          "wet_centroid": "(820.9935, 47.68888, 1310.949)"
+        },
+        "ml": 1
+      },
+      {
+        "cell": [
+          1640,
+          95,
+          2622
+        ],
+        "distance_m": 18.9382820129395,
+        "geometry": {
+          "bottom": 47.7590408325195,
+          "capacity_ml": 60273,
+          "cut": true,
+          "head": 47.7322841199409,
+          "wet_centroid": "(820.493, 47.73159, 1311.454)"
+        },
+        "ml": 1
+      }
+    ]
+  }
+}

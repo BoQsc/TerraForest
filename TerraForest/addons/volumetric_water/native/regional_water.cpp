@@ -64,7 +64,7 @@ void NativeRegionalWater::_bind_methods(){
     ClassDB::bind_method(D_METHOD("next_request"),&NativeRegionalWater::next_request);
     ClassDB::bind_method(D_METHOD("accept_patch","patch"),&NativeRegionalWater::accept_patch);
     ClassDB::bind_method(D_METHOD("invalidate","bounds"),&NativeRegionalWater::invalidate);
-    ClassDB::bind_method(D_METHOD("advance","budget"),&NativeRegionalWater::advance);
+    ClassDB::bind_method(D_METHOD("advance","budget","seconds"),&NativeRegionalWater::advance,DEFVAL(1.0/60.0));
     ClassDB::bind_method(D_METHOD("begin_fill","bounds","level","seed","amount"),&NativeRegionalWater::begin_fill);
     ClassDB::bind_method(D_METHOD("remove_bounds","bounds"),&NativeRegionalWater::remove_bounds);
     ClassDB::bind_method(D_METHOD("brush","point","radius","amount"),&NativeRegionalWater::brush);
@@ -206,6 +206,21 @@ void NativeRegionalWater::process_cell(const Vector3i &p){
             target=(lo+hi)*0.5;
         }
         uint64_t amount=uint64_t(std::max(0.0,std::round(std::min(double(a->water[i])-pa.volume(target),pb.volume(target)-double(b->water[j])))));
+        // Equilibrium is a target, not an instantaneous transfer. Bound each
+        // face by a gravity-head speed over the 0.5 m cell width and elapsed
+        // simulation time. Millilitre rounding retains tiny finite droplets.
+        double speed=std::sqrt(2.0*9.81*(ha-hb)*0.001);
+        // Thin runoff also needs bed resistance; a head-only speed makes a
+        // millimetre film travel as fast as a deep pool. Use a shallow-flow
+        // Manning estimate (R approximated by mean wetted depth), capped by the
+        // gravity-head speed. Fixed roughness is a gameplay approximation.
+        double area=ha>=pa.maximum()?1.0:pa.footprint(ha).area;
+        double depth=double(a->water[i])/(250000.0*std::max(area,1e-9));
+        double friction_speed=std::pow(depth,2.0/3.0)*std::sqrt((ha-hb)/500.0)/0.06;
+        speed=std::min(speed,friction_speed);
+        double fraction=std::min(1.0,speed*flow_seconds/0.5);
+        uint64_t transport=uint64_t(std::ceil(double(a->water[i])*fraction));
+        amount=std::min(amount,transport);
         move(p,q,std::min({amount,cap-b->water[j],a->water[i]}));
     }
     if(a->water[i]>capacity&&a->ceiling[i]==500){Vector3i q=p+directions[5];Region *b=get(q,true);if(b&&profile(*b,index(q)).open_bottom){
@@ -241,8 +256,10 @@ void NativeRegionalWater::process_fill(){
     // amounts are idempotent; a disconnected air interval is never a fill edge.
     if(retry)fill.queue.push_back(key(p));
 }
-void NativeRegionalWater::advance(int64_t budget){
-    if(budget<1||budget>8192)return;uint64_t start=Time::get_singleton()->get_ticks_usec();
+void NativeRegionalWater::advance(int64_t budget,double seconds){
+    if(budget<1||budget>8192||!std::isfinite(seconds)||seconds<=0)return;
+    // A stalled render frame must not cause an instantaneous long-distance jump.
+    flow_seconds=std::min(seconds,0.05);uint64_t start=Time::get_singleton()->get_ticks_usec();
     // One active frontier per update: reawakened cells progress next update,
     // rather than relaxing the same local disturbance away before rendering.
     size_t remaining_active=active.size();
@@ -622,7 +639,7 @@ Dictionary NativeRegionalWater::statistics() const {
 static constexpr uint32_t MAGIC=0x31575256,OLD_REGION_BYTES=16+512*12,REGION_BYTES=OLD_REGION_BYTES+729*4;
 PackedByteArray NativeRegionalWater::capture_snapshot(const PackedByteArray &catalog) const {
     PackedByteArray out;Ref<NativeLakeCatalog> validator;validator.instantiate();if(fill.running||!validator->validate_snapshot(catalog))return out;
-    out.resize(32+catalog.size()+regions.size()*REGION_BYTES);out.encode_u32(0,MAGIC);out.encode_u32(4,3);out.encode_u32(8,catalog.size());out.encode_u32(12,regions.size());out.encode_u64(16,total);out.encode_u64(24,0);
+    out.resize(32+catalog.size()+regions.size()*REGION_BYTES);out.encode_u32(0,MAGIC);out.encode_u32(4,4);out.encode_u32(8,catalog.size());out.encode_u32(12,regions.size());out.encode_u64(16,total);out.encode_u64(24,0);
     for(int i=0;i<catalog.size();++i)out.set(32+i,catalog[i]);int64_t offset=32+catalog.size();
     for(const auto &[k,r]:regions){out.encode_u64(offset,k);out.encode_u32(offset+8,r.valid?1:0);out.encode_u32(offset+12,r.has_density?1:0);offset+=16;
         for(int i=0;i<512;++i){out.encode_u16(offset,r.floor[i]);out.encode_u16(offset+2,r.ceiling[i]);out.encode_u64(offset+4,r.water[i]|(r.water[i]&&active_set.count(key(position(k)*8+Vector3i(i%8,(i/8)%8,i/64)))?(uint64_t(1)<<63):0));offset+=12;}
@@ -630,7 +647,7 @@ PackedByteArray NativeRegionalWater::capture_snapshot(const PackedByteArray &cat
     return out;
 }
 bool NativeRegionalWater::decode(const PackedByteArray &data,bool install){
-    if(data.size()<32||data.decode_u32(0)!=MAGIC||(data.decode_u32(4)<1||data.decode_u32(4)>3)||data.decode_u64(24)!=0)return false;
+    if(data.size()<32||data.decode_u32(0)!=MAGIC||(data.decode_u32(4)<1||data.decode_u32(4)>4)||data.decode_u64(24)!=0)return false;
     const bool shaped=data.decode_u32(4)>=2;
     const uint32_t record_bytes=shaped?REGION_BYTES:OLD_REGION_BYTES;
     uint32_t bytes=data.decode_u32(8),count=data.decode_u32(12);uint64_t expected=data.decode_u64(16);
@@ -646,7 +663,7 @@ bool NativeRegionalWater::decode(const PackedByteArray &data,bool install){
         // Old saved amounts are authoritative. Wake only cut cells whose new
         // capacity differs, then settle with cached terrain instead of sampling
         // or discarding/recreating water during the format upgrade.
-        if(install&&data.decode_u32(4)<3&&r.has_density)for(int i=0;i<512;++i)
+        if(install&&data.decode_u32(4)<4&&r.has_density)for(int i=0;i<512;++i)
             if(r.water[i]&&profile(r,i).capacity()!=uint64_t(r.ceiling[i]-r.floor[i])*250)
                 awake.push_back(key(p*8+Vector3i(i%8,(i/8)%8,i/64)));
         if(install)staged.emplace(k,std::move(r));

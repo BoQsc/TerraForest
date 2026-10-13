@@ -8,7 +8,8 @@
 namespace terraforest {
 // A floor cut through a finite-volume cell. The two triangles use the same
 // four cached density crossings; no new terrain queries or water store.
-// Coordinates are cell-local X/Z [0,1], heights are millimetres [0,500].
+// Coordinates are cell-local X/Z [0,1]; heights are millimetres. Floor
+// crossings may exceed the 500 mm cell top and are clipped by volume().
 struct WaterCellProfile {
     struct Point { double x,z,y; };
     struct Shape { double area=0,x=0,z=0; };
@@ -17,17 +18,20 @@ struct WaterCellProfile {
     bool cut=false,open_bottom=true;
     static WaterCellProfile make(const float *d,bool shaped,uint16_t lo,uint16_t hi) {
         WaterCellProfile p;p.floor.fill(lo);p.ceiling=hi;p.open_bottom=lo==0;
-        // Floors with an entirely open top can be represented without merging
-        // disconnected air intervals. Ambiguous walls/ceilings retain the
-        // previous conservative interval until a richer cut is supported.
+        // Upward-monotone floor crossings remain a single air interval even
+        // where the floor rises above the cell top. Retain those crossings
+        // beyond 500 mm so clipping computes the actual partial top opening.
+        // Ambiguous walls/ceilings keep the conservative interval.
         if(!shaped)return p;
-        for(int c:{2,3,6,7})if(d[c]<=0)return p;
-        p.ceiling=500;p.open_bottom=false;
+        std::array<double,4> crossings{};bool open=false;
         for(int n=0;n<4;++n){int i=(n&1)+4*(n>>1);
-            p.floor[n]=d[i]>=0?0:500.0*(-d[i])/(d[i+2]-d[i]);
-            p.open_bottom|=d[i]>0;
+            double a=d[i],b=d[i+2];
+            if(a>=0&&b>0)crossings[n]=0;
+            else if(b>a)crossings[n]=500.0*(-a)/(b-a);
+            else return p;
+            open|=a>0;
         }
-        p.cut=true;return p;
+        p.floor=crossings;p.ceiling=500;p.open_bottom=open;p.cut=true;return p;
     }
     double minimum()const{return *std::min_element(floor.begin(),floor.end());}
     double maximum()const{return *std::max_element(floor.begin(),floor.end());}

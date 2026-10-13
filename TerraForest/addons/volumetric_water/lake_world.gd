@@ -113,7 +113,7 @@ func _process(delta:float) -> void:
  _publish_meshes()
  # Prepare during loading, but do not advance an already restored moving world
  # while the player is waiting for its meshes and collision.
- if _filling_id!=0 or not get_parent().get("loading_active"):water.advance(2048)
+ if _filling_id!=0 or not get_parent().get("loading_active"):water.advance(2048,delta)
  # Invalid regions already refuse flow in native code. Keep unaffected water
  # moving while edits publish; only terrain sampling needs a stable revision.
  if not _busy and not terrain.pending_edit:

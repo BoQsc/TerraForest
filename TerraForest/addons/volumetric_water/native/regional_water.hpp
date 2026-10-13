@@ -88,6 +88,7 @@ class NativeRegionalWater : public godot::RefCounted {
     uint64_t cache_rebuilds=0;
     uint64_t total=0,steps=0,sampled=0,cache_hits=0,changes=0;
     uint64_t last_us=0,max_us=0,mesh_us=0,max_mesh_us=0;
+    double flow_seconds=1.0/60.0;
     bool limit=false;
     struct Fill {
         bool running=false;
@@ -126,7 +127,7 @@ public:
     godot::Dictionary next_request();
     bool accept_patch(const godot::Ref<NativeWaterTerrainPatch> &patch);
     void invalidate(const godot::AABB &bounds);
-    void advance(int64_t budget);
+    void advance(int64_t budget,double seconds=1.0/60.0);
     bool begin_fill(const godot::AABB &bounds,double level,const godot::Vector3 &seed,int64_t amount);
     int64_t remove_bounds(const godot::AABB &bounds);
     int64_t brush(const godot::Vector3 &point,double radius,int64_t amount);
