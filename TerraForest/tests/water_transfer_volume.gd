@@ -45,6 +45,27 @@ func _initialize():
  var before:PackedByteArray=water.capture_snapshot(catalog);var held:Dictionary=inventory.snapshot()
  result=water.transfer_bucket(from,to,true,inventory,0,held.revision)
  check(not result.ok and inventory.snapshot()==held and water.capture_snapshot(catalog)==before,"Pour into a full sealed basin fails without losing or hiding water")
+ # A larger source must lose a compact bucket-sized cavity, not BFS arms.
+ var lake:=bytes.duplicate();lake.encode_u64(16,18000000)
+ for j in 512:
+  lake.encode_u16(base+16+j*12,500);lake.encode_u64(base+20+j*12,0)
+ for z in range(1,7):
+  for y in range(2,6):
+   for x in range(1,7):
+    var j:int=x+8*y+64*z
+    lake.encode_u16(base+16+j*12,0);lake.encode_u64(base+20+j*12,125000)
+ var large=ClassDB.instantiate("NativeRegionalWater");assert(large.restore_snapshot(lake))
+ inventory.exchange_water(0,true,inventory.snapshot().revision,1000000)
+ result=large.transfer_bucket(Vector3(42,44.5,42),Vector3(42,42.25,42),false,inventory,0,inventory.snapshot().revision)
+ var after:PackedByteArray=large.capture_snapshot(catalog)
+ var removed:=0;var lo:=Vector3i(99,99,99);var hi:=Vector3i(-99,-99,-99)
+ for j in 512:
+  if lake.decode_u64(base+20+j*12)>after.decode_u64(base+20+j*12):
+   removed+=1
+   var pos:=Vector3i(j%8,(j/8)%8,j/64)
+   lo=lo.min(pos);hi=hi.max(pos)
+ check(result.ok and result.water_ml==1000000 and large.statistics().water_ml==17000000,"Large lake scoop conserves one cubic metre")
+ check(removed==8 and hi-lo==Vector3i.ONE,"Large lake scoop removes one compact 2 by 2 by 2 group of cells")
  DirAccess.make_dir_recursive_absolute("res://reports")
  var file:=FileAccess.open("res://reports/water_transfer_volume.json",FileAccess.WRITE);file.store_string(JSON.stringify({"failures":failures}));file.close()
  print("WATER_TRANSFER_VOLUME failures=",failures);quit(failures)

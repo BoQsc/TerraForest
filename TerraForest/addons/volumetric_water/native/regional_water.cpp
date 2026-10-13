@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <cmath>
 #include <vector>
+#include <queue>
 using namespace godot;
 namespace terraforest {
 static const Vector3i directions[6]={{0,-1,0},{1,0,0},{-1,0,0},{0,0,1},{0,0,-1},{0,1,0}};
@@ -300,8 +301,17 @@ Dictionary NativeRegionalWater::transfer_water(const Vector3 &from,const Vector3
         uint64_t remaining=amount;
         // A full cubic metre can spread into a shallow local puddle. Search
         // at most 9^3 cells (2 m radius), following actual wet connections.
-        std::deque<Vector3i> candidates;std::unordered_set<Key> visited;candidates.push_back(target);visited.insert(key(target));
-        while(!candidates.empty()&&remaining){Vector3i p=candidates.front();candidates.pop_front();const Region *other=get(p);if(!other)continue;int j=index(p);
+        // Prefer a one-metre cube immediately beneath the aimed surface.
+        // The bounded connected search can expand for shallow sources, but its
+        // traversal order must not dictate cross-shaped excavations.
+        Vector3 aim=surface["point"];
+        int x0=target.x-(aim.x-target.x*.5<.25?1:0),z0=target.z-(aim.z-target.z*.5<.25?1:0);
+        Vector3i center2(2*x0+1,2*target.y-1,2*z0+1);
+        auto rank=[&](Vector3i p){Vector3i delta=p*2-center2;return delta.length_squared();};
+        auto farther=[&](Vector3i a,Vector3i b){auto ra=rank(a),rb=rank(b);return ra!=rb?ra>rb:key(a)>key(b);};
+        std::priority_queue<Vector3i,std::vector<Vector3i>,decltype(farther)> candidates(farther);
+        std::unordered_set<Key> visited;candidates.push(target);visited.insert(key(target));
+        while(!candidates.empty()&&remaining){Vector3i p=candidates.top();candidates.pop();const Region *other=get(p);if(!other)continue;int j=index(p);
             uint64_t amount=std::min(remaining,other->water[j]);if(!amount||!profile(*other,j).capacity())continue;
             take.emplace_back(p,amount);remaining-=amount;
             for(int d=0;d<6;++d){Vector3i q=p+directions[d];Vector3i distance=q-target;
@@ -311,12 +321,12 @@ Dictionary NativeRegionalWater::transfer_water(const Vector3 &from,const Vector3
                 if(d==0)connected=joined_vertical(b,next->water[n],a,other->water[j]);
                 else if(d==5)connected=joined_vertical(a,other->water[j],b,next->water[n]);
                 else {int axis=q.x!=p.x?0:2;connected=joined(a,other->water[j],b,next->water[n],axis,q[axis]>p[axis]);}
-                if(connected&&visited.insert(key(q)).second)candidates.push_back(q);
+                if(connected&&visited.insert(key(q)).second)candidates.push(q);
             }
         }
         amount-=remaining;
         if(!amount){
-            // Flow can empty the owner after its visible snapshot was published.
+            // An explicit edit can empty the owner before its new mesh is published.
             // Retry the same click after publication instead of taking unrelated
             // nearby water or reporting a miss against a still-visible surface.
             if(publication_enabled&&(batch_active||publish_pending||mesh_set.count(region_key(target)))){

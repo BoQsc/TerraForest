@@ -26,6 +26,13 @@ func run():
  click(MOUSE_BUTTON_LEFT)
  check(held_ml()==1000000 and game.lakes.statistics().water_ml==total-1000000,"One actual click fills the full bucket from the lake")
  if failures:await finish();return
+ deadline=Time.get_ticks_msec()+4000
+ while Time.get_ticks_msec()<deadline:
+  await process_frame
+  var state:Dictionary=game.lakes.statistics()
+  if int(state.dirty_meshes)==0 and not state.mesh_batch_active and not state.mesh_publish_pending:break
+ await RenderingServer.frame_post_draw
+ root.get_texture().get_image().save_png("res://reports/water_lake_scoop.png")
  var origin:Vector3=game.player.global_position+Vector3(0,0,10)
  var ground:Dictionary={}
  # Select the gentlest of nine nearby natural surfaces; never sculpt a basin.

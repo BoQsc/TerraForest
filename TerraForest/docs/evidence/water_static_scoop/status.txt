@@ -1,0 +1,12 @@
+2026-10-13: COMPACT STATIC BUCKET SCOOP
+Native removal prioritizes cells around a one-metre cube below the aimed surface.
+The existing connected search remains bounded to 9^3 cells; it expands only when
+needed for shallow/irregular sources. It neither moves nor simulates water.
+Regression: old BFS transfers exact quantity but fails compact 2x2x2 assertion.
+New priority traversal passes all nine water_transfer_volume release assertions.
+Debug/release DLLs rebuilt with cached SDK; no godot-cpp sources rebuilt.
+Actual world: reports/checks/20261013T180449442226Z, water_ground_pour PASS.
+Captured lake_scoop.png was inspected: visible compact cut at aimed shore.
+This does not prove arbitrary shoreline contact, thin-water visibility, exact
+rendered volume or terrain-field migration. Those remain open. No broad
+performance claim is made; only explicit scoop ordering changed.
