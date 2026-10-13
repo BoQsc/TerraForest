@@ -10,6 +10,28 @@ Updated 2026-10-11. TerraForest is an integrated development world, not a comple
 
 This is the current delivery-order and coverage reference. [Delivery history](DELIVERY_STATUS.md) records evidence at the time of each change; older entries are not current status. [World systems design](WORLD_SYSTEMS_DESIGN.md) retains the broader architecture contract. A documentation update alone closes no implementation gate.
 
+## Current water implementation and remaining gate - 2026-10-13
+
+The installed game has static water, whole-unit bucket interaction, and compound
+save/reload. Actual-world checks cover adjacent/stacked placement, complete recovery,
+mined ground, and use after disk reload. Evidence is in
+`evidence/water_pool_recovery/` and `evidence/water_static_profiles/`.
+The human-review entry point is `Review Water Buckets.cmd`.
+
+Storage is still NativeRegionalWater; terrain and water share density extraction,
+not authoritative storage. Do not claim the storage migration is complete.
+The proposed TerrainCore smooth-density replacement still fails all six existing
+volume gates on the current build (`evidence/terrain_material_units/current_density_gate.log`).
+A one-metre aligned density box produces no surface. Existing explicit TerrainCore
+voxels do represent whole units, but switching them into water still needs shoreline,
+contact, picking and saved-world conversion work. Do not install the failed density
+primitive merely to label the storage unified, or start another volume-fitting solver.
+
+Broader visual acceptance and world-scale/thermal qualification remain open.
+No automatic flow, settling or spillage is part of this phase. Historical flow
+requirements below are superseded. The earlier water checkpoints below record
+prior states; use this section and the newer evidence for current status.
+
 ## Active water scope override - 2026-10-13
 
 The user explicitly deferred all spillage and automatic flow for the foreseeable
@@ -20,7 +42,7 @@ run simulation. Earlier flow-back, drainage, local-settling and outlet-response
 gates below are historical and no longer acceptance requirements for this phase.
 The current density/volume and visual failures remain blocking.
 
-## Current water checkpoint - 2026-10-13
+## Historical water checkpoint - 2026-10-13
 
 The user supplied the older `gpu-marching-cubes` project. Its actual GPU brush and
 marching-cubes shaders now have a repeatable read-only behavior check. Direct
@@ -30,7 +52,7 @@ unfinished: closed captured topology, but missing thin layers and inaccurate
 small-volume geometry. Do not resume cosmetic fitting/clipping patches or treat
 this checkpoint as accepted. See `evidence/water_reference_review/status.txt`.
 
-## Water direction correction - 2026-10-13
+## Historical water direction correction - 2026-10-13
 
 The user explicitly rejected continued patching of the independent water representation.
 Retain the accepted visuals, but replace the interaction/material integration with

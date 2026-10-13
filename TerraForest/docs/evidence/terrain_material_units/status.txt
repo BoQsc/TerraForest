@@ -26,3 +26,6 @@ The current live regional water owner remains unchanged.
 
 Command:
 python tools/test_native_release.py --addon volumetric_terrain --test terrain_material_units --godot <Steam Godot executable>
+
+Current-build migration audit, 2026-10-13 (after shared component extraction):
+The existing terrain_material_volume check was rerun headlessly (20261013T203738850712Z), without changing code or starting another implementation. All six density-box volume gates still fail. An integer-aligned 1 m box has zero triangles; a half-offset 1 m box renders about 0.037037 m3. This is a failure of the proposed direct-density migration primitive, not a regression of the installed fixed-unit bucket path. Exact terrain voxel ownership remains the existing viable fixed-unit primitive. Smooth shoreline/contact preservation and legacy regional-water conversion remain prerequisites for switching authority; shared extraction helpers alone are not storage unification.
