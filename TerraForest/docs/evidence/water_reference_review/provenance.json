@@ -1,0 +1,14 @@
+{
+  "reference": "C:\\Users\\windows10\\Documents\\gpu-marching-cubes",
+  "git_head": "2ca95dd74fa90f4a978da23dfa136be839732d6e",
+  "source_sha256": {
+    "world_marching_cubes/modify_density.glsl": "77270214d38bc82e22ae313441d063d90824825bc65f2e8d876a0f90a48aee33",
+    "world_marching_cubes/marching_cubes.glsl": "9ee6a3d15ed50ced38929cc50343286d2b0aa2fd89b740dd54f0cd7d0e72a01b",
+    "world_marching_cubes/marching_cubes_lookup_table.glslinc": "477303c86782c4c85456b44eed127d15e002502ab5e87635ee5344045eb0d827",
+    "world_marching_cubes/gen_water_density.glsl": "80eeca6cf3fafc4355640ad89cc1a186ed91213751f4e9267d52a8ec5bc29f4a",
+    "world_voxel_brush/presets/bucket.tres": "4b741906b568c666939a8cfe802ad88bf909d058227e9be3a3ac8d0b9aea7570",
+    "modules/world_player_v2/features/tool_terrain/terrain_interaction.gd": "149a8a67a805bd58cf414bddf47ae8f517615460d22efe7bd9ca3e2b24df4f89",
+    "LICENSE": "a2010f343487d3f7618affe54f789f5487602331c0a8d03f49e9a7c547cf0499"
+  },
+  "scope": "Read-only shader execution, not an entire-world test. No reference source or binaries vendored into TerraForest."
+}

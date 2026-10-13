@@ -1,0 +1,9 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.3.280 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+PASS Actual reference box shader removes four submerged corner samples at the lake surface
+PASS The shared marching-cubes shader rebuilds the sculpted water surface
+PASS Actual bucket placement creates eight negative density corners in dry space
+PASS The reference's placed water is a closed volumetric mesh
+PASS The same water-layer box removal removes the placed volume
+WATER_REFERENCE_SHADER failures=0

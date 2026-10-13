@@ -654,145 +654,91 @@ Dictionary NativeRegionalWater::next_mesh(bool include_contacts){
     mesh_us=Time::get_singleton()->get_ticks_usec()-start;max_mesh_us=std::max(max_mesh_us,mesh_us);return result;
 }
 NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool snapshot,bool include_contacts) const {
-    SurfaceMesh output;auto &vertices=output.vertices;auto &normals=output.normals;auto &uv=output.uv;
-    // The sole runtime mesher is the terrain surface-nets reconstruction. Water
-    // supplies exact material crossings instead of losing thin volumes to a
-    // fixed lattice's point samples. Quantities and simulation are not modified.
-    struct Sample { Vector3 position,origin; WaterCellProfile shape; double bottom=0,top=0,head=0;uint16_t floor=0,ceiling=0;uint64_t amount=0; bool wet=false,known=false; };
-    struct Representative { int cx,cy,cz;unsigned mask;Vector3 position;int next; };
-    const Vector3i base=position(k)*8;
-    std::array<Sample,10*10*10> samples;
-    std::array<int,9*9*9> ids;ids.fill(-1);
-    std::vector<Representative> representatives;representatives.reserve(256);
-    auto sample_index=[](int x,int y,int z){return x+1+10*(y+1+10*(z+1));};
-    auto vertex_index=[](int x,int y,int z){return x+1+9*(y+1+9*(z+1));};
+    SurfaceMesh output;
+    // Uniform, global material-density lattice. Geometry is extracted and
+    // connected by exactly the terrain path; there is no per-water vertex fit,
+    // coordinate displacement, interval crossing override or triangle clipping.
+    constexpr int N=16,S=N+2,V=N+1;
+    constexpr float STEP=.25f,BAND=.25f;
+    struct Node {float density=BAND;Vector3i owner;bool contact=false;};
+    struct Vertex {int cx,cy,cz;unsigned mask;Vector3 position;};
+    std::array<Node,S*S*S> field;
+    std::array<int,V*V*V> ids;ids.fill(-1);
+    std::vector<Vertex> vertices;vertices.reserve(512);
+    Vector3i base=position(k)*8;
+    auto node_index=[](int x,int y,int z){return x+1+S*(y+1+S*(z+1));};
+    auto vertex_index=[](int x,int y,int z){return x+1+V*(y+1+V*(z+1));};
+    int unresolved=0,wet_cells=0;
+    // Rasterise the union of cached local volumes into one signed field. The
+    // half-step lattice avoids coincident internal cell faces. All coordinates
+    // are derived from global integer keys, identically in neighbouring halos.
     for(int z=-1;z<=8;++z)for(int y=-1;y<=8;++y)for(int x=-1;x<=8;++x){
-        Vector3i p=base+Vector3i(x,y,z);Sample &sample=samples[sample_index(x,y,z)];
-        sample.origin=Vector3(p)*0.5;sample.position=sample.origin+Vector3(0.25,0.25,0.25);
-        if(!in_domain(p))continue;const Region *region=surface_region(region_key(p),snapshot);if(!region||!region->valid)continue;int i=index(p);
-        sample.known=true;sample.shape=surface_profile(p,snapshot);sample.amount=region->water[i];
-        if(!sample.amount||!sample.shape.capacity())continue;
-        double head=sample.shape.head(sample.amount);auto footprint=sample.shape.footprint(head);
-        sample.origin=Vector3(p)*0.5;sample.wet=true;
-        sample.bottom=sample.origin.y+sample.shape.bottom(footprint.x,footprint.z)*0.001;
-        sample.head=head;sample.top=sample.origin.y+sample.shape.surface(head,footprint.x,footprint.z)*0.001;sample.floor=region->floor[i];sample.ceiling=region->ceiling[i];
-        sample.position=sample.origin+Vector3(footprint.x*0.5,0,footprint.z*0.5);
-        sample.position.y=(sample.bottom+sample.top)*0.5;
-    }
-    // Water/solid contact is not a reflective water/air interface. Keep the
-    // finite volume in the store, but do not render or pick its buried shell.
-    auto terrain_contact=[](const Sample &wet,const Sample &other,int axis,bool positive){
-        if(axis==1)return positive?wet.shape.ceiling<500:!wet.shape.open_bottom;
-        if(!other.known)return false;
-        auto air=other.shape;air.slope_x=air.slope_z=0;
-        return !WaterCellProfile::face_overlap(wet.shape,wet.head,air,air.ceiling,axis,positive);
-    };
-    for(int z=-1;z<8;++z)for(int y=-1;y<8;++y)for(int x=-1;x<8;++x){
-        const Sample *corners[8];unsigned signs=0;
-        for(int c=0;c<8;++c){corners[c]=&samples[sample_index(x+(c&1),y+((c>>1)&1),z+((c>>2)&1))];if(corners[c]->wet)signs|=1u<<c;}
-        if(!signs)continue;
-        unsigned components[8];int count=surface_components(signs,components,[&](int a,int b){
-            const Sample &first=*corners[a],&second=*corners[b];
-            if((a^b)==2){const Sample &lower=(a&2)?second:first,&upper=(a&2)?first:second;
-                return joined_vertical(lower.shape,lower.amount,upper.shape,upper.amount);}
-            int axis=(a^b)==1?0:2;
-            return joined(first.shape,first.amount,second.shape,second.amount,axis,second.position[axis]>first.position[axis]);
-        });
-        for(int component=0;component<count;++component){
-            unsigned mask=components[component];if(mask==255)continue;
-            std::array<const Sample*,12> floor_contacts{};int floor_count=0;
-            Vector3 axis_sum;int axis_count[3]={0,0,0};
-            const Sample *vertical_surface[12]{};bool vertical_top[12]{};int vertical_count=0;
-            Vector3 point=surface_crossing_vertex<Vector3>(mask,[&](Vector3 sum,int a,int b){
-                const Sample &wet=*corners[(mask&(1u<<a))?a:b];
-                const Sample &dry=*corners[(mask&(1u<<a))?b:a];
-                if((a^b)==2&&dry.position.y<wet.position.y&&!wet.shape.open_bottom)floor_contacts[floor_count++]=&wet;
-                Vector3 crossing=wet.position;
-                if((a^b)==2){bool top=dry.position.y>wet.position.y;crossing.y=top?wet.top:wet.bottom;
-                    vertical_surface[vertical_count]=&wet;vertical_top[vertical_count++]=top;}
-                else {
-                    int axis=(a^b)==1?0:2;double end=wet.origin[axis]+(dry.position[axis]>wet.position[axis]?0.5:0.0);
-                    Vector3 candidate=crossing;candidate[axis]=end;
-                    auto bottom_at=[&](Vector3 v){return wet.origin.y+wet.shape.bottom((v.x-wet.origin.x)*2,(v.z-wet.origin.z)*2)*0.001;};
-                    auto top_at=[&](Vector3 v){return wet.origin.y+wet.shape.surface(wet.head,(v.x-wet.origin.x)*2,(v.z-wet.origin.z)*2)*0.001;};
-                    if(bottom_at(candidate)>top_at(candidate)){
-                        double lo=0,hi=1;
-                        for(int n=0;n<14;++n){double t=(lo+hi)*0.5;Vector3 v=crossing+(candidate-crossing)*t;if(bottom_at(v)<top_at(v))lo=t;else hi=t;}
-                        candidate=crossing+(candidate-crossing)*((lo+hi)*0.5);
-                    }
-                    crossing=candidate;crossing.y=(bottom_at(crossing)+top_at(crossing))*0.5;
-                }
-                int crossed_axis=(a^b)==1?0:((a^b)==2?1:2);
-                axis_sum[crossed_axis]+=crossing[crossed_axis];++axis_count[crossed_axis];
-                return sum+crossing;
-            });
-            // Each crossing constrains its own face coordinate. Averaging all
-            // coordinates pulls a finite water body inward at every boundary
-            // (a single full cell otherwise shrinks to 1/27 of its volume).
-            // Retain a tiny interior bias to keep diagonal components from
-            // collapsing onto the same edge at single-precision coordinates.
-            for(int axis=0;axis<3;++axis)if(axis_count[axis])point[axis]=0.999*(axis_sum[axis]/axis_count[axis])+0.001*point[axis];
-            // Evaluate vertical constraints at the fitted horizontal position,
-            // not at the old footprint centroid: slope and height are coupled.
-            if(vertical_count){double height=0;
-                for(int n=0;n<vertical_count;++n){const Sample &s=*vertical_surface[n];
-                    double x=(point.x-s.origin.x)*2,z=(point.z-s.origin.z)*2;
-                    height+=s.origin.y+(vertical_top[n]?s.shape.surface(s.head,x,z):s.shape.bottom(x,z))*0.001;}
-                point.y=height/vertical_count;
-            }
-            // An exposed surface may end at the bed, but must not stop halfway
-            // through the shallow volume after averaging its side crossings.
-            if(floor_count){double bed=0;for(int n=0;n<floor_count;++n){const Sample &s=*floor_contacts[n];
-                bed+=s.origin.y+s.shape.bottom((point.x-s.origin.x)*2,(point.z-s.origin.z)*2)*0.001;}
-                point.y=bed/floor_count;}
-            int &head=ids[vertex_index(x,y,z)];
-            representatives.push_back({x,y,z,mask,point,head});head=int(representatives.size())-1;
+        Vector3i cell=base+Vector3i(x,y,z);
+        if(!in_domain(cell))continue;
+        const Region *region=surface_region(region_key(cell),snapshot);
+        if(!region||!region->valid)continue;
+        uint64_t amount=region->water[index(cell)];if(!amount)continue;
+        auto shape=surface_profile(cell,snapshot);if(!shape.capacity())continue;
+        double head=shape.head(amount);bool represented=false;
+        for(int nz=std::max(-1,2*z-1);nz<=std::min(N,2*z+2);++nz)
+        for(int ny=std::max(-1,2*y-1);ny<=std::min(N,2*y+2);++ny)
+        for(int nx=std::max(-1,2*x-1);nx<=std::min(N,2*x+2);++nx){
+            double lx=(nx+.5)*STEP-x*.5,ly=(ny+.5)*STEP-y*.5,lz=(nz+.5)*STEP-z*.5;
+            double bottom=shape.bottom(lx*2,lz*2)*.001;
+            double top=shape.surface(head,lx*2,lz*2)*.001;
+            float horizontal=float(std::max(std::abs(lx-.25)-.25,std::abs(lz-.25)-.25));
+            float below=float(bottom-ly),above=float(ly-top);
+            float d=std::max({horizontal,below,above});
+            represented|=d<0;
+            Node &sample=field[node_index(nx,ny,nz)];
+            if(d<sample.density){sample.density=d;sample.owner=cell;
+                sample.contact=below>=std::max(horizontal,above)&&!shape.open_bottom;}
         }
+        if(x>=0&&x<8&&y>=0&&y<8&&z>=0&&z<8){++wet_cells;if(!represented)++unresolved;}
     }
-    int triangles=0,tops=0,bottoms=0,sides=0,tiny=0,small=0,medium=0,large=0;double max_side=0;
-    connect_material_surface(int(representatives.size()),{0,8,0,8,0,8},
-        [&](int i)->const Representative&{return representatives[i];},
-        [&](int x,int y,int z,int ax,int ay,int az){
-            if(x< -1||x>=8||y< -1||y>=8||z< -1||z>=8)return -1;
-            int dx=ax-x,dy=ay-y,dz=az-z;if(dx<0||dx>1||dy<0||dy>1||dz<0||dz>1)return -1;
-            unsigned bit=1u<<(dx+2*dy+4*dz);
-            for(int id=ids[vertex_index(x,y,z)];id>=0;id=representatives[id].next)if(representatives[id].mask&bit)return id;
-            return -1;
+    for(int z=-1;z<N;++z)for(int y=-1;y<N;++y)for(int x=-1;x<N;++x){
+        float d[8];unsigned signs=0;
+        for(int c=0;c<8;++c){d[c]=field[node_index(x+(c&1),y+((c>>1)&1),z+((c>>2)&1))].density;if(d[c]<0)signs|=1u<<c;}
+        DensitySurfaceVertex geometry;
+        if(!extract_density_surface(d,signs,false,geometry))continue;
+        // Sum in lattice coordinates first, then translate once. Shared halo
+        // vertices therefore have the same float bits across region packets.
+        Vector3 p((base.x*2+x+.5f+geometry.position.x)*STEP,
+                  (base.y*2+y+.5f+geometry.position.y)*STEP,
+                  (base.z*2+z+.5f+geometry.position.z)*STEP);
+        ids[vertex_index(x,y,z)]=int(vertices.size());
+        vertices.push_back({x,y,z,signs,p});
+    }
+    int triangles=0,tops=0,bottoms=0,sides=0;
+    connect_density_surface(int(vertices.size()),{0,N,0,N,0,N},
+        [&](int i)->const Vertex&{return vertices[i];},
+        [&](int x,int y,int z){return x< -1||x>=N||y< -1||y>=N||z< -1||z>=N?-1:ids[vertex_index(x,y,z)];},
+        [&](int axis,int x,int y,int z){
+            if(include_contacts)return true;
+            Vector3i next(x,y,z);next[axis]++;
+            const Node &a=field[node_index(x,y,z)],&b=field[node_index(next.x,next.y,next.z)];
+            // Hidden solid/liquid boundaries are classification only; their
+            // removal never changes the shared density field or representatives.
+            return !(a.density>=0?a.contact:b.contact);
         },
         [&](int a,int b,int c,int d,bool reverse){
-            const auto &origin=representatives[c];Vector3i owner=base+Vector3i(origin.cx,origin.cy,origin.cz);
-            const auto &first_edge=representatives[a];const auto &second_edge=representatives[b];const auto &last_edge=representatives[d];
-            int axis=(first_edge.cx==origin.cx&&second_edge.cx==origin.cx&&last_edge.cx==origin.cx)?0:
-                     (first_edge.cy==origin.cy&&second_edge.cy==origin.cy&&last_edge.cy==origin.cy)?1:2;
-            Vector3i low(origin.cx,origin.cy,origin.cz),high=low;high[axis]++;
-            const Sample &low_sample=samples[sample_index(low.x,low.y,low.z)];
-            const Sample &high_sample=samples[sample_index(high.x,high.y,high.z)];
-            bool positive=bool(origin.mask&1);
-            if(!include_contacts&&terrain_contact(positive?low_sample:high_sample,positive?high_sample:low_sample,axis,positive))return;
-            if(!(origin.mask&1)){
-                const auto &first=representatives[a];const auto &second=representatives[b];const auto &last=representatives[d];
-                if(first.cx==origin.cx&&second.cx==origin.cx&&last.cx==origin.cx)++owner.x;
-                else if(first.cy==origin.cy&&second.cy==origin.cy&&last.cy==origin.cy)++owner.y;
-                else ++owner.z;
-            }
-            surface_quad(a,b,c,d,reverse,[&](int i){return representatives[i].position;},
-                [&](int i,int j,int l){
-                    Vector3 a=representatives[i].position,b=representatives[j].position,c=representatives[l].position;
-                    Vector3 n=(c-a).cross(b-a).normalized();if(n.length_squared()<0.5)return;
-                    auto emit=[&](Vector3 a,Vector3 b,Vector3 c){
-                        for(Vector3 p:{a,b,c}){vertices.push_back(p);normals.push_back(n);uv.push_back(Vector2(p.x,p.z));}
-                        output.owners.push_back(owner);++triangles;
-                        if(std::abs(n.y)<0.001){
-                            ++sides;double height=std::max({a.y,b.y,c.y})-std::min({a.y,b.y,c.y});max_side=std::max(max_side,height);
-                            if(height<0.0011)++tiny;else if(height<0.01)++small;else if(height<0.1)++medium;else ++large;
-                        }else if(n.y>0)++tops;else ++bottoms;
-                    };
-                    emit(a,b,c);
-                });
+            const auto &v=vertices[c];
+            int axis=(vertices[a].cx==v.cx&&vertices[b].cx==v.cx&&vertices[d].cx==v.cx)?0:
+                     (vertices[a].cy==v.cy&&vertices[b].cy==v.cy&&vertices[d].cy==v.cy)?1:2;
+            Vector3i next(v.cx,v.cy,v.cz);next[axis]++;
+            const Node &first=field[node_index(v.cx,v.cy,v.cz)],&second=field[node_index(next.x,next.y,next.z)];
+            Vector3i owner=first.density<0?first.owner:second.owner;
+            surface_quad(a,b,c,d,reverse,[&](int i){return vertices[i].position;},[&](int a,int b,int c){
+                Vector3 p=vertices[a].position,q=vertices[b].position,r=vertices[c].position;
+                Vector3 normal=(r-p).cross(q-p).normalized();if(normal.length_squared()<.5)return;
+                for(auto point:{p,q,r}){output.vertices.push_back(point);output.normals.push_back(normal);output.uv.push_back(Vector2(point.x,point.z));}
+                output.owners.push_back(owner);++triangles;
+                if(normal.y>.001)++tops;else if(normal.y<-.001)++bottoms;else ++sides;
+            });
         });
-    Dictionary faces;faces["top"]=tops;faces["bottom"]=bottoms;faces["shore_triangles"]=0;faces["side"]=sides;faces["side_under_1mm"]=tiny;
-    faces["side_under_1cm"]=small;faces["side_under_10cm"]=medium;faces["side_larger"]=large;faces["max_side_height"]=max_side;
-    faces["shared_surface_nets"]=true;faces["triangles"]=triangles;output.faces=faces;
+    output.faces["top"]=tops;output.faces["bottom"]=bottoms;output.faces["side"]=sides;output.faces["triangles"]=triangles;
+    output.faces["shared_surface_nets"]=true;output.faces["terrain_density_extractor"]=true;
+    output.faces["density_step_m"]=STEP;output.faces["wet_cells"]=wet_cells;output.faces["unresolved_wet_cells"]=unresolved;
     return output;
 }
 Dictionary NativeRegionalWater::statistics() const {

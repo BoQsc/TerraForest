@@ -4,6 +4,16 @@ Updated 2026-10-11. TerraForest is an integrated development world, not a comple
 
 This is the current delivery-order and coverage reference. [Delivery history](DELIVERY_STATUS.md) records evidence at the time of each change; older entries are not current status. [World systems design](WORLD_SYSTEMS_DESIGN.md) retains the broader architecture contract. A documentation update alone closes no implementation gate.
 
+## Current water checkpoint - 2026-10-13
+
+The user supplied the older `gpu-marching-cubes` project. Its actual GPU brush and
+marching-cubes shaders now have a repeatable read-only behavior check. Direct
+density edits are the interaction reference; their unequal scoop/pour quantities
+are not a conservation model. TerraForest's current density extractor remains
+unfinished: closed captured topology, but missing thin layers and inaccurate
+small-volume geometry. Do not resume cosmetic fitting/clipping patches or treat
+this checkpoint as accepted. See `evidence/water_reference_review/status.txt`.
+
 ## Water direction correction - 2026-10-13
 
 The user explicitly rejected continued patching of the independent water representation.

@@ -1,0 +1,66 @@
+{
+  "cases": [
+    {
+      "bottom": 41.0,
+      "closed": true,
+      "dimensions": "2 x 2 x 2 cells, slope=false",
+      "mesh_ml": 843750.476837158,
+      "relative_error": 0.156249523162842,
+      "stored_ml": 1000000,
+      "top": 42.0,
+      "triangles": 192
+    },
+    {
+      "bottom": 41.0,
+      "closed": true,
+      "dimensions": "4 x 2 x 4 cells, slope=false",
+      "mesh_ml": 3718750.47683716,
+      "relative_error": 0.0703123807907106,
+      "stored_ml": 4000000,
+      "top": 42.0,
+      "triangles": 512
+    },
+    {
+      "bottom": 41.0,
+      "closed": true,
+      "dimensions": "1 x 1 x 1 cells, slope=false",
+      "mesh_ml": 62500.4768371582,
+      "relative_error": 0.499996185302734,
+      "stored_ml": 125000,
+      "top": 41.5,
+      "triangles": 48
+    },
+    {
+      "bottom": Infinity,
+      "closed": false,
+      "dimensions": "2 x 1 x 2 cells, slope=false",
+      "mesh_ml": 0.0,
+      "relative_error": 1.0,
+      "stored_ml": 100000,
+      "top": -Infinity,
+      "triangles": 0
+    },
+    {
+      "bottom": Infinity,
+      "closed": false,
+      "dimensions": "1 x 1 x 1 cells, slope=false",
+      "mesh_ml": 0.0,
+      "relative_error": 1.0,
+      "stored_ml": 1000,
+      "top": -Infinity,
+      "triangles": 0
+    },
+    {
+      "bottom": Infinity,
+      "closed": false,
+      "dimensions": "1 x 1 x 1 cells, slope=true",
+      "mesh_ml": 0.0,
+      "relative_error": 1.0,
+      "stored_ml": 10000,
+      "top": -Infinity,
+      "triangles": 0
+    }
+  ],
+  "failures": 12,
+  "library": "volumetric_water.windows.template_release.x86_64.dll"
+}

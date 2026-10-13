@@ -1,0 +1,17 @@
+{
+  "degenerate_triangles": 0,
+  "examples": [],
+  "failures": 0,
+  "gap_examples": [],
+  "longest_edge_m": 0.373743921518326,
+  "nonmanifold_edges": 0,
+  "same_direction_pairs": 0,
+  "scope": "Exact edge conformity of the complete captured material envelope; unpaired edges may include T-junctions and require geometric diagnosis.",
+  "signed_volume_m3": -554.961564053734,
+  "triangles": 21444,
+  "unmatched_edge_length_m": 0.0,
+  "unmatched_midpoints_1mm": 0,
+  "unpaired_edges": 0,
+  "water_ml": 559128094,
+  "library": "volumetric_water.windows.template_release.x86_64.dll"
+}

@@ -1,0 +1,44 @@
+{
+  "changed_lake_samples": 4,
+  "failures": 0,
+  "lake_before": {
+    "closed_mesh_volume_m3": null,
+    "depth_integral_below_y_8_5": 0.0,
+    "high": "(31.0, 8.5, 31.0)",
+    "low": "(0.0, 8.5, 0.0)",
+    "triangles": 1922,
+    "unpaired_edges": 124,
+    "vertices": 3844
+  },
+  "lake_scooped": {
+    "closed_mesh_volume_m3": null,
+    "depth_integral_below_y_8_5": 3.125,
+    "high": "(31.0, 8.5, 31.0)",
+    "low": "(0.0, 7.75, 0.0)",
+    "triangles": 1938,
+    "unpaired_edges": 124,
+    "vertices": 3876
+  },
+  "lake_surface_removed_m3": 3.125,
+  "placed": {
+    "closed_mesh_volume_m3": 1.03008368611336,
+    "depth_integral_below_y_8_5": 0.0,
+    "high": "(17.00497, 9.004975, 17.00497)",
+    "low": "(15.99502, 7.995025, 15.99502)",
+    "triangles": 44,
+    "unpaired_edges": 0,
+    "vertices": 96
+  },
+  "placed_negative_samples": 8,
+  "removed": {
+    "closed_mesh_volume_m3": 0.0,
+    "depth_integral_below_y_8_5": 0.0,
+    "high": "(-inf, -inf, -inf)",
+    "low": "(inf, inf, inf)",
+    "triangles": 0,
+    "unpaired_edges": 0,
+    "vertices": 0
+  },
+  "removed_negative_samples": 4,
+  "scope": "Unmodified reference GPU shaders, lake density matching its water-level generator, and dry density +100. No whole-world performance, flow, bucket conservation or gameplay acceptance claim."
+}

@@ -1,0 +1,44 @@
+2026-10-13: REFERENCE VERIFIED; TERRAFORREST WATER STILL UNACCEPTED
+
+Read-only reference: C:/Users/windows10/Documents/gpu-marching-cubes
+The check compiles and executes its actual modify_density.glsl and
+marching_cubes.glsl through a local RenderingDevice. It reads the original
+lookup table in place. Source hashes and reference Git HEAD are in provenance.
+No source or native binaries from the reference were vendored into TerraForest.
+The reference's LICENSE says CC0. This check's own code is original 0BSD.
+
+Observed reference behavior:
+- Box bucket at (16.5,8.5,16.5), radius .6, modifies the density field directly.
+- Positive .5 removes four submerged samples from a flat lake at y=8.5.
+- The resulting depression is .75m deep. Projected surface integration gives
+  3.125m3 removed. The surrounding boundary is unchanged by this interior edit.
+- Negative .5 in generated dry density +100 creates eight negative corners.
+- Actual marching cubes returns a closed 44-triangle volume of 1.030083686m3.
+- The removal brush then eliminates that placed volume.
+- This is NOT conserved bucket transfer, automatic flow, general terrain contact
+  validation, or a full-world performance result. The lake mesh is an open patch;
+  only its unchanged-boundary depression integral is used, not a closed volume.
+
+Direction: preserve direct density-field editing as the reference behavior.
+Do not copy its unmeasured scoop/placement quantities as a conservation system.
+TerraForest still needs authoritative material-field editing, terrain exclusion,
+conserved transfers, bounded local settling, persistence and cached loading.
+
+Unfinished TerraForest checkpoint (before this reference review):
+The runtime custom fitted surface was replaced by fixed .25m density samples
+passed directly to terrain's extract_density_surface/connect_density_surface.
+There is no alternate renderer or triangle clipping fallback. It still derives
+the field from the old volume profiles; it is NOT the reference's direct edits.
+Captured complete-envelope topology has zero unmatched/nonmanifold edges and
+the ground gameplay test passes. However controlled volume checks FAIL:
+a 1m3 box renders .843750m3; several thin layers have no surface. These failures
+remain in the test suite and are retained here. Do not call this a working
+replacement or accept a passing contact check caused by missing thin geometry.
+
+Command for repeatable reference-only check (about two seconds here):
+python tools/run_godot_check.py water_reference_shader --timeout 25 --require
+"WATER_REFERENCE_SHADER failures=0" --
+"--reference-project=C:/Users/windows10/Documents/gpu-marching-cubes"
+
+The check runs fullscreen 1920x1080 but measures shader output, not visual quality
+or FPS. It does not alter the reference project or either project's saved world.
