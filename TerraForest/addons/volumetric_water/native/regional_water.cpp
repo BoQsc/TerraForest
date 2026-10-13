@@ -422,8 +422,8 @@ NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool s
     // The sole runtime mesher is the terrain surface-nets reconstruction. Water
     // supplies exact material crossings instead of losing thin volumes to a
     // fixed lattice's point samples. Quantities and simulation are not modified.
-    struct Sample { Vector3 position; double bottom=0,top=0; bool wet=false; };
-    struct Representative { int cx,cy,cz;unsigned mask;Vector3 position; };
+    struct Sample { Vector3 position; double bottom=0,top=0;uint16_t floor=0,ceiling=0;uint64_t amount=0; bool wet=false; };
+    struct Representative { int cx,cy,cz;unsigned mask;Vector3 position;int next; };
     const Vector3i base=position(k)*8;
     std::array<Sample,10*10*10> samples;
     std::array<int,9*9*9> ids;ids.fill(-1);
@@ -436,30 +436,44 @@ NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool s
         if(!in_domain(p))continue;const Region *region=surface_region(region_key(p),snapshot);if(!region||!region->valid)continue;int i=index(p);
         auto interval=WaterSurfaceInterval::from_cell(p.y,region->floor[i],region->ceiling[i],region->water[i]);
         if(!interval.wet)continue;
-        sample.wet=true;sample.bottom=interval.bottom;sample.top=interval.top;
+        sample.wet=true;sample.bottom=interval.bottom;sample.top=interval.top;sample.floor=region->floor[i];sample.ceiling=region->ceiling[i];sample.amount=region->water[i];
         sample.position.y=(interval.bottom+interval.top)*0.5;
     }
     for(int z=-1;z<8;++z)for(int y=-1;y<8;++y)for(int x=-1;x<8;++x){
         const Sample *corners[8];unsigned signs=0;
         for(int c=0;c<8;++c){corners[c]=&samples[sample_index(x+(c&1),y+((c>>1)&1),z+((c>>2)&1))];if(corners[c]->wet)signs|=1u<<c;}
-        if(!signs||signs==255)continue;
-        Vector3 point=surface_crossing_vertex<Vector3>(signs,[&](Vector3 sum,int a,int b){
-            const Sample &wet=*corners[corners[a]->wet?a:b];
-            const Sample &dry=*corners[corners[a]->wet?b:a];
-            Vector3 crossing=wet.position;
-            if((a^b)==2)crossing.y=dry.position.y>wet.position.y?wet.top:wet.bottom;
-            else if((a^b)==1)crossing.x=(wet.position.x+dry.position.x)*0.5;
-            else crossing.z=(wet.position.z+dry.position.z)*0.5;
-            return sum+crossing;
+        if(!signs)continue;
+        unsigned components[8];int count=surface_components(signs,components,[&](int a,int b){
+            const Sample &first=*corners[a],&second=*corners[b];
+            if((a^b)==2){const Sample &lower=(a&2)?second:first,&upper=(a&2)?first:second;
+                return lower.ceiling==500&&upper.floor==0&&lower.amount>=uint64_t(lower.ceiling-lower.floor)*250;}
+            return water_intervals_joined(first.floor,first.ceiling,first.amount,second.floor,second.ceiling,second.amount);
         });
-        ids[vertex_index(x,y,z)]=int(representatives.size());
-        representatives.push_back({x,y,z,signs,point});
+        for(int component=0;component<count;++component){
+            unsigned mask=components[component];if(mask==255)continue;
+            Vector3 point=surface_crossing_vertex<Vector3>(mask,[&](Vector3 sum,int a,int b){
+                const Sample &wet=*corners[(mask&(1u<<a))?a:b];
+                const Sample &dry=*corners[(mask&(1u<<a))?b:a];
+                Vector3 crossing=wet.position;
+                if((a^b)==2)crossing.y=dry.position.y>wet.position.y?wet.top:wet.bottom;
+                else if((a^b)==1)crossing.x=(wet.position.x+dry.position.x)*0.5;
+                else crossing.z=(wet.position.z+dry.position.z)*0.5;
+                return sum+crossing;
+            });
+            int &head=ids[vertex_index(x,y,z)];
+            representatives.push_back({x,y,z,mask,point,head});head=int(representatives.size())-1;
+        }
     }
     int triangles=0,tops=0,bottoms=0,sides=0,tiny=0,small=0,medium=0,large=0;double max_side=0;
-    connect_density_surface(int(representatives.size()),{0,8,0,8,0,8},
+    connect_material_surface(int(representatives.size()),{0,8,0,8,0,8},
         [&](int i)->const Representative&{return representatives[i];},
-        [&](int x,int y,int z){return x< -1||x>=8||y< -1||y>=8||z< -1||z>=8?-1:ids[vertex_index(x,y,z)];},
-        [](int,int,int,int){return true;},
+        [&](int x,int y,int z,int ax,int ay,int az){
+            if(x< -1||x>=8||y< -1||y>=8||z< -1||z>=8)return -1;
+            int dx=ax-x,dy=ay-y,dz=az-z;if(dx<0||dx>1||dy<0||dy>1||dz<0||dz>1)return -1;
+            unsigned bit=1u<<(dx+2*dy+4*dz);
+            for(int id=ids[vertex_index(x,y,z)];id>=0;id=representatives[id].next)if(representatives[id].mask&bit)return id;
+            return -1;
+        },
         [&](int a,int b,int c,int d,bool reverse){
             const auto &origin=representatives[c];Vector3i owner=base+Vector3i(origin.cx,origin.cy,origin.cz);
             if(!(origin.mask&1)){

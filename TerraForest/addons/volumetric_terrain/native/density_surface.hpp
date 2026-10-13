@@ -55,4 +55,21 @@ inline void connect_density_surface(int count,SurfaceOwnership owned,Cells cell,
    });
  }
 }
+// A multi-component cell selects each neighbour representative using the wet
+// endpoint shared by all four cells around the material-crossing edge.
+template<class Cells,class Lookup,class Emit>
+inline void connect_material_surface(int count,SurfaceOwnership owned,Cells cell,Lookup lookup,Emit emit){
+ for(int j=0;j<count;++j){
+  const auto &v=cell(j);int x=v.cx,y=v.cy,z=v.cz;
+  if(!owned.contains(x,y,z))continue;
+  surface_component_faces(x,y,z,v.mask,
+   [&](int xx,int yy,int zz,int axis){
+    int ax=x,ay=y,az=z;
+    if(!(v.mask&1)){if(axis==0)++ax;else if(axis==1)++ay;else ++az;}
+    return lookup(xx,yy,zz,ax,ay,az);
+   },
+   [&](int,int a,int b,int c,int d,bool reverse){emit(a,b,c,d,reverse);});
+ }
+}
+
 }

@@ -30,7 +30,7 @@ inline Vec surface_cell_vertex(const float *d,unsigned signs) {
 // Lookup returns a vertex index or -1 for absent cells. Domain ownership and
 // boundary guards stay with the caller; ghost cells may have negative indices.
 template<class Lookup,class Emit>
-inline void surface_cell_faces(int x,int y,int z,unsigned signs,Lookup lookup,Emit emit){
+inline void surface_component_faces(int x,int y,int z,unsigned signs,Lookup lookup,Emit emit){
  static constexpr int offsets[3][3][3]={
   {{0,-1,-1},{0,0,-1},{0,-1,0}},
   {{-1,0,-1},{-1,0,0},{0,0,-1}},
@@ -39,12 +39,35 @@ inline void surface_cell_faces(int x,int y,int z,unsigned signs,Lookup lookup,Em
  for(int axis=0;axis<3;axis++){
   int other=1<<axis;if((signs&1)==((signs>>other)&1))continue;
   const auto &o=offsets[axis];
-  int a=lookup(x+o[0][0],y+o[0][1],z+o[0][2]);
-  int b=lookup(x+o[1][0],y+o[1][1],z+o[1][2]);
-  int c=lookup(x,y,z);
-  int d=lookup(x+o[2][0],y+o[2][1],z+o[2][2]);
+  int a=lookup(x+o[0][0],y+o[0][1],z+o[0][2],axis);
+  int b=lookup(x+o[1][0],y+o[1][1],z+o[1][2],axis);
+  int c=lookup(x,y,z,axis);
+  int d=lookup(x+o[2][0],y+o[2][1],z+o[2][2],axis);
   if(a>=0&&b>=0&&c>=0&&d>=0)emit(axis,a,b,c,d,(signs&1)==0);
  }
+}
+template<class Lookup,class Emit>
+inline void surface_cell_faces(int x,int y,int z,unsigned signs,Lookup lookup,Emit emit){
+ surface_component_faces(x,y,z,signs,[&](int xx,int yy,int zz,int){return lookup(xx,yy,zz);},emit);
+}
+// Partition the eight occupied corners through face-adjacent material openings.
+// A single representative must never weld unrelated material components.
+template<class Connected>
+inline int surface_components(unsigned signs,unsigned *masks,Connected connected){
+ int count=0;unsigned unseen=signs;
+ while(unseen){
+  unsigned seed=unseen&(~unseen+1),component=seed,frontier=seed;unseen^=seed;
+  while(frontier){
+   unsigned next=0;
+   for(int a=0;a<8;++a)if(frontier&(1u<<a))for(int axis=0;axis<3;++axis){
+    int b=a^(1<<axis);unsigned bit=1u<<b;
+    if((unseen&bit)&&connected(a,b)){unseen^=bit;component|=bit;next|=bit;}
+   }
+   frontier=next;
+  }
+  masks[count++]=component;
+ }
+ return count;
 }
 // Clockwise Godot triangles with the shorter geometric diagonal. Both terrain
 // and water use this rule so warped quads are not split by different policies.

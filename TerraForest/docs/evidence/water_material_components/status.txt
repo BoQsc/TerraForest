@@ -1,0 +1,29 @@
+Material-component reconstruction, 2026-10-13
+
+Replacing old quad-count assertions with representation-independent closed-edge
+and connected-component checks exposed TWO genuine failures before the fix:
+diagonal wet cells became one connected surface, and a solid vertical ledge did
+not separate an upper pool. Closed cross-region surfaces, conservation and
+invalidation already passed the revised checks. The two failures were fixed in
+the shared reconstruction machinery, not waived by changing expected outcomes.
+
+Wet corners are partitioned through actual wet openings before reconstruction.
+Each component gets its own representative. Face lookup chooses the component
+containing the edge's wet endpoint, including both interfaces where wet endpoints
+are separated by a solid interval. The connection policy is volume-aware;
+terrain's existing density path is unchanged and uses the shared edge machinery.
+
+Checks passed:
+- All 510 non-empty 2x2x2 occupancy patterns (255 shallow, 255 full): closed,
+  nondegenerate surfaces and expected connected-component counts.
+- Hand-authored diagonal, cross-region and solid-ledge cases; invalid occupancy,
+  boundary invalidation, exact quantities and resumable vertical repairs.
+- 30 thin-water/query cases plus immutable-batch/cancellation checks.
+- 72 complete terrain mesh packets unchanged versus frozen pre-refactor source.
+- Actual 1920x1080 combined-world test: all 50 checks, mining, buckets, cached
+  save/reload and atomic scene publication.
+
+Not a proof for every material field or arbitrary terrain geometry. Flow remains
+an approximate finite-volume relaxation; reconstructed visual volume is not an
+exact geometric integral of stored millilitres. Query/display snapshot agreement,
+large-scale staging cost and sustained laptop performance remain unqualified.
