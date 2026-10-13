@@ -31,5 +31,5 @@ for name,source in [('before',baseline),('after',native/'core.cpp')]:
  outputs.append(run.stdout)
 if outputs[0]!=outputs[1]:print('FAIL complete terrain patch mismatch');raise SystemExit(1)
 with (ROOT/'reports/surface_cell_reuse.log').open('a') as report:
- report.write('PASS six complete encoded terrain patches match pre-refactor source\n'+outputs[1])
-print('PASS six complete encoded terrain patches match pre-refactor source')
+ report.write('PASS 72 generated, edited, cached and restored terrain packets match pre-refactor source\n'+outputs[1])
+print('PASS 72 generated, edited, cached and restored terrain packets match pre-refactor source')

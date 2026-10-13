@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: 0BSD
 #include "core.h"
 #include "geology.hpp"
-#include "surface_cell.hpp"
+#include "density_surface.hpp"
 #if defined(TERRAFOREST_TYPED_BRIDGE)
 #include <chrono>
 #endif
@@ -247,11 +247,6 @@ bool World::deserialize(const u8*data,int n){
  if(!r.good){t.release();return false;}release();*this=t;return true;
 }
 
-static V3 gradient(const float*d,V3 p){
- V3 g{};for(int i=0;i<8;i++){float wx=i&1?p.x:1-p.x,wy=i&2?p.y:1-p.y,wz=i&4?p.z:1-p.z;
-  g.x+=d[i]*(i&1?1.f:-1.f)*wy*wz;g.y+=d[i]*(i&2?1.f:-1.f)*wx*wz;g.z+=d[i]*(i&4?1.f:-1.f)*wx*wy;}
- return normal(g);
-}
 static u32 cell_key(int x,int y,int z,int n){return u32((x+1)+(n+1)*((z+1)+(n+1)*y))+1;}
 static void quad(Mesh&m,u32 a,u32 b,u32 c,u32 d,bool reverse){
  terraforest::surface_quad(a,b,c,d,reverse,
@@ -405,24 +400,11 @@ static bool extract_vertices(const World&w,int ox,int oz,int size,Mesh&m,u32 epo
     if(d[k]<0)signs|=1u<<k;
    }
    if(signs==0||signs==255)continue;
-   V3 p=terraforest::surface_cell_vertex<V3>(d,signs);
-   if(w.surface_style==1){
-    bool edited_cell=false;for(int k=0;k<8;k++)if(mats[k])edited_cell=true;
-    if(edited_cell)for(int iteration=0;iteration<4;iteration++){
-     float value=0;V3 grad{};
-     for(int k=0;k<8;k++){
-      float xx=k&1?p.x:1-p.x,yy=k&2?p.y:1-p.y,zz=k&4?p.z:1-p.z;
-      value+=d[k]*xx*yy*zz;
-      grad.x+=d[k]*(k&1?1.f:-1.f)*yy*zz;
-      grad.y+=d[k]*(k&2?1.f:-1.f)*xx*zz;
-      grad.z+=d[k]*(k&4?1.f:-1.f)*xx*yy;
-     }
-     float g2=dot(grad,grad);if(g2<1e-8f||ab(value)<.0005f)break;
-     V3 delta=grad*(value/g2);float dl=length(delta);if(dl>.2f)delta=delta*(.2f/dl);
-     p={clampf(p.x-delta.x,.001f,.999f),clampf(p.y-delta.y,.001f,.999f),clampf(p.z-delta.z,.001f,.999f)};
-    }
-   }
-   Vertex v;v.p={gx+p.x,y+p.y,gz+p.z};v.n=gradient(d,p);v.cx=gx;v.cy=y;v.cz=gz;v.mask=signs;
+   bool refine=false;if(w.surface_style==1)for(int k=0;k<8;k++)if(mats[k])refine=true;
+   terraforest::DensitySurfaceVertex geometry;
+   if(!terraforest::extract_density_surface(d,signs,refine,geometry))continue;
+   V3 p=geometry.position;
+   Vertex v;v.p={gx+p.x,y+p.y,gz+p.z};v.n=geometry.normal;v.cx=gx;v.cy=y;v.cz=gz;v.mask=signs;
    // Material classification does not affect the field or topology.
    float best=1e30f;for(int k=0;k<8;k++)if(mats[k]&&mats[k]<5&&ab(d[k])<best){best=ab(d[k]);v.material=float(mats[k]);} // Natural ore IDs are shaded separately from edit materials.
    m.v.push(v);
@@ -436,16 +418,11 @@ static bool extract_vertices(const World&w,int ox,int oz,int size,Mesh&m,u32 epo
 static void connect_patch(int ox,int oz,int size,Mesh&m,int y_begin=0,int y_end=WORLD_Y){
  Map ids;
  for(int j=0;j<m.v.n;j++){const Vertex&v=m.v[j];ids.put(cell_key(v.cx-ox,v.cy,v.cz-oz,size),j);}
- int vn=m.v.n;
- for(int j=0;j<vn;j++){
-   const Vertex&v=m.v[j];int x=v.cx-ox,y=v.cy,z=v.cz-oz;if(x<0||z<0||x>=size||z>=size||y<y_begin||y>=y_end)continue;u32 s=v.mask;
-  terraforest::surface_cell_faces(x,y,z,s,
-   [&](int xx,int yy,int zz){if(yy<0)return -1;return xx==x&&yy==y&&zz==z?j:ids.get(cell_key(xx,yy,zz,size));},
-   [&](int axis,int a,int b,int c,int d,bool reverse){
-    if((axis==0&&(y<1||z<0))||(axis==2&&y<1))return;
-    quad(m,a,b,c,d,reverse);
-   });
- }
+ terraforest::connect_density_surface(m.v.n,{ox,ox+size,y_begin,y_end,oz,oz+size},
+  [&](int j)->const Vertex&{return m.v[j];},
+  [&](int x,int y,int z){return y<0?-1:ids.get(cell_key(x-ox,y,z-oz,size));},
+  [&](int axis,int x,int y,int z){return !((axis==0&&(y<1||z<oz))||(axis==2&&y<1));},
+  [&](int a,int b,int c,int d,bool reverse){quad(m,a,b,c,d,reverse);});
  ids.release();
 }
 
