@@ -1,0 +1,19 @@
+2026-10-13: Generated ripple normal texture integrated into the existing water material.
+Built-in image_gen; exact prompt and asset provenance are in
+addons/volumetric_water/textures/generation.json.
+
+Runtime import: 512-pixel maximum dimension, VRAM compressed normal map,
+mipmaps enabled. One shared repeating linear-data sampler replaces the two
+analytic cosine ripples. No additional camera, reflection or screen-copy pass.
+No geometry, flow, bucket quantities or archive changes.
+
+Actual-world checks at 1920x1080 fullscreen, capped at 60 FPS:
+- water_bucket_review: PASS (20261013T112546861936Z).
+- regional_water_world: PASS (20261013T112623780401Z), including scoop,
+  pour, mining, conservation and archive roundtrip. Retained run.json/engine.log.
+- Inspected lake.png and puddle.png: transparent shallow bed remains visible.
+
+Limitations: subtle normal detail, not a final water art approval. Environment
+reflections are disabled by the current world, limiting reflected ripple detail.
+Angular shoreline/puddle geometry remains. No GPU-time delta or sustained laptop
+thermal claim is made from this visual check or its screenshot FPS counter.

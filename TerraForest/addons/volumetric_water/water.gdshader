@@ -11,7 +11,10 @@ uniform vec3 water_color : source_color = vec3(0.08, 0.36, 0.34);
 uniform float absorption : hint_range(0.05, 2.0) = 0.65;
 // A small surface tint keeps bucket-sized shallow puddles readable.
 uniform float surface_tint : hint_range(0.0, 0.3) = 0.22;
-uniform float ripple_strength : hint_range(0.0, 0.12) = 0.035;
+// Linear RG slope data: one shared mipmapped texture, no extra render pass.
+uniform sampler2D ripple_normal : hint_normal, repeat_enable, filter_linear_mipmap;
+uniform float ripple_strength : hint_range(0.0, 1.0) = 0.55;
+uniform float ripple_scale = 0.25;
 varying vec3 surface_world_normal;
 
 void vertex() {
@@ -30,10 +33,9 @@ void fragment() {
     float thickness = clamp(length(behind.xyz) - length(VERTEX), 0.0, 40.0);
     float transmission = exp(-absorption * thickness);
     vec3 n = normalize(surface_world_normal);
-    float a = dot(UV, vec2(1.7, 1.1)) + TIME * 0.65;
-    float b = dot(UV, vec2(-1.3, 2.2)) - TIME * 0.48;
+    vec2 ripple = texture(ripple_normal, UV * ripple_scale + TIME * vec2(0.007, -0.004)).rg * 2.0 - 1.0;
     // Preserve vertical side normals; ripples perturb horizontal surfaces only.
-    n = normalize(n + vec3(cos(a), 0.0, cos(b)) * ripple_strength * abs(n.y));
+    n = normalize(n + vec3(ripple.x, 0.0, ripple.y) * ripple_strength * abs(n.y));
     NORMAL = normalize((VIEW_MATRIX * vec4(n, 0.0)).xyz);
     if (!FRONT_FACING) NORMAL = -NORMAL;
     float facing = clamp(abs(dot(NORMAL, VIEW)), 0.0, 1.0);

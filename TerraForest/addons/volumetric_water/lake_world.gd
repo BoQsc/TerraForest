@@ -70,6 +70,7 @@ func restore_snapshot(bytes:PackedByteArray) -> bool:
 func _ready() -> void:
  if terrain==null or not prepare():set_process(false);return
  _material.shader=preload("res://addons/volumetric_water/water.gdshader")
+ _material.set_shader_parameter("ripple_normal",preload("res://addons/volumetric_water/textures/water_ripples_normal.png"))
  terrain.lake_slice_ready.connect(_slice_ready);terrain.region_invalidated.connect(_invalidate)
  # Mining is admitted normally. Invalid regions retain their water and wait for
  # the committed terrain worker samples; they never flow against stale solids.

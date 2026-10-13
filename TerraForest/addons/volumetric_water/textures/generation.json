@@ -1,0 +1,9 @@
+{
+  "mode": "Built-in image_gen",
+  "date": "2026-10-13",
+  "asset": "water_ripples_normal.png",
+  "prompt": "Use case: photorealistic-natural. Asset type: seamless tileable tangent-space NORMAL MAP for subtle calm freshwater lake ripples in a realtime game, square 1024x1024. Generate the technical normal map itself, not a picture of water. Predominantly periwinkle blue RGB approximately (128,128,250), red/green encode gently varying surface slopes. Natural irregular overlapping fine wind ripples with broader gentle undulations, no concentric circles, no foam, no reflections, no lighting, no shadows, no color/albedo, no objects, no text, no borders. Orthographic flat full frame continuous texture, periodic seamless edges in both axes. Soft low-amplitude realistic ripple normals, avoid harsh high-contrast ridges and repeated obvious motifs. Opaque RGB texture; water transparency will be implemented by the game shader.",
+  "usage": "Linear normal data; shared repeat/mipmap sampler. Water transmission remains depth based.",
+  "license": "0BSD",
+  "sha256": "6cd04d22f26ee11e7ca1cad30d1d3307eb5d528b29f6def1e5b78f79677e6648"
+}
