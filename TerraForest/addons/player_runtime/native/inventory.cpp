@@ -6,6 +6,7 @@
 namespace terraforest {
 using namespace godot;
 void NativePlayerInventory::_bind_methods() {
+    ClassDB::bind_method(D_METHOD("exchange_water","slot","pour","revision","millilitres"),&NativePlayerInventory::exchange_water);
     ClassDB::bind_method(D_METHOD("exchange_bucket","slot","pour","revision","litres"),&NativePlayerInventory::exchange_bucket,DEFVAL(1));
     ClassDB::bind_method(D_METHOD("register_durable","item","maximum"),&NativePlayerInventory::register_durable);
     ClassDB::bind_method(D_METHOD("wear_tool","slot","amount","expected_revision"),&NativePlayerInventory::wear_tool);
@@ -42,12 +43,12 @@ Dictionary NativePlayerInventory::wear_tool(int64_t slot,int64_t amount,int64_t 
     if(broken)s={};++revision;auto out=result(true,"");out["broken"]=broken;return out;
 }
 bool NativePlayerInventory::register_item(int64_t item,int64_t limit) {
-    if(catalog_owner.is_valid()||revision||item<=0||item>INT32_MAX||limit<1||limit>1000000||catalog().size()>=256||catalog().count(item))return false;
+    if(catalog_owner.is_valid()||revision||item<=0||item>INT32_MAX||limit<1||limit>1000000||(water_container(item)&&limit!=1)||catalog().size()>=256||catalog().count(item))return false;
     limits[item]=limit;return true;
 }
 Dictionary NativePlayerInventory::snapshot() const {
     Dictionary out;out["schema"]=1;out["revision"]=revision;Array rows;
-    for(auto s:slots){Dictionary row;row["item"]=s.item;row["count"]=s.count;row["wear"]=s.wear;row["durability"]=max_durability(s.item)-s.wear;row["max_durability"]=max_durability(s.item);rows.push_back(row);}
+    for(auto s:slots){Dictionary row;row["item"]=s.item;row["count"]=s.count;row["wear"]=s.wear;row["water_ml"]=s.water_ml;row["water_capacity_ml"]=water_container(s.item)?WATER_CAPACITY_ML:0;row["durability"]=max_durability(s.item)-s.wear;row["max_durability"]=max_durability(s.item);rows.push_back(row);}
     out["slots"]=rows;return out;
 }
 Dictionary NativePlayerInventory::grant(int64_t item,int64_t count,int64_t expected) {
@@ -61,7 +62,7 @@ Dictionary NativePlayerInventory::grant(int64_t item,int64_t count,int64_t expec
     for(int pass=0;pass<2&&count;pass++)for(auto &s:slots) {
         if((pass==0&&s.item!=item)||(pass==1&&s.item))continue;
         int64_t amount=std::min(count,found->second-s.count);
-        if(amount){s.item=item;s.count+=amount;count-=amount;}
+        if(amount){s.item=item;s.water_ml=water_container(item)?(item-401)*1000:0;s.count+=amount;count-=amount;}
     }
     ++revision;return result(true,"");
 }
@@ -84,7 +85,7 @@ Dictionary NativePlayerInventory::apply_grants(const PackedInt64Array &items,int
         for(int pass=0;pass<2&&count;++pass)for(auto &slot:candidate){
             if((pass==0&&slot.item!=item)||(pass==1&&slot.item))continue;
             const int64_t amount=std::min(count,found->second-slot.count);
-            if(amount){slot.item=item;slot.count+=amount;count-=amount;}
+            if(amount){slot.item=item;slot.water_ml=water_container(item)?(item-401)*1000:0;slot.count+=amount;count-=amount;}
         }
         if(count){auto out=result(false,"full");out["item"]=item;out["missing_capacity"]=count;return out;}
     }
@@ -132,12 +133,12 @@ Dictionary NativePlayerInventory::transfer(int64_t from,int64_t to,int64_t count
     if(expected!=revision)return result(false,"stale_revision");
     if(from<0||from>=32||to<0||to>=32||from==to||count<=0||count>slots[from].count)return result(false,"invalid_transfer");
     auto &a=slots[from];auto &b=slots[to];
-    if(b.item&&(b.item!=a.item||max_durability(a.item))){
+    if(b.item&&(b.item!=a.item||max_durability(a.item)||water_container(a.item))){
         if(count!=a.count)return result(false,"partial_swap");
         std::swap(a,b);
     }else{
         if(count>catalog().at(a.item)-b.count)return result(false,"stack_full");
-        b.item=a.item;b.wear=a.wear;b.count+=count;a.count-=count;if(!a.count)a={};
+        b.item=a.item;b.wear=a.wear;b.water_ml=a.water_ml;b.count+=count;a.count-=count;if(!a.count)a={};
     }
     ++revision;return result(true,"");
 }
@@ -153,12 +154,12 @@ Dictionary NativePlayerInventory::transfer_to(const Ref<NativePlayerInventory> &
     const int64_t item=slots[slot].item;
     if(max_durability(item)!=target->max_durability(item))return result(false,"durability_schema_mismatch");
     int target_slot=-1;
-    if(max_durability(item))for(int i=0;i<32;++i)if(!target->slots[i].item){target_slot=i;break;}
+    if(max_durability(item)||water_container(item))for(int i=0;i<32;++i)if(!target->slots[i].item){target_slot=i;break;}
     Dictionary granted=target->grant(item,count,expected_destination);
     if(!bool(granted["ok"])) {
         Dictionary failed=result(false,"destination_rejected");failed["detail"]=granted["reason"];return failed;
     }
-    if(target_slot>=0)target->slots[target_slot].wear=slots[slot].wear;
+    if(target_slot>=0){target->slots[target_slot].wear=slots[slot].wear;target->slots[target_slot].water_ml=slots[slot].water_ml;}
     auto &source=slots[slot];source.count-=count;if(!source.count)source={};
     ++revision;
     Dictionary completed=result(true,"");completed["destination_revision"]=target->revision;
@@ -180,7 +181,11 @@ Dictionary NativePlayerInventory::restore(const Dictionary &data,int64_t expecte
         if(wear.get_type()!=Variant::INT)return result(false,"invalid_wear");
         int64_t w=wear;
         if(w<0||(w>0&&(!max_durability(id)||w>=max_durability(id))))return result(false,"invalid_wear");
-        candidate[i]={id,n,w};
+        Variant water=row.get("water_ml",water_container(id)?(id-401)*1000:int64_t(0));
+        if(water.get_type()!=Variant::INT)return result(false,"invalid_water");
+        int64_t ml=water;
+        if(ml<0||ml>WATER_CAPACITY_ML||(!water_container(id)&&ml)||(water_container(id)&&n!=1))return result(false,"invalid_water");
+        candidate[i]={id,n,w,ml};
     }
     slots=candidate;++revision;return result(true,"");
 }
@@ -193,30 +198,38 @@ void write_u32(uint8_t *p,uint32_t n) {
 }
 }
 PackedByteArray NativePlayerInventory::capture_storage_snapshot() const {
-    PackedByteArray data;data.resize(392);data.encode_u32(0,0x32564654);data.encode_u32(4,32);
-    for(int i=0;i<32;++i){data.encode_u32(8+i*12,slots[i].item);data.encode_u32(12+i*12,slots[i].count);data.encode_u32(16+i*12,slots[i].wear);}return data;
+    PackedByteArray data;data.resize(520);data.encode_u32(0,0x33564654);data.encode_u32(4,32);
+    for(int i=0;i<32;++i){data.encode_u32(8+i*16,slots[i].item);data.encode_u32(12+i*16,slots[i].count);data.encode_u32(16+i*16,slots[i].wear);data.encode_u32(20+i*16,slots[i].water_ml);}return data;
 }
 bool NativePlayerInventory::validate_snapshot(const PackedByteArray &data) const {
-    const bool old=data.size()==264;const int stride=old?8:12;
-    if((!old&&data.size()!=392)||data.decode_u32(0)!=(old?0x31564654:0x32564654)||data.decode_u32(4)!=32)return false;
+    const int stride=data.size()==264?8:(data.size()==392?12:(data.size()==520?16:0));
+    if(!stride||data.decode_u32(0)!=(stride==8?0x31564654u:(stride==12?0x32564654u:0x33564654u))||data.decode_u32(4)!=32)return false;
     for(int i=0;i<32;++i){
-        auto id=data.decode_u32(8+i*stride),n=data.decode_u32(12+i*stride),w=old?0:data.decode_u32(16+i*stride);
+        auto id=data.decode_u32(8+i*stride),n=data.decode_u32(12+i*stride),w=stride==8?0:data.decode_u32(16+i*stride);
         auto found=catalog().find(id);
         if(id==0 ? n!=0 : found==catalog().end()||n==0||n>found->second)return false;
         if(w&&(!max_durability(id)||w>=max_durability(id)))return false;
+        uint64_t ml=stride==16?data.decode_u32(20+i*stride):(water_container(id)?(id-401)*1000:0);
+        if(ml>WATER_CAPACITY_ML||(!water_container(id)&&ml)||(water_container(id)&&n!=1))return false;
     }return true;
 }
 bool NativePlayerInventory::restore_storage_snapshot(const PackedByteArray &data) {
-    if(!validate_snapshot(data))return false;const bool old=data.size()==264;const int stride=old?8:12;
-    for(int i=0;i<32;++i)slots[i]={data.decode_u32(8+i*stride),data.decode_u32(12+i*stride),old?0:data.decode_u32(16+i*stride)};
+    if(!validate_snapshot(data))return false;const int stride=data.size()==264?8:(data.size()==392?12:16);
+    for(int i=0;i<32;++i){int64_t id=data.decode_u32(8+i*stride);
+        slots[i]={id,data.decode_u32(12+i*stride),stride==8?0:data.decode_u32(16+i*stride),stride==16?data.decode_u32(20+i*stride):(water_container(id)?(id-401)*1000:0)};}
     ++revision;return true;
 }
+bool NativePlayerInventory::exchange_water(int64_t slot,bool pour,int64_t expected,int64_t millilitres){
+    if(expected!=revision||slot<0||slot>=32||millilitres<1||millilitres>WATER_CAPACITY_ML)return false;
+    auto &s=slots[slot];if(s.count!=1||!water_container(s.item)||!catalog().count(401))return false;
+    if(pour?millilitres>s.water_ml:millilitres>WATER_CAPACITY_ML-s.water_ml)return false;
+    s.water_ml+=pour?-millilitres:millilitres;s.item=401;++revision;return true;
 }
-
-namespace terraforest {
 bool NativePlayerInventory::exchange_bucket(int64_t slot,bool pour,int64_t expected,int64_t litres){
+    // Legacy litre API remains compatible, but may never reinterpret metadata.
     if(expected!=revision||slot<0||slot>=32||litres<1||litres>10)return false;
-    auto &s=slots[slot];if(s.count!=1||s.item<401||s.item>411||(pour?s.item==401:s.item==411))return false;
-    const int64_t next=s.item+(pour?-litres:litres);if(next<401||next>411||!catalog().count(next))return false;s.item=next;++revision;return true;
+    auto &s=slots[slot];if(s.count!=1||!water_container(s.item)||s.water_ml!=(s.item-401)*1000)return false;
+    const int64_t next=s.item+(pour?-litres:litres);if(next<401||next>411||!catalog().count(next))return false;
+    s.item=next;s.water_ml=(next-401)*1000;++revision;return true;
 }
 }

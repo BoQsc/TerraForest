@@ -92,9 +92,9 @@ func run():
  var scoop_cell:Vector3=Vector3(scoop_hit.cell)*0.5+Vector3.ONE*0.25
  var scoop_trace:Array=[{"frame":-1,"ml":stored_amount(game.lakes.capture_snapshot(),scoop_cell),"surface_y":scoop_hit.point.y}]
  game._unhandled_input(shore_click)
- check(inventory.snapshot().slots[slot].item==411 and game.lakes.statistics().water_ml==quantity-10000,"Real left-click at rendered shore conserves world plus bucket water")
+ check(inventory.snapshot().slots[slot].water_ml==1000000 and game.lakes.statistics().water_ml==quantity-1000000,"Real left-click at rendered shore conserves world plus bucket water")
  scoop_trace.append({"frame":0,"ml":stored_amount(game.lakes.capture_snapshot(),scoop_cell),"surface_y":game.lakes.water.raycast_surface(shore+Vector3.UP,shore-Vector3.UP).get("point",Vector3.INF).y})
- for frame in 16:
+ for frame in 60:
   await process_frame
   var shown:Dictionary=game.lakes.water.raycast_surface(shore+Vector3.UP,shore-Vector3.UP)
   scoop_trace.append({"frame":frame+1,"ml":stored_amount(game.lakes.capture_snapshot(),scoop_cell),"surface_y":shown.get("point",Vector3.INF).y})
@@ -105,16 +105,16 @@ func run():
  timings.bucket_scoop_trace=scoop_trace
  print("BUCKET_SCOOP_TRACE ",JSON.stringify(scoop_trace))
  shore_click.button_index=MOUSE_BUTTON_RIGHT;game._unhandled_input(shore_click)
- check(inventory.snapshot().slots[slot].item==401 and game.lakes.statistics().water_ml==quantity,"Real right-click at shore returns full bucket without creating a detached puddle")
+ check(inventory.snapshot().slots[slot].water_ml==0 and game.lakes.statistics().water_ml==quantity,"Real right-click at shore returns full bucket without creating a detached puddle")
  Input.mouse_mode=Input.MOUSE_MODE_VISIBLE
  if failures:await finish();return
 
  game.camera.global_position=probe+Vector3.UP*1.5;game.camera.look_at(probe,Vector3.FORWARD);game.app_focused=true;Input.mouse_mode=Input.MOUSE_MODE_CAPTURED
  print("INPUT_STATE ",game.session_menu.developer," ",game.equipped_tool," ",game._model_edit_available()," ",Input.mouse_mode," ",game.player_hud.active_item)
  var click:=InputEventMouseButton.new();click.button_index=MOUSE_BUTTON_LEFT;click.pressed=true;game.app_focused=true;game._unhandled_input(click);Input.mouse_mode=Input.MOUSE_MODE_VISIBLE
- check(inventory.snapshot().slots[slot].item==411 and game.lakes.statistics().water_ml==quantity-10000,"Real bucket left-click conserves lake + inventory water")
+ check(inventory.snapshot().slots[slot].water_ml==1000000 and game.lakes.statistics().water_ml==quantity-1000000,"Real bucket left-click conserves lake + inventory water")
  var stale:Dictionary=game.lakes.bucket(probe+Vector3.UP,probe,false,inventory,slot,-1)
- check(not stale.ok and game.lakes.statistics().water_ml==quantity-10000,"Stale bucket action cannot remove or create water")
+ check(not stale.ok and game.lakes.statistics().water_ml==quantity-1000000,"Stale bucket action cannot remove or create water")
  if failures:await finish();return
  # A new unrelated hole, outside the authored lake. No lake definition at target.
  var hole:Vector3=center+Vector3(28,0,0)
@@ -128,8 +128,8 @@ func run():
  game.camera.global_position=target+Vector3.UP*1.4;game.camera.look_at(target,Vector3.FORWARD);game.app_focused=true;Input.mouse_mode=Input.MOUSE_MODE_CAPTURED
  click.button_index=MOUSE_BUTTON_RIGHT;game.app_focused=true;game._unhandled_input(click);Input.mouse_mode=Input.MOUSE_MODE_VISIBLE
  var deadline:=Time.get_ticks_msec()+6000
- while inventory.snapshot().slots[slot].item!=401 and Time.get_ticks_msec()<deadline:await process_frame
- check(inventory.snapshot().slots[slot].item==401 and game.lakes.statistics().water_ml==quantity,"Real right-click creates water outside lake with exact full-bucket debit")
+ while inventory.snapshot().slots[slot].water_ml!=0 and Time.get_ticks_msec()<deadline:await process_frame
+ check(inventory.snapshot().slots[slot].water_ml==0 and game.lakes.statistics().water_ml==quantity,"Real right-click creates water outside lake with exact full-bucket debit")
  if failures:await finish();return
  var puddle_deadline:=Time.get_ticks_msec()+3000
  while Time.get_ticks_msec()<puddle_deadline and (game.lakes.statistics().active_cells>0 or not game.lakes.statistics().render_ready):await process_frame
@@ -164,12 +164,12 @@ func run():
  var puddle_hit:Dictionary=game.structures.blocks.raycast_scene(puddle_start,puddle_end,0xFFFFFFFF,[game.player.get_rid()])
  print("PUDDLE_AIM ",puddle," START ",puddle_start," END ",puddle_end," HIT ",puddle_hit)
  click.button_index=MOUSE_BUTTON_LEFT;game.app_focused=true;game._unhandled_input(click);Input.mouse_mode=Input.MOUSE_MODE_VISIBLE
- check(inventory.snapshot().slots[slot].item==411 and game.lakes.statistics().water_ml==quantity-10000,"Ten-litre puddle can be scooped back through real gameplay")
+ check(inventory.snapshot().slots[slot].water_ml==1000000 and game.lakes.statistics().water_ml==quantity-1000000,"One-cubic-metre puddle can be scooped back through real gameplay")
  if failures:await finish();return
  check(await wait_water(3.0,true),"Scooped puddle removal publishes")
  await capture_visual("water_bucket_scooped")
  Input.mouse_mode=Input.MOUSE_MODE_CAPTURED;click.button_index=MOUSE_BUTTON_RIGHT;game.app_focused=true;game._unhandled_input(click);Input.mouse_mode=Input.MOUSE_MODE_VISIBLE
- check(inventory.snapshot().slots[slot].item==401 and game.lakes.statistics().water_ml==quantity,"Puddle pour-back conserves the same ten litres")
+ check(inventory.snapshot().slots[slot].water_ml==0 and game.lakes.statistics().water_ml==quantity,"Puddle pour-back conserves the same cubic metre")
  if failures:await finish();return
  # Open an underground outlet connected to the lake's right bank.
  var outlet:Vector3=center+Vector3(13,-4,0)
@@ -294,7 +294,7 @@ func run():
  check(game.lakes._meshes.has(outlet_region) and game.lakes._meshes[outlet_region].mesh!=null,"Saved outlet surface republishes within 2 seconds")
  timings.reopen_ms=Time.get_ticks_msec()-start
  s=game.lakes.statistics();timings.runtime_reopened=s
- check(s.water_ml==quantity and game.player_hud.inventory.snapshot().slots[slot].item==401,"Disk reopening preserves world and bucket quantity")
+ check(s.water_ml==quantity and game.player_hud.inventory.snapshot().slots[slot].water_ml==0,"Disk reopening preserves world and bucket quantity")
  print("REOPEN_STATS ",s)
  check(s.query_builds==0 and s.published_mesh_batch==game.lakes._published_mesh_batch_id,"Gameplay queries use published meshes without rebuilding geometry")
  timings.at_snapshot_restore=restored_stats
@@ -378,7 +378,7 @@ func render_comparison():
    game.lakes.visible=shown
    for warmup in 6:await process_frame
    var gpu:Array[float]=[];var cpu:Array[float]=[]
-   for frame in 16:
+   for frame in 60:
     await process_frame
     gpu.append(RenderingServer.viewport_get_measured_render_time_gpu(root.get_viewport_rid()))
     cpu.append(RenderingServer.viewport_get_measured_render_time_cpu(root.get_viewport_rid()))

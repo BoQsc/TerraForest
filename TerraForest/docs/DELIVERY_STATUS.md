@@ -2,6 +2,10 @@
 
 The [delivery plan and coverage register](PROJECT_PLAN.md) is the current reference for milestone order, original-scope coverage and deferred-work return triggers. Entries below preserve evidence at their recorded development stage. Older headings and the historical scope table are not current status; later implementations supersede some of their limitations. Correctness, integration, rendered performance and sustained qualification are separate gates.
 
+## Cubic-metre water transfer - 2026-10-13
+
+One-click capacity is now 1 m³ with exact contents preserved across inventory and storage. Actual lake scoop, local refill and untouched-ground pour pass short checks. The larger mined-bowl pour exposes a failing terrain-contact gate; this is not completed water acceptance. [Evidence and retained failure](evidence/water_cubic_metre_transfer/status.txt).
+
 ## Ground bucket interaction and flow limits - 2026-10-13
 
 Untouched-ground pouring and shallow scooping now pass with exact quantities.

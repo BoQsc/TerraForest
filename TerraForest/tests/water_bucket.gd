@@ -23,15 +23,15 @@ func _initialize():
   var water=fixture(amount);var inventory=ClassDB.instantiate("NativePlayerInventory")
   for item in range(401,412):inventory.register_item(item,1)
   inventory.grant(401,1,0)
-  var expected:=mini(10,amount/1000)
+  var expected:=mini(1000000,amount)
   var result:Dictionary=water.transfer_bucket(from,to,false,inventory,0,inventory.snapshot().revision)
-  check(result.ok==(expected>0) and inventory.snapshot().slots[0].item==401+expected and water.statistics().water_ml==amount-expected*1000,"One click fills available whole litres without losing remainder (%d ml)"%amount)
+  check(result.ok==(expected>0) and inventory.snapshot().slots[0].water_ml==expected and water.statistics().water_ml==amount-expected,"One click fills available exact millilitres without losing remainder (%d ml)"%amount)
   var held:Dictionary=inventory.snapshot();var quantity:int=water.statistics().water_ml
   check(not water.transfer_bucket(from,to,true,inventory,0,-1).ok and inventory.snapshot()==held and water.statistics().water_ml==quantity,"Stale click changes neither inventory nor water")
-  if expected==10:
+  if expected==1000000:
    check(not water.transfer_bucket(from,to,false,inventory,0,held.revision).ok and inventory.snapshot()==held and water.statistics().water_ml==quantity,"Full bucket cannot take more water")
   result=water.transfer_bucket(from,to,true,inventory,0,held.revision)
-  check(result.ok==(expected>0) and inventory.snapshot().slots[0].item==401 and water.statistics().water_ml==amount,"One right click returns all bucket contents exactly")
+  check(result.ok==(expected>0) and inventory.snapshot().slots[0].water_ml==0 and water.statistics().water_ml==amount,"One right click returns all bucket contents exactly")
   held=inventory.snapshot()
   check(not inventory.exchange_bucket(0,false,held.revision,11) and inventory.snapshot()==held,"Invalid bucket amount is atomic")
  var flowing=fixture(62500,true)

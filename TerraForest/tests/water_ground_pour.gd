@@ -14,6 +14,8 @@ func aim(point:Vector3):
  game.fly=true;game.needs_floor_spawn=false;game._clear_motion()
  game.pitch=-PI/2;game.yaw=0;game.player.rotation.y=0
  game.camera.global_position=point+Vector3.UP*1.6;game.camera.look_at(point,Vector3.FORWARD)
+func held_ml() -> int:
+ return int(game.player_hud.inventory.snapshot().slots[game.player_hud.active_slot].water_ml)
 func run():
  game=load("res://demo/world.tscn").instantiate();root.add_child(game)
  var deadline:=Time.get_ticks_msec()+35000
@@ -22,7 +24,7 @@ func run():
  if failures:await finish();return
  var total:int=game.lakes.statistics().water_ml
  click(MOUSE_BUTTON_LEFT)
- check(game.player_hud.active_item==411 and game.lakes.statistics().water_ml==total-10000,"One actual click fills the full bucket from the lake")
+ check(held_ml()==1000000 and game.lakes.statistics().water_ml==total-1000000,"One actual click fills the full bucket from the lake")
  if failures:await finish();return
  var origin:Vector3=game.player.global_position+Vector3(0,0,10)
  var ground:Dictionary={}
@@ -40,8 +42,8 @@ func run():
  var before_pour:PackedByteArray=game.lakes.capture_snapshot()
  aim(target);click(MOUSE_BUTTON_RIGHT)
  deadline=Time.get_ticks_msec()+6000
- while game.player_hud.active_item!=401 and Time.get_ticks_msec()<deadline:await process_frame
- check(game.player_hud.active_item==401 and game.lakes.statistics().water_ml==total,"Actual right-click pours all ten litres onto unedited ground")
+ while held_ml()!=0 and Time.get_ticks_msec()<deadline:await process_frame
+ check(held_ml()==0 and game.lakes.statistics().water_ml==total,"Actual right-click pours one cubic metre onto unedited ground")
  if failures:await finish();return
  var initial_file:=FileAccess.open("res://reports/water_ground_initial.bin",FileAccess.WRITE)
  initial_file.store_buffer(game.lakes.capture_snapshot());initial_file.close()
@@ -81,9 +83,9 @@ func run():
  results.scoop_aim={"from":from,"water":water_hit,"terrain_point":terrain_hit.get("position",Vector3.INF),"statistics":game.lakes.statistics(),"nearby_now":game.lakes.water.surface_near(surface,0.3)}
  if water_hit.hit:results.scoop_aim.geometry=game.lakes.water.cell_geometry(Vector3(water_hit.cell)*0.5+Vector3.ONE*0.25)
  click(MOUSE_BUTTON_LEFT)
- var held:int=game.player_hud.active_item-401
- results.recovered_litres=held
- check(held>=1 and held<=10 and game.lakes.statistics().water_ml==total-held*1000,"The visible ground water can be scooped with exact inventory/world transfer")
+ var held:int=held_ml()
+ results.recovered_ml=held
+ check(held>=1 and held<=1000000 and game.lakes.statistics().water_ml==total-held,"The visible ground water can be scooped with exact inventory/world transfer")
  await finish()
 func local_components(rows:Array) -> Dictionary:
  return preload("res://tests/water_coherence_probe.gd").components(game.lakes.water,rows)

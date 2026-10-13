@@ -11,7 +11,7 @@ namespace terraforest {
 class NativePlayerInventory : public godot::RefCounted {
     GDCLASS(NativePlayerInventory,godot::RefCounted)
     friend class NativeContainerStore;
-    struct Stack {int64_t item=0,count=0,wear=0;};
+    struct Stack {int64_t item=0,count=0,wear=0,water_ml=0;};
     std::array<Stack,32> slots{};
     std::unordered_map<int64_t,int64_t> limits;
     // Containers share one private immutable schema instead of copying its
@@ -27,6 +27,9 @@ class NativePlayerInventory : public godot::RefCounted {
 protected:
     static void _bind_methods();
 public:
+    static constexpr int64_t WATER_CAPACITY_ML=1000000;
+    static bool water_container(int64_t item){return item>=401&&item<=411;}
+    bool exchange_water(int64_t slot,bool pour,int64_t expected,int64_t millilitres);
     bool exchange_bucket(int64_t slot,bool pour,int64_t expected,int64_t litres=1);
     bool register_durable(int64_t item,int64_t maximum);
     int64_t max_durability(int64_t item) const;

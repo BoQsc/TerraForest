@@ -1,0 +1,1284 @@
+{
+  "checks": [
+    {
+      "name": "Normal combined world loads",
+      "pass": true
+    },
+    {
+      "name": "World terrain supplies lake location",
+      "pass": true
+    },
+    {
+      "name": "Ordinary lake authoring uses shallow elongated excavation",
+      "pass": true
+    },
+    {
+      "name": "Actual world water builds and publishes",
+      "pass": true
+    },
+    {
+      "name": "Undisturbed lake sleeps with no active water cells",
+      "pass": true
+    },
+    {
+      "name": "Sleeping lake performs zero flow cell steps",
+      "pass": true
+    },
+    {
+      "name": "Lake is visibly filled and swimming query is wet",
+      "pass": true
+    },
+    {
+      "name": "Gameplay equips normal bucket",
+      "pass": true
+    },
+    {
+      "name": "Actual lake shoreline is pickable while outward ray misses",
+      "pass": true
+    },
+    {
+      "name": "Real left-click at rendered shore conserves world plus bucket water",
+      "pass": true
+    },
+    {
+      "name": "Bucket scoop is published as a local surface depression",
+      "pass": true
+    },
+    {
+      "name": "Surrounding water refills the published scoop depression",
+      "pass": true
+    },
+    {
+      "name": "Real right-click at shore returns full bucket without creating a detached puddle",
+      "pass": true
+    },
+    {
+      "name": "Real bucket left-click conserves lake + inventory water",
+      "pass": true
+    },
+    {
+      "name": "Stale bucket action cannot remove or create water",
+      "pass": true
+    },
+    {
+      "name": "Separate hole is carved into actual terrain, not empty air",
+      "pass": true
+    },
+    {
+      "name": "Mine a separate hole outside lake definitions",
+      "pass": true
+    },
+    {
+      "name": "Separate hole terrain edit publishes",
+      "pass": true
+    },
+    {
+      "name": "Real right-click creates water outside lake with exact full-bucket debit",
+      "pass": true
+    },
+    {
+      "name": "Poured water settles to a queryable surface in the dug hole",
+      "pass": true
+    },
+    {
+      "name": "Poured water floor contacts actual terrain within 2 cm of its wet footprint",
+      "pass": false
+    }
+  ],
+  "failures": 1,
+  "timings": {
+    "bucket_scoop_trace": [
+      {
+        "frame": -1,
+        "ml": 60827,
+        "surface_y": 48.2499961853027
+      },
+      {
+        "frame": 0,
+        "ml": 0,
+        "surface_y": 48.2499961853027
+      },
+      {
+        "frame": 1,
+        "ml": 0,
+        "surface_y": 48.2499961853027
+      },
+      {
+        "frame": 2,
+        "ml": 0,
+        "surface_y": 1e99999
+      },
+      {
+        "frame": 3,
+        "ml": 0,
+        "surface_y": 1e99999
+      },
+      {
+        "frame": 4,
+        "ml": 0,
+        "surface_y": 47.5582160949707
+      },
+      {
+        "frame": 5,
+        "ml": 0,
+        "surface_y": 47.5582160949707
+      },
+      {
+        "frame": 6,
+        "ml": 0,
+        "surface_y": 47.5582160949707
+      },
+      {
+        "frame": 7,
+        "ml": 0,
+        "surface_y": 47.5582160949707
+      },
+      {
+        "frame": 8,
+        "ml": 0,
+        "surface_y": 47.7550964355469
+      },
+      {
+        "frame": 9,
+        "ml": 0,
+        "surface_y": 47.7550964355469
+      },
+      {
+        "frame": 10,
+        "ml": 0,
+        "surface_y": 47.7550964355469
+      },
+      {
+        "frame": 11,
+        "ml": 0,
+        "surface_y": 47.7550964355469
+      },
+      {
+        "frame": 12,
+        "ml": 0,
+        "surface_y": 47.8845634460449
+      },
+      {
+        "frame": 13,
+        "ml": 0,
+        "surface_y": 47.8845634460449
+      },
+      {
+        "frame": 14,
+        "ml": 0,
+        "surface_y": 47.8845634460449
+      },
+      {
+        "frame": 15,
+        "ml": 0,
+        "surface_y": 47.8845634460449
+      },
+      {
+        "frame": 16,
+        "ml": 0,
+        "surface_y": 47.8845634460449
+      },
+      {
+        "frame": 17,
+        "ml": 0,
+        "surface_y": 47.9885482788086
+      },
+      {
+        "frame": 18,
+        "ml": 530,
+        "surface_y": 47.9885482788086
+      },
+      {
+        "frame": 19,
+        "ml": 530,
+        "surface_y": 47.9885482788086
+      },
+      {
+        "frame": 20,
+        "ml": 2204,
+        "surface_y": 47.9885482788086
+      },
+      {
+        "frame": 21,
+        "ml": 2204,
+        "surface_y": 47.9885482788086
+      },
+      {
+        "frame": 22,
+        "ml": 2204,
+        "surface_y": 47.9996566772461
+      },
+      {
+        "frame": 23,
+        "ml": 7154,
+        "surface_y": 47.9996566772461
+      },
+      {
+        "frame": 24,
+        "ml": 7154,
+        "surface_y": 47.9996566772461
+      },
+      {
+        "frame": 25,
+        "ml": 10061,
+        "surface_y": 47.9996566772461
+      },
+      {
+        "frame": 26,
+        "ml": 12075,
+        "surface_y": 47.9996566772461
+      },
+      {
+        "frame": 27,
+        "ml": 12075,
+        "surface_y": 47.9996566772461
+      },
+      {
+        "frame": 28,
+        "ml": 18417,
+        "surface_y": 48.0391578674316
+      },
+      {
+        "frame": 29,
+        "ml": 18417,
+        "surface_y": 48.0391578674316
+      },
+      {
+        "frame": 30,
+        "ml": 18417,
+        "surface_y": 48.0391578674316
+      },
+      {
+        "frame": 31,
+        "ml": 25225,
+        "surface_y": 48.0391578674316
+      },
+      {
+        "frame": 32,
+        "ml": 25221,
+        "surface_y": 48.0391578674316
+      },
+      {
+        "frame": 33,
+        "ml": 28252,
+        "surface_y": 48.0391578674316
+      },
+      {
+        "frame": 34,
+        "ml": 30515,
+        "surface_y": 48.0391578674316
+      },
+      {
+        "frame": 35,
+        "ml": 30457,
+        "surface_y": 48.1020126342773
+      },
+      {
+        "frame": 36,
+        "ml": 33616,
+        "surface_y": 48.1020126342773
+      },
+      {
+        "frame": 37,
+        "ml": 35577,
+        "surface_y": 48.1020126342773
+      },
+      {
+        "frame": 38,
+        "ml": 35432,
+        "surface_y": 48.1020126342773
+      },
+      {
+        "frame": 39,
+        "ml": 39145,
+        "surface_y": 48.1020126342773
+      },
+      {
+        "frame": 40,
+        "ml": 39145,
+        "surface_y": 48.1020126342773
+      },
+      {
+        "frame": 41,
+        "ml": 38970,
+        "surface_y": 48.1343154907227
+      },
+      {
+        "frame": 42,
+        "ml": 38970,
+        "surface_y": 48.1343154907227
+      },
+      {
+        "frame": 43,
+        "ml": 41729,
+        "surface_y": 48.1343154907227
+      },
+      {
+        "frame": 44,
+        "ml": 41557,
+        "surface_y": 48.1343154907227
+      },
+      {
+        "frame": 45,
+        "ml": 42781,
+        "surface_y": 48.1343154907227
+      },
+      {
+        "frame": 46,
+        "ml": 43420,
+        "surface_y": 48.1343154907227
+      },
+      {
+        "frame": 47,
+        "ml": 43285,
+        "surface_y": 48.1649513244629
+      },
+      {
+        "frame": 48,
+        "ml": 43285,
+        "surface_y": 48.1649513244629
+      },
+      {
+        "frame": 49,
+        "ml": 44784,
+        "surface_y": 48.1649513244629
+      },
+      {
+        "frame": 50,
+        "ml": 44665,
+        "surface_y": 48.1649513244629
+      },
+      {
+        "frame": 51,
+        "ml": 44665,
+        "surface_y": 48.1649513244629
+      },
+      {
+        "frame": 52,
+        "ml": 45870,
+        "surface_y": 48.1649513244629
+      },
+      {
+        "frame": 53,
+        "ml": 45769,
+        "surface_y": 48.1802444458008
+      },
+      {
+        "frame": 54,
+        "ml": 45769,
+        "surface_y": 48.1802444458008
+      },
+      {
+        "frame": 55,
+        "ml": 46804,
+        "surface_y": 48.1802444458008
+      },
+      {
+        "frame": 56,
+        "ml": 46714,
+        "surface_y": 48.1802444458008
+      },
+      {
+        "frame": 57,
+        "ml": 46714,
+        "surface_y": 48.1802444458008
+      },
+      {
+        "frame": 58,
+        "ml": 47607,
+        "surface_y": 48.1802444458008
+      },
+      {
+        "frame": 59,
+        "ml": 47529,
+        "surface_y": 48.1802444458008
+      },
+      {
+        "frame": 60,
+        "ml": 47529,
+        "surface_y": 48.1906051635742
+      }
+    ],
+    "cold_water_ms": 2565,
+    "frame_ms": {
+      "max": 34.941,
+      "p50": 16.665,
+      "p95": 16.77,
+      "samples": 455
+    },
+    "gpu_ms": {
+      "max": 7.67600011825562,
+      "p50": 5.51599979400635,
+      "p95": 6.06400012969971
+    },
+    "hardware": "NVIDIA GeForce RTX 4050 Laptop GPU",
+    "puddle_contact": {
+      "cells": [
+        {
+          "cell": [
+            1654,
+            88,
+            2581
+          ],
+          "conservative_floor_y": 44.5,
+          "cut": true,
+          "floor_gap_m": -0.144023397429557,
+          "floor_y": 44.4821095676583,
+          "ml": 73,
+          "stored_depth_m": 0.017890432341666,
+          "terrain_y": 44.6261329650879
+        },
+        {
+          "cell": [
+            1655,
+            88,
+            2581
+          ],
+          "conservative_floor_y": 44.5,
+          "cut": true,
+          "floor_gap_m": -0.193382433556756,
+          "floor_y": 44.42654401908,
+          "ml": 5134,
+          "stored_depth_m": 0.0734559809200377,
+          "terrain_y": 44.6199264526367
+        },
+        {
+          "cell": [
+            1654,
+            89,
+            2581
+          ],
+          "conservative_floor_y": 45.0,
+          "cut": true,
+          "floor_gap_m": -0.142170313883085,
+          "floor_y": 44.5058056077478,
+          "ml": 252,
+          "stored_depth_m": 0.0293212150518585,
+          "terrain_y": 44.6479759216309
+        },
+        {
+          "cell": [
+            1655,
+            89,
+            2581
+          ],
+          "conservative_floor_y": 44.938,
+          "cut": true,
+          "floor_gap_m": -0.129638671875,
+          "floor_y": 44.5,
+          "ml": 2778,
+          "stored_depth_m": 0.0355676313427722,
+          "terrain_y": 44.629638671875
+        },
+        {
+          "cell": [
+            1653,
+            88,
+            2582
+          ],
+          "conservative_floor_y": 44.5,
+          "cut": true,
+          "floor_gap_m": -0.144055940689235,
+          "floor_y": 44.4820465068205,
+          "ml": 73,
+          "stored_depth_m": 0.0179534931794691,
+          "terrain_y": 44.6261024475098
+        },
+        {
+          "cell": [
+            1654,
+            88,
+            2582
+          ],
+          "conservative_floor_y": 44.5,
+          "cut": true,
+          "floor_gap_m": -0.128327594449608,
+          "floor_y": 44.4193103450035,
+          "ml": 15453,
+          "stored_depth_m": 0.0806896549964833,
+          "terrain_y": 44.5476379394531
+        },
+        {
+          "cell": [
+            1655,
+            88,
+            2582
+          ],
+          "conservative_floor_y": 44.446,
+          "cut": true,
+          "floor_gap_m": -0.148814340913404,
+          "floor_y": 44.2875603233932,
+          "ml": 53670,
+          "stored_depth_m": 0.212439676606763,
+          "terrain_y": 44.4363746643066
+        },
+        {
+          "cell": [
+            1653,
+            89,
+            2582
+          ],
+          "conservative_floor_y": 45.0,
+          "cut": true,
+          "floor_gap_m": -0.143157958984375,
+          "floor_y": 44.5,
+          "ml": 155,
+          "stored_depth_m": 0.0251768320327628,
+          "terrain_y": 44.6431579589844
+        },
+        {
+          "cell": [
+            1654,
+            89,
+            2582
+          ],
+          "conservative_floor_y": 44.627,
+          "cut": true,
+          "floor_gap_m": -0.0647850036621094,
+          "floor_y": 44.5,
+          "ml": 5723,
+          "stored_depth_m": 0.0285832344153292,
+          "terrain_y": 44.5647850036621
+        },
+        {
+          "cell": [
+            1655,
+            89,
+            2582
+          ],
+          "conservative_floor_y": 44.5,
+          "cut": true,
+          "floor_gap_m": 0.0636253356933594,
+          "floor_y": 44.5,
+          "ml": 7832,
+          "stored_depth_m": 0.031328000000002,
+          "terrain_y": 44.4363746643066
+        },
+        {
+          "cell": [
+            1653,
+            88,
+            2583
+          ],
+          "conservative_floor_y": 44.5,
+          "cut": true,
+          "floor_gap_m": -0.193363143939358,
+          "floor_y": 44.4265633086974,
+          "ml": 5134,
+          "stored_depth_m": 0.0734366913026392,
+          "terrain_y": 44.6199264526367
+        },
+        {
+          "cell": [
+            1654,
+            88,
+            2583
+          ],
+          "conservative_floor_y": 44.446,
+          "cut": true,
+          "floor_gap_m": -0.148814340913404,
+          "floor_y": 44.2875603233932,
+          "ml": 53670,
+          "stored_depth_m": 0.212439676606763,
+          "terrain_y": 44.4363746643066
+        },
+        {
+          "cell": [
+            1655,
+            88,
+            2583
+          ],
+          "conservative_floor_y": 44.275,
+          "cut": true,
+          "floor_gap_m": -0.0130512408223851,
+          "floor_y": 44.137129575828,
+          "ml": 91337,
+          "stored_depth_m": 0.362870424171994,
+          "terrain_y": 44.1501808166504
+        },
+        {
+          "cell": [
+            1653,
+            89,
+            2583
+          ],
+          "conservative_floor_y": 44.938,
+          "cut": true,
+          "floor_gap_m": -0.123039245605469,
+          "floor_y": 44.5,
+          "ml": 964,
+          "stored_depth_m": 0.0133690978534204,
+          "terrain_y": 44.6230392456055
+        },
+        {
+          "cell": [
+            1654,
+            89,
+            2583
+          ],
+          "conservative_floor_y": 44.5,
+          "cut": true,
+          "floor_gap_m": 0.0636253356933594,
+          "floor_y": 44.5,
+          "ml": 5281,
+          "stored_depth_m": 0.0211240000000004,
+          "terrain_y": 44.4363746643066
+        },
+        {
+          "cell": [
+            1655,
+            89,
+            2583
+          ],
+          "conservative_floor_y": 44.5,
+          "cut": true,
+          "floor_gap_m": 0.349819183349609,
+          "floor_y": 44.5,
+          "ml": 6945,
+          "stored_depth_m": 0.0277799999999999,
+          "terrain_y": 44.1501808166504
+        },
+        {
+          "cell": [
+            1653,
+            88,
+            2584
+          ],
+          "conservative_floor_y": 44.5,
+          "cut": true,
+          "floor_gap_m": -0.196063632294909,
+          "floor_y": 44.4252666289356,
+          "ml": 5349,
+          "stored_depth_m": 0.0747333710644398,
+          "terrain_y": 44.6213302612305
+        },
+        {
+          "cell": [
+            1654,
+            88,
+            2584
+          ],
+          "conservative_floor_y": 44.446,
+          "cut": true,
+          "floor_gap_m": -0.155539625295738,
+          "floor_y": 44.2808350390109,
+          "ml": 54230,
+          "stored_depth_m": 0.219164960989097,
+          "terrain_y": 44.4363746643066
+        },
+        {
+          "cell": [
+            1655,
+            88,
+            2584
+          ],
+          "conservative_floor_y": 44.275,
+          "cut": true,
+          "floor_gap_m": -0.0204916419451422,
+          "floor_y": 44.1296891747052,
+          "ml": 91957,
+          "stored_depth_m": 0.370310825294752,
+          "terrain_y": 44.1501808166504
+        },
+        {
+          "cell": [
+            1653,
+            89,
+            2584
+          ],
+          "conservative_floor_y": 44.938,
+          "cut": true,
+          "floor_gap_m": -0.12139892578125,
+          "floor_y": 44.5,
+          "ml": 18,
+          "stored_depth_m": 0.000251087114534698,
+          "terrain_y": 44.6213989257813
+        },
+        {
+          "cell": [
+            1654,
+            89,
+            2584
+          ],
+          "conservative_floor_y": 44.5,
+          "cut": true,
+          "floor_gap_m": 0.0636253356933594,
+          "floor_y": 44.5,
+          "ml": 1609,
+          "stored_depth_m": 0.00643600000000077,
+          "terrain_y": 44.4363746643066
+        },
+        {
+          "cell": [
+            1655,
+            89,
+            2584
+          ],
+          "conservative_floor_y": 44.5,
+          "cut": true,
+          "floor_gap_m": 0.349819183349609,
+          "floor_y": 44.5,
+          "ml": 4437,
+          "stored_depth_m": 0.0177479999999974,
+          "terrain_y": 44.1501808166504
+        },
+        {
+          "cell": [
+            1653,
+            88,
+            2585
+          ],
+          "conservative_floor_y": 44.5,
+          "cut": true,
+          "floor_gap_m": -0.144816983210262,
+          "floor_y": 44.4815029020436,
+          "ml": 74,
+          "stored_depth_m": 0.018032132645935,
+          "terrain_y": 44.6263198852539
+        },
+        {
+          "cell": [
+            1654,
+            88,
+            2585
+          ],
+          "conservative_floor_y": 44.5,
+          "cut": true,
+          "floor_gap_m": -0.13275665259215,
+          "floor_y": 44.4157395937457,
+          "ml": 15729,
+          "stored_depth_m": 0.0838812604962556,
+          "terrain_y": 44.5484962463379
+        },
+        {
+          "cell": [
+            1655,
+            88,
+            2585
+          ],
+          "conservative_floor_y": 44.446,
+          "cut": true,
+          "floor_gap_m": -0.155539625295738,
+          "floor_y": 44.2808350390109,
+          "ml": 54230,
+          "stored_depth_m": 0.219164960989097,
+          "terrain_y": 44.4363746643066
+        },
+        {
+          "cell": [
+            1655,
+            89,
+            2585
+          ],
+          "conservative_floor_y": 44.5,
+          "cut": true,
+          "floor_gap_m": 0.0636253356933594,
+          "floor_y": 44.5,
+          "ml": 715,
+          "stored_depth_m": 0.00285999999999831,
+          "terrain_y": 44.4363746643066
+        },
+        {
+          "cell": [
+            1654,
+            88,
+            2586
+          ],
+          "conservative_floor_y": 44.5,
+          "cut": true,
+          "floor_gap_m": -0.144805116283116,
+          "floor_y": 44.4812057784923,
+          "ml": 72,
+          "stored_depth_m": 0.0178373781700643,
+          "terrain_y": 44.6260108947754
+        },
+        {
+          "cell": [
+            1655,
+            88,
+            2586
+          ],
+          "conservative_floor_y": 44.5,
+          "cut": true,
+          "floor_gap_m": -0.196336683296657,
+          "floor_y": 44.4247532520061,
+          "ml": 5283,
+          "stored_depth_m": 0.0743170534065598,
+          "terrain_y": 44.6210899353027
+        },
+        {
+          "cell": [
+            1656,
+            88,
+            2581
+          ],
+          "conservative_floor_y": 44.5,
+          "cut": true,
+          "floor_gap_m": -0.196041158966715,
+          "floor_y": 44.4253234345391,
+          "ml": 5349,
+          "stored_depth_m": 0.0746765654608552,
+          "terrain_y": 44.6213645935059
+        },
+        {
+          "cell": [
+            1657,
+            88,
+            2581
+          ],
+          "conservative_floor_y": 44.5,
+          "cut": true,
+          "floor_gap_m": -0.144808256027346,
+          "floor_y": 44.4817557698516,
+          "ml": 75,
+          "stored_depth_m": 0.01824423014844,
+          "terrain_y": 44.6265640258789
+        },
+        {
+          "cell": [
+            1656,
+            89,
+            2581
+          ],
+          "conservative_floor_y": 44.938,
+          "cut": true,
+          "floor_gap_m": -0.13134765625,
+          "floor_y": 44.5,
+          "ml": 2940,
+          "stored_depth_m": 0.0361944124030273,
+          "terrain_y": 44.63134765625
+        },
+        {
+          "cell": [
+            1657,
+            89,
+            2581
+          ],
+          "conservative_floor_y": 45.0,
+          "cut": true,
+          "floor_gap_m": -0.14349695008115,
+          "floor_y": 44.507484952995,
+          "ml": 297,
+          "stored_depth_m": 0.03070655932693,
+          "terrain_y": 44.6509819030762
+        },
+        {
+          "cell": [
+            1658,
+            89,
+            2581
+          ],
+          "conservative_floor_y": 45.0,
+          "cut": true,
+          "floor_gap_m": -0.148490686873437,
+          "floor_y": 44.6605036063395,
+          "ml": 15,
+          "stored_depth_m": 0.0124579315023254,
+          "terrain_y": 44.8089942932129
+        },
+        {
+          "cell": [
+            1656,
+            88,
+            2582
+          ],
+          "conservative_floor_y": 44.446,
+          "cut": true,
+          "floor_gap_m": -0.155539625295738,
+          "floor_y": 44.2808350390109,
+          "ml": 54230,
+          "stored_depth_m": 0.219164960989097,
+          "terrain_y": 44.4363746643066
+        },
+        {
+          "cell": [
+            1657,
+            88,
+            2582
+          ],
+          "conservative_floor_y": 44.5,
+          "cut": true,
+          "floor_gap_m": -0.132814387709026,
+          "floor_y": 44.4158649640976,
+          "ml": 15800,
+          "stored_depth_m": 0.0841350359023849,
+          "terrain_y": 44.5486793518066
+        },
+        {
+          "cell": [
+            1658,
+            88,
+            2582
+          ],
+          "conservative_floor_y": 44.5,
+          "cut": true,
+          "floor_gap_m": -0.144778723316691,
+          "floor_y": 44.4818158201403,
+          "ml": 75,
+          "stored_depth_m": 0.0181841798596594,
+          "terrain_y": 44.626594543457
+        },
+        {
+          "cell": [
+            1656,
+            89,
+            2582
+          ],
+          "conservative_floor_y": 44.5,
+          "cut": true,
+          "floor_gap_m": 0.0636253356933594,
+          "floor_y": 44.5,
+          "ml": 8359,
+          "stored_depth_m": 0.0334360000000018,
+          "terrain_y": 44.4363746643066
+        },
+        {
+          "cell": [
+            1657,
+            89,
+            2582
+          ],
+          "conservative_floor_y": 44.627,
+          "cut": true,
+          "floor_gap_m": -0.0674247741699219,
+          "floor_y": 44.5,
+          "ml": 6943,
+          "stored_depth_m": 0.034055666476057,
+          "terrain_y": 44.5674247741699
+        },
+        {
+          "cell": [
+            1658,
+            89,
+            2582
+          ],
+          "conservative_floor_y": 45.0,
+          "cut": true,
+          "floor_gap_m": -0.143605467370122,
+          "floor_y": 44.5078990492314,
+          "ml": 303,
+          "stored_depth_m": 0.0307893624198314,
+          "terrain_y": 44.6515045166016
+        },
+        {
+          "cell": [
+            1656,
+            88,
+            2583
+          ],
+          "conservative_floor_y": 44.275,
+          "cut": true,
+          "floor_gap_m": -0.0204916419451422,
+          "floor_y": 44.1296891747052,
+          "ml": 91957,
+          "stored_depth_m": 0.370310825294752,
+          "terrain_y": 44.1501808166504
+        },
+        {
+          "cell": [
+            1657,
+            88,
+            2583
+          ],
+          "conservative_floor_y": 44.446,
+          "cut": true,
+          "floor_gap_m": -0.155539625295738,
+          "floor_y": 44.2808350390109,
+          "ml": 54230,
+          "stored_depth_m": 0.219164960989097,
+          "terrain_y": 44.4363746643066
+        },
+        {
+          "cell": [
+            1658,
+            88,
+            2583
+          ],
+          "conservative_floor_y": 44.5,
+          "cut": true,
+          "floor_gap_m": -0.196063632294909,
+          "floor_y": 44.4252666289356,
+          "ml": 5349,
+          "stored_depth_m": 0.0747333710644398,
+          "terrain_y": 44.6213302612305
+        },
+        {
+          "cell": [
+            1656,
+            89,
+            2583
+          ],
+          "conservative_floor_y": 44.5,
+          "cut": true,
+          "floor_gap_m": 0.349819183349609,
+          "floor_y": 44.5,
+          "ml": 7962,
+          "stored_depth_m": 0.0318479999999965,
+          "terrain_y": 44.1501808166504
+        },
+        {
+          "cell": [
+            1657,
+            89,
+            2583
+          ],
+          "conservative_floor_y": 44.5,
+          "cut": true,
+          "floor_gap_m": 0.0636253356933594,
+          "floor_y": 44.5,
+          "ml": 8222,
+          "stored_depth_m": 0.0328879999999998,
+          "terrain_y": 44.4363746643066
+        },
+        {
+          "cell": [
+            1658,
+            89,
+            2583
+          ],
+          "conservative_floor_y": 44.938,
+          "cut": true,
+          "floor_gap_m": -0.130939483642578,
+          "floor_y": 44.5,
+          "ml": 2837,
+          "stored_depth_m": 0.0350565755193131,
+          "terrain_y": 44.6309394836426
+        },
+        {
+          "cell": [
+            1656,
+            88,
+            2584
+          ],
+          "conservative_floor_y": 44.275,
+          "cut": true,
+          "floor_gap_m": -0.0130512408223851,
+          "floor_y": 44.137129575828,
+          "ml": 91337,
+          "stored_depth_m": 0.362870424171994,
+          "terrain_y": 44.1501808166504
+        },
+        {
+          "cell": [
+            1657,
+            88,
+            2584
+          ],
+          "conservative_floor_y": 44.446,
+          "cut": true,
+          "floor_gap_m": -0.148814340913404,
+          "floor_y": 44.2875603233932,
+          "ml": 53670,
+          "stored_depth_m": 0.212439676606763,
+          "terrain_y": 44.4363746643066
+        },
+        {
+          "cell": [
+            1658,
+            88,
+            2584
+          ],
+          "conservative_floor_y": 44.5,
+          "cut": true,
+          "floor_gap_m": -0.193363143939358,
+          "floor_y": 44.4265633086974,
+          "ml": 5134,
+          "stored_depth_m": 0.0734366913026392,
+          "terrain_y": 44.6199264526367
+        },
+        {
+          "cell": [
+            1656,
+            89,
+            2584
+          ],
+          "conservative_floor_y": 44.5,
+          "cut": true,
+          "floor_gap_m": 0.349819183349609,
+          "floor_y": 44.5,
+          "ml": 6020,
+          "stored_depth_m": 0.0240799999999979,
+          "terrain_y": 44.1501808166504
+        },
+        {
+          "cell": [
+            1657,
+            89,
+            2584
+          ],
+          "conservative_floor_y": 44.5,
+          "cut": true,
+          "floor_gap_m": 0.0636253356933594,
+          "floor_y": 44.5,
+          "ml": 6866,
+          "stored_depth_m": 0.0274640000000019,
+          "terrain_y": 44.4363746643066
+        },
+        {
+          "cell": [
+            1658,
+            89,
+            2584
+          ],
+          "conservative_floor_y": 44.938,
+          "cut": true,
+          "floor_gap_m": -0.129058837890625,
+          "floor_y": 44.5,
+          "ml": 2567,
+          "stored_depth_m": 0.033135464792224,
+          "terrain_y": 44.6290588378906
+        },
+        {
+          "cell": [
+            1656,
+            88,
+            2585
+          ],
+          "conservative_floor_y": 44.446,
+          "cut": true,
+          "floor_gap_m": -0.148814340913404,
+          "floor_y": 44.2875603233932,
+          "ml": 53670,
+          "stored_depth_m": 0.212439676606763,
+          "terrain_y": 44.4363746643066
+        },
+        {
+          "cell": [
+            1657,
+            88,
+            2585
+          ],
+          "conservative_floor_y": 44.5,
+          "cut": true,
+          "floor_gap_m": -0.128327594449608,
+          "floor_y": 44.4193103450035,
+          "ml": 15453,
+          "stored_depth_m": 0.0806896549964833,
+          "terrain_y": 44.5476379394531
+        },
+        {
+          "cell": [
+            1658,
+            88,
+            2585
+          ],
+          "conservative_floor_y": 44.5,
+          "cut": true,
+          "floor_gap_m": -0.144055940689235,
+          "floor_y": 44.4820465068205,
+          "ml": 73,
+          "stored_depth_m": 0.0179534931794691,
+          "terrain_y": 44.6261024475098
+        },
+        {
+          "cell": [
+            1656,
+            89,
+            2585
+          ],
+          "conservative_floor_y": 44.5,
+          "cut": true,
+          "floor_gap_m": 0.0636253356933594,
+          "floor_y": 44.5,
+          "ml": 2630,
+          "stored_depth_m": 0.0105199999999996,
+          "terrain_y": 44.4363746643066
+        },
+        {
+          "cell": [
+            1657,
+            89,
+            2585
+          ],
+          "conservative_floor_y": 44.627,
+          "cut": true,
+          "floor_gap_m": -0.0604286193847656,
+          "floor_y": 44.5,
+          "ml": 3853,
+          "stored_depth_m": 0.019634309836313,
+          "terrain_y": 44.5604286193848
+        },
+        {
+          "cell": [
+            1658,
+            89,
+            2585
+          ],
+          "conservative_floor_y": 45.0,
+          "cut": true,
+          "floor_gap_m": -0.142415941454843,
+          "floor_y": 44.5016003244143,
+          "ml": 188,
+          "stored_depth_m": 0.0272102252109221,
+          "terrain_y": 44.6440162658691
+        },
+        {
+          "cell": [
+            1656,
+            88,
+            2586
+          ],
+          "conservative_floor_y": 44.5,
+          "cut": true,
+          "floor_gap_m": -0.193382433556756,
+          "floor_y": 44.42654401908,
+          "ml": 5134,
+          "stored_depth_m": 0.0734559809200377,
+          "terrain_y": 44.6199264526367
+        },
+        {
+          "cell": [
+            1657,
+            88,
+            2586
+          ],
+          "conservative_floor_y": 44.5,
+          "cut": true,
+          "floor_gap_m": -0.144023397429557,
+          "floor_y": 44.4821095676583,
+          "ml": 73,
+          "stored_depth_m": 0.017890432341666,
+          "terrain_y": 44.6261329650879
+        },
+        {
+          "cell": [
+            1656,
+            89,
+            2586
+          ],
+          "conservative_floor_y": 44.938,
+          "cut": true,
+          "floor_gap_m": -0.110557556152344,
+          "floor_y": 44.5,
+          "ml": 137,
+          "stored_depth_m": 0.00362555775897988,
+          "terrain_y": 44.6105575561523
+        },
+        {
+          "cell": [
+            1657,
+            89,
+            2586
+          ],
+          "conservative_floor_y": 45.0,
+          "cut": true,
+          "floor_gap_m": -0.136409759521484,
+          "floor_y": 44.5,
+          "ml": 75,
+          "stored_depth_m": 0.0144975294003871,
+          "terrain_y": 44.6364097595215
+        }
+      ],
+      "max_floor_gap_m": 0.349819183349609,
+      "terrain_contact_qualified": false,
+      "water_ml": 1000000
+    },
+    "render_cpu_ms": {
+      "max": 2.98000001907349,
+      "p95": 0.679000020027161
+    },
+    "water_bucket_contact_capture_ms": 778.436,
+    "water_bucket_poured_capture_ms": 776.701,
+    "water_settled_close_capture_ms": 683.139
+  }
+}

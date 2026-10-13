@@ -45,6 +45,8 @@ var item_label: Label
 var count_label: Label
 var key_label: Label
 func present(row: Dictionary,title: String,key: String="") -> void:
+	var carries_water: bool=int(row.get("water_capacity_ml",0))>0
+	if carries_water:title="Water bucket"
 	if item_picture==null:
 		item_picture=TextureRect.new();item_picture.expand_mode=TextureRect.EXPAND_IGNORE_SIZE;item_picture.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		add_child(item_picture);item_picture.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT);item_picture.offset_top=3;item_picture.offset_bottom=-22;item_picture.offset_left=20;item_picture.offset_right=-20
@@ -61,6 +63,9 @@ func present(row: Dictionary,title: String,key: String="") -> void:
 	item_label.text=title if occupied else "Empty";item_label.modulate.a=1.0 if occupied else 0.5
 	count_label.text=str(row.count) if int(row.get("count",0))>1 else ""
 	tooltip_text=title if occupied else "Empty slot"
+	if occupied and carries_water:
+		count_label.text="%.3f m³"%(float(row.water_ml)/1000000.0)
+		tooltip_text+="\nWater: %.3f / 1,000 L\nCapacity: 1 m³"%(float(row.water_ml)/1000.0)
 	var maximum: int=row.get("max_durability",0)
 	durability_ratio=clampf(float(row.get("durability",0))/maximum,0,1) if occupied and maximum>0 else -1.0
 	if durability_ratio>=0:tooltip_text+="\nDurability: %d / %d (%d%%)"%[row.durability,maximum,roundi(durability_ratio*100)]

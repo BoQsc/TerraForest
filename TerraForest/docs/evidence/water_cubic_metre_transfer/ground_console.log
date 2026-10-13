@@ -1,0 +1,35 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.3.280 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] New world
+[TerrainRewrite] New world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+[TerrainRewrite] Preparing your finite lake; terrain and water are being built
+[TerrainRewrite] Mined resources added to inventory
+[TerrainRewrite] Lake ready · temporary world
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Bucket review · disposable world
+PASS Normal disposable bucket-review world is ready
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Scooped 1000.0 L
+PASS One actual click fills the full bucket from the lake
+PASS Untouched ground is available outside the authored lake
+PASS Pour target starts dry and is separate from the lake
+[TerrainRewrite] Preparing water at this location
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Poured 1000.0 L
+PASS Actual right-click pours one cubic metre onto unedited ground
+GROUND_SURFACE_CONTACT 227 below=0 gap=0.00017547607422..0.10066604614258
+PASS Sampled rendered pour triangles stay above actual terrain
+GROUND_COMPONENTS [{"cells":115,"ml":853757}]
+PASS Gentle-ground full-bucket pour remains one connected body, without detached small pieces
+PASS Poured water remains visibly queryable near the natural-ground target after two seconds
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Scooped 376.986 L
+PASS The visible ground water can be scooped with exact inventory/world transfer
+[TerrainRewrite] Temporary test world: save skipped
+WATER_GROUND_POUR failures=0

@@ -65,13 +65,13 @@ Dictionary NativeContainerStore::drag_slots(int64_t id,const Ref<NativePlayerInv
         if(limit==target->catalog().end()){out["reason"]="invalid_item";return out;}
         if(source->max_durability(a.item)!=target->max_durability(a.item)){out["reason"]="durability_schema_mismatch";return out;}
         if(b.item&&source->max_durability(b.item)!=target->max_durability(b.item)){out["reason"]="durability_schema_mismatch";return out;}
-        if(b.item&&(b.item!=a.item||source->max_durability(a.item))) {
+        if(b.item&&(b.item!=a.item||source->max_durability(a.item)||NativePlayerInventory::water_container(a.item))) {
             auto back=source->catalog().find(b.item);
             if(count!=a.count||a.count>limit->second||back==source->catalog().end()||b.count>back->second){out["reason"]="partial_swap";return out;}
             std::swap(a,b);
         } else {
             if(count>limit->second-b.count){out["reason"]="stack_full";return out;}
-            b.item=a.item;b.wear=a.wear;b.count+=count;a.count-=count;if(!a.count)a={};
+            b.item=a.item;b.wear=a.wear;b.water_ml=a.water_ml;b.count+=count;a.count-=count;if(!a.count)a={};
         }
         // No callbacks between either commit. Invalid targets preserve both sides.
         source->slots[from]=a;target->slots[to]=b;++source->revision;++target->revision;
@@ -85,31 +85,31 @@ Dictionary NativeContainerStore::drag_slots(int64_t id,const Ref<NativePlayerInv
 }
 PackedByteArray NativeContainerStore::capture_storage_snapshot() const {
     if(schema.is_null())return {};
-    PackedByteArray out;out.resize(16+contents.size()*400);
-    std::memcpy(out.ptrw(),"TFCS\2\0\0\0",8);out.encode_u64(8,contents.size());
+    PackedByteArray out;out.resize(16+contents.size()*528);
+    std::memcpy(out.ptrw(),"TFCS\3\0\0\0",8);out.encode_u64(8,contents.size());
     int64_t at=16;for(const auto &entry:contents) {
         out.encode_u64(at,entry.first);auto bytes=entry.second->capture_storage_snapshot();
-        std::memcpy(out.ptrw()+at+8,bytes.ptr(),392);at+=400;
+        std::memcpy(out.ptrw()+at+8,bytes.ptr(),520);at+=528;
     }
     return out;
 }
 bool NativeContainerStore::validate_snapshot(const PackedByteArray &bytes) const {
-    if(schema.is_null()||bytes.size()<16||(std::memcmp(bytes.ptr(),"TFCS\1\0\0\0",8)&&std::memcmp(bytes.ptr(),"TFCS\2\0\0\0",8)))return false;
-    const int stride=bytes[4]==1?272:400;
+    if(schema.is_null()||bytes.size()<16||(std::memcmp(bytes.ptr(),"TFCS\1\0\0\0",8)&&std::memcmp(bytes.ptr(),"TFCS\2\0\0\0",8)&&std::memcmp(bytes.ptr(),"TFCS\3\0\0\0",8)))return false;
+    const int stride=bytes[4]==1?272:(bytes[4]==2?400:528);
     uint64_t count=bytes.decode_u64(8),last=0;
     if(count>uint64_t(capacity)||uint64_t(bytes.size())!=16+count*stride)return false;
     for(uint64_t i=0;i<count;++i) {
         int64_t at=16+i*stride;uint64_t id=bytes.decode_u64(at);
         if(id<=last||id>uint64_t(INT64_MAX))return false;last=id;
         auto inventory=bytes.slice(at+8,at+stride);if(!schema->validate_snapshot(inventory))return false;
-        bool nonempty=false;for(int slot=0;slot<32;++slot)nonempty=nonempty||inventory.decode_u32(12+slot*(stride==272?8:12))>0;
+        bool nonempty=false;for(int slot=0;slot<32;++slot)nonempty=nonempty||inventory.decode_u32(12+slot*(stride==272?8:(stride==400?12:16)))>0;
         if(!nonempty)return false;
     }
     return true;
 }
 bool NativeContainerStore::restore_storage_snapshot(const PackedByteArray &bytes) {
     if(!validate_snapshot(bytes))return false;
-    const int stride=bytes[4]==1?272:400;
+    const int stride=bytes[4]==1?272:(bytes[4]==2?400:528);
     decltype(contents) staged;uint64_t count=bytes.decode_u64(8);int64_t next_revision=revision+1;
     for(uint64_t i=0;i<count;++i) {
         int64_t at=16+i*stride;auto inventory=empty_inventory();

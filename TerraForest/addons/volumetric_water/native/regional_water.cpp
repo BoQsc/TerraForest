@@ -69,7 +69,7 @@ void NativeRegionalWater::_bind_methods(){
     ClassDB::bind_method(D_METHOD("remove_bounds","bounds"),&NativeRegionalWater::remove_bounds);
     ClassDB::bind_method(D_METHOD("brush","point","radius","amount"),&NativeRegionalWater::brush);
     ClassDB::bind_method(D_METHOD("transfer_litre","from","to","pour","inventory","slot","revision","max_litres"),&NativeRegionalWater::transfer_water,DEFVAL(1));
-    ClassDB::bind_method(D_METHOD("transfer_bucket","from","to","pour","inventory","slot","revision","max_litres"),&NativeRegionalWater::transfer_water,DEFVAL(10));
+    ClassDB::bind_method(D_METHOD("transfer_bucket","from","to","pour","inventory","slot","revision","max_litres"),&NativeRegionalWater::transfer_water,DEFVAL(1000));
     ClassDB::bind_method(D_METHOD("surface_near","point","radius"),&NativeRegionalWater::surface_near);
     ClassDB::bind_method(D_METHOD("depth_at","point"),&NativeRegionalWater::depth_at);
     ClassDB::bind_method(D_METHOD("placement_mask","transforms"),&NativeRegionalWater::placement_mask);
@@ -324,17 +324,19 @@ int64_t NativeRegionalWater::brush(const Vector3 &point,double radius,int64_t am
 }
 Dictionary NativeRegionalWater::transfer_water(const Vector3 &from,const Vector3 &to,bool pour,Object *inventory,int64_t slot,int64_t revision,int64_t max_litres){
     Dictionary out;out["ok"]=false;out["pending"]=false;
-    if(fill.running||!from.is_finite()||!to.is_finite()||from.distance_to(to)>5||!inventory||!inventory->has_method("exchange_bucket")){out["reason"]="Water is preparing, or target is out of reach";return out;}
-    if(max_litres<1||max_litres>10||!inventory->has_method("snapshot")){out["reason"]="Invalid bucket transfer";return out;}
+    if(fill.running||!from.is_finite()||!to.is_finite()||from.distance_to(to)>5||!inventory||!inventory->has_method("exchange_water")){out["reason"]="Water is preparing, or target is out of reach";return out;}
+    if(max_litres<1||max_litres>1000||!inventory->has_method("snapshot")){out["reason"]="Invalid bucket transfer";return out;}
     Dictionary state=inventory->call("snapshot");Array slots=state.get("slots",Array());
     if(int64_t(state.get("revision",-1))!=revision||slot<0||slot>=slots.size()){out["reason"]="Selected item changed";return out;}
     Dictionary stack=slots[slot];int64_t item=stack.get("item",0);
     if(item<401||item>411||int64_t(stack.get("count",0))!=1){out["reason"]="Select a bucket";return out;}
-    uint64_t amount=uint64_t(std::min(max_litres,pour?item-401:411-item))*1000;
+    int64_t held=stack.get("water_ml",int64_t(-1)),capacity=stack.get("water_capacity_ml",int64_t(0));
+    if(held<0||capacity!=1000000||held>capacity){out["reason"]="Invalid water container state";return out;}
+    uint64_t amount=uint64_t(std::min(max_litres*1000,pour?held:capacity-held));
     if(!amount){out["reason"]=pour?"Bucket empty":"Bucket full";return out;}
     Dictionary surface=raycast_surface(from,to);bool hit=bool(surface["hit"]);
     Vector3i target=hit?Vector3i(surface["cell"]):cell(to);
-    if(!pour&&!hit){out["reason"]="Aim at nearby water containing at least one litre";return out;}
+    if(!pour&&!hit){out["reason"]="Aim at nearby water";return out;}
     Region *r=get(target,true);if(!r){out["pending"]=in_domain(target)&&!limit;out["reason"]="Preparing water at this location";return out;}
     // A terrain ray can end inside a conservative shoreline cell. Pour into
     // the first open cell just back along the unobstructed aiming segment,
@@ -365,18 +367,40 @@ Dictionary NativeRegionalWater::transfer_water(const Vector3 &from,const Vector3
                 if(connected&&visited.insert(key(q)).second)candidates.push_back(q);
             }
         }
-        amount=(amount-remaining)/1000*1000;
-        if(!amount){out["reason"]="Less than one litre within bucket reach";return out;}
+        amount-=remaining;
+        if(!amount){out["reason"]="No water within bucket reach";return out;}
+    }
+    if(pour){
+        // Plan a bounded connected placement before touching either owner.
+        // A cubic-metre transfer must not be hidden in an overfull single cell.
+        uint64_t remaining=amount;std::deque<Vector3i> pending;std::unordered_set<Key> visited;
+        pending.push_back(target);visited.insert(key(target));
+        while(!pending.empty()&&remaining){Vector3i p=pending.front();pending.pop_front();
+            Region *current=get(p,true);if(!current){out["pending"]=!limit;out["reason"]="Preparing water at this location";return out;}
+            auto shape=profile(*current,index(p));uint64_t cap=shape.capacity(),stored=current->water[index(p)];
+            if(!cap)continue;
+            uint64_t give=std::min(remaining,cap>stored?cap-stored:0);if(give){take.emplace_back(p,give);remaining-=give;}
+            if(!remaining)break;
+            for(int d=0;d<6;++d){Vector3i q=p+directions[d],distance=q-target;
+                if(!in_domain(q)||std::max({std::abs(distance.x),std::abs(distance.y),std::abs(distance.z)})>2||visited.count(key(q)))continue;
+                Region *other=get(q,true);if(!other){out["pending"]=!limit;out["reason"]="Preparing water at this location";return out;}
+                auto next=profile(*other,index(q));if(!next.capacity())continue;
+                bool connected=d==0?(shape.open_bottom&&next.ceiling==500):d==5?(shape.ceiling==500&&next.open_bottom):
+                    WaterCellProfile::face_overlap(shape,shape.ceiling,next,next.ceiling,q.x!=p.x?0:2,q.x!=p.x?q.x>p.x:q.z>p.z);
+                if(connected&&visited.insert(key(q)).second)pending.push_back(q);
+            }
+        }
+        if(remaining){out["reason"]="Not enough connected space near the pour target";return out;}
     }
     if(pour&&(!profile(*r,i).capacity()||total>MAX_TOTAL-amount)){out["reason"]="Aim at open space just above terrain";return out;}
-    if(!bool(inventory->call("exchange_bucket",slot,pour,revision,int64_t(amount/1000)))){out["reason"]="Bucket full / empty, or selected item changed";return out;}
-    if(pour){preserve_mesh_region(region_key(target));r->water[i]+=amount;total+=amount;}else{
+    if(!bool(inventory->call("exchange_water",slot,pour,revision,int64_t(amount)))){out["reason"]="Bucket full / empty, or selected item changed";return out;}
+    if(pour){for(const auto &[p,give]:take){preserve_mesh_region(region_key(p));regions.at(region_key(p)).water[index(p)]+=give;changed(p);}total+=amount;}else{
         uint64_t remaining=amount;
         for(const auto &[p,available]:take){uint64_t debit=std::min(remaining,available);if(!debit)break;
             preserve_mesh_region(region_key(p));regions.at(region_key(p)).water[index(p)]-=debit;changed(p);remaining-=debit;}
         total-=amount;
     }
-    changed(target);prioritize_mesh(region_key(target));out["ok"]=true;out["litres"]=int64_t(amount/1000);out["reason"]=String(pour?"Poured ":"Scooped ")+String::num_int64(amount/1000)+" L";out["point"]=Vector3(target)*0.5;return out;
+    changed(target);prioritize_mesh(region_key(target));out["ok"]=true;out["water_ml"]=int64_t(amount);out["litres"]=double(amount)/1000.0;out["reason"]=String(pour?"Poured ":"Scooped ")+String::num(double(amount)/1000.0,3)+" L";out["point"]=Vector3(target)*0.5;return out;
 }
 Vector3 NativeRegionalWater::surface_near(const Vector3 &point,double radius) const {
     Vector3 best(INFINITY,INFINITY,INFINITY);if(!point.is_finite()||!std::isfinite(radius)||radius<0||radius>3)return best;

@@ -1,0 +1,19 @@
+Cubic-metre gameplay transfer — 2026-10-13
+
+Units: 1 world unit = 1 metre. A full 0.5 m simulation cell owns 125,000 ml.
+Normal bucket capacity and maximum one-click scoop are now 1,000,000 ml (1 m³).
+This is deliberately generous gameplay capacity, not the physical capacity of the small held bucket model.
+Actual contents are explicit integer millilitres, independent of item identity.
+Pour plans bounded connected space before mutating inventory/world; no hidden single-cell overflow.
+Scoop collects connected water locally (at most a 5×5×5-cell neighborhood); less available water means a partial fill.
+Inventory, containers and dropped-item storage retain quantities; v1/v2 inventory and container saves retain old litres exactly. New v3 inventory/container saves require the updated executable.
+
+PASS: 20 inventory/storage/migration assertions; existing inventory_transfer 29, container_drag 13, container_store 23.
+PASS: 7 direct runtime transfer assertions: 1 m³ removed, same amount poured into a second basin, measured 1 m fill height, eight full cells, cached reload, atomic sealed-basin failure.
+PASS: bucket regression and 30 material/surface cases.
+PASS actual world: one click scoops 1 m³, pours it on untouched gentle ground; 227 sampled top triangle centroids above terrain; local positive-delta cells form one connected body after two seconds; subsequent scoop recovered 376,986 ml exactly. Local connectivity probe excludes previously wet lake cells and does not establish global topology.
+PASS shoreline: visible ~0.69 m depression and recovery to within ~0.06 m of prior height over 60 rendered frames; original top cell receives water again.
+FAIL actual mined bowl contact: exact 1 m³ stored but 2 cm contact gate fails. Some sampled boundary estimates lie about 0.20 m below terrain. The diagnostic also compares upper cell bottoms against terrain, so its +0.35 m maximum is not a valid standalone floating-gap measurement for a multi-layer pour. It must distinguish internal water interfaces before interpreting positive gaps; below-terrain samples still prevent acceptance.
+Screenshots inspected: visible larger puddle and legible quantity HUD, angular outline remains.
+No full-world acceptance, arbitrary terrain-contact, sustained performance, thermal or detached-terrain-fragment claim.
+Next: resolve contact against the rendered/physical terrain and qualify larger pours; do not hide the failed gate or rewrite the mesher again without evidence.
