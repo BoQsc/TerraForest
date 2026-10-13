@@ -74,6 +74,14 @@ func _initialize():
  var before_bucket:Dictionary=inventory.snapshot()
  result=tiny.transfer_bucket(Vector3(43,43,41.5),Vector3(43,41.25,41.5),true,inventory,0,before_bucket.revision)
  check(not result.ok and not result.pending and inventory.snapshot()==before_bucket and tiny.capture_snapshot(catalog)==before_tiny,"Sub-grid dry pour is rejected visibly without consuming the bucket or creating invisible water")
+ var dev=ClassDB.instantiate("NativeRegionalWater");assert(dev.restore_snapshot(bytes))
+ check(dev.brush(Vector3(43,41.25,41.5),0.0,1000000)==1000000,"Developer placement accepts one cubic metre")
+ var dev_saved:PackedByteArray=dev.capture_snapshot(catalog);var dev_full:=0;var dev_overfull:=false
+ for j in 512:
+  var ml:int=dev_saved.decode_u64(base+20+j*12)
+  if ml==125000:dev_full+=1
+  dev_overfull=dev_overfull or ml>125000
+ check(dev_full==16 and not dev_overfull,"Developer placement shares bucket capacity rules, without hidden overfilled cells")
  DirAccess.make_dir_recursive_absolute("res://reports")
  var file:=FileAccess.open("res://reports/water_transfer_volume.json",FileAccess.WRITE);file.store_string(JSON.stringify({"failures":failures}));file.close()
  print("WATER_TRANSFER_VOLUME failures=",failures);quit(failures)

@@ -17,7 +17,7 @@ func wait_publication()->bool:
  while Time.get_ticks_msec()<deadline:
   await process_frame
   var s:Dictionary=game.lakes.statistics()
-  if game.lakes._pending_bucket.is_empty() and int(s.dirty_meshes)==0 and not s.mesh_batch_active and not s.mesh_publish_pending:return true
+  if game.lakes._pending_bucket.is_empty() and game.lakes._pending_dev.is_empty() and int(s.dirty_meshes)==0 and not s.mesh_batch_active and not s.mesh_publish_pending:return true
  return false
 func run():
  process_frame.connect(record_frame)
@@ -68,6 +68,18 @@ func run():
   check(not visible,"Recovered pour leaves no stale visible water surface")
   results.cases.append({"target":target,"slope_degrees":rad_to_deg(acos(ground.normal.y)),"recovered_ml":held_ml(),"cell_amounts_restored":same,"stale_surface":visible,"pour":pour,"scoop":scoop})
   if failures:break
+ if failures==0:
+  var slot:int=game.player_hud.active_slot
+  var inventory=game.player_hud.inventory
+  check(inventory.exchange_water(slot,true,inventory.snapshot().revision,1000000),"Empty test bucket before collecting developer-placed water")
+  var from:Vector3=game.camera.global_position;var to:Vector3=from-game.camera.global_basis.z*3.5
+  var hit:Dictionary=game.get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(from,to,1))
+  check(not hit.is_empty(),"Developer tool aims at the mined ground")
+  if not hit.is_empty():
+   game.lakes.dev_brush(Vector3(hit.position)+Vector3.UP*0.02,false)
+   check(await wait_publication(),"Actual developer brush finishes shared placement")
+   click(MOUSE_BUTTON_LEFT);await wait_publication()
+   check(held_ml()==1000000 and amounts(game.lakes.capture_snapshot())==original,"Entire developer-placed volume is visible, scoopable and leaves no hidden surplus")
  await finish()
 func finish():
  results.failures=failures

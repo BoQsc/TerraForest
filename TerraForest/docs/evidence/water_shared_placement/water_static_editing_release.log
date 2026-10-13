@@ -1,0 +1,12 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS Legacy awake water restores without enabling simulation
+PASS Ten simulated seconds leave suspended water byte-identical
+PASS Static water has no active-cell simulation work
+PASS Explicit local removal still works
+PASS Explicit local placement still works
+PASS Explicit edits do not start flow or spillage
+PASS Edited static water reloads
+PASS Reload retains quantity and remains stationary
+WATER_STATIC_EDITING failures=0
+

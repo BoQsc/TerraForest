@@ -117,6 +117,7 @@ void NativeRegionalWater::_bind_methods(){
     ClassDB::bind_method(D_METHOD("remove_bounds","bounds"),&NativeRegionalWater::remove_bounds);
     ClassDB::bind_method(D_METHOD("brush","point","radius","amount"),&NativeRegionalWater::brush);
     ClassDB::bind_method(D_METHOD("transfer_litre","from","to","pour","inventory","slot","revision","max_litres"),&NativeRegionalWater::transfer_water,DEFVAL(1));
+    ClassDB::bind_method(D_METHOD("place_water","point","amount_ml"),&NativeRegionalWater::place_water);
     ClassDB::bind_method(D_METHOD("transfer_bucket","from","to","pour","inventory","slot","revision","max_litres"),&NativeRegionalWater::transfer_water,DEFVAL(1000));
     ClassDB::bind_method(D_METHOD("surface_near","point","radius"),&NativeRegionalWater::surface_near);
     ClassDB::bind_method(D_METHOD("depth_at","point"),&NativeRegionalWater::depth_at);
@@ -258,10 +259,98 @@ int64_t NativeRegionalWater::remove_bounds(const AABB &bounds){
         for(int i=0;i<512;++i)if(r.water[i]){Vector3i p=base+Vector3i(i%8,(i/8)%8,i/64);if(bounds.has_point(Vector3(p)*0.5+Vector3(0.25,0.25,0.25))){removed+=r.water[i];r.water[i]=0;changed(p);}}}
     total-=removed;return removed;
 }
+bool NativeRegionalWater::plan_placement(Vector3i target,const Vector3 &aim,uint64_t amount,Placement &take,Dictionary &out){
+    Region *origin=get(target,true);
+    if(!origin){out["pending"]=in_domain(target)&&!limit;out["reason"]="Preparing water at this location";return false;}
+    uint64_t held=origin->water[index(target)],capacity=profile(*origin,index(target)).capacity();
+    // A top-up that fits its existing cell needs no neighbouring region work.
+    if(held>0&&held<=capacity&&amount<=capacity-held){take.emplace_back(target,amount);return true;}
+        // A static pour has a compact footprint and one final surface height.
+        struct Site{Vector3i p;WaterCellProfile shape;uint64_t stored,room;};
+        std::vector<Site> sites;std::deque<Vector3i> pending;std::unordered_set<Key> visited;
+        int x0=target.x-(aim.x-target.x*0.5<0.25?1:0),z0=target.z-(aim.z-target.z*0.5<0.25?1:0);
+        pending.push_back(target);visited.insert(key(target));uint64_t space=0;
+        while(!pending.empty()){
+            Vector3i p=pending.front();pending.pop_front();
+            Region *current=get(p,true);if(!current){out["pending"]=!limit;out["reason"]="Preparing water at this location";return false;}
+            auto shape=profile(*current,index(p));uint64_t cap=shape.capacity(),stored=current->water[index(p)];
+            if(!cap)continue;
+            uint64_t room=cap>stored?cap-stored:0;sites.push_back({p,shape,stored,room});space+=room;
+            for(int d=0;d<6;d++){
+                Vector3i q=p+directions[d];
+                if(!in_domain(q)||q.x<x0||q.x>x0+1||q.z<z0||q.z>z0+1||q.y<target.y-2||q.y>target.y+4||visited.count(key(q)))continue;
+                Region *other=get(q,true);if(!other){out["pending"]=!limit;out["reason"]="Preparing water at this location";return false;}
+                auto next=profile(*other,index(q));if(!next.capacity())continue;
+                bool connected=d==0?(shape.open_bottom&&next.ceiling==500):d==5?(shape.ceiling==500&&next.open_bottom):
+                    WaterCellProfile::face_overlap(shape,shape.ceiling,next,next.ceiling,q.x!=p.x?0:2,q.x!=p.x?q.x>p.x:q.z>p.z);
+                if(connected&&visited.insert(key(q)).second)pending.push_back(q);
+            }
+        }
+        if(space<amount){out["reason"]="Not enough connected space near the pour target";return false;}
+        auto allocation=[](const Site&s,double level){
+            double volume=s.shape.volume(std::clamp(level-s.p.y*500.0,0.0,500.0));
+            uint64_t desired=uint64_t(std::max(0.0,std::floor(volume)));
+            return std::min(s.room,desired>s.stored?desired-s.stored:0);
+        };
+        double low=(target.y-2)*500.0,high=(target.y+5)*500.0;
+        for(int iteration=0;iteration<32;iteration++){
+            double middle=(low+high)*0.5;uint64_t sum=0;for(const auto&s:sites)sum+=allocation(s,middle);
+            if(sum>amount)high=middle;else low=middle;
+        }
+        uint64_t remaining=amount;
+        for(const auto&s:sites){uint64_t give=std::min(remaining,allocation(s,low));take.emplace_back(s.p,give);remaining-=give;}
+        // Exact integer quantity; distribute only the final rounding millilitres.
+        for(size_t n=0;n<sites.size()&&remaining;n++)if(take[n].second<sites[n].room&&allocation(sites[n],high)>take[n].second){take[n].second++;remaining--;}
+        if(remaining){out["reason"]="Water placement could not retain its full quantity";return false;}
+        // Reject disconnected pockets instead of creating several small pieces.
+        std::unordered_map<Key,size_t> lookup;for(size_t n=0;n<sites.size();n++)lookup[key(sites[n].p)]=n;
+        std::vector<size_t> reached;std::unordered_set<size_t> seen;
+        for(size_t n=0;n<take.size();n++)if(take[n].second){reached.push_back(n);seen.insert(n);break;}
+        for(size_t at=0;at<reached.size();at++){
+            size_t n=reached[at];const auto&a=sites[n];uint64_t av=a.stored+take[n].second;
+            for(int d=0;d<6;d++){
+                auto found=lookup.find(key(a.p+directions[d]));if(found==lookup.end()||seen.count(found->second))continue;
+                size_t j=found->second;const auto&b=sites[j];uint64_t bv=b.stored+take[j].second;if(!bv)continue;
+                bool connected=d==0?joined_vertical(b.shape,bv,a.shape,av):d==5?joined_vertical(a.shape,av,b.shape,bv):
+                    joined(a.shape,av,b.shape,bv,b.p.x!=a.p.x?0:2,b.p.x!=a.p.x?b.p.x>a.p.x:b.p.z>a.p.z);
+                if(connected){seen.insert(j);reached.push_back(j);}
+            }
+        }
+        for(size_t n=0;n<take.size();n++)if(take[n].second&&!seen.count(n)){out["reason"]="Aim at one connected open area";return false;}
+        // Do not debit a bucket into a completely invisible isolated body.
+        // These are the same eight owned lattice points used by build_surface:
+        // .125/.375 metres, or 125/375 mm in the cached half-metre profile.
+        // Existing bodies may receive small surface-height additions normally.
+        bool existing_body=false,represented=false;
+        for(size_t n=0;n<sites.size();n++){
+            const auto &site=sites[n];existing_body|=site.stored>0;
+            uint64_t filled=site.stored+take[n].second;if(!filled)continue;
+            double head=site.shape.head(filled);
+            for(double z:{.25,.75})for(double x:{.25,.75}){
+                double bottom=site.shape.bottom(x,z),top=site.shape.surface(head,x,z);
+                represented|=(bottom<125&&125<top)||(bottom<375&&375<top);
+            }
+        }
+        if(!existing_body&&!represented){out["reason"]="Too little water to form a visible volume here; water kept in bucket";return false;}
+        take.erase(std::remove_if(take.begin(),take.end(),[](const auto&entry){return entry.second==0;}),take.end());
+
+    return true;
+}
+void NativeRegionalWater::apply_placement(const Placement &take){
+    for(const auto &[p,give]:take){preserve_mesh_region(region_key(p));regions.at(region_key(p)).water[index(p)]+=give;total+=give;changed(p);}
+}
+Dictionary NativeRegionalWater::place_water(const Vector3 &point,int64_t amount){
+    Dictionary out;out["ok"]=false;out["pending"]=false;
+    if(fill.running||!point.is_finite()||amount<=0||amount>1000000||uint64_t(amount)>MAX_TOTAL-total){out["reason"]="Water placement is unavailable";return out;}
+    Vector3i target=cell(point);
+    if(!in_domain(target)){out["reason"]="Water target is outside the world";return out;}
+    Placement take;if(!plan_placement(target,point,uint64_t(amount),take,out))return out;
+    apply_placement(take);prioritize_mesh(region_key(target));
+    out["ok"]=true;out["water_ml"]=amount;out["reason"]="Placed water";return out;
+}
 int64_t NativeRegionalWater::brush(const Vector3 &point,double radius,int64_t amount){
     if(!point.is_finite()||!std::isfinite(radius)||radius<0||radius>16||fill.running)return 0;
-    if(amount>0){if(uint64_t(amount)>MAX_TOTAL-total)return 0;Vector3i p=cell(point);Region *r=get(p,true);if(!r||!profile(*r,index(p)).capacity())return 0;
-        r->water[index(p)]+=amount;total+=amount;changed(p);prioritize_mesh(region_key(p));return amount;}
+    if(amount>0){Dictionary result=place_water(point,amount);return bool(result["ok"])?amount:0;}
     if(amount==0)return 0;
     uint64_t removed=0,requested=amount==INT64_MIN?MAX_TOTAL:uint64_t(-amount);
     Vector3i lo=cell(point-Vector3(radius,radius,radius)),hi=cell(point+Vector3(radius,radius,radius));
@@ -335,81 +424,10 @@ Dictionary NativeRegionalWater::transfer_water(const Vector3 &from,const Vector3
             return out;
         }
     }
-    if(pour){
-        // A static pour has a compact footprint and one final surface height.
-        struct Site{Vector3i p;WaterCellProfile shape;uint64_t stored,room;};
-        std::vector<Site> sites;std::deque<Vector3i> pending;std::unordered_set<Key> visited;
-        Vector3 aim=hit?Vector3(surface["point"]):to;
-        int x0=target.x-(aim.x-target.x*0.5<0.25?1:0),z0=target.z-(aim.z-target.z*0.5<0.25?1:0);
-        pending.push_back(target);visited.insert(key(target));uint64_t space=0;
-        while(!pending.empty()){
-            Vector3i p=pending.front();pending.pop_front();
-            Region *current=get(p,true);if(!current){out["pending"]=!limit;out["reason"]="Preparing water at this location";return out;}
-            auto shape=profile(*current,index(p));uint64_t cap=shape.capacity(),stored=current->water[index(p)];
-            if(!cap)continue;
-            uint64_t room=cap>stored?cap-stored:0;sites.push_back({p,shape,stored,room});space+=room;
-            for(int d=0;d<6;d++){
-                Vector3i q=p+directions[d];
-                if(!in_domain(q)||q.x<x0||q.x>x0+1||q.z<z0||q.z>z0+1||q.y<target.y-2||q.y>target.y+4||visited.count(key(q)))continue;
-                Region *other=get(q,true);if(!other){out["pending"]=!limit;out["reason"]="Preparing water at this location";return out;}
-                auto next=profile(*other,index(q));if(!next.capacity())continue;
-                bool connected=d==0?(shape.open_bottom&&next.ceiling==500):d==5?(shape.ceiling==500&&next.open_bottom):
-                    WaterCellProfile::face_overlap(shape,shape.ceiling,next,next.ceiling,q.x!=p.x?0:2,q.x!=p.x?q.x>p.x:q.z>p.z);
-                if(connected&&visited.insert(key(q)).second)pending.push_back(q);
-            }
-        }
-        if(space<amount){out["reason"]="Not enough connected space near the pour target";return out;}
-        auto allocation=[](const Site&s,double level){
-            double volume=s.shape.volume(std::clamp(level-s.p.y*500.0,0.0,500.0));
-            uint64_t desired=uint64_t(std::max(0.0,std::floor(volume)));
-            return std::min(s.room,desired>s.stored?desired-s.stored:0);
-        };
-        double low=(target.y-2)*500.0,high=(target.y+5)*500.0;
-        for(int iteration=0;iteration<32;iteration++){
-            double middle=(low+high)*0.5;uint64_t sum=0;for(const auto&s:sites)sum+=allocation(s,middle);
-            if(sum>amount)high=middle;else low=middle;
-        }
-        uint64_t remaining=amount;
-        for(const auto&s:sites){uint64_t give=std::min(remaining,allocation(s,low));take.emplace_back(s.p,give);remaining-=give;}
-        // Exact integer quantity; distribute only the final rounding millilitres.
-        for(size_t n=0;n<sites.size()&&remaining;n++)if(take[n].second<sites[n].room&&allocation(sites[n],high)>take[n].second){take[n].second++;remaining--;}
-        if(remaining){out["reason"]="Water placement could not retain its full quantity";return out;}
-        // Reject disconnected pockets instead of creating several small pieces.
-        std::unordered_map<Key,size_t> lookup;for(size_t n=0;n<sites.size();n++)lookup[key(sites[n].p)]=n;
-        std::vector<size_t> reached;std::unordered_set<size_t> seen;
-        for(size_t n=0;n<take.size();n++)if(take[n].second){reached.push_back(n);seen.insert(n);break;}
-        for(size_t at=0;at<reached.size();at++){
-            size_t n=reached[at];const auto&a=sites[n];uint64_t av=a.stored+take[n].second;
-            for(int d=0;d<6;d++){
-                auto found=lookup.find(key(a.p+directions[d]));if(found==lookup.end()||seen.count(found->second))continue;
-                size_t j=found->second;const auto&b=sites[j];uint64_t bv=b.stored+take[j].second;if(!bv)continue;
-                bool connected=d==0?joined_vertical(b.shape,bv,a.shape,av):d==5?joined_vertical(a.shape,av,b.shape,bv):
-                    joined(a.shape,av,b.shape,bv,b.p.x!=a.p.x?0:2,b.p.x!=a.p.x?b.p.x>a.p.x:b.p.z>a.p.z);
-                if(connected){seen.insert(j);reached.push_back(j);}
-            }
-        }
-        for(size_t n=0;n<take.size();n++)if(take[n].second&&!seen.count(n)){out["reason"]="Aim at one connected open area";return out;}
-        // Do not debit a bucket into a completely invisible isolated body.
-        // These are the same eight owned lattice points used by build_surface:
-        // .125/.375 metres, or 125/375 mm in the cached half-metre profile.
-        // Existing bodies may receive small surface-height additions normally.
-        bool existing_body=false,represented=false;
-        for(size_t n=0;n<sites.size();n++){
-            const auto &site=sites[n];existing_body|=site.stored>0;
-            uint64_t filled=site.stored+take[n].second;if(!filled)continue;
-            double head=site.shape.head(filled);
-            for(double z:{.25,.75})for(double x:{.25,.75}){
-                double bottom=site.shape.bottom(x,z),top=site.shape.surface(head,x,z);
-                represented|=(bottom<125&&125<top)||(bottom<375&&375<top);
-            }
-        }
-        if(!existing_body&&!represented){out["reason"]="Too little water to form a visible volume here; water kept in bucket";return out;}
-        take.erase(std::remove_if(take.begin(),take.end(),[](const auto&entry){return entry.second==0;}),take.end());
-
-    }
+    if(pour&&!plan_placement(target,hit?Vector3(surface["point"]):to,amount,take,out))return out;
     if(pour&&(!profile(*r,i).capacity()||total>MAX_TOTAL-amount)){out["reason"]="Aim at open space just above terrain";return out;}
     if(!bool(inventory->call("exchange_water",slot,pour,revision,int64_t(amount)))){out["reason"]="Bucket full / empty, or selected item changed";return out;}
-    if(pour){for(const auto &[p,give]:take){preserve_mesh_region(region_key(p));regions.at(region_key(p)).water[index(p)]+=give;changed(p);}total+=amount;}else{
+    if(pour){apply_placement(take);}else{
         uint64_t remaining=amount;
         for(const auto &[p,available]:take){uint64_t debit=std::min(remaining,available);if(!debit)break;
             preserve_mesh_region(region_key(p));regions.at(region_key(p)).water[index(p)]-=debit;changed(p);remaining-=debit;}

@@ -1,0 +1,20 @@
+2026-10-13: ONE BOUNDED PLACEMENT PLANNER FOR BUCKET AND DEV TOOL
+Previously positive brush(amount) bypassed capacity and stored 1m3 in a single
+0.5m cell (capacity 0.125m3), hiding most of the requested water. Regression
+failed against b328faa. Extracted bucket planning into native plan_placement
+and a shared apply_placement. Added place_water(point,amount_ml) result API.
+Both bucket transfer and positive developer brush use these functions; negative
+brush remains explicit radius removal. Developer UI now distinguishes pending
+occupancy from terminal rejection and reports the native reason immediately.
+An existing-cell top-up that fits capacity avoids requesting neighbours.
+No flow, new mesher, shader, runtime or per-frame simulation added.
+
+Twelve native transfer assertions and eight static-state assertions pass.
+Actual demo/world: reports/checks/20261013T190212204250Z, PASS six full-bucket
+round trips plus developer placement on mined terrain followed by full bucket
+recovery, with the exact original cell-quantity map restored.
+The test empties its bucket explicitly before the developer interoperability
+step; collection and developer placement use actual world code paths.
+Debug/release binaries rebuilt. Thin-volume rendering, legacy overfilled saves
+and authoritative terrain-field migration remain unfinished; no broad
+performance/visual-completeness claim follows from these checks.

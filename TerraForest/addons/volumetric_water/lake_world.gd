@@ -131,8 +131,11 @@ func _process(delta:float) -> void:
    terrain.message_changed.emit(result.reason)
  if not _pending_dev.is_empty():
   var p:=_pending_dev
-  if water.brush(p.point,0.0,p.amount)>0:terrain.changed_since_save=true;_pending_dev={}
-  elif Time.get_ticks_msec()>p.deadline:_pending_dev={};terrain.message_changed.emit("Aim the water brush into open space above terrain")
+  var result:Dictionary=water.place_water(p.point,p.amount)
+  if result.ok or not result.pending or Time.get_ticks_msec()>p.deadline:
+   _pending_dev={}
+   if result.ok:terrain.changed_since_save=true
+   terrain.message_changed.emit(result.reason)
  var after:Dictionary=water.statistics()
  if after.capacity_reached and not _capacity_reported:
   _capacity_reported=true;terrain.message_changed.emit("Water resident-region limit reached; quantities retained, expansion paused")
@@ -187,8 +190,11 @@ func bucket(from:Vector3,to:Vector3,pour:bool,inventory:RefCounted,slot:int,revi
 func dev_brush(point:Vector3,remove:bool,radius:float=2.0) -> void:
  if terrain.pending_edit:return
  if remove:water.brush(point,radius,-0x10000000000000);terrain.changed_since_save=true
- elif water.brush(point,0.0,1000000)==0:_pending_dev={"point":point,"amount":1000000,"deadline":Time.get_ticks_msec()+5000}
- else:terrain.changed_since_save=true
+ else:
+  var result:Dictionary=water.place_water(point,1000000)
+  if result.pending:_pending_dev={"point":point,"amount":1000000,"deadline":Time.get_ticks_msec()+5000}
+  if result.ok:terrain.changed_since_save=true
+  terrain.message_changed.emit(result.reason)
 func placement_mask(transforms:Array[Transform3D]) -> PackedByteArray:return water.placement_mask(transforms)
 func depth_at(point:Vector3) -> float:return water.depth_at(point)
 func statistics() -> Dictionary:

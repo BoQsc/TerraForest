@@ -1,0 +1,5 @@
+{
+  "failures": 0,
+  "scope": "No autonomous water movement; explicit edits and snapshot retention. Not visual or bucket-volume acceptance.",
+  "library": "volumetric_water.windows.template_release.x86_64.dll"
+}

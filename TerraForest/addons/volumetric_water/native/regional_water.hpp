@@ -116,6 +116,9 @@ class NativeRegionalWater : public godot::RefCounted {
     const Region *get(const godot::Vector3i &p) const;
     void changed(const godot::Vector3i &p);
     void request(Key k);
+    using Placement=std::vector<std::pair<godot::Vector3i,uint64_t>>;
+    bool plan_placement(godot::Vector3i target,const godot::Vector3 &aim,uint64_t amount,Placement &take,godot::Dictionary &out);
+    void apply_placement(const Placement &take);
     void process_fill();
     struct SurfaceMesh {
         godot::PackedVector3Array vertices,normals;
@@ -134,6 +137,7 @@ public:
     void advance(int64_t budget,double seconds=1.0/60.0);
     bool begin_fill(const godot::AABB &bounds,double level,const godot::Vector3 &seed,int64_t amount);
     int64_t remove_bounds(const godot::AABB &bounds);
+    godot::Dictionary place_water(const godot::Vector3 &point,int64_t amount);
     int64_t brush(const godot::Vector3 &point,double radius,int64_t amount);
     godot::Dictionary transfer_water(const godot::Vector3 &from,const godot::Vector3 &to,bool pour,godot::Object *inventory,int64_t slot,int64_t revision,int64_t max_litres);
     godot::Vector3 surface_near(const godot::Vector3 &point,double radius) const;
@@ -144,7 +148,7 @@ public:
     bool commit_mesh_batch(int64_t id);
     godot::Dictionary next_mesh_batch();
     // Diagnostic contact flag audits the closed volume with the same builder.
-    // Runtime publication and picking always request exposed interfaces only.
+    // Runtime publication and picking use the same closed material boundary.
     godot::Dictionary next_mesh(bool include_contacts=false);
     godot::Dictionary statistics() const;
     godot::PackedByteArray capture_snapshot(const godot::PackedByteArray &catalog) const;
