@@ -40,7 +40,7 @@ func _process(_delta:float) -> void:
        game.pitch=atan2(aim.y,Vector2(aim.x,aim.z).length());game.camera.rotation.x=game.pitch;game._clear_motion();break
      var layer:=CanvasLayer.new();game.add_child(layer)
      var guide:=Label.new();guide.position=Vector2(400,24);guide.add_theme_font_size_override("font_size",20);guide.add_theme_color_override("font_shadow_color",Color.BLACK);guide.add_theme_constant_override("shadow_offset_x",2);guide.add_theme_constant_override("shadow_offset_y",2);guide.mouse_filter=Control.MOUSE_FILTER_IGNORE
-     guide.text="BUCKET REVIEW · temporary world\nLeft click: fill bucket · Right click: pour contents\nScoop here, then turn toward dry ground and pour.\nEsc: menu · Changes are discarded on close."
+     guide.text="BUCKET REVIEW · temporary world\nLeft click: collect 1 water unit · Right click: place 1 unit\nOne unit = 1 m³ · Water stays where placed; no flow.\nScoop here, then turn toward dry ground and pour.\nEsc: menu · Changes are discarded on close."
      layer.add_child(guide);game.set_meta("water_bucket_review_ready",true)
     if not game.temporary_world:game.terrain.save_world()
     game._show_lake_notice("Bucket review · disposable world" if game.temporary_world else "Finite lake ready · Bucket: left fill / right pour contents · Esc: Save world")
