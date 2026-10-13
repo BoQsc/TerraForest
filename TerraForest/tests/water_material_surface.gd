@@ -58,9 +58,45 @@ func check_batch():
  check(not restarted.is_empty() and restarted.batch>old_batch and not water.commit_mesh_batch(old_batch),"Terrain invalidation cancels staged publication and changes batch identity")
  var saved:PackedByteArray=fixture(0,0).capture_snapshot(ClassDB.instantiate("NativeLakeCatalog").encode([]))
  check(water.restore_snapshot(saved) and water.statistics().query_cache_bytes==0 and not water.raycast_surface(origin+Vector3.UP,origin-Vector3.UP).hit,"Restore retires old published geometry until replacement is displayed")
+func check_contacts():
+ var water=fixture(3,200);var catalog:PackedByteArray=ClassDB.instantiate("NativeLakeCatalog").encode([])
+ var before:PackedByteArray=water.capture_snapshot(catalog);var count:=0;var exposed_only:=true
+ for step in 100:
+  var packet:Dictionary=water.next_mesh()
+  if packet.is_empty():break
+  var points:PackedVector3Array=packet.arrays[Mesh.ARRAY_VERTEX]
+  for i in range(0,points.size(),3):
+   var normal:Vector3=(points[i+2]-points[i]).cross(points[i+1]-points[i]).normalized()
+   exposed_only=exposed_only and normal.y>0.99;count+=1
+ check(count>0 and exposed_only,"Solid-enclosed puddle renders only its air-facing top, no reflective bed or wall shells")
+ check(water.capture_snapshot(catalog)==before,"Contact-face omission never deletes water or changes saved volume")
+ check(not water.raycast_surface(Vector3(41.75,41.69,41.75),Vector3(41.75,41.7001,41.75)).hit,"Buried contact shell cannot intercept a bucket ray")
+func check_pour_batch():
+ var reference=fixture(0,0);var expected:Dictionary={}
+ for step in 100:
+  var packet:Dictionary=reference.next_mesh()
+  if packet.is_empty():break
+  expected[packet.coordinate]=packet.arrays
+ var water=fixture(0,0);var inventory=ClassDB.instantiate("NativePlayerInventory")
+ for item in range(401,412):inventory.register_item(item,1)
+ inventory.grant(411,1,0)
+ var actual:Dictionary={};var transferred:=false;var completed:=false
+ for step in 100:
+  var packet:Dictionary=water.next_mesh_batch()
+  if packet.is_empty():break
+  if packet.has("coordinate"):actual[packet.coordinate]=packet.arrays
+  if step==0:
+   var result:Dictionary=water.transfer_bucket(Vector3(40.25,42.5,41.75),Vector3(40.25,41.5,41.75),true,inventory,0,inventory.snapshot().revision)
+   transferred=result.ok
+  if packet.complete:completed=true;break
+ var stable:bool=actual==expected
+ check(transferred and completed and stable and water.statistics().water_ml==11000,"Actual bucket pour preserves the entire in-flight mesh snapshot and adds exactly ten litres")
 func _initialize():
  GDExtensionManager.load_extension("res://addons/volumetric_water/volumetric_water.gdextension")
+ GDExtensionManager.load_extension("res://addons/player_runtime/player_runtime.gdextension")
  check_batch()
+ check_contacts()
+ check_pour_batch()
  var closed:=true;var visible:=true;var bounded:=true;var conserved:=true;var shared:=true;var cases:=0;var picked:=true;var missed:=true;var nearest_matches:=true;var invalid_misses:=true
  for x in [0,7]:
   for floor_mm in range(0,491,35):
@@ -69,7 +105,7 @@ func _initialize():
    var before:PackedByteArray=water.capture_snapshot(ClassDB.instantiate("NativeLakeCatalog").encode([]))
    var edges:Dictionary={};var count:=0;var low:=INF;var high:=-INF
    for step in 100:
-    var packet:Dictionary=water.next_mesh()
+    var packet:Dictionary=water.next_mesh(true)
     if packet.is_empty():break
     shared=shared and packet.faces.get("shared_surface_nets",false)
     var vertices:PackedVector3Array=packet.arrays[Mesh.ARRAY_VERTEX]
@@ -100,7 +136,7 @@ func _initialize():
  check(shared,"Water packets use shared surface-nets reconstruction")
  check(visible,"One-litre puddles retain nonzero geometry across vertical offsets")
  check(bounded,"Thin-water vertices stay between actual bottom and top")
- check(closed,"Region-boundary puddles have exactly two triangles per welded edge")
+ check(closed,"Stored-volume envelopes retain two triangles per welded edge across regions")
  check(nearest_matches,"Nearest-surface query agrees with reconstructed upper surface")
  check(invalid_misses,"Unknown terrain occupancy is not pickable")
  check(picked,"Thin-water ray hits rendered top and correct owning volume cell")

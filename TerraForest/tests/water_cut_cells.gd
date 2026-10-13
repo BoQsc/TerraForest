@@ -39,7 +39,7 @@ func run():
  check(water.depth_at(Vector3(41.55,41.55,41.75))>0.09 and water.depth_at(Vector3(41.9,41.55,41.75))==0,"Depth query distinguishes wet and dry parts inside one cut cell")
  var edges:Dictionary={};var vertices:=0
  for packet_index in 40:
-  var packet:Dictionary=water.next_mesh()
+  var packet:Dictionary=water.next_mesh(true)
   if packet.is_empty():break
   var points:PackedVector3Array=packet.arrays[Mesh.ARRAY_VERTEX];vertices+=points.size()
   for i in range(0,points.size(),3):
@@ -49,7 +49,7 @@ func run():
     edges[key]=edges.get(key,0)+1
  var closed:bool=vertices>0
  for count:int in edges.values():closed=closed and count==2
- check(closed,"Cut-cell mesh is closed with two incident triangles per edge")
+ check(closed,"Cut-cell stored-volume envelope is closed with two incident triangles per edge")
  var point:Vector3=geometry.wet_centroid;var hit:Dictionary=water.raycast_surface(point+Vector3.UP,point-Vector3.UP)
  check(hit.hit and hit.point.y>point.y and hit.point.y<=geometry.head+0.00001,"Bucket query hits the same finite cut-cell surface")
  check(water.capture_snapshot(catalog)==upgraded,"Meshing and picking never alter cut-cell quantities")

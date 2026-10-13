@@ -120,7 +120,7 @@ class NativeRegionalWater : public godot::RefCounted {
         godot::Dictionary faces;
     };
     bool surface_ready(Key owner,bool snapshot=false) const;
-    SurfaceMesh build_surface(Key owner,bool snapshot=false) const;
+    SurfaceMesh build_surface(Key owner,bool snapshot=false,bool include_contacts=false) const;
     bool decode(const godot::PackedByteArray &data,bool install);
 protected: static void _bind_methods();
 public:
@@ -139,7 +139,9 @@ public:
     godot::Dictionary raycast_surface(const godot::Vector3 &from,const godot::Vector3 &to) const;
     bool commit_mesh_batch(int64_t id);
     godot::Dictionary next_mesh_batch();
-    godot::Dictionary next_mesh();
+    // Diagnostic contact flag audits the closed volume with the same builder.
+    // Runtime publication and picking always request exposed interfaces only.
+    godot::Dictionary next_mesh(bool include_contacts=false);
     godot::Dictionary statistics() const;
     godot::PackedByteArray capture_snapshot(const godot::PackedByteArray &catalog) const;
     bool restore_snapshot(const godot::PackedByteArray &data);

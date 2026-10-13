@@ -76,7 +76,7 @@ void NativeRegionalWater::_bind_methods(){
     ClassDB::bind_method(D_METHOD("raycast_surface","from","to"),&NativeRegionalWater::raycast_surface);
     ClassDB::bind_method(D_METHOD("commit_mesh_batch","id"),&NativeRegionalWater::commit_mesh_batch);
     ClassDB::bind_method(D_METHOD("next_mesh_batch"),&NativeRegionalWater::next_mesh_batch);
-    ClassDB::bind_method(D_METHOD("next_mesh"),&NativeRegionalWater::next_mesh);
+    ClassDB::bind_method(D_METHOD("next_mesh","include_contacts"),&NativeRegionalWater::next_mesh,DEFVAL(false));
     ClassDB::bind_method(D_METHOD("statistics"),&NativeRegionalWater::statistics);
     ClassDB::bind_method(D_METHOD("capture_snapshot","catalog"),&NativeRegionalWater::capture_snapshot);
     ClassDB::bind_method(D_METHOD("restore_snapshot","bytes"),&NativeRegionalWater::restore_snapshot);
@@ -338,7 +338,7 @@ Dictionary NativeRegionalWater::transfer_water(const Vector3 &from,const Vector3
     }
     if(pour&&(!profile(*r,i).capacity()||total>MAX_TOTAL-amount)){out["reason"]="Aim at open space just above terrain";return out;}
     if(!bool(inventory->call("exchange_bucket",slot,pour,revision,int64_t(amount/1000)))){out["reason"]="Bucket full / empty, or selected item changed";return out;}
-    if(pour){r->water[i]+=amount;total+=amount;}else{
+    if(pour){preserve_mesh_region(region_key(target));r->water[i]+=amount;total+=amount;}else{
         uint64_t remaining=amount;
         for(const auto &[p,available]:take){uint64_t debit=std::min(remaining,available);if(!debit)break;
             preserve_mesh_region(region_key(p));regions.at(region_key(p)).water[index(p)]-=debit;changed(p);remaining-=debit;}
@@ -515,7 +515,7 @@ Dictionary NativeRegionalWater::raycast_surface(const Vector3 &from,const Vector
     if(nearest<=1){result["hit"]=true;result["point"]=point;result["normal"]=normal;result["cell"]=owner;}
     return result;
 }
-Dictionary NativeRegionalWater::next_mesh(){
+Dictionary NativeRegionalWater::next_mesh(bool include_contacts){
     Dictionary result;if(meshes.empty())return result;uint64_t start=Time::get_singleton()->get_ticks_usec();
     // Invalid occupancy is unknown, not empty space. Retain the last published
     // surface until its bounded reconstruction neighbourhood is sampled again.
@@ -528,17 +528,17 @@ Dictionary NativeRegionalWater::next_mesh(){
         meshes.push_back(k);
     }
     if(!ready)return result;
-    SurfaceMesh mesh=build_surface(k);
+    SurfaceMesh mesh=build_surface(k,false,include_contacts);
     result["coordinate"]=position(k);result["faces"]=mesh.faces;Array arrays;arrays.resize(Mesh::ARRAY_MAX);
     arrays[Mesh::ARRAY_VERTEX]=mesh.vertices;arrays[Mesh::ARRAY_NORMAL]=mesh.normals;arrays[Mesh::ARRAY_TEX_UV]=mesh.uv;result["arrays"]=arrays;result["vertices"]=mesh.vertices.size();
     mesh_us=Time::get_singleton()->get_ticks_usec()-start;max_mesh_us=std::max(max_mesh_us,mesh_us);return result;
 }
-NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool snapshot) const {
+NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool snapshot,bool include_contacts) const {
     SurfaceMesh output;auto &vertices=output.vertices;auto &normals=output.normals;auto &uv=output.uv;
     // The sole runtime mesher is the terrain surface-nets reconstruction. Water
     // supplies exact material crossings instead of losing thin volumes to a
     // fixed lattice's point samples. Quantities and simulation are not modified.
-    struct Sample { Vector3 position,origin; WaterCellProfile shape; double bottom=0,top=0;uint16_t floor=0,ceiling=0;uint64_t amount=0; bool wet=false; };
+    struct Sample { Vector3 position,origin; WaterCellProfile shape; double bottom=0,top=0;uint16_t floor=0,ceiling=0;uint64_t amount=0; bool wet=false,known=false; };
     struct Representative { int cx,cy,cz;unsigned mask;Vector3 position;int next; };
     const Vector3i base=position(k)*8;
     std::array<Sample,10*10*10> samples;
@@ -548,9 +548,9 @@ NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool s
     auto vertex_index=[](int x,int y,int z){return x+1+9*(y+1+9*(z+1));};
     for(int z=-1;z<=8;++z)for(int y=-1;y<=8;++y)for(int x=-1;x<=8;++x){
         Vector3i p=base+Vector3i(x,y,z);Sample &sample=samples[sample_index(x,y,z)];
-        sample.position=Vector3(p)*0.5+Vector3(0.25,0.25,0.25);
+        sample.origin=Vector3(p)*0.5;sample.position=sample.origin+Vector3(0.25,0.25,0.25);
         if(!in_domain(p))continue;const Region *region=surface_region(region_key(p),snapshot);if(!region||!region->valid)continue;int i=index(p);
-        sample.shape=profile(*region,i);sample.amount=region->water[i];
+        sample.known=true;sample.shape=profile(*region,i);sample.amount=region->water[i];
         if(!sample.amount||!sample.shape.capacity())continue;
         double head=sample.shape.head(sample.amount);auto footprint=sample.shape.footprint(head);
         sample.origin=Vector3(p)*0.5;sample.wet=true;
@@ -559,6 +559,14 @@ NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool s
         sample.position=sample.origin+Vector3(footprint.x*0.5,0,footprint.z*0.5);
         sample.position.y=(sample.bottom+sample.top)*0.5;
     }
+    // Water/solid contact is not a reflective water/air interface. Keep the
+    // finite volume in the store, but do not render or pick its buried shell.
+    auto terrain_contact=[](const Sample &wet,const Sample &other,int axis,bool positive){
+        if(axis==1)return positive?wet.shape.ceiling<500:!wet.shape.open_bottom;
+        if(!other.known)return false;
+        double opening=std::max(wet.shape.opening(axis,positive),other.shape.opening(axis,!positive));
+        return opening>=wet.shape.head(wet.amount);
+    };
     for(int z=-1;z<8;++z)for(int y=-1;y<8;++y)for(int x=-1;x<8;++x){
         const Sample *corners[8];unsigned signs=0;
         for(int c=0;c<8;++c){corners[c]=&samples[sample_index(x+(c&1),y+((c>>1)&1),z+((c>>2)&1))];if(corners[c]->wet)signs|=1u<<c;}
@@ -572,9 +580,11 @@ NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool s
         });
         for(int component=0;component<count;++component){
             unsigned mask=components[component];if(mask==255)continue;
+            std::array<const Sample*,12> floor_contacts{};int floor_count=0;
             Vector3 point=surface_crossing_vertex<Vector3>(mask,[&](Vector3 sum,int a,int b){
                 const Sample &wet=*corners[(mask&(1u<<a))?a:b];
                 const Sample &dry=*corners[(mask&(1u<<a))?b:a];
+                if((a^b)==2&&dry.position.y<wet.position.y&&!wet.shape.open_bottom)floor_contacts[floor_count++]=&wet;
                 Vector3 crossing=wet.position;
                 if((a^b)==2)crossing.y=dry.position.y>wet.position.y?wet.top:wet.bottom;
                 else {
@@ -590,6 +600,11 @@ NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool s
                 }
                 return sum+crossing;
             });
+            // An exposed surface may end at the bed, but must not stop halfway
+            // through the shallow volume after averaging its side crossings.
+            if(floor_count){double bed=0;for(int n=0;n<floor_count;++n){const Sample &s=*floor_contacts[n];
+                bed+=s.origin.y+s.shape.bottom((point.x-s.origin.x)*2,(point.z-s.origin.z)*2)*0.001;}
+                point.y=bed/floor_count;}
             int &head=ids[vertex_index(x,y,z)];
             representatives.push_back({x,y,z,mask,point,head});head=int(representatives.size())-1;
         }
@@ -606,6 +621,14 @@ NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool s
         },
         [&](int a,int b,int c,int d,bool reverse){
             const auto &origin=representatives[c];Vector3i owner=base+Vector3i(origin.cx,origin.cy,origin.cz);
+            const auto &first_edge=representatives[a];const auto &second_edge=representatives[b];const auto &last_edge=representatives[d];
+            int axis=(first_edge.cx==origin.cx&&second_edge.cx==origin.cx&&last_edge.cx==origin.cx)?0:
+                     (first_edge.cy==origin.cy&&second_edge.cy==origin.cy&&last_edge.cy==origin.cy)?1:2;
+            Vector3i low(origin.cx,origin.cy,origin.cz),high=low;high[axis]++;
+            const Sample &low_sample=samples[sample_index(low.x,low.y,low.z)];
+            const Sample &high_sample=samples[sample_index(high.x,high.y,high.z)];
+            bool positive=bool(origin.mask&1);
+            if(!include_contacts&&terrain_contact(positive?low_sample:high_sample,positive?high_sample:low_sample,axis,positive))return;
             if(!(origin.mask&1)){
                 const auto &first=representatives[a];const auto &second=representatives[b];const auto &last=representatives[d];
                 if(first.cx==origin.cx&&second.cx==origin.cx&&last.cx==origin.cx)++owner.x;

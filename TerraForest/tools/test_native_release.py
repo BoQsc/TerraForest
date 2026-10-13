@@ -40,7 +40,7 @@ with tempfile.TemporaryDirectory(prefix='release_smoke_',dir=build) as temporary
     test=args.test or {'volumetric_water':'water_single_runtime','volumetric_terrain':'terrain_planner','structures':'structures'}.get(args.addon,'native_runtime')
     if test=='water_publication_scale':
         shutil.copy2(source/'publication_budget.gd',addon/'publication_budget.gd')
-    if test in ['water_shore_clipping','water_bucket']:
+    if test in ['water_shore_clipping','water_bucket','water_material_surface']:
         player=project/'addons/player_runtime';(player/'bin').mkdir(parents=True)
         shutil.copy2(ROOT/'addons/player_runtime/bin/player_runtime.windows.template_release.x86_64.dll',player/'bin')
         (player/'player_runtime.gdextension').write_text((ROOT/'addons/player_runtime/player_runtime.gdextension').read_text().replace('template_debug','template_release'))

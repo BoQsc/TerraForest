@@ -1,0 +1,15 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS Old cached terrain restores without resampling
+PASS Runtime cut-cell level follows wedge volume instead of highest corner
+PASS Version 2 upgrade wakes changed cut capacity using cached terrain
+PASS Version 3 partial-top archive restores
+PASS Version 3 partial-top migration wakes cached water without losing volume
+PASS Version 4 upgrade preserves every millilitre
+PASS Cut-cell archive roundtrip preserves cached data and pending work
+PASS Depth query distinguishes wet and dry parts inside one cut cell
+PASS Cut-cell mesh is closed with two incident triangles per edge
+PASS Bucket query hits the same finite cut-cell surface
+PASS Meshing and picking never alter cut-cell quantities
+WATER_CUT_CELLS failures=0
+

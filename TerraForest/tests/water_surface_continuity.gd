@@ -44,7 +44,7 @@ func vertical_fixture(ledge:bool) -> RefCounted:
 func collect_surface(water) -> PackedVector3Array:
  var vertices:=PackedVector3Array()
  for step in 200:
-  var packet:Dictionary=water.next_mesh()
+  var packet:Dictionary=water.next_mesh(true)
   if packet.is_empty():break
   vertices.append_array(packet.arrays[Mesh.ARRAY_VERTEX])
  return vertices
@@ -92,7 +92,7 @@ func check_vertical_repair():
   bytes.encode_u64(base+index*12+4,([124999,125000,125000,50000][y-3])|(1<<63))
  var water=ClassDB.instantiate("NativeRegionalWater")
  check(water.restore_snapshot(bytes),"Vertical repair fixture restores one-millilitre lower gap")
- check(not water.next_mesh().is_empty(),"Saved water can publish without advancing pending vertical repair")
+ check(not water.next_mesh(true).is_empty(),"Saved water can publish without advancing pending vertical repair")
  var conserved:=true
  water.advance(1)
  check(water.statistics().vertical_steps==1 and water.statistics().pending_vertical>0,"One operation repairs only one vertical face and queues the next")
@@ -109,7 +109,7 @@ func check_vertical_repair():
   var amount:int=result.decode_u64(result_base+(3+8*y+64*3)*12+4)&0x7fffffffffffffff
   correct=correct and amount==[125000,125000,125000,49999][y-3]
  check(correct and conserved and water.statistics().pending_vertical==0,"Vertical chain packs exactly without creating or losing a millilitre")
- check(not water.next_mesh().is_empty(),"Repaired column becomes eligible for mesh publication")
+ check(not water.next_mesh(true).is_empty(),"Repaired column becomes eligible for mesh publication")
 func pattern_fixture(mask:int,full:bool):
  var catalog:PackedByteArray=ClassDB.instantiate("NativeLakeCatalog").encode([])
  var bytes:=PackedByteArray();bytes.resize(32+catalog.size()+6160);bytes.fill(0)
@@ -147,7 +147,7 @@ func check_patterns():
    var result:=topology(collect_surface(water))
    if not result.closed or result.components!=expected_components(mask,full):bad.append({"mask":mask,"full":full,"result":result})
  print("MATERIAL_PATTERN_FAILURES ",JSON.stringify(bad))
- check(bad.is_empty(),"All 510 shallow/full occupancy patterns are closed with correct component count")
+ check(bad.is_empty(),"All 510 stored-volume envelopes are closed with correct component count")
 func _initialize():
  GDExtensionManager.load_extension("res://addons/volumetric_water/volumetric_water.gdextension")
  check_vertical_repair()

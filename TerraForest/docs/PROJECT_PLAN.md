@@ -4,6 +4,32 @@ Updated 2026-10-11. TerraForest is an integrated development world, not a comple
 
 This is the current delivery-order and coverage reference. [Delivery history](DELIVERY_STATUS.md) records evidence at the time of each change; older entries are not current status. [World systems design](WORLD_SYSTEMS_DESIGN.md) retains the broader architecture contract. A documentation update alone closes no implementation gate.
 
+## Current blocking priority - terrain/water correctness (2026-10-13)
+
+User priority overrides the earlier feature sequence: resolve the visible and
+interactive terrain/water defects before more feature work, texture polish or
+performance-only tuning. Efficiency remains an implementation constraint.
+
+Required acceptance in the normal 1920x1080 world:
+
+- No reflective water/terrain-contact bands, floating-looking shards or shore gaps.
+- A full bucket poured onto ordinary ground forms readable water that stays
+  outside solid terrain; no strip-like or disappearing result accepted.
+- Scooping changes the targeted visible area, then connected water flows back;
+  a changed inventory number or a briefly recorded dip alone is insufficient.
+- Unwanted small detached water/terrain fragments are handled coherently with
+  bounded local work. Do not silently erase volume, bridge through solid terrain,
+  or mistake a legitimate separate puddle, placed object or terrain island for
+  an artifact. No global per-frame component scan.
+- Repeated digging, pouring, scooping and cached reload preserve those results.
+
+The underwater-band reproduction is corrected by excluding solid-contact faces
+from the existing surface builder and bucket query geometry. Full stored-volume
+topology is still audited with the same builder's diagnostic contact-face flag.
+This is not a replacement water implementation. Natural-ground runoff remains
+visually unacceptable; fragment cleanup and arbitrary shore/contact accuracy
+are not complete. See `evidence/water_contact_faces/status.txt`.
+
 ## What counts as first-round coverage
 
 A system needs a usable main-world path, persistent state where appropriate, a small correctness check, a representative performance check, and explicit limits. An isolated addon, API test or visual showcase is supporting evidence, not integrated coverage. User-visible behavior also needs a human checkpoint. Production qualification additionally requires combined workloads, sustained operation and release checks.

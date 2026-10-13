@@ -1,0 +1,44 @@
+Terrain/water contact artifacts - 2026-10-13
+
+The user's underwater screenshot was reproduced in the normal temporary bucket
+review world. The baseline shows horizontal water-colored bands and reflective
+fragments on the bed. The corresponding after view no longer shows those bands
+or fragments. These reproduced pieces were rendered water/solid contact faces;
+this does not establish that all detached terrain components are corrected.
+
+Changes:
+- NativeRegionalWater's existing shared surface builder distinguishes exposed
+  water/air interfaces from water/solid contacts using the cached cell profile.
+  Contact faces are omitted from runtime mesh uploads and bucket query geometry.
+  No shader discard, deletion of stored water, extra renderer or alternate mesh
+  implementation is used. Free falling water's air-facing surfaces remain.
+- Boundary representatives at a partial solid floor meet that floor instead of
+  averaging side crossings halfway above it.
+- Bucket pours now preserve immutable mesh-region data BEFORE changing amount.
+  Previously only removals preserved the in-flight snapshot at this point.
+- next_mesh(true) is a diagnostic flag on the same builder: it includes contact
+  faces to retain closed-envelope topology audits. Runtime publication and
+  raycasts use exposed faces. Closed-volume assertions are not claims that an
+  exposed water surface must also draw its buried bed.
+
+Validation:
+- 30 thin-volume placements and existing published-query consistency tests pass.
+- New tests: solid-enclosed water renders only the air-facing top; buried contact
+  surfaces are not bucket targets; geometry never changes stored quantity; an
+  actual 10 L bucket pour preserves all packets of an already-started batch.
+- All 510 shallow/full stored-envelope patterns retain manifold edges and the
+  expected number of components. Cut-cell migration and volume tests pass.
+- Short 1920x1080 normal-world visual capture and bucket contact check pass.
+  Natural-ground pour/scoop transfers also pass but their visual result does NOT.
+
+Blocking work remains:
+- Natural-ground shallow runoff remains strip-like (runoff_still_open.png).
+- Arbitrary shore gaps/contact, disconnected small material fragments and clear
+  sustained local scoop/refill feedback are not qualified or marked complete.
+- No terrain-fragment cleanup was implemented in this change. A future local
+  cleanup must preserve legitimate placed/separate volumes and material quantity.
+- Prior flow-deadline instability remains open. No thermal/performance claim is
+  inferred from screenshot FPS. No broad long-duration benchmark was run.
+
+PROJECT_PLAN.md now records these as the current blocking priority ahead of
+feature expansion, texture polish and performance-only work.
