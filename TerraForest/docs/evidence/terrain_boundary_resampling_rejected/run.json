@@ -1,0 +1,39 @@
+{
+  "timed_out": false,
+  "launch_error": null,
+  "pid": 26752,
+  "exit_code": 1,
+  "diagnostics": [
+    "FAIL Poured water floor contacts actual terrain within 2 cm of its wet footprint"
+  ],
+  "required_text_found": false,
+  "elapsed_seconds": 20.223103099997388,
+  "passed": false,
+  "provenance": {
+    "command": [
+      "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+      "--path",
+      "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+      "--log-file",
+      "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\checks\\20261013T152357319826Z\\engine.log",
+      "--fullscreen",
+      "--resolution",
+      "1920x1080",
+      "--max-fps",
+      "60",
+      "--script",
+      "res://tests/regional_water_world.gd",
+      "--",
+      "--world-slot=check_7a435fb7a8014bc2acef0c770d1a451d",
+      "--derived-cache=user://regional_water_world_7a435fb7a8014bc2acef0c770d1a451d",
+      "--gameplay-construction",
+      "--water-contact-only"
+    ],
+    "slot": "check_7a435fb7a8014bc2acef0c770d1a451d",
+    "cache": "user://regional_water_world_7a435fb7a8014bc2acef0c770d1a451d",
+    "engine_sha256": "12310c74bdda7dcd43f28e971f33047dcecadd436b68169d61ce41009006df38",
+    "test_sha256": "62a1ceb62b843df044fb3d12c0b1963a3b42e90b02403e4726f0644215ecada5",
+    "shader_sha256": "822202ea9f7d9fffad09008aa0ad5ccd559f24e64c0259b59d6051cc550ebbee",
+    "native_sha256": "3033e5e206a0e3f597612ceab6843318a36565b304119cf680f924be1f133911"
+  }
+}

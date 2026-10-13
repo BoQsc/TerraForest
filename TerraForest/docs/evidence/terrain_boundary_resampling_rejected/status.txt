@@ -1,0 +1,7 @@
+2026-10-13 — rejected conversion, not a shipped improvement
+
+Tested terrain command-32 triangles converted to vertical signed-distance samples on the old 0.5 m water lattice. Normal actual-world lake creation, full-cubic-metre scoop and pour worked, but the mined-bowl 2 cm contact gate still failed: -0.0196 m penetration to +0.1461 m gap at external boundary samples. Exact quantity remained 1,000,000 ml. This replaces neither the water representation nor its independent floor approximation, so it does not meet the user's direction change.
+
+Removed the trial worker conversion and rebuilt the water DLLs from the last committed runtime. No new runtime switch, alternative water implementation, save format or approximation is retained. The existing terrain-owned boundary export remains available.
+
+Integration requirement: retain actual triangle contact geometry, including kinks inside a liquid cell, rather than reducing it to four independently interpolated floor corners. Use that same contact geometry for available volume, visual contact and transfer targeting. Simply sharing the meshing helper or resampling density cannot satisfy that contract. Existing WaterCellProfile::floor[4], its two fixed triangles, and mesh density conversion are replacement targets. The full scoop/pour/dig/settle/reload gate remains open.
