@@ -40,11 +40,12 @@ struct WaterCellProfile {
     double minimum()const{return *std::min_element(floor.begin(),floor.end());}
     double maximum()const{return *std::max_element(floor.begin(),floor.end());}
     double mean()const{return (floor[0]+floor[3])/3.0+(floor[1]+floor[2])/6.0;}
-    double bottom(double x,double z)const {
+    double raw_bottom(double x,double z)const {
         x=std::clamp(x,0.0,1.0);z=std::clamp(z,0.0,1.0);
-        return std::max(0.0,x>=z ? floor[0]*(1-x)+floor[1]*(x-z)+floor[3]*z
-                    : floor[0]*(1-z)+floor[2]*(z-x)+floor[3]*x);
+        return x>=z ? floor[0]*(1-x)+floor[1]*(x-z)+floor[3]*z
+                    : floor[0]*(1-z)+floor[2]*(z-x)+floor[3]*x;
     }
+    double bottom(double x,double z)const{return std::max(0.0,raw_bottom(x,z));}
     template<class Emit> void polygons(double h,Emit emit)const {
         const Point v[4]={{0,0,floor[0]},{1,0,floor[1]},{0,1,floor[2]},{1,1,floor[3]}};
         for(const auto &ids:std::array<std::array<int,3>,2>{{{{0,1,3}},{{0,3,2}}}}){
@@ -112,8 +113,8 @@ struct WaterCellProfile {
     double head(uint64_t ml)const {
         if(slope_x==0&&slope_z==0){
             if(!ml)return std::max(0.0,minimum());
-            if(ml>=flat_volume(maximum()))return std::min(ceiling,mean()+(ml+(minimum()<0?raw_volume(0):0))/250.0);
             if(ml>=capacity())return ceiling;
+            if(ml>=flat_volume(maximum()))return std::min(ceiling,mean()+(ml+(minimum()<0?raw_volume(0):0))/250.0);
         }
         double lo=1e30,hi=ceiling+(std::abs(slope_x)+std::abs(slope_z))*0.5;
         for(int i=0;i<4;++i)lo=std::min(lo,floor[i]-offset(i&1,i>>1));
@@ -131,6 +132,43 @@ struct WaterCellProfile {
         });
         if(result.area>0){result.x/=result.area;result.z/=result.area;}else result.x=result.z=0.5;
         return result;
+    }
+    // Exact overlap of two wet intervals along a shared horizontal face.
+    // All inequalities are linear before floor/ceiling clipping.
+    static bool face_overlap(const WaterCellProfile &a,double ah,const WaterCellProfile &b,double bh,int axis,int side){
+        double lower[3][2]{},upper[4][2]{};
+        for(int t=0;t<2;++t){double ax=axis==0?side:t,az=axis==0?t:side;
+            double bx=axis==0?1-side:t,bz=axis==0?t:1-side;
+            lower[0][t]=a.raw_bottom(ax,az);lower[1][t]=b.raw_bottom(bx,bz);
+            upper[0][t]=ah+a.offset(ax,az);upper[1][t]=bh+b.offset(bx,bz);
+            upper[2][t]=a.ceiling;upper[3][t]=b.ceiling;}
+        double lo=0,hi=1;
+        for(auto &u:upper)for(auto &l:lower){double v0=u[0]-l[0]-1e-6,v1=u[1]-l[1]-1e-6;
+            if(v0<=0&&v1<=0)return false;
+            if(v0<=0)lo=std::max(lo,-v0/(v1-v0));else if(v1<=0)hi=std::min(hi,v0/(v0-v1));
+            if(lo>=hi)return false;}
+        return true;
+    }
+    static bool vertical_overlap(const WaterCellProfile &low,double lh,const WaterCellProfile &high,double hh){
+        const Point v[4]={{0,0,0},{1,0,0},{0,1,0},{1,1,0}};
+        for(auto ids:std::array<std::array<int,3>,2>{{{{0,1,3}},{{0,3,2}}}}){
+            std::array<Point,8> polygon{},next{};int count=3;
+            for(int i=0;i<3;++i)polygon[i]=v[ids[i]];
+            for(int constraint=0;constraint<4&&count;++constraint){
+                auto field=[&](Point p){switch(constraint){
+                    case 0:return lh+low.offset(p.x,p.z)-500+1e-6;
+                    case 1:return -high.raw_bottom(p.x,p.z)+1e-6;
+                    case 2:return hh+high.offset(p.x,p.z)-1e-6;
+                    default:return 500-low.raw_bottom(p.x,p.z)-1e-6;}};
+                int size=0;for(int i=0;i<count;++i){Point a=polygon[i],b=polygon[(i+1)%count];double av=field(a),bv=field(b);
+                    if(av>=0)next[size++]=a;
+                    if((av>=0)!=(bv>=0)){double t=av/(av-bv);next[size++]={a.x+(b.x-a.x)*t,a.z+(b.z-a.z)*t,0};}}
+                polygon=next;count=size;
+            }
+            double area=0;for(int i=1;i+1<count;++i)area+=std::abs((polygon[i].x-polygon[0].x)*(polygon[i+1].z-polygon[0].z)-(polygon[i].z-polygon[0].z)*(polygon[i+1].x-polygon[0].x));
+            if(area>1e-10)return true;
+        }
+        return false;
     }
     // Lowest opening on a shared face. Piecewise linear floors agree across
     // the face because they come from identical cached terrain edge samples.

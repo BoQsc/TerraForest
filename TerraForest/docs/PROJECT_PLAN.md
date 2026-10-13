@@ -26,9 +26,11 @@ Required acceptance in the normal 1920x1080 world:
 The underwater-band reproduction is corrected by excluding solid-contact faces
 from the existing surface builder and bucket query geometry. Full stored-volume
 topology is still audited with the same builder's diagnostic contact-face flag.
-This is not a replacement water implementation. Natural-ground runoff remains
-visually unacceptable; fragment cleanup and arbitrary shore/contact accuracy
-are not complete. See `evidence/water_contact_faces/status.txt`.
+This is not a replacement water implementation. The captured gentle-ground pour now stays connected and above terrain using
+volume-preserving sloping reconstruction. Its outline is still angular; the
+mined-outlet response deadline still fails. General fragment handling and
+arbitrary shore/contact accuracy remain incomplete. See
+`evidence/water_sloping_pour/status.txt` for passing and failing evidence.
 
 ## What counts as first-round coverage
 

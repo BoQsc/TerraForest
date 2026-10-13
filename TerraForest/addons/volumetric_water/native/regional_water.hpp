@@ -50,9 +50,12 @@ class NativeRegionalWater : public godot::RefCounted {
         for(int c=0;c<8;++c)d[c]=r.density[x+(c&1)+9*(y+((c>>1)&1))+81*(z+((c>>2)&1))];
         return WaterCellProfile::make(d,r.has_density,r.floor[i],r.ceiling[i]);
     }
+    WaterCellProfile surface_profile(const godot::Vector3i &p,bool snapshot=false) const;
     static bool joined(const WaterCellProfile &a,uint64_t av,const WaterCellProfile &b,uint64_t bv,int axis,int side) {
-        double opening=std::max(a.opening(axis,side),b.opening(axis,1-side));
-        return opening<std::min(a.ceiling,b.ceiling)&&a.head(av)>opening&&b.head(bv)>opening;
+        return av&&bv&&WaterCellProfile::face_overlap(a,a.head(av),b,b.head(bv),axis,side);
+    }
+    static bool joined_vertical(const WaterCellProfile &a,uint64_t av,const WaterCellProfile &b,uint64_t bv){
+        return av&&bv&&a.ceiling==500&&b.open_bottom&&WaterCellProfile::vertical_overlap(a,a.head(av),b,b.head(bv));
     }
     static constexpr size_t MAX_REGIONS=4096;
     static constexpr uint64_t MAX_TOTAL=uint64_t(1)<<52;

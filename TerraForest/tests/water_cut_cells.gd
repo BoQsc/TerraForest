@@ -20,7 +20,7 @@ func run():
  var water=ClassDB.instantiate("NativeRegionalWater")
  check(water.restore_snapshot(bytes),"Old cached terrain restores without resampling")
  var geometry:Dictionary=water.cell_geometry(Vector3(41.75,41.75,41.75))
- check(geometry.cut and geometry.capacity_ml==93750 and abs(geometry.head-(41.5+sqrt(20000.0)*0.001))<0.00001,"Runtime cut-cell level follows wedge volume instead of highest corner")
+ check(geometry.cut and geometry.capacity_ml==93750 and abs(geometry.head-41.665)<0.00001 and abs(geometry.slope_x-250)<0.001,"Ten litres form a 40 mm film over a quarter-square-metre sloping floor")
  check(water.statistics().active_cells>0 and water.statistics().pending_regions==0,"Version 2 upgrade wakes changed cut capacity using cached terrain")
  # Version 3 also needs to wake the newly supported partially open top cell.
  var previous:=bytes.duplicate();previous.encode_u32(4,3)
@@ -42,11 +42,19 @@ func run():
  check(bottom_water.restore_snapshot(bottom_bytes),"Version 4 partial-bottom archive restores")
  var bottom_shape:Dictionary=bottom_water.cell_geometry(Vector3(41.75,41.75,41.75))
  check(abs(bottom_shape.capacity_ml-118750)<=2 and bottom_water.statistics().water_ml==10000 and bottom_water.statistics().active_cells>0 and bottom_water.statistics().pending_regions==0,"Partial-bottom migration recovers real air capacity without changing water or resampling terrain")
+ # A wet downhill neighbour at the same level must keep a resting shore flat.
+ var resting_bytes:=bytes.duplicate();var downhill:=index-1
+ resting_bytes.encode_u16(base+16+downhill*12,0)
+ resting_bytes.encode_u64(base+20+downhill*12,35355)
+ resting_bytes.encode_u64(16,45355)
+ var resting=ClassDB.instantiate("NativeRegionalWater");resting.restore_snapshot(resting_bytes)
+ var shore:Dictionary=resting.cell_geometry(Vector3(41.75,41.75,41.75))
+ check(abs(shore.slope_x)<0.01 and abs(shore.head-(41.5+sqrt(20000.0)*0.001))<0.00001,"Equal-level lake neighbour preserves the horizontal shoreline wedge")
  var upgraded:PackedByteArray=water.capture_snapshot(catalog)
  check(upgraded.decode_u32(4)==5 and water.statistics().water_ml==10000,"Version 5 upgrade preserves every millilitre")
  var reopened=ClassDB.instantiate("NativeRegionalWater")
  check(reopened.restore_snapshot(upgraded) and reopened.capture_snapshot(catalog)==upgraded,"Cut-cell archive roundtrip preserves cached data and pending work")
- check(water.depth_at(Vector3(41.55,41.55,41.75))>0.09 and water.depth_at(Vector3(41.9,41.55,41.75))==0,"Depth query distinguishes wet and dry parts inside one cut cell")
+ check(abs(water.depth_at(Vector3(41.55,41.55,41.75))-0.015)<0.00001 and water.depth_at(Vector3(41.9,41.55,41.75))==0,"Sloping-film depth is pointwise and never extends into solid terrain")
  var edges:Dictionary={};var vertices:=0
  for packet_index in 40:
   var packet:Dictionary=water.next_mesh(true)

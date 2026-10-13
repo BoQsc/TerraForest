@@ -104,6 +104,29 @@ NativeRegionalWater::Region *NativeRegionalWater::get(const Vector3i &p,bool ask
 const NativeRegionalWater::Region *NativeRegionalWater::get(const Vector3i &p) const {
     if(!in_domain(p))return nullptr;auto it=regions.find(region_key(p));return it!=regions.end()&&it->second.valid?&it->second:nullptr;
 }
+WaterCellProfile NativeRegionalWater::surface_profile(const Vector3i &p,bool snapshot) const {
+    const Region *r=surface_region(region_key(p),snapshot);
+    if(!r||!r->valid)return WaterCellProfile::make(nullptr,false,500,500);
+    int i=index(p);auto result=profile(*r,i);uint64_t amount=r->water[i];
+    if(!result.cut||!result.capacity()||amount>=result.capacity())return result;
+    double level=result.head(amount);
+    if(level>=result.maximum())return result;
+    // Reconstruct shallow free surfaces from local level differences. Resting
+    // neighbours at the same level force zero slope; dry edges use bed slope.
+    for(int axis:{0,2}){
+        double slope=axis==0?(result.floor[1]+result.floor[3]-result.floor[0]-result.floor[2])*0.5:
+                             (result.floor[2]+result.floor[3]-result.floor[0]-result.floor[1])*0.5;
+        for(int side:{-1,1}){Vector3i q=p;q[axis]+=side;if(!in_domain(q))continue;
+            const Region *other=surface_region(region_key(q),snapshot);if(!other||!other->valid)continue;
+            int j=index(q);if(!other->water[j])continue;auto shape=profile(*other,j);
+            double difference=(shape.head(other->water[j])-level)*side;
+            if(slope*difference<=0||std::abs(difference)<0.001){slope=0;break;}
+            slope=std::copysign(std::min(std::abs(slope),std::abs(difference)),slope);
+        }
+        if(axis==0)result.slope_x=slope;else result.slope_z=slope;
+    }
+    return result;
+}
 void NativeRegionalWater::wake(const Vector3i &p){
     if(!in_domain(p))return;auto it=regions.find(region_key(p));
     if(it!=regions.end()&&it->second.water[index(p)]&&active_set.insert(key(p)).second)active.push_back(key(p));
@@ -111,10 +134,10 @@ void NativeRegionalWater::wake(const Vector3i &p){
 void NativeRegionalWater::changed(const Vector3i &p){
     queue_vertical(p);queue_vertical(p+Vector3i(0,-1,0));
     ++changes;wake(p);Key k=region_key(p);if(mesh_set.insert(k).second)meshes.push_back(k);
-    // Surface-nets representatives read a one-cell halo. Render owners may
+    // Reconstruction reads adjacent levels as well as the meshing halo. Owners may
     // be empty storage regions; they still own boundary triangles.
-    Vector3i lo=position(region_key(Vector3i(std::max(p.x-1,0),std::max(p.y-1,0),std::max(p.z-1,0))));
-    Vector3i hi=position(region_key(Vector3i(std::min(p.x+1,3999),std::min(p.y+1,508),std::min(p.z+1,3999))));
+    Vector3i lo=position(region_key(Vector3i(std::max(p.x-2,0),std::max(p.y-1,0),std::max(p.z-2,0))));
+    Vector3i hi=position(region_key(Vector3i(std::min(p.x+2,3999),std::min(p.y+1,508),std::min(p.z+2,3999))));
     for(int z=lo.z;z<=hi.z;++z)for(int y=lo.y;y<=hi.y;++y)for(int x=lo.x;x<=hi.x;++x){Key other=key(Vector3i(x,y,z));
         if(other!=k&&mesh_set.insert(other).second)meshes.push_back(other);}
     for(const Vector3i &d:directions){Vector3i n=p+d;if(!in_domain(n))continue;wake(n);Key other=region_key(n);
@@ -188,17 +211,18 @@ void NativeRegionalWater::process_cell(const Vector3i &p){
     // Rotating the deterministic order avoids a permanent cardinal-direction bias.
     const int rotation=int(key(p)&3);
     for(int t=0;t<4&&a->water[i];++t){Vector3i q=p+directions[1+(t+rotation)%4];Region *b=get(q,true);if(!b)continue;int j=index(q);
-        auto pa=profile(*a,i),pb=profile(*b,j);int axis=q.x!=p.x?0:2,side=q[axis]>p[axis];
+        auto pa=surface_profile(p),pb=surface_profile(q);int axis=q.x!=p.x?0:2,side=q[axis]>p[axis];
         double opening=std::max(pa.opening(axis,side),pb.opening(axis,1-side));
         if(opening>=std::min(pa.ceiling,pb.ceiling))continue;
         uint64_t cap=pb.capacity();if(b->water[j]>=cap)continue;
         double ha=pa.head(a->water[i]),hb=pb.head(b->water[j]);
-        if(ha<=opening||ha-hb<=1.0)continue;
+        auto air=pb;air.slope_x=air.slope_z=0;
+        if(!WaterCellProfile::face_overlap(pa,ha,air,air.ceiling,axis,side)||ha-hb<=1.0)continue;
         // Full-footprint columns keep the constant-area, closed-form path.
         // Only a level crossing a sloped floor needs bounded inversion.
         double target=(ha+hb)*0.5;
         if(target<std::max({opening,pa.maximum(),pb.maximum()})||target>std::min(pa.ceiling,pb.ceiling)||a->water[i]>capacity){
-            double lo=std::max(opening,hb),hi=ha;
+            double lo=hb,hi=ha;
             for(int n=0;n<24;++n){double mid=(lo+hi)*0.5;
                 double debit=double(a->water[i])-pa.volume(mid),credit=pb.volume(mid)-double(b->water[j]);
                 if(debit>credit)lo=mid;else hi=mid;
@@ -208,7 +232,9 @@ void NativeRegionalWater::process_cell(const Vector3i &p){
         uint64_t amount=uint64_t(std::max(0.0,std::round(std::min(double(a->water[i])-pa.volume(target),pb.volume(target)-double(b->water[j])))));
         // Equilibrium is a target, not an instantaneous transfer. Bound each
         // face by a gravity-head speed over the 0.5 m cell width and elapsed
-        // simulation time. Millilitre rounding retains tiny finite droplets.
+        // simulation time. Never round sub-millilitre transport upward: that
+        // launches tiny fragments faster than the permitted flow. Residual
+        // water remains owned here; it is neither deleted nor teleported.
         double speed=std::sqrt(2.0*9.81*(ha-hb)*0.001);
         // Thin runoff also needs bed resistance; a head-only speed makes a
         // millimetre film travel as fast as a deep pool. Use a shallow-flow
@@ -219,7 +245,7 @@ void NativeRegionalWater::process_cell(const Vector3i &p){
         double friction_speed=std::pow(depth,2.0/3.0)*std::sqrt((ha-hb)/500.0)/0.06;
         speed=std::min(speed,friction_speed);
         double fraction=std::min(1.0,speed*flow_seconds/0.5);
-        uint64_t transport=uint64_t(std::ceil(double(a->water[i])*fraction));
+        uint64_t transport=uint64_t(std::floor(double(a->water[i])*fraction));
         amount=std::min(amount,transport);
         move(p,q,std::min({amount,cap-b->water[j],a->water[i]}));
     }
@@ -326,9 +352,9 @@ Dictionary NativeRegionalWater::transfer_water(const Vector3 &from,const Vector3
             for(int d=0;d<6;++d){Vector3i q=p+directions[d];Vector3i distance=q-target;
                 if(std::max({std::abs(distance.x),std::abs(distance.y),std::abs(distance.z)})>2||!in_domain(q))continue;
                 const Region *next=get(q);if(!next||!next->water[index(q)])continue;int n=index(q);bool connected=false;
-                auto a=profile(*other,j),b=profile(*next,n);
-                if(d==0)connected=a.open_bottom&&b.ceiling==500&&next->water[n]>=b.capacity();
-                else if(d==5)connected=a.ceiling==500&&b.open_bottom&&other->water[j]>=a.capacity();
+                auto a=surface_profile(p),b=surface_profile(q);
+                if(d==0)connected=joined_vertical(b,next->water[n],a,other->water[j]);
+                else if(d==5)connected=joined_vertical(a,other->water[j],b,next->water[n]);
                 else {int axis=q.x!=p.x?0:2;connected=joined(a,other->water[j],b,next->water[n],axis,q[axis]>p[axis]);}
                 if(connected&&visited.insert(key(q)).second)candidates.push_back(q);
             }
@@ -369,23 +395,32 @@ Vector3 NativeRegionalWater::surface_near(const Vector3 &point,double radius) co
 
 Dictionary NativeRegionalWater::cell_geometry(const Vector3 &point) const {
     Dictionary out;if(!point.is_finite())return out;Vector3i p=cell(point);const Region *r=get(p);if(!r)return out;
-    int i=index(p);auto shape=profile(*r,i);double h=shape.head(r->water[i]);auto footprint=shape.footprint(h);
+    int i=index(p);auto shape=surface_profile(p);double h=shape.head(r->water[i]);auto footprint=shape.footprint(h);
     out["bottom"]=p.y*0.5+shape.bottom(point.x*2-p.x,point.z*2-p.z)*0.001;
-    out["head"]=p.y*0.5+h*0.001;out["capacity_ml"]=int64_t(shape.capacity());out["cut"]=shape.cut;
+    out["head"]=p.y*0.5+shape.surface(h,point.x*2-p.x,point.z*2-p.z)*0.001;out["slope_x"]=shape.slope_x;out["slope_z"]=shape.slope_z;out["capacity_ml"]=int64_t(shape.capacity());out["cut"]=shape.cut;
     out["wet_centroid"]=Vector3(p)*0.5+Vector3(footprint.x*0.5,shape.bottom(footprint.x,footprint.z)*0.001,footprint.z*0.5);
+    int connections=0;
+    for(int d=0;d<6;++d){Vector3i q=p+directions[d];const Region *other=get(q);if(!other||!other->water[index(q)])continue;
+        auto next=surface_profile(q);uint64_t amount=other->water[index(q)];bool linked=false;
+        if(d==0)linked=joined_vertical(next,amount,shape,r->water[i]);
+        else if(d==5)linked=joined_vertical(shape,r->water[i],next,amount);
+        else{int axis=q.x!=p.x?0:2;linked=joined(shape,r->water[i],next,amount,axis,q[axis]>p[axis]);}
+        if(linked)connections|=1<<d;
+    }
+    out["connections"]=connections;
     return out;
 }
 double NativeRegionalWater::depth_at(const Vector3 &point) const {
     if(!point.is_finite())return 0;Vector3i p=cell(point);const Region *r=get(p);if(!r)return 0;int i=index(p);
-    auto shape=profile(*r,i);if(!r->water[i]||!shape.capacity())return 0;
-    double top=p.y*0.5+shape.head(r->water[i])*0.001;
+    auto shape=surface_profile(p);if(!r->water[i]||!shape.capacity())return 0;
+    double top=p.y*0.5+shape.surface(shape.head(r->water[i]),point.x*2-p.x,point.z*2-p.z)*0.001;
     double bottom=p.y*0.5+shape.bottom(point.x*2-p.x,point.z*2-p.z)*0.001;
     if(point.y>=top||point.y<bottom)return 0;
     // At most the bounded vertical domain, only for actual wet query points.
     for(int y=p.y+1;y<509;++y){Vector3i q(p.x,y,p.z);const Region *above=get(q);if(!above||!above->water[index(q)]||top<y*0.5-0.00001||!profile(*above,index(q)).open_bottom)break;
-        int j=index(q);auto shape_above=profile(*above,j);
+        int j=index(q);auto shape_above=surface_profile(q);
         if(shape_above.bottom(point.x*2-p.x,point.z*2-p.z)>0)break;
-        top=y*0.5+shape_above.head(above->water[j])*0.001;}
+        top=y*0.5+shape_above.surface(shape_above.head(above->water[j]),point.x*2-p.x,point.z*2-p.z)*0.001;}
     return std::max(0.0,top-point.y);
 }
 PackedByteArray NativeRegionalWater::placement_mask(const TypedArray<Transform3D> &transforms) const {
@@ -538,7 +573,7 @@ NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool s
     // The sole runtime mesher is the terrain surface-nets reconstruction. Water
     // supplies exact material crossings instead of losing thin volumes to a
     // fixed lattice's point samples. Quantities and simulation are not modified.
-    struct Sample { Vector3 position,origin; WaterCellProfile shape; double bottom=0,top=0;uint16_t floor=0,ceiling=0;uint64_t amount=0; bool wet=false,known=false; };
+    struct Sample { Vector3 position,origin; WaterCellProfile shape; double bottom=0,top=0,head=0;uint16_t floor=0,ceiling=0;uint64_t amount=0; bool wet=false,known=false; };
     struct Representative { int cx,cy,cz;unsigned mask;Vector3 position;int next; };
     const Vector3i base=position(k)*8;
     std::array<Sample,10*10*10> samples;
@@ -550,12 +585,12 @@ NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool s
         Vector3i p=base+Vector3i(x,y,z);Sample &sample=samples[sample_index(x,y,z)];
         sample.origin=Vector3(p)*0.5;sample.position=sample.origin+Vector3(0.25,0.25,0.25);
         if(!in_domain(p))continue;const Region *region=surface_region(region_key(p),snapshot);if(!region||!region->valid)continue;int i=index(p);
-        sample.known=true;sample.shape=profile(*region,i);sample.amount=region->water[i];
+        sample.known=true;sample.shape=surface_profile(p,snapshot);sample.amount=region->water[i];
         if(!sample.amount||!sample.shape.capacity())continue;
         double head=sample.shape.head(sample.amount);auto footprint=sample.shape.footprint(head);
         sample.origin=Vector3(p)*0.5;sample.wet=true;
         sample.bottom=sample.origin.y+sample.shape.bottom(footprint.x,footprint.z)*0.001;
-        sample.top=sample.origin.y+head*0.001;sample.floor=region->floor[i];sample.ceiling=region->ceiling[i];
+        sample.head=head;sample.top=sample.origin.y+sample.shape.surface(head,footprint.x,footprint.z)*0.001;sample.floor=region->floor[i];sample.ceiling=region->ceiling[i];
         sample.position=sample.origin+Vector3(footprint.x*0.5,0,footprint.z*0.5);
         sample.position.y=(sample.bottom+sample.top)*0.5;
     }
@@ -564,8 +599,8 @@ NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool s
     auto terrain_contact=[](const Sample &wet,const Sample &other,int axis,bool positive){
         if(axis==1)return positive?wet.shape.ceiling<500:!wet.shape.open_bottom;
         if(!other.known)return false;
-        double opening=std::max(wet.shape.opening(axis,positive),other.shape.opening(axis,!positive));
-        return opening>=wet.shape.head(wet.amount);
+        auto air=other.shape;air.slope_x=air.slope_z=0;
+        return !WaterCellProfile::face_overlap(wet.shape,wet.head,air,air.ceiling,axis,positive);
     };
     for(int z=-1;z<8;++z)for(int y=-1;y<8;++y)for(int x=-1;x<8;++x){
         const Sample *corners[8];unsigned signs=0;
@@ -574,7 +609,7 @@ NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool s
         unsigned components[8];int count=surface_components(signs,components,[&](int a,int b){
             const Sample &first=*corners[a],&second=*corners[b];
             if((a^b)==2){const Sample &lower=(a&2)?second:first,&upper=(a&2)?first:second;
-                return lower.shape.ceiling==500&&upper.shape.open_bottom&&lower.amount>=lower.shape.capacity();}
+                return joined_vertical(lower.shape,lower.amount,upper.shape,upper.amount);}
             int axis=(a^b)==1?0:2;
             return joined(first.shape,first.amount,second.shape,second.amount,axis,second.position[axis]>first.position[axis]);
         });
@@ -591,12 +626,13 @@ NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool s
                     int axis=(a^b)==1?0:2;double end=wet.origin[axis]+(dry.position[axis]>wet.position[axis]?0.5:0.0);
                     Vector3 candidate=crossing;candidate[axis]=end;
                     auto bottom_at=[&](Vector3 v){return wet.origin.y+wet.shape.bottom((v.x-wet.origin.x)*2,(v.z-wet.origin.z)*2)*0.001;};
-                    if(bottom_at(candidate)>wet.top){
+                    auto top_at=[&](Vector3 v){return wet.origin.y+wet.shape.surface(wet.head,(v.x-wet.origin.x)*2,(v.z-wet.origin.z)*2)*0.001;};
+                    if(bottom_at(candidate)>top_at(candidate)){
                         double lo=0,hi=1;
-                        for(int n=0;n<14;++n){double t=(lo+hi)*0.5;Vector3 v=crossing+(candidate-crossing)*t;if(bottom_at(v)<wet.top)lo=t;else hi=t;}
+                        for(int n=0;n<14;++n){double t=(lo+hi)*0.5;Vector3 v=crossing+(candidate-crossing)*t;if(bottom_at(v)<top_at(v))lo=t;else hi=t;}
                         candidate=crossing+(candidate-crossing)*((lo+hi)*0.5);
                     }
-                    crossing=candidate;crossing.y=(bottom_at(crossing)+wet.top)*0.5;
+                    crossing=candidate;crossing.y=(bottom_at(crossing)+top_at(crossing))*0.5;
                 }
                 return sum+crossing;
             });

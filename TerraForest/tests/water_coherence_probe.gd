@@ -13,20 +13,11 @@ static func components(water:RefCounted,rows:Array) -> Dictionary:
    for step:Vector3i in [Vector3i.LEFT,Vector3i.RIGHT,Vector3i.UP,Vector3i.DOWN,Vector3i.FORWARD,Vector3i.BACK]:
     var q:=p+step
     if seen.has(q) or not cells.has(q):continue
-    var b:Dictionary=cells[q];var linked:=false
-    if step.y!=0:
-     var low:Dictionary=a if step.y>0 else b;var high:Dictionary=b if step.y>0 else a
-     linked=low.ml>=low.geometry.capacity_ml and high.geometry.bottom<=low.geometry.head+0.00001
-    else:
-     var edge:Vector3=(Vector3(p)+Vector3(q))*0.25+Vector3.ONE*0.25
-     var tangent:=Vector3.FORWARD if step.x!=0 else Vector3.RIGHT
-     var a_min:=INF;var b_min:=INF
-     for sign_value in [-1,1]:
-      var corner:Vector3=edge+tangent*0.2499*sign_value
-      a_min=minf(a_min,water.cell_geometry(corner-Vector3(step)*0.0001).bottom)
-      b_min=minf(b_min,water.cell_geometry(corner+Vector3(step)*0.0001).bottom)
-     var opening:=maxf(a_min,b_min)
-     linked=a.geometry.head>opening and b.geometry.head>opening
+    # Connectivity now includes the reconstructed sloping free surface, not
+    # the former constant head assumption. Its geometric predicates are also
+    # checked independently in the native profile probe.
+    var directions:Array[Vector3i]=[Vector3i.DOWN,Vector3i.RIGHT,Vector3i.LEFT,Vector3i.BACK,Vector3i.FORWARD,Vector3i.UP]
+    var linked:bool=(int(a.geometry.connections)&(1<<directions.find(step)))!=0
     if linked:seen[q]=true;pending.append(q)
   groups.append({"cells":count,"ml":amount})
  var sum_ml:=0

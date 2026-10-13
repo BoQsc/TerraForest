@@ -50,6 +50,7 @@ func run():
  var started:=Time.get_ticks_msec()
  while Time.get_ticks_msec()-started<2000:await process_frame
  results.surface_contact=surface_contact(target)
+ check(results.surface_contact.samples>0 and results.surface_contact.below_ground==0,"Sampled rendered pour triangles stay above actual terrain")
  results.after_two_seconds=game.lakes.statistics()
  results.water_delta=water_delta(before_pour,game.lakes.capture_snapshot(),target)
  results.local_components=local_components(results.water_delta.new_wet_cells)

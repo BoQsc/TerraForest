@@ -45,5 +45,15 @@ int main(){
     }
     float zero_density[8]={};auto unknown=WaterCellProfile::make(zero_density,true,500,500);
     require(unknown.capacity()==0,"zero-density ambiguity does not invent fully open space");
+    auto fractional=film;fractional.slope_x=0;fractional.slope_z=0;fractional.floor[0]+=0.123;
+ require(fractional.head(fractional.capacity())==500,"integer-capacity saturation reaches the top despite sub-millilitre rounding");
+ auto adjacent=film;for(double &y:adjacent.floor)y+=30;
+    require(WaterCellProfile::face_overlap(film,film.head(1000),adjacent,adjacent.head(1000),0,1),"volume-preserving films meet across a shared sloping face");
+    auto barrier=adjacent;barrier.floor.fill(500);
+    require(!WaterCellProfile::face_overlap(film,film.head(1000),barrier,500,0,1),"coherence never bridges a solid face");
+    auto lower=partial;lower.slope_x=200;
+    auto upper=bottom_cut;upper.slope_x=200;
+    require(WaterCellProfile::vertical_overlap(lower,504,upper,4),"thin films connect through a narrow partial vertical opening");
+    require(!WaterCellProfile::vertical_overlap(lower,504,upper,-10),"a dry vertical gap stays disconnected");
     std::puts("WATER_CELL_PROFILE failures=0");
 }

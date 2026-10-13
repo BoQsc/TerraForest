@@ -1,0 +1,69 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.3.280 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] New world
+[TerrainRewrite] New world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+PASS Normal combined world loads
+PASS World terrain supplies lake location
+PASS Ordinary lake authoring uses shallow elongated excavation
+[TerrainRewrite] Mined resources added to inventory
+[TerrainRewrite] Lake ready · F5 saves world
+PASS Actual world water builds and publishes
+COLD_STATS { "pending_vertical": 0, "vertical_steps": 2778, "water_ml": 565291754, "active_cells": 0, "regions": 52, "pending_regions": 0, "dirty_meshes": 0, "mesh_batch_active": false, "mesh_publish_pending": false, "published_mesh_batch": 114, "query_cache_bytes": 96480, "query_builds": 0, "query_cache_hits": 0, "mesh_snapshot_bytes": 0, "fill_active": false, "fill_remaining_ml": -1, "sampled_nodes": 37908, "cache_hits": 0, "cached_region_rebuilds": 0, "cell_steps": 5809, "changes": 5809, "step_us": 1, "max_step_us": 1087, "mesh_us": 279, "max_mesh_us": 1140, "capacity_reached": false, "resident_cell_bytes": 471328, &"lakes": 1, &"ready": 1, &"outstanding_slices": 0, &"resident_occupancy_bytes": 471328, &"mesh_publish_us": 1199, &"max_mesh_publish_us": 1770, &"mesh_commit_us": 200, &"max_mesh_commit_us": 446, &"staged_meshes": 0, &"render_ready": true }
+PASS Undisturbed lake sleeps with no active water cells
+PASS Sleeping lake performs zero flow cell steps
+PASS Lake is visibly filled and swimming query is wet
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Bucket · 0/10 L
+PASS Gameplay equips normal bucket
+PASS Actual lake shoreline is pickable while outward ray misses
+SHORE_TARGET (811.125, 48.25, 1292.0)
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Bucket · 10/10 L
+[TerrainRewrite] Scooped 10 L
+PASS Real left-click at rendered shore conserves world plus bucket water
+PASS Bucket scoop is published as a local surface depression
+PASS Surrounding water refills the published scoop depression
+BUCKET_SCOOP_TRACE [{"frame":-1,"ml":60827,"surface_y":48.2499961853027},{"frame":0,"ml":50827,"surface_y":48.2499961853027},{"frame":1,"ml":59609,"surface_y":48.2499961853027},{"frame":2,"ml":59282,"surface_y":48.2400016784668},{"frame":3,"ml":59749,"surface_y":48.2400016784668},{"frame":4,"ml":59915,"surface_y":48.2423095703125},{"frame":5,"ml":60102,"surface_y":48.2423095703125},{"frame":6,"ml":60102,"surface_y":48.2460517883301},{"frame":7,"ml":60102,"surface_y":48.2460517883301},{"frame":8,"ml":60102,"surface_y":48.2471504211426},{"frame":9,"ml":60102,"surface_y":48.2471504211426},{"frame":10,"ml":60102,"surface_y":48.2471504211426},{"frame":11,"ml":60102,"surface_y":48.2474899291992},{"frame":12,"ml":60102,"surface_y":48.2475128173828},{"frame":13,"ml":60102,"surface_y":48.2475204467773},{"frame":14,"ml":60102,"surface_y":48.2475318908691},{"frame":15,"ml":60102,"surface_y":48.2475318908691},{"frame":16,"ml":60102,"surface_y":48.2475395202637}]
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Bucket · 0/10 L
+[TerrainRewrite] Poured 10 L
+PASS Real right-click at shore returns full bucket without creating a detached puddle
+INPUT_STATE false 401 true 2 401
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Bucket · 10/10 L
+[TerrainRewrite] Scooped 10 L
+PASS Real bucket left-click conserves lake + inventory water
+PASS Stale bucket action cannot remove or create water
+PASS Separate hole is carved into actual terrain, not empty air
+PASS Mine a separate hole outside lake definitions
+[TerrainRewrite] Mined resources added to inventory
+PASS Separate hole terrain edit publishes
+[TerrainRewrite] Preparing water at this location
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Bucket · 0/10 L
+[TerrainRewrite] Poured 10 L
+PASS Real right-click creates water outside lake with exact full-bucket debit
+PASS Poured water settles to a queryable surface in the dug hole
+PUDDLE_CONTACT {"cells":[{"cell":[1655,88,2583],"conservative_floor_y":44.275,"cut":true,"floor_gap_m":-0.00688924043288353,"floor_y":44.0695229604949,"ml":2433,"stored_depth_m":0.0317433461191285,"terrain_y":44.0764122009277},{"cell":[1655,88,2584],"conservative_floor_y":44.275,"cut":true,"floor_gap_m":-0.0106015138942936,"floor_y":44.066981799094,"ml":2512,"stored_depth_m":0.0334827349204758,"terrain_y":44.0775833129883},{"cell":[1656,88,2583],"conservative_floor_y":44.275,"cut":true,"floor_gap_m":-0.0107565672323489,"floor_y":44.0680741517618,"ml":2624,"stored_depth_m":0.0338621300551694,"terrain_y":44.0788307189941},{"cell":[1656,88,2584],"conservative_floor_y":44.275,"cut":true,"floor_gap_m":-0.00684842358100468,"floor_y":44.0694912980987,"ml":2431,"stored_depth_m":0.0317471137980192,"terrain_y":44.0763397216797}],"max_floor_gap_m":0.0,"terrain_contact_qualified":true,"water_ml":10000}
+PASS Poured water floor contacts actual terrain within 2 cm of its wet footprint
+PUDDLE_AIM (828.0008, 44.10123, 1291.999) START (828.0008, 45.60123, 1291.999) END (828.0008, 42.10123, 1291.999) HIT { "position": (828.0008, 44.00048, 1291.999), "normal": (-0.514956, 0.857217, 0.0), "face_index": 557, "collider_id": 346550179628, "collider": MatchingCollision:<StaticBody3D#346550179628>, "shape": 0, "rid": RID(89545773154419) }
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Bucket · 10/10 L
+[TerrainRewrite] Scooped 10 L
+PASS Ten-litre puddle can be scooped back through real gameplay
+PASS Scooped puddle removal publishes
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Bucket · 0/10 L
+[TerrainRewrite] Poured 10 L
+PASS Puddle pour-back conserves the same ten litres
+PASS Future outlet starts dry
+PASS Mining beside filled water is accepted through ordinary terrain path
+[TerrainRewrite] Mined resources added to inventory
+PASS Outlet terrain edit publishes
+OUTLET_STATE { "depth": 0.0, "held": true, "water": { "pending_vertical": 0, "vertical_steps": 25679, "water_ml": 565291754, "active_cells": 1383, "regions": 62, "pending_regions": 0, "dirty_meshes": 66, "mesh_batch_active": true, "mesh_publish_pending": false, "published_mesh_batch": 273, "query_cache_bytes": 117120, "query_builds": 0, "query_cache_hits": 88, "mesh_snapshot_bytes": 426008, "fill_active": false, "fill_remaining_ml": -1, "sampled_nodes": 69984, "cache_hits": 0, "cached_region_rebuilds": 0, "cell_steps": 108015, "changes": 228482, "step_us": 1040, "max_step_us": 1659, "mesh_us": 641, "max_mesh_us": 4580, "capacity_reached": false, "resident_cell_bytes": 561968, &"lakes": 1, &"ready": 1, &"outstanding_slices": 0, &"resident_occupancy_bytes": 561968, &"mesh_publish_us": 1265, &"max_mesh_publish_us": 4716, &"mesh_commit_us": 292, &"max_mesh_commit_us": 446, &"staged_meshes": 20, &"render_ready": false } }
+FAIL Water flows into mined outlet while mining button remains held
+PASS Held mining admission remains active throughout flow check
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+REGIONAL_WATER_WORLD failures=1
