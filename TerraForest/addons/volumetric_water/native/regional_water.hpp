@@ -91,18 +91,11 @@ class NativeRegionalWater : public godot::RefCounted {
     void prioritize_mesh(Key k);
     const Region *surface_region(Key k,bool snapshot) const;
 
-    std::deque<Key> active,requests,meshes;
-    std::unordered_map<Key,double> active_set; // Pending simulated-time cursor per awake cell.
+    std::deque<Key> requests,meshes;
     std::unordered_set<Key> request_set,mesh_set,restored_cache;
-    std::deque<Key> vertical;
-    std::unordered_set<Key> vertical_set;
-    std::map<Key,uint32_t> vertical_regions;
-    void queue_vertical(const godot::Vector3i &lower);
-    uint64_t vertical_steps=0;
     uint64_t cache_rebuilds=0;
-    uint64_t total=0,steps=0,sampled=0,cache_hits=0,changes=0;
+    uint64_t total=0,sampled=0,cache_hits=0,changes=0;
     uint64_t last_us=0,max_us=0,mesh_us=0,max_mesh_us=0;
-    double flow_seconds=1.0/60.0,flow_clock=0;
     bool limit=false;
     struct Fill {
         bool running=false;
@@ -121,11 +114,9 @@ class NativeRegionalWater : public godot::RefCounted {
     static bool in_domain(const godot::Vector3i &p);
     Region *get(const godot::Vector3i &p,bool request);
     const Region *get(const godot::Vector3i &p) const;
-    void wake(const godot::Vector3i &p);
     void changed(const godot::Vector3i &p);
     void request(Key k);
     void process_fill();
-    void move(const godot::Vector3i &a,const godot::Vector3i &b,uint64_t amount);
     struct SurfaceMesh {
         godot::PackedVector3Array vertices,normals;
         godot::PackedVector2Array uv;

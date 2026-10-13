@@ -1,0 +1,15 @@
+2026-10-13: STATIC WATER MINING AND CACHED REOPEN
+Removed dormant wake/vertical queues, per-cell wake scans, old flow counters and
+snapshot awake-list construction. Old archive awake bits remain readable and
+validated, but new archives serialize only quantities. Public diagnostic keys
+remain zero for compatibility. No automatic movement is reintroduced.
+
+Eight release static-state checks pass. Actual-world water_static_mining passes
+in reports/checks/20261013T175102670681Z: ordinary terrain mining below the lake,
+publication completes, every stored water-cell amount remains equal, no flow
+work, water-only cached reload and no terrain resampling. Screenshot inspected:
+no torn sheets/shards visible from that specific above-water camera.
+
+Scope: water component reload within the same live edited terrain world, not
+full compound save/reopen, arbitrary shoreline/contact correctness, exact rendered
+volume or completed terrain-field migration. Those remain unproven/unfinished.
