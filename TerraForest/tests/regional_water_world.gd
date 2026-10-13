@@ -295,17 +295,26 @@ func render_comparison():
    else:faces[key]+=counts[key]
  timings.water_mesh_faces=faces
  print("WATER_MESH_FACES ",JSON.stringify(faces))
- var results:Array=[]
- for shown in [false,true,true,false]:
-  game.lakes.visible=shown
-  for warmup in 12:await process_frame
-  var gpu:Array[float]=[];var cpu:Array[float]=[]
-  for frame in 48:
-   await process_frame
-   gpu.append(RenderingServer.viewport_get_measured_render_time_gpu(root.get_viewport_rid()))
-   cpu.append(RenderingServer.viewport_get_measured_render_time_cpu(root.get_viewport_rid()))
-  gpu.sort();cpu.sort()
-  results.append({"water_visible":shown,"samples":gpu.size(),"gpu_p50_ms":gpu[24],"gpu_p95_ms":gpu[45],"cpu_p50_ms":cpu[24],"cpu_p95_ms":cpu[45]})
+ # Repeat short ABBA blocks so clock/temperature drift is visible rather
+ # than treating a single distant before/after measurement as water cost.
+ var results:Array=[];var paired_gpu:Array[float]=[];var paired_cpu:Array[float]=[]
+ for cycle in 4:
+  var blocks:Array=[]
+  for shown in [false,true,true,false]:
+   game.lakes.visible=shown
+   for warmup in 6:await process_frame
+   var gpu:Array[float]=[];var cpu:Array[float]=[]
+   for frame in 16:
+    await process_frame
+    gpu.append(RenderingServer.viewport_get_measured_render_time_gpu(root.get_viewport_rid()))
+    cpu.append(RenderingServer.viewport_get_measured_render_time_cpu(root.get_viewport_rid()))
+   gpu.sort();cpu.sort()
+   var block:Dictionary={"cycle":cycle,"water_visible":shown,"samples":gpu.size(),"gpu_p50_ms":gpu[8],"gpu_p95_ms":gpu[15],"cpu_p50_ms":cpu[8],"cpu_p95_ms":cpu[15]}
+   results.append(block);blocks.append(block)
+  paired_gpu.append((blocks[1].gpu_p50_ms+blocks[2].gpu_p50_ms-blocks[0].gpu_p50_ms-blocks[3].gpu_p50_ms)*0.5)
+  paired_cpu.append((blocks[1].cpu_p50_ms+blocks[2].cpu_p50_ms-blocks[0].cpu_p50_ms-blocks[3].cpu_p50_ms)*0.5)
+ var sorted_gpu:=paired_gpu.duplicate();sorted_gpu.sort()
+ timings.water_render_delta={"gpu_paired_ms":paired_gpu,"cpu_paired_ms":paired_cpu,"gpu_median_ms":(sorted_gpu[1]+sorted_gpu[2])*0.5,"gpu_min_ms":sorted_gpu[0],"gpu_max_ms":sorted_gpu[3],"cycles":4,"samples_per_block":16}
  game.lakes.visible=true
  for frame in 60:await process_frame
  await capture_visual("water_depth_close")

@@ -1,0 +1,29 @@
+Water rendering attribution, 2026-10-13
+
+Current default four-packet runtime. Actual combined world, 1920x1080 fullscreen, 60 FPS cap, NVIDIA GeForce RTX 4050 Laptop GPU. Water simulation frozen during rendering comparison; same camera/scene, toggling only water visibility. Four ABBA cycles (hidden, visible, visible, hidden), six warmup frames and sixteen measured frames per block. Each paired difference averages the two visible medians minus the two hidden medians. Other scene animation and hardware clocks are not locked.
+
+{
+  "cpu_paired_ms": [
+    0.0884999930858612,
+    0.0769999921321869,
+    0.0794999897480011,
+    0.142999976873398
+  ],
+  "cycles": 4,
+  "gpu_max_ms": 2.05399990081787,
+  "gpu_median_ms": 1.76674997806549,
+  "gpu_min_ms": 1.55850005149841,
+  "gpu_paired_ms": [
+    2.05399990081787,
+    1.55850005149841,
+    1.96099996566772,
+    1.57249999046326
+  ],
+  "samples_per_block": 16
+}
+
+This is an observed water-visible rendering delta, including screen/depth transmission and all pipeline consequences, not isolated fragment-shader timing or whole-device utilization. Four short cycles do not establish sustained thermal performance. It is about 1.77 ms median incremental GPU rendering time in this camera view, large enough to investigate before claiming efficiency. The earlier single ABBA run had visible drift in its hidden baselines; repeating short blocks now exposes the measurement spread.
+
+All 51 actual-world assertions passed, including mining, buckets, coherent publication, conservation and cached reopening. Saved images were visually inspected: depth transmission is present; this is not final visual acceptance. The low HUD FPS in the repeated-mining diagnostic image occurs around synchronous screenshot captures and is not a sustained-FPS measurement; use captured timing data with diagnostic I/O exclusions instead.
+
+Next attribution: distinguish screen/depth transmission cost from mesh/lighting cost before choosing a rendering change. No shader change is made by this evidence commit. Connected-batch latency and other prior limits remain open.
