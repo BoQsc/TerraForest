@@ -1,0 +1,22 @@
+Connected lake scaling, 2026-10-13
+
+Extended the existing native test to connected cached lakes of 16, 64 and 256 regions. All have a flat 0.25 m water layer; the largest is 64 x 64 m. An explicit synthetic solid terrain provider services newly requested occupancy outside the fixture. Without this provider, unresolved terrain requests correctly prevent publication; this is a test dependency, not a water settling failure.
+
+Single local 62.5 L removal: first publication in 1-2 simulated frames; idle in 2-3. The 256-region case rebuilt eight packets, not the whole lake. Initial loading was 288 packets in one batch (minimum 72 frames at four packets/frame).
+
+Repeated case: 61 removal attempts along a 30 m path crossing region boundaries while advancing flow. Every transferred millilitre is included in conservation checks. Latest run metrics:
+{
+  "edit_attempts": 61,
+  "removed_ml": 3551382,
+  "first_commit_frame": 2,
+  "settle_frames": 72,
+  "max_batch_frames": 7,
+  "max_dirty": 37,
+  "packets": 287,
+  "simulation_us": 59831,
+  "mesh_us": 13837
+}
+
+All assertions pass. Seven-frame worst batch corresponds to about 117 ms at 60 FPS, but these are simulated frames, not measured wall-clock display latency. The harness limits publication to four native packets/frame, without ArrayMesh uploads, the runtime presentation time limit or graphical workload. Terrain response here is synchronous and synthetic. Advance uses the actual native time/operation limits, so the exact amount removed and settle timings can vary by run; exact conservation must not vary.
+
+This identifies remaining sustained-edit publication latency; it does not show whole-lake rebuilding for one local edit. Do not infer GPU, thermal, arbitrary-terrain, pressure-fluid correctness, or sustained 60 FPS acceptance. No runtime algorithm was changed in this commit.
