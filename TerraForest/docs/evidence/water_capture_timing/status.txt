@@ -1,0 +1,32 @@
+2026-10-13: Attribute low-FPS review captures before changing runtime
+
+Same actual-world roundtrip, fixed 1920x1080 presentation, one terrain crater.
+Synchronous capture run 20261013T194104030356Z:
+  Each viewport readback + PNG save: 619.289-806.787 ms on the main thread.
+  Measured terrain-edit interval: 131.958 ms; worst frame 16.751 ms.
+Capture-free run 20261013T194204829299Z:
+  Terrain-edit interval: 140.353 ms; worst frame 16.837 ms.
+Asynchronous final run 20261013T194447682439Z:
+  Terrain-edit interval: 139.277 ms; worst frame 16.777 ms.
+  Maximum measured terrain staging frame: 4.155 ms.
+  Viewport readback remains on main thread: 9.341-15.433 ms.
+  PNG compression/file I/O runs on one worker: maximum 813.736 ms.
+  All ten images saved successfully; all gameplay/notice checks pass.
+
+An intermediate async run showed ~66.7ms frames due to the existing background
+15 FPS cap. The test now sets its background cap to 60 and records each mining
+frame's Engine.max_fps; all final samples report 60. Normal gameplay background
+policy is unchanged. Do not interpret background throttling as processing cost.
+
+Test-only visual_capture_writer owns detached Images, uses one worker, and
+bounds queued + active jobs to two images. Queue backpressure yields game
+frames; shutdown drains jobs and joins the worker. There are no new runtime
+threads, DLL changes or gameplay performance optimizations in this change.
+The visual test records capture overhead and mining stages separately.
+
+Conclusion: the low HUD FPS seen in these review screenshots is not evidence
+of a 100-160ms terrain-mining frame. Synchronous test captures were introducing
+~0.6-0.8 second stalls. This closes attribution of this particular observation,
+not historical mining-latency issues, sustained 60 FPS, laptop GPU utilization,
+thermal headroom or large-world scalability. Readback can still disturb capture
+frames; capture-free runs remain the appropriate performance comparison.

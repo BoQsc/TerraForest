@@ -3,9 +3,15 @@ extends "res://tests/water_ground_pour.gd"
 var measuring:=false
 var last_frame_us:=0
 var frame_ms:Array=[]
+var captures:Array=[]
+var mining_stages:Dictionary={}
+var mining_caps:Array=[]
+var mining_trace:=false
+var capture_writer:RefCounted
 func record_frame():
  var now:=Time.get_ticks_usec()
  if measuring:frame_ms.append((now-last_frame_us)/1000.0)
+ if mining_trace:mining_caps.append(Engine.max_fps)
  last_frame_us=now
 func measured_click(button:int)->Dictionary:
  frame_ms.clear();last_frame_us=Time.get_ticks_usec();var started:=last_frame_us;measuring=true
@@ -19,6 +25,17 @@ func wait_publication()->bool:
   var s:Dictionary=game.lakes.statistics()
   if game.lakes._pending_bucket.is_empty() and game.lakes._pending_dev.is_empty() and int(s.dirty_meshes)==0 and not s.mesh_batch_active and not s.mesh_publish_pending:return true
  return false
+func capture_frame(path:String):
+ if capture_writer==null:return
+ while capture_writer.pending()>=2:await process_frame
+ await RenderingServer.frame_post_draw
+ var start:=Time.get_ticks_usec()
+ var image:Image=root.get_texture().get_image()
+ var elapsed:float=(Time.get_ticks_usec()-start)/1000.0
+ check(capture_writer.submit(image,path),"Bounded screenshot writer accepts captured frame")
+ captures.append({"path":path,"readback_ms":elapsed})
+func record_stage(label:String,ms:float):
+ if mining_trace:mining_stages[label]=maxf(mining_stages.get(label,0.0),ms)
 func capture_volume_side(target:Vector3,index:int):
  for frame in 2:await process_frame
  check(game.telemetry.text.contains("Placed one water unit"),"Visible HUD label shows the completed pour")
@@ -29,17 +46,22 @@ func capture_volume_side(target:Vector3,index:int):
   game.camera.global_position=target+Vector3(2.0*side,1.25,2.25)
   game.camera.look_at(target+Vector3.UP*0.45,Vector3.UP)
   for frame in 4:await process_frame
-  await RenderingServer.frame_post_draw
-  root.get_texture().get_image().save_png("res://reports/water_roundtrip_side_%d_%d.png"%[index,side])
+  await capture_frame("res://reports/water_roundtrip_side_%d_%d.png"%[index,side])
  game.camera.global_transform=transform
  game.set_process(processing);game.set_physics_process(physics)
 func run():
+ if not "--no-review-captures" in OS.get_cmdline_user_args():
+  capture_writer=preload("res://tests/visual_capture_writer.gd").new()
+  var started:int=capture_writer.start()
+  check(started==OK,"Screenshot compression worker starts")
+  if started!=OK:capture_writer=null
  process_frame.connect(record_frame)
- game=load("res://demo/world.tscn").instantiate();root.add_child(game)
+ game=load("res://demo/world.tscn").instantiate();game.background_fps=60;root.add_child(game)
  var deadline:=Time.get_ticks_msec()+35000
  while not game.has_meta("water_bucket_review_ready") and Time.get_ticks_msec()<deadline:await process_frame
  check(game.has_meta("water_bucket_review_ready") and game.temporary_world,"Disposable gameplay world is ready")
  if failures:await finish();return
+ game.terrain.stage_measured.connect(record_stage)
  click(MOUSE_BUTTON_LEFT);await wait_publication()
  check(held_ml()==1000000,"One normal click fills the bucket")
  if failures:await finish();return
@@ -51,11 +73,14 @@ func run():
   check(not ground.is_empty(),"Natural ground exists for case %d"%results.cases.size())
   if ground.is_empty():break
   if results.cases.size()==5:
+   frame_ms.clear();last_frame_us=Time.get_ticks_usec();var mine_start:=last_frame_us;measuring=true;mining_trace=true
    check(game.terrain.sculpt_sphere(Vector3(ground.position)+Vector3.UP*0.5,2.0),"Mine a crater through the ordinary terrain path")
    deadline=Time.get_ticks_msec()+10000
    while game.terrain.pending_edit and Time.get_ticks_msec()<deadline:await process_frame
    check(not game.terrain.pending_edit,"Mined terrain publishes")
    for frame in 6:await physics_frame
+   measuring=false;mining_trace=false
+   results.mining={"elapsed_ms":(Time.get_ticks_usec()-mine_start)/1000.0,"frame_ms":frame_ms.duplicate(),"max_stage_ms":mining_stages.duplicate(),"fps_caps":mining_caps.duplicate()}
    position+=Vector3(1.25,0,0)
    ground=game.get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(position+Vector3.UP*30,position-Vector3.UP*30,1))
    check(not ground.is_empty(),"Mined crater has a collidable surface")
@@ -70,8 +95,7 @@ func run():
   check(held_ml()==0,"Full bucket transfers into world")
   check(game._lake_notice=="Placed one water unit (1 m3)","HUD confirms the completed pour instead of retaining a pending or previous message")
   if failures:break
-  await RenderingServer.frame_post_draw
-  root.get_texture().get_image().save_png("res://reports/water_roundtrip_%d.png"%results.cases.size())
+  await capture_frame("res://reports/water_roundtrip_%d.png"%results.cases.size())
   if results.cases.size()==0 or results.cases.size()==5:await capture_volume_side(target,results.cases.size())
   # Aim straight down at the actual clicked terrain position, without searching
   # cell metadata for a specially chosen easier-to-scoop part of the water.
@@ -99,7 +123,13 @@ func run():
    check(held_ml()==1000000 and amounts(game.lakes.capture_snapshot())==original,"Entire developer-placed volume is visible, scoopable and leaves no hidden surplus")
  await finish()
 func finish():
+ if capture_writer!=null:
+  while capture_writer.pending()>0:await process_frame
+  results.png_jobs=capture_writer.close()
+  check(results.png_jobs.size()==captures.size(),"Every queued screenshot finishes")
+  for job:Dictionary in results.png_jobs:check(job.error==OK,"Screenshot saved: "+job.path)
  results.failures=failures
+ results.captures=captures
  var file:=FileAccess.open("res://reports/water_bucket_roundtrip.json",FileAccess.WRITE);file.store_string(JSON.stringify(results,"  "));file.close()
  game.terrain.shutdown();game.queue_free();await process_frame;await process_frame
  print("WATER_BUCKET_ROUNDTRIP failures=",failures);quit(failures)

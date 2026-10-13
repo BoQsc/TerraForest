@@ -25,3 +25,8 @@ the HUD FPS can retain the preceding mining-stage reading. These captures are
 not performance measurements. The earlier low mining-stage FPS remains an
 unresolved performance observation, not dismissed as a water-only issue.
 No mesher, material shader, native DLL or world storage was changed here.
+
+Follow-up attribution: ../water_capture_timing/status.txt identifies synchronous
+PNG capture stalls and the background FPS cap in this review. The measured
+mining interval stays below 16.9ms per frame in capture-free and final checks.
+This resolves this screenshot observation, not broad performance acceptance.
