@@ -1,0 +1,42 @@
+Partial-bottom geometry correction and sloping-volume prerequisite - 2026-10-13
+
+Live runtime correction:
+A terrain floor that crosses the bottom of a cell must be interpolated before
+clamping to the cell bottom. Clamping the four crossings first invents solid
+terrain: the analytical -100..+100 mm ramp lost 6,250 ml of air capacity per
+0.5 m cell (112,500 instead of 118,750 ml). NativeWaterCellProfile now retains
+raw crossings and subtracts below-cell volume. bottom() clips the interpolated
+floor, retaining a finite open bottom area instead of a zero-width corner.
+Fully positive density cells retain a flat open interval; all-zero ambiguity
+keeps its conservative interval. This uses the existing cached terrain samples.
+
+Snapshots are version 5, layout unchanged. Versions 1-4 remain readable. Old
+cut-cell quantities are preserved and changed capacities wake using the cached
+terrain. Older binaries cannot read new version-5 saves. The version-4 partial
+bottom fixture restores with correct capacity, no lost water and no resampling.
+
+Next required representation work:
+The same profile now has exact clipped-volume and footprint calculations for a
+sloping free-surface plane. The slope fields remain zero in current runtime
+adapters: this is a tested prerequisite, NOT a claim of coherent slope runoff.
+It integrates positive linear water depth over clipped triangles and subtracts
+ceiling overflow. No separate store, renderer, external code/library, or copied
+meshing implementation was introduced. New code remains original 0BSD.
+Analytical 1-litre/4-mm film cases, top/bottom clipping, inverse-volume checks,
+and independent 400x400 area quadrature pass (under 1 ml integration difference).
+
+Validation:
+- Native cut-cell migration, flow clock, material publication/query checks pass.
+- All 510 stored-volume topology configurations continue to pass.
+- The short actual-world bucket/terrain-contact check passes. Its run predates
+  only the final strict-positive all-air guard and nonnegative subtraction clamp;
+  those were checked by the zero-density and volume tests after the final build.
+- Captured-world coherence STILL FAILS with multiple fragments; exact global
+  millilitres remain conserved. Counts vary with the bounded work scheduler.
+  Neither that failure nor the requested visual/interaction gate is closed.
+- No GPU or sustained performance claim; no broad benchmark was run.
+
+The next runtime step must consistently use a locally reconstructed free surface
+for wet-face connectivity, rendering and queries while preserving resting lakes,
+terrain exclusion and exact stored volume. Merely shifting vertices upward or
+hiding small components would not resolve the physical disconnected intervals.

@@ -1,0 +1,63 @@
+PASS sloped half-cell capacity is 62.5 litres
+PASS quarter-height wedge integrates to 15.625 litres
+PASS head inversion conserves sub-litre and full-cell quantities
+PASS head inversion conserves sub-litre and full-cell quantities
+PASS head inversion conserves sub-litre and full-cell quantities
+PASS head inversion conserves sub-litre and full-cell quantities
+PASS head inversion conserves sub-litre and full-cell quantities
+PASS wetted centroid excludes the dry half of the slope
+PASS opposite floor faces have distinct spill heights
+PASS flat cells retain their exact constant-area behavior
+PASS ambiguous walls retain conservative closure
+PASS cached floor crossings recover partial capacity without opening solid bottom
+PASS floor crossing the cell top retains its partial air wedge
+PASS one litre on a sloping surface has exactly four millimetres of depth
+PASS sloping water surface reaches both terrain faces without a dry interior gap
+PASS thin slope film covers a connected footprint
+PASS tilted surface inversion conserves volume under cell ceiling clipping
+PASS tilted surface inversion conserves volume under cell ceiling clipping
+PASS tilted surface inversion conserves volume under cell ceiling clipping
+PASS tilted surface inversion conserves volume under cell ceiling clipping
+PASS tilted surface inversion conserves volume under cell ceiling clipping
+PASS tilted surface inversion conserves volume under cell ceiling clipping
+PASS tilted surface inversion conserves volume under cell ceiling clipping
+PASS tilted surface inversion conserves volume under cell ceiling clipping
+PASS tilted surface inversion conserves volume under cell ceiling clipping
+PASS tilted surface inversion conserves volume under cell ceiling clipping
+PASS tilted surface inversion conserves volume under cell ceiling clipping
+PASS tilted surface inversion conserves volume under cell ceiling clipping
+PASS tilted surface inversion conserves volume under cell ceiling clipping
+PASS tilted surface inversion conserves volume under cell ceiling clipping
+PASS tilted surface inversion conserves volume under cell ceiling clipping
+PASS tilted surface inversion conserves volume under cell ceiling clipping
+PASS tilted surface inversion conserves volume under cell ceiling clipping
+PASS tilted surface inversion conserves volume under cell ceiling clipping
+PASS tilted surface inversion conserves volume under cell ceiling clipping
+PASS tilted surface inversion conserves volume under cell ceiling clipping
+PASS tilted surface inversion conserves volume under cell ceiling clipping
+PASS tilted surface inversion conserves volume under cell ceiling clipping
+PASS tilted surface inversion conserves volume under cell ceiling clipping
+PASS tilted surface inversion conserves volume under cell ceiling clipping
+PASS tilted surface inversion conserves volume under cell ceiling clipping
+PASS tilted surface inversion conserves volume under cell ceiling clipping
+PASS tilted surface inversion conserves volume under cell ceiling clipping
+PASS tilted surface inversion conserves volume under cell ceiling clipping
+PASS tilted surface inversion conserves volume under cell ceiling clipping
+PASS tilted surface inversion conserves volume under cell ceiling clipping
+PASS tilted surface inversion conserves volume under cell ceiling clipping
+PASS tilted surface inversion conserves volume under cell ceiling clipping
+PASS tilted surface inversion conserves volume under cell ceiling clipping
+PASS tilted surface inversion conserves volume under cell ceiling clipping
+PASS tilted surface inversion conserves volume under cell ceiling clipping
+PASS tilted surface inversion conserves volume under cell ceiling clipping
+PASS partial bottom clips the interpolated floor instead of inventing a ramp
+PASS partial bottom retains a finite open face and real uphill terrain
+PASS tilted partial-bottom surface preserves volume within the cell
+PASS tilted partial-bottom surface preserves volume within the cell
+PASS tilted partial-bottom surface preserves volume within the cell
+PASS tilted partial-bottom surface preserves volume within the cell
+PASS tilted partial-bottom surface preserves volume within the cell
+PASS clipped sloping volume agrees with independent dense area quadrature within one millilitre
+PASS clipped sloping volume agrees with independent dense area quadrature within one millilitre
+PASS zero-density ambiguity does not invent fully open space
+WATER_CELL_PROFILE failures=0

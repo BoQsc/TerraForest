@@ -1,0 +1,133 @@
+{
+  "components": {
+    "components": [
+      {
+        "cells": 1,
+        "ml": 1
+      },
+      {
+        "cells": 1,
+        "ml": 1
+      },
+      {
+        "cells": 1,
+        "ml": 1
+      },
+      {
+        "cells": 1,
+        "ml": 2
+      },
+      {
+        "cells": 1,
+        "ml": 2
+      },
+      {
+        "cells": 1,
+        "ml": 1
+      },
+      {
+        "cells": 1,
+        "ml": 2
+      },
+      {
+        "cells": 1,
+        "ml": 2
+      },
+      {
+        "cells": 1,
+        "ml": 1
+      },
+      {
+        "cells": 1,
+        "ml": 91
+      },
+      {
+        "cells": 1,
+        "ml": 2
+      },
+      {
+        "cells": 1,
+        "ml": 2
+      },
+      {
+        "cells": 1,
+        "ml": 1
+      },
+      {
+        "cells": 6,
+        "ml": 7154
+      },
+      {
+        "cells": 4,
+        "ml": 2377
+      },
+      {
+        "cells": 1,
+        "ml": 5
+      },
+      {
+        "cells": 1,
+        "ml": 2
+      },
+      {
+        "cells": 2,
+        "ml": 217
+      },
+      {
+        "cells": 1,
+        "ml": 1
+      },
+      {
+        "cells": 1,
+        "ml": 1
+      },
+      {
+        "cells": 1,
+        "ml": 2
+      },
+      {
+        "cells": 1,
+        "ml": 1
+      },
+      {
+        "cells": 1,
+        "ml": 1
+      }
+    ],
+    "radius_m": 3,
+    "scope": "Newly wet cells within three metres; boundary and pre-existing cells excluded",
+    "water_ml": 9870
+  },
+  "conserved": true,
+  "failures": 1,
+  "statistics": {
+    "active_cells": 1847,
+    "cache_hits": 101,
+    "cached_region_rebuilds": 0,
+    "capacity_reached": false,
+    "cell_steps": 43242,
+    "changes": 83946,
+    "dirty_meshes": 105,
+    "fill_active": false,
+    "fill_remaining_ml": -1,
+    "max_mesh_us": 0,
+    "max_step_us": 1209,
+    "mesh_batch_active": false,
+    "mesh_publish_pending": false,
+    "mesh_snapshot_bytes": 0,
+    "mesh_us": 0,
+    "pending_regions": 0,
+    "pending_vertical": 0,
+    "published_mesh_batch": 0,
+    "query_builds": 0,
+    "query_cache_bytes": 0,
+    "query_cache_hits": 0,
+    "regions": 101,
+    "resident_cell_bytes": 915464,
+    "sampled_nodes": 0,
+    "step_us": 1024,
+    "vertical_steps": 2094,
+    "water_ml": 556131961
+  },
+  "library": "volumetric_water.windows.template_release.x86_64.dll"
+}

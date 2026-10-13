@@ -1,0 +1,7 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+GROUND_COMPONENTS [{"cells":1,"ml":1},{"cells":1,"ml":1},{"cells":1,"ml":1},{"cells":1,"ml":2},{"cells":1,"ml":2},{"cells":1,"ml":1},{"cells":1,"ml":2},{"cells":1,"ml":2},{"cells":1,"ml":1},{"cells":1,"ml":91},{"cells":1,"ml":2},{"cells":1,"ml":2},{"cells":1,"ml":1},{"cells":6,"ml":7154},{"cells":4,"ml":2377},{"cells":1,"ml":5},{"cells":1,"ml":2},{"cells":2,"ml":217},{"cells":1,"ml":1},{"cells":1,"ml":1},{"cells":1,"ml":2},{"cells":1,"ml":1},{"cells":1,"ml":1}]
+PASS Captured-world replay preserves every millilitre
+FAIL Gentle-ground bucket pour has one connected local water body
+WATER_GROUND_COHERENCE failures=1
+

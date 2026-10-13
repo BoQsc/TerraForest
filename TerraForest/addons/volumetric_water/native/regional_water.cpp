@@ -662,7 +662,7 @@ Dictionary NativeRegionalWater::statistics() const {
 static constexpr uint32_t MAGIC=0x31575256,OLD_REGION_BYTES=16+512*12,REGION_BYTES=OLD_REGION_BYTES+729*4;
 PackedByteArray NativeRegionalWater::capture_snapshot(const PackedByteArray &catalog) const {
     PackedByteArray out;Ref<NativeLakeCatalog> validator;validator.instantiate();if(fill.running||!validator->validate_snapshot(catalog))return out;
-    out.resize(32+catalog.size()+regions.size()*REGION_BYTES);out.encode_u32(0,MAGIC);out.encode_u32(4,4);out.encode_u32(8,catalog.size());out.encode_u32(12,regions.size());out.encode_u64(16,total);out.encode_u64(24,0);
+    out.resize(32+catalog.size()+regions.size()*REGION_BYTES);out.encode_u32(0,MAGIC);out.encode_u32(4,5);out.encode_u32(8,catalog.size());out.encode_u32(12,regions.size());out.encode_u64(16,total);out.encode_u64(24,0);
     for(int i=0;i<catalog.size();++i)out.set(32+i,catalog[i]);int64_t offset=32+catalog.size();
     for(const auto &[k,r]:regions){out.encode_u64(offset,k);out.encode_u32(offset+8,r.valid?1:0);out.encode_u32(offset+12,r.has_density?1:0);offset+=16;
         for(int i=0;i<512;++i){out.encode_u16(offset,r.floor[i]);out.encode_u16(offset+2,r.ceiling[i]);out.encode_u64(offset+4,r.water[i]|(r.water[i]&&active_set.count(key(position(k)*8+Vector3i(i%8,(i/8)%8,i/64)))?(uint64_t(1)<<63):0));offset+=12;}
@@ -670,7 +670,7 @@ PackedByteArray NativeRegionalWater::capture_snapshot(const PackedByteArray &cat
     return out;
 }
 bool NativeRegionalWater::decode(const PackedByteArray &data,bool install){
-    if(data.size()<32||data.decode_u32(0)!=MAGIC||(data.decode_u32(4)<1||data.decode_u32(4)>4)||data.decode_u64(24)!=0)return false;
+    if(data.size()<32||data.decode_u32(0)!=MAGIC||(data.decode_u32(4)<1||data.decode_u32(4)>5)||data.decode_u64(24)!=0)return false;
     const bool shaped=data.decode_u32(4)>=2;
     const uint32_t record_bytes=shaped?REGION_BYTES:OLD_REGION_BYTES;
     uint32_t bytes=data.decode_u32(8),count=data.decode_u32(12);uint64_t expected=data.decode_u64(16);
@@ -686,7 +686,7 @@ bool NativeRegionalWater::decode(const PackedByteArray &data,bool install){
         // Old saved amounts are authoritative. Wake only cut cells whose new
         // capacity differs, then settle with cached terrain instead of sampling
         // or discarding/recreating water during the format upgrade.
-        if(install&&data.decode_u32(4)<4&&r.has_density)for(int i=0;i<512;++i)
+        if(install&&data.decode_u32(4)<5&&r.has_density)for(int i=0;i<512;++i)
             if(r.water[i]&&profile(r,i).capacity()!=uint64_t(r.ceiling[i]-r.floor[i])*250)
                 awake.push_back(key(p*8+Vector3i(i%8,(i/8)%8,i/64)));
         if(install)staged.emplace(k,std::move(r));

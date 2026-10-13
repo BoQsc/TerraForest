@@ -32,8 +32,18 @@ func run():
  check(migrated.restore_snapshot(previous),"Version 3 partial-top archive restores")
  var partial:Dictionary=migrated.cell_geometry(Vector3(41.75,41.75,41.75))
  check(partial.cut and abs(partial.capacity_ml-6250)<=2 and migrated.statistics().active_cells>0 and migrated.statistics().pending_regions==0 and migrated.statistics().water_ml==10000,"Version 3 partial-top migration wakes cached water without losing volume")
+ # Version 4 clipped raw negative floor crossings at corners, losing air.
+ var bottom_bytes:=bytes.duplicate();bottom_bytes.encode_u32(4,4)
+ for i in 729:
+  var x:float=40+(i%9)*0.5;var y:float=40+((i/9)%9)*0.5
+  bottom_bytes.encode_float(base+6160+i*4,y-(41.4+(x-41.5)*0.4))
+ bottom_bytes.encode_u16(base+16+index*12,100)
+ var bottom_water=ClassDB.instantiate("NativeRegionalWater")
+ check(bottom_water.restore_snapshot(bottom_bytes),"Version 4 partial-bottom archive restores")
+ var bottom_shape:Dictionary=bottom_water.cell_geometry(Vector3(41.75,41.75,41.75))
+ check(abs(bottom_shape.capacity_ml-118750)<=2 and bottom_water.statistics().water_ml==10000 and bottom_water.statistics().active_cells>0 and bottom_water.statistics().pending_regions==0,"Partial-bottom migration recovers real air capacity without changing water or resampling terrain")
  var upgraded:PackedByteArray=water.capture_snapshot(catalog)
- check(upgraded.decode_u32(4)==4 and water.statistics().water_ml==10000,"Version 4 upgrade preserves every millilitre")
+ check(upgraded.decode_u32(4)==5 and water.statistics().water_ml==10000,"Version 5 upgrade preserves every millilitre")
  var reopened=ClassDB.instantiate("NativeRegionalWater")
  check(reopened.restore_snapshot(upgraded) and reopened.capture_snapshot(catalog)==upgraded,"Cut-cell archive roundtrip preserves cached data and pending work")
  check(water.depth_at(Vector3(41.55,41.55,41.75))>0.09 and water.depth_at(Vector3(41.9,41.55,41.75))==0,"Depth query distinguishes wet and dry parts inside one cut cell")
