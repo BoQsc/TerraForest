@@ -83,13 +83,13 @@ func visible_pool_top(target:Vector3)->Vector3:
    var hit:Dictionary=game.lakes.water.raycast_surface(point+Vector3.UP*3,point-Vector3.UP)
    if hit.hit and hit.normal.y>0.5 and hit.point.y>height:best=hit.point;height=best.y
  return best
-func pool_topology(target:Vector3)->Dictionary:
+func pool_topology(target:Vector3,radius:float=4.0)->Dictionary:
  var edges:Dictionary={};var triangles:=0;var parents:Array[int]=[]
  for instance:MeshInstance3D in game.lakes._meshes.values():
   if instance.mesh==null:continue
   var vertices:PackedVector3Array=instance.mesh.surface_get_arrays(0)[Mesh.ARRAY_VERTEX]
   for i in range(0,vertices.size(),3):
-   if ((vertices[i]+vertices[i+1]+vertices[i+2])/3.0).distance_to(target)>4.0:continue
+   if ((vertices[i]+vertices[i+1]+vertices[i+2])/3.0).distance_to(target)>radius:continue
    parents.append(triangles);triangles+=1
    for j in 3:
     var a:Vector3=vertices[i+j];var b:Vector3=vertices[i+(j+1)%3]

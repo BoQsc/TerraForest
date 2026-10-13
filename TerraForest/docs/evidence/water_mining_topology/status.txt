@@ -1,0 +1,13 @@
+Excavation topology regression - OPEN - 2026-10-13
+
+Actual-world test water_mining_topology starts from the bucket-review lake, excavates its floor through the normal terrain facade, waits for publication and checks stored quantities plus actual published mesh connectivity. Initial lake: 21132 triangles, one component, zero non-two-incident edges. First excavation: 21748 triangles, one component, four non-two-incident edges. Quantities are unchanged. This is not corrected by the underwater fog shader fix.
+
+The failure snapshot is preserved in tests/fixtures/water_mining_topology/failure.bin. Headless water_mining_mesh replays it without world generation, rendering or a graphical game and reproduces four edges with four incident triangles in less than one second through the test launcher. This test intentionally fails until the defect is fixed; do not change its expected result to accept the broken geometry.
+
+Inspection of the eight affected corner masks (124,62,199,227,61,188,211,203) finds one face-connected occupied component and two face-connected unoccupied components in every cell. The current shared density extractor partitions only occupied corners, leaving separate boundary sheets collapsed into one representative. The previous pool fix therefore does not cover this complementary ambiguity. Correct boundary selection and neighbour lookup must distinguish the crossing surface sheets, while remaining consistent on shared cell faces. No new simulation or fluid flow is required.
+
+Reproduction:
+python tools/run_godot_check.py water_mining_mesh --headless --timeout 15 --require "WATER_MINING_MESH failures=0"
+python tools/run_godot_check.py water_mining_topology --timeout 60 --require "WATER_MINING_TOPOLOGY failures=0" -- --gameplay-construction --water-gameplay --water-bucket-review
+
+Keep the fixture replay failing until corrected; then rerun the actual-world mining test and the existing placed-pool recovery tests. A passing fixture alone cannot prove the whole interactive path or visual result.
