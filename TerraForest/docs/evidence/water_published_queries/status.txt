@@ -1,0 +1,23 @@
+Published surface query cache, 2026-10-13
+
+The game explicitly acknowledges a completed render batch after assigning scene
+meshes. Native published query triangles switch on that acknowledgement, retain
+owning wet cells, and reuse generated packed vertex data. Staged geometry is not
+pickable. Wrong, incomplete or cancelled batch acknowledgements are rejected.
+Restore retires old query geometry. Immediate standalone native diagnostics still
+use the same builder without a renderer; gameplay switches to published queries
+on its first publication batch and never takes that reconstruction fallback.
+
+Native targeted checks pass for old/displayed versus newer/live surface heights,
+publication gating, cancellation, restore retirement, zero query rebuilds and the
+existing 30 thin-water cases. World run: all 51 checks pass, including real bucket
+input, mining, conservation, cached reload and scene/query publication identity.
+Before save: 108 cached-region query hits, zero query-triggered builds, 276672
+bytes of retained vertex/owner payload. Container overhead and staging resources
+are additional. These measurements apply to this test scene only.
+
+An obsolete visible owner cannot invent water: bucket transfers validate current
+stored amounts. Invalid occupancy is temporarily not pickable even if its older
+mesh remains visible. Depth is an authoritative volume query, not a display-mesh
+intersection. Scale, staging latency and sustained thermal performance remain
+open; this is not completion of the broader project or all water requirements.

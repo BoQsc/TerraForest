@@ -46,6 +46,15 @@ class NativeRegionalWater : public godot::RefCounted {
     };
     static constexpr size_t MAX_REGIONS=4096;
     static constexpr uint64_t MAX_TOTAL=uint64_t(1)<<52;
+    struct QuerySurface {
+        godot::PackedVector3Array vertices;
+        std::vector<godot::Vector3i> owners;
+    };
+    std::map<Key,QuerySurface> published_surfaces,staged_surfaces;
+    bool publication_enabled=false,publish_pending=false;
+    uint64_t published_batch=0,query_cache_bytes=0;
+    mutable uint64_t query_builds=0,query_cache_hits=0;
+    const QuerySurface *query_surface(Key k,QuerySurface &temporary) const;
     std::map<Key,Region> regions;
     std::map<Key,Region> mesh_snapshot;
     std::unordered_set<Key> mesh_snapshot_absent;
@@ -115,6 +124,7 @@ public:
     double depth_at(const godot::Vector3 &point) const;
     godot::PackedByteArray placement_mask(const godot::TypedArray<godot::Transform3D> &transforms) const;
     godot::Dictionary raycast_surface(const godot::Vector3 &from,const godot::Vector3 &to) const;
+    bool commit_mesh_batch(int64_t id);
     godot::Dictionary next_mesh_batch();
     godot::Dictionary next_mesh();
     godot::Dictionary statistics() const;

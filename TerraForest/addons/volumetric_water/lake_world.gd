@@ -159,6 +159,7 @@ func _publish_meshes() -> void:
     if _meshes.has(coordinate):_meshes[coordinate].mesh=staged.mesh
     var bounds:=AABB(Vector3(coordinate)*4,Vector3(4,4,4))
     _changed_bounds=_changed_bounds.merge(bounds) if _have_bounds else bounds;_have_bounds=true
+   if not water.commit_mesh_batch(update.batch):push_error("Water query publication did not match rendered batch")
    _published_mesh_batch_id=update.batch
    _staged_meshes.clear()
    _mesh_commit_us=Time.get_ticks_usec()-commit_started;_mesh_max_commit_us=maxi(_mesh_max_commit_us,_mesh_commit_us)

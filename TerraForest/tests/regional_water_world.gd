@@ -114,7 +114,7 @@ func run():
  check(inventory.snapshot().slots[slot].item==401 and game.lakes.statistics().water_ml==quantity,"Real right-click creates water outside lake with exact bucket debit")
  if failures:await finish();return
  var puddle_deadline:=Time.get_ticks_msec()+3000
- while Time.get_ticks_msec()<puddle_deadline and (game.lakes.statistics().active_cells>0 or game.lakes.statistics().pending_regions>0):await process_frame
+ while Time.get_ticks_msec()<puddle_deadline and (game.lakes.statistics().active_cells>0 or not game.lakes.statistics().render_ready):await process_frame
  var puddle:Vector3=game.lakes.water.surface_near(hole-Vector3(0,1.5,0),3.0)
  check(puddle.is_finite(),"Poured water settles to a queryable surface in the dug hole")
  if not puddle.is_finite():await finish();return
@@ -253,6 +253,7 @@ func run():
  s=game.lakes.statistics();timings.runtime_reopened=s
  check(s.water_ml==quantity and game.player_hud.inventory.snapshot().slots[slot].item==401,"Disk reopening preserves world and bucket quantity")
  print("REOPEN_STATS ",s)
+ check(s.query_builds==0 and s.published_mesh_batch==game.lakes._published_mesh_batch_id,"Gameplay queries use published meshes without rebuilding geometry")
  timings.at_snapshot_restore=restored_stats
  check(s.cache_hits>0 and restored_stats.get("sampled_nodes",-1)==0 and s.cached_region_rebuilds==0,"Warm load restores cached occupancy with zero cached-region rebuilds")
  check(game.lakes.depth_at(outlet)>0,"Mined outlet remains wet after reopening")

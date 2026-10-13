@@ -73,6 +73,7 @@ void NativeRegionalWater::_bind_methods(){
     ClassDB::bind_method(D_METHOD("depth_at","point"),&NativeRegionalWater::depth_at);
     ClassDB::bind_method(D_METHOD("placement_mask","transforms"),&NativeRegionalWater::placement_mask);
     ClassDB::bind_method(D_METHOD("raycast_surface","from","to"),&NativeRegionalWater::raycast_surface);
+    ClassDB::bind_method(D_METHOD("commit_mesh_batch","id"),&NativeRegionalWater::commit_mesh_batch);
     ClassDB::bind_method(D_METHOD("next_mesh_batch"),&NativeRegionalWater::next_mesh_batch);
     ClassDB::bind_method(D_METHOD("next_mesh"),&NativeRegionalWater::next_mesh);
     ClassDB::bind_method(D_METHOD("statistics"),&NativeRegionalWater::statistics);
@@ -300,10 +301,10 @@ Vector3 NativeRegionalWater::surface_near(const Vector3 &point,double radius) co
     Vector3 margin(radius+0.5,radius+0.5,radius+0.5);
     Vector3i lo=Vector3i(((point-margin)/4.0).floor()),hi=Vector3i(((point+margin)/4.0).floor());double distance=radius*radius;
     for(int z=std::max(0,lo.z);z<=std::min(499,hi.z);++z)for(int y=std::max(0,lo.y);y<=std::min(63,hi.y);++y)for(int x=std::max(0,lo.x);x<=std::min(499,hi.x);++x){
-        Key k=key(Vector3i(x,y,z));if(!surface_ready(k))continue;SurfaceMesh mesh=build_surface(k);
+        Key k=key(Vector3i(x,y,z));if(!surface_ready(k))continue;QuerySurface temporary;const QuerySurface *selected=query_surface(k,temporary);if(!selected)continue;const QuerySurface &mesh=*selected;
         auto consider=[&](Vector3 q){double d=point.distance_squared_to(q);if(d<distance){distance=d;best=q;}};
         for(int i=0;i<mesh.vertices.size();i+=3){
-            if(mesh.normals[i].y<=0.001)continue;
+            if((mesh.vertices[i+2]-mesh.vertices[i]).cross(mesh.vertices[i+1]-mesh.vertices[i]).y<=0)continue;
             Vector3 a=mesh.vertices[i],b=mesh.vertices[i+1],c=mesh.vertices[i+2];
             Vector3 u=b-a,v=c-a,n=u.cross(v);double n2=n.length_squared();if(n2<1e-16)continue;
             Vector3 q=point-n*(n.dot(point-a)/n2),w=q-a;
@@ -342,12 +343,13 @@ const NativeRegionalWater::Region *NativeRegionalWater::surface_region(Key k,boo
     auto live=regions.find(k);return live==regions.end()?nullptr:&live->second;
 }
 void NativeRegionalWater::cancel_mesh_batch(){
-    if(!batch_active)return;
+    if(!batch_active&&!publish_pending)return;
     for(Key k:batch_owners)if(mesh_set.insert(k).second)meshes.push_back(k);
-    batch_active=false;batch_queue.clear();batch_owners.clear();mesh_snapshot.clear();mesh_snapshot_absent.clear();
+    batch_active=false;publish_pending=false;staged_surfaces.clear();batch_queue.clear();batch_owners.clear();mesh_snapshot.clear();mesh_snapshot_absent.clear();
 }
 Dictionary NativeRegionalWater::next_mesh_batch(){
-    Dictionary result;
+    Dictionary result;publication_enabled=true;
+    if(publish_pending){result["batch"]=int64_t(batch_id);result["complete"]=true;return result;}
     if(!batch_active){
         if(meshes.empty())return result;
         batch_queue.swap(meshes);mesh_set.clear();batch_owners.assign(batch_queue.begin(),batch_queue.end());
@@ -360,12 +362,36 @@ Dictionary NativeRegionalWater::next_mesh_batch(){
         if(!surface_ready(k,true)){if(mesh_set.insert(k).second)meshes.push_back(k);continue;}
         SurfaceMesh mesh=build_surface(k,true);Array arrays;arrays.resize(Mesh::ARRAY_MAX);
         arrays[Mesh::ARRAY_VERTEX]=mesh.vertices;arrays[Mesh::ARRAY_NORMAL]=mesh.normals;arrays[Mesh::ARRAY_TEX_UV]=mesh.uv;
+        staged_surfaces[k]={mesh.vertices,std::move(mesh.owners)};
         result["coordinate"]=position(k);result["faces"]=mesh.faces;result["arrays"]=arrays;result["vertices"]=mesh.vertices.size();break;
     }
     if(batch_queue.empty()){
-        result["complete"]=true;batch_active=false;batch_owners.clear();mesh_snapshot.clear();mesh_snapshot_absent.clear();
+        result["complete"]=true;batch_active=false;publish_pending=true;mesh_snapshot.clear();mesh_snapshot_absent.clear();
     }
     mesh_us=Time::get_singleton()->get_ticks_usec()-start;max_mesh_us=std::max(max_mesh_us,mesh_us);return result;
+}
+bool NativeRegionalWater::commit_mesh_batch(int64_t id){
+    if(!publish_pending||id<0||uint64_t(id)!=batch_id)return false;
+    for(auto &[k,surface]:staged_surfaces){
+        auto old=published_surfaces.find(k);
+        if(old!=published_surfaces.end())query_cache_bytes-=uint64_t(old->second.vertices.size())*sizeof(Vector3)+old->second.owners.size()*sizeof(Vector3i);
+        if(surface.vertices.is_empty())published_surfaces.erase(k);
+        else{
+            query_cache_bytes+=uint64_t(surface.vertices.size())*sizeof(Vector3)+surface.owners.size()*sizeof(Vector3i);
+            published_surfaces[k]=std::move(surface);
+        }
+    }
+    staged_surfaces.clear();batch_owners.clear();publish_pending=false;published_batch=batch_id;return true;
+}
+const NativeRegionalWater::QuerySurface *NativeRegionalWater::query_surface(Key k,QuerySurface &temporary) const {
+    if(publication_enabled){
+        auto found=published_surfaces.find(k);if(found==published_surfaces.end())return nullptr;
+        ++query_cache_hits;return &found->second;
+    }
+    // Immediate native diagnostics have no renderer. The game enables published
+    // queries with its first batch and never rebuilds geometry to target water.
+    SurfaceMesh mesh=build_surface(k);++query_builds;
+    temporary={mesh.vertices,std::move(mesh.owners)};return &temporary;
 }
 bool NativeRegionalWater::surface_ready(Key k,bool snapshot) const {
     Vector3i c=position(k);
@@ -386,14 +412,14 @@ Dictionary NativeRegionalWater::raycast_surface(const Vector3 &from,const Vector
     // the rendering source; never use an independent shoreline polygon or level.
     for(int z=std::max(0,lo.z);z<=std::min(499,hi.z);++z)for(int y=std::max(0,lo.y);y<=std::min(63,hi.y);++y)for(int x=std::max(0,lo.x);x<=std::min(499,hi.x);++x){
         Key k=key(Vector3i(x,y,z));if(!surface_ready(k))continue;
-        SurfaceMesh mesh=build_surface(k);
+        QuerySurface temporary;const QuerySurface *selected=query_surface(k,temporary);if(!selected)continue;const QuerySurface &mesh=*selected;
         for(int i=0;i<mesh.vertices.size();i+=3){
             Vector3 a=mesh.vertices[i],e1=mesh.vertices[i+1]-a,e2=mesh.vertices[i+2]-a;
             Vector3 h=direction.cross(e2);double determinant=e1.dot(h);if(std::abs(determinant)<1e-12)continue;
             double inverse=1.0/determinant;Vector3 offset=from-a;double u=offset.dot(h)*inverse;if(u< -1e-6||u>1.000001)continue;
             Vector3 q=offset.cross(e1);double v=direction.dot(q)*inverse;if(v< -1e-6||u+v>1.000001)continue;
             double t=e2.dot(q)*inverse;if(t<0||t>1||t>=nearest)continue;
-            nearest=t;point=from+direction*t;normal=mesh.normals[i];owner=mesh.owners[i/3];
+            nearest=t;point=from+direction*t;normal=e2.cross(e1).normalized();owner=mesh.owners[i/3];
         }
     }
     if(nearest<=1){result["hit"]=true;result["point"]=point;result["normal"]=normal;result["cell"]=owner;}
@@ -500,7 +526,7 @@ NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool s
     return output;
 }
 Dictionary NativeRegionalWater::statistics() const {
-    Dictionary d;d["pending_vertical"]=int64_t(vertical.size());d["vertical_steps"]=int64_t(vertical_steps);d["water_ml"]=int64_t(total);d["active_cells"]=int64_t(active.size());d["regions"]=int64_t(regions.size());d["pending_regions"]=int64_t(requests.size());d["dirty_meshes"]=int64_t(meshes.size()+batch_queue.size());d["mesh_batch_active"]=batch_active;d["mesh_snapshot_bytes"]=int64_t(mesh_snapshot.size()*sizeof(Region));d["fill_active"]=fill.running;d["fill_remaining_ml"]=fill.remaining;d["sampled_nodes"]=int64_t(sampled);d["cache_hits"]=int64_t(cache_hits);d["cached_region_rebuilds"]=int64_t(cache_rebuilds);d["cell_steps"]=int64_t(steps);d["changes"]=int64_t(changes);d["step_us"]=int64_t(last_us);d["max_step_us"]=int64_t(max_us);d["mesh_us"]=int64_t(mesh_us);d["max_mesh_us"]=int64_t(max_mesh_us);d["capacity_reached"]=limit;d["resident_cell_bytes"]=int64_t(regions.size()*sizeof(Region));return d;
+    Dictionary d;d["pending_vertical"]=int64_t(vertical.size());d["vertical_steps"]=int64_t(vertical_steps);d["water_ml"]=int64_t(total);d["active_cells"]=int64_t(active.size());d["regions"]=int64_t(regions.size());d["pending_regions"]=int64_t(requests.size());d["dirty_meshes"]=int64_t(meshes.size()+batch_queue.size());d["mesh_batch_active"]=batch_active;d["mesh_publish_pending"]=publish_pending;d["published_mesh_batch"]=int64_t(published_batch);d["query_cache_bytes"]=int64_t(query_cache_bytes);d["query_builds"]=int64_t(query_builds);d["query_cache_hits"]=int64_t(query_cache_hits);d["mesh_snapshot_bytes"]=int64_t(mesh_snapshot.size()*sizeof(Region));d["fill_active"]=fill.running;d["fill_remaining_ml"]=fill.remaining;d["sampled_nodes"]=int64_t(sampled);d["cache_hits"]=int64_t(cache_hits);d["cached_region_rebuilds"]=int64_t(cache_rebuilds);d["cell_steps"]=int64_t(steps);d["changes"]=int64_t(changes);d["step_us"]=int64_t(last_us);d["max_step_us"]=int64_t(max_us);d["mesh_us"]=int64_t(mesh_us);d["max_mesh_us"]=int64_t(max_mesh_us);d["capacity_reached"]=limit;d["resident_cell_bytes"]=int64_t(regions.size()*sizeof(Region));return d;
 }
 // Self-contained compound snapshot: authoritative amounts + derived occupancy.
 // Occupancy is valid only for the terrain captured in the SAME world archive.
@@ -533,7 +559,7 @@ bool NativeRegionalWater::decode(const PackedByteArray &data,bool install){
         if(install)staged.emplace(k,std::move(r));
     }
     if(sum!=expected)return false;if(!install)return true;
-    cancel_mesh_batch();regions.swap(staged);vertical.clear();vertical_set.clear();vertical_regions.clear();vertical_steps=0;restored_cache.clear();cache_rebuilds=0;active.clear();active_set.clear();requests.clear();request_set.clear();meshes.clear();mesh_set.clear();fill=Fill{};total=sum;sampled=0;cache_hits=0;steps=0;changes=0;last_us=max_us=mesh_us=max_mesh_us=0;limit=false;
+    cancel_mesh_batch();published_surfaces.clear();published_batch=0;query_cache_bytes=0;query_builds=0;query_cache_hits=0;regions.swap(staged);vertical.clear();vertical_set.clear();vertical_regions.clear();vertical_steps=0;restored_cache.clear();cache_rebuilds=0;active.clear();active_set.clear();requests.clear();request_set.clear();meshes.clear();mesh_set.clear();fill=Fill{};total=sum;sampled=0;cache_hits=0;steps=0;changes=0;last_us=max_us=mesh_us=max_mesh_us=0;limit=false;
     for(auto &[k,r]:regions){if(r.valid){++cache_hits;restored_cache.insert(k);}else request(k);
         // Version 1 remains playable during one-time terrain-shape cache upgrade.
         if(!r.has_density)request(k);
