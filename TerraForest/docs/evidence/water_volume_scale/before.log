@@ -1,0 +1,19 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS 2 x 2 x 2 cells: measured envelope is closed
+PASS 2 x 2 x 2 cells: rendered fill height matches world metres
+FAIL 2 x 2 x 2 cells: geometric volume agrees with stored volume within 5 percent
+PASS 2 x 2 x 2 cells: measuring does not change water
+VOLUME_SCALE {"bottom":41.0,"closed":true,"dimensions":"2 x 2 x 2 cells","mesh_ml":499998.092651367,"relative_error":0.500001907348633,"stored_ml":1000000,"top":42.0,"triangles":48}
+PASS 4 x 2 x 4 cells: measured envelope is closed
+PASS 4 x 2 x 4 cells: rendered fill height matches world metres
+FAIL 4 x 2 x 4 cells: geometric volume agrees with stored volume within 5 percent
+PASS 4 x 2 x 4 cells: measuring does not change water
+VOLUME_SCALE {"bottom":41.0,"closed":true,"dimensions":"4 x 2 x 4 cells","mesh_ml":2999998.09265137,"relative_error":0.250000476837158,"stored_ml":4000000,"top":42.0,"triangles":128}
+PASS 1 x 1 x 1 cells: measured envelope is closed
+FAIL 1 x 1 x 1 cells: rendered fill height matches world metres
+FAIL 1 x 1 x 1 cells: geometric volume agrees with stored volume within 5 percent
+PASS 1 x 1 x 1 cells: measuring does not change water
+VOLUME_SCALE {"bottom":41.1666679382324,"closed":true,"dimensions":"1 x 1 x 1 cells","mesh_ml":4629.41778823733,"relative_error":0.962964657694101,"stored_ml":125000,"top":41.3333320617676,"triangles":12}
+WATER_VOLUME_SCALE failures=4
+

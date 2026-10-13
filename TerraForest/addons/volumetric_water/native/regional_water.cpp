@@ -622,12 +622,15 @@ NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool s
         for(int component=0;component<count;++component){
             unsigned mask=components[component];if(mask==255)continue;
             std::array<const Sample*,12> floor_contacts{};int floor_count=0;
+            Vector3 axis_sum;int axis_count[3]={0,0,0};
+            const Sample *vertical_surface[12]{};bool vertical_top[12]{};int vertical_count=0;
             Vector3 point=surface_crossing_vertex<Vector3>(mask,[&](Vector3 sum,int a,int b){
                 const Sample &wet=*corners[(mask&(1u<<a))?a:b];
                 const Sample &dry=*corners[(mask&(1u<<a))?b:a];
                 if((a^b)==2&&dry.position.y<wet.position.y&&!wet.shape.open_bottom)floor_contacts[floor_count++]=&wet;
                 Vector3 crossing=wet.position;
-                if((a^b)==2)crossing.y=dry.position.y>wet.position.y?wet.top:wet.bottom;
+                if((a^b)==2){bool top=dry.position.y>wet.position.y;crossing.y=top?wet.top:wet.bottom;
+                    vertical_surface[vertical_count]=&wet;vertical_top[vertical_count++]=top;}
                 else {
                     int axis=(a^b)==1?0:2;double end=wet.origin[axis]+(dry.position[axis]>wet.position[axis]?0.5:0.0);
                     Vector3 candidate=crossing;candidate[axis]=end;
@@ -640,8 +643,24 @@ NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool s
                     }
                     crossing=candidate;crossing.y=(bottom_at(crossing)+top_at(crossing))*0.5;
                 }
+                int crossed_axis=(a^b)==1?0:((a^b)==2?1:2);
+                axis_sum[crossed_axis]+=crossing[crossed_axis];++axis_count[crossed_axis];
                 return sum+crossing;
             });
+            // Each crossing constrains its own face coordinate. Averaging all
+            // coordinates pulls a finite water body inward at every boundary
+            // (a single full cell otherwise shrinks to 1/27 of its volume).
+            // Retain a tiny interior bias to keep diagonal components from
+            // collapsing onto the same edge at single-precision coordinates.
+            for(int axis=0;axis<3;++axis)if(axis_count[axis])point[axis]=0.999*(axis_sum[axis]/axis_count[axis])+0.001*point[axis];
+            // Evaluate vertical constraints at the fitted horizontal position,
+            // not at the old footprint centroid: slope and height are coupled.
+            if(vertical_count){double height=0;
+                for(int n=0;n<vertical_count;++n){const Sample &s=*vertical_surface[n];
+                    double x=(point.x-s.origin.x)*2,z=(point.z-s.origin.z)*2;
+                    height+=s.origin.y+(vertical_top[n]?s.shape.surface(s.head,x,z):s.shape.bottom(x,z))*0.001;}
+                point.y=height/vertical_count;
+            }
             // An exposed surface may end at the bed, but must not stop halfway
             // through the shallow volume after averaging its side crossings.
             if(floor_count){double bed=0;for(int n=0;n<floor_count;++n){const Sample &s=*floor_contacts[n];

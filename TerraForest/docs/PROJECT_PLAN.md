@@ -34,6 +34,14 @@ arbitrary shore/contact accuracy remain incomplete. See
 `evidence/water_sloping_pour/status.txt` and
 `evidence/water_flow_scheduling/status.txt` for passing and failing evidence.
 
+The volume-scale check now also measures the reconstructed mesh, not just stored
+millilitres. The six controlled cases agree within 0.135 percent after correcting
+boundary shrinkage; arbitrary terrain geometry remains unqualified. Larger,
+useful cube-sized gameplay transfers are pending: replace the legacy eleven
+bucket fill IDs with explicit fluid quantity and preserve old saved litres.
+See `evidence/water_volume_scale/status.txt`. This is part of the blocking water
+work, not a reason to resume unrelated features.
+
 ## What counts as first-round coverage
 
 A system needs a usable main-world path, persistent state where appropriate, a small correctness check, a representative performance check, and explicit limits. An isolated addon, API test or visual showcase is supporting evidence, not integrated coverage. User-visible behavior also needs a human checkpoint. Production qualification additionally requires combined workloads, sustained operation and release checks.

@@ -1,0 +1,39 @@
+Water geometric-volume correction - 2026-10-13
+
+User requirement: consistent world units, useful cube-sized transfers, and the
+visible water must represent the transferred amount. Numeric conservation
+alone is insufficient. A larger normal scoop remains pending below.
+
+The former edge-position average shrank finite water envelopes. Independent
+triangle volume integration found 0.50 m3 for a stored 1 m3 test body, 3 m3 for
+4 m3, and about 4.63 L for an isolated 125 L cell. These are controlled mesh
+fixtures, not measurements of every lake; they prove a reconstruction error.
+
+The existing shared surface-nets builder now fits each crossing's face
+coordinate. It evaluates vertical planes again at the fitted x/z position so
+sloping water stays above its terrain floor. A 0.1 percent interior bias keeps
+otherwise coincident diagonal components separate at float precision. There is
+no extra surface, no volume deletion, and no global scan or alternate mesher.
+
+Six controlled cases pass: 1 m3, 4 m3, 125 L, 100 L shallow layer, 1 L film and
+10 L sloping film. Closed-envelope triangle integrals agree with stored amounts
+within 0.135 percent; extrema agree within 1 mm. Test acceptance is 1 percent
+volume and 1 mm height. The same builder's diagnostic contact flag closes the
+otherwise hidden solid-contact shell for measurement without moving vertices.
+These fixtures do not prove arbitrary curved/complex terrain volume accuracy.
+
+Existing 510 topology patterns, cut profiles and material/publication tests pass.
+Actual-world ground pour passes, with no sampled triangle centroid below ground,
+and remains scoopable. Lake bucket contact test passes. Underwater screenshot
+was inspected and retains removal of the previously reproduced internal bands.
+The puddle outline is still angular. No new runtime performance claim is made.
+
+Still required:
+- Normal gameplay tool should transfer a useful cube-sized quantity (proposed
+  default 1 m3 = 1,000 L). Current bucket still holds only 10 L.
+- Replace the eleven legacy bucket fill item IDs with actual per-stack fluid
+  quantity; migrate old amounts exactly, preserving drag/drop, chests, dropped
+  items, toolbelt and saves. Never reinterpret an old 10 L as 1,000 L.
+- End-to-end measured basin scoop/pour with larger gameplay container.
+- General shore/contact accuracy, faster mined-outlet response, and unwanted
+  detached terrain handling remain incomplete. All broad water gates stay open.
