@@ -1,0 +1,20 @@
+Shared surface query integration, 2026-10-13
+
+Rendering, bucket raycasts and nearest-surface selection call build_surface.
+Triangles retain their owning wet cell so bucket transfers use exact stored
+quantities. Ray reach is limited to five metres; invalid terrain occupancy is
+not pickable. Queries do not consume dirty render jobs or advance simulation.
+The old shoreline polygon builder is removed. Physical depth uses stored wet
+intervals; it no longer invents water outside them using obsolete polygons.
+
+Release-native check: 30 height/boundary cases, nine assertions passed,
+including query/mesh agreement, misses, invalid occupancy and conservation.
+World check: all 49 assertions passed with actual shoreline bucket clicks,
+mining, independent puddle, conserved quantities, save and cached reload.
+The shore test now requires a reconstructed surface hit and a nearby outward
+miss, rather than assuming the obsolete clipped apron outside wet cells exists.
+
+Not completed: coherent mesh publication during flow, existing continuity
+failures, material storage unification and broad performance qualification.
+Queries use current state, not a cached copy of the last published mesh.
+They rebuild nearby bounded regions on demand; no per-frame raycast was added.

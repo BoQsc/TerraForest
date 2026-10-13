@@ -6,6 +6,9 @@
 #include <godot_cpp/variant/aabb.hpp>
 #include <godot_cpp/variant/typed_array.hpp>
 #include <godot_cpp/variant/transform3d.hpp>
+#include <godot_cpp/variant/packed_vector3_array.hpp>
+#include <godot_cpp/variant/packed_vector2_array.hpp>
+#include <vector>
 #include <array>
 #include <deque>
 #include <map>
@@ -79,14 +82,14 @@ class NativeRegionalWater : public godot::RefCounted {
     void process_cell(const godot::Vector3i &p);
     void process_fill();
     void move(const godot::Vector3i &a,const godot::Vector3i &b,uint64_t amount);
-    struct ShoreMesh {
-        std::array<godot::Vector3,24> vertices{};
-        std::array<godot::Vector3i,8> owners{};
-        int triangles=0;
+    struct SurfaceMesh {
+        godot::PackedVector3Array vertices,normals;
+        godot::PackedVector2Array uv;
+        std::vector<godot::Vector3i> owners;
+        godot::Dictionary faces;
     };
-    bool exposed_surface(const godot::Vector3i &p,double &height) const;
-    ShoreMesh shoreline(const godot::Vector3i &p) const;
-    bool shoreline_point(const godot::Vector3 &point,const ShoreMesh &mesh,godot::Vector3i &owner) const;
+    bool surface_ready(Key owner) const;
+    SurfaceMesh build_surface(Key owner) const;
     bool decode(const godot::PackedByteArray &data,bool install);
 protected: static void _bind_methods();
 public:
@@ -101,6 +104,7 @@ public:
     godot::Vector3 surface_near(const godot::Vector3 &point,double radius) const;
     double depth_at(const godot::Vector3 &point) const;
     godot::PackedByteArray placement_mask(const godot::TypedArray<godot::Transform3D> &transforms) const;
+    godot::Dictionary raycast_surface(const godot::Vector3 &from,const godot::Vector3 &to) const;
     godot::Dictionary next_mesh();
     godot::Dictionary statistics() const;
     godot::PackedByteArray capture_snapshot(const godot::PackedByteArray &catalog) const;

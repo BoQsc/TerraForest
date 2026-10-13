@@ -72,6 +72,7 @@ void NativeRegionalWater::_bind_methods(){
     ClassDB::bind_method(D_METHOD("surface_near","point","radius"),&NativeRegionalWater::surface_near);
     ClassDB::bind_method(D_METHOD("depth_at","point"),&NativeRegionalWater::depth_at);
     ClassDB::bind_method(D_METHOD("placement_mask","transforms"),&NativeRegionalWater::placement_mask);
+    ClassDB::bind_method(D_METHOD("raycast_surface","from","to"),&NativeRegionalWater::raycast_surface);
     ClassDB::bind_method(D_METHOD("next_mesh"),&NativeRegionalWater::next_mesh);
     ClassDB::bind_method(D_METHOD("statistics"),&NativeRegionalWater::statistics);
     ClassDB::bind_method(D_METHOD("capture_snapshot","catalog"),&NativeRegionalWater::capture_snapshot);
@@ -250,69 +251,11 @@ int64_t NativeRegionalWater::brush(const Vector3 &point,double radius,int64_t am
         auto it=regions.find(region_key(p));if(it==regions.end())continue;uint64_t &v=it->second.water[index(p)];uint64_t take=std::min(v,requested-removed);if(take){v-=take;total-=take;removed+=take;changed(p);}if(removed==requested)return removed;}
     return int64_t(removed);
 }
-bool NativeRegionalWater::exposed_surface(const Vector3i &p,double &height) const {
-    const Region *r=get(p);if(!r)return false;int i=index(p);
-    auto interval=WaterSurfaceInterval::from_cell(p.y,r->floor[i],r->ceiling[i],r->water[i]);
-    if(!interval.wet)return false;height=interval.top;
-    Vector3i q=p+Vector3i(0,1,0);const Region *above=get(q);
-    return !(height>=(p.y+1)*0.5-0.00001&&above&&above->floor[index(q)]==0&&above->water[index(q)]);
-}
-NativeRegionalWater::ShoreMesh NativeRegionalWater::shoreline(const Vector3i &p) const {
-    ShoreMesh result;const Region *region=get(p);if(!region||!region->has_density||region->water[index(p)])return result;
-    const Region &r=*region;int x=p.x&7,y=p.y&7,z=p.z&7;
-            bool wet[4]{};double levels[4]{};double level=0;int count=0;bool consistent=true;
-            // Perimeter order matches the four center-fan triangles below.
-            Vector3i offsets[4]={{0,0,-1},{1,0,0},{0,0,1},{-1,0,0}};
-            for(int d=0;d<4;++d){wet[d]=exposed_surface(p+offsets[d],levels[d]);
-                if(wet[d]){if(count&&std::abs(level/count-levels[d])>0.002)consistent=false;level+=levels[d];++count;}}
-            if(!count||!consistent)return result;level/=count;
-            double t=(level-p.y*0.5)*2.0;if(t<=0||t>1)return result;
-            Vector3 points[5]={Vector3(p.x*0.5,level,p.z*0.5),Vector3((p.x+1)*0.5,level,p.z*0.5),
-                Vector3((p.x+1)*0.5,level,(p.z+1)*0.5),Vector3(p.x*0.5,level,(p.z+1)*0.5),Vector3((p.x+0.5)*0.5,level,(p.z+0.5)*0.5)};
-            double density[5]{};int dx[4]={0,1,1,0},dz[4]={0,0,1,1};
-            for(int n=0;n<4;++n){int node=x+dx[n]+9*y+81*(z+dz[n]);density[n]=r.density[node]*(1-t)+r.density[node+9]*t;density[4]+=density[n]*0.25;}
-            // This reconstructs a terrain-cut cell, not a free-air dry cell.
-            // Never visually advance a flowing front ahead of its stored water.
-            if(*std::min_element(density,density+4)>0||*std::max_element(density,density+4)<=0)return result;
-            bool connected[4]{};Vector3i owners[4];int queue[4],head=0,tail=0;
-            for(int d=0;d<4;++d)if(wet[d]&&(density[d]>0||density[(d+1)%4]>0)){connected[d]=true;owners[d]=p+offsets[d];queue[tail++]=d;}
-            while(head<tail){int d=queue[head++];int neighbours[2]={(d+3)%4,(d+1)%4};int shared[2]={d,(d+1)%4};
-                for(int n=0;n<2;++n)if(!connected[neighbours[n]]&&(density[4]>0||density[shared[n]]>0)){
-                    connected[neighbours[n]]=true;owners[neighbours[n]]=owners[d];queue[tail++]=neighbours[n];}}
-            for(int d=0;d<4;++d)if(connected[d]){
-                int ids[3]={d,(d+1)%4,4};Vector3 clipped[4];int size=0;
-                for(int n=0;n<3;++n){int a=ids[n],b=ids[(n+1)%3];bool inside_a=density[a]>0,inside_b=density[b]>0;
-                    if(inside_a)clipped[size++]=points[a];
-                    if(inside_a!=inside_b)clipped[size++]=points[a].lerp(points[b],density[a]/(density[a]-density[b]));}
-                for(int n=1;n+1<size;++n)if((clipped[n]-clipped[0]).cross(clipped[n+1]-clipped[0]).length_squared()>1e-16){
-                    int out=result.triangles*3;result.vertices[out]=clipped[0];result.vertices[out+1]=clipped[n];result.vertices[out+2]=clipped[n+1];result.owners[result.triangles++]=owners[d];}
-            }
-    return result;
-}
-bool NativeRegionalWater::shoreline_point(const Vector3 &point,const ShoreMesh &mesh,Vector3i &owner) const {
-    for(int n=0;n<mesh.triangles;++n){Vector3 a=mesh.vertices[n*3],b=mesh.vertices[n*3+1],c=mesh.vertices[n*3+2];
-        auto edge=[&](Vector3 u,Vector3 v){return (v.x-u.x)*(point.z-u.z)-(v.z-u.z)*(point.x-u.x);};
-        if(edge(a,b)>=-1e-8&&edge(b,c)>=-1e-8&&edge(c,a)>=-1e-8){owner=mesh.owners[n];return true;}}
-    return false;
-}
 Dictionary NativeRegionalWater::transfer_litre(const Vector3 &from,const Vector3 &to,bool pour,Object *inventory,int64_t slot,int64_t revision){
     Dictionary out;out["ok"]=false;out["pending"]=false;
     if(fill.running||!from.is_finite()||!to.is_finite()||from.distance_to(to)>5||!inventory||!inventory->has_method("exchange_bucket")){out["reason"]="Water is preparing, or target is out of reach";return out;}
-    Vector3i target=cell(to),last_shore(-1,-1,-1);bool hit=false;
-    for(int i=0;i<=100;++i){Vector3 p=from.lerp(to,i/100.0);Vector3i c=cell(p);const Region *r=get(c);
-        if(r&&!r->water[index(c)]&&c!=last_shore&&std::abs(to.y-from.y)>0.000001){
-            last_shore=c;ShoreMesh shore=shoreline(c);
-            if(shore.triangles){double t=(shore.vertices[0].y-from.y)/(to.y-from.y);Vector3i owner;
-                if(t>=0&&t<=1&&shoreline_point(from.lerp(to,t),shore,owner)){target=owner;hit=true;break;}}
-        }
-        if(!r||!r->water[index(c)]||r->floor[index(c)]==r->ceiling[index(c)])continue;
-        int j=index(c);double top=c.y*0.5+r->floor[j]*0.001+std::min(r->water[j],uint64_t(r->ceiling[j]-r->floor[j])*250)/250000.0;
-        bool intersects=depth_at(p)>0;
-        // Analytic surface crossing catches a thin one-litre puddle between
-        // ray-march samples without picking dry air above it or buried water.
-        if(std::abs(to.y-from.y)>0.000001){double t=(top-from.y)/(to.y-from.y);Vector3 q=from.lerp(to,t);
-            intersects|=t>=0&&t<=1&&q.x>=c.x*0.5&&q.x<(c.x+1)*0.5&&q.z>=c.z*0.5&&q.z<(c.z+1)*0.5;}
-        if(intersects){target=c;hit=true;break;}}
+    Dictionary surface=raycast_surface(from,to);bool hit=bool(surface["hit"]);
+    Vector3i target=hit?Vector3i(surface["cell"]):cell(to);
     if(!pour&&!hit){out["reason"]="Aim at nearby water containing at least one litre";return out;}
     Region *r=get(target,true);if(!r){out["pending"]=in_domain(target)&&!limit;out["reason"]="Preparing water at this location";return out;}
     // A terrain ray can end inside a conservative shoreline cell. Pour into
@@ -352,30 +295,28 @@ Dictionary NativeRegionalWater::transfer_litre(const Vector3 &from,const Vector3
 }
 Vector3 NativeRegionalWater::surface_near(const Vector3 &point,double radius) const {
     Vector3 best(INFINITY,INFINITY,INFINITY);if(!point.is_finite()||!std::isfinite(radius)||radius<0||radius>3)return best;
-    Vector3i lo=cell(point-Vector3(radius,radius,radius)),hi=cell(point+Vector3(radius,radius,radius));double distance=radius*radius;
-    for(int z=lo.z;z<=hi.z;++z)for(int y=lo.y;y<=hi.y;++y)for(int x=lo.x;x<=hi.x;++x){Vector3i p(x,y,z);const Region *r=get(p);if(!r)continue;int i=index(p);
-        if(!r->water[i]){ShoreMesh shore=shoreline(p);
-            for(int n=0;n<shore.triangles;++n){Vector3 q=(shore.vertices[n*3]+shore.vertices[n*3+1]+shore.vertices[n*3+2])/3.0;
-                double d=point.distance_squared_to(q);if(d<distance){distance=d;best=q;}}
-            continue;
+    Vector3 margin(radius+0.5,radius+0.5,radius+0.5);
+    Vector3i lo=Vector3i(((point-margin)/4.0).floor()),hi=Vector3i(((point+margin)/4.0).floor());double distance=radius*radius;
+    for(int z=std::max(0,lo.z);z<=std::min(499,hi.z);++z)for(int y=std::max(0,lo.y);y<=std::min(63,hi.y);++y)for(int x=std::max(0,lo.x);x<=std::min(499,hi.x);++x){
+        Key k=key(Vector3i(x,y,z));if(!surface_ready(k))continue;SurfaceMesh mesh=build_surface(k);
+        auto consider=[&](Vector3 q){double d=point.distance_squared_to(q);if(d<distance){distance=d;best=q;}};
+        for(int i=0;i<mesh.vertices.size();i+=3){
+            if(mesh.normals[i].y<=0.001)continue;
+            Vector3 a=mesh.vertices[i],b=mesh.vertices[i+1],c=mesh.vertices[i+2];
+            Vector3 u=b-a,v=c-a,n=u.cross(v);double n2=n.length_squared();if(n2<1e-16)continue;
+            Vector3 q=point-n*(n.dot(point-a)/n2),w=q-a;
+            double uu=u.dot(u),uv=u.dot(v),vv=v.dot(v),wu=w.dot(u),wv=w.dot(v),denom=uu*vv-uv*uv;
+            if(denom>1e-16){double bu=(vv*wu-uv*wv)/denom,bv=(uu*wv-uv*wu)/denom;if(bu>=0&&bv>=0&&bu+bv<=1)consider(q);}
+            for(int edge=0;edge<3;++edge){Vector3 start=mesh.vertices[i+edge],delta=mesh.vertices[i+(edge+1)%3]-start;
+                double length=delta.length_squared();if(length>1e-16)consider(start+delta*std::clamp(double((point-start).dot(delta))/length,0.0,1.0));}
         }
-        if(r->ceiling[i]==r->floor[i])continue;
-        double top=y*0.5+r->floor[i]*0.001+std::min(r->water[i],uint64_t(r->ceiling[i]-r->floor[i])*250)/250000.0;
-        Vector3 q((x+0.5)*0.5,top,(z+0.5)*0.5);if(depth_at(q+Vector3(0,0.0001,0))>0)continue;
-        double d=point.distance_squared_to(q);if(d<distance){distance=d;best=q;}}
+    }
     return best;
 }
 
 double NativeRegionalWater::depth_at(const Vector3 &point) const {
     if(!point.is_finite())return 0;Vector3i p=cell(point);const Region *r=get(p);if(!r)return 0;int i=index(p);
-    if(!r->water[i]){ShoreMesh shore=shoreline(p);Vector3i owner;
-        if(!shore.triangles||point.y>=shore.vertices[0].y||!shoreline_point(point,shore,owner))return 0;
-        // The reconstructed wedge is wet only above the cached terrain surface.
-        Vector3 t=point*2.0-Vector3(p);int x=p.x&7,y=p.y&7,z=p.z&7;double density=0;
-        for(int dz=0;dz<2;++dz)for(int dy=0;dy<2;++dy)for(int dx=0;dx<2;++dx)
-            density+=r->density[x+dx+9*(y+dy)+81*(z+dz)]*(dx?t.x:1-t.x)*(dy?t.y:1-t.y)*(dz?t.z:1-t.z);
-        return density>0?shore.vertices[0].y-point.y:0;
-    }
+    if(!r->water[i]||r->floor[i]==r->ceiling[i])return 0;
     double top=p.y*0.5+r->floor[i]*0.001+std::min(r->water[i],uint64_t(r->ceiling[i]-r->floor[i])*250)/250000.0;
     if(point.y>=top||point.y<p.y*0.5+r->floor[i]*0.001)return 0;
     // At most the bounded vertical domain, only for actual wet query points.
@@ -386,6 +327,38 @@ double NativeRegionalWater::depth_at(const Vector3 &point) const {
 PackedByteArray NativeRegionalWater::placement_mask(const TypedArray<Transform3D> &transforms) const {
     PackedByteArray result;if(transforms.size()>512)return result;result.resize(transforms.size());for(int i=0;i<transforms.size();++i){Transform3D t=transforms[i];result.set(i,depth_at(t.origin)>0?1:0);}return result;
 }
+bool NativeRegionalWater::surface_ready(Key k) const {
+    Vector3i c=position(k);
+    for(int z=-1;z<=1;++z)for(int y=-1;y<=1;++y)for(int x=-1;x<=1;++x){
+        Vector3i n=c+Vector3i(x,y,z);if(n.x<0||n.y<0||n.z<0)continue;
+        auto neighbour=regions.find(key(n));if(neighbour!=regions.end()&&!neighbour->second.valid)return false;
+    }
+    return true;
+}
+Dictionary NativeRegionalWater::raycast_surface(const Vector3 &from,const Vector3 &to) const {
+    Dictionary result;result["hit"]=false;
+    if(!from.is_finite()||!to.is_finite()||from.distance_to(to)>5.0)return result;
+    Vector3 direction=to-from;if(direction.length_squared()<1e-12)return result;
+    Vector3 low=from.min(to)-Vector3(0.5,0.5,0.5),high=from.max(to)+Vector3(0.5,0.5,0.5);
+    Vector3i lo=Vector3i((low/4.0).floor()),hi=Vector3i((high/4.0).floor());
+    double nearest=2.0;Vector3 point,normal;Vector3i owner;
+    // The five-metre reach bounds the candidate owner box. Build from precisely
+    // the rendering source; never use an independent shoreline polygon or level.
+    for(int z=std::max(0,lo.z);z<=std::min(499,hi.z);++z)for(int y=std::max(0,lo.y);y<=std::min(63,hi.y);++y)for(int x=std::max(0,lo.x);x<=std::min(499,hi.x);++x){
+        Key k=key(Vector3i(x,y,z));if(!surface_ready(k))continue;
+        SurfaceMesh mesh=build_surface(k);
+        for(int i=0;i<mesh.vertices.size();i+=3){
+            Vector3 a=mesh.vertices[i],e1=mesh.vertices[i+1]-a,e2=mesh.vertices[i+2]-a;
+            Vector3 h=direction.cross(e2);double determinant=e1.dot(h);if(std::abs(determinant)<1e-12)continue;
+            double inverse=1.0/determinant;Vector3 offset=from-a;double u=offset.dot(h)*inverse;if(u< -1e-6||u>1.000001)continue;
+            Vector3 q=offset.cross(e1);double v=direction.dot(q)*inverse;if(v< -1e-6||u+v>1.000001)continue;
+            double t=e2.dot(q)*inverse;if(t<0||t>1||t>=nearest)continue;
+            nearest=t;point=from+direction*t;normal=mesh.normals[i];owner=mesh.owners[i/3];
+        }
+    }
+    if(nearest<=1){result["hit"]=true;result["point"]=point;result["normal"]=normal;result["cell"]=owner;}
+    return result;
+}
 Dictionary NativeRegionalWater::next_mesh(){
     Dictionary result;if(meshes.empty())return result;uint64_t start=Time::get_singleton()->get_ticks_usec();
     // Invalid occupancy is unknown, not empty space. Retain the last published
@@ -394,18 +367,18 @@ Dictionary NativeRegionalWater::next_mesh(){
     // independent water or turn a frame into an unbounded queue scan.
     Key k=0;bool ready=false;const size_t attempts=std::min<size_t>(meshes.size(),8);
     for(size_t attempt=0;attempt<attempts;++attempt){
-        k=meshes.front();meshes.pop_front();Vector3i c=position(k);bool valid=true;
-        for(int z=-1;z<=1&&valid;++z)for(int y=-1;y<=1&&valid;++y)for(int x=-1;x<=1;++x){
-            Vector3i n=c+Vector3i(x,y,z);if(n.x<0||n.y<0||n.z<0)continue;
-            auto neighbour=regions.find(key(n));
-            if(neighbour!=regions.end()&&!neighbour->second.valid){valid=false;break;}
-        }
-        if(valid){ready=true;mesh_set.erase(k);break;}
+        k=meshes.front();meshes.pop_front();
+        if(surface_ready(k)){ready=true;mesh_set.erase(k);break;}
         meshes.push_back(k);
     }
     if(!ready)return result;
-    result["coordinate"]=position(k);Array arrays;arrays.resize(Mesh::ARRAY_MAX);
-    PackedVector3Array vertices,normals;PackedVector2Array uv;
+    SurfaceMesh mesh=build_surface(k);
+    result["coordinate"]=position(k);result["faces"]=mesh.faces;Array arrays;arrays.resize(Mesh::ARRAY_MAX);
+    arrays[Mesh::ARRAY_VERTEX]=mesh.vertices;arrays[Mesh::ARRAY_NORMAL]=mesh.normals;arrays[Mesh::ARRAY_TEX_UV]=mesh.uv;result["arrays"]=arrays;result["vertices"]=mesh.vertices.size();
+    mesh_us=Time::get_singleton()->get_ticks_usec()-start;max_mesh_us=std::max(max_mesh_us,mesh_us);return result;
+}
+NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k) const {
+    SurfaceMesh output;auto &vertices=output.vertices;auto &normals=output.normals;auto &uv=output.uv;
     // The sole runtime mesher is the terrain surface-nets reconstruction. Water
     // supplies exact material crossings instead of losing thin volumes to a
     // fixed lattice's point samples. Quantities and simulation are not modified.
@@ -448,12 +421,19 @@ Dictionary NativeRegionalWater::next_mesh(){
         [&](int x,int y,int z){return x< -1||x>=8||y< -1||y>=8||z< -1||z>=8?-1:ids[vertex_index(x,y,z)];},
         [](int,int,int,int){return true;},
         [&](int a,int b,int c,int d,bool reverse){
+            const auto &origin=representatives[c];Vector3i owner=base+Vector3i(origin.cx,origin.cy,origin.cz);
+            if(!(origin.mask&1)){
+                const auto &first=representatives[a];const auto &second=representatives[b];const auto &last=representatives[d];
+                if(first.cx==origin.cx&&second.cx==origin.cx&&last.cx==origin.cx)++owner.x;
+                else if(first.cy==origin.cy&&second.cy==origin.cy&&last.cy==origin.cy)++owner.y;
+                else ++owner.z;
+            }
             surface_quad(a,b,c,d,reverse,[&](int i){return representatives[i].position;},
                 [&](int i,int j,int l){
                     Vector3 a=representatives[i].position,b=representatives[j].position,c=representatives[l].position;
                     Vector3 n=(c-a).cross(b-a).normalized();if(n.length_squared()<0.5)return;
                     for(Vector3 p:{a,b,c}){vertices.push_back(p);normals.push_back(n);uv.push_back(Vector2(p.x,p.z));}
-                    ++triangles;
+                    output.owners.push_back(owner);++triangles;
                     if(std::abs(n.y)<0.001){
                         ++sides;double height=std::max({a.y,b.y,c.y})-std::min({a.y,b.y,c.y});max_side=std::max(max_side,height);
                         if(height<0.0011)++tiny;else if(height<0.01)++small;else if(height<0.1)++medium;else ++large;
@@ -462,9 +442,8 @@ Dictionary NativeRegionalWater::next_mesh(){
         });
     Dictionary faces;faces["top"]=tops;faces["bottom"]=bottoms;faces["shore_triangles"]=0;faces["side"]=sides;faces["side_under_1mm"]=tiny;
     faces["side_under_1cm"]=small;faces["side_under_10cm"]=medium;faces["side_larger"]=large;faces["max_side_height"]=max_side;
-    faces["shared_surface_nets"]=true;faces["triangles"]=triangles;result["faces"]=faces;
-    arrays[Mesh::ARRAY_VERTEX]=vertices;arrays[Mesh::ARRAY_NORMAL]=normals;arrays[Mesh::ARRAY_TEX_UV]=uv;result["arrays"]=arrays;result["vertices"]=vertices.size();
-    mesh_us=Time::get_singleton()->get_ticks_usec()-start;max_mesh_us=std::max(max_mesh_us,mesh_us);return result;
+    faces["shared_surface_nets"]=true;faces["triangles"]=triangles;output.faces=faces;
+    return output;
 }
 Dictionary NativeRegionalWater::statistics() const {
     Dictionary d;d["pending_vertical"]=int64_t(vertical.size());d["vertical_steps"]=int64_t(vertical_steps);d["water_ml"]=int64_t(total);d["active_cells"]=int64_t(active.size());d["regions"]=int64_t(regions.size());d["pending_regions"]=int64_t(requests.size());d["dirty_meshes"]=int64_t(meshes.size());d["fill_active"]=fill.running;d["fill_remaining_ml"]=fill.remaining;d["sampled_nodes"]=int64_t(sampled);d["cache_hits"]=int64_t(cache_hits);d["cached_region_rebuilds"]=int64_t(cache_rebuilds);d["cell_steps"]=int64_t(steps);d["changes"]=int64_t(changes);d["step_us"]=int64_t(last_us);d["max_step_us"]=int64_t(max_us);d["mesh_us"]=int64_t(mesh_us);d["max_mesh_us"]=int64_t(max_mesh_us);d["capacity_reached"]=limit;d["resident_cell_bytes"]=int64_t(regions.size()*sizeof(Region));return d;

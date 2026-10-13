@@ -17,7 +17,7 @@ func fixture(x:int,floor_mm:int):
  return water
 func _initialize():
  GDExtensionManager.load_extension("res://addons/volumetric_water/volumetric_water.gdextension")
- var closed:=true;var visible:=true;var bounded:=true;var conserved:=true;var shared:=true;var cases:=0
+ var closed:=true;var visible:=true;var bounded:=true;var conserved:=true;var shared:=true;var cases:=0;var picked:=true;var missed:=true;var nearest_matches:=true;var invalid_misses:=true
  for x in [0,7]:
   for floor_mm in range(0,491,35):
    var water=fixture(x,floor_mm)
@@ -41,11 +41,26 @@ func _initialize():
    for value in edges.values():closed=closed and value==2
    visible=visible and count>0 and high-low>0.001
    conserved=conserved and before==water.capture_snapshot(ClassDB.instantiate("NativeLakeCatalog").encode([]))
+   var center:=Vector3(40.25+x*0.5,41.5+floor_mm*0.001,41.75)
+   var hit:Dictionary=water.raycast_surface(center+Vector3.UP,center-Vector3.UP)
+   picked=picked and hit.get("hit",false) and hit.get("cell",Vector3i.ZERO)==Vector3i(80+x,83,83)
+   if hit.get("hit",false):picked=picked and absf(hit.point.y-high)<0.00002
+   var outside:=center+Vector3(0.4,0,0)
+   missed=missed and not water.raycast_surface(outside+Vector3.UP,outside-Vector3.UP).hit
+   conserved=conserved and before==water.capture_snapshot(ClassDB.instantiate("NativeLakeCatalog").encode([]))
+   var nearest:Vector3=water.surface_near(center+Vector3.UP*0.1,0.2)
+   nearest_matches=nearest_matches and nearest.is_finite() and absf(nearest.y-high)<0.00002
+   water.invalidate(AABB(center-Vector3.ONE*0.01,Vector3.ONE*0.02))
+   invalid_misses=invalid_misses and not water.raycast_surface(center+Vector3.UP,center-Vector3.UP).hit
    cases+=1
  check(shared,"Water packets use shared surface-nets reconstruction")
  check(visible,"One-litre puddles retain nonzero geometry across vertical offsets")
  check(bounded,"Thin-water vertices stay between actual bottom and top")
  check(closed,"Region-boundary puddles have exactly two triangles per welded edge")
+ check(nearest_matches,"Nearest-surface query agrees with reconstructed upper surface")
+ check(invalid_misses,"Unknown terrain occupancy is not pickable")
+ check(picked,"Thin-water ray hits rendered top and correct owning volume cell")
+ check(missed,"Rays outside rendered puddle miss")
  check(conserved,"Meshing leaves stored quantity and snapshot unchanged")
  DirAccess.make_dir_recursive_absolute("res://reports")
  var file=FileAccess.open("res://reports/water_material_surface.json",FileAccess.WRITE);file.store_string(JSON.stringify({"failures":failures,"cases":cases}));file.close()

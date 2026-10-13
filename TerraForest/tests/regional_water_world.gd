@@ -69,15 +69,16 @@ func run():
  var inventory=game.player_hud.inventory
  check(game.player_hud.equip_item(401),"Gameplay equips normal bucket")
  var slot:int=game.player_hud.active_slot
- # Locate a rendered sub-cell shore with zero locally owned amount. Read the
- # saved store only in this diagnostic so the check cannot accidentally target
- # an ordinary wet cell and claim to cover shoreline interaction.
- var store:PackedByteArray=game.lakes.capture_snapshot()
+ # Target the actual reconstructed shoreline. Require a nearby outward ray
+ # to miss so this cannot silently become an ordinary interior-pool test.
  var shore:=Vector3.INF
  for sample in 24:
   var q:Vector3=game.lakes.water.surface_near(center+Vector3(10.5+sample*0.125,-0.75,0.0),0.2)
-  if q.is_finite() and stored_amount(store,q-Vector3.UP*0.0001)==0:shore=q;break
- check(shore.is_finite(),"Actual lake exposes a terrain-clipped shoreline target outside owned wet cells")
+  if not q.is_finite():continue
+  var shore_hit:Dictionary=game.lakes.water.raycast_surface(q+Vector3.UP,q-Vector3.UP)
+  var outside:=q+Vector3.RIGHT*0.5
+  if shore_hit.hit and not game.lakes.water.raycast_surface(outside+Vector3.UP,outside-Vector3.UP).hit:shore=shore_hit.point;break
+ check(shore.is_finite(),"Actual lake shoreline is pickable while outward ray misses")
  if not shore.is_finite():await finish();return
  print("SHORE_TARGET ",shore)
  game.app_focused=true;Input.mouse_mode=Input.MOUSE_MODE_CAPTURED
