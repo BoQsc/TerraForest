@@ -84,8 +84,22 @@ func run():
  game.app_focused=true;Input.mouse_mode=Input.MOUSE_MODE_CAPTURED
  game.pitch=-PI/2;game.camera.global_position=shore+Vector3.UP*1.0;game.camera.look_at(shore,Vector3.FORWARD)
  var shore_click:=InputEventMouseButton.new();shore_click.button_index=MOUSE_BUTTON_LEFT;shore_click.pressed=true
+ var scoop_hit:Dictionary=game.lakes.water.raycast_surface(shore+Vector3.UP,shore-Vector3.UP)
+ var scoop_cell:Vector3=Vector3(scoop_hit.cell)*0.5+Vector3.ONE*0.25
+ var scoop_trace:Array=[{"frame":-1,"ml":stored_amount(game.lakes.capture_snapshot(),scoop_cell),"surface_y":scoop_hit.point.y}]
  game._unhandled_input(shore_click)
  check(inventory.snapshot().slots[slot].item==411 and game.lakes.statistics().water_ml==quantity-10000,"Real left-click at rendered shore conserves world plus bucket water")
+ scoop_trace.append({"frame":0,"ml":stored_amount(game.lakes.capture_snapshot(),scoop_cell),"surface_y":game.lakes.water.raycast_surface(shore+Vector3.UP,shore-Vector3.UP).get("point",Vector3.INF).y})
+ for frame in 16:
+  await process_frame
+  var shown:Dictionary=game.lakes.water.raycast_surface(shore+Vector3.UP,shore-Vector3.UP)
+  scoop_trace.append({"frame":frame+1,"ml":stored_amount(game.lakes.capture_snapshot(),scoop_cell),"surface_y":shown.get("point",Vector3.INF).y})
+ var lowest_surface:float=scoop_trace[1].surface_y
+ for row:Dictionary in scoop_trace:lowest_surface=minf(lowest_surface,row.surface_y)
+ check(scoop_trace[0].surface_y-lowest_surface>=0.009,"Bucket scoop is published as a local surface depression")
+ check(scoop_trace.back().surface_y-lowest_surface>=0.004 and scoop_trace.back().ml>scoop_trace[1].ml,"Surrounding water refills the published scoop depression")
+ timings.bucket_scoop_trace=scoop_trace
+ print("BUCKET_SCOOP_TRACE ",JSON.stringify(scoop_trace))
  shore_click.button_index=MOUSE_BUTTON_RIGHT;game._unhandled_input(shore_click)
  check(inventory.snapshot().slots[slot].item==401 and game.lakes.statistics().water_ml==quantity,"Real right-click at shore returns full bucket without creating a detached puddle")
  Input.mouse_mode=Input.MOUSE_MODE_VISIBLE

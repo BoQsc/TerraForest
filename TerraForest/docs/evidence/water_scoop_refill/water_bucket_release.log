@@ -1,0 +1,18 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS One click fills available whole litres without losing remainder (62500 ml)
+PASS Stale click changes neither inventory nor water
+PASS Full bucket cannot take more water
+PASS One right click returns all bucket contents exactly
+PASS Invalid bucket amount is atomic
+PASS One click fills available whole litres without losing remainder (3570 ml)
+PASS Stale click changes neither inventory nor water
+PASS One right click returns all bucket contents exactly
+PASS Invalid bucket amount is atomic
+PASS One click fills available whole litres without losing remainder (570 ml)
+PASS Stale click changes neither inventory nor water
+PASS One right click returns all bucket contents exactly
+PASS Invalid bucket amount is atomic
+PASS Flow processes only the starting active frontier and defers reawakened cells
+PASS Frontier-limited flow preserves quantity
+

@@ -1,0 +1,9 @@
+Published scoop/refill motion, 2026-10-13
+
+Before: a real shoreline bucket click changed its source cell from 62500 ml to 52500 ml, but simulation relaxed it to 61886 ml before any changed surface was published. The first changed published height was 48.24756 m versus 48.25 m originally; the actual scoop depression was never displayed.
+
+Change: publish queued edits before flow advancement. Immutable native batches retain that state across frames. Native advance processes no more than the active frontier present at entry, deferring reawakened/new active cells until a later call. Existing operation and soft time caps, fill preparation and priority vertical consistency repair remain. This is successive local equalisation, not a velocity/pressure solver or frame-rate-independent fluid integrator.
+
+After: first changed published surface is about 48.24 m (1 cm lower), then 48.24313, 48.24598, 48.24683, converging near 48.24756 over roughly eight frames. Actual source amount recovers through neighbouring transfers. The 10 L bucket/world total remains conserved. One centimetre is small; proving this trajectory reaches published geometry does not establish that motion is obvious at every camera distance.
+
+54 actual-world assertions pass, including new published-drop and refill assertions, full-bucket transfers, puddle removal, terrain mining, conservation, save and cached reopening. Fifteen native bucket/frontier assertions pass; continuity suite including 510 occupancy patterns passes. No rendering performance experiment was run. The broad visual goal, particularly angular puddle outlines and playtest judgement of refill visibility, remains open.

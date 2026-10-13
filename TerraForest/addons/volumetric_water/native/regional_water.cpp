@@ -230,10 +230,13 @@ void NativeRegionalWater::process_fill(){
 }
 void NativeRegionalWater::advance(int64_t budget){
     if(budget<1||budget>8192)return;uint64_t start=Time::get_singleton()->get_ticks_usec();
+    // One active frontier per update: reawakened cells progress next update,
+    // rather than relaxing the same local disturbance away before rendering.
+    size_t remaining_active=active.size();
     for(int n=0;n<budget;++n){
         if(fill.running){size_t before=fill.queue.size();process_fill();if(fill.running&&fill.queue.size()==before&&!requests.empty())break;}
         else if(!vertical.empty())settle_vertical();
-        else{if(active.empty())break;Key k=active.front();active.pop_front();active_set.erase(k);process_cell(position(k));++steps;}
+        else{if(active.empty()||remaining_active==0)break;--remaining_active;Key k=active.front();active.pop_front();active_set.erase(k);process_cell(position(k));++steps;}
         if((n&7)==7&&Time::get_singleton()->get_ticks_usec()-start>=1000)break;
     }
     last_us=Time::get_singleton()->get_ticks_usec()-start;max_us=std::max(max_us,last_us);

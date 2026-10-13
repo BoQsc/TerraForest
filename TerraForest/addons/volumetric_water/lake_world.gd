@@ -107,6 +107,9 @@ func _process(delta:float) -> void:
    if water.begin_fill(AABB(item.origin,Vector3(item.cells)*item.spacing),item.level,item.seed,item.amount):_filling_id=item.id
    else:item.dirty=false;item.failure="Water authoring bounds unavailable";lake_failed.emit(item.id,-2);catalog_changed.emit()
    break
+ # Show edits before advancing their flow. Native immutable batches retain
+ # that state if publication spans more than one frame.
+ _publish_meshes()
  # Prepare during loading, but do not advance an already restored moving world
  # while the player is waiting for its meshes and collision.
  if _filling_id!=0 or not get_parent().get("loading_active"):water.advance(2048)
@@ -130,7 +133,6 @@ func _process(delta:float) -> void:
   var p:=_pending_dev
   if water.brush(p.point,0.0,p.amount)>0:terrain.changed_since_save=true;_pending_dev={}
   elif Time.get_ticks_msec()>p.deadline:_pending_dev={};terrain.message_changed.emit("Aim the water brush into open space above terrain")
- _publish_meshes()
  var after:Dictionary=water.statistics()
  if after.capacity_reached and not _capacity_reported:
   _capacity_reported=true;terrain.message_changed.emit("Water resident-region limit reached; quantities retained, expansion paused")
