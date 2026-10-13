@@ -1,0 +1,19 @@
+2026-10-13: FULL-BUCKET RECOVERY IN ACTUAL WORLD
+Stricter existing ground-pour gate requires exactly 1,000,000 ml recovered,
+instead of accepting any positive recovery. Added six actual gameplay cases:
+five distinct natural surfaces (4.25-5.23 degrees) and an ordinarily mined
+crater slope (36.72 degrees). Each begins with dry ground, pours the full bucket,
+then aims straight down at the same target and scoops once. No metadata search
+for a specially convenient wet cell. All six restore the exact pre-pour mapping
+of water-cell amounts and leave no published raycast surface at the target.
+
+Current run: reports/checks/20261013T185109211666Z, PASS.
+Measured pour completion 16.7-126.3 ms including cold occupancy preparation;
+maximum observed frame interval within pour operations 19.56 ms. Scoop completion
+9.3-19.5 ms. This is a short operational observation, not a latency distribution
+or a hard performance gate. The mined-case screenshot HUD transiently showed
+10 FPS in the preceding run, but these bucket-only intervals did not reproduce
+that stall; the earlier mining stage was not timed and remains unattributed.
+Screenshots of natural and mined placement inspected. Static volume remains
+compact and recoverable. Thin isolated amounts / sub-grid representation and
+general visual correctness are not proved by full-bucket cases. No flow added.

@@ -99,7 +99,7 @@ func run():
  results.scoop_response_ms=Time.get_ticks_msec()-scoop_start
  var held:int=held_ml()
  results.recovered_ml=held
- check(held>=1 and held<=1000000 and game.lakes.statistics().water_ml==total-held,"The visible ground water can be scooped with exact inventory/world transfer")
+ check(held==1000000 and game.lakes.statistics().water_ml==total-held,"The entire poured cubic metre is recoverable in one scoop")
  await finish()
 func local_components(rows:Array) -> Dictionary:
  return preload("res://tests/water_coherence_probe.gd").components(game.lakes.water,rows)
