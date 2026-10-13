@@ -40,8 +40,9 @@ void fragment() {
     float contact_visibility = smoothstep(0.0, 0.25, thickness);
     vec3 n = normalize(surface_world_normal);
     vec2 ripple = texture(ripple_normal, UV * ripple_scale + TIME * vec2(0.007, -0.004)).rg * 2.0 - 1.0;
-    // Preserve vertical side normals; ripples perturb horizontal surfaces only.
-    n = normalize(n + vec3(ripple.x, 0.0, ripple.y) * ripple_strength * abs(n.y));
+    // Ripples belong to the upper water surface. Viewing it from below still
+    // preserves ripples, but excavated underside/contact faces stay unperturbed.
+    n = normalize(n + vec3(ripple.x, 0.0, ripple.y) * ripple_strength * max(n.y, 0.0));
     NORMAL = normalize((VIEW_MATRIX * vec4(n, 0.0)).xyz);
     if (!FRONT_FACING) NORMAL = -NORMAL;
     float facing = clamp(abs(dot(NORMAL, VIEW)), 0.0, 1.0);

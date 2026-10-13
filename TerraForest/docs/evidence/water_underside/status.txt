@@ -1,0 +1,10 @@
+Water underside ripple correction - 2026-10-14
+
+Digging below static water exposes its downward-facing boundary. The prior shader weighted ripple normals by abs(normal.y), so this lower boundary acquired the same animated wave pattern as the upper free surface. Weighting by max(normal.y,0) keeps underside/contact normals unperturbed; upward-facing surfaces still ripple even when viewed from below. This is one scalar shader expression change, with no extra samples, passes, mesh work, storage changes or simulation.
+
+The actual-world visual check starts the disposable bucket-review lake, excavates the floor through the terrain facade, waits for publication, and aims into the excavation. It captures the previous and installed shader with two fixed ripple phases. In the downward-facing surface region, mean absolute RGB difference (0-255 scale) between phases was 4.4062 before and 0.0 after. Before/after images were inspected. This certifies the reproduced underside animation defect, not the appearance of every surface or camera angle.
+
+Water remains static: removing its supporting terrain can leave an air cavity beneath its lower boundary. This correction does not fill that cavity or introduce the deferred flow/spillage behavior. Angular mesh silhouettes and general visual acceptance remain separate from this shader defect.
+
+Reproduce:
+python tools/run_godot_check.py water_underside_visual --timeout 50 --require "WATER_UNDERSIDE_VISUAL failures=0" -- --gameplay-construction --water-gameplay --water-bucket-review

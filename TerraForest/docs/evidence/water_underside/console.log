@@ -1,0 +1,19 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.3.280 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] New world
+[TerrainRewrite] New world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+[terrain-hitch] controller process 53.87 ms at 6530
+[terrain-hitch] world process 56.5 ms at 6532
+[TerrainRewrite] Preparing your finite lake; terrain and water are being built
+[TerrainRewrite] Mined resources added to inventory
+[TerrainRewrite] Lake ready · temporary world
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Bucket review · disposable world
+[TerrainRewrite] Mined resources added to inventory
+UNDERWATER_DEPTH 2.1079216003418
+{"after_phase_difference":0.0,"before_phase_difference":4.40620873833439,"failures":0,"scope":"Fixed actual-world excavation view; downward-facing surface ROI under two ripple phases"}
+[TerrainRewrite] Temporary test world: save skipped
+WATER_UNDERSIDE_VISUAL failures=0

@@ -10,13 +10,28 @@ Updated 2026-10-11. TerraForest is an integrated development world, not a comple
 
 This is the current delivery-order and coverage reference. [Delivery history](DELIVERY_STATUS.md) records evidence at the time of each change; older entries are not current status. [World systems design](WORLD_SYSTEMS_DESIGN.md) retains the broader architecture contract. A documentation update alone closes no implementation gate.
 
-## Current water implementation and remaining gate - 2026-10-13
+## Current water implementation and remaining gate - 2026-10-14
 
 The installed game has static water, whole-unit bucket interaction, and compound
 save/reload. Actual-world checks cover adjacent/stacked placement, complete recovery,
 mined ground, and use after disk reload. Evidence is in
 `evidence/water_pool_recovery/` and `evidence/water_static_profiles/`.
 The human-review entry point is `Review Water Buckets.cmd`.
+
+The reported underwater bands are corrected by avoiding duplicate environment fog
+on resolved water transmission (`evidence/water_underwater_fog/`). The captured
+excavation topology defect is corrected in the shared extractor, with three actual
+world excavations, repeated bucket recovery, bounded density cases and terrain
+cache parity checks (`evidence/water_boundary_fix/`). These are specific verified
+fixes, not blanket visual or world-scale acceptance.
+
+Current visual/interaction acceptance still requires clear placed volumes, reliable
+targeted whole-unit removal, no unwanted disconnected fragments or contact artifacts,
+and persistence after repeated edits. Static water may expose its lower boundary
+when supporting terrain is removed: filling the resulting air space would be flow,
+which is outside the requested scope. That lower boundary must not acquire the
+animated ripples of an upper water surface.
+
 
 Storage is still NativeRegionalWater; terrain and water share density extraction,
 not authoritative storage. Do not claim the storage migration is complete.
@@ -68,7 +83,11 @@ playable fix. See `evidence/terrain_material_boundary/status.txt`.
 
 The command-32 boundary is now consumed for single-floor contact geometry, with exact triangle volume integration and version-6 caching. The mined-bowl contact gate passes. Multiple floors/walls/ceilings, rendered natural-ground contact, moving-surface scoop reliability and outlet response remain incomplete. See `evidence/water_exact_terrain_contact/status.txt`; the overall acceptance gate remains failing.
 
-## Current blocking priority - terrain/water correctness (2026-10-13)
+## Historical terrain/water correctness checkpoint (2026-10-13)
+
+This section records an earlier implementation and includes superseded flow,
+contact-face removal and sloping-reconstruction behavior. Use the current water
+section above for implementation status and the no-flow scope.
 
 User priority overrides the earlier feature sequence: resolve the visible and
 interactive terrain/water defects before more feature work, texture polish or
