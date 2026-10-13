@@ -5,7 +5,7 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 data=(ROOT/'reports/water_repeated_mining.bin').read_bytes()
 magic,version,catalog,count=struct.unpack_from('<4I',data)
-assert magic==0x31575256 and version==2
+assert magic==0x31575256 and version>=2
 cells={}
 for region in range(count):
  offset=32+catalog+region*9076

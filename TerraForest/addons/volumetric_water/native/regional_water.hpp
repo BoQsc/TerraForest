@@ -13,6 +13,7 @@
 #include <deque>
 #include <map>
 #include <unordered_set>
+#include "water_cell_profile.hpp"
 
 namespace terraforest {
 // Immutable hand-off: only the terrain worker writes this object. No scene,
@@ -44,6 +45,15 @@ class NativeRegionalWater : public godot::RefCounted {
         std::array<float,729> density{};
         bool valid=false,has_density=false;
     };
+    static WaterCellProfile profile(const Region &r,int i) {
+        float d[8];int x=i%8,y=(i/8)%8,z=i/64;
+        for(int c=0;c<8;++c)d[c]=r.density[x+(c&1)+9*(y+((c>>1)&1))+81*(z+((c>>2)&1))];
+        return WaterCellProfile::make(d,r.has_density,r.floor[i],r.ceiling[i]);
+    }
+    static bool joined(const WaterCellProfile &a,uint64_t av,const WaterCellProfile &b,uint64_t bv,int axis,int side) {
+        double opening=std::max(a.opening(axis,side),b.opening(axis,1-side));
+        return opening<std::min(a.ceiling,b.ceiling)&&a.head(av)>opening&&b.head(bv)>opening;
+    }
     static constexpr size_t MAX_REGIONS=4096;
     static constexpr uint64_t MAX_TOTAL=uint64_t(1)<<52;
     struct QuerySurface {
@@ -123,6 +133,7 @@ public:
     godot::Dictionary transfer_water(const godot::Vector3 &from,const godot::Vector3 &to,bool pour,godot::Object *inventory,int64_t slot,int64_t revision,int64_t max_litres);
     godot::Vector3 surface_near(const godot::Vector3 &point,double radius) const;
     double depth_at(const godot::Vector3 &point) const;
+    godot::Dictionary cell_geometry(const godot::Vector3 &point) const;
     godot::PackedByteArray placement_mask(const godot::TypedArray<godot::Transform3D> &transforms) const;
     godot::Dictionary raycast_surface(const godot::Vector3 &from,const godot::Vector3 &to) const;
     bool commit_mesh_batch(int64_t id);

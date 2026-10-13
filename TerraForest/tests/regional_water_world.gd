@@ -146,8 +146,8 @@ func run():
  for frame in 3:await process_frame
  await capture_visual("water_bucket_contact")
  game.pitch=-PI/2;game.camera.global_transform=puddle_pose
+ check(timings.puddle_contact.terrain_contact_qualified,"Poured water floor contacts actual terrain within 2 cm of its wet footprint")
  if "--water-contact-only" in OS.get_cmdline_user_args():
-  check(timings.puddle_contact.terrain_contact_qualified,"Poured water floor contacts actual terrain within 2 cm")
   await finish();return
  var diagnostic:=StandardMaterial3D.new();diagnostic.shading_mode=BaseMaterial3D.SHADING_MODE_UNSHADED;diagnostic.albedo_color=Color.MAGENTA;diagnostic.cull_mode=BaseMaterial3D.CULL_DISABLED
  for node:MeshInstance3D in game.lakes._meshes.values():node.material_override=diagnostic
@@ -312,7 +312,7 @@ func visible_water_meshes() -> Dictionary:
  return result
 func puddle_contact(bytes:PackedByteArray,point:Vector3) -> Dictionary:
  var result:Dictionary={"cells":[],"water_ml":0,"max_floor_gap_m":0.0,"terrain_contact_qualified":false}
- var version:int=bytes.decode_u32(4);var size:=9076 if version==2 else 6160
+ var version:int=bytes.decode_u32(4);var size:=9076 if version>=2 else 6160
  for r in bytes.decode_u32(12):
   var base:int=32+bytes.decode_u32(8)+r*size;var key:int=bytes.decode_u64(base)
   var region:=Vector3i((key>>24)&4095,(key>>12)&4095,key&4095)
@@ -324,8 +324,15 @@ func puddle_contact(bytes:PackedByteArray,point:Vector3) -> Dictionary:
    var center:=Vector3(cell)*0.5+Vector3.ONE*0.25
    if center.distance_to(point)>3.0:continue
    var floor_y:float=cell.y*0.5+bytes.decode_u16(offset)*0.001
-   var ground:Dictionary=game.get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(Vector3(center.x,floor_y+0.1,center.z),Vector3(center.x,floor_y-2.0,center.z),1))
-   var row:Dictionary={"cell":[cell.x,cell.y,cell.z],"ml":ml,"floor_y":floor_y,"stored_depth_m":ml/250000.0}
+   var geometry:Dictionary=game.lakes.water.cell_geometry(center)
+   # A cut cell can be dry at its centre. Probe the actual wetted footprint
+   # rather than comparing the water floor at a point outside the puddle.
+   var probe:Vector3=geometry.get("wet_centroid",center)
+   geometry=game.lakes.water.cell_geometry(Vector3(probe.x,center.y,probe.z))
+   var conservative_floor_y:=floor_y
+   floor_y=geometry.get("bottom",floor_y)
+   var ground:Dictionary=game.get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(Vector3(probe.x,floor_y+0.5,probe.z),Vector3(probe.x,floor_y-2.0,probe.z),1))
+   var row:Dictionary={"cell":[cell.x,cell.y,cell.z],"ml":ml,"floor_y":floor_y,"conservative_floor_y":conservative_floor_y,"stored_depth_m":geometry.get("head",floor_y)-floor_y,"cut":geometry.get("cut",false)}
    if not ground.is_empty():
     row.terrain_y=ground.position.y;row.floor_gap_m=floor_y-ground.position.y
     result.max_floor_gap_m=maxf(result.max_floor_gap_m,row.floor_gap_m)
@@ -338,7 +345,7 @@ func stored_amount(bytes:PackedByteArray,point:Vector3) -> int:
  if bytes.size()<32 or bytes.decode_u32(0)!=0x31575256:return -1
  var cell:=Vector3i((point*2.0).floor());var region:=Vector3i(cell.x/8,cell.y/8,cell.z/8)
  var key:int=(region.x<<24)|(region.y<<12)|region.z
- var size:=9076 if bytes.decode_u32(4)==2 else 6160
+ var size:=9076 if bytes.decode_u32(4)>=2 else 6160
  for r in bytes.decode_u32(12):
   var offset:int=32+bytes.decode_u32(8)+r*size
   if bytes.decode_u64(offset)==key:

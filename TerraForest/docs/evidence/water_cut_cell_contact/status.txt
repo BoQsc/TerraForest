@@ -1,0 +1,44 @@
+2026-10-13: Terrain-shaped floor capacity integrated in the existing water runtime.
+
+The earlier highest-corner floor remains cached as the conservative fallback.
+Cells whose top is entirely air derive four floor crossings from the existing
+729 terrain samples. Two triangular floor patches determine capacity, wet
+footprint and water level. Transfers, lake filling, gravity, depth, bucket
+connectivity and the shared surface-nets adapter use that same cell profile.
+Integer millilitres remain authoritative. No new terrain sampling, simulation,
+render pass or per-cell persistent storage was introduced.
+
+The constant-area path remains closed-form when water covers a complete cell
+footprint. A bounded inversion handles shallow water crossing a sloped floor.
+The rendered contour remains a coarse surface-nets approximation, not an exact
+volume integral of the render mesh. Fine silhouette quality is still open.
+
+Reproduction: python tools/check_regional_water_world.py --contact-only
+The contact test now probes each actual wetted footprint's centroid; a cut-cell
+centre can legitimately be dry. It compares the profile floor with actual
+terrain collision, using the unchanged 2 cm absolute-error tolerance. The full
+world check now includes this gate as well, rather than only reporting it.
+
+Final actual-world run: 20261013T120115293727Z, 55 checks PASS, 27.23 seconds,
+1920x1080 fullscreen capped at 60 FPS, no engine errors. Exact 10 L pour/scoop,
+local scoop depression/refill, mining, archive roundtrip and cached reuse pass.
+The prior +124.82 mm floating floor is replaced by -6.61 to -10.68 mm floor
+error at wetted centroids (slight intersection with the rendered terrain).
+The original conservation and visible-puddle checks also remain in the run.
+Screenshots inspected: contact.png, puddle.png and lake.png.
+
+Native release checks PASS: cut-cell capacity/head and cached-save migration;
+bucket amounts/stale actions; 30 material-surface cases; all 510 shallow/full
+occupancy patterns plus vertical/region continuity; disconnected solid barriers.
+Analytic wedge integration/inversion probe PASS, including 1 ml and 10 L.
+
+Snapshot version 3 keeps the existing region layout. Versions 1 and 2 remain
+readable; version 2 changed cut cells wake using cached terrain, without losing
+quantities. Version 3 preserves pending work normally. Older executables do not
+read version 3 saves. Native debug/release built with pinned Zig/prebuilt SDK.
+
+Limits: floor cells with entirely open tops are handled here. Ambiguous walls,
+ceilings and unresolved sub-cell passages retain conservative intervals and
+are not qualified by this fixture. No broad shoreline/overhang, GPU-time,
+large-world or sustained thermal claim follows from these checks. Screenshot
+readback stalls affect HUD FPS and are excluded from gameplay timing samples.

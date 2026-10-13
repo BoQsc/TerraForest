@@ -2,6 +2,17 @@
 
 The [delivery plan and coverage register](PROJECT_PLAN.md) is the current reference for milestone order, original-scope coverage and deferred-work return triggers. Entries below preserve evidence at their recorded development stage. Older headings and the historical scope table are not current status; later implementations supersede some of their limitations. Correctness, integration, rendered performance and sustained qualification are separate gates.
 
+## Water floor contact and finite bucket volume - 2026-10-13
+
+Terrain-shaped floor capacity replaces the highest-corner slab for floor cells
+with open tops. The actual-world 10 L pour/scoop, mining and cached archive
+roundtrip pass 55 checks, including a 2 cm contact gate. The previous 12.5 cm
+floating-floor case is corrected; ambiguous wall/ceiling cells, fine outlines
+and sustained performance remain unqualified. Native hot paths and the shared
+terrain surface reconstruction remain the runtime path.
+
+[Evidence and exact limits](evidence/water_cut_cell_contact/status.txt).
+
 ## Combined settlement world survives a fresh process - 2026-10-09
 
 The actual editor creates and saves four cottages, connected roads and a static
