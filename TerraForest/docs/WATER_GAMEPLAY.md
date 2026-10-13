@@ -1,3 +1,5 @@
+> Current contact update, 2026-10-13: supported floor contacts now retain actual terrain triangles for volume and interaction queries; version 6 caches them. Mined-bowl contact and native cached reopen pass. Natural-ground rendered contact/scoop and large-outlet flow still fail; see `evidence/water_exact_terrain_contact/status.txt`. The full replacement is incomplete.
+
 > Current transfer update, 2026-10-13: normal one-click bucket capacity is 1 m³, stored as exact millilitres independent of item IDs. Existing buckets retain their old litres. Actual lake scoop and untouched-ground pour pass; larger mined-bowl contact fails and remains open. See `evidence/water_cubic_metre_transfer/status.txt`.
 
 > Partial-bottom correction, 2026-10-13: floor crossings are now interpolated before clipping to the cell bottom, removing invented solid ramps and recovering real air capacity. Snapshot version 5 reads versions 1-4 without changing water quantity. The slope-volume math is tested but runtime slopes remain zero; ground-pour coherence still fails and remains blocking. See `evidence/water_partial_bottom/status.txt`.

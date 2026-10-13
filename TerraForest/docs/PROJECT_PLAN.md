@@ -18,6 +18,8 @@ full-detail boundary through command 32; a 144-triangle comparison passes, but w
 does not consume it yet. This is a prerequisite, not a replacement runtime or finished
 playable fix. See `evidence/terrain_material_boundary/status.txt`.
 
+The command-32 boundary is now consumed for single-floor contact geometry, with exact triangle volume integration and version-6 caching. The mined-bowl contact gate passes. Multiple floors/walls/ceilings, rendered natural-ground contact, moving-surface scoop reliability and outlet response remain incomplete. See `evidence/water_exact_terrain_contact/status.txt`; the overall acceptance gate remains failing.
+
 ## Current blocking priority - terrain/water correctness (2026-10-13)
 
 User priority overrides the earlier feature sequence: resolve the visible and

@@ -52,7 +52,7 @@ func run():
  var started:=Time.get_ticks_msec()
  while Time.get_ticks_msec()-started<2000:await process_frame
  results.surface_contact=surface_contact(target)
- check(results.surface_contact.samples>0 and results.surface_contact.below_ground==0,"Sampled rendered pour triangles stay above actual terrain")
+ check(results.surface_contact.samples>0 and results.surface_contact.below_ground==0,"Sampled rendered pour triangles stay above actual terrain within 0.25 mm numerical tolerance")
  results.after_two_seconds=game.lakes.statistics()
  results.water_delta=water_delta(before_pour,game.lakes.capture_snapshot(),target)
  results.local_components=local_components(results.water_delta.new_wet_cells)
@@ -90,7 +90,7 @@ func run():
 func local_components(rows:Array) -> Dictionary:
  return preload("res://tests/water_coherence_probe.gd").components(game.lakes.water,rows)
 func surface_contact(target:Vector3) -> Dictionary:
- var report:Dictionary={"samples":0,"below_ground":0,"min_gap":INF,"max_gap":-INF,"rows":[]}
+ var report:Dictionary={"samples":0,"below_ground":0,"negative_gaps":0,"tolerance_m":0.00025,"min_gap":INF,"max_gap":-INF,"rows":[]}
  for instance:MeshInstance3D in game.lakes._meshes.values():
   if instance.mesh==null:continue
   var vertices:PackedVector3Array=instance.mesh.surface_get_arrays(0)[Mesh.ARRAY_VERTEX]
@@ -103,7 +103,9 @@ func surface_contact(target:Vector3) -> Dictionary:
    if ground.is_empty():continue
    var gap:float=point.y-ground.position.y
    report.samples+=1;report.min_gap=minf(report.min_gap,gap);report.max_gap=maxf(report.max_gap,gap)
-   if gap<0:report.below_ground+=1
+   if gap<0:report.negative_gaps+=1
+   # Two float32 position ULPs near the world test location (~1300 m).
+   if gap< -report.tolerance_m:report.below_ground+=1
    report.rows.append({"point":point,"gap":gap,"vertices":[a,b,c]})
  print("GROUND_SURFACE_CONTACT ",report.samples," below=",report.below_ground," gap=",report.min_gap,"..",report.max_gap)
  return report

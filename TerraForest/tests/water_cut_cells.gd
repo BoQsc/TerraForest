@@ -51,7 +51,7 @@ func run():
  var shore:Dictionary=resting.cell_geometry(Vector3(41.75,41.75,41.75))
  check(abs(shore.slope_x)<0.01 and abs(shore.head-(41.5+sqrt(20000.0)*0.001))<0.00001,"Equal-level lake neighbour preserves the horizontal shoreline wedge")
  var upgraded:PackedByteArray=water.capture_snapshot(catalog)
- check(upgraded.decode_u32(4)==5 and water.statistics().water_ml==10000,"Version 5 upgrade preserves every millilitre")
+ check(upgraded.decode_u32(4)==6 and water.statistics().water_ml==10000,"Version 6 upgrade preserves every millilitre")
  var reopened=ClassDB.instantiate("NativeRegionalWater")
  check(reopened.restore_snapshot(upgraded) and reopened.capture_snapshot(catalog)==upgraded,"Cut-cell archive roundtrip preserves cached data and pending work")
  check(abs(water.depth_at(Vector3(41.55,41.55,41.75))-0.015)<0.00001 and water.depth_at(Vector3(41.9,41.55,41.75))==0,"Sloping-film depth is pointwise and never extends into solid terrain")

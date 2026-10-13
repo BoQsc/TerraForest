@@ -151,6 +151,19 @@ func run():
  await capture_visual("water_bucket_contact")
  game.pitch=-PI/2;game.camera.global_transform=puddle_pose
  check(timings.puddle_contact.terrain_contact_qualified,"Poured water floor contacts actual terrain within 2 cm of its wet footprint")
+ # The new contact geometry must be cached with the exact transferred water.
+ var contact_bytes:PackedByteArray=game.lakes.capture_snapshot()
+ var reopened=ClassDB.instantiate("NativeRegionalWater")
+ check(reopened.restore_snapshot(contact_bytes),"Terrain contact cache restores with exact water quantities")
+ var contact_same:bool=reopened.statistics().water_ml==game.lakes.statistics().water_ml and reopened.statistics().pending_regions==0
+ for row:Dictionary in timings.puddle_contact.cells:
+  var contact_center:=Vector3(row.cell[0],row.cell[1],row.cell[2])*0.5+Vector3.ONE*0.25
+  var original:Dictionary=game.lakes.water.cell_geometry(contact_center);var restored:Dictionary=reopened.cell_geometry(contact_center)
+  contact_same=contact_same and absf(original.bottom-restored.bottom)<0.00001 and absf(original.head-restored.head)<0.00001
+ check(contact_same,"Cached reopen preserves floor and water height without terrain resampling")
+ check(reopened.capture_snapshot(game.lakes.water.snapshot_catalog(contact_bytes))==contact_bytes,"Contact geometry and quantities roundtrip byte-for-byte")
+ var truncated:=contact_bytes.slice(0,contact_bytes.size()-1)
+ check(not reopened.restore_snapshot(truncated) and reopened.statistics().water_ml==game.lakes.statistics().water_ml,"Truncated contact cache is rejected without mutating live water")
  if "--water-contact-only" in OS.get_cmdline_user_args():
   await finish();return
  var diagnostic:=StandardMaterial3D.new();diagnostic.shading_mode=BaseMaterial3D.SHADING_MODE_UNSHADED;diagnostic.albedo_color=Color.MAGENTA;diagnostic.cull_mode=BaseMaterial3D.CULL_DISABLED
@@ -166,7 +179,12 @@ func run():
  click.button_index=MOUSE_BUTTON_LEFT;game.app_focused=true;game._unhandled_input(click);Input.mouse_mode=Input.MOUSE_MODE_VISIBLE
  check(inventory.snapshot().slots[slot].water_ml==1000000 and game.lakes.statistics().water_ml==quantity-1000000,"One-cubic-metre puddle can be scooped back through real gameplay")
  if failures:await finish();return
- check(await wait_water(3.0,true),"Scooped puddle removal publishes")
+ # Removal must publish locally while an unrelated lake continues settling.
+ # Retain its activity in evidence instead of confusing it with this puddle.
+ var removal_deadline:=Time.get_ticks_msec()+3000
+ while game.lakes.water.surface_near(puddle,3.0).is_finite() and Time.get_ticks_msec()<removal_deadline:await process_frame
+ timings.puddle_removal_state=game.lakes.statistics()
+ check(not game.lakes.water.surface_near(puddle,3.0).is_finite(),"Scooped puddle has no remaining published surface within three metres")
  await capture_visual("water_bucket_scooped")
  Input.mouse_mode=Input.MOUSE_MODE_CAPTURED;click.button_index=MOUSE_BUTTON_RIGHT;game.app_focused=true;game._unhandled_input(click);Input.mouse_mode=Input.MOUSE_MODE_VISIBLE
  check(inventory.snapshot().slots[slot].water_ml==0 and game.lakes.statistics().water_ml==quantity,"Puddle pour-back conserves the same cubic metre")

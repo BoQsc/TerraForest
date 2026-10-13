@@ -61,6 +61,8 @@ func restore_snapshot(bytes:PackedByteArray) -> bool:
  clear();_next_id=decoded.next_id
  var cached:bool=bytes.decode_u32(0)==0x31575256
  if cached and not water.restore_snapshot(bytes):return false
+ # Old saves retain quantities but must rebuild their derived terrain contact cache.
+ if cached and bytes.decode_u32(4)<6:water.invalidate(AABB(Vector3.ZERO,Vector3(2000,256,2000)))
  for record:Dictionary in decoded.records:
   record.dirty=not cached;record.failure=""
   var state:PackedByteArray=record.get("water_state",PackedByteArray())

@@ -12,17 +12,21 @@
 #include <array>
 #include <deque>
 #include <map>
+#include <memory>
 #include <unordered_map>
 #include <unordered_set>
 #include "water_cell_profile.hpp"
 
 namespace terraforest {
+struct TerrainWaterContacts {uint64_t bytes=0;std::array<std::vector<WaterCellProfile::Triangle>,512> floors;};
 // Immutable hand-off: only the terrain worker writes this object. No scene,
 // inventory or live water state is touched by the worker.
 class NativeWaterTerrainPatch : public godot::RefCounted {
     GDCLASS(NativeWaterTerrainPatch,godot::RefCounted)
     friend class NativeRegionalWater;
     godot::Vector3i coord;
+    godot::PackedByteArray boundary;
+    std::shared_ptr<const TerrainWaterContacts> contacts;
     std::array<float,729> density{};
     std::array<uint16_t,512> floor{},ceiling{};
     int cursor=0,status=-1;
@@ -44,12 +48,18 @@ class NativeRegionalWater : public godot::RefCounted {
         std::array<uint16_t,512> floor{},ceiling{};
         std::array<uint64_t,512> water{};
         std::array<float,729> density{};
+        std::shared_ptr<const TerrainWaterContacts> contacts;
         bool valid=false,has_density=false;
     };
     static WaterCellProfile profile(const Region &r,int i) {
         float d[8];int x=i%8,y=(i/8)%8,z=i/64;
         for(int c=0;c<8;++c)d[c]=r.density[x+(c&1)+9*(y+((c>>1)&1))+81*(z+((c>>2)&1))];
-        return WaterCellProfile::make(d,r.has_density,r.floor[i],r.ceiling[i]);
+        auto result=WaterCellProfile::make(d,r.has_density,r.floor[i],r.ceiling[i]);
+        if(r.contacts&&!r.contacts->floors[i].empty()){
+            result.contact=&r.contacts->floors[i];result.cut=true;result.ceiling=500;result.open_bottom=result.minimum()<0;
+            for(int n=0;n<4;++n)result.floor[n]=result.raw_bottom(n&1,n>>1);
+        }
+        return result;
     }
     WaterCellProfile surface_profile(const godot::Vector3i &p,bool snapshot=false) const;
     static bool joined(const WaterCellProfile &a,uint64_t av,const WaterCellProfile &b,uint64_t bv,int axis,int side) {
