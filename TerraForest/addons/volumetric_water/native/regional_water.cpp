@@ -138,6 +138,7 @@ bool NativeRegionalWater::accept_patch(const Ref<NativeWaterTerrainPatch> &patch
         if((i%8)==0)wake(p+Vector3i(-1,0,0));if((i%8)==7)wake(p+Vector3i(1,0,0));
         if(((i/8)%8)==0)wake(p+Vector3i(0,-1,0));if(((i/8)%8)==7)wake(p+Vector3i(0,1,0));
         if((i/64)==0)wake(p+Vector3i(0,0,-1));if((i/64)==7)wake(p+Vector3i(0,0,1));}
+    prioritize_mesh(k);
     return true;
 }
 void NativeRegionalWater::invalidate(const AABB &bounds){
@@ -246,12 +247,13 @@ int64_t NativeRegionalWater::remove_bounds(const AABB &bounds){
 int64_t NativeRegionalWater::brush(const Vector3 &point,double radius,int64_t amount){
     if(!point.is_finite()||!std::isfinite(radius)||radius<0||radius>16||fill.running)return 0;
     if(amount>0){if(uint64_t(amount)>MAX_TOTAL-total)return 0;Vector3i p=cell(point);Region *r=get(p,true);if(!r||r->floor[index(p)]==r->ceiling[index(p)])return 0;
-        r->water[index(p)]+=amount;total+=amount;changed(p);return amount;}
+        r->water[index(p)]+=amount;total+=amount;changed(p);prioritize_mesh(region_key(p));return amount;}
     if(amount==0)return 0;
     uint64_t removed=0,requested=amount==INT64_MIN?MAX_TOTAL:uint64_t(-amount);
     Vector3i lo=cell(point-Vector3(radius,radius,radius)),hi=cell(point+Vector3(radius,radius,radius));
     for(int z=lo.z;z<=hi.z;++z)for(int y=lo.y;y<=hi.y;++y)for(int x=lo.x;x<=hi.x;++x){Vector3i p(x,y,z);if(!in_domain(p)||(Vector3(p)*0.5+Vector3(0.25,0.25,0.25)-point).length()>radius)continue;
-        auto it=regions.find(region_key(p));if(it==regions.end())continue;preserve_mesh_region(region_key(p));uint64_t &v=it->second.water[index(p)];uint64_t take=std::min(v,requested-removed);if(take){v-=take;total-=take;removed+=take;changed(p);}if(removed==requested)return removed;}
+        auto it=regions.find(region_key(p));if(it==regions.end())continue;preserve_mesh_region(region_key(p));uint64_t &v=it->second.water[index(p)];uint64_t take=std::min(v,requested-removed);if(take){v-=take;total-=take;removed+=take;changed(p);}if(removed==requested){prioritize_mesh(region_key(cell(point)));return removed;}}
+    if(removed)prioritize_mesh(region_key(cell(point)));
     return int64_t(removed);
 }
 Dictionary NativeRegionalWater::transfer_litre(const Vector3 &from,const Vector3 &to,bool pour,Object *inventory,int64_t slot,int64_t revision){
@@ -294,7 +296,7 @@ Dictionary NativeRegionalWater::transfer_litre(const Vector3 &from,const Vector3
     if(pour&&(r->ceiling[i]==r->floor[i]||total>MAX_TOTAL-1000)){out["reason"]="Aim at open space just above terrain";return out;}
     if(!bool(inventory->call("exchange_bucket",slot,pour,revision))){out["reason"]="Bucket full / empty, or selected item changed";return out;}
     if(pour){r->water[i]+=1000;total+=1000;}else{for(const auto &[p,amount]:take){preserve_mesh_region(region_key(p));regions.at(region_key(p)).water[index(p)]-=amount;changed(p);}total-=1000;}
-    changed(target);out["ok"]=true;out["reason"]=pour?"Poured 1 L":"Scooped 1 L";out["point"]=Vector3(target)*0.5;return out;
+    changed(target);prioritize_mesh(region_key(target));out["ok"]=true;out["reason"]=pour?"Poured 1 L":"Scooped 1 L";out["point"]=Vector3(target)*0.5;return out;
 }
 Vector3 NativeRegionalWater::surface_near(const Vector3 &point,double radius) const {
     Vector3 best(INFINITY,INFINITY,INFINITY);if(!point.is_finite()||!std::isfinite(radius)||radius<0||radius>3)return best;
@@ -342,6 +344,11 @@ const NativeRegionalWater::Region *NativeRegionalWater::surface_region(Key k,boo
     }
     auto live=regions.find(k);return live==regions.end()?nullptr:&live->second;
 }
+void NativeRegionalWater::prioritize_mesh(Key k){
+    if(!mesh_set.count(k)||meshes.empty()||meshes.front()==k)return;
+    auto found=std::find(meshes.begin(),meshes.end(),k);
+    if(found!=meshes.end()){meshes.erase(found);meshes.push_front(k);}
+}
 void NativeRegionalWater::cancel_mesh_batch(){
     if(!batch_active&&!publish_pending)return;
     for(Key k:batch_owners)if(mesh_set.insert(k).second)meshes.push_back(k);
@@ -352,7 +359,19 @@ Dictionary NativeRegionalWater::next_mesh_batch(){
     if(publish_pending){result["batch"]=int64_t(batch_id);result["complete"]=true;return result;}
     if(!batch_active){
         if(meshes.empty())return result;
-        batch_queue.swap(meshes);mesh_set.clear();batch_owners.assign(batch_queue.begin(),batch_queue.end());
+        // Only dirty owners with overlapping reconstruction halos must publish
+        // together. Distant pools must not wait for one global mesh batch.
+        Key seed=meshes.front();mesh_set.erase(seed);batch_owners.push_back(seed);
+        for(size_t i=0;i<batch_owners.size();++i){
+            Vector3i p=position(batch_owners[i]);
+            for(int z=-1;z<=1;++z)for(int y=-1;y<=1;++y)for(int x=-1;x<=1;++x){
+                Vector3i n=p+Vector3i(x,y,z);
+                if(n.x<0||n.x>=500||n.y<0||n.y>=64||n.z<0||n.z>=500)continue;
+                Key k=key(n);if(mesh_set.erase(k))batch_owners.push_back(k);
+            }
+        }
+        batch_queue.assign(batch_owners.begin(),batch_owners.end());
+        meshes.erase(std::remove_if(meshes.begin(),meshes.end(),[&](Key k){return !mesh_set.count(k);}),meshes.end());
         batch_active=true;++batch_id;
     }
     result["batch"]=int64_t(batch_id);result["complete"]=false;

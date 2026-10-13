@@ -64,6 +64,7 @@ class NativeRegionalWater : public godot::RefCounted {
     uint64_t batch_id=0;
     void preserve_mesh_region(Key k);
     void cancel_mesh_batch();
+    void prioritize_mesh(Key k);
     const Region *surface_region(Key k,bool snapshot) const;
 
     std::deque<Key> active,requests,meshes;
