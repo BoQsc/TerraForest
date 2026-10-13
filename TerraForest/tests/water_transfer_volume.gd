@@ -66,6 +66,23 @@ func _initialize():
    lo=lo.min(pos);hi=hi.max(pos)
  check(result.ok and result.water_ml==1000000 and large.statistics().water_ml==17000000,"Large lake scoop conserves one cubic metre")
  check(removed==8 and hi-lo==Vector3i.ONE,"Large lake scoop removes one compact 2 by 2 by 2 group of cells")
+ # Editing beside existing water must preserve neighbours, not just the total.
+ var neighbours=ClassDB.instantiate("NativeRegionalWater");assert(neighbours.restore_snapshot(lake))
+ inventory.exchange_water(0,true,inventory.snapshot().revision,1000000)
+ for target:Vector3 in [Vector3(41.5,40.75,41.5),Vector3(42,40.75,42),Vector3(42.5,40.75,42.5),Vector3(40.65,40.75,41.5),Vector3(40.65,40.75,40.65)]:
+  assert(neighbours.restore_snapshot(lake))
+  var carried:int=inventory.snapshot().slots[0].water_ml
+  if carried:inventory.exchange_water(0,true,inventory.snapshot().revision,carried)
+  var start:Vector3=target+Vector3.UP*3.75
+  var baseline:PackedByteArray=neighbours.capture_snapshot(catalog)
+  var scoop:Dictionary=neighbours.transfer_bucket(start,target,false,inventory,0,inventory.snapshot().revision)
+  var returned:Dictionary=neighbours.transfer_bucket(start,target,true,inventory,0,inventory.snapshot().revision)
+  var restored_cells:PackedByteArray=neighbours.capture_snapshot(catalog)
+  var identical:=true
+  for j in 512:
+   identical=identical and baseline.decode_u64(base+20+j*12)==restored_cells.decode_u64(base+20+j*12)
+  print("NEIGHBOUR ",target," scoop=",scoop," pour=",returned," same=",identical)
+  check(scoop.ok and returned.ok and identical and inventory.snapshot().slots[0].water_ml==0,"Same-aim scoop and replacement preserve every neighbouring cell at "+str(target))
  # A partial bucket must not be consumed into a body with no render samples.
  var tiny=ClassDB.instantiate("NativeRegionalWater");assert(tiny.restore_snapshot(bytes))
  inventory.exchange_water(0,true,inventory.snapshot().revision,1000000)

@@ -1,0 +1,27 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS One scoop transfers exactly one cubic metre out of the targeted source
+PASS Scooped source visibly disappears
+PASS One pour transfers the same cubic metre into a separate basin
+PASS Visible basin fills to its measured one-metre height immediately
+PASS Placement owns eight full half-metre cells, never one hidden overfull cell
+PASS Cached reload preserves quantity and visible fill height
+PASS Pour into a full sealed basin fails without losing or hiding water
+PASS Large lake scoop conserves one cubic metre
+PASS Large lake scoop removes one compact 2 by 2 by 2 group of cells
+NEIGHBOUR (41.5, 40.75, 41.5) scoop={ "ok": true, "pending": false, "water_ml": 1000000, "units": 1, "reason": "Bucket filled: one water unit (1 m3)", "point": (41.0, 42.5, 41.0) } pour={ "ok": true, "pending": false, "water_ml": 1000000, "units": 1, "reason": "Placed one water unit (1 m3)", "point": (41.0, 41.5, 41.0) } same=true
+PASS Same-aim scoop and replacement preserve every neighbouring cell at (41.5, 40.75, 41.5)
+NEIGHBOUR (42.0, 40.75, 42.0) scoop={ "ok": true, "pending": false, "water_ml": 1000000, "units": 1, "reason": "Bucket filled: one water unit (1 m3)", "point": (41.5, 42.5, 41.5) } pour={ "ok": true, "pending": false, "water_ml": 1000000, "units": 1, "reason": "Placed one water unit (1 m3)", "point": (41.5, 41.5, 41.5) } same=true
+PASS Same-aim scoop and replacement preserve every neighbouring cell at (42.0, 40.75, 42.0)
+NEIGHBOUR (42.5, 40.75, 42.5) scoop={ "ok": true, "pending": false, "water_ml": 1000000, "units": 1, "reason": "Bucket filled: one water unit (1 m3)", "point": (42.0, 42.5, 42.0) } pour={ "ok": true, "pending": false, "water_ml": 1000000, "units": 1, "reason": "Placed one water unit (1 m3)", "point": (42.0, 41.5, 42.0) } same=true
+PASS Same-aim scoop and replacement preserve every neighbouring cell at (42.5, 40.75, 42.5)
+NEIGHBOUR (40.65, 40.75, 41.5) scoop={ "ok": true, "pending": false, "water_ml": 1000000, "units": 1, "reason": "Bucket filled: one water unit (1 m3)", "point": (40.5, 42.5, 41.0) } pour={ "ok": true, "pending": false, "water_ml": 1000000, "units": 1, "reason": "Placed one water unit (1 m3)", "point": (40.5, 41.5, 41.0) } same=true
+PASS Same-aim scoop and replacement preserve every neighbouring cell at (40.65, 40.75, 41.5)
+NEIGHBOUR (40.65, 40.75, 40.65) scoop={ "ok": true, "pending": false, "water_ml": 1000000, "units": 1, "reason": "Bucket filled: one water unit (1 m3)", "point": (40.5, 42.5, 40.5) } pour={ "ok": true, "pending": false, "water_ml": 1000000, "units": 1, "reason": "Placed one water unit (1 m3)", "point": (40.5, 41.5, 40.5) } same=true
+PASS Same-aim scoop and replacement preserve every neighbouring cell at (40.65, 40.75, 40.65)
+PASS Legacy partial pour is rejected without changing bucket or world
+PASS Legacy partial bucket refills without discarding or creating water
+PASS Developer placement accepts one cubic metre
+PASS Developer placement shares bucket capacity rules, without hidden overfilled cells
+WATER_TRANSFER_VOLUME failures=0
+

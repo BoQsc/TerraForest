@@ -117,6 +117,7 @@ class NativeRegionalWater : public godot::RefCounted {
     void changed(const godot::Vector3i &p);
     void request(Key k);
     using Placement=std::vector<std::pair<godot::Vector3i,uint64_t>>;
+    bool bucket_footprint(godot::Vector3i target,const godot::Vector3 &aim,uint64_t amount,bool collect,int &x0,int &z0,godot::Dictionary &out);
     bool plan_placement(godot::Vector3i target,const godot::Vector3 &aim,uint64_t amount,Placement &take,godot::Dictionary &out);
     void apply_placement(const Placement &take);
     void process_fill();

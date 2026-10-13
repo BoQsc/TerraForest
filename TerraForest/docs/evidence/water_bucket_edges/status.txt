@@ -1,0 +1,28 @@
+2026-10-13: Fixed-unit bucket edits beside walls and corners
+
+Reproduced on committed dc389b7 release DLL in an isolated headless project:
+2 failures: a scoop beside a wall/corner succeeded, but replacement at the same
+ray failed for insufficient space. The centre cases passed. Every case now
+resets its fixture so failures cannot contaminate the next case.
+
+Cause: scoop could search inward, while pour retained a footprint partly inside
+the wall. Both now use one bounded local footprint selector. It considers at
+most four 1m-wide footprints containing the target half-metre cell; occupied
+source capacity selects the scoop footprint, free capacity selects placement.
+Existing exact connected-space validation remains authoritative. No flow,
+spillage, new mesher, idle processing or saved-format change.
+
+After: all 18 water_transfer_volume release assertions pass, including exact
+per-cell restoration at three centre aims, one wall and one corner. The same
+updated test fails the two edge cases on the original committed DLL (before.log).
+water_bucket 13 checks and water_static_editing 8 checks also pass.
+Actual world water_bucket_roundtrip PASS, run 20261013T192508015675Z: five natural
+ground cases, one mined slope, and developer placement interoperability.
+That world test is a regression, not a wall/corner visual acceptance test.
+Both native variants rebuilt using pinned Zig and the existing prebuilt SDK.
+
+Remaining: fixed transfer amounts are not a completed terrain-field storage
+migration. The current direct terrain field still cannot represent an integer-
+aligned 1m box; replacing the live regional owner requires resolving that
+representation issue. Do not treat these bucket regressions as proof of full
+visual, large-world, long-run or thermal acceptance.

@@ -258,6 +258,31 @@ int64_t NativeRegionalWater::remove_bounds(const AABB &bounds){
         for(int i=0;i<512;++i)if(r.water[i]){Vector3i p=base+Vector3i(i%8,(i/8)%8,i/64);if(bounds.has_point(Vector3(p)*0.5+Vector3(0.25,0.25,0.25))){removed+=r.water[i];r.water[i]=0;changed(p);}}}
     total-=removed;return removed;
 }
+bool NativeRegionalWater::bucket_footprint(Vector3i target,const Vector3 &aim,uint64_t amount,bool collect,int &x0,int &z0,Dictionary &out){
+    x0=target.x-(aim.x-target.x*.5<.25?1:0);z0=target.z-(aim.z-target.z*.5<.25?1:0);
+    const int preferred_x=x0,preferred_z=z0;
+    // Four one-metre footprints contain the aimed half-metre cell. Prefer the
+    // nearest; near a wall choose the first that can hold the complete unit.
+    // This is bounded selection, not spreading or a volume-fitting iteration.
+    for(int choice=0;choice<4;choice++){
+        int x=choice&1?2*target.x-1-preferred_x:preferred_x;
+        int z=choice&2?2*target.z-1-preferred_z:preferred_z;
+        uint64_t available=0;bool waiting=false;
+        for(int dz=0;dz<2;dz++)for(int dx=0;dx<2;dx++)
+        for(int y=target.y-(collect?1:2);y<=target.y+(collect?0:4);y++){
+            Vector3i p(x+dx,y,z+dz);if(!in_domain(p))continue;
+            const Region *r=get(p,!collect);
+            if(!r){waiting|=!collect&&!limit;continue;}
+            auto cap=profile(*r,index(p)).capacity();auto stored=r->water[index(p)];
+            available+=collect?std::min(cap,stored):(cap>stored?cap-stored:0);
+        }
+        if(waiting){out["pending"]=true;out["reason"]="Preparing water at this location";return false;}
+        if(available>=amount){x0=x;z0=z;return true;}
+    }
+    // Irregular shallow sources still use the bounded connected scoop search;
+    // placement performs its existing exact capacity/connectivity validation.
+    return true;
+}
 bool NativeRegionalWater::plan_placement(Vector3i target,const Vector3 &aim,uint64_t amount,Placement &take,Dictionary &out){
     Region *origin=get(target,true);
     if(!origin){out["pending"]=in_domain(target)&&!limit;out["reason"]="Preparing water at this location";return false;}
@@ -267,7 +292,7 @@ bool NativeRegionalWater::plan_placement(Vector3i target,const Vector3 &aim,uint
         // A static pour has a compact footprint and one final surface height.
         struct Site{Vector3i p;WaterCellProfile shape;uint64_t stored,room;};
         std::vector<Site> sites;std::deque<Vector3i> pending;std::unordered_set<Key> visited;
-        int x0=target.x-(aim.x-target.x*0.5<0.25?1:0),z0=target.z-(aim.z-target.z*0.5<0.25?1:0);
+        int x0,z0;if(!bucket_footprint(target,aim,amount,false,x0,z0,out))return false;
         pending.push_back(target);visited.insert(key(target));uint64_t space=0;
         while(!pending.empty()){
             Vector3i p=pending.front();pending.pop_front();
@@ -396,7 +421,7 @@ Dictionary NativeRegionalWater::transfer_water(const Vector3 &from,const Vector3
         // The bounded connected search can expand for shallow sources, but its
         // traversal order must not dictate cross-shaped excavations.
         Vector3 aim=surface["point"];
-        int x0=target.x-(aim.x-target.x*.5<.25?1:0),z0=target.z-(aim.z-target.z*.5<.25?1:0);
+        int x0,z0;if(!bucket_footprint(target,aim,amount,true,x0,z0,out))return out;
         Vector3i center2(2*x0+1,2*target.y-1,2*z0+1);
         auto rank=[&](Vector3i p){Vector3i delta=p*2-center2;return delta.length_squared();};
         auto farther=[&](Vector3i a,Vector3i b){auto ra=rank(a),rb=rank(b);return ra!=rb?ra>rb:key(a)>key(b);};
