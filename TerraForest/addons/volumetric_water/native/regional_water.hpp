@@ -12,6 +12,7 @@
 #include <array>
 #include <deque>
 #include <map>
+#include <unordered_map>
 #include <unordered_set>
 #include "water_cell_profile.hpp"
 
@@ -81,7 +82,8 @@ class NativeRegionalWater : public godot::RefCounted {
     const Region *surface_region(Key k,bool snapshot) const;
 
     std::deque<Key> active,requests,meshes;
-    std::unordered_set<Key> active_set,request_set,mesh_set,restored_cache;
+    std::unordered_map<Key,double> active_set; // Pending simulated-time cursor per awake cell.
+    std::unordered_set<Key> request_set,mesh_set,restored_cache;
     std::deque<Key> vertical;
     std::unordered_set<Key> vertical_set;
     std::map<Key,uint32_t> vertical_regions;
@@ -91,7 +93,7 @@ class NativeRegionalWater : public godot::RefCounted {
     uint64_t cache_rebuilds=0;
     uint64_t total=0,steps=0,sampled=0,cache_hits=0,changes=0;
     uint64_t last_us=0,max_us=0,mesh_us=0,max_mesh_us=0;
-    double flow_seconds=1.0/60.0;
+    double flow_seconds=1.0/60.0,flow_clock=0;
     bool limit=false;
     struct Fill {
         bool running=false;

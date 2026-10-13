@@ -27,10 +27,12 @@ The underwater-band reproduction is corrected by excluding solid-contact faces
 from the existing surface builder and bucket query geometry. Full stored-volume
 topology is still audited with the same builder's diagnostic contact-face flag.
 This is not a replacement water implementation. The captured gentle-ground pour now stays connected and above terrain using
-volume-preserving sloping reconstruction. Its outline is still angular; the
-mined-outlet response deadline still fails. General fragment handling and
+volume-preserving sloping reconstruction. Its outline is still angular. Per-cell
+flow timing now survives CPU-budget deferral, and the 55-check world test passes;
+outlet response remains marginal (9.8 seconds from edit submission). General fragment handling and
 arbitrary shore/contact accuracy remain incomplete. See
-`evidence/water_sloping_pour/status.txt` for passing and failing evidence.
+`evidence/water_sloping_pour/status.txt` and
+`evidence/water_flow_scheduling/status.txt` for passing and failing evidence.
 
 ## What counts as first-round coverage
 

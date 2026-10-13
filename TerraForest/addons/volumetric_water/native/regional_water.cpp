@@ -129,7 +129,7 @@ WaterCellProfile NativeRegionalWater::surface_profile(const Vector3i &p,bool sna
 }
 void NativeRegionalWater::wake(const Vector3i &p){
     if(!in_domain(p))return;auto it=regions.find(region_key(p));
-    if(it!=regions.end()&&it->second.water[index(p)]&&active_set.insert(key(p)).second)active.push_back(key(p));
+    if(it!=regions.end()&&it->second.water[index(p)]&&active_set.emplace(key(p),flow_clock).second)active.push_back(key(p));
 }
 void NativeRegionalWater::changed(const Vector3i &p){
     queue_vertical(p);queue_vertical(p+Vector3i(0,-1,0));
@@ -285,14 +285,20 @@ void NativeRegionalWater::process_fill(){
 void NativeRegionalWater::advance(int64_t budget,double seconds){
     if(budget<1||budget>8192||!std::isfinite(seconds)||seconds<=0)return;
     // A stalled render frame must not cause an instantaneous long-distance jump.
-    flow_seconds=std::min(seconds,0.05);uint64_t start=Time::get_singleton()->get_ticks_usec();
+    flow_clock+=std::min(seconds,0.05);uint64_t start=Time::get_singleton()->get_ticks_usec();
     // One active frontier per update: reawakened cells progress next update,
     // rather than relaxing the same local disturbance away before rendering.
     size_t remaining_active=active.size();
     for(int n=0;n<budget;++n){
         if(fill.running){size_t before=fill.queue.size();process_fill();if(fill.running&&fill.queue.size()==before&&!requests.empty())break;}
         else if(!vertical.empty())settle_vertical();
-        else{if(active.empty()||remaining_active==0)break;--remaining_active;Key k=active.front();active.pop_front();active_set.erase(k);process_cell(position(k));++steps;}
+        else{if(active.empty()||remaining_active==0)break;--remaining_active;Key k=active.front();active.pop_front();
+            // A CPU-budget wait is not a pause in simulated time. Consume a
+            // bounded substep and carry remaining time only while still awake.
+            double previous=active_set.at(k);flow_seconds=std::min(0.05,std::max(0.0,flow_clock-previous));
+            active_set.erase(k);process_cell(position(k));++steps;
+            auto pending=active_set.find(k);if(pending!=active_set.end())pending->second=previous+flow_seconds;
+        }
         if((n&7)==7&&Time::get_singleton()->get_ticks_usec()-start>=1000)break;
     }
     last_us=Time::get_singleton()->get_ticks_usec()-start;max_us=std::max(max_us,last_us);
@@ -728,7 +734,7 @@ bool NativeRegionalWater::decode(const PackedByteArray &data,bool install){
         if(install)staged.emplace(k,std::move(r));
     }
     if(sum!=expected)return false;if(!install)return true;
-    cancel_mesh_batch();published_surfaces.clear();published_batch=0;query_cache_bytes=0;query_builds=0;query_cache_hits=0;regions.swap(staged);vertical.clear();vertical_set.clear();vertical_regions.clear();vertical_steps=0;restored_cache.clear();cache_rebuilds=0;active.clear();active_set.clear();requests.clear();request_set.clear();meshes.clear();mesh_set.clear();fill=Fill{};total=sum;sampled=0;cache_hits=0;steps=0;changes=0;last_us=max_us=mesh_us=max_mesh_us=0;limit=false;
+    cancel_mesh_batch();published_surfaces.clear();published_batch=0;query_cache_bytes=0;query_builds=0;query_cache_hits=0;regions.swap(staged);vertical.clear();vertical_set.clear();vertical_regions.clear();vertical_steps=0;restored_cache.clear();cache_rebuilds=0;active.clear();active_set.clear();flow_clock=0;requests.clear();request_set.clear();meshes.clear();mesh_set.clear();fill=Fill{};total=sum;sampled=0;cache_hits=0;steps=0;changes=0;last_us=max_us=mesh_us=max_mesh_us=0;limit=false;
     for(auto &[k,r]:regions){if(r.valid){++cache_hits;restored_cache.insert(k);}else request(k);
         // Version 1 remains playable during one-time terrain-shape cache upgrade.
         if(!r.has_density)request(k);

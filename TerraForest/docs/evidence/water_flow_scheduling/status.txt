@@ -1,0 +1,31 @@
+Flow scheduling correction - 2026-10-13
+
+Previously a cell delayed by CPU-budget exhaustion advanced with only the
+current frame delta. Larger active queues therefore slowed physical flow.
+Each awake cell now owns a simulated-time cursor. A processed cell consumes
+at most 50 ms, retaining unconsumed time while awake. Global frame stalls are
+still clamped to 50 ms; the 1 ms soft work budget and starting-frontier limit
+remain. Sleeping cells retain no clock entry. Save/reload deliberately starts
+new timing cursors and preserves quantities/awake flags, not offline catch-up.
+This is bounded asynchronous flow, not a full fixed-timestep fluid solver.
+
+Regression evidence:
+- Same test against prior HEAD 4e11e9d: deferred source moves 343 ml rather than
+  the elapsed-time expectation 1,031 ml (FAIL). Current runtime moves 1,031 ml.
+- 30/120 Hz, long-stall cap, invalid delta and conservation assertions pass.
+- Test snapshot lookup now resolves its actual region key: additional pending
+  regions can precede the fixture region; a fixed first-region offset was wrong.
+- Captured 10 L ground pour remains one connected component; actual-world pour
+  again passes above-terrain sampling, local scoop and exact conservation.
+- Full-world acceptance passes all 55 assertions: scoop depression/refill,
+  mining-held outlet, repeated excavation, visible publication and cached save/
+  reload. Outlet response is 9,818 ms from edit submission: this is marginal,
+  not proof that responsiveness is finished or stable across large workloads.
+- Visual review still shows angular shore/contact wedges after repeated mining.
+  A positive depth query and the passing procedural assertions do not qualify
+  those visuals. General detached terrain cleanup remains unimplemented.
+
+No CPU/GPU/thermal sustainability claim. No extra per-frame global scan, new
+water implementation, SDK rebuild, deleted water or deadline increase.
+Next priority remains water/terrain visual contact and local response under
+repeated mining; retain the preceding failure as historical evidence.
