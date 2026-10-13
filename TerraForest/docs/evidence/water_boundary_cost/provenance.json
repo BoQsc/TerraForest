@@ -1,0 +1,12 @@
+{
+  "old_commit": "af9b1a7",
+  "new_commit": "8f80226",
+  "old_sha256": "532a0f1f5ed3eddcbfbe9b15ac7ba3246bdcb309653914d3dda8aa0722b12467",
+  "new_sha256": "6c8642766acc53adc89d0e05d15afc63adc6a7881ecb4ba97e2dc1f17e650ade",
+  "shader": "8f80226 for both versions; isolates geometry cost",
+  "order": [
+    "closed_a",
+    "open",
+    "closed_b"
+  ]
+}

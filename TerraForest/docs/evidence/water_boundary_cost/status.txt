@@ -1,0 +1,23 @@
+2026-10-13: SHORT PAIRED WATER-BOUNDARY RENDER COST
+Two stationary lake views, fullscreen 1920x1080 native scale, capped 60 FPS.
+60 settled warmup frames + 120 measured frames/view/run. No terrain or water
+rebuilds during sampling; equal 2,723 trees, identical camera and lake workload.
+Order: closed_a (8f80226), open (af9b1a7), closed_b (8f80226).
+Same current shader in both versions isolates geometry change; it does not
+measure the shader contact-fade change. Previous binary temporarily installed
+only for its test process; current binary restored in finally and hash checked.
+Runs: 20261013T184328161314Z, 20261013T184421800180Z,
+20261013T184438954451Z under reports/checks.
+
+GPU median milliseconds above: closed 11.285 / open 11.199 / closed 12.042.
+GPU median milliseconds below: closed 9.939 / open 10.621 / closed 11.945.
+Repeated current-build variation exceeds the apparent before/after difference;
+this short comparison cannot resolve a reliable GPU regression or improvement.
+Current geometry adds 8,520 rendered primitives and two draws in the above view;
+6,652 primitives and zero draws underwater. No additional passes are added by
+the code change. Detailed frame/render CPU/GPU observations in summary.json.
+This does not establish older-laptop headroom, whole-device usage, thermal
+sustainability, travel performance or many-lake scaling. No 60-FPS screenshot
+is treated as that proof. Keep the correctness fix; don't infer an optimization
+requirement from these noisy timing differences. Thin-water geometry remains
+the next correctness issue, before broader optimization.

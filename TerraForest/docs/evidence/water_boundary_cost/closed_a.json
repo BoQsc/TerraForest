@@ -1,0 +1,2103 @@
+{
+  "cpu": "12th Gen Intel(R) Core(TM) i5-12450H",
+  "failures": 0,
+  "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU",
+  "phases": [
+    {
+      "camera": "(800.0, 50.25, 1298.0)",
+      "rows": [
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.629,
+          "gpu_ms": 10.0880002975464,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.714999973773956,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.602,
+          "gpu_ms": 10.4340000152588,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.695999979972839,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 17.574,
+          "gpu_ms": 10.0909996032715,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.714999973773956,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 15.858,
+          "gpu_ms": 10.5299997329712,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.700999975204468,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.604,
+          "gpu_ms": 10.0699996948242,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.625,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.645,
+          "gpu_ms": 10.4670000076294,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.691999971866608,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.635,
+          "gpu_ms": 10.5480003356934,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.695999979972839,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.715,
+          "gpu_ms": 11.0450000762939,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.690999984741211,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.604,
+          "gpu_ms": 11.1599998474121,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.597000002861023,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 18.046,
+          "gpu_ms": 11.246000289917,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.65200001001358,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 15.437,
+          "gpu_ms": 10.1049995422363,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.596000015735626,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.642,
+          "gpu_ms": 11.5220003128052,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.828000009059906,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.663,
+          "gpu_ms": 11.3430004119873,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.707000017166138,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.573,
+          "gpu_ms": 11.1190004348755,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.721000015735626,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.844,
+          "gpu_ms": 11.4139995574951,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.718999981880188,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.558,
+          "gpu_ms": 11.1440000534058,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.685000002384186,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 17.872,
+          "gpu_ms": 11.4230003356934,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.665000021457672,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 15.32,
+          "gpu_ms": 11.1479997634888,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.717000007629395,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 18.218,
+          "gpu_ms": 11.7729997634888,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.694999992847443,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 15.353,
+          "gpu_ms": 11.1479997634888,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.593999981880188,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.668,
+          "gpu_ms": 11.7729997634888,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.99099999666214,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.622,
+          "gpu_ms": 11.4849996566772,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.731000006198883,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.635,
+          "gpu_ms": 11.3500003814697,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.745999991893768,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 17.34,
+          "gpu_ms": 10.4989995956421,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.753000020980835,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 15.963,
+          "gpu_ms": 11.1169996261597,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.662999987602234,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.63,
+          "gpu_ms": 11.4409999847412,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.611999988555908,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.634,
+          "gpu_ms": 10.4980001449585,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.686999976634979,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.68,
+          "gpu_ms": 11.4720001220703,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.702000021934509,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.662,
+          "gpu_ms": 11.4280004501343,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.694999992847443,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.675,
+          "gpu_ms": 11.4490003585815,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.698000013828278,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 17.412,
+          "gpu_ms": 11.1730003356934,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.698000013828278,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.021,
+          "gpu_ms": 10.5109996795654,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.700999975204468,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.538,
+          "gpu_ms": 10.8549995422363,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.676999986171722,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.683,
+          "gpu_ms": 11.41100025177,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.679000020027161,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.903,
+          "gpu_ms": 11.4270000457764,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.679000020027161,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.386,
+          "gpu_ms": 11.4230003356934,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.699000000953674,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.727,
+          "gpu_ms": 11.1680002212524,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.672999978065491,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 17.542,
+          "gpu_ms": 10.4440002441406,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.662999987602234,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 15.913,
+          "gpu_ms": 11.4930000305176,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.596000015735626,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.55,
+          "gpu_ms": 10.9790000915527,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.712999999523163,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.651,
+          "gpu_ms": 11.4090003967285,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.699000000953674,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.668,
+          "gpu_ms": 11.0690002441406,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.708000004291534,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.709,
+          "gpu_ms": 11.3889999389648,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.689999997615814,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.605,
+          "gpu_ms": 11.1870002746582,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.697000026702881,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 17.664,
+          "gpu_ms": 11.4079999923706,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.708000004291534,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 15.663,
+          "gpu_ms": 10.5830001831055,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.688000023365021,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.686,
+          "gpu_ms": 11.0229997634888,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.697000026702881,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.667,
+          "gpu_ms": 11.1940002441406,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.676999986171722,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.741,
+          "gpu_ms": 11.3859996795654,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.700999975204468,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.622,
+          "gpu_ms": 11.3780002593994,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.693000018596649,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.783,
+          "gpu_ms": 11.3579998016357,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.736999988555908,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 17.399,
+          "gpu_ms": 11.3699998855591,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.703000009059906,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 15.782,
+          "gpu_ms": 11.2609996795654,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.697000026702881,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.798,
+          "gpu_ms": 11.8540000915527,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.689000010490417,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.557,
+          "gpu_ms": 11.1000003814697,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.703000009059906,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.637,
+          "gpu_ms": 11.2250003814697,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.791000008583069,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.662,
+          "gpu_ms": 11.1520004272461,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.625999987125397,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.749,
+          "gpu_ms": 11.253999710083,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.690999984741211,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 17.396,
+          "gpu_ms": 11.1940002441406,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.689999997615814,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 15.88,
+          "gpu_ms": 11.3640003204346,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.685999989509583,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.65,
+          "gpu_ms": 11.9980001449585,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.705999970436096,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.648,
+          "gpu_ms": 11.2399997711182,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.708000004291534,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.66,
+          "gpu_ms": 11.4219999313354,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.698000013828278,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.692,
+          "gpu_ms": 11.4759998321533,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.700999975204468,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.675,
+          "gpu_ms": 11.5530004501343,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.690999984741211,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 17.536,
+          "gpu_ms": 11.456000328064,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.695999979972839,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.516,
+          "gpu_ms": 11.3009996414185,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.694999992847443,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 15.972,
+          "gpu_ms": 11.8559999465942,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.583999991416931,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.669,
+          "gpu_ms": 11.298999786377,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.689000010490417,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.62,
+          "gpu_ms": 11.2089996337891,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.718999981880188,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.579,
+          "gpu_ms": 11.2259998321533,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.689000010490417,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.787,
+          "gpu_ms": 11.2700004577637,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.695999979972839,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 17.523,
+          "gpu_ms": 11.048999786377,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.591000020503998,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 15.776,
+          "gpu_ms": 10.8889999389648,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.698000013828278,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.695,
+          "gpu_ms": 12.1899995803833,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.689999997615814,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.646,
+          "gpu_ms": 11.621000289917,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.689000010490417,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.666,
+          "gpu_ms": 11.668999671936,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.689000010490417,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.7,
+          "gpu_ms": 11.6680002212524,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.714999973773956,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.636,
+          "gpu_ms": 11.5570001602173,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.694000005722046,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 17.506,
+          "gpu_ms": 11.6680002212524,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.689000010490417,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 15.871,
+          "gpu_ms": 11.5690002441406,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.704999983310699,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.634,
+          "gpu_ms": 12.5989999771118,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.700999975204468,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.545,
+          "gpu_ms": 10.7550001144409,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.707000017166138,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.773,
+          "gpu_ms": 10.8839998245239,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.698000013828278,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.651,
+          "gpu_ms": 11.5740003585815,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.607999980449677,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.612,
+          "gpu_ms": 11.5520000457764,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.598999977111816,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 17.593,
+          "gpu_ms": 11.3249998092651,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.703999996185303,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 15.813,
+          "gpu_ms": 11.2760000228882,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.573000013828278,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.668,
+          "gpu_ms": 11.9720001220703,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.689000010490417,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.624,
+          "gpu_ms": 11.2849998474121,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.699999988079071,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.669,
+          "gpu_ms": 11.2819995880127,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.691999971866608,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.683,
+          "gpu_ms": 11.2930002212524,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.690999984741211,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.654,
+          "gpu_ms": 11.7670001983643,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.691999971866608,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 17.819,
+          "gpu_ms": 11.2849998474121,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.694999992847443,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 15.539,
+          "gpu_ms": 11.2950000762939,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.693000018596649,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.696,
+          "gpu_ms": 11.9840002059937,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.686999976634979,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.629,
+          "gpu_ms": 11.2889995574951,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.698000013828278,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.649,
+          "gpu_ms": 11.2729997634888,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.689999997615814,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.655,
+          "gpu_ms": 11.2829999923706,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.619000017642975,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.692,
+          "gpu_ms": 11.3159999847412,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.697000026702881,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 17.511,
+          "gpu_ms": 11.2760000228882,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.689000010490417,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 15.8,
+          "gpu_ms": 11.2749996185303,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.702000021934509,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.725,
+          "gpu_ms": 11.2650003433228,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.688000023365021,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.63,
+          "gpu_ms": 11.3100004196167,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.694000005722046,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.694,
+          "gpu_ms": 10.6490001678467,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.703999996185303,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.537,
+          "gpu_ms": 11.298999786377,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.693000018596649,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.753,
+          "gpu_ms": 11.2770004272461,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.693000018596649,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 18.481,
+          "gpu_ms": 11.0509996414185,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.60699999332428,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 14.857,
+          "gpu_ms": 11.2159996032715,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.693000018596649,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.631,
+          "gpu_ms": 12.1949996948242,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.691999971866608,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.717,
+          "gpu_ms": 10.951000213623,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.71399998664856,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.663,
+          "gpu_ms": 11.0679998397827,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.601000010967255,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 17.002,
+          "gpu_ms": 11.3290004730225,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.699000000953674,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.446,
+          "gpu_ms": 11.210000038147,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.694999992847443,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 17.698,
+          "gpu_ms": 13.0129995346069,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.912999987602234,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 15.709,
+          "gpu_ms": 11.0649995803833,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.744000017642975,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.604,
+          "gpu_ms": 11.8210000991821,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.750999987125397,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.815,
+          "gpu_ms": 11.6829996109009,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.746999979019165,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.538,
+          "gpu_ms": 11.2810001373291,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.726000010967255,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 574.0,
+          "frame_ms": 16.77,
+          "gpu_ms": 11.6829996109009,
+          "primitives": 2444206.0,
+          "render_cpu_ms": 0.819000005722046,
+          "unsettled": 0
+        }
+      ],
+      "summary": {
+        "draw_calls": {
+          "max": 574.0,
+          "median": 574.0,
+          "p95": 574.0
+        },
+        "frame_ms": {
+          "max": 18.481,
+          "median": 16.655,
+          "p95": 17.664
+        },
+        "gpu_ms": {
+          "max": 13.0129995346069,
+          "median": 11.2849998474121,
+          "p95": 11.9720001220703
+        },
+        "primitives": {
+          "max": 2444206.0,
+          "median": 2444206.0,
+          "p95": 2444206.0
+        },
+        "render_cpu_ms": {
+          "max": 0.99099999666214,
+          "median": 0.694999992847443,
+          "p95": 0.750999987125397
+        },
+        "unsettled": {
+          "max": 0,
+          "median": 0,
+          "p95": 0
+        }
+      },
+      "target": "(800.0, 48.25, 1292.0)",
+      "trees": 2723,
+      "view": "above",
+      "water": {
+        "active_cells": 0,
+        "cache_hits": 0,
+        "cached_region_rebuilds": 0,
+        "capacity_reached": false,
+        "cell_steps": 0,
+        "changes": 5777,
+        "dirty_meshes": 0,
+        "fill_active": false,
+        "fill_remaining_ml": -1,
+        "lakes": 1,
+        "max_mesh_commit_us": 647,
+        "max_mesh_publish_us": 2013,
+        "max_mesh_us": 1536,
+        "max_step_us": 900,
+        "mesh_batch_active": false,
+        "mesh_commit_us": 224,
+        "mesh_publish_pending": false,
+        "mesh_publish_us": 2,
+        "mesh_snapshot_bytes": 0,
+        "mesh_us": 266,
+        "outstanding_slices": 0,
+        "pending_regions": 0,
+        "pending_vertical": 0,
+        "published_mesh_batch": 129,
+        "query_builds": 0,
+        "query_cache_bytes": 1014336,
+        "query_cache_hits": 8,
+        "ready": 1,
+        "regions": 50,
+        "render_ready": true,
+        "resident_cell_bytes": 2196200,
+        "resident_occupancy_bytes": 2196200,
+        "sampled_nodes": 36450,
+        "staged_meshes": 0,
+        "step_us": 337,
+        "terrain_contact_bytes": 1741800,
+        "vertical_steps": 0,
+        "water_ml": 559128094
+      }
+    },
+    {
+      "camera": "(800.0, 47.05, 1296.0)",
+      "rows": [
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.713,
+          "gpu_ms": 9.60099983215332,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.600000023841858,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.586,
+          "gpu_ms": 9.97999954223633,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.601000010967255,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.657,
+          "gpu_ms": 9.58100032806396,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.716000020503998,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.619,
+          "gpu_ms": 9.60000038146973,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.499000012874603,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 17.683,
+          "gpu_ms": 10.076000213623,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.59799998998642,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 15.752,
+          "gpu_ms": 9.60599994659424,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.606000006198883,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.577,
+          "gpu_ms": 10.0260000228882,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.559000015258789,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.833,
+          "gpu_ms": 9.60000038146973,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.592999994754791,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.619,
+          "gpu_ms": 9.96100044250488,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.603999972343445,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.614,
+          "gpu_ms": 9.96300029754639,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.643999993801117,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.586,
+          "gpu_ms": 9.59200000762939,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.59799998998642,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 17.475,
+          "gpu_ms": 9.96599960327148,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.602999985218048,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 15.915,
+          "gpu_ms": 9.61200046539307,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.592000007629395,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.62,
+          "gpu_ms": 10.0050001144409,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.595000028610229,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.735,
+          "gpu_ms": 9.96199989318848,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.596000015735626,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.592,
+          "gpu_ms": 9.57900047302246,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.545000016689301,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.716,
+          "gpu_ms": 9.5959997177124,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.635999977588654,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.68,
+          "gpu_ms": 9.98700046539307,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.59799998998642,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 17.675,
+          "gpu_ms": 9.95699977874756,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.601000010967255,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 15.715,
+          "gpu_ms": 9.60999965667725,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.597000002861023,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.661,
+          "gpu_ms": 10.03600025177,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.545000016689301,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.593,
+          "gpu_ms": 9.58699989318848,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.644999980926514,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.623,
+          "gpu_ms": 9.98999977111816,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.601000010967255,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.695,
+          "gpu_ms": 9.61600017547607,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.630999982357025,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.643,
+          "gpu_ms": 9.96599960327148,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.598999977111816,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 17.493,
+          "gpu_ms": 9.58800029754639,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.603999972343445,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 15.837,
+          "gpu_ms": 9.97299957275391,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.603999972343445,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.715,
+          "gpu_ms": 10.3950004577637,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.532000005245209,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.633,
+          "gpu_ms": 9.65100002288818,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.609000027179718,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.582,
+          "gpu_ms": 10.5500001907349,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.600000023841858,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.768,
+          "gpu_ms": 9.60200023651123,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.601000010967255,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.73,
+          "gpu_ms": 10.048999786377,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.513999998569489,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 17.376,
+          "gpu_ms": 9.61999988555908,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.60699999332428,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 15.86,
+          "gpu_ms": 10.0659999847412,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.60699999332428,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.658,
+          "gpu_ms": 9.59700012207031,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.600000023841858,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.665,
+          "gpu_ms": 9.98900032043457,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.606000006198883,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.686,
+          "gpu_ms": 9.60400009155273,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.602999985218048,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.553,
+          "gpu_ms": 9.98299980163574,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.601000010967255,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.789,
+          "gpu_ms": 9.60799980163574,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.601000010967255,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 17.461,
+          "gpu_ms": 10.0799999237061,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.507000029087067,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 15.935,
+          "gpu_ms": 9.5959997177124,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.60699999332428,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.577,
+          "gpu_ms": 9.66800022125244,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.601999998092651,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.722,
+          "gpu_ms": 9.98499965667725,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.600000023841858,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.715,
+          "gpu_ms": 10.0780000686646,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.59799998998642,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.617,
+          "gpu_ms": 9.59200000762939,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.619000017642975,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.718,
+          "gpu_ms": 9.68000030517578,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.600000023841858,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 17.507,
+          "gpu_ms": 9.58300018310547,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.607999980449677,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 15.93,
+          "gpu_ms": 9.9709997177124,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.656000018119812,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.459,
+          "gpu_ms": 9.70800018310547,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.546999990940094,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.664,
+          "gpu_ms": 10.076000213623,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.612999975681305,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.727,
+          "gpu_ms": 9.61400032043457,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.60699999332428,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.607,
+          "gpu_ms": 9.67000007629395,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.60699999332428,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.846,
+          "gpu_ms": 9.57699966430664,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.607999980449677,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 17.3,
+          "gpu_ms": 10.0659999847412,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.598999977111816,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 15.864,
+          "gpu_ms": 9.62399959564209,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.612999975681305,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.65,
+          "gpu_ms": 10.0329999923706,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.600000023841858,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.662,
+          "gpu_ms": 9.97599983215332,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.61599999666214,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.683,
+          "gpu_ms": 9.69600009918213,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.601000010967255,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.829,
+          "gpu_ms": 10.0970001220703,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.602999985218048,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.485,
+          "gpu_ms": 10.6269998550415,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.600000023841858,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 17.492,
+          "gpu_ms": 9.97700023651123,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.600000023841858,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 15.836,
+          "gpu_ms": 8.57900047302246,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.499000012874603,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.75,
+          "gpu_ms": 9.9399995803833,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.598999977111816,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.608,
+          "gpu_ms": 9.58100032806396,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.600000023841858,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.662,
+          "gpu_ms": 9.96500015258789,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.60699999332428,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.754,
+          "gpu_ms": 9.61400032043457,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.600000023841858,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.589,
+          "gpu_ms": 9.96199989318848,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.606000006198883,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 17.469,
+          "gpu_ms": 9.57800006866455,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.593999981880188,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 15.98,
+          "gpu_ms": 9.98200035095215,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.620000004768372,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.529,
+          "gpu_ms": 9.93900012969971,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.597000002861023,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.662,
+          "gpu_ms": 9.61999988555908,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.597000002861023,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.854,
+          "gpu_ms": 9.98400020599365,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.596000015735626,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.526,
+          "gpu_ms": 9.57900047302246,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.597000002861023,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.621,
+          "gpu_ms": 10.0649995803833,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.59799998998642,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 17.535,
+          "gpu_ms": 10.0609998703003,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.601999998092651,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 15.793,
+          "gpu_ms": 9.58600044250488,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.601000010967255,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.692,
+          "gpu_ms": 10.0389995574951,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.591000020503998,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.818,
+          "gpu_ms": 9.61400032043457,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.602999985218048,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.493,
+          "gpu_ms": 10.0500001907349,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.601999998092651,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.694,
+          "gpu_ms": 9.61499977111816,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.635999977588654,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.682,
+          "gpu_ms": 9.98900032043457,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.610000014305115,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 17.449,
+          "gpu_ms": 9.5930004119873,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.602999985218048,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 15.746,
+          "gpu_ms": 9.99899959564209,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.602999985218048,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.88,
+          "gpu_ms": 9.97299957275391,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.598999977111816,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.556,
+          "gpu_ms": 9.60400009155273,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.50900000333786,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.655,
+          "gpu_ms": 10.0509996414185,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.648999989032745,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.779,
+          "gpu_ms": 9.60400009155273,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.606000006198883,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.72,
+          "gpu_ms": 9.97200012207031,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.605000019073486,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 17.42,
+          "gpu_ms": 9.9379997253418,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.611999988555908,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 15.797,
+          "gpu_ms": 9.59700012207031,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.769999980926514,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.618,
+          "gpu_ms": 10.039999961853,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.675999999046326,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.639,
+          "gpu_ms": 9.58899974822998,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.5,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.911,
+          "gpu_ms": 10.0769996643066,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.600000023841858,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.459,
+          "gpu_ms": 9.61800003051758,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.600000023841858,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.532,
+          "gpu_ms": 9.95499992370605,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.61599999666214,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 17.755,
+          "gpu_ms": 9.62199974060059,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.601000010967255,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 15.968,
+          "gpu_ms": 9.96199989318848,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.505999982357025,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.544,
+          "gpu_ms": 9.68200016021729,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.546000003814697,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.647,
+          "gpu_ms": 9.9709997177124,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.728999972343445,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.548,
+          "gpu_ms": 9.94999980926514,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.529999971389771,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.686,
+          "gpu_ms": 8.58199977874756,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.609000027179718,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.703,
+          "gpu_ms": 10.0539999008179,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.598999977111816,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 17.489,
+          "gpu_ms": 9.9680004119873,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.59799998998642,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 15.927,
+          "gpu_ms": 9.58500003814697,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.610000014305115,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.592,
+          "gpu_ms": 10.0299997329712,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.596000015735626,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.631,
+          "gpu_ms": 9.60799980163574,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.633000016212463,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.627,
+          "gpu_ms": 10.4429998397827,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.601999998092651,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.748,
+          "gpu_ms": 9.60000038146973,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.61599999666214,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.648,
+          "gpu_ms": 9.98499965667725,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.59799998998642,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 17.525,
+          "gpu_ms": 9.60599994659424,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.597000002861023,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 15.758,
+          "gpu_ms": 10.7919998168945,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.598999977111816,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.721,
+          "gpu_ms": 10.0179996490479,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.59799998998642,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.597,
+          "gpu_ms": 9.61800003051758,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.605000019073486,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.688,
+          "gpu_ms": 9.60999965667725,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.596000015735626,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.645,
+          "gpu_ms": 9.5930004119873,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.603999972343445,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.743,
+          "gpu_ms": 9.60499954223633,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.601000010967255,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 17.541,
+          "gpu_ms": 10.5509996414185,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.621999979019165,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 15.689,
+          "gpu_ms": 9.59799957275391,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.602999985218048,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.703,
+          "gpu_ms": 9.70800018310547,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.657000005245209,
+          "unsettled": 0
+        },
+        {
+          "draw_calls": 408.0,
+          "frame_ms": 16.649,
+          "gpu_ms": 9.61499977111816,
+          "primitives": 2044428.0,
+          "render_cpu_ms": 0.601000010967255,
+          "unsettled": 0
+        }
+      ],
+      "summary": {
+        "draw_calls": {
+          "max": 408.0,
+          "median": 408.0,
+          "p95": 408.0
+        },
+        "frame_ms": {
+          "max": 17.755,
+          "median": 16.658,
+          "p95": 17.507
+        },
+        "gpu_ms": {
+          "max": 10.7919998168945,
+          "median": 9.93900012969971,
+          "p95": 10.0970001220703
+        },
+        "primitives": {
+          "max": 2044428.0,
+          "median": 2044428.0,
+          "p95": 2044428.0
+        },
+        "render_cpu_ms": {
+          "max": 0.769999980926514,
+          "median": 0.601000010967255,
+          "p95": 0.648999989032745
+        },
+        "unsettled": {
+          "max": 0,
+          "median": 0,
+          "p95": 0
+        }
+      },
+      "target": "(800.0, 46.95, 1288.0)",
+      "trees": 2723,
+      "view": "underwater",
+      "water": {
+        "active_cells": 0,
+        "cache_hits": 0,
+        "cached_region_rebuilds": 0,
+        "capacity_reached": false,
+        "cell_steps": 0,
+        "changes": 5777,
+        "dirty_meshes": 0,
+        "fill_active": false,
+        "fill_remaining_ml": -1,
+        "lakes": 1,
+        "max_mesh_commit_us": 647,
+        "max_mesh_publish_us": 2013,
+        "max_mesh_us": 1536,
+        "max_step_us": 900,
+        "mesh_batch_active": false,
+        "mesh_commit_us": 224,
+        "mesh_publish_pending": false,
+        "mesh_publish_us": 2,
+        "mesh_snapshot_bytes": 0,
+        "mesh_us": 266,
+        "outstanding_slices": 0,
+        "pending_regions": 0,
+        "pending_vertical": 0,
+        "published_mesh_batch": 129,
+        "query_builds": 0,
+        "query_cache_bytes": 1014336,
+        "query_cache_hits": 8,
+        "ready": 1,
+        "regions": 50,
+        "render_ready": true,
+        "resident_cell_bytes": 2196200,
+        "resident_occupancy_bytes": 2196200,
+        "sampled_nodes": 36450,
+        "staged_meshes": 0,
+        "step_us": 337,
+        "terrain_contact_bytes": 1741800,
+        "vertical_steps": 0,
+        "water_ml": 559128094
+      }
+    }
+  ],
+  "presentation": {
+    "fair_graphical_sample": true,
+    "fullscreen": true,
+    "headless": false,
+    "render_scale": 1.0,
+    "viewport": [
+      1920,
+      1080
+    ],
+    "window_mode": 3,
+    "window_size": [
+      1920,
+      1080
+    ]
+  },
+  "scope": "Two fixed views, 120 measured frames each after 60 settled frames. Viewport timers, not whole-device utilization, power or endurance."
+}
