@@ -18,7 +18,7 @@ The normal world now uses `NativeRegionalWater` for editable water. The earlier 
 
 Run **Play Water Gameplay.cmd** for the saved `water_gameplay_v2` world (the old `water_gameplay` save is retained). **Prepare Water World.cmd** optionally prepares and saves its spawn area headlessly before graphical play. It uses the same game scene, terrain worker, generator and save path; it is not a separate showcase. The preparation command does not bake an unbounded entire world. Existing saved terrain takes precedence over generator arguments.
 
-- A bucket holds 10 litres. Left mouse scoops one litre; right mouse pours one litre, including into a newly dug hole outside any authored lake.
+- A bucket holds 10 litres, stored in whole-litre units. Scooping a smaller puddle takes available whole litres and leaves any fractional remainder in the world. One left click fills available bucket capacity; one right click pours all contents, including into a newly dug hole outside any authored lake.
 - Water moves into newly mined openings and down through unsupported space. It retains finite quantities instead of refilling to an authored level.
 - Esc > Development > Water offers water addition and a local removal brush. Removing water does not remove terrain.
 - Normal Save / F5 stores terrain, water and bucket inventory together. Chest transfers, drops and inventory moves retain the bucket's fill-state item.

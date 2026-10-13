@@ -6,7 +6,7 @@
 namespace terraforest {
 using namespace godot;
 void NativePlayerInventory::_bind_methods() {
-    ClassDB::bind_method(D_METHOD("exchange_bucket","slot","pour","revision"),&NativePlayerInventory::exchange_bucket);
+    ClassDB::bind_method(D_METHOD("exchange_bucket","slot","pour","revision","litres"),&NativePlayerInventory::exchange_bucket,DEFVAL(1));
     ClassDB::bind_method(D_METHOD("register_durable","item","maximum"),&NativePlayerInventory::register_durable);
     ClassDB::bind_method(D_METHOD("wear_tool","slot","amount","expected_revision"),&NativePlayerInventory::wear_tool);
     ClassDB::bind_method(D_METHOD("register_item","item","limit"),&NativePlayerInventory::register_item);
@@ -214,9 +214,9 @@ bool NativePlayerInventory::restore_storage_snapshot(const PackedByteArray &data
 }
 
 namespace terraforest {
-bool NativePlayerInventory::exchange_bucket(int64_t slot,bool pour,int64_t expected){
-    if(expected!=revision||slot<0||slot>=32)return false;
+bool NativePlayerInventory::exchange_bucket(int64_t slot,bool pour,int64_t expected,int64_t litres){
+    if(expected!=revision||slot<0||slot>=32||litres<1||litres>10)return false;
     auto &s=slots[slot];if(s.count!=1||s.item<401||s.item>411||(pour?s.item==401:s.item==411))return false;
-    const int64_t next=s.item+(pour?-1:1);if(!catalog().count(next))return false;s.item=next;++revision;return true;
+    const int64_t next=s.item+(pour?-litres:litres);if(next<401||next>411||!catalog().count(next))return false;s.item=next;++revision;return true;
 }
 }

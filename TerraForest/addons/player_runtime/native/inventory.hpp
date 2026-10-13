@@ -27,7 +27,7 @@ class NativePlayerInventory : public godot::RefCounted {
 protected:
     static void _bind_methods();
 public:
-    bool exchange_bucket(int64_t slot,bool pour,int64_t expected);
+    bool exchange_bucket(int64_t slot,bool pour,int64_t expected,int64_t litres=1);
     bool register_durable(int64_t item,int64_t maximum);
     int64_t max_durability(int64_t item) const;
     godot::Dictionary wear_tool(int64_t slot,int64_t amount,int64_t expected);

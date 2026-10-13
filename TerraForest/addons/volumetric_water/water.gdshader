@@ -7,8 +7,10 @@ render_mode cull_disabled, depth_draw_always;
 // No SSR, second camera, refraction distortion, or geometry displacement.
 uniform sampler2D scene_color : hint_screen_texture, repeat_disable, filter_nearest;
 uniform sampler2D scene_depth : hint_depth_texture, repeat_disable, filter_nearest;
-uniform vec3 water_color : source_color = vec3(0.055, 0.19, 0.17);
-uniform float absorption : hint_range(0.05, 2.0) = 0.32;
+uniform vec3 water_color : source_color = vec3(0.045, 0.24, 0.20);
+uniform float absorption : hint_range(0.05, 2.0) = 0.65;
+// A small surface tint keeps bucket-sized shallow puddles readable.
+uniform float surface_tint : hint_range(0.0, 0.3) = 0.12;
 uniform float ripple_strength : hint_range(0.0, 0.12) = 0.035;
 varying vec3 surface_world_normal;
 
@@ -36,7 +38,7 @@ void fragment() {
     if (!FRONT_FACING) NORMAL = -NORMAL;
     float facing = clamp(abs(dot(NORMAL, VIEW)), 0.0, 1.0);
     float fresnel = 0.02 + 0.98 * pow(1.0 - facing, 5.0);
-    float through = transmission * (1.0 - fresnel);
+    float through = transmission * (1.0 - fresnel) * (1.0 - surface_tint);
     ALBEDO = water_color * (1.0 - through);
     EMISSION = textureLod(scene_color, SCREEN_UV, 0.0).rgb * through;
     METALLIC = 0.0;

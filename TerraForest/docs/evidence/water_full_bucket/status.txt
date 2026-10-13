@@ -1,0 +1,9 @@
+Full bucket interaction, 2026-10-13
+
+User direction: one click fills the bucket, prioritise visible working gameplay before performance. Gameplay now calls transfer_bucket, which uses the same native transaction implementation as the compatibility one-litre API. Capacity is 10 L, represented by existing whole-litre inventory states. Scoop up to remaining capacity within local connected water; a partial supply transfers whole litres, retaining fractional millilitres in the world. Pour all current contents. Inventory performs one revision-checked exchange before authoritative volume mutation. No alternate water runtime or mesher was added.
+
+13 native checks pass: full/partial/sub-litre supply, full rejection, stale revisions, out-of-range amounts, and exact return of contents. Actual-world check passed 52 assertions including real mouse-click full scoop/pour, independent 10 L puddle scoop/pour, mining, saving and cached reopening. Both native addons rebuilt in debug and release. HUD and starter notice describe the new controls.
+
+Water shader has a small minimum shallow tint and stronger depth absorption. Puddle images were inspected and still do not provide strong enough visual contrast against dark rocky terrain; visual acceptance remains OPEN. These checks prove the inventory/world transfer, not an obvious scoop depression refilling on screen. Do not treat them as finished water gameplay presentation.
+
+Performance investigation is deferred. Rendering profiling in the world-check runner is now explicit --render-profile; ordinary interaction checks do not run the rendering comparison.

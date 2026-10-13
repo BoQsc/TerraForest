@@ -121,7 +121,7 @@ func _process(delta:float) -> void:
    if terrain.request_lake_slice(_builder,_token):_busy=true
  if not _pending_bucket.is_empty():
   var p:=_pending_bucket
-  var result:Dictionary=water.transfer_litre(p.from,p.to,p.pour,p.inventory,p.slot,p.revision)
+  var result:Dictionary=water.transfer_bucket(p.from,p.to,p.pour,p.inventory,p.slot,p.revision)
   if result.ok or not result.pending or Time.get_ticks_msec()>p.deadline:
    _pending_bucket={}
    if result.ok:terrain.changed_since_save=true;bucket_completed.emit(p.slot)
@@ -178,7 +178,7 @@ func _slice_ready(token:int,status:int,epoch_id:int,revision:int) -> void:
  _builder=null
 func bucket(from:Vector3,to:Vector3,pour:bool,inventory:RefCounted,slot:int,revision:int) -> Dictionary:
  if not terrain.world_ready or terrain.pending_edit:return {"ok":false,"reason":"Wait for the terrain edit to finish"}
- var result:Dictionary=water.transfer_litre(from,to,pour,inventory,slot,revision)
+ var result:Dictionary=water.transfer_bucket(from,to,pour,inventory,slot,revision)
  if result.pending:_pending_bucket={"from":from,"to":to,"pour":pour,"inventory":inventory,"slot":slot,"revision":revision,"deadline":Time.get_ticks_msec()+5000}
  if result.ok:terrain.changed_since_save=true
  return result

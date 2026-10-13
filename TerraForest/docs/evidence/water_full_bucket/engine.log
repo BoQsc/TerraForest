@@ -1,0 +1,98 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.3.280 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] New world
+[TerrainRewrite] New world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+PASS Normal combined world loads
+PASS World terrain supplies lake location
+PASS Ordinary lake authoring uses shallow elongated excavation
+[TerrainRewrite] Mined resources added to inventory
+[TerrainRewrite] Lake ready · F5 saves world
+PASS Actual world water builds and publishes
+COLD_STATS { "pending_vertical": 0, "vertical_steps": 2258, "water_ml": 514832000, "active_cells": 0, "regions": 48, "pending_regions": 0, "dirty_meshes": 0, "mesh_batch_active": false, "mesh_publish_pending": false, "published_mesh_batch": 205, "query_cache_bytes": 252672, "query_builds": 0, "query_cache_hits": 0, "mesh_snapshot_bytes": 0, "fill_active": false, "fill_remaining_ml": -1, "sampled_nodes": 34992, "cache_hits": 0, "cached_region_rebuilds": 0, "cell_steps": 4873, "changes": 4873, "step_us": 0, "max_step_us": 473, "mesh_us": 34, "max_mesh_us": 222, "capacity_reached": false, "resident_cell_bytes": 435072, &"lakes": 1, &"ready": 1, &"outstanding_slices": 0, &"resident_occupancy_bytes": 435072, &"mesh_publish_us": 361, &"max_mesh_publish_us": 803, &"mesh_commit_us": 207, &"max_mesh_commit_us": 415, &"staged_meshes": 0, &"render_ready": true }
+PASS Undisturbed lake sleeps with no active water cells
+PASS Sleeping lake performs zero flow cell steps
+PASS Lake is visibly filled and swimming query is wet
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Bucket · 0/10 L
+PASS Gameplay equips normal bucket
+PASS Actual lake shoreline is pickable while outward ray misses
+SHORE_TARGET (811.0, 48.25, 1292.0)
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Bucket · 10/10 L
+[TerrainRewrite] Scooped 10 L
+PASS Real left-click at rendered shore conserves world plus bucket water
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Bucket · 0/10 L
+[TerrainRewrite] Poured 10 L
+PASS Real right-click at shore returns full bucket without creating a detached puddle
+INPUT_STATE false 401 true 2 401
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Bucket · 10/10 L
+[TerrainRewrite] Scooped 10 L
+PASS Real bucket left-click conserves lake + inventory water
+PASS Stale bucket action cannot remove or create water
+PASS Separate hole is carved into actual terrain, not empty air
+PASS Mine a separate hole outside lake definitions
+[TerrainRewrite] Mined resources added to inventory
+PASS Separate hole terrain edit publishes
+[TerrainRewrite] Preparing water at this location
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Bucket · 0/10 L
+[TerrainRewrite] Poured 10 L
+PASS Real right-click creates water outside lake with exact full-bucket debit
+PASS Poured water settles to a queryable surface in the dug hole
+PUDDLE_AIM (828.0, 44.285, 1292.0) START (828.0, 45.785, 1292.0) END (828.0, 42.285, 1292.0) HIT { "position": (828.0, 44.0, 1292.0), "normal": (0.514956, 0.857217, 0.0), "face_index": 550, "collider_id": 328330123009, "collider": MatchingCollision:<StaticBody3D#328330123009>, "shape": 0, "rid": RID(85890755985559) }
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Bucket · 10/10 L
+[TerrainRewrite] Scooped 10 L
+PASS Ten-litre puddle can be scooped back through real gameplay
+PASS Scooped puddle removal publishes
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Bucket · 0/10 L
+[TerrainRewrite] Poured 10 L
+PASS Puddle pour-back conserves the same ten litres
+PASS Future outlet starts dry
+PASS Mining beside filled water is accepted through ordinary terrain path
+[TerrainRewrite] Mined resources added to inventory
+PASS Outlet terrain edit publishes
+PASS Water flows into mined outlet while mining button remains held
+PASS Held mining admission remains active throughout flow check
+PASS Mining and flowing conserve every millilitre
+PASS Flowing outlet receives a visible regional mesh within 2 seconds
+PASS Repeated shoreline mining stroke 0 accepted
+[TerrainRewrite] Mined resources added to inventory
+PASS Repeated shoreline mining stroke 0 publishes
+PASS Repeated shoreline mining stroke 1 accepted
+[TerrainRewrite] Mined resources added to inventory
+PASS Repeated shoreline mining stroke 1 publishes
+PASS Repeated shoreline mining stroke 2 accepted
+[TerrainRewrite] Mined resources added to inventory
+PASS Repeated shoreline mining stroke 2 publishes
+PASS Water reaches repeatedly excavated extension before mining is released
+PASS Repeated mining preserves water quantity
+PASS Frozen comparison starts with vertical repairs complete
+PASS Visible water meshes change only when a complete batch publishes
+PASS Frozen water mesh queue drains without advancing simulation
+PASS Full regional republish leaves frozen water state byte-identical
+PASS Snapshot validates quantities and cached occupancy
+PASS Snapshot rejects inconsistent total quantity
+PASS Snapshot rejects truncated cache without replacing live state
+PASS Fixture owns a disposable real saved world
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+PASS Normal world save publishes terrain, water cache and bucket together
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+[TerrainRewrite] World loaded
+[TerrainRewrite] World loaded
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+PASS Saved combined world reopens
+PASS Saved outlet surface republishes within 2 seconds
+PASS Disk reopening preserves world and bucket quantity
+REOPEN_STATS { "pending_vertical": 0, "vertical_steps": 125, "water_ml": 514832000, "active_cells": 1737, "regions": 60, "pending_regions": 0, "dirty_meshes": 46, "mesh_batch_active": true, "mesh_publish_pending": false, "published_mesh_batch": 2, "query_cache_bytes": 277056, "query_builds": 0, "query_cache_hits": 0, "mesh_snapshot_bytes": 0, "fill_active": false, "fill_remaining_ml": -1, "sampled_nodes": 0, "cache_hits": 60, "cached_region_rebuilds": 0, "cell_steps": 1499, "changes": 3898, "step_us": 1000, "max_step_us": 1000, "mesh_us": 28, "max_mesh_us": 139, "capacity_reached": false, "resident_cell_bytes": 543840, &"lakes": 1, &"ready": 1, &"outstanding_slices": 0, &"resident_occupancy_bytes": 543840, &"mesh_publish_us": 294, &"max_mesh_publish_us": 663, &"mesh_commit_us": 84, &"max_mesh_commit_us": 425, &"staged_meshes": 4, &"render_ready": false }
+PASS Gameplay queries use published meshes without rebuilding geometry
+PASS Warm load restores cached occupancy with zero cached-region rebuilds
+PASS Mined outlet remains wet after reopening
+PASS Developer water brush removes water locally
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+REGIONAL_WATER_WORLD failures=0
