@@ -1,0 +1,16 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS Publication batch keeps one immutable surface while live water changes
+PASS Live edit survives batch and snapshots retire at completion
+PASS Terrain invalidation cancels staged publication and changes batch identity
+PASS Water packets use shared surface-nets reconstruction
+PASS One-litre puddles retain nonzero geometry across vertical offsets
+PASS Thin-water vertices stay between actual bottom and top
+PASS Region-boundary puddles have exactly two triangles per welded edge
+PASS Nearest-surface query agrees with reconstructed upper surface
+PASS Unknown terrain occupancy is not pickable
+PASS Thin-water ray hits rendered top and correct owning volume cell
+PASS Rays outside rendered puddle miss
+PASS Meshing leaves stored quantity and snapshot unchanged
+WATER_MATERIAL_SURFACE cases=30 failures=0
+

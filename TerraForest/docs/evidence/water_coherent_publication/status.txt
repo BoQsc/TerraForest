@@ -1,0 +1,25 @@
+Coherent regional water publication, 2026-10-13
+
+The live scene uses next_mesh_batch. Native batches retain a stable source via
+lazy copies before mutable region access; newly created regions are absent in
+the baseline. Flow continues. Changes made during reconstruction queue the next
+batch. Terrain invalidation cancels and requeues all staged owners; batch IDs
+prevent stale staged ArrayMeshes from being installed after cancellation.
+
+The script retains the four-packet / soft 1ms preparation budget, then assigns
+all completed batch meshes in one main-thread frame. This final assignment is
+measured separately and is not claimed to have a hard time bound.
+
+Native check passes: immutable packet equality despite an intervening live edit,
+edit retention, snapshot retirement, and invalidation cancellation. Thin-water
+and query checks also pass. Full-world run passes 50 assertions including actual
+bucket input, mining, conservation, cached save/reload and an added assertion
+that scene mesh resources remain unchanged between completed batch publications.
+
+The retained mining screenshot no longer shows the earlier long internal seams.
+This is one targeted scene, not proof of arbitrary topology or scale. Existing
+continuity issues, query/display snapshot differences, flow approximation,
+material storage unification and laptop sustainability remain open. Snapshot and
+staging memory, publication latency and swap cost need scale qualification.
+The old next_mesh entry point remains an immediate diagnostic API over the same
+builder; it is not used for the game's publication loop.

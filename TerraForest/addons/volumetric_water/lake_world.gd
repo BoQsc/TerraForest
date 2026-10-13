@@ -19,6 +19,11 @@ var _token:=0
 var _epoch:=-1
 var _filling_id:=0
 var _meshes:Dictionary={}
+var _staged_meshes:Dictionary={}
+var _mesh_batch_id:int=0
+var _published_mesh_batch_id:int=0
+var _mesh_commit_us:int=0
+var _mesh_max_commit_us:int=0
 var _mesh_faces:Dictionary={}
 var _material:=ShaderMaterial.new()
 var _pending_bucket:Dictionary={}
@@ -81,7 +86,7 @@ func remove_lake(id:int) -> void:
 func clear() -> void:
  _lakes.clear();_filling_id=0;_pending_bucket.clear();_pending_dev.clear()
  for mesh:MeshInstance3D in _meshes.values():mesh.queue_free()
- _meshes.clear();_mesh_faces.clear();water=ClassDB.instantiate("NativeRegionalWater");_builder=null
+ _meshes.clear();_mesh_faces.clear();_staged_meshes.clear();_mesh_batch_id=0;_published_mesh_batch_id=0;water=ClassDB.instantiate("NativeRegionalWater");_builder=null
  _have_bounds=false;_last_changes=0
 func _invalidate(bounds:AABB) -> void:
  water.invalidate(bounds)
@@ -131,22 +136,32 @@ func _process(delta:float) -> void:
  if _have_bounds and _notify_seconds>=0.25:
   _notify_seconds=0;_have_bounds=false;exclusion_changed.emit(_changed_bounds)
 func _publish_meshes() -> void:
- # Share a 1 ms presentation target and at most four small regional uploads.
+ # Build/upload within the existing soft budget; only a complete immutable
+ # batch becomes visible. Flow may advance between calls without mixed edges.
  var mesh_started:=Time.get_ticks_usec()
  for publication in 4:
-  var update:Dictionary=water.next_mesh()
+  var update:Dictionary=water.next_mesh_batch()
   if update.is_empty():break
-  else:
-   var coordinate:Vector3i=update.coordinate
-   if not _meshes.has(coordinate):
-    var node:=MeshInstance3D.new();node.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_OFF;node.material_override=_material;add_child(node);_meshes[coordinate]=node
-   _mesh_faces[coordinate]=update.faces
-   var mesh:MeshInstance3D=_meshes[coordinate]
-   if update.vertices==0:mesh.mesh=null
-   else:
-    var geometry:=ArrayMesh.new();geometry.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES,update.arrays);mesh.mesh=geometry
-   var bounds:=AABB(Vector3(coordinate)*4,Vector3(4,4,4))
-   _changed_bounds=_changed_bounds.merge(bounds) if _have_bounds else bounds;_have_bounds=true
+  if update.batch!=_mesh_batch_id:
+   _staged_meshes.clear();_mesh_batch_id=update.batch
+  if update.has("coordinate"):
+   var geometry:ArrayMesh=null
+   if update.vertices>0:
+    geometry=ArrayMesh.new();geometry.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES,update.arrays)
+   _staged_meshes[update.coordinate]={"mesh":geometry,"faces":update.faces}
+  if update.complete:
+   var commit_started:=Time.get_ticks_usec()
+   for coordinate:Vector3i in _staged_meshes:
+    var staged:Dictionary=_staged_meshes[coordinate]
+    if not _meshes.has(coordinate) and staged.mesh!=null:
+     var node:=MeshInstance3D.new();node.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_OFF;node.material_override=_material;add_child(node);_meshes[coordinate]=node
+    _mesh_faces[coordinate]=staged.faces
+    if _meshes.has(coordinate):_meshes[coordinate].mesh=staged.mesh
+    var bounds:=AABB(Vector3(coordinate)*4,Vector3(4,4,4))
+    _changed_bounds=_changed_bounds.merge(bounds) if _have_bounds else bounds;_have_bounds=true
+   _published_mesh_batch_id=update.batch
+   _staged_meshes.clear()
+   _mesh_commit_us=Time.get_ticks_usec()-commit_started;_mesh_max_commit_us=maxi(_mesh_max_commit_us,_mesh_commit_us)
   if Time.get_ticks_usec()-mesh_started>=1000:break
 func _slice_ready(token:int,status:int,epoch_id:int,revision:int) -> void:
  if token!=_token:return
@@ -173,7 +188,8 @@ func statistics() -> Dictionary:
  var s:Dictionary=water.statistics();s.lakes=_lakes.size();s.ready=0;s.outstanding_slices=int(_busy);s.resident_occupancy_bytes=s.resident_cell_bytes
  for item:Dictionary in _lakes.values():
   if not item.dirty and item.failure.is_empty():s.ready+=1
- s.render_ready=s.dirty_meshes==0 and s.pending_regions==0 and not s.fill_active
+ s.mesh_commit_us=_mesh_commit_us;s.max_mesh_commit_us=_mesh_max_commit_us;s.staged_meshes=_staged_meshes.size()
+ s.render_ready=_staged_meshes.is_empty() and s.dirty_meshes==0 and s.pending_regions==0 and not s.fill_active
  return s
 func descriptions() -> Array[Dictionary]:
  var rows:Array[Dictionary]=[]

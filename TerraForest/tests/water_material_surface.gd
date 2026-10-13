@@ -15,8 +15,35 @@ func fixture(x:int,floor_mm:int):
  var water=ClassDB.instantiate("NativeRegionalWater")
  if not water.restore_snapshot(bytes):return null
  return water
+func check_batch():
+ var reference=fixture(7,0);var expected:Dictionary={}
+ for step in 100:
+  var packet:Dictionary=reference.next_mesh()
+  if packet.is_empty():break
+  expected[packet.coordinate]=packet.arrays
+ var water=fixture(7,0);var collected:Dictionary={};var changed:=false;var complete:=false;var stable:=true
+ var origin:=Vector3(43.75,41.501,41.75)
+ for step in 100:
+  var packet:Dictionary=water.next_mesh_batch()
+  if packet.is_empty():break
+  if packet.has("coordinate"):collected[packet.coordinate]=packet.arrays
+  if not changed:
+   changed=water.brush(origin,0.0,1000)==1000
+   stable=stable and water.statistics().mesh_snapshot_bytes>0
+  if packet.complete:complete=true;break
+ stable=stable and expected.size()==collected.size()
+ for coordinate in expected:
+  stable=stable and collected.has(coordinate)
+  if collected.has(coordinate):stable=stable and collected[coordinate]==expected[coordinate]
+ check(complete and changed and stable,"Publication batch keeps one immutable surface while live water changes")
+ check(water.statistics().water_ml==2000 and water.statistics().dirty_meshes>0 and water.statistics().mesh_snapshot_bytes==0,"Live edit survives batch and snapshots retire at completion")
+ var next:Dictionary=water.next_mesh_batch();var old_batch:int=next.batch
+ water.invalidate(AABB(origin-Vector3.ONE*0.01,Vector3.ONE*0.02))
+ var restarted:Dictionary=water.next_mesh_batch()
+ check(not restarted.is_empty() and restarted.batch>old_batch,"Terrain invalidation cancels staged publication and changes batch identity")
 func _initialize():
  GDExtensionManager.load_extension("res://addons/volumetric_water/volumetric_water.gdextension")
+ check_batch()
  var closed:=true;var visible:=true;var bounded:=true;var conserved:=true;var shared:=true;var cases:=0;var picked:=true;var missed:=true;var nearest_matches:=true;var invalid_misses:=true
  for x in [0,7]:
   for floor_mm in range(0,491,35):

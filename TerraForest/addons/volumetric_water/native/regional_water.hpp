@@ -47,6 +47,16 @@ class NativeRegionalWater : public godot::RefCounted {
     static constexpr size_t MAX_REGIONS=4096;
     static constexpr uint64_t MAX_TOTAL=uint64_t(1)<<52;
     std::map<Key,Region> regions;
+    std::map<Key,Region> mesh_snapshot;
+    std::unordered_set<Key> mesh_snapshot_absent;
+    std::deque<Key> batch_queue;
+    std::vector<Key> batch_owners;
+    bool batch_active=false;
+    uint64_t batch_id=0;
+    void preserve_mesh_region(Key k);
+    void cancel_mesh_batch();
+    const Region *surface_region(Key k,bool snapshot) const;
+
     std::deque<Key> active,requests,meshes;
     std::unordered_set<Key> active_set,request_set,mesh_set,restored_cache;
     std::deque<Key> vertical;
@@ -88,8 +98,8 @@ class NativeRegionalWater : public godot::RefCounted {
         std::vector<godot::Vector3i> owners;
         godot::Dictionary faces;
     };
-    bool surface_ready(Key owner) const;
-    SurfaceMesh build_surface(Key owner) const;
+    bool surface_ready(Key owner,bool snapshot=false) const;
+    SurfaceMesh build_surface(Key owner,bool snapshot=false) const;
     bool decode(const godot::PackedByteArray &data,bool install);
 protected: static void _bind_methods();
 public:
@@ -105,6 +115,7 @@ public:
     double depth_at(const godot::Vector3 &point) const;
     godot::PackedByteArray placement_mask(const godot::TypedArray<godot::Transform3D> &transforms) const;
     godot::Dictionary raycast_surface(const godot::Vector3 &from,const godot::Vector3 &to) const;
+    godot::Dictionary next_mesh_batch();
     godot::Dictionary next_mesh();
     godot::Dictionary statistics() const;
     godot::PackedByteArray capture_snapshot(const godot::PackedByteArray &catalog) const;

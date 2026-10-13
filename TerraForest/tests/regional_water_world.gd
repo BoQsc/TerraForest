@@ -200,11 +200,17 @@ func run():
  # isolates publication-age seams from errors in a single-state surface.
  var state_before:PackedByteArray=game.lakes.capture_snapshot()
  var drain_started:=Time.get_ticks_msec()
+ var atomic_visibility:=true;var saw_staging:=false
  for frame in 120:
   if game.lakes.statistics().dirty_meshes==0:break
+  var visible_before:=visible_water_meshes()
+  var published_before:int=game.lakes._published_mesh_batch_id
   game.lakes._publish_meshes()
+  saw_staging=saw_staging or not game.lakes._staged_meshes.is_empty()
+  if game.lakes._published_mesh_batch_id==published_before:atomic_visibility=atomic_visibility and visible_before==visible_water_meshes()
   await process_frame
  timings.frozen_mesh_drain_ms=Time.get_ticks_msec()-drain_started
+ check(atomic_visibility and saw_staging,"Visible water meshes change only when a complete batch publishes")
  check(game.lakes.statistics().dirty_meshes==0,"Frozen water mesh queue drains without advancing simulation")
  check(game.lakes.capture_snapshot()==state_before,"Full regional republish leaves frozen water state byte-identical")
  for frame in 3:await process_frame
@@ -260,6 +266,12 @@ func run():
   await capture_visual("regional_water_world")
  await render_comparison()
  await finish()
+func visible_water_meshes() -> Dictionary:
+ var result:Dictionary={}
+ for coordinate:Vector3i in game.lakes._meshes:
+  var mesh:Mesh=game.lakes._meshes[coordinate].mesh
+  result[coordinate]=mesh.get_instance_id() if mesh!=null else 0
+ return result
 func stored_amount(bytes:PackedByteArray,point:Vector3) -> int:
  if bytes.size()<32 or bytes.decode_u32(0)!=0x31575256:return -1
  var cell:=Vector3i((point*2.0).floor());var region:=Vector3i(cell.x/8,cell.y/8,cell.z/8)
