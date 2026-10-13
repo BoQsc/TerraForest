@@ -33,3 +33,20 @@ python tools/test_native_release.py --addon volumetric_terrain
 New field saves name generator 5 in the existing version-2 terrain archive;
 older binaries reject that generator. Existing generator-1-through-4 saves
 retain their identity and load behavior.
+
+2026-10-13: TERRAIN-AWARE DIRECT MATERIAL EDITS
+TerrainCore.material_box now stages bounded box CSG changes to the existing
+material density pages, intersecting them with the complement of a second
+TerrainCore solid field. Both owners are locked together and the expected
+solid revision is checked before editing. This introduces no new mesher.
+Invalid/stale requests leave the field unchanged. Allocation is preflighted;
+new empty pages are rolled back if allocation fails before density publication.
+Existing geometry cache and archive paths remain authoritative.
+
+Release check now passes 26 assertions (terrain_exclusion.log), including
+sample exclusion, direct removal, stale/invalid rejection, and identical mesh
+on archive reload. Both debug and release DLLs rebuilt with the prebuilt SDK.
+This does not prove rendered shoreline contact, physical volume conservation,
+sub-grid visibility, flow, or live lake integration. The operation currently
+accepts boxes up to 32 metres per axis; large fills need bounded scheduling.
+The live water runtime is still unchanged. No playtest acceptance claimed.

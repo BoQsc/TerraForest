@@ -42,6 +42,35 @@ func run():
  var removed:PackedByteArray=core.execute(Codec.command(20,[16,16,16,1]))
  check(removed.decode_u32(40)==0 and core.execute(Codec.point_command(center)).decode_float(16)>0,"Normal terrain removal retires the cached material surface")
  check(restored.execute(Codec.point_command(center)).decode_float(16)<0,"Independent material-field owners do not mutate each other")
+ var solid=ClassDB.instantiate("TerrainCore")
+ solid.execute(Codec.command(6,[1703,Codec.MATERIAL_FIELD_GENERATOR]))
+ solid.execute(Codec.brush(Vector3(24,10,24),Vector3(24,10,24),3,1,true,0))
+ var solid_revision:int=solid.execute(Codec.command(0)).decode_u32(12)
+ var material=ClassDB.instantiate("TerrainCore")
+ material.execute(Codec.command(6,[1703,Codec.MATERIAL_FIELD_GENERATOR]))
+ var receipt:Dictionary=material.material_box(solid,Vector3(20,8,20),Vector3(28,16,28),true,solid_revision)
+ check(receipt.get("accepted",false) and receipt.get("changes",0)>0,"Terrain-aware placement commits direct density changes")
+ check(material.execute(Codec.point_command(Vector3(24,10,24))).decode_float(16)>0,"Material excludes authoritative solid terrain")
+ check(material.execute(Codec.point_command(Vector3(24,15,24))).decode_float(16)<0,"Material occupies air above solid terrain")
+ var exclusion_ok:=true
+ for y in range(7,18):
+  for z in range(19,30):
+   for x in range(19,30):
+    var point:=Vector3(x,y,z)
+    if solid.execute(Codec.point_command(point)).decode_float(16)<=0 and material.execute(Codec.point_command(point)).decode_float(16)<0:exclusion_ok=false
+ check(exclusion_ok,"No edited sample is simultaneously solid terrain and material")
+ var field_save:PackedByteArray=material.execute(Codec.command(4)).slice(12)
+ var stale:Dictionary=material.material_box(solid,Vector3(20,8,20),Vector3(28,16,28),false,solid_revision-1)
+ check(not stale.get("accepted",false) and material.execute(Codec.command(4)).slice(12)==field_save,"Stale terrain revision rejects without mutation")
+ var invalid:Dictionary=material.material_box(solid,Vector3(28,8,20),Vector3(20,16,28),false,solid_revision)
+ check(not invalid.get("accepted",false) and material.execute(Codec.command(4)).slice(12)==field_save,"Invalid brush rejects without mutation")
+ var direct_mesh:PackedByteArray=material.execute(Codec.command(20,[16,16,16,1]))
+ check(direct_mesh.decode_u32(40)>0,"Terrain-aware field uses cached terrain meshing")
+ var load_field:=Codec.command(5);load_field.append_array(field_save)
+ restored.execute(load_field)
+ check(restored.execute(Codec.command(20,[16,16,16,1]))==direct_mesh,"Terrain-aware field reloads identical geometry")
+ var removed_receipt:Dictionary=material.material_box(solid,Vector3(19,7,19),Vector3(29,17,29),false,solid_revision)
+ check(removed_receipt.get("accepted",false) and material.execute(Codec.command(20,[16,16,16,1])).decode_u32(40)==0,"Direct removal clears cached surface")
  finish()
 func finish():
  DirAccess.make_dir_recursive_absolute("res://reports")

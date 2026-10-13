@@ -1,0 +1,31 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS TerrainCore accepts an empty material field
+PASS Empty material field allocates no density pages
+PASS Empty material field has no generated cave primitives
+PASS Material base is empty throughout the world: (16.0, 8.0, 16.0)
+PASS Material base is empty throughout the world: (1000.0, 100.0, 1000.0)
+PASS Material base is empty throughout the world: (1999.0, 1.0, 1999.0)
+PASS Ordinary terrain mesher produces no phantom land
+PASS Normal terrain box command places material directly in the field
+PASS Placed material is the authoritative density, not a rendered proxy
+PASS Normal terrain mesher produces the placed material surface
+PASS Existing terrain geometry cache produces byte-identical material geometry
+PASS Warm material mesh uses cache hits without additional misses
+PASS Existing terrain archive reloads the material field
+PASS Material density save roundtrip is byte-exact
+PASS Reloaded material geometry is byte-exact
+PASS Normal terrain removal retires the cached material surface
+PASS Independent material-field owners do not mutate each other
+PASS Terrain-aware placement commits direct density changes
+PASS Material excludes authoritative solid terrain
+PASS Material occupies air above solid terrain
+PASS No edited sample is simultaneously solid terrain and material
+PASS Stale terrain revision rejects without mutation
+PASS Invalid brush rejects without mutation
+PASS Terrain-aware field uses cached terrain meshing
+PASS Terrain-aware field reloads identical geometry
+PASS Direct removal clears cached surface
+TERRAIN_MATERIAL_FIELD failures=0
+
+

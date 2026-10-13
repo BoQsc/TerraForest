@@ -40,6 +40,7 @@ class TerrainCore : public godot::RefCounted {
 protected:
     static void _bind_methods() {
         godot::ClassDB::bind_method(godot::D_METHOD("execute","packet"), &TerrainCore::execute);
+        godot::ClassDB::bind_method(godot::D_METHOD("material_box","solid","minimum","maximum","add","solid_revision"), &TerrainCore::material_box);
         godot::ClassDB::bind_method(godot::D_METHOD("geometry_cache_key","x","z","size","step"), &TerrainCore::geometry_cache_key);
         godot::ClassDB::bind_method(godot::D_METHOD("build_owned_region","x","z","size","step","y_begin","y_end","epoch"), &TerrainCore::build_owned_region);
         godot::ClassDB::bind_method(godot::D_METHOD("supports_isolated_worlds"), &TerrainCore::supports_isolated_worlds);
@@ -57,6 +58,21 @@ protected:
         godot::ClassDB::bind_method(godot::D_METHOD("experimental_partition_mesh_budgeted","packet","workspace_bytes","output_bytes","expected_epoch"), &TerrainCore::experimental_partition_mesh_budgeted);
     }
 public:
+    godot::Dictionary material_box(const godot::Ref<TerrainCore>&solid,godot::Vector3 minimum,godot::Vector3 maximum,bool add,int64_t solid_revision){
+        godot::Dictionary result;result["accepted"]=false;result["changes"]=0;
+        if(solid.is_null()||solid.ptr()==this)return result;
+        // A single lock transaction prevents terrain changes between exclusion and commit.
+        std::scoped_lock lock(mutex_,solid->mutex_);
+        if(solid_revision!=solid->world_.revision)return result;
+        tr_oom=false;V3 lo,hi;int changes=0;
+        bool ok=world_.material_box(solid->world_,{float(minimum.x),float(minimum.y),float(minimum.z)},
+            {float(maximum.x),float(maximum.y),float(maximum.z)},add,lo,hi,changes);
+        if(changes)snapshot_epoch_.fetch_add(1);
+        result["accepted"]=ok;result["changes"]=changes;result["revision"]=world_.revision;
+        result["solid_revision"]=solid->world_.revision;
+        if(ok){result["minimum"]=godot::Vector3(lo.x,lo.y,lo.z);result["maximum"]=godot::Vector3(hi.x,hi.y,hi.z);}
+        return result;
+    }
     godot::PackedByteArray build_owned_region(int64_t x,int64_t z,int64_t size,int64_t step,int64_t y_begin,int64_t y_end,int64_t epoch){
         if(x<0||z<0||x>=2048||z>=2048||size<16||size>64||step<1||step>8||y_begin<0||y_end>WORLD_Y||epoch<0||epoch>0xffffffffLL)return {};
         std::lock_guard<std::mutex> lock(mutex_);tr_oom=false;

@@ -224,6 +224,52 @@ bool World::edit(V3 a,V3 b,float radius,int shape,bool add,u8 material,V3&lo,V3&
  }
  if(changes){invalidate_geometry_cache(*this,lo,hi);revision++;edits++;changed_samples+=changes;lighting_revision=-1;}return true;
 }
+// Stage all changed samples before publishing a material edit. Failure leaves
+// density and revision unchanged; newly allocated empty pages are rolled back.
+bool World::material_box(const World&solid,V3 minimum,V3 maximum,bool add,V3&lo,V3&hi,int&changes){
+ changes=0;
+ if(generator_id!=MATERIAL_FIELD_GENERATOR_ID||&solid==this)return false;
+ V3 center=(minimum+maximum)*.5f,half=(maximum-minimum)*.5f;
+ if(!__builtin_isfinite(minimum.x)||!__builtin_isfinite(minimum.y)||!__builtin_isfinite(minimum.z)||
+    !__builtin_isfinite(maximum.x)||!__builtin_isfinite(maximum.y)||!__builtin_isfinite(maximum.z)||
+    half.x<=0||half.y<=0||half.z<=0||half.x>16||half.y>16||half.z>16)return false;
+ lo={mx(0,minimum.x-SDF_BAND),mx(1,minimum.y-SDF_BAND),mx(0,minimum.z-SDF_BAND)};
+ hi={mn(WORLD,maximum.x+SDF_BAND),mn(255,maximum.y+SDF_BAND),mn(WORLD,maximum.z+SDF_BAND)};
+ if(lo.x>hi.x||lo.y>hi.y||lo.z>hi.z)return false;
+ struct Change{int x,y,z;i16 value;};List<Change> staged;
+ for(int z=fl(lo.z);z<=fl(hi.z);z++)for(int x=fl(lo.x);x<=fl(hi.x);x++)for(int y=fl(lo.y);y<=fl(hi.y);y++){
+  V3 q={ab(x-center.x)-half.x,ab(y-center.y)-half.y,ab(z-center.z)-half.z};
+  float brush=length({mx(q.x,0),mx(q.y,0),mx(q.z,0)})+mn(mx(q.x,mx(q.y,q.z)),0);
+  float old=sample(x,y,z),value=add?mn(old,brush):mx(old,-brush);
+  // No independent floor reconstruction or water-specific contact mesh.
+  value=mx(value,-solid.sample(x,y,z));
+  if(x==0||x==WORLD||z==0||z==WORLD||y==1||y==255)value=mx(value,0.f);
+  i16 encoded=quant(value);if(encoded!=quant(old))staged.push({x,y,z,encoded});
+ }
+ if(tr_oom){staged.release();return false;}
+ if(!staged.n){staged.release();return true;}
+ int original_pages=pages.n,needed=0;
+ for(int py=fl(lo.y)>>4;py<=(fl(hi.y)>>4);py++)for(int pz=fl(lo.z)>>4;pz<=(fl(hi.z)>>4);pz++)for(int px=fl(lo.x)>>4;px<=(fl(hi.x)>>4);px++)if(pages_by_key.get(page_key(px,py,pz))<0)needed++;
+ if(original_pages+needed>MAX_PAGES||!pages.reserve(original_pages+needed)){staged.release();return false;}
+ int map_capacity=pages_by_key.cap?pages_by_key.cap:64;
+ while((pages_by_key.used+needed+1)*10>=map_capacity*7)map_capacity*=2;
+ if(map_capacity!=pages_by_key.cap)pages_by_key.rehash(map_capacity);
+ if(tr_oom){staged.release();return false;}
+ bool allocated=true;
+ for(int i=0;i<staged.n;i++){auto c=staged[i];if(!ensure(c.x>>4,c.y>>4,c.z>>4)||tr_oom){allocated=false;break;}}
+ if(!allocated){
+  // Capacity may have been exhausted without setting the allocator flag.
+  for(int i=pages.n-1;i>=original_pages;i--){auto&p=pages[i];int x,y,z;decode_page(p.key,x,y,z);pages_by_key.erase(p.key);edit_columns[x+NP*z]&=~(1u<<y);tr_free(p.d);tr_free(p.mat);}
+  pages.n=original_pages;staged.release();return false;
+ }
+ for(int i=0;i<staged.n;i++){
+  auto c=staged[i];int page=pages_by_key.get(page_key(c.x>>4,c.y>>4,c.z>>4));
+  auto&p=pages[page];int at=(c.x&15)+16*((c.z&15)+16*(c.y&15));p.d[at]=c.value;p.mat[at]=0;p.geometry_digest_valid=false;
+ }
+ changes=staged.n;staged.release();
+ if(changes){invalidate_geometry_cache(*this,lo,hi);revision++;edits++;changed_samples+=changes;lighting_revision=-1;}
+ return true;
+}
 static u32 checksum(const u8*p,int n){u32 h=2166136261u;for(int i=0;i<n;i++){h^=p[i];h*=16777619u;}return h;}
 void World::serialize(Bytes&out)const{
  int start=out.n;
