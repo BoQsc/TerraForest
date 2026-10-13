@@ -1,0 +1,14 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS One scoop transfers exactly one cubic metre out of the targeted source
+PASS Scooped source visibly disappears
+PASS One pour transfers the same cubic metre into a separate basin
+PASS Visible basin fills to its measured one-metre height immediately
+PASS Placement owns eight full half-metre cells, never one hidden overfull cell
+PASS Cached reload preserves quantity and visible fill height
+PASS Pour into a full sealed basin fails without losing or hiding water
+PASS Large lake scoop conserves one cubic metre
+PASS Large lake scoop removes one compact 2 by 2 by 2 group of cells
+PASS Sub-grid dry pour is rejected visibly without consuming the bucket or creating invisible water
+WATER_TRANSFER_VOLUME failures=0
+

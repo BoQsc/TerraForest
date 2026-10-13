@@ -389,6 +389,21 @@ Dictionary NativeRegionalWater::transfer_water(const Vector3 &from,const Vector3
             }
         }
         for(size_t n=0;n<take.size();n++)if(take[n].second&&!seen.count(n)){out["reason"]="Aim at one connected open area";return out;}
+        // Do not debit a bucket into a completely invisible isolated body.
+        // These are the same eight owned lattice points used by build_surface:
+        // .125/.375 metres, or 125/375 mm in the cached half-metre profile.
+        // Existing bodies may receive small surface-height additions normally.
+        bool existing_body=false,represented=false;
+        for(size_t n=0;n<sites.size();n++){
+            const auto &site=sites[n];existing_body|=site.stored>0;
+            uint64_t filled=site.stored+take[n].second;if(!filled)continue;
+            double head=site.shape.head(filled);
+            for(double z:{.25,.75})for(double x:{.25,.75}){
+                double bottom=site.shape.bottom(x,z),top=site.shape.surface(head,x,z);
+                represented|=(bottom<125&&125<top)||(bottom<375&&375<top);
+            }
+        }
+        if(!existing_body&&!represented){out["reason"]="Too little water to form a visible volume here; water kept in bucket";return out;}
         take.erase(std::remove_if(take.begin(),take.end(),[](const auto&entry){return entry.second==0;}),take.end());
 
     }

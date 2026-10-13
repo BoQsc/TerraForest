@@ -1,0 +1,17 @@
+2026-10-13: DO NOT CONSUME BUCKET INTO AN INVISIBLE DRY BODY
+Regression first failed against 7bbbeb1: a 1-litre partial bucket was accepted
+into empty cells although the 0.25m density lattice could not represent it.
+Native pour planning now checks its existing connected candidate body against
+the same owned lattice positions as build_surface, before inventory exchange.
+If there is no existing water body and no occupied sample, reject with an
+explicit water-kept-in-bucket message. Inventory and world quantities unchanged.
+This is a bounded placement preflight (at most 28 sites, eight sample points
+per occupied site), not a finer lattice, new mesher, simulation or render pass.
+Ten release transfer assertions pass; debug/release extensions rebuilt.
+Six full-bucket actual-world round trips still pass after the guard.
+
+LIMITATION: this prevents one known invisible-loss interaction; it does NOT
+make sub-grid water renderable. A small partial bucket may refuse to pour on
+dry ground. Existing-body additions remain allowed. Developer brush and old
+saved thin bodies are not repaired. Underlying representation work remains
+open; this guard must not be presented as completed thin-water support.
