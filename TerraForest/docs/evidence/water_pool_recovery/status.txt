@@ -27,3 +27,6 @@ Limits:
 - This is a targeted integration regression, not exhaustive topology proof, broad world-scale validation or sustained laptop performance qualification.
 - Static placed water retains a rounded voxel shape. This is not a fluid simulation or final art acceptance.
 - Legacy sub-unit remainders may be below rendering resolution; their saved quantity is retained rather than silently destroyed.
+
+Disk integration follow-up, 2026-10-13:
+Expanded water_static_compound passes in the actual world with a unique disposable persistent slot (20261013T202941415355Z). Places one unit on ordinary terrain, refills the bucket, mines beneath the lake, uses the normal compound disk save and destroys/recreates the game scene. Reopening preserves every water-cell quantity, the exact terrain archive and inventory bytes. The saved placement republishes, the saved full bucket pours into the lake, and the placed unit can be scooped completely after reload. Water restoration reports 52 cache hits and zero sampled terrain nodes. This closes the disk-save evidence gap for this scenario; it does not change the storage-migration or broad visual/performance limitations above.

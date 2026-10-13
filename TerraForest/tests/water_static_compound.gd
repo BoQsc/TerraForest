@@ -36,7 +36,7 @@ func run():
   if FileAccess.file_exists(initial_path+suffix):
    check(false,"Test save slot must not already exist");await finish();return
  owns_save=true
- game=load("res://demo/world.tscn").instantiate();root.add_child(game)
+ game=load("res://demo/world.tscn").instantiate();game.background_fps=60;root.add_child(game)
  var deadline:=Time.get_ticks_msec()+35000
  while not game.has_meta("water_bucket_review_ready") and Time.get_ticks_msec()<deadline:await process_frame
  if not game.has_meta("water_bucket_review_ready"):
@@ -53,6 +53,22 @@ func run():
  deadline=Time.get_ticks_msec()+5000
  while not game.lakes._pending_bucket.is_empty() and Time.get_ticks_msec()<deadline:await process_frame
  check(inventory.snapshot().slots[slot].water_ml==1000000,"Full bucket collected before compound save")
+ if failures:await finish();return
+ # Persist a placed unit as well as the lake excavation and held bucket.
+ var dry_origin:Vector3=game.player.global_position+Vector3(0,0,10)
+ var dry:Dictionary=game.get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(dry_origin+Vector3.UP*30,dry_origin-Vector3.UP*30,1))
+ check(not dry.is_empty(),"Ordinary dry ground found for saved placement")
+ if dry.is_empty():await finish();return
+ var placed:Vector3=dry.position+Vector3.UP*0.03
+ game.lakes.bucket(placed+Vector3.UP*2,placed,true,inventory,slot,inventory.snapshot().revision)
+ deadline=Time.get_ticks_msec()+5000
+ while not game.lakes._pending_bucket.is_empty() and Time.get_ticks_msec()<deadline:await process_frame
+ check(inventory.snapshot().slots[slot].water_ml==0 and await ready_water(),"Full unit placed on terrain before disk save")
+ check(game.lakes.water.surface_near(placed,2.0).is_finite(),"Saved placement has a published surface")
+ game.lakes.bucket(above,above-Vector3.UP*3.5,false,inventory,slot,inventory.snapshot().revision)
+ deadline=Time.get_ticks_msec()+5000
+ while not game.lakes._pending_bucket.is_empty() and Time.get_ticks_msec()<deadline:await process_frame
+ check(inventory.snapshot().slots[slot].water_ml==1000000,"Bucket refilled alongside placed water before save")
  if failures:await finish();return
  var before:=amounts(game.lakes.capture_snapshot())
  var point:Vector3=ground.position-Vector3.UP*0.4
@@ -75,15 +91,30 @@ func run():
  check(saved_notice,"Normal compound save verifies terrain, water and inventory")
  if failures:await finish();return
  game.terrain.shutdown();game.queue_free();await process_frame;await process_frame
- game=load("res://demo/world.tscn").instantiate();root.add_child(game)
+ game=load("res://demo/world.tscn").instantiate();game.background_fps=60;root.add_child(game)
  game.terrain.snapshot_restored.connect(func(_sections:Dictionary,_epoch:int):restore_stats=game.lakes.statistics())
  deadline=Time.get_ticks_msec()+20000
  while (game.loading_active or not game.terrain.world_ready) and Time.get_ticks_msec()<deadline:await process_frame
  check(not game.loading_active and game.terrain.world_ready and await ready_water(),"Saved combined world reopens and publishes water")
  check(amounts(game.lakes.capture_snapshot())==before,"Compound disk reload preserves every water-cell quantity")
+ check(game.lakes.water.surface_near(placed,2.0).is_finite(),"Disk reload republishes the placed water at its saved location")
  check(game.player_hud.inventory.capture_storage_snapshot()==held_before,"Compound disk reload preserves the filled bucket and inventory")
  check(game.terrain.backend.native.execute(Codec.command(4))==terrain_before,"Compound disk reload preserves the mined terrain field exactly")
  check(restore_stats.get("cache_hits",0)>0 and restore_stats.get("sampled_nodes",-1)==0,"Water occupancy restored from cache without resampling")
+ # Exercise the restored inventory and rendered placement, not just bytes.
+ inventory=game.player_hud.inventory
+ game.lakes.bucket(above,above-Vector3.UP*3.5,true,inventory,slot,inventory.snapshot().revision)
+ deadline=Time.get_ticks_msec()+5000
+ while not game.lakes._pending_bucket.is_empty() and Time.get_ticks_msec()<deadline:await process_frame
+ check(inventory.snapshot().slots[slot].water_ml==0 and await ready_water(),"Reloaded full bucket pours back into lake")
+ var top:Vector3=game.lakes.water.surface_near(placed,2.0)
+ check(top.is_finite(),"Reloaded placed water remains targetable")
+ if top.is_finite():
+  game.lakes.bucket(top+Vector3.UP*2,top-Vector3.UP*0.5,false,inventory,slot,inventory.snapshot().revision)
+  deadline=Time.get_ticks_msec()+5000
+  while not game.lakes._pending_bucket.is_empty() and Time.get_ticks_msec()<deadline:await process_frame
+  check(inventory.snapshot().slots[slot].water_ml==1000000 and await ready_water(),"Reloaded placement fills one whole bucket")
+  check(not game.lakes.water.surface_near(placed,2.0).is_finite(),"Scoop removes reloaded placement without a stale surface")
  var file:=FileAccess.open("res://reports/water_static_compound.json",FileAccess.WRITE);file.store_string(JSON.stringify({"failures":failures,"restore_statistics":restore_stats,"slot":save_slot},"  "));file.close()
  await finish()
 func finish():
