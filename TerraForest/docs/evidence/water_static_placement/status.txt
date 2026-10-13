@@ -1,0 +1,16 @@
+2026-10-13: COMPACT STATIC BUCKET PLACEMENT
+The current runtime's six-direction BFS allocation produced a visible cross once
+flow was removed. Explicit pouring now plans at most 28 connected half-metre
+cells in a one-metre horizontal footprint and selects one common fill height.
+Exact integer millilitres transfer atomically after capacity and connectivity
+checks. No autonomous spreading/settling was reintroduced. Existing quantities
+are not redistributed. Unsupported disconnected placements reject unchanged.
+
+Release water_transfer_volume: seven checks pass, including exact 1m3 source/
+destination transfer, eight full cells, visible height, cached reopen and blocked
+pour rollback. Actual-world water_ground_pour passes with a new compact footprint
+gate: reports/checks/20261013T174620746525Z. Screenshot reviewed and retained;
+the cross-shaped arms are removed. Statistics after placement show no active
+flow cells or cell steps. This is a visible correction in the current runtime,
+not acceptance of general geometry/contact, bucket-scale volume accuracy or the
+unfinished migration to authoritative TerrainCore material fields.

@@ -56,6 +56,10 @@ func run():
  results.after_two_seconds=game.lakes.statistics()
  results.water_delta=water_delta(before_pour,game.lakes.capture_snapshot(),target)
  results.local_components=local_components(results.water_delta.new_wet_cells)
+ var low_cell:=Vector3i(2147483647,2147483647,2147483647);var high_cell:=Vector3i(-2147483647,-2147483647,-2147483647)
+ for row:Dictionary in results.water_delta.new_wet_cells:
+  var p:=Vector3i(row.cell[0],row.cell[1],row.cell[2]);low_cell=low_cell.min(p);high_cell=high_cell.max(p)
+ check(high_cell.x-low_cell.x<=1 and high_cell.z-low_cell.z<=1,"Static pour has a compact one-metre footprint instead of cross-shaped arms")
  check(results.local_components.components.size()==1,"Gentle-ground full-bucket pour remains one connected body, without detached small pieces")
  var final_file:=FileAccess.open("res://reports/water_ground_after.bin",FileAccess.WRITE)
  final_file.store_buffer(game.lakes.capture_snapshot());final_file.close()

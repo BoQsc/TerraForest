@@ -337,18 +337,21 @@ Dictionary NativeRegionalWater::transfer_water(const Vector3 &from,const Vector3
         }
     }
     if(pour){
-        // Plan a bounded connected placement before touching either owner.
-        // A cubic-metre transfer must not be hidden in an overfull single cell.
-        uint64_t remaining=amount;std::deque<Vector3i> pending;std::unordered_set<Key> visited;
-        pending.push_back(target);visited.insert(key(target));
-        while(!pending.empty()&&remaining){Vector3i p=pending.front();pending.pop_front();
+        // A static pour has a compact footprint and one final surface height.
+        struct Site{Vector3i p;WaterCellProfile shape;uint64_t stored,room;};
+        std::vector<Site> sites;std::deque<Vector3i> pending;std::unordered_set<Key> visited;
+        Vector3 aim=hit?Vector3(surface["point"]):to;
+        int x0=target.x-(aim.x-target.x*0.5<0.25?1:0),z0=target.z-(aim.z-target.z*0.5<0.25?1:0);
+        pending.push_back(target);visited.insert(key(target));uint64_t space=0;
+        while(!pending.empty()){
+            Vector3i p=pending.front();pending.pop_front();
             Region *current=get(p,true);if(!current){out["pending"]=!limit;out["reason"]="Preparing water at this location";return out;}
             auto shape=profile(*current,index(p));uint64_t cap=shape.capacity(),stored=current->water[index(p)];
             if(!cap)continue;
-            uint64_t give=std::min(remaining,cap>stored?cap-stored:0);if(give){take.emplace_back(p,give);remaining-=give;}
-            if(!remaining)break;
-            for(int d=0;d<6;++d){Vector3i q=p+directions[d],distance=q-target;
-                if(!in_domain(q)||std::max({std::abs(distance.x),std::abs(distance.y),std::abs(distance.z)})>2||visited.count(key(q)))continue;
+            uint64_t room=cap>stored?cap-stored:0;sites.push_back({p,shape,stored,room});space+=room;
+            for(int d=0;d<6;d++){
+                Vector3i q=p+directions[d];
+                if(!in_domain(q)||q.x<x0||q.x>x0+1||q.z<z0||q.z>z0+1||q.y<target.y-2||q.y>target.y+4||visited.count(key(q)))continue;
                 Region *other=get(q,true);if(!other){out["pending"]=!limit;out["reason"]="Preparing water at this location";return out;}
                 auto next=profile(*other,index(q));if(!next.capacity())continue;
                 bool connected=d==0?(shape.open_bottom&&next.ceiling==500):d==5?(shape.ceiling==500&&next.open_bottom):
@@ -356,7 +359,39 @@ Dictionary NativeRegionalWater::transfer_water(const Vector3 &from,const Vector3
                 if(connected&&visited.insert(key(q)).second)pending.push_back(q);
             }
         }
-        if(remaining){out["reason"]="Not enough connected space near the pour target";return out;}
+        if(space<amount){out["reason"]="Not enough connected space near the pour target";return out;}
+        auto allocation=[](const Site&s,double level){
+            double volume=s.shape.volume(std::clamp(level-s.p.y*500.0,0.0,500.0));
+            uint64_t desired=uint64_t(std::max(0.0,std::floor(volume)));
+            return std::min(s.room,desired>s.stored?desired-s.stored:0);
+        };
+        double low=(target.y-2)*500.0,high=(target.y+5)*500.0;
+        for(int iteration=0;iteration<32;iteration++){
+            double middle=(low+high)*0.5;uint64_t sum=0;for(const auto&s:sites)sum+=allocation(s,middle);
+            if(sum>amount)high=middle;else low=middle;
+        }
+        uint64_t remaining=amount;
+        for(const auto&s:sites){uint64_t give=std::min(remaining,allocation(s,low));take.emplace_back(s.p,give);remaining-=give;}
+        // Exact integer quantity; distribute only the final rounding millilitres.
+        for(size_t n=0;n<sites.size()&&remaining;n++)if(take[n].second<sites[n].room&&allocation(sites[n],high)>take[n].second){take[n].second++;remaining--;}
+        if(remaining){out["reason"]="Water placement could not retain its full quantity";return out;}
+        // Reject disconnected pockets instead of creating several small pieces.
+        std::unordered_map<Key,size_t> lookup;for(size_t n=0;n<sites.size();n++)lookup[key(sites[n].p)]=n;
+        std::vector<size_t> reached;std::unordered_set<size_t> seen;
+        for(size_t n=0;n<take.size();n++)if(take[n].second){reached.push_back(n);seen.insert(n);break;}
+        for(size_t at=0;at<reached.size();at++){
+            size_t n=reached[at];const auto&a=sites[n];uint64_t av=a.stored+take[n].second;
+            for(int d=0;d<6;d++){
+                auto found=lookup.find(key(a.p+directions[d]));if(found==lookup.end()||seen.count(found->second))continue;
+                size_t j=found->second;const auto&b=sites[j];uint64_t bv=b.stored+take[j].second;if(!bv)continue;
+                bool connected=d==0?joined_vertical(b.shape,bv,a.shape,av):d==5?joined_vertical(a.shape,av,b.shape,bv):
+                    joined(a.shape,av,b.shape,bv,b.p.x!=a.p.x?0:2,b.p.x!=a.p.x?b.p.x>a.p.x:b.p.z>a.p.z);
+                if(connected){seen.insert(j);reached.push_back(j);}
+            }
+        }
+        for(size_t n=0;n<take.size();n++)if(take[n].second&&!seen.count(n)){out["reason"]="Aim at one connected open area";return out;}
+        take.erase(std::remove_if(take.begin(),take.end(),[](const auto&entry){return entry.second==0;}),take.end());
+
     }
     if(pour&&(!profile(*r,i).capacity()||total>MAX_TOTAL-amount)){out["reason"]="Aim at open space just above terrain";return out;}
     if(!bool(inventory->call("exchange_water",slot,pour,revision,int64_t(amount)))){out["reason"]="Bucket full / empty, or selected item changed";return out;}
