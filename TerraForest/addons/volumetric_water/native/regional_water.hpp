@@ -98,7 +98,6 @@ class NativeRegionalWater : public godot::RefCounted {
     std::unordered_set<Key> vertical_set;
     std::map<Key,uint32_t> vertical_regions;
     void queue_vertical(const godot::Vector3i &lower);
-    void settle_vertical();
     uint64_t vertical_steps=0;
     uint64_t cache_rebuilds=0;
     uint64_t total=0,steps=0,sampled=0,cache_hits=0,changes=0;
@@ -125,7 +124,6 @@ class NativeRegionalWater : public godot::RefCounted {
     void wake(const godot::Vector3i &p);
     void changed(const godot::Vector3i &p);
     void request(Key k);
-    void process_cell(const godot::Vector3i &p);
     void process_fill();
     void move(const godot::Vector3i &a,const godot::Vector3i &b,uint64_t amount);
     struct SurfaceMesh {

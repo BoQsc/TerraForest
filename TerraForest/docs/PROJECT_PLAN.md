@@ -4,6 +4,16 @@ Updated 2026-10-11. TerraForest is an integrated development world, not a comple
 
 This is the current delivery-order and coverage reference. [Delivery history](DELIVERY_STATUS.md) records evidence at the time of each change; older entries are not current status. [World systems design](WORLD_SYSTEMS_DESIGN.md) retains the broader architecture contract. A documentation update alone closes no implementation gate.
 
+## Active water scope override - 2026-10-13
+
+The user explicitly deferred all spillage and automatic flow for the foreseeable
+future. Water stays where placed. Only explicit lake generation, bucket scoop/
+pour, development edits and terrain-contact maintenance may change it. Retain
+good visuals, low runtime cost, saving and cached loading. Idle water must not
+run simulation. Earlier flow-back, drainage, local-settling and outlet-response
+gates below are historical and no longer acceptance requirements for this phase.
+The current density/volume and visual failures remain blocking.
+
 ## Current water checkpoint - 2026-10-13
 
 The user supplied the older `gpu-marching-cubes` project. Its actual GPU brush and

@@ -174,10 +174,8 @@ WaterCellProfile NativeRegionalWater::surface_profile(const Vector3i &p,bool sna
     }
     return result;
 }
-void NativeRegionalWater::wake(const Vector3i &p){
-    if(!in_domain(p))return;auto it=regions.find(region_key(p));
-    if(it!=regions.end()&&it->second.water[index(p)]&&active_set.emplace(key(p),flow_clock).second)active.push_back(key(p));
-}
+// Static editable water: no automatic simulation frontier.
+void NativeRegionalWater::wake(const Vector3i &){}
 void NativeRegionalWater::changed(const Vector3i &p){
     queue_vertical(p);queue_vertical(p+Vector3i(0,-1,0));
     ++changes;wake(p);Key k=region_key(p);if(mesh_set.insert(k).second)meshes.push_back(k);
@@ -219,86 +217,7 @@ void NativeRegionalWater::invalidate(const AABB &bounds){
 }
 // Prioritised conservative gravity repair. Each job handles exactly one face;
 // chains resume through the same bounded queue rather than scanning a column.
-void NativeRegionalWater::queue_vertical(const Vector3i &lower){
-    const Region *a=get(lower);Vector3i upper=lower+Vector3i(0,1,0);const Region *b=get(upper);
-    if(!a||!b)return;int i=index(lower),j=index(upper);
-    uint64_t capacity=profile(*a,i).capacity();
-    if(a->ceiling[i]!=500||!profile(*b,j).open_bottom||a->water[i]>=capacity||!b->water[j])return;
-    Key k=key(lower);if(vertical_set.insert(k).second){vertical.push_back(k);++vertical_regions[region_key(lower)];}
-    // The existing saved awake bit records work even if the lower cell is dry.
-    wake(upper);
-}
-void NativeRegionalWater::settle_vertical(){
-    Key k=vertical.front();vertical.pop_front();vertical_set.erase(k);Vector3i lower=position(k);
-    auto pending=vertical_regions.find(region_key(lower));if(pending!=vertical_regions.end()&&!--pending->second)vertical_regions.erase(pending);
-    Vector3i upper=lower+Vector3i(0,1,0);Region *a=get(lower,false),*b=get(upper,false);++vertical_steps;
-    if(!a||!b)return;int i=index(lower),j=index(upper);
-    uint64_t capacity=profile(*a,i).capacity();
-    if(a->ceiling[i]==500&&profile(*b,j).open_bottom&&capacity>a->water[i]&&b->water[j])
-        move(upper,lower,std::min(capacity-a->water[i],b->water[j]));
-}
-void NativeRegionalWater::move(const Vector3i &a,const Vector3i &b,uint64_t amount){
-    if(!amount)return;preserve_mesh_region(region_key(a));preserve_mesh_region(region_key(b));regions.at(region_key(a)).water[index(a)]-=amount;regions.at(region_key(b)).water[index(b)]+=amount;changed(a);changed(b);
-}
-void NativeRegionalWater::process_cell(const Vector3i &p){
-    Region *a=get(p,true);if(!a)return;int i=index(p);if(!a->water[i])return;
-    const uint64_t capacity=profile(*a,i).capacity();
-    // Newly placed solid terrain never deletes water. Try adjacent free cells;
-    // any trapped displacement stays owned here until terrain opens again.
-    if(capacity==0){
-        for(const Vector3i &d:directions){Vector3i q=p+d;Region *b=get(q,true);if(!b)continue;int j=index(q);uint64_t cap=profile(*b,j).capacity();
-            if(cap>b->water[j])move(p,q,std::min(a->water[i],cap-b->water[j]));if(!a->water[i])break;}
-        return;
-    }
-    Vector3i below=p+directions[0];Region *down=nullptr;
-    if(profile(*a,i).open_bottom){down=get(below,true);if(down){int j=index(below);uint64_t cap=profile(*down,j).capacity();
-        if(down->ceiling[j]==500&&cap>down->water[j])move(p,below,std::min(a->water[i],cap-down->water[j]));}}
-    if(!a->water[i])return;
-    // Equalise only across a shared air interval, with exact integer transfers.
-    // Rotating the deterministic order avoids a permanent cardinal-direction bias.
-    const int rotation=int(key(p)&3);
-    for(int t=0;t<4&&a->water[i];++t){Vector3i q=p+directions[1+(t+rotation)%4];Region *b=get(q,true);if(!b)continue;int j=index(q);
-        auto pa=surface_profile(p),pb=surface_profile(q);int axis=q.x!=p.x?0:2,side=q[axis]>p[axis];
-        double opening=std::max(pa.opening(axis,side),pb.opening(axis,1-side));
-        if(opening>=std::min(pa.ceiling,pb.ceiling))continue;
-        uint64_t cap=pb.capacity();if(b->water[j]>=cap)continue;
-        double ha=pa.head(a->water[i]),hb=pb.head(b->water[j]);
-        auto air=pb;air.slope_x=air.slope_z=0;
-        if(!WaterCellProfile::face_overlap(pa,ha,air,air.ceiling,axis,side)||ha-hb<=1.0)continue;
-        // Full-footprint columns keep the constant-area, closed-form path.
-        // Only a level crossing a sloped floor needs bounded inversion.
-        double target=(ha+hb)*0.5;
-        if(target<std::max({opening,pa.maximum(),pb.maximum()})||target>std::min(pa.ceiling,pb.ceiling)||a->water[i]>capacity){
-            double lo=hb,hi=ha;
-            for(int n=0;n<24;++n){double mid=(lo+hi)*0.5;
-                double debit=double(a->water[i])-pa.volume(mid),credit=pb.volume(mid)-double(b->water[j]);
-                if(debit>credit)lo=mid;else hi=mid;
-            }
-            target=(lo+hi)*0.5;
-        }
-        uint64_t amount=uint64_t(std::max(0.0,std::round(std::min(double(a->water[i])-pa.volume(target),pb.volume(target)-double(b->water[j])))));
-        // Equilibrium is a target, not an instantaneous transfer. Bound each
-        // face by a gravity-head speed over the 0.5 m cell width and elapsed
-        // simulation time. Never round sub-millilitre transport upward: that
-        // launches tiny fragments faster than the permitted flow. Residual
-        // water remains owned here; it is neither deleted nor teleported.
-        double speed=std::sqrt(2.0*9.81*(ha-hb)*0.001);
-        // Thin runoff also needs bed resistance; a head-only speed makes a
-        // millimetre film travel as fast as a deep pool. Use a shallow-flow
-        // Manning estimate (R approximated by mean wetted depth), capped by the
-        // gravity-head speed. Fixed roughness is a gameplay approximation.
-        double area=ha>=pa.maximum()?1.0:pa.footprint(ha).area;
-        double depth=double(a->water[i])/(250000.0*std::max(area,1e-9));
-        double friction_speed=std::pow(depth,2.0/3.0)*std::sqrt((ha-hb)/500.0)/0.06;
-        speed=std::min(speed,friction_speed);
-        double fraction=std::min(1.0,speed*flow_seconds/0.5);
-        uint64_t transport=uint64_t(std::floor(double(a->water[i])*fraction));
-        amount=std::min(amount,transport);
-        move(p,q,std::min({amount,cap-b->water[j],a->water[i]}));
-    }
-    if(a->water[i]>capacity&&a->ceiling[i]==500){Vector3i q=p+directions[5];Region *b=get(q,true);if(b&&profile(*b,index(q)).open_bottom){
-        uint64_t cap=profile(*b,index(q)).capacity();if(cap>b->water[index(q)])move(p,q,std::min(a->water[i]-capacity,cap-b->water[index(q)]));}}
-}
+void NativeRegionalWater::queue_vertical(const Vector3i &){}
 bool NativeRegionalWater::begin_fill(const AABB &bounds,double level,const Vector3 &seed,int64_t amount){
     if(fill.running||!bounds.position.is_finite()||!bounds.size.is_finite()||!seed.is_finite()||!std::isfinite(level)||amount<-1||amount>int64_t(MAX_TOTAL-total))return false;
     Vector3i lo=cell(bounds.position),hi=cell(bounds.position+bounds.size);Vector3i start=cell(seed);
@@ -330,22 +249,14 @@ void NativeRegionalWater::process_fill(){
     if(retry)fill.queue.push_back(key(p));
 }
 void NativeRegionalWater::advance(int64_t budget,double seconds){
+    // Only authored lake preparation advances. Existing water never flows,
+    // spills or settles; edits and bucket transfers are explicit operations.
     if(budget<1||budget>8192||!std::isfinite(seconds)||seconds<=0)return;
-    // A stalled render frame must not cause an instantaneous long-distance jump.
-    flow_clock+=std::min(seconds,0.05);uint64_t start=Time::get_singleton()->get_ticks_usec();
-    // One active frontier per update: reawakened cells progress next update,
-    // rather than relaxing the same local disturbance away before rendering.
-    size_t remaining_active=active.size();
-    for(int n=0;n<budget;++n){
-        if(fill.running){size_t before=fill.queue.size();process_fill();if(fill.running&&fill.queue.size()==before&&!requests.empty())break;}
-        else if(!vertical.empty())settle_vertical();
-        else{if(active.empty()||remaining_active==0)break;--remaining_active;Key k=active.front();active.pop_front();
-            // A CPU-budget wait is not a pause in simulated time. Consume a
-            // bounded substep and carry remaining time only while still awake.
-            double previous=active_set.at(k);flow_seconds=std::min(0.05,std::max(0.0,flow_clock-previous));
-            active_set.erase(k);process_cell(position(k));++steps;
-            auto pending=active_set.find(k);if(pending!=active_set.end())pending->second=previous+flow_seconds;
-        }
+    last_us=0;if(!fill.running)return;
+    uint64_t start=Time::get_singleton()->get_ticks_usec();
+    for(int n=0;n<budget&&fill.running;++n){
+        size_t before=fill.queue.size();process_fill();
+        if(fill.running&&fill.queue.size()==before&&!requests.empty())break;
         if((n&7)==7&&Time::get_singleton()->get_ticks_usec()-start>=1000)break;
     }
     last_us=Time::get_singleton()->get_ticks_usec()-start;max_us=std::max(max_us,last_us);

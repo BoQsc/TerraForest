@@ -113,11 +113,8 @@ func _process(delta:float) -> void:
  # Show edits before advancing their flow. Native immutable batches retain
  # that state if publication spans more than one frame.
  _publish_meshes()
- # Prepare during loading, but do not advance an already restored moving world
- # while the player is waiting for its meshes and collision.
- if _filling_id!=0 or not get_parent().get("loading_active"):water.advance(2048,delta)
- # Invalid regions already refuse flow in native code. Keep unaffected water
- # moving while edits publish; only terrain sampling needs a stable revision.
+ # Explicit lake creation only. Resting or edited water has no flow tick.
+ if _filling_id!=0:water.advance(2048,delta)
  if not _busy and not terrain.pending_edit:
   var request:Dictionary=water.next_request()
   if not request.is_empty():

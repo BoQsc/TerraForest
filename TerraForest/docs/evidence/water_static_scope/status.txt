@@ -1,0 +1,18 @@
+2026-10-13: USER DEFERRED FLOW AND SPILLAGE
+Current requirement: static editable volumetric water, simple bucket gameplay,
+good visuals and efficient runtime. No automatic flow, drainage, settling or
+spillage for the foreseeable future. Earlier flow-back/outlet gates superseded.
+
+Removed automatic vertical settling and lateral/gravity transport implementations
+from active native source. Wake hooks no longer enqueue simulation work, including
+legacy saved awake bits. advance only prepares authored lakes; lake_world calls
+it only during authoring. Explicit edits and bucket operations remain enabled.
+
+Eight static-state assertions pass in debug and release: suspended old-save water
+and edited water remain byte-identical after 600 advance calls, zero simulation
+steps/active cells, explicit removal/placement and reload retain quantities.
+Debug report: reports/checks/20261013T173017636892Z.
+Actual-world bucket test: reports/checks/20261013T173041562972Z, passing automated
+checks. Captured image reviewed: poured shape is an awkward cross and is NOT
+visually accepted. This change closes no volume/geometry or full gameplay gate.
+The terrain-field migration and bucket-scale representation defects remain open.
