@@ -1,0 +1,29 @@
+Frozen publication diagnosis, 2026-10-13
+
+This is evidence for rejecting the current water reconstruction/publication path,
+not acceptance of completed water or a substitute implementation.
+
+The test froze simulation, completed queued vertical repairs, captured the current
+meshes, then drained regional mesh publication without advancing simulation.
+The saved water snapshot remained byte-identical across the mesh republish.
+Inspect engine.log for those assertions. Compare face_classes (before) against
+coherent_faces (after): long interior seams disappear; shoreline holes remain.
+This narrows the interior defect to reconstruction/publication consistency rather
+than requiring changed water quantities to eliminate those particular seams.
+It does not prove all moving-surface defects have the same cause.
+
+The runner reports FAILED: normal exit code 0, no timeout, but final completion
+marker absent. Assertions and captures provide diagnostic evidence only; this
+run must not be advertised as a passed acceptance test. Screenshot FPS includes
+capture/shader diagnostic disturbances, not a sustained gameplay measurement.
+
+Required replacement remains unfinished:
+- One terrain/material reconstruction path, not independent top/side/shore meshes.
+- Preserve sub-grid water amounts and bucket recoverability; naive coarse density
+  sampling has already been shown to miss thin water layers.
+- Publish adjacent dependent material meshes from a consistent world revision.
+- Preserve mining interaction, quantity conservation, saved state and cached loads.
+- Validate the actual world with digging, a bucketful, shoreline and save/reopen.
+- Measure runtime cost independently of screenshots; no claim of sustained 60 FPS.
+
+No new runtime mesher or alternative water system was introduced by this diagnosis.

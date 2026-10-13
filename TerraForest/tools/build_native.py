@@ -44,7 +44,7 @@ def build(target, addon_name='world_runtime'):
     state_path=work/'state.json'
     state=json.loads(state_path.read_text()) if state_path.exists() else {}
     fingerprint=hashlib.sha256((info['lock_sha256']+json.dumps(flags)+digest(library)).encode())
-    shared_headers = [ROOT/'addons/volumetric_terrain/native/surface_cell.hpp'] if addon_name=='volumetric_water' else []
+    shared_headers = [ROOT/'addons/volumetric_terrain/native'/name for name in ('surface_cell.hpp','density_surface.hpp','platform.h')] if addon_name=='volumetric_water' else []
     for header in sorted([*native.rglob('*.hpp'),*native.rglob('*.h'),*shared_headers]):
         fingerprint.update(str(header.relative_to(ROOT)).encode())
         fingerprint.update(header.read_bytes())

@@ -4,18 +4,27 @@
 // Caller supplies finite densities and their negative-sample mask. No terrain
 // storage, material, engine, allocator or simulation dependency.
 namespace terraforest {
-template<class Vec>
-inline Vec surface_cell_vertex(const float *d, unsigned signs) {
+// The reconstruction consumes material-boundary crossings. Density fields supply
+// linearly interpolated crossings; sub-grid materials may supply exact crossings.
+// This keeps topology and vertex aggregation common without rounding away volume.
+template<class Vec,class AddCrossing>
+inline Vec surface_crossing_vertex(unsigned signs,AddCrossing add){
  static constexpr int edges[12][2]={{0,1},{2,3},{4,5},{6,7},{0,2},{1,3},{4,6},{5,7},{0,4},{1,5},{2,6},{3,7}};
  Vec p{};int count=0;
  for(int e=0;e<12;e++){
   int a=edges[e][0],b=edges[e][1];
   if(((signs>>a)&1)==((signs>>b)&1))continue;
-  float t=d[a]/(d[a]-d[b]);
-  Vec va={float(a&1),float((a>>1)&1),float((a>>2)&1)},vb={float(b&1),float((b>>1)&1),float((b>>2)&1)};
-  p=p+va+(vb-va)*t;count++;
+  p=add(p,a,b);count++;
  }
  return count?p/float(count):p;
+}
+template<class Vec>
+inline Vec surface_cell_vertex(const float *d,unsigned signs) {
+ return surface_crossing_vertex<Vec>(signs,[&](Vec p,int a,int b){
+  float t=d[a]/(d[a]-d[b]);
+  Vec va={float(a&1),float((a>>1)&1),float((a>>2)&1)},vb={float(b&1),float((b>>1)&1),float((b>>2)&1)};
+  return p+va+(vb-va)*t;
+ });
 }
 // Emit the three owned dual faces around a cell's minimum lattice corner.
 // Lookup returns a vertex index or -1 for absent cells. Domain ownership and

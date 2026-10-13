@@ -172,6 +172,14 @@ func run():
  # Freeze one published state for visual attribution; diagnostic materials
  # are never installed as gameplay shaders.
  game.lakes.set_process(false)
+ # Finish only existing priority repairs, never an ordinary lateral flow step.
+ for repair_frame in 120:
+  if game.lakes.statistics().pending_vertical==0:break
+  for operation in 64:
+   if game.lakes.statistics().pending_vertical==0:break
+   game.lakes.water.advance(1)
+  await process_frame
+ check(game.lakes.statistics().pending_vertical==0,"Frozen comparison starts with vertical repairs complete")
  var diagnostic_snapshot:=FileAccess.open("res://reports/water_repeated_mining.bin",FileAccess.WRITE)
  diagnostic_snapshot.store_buffer(game.lakes.capture_snapshot());diagnostic_snapshot.close()
  await capture_visual("water_repeated_mining")
@@ -187,8 +195,22 @@ func run():
  game.lakes._material.shader=classified
  for frame in 3:await process_frame
  await capture_visual("water_repeated_mining_face_classes")
+ # Same simulation state, now rebuild every queued regional surface. This
+ # isolates publication-age seams from errors in a single-state surface.
+ var state_before:PackedByteArray=game.lakes.capture_snapshot()
+ var drain_started:=Time.get_ticks_msec()
+ for frame in 120:
+  if game.lakes.statistics().dirty_meshes==0:break
+  game.lakes._publish_meshes()
+  await process_frame
+ timings.frozen_mesh_drain_ms=Time.get_ticks_msec()-drain_started
+ check(game.lakes.statistics().dirty_meshes==0,"Frozen water mesh queue drains without advancing simulation")
+ check(game.lakes.capture_snapshot()==state_before,"Full regional republish leaves frozen water state byte-identical")
+ for frame in 3:await process_frame
+ await capture_visual("water_repeated_mining_coherent_faces")
  game.lakes._material.shader=original_shader
  for frame in 3:await process_frame
+ await capture_visual("water_repeated_mining_coherent")
  measuring=prior_measuring;previous_frame=0
  game.lakes.visible=false
  for frame in 2:await process_frame

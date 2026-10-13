@@ -1,0 +1,24 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS Vertical repair fixture restores one-millilitre lower gap
+PASS Pending vertical repair defers affected mesh publication
+PASS One operation repairs only one vertical face and queues the next
+PASS Save and restore retain unfinished vertical work
+PASS Vertical chain packs exactly without creating or losing a millilitre
+PASS Repaired column becomes eligible for mesh publication
+PASS two-region surface fixture loads
+FAIL adjacent regions share identical surface edge without internal wall
+PASS mesh reconstruction preserves exact quantities and cached state
+FAIL invalid neighbour defers surface publication instead of exposing internal walls
+FAIL deferred meshes and water quantities survive terrain invalidation
+FAIL diagonal contact through solid neighbours does not join water surfaces
+PASS vertical-region fixture loads (ledge=false)
+FAIL height-layer crossing shares surface without a submerged wall
+PASS cross-layer meshing preserves all authoritative state
+PASS vertical-region fixture loads (ledge=true)
+FAIL solid ledge keeps upper pool distinct from joined lower water
+PASS cross-layer meshing preserves all authoritative state
+PASS local water edit accepted for mesh invalidation
+FAIL mesh invalidation includes upper region reached by full-cell surface dependency
+WATER_SURFACE_CONTINUITY failures=7
+

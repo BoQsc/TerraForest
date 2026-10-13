@@ -122,6 +122,15 @@ func _process(delta:float) -> void:
   var p:=_pending_dev
   if water.brush(p.point,0.0,p.amount)>0:terrain.changed_since_save=true;_pending_dev={}
   elif Time.get_ticks_msec()>p.deadline:_pending_dev={};terrain.message_changed.emit("Aim the water brush into open space above terrain")
+ _publish_meshes()
+ var after:Dictionary=water.statistics()
+ if after.capacity_reached and not _capacity_reported:
+  _capacity_reported=true;terrain.message_changed.emit("Water resident-region limit reached; quantities retained, expansion paused")
+ if after.changes!=_last_changes:terrain.changed_since_save=true;_last_changes=after.changes
+ _notify_seconds+=delta
+ if _have_bounds and _notify_seconds>=0.25:
+  _notify_seconds=0;_have_bounds=false;exclusion_changed.emit(_changed_bounds)
+func _publish_meshes() -> void:
  # Share a 1 ms presentation target and at most four small regional uploads.
  var mesh_started:=Time.get_ticks_usec()
  for publication in 4:
@@ -139,13 +148,6 @@ func _process(delta:float) -> void:
    var bounds:=AABB(Vector3(coordinate)*4,Vector3(4,4,4))
    _changed_bounds=_changed_bounds.merge(bounds) if _have_bounds else bounds;_have_bounds=true
   if Time.get_ticks_usec()-mesh_started>=1000:break
- var after:Dictionary=water.statistics()
- if after.capacity_reached and not _capacity_reported:
-  _capacity_reported=true;terrain.message_changed.emit("Water resident-region limit reached; quantities retained, expansion paused")
- if after.changes!=_last_changes:terrain.changed_since_save=true;_last_changes=after.changes
- _notify_seconds+=delta
- if _have_bounds and _notify_seconds>=0.25:
-  _notify_seconds=0;_have_bounds=false;exclusion_changed.emit(_changed_bounds)
 func _slice_ready(token:int,status:int,epoch_id:int,revision:int) -> void:
  if token!=_token:return
  _busy=false

@@ -1,0 +1,53 @@
+# SPDX-License-Identifier: 0BSD
+extends SceneTree
+var failures:=0
+func check(ok:bool,label:String):
+ print("PASS " if ok else "FAIL ",label)
+ if not ok:failures+=1
+func fixture(x:int,floor_mm:int):
+ var catalog:PackedByteArray=ClassDB.instantiate("NativeLakeCatalog").encode([])
+ var bytes:=PackedByteArray();bytes.resize(32+catalog.size()+6160);bytes.fill(0)
+ bytes.encode_u32(0,0x31575256);bytes.encode_u32(4,1);bytes.encode_u32(8,catalog.size());bytes.encode_u32(12,1);bytes.encode_u64(16,1000)
+ for i in catalog.size():bytes[32+i]=catalog[i]
+ var base:int=32+catalog.size();bytes.encode_u64(base,(10<<24)|(10<<12)|10);bytes.encode_u32(base+8,1);base+=16
+ for i in 512:bytes.encode_u16(base+i*12,500);bytes.encode_u16(base+i*12+2,500)
+ var i:=x+8*3+64*3;bytes.encode_u16(base+i*12,floor_mm);bytes.encode_u64(base+i*12+4,1000)
+ var water=ClassDB.instantiate("NativeRegionalWater")
+ if not water.restore_snapshot(bytes):return null
+ return water
+func _initialize():
+ GDExtensionManager.load_extension("res://addons/volumetric_water/volumetric_water.gdextension")
+ var closed:=true;var visible:=true;var bounded:=true;var conserved:=true;var shared:=true;var cases:=0
+ for x in [0,7]:
+  for floor_mm in range(0,491,35):
+   var water=fixture(x,floor_mm)
+   if water==null:quit(2);return
+   var before:PackedByteArray=water.capture_snapshot(ClassDB.instantiate("NativeLakeCatalog").encode([]))
+   var edges:Dictionary={};var count:=0;var low:=INF;var high:=-INF
+   for step in 100:
+    var packet:Dictionary=water.next_mesh()
+    if packet.is_empty():break
+    shared=shared and packet.faces.get("shared_surface_nets",false)
+    var vertices:PackedVector3Array=packet.arrays[Mesh.ARRAY_VERTEX]
+    for v in vertices:
+     low=minf(low,v.y);high=maxf(high,v.y)
+     bounded=bounded and v.y>=41.5+floor_mm*0.001-0.00002 and v.y<=41.5+floor_mm*0.001+0.00402
+    for t in range(0,vertices.size(),3):
+     count+=1
+     for e in 3:
+      var a:String=str(vertices[t+e].snapped(Vector3.ONE*0.00001));var b:String=str(vertices[t+(e+1)%3].snapped(Vector3.ONE*0.00001))
+      var key:=a+"|"+b if a<b else b+"|"+a
+      edges[key]=edges.get(key,0)+1
+   for value in edges.values():closed=closed and value==2
+   visible=visible and count>0 and high-low>0.001
+   conserved=conserved and before==water.capture_snapshot(ClassDB.instantiate("NativeLakeCatalog").encode([]))
+   cases+=1
+ check(shared,"Water packets use shared surface-nets reconstruction")
+ check(visible,"One-litre puddles retain nonzero geometry across vertical offsets")
+ check(bounded,"Thin-water vertices stay between actual bottom and top")
+ check(closed,"Region-boundary puddles have exactly two triangles per welded edge")
+ check(conserved,"Meshing leaves stored quantity and snapshot unchanged")
+ DirAccess.make_dir_recursive_absolute("res://reports")
+ var file=FileAccess.open("res://reports/water_material_surface.json",FileAccess.WRITE);file.store_string(JSON.stringify({"failures":failures,"cases":cases}));file.close()
+ print("WATER_MATERIAL_SURFACE cases=",cases," failures=",failures)
+ quit(0 if failures==0 else 1)

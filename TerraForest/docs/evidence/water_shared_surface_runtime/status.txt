@@ -1,0 +1,28 @@
+WORK IN PROGRESS -- shared runtime surface-nets adoption
+
+Water next_mesh now uses the same crossing aggregation, dual-cell connectivity
+and triangulation as terrain. Water supplies exact interval boundary crossings
+so a one-litre layer does not vanish between ordinary density samples. This is
+the sole water runtime mesh builder; custom top/side/shore assembly is removed.
+Authoritative volume storage, flow, queries and archives were not replaced.
+
+Final world run: 49 checks passed, including mining, buckets, conservation and
+cached save/reopen. Native mesh check: 30 thin-layer/boundary fixtures passed.
+Terrain regression: 72 complete packets match the frozen pre-refactor version.
+
+NOT COMPLETE: moving publication cracks remain; queries still use old shoreline
+polygons and differ from the new reconstruction. Older continuity tests failed
+seven assertions before removal of the vertical-publication gate. Some tests
+assume the previous vertex layout or queue order, but diagonal/ledge isolation
+and invalid-region behavior still require meaningful replacement coverage.
+Do not discard those requirements merely because new tests passed.
+
+Warm loading revealed a dependency cycle: meshes awaited vertical repairs while
+loading paused simulation awaiting meshes. Shared reconstruction no longer needs
+that old mesher gate. Invalid terrain occupancy still defers local publication.
+Empty storage neighbours can own boundary faces and now receive render jobs,
+including on restore. These jobs do not allocate water storage regions.
+
+No sustained 60 FPS, thermal sustainability or scale claim. Water storage and
+world streaming are not unified by this geometry change. The recorded native
+continuity failures are retained intentionally, not presented as a pass.
