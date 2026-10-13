@@ -1,0 +1,12 @@
+Fixed bucket units, 2026-10-13
+User selected fixed terrain-sized voxel units, not arbitrary fractional gameplay transfers.
+One new bucket click transfers exactly 1 m3 (internally 1,000,000 ml), or changes nothing.
+Insufficient connected source rejects without mutation. No alternate transfer_litre API.
+Legacy partial buckets retain contents; collecting tops them up, pouring requires a full unit.
+UI displays empty/full and 0/1 or 1/1. No automatic flow or spillage.
+Native release checks: water_bucket 13 PASS; water_transfer_volume 13 PASS.
+Actual world: water_bucket_roundtrip PASS, run 20261013T191739764897Z.
+Five natural-ground placements and one mined-slope placement recovered exactly 1 m3 and restored all cell quantities; developer-placement interoperability also passed.
+1920x1080 capture reviewed: empty bucket after pour shows 0/1 and unit-based hint.
+Limitations: this is atomic gameplay transfer, not completed TerrainCore storage migration or new snapped density geometry. Existing half-metre regional storage and terrain-contact placement remain. Historical fractional geometry failures are not repaired by this change. This short test does not establish sustained GPU/thermal performance or full visual acceptance.
+The older water_shore_clipping test's transfer calls were updated, but its obsolete shore-triangle geometry assertions were not run or certified.

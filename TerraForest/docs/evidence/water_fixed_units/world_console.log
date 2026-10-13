@@ -1,0 +1,112 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.3.280 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] New world
+[TerrainRewrite] New world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+[TerrainRewrite] Preparing your finite lake; terrain and water are being built
+[TerrainRewrite] Mined resources added to inventory
+[TerrainRewrite] Lake ready · temporary world
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Bucket review · disposable world
+PASS Disposable gameplay world is ready
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Bucket filled: one water unit (1 m3)
+PASS One normal click fills the bucket
+PASS Natural ground exists for case 0
+PASS Round-trip target starts dry
+[TerrainRewrite] Preparing water at this location
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Placed one water unit (1 m3)
+PASS Pour finishes publication
+PASS Full bucket transfers into world
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Bucket filled: one water unit (1 m3)
+PASS Scoop finishes publication
+PASS One scoop recovers the whole pour, with no hidden water remainder
+PASS Recovered pour leaves no stale visible water surface
+PASS Natural ground exists for case 1
+PASS Round-trip target starts dry
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Placed one water unit (1 m3)
+PASS Pour finishes publication
+PASS Full bucket transfers into world
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Bucket filled: one water unit (1 m3)
+PASS Scoop finishes publication
+PASS One scoop recovers the whole pour, with no hidden water remainder
+PASS Recovered pour leaves no stale visible water surface
+PASS Natural ground exists for case 2
+PASS Round-trip target starts dry
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Placed one water unit (1 m3)
+PASS Pour finishes publication
+PASS Full bucket transfers into world
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Bucket filled: one water unit (1 m3)
+PASS Scoop finishes publication
+PASS One scoop recovers the whole pour, with no hidden water remainder
+PASS Recovered pour leaves no stale visible water surface
+PASS Natural ground exists for case 3
+PASS Round-trip target starts dry
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Placed one water unit (1 m3)
+PASS Pour finishes publication
+PASS Full bucket transfers into world
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Bucket filled: one water unit (1 m3)
+PASS Scoop finishes publication
+PASS One scoop recovers the whole pour, with no hidden water remainder
+PASS Recovered pour leaves no stale visible water surface
+PASS Natural ground exists for case 4
+PASS Round-trip target starts dry
+[TerrainRewrite] Preparing water at this location
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Placed one water unit (1 m3)
+PASS Pour finishes publication
+PASS Full bucket transfers into world
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Bucket filled: one water unit (1 m3)
+PASS Scoop finishes publication
+PASS One scoop recovers the whole pour, with no hidden water remainder
+PASS Recovered pour leaves no stale visible water surface
+PASS Natural ground exists for case 5
+PASS Mine a crater through the ordinary terrain path
+[TerrainRewrite] Mined resources added to inventory
+PASS Mined terrain publishes
+PASS Mined crater has a collidable surface
+PASS Round-trip target starts dry
+[TerrainRewrite] Preparing water at this location
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Placed one water unit (1 m3)
+PASS Pour finishes publication
+PASS Full bucket transfers into world
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Bucket filled: one water unit (1 m3)
+PASS Scoop finishes publication
+PASS One scoop recovers the whole pour, with no hidden water remainder
+PASS Recovered pour leaves no stale visible water surface
+PASS Empty test bucket before collecting developer-placed water
+PASS Developer tool aims at the mined ground
+[TerrainRewrite] Placed water
+PASS Actual developer brush finishes shared placement
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Bucket filled: one water unit (1 m3)
+PASS Entire developer-placed volume is visible, scoopable and leaves no hidden surplus
+[TerrainRewrite] Temporary test world: save skipped
+WATER_BUCKET_ROUNDTRIP failures=0

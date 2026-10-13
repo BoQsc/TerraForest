@@ -207,7 +207,9 @@ func refresh() -> void:
 	var inventory_changed_since_view: bool=latest.revision!=state.get("revision",-1)
 	state=latest
 	if action_hint!=null and active_slot>=0 and active_item>=401 and active_item<=411 and not developer_belt:
-		action_hint.text="Bucket - %.3f / 1 m³ | Left mouse: scoop up to 1 m³ | Right mouse: pour contents | G drop"%(float(state.slots[active_slot].water_ml)/1000000.0)
+		var water_amount:int=state.slots[active_slot].water_ml
+		var bucket_state:String="Full" if water_amount==1000000 else "Empty" if water_amount==0 else "Older partial: refill first"
+		action_hint.text="Bucket - %s | Left mouse: collect 1 water unit | Right mouse: place 1 water unit | G drop"%bucket_state
 	if inventory_changed_since_view and active_slot>=0 and active_item!=int(state.slots[active_slot].item):
 		active_item=int(state.slots[active_slot].item);tool_requested.emit(active_item)
 	for i in range(32):

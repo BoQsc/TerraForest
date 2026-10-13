@@ -64,8 +64,9 @@ func present(row: Dictionary,title: String,key: String="") -> void:
 	count_label.text=str(row.count) if int(row.get("count",0))>1 else ""
 	tooltip_text=title if occupied else "Empty slot"
 	if occupied and carries_water:
-		count_label.text="%.3f m³"%(float(row.water_ml)/1000000.0)
-		tooltip_text+="\nWater: %.3f / 1,000 L\nCapacity: 1 m³"%(float(row.water_ml)/1000.0)
+		var water_amount:int=row.water_ml
+		count_label.text="1 / 1" if water_amount==1000000 else "0 / 1" if water_amount==0 else "Refill"
+		tooltip_text+="\nWater: %s\nOne unit = 1 m³"%("1 unit" if water_amount==1000000 else "Empty" if water_amount==0 else "Older partial bucket; collect water to refill")
 	var maximum: int=row.get("max_durability",0)
 	durability_ratio=clampf(float(row.get("durability",0))/maximum,0,1) if occupied and maximum>0 else -1.0
 	if durability_ratio>=0:tooltip_text+="\nDurability: %d / %d (%d%%)"%[row.durability,maximum,roundi(durability_ratio*100)]

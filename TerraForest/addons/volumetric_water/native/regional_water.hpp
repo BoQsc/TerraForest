@@ -139,7 +139,7 @@ public:
     int64_t remove_bounds(const godot::AABB &bounds);
     godot::Dictionary place_water(const godot::Vector3 &point,int64_t amount);
     int64_t brush(const godot::Vector3 &point,double radius,int64_t amount);
-    godot::Dictionary transfer_water(const godot::Vector3 &from,const godot::Vector3 &to,bool pour,godot::Object *inventory,int64_t slot,int64_t revision,int64_t max_litres);
+    godot::Dictionary transfer_water(const godot::Vector3 &from,const godot::Vector3 &to,bool pour,godot::Object *inventory,int64_t slot,int64_t revision);
     godot::Vector3 surface_near(const godot::Vector3 &point,double radius) const;
     double depth_at(const godot::Vector3 &point) const;
     godot::Dictionary cell_geometry(const godot::Vector3 &point) const;

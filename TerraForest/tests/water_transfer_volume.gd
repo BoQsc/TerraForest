@@ -73,7 +73,9 @@ func _initialize():
  var before_tiny:PackedByteArray=tiny.capture_snapshot(catalog)
  var before_bucket:Dictionary=inventory.snapshot()
  result=tiny.transfer_bucket(Vector3(43,43,41.5),Vector3(43,41.25,41.5),true,inventory,0,before_bucket.revision)
- check(not result.ok and not result.pending and inventory.snapshot()==before_bucket and tiny.capture_snapshot(catalog)==before_tiny,"Sub-grid dry pour is rejected visibly without consuming the bucket or creating invisible water")
+ check(not result.ok and not result.pending and inventory.snapshot()==before_bucket and tiny.capture_snapshot(catalog)==before_tiny,"Legacy partial pour is rejected without changing bucket or world")
+ result=tiny.transfer_bucket(Vector3(41.5,43,41.5),Vector3(41.5,41,41.5),false,inventory,0,inventory.snapshot().revision)
+ check(result.ok and inventory.snapshot().slots[0].water_ml==1000000 and tiny.statistics().water_ml==1000,"Legacy partial bucket refills without discarding or creating water")
  var dev=ClassDB.instantiate("NativeRegionalWater");assert(dev.restore_snapshot(bytes))
  check(dev.brush(Vector3(43,41.25,41.5),0.0,1000000)==1000000,"Developer placement accepts one cubic metre")
  var dev_saved:PackedByteArray=dev.capture_snapshot(catalog);var dev_full:=0;var dev_overfull:=false

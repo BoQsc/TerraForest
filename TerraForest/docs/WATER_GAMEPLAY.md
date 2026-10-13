@@ -1,3 +1,5 @@
+> Fixed-unit scope decision, 2026-10-13: bucket gameplay now transfers one complete 1 m³ unit or nothing. UI shows empty/full; older partial buckets retain their contents and can be refilled. No automatic flow or spillage. Native atomic-transfer checks and actual-world pour/recovery pass. This does not complete the TerrainCore storage migration or certify all water visuals. See `evidence/water_fixed_units/status.txt`. Earlier fractional/litre gameplay requirements below are superseded.
+
 > Scope override, 2026-10-13: no automatic flow, settling or spillage is wanted for the foreseeable future. Water stays where explicitly placed. Runtime advance now only prepares authored lakes; idle water has no simulation tick. Historical flow claims below describe prior behavior. Bucket-scale geometry and visual acceptance remain unfinished.
 
 > Shared-field foundation, 2026-10-13: TerrainCore now supports an empty material base through its existing density pages, edits, mesher, cache and archive. Seventeen native checks and terrain regressions pass. Lake gameplay is not wired to it yet; existing water failures remain open. See `evidence/terrain_material_field/status.txt`.

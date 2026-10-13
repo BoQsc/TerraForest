@@ -1,3 +1,5 @@
+> Fixed-unit scope decision, 2026-10-13: bucket gameplay now transfers one complete 1 m³ unit or nothing. UI shows empty/full; older partial buckets retain their contents and can be refilled. No automatic flow or spillage. Native atomic-transfer checks and actual-world pour/recovery pass. This does not complete the TerrainCore storage migration or certify all water visuals. See `evidence/water_fixed_units/status.txt`. Earlier fractional/litre gameplay requirements below are superseded.
+
 # TerraForest delivery plan and coverage register
 
 Updated 2026-10-11. TerraForest is an integrated development world, not a completed game-ready world engine. The next objective is first-round coverage of the original scope, followed by combined scale and endurance qualification. A coherent playable area demonstrates integration; it does not replace missing systems or reduce the large-world goal.
