@@ -1,0 +1,16 @@
+2026-10-13: LATEST WATER ACTION CANCELS OBSOLETE PENDING EDITS
+Actual world regression before fix: developer placement waits for uncached
+terrain; removing at that location or clicking a rejected new target leaves
+old pending placement live. It later adds water despite the newer action.
+First run 20261013T190454560395Z failed three assertions and logged Placed water.
+
+Both public world-level water actions now clear obsolete pending bucket and
+developer edits before validating the new action. Existing terrain requests
+may finish and remain cached, but cannot publish an abandoned water mutation.
+No region scan, rendering or simulation changes.
+
+Final run 20261013T190628389189Z passes developer add->remove, add->invalid
+retarget, and bucket pour->developer remove, each at an uncached actual-world
+target. Wait for outstanding terrain requests to finish. Exact original water
+cell map remains unchanged, and canceled bucket retains the full cubic metre.
+This fixes delayed obsolete edits; it does not address thin-volume rendering.

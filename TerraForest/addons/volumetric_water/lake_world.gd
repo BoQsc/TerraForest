@@ -182,12 +182,16 @@ func _slice_ready(token:int,status:int,epoch_id:int,revision:int) -> void:
  else:terrain.message_changed.emit("Water terrain sampling failed; quantities retained")
  _builder=null
 func bucket(from:Vector3,to:Vector3,pour:bool,inventory:RefCounted,slot:int,revision:int) -> Dictionary:
+ # A new intent supersedes queued edits, even if this new target is rejected.
+ _pending_bucket.clear();_pending_dev.clear()
  if not terrain.world_ready or terrain.pending_edit:return {"ok":false,"reason":"Wait for the terrain edit to finish"}
  var result:Dictionary=water.transfer_bucket(from,to,pour,inventory,slot,revision)
  if result.pending:_pending_bucket={"from":from,"to":to,"pour":pour,"inventory":inventory,"slot":slot,"revision":revision,"deadline":Time.get_ticks_msec()+5000}
  if result.ok:terrain.changed_since_save=true
  return result
 func dev_brush(point:Vector3,remove:bool,radius:float=2.0) -> void:
+ # A new intent supersedes queued edits, even if this new target is rejected.
+ _pending_bucket.clear();_pending_dev.clear()
  if terrain.pending_edit:return
  if remove:water.brush(point,radius,-0x10000000000000);terrain.changed_since_save=true
  else:
