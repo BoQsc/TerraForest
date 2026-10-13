@@ -1,0 +1,27 @@
+2026-10-13: OPEN FAILURE -- poured water terrain contact.
+
+Reproduce: python tools/check_regional_water_world.py --contact-only
+Actual normal world, real bucket mouse input, dug terrain, 1920x1080 fullscreen.
+The focused run stops after pouring and fails if the stored floor at any wet
+cell centre differs from the terrain collision surface by more than 2 cm.
+This is a centre-contact gate, not a complete shoreline/overhang qualification.
+
+Run 20261013T113737054580Z: expected failure in 12.73 seconds, no engine errors.
+10,000 ml conserved across four cells. Stored depth is 9.6--10.2 mm, while the
+stored floor is 44.275 m and terrain collision at each cell centre is 44.15018 m.
+The 124.82 mm air gap is more than twelve times the water's local depth.
+The earlier full run 20261013T113550926401Z passed its existing gameplay/archive
+checks, which do not enforce this terrain-contact tolerance. Passing those
+checks is not evidence that the water's visual volume is correctly supported.
+
+Cause in current code: NativeWaterTerrainPatch::sample_terrain intersects four
+corner air intervals, retaining the highest corner floor throughout a cell.
+WaterSurfaceInterval and build_surface then reconstruct a thin layer above that
+conservative floor, without accounting for the terrain below inside the cell.
+Surface-nets outline smoothing alone cannot fix that missing occupied volume.
+
+Next correction: terrain-aware partial-cell volume/head and shared-surface
+reconstruction. Preserve conservative face barriers, exact millilitre transfers,
+published query/render agreement and cached loading; do not simply lower the
+floor, visually inflate the water, or permit diagonal leakage. This remains
+an unresolved gameplay visual/correctness issue, ahead of performance tuning.

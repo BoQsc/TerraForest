@@ -1,0 +1,258 @@
+{
+  "checks": [
+    {
+      "name": "Normal combined world loads",
+      "pass": true
+    },
+    {
+      "name": "World terrain supplies lake location",
+      "pass": true
+    },
+    {
+      "name": "Ordinary lake authoring uses shallow elongated excavation",
+      "pass": true
+    },
+    {
+      "name": "Actual world water builds and publishes",
+      "pass": true
+    },
+    {
+      "name": "Undisturbed lake sleeps with no active water cells",
+      "pass": true
+    },
+    {
+      "name": "Sleeping lake performs zero flow cell steps",
+      "pass": true
+    },
+    {
+      "name": "Lake is visibly filled and swimming query is wet",
+      "pass": true
+    },
+    {
+      "name": "Gameplay equips normal bucket",
+      "pass": true
+    },
+    {
+      "name": "Actual lake shoreline is pickable while outward ray misses",
+      "pass": true
+    },
+    {
+      "name": "Real left-click at rendered shore conserves world plus bucket water",
+      "pass": true
+    },
+    {
+      "name": "Bucket scoop is published as a local surface depression",
+      "pass": true
+    },
+    {
+      "name": "Surrounding water refills the published scoop depression",
+      "pass": true
+    },
+    {
+      "name": "Real right-click at shore returns full bucket without creating a detached puddle",
+      "pass": true
+    },
+    {
+      "name": "Real bucket left-click conserves lake + inventory water",
+      "pass": true
+    },
+    {
+      "name": "Stale bucket action cannot remove or create water",
+      "pass": true
+    },
+    {
+      "name": "Separate hole is carved into actual terrain, not empty air",
+      "pass": true
+    },
+    {
+      "name": "Mine a separate hole outside lake definitions",
+      "pass": true
+    },
+    {
+      "name": "Separate hole terrain edit publishes",
+      "pass": true
+    },
+    {
+      "name": "Real right-click creates water outside lake with exact full-bucket debit",
+      "pass": true
+    },
+    {
+      "name": "Poured water settles to a queryable surface in the dug hole",
+      "pass": true
+    },
+    {
+      "name": "Poured water floor contacts actual terrain within 2 cm",
+      "pass": false
+    }
+  ],
+  "failures": 1,
+  "timings": {
+    "bucket_scoop_trace": [
+      {
+        "frame": -1,
+        "ml": 62500,
+        "surface_y": 48.25
+      },
+      {
+        "frame": 0,
+        "ml": 52500,
+        "surface_y": 48.25
+      },
+      {
+        "frame": 1,
+        "ml": 61875,
+        "surface_y": 48.2399978637695
+      },
+      {
+        "frame": 2,
+        "ml": 61269,
+        "surface_y": 48.2431259155273
+      },
+      {
+        "frame": 3,
+        "ml": 61772,
+        "surface_y": 48.2459754943848
+      },
+      {
+        "frame": 4,
+        "ml": 61889,
+        "surface_y": 48.246826171875
+      },
+      {
+        "frame": 5,
+        "ml": 61886,
+        "surface_y": 48.2472801208496
+      },
+      {
+        "frame": 6,
+        "ml": 61886,
+        "surface_y": 48.2472801208496
+      },
+      {
+        "frame": 7,
+        "ml": 61886,
+        "surface_y": 48.2474136352539
+      },
+      {
+        "frame": 8,
+        "ml": 61886,
+        "surface_y": 48.2475624084473
+      },
+      {
+        "frame": 9,
+        "ml": 61886,
+        "surface_y": 48.2475624084473
+      },
+      {
+        "frame": 10,
+        "ml": 61886,
+        "surface_y": 48.2475624084473
+      },
+      {
+        "frame": 11,
+        "ml": 61886,
+        "surface_y": 48.2475624084473
+      },
+      {
+        "frame": 12,
+        "ml": 61886,
+        "surface_y": 48.2475624084473
+      },
+      {
+        "frame": 13,
+        "ml": 61886,
+        "surface_y": 48.2475624084473
+      },
+      {
+        "frame": 14,
+        "ml": 61886,
+        "surface_y": 48.2475624084473
+      },
+      {
+        "frame": 15,
+        "ml": 61886,
+        "surface_y": 48.2475624084473
+      },
+      {
+        "frame": 16,
+        "ml": 61886,
+        "surface_y": 48.2475624084473
+      }
+    ],
+    "cold_water_ms": 2265,
+    "frame_ms": {
+      "max": 32.074,
+      "p50": 16.661,
+      "p95": 16.92,
+      "samples": 200
+    },
+    "gpu_ms": {
+      "max": 6.39099979400635,
+      "p50": 4.65999984741211,
+      "p95": 5.31799983978271
+    },
+    "hardware": "NVIDIA GeForce RTX 4050 Laptop GPU",
+    "puddle_contact": {
+      "cells": [
+        {
+          "cell": [
+            1655,
+            88,
+            2583
+          ],
+          "floor_gap_m": 0.124819183349608,
+          "floor_y": 44.275,
+          "ml": 2578,
+          "stored_depth_m": 0.010312,
+          "terrain_y": 44.1501808166504
+        },
+        {
+          "cell": [
+            1655,
+            88,
+            2584
+          ],
+          "floor_gap_m": 0.124819183349608,
+          "floor_y": 44.275,
+          "ml": 2422,
+          "stored_depth_m": 0.009688,
+          "terrain_y": 44.1501808166504
+        },
+        {
+          "cell": [
+            1656,
+            88,
+            2583
+          ],
+          "floor_gap_m": 0.124819183349608,
+          "floor_y": 44.275,
+          "ml": 2578,
+          "stored_depth_m": 0.010312,
+          "terrain_y": 44.1501808166504
+        },
+        {
+          "cell": [
+            1656,
+            88,
+            2584
+          ],
+          "floor_gap_m": 0.124819183349608,
+          "floor_y": 44.275,
+          "ml": 2422,
+          "stored_depth_m": 0.009688,
+          "terrain_y": 44.1501808166504
+        }
+      ],
+      "max_floor_gap_m": 0.124819183349608,
+      "terrain_contact_qualified": false,
+      "water_ml": 10000
+    },
+    "render_cpu_ms": {
+      "max": 2.62199997901917,
+      "p95": 0.708999991416931
+    },
+    "water_bucket_contact_capture_ms": 750.471,
+    "water_bucket_poured_capture_ms": 800.423,
+    "water_settled_close_capture_ms": 663.921
+  }
+}

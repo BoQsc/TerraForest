@@ -136,6 +136,19 @@ func run():
  game.pitch=-PI/2;game.camera.look_at(puddle,Vector3.FORWARD)
  for frame in 3:await process_frame
  await capture_visual("water_bucket_poured")
+ # Retain terrain-contact evidence, not just an overhead visible-pixel check.
+ # This is a diagnostic, not a claim that contact accuracy currently passes.
+ timings.puddle_contact=puddle_contact(game.lakes.capture_snapshot(),puddle)
+ print("PUDDLE_CONTACT ",JSON.stringify(timings.puddle_contact))
+ var puddle_pose:Transform3D=game.camera.global_transform
+ game.pitch=-atan2(2.2,1.6)
+ game.camera.global_position=puddle+Vector3(0,2.2,1.6);game.camera.look_at(puddle,Vector3.UP)
+ for frame in 3:await process_frame
+ await capture_visual("water_bucket_contact")
+ game.pitch=-PI/2;game.camera.global_transform=puddle_pose
+ if "--water-contact-only" in OS.get_cmdline_user_args():
+  check(timings.puddle_contact.terrain_contact_qualified,"Poured water floor contacts actual terrain within 2 cm")
+  await finish();return
  var diagnostic:=StandardMaterial3D.new();diagnostic.shading_mode=BaseMaterial3D.SHADING_MODE_UNSHADED;diagnostic.albedo_color=Color.MAGENTA;diagnostic.cull_mode=BaseMaterial3D.CULL_DISABLED
  for node:MeshInstance3D in game.lakes._meshes.values():node.material_override=diagnostic
  for frame in 3:await process_frame
@@ -296,6 +309,30 @@ func visible_water_meshes() -> Dictionary:
  for coordinate:Vector3i in game.lakes._meshes:
   var mesh:Mesh=game.lakes._meshes[coordinate].mesh
   result[coordinate]=mesh.get_instance_id() if mesh!=null else 0
+ return result
+func puddle_contact(bytes:PackedByteArray,point:Vector3) -> Dictionary:
+ var result:Dictionary={"cells":[],"water_ml":0,"max_floor_gap_m":0.0,"terrain_contact_qualified":false}
+ var version:int=bytes.decode_u32(4);var size:=9076 if version==2 else 6160
+ for r in bytes.decode_u32(12):
+  var base:int=32+bytes.decode_u32(8)+r*size;var key:int=bytes.decode_u64(base)
+  var region:=Vector3i((key>>24)&4095,(key>>12)&4095,key&4095)
+  if (Vector3(region)*4.0+Vector3.ONE*2.0).distance_to(point)>7.0:continue
+  for i in 512:
+   var offset:int=base+16+i*12;var ml:int=bytes.decode_u64(offset+4)&0x7fffffffffffffff
+   if ml==0:continue
+   var cell:=region*8+Vector3i(i%8,(i/8)%8,i/64)
+   var center:=Vector3(cell)*0.5+Vector3.ONE*0.25
+   if center.distance_to(point)>3.0:continue
+   var floor_y:float=cell.y*0.5+bytes.decode_u16(offset)*0.001
+   var ground:Dictionary=game.get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(Vector3(center.x,floor_y+0.1,center.z),Vector3(center.x,floor_y-2.0,center.z),1))
+   var row:Dictionary={"cell":[cell.x,cell.y,cell.z],"ml":ml,"floor_y":floor_y,"stored_depth_m":ml/250000.0}
+   if not ground.is_empty():
+    row.terrain_y=ground.position.y;row.floor_gap_m=floor_y-ground.position.y
+    result.max_floor_gap_m=maxf(result.max_floor_gap_m,row.floor_gap_m)
+   result.cells.append(row);result.water_ml+=ml
+ result.terrain_contact_qualified=not result.cells.is_empty() and result.max_floor_gap_m<=0.02
+ for row:Dictionary in result.cells:
+  if not row.has("terrain_y") or absf(row.get("floor_gap_m",INF))>0.02:result.terrain_contact_qualified=false
  return result
 func stored_amount(bytes:PackedByteArray,point:Vector3) -> int:
  if bytes.size()<32 or bytes.decode_u32(0)!=0x31575256:return -1
