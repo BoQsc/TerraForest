@@ -1,3 +1,5 @@
+> Bucket interaction review: run `Review Water Buckets.cmd` for a disposable normal world with the bucket selected and water within reach. Left click fills up to 10 L; right click pours all contents. Turn toward dry terrain to compare poured and scooped water. Changes are discarded on close. This is visual review, not final water acceptance.
+
 > Connected-lake evidence, 2026-10-13: a local removal in a 256-region flat lake rebuilt eight packets and settled in two simulated frames. Repeated edits crossing region boundaries produced up to seven-frame publication batches. This is a headless native test, not measured graphical latency. See `evidence/water_connected_scaling/status.txt`. Sustained-edit publication delay remains open.
 
 > Snapshot scope update, 2026-10-13: copy-on-write now retains only data inside the active batch reconstruction/readiness halo. A targeted test performs 255 distant edits with zero copied regional payload while preserving local snapshot consistency. See `evidence/water_snapshot_scope/status.txt`. This does not bound a large connected batch.

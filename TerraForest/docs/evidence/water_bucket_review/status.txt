@@ -1,0 +1,7 @@
+Playable bucket review, 2026-10-13
+
+Review Water Buckets.cmd launches the ordinary combined game at 1920x1080 fullscreen with a 60 FPS cap, temporary storage, the same authoring/terrain/water/player path and a selected empty bucket. The review uses no alternate simulation. Startup locates a bank position within bucket reach and aims inward at the top surface. A non-interactive guide states controls and that changes are discarded. Temporary startup no longer requests a save.
+
+Short actual-game check passed: temporary mode, selected empty bucket, initial aim hits upward-facing water within 3.5 m from above, first left click fills 10 L, first right click returns all contents, exact world quantity restoration. Starting view captured and inspected; guide does not overlap the HUD. Launcher dry-run confirms fullscreen 1920x1080 and cap60. The earlier side-face starting aim was rejected by visual inspection and the strengthened upward-normal assertion.
+
+The screenshot remains a close water view, not final art acceptance. User can turn toward the bank and pour onto terrain. Angular puddle outlines and visual judgement of depth/refill remain open. Performance investigation remains deferred in favour of this playable interaction review.
