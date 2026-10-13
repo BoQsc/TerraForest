@@ -1,0 +1,10 @@
+{
+  "counts": {
+    "exposed_cells": 893,
+    "same_layer_connected": 1625,
+    "cross_layer_connected": 70,
+    "same_layer_separated": 2
+  },
+  "examples": [],
+  "scope": "Exposed adjacent-column pairs in frozen store; not a visible-pixel classification."
+}

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: 0BSD
 #include "regional_water.hpp"
 #include "water_surface_interval.hpp"
+#include "../../volumetric_terrain/native/surface_cell.hpp"
 #include "lake_catalog.hpp"
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/classes/time.hpp>
@@ -104,6 +105,7 @@ void NativeRegionalWater::wake(const Vector3i &p){
     if(it!=regions.end()&&it->second.water[index(p)]&&active_set.insert(key(p)).second)active.push_back(key(p));
 }
 void NativeRegionalWater::changed(const Vector3i &p){
+    queue_vertical(p);queue_vertical(p+Vector3i(0,-1,0));
     ++changes;wake(p);Key k=region_key(p);if(mesh_set.insert(k).second)meshes.push_back(k);
     // Surface components span three layer changes plus the full cell below.
     // Dirty that bounded halo, including diagonal and vertical region corners.
@@ -138,6 +140,26 @@ bool NativeRegionalWater::accept_patch(const Ref<NativeWaterTerrainPatch> &patch
 void NativeRegionalWater::invalidate(const AABB &bounds){
     if(!bounds.position.is_finite()||!bounds.size.is_finite())return;
     for(auto &[k,r]:regions)if(AABB(Vector3(position(k))*4.0,Vector3(4,4,4)).intersects(bounds.grow(0.5))){r.valid=false;request(k);}
+}
+// Prioritised conservative gravity repair. Each job handles exactly one face;
+// chains resume through the same bounded queue rather than scanning a column.
+void NativeRegionalWater::queue_vertical(const Vector3i &lower){
+    const Region *a=get(lower);Vector3i upper=lower+Vector3i(0,1,0);const Region *b=get(upper);
+    if(!a||!b)return;int i=index(lower),j=index(upper);
+    uint64_t capacity=uint64_t(a->ceiling[i]-a->floor[i])*250;
+    if(a->ceiling[i]!=500||b->floor[j]!=0||a->water[i]>=capacity||!b->water[j])return;
+    Key k=key(lower);if(vertical_set.insert(k).second){vertical.push_back(k);++vertical_regions[region_key(lower)];}
+    // The existing saved awake bit records work even if the lower cell is dry.
+    wake(upper);
+}
+void NativeRegionalWater::settle_vertical(){
+    Key k=vertical.front();vertical.pop_front();vertical_set.erase(k);Vector3i lower=position(k);
+    auto pending=vertical_regions.find(region_key(lower));if(pending!=vertical_regions.end()&&!--pending->second)vertical_regions.erase(pending);
+    Vector3i upper=lower+Vector3i(0,1,0);Region *a=get(lower,false),*b=get(upper,false);++vertical_steps;
+    if(!a||!b)return;int i=index(lower),j=index(upper);
+    uint64_t capacity=uint64_t(a->ceiling[i]-a->floor[i])*250;
+    if(a->ceiling[i]==500&&b->floor[j]==0&&capacity>a->water[i]&&b->water[j])
+        move(upper,lower,std::min(capacity-a->water[i],b->water[j]));
 }
 void NativeRegionalWater::move(const Vector3i &a,const Vector3i &b,uint64_t amount){
     if(!amount)return;regions.at(region_key(a)).water[index(a)]-=amount;regions.at(region_key(b)).water[index(b)]+=amount;changed(a);changed(b);
@@ -204,8 +226,9 @@ void NativeRegionalWater::advance(int64_t budget){
     if(budget<1||budget>8192)return;uint64_t start=Time::get_singleton()->get_ticks_usec();
     for(int n=0;n<budget;++n){
         if(fill.running){size_t before=fill.queue.size();process_fill();if(fill.running&&fill.queue.size()==before&&!requests.empty())break;}
+        else if(!vertical.empty())settle_vertical();
         else{if(active.empty())break;Key k=active.front();active.pop_front();active_set.erase(k);process_cell(position(k));++steps;}
-        if((n&31)==31&&Time::get_singleton()->get_ticks_usec()-start>=1000)break;
+        if((n&7)==7&&Time::get_singleton()->get_ticks_usec()-start>=1000)break;
     }
     last_us=Time::get_singleton()->get_ticks_usec()-start;max_us=std::max(max_us,last_us);
 }
@@ -375,7 +398,7 @@ Dictionary NativeRegionalWater::next_mesh(){
         for(int z=-1;z<=1&&valid;++z)for(int y=-1;y<=1&&valid;++y)for(int x=-1;x<=1;++x){
             Vector3i n=c+Vector3i(x,y,z);if(n.x<0||n.y<0||n.z<0)continue;
             auto neighbour=regions.find(key(n));
-            if(neighbour!=regions.end()&&!neighbour->second.valid){valid=false;break;}
+            if((neighbour!=regions.end()&&!neighbour->second.valid)||vertical_regions.count(key(n))){valid=false;break;}
         }
         if(valid){ready=true;mesh_set.erase(k);break;}
         meshes.push_back(k);
@@ -446,8 +469,9 @@ Dictionary NativeRegionalWater::next_mesh(){
         if(!covered){
             ++top_count;h00=corner(p,p.x,p.z,top);h10=corner(p,p.x+1,p.z,top);
             h11=corner(p,p.x+1,p.z+1,top);h01=corner(p,p.x,p.z+1,top);
-            triangle(Vector3(x,h00,z),Vector3(x+0.5,h10,z),Vector3(x+0.5,h11,z+0.5));
-            triangle(Vector3(x,h00,z),Vector3(x+0.5,h11,z+0.5),Vector3(x,h01,z+0.5));
+            const Vector3 points[4]={Vector3(x,h00,z),Vector3(x,h01,z+0.5),Vector3(x+0.5,h11,z+0.5),Vector3(x+0.5,h10,z)};
+            surface_quad(0,1,2,3,false,[&](int id){return points[id];},
+                [&](int a,int b,int c){triangle(points[a],points[b],points[c]);});
         }
         for(int d=1;d<=4;++d){Vector3i q=p+directions[d];const Region *neighbour=get(q);double low=bottom;
             if(neighbour){int j=index(q);if(neighbour->floor[j]==neighbour->ceiling[j])continue;low=std::max(low,q.y*0.5+neighbour->floor[j]*0.001+std::min(neighbour->water[j],uint64_t(neighbour->ceiling[j]-neighbour->floor[j])*250)/250000.0);}
@@ -488,7 +512,7 @@ Dictionary NativeRegionalWater::next_mesh(){
     mesh_us=Time::get_singleton()->get_ticks_usec()-start;max_mesh_us=std::max(max_mesh_us,mesh_us);return result;
 }
 Dictionary NativeRegionalWater::statistics() const {
-    Dictionary d;d["water_ml"]=int64_t(total);d["active_cells"]=int64_t(active.size());d["regions"]=int64_t(regions.size());d["pending_regions"]=int64_t(requests.size());d["dirty_meshes"]=int64_t(meshes.size());d["fill_active"]=fill.running;d["fill_remaining_ml"]=fill.remaining;d["sampled_nodes"]=int64_t(sampled);d["cache_hits"]=int64_t(cache_hits);d["cached_region_rebuilds"]=int64_t(cache_rebuilds);d["cell_steps"]=int64_t(steps);d["changes"]=int64_t(changes);d["step_us"]=int64_t(last_us);d["max_step_us"]=int64_t(max_us);d["mesh_us"]=int64_t(mesh_us);d["max_mesh_us"]=int64_t(max_mesh_us);d["capacity_reached"]=limit;d["resident_cell_bytes"]=int64_t(regions.size()*sizeof(Region));return d;
+    Dictionary d;d["pending_vertical"]=int64_t(vertical.size());d["vertical_steps"]=int64_t(vertical_steps);d["water_ml"]=int64_t(total);d["active_cells"]=int64_t(active.size());d["regions"]=int64_t(regions.size());d["pending_regions"]=int64_t(requests.size());d["dirty_meshes"]=int64_t(meshes.size());d["fill_active"]=fill.running;d["fill_remaining_ml"]=fill.remaining;d["sampled_nodes"]=int64_t(sampled);d["cache_hits"]=int64_t(cache_hits);d["cached_region_rebuilds"]=int64_t(cache_rebuilds);d["cell_steps"]=int64_t(steps);d["changes"]=int64_t(changes);d["step_us"]=int64_t(last_us);d["max_step_us"]=int64_t(max_us);d["mesh_us"]=int64_t(mesh_us);d["max_mesh_us"]=int64_t(max_mesh_us);d["capacity_reached"]=limit;d["resident_cell_bytes"]=int64_t(regions.size()*sizeof(Region));return d;
 }
 // Self-contained compound snapshot: authoritative amounts + derived occupancy.
 // Occupancy is valid only for the terrain captured in the SAME world archive.
@@ -521,12 +545,12 @@ bool NativeRegionalWater::decode(const PackedByteArray &data,bool install){
         if(install)staged.emplace(k,std::move(r));
     }
     if(sum!=expected)return false;if(!install)return true;
-    regions.swap(staged);restored_cache.clear();cache_rebuilds=0;active.clear();active_set.clear();requests.clear();request_set.clear();meshes.clear();mesh_set.clear();fill=Fill{};total=sum;sampled=0;cache_hits=0;steps=0;changes=0;last_us=max_us=mesh_us=max_mesh_us=0;limit=false;
+    regions.swap(staged);vertical.clear();vertical_set.clear();vertical_regions.clear();vertical_steps=0;restored_cache.clear();cache_rebuilds=0;active.clear();active_set.clear();requests.clear();request_set.clear();meshes.clear();mesh_set.clear();fill=Fill{};total=sum;sampled=0;cache_hits=0;steps=0;changes=0;last_us=max_us=mesh_us=max_mesh_us=0;limit=false;
     for(auto &[k,r]:regions){if(r.valid){++cache_hits;restored_cache.insert(k);}else request(k);
         // Version 1 remains playable during one-time terrain-shape cache upgrade.
         if(!r.has_density)request(k);
         if(mesh_set.insert(k).second)meshes.push_back(k);}
-    for(Key k:awake)wake(position(k));
+    for(Key k:awake){Vector3i p=position(k);wake(p);queue_vertical(p);queue_vertical(p+Vector3i(0,-1,0));}
     return true;
 }
 bool NativeRegionalWater::restore_snapshot(const PackedByteArray &data){return decode(data,true);}

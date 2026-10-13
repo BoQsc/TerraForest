@@ -1,0 +1,10 @@
+PASS 7168 connectivity cases: ownership, winding and missing neighbours
+PASS six quad cases: both diagonals, flat tie and reversed winding
+PASS 32768 surface-cell cases: bit-identical to live terrain calculation
+PASS six complete encoded terrain patches match pre-refactor source
+0 0 326 1716 acdfb9adbf9c20f9
+0 1 352 1872 6aa1aaeb41c2d929
+0 2 374 1980 970e9ba1a551c337
+1 0 326 1716 acdfb9adbf9c20f9
+1 1 352 1872 6aa1aaeb41c2d929
+1 2 374 1980 970e9ba1a551c337

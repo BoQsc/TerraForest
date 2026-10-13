@@ -32,8 +32,24 @@ static bool face_probe(){
  }
  std::printf("PASS %u connectivity cases: ownership, winding and missing neighbours\n",cases);return true;
 }
+static bool quad_probe(){
+ for(int shape=0;shape<3;shape++)for(int reverse=0;reverse<2;reverse++){
+  V3 points[4]={{0,0,0},{0,0,1},{1,0,1},{1,0,0}};
+  if(shape==1)points[2].y=2;
+  if(shape==2)points[1].y=2;
+  int expected[6],actual[6],n=0;int a=0,b=1,c=2,d=3;
+  if(reverse){int temp=b;b=d;d=temp;}
+  if(dot(points[a]-points[c],points[a]-points[c])<=dot(points[b]-points[d],points[b]-points[d])){
+   int sequence[6]={a,c,b,a,d,c};for(int i=0;i<6;i++)expected[i]=sequence[i];
+  }else{int sequence[6]={a,d,b,b,d,c};for(int i=0;i<6;i++)expected[i]=sequence[i];}
+  terraforest::surface_quad(0,1,2,3,reverse,[&](int i){return points[i];},[&](int a,int b,int c){actual[n++]=a;actual[n++]=b;actual[n++]=c;});
+  if(n!=6)return false;for(int i=0;i<6;i++)if(actual[i]!=expected[i])return false;
+ }
+ std::puts("PASS six quad cases: both diagonals, flat tie and reversed winding");return true;
+}
 int main(){
  if(!face_probe())return 3;
+ if(!quad_probe())return 4;
  unsigned cases=0;uint32_t random=71237;
  for(unsigned mask=0;mask<256;mask++)for(int sample=0;sample<128;sample++){
   float d[8];for(int k=0;k<8;k++){

@@ -60,8 +60,40 @@ func check_vertical(ledge:bool):
  if ledge:check(levels.has(43950) and levels.has(44300) and levels.size()==2,"solid ledge keeps upper pool distinct from joined lower water")
  else:check(levels.size()==1 and levels.has(44050) and edge_vertices==6 and side_count==0,"height-layer crossing shares surface without a submerged wall")
  check(water.capture_snapshot(catalog)==before,"cross-layer meshing preserves all authoritative state")
+func check_vertical_repair():
+ var catalog:PackedByteArray=ClassDB.instantiate("NativeLakeCatalog").encode([])
+ var bytes:=PackedByteArray();bytes.resize(32+catalog.size()+6160);bytes.fill(0)
+ bytes.encode_u32(0,0x31575256);bytes.encode_u32(4,1);bytes.encode_u32(8,catalog.size());bytes.encode_u32(12,1);bytes.encode_u64(16,424999)
+ for i in catalog.size():bytes[32+i]=catalog[i]
+ var base:int=32+catalog.size();bytes.encode_u64(base,(10<<24)|(10<<12)|10);bytes.encode_u32(base+8,1);base+=16
+ for i in 512:bytes.encode_u16(base+i*12,500);bytes.encode_u16(base+i*12+2,500)
+ for y in range(3,7):
+  var index:int=3+8*y+64*3
+  bytes.encode_u16(base+index*12,0)
+  bytes.encode_u64(base+index*12+4,([124999,125000,125000,50000][y-3])|(1<<63))
+ var water=ClassDB.instantiate("NativeRegionalWater")
+ check(water.restore_snapshot(bytes),"Vertical repair fixture restores one-millilitre lower gap")
+ check(water.next_mesh().is_empty(),"Pending vertical repair defers affected mesh publication")
+ var conserved:=true
+ water.advance(1)
+ check(water.statistics().vertical_steps==1 and water.statistics().pending_vertical>0,"One operation repairs only one vertical face and queues the next")
+ var saved:PackedByteArray=water.capture_snapshot(catalog)
+ var restored=ClassDB.instantiate("NativeRegionalWater")
+ check(restored.restore_snapshot(saved) and restored.statistics().pending_vertical>0,"Save and restore retain unfinished vertical work")
+ for tick in 16:
+  water.advance(1);restored.advance(1)
+  conserved=conserved and water.statistics().water_ml==424999 and restored.statistics().water_ml==424999
+ var result:PackedByteArray=water.capture_snapshot(catalog)
+ var result_base:int=32+catalog.size()+16
+ var correct:=true
+ for y in range(3,7):
+  var amount:int=result.decode_u64(result_base+(3+8*y+64*3)*12+4)&0x7fffffffffffffff
+  correct=correct and amount==[125000,125000,125000,49999][y-3]
+ check(correct and conserved and water.statistics().pending_vertical==0,"Vertical chain packs exactly without creating or losing a millilitre")
+ check(not water.next_mesh().is_empty(),"Repaired column becomes eligible for mesh publication")
 func _initialize():
  GDExtensionManager.load_extension("res://addons/volumetric_water/volumetric_water.gdextension")
+ check_vertical_repair()
  var water=fixture(false)
  check(water!=null,"two-region surface fixture loads")
  if water!=null:

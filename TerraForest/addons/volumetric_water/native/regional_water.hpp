@@ -46,6 +46,12 @@ class NativeRegionalWater : public godot::RefCounted {
     std::map<Key,Region> regions;
     std::deque<Key> active,requests,meshes;
     std::unordered_set<Key> active_set,request_set,mesh_set,restored_cache;
+    std::deque<Key> vertical;
+    std::unordered_set<Key> vertical_set;
+    std::map<Key,uint32_t> vertical_regions;
+    void queue_vertical(const godot::Vector3i &lower);
+    void settle_vertical();
+    uint64_t vertical_steps=0;
     uint64_t cache_rebuilds=0;
     uint64_t total=0,steps=0,sampled=0,cache_hits=0,changes=0;
     uint64_t last_us=0,max_us=0,mesh_us=0,max_mesh_us=0;

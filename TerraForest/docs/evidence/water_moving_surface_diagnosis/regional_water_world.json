@@ -1,0 +1,336 @@
+{
+  "checks": [
+    {
+      "name": "Normal combined world loads",
+      "pass": true
+    },
+    {
+      "name": "World terrain supplies lake location",
+      "pass": true
+    },
+    {
+      "name": "Ordinary lake authoring uses shallow elongated excavation",
+      "pass": true
+    },
+    {
+      "name": "Actual world water builds and publishes",
+      "pass": true
+    },
+    {
+      "name": "Undisturbed lake sleeps with no active water cells",
+      "pass": true
+    },
+    {
+      "name": "Sleeping lake performs zero flow cell steps",
+      "pass": true
+    },
+    {
+      "name": "Lake is visibly filled and swimming query is wet",
+      "pass": true
+    },
+    {
+      "name": "Gameplay equips normal bucket",
+      "pass": true
+    },
+    {
+      "name": "Actual lake exposes a terrain-clipped shoreline target outside owned wet cells",
+      "pass": true
+    },
+    {
+      "name": "Real left-click at rendered shore conserves world plus bucket water",
+      "pass": true
+    },
+    {
+      "name": "Real right-click at shore returns litre without creating a detached puddle",
+      "pass": true
+    },
+    {
+      "name": "Real bucket left-click conserves lake + inventory water",
+      "pass": true
+    },
+    {
+      "name": "Stale bucket action cannot remove or create water",
+      "pass": true
+    },
+    {
+      "name": "Separate hole is carved into actual terrain, not empty air",
+      "pass": true
+    },
+    {
+      "name": "Mine a separate hole outside lake definitions",
+      "pass": true
+    },
+    {
+      "name": "Separate hole terrain edit publishes",
+      "pass": true
+    },
+    {
+      "name": "Real right-click creates water outside lake with exact bucket debit",
+      "pass": true
+    },
+    {
+      "name": "Poured water settles to a queryable surface in the dug hole",
+      "pass": true
+    },
+    {
+      "name": "One-litre puddle can be scooped back through real gameplay",
+      "pass": true
+    },
+    {
+      "name": "Puddle pour-back conserves the same litre",
+      "pass": true
+    },
+    {
+      "name": "Future outlet starts dry",
+      "pass": true
+    },
+    {
+      "name": "Mining beside filled water is accepted through ordinary terrain path",
+      "pass": true
+    },
+    {
+      "name": "Outlet terrain edit publishes",
+      "pass": true
+    },
+    {
+      "name": "Water flows into mined outlet while mining button remains held",
+      "pass": true
+    },
+    {
+      "name": "Held mining admission remains active throughout flow check",
+      "pass": true
+    },
+    {
+      "name": "Mining and flowing conserve every millilitre",
+      "pass": true
+    },
+    {
+      "name": "Flowing outlet receives a visible regional mesh within 2 seconds",
+      "pass": true
+    },
+    {
+      "name": "Repeated shoreline mining stroke 0 accepted",
+      "pass": true
+    },
+    {
+      "name": "Repeated shoreline mining stroke 0 publishes",
+      "pass": true
+    },
+    {
+      "name": "Repeated shoreline mining stroke 1 accepted",
+      "pass": true
+    },
+    {
+      "name": "Repeated shoreline mining stroke 1 publishes",
+      "pass": true
+    },
+    {
+      "name": "Repeated shoreline mining stroke 2 accepted",
+      "pass": true
+    },
+    {
+      "name": "Repeated shoreline mining stroke 2 publishes",
+      "pass": true
+    },
+    {
+      "name": "Water reaches repeatedly excavated extension before mining is released",
+      "pass": true
+    },
+    {
+      "name": "Repeated mining preserves water quantity",
+      "pass": true
+    },
+    {
+      "name": "Snapshot validates quantities and cached occupancy",
+      "pass": true
+    },
+    {
+      "name": "Snapshot rejects inconsistent total quantity",
+      "pass": true
+    },
+    {
+      "name": "Snapshot rejects truncated cache without replacing live state",
+      "pass": true
+    },
+    {
+      "name": "Fixture owns a disposable real saved world",
+      "pass": true
+    },
+    {
+      "name": "Normal world save publishes terrain, water cache and bucket together",
+      "pass": true
+    },
+    {
+      "name": "Saved combined world reopens",
+      "pass": true
+    },
+    {
+      "name": "Saved outlet surface republishes within 2 seconds",
+      "pass": true
+    },
+    {
+      "name": "Disk reopening preserves world and bucket quantity",
+      "pass": true
+    },
+    {
+      "name": "Warm load restores cached occupancy with zero cached-region rebuilds",
+      "pass": true
+    },
+    {
+      "name": "Mined outlet remains wet after reopening",
+      "pass": true
+    },
+    {
+      "name": "Developer water brush removes water locally",
+      "pass": true
+    }
+  ],
+  "failures": 0,
+  "timings": {
+    "at_snapshot_restore": {
+      "active_cells": 1862,
+      "cache_hits": 60,
+      "cached_region_rebuilds": 0,
+      "capacity_reached": false,
+      "cell_steps": 0,
+      "changes": 0,
+      "dirty_meshes": 60,
+      "fill_active": false,
+      "fill_remaining_ml": -1,
+      "lakes": 1,
+      "max_mesh_us": 0,
+      "max_step_us": 0,
+      "mesh_us": 0,
+      "outstanding_slices": 0,
+      "pending_regions": 0,
+      "ready": 1,
+      "regions": 60,
+      "render_ready": false,
+      "resident_cell_bytes": 543840,
+      "resident_occupancy_bytes": 543840,
+      "sampled_nodes": 0,
+      "step_us": 0,
+      "water_ml": 514832000
+    },
+    "cold_water_ms": 2065,
+    "frame_ms": {
+      "max": 46.802,
+      "p50": 16.666,
+      "p95": 16.824,
+      "samples": 668
+    },
+    "gpu_ms": {
+      "max": 24.2220001220703,
+      "p50": 5.69899988174438,
+      "p95": 6.55800008773804
+    },
+    "hardware": "NVIDIA GeForce RTX 4050 Laptop GPU",
+    "outlet_response_ms": 1211,
+    "regional_water_world_capture_ms": 599.792,
+    "render_cpu_ms": {
+      "max": 2.86800003051758,
+      "p95": 0.925000011920929
+    },
+    "reopen_ms": 4075,
+    "runtime_before_save": {
+      "active_cells": 1896,
+      "cache_hits": 0,
+      "cached_region_rebuilds": 0,
+      "capacity_reached": false,
+      "cell_steps": 202596,
+      "changes": 455691,
+      "dirty_meshes": 50,
+      "fill_active": false,
+      "fill_remaining_ml": -1,
+      "lakes": 1,
+      "max_mesh_us": 521,
+      "max_step_us": 1043,
+      "mesh_us": 83,
+      "outstanding_slices": 0,
+      "pending_regions": 0,
+      "ready": 1,
+      "regions": 60,
+      "render_ready": false,
+      "resident_cell_bytes": 543840,
+      "resident_occupancy_bytes": 543840,
+      "sampled_nodes": 83106,
+      "step_us": 1008,
+      "water_ml": 514832000
+    },
+    "runtime_reopened": {
+      "active_cells": 1994,
+      "cache_hits": 60,
+      "cached_region_rebuilds": 0,
+      "capacity_reached": false,
+      "cell_steps": 1824,
+      "changes": 4542,
+      "dirty_meshes": 50,
+      "fill_active": false,
+      "fill_remaining_ml": -1,
+      "lakes": 1,
+      "max_mesh_us": 458,
+      "max_step_us": 1016,
+      "mesh_us": 51,
+      "outstanding_slices": 0,
+      "pending_regions": 0,
+      "ready": 1,
+      "regions": 60,
+      "render_ready": false,
+      "resident_cell_bytes": 543840,
+      "resident_occupancy_bytes": 543840,
+      "sampled_nodes": 0,
+      "step_us": 1016,
+      "water_ml": 514832000
+    },
+    "water_depth_close_capture_ms": 607.998,
+    "water_mesh_faces": {
+      "max_side_height": 0.416000366210938,
+      "shore_triangles": 723,
+      "side": 1005,
+      "side_larger": 55,
+      "side_under_10cm": 505,
+      "side_under_1cm": 245,
+      "side_under_1mm": 200,
+      "top": 1086
+    },
+    "water_render_comparison": [
+      {
+        "cpu_p50_ms": 0.521000027656555,
+        "cpu_p95_ms": 0.672999978065491,
+        "gpu_p50_ms": 5.80299997329712,
+        "gpu_p95_ms": 5.85699987411499,
+        "samples": 48,
+        "water_visible": false
+      },
+      {
+        "cpu_p50_ms": 0.642000019550323,
+        "cpu_p95_ms": 0.955999970436096,
+        "gpu_p50_ms": 6.09800004959106,
+        "gpu_p95_ms": 6.55800008773804,
+        "samples": 48,
+        "water_visible": true
+      },
+      {
+        "cpu_p50_ms": 0.662000000476837,
+        "cpu_p95_ms": 1.35000002384186,
+        "gpu_p50_ms": 6.09000015258789,
+        "gpu_p95_ms": 6.26300001144409,
+        "samples": 48,
+        "water_visible": true
+      },
+      {
+        "cpu_p50_ms": 0.628000020980835,
+        "cpu_p95_ms": 0.74099999666214,
+        "gpu_p50_ms": 4.10500001907349,
+        "gpu_p95_ms": 4.12400007247925,
+        "samples": 48,
+        "water_visible": false
+      }
+    ],
+    "water_repeated_mining_capture_ms": 559.646,
+    "water_repeated_mining_face_classes_capture_ms": 411.949,
+    "water_repeated_mining_terrain_only_capture_ms": 546.605,
+    "water_repeated_mining_top_only_capture_ms": 581.357,
+    "water_settled_close_capture_ms": 633.624
+  }
+}

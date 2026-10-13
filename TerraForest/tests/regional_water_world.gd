@@ -169,11 +169,31 @@ func run():
  game.terrain.set_brush_active(false);game.set_process(true);game.set_physics_process(true)
  game.player.global_position=outlet+Vector3(0,4,5);game.camera.position=Vector3(0,1.68,0);game.yaw=0;game.pitch=-0.8;game.player.rotation.y=0;game.camera.rotation.x=game.pitch;game._clear_motion()
  for frame in 30:await process_frame
+ # Freeze one published state for visual attribution; diagnostic materials
+ # are never installed as gameplay shaders.
+ game.lakes.set_process(false)
+ var diagnostic_snapshot:=FileAccess.open("res://reports/water_repeated_mining.bin",FileAccess.WRITE)
+ diagnostic_snapshot.store_buffer(game.lakes.capture_snapshot());diagnostic_snapshot.close()
  await capture_visual("water_repeated_mining")
+ var prior_measuring:=measuring;measuring=false
+ var original_shader:Shader=game.lakes._material.shader
+ var tops_only:=Shader.new()
+ tops_only.code=original_shader.code.replace("vec3 n = normalize(surface_world_normal);","vec3 n = normalize(surface_world_normal); if (abs(n.y) < 0.001) discard;")
+ game.lakes._material.shader=tops_only
+ for frame in 3:await process_frame
+ await capture_visual("water_repeated_mining_top_only")
+ var classified:=Shader.new()
+ classified.code="shader_type spatial; render_mode unshaded, cull_disabled; varying float up; void vertex(){ up=abs((MODEL_NORMAL_MATRIX*NORMAL).y); } void fragment(){ ALBEDO=up<0.001?vec3(1.0,0.08,0.03):vec3(0.0,0.8,0.9); }"
+ game.lakes._material.shader=classified
+ for frame in 3:await process_frame
+ await capture_visual("water_repeated_mining_face_classes")
+ game.lakes._material.shader=original_shader
+ for frame in 3:await process_frame
+ measuring=prior_measuring;previous_frame=0
  game.lakes.visible=false
  for frame in 2:await process_frame
  await capture_visual("water_repeated_mining_terrain_only")
- game.lakes.visible=true
+ game.lakes.visible=true;game.lakes.set_process(true)
  var s:Dictionary=game.lakes.statistics();timings.runtime_before_save=s
  var data:PackedByteArray=game.lakes.capture_snapshot()
  check(not data.is_empty() and game.lakes.snapshot_validator().validate_snapshot(data),"Snapshot validates quantities and cached occupancy")

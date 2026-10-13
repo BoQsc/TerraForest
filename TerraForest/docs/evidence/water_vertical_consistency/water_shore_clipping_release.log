@@ -1,0 +1,19 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS terrain samples and quantities restore from version 2 cache
+PASS shore triangles reach sloped terrain contour without entering solid half-cell
+PASS shore reconstruction preserves exact authoritative volume and terrain cache
+PASS non-finite cached terrain rejected without replacing live water
+PASS truncated terrain cache rejected
+PASS open-air control cache restores
+PASS shore reconstruction never paints water into fully dry open-air cells
+PASS depth query recognizes reconstructed shallow water
+PASS shore depth query excludes terrain and solid side
+PASS air above shoreline remains dry
+PASS real native inventory supplies empty bucket
+PASS scoop at rendered shoreline debits connected owned water and fills real bucket
+PASS stale shoreline transfer preserves water and inventory exactly
+PASS pour at same shore returns litre to its connected owner
+PASS solid side of clipped shoreline cannot scoop neighbouring water
+WATER_SHORE_CLIPPING failures=0
+

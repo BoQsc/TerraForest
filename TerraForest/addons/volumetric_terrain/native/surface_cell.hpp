@@ -37,4 +37,17 @@ inline void surface_cell_faces(int x,int y,int z,unsigned signs,Lookup lookup,Em
   if(a>=0&&b>=0&&c>=0&&d>=0)emit(axis,a,b,c,d,(signs&1)==0);
  }
 }
+// Clockwise Godot triangles with the shorter geometric diagonal. Both terrain
+// and water use this rule so warped quads are not split by different policies.
+template<class Position,class Emit>
+inline void surface_quad(int a,int b,int c,int d,bool reverse,Position position,Emit emit){
+ if(reverse){int tmp=b;b=d;d=tmp;}
+ auto ac=position(a)-position(c),bd=position(b)-position(d);
+ auto squared=[](const auto &v){return v.x*v.x+v.y*v.y+v.z*v.z;};
+ if(squared(ac)<=squared(bd)){
+  emit(a,c,b);emit(a,d,c);
+ }else{
+  emit(a,d,b);emit(b,d,c);
+ }
+}
 }

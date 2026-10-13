@@ -254,11 +254,9 @@ static V3 gradient(const float*d,V3 p){
 }
 static u32 cell_key(int x,int y,int z,int n){return u32((x+1)+(n+1)*((z+1)+(n+1)*y))+1;}
 static void quad(Mesh&m,u32 a,u32 b,u32 c,u32 d,bool reverse){
- // Godot uses clockwise front faces. The input ring's mathematical normal is outward.
- if(reverse){u32 tmp=b;b=d;d=tmp;}
- if(dot(m.v[a].p-m.v[c].p,m.v[a].p-m.v[c].p)<=dot(m.v[b].p-m.v[d].p,m.v[b].p-m.v[d].p)){
-  m.i.push(a);m.i.push(c);m.i.push(b);m.i.push(a);m.i.push(d);m.i.push(c);
- }else{m.i.push(a);m.i.push(d);m.i.push(b);m.i.push(b);m.i.push(d);m.i.push(c);}
+ terraforest::surface_quad(a,b,c,d,reverse,
+  [&](int id){return m.v[id].p;},
+  [&](int x,int y,int z){m.i.push(x);m.i.push(y);m.i.push(z);});
 }
 struct Neighbors{int p[160];int n=0;void add(int v){for(int i=0;i<n;i++)if(p[i]==v)return;if(n<160)p[n++]=v;}};
 static void prune(List<int>&adj,const Mesh&m,int v){int n=0;for(int j=0;j<adj.n;j++){int t=adj[j],at=t*3;if(m.i[at]!=0xffffffffu&&(m.i[at]==u32(v)||m.i[at+1]==u32(v)||m.i[at+2]==u32(v))){bool dup=false;for(int k=0;k<n;k++)if(adj[k]==t){dup=true;break;}if(!dup)adj[n++]=t;}}adj.n=n;}
