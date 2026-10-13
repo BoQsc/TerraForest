@@ -1,0 +1,35 @@
+2026-10-13: SHARED TERRAIN MATERIAL FIELD FOUNDATION, NOT WATER ACCEPTANCE
+
+TerrainCore now accepts generator identity 5 (MATERIAL_FIELD_GENERATOR), an
+empty immutable base. It uses the existing World sparse density pages, brush
+commands, extraction, geometry cache, density queries and archive format.
+It does not generate land, caves or ore. Terrain generators 1-4 keep their
+existing meanings. The default remains generator 1; no game launcher selects 5.
+
+Release native check: 17 assertions pass, including direct placement/removal,
+empty-world sampling, no initial density pages, ordinary/cached mesh equality,
+warm cache hits without new misses, exact density archive reload, exact mesh
+reload, and independent material owners. The initial test compared different
+command envelope IDs; corrected comparison excludes the 12-byte reply envelope.
+
+Existing checks also pass: terrain_material_boundary (exact ordinary geometry),
+terrain_generator_identity (old saves and unknown-generator rejection), and
+terrain_geology (ore preservation and old generator behavior).
+
+Both debug and release terrain DLLs rebuilt using the existing prebuilt SDK.
+No copied legacy-project source, new mesher, water-specific polygon fitting,
+alternate water runtime, or automatic saved-world migration was introduced.
+
+Remaining integration: water must use this field as its authoritative state,
+replace the regional-volume-to-density adapter, edit through the shared worker,
+account for transferred material, exclude solid terrain, persist the new field
+and provide bounded local settling. Existing water rendering/volume failures
+remain open. This core-only check is not in-world water acceptance.
+
+Native command:
+python tools/test_native_release.py --addon volumetric_terrain
+--test terrain_material_field --godot <Godot executable>
+
+New field saves name generator 5 in the existing version-2 terrain archive;
+older binaries reject that generator. Existing generator-1-through-4 saves
+retain their identity and load behavior.

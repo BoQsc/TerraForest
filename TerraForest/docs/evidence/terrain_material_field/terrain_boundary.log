@@ -1,0 +1,10 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS Terrain worker exports its existing material boundary
+PASS Ordinary full-detail terrain mesh is available as independent packet oracle
+PASS Boundary triangles and winding exactly match ordinary terrain inside the requested region
+PASS Repeated boundary request is deterministic and read-only
+PASS Stale density revision returns no geometry
+PASS Cancelled boundary request returns no geometry
+PASS Unaligned region is rejected
+TERRAIN_MATERIAL_BOUNDARY triangles=144 failures=0

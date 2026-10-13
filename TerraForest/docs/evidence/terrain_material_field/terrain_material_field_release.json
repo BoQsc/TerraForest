@@ -1,0 +1,6 @@
+{
+  "checks": 17,
+  "failures": 0,
+  "scope": "Actual TerrainCore edit, extraction, cache and archive paths on an empty field. Not lake integration, flow or bucket conservation.",
+  "library": "terrain_core.windows.template_release.x86_64.dll"
+}

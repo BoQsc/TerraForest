@@ -1,0 +1,10 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS save explicitly names format 2 and generator 1
+PASS versioned edited terrain roundtrips exactly
+PASS legacy seed-only save remains readable
+PASS legacy migration preserves pages blocks seed and edit metadata
+PASS legacy migration preserves generator cache identity
+PASS unknown generator rejected atomically despite valid checksum
+PASS unknown save format rejected
+PASS truncated generator header rejected

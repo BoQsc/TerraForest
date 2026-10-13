@@ -40,6 +40,7 @@ static float bump(float x,float z,float cx,float cz,float r,float height){
  float a=(x-cx)/r,b=(z-cz)/r,t=mx(0.f,1.f-a*a-b*b);return height*smooth(t);
 }
 float World::height(float x,float z)const{
+ if(generator_id==MATERIAL_FIELD_GENERATOR_ID)return 0;
  float h=49.f+noise(x/320.f,z/320.f,u32(seed))*20.f+noise(x/100.f,z/100.f,u32(seed)+1u)*8.f+noise(x/34.f,z/34.f,u32(seed)+2u)*2.5f;
  if(generator_id>=2){
   // Four seed-derived massifs, constant query work and no generated sample storage.
@@ -64,6 +65,7 @@ float World::height(float x,float z)const{
 }
 static float capsule(V3 p,V3 a,V3 b,float r){V3 pa=p-a,ba=b-a;float t=clampf(dot(pa,ba)/mx(dot(ba,ba),1e-8f),0,1);return length(pa-ba*t)-r;}
 float World::base(V3 p,float h)const{
+ if(generator_id==MATERIAL_FIELD_GENERATOR_ID)return SDF_BAND;
  float d=p.y-h;
  for(int i=0;i<caves.n;i++){
   const Cave&c=caves[i];
@@ -76,6 +78,7 @@ float World::base(V3 p,float h)const{
 void World::init(int p_seed,u32 generator){
  seed=p_seed;generator_id=generator;basin_count=0;revision=edits=0;changed_samples=0;block_columns.resize(4096);
  edit_columns=(u32*)tr_alloc(NP*NP*sizeof(u32));if(edit_columns)zero_bytes(edit_columns,NP*NP*sizeof(u32));else tr_oom=true;
+ if(generator_id==MATERIAL_FIELD_GENERATOR_ID)return;
  if(generator_id==4){
   // Separate seed domains and quadrant placement keep basins away from caves.
   for(u32 i=0;i<4;i++){
@@ -128,7 +131,7 @@ float World::sample(int x,int y,int z,u8*mat)const{
  int index=pages_by_key.get(page_key(x>>4,y>>4,z>>4));
  if(index>=0){const Page&p=pages[index];int j=(x&15)+16*((z&15)+16*(y&15));if(mat)*mat=p.mat[j];return float(p.d[j])/SDF_SCALE;}
  V3 point={float(x),float(y),float(z)};float h=height(point.x,point.z);
- if(mat&&generator_id>=3){float weight=geological_weight(point,h,u32(seed));*mat=weight>.5f?8:(weight<-.5f?9:0);}
+ if(mat&&has_geology()){float weight=geological_weight(point,h,u32(seed));*mat=weight>.5f?8:(weight<-.5f?9:0);}
  return base(point,h);
 }
 Page* World::ensure(int px,int py,int pz){
@@ -140,7 +143,7 @@ Page* World::ensure(int px,int py,int pz){
   float wx=float(px*16+x),wz=float(pz*16+z),h=height(wx,wz);
   for(int y=0;y<16;y++){
    int index=x+16*(z+16*y);V3 point={wx,float(py*16+y),wz};page.d[index]=quant(base(point,h));
-   if(generator_id>=3){float weight=geological_weight(point,h,u32(seed));page.mat[index]=weight>.5f?8:(weight<-.5f?9:0);}
+   if(has_geology()){float weight=geological_weight(point,h,u32(seed));page.mat[index]=weight>.5f?8:(weight<-.5f?9:0);}
   }
  }
  int idx=pages.push(page);pages_by_key.put(key,idx);edit_columns[px+NP*pz]|=(1u<<py);return &pages[idx];
@@ -210,7 +213,7 @@ bool World::edit(V3 a,V3 b,float radius,int shape,bool add,u8 material,V3&lo,V3&
    }
    pages[idx].d[j]=q;
    // Cut walls retain their substrate; pavement is limited to the bed.
-   if((add||generator_id<3)&&!(shape==2&&clearance>0&&brush>0))pages[idx].mat[j]=material;
+   if((add||!has_geology())&&!(shape==2&&clearance>0&&brush>0))pages[idx].mat[j]=material;
    pages[idx].geometry_digest_valid=false;changes++;
   }
  }
@@ -234,7 +237,7 @@ bool World::deserialize(const u8*data,int n){
  Reader r{data,n-4};if(r.u()!=SAVE_MAGIC)return false;u32 format=r.u();if(format!=1&&format!=2)return false;
  int s=int(r.u()),pc=int(r.u()),bc=int(r.u()),rev=int(r.u()),ed=int(r.u());
  u32 generator=format==1?1:r.u();
- if(!r.good||generator<1||generator>4)return false;
+ if(!r.good||generator<1||generator>MATERIAL_FIELD_GENERATOR_ID)return false;
  if(pc<0||pc>MAX_PAGES||bc<0||bc>2000000||i64(pc)*(4+PAGE_SAMPLES*3)+i64(bc)*8+(format==1?28:32)!=n-4)return false;
  World t;t.build_control=build_control;t.init(s,generator);t.revision=rev;t.edits=ed;t.surface_style=surface_style;
  for(int i=0;i<pc;i++){
@@ -612,7 +615,7 @@ void shade_mesh(const World&w,Mesh&m,u32 expected_epoch){
  for(int i=0;i<m.v.n;i++){
   if((i&31)==0&&cancelled(w,epoch))return;
   Vertex&v=m.v[i];float h=w.height(v.p.x,v.p.z);
-  v.ore=w.generator_id>=3&&v.material<5?geological_weight(v.p,h,u32(w.seed)):0;
+  v.ore=w.has_geology()&&v.material<5?geological_weight(v.p,h,u32(w.seed)):0;
   v.substrate=eased(.15f,.65f,h-v.p.y);v.blend={};v.asphalt=0;
   if(v.material<5){
    int x=fl(v.p.x),y=fl(v.p.y),z=fl(v.p.z);V3 f={v.p.x-x,v.p.y-y,v.p.z-z};float delta=0,total=0,asphalt=0,original[8];V3 influence{};
@@ -817,7 +820,7 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
  }
  else if(cmd==4){w.serialize(out);}
  else if(cmd==5){if(!w.deserialize(data+4,n-4))out.p[8]=1;out.u(w.revision);out.u(w.pages.n);out.u(w.blocks.n);}
- else if(cmd==6){int seed=int(r.u());u32 generator=n==12?r.u():1;if(!r.good||(n!=8&&n!=12)||generator<1||generator>4){out.p[8]=1;return;}BuildControl *control=w.build_control;w.release();w=World{};w.build_control=control;w.init(seed,generator);}
+ else if(cmd==6){int seed=int(r.u());u32 generator=n==12?r.u():1;if(!r.good||(n!=8&&n!=12)||generator<1||generator>MATERIAL_FIELD_GENERATOR_ID){out.p[8]=1;return;}BuildControl *control=w.build_control;w.release();w=World{};w.build_control=control;w.init(seed,generator);}
  else if(cmd==7){V3 p=r.vec();if(!r.good||!(ab(p.x)<=10000&&ab(p.y)<=10000&&ab(p.z)<=10000)){out.p[8]=1;return;}out.f(w.height(p.x,p.z));out.f(w.sample(fl(p.x),fl(p.y),fl(p.z)));}
  else if(cmd==8){ // Deterministic construction proof; not a replay list.
   int bx=1472,bz=1440,by=int(w.height(float(bx),float(bz)))+1;
@@ -932,7 +935,7 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
  else if(cmd==26){
   V3 point=r.vec();if(!r.good||n!=16||!(point.x>=0&&point.x<=WORLD&&point.z>=0&&point.z<=WORLD&&point.y>=0&&point.y<WORLD_Y)){out.p[8]=1;return;}
   u8 material=0;float density=w.sample(fl(point.x),fl(point.y),fl(point.z),&material);
-  out.u(material);out.f(density);out.f(w.generator_id>=3?geological_weight(point,w.height(point.x,point.z),u32(w.seed)):0);
+  out.u(material);out.f(density);out.f(w.has_geology()?geological_weight(point,w.height(point.x,point.z),u32(w.seed)):0);
  }
  else if(cmd==32){
   // Worker-owned boundary packet for material integration. Reuse the exact

@@ -1,6 +1,9 @@
 # SPDX-License-Identifier: 0BSD
 extends RefCounted
 
+# Same sparse density/edit/cache/save path with no generated land or caves.
+const MATERIAL_FIELD_GENERATOR: int = 5
+
 const MESH_MAGIC: int = 0x324d5254
 const REPLY_MAGIC: int = 0x32505254
 
