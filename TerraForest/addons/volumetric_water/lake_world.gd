@@ -223,16 +223,20 @@ func bucket(from:Vector3,to:Vector3,pour:bool,inventory:RefCounted,slot:int,revi
  if result.pending:_pending_bucket={"from":from,"to":to,"pour":pour,"inventory":inventory,"slot":slot,"revision":revision,"deadline":Time.get_ticks_msec()+5000}
  if result.ok:terrain.changed_since_save=true
  return result
-func dev_brush(point:Vector3,remove:bool,radius:float=2.0) -> void:
+func dev_brush(point:Vector3,remove:bool,radius:float=2.0) -> Dictionary:
  # A new intent supersedes queued edits, even if this new target is rejected.
  _pending_bucket.clear();_pending_dev.clear()
- if terrain.pending_edit:return
- if remove:water.brush(point,radius,-0x10000000000000);terrain.changed_since_save=true
- else:
-  var result:Dictionary=water.place_water(point,1000000)
-  if result.pending:_pending_dev={"point":point,"amount":1000000,"deadline":Time.get_ticks_msec()+5000}
-  if result.ok:terrain.changed_since_save=true
-  terrain.message_changed.emit(result.reason)
+ if not terrain.world_ready or terrain.pending_edit:return {"ok":false,"pending":false,"reason":"Wait for the terrain edit to finish"}
+ if not point.is_finite():return {"ok":false,"pending":false,"reason":"Aim at a surface within 5 m"}
+ if remove:
+  var removed:int=water.brush(point,radius,-0x10000000000000)
+  if removed>0:terrain.changed_since_save=true
+  return {"ok":removed>0,"pending":false,"water_ml":removed,"reason":"Removed %.3f m³ of water"%(float(removed)/1000000.0) if removed>0 else "No water removed; the target is empty or water is preparing"}
+ var result:Dictionary=water.place_water(point,1000000)
+ if result.pending:_pending_dev={"point":point,"amount":1000000,"deadline":Time.get_ticks_msec()+5000}
+ if result.ok:terrain.changed_since_save=true
+ terrain.message_changed.emit(result.reason)
+ return result
 func placement_mask(transforms:Array[Transform3D]) -> PackedByteArray:return water.placement_mask(transforms)
 func depth_at(point:Vector3) -> float:return water.depth_at(point)
 func statistics() -> Dictionary:

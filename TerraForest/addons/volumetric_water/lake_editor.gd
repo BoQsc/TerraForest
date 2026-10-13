@@ -8,7 +8,7 @@ func _ready() -> void:
  add_theme_constant_override("separation",12)
  var menu=game.session_menu
  menu.label(self,"Water / lakes").add_theme_font_size_override("font_size",22)
- menu.label(self,"Water follows edited terrain. Buckets scoop / pour 1 L, including new locations. Development brushes add or remove water directly. Saved regions reuse prepared terrain occupancy.")
+ menu.label(self,"Static water: one bucket transfers 1 m³. Water stays where placed; no flow. Add one unit at the aimed surface, or remove water with a 2 m radius development brush. Save world to keep changes.")
  menu.button(self,"Carve lake at aim",func():
   if menu.developer:menu.run_command(KEY_L))
  menu.button(self,"Give empty bucket (development)",func():
@@ -17,10 +17,12 @@ func _ready() -> void:
   var result:Dictionary=inventory.grant(401,1,inventory.snapshot().revision)
   if result.ok:game.player_hud.refresh();game.terrain.changed_since_save=true
   menu.message.text="Bucket added to inventory" if result.ok else "Inventory full")
- menu.button(self,"Add water at aim (1,000 L)",water_brush.bind(false))
+ menu.button(self,"Add water at aim (1 m³)",water_brush.bind(false))
  menu.button(self,"Remove water at aim (2 m brush)",water_brush.bind(true))
  rows=VBoxContainer.new();rows.add_theme_constant_override("separation",12);add_child(rows)
  game.lakes.catalog_changed.connect(schedule_refresh)
+ game.lakes.interaction_finished.connect(func(message:String):
+  if is_visible_in_tree():game.session_menu.message.text=message)
  rebuild()
 func schedule_refresh() -> void:
  if refresh_queued:return
@@ -50,7 +52,12 @@ func water_brush(remove:bool) -> void:
  if not game.session_menu.developer:return
  var start:Vector3=game.camera.global_position
  var end:Vector3=start-game.camera.global_basis.z*5.0
- var hit:Dictionary=game.structures.blocks.raycast_scene(start,end,0xFFFFFFFF,[game.player.get_rid()])
- if not hit.is_empty():end=hit.position+hit.normal*0.05
- game.lakes.dev_brush(end,remove)
- game.session_menu.message.text="Water removal applied" if remove else "Water addition queued at aim"
+ var solid:Dictionary=game.structures.blocks.raycast_scene(start,end,0xFFFFFFFF,[game.player.get_rid()])
+ if not solid.is_empty():end=solid.position
+ var surface:Dictionary=game.lakes.water.raycast_surface(start,end)
+ var target:=Vector3.INF
+ if surface.hit:target=surface.point if remove else surface.point+surface.normal*0.05
+ elif not remove and not solid.is_empty():target=solid.position+solid.normal*0.05
+ # Even an invalid new click cancels an older queued water intent.
+ var result:Dictionary=game.lakes.dev_brush(target,remove)
+ game.session_menu.message.text=result.reason if target.is_finite() else ("Aim at visible water within 5 m" if remove else "Aim at terrain or water within 5 m")

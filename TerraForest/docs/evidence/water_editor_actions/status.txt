@@ -1,0 +1,12 @@
+Water editor targeting and feedback - 2026-10-14
+
+The editor still advertised 1-litre buckets after gameplay switched to fixed cubic-metre units. Its brush callback targeted a solid hit or the far ray endpoint, ignoring the visible water surface, and unconditionally displayed success even if the facade rejected an action. Queued placement completion did not reach the editor message.
+
+The visible controls now explain static water and 1 m3 transfers. Water targeting is clipped by the nearest solid and uses the water surface first; addition uses the surface's outward side or an ordinary ground hit. Missing targets produce an explanatory rejection and cancel older queued intents. The world facade returns actual success/pending/rejection state, records the measured removed amount, and marks changes only when a mutation succeeds. The visible editor receives asynchronous completion messages. Removal remains an explicit 2 m radius development brush, not a bucket conservation operation.
+
+Actual-world regression exercises the real Button.pressed connections in the development Water page: current units, no-hit rejection without water changes, removal of the aimed upper surface, actual removal feedback, one-unit placement on ordinary ground after preparation, completion feedback, and rejection during a real terrain edit without mutation or queued placement. Final run passes and the UI capture was inspected at 1920x1080. Initial harness runs incorrectly called the page-construction helper instead of reading the existing pages dictionary; those runs timed out and are not acceptance evidence.
+
+Run:
+python tools/run_godot_check.py water_editor_actions --timeout 35 --require "WATER_EDITOR_ACTIONS failures=0" -- --gameplay-construction --water-gameplay --water-bucket-review
+
+No native mesher, storage format, flow simulation or rendering change in this commit. This check covers editor entry points, not arbitrary geometry or long-run performance.
