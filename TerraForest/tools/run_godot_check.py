@@ -17,7 +17,7 @@ from play_checkpoint import revision_metadata
 from run import ROOT, parse_args
 
 
-def command_for(engine, test, folder, extra, headless=False):
+def command_for(engine, test, folder, extra, headless=False, persistent=False):
     if not re.fullmatch(r"[a-z][a-z0-9_]{0,63}", test):
         raise ValueError("Test must be a simple repository test name")
     if not (ROOT / "tests" / (test + ".gd")).is_file():
@@ -26,12 +26,14 @@ def command_for(engine, test, folder, extra, headless=False):
                 "--snapshot-readonly", "--world-slot"}
     if any(arg.split("=", 1)[0] in reserved or arg == "--" for arg in extra):
         raise ValueError("Cache and temporary-world options belong to this launcher")
+    if persistent and test != "water_static_compound":
+        raise ValueError("Persistent mode is restricted to the isolated water compound-save check")
     token = uuid.uuid4().hex
     cache = f"user://{test}_{token}"
     command = [str(engine), "--path", str(ROOT), "--log-file", str(folder / "engine.log"),
                *(["--headless"] if headless else ["--fullscreen", "--resolution", "1920x1080"]),
                "--max-fps", "60", "--script", f"res://tests/{test}.gd", "--",
-               "--temporary", f"--world-slot=check_{token}", f"--derived-cache={cache}", *extra]
+               *([f"--world-slot=water_compound_check_{token}"] if persistent else ["--temporary", f"--world-slot=check_{token}"]), f"--derived-cache={cache}", *extra]
     return command, cache
 
 
@@ -71,6 +73,7 @@ def main(argv=None):
     parser.add_argument("test", help="tests/<name>.gd")
     parser.add_argument("--godot")
     parser.add_argument("--headless", action="store_true")
+    parser.add_argument("--persistent", action="store_true", help="Unique disposable save slot; water_static_compound only")
     parser.add_argument("--timeout", type=float, default=90)
     parser.add_argument("--require", required=True, help="Successful completion text in console output")
     parser.add_argument("--dry-run", action="store_true")
@@ -88,11 +91,11 @@ def main(argv=None):
     stamp = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dT%H%M%S%fZ")
     folder = ROOT / "reports" / "checks" / stamp
     try:
-        command, cache = command_for(engine, args.test, folder, values[split+1:], args.headless)
+        command, cache = command_for(engine, args.test, folder, values[split+1:], args.headless, args.persistent)
     except ValueError as error:
         parser.error(str(error))
     details = dict(command=command, cache=cache, utc=stamp, timeout=args.timeout,
-                   required_text=args.require, headless=args.headless,
+                   required_text=args.require, headless=args.headless, persistent=args.persistent,
                    scope="Fresh derived-cache argument; test code must honor it. Not save isolation or a sandbox.",
                    cache_retained=True, **revision_metadata())
     details["engine_sha256"] = hashlib.sha256(engine.read_bytes()).hexdigest()
