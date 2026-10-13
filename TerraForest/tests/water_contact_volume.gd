@@ -39,6 +39,22 @@ func run():
  check(not water.restore_snapshot(malformed) and water.statistics().water_ml==41667,"Oversized contact list is rejected atomically")
  malformed=data.duplicate();malformed.encode_float(count_at+4,NAN)
  check(not water.restore_snapshot(malformed) and water.statistics().water_ml==41667,"Non-finite cached triangle is rejected atomically")
+ var shallow:=data.duplicate();shallow.encode_u64(16,29167);shallow.encode_u64(base+20+cell*12,29167)
+ check(water.restore_snapshot(shallow),"Partial fill exposes the terrain peak above water")
+ var top_samples:=0;var above_floor:=true
+ for step in 100:
+  var packet:Dictionary=water.next_mesh()
+  if packet.is_empty():break
+  var positions:PackedVector3Array=packet.arrays[Mesh.ARRAY_VERTEX]
+  for i in range(0,positions.size(),3):
+   var a:Vector3=positions[i];var b:Vector3=positions[i+1];var c:Vector3=positions[i+2]
+   if (c-a).cross(b-a).y<=0:continue
+   var point:Vector3=(a+b+c)/3.0
+   if point.x<41.5 or point.x>=42 or point.z<41.5 or point.z>=42:continue
+   var actual:Dictionary=water.cell_geometry(Vector3(point.x,41.75,point.z))
+   top_samples+=1;above_floor=above_floor and point.y>=actual.bottom-0.00001
+ check(top_samples>0 and above_floor,"Rendered top triangles respect the interior terrain peak, not only floor corners")
+ check(water.statistics().water_ml==29167,"Contact clipping does not delete stored water")
  DirAccess.make_dir_recursive_absolute("res://reports")
- var report:=FileAccess.open("res://reports/water_contact_volume.json",FileAccess.WRITE);report.store_string(JSON.stringify({"failures":failures,"cases":6}));report.close()
+ var report:=FileAccess.open("res://reports/water_contact_volume.json",FileAccess.WRITE);report.store_string(JSON.stringify({"failures":failures,"cases":9}));report.close()
  print("WATER_CONTACT_VOLUME failures=",failures);quit(failures)

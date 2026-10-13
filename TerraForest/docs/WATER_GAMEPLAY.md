@@ -1,3 +1,5 @@
+> Rendered-contact update, 2026-10-13: surface triangles are clipped against supported cached terrain contacts. The captured natural-ground regression fails on the prior DLL and passes now; actual ground pour/scoop also passes. Outlet flow, other contact configurations and sustained performance remain open. See `evidence/water_surface_contact_clip/status.txt`.
+
 > Picking update, 2026-10-13: published water remains targetable while neighbouring terrain prepares; a drained visible owner defers the original click until the surface updates. Focused checks and one actual ground scoop pass (343 ms response). Surface penetration and outlet timing remain open. See `evidence/water_published_scoop/status.txt`.
 
 > Current contact update, 2026-10-13: supported floor contacts now retain actual terrain triangles for volume and interaction queries; version 6 caches them. Mined-bowl contact and native cached reopen pass. Natural-ground rendered contact/scoop and large-outlet flow still fail; see `evidence/water_exact_terrain_contact/status.txt`. The full replacement is incomplete.

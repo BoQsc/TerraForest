@@ -1,0 +1,8 @@
+{
+  "failures": 0,
+  "minimum_gap_m": 3.23367118681972e-06,
+  "penetrations": 0,
+  "samples": 389,
+  "water_ml": 559128094,
+  "library": "volumetric_water.windows.template_release.x86_64.dll"
+}

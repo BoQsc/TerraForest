@@ -1,0 +1,7 @@
+{
+  "capacity_ml": 93750,
+  "failures": 0,
+  "head": 41.6650000028312,
+  "vertices": 36,
+  "library": "volumetric_water.windows.template_release.x86_64.dll"
+}

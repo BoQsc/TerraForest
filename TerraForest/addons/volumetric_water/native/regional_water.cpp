@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: 0BSD
 #include "regional_water.hpp"
+#include "water_contact_clip.hpp"
 #include "../../volumetric_terrain/native/density_surface.hpp"
 #include "lake_catalog.hpp"
 #include <godot_cpp/core/class_db.hpp>
@@ -779,12 +780,29 @@ NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool s
                 [&](int i,int j,int l){
                     Vector3 a=representatives[i].position,b=representatives[j].position,c=representatives[l].position;
                     Vector3 n=(c-a).cross(b-a).normalized();if(n.length_squared()<0.5)return;
-                    for(Vector3 p:{a,b,c}){vertices.push_back(p);normals.push_back(n);uv.push_back(Vector2(p.x,p.z));}
-                    output.owners.push_back(owner);++triangles;
-                    if(std::abs(n.y)<0.001){
-                        ++sides;double height=std::max({a.y,b.y,c.y})-std::min({a.y,b.y,c.y});max_side=std::max(max_side,height);
-                        if(height<0.0011)++tiny;else if(height<0.01)++small;else if(height<0.1)++medium;else ++large;
-                    }else if(n.y>0)++tops;else ++bottoms;
+                    auto emit=[&](Vector3 a,Vector3 b,Vector3 c){
+                        for(Vector3 p:{a,b,c}){vertices.push_back(p);normals.push_back(n);uv.push_back(Vector2(p.x,p.z));}
+                        output.owners.push_back(owner);++triangles;
+                        if(std::abs(n.y)<0.001){
+                            ++sides;double height=std::max({a.y,b.y,c.y})-std::min({a.y,b.y,c.y});max_side=std::max(max_side,height);
+                            if(height<0.0011)++tiny;else if(height<0.01)++small;else if(height<0.1)++medium;else ++large;
+                        }else if(n.y>0)++tops;else ++bottoms;
+                    };
+                    Vector3 low=a.min(b).min(c),high=a.max(b).max(c);
+                    Vector3i lo=Vector3i((low*2).floor()),hi=Vector3i((high*2).ceil())-Vector3i(1,1,1);hi=hi.max(lo);
+                    auto contact=[&](Vector3i cell)->const std::vector<WaterCellProfile::Triangle>*{
+                        if(!in_domain(cell))return nullptr;const Region *r=surface_region(region_key(cell),snapshot);
+                        if(!r||!r->contacts||r->contacts->floors[index(cell)].empty())return nullptr;return &r->contacts->floors[index(cell)];
+                    };
+                    bool intersects=false;
+                    for(int z=lo.z;z<=hi.z&&!intersects;++z)for(int y=lo.y;y<=hi.y&&!intersects;++y)for(int x=lo.x;x<=hi.x&&!intersects;++x){
+                        auto floor=contact(Vector3i(x,y,z));if(!floor)continue;
+                        bool possible=false;for(const auto&t:*floor)for(auto p:t)if(y*.5+p.y*.001>low.y+1e-7)possible=true;
+                        if(possible)intersects=clip_water_contact(a,b,c,Vector3(x,y,z)*.5,floor,[](Vector3,Vector3,Vector3){},true);
+                    }
+                    if(!intersects){emit(a,b,c);return;}
+                    for(int z=lo.z;z<=hi.z;++z)for(int y=lo.y;y<=hi.y;++y)for(int x=lo.x;x<=hi.x;++x){Vector3i cell(x,y,z);
+                        clip_water_contact(a,b,c,Vector3(cell)*.5,contact(cell),emit);}
                 });
         });
     Dictionary faces;faces["top"]=tops;faces["bottom"]=bottoms;faces["shore_triangles"]=0;faces["side"]=sides;faces["side_under_1mm"]=tiny;

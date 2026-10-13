@@ -1,0 +1,4 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+FAIL Captured natural-ground surface stays outside its exact terrain contact; samples=218 penetrations=2 min_gap=-0.00169953465462
+WATER_CONTACT_CLIP failures=1

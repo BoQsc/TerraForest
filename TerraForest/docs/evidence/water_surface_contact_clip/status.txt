@@ -1,0 +1,13 @@
+2026-10-13 — Rendered surface contact clipping
+
+Existing surface-nets triangles now undergo cell-local polygon clipping where they actually penetrate supported cached terrain floor triangles. This uses the same contact geometry as capacity/volume calculation. It neither raises vertices nor changes stored quantities. Rendered and published picking triangles come from the same resulting mesh. Planes/intersections use local doubles and fixed-size polygon buffers. A probe avoids subdividing triangles already outside terrain; unaffected triangles are emitted unchanged. No shader, new water runtime, global scan or per-frame terrain reconstruction was added.
+
+Decisive captured-state regression: tests/fixtures/water_contact_clip/captured.bin, from the actual natural-ground world. Previous committed release DLL (ee657c4) fails with 2 penetrating triangles, minimum gap -0.0016995 m. Current DLL passes with 389 sampled upper triangles and minimum gap +0.00000323 m. Both preserve stored water. The same captured state, target and test were used; baseline ran in an isolated temporary project without replacing the game DLL.
+
+Actual 1920x1080 world run 20261013T160847804789Z passes ground pour, sampled contact, local connectedness and same-click scoop. 400 sampled triangle centroids, zero penetration, minimum gap +0.00000763 m. Scoop had no pending wait in this run and transferred 847,659 ml exactly; the rest remains in the world. Its position/flow means this scoop need not recover the entire ground pour. The 1 m³ lake action remains the capacity rule.
+
+Focused analytic interior-peak test and existing material-surface, six controlled geometric-volume cases and cut-cell checks pass. Controlled volume tests mostly have no complex terrain contacts; they are not proof of arbitrary clipped-envelope volume or watertightness.
+
+First clipping trial subdivided 630 local samples; actual-intersection probing reduced this run to 400 (flow state differs, so not a fixed-state performance benchmark). Recorded peaks in the latest run: native mesh packet 3.531 ms, flow step 1.646 ms, scene publication 4.354 ms. Screenshot of the earlier trial read 49 FPS. No stable-60-FPS or thermal acceptance claim. Correctness and performance remain separate gates.
+
+Open: large mined outlet misses 10 s response deadline; multiple-floor/wall/ceiling contacts still use prior unsupported occupancy; general fragment handling and clipped volume-envelope qualification remain incomplete. No overall volumetric-water completion claimed. Next work is simple local settling/outlet response and remaining unified contact coverage, while preserving these regression checks.
