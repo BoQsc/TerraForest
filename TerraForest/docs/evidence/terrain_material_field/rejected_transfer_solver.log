@@ -1,0 +1,21 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+FAIL One cubic metre remains visible at grid offset 0.0
+PASS Transfer receipt equals actual geometry
+PASS Stale transfer leaves field unchanged
+FAIL Scoop removes exactly the visible placed volume
+FAIL One cubic metre remains visible at grid offset 0.25
+PASS Transfer receipt equals actual geometry
+PASS Stale transfer leaves field unchanged
+FAIL Scoop removes exactly the visible placed volume
+FAIL One cubic metre remains visible at grid offset 0.5
+PASS Transfer receipt equals actual geometry
+PASS Stale transfer leaves field unchanged
+FAIL Scoop removes exactly the visible placed volume
+FAIL One cubic metre remains visible at grid offset 0.75
+PASS Transfer receipt equals actual geometry
+PASS Stale transfer leaves field unchanged
+FAIL Scoop removes exactly the visible placed volume
+PASS Empty scoop rejects with byte-exact state
+PASS Blocked pour rejects without consuming or changing field
+TERRAIN_MATERIAL_TRANSFER failures=8

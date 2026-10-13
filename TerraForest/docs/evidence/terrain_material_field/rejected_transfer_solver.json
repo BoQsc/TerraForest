@@ -1,0 +1,65 @@
+{
+  "cases": [
+    {
+      "offset": 0.0,
+      "pour": {
+        "accepted": false,
+        "candidate_m3": 0.296297991720536,
+        "iterations": 17
+      },
+      "remaining_m3": 0.0,
+      "scoop": {
+        "accepted": false,
+        "candidate_m3": 0.0,
+        "iterations": 1
+      },
+      "worker_us": 6387
+    },
+    {
+      "offset": 0.25,
+      "pour": {
+        "accepted": false,
+        "candidate_m3": 0.125,
+        "iterations": 17
+      },
+      "remaining_m3": 0.0,
+      "scoop": {
+        "accepted": false,
+        "candidate_m3": 0.0,
+        "iterations": 1
+      },
+      "worker_us": 4827
+    },
+    {
+      "offset": 0.5,
+      "pour": {
+        "accepted": false,
+        "candidate_m3": 0.0,
+        "iterations": 17
+      },
+      "remaining_m3": 0.0,
+      "scoop": {
+        "accepted": false,
+        "candidate_m3": 0.0,
+        "iterations": 1
+      },
+      "worker_us": 4948
+    },
+    {
+      "offset": 0.75,
+      "pour": {
+        "accepted": false,
+        "candidate_m3": 0.125,
+        "iterations": 17
+      },
+      "remaining_m3": 0.0,
+      "scoop": {
+        "accepted": false,
+        "candidate_m3": 0.0,
+        "iterations": 1
+      },
+      "worker_us": 4960
+    }
+  ],
+  "failures": 8
+}

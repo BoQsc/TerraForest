@@ -1,0 +1,38 @@
+# SPDX-License-Identifier: 0BSD
+extends SceneTree
+const Codec=preload("res://addons/volumetric_terrain/mesh_codec.gd")
+var failures:=0
+var cases:Array=[]
+func check(ok:bool,label:String):
+ print("PASS " if ok else "FAIL ",label)
+ if not ok:failures+=1
+func revision(field)->int:return field.execute(Codec.command(0)).decode_u32(12)
+func empty():
+ var f=ClassDB.instantiate("TerrainCore");f.execute(Codec.command(6,[1703,Codec.MATERIAL_FIELD_GENERATOR]));return f
+func _initialize():call_deferred("run")
+func run():
+ GDExtensionManager.load_extension("res://addons/volumetric_terrain/terrain_core.gdextension")
+ var solid=empty()
+ for offset:float in [0.0,0.25,0.5,0.75]:
+  var field=empty();var center:=Vector3(24,24,24)+Vector3.ONE*offset
+  var start:=Time.get_ticks_usec()
+  var pour:Dictionary=field.transfer_material(solid,center,true,1.0,revision(solid),revision(field))
+  var elapsed:=Time.get_ticks_usec()-start
+  var measured:Dictionary=field.measure_material_surface(16,16,16,16,32)
+  var amount:float=measured.get("volume_m3",0.0)
+  check(pour.get("accepted",false) and amount>=0.995 and amount<=1.000001,"One cubic metre remains visible at grid offset "+str(offset))
+  check(abs(pour.get("measured_m3",0)-amount)<0.00001,"Transfer receipt equals actual geometry")
+  var saved:PackedByteArray=field.execute(Codec.command(4))
+  var stale:Dictionary=field.transfer_material(solid,center,false,1.0,revision(solid),revision(field)-1)
+  check(not stale.accepted and field.execute(Codec.command(4))==saved,"Stale transfer leaves field unchanged")
+  var scoop:Dictionary=field.transfer_material(solid,center,false,1.0,revision(solid),revision(field))
+  var remaining:float=field.measure_material_surface(16,16,16,16,32).get("volume_m3",-1)
+  check(scoop.get("accepted",false) and remaining<0.000001 and abs(scoop.get("measured_m3",0)-amount)<0.00001,"Scoop removes exactly the visible placed volume")
+  cases.append({"offset":offset,"pour":pour,"scoop":scoop,"worker_us":elapsed,"remaining_m3":remaining})
+ var field=empty();var before:PackedByteArray=field.execute(Codec.command(4))
+ check(not field.transfer_material(solid,Vector3(24,24,24),false,1.0,revision(solid),revision(field)).accepted and field.execute(Codec.command(4))==before,"Empty scoop rejects with byte-exact state")
+ solid.material_box(empty(),Vector3(20,20,20),Vector3(28,28,28),true,0)
+ check(not field.transfer_material(solid,Vector3(24,24,24),true,1.0,revision(solid),revision(field)).accepted and field.execute(Codec.command(4))==before,"Blocked pour rejects without consuming or changing field")
+ DirAccess.make_dir_recursive_absolute("res://reports")
+ var f:=FileAccess.open("res://reports/terrain_material_transfer.json",FileAccess.WRITE);f.store_string(JSON.stringify({"failures":failures,"cases":cases},"  "));f.close()
+ print("TERRAIN_MATERIAL_TRANSFER failures=",failures);quit(failures)

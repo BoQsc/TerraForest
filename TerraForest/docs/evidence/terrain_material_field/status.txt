@@ -87,3 +87,18 @@ volume-constrained transfer or prove adequate runtime latency.
 The 31-check native suite passes including independent render-triangle
 agreement, open-patch rejection and bounds. Bucket-scale failures remain open;
 never treat the passing measurement tests as acceptance of the measured shape.
+
+2026-10-13: REJECTED ITERATIVE BRUSH-VOLUME SOLVER
+A bounded 16-step radius search was implemented and measured before runtime
+integration. It failed all four one-cubic-metre grid-offset cases. The best
+under-capacity samples were 0.2963, 0.125, 0 and 0.125m3; intermediate mesh
+volumes were skipped at topology changes. Requests were rolled back correctly,
+but that does not make the solver a viable interaction implementation.
+Trial duration was about 5-6ms here, not a general performance guarantee.
+
+The failed native implementation and public binding were removed, and installed
+terrain DLLs restored to the committed version. Failed test source and output
+remain as evidence only. Do not add iterative fitting or per-click search to
+live bucket gameplay. The unresolved issue is small-volume representation by
+the existing shared density extraction; direct reference-project interaction
+remains the target. Static water scope continues: no flow or spillage.
