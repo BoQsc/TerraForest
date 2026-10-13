@@ -1,0 +1,35 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.3.280 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] New world
+[TerrainRewrite] New world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+[TerrainRewrite] Preparing your finite lake; terrain and water are being built
+[TerrainRewrite] Mined resources added to inventory
+[TerrainRewrite] Lake ready · temporary world
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Bucket review · disposable world
+PASS Actual lake review world ready
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Empty hands - left mouse punches, E interacts
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Empty hands - left mouse punches, E interacts
+PASS Solid placement target contains water
+[TerrainRewrite] Water occupies this area; scoop or remove it before adding solid terrain
+PASS Adding solid terrain into water is rejected before mutation
+PASS Rejected addition explains how to clear the area
+[TerrainRewrite] Water occupies this area; scoop or remove it before adding solid terrain
+PASS Exact terrain block cannot occupy stored water
+[TerrainRewrite] Water occupies this area; scoop or remove it before adding solid terrain
+PASS Mixed dry/wet terrain batch rejects atomically
+PASS No outstanding edit work
+PASS Rejected addition leaves terrain unchanged
+PASS Water remains visible and owned instead of buried
+PASS Solid terrain addition remains available away from water
+PASS Dry terrain addition publishes normally
+PASS Excavation inside water remains allowed
+PASS Excavation and water contact updates publish
+PASS Admission and excavation do not destroy or move water
+[TerrainRewrite] Temporary test world: save skipped
+WATER_SOLID_OVERLAP failures=0

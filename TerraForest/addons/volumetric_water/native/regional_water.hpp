@@ -144,6 +144,7 @@ public:
     godot::Dictionary transfer_water(const godot::Vector3 &from,const godot::Vector3 &to,bool pour,godot::Object *inventory,int64_t slot,int64_t revision);
     godot::Vector3 surface_near(const godot::Vector3 &point,double radius) const;
     double depth_at(const godot::Vector3 &point) const;
+    bool overlaps_occupied(const godot::AABB &bounds) const;
     godot::Dictionary cell_geometry(const godot::Vector3 &point) const;
     godot::PackedByteArray placement_mask(const godot::TypedArray<godot::Transform3D> &transforms) const;
     godot::Dictionary raycast_surface(const godot::Vector3 &from,const godot::Vector3 &to) const;

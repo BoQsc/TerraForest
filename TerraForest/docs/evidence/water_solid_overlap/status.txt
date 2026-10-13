@@ -1,0 +1,11 @@
+Terrain deposition admission - 2026-10-13
+
+Reproduced in the actual disposable 1920x1080 world: development-mode additive terrain sculpt accepted a sphere inside occupied lake water. The terrain archive changed and water at the target became hidden while stored quantities remained. Baseline fails three assertions. Gameplay mode alone masked this because its mining-reward admission already disallows all filling; the regression explicitly activates developer mode.
+
+Terrain facade now passes the validated command group to the existing optional water admission hook. LakeWorld distinguishes removal from deposition. The native occupancy query checks only stored regions intersecting the proposed bounds, early-outs on occupied cells, and performs no meshing/terrain sampling. Additive brushes include one terrain-lattice-step margin; exact terrain voxels use their cell bounds; road beds use validated conservative edit bounds. Contact caches may be invalid without disabling protection. Whole grouped edits are checked before admission or mutation.
+
+The game explains: Water occupies this area; scoop or remove it before adding solid terrain.
+
+Actual-world regression passes: wet sculpt rejected, explanatory message emitted, wet exact terrain voxel rejected, mixed dry/wet batch rejected atomically, terrain/water unchanged on rejection, dry addition accepted/published, excavation accepted/published, and water quantities preserved. No simulation, displaced-water destination or automatic volume loss introduced.
+
+Scope/limits: conservative cell/AABB overlap can reject a brush beside water even if its curved shape would narrowly miss it. This applies to the normal TerrainWorld edit entry point; independently placed structure/model collision is not covered here. Direct native diagnostic edits bypass the gameplay facade. No general performance or universal geometry acceptance claim.

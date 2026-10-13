@@ -120,6 +120,7 @@ void NativeRegionalWater::_bind_methods(){
     ClassDB::bind_method(D_METHOD("transfer_bucket","from","to","pour","inventory","slot","revision"),&NativeRegionalWater::transfer_water);
     ClassDB::bind_method(D_METHOD("surface_near","point","radius"),&NativeRegionalWater::surface_near);
     ClassDB::bind_method(D_METHOD("depth_at","point"),&NativeRegionalWater::depth_at);
+    ClassDB::bind_method(D_METHOD("overlaps_occupied","bounds"),&NativeRegionalWater::overlaps_occupied);
     ClassDB::bind_method(D_METHOD("placement_mask","transforms"),&NativeRegionalWater::placement_mask);
     ClassDB::bind_method(D_METHOD("raycast_surface","from","to"),&NativeRegionalWater::raycast_surface);
     ClassDB::bind_method(D_METHOD("commit_mesh_batch","id"),&NativeRegionalWater::commit_mesh_batch);
@@ -578,6 +579,20 @@ Dictionary NativeRegionalWater::cell_geometry(const Vector3 &point) const {
     }
     out["connections"]=connections;
     return out;
+}
+bool NativeRegionalWater::overlaps_occupied(const AABB &bounds) const {
+    // Conservative edit admission against authoritative occupancy, including
+    // temporarily invalid contacts. No terrain sampling or mesh work is needed.
+    if(!bounds.position.is_finite()||!bounds.size.is_finite()||bounds.size.x<0||bounds.size.y<0||bounds.size.z<0)return true;
+    if(!total)return false;
+    for(const auto &[k,r]:regions){Vector3i base=position(k)*8;
+        if(!AABB(Vector3(base)*.5,Vector3(4,4,4)).intersects(bounds))continue;
+        for(int i=0;i<512;i++)if(r.water[i]){
+            Vector3i p=base+Vector3i(i%8,(i/8)%8,i/64);
+            if(AABB(Vector3(p)*.5,Vector3(.5,.5,.5)).intersects(bounds))return true;
+        }
+    }
+    return false;
 }
 double NativeRegionalWater::depth_at(const Vector3 &point) const {
     if(!point.is_finite())return 0;Vector3i p=cell(point);const Region *r=get(p);if(!r)return 0;int i=index(p);

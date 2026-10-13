@@ -72,6 +72,27 @@ func restore_snapshot(bytes:PackedByteArray) -> bool:
   record.amount=-1 if state.is_empty() else int(state.decode_u64(16))
   _lakes[record.id]=record
  catalog_changed.emit();return true
+func _admit_terrain_edit(bounds:AABB,commands:Array)->bool:
+ # Commands have already been validated by the terrain facade. Only deposition
+ # needs protection; excavation remains available beside and beneath water.
+ for packet:PackedByteArray in commands:
+  var kind:int=packet.decode_u32(0)
+  var occupied_bounds:=bounds
+  if kind==2:
+   if packet.decode_u32(36)==0:continue
+   var a:=Vector3(packet.decode_float(4),packet.decode_float(8),packet.decode_float(12))
+   var b:=Vector3(packet.decode_float(16),packet.decode_float(20),packet.decode_float(24))
+   # Include one terrain lattice step for interpolation around the brush.
+   var extent:=Vector3.ONE*(packet.decode_float(28)+1.0)
+   occupied_bounds=AABB(a.min(b)-extent,a.max(b)-a.min(b)+extent*2)
+  elif kind==3:
+   if packet.decode_u32(16)==0:continue
+   occupied_bounds=AABB(Vector3(packet.decode_s32(4),packet.decode_s32(8),packet.decode_s32(12)),Vector3.ONE)
+  # Graded road beds use their validated conservative deposition bounds.
+  if water.overlaps_occupied(occupied_bounds):
+   terrain.message_changed.emit("Water occupies this area; scoop or remove it before adding solid terrain")
+   return false
+ return true
 func _ready() -> void:
  if terrain==null or not prepare():set_process(false);return
  _material.shader=preload("res://addons/volumetric_water/water.gdshader")
@@ -79,7 +100,7 @@ func _ready() -> void:
  terrain.lake_slice_ready.connect(_slice_ready);terrain.region_invalidated.connect(_invalidate)
  # Mining is admitted normally. Invalid regions retain their water and wait for
  # the committed terrain worker samples; they never flow against stale solids.
- terrain.water_edit_admission=Callable()
+ terrain.water_edit_admission=_admit_terrain_edit
  _epoch=terrain.epoch
 func add_lake(origin:Vector3,cells:Vector3i,spacing:float,level:float,seed:Vector3) -> int:
  if _lakes.size()>=max_lakes:return 0

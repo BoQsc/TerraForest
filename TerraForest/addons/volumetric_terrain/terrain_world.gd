@@ -172,7 +172,7 @@ func edit(data: PackedByteArray, lo: Vector3, hi: Vector3, captured_us: int = 0,
 			safe_hi = safe_hi.max(Vector3(cell) + Vector3.ONE * 3.0)
 		else:
 			return false
-	if water_edit_admission.is_valid() and not water_edit_admission.call(AABB(safe_lo,safe_hi-safe_lo)): return false
+	if water_edit_admission.is_valid() and not water_edit_admission.call(AABB(safe_lo,safe_hi-safe_lo),selected): return false
 	if edit_admission.is_valid() and not edit_admission.call(selected): return false
 	var accepted: bool = super.edit(data, safe_lo, safe_hi, captured_us, selected, member_captures)
 	if accepted:

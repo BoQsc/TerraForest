@@ -1,3 +1,5 @@
+> Terrain deposition guard, 2026-10-13: development terrain filling can no longer silently bury occupied water. Validated terrain edits reject conservative water overlaps before mutation and explain that water must be scooped/removed first. Dry additions and excavation remain available. Actual-world before/after evidence: `evidence/water_solid_overlap/status.txt`. Independent structure/model placement is outside this guard.
+
 > Static profile simplification, 2026-10-13: removed unused tilted-water-surface integration from the live native path. Horizontal static surfaces still use terrain-shaped floors and exact stored quantities. Native math, transfer, static-editing and captured topology checks pass. See `evidence/water_static_profiles/status.txt`.
 
 > Disk-save integration verified, 2026-10-13: the normal compound save/reopen preserves mined terrain, lake water, placed water and a full bucket together. The reloaded bucket pours and the saved placed unit can be scooped completely. Water restores with 52 cache hits and zero terrain samples. Evidence: `evidence/water_pool_recovery/compound_disk_pass.log`. Shared-storage migration remains open.
