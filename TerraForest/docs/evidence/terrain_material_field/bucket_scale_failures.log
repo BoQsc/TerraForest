@@ -1,0 +1,9 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+FAIL {"closed":false,"edge_m":1.0,"expected_m3":1.0,"offset_m":0.0,"passed":false,"rendered_m3":0.0,"triangles":0}
+FAIL {"closed":true,"edge_m":1.0,"expected_m3":1.0,"offset_m":0.5,"passed":false,"rendered_m3":0.0370368262132009,"triangles":12}
+FAIL {"closed":true,"edge_m":2.0,"expected_m3":8.0,"offset_m":0.0,"passed":false,"rendered_m3":0.296297132968903,"triangles":12}
+FAIL {"closed":true,"edge_m":2.0,"expected_m3":8.0,"offset_m":0.5,"passed":false,"rendered_m3":3.99999809265137,"triangles":48}
+FAIL {"closed":true,"edge_m":4.0,"expected_m3":64.0,"offset_m":0.0,"passed":false,"rendered_m3":38.0000043710073,"triangles":108}
+FAIL {"closed":true,"edge_m":4.0,"expected_m3":64.0,"offset_m":0.5,"passed":false,"rendered_m3":53.9999974966049,"triangles":192}
+TERRAIN_MATERIAL_VOLUME failures=6

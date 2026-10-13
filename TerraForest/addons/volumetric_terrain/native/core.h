@@ -60,6 +60,8 @@ u32 terrain_build_epoch(const World *world=nullptr);
 u32 terrain_cancel_builds(const World *world=nullptr);
 bool build_patch(const World&w,int ox,int oz,int size,int step,Mesh&m,u32 expected_epoch=0xffffffffu,bool region_cache=false);
 bool build_owned_region(const World&w,int ox,int oz,int size,int step,int y_begin,int y_end,Mesh&m,u32 epoch);
+// Bounded full-detail material geometry integral; physical volume only when closed.
+bool measure_material_surface(const World&w,int x,int z,int size,int y_begin,int y_end,double &integral,int &triangles,bool &closed);
 void release_geometry_cache(const World&w);
 void invalidate_geometry_cache(const World&w,V3 lo,V3 hi);
 void geometry_cache_stats(const World&w,Bytes&out);

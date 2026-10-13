@@ -71,6 +71,21 @@ func run():
  check(restored.execute(Codec.command(20,[16,16,16,1]))==direct_mesh,"Terrain-aware field reloads identical geometry")
  var removed_receipt:Dictionary=material.material_box(solid,Vector3(19,7,19),Vector3(29,17,29),false,solid_revision)
  check(removed_receipt.get("accepted",false) and material.execute(Codec.command(20,[16,16,16,1])).decode_u32(40)==0,"Direct removal clears cached surface")
+ var measured:Dictionary=restored.measure_material_surface(16,16,16,4,24)
+ check(measured.get("valid",false) and measured.get("closed",false) and measured.get("volume_m3",0)>0,"Native material measurement reports a closed positive envelope")
+ var vcount:int=direct_mesh.decode_u32(40);var icount:int=direct_mesh.decode_u32(44)
+ var positions:PackedVector3Array=Codec._packed_channel(direct_mesh,52,vcount,12,TYPE_PACKED_VECTOR3_ARRAY)
+ var ids:PackedInt32Array=Codec._packed_channel(direct_mesh,52+vcount*56,icount,4,TYPE_PACKED_INT32_ARRAY)
+ var integral:=0.0
+ for i in range(0,ids.size(),3):
+  var a:=positions[ids[i]]-Vector3(16,4,16);var b:=positions[ids[i+1]]-Vector3(16,4,16);var c:=positions[ids[i+2]]-Vector3(16,4,16)
+  integral+=a.dot(b.cross(c))/6.0
+ check(abs(measured.get("volume_m3",-1)-abs(integral))<0.0001,"Native integral matches independently measured render triangles")
+ var open_patch:Dictionary=restored.measure_material_surface(24,24,8,4,24)
+ check(open_patch.get("valid",false) and not open_patch.get("closed",true) and not open_patch.has("volume_m3"),"Open patches cannot report a physical volume")
+ var empty_measure:Dictionary=material.measure_material_surface(16,16,16,4,24)
+ check(empty_measure.get("valid",false) and empty_measure.get("volume_m3",-1)==0,"Empty field reports zero volume")
+ check(not material.measure_material_surface(16,16,33,4,24).get("valid",true),"Oversized volume work rejected")
  finish()
 func finish():
  DirAccess.make_dir_recursive_absolute("res://reports")

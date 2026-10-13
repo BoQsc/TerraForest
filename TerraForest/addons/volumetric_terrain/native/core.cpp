@@ -475,6 +475,31 @@ static void connect_patch(int ox,int oz,int size,Mesh&m,int y_begin=0,int y_end=
  ids.release();
 }
 
+bool measure_material_surface(const World&w,int x,int z,int size,int y_begin,int y_end,double&integral,int&triangles,bool&closed){
+ integral=0;triangles=0;closed=false;
+ if(w.generator_id!=MATERIAL_FIELD_GENERATOR_ID||x<0||z<0||size<1||size>32||x+size>WORLD||z+size>WORLD||y_begin<1||y_end>255||y_end<=y_begin||y_end-y_begin>32)return false;
+ const u32 epoch=terrain_build_epoch(&w);Mesh mesh;
+ if(!extract_vertices(w,x,z,size,mesh,epoch,y_begin,y_end)){mesh.release();return false;}
+ connect_patch(x,z,size,mesh,y_begin,y_end);
+ if(tr_oom||cancelled(w,epoch)||mesh.v.n>=65535){mesh.release();return false;}
+ struct Edge{int count=0,balance=0;};Map ids;List<Edge> edges;
+ for(int i=0;i<mesh.i.n;i+=3){
+  V3 a=mesh.v[mesh.i[i]].p-V3{float(x),float(y_begin),float(z)};
+  V3 b=mesh.v[mesh.i[i+1]].p-V3{float(x),float(y_begin),float(z)};
+  V3 c=mesh.v[mesh.i[i+2]].p-V3{float(x),float(y_begin),float(z)};
+  integral+=(double(a.x)*(double(b.y)*c.z-double(b.z)*c.y)+double(a.y)*(double(b.z)*c.x-double(b.x)*c.z)+double(a.z)*(double(b.x)*c.y-double(b.y)*c.x))/6.0;
+  for(int j=0;j<3;j++){
+   u32 a=mesh.i[i+j],b=mesh.i[i+(j+1)%3];u32 key=((a<b?a:b)<<16)|(a<b?b:a);key++;
+   int id=ids.get(key);if(id<0){id=edges.push({});if(tr_oom)break;ids.put(key,id);}
+   if(tr_oom)break;edges[id].count++;edges[id].balance+=a<b?1:-1;
+  }
+  if(tr_oom)break;
+ }
+ triangles=mesh.i.n/3;closed=true;
+ for(int i=0;i<edges.n;i++)if(edges[i].count!=2||edges[i].balance!=0){closed=false;break;}
+ bool ok=!tr_oom&&!cancelled(w,epoch);mesh.release();ids.release();edges.release();return ok;
+}
+
 #include "geometry_regions.hpp"
 
 bool build_patch(const World&w,int ox,int oz,int size,int step,Mesh&m,u32 expected_epoch,bool region_cache){

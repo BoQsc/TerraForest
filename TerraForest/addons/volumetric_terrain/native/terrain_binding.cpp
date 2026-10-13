@@ -40,6 +40,7 @@ class TerrainCore : public godot::RefCounted {
 protected:
     static void _bind_methods() {
         godot::ClassDB::bind_method(godot::D_METHOD("execute","packet"), &TerrainCore::execute);
+        godot::ClassDB::bind_method(godot::D_METHOD("measure_material_surface","x","z","size","y_begin","y_end"), &TerrainCore::measure_material_surface);
         godot::ClassDB::bind_method(godot::D_METHOD("material_box","solid","minimum","maximum","add","solid_revision","material_revision"), &TerrainCore::material_box, DEFVAL(-1));
         godot::ClassDB::bind_method(godot::D_METHOD("geometry_cache_key","x","z","size","step"), &TerrainCore::geometry_cache_key);
         godot::ClassDB::bind_method(godot::D_METHOD("build_owned_region","x","z","size","step","y_begin","y_end","epoch"), &TerrainCore::build_owned_region);
@@ -58,6 +59,18 @@ protected:
         godot::ClassDB::bind_method(godot::D_METHOD("experimental_partition_mesh_budgeted","packet","workspace_bytes","output_bytes","expected_epoch"), &TerrainCore::experimental_partition_mesh_budgeted);
     }
 public:
+    godot::Dictionary measure_material_surface(int64_t x,int64_t z,int64_t size,int64_t y_begin,int64_t y_end){
+        godot::Dictionary result;result["valid"]=false;
+        if(x<0||x>WORLD||z<0||z>WORLD||size<1||size>32||y_begin<1||y_end>255||y_end<=y_begin||y_end-y_begin>32)return result;
+        std::lock_guard<std::mutex> lock(mutex_);tr_oom=false;
+        double integral=0;int triangles=0;bool closed=false;
+        if(!::measure_material_surface(world_,int(x),int(z),int(size),int(y_begin),int(y_end),integral,triangles,closed))return result;
+        result["valid"]=true;result["signed_integral_m3"]=integral;result["closed"]=closed;
+        result["triangles"]=triangles;result["revision"]=world_.revision;
+        // An open patch's origin-dependent integral is not its physical volume.
+        if(closed)result["volume_m3"]=integral<0?-integral:integral;
+        return result;
+    }
     godot::Dictionary material_box(const godot::Ref<TerrainCore>&solid,godot::Vector3 minimum,godot::Vector3 maximum,bool add,int64_t solid_revision,int64_t material_revision=-1){
         godot::Dictionary result;result["accepted"]=false;result["changes"]=0;
         if(solid.is_null()||solid.ptr()==this)return result;

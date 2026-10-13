@@ -66,3 +66,24 @@ This is a callable integration path, not a switch of the live lake owner.
 Bucket quantities, live publication, water save migration, local settling and
 visual acceptance remain unfinished. Do not enable a second parallel water
 owner in gameplay to mask that missing migration.
+
+2026-10-13: BUCKET-SCALE GEOMETRY GATE FAILS; NATIVE MEASUREMENT ADDED
+The new direct material field must not equate analytic brush dimensions with
+transferred volume. tests/terrain_material_volume.gd measures actual runtime
+triangles: an integer-aligned 1m box has no surface, a half-grid-offset 1m box
+renders 0.037m3; 2m and 4m boxes also shrink. All six target-volume cases fail.
+This is the existing one-metre lattice plus surface representative averaging,
+not a bucket inventory defect. No runtime migration is accepted on that basis.
+Raw failures are retained in bucket_scale_failures.{json,log}.
+
+Native measure_material_surface now integrates the same full-detail extraction
+and connectivity, without lighting, GPU upload or a separate water mesher.
+Requests are limited to 32m per axis. It checks oriented edge closure and
+returns physical volume only for a closed envelope (including empty zero).
+Open patch integrals are explicitly named signed_integral_m3, not volume.
+This enables bounded before/after accounting; it does not yet implement a
+volume-constrained transfer or prove adequate runtime latency.
+
+The 31-check native suite passes including independent render-triangle
+agreement, open-patch rejection and bounds. Bucket-scale failures remain open;
+never treat the passing measurement tests as acceptance of the measured shape.
