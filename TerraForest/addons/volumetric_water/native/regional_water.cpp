@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: 0BSD
 #include "regional_water.hpp"
+#include "water_surface_interval.hpp"
 #include "lake_catalog.hpp"
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/classes/time.hpp>
@@ -228,8 +229,8 @@ int64_t NativeRegionalWater::brush(const Vector3 &point,double radius,int64_t am
 }
 bool NativeRegionalWater::exposed_surface(const Vector3i &p,double &height) const {
     const Region *r=get(p);if(!r)return false;int i=index(p);
-    if(!r->water[i]||r->floor[i]==r->ceiling[i])return false;
-    height=p.y*0.5+r->floor[i]*0.001+std::min(r->water[i],uint64_t(r->ceiling[i]-r->floor[i])*250)/250000.0;
+    auto interval=WaterSurfaceInterval::from_cell(p.y,r->floor[i],r->ceiling[i],r->water[i]);
+    if(!interval.wet)return false;height=interval.top;
     Vector3i q=p+Vector3i(0,1,0);const Region *above=get(q);
     return !(height>=(p.y+1)*0.5-0.00001&&above&&above->floor[index(q)]==0&&above->water[index(q)]);
 }
@@ -315,7 +316,7 @@ Dictionary NativeRegionalWater::transfer_litre(const Vector3 &from,const Vector3
                 const Region *next=get(q);if(!next||!next->water[index(q)])continue;int n=index(q);bool connected=false;
                 if(d==0)connected=other->floor[j]==0&&next->ceiling[n]==500&&next->water[n]>=uint64_t(500-next->floor[n])*250;
                 else if(d==5)connected=other->ceiling[j]==500&&next->floor[n]==0&&other->water[j]>=uint64_t(500-other->floor[j])*250;
-                else{int opening=std::max(other->floor[j],next->floor[n]);connected=opening<std::min(other->ceiling[j],next->ceiling[n])&&int64_t(other->floor[j])*250+other->water[j]>uint64_t(opening)*250&&int64_t(next->floor[n])*250+next->water[n]>uint64_t(opening)*250;}
+                else connected=water_intervals_joined(other->floor[j],other->ceiling[j],other->water[j],next->floor[n],next->ceiling[n],next->water[n]);
                 if(connected&&visited.insert(key(q)).second)candidates.push_back(q);
             }
         }
@@ -393,10 +394,8 @@ Dictionary NativeRegionalWater::next_mesh(){
     auto surface=[&](const Vector3i &p,double &height)->bool {return exposed_surface(p,height);};
     auto joined=[&](const Vector3i &a,const Vector3i &b)->bool {
         const Region *ra=get(a),*rb=get(b);if(!ra||!rb)return false;
-        int ia=index(a),ib=index(b);int opening=std::max(ra->floor[ia],rb->floor[ib]);
-        if(opening>=std::min(ra->ceiling[ia],rb->ceiling[ib]))return false;
-        return int64_t(ra->floor[ia])*250+int64_t(ra->water[ia])>opening*250 &&
-               int64_t(rb->floor[ib])*250+int64_t(rb->water[ib])>opening*250;
+        int ia=index(a),ib=index(b);
+        return water_intervals_joined(ra->floor[ia],ra->ceiling[ia],ra->water[ia],rb->floor[ib],rb->ceiling[ib],rb->water[ib]);
     };
     auto surface_joined=[&](const Vector3i &a,const Vector3i &b)->bool {
         if(a.y==b.y)return joined(a,b);

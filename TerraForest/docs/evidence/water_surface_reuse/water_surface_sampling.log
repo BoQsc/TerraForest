@@ -1,0 +1,4 @@
+deep_pool_surface_cells=32 shallow_phases_visible=8 shallow_phases_missing=992/1000
+DIRECT_UNIFORM_GRID_ADOPTION=REJECTED: finite stored water can have no surface samples
+EXPOSED_SHEET_HEIGHTS=PASS 36504 world-height/floor cases; dry, solid and capacity guards pass
+RUNTIME_ADOPTION=NOT_QUALIFIED: connectivity, shores and query agreement still required

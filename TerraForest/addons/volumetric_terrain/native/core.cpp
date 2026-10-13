@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: 0BSD
 #include "core.h"
 #include "geology.hpp"
+#include "surface_cell.hpp"
 #if defined(TERRAFOREST_TYPED_BRIDGE)
 #include <chrono>
 #endif
@@ -376,7 +377,6 @@ static bool extract_vertices(const World&w,int ox,int oz,int size,Mesh&m,u32 epo
  }
  const float*height_values=cached_heights?cached_heights:heights.p;
  List<CachedSample> cache;const int plane_size=hn*257;cache.resize(plane_size*2);
- static const int edges[12][2]={{0,1},{2,3},{4,5},{6,7},{0,2},{1,3},{4,6},{5,7},{0,4},{1,5},{2,6},{3,7}};
  for(int z=-1;z<size;z++){
   if(cancelled(w,epoch))break;
   zero_bytes(cache.p+((z+1)&1)*plane_size,size_t(plane_size)*sizeof(CachedSample));
@@ -407,8 +407,7 @@ static bool extract_vertices(const World&w,int ox,int oz,int size,Mesh&m,u32 epo
     if(d[k]<0)signs|=1u<<k;
    }
    if(signs==0||signs==255)continue;
-   V3 p{};int count=0;for(int e=0;e<12;e++){int a=edges[e][0],b=edges[e][1];if(((signs>>a)&1)==((signs>>b)&1))continue;float t=d[a]/(d[a]-d[b]);V3 va={float(a&1),float((a>>1)&1),float((a>>2)&1)},vb={float(b&1),float((b>>1)&1),float((b>>2)&1)};p=p+va+(vb-va)*t;count++;}
-   if(!count)continue;p=p/float(count);
+   V3 p=terraforest::surface_cell_vertex<V3>(d,signs);
    if(w.surface_style==1){
     bool edited_cell=false;for(int k=0;k<8;k++)if(mats[k])edited_cell=true;
     if(edited_cell)for(int iteration=0;iteration<4;iteration++){
@@ -442,13 +441,12 @@ static void connect_patch(int ox,int oz,int size,Mesh&m,int y_begin=0,int y_end=
  int vn=m.v.n;
  for(int j=0;j<vn;j++){
    const Vertex&v=m.v[j];int x=v.cx-ox,y=v.cy,z=v.cz-oz;if(x<0||z<0||x>=size||z>=size||y<y_begin||y>=y_end)continue;u32 s=v.mask;
-  for(int axis=0;axis<3;axis++){
-   int other=axis==0?1:(axis==1?2:4);if((s&1)==((s>>other)&1))continue;int a,b,c,d;
-   if(axis==0){if(y<1||z<0)continue;a=ids.get(cell_key(x,y-1,z-1,size));b=ids.get(cell_key(x,y,z-1,size));c=j;d=ids.get(cell_key(x,y-1,z,size));}
-   else if(axis==1){a=ids.get(cell_key(x-1,y,z-1,size));b=ids.get(cell_key(x-1,y,z,size));c=j;d=ids.get(cell_key(x,y,z-1,size));}
-   else{if(y<1)continue;a=ids.get(cell_key(x-1,y-1,z,size));b=ids.get(cell_key(x,y-1,z,size));c=j;d=ids.get(cell_key(x-1,y,z,size));}
-   if(a<0||b<0||c<0||d<0)continue;quad(m,a,b,c,d,(s&1)==0);
-  }
+  terraforest::surface_cell_faces(x,y,z,s,
+   [&](int xx,int yy,int zz){if(yy<0)return -1;return xx==x&&yy==y&&zz==z?j:ids.get(cell_key(xx,yy,zz,size));},
+   [&](int axis,int a,int b,int c,int d,bool reverse){
+    if((axis==0&&(y<1||z<0))||(axis==2&&y<1))return;
+    quad(m,a,b,c,d,reverse);
+   });
  }
  ids.release();
 }

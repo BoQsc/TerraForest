@@ -11,6 +11,8 @@ ROOT = Path(__file__).resolve().parents[1]
 def parse_args(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     steam = Path(r'C:\Program Files (x86)\Steam\steamapps\common\Godot Engine\godot.windows.opt.tools.64.exe')
+    if not steam.is_file():
+        steam = steam.with_name('Godot Engine.exe')
     parser.add_argument('--godot', default=os.environ.get('GODOT_EXE') or shutil.which('godot') or (str(steam) if steam.is_file() else None))
     parser.add_argument('--renderer', choices=['forward_plus', 'mobile', 'gl_compatibility'], default='forward_plus')
     parser.add_argument('--temporary', action='store_true')
