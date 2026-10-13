@@ -32,6 +32,10 @@ void fragment() {
     // Distance through the water along this view ray, not nonlinear depth.
     float thickness = clamp(length(behind.xyz) - length(VERTEX), 0.0, 40.0);
     float transmission = exp(-absorption * thickness);
+    // At solid contact, the boundary converges to the already rendered terrain.
+    // Fade surface lighting as well as tint; otherwise closed contact faces
+    // create reflective bands across the lake bed.
+    float contact_visibility = smoothstep(0.0, 0.25, thickness);
     vec3 n = normalize(surface_world_normal);
     vec2 ripple = texture(ripple_normal, UV * ripple_scale + TIME * vec2(0.007, -0.004)).rg * 2.0 - 1.0;
     // Preserve vertical side normals; ripples perturb horizontal surfaces only.
@@ -40,13 +44,13 @@ void fragment() {
     if (!FRONT_FACING) NORMAL = -NORMAL;
     float facing = clamp(abs(dot(NORMAL, VIEW)), 0.0, 1.0);
     float fresnel = 0.02 + 0.98 * pow(1.0 - facing, 5.0);
-    float through = transmission * (1.0 - fresnel) * (1.0 - surface_tint);
+    float through = transmission * (1.0 - fresnel * contact_visibility) * (1.0 - surface_tint * contact_visibility);
     ALBEDO = water_color * (1.0 - through) * 0.5;
     EMISSION = textureLod(scene_color, SCREEN_UV, 0.0).rgb * through + water_color * (1.0 - through) * 0.5;
     METALLIC = 0.0;
     ROUGHNESS = 0.16;
     // Godot's dielectric F0 = 0.16 * SPECULAR^2; water F0 is about 0.02.
-    SPECULAR = 0.35;
+    SPECULAR = 0.35 * contact_visibility;
     // Clear shallows, progressively absorbed deep water, reflected grazing light.
     // Deliberately no alpha blending: nearest depth wins regardless of region
     // draw order. Transmission is already included in the resolved color.

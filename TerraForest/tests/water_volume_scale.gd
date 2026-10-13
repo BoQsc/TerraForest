@@ -34,9 +34,8 @@ func _initialize():
   var signed_volume:=0.0;var triangles:=0;var top:=-INF;var bottom:=INF
   var edges:Dictionary={}
   for iteration in 64:
-   # Contacts close the same runtime reconstruction for the volume integral.
-   # Runtime omits buried faces; this flag does not change vertex positions.
-   var packet:Dictionary=water.next_mesh(true)
+   # Measure the same closed envelope that the runtime publishes.
+   var packet:Dictionary=water.next_mesh()
    if packet.is_empty():break
    var vertices:PackedVector3Array=packet.arrays[Mesh.ARRAY_VERTEX]
    for i in range(0,vertices.size(),3):

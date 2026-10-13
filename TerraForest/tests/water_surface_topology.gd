@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: 0BSD
 extends SceneTree
-# Replay real terrain contacts, including the diagnostic buried faces. A closed
+# Replay the actual runtime mesh, without diagnostic-only extra faces. A closed
 # material envelope must pair each directed edge with its reverse across packets.
 # This deliberately does not infer visible continuity from stored-cell adjacency.
 func _initialize():call_deferred("run")
@@ -13,7 +13,7 @@ func run():
  var signed_volume:=0.0;var volume_origin:=Vector3(800,48,1300)
  var stored:int=water.statistics().water_ml
  for iteration in 10000:
-  var packet:Dictionary=water.next_mesh(true)
+  var packet:Dictionary=water.next_mesh()
   if packet.is_empty():break
   var vertices:PackedVector3Array=packet.arrays[Mesh.ARRAY_VERTEX]
   for i in range(0,vertices.size(),3):

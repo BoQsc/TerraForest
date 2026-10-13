@@ -1,0 +1,20 @@
+2026-10-13: CLOSED RUNTIME WATER BOUNDARY + CONTACT LIGHTING
+Topology gate now uses next_mesh() (actual runtime), not next_mesh(true).
+Before: 13,098 triangles; 2,174 unpaired edges, 485.641m unpaired length.
+After: 21,444 triangles; zero unpaired/nonmanifold/degenerate/winding errors.
+Removed endpoint-labelled contact-face suppression: one dry endpoint does not
+prove an entire dual face is buried. Terrain depth occludes buried faces.
+The diagnostic compatibility argument remains accepted, but no longer changes
+which faces exist. Storage, sample resolution and extracted vertices unchanged.
+
+Closed geometry alone exposed reflective bands on lake-bed contact faces.
+Depth-based surface-lighting/tint fade removes these in the inspected underwater
+capture, using existing scene-depth sampling, no extra render pass or texture
+sample. This visual blending does not fix sub-grid volume or geometric contact.
+Visual run: reports/checks/20261013T180948781298Z (above and underwater).
+Scoop/pour/recover: reports/checks/20261013T181039356724Z PASS; image inspected.
+Captured contact test: 102 samples, zero penetrations, min gap 0.001416m.
+
+Triangle increase is explicit (8,346 in this fixture). Performance impact is
+unmeasured; displayed 60 FPS is not a benchmark. Thin volumes, general contact
+accuracy and authoritative terrain-field migration remain open.

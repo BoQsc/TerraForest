@@ -658,14 +658,11 @@ NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool s
     connect_density_surface(int(vertices.size()),{0,N,0,N,0,N},
         [&](int i)->const Vertex&{return vertices[i];},
         [&](int x,int y,int z){return x< -1||x>=N||y< -1||y>=N||z< -1||z>=N?-1:ids[vertex_index(x,y,z)];},
-        [&](int axis,int x,int y,int z){
-            if(include_contacts)return true;
-            Vector3i next(x,y,z);next[axis]++;
-            const Node &a=field[node_index(x,y,z)],&b=field[node_index(next.x,next.y,next.z)];
-            // Hidden solid/liquid boundaries are classification only; their
-            // removal never changes the shared density field or representatives.
-            return !(a.density>=0?a.contact:b.contact);
-        },
+        // A contact-labelled lattice endpoint does not prove its entire dual
+        // face is buried. Removing it opens visible holes along the shoreline.
+        // Keep the closed material boundary; normal terrain depth occludes
+        // genuinely buried faces without inventing a second diagnostic mesh.
+        [&](int,int,int,int){return true;},
         [&](int a,int b,int c,int d,bool reverse){
             const auto &v=vertices[c];
             int axis=(vertices[a].cx==v.cx&&vertices[b].cx==v.cx&&vertices[d].cx==v.cx)?0:
