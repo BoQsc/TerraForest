@@ -7,8 +7,8 @@ render_mode cull_disabled, depth_draw_always;
 // No SSR, second camera, refraction distortion, or geometry displacement.
 uniform sampler2D scene_color : hint_screen_texture, repeat_disable, filter_nearest;
 uniform sampler2D scene_depth : hint_depth_texture, repeat_disable, filter_nearest;
-uniform vec3 water_color : source_color = vec3(0.08, 0.36, 0.34);
-uniform float absorption : hint_range(0.05, 2.0) = 0.65;
+uniform vec3 water_color : source_color = vec3(0.055, 0.23, 0.21);
+uniform float absorption : hint_range(0.05, 2.0) = 0.4;
 // A small surface tint keeps bucket-sized shallow puddles readable.
 uniform float surface_tint : hint_range(0.0, 0.3) = 0.22;
 // Linear RG slope data: one shared mipmapped texture, no extra render pass.
@@ -44,8 +44,9 @@ void fragment() {
     ALBEDO = water_color * (1.0 - through) * 0.5;
     EMISSION = textureLod(scene_color, SCREEN_UV, 0.0).rgb * through + water_color * (1.0 - through) * 0.5;
     METALLIC = 0.0;
-    ROUGHNESS = 0.24;
-    SPECULAR = 0.5;
+    ROUGHNESS = 0.16;
+    // Godot's dielectric F0 = 0.16 * SPECULAR^2; water F0 is about 0.02.
+    SPECULAR = 0.35;
     // Clear shallows, progressively absorbed deep water, reflected grazing light.
     // Deliberately no alpha blending: nearest depth wins regardless of region
     // draw order. Transmission is already included in the resolved color.

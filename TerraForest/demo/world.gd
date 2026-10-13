@@ -459,6 +459,9 @@ func _setup_scene() -> void:
 		if child is WorldEnvironment:
 			var environment: Environment = child.environment
 			var sky := Sky.new()
+			# Reuse the static sky for material reflections. A small radiance map
+			# is filtered once; this does not render the world again or use SSR.
+			sky.radiance_size = Sky.RADIANCE_SIZE_128
 			var sky_material := ProceduralSkyMaterial.new()
 			sky_material.sky_top_color = Color("527b9a")
 			sky_material.sky_horizon_color = Color("c4d6d8")
@@ -467,6 +470,7 @@ func _setup_scene() -> void:
 			sky.sky_material = sky_material
 			environment.sky = sky
 			environment.background_mode = Environment.BG_SKY
+			environment.reflected_light_source = Environment.REFLECTION_SOURCE_SKY
 			environment.ambient_light_energy = 0.35
 			environment.tonemap_mode = Environment.TONE_MAPPER_FILMIC
 			environment.fog_enabled = true

@@ -1,0 +1,23 @@
+2026-10-13: Follow-up to the generated water ripple texture.
+
+The combined world supplied a ProceduralSkyMaterial but retained the terrain
+test controller's REFLECTION_SOURCE_DISABLED. This made the normal texture
+largely ineffective outside the direct sun highlight. The combined world now
+uses its existing sky for material reflections with a 128px radiance map.
+This is sky-only image-based lighting, not a reflection of trees/buildings.
+It also restores sky specular response on other materials, including the bucket.
+There is no extra world camera, reflection probe or screen-space reflection pass.
+
+Water absorption is reduced from 0.65 to 0.4, tint from bright teal to a darker
+green-blue, roughness from 0.24 to 0.16. Dielectric specular is 0.35. Geometry,
+flow, terrain interaction, buckets and persistence are unchanged.
+
+Validation: regional_water_world PASS, no reported engine errors, 26.32 seconds,
+1920x1080 fullscreen capped at 60. Run 20261013T113018589531Z retained here.
+The actual-world check covers full-bucket scoop, published local depression and
+refill, isolated pour/scoop, mining, conservation and saved-world roundtrip.
+Inspected lake.png and puddle.png. Ripples now affect sky highlights; the bed
+remains visible through shallows. Angular puddle edges remain a meshing issue.
+
+No GPU-time delta or thermal qualification was performed. Screenshot capture
+stalls affect the HUD FPS; it is not a performance measurement.
