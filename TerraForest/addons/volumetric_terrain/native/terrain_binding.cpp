@@ -40,7 +40,7 @@ class TerrainCore : public godot::RefCounted {
 protected:
     static void _bind_methods() {
         godot::ClassDB::bind_method(godot::D_METHOD("execute","packet"), &TerrainCore::execute);
-        godot::ClassDB::bind_method(godot::D_METHOD("material_box","solid","minimum","maximum","add","solid_revision"), &TerrainCore::material_box);
+        godot::ClassDB::bind_method(godot::D_METHOD("material_box","solid","minimum","maximum","add","solid_revision","material_revision"), &TerrainCore::material_box, DEFVAL(-1));
         godot::ClassDB::bind_method(godot::D_METHOD("geometry_cache_key","x","z","size","step"), &TerrainCore::geometry_cache_key);
         godot::ClassDB::bind_method(godot::D_METHOD("build_owned_region","x","z","size","step","y_begin","y_end","epoch"), &TerrainCore::build_owned_region);
         godot::ClassDB::bind_method(godot::D_METHOD("supports_isolated_worlds"), &TerrainCore::supports_isolated_worlds);
@@ -58,12 +58,12 @@ protected:
         godot::ClassDB::bind_method(godot::D_METHOD("experimental_partition_mesh_budgeted","packet","workspace_bytes","output_bytes","expected_epoch"), &TerrainCore::experimental_partition_mesh_budgeted);
     }
 public:
-    godot::Dictionary material_box(const godot::Ref<TerrainCore>&solid,godot::Vector3 minimum,godot::Vector3 maximum,bool add,int64_t solid_revision){
+    godot::Dictionary material_box(const godot::Ref<TerrainCore>&solid,godot::Vector3 minimum,godot::Vector3 maximum,bool add,int64_t solid_revision,int64_t material_revision=-1){
         godot::Dictionary result;result["accepted"]=false;result["changes"]=0;
         if(solid.is_null()||solid.ptr()==this)return result;
         // A single lock transaction prevents terrain changes between exclusion and commit.
         std::scoped_lock lock(mutex_,solid->mutex_);
-        if(solid_revision!=solid->world_.revision)return result;
+        if(solid_revision!=solid->world_.revision||(material_revision>=0&&material_revision!=world_.revision))return result;
         tr_oom=false;V3 lo,hi;int changes=0;
         bool ok=world_.material_box(solid->world_,{float(minimum.x),float(minimum.y),float(minimum.z)},
             {float(maximum.x),float(maximum.y),float(maximum.z)},add,lo,hi,changes);

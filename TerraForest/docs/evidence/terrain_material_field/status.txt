@@ -50,3 +50,19 @@ This does not prove rendered shoreline contact, physical volume conservation,
 sub-grid visibility, flow, or live lake integration. The operation currently
 accepts boxes up to 32 metres per axis; large fills need bounded scheduling.
 The live water runtime is still unchanged. No playtest acceptance claimed.
+
+2026-10-13: EXISTING TERRAIN WORKER INTEGRATION
+The public terrain facade now accepts a bounded material_edit request. It uses
+the existing persistent terrain worker, preserves mutation/save ordering, and
+limits admission to one request including unconsumed completion. Inputs are
+copied and validated. Native code checks both material and solid revisions
+under the same paired lock. Reset/cancellation epochs reject queued stale work.
+The result identifies its world epoch rather than hiding an old-world commit.
+
+Actual worker test: tests/terrain_material_worker.gd, ten checks pass in
+reports/checks/20261013T171758063819Z. Direct native 26-check regression also
+passes after rebuilding debug/release. Temporary world; no saved world edited.
+This is a callable integration path, not a switch of the live lake owner.
+Bucket quantities, live publication, water save migration, local settling and
+visual acceptance remain unfinished. Do not enable a second parallel water
+owner in gameplay to mask that missing migration.

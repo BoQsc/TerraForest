@@ -5,6 +5,7 @@ extends "res://addons/volumetric_terrain/terrain_stream.gd"
 signal surface_batch_ready(token: int, points: PackedVector3Array, normals: PackedVector3Array, epoch_id: int, revision: int)
 signal region_changed(bounds: AABB, revision: int)
 signal region_invalidated(bounds: AABB)
+signal material_edit_ready(result: Dictionary)
 signal lake_slice_ready(token: int, status: int, epoch_id: int, revision: int)
 signal lake_cache_result(event: String, identity: String)
 signal lake_slice_profiled(worker_ms: float, queue_ms: float, status: int)
@@ -90,6 +91,11 @@ func _receive(result: Dictionary) -> void:
 			if not snapshot_restore_ok:
 				backend.disable_snapshot_writes("addon restoration failed")
 				result["message"] = "ERROR: addon restoration failed; canonical save protected"
+	if result.get("kind", "") == "material_edit":
+		# An accepted old-world mutation belongs only to its old material owner.
+		result["current_world"]=result.get("epoch",-1)==epoch
+		material_edit_ready.emit(result)
+		return
 	if result.get("kind", "") == "lake_slice":
 		lake_cache_result.emit(str(result.get("lake_cache","disabled")),str(result.get("lake_identity","")))
 		lake_slice_profiled.emit(float(result.get("worker_ms",0)),float(result.get("queue_ms",0)),int(result["status"]))
@@ -172,6 +178,10 @@ func edit(data: PackedByteArray, lo: Vector3, hi: Vector3, captured_us: int = 0,
 	if accepted:
 		region_invalidated.emit(AABB(safe_lo, safe_hi - safe_lo))
 	return accepted
+
+func request_material_edit(field:RefCounted,minimum:Vector3,maximum:Vector3,add:bool,field_revision:int,token:int) -> bool:
+	if not world_ready or pending_edit or foreground_brush or stopping:return false
+	return backend.submit({"kind":"material_edit","field":field,"minimum":minimum,"maximum":maximum,"add":add,"token":token,"epoch":epoch,"revision":density_revision,"field_revision":field_revision})
 
 func request_lake_slice(builder: RefCounted, token: int) -> bool:
 	# Optional native addon protocol: terrain has no dependency on its renderer.

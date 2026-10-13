@@ -7,6 +7,7 @@ var mutex := Mutex.new()
 var semaphore := Semaphore.new()
 var jobs: Array[Dictionary] = []
 var results: Array[Dictionary] = []
+var _material_pending: int = 0 # One mutation reservation through result consumption.
 var _density_pending: int = 0 # Accepted queries, including unconsumed results.
 var _partition_pending: int = 0 # One bounded source/result, including unconsumed output.
 var _lake_pending: int = 0 # One builder reservation through completion consumption.
@@ -231,6 +232,17 @@ var _site_pending:=0
 func submit(job: Dictionary, priority: bool = false) -> bool:
 	if job.get("kind","")=="save" and snapshot_ready.is_valid() and not snapshot_ready.call("save"):
 		return false
+	if job.get("kind","")=="material_edit":
+		if not is_instance_valid(job.get("field")) or job.field.get_class()!="TerrainCore":return false
+		if typeof(job.get("minimum"))!=TYPE_VECTOR3 or typeof(job.get("maximum"))!=TYPE_VECTOR3 or typeof(job.get("add"))!=TYPE_BOOL:return false
+		var minimum:Vector3=job.minimum;var maximum:Vector3=job.maximum
+		if not minimum.is_finite() or not maximum.is_finite():return false
+		for axis in 3:
+			if maximum[axis]<=minimum[axis] or maximum[axis]-minimum[axis]>32.0:return false
+		for name in ["token","epoch","revision","field_revision"]:
+			if typeof(job.get(name))!=TYPE_INT or job[name]<0:return false
+		job={"kind":"material_edit","field":job.field,"minimum":minimum,"maximum":maximum,"add":job.add,"token":job.token,"epoch":job.epoch,"revision":job.revision,"field_revision":job.field_revision}
+		priority=false # Never overtake accepted terrain mutations or saves.
 	if job.get("kind","")=="density_batch":
 		var paged: Variant=job.get("paged",false)
 		if typeof(paged)!=TYPE_BOOL: return false
@@ -280,6 +292,8 @@ func submit(job: Dictionary, priority: bool = false) -> bool:
 	if str(job.get("kind", "")) in ["edit", "save"]:
 		job["component_snapshot"] = _capture_snapshot()
 	mutex.lock()
+	if job.get("kind","")=="material_edit" and _material_pending>=1:
+		mutex.unlock();return false
 	if job.get("kind","")=="lake_slice" and _lake_pending>=1:
 		mutex.unlock();return false
 	if job.get("kind","")=="density_batch" and _site_pending>=1:
@@ -324,6 +338,7 @@ func submit(job: Dictionary, priority: bool = false) -> bool:
 		if Codec.reply_ok(cancellation) and cancellation.size() >= 16:
 			build_epoch = cancellation.decode_u32(12)
 	job["build_epoch"] = build_epoch
+	if job.get("kind","")=="material_edit": _material_pending+=1
 	if job.get("kind","")=="density_ray": _density_pending+=1
 	if job.get("kind","")=="partition": _partition_pending+=1
 	if job.get("kind","")=="lake_slice": _lake_pending+=1
@@ -334,7 +349,7 @@ func submit(job: Dictionary, priority: bool = false) -> bool:
 			# Captured addon snapshots belong to their accepted world order.
 			# Prioritize over background work, never over a save or mutation.
 			for index in range(jobs.size()):
-				if str(jobs[index].get("kind","")) in ["save","edit","load","reset"]:
+				if str(jobs[index].get("kind","")) in ["save","edit","load","reset","material_edit"]:
 					insertion=index+1
 		jobs.insert(insertion,job)
 	else:
@@ -374,6 +389,7 @@ func poll() -> Array[Dictionary]:
 	mutex.lock()
 	var ready: Array[Dictionary] = results
 	for result: Dictionary in ready:
+		if result.get("kind","")=="material_edit": _material_pending-=1
 		if result.get("kind","")=="density_batch": _site_pending-=1
 		if result.get("kind","")=="density_ray": _density_pending-=1
 		if result.get("kind","")=="partition": _partition_pending-=1
@@ -564,6 +580,17 @@ func _execute_density_query(job: Dictionary) -> void:
 	if result.has("revision") and result.revision!=job["revision"]:
 		result.erase("position");result.erase("fraction");result["status"]="stale"
 	result.merge({"kind":"density_ray","token":job["token"],"epoch":job["epoch"],"requested_revision":job["revision"],"build_epoch":job["build_epoch"],"queue_ms":queue_ms,"query_ms":(Time.get_ticks_usec()-query_started)/1000.0,"worker_finished_us":Time.get_ticks_usec()})
+	_push(result)
+
+func _execute_material_edit(job: Dictionary) -> void:
+	var started:=Time.get_ticks_usec()
+	var result:Dictionary={"accepted":false,"changes":0,"status":"stale"}
+	var cancel:=_call(Codec.command(13))
+	var info:PackedByteArray=job.field.execute(Codec.command(0))
+	if Codec.reply_ok(cancel) and cancel.decode_u32(12)==job.build_epoch and Codec.reply_ok(info) and info.decode_u32(12)==job.field_revision:
+		result=job.field.material_box(native,job.minimum,job.maximum,job.add,job.revision,job.field_revision)
+		result["status"]="ok" if result.get("accepted",false) else "rejected"
+	result.merge({"kind":"material_edit","token":job.token,"epoch":job.epoch,"requested_revision":job.revision,"queue_ms":(started-job.submitted_us)/1000.0,"worker_ms":(Time.get_ticks_usec()-started)/1000.0})
 	_push(result)
 
 func _execute_lake_slice(job: Dictionary) -> void:
@@ -1094,6 +1121,8 @@ func _run() -> void:
 				"components": components.duplicate(), "modified": _call(Codec.command(10)), "stats": _call(Codec.command(0))})
 		elif kind == "density_batch":
 			_execute_density_batch(job)
+		elif kind == "material_edit":
+			_execute_material_edit(job)
 		elif kind == "lake_slice":
 			_execute_lake_slice(job)
 		elif kind == "surface_batch":
