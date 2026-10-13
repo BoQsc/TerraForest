@@ -1,0 +1,9 @@
+Static water profile simplification - 2026-10-13
+
+Removed unused tilted free-surface fields, polygon integration and branches from the live WaterCellProfile implementation. Surface slopes have had no runtime writer since connected pool recovery; static profiles now express that invariant directly. Terrain floor/contact geometry and finite-volume integration remain. Diagnostic slope fields stay present as constant zero for API compatibility. Save representation and quantity migration are unchanged.
+
+Updated native mathematical probes to cover the retained horizontal surface over sloping floors, partial floor/ceiling volume inversion, independent area quadrature, shared-face connectivity and solid barriers. Superseded tilted-film probes were removed with the unsupported machinery, not counted as passes.
+
+Passing checks: check_water_cell_profile.py; release water_pool_topology, water_surface_topology, water_transfer_volume, water_bucket, water_static_editing. The captured lake remains 21428 triangles with signed volume -554.965262108008 m3, zero degenerate triangles, unpaired/nonmanifold edges or inconsistent winding, matching the previous result. Both debug/release water extensions rebuilt with pinned Zig and prebuilt godot-cpp.
+
+No FPS or thermal improvement is claimed. Full terrain storage unification remains unfinished. Historical flow/film tests elsewhere are not current acceptance criteria.

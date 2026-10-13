@@ -1,0 +1,34 @@
+PASS sloped half-cell capacity is 62.5 litres
+PASS quarter-height wedge integrates to 15.625 litres
+PASS head inversion conserves sub-litre and full-cell quantities
+PASS head inversion conserves sub-litre and full-cell quantities
+PASS head inversion conserves sub-litre and full-cell quantities
+PASS head inversion conserves sub-litre and full-cell quantities
+PASS head inversion conserves sub-litre and full-cell quantities
+PASS wetted centroid excludes the dry half of the slope
+PASS opposite floor faces have distinct spill heights
+PASS flat cells retain their exact constant-area behavior
+PASS ambiguous walls retain conservative closure
+PASS cached floor crossings recover partial capacity without opening solid bottom
+PASS floor crossing the cell top retains its partial air wedge
+PASS static top stays horizontal above a sloping floor
+PASS static partial-top inversion conserves volume
+PASS static partial-top inversion conserves volume
+PASS static partial-top inversion conserves volume
+PASS static partial-top inversion conserves volume
+PASS partial bottom clips the interpolated floor instead of inventing a ramp
+PASS partial bottom retains a finite open face and real uphill terrain
+PASS static partial-bottom surface preserves volume within the cell
+PASS static partial-bottom surface preserves volume within the cell
+PASS static partial-bottom surface preserves volume within the cell
+PASS static partial-bottom surface preserves volume within the cell
+PASS static partial-bottom surface preserves volume within the cell
+PASS clipped static volume agrees with independent dense area quadrature within one millilitre
+PASS clipped static volume agrees with independent dense area quadrature within one millilitre
+PASS zero-density ambiguity does not invent fully open space
+PASS integer-capacity saturation reaches the top despite sub-millilitre rounding
+PASS sufficient static volumes meet across a shared sloping floor face
+PASS coherence never bridges a solid face
+PASS static volumes connect through a narrow partial vertical opening
+PASS a dry vertical gap stays disconnected
+WATER_CELL_PROFILE failures=0

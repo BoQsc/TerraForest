@@ -566,7 +566,7 @@ Dictionary NativeRegionalWater::cell_geometry(const Vector3 &point) const {
     Dictionary out;if(!point.is_finite())return out;Vector3i p=cell(point);const Region *r=get(p);if(!r)return out;
     int i=index(p);auto shape=surface_profile(p);double h=shape.head(r->water[i]);auto footprint=shape.footprint(h);
     out["bottom"]=p.y*0.5+shape.bottom(point.x*2-p.x,point.z*2-p.z)*0.001;
-    out["head"]=p.y*0.5+shape.surface(h,point.x*2-p.x,point.z*2-p.z)*0.001;out["slope_x"]=shape.slope_x;out["slope_z"]=shape.slope_z;out["capacity_ml"]=int64_t(shape.capacity());out["cut"]=shape.cut;
+    out["head"]=p.y*0.5+shape.surface(h,point.x*2-p.x,point.z*2-p.z)*0.001;out["slope_x"]=0.0;out["slope_z"]=0.0;out["capacity_ml"]=int64_t(shape.capacity());out["cut"]=shape.cut;
     out["wet_centroid"]=Vector3(p)*0.5+Vector3(footprint.x*0.5,shape.bottom(footprint.x,footprint.z)*0.001,footprint.z*0.5);
     int connections=0;
     for(int d=0;d<6;++d){Vector3i q=p+directions[d];const Region *other=get(q);if(!other||!other->water[index(q)])continue;
@@ -866,9 +866,8 @@ bool NativeRegionalWater::decode(const PackedByteArray &data,bool install){
         for(int i=0;i<512;++i){r.floor[i]=data.decode_u16(offset);r.ceiling[i]=data.decode_u16(offset+2);r.water[i]=data.decode_u64(offset+4);if(r.water[i]>>63){r.water[i]&=~(uint64_t(1)<<63);if(!r.water[i])return false;}offset+=12;
             if(r.floor[i]>r.ceiling[i]||r.ceiling[i]>500||r.water[i]>MAX_TOTAL-sum)return false;sum+=r.water[i];}
         if(shaped)for(float &value:r.density){value=data.decode_float(offset);offset+=4;if(!std::isfinite(value))return false;}
-        // Old saved amounts are authoritative. Wake only cut cells whose new
-        // capacity differs, then settle with cached terrain instead of sampling
-        // or discarding/recreating water during the format upgrade.
+        // Old saved amounts are authoritative, including over-capacity cells.
+        // Restore cached profiles without simulation or quantity changes.
         if(install||data.decode_u32(4)>=6)staged.emplace(k,std::move(r));
     }
     if(data.decode_u32(4)>=6){
