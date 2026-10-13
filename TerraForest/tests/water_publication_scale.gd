@@ -53,6 +53,15 @@ func _initialize():
   check(initial.batches==count and initial.largest_batch_packets==3,"Independent pools publish separately with bounded batch size (%d regions)"%count)
   check(local.packets==1,"Local interior edit rebuilds only one owner (%d regions)"%count)
   rows.append({"regions":count,"initial":initial,"local_edit":local,"query_cache_bytes":stats.query_cache_bytes,"resident_cell_bytes":stats.resident_cell_bytes})
+ var scoped=fixture(256)
+ var scoped_first:Dictionary=scoped.next_mesh_batch()
+ var distant_added:=0
+ for r in range(1,256):
+  var point:=Vector3((10+3*(r/16))*4+1.75,41.6,(10+3*(r%16))*4+1.75)
+  distant_added+=scoped.brush(point,0.0,1000)
+ check(not scoped_first.complete and distant_added==255000 and scoped.statistics().mesh_snapshot_bytes==0,"255 unrelated edits retain zero snapshot payload for active pool")
+ check(scoped.brush(Vector3(41.75,41.6,41.75),0.0,1000)==1000 and scoped.statistics().mesh_snapshot_bytes>0,"Relevant edit still preserves active pool snapshot")
+ check(publish(scoped,16,false).complete and scoped.statistics().mesh_snapshot_bytes==0 and scoped.statistics().water_ml==256*4000000+256000,"Scoped snapshots retire without losing local or distant edits")
  var adjacent=fixture(16,1)
  var connected:=publish(adjacent,256)
  check(connected.complete and connected.batches==1,"Adjacent dirty owners remain in one coherent batch")
@@ -63,6 +72,7 @@ func _initialize():
  check(first.has("coordinate") and not first.complete,"Distant publication is in flight before local edit")
  var late_point:=Vector3(221.75,41.6,221.75)
  check(queued.brush(late_point,0.0,1000)==1000,"Edit last queued pool during distant publication")
+ check(queued.statistics().mesh_snapshot_bytes==0,"Distant edit does not copy data for unrelated in-flight pool")
  var finish:=publish(queued,16,false)
  check(finish.complete,"In-flight distant batch commits")
  var next:Dictionary=queued.next_mesh_batch()

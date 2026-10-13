@@ -333,7 +333,7 @@ PackedByteArray NativeRegionalWater::placement_mask(const TypedArray<Transform3D
     PackedByteArray result;if(transforms.size()>512)return result;result.resize(transforms.size());for(int i=0;i<transforms.size();++i){Transform3D t=transforms[i];result.set(i,depth_at(t.origin)>0?1:0);}return result;
 }
 void NativeRegionalWater::preserve_mesh_region(Key k){
-    if(!batch_active||mesh_snapshot.count(k)||mesh_snapshot_absent.count(k))return;
+    if(!batch_active||!mesh_snapshot_dependencies.count(k)||mesh_snapshot.count(k)||mesh_snapshot_absent.count(k))return;
     auto found=regions.find(k);
     if(found==regions.end())mesh_snapshot_absent.insert(k);else mesh_snapshot.emplace(k,found->second);
 }
@@ -352,7 +352,7 @@ void NativeRegionalWater::prioritize_mesh(Key k){
 void NativeRegionalWater::cancel_mesh_batch(){
     if(!batch_active&&!publish_pending)return;
     for(Key k:batch_owners)if(mesh_set.insert(k).second)meshes.push_back(k);
-    batch_active=false;publish_pending=false;staged_surfaces.clear();batch_queue.clear();batch_owners.clear();mesh_snapshot.clear();mesh_snapshot_absent.clear();
+    batch_active=false;publish_pending=false;staged_surfaces.clear();batch_queue.clear();batch_owners.clear();mesh_snapshot.clear();mesh_snapshot_absent.clear();mesh_snapshot_dependencies.clear();
 }
 Dictionary NativeRegionalWater::next_mesh_batch(){
     Dictionary result;publication_enabled=true;
@@ -368,6 +368,15 @@ Dictionary NativeRegionalWater::next_mesh_batch(){
                 Vector3i n=p+Vector3i(x,y,z);
                 if(n.x<0||n.x>=500||n.y<0||n.y>=64||n.z<0||n.z>=500)continue;
                 Key k=key(n);if(mesh_set.erase(k))batch_owners.push_back(k);
+            }
+        }
+        // Reconstruction and readiness read only each owner's one-region halo.
+        // Copy-on-write must not retain mutations elsewhere in the world.
+        for(Key owner:batch_owners){
+            Vector3i p=position(owner);
+            for(int z=-1;z<=1;++z)for(int y=-1;y<=1;++y)for(int x=-1;x<=1;++x){
+                Vector3i n=p+Vector3i(x,y,z);
+                if(n.x>=0&&n.x<500&&n.y>=0&&n.y<64&&n.z>=0&&n.z<500)mesh_snapshot_dependencies.insert(key(n));
             }
         }
         batch_queue.assign(batch_owners.begin(),batch_owners.end());
@@ -388,7 +397,7 @@ Dictionary NativeRegionalWater::next_mesh_batch(){
         result["coordinate"]=position(k);result["faces"]=mesh.faces;result["arrays"]=arrays;result["vertices"]=mesh.vertices.size();break;
     }
     if(batch_queue.empty()){
-        result["complete"]=true;batch_active=false;publish_pending=true;mesh_snapshot.clear();mesh_snapshot_absent.clear();
+        result["complete"]=true;batch_active=false;publish_pending=true;mesh_snapshot.clear();mesh_snapshot_absent.clear();mesh_snapshot_dependencies.clear();
     }
     mesh_us=Time::get_singleton()->get_ticks_usec()-start;max_mesh_us=std::max(max_mesh_us,mesh_us);return result;
 }

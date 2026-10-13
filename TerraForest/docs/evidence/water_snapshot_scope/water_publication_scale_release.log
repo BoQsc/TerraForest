@@ -1,0 +1,30 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS Publication and local edit conserve water (1 regions)
+PASS Restore schedules surface owners without empty halo packets (1 regions)
+PASS Independent pools publish separately with bounded batch size (1 regions)
+PASS Local interior edit rebuilds only one owner (1 regions)
+PASS Publication and local edit conserve water (16 regions)
+PASS Restore schedules surface owners without empty halo packets (16 regions)
+PASS Independent pools publish separately with bounded batch size (16 regions)
+PASS Local interior edit rebuilds only one owner (16 regions)
+PASS Publication and local edit conserve water (64 regions)
+PASS Restore schedules surface owners without empty halo packets (64 regions)
+PASS Independent pools publish separately with bounded batch size (64 regions)
+PASS Local interior edit rebuilds only one owner (64 regions)
+PASS Publication and local edit conserve water (256 regions)
+PASS Restore schedules surface owners without empty halo packets (256 regions)
+PASS Independent pools publish separately with bounded batch size (256 regions)
+PASS Local interior edit rebuilds only one owner (256 regions)
+PASS 255 unrelated edits retain zero snapshot payload for active pool
+PASS Relevant edit still preserves active pool snapshot
+PASS Scoped snapshots retire without losing local or distant edits
+PASS Adjacent dirty owners remain in one coherent batch
+PASS Distant publication is in flight before local edit
+PASS Edit last queued pool during distant publication
+PASS Distant edit does not copy data for unrelated in-flight pool
+PASS In-flight distant batch commits
+PASS Edited pool takes priority over unrelated queued pools
+PASS Edited pool publishes while distant work remains queued
+WATER_SCALE [{"initial":{"batches":1,"commit_us":3,"complete":true,"empty_packets":0,"first_batch_packets":3,"largest_batch_packets":3,"minimum_frames_at_four_packets":1,"native_us":205,"packets":3},"local_edit":{"batches":1,"commit_us":1,"complete":true,"empty_packets":0,"first_batch_packets":1,"largest_batch_packets":1,"minimum_frames_at_four_packets":1,"native_us":67,"packets":1},"query_cache_bytes":15360,"regions":1,"resident_cell_bytes":9064},{"initial":{"batches":16,"commit_us":15,"complete":true,"empty_packets":0,"first_batch_packets":3,"largest_batch_packets":3,"minimum_frames_at_four_packets":12,"native_us":1666,"packets":48},"local_edit":{"batches":1,"commit_us":0,"complete":true,"empty_packets":0,"first_batch_packets":1,"largest_batch_packets":1,"minimum_frames_at_four_packets":1,"native_us":54,"packets":1},"query_cache_bytes":245760,"regions":16,"resident_cell_bytes":145024},{"initial":{"batches":64,"commit_us":56,"complete":true,"empty_packets":0,"first_batch_packets":3,"largest_batch_packets":3,"minimum_frames_at_four_packets":48,"native_us":7695,"packets":192},"local_edit":{"batches":1,"commit_us":1,"complete":true,"empty_packets":0,"first_batch_packets":1,"largest_batch_packets":1,"minimum_frames_at_four_packets":1,"native_us":59,"packets":1},"query_cache_bytes":983040,"regions":64,"resident_cell_bytes":580096},{"initial":{"batches":256,"commit_us":217,"complete":true,"empty_packets":0,"first_batch_packets":3,"largest_batch_packets":3,"minimum_frames_at_four_packets":192,"native_us":29936,"packets":768},"local_edit":{"batches":1,"commit_us":2,"complete":true,"empty_packets":0,"first_batch_packets":1,"largest_batch_packets":1,"minimum_frames_at_four_packets":1,"native_us":63,"packets":1},"query_cache_bytes":3932160,"regions":256,"resident_cell_bytes":2320384}]
+

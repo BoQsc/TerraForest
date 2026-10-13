@@ -57,7 +57,7 @@ class NativeRegionalWater : public godot::RefCounted {
     const QuerySurface *query_surface(Key k,QuerySurface &temporary) const;
     std::map<Key,Region> regions;
     std::map<Key,Region> mesh_snapshot;
-    std::unordered_set<Key> mesh_snapshot_absent;
+    std::unordered_set<Key> mesh_snapshot_absent,mesh_snapshot_dependencies;
     std::deque<Key> batch_queue;
     std::vector<Key> batch_owners;
     bool batch_active=false;

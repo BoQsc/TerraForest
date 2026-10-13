@@ -1,0 +1,7 @@
+Water batch snapshot scope, 2026-10-13
+
+Reproduced before fix: changing a distant pool during publication retained its Region in the current pool's copy-on-write snapshot (see before log). The runtime now records the current render owners' one-region reconstruction/readiness halo, and preserves mutated regions only within that dependency set. Dependencies retire at batch completion or cancellation, including restore. No simulation or mesh geometry algorithm changed.
+
+Validation: 26 native scale assertions pass, including 255 distant edits during an active three-owner batch retaining zero snapshot payload; a subsequent relevant edit does retain a snapshot; publication retires it and conserves all 256000 added millilitres. The thin/material suite passes 30 fixtures plus immutable geometry/query/acknowledgement/invalidation tests. These target the changed snapshot lifetime directly. No additional graphical test was run for this memory-scope-only change; the prior in-world result belongs to eae4ded.
+
+Dependency keys and container overhead still consume memory; zero snapshot payload means zero copied Region values, not zero allocation. A large connected dirty batch still has a large dependency footprint and publication delay. GPU usage, global loading time, paging and thermal sustainability remain separate unresolved acceptance requirements.
