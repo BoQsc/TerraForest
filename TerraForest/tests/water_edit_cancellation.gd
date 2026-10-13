@@ -25,6 +25,20 @@ func run():
    if distance==30:game.lakes.dev_brush(point,true)
    else:game.lakes.dev_brush(Vector3.INF,false)
   check(game.lakes._pending_dev.is_empty() and game.lakes._pending_bucket.is_empty(),"Latest action cancels the obsolete pending placement")
+ # Expiring an uncached action must stop saying "Preparing" and retain items.
+ var remote:Vector3=game.player.global_position+Vector3(0,0,54)
+ var floor_hit:Dictionary=game.get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(remote+Vector3.UP*30,remote-Vector3.UP*30,1))
+ check(not floor_hit.is_empty(),"Timeout target has terrain")
+ if not floor_hit.is_empty():
+  var point:Vector3=floor_hit.position+Vector3.UP*0.03
+  var inventory=game.player_hud.inventory;var slot:int=game.player_hud.active_slot
+  var reply:Dictionary=game.lakes.bucket(point+Vector3.UP*2,point,true,inventory,slot,inventory.snapshot().revision)
+  check(reply.pending,"Timeout case genuinely awaits uncached terrain")
+  if reply.pending:
+   game.lakes._pending_bucket.deadline=Time.get_ticks_msec()-1
+   game.lakes._process(0.0)
+   check(game.lakes._pending_bucket.is_empty() and held_ml()==1000000,"Expired action is retired without consuming the bucket")
+   check(game._lake_notice=="Water action timed out; bucket unchanged. Try again.","HUD reports the terminal timeout instead of a permanent Preparing message")
  deadline=Time.get_ticks_msec()+6000
  while Time.get_ticks_msec()<deadline:
   await process_frame

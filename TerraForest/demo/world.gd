@@ -263,6 +263,7 @@ func _ready() -> void:
 	ground_interaction.cover=ground_cover
 	ground_interaction.scene_ray=func(from: Vector3,to: Vector3):return structures.blocks.raycast_scene(from,to,7,[player.get_rid()])
 	ground_interaction.changed.connect(func():terrain.changed_since_save=true;player_hud.refresh())
+	lakes.interaction_finished.connect(_show_lake_notice)
 	lakes.bucket_completed.connect(func(slot:int):
 		if player_hud.active_slot==slot:player_hud.equip_inventory(slot);tool_view.swing()
 		else:player_hud.refresh())
@@ -280,6 +281,7 @@ func _show_lake_notice(text: String) -> void:
 	_sync_construction_palette()
 	_lake_notice = text
 	_lake_notice_until = Time.get_ticks_msec()+6000
+	_telemetry_time = 0.5 # Publish action feedback on the next frame.
 	_message(text)
 
 func _capture_player_pose() -> PackedByteArray:

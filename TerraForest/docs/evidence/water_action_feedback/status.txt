@@ -1,0 +1,27 @@
+2026-10-13: Actual-world water feedback and side-view evidence
+
+A pending bucket action emitted its final result only through the terrain
+message signal. The gameplay notice filters that signal, so the visible HUD
+could continue to say Preparing or display an earlier scoop after a pour.
+LakeWorld now emits interaction_finished for deferred bucket/developer actions;
+the actual world connects it to the same notice used by immediate actions.
+Action notices request refresh on the next frame instead of waiting for the
+half-second telemetry timer. Timed-out pending requests now explicitly state
+that the bucket/placement was unchanged, rather than saying Preparing forever.
+
+The actual-world roundtrip test now checks completion notices on all six pour/
+scoop cases, checks the visible label, and captures both side views of normal
+ground and a mined slope. All checks pass in run 20261013T193807944917Z.
+The existing cancellation test now expires a genuinely uncached bucket request
+and verifies retirement, retained full bucket, terminal HUD text and no eventual
+world mutation. PASS run 20261013T193632052864Z.
+
+Side views inspected: a connected raised translucent volume is visible, with
+terrain showing through it. These two cases do not show the earlier stretched
+sheets. This is not complete visual acceptance or proof of accurate geometric
+volume, all shoreline configurations, or a terrain-field migration.
+The camera and world process are briefly frozen during side captures only;
+the HUD FPS can retain the preceding mining-stage reading. These captures are
+not performance measurements. The earlier low mining-stage FPS remains an
+unresolved performance observation, not dismissed as a water-only issue.
+No mesher, material shader, native DLL or world storage was changed here.

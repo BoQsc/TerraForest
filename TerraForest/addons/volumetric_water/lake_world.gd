@@ -3,6 +3,7 @@ extends Node3D
 const PublicationBudget=preload("res://addons/volumetric_water/publication_budget.gd")
 # Native store/flow/meshing. Script only coordinates worker hand-off, scene and UI.
 signal bucket_completed(slot:int)
+signal interaction_finished(message:String)
 signal catalog_changed
 signal lake_ready(id:int)
 signal lake_failed(id:int,status:int)
@@ -127,15 +128,19 @@ func _process(delta:float) -> void:
   var result:Dictionary=water.transfer_bucket(p.from,p.to,p.pour,p.inventory,p.slot,p.revision)
   if result.ok or not result.pending or Time.get_ticks_msec()>p.deadline:
    _pending_bucket={}
+   if result.pending:result.reason="Water action timed out; bucket unchanged. Try again."
    if result.ok:terrain.changed_since_save=true;bucket_completed.emit(p.slot)
    terrain.message_changed.emit(result.reason)
+   interaction_finished.emit(result.reason)
  if not _pending_dev.is_empty():
   var p:=_pending_dev
   var result:Dictionary=water.place_water(p.point,p.amount)
   if result.ok or not result.pending or Time.get_ticks_msec()>p.deadline:
    _pending_dev={}
+   if result.pending:result.reason="Water placement timed out; no water placed. Try again."
    if result.ok:terrain.changed_since_save=true
    terrain.message_changed.emit(result.reason)
+   interaction_finished.emit(result.reason)
  var after:Dictionary=water.statistics()
  if after.capacity_reached and not _capacity_reported:
   _capacity_reported=true;terrain.message_changed.emit("Water resident-region limit reached; quantities retained, expansion paused")

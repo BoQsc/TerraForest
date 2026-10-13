@@ -19,6 +19,20 @@ func wait_publication()->bool:
   var s:Dictionary=game.lakes.statistics()
   if game.lakes._pending_bucket.is_empty() and game.lakes._pending_dev.is_empty() and int(s.dirty_meshes)==0 and not s.mesh_batch_active and not s.mesh_publish_pending:return true
  return false
+func capture_volume_side(target:Vector3,index:int):
+ for frame in 2:await process_frame
+ check(game.telemetry.text.contains("Placed one water unit"),"Visible HUD label shows the completed pour")
+ var transform:Transform3D=game.camera.global_transform
+ var processing:bool=game.is_processing();var physics:bool=game.is_physics_processing()
+ game.set_process(false);game.set_physics_process(false)
+ for side:int in [-1,1]:
+  game.camera.global_position=target+Vector3(2.0*side,1.25,2.25)
+  game.camera.look_at(target+Vector3.UP*0.45,Vector3.UP)
+  for frame in 4:await process_frame
+  await RenderingServer.frame_post_draw
+  root.get_texture().get_image().save_png("res://reports/water_roundtrip_side_%d_%d.png"%[index,side])
+ game.camera.global_transform=transform
+ game.set_process(processing);game.set_physics_process(physics)
 func run():
  process_frame.connect(record_frame)
  game=load("res://demo/world.tscn").instantiate();root.add_child(game)
@@ -54,13 +68,16 @@ func run():
   var pour:Dictionary=await measured_click(MOUSE_BUTTON_RIGHT)
   check(pour.ready,"Pour finishes publication")
   check(held_ml()==0,"Full bucket transfers into world")
+  check(game._lake_notice=="Placed one water unit (1 m3)","HUD confirms the completed pour instead of retaining a pending or previous message")
   if failures:break
   await RenderingServer.frame_post_draw
   root.get_texture().get_image().save_png("res://reports/water_roundtrip_%d.png"%results.cases.size())
+  if results.cases.size()==0 or results.cases.size()==5:await capture_volume_side(target,results.cases.size())
   # Aim straight down at the actual clicked terrain position, without searching
   # cell metadata for a specially chosen easier-to-scoop part of the water.
   var scoop:Dictionary=await measured_click(MOUSE_BUTTON_LEFT)
   check(scoop.ready,"Scoop finishes publication")
+  check(game._lake_notice=="Bucket filled: one water unit (1 m3)","HUD confirms the completed scoop")
   var current:Dictionary=amounts(game.lakes.capture_snapshot())
   var same:bool=current==original
   check(held_ml()==1000000 and same,"One scoop recovers the whole pour, with no hidden water remainder")
