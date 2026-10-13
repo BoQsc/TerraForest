@@ -155,25 +155,9 @@ const NativeRegionalWater::Region *NativeRegionalWater::get(const Vector3i &p) c
 WaterCellProfile NativeRegionalWater::surface_profile(const Vector3i &p,bool snapshot) const {
     const Region *r=surface_region(region_key(p),snapshot);
     if(!r||!r->valid)return WaterCellProfile::make(nullptr,false,500,500);
-    int i=index(p);auto result=profile(*r,i);uint64_t amount=r->water[i];
-    if(!result.cut||!result.capacity()||amount>=result.capacity())return result;
-    double level=result.head(amount);
-    if(level>=result.maximum())return result;
-    // Reconstruct shallow free surfaces from local level differences. Resting
-    // neighbours at the same level force zero slope; dry edges use bed slope.
-    for(int axis:{0,2}){
-        double slope=axis==0?(result.floor[1]+result.floor[3]-result.floor[0]-result.floor[2])*0.5:
-                             (result.floor[2]+result.floor[3]-result.floor[0]-result.floor[1])*0.5;
-        for(int side:{-1,1}){Vector3i q=p;q[axis]+=side;if(!in_domain(q))continue;
-            const Region *other=surface_region(region_key(q),snapshot);if(!other||!other->valid)continue;
-            int j=index(q);if(!other->water[j])continue;auto shape=profile(*other,j);
-            double difference=(shape.head(other->water[j])-level)*side;
-            if(slope*difference<=0||std::abs(difference)<0.001){slope=0;break;}
-            slope=std::copysign(std::min(std::abs(slope),std::abs(difference)),slope);
-        }
-        if(axis==0)result.slope_x=slope;else result.slope_z=slope;
-    }
-    return result;
+    // Static material has an explicit local fill height. Neighbour edits must
+    // not tilt an unchanged cell's surface or silently change its connections.
+    return profile(*r,index(p));
 }
 void NativeRegionalWater::changed(const Vector3i &p){
     ++changes;Key k=region_key(p);if(mesh_set.insert(k).second)meshes.push_back(k);
@@ -257,6 +241,100 @@ int64_t NativeRegionalWater::remove_bounds(const AABB &bounds){
     for(auto &[k,r]:regions){Vector3i base=position(k)*8;if(!AABB(Vector3(base)*0.5,Vector3(4,4,4)).intersects(bounds))continue;preserve_mesh_region(k);
         for(int i=0;i<512;++i)if(r.water[i]){Vector3i p=base+Vector3i(i%8,(i/8)%8,i/64);if(bounds.has_point(Vector3(p)*0.5+Vector3(0.25,0.25,0.25))){removed+=r.water[i];r.water[i]=0;changed(p);}}}
     total-=removed;return removed;
+}
+bool NativeRegionalWater::plan_connected_scoop(Placement &cells,uint64_t amount,Dictionary &out) const {
+    // The caller supplies at most the existing 9^3 local connected cells, in
+    // aim-priority order. Peel this body without stranding disconnected pieces.
+    // Only the six edges incident to a trial cell need geometric reevaluation.
+    struct Cell {Vector3i p;WaterCellProfile shape;uint64_t water;int neighbour[6];unsigned links=0;bool boundary=false;};
+    std::vector<Cell> graph;graph.reserve(cells.size());std::unordered_map<Key,int> ids;
+    uint64_t total_here=0;
+    for(const auto &[p,water]:cells){ids[key(p)]=int(graph.size());graph.push_back({p,surface_profile(p),water,{-1,-1,-1,-1,-1,-1},0});total_here+=water;}
+    if(total_here<amount){out["reason"]="Not enough connected water to fill one voxel unit";return false;}
+    static constexpr int opposite[6]={5,2,1,4,3,0};
+    auto connected=[&](int a,int b,int d,uint64_t av){
+        const auto &x=graph[a];const auto &y=graph[b];if(!av||!y.water)return false;
+        return d==0?joined_vertical(y.shape,y.water,x.shape,av):d==5?joined_vertical(x.shape,av,y.shape,y.water):
+            joined(x.shape,av,y.shape,y.water,d<=2?0:2,d==1||d==3);
+    };
+    for(int n=0;n<int(graph.size());n++)for(int d=0;d<6;d++){
+        Vector3i q=graph[n].p+directions[d];auto found=ids.find(key(q));
+        if(found==ids.end()){
+            const Region *outside=get(q);if(!outside||!outside->water[index(q)])continue;
+            auto a=graph[n].shape,b=surface_profile(q);uint64_t av=graph[n].water,bv=outside->water[index(q)];
+            bool linked=d==0?joined_vertical(b,bv,a,av):d==5?joined_vertical(a,av,b,bv):joined(a,av,b,bv,d<=2?0:2,d==1||d==3);
+            graph[n].boundary|=linked;continue;
+        }
+        graph[n].neighbour[d]=found->second;
+        if(connected(n,found->second,d,graph[n].water))graph[n].links|=1u<<d;
+    }
+    bool touches_outside=false;for(const auto &c:graph)touches_outside|=c.boundary;
+    if(total_here==amount&&!touches_outside)return true;
+    // Retain all connections leaving the bounded search. Connectivity inside
+    // this local graph alone cannot prove that a distant body stays connected.
+    std::vector<int> visited(graph.size(),0),queue(graph.size());int generation=0,alive=int(graph.size()),connectivity_visits=0;
+    // Match the eight half-step density samples owned by each storage cell.
+    // Geometric contact alone can be thinner than the rendered lattice.
+    auto sample_mask=[](const WaterCellProfile &shape,uint64_t water){
+        unsigned mask=0;if(!water)return mask;double head=shape.head(water);
+        for(int i=0;i<8;i++){double x=(i&1)?.75:.25,z=(i&4)?.75:.25,y=(i&2)?375:125;
+            if(shape.bottom(x,z)<y&&y<shape.surface(head,x,z))mask|=1u<<i;}
+        return mask;
+    };
+    std::vector<unsigned> masks;for(const auto &c:graph)masks.push_back(sample_mask(c.shape,c.water));
+    std::vector<int> sample_seen(graph.size()*8,0),sample_queue(graph.size()*8);int sample_generation=0;
+    auto visible_connected=[&](int changed,unsigned replacement){
+        ++sample_generation;int expected=0,head=0,count=0;
+        for(int n=0;n<int(graph.size());n++){unsigned mask=n==changed?replacement:masks[n];
+            for(int bit=0;bit<8;bit++)if(mask&(1u<<bit)){expected++;
+                if(!count){sample_queue[count++]=n*8+bit;sample_seen[n*8+bit]=sample_generation;}}}
+        while(head<count){
+            if(++connectivity_visits>131072)return false;
+            int node=sample_queue[head++],n=node/8,bit=node%8;
+            for(int axis=0;axis<3;axis++)for(int step:{-1,1}){
+                int target=n,next=bit^(1<<axis),side=(bit>>axis)&1;
+                if((side==0&&step<0)||(side==1&&step>0)){
+                    int d=axis==0?(step>0?1:2):axis==1?(step>0?5:0):(step>0?3:4);
+                    target=graph[n].neighbour[d];if(target<0)continue;}
+                unsigned mask=target==changed?replacement:masks[target];int id=target*8+next;
+                if((mask&(1u<<next))&&sample_seen[id]!=sample_generation){sample_seen[id]=sample_generation;sample_queue[count++]=id;}
+            }
+        }
+        // Legacy refill can leave less than one representable unit. Preserve
+        // that saved quantity; normal whole-unit gameplay never takes this path.
+        return count==expected&&(expected>0||(amount<1000000&&total_here-amount<1000000));
+    };
+    Placement selected;uint64_t remaining=amount;
+    while(remaining){
+        bool progress=false;
+        for(int n=0;n<int(graph.size())&&remaining;n++){
+            auto &c=graph[n];if(!c.water||c.boundary)continue;
+            uint64_t debit=std::min(remaining,c.water),left=c.water-debit;unsigned trial=0;
+            for(int d=0;d<6;d++)if(c.neighbour[d]>=0&&connected(n,c.neighbour[d],d,left))trial|=1u<<d;
+            int expected=alive-(left==0),count=0,head=0;
+            ++generation;
+            for(int seed=0;seed<int(graph.size());seed++)if((seed==n?left:graph[seed].water)>0){queue[count++]=seed;visited[seed]=generation;break;}
+            while(head<count){
+                if(++connectivity_visits>131072){out["reason"]="Scoop connectivity limit reached; aim at an outer surface";return false;}
+                int a=queue[head++];unsigned links=a==n?trial:graph[a].links;
+                for(int d=0;d<6;d++){int b=graph[a].neighbour[d];if(b<0||visited[b]==generation)continue;
+                    bool linked=b==n?(trial&(1u<<opposite[d])):(links&(1u<<d));
+                    if(linked){visited[b]=generation;queue[count++]=b;}}
+            }
+            if(count!=expected)continue;
+            unsigned mask=sample_mask(c.shape,left);
+            if(expected>0&&!visible_connected(n,mask)){
+                if(connectivity_visits>131072){out["reason"]="Scoop connectivity limit reached; aim at an outer surface";return false;}
+                continue;
+            }
+            masks[n]=mask;
+            selected.emplace_back(c.p,debit);c.water=left;c.links=trial;remaining-=debit;alive=expected;progress=true;
+            for(int d=0;d<6;d++)if(c.neighbour[d]>=0){auto &other=graph[c.neighbour[d]];
+                other.links&=~(1u<<opposite[d]);if(trial&(1u<<d))other.links|=1u<<opposite[d];}
+        }
+        if(!progress){out["reason"]="Aim at an outer surface to scoop without leaving disconnected water";return false;}
+    }
+    cells=std::move(selected);return true;
 }
 bool NativeRegionalWater::bucket_footprint(Vector3i target,const Vector3 &aim,uint64_t amount,bool collect,int &x0,int &z0,Dictionary &out){
     x0=target.x-(aim.x-target.x*.5<.25?1:0);z0=target.z-(aim.z-target.z*.5<.25?1:0);
@@ -427,9 +505,9 @@ Dictionary NativeRegionalWater::transfer_water(const Vector3 &from,const Vector3
         auto farther=[&](Vector3i a,Vector3i b){auto ra=rank(a),rb=rank(b);return ra!=rb?ra>rb:key(a)>key(b);};
         std::priority_queue<Vector3i,std::vector<Vector3i>,decltype(farther)> candidates(farther);
         std::unordered_set<Key> visited;candidates.push(target);visited.insert(key(target));
-        while(!candidates.empty()&&remaining){Vector3i p=candidates.top();candidates.pop();const Region *other=get(p);if(!other)continue;int j=index(p);
-            uint64_t amount=std::min(remaining,other->water[j]);if(!amount||!profile(*other,j).capacity())continue;
-            take.emplace_back(p,amount);remaining-=amount;
+        while(!candidates.empty()){Vector3i p=candidates.top();candidates.pop();const Region *other=get(p);if(!other)continue;int j=index(p);
+            uint64_t available=other->water[j];if(!available||!profile(*other,j).capacity())continue;
+            take.emplace_back(p,available);
             for(int d=0;d<6;++d){Vector3i q=p+directions[d];Vector3i distance=q-target;
                 if(std::max({std::abs(distance.x),std::abs(distance.y),std::abs(distance.z)})>4||!in_domain(q))continue;
                 const Region *next=get(q);if(!next||!next->water[index(q)])continue;int n=index(q);bool connected=false;
@@ -440,7 +518,7 @@ Dictionary NativeRegionalWater::transfer_water(const Vector3 &from,const Vector3
                 if(connected&&visited.insert(key(q)).second)candidates.push(q);
             }
         }
-        if(remaining>0&&remaining<amount){out["reason"]="Not enough connected water to fill one voxel unit";return out;}
+        if(!take.empty()){if(!plan_connected_scoop(take,amount,out))return out;remaining=0;}
         amount-=remaining;
         if(!amount){
             // An explicit edit can empty the owner before its new mesh is published.
@@ -705,20 +783,26 @@ NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool s
     for(int z=-1;z<N;++z)for(int y=-1;y<N;++y)for(int x=-1;x<N;++x){
         float d[8];unsigned signs=0;
         for(int c=0;c<8;++c){d[c]=field[node_index(x+(c&1),y+((c>>1)&1),z+((c>>2)&1))].density;if(d[c]<0)signs|=1u<<c;}
-        DensitySurfaceVertex geometry;
-        if(!extract_density_surface(d,signs,false,geometry))continue;
+        ids[vertex_index(x,y,z)]=int(vertices.size());
+        extract_density_components(d,signs,false,[&](const DensitySurfaceVertex &geometry,unsigned component){
         // Sum in lattice coordinates first, then translate once. Shared halo
         // vertices therefore have the same float bits across region packets.
         Vector3 p((base.x*2+x+.5f+geometry.position.x)*STEP,
                   (base.y*2+y+.5f+geometry.position.y)*STEP,
                   (base.z*2+z+.5f+geometry.position.z)*STEP);
-        ids[vertex_index(x,y,z)]=int(vertices.size());
-        vertices.push_back({x,y,z,signs,p});
+        vertices.push_back({x,y,z,component,p});
+        });
     }
     int triangles=0,tops=0,bottoms=0,sides=0;
-    connect_density_surface(int(vertices.size()),{0,N,0,N,0,N},
+    connect_material_surface(int(vertices.size()),{0,N,0,N,0,N},
         [&](int i)->const Vertex&{return vertices[i];},
-        [&](int x,int y,int z){return x< -1||x>=N||y< -1||y>=N||z< -1||z>=N?-1:ids[vertex_index(x,y,z)];},
+        [&](int x,int y,int z,int ax,int ay,int az){
+            if(x< -1||x>=N||y< -1||y>=N||z< -1||z>=N)return -1;
+            int first=ids[vertex_index(x,y,z)];unsigned corner=1u<<((ax-x)+2*(ay-y)+4*(az-z));
+            for(int i=first;i>=0&&i<int(vertices.size());i++){const auto &v=vertices[i];
+                if(v.cx!=x||v.cy!=y||v.cz!=z)break;if(v.mask&corner)return i;}
+            return -1;
+        },
         // A contact-labelled lattice endpoint does not prove its entire dual
         // face is buried. Removing it opens visible holes along the shoreline.
         // Keep the closed material boundary; normal terrain depth occludes

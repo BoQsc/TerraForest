@@ -1,0 +1,29 @@
+Fixed-unit pool recovery - 2026-10-13
+
+Scope: one whole 1 m3 bucket per click; no flow, settling or spillage. Existing partial legacy buckets retain their quantity and can finish refilling. Normal gameplay does not create partial buckets.
+
+Reproduced failures:
+- Six adjacent/stacked pours followed by recovery left four disconnected stored remnants totalling one cubic metre.
+- After connected removal planning, one rendered edge still had four incident triangles: disconnected occupied corners had been welded into one Surface Nets representative.
+- Correcting that topology exposed a remaining gap between physical contact and the rendered sampling grid. Thin contacts could still leave multiple visible bodies.
+
+Changes:
+- Bounded native scoop planning preserves both physical cell connectivity and the half-step sample connectivity used by rendering. It plans before inventory/world mutation, preserves connections leaving its local search, and caps connectivity visits at 131072. Rejected actions leave bucket/world unchanged.
+- Shared terrain/water density extraction now retains separate representatives for disconnected occupied corner groups. Terrain cache ordering includes component order; the geometry cache content domain is bumped to invalidate old mesh payloads.
+- Removed neighbour-inferred free-surface slopes from static water. Unedited profiles no longer tilt in response to adjacent edits.
+- Added runtime native bucket timing and actual input-dispatch timing to diagnostics.
+- Side-view screenshot helper now updates camera-local underwater presentation after moving a paused camera.
+
+Evidence:
+- Actual 1920x1080 world: six scoops, six adjacent/stacked pours, native water snapshot restore through LakeWorld, six recovery scoops and six returns to lake. Quantity conserved after each action; cached reload resamples zero terrain nodes. Every remaining published pool has one closed connected surface; final removal leaves no wet cells or stale surface. This is a component snapshot reload, not a disk roundtrip of the whole game's save archive.
+- Final pool run 20261013T202432828785Z passes. Maximum native transfer 1.375 ms, input dispatch 7.536 ms, action through publication 131.844 ms; maximum observed action frame 20.083 ms. No claim of perfect 60 FPS or sustained thermal performance.
+- Actual single-bucket ground/mined-slope/developer-placement regression passes: 20261013T202507920341Z.
+- Release native checks pass: pool topology replay, lake surface topology, transfer volume, bucket, static editing, terrain material field/units, terrain region cache and collision.
+- Lake topology fixture: 21428 triangles, zero degenerate triangles, unpaired/nonmanifold edges or inconsistent winding.
+- The checked-in pool fixture reproduces the former four-face edge without launching a graphical world.
+
+Limits:
+- One live NativeRegionalWater owner still supplies cached profiles to the shared terrain density extractor. Full TerrainCore storage migration is unfinished.
+- This is a targeted integration regression, not exhaustive topology proof, broad world-scale validation or sustained laptop performance qualification.
+- Static placed water retains a rounded voxel shape. This is not a fluid simulation or final art acceptance.
+- Legacy sub-unit remainders may be below rendering resolution; their saved quantity is retained rather than silently destroyed.

@@ -1,3 +1,5 @@
+> Pool recovery correction, 2026-10-13: six adjacent/stacked full-bucket pours, cached reload and complete recovery now pass in the actual world without disconnected remaining surfaces. Shared terrain/water extraction handles disconnected cell corners; scoop planning checks stored and rendered connectivity. Static water and full-unit bucket scope remain unchanged. Full TerrainCore storage migration and broader visual/performance acceptance remain open. See `evidence/water_pool_recovery/status.txt`.
+
 > Fixed-unit scope decision, 2026-10-13: bucket gameplay now transfers one complete 1 m³ unit or nothing. UI shows empty/full; older partial buckets retain their contents and can be refilled. No automatic flow or spillage. Native atomic-transfer checks and actual-world pour/recovery pass. This does not complete the TerrainCore storage migration or certify all water visuals. See `evidence/water_fixed_units/status.txt`. Earlier fractional/litre gameplay requirements below are superseded.
 
 # TerraForest delivery plan and coverage register

@@ -450,13 +450,13 @@ static bool extract_vertices(const World&w,int ox,int oz,int size,Mesh&m,u32 epo
    }
    if(signs==0||signs==255)continue;
    bool refine=false;if(w.surface_style==1)for(int k=0;k<8;k++)if(mats[k])refine=true;
-   terraforest::DensitySurfaceVertex geometry;
-   if(!terraforest::extract_density_surface(d,signs,refine,geometry))continue;
+   terraforest::extract_density_components(d,signs,refine,[&](const terraforest::DensitySurfaceVertex &geometry,unsigned component){
    V3 p=geometry.position;
-   Vertex v;v.p={gx+p.x,y+p.y,gz+p.z};v.n=geometry.normal;v.cx=gx;v.cy=y;v.cz=gz;v.mask=signs;
+   Vertex v;v.p={gx+p.x,y+p.y,gz+p.z};v.n=geometry.normal;v.cx=gx;v.cy=y;v.cz=gz;v.mask=component;
    // Material classification does not affect the field or topology.
    float best=1e30f;for(int k=0;k<8;k++)if(mats[k]&&mats[k]<5&&ab(d[k])<best){best=ab(d[k]);v.material=float(mats[k]);} // Natural ore IDs are shaded separately from edit materials.
    m.v.push(v);
+   });
   }
  }}
  cache.release();
@@ -466,10 +466,13 @@ static bool extract_vertices(const World&w,int ox,int oz,int size,Mesh&m,u32 epo
 
 static void connect_patch(int ox,int oz,int size,Mesh&m,int y_begin=0,int y_end=WORLD_Y){
  Map ids;
- for(int j=0;j<m.v.n;j++){const Vertex&v=m.v[j];ids.put(cell_key(v.cx-ox,v.cy,v.cz-oz,size),j);}
- terraforest::connect_density_surface(m.v.n,{ox,ox+size,y_begin,y_end,oz,oz+size},
+ for(int j=0;j<m.v.n;j++){const Vertex&v=m.v[j];u32 k=cell_key(v.cx-ox,v.cy,v.cz-oz,size);if(ids.get(k)<0)ids.put(k,j);}
+ terraforest::connect_material_surface(m.v.n,{ox,ox+size,y_begin,y_end,oz,oz+size},
   [&](int j)->const Vertex&{return m.v[j];},
-  [&](int x,int y,int z){return y<0?-1:ids.get(cell_key(x-ox,y,z-oz,size));},
+  [&](int x,int y,int z,int ax,int ay,int az){
+   if(y<0)return -1;int first=ids.get(cell_key(x-ox,y,z-oz,size));unsigned corner=1u<<((ax-x)+2*(ay-y)+4*(az-z));
+   for(int i=first;i>=0&&i<m.v.n;i++){const auto &v=m.v[i];if(v.cx!=x||v.cy!=y||v.cz!=z)break;if(v.mask&corner)return i;}return -1;
+  },
   [&](int axis,int x,int y,int z){return !((axis==0&&(y<1||z<oz))||(axis==2&&y<1));},
   [&](int a,int b,int c,int d,bool reverse){quad(m,a,b,c,d,reverse);});
  ids.release();

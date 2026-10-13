@@ -1,0 +1,126 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.3.280 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] New world
+[TerrainRewrite] New world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+[TerrainRewrite] Preparing your finite lake; terrain and water are being built
+[TerrainRewrite] Mined resources added to inventory
+[TerrainRewrite] Lake ready · temporary world
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Bucket review · disposable world
+PASS Temporary actual world ready
+PASS Pool target has ordinary terrain
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Bucket filled: one water unit (1 m3)
+PASS Collect one whole unit for the pool
+[TerrainRewrite] Preparing water at this location
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Placed one water unit (1 m3)
+[TerrainRewrite] Placed one water unit (1 m3)
+PASS Place whole unit beside or above existing water
+PASS Every placement conserves lake plus pool quantity
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Bucket filled: one water unit (1 m3)
+PASS Collect one whole unit for the pool
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Placed one water unit (1 m3)
+PASS Place whole unit beside or above existing water
+PASS Every placement conserves lake plus pool quantity
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Bucket filled: one water unit (1 m3)
+PASS Collect one whole unit for the pool
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Placed one water unit (1 m3)
+PASS Place whole unit beside or above existing water
+PASS Every placement conserves lake plus pool quantity
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Bucket filled: one water unit (1 m3)
+PASS Collect one whole unit for the pool
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Placed one water unit (1 m3)
+PASS Place whole unit beside or above existing water
+PASS Every placement conserves lake plus pool quantity
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Bucket filled: one water unit (1 m3)
+PASS Collect one whole unit for the pool
+[TerrainRewrite] Preparing water at this location
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Placed one water unit (1 m3)
+[TerrainRewrite] Placed one water unit (1 m3)
+PASS Place whole unit beside or above existing water
+PASS Every placement conserves lake plus pool quantity
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Bucket filled: one water unit (1 m3)
+PASS Collect one whole unit for the pool
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Placed one water unit (1 m3)
+PASS Place whole unit beside or above existing water
+PASS Every placement conserves lake plus pool quantity
+GROUND_COMPONENTS [{"cells":64,"ml":6000000}]
+PASS Six poured units form one connected local pool
+PASS Actual published pool mesh is closed across all region packets
+PASS Visible HUD label shows the completed pour
+PASS Bounded screenshot writer accepts captured frame
+PASS Bounded screenshot writer accepts captured frame
+PASS Pool snapshot reloads through the world water component
+PASS Cached pool surface republishes
+PASS Cached reload preserves every lake and pool cell
+PASS Cached pool reload needs no terrain resampling
+PASS Remaining pool has an aimable rendered top
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Bucket filled: one water unit (1 m3)
+PASS Recover a full unit from the reloaded pool
+GROUND_COMPONENTS [{"cells":54,"ml":5000000}]
+PASS Scoop leaves at most one connected pool, never isolated remnants
+PASS Remaining rendered water is closed and has no disconnected surface fragments
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Placed one water unit (1 m3)
+PASS Return recovered unit to lake
+PASS Recovery preserves total water
+PASS Remaining pool has an aimable rendered top
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Bucket filled: one water unit (1 m3)
+PASS Recover a full unit from the reloaded pool
+GROUND_COMPONENTS [{"cells":46,"ml":4000000}]
+PASS Scoop leaves at most one connected pool, never isolated remnants
+PASS Remaining rendered water is closed and has no disconnected surface fragments
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Placed one water unit (1 m3)
+PASS Return recovered unit to lake
+PASS Recovery preserves total water
+PASS Remaining pool has an aimable rendered top
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Bucket filled: one water unit (1 m3)
+PASS Recover a full unit from the reloaded pool
+GROUND_COMPONENTS [{"cells":35,"ml":3000000}]
+PASS Scoop leaves at most one connected pool, never isolated remnants
+FAIL Remaining rendered water is closed and has no disconnected surface fragments
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Placed one water unit (1 m3)
+PASS Return recovered unit to lake
+PASS Recovery preserves total water
+GROUND_COMPONENTS [{"cells":35,"ml":3000000}]
+PASS Review image saved
+PASS Review image saved
+[TerrainRewrite] Temporary test world: save skipped
+WATER_POOL_GAMEPLAY failures=1

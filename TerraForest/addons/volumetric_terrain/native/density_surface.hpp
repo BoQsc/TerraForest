@@ -34,6 +34,16 @@ inline bool extract_density_surface(const float *d,unsigned signs,bool refine,De
    }
  out.position=p;out.normal=density_surface_normal(d,p);return true;
 }
+// Disconnected occupied corners need independent representatives. Collapsing
+// them creates a four-face edge when an excavation leaves a diagonal contact.
+template<class Emit>
+inline void extract_density_components(const float *d,unsigned signs,bool refine,Emit emit){
+ if(signs==0||signs==255)return;
+ unsigned masks[8];int count=surface_components(signs,masks,[](int,int){return true;});
+ for(int i=0;i<count;i++){DensitySurfaceVertex vertex;
+  if(extract_density_surface(d,masks[i],refine,vertex))emit(vertex,masks[i]);
+ }
+}
 // Enumerate all owned cells and connect to retained halo representatives. The
 // storage adapter supplies indexing and emission, so no engine object or heap
 // allocation is required by the mesher itself.
@@ -57,8 +67,8 @@ inline void connect_density_surface(int count,SurfaceOwnership owned,Cells cell,
 }
 // A multi-component cell selects each neighbour representative using the wet
 // endpoint shared by all four cells around the material-crossing edge.
-template<class Cells,class Lookup,class Emit>
-inline void connect_material_surface(int count,SurfaceOwnership owned,Cells cell,Lookup lookup,Emit emit){
+template<class Cells,class Lookup,class FaceAllowed,class Emit>
+inline void connect_material_surface(int count,SurfaceOwnership owned,Cells cell,Lookup lookup,FaceAllowed allowed,Emit emit){
  for(int j=0;j<count;++j){
   const auto &v=cell(j);int x=v.cx,y=v.cy,z=v.cz;
   if(!owned.contains(x,y,z))continue;
@@ -68,7 +78,7 @@ inline void connect_material_surface(int count,SurfaceOwnership owned,Cells cell
     if(!(v.mask&1)){if(axis==0)++ax;else if(axis==1)++ay;else ++az;}
     return lookup(xx,yy,zz,ax,ay,az);
    },
-   [&](int,int a,int b,int c,int d,bool reverse){emit(a,b,c,d,reverse);});
+   [&](int axis,int a,int b,int c,int d,bool reverse){if(allowed(axis,x,y,z))emit(a,b,c,d,reverse);});
  }
 }
 

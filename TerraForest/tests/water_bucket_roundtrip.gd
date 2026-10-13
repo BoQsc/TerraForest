@@ -16,8 +16,9 @@ func record_frame():
 func measured_click(button:int)->Dictionary:
  frame_ms.clear();last_frame_us=Time.get_ticks_usec();var started:=last_frame_us;measuring=true
  click(button)
+ var dispatch_ms:float=(Time.get_ticks_usec()-started)/1000.0
  var ready:bool=await wait_publication();measuring=false
- return {"ready":ready,"elapsed_ms":(Time.get_ticks_usec()-started)/1000.0,"max_frame_ms":frame_ms.max() if not frame_ms.is_empty() else 0,"water":game.lakes.statistics()}
+ return {"ready":ready,"dispatch_ms":dispatch_ms,"elapsed_ms":(Time.get_ticks_usec()-started)/1000.0,"max_frame_ms":frame_ms.max() if not frame_ms.is_empty() else 0,"water":game.lakes.statistics()}
 func wait_publication()->bool:
  var deadline:=Time.get_ticks_msec()+6000
  while Time.get_ticks_msec()<deadline:
@@ -46,6 +47,8 @@ func capture_volume_side(target:Vector3,index:int):
   game.camera.global_position=target+Vector3(2.0*side,1.25,2.25)
   game.camera.look_at(target+Vector3.UP*0.45,Vector3.UP)
   for frame in 4:await process_frame
+  game.water_camera.update()
+  await process_frame
   await capture_frame("res://reports/water_roundtrip_side_%d_%d.png"%[index,side])
  game.camera.global_transform=transform
  game.set_process(processing);game.set_physics_process(physics)

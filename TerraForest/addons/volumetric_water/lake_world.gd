@@ -31,6 +31,8 @@ var _mesh_max_commit_us:int=0
 var _mesh_faces:Dictionary={}
 var _material:=ShaderMaterial.new()
 var _pending_bucket:Dictionary={}
+var _bucket_native_us:=0
+var _max_bucket_native_us:=0
 var _pending_dev:Dictionary={}
 var _last_changes:=0
 var _notify_seconds:=0.0
@@ -125,7 +127,7 @@ func _process(delta:float) -> void:
    if terrain.request_lake_slice(_builder,_token):_busy=true
  if not _pending_bucket.is_empty():
   var p:=_pending_bucket
-  var result:Dictionary=water.transfer_bucket(p.from,p.to,p.pour,p.inventory,p.slot,p.revision)
+  var result:Dictionary=_transfer_bucket(p.from,p.to,p.pour,p.inventory,p.slot,p.revision)
   if result.ok or not result.pending or Time.get_ticks_msec()>p.deadline:
    _pending_bucket={}
    if result.pending:result.reason="Water action timed out; bucket unchanged. Try again."
@@ -186,11 +188,17 @@ func _slice_ready(token:int,status:int,epoch_id:int,revision:int) -> void:
  if status==1:water.accept_patch(_builder)
  else:terrain.message_changed.emit("Water terrain sampling failed; quantities retained")
  _builder=null
+func _transfer_bucket(from:Vector3,to:Vector3,pour:bool,inventory:RefCounted,slot:int,revision:int)->Dictionary:
+ var started:=Time.get_ticks_usec()
+ var result:Dictionary=water.transfer_bucket(from,to,pour,inventory,slot,revision)
+ _bucket_native_us=Time.get_ticks_usec()-started
+ _max_bucket_native_us=maxi(_max_bucket_native_us,_bucket_native_us)
+ return result
 func bucket(from:Vector3,to:Vector3,pour:bool,inventory:RefCounted,slot:int,revision:int) -> Dictionary:
  # A new intent supersedes queued edits, even if this new target is rejected.
  _pending_bucket.clear();_pending_dev.clear()
  if not terrain.world_ready or terrain.pending_edit:return {"ok":false,"reason":"Wait for the terrain edit to finish"}
- var result:Dictionary=water.transfer_bucket(from,to,pour,inventory,slot,revision)
+ var result:Dictionary=_transfer_bucket(from,to,pour,inventory,slot,revision)
  if result.pending:_pending_bucket={"from":from,"to":to,"pour":pour,"inventory":inventory,"slot":slot,"revision":revision,"deadline":Time.get_ticks_msec()+5000}
  if result.ok:terrain.changed_since_save=true
  return result
@@ -210,6 +218,7 @@ func statistics() -> Dictionary:
  var s:Dictionary=water.statistics();s.lakes=_lakes.size();s.ready=0;s.outstanding_slices=int(_busy);s.resident_occupancy_bytes=s.resident_cell_bytes
  for item:Dictionary in _lakes.values():
   if not item.dirty and item.failure.is_empty():s.ready+=1
+ s.bucket_native_us=_bucket_native_us;s.max_bucket_native_us=_max_bucket_native_us
  s.mesh_publish_us=_mesh_publish_us;s.max_mesh_publish_us=_mesh_max_publish_us
  s.mesh_commit_us=_mesh_commit_us;s.max_mesh_commit_us=_mesh_max_commit_us;s.staged_meshes=_staged_meshes.size()
  s.render_ready=_staged_meshes.is_empty() and s.dirty_meshes==0 and s.pending_regions==0 and not s.fill_active

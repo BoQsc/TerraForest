@@ -57,7 +57,9 @@ static bool configure_geometry_cache(const World&w,u32 budget){
  return true;
 }
 static bool vertex_before(const Vertex&a,const Vertex&b){
- return a.cz!=b.cz?a.cz<b.cz:(a.cx!=b.cx?a.cx<b.cx:a.cy<b.cy);
+ // Match extraction order, including separate components of the same cell.
+ if(a.cz!=b.cz)return a.cz<b.cz;if(a.cx!=b.cx)return a.cx<b.cx;if(a.cy!=b.cy)return a.cy<b.cy;
+ return (a.mask&(~a.mask+1))<(b.mask&(~b.mask+1));
 }
 static void order_vertices(Vertex*p,int lo,int hi){
  while(lo<hi){Vertex pivot=p[(lo+hi)/2];int i=lo,j=hi;
