@@ -317,7 +317,7 @@ func visible_water_meshes() -> Dictionary:
   result[coordinate]=mesh.get_instance_id() if mesh!=null else 0
  return result
 func puddle_contact(bytes:PackedByteArray,point:Vector3) -> Dictionary:
- var result:Dictionary={"cells":[],"water_ml":0,"max_floor_gap_m":0.0,"terrain_contact_qualified":false}
+ var result:Dictionary={"cells":[],"water_ml":0,"max_floor_gap_m":0.0,"terrain_contact_qualified":false,"external_samples":0,"internal_water_interfaces":0,"min_floor_gap_m":INF}
  var version:int=bytes.decode_u32(4);var size:=9076 if version>=2 else 6160
  for r in bytes.decode_u32(12):
   var base:int=32+bytes.decode_u32(8)+r*size;var key:int=bytes.decode_u64(base)
@@ -339,14 +339,35 @@ func puddle_contact(bytes:PackedByteArray,point:Vector3) -> Dictionary:
    floor_y=geometry.get("bottom",floor_y)
    var ground:Dictionary=game.get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(Vector3(probe.x,floor_y+0.5,probe.z),Vector3(probe.x,floor_y-2.0,probe.z),1))
    var row:Dictionary={"cell":[cell.x,cell.y,cell.z],"ml":ml,"floor_y":floor_y,"conservative_floor_y":conservative_floor_y,"stored_depth_m":geometry.get("head",floor_y)-floor_y,"cut":geometry.get("cut",false)}
+   # An upper water cell's bottom is not the terrain floor when water below
+   # reaches that exact point. Keep its quantity, but do not call it a gap.
+   var below:Dictionary=game.lakes.water.cell_geometry(Vector3(probe.x,cell.y*0.5-0.0001,probe.z))
+   var internal:bool=absf(floor_y-cell.y*0.5)<0.00001 and not below.is_empty() and below.head>=floor_y-0.00001 and below.head>below.bottom+0.00001
+   row.internal_water_interface=internal
+   if internal:result.internal_water_interfaces+=1
+   else:result.external_samples+=1
+   row.cached_density_at_floor=cached_density(bytes,base,Vector3(probe.x,floor_y,probe.z),region)
    if not ground.is_empty():
+    row.cached_density_at_terrain=cached_density(bytes,base,ground.position,region)
     row.terrain_y=ground.position.y;row.floor_gap_m=floor_y-ground.position.y
-    result.max_floor_gap_m=maxf(result.max_floor_gap_m,row.floor_gap_m)
+    if not internal:
+     result.max_floor_gap_m=maxf(result.max_floor_gap_m,row.floor_gap_m)
+     result.min_floor_gap_m=minf(result.min_floor_gap_m,row.floor_gap_m)
    result.cells.append(row);result.water_ml+=ml
- result.terrain_contact_qualified=not result.cells.is_empty() and result.max_floor_gap_m<=0.02
+ result.terrain_contact_qualified=result.external_samples>0 and result.max_floor_gap_m<=0.02
  for row:Dictionary in result.cells:
+  if row.internal_water_interface:continue
   if not row.has("terrain_y") or absf(row.get("floor_gap_m",INF))>0.02:result.terrain_contact_qualified=false
  return result
+func cached_density(bytes:PackedByteArray,base:int,point:Vector3,region:Vector3i) -> float:
+ var local:=point*2.0-Vector3(region*8)
+ if local.x<0 or local.y<0 or local.z<0 or local.x>8 or local.y>8 or local.z>8:return NAN
+ var c:=Vector3i(local.floor()).clampi(0,7);var f:=local-Vector3(c);var value:=0.0
+ for k in 8:
+  var q:=c+Vector3i(k&1,(k>>1)&1,(k>>2)&1)
+  var weight:float=(f.x if k&1 else 1-f.x)*(f.y if k&2 else 1-f.y)*(f.z if k&4 else 1-f.z)
+  value+=bytes.decode_float(base+6160+4*(q.x+9*q.y+81*q.z))*weight
+ return value
 func stored_amount(bytes:PackedByteArray,point:Vector3) -> int:
  if bytes.size()<32 or bytes.decode_u32(0)!=0x31575256:return -1
  var cell:=Vector3i((point*2.0).floor());var region:=Vector3i(cell.x/8,cell.y/8,cell.z/8)

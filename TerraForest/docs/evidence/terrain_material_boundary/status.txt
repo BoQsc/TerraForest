@@ -1,0 +1,12 @@
+2026-10-13 — Terrain-owned boundary integration prerequisite
+
+User rejected continued patching of the independent water representation and requested terrain-like volumetric interaction. Runtime replacement remains incomplete; command 32 is not yet consumed by water.
+
+Native terrain command 32 returns geometry from the same extract_vertices/connect_patch path used by full-detail terrain. Request: six u32 values (command=32, density revision, cancellation epoch, x, y, z). Origin is aligned to 4 m. Reply: standard 12-byte reply header, revision, epoch, vertex count, index count, XYZ float vertices, u32 indices. One-cell ownership halo includes faces crossing the region. No shading, simplification, simulation or new mesher. Terrain density geometry only; separately placed blocks/objects are not included. Worker ownership and revision/epoch checks are required. Consumers must clip/use only requested-region coverage, and cache by revision rather than request per frame.
+
+Seven assertions pass, including byte-exact vertex triangles and winding versus an ordinary full-detail 32 m mesh: 144 interior triangles in a carved underground sphere. This is a focused geometry contract, not arbitrary-world or water acceptance.
+
+Corrected previous contact diagnostic to exclude internal water interfaces. Actual mined-bowl test: 23 internal interfaces, 37 external boundary samples, worst penetration ~0.196 m, no positive external gap. Cached density at the physical terrain is substantially positive (up to ~0.16 in the shown samples), whereas water's derived floor is near density zero. Thus interpolated field vs reconstructed terrain boundary is an observed mismatch, not just a bucket-quantity issue.
+
+Next required implementation: consume terrain-owned boundary/voxel data in the replacement water material path; retain shader/assets, exact volume accounting and archive quantities. Remove superseded boundary/meshing logic when switching runtime. Do not claim that exposing geometry alone implements terrain-like liquid.
+Acceptance remains actual-world scoop, pour, dig beneath, settle, save/reload with conserved quantity and no buried water, shore gaps or disconnected artifacts; then bounded active-cell work and sleeping regions. No acceptance gate relaxed.

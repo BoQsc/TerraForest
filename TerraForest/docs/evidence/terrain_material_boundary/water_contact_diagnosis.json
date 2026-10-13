@@ -1,0 +1,1453 @@
+{
+  "checks": [
+    {
+      "name": "Normal combined world loads",
+      "pass": true
+    },
+    {
+      "name": "World terrain supplies lake location",
+      "pass": true
+    },
+    {
+      "name": "Ordinary lake authoring uses shallow elongated excavation",
+      "pass": true
+    },
+    {
+      "name": "Actual world water builds and publishes",
+      "pass": true
+    },
+    {
+      "name": "Undisturbed lake sleeps with no active water cells",
+      "pass": true
+    },
+    {
+      "name": "Sleeping lake performs zero flow cell steps",
+      "pass": true
+    },
+    {
+      "name": "Lake is visibly filled and swimming query is wet",
+      "pass": true
+    },
+    {
+      "name": "Gameplay equips normal bucket",
+      "pass": true
+    },
+    {
+      "name": "Actual lake shoreline is pickable while outward ray misses",
+      "pass": true
+    },
+    {
+      "name": "Real left-click at rendered shore conserves world plus bucket water",
+      "pass": true
+    },
+    {
+      "name": "Bucket scoop is published as a local surface depression",
+      "pass": true
+    },
+    {
+      "name": "Surrounding water refills the published scoop depression",
+      "pass": true
+    },
+    {
+      "name": "Real right-click at shore returns full bucket without creating a detached puddle",
+      "pass": true
+    },
+    {
+      "name": "Real bucket left-click conserves lake + inventory water",
+      "pass": true
+    },
+    {
+      "name": "Stale bucket action cannot remove or create water",
+      "pass": true
+    },
+    {
+      "name": "Separate hole is carved into actual terrain, not empty air",
+      "pass": true
+    },
+    {
+      "name": "Mine a separate hole outside lake definitions",
+      "pass": true
+    },
+    {
+      "name": "Separate hole terrain edit publishes",
+      "pass": true
+    },
+    {
+      "name": "Real right-click creates water outside lake with exact full-bucket debit",
+      "pass": true
+    },
+    {
+      "name": "Poured water settles to a queryable surface in the dug hole",
+      "pass": true
+    },
+    {
+      "name": "Poured water floor contacts actual terrain within 2 cm of its wet footprint",
+      "pass": false
+    }
+  ],
+  "failures": 1,
+  "timings": {
+    "bucket_scoop_trace": [
+      {
+        "frame": -1,
+        "ml": 60827,
+        "surface_y": 48.2499961853027
+      },
+      {
+        "frame": 0,
+        "ml": 0,
+        "surface_y": 48.2499961853027
+      },
+      {
+        "frame": 1,
+        "ml": 0,
+        "surface_y": 48.2499961853027
+      },
+      {
+        "frame": 2,
+        "ml": 0,
+        "surface_y": 1e99999
+      },
+      {
+        "frame": 3,
+        "ml": 0,
+        "surface_y": 1e99999
+      },
+      {
+        "frame": 4,
+        "ml": 0,
+        "surface_y": 47.5582160949707
+      },
+      {
+        "frame": 5,
+        "ml": 0,
+        "surface_y": 47.5582160949707
+      },
+      {
+        "frame": 6,
+        "ml": 0,
+        "surface_y": 47.5582160949707
+      },
+      {
+        "frame": 7,
+        "ml": 0,
+        "surface_y": 47.7465591430664
+      },
+      {
+        "frame": 8,
+        "ml": 0,
+        "surface_y": 47.7465591430664
+      },
+      {
+        "frame": 9,
+        "ml": 0,
+        "surface_y": 47.7465591430664
+      },
+      {
+        "frame": 10,
+        "ml": 0,
+        "surface_y": 47.7465591430664
+      },
+      {
+        "frame": 11,
+        "ml": 0,
+        "surface_y": 47.7465591430664
+      },
+      {
+        "frame": 12,
+        "ml": 0,
+        "surface_y": 47.9073143005371
+      },
+      {
+        "frame": 13,
+        "ml": 0,
+        "surface_y": 47.9073143005371
+      },
+      {
+        "frame": 14,
+        "ml": 0,
+        "surface_y": 47.9073143005371
+      },
+      {
+        "frame": 15,
+        "ml": 0,
+        "surface_y": 47.9073143005371
+      },
+      {
+        "frame": 16,
+        "ml": 0,
+        "surface_y": 47.9073143005371
+      },
+      {
+        "frame": 17,
+        "ml": 43,
+        "surface_y": 47.9742202758789
+      },
+      {
+        "frame": 18,
+        "ml": 138,
+        "surface_y": 47.9742202758789
+      },
+      {
+        "frame": 19,
+        "ml": 1111,
+        "surface_y": 47.9742202758789
+      },
+      {
+        "frame": 20,
+        "ml": 1342,
+        "surface_y": 47.9742202758789
+      },
+      {
+        "frame": 21,
+        "ml": 3228,
+        "surface_y": 47.9742202758789
+      },
+      {
+        "frame": 22,
+        "ml": 3720,
+        "surface_y": 47.9742202758789
+      },
+      {
+        "frame": 23,
+        "ml": 3720,
+        "surface_y": 47.9993057250977
+      },
+      {
+        "frame": 24,
+        "ml": 8338,
+        "surface_y": 47.9993057250977
+      },
+      {
+        "frame": 25,
+        "ml": 9345,
+        "surface_y": 47.9993057250977
+      },
+      {
+        "frame": 26,
+        "ml": 12978,
+        "surface_y": 47.9993057250977
+      },
+      {
+        "frame": 27,
+        "ml": 12978,
+        "surface_y": 48.0492477416992
+      },
+      {
+        "frame": 28,
+        "ml": 14605,
+        "surface_y": 48.0492477416992
+      },
+      {
+        "frame": 29,
+        "ml": 20669,
+        "surface_y": 48.0492477416992
+      },
+      {
+        "frame": 30,
+        "ml": 21549,
+        "surface_y": 48.0492477416992
+      },
+      {
+        "frame": 31,
+        "ml": 21549,
+        "surface_y": 48.0492477416992
+      },
+      {
+        "frame": 32,
+        "ml": 27558,
+        "surface_y": 48.0492477416992
+      },
+      {
+        "frame": 33,
+        "ml": 28408,
+        "surface_y": 48.0492477416992
+      },
+      {
+        "frame": 34,
+        "ml": 28408,
+        "surface_y": 48.0857429504395
+      },
+      {
+        "frame": 35,
+        "ml": 33453,
+        "surface_y": 48.0857429504395
+      },
+      {
+        "frame": 36,
+        "ml": 33855,
+        "surface_y": 48.0857429504395
+      },
+      {
+        "frame": 37,
+        "ml": 36607,
+        "surface_y": 48.0857429504395
+      },
+      {
+        "frame": 38,
+        "ml": 37251,
+        "surface_y": 48.0857429504395
+      },
+      {
+        "frame": 39,
+        "ml": 37251,
+        "surface_y": 48.0857429504395
+      },
+      {
+        "frame": 40,
+        "ml": 39673,
+        "surface_y": 48.1303634643555
+      },
+      {
+        "frame": 41,
+        "ml": 39929,
+        "surface_y": 48.1303634643555
+      },
+      {
+        "frame": 42,
+        "ml": 39784,
+        "surface_y": 48.1303634643555
+      },
+      {
+        "frame": 43,
+        "ml": 41817,
+        "surface_y": 48.1303634643555
+      },
+      {
+        "frame": 44,
+        "ml": 42004,
+        "surface_y": 48.1303634643555
+      },
+      {
+        "frame": 45,
+        "ml": 43301,
+        "surface_y": 48.1303634643555
+      },
+      {
+        "frame": 46,
+        "ml": 43301,
+        "surface_y": 48.1303634643555
+      },
+      {
+        "frame": 47,
+        "ml": 43573,
+        "surface_y": 48.1581268310547
+      },
+      {
+        "frame": 48,
+        "ml": 44813,
+        "surface_y": 48.1581268310547
+      },
+      {
+        "frame": 49,
+        "ml": 44964,
+        "surface_y": 48.1581268310547
+      },
+      {
+        "frame": 50,
+        "ml": 44964,
+        "surface_y": 48.1581268310547
+      },
+      {
+        "frame": 51,
+        "ml": 45957,
+        "surface_y": 48.1581268310547
+      },
+      {
+        "frame": 52,
+        "ml": 45957,
+        "surface_y": 48.1581268310547
+      },
+      {
+        "frame": 53,
+        "ml": 45957,
+        "surface_y": 48.182243347168
+      },
+      {
+        "frame": 54,
+        "ml": 46964,
+        "surface_y": 48.182243347168
+      },
+      {
+        "frame": 55,
+        "ml": 46964,
+        "surface_y": 48.182243347168
+      },
+      {
+        "frame": 56,
+        "ml": 46964,
+        "surface_y": 48.182243347168
+      },
+      {
+        "frame": 57,
+        "ml": 47670,
+        "surface_y": 48.182243347168
+      },
+      {
+        "frame": 58,
+        "ml": 47670,
+        "surface_y": 48.182243347168
+      },
+      {
+        "frame": 59,
+        "ml": 48343,
+        "surface_y": 48.1919250488281
+      },
+      {
+        "frame": 60,
+        "ml": 48343,
+        "surface_y": 48.1919250488281
+      }
+    ],
+    "cold_water_ms": 2608,
+    "frame_ms": {
+      "max": 75.296,
+      "p50": 16.664,
+      "p95": 56.175,
+      "samples": 413
+    },
+    "gpu_ms": {
+      "max": 6.33599996566772,
+      "p50": 5.57800006866455,
+      "p95": 6.19899988174438
+    },
+    "hardware": "NVIDIA GeForce RTX 4050 Laptop GPU",
+    "puddle_contact": {
+      "cells": [
+        {
+          "cached_density_at_floor": 0.00313824098335136,
+          "cached_density_at_terrain": 0.112706956259918,
+          "cell": [
+            1654,
+            88,
+            2581
+          ],
+          "conservative_floor_y": 44.5,
+          "cut": true,
+          "floor_gap_m": -0.144023397429557,
+          "floor_y": 44.4821095676583,
+          "internal_water_interface": false,
+          "ml": 73,
+          "stored_depth_m": 0.017890432341666,
+          "terrain_y": 44.6261329650879
+        },
+        {
+          "cached_density_at_floor": 0.010682324167794,
+          "cached_density_at_terrain": 0.162376353359795,
+          "cell": [
+            1655,
+            88,
+            2581
+          ],
+          "conservative_floor_y": 44.5,
+          "cut": true,
+          "floor_gap_m": -0.193382433556756,
+          "floor_y": 44.42654401908,
+          "internal_water_interface": false,
+          "ml": 5134,
+          "stored_depth_m": 0.0734559809200377,
+          "terrain_y": 44.6199264526367
+        },
+        {
+          "cached_density_at_floor": 0.00501064662070139,
+          "cached_density_at_terrain": 0.112214779667504,
+          "cell": [
+            1654,
+            89,
+            2581
+          ],
+          "conservative_floor_y": 45.0,
+          "cut": true,
+          "floor_gap_m": -0.142018521243294,
+          "floor_y": 44.5071819182098,
+          "internal_water_interface": false,
+          "ml": 274,
+          "stored_depth_m": 0.0299245347138992,
+          "terrain_y": 44.6492004394531
+        },
+        {
+          "cached_density_at_floor": 0.0527552338317037,
+          "cached_density_at_terrain": 0.154321409031958,
+          "cell": [
+            1655,
+            89,
+            2581
+          ],
+          "conservative_floor_y": 44.938,
+          "cut": true,
+          "floor_gap_m": -0.130321502685547,
+          "floor_y": 44.5,
+          "internal_water_interface": true,
+          "ml": 2982,
+          "stored_depth_m": 0.0378884054776094,
+          "terrain_y": 44.6303215026855
+        },
+        {
+          "cached_density_at_floor": 0.00313229019763195,
+          "cached_density_at_terrain": 0.112725937125706,
+          "cell": [
+            1653,
+            88,
+            2582
+          ],
+          "conservative_floor_y": 44.5,
+          "cut": true,
+          "floor_gap_m": -0.144055940689235,
+          "floor_y": 44.4820465068205,
+          "internal_water_interface": false,
+          "ml": 73,
+          "stored_depth_m": 0.0179534931794691,
+          "terrain_y": 44.6261024475098
+        },
+        {
+          "cached_density_at_floor": 0.00729107311337529,
+          "cached_density_at_terrain": 0.108042016162206,
+          "cell": [
+            1654,
+            88,
+            2582
+          ],
+          "conservative_floor_y": 44.5,
+          "cut": true,
+          "floor_gap_m": -0.128327594449608,
+          "floor_y": 44.4193103450035,
+          "internal_water_interface": false,
+          "ml": 15453,
+          "stored_depth_m": 0.0806896549964833,
+          "terrain_y": 44.5476379394531
+        },
+        {
+          "cached_density_at_floor": 0.00841308105736971,
+          "cached_density_at_terrain": 0.132795083802193,
+          "cell": [
+            1655,
+            88,
+            2582
+          ],
+          "conservative_floor_y": 44.446,
+          "cut": true,
+          "floor_gap_m": -0.148814340913404,
+          "floor_y": 44.2875603233932,
+          "internal_water_interface": false,
+          "ml": 53670,
+          "stored_depth_m": 0.212439676606763,
+          "terrain_y": 44.4363746643066
+        },
+        {
+          "cached_density_at_floor": 0.00550005325203529,
+          "cached_density_at_terrain": 0.113101819348458,
+          "cell": [
+            1653,
+            89,
+            2582
+          ],
+          "conservative_floor_y": 45.0,
+          "cut": true,
+          "floor_gap_m": -0.142177581787109,
+          "floor_y": 44.5,
+          "internal_water_interface": true,
+          "ml": 140,
+          "stored_depth_m": 0.0233989730512221,
+          "terrain_y": 44.6421775817871
+        },
+        {
+          "cached_density_at_floor": 0.0607390564982779,
+          "cached_density_at_terrain": 0.11167685828736,
+          "cell": [
+            1654,
+            89,
+            2582
+          ],
+          "conservative_floor_y": 44.627,
+          "cut": true,
+          "floor_gap_m": -0.06524658203125,
+          "floor_y": 44.5,
+          "internal_water_interface": true,
+          "ml": 5829,
+          "stored_depth_m": 0.0290856058964977,
+          "terrain_y": 44.5652465820313
+        },
+        {
+          "cached_density_at_floor": 0.18597412109375,
+          "cached_density_at_terrain": 0.132795083802193,
+          "cell": [
+            1655,
+            89,
+            2582
+          ],
+          "conservative_floor_y": 44.5,
+          "cut": true,
+          "floor_gap_m": 0.0636253356933594,
+          "floor_y": 44.5,
+          "internal_water_interface": true,
+          "ml": 8177,
+          "stored_depth_m": 0.0327079999999995,
+          "terrain_y": 44.4363746643066
+        },
+        {
+          "cached_density_at_floor": 0.0106818708073466,
+          "cached_density_at_terrain": 0.162359752584254,
+          "cell": [
+            1653,
+            88,
+            2583
+          ],
+          "conservative_floor_y": 44.5,
+          "cut": true,
+          "floor_gap_m": -0.193363143939358,
+          "floor_y": 44.4265633086974,
+          "internal_water_interface": false,
+          "ml": 5134,
+          "stored_depth_m": 0.0734366913026392,
+          "terrain_y": 44.6199264526367
+        },
+        {
+          "cached_density_at_floor": 0.00841308105736971,
+          "cached_density_at_terrain": 0.132795083802193,
+          "cell": [
+            1654,
+            88,
+            2583
+          ],
+          "conservative_floor_y": 44.446,
+          "cut": true,
+          "floor_gap_m": -0.148814340913404,
+          "floor_y": 44.2875603233932,
+          "internal_water_interface": false,
+          "ml": 53670,
+          "stored_depth_m": 0.212439676606763,
+          "terrain_y": 44.4363746643066
+        },
+        {
+          "cached_density_at_floor": 0.00886446051299572,
+          "cached_density_at_terrain": 0.0208137580193579,
+          "cell": [
+            1655,
+            88,
+            2583
+          ],
+          "conservative_floor_y": 44.275,
+          "cut": true,
+          "floor_gap_m": -0.0130512408223851,
+          "floor_y": 44.137129575828,
+          "internal_water_interface": false,
+          "ml": 91337,
+          "stored_depth_m": 0.362870424171994,
+          "terrain_y": 44.1501808166504
+        },
+        {
+          "cached_density_at_floor": 0.0634057657371159,
+          "cached_density_at_terrain": 0.159125846647209,
+          "cell": [
+            1653,
+            89,
+            2583
+          ],
+          "conservative_floor_y": 44.938,
+          "cut": true,
+          "floor_gap_m": -0.122287750244141,
+          "floor_y": 44.5,
+          "internal_water_interface": true,
+          "ml": 757,
+          "stored_depth_m": 0.0106198220833988,
+          "terrain_y": 44.6222877502441
+        },
+        {
+          "cached_density_at_floor": 0.18597412109375,
+          "cached_density_at_terrain": 0.132795083802193,
+          "cell": [
+            1654,
+            89,
+            2583
+          ],
+          "conservative_floor_y": 44.5,
+          "cut": true,
+          "floor_gap_m": 0.0636253356933594,
+          "floor_y": 44.5,
+          "internal_water_interface": true,
+          "ml": 4745,
+          "stored_depth_m": 0.0189799999999991,
+          "terrain_y": 44.4363746643066
+        },
+        {
+          "cached_density_at_floor": 0.34112548828125,
+          "cached_density_at_terrain": 0.0208137580193579,
+          "cell": [
+            1655,
+            89,
+            2583
+          ],
+          "conservative_floor_y": 44.5,
+          "cut": true,
+          "floor_gap_m": 0.349819183349609,
+          "floor_y": 44.5,
+          "internal_water_interface": true,
+          "ml": 7102,
+          "stored_depth_m": 0.0284079999999989,
+          "terrain_y": 44.1501808166504
+        },
+        {
+          "cached_density_at_floor": 0.00755584733167414,
+          "cached_density_at_terrain": 0.161381608986981,
+          "cell": [
+            1653,
+            88,
+            2584
+          ],
+          "conservative_floor_y": 44.5,
+          "cut": true,
+          "floor_gap_m": -0.196253157405472,
+          "floor_y": 44.424905442448,
+          "internal_water_interface": false,
+          "ml": 5304,
+          "stored_depth_m": 0.0744597842162236,
+          "terrain_y": 44.6211585998535
+        },
+        {
+          "cached_density_at_floor": 0.002791962120682,
+          "cached_density_at_terrain": 0.132795083802193,
+          "cell": [
+            1654,
+            88,
+            2584
+          ],
+          "conservative_floor_y": 44.446,
+          "cut": true,
+          "floor_gap_m": -0.155539625295738,
+          "floor_y": 44.2808350390109,
+          "internal_water_interface": false,
+          "ml": 54230,
+          "stored_depth_m": 0.219164960989097,
+          "terrain_y": 44.4363746643066
+        },
+        {
+          "cached_density_at_floor": 0.00204976322129369,
+          "cached_density_at_terrain": 0.0208137580193579,
+          "cell": [
+            1655,
+            88,
+            2584
+          ],
+          "conservative_floor_y": 44.275,
+          "cut": true,
+          "floor_gap_m": -0.0204916419451422,
+          "floor_y": 44.1296891747052,
+          "internal_water_interface": false,
+          "ml": 91957,
+          "stored_depth_m": 0.370310825294752,
+          "terrain_y": 44.1501808166504
+        },
+        {
+          "cached_density_at_floor": 0.18597412109375,
+          "cached_density_at_terrain": 0.132795083802193,
+          "cell": [
+            1654,
+            89,
+            2584
+          ],
+          "conservative_floor_y": 44.5,
+          "cut": true,
+          "floor_gap_m": 0.0636253356933594,
+          "floor_y": 44.5,
+          "internal_water_interface": true,
+          "ml": 1010,
+          "stored_depth_m": 0.00404000000000337,
+          "terrain_y": 44.4363746643066
+        },
+        {
+          "cached_density_at_floor": 0.34112548828125,
+          "cached_density_at_terrain": 0.0208137580193579,
+          "cell": [
+            1655,
+            89,
+            2584
+          ],
+          "conservative_floor_y": 44.5,
+          "cut": true,
+          "floor_gap_m": 0.349819183349609,
+          "floor_y": 44.5,
+          "internal_water_interface": true,
+          "ml": 4015,
+          "stored_depth_m": 0.0160600000000031,
+          "terrain_y": 44.1501808166504
+        },
+        {
+          "cached_density_at_floor": 0.00244515791481703,
+          "cached_density_at_terrain": 0.112637946175254,
+          "cell": [
+            1653,
+            88,
+            2585
+          ],
+          "conservative_floor_y": 44.5,
+          "cut": true,
+          "floor_gap_m": -0.144826596763892,
+          "floor_y": 44.4808486046521,
+          "internal_water_interface": false,
+          "ml": 70,
+          "stored_depth_m": 0.0176934790588348,
+          "terrain_y": 44.625675201416
+        },
+        {
+          "cached_density_at_floor": 0.00402114444111668,
+          "cached_density_at_terrain": 0.108202627195007,
+          "cell": [
+            1654,
+            88,
+            2585
+          ],
+          "conservative_floor_y": 44.5,
+          "cut": true,
+          "floor_gap_m": -0.132727785033708,
+          "floor_y": 44.4156769085698,
+          "internal_water_interface": false,
+          "ml": 15707,
+          "stored_depth_m": 0.0838272386045062,
+          "terrain_y": 44.5484046936035
+        },
+        {
+          "cached_density_at_floor": 0.002791962120682,
+          "cached_density_at_terrain": 0.132795083802193,
+          "cell": [
+            1655,
+            88,
+            2585
+          ],
+          "conservative_floor_y": 44.446,
+          "cut": true,
+          "floor_gap_m": -0.155539625295738,
+          "floor_y": 44.2808350390109,
+          "internal_water_interface": false,
+          "ml": 54230,
+          "stored_depth_m": 0.219164960989097,
+          "terrain_y": 44.4363746643066
+        },
+        {
+          "cached_density_at_floor": 0.18597412109375,
+          "cached_density_at_terrain": 0.132795083802193,
+          "cell": [
+            1655,
+            89,
+            2585
+          ],
+          "conservative_floor_y": 44.5,
+          "cut": true,
+          "floor_gap_m": 0.0636253356933594,
+          "floor_y": 44.5,
+          "internal_water_interface": true,
+          "ml": 298,
+          "stored_depth_m": 0.00119200000000319,
+          "terrain_y": 44.4363746643066
+        },
+        {
+          "cached_density_at_floor": 0.00246556728810221,
+          "cached_density_at_terrain": 0.112631295847699,
+          "cell": [
+            1654,
+            88,
+            2586
+          ],
+          "conservative_floor_y": 44.5,
+          "cut": true,
+          "floor_gap_m": -0.144805116283116,
+          "floor_y": 44.4812057784923,
+          "internal_water_interface": false,
+          "ml": 72,
+          "stored_depth_m": 0.0178373781700643,
+          "terrain_y": 44.6260108947754
+        },
+        {
+          "cached_density_at_floor": 0.00755254990514798,
+          "cached_density_at_terrain": 0.161448720542246,
+          "cell": [
+            1655,
+            88,
+            2586
+          ],
+          "conservative_floor_y": 44.5,
+          "cut": true,
+          "floor_gap_m": -0.196336683296657,
+          "floor_y": 44.4247532520061,
+          "internal_water_interface": false,
+          "ml": 5281,
+          "stored_depth_m": 0.0742889326324345,
+          "terrain_y": 44.6210899353027
+        },
+        {
+          "cached_density_at_floor": 0.00757554934975957,
+          "cached_density_at_terrain": 0.161213450661175,
+          "cell": [
+            1656,
+            88,
+            2581
+          ],
+          "conservative_floor_y": 44.5,
+          "cut": true,
+          "floor_gap_m": -0.196041158966715,
+          "floor_y": 44.4253234345391,
+          "internal_water_interface": false,
+          "ml": 5349,
+          "stored_depth_m": 0.0746765654608552,
+          "terrain_y": 44.6213645935059
+        },
+        {
+          "cached_density_at_floor": 0.00249735866410428,
+          "cached_density_at_terrain": 0.112646189543421,
+          "cell": [
+            1657,
+            88,
+            2581
+          ],
+          "conservative_floor_y": 44.5,
+          "cut": true,
+          "floor_gap_m": -0.144808256027346,
+          "floor_y": 44.4817557698516,
+          "internal_water_interface": false,
+          "ml": 75,
+          "stored_depth_m": 0.01824423014844,
+          "terrain_y": 44.6265640258789
+        },
+        {
+          "cached_density_at_floor": 0.0501869617946795,
+          "cached_density_at_terrain": 0.152974448243682,
+          "cell": [
+            1656,
+            89,
+            2581
+          ],
+          "conservative_floor_y": 44.938,
+          "cut": true,
+          "floor_gap_m": -0.132030487060547,
+          "floor_y": 44.5,
+          "internal_water_interface": true,
+          "ml": 3164,
+          "stored_depth_m": 0.0386435185398426,
+          "terrain_y": 44.6320304870605
+        },
+        {
+          "cached_density_at_floor": 0.00407158308985256,
+          "cached_density_at_terrain": 0.112166489141586,
+          "cell": [
+            1657,
+            89,
+            2581
+          ],
+          "conservative_floor_y": 45.0,
+          "cut": true,
+          "floor_gap_m": -0.143379511288309,
+          "floor_y": 44.5096279960359,
+          "internal_water_interface": false,
+          "ml": 335,
+          "stored_depth_m": 0.0316140396123359,
+          "terrain_y": 44.6530075073242
+        },
+        {
+          "cached_density_at_floor": 0.00264403799016574,
+          "cached_density_at_terrain": 0.108377981070157,
+          "cell": [
+            1658,
+            89,
+            2581
+          ],
+          "conservative_floor_y": 45.0,
+          "cut": true,
+          "floor_gap_m": -0.148622648927869,
+          "floor_y": 44.660314423826,
+          "internal_water_interface": false,
+          "ml": 15,
+          "stored_depth_m": 0.0125986236755793,
+          "terrain_y": 44.8089370727539
+        },
+        {
+          "cached_density_at_floor": 0.002791962120682,
+          "cached_density_at_terrain": 0.132795083802193,
+          "cell": [
+            1656,
+            88,
+            2582
+          ],
+          "conservative_floor_y": 44.446,
+          "cut": true,
+          "floor_gap_m": -0.155539625295738,
+          "floor_y": 44.2808350390109,
+          "internal_water_interface": false,
+          "ml": 54230,
+          "stored_depth_m": 0.219164960989097,
+          "terrain_y": 44.4363746643066
+        },
+        {
+          "cached_density_at_floor": 0.00402119973127391,
+          "cached_density_at_terrain": 0.108259314658331,
+          "cell": [
+            1657,
+            88,
+            2582
+          ],
+          "conservative_floor_y": 44.5,
+          "cut": true,
+          "floor_gap_m": -0.132814387709026,
+          "floor_y": 44.4158649640976,
+          "internal_water_interface": false,
+          "ml": 15800,
+          "stored_depth_m": 0.0841350359023849,
+          "terrain_y": 44.5486793518066
+        },
+        {
+          "cached_density_at_floor": 0.00250330690047856,
+          "cached_density_at_terrain": 0.112627201511888,
+          "cell": [
+            1658,
+            88,
+            2582
+          ],
+          "conservative_floor_y": 44.5,
+          "cut": true,
+          "floor_gap_m": -0.144778723316691,
+          "floor_y": 44.4818158201403,
+          "internal_water_interface": false,
+          "ml": 75,
+          "stored_depth_m": 0.0181841798596594,
+          "terrain_y": 44.626594543457
+        },
+        {
+          "cached_density_at_floor": 0.18597412109375,
+          "cached_density_at_terrain": 0.132795083802193,
+          "cell": [
+            1656,
+            89,
+            2582
+          ],
+          "conservative_floor_y": 44.5,
+          "cut": true,
+          "floor_gap_m": 0.0636253356933594,
+          "floor_y": 44.5,
+          "internal_water_interface": true,
+          "ml": 8868,
+          "stored_depth_m": 0.0354719999999986,
+          "terrain_y": 44.4363746643066
+        },
+        {
+          "cached_density_at_floor": 0.0589833510384778,
+          "cached_density_at_terrain": 0.112309854549135,
+          "cell": [
+            1657,
+            89,
+            2582
+          ],
+          "conservative_floor_y": 44.627,
+          "cut": true,
+          "floor_gap_m": -0.0683746337890625,
+          "floor_y": 44.5,
+          "internal_water_interface": true,
+          "ml": 7362,
+          "stored_depth_m": 0.0359776788574209,
+          "terrain_y": 44.5683746337891
+        },
+        {
+          "cached_density_at_floor": 0.00409269419255809,
+          "cached_density_at_terrain": 0.112262091767553,
+          "cell": [
+            1658,
+            89,
+            2582
+          ],
+          "conservative_floor_y": 45.0,
+          "cut": true,
+          "floor_gap_m": -0.143508834105013,
+          "floor_y": 44.5102349097915,
+          "internal_water_interface": false,
+          "ml": 345,
+          "stored_depth_m": 0.0317811075928347,
+          "terrain_y": 44.6537437438965
+        },
+        {
+          "cached_density_at_floor": 0.00204976322129369,
+          "cached_density_at_terrain": 0.0208137580193579,
+          "cell": [
+            1656,
+            88,
+            2583
+          ],
+          "conservative_floor_y": 44.275,
+          "cut": true,
+          "floor_gap_m": -0.0204916419451422,
+          "floor_y": 44.1296891747052,
+          "internal_water_interface": false,
+          "ml": 91957,
+          "stored_depth_m": 0.370310825294752,
+          "terrain_y": 44.1501808166504
+        },
+        {
+          "cached_density_at_floor": 0.002791962120682,
+          "cached_density_at_terrain": 0.132795083802193,
+          "cell": [
+            1657,
+            88,
+            2583
+          ],
+          "conservative_floor_y": 44.446,
+          "cut": true,
+          "floor_gap_m": -0.155539625295738,
+          "floor_y": 44.2808350390109,
+          "internal_water_interface": false,
+          "ml": 54230,
+          "stored_depth_m": 0.219164960989097,
+          "terrain_y": 44.4363746643066
+        },
+        {
+          "cached_density_at_floor": 0.00757197195413761,
+          "cached_density_at_terrain": 0.161230414354253,
+          "cell": [
+            1658,
+            88,
+            2583
+          ],
+          "conservative_floor_y": 44.5,
+          "cut": true,
+          "floor_gap_m": -0.196063632294909,
+          "floor_y": 44.4252666289356,
+          "internal_water_interface": false,
+          "ml": 5349,
+          "stored_depth_m": 0.0747333710644398,
+          "terrain_y": 44.6213302612305
+        },
+        {
+          "cached_density_at_floor": 0.34112548828125,
+          "cached_density_at_terrain": 0.0208137580193579,
+          "cell": [
+            1656,
+            89,
+            2583
+          ],
+          "conservative_floor_y": 44.5,
+          "cut": true,
+          "floor_gap_m": 0.349819183349609,
+          "floor_y": 44.5,
+          "internal_water_interface": true,
+          "ml": 8368,
+          "stored_depth_m": 0.0334720000000033,
+          "terrain_y": 44.1501808166504
+        },
+        {
+          "cached_density_at_floor": 0.18597412109375,
+          "cached_density_at_terrain": 0.132795083802193,
+          "cell": [
+            1657,
+            89,
+            2583
+          ],
+          "conservative_floor_y": 44.5,
+          "cut": true,
+          "floor_gap_m": 0.0636253356933594,
+          "floor_y": 44.5,
+          "internal_water_interface": true,
+          "ml": 8681,
+          "stored_depth_m": 0.0347239999999971,
+          "terrain_y": 44.4363746643066
+        },
+        {
+          "cached_density_at_floor": 0.0506461849436164,
+          "cached_density_at_terrain": 0.153134423121912,
+          "cell": [
+            1658,
+            89,
+            2583
+          ],
+          "conservative_floor_y": 44.938,
+          "cut": true,
+          "floor_gap_m": -0.131622314453125,
+          "floor_y": 44.5,
+          "internal_water_interface": true,
+          "ml": 3049,
+          "stored_depth_m": 0.0373913109449617,
+          "terrain_y": 44.6316223144531
+        },
+        {
+          "cached_density_at_floor": 0.00886446051299572,
+          "cached_density_at_terrain": 0.0208137580193579,
+          "cell": [
+            1656,
+            88,
+            2584
+          ],
+          "conservative_floor_y": 44.275,
+          "cut": true,
+          "floor_gap_m": -0.0130512408223851,
+          "floor_y": 44.137129575828,
+          "internal_water_interface": false,
+          "ml": 91337,
+          "stored_depth_m": 0.362870424171994,
+          "terrain_y": 44.1501808166504
+        },
+        {
+          "cached_density_at_floor": 0.00841308105736971,
+          "cached_density_at_terrain": 0.132795083802193,
+          "cell": [
+            1657,
+            88,
+            2584
+          ],
+          "conservative_floor_y": 44.446,
+          "cut": true,
+          "floor_gap_m": -0.148814340913404,
+          "floor_y": 44.2875603233932,
+          "internal_water_interface": false,
+          "ml": 53670,
+          "stored_depth_m": 0.212439676606763,
+          "terrain_y": 44.4363746643066
+        },
+        {
+          "cached_density_at_floor": 0.0106818708073466,
+          "cached_density_at_terrain": 0.162359752584254,
+          "cell": [
+            1658,
+            88,
+            2584
+          ],
+          "conservative_floor_y": 44.5,
+          "cut": true,
+          "floor_gap_m": -0.193363143939358,
+          "floor_y": 44.4265633086974,
+          "internal_water_interface": false,
+          "ml": 5134,
+          "stored_depth_m": 0.0734366913026392,
+          "terrain_y": 44.6199264526367
+        },
+        {
+          "cached_density_at_floor": 0.34112548828125,
+          "cached_density_at_terrain": 0.0208137580193579,
+          "cell": [
+            1656,
+            89,
+            2584
+          ],
+          "conservative_floor_y": 44.5,
+          "cut": true,
+          "floor_gap_m": 0.349819183349609,
+          "floor_y": 44.5,
+          "internal_water_interface": true,
+          "ml": 5979,
+          "stored_depth_m": 0.0239159999999998,
+          "terrain_y": 44.1501808166504
+        },
+        {
+          "cached_density_at_floor": 0.18597412109375,
+          "cached_density_at_terrain": 0.132795083802193,
+          "cell": [
+            1657,
+            89,
+            2584
+          ],
+          "conservative_floor_y": 44.5,
+          "cut": true,
+          "floor_gap_m": 0.0636253356933594,
+          "floor_y": 44.5,
+          "internal_water_interface": true,
+          "ml": 7021,
+          "stored_depth_m": 0.0280839999999998,
+          "terrain_y": 44.4363746643066
+        },
+        {
+          "cached_density_at_floor": 0.0537468565598829,
+          "cached_density_at_terrain": 0.154849690870453,
+          "cell": [
+            1658,
+            89,
+            2584
+          ],
+          "conservative_floor_y": 44.938,
+          "cut": true,
+          "floor_gap_m": -0.129673004150391,
+          "floor_y": 44.5,
+          "internal_water_interface": true,
+          "ml": 2739,
+          "stored_depth_m": 0.0351236517242768,
+          "terrain_y": 44.6296730041504
+        },
+        {
+          "cached_density_at_floor": 0.00841308105736971,
+          "cached_density_at_terrain": 0.132795083802193,
+          "cell": [
+            1656,
+            88,
+            2585
+          ],
+          "conservative_floor_y": 44.446,
+          "cut": true,
+          "floor_gap_m": -0.148814340913404,
+          "floor_y": 44.2875603233932,
+          "internal_water_interface": false,
+          "ml": 53670,
+          "stored_depth_m": 0.212439676606763,
+          "terrain_y": 44.4363746643066
+        },
+        {
+          "cached_density_at_floor": 0.00729107311337529,
+          "cached_density_at_terrain": 0.108042016162206,
+          "cell": [
+            1657,
+            88,
+            2585
+          ],
+          "conservative_floor_y": 44.5,
+          "cut": true,
+          "floor_gap_m": -0.128327594449608,
+          "floor_y": 44.4193103450035,
+          "internal_water_interface": false,
+          "ml": 15453,
+          "stored_depth_m": 0.0806896549964833,
+          "terrain_y": 44.5476379394531
+        },
+        {
+          "cached_density_at_floor": 0.00313229019763195,
+          "cached_density_at_terrain": 0.112725937125706,
+          "cell": [
+            1658,
+            88,
+            2585
+          ],
+          "conservative_floor_y": 44.5,
+          "cut": true,
+          "floor_gap_m": -0.144055940689235,
+          "floor_y": 44.4820465068205,
+          "internal_water_interface": false,
+          "ml": 73,
+          "stored_depth_m": 0.0179534931794691,
+          "terrain_y": 44.6261024475098
+        },
+        {
+          "cached_density_at_floor": 0.18597412109375,
+          "cached_density_at_terrain": 0.132795083802193,
+          "cell": [
+            1656,
+            89,
+            2585
+          ],
+          "conservative_floor_y": 44.5,
+          "cut": true,
+          "floor_gap_m": 0.0636253356933594,
+          "floor_y": 44.5,
+          "internal_water_interface": true,
+          "ml": 1928,
+          "stored_depth_m": 0.00771199999999794,
+          "terrain_y": 44.4363746643066
+        },
+        {
+          "cached_density_at_floor": 0.0639263665070757,
+          "cached_density_at_terrain": 0.110517251070405,
+          "cell": [
+            1657,
+            89,
+            2585
+          ],
+          "conservative_floor_y": 44.627,
+          "cut": true,
+          "floor_gap_m": -0.0595703125,
+          "floor_y": 44.5,
+          "internal_water_interface": true,
+          "ml": 3489,
+          "stored_depth_m": 0.0178576239242503,
+          "terrain_y": 44.5595703125
+        },
+        {
+          "cached_density_at_floor": 0.00470977290761376,
+          "cached_density_at_terrain": 0.112238273475458,
+          "cell": [
+            1658,
+            89,
+            2585
+          ],
+          "conservative_floor_y": 45.0,
+          "cut": true,
+          "floor_gap_m": -0.142250168533621,
+          "floor_y": 44.5027808068082,
+          "internal_water_interface": false,
+          "ml": 204,
+          "stored_depth_m": 0.0277009357638462,
+          "terrain_y": 44.6450309753418
+        },
+        {
+          "cached_density_at_floor": 0.010682324167794,
+          "cached_density_at_terrain": 0.162376353359795,
+          "cell": [
+            1656,
+            88,
+            2586
+          ],
+          "conservative_floor_y": 44.5,
+          "cut": true,
+          "floor_gap_m": -0.193382433556756,
+          "floor_y": 44.42654401908,
+          "internal_water_interface": false,
+          "ml": 5134,
+          "stored_depth_m": 0.0734559809200377,
+          "terrain_y": 44.6199264526367
+        },
+        {
+          "cached_density_at_floor": 0.00313824098335136,
+          "cached_density_at_terrain": 0.112706956259918,
+          "cell": [
+            1657,
+            88,
+            2586
+          ],
+          "conservative_floor_y": 44.5,
+          "cut": true,
+          "floor_gap_m": -0.144023397429557,
+          "floor_y": 44.4821095676583,
+          "internal_water_interface": false,
+          "ml": 73,
+          "stored_depth_m": 0.017890432341666,
+          "terrain_y": 44.6261329650879
+        },
+        {
+          "cached_density_at_floor": 0.0434995703399181,
+          "cached_density_at_terrain": 0.124608101350702,
+          "cell": [
+            1656,
+            89,
+            2586
+          ],
+          "conservative_floor_y": 44.938,
+          "cut": true,
+          "floor_gap_m": -0.104881286621094,
+          "floor_y": 44.5,
+          "internal_water_interface": true,
+          "ml": 57,
+          "stored_depth_m": 0.00248332342728474,
+          "terrain_y": 44.6048812866211
+        },
+        {
+          "cached_density_at_floor": 0.0106336859535077,
+          "cached_density_at_terrain": 0.113089319407462,
+          "cell": [
+            1657,
+            89,
+            2586
+          ],
+          "conservative_floor_y": 45.0,
+          "cut": true,
+          "floor_gap_m": -0.135059356689453,
+          "floor_y": 44.5,
+          "internal_water_interface": true,
+          "ml": 63,
+          "stored_depth_m": 0.0125753250017624,
+          "terrain_y": 44.6350593566895
+        }
+      ],
+      "external_samples": 37,
+      "internal_water_interfaces": 23,
+      "max_floor_gap_m": 0.0,
+      "min_floor_gap_m": -0.196336683296657,
+      "terrain_contact_qualified": false,
+      "water_ml": 1000000
+    },
+    "render_cpu_ms": {
+      "max": 2.95499992370605,
+      "p95": 0.634999990463257
+    },
+    "water_bucket_contact_capture_ms": 705.524,
+    "water_bucket_poured_capture_ms": 765.706,
+    "water_settled_close_capture_ms": 683.337
+  }
+}

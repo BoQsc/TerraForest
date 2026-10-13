@@ -1,0 +1,62 @@
+{
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+    "--path",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+    "--log-file",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\checks\\20261013T151842959410Z\\engine.log",
+    "--headless",
+    "--max-fps",
+    "60",
+    "--script",
+    "res://tests/terrain_material_boundary.gd",
+    "--",
+    "--temporary",
+    "--world-slot=check_be399601a5354ae0a2c5e6f83626ed6f",
+    "--derived-cache=user://terrain_material_boundary_be399601a5354ae0a2c5e6f83626ed6f"
+  ],
+  "cache": "user://terrain_material_boundary_be399601a5354ae0a2c5e6f83626ed6f",
+  "utc": "20261013T151842959410Z",
+  "timeout": 30.0,
+  "required_text": "failures=0",
+  "headless": true,
+  "scope": "Fresh derived-cache argument; test code must honor it. Not save isolation or a sandbox.",
+  "cache_retained": true,
+  "revision": "743a207f7bb40a3a7b3448f6f21bbec801305527",
+  "worktree_changes": [
+    " M TerraForest/addons/volumetric_terrain/bin/terrain_core.windows.template_release.x86_64.dll",
+    " M TerraForest/addons/volumetric_terrain/bin/terrain_core.windows.x86_64.dll",
+    " M TerraForest/addons/volumetric_terrain/native/core.cpp",
+    " M TerraForest/tests/regional_water_world.gd",
+    "?? TerraForest/tests/terrain_material_boundary.gd"
+  ],
+  "git_metadata_available": true,
+  "engine_sha256": "12310c74bdda7dcd43f28e971f33047dcecadd436b68169d61ce41009006df38",
+  "test_sha256": "94b99bc432ff6acb041f02f70340b9ce71d095b45e5031bce760dbf6346900c2",
+  "native_sha256": {
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "ed066843981550a6da7f2ed47f5f05eb676b1256540206cb2399e528d965c965",
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "7fe9102e113afdf3c91293fa09b2fb78f060985a2089c8fef67e4b58e0a62d6b",
+    "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "2093381ed06d0918ae5083475181e42f253505dcff89d56f5899179abb5fe132",
+    "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "758cca1718d8d1ce3a80a471a701e49d422bedceea7b43bfb50cf3bed4753b15",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "0742e44096e00e13acd013a151ca4cbd7d52b5d3ac3703485a7a3d656a9a9b6f",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "13f455564dba3ebddce1f4f4a0fa470dad07ce80ef0d4097ce48527427046e04",
+    "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "91f711e3fb45491f3948f40ae4343fa13d96b5500e994c07620dc526c1e30160",
+    "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "73ca232cc326241b6ba2ebdf42fd30c4ddb2e1a5d11a568391d7c2d22d0e28fe",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "d0acee395f14b593a283cbc71dcefe21e9405dc4a229f0aa18d845c2e3c2c8eb",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "387adbcf0ed81166c5bf4f9c46f7adf658481314e9ac4deb2a751b20c0a0bafc",
+    "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "c60504ced5ea7bd69d582419f0222615333b7f044008c2583f530b8e4c45068f",
+    "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "38ddb056f0d214b98beee27217cba658b219de9cf03bb01642565f0cf3555593",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "ac88a4acf809438bedfa06fe6508837395f84e6b0654e573cafa416d59b35e15",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "6d319a8b296f7ab998c5be91f925ec247db3c4335338d70633fc88cbfaf3bba2"
+  },
+  "result": {
+    "timed_out": false,
+    "launch_error": null,
+    "pid": 21608,
+    "exit_code": 0,
+    "diagnostics": [],
+    "required_text_found": true,
+    "elapsed_seconds": 0.3594176000005973,
+    "passed": true
+  }
+}

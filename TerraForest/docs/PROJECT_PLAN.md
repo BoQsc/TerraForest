@@ -4,6 +4,20 @@ Updated 2026-10-11. TerraForest is an integrated development world, not a comple
 
 This is the current delivery-order and coverage reference. [Delivery history](DELIVERY_STATUS.md) records evidence at the time of each change; older entries are not current status. [World systems design](WORLD_SYSTEMS_DESIGN.md) retains the broader architecture contract. A documentation update alone closes no implementation gate.
 
+## Water direction correction - 2026-10-13
+
+The user explicitly rejected continued patching of the independent water representation.
+Retain the accepted visuals, but replace the interaction/material integration with
+terrain-aligned volumetric water, simple local settling and sleeping inactive regions.
+Do not describe shared helper calls as proof of a unified terrain/water boundary.
+The same visible volume must leave/enter the targeted world area and survive reload.
+
+Cubic-metre transfers and explicit inventory quantities are implemented (743a207).
+They do not resolve geometric correctness. The native terrain now exports its own
+full-detail boundary through command 32; a 144-triangle comparison passes, but water
+does not consume it yet. This is a prerequisite, not a replacement runtime or finished
+playable fix. See `evidence/terrain_material_boundary/status.txt`.
+
 ## Current blocking priority - terrain/water correctness (2026-10-13)
 
 User priority overrides the earlier feature sequence: resolve the visible and

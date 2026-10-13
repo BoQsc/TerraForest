@@ -934,6 +934,23 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
   u8 material=0;float density=w.sample(fl(point.x),fl(point.y),fl(point.z),&material);
   out.u(material);out.f(density);out.f(w.generator_id>=3?geological_weight(point,w.height(point.x,point.z),u32(w.seed)):0);
  }
+ else if(cmd==32){
+  // Worker-owned boundary packet for material integration. Reuse the exact
+  // full-detail terrain extractor/connectivity, without lighting or LOD.
+  // Request: revision, cancellation epoch, aligned 4 m region origin (x,y,z).
+  u32 revision=r.u(),epoch=r.u();int x=int(r.u()),y=int(r.u()),z=int(r.u());
+  if(!r.good||n!=24||x<0||z<0||x>=WORLD||z>=WORLD||y<0||y>=WORLD_Y||x%4||y%4||z%4){out.p[8]=1;return;}
+  if(revision!=w.revision||cancelled(w,epoch)){out.p[8]=4;return;}
+  Mesh m;int ox=imx(0,x-1),oz=imx(0,z-1),yb=imx(0,y-1),ye=imn(WORLD_Y,y+5);
+  // One-cell ownership halo retains faces crossing the requested region.
+  if(!extract_vertices(w,ox,oz,6,m,epoch,yb,ye)){m.release();out.p[8]=4;return;}
+  connect_patch(ox,oz,6,m,yb,ye);
+  if(cancelled(w,epoch)){m.release();out.p[8]=4;return;}
+  out.u(w.revision);out.u(epoch);out.u(m.v.n);out.u(m.i.n);
+  for(int i=0;i<m.v.n;i++)out.vec(m.v[i].p);
+  for(int i=0;i<m.i.n;i++)out.u(m.i[i]);
+  m.release();
+ }
  else if(cmd==29||cmd==30||cmd==31){
   // Bounded read-only site probes. The worker owns the density field; never
   // sample it from the scene thread. Revision mismatch publishes no values.
