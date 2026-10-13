@@ -1,0 +1,25 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS Place one existing terrain voxel at x=24
+PASS Terrain voxel renders one cubic metre with twelve triangles
+PASS Adjacent unit adds exactly one cubic metre
+PASS Removing one unit leaves neighbouring geometry unchanged
+PASS Existing terrain archive preserves fixed-unit geometry
+PASS Existing terrain cache produces identical voxel geometry
+PASS Fixed voxel ownership requires no allocated density pages
+PASS Place one existing terrain voxel at x=31
+PASS Terrain voxel renders one cubic metre with twelve triangles
+PASS Adjacent unit adds exactly one cubic metre
+PASS Removing one unit leaves neighbouring geometry unchanged
+PASS Existing terrain archive preserves fixed-unit geometry
+PASS Existing terrain cache produces identical voxel geometry
+PASS Fixed voxel ownership requires no allocated density pages
+PASS Place one existing terrain voxel at x=32
+PASS Terrain voxel renders one cubic metre with twelve triangles
+PASS Adjacent unit adds exactly one cubic metre
+PASS Removing one unit leaves neighbouring geometry unchanged
+PASS Existing terrain archive preserves fixed-unit geometry
+PASS Existing terrain cache produces identical voxel geometry
+PASS Fixed voxel ownership requires no allocated density pages
+TERRAIN_MATERIAL_UNITS failures=0
+

@@ -1,0 +1,31 @@
+{
+  "cases": [
+    {
+      "joined_m3": 2.0,
+      "joined_triangles": 12,
+      "neighbour_restored": true,
+      "single_m3": 1.0,
+      "single_triangles": 12,
+      "x": 24
+    },
+    {
+      "joined_m3": 2.0,
+      "joined_triangles": 20,
+      "neighbour_restored": true,
+      "single_m3": 1.0,
+      "single_triangles": 12,
+      "x": 31
+    },
+    {
+      "joined_m3": 2.0,
+      "joined_triangles": 12,
+      "neighbour_restored": true,
+      "single_m3": 1.0,
+      "single_triangles": 12,
+      "x": 32
+    }
+  ],
+  "failures": 0,
+  "scope": "Existing TerrainCore voxel storage, renderer, cache and archive only. No live water replacement, terrain contact, transparent shading or water gameplay acceptance. Smooth density-box failure remains separate.",
+  "library": "terrain_core.windows.template_release.x86_64.dll"
+}

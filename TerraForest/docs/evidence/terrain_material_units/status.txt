@@ -1,0 +1,28 @@
+2026-10-13: Existing TerrainCore fixed-unit primitive check
+
+This is a diagnostic of existing native code, not a second water implementation.
+No runtime DLL, live water owner, mesh algorithm or save format was changed.
+
+The material_box density operation fails the already captured integer-aligned
+one-metre box case because its sampled boundary values are zero and no lattice
+node is negative. That does not imply all terrain representations fail units.
+The existing TerrainCore command-3 voxel ownership and greedy face generation
+already represent an isolated unit as exactly 1 m3 and 12 triangles.
+
+21 release checks pass: positions x=24,31,32 cover ordinary placement and a
+32-metre partition boundary. For each: insertion, measured one-unit mesh,
+adjacent insertion measuring 2 m3, deletion preserving the remaining neighbour,
+byte-identical geometry after ordinary terrain archive reload, identical cached
+geometry, and zero density-page allocation. Geometry comparisons exclude reply
+revision metadata; the initial test incorrectly included it and was corrected.
+
+Implication: do not add another volume-fitting solver or assume a new mesher is
+necessary to represent fixed units. Terrain already has exact cell ownership.
+Unresolved integration: mapping smooth lake/shore geometry to that ownership,
+solid-contact exclusion, water picking and bucket edits, legacy saved quantities,
+and preserving the accepted translucent visuals. A block mesh by itself does
+not prove smooth shoreline quality and is not installed as live water here.
+The current live regional water owner remains unchanged.
+
+Command:
+python tools/test_native_release.py --addon volumetric_terrain --test terrain_material_units --godot <Steam Godot executable>
