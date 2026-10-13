@@ -1,0 +1,7 @@
+Bucket water visual readability, 2026-10-13
+
+Diagnostic material on the actual published water mesh shows the poured 10 L surface is present and visible above terrain. The near-invisible appearance was material response, not a missing mesh. Capture now waits three frames after camera movement. A temporary magenta unshaded material identifies visible water coverage, then the normal gameplay material is restored before continuing the actual bucket input checks.
+
+Normal water now uses a stronger shallow tint and divides water-colour contribution between lit albedo and a simple scattering approximation in emission. Ground remains visible through the puddle. This is a readability approximation, not physically correct volumetric scattering. It adds no water simulation, texture, camera or separate runtime. The poured and scooped captures visibly distinguish presence and removal. The outline is still angular. Readable lake scoop/refill motion and broader art acceptance remain open; do not label water complete from these images.
+
+Actual-world 1920x1080 fullscreen test passed all 52 assertions, including full-bucket input, conservation, puddle removal publication, mining, save/reopen and cached loading. Rendering profiling was not requested or run. Screenshot capture stalls are diagnostic I/O, not sustained FPS evidence.

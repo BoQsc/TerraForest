@@ -120,7 +120,14 @@ func run():
  if not puddle.is_finite():await finish();return
  game.camera.global_position=puddle+Vector3.UP*1.5;game.camera.look_at(puddle,Vector3.FORWARD);game.app_focused=true;Input.mouse_mode=Input.MOUSE_MODE_CAPTURED
  game.pitch=-PI/2;game.camera.look_at(puddle,Vector3.FORWARD)
+ for frame in 3:await process_frame
  await capture_visual("water_bucket_poured")
+ var diagnostic:=StandardMaterial3D.new();diagnostic.shading_mode=BaseMaterial3D.SHADING_MODE_UNSHADED;diagnostic.albedo_color=Color.MAGENTA;diagnostic.cull_mode=BaseMaterial3D.CULL_DISABLED
+ for node:MeshInstance3D in game.lakes._meshes.values():node.material_override=diagnostic
+ for frame in 3:await process_frame
+ await capture_visual("water_bucket_geometry")
+ for node:MeshInstance3D in game.lakes._meshes.values():node.material_override=game.lakes._material
+ for frame in 3:await process_frame
  var puddle_start:Vector3=game.camera.global_position
  var puddle_end:Vector3=puddle_start-game.camera.global_basis.z*3.5
  var puddle_hit:Dictionary=game.structures.blocks.raycast_scene(puddle_start,puddle_end,0xFFFFFFFF,[game.player.get_rid()])
