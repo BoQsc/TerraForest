@@ -43,12 +43,19 @@ func run():
  while game.player_hud.active_item!=401 and Time.get_ticks_msec()<deadline:await process_frame
  check(game.player_hud.active_item==401 and game.lakes.statistics().water_ml==total,"Actual right-click pours all ten litres onto unedited ground")
  if failures:await finish();return
+ var initial_file:=FileAccess.open("res://reports/water_ground_initial.bin",FileAccess.WRITE)
+ initial_file.store_buffer(game.lakes.capture_snapshot());initial_file.close()
  # Let normal simulation run for two seconds, rather than inspecting only the
  # immediate pour frame or freezing the water before it can leave the target.
  var started:=Time.get_ticks_msec()
  while Time.get_ticks_msec()-started<2000:await process_frame
+ results.surface_contact=surface_contact(target)
  results.after_two_seconds=game.lakes.statistics()
  results.water_delta=water_delta(before_pour,game.lakes.capture_snapshot(),target)
+ results.local_components=local_components(results.water_delta.new_wet_cells)
+ check(results.local_components.components.size()==1,"Gentle-ground full-bucket pour remains one connected body, without detached small pieces")
+ var final_file:=FileAccess.open("res://reports/water_ground_after.bin",FileAccess.WRITE)
+ final_file.store_buffer(game.lakes.capture_snapshot());final_file.close()
  await RenderingServer.frame_post_draw
  root.get_texture().get_image().save_png("res://reports/water_ground_pour_target.png")
  # Aim inside the largest nearby wet footprint. The nearest point to the old
@@ -77,6 +84,26 @@ func run():
  results.recovered_litres=held
  check(held>=1 and held<=10 and game.lakes.statistics().water_ml==total-held*1000,"The visible ground water can be scooped with exact inventory/world transfer")
  await finish()
+func local_components(rows:Array) -> Dictionary:
+ return preload("res://tests/water_coherence_probe.gd").components(game.lakes.water,rows)
+func surface_contact(target:Vector3) -> Dictionary:
+ var report:Dictionary={"samples":0,"below_ground":0,"min_gap":INF,"max_gap":-INF,"rows":[]}
+ for instance:MeshInstance3D in game.lakes._meshes.values():
+  if instance.mesh==null:continue
+  var vertices:PackedVector3Array=instance.mesh.surface_get_arrays(0)[Mesh.ARRAY_VERTEX]
+  for i in range(0,vertices.size(),3):
+   var a:Vector3=vertices[i];var b:Vector3=vertices[i+1];var c:Vector3=vertices[i+2]
+   if (c-a).cross(b-a).y<=0:continue
+   var point:Vector3=(a+b+c)/3.0
+   if point.distance_to(target)>3:continue
+   var ground:Dictionary=game.get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(point+Vector3.UP,point-Vector3.UP,1))
+   if ground.is_empty():continue
+   var gap:float=point.y-ground.position.y
+   report.samples+=1;report.min_gap=minf(report.min_gap,gap);report.max_gap=maxf(report.max_gap,gap)
+   if gap<0:report.below_ground+=1
+   report.rows.append({"point":point,"gap":gap,"vertices":[a,b,c]})
+ print("GROUND_SURFACE_CONTACT ",report.samples," below=",report.below_ground," gap=",report.min_gap,"..",report.max_gap)
+ return report
 func amounts(bytes:PackedByteArray) -> Dictionary:
  var found:Dictionary={};var size:=9076 if bytes.decode_u32(4)>=2 else 6160
  for r in bytes.decode_u32(12):

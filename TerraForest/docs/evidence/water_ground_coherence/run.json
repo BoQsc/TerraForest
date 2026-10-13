@@ -1,0 +1,65 @@
+{
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+    "--path",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+    "--log-file",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\checks\\20261013T132128859070Z\\engine.log",
+    "--fullscreen",
+    "--resolution",
+    "1920x1080",
+    "--max-fps",
+    "60",
+    "--script",
+    "res://tests/water_ground_pour.gd",
+    "--",
+    "--temporary",
+    "--world-slot=check_6668cc5112fd4a4ca7212780d176073c",
+    "--derived-cache=user://water_ground_pour_6668cc5112fd4a4ca7212780d176073c",
+    "--gameplay-construction",
+    "--water-gameplay",
+    "--water-bucket-review"
+  ],
+  "cache": "user://water_ground_pour_6668cc5112fd4a4ca7212780d176073c",
+  "utc": "20261013T132128859070Z",
+  "timeout": 50.0,
+  "required_text": "WATER_GROUND_POUR failures=0",
+  "headless": false,
+  "scope": "Fresh derived-cache argument; test code must honor it. Not save isolation or a sandbox.",
+  "cache_retained": true,
+  "revision": "cca3f6d63b002b072b12746b2b2bf08e9bbb3934",
+  "worktree_changes": [
+    " M TerraForest/tests/water_ground_pour.gd"
+  ],
+  "git_metadata_available": true,
+  "engine_sha256": "12310c74bdda7dcd43f28e971f33047dcecadd436b68169d61ce41009006df38",
+  "test_sha256": "9fc7279af11f4a4548faaa8bafbff67b3dd225ffd457ea4eec88d186f8b61559",
+  "native_sha256": {
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "4571507d9215a9d7b4700374833501adf085a5c93a4ee62a2122c5cd69cecced",
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "d02a27f2528e2448ec32e0785921507c3fcaa705cce84e98934a6596f2904375",
+    "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "2093381ed06d0918ae5083475181e42f253505dcff89d56f5899179abb5fe132",
+    "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "758cca1718d8d1ce3a80a471a701e49d422bedceea7b43bfb50cf3bed4753b15",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "0742e44096e00e13acd013a151ca4cbd7d52b5d3ac3703485a7a3d656a9a9b6f",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "13f455564dba3ebddce1f4f4a0fa470dad07ce80ef0d4097ce48527427046e04",
+    "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "91f711e3fb45491f3948f40ae4343fa13d96b5500e994c07620dc526c1e30160",
+    "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "73ca232cc326241b6ba2ebdf42fd30c4ddb2e1a5d11a568391d7c2d22d0e28fe",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "cca2ddfbb61d6d7c96dd8eee7ffbaa2e2aef40e87540b551c3613286ceb780e6",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "d40aeb37abd76ac2b5d382df156baec234b4b26038a2778560f16c51b9d120a9",
+    "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "d5f636e9847be73bfd4867c7367cb7395e780b8ef3a68be5d107d39f4e070991",
+    "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "32e4e87a25f2fdb8a960180e058990c211b4fa01975e2ff52af4552729c8093b",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "ac88a4acf809438bedfa06fe6508837395f84e6b0654e573cafa416d59b35e15",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "6d319a8b296f7ab998c5be91f925ec247db3c4335338d70633fc88cbfaf3bba2"
+  },
+  "result": {
+    "timed_out": false,
+    "launch_error": null,
+    "pid": 11580,
+    "exit_code": 1,
+    "diagnostics": [
+      "FAIL Gentle-ground full-bucket pour remains one connected body, without detached small pieces"
+    ],
+    "required_text_found": false,
+    "elapsed_seconds": 12.60271609999836,
+    "passed": false
+  }
+}

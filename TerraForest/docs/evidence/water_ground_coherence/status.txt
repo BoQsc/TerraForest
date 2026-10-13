@@ -1,0 +1,44 @@
+Blocking ground-pour coherence regression - 2026-10-13
+
+Authoritative runtime: cca3f6d. No runtime behavior is changed by this evidence
+commit. The new checks intentionally fail the visible/physical acceptance gate.
+
+Findings from the actual temporary bucket-review world:
+- All 68 sampled top triangle centroids near the pour were ABOVE the rendered
+  terrain collision surface (roughly 0.3-9 mm), not buried. This only tests
+  triangle centroids in this case; it does not qualify arbitrary contact.
+- A first connectivity capture found 23 local water components, including many
+  1-38 ml pieces. A repeat found 24, with 9,349 ml inside the inspected radius.
+  Exact counts vary with the bounded runtime work schedule; fragmentation does
+  not disappear. Local totals exclude water outside the 3 m inspection radius.
+- Connectivity is evaluated using shared-face floor openings and actual heads,
+  rather than merely counting face-adjacent occupied cells. Components are
+  clipped to the inspection window and exclude pre-existing wet cells in the
+  graphical test. The target was initially dry and outside the lake.
+- Inventory/world conservation and scooping pass, but the combined test now
+  explicitly FAILS if the inspected gentle-ground pour contains multiple bodies.
+
+Fast replay:
+python tools/test_native_release.py --addon volumetric_water --test water_ground_coherence --godot <Godot executable>
+
+The fixture contains initial post-pour quantities from the actual world. Static
+terrain cache records from the later capture are primed without changing those
+initial quantities. No synthetic terrain or alternate water implementation is
+introduced. The main native release DLL advances the captured store for 120
+bounded updates at 1/60 s. Current replay takes under one second including
+startup, conserves the global total, and reproduces 21 local components.
+This is a fast regression fixture, not a simulation-rate or GPU benchmark.
+
+Code evidence guiding the next correction:
+WaterCellProfile currently places each cell's quantity under a horizontal head
+on a sloped floor. Small incoming transfers occupy the lower corner of the next
+cell before its head reaches the shared opening. Thus face-adjacent stored water
+need not form a connected wet surface. A representative-point or texture change
+alone cannot correct the disconnected physical wet intervals. This mechanism is
+the next implementation target; this commit does not claim it is resolved.
+
+Required acceptance remains coherent slope runoff with real finite volume,
+correct terrain exclusion, valid separate pools, targeted scoop/refill, no
+unwanted detached fragments, and bounded local work. Do not glue through solid
+terrain, hide stored water, delete quantities or replace this test by transfer-only
+checks to obtain a pass. Verify in the original world after fixing the replay.

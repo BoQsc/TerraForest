@@ -1,0 +1,11 @@
+{
+  "target": [
+    802.0,
+    49.49169921875,
+    1306.5
+  ],
+  "slope_degrees": 4.19497982237762,
+  "source_run": "20261013T132128859070Z",
+  "source_revision": "cca3f6d",
+  "scope": "Actual world initial post-pour quantities. Only immutable terrain cache is primed from the later capture, avoiding worker/loading timing in the short native replay."
+}
