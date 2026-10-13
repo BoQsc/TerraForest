@@ -415,7 +415,15 @@ Dictionary NativeRegionalWater::transfer_water(const Vector3 &from,const Vector3
             }
         }
         amount-=remaining;
-        if(!amount){out["reason"]="No water within bucket reach";return out;}
+        if(!amount){
+            // Flow can empty the owner after its visible snapshot was published.
+            // Retry the same click after publication instead of taking unrelated
+            // nearby water or reporting a miss against a still-visible surface.
+            if(publication_enabled&&(batch_active||publish_pending||mesh_set.count(region_key(target)))){
+                prioritize_mesh(region_key(target));out["pending"]=true;out["reason"]="Updating displayed water";
+            }else out["reason"]="No water within bucket reach";
+            return out;
+        }
     }
     if(pour){
         // Plan a bounded connected placement before touching either owner.
@@ -454,7 +462,7 @@ Vector3 NativeRegionalWater::surface_near(const Vector3 &point,double radius) co
     Vector3 margin(radius+0.5,radius+0.5,radius+0.5);
     Vector3i lo=Vector3i(((point-margin)/4.0).floor()),hi=Vector3i(((point+margin)/4.0).floor());double distance=radius*radius;
     for(int z=std::max(0,lo.z);z<=std::min(499,hi.z);++z)for(int y=std::max(0,lo.y);y<=std::min(63,hi.y);++y)for(int x=std::max(0,lo.x);x<=std::min(499,hi.x);++x){
-        Key k=key(Vector3i(x,y,z));if(!surface_ready(k))continue;QuerySurface temporary;const QuerySurface *selected=query_surface(k,temporary);if(!selected)continue;const QuerySurface &mesh=*selected;
+        Key k=key(Vector3i(x,y,z));if(!publication_enabled&&!surface_ready(k))continue;QuerySurface temporary;const QuerySurface *selected=query_surface(k,temporary);if(!selected)continue;const QuerySurface &mesh=*selected;
         auto consider=[&](Vector3 q){double d=point.distance_squared_to(q);if(d<distance){distance=d;best=q;}};
         for(int i=0;i<mesh.vertices.size();i+=3){
             if((mesh.vertices[i+2]-mesh.vertices[i]).cross(mesh.vertices[i+1]-mesh.vertices[i]).y<=0)continue;
@@ -613,7 +621,7 @@ Dictionary NativeRegionalWater::raycast_surface(const Vector3 &from,const Vector
     // The five-metre reach bounds the candidate owner box. Build from precisely
     // the rendering source; never use an independent shoreline polygon or level.
     for(int z=std::max(0,lo.z);z<=std::min(499,hi.z);++z)for(int y=std::max(0,lo.y);y<=std::min(63,hi.y);++y)for(int x=std::max(0,lo.x);x<=std::min(499,hi.x);++x){
-        Key k=key(Vector3i(x,y,z));if(!surface_ready(k))continue;
+        Key k=key(Vector3i(x,y,z));if(!publication_enabled&&!surface_ready(k))continue;
         QuerySurface temporary;const QuerySurface *selected=query_surface(k,temporary);if(!selected)continue;const QuerySurface &mesh=*selected;
         for(int i=0;i<mesh.vertices.size();i+=3){
             Vector3 a=mesh.vertices[i],e1=mesh.vertices[i+1]-a,e2=mesh.vertices[i+2]-a;

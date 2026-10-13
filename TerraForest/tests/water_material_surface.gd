@@ -53,11 +53,32 @@ func check_batch():
  var updated:Dictionary=water.raycast_surface(origin+Vector3.UP,origin-Vector3.UP)
  check(updated.hit and updated.point.y>published_hit.point.y and water.statistics().query_builds==0,"Query surface advances at publication without rebuilding geometry")
  var next:Dictionary=water.next_mesh_batch();var old_batch:int=next.batch
+ water.brush(origin+Vector3(-1,0,0),0.0,1000)
+ check(water.raycast_surface(origin+Vector3.UP,origin-Vector3.UP).hit,"Preparing a neighbouring region does not make displayed water unpickable")
  water.invalidate(AABB(origin-Vector3.ONE*0.01,Vector3.ONE*0.02))
+ check(water.raycast_surface(origin+Vector3.UP,origin-Vector3.UP).hit,"Displayed water remains targetable while its terrain is being rebuilt")
+ var inventory=ClassDB.instantiate("NativePlayerInventory");inventory.register_item(401,1);inventory.grant(401,1,0)
+ var before_amount:int=water.statistics().water_ml;var inventory_before:PackedByteArray=inventory.capture_storage_snapshot()
+ var deferred:Dictionary=water.transfer_bucket(origin+Vector3.UP,origin-Vector3.UP,false,inventory,0,inventory.snapshot().revision)
+ check(not deferred.ok and deferred.pending and water.statistics().water_ml==before_amount and inventory.capture_storage_snapshot()==inventory_before,"Scoop on invalid target occupancy defers without changing either owner")
  var restarted:Dictionary=water.next_mesh_batch()
  check(not restarted.is_empty() and restarted.batch>old_batch and not water.commit_mesh_batch(old_batch),"Terrain invalidation cancels staged publication and changes batch identity")
  var saved:PackedByteArray=fixture(0,0).capture_snapshot(ClassDB.instantiate("NativeLakeCatalog").encode([]))
  check(water.restore_snapshot(saved) and water.statistics().query_cache_bytes==0 and not water.raycast_surface(origin+Vector3.UP,origin-Vector3.UP).hit,"Restore retires old published geometry until replacement is displayed")
+func check_pending_scoop():
+ var water=fixture(3,0);var origin:=Vector3(41.75,41.75,41.75)
+ for step in 100:
+  var packet:Dictionary=water.next_mesh_batch()
+  if packet.complete:water.commit_mesh_batch(packet.batch);break
+ var inventory=ClassDB.instantiate("NativePlayerInventory");inventory.register_item(401,1);inventory.grant(401,1,0)
+ check(water.brush(origin,0.0,-1000)==1000 and water.raycast_surface(origin+Vector3.UP,origin-Vector3.UP).hit,"Live owner can drain while its prior surface is still displayed")
+ var result:Dictionary=water.transfer_bucket(origin+Vector3.UP,origin-Vector3.UP,false,inventory,0,inventory.snapshot().revision)
+ check(not result.ok and result.pending and water.statistics().water_ml==0 and inventory.snapshot().slots[0].water_ml==0,"A scoop waits for publication instead of missing or inventing water from a drained visible owner")
+ for step in 100:
+  var packet:Dictionary=water.next_mesh_batch()
+  if packet.complete:water.commit_mesh_batch(packet.batch);break
+ result=water.transfer_bucket(origin+Vector3.UP,origin-Vector3.UP,false,inventory,0,inventory.snapshot().revision)
+ check(not result.ok and not result.pending and not water.raycast_surface(origin+Vector3.UP,origin-Vector3.UP).hit,"Published removal ends the retry without taking nonexistent water")
 func check_contacts():
  var water=fixture(3,200);var catalog:PackedByteArray=ClassDB.instantiate("NativeLakeCatalog").encode([])
  var before:PackedByteArray=water.capture_snapshot(catalog);var count:=0;var exposed_only:=true
@@ -95,6 +116,7 @@ func _initialize():
  GDExtensionManager.load_extension("res://addons/volumetric_water/volumetric_water.gdextension")
  GDExtensionManager.load_extension("res://addons/player_runtime/player_runtime.gdextension")
  check_batch()
+ check_pending_scoop()
  check_contacts()
  check_pour_batch()
  var closed:=true;var visible:=true;var bounded:=true;var conserved:=true;var shared:=true;var cases:=0;var picked:=true;var missed:=true;var nearest_matches:=true;var invalid_misses:=true

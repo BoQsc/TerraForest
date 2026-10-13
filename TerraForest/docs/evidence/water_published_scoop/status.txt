@@ -1,0 +1,11 @@
+2026-10-13 — Published-surface scoop timing correction
+
+Two reproduced causes addressed in the existing native runtime:
+1. raycast_surface/surface_near skipped an entire published mesh whenever any neighbouring terrain region was invalid. The renderer kept those triangles visible. Published queries now use that same visible snapshot; mutation still validates live target occupancy and returns pending if unavailable. Immediate unrendered diagnostics still require valid occupancy.
+2. Flow could drain a visible triangle's owner before the next render batch committed. Instead of reporting no water or searching unrelated pools, transfer_water returns pending while geometry is dirty/in flight. The existing bounded pending-click path retries the original ray/revision after publication. No quantity changes occur during deferral.
+
+Six added focused assertions cover neighbouring preparation, invalid target deferral without world/inventory mutation, drained-but-visible owner deferral, and completion of empty-surface publication without phantom water. Material-surface test passes.
+
+Actual natural-ground scenario passes in run 20261013T155525570836Z: lake scoop 1 m³, ground pour 1 m³, connected sampled local body, published ground water scoop succeeds after 343 ms from one click, exact 945,765 ml transferred. The test allows up to one second for the already-issued click; no additional click is injected. Remaining water is conserved. Sampled minimum rendered gap was -0.0000267 m, inside declared 0.25 mm float-position tolerance.
+
+This one run does not close the earlier 1.18 mm surface-penetration failure or the 10-second outlet-flow failure. Meshing/contact-boundary replacement remains incomplete. No changes to surface generation, quantities, shader, archive schema or flow rates in this commit.

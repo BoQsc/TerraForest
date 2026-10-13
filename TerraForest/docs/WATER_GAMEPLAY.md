@@ -1,3 +1,5 @@
+> Picking update, 2026-10-13: published water remains targetable while neighbouring terrain prepares; a drained visible owner defers the original click until the surface updates. Focused checks and one actual ground scoop pass (343 ms response). Surface penetration and outlet timing remain open. See `evidence/water_published_scoop/status.txt`.
+
 > Current contact update, 2026-10-13: supported floor contacts now retain actual terrain triangles for volume and interaction queries; version 6 caches them. Mined-bowl contact and native cached reopen pass. Natural-ground rendered contact/scoop and large-outlet flow still fail; see `evidence/water_exact_terrain_contact/status.txt`. The full replacement is incomplete.
 
 > Current transfer update, 2026-10-13: normal one-click bucket capacity is 1 m³, stored as exact millilitres independent of item IDs. Existing buckets retain their old litres. Actual lake scoop and untouched-ground pour pass; larger mined-bowl contact fails and remains open. See `evidence/water_cubic_metre_transfer/status.txt`.

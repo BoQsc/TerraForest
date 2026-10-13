@@ -83,6 +83,9 @@ func run():
  results.scoop_aim={"from":from,"water":water_hit,"terrain_point":terrain_hit.get("position",Vector3.INF),"statistics":game.lakes.statistics(),"nearby_now":game.lakes.water.surface_near(surface,0.3)}
  if water_hit.hit:results.scoop_aim.geometry=game.lakes.water.cell_geometry(Vector3(water_hit.cell)*0.5+Vector3.ONE*0.25)
  click(MOUSE_BUTTON_LEFT)
+ var scoop_start:=Time.get_ticks_msec()
+ while not game.lakes._pending_bucket.is_empty() and Time.get_ticks_msec()-scoop_start<1000:await process_frame
+ results.scoop_response_ms=Time.get_ticks_msec()-scoop_start
  var held:int=held_ml()
  results.recovered_ml=held
  check(held>=1 and held<=1000000 and game.lakes.statistics().water_ml==total-held,"The visible ground water can be scooped with exact inventory/world transfer")
