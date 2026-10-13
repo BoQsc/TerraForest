@@ -16,13 +16,13 @@ func fixture(x:int,floor_mm:int):
  if not water.restore_snapshot(bytes):return null
  return water
 func check_batch():
- var reference=fixture(7,0);var expected:Dictionary={}
+ var reference=fixture(0,0);var expected:Dictionary={}
  for step in 100:
   var packet:Dictionary=reference.next_mesh()
   if packet.is_empty():break
   expected[packet.coordinate]=packet.arrays
- var water=fixture(7,0);var collected:Dictionary={};var changed:=false;var complete:=false;var stable:=true;var completed_id:=0
- var origin:=Vector3(43.75,41.501,41.75)
+ var water=fixture(0,0);var collected:Dictionary={};var changed:=false;var complete:=false;var stable:=true;var completed_id:=0
+ var origin:=Vector3(40.25,41.501,41.75)
  for step in 100:
   var packet:Dictionary=water.next_mesh_batch()
   if packet.is_empty():break
@@ -56,7 +56,7 @@ func check_batch():
  water.invalidate(AABB(origin-Vector3.ONE*0.01,Vector3.ONE*0.02))
  var restarted:Dictionary=water.next_mesh_batch()
  check(not restarted.is_empty() and restarted.batch>old_batch and not water.commit_mesh_batch(old_batch),"Terrain invalidation cancels staged publication and changes batch identity")
- var saved:PackedByteArray=fixture(7,0).capture_snapshot(ClassDB.instantiate("NativeLakeCatalog").encode([]))
+ var saved:PackedByteArray=fixture(0,0).capture_snapshot(ClassDB.instantiate("NativeLakeCatalog").encode([]))
  check(water.restore_snapshot(saved) and water.statistics().query_cache_bytes==0 and not water.raycast_surface(origin+Vector3.UP,origin-Vector3.UP).hit,"Restore retires old published geometry until replacement is displayed")
 func _initialize():
  GDExtensionManager.load_extension("res://addons/volumetric_water/volumetric_water.gdextension")

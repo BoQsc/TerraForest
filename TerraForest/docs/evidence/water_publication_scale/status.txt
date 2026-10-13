@@ -1,0 +1,11 @@
+Water restore publication scaling, 2026-10-13
+
+One native release run before and after, same synthetic cached fixtures: 1, 16, 64, 256 isolated regions. This is not a GPU or sustained laptop benchmark.
+
+At 256 regions, restore packets fell from 6912 (6144 empty) to 768 (0 empty). Native generation/publication work fell from 185567 to 32006 microseconds. Local interior edits rebuilt one packet at every size (57-65 microseconds after the fix). Query payload at 256 regions: 3932160 bytes; region payload: 2320384 bytes, excluding allocator/container overhead.
+
+Restore queues actual negative-axis face owners instead of the full 27-region halo. Empty mesh packets are suppressed unless needed to retire published geometry. Mid-batch regression fixtures now touch the negative boundary so they still exercise multiple real owners.
+
+Remaining limitation: at four packets per frame, the largest fixture needs at least 192 frames (3.2 seconds at 60 FPS), before accounting for upload costs or the soft time budget. Global batch latency and unbounded staging within resident limits remain open. Do not treat CPU timing as a GPU improvement or visual acceptance.
+
+Validation: native scale test failures=0; 30 thin/material cases passed; continuity suite passed including 510 occupancy patterns. Actual-world 1920x1080 fullscreen capped-60 check completed in 27.30 seconds with 51 PASS assertions, zero failures and no runner diagnostics. Covers bucket interaction, repeated mining, flow quantity conservation, coherent publication, save/reopen, and cached occupancy reuse. It does not establish sustained 60 FPS, arbitrary-world correctness or thermal sustainability.

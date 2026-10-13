@@ -1,0 +1,90 @@
+{
+  "failures": 0,
+  "rows": [
+    {
+      "initial": {
+        "commit_us": 3,
+        "complete": true,
+        "empty_packets": 24,
+        "minimum_frames_at_four_packets": 7,
+        "native_us": 659,
+        "packets": 27
+      },
+      "local_edit": {
+        "commit_us": 1,
+        "complete": true,
+        "empty_packets": 0,
+        "minimum_frames_at_four_packets": 1,
+        "native_us": 59,
+        "packets": 1
+      },
+      "query_cache_bytes": 15360,
+      "regions": 1,
+      "resident_cell_bytes": 9064
+    },
+    {
+      "initial": {
+        "commit_us": 26,
+        "complete": true,
+        "empty_packets": 384,
+        "minimum_frames_at_four_packets": 108,
+        "native_us": 10040,
+        "packets": 432
+      },
+      "local_edit": {
+        "commit_us": 1,
+        "complete": true,
+        "empty_packets": 0,
+        "minimum_frames_at_four_packets": 1,
+        "native_us": 57,
+        "packets": 1
+      },
+      "query_cache_bytes": 245760,
+      "regions": 16,
+      "resident_cell_bytes": 145024
+    },
+    {
+      "initial": {
+        "commit_us": 125,
+        "complete": true,
+        "empty_packets": 1536,
+        "minimum_frames_at_four_packets": 432,
+        "native_us": 39449,
+        "packets": 1728
+      },
+      "local_edit": {
+        "commit_us": 2,
+        "complete": true,
+        "empty_packets": 0,
+        "minimum_frames_at_four_packets": 1,
+        "native_us": 62,
+        "packets": 1
+      },
+      "query_cache_bytes": 983040,
+      "regions": 64,
+      "resident_cell_bytes": 580096
+    },
+    {
+      "initial": {
+        "commit_us": 667,
+        "complete": true,
+        "empty_packets": 6144,
+        "minimum_frames_at_four_packets": 1728,
+        "native_us": 185567,
+        "packets": 6912
+      },
+      "local_edit": {
+        "commit_us": 3,
+        "complete": true,
+        "empty_packets": 0,
+        "minimum_frames_at_four_packets": 1,
+        "native_us": 90,
+        "packets": 1
+      },
+      "query_cache_bytes": 3932160,
+      "regions": 256,
+      "resident_cell_bytes": 2320384
+    }
+  ],
+  "library": "volumetric_water.windows.template_release.x86_64.dll"
+}

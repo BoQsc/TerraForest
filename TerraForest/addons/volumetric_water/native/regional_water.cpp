@@ -360,7 +360,10 @@ Dictionary NativeRegionalWater::next_mesh_batch(){
     for(int attempt=0;attempt<8&&!batch_queue.empty();++attempt){
         Key k=batch_queue.front();batch_queue.pop_front();
         if(!surface_ready(k,true)){if(mesh_set.insert(k).second)meshes.push_back(k);continue;}
-        SurfaceMesh mesh=build_surface(k,true);Array arrays;arrays.resize(Mesh::ARRAY_MAX);
+        SurfaceMesh mesh=build_surface(k,true);
+        // Empty geometry only needs publication when retiring an existing mesh.
+        if(mesh.vertices.is_empty()&&!published_surfaces.count(k))continue;
+        Array arrays;arrays.resize(Mesh::ARRAY_MAX);
         arrays[Mesh::ARRAY_VERTEX]=mesh.vertices;arrays[Mesh::ARRAY_NORMAL]=mesh.normals;arrays[Mesh::ARRAY_TEX_UV]=mesh.uv;
         staged_surfaces[k]={mesh.vertices,std::move(mesh.owners)};
         result["coordinate"]=position(k);result["faces"]=mesh.faces;result["arrays"]=arrays;result["vertices"]=mesh.vertices.size();break;
@@ -564,12 +567,18 @@ bool NativeRegionalWater::decode(const PackedByteArray &data,bool install){
         // Version 1 remains playable during one-time terrain-shape cache upgrade.
         if(!r.has_density)request(k);
         if(mesh_set.insert(k).second)meshes.push_back(k);
-        if(std::any_of(r.water.begin(),r.water.end(),[](uint64_t ml){return ml!=0;})){
-            Vector3i p=position(k);
-            for(int z=-1;z<=1;++z)for(int y=-1;y<=1;++y)for(int x=-1;x<=1;++x){
-                Vector3i n=p+Vector3i(x,y,z);if(n.x<0||n.x>=500||n.y<0||n.y>=64||n.z<0||n.z>=500)continue;
-                Key owner=key(n);if(mesh_set.insert(owner).second)meshes.push_back(owner);
-            }
+        // A face is owned by the minimum endpoint of a crossing edge. A wet
+        // boundary node can therefore add only its negative-axis neighbour,
+        // not every region in a 3x3x3 reconstruction halo.
+        bool negative[3]={false,false,false};
+        for(int i=0;i<512;++i)if(r.water[i]&&r.floor[i]<r.ceiling[i]){
+            if((i&7)==0)negative[0]=true;
+            if(((i>>3)&7)==0)negative[1]=true;
+            if((i>>6)==0)negative[2]=true;
+        }
+        Vector3i p=position(k);
+        for(int axis=0;axis<3;++axis)if(negative[axis]&&p[axis]>0){
+            Vector3i n=p;--n[axis];Key owner=key(n);if(mesh_set.insert(owner).second)meshes.push_back(owner);
         }
     }
     for(Key k:awake){Vector3i p=position(k);wake(p);queue_vertical(p);queue_vertical(p+Vector3i(0,-1,0));}
