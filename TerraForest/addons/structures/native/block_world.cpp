@@ -29,6 +29,7 @@ void NativeBlockWorld::_bind_methods() {
     ClassDB::bind_method(D_METHOD("set_texture_set","name"),&NativeBlockWorld::set_texture_set);
     ClassDB::bind_method(D_METHOD("get_texture_set"),&NativeBlockWorld::get_texture_set);
     ClassDB::bind_method(D_METHOD("preview_mesh","shape","rotation"),&NativeBlockWorld::preview_mesh);
+    ClassDB::bind_method(D_METHOD("sample_solid","world_points"),&NativeBlockWorld::sample_solid);
     ClassDB::bind_method(D_METHOD("capture_region","region"),&NativeBlockWorld::capture_region);
     ClassDB::bind_method(D_METHOD("validate_region_snapshot","bytes"),&NativeBlockWorld::validate_region_snapshot);
     ClassDB::bind_method(D_METHOD("unload_region","expected_snapshot"),&NativeBlockWorld::unload_region);

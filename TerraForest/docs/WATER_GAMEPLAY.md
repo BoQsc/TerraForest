@@ -45,7 +45,7 @@ checks. There are no per-cell scene nodes or physics bodies.
 
 Terrain occupancy comes from the terrain worker. Water edits wait for required
 occupancy and validate inventory revisions before committing. Terrain deposition
-that would bury existing water is rejected through the terrain editing facade.
+deletes the water its solid volume replaces; excavation does not restore it.
 Building and vehicle shapes are not yet included in water occupancy.
 
 Mesh preparation/publication has bounded work queues and cooperative budgets.

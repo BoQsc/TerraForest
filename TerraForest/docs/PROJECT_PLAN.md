@@ -12,6 +12,14 @@ This is the current delivery-order and coverage reference. [Delivery history](DE
 
 ## Current water implementation and remaining gate - 2026-10-14
 
+Building replacement decision: constructed solids must delete overlapping water,
+matching terrain. The native shape-sampling prerequisite passes debug/release
+checks for all six shapes and four rotations, transforms and unloaded regions.
+It is not connected to water yet. Remaining work includes representing occupied
+intervals around partial/curved shapes, both placement directions, invalidation,
+history and compound reload. The current single-interval water profile cannot
+represent every building intersection; do not substitute whole-cell deletion.
+
 Terrain replacement policy, 2026-10-14: the user explicitly wants solid terrain
 to delete water that it replaces. The former rejection rule is superseded.
 Cubes and smooth deposition, pending water snapshot reload, no resurrection

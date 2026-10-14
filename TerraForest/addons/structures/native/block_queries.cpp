@@ -60,6 +60,25 @@ double shape_hit(int word,Vector3 origin,Vector3 direction,Vector3 &normal) {
     return nearest;
 }
 }
+PackedByteArray NativeBlockWorld::sample_solid(const PackedVector3Array &points) const {
+    PackedByteArray result;if(points.size()>4096)return result;
+    Transform3D frame=is_inside_tree()?get_global_transform():get_transform();
+    if(!frame.is_finite()||std::abs(frame.basis.determinant())<1e-12)return result;
+    const Transform3D inverse=frame.affine_inverse();
+    result.resize(points.size());
+    for(int64_t i=0;i<points.size();++i){
+        Vector3 p=inverse.xform(points[i]);
+        if(!points[i].is_finite()||!p.is_finite())return PackedByteArray();
+        for(int a=0;a<3;++a)if(p[a]<-1048575.0||p[a]>=1048576.0)return PackedByteArray();
+        Vector3i cell_position(int(std::floor(p.x)),int(std::floor(p.y)),int(std::floor(p.z)));
+        if(unavailable_region(AABB(Vector3(cell_position),Vector3(1,1,1)))){result.set(i,2);continue;}
+        int word=cell(cell_position.x,cell_position.y,cell_position.z);Vector3 unused;
+        // A zero-length segment reuses the exact convex planes used by picking,
+        // including the faceted rendered sphere rather than an analytic sphere.
+        result.set(i,word&&shape_hit(word,p-Vector3(cell_position),Vector3(),unused)<0?1:0);
+    }
+    return result;
+}
 Dictionary NativeBlockWorld::raycast_cells(Vector3 from,Vector3 to) const {
     Dictionary result;
     Transform3D frame=is_inside_tree()?get_global_transform():get_transform();

@@ -146,6 +146,8 @@ public:
     Dictionary region_stats() const;
     Dictionary capture_storage_state() const;
     bool restore_storage_state(const PackedByteArray &resident,const PackedInt32Array &keys,const PackedByteArray &checksums);
+    // Bounded main-thread sampling: 0 air, 1 solid, 2 unavailable resident data.
+    PackedByteArray sample_solid(const PackedVector3Array &points) const;
     Dictionary raycast_cells(Vector3 from,Vector3 to) const;
     Dictionary raycast_scene(Vector3 from,Vector3 to,int64_t mask,const TypedArray<RID> &exclude) const;
     ~NativeBlockWorld();

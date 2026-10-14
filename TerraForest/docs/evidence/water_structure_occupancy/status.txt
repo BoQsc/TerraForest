@@ -15,7 +15,8 @@ placement or claim coverage of the reverse water-into-building direction.
 
 Required integration covers both placement directions, shape-aware occupancy,
 removal, history, cache invalidation and reload. A terrain-only guard does not
-complete that work. Do not silently erase water to make a structure fit.
+complete that work. User decision on 2026-10-14: building solids should delete the water they replace,
+matching terrain deposition. This supersedes the former rejection policy.
 
 Kept separate from the active bucket-usability issue. No runtime changes were
 made while preserving this evidence. Human acceptance of recent refill fixes
