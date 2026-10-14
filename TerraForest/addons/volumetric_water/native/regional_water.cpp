@@ -403,7 +403,14 @@ bool NativeRegionalWater::plan_local_refill(Vector3i target,const Vector3 &aim,u
         for(int axis: {0,2}){bool sides[2]={false,false};
             for(int side=0;side<2;side++)for(int step=1;step<=R;step++){
                 Vector3i p=sites[i].p;p[axis]+=(side?1:-1)*step;int j=find(p);
-                if(j<0)break;if(sites[j].body){sides[side]=true;break;}}
+                if(j<0){
+                    // A solid bank bounds a refill hole just as existing water
+                    // does. Missing/unprepared cells do not establish a bank.
+                    const Region *r=get(p);
+                    if(at(p)>=0&&r&&!profile(*r,index(p)).capacity())sides[side]=true;
+                    break;
+                }
+                if(sites[j].body){sides[side]=true;break;}}
             if(sides[0]&&sides[1])return true;}
         return false;
     };

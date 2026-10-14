@@ -1,0 +1,19 @@
+2026-10-14: Repair with water collected elsewhere
+
+Human review rejected the prior bucket experience. The reported difficulty is
+refilling missing water using water collected from another area. General visual
+and interaction acceptance remains open.
+
+Reproduced defect: a gap at a solid bank corner failed restoration despite a
+successful pour. The local refill classifier required existing water on opposite
+sides and did not recognize solid banks as boundaries. It now accepts prepared
+solid cells as bounds; missing/unprepared regions are never treated as banks.
+Actual added water still has to connect to the existing body. No flow was added.
+
+Native tests cover corner, edge and interior, plus a second bucket collected
+elsewhere repairing the first hole while conserving all water. Actual-world
+input test leaves the first scoop on dry ground, collects another lake area,
+returns to the original shore and restores every removed cell. The six-unit
+separate-pool cached-reload/recovery regression passes after the change.
+Both native DLL variants rebuilt. Tests do not establish broad usability or
+address every large/deep or previously malformed hole; human acceptance is open.
