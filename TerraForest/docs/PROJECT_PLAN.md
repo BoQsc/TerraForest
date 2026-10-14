@@ -12,6 +12,14 @@ This is the current delivery-order and coverage reference. [Delivery history](DE
 
 ## Current water implementation and remaining gate - 2026-10-14
 
+Human refill acceptance, 2026-10-14: the user confirms that refilling the
+troublesome hole with water collected elsewhere now works predictably. The
+reported bucket-refill issue is closed; do not keep treating it as awaiting
+review. Evidence: `evidence/water_bank_repair/status.txt`. This does not close
+construction occupancy, broader visuals or performance qualification. The
+reproduced construction overlap remains failing: see
+`evidence/water_structure_occupancy/status.txt`.
+
 The installed game has static water, whole-unit bucket interaction, and compound
 save/reload. Actual-world checks cover adjacent/stacked placement, complete recovery,
 mined ground, and use after disk reload. Evidence is in
