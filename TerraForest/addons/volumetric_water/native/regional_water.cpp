@@ -363,9 +363,70 @@ bool NativeRegionalWater::bucket_footprint(Vector3i target,const Vector3 &aim,ui
     // placement performs its existing exact capacity/connectivity validation.
     return true;
 }
+// An explicit nearby pour restores connected missing volume before stacking.
+// Read only prepared local cells: no simulation, global search, or remote loads.
+bool NativeRegionalWater::plan_local_refill(Vector3i target,const Vector3 &aim,uint64_t amount,Placement &take) const{
+    struct Site{Vector3i p;WaterCellProfile shape;uint64_t stored=0,desired=0,added=0;bool body=false,queued=false;};
+    constexpr int R=4,N=9;std::vector<Site> sites;sites.reserve(N*N*N);
+    std::array<int,N*N*N> ids;ids.fill(-1);
+    auto at=[&](Vector3i p){Vector3i d=p-target+Vector3i(R,R,R);return d.x<0||d.y<0||d.z<0||d.x>=N||d.y>=N||d.z>=N?-1:d.x+N*(d.y+N*d.z);};
+    auto find=[&](Vector3i p){int i=at(p);return i<0?-1:ids[i];};
+    int seed=-1;double best=1e30;
+    for(int z=-R;z<=R;z++)for(int y=-R;y<=R;y++)for(int x=-R;x<=R;x++){
+        Vector3i p=target+Vector3i(x,y,z);const Region *r=get(p);if(!r)continue;
+        auto shape=profile(*r,index(p));if(!shape.capacity())continue;
+        uint64_t stored=r->water[index(p)];int id=int(sites.size());ids[at(p)]=id;sites.push_back({p,shape,stored});
+        if(stored){Vector3 center=Vector3(p)*.5+Vector3(.25,.25,.25);double distance=center.distance_squared_to(aim);
+            if(distance<best){best=distance;seed=id;}}
+    }
+    // A separate dry placement must not be redirected to a distant lake.
+    if(seed<0||best>1.0)return false;
+    auto connects=[&](const Site&a,uint64_t av,const Site&b,uint64_t bv){
+        if(!av||!bv)return false;Vector3i d=b.p-a.p;
+        return d.y<0?joined_vertical(b.shape,bv,a.shape,av):d.y>0?joined_vertical(a.shape,av,b.shape,bv):
+            joined(a.shape,av,b.shape,bv,d.x?0:2,d.x?d.x>0:d.z>0);
+    };
+    std::vector<int> body;body.push_back(seed);sites[seed].body=true;double level=-1e30;
+    for(size_t q=0;q<body.size();q++){
+        auto &a=sites[body[q]];level=std::max(level,a.p.y*500.0+a.shape.head(a.stored));
+        for(int d=0;d<6;d++){int j=find(a.p+directions[d]);if(j<0||sites[j].body)continue;
+            if(connects(a,a.stored,sites[j],sites[j].stored)){sites[j].body=true;body.push_back(j);}}
+    }
+    for(auto &s:sites){double volume=s.shape.volume(std::clamp(level-s.p.y*500.0,0.0,500.0));
+        s.desired=std::min(s.shape.capacity(),uint64_t(std::max(0.0,std::floor(volume+1e-6))));}
+    auto rank=[&](int i){return (Vector3(sites[i].p)*.5+Vector3(.25,.25,.25)).distance_squared_to(aim);};
+    auto farther=[&](int a,int b){auto ra=rank(a),rb=rank(b);return ra!=rb?ra>rb:key(sites[a].p)>key(sites[b].p);};
+    std::priority_queue<int,std::vector<int>,decltype(farther)> queue(farther);
+    // Refill a gap inside the body, not unused ground around a separate pool.
+    auto bounded_gap=[&](int i){
+        if(sites[i].body)return true;
+        for(int axis: {0,2}){bool sides[2]={false,false};
+            for(int side=0;side<2;side++)for(int step=1;step<=R;step++){
+                Vector3i p=sites[i].p;p[axis]+=(side?1:-1)*step;int j=find(p);
+                if(j<0)break;if(sites[j].body){sides[side]=true;break;}}
+            if(sides[0]&&sides[1])return true;}
+        return false;
+    };
+    auto enqueue=[&](int i){if(i>=0&&!sites[i].queued&&sites[i].desired>sites[i].stored+sites[i].added&&bounded_gap(i)){sites[i].queued=true;queue.push(i);}};
+    for(int i:body){enqueue(i);for(int d=0;d<6;d++)enqueue(find(sites[i].p+directions[d]));}
+    uint64_t remaining=amount;Placement proposed;
+    while(!queue.empty()&&remaining){
+        int i=queue.top();queue.pop();auto &a=sites[i];a.queued=false;
+        uint64_t give=std::min(remaining,a.desired-a.stored-a.added);if(!give)continue;
+        bool connected=a.body;
+        for(int d=0;d<6&&!connected;d++){int j=find(a.p+directions[d]);if(j<0)continue;const auto &b=sites[j];
+            if((b.body||b.added)&&connects(a,a.stored+a.added+give,b,b.stored+b.added))connected=true;}
+        if(!connected)continue;
+        a.added+=give;remaining-=give;proposed.emplace_back(a.p,give);
+        for(int d=0;d<6;d++)enqueue(find(a.p+directions[d]));
+    }
+    if(remaining)return false;
+    take=std::move(proposed);return true;
+}
 bool NativeRegionalWater::plan_placement(Vector3i target,const Vector3 &aim,uint64_t amount,Placement &take,Dictionary &out){
     Region *origin=get(target,true);
     if(!origin){out["pending"]=in_domain(target)&&!limit;out["reason"]="Preparing water at this location";return false;}
+    if(plan_local_refill(target,aim,amount,take))return true;
     uint64_t held=origin->water[index(target)],capacity=profile(*origin,index(target)).capacity();
     // A top-up that fits its existing cell needs no neighbouring region work.
     if(held>0&&held<=capacity&&amount<=capacity-held){take.emplace_back(target,amount);return true;}

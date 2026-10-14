@@ -1,0 +1,26 @@
+2026-10-14: Nearby bucket return
+
+Cause: placement considered a narrow footprint and counted air above water as
+available. Five of six half-metre-offset return cases failed exact restoration;
+the old same-aim case passed. before.log records this counterexample.
+
+Correction: an explicit pour first tries prepared cells within two metres of the
+aim cell, filling connected gaps below the nearby body's existing water level.
+Empty gap cells must be bounded by existing water on opposite horizontal sides;
+this avoids expanding a separate dry-ground pool and impairing its recovery.
+The transaction still transfers exactly one cubic metre or nothing. There is no
+idle simulation, global search, flow or spillage. Dry-ground placement retains
+its existing path when the local gap cannot accept a full unit.
+
+Validation on final debug DLL:
+- Six native changed-aim round trips restore every initial cell.
+- Actual review world: shoreline scoop, shift camera +0.5 / -0.5 metres, return
+  with real input dispatch; all initial lake cell quantities restored exactly.
+  Captured image inspected: no added pillar. See shore.json and shore.png.
+- Six adjacent/stacked dry-ground pours, cached reload, complete recovery pass,
+  including mesh connectivity and no stranded remainder. See pool_pass.log.
+- Existing water_transfer_volume atomic/quantity checks pass.
+Both debug and release DLLs rebuilt. These short checks are not endurance or
+universal visual acceptance. Already placed pillars are not automatically moved.
+The shore harness does not record frame timings; max_frame_ms=0 is unavailable,
+not a zero-cost frame claim. Dispatch/publication/native timing fields are valid.

@@ -1,0 +1,21 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS Scoop one unit
+RETURN (0.0, 0.0, 0.0) result={ "ok": true, "pending": false, "water_ml": 1000000, "units": 1, "reason": "Placed one water unit (1 m3)", "point": (42.0, 41.0, 42.0) } exact_restore=true
+PASS Return from a nearby angle refills the missing volume instead of building a pillar
+PASS Scoop one unit
+RETURN (0.5, 0.0, 0.0) result={ "ok": true, "pending": false, "water_ml": 1000000, "units": 1, "reason": "Placed one water unit (1 m3)", "point": (42.5, 41.5, 41.5) } exact_restore=false
+FAIL Return from a nearby angle refills the missing volume instead of building a pillar
+PASS Scoop one unit
+RETURN (-0.5, 0.0, 0.0) result={ "ok": true, "pending": false, "water_ml": 1000000, "units": 1, "reason": "Placed one water unit (1 m3)", "point": (41.0, 41.5, 41.5) } exact_restore=false
+FAIL Return from a nearby angle refills the missing volume instead of building a pillar
+PASS Scoop one unit
+RETURN (0.0, 0.0, 0.5) result={ "ok": true, "pending": false, "water_ml": 1000000, "units": 1, "reason": "Placed one water unit (1 m3)", "point": (41.5, 41.5, 42.5) } exact_restore=false
+FAIL Return from a nearby angle refills the missing volume instead of building a pillar
+PASS Scoop one unit
+RETURN (0.0, 0.0, -0.5) result={ "ok": true, "pending": false, "water_ml": 1000000, "units": 1, "reason": "Placed one water unit (1 m3)", "point": (41.5, 41.5, 41.0) } exact_restore=false
+FAIL Return from a nearby angle refills the missing volume instead of building a pillar
+PASS Scoop one unit
+RETURN (0.5, 0.0, 0.5) result={ "ok": true, "pending": false, "water_ml": 1000000, "units": 1, "reason": "Placed one water unit (1 m3)", "point": (42.5, 41.5, 42.0) } exact_restore=false
+FAIL Return from a nearby angle refills the missing volume instead of building a pillar
+WATER_RETURN_NEARBY failures=5
