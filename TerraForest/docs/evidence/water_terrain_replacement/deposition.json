@@ -1,0 +1,6 @@
+{
+  "failures": 0,
+  "removed_ml": 1000000,
+  "scope": "Actual terrain placement, water snapshot reload and terrain removal",
+  "target": "(803, 47, 1292)"
+}

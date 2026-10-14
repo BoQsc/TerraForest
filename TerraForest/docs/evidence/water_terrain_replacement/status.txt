@@ -1,0 +1,24 @@
+2026-10-14: Terrain solid replaces water
+
+User explicitly prefers terrain placement deleting the water it replaces.
+This supersedes the former reject-solid-over-water rule. It is intentional
+quantity destruction by terrain placement, without bucket credit or flow.
+
+Terrain worker command 33 returns explicit terrain-cube occupancy for bounded
+batches. Water patches include these cubes as closed half-metre cells. Accepted
+terrain deposition marks affected regions for water replacement; after the new
+terrain patch arrives, water is limited to the available volume below its prior
+head. Other cells retain their quantities. Mining-only invalidation does not
+perform this deletion. Native work remains local to invalidated regions.
+
+Water snapshot version 7 serializes pending replacement, with the existing
+contact payload layout. Older caches rebuild once through LakeWorld. This is
+terrain integration only; separate structure-addon blocks are not yet included.
+
+Actual-world check: one full terrain cube removes exactly 1,000,000 ml; distant
+water unchanged; pending replacement survives water snapshot restoration;
+completed deletion survives reload; removing the cube restores no water.
+Smooth sphere deposition also deletes water, and subsequent excavation does
+not restore it. Ordinary mining regression passes. Water-only snapshot reload
+is tested here, not a fresh full compound-disk round trip for this new change.
+Curved contact accuracy remains bounded by the existing water occupancy model.

@@ -1,35 +1,47 @@
 # SPDX-License-Identifier: 0BSD
 extends "res://tests/water_static_mining.gd"
-const Codec=preload("res://addons/volumetric_terrain/mesh_codec.gd")
 func run():
  game=load("res://demo/world.tscn").instantiate();game.background_fps=60;root.add_child(game)
  var deadline:=Time.get_ticks_msec()+35000
  while not game.has_meta("water_bucket_review_ready") and Time.get_ticks_msec()<deadline:await process_frame
- check(game.has_meta("water_bucket_review_ready"),"Actual lake review world ready")
+ check(game.has_meta("water_bucket_review_ready"),"Actual lake prepared")
  if failures:await finish();return
  game.set_process(false);game.set_physics_process(false);game._clear_motion()
  game.session_menu.toggle_developer()
  var entry:Dictionary=game.lakes._lakes.values()[0]
- var target:=Vector3(entry.seed.x+3,entry.level-0.5,entry.seed.z)
- check(game.lakes.depth_at(target)>0,"Solid placement target contains water")
- var before:PackedByteArray=game.terrain.backend.native.execute(Codec.command(4))
- var water_before:=amounts(game.lakes.capture_snapshot())
- var notices:Array[String]=[]
- game.terrain.message_changed.connect(func(message:String):notices.append(message))
- check(not game.terrain.sculpt_sphere(target,1.5,true),"Adding solid terrain into water is rejected before mutation")
- check(notices.any(func(message:String):return message.contains("scoop or remove")),"Rejected addition explains how to clear the area")
- check(not game.terrain.set_block(Vector3i(target.floor()),1),"Exact terrain block cannot occupy stored water")
- var dry:=target+Vector3(18,0,18)
- var batch:Array[PackedByteArray]=[Codec.brush(dry,dry,1.5,0,true,1),Codec.brush(target,target,1.5,0,true,1)]
- check(not game.terrain.edit(batch[0],dry.min(target),dry.max(target),0,batch),"Mixed dry/wet terrain batch rejects atomically")
- check(await ready_water(),"No outstanding edit work")
- check(game.terrain.backend.native.execute(Codec.command(4))==before,"Rejected addition leaves terrain unchanged")
- check(amounts(game.lakes.capture_snapshot())==water_before and game.lakes.depth_at(target)>0,"Water remains visible and owned instead of buried")
- check(game.terrain.sculpt_sphere(dry,1.5,true),"Solid terrain addition remains available away from water")
- check(await ready_water(),"Dry terrain addition publishes normally")
- check(game.terrain.sculpt_sphere(target,1.5,false),"Excavation inside water remains allowed")
- check(await ready_water(),"Excavation and water contact updates publish")
- check(amounts(game.lakes.capture_snapshot())==water_before,"Admission and excavation do not destroy or move water")
+ var target:=Vector3i(floori(entry.seed.x+3),floori(entry.level)-1,floori(entry.seed.z))
+ var before:=amounts(game.lakes.capture_snapshot());var total:int=game.lakes.statistics().water_ml
+ check(game.lakes.depth_at(Vector3(target)+Vector3.ONE*.5)>0,"Terrain placement starts inside water")
+ check(game.terrain.set_block(target,1),"Solid terrain placement in water is accepted")
+ check(game.lakes.restore_snapshot(game.lakes.capture_snapshot()),"Pending terrain displacement survives water snapshot reload")
+ check(await ready_water(),"Solid terrain and water publish")
+ var after:=amounts(game.lakes.capture_snapshot());var removed:int=total-game.lakes.statistics().water_ml
+ check(removed>0,"Solid deposition deletes replaced water")
+ check(game.lakes.depth_at(Vector3(target)+Vector3.ONE*.5)==0,"Placed solid contains no water")
+ var untouched:=true
+ for key in before:
+  var parts:PackedStringArray=key.split(":");var region:int=int(parts[0]);var i:int=int(parts[1])
+  var cell:=Vector3i((region>>24)&4095,(region>>12)&4095,region&4095)*8+Vector3i(i%8,(i/8)%8,i/64)
+  if not AABB(Vector3(target)-Vector3.ONE,Vector3.ONE*3).has_point(Vector3(cell)*.5):untouched=untouched and after.get(key,0)==before[key]
+ check(untouched,"Water beyond local terrain reconstruction remains unchanged")
+ var saved:PackedByteArray=game.lakes.capture_snapshot()
+ check(game.lakes.restore_snapshot(saved),"Edited water snapshot reloads")
+ check(await ready_water(),"Reloaded surfaces publish")
+ check(amounts(game.lakes.capture_snapshot())==after,"Reload preserves deleted quantities exactly")
+ check(game.terrain.set_block(target,0),"Remove the placed terrain")
+ check(await ready_water(),"Terrain removal publishes")
+ check(amounts(game.lakes.capture_snapshot())==after,"Digging out the solid does not resurrect deleted water")
+ # Smooth deposition uses the same occupied-volume replacement path.
+ var sphere:=Vector3(target)+Vector3(4,.5,0)
+ var smooth_before:int=game.lakes.statistics().water_ml
+ check(game.terrain.sculpt_sphere(sphere,1.5,true),"Smooth terrain deposition into water accepted")
+ check(await ready_water(),"Smooth deposition publishes")
+ var smooth_after:=amounts(game.lakes.capture_snapshot())
+ check(game.lakes.statistics().water_ml<smooth_before,"Smooth deposition removes replaced water")
+ check(game.terrain.sculpt_sphere(sphere,1.5,false),"Mine smooth deposited terrain")
+ check(await ready_water(),"Smooth excavation publishes")
+ check(amounts(game.lakes.capture_snapshot())==smooth_after,"Smooth excavation does not restore deleted water")
+ var file:=FileAccess.open("res://reports/water_solid_overlap.json",FileAccess.WRITE);file.store_string(JSON.stringify({"failures":failures,"removed_ml":removed,"target":target,"scope":"Actual terrain placement, water snapshot reload and terrain removal"},"  "));file.close()
  await finish()
 func finish():
  if is_instance_valid(game):game.terrain.shutdown();game.queue_free()

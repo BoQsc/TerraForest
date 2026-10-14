@@ -12,6 +12,13 @@ This is the current delivery-order and coverage reference. [Delivery history](DE
 
 ## Current water implementation and remaining gate - 2026-10-14
 
+Terrain replacement policy, 2026-10-14: the user explicitly wants solid terrain
+to delete water that it replaces. The former rejection rule is superseded.
+Cubes and smooth deposition, pending water snapshot reload, no resurrection
+after excavation, and the bucket-pool regression pass. See
+`evidence/water_terrain_replacement/status.txt` for scope and limits. This does
+not yet integrate separate structure-addon blocks.
+
 Human refill acceptance, 2026-10-14: the user confirms that refilling the
 troublesome hole with water collected elsewhere now works predictably. The
 reported bucket-refill issue is closed; do not keep treating it as awaiting

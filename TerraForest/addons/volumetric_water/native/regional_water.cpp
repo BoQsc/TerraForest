@@ -66,6 +66,14 @@ int64_t NativeWaterTerrainPatch::sample_terrain(Object *core,int64_t budget,int6
         ceiling[i]=uint16_t(std::clamp(int(std::floor(hi)),int(floor[i]),500));
         if(coord.y*8+y<2||coord.y*8+y>=509)floor[i]=ceiling[i]=500;
     }
+    // Explicit one-metre terrain cubes are separate from smooth density.
+    // Query cell centres on the same pinned worker revision.
+    PackedByteArray blocks;blocks.resize(12+512*12);blocks.encode_u32(0,33);blocks.encode_u32(4,rev);blocks.encode_u32(8,512);
+    for(int i=0;i<512;++i){Vector3 p=Vector3(coord)*4.0+Vector3(i%8,(i/8)%8,i/64)*.5+Vector3(.25,.25,.25);
+        blocks.encode_float(12+i*12,p.x);blocks.encode_float(16+i*12,p.y);blocks.encode_float(20+i*12,p.z);}
+    PackedByteArray occupied=core->call("execute",blocks);
+    if(!reply_ok(occupied,20+512*4)||occupied.decode_u32(12)!=uint64_t(rev))return status=-4;
+    for(int i=0;i<512;++i)if(occupied.decode_float(20+i*4)>0)floor[i]=ceiling[i]=500;
     // Retain the terrain triangles themselves, clipped only in X/Z. No
     // conversion to another density grid or four-corner floor approximation.
     auto prepared=std::make_shared<TerrainWaterContacts>();
@@ -95,7 +103,7 @@ int64_t NativeWaterTerrainPatch::sample_terrain(Object *core,int64_t budget,int6
         for(int y=0;y<8;++y){double bottom=(coord.y*8+y)*500.0;
             if(min_y>=bottom+1500||max_y<=bottom-1000)continue;
             float d[8];for(int c=0;c<8;++c)d[c]=density[x+(c&1)+9*(y+((c>>1)&1))+81*(z+((c>>2)&1))];
-            int cell=x+8*y+64*z;auto original=WaterCellProfile::make(d,true,floor[cell],ceiling[cell]);if(!original.cut)continue;
+            int cell=x+8*y+64*z;if(floor[cell]==ceiling[cell])continue;auto original=WaterCellProfile::make(d,true,floor[cell],ceiling[cell]);if(!original.cut)continue;
             if(max_y<=bottom&&original.maximum()<=0&&original.ceiling==500)continue;
             if(min_y>=bottom+500&&original.capacity()==0)continue;
             auto &out=prepared->floors[cell];out=column;for(auto &t:out)for(auto &p:t)p.y-=bottom;
@@ -112,7 +120,7 @@ void NativeRegionalWater::_bind_methods(){
     ClassDB::bind_method(D_METHOD("cell_geometry","point"),&NativeRegionalWater::cell_geometry);
     ClassDB::bind_method(D_METHOD("next_request"),&NativeRegionalWater::next_request);
     ClassDB::bind_method(D_METHOD("accept_patch","patch"),&NativeRegionalWater::accept_patch);
-    ClassDB::bind_method(D_METHOD("invalidate","bounds"),&NativeRegionalWater::invalidate);
+    ClassDB::bind_method(D_METHOD("invalidate","bounds","replace_water"),&NativeRegionalWater::invalidate,DEFVAL(false));
     ClassDB::bind_method(D_METHOD("advance","budget","seconds"),&NativeRegionalWater::advance,DEFVAL(1.0/60.0));
     ClassDB::bind_method(D_METHOD("begin_fill","bounds","level","seed","amount"),&NativeRegionalWater::begin_fill);
     ClassDB::bind_method(D_METHOD("remove_bounds","bounds"),&NativeRegionalWater::remove_bounds);
@@ -180,19 +188,33 @@ Dictionary NativeRegionalWater::next_request(){
 bool NativeRegionalWater::accept_patch(const Ref<NativeWaterTerrainPatch> &patch){
     if(patch.is_null()||patch->status!=1)return false;Key k=key(patch->coord);auto it=regions.find(k);if(it==regions.end())return false;
     preserve_mesh_region(k);if(restored_cache.count(k))++cache_rebuilds;
+    // Preserve the old water head while terrain occupancy is replaced. New
+    // solid removes only water below that head; it must not push water upward.
+    std::array<double,512> old_heads{};
+    const bool had_shape=it->second.has_density&&it->second.replace_water;
+    if(had_shape)for(int i=0;i<512;++i)if(it->second.water[i])old_heads[i]=profile(it->second,i).head(it->second.water[i]);
     it->second.density=patch->density;it->second.has_density=true;it->second.contacts=patch->contacts;
     if(mesh_set.insert(k).second)meshes.push_back(k);
     it->second.floor=patch->floor;it->second.ceiling=patch->ceiling;it->second.valid=true;sampled+=729;
     request_set.erase(k);requests.erase(std::remove(requests.begin(),requests.end(),k),requests.end());
     Vector3i base=patch->coord*8;
-    for(int i=0;i<512;++i)if(it->second.water[i])changed(base+Vector3i(i%8,(i/8)%8,i/64));
+    for(int i=0;i<512;++i)if(it->second.water[i]){
+        if(had_shape){
+            auto shape=profile(it->second,i);
+            uint64_t retained=uint64_t(std::max(0.0,std::round(shape.volume(old_heads[i]))));
+            retained=std::min(it->second.water[i],retained);
+            total-=it->second.water[i]-retained;it->second.water[i]=retained;
+        }
+        changed(base+Vector3i(i%8,(i/8)%8,i/64));
+    }
+    it->second.replace_water=false;
     prioritize_mesh(k);
     return true;
 }
-void NativeRegionalWater::invalidate(const AABB &bounds){
+void NativeRegionalWater::invalidate(const AABB &bounds,bool replace_water){
     if(!bounds.position.is_finite()||!bounds.size.is_finite())return;
     cancel_mesh_batch();
-    for(auto &[k,r]:regions)if(AABB(Vector3(position(k))*4.0,Vector3(4,4,4)).intersects(bounds.grow(0.5))){r.valid=false;request(k);}
+    for(auto &[k,r]:regions)if(AABB(Vector3(position(k))*4.0,Vector3(4,4,4)).intersects(bounds.grow(0.5))){r.valid=false;r.replace_water|=replace_water;request(k);}
 }
 bool NativeRegionalWater::begin_fill(const AABB &bounds,double level,const Vector3 &seed,int64_t amount){
     if(fill.running||!bounds.position.is_finite()||!bounds.size.is_finite()||!seed.is_finite()||!std::isfinite(level)||amount<-1||amount>int64_t(MAX_TOTAL-total))return false;
@@ -936,9 +958,9 @@ PackedByteArray NativeRegionalWater::capture_snapshot(const PackedByteArray &cat
     uint64_t contact_bytes=regions.size()*4;
     for(const auto &[k,r]:regions)if(r.contacts){contact_bytes+=512*4;for(const auto &cell:r.contacts->floors)contact_bytes+=cell.size()*36;}
     if(contact_bytes>64*1024*1024)return out;
-    out.resize(32+catalog.size()+regions.size()*REGION_BYTES+contact_bytes);out.encode_u32(0,MAGIC);out.encode_u32(4,6);out.encode_u32(8,catalog.size());out.encode_u32(12,regions.size());out.encode_u64(16,total);out.encode_u64(24,contact_bytes);
+    out.resize(32+catalog.size()+regions.size()*REGION_BYTES+contact_bytes);out.encode_u32(0,MAGIC);out.encode_u32(4,7);out.encode_u32(8,catalog.size());out.encode_u32(12,regions.size());out.encode_u64(16,total);out.encode_u64(24,contact_bytes);
     for(int i=0;i<catalog.size();++i)out.set(32+i,catalog[i]);int64_t offset=32+catalog.size();
-    for(const auto &[k,r]:regions){out.encode_u64(offset,k);out.encode_u32(offset+8,r.valid?1:0);out.encode_u32(offset+12,r.has_density?1:0);offset+=16;
+    for(const auto &[k,r]:regions){out.encode_u64(offset,k);out.encode_u32(offset+8,r.valid?1:0);out.encode_u32(offset+12,(r.has_density?1:0)|(r.replace_water?2:0));offset+=16;
         for(int i=0;i<512;++i){out.encode_u16(offset,r.floor[i]);out.encode_u16(offset+2,r.ceiling[i]);out.encode_u64(offset+4,r.water[i]);offset+=12;}
         for(float value:r.density){out.encode_float(offset,value);offset+=4;}}
     for(const auto &[k,r]:regions){out.encode_u32(offset,r.contacts?1:0);offset+=4;if(!r.contacts)continue;
@@ -947,7 +969,7 @@ PackedByteArray NativeRegionalWater::capture_snapshot(const PackedByteArray &cat
     return out;
 }
 bool NativeRegionalWater::decode(const PackedByteArray &data,bool install){
-    if(data.size()<32||data.decode_u32(0)!=MAGIC||(data.decode_u32(4)<1||data.decode_u32(4)>6)||(data.decode_u32(4)<6&&data.decode_u64(24)!=0)||data.decode_u64(24)>64*1024*1024)return false;
+    if(data.size()<32||data.decode_u32(0)!=MAGIC||(data.decode_u32(4)<1||data.decode_u32(4)>7)||(data.decode_u32(4)<6&&data.decode_u64(24)!=0)||data.decode_u64(24)>64*1024*1024)return false;
     const bool shaped=data.decode_u32(4)>=2;
     const uint32_t record_bytes=shaped?REGION_BYTES:OLD_REGION_BYTES;
     uint32_t bytes=data.decode_u32(8),count=data.decode_u32(12);uint64_t expected=data.decode_u64(16);
@@ -955,8 +977,8 @@ bool NativeRegionalWater::decode(const PackedByteArray &data,bool install){
     Ref<NativeLakeCatalog> validator;validator.instantiate();if(!validator->validate_snapshot(data.slice(32,32+bytes)))return false;
     std::map<Key,Region> staged;int64_t offset=32+bytes;uint64_t sum=0;Key previous=0;
     for(uint32_t n=0;n<count;++n){Key k=data.decode_u64(offset);uint32_t valid=data.decode_u32(offset+8),shape=data.decode_u32(offset+12);Vector3i p=position(k);
-        if(k!=key(p)||(n&&k<=previous)||p.x>=500||p.z>=500||p.y>=64||valid>1||shape>(shaped?1u:0u))return false;previous=k;offset+=16;
-        Region r;r.valid=valid;r.has_density=shape;
+        if(k!=key(p)||(n&&k<=previous)||p.x>=500||p.z>=500||p.y>=64||valid>1||shape>(data.decode_u32(4)>=7?3u:shaped?1u:0u))return false;previous=k;offset+=16;
+        Region r;r.valid=valid;r.has_density=shape&1;r.replace_water=shape&2;
         for(int i=0;i<512;++i){r.floor[i]=data.decode_u16(offset);r.ceiling[i]=data.decode_u16(offset+2);r.water[i]=data.decode_u64(offset+4);if(r.water[i]>>63){r.water[i]&=~(uint64_t(1)<<63);if(!r.water[i])return false;}offset+=12;
             if(r.floor[i]>r.ceiling[i]||r.ceiling[i]>500||r.water[i]>MAX_TOTAL-sum)return false;sum+=r.water[i];}
         if(shaped)for(float &value:r.density){value=data.decode_float(offset);offset+=4;if(!std::isfinite(value))return false;}

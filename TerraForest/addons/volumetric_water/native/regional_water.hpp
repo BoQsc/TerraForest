@@ -49,9 +49,10 @@ class NativeRegionalWater : public godot::RefCounted {
         std::array<uint64_t,512> water{};
         std::array<float,729> density{};
         std::shared_ptr<const TerrainWaterContacts> contacts;
-        bool valid=false,has_density=false;
+        bool valid=false,has_density=false,replace_water=false;
     };
     static WaterCellProfile profile(const Region &r,int i) {
+        if(r.floor[i]==r.ceiling[i])return WaterCellProfile::make(nullptr,false,r.floor[i],r.ceiling[i]);
         float d[8];int x=i%8,y=(i/8)%8,z=i/64;
         for(int c=0;c<8;++c)d[c]=r.density[x+(c&1)+9*(y+((c>>1)&1))+81*(z+((c>>2)&1))];
         auto result=WaterCellProfile::make(d,r.has_density,r.floor[i],r.ceiling[i]);
@@ -136,7 +137,7 @@ protected: static void _bind_methods();
 public:
     godot::Dictionary next_request();
     bool accept_patch(const godot::Ref<NativeWaterTerrainPatch> &patch);
-    void invalidate(const godot::AABB &bounds);
+    void invalidate(const godot::AABB &bounds,bool replace_water=false);
     void advance(int64_t budget,double seconds=1.0/60.0);
     bool begin_fill(const godot::AABB &bounds,double level,const godot::Vector3 &seed,int64_t amount);
     int64_t remove_bounds(const godot::AABB &bounds);

@@ -5,6 +5,7 @@ extends "res://addons/volumetric_terrain/terrain_stream.gd"
 signal surface_batch_ready(token: int, points: PackedVector3Array, normals: PackedVector3Array, epoch_id: int, revision: int)
 signal region_changed(bounds: AABB, revision: int)
 signal region_invalidated(bounds: AABB)
+signal solid_deposited(bounds: AABB)
 signal material_edit_ready(result: Dictionary)
 signal lake_slice_ready(token: int, status: int, epoch_id: int, revision: int)
 signal lake_cache_result(event: String, identity: String)
@@ -176,6 +177,10 @@ func edit(data: PackedByteArray, lo: Vector3, hi: Vector3, captured_us: int = 0,
 	if edit_admission.is_valid() and not edit_admission.call(selected): return false
 	var accepted: bool = super.edit(data, safe_lo, safe_hi, captured_us, selected, member_captures)
 	if accepted:
+		for packet:PackedByteArray in selected:
+			var kind:int=packet.decode_u32(0)
+			if (kind==2 and packet.decode_u32(36)!=0) or (kind==3 and packet.decode_u32(16)!=0) or kind==28:
+				solid_deposited.emit(AABB(safe_lo,safe_hi-safe_lo));break
 		region_invalidated.emit(AABB(safe_lo, safe_hi - safe_lo))
 	return accepted
 

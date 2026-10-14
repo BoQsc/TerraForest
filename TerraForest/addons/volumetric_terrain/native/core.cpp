@@ -1039,7 +1039,7 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
   for(int i=0;i<m.i.n;i++)out.u(m.i[i]);
   m.release();
  }
- else if(cmd==29||cmd==30||cmd==31){
+ else if(cmd==29||cmd==30||cmd==31||cmd==33){
   // Bounded read-only site probes. The worker owns the density field; never
   // sample it from the scene thread. Revision mismatch publishes no values.
   u32 revision=r.u(),count=r.u(),depth=cmd==30?r.u():0;
@@ -1053,7 +1053,8 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
   out.u(w.revision);out.u(count);
   for(u32 i=0;i<count;i++){
    const V3 &p=points[i];float value=0;
-   if(cmd==31){
+   if(cmd==33){value=w.blocks.get(block_key(fl(p.x),fl(p.y),fl(p.z)))>0?1.f:0.f;}
+   else if(cmd==31){
     // Authored vegetation must use the same interpolated lattice as natural
     // roots (command17), not a floor-rounded nearest corner (command29).
     int x=fl(p.x),y=fl(p.y),z=fl(p.z);float dx=p.x-x,dy=p.y-y,dz=p.z-z;

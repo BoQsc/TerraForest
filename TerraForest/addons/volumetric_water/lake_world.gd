@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: 0BSD
 extends Node3D
 const PublicationBudget=preload("res://addons/volumetric_water/publication_budget.gd")
-# Native store/flow/meshing. Script only coordinates worker hand-off, scene and UI.
+# Native static storage/meshing. Script only coordinates worker hand-off, scene and UI.
 signal bucket_completed(slot:int)
 signal interaction_finished(message:String)
 signal catalog_changed
@@ -64,43 +64,23 @@ func restore_snapshot(bytes:PackedByteArray) -> bool:
  clear();_next_id=decoded.next_id
  var cached:bool=bytes.decode_u32(0)==0x31575256
  if cached and not water.restore_snapshot(bytes):return false
- # Old saves retain quantities but must rebuild their derived terrain contact cache.
- if cached and bytes.decode_u32(4)<6:water.invalidate(AABB(Vector3.ZERO,Vector3(2000,256,2000)))
+ # Old saves retain quantities but rebuild contacts to include explicit terrain cubes.
+ if cached and bytes.decode_u32(4)<7:water.invalidate(AABB(Vector3.ZERO,Vector3(2000,256,2000)))
  for record:Dictionary in decoded.records:
   record.dirty=not cached;record.failure=""
   var state:PackedByteArray=record.get("water_state",PackedByteArray())
   record.amount=-1 if state.is_empty() else int(state.decode_u64(16))
   _lakes[record.id]=record
  catalog_changed.emit();return true
-func _admit_terrain_edit(bounds:AABB,commands:Array)->bool:
- # Commands have already been validated by the terrain facade. Only deposition
- # needs protection; excavation remains available beside and beneath water.
- for packet:PackedByteArray in commands:
-  var kind:int=packet.decode_u32(0)
-  var occupied_bounds:=bounds
-  if kind==2:
-   if packet.decode_u32(36)==0:continue
-   var a:=Vector3(packet.decode_float(4),packet.decode_float(8),packet.decode_float(12))
-   var b:=Vector3(packet.decode_float(16),packet.decode_float(20),packet.decode_float(24))
-   # Include one terrain lattice step for interpolation around the brush.
-   var extent:=Vector3.ONE*(packet.decode_float(28)+1.0)
-   occupied_bounds=AABB(a.min(b)-extent,a.max(b)-a.min(b)+extent*2)
-  elif kind==3:
-   if packet.decode_u32(16)==0:continue
-   occupied_bounds=AABB(Vector3(packet.decode_s32(4),packet.decode_s32(8),packet.decode_s32(12)),Vector3.ONE)
-  # Graded road beds use their validated conservative deposition bounds.
-  if water.overlaps_occupied(occupied_bounds):
-   terrain.message_changed.emit("Water occupies this area; scoop or remove it before adding solid terrain")
-   return false
- return true
 func _ready() -> void:
  if terrain==null or not prepare():set_process(false);return
  _material.shader=preload("res://addons/volumetric_water/water.gdshader")
  _material.set_shader_parameter("ripple_normal",preload("res://addons/volumetric_water/textures/water_ripples_normal.png"))
  terrain.lake_slice_ready.connect(_slice_ready);terrain.region_invalidated.connect(_invalidate)
+ terrain.solid_deposited.connect(func(bounds:AABB):water.invalidate(bounds,true))
  # Mining is admitted normally. Invalid regions retain their water and wait for
  # the committed terrain worker samples; they never flow against stale solids.
- terrain.water_edit_admission=_admit_terrain_edit
+ # Accepted terrain occupancy patches remove water replaced by solid terrain.
  _epoch=terrain.epoch
 func add_lake(origin:Vector3,cells:Vector3i,spacing:float,level:float,seed:Vector3) -> int:
  if _lakes.size()>=max_lakes:return 0
