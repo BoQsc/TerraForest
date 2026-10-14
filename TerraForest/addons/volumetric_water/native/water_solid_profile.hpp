@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: 0BSD
 #pragma once
-#include "water_solid_clip.hpp"
+#include "water_face_clip.hpp"
 #include <array>
 #include <cstdint>
 
@@ -17,6 +17,19 @@ private:
     std::vector<Segment> curve;
     std::vector<Hull> hulls;
     double full=0,low=0,high=0;
+    std::array<std::vector<std::vector<WaterFaceClip::Point>>,6> faces;
+    bool prepare_faces(){
+        size_t total=0;
+        for(auto &face:faces)face.clear();
+        for(int axis=0;axis<3;++axis)for(int side=0;side<2;++side)for(const auto &h:hulls){
+            auto polygon=WaterFaceClip::square();
+            for(auto plane:h.planes){if(!WaterFaceClip::project(polygon,plane,axis,side))return false;if(polygon.count<3)break;}
+            if(polygon.count<3||WaterFaceClip::area(polygon)<=1e-12)continue;
+            total+=polygon.count;if(total>MAX_VERTICES)return false;
+            faces[axis*2+side].emplace_back(polygon.points.begin(),polygon.points.begin()+polygon.count);
+        }
+        return true;
+    }
 public:
     bool prepare(const C::Pieces &pieces){
         if(pieces.size()>C::MAX_PIECES)return false;
@@ -58,7 +71,7 @@ public:
             double d1=v[1]-v[0],d2=v[2]-v[0],d3=v[3]-v[0];
             staged.curve.push_back({a,b,{v[0],9*d1-4.5*d2+d3,-22.5*d1+18*d2-4.5*d3,13.5*d1-13.5*d2+4.5*d3}});
         }
-        *this=std::move(staged);return true;
+        if(!staged.prepare_faces())return false;*this=std::move(staged);return true;
     }
     double volume(double y)const{
         if(y<=low)return 0;if(y>=high)return full;
@@ -109,6 +122,12 @@ public:
         for(size_t i=0;i<count;++i)if(p.y>=spans[i][0]-1e-9&&p.y<=spans[i][1]+1e-9){bottom=spans[i][0];top=spans[i][1];return true;}
         return false;
     }
+    template<class Emit> bool visit_face(int axis,int side,double head,Emit emit)const{
+        for(const auto &points:faces[axis*2+side]){WaterFaceClip::Polygon p;p.count=points.size();std::copy(points.begin(),points.end(),p.points.begin());
+            if(!WaterFaceClip::wet(p,axis,side,head))continue;
+            if(p.count>=3&&WaterFaceClip::area(p)>1e-12&&emit(p))return true;}
+        return false;
+    }
     size_t encoded_size()const{size_t n=5+curve.size()*6;for(const auto &h:hulls)n+=1+h.planes.size()*4;return n;}
     std::vector<double> encode()const{
         std::vector<double> out{full,low,high,double(curve.size()),double(hulls.size())};
@@ -144,8 +163,8 @@ public:
             staged.hulls.push_back(std::move(hull));
         }
         if(at!=data.size()||(staged.full>0&&(staged.curve.empty()||staged.hulls.empty())))return false;
-        *this=std::move(staged);return true;
+        if(!staged.prepare_faces())return false;*this=std::move(staged);return true;
     }
-    size_t bytes()const{size_t n=sizeof(*this)+curve.capacity()*sizeof(Segment)+hulls.capacity()*sizeof(Hull);for(const auto &h:hulls)n+=h.planes.capacity()*sizeof(C::Plane);return n;}
+    size_t bytes()const{size_t n=sizeof(*this)+curve.capacity()*sizeof(Segment)+hulls.capacity()*sizeof(Hull);for(const auto &h:hulls)n+=h.planes.capacity()*sizeof(C::Plane);for(const auto &face:faces){n+=face.capacity()*sizeof(std::vector<WaterFaceClip::Point>);for(const auto &p:face)n+=p.capacity()*sizeof(WaterFaceClip::Point);}return n;}
 };
 }

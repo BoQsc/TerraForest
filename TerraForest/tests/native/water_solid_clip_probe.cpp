@@ -59,5 +59,16 @@ int main(){
  check(loaded.decode(encoded)&&near(loaded.capacity(),cache.capacity())&&near(loaded.volume(.31),cache.volume(.31)),"Prepared occupancy codec preserves exact values");
  auto bad=encoded;bad[0]=1;check(!loaded.decode(bad)&&near(loaded.capacity(),cache.capacity()),"Bad occupancy cache fails atomically");
  bad=encoded;bad.push_back(0);check(!loaded.decode(bad),"Occupancy codec rejects trailing data");
+ auto slope=box({0,0,0},{.5,.5,.5});slope.push_back({{0,1,-1},0});
+ plain.solid=nullptr;check(plain.solid_remainder(500,{slope},actual)&&cache.prepare(actual),"Prepare slope face fixture");plain.solid=&cache;
+ auto neighbour=terraforest::WaterCellProfile::make(nullptr,false,0,500);
+ check(!terraforest::WaterCellProfile::face_overlap(plain,500,neighbour,500,2,1),"Solid end of slope is not a water connection");
+ check(terraforest::WaterCellProfile::face_overlap(plain,500,neighbour,500,2,0),"Open end of slope remains connected");
+ check(!terraforest::WaterCellProfile::face_overlap(neighbour,500,plain,500,2,0),"Sealed face is symmetric across neighbours");
+ check(loaded.decode(cache.encode()),"Clipped-face cache restores");plain.solid=&loaded;
+ check(!terraforest::WaterCellProfile::face_overlap(plain,500,neighbour,500,2,1),"Restored cache preserves sealed slope face");
+ plain.solid=nullptr;check(plain.solid_remainder(500,{box({0,.25,0},{.5,.5,.5})},actual)&&cache.prepare(actual),"Prepare occupied ceiling fixture");plain.solid=&cache;
+ check(!terraforest::WaterCellProfile::vertical_overlap(plain,500,neighbour,500),"Solid ceiling blocks vertical water connection");
+ check(terraforest::WaterCellProfile::vertical_overlap(neighbour,500,plain,500),"Open underside retains vertical connection");
  std::printf("WATER_SOLID_CLIP failures=%d\n",failures);return failures?1:0;
 }

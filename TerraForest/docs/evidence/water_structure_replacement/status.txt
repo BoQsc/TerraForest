@@ -27,3 +27,26 @@ Remaining before completion: full compound disk save with buildings and water,
 reverse bucket placement/removal around solids, edit history and region reload,
 partial-face connectivity, broader visual cases and targeted frame-cost checks.
 Do not describe these remaining gates as completed by the current tests.
+
+2026-10-14 integration follow-up (supersedes the open integration gates above):
+Normal compound disk save/reopen now includes a stair and sphere. Matching
+building geometry, every water-cell quantity, bucket inventory, terrain field
+and clipped empty spaces survive. Cached occupancy reloads without sampling;
+the restored bucket pours and a separate saved water unit can be recovered.
+
+Actual mouse-event bucket scoops/pours beside stairs, slopes and spheres each
+transfer exactly one unit, preserve dry building interiors and refill adjacent
+space. Post undo/redo, unchanged unload/reload, and resident region replacement
+pass. Resident replacement now emits cells_changed; unchanged paging preserves
+water caches byte-for-byte. Existing shape occupancy tests cover six shapes;
+these interaction tests are representative cases, not exhaustive combinations.
+
+A native regression reproduced incorrect connectivity through a solid slope
+face. Immutable clipped face polygons now supply solid-aware connectivity.
+Tests cover sealed/open slope faces, symmetry, cache reload, occupied ceilings
+and open undersides. The default terrain-only path retains its existing logic.
+No water simulation or spillage was added. Release cached-fixture reload passes.
+
+Remaining: targeted update/frame-cost profiling, broader visual acceptance and
+scale qualification. Earlier 170-435ms edit-to-publication figures are not a
+60fps frame-time guarantee. No claim of project-wide completion is made.

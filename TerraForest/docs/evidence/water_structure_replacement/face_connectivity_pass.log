@@ -1,0 +1,51 @@
+PASS Unit volume
+PASS Slab removes only lower half
+PASS Post preserves all surrounding water
+PASS Repeated solid does not double-delete
+PASS Removal respects existing partial water head
+PASS Overhang preserves water above and below
+PASS Lower disconnected interval remains representable
+PASS Slope preserves half cell
+PASS Sloped partial water volume is exact
+PASS Stair component clips
+PASS Stair component clips
+PASS Stair component clips
+PASS Stair component clips
+PASS Four-step stair removes actual volume
+PASS Touching solid does not delete water
+PASS Enclosing solid empties cell
+PASS Invalid clipping leaves output unchanged
+PASS Runtime terrain wedge converts to exact air volume
+PASS Runtime partial head matches terrain volume
+PASS Building deletes only water above existing terrain
+PASS Floor below cell is clipped without invented water
+PASS Prepare cached occupancy for terrain and overhang
+PASS Cached cubic volume agrees with clipping at 101 heights
+PASS Prepare two wet intervals
+PASS Runtime capacity subtracts slab exactly
+PASS Cached head conserves quantity across cavity
+PASS Cached head conserves quantity across cavity
+PASS Cached head conserves quantity across cavity
+PASS Cached head conserves quantity across cavity
+PASS Cached head conserves quantity across cavity
+PASS Cached head conserves quantity across cavity
+PASS Signed field preserves both intervals and excludes building
+PASS Depth below overhang stops at its underside
+PASS Depth above overhang starts at its top
+PASS Solid interior is never water
+PASS Prepare post cache
+PASS Runtime field keeps post dry with finite interpolation
+PASS Runtime interval includes surrounding water
+PASS Prepared occupancy codec preserves exact values
+PASS Bad occupancy cache fails atomically
+PASS Occupancy codec rejects trailing data
+PASS Prepare slope face fixture
+PASS Solid end of slope is not a water connection
+PASS Open end of slope remains connected
+PASS Sealed face is symmetric across neighbours
+PASS Clipped-face cache restores
+PASS Restored cache preserves sealed slope face
+PASS Prepare occupied ceiling fixture
+PASS Solid ceiling blocks vertical water connection
+PASS Open underside retains vertical connection
+WATER_SOLID_CLIP failures=0

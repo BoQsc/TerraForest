@@ -48,8 +48,9 @@ occupancy and validate inventory revisions before committing. Terrain deposition
 deletes the water its solid volume replaces; excavation does not restore it.
 Building cubes, slabs, stairs, slopes, posts and spheres participate in water
 occupancy: placing one deletes the water its solid shape replaces. Their empty
-portions retain water. Vehicle shapes are not yet included. Building bucket
-interactions and full compound disk-save validation remain open.
+portions retain water. Vehicle shapes are not yet included. Representative bucket
+interactions, edit history, region paging and compound disk-save checks pass;
+update latency and broader visual/scale qualification remain open.
 
 Mesh preparation/publication has bounded work queues and cooperative budgets.
 Bucket picking uses the published water surface. Cached meshes must be published

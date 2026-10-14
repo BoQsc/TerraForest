@@ -87,6 +87,18 @@ func run():
  check(await ready_water(),"Terrain replacement and water deletion publish before save")
  check(game.lakes.statistics().water_ml<volume_before,"Terrain replacement deletes water before compound save")
  check(game.lakes.depth_at(Vector3(replacement)+Vector3.ONE*.5)==0,"Replacement cube has no hidden water")
+ # Save partial building occupancy through the same compound world archive.
+ var construction_targets:Array=[Vector3i(floori(entry.seed.x+6),floori(entry.level)-1,floori(entry.seed.z)),Vector3i(floori(entry.seed.x+8),floori(entry.level)-1,floori(entry.seed.z))]
+ var construction_shapes:Array=[3,6]
+ var empty_points:Array=[Vector3(.5,.8,.1),Vector3(.9,.9,.9)]
+ var solid_points:Array=[Vector3(.5,.8,.9),Vector3(.5,.5,.5)]
+ game.construction_inventory.gameplay=false
+ for n in construction_targets.size():
+  var target:Vector3i=construction_targets[n]
+  check(game.lakes.depth_at(Vector3(target)+empty_points[n])>0,"Saved building starts with water in its empty space")
+  check(game.construction_inventory.place_block(game.structures.blocks,inventory,target,construction_shapes[n]),"Place partial building before compound save")
+  check(await ready_water(),"Building replacement publishes before disk save")
+  check(game.lakes.depth_at(Vector3(target)+solid_points[n])==0 and game.lakes.depth_at(Vector3(target)+empty_points[n])>0,"Partial building removes only its solid water volume")
  before=amounts(game.lakes.capture_snapshot())
  game.camera.global_position=above+Vector3(0,1,3);game.camera.look_at(point,Vector3.UP)
  for frame in 4:await process_frame
@@ -112,6 +124,11 @@ func run():
  check(game.terrain.backend.native.execute(Codec.command(4))==terrain_before,"Compound disk reload preserves the mined terrain field exactly")
  check(restore_stats.get("cache_hits",0)>0 and restore_stats.get("sampled_nodes",-1)==0,"Water occupancy restored from cache without resampling")
  check(game.lakes.depth_at(Vector3(replacement)+Vector3.ONE*.5)==0,"Disk reload does not resurrect water inside solid terrain")
+ check(restore_stats.get("structure_contact_bytes",0)>0,"Compound disk reload restores prepared building occupancy")
+ for n in construction_targets.size():
+  var target:Vector3i=construction_targets[n]
+  check(game.structures.blocks.get_cell(target)==construction_shapes[n],"Compound disk reload restores the matching building shape")
+  check(game.lakes.depth_at(Vector3(target)+solid_points[n])==0 and game.lakes.depth_at(Vector3(target)+empty_points[n])>0,"Disk reload retains water around partial building shape")
  if not game.session_menu.developer:game.session_menu.toggle_developer()
  check(game.terrain.set_block(replacement,0),"Remove saved replacement cube after disk reload")
  check(await ready_water(),"Saved cube removal and water contacts publish")

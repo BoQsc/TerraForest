@@ -1,0 +1,17 @@
+{
+  "cases": [
+    {
+      "notice": "60 FPS  ·  2662 trees  ·  162 cells\nLake ready · temporary world",
+      "shape": 3
+    },
+    {
+      "notice": "60 FPS  ·  2662 trees  ·  162 cells\nLake ready · temporary world",
+      "shape": 4
+    },
+    {
+      "notice": "60 FPS  ·  2662 trees  ·  162 cells\nLake ready · temporary world",
+      "shape": 6
+    }
+  ],
+  "failures": 0
+}

@@ -136,9 +136,30 @@ struct WaterCellProfile {
         if(result.area>0){result.x/=result.area;result.z/=result.area;}else result.x=result.z=0.5;
         return result;
     }
+    template<class Emit> bool visit_face(int axis,int side,double h,Emit emit)const{
+        if(solid)return solid->visit_face(axis,side,h*.001,emit);
+        using F=WaterFaceClip;using C=WaterSolidClip;bool found=false;
+        floor_triangles([&](const Triangle &t){
+            if(found)return;auto polygon=F::square();
+            C::Point points[3];C::Point center;
+            for(int i=0;i<3;++i){points[i]={t[i].x*.5,t[i].y*.001,t[i].z*.5};center=center+points[i];}center=center*(1.0/3);
+            // Bound the triangular X/Z footprint before applying its floor.
+            for(int i=0;i<3;++i){auto a=points[i],b=points[(i+1)%3];C::Point n{b.z-a.z,0,a.x-b.x};double offset=n.dot(a);
+                if(n.dot(center)>offset){n=n*(-1);offset=-offset;}
+                if(!F::project(polygon,{n,offset},axis,side))return;}
+            auto n=(points[1]-points[0]).cross(points[2]-points[0]);if(std::abs(n.y)<1e-15)return;if(n.y>0)n=n*(-1);
+            if(!F::project(polygon,{n,n.dot(points[0])},axis,side)||!F::wet(polygon,axis,side,std::min(h,ceiling)*.001))return;
+            if(polygon.count>=3&&F::area(polygon)>1e-12)found=emit(polygon);
+        });return found;
+    }
+    static bool clipped_face_overlap(const WaterCellProfile &a,double ah,const WaterCellProfile &b,double bh,int axis,int side){
+        return a.visit_face(axis,side,ah,[&](const WaterFaceClip::Polygon &ap){
+            return b.visit_face(axis,1-side,bh,[&](const WaterFaceClip::Polygon &bp){return WaterFaceClip::overlaps(ap,bp);});});
+    }
     // Exact overlap of two wet intervals along a shared horizontal face.
     // All inequalities are linear before floor/ceiling clipping.
     static bool face_overlap(const WaterCellProfile &a,double ah,const WaterCellProfile &b,double bh,int axis,int side){
+        if(a.solid||b.solid)return clipped_face_overlap(a,ah,b,bh,axis,side);
         std::array<double,770> breaks;size_t count=2;breaks[0]=0;breaks[1]=1;
         auto split=[&](const WaterCellProfile &shape,int face){if(!shape.contact)return;
             for(const auto&t:*shape.contact)for(auto p:t)if(std::abs((axis==0?p.x:p.z)-face)<1e-7)breaks[count++]=std::clamp(axis==0?p.z:p.x,0.0,1.0);};
@@ -160,6 +181,7 @@ struct WaterCellProfile {
         return false;
     }
     static bool vertical_overlap(const WaterCellProfile &low,double lh,const WaterCellProfile &high,double hh){
+        if(low.solid||high.solid)return clipped_face_overlap(low,lh,high,hh,1,1);
         const Point v[4]={{0,0,0},{1,0,0},{0,1,0},{1,1,0}};
         for(auto ids:std::array<std::array<int,3>,2>{{{{0,1,3}},{{0,3,2}}}}){
             std::array<Point,8> polygon{},next{};int count=3;

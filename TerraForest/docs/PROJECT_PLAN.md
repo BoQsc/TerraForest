@@ -12,6 +12,15 @@ This is the current delivery-order and coverage reference. [Delivery history](DE
 
 ## Current water implementation and remaining gate - 2026-10-14
 
+Building replacement integration follow-up: compound disk save/reopen with
+stairs and spheres, normal bucket clicks beside stairs/slopes/spheres, post
+undo/redo, unchanged region paging and resident region replacement now pass.
+Solid-aware face connectivity fixes traversal through occupied slope faces and
+ceilings. See `evidence/water_structure_replacement/` for current evidence.
+Update latency, broader visuals and scale qualification remain open. This
+supersedes the older open integration-gate statements below.
+
+
 Building replacement integration, 2026-10-14: the actual construction path now
 deletes water inside all six authored shapes while preserving their empty space.
 Actual-world checks and debug/release cached-water reload pass. Full compound

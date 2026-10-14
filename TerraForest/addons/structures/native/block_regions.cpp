@@ -108,7 +108,11 @@ bool NativeBlockWorld::restore_region_impl(const PackedByteArray &bytes,const Pa
     for(int z=0;z<4;z++)for(int y=0;y<4;y++)for(int x=0;x<4;x++)removed+=chunks.count({region.x*4+x,region.y*4+y,region.z*4+z});
     if(chunks.size()-removed+restored.size()>2048)return false;
     if(unloaded==unloaded_regions.end()&&bytes==expected_current)return true;
+    const bool replaces_resident=unloaded==unloaded_regions.end();
     unloaded_regions.erase(region);replace_region_chunks(region,std::move(restored),!preserve_history);
+    // Paging the same saved region preserves water caches. Replacing resident
+    // authored geometry must invalidate occupancy just like ordinary edits.
+    if(replaces_resident)emit_signal("cells_changed",AABB(Vector3(region.x*64,region.y*64,region.z*64),Vector3(64,64,64)));
     emit_signal("changed");return true;
 }
 Dictionary NativeBlockWorld::region_stats() const {
