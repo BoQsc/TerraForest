@@ -1,0 +1,9 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS Actual-world building occupancy snapshot restores
+PASS Reload uses cached structures without terrain sampling
+PASS Saved sphere interior stays dry
+PASS Saved sphere empty corner retains water
+PASS Cached world snapshot round-trips byte-exactly
+PASS Invalid snapshot cannot partially replace state
+WATER_STRUCTURE_CACHE failures=0

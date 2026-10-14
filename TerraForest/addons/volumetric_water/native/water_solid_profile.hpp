@@ -21,7 +21,11 @@ public:
     bool prepare(const C::Pieces &pieces){
         if(pieces.size()>C::MAX_PIECES)return false;
         WaterSolidProfile staged;std::vector<double> knots;size_t vertices=0;
-        for(const auto &piece:pieces){
+        // Roundoff can leave almost-flat fragments with fewer than four
+        // independent faces. Their total possible volume is below .001 ml per
+        // cell; do not cache unbounded pseudo-hulls from these fragments.
+        C::Pieces stable;for(const auto &piece:pieces)if(C::volume(piece)>1e-12)stable.push_back(piece);
+        for(const auto &piece:stable){
             if(piece.faces.size()>C::MAX_FACES)return false;
             C::Point center;size_t count=0;
             for(const auto &face:piece.faces)for(auto p:face){
@@ -37,15 +41,15 @@ public:
                 double offset=n.dot(face[0]);if(n.dot(center)>offset){n=n*(-1);offset=-offset;}
                 hull.planes.push_back({n,offset});
             }
-            if(!hull.planes.empty())staged.hulls.push_back(std::move(hull));
+            if(hull.planes.size()<4)return false;staged.hulls.push_back(std::move(hull));
         }
         if(knots.empty()){*this=std::move(staged);return true;}
         std::sort(knots.begin(),knots.end());
         knots.erase(std::unique(knots.begin(),knots.end(),[](double a,double b){return b-a<1e-9;}),knots.end());
         if(knots.size()>MAX_KNOTS)return false;
-        staged.low=knots.front();staged.high=knots.back();staged.full=C::volume(pieces);
+        staged.low=knots.front();staged.high=knots.back();staged.full=C::volume(stable);
         if(!std::isfinite(staged.full)||staged.full>.125+1e-9)return false;
-        auto at=[&](double y,double &v){C::Pieces cut;if(!C::below(pieces,y,cut))return false;v=C::volume(cut);return std::isfinite(v);};
+        auto at=[&](double y,double &v){C::Pieces cut;if(!C::below(stable,y,cut))return false;v=C::volume(cut);return std::isfinite(v);};
         // Polyhedral volume below a moving plane is cubic between vertex
         // heights. Fit in normalized local t to avoid large-coordinate loss.
         for(size_t i=1;i<knots.size();++i){
@@ -104,6 +108,43 @@ public:
         Intervals spans;size_t count=vertical_intervals(p.x,p.z,head,spans);
         for(size_t i=0;i<count;++i)if(p.y>=spans[i][0]-1e-9&&p.y<=spans[i][1]+1e-9){bottom=spans[i][0];top=spans[i][1];return true;}
         return false;
+    }
+    size_t encoded_size()const{size_t n=5+curve.size()*6;for(const auto &h:hulls)n+=1+h.planes.size()*4;return n;}
+    std::vector<double> encode()const{
+        std::vector<double> out{full,low,high,double(curve.size()),double(hulls.size())};
+        for(const auto &s:curve){out.push_back(s.low);out.push_back(s.high);for(auto c:s.polynomial)out.push_back(c);}
+        for(const auto &h:hulls){out.push_back(double(h.planes.size()));for(auto p:h.planes){out.push_back(p.normal.x);out.push_back(p.normal.y);out.push_back(p.normal.z);out.push_back(p.offset);}}
+        return out;
+    }
+    bool decode(const std::vector<double> &data){
+        if(data.size()<5||data.size()>131072)return false;
+        for(double v:data)if(!std::isfinite(v))return false;
+        auto integer=[](double v,size_t max){return v>=0&&v<=max&&v==std::floor(v);};
+        if(!integer(data[3],MAX_KNOTS)||!integer(data[4],C::MAX_PIECES)||data[0]<0||data[0]>.125+1e-9||data[1]<0||data[2]>.5||data[1]>data[2])return false;
+        WaterSolidProfile staged;staged.full=data[0];staged.low=data[1];staged.high=data[2];size_t at=5;
+        double previous_y=staged.low,previous_v=0;
+        for(size_t i=0;i<size_t(data[3]);++i){
+            if(at+6>data.size())return false;
+            Segment seg{data[at],data[at+1],{data[at+2],data[at+3],data[at+4],data[at+5]}};at+=6;
+            if(std::abs(seg.low-previous_y)>1e-9||seg.high<=seg.low||seg.high>staged.high+1e-9||std::abs(seg.polynomial[0]-previous_v)>1e-9)return false;
+            auto c=seg.polynomial;for(auto value:c)if(std::abs(value)>4)return false;
+            auto derivative=[&](double t){return c[1]+2*c[2]*t+3*c[3]*t*t;};
+            if(derivative(0)<-1e-9||derivative(1)<-1e-9)return false;
+            if(std::abs(c[3])>1e-15){double t=-c[2]/(3*c[3]);if(t>0&&t<1&&derivative(t)<-1e-9)return false;}
+            previous_y=seg.high;previous_v=c[0]+c[1]+c[2]+c[3];
+            if(previous_v< -1e-9||previous_v>staged.full+1e-9)return false;staged.curve.push_back(seg);
+        }
+        if(std::abs(previous_y-staged.high)>1e-9||std::abs(previous_v-staged.full)>1e-9)return false;
+        size_t plane_total=0;
+        for(size_t i=0;i<size_t(data[4]);++i){
+            if(at>=data.size()||!integer(data[at],C::MAX_FACES))return false;size_t count=size_t(data[at++]);
+            if(count<4||at+4*count>data.size()||(plane_total+=count)>MAX_VERTICES)return false;Hull hull;
+            for(size_t j=0;j<count;++j){C::Plane p{{data[at],data[at+1],data[at+2]},data[at+3]};at+=4;
+                if(std::abs(p.normal.dot(p.normal)-1)>1e-6||std::abs(p.offset)>2)return false;hull.planes.push_back(p);}
+            staged.hulls.push_back(std::move(hull));
+        }
+        if(at!=data.size()||(staged.full>0&&(staged.curve.empty()||staged.hulls.empty())))return false;
+        *this=std::move(staged);return true;
     }
     size_t bytes()const{size_t n=sizeof(*this)+curve.capacity()*sizeof(Segment)+hulls.capacity()*sizeof(Hull);for(const auto &h:hulls)n+=h.planes.capacity()*sizeof(C::Plane);return n;}
 };

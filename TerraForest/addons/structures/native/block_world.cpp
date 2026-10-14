@@ -115,6 +115,7 @@ bool NativeBlockWorld::apply_cells(const PackedInt32Array &records,bool record_h
     if(capture)changes.reserve(records.size()/4);
     // Stage touched chunks: bad records or a capacity overflow cannot partially edit a building.
     std::map<BlockKey,BlockChunk> staged;
+    AABB changed_bounds;bool has_bounds=false;
     for(int64_t i=0;i<records.size();i+=4) {
         int x=records[i],y=records[i+1],z=records[i+2],w=records[i+3];
         if(x<-LIMIT||x>LIMIT||y<-LIMIT||y>LIMIT||z<-LIMIT||z>LIMIT||!valid_word(w)) return false;
@@ -127,6 +128,7 @@ bool NativeBlockWorld::apply_cells(const PackedInt32Array &records,bool record_h
             it=staged.emplace(k,old==chunks.end()?BlockChunk{}:old->second).first;
         }
         auto &c=it->second; auto &v=c.cells[index(x,y,z)];
+        if(v!=w){AABB bounds(Vector3(x,y,z),Vector3(1,1,1));changed_bounds=has_bounds?changed_bounds.merge(bounds):bounds;has_bounds=true;}
         if(capture)changes.push_back({x,y,z,v,uint16_t(w)});
         c.count+=(w!=0)-(v!=0); v=uint16_t(w);
         auto &column=c.columns[(x&15)+16*(z&15)];
@@ -136,14 +138,12 @@ bool NativeBlockWorld::apply_cells(const PackedInt32Array &records,bool record_h
     int final_count=int(chunks.size());
     for(auto &entry:staged) final_count+=(entry.second.count>0)-(chunks.count(entry.first)>0);
     if(final_count>MAX_CHUNKS) return false;
-    AABB changed_bounds;bool has_bounds=false;
     for(auto &entry:staged) {
         auto old=chunks.find(entry.first);
         if(old!=chunks.end()&&old->second.cells==entry.second.cells) continue;
         if(old==chunks.end()&&entry.second.count==0) continue;
         auto k=entry.first; changed=true;
-        AABB chunk_bounds(Vector3(k.x*16,k.y*16,k.z*16),Vector3(16,16,16));
-        changed_bounds=has_bounds?changed_bounds.merge(chunk_bounds):chunk_bounds;has_bounds=true;
+        // Chunk bake dependencies remain separate from exact edited-cell bounds.
         if(entry.second.count) chunks[k]=std::move(entry.second); else chunks.erase(k);
         invalidate(k);
         // Halo dependencies are face neighbours. Conservatively invalidate all six.

@@ -12,6 +12,14 @@ This is the current delivery-order and coverage reference. [Delivery history](DE
 
 ## Current water implementation and remaining gate - 2026-10-14
 
+Building replacement integration, 2026-10-14: the actual construction path now
+deletes water inside all six authored shapes while preserving their empty space.
+Actual-world checks and debug/release cached-water reload pass. Full compound
+building+water disk saving, reverse bucket interactions, edit history, partial
+face connectivity and performance qualification remain open. Current evidence:
+`evidence/water_structure_replacement/status.txt`. This supersedes the earlier
+prerequisite-only notes below.
+
 Building clipping prerequisite, 2026-10-14: exact convex subtraction is now
 available from the terrain water profile, and building hull export shares the
 picking planes. Debug/release geometry checks pass. Runtime occupancy, meshing

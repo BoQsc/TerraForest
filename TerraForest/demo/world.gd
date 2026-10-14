@@ -269,6 +269,7 @@ func _ready() -> void:
 		else:player_hud.refresh())
 	lakes.name = "Lakes"
 	lakes.terrain = terrain
+	lakes.blocks = structures.blocks
 	add_child(lakes)
 	add_child(water_camera)
 	water_camera.configure(camera,lakes)

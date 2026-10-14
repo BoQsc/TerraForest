@@ -14,6 +14,10 @@ func hull_contains(hulls:Array,point:Vector3)->bool:
 func _initialize():
  GDExtensionManager.load_extension("res://addons/structures/structures.gdextension")
  var blocks=ClassDB.instantiate("NativeBlockWorld")
+ var notifications:Array=[]
+ blocks.cells_changed.connect(func(bounds:AABB):notifications.append(bounds))
+ blocks.set_cells(PackedInt32Array([0,0,0,1]))
+ check(not notifications.is_empty() and notifications.back()==AABB(Vector3.ZERO,Vector3.ONE),"One block notifies only its unit bounds")
  # Independent interior/exterior points distinguish real shapes from cell AABBs.
  var fixtures:Array=[
   [Vector3(.1,.9,.1),Vector3(1.1,.5,.5)],

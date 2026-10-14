@@ -61,10 +61,11 @@ Dictionary NativeBlockWorld::solid_hulls(const AABB &bounds) const {
         PackedFloat64Array hull;Vector3 center(.5,.5,.5),translation(x,y,z);
         visit_shape_hulls(word&7,[&](){hull=PackedFloat64Array();},[&](Vector3 n,double offset){
             Vector3 rotated=n;for(int r=0;r<((word>>3)&3);++r)rotated=Vector3(-rotated.z,rotated.y,rotated.x);
-            double local_offset=offset+rotated.dot(center+translation)-n.dot(center);
-            Vector3 world_normal=normal_frame.xform(rotated);double length=world_normal.length();
-            double world_offset=(local_offset+world_normal.dot(frame.origin))/length;world_normal/=length;
-            hull.push_back(world_normal.x);hull.push_back(world_normal.y);hull.push_back(world_normal.z);hull.push_back(world_offset);
+            auto dot=[](Vector3 a,Vector3 b){return double(a.x)*b.x+double(a.y)*b.y+double(a.z)*b.z;};
+            double local_offset=offset+dot(rotated,center+translation)-dot(n,center);
+            Vector3 world_normal=normal_frame.xform(rotated);double length=std::sqrt(dot(world_normal,world_normal));
+            double world_offset=(local_offset+dot(world_normal,frame.origin))/length;
+            hull.push_back(double(world_normal.x)/length);hull.push_back(double(world_normal.y)/length);hull.push_back(double(world_normal.z)/length);hull.push_back(world_offset);
         },[&](){hulls.push_back(hull);});
     }
     result["hulls"]=hulls;result["ok"]=true;return result;

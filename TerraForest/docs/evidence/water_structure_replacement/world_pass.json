@@ -1,0 +1,40 @@
+{
+  "block": 1,
+  "failures": 0,
+  "placed": true,
+  "shapes": [
+    {
+      "cache_bytes": 8480,
+      "publish_ms": 183.853,
+      "removed_ml": 500000,
+      "shape": 2
+    },
+    {
+      "cache_bytes": 19536,
+      "publish_ms": 253.152,
+      "removed_ml": 625000,
+      "shape": 3
+    },
+    {
+      "cache_bytes": 21888,
+      "publish_ms": 186.479,
+      "removed_ml": 500000,
+      "shape": 4
+    },
+    {
+      "cache_bytes": 38976,
+      "publish_ms": 170.465,
+      "removed_ml": 250000,
+      "shape": 5
+    },
+    {
+      "cache_bytes": 158336,
+      "publish_ms": 434.815,
+      "removed_ml": 466504,
+      "shape": 6
+    }
+  ],
+  "target": "(800, 47, 1292)",
+  "water_overlap": false,
+  "water_unchanged": false
+}

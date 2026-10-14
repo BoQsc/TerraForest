@@ -1,0 +1,38 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.3.280 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] New world
+[TerrainRewrite] New world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+[TerrainRewrite] Preparing your finite lake; terrain and water are being built
+[TerrainRewrite] Mined resources added to inventory
+[TerrainRewrite] Lake ready · temporary world
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Bucket review · disposable world
+PASS Actual lake prepared
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Empty hands - left mouse punches, E interacts
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Empty hands - left mouse punches, E interacts
+PASS Terrain placement starts inside water
+PASS Solid terrain placement in water is accepted
+PASS Pending terrain displacement survives water snapshot reload
+PASS Solid terrain and water publish
+PASS Solid deposition deletes replaced water
+PASS Placed solid contains no water
+PASS Water beyond local terrain reconstruction remains unchanged
+PASS Edited water snapshot reloads
+PASS Reloaded surfaces publish
+PASS Reload preserves deleted quantities exactly
+PASS Remove the placed terrain
+PASS Terrain removal publishes
+PASS Digging out the solid does not resurrect deleted water
+PASS Smooth terrain deposition into water accepted
+PASS Smooth deposition publishes
+PASS Smooth deposition removes replaced water
+PASS Mine smooth deposited terrain
+PASS Smooth excavation publishes
+PASS Smooth excavation does not restore deleted water
+[TerrainRewrite] Temporary test world: save skipped
+WATER_SOLID_OVERLAP failures=0

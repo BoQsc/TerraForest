@@ -19,6 +19,7 @@
 
 namespace terraforest {
 struct TerrainWaterContacts {uint64_t bytes=0;std::array<std::vector<WaterCellProfile::Triangle>,512> floors;};
+struct StructureWaterContacts {uint64_t bytes=sizeof(std::shared_ptr<const WaterSolidProfile>)*512;std::array<std::shared_ptr<const WaterSolidProfile>,512> cells;};
 // Immutable hand-off: only the terrain worker writes this object. No scene,
 // inventory or live water state is touched by the worker.
 class NativeWaterTerrainPatch : public godot::RefCounted {
@@ -29,11 +30,17 @@ class NativeWaterTerrainPatch : public godot::RefCounted {
     std::shared_ptr<const TerrainWaterContacts> contacts;
     std::array<float,729> density{};
     std::array<uint16_t,512> floor{},ceiling{};
+    std::vector<std::vector<WaterSolidClip::Plane>> structure_hulls;
+    std::shared_ptr<StructureWaterContacts> structures;
+    bool terrain_prepared=false;
+    int structure_cursor=0;
+    int64_t prepare_structures();
     int cursor=0,status=-1;
     int64_t revision=-1,epoch=-1;
 protected: static void _bind_methods();
 public:
     bool configure(const godot::Vector3i &coordinate);
+    bool set_structure_hulls(const godot::Array &hulls);
     int64_t sample_terrain(godot::Object *core,int64_t budget,int64_t rev,int64_t cancel);
     godot::Dictionary statistics() const;
 };
@@ -49,6 +56,7 @@ class NativeRegionalWater : public godot::RefCounted {
         std::array<uint64_t,512> water{};
         std::array<float,729> density{};
         std::shared_ptr<const TerrainWaterContacts> contacts;
+        std::shared_ptr<const StructureWaterContacts> structures;
         bool valid=false,has_density=false,replace_water=false;
     };
     static WaterCellProfile profile(const Region &r,int i) {
@@ -60,6 +68,7 @@ class NativeRegionalWater : public godot::RefCounted {
             result.contact=&r.contacts->floors[i];result.cut=true;result.ceiling=500;result.open_bottom=result.minimum()<0;
             for(int n=0;n<4;++n)result.floor[n]=result.raw_bottom(n&1,n>>1);
         }
+        if(r.structures&&r.structures->cells[i])result.solid=r.structures->cells[i].get();
         return result;
     }
     WaterCellProfile surface_profile(const godot::Vector3i &p,bool snapshot=false) const;
@@ -95,6 +104,7 @@ class NativeRegionalWater : public godot::RefCounted {
     std::deque<Key> requests,meshes;
     std::unordered_set<Key> request_set,mesh_set,restored_cache;
     uint64_t cache_rebuilds=0;
+    uint64_t solid_cache_bytes=0;
     uint64_t total=0,sampled=0,cache_hits=0,changes=0;
     uint64_t last_us=0,max_us=0,mesh_us=0,max_mesh_us=0;
     bool limit=false;

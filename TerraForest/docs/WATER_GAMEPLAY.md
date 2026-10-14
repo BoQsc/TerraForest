@@ -46,7 +46,10 @@ checks. There are no per-cell scene nodes or physics bodies.
 Terrain occupancy comes from the terrain worker. Water edits wait for required
 occupancy and validate inventory revisions before committing. Terrain deposition
 deletes the water its solid volume replaces; excavation does not restore it.
-Building and vehicle shapes are not yet included in water occupancy.
+Building cubes, slabs, stairs, slopes, posts and spheres participate in water
+occupancy: placing one deletes the water its solid shape replaces. Their empty
+portions retain water. Vehicle shapes are not yet included. Building bucket
+interactions and full compound disk-save validation remain open.
 
 Mesh preparation/publication has bounded work queues and cooperative budgets.
 Bucket picking uses the published water surface. Cached meshes must be published

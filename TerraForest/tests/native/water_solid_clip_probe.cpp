@@ -55,5 +55,9 @@ int main(){
  plain.solid=&cache;
  check(plain.field(.25,.25,.25,500)>0&&plain.field(.25,.25,.25,500)<=.25&&plain.field(.05,.25,.05,500)<0,"Runtime field keeps post dry with finite interpolation");
  check(plain.wet_interval(.05,.25,.05,500,bottom,top)&&near(top,.5),"Runtime interval includes surrounding water");
+ auto encoded=cache.encode();terraforest::WaterSolidProfile loaded;
+ check(loaded.decode(encoded)&&near(loaded.capacity(),cache.capacity())&&near(loaded.volume(.31),cache.volume(.31)),"Prepared occupancy codec preserves exact values");
+ auto bad=encoded;bad[0]=1;check(!loaded.decode(bad)&&near(loaded.capacity(),cache.capacity()),"Bad occupancy cache fails atomically");
+ bad=encoded;bad.push_back(0);check(!loaded.decode(bad),"Occupancy codec rejects trailing data");
  std::printf("WATER_SOLID_CLIP failures=%d\n",failures);return failures?1:0;
 }

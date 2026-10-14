@@ -1,0 +1,29 @@
+2026-10-14: Building-water replacement integrated; remaining gates open.
+
+The actual world now snapshots authored building hulls before terrain-worker
+preparation. The worker builds sparse clipped occupancy; revision changes reject
+stale results. Native water removes only newly occupied volume. Cubes, slabs,
+stairs, slopes, posts and faceted spheres pass actual-world placement, empty-space
+preservation and cached-water reload. The cube also passes removal without water
+resurrection. Every unrelated cell remains unchanged for all five partial shapes.
+Deleted volume matches the rendered shape within per-cell integer rounding.
+
+Water snapshot version 8 stores prepared building occupancy. A preserved world
+fixture reloads byte-exactly in debug and release, with zero terrain samples;
+malformed snapshots are rejected atomically. The terrain-deposition regression
+still passes. Block change notifications now use edited-cell bounds instead of
+whole 16m chunks. Shape plane export uses double-precision offsets to avoid
+translation-dependent volume loss. Degenerate clipping debris below .001 ml
+per cell is excluded from immutable cache geometry.
+
+Stair/sphere captures were visually inspected. Recorded shape update latency was
+170-435 ms in this one run, excluding subsequent captures. These measurements do
+not prove a 60fps frame budget or large-city scaling. Curved cells need further
+cost review. Native preparation yields between cells after a 1ms soft budget;
+a single cell is not a hard time bound. Caches are capped at 4 MiB per region
+and 64 MiB total, plus immutable references retained during mesh publication.
+
+Remaining before completion: full compound disk save with buildings and water,
+reverse bucket placement/removal around solids, edit history and region reload,
+partial-face connectivity, broader visual cases and targeted frame-cost checks.
+Do not describe these remaining gates as completed by the current tests.

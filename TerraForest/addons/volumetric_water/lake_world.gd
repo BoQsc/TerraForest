@@ -9,6 +9,9 @@ signal lake_ready(id:int)
 signal lake_failed(id:int,status:int)
 signal exclusion_changed(bounds:AABB)
 @export var terrain:Node3D
+var blocks:Node3D
+var _structure_revision:=0
+var _builder_structure_revision:=-1
 @export_range(1,16) var max_lakes:int=16
 var _lakes:Dictionary={}
 var _next_id:=1
@@ -65,7 +68,7 @@ func restore_snapshot(bytes:PackedByteArray) -> bool:
  var cached:bool=bytes.decode_u32(0)==0x31575256
  if cached and not water.restore_snapshot(bytes):return false
  # Old saves retain quantities but rebuild contacts to include explicit terrain cubes.
- if cached and bytes.decode_u32(4)<7:water.invalidate(AABB(Vector3.ZERO,Vector3(2000,256,2000)))
+ if cached and bytes.decode_u32(4)<8:water.invalidate(AABB(Vector3.ZERO,Vector3(2000,256,2000)),true)
  for record:Dictionary in decoded.records:
   record.dirty=not cached;record.failure=""
   var state:PackedByteArray=record.get("water_state",PackedByteArray())
@@ -81,6 +84,9 @@ func _ready() -> void:
  # Mining is admitted normally. Invalid regions retain their water and wait for
  # the committed terrain worker samples; they never flow against stale solids.
  # Accepted terrain occupancy patches remove water replaced by solid terrain.
+ if blocks!=null:
+  blocks.cells_changed.connect(func(bounds:AABB):water.invalidate(blocks.global_transform*bounds,true);_builder=null)
+  blocks.changed.connect(func():_structure_revision+=1)
  _epoch=terrain.epoch
 func add_lake(origin:Vector3,cells:Vector3i,spacing:float,level:float,seed:Vector3) -> int:
  if _lakes.size()>=max_lakes:return 0
@@ -124,8 +130,13 @@ func _process(delta:float) -> void:
   if not request.is_empty():
    if _builder==null or _revision!=terrain.published_revision:
     _builder=ClassDB.instantiate("NativeWaterTerrainPatch");_builder.configure(request.coordinate);_revision=terrain.published_revision
-   _token=_builder.get_instance_id()
-   if terrain.request_lake_slice(_builder,_token):_busy=true
+    _builder_structure_revision=_structure_revision
+    if blocks!=null:
+     var solids:Dictionary=blocks.solid_hulls(AABB(Vector3(request.coordinate)*4,Vector3(4,4,4)))
+     if not solids.ok or not _builder.set_structure_hulls(solids.hulls):_builder=null
+   if _builder!=null:
+    _token=_builder.get_instance_id()
+    if terrain.request_lake_slice(_builder,_token):_busy=true
  if not _pending_bucket.is_empty():
   var p:=_pending_bucket
   var result:Dictionary=_transfer_bucket(p.from,p.to,p.pour,p.inventory,p.slot,p.revision)
@@ -184,9 +195,10 @@ func _publish_meshes() -> void:
 func _slice_ready(token:int,status:int,epoch_id:int,revision:int) -> void:
  if token!=_token:return
  _busy=false
- if _builder==null or epoch_id!=terrain.epoch or revision!=terrain.published_revision or terrain.pending_edit or status==-4:_builder=null;return
+ if _builder==null or _builder_structure_revision!=_structure_revision or epoch_id!=terrain.epoch or revision!=terrain.published_revision or terrain.pending_edit or status==-4:_builder=null;return
  if status==0:return
- if status==1:water.accept_patch(_builder)
+ if status==1:
+  if not water.accept_patch(_builder):terrain.message_changed.emit("Water occupancy cache budget reached; quantities retained")
  else:terrain.message_changed.emit("Water terrain sampling failed; quantities retained")
  _builder=null
 func _transfer_bucket(from:Vector3,to:Vector3,pour:bool,inventory:RefCounted,slot:int,revision:int)->Dictionary:
