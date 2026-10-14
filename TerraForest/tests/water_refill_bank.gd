@@ -34,6 +34,9 @@ func _initialize():
  var source:=Vector3(43,41.25,43)
  var collected:Dictionary=water.transfer_bucket(source+Vector3.UP*2.25,source,false,inventory,1,inventory.snapshot().revision)
  check(collected.ok,"Collect replacement water from another part")
+ var saved:PackedByteArray=water.capture_snapshot(catalog)
+ water=ClassDB.instantiate("NativeRegionalWater")
+ check(water.restore_snapshot(saved),"Fresh water instance reopens both holes before repair")
  var repaired:Dictionary=water.transfer_bucket(hole+Vector3(.5,2.25,.5),hole+Vector3(.5,0,.5),true,inventory,1,inventory.snapshot().revision)
  var current:=amounts(water.capture_snapshot(catalog));var restored:=true
  for cell in original:

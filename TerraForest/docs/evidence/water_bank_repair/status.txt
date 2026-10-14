@@ -17,3 +17,5 @@ returns to the original shore and restores every removed cell. The six-unit
 separate-pool cached-reload/recovery regression passes after the change.
 Both native DLL variants rebuilt. Tests do not establish broad usability or
 address every large/deep or previously malformed hole; human acceptance is open.
+
+Release follow-up: bank-corner, edge, interior and separate-source repair pass on the release DLL. The separate-source case now restores both holes into a fresh native instance before repairing the original hole, proving it does not depend on transient last-scoop history. Human usability acceptance remains open.
