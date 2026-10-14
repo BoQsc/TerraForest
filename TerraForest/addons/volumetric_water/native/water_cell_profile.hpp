@@ -5,7 +5,7 @@
 #include <cmath>
 #include <cstdint>
 #include <vector>
-#include "water_solid_clip.hpp"
+#include "water_solid_profile.hpp"
 
 namespace terraforest {
 // A floor cut through a finite-volume cell. The two triangles use the same
@@ -14,6 +14,7 @@ namespace terraforest {
 // Crossings remain unclamped through interpolation. Volume clips against both
 // the zero bottom and 500 mm top; corner-clamping invents solid wedges.
 struct WaterCellProfile {
+    const WaterSolidProfile *solid=nullptr; // Immutable prepared building occupancy.
     struct Point { double x,z,y; };
     using Triangle=std::array<Point,3>;
     const std::vector<Triangle> *contact=nullptr; // Immutable terrain-owned floor fragments.
@@ -103,11 +104,12 @@ struct WaterCellProfile {
         if(h<=0)return 0;
         return std::max(0.0,raw_volume(h)-(minimum()<0?raw_volume(0):0));
     }
-    uint64_t capacity()const{return uint64_t(std::floor(flat_volume(ceiling)+1e-7));}
+    uint64_t capacity()const{if(solid)return uint64_t(std::floor(solid->capacity()*1000000+1e-7));return uint64_t(std::floor(flat_volume(ceiling)+1e-7));}
     // Static occupancy has a horizontal top; only its cached terrain floor varies.
     double surface(double h,double,double)const{return std::min(ceiling,h);}
-    double volume(double h)const{return flat_volume(h);}
+    double volume(double h)const{return solid?solid->volume(h*.001)*1000000:flat_volume(h);}
     double head(uint64_t ml)const {
+        if(solid)return solid->head(double(ml)*.000001)*1000;
             if(!ml)return std::max(0.0,minimum());
             if(ml>=capacity())return ceiling;
             if(ml>=flat_volume(maximum()))return std::min(ceiling,mean()+(ml+(minimum()<0?raw_volume(0):0))/250.0);
@@ -116,6 +118,16 @@ struct WaterCellProfile {
         if(!ml)return lo;
         for(int n=0;n<26;++n){double mid=(lo+hi)*0.5;if(volume(mid)<ml)lo=mid;else hi=mid;}
         return (lo+hi)*0.5;
+    }
+    // Cell-local metres; head remains millimetres like the volume API.
+    double field(double x,double y,double z,double h)const {
+        if(solid)return solid->distance({x,y,z},h*.001);
+        return std::max({std::abs(x-.25)-.25,std::abs(z-.25)-.25,bottom(x*2,z*2)*.001-y,y-surface(h,x*2,z*2)*.001});
+    }
+    bool wet_interval(double x,double y,double z,double h,double &lo,double &hi)const {
+        if(solid)return solid->interval({x,y,z},h*.001,lo,hi);
+        lo=bottom(x*2,z*2)*.001;hi=surface(h,x*2,z*2)*.001;
+        return y>=lo&&y<=hi&&hi>lo;
     }
     Shape footprint(double h)const {
         Shape result;

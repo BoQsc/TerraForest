@@ -18,3 +18,17 @@ changes/removal/history, preserve caches and quantities through compound saves,
 then run the existing actual-world overlap test plus partial-shape cases.
 Clipping belongs on bounded edit preparation; it must not be repeated for every
 mesh sample or every frame. Global cache memory bounds still need integration.
+
+Cached profile step: immutable convex occupancy now has a piecewise cubic
+height/volume curve, bounded preparation and allocation-free runtime queries.
+The curve agrees with direct clipping at 101 tested heights; head inversion,
+separate vertical intervals, post interiors and internal-triangulation seams
+have targeted checks. Mesh field sampling, bucket visible-volume checks and
+depth queries now use the shared profile interface. Debug/release DLLs compile.
+Pool-topology and static-water checks pass with existing unmodified cells.
+
+NativeRegionalWater does NOT yet attach building profiles to its regions.
+Remaining work still includes worker preparation, versioned building change
+invalidation, memory accounting, connectivity of partial faces, serialization,
+removal/history and actual-world acceptance. No runtime performance claim is
+established by these unit checks. Do not call the building integration finished.

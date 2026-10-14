@@ -34,5 +34,26 @@ int main(){
  check(terrain.solid_remainder(500,{box({0,0,0},{.25,.5,.5})},actual)&&near(C::volume(actual),.015625),"Building deletes only water above existing terrain");
  terrain.floor={-500,500,-500,500};
  check(terrain.solid_remainder(500,{},actual)&&near(C::volume(actual)*1000000,terrain.volume(500)),"Floor below cell is clipped without invented water");
+ terraforest::WaterSolidProfile cache;
+ terrain.floor={0,500,0,500};
+ check(terrain.solid_remainder(500,{box({0,.15,0},{.5,.25,.5})},actual)&&cache.prepare(actual),"Prepare cached occupancy for terrain and overhang");
+ double worst=0;
+ for(int i=0;i<=100;i++){double y=i*.005;C::Pieces reference;C::below(actual,y,reference);worst=std::max(worst,std::abs(cache.volume(y)-C::volume(reference)));}
+ check(worst<1e-9,"Cached cubic volume agrees with clipping at 101 heights");
+ auto plain=terraforest::WaterCellProfile::make(nullptr,false,0,500);
+ check(plain.solid_remainder(500,{box({0,.15,0},{.5,.25,.5})},actual)&&cache.prepare(actual),"Prepare two wet intervals");
+ plain.solid=&cache;
+ check(plain.capacity()==100000,"Runtime capacity subtracts slab exactly");
+ for(auto amount:{1000u,15000u,37499u,37500u,50000u,99999u})check(std::abs(plain.volume(plain.head(amount))-amount)<.01,"Cached head conserves quantity across cavity");
+ check(cache.distance({.25,.2,.25},.5)>0&&cache.distance({.25,.1,.25},.5)<0&&cache.distance({.25,.4,.25},.5)<0,"Signed field preserves both intervals and excludes building");
+ double bottom=0,top=0;
+ check(cache.interval({.25,.1,.25},.5,bottom,top)&&near(bottom,0)&&near(top,.15),"Depth below overhang stops at its underside");
+ check(cache.interval({.25,.4,.25},.5,bottom,top)&&near(bottom,.25)&&near(top,.5),"Depth above overhang starts at its top");
+ check(!cache.interval({.25,.2,.25},.5,bottom,top),"Solid interior is never water");
+ plain.solid=nullptr;
+ check(plain.solid_remainder(500,{box({.125,0,.125},{.375,.5,.375})},actual)&&cache.prepare(actual),"Prepare post cache");
+ plain.solid=&cache;
+ check(plain.field(.25,.25,.25,500)>0&&plain.field(.25,.25,.25,500)<=.25&&plain.field(.05,.25,.05,500)<0,"Runtime field keeps post dry with finite interpolation");
+ check(plain.wet_interval(.05,.25,.05,500,bottom,top)&&near(top,.5),"Runtime interval includes surrounding water");
  std::printf("WATER_SOLID_CLIP failures=%d\n",failures);return failures?1:0;
 }

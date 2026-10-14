@@ -302,7 +302,7 @@ bool NativeRegionalWater::plan_connected_scoop(Placement &cells,uint64_t amount,
     auto sample_mask=[](const WaterCellProfile &shape,uint64_t water){
         unsigned mask=0;if(!water)return mask;double head=shape.head(water);
         for(int i=0;i<8;i++){double x=(i&1)?.75:.25,z=(i&4)?.75:.25,y=(i&2)?375:125;
-            if(shape.bottom(x,z)<y&&y<shape.surface(head,x,z))mask|=1u<<i;}
+            if(shape.field(x*.5,y*.001,z*.5,head)<0)mask|=1u<<i;}
         return mask;
     };
     std::vector<unsigned> masks;for(const auto &c:graph)masks.push_back(sample_mask(c.shape,c.water));
@@ -521,8 +521,7 @@ bool NativeRegionalWater::plan_placement(Vector3i target,const Vector3 &aim,uint
             uint64_t filled=site.stored+take[n].second;if(!filled)continue;
             double head=site.shape.head(filled);
             for(double z:{.25,.75})for(double x:{.25,.75}){
-                double bottom=site.shape.bottom(x,z),top=site.shape.surface(head,x,z);
-                represented|=(bottom<125&&125<top)||(bottom<375&&375<top);
+                represented|=site.shape.field(x*.5,.125,z*.5,head)<0||site.shape.field(x*.5,.375,z*.5,head)<0;
             }
         }
         if(!existing_body&&!represented){out["reason"]="Too little water to form a visible volume here; water kept in bucket";return false;}
@@ -688,14 +687,14 @@ bool NativeRegionalWater::overlaps_occupied(const AABB &bounds) const {
 double NativeRegionalWater::depth_at(const Vector3 &point) const {
     if(!point.is_finite())return 0;Vector3i p=cell(point);const Region *r=get(p);if(!r)return 0;int i=index(p);
     auto shape=surface_profile(p);if(!r->water[i]||!shape.capacity())return 0;
-    double top=p.y*0.5+shape.surface(shape.head(r->water[i]),point.x*2-p.x,point.z*2-p.z)*0.001;
-    double bottom=p.y*0.5+shape.bottom(point.x*2-p.x,point.z*2-p.z)*0.001;
-    if(point.y>=top||point.y<bottom)return 0;
-    // At most the bounded vertical domain, only for actual wet query points.
-    for(int y=p.y+1;y<509;++y){Vector3i q(p.x,y,p.z);const Region *above=get(q);if(!above||!above->water[index(q)]||top<y*0.5-0.00001||!profile(*above,index(q)).open_bottom)break;
-        int j=index(q);auto shape_above=surface_profile(q);
-        if(shape_above.bottom(point.x*2-p.x,point.z*2-p.z)>0)break;
-        top=y*0.5+shape_above.surface(shape_above.head(above->water[j]),point.x*2-p.x,point.z*2-p.z)*0.001;}
+    double bottom=0,top=0,lx=point.x-p.x*.5,lz=point.z-p.z*.5;
+    if(!shape.wet_interval(lx,point.y-p.y*.5,lz,shape.head(r->water[i]),bottom,top))return 0;
+    top+=p.y*.5;
+    // Follow only touching wet intervals, never through an occupied ceiling.
+    for(int y=p.y+1;y<509;++y){Vector3i q(p.x,y,p.z);const Region *above=get(q);if(!above||!above->water[index(q)]||top<y*.5-.00001)break;
+        int j=index(q);auto shape_above=surface_profile(q);double lo=0,hi=0;
+        if(!shape_above.wet_interval(lx,0,lz,shape_above.head(above->water[j]),lo,hi)||lo>0)break;
+        top=y*.5+hi;}
     return std::max(0.0,top-point.y);
 }
 PackedByteArray NativeRegionalWater::placement_mask(const TypedArray<Transform3D> &transforms) const {
@@ -878,7 +877,7 @@ NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool s
             double top=shape.surface(head,lx*2,lz*2)*.001;
             float horizontal=float(std::max(std::abs(lx-.25)-.25,std::abs(lz-.25)-.25));
             float below=float(bottom-ly),above=float(ly-top);
-            float d=std::max({horizontal,below,above});
+            float d=float(shape.field(lx,ly,lz,head));
             represented|=d<0;
             Node &sample=field[node_index(nx,ny,nz)];
             if(d<sample.density){sample.density=d;sample.owner=cell;
