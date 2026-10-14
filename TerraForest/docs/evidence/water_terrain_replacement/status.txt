@@ -22,3 +22,5 @@ Smooth sphere deposition also deletes water, and subsequent excavation does
 not restore it. Ordinary mining regression passes. Water-only snapshot reload
 is tested here, not a fresh full compound-disk round trip for this new change.
 Curved contact accuracy remains bounded by the existing water occupancy model.
+
+Compound disk follow-up: ordinary save verification and a new game instance reopening the isolated disposable slot pass with the solid replacement, edited lake, separate placed water and full bucket. All water cells, terrain bytes and inventory survive together. Removing the saved solid after reload restores no deleted water. Cached restoration reports hits with zero sampled terrain nodes. This closes the full compound-disk gap noted above.

@@ -78,6 +78,16 @@ func run():
  check(amounts(saved)==before,"Mining does not move water quantities between cells")
  var stats:Dictionary=game.lakes.statistics()
  check(stats.active_cells==0 and stats.cell_steps==0 and stats.pending_vertical==0,"Mining creates no flow or settling work")
+ # Persist terrain that intentionally replaces water alongside bucket edits.
+ var replacement:=Vector3i(floori(entry.seed.x-3),floori(entry.level)-1,floori(entry.seed.z))
+ if not game.session_menu.developer:game.session_menu.toggle_developer()
+ var volume_before:int=game.lakes.statistics().water_ml
+ check(game.lakes.depth_at(Vector3(replacement)+Vector3.ONE*.5)>0,"Replacement cube starts in occupied water")
+ check(game.terrain.set_block(replacement,1),"Terrain cube replaces water before disk save")
+ check(await ready_water(),"Terrain replacement and water deletion publish before save")
+ check(game.lakes.statistics().water_ml<volume_before,"Terrain replacement deletes water before compound save")
+ check(game.lakes.depth_at(Vector3(replacement)+Vector3.ONE*.5)==0,"Replacement cube has no hidden water")
+ before=amounts(game.lakes.capture_snapshot())
  game.camera.global_position=above+Vector3(0,1,3);game.camera.look_at(point,Vector3.UP)
  for frame in 4:await process_frame
  await RenderingServer.frame_post_draw
@@ -101,6 +111,11 @@ func run():
  check(game.player_hud.inventory.capture_storage_snapshot()==held_before,"Compound disk reload preserves the filled bucket and inventory")
  check(game.terrain.backend.native.execute(Codec.command(4))==terrain_before,"Compound disk reload preserves the mined terrain field exactly")
  check(restore_stats.get("cache_hits",0)>0 and restore_stats.get("sampled_nodes",-1)==0,"Water occupancy restored from cache without resampling")
+ check(game.lakes.depth_at(Vector3(replacement)+Vector3.ONE*.5)==0,"Disk reload does not resurrect water inside solid terrain")
+ if not game.session_menu.developer:game.session_menu.toggle_developer()
+ check(game.terrain.set_block(replacement,0),"Remove saved replacement cube after disk reload")
+ check(await ready_water(),"Saved cube removal and water contacts publish")
+ check(amounts(game.lakes.capture_snapshot())==before,"Removing reloaded solid does not restore deleted water")
  # Exercise the restored inventory and rendered placement, not just bytes.
  inventory=game.player_hud.inventory
  game.lakes.bucket(above,above-Vector3.UP*3.5,true,inventory,slot,inventory.snapshot().revision)
