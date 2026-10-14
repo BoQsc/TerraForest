@@ -147,6 +147,7 @@ public:
     Dictionary capture_storage_state() const;
     bool restore_storage_state(const PackedByteArray &resident,const PackedInt32Array &keys,const PackedByteArray &checksums);
     // Bounded main-thread sampling: 0 air, 1 solid, 2 unavailable resident data.
+    Dictionary solid_hulls(const AABB &world_bounds) const;
     PackedByteArray sample_solid(const PackedVector3Array &points) const;
     Dictionary raycast_cells(Vector3 from,Vector3 to) const;
     Dictionary raycast_scene(Vector3 from,Vector3 to,int64_t mask,const TypedArray<RID> &exclude) const;

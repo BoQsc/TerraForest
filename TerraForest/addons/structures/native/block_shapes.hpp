@@ -36,4 +36,17 @@ inline const SphereTemplate &sphere_template() {
     }();
     return geometry;
 }
+// Shared allocation-free authored planes for picking and water occupancy.
+template<class Begin,class Plane,class End>
+void visit_shape_hulls(int shape,Begin begin,Plane plane,End end){
+    auto planes=[&](Vector3 lo,Vector3 hi){for(int a=0;a<3;++a){Vector3 n;n[a]=1;plane(n,double(hi[a]));n[a]=-1;plane(n,-double(lo[a]));}};
+    auto box=[&](Vector3 lo,Vector3 hi){begin();planes(lo,hi);end();};
+    if(shape==1)box(Vector3(),Vector3(1,1,1));
+    else if(shape==2)box(Vector3(),Vector3(1,.5,1));
+    else if(shape==3)for(int step=0;step<4;++step)box(Vector3(0,0,step*.25),Vector3(1,(step+1)*.25,(step+1)*.25));
+    else if(shape==4){begin();planes(Vector3(),Vector3(1,1,1));plane(Vector3(0,1,-1).normalized(),0);end();}
+    else if(shape==5)box(Vector3(.25,0,.25),Vector3(.75,1,.75));
+    else if(shape==6){begin();planes(Vector3(),Vector3(1,1,1));for(const auto &p:sphere_template().planes)plane(p.normal,p.offset);end();}
+}
+
 }

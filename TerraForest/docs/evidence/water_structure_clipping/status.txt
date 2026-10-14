@@ -1,0 +1,20 @@
+2026-10-14: Building-water replacement geometry prerequisite (not complete integration).
+
+NativeBlockWorld exports bounded convex hulls from the same allocation-free
+shape planes as picking. All six shapes and four rotations, world transforms,
+unloaded-region rejection, batch limits and ray picking pass debug/release.
+
+WaterCellProfile can now turn its existing terrain-contact floor and water head
+into convex air pieces and subtract building hulls. Short native tests cover
+slabs, posts, slopes, stairs, overhangs, repeated overlap, partial heads, existing
+terrain overlap, exact touching and invalid inputs. The original terrain-profile
+checks still pass. There is no new flow or alternative water mesher.
+
+This geometry helper is not yet used by NativeRegionalWater. It does not fix
+in-game structure/water overlap yet and does not justify a new human playtest.
+Remaining: cache the clipped occupancy and height-volume data, feed it into
+water admission/quantities and shared density extraction, connect structure
+changes/removal/history, preserve caches and quantities through compound saves,
+then run the existing actual-world overlap test plus partial-shape cases.
+Clipping belongs on bounded edit preparation; it must not be repeated for every
+mesh sample or every frame. Global cache memory bounds still need integration.

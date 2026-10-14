@@ -12,6 +12,11 @@ This is the current delivery-order and coverage reference. [Delivery history](DE
 
 ## Current water implementation and remaining gate - 2026-10-14
 
+Building clipping prerequisite, 2026-10-14: exact convex subtraction is now
+available from the terrain water profile, and building hull export shares the
+picking planes. Debug/release geometry checks pass. Runtime occupancy, meshing
+and save integration remain open; see `evidence/water_structure_clipping/`.
+
 Building replacement decision: constructed solids must delete overlapping water,
 matching terrain. The native shape-sampling prerequisite passes debug/release
 checks for all six shapes and four rotations, transforms and unloaded regions.

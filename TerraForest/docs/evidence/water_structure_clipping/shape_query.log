@@ -1,0 +1,107 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS Authored shape accepted
+PASS Shape 1 rotation 0 preserves its empty space
+PASS Picking remains consistent with occupied shape
+PASS Exported hull matches authored shape
+PASS Authored shape accepted
+PASS Shape 1 rotation 1 preserves its empty space
+PASS Picking remains consistent with occupied shape
+PASS Exported hull matches authored shape
+PASS Authored shape accepted
+PASS Shape 1 rotation 2 preserves its empty space
+PASS Picking remains consistent with occupied shape
+PASS Exported hull matches authored shape
+PASS Authored shape accepted
+PASS Shape 1 rotation 3 preserves its empty space
+PASS Picking remains consistent with occupied shape
+PASS Exported hull matches authored shape
+PASS Authored shape accepted
+PASS Shape 2 rotation 0 preserves its empty space
+PASS Picking remains consistent with occupied shape
+PASS Exported hull matches authored shape
+PASS Authored shape accepted
+PASS Shape 2 rotation 1 preserves its empty space
+PASS Picking remains consistent with occupied shape
+PASS Exported hull matches authored shape
+PASS Authored shape accepted
+PASS Shape 2 rotation 2 preserves its empty space
+PASS Picking remains consistent with occupied shape
+PASS Exported hull matches authored shape
+PASS Authored shape accepted
+PASS Shape 2 rotation 3 preserves its empty space
+PASS Picking remains consistent with occupied shape
+PASS Exported hull matches authored shape
+PASS Authored shape accepted
+PASS Shape 3 rotation 0 preserves its empty space
+PASS Picking remains consistent with occupied shape
+PASS Exported hull matches authored shape
+PASS Authored shape accepted
+PASS Shape 3 rotation 1 preserves its empty space
+PASS Picking remains consistent with occupied shape
+PASS Exported hull matches authored shape
+PASS Authored shape accepted
+PASS Shape 3 rotation 2 preserves its empty space
+PASS Picking remains consistent with occupied shape
+PASS Exported hull matches authored shape
+PASS Authored shape accepted
+PASS Shape 3 rotation 3 preserves its empty space
+PASS Picking remains consistent with occupied shape
+PASS Exported hull matches authored shape
+PASS Authored shape accepted
+PASS Shape 4 rotation 0 preserves its empty space
+PASS Picking remains consistent with occupied shape
+PASS Exported hull matches authored shape
+PASS Authored shape accepted
+PASS Shape 4 rotation 1 preserves its empty space
+PASS Picking remains consistent with occupied shape
+PASS Exported hull matches authored shape
+PASS Authored shape accepted
+PASS Shape 4 rotation 2 preserves its empty space
+PASS Picking remains consistent with occupied shape
+PASS Exported hull matches authored shape
+PASS Authored shape accepted
+PASS Shape 4 rotation 3 preserves its empty space
+PASS Picking remains consistent with occupied shape
+PASS Exported hull matches authored shape
+PASS Authored shape accepted
+PASS Shape 5 rotation 0 preserves its empty space
+PASS Picking remains consistent with occupied shape
+PASS Exported hull matches authored shape
+PASS Authored shape accepted
+PASS Shape 5 rotation 1 preserves its empty space
+PASS Picking remains consistent with occupied shape
+PASS Exported hull matches authored shape
+PASS Authored shape accepted
+PASS Shape 5 rotation 2 preserves its empty space
+PASS Picking remains consistent with occupied shape
+PASS Exported hull matches authored shape
+PASS Authored shape accepted
+PASS Shape 5 rotation 3 preserves its empty space
+PASS Picking remains consistent with occupied shape
+PASS Exported hull matches authored shape
+PASS Authored shape accepted
+PASS Shape 6 rotation 0 preserves its empty space
+PASS Picking remains consistent with occupied shape
+PASS Exported hull matches authored shape
+PASS Authored shape accepted
+PASS Shape 6 rotation 1 preserves its empty space
+PASS Picking remains consistent with occupied shape
+PASS Exported hull matches authored shape
+PASS Authored shape accepted
+PASS Shape 6 rotation 2 preserves its empty space
+PASS Picking remains consistent with occupied shape
+PASS Exported hull matches authored shape
+PASS Authored shape accepted
+PASS Shape 6 rotation 3 preserves its empty space
+PASS Picking remains consistent with occupied shape
+PASS Exported hull matches authored shape
+PASS Transformed block samples use world coordinates
+PASS Hull export applies nonuniform world transform
+PASS Hull export rejects oversized batch
+PASS Invalid batch fails without partial output
+PASS Sampling has a bounded batch size
+PASS Region unload succeeds
+PASS Unavailable region is distinct from empty space
+PASS Hull export never treats unloaded solids as air
+BLOCK_SOLID_SAMPLES failures=0

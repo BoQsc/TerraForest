@@ -3,6 +3,7 @@
 #include <godot_cpp/classes/physics_direct_space_state3d.hpp>
 #include <godot_cpp/classes/physics_ray_query_parameters3d.hpp>
 #include <limits>
+#include <godot_cpp/variant/packed_float64_array.hpp>
 
 namespace terraforest {
 namespace {
@@ -25,14 +26,6 @@ void clip(Intersection &hit,Vector3 origin,Vector3 direction,Vector3 normal,doub
     else hit.exit=std::min(hit.exit,t);
     if(hit.enter>hit.exit+EPS)hit.valid=false;
 }
-Intersection box(Vector3 origin,Vector3 direction,Vector3 lo,Vector3 hi) {
-    Intersection hit;
-    for(int a=0;a<3;a++) {
-        Vector3 n;n[a]=1;clip(hit,origin,direction,n,hi[a]);
-        n[a]=-1;clip(hit,origin,direction,n,-lo[a]);
-    }
-    return hit;
-}
 // -1 means the segment starts within this solid; front-face picking then rejects.
 double shape_hit(int word,Vector3 origin,Vector3 direction,Vector3 &normal) {
     int rotation=(word>>3)&3,shape=word&7;
@@ -43,22 +36,38 @@ double shape_hit(int word,Vector3 origin,Vector3 direction,Vector3 &normal) {
         if(hit.enter<-EPS&&hit.exit>EPS){inside=true;return;}
         if(hit.enter>=-EPS&&hit.enter<nearest){nearest=std::max(0.0,hit.enter);normal=hit.normal;}
     };
-    if(shape==1)accept(box(origin,direction,Vector3(),Vector3(1,1,1)));
-    else if(shape==2)accept(box(origin,direction,Vector3(),Vector3(1,.5,1)));
-    else if(shape==3)for(int step=0;step<4;step++)accept(box(origin,direction,Vector3(0,0,step*.25),Vector3(1,(step+1)*.25,(step+1)*.25)));
-    else if(shape==4) {
-        auto hit=box(origin,direction,Vector3(),Vector3(1,1,1));
-        clip(hit,origin,direction,Vector3(0,1,-1).normalized(),0);accept(hit);
-    } else if(shape==5)accept(box(origin,direction,Vector3(.25,0,.25),Vector3(.75,1,.75)));
-    else if(shape==6) {
-        auto hit=box(origin,direction,Vector3(),Vector3(1,1,1));
-        for(const auto &plane:sphere_template().planes)clip(hit,origin,direction,plane.normal,plane.offset);
-        accept(hit);
-    }
+    Intersection component;
+    visit_shape_hulls(shape,[&](){component=Intersection{};},
+        [&](Vector3 n,double offset){clip(component,origin,direction,n,offset);},
+        [&](){accept(component);});
     if(inside)return -1;
     for(int r=0;r<rotation;r++)normal=Vector3(-normal.z,normal.y,normal.x);
     return nearest;
 }
+}
+Dictionary NativeBlockWorld::solid_hulls(const AABB &bounds) const {
+    Dictionary result;result["ok"]=false;result["unavailable"]=false;
+    if(!bounds.position.is_finite()||!bounds.size.is_finite()||bounds.size.x<=0||bounds.size.y<=0||bounds.size.z<=0)return result;
+    Transform3D frame=is_inside_tree()?get_global_transform():get_transform();
+    if(!frame.is_finite()||std::abs(frame.basis.determinant())<1e-12)return result;
+    Transform3D inverse=frame.affine_inverse();AABB local=inverse.xform(bounds);
+    Vector3 lo=local.position.floor(),hi=(local.position+local.size).ceil();
+    for(int a=0;a<3;++a)if(lo[a]<-1048575||hi[a]>1048576)return result;
+    Vector3 extent=hi-lo;if(double(extent.x)*extent.y*extent.z>512)return result;
+    if(unavailable_region(local)){result["unavailable"]=true;return result;}
+    Array hulls;Basis normal_frame=inverse.basis.transposed();
+    for(int z=int(lo.z);z<int(hi.z);++z)for(int y=int(lo.y);y<int(hi.y);++y)for(int x=int(lo.x);x<int(hi.x);++x){
+        int word=cell(x,y,z);if(!word)continue;
+        PackedFloat64Array hull;Vector3 center(.5,.5,.5),translation(x,y,z);
+        visit_shape_hulls(word&7,[&](){hull=PackedFloat64Array();},[&](Vector3 n,double offset){
+            Vector3 rotated=n;for(int r=0;r<((word>>3)&3);++r)rotated=Vector3(-rotated.z,rotated.y,rotated.x);
+            double local_offset=offset+rotated.dot(center+translation)-n.dot(center);
+            Vector3 world_normal=normal_frame.xform(rotated);double length=world_normal.length();
+            double world_offset=(local_offset+world_normal.dot(frame.origin))/length;world_normal/=length;
+            hull.push_back(world_normal.x);hull.push_back(world_normal.y);hull.push_back(world_normal.z);hull.push_back(world_offset);
+        },[&](){hulls.push_back(hull);});
+    }
+    result["hulls"]=hulls;result["ok"]=true;return result;
 }
 PackedByteArray NativeBlockWorld::sample_solid(const PackedVector3Array &points) const {
     PackedByteArray result;if(points.size()>4096)return result;

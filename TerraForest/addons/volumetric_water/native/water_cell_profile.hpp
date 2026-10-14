@@ -5,6 +5,7 @@
 #include <cmath>
 #include <cstdint>
 #include <vector>
+#include "water_solid_clip.hpp"
 
 namespace terraforest {
 // A floor cut through a finite-volume cell. The two triangles use the same
@@ -65,6 +66,31 @@ struct WaterCellProfile {
             for(int n=1;n+1<count;++n){Point a=clipped[0],b=clipped[n],c=clipped[n+1];
                 double area=std::abs((b.x-a.x)*(c.z-a.z)-(b.z-a.z)*(c.x-a.x))*0.5;emit(area,a,b,c);}
         });
+    }
+    // Exact editable air geometry for structure replacement. Coordinates passed
+    // to solids are local metres, matching the half-metre cell. This also keeps
+    // both remaining intervals when an object cuts through the middle of water.
+    bool solid_remainder(double head,const std::vector<std::vector<WaterSolidClip::Plane>> &solids,
+                         WaterSolidClip::Pieces &out)const {
+        using C=WaterSolidClip;C::Pieces pieces;bool ok=std::isfinite(head);
+        const double top=std::clamp(head,0.0,ceiling)*.001;
+        if(!ok||solids.size()>C::MAX_PIECES)return false;
+        if(top<=0){out.clear();return true;}
+        floor_triangles([&](const Triangle &t){
+            if(!ok)return;
+            C::Point a{t[0].x*.5,0,t[0].z*.5},b{t[1].x*.5,0,t[1].z*.5},c{t[2].x*.5,0,t[2].z*.5};
+            C::Point u{0,top,0};
+            C::Polyhedron prism{{{a,b,c},{a+u,c+u,b+u},{a,a+u,b+u,b},{b,b+u,c+u,c},{c,c+u,a+u,a}}};
+            C::Point fa=a,fb=b,fc=c;fa.y=t[0].y*.001;fb.y=t[1].y*.001;fc.y=t[2].y*.001;
+            C::Point n=(fb-fa).cross(fc-fa);if(std::abs(n.y)<1e-15)return;
+            if(n.y>0)n=n*(-1); // Keep air above the floor.
+            C::Polyhedron clipped;
+            if(!C::clip(prism,{n,n.dot(fa)},clipped)){ok=false;return;}
+            if(C::volume(clipped)>1e-15){if(pieces.size()==C::MAX_PIECES){ok=false;return;}pieces.push_back(std::move(clipped));}
+        });
+        if(!ok)return false;
+        for(const auto &solid:solids){C::Pieces next;if(!C::subtract(pieces,solid,next))return false;pieces=std::move(next);}
+        out=std::move(pieces);return true;
     }
     double raw_volume(double h)const {
         h=std::min(h,ceiling);if(h<=minimum())return 0;
