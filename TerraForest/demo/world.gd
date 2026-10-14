@@ -708,6 +708,8 @@ func _unhandled_input(event: InputEvent) -> void:
 			# Placement clearance is only for pours. Applying it to a scoop
 			# cuts off visible water shallower than 1 cm before the ray reaches it.
 			if not hit.is_empty():end=hit.position+hit.normal*(0.01 if event.button_index==MOUSE_BUTTON_RIGHT else 0.0)
+			elif event.button_index==MOUSE_BUTTON_RIGHT and not lakes.water.raycast_surface(start,end).hit:
+				_show_lake_notice("Aim at nearby terrain or water to pour");return
 			var result:Dictionary=lakes.bucket(start,end,event.button_index==MOUSE_BUTTON_RIGHT,player_hud.inventory,player_hud.active_slot,player_hud.inventory.snapshot().revision)
 			if result.ok:player_hud.equip_inventory(player_hud.active_slot);tool_view.swing()
 			_show_lake_notice(result.reason)

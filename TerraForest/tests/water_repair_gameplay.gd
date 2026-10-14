@@ -10,6 +10,14 @@ func run():
  await measured_click(MOUSE_BUTTON_LEFT)
  check(held_ml()==1000000,"Scoop original shore hole")
  var after_hole:=amounts(game.lakes.capture_snapshot())
+ # Empty space is not a placement surface, even inside prepared regions.
+ var before_air:Dictionary=game.lakes.statistics()
+ game.camera.look_at(game.camera.global_position+Vector3.UP,Vector3.FORWARD)
+ click(MOUSE_BUTTON_RIGHT)
+ check(held_ml()==1000000 and amounts(game.lakes.capture_snapshot())==after_hole,"Pour into empty air changes neither bucket nor world")
+ check(game._lake_notice=="Aim at nearby terrain or water to pour","Empty-space pour gives actionable aiming feedback")
+ check(game.lakes._pending_bucket.is_empty() and game.lakes.statistics().regions==before_air.regions,"Empty-space pour schedules no water preparation")
+ game.camera.global_transform=view
  var dry:Vector3=game.player.global_position+Vector3(0,0,10)
  var ground:Dictionary=game.get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(dry+Vector3.UP*30,dry-Vector3.UP*30,1))
  check(not ground.is_empty(),"Dry deposit target exists")

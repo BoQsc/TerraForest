@@ -19,3 +19,5 @@ Both native DLL variants rebuilt. Tests do not establish broad usability or
 address every large/deep or previously malformed hole; human acceptance is open.
 
 Release follow-up: bank-corner, edge, interior and separate-source repair pass on the release DLL. The separate-source case now restores both holes into a fresh native instance before repairing the original hole, proving it does not depend on transient last-scoop history. Human usability acceptance remains open.
+
+Aiming correction: normal bucket input now rejects a pour when the reach ray hits neither an opaque surface nor published water. It reports an aiming hint and does not consume water, create a remote cell, or queue preparation. The actual-world repair test verifies this before dry-ground placement and separate-source repair; all pass. This prevents arbitrary floating endpoint placement, not all possible water geometry artifacts.
