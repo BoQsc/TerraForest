@@ -55,7 +55,8 @@ pour, development edits and terrain-contact maintenance may change it. Retain
 good visuals, low runtime cost, saving and cached loading. Idle water must not
 run simulation. Earlier flow-back, drainage, local-settling and outlet-response
 gates below are historical and no longer acceptance requirements for this phase.
-The current density/volume and visual failures remain blocking.
+Current unresolved visual/interaction gates are listed above; earlier failures
+are historical unless reproduced on the installed build.
 
 ## Historical water checkpoint - 2026-10-13
 
@@ -138,7 +139,7 @@ Statuses below distinguish **integrated partial** (usable but coverage gates rem
 | New combined project and independently usable addons | Integrated partial: terrain, forest and companion addons; source projects preserved | Verify documented dependencies, addon isolation and supported Windows build/install paths; retain a full support matrix |
 | Volumetric terrain, large caves and mountains | Integrated partial: editable terrain and seeded generation paths | Generate and traverse representative above/below-ground regions; mine nearby and after travel with visual and collision correctness, save and reload |
 | Underground materials and veins | Integrated partial: seeded geology and excavation accounting | Demonstrate discoverable material variation, correct appearance/rewards and reproducibility after reload in the playable world |
-| Volumetric water and lakes | Integrated regional water: C++ finite volumes, mining interaction, arbitrary bucket placement, sleeping cells, compound persistence and cached occupancy; see [water gameplay](WATER_GAMEPLAY.md) | Qualify regional paging, structure occupancy, shoreline quality, large-body flow and combined endurance; current 0.5 m / 4,096-resident-region limits are explicit |
+| Volumetric water and lakes | Integrated partial: native static volumes, whole-unit buckets, mining contact, compound persistence and cached occupancy; see [water gameplay](WATER_GAMEPLAY.md) | Qualify regional paging, structure occupancy, shoreline quality and combined endurance; automatic flow/spillage are deferred; current 0.5 m / 4,096-resident-region limits are explicit |
 | Asphalt roads | Integrated partial: native grading/paving and connected street authoring | Drive connected roads across loaded region boundaries, edit/save/reload them, and verify terrain, buildings and vegetation remain consistent |
 | Block shapes, prefabs and static model objects | Integrated partial: cubes, slabs, stairs, slopes, posts, spheres, placement/transforms/history and persistence | Author a usable building with interior objects and access features; verify selection, collisions, undo where supported, and persistence through travel |
 | Large buildings, towns and cities | Integrated partial: house/tower examples and native connected multi-street settlement authoring | Implement a reproducible settlement generation/authoring workflow with connected roads, supported buildings and usable interiors; measure representative detailed structures, not just empty shells |
