@@ -1,0 +1,22 @@
+2026-10-14: Known failing water/structure integration gate
+
+The actual-world construction coordinator accepts a full cube in an occupied
+water cell. The block is present and the water quantity remains unchanged in
+that same space. Reproduction captured before the bank-refill correction; those
+later changes do not add structure admission or occupancy support.
+
+Reproduce with one graphical game at a time:
+python tools/run_godot_check.py water_structure_occupancy --timeout 60 --require "WATER_STRUCTURE_OCCUPANCY failures=0" -- --gameplay-construction --water-gameplay --water-bucket-review
+
+This test intentionally asserts the required behavior and currently fails. It
+is not a passing acceptance check. It calls the normal construction coordinator
+inside the actual world in free-editor mode; it does not synthesize a mouse
+placement or claim coverage of the reverse water-into-building direction.
+
+Required integration covers both placement directions, shape-aware occupancy,
+removal, history, cache invalidation and reload. A terrain-only guard does not
+complete that work. Do not silently erase water to make a structure fit.
+
+Kept separate from the active bucket-usability issue. No runtime changes were
+made while preserving this evidence. Human acceptance of recent refill fixes
+remains pending.
