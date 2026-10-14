@@ -24,3 +24,5 @@ Both debug and release DLLs rebuilt. These short checks are not endurance or
 universal visual acceptance. Already placed pillars are not automatically moved.
 The shore harness does not record frame timings; max_frame_ms=0 is unavailable,
 not a zero-cost frame claim. Dispatch/publication/native timing fields are valid.
+
+Boundary follow-up: all 18 translated-lake cases pass on debug and release DLLs: region interior, face, and four-region corner. Every original water cell is restored and bucket empties. Release evidence is boundary_release.log/json. No runtime changes were needed.

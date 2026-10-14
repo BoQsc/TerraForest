@@ -1,0 +1,240 @@
+{
+  "cases": [
+    {
+      "center": "(42.0, 42.0, 42.0)",
+      "exact_restore": true,
+      "offset": "(0.0, 0.0, 0.0)",
+      "return": {
+        "ok": true,
+        "pending": false,
+        "point": "(42.0, 41.0, 42.0)",
+        "reason": "Placed one water unit (1 m3)",
+        "units": 1,
+        "water_ml": 1000000
+      }
+    },
+    {
+      "center": "(42.0, 42.0, 42.0)",
+      "exact_restore": true,
+      "offset": "(0.5, 0.0, 0.0)",
+      "return": {
+        "ok": true,
+        "pending": false,
+        "point": "(42.5, 41.5, 41.5)",
+        "reason": "Placed one water unit (1 m3)",
+        "units": 1,
+        "water_ml": 1000000
+      }
+    },
+    {
+      "center": "(42.0, 42.0, 42.0)",
+      "exact_restore": true,
+      "offset": "(-0.5, 0.0, 0.0)",
+      "return": {
+        "ok": true,
+        "pending": false,
+        "point": "(41.0, 41.5, 41.5)",
+        "reason": "Placed one water unit (1 m3)",
+        "units": 1,
+        "water_ml": 1000000
+      }
+    },
+    {
+      "center": "(42.0, 42.0, 42.0)",
+      "exact_restore": true,
+      "offset": "(0.0, 0.0, 0.5)",
+      "return": {
+        "ok": true,
+        "pending": false,
+        "point": "(41.5, 41.5, 42.5)",
+        "reason": "Placed one water unit (1 m3)",
+        "units": 1,
+        "water_ml": 1000000
+      }
+    },
+    {
+      "center": "(42.0, 42.0, 42.0)",
+      "exact_restore": true,
+      "offset": "(0.0, 0.0, -0.5)",
+      "return": {
+        "ok": true,
+        "pending": false,
+        "point": "(41.5, 41.5, 41.0)",
+        "reason": "Placed one water unit (1 m3)",
+        "units": 1,
+        "water_ml": 1000000
+      }
+    },
+    {
+      "center": "(42.0, 42.0, 42.0)",
+      "exact_restore": true,
+      "offset": "(0.5, 0.0, 0.5)",
+      "return": {
+        "ok": true,
+        "pending": false,
+        "point": "(42.5, 41.5, 42.0)",
+        "reason": "Placed one water unit (1 m3)",
+        "units": 1,
+        "water_ml": 1000000
+      }
+    },
+    {
+      "center": "(44.0, 42.0, 42.0)",
+      "exact_restore": true,
+      "offset": "(0.0, 0.0, 0.0)",
+      "return": {
+        "ok": true,
+        "pending": false,
+        "point": "(44.0, 41.0, 42.0)",
+        "reason": "Placed one water unit (1 m3)",
+        "units": 1,
+        "water_ml": 1000000
+      }
+    },
+    {
+      "center": "(44.0, 42.0, 42.0)",
+      "exact_restore": true,
+      "offset": "(0.5, 0.0, 0.0)",
+      "return": {
+        "ok": true,
+        "pending": false,
+        "point": "(44.5, 41.5, 41.5)",
+        "reason": "Placed one water unit (1 m3)",
+        "units": 1,
+        "water_ml": 1000000
+      }
+    },
+    {
+      "center": "(44.0, 42.0, 42.0)",
+      "exact_restore": true,
+      "offset": "(-0.5, 0.0, 0.0)",
+      "return": {
+        "ok": true,
+        "pending": false,
+        "point": "(43.0, 41.5, 41.5)",
+        "reason": "Placed one water unit (1 m3)",
+        "units": 1,
+        "water_ml": 1000000
+      }
+    },
+    {
+      "center": "(44.0, 42.0, 42.0)",
+      "exact_restore": true,
+      "offset": "(0.0, 0.0, 0.5)",
+      "return": {
+        "ok": true,
+        "pending": false,
+        "point": "(43.5, 41.5, 42.5)",
+        "reason": "Placed one water unit (1 m3)",
+        "units": 1,
+        "water_ml": 1000000
+      }
+    },
+    {
+      "center": "(44.0, 42.0, 42.0)",
+      "exact_restore": true,
+      "offset": "(0.0, 0.0, -0.5)",
+      "return": {
+        "ok": true,
+        "pending": false,
+        "point": "(43.5, 41.5, 41.0)",
+        "reason": "Placed one water unit (1 m3)",
+        "units": 1,
+        "water_ml": 1000000
+      }
+    },
+    {
+      "center": "(44.0, 42.0, 42.0)",
+      "exact_restore": true,
+      "offset": "(0.5, 0.0, 0.5)",
+      "return": {
+        "ok": true,
+        "pending": false,
+        "point": "(44.5, 41.5, 42.0)",
+        "reason": "Placed one water unit (1 m3)",
+        "units": 1,
+        "water_ml": 1000000
+      }
+    },
+    {
+      "center": "(44.0, 42.0, 44.0)",
+      "exact_restore": true,
+      "offset": "(0.0, 0.0, 0.0)",
+      "return": {
+        "ok": true,
+        "pending": false,
+        "point": "(44.0, 41.0, 44.0)",
+        "reason": "Placed one water unit (1 m3)",
+        "units": 1,
+        "water_ml": 1000000
+      }
+    },
+    {
+      "center": "(44.0, 42.0, 44.0)",
+      "exact_restore": true,
+      "offset": "(0.5, 0.0, 0.0)",
+      "return": {
+        "ok": true,
+        "pending": false,
+        "point": "(44.5, 41.5, 43.5)",
+        "reason": "Placed one water unit (1 m3)",
+        "units": 1,
+        "water_ml": 1000000
+      }
+    },
+    {
+      "center": "(44.0, 42.0, 44.0)",
+      "exact_restore": true,
+      "offset": "(-0.5, 0.0, 0.0)",
+      "return": {
+        "ok": true,
+        "pending": false,
+        "point": "(43.0, 41.5, 43.5)",
+        "reason": "Placed one water unit (1 m3)",
+        "units": 1,
+        "water_ml": 1000000
+      }
+    },
+    {
+      "center": "(44.0, 42.0, 44.0)",
+      "exact_restore": true,
+      "offset": "(0.0, 0.0, 0.5)",
+      "return": {
+        "ok": true,
+        "pending": false,
+        "point": "(43.5, 41.5, 44.5)",
+        "reason": "Placed one water unit (1 m3)",
+        "units": 1,
+        "water_ml": 1000000
+      }
+    },
+    {
+      "center": "(44.0, 42.0, 44.0)",
+      "exact_restore": true,
+      "offset": "(0.0, 0.0, -0.5)",
+      "return": {
+        "ok": true,
+        "pending": false,
+        "point": "(43.5, 41.5, 43.0)",
+        "reason": "Placed one water unit (1 m3)",
+        "units": 1,
+        "water_ml": 1000000
+      }
+    },
+    {
+      "center": "(44.0, 42.0, 44.0)",
+      "exact_restore": true,
+      "offset": "(0.5, 0.0, 0.5)",
+      "return": {
+        "ok": true,
+        "pending": false,
+        "point": "(44.5, 41.5, 44.0)",
+        "reason": "Placed one water unit (1 m3)",
+        "units": 1,
+        "water_ml": 1000000
+      }
+    }
+  ],
+  "failures": 0,
+  "library": "volumetric_water.windows.template_release.x86_64.dll"
+}
