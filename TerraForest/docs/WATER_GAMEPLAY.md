@@ -115,3 +115,11 @@ The raised-water mouse-action regression restores exact cell amounts and publish
 ## Lowering raised water (2026-10-15 follow-up)
 
 The return-to-same-shape check did not cover moving elevated water back into a lower hole. Raised side scoops now remove the top first and preserve the surrounding lake level when a complete unit is available above it. Refill no longer treats the highest nearby column as the lake level, and deeper scoop vacancies remain reachable below refilled layers. The actual-world three-bucket reversal now restores the original lake amounts and mesh exactly. See `evidence/water_lowering/status.txt`. No flow or spillage was added.
+
+## Swimming camera inside a scooped cavity (2026-10-15)
+
+The vacancy ray previously selected distance zero when its origin lay inside removed water. It now merges touching ray intervals and ignores the interval containing the camera. Internal half-metre cell boundaries cannot become invisible foreground targets. Looking into a cavity from outside still selects its entrance. This runs on bucket queries, with the existing bounded ray range, not as a simulation.
+
+Evidence: `docs/evidence/water_swimming_target`. The native reproducer fails before the change; nearby-return and raised-lowering regressions pass afterward. A 1920x1080 actual-world input check places the camera below lake level inside a scooped cavity, hits the visible wall 0.4 m ahead, pours, and restores all cell amounts and published mesh fingerprints exactly. Both native builds are installed.
+
+Limits: this is one confirmed targeting defect, not proof of all swimming aims. Nearby vacancy/geometric refill assistance remains and needs a separate multi-hole targeting check; no placement preview exists yet. The retained underwater screenshot still shows shoreline artifacts, so the interaction pass is not a visual-quality pass. The fixed camera test does not exercise moving-camera pending retries or continuous swimming physics.

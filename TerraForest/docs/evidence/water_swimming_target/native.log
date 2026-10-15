@@ -1,0 +1,10 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS Prepared swimming lake restores
+PASS Create a full-unit cavity
+PASS Looking into the cavity from outside still targets its entrance
+SWIMMING origin=(42.1, 41.75, 42.1) vacancy={ "hit": false } visible_surface={ "hit": true, "point": (42.5, 41.75, 42.1), "normal": (-1.0, 0.0, 0.0), "cell": (85, 83, 84) }
+PASS A cavity surrounding the swimming camera cannot intercept the aim
+PASS Adjacent vacant cells do not create invisible internal targets
+PASS Pouring at the visible cavity wall restores the original water exactly
+WATER_SWIMMING_TARGET failures=0

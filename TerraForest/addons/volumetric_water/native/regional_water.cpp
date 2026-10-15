@@ -699,7 +699,8 @@ Dictionary NativeRegionalWater::raycast_vacancy(const Vector3 &from,const Vector
     Dictionary out;out["hit"]=false;
     if(!from.is_finite()||!to.is_finite()||from.distance_to(to)>5)return out;
     Vector3 delta=to-from;Vector3i low=cell(from.min(to)),high=cell(from.max(to));
-    double nearest=2;Vector3i selected;
+    struct Interval {double enter,leave;Vector3i cell;};
+    std::vector<Interval> intervals;
     // At most 11^3 half-metre cells for a five-metre interaction ray. Slab
     // intersection catches thin diagonal crossings without sampling gaps.
     for(int z=low.z;z<=high.z;z++)for(int y=low.y;y<=high.y;y++)for(int x=low.x;x<=high.x;x++){
@@ -715,9 +716,18 @@ Dictionary NativeRegionalWater::raycast_vacancy(const Vector3 &from,const Vector
             double a=(lo[axis]-from[axis])/delta[axis],b=(hi[axis]-from[axis])/delta[axis];
             enter=std::max(enter,std::min(a,b));leave=std::min(leave,std::max(a,b));
         }
-        if(enter<=leave&&enter<nearest){nearest=enter;selected=p;}
+        if(enter<=leave)intervals.push_back({enter,leave,p});
     }
-    if(nearest<=1){out["hit"]=true;out["cell"]=selected;out["point"]=from+delta*nearest;}
+    // Pick entrances into the union of vacant cells, not internal cell faces.
+    // A camera inside a scooped cavity must not select its own position or
+    // the next half-metre cell as an invisible foreground target.
+    std::sort(intervals.begin(),intervals.end(),[](const Interval&a,const Interval&b){return a.enter<b.enter;});
+    for(size_t i=0;i<intervals.size();){
+        const auto first=intervals[i++];double leave=first.leave;
+        while(i<intervals.size()&&intervals[i].enter<=leave+1e-7){leave=std::max(leave,intervals[i].leave);++i;}
+        if(first.enter<=1e-7)continue;
+        out["hit"]=true;out["cell"]=first.cell;out["point"]=from+delta*first.enter;break;
+    }
     return out;
 }
 Dictionary NativeRegionalWater::transfer_water(const Vector3 &from,const Vector3 &to,bool pour,Object *inventory,int64_t slot,int64_t revision){
