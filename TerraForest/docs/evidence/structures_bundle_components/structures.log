@@ -1,0 +1,36 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.3.280 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+PASS bundled native structure world prepares
+PASS bundled building catalogs register
+PASS bundled catalog icon resolves: Wooden door (E open / close)
+PASS bundled catalog icon resolves: Wood framed window
+PASS bundled catalog icon resolves: Metal guardrail
+PASS bundled catalog icon resolves: Wooden fence
+PASS Wood framed window placed
+PASS Wood framed window blocks passage
+PASS Wood framed window removed
+PASS Wood framed window leaves no stale collider
+PASS Wood framed window snapshot restored
+PASS Wood framed window exact state and collision restored
+PASS Metal guardrail placed
+PASS Metal guardrail blocks passage
+PASS Metal guardrail removed
+PASS Metal guardrail leaves no stale collider
+PASS Metal guardrail snapshot restored
+PASS Metal guardrail exact state and collision restored
+PASS Wooden fence placed
+PASS Wooden fence blocks passage
+PASS Wooden fence removed
+PASS Wooden fence leaves no stale collider
+PASS Wooden fence snapshot restored
+PASS Wooden fence exact state and collision restored
+PASS bundled door placed
+PASS bundled closed door blocks ray
+PASS bundled hinge opens
+PASS bundled open door clears passage
+PASS bundled hinge and model restore
+PASS restored bundled door closes to exact pose
+PASS restored bundled collision closes passage
+BUNDLE_STRUCTURES failures=0
+

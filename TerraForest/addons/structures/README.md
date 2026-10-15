@@ -469,6 +469,21 @@ protection bounds remain authoritative. One mesh is rebuilt only for a new
 plan and hidden outside construction or after the plan is invalidated.
 
 
+### Standalone bundle verification
+
+Build the dependency bundle with `python tools/package.py --addon structures`.
+Verify it in a fresh temporary Godot project with
+`python tools/verify_addon_bundle.py --addon structures --godot <engine.exe> --exercise-structures`.
+The ZIP contains the declared addon dependencies; extract it into the host
+project root and let Godot import its resources. The host still supplies input,
+world setup and save orchestration.
+
+The extracted-project check exercises door hinges and collision, plus window,
+guardrail and fence placement, removal and snapshot restoration. It checks their
+baked icons without relying on main-project resources. See the scoped
+[component evidence](../../docs/evidence/structures_bundle_components/README.md).
+This is not large-city performance or complete host integration qualification.
+
 ### Model attachments in authoring prefabs
 
 `NativeBlockPrefab.configure_model_attachments(Array)` accepts at most 4096 dictionaries with exactly `model` (stable catalog key) and `transform` (`Transform3D` in prefab coordinates). Keys use lowercase letters, digits, `/`, `_` and `-`, up to 128 characters. Transforms must be finite, nonsingular, with origins within +/-4096 and basis components within +/-64. Returned arrays are independent copies. These records have no runtime instance IDs: placement must allocate authoritative identities from registered model collections.
