@@ -1,3 +1,9 @@
+> 2026-10-15 cave human checkpoint: Review Natural Caves.cmd starts on foot
+> outside generator6 cave0 in a disposable world. Startup visual check passes;
+> normal walking to 60 metres inside and back passes six waypoints. Evidence:
+> evidence/natural_cave_review/. Human review, broader cave coverage, discovery
+> from settlement and visual polish remain open. Water stays deferred.
+
 > 2026-10-15 cave entrance fix: opt-in generator 6 lifts the radius-7 mouth
 > capsule while preserving generator 1-5 geometry. Four seed-1703 sampled mouths
 > lose their steep lips; actual cave-0 walking in/out now passes. Debug/release

@@ -1,0 +1,18 @@
+2026-10-15: playable cave checkpoint and deeper traversal
+
+Review Natural Caves.cmd opens generator6 seed1703 cave0 on foot outside the
+entrance, using the ordinary world scene, gameplay UI and headlamp. Temporary
+world; edits are discarded and existing gameplay saves are untouched. It uses
+1920x1080 fullscreen, VSync and a 60 FPS cap. Startup smoke passes floor contact,
+start position, walking mode and gameplay UI checks. start.png was inspected.
+
+Actual player walking passes waypoints 20,40,60 metres inside and 40,20,-12
+metres back to the exterior. Only initial positioning is a fixture; traversal
+uses normal movement and streamed collision, without jumping or terrain edits.
+depth.json retains positions and floor states; depth.log records all six passes.
+The independent native query helper removes the new test's dependency on an
+earlier profile report. Water code is unchanged.
+
+Limits: one cave and one seed, not every branch or settlement discovery. Coarse
+cave art, cold startup and streaming hitches remain. A 60 FPS cap and screenshots
+do not establish sustained performance. Human review remains pending.
