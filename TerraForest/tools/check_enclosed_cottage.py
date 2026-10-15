@@ -17,11 +17,13 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--grounded', action='store_true')
     parser.add_argument('--play', action='store_true')
+    parser.add_argument('--tower', action='store_true')
     args = parser.parse_args()
     config, _ = parse_args([])
     worlds = Path(os.environ['APPDATA']) / 'Godot/app_userdata/TerraForest/worlds'
-    if args.play and (worlds / 'building_review.trw').exists():
-        return play()
+    review_slot = 'tower_review' if args.tower else 'building_review'
+    if args.play and (worlds / (review_slot + '.trw')).exists():
+        return play(review_slot)
     source = worlds / 'combined_gameplay.trw'
     before = hashlib.sha256(source.read_bytes()).hexdigest()
     slot = 'doors_' + uuid.uuid4().hex
@@ -33,6 +35,8 @@ def main():
                '--route-evidence=' + str(folder / 'expected')]
     if args.grounded or args.play:
         command.append('--grounded')
+    if args.tower:
+        command.append('--tower')
     result = execute(command, folder, 100, 'COMBINED_RESOURCE_ROUTE failures=0')
     reopen = None
     if result['passed']:
@@ -41,18 +45,18 @@ def main():
     unchanged = hashlib.sha256(source.read_bytes()).hexdigest() == before
     passed = result['passed'] and reopen is not None and reopen['passed'] and unchanged
     if passed and (args.grounded or args.play):
-        clone_once(worlds, slot, 'building_review')
+        clone_once(worlds, slot, review_slot)
     (folder / 'run.json').write_text(json.dumps(dict(copy=copied, command=command, result=result, reopen=reopen,
         source_unchanged=unchanged, **revision_metadata()), indent=2))
     print(('PASS ' if passed else 'FAIL ') + str(folder))
     if passed and args.play:
-        return play()
+        return play(review_slot)
     return 0 if passed else 1
 
 
-def play():
+def play(slot):
     from run import main as launch
-    return launch(['--slot', 'building_review', '--ground-cover'])
+    return launch(['--slot', slot, '--ground-cover'])
 
 
 if __name__ == '__main__':

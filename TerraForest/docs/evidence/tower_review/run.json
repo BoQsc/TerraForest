@@ -1,0 +1,53 @@
+{
+  "copy": {
+    "created": true,
+    "slot": "doors_4d48d23967ad4bde93a6521e75fe1054",
+    "source_slot": "combined_gameplay",
+    "source_sha256": "25b19886c1b677c44cabce30b1bc39a9efb6614f40d6c733bfb990fa7e3d9052"
+  },
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+    "--path",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+    "--fullscreen",
+    "--resolution",
+    "1920x1080",
+    "--max-fps",
+    "60",
+    "--script",
+    "res://tests/enclosed_cottage.gd",
+    "--",
+    "--world-slot=doors_4d48d23967ad4bde93a6521e75fe1054",
+    "--route-evidence=C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\enclosed_cottage\\20261015T161154212466Z\\expected",
+    "--grounded",
+    "--tower"
+  ],
+  "result": {
+    "timed_out": false,
+    "launch_error": null,
+    "pid": 29072,
+    "exit_code": 0,
+    "diagnostics": [],
+    "required_text_found": true,
+    "elapsed_seconds": 28.08825760000036,
+    "passed": true
+  },
+  "reopen": {
+    "timed_out": false,
+    "launch_error": null,
+    "pid": 21120,
+    "exit_code": 0,
+    "diagnostics": [],
+    "required_text_found": true,
+    "elapsed_seconds": 13.987816400003794,
+    "passed": true
+  },
+  "source_unchanged": true,
+  "revision": "620327fff4ba5f0cacfeeb881d6228850cc6a739",
+  "worktree_changes": [
+    " M TerraForest/tests/enclosed_cottage.gd",
+    " M TerraForest/tools/check_enclosed_cottage.py",
+    "?? \"TerraForest/Review Tower.cmd\""
+  ],
+  "git_metadata_available": true
+}

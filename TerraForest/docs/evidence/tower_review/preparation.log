@@ -1,0 +1,28 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.3.280 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] World loaded
+[TerrainRewrite] World loaded
+[terrain-hitch] receive 149.78 ms at 3696
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS cloned world loads
+PASS building combines expected furniture storage door and windows
+PASS editor surveys grounded cottage site
+PASS editor grades cottage foundation
+[TerrainRewrite] Checking foundation support…
+[TerrainRewrite] Preparing furnished buildings...
+[TerrainRewrite] Furnished tower · 3 floors placed - F5 saves; combined undo unavailable
+PASS supported cottage publishes through editor placement
+PASS cottage collision is ready
+PASS closed door blocks player capsule
+[TerrainRewrite] Door opened
+PASS cottage entrance opens through E
+PASS player walks through open doorway onto building floor
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+PASS main-world player walks from entrance to third floor
+PASS main-world player returns downstairs
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Empty hands - left mouse punches, E interacts
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+PASS ordinary compound save completes
+COMBINED_RESOURCE_ROUTE failures=0

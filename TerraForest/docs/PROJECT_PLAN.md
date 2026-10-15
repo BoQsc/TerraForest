@@ -1,3 +1,9 @@
+> 2026-10-15 grounded tower: editor grading/placement, main-world native walking
+> from entrance to third floor and back, plus fresh-process door/window restore
+> pass. `Review Tower.cmd` opens separately published tower_review. Evidence:
+> evidence/tower_review/. Exterior capture is foliage-obscured; human visual review,
+> stairwell guards and scale qualification remain open. Cottage review unchanged.
+
 > 2026-10-15 tower enclosure: closed roof/front façade, removed the unused top
 > stair flight, and added hinged ground-floor entrance plus approach step.
 > Twenty checks pass including entrance and full stair route; inspected rendered
