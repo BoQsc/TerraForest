@@ -47,6 +47,8 @@ func run()->void:
   check(game.storage.store.capture_storage_snapshot()==expected.storage,"earned chest contents restored exactly")
   check(game.ground_cover.removed.capture_storage_snapshot()==expected.removed,"gathered identities restored exactly")
   check(game.structures.blocks.get_cell(expected.cell)==1,"paid brick restored")
+  if expected.has("hinges"):
+   check(game.doors.state.capture_storage_snapshot()==expected.hinges and game.doors.collection.capture_snapshot()==expected.doors,"door state after travel restores exactly")
  else:
   if not check(amount(201)==0 and amount(101)==0,"no starting stone or bricks fund this route"):await finish();return
   var cover:Node=game.ground_cover
@@ -65,6 +67,13 @@ func run()->void:
    use()
    if cover.removed.contains(row.id):gathered.append(row.id);last=row.point
    if gathered.size()==5:break
+  if gathered.size()!=5:
+   print("GATHER_CANDIDATES count=",candidates.size()," player=",game.player.position," focus=",game.terrain.focus," nearest=",candidates[0].point if not candidates.is_empty() else Vector3.INF)
+   for row: Dictionary in candidates.slice(0,3):
+    var ray_from: Vector3=row.point+Vector3.UP*64
+    var ray_to: Vector3=row.point-Vector3.UP*4
+    await wait_for(func():return not game._terrain_pick(ray_from,ray_to).is_empty(),5)
+    print("GATHER_SURFACE point=",row.point," terrain=",game._terrain_pick(ray_from,ray_to))
   if not check(gathered.size()==5 and amount(201)==5,"E gathers five actual natural stones without free grants"):await finish();return
   game.player_hud.set_open(true);game.player_hud.recipe_buttons[0].pressed.emit()
   if not check(amount(201)==3 and amount(101)==1,"crafting button spends two earned stones for one brick"):await finish();return

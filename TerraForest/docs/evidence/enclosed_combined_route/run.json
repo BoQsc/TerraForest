@@ -1,0 +1,51 @@
+{
+  "copy": {
+    "created": true,
+    "slot": "combined_route_6839415af61244d1b5dec47f3988bb01",
+    "source_slot": "combined_enclosed_review",
+    "source_sha256": "d35b2a41e518a19caeda9829f98fc6ffc0acf07c79e5db1a11b4dc61df5c6fdd"
+  },
+  "phases": [
+    {
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--fullscreen",
+        "--resolution",
+        "1920x1080",
+        "--max-fps",
+        "60",
+        "--script",
+        "res://tests/combined_resource_route.gd",
+        "--",
+        "--world-slot=combined_route_6839415af61244d1b5dec47f3988bb01",
+        "--gameplay-construction",
+        "--ground-cover",
+        "--actors",
+        "--vehicle-fleet",
+        "--route-evidence=C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\combined_resource_route\\20261015T171536132356Z\\expected.bin"
+      ],
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "pid": 30944,
+        "exit_code": 1,
+        "diagnostics": [
+          "FAIL E gathers five actual natural stones without free grants"
+        ],
+        "required_text_found": false,
+        "elapsed_seconds": 35.38849009999831,
+        "passed": false
+      }
+    }
+  ],
+  "revision": "e747338d4e301a64b0c69c064e1e9bf7b0e4e612",
+  "worktree_changes": [
+    " M TerraForest/tests/combined_resource_route.gd",
+    " M TerraForest/tests/combined_travel_route.gd",
+    " M TerraForest/tools/run_combined_resource_route.py"
+  ],
+  "git_metadata_available": true,
+  "source_unchanged": true
+}

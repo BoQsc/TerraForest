@@ -33,6 +33,11 @@ func run()->void:
  # Block doorway occupies local x=[0,1]; attachments use the integer origin.
  var center:=Vector3(t[3],t[7],t[11])-right*2.0
  if not check(await walk_to(center+front*2),"walk from saved chest position into central aisle"):await finish();return
+ if not game.doors.collection.get_ids().is_empty():
+  if not check(await walk_to(center+front*4),"walk within reach of enclosed cottage door"):await finish();return
+  game.camera.look_at(center+front*5.5+Vector3.UP)
+  if not check(game.doors.try_interact(),"interact with generated cottage door before departure"):await finish();return
+  for frame in 15:await physics_frame
  if not check(await walk_to(center+front*14.5),"walk through doorway and down stairs to street without jumping"):await finish();return
  var street:Dictionary=game.road_palette.prepared_streets[0]
  var a:Vector3=street.ends[0];var b:Vector3=street.ends[1];var direction:Vector3=(b-a).normalized()
@@ -74,6 +79,9 @@ func run()->void:
  if not check(await walk_to(center+front*14.5),"walk from parked car back to cottage approach"):await finish();return
  if not check(await walk_to(center+front*2),"walk back up stairs through doorway without jumping"):await finish();return
  check(game.player_hud.inventory.capture_storage_snapshot()==expected.inventory and game.storage.store.capture_storage_snapshot()==expected.storage,"earned inventory and chest contents unchanged after travel")
+ expected.hinges=game.doors.state.capture_storage_snapshot()
+ expected.doors=game.doors.collection.capture_snapshot()
+ var saved:=FileAccess.open(evidence,FileAccess.WRITE);saved.store_var(expected);saved.close()
  await finish()
 func finish()->void:
  for code in [KEY_W,KEY_S,KEY_A,KEY_D]:key(code,false)

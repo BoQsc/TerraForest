@@ -1,6 +1,8 @@
 # SPDX-License-Identifier: 0BSD
 """Gather/build/store check on a fresh copy; never edit the user's gameplay slot."""
 import datetime
+import argparse
+import re
 import hashlib
 import json
 import os
@@ -13,12 +15,16 @@ from play_checkpoint import revision_metadata
 
 
 def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--source', default='combined_gameplay')
+    args = parser.parse_args()
+    if not re.fullmatch(r'[A-Za-z_][A-Za-z0-9_]{0,47}', args.source):parser.error('Invalid source slot')
     config, _ = parse_args([])
     worlds = Path(os.environ['APPDATA']) / 'Godot/app_userdata/TerraForest/worlds'
-    source = worlds / 'combined_gameplay.trw'
+    source = worlds / (args.source + '.trw')
     before = hashlib.sha256(source.read_bytes()).hexdigest()
     slot = 'combined_route_' + uuid.uuid4().hex
-    copy = clone_once(worlds, 'combined_gameplay', slot)
+    copy = clone_once(worlds, args.source, slot)
     stamp = datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')
     folder = ROOT / 'reports/combined_resource_route' / stamp
     folder.mkdir(parents=True)

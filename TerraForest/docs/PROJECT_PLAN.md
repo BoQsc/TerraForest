@@ -1,3 +1,12 @@
+> 2026-10-15 enclosed combined route FAILS before travel: gathering finds no
+> stones within 25 m of saved cottage spawn Y79.5. Nearest natural stones are
+> around Y47.6; asynchronous native terrain rays confirm those ground heights.
+> The enclosed-generation save/reopen and entrance tests did not prove connection
+> to surrounding terrain. Investigate grading/generation/persistence height
+> agreement before calling this a coherent gameplay checkpoint. Source review
+> unchanged. Evidence: evidence/enclosed_combined_route/. No performance or
+> route closure; do not merely widen gathering radius to hide the mismatch.
+
 > 2026-10-15 generated entrance correction: real held-W approach exposed door
 > protection rejecting all four players touching a closed door. Door interaction
 > now uses actual capsule radius, without an extra inflated leaf margin. Four
