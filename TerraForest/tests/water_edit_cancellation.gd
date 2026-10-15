@@ -6,7 +6,15 @@ func run():
  while not game.has_meta("water_bucket_review_ready") and Time.get_ticks_msec()<deadline:await process_frame
  check(game.has_meta("water_bucket_review_ready"),"Actual review world is ready")
  if failures:await finish();return
+ # A queued click may expire just as its target becomes ready. The deadline
+ # must be checked before executing an otherwise valid native transfer.
  var original:Dictionary=amounts(game.lakes.capture_snapshot())
+ var ready_from:Vector3=game.camera.global_position
+ var ready_to:Vector3=ready_from-game.camera.global_basis.z*3.5
+ game.lakes._pending_bucket={"from":ready_from,"to":ready_to,"pour":false,"inventory":game.player_hud.inventory,"slot":game.player_hud.active_slot,"revision":game.player_hud.inventory.snapshot().revision,"deadline":Time.get_ticks_msec()-1}
+ game.lakes._process(0.0)
+ check(held_ml()==0 and amounts(game.lakes.capture_snapshot())==original,"Expired click cannot scoop even when its target is ready")
+ if failures:await finish();return
  for distance in [30,38,46]:
   var position:Vector3=game.player.global_position+Vector3(0,0,distance)
   var hit:Dictionary=game.get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(position+Vector3.UP*30,position-Vector3.UP*30,1))

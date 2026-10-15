@@ -160,7 +160,9 @@ func _process(delta:float) -> void:
     elif terrain.request_lake_slice(_builder,_token):_busy=true
  if not _pending_bucket.is_empty():
   var p:=_pending_bucket
-  var result:Dictionary=_transfer_bucket(p.from,p.to,p.pour,p.inventory,p.slot,p.revision)
+  # Expiration is a precondition: never execute a stale click first and
+  # discover afterwards that its loading deadline already passed.
+  var result:Dictionary={"ok":false,"pending":false,"reason":"Water action timed out; bucket unchanged. Try again."} if Time.get_ticks_msec()>p.deadline else _transfer_bucket(p.from,p.to,p.pour,p.inventory,p.slot,p.revision)
   if result.ok or not result.pending or Time.get_ticks_msec()>p.deadline:
    _pending_bucket={}
    if result.pending:result.reason="Water action timed out; bucket unchanged. Try again."
@@ -169,7 +171,7 @@ func _process(delta:float) -> void:
    interaction_finished.emit(result.reason)
  if not _pending_dev.is_empty():
   var p:=_pending_dev
-  var result:Dictionary=water.place_water(p.point,p.amount)
+  var result:Dictionary={"ok":false,"pending":false,"reason":"Water placement timed out; no water placed. Try again."} if Time.get_ticks_msec()>p.deadline else water.place_water(p.point,p.amount)
   if result.ok or not result.pending or Time.get_ticks_msec()>p.deadline:
    _pending_dev={}
    if result.pending:result.reason="Water placement timed out; no water placed. Try again."

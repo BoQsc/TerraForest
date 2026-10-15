@@ -131,3 +131,9 @@ A two-hole reproducer exposed a second aim defect: sorting all nearby vacancy ce
 Evidence: `docs/evidence/water_multiple_holes`. Two of four above-water offsets failed before the correction. All eight above-water/underwater cases now restore the intended hole exactly while leaving the other unchanged. The normal-world submerged oblique mouse-input case checks every water cell and published mesh fingerprint. Shore/corner return, raised-shape native return, and the actual-world three-unit raised-water lowering sequence also pass. Debug and release DLLs rebuilt.
 
 Scope: this corrects distinct marked holes with enough missing capacity for the full unit. The existing geometric fallback for older or partially replaced holes remains. There is still no placement preview, and these fixed-camera checks do not prove moving-camera queued-input behavior or resolve the previously recorded underwater shoreline visual artifacts.
+
+## Expired queued actions (2026-10-15)
+
+Queued bucket and developer placements now check the five-second deadline before calling the native mutation. Previously a target becoming ready at expiry could execute the stale action before timeout was considered. The actual-world cancellation regression now includes an already-ready target with an expired queued scoop; before the fix it incorrectly filled the bucket, afterward world and inventory remain unchanged. Existing superseding-action and cold-target timeout checks also pass. Evidence: `docs/evidence/water_expired_ready_action`.
+
+Queued bucket requests still retain their click-time ray and inventory revision; camera movement does not retarget them. Continuous-swimming usability is not established by this deadline regression.
