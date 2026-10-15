@@ -507,3 +507,7 @@ Existing shape IDs and saves are unchanged. Saves containing shape 7 require thi
 ### Clean bundle verification
 
 `python tools/package.py --addon structures` creates the dependency archive. Run `python tools/verify_addon_bundle.py --addon structures --godot "PATH_TO_GODOT" --exercise-structures` to extract it into a fresh project, import/load all resources, and exercise seven block shapes in four rotations, rotated prefab capture/restore, windows, doors, fences, and straight/sloping guardrails. The fixture uses actual native collision, removal and restore; it has no main-project resource fallback. This verifies packaging and scoped functionality on Godot 4.7 Windows, not exported-game support, other platforms or city-scale performance.
+
+### Timber footbridge prefab
+
+The main-world construction palette includes **Timber footbridge - 12 m span**. `bridge_catalog.gd.footbridge()` creates92 ordinary wooden block cells with stairs at both ends, posts and slab rail caps. Gameplay cost is92 wood; free-editor placement uses the same native prefab path. The four-metre-wide deck spans local Z0..11; approach stairs occupy Z-1 and12. Align the approaches with existing banks at origin height. Whole-footprint foundation preparation is intended for buildings and would fill the gap, so place the bridge directly. This is a static footbridge, not automatic bridge siting or structural simulation. Traversal and main-world fresh-save evidence: [timber bridge](../../docs/evidence/timber_bridge/README.md).

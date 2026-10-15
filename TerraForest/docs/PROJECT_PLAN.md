@@ -1,3 +1,9 @@
+> 2026-10-16 construction coverage: timber footbridge is selectable in the main
+> world.92 ordinary wood blocks,12 m deck, stairs and block railings; paid
+> placement, no-jump crossing/return, lateral containment and fresh-process
+> rotated persistence pass. Manual bank siting only; automatic bridging and
+> vehicle/scale qualification remain open. Evidence: evidence/timber_bridge/.
+
 > 2026-10-16 addon support: clean structures dependency ZIP loads104 resources
 > and passes99 graphical shape/door/window/fence/rail assertions. Fixed the
 > session menu hard-coded demo-browser dependency through a host-supplied path;

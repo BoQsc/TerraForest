@@ -367,6 +367,9 @@ func _setup_prefabs() -> void:
 	var tower: Resource=preload("res://addons/structures/furniture_catalog.gd").furnished_tower()
 	if tower!=null:
 		structure_prefabs.append(tower);tower.changed.connect(_invalidate_prefab_preview)
+	var bridge: Resource=preload("res://addons/structures/bridge_catalog.gd").footbridge()
+	if bridge!=null:
+		structure_prefabs.append(bridge);bridge.changed.connect(_invalidate_prefab_preview)
 	for asset: Resource in prefab_library.assets:
 		structure_prefabs.append(asset)
 		asset.changed.connect(_invalidate_prefab_preview)
