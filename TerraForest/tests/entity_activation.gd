@@ -28,7 +28,12 @@ func run() -> void:
 	var invalid:=targets.duplicate();invalid[2]=Vector3(NAN,0,0)
 	check(not pool.tick(invalid,1.0/60,PackedByteArray([1,1,1])) and store.capture_storage_snapshot()==snapshot,"invalid last target rejects whole batch")
 	await physics_frame
-	check(pool.tick(targets,1.0/60,PackedByteArray([1,1,1])) and store.get_position(local[0]).x>0,"native batch advances selected actors")
+	check(pool.tick(targets,1.0/60,PackedByteArray([1,1,1])),"native batch submits avoidance intent")
+	# NavigationServer returns safe velocity on a subsequent physics update.
+	for frame in 4:
+		await physics_frame
+		pool.tick(targets,1.0/60,PackedByteArray([1,1,1]))
+	check(store.get_position(local[0]).x>0,"native batch advances after bounded avoidance warm-up")
 	pool.select(Vector3(10,2,0),3,4096)
 	check(pool.active_handles().has(local[5]) and not pool.active_handles().has(local[0]),"focus change retires distant actor and activates nearer identity")
 	pool.select(Vector3(5000,0,0),16,4096)

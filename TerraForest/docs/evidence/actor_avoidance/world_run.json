@@ -1,0 +1,53 @@
+{
+  "copy": {
+    "created": true,
+    "slot": "actor_crossing_aa2b8e66adcc466bae7ed181c6d79d55",
+    "source_slot": "combined_gameplay",
+    "source_sha256": "25b19886c1b677c44cabce30b1bc39a9efb6614f40d6c733bfb990fa7e3d9052"
+  },
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+    "--path",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+    "--fullscreen",
+    "--resolution",
+    "1920x1080",
+    "--max-fps",
+    "60",
+    "--script",
+    "res://tests/actor_street_crossing.gd",
+    "--",
+    "--world-slot=actor_crossing_aa2b8e66adcc466bae7ed181c6d79d55",
+    "--actors",
+    "--ground-cover",
+    "--crossing-output=C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\actor_street_crossing\\20261015T141623242257Z"
+  ],
+  "result": {
+    "timed_out": false,
+    "launch_error": null,
+    "pid": 24788,
+    "exit_code": 0,
+    "diagnostics": [],
+    "required_text_found": true,
+    "elapsed_seconds": 26.04632639999909,
+    "passed": true
+  },
+  "source_unchanged": true,
+  "revision": "ff2a3b7b408e6f7b2e11fed39573ea1ab94cf66e",
+  "worktree_changes": [
+    " M TerraForest/addons/world_runtime/bin/world_runtime.windows.template_debug.x86_64.dll",
+    " M TerraForest/addons/world_runtime/bin/world_runtime.windows.template_release.x86_64.dll",
+    " M TerraForest/addons/world_runtime/native/entity_activation.cpp",
+    " M TerraForest/addons/world_runtime/native/entity_actor.cpp",
+    " M TerraForest/addons/world_runtime/native/entity_actor.hpp",
+    " M TerraForest/tests/actor_structure_collision.gd",
+    "?? TerraForest/tests/actor_crossing.gd",
+    "?? TerraForest/tests/actor_street_crossing.gd",
+    "?? TerraForest/tools/run_actor_street_crossing.py"
+  ],
+  "git_metadata_available": true,
+  "native_sha256": {
+    "world_runtime.windows.template_debug.x86_64.dll": "fa2e45609ca9980ef9211e9a8f639928b31d693da95bd4afb65013792197ed4b",
+    "world_runtime.windows.template_release.x86_64.dll": "4d4eeea469d15e57d9bff5224e566958c55740b37daf31055ca2ef4f4d5dd56c"
+  }
+}

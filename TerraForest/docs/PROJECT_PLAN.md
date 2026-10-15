@@ -1,3 +1,10 @@
+> 2026-10-15 local actor avoidance is integrated: native active proxies now
+> avoid each other and retain mutual collision. Opposing routes pass on the
+> actual settlement street (minimum 0.800 m separation); cottage access and
+> sleeping/reactivation checks pass. Evidence: evidence/actor_avoidance/.
+> Dense crowds, narrow opposing doorways and runtime cost remain unqualified.
+> Water unchanged; no entity-population completion claim.
+
 > 2026-10-15 interacting-entity identity fix: attacks now resolve the actual
 > hit native body directly, without a capped position lookup. An actual-world
 > 80-coincident-record failure now passes; only the hit actor is destroyed.

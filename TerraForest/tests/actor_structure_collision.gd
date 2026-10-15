@@ -23,11 +23,17 @@ func run() -> void:
 	check(point.x<-0.64 and point.x>-0.8,"active actor stops against authored-structure collision layer")
 	check(point.y>0.88 and point.y<0.95,"authored-structure floor supports actor")
 	var body: CharacterBody3D=pool.get_child(0)
-	check(body.collision_layer==8 and body.collision_mask==3,"actors use separate membership and terrain/structure mask")
+	var avoidance: NavigationAgent3D
+	for child in body.get_children():
+		if child is NavigationAgent3D:avoidance=child
+	check(avoidance!=null and avoidance.avoidance_enabled,"active proxy participates in native avoidance")
+	check(body.collision_layer==8 and body.collision_mask==11,"actors collide with terrain, structures and other actors")
 	pool.select(Vector3(100,0,0),1,16)
 	check(body.collision_layer==0 and body.collision_mask==0,"sleeping proxy has no collision membership")
+	check(not avoidance.avoidance_enabled,"sleeping proxy leaves avoidance simulation")
 	pool.select(Vector3.ZERO,10,16)
-	check(body.collision_layer==8 and body.collision_mask==3,"reactivation restores both world collision layers")
+	check(body.collision_layer==8 and body.collision_mask==11,"reactivation restores world and actor collision layers")
+	check(avoidance.avoidance_enabled,"reactivation restores avoidance")
 	var before: Vector3=store.get_position(handle)
 	pool.settle(1.0/Engine.physics_ticks_per_second,func(_bounds: AABB):return false)
 	check(store.get_position(handle)==before,"unavailable collision still holds actor")

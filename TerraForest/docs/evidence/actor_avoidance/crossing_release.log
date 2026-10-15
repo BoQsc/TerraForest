@@ -1,0 +1,7 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS two-body pool configures
+PASS opposing routes retain capsule separation: 0.806 m
+PASS both actors reach opposite destinations
+ACTOR_CROSSING failures=0
+

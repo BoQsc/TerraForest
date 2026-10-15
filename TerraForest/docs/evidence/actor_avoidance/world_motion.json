@@ -1,0 +1,1197 @@
+{
+  "failures": 0,
+  "minimum_separation": 0.799935638904572,
+  "peak_route_work": 12,
+  "trace": [
+    {
+      "a": "(805.0, 47.93, 1310.0)",
+      "a_state": {
+        "state": "sleeping"
+      },
+      "b": "(817.0, 47.93, 1310.0)",
+      "b_state": {
+        "state": "sleeping"
+      }
+    },
+    {
+      "a": "(805.0, 47.92445, 1310.0)",
+      "a_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "planning",
+        "waypoints": 7
+      },
+      "b": "(817.0, 47.92445, 1310.0)",
+      "b_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "planning",
+        "waypoints": 7
+      }
+    },
+    {
+      "a": "(805.3752, 47.90015, 1310.0)",
+      "a_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "following",
+        "waypoints": 25
+      },
+      "b": "(816.6248, 47.90015, 1310.0)",
+      "b_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "following",
+        "waypoints": 25
+      }
+    },
+    {
+      "a": "(805.8752, 47.90015, 1310.0)",
+      "a_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "following",
+        "waypoints": 25
+      },
+      "b": "(816.1248, 47.90015, 1310.0)",
+      "b_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "following",
+        "waypoints": 25
+      }
+    },
+    {
+      "a": "(806.3752, 47.90015, 1310.0)",
+      "a_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "following",
+        "waypoints": 25
+      },
+      "b": "(815.6248, 47.90015, 1310.0)",
+      "b_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "following",
+        "waypoints": 25
+      }
+    },
+    {
+      "a": "(806.8752, 47.90015, 1310.0)",
+      "a_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "following",
+        "waypoints": 25
+      },
+      "b": "(815.1248, 47.90015, 1310.0)",
+      "b_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "following",
+        "waypoints": 25
+      }
+    },
+    {
+      "a": "(807.3752, 47.90015, 1310.0)",
+      "a_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "following",
+        "waypoints": 25
+      },
+      "b": "(814.6248, 47.90015, 1310.0)",
+      "b_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "following",
+        "waypoints": 25
+      }
+    },
+    {
+      "a": "(807.8752, 47.90015, 1310.0)",
+      "a_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "following",
+        "waypoints": 25
+      },
+      "b": "(814.1248, 47.90015, 1310.0)",
+      "b_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "following",
+        "waypoints": 25
+      }
+    },
+    {
+      "a": "(808.3752, 47.90015, 1310.0)",
+      "a_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "following",
+        "waypoints": 25
+      },
+      "b": "(813.6248, 47.90015, 1310.0)",
+      "b_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "following",
+        "waypoints": 25
+      }
+    },
+    {
+      "a": "(808.8752, 47.90015, 1310.0)",
+      "a_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "following",
+        "waypoints": 25
+      },
+      "b": "(813.1248, 47.90015, 1310.0)",
+      "b_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "following",
+        "waypoints": 25
+      }
+    },
+    {
+      "a": "(809.3512, 47.90015, 1309.928)",
+      "a_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "following",
+        "waypoints": 25
+      },
+      "b": "(812.6488, 47.90015, 1310.072)",
+      "b_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "following",
+        "waypoints": 25
+      }
+    },
+    {
+      "a": "(809.6484, 47.90015, 1310.116)",
+      "a_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "following",
+        "waypoints": 25
+      },
+      "b": "(812.2908, 47.90015, 1309.962)",
+      "b_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "following",
+        "waypoints": 25
+      }
+    },
+    {
+      "a": "(809.8799, 47.90015, 1310.307)",
+      "a_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "following",
+        "waypoints": 25
+      },
+      "b": "(811.8222, 47.90015, 1309.976)",
+      "b_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "following",
+        "waypoints": 25
+      }
+    },
+    {
+      "a": "(809.878, 47.90015, 1310.447)",
+      "a_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "following",
+        "waypoints": 25
+      },
+      "b": "(811.3311, 47.90015, 1309.992)",
+      "b_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "following",
+        "waypoints": 25
+      }
+    },
+    {
+      "a": "(809.8503, 47.90015, 1310.577)",
+      "a_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "following",
+        "waypoints": 25
+      },
+      "b": "(810.8313, 47.90015, 1310.0)",
+      "b_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "following",
+        "waypoints": 25
+      }
+    },
+    {
+      "a": "(809.8224, 47.90015, 1310.696)",
+      "a_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "following",
+        "waypoints": 25
+      },
+      "b": "(810.3311, 47.90015, 1310.0)",
+      "b_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "following",
+        "waypoints": 25
+      }
+    },
+    {
+      "a": "(809.823, 47.90015, 1310.803)",
+      "a_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "following",
+        "waypoints": 25
+      },
+      "b": "(809.8308, 47.90015, 1310.0)",
+      "b_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "following",
+        "waypoints": 25
+      }
+    },
+    {
+      "a": "(809.9497, 47.90015, 1310.492)",
+      "a_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "following",
+        "waypoints": 25
+      },
+      "b": "(809.3748, 47.90015, 1309.888)",
+      "b_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "following",
+        "waypoints": 25
+      }
+    },
+    {
+      "a": "(810.0006, 47.90015, 1309.994)",
+      "a_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "following",
+        "waypoints": 25
+      },
+      "b": "(809.2017, 47.90015, 1309.913)",
+      "b_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "following",
+        "waypoints": 25
+      }
+    },
+    {
+      "a": "(810.5007, 47.90015, 1310.0)",
+      "a_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "following",
+        "waypoints": 25
+      },
+      "b": "(809.4156, 47.90015, 1310.008)",
+      "b_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "following",
+        "waypoints": 25
+      }
+    },
+    {
+      "a": "(811.0002, 47.90015, 1310.0)",
+      "a_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "following",
+        "waypoints": 25
+      },
+      "b": "(808.9166, 47.90015, 1309.999)",
+      "b_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "following",
+        "waypoints": 25
+      }
+    },
+    {
+      "a": "(811.5002, 47.90015, 1310.0)",
+      "a_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "following",
+        "waypoints": 25
+      },
+      "b": "(808.4166, 47.90015, 1310.0)",
+      "b_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "following",
+        "waypoints": 25
+      }
+    },
+    {
+      "a": "(812.0002, 47.90015, 1310.0)",
+      "a_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "following",
+        "waypoints": 25
+      },
+      "b": "(807.9166, 47.90015, 1310.0)",
+      "b_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "following",
+        "waypoints": 25
+      }
+    },
+    {
+      "a": "(812.5002, 47.90015, 1310.0)",
+      "a_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "following",
+        "waypoints": 25
+      },
+      "b": "(807.4166, 47.90015, 1310.0)",
+      "b_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "following",
+        "waypoints": 25
+      }
+    },
+    {
+      "a": "(813.0002, 47.90015, 1310.0)",
+      "a_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "following",
+        "waypoints": 25
+      },
+      "b": "(806.9166, 47.90015, 1310.0)",
+      "b_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "following",
+        "waypoints": 25
+      }
+    },
+    {
+      "a": "(813.5002, 47.90015, 1310.0)",
+      "a_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "following",
+        "waypoints": 25
+      },
+      "b": "(806.4166, 47.90015, 1310.0)",
+      "b_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "following",
+        "waypoints": 25
+      }
+    },
+    {
+      "a": "(814.0002, 47.90015, 1310.0)",
+      "a_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "following",
+        "waypoints": 25
+      },
+      "b": "(805.9166, 47.90015, 1310.0)",
+      "b_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "following",
+        "waypoints": 25
+      }
+    },
+    {
+      "a": "(814.5002, 47.90015, 1310.0)",
+      "a_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "following",
+        "waypoints": 25
+      },
+      "b": "(805.4166, 47.90015, 1310.0)",
+      "b_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "following",
+        "waypoints": 25
+      }
+    },
+    {
+      "a": "(815.0002, 47.90015, 1310.0)",
+      "a_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "following",
+        "waypoints": 25
+      },
+      "b": "(805.0831, 47.90015, 1310.0)",
+      "b_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "arrived",
+        "waypoints": 25
+      }
+    },
+    {
+      "a": "(815.5002, 47.90015, 1310.0)",
+      "a_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "following",
+        "waypoints": 25
+      },
+      "b": "(805.0831, 47.90015, 1310.0)",
+      "b_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "arrived",
+        "waypoints": 25
+      }
+    },
+    {
+      "a": "(816.0002, 47.90015, 1310.0)",
+      "a_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "following",
+        "waypoints": 25
+      },
+      "b": "(805.0831, 47.90015, 1310.0)",
+      "b_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "arrived",
+        "waypoints": 25
+      }
+    },
+    {
+      "a": "(816.5002, 47.90015, 1310.0)",
+      "a_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "following",
+        "waypoints": 25
+      },
+      "b": "(805.0831, 47.90015, 1310.0)",
+      "b_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "arrived",
+        "waypoints": 25
+      }
+    },
+    {
+      "a": "(816.9169, 47.90015, 1310.0)",
+      "a_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "arrived",
+        "waypoints": 25
+      },
+      "b": "(805.0831, 47.90015, 1310.0)",
+      "b_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "arrived",
+        "waypoints": 25
+      }
+    },
+    {
+      "a": "(816.9169, 47.90015, 1310.0)",
+      "a_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "arrived",
+        "waypoints": 25
+      },
+      "b": "(805.0831, 47.90015, 1310.0)",
+      "b_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "arrived",
+        "waypoints": 25
+      }
+    },
+    {
+      "a": "(816.9169, 47.90015, 1310.0)",
+      "a_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "arrived",
+        "waypoints": 25
+      },
+      "b": "(805.0831, 47.90015, 1310.0)",
+      "b_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "arrived",
+        "waypoints": 25
+      }
+    },
+    {
+      "a": "(816.9169, 47.90015, 1310.0)",
+      "a_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "arrived",
+        "waypoints": 25
+      },
+      "b": "(805.0831, 47.90015, 1310.0)",
+      "b_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "arrived",
+        "waypoints": 25
+      }
+    },
+    {
+      "a": "(816.9169, 47.90015, 1310.0)",
+      "a_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "arrived",
+        "waypoints": 25
+      },
+      "b": "(805.0831, 47.90015, 1310.0)",
+      "b_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "arrived",
+        "waypoints": 25
+      }
+    },
+    {
+      "a": "(816.9169, 47.90015, 1310.0)",
+      "a_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "arrived",
+        "waypoints": 25
+      },
+      "b": "(805.0831, 47.90015, 1310.0)",
+      "b_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "arrived",
+        "waypoints": 25
+      }
+    },
+    {
+      "a": "(816.9169, 47.90015, 1310.0)",
+      "a_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "arrived",
+        "waypoints": 25
+      },
+      "b": "(805.0831, 47.90015, 1310.0)",
+      "b_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "arrived",
+        "waypoints": 25
+      }
+    },
+    {
+      "a": "(816.9169, 47.90015, 1310.0)",
+      "a_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "arrived",
+        "waypoints": 25
+      },
+      "b": "(805.0831, 47.90015, 1310.0)",
+      "b_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "arrived",
+        "waypoints": 25
+      }
+    },
+    {
+      "a": "(816.9169, 47.90015, 1310.0)",
+      "a_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "arrived",
+        "waypoints": 25
+      },
+      "b": "(805.0831, 47.90015, 1310.0)",
+      "b_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "arrived",
+        "waypoints": 25
+      }
+    },
+    {
+      "a": "(816.9169, 47.90015, 1310.0)",
+      "a_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "arrived",
+        "waypoints": 25
+      },
+      "b": "(805.0831, 47.90015, 1310.0)",
+      "b_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "arrived",
+        "waypoints": 25
+      }
+    },
+    {
+      "a": "(816.9169, 47.90015, 1310.0)",
+      "a_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "arrived",
+        "waypoints": 25
+      },
+      "b": "(805.0831, 47.90015, 1310.0)",
+      "b_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "arrived",
+        "waypoints": 25
+      }
+    },
+    {
+      "a": "(816.9169, 47.90015, 1310.0)",
+      "a_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "arrived",
+        "waypoints": 25
+      },
+      "b": "(805.0831, 47.90015, 1310.0)",
+      "b_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "arrived",
+        "waypoints": 25
+      }
+    },
+    {
+      "a": "(816.9169, 47.90015, 1310.0)",
+      "a_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "arrived",
+        "waypoints": 25
+      },
+      "b": "(805.0831, 47.90015, 1310.0)",
+      "b_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "arrived",
+        "waypoints": 25
+      }
+    },
+    {
+      "a": "(816.9169, 47.90015, 1310.0)",
+      "a_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "arrived",
+        "waypoints": 25
+      },
+      "b": "(805.0831, 47.90015, 1310.0)",
+      "b_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "arrived",
+        "waypoints": 25
+      }
+    },
+    {
+      "a": "(816.9169, 47.90015, 1310.0)",
+      "a_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "arrived",
+        "waypoints": 25
+      },
+      "b": "(805.0831, 47.90015, 1310.0)",
+      "b_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "arrived",
+        "waypoints": 25
+      }
+    },
+    {
+      "a": "(816.9169, 47.90015, 1310.0)",
+      "a_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "arrived",
+        "waypoints": 25
+      },
+      "b": "(805.0831, 47.90015, 1310.0)",
+      "b_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "arrived",
+        "waypoints": 25
+      }
+    },
+    {
+      "a": "(816.9169, 47.90015, 1310.0)",
+      "a_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "arrived",
+        "waypoints": 25
+      },
+      "b": "(805.0831, 47.90015, 1310.0)",
+      "b_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "arrived",
+        "waypoints": 25
+      }
+    },
+    {
+      "a": "(816.9169, 47.90015, 1310.0)",
+      "a_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "arrived",
+        "waypoints": 25
+      },
+      "b": "(805.0831, 47.90015, 1310.0)",
+      "b_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "arrived",
+        "waypoints": 25
+      }
+    },
+    {
+      "a": "(816.9169, 47.90015, 1310.0)",
+      "a_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "arrived",
+        "waypoints": 25
+      },
+      "b": "(805.0831, 47.90015, 1310.0)",
+      "b_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "arrived",
+        "waypoints": 25
+      }
+    },
+    {
+      "a": "(816.9169, 47.90015, 1310.0)",
+      "a_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "arrived",
+        "waypoints": 25
+      },
+      "b": "(805.0831, 47.90015, 1310.0)",
+      "b_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "arrived",
+        "waypoints": 25
+      }
+    },
+    {
+      "a": "(816.9169, 47.90015, 1310.0)",
+      "a_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "arrived",
+        "waypoints": 25
+      },
+      "b": "(805.0831, 47.90015, 1310.0)",
+      "b_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "arrived",
+        "waypoints": 25
+      }
+    },
+    {
+      "a": "(816.9169, 47.90015, 1310.0)",
+      "a_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "arrived",
+        "waypoints": 25
+      },
+      "b": "(805.0831, 47.90015, 1310.0)",
+      "b_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "arrived",
+        "waypoints": 25
+      }
+    },
+    {
+      "a": "(816.9169, 47.90015, 1310.0)",
+      "a_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "arrived",
+        "waypoints": 25
+      },
+      "b": "(805.0831, 47.90015, 1310.0)",
+      "b_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "arrived",
+        "waypoints": 25
+      }
+    },
+    {
+      "a": "(816.9169, 47.90015, 1310.0)",
+      "a_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "arrived",
+        "waypoints": 25
+      },
+      "b": "(805.0831, 47.90015, 1310.0)",
+      "b_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "arrived",
+        "waypoints": 25
+      }
+    },
+    {
+      "a": "(816.9169, 47.90015, 1310.0)",
+      "a_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "arrived",
+        "waypoints": 25
+      },
+      "b": "(805.0831, 47.90015, 1310.0)",
+      "b_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "arrived",
+        "waypoints": 25
+      }
+    },
+    {
+      "a": "(816.9169, 47.90015, 1310.0)",
+      "a_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "arrived",
+        "waypoints": 25
+      },
+      "b": "(805.0831, 47.90015, 1310.0)",
+      "b_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "arrived",
+        "waypoints": 25
+      }
+    },
+    {
+      "a": "(816.9169, 47.90015, 1310.0)",
+      "a_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "arrived",
+        "waypoints": 25
+      },
+      "b": "(805.0831, 47.90015, 1310.0)",
+      "b_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "arrived",
+        "waypoints": 25
+      }
+    },
+    {
+      "a": "(816.9169, 47.90015, 1310.0)",
+      "a_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "arrived",
+        "waypoints": 25
+      },
+      "b": "(805.0831, 47.90015, 1310.0)",
+      "b_state": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "state": "arrived",
+        "waypoints": 25
+      }
+    }
+  ]
+}

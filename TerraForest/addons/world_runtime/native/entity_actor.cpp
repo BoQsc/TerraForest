@@ -12,6 +12,32 @@ void NativeEntityActor::_bind_methods() {
     ClassDB::bind_method(D_METHOD("bind_entity","store","handle"),&NativeEntityActor::bind_entity);
     ClassDB::bind_method(D_METHOD("tick","target","delta","collision_ready"),&NativeEntityActor::tick);
     ClassDB::bind_method(D_METHOD("entity_handle","store"),&NativeEntityActor::entity_handle);
+    ClassDB::bind_method(D_METHOD("_avoidance_velocity","velocity"),&NativeEntityActor::avoidance_velocity);
+}
+void NativeEntityActor::set_crowd_active(bool active) {
+    if(active==crowd_active_)return;
+    crowd_active_=active;safe_valid_=false;safe_velocity_=Vector3();
+    if(active && !avoidance_){
+        avoidance_=memnew(NavigationAgent3D);
+        avoidance_->set_radius(.4);avoidance_->set_height(1.8);
+        avoidance_->set_neighbor_distance(4);avoidance_->set_max_neighbors(16);
+        avoidance_->set_time_horizon_agents(1.0);avoidance_->set_max_speed(2.5);
+        avoidance_->set_use_3d_avoidance(false);
+        add_child(avoidance_);
+        avoidance_->connect("velocity_computed",Callable(this,"_avoidance_velocity"));
+    }
+    if(avoidance_){
+        // Godot gates velocity submission on a target having been assigned.
+        // We never request its path: the existing terrain route remains owner.
+        if(active)avoidance_->set_target_position(get_global_position());
+        avoidance_->set_velocity(Vector3());avoidance_->set_velocity_forced(Vector3());
+        avoidance_->set_avoidance_enabled(active);
+    }
+}
+void NativeEntityActor::avoidance_velocity(const Vector3 &velocity) {
+    if(!crowd_active_ || !velocity.is_finite())return;
+    safe_velocity_=velocity;safe_velocity_.y=0;
+    safe_frame_=Engine::get_singleton()->get_physics_frames();safe_valid_=true;
 }
 int64_t NativeEntityActor::entity_handle(const Ref<NativeEntityStore> &store) const {
     // The hit proxy already owns identity. Never infer it from position or
@@ -21,7 +47,7 @@ int64_t NativeEntityActor::entity_handle(const Ref<NativeEntityStore> &store) co
 }
 bool NativeEntityActor::bind_entity(const Ref<NativeEntityStore> &store,int64_t handle) {
     if(!is_inside_tree()||store.is_null()||!store->contains(handle))return false;
-    stepped_before_=false;store_=store;handle_=handle;set_global_position(store_->get_position(handle));
+    stepped_before_=false;safe_valid_=false;store_=store;handle_=handle;set_global_position(store_->get_position(handle));
     set_velocity(Vector3());store_->set_velocity(handle_,Vector3());return true;
 }
 // Same bounded up/forward/landing policy as player movement, adapted to a
@@ -58,16 +84,26 @@ bool NativeEntityActor::tick(const Vector3 &target,double delta,bool collision_r
     transform_us=motion_us=store_us=0;
     if(!is_inside_tree()||store_.is_null()||!store_->contains(handle_)||!target.is_finite()||
        !std::isfinite(delta)||delta<=0||delta>0.1)return false;
-    if(!collision_ready){set_velocity(Vector3());return false;}
+    if(!collision_ready){set_velocity(Vector3());safe_valid_=false;if(avoidance_)avoidance_->set_velocity(Vector3());return false;}
     // External authority corrections must be reflected before the next collision step.
     const uint64_t correction_begin=profile_tick?Time::get_singleton()->get_ticks_usec():0;
     const Vector3 authoritative=store_->get_position(handle_);
-    if(get_global_position()!=authoritative)set_global_position(authoritative);
+    if(get_global_position()!=authoritative){
+        set_global_position(authoritative);safe_valid_=false;
+        if(avoidance_)avoidance_->set_velocity_forced(Vector3());
+    }
     if(profile_tick)transform_us=Time::get_singleton()->get_ticks_usec()-correction_begin;
     Vector3 direction=target-get_global_position();direction.y=0;
     const real_t distance=direction.length();
     Vector3 velocity;
     if(distance>arrival_distance)velocity=direction/distance*real_t(std::min(2.5,double(distance)/delta));
+    if(crowd_active_){
+        avoidance_->set_velocity(velocity);
+        const uint64_t frame=Engine::get_singleton()->get_physics_frames();
+        // A missing/stale asynchronous result holds horizontal motion. Terrain
+        // readiness is still checked synchronously before any body integration.
+        velocity=safe_valid_ && frame>=safe_frame_ && frame-safe_frame_<=2 ? safe_velocity_ : Vector3();
+    }
     velocity.y=is_on_floor()?0:get_velocity().y-real_t(20.0*delta);
     const uint64_t motion_begin=profile_tick?Time::get_singleton()->get_ticks_usec():0;
     set_velocity(velocity);

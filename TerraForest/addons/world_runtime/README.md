@@ -209,7 +209,17 @@ terrain publication, structure edits, harvesting and lake changes, supplies dry-
 admission and displays selected actor status in the HUD. Structure/harvest invalidation
 currently covers all active routes. Later actor activation retains the admission callback.
 
-No crowd avoidance, dynamic-obstacle policy, region graph, shared route cache or
+Active proxies now use Godot native avoidance (0.4 m radius, 4 m neighbour range,
+16 neighbours, 2.5 m/s maximum). Each reusable proxy owns at most one avoidance
+agent; sleeping proxies disable it. Safe velocity arrives asynchronously, so a
+newly activated actor waits for a valid result rather than moving on unfiltered
+intent. Terrain/structure readiness still gates movement; collision mask 11 also
+prevents actor interpenetration. Avoidance is transient and does not change saves.
+The existing route planner remains authoritative for terrain paths; the avoidance
+agent does not request navigation-mesh paths. See
+`docs/evidence/actor_avoidance/README.md` for crossing and lifecycle evidence.
+
+No general dynamic-obstacle policy, region graph, shared route cache or
 large-population qualification is supplied by this local planner. Bodies on the
 queried world layers can cause conservative blockage. The next gate is authored
 settlement routes and measured planning latency under a declared active population.

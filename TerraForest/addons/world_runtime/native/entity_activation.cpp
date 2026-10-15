@@ -45,7 +45,7 @@ bool NativeEntityActivation::configure(const Ref<NativeEntityStore> &store,int c
     return true;
 }
 void NativeEntityActivation::sleep_all(){
-    active_.clear();for(auto &p:proxies_){p.handle=0;p.body->set_collision_layer(0);p.body->set_collision_mask(0);p.body->set_velocity(Vector3());}
+    active_.clear();for(auto &p:proxies_){p.handle=0;p.body->set_crowd_active(false);p.body->set_collision_layer(0);p.body->set_collision_mask(0);p.body->set_velocity(Vector3());}
 }
 Dictionary NativeEntityActivation::select(const Vector3 &center,double radius,int candidate_budget){
     Dictionary result;result["ok"]=false;result["active"]=0;
@@ -73,7 +73,7 @@ Dictionary NativeEntityActivation::select(const Vector3 &center,double radius,in
     for(int64_t i=0;i<ids.size();++i)ids.set(i,candidates[i].handle);
     result["ids"]=ids;result["retention_margin_m"]=2.0;
     for(auto &p:proxies_)if(p.handle&& !ids.has(p.handle)){
-        p.handle=0;p.body->set_collision_layer(0);p.body->set_collision_mask(0);p.body->set_velocity(Vector3());
+        p.handle=0;p.body->set_crowd_active(false);p.body->set_collision_layer(0);p.body->set_collision_mask(0);p.body->set_velocity(Vector3());
     }
     for(int64_t i=0;i<ids.size();++i){
         auto found=std::find_if(proxies_.begin(),proxies_.end(),[&](const Proxy &p){return p.handle==ids[i];});
@@ -81,8 +81,9 @@ Dictionary NativeEntityActivation::select(const Vector3 &center,double radius,in
         auto empty=std::find_if(proxies_.begin(),proxies_.end(),[](const Proxy &p){return p.handle==0;});
         if(empty==proxies_.end()||!empty->body->bind_entity(store_,ids[i])){sleep_all();result["ok"]=false;return result;}
         empty->route=ActorRoute();empty->handle=ids[i];// Actors occupy a dedicated layer; terrain (1) and authored structures (2)
-        // both constrain movement. Actor-to-actor avoidance remains a separate policy.
-        empty->body->set_collision_layer(8);empty->body->set_collision_mask(3);
+        // constrain movement; actor collision backs up active native avoidance.
+        empty->body->set_collision_layer(8);empty->body->set_collision_mask(11);
+        empty->body->set_crowd_active(true);
     }
     active_=ids;result["active"]=ids.size();return result;
 }
