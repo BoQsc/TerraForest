@@ -141,3 +141,11 @@ Queued bucket requests still retain their click-time ray and inventory revision;
 ## Moving player check (2026-10-15)
 
 `water_moving_player` keeps controller processing and physics enabled, disables flight, places the body in water, holds W through normal input dispatch, and pours while moving toward the scooped hole. The recorded body displacement before click is 0.13 m, water depth is 0.757 m, and forward input remains held through the transfer. Every water cell returns to baseline. The short normal-world 1920x1080 run passes; evidence is in `docs/evidence/water_moving_player`. This verifies immediate pouring while swimming, not delayed loading during motion, all viewing angles, or underwater visual quality.
+
+## Terrain-bank aim must not refill a nearby hole (2026-10-15)
+
+Bucket placement now permits vacancy/geometric refill assistance only when its ray hits water or a vacant scooped space. A terrain-clipped endpoint above water uses local placement instead, even if a nearby hole could accept the bucket. This fixes the reported scoop-then-pour-on-bank redirection without adding a simulation or per-frame query. Developer point placement retains its existing semantics.
+
+The native reproducer fails before the fix: the ray bypasses both surfaces but the scooped hole changes. The final fixture also prepares the upper air region needed by actual placement. The normal-world regression selects a real terrain bank above lake level, scoops 1.5 m inward, pours at the bank through mouse input, and verifies every removed cell stays unchanged. Its retained image shows the new bank volume beside the still-open hole. Native bank return, multiple-hole selection, and the full raised-world lowering sequence pass. Both native DLLs rebuilt and installed. Evidence: `docs/evidence/water_bank_target`.
+
+The multiple-hole regression now extends underwater aiming to the normal 3.5 m reach: its former shortest offset ended before either target and inadvertently depended on the very off-ray assistance being removed. No visual-quality or broad performance claim follows from these interaction checks.

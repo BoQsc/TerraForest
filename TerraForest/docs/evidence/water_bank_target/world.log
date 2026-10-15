@@ -1,0 +1,30 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.3.280 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] New world
+[TerrainRewrite] New world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+[TerrainRewrite] Preparing your finite lake; terrain and water are being built
+[TerrainRewrite] Mined resources added to inventory
+[TerrainRewrite] Lake ready · temporary world
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Bucket review · disposable world
+PASS Normal disposable world ready
+PASS Find actual terrain bank just above lake level
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Bucket filled: one water unit (1 m3)
+PASS Scoop water beside the bank
+PASS Normal pour ray hits terrain
+PASS Bank aim bypasses lake and scooped hole
+BANK_WORLD source=(810.5, 48.25, 1292.0) terrain=(812.0, 48.5112, 1292.0)
+[TerrainRewrite] Preparing water at this location
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Placed one water unit (1 m3)
+[TerrainRewrite] Placed one water unit (1 m3)
+PASS Bank placement completes through normal input
+PASS Pour on bank does not refill the nearby scooped hole
+[TerrainRewrite] Temporary test world: save skipped
+WATER_BANK_WORLD failures=0

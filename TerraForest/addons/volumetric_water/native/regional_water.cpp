@@ -607,11 +607,11 @@ bool NativeRegionalWater::plan_local_refill(Vector3i target,const Vector3 &aim,u
     if(remaining)return false;
     take=std::move(proposed);return true;
 }
-bool NativeRegionalWater::plan_placement(Vector3i target,const Vector3 &aim,uint64_t amount,Placement &take,Dictionary &out){
+bool NativeRegionalWater::plan_placement(Vector3i target,const Vector3 &aim,uint64_t amount,Placement &take,Dictionary &out,bool allow_refill){
     Region *origin=get(target,true);
     if(!origin){out["pending"]=in_domain(target)&&!limit;out["reason"]="Preparing water at this location";return false;}
-    if(plan_vacancy_refill(target,aim,amount,take))return true;
-    if(plan_local_refill(target,aim,amount,take))return true;
+    if(allow_refill&&plan_vacancy_refill(target,aim,amount,take))return true;
+    if(allow_refill&&plan_local_refill(target,aim,amount,take))return true;
     uint64_t held=origin->water[index(target)],capacity=profile(*origin,index(target)).capacity();
     // A top-up that fits its existing cell needs no neighbouring region work.
     if(held>0&&held<=capacity&&amount<=capacity-held){take.emplace_back(target,amount);return true;}
@@ -842,7 +842,7 @@ Dictionary NativeRegionalWater::transfer_water(const Vector3 &from,const Vector3
             return out;
         }
     }
-    if(pour&&!plan_placement(target,hit?Vector3(surface["point"]):to,amount,take,out))return out;
+    if(pour&&!plan_placement(target,hit?Vector3(surface["point"]):to,amount,take,out,hit))return out;
     if(pour&&(!profile(*r,i).capacity()||total>MAX_TOTAL-amount)){out["reason"]="Aim at open space just above terrain";return out;}
     if(!bool(inventory->call("exchange_water",slot,pour,revision,int64_t(amount)))){out["reason"]="Bucket full / empty, or selected item changed";return out;}
     if(pour){apply_placement(take);}else{

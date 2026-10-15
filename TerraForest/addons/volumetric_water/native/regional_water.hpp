@@ -144,7 +144,7 @@ class NativeRegionalWater : public godot::RefCounted {
     bool bucket_footprint(godot::Vector3i target,const godot::Vector3 &aim,uint64_t amount,bool collect,int &x0,int &z0,godot::Dictionary &out);
     bool plan_vacancy_refill(godot::Vector3i target,const godot::Vector3 &aim,uint64_t amount,Placement &take) const;
     bool plan_local_refill(godot::Vector3i target,const godot::Vector3 &aim,uint64_t amount,Placement &take) const;
-    bool plan_placement(godot::Vector3i target,const godot::Vector3 &aim,uint64_t amount,Placement &take,godot::Dictionary &out);
+    bool plan_placement(godot::Vector3i target,const godot::Vector3 &aim,uint64_t amount,Placement &take,godot::Dictionary &out,bool allow_refill=true);
     void apply_placement(const Placement &take);
     void process_fill();
     struct SurfaceMesh {

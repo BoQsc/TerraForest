@@ -25,6 +25,7 @@ func _initialize():
    var target:=second+offset
    var start:Vector3=Vector3(42,41.75,42) if submerged else target+Vector3.UP
    var end:Vector3=Vector3(target.x,41.75,target.z) if submerged else target-Vector3.UP
+   if submerged:end=start+(end-start).normalized()*3.5 # Match the actual gameplay ray length.
    var result:Dictionary=water.transfer_bucket(start,end,true,inventory,0,inventory.snapshot().revision)
    print("MULTI_HOLE submerged=",submerged," offset=",offset," result=",result)
    check(result.ok and amounts(water.capture_snapshot(catalog))==expected,"Targeted hole restores without changing the other hole")
