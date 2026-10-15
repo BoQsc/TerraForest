@@ -33,3 +33,19 @@ static func furnished_cottage(with_storage: bool=false) -> Resource:
 # Provisional dismantling yield: partial recovery, not a full construction refund.
 static func salvage_recipes() -> Dictionary:
 	return {"furniture/table/v1":PackedInt64Array([102,3]),"furniture/chair/v1":PackedInt64Array([102,1]),"furniture/shelf/v1":PackedInt64Array([102,4])}
+
+static func enclosed_cottage() -> Resource:
+	var asset: Resource=furnished_cottage(true)
+	if asset==null:return null
+	var attachments: Array=asset.get_model_attachments()
+	# Existing one-metre-wide, two-metre-high doorway; retain its stair approach.
+	attachments.append({"model":"architecture/wooden_door/v1","transform":Transform3D(Basis.IDENTITY.scaled(Vector3(1,0.9,1)),Vector3(0,1,5.5))})
+	for z in [-4.5,5.5]:
+		for x in [-1.5,2.5]:
+			attachments.append({"model":"architecture/wooden_window/v1","transform":Transform3D(Basis.IDENTITY.scaled(Vector3(0.5,1,1)),Vector3(x,2,z))})
+	for x in [-3.5,4.5]:
+		for z in [-1,2]:
+			attachments.append({"model":"architecture/wooden_window/v1","transform":Transform3D(Basis(Vector3.UP,PI/2),Vector3(x,2,z))})
+	if not asset.configure_model_attachments(attachments):return null
+	asset.resource_name="Furnished cottage with door and windows"
+	return asset

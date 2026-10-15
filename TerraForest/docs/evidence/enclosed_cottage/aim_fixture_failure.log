@@ -1,0 +1,17 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.3.280 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] World loaded
+[TerrainRewrite] World loaded
+[terrain-hitch] receive 160.44 ms at 3077
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS cloned world loads
+PASS fresh process restores exact hinge state
+PASS saved door becomes resident
+PASS fresh process restores open door pose
+PASS fresh process restores eight window identities
+[TerrainRewrite] No reachable material within 2.5 m
+FAIL restored building door closes through E
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+PASS ordinary compound save completes
+COMBINED_RESOURCE_ROUTE failures=1

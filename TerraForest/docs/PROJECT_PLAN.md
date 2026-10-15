@@ -1,3 +1,10 @@
+> 2026-10-15 enclosed cottage: new prefab combines furniture, chest, fitted door
+> and eight glazed windows. Capsule walks through the opened doorway; normal
+> compound disk save and fresh process restore preserve hinge/door/window state.
+> Restored door closes via E. Source world unchanged. Evidence:
+> evidence/enclosed_cottage/. Elevated clone-only fixture isolates geometry;
+> grounded human review and furnished multi-storey tower remain pending.
+
 > 2026-10-15 doors: native hinged-door state now drives batched wooden doors from
 > normal E interaction. Stable identity, local hinge, player swing protection,
 > snapshot restore and 100 drift-free cycles pass; normal-world interaction and
