@@ -1,3 +1,10 @@
+> 2026-10-15 door occupancy: native toggles now query the physics broadphase
+> for active actor/vehicle layers before mutation (one result, click-time only).
+> Opening/closing rejection preserves model and hinge snapshots; fixture fails
+> before the fix and passes after. Generated-settlement actor entry/exit remains
+> passing. Both builds updated. Evidence: evidence/door_occupancy/. Tests use
+> representative collision-layer bodies for rejection; no population cost claim.
+
 > 2026-10-15 actor/door integration: one native actor in the generated enclosed
 > settlement stays outside a closed door, enters after the hinge changes, stays
 > inside after closing, and returns downstairs after reopening. Existing model

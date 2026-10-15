@@ -1,0 +1,25 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS production door interaction parses
+PASS structures prepared
+PASS production door catalog registered
+PASS stable door placed
+PASS closed leaf blocks entrance
+PASS actor-layer occupancy rejects opening without mutation
+PASS vehicle-layer occupancy rejects opening without mutation
+PASS door opens without changing identity
+PASS open leaf clears entrance collision
+PASS occupied closing preserves pose and hinge on layer 8
+PASS occupied closing preserves pose and hinge on layer 4
+PASS occupied swing rejects closing without mutation
+PASS open hinge and model restore
+PASS restored door closes to exact original pose
+PASS closed collision restored
+PASS 100 cycles have no hinge drift or identity loss
+PASS malformed hinge save rejected transactionally
+PASS missing door rejected
+PASS door opens before editor relocation
+PASS editor relocates opened door
+PASS stale hinge cannot teleport relocated door
+PASS rotated placed door uses its local hinge
+DOOR_COMPONENT failures=0

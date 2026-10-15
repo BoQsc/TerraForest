@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: 0BSD
 #include "hinged_doors.hpp"
 #include <godot_cpp/core/class_db.hpp>
+#include <godot_cpp/classes/box_shape3d.hpp>
+#include <godot_cpp/classes/physics_shape_query_parameters3d.hpp>
+#include <godot_cpp/classes/physics_direct_space_state3d.hpp>
+#include <godot_cpp/classes/world3d.hpp>
 #include <cmath>
 namespace terraforest {
 using namespace godot;
@@ -31,6 +35,20 @@ Dictionary NativeHingedDoors::toggle(NativeStaticBatch *batch,int64_t id,const A
     // here prevents a player stopped by collision from opening away from them.
     AABB sweep=(global*unpack(current)).xform(leaf).merge((global*unpack(requested)).xform(leaf));
     if(protection.has_volume()&&sweep.intersects(protection)){result["reason"]="Step clear of the door swing";return result;}
+    // Click-time broadphase query only: active actors use layer 8, vehicle
+    // bodies (including parked proxies) use layer 4. Never scan entity stores.
+    if(batch->is_inside_tree()){
+        Ref<World3D> world=batch->get_world_3d();
+        auto *space=world.is_valid()?world->get_direct_space_state():nullptr;
+        if(!space)return result;
+        Ref<BoxShape3D> shape;shape.instantiate();shape->set_size(sweep.size);
+        Ref<PhysicsShapeQueryParameters3D> query;query.instantiate();
+        query->set_shape(shape);query->set_transform(Transform3D(Basis(),sweep.get_center()));
+        query->set_collision_mask(12);query->set_margin(0.0);
+        if(!space->intersect_shape(query,1).is_empty()){
+            result["reason"]="An actor or vehicle blocks the door swing";return result;
+        }
+    }
     PackedInt64Array ids;ids.push_back(id);
     if(!batch->upsert_instances(ids,requested))return result;
     if(closing)opened.erase(id);else opened[id]=current;
