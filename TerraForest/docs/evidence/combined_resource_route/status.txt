@@ -1,0 +1,24 @@
+2026-10-15: earned-resource route in the prepared settlement
+
+A unique cloned combined_gameplay world runs with gameplay, ground cover, actors
+and vehicle-fleet flags. Five natural stones are gathered using the normal E
+interaction dispatcher. No grants or inventory clearing fund the test. The UI
+craft button converts two stones to one brick. Inventory drag callback moves the
+brick into the belt, equipping it and right-clicking supporting ground places it
+through the normal input path. Three raw stones remain. E opens an existing
+furnished-cottage chest; its deposit/withdraw controls leave two stones carried
+and one stored. The nonempty chest has native removal protection.
+
+Ordinary compound save and a fresh graphical process preserve byte-exact carried
+inventory, chest contents and natural removal identities, plus the placed brick.
+E reopens the same chest and displays its one remaining stone. Both processes
+pass at fullscreen1920x1080, cap60. Screenshot inspected. Source gameplay root
+SHA256 remains unchanged; only the uniquely named clone receives test edits.
+The new test refuses slots outside the combined_route_ prefix before loading.
+
+Limits: this is a connected interaction/persistence test, with explicit player
+positioning between points. It does not prove walking accessibility or driving,
+actual OS mouse dragging, actor/vehicle population costs or sustained60FPS.
+Startup receive hitches remain in the raw logs. Existing runtime needed no fix
+for these interactions. Next: continuous road departure/return with these earned
+contents, and player access using movement instead of fixture repositioning.

@@ -1,3 +1,11 @@
+> 2026-10-15 connected resource checkpoint: in a copy of the prepared settlement,
+> normal E gathering, crafting UI, held-brick right-click placement and existing
+> cottage chest deposit/withdraw now pass together. Fresh-process exact inventory,
+> chest contents, natural removal identities and placed-block restoration pass;
+> source gameplay save unchanged. Evidence: `evidence/combined_resource_route/`.
+> Fixture positioning does not prove walking/driving. Next: continuous road
+> departure/return with earned contents and movement-based building access.
+
 > 2026-10-15 implementation checkpoint: `Prepare Combined Gameplay.cmd` now
 > reproduces the furnished settlement from the existing editor/native generation
 > path, verifies a fresh-process reopen, then publishes only if gameplay progress

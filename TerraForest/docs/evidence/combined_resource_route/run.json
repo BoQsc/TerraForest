@@ -1,0 +1,80 @@
+{
+  "copy": {
+    "created": true,
+    "slot": "combined_route_550ed422920443b9a9c185cc67aa1fc7",
+    "source_slot": "combined_gameplay",
+    "source_sha256": "25b19886c1b677c44cabce30b1bc39a9efb6614f40d6c733bfb990fa7e3d9052"
+  },
+  "phases": [
+    {
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--fullscreen",
+        "--resolution",
+        "1920x1080",
+        "--max-fps",
+        "60",
+        "--script",
+        "res://tests/combined_resource_route.gd",
+        "--",
+        "--world-slot=combined_route_550ed422920443b9a9c185cc67aa1fc7",
+        "--gameplay-construction",
+        "--ground-cover",
+        "--actors",
+        "--vehicle-fleet",
+        "--route-evidence=C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\combined_resource_route\\20261015T120625794920Z\\expected.bin"
+      ],
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "pid": 25880,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 21.30184029999873,
+        "passed": true
+      }
+    },
+    {
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--fullscreen",
+        "--resolution",
+        "1920x1080",
+        "--max-fps",
+        "60",
+        "--script",
+        "res://tests/combined_resource_route.gd",
+        "--",
+        "--world-slot=combined_route_550ed422920443b9a9c185cc67aa1fc7",
+        "--gameplay-construction",
+        "--ground-cover",
+        "--actors",
+        "--vehicle-fleet",
+        "--route-evidence=C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\combined_resource_route\\20261015T120625794920Z\\expected.bin",
+        "--reopen-route"
+      ],
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "pid": 24956,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 12.850567699999374,
+        "passed": true
+      }
+    }
+  ],
+  "revision": "741c18a5943b64c8e2568e37fc6c65c264c6c269",
+  "worktree_changes": [
+    "?? TerraForest/tests/combined_resource_route.gd",
+    "?? TerraForest/tools/run_combined_resource_route.py"
+  ],
+  "git_metadata_available": true,
+  "source_unchanged": true
+}
