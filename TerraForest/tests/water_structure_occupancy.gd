@@ -83,6 +83,7 @@ func run():
   var started:=Time.get_ticks_usec()
   check(game.construction_inventory.place_block(game.structures.blocks,game.player_hud.inventory,target,shape),"Place actual construction shape %d"%shape)
   var dispatch_us:=Time.get_ticks_usec()-started
+  check(game.lakes.statistics().pending_regions==1,"Single-cell shape %d rebuilds one occupancy region"%shape)
   check(await ready_water(),"Shape %d water publishes"%shape)
   var elapsed_ms:float=(Time.get_ticks_usec()-started)/1000.0
   var costs:=end_costs();costs.dispatch_us=dispatch_us

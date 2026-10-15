@@ -166,6 +166,7 @@ void NativeRegionalWater::_bind_methods(){
     ClassDB::bind_method(D_METHOD("next_request"),&NativeRegionalWater::next_request);
     ClassDB::bind_method(D_METHOD("accept_patch","patch"),&NativeRegionalWater::accept_patch);
     ClassDB::bind_method(D_METHOD("invalidate","bounds","replace_water"),&NativeRegionalWater::invalidate,DEFVAL(false));
+    ClassDB::bind_method(D_METHOD("invalidate_buildings","bounds"),&NativeRegionalWater::invalidate_buildings);
     ClassDB::bind_method(D_METHOD("advance","budget","seconds"),&NativeRegionalWater::advance,DEFVAL(1.0/60.0));
     ClassDB::bind_method(D_METHOD("begin_fill","bounds","level","seed","amount"),&NativeRegionalWater::begin_fill);
     ClassDB::bind_method(D_METHOD("remove_bounds","bounds"),&NativeRegionalWater::remove_bounds);
@@ -261,8 +262,17 @@ bool NativeRegionalWater::accept_patch(const Ref<NativeWaterTerrainPatch> &patch
 }
 void NativeRegionalWater::invalidate(const AABB &bounds,bool replace_water){
     if(!bounds.position.is_finite()||!bounds.size.is_finite())return;
+    invalidate_regions(bounds.grow(0.5),replace_water);
+}
+void NativeRegionalWater::invalidate_buildings(const AABB &bounds){
+    // Building hulls affect only intersected volume, unlike terrain sampling.
+    // accept_patch/changed still invalidate adjacent mesh owners for seams.
+    invalidate_regions(bounds,true);
+}
+void NativeRegionalWater::invalidate_regions(const AABB &bounds,bool replace_water){
+    if(!bounds.position.is_finite()||!bounds.size.is_finite()||bounds.size.x<=0||bounds.size.y<=0||bounds.size.z<=0)return;
     cancel_mesh_batch();
-    for(auto &[k,r]:regions)if(AABB(Vector3(position(k))*4.0,Vector3(4,4,4)).intersects(bounds.grow(0.5))){r.valid=false;r.replace_water|=replace_water;request(k);}
+    for(auto &[k,r]:regions)if(AABB(Vector3(position(k))*4.0,Vector3(4,4,4)).intersects(bounds)){r.valid=false;r.replace_water|=replace_water;request(k);}
 }
 bool NativeRegionalWater::begin_fill(const AABB &bounds,double level,const Vector3 &seed,int64_t amount){
     if(fill.running||!bounds.position.is_finite()||!bounds.size.is_finite()||!seed.is_finite()||!std::isfinite(level)||amount<-1||amount>int64_t(MAX_TOTAL-total))return false;

@@ -88,7 +88,7 @@ func _ready() -> void:
  # the committed terrain worker samples; they never flow against stale solids.
  # Accepted terrain occupancy patches remove water replaced by solid terrain.
  if blocks!=null:
-  blocks.cells_changed.connect(func(bounds:AABB):water.invalidate(blocks.global_transform*bounds,true);_builder=null)
+  blocks.cells_changed.connect(func(bounds:AABB):water.invalidate_buildings(blocks.global_transform*bounds);_builder=null)
   blocks.changed.connect(func():_structure_revision+=1)
  _epoch=terrain.epoch
 func add_lake(origin:Vector3,cells:Vector3i,spacing:float,level:float,seed:Vector3) -> int:

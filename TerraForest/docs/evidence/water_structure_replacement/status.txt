@@ -100,3 +100,20 @@ Next inspect unnecessary building invalidation halo: 4-8 complete water regions
 are requested per single-cell placement, each still has a main-thread roundtrip.
 Terrain's half-cell sampling halo may not be required for exact building hulls;
 neighbor mesh invalidation must remain correct if occupancy requests are reduced.
+
+2026-10-15 building-specific occupancy invalidation:
+Building hull edits now invalidate exact intersected water regions, without the
+terrain sampling half-cell margin. Terrain edits retain their original margin.
+Mesh neighbor invalidation in accept_patch/changed remains unchanged. This is
+one water representation with distinct edit bounds, not another water system.
+Boundary tests in debug/release prove a boundary-aligned unit needs one region,
+a crossing edit needs both, and terrain retains the halo. Actual-world test now
+asserts one pending occupancy region for each partial shape, with unchanged
+volume/removal/cache checks. Bucket/history/unload/reload integration passes.
+Sphere screenshot inspected: no obvious old stripes or detached water patches
+in this view; not exhaustive visual acceptance.
+Latest edit-to-publication: slab103ms,stairs138ms,slope121ms,post121ms,sphere234ms.
+Previous continuation-only run:178,254,169,170,435ms respectively. Current frame
+maxima16.7-17.8ms. Both native targets built and installed. These short observations
+do not prove sustained60fps. Curved preparation still107ms aggregate worker;
+remaining latency and broader scale qualification stay open.

@@ -1,0 +1,82 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.3.280 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] New world
+[TerrainRewrite] New world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+[TerrainRewrite] Preparing your finite lake; terrain and water are being built
+[TerrainRewrite] Mined resources added to inventory
+[TerrainRewrite] Lake ready · temporary world
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Bucket review · disposable world
+PASS Actual water world ready
+PASS Construction target contains water
+PASS Construction target has no existing block
+PASS Construction placement succeeds
+PASS Building occupancy and water publish
+PASS Solid construction must not coexist with occupied water
+PASS Constructed solid actually deletes replaced quantity
+PASS Building occupancy cache reloads
+PASS Reloaded water publishes
+PASS Reload preserves replaced volume and excludes solid
+PASS Remove constructed cube
+PASS Removed construction publishes
+PASS Removing construction does not resurrect deleted water
+PASS Shape 2 starts with water inside and beside solid
+PASS Place actual construction shape 2
+PASS Single-cell shape 2 rebuilds one occupancy region
+PASS Shape 2 water publishes
+PASS Shape 2 leaves every other water cell unchanged
+PASS Shape 2 deleted volume agrees with its rendered mesh
+PASS Shape 2 deletes its occupied water
+PASS Shape 2 preserves water in its empty space
+PASS Shape 2 cached occupancy reloads
+PASS Shape 2 reloaded water publishes
+PASS Shape 2 reload preserves geometry and quantities
+PASS Shape 3 starts with water inside and beside solid
+PASS Place actual construction shape 3
+PASS Single-cell shape 3 rebuilds one occupancy region
+PASS Shape 3 water publishes
+PASS Shape 3 leaves every other water cell unchanged
+PASS Shape 3 deleted volume agrees with its rendered mesh
+PASS Shape 3 deletes its occupied water
+PASS Shape 3 preserves water in its empty space
+PASS Shape 3 cached occupancy reloads
+PASS Shape 3 reloaded water publishes
+PASS Shape 3 reload preserves geometry and quantities
+PASS Shape 4 starts with water inside and beside solid
+PASS Place actual construction shape 4
+PASS Single-cell shape 4 rebuilds one occupancy region
+PASS Shape 4 water publishes
+PASS Shape 4 leaves every other water cell unchanged
+PASS Shape 4 deleted volume agrees with its rendered mesh
+PASS Shape 4 deletes its occupied water
+PASS Shape 4 preserves water in its empty space
+PASS Shape 4 cached occupancy reloads
+PASS Shape 4 reloaded water publishes
+PASS Shape 4 reload preserves geometry and quantities
+PASS Shape 5 starts with water inside and beside solid
+PASS Place actual construction shape 5
+PASS Single-cell shape 5 rebuilds one occupancy region
+PASS Shape 5 water publishes
+PASS Shape 5 leaves every other water cell unchanged
+PASS Shape 5 deleted volume agrees with its rendered mesh
+PASS Shape 5 deletes its occupied water
+PASS Shape 5 preserves water in its empty space
+PASS Shape 5 cached occupancy reloads
+PASS Shape 5 reloaded water publishes
+PASS Shape 5 reload preserves geometry and quantities
+PASS Shape 6 starts with water inside and beside solid
+PASS Place actual construction shape 6
+PASS Single-cell shape 6 rebuilds one occupancy region
+PASS Shape 6 water publishes
+PASS Shape 6 leaves every other water cell unchanged
+PASS Shape 6 deleted volume agrees with its rendered mesh
+PASS Shape 6 deletes its occupied water
+PASS Shape 6 preserves water in its empty space
+PASS Shape 6 cached occupancy reloads
+PASS Shape 6 reloaded water publishes
+PASS Shape 6 reload preserves geometry and quantities
+[TerrainRewrite] Temporary test world: save skipped
+WATER_STRUCTURE_OCCUPANCY failures=0
