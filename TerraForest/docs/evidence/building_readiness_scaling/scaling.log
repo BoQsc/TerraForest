@@ -1,0 +1,13 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS 512 spatially separated authored chunks
+PASS 1000 local empty-space queries probe one chunk each despite distant construction
+PASS far unbaked occupied cell remains unavailable
+PASS far occupied query probes only its chunk
+PASS wide sparse empty layer remains ready
+PASS wide sparse query scans authored records rather than billions of empty coordinates
+PASS finite query beyond authored domain is empty
+PASS outside-domain query touches no chunk records
+PASS huge finite volume still detects unfinished construction
+READINESS_PROBES {"chunks":512,"local_probes":1000,"local_queries":1000,"wide_probes":512}
+BUILDING_READINESS_SCALING failures=0

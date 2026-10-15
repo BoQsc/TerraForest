@@ -1,3 +1,9 @@
+> 2026-10-16 local building readiness: native queries use addressed chunk-map
+> lookups when cheaper than scanning authored records. 1000 local queries in a
+> 512-chunk world perform1000 probes; wide/negative/transformed/dirty/unloaded
+> regressions pass. Debug/release rebuilt. Work-count evidence only, not frame
+> or thermal qualification. Evidence: evidence/building_readiness_scaling/.
+
 > 2026-10-16 native building idle cost: collision selection now sleeps after
 > settling and wakes on focus/radius/geometry changes. 512-chunk regression and
 > 480-piece streaming test pass. 64 towers/4480 models report zero idle scans,

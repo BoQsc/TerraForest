@@ -8,6 +8,7 @@
 
 namespace terraforest {
 bool NativeBlockWorld::is_collision_region_ready(const AABB &world_bounds) const {
+    ++readiness_queries;
     if(!world_bounds.position.is_finite()||!world_bounds.size.is_finite()||
        world_bounds.size.x<=0||world_bounds.size.y<=0||world_bounds.size.z<=0)return false;
     const Transform3D frame=is_inside_tree()?get_global_transform():get_transform();
@@ -15,26 +16,48 @@ bool NativeBlockWorld::is_collision_region_ready(const AABB &world_bounds) const
     const AABB local=frame.affine_inverse().xform(world_bounds);
     if(!local.position.is_finite()||!local.get_end().is_finite())return false;
     if(unavailable_region(local))return false;
-    for(const auto &entry:chunks) {
+    const auto chunk_ready=[&](const auto &entry) {
         const auto &key=entry.first;
         const AABB chunk_bounds(Vector3(key.x*16,key.y*16,key.z*16),Vector3(16,16,16));
-        if(!local.intersects(chunk_bounds))continue;
+        if(!local.intersects(chunk_bounds))return true;
         const AABB overlap=local.intersection(chunk_bounds);
         const Vector3 lo=overlap.position-chunk_bounds.position,hi=overlap.get_end()-chunk_bounds.position;
         const int x0=std::max(0,int(std::floor(lo.x))),x1=std::min(15,int(std::ceil(hi.x))-1);
         const int y0=std::max(0,int(std::floor(lo.y))),y1=std::min(15,int(std::ceil(hi.y))-1);
         const int z0=std::max(0,int(std::floor(lo.z))),z1=std::min(15,int(std::ceil(hi.z))-1);
-        if(x0>x1||y0>y1||z0>z1)continue;
+        if(x0>x1||y0>y1||z0>z1)return true;
         const uint16_t mask=uint16_t(((1u<<(y1+1))-1)&~((1u<<y0)-1));
         bool occupied=false;
         for(int z=z0;z<=z1&&!occupied;++z)for(int x=x0;x<=x1;++x)
             if(entry.second.columns[x+16*z]&mask) {occupied=true;break;}
-        if(!occupied)continue;
+        if(!occupied)return true;
         if(!collisions||!settled.count(key)||dirty.count(key)||tickets.count(key))return false;
         const auto visual=visuals.find(key);
         if(visual!=visuals.end()&&!visual->second.collision_ready)return false;
         // Settled fully enclosed cells emit no surfaces and need no body.
         if(visual==visuals.end()&&budget_blocked.count(key))return false;
+        return true;
+    };
+    // Match the authored coordinate domain; avoid overflow for very large
+    // finite query volumes. Small queries probe the existing ordered chunk map
+    // directly. Wide sparse queries scan authored records instead of empty cells.
+    int a[3],b[3];int64_t volume=1;
+    for(int axis=0;axis<3;++axis) {
+        double lo=std::max(double(local.position[axis]),-1048576.0);
+        double hi=std::min(double(local.get_end()[axis]),1048576.0);
+        if(hi<=lo)return true;
+        a[axis]=int(std::floor(lo/16));b[axis]=int(std::ceil(hi/16))-1;
+        volume*=int64_t(b[axis]-a[axis]+1);
+    }
+    if(volume<=int64_t(chunks.size())) {
+        for(int z=a[2];z<=b[2];++z)for(int y=a[1];y<=b[1];++y)for(int x=a[0];x<=b[0];++x) {
+            ++readiness_chunk_probes;
+            const auto found=chunks.find({x,y,z});
+            if(found!=chunks.end()&&!chunk_ready(*found))return false;
+        }
+    } else for(const auto &entry:chunks) {
+        ++readiness_chunk_probes;
+        if(!chunk_ready(entry))return false;
     }
     return true;
 }
@@ -138,6 +161,8 @@ Dictionary NativeBlockWorld::collision_stats() const {
     result["retire_operations_per_tick"]=COLLISION_RETIRE_PER_TICK;
     result["ticks"]=int64_t(collision_ticks);result["pieces_built"]=int64_t(collision_pieces_built);
     result["selection_scans"]=int64_t(collision_selection_scans);
+    result["readiness_queries"]=int64_t(readiness_queries);
+    result["readiness_chunk_probes"]=int64_t(readiness_chunk_probes);
     result["pieces_retired"]=int64_t(collision_pieces_retired);
     result["last_tick_ms"]=collision_last_ms;result["max_tick_ms"]=collision_max_ms;
     result["cook_max_ms"]=collision_cook_max_ms;result["attach_max_ms"]=collision_attach_max_ms;
