@@ -1,3 +1,9 @@
+> 2026-10-15 route startup diagnosis: the 16-actor travel shortfall includes
+> .53–.55 s of bounded planning. After readiness, all actors move 4.72–5.04 m
+> in two seconds, grounded; startup passes a separate 1 s gate. Runtime unchanged.
+> Terrain contact still fails actor cost gates; old end-to-end failures retained.
+> Evidence: evidence/actor_contact_startup/.
+
 > 2026-10-15 controlled actor contact: test-only fixed active/background 60 FPS
 > caps restore 17–18 ms frame p95; actor budget still fails. Terrain/box/terrain
 > diagnostics show motion p95 .820/.270/.844 ms, with similar grounded travel

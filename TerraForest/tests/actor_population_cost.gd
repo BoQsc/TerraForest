@@ -82,12 +82,28 @@ func compare_contact() -> void:
 		game.actors.select_near(start)
 		for body in game.actors.pool.get_children():body.collision_mask=128 if label=="box" else 1
 		await physics_frame;await physics_frame
+		# Contact cost needs an established route. Preserve startup separately;
+		# do not charge an unfinished planner's wait against locomotion speed.
+		tick_rows.clear();measuring=true
+		var planning_ticks: Array=[];var ready:=false;var elapsed:=0.0
+		while elapsed<1.0 and not ready:
+			await RenderingServer.frame_post_draw
+			for observation in tick_rows:elapsed+=observation.delta
+			planning_ticks.append_array(tick_rows);tick_rows.clear()
+			ready=true
+			for identity in ids:
+				ready=ready and game.actors.pool.navigation_status(game.actors.store.resolve_identity(identity)).state=="following"
+		measuring=false
+		check(ready,label+" all16 routes ready within1s before contact measurement")
+		var movement_origins: Array[Vector3]=[]
+		for identity in ids:movement_origins.append(game.actors.store.get_position(game.actors.store.resolve_identity(identity)))
 		await sample(label)
+		phases[-1].startup={"all_ready":ready,"simulation_seconds":elapsed,"ticks":planning_ticks}
 		var correct:=true
 		var movement: Array=[]
 		for i in ids.size():
 			var position: Vector3=game.actors.store.get_position(game.actors.store.resolve_identity(ids[i]))
-			var original:=start+direction*(i/4)*0.8+side*(i%4-1.5)*1.0
+			var original:=movement_origins[i]
 			movement.append({"identity":ids[i],"forward_m":(position-original).dot(direction),"height_error_m":position.y-start.y,"route":game.actors.pool.navigation_status(game.actors.store.resolve_identity(ids[i]))})
 			correct=correct and (position-original).dot(direction)>4 and absf(position.y-start.y)<0.15
 		phases[-1].movement=movement
