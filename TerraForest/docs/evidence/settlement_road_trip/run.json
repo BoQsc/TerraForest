@@ -1,0 +1,61 @@
+{
+  "copy": {
+    "created": true,
+    "slot": "road_trip_cb88242173164ef7b437b72c62a8bd80",
+    "source_slot": "combined_gameplay",
+    "source_sha256": "25b19886c1b677c44cabce30b1bc39a9efb6614f40d6c733bfb990fa7e3d9052"
+  },
+  "slot": "road_trip_cb88242173164ef7b437b72c62a8bd80",
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+    "--path",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+    "--fullscreen",
+    "--resolution",
+    "1920x1080",
+    "--max-fps",
+    "60",
+    "--script",
+    "res://tests/settlement_road_trip.gd",
+    "--",
+    "--world-slot=road_trip_cb88242173164ef7b437b72c62a8bd80",
+    "--ground-cover",
+    "--actors",
+    "--vehicle-fleet",
+    "--route-evidence=C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\settlement_road_trip\\20261015T135305893168Z\\trip"
+  ],
+  "result": {
+    "timed_out": false,
+    "launch_error": null,
+    "pid": 21892,
+    "exit_code": 0,
+    "diagnostics": [],
+    "required_text_found": true,
+    "elapsed_seconds": 24.029871799997636,
+    "passed": true
+  },
+  "reopen": {
+    "timed_out": false,
+    "launch_error": null,
+    "pid": 25716,
+    "exit_code": 0,
+    "diagnostics": [],
+    "required_text_found": true,
+    "elapsed_seconds": 12.62841330000083,
+    "passed": true
+  },
+  "source_unchanged": true,
+  "revision": "51995591f0f693045ef2850d1e16cd6529cad856",
+  "worktree_changes": [
+    "?? \"TerraForest/Review Settlement Road.cmd\"",
+    "?? TerraForest/tests/settlement_road_trip.gd",
+    "?? TerraForest/tools/run_settlement_road_trip.py"
+  ],
+  "git_metadata_available": true,
+  "publication": {
+    "created": true,
+    "slot": "settlement_travel",
+    "source_slot": "road_trip_cb88242173164ef7b437b72c62a8bd80",
+    "source_sha256": "42a8c501355ebe8db4a27aac0904e33a8b59dfdddc09f0ed32bb615316ff37da"
+  }
+}

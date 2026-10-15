@@ -1,0 +1,15 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.3.280 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] World loaded
+[TerrainRewrite] World loaded
+[terrain-hitch] receive 150.11 ms at 3414
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS settlement copy opens
+PASS terrain-following extension preview: Smooth preview ready · end height 55.40 m. Builds in sections; no terrain undo.
+PASS connected road constructed: Smooth road completed · F5 saves terrain and entrances.
+ROAD_TRIP_SPAWN Place vehicle farther from the player
+FAIL vehicle placed at departure
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+PASS ordinary compound save completes
+COMBINED_RESOURCE_ROUTE failures=1

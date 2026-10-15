@@ -1,3 +1,10 @@
+> 2026-10-15 settlement travel checkpoint: existing road authoring creates a
+> 112 m extension; normal vehicle input drives 113.90 m including braking across
+> seven terrain regions. Fresh reopen restores road entrances, vehicle and saved
+> player pose. Review Settlement Road.cmd opens a separate retained copy.
+> See SETTLEMENT_ROAD_TRIP.md; short coverage, not long-run qualification.
+> Water remains deferred.
+
 > 2026-10-15 general saved-world cache preparation added. Read-only normal
 > world loading prepares saved spawn/ordinary terrain coverage; optional fresh
 > graphical verification reports cache reuse and unchanged canonical hash.
