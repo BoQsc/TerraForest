@@ -1273,10 +1273,11 @@ func _place_inventory_model(history: RefCounted, collection: Node3D, transforms:
 func _remove_inventory_model(history: RefCounted, collection: Node3D, identity: int) -> bool:
 	if not _model_edit_available():
 		model_tool.placement_failure="World interaction unavailable";return false
-	var recipes: Dictionary=preload("res://addons/structures/furniture_catalog.gd").salvage_recipes()
+	var recipes: Dictionary=preload("res://addons/structures/construction_catalog.gd").salvage_recipes()
 	for key: String in recipes:
 		if structures.model(key)==collection:
 			var removed: bool=construction_inventory.salvage_model(history,collection,player_hud.inventory,identity,recipes[key])
+			if removed and collection==doors.collection:doors.state.forget(identity)
 			model_tool.placement_failure=construction_inventory.reason;player_hud.refresh();return removed
 	var removed: bool=history.erase(collection,identity)
 	if removed and collection==doors.collection:doors.state.forget(identity)

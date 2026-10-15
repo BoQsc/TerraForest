@@ -1,3 +1,10 @@
+> 2026-10-15 building salvage: shared attack/removal now recovers 3 wood from
+> doors, 2 wood from windows and 2 metal from guardrails via existing native
+> salvage transactions. Successful door removal clears its hinge state. Actual
+> world ray targeting, repeated attack, tool wear, protected rejection and
+> duplicate-reward rejection pass. Evidence: evidence/building_salvage/.
+> Whole-window destruction only; glass-only breakage remains unimplemented.
+
 > 2026-10-15 object chooser: two columns, larger baked icons and cost tooltips
 > replace thin rows. Normal-world 1080p test confirms workspace bounds, every
 > choice scrolls into view, button signals select corresponding models and
