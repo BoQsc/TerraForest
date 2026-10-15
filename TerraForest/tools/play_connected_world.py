@@ -37,7 +37,7 @@ def main():
         parser.error("Checkpoint manifest has an invalid slot")
     save = Path(os.environ.get("APPDATA", "")) / "Godot/app_userdata/TerraForest/worlds" / (slot + ".trw")
     if not save.is_file() and not (args.gameplay_copy and (save.parent / "combined_gameplay.trw").is_file()):
-        parser.error("This locally generated checkpoint save is missing. See docs/CONNECTED_WORLD_CHECKPOINT.md; the repository does not contain user saves.")
+        parser.error("Gameplay world missing: run Prepare Combined Gameplay.cmd first." if args.gameplay_copy else "This locally generated checkpoint save is missing. See docs/CONNECTED_WORLD_CHECKPOINT.md; the repository does not contain user saves.")
     source_slot = slot
     copy_info = None
     if args.gameplay_copy:

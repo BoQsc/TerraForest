@@ -1,0 +1,9 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS new generated world creates addon definitions
+PASS current regional validator accepts generated catalog
+PASS four generated definitions retain identities
+PASS main-world adapter restores new-world definitions
+PASS new lakes await generation rather than masquerading as empty cached water
+PASS original generator keeps no generated lakes
+GENERATED_WORLD_CATALOG failures=0

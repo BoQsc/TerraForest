@@ -1,3 +1,11 @@
+> 2026-10-15 implementation checkpoint: `Prepare Combined Gameplay.cmd` now
+> reproduces the furnished settlement from the existing editor/native generation
+> path, verifies a fresh-process reopen, then publishes only if gameplay progress
+> is absent. The generated-world catalog API regression is fixed. Gameplay-mode
+> reopen and launcher resolution pass; see `evidence/combined_preparation/`.
+> Early autosave rejections, cold preparation and startup hitches are retained.
+> Next remains the connected gather/build/store/drive route; not full M2/M3 closure.
+
 ## Current priority - 2026-10-15: resume the combined gameplay world
 
 The user accepts water as good enough for now and explicitly requests moving on.

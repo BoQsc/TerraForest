@@ -1,0 +1,27 @@
+2026-10-15: reproducible combined gameplay preparation
+
+Fixed new generator-4 startup calling encode() on NativeRegionalWater: definitions
+are encoded through the existing NativeLakeCatalog and validated by the regional
+validator. New lakes remain dirty until generated; no water interaction/render change.
+Six direct native-backed catalog checks pass. Four Python publication guards pass:
+existing progress retained, failed reopen not published, verified stage published,
+concurrent preparation refused. Initial native API failure retained.
+
+Prepare Combined Gameplay.cmd creates a unique staging world using the existing
+native frontage, survey, terrain grading/asphalt and staged placement workflow.
+Four cottages with tables/chairs/shelves/chests are saved through ordinary compound
+persistence. Fresh process exact block, road and furnishing snapshots and on-foot
+spawn pass. Additional reopen with gameplay construction, actors and vehicle-fleet
+flags passes in 13.06s. Inspected gameplay.png at 1920x1080 fullscreen/cap60.
+The first successful creation/reopen run preceded addition of gameplay flags to the
+preparer; gameplay_result.json records the additional equivalent phase on its stage.
+Local combined_gameplay save is published. Launcher dry-run succeeds. Preparation
+retains existing gameplay saves; staging saves/logs are retained for diagnosis.
+
+Limits: initial 30s startup attempt failed; allowed startup watchdog is now 60s,
+not a claim of improved loading speed. Successful creation logs two rejected early
+autosaves while generated components are incomplete, then verified final persistence.
+Creation controller hitches reach 77.64ms; reopen receive hitch reaches 155.54ms.
+No sustained performance, actor population, vehicle driving, full gameplay loop or
+human acceptance claim. No actor/vehicle population is added by enabling their flags.
+Next: actual gather/build/store and drive-away/return route in this settlement.

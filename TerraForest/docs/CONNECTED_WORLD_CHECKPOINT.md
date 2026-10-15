@@ -1,3 +1,20 @@
+## Reproduce the combined gameplay start on a new computer
+
+Run **Prepare Combined Gameplay.cmd** once, with the game closed. It creates a
+new staging world through the existing settlement workflow, saves and reopens it,
+then publishes `combined_gameplay` only after verification. Existing gameplay
+progress is retained without regeneration. Afterwards run **Play Combined Gameplay.cmd**.
+The preparation needs no historical local checkpoint save. It may take about a
+minute on the current host; reports and staging saves are retained on failure.
+A failed preparation never replaces gameplay progress. Close the game before
+preparing so graphical processes do not compete for GPU time.
+
+This provides four furnished cottages, chests and connected streets, starting
+on foot inside a cottage. The play launcher enables existing actors and fleet
+systems; preparation does not populate them. Generation/persistence evidence and
+remaining startup issues: `evidence/combined_preparation/`. Earlier checkpoint
+instructions below describe historical local saves and remain valid when present.
+
 # Connected world save/reopen checkpoint
 
 2026-10-09. A fresh graphical process now verifies the combined saved world after

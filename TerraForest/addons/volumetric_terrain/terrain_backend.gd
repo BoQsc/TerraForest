@@ -496,7 +496,14 @@ func _initialize_generated_components() -> bool:
 			var cells:=Vector3i(definitions.decode_u32(offset+12),definitions.decode_u32(offset+16),definitions.decode_u32(offset+20))
 			var seed_point:=Vector3(definitions.decode_float(offset+32),definitions.decode_float(offset+36),definitions.decode_float(offset+40))
 			records.append({"id":i+1,"origin":origin,"cells":cells,"spacing":definitions.decode_float(offset+24),"level":definitions.decode_float(offset+28),"seed":seed_point})
-		components["volumetric_water"]=snapshot_validators["volumetric_water"].encode(records,5)
+		# New worlds start from definitions, which the regional validator accepts.
+		# Encoding an empty regional snapshot here would mark unfilled lakes cached.
+		var catalog: RefCounted=ClassDB.instantiate("NativeLakeCatalog")
+		var encoded: PackedByteArray=catalog.encode(records,5)
+		if encoded.is_empty() or not snapshot_validators["volumetric_water"].validate_snapshot(encoded):
+			write_allowed=false
+			return false
+		components["volumetric_water"]=encoded
 	return true
 
 func _load() -> String:
