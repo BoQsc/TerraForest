@@ -14,7 +14,9 @@ func try_interact() -> bool:
 	var hit: Dictionary=game.structures.blocks.raycast_scene(start,start-game.camera.global_basis.z*3,7,[game.player.get_rid()])
 	if hit.is_empty() or hit.collider!=collection:return false
 	var id: int=collection.placement_for_body(hit.rid)
-	var result: Dictionary=state.toggle(collection,id,game.model_tool.protection())
+	# Match the player's 0.34 m collision radius, not the larger placement guard.
+	var protection:=AABB(game.player.global_position+Vector3(-0.34,0,-0.34),Vector3(0.68,1.8,0.68))
+	var result: Dictionary=state.toggle(collection,id,protection)
 	if result.ok:game.terrain.changed_since_save=true
 	game._show_lake_notice(result.reason)
 	return true

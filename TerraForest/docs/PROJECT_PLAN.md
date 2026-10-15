@@ -1,3 +1,11 @@
+> 2026-10-15 generated entrance correction: real held-W approach exposed door
+> protection rejecting all four players touching a closed door. Door interaction
+> now uses actual capsule radius, without an extra inflated leaf margin. Four
+> stair approaches, normal E opening and production-controller interior walks
+> pass on a cloned settlement. Occupied closing regression still passes; both
+> native builds updated. Evidence: evidence/enclosed_settlement_walk/.
+> Source review save unchanged; actor access and general travel remain open.
+
 > 2026-10-15 enclosed settlement: fresh combined-world preparation now chooses
 > cottages with doors/windows and verifies their snapshots on fresh reopen.
 > Review Enclosed Settlement.cmd prepares/opens a separate exclusive save;

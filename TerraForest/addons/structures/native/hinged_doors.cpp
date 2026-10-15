@@ -27,7 +27,9 @@ Dictionary NativeHingedDoors::toggle(NativeStaticBatch *batch,int64_t id,const A
     auto requested=closing?found->second:swing(current);
     Transform3D global=batch->is_inside_tree()?batch->get_global_transform():batch->get_transform();
     AABB leaf(Vector3(0,0,-0.07),Vector3(1,2.2,0.14));
-    AABB sweep=(global*unpack(current)).xform(leaf).merge((global*unpack(requested)).xform(leaf)).grow(0.05);
+    // Contact with the closed leaf is not penetration. An extra inflated margin
+    // here prevents a player stopped by collision from opening away from them.
+    AABB sweep=(global*unpack(current)).xform(leaf).merge((global*unpack(requested)).xform(leaf));
     if(protection.has_volume()&&sweep.intersects(protection)){result["reason"]="Step clear of the door swing";return result;}
     PackedInt64Array ids;ids.push_back(id);
     if(!batch->upsert_instances(ids,requested))return result;

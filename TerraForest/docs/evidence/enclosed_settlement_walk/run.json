@@ -1,0 +1,46 @@
+{
+  "copy": {
+    "created": true,
+    "slot": "doorwalk_e131ea51d93f4259b534842a5963960c",
+    "source_slot": "combined_enclosed_review",
+    "source_sha256": "36f7a3803944c4b71607c3de1d12990ec85a04b4e13754c11b02bd421b574195"
+  },
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+    "--path",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+    "--fullscreen",
+    "--resolution",
+    "1920x1080",
+    "--max-fps",
+    "60",
+    "--script",
+    "res://tests/enclosed_settlement_walk.gd",
+    "--",
+    "--world-slot=doorwalk_e131ea51d93f4259b534842a5963960c",
+    "--gameplay-construction",
+    "--ground-cover"
+  ],
+  "result": {
+    "timed_out": false,
+    "launch_error": null,
+    "pid": 31628,
+    "exit_code": 0,
+    "diagnostics": [],
+    "required_text_found": true,
+    "elapsed_seconds": 23.94990189999953,
+    "passed": true
+  },
+  "source_unchanged": true,
+  "revision": "8fc57623b9be226fc7cb9c24d7a74be89598483e",
+  "worktree_changes": [
+    " M TerraForest/addons/structures/bin/structures.windows.template_debug.x86_64.dll",
+    " M TerraForest/addons/structures/bin/structures.windows.template_release.x86_64.dll",
+    " M TerraForest/addons/structures/door_interaction.gd",
+    " M TerraForest/addons/structures/native/hinged_doors.cpp",
+    "?? TerraForest/docs/evidence/enclosed_settlement_walk/",
+    "?? TerraForest/tests/enclosed_settlement_walk.gd",
+    "?? TerraForest/tools/check_enclosed_settlement_walk.py"
+  ],
+  "git_metadata_available": true
+}
