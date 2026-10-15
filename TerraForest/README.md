@@ -9,6 +9,7 @@ saved world, or create a named world with a landscape preset and seed. Save from
 the Actions menu or F5 to retain a new world. Gameplay material costs can be
 enabled or disabled before opening. Initial terrain loading still takes time;
 this screen does not pre-bake an entire world.
+Use **Esc > Session > World browser** to save and choose another world.
 
 | Launcher | What to try |
 | --- | --- |

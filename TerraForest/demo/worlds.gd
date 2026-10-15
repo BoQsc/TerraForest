@@ -14,6 +14,7 @@ func heading(parent: Node,text: String,size: int=24) -> Label:
 func button(parent: Node,text: String,action: Callable) -> Button:
 	var out:=Button.new();out.text=text;out.custom_minimum_size.y=48;out.pressed.connect(action);parent.add_child(out);return out
 func _ready() -> void:
+	get_tree().auto_accept_quit=true
 	Engine.max_fps=60;DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_ENABLED)
 	Input.mouse_mode=Input.MOUSE_MODE_VISIBLE
 	var background:=ColorRect.new();background.color=Color("101e22");background.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT);add_child(background)

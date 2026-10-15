@@ -18,6 +18,7 @@ var mode_button: Button
 var dev_box: VBoxContainer
 var confirmation: ConfirmationDialog
 var pending_action: Callable
+var leaving_world:=false
 var pages: Dictionary={}
 var navigation: Dictionary={}
 var belt_choices: Array[Button]=[]
@@ -60,6 +61,7 @@ func _ready() -> void:
 	button(session,"Headlamp on / off",func():game.headlamp.toggle();refresh())
 	mode_button=button(session,"Development mode",toggle_developer)
 	button(session,"Save and quit",func():confirm("Save this world and quit?",func():game._notification(NOTIFICATION_WM_CLOSE_REQUEST)))
+	button(session,"World browser",func():confirm("Leave this temporary world and discard its changes?" if game.temporary_world else "Save this world and return to the world browser?",leave_to_browser))
 	var equipment:=page("Toolbelt")
 	label(equipment,"Quick-use tools and items").add_theme_font_size_override("font_size",22)
 	label(equipment,"Every belt slot is selectable. Empty slots put your tools away. Materials can be held without activating an editor. Use Inventory to drag items into the ten belt slots.")
@@ -215,10 +217,41 @@ func save_world() -> void:
 	if game.world_vehicle.driving and not game.world_vehicle.safe_exit_position(game).is_finite():message.text="Park beside clear ground before saving.";return
 	game.terrain.save_world();message.text="Saving..."
 func reload_world() -> void:set_open(false);game.terrain.reload_world(false)
+func leave_to_browser() -> void:
+	if leaving_world or game.shutdown_requested:return
+	if game.loading_active or not game.terrain.world_ready or game.terrain.stopping:
+		message.text="Wait for world loading before leaving.";return
+	if game.world_vehicle.driving and not game.world_vehicle.safe_exit_position(game).is_finite():
+		message.text="Park beside clear ground before saving.";return
+	leaving_world=true;panel.process_mode=Node.PROCESS_MODE_DISABLED
+	game.shutdown_requested=true;game._cancel_edit_input();game._clear_motion()
+	if not game.temporary_world:
+		message.text="Saving before returning to worlds..."
+		var result:={"received":false,"ok":false}
+		var listener:=func(ok: bool):result.received=true;result.ok=ok
+		game.terrain.save_completed.connect(listener)
+		game.terrain.save_world()
+		var deadline:=Time.get_ticks_msec()+30000
+		while not result.received and game.terrain.latest_error.is_empty() and Time.get_ticks_msec()<deadline:
+			await get_tree().process_frame
+		game.terrain.save_completed.disconnect(listener)
+		if not result.received or not result.ok:
+			leaving_world=false;panel.process_mode=Node.PROCESS_MODE_INHERIT;game.shutdown_requested=false
+			message.text="Save did not complete. Staying in this world; retry after checking world status.";return
+	# Load the browser resource before stopping workers so a missing resource
+	# leaves the current session usable.
+	var browser=load("res://demo/worlds.tscn")
+	if browser==null:
+		leaving_world=false;panel.process_mode=Node.PROCESS_MODE_INHERIT;game.shutdown_requested=false;message.text="World browser could not be loaded.";return
+	game._close_journal()
+	await game.terrain.shutdown_after_edits()
+	get_tree().change_scene_to_packed(browser)
 func run_command(key: int,shift: bool=false) -> void:
 	if not developer:return
 	set_open(false);var event:=InputEventKey.new();event.pressed=true;event.physical_keycode=key;event.shift_pressed=shift;game._unhandled_input(event)
 func _input(event: InputEvent) -> void:
+	if leaving_world:
+		get_viewport().set_input_as_handled();return
 	if event is InputEventMouseButton and event.pressed and event.button_index in [MOUSE_BUTTON_WHEEL_UP,MOUSE_BUTTON_WHEEL_DOWN]:
 		if not visible_ui() and not game.player_hud.inventory_open and not game.storage.opened and not game.world_vehicle.driving and not game.loading_active and game.app_focused and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED:
 			var slot: int=game.player_hud.developer_slot if developer else game.player_hud.active_slot

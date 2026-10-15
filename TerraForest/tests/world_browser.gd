@@ -25,7 +25,9 @@ func run() -> void:
 	file=FileAccess.open(path.path_join("preparing.prepare.lock"),FileAccess.WRITE);file.close()
 	check(not Launch.command("preparing",true,6,1703,true,path).ok,"in-progress preparation name is reserved")
 	check(Launch.saved_slots(path)==PackedStringArray(["saved_world"]) and not Launch.command("missing",false,6,1703,true,path).ok,"listing selects canonical saves and missing save fails")
+	auto_accept_quit=false
 	var browser=load("res://demo/worlds.tscn").instantiate();root.add_child(browser)
+	check(auto_accept_quit,"browser restores window close after returning from a world")
 	browser.slots=PackedStringArray(["woodland_home","natural_cave_gameplay","mixed_neighborhood_review"]);browser.filter_list()
 	browser.filter_field.text="CAVE";browser.filter_field.text_changed.emit("CAVE");check(browser.worlds.item_count==1,"saved-world filtering ignores case")
 	browser.filter_field.text="";browser.filter_field.text_changed.emit("");browser.name_field.text="../bad";browser.launch_selected(true)

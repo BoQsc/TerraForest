@@ -13,6 +13,21 @@ The browser launches the actual world in a new Godot process at 1920x1080
 fullscreen capped at 60 FPS, then exits. It owns no terrain workers. World
 runtime, generation, storage and water implementations are unchanged.
 
+**Esc > Session > World browser** asks to save and return (or discard a temporary
+review world). It freezes menu/game actions during the save, requires a successful
+manual-save response, then shuts down terrain workers and replaces the current
+scene with the browser. Save failure leaves the current session open and restores
+its controls. Loading and unsafe seated restore positions reject departure.
+The browser restores normal window closing after the world's custom close handler.
+
+Departure validation: `world_browser_route.gd` now invokes the actual menu method
+on a persistent world, checks that the browser replaces and frees it, and verifies
+the changed inventory in another process. Report `20261015T211507281741Z` passes;
+child logs are in `evidence/world_browser_departure/`. Stubbed save-failure,
+loading and vehicle guards pass (`20261015T211451571999Z`). Browser UI and inherited
+window-close policy pass (`20261015T211554755762Z`). Failure injection is a signal
+stub, not real disk exhaustion. The route calls the menu method, not mouse input.
+
 Validation: `tests/world_browser.gd`, graphical report
 `reports/checks/20261015T210521848520Z`, all 14 assertions passed. Includes name
 validation, preservation of existing sentinel bytes, orphan-data rejection,
@@ -35,6 +50,6 @@ The reopened world screenshot was inspected.
 
 This is not an actual mouse click through the browser, nor qualification of
 exported executables, simultaneous creators, all presets/seeds, loading time or
-sustained frame rate. Whole-world baking, thumbnails and a return-to-browser
-action remain future work. Other world-generation and persistence evidence
+sustained frame rate. Whole-world baking and thumbnails remain future work.
+Other world-generation and persistence evidence
 still applies only to its recorded builds.

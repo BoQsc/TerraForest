@@ -1,0 +1,8 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS loading refuses departure without touching saves
+PASS unsafe seated restore refuses departure
+PASS failed save releases departure guard and stays in session
+PASS failed save restores menu with explicit feedback
+PASS failed save removes temporary callback
+WORLD_BROWSER_DEPARTURE failures=0

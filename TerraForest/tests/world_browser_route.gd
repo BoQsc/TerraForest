@@ -47,7 +47,7 @@ func child(args: PackedStringArray)->void:
 		if arg.begins_with("--world-slot="):slot=arg.trim_prefix("--world-slot=")
 	if not slot.begins_with("browser_route_") or report.is_empty():quit(2);return
 	var reopen:bool="--browser-reopen" in args
-	game=load("res://demo/world.tscn").instantiate();game.background_fps=60;root.add_child(game)
+	game=load("res://demo/world.tscn").instantiate();game.background_fps=60;root.add_child(game);current_scene=game
 	if check(await wait_until(func():return not game.loading_active,90),"actual world loading completes"):
 		game.set_physics_process(false);game._clear_motion()
 		check(game.terrain.save_slot==slot and not game.temporary_world,"isolated persistent slot active")
@@ -63,9 +63,17 @@ func child(args: PackedStringArray)->void:
 			var file:=FileAccess.open(snapshot,FileAccess.WRITE);file.store_var(game.player_hud.inventory.capture_storage_snapshot());file.close()
 		await RenderingServer.frame_post_draw
 		root.get_texture().get_image().save_png(report.path_join("reopen.png" if reopen else "create.png"))
-	game.shutdown_requested=true
-	check(await game.terrain.shutdown_after_edits(),"ordinary compound save completes")
-	game.free();await process_frame
+	if not reopen and failures==0:
+		game.session_menu.set_open(true)
+		await game.session_menu.leave_to_browser()
+		await process_frame
+		await process_frame
+		check(is_instance_valid(current_scene) and current_scene.scene_file_path=="res://demo/worlds.tscn","Actions saves and returns to world browser")
+		check(not is_instance_valid(game),"previous world released before selecting another world")
+	else:
+		game.shutdown_requested=true
+		check(await game.terrain.shutdown_after_edits(),"ordinary compound save completes")
+		game.free();await process_frame
 	var output:=FileAccess.open(report.path_join("reopen.json" if reopen else "create.json"),FileAccess.WRITE)
 	output.store_string(JSON.stringify({"failures":failures,"slot":slot}));output.close()
 	quit(1 if failures else 0)

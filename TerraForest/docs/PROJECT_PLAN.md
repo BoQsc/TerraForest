@@ -1,3 +1,9 @@
+> 2026-10-16 world navigation: Actions > Session > World browser saves before
+> returning, frees the old world, and retains changes on fresh reopen. Save
+> failure stays in-session with feedback. Actual return/reopen route and stubbed
+> failure guards pass; no performance or real disk-exhaustion claim. Evidence:
+> evidence/world_browser_departure/. Water remains unchanged.
+
 > 2026-10-16 browser launch verification: production command policy starts two
 > sequential graphical processes; generator1/seed7129 and changed inventory
 > survive ordinary compound save and fresh reopen. Both use 1080p fullscreen.
