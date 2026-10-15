@@ -1,0 +1,29 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS compose three connected mixed streets
+PASS seed reproduces blocks and road geometry
+PASS three street ends connect exactly to both cross streets
+PASS oversized generation preserves prior geometry and road metadata
+PASS invalid street count and width reject
+PASS rotated connected grading/paving plan 0
+PASS native terrain accepts all connected site sections 0
+PASS connected streets and junctions have asphalt below and clearance above 0
+PASS rotated connected grading/paving plan 1
+PASS native terrain accepts all connected site sections 1
+PASS connected streets and junctions have asphalt below and clearance above 1
+PASS rotated connected grading/paving plan 2
+PASS native terrain accepts all connected site sections 2
+PASS connected streets and junctions have asphalt below and clearance above 2
+PASS rotated connected grading/paving plan 3
+PASS native terrain accepts all connected site sections 3
+PASS connected streets and junctions have asphalt below and clearance above 3
+PASS tampered road through a foundation rejects
+PASS authoring worker accepts connected settlement
+PASS worker saves connected settlement resource
+PASS saved resource retains deterministic geometry and usable road plan
+PASS all settlement streets enter the saved entrance catalog
+PASS repeat registration does not duplicate connected streets
+PASS connected catalog registers with compound world persistence
+PASS all road entrances survive exact persistence round trip
+PASS insufficient catalog capacity rejects entire network without partial registration
+SETTLEMENT_NETWORK checks=26 failures=0

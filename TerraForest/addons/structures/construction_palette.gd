@@ -33,6 +33,7 @@ var frontage_sources: ItemList
 var frontage_name: LineEdit
 var frontage_status: Label
 var frontage_presets: Array[Button]=[]
+var _frontage_assets: Array[Resource]=[]
 var stack_count: SpinBox
 var stack_button: Button
 var supply: OptionButton
@@ -139,6 +140,7 @@ func _number(parent: Control,title: String,lo: int,hi: int,value: int,step: int)
 	var field:=SpinBox.new();field.min_value=lo;field.max_value=hi;field.step=step;field.value=value;row.add_child(field)
 	return field
 func configure(assets: Array[Resource]) -> void:
+	_frontage_assets=assets.duplicate()
 	prefab.clear();prefab.add_item("Single blocks")
 	for asset in assets: prefab.add_item(asset.resource_name)
 	frontage_sources.clear()
@@ -166,6 +168,15 @@ func _request_frontage() -> void:
 		frontage_status.text="Choose at least one building type.";return
 	if not frontage_mix.button_pressed and _selected_prefab<0:
 		frontage_status.text="Choose a building prefab or a neighborhood preset.";return
+	var chosen: Array[Resource]=[]
+	var indices: PackedInt32Array=frontage_sources.get_selected_items() if frontage_mix.button_pressed else PackedInt32Array([_selected_prefab])
+	for i in indices:
+		if i<0 or i>=_frontage_assets.size():frontage_status.text="Building catalog changed; reopen the layout editor.";return
+		chosen.append(_frontage_assets[i])
+	var counter: Resource=ClassDB.instantiate("NativeBlockPrefab")
+	var counts: Dictionary=counter.layout_counts(chosen,int(frontage_lots.value),int(frontage_seed.value),int(frontage_streets.value))
+	if not counts.ok:
+		frontage_status.text=counts.reason;return
 	capture_name.text=frontage_name.text
 	frontage_dialog.hide()
 	if int(frontage_streets.value)>1:

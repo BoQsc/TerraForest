@@ -26,6 +26,10 @@ func begin_frontage_sources(sources: Array,lots: int,width: int,gap: int,seed: i
 		if not source is Resource or not source.is_class("NativeBlockPrefab") or source.get_cell_count()==0: return {"ok":false,"reason":"Select valid building prefabs"}
 		total+=source.get_cell_count()
 		if total>262144: return {"ok":false,"reason":"Source mix exceeds 262144 blocks; choose fewer buildings"}
+	# Count chosen source metadata before copying records or starting a worker.
+	var counter: Resource=ClassDB.instantiate("NativeBlockPrefab")
+	var counts: Dictionary=counter.layout_counts(sources,lots,seed,streets)
+	if not counts.ok:return counts
 	# Copy-on-write packed records cross the boundary; the worker never reads a
 	# live authoring resource and publishes its private result only after join.
 	var records: Array[PackedInt32Array]=[]

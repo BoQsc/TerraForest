@@ -4,6 +4,7 @@
 #include <godot_cpp/variant/packed_int64_array.hpp>
 #include <godot_cpp/variant/aabb.hpp>
 #include <godot_cpp/variant/array.hpp>
+#include <godot_cpp/variant/dictionary.hpp>
 #include <godot_cpp/variant/packed_vector3_array.hpp>
 #include <vector>
 
@@ -34,6 +35,7 @@ public:
     bool compose(const Array &sources,const PackedInt32Array &placements);
     bool compose_frontage(const Array &sources,int64_t lots_per_side,int64_t street_width,int64_t gap,int64_t seed);
     bool compose_settlement(const Array &sources,int64_t lots_per_side,int64_t street_width,int64_t gap,int64_t seed,int64_t streets);
+    Dictionary layout_counts(const Array &sources,int64_t lots_per_side,int64_t seed,int64_t streets) const;
     void set_records(const PackedInt32Array &records);
     PackedInt32Array get_records() const;
     int get_cell_count() const { return int(cells.size()); }

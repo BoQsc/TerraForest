@@ -9,7 +9,13 @@
 #include <godot_cpp/variant/dictionary.hpp>
 
 namespace terraforest {
+static uint32_t frontage_choice(uint32_t seed,int ordinal,int count) {
+    uint32_t h=seed^uint32_t(ordinal+1)*0x9e3779b9u;
+    h^=h>>16;h*=0x85ebca6bu;h^=h>>13;h*=0xc2b2ae35u;h^=h>>16;
+    return h%uint32_t(count);
+}
 void NativeBlockPrefab::_bind_methods() {
+    ClassDB::bind_method(D_METHOD("layout_counts","sources","lots_per_side","seed","streets"),&NativeBlockPrefab::layout_counts);
     ClassDB::bind_method(D_METHOD("configure","records"),&NativeBlockPrefab::configure);
     ClassDB::bind_method(D_METHOD("compose","sources","placements"),&NativeBlockPrefab::compose);
     ClassDB::bind_method(D_METHOD("compose_frontage","sources","lots_per_side","street_width","gap","seed"),&NativeBlockPrefab::compose_frontage);
@@ -201,6 +207,26 @@ bool NativeBlockPrefab::compose(const Array &sources,const PackedInt32Array &pla
     if(!configure_impl(records,false))return false;
     model_attachments=attached;emit_changed();return true;
 }
+Dictionary NativeBlockPrefab::layout_counts(const Array &sources,int64_t lots,int64_t seed,int64_t streets) const {
+    Dictionary result;result["ok"]=false;result["reason"]="Select valid sources, 1-64 lots and 1-8 streets";
+    if(sources.is_empty()||sources.size()>256||lots<1||lots>64||streets<1||streets>8||seed<0||seed>0xffffffffLL)return result;
+    std::vector<Ref<NativeBlockPrefab>> assets;
+    for(int i=0;i<sources.size();++i){
+        if(sources[i].get_type()!=Variant::OBJECT)return result;
+        Ref<NativeBlockPrefab> asset=sources[i];
+        if(asset.is_null()||asset->cells.empty())return result;
+        assets.push_back(asset);
+    }
+    int64_t blocks=0,models=0;
+    for(int row=0;row<streets;++row)for(int ordinal=0;ordinal<lots*2;++ordinal){
+        const auto &asset=assets[frontage_choice(uint32_t(seed)+uint32_t(row)*0x9e3779b9u,ordinal,int(assets.size()))];
+        blocks+=asset->cells.size();models+=asset->model_attachments.size();
+    }
+    const bool ok=blocks<=262144&&models<=4096;
+    result["ok"]=ok;result["blocks"]=blocks;result["models"]=models;result["buildings"]=lots*2*streets;
+    result["reason"]=blocks>262144?"Layout exceeds 262144 blocks; reduce buildings or streets":models>4096?"Layout exceeds 4096 attached objects; reduce buildings or streets":"";
+    return result;
+}
 bool NativeBlockPrefab::compose_frontage(const Array &sources,int64_t lots,int64_t street,int64_t gap,int64_t seed) {
     // v1: paired lots on a straight street; authored prefab fronts face +Z.
     // Derive each choice from its ordinal, not an advancing global RNG.
@@ -217,9 +243,7 @@ bool NativeBlockPrefab::compose_frontage(const Array &sources,int64_t lots,int64
     for(int lot=0;lot<lots;++lot){
         int width=0;
         for(int side=0;side<2;++side){
-            uint32_t h=uint32_t(seed)^uint32_t(lot*2+side+1)*0x9e3779b9u;
-            h^=h>>16;h*=0x85ebca6bu;h^=h>>13;h*=0xc2b2ae35u;h^=h>>16;
-            int index=int(h%assets.size()),turns=side*2;
+            int index=int(frontage_choice(uint32_t(seed),lot*2+side,int(assets.size()))),turns=side*2;
             total+=assets[index]->cells.size();if(total>262144)return false;
             AABB b=assets[index]->placement_bounds(Vector3i(),turns);
             int z=side==0?-int(street/2+gap)-int(b.get_end().z):int(street/2+gap)-int(b.position.z);

@@ -35,4 +35,8 @@ func run() -> void:
 	check(requests.size()==1 and palette.frontage_dialog.visible and not palette.frontage_status.text.is_empty(),"empty selection stays open with feedback and cannot submit generation")
 	palette.frontage_presets[0].pressed.emit();palette.frontage_dialog.confirmed.emit()
 	check(requests.size()==2 and requests[1][0].size()==1 and requests[1][1]==1,"cottage preset replaces mixed selection and restores small layout")
+	palette.frontage_button.pressed.emit();palette.frontage_sources.deselect_all();palette.frontage_sources.select(1)
+	palette.frontage_streets.value=1;palette.frontage_lots.value=32
+	palette.frontage_dialog.confirmed.emit()
+	check(requests.size()==2 and palette.frontage_dialog.visible and "4096" in palette.frontage_status.text,"oversized attachment layout stays in dialog without dispatching generation")
 	palette.free();print("SETTLEMENT_PRESETS failures=",failures);quit(1 if failures else 0)

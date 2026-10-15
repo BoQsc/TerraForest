@@ -22,7 +22,10 @@ Building → Create streets / settlement from prefabs**, then choose **Cottage
 neighborhood** or **Mixed neighborhood**. Name it in the dialog and click building
 types to include/exclude them; Ctrl is no longer required. Street count, density,
 width, gap and seed remain editable. **Create and save layout** creates a reusable
-prefab. Return to the world, aim at terrain, then use **Survey ground**, **Prepare
+prefab, with an immediate capacity check against the existing per-layout limits
+of 262,144 blocks and 4,096 attached objects. An oversized selection stays in the
+dialog and explains which count must be reduced. These limits do not establish
+whole-city performance. Return to the world, aim at terrain, then use **Survey ground**, **Prepare
 foundation** and **Place prefab** through the existing building controls.
 
 Run **Review Buildings.cmd** from the TerraForest folder. It opens the separate

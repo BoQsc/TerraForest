@@ -1,3 +1,10 @@
+> 2026-10-15 settlement capacity preflight: native metadata counts use the same
+> seeded selection as composition and reject layouts above existing 262,144-block
+> or 4,096-attachment limits before record copies/worker launch. UI reports the
+> limit in the open dialog. Nine count/composition comparisons, independent
+> model/block rejections and existing 26-check network regression pass. Evidence:
+> evidence/settlement_capacity/. This does not raise city-generation capacity.
+
 > 2026-10-15 settlement editor: visible layout naming, single-click building
 > selection and cottage/mixed presets expose the verified layout through the UI.
 > No prior prefab selection required. Empty choices stay open with feedback.
