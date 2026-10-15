@@ -28,9 +28,12 @@ func run() -> void:
 		correct = correct and renderer.multimesh.get_instance_transform(i).origin.is_equal_approx(store.get_position(result.ids[i]))
 	check(correct, "uploaded transforms match generation checked handles")
 	var unchanged_bytes:=0
+	var unchanged_visits:=0
 	for frame in 60:
-		unchanged_bytes+=int(renderer.refresh(Vector3(32,0,32),16).upload_bytes)
+		var unchanged: Dictionary=renderer.refresh(Vector3(32,0,32),16)
+		unchanged_bytes+=int(unchanged.upload_bytes);unchanged_visits+=int(unchanged.visited)
 	check(unchanged_bytes==0,"sixty unchanged refreshes perform zero transform uploads")
+	check(unchanged_visits==0,"sixty unchanged refreshes perform zero spatial candidate visits")
 	var moving_id: int=result.ids[0]
 	var previous: Vector3=store.get_position(moving_id)
 	store.set_velocity(moving_id,Vector3(1,0,0));store.step(0.1);store.set_velocity(moving_id,Vector3.ZERO)
@@ -92,6 +95,16 @@ func run() -> void:
 	check(probe_result.upload_bytes==0 and probe.multimesh.visible_instance_count==0,"removing all entities hides old buffer without upload")
 	check(not marker.visible,"despawn hides stale identity marker")
 	marker.free();check(probe.refresh_positions().ok,"deleted marker is safely ignored")
+	var restored_id: int=tiny.spawn(Vector3.ZERO,Vector3.ZERO)
+	var storage: PackedByteArray=tiny.capture_storage_snapshot()
+	probe_result=probe.refresh(Vector3.ZERO,100)
+	probe_result.ids=PackedInt64Array();probe_result.ok=false
+	check(probe.refresh(Vector3.ZERO,100).rendered==1,"caller mutation cannot corrupt cached query")
+	check(tiny.restore_storage_snapshot(storage),"same-count restore succeeds")
+	probe_result=probe.refresh(Vector3.ZERO,100)
+	check(probe_result.visited>0 and probe_result.ids[0]!=restored_id and probe_result.rendered==1,"same-count restore invalidates cached generation handles")
+	tiny.set_position(probe_result.ids[0],Vector3(200,0,0))
+	check(probe.refresh(Vector3.ZERO,100).rendered==0,"position correction invalidates selection even without entity stepping")
 	probe.free()
 	renderer.configure(store, mesh, 128)
 	result = renderer.refresh(Vector3(32, 0, 32), 16)

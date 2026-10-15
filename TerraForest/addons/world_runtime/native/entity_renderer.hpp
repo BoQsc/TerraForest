@@ -22,6 +22,12 @@ class NativeEntityRenderer : public godot::MultiMeshInstance3D {
     uint64_t marker_id_ = 0;
     int64_t highlighted_identity_ = 0;
     godot::PackedInt64Array selected_;
+    godot::Dictionary selection_cache_;
+    godot::Vector3 cached_center_;
+    double cached_radius_=0;
+    int cached_budget_=0;
+    uint64_t cached_revision_=0;
+    bool cache_valid_=false;
     godot::Dictionary publish(godot::Dictionary result);
 protected:
     static void _bind_methods();

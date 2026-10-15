@@ -31,13 +31,26 @@ bool NativeEntityRenderer::configure(const Ref<NativeEntityStore> &store, const 
     buffer_.resize(int64_t(capacity) * (animated?16:12));
     buffer_.fill(0);
     selected_.clear();
+    cache_valid_=false;selection_cache_.clear();
     store_ = store; instances_ = next; capacity_ = capacity;
     set_multimesh(instances_);
     return true;
 }
 Dictionary NativeEntityRenderer::refresh(const Vector3 &center, double radius, int candidate_budget) {
     Dictionary result;
-    if(store_.is_valid())result=store_->query_sphere_nearest(center,radius,capacity_,candidate_budget);
+    if(store_.is_valid()){
+        if(cache_valid_ && cached_revision_==store_->spatial_revision() && cached_center_==center && cached_radius_==radius && cached_budget_==candidate_budget){
+            result=selection_cache_.duplicate(true);
+            result["visited"]=0;result["cells_visited"]=0;result["selection_cached"]=true;
+        }else{
+            result=store_->query_sphere_nearest(center,radius,capacity_,candidate_budget);
+            cache_valid_=bool(result.get("ok",false)) && bool(result.get("selection_complete",false));
+            if(cache_valid_){
+                selection_cache_=result.duplicate(true);cached_center_=center;cached_radius_=radius;
+                cached_budget_=candidate_budget;cached_revision_=store_->spatial_revision();
+            }
+        }
+    }
     selected_=bool(result.get("ok",false))?PackedInt64Array(result["ids"]):PackedInt64Array();
     // Render residency owns gait history. Never retain visited-world actors.
     if(animated_){

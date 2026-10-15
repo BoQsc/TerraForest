@@ -87,6 +87,7 @@ bool NativeEntityStore::restore_storage_snapshot(const PackedByteArray &data) {
     next_persistent_id_=staged->next_persistent_id_;
     capacity_=staged->capacity_;count_=staged->count_;free_count_=staged->free_count_;
     next_generation_=staged->next_generation_;ticks_=0;
+    ++spatial_revision_;
     return true;
 }
 }

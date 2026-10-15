@@ -76,6 +76,7 @@ bool NativeEntityStore::configure(int64_t capacity) {
     capacity_ = uint32_t(capacity); free_count_ = capacity_; ticks_ = 0;
     cell_heads_.clear();
     identity_slots_.clear();
+    ++spatial_revision_;
     return true;
 }
 
@@ -96,6 +97,7 @@ int64_t NativeEntityStore::spawn_unchecked(const Vector3 &position, const Vector
     slot.persistent_id = persistent_id ? persistent_id : next_persistent_id_++;
     identity_slots_[slot.persistent_id] = index;
     index_insert(index);
+    ++spatial_revision_;
     return int64_t((uint64_t(slot.generation) << 32) | index);
 }
 
@@ -129,6 +131,7 @@ bool NativeEntityStore::despawn(int64_t id) {
     uint32_t moved = dense_[--count_];
     dense_[dense_index] = moved; slots_[moved].dense_index = dense_index;
     slot->active = false;update_moving(index);free_[free_count_++] = index;
+    ++spatial_revision_;
     return true;
 }
 bool NativeEntityStore::contains(int64_t id) const { return resolve(id) != nullptr; }
@@ -147,6 +150,8 @@ Vector3 NativeEntityStore::get_position(int64_t id) const { auto *slot = resolve
 bool NativeEntityStore::set_position(int64_t id, const Vector3 &position) {
     Slot *slot=resolve(id);
     if (!slot || !position.is_finite()) return false;
+    if(slot->position==position)return true;
+    ++spatial_revision_;
     const uint32_t index=uint32_t(uint64_t(id));
     if (!(cell_for(slot->position)==cell_for(position))) {
         index_remove(index);slot->position=position;index_insert(index);
@@ -172,6 +177,7 @@ bool NativeEntityStore::step(double seconds) {
         if(!(cell_for(slot.position)==cell_for(next))){index_remove(index);slot.position=next;index_insert(index);}
         else slot.position=next;
     }
+    if(moving_count_)++spatial_revision_;
     ++ticks_; return true;
 }
 PackedFloat32Array NativeEntityStore::multimesh_transforms() const {

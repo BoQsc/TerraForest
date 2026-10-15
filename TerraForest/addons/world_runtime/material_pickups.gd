@@ -108,18 +108,20 @@ func update_view(delta: float, focus: Vector3, enabled: bool) -> void:
 
 func aimed(from: Vector3,to: Vector3,reachable: Callable) -> Dictionary:
 	if _transferring or not from.is_finite() or not to.is_finite() or not reachable.is_valid():return {"ok":false,"reason":"Pickup unavailable"}
-	var budget:=1024;var best:=1.0;var selected: Dictionary={"ok":false,"reason":"No aimed pickup"}
+	var budget:=1024;var visited:=0;var queries:=0;var best:=1.0;var selected: Dictionary={"ok":false,"reason":"No aimed pickup"}
 	# Fixed catalog orchestration only; native spatial cells and intersections.
 	for item: int in stores:
-		if budget<=0:return {"ok":false,"reason":"Pickup area is too crowded"}
+		if budget<=0:return {"ok":false,"reason":"Pickup area is too crowded","visited":visited,"queries":queries}
 		var query: Dictionary=stores[item].query_segment(to_local(from),to_local(to),0.32,budget)
-		if not query.ok or not query.complete:return {"ok":false,"reason":"Pickup area is too crowded"}
+		queries+=1;visited+=int(query.visited)
+		if not query.ok or not query.complete:return {"ok":false,"reason":"Pickup area is too crowded","visited":visited,"queries":queries}
 		budget-=int(query.visited)
 		if query.handle>0 and (not selected.ok or query.fraction<best):
 			best=query.fraction;selected={"ok":true,"item":item,"handle":query.handle,"position":from.lerp(to,best)}
 	if selected.ok:
 		var center: Vector3=to_global(stores[selected.item].get_position(selected.handle))
-		if not reachable.call(center):return {"ok":false,"reason":"Pickup obstructed"}
+		if not reachable.call(center):return {"ok":false,"reason":"Pickup obstructed","visited":visited,"queries":queries}
+	selected.visited=visited;selected.queries=queries
 	return selected
 
 func collect_aimed(from: Vector3,to: Vector3,inventory: RefCounted,reachable: Callable) -> Dictionary:

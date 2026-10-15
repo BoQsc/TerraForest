@@ -43,6 +43,7 @@ class NativeEntityStore : public godot::RefCounted {
     uint32_t capacity_ = 0, count_ = 0, free_count_ = 0;
     uint32_t next_generation_ = 1;
     uint64_t ticks_ = 0;
+    uint64_t spatial_revision_ = 0;
     uint64_t next_persistent_id_ = 1;
     std::unordered_map<uint64_t, uint32_t> identity_slots_;
     Slot *resolve(int64_t id) const;
@@ -52,6 +53,7 @@ class NativeEntityStore : public godot::RefCounted {
 protected:
     static void _bind_methods();
 public:
+    uint64_t spatial_revision() const {return spatial_revision_;}
     bool configure(int64_t capacity);
     int64_t spawn(const godot::Vector3 &position, const godot::Vector3 &velocity);
     godot::PackedInt64Array spawn_grid(int64_t count, const godot::Vector3 &origin, double spacing, const godot::Vector3 &velocity);

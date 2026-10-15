@@ -1,0 +1,82 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.3.280 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+PASS 1920x1080 fullscreen presentation
+PASS all catalog pickup stores and renderers initialize
+PASS every catalog type participates in pressure workload
+PASS full store admitted: 1
+PASS full store admitted: 2
+PASS full store admitted: 3
+PASS full store admitted: 4
+PASS full store admitted: 101
+PASS full store admitted: 102
+PASS full store admitted: 103
+PASS full store admitted: 104
+PASS full store admitted: 201
+PASS full store admitted: 202
+PASS full store admitted: 203
+PASS full store admitted: 204
+PASS full store admitted: 205
+PASS full store admitted: 206
+PASS full store admitted: 207
+PASS full store admitted: 208
+PASS full store admitted: 209
+PASS full store admitted: 210
+PASS full store admitted: 211
+PASS full store admitted: 301
+PASS full store admitted: 302
+PASS full store admitted: 303
+PASS full store admitted: 401
+PASS bounded first selection and upload: 1
+PASS bounded first selection and upload: 2
+PASS bounded first selection and upload: 3
+PASS bounded first selection and upload: 4
+PASS bounded first selection and upload: 101
+PASS bounded first selection and upload: 102
+PASS bounded first selection and upload: 103
+PASS bounded first selection and upload: 104
+PASS bounded first selection and upload: 201
+PASS bounded first selection and upload: 202
+PASS bounded first selection and upload: 203
+PASS bounded first selection and upload: 204
+PASS bounded first selection and upload: 205
+PASS bounded first selection and upload: 206
+PASS bounded first selection and upload: 207
+PASS bounded first selection and upload: 208
+PASS bounded first selection and upload: 209
+PASS bounded first selection and upload: 210
+PASS bounded first selection and upload: 211
+PASS bounded first selection and upload: 301
+PASS bounded first selection and upload: 302
+PASS bounded first selection and upload: 303
+PASS bounded first selection and upload: 401
+PASS all full stores respect declared per-type visible and upload caps
+PASS thirty stationary full-population refreshes upload zero transform bytes
+PASS thirty stationary refreshes visit zero spatial candidates
+PASS moving focus stays bounded: 1
+PASS moving focus stays bounded: 2
+PASS moving focus stays bounded: 3
+PASS moving focus stays bounded: 4
+PASS moving focus stays bounded: 101
+PASS moving focus stays bounded: 102
+PASS moving focus stays bounded: 103
+PASS moving focus stays bounded: 104
+PASS moving focus stays bounded: 201
+PASS moving focus stays bounded: 202
+PASS moving focus stays bounded: 203
+PASS moving focus stays bounded: 204
+PASS moving focus stays bounded: 205
+PASS moving focus stays bounded: 206
+PASS moving focus stays bounded: 207
+PASS moving focus stays bounded: 208
+PASS moving focus stays bounded: 209
+PASS moving focus stays bounded: 210
+PASS moving focus stays bounded: 211
+PASS moving focus stays bounded: 301
+PASS moving focus stays bounded: 302
+PASS moving focus stays bounded: 303
+PASS moving focus stays bounded: 401
+TRANSFORM_PROBE actual=(11.5, 0.0, 6.5) expected=(11.5, 0.0, 6.5)
+PASS removed visible population is replaced with live nearest positions
+PASS leaving populated area hides every pickup batch
+PICKUP_RENDER_PRESSURE population=94208 visible_cap=5888 first_upload_bytes=282624 idle_upload_bytes=0 refresh_cpu_us_p50=155 p95=185 max=506 checks=77 failures=0

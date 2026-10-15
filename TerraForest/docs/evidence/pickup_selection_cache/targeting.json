@@ -1,0 +1,34 @@
+{
+  "failures": 0,
+  "population": 94208,
+  "rows": [
+    {
+      "catalog_types": 23,
+      "label": "one_local",
+      "max_candidates": 1,
+      "max_occlusion_calls": 1,
+      "max_us": 2017,
+      "p50_us": 98,
+      "p95_us": 161
+    },
+    {
+      "catalog_types": 23,
+      "label": "full_distant_population",
+      "max_candidates": 1,
+      "max_occlusion_calls": 1,
+      "max_us": 385,
+      "p50_us": 118,
+      "p95_us": 258
+    },
+    {
+      "catalog_types": 23,
+      "label": "dense_local_rejected",
+      "max_candidates": 1024,
+      "max_occlusion_calls": 0,
+      "max_us": 251,
+      "p50_us": 54,
+      "p95_us": 124
+    }
+  ],
+  "scope": "Targeting CPU component only; stubbed winner occlusion, no rendering/thermal qualification"
+}
