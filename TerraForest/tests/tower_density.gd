@@ -19,7 +19,8 @@ func run() -> void:
 	var camera:=Camera3D.new();root.add_child(camera);camera.current=true
 	var catalog=preload("res://addons/structures/furniture_catalog.gd")
 	var asset: Resource=catalog.furnished_tower(3)
-	for count in [1,16,64]:
+	var comparison: bool="--shadow-comparison" in OS.get_cmdline_user_args()
+	for count in ([64] if comparison else [1,16,64]):
 		var world=preload("res://addons/structures/structures_world.gd").new();root.add_child(world)
 		check(world.prepare() and catalog.register(world).size()==3,"fixture prepared %d"%count)
 		for c in [preload("res://addons/structures/storage_catalog.gd"),preload("res://addons/structures/window_catalog.gd"),preload("res://addons/structures/door_catalog.gd"),preload("res://addons/structures/guardrail_catalog.gd")]:check(not c.register(world).is_empty(),"model catalog registered %d"%count)
@@ -52,20 +53,25 @@ func run() -> void:
 		check(settled,"model render and collision queues settled %d"%count)
 		var local_ready: bool=world.is_collision_region_ready(AABB(focus+Vector3(-9,0,-9),Vector3(19,14,20)))
 		check(local_ready,"nearest complete tower has collision coverage %d"%count)
-		var frames: Array=[];var cpu: Array=[];var gpu_render: Array=[];var cpu_render: Array=[];var previous:=Time.get_ticks_usec()
-		for frame in 120:
-			await process_frame
-			var now:=Time.get_ticks_usec();frames.append((now-previous)/1000.0);previous=now
-			cpu.append(Performance.get_monitor(Performance.TIME_PROCESS)*1000)
-			gpu_render.append(RenderingServer.viewport_get_measured_render_time_gpu(root.get_viewport_rid()))
-			cpu_render.append(RenderingServer.viewport_get_measured_render_time_cpu(root.get_viewport_rid()))
-		var row: Dictionary={"towers":count,"blocks":world.blocks.stats(),"models":total_models,"residents":residents,"nearest_tower_collision_ready":local_ready,"max_placement_call_us":maximum_call_us,"frame_p50_ms":percentile(frames,0.5),"frame_p95_ms":percentile(frames,0.95),"frame_max_ms":frames.max(),"engine_process_monitor_p95_ms":percentile(cpu,0.95),"draw_calls":Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME),"primitives":Performance.get_monitor(Performance.RENDER_TOTAL_PRIMITIVES_IN_FRAME)}
-		row["viewport_gpu_p95_ms"]=percentile(gpu_render,0.95)
-		row["viewport_render_cpu_p95_ms"]=percentile(cpu_render,0.95)
-		rows.append(row);print("TOWER_DENSITY_ROW ",JSON.stringify(row))
-		check(float(row.frame_p95_ms)<=20,"settled frame p95 <=20 ms diagnostic threshold %d"%count)
-		DirAccess.make_dir_recursive_absolute("res://reports")
-		await RenderingServer.frame_post_draw;root.get_texture().get_image().save_png("res://reports/tower_density_%d.png"%count)
+		for phase in (["baseline","no_window_shadows","no_model_shadows","baseline_repeat"] if comparison else ["baseline"]):
+			for key: String in world.model_collections():
+				world.model(key).set_casts_shadows(phase!="no_model_shadows" and not (phase=="no_window_shadows" and key=="architecture/wooden_window/v1"))
+				residents[key]["render"]=world.model(key).render_stats()
+			for frame in 60:await process_frame
+			var frames: Array=[];var cpu: Array=[];var gpu_render: Array=[];var cpu_render: Array=[];var previous:=Time.get_ticks_usec()
+			for frame in 120:
+				await process_frame
+				var now:=Time.get_ticks_usec();frames.append((now-previous)/1000.0);previous=now
+				cpu.append(Performance.get_monitor(Performance.TIME_PROCESS)*1000)
+				gpu_render.append(RenderingServer.viewport_get_measured_render_time_gpu(root.get_viewport_rid()))
+				cpu_render.append(RenderingServer.viewport_get_measured_render_time_cpu(root.get_viewport_rid()))
+			var row: Dictionary={"phase":phase,"towers":count,"blocks":world.blocks.stats(),"models":total_models,"residents":residents.duplicate(true),"nearest_tower_collision_ready":local_ready,"max_placement_call_us":maximum_call_us,"frame_p50_ms":percentile(frames,0.5),"frame_p95_ms":percentile(frames,0.95),"frame_max_ms":frames.max(),"engine_process_monitor_p95_ms":percentile(cpu,0.95),"draw_calls":Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME),"primitives":Performance.get_monitor(Performance.RENDER_TOTAL_PRIMITIVES_IN_FRAME)}
+			row["viewport_gpu_p95_ms"]=percentile(gpu_render,0.95)
+			row["viewport_render_cpu_p95_ms"]=percentile(cpu_render,0.95)
+			rows.append(row);print("TOWER_DENSITY_ROW ",JSON.stringify(row))
+			check(float(row.frame_p95_ms)<=20,"settled frame p95 <=20 ms diagnostic threshold %d"%count)
+			DirAccess.make_dir_recursive_absolute("res://reports")
+			await RenderingServer.frame_post_draw;root.get_texture().get_image().save_png("res://reports/tower_density_%d_%s.png"%[count,phase])
 		world.free();await process_frame
 	var file:=FileAccess.open("res://reports/tower_density.json",FileAccess.WRITE)
 	file.store_string(JSON.stringify({"failures":failures,"rows":rows,"scope":"1080p capped 60, 120 measured frames per size, isolated buildings with shadows; no terrain forest actors traffic or thermal qualification"},"  "));file.close()

@@ -1,3 +1,11 @@
+> 2026-10-15 shadow isolation: same-scene baseline/disabled/repeated-baseline
+> comparison added. Model-shadow draw cost is real (833→502 draws), but GPU
+> savings vary substantially between runs; window-only GPU benefit unproven.
+> First baseline frame p95 still fails 20 ms; repeat passes. Evidence:
+> evidence/tower_shadow_cost/. Keep production shadows; no stable hitch cause
+> or thermal/headroom qualification established. Avoid a visual downgrade based
+> on these short, variable samples.
+
 > 2026-10-15 tower density diagnostic: 1/16/64 furnished towers tested at 1080p.
 > Instrumented 64-tower run FAILS frame p95 diagnostic threshold: 25.818 ms,
 > viewport GPU p95 8.518 ms, 833 draws; nearest complete tower collision is ready.
