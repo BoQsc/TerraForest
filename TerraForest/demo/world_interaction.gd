@@ -11,15 +11,29 @@ func describe(game: Node, target: Dictionary) -> String:
 	if game.storage.aimed_id(target)>0:return "E · Open wooden chest"
 	var door_id: int=game.doors.aimed_id(target)
 	if door_id>0:return "E · Close wooden door" if game.doors.state.is_open(door_id) else "E · Open wooden door"
-	var ground:=ground_target(game,target)
-	if ground.ok:
-		var name: String=preload("res://addons/world_ecosystem/ground_catalog.gd").NAMES[ground.hit.species]
+	var loose:=loose_target(game,target)
+	if loose.get("kind")=="pickup":return "E · Pick up "+game.pickups.ITEMS[loose.item]
+	if loose.get("kind")=="ground":
+		var name: String=preload("res://addons/world_ecosystem/ground_catalog.gd").NAMES[loose.hit.species]
 		return "E · "+("Collect " if game.construction_inventory.gameplay else "Remove ")+name
 	return ""
 func ground_target(game: Node,target: Dictionary) -> Dictionary:
 	if not game.ground_enabled:return {"ok":false}
 	var origin: Vector3=game.camera.global_position
 	return game.ground_interaction.collection_probe(origin,origin-game.camera.global_basis.z*2.5,target)
+func pickup_end(game: Node,target: Dictionary) -> Vector3:
+	var origin: Vector3=game.camera.global_position
+	var endpoint: Vector3=origin-game.camera.global_basis.z*2.5
+	return target.position if not target.is_empty() and origin.distance_squared_to(target.position)<origin.distance_squared_to(endpoint) else endpoint
+func loose_target(game: Node,target: Dictionary) -> Dictionary:
+	var ground:=ground_target(game,target)
+	if ground.ok:ground.kind="ground"
+	if game.pickups==null:return ground
+	var origin: Vector3=game.camera.global_position
+	var pickup: Dictionary=game.pickups.aimed(origin,pickup_end(game,target),game._pickup_reachable)
+	if pickup.ok and (not ground.ok or origin.distance_squared_to(pickup.position)<origin.distance_squared_to(ground.hit.position)):
+		pickup.kind="pickup";return pickup
+	return ground
 func update(game: Node, delta: float) -> void:
 	if not available(game):
 		remaining=0.0;game.player_hud.show_interaction_hint("");return
@@ -33,7 +47,12 @@ func interact(game: Node) -> bool:
 	# Re-pick at the input event: the presentation cache is never authoritative.
 	var target:=hit(game)
 	var handled: bool=game.storage.try_open(target) or game.doors.try_interact(target)
-	if not handled and ground_target(game,target).ok:
+	var loose: Dictionary={} if handled else loose_target(game,target)
+	if not handled and loose.get("kind")=="pickup":
+		var result: Dictionary=game.pickups.collect_aimed(game.camera.global_position,pickup_end(game,target),game.player_hud.inventory,game._pickup_reachable)
+		if result.ok:game.player_hud.refresh()
+		game._show_lake_notice(result.reason);handled=true
+	if not handled and loose.get("kind")=="ground":
 		var origin: Vector3=game.camera.global_position
 		var result: Dictionary=game.ground_interaction.collect(origin,origin-game.camera.global_basis.z*2.5,game.player_hud.inventory,game.construction_inventory.gameplay,target)
 		if result.ok:

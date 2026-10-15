@@ -16,6 +16,7 @@ class Game extends Node3D:
 	var world_vehicle: Dictionary={"driving":false}
 	var fly:=false
 	var ground_enabled:=false
+	var pickups: Node3D
 	var app_focused:=true
 	var loading_active:=false
 	var shutdown_requested:=false

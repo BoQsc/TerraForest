@@ -27,6 +27,7 @@ void NativeEntityStore::_bind_methods() {
     ClassDB::bind_method(D_METHOD("restore_storage_snapshot", "data"), &NativeEntityStore::restore_storage_snapshot);
     ClassDB::bind_method(D_METHOD("query_sphere","center","radius","result_limit","candidate_budget"),&NativeEntityStore::query_sphere,DEFVAL(256),DEFVAL(4096));
     ClassDB::bind_method(D_METHOD("query_sphere_nearest","center","radius","result_limit","candidate_budget"),&NativeEntityStore::query_sphere_nearest,DEFVAL(256),DEFVAL(4096));
+    ClassDB::bind_method(D_METHOD("query_segment","from","to","radius","candidate_budget"),&NativeEntityStore::query_segment,DEFVAL(256));
 }
 
 NativeEntityStore::Cell NativeEntityStore::cell_for(const Vector3 &p) {
@@ -193,6 +194,35 @@ Dictionary NativeEntityStore::statistics() const {
     result["native"] = true; result["collision_simulation"] = false;
     result["spatial_cells"]=int64_t(cell_heads_.size());result["spatial_cell_size"]=32;
     return result;
+}
+Dictionary NativeEntityStore::query_segment(const Vector3 &from,const Vector3 &to,double radius,int candidate_budget) const {
+    Dictionary out;out["ok"]=false;out["complete"]=false;out["handle"]=int64_t(0);out["fraction"]=1.0;out["visited"]=0;
+    if(!from.is_finite()||!to.is_finite()||
+       std::abs(from.x)>10000000||std::abs(from.y)>10000000||std::abs(from.z)>10000000||
+       std::abs(to.x)>10000000||std::abs(to.y)>10000000||std::abs(to.z)>10000000||
+       !std::isfinite(radius)||radius<=0||radius>1||candidate_budget<1||candidate_budget>16384)return out;
+    const Vector3 delta=to-from;const double length2=delta.length_squared();
+    if(length2<=1e-12||length2>64.01)return out;
+    const Vector3 extent(radius,radius,radius);
+    const Cell low=cell_for(from.min(to)-extent),high=cell_for(from.max(to)+extent);
+    int visited=0;double best=1.0;int64_t handle=0;uint64_t identity=UINT64_MAX;
+    for(real_t z=low.z;z<=high.z;++z)for(real_t y=low.y;y<=high.y;++y)for(real_t x=low.x;x<=high.x;++x){
+        auto entry=cell_heads_.find({x,y,z});if(entry==cell_heads_.end())continue;
+        for(uint32_t index=entry->second;index!=UINT32_MAX;index=slots_[index].next){
+            if(visited==candidate_budget){out["ok"]=true;out["visited"]=visited;return out;}++visited;
+            const Slot &slot=slots_[index];const Vector3 offset=from-slot.position;
+            const double c=offset.length_squared()-radius*radius;double fraction=0.0;
+            if(c>0){const double b=offset.dot(delta),discriminant=b*b-length2*c;
+                if(discriminant<0)continue;
+                fraction=(-b-std::sqrt(discriminant))/length2;
+                if(fraction<0||fraction>1)continue;
+            }
+            if(handle==0||fraction<best||(fraction==best&&slot.persistent_id<identity)){
+                best=fraction;identity=slot.persistent_id;handle=int64_t((uint64_t(slot.generation)<<32)|index);
+            }
+        }
+    }
+    out["ok"]=true;out["complete"]=true;out["handle"]=handle;out["fraction"]=best;out["visited"]=visited;return out;
 }
 Dictionary NativeEntityStore::query_sphere_nearest(const Vector3 &center,double radius,int result_limit,int candidate_budget) const {
     Dictionary out;PackedInt64Array ids;out["ok"]=false;out["complete"]=false;out["selection_complete"]=false;out["ids"]=ids;out["visited"]=0;out["cells_visited"]=0;

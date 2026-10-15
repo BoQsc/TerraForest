@@ -106,6 +106,27 @@ func update_view(delta: float, focus: Vector3, enabled: bool) -> void:
 	for item: int in stores:
 		render_status[item] = renderers[item].refresh(to_local(focus), 64.0, 4096)
 
+func aimed(from: Vector3,to: Vector3,reachable: Callable) -> Dictionary:
+	if _transferring or not from.is_finite() or not to.is_finite() or not reachable.is_valid():return {"ok":false,"reason":"Pickup unavailable"}
+	var budget:=1024;var best:=1.0;var selected: Dictionary={"ok":false,"reason":"No aimed pickup"}
+	# Fixed catalog orchestration only; native spatial cells and intersections.
+	for item: int in stores:
+		if budget<=0:return {"ok":false,"reason":"Pickup area is too crowded"}
+		var query: Dictionary=stores[item].query_segment(to_local(from),to_local(to),0.32,budget)
+		if not query.ok or not query.complete:return {"ok":false,"reason":"Pickup area is too crowded"}
+		budget-=int(query.visited)
+		if query.handle>0 and (not selected.ok or query.fraction<best):
+			best=query.fraction;selected={"ok":true,"item":item,"handle":query.handle,"position":from.lerp(to,best)}
+	if selected.ok:
+		var center: Vector3=to_global(stores[selected.item].get_position(selected.handle))
+		if not reachable.call(center):return {"ok":false,"reason":"Pickup obstructed"}
+	return selected
+
+func collect_aimed(from: Vector3,to: Vector3,inventory: RefCounted,reachable: Callable) -> Dictionary:
+	var candidate:=aimed(from,to,reachable)
+	if not candidate.ok:return candidate
+	return _collect(candidate.item,candidate.handle,inventory)
+
 func collect_near(point: Vector3, inventory: RefCounted, reachable: Callable) -> Dictionary:
 	# Explicit keypress only; at most ITEMS.size() x 64 candidates. Never a per-frame scan.
 	var best_item := 0; var best_handle := 0; var best_distance := INF
@@ -118,15 +139,22 @@ func collect_near(point: Vector3, inventory: RefCounted, reachable: Callable) ->
 			if distance < best_distance and reachable.call(position):
 				best_item = item; best_handle = handle; best_distance = distance
 	if best_handle == 0: return {"ok": false, "reason": "No reachable material within 2.5 m"}
+	return _collect(best_item,best_handle,inventory)
+
+func _collect(best_item: int,best_handle: int,inventory: RefCounted) -> Dictionary:
+	if _transferring or inventory==null or not stores.has(best_item) or not stores[best_item].contains(best_handle):return {"ok":false,"reason":"Pickup unavailable"}
+	_transferring=true
 	var id: int=stores[best_item].persistent_id(best_handle)
 	var box: Dictionary=stacks[best_item].snapshot(id)
 	var result: Dictionary
 	if stacks[best_item].has_contents(id):
 		result=stacks[best_item].withdraw(id,inventory,0,box.slots[0].count,inventory.snapshot().revision,box.store_revision)
 	else:result=inventory.grant(best_item,1,inventory.snapshot().revision) # Legacy/authored single pickup.
-	if not result.ok: return {"ok": false, "reason": "Inventory full or unavailable"}
+	if not result.ok:
+		_transferring=false;return {"ok": false, "reason": "Inventory full or unavailable"}
 	# Single main-thread transaction: grant emits no callbacks; this handle is live.
 	stores[best_item].despawn(best_handle); _dirty = true
 	# Emit after both halves commit so observers capture a consistent world.
 	changed.emit()
+	_transferring=false
 	return {"ok": true, "item": best_item, "reason": "Collected " + ITEMS[best_item]}

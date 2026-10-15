@@ -1259,7 +1259,7 @@ func _harvest_aimed_tree() -> bool:
 	return true
 
 func _pickup_reachable(point: Vector3) -> bool:
-	var query:=PhysicsRayQueryParameters3D.create(camera.global_position,point,3,[player.get_rid()])
+	var query:=PhysicsRayQueryParameters3D.create(camera.global_position,point,7,[player.get_rid()])
 	return get_world_3d().direct_space_state.intersect_ray(query).is_empty()
 
 func _remove_actor(identity: int) -> bool:

@@ -1,0 +1,13 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS nearest sphere selected across spatial cell boundary
+PASS reverse ray selects opposite nearest
+PASS inside proxy begins at zero
+PASS parallel miss
+PASS clipped endpoint cannot reach distant sphere
+PASS stable identity resolves equal-distance ties
+PASS removed identity cannot remain targeted
+PASS budget exhaustion exposes no partial target
+PASS nonfinite degenerate and excessive reach rejected
+PASS distant population does not increase local candidate work
+ENTITY_SEGMENT failures=0
