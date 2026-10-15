@@ -1,3 +1,10 @@
+> 2026-10-15 building components: added baked wood/glass window to the normal
+> object palette and prefab recipes, using existing native batch persistence,
+> collision and object destruction. Ten headless checks pass (evidence/window_component/).
+> This is a component increment, not finished buildings: visual review, furnished
+> tower integration, functional doors and independent glass breakage remain open.
+> Water stays parked at the user's accepted state.
+
 > 2026-10-15 tower coverage audit: prior3-floor fixture walked only1 flight.
 > Extended native capsule route now reaches third floor and returns through
 > both landings/flights;8 checks pass with unchanged runtime/prefab. First test

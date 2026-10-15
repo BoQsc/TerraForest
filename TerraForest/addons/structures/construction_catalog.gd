@@ -7,4 +7,6 @@ static func recipes() -> Dictionary:
 	var chest=preload("res://addons/structures/storage_catalog.gd")
 	result[ladder.KEY]=ladder.recipe()
 	result[chest.KEY]=chest.recipe()
+	var window=preload("res://addons/structures/window_catalog.gd")
+	result[window.KEY]=window.recipe()
 	return result

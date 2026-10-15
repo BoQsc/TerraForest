@@ -1,0 +1,13 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS production world scene and window catalog parse
+PASS structure world prepared
+PASS window registered through production catalog
+PASS window shares separate frame and transparent glass surfaces
+PASS window placed with stable identity
+PASS glass blocks passage through window opening
+PASS window removal accepted
+PASS removed window leaves no invisible collision
+PASS window snapshot restored
+PASS restored window retains exact placement and collision
+WINDOW_COMPONENT failures=0

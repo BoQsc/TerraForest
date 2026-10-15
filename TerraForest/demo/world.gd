@@ -122,6 +122,8 @@ func _ready() -> void:
 	structures_ready = structures_ready and not ladder.is_empty()
 	var chest: Dictionary=preload("res://addons/structures/storage_catalog.gd").register(structures)
 	structures_ready = structures_ready and not chest.is_empty()
+	var window: Dictionary=preload("res://addons/structures/window_catalog.gd").register(structures)
+	structures_ready = structures_ready and not window.is_empty()
 	player_hud.ground_tools_enabled=ground_enabled
 	if not player_hud.prepare() or not persistence.register_component("player_loadout", player_hud.capture_snapshot, player_hud.restore_snapshot, player_hud.inventory, player_hud.default_loadout):
 		push_error("Player loadout persistence initialization failed")
@@ -182,6 +184,7 @@ func _ready() -> void:
 	object_entries.append_array(furniture)
 	object_entries.append(ladder)
 	object_entries.append(chest)
+	object_entries.append(window)
 	model_tool.configure(camera,player,object_entries,help.get_parent(),structures.blocks)
 	model_tool.notice.connect(_show_lake_notice)
 	if model_region_paging and (not temporary_world or terrain.backend.readonly_snapshot):
