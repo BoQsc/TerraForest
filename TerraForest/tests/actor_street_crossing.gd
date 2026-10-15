@@ -40,14 +40,22 @@ func run()->void:
    var identity:int=game.actors.spawn(point)
    handles.append(game.actors.store.resolve_identity(identity));goals.append(goal)
    game.actors.orders.set_target(identity,goal)
- var minimum:=INF;var trace:Array=[];var peak_work:=0;var costs:Array=[]
+ var minimum:=INF;var trace:Array=[];var peak_work:=0;var costs:Array=[];var render_costs:Array=[]
  var viewport:=root.get_viewport_rid();RenderingServer.viewport_set_measure_render_time(viewport,true)
- var previous:int=Time.get_ticks_usec()
+ game.actors.pool.set_profiling(true)
+ var timing:Dictionary={"previous":Time.get_ticks_usec(),"drawn":Engine.get_frames_drawn(),"actor_ms":0.0,"probe_ms":0.0,"updates":0}
+ var frame_sampler:Callable=func():
+  var now:int=Time.get_ticks_usec()
+  render_costs.append({"frame_ms":(now-timing.previous)/1000.0,"drawn_delta":Engine.get_frames_drawn()-timing.drawn,"actor_ms":timing.actor_ms,"probe_ms":timing.probe_ms,"updates":timing.updates,"gpu_ms":RenderingServer.viewport_get_measured_render_time_gpu(viewport),"engine_window_process_max_ms":Performance.get_monitor(Performance.TIME_PROCESS)*1000,"engine_window_physics_max_ms":Performance.get_monitor(Performance.TIME_PHYSICS_PROCESS)*1000,"engine_window_navigation_max_ms":Performance.get_monitor(Performance.TIME_NAVIGATION_PROCESS)*1000})
+  timing.previous=now;timing.drawn=Engine.get_frames_drawn();timing.actor_ms=0.0;timing.probe_ms=0.0;timing.updates=0
+ RenderingServer.frame_post_draw.connect(frame_sampler)
  for frame in 720:
   await physics_frame
   var begin:int=Time.get_ticks_usec()
   game.actors.update_simulation(1.0/60,(a+b)*0.5,true,game._actor_collision_ready)
   var actor_ms:float=(Time.get_ticks_usec()-begin)/1000.0
+  timing.actor_ms+=actor_ms;timing.updates+=1
+  var probe_begin:int=Time.get_ticks_usec()
   peak_work=maxi(peak_work,game.actors.simulation_status.route_work)
   var positions:=PackedVector3Array();var states:Array=[]
   for handle in handles:
@@ -56,10 +64,10 @@ func run()->void:
   for i in positions.size():
    for j in range(i+1,positions.size()):minimum=minf(minimum,positions[i].distance_to(positions[j]))
   if frame%12==0:trace.append({"positions":positions,"states":states})
-  await RenderingServer.frame_post_draw
-  var now:int=Time.get_ticks_usec()
-  costs.append({"frame_ms":(now-previous)/1000.0,"actor_ms":actor_ms,"gpu_ms":RenderingServer.viewport_get_measured_render_time_gpu(viewport),"held":game.actors.simulation_status.held,"active":game.actors.pool.active_handles().size()});previous=now
-  if frame==180:root.get_texture().get_image().save_png(output+"/crossing.png")
+  timing.probe_ms+=(Time.get_ticks_usec()-probe_begin)/1000.0
+  var status:Dictionary=game.actors.simulation_status
+  costs.append({"actor_ms":actor_ms,"readiness_ms":status.readiness_us/1000.0,"motion_ms":status.motion_us/1000.0,"transform_ms":status.transform_us/1000.0,"store_ms":status.store_us/1000.0,"planning_ms":status.route_planning_us/1000.0,"held":status.held,"active":game.actors.pool.active_handles().size()})
+ RenderingServer.frame_post_draw.disconnect(frame_sampler)
  var arrived:=0
  for i in handles.size():
   if game.actors.store.get_position(handles[i]).distance_to(goals[i])<0.3:arrived+=1
@@ -67,7 +75,10 @@ func run()->void:
  check(arrived==handles.size(),"actors arrive through ordinary main-world navigation: %d / %d"%[arrived,handles.size()])
  check(peak_work<=12,"shared route planning budget remains bounded")
  var measured:Array=costs.slice(60);var summary:Dictionary={}
- for field in ["frame_ms","actor_ms","gpu_ms","held","active"]:summary[field]={"p95":percentile(measured,field,0.95),"max":percentile(measured,field,1.0)}
+ for field in ["actor_ms","readiness_ms","motion_ms","transform_ms","store_ms","planning_ms","held","active"]:summary[field]={"p95":percentile(measured,field,0.95),"max":percentile(measured,field,1.0)}
+ for field in ["frame_ms","gpu_ms","probe_ms","drawn_delta","updates"]:summary[field]={"p95":percentile(render_costs.slice(60),field,0.95),"max":percentile(render_costs.slice(60),field,1.0)}
+ for field in ["engine_window_process_max_ms","engine_window_physics_max_ms","engine_window_navigation_max_ms"]:summary[field]={"observed_max":percentile(render_costs.slice(60),field,1.0)}
+ check(summary.drawn_delta.max==1,"render sampler observes consecutive drawn frames")
  check(summary.active.max<=16,"active collision population remains bounded")
  if crowd:
   check(summary.frame_ms.p95<=18.5,"frame p95 <= 18.5 ms")
@@ -75,6 +86,6 @@ func run()->void:
  print("CROSSING_COST ",JSON.stringify(summary))
  await RenderingServer.frame_post_draw;root.get_texture().get_image().save_png(output+"/street.png")
  var file:=FileAccess.open(output+"/motion.json",FileAccess.WRITE)
- file.store_string(JSON.stringify({"failures":failures,"population":handles.size(),"arrived":arrived,"minimum_separation":minimum,"peak_route_work":peak_work,"summary":summary,"cost_rows":costs,"trace":trace},"  "));file.close()
+ file.store_string(JSON.stringify({"timing_schema":2,"native_profiling":true,"failures":failures,"population":handles.size(),"arrived":arrived,"minimum_separation":minimum,"peak_route_work":peak_work,"summary":summary,"physics_cost_rows":costs,"render_cost_rows":render_costs,"trace":trace},"  "));file.close()
  game.terrain.shutdown();game.free();await process_frame
  print("ACTOR_STREET_CROSSING failures=",failures);quit(1 if failures else 0)

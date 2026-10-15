@@ -1,3 +1,7 @@
+> Follow-up: ../actor_crowd_timing/README.md corrects frame measurement and
+> reopens continuous-physics arrival qualification (14/16). The evidence below
+> remains historical, including screenshot overhead in its worst interval.
+
 # Sixteen-actor crossing and arrival policy, 2026-10-15
 
 The two-actor check was expanded to the normal active cap of 16: eight lanes

@@ -1,3 +1,10 @@
+> 2026-10-15 crowd timing correction: screenshot writing caused the largest
+> prior interval. Independent frame sampling now records p95/max17.657/60.289ms;
+> profiled adapter1.048/2.487ms still fails. Continuous physics finishes14/16,
+> so arrival remains unqualified. Evidence: evidence/actor_crowd_timing/.
+> No runtime optimization claim. Next inspect late waypoint progress and native
+> movement/readiness cost; engine periodic maxima are not frame samples.
+
 > 2026-10-15 sixteen-actor crossing exposed arrival drift. Stopped actors now
 > hold position with higher avoidance priority; all16 complete, separation
 > remains >=0.786m. Cost gates FAIL: frame p95 37.346ms, adapter p95/max

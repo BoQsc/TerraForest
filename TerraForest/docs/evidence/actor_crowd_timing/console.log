@@ -1,0 +1,18 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.3.280 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] World loaded
+[TerrainRewrite] World loaded
+[terrain-hitch] receive 160.86 ms at 3478
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS furnished settlement loads
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+PASS street crossing preserves separation: 0.783 m
+FAIL actors arrive through ordinary main-world navigation: 14 / 16
+PASS shared route planning budget remains bounded
+PASS active collision population remains bounded
+PASS frame p95 <= 18.5 ms
+FAIL actor adapter p95 <= 1 ms and max <= 2 ms
+CROSSING_COST {"active":{"max":16.0,"p95":16.0},"actor_ms":{"max":2.487,"p95":1.048},"drawn_delta":{"max":1.0,"p95":1.0},"frame_ms":{"max":60.289,"p95":17.657},"gpu_ms":{"max":7.21199989318848,"p95":5.76200008392334},"held":{"max":0.0,"p95":0.0},"motion_ms":{"max":1.654,"p95":0.698},"navigation_ms":{"max":3.136,"p95":3.136},"physics_ms":{"max":10.839,"p95":10.839},"planning_ms":{"max":0.06,"p95":0.012},"probe_ms":{"max":0.241,"p95":0.055},"process_ms":{"max":46.028,"p95":46.028},"readiness_ms":{"max":0.854,"p95":0.256},"store_ms":{"max":0.009,"p95":0.004},"transform_ms":{"max":0.015,"p95":0.006},"updates":{"max":2.0,"p95":1.0}}
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+ACTOR_STREET_CROSSING failures=2
