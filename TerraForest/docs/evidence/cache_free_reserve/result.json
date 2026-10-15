@@ -1,0 +1,26 @@
+{
+  "cache": {
+    "accounting_complete": true,
+    "byte_limit": 536870912,
+    "cache_read_only": true,
+    "corrupt": 0,
+    "disk_bytes": 2080,
+    "enabled": true,
+    "evicted_bytes": 0,
+    "eviction_pending": false,
+    "evictions": 0,
+    "hits": 2,
+    "last_available_bytes": -1,
+    "lease_owned": true,
+    "minimum_free_bytes": 0,
+    "misses": 0,
+    "reserve_blocked": true,
+    "reserve_skips": 3,
+    "scan_entries": 2,
+    "write_failures": 0,
+    "writes": 2
+  },
+  "failures": 0,
+  "initial_available_bytes": 135965646848,
+  "scope": "Native free-space query plus threshold simulation; no real disk exhaustion or canonical-save qualification"
+}

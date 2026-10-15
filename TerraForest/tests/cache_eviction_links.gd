@@ -2,7 +2,11 @@
 extends SceneTree
 func _initialize() -> void:
 	GDExtensionManager.load_extension("res://addons/world_runtime/world_runtime.gdextension")
-	var fixture: String=OS.get_cmdline_user_args()[0]
+	var args:=OS.get_cmdline_user_args()
+	if args.is_empty() or not args[0].is_absolute_path() or not DirAccess.dir_exists_absolute(args[0].path_join("root")):
+		push_error("Supply an absolute prepared junction fixture as the first user argument; this test does not use run_godot_check.py.")
+		quit(2);return
+	var fixture: String=args[0]
 	var index: RefCounted=ClassDB.instantiate("NativeDerivedCacheIndex")
 	var ok: bool=not index.acquire(fixture.path_join("linked_root"))
 	print("LINK root junction rejected=",ok)

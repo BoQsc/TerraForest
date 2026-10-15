@@ -28,6 +28,7 @@ public:
     void touch(const godot::String &path);
     void forget(const godot::String &path);
     godot::Dictionary evict_one();
+    int64_t available_bytes() const;
     int64_t count() const{return int64_t(entries_.size());}
 };
 }

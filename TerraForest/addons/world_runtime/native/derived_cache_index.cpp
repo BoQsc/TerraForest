@@ -24,6 +24,14 @@ void NativeDerivedCacheIndex::_bind_methods(){
     ClassDB::bind_method(D_METHOD("forget","path"),&NativeDerivedCacheIndex::forget);
     ClassDB::bind_method(D_METHOD("evict_one"),&NativeDerivedCacheIndex::evict_one);
     ClassDB::bind_method(D_METHOD("count"),&NativeDerivedCacheIndex::count);
+    ClassDB::bind_method(D_METHOD("available_bytes"),&NativeDerivedCacheIndex::available_bytes);
+}
+int64_t NativeDerivedCacheIndex::available_bytes() const{
+    if(!lease_||!directory_||root_.is_empty())return -1;
+    ULARGE_INTEGER available{};
+    auto path=root_.utf16();
+    if(!GetDiskFreeSpaceExW(reinterpret_cast<LPCWSTR>(path.get_data()),&available,nullptr,nullptr))return -1;
+    return available.QuadPart>uint64_t(INT64_MAX)?INT64_MAX:int64_t(available.QuadPart);
 }
 NativeDerivedCacheIndex::~NativeDerivedCacheIndex(){release();}
 void NativeDerivedCacheIndex::release(){entries_.clear();order_.clear();clock_=0;if(lease_)CloseHandle(HANDLE(lease_));if(directory_)CloseHandle(HANDLE(directory_));lease_=directory_=nullptr;root_=String();}

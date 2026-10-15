@@ -37,6 +37,12 @@ var _eviction_target: int=-1
 var _eviction_exhausted:=false
 var evictions:=0
 var evicted_bytes:=0
+const DEFAULT_FREE_RESERVE: int=1024*1024*1024
+var minimum_free_bytes: int=DEFAULT_FREE_RESERVE
+var last_available_bytes: int=-1
+var reserve_blocked:=false
+var reserve_skips:=0
+var _space_retry_usec:=0
 
 func _close_scan() -> void:
 	if _scan_directory!=null: _scan_directory.list_dir_end()
@@ -54,6 +60,7 @@ func configure(compatibility: String, snapshot: String, style: int, path: String
 	_close_scan()
 	if _cache_owner!=null:_cache_owner.release()
 	_cache_owner=null;_lease_owned=false;_eviction_target=-1;_eviction_exhausted=false
+	reserve_blocked=false;last_available_bytes=-1;_space_retry_usec=0
 	base_path = path
 	signature = ("trm5:046:" + compatibility + ":" + str(style)).sha256_text()
 	cache_directory = base_path.path_join(signature).path_join(snapshot) if _safe_component(snapshot) else ""
@@ -232,6 +239,7 @@ func store_packet(key: Vector3i, data: PackedByteArray, content: String = "") ->
 	if path.is_empty():return
 	if FileAccess.file_exists(path):return
 	if not _request_space(data.size()+40):return
+	if not _drive_has_space(data.size()+40):return
 	if not _writable_parent(path):return
 	if DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(path.get_base_dir())) != OK:
 		write_failures += 1
@@ -263,6 +271,17 @@ func store_packet(key: Vector3i, data: PackedByteArray, content: String = "") ->
 		write_failures += 1
 		DirAccess.remove_absolute(ProjectSettings.globalize_path(temp))
 
+func _drive_has_space(bytes: int) -> bool:
+	# Optional derived writes only. Do not treat this as a reservation against
+	# other processes or as protection for canonical-save writes.
+	if reserve_blocked and Time.get_ticks_usec()<_space_retry_usec:
+		reserve_skips+=1;return false
+	last_available_bytes=_cache_owner.available_bytes() if _cache_owner!=null else -1
+	reserve_blocked=minimum_free_bytes<0 or last_available_bytes<bytes or last_available_bytes-bytes<minimum_free_bytes
+	if reserve_blocked:
+		reserve_skips+=1;_space_retry_usec=Time.get_ticks_usec()+2000000
+	return not reserve_blocked
+
 func _request_space(bytes: int) -> bool:
 	if not _lease_owned or not accounting_complete or _scan_failed or bytes>byte_limit:return false
 	if total_bytes+bytes<=byte_limit and total_bytes<byte_limit:return true
@@ -274,5 +293,6 @@ func _request_space(bytes: int) -> bool:
 func counters() -> Dictionary:
 	return {"hits": hits, "misses": misses, "writes": writes, "corrupt": corrupt,
 		"write_failures": write_failures, "disk_bytes": total_bytes, "enabled": enabled,
-		"accounting_complete":accounting_complete,"scan_entries":scan_entries,"cache_read_only":enabled and (not accounting_complete or not _lease_owned or total_bytes>=byte_limit),
+		"accounting_complete":accounting_complete,"scan_entries":scan_entries,"cache_read_only":enabled and (not accounting_complete or not _lease_owned or total_bytes>=byte_limit or reserve_blocked),
+		"minimum_free_bytes":minimum_free_bytes,"last_available_bytes":last_available_bytes,"reserve_blocked":reserve_blocked,"reserve_skips":reserve_skips,
 		"lease_owned":_lease_owned,"evictions":evictions,"evicted_bytes":evicted_bytes,"eviction_pending":_eviction_target>=0,"byte_limit":byte_limit}

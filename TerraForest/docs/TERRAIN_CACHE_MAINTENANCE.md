@@ -22,9 +22,19 @@ Canonical saves, unknown files and temporary files are not eviction candidates.
 Unknown/hidden file bytes count toward the quota; an unknown-only full directory
 therefore remains read-only. Accounting is capped at 262,144 visited entries and
 32 directory levels. Empty directories are retained. The quota is for logical
-file bytes, not filesystem metadata, a disk-free reserve or a hard I/O deadline.
+file bytes, not filesystem metadata or a hard I/O deadline.
 It coordinates updated cache owners only: old builds, offline tools and external
 file writers do not participate in the lease. Canonical world data stays separate.
+
+Terrain mesh packet writes additionally preserve a default **1 GiB free-space
+reserve**. The native Windows query reads bytes available to the current caller
+on the owned cache volume before a new optional packet is written. Insufficient
+or unknown space skips the write while retaining cache reads; rejected writes
+retry no sooner than two seconds later. Diagnostics expose `reserve_blocked`,
+`reserve_skips`, `last_available_bytes` and `minimum_free_bytes`. This is a
+best-effort admission check, not a reservation against other processes, a
+guarantee against disk-full races, or a canonical-save safety mechanism. It
+does not alter water caching. See [reserve evidence](evidence/cache_free_reserve/README.md).
 See `docs/evidence/cache_eviction` for scoped validation and the retained world-test
 path mistake; sustained travel/mining and disk-pressure qualification remain open.
 

@@ -1,3 +1,10 @@
+> 2026-10-15 storage coverage: optional terrain mesh cache writes now check a
+> native caller-available disk-space query and preserve a default 1 GiB reserve.
+> Low/unknown space keeps reads available and throttles retries. Threshold,
+> recovery, quota/ownership and junction checks pass; actual disk exhaustion,
+> external-writer races, canonical-save space safety and endurance remain open.
+> Evidence: evidence/cache_free_reserve/. Water is unchanged.
+
 > 2026-10-15 cave round trip: direct return catches on mined floor edge; explicit
 > walking detour around the excavation permits normal ascent. Surface position,
 > inventory/wear and edited density restore after fresh reopen. Both results

@@ -1,0 +1,15 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS unowned free space is unknown, never unlimited
+PASS isolated cache obtains ownership and accounting
+PASS native volume query returns caller-available bytes
+PASS default reserve is one GiB
+PASS ample-space cache packet publishes
+PASS insufficient reserve makes derived writes read-only
+PASS reserve rejection creates no packet or eviction
+PASS existing cache remains readable under reserve pressure
+PASS canonical sentinel is untouched
+PASS pressure retry is throttled rather than polling per packet
+PASS writes recover after retry when space is sufficient
+PASS unknown query fails closed
+CACHE_FREE_RESERVE failures=0
