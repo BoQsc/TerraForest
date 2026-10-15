@@ -1,3 +1,9 @@
+> 2026-10-15 prefab publication: reproduced save/load mismatch for an asset with
+> metadata exceeding the library's 8 MiB read limit. Authoring now stages, reopens,
+> verifies geometry/attachments/title/metadata, then publishes; failed output is
+> removed. Capture/stack/archive and settlement worker regressions pass. Evidence:
+> evidence/prefab_publication/. No crash-durability or multi-writer guarantee.
+
 > 2026-10-15 settlement capacity preflight: native metadata counts use the same
 > seeded selection as composition and reject layouts above existing 262,144-block
 > or 4,096-attachment limits before record copies/worker launch. UI reports the

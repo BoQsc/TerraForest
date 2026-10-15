@@ -1,0 +1,7 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+FAIL unreadable oversized save is not reported as published
+FAIL failed publication leaves no final or pending asset
+PASS valid layout publishes
+PASS published asset reopens with exact geometry and road metadata
+PREFAB_PUBLICATION failures=2

@@ -57,9 +57,8 @@ static func _build_frontage(records: Array[PackedInt32Array],lots: int,width: in
 	asset.set_meta("frontage_seed",seed);asset.set_meta("frontage_source_count",sources.size())
 	asset.resource_name=title
 	if DirAccess.make_dir_recursive_absolute(path.get_base_dir())!=OK or FileAccess.file_exists(path): return {"ok":false,"reason":"Cannot create prefab file"}
-	if ResourceSaver.save(asset,path)!=OK:
-		DirAccess.remove_absolute(path)
-		return {"ok":false,"reason":"Could not save frontage"}
+	var saved: Dictionary=_write_verified_asset(asset,path)
+	if not saved.ok:return saved
 	return {"ok":true,"asset":asset,"path":path}
 
 func poll_frontage() -> Dictionary:
@@ -93,13 +92,38 @@ func load_library() -> void:
 			assets.append(asset)
 			_paths[asset.get_instance_id()]=path
 
-func _read_asset(path: String) -> Resource:
+static func _read_asset(path: String) -> Resource:
 	var stream:=FileAccess.open(path,FileAccess.READ)
 	if stream==null: return null
 	var length:=stream.get_length();stream.close()
 	if length<=0 or length>MAX_FILE_BYTES: return null
 	var asset:=ResourceLoader.load(path,"",ResourceLoader.CACHE_MODE_IGNORE)
 	return asset if asset!=null and asset.is_class("NativeBlockPrefab") and asset.get_cell_count()>0 else null
+
+static func _write_verified_asset(asset: Resource,path: String) -> Dictionary:
+	# Keep incomplete resources out of load_library's .res scan. All writes here
+	# are infrequent authoring operations, never per-frame world persistence.
+	if FileAccess.file_exists(path):return {"ok":false,"reason":"Prefab filename already exists; retry"}
+	# ResourceSaver requires a supported resource suffix; use a hidden staging
+	# subdirectory which the nonrecursive library scan does not inspect.
+	var staging:=path.get_base_dir().path_join(".pending")
+	if DirAccess.make_dir_recursive_absolute(staging)!=OK:return {"ok":false,"reason":"Cannot prepare prefab staging directory"}
+	var pending:=staging.path_join(path.get_file())
+	if FileAccess.file_exists(pending):return {"ok":false,"reason":"Prefab staging filename already exists; retry"}
+	var error:=ResourceSaver.save(asset,pending)
+	var verified: Resource=_read_asset(pending) if error==OK else null
+	var valid: bool=verified!=null and verified.get_records()==asset.get_records() and verified.get_model_attachments()==asset.get_model_attachments() and verified.resource_name==asset.resource_name
+	if valid:
+		for key in asset.get_meta_list():
+			if not verified.has_meta(key) or verified.get_meta(key)!=asset.get_meta(key):valid=false;break
+	if not valid:
+		DirAccess.remove_absolute(pending);DirAccess.remove_absolute(staging)
+		return {"ok":false,"reason":"Prefab could not be verified within the 8 MiB library limit; reduce its size"}
+	if FileAccess.file_exists(path) or DirAccess.rename_absolute(pending,path)!=OK:
+		DirAccess.remove_absolute(pending);DirAccess.remove_absolute(staging)
+		return {"ok":false,"reason":"Could not publish verified prefab"}
+	DirAccess.remove_absolute(staging)
+	return {"ok":true}
 
 func owns(asset: Resource) -> bool:
 	return asset!=null and assets.has(asset) and _paths.has(asset.get_instance_id())
@@ -188,8 +212,8 @@ func _save_asset(asset: Resource,title: String) -> Dictionary:
 	# A new filename per capture avoids overwriting another authored asset.
 	var path:=directory.path_join("prefab_%d_%d.res" % [Time.get_unix_time_from_system()*1000000,Time.get_ticks_usec()])
 	if FileAccess.file_exists(path): return {"ok":false,"reason":"Prefab filename already exists; retry"}
-	error=ResourceSaver.save(asset,path)
-	if error!=OK: return {"ok":false,"reason":"Could not save prefab (%d)" % error}
+	var saved: Dictionary=_write_verified_asset(asset,path)
+	if not saved.ok:return saved
 	assets.append(asset)
 	_paths[asset.get_instance_id()]=path
 	return {"ok":true,"asset":asset,"path":path}
