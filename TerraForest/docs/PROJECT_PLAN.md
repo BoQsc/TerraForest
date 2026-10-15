@@ -1,3 +1,9 @@
+> 2026-10-15 ore reach diagnosis: both collision and native density queries
+> find the excavated face beyond 3.5m reach. Walking forward with normal
+> collision restores targeting; mining, crafting, placement and fresh reload
+> pass. Evidence: evidence/geology_crafting_route/reach_*. Gameplay reach
+> unchanged. Continue content coverage; general mining/performance stays open.
+
 > 2026-10-15 ore crafting follow-up remains open: two earned ores of each type
 > can craft metal through UI, place a metal block and restore it/inventory in
 > a fresh process. However a visual rerun loses the subsequent terrain target

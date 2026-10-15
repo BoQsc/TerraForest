@@ -6,7 +6,7 @@ func run()->void:
   if arg.begins_with("--route-evidence="):evidence=arg.trim_prefix("--route-evidence=")
   if arg.begins_with("--world-slot="):slot=arg.trim_prefix("--world-slot=")
  if evidence.is_empty() or not slot.begins_with("geology_route_"):quit(2);return
- game=load("res://demo/world.tscn").instantiate();root.add_child(game)
+ game=load("res://demo/world.tscn").instantiate();game.max_fps=60;game.background_fps=60;root.add_child(game)
  if not check(await wait_for(func():return not game.loading_active,60),"copied geology world opens"):await finish();return
  game.set_physics_process(false);game._clear_motion()
  check(game.construction_inventory.gameplay and not game.session_menu.developer,"normal mining gameplay active")

@@ -18,3 +18,12 @@ No diagnosis yet: inspect collision refresh, density-vs-collision selection and
 3.5m attack reach before changing runtime or fixture. Do not conceal failure by
 granting ore or extending gameplay reach. Earlier single-strike evidence remains
 narrowly valid; repeated ore mining now has a reproducible investigation point.
+
+Follow-up: both faces recede beyond attack reach. Physics hit distance4.129m,
+native density4.232m, ordinary reach3.5m. Test walks0.9m forward through normal
+motor/collision only when both queries confirm this. Both walking branches,
+ore acquisition, crafting, placement and fresh reopen pass. Actual metal mesh
+image inspected after unequipping preview. No runtime reach/collision changes.
+Screenshot retains12FPS background throttle: test now sets both caps60 for
+future runs. Configuration correction is not a new timing result. General mining
+latency and performance are not qualified by this fixture correction.
