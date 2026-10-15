@@ -1,6 +1,7 @@
 #include "block_world.hpp"
 #include "prefab_transaction.hpp"
 #include "static_batch.hpp"
+#include "hinged_doors.hpp"
 #include "structures_snapshot.hpp"
 #include "structure_queries.hpp"
 #include "static_history.hpp"
@@ -19,6 +20,7 @@ static void initialize(ModuleInitializationLevel level) {
         GDREGISTER_CLASS(terraforest::NativePrefabPlacement);
         GDREGISTER_CLASS(terraforest::NativeBlockWorld);
         GDREGISTER_CLASS(terraforest::NativeStaticBatch);
+        GDREGISTER_CLASS(terraforest::NativeHingedDoors);
         GDREGISTER_CLASS(terraforest::NativeStructuresSnapshot);
         GDREGISTER_CLASS(terraforest::NativeStructureQueries);
         GDREGISTER_CLASS(terraforest::NativeStaticHistory);

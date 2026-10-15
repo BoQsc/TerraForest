@@ -1,3 +1,9 @@
+> 2026-10-15 doors: native hinged-door state now drives batched wooden doors from
+> normal E interaction. Stable identity, local hinge, player swing protection,
+> snapshot restore and 100 drift-free cycles pass; normal-world interaction and
+> compound capture pass. Evidence: evidence/hinged_doors/. Actual disk restart,
+> furnished building integration and visual review remain pending. No water changes.
+
 > 2026-10-15 building components: added baked wood/glass window to the normal
 > object palette and prefab recipes, using existing native batch persistence,
 > collision and object destruction. Ten headless checks pass (evidence/window_component/).

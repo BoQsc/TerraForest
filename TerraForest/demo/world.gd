@@ -30,6 +30,7 @@ var structures = Structures.new()
 var player_hud=preload("res://addons/player_runtime/player_hud.gd").new()
 var session_menu=preload("res://addons/player_runtime/session_menu.gd").new()
 var storage=preload("res://addons/player_runtime/storage.gd").new()
+var doors=preload("res://addons/structures/door_interaction.gd").new()
 var construction_inventory=preload("res://addons/player_runtime/construction_inventory.gd").new()
 var world_attack=preload("res://addons/player_runtime/world_attack.gd").new()
 var equipped_tool:=0
@@ -124,6 +125,8 @@ func _ready() -> void:
 	structures_ready = structures_ready and not chest.is_empty()
 	var window: Dictionary=preload("res://addons/structures/window_catalog.gd").register(structures)
 	structures_ready = structures_ready and not window.is_empty()
+	var door: Dictionary=preload("res://addons/structures/door_catalog.gd").register(structures)
+	structures_ready = structures_ready and not door.is_empty() and doors.prepare(self)
 	player_hud.ground_tools_enabled=ground_enabled
 	if not player_hud.prepare() or not persistence.register_component("player_loadout", player_hud.capture_snapshot, player_hud.restore_snapshot, player_hud.inventory, player_hud.default_loadout):
 		push_error("Player loadout persistence initialization failed")
@@ -185,6 +188,7 @@ func _ready() -> void:
 	object_entries.append(ladder)
 	object_entries.append(chest)
 	object_entries.append(window)
+	object_entries.append(door)
 	model_tool.configure(camera,player,object_entries,help.get_parent(),structures.blocks)
 	model_tool.notice.connect(_show_lake_notice)
 	if model_region_paging and (not temporary_world or terrain.backend.readonly_snapshot):
@@ -755,6 +759,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		if not loading_active and not shutdown_requested and app_focused and terrain.world_ready and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED:
 			# A directly aimed container takes priority over proximity-based entry.
 			if storage.try_open(): return
+			if doors.try_interact(): return
 			if world_vehicle.enter(self):
 				_clear_motion();_show_lake_notice("Driving · E exit when stopped · Space brake");return
 			# Attacks exclusively use left mouse; E remains interaction.
@@ -1265,6 +1270,7 @@ func _remove_inventory_model(history: RefCounted, collection: Node3D, identity: 
 			var removed: bool=construction_inventory.salvage_model(history,collection,player_hud.inventory,identity,recipes[key])
 			model_tool.placement_failure=construction_inventory.reason;player_hud.refresh();return removed
 	var removed: bool=history.erase(collection,identity)
+	if removed and collection==doors.collection:doors.state.forget(identity)
 	model_tool.placement_failure="Object removed; no salvage recipe" if removed else "Object removal rejected"
 	return removed
 
