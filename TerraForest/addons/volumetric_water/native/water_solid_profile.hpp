@@ -3,6 +3,8 @@
 #include "water_face_clip.hpp"
 #include <array>
 #include <cstdint>
+#include <cstring>
+#include <map>
 
 namespace terraforest {
 // Immutable, edit-time-prepared occupancy. Queries never clip polygons or
@@ -11,11 +13,22 @@ class WaterSolidProfile {
 public:
     using C=WaterSolidClip;
     struct Segment {double low,high;std::array<double,4> polynomial;};
-    struct Hull {std::vector<C::Plane> planes;};
+    struct Hull {std::vector<uint16_t> planes;};
     static constexpr size_t MAX_KNOTS=128,MAX_VERTICES=32768;
 private:
     std::vector<Segment> curve;
     std::vector<Hull> hulls;
+    std::vector<C::Plane> plane_table;
+    using PlaneMap=std::map<std::array<uint64_t,4>,uint16_t>;
+    bool append_plane(Hull &h,const C::Plane &p,PlaneMap &known){
+        // Bitwise identity preserves even signed zero in existing snapshots.
+        std::array<double,4> values{p.normal.x,p.normal.y,p.normal.z,p.offset};
+        std::array<uint64_t,4> bits;std::memcpy(bits.data(),values.data(),sizeof(bits));
+        auto found=known.find(bits);
+        if(found!=known.end()){h.planes.push_back(found->second);return true;}
+        if(plane_table.size()>=MAX_VERTICES)return false;
+        auto index=uint16_t(plane_table.size());plane_table.push_back(p);known.emplace(bits,index);h.planes.push_back(index);return true;
+    }
     double full=0,low=0,high=0;
     std::array<std::vector<std::vector<WaterFaceClip::Point>>,6> faces;
     bool prepare_faces(){
@@ -23,7 +36,7 @@ private:
         for(auto &face:faces)face.clear();
         for(int axis=0;axis<3;++axis)for(int side=0;side<2;++side)for(const auto &h:hulls){
             auto polygon=WaterFaceClip::square();
-            for(auto plane:h.planes){if(!WaterFaceClip::project(polygon,plane,axis,side))return false;if(polygon.count<3)break;}
+            for(auto index:h.planes){const auto &plane=plane_table[index];if(!WaterFaceClip::project(polygon,plane,axis,side))return false;if(polygon.count<3)break;}
             if(polygon.count<3||WaterFaceClip::area(polygon)<=1e-12)continue;
             total+=polygon.count;if(total>MAX_VERTICES)return false;
             faces[axis*2+side].emplace_back(polygon.points.begin(),polygon.points.begin()+polygon.count);
@@ -31,14 +44,14 @@ private:
         return true;
     }
     void compact(){
-        curve.shrink_to_fit();hulls.shrink_to_fit();
+        curve.shrink_to_fit();hulls.shrink_to_fit();plane_table.shrink_to_fit();
         for(auto &h:hulls)h.planes.shrink_to_fit();
         for(auto &face:faces){face.shrink_to_fit();for(auto &p:face)p.shrink_to_fit();}
     }
 public:
     bool prepare(const C::Pieces &pieces){
         if(pieces.size()>C::MAX_PIECES)return false;
-        WaterSolidProfile staged;std::vector<double> knots;size_t vertices=0;
+        WaterSolidProfile staged;PlaneMap known_planes;std::vector<double> knots;size_t vertices=0;
         // Roundoff can leave almost-flat fragments with fewer than four
         // independent faces. Their total possible volume is below .001 ml per
         // cell; do not cache unbounded pseudo-hulls from these fragments.
@@ -57,7 +70,7 @@ public:
                 for(size_t i=1;i+1<face.size();++i){n=(face[i]-face[0]).cross(face[i+1]-face[0]);if(n.dot(n)>1e-24)break;}
                 double length=std::sqrt(n.dot(n));if(length<1e-12)continue;n=n*(1/length);
                 double offset=n.dot(face[0]);if(n.dot(center)>offset){n=n*(-1);offset=-offset;}
-                hull.planes.push_back({n,offset});
+                if(!staged.append_plane(hull,{n,offset},known_planes))return false;
             }
             if(hull.planes.size()<4)return false;staged.hulls.push_back(std::move(hull));
         }
@@ -130,7 +143,7 @@ public:
     size_t vertical_intervals(double x,double z,double head,Intervals &out)const{
         size_t count=0;
         for(const auto &h:hulls){double a=0,b=std::min(.5,head);bool valid=true;
-            for(auto plane:h.planes){double room=plane.offset-plane.normal.x*x-plane.normal.z*z;
+            for(auto index:h.planes){const auto &plane=plane_table[index];double room=plane.offset-plane.normal.x*x-plane.normal.z*z;
                 if(std::abs(plane.normal.y)<1e-12){if(room< -1e-9){valid=false;break;}}
                 else if(plane.normal.y>0)b=std::min(b,room/plane.normal.y);else a=std::max(a,room/plane.normal.y);}
             if(valid&&b>a+1e-10)out[count++]={a,b};
@@ -150,7 +163,7 @@ public:
         if(!count){
             // A column fully occupied by a post still needs a finite outside
             // value for interpolation; infinity would pull vertices to edges.
-            for(const auto &h:hulls){double d=p.y-head;for(auto plane:h.planes)d=std::max(d,plane.normal.dot(p)-plane.offset);nearest=std::min(nearest,d);}
+            for(const auto &h:hulls){double d=p.y-head;for(auto index:h.planes){const auto &plane=plane_table[index];d=std::max(d,plane.normal.dot(p)-plane.offset);}nearest=std::min(nearest,d);}
         }
         return std::min(nearest,.25);
     }
@@ -169,7 +182,7 @@ public:
     std::vector<double> encode()const{
         std::vector<double> out{full,low,high,double(curve.size()),double(hulls.size())};
         for(const auto &s:curve){out.push_back(s.low);out.push_back(s.high);for(auto c:s.polynomial)out.push_back(c);}
-        for(const auto &h:hulls){out.push_back(double(h.planes.size()));for(auto p:h.planes){out.push_back(p.normal.x);out.push_back(p.normal.y);out.push_back(p.normal.z);out.push_back(p.offset);}}
+        for(const auto &h:hulls){out.push_back(double(h.planes.size()));for(auto index:h.planes){const auto &p=plane_table[index];out.push_back(p.normal.x);out.push_back(p.normal.y);out.push_back(p.normal.z);out.push_back(p.offset);}}
         return out;
     }
     bool decode(const std::vector<double> &data){
@@ -177,7 +190,7 @@ public:
         for(double v:data)if(!std::isfinite(v))return false;
         auto integer=[](double v,size_t max){return v>=0&&v<=max&&v==std::floor(v);};
         if(!integer(data[3],MAX_KNOTS)||!integer(data[4],C::MAX_PIECES)||data[0]<0||data[0]>.125+1e-9||data[1]<0||data[2]>.5||data[1]>data[2])return false;
-        WaterSolidProfile staged;staged.full=data[0];staged.low=data[1];staged.high=data[2];size_t at=5;
+        WaterSolidProfile staged;PlaneMap known_planes;staged.full=data[0];staged.low=data[1];staged.high=data[2];size_t at=5;
         double previous_y=staged.low,previous_v=0;
         for(size_t i=0;i<size_t(data[3]);++i){
             if(at+6>data.size())return false;
@@ -196,12 +209,12 @@ public:
             if(at>=data.size()||!integer(data[at],C::MAX_FACES))return false;size_t count=size_t(data[at++]);
             if(count<4||at+4*count>data.size()||(plane_total+=count)>MAX_VERTICES)return false;Hull hull;
             for(size_t j=0;j<count;++j){C::Plane p{{data[at],data[at+1],data[at+2]},data[at+3]};at+=4;
-                if(std::abs(p.normal.dot(p.normal)-1)>1e-6||std::abs(p.offset)>2)return false;hull.planes.push_back(p);}
+                if(std::abs(p.normal.dot(p.normal)-1)>1e-6||std::abs(p.offset)>2)return false;if(!staged.append_plane(hull,p,known_planes))return false;}
             staged.hulls.push_back(std::move(hull));
         }
         if(at!=data.size()||(staged.full>0&&(staged.curve.empty()||staged.hulls.empty())))return false;
         if(!staged.prepare_faces())return false;staged.compact();*this=std::move(staged);return true;
     }
-    size_t bytes()const{size_t n=sizeof(*this)+curve.capacity()*sizeof(Segment)+hulls.capacity()*sizeof(Hull);for(const auto &h:hulls)n+=h.planes.capacity()*sizeof(C::Plane);for(const auto &face:faces){n+=face.capacity()*sizeof(std::vector<WaterFaceClip::Point>);for(const auto &p:face)n+=p.capacity()*sizeof(WaterFaceClip::Point);}return n;}
+    size_t bytes()const{size_t n=sizeof(*this)+curve.capacity()*sizeof(Segment)+hulls.capacity()*sizeof(Hull)+plane_table.capacity()*sizeof(C::Plane);for(const auto &h:hulls)n+=h.planes.capacity()*sizeof(uint16_t);for(const auto &face:faces){n+=face.capacity()*sizeof(std::vector<WaterFaceClip::Point>);for(const auto &p:face)n+=p.capacity()*sizeof(WaterFaceClip::Point);}return n;}
 };
 }

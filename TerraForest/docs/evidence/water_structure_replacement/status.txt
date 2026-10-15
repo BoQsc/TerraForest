@@ -210,3 +210,17 @@ no retry loop and recovery when the over-budget block is removed. The normal
 8-shape scaling/cancellation/shutdown and release cache reload checks pass.
 Both DLLs installed. Remaining capacity problem needs representation/storage
 work or explicit edit admission; current failing edit leaves water pending.
+
+2026-10-15 exact plane indexing resolves the32-sphere regression:
+Cached hulls now hold16-bit indices into a per-cell plane table. Construction
+and decoding intern only bitwise-identical planes, including signed zero; no
+normal/offset quantization, approximation or serialization change. Existing
+snapshots still round-trip byte-for-byte in release. Native curved-volume and
+connectivity comparisons pass. Queries remain allocation-free.
+The previously failing32-sphere test now passes under the unchanged4MiB cap,
+using3,914,158 bytes (3.73MiB). Full occupancy reconstruction, mesh hashes,
+repeated-edit cache stability, stale-task cancellation and shutdown all pass.
+Earlier dense_capacity_open.log is superseded for this exact32-shape fixture.
+This leaves limited headroom, not unlimited region density. Larger/terrain-cut
+cases can still exhaust explicit budgets; failed-edit admission remains a broader
+open issue, as does sustained frame/scale qualification. Both DLLs installed.
