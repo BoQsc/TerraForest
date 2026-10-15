@@ -1,0 +1,11 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.3.280 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+PASS production structure catalog prepared
+PASS production object title resolves baked icon
+PASS production object title resolves baked icon
+PASS production object title resolves baked icon
+PASS all baked tiles contain visible pixels
+PASS unknown identity has safe missing-icon fallback
+PASS transparent atlas fits catalog rows
+ITEM_ICONS failures=0

@@ -17,7 +17,7 @@ func run() -> void:
 	var sun:=DirectionalLight3D.new();sun.rotation_degrees=Vector3(-35,-35,0);sun.light_energy=1.6;viewport.add_child(sun)
 	var camera:=Camera3D.new();camera.projection=Camera3D.PROJECTION_ORTHOGONAL;viewport.add_child(camera);camera.current=true
 	var tool=preload("res://addons/player_runtime/tool_view.gd").new();viewport.add_child(tool)
-	var atlas:=Image.create(1024,512,false,Image.FORMAT_RGBA8);atlas.fill(Color.TRANSPARENT)
+	var atlas:=Image.create(1024,ceili(Icons.KEYS.size()/8.0)*128,false,Image.FORMAT_RGBA8);atlas.fill(Color.TRANSPARENT)
 	for i in Icons.KEYS.size():
 		var key: String=Icons.KEYS[i];var id:=key.to_int();var model:=Node3D.new();viewport.add_child(model)
 		if id in [1,2,3,4]:
@@ -44,9 +44,9 @@ func run() -> void:
 		elif key in ["Metal beam","Floor panel"]:
 			tool.part(model,Vector3(4,0.2,0.2) if key=="Metal beam" else Vector3(4,0.25,4),Vector3.ZERO,Color("3b5359"))
 		else:
-			var file: String={"Doorway":"doorway","Wooden table":"table","Wooden chair":"chair","Wooden shelf":"shelf","Wooden ladder":"ladder","Wooden storage chest (E open)":"storage_chest"}[key]
+			var file: String={"Wood framed window":"window","Wooden door (E open / close)":"door","Metal guardrail":"guardrail","Doorway":"doorway","Wooden table":"table","Wooden chair":"chair","Wooden shelf":"shelf","Wooden ladder":"ladder","Wooden storage chest (E open)":"storage_chest"}[key]
 			model.add_child(instance(load("res://addons/structures/prefabs/"+file+"_model.tres")))
-		if id>0:bake_drop(model,id)
+		if id>0 and not "--icons-only" in OS.get_cmdline_user_args():bake_drop(model,id)
 		var box:=bounds(model);var center:=box.get_center();var radius:=box.size.length()*0.5
 		camera.position=center+Vector3(1.3,0.9,2).normalized()*maxf(4,radius*3);camera.look_at(center);camera.size=maxf(0.1,radius*2.2)
 		viewport.render_target_update_mode=SubViewport.UPDATE_ALWAYS

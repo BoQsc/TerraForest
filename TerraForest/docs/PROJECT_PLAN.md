@@ -1,3 +1,10 @@
+> 2026-10-15 building object icons: windows, doors and guardrails now resolve
+> baked icons through their production catalog titles. Actual model renders
+> share the existing atlas (1024x640, 2.5 MiB uncompressed, +0.5 MiB); no runtime
+> icon viewports. Rendered catalog inspected and lookup checks pass. Evidence:
+> evidence/building_icons/. No new gameplay inventory identities or crafting
+> mechanics are implied; this completes the object chooser's missing images.
+
 > 2026-10-15 player collision readiness: production controller preserves held W
 > while a nearby model awaits collision, then resumes walking without another
 > key press. Normal-world rendered 1080p check passes. Evidence:
