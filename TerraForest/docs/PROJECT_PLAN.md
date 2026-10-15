@@ -1,3 +1,10 @@
+> 2026-10-16 building access: new furnished towers gain sloping flight rails in
+> addition to existing landing guards. Three floors now have70 attachments;
+> four additional batched meshes and16 top-bar collision shapes. Placement,
+> normal ascent/descent and four lateral-fall checks pass. Saved towers unchanged;
+> dense/rotated/main-world persistence qualification remains open. Evidence:
+> evidence/tower_stair_rails/ (including rejected whole-proxy attempt).
+
 > 2026-10-16 world navigation: Actions > Session > World browser saves before
 > returning, frees the old world, and retains changes on fresh reopen. Save
 > failure stays in-session with feedback. Actual return/reopen route and stubbed

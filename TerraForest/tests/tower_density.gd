@@ -70,7 +70,7 @@ func run() -> void:
 			var rendering: Dictionary=batch.render_stats();var collision: Dictionary=batch.collision_stats()
 			residents[key]={"render":rendering,"collision":collision}
 			settled=settled and not rendering.selection_pending and rendering.pending_batches==0 and not collision.selection_pending and collision.pending_bodies==0
-		check(exact and total_models==count*66,"exact furnished population %d"%count)
+		check(exact and total_models==count*70,"exact furnished population %d"%count)
 		check(settled,"model render and collision queues settled %d"%count)
 		var local_ready: bool=world.is_collision_region_ready(AABB(focus+Vector3(-9,0,-9),Vector3(19,14,20)))
 		check(local_ready,"nearest complete tower has collision coverage %d"%count)

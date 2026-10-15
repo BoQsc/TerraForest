@@ -85,6 +85,12 @@ static func furnished_tower(floors: int=3) -> Resource:
 		if level>0:
 			for x in [-1.1,2.1]:
 				attachments.append({"model":"architecture/metal_guardrail/v1","transform":Transform3D(Basis.IDENTITY,Vector3(x,1,2))})
+		if level<floors-1:
+			# Reuse the batched rail with vertical posts and a 1:1 rising span.
+			# Native collision transforms the four top-rail proxy sections.
+			var rising:=Basis(Vector3.RIGHT,Vector3.UP,Vector3(0,1,1))
+			for x in [-0.9,1.9]:
+				attachments.append({"model":"architecture/metal_stairrail/v1","transform":Transform3D(rising,Vector3(x,3,2))})
 		if level==floors-1:
 			attachments.append({"model":"architecture/metal_guardrail/v1","transform":Transform3D(Basis(Vector3.UP,PI/2).scaled(Vector3(0.8,1,1)),Vector3(0.5,1,-0.1))})
 		# Work areas stay outside the stair shaft and its eastern circulation aisle.

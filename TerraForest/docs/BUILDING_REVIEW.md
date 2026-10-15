@@ -67,3 +67,5 @@ performance qualification. Upper stairwell guards are now included; further
 interior detail remains unfinished. The previous `tower_review` save is preserved.
 The automated exterior image is obscured by nearby foliage, so human
 visual feedback is still needed.
+
+New furnished towers include sloping rails along both sides of each flight, in addition to landing guards. Existing saved towers retain their previous geometry; place a new prefab to review the rails. See [stair-rail evidence](evidence/tower_stair_rails/README.md) for collision behavior and limits.

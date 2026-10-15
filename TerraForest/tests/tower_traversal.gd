@@ -46,12 +46,13 @@ func run() -> void:
 		check(not preload("res://addons/structures/door_catalog.gd").register(structures).is_empty(),"tower entrance registered")
 		check(not preload("res://addons/structures/guardrail_catalog.gd").register(structures).is_empty(),"tower guardrails registered")
 		assembly=catalog.furnished_tower(3);blocks=structures.blocks
-		check(assembly!=null and assembly.get_model_attachments().size()==66,"three floors compose furnishings windows entrance and guards")
+		check(assembly!=null and assembly.get_model_attachments().size()==70,"three floors compose furnishings windows entrance and landing/flight guards")
 	blocks.set_focus(Vector3(0,4,0));blocks.set_collision_radius(48)
 	if structures!=null:
 		var coordinator=preload("res://addons/player_runtime/construction_inventory.gd").new()
 		var inventory=ClassDB.instantiate("NativePlayerInventory")
 		check(coordinator.place_prefab(blocks,inventory,assembly,Vector3i.ZERO,0,structures.model_collections(),preload("res://addons/structures/construction_catalog.gd").recipes(),[]),"complete furnished tower placed")
+		if failures:print("Placement reason: ",coordinator.reason);structures.free();quit(1);return
 		structures.set_model_focus(Vector3(0,5,0))
 		var deadline_models:=Time.get_ticks_msec()+10000
 		var all_bounds:=AABB(Vector3(-9,0,-9),Vector3(19,14,19))
@@ -113,6 +114,12 @@ func run() -> void:
 	await walk(player,movement,Vector3(0,0,-1),70)
 	check(player.position.z<0 and player.position.y<1.1,"capsule descends flight back to lower floor")
 	if structures!=null:
+		for level in 2:
+			for side in [-1,1]:
+				player.position=Vector3(0.5,level*4+3.3,2.05);player.velocity=Vector3.ZERO
+				await walk(player,movement,Vector3.ZERO,10)
+				await walk(player,movement,Vector3(side,0,0),35)
+				check(player.position.y>level*4+3.0 and (player.position.x> -0.8 if side<0 else player.position.x<1.8),"sloping rail prevents lateral fall on flight %d side %d"%[level,side])
 		for side in [-1,1]:
 			player.position=Vector3(-2 if side<0 else 3,9.03,2);player.velocity=Vector3.ZERO
 			await walk(player,movement,Vector3.ZERO,10)
@@ -138,6 +145,9 @@ func run() -> void:
 	if "--visual" in OS.get_cmdline_user_args():
 		await RenderingServer.frame_post_draw
 		root.get_texture().get_image().save_png("res://reports/furnished_tower.png")
+		var camera:=root.get_camera_3d();camera.position=Vector3(4,7.5,4.5);camera.look_at(Vector3(0.5,7,2))
+		await RenderingServer.frame_post_draw
+		root.get_texture().get_image().save_png("res://reports/tower_stair_rails.png")
 	var file:=FileAccess.open("res://reports/tower_traversal.json",FileAccess.WRITE)
 	file.store_string(JSON.stringify({"failures":failures,"ascent_position":str(ascent),"landings":landing_trace,"scope":"native building collision and player capsule ascent descent and blocked clearance"}));file.close()
 	player.free()
