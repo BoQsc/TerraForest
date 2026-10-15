@@ -1,3 +1,8 @@
+> 2026-10-15 actor development UI: dev slot9 now groups actor authoring controls
+> in a persistent HUD. Selection/removal use exact native hit identity. Real-world
+> button-signal regression passes with80 coincident dormant records. Visual1080p
+> layout checked. Evidence: evidence/actor_authoring_ui/. Water unchanged.
+
 > 2026-10-15 straight waypoint correction: bounded advancement prevents chasing
 > passed intermediate samples. Continuous-physics crossing passes 16/16;
 > separation >=0.786m, adapter p95/max 0.869/1.401ms, frame17.678/55.052ms.

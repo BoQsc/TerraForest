@@ -31,6 +31,28 @@ func run()->void:
  for frame in 4:await physics_frame
  var target:Dictionary=game.world_attack.target()
  check(target.get("kind")=="actor" and target.get("id")==identity and target.get("handle")==handle,"physics hit identifies its exact actor despite coincident records")
+ if "--authoring" in OS.get_cmdline_user_args():
+  game.session_menu.toggle_developer();game.session_menu.activate_developer_slot(8)
+  var hud=game.session_menu.developer_hud;hud.refresh()
+  check(hud.panel.visible and hud.title.text=="DEVELOPMENT / Actors","actor toolbelt opens its own visible controls")
+  for child in hud.content.get_children():
+   if child is Button and child.text=="Select / send at aim":child.pressed.emit()
+  check(game.actor_authoring.selected_identity==identity,"editor button selects exact hit actor despite coincident records")
+  check(game.actors.orders.set_target(identity,point+Vector3(2,0,0)),"selected actor accepts a persistent order")
+  for child in hud.content.get_children():
+   if child is Button and child.text=="Stop selected actor":child.pressed.emit()
+  check(not game.actors.orders.get_target(identity).present,"stop button clears selected order")
+  await RenderingServer.frame_post_draw
+  DirAccess.make_dir_recursive_absolute("res://reports/actor_authoring_ui")
+  root.get_texture().get_image().save_png("res://reports/actor_authoring_ui/controls.png")
+  for child in hud.content.get_children():
+   if child is Button and child.text=="Remove actor at aim":child.pressed.emit()
+  check(game.actors.store.resolve_identity(identity)==0 and game.actor_authoring.selected_identity==0,"remove button retires exact hit and clears selection")
+  var intact:=true
+  for other in others:intact=intact and game.actors.store.contains(other)
+  check(intact,"editor removal preserves all eighty neighbouring records")
+  game.terrain.shutdown();game.free();await process_frame
+  print("ACTOR_AUTHORING_UI failures=",failures);quit(1 if failures else 0);return
  if target.get("id")==identity:
   for hit in 7:game.world_attack.apply_target(target)
   check(game.actors.store.resolve_identity(identity)==0,"attacked actor is retired")

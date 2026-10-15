@@ -3,7 +3,7 @@
 extends CanvasLayer
 signal tool_requested(item: int)
 signal developer_tool_requested(slot: int)
-const DEV_TOOLS=["Sculpt sphere","Sculpt box","Voxel cube","Build blocks","Place objects","Vegetation","Roads","World tools","Empty","Empty"]
+const DEV_TOOLS=["Sculpt sphere","Sculpt box","Voxel cube","Build blocks","Place objects","Vegetation","Roads","World tools","Actors","Empty"]
 var developer_belt:=false
 var developer_slot:=8
 signal actions_requested

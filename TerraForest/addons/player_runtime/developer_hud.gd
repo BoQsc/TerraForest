@@ -73,6 +73,19 @@ Esc opens the complete road editor.")
 			button("Save world",game.session_menu.save_world)
 			button("Water / lakes",func():game.session_menu.show_page("Water"))
 			button("World / generation settings",func():game.session_menu.show_page("Development"))
+		8:
+			label("Aim at the world, then hold Alt and click an action. Release Alt to look around.")
+			if game.actors.pool==null:
+				button("Enable actor simulation",func():
+					if not game.actors.enable():game._show_lake_notice("Could not enable actors.")
+					displayed_slot=-1;refresh())
+			else:
+				button("Place actor at aim",func():game.session_menu.run_command(KEY_J))
+				button("Select / send at aim",func():game.session_menu.run_command(KEY_K))
+				button("Stop selected actor",func():game.session_menu.run_command(KEY_K,true))
+				button("Remove actor at aim",func():game.session_menu.run_command(KEY_J,true))
+				label("Select an actor, then aim at a destination and choose Select / send again. Nearby walking only; the selection ring and route status show progress.")
+				button("Save world",game.session_menu.save_world)
 		_:
 			label("No development tool selected.")
 func _input(event: InputEvent) -> void:

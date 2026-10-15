@@ -1,0 +1,68 @@
+{
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+    "--path",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+    "--log-file",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\checks\\20261015T150109899320Z\\engine.log",
+    "--fullscreen",
+    "--resolution",
+    "1920x1080",
+    "--max-fps",
+    "60",
+    "--script",
+    "res://tests/actor_attack_identity.gd",
+    "--",
+    "--temporary",
+    "--world-slot=check_b5f393c00e21486aa053afe43f83fbde",
+    "--derived-cache=user://actor_attack_identity_b5f393c00e21486aa053afe43f83fbde",
+    "--authoring"
+  ],
+  "cache": "user://actor_attack_identity_b5f393c00e21486aa053afe43f83fbde",
+  "utc": "20261015T150109899320Z",
+  "timeout": 65.0,
+  "required_text": "ACTOR_AUTHORING_UI failures=0",
+  "headless": false,
+  "persistent": false,
+  "scope": "Fresh derived-cache argument; test code must honor it. Not save isolation or a sandbox.",
+  "cache_retained": true,
+  "revision": "a5a309b083d1bd108badb7bf330dd96004eb43a6",
+  "worktree_changes": [
+    " M TerraForest/addons/player_runtime/developer_hud.gd",
+    " M TerraForest/addons/player_runtime/player_hud.gd",
+    " M TerraForest/addons/player_runtime/session_menu.gd",
+    " M TerraForest/addons/world_runtime/actor_authoring.gd",
+    " M TerraForest/tests/actor_attack_identity.gd"
+  ],
+  "git_metadata_available": true,
+  "engine_sha256": "12310c74bdda7dcd43f28e971f33047dcecadd436b68169d61ce41009006df38",
+  "test_sha256": "ec476ab49c34d40a3ff6ddaf32422791c22ad0344936ee4b4ab0c5ea6b9ef770",
+  "native_sha256": {
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "ed066843981550a6da7f2ed47f5f05eb676b1256540206cb2399e528d965c965",
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "7fe9102e113afdf3c91293fa09b2fb78f060985a2089c8fef67e4b58e0a62d6b",
+    "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "10590aa1b209bffbb93c6fab44ef51cbe2007a2ce80b065c0f4d3d7c3ea3b768",
+    "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "e75b14e2766ac5eb969d973e10ae794520338d908730bba6d25d45a9a3d0a4ba",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "0742e44096e00e13acd013a151ca4cbd7d52b5d3ac3703485a7a3d656a9a9b6f",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "13f455564dba3ebddce1f4f4a0fa470dad07ce80ef0d4097ce48527427046e04",
+    "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "91f711e3fb45491f3948f40ae4343fa13d96b5500e994c07620dc526c1e30160",
+    "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "73ca232cc326241b6ba2ebdf42fd30c4ddb2e1a5d11a568391d7c2d22d0e28fe",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "b1767377e99932b024da2334021d67ac8d4a68d7a112d45efe101a899685e72e",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "321e7297acf7038fcac8285c01a4e81118902194590c6ade5044a7cb4eda11ab",
+    "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "8d7631c96ca3f186522ec4428f741baa9bd1581f01dedc57b835ea2b534a17c5",
+    "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "65fcad69f40898fb10db522a5741fd7c8f4953f0c96e1ec1cec863531272ce52",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "9e414123650672d75da6ad8f99e8577d987c0affb239ea7f1445d6edae6e3318",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "69b4ba87356afb01a19696760f4263bb9ddc3234c05e1fe282c9e3422a88a0e7"
+  },
+  "result": {
+    "timed_out": false,
+    "launch_error": null,
+    "pid": 23236,
+    "exit_code": 1,
+    "diagnostics": [
+      "FAIL stop button clears selected order"
+    ],
+    "required_text_found": false,
+    "elapsed_seconds": 7.697333200005232,
+    "passed": false
+  }
+}

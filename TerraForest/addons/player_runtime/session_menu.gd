@@ -199,9 +199,9 @@ func activate_developer_slot(slot: int) -> void:
 			set_open(false);game.editor_tool_active=true;game.equipped_tool=0;game.tool_view.equip(0)
 			game._set_player_tool_mode(true,slot==4,game.tool)
 		5:choose_plant(maxi(0,game.player_hud.ground_species))
-		6,7:
+		6,7,8:
 			set_open(false);game._equip_player_tool(0)
-			game.player_hud.editor_hint="DEVELOPMENT | "+("Roads" if slot==6 else "World tools")+" | Esc: configure"
+			game.player_hud.editor_hint="DEVELOPMENT | "+({6:"Roads",7:"World tools",8:"Actors"}[slot])+" | Esc: configure"
 		_:
 			set_open(false);game._equip_player_tool(0)
 	game.player_hud.refresh();refresh()

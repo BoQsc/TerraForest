@@ -18,10 +18,10 @@ func apply(world: Node,remove: bool) -> String:
 	if hit.is_empty():return "Aim at a nearby actor." if remove else "Aim at clear, supported ground within 12 m."
 	if remove:
 		if hit.collider.get_parent()!=world.actors.pool:return "Aim directly at an active actor to remove it."
-		var query: Dictionary=world.actors.store.query_sphere_nearest(hit.collider.global_position,0.01,1,64)
-		if not query.ok or not query.complete or query.ids.size()!=1:return "Actor selection is ambiguous; try again."
-		var identity: int=world.actors.store.persistent_id(query.ids[0])
-		if not world.actors.store.despawn(query.ids[0]):return "Actor changed; try again."
+		var handle: int=hit.collider.entity_handle(world.actors.store)
+		if handle==0:return "Actor changed; try again."
+		var identity: int=world.actors.store.persistent_id(handle)
+		if not world.actors.store.despawn(handle):return "Actor changed; try again."
 		if identity==selected_identity:
 			selected_identity=0;world.actors.renderer.set_selection_marker(world.actors.selection_marker,0)
 		world.actors.orders.clear_target(identity)
@@ -48,7 +48,7 @@ func command(world: Node,stop: bool) -> String:
 	if selected_epoch!=world.terrain.epoch or world.actors.store.resolve_identity(selected_identity)==0:
 		selected_identity=0;world.actors.renderer.set_selection_marker(world.actors.selection_marker,0)
 	if stop:
-		if selected_identity==0:return "Select an actor with K first."
+		if selected_identity==0:return "Select an actor first."
 		world.actors.orders.clear_target(selected_identity)
 		return "Actor stopped · F5 saves world."
 	var origin: Vector3=world.camera.global_position
@@ -56,12 +56,12 @@ func command(world: Node,stop: bool) -> String:
 	var hit: Dictionary=world.get_world_3d().direct_space_state.intersect_ray(ray)
 	if hit.is_empty():return "Aim at an actor or a nearby destination."
 	if hit.collider.get_parent()==world.actors.pool:
-		var query: Dictionary=world.actors.store.query_sphere_nearest(hit.collider.global_position,0.01,1,64)
-		if not query.ok or not query.complete or query.ids.size()!=1:return "Actor selection is ambiguous."
-		selected_identity=world.actors.store.persistent_id(query.ids[0]);selected_epoch=world.terrain.epoch
+		var handle: int=hit.collider.entity_handle(world.actors.store)
+		if handle==0:return "Actor changed; select it again."
+		selected_identity=world.actors.store.persistent_id(handle);selected_epoch=world.terrain.epoch
 		world.actors.renderer.set_selection_marker(world.actors.selection_marker,selected_identity)
-		return "Actor selected · aim at ground and press K to move; Shift+K stops."
-	if selected_identity==0:return "Aim at an actor and press K first."
+		return "Actor selected · aim at ground and choose Select / send; Stop holds position."
+	if selected_identity==0:return "Aim at an actor and choose Select / send first."
 	if hit.collider is CharacterBody3D or hit.collider is RigidBody3D or hit.normal.dot(Vector3.UP)<0.8:return "Choose a level static destination."
 	var point: Vector3=hit.position+Vector3.UP*0.93
 	if not world._actor_collision_ready(AABB(point-Vector3(0.4,1.2,0.4),Vector3(0.8,2.2,0.8))):return "Destination area is still loading."
