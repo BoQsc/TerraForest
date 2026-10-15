@@ -1,0 +1,58 @@
+{
+  "copy": {
+    "created": true,
+    "slot": "actor_ui_d8732f097ceb46fb8b85392c03cba08d",
+    "source_slot": "combined_gameplay",
+    "source_sha256": "25b19886c1b677c44cabce30b1bc39a9efb6614f40d6c733bfb990fa7e3d9052"
+  },
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+    "--path",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+    "--fullscreen",
+    "--resolution",
+    "1920x1080",
+    "--max-fps",
+    "60",
+    "--script",
+    "res://tests/settlement_actor_authoring.gd",
+    "--",
+    "--world-slot=actor_ui_d8732f097ceb46fb8b85392c03cba08d",
+    "--ground-cover",
+    "--route-evidence=C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\settlement_actor_authoring\\20261015T150609956809Z\\expected"
+  ],
+  "result": {
+    "timed_out": false,
+    "launch_error": null,
+    "pid": 10052,
+    "exit_code": 0,
+    "diagnostics": [],
+    "required_text_found": true,
+    "elapsed_seconds": 18.732268400002795,
+    "passed": true
+  },
+  "reopen": {
+    "timed_out": false,
+    "launch_error": null,
+    "pid": 15556,
+    "exit_code": 0,
+    "diagnostics": [],
+    "required_text_found": true,
+    "elapsed_seconds": 12.255657800000336,
+    "passed": true
+  },
+  "source_unchanged": true,
+  "revision": "56c88c912a957ef299703990db5bc3cf12771735",
+  "worktree_changes": [
+    "?? \"TerraForest/Review Settlement Actors.cmd\"",
+    "?? TerraForest/tests/settlement_actor_authoring.gd",
+    "?? TerraForest/tools/run_settlement_actor_authoring.py"
+  ],
+  "git_metadata_available": true,
+  "publication": {
+    "created": true,
+    "slot": "settlement_actors",
+    "source_slot": "actor_ui_d8732f097ceb46fb8b85392c03cba08d",
+    "source_sha256": "26d875adf4bbd3f450a74593f4265e89b8b277b2436a8544bdff85324e161f92"
+  }
+}

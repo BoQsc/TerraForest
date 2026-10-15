@@ -1,3 +1,9 @@
+> 2026-10-15 settlement actor review ready: HUD enable/place/select/send reaches
+> a real street destination; normal compound save and fresh-process reopen retain
+> exact actor/order snapshots. Review Settlement Actors.cmd opens a separate copy.
+> Startup hitches remain; no performance claim. See SETTLEMENT_ACTORS.md and
+> evidence/settlement_actor_authoring/. Water unchanged.
+
 > 2026-10-15 actor development UI: dev slot9 now groups actor authoring controls
 > in a persistent HUD. Selection/removal use exact native hit identity. Real-world
 > button-signal regression passes with80 coincident dormant records. Visual1080p
