@@ -1,3 +1,10 @@
+> 2026-10-15 ore crafting follow-up remains open: two earned ores of each type
+> can craft metal through UI, place a metal block and restore it/inventory in
+> a fresh process. However a visual rerun loses the subsequent terrain target
+> before acquiring enough ore. Evidence: evidence/geology_crafting_route/.
+> Investigate ray reach and collision publication timing; do not call this
+> route reliable or repeat unchanged. Water remains deferred.
+
 > 2026-10-15 ore gameplay checkpoint: ordinary pickaxe attacks on the prepared
 > iron and copper faces yield the correct items directly, with tool wear and
 > no unclaimed rewards. Exact inventory survives fresh-process compound reload.

@@ -13,6 +13,7 @@ func run()->void:
  if "--reopen-route" in OS.get_cmdline_user_args():
   var expected:Dictionary=FileAccess.open(evidence,FileAccess.READ).get_var()
   check(game.player_hud.inventory.capture_storage_snapshot()==expected.inventory,"mined ore and tool wear restore exactly")
+  check(game.structures.blocks.get_cell(expected.cell)==expected.word,"crafted metal placement restores exactly")
   check(amount(202)==expected.iron and amount(203)==expected.copper,"both ore quantities survive fresh reopen")
  else:
   var rows:Array=[]
@@ -31,13 +32,32 @@ func run()->void:
     if not check(game.world_attack.attack(),"ordinary pickaxe attack accepted"):break
     if not check(await wait_for(func():return not game.terrain.pending_edit,15),"mining publishes"):break
     rows.append({"item":item,"strike":strike,"target":target,"outcome":game.terrain.last_edit_outcome,"quantity":amount(item)})
-    if amount(item)>before:break
-   check(amount(item)>before,"ore %d enters inventory directly"%item)
+    if amount(item)>=before+2:break
+   check(amount(item)>=before+2,"two ore %d enter inventory directly"%item)
    check(game.player_hud.inventory.snapshot().slots[0].wear>wear,"successful mining wears pickaxe")
    check(game.player_hud.reward_inbox.get_pending().is_empty(),"no unclaimed materials with available inventory room")
    await RenderingServer.frame_post_draw
    root.get_texture().get_image().save_png(evidence+".%d.png"%item)
+  if not check(amount(202)>=2 and amount(203)>=2,"earned ores cover both metal recipes"):await finish();return
+  var iron_before:int=amount(202);var copper_before:int=amount(203);var metal_before:int=amount(104)
+  game.player_hud.set_open(true)
+  game.player_hud.recipe_buttons[2].pressed.emit();game.player_hud.recipe_buttons[3].pressed.emit()
+  check(amount(202)==iron_before-2 and amount(203)==copper_before-2 and amount(104)==metal_before+2,"crafting buttons consume earned ores for two metal blocks")
+  game.player_hud.drop_stack("player",9,game.player_hud.drag_data("player",slot_of(104)))
+  game.player_hud.set_open(false);game.player_hud.equip(9)
+  game.camera.look_at(game.player.position+Vector3(-1.5,-2.0,0))
+  var hit:Dictionary=game._structure_target(false)
+  if not check(not hit.is_empty(),"crafted metal targets tunnel floor"):await finish();return
+  var cell:Vector3i=hit.target
+  var click:=InputEventMouseButton.new();click.pressed=true;click.button_index=MOUSE_BUTTON_RIGHT
+  game._unhandled_input(click)
+  var word:int=game.structures.blocks.get_cell(cell)
+  check(amount(104)==metal_before+1 and word!=0 and ((word>>5)&3)==3,"right click consumes one crafted metal block and places metal")
+  game.player_hud.equip(8)
+  for frame in 60:await physics_frame
+  await RenderingServer.frame_post_draw
+  root.get_texture().get_image().save_png(evidence+".built.png")
   var file:=FileAccess.open(evidence,FileAccess.WRITE)
-  file.store_var({"inventory":game.player_hud.inventory.capture_storage_snapshot(),"iron":amount(202),"copper":amount(203)});file.close()
+  file.store_var({"inventory":game.player_hud.inventory.capture_storage_snapshot(),"iron":amount(202),"copper":amount(203),"cell":cell,"word":word});file.close()
   file=FileAccess.open(evidence+".json",FileAccess.WRITE);file.store_string(JSON.stringify({"failures":failures,"strikes":rows},"  "));file.close()
  await finish()

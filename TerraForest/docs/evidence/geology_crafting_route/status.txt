@@ -1,0 +1,20 @@
+2026-10-15: ore-to-building integration, reliability gate remains open
+
+Extended the existing copied-world ore check to acquire two iron and two copper,
+click both metal recipe buttons, move metal to the toolbelt via the UI callback,
+right-click place one metal block, and verify exact inventory and placed word in
+a fresh process. A complete run passes (pass_*). Source gameplay stays unchanged.
+
+Initial fixture failed because its placement overlapped the player. A second
+aim was outside the 4m construction ray; corrected aim passes with unchanged
+product collision/reach rules. Those logs remain as fixture evidence.
+
+The passing run's image was captured before mesh publication and showed a ghost.
+Adding a one-second visual wait and unequipping the block prompted a new run;
+this run failed EARLIER, during ore acquisition. Each face loses the terrain
+target after two accepted attacks; sufficient ore has not arrived. Therefore
+repeatability is NOT established, and the actual block visual is unverified.
+No diagnosis yet: inspect collision refresh, density-vs-collision selection and
+3.5m attack reach before changing runtime or fixture. Do not conceal failure by
+granting ore or extending gameplay reach. Earlier single-strike evidence remains
+narrowly valid; repeated ore mining now has a reproducible investigation point.

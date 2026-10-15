@@ -1,0 +1,49 @@
+{
+  "copy": {
+    "created": true,
+    "slot": "geology_route_79082222ac0f47d3a26b8a671d65b112",
+    "source_slot": "geology_gameplay",
+    "source_sha256": "5aec469e8074b2c88bd73752116f7ca434ef562855f2e8c5ef45555e4b6230c6"
+  },
+  "phases": [
+    {
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--fullscreen",
+        "--resolution",
+        "1920x1080",
+        "--max-fps",
+        "60",
+        "--script",
+        "res://tests/geology_rewards_route.gd",
+        "--",
+        "--world-slot=geology_route_79082222ac0f47d3a26b8a671d65b112",
+        "--gameplay-construction",
+        "--route-evidence=C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\geology_rewards_route\\20261015T125952358267Z\\expected.bin"
+      ],
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "pid": 12760,
+        "exit_code": 1,
+        "diagnostics": [
+          "FAIL earned ores cover both metal recipes",
+          "FAIL pickaxe targets actual ore-face terrain",
+          "FAIL two ore 202 enter inventory directly",
+          "FAIL two ore 203 enter inventory directly"
+        ],
+        "required_text_found": false,
+        "elapsed_seconds": 35.82775699999911,
+        "passed": false
+      }
+    }
+  ],
+  "revision": "ae636db6135d17c317756cb8980ab0aa90fc93af",
+  "worktree_changes": [
+    " M TerraForest/tests/geology_rewards_route.gd"
+  ],
+  "git_metadata_available": true,
+  "source_unchanged": true
+}
