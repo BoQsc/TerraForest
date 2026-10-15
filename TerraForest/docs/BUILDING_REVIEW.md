@@ -20,7 +20,7 @@ This checkpoint covers one furnished cottage, not finished city or tower content
 
 ## Tower checkpoint
 
-**Review Tower.cmd** opens a separate `tower_review` save beside the three-floor
+**Review Tower.cmd** opens a separate `tower_review_guarded` save beside the three-floor
 furnished tower's entrance. Press E while aiming at the door. Inside, use the
 central stair flight, walk around its east landing, and take the next flight to
 the third floor. Floors have tables, chairs, shelves and chests. F5 saves this
@@ -28,6 +28,7 @@ review world. The cottage checkpoint is separate and is not overwritten.
 
 Main-world automated walking reached the third floor and returned downstairs;
 door/window state survived a fresh-process restart. This is not a large-city
-performance qualification. Stairwell guards and further interior detail remain
-unfinished. The automated exterior image is obscured by nearby foliage, so human
+performance qualification. Upper stairwell guards are now included; further
+interior detail remains unfinished. The previous `tower_review` save is preserved.
+The automated exterior image is obscured by nearby foliage, so human
 visual feedback is still needed.

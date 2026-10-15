@@ -29,6 +29,7 @@ func run() -> void:
 		check(await wait_for(func():return doors.get_instance(saved.id).size()==12),"saved door becomes resident")
 		check(doors.get_instance(saved.id)==saved.door,"fresh process restores open door pose")
 		check(windows.get_ids()==saved.windows,"fresh process restores exact window identities")
+		if tower:check(game.structures.model("architecture/metal_guardrail/v1").capture_snapshot()==saved.guards,"fresh process restores exact guardrail placements")
 		aim(saved.origin+Vector3(2,1.03,front-0.8),saved.origin+Vector3(0,2,front-0.8))
 		for i in 20:await physics_frame;await process_frame
 		use()
@@ -38,7 +39,7 @@ func run() -> void:
 		await finish();return
 	var catalog=preload("res://addons/structures/furniture_catalog.gd")
 	var asset: Resource=catalog.furnished_tower(3) if tower else catalog.enclosed_cottage()
-	check(asset!=null and asset.get_model_attachments().size()==(61 if tower else 13),"building combines expected furniture storage door and windows")
+	check(asset!=null and asset.get_model_attachments().size()==(66 if tower else 13),"building combines expected furniture storage door windows and guards")
 	var origin:=Vector3i(game.player.position.floor())+Vector3i(20,12,0)
 	game.construction_inventory.gameplay=false
 	if "--grounded" in OS.get_cmdline_user_args():
@@ -93,7 +94,7 @@ func run() -> void:
 		game.player.position=Vector3(origin)+Vector3(0.5,1.02,3)
 		check(not game.player.test_move(game.player.global_transform,Vector3(0,0,-4)),"central interior aisle stays clear")
 	var file:=FileAccess.open(evidence,FileAccess.WRITE)
-	file.store_var({"hinges":game.doors.state.capture_storage_snapshot(),"door":doors.get_instance(id),"id":id,"origin":Vector3(origin),"windows":windows.get_ids()});file.close()
+	file.store_var({"hinges":game.doors.state.capture_storage_snapshot(),"door":doors.get_instance(id),"id":id,"origin":Vector3(origin),"windows":windows.get_ids(),"guards":game.structures.model("architecture/metal_guardrail/v1").capture_snapshot()});file.close()
 	game.camera.global_position=Vector3(origin)+(Vector3(23,18,30) if tower else Vector3(12,7,16));game.camera.look_at(Vector3(origin)+Vector3(0,6 if tower else 3,0))
 	await RenderingServer.frame_post_draw;root.get_texture().get_image().save_png(evidence+".png")
 	game.camera.position=Vector3(0,1.62,0)

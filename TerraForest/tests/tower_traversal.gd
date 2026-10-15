@@ -44,8 +44,9 @@ func run() -> void:
 		check(not preload("res://addons/structures/storage_catalog.gd").register(structures).is_empty(),"tower storage registered")
 		check(not preload("res://addons/structures/window_catalog.gd").register(structures).is_empty(),"tower windows registered")
 		check(not preload("res://addons/structures/door_catalog.gd").register(structures).is_empty(),"tower entrance registered")
+		check(not preload("res://addons/structures/guardrail_catalog.gd").register(structures).is_empty(),"tower guardrails registered")
 		assembly=catalog.furnished_tower(3);blocks=structures.blocks
-		check(assembly!=null and assembly.get_model_attachments().size()==61,"three floors compose furnishings windows and entrance")
+		check(assembly!=null and assembly.get_model_attachments().size()==66,"three floors compose furnishings windows entrance and guards")
 	blocks.set_focus(Vector3(0,4,0));blocks.set_collision_radius(48)
 	if structures!=null:
 		var coordinator=preload("res://addons/player_runtime/construction_inventory.gd").new()
@@ -111,6 +112,16 @@ func run() -> void:
 		check(lower,"player returns around landing to first flight")
 	await walk(player,movement,Vector3(0,0,-1),70)
 	check(player.position.z<0 and player.position.y<1.1,"capsule descends flight back to lower floor")
+	if structures!=null:
+		for side in [-1,1]:
+			player.position=Vector3(-2 if side<0 else 3,9.03,2);player.velocity=Vector3.ZERO
+			await walk(player,movement,Vector3.ZERO,10)
+			await walk(player,movement,Vector3(-side,0,0),40)
+			check(player.position.y>8.9 and (player.position.x< -1.35 if side<0 else player.position.x>2.35),"upper side guard prevents walking into shaft %d"%side)
+		player.position=Vector3(0.5,9.03,-0.8);player.velocity=Vector3.ZERO
+		await walk(player,movement,Vector3.ZERO,10)
+		await walk(player,movement,Vector3.BACK,40)
+		check(player.position.y>8.9 and player.position.z< -0.35,"top rear guard prevents walking into shaft")
 	var wall:=obstacle(Vector3(3,2.5,1),Vector3(1,3,1))
 	player.position=Vector3(3,1.05,-0.8);player.velocity=Vector3.ZERO
 	await walk(player,movement,Vector3.ZERO,10)

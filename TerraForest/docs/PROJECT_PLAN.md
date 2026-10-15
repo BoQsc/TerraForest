@@ -1,3 +1,9 @@
+> 2026-10-15 tower guards: reusable batched metal guardrails now protect upper
+> shaft sides and the top rear edge. Full traversal and three deliberate fall
+> approaches pass; main-world ascent/descent and exact guard snapshot restoration
+> pass. `Review Tower.cmd` now opens tower_review_guarded, preserving the previous
+> tower_review save. Evidence: evidence/tower_guards/. Human review still open.
+
 > 2026-10-15 grounded tower: editor grading/placement, main-world native walking
 > from entrance to third floor and back, plus fresh-process door/window restore
 > pass. `Review Tower.cmd` opens separately published tower_review. Evidence:

@@ -82,6 +82,11 @@ static func furnished_tower(floors: int=3) -> Resource:
 		var attachments: Array=[]
 		if level==0:
 			attachments.append({"model":"architecture/wooden_door/v1","transform":Transform3D(Basis.IDENTITY.scaled(Vector3(1,0.9,1)),Vector3(0,1,8.5))})
+		if level>0:
+			for x in [-1.1,2.1]:
+				attachments.append({"model":"architecture/metal_guardrail/v1","transform":Transform3D(Basis.IDENTITY,Vector3(x,1,2))})
+		if level==floors-1:
+			attachments.append({"model":"architecture/metal_guardrail/v1","transform":Transform3D(Basis(Vector3.UP,PI/2).scaled(Vector3(0.8,1,1)),Vector3(0.5,1,-0.1))})
 		# Work areas stay outside the stair shaft and its eastern circulation aisle.
 		for x in [-5.0,5.5]:
 			attachments.append({"model":"furniture/table/v1","transform":Transform3D(Basis.IDENTITY,Vector3(x,1,-4))})

@@ -11,4 +11,6 @@ static func recipes() -> Dictionary:
 	result[window.KEY]=window.recipe()
 	var door=preload("res://addons/structures/door_catalog.gd")
 	result[door.KEY]=door.recipe()
+	var guardrail=preload("res://addons/structures/guardrail_catalog.gd")
+	result[guardrail.KEY]=guardrail.recipe()
 	return result

@@ -21,7 +21,7 @@ def main():
     args = parser.parse_args()
     config, _ = parse_args([])
     worlds = Path(os.environ['APPDATA']) / 'Godot/app_userdata/TerraForest/worlds'
-    review_slot = 'tower_review' if args.tower else 'building_review'
+    review_slot = 'tower_review_guarded' if args.tower else 'building_review'
     if args.play and (worlds / (review_slot + '.trw')).exists():
         return play(review_slot)
     source = worlds / 'combined_gameplay.trw'

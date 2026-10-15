@@ -1,0 +1,59 @@
+{
+  "copy": {
+    "created": true,
+    "slot": "doors_f100d378e6a64070ab1e72406dd103f2",
+    "source_slot": "combined_gameplay",
+    "source_sha256": "25b19886c1b677c44cabce30b1bc39a9efb6614f40d6c733bfb990fa7e3d9052"
+  },
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+    "--path",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+    "--fullscreen",
+    "--resolution",
+    "1920x1080",
+    "--max-fps",
+    "60",
+    "--script",
+    "res://tests/enclosed_cottage.gd",
+    "--",
+    "--world-slot=doors_f100d378e6a64070ab1e72406dd103f2",
+    "--route-evidence=C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\enclosed_cottage\\20261015T161733361300Z\\expected",
+    "--grounded",
+    "--tower"
+  ],
+  "result": {
+    "timed_out": false,
+    "launch_error": null,
+    "pid": 28860,
+    "exit_code": 0,
+    "diagnostics": [],
+    "required_text_found": true,
+    "elapsed_seconds": 26.497819199998048,
+    "passed": true
+  },
+  "reopen": {
+    "timed_out": false,
+    "launch_error": null,
+    "pid": 14768,
+    "exit_code": 0,
+    "diagnostics": [],
+    "required_text_found": true,
+    "elapsed_seconds": 12.245276299996476,
+    "passed": true
+  },
+  "source_unchanged": true,
+  "revision": "d5da9bdc79b437c853ac83a55e5ab8d5afb82790",
+  "worktree_changes": [
+    " M TerraForest/addons/structures/construction_catalog.gd",
+    " M TerraForest/addons/structures/furniture_catalog.gd",
+    " M TerraForest/demo/world.gd",
+    " M TerraForest/tests/enclosed_cottage.gd",
+    " M TerraForest/tests/tower_traversal.gd",
+    " M TerraForest/tools/check_enclosed_cottage.py",
+    "?? TerraForest/addons/structures/guardrail_catalog.gd",
+    "?? TerraForest/addons/structures/prefabs/guardrail_model.tres",
+    "?? TerraForest/tools/bake_guardrail.gd"
+  ],
+  "git_metadata_available": true
+}
