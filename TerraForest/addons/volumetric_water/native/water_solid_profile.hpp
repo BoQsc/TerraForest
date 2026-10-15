@@ -30,6 +30,11 @@ private:
         }
         return true;
     }
+    void compact(){
+        curve.shrink_to_fit();hulls.shrink_to_fit();
+        for(auto &h:hulls)h.planes.shrink_to_fit();
+        for(auto &face:faces){face.shrink_to_fit();for(auto &p:face)p.shrink_to_fit();}
+    }
 public:
     bool prepare(const C::Pieces &pieces){
         if(pieces.size()>C::MAX_PIECES)return false;
@@ -103,7 +108,7 @@ public:
             for(int j=0;j<4;++j){v[j]=at(a+(b-a)*(j/3.0));if(!std::isfinite(v[j]))return false;}
             staged.curve.push_back(fit(a,b,v));
         }
-        if(!staged.prepare_faces())return false;*this=std::move(staged);return true;
+        if(!staged.prepare_faces())return false;staged.compact();*this=std::move(staged);return true;
     }
     double volume(double y)const{
         if(y<=low)return 0;if(y>=high)return full;
@@ -195,7 +200,7 @@ public:
             staged.hulls.push_back(std::move(hull));
         }
         if(at!=data.size()||(staged.full>0&&(staged.curve.empty()||staged.hulls.empty())))return false;
-        if(!staged.prepare_faces())return false;*this=std::move(staged);return true;
+        if(!staged.prepare_faces())return false;staged.compact();*this=std::move(staged);return true;
     }
     size_t bytes()const{size_t n=sizeof(*this)+curve.capacity()*sizeof(Segment)+hulls.capacity()*sizeof(Hull);for(const auto &h:hulls)n+=h.planes.capacity()*sizeof(C::Plane);for(const auto &face:faces){n+=face.capacity()*sizeof(std::vector<WaterFaceClip::Point>);for(const auto &p:face)n+=p.capacity()*sizeof(WaterFaceClip::Point);}return n;}
 };

@@ -8,6 +8,14 @@ func sample_queue():
  for job:Dictionary in snapshot.queued:
   if job.kind=="lake_slice":waiting+=1
  if waiting:queue_samples.append({"active":snapshot.active,"water_waiting":waiting})
+func ready_water()->bool:
+ var deadline:=Time.get_ticks_msec()+10000
+ while Time.get_ticks_msec()<deadline:
+  var state:Dictionary=game.lakes.statistics()
+  if not str(state.get("occupancy_failure","")).is_empty():return false
+  if not game.terrain.pending_edit and state.render_ready:return true
+  await process_frame
+ return false
 func timed_edit(cell:Vector3i,word:int,label:String)->Dictionary:
  var initial:int=game.lakes.statistics().water_ml
  var sampled:int=game.lakes.statistics().sampled_nodes
@@ -43,11 +51,19 @@ func run():
  check(game.construction_inventory.place_block(game.structures.blocks,game.player_hud.inventory,cell,6),"First sphere placement")
  check(await ready_water(),"First sphere ready")
  var word:int=game.structures.blocks.get_cell(cell)
- results={"edits":[],"scope":"Eight spheres in one region and four removal/replacement cycles; short scaling probe, not sustained performance qualification."}
- for n in range(1,8):
-  var target:=cell+Vector3i(n%4,0,n/4)
+ var sphere_count:=32 if "--dense-water-region" in OS.get_cmdline_user_args() else 8
+ results={"sphere_count":sphere_count,"edits":[],"scope":"Curved shapes in one region and four removal/replacement cycles; short scaling probe, not sustained performance qualification."}
+ for n in range(1,sphere_count):
+  var target:=cell+Vector3i(n%4,-(n/16),(n/4)%4)
   check(game.lakes.depth_at(Vector3(target)+Vector3.ONE*.5)>0,"Next sphere starts in water")
   results.edits.append(await timed_edit(target,word,"sphere_%d"%(n+1)))
+  if failures:
+   var failed_region_stats:Dictionary=game.lakes.statistics()
+   for frame in 20:await process_frame
+   check(not str(failed_region_stats.occupancy_failure).is_empty() and game.lakes._cached_task<0 and not game.lakes._busy,"Capacity failure does not continuously retry")
+   game.structures.blocks.set_cells(PackedInt32Array([target.x,target.y,target.z,0]))
+   check(await ready_water(),"Removing the over-budget shape recovers water updates")
+   await finish();return
  var meshes:=mesh_fingerprints();var snapshot:PackedByteArray=game.lakes.capture_snapshot()
  check(game.lakes.restore_snapshot(snapshot),"Dense water snapshot restores")
  check(await ready_water(),"Dense cached water publishes")

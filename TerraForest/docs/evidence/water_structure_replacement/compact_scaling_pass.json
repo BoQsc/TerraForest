@@ -1,0 +1,382 @@
+{
+  "edits": [
+    {
+      "cache_bytes": 274064,
+      "frame_max_ms": 16.679,
+      "frame_median_ms": 16.66,
+      "frame_samples": 5,
+      "label": "sphere_2",
+      "publish_ms": 82.115,
+      "queue_samples": [],
+      "water_peak_us": {
+        "accept_patch_us": 51,
+        "exclusion_notify_us": 0,
+        "hull_snapshot_us": 40,
+        "mesh_commit_us": 68,
+        "mesh_publish_us": 1143,
+        "mesh_us": 905,
+        "step_us": 128
+      },
+      "worker_slices": [
+        {
+          "queue_ms": 0.054,
+          "status": 1,
+          "worker_ms": 25.088
+        }
+      ]
+    },
+    {
+      "cache_bytes": 407264,
+      "frame_max_ms": 16.669,
+      "frame_median_ms": 16.665,
+      "frame_samples": 6,
+      "label": "sphere_3",
+      "publish_ms": 96.54,
+      "queue_samples": [],
+      "water_peak_us": {
+        "accept_patch_us": 52,
+        "exclusion_notify_us": 0,
+        "hull_snapshot_us": 49,
+        "mesh_commit_us": 76,
+        "mesh_publish_us": 1334,
+        "mesh_us": 1044,
+        "step_us": 128
+      },
+      "worker_slices": [
+        {
+          "queue_ms": 0.014,
+          "status": 1,
+          "worker_ms": 26.134
+        }
+      ]
+    },
+    {
+      "cache_bytes": 539936,
+      "frame_max_ms": 16.673,
+      "frame_median_ms": 16.663,
+      "frame_samples": 7,
+      "label": "sphere_4",
+      "publish_ms": 112.517,
+      "queue_samples": [],
+      "water_peak_us": {
+        "accept_patch_us": 52,
+        "exclusion_notify_us": 145,
+        "hull_snapshot_us": 62,
+        "mesh_commit_us": 130,
+        "mesh_publish_us": 1685,
+        "mesh_us": 1195,
+        "step_us": 128
+      },
+      "worker_slices": [
+        {
+          "queue_ms": 0.046,
+          "status": 1,
+          "worker_ms": 25.283
+        }
+      ]
+    },
+    {
+      "cache_bytes": 672696,
+      "frame_max_ms": 16.677,
+      "frame_median_ms": 16.668,
+      "frame_samples": 6,
+      "label": "sphere_5",
+      "publish_ms": 96.741,
+      "queue_samples": [],
+      "water_peak_us": {
+        "accept_patch_us": 51,
+        "exclusion_notify_us": 0,
+        "hull_snapshot_us": 73,
+        "mesh_commit_us": 74,
+        "mesh_publish_us": 1627,
+        "mesh_us": 1344,
+        "step_us": 128
+      },
+      "worker_slices": [
+        {
+          "queue_ms": 0.132,
+          "status": 1,
+          "worker_ms": 28.86
+        }
+      ]
+    },
+    {
+      "cache_bytes": 805912,
+      "frame_max_ms": 16.669,
+      "frame_median_ms": 16.66,
+      "frame_samples": 5,
+      "label": "sphere_6",
+      "publish_ms": 79.118,
+      "queue_samples": [],
+      "water_peak_us": {
+        "accept_patch_us": 52,
+        "exclusion_notify_us": 0,
+        "hull_snapshot_us": 74,
+        "mesh_commit_us": 59,
+        "mesh_publish_us": 1748,
+        "mesh_us": 1442,
+        "step_us": 128
+      },
+      "worker_slices": [
+        {
+          "queue_ms": 0.048,
+          "status": 1,
+          "worker_ms": 27.089
+        }
+      ]
+    },
+    {
+      "cache_bytes": 939440,
+      "frame_max_ms": 16.724,
+      "frame_median_ms": 16.648,
+      "frame_samples": 5,
+      "label": "sphere_7",
+      "publish_ms": 79.919,
+      "queue_samples": [],
+      "water_peak_us": {
+        "accept_patch_us": 51,
+        "exclusion_notify_us": 142,
+        "hull_snapshot_us": 80,
+        "mesh_commit_us": 75,
+        "mesh_publish_us": 1987,
+        "mesh_us": 1661,
+        "step_us": 128
+      },
+      "worker_slices": [
+        {
+          "queue_ms": 0.014,
+          "status": 1,
+          "worker_ms": 27.816
+        }
+      ]
+    },
+    {
+      "cache_bytes": 1072488,
+      "frame_max_ms": 16.68,
+      "frame_median_ms": 16.666,
+      "frame_samples": 5,
+      "label": "sphere_8",
+      "publish_ms": 80.294,
+      "queue_samples": [],
+      "water_peak_us": {
+        "accept_patch_us": 51,
+        "exclusion_notify_us": 0,
+        "hull_snapshot_us": 86,
+        "mesh_commit_us": 83,
+        "mesh_publish_us": 2098,
+        "mesh_us": 1711,
+        "step_us": 128
+      },
+      "worker_slices": [
+        {
+          "queue_ms": 0.014,
+          "status": 1,
+          "worker_ms": 26.057
+        }
+      ]
+    },
+    {
+      "cache_bytes": 939616,
+      "frame_max_ms": 16.714,
+      "frame_median_ms": 16.662,
+      "frame_samples": 5,
+      "label": "remove_0",
+      "publish_ms": 65.881,
+      "queue_samples": [],
+      "water_peak_us": {
+        "accept_patch_us": 106,
+        "exclusion_notify_us": 0,
+        "hull_snapshot_us": 75,
+        "mesh_commit_us": 136,
+        "mesh_publish_us": 1979,
+        "mesh_us": 1606,
+        "step_us": 0
+      },
+      "worker_slices": [
+        {
+          "queue_ms": 0.016,
+          "status": 1,
+          "worker_ms": 0.02
+        }
+      ]
+    },
+    {
+      "cache_bytes": 1072488,
+      "frame_max_ms": 16.672,
+      "frame_median_ms": 16.667,
+      "frame_samples": 6,
+      "label": "replace_0",
+      "publish_ms": 97.573,
+      "queue_samples": [],
+      "water_peak_us": {
+        "accept_patch_us": 54,
+        "exclusion_notify_us": 149,
+        "hull_snapshot_us": 79,
+        "mesh_commit_us": 133,
+        "mesh_publish_us": 2272,
+        "mesh_us": 1847,
+        "step_us": 0
+      },
+      "worker_slices": [
+        {
+          "queue_ms": 0.013,
+          "status": 1,
+          "worker_ms": 26.043
+        }
+      ]
+    },
+    {
+      "cache_bytes": 939616,
+      "frame_max_ms": 16.676,
+      "frame_median_ms": 16.662,
+      "frame_samples": 5,
+      "label": "remove_1",
+      "publish_ms": 79.446,
+      "queue_samples": [],
+      "water_peak_us": {
+        "accept_patch_us": 111,
+        "exclusion_notify_us": 0,
+        "hull_snapshot_us": 74,
+        "mesh_commit_us": 126,
+        "mesh_publish_us": 1870,
+        "mesh_us": 1548,
+        "step_us": 0
+      },
+      "worker_slices": [
+        {
+          "queue_ms": 0.017,
+          "status": 1,
+          "worker_ms": 0.014
+        }
+      ]
+    },
+    {
+      "cache_bytes": 1072488,
+      "frame_max_ms": 16.68,
+      "frame_median_ms": 16.664,
+      "frame_samples": 7,
+      "label": "replace_1",
+      "publish_ms": 114.174,
+      "queue_samples": [],
+      "water_peak_us": {
+        "accept_patch_us": 52,
+        "exclusion_notify_us": 0,
+        "hull_snapshot_us": 81,
+        "mesh_commit_us": 130,
+        "mesh_publish_us": 2071,
+        "mesh_us": 1710,
+        "step_us": 0
+      },
+      "worker_slices": [
+        {
+          "queue_ms": 0.032,
+          "status": 1,
+          "worker_ms": 23.874
+        }
+      ]
+    },
+    {
+      "cache_bytes": 939616,
+      "frame_max_ms": 16.671,
+      "frame_median_ms": 16.666,
+      "frame_samples": 5,
+      "label": "remove_2",
+      "publish_ms": 78.1,
+      "queue_samples": [],
+      "water_peak_us": {
+        "accept_patch_us": 99,
+        "exclusion_notify_us": 143,
+        "hull_snapshot_us": 84,
+        "mesh_commit_us": 123,
+        "mesh_publish_us": 1995,
+        "mesh_us": 1648,
+        "step_us": 0
+      },
+      "worker_slices": [
+        {
+          "queue_ms": 0.021,
+          "status": 1,
+          "worker_ms": 0.023
+        }
+      ]
+    },
+    {
+      "cache_bytes": 1072488,
+      "frame_max_ms": 16.672,
+      "frame_median_ms": 16.663,
+      "frame_samples": 6,
+      "label": "replace_2",
+      "publish_ms": 98.114,
+      "queue_samples": [],
+      "water_peak_us": {
+        "accept_patch_us": 53,
+        "exclusion_notify_us": 0,
+        "hull_snapshot_us": 83,
+        "mesh_commit_us": 129,
+        "mesh_publish_us": 2185,
+        "mesh_us": 1799,
+        "step_us": 0
+      },
+      "worker_slices": [
+        {
+          "queue_ms": 0.013,
+          "status": 1,
+          "worker_ms": 25.901
+        }
+      ]
+    },
+    {
+      "cache_bytes": 939616,
+      "frame_max_ms": 16.686,
+      "frame_median_ms": 16.67,
+      "frame_samples": 5,
+      "label": "remove_3",
+      "publish_ms": 80.093,
+      "queue_samples": [],
+      "water_peak_us": {
+        "accept_patch_us": 105,
+        "exclusion_notify_us": 0,
+        "hull_snapshot_us": 71,
+        "mesh_commit_us": 125,
+        "mesh_publish_us": 1984,
+        "mesh_us": 1658,
+        "step_us": 0
+      },
+      "worker_slices": [
+        {
+          "queue_ms": 0.044,
+          "status": 1,
+          "worker_ms": 0.02
+        }
+      ]
+    },
+    {
+      "cache_bytes": 1072488,
+      "frame_max_ms": 16.769,
+      "frame_median_ms": 16.658,
+      "frame_samples": 7,
+      "label": "replace_3",
+      "publish_ms": 113.872,
+      "queue_samples": [],
+      "water_peak_us": {
+        "accept_patch_us": 54,
+        "exclusion_notify_us": 120,
+        "hull_snapshot_us": 79,
+        "mesh_commit_us": 119,
+        "mesh_publish_us": 2103,
+        "mesh_us": 1732,
+        "step_us": 0
+      },
+      "worker_slices": [
+        {
+          "queue_ms": 0.047,
+          "status": 1,
+          "worker_ms": 28.197
+        }
+      ]
+    }
+  ],
+  "failures": 0,
+  "scope": "Curved shapes in one region and four removal/replacement cycles; short scaling probe, not sustained performance qualification.",
+  "sphere_count": 8
+}

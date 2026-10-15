@@ -194,3 +194,19 @@ Latest task-start wait max0.059ms; preceding shared worker waits reached147ms.
 Edit publication64.7-148.1ms across this run. Pool latency on other workloads is
 not guaranteed. Remaining: broader long-run/frame/scale qualification and visual
 coverage; terrain-dependent water updates still share the terrain worker queue.
+
+2026-10-15 dense capacity failure discovered (OPEN):
+The new --dense-water-region mode attempts32 spheres in two layers of one4m
+region. It failed at sphere25 because cache bytes reached the4MiB region cap;
+preparation then retried continuously, consuming repeated worker time. Archived
+baseline dense_capacity_failure.json records this failure, not a passing result.
+Immutable curve/hull/face arrays now release unused allocation capacity before
+publication/decode. At24 spheres bytes fall from4,042,352 to3,202,064 (~21%).
+Dense test now reaches30 spheres but FAILS sphere31. Do not call dense coverage
+complete or increase budgets merely to pass. Exact geometry/format are unchanged.
+A terminal preparation/publication error now latches a visible failure and stops
+resubmission until a terrain/building/world change. The failing dense test proves
+no retry loop and recovery when the over-budget block is removed. The normal
+8-shape scaling/cancellation/shutdown and release cache reload checks pass.
+Both DLLs installed. Remaining capacity problem needs representation/storage
+work or explicit edit admission; current failing edit leaves water pending.

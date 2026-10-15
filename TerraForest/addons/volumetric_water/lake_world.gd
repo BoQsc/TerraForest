@@ -20,6 +20,7 @@ var _catalog:RefCounted
 var water:RefCounted
 var _builder:RefCounted
 var _busy:=false
+var _occupancy_failure:String=""
 var _cached_task:int=-1
 var _cached_job:Dictionary={}
 var _builder_reused:=false
@@ -92,7 +93,7 @@ func _ready() -> void:
  # the committed terrain worker samples; they never flow against stale solids.
  # Accepted terrain occupancy patches remove water replaced by solid terrain.
  if blocks!=null:
-  blocks.cells_changed.connect(func(bounds:AABB):water.invalidate_buildings(blocks.global_transform*bounds);_discard_builder())
+  blocks.cells_changed.connect(func(bounds:AABB):water.invalidate_buildings(blocks.global_transform*bounds);_occupancy_failure="";_discard_builder())
   blocks.changed.connect(func():_structure_revision+=1)
  _epoch=terrain.epoch
 func add_lake(origin:Vector3,cells:Vector3i,spacing:float,level:float,seed:Vector3) -> int:
@@ -107,17 +108,19 @@ func remove_lake(id:int) -> void:
  water.remove_bounds(AABB(item.origin,Vector3(item.cells)*item.spacing))
  _lakes.erase(id);terrain.changed_since_save=true;catalog_changed.emit()
 func clear() -> void:
+ _occupancy_failure=""
  _lakes.clear();_filling_id=0;_pending_bucket.clear();_pending_dev.clear()
  for mesh:MeshInstance3D in _meshes.values():mesh.queue_free()
  _meshes.clear();_mesh_faces.clear();_staged_meshes.clear();_mesh_batch_id=0;_published_mesh_batch_id=0;water=ClassDB.instantiate("NativeRegionalWater");_discard_builder()
  _have_bounds=false;_last_changes=0
 func _invalidate(bounds:AABB) -> void:
+ _occupancy_failure=""
  water.invalidate(bounds)
  _discard_builder()
 func _process(delta:float) -> void:
  _poll_cached_task()
  if terrain==null or not terrain.world_ready:return
- if _epoch!=terrain.epoch:_epoch=terrain.epoch;_discard_builder()
+ if _epoch!=terrain.epoch:_epoch=terrain.epoch;_occupancy_failure="";_discard_builder()
  var before:Dictionary=water.statistics()
  if _filling_id!=0 and not before.fill_active:
   var id:=_filling_id;_filling_id=0
@@ -133,7 +136,7 @@ func _process(delta:float) -> void:
  _publish_meshes()
  # Explicit lake creation only. Resting or edited water has no flow tick.
  if _filling_id!=0:water.advance(2048,delta)
- if not _busy and not terrain.pending_edit:
+ if not _busy and not terrain.pending_edit and _occupancy_failure.is_empty():
   var request:Dictionary=water.next_request()
   if not request.is_empty():
    if _builder==null or _revision!=terrain.published_revision:
@@ -235,9 +238,10 @@ func _slice_ready(token:int,status:int,epoch_id:int,revision:int) -> void:
  if status==0:return
  if status==1:
   var accept_started:=Time.get_ticks_usec()
-  if not water.accept_patch(_builder):terrain.message_changed.emit("Water occupancy cache budget reached; quantities retained")
+  if not water.accept_patch(_builder):_occupancy_failure="Water occupancy cache budget reached; edit remains pending until the world changes"
   _accept_patch_us=Time.get_ticks_usec()-accept_started
- else:terrain.message_changed.emit("Water terrain sampling failed; quantities retained")
+ else:_occupancy_failure="Water occupancy preparation failed; edit remains pending until the world changes"
+ if not _occupancy_failure.is_empty():terrain.message_changed.emit(_occupancy_failure)
  _discard_builder()
 func _transfer_bucket(from:Vector3,to:Vector3,pour:bool,inventory:RefCounted,slot:int,revision:int)->Dictionary:
  var started:=Time.get_ticks_usec()
@@ -273,6 +277,7 @@ func statistics() -> Dictionary:
  var s:Dictionary=water.statistics();s.lakes=_lakes.size();s.ready=0;s.outstanding_slices=int(_busy);s.resident_occupancy_bytes=s.resident_cell_bytes
  for item:Dictionary in _lakes.values():
   if not item.dirty and item.failure.is_empty():s.ready+=1
+ s.occupancy_failure=_occupancy_failure
  s.bucket_native_us=_bucket_native_us;s.max_bucket_native_us=_max_bucket_native_us
  s.exclusion_notify_us=_exclusion_notify_us;s.accept_patch_us=_accept_patch_us;s.hull_snapshot_us=_hull_snapshot_us
  s.mesh_publish_us=_mesh_publish_us;s.max_mesh_publish_us=_mesh_max_publish_us

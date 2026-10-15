@@ -1,0 +1,200 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.3.280 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] New world
+[TerrainRewrite] New world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+[TerrainRewrite] Preparing your finite lake; terrain and water are being built
+[TerrainRewrite] Mined resources added to inventory
+[TerrainRewrite] Lake ready · temporary world
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Bucket review · disposable world
+PASS Actual water world ready
+PASS First sphere placement
+PASS First sphere ready
+PASS Next sphere starts in water
+PASS sphere_2 accepted
+PASS sphere_2 publishes
+PASS sphere_2 reuses unchanged terrain sampling
+PASS sphere_2 does not create water
+PASS sphere_2 solid center dry
+PASS Next sphere starts in water
+PASS sphere_3 accepted
+PASS sphere_3 publishes
+PASS sphere_3 reuses unchanged terrain sampling
+PASS sphere_3 does not create water
+PASS sphere_3 solid center dry
+PASS Next sphere starts in water
+PASS sphere_4 accepted
+PASS sphere_4 publishes
+PASS sphere_4 reuses unchanged terrain sampling
+PASS sphere_4 does not create water
+PASS sphere_4 solid center dry
+PASS Next sphere starts in water
+PASS sphere_5 accepted
+PASS sphere_5 publishes
+PASS sphere_5 reuses unchanged terrain sampling
+PASS sphere_5 does not create water
+PASS sphere_5 solid center dry
+PASS Next sphere starts in water
+PASS sphere_6 accepted
+PASS sphere_6 publishes
+PASS sphere_6 reuses unchanged terrain sampling
+PASS sphere_6 does not create water
+PASS sphere_6 solid center dry
+PASS Next sphere starts in water
+PASS sphere_7 accepted
+PASS sphere_7 publishes
+PASS sphere_7 reuses unchanged terrain sampling
+PASS sphere_7 does not create water
+PASS sphere_7 solid center dry
+PASS Next sphere starts in water
+PASS sphere_8 accepted
+PASS sphere_8 publishes
+PASS sphere_8 reuses unchanged terrain sampling
+PASS sphere_8 does not create water
+PASS sphere_8 solid center dry
+PASS Next sphere starts in water
+PASS sphere_9 accepted
+PASS sphere_9 publishes
+PASS sphere_9 reuses unchanged terrain sampling
+PASS sphere_9 does not create water
+PASS sphere_9 solid center dry
+PASS Next sphere starts in water
+PASS sphere_10 accepted
+PASS sphere_10 publishes
+PASS sphere_10 reuses unchanged terrain sampling
+PASS sphere_10 does not create water
+PASS sphere_10 solid center dry
+PASS Next sphere starts in water
+PASS sphere_11 accepted
+PASS sphere_11 publishes
+PASS sphere_11 reuses unchanged terrain sampling
+PASS sphere_11 does not create water
+PASS sphere_11 solid center dry
+PASS Next sphere starts in water
+PASS sphere_12 accepted
+PASS sphere_12 publishes
+PASS sphere_12 reuses unchanged terrain sampling
+PASS sphere_12 does not create water
+PASS sphere_12 solid center dry
+PASS Next sphere starts in water
+PASS sphere_13 accepted
+PASS sphere_13 publishes
+PASS sphere_13 reuses unchanged terrain sampling
+PASS sphere_13 does not create water
+PASS sphere_13 solid center dry
+PASS Next sphere starts in water
+PASS sphere_14 accepted
+PASS sphere_14 publishes
+PASS sphere_14 reuses unchanged terrain sampling
+PASS sphere_14 does not create water
+PASS sphere_14 solid center dry
+PASS Next sphere starts in water
+PASS sphere_15 accepted
+PASS sphere_15 publishes
+PASS sphere_15 reuses unchanged terrain sampling
+PASS sphere_15 does not create water
+PASS sphere_15 solid center dry
+PASS Next sphere starts in water
+PASS sphere_16 accepted
+PASS sphere_16 publishes
+PASS sphere_16 reuses unchanged terrain sampling
+PASS sphere_16 does not create water
+PASS sphere_16 solid center dry
+PASS Next sphere starts in water
+PASS sphere_17 accepted
+PASS sphere_17 publishes
+PASS sphere_17 reuses unchanged terrain sampling
+PASS sphere_17 does not create water
+PASS sphere_17 solid center dry
+PASS Next sphere starts in water
+PASS sphere_18 accepted
+PASS sphere_18 publishes
+PASS sphere_18 reuses unchanged terrain sampling
+PASS sphere_18 does not create water
+PASS sphere_18 solid center dry
+PASS Next sphere starts in water
+PASS sphere_19 accepted
+PASS sphere_19 publishes
+PASS sphere_19 reuses unchanged terrain sampling
+PASS sphere_19 does not create water
+PASS sphere_19 solid center dry
+PASS Next sphere starts in water
+PASS sphere_20 accepted
+PASS sphere_20 publishes
+PASS sphere_20 reuses unchanged terrain sampling
+PASS sphere_20 does not create water
+PASS sphere_20 solid center dry
+PASS Next sphere starts in water
+PASS sphere_21 accepted
+PASS sphere_21 publishes
+PASS sphere_21 reuses unchanged terrain sampling
+PASS sphere_21 does not create water
+PASS sphere_21 solid center dry
+PASS Next sphere starts in water
+PASS sphere_22 accepted
+PASS sphere_22 publishes
+PASS sphere_22 reuses unchanged terrain sampling
+PASS sphere_22 does not create water
+PASS sphere_22 solid center dry
+PASS Next sphere starts in water
+PASS sphere_23 accepted
+PASS sphere_23 publishes
+PASS sphere_23 reuses unchanged terrain sampling
+PASS sphere_23 does not create water
+PASS sphere_23 solid center dry
+PASS Next sphere starts in water
+PASS sphere_24 accepted
+PASS sphere_24 publishes
+PASS sphere_24 reuses unchanged terrain sampling
+PASS sphere_24 does not create water
+PASS sphere_24 solid center dry
+PASS Next sphere starts in water
+PASS sphere_25 accepted
+PASS sphere_25 publishes
+PASS sphere_25 reuses unchanged terrain sampling
+PASS sphere_25 does not create water
+PASS sphere_25 solid center dry
+PASS Next sphere starts in water
+PASS sphere_26 accepted
+PASS sphere_26 publishes
+PASS sphere_26 reuses unchanged terrain sampling
+PASS sphere_26 does not create water
+PASS sphere_26 solid center dry
+PASS Next sphere starts in water
+PASS sphere_27 accepted
+PASS sphere_27 publishes
+PASS sphere_27 reuses unchanged terrain sampling
+PASS sphere_27 does not create water
+PASS sphere_27 solid center dry
+PASS Next sphere starts in water
+PASS sphere_28 accepted
+PASS sphere_28 publishes
+PASS sphere_28 reuses unchanged terrain sampling
+PASS sphere_28 does not create water
+PASS sphere_28 solid center dry
+PASS Next sphere starts in water
+PASS sphere_29 accepted
+PASS sphere_29 publishes
+PASS sphere_29 reuses unchanged terrain sampling
+PASS sphere_29 does not create water
+PASS sphere_29 solid center dry
+PASS Next sphere starts in water
+PASS sphere_30 accepted
+PASS sphere_30 publishes
+PASS sphere_30 reuses unchanged terrain sampling
+PASS sphere_30 does not create water
+PASS sphere_30 solid center dry
+PASS Next sphere starts in water
+PASS sphere_31 accepted
+[TerrainRewrite] Water occupancy preparation failed; edit remains pending until the world changes
+FAIL sphere_31 publishes
+PASS sphere_31 reuses unchanged terrain sampling
+PASS sphere_31 does not create water
+PASS sphere_31 solid center dry
+PASS Capacity failure does not continuously retry
+PASS Removing the over-budget shape recovers water updates
+[TerrainRewrite] Temporary test world: save skipped
+WATER_STRUCTURE_SCALING failures=1
