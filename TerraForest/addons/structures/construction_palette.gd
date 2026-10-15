@@ -30,6 +30,9 @@ var frontage_gap: SpinBox
 var frontage_seed: SpinBox
 var frontage_mix: CheckBox
 var frontage_sources: ItemList
+var frontage_name: LineEdit
+var frontage_status: Label
+var frontage_presets: Array[Button]=[]
 var stack_count: SpinBox
 var stack_button: Button
 var supply: OptionButton
@@ -83,8 +86,13 @@ func _ready() -> void:
 	stack_button=Button.new();stack_button.text="Stack selected prefab";stack_button.focus_mode=Control.FOCUS_NONE
 	stack_button.pressed.connect(func(): stack_requested.emit(int(stack_count.value),capture_name.text));stack_row.add_child(stack_button)
 	frontage_button=Button.new();frontage_button.text="Create streets / settlement from prefabs";frontage_button.focus_mode=Control.FOCUS_NONE;column.add_child(frontage_button)
-	frontage_dialog=AcceptDialog.new();frontage_dialog.title="Street and settlement layout";frontage_dialog.ok_button_text="Create and save";add_child(frontage_dialog)
+	frontage_dialog=AcceptDialog.new();frontage_dialog.title="Street and settlement layout";frontage_dialog.ok_button_text="Create and save layout";frontage_dialog.dialog_hide_on_ok=false;add_child(frontage_dialog)
 	var frontage_fields:=VBoxContainer.new();frontage_dialog.add_child(frontage_fields)
+	frontage_name=LineEdit.new();frontage_name.placeholder_text="Settlement name";frontage_name.max_length=48;frontage_fields.add_child(frontage_name)
+	var presets:=HBoxContainer.new();frontage_fields.add_child(presets)
+	for mixed in [false,true]:
+		var button:=Button.new();button.text="Mixed neighborhood" if mixed else "Cottage neighborhood";button.focus_mode=Control.FOCUS_NONE
+		button.pressed.connect(_apply_settlement_preset.bind(mixed));presets.add_child(button);frontage_presets.append(button)
 	frontage_streets=_number(frontage_fields,"Connected streets",1,8,1,1)
 	frontage_lots=_number(frontage_fields,"Buildings per side",1,64,2,1)
 	frontage_width=_number(frontage_fields,"Street width (m)",4,64,8,2)
@@ -92,10 +100,15 @@ func _ready() -> void:
 	frontage_seed=_number(frontage_fields,"Layout seed",0,4294967295,1703,1)
 	frontage_seed.custom_minimum_size.x=180
 	frontage_mix=CheckBox.new();frontage_mix.text="Mix selected building types";frontage_fields.add_child(frontage_mix)
-	frontage_sources=ItemList.new();frontage_sources.select_mode=ItemList.SELECT_MULTI;frontage_sources.custom_minimum_size=Vector2(500,120);frontage_fields.add_child(frontage_sources)
-	frontage_sources.tooltip_text="Ctrl-click to select multiple buildings. List order and seed determine the layout."
-	var notice:=Label.new();notice.text="Uses the prefab name entered in the construction panel.\nBuilding fronts must face local +Z.\nLayout only: terrain is not graded and asphalt is not laid.";frontage_fields.add_child(notice)
-	frontage_button.pressed.connect(func(): frontage_dialog.popup_centered(Vector2i(550,520)))
+	frontage_sources=ItemList.new();frontage_sources.select_mode=ItemList.SELECT_TOGGLE;frontage_sources.custom_minimum_size=Vector2(500,160);frontage_fields.add_child(frontage_sources)
+	frontage_sources.tooltip_text="Click each building type to include or exclude it. List order and seed determine the layout."
+	var notice:=Label.new();notice.text="Click building types to include / exclude them.\nBuilding fronts must face local +Z.\nAfter creation: Survey ground, Prepare foundation, then Place prefab.";frontage_fields.add_child(notice)
+	frontage_status=Label.new();frontage_status.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;frontage_fields.add_child(frontage_status)
+	frontage_button.pressed.connect(func():
+		frontage_name.text=capture_name.text
+		frontage_status.text=""
+		if _selected_prefab<0:frontage_mix.button_pressed=true
+		frontage_dialog.popup_centered(Vector2i(570,620)))
 	frontage_dialog.confirmed.connect(_request_frontage)
 	archive_button=Button.new();archive_button.text="Archive selected personal prefab";archive_button.focus_mode=Control.FOCUS_NONE;archive_button.disabled=true
 	archive_button.pressed.connect(func(): capture_requested.emit("archive",""));column.add_child(archive_button)
@@ -130,8 +143,31 @@ func configure(assets: Array[Resource]) -> void:
 	for asset in assets: prefab.add_item(asset.resource_name)
 	frontage_sources.clear()
 	for asset in assets: frontage_sources.add_item(asset.resource_name)
+	var cottage:=false;var tower:=false
+	for asset in assets:
+		cottage=cottage or asset.resource_name=="Furnished cottage with door and windows"
+		tower=tower or asset.resource_name=="Furnished tower · 3 floors"
+	frontage_presets[0].disabled=not cottage
+	frontage_presets[1].disabled=not (cottage and tower)
+
+func _apply_settlement_preset(mixed: bool) -> void:
+	frontage_sources.deselect_all()
+	for i in frontage_sources.item_count:
+		var title: String=frontage_sources.get_item_text(i)
+		if title=="Furnished cottage with door and windows" or (mixed and title=="Furnished tower · 3 floors"):frontage_sources.select(i,false)
+	frontage_mix.button_pressed=true
+	frontage_streets.value=2;frontage_lots.value=2 if mixed else 1
+	frontage_width.value=8;frontage_gap.value=3;frontage_seed.value=1703
+	frontage_name.text="Mixed neighborhood" if mixed else "Cottage neighborhood"
+	frontage_status.text=""
 
 func _request_frontage() -> void:
+	if frontage_mix.button_pressed and frontage_sources.get_selected_items().is_empty():
+		frontage_status.text="Choose at least one building type.";return
+	if not frontage_mix.button_pressed and _selected_prefab<0:
+		frontage_status.text="Choose a building prefab or a neighborhood preset.";return
+	capture_name.text=frontage_name.text
+	frontage_dialog.hide()
 	if int(frontage_streets.value)>1:
 		var selected: PackedInt32Array=frontage_sources.get_selected_items()
 		if not frontage_mix.button_pressed: selected=PackedInt32Array([_selected_prefab])
@@ -149,7 +185,7 @@ func synchronize(active: bool,shape_id: int,material_id: int,quarter_turn: int,p
 	material.disabled=prefab_index>=0
 	stack_button.disabled=prefab_index<0
 	_selected_prefab=prefab_index
-	frontage_button.disabled=prefab_index<0
+	frontage_button.disabled=not active or frontage_sources.item_count==0
 	if not frontage_dialog.visible and prefab_index>=0 and frontage_sources.get_selected_items().is_empty(): frontage_sources.select(prefab_index)
 	survey_button.disabled=prefab_index<0 or survey_busy
 	survey_button.text="Surveying ground…" if survey_busy else "Survey ground for selected prefab"

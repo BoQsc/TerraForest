@@ -17,6 +17,14 @@ large-city or sustained-performance qualification. See
 
 ## Cottage checkpoint
 
+To create your own layout, enable development mode with **~**, open **Esc →
+Building → Create streets / settlement from prefabs**, then choose **Cottage
+neighborhood** or **Mixed neighborhood**. Name it in the dialog and click building
+types to include/exclude them; Ctrl is no longer required. Street count, density,
+width, gap and seed remain editable. **Create and save layout** creates a reusable
+prefab. Return to the world, aim at terrain, then use **Survey ground**, **Prepare
+foundation** and **Place prefab** through the existing building controls.
+
 Run **Review Buildings.cmd** from the TerraForest folder. It opens the separate
 `building_review` save at 1920×1080 with the normal 60 FPS target. An existing
 review save is reused, never replaced. If absent, the launcher prepares and checks

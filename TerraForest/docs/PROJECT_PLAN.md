@@ -1,3 +1,9 @@
+> 2026-10-15 settlement editor: visible layout naming, single-click building
+> selection and cottage/mixed presets expose the verified layout through the UI.
+> No prior prefab selection required. Empty choices stay open with feedback.
+> Preset signal/native composition reproduces 6,771 blocks / 263 attachments;
+> existing custom frontage checks pass. Evidence: evidence/settlement_presets/.
+
 > 2026-10-15 mixed gameplay route: two fresh-copy runs complete earned gathering,
 > crafting, paid construction, chest transfers, walking, driving/reversing and
 > exact restart persistence in the eight-building neighborhood. An earlier run
