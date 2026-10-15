@@ -1,0 +1,16 @@
+{
+  "requested_addon": "structures",
+  "included_addons": [
+    "player_runtime",
+    "structures",
+    "volumetric_terrain",
+    "volumetric_water",
+    "world_runtime"
+  ],
+  "asset_paths": [
+    "addons/structures/textures/terraforest",
+    "addons/world_ecosystem/woodland.gdshader"
+  ],
+  "binary_support": "Godot 4.7 Windows x86-64 single precision",
+  "qualification": "Dependency bundle; host scene contracts and clean runtime qualification remain addon-specific."
+}

@@ -28,6 +28,12 @@ func run()->void:
 	var game:=GameStub.new()
 	var menu=preload("res://addons/player_runtime/session_menu.gd").new()
 	menu.game=game;menu.message=Label.new();menu.panel=PanelContainer.new()
+	await menu.leave_to_browser()
+	check(game.terrain.saves==0 and not game.shutdown_requested and menu.message.text.begins_with("No world browser"),"unconfigured addon has no demo dependency or save side effects")
+	menu.world_browser_path="res://missing_world_browser.tscn"
+	await menu.leave_to_browser()
+	check(game.terrain.saves==0 and not menu.leaving_world,"missing host destination refuses departure before save")
+	menu.world_browser_path="res://demo/worlds.tscn"
 	game.loading_active=true
 	await menu.leave_to_browser()
 	check(game.terrain.saves==0 and not game.shutdown_requested,"loading refuses departure without touching saves")

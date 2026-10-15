@@ -16,7 +16,9 @@ collision baking. `raycast_scene(from, to, collision_mask=3, exclude=[])` also
 respects nearer scene collision while ignoring stale bodies belonging to this
 block world. See [API limits and validation](../../docs/BLOCK_PICKING_VALIDATION.md).
 
-Independent Godot 4.7 Windows x86-64 addon. Copy this directory into a project; the GDExtension registers `NativeBlockWorld` and `NativeStaticBatch`. No terrain, vegetation or other TerraForest addon is required. Native sources and both debug/release DLLs are included. Build using the repository's pinned Zig/prebuilt godot-cpp toolchain:
+Godot 4.7 Windows x86-64 addon. The native block/static-model core can be used without terrain or vegetation, but the complete addon includes scene adapters and UI scripts with additional dependencies. For the supported complete installation, extract `dist/structures.zip` at your Godot project root, retaining its `addons/` layout. Do not copy only this folder when using those adapters. The bundle declares its dependency closure in `ADDON_PACKAGE.json` and covers every file with `MANIFEST.sha256.json`.
+
+Native sources and both debug/release DLLs are included. Build using the repository's pinned Zig/prebuilt godot-cpp toolchain:
 
 ```text
 python tools/build_native.py --addon structures --target all
@@ -501,3 +503,7 @@ Combined placement establishes a history barrier: prior block undo is cleared an
 Shape 7 is a one-metre-high, one-metre-diameter twelve-sided column. Select Round column in the construction palette or development HUD. It uses existing material costs, chunk meshes, collision, picking, history, prefabs and saves. The shared immutable template has 54 vertices and 48 triangles with separate cap normals. Fully cube-enclosed columns are culled; adjacent column caps are currently conservative, with no curved-shape greedy merging or dedicated LOD. This is more expensive than a greedy cube and is intended for architectural details.
 
 Existing shape IDs and saves are unchanged. Saves containing shape 7 require this build or newer; older binaries reject the new shape. Targeted validation: `tests/block_cylinder.gd` and `tests/block_solid_samples.gd`.
+
+### Clean bundle verification
+
+`python tools/package.py --addon structures` creates the dependency archive. Run `python tools/verify_addon_bundle.py --addon structures --godot "PATH_TO_GODOT" --exercise-structures` to extract it into a fresh project, import/load all resources, and exercise seven block shapes in four rotations, rotated prefab capture/restore, windows, doors, fences, and straight/sloping guardrails. The fixture uses actual native collision, removal and restore; it has no main-project resource fallback. This verifies packaging and scoped functionality on Godot 4.7 Windows, not exported-game support, other platforms or city-scale performance.

@@ -208,7 +208,7 @@ func _ready() -> void:
 	player_hud.temporary_world=temporary_world
 	add_child(player_hud)
 	add_child(storage)
-	session_menu.game=self;add_child(session_menu)
+	session_menu.game=self;session_menu.world_browser_path="res://demo/worlds.tscn";add_child(session_menu)
 	construction_palette.history_requested.connect(_construction_history)
 	add_child(construction_palette)
 	add_child(road_palette)

@@ -1,0 +1,37 @@
+{
+  "addon": "structures",
+  "archive_sha256": "b39f299eaddce2de7164604a529f3adc0cf2d9847ef4ec2ecb864cb1a84be21c",
+  "steps": [
+    {
+      "phase": "import",
+      "exit_code": 0,
+      "ok": true
+    },
+    {
+      "phase": "load",
+      "exit_code": 0,
+      "ok": true
+    },
+    {
+      "phase": "structures",
+      "exit_code": 0,
+      "ok": true,
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\.build\\addon_structures_l3a4rjno",
+        "--fullscreen",
+        "--resolution",
+        "1920x1080",
+        "--max-fps",
+        "60",
+        "--script",
+        "res://bundle_structures.gd"
+      ]
+    }
+  ],
+  "import_frame_delay_ms": 0,
+  "resource_count": 104,
+  "structures_fixture_sha256": "d20f5b59454385aa2ccb10f3c560d4f772047355abd309f79820d45848ba8625",
+  "ok": true
+}

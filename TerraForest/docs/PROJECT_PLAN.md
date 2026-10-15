@@ -1,3 +1,10 @@
+> 2026-10-16 addon support: clean structures dependency ZIP loads104 resources
+> and passes99 graphical shape/door/window/fence/rail assertions. Fixed the
+> session menu hard-coded demo-browser dependency through a host-supplied path;
+> main-world save/browser/reopen regression and all6 package tests pass. Evidence:
+> evidence/building_bundle_current/. Distribution support remains Windows4.7;
+> exported-game, other platforms and sustained performance are unqualified.
+
 > 2026-10-16 construction coverage: native round column shape 7 is available
 > in construction UI, with existing materials/costs, chunk rendering, collision,
 > picking, editing/history and save/prefab paths. Targeted graphical and legacy

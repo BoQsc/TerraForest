@@ -140,3 +140,7 @@ reach/occlusion checks, inventory UI, native removal protection and compound sav
 The world cap is 4,096 nonempty chests; serialized size is 16 + 272*N bytes. Cold
 contents remain resident. Accounting/encoding are native; UI is event-driven.
 See [usage, verification and limits](../../docs/evidence/chest_storage/README.md).
+
+### Host-owned world browser
+
+Before adding `session_menu.gd` to the tree, the host may assign `world_browser_path` to its own PackedScene resource path. The default is empty, which omits the browser action. A missing/unconfigured destination refuses departure before saving or shutdown. TerraForest supplies its demo browser path from `demo/world.gd`; the player addon does not require that scene. The menu still requires its documented world-controller adapter contract.

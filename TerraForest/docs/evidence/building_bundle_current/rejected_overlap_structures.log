@@ -1,0 +1,103 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.3.280 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+PASS bundled native structure world prepares
+PASS bundled shape 1 rotation 0 preview
+PASS bundled shape 1 rotation 1 preview
+PASS bundled shape 1 rotation 2 preview
+PASS bundled shape 1 rotation 3 preview
+PASS bundled shape 2 rotation 0 preview
+PASS bundled shape 2 rotation 1 preview
+PASS bundled shape 2 rotation 2 preview
+PASS bundled shape 2 rotation 3 preview
+PASS bundled shape 3 rotation 0 preview
+PASS bundled shape 3 rotation 1 preview
+PASS bundled shape 3 rotation 2 preview
+PASS bundled shape 3 rotation 3 preview
+PASS bundled shape 4 rotation 0 preview
+PASS bundled shape 4 rotation 1 preview
+PASS bundled shape 4 rotation 2 preview
+PASS bundled shape 4 rotation 3 preview
+PASS bundled shape 5 rotation 0 preview
+PASS bundled shape 5 rotation 1 preview
+PASS bundled shape 5 rotation 2 preview
+PASS bundled shape 5 rotation 3 preview
+PASS bundled shape 6 rotation 0 preview
+PASS bundled shape 6 rotation 1 preview
+PASS bundled shape 6 rotation 2 preview
+PASS bundled shape 6 rotation 3 preview
+PASS bundled shape 7 rotation 0 preview
+PASS bundled shape 7 rotation 1 preview
+PASS bundled shape 7 rotation 2 preview
+PASS bundled shape 7 rotation 3 preview
+PASS bundled shapes accept all rotations and materials
+PASS bundled shape 1 rotation 0 targeting matches collision
+PASS bundled shape 1 rotation 1 targeting matches collision
+PASS bundled shape 1 rotation 2 targeting matches collision
+PASS bundled shape 1 rotation 3 targeting matches collision
+PASS bundled shape 2 rotation 0 targeting matches collision
+PASS bundled shape 2 rotation 1 targeting matches collision
+PASS bundled shape 2 rotation 2 targeting matches collision
+PASS bundled shape 2 rotation 3 targeting matches collision
+PASS bundled shape 3 rotation 0 targeting matches collision
+PASS bundled shape 3 rotation 1 targeting matches collision
+PASS bundled shape 3 rotation 2 targeting matches collision
+PASS bundled shape 3 rotation 3 targeting matches collision
+PASS bundled shape 4 rotation 0 targeting matches collision
+PASS bundled shape 4 rotation 1 targeting matches collision
+PASS bundled shape 4 rotation 2 targeting matches collision
+PASS bundled shape 4 rotation 3 targeting matches collision
+PASS bundled shape 5 rotation 0 targeting matches collision
+PASS bundled shape 5 rotation 1 targeting matches collision
+PASS bundled shape 5 rotation 2 targeting matches collision
+PASS bundled shape 5 rotation 3 targeting matches collision
+PASS bundled shape 6 rotation 0 targeting matches collision
+PASS bundled shape 6 rotation 1 targeting matches collision
+PASS bundled shape 6 rotation 2 targeting matches collision
+PASS bundled shape 6 rotation 3 targeting matches collision
+PASS bundled shape 7 rotation 0 targeting matches collision
+PASS bundled shape 7 rotation 1 targeting matches collision
+PASS bundled shape 7 rotation 2 targeting matches collision
+PASS bundled shape 7 rotation 3 targeting matches collision
+PASS bundled shapes capture and place as rotated prefab
+PASS bundled shapes restore exact records
+PASS bundled building catalogs register
+PASS bundled catalog icon resolves: Wooden door (E open / close)
+PASS bundled catalog icon resolves: Wood framed window
+PASS bundled catalog icon resolves: Metal guardrail
+PASS bundled catalog icon resolves: Wooden fence
+PASS bundled stair rail registers
+PASS bundled sheared stair rail places
+PASS bundled sloping top rail blocks passage
+PASS bundled stair rail leaves space below top bar
+PASS bundled stair rail removes
+PASS bundled removed stair rail releases collider
+PASS bundled stair rail restores
+PASS bundled restored stair rail retains shear and collision
+PASS Wood framed window placed
+PASS Wood framed window blocks passage
+PASS Wood framed window removed
+FAIL Wood framed window leaves no stale collider
+PASS Wood framed window snapshot restored
+PASS Wood framed window exact state and collision restored
+PASS Metal guardrail placed
+PASS Metal guardrail blocks passage
+PASS Metal guardrail removed
+FAIL Metal guardrail leaves no stale collider
+PASS Metal guardrail snapshot restored
+PASS Metal guardrail exact state and collision restored
+PASS Wooden fence placed
+PASS Wooden fence blocks passage
+PASS Wooden fence removed
+PASS Wooden fence leaves no stale collider
+PASS Wooden fence snapshot restored
+PASS Wooden fence exact state and collision restored
+PASS bundled door placed
+PASS bundled closed door blocks ray
+PASS bundled hinge opens
+PASS bundled open door clears passage
+PASS bundled hinge and model restore
+PASS restored bundled door closes to exact pose
+PASS restored bundled collision closes passage
+BUNDLE_STRUCTURES failures=2
+

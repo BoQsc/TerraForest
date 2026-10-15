@@ -1,6 +1,8 @@
 # SPDX-License-Identifier: 0BSD
 extends CanvasLayer
 # One entry point and dock for gameplay equipment and development authoring.
+# Optional host-owned destination; standalone addons do not depend on demo scenes.
+var world_browser_path: String=""
 var game: Node
 var opened:=false
 var workspace:=false
@@ -61,7 +63,7 @@ func _ready() -> void:
 	button(session,"Headlamp on / off",func():game.headlamp.toggle();refresh())
 	mode_button=button(session,"Development mode",toggle_developer)
 	button(session,"Save and quit",func():confirm("Save this world and quit?",func():game._notification(NOTIFICATION_WM_CLOSE_REQUEST)))
-	button(session,"World browser",func():confirm("Leave this temporary world and discard its changes?" if game.temporary_world else "Save this world and return to the world browser?",leave_to_browser))
+	if not world_browser_path.is_empty():button(session,"World browser",func():confirm("Leave this temporary world and discard its changes?" if game.temporary_world else "Save this world and return to the world browser?",leave_to_browser))
 	var equipment:=page("Toolbelt")
 	label(equipment,"Quick-use tools and items").add_theme_font_size_override("font_size",22)
 	label(equipment,"Every belt slot is selectable. Empty slots put your tools away. Materials can be held without activating an editor. Use Inventory to drag items into the ten belt slots.")
@@ -218,6 +220,8 @@ func save_world() -> void:
 	game.terrain.save_world();message.text="Saving..."
 func reload_world() -> void:set_open(false);game.terrain.reload_world(false)
 func leave_to_browser() -> void:
+	if world_browser_path.is_empty() or not ResourceLoader.exists(world_browser_path):
+		message.text="No world browser is configured by this project.";return
 	if leaving_world or game.shutdown_requested:return
 	if game.loading_active or not game.terrain.world_ready or game.terrain.stopping:
 		message.text="Wait for world loading before leaving.";return
@@ -240,7 +244,7 @@ func leave_to_browser() -> void:
 			message.text="Save did not complete. Staying in this world; retry after checking world status.";return
 	# Load the browser resource before stopping workers so a missing resource
 	# leaves the current session usable.
-	var browser=load("res://demo/worlds.tscn")
+	var browser=load(world_browser_path)
 	if browser==null:
 		leaving_world=false;panel.process_mode=Node.PROCESS_MODE_INHERIT;game.shutdown_requested=false;message.text="World browser could not be loaded.";return
 	game._close_journal()
