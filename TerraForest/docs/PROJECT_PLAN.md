@@ -1,3 +1,10 @@
+> 2026-10-15 natural cave ore: read-only survey finds exposed iron/copper without
+> authored tunnels. Actual pickaxe strikes yield2 iron/1 copper with exact native
+> reward counts and tool wear. Fresh process restores inventory and54 sampled
+> edited density values; source save unchanged. Relocated fixture, not continuous
+> discovery. HUD30/46 and153 ms reopen hitch mean no performance pass.
+> Evidence: evidence/natural_ore_gameplay/. Next coverage: entrance-to-ore walk.
+
 > 2026-10-15 persistent cave checkpoint: Play Natural Caves.cmd creates and
 > verifies a separate generator6 save, then opens ordinary gameplay preserving
 > edits. Grounded entrance pose and exact inventory survive fresh-process reopen;

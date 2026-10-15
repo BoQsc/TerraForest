@@ -1,0 +1,5 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+NATURAL_ORE { "material": 8, "surface": (722.2857, 82.38541, 399.9143), "sample": (722.2857, 81.88541, 399.9143), "capsule": 0 }
+NATURAL_ORE { "material": 9, "surface": (1457.034, 74.69663, 1455.276), "sample": (1457.034, 74.19663, 1455.276), "capsule": 16 }
+NATURAL_ORE_SURVEY failures=0

@@ -23,10 +23,13 @@ protection tests cover existing progress, failed-reopen publication and lock
 ownership. Screenshots show the exterior entrance; no new art acceptance or
 performance qualification is claimed.
 
-Remaining integration gate: mine and collect naturally exposed ore in this
-specific persistent cave world, then reopen and verify the terrain edit and
-reward together. Existing authored iron/copper mining/crafting checks and the
-60 m natural cave walk are supporting evidence, not that combined gate.
+Natural ore integration now has a passing targeted check on a disposable copy
+of this world's original preparation stage. Ordinary pickaxe strikes at two
+naturally exposed floors yielded two iron items and one copper item; exact
+inventory/tool wear and sampled edited terrain survived fresh-process reopen.
+See `evidence/natural_ore_gameplay`. The fixture relocates to the ore sites:
+a continuous entrance-to-ore discovery walk and sustained mining performance
+remain open. The existing 60 m cave walk is separate supporting evidence.
 
 Startup retained existing generated-component capture rejections while the
 world was incomplete; the final compound save and fresh reopen succeeded.
