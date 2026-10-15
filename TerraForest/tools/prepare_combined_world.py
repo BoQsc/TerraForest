@@ -4,6 +4,7 @@ import argparse
 import datetime
 import json
 import os
+import re
 import uuid
 from pathlib import Path
 from clone_world import clone_once
@@ -12,13 +13,15 @@ from run import ROOT, parse_args
 from run_godot_check import execute
 
 
-def prepare(engine, worlds, folder):
+def prepare(engine, worlds, folder, destination="combined_gameplay"):
+    if not re.fullmatch(r'[A-Za-z_][A-Za-z0-9_]{0,47}', destination):
+        raise ValueError("Invalid destination slot")
     worlds.mkdir(parents=True, exist_ok=True)
-    if (worlds / 'combined_gameplay.trw').exists():
+    if (worlds / (destination + '.trw')).exists():
         print('Existing combined gameplay save retained; nothing regenerated.')
         return 0
     # A second preparation must not race the fixed destination or reports.
-    lock = worlds / 'combined_gameplay.prepare.lock'
+    lock = worlds / (destination + '.prepare.lock')
     with lock.open('x') as handle:
         handle.write(str(os.getpid()))
     try:
@@ -43,9 +46,9 @@ def prepare(engine, worlds, folder):
             if not result['passed']:
                 print('Preparation failed; gameplay save not published. Evidence: ' + str(phase_dir))
                 return 1
-        metadata['publication'] = clone_once(worlds, slot, 'combined_gameplay')
+        metadata['publication'] = clone_once(worlds, slot, destination)
         (folder / 'run.json').write_text(json.dumps(metadata, indent=2))
-        print('Prepared and reopened. Run Play Combined Gameplay.cmd. Evidence: ' + str(folder))
+        print('Prepared and reopened slot ' + destination + '. Evidence: ' + str(folder))
         return 0
     finally:
         lock.unlink()
@@ -54,11 +57,12 @@ def prepare(engine, worlds, folder):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--godot')
+    parser.add_argument('--destination', default='combined_gameplay', help='Create only when this save slot is absent')
     args = parser.parse_args()
     config, _ = parse_args(['--godot', args.godot] if args.godot else [])
     worlds = Path(os.environ['APPDATA']) / 'Godot/app_userdata/TerraForest/worlds'
     stamp = datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')
-    return prepare(config.godot, worlds, ROOT / 'reports/combined_preparation' / stamp)
+    return prepare(config.godot, worlds, ROOT / 'reports/combined_preparation' / stamp, args.destination)
 
 
 if __name__ == '__main__':

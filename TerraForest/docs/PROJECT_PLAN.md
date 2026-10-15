@@ -1,3 +1,11 @@
+> 2026-10-15 enclosed settlement: fresh combined-world preparation now chooses
+> cottages with doors/windows and verifies their snapshots on fresh reopen.
+> Review Enclosed Settlement.cmd prepares/opens a separate exclusive save;
+> existing combined_gameplay is retained. Grading, staged placement and exact
+> disk reopen pass; inspected furnished interior. Six preparation safety tests
+> pass. Evidence: evidence/enclosed_settlement/. Whole-settlement entrance walks,
+> driving and actor routes with the new closed doors remain unqualified.
+
 > 2026-10-15 structures distribution: current dependency ZIP passes clean
 > extracted import/load (102 resources) and 12 runtime building checks: native
 > world, catalogs/icons, closed/open door collision and exact hinge/model restore.

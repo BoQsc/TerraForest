@@ -12,7 +12,7 @@ func wait_until(predicate:Callable,seconds:int=30)->bool:
  return predicate.call()
 func signature()->Dictionary:
  var result:Dictionary={"blocks":Marshalls.raw_to_base64(game.structures.blocks.capture_snapshot()),"roads":Marshalls.raw_to_base64(game.road_palette.capture_anchors())}
- for asset in ["furniture/table/v1","furniture/chair/v1","furniture/shelf/v1","storage/wooden_chest/v1"]:
+ for asset in ["furniture/table/v1","furniture/chair/v1","furniture/shelf/v1","storage/wooden_chest/v1","architecture/wooden_door/v1","architecture/wooden_window/v1"]:
   var batch=game.structures.model(asset)
   result[asset]=Marshalls.raw_to_base64(batch.capture_snapshot())
  return result
@@ -38,7 +38,7 @@ func run()->void:
   game.structure_mode=true;game.structure_rotation=0
   var source:=-1
   for i in game.structure_prefabs.size():
-   if game.structure_prefabs[i].resource_name=="Furnished cottage with storage":source=i;break
+   if game.structure_prefabs[i].resource_name=="Furnished cottage with door and windows":source=i;break
   if not require(source>=0,"registered furnished cottage is available"):await finish(false);return
   game.prefab_library.directory="user://checkpoint_prefabs/"+game.terrain.save_slot
   var count:int=game.structure_prefabs.size()

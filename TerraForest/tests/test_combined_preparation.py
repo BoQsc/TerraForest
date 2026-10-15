@@ -9,6 +9,23 @@ import prepare_combined_world as prep
 
 
 class PreparationTests(unittest.TestCase):
+    def test_invalid_destination_rejected_before_writes(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            for name in ('../world', '', 'x'*49, 'é'):
+                with self.assertRaises(ValueError):prep.prepare('unused', root, root/'report', name)
+            self.assertEqual(list(root.iterdir()), [])
+
+    def test_custom_destination_is_exclusive(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            save = root/'review.trw'
+            save.write_bytes(b'review progress')
+            with patch.object(prep, 'execute') as run:
+                self.assertEqual(prep.prepare('unused', root, root/'report', 'review'), 0)
+                run.assert_not_called()
+            self.assertEqual(save.read_bytes(), b'review progress')
+
     def test_existing_progress_never_runs_generation(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
