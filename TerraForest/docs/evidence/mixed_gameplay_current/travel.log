@@ -1,0 +1,39 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.3.280 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] World loaded
+[TerrainRewrite] World loaded
+[terrain-hitch] receive 159.9 ms at 3131
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+PASS earned settlement opens for movement
+PASS walk from saved chest position into central aisle
+PASS walk within reach of enclosed cottage door
+[TerrainRewrite] Door opened
+PASS interact with generated cottage door before departure
+PASS walk through doorway and down stairs to street without jumping
+TRAVEL_STREET (800.0, 47.0, 1310.0) -> (851.0, 47.0, 1310.0)
+PASS walk along street to vehicle departure point
+TRAVEL_VEHICLE Vehicle placed; preparing visuals · F5 saves world
+PASS normal vehicle placement on authored street
+Visual vehicle dents repaired.
+PASS walk up to placed car
+PASS enter nearby car
+PASS authored street supports a meaningful short drive
+PASS drive outbound and brake using keyboard input
+REVERSE_START { "position": (825.5388, 47.6258, 1310.0), "velocity": (0.07802, 0.00015, 0.0), "controls": true, "W": false, "S": true, "freeze": false, "sleeping": false, "waiting": false, "loaded_wheels": 4, "normal": true, "drive_speed": 0.07810790836811, "app_focused": true, "window_focused": true, "physics_frame": 1136, "time_ms": 18823 }
+REVERSE_SAMPLE { "position": (824.861, 47.6258, 1310.0), "velocity": (-2.612907, 0.000149, -0.0), "controls": true, "W": false, "S": true, "freeze": false, "sleeping": false, "waiting": false, "loaded_wheels": 4, "normal": true, "drive_speed": -2.61584997177124, "app_focused": true, "window_focused": true, "physics_frame": 1197, "time_ms": 19339 }
+REVERSE_SAMPLE { "position": (822.9027, 47.6258, 1310.0), "velocity": (-4.856263, -0.000144, -0.0), "controls": true, "W": false, "S": true, "freeze": false, "sleeping": false, "waiting": false, "loaded_wheels": 4, "normal": true, "drive_speed": -4.86173248291016, "app_focused": true, "window_focused": true, "physics_frame": 1259, "time_ms": 19856 }
+REVERSE_SAMPLE { "position": (819.8957, 47.62578, 1310.0), "velocity": (-6.692785, -0.000221, -0.000001), "controls": true, "W": false, "S": true, "freeze": false, "sleeping": false, "waiting": false, "loaded_wheels": 4, "normal": true, "drive_speed": -6.70032262802124, "app_focused": true, "window_focused": true, "physics_frame": 1321, "time_ms": 20373 }
+REVERSE_SAMPLE { "position": (816.0302, 47.62574, 1310.0), "velocity": (-8.196248, -0.000226, -0.000001), "controls": true, "W": false, "S": true, "freeze": false, "sleeping": false, "waiting": false, "loaded_wheels": 4, "normal": true, "drive_speed": -8.20547866821289, "app_focused": true, "window_focused": true, "physics_frame": 1383, "time_ms": 20889 }
+REVERSE_SAMPLE { "position": (811.4617, 47.62571, 1310.0), "velocity": (-9.427058, -0.000227, -0.000001), "controls": true, "W": false, "S": true, "freeze": false, "sleeping": false, "waiting": false, "loaded_wheels": 4, "normal": true, "drive_speed": -9.43767547607422, "app_focused": true, "window_focused": true, "physics_frame": 1445, "time_ms": 21406 }
+REVERSE_END { "position": (808.9547, 47.62569, 1310.0), "velocity": (-9.956041, -0.000222, -0.000001), "controls": true, "W": false, "S": true, "freeze": false, "sleeping": false, "waiting": false, "loaded_wheels": 4, "normal": true, "drive_speed": -9.96725463867188, "app_focused": true, "window_focused": true, "physics_frame": 1476, "time_ms": 21656 }
+PASS reverse to departure point and stop without pose correction
+TRAVEL_DISTANCE outbound=12.0230712890625 return_error=2.54791331291199
+TRAVEL_EXIT On foot · E nearby to enter vehicle
+PASS exit stopped car restores walking
+PASS walk from parked car back to cottage approach
+PASS walk back up stairs through doorway without jumping
+PASS earned inventory and chest contents unchanged after travel
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+PASS ordinary compound save completes
+COMBINED_RESOURCE_ROUTE failures=0

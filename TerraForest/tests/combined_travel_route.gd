@@ -2,7 +2,7 @@
 extends "res://tests/combined_resource_route.gd"
 var motion_rows:Array=[]
 func vehicle_state(car: RigidBody3D) -> Dictionary:
- return {"position":car.position,"velocity":car.linear_velocity,"controls":car.controls_enabled,"W":Input.is_key_pressed(KEY_W),"S":Input.is_key_pressed(KEY_S),"freeze":car.freeze,"sleeping":car.sleeping,"waiting":car.streaming.waiting,"loaded_wheels":car.loaded_wheels,"normal":car._normal_mode,"drive_speed":car._drive_speed}
+ return {"position":car.position,"velocity":car.linear_velocity,"controls":car.controls_enabled,"W":Input.is_key_pressed(KEY_W),"S":Input.is_key_pressed(KEY_S),"freeze":car.freeze,"sleeping":car.sleeping,"waiting":car.streaming.waiting,"loaded_wheels":car.loaded_wheels,"normal":car._normal_mode,"drive_speed":car._drive_speed,"app_focused":game.app_focused,"window_focused":DisplayServer.window_is_focused(),"physics_frame":Engine.get_physics_frames(),"time_ms":Time.get_ticks_msec()}
 func walk_to(target:Vector3,seconds:float=8.0)->bool:
  var deadline:int=Time.get_ticks_msec()+int(seconds*1000)
  while Time.get_ticks_msec()<deadline:

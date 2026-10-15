@@ -1,3 +1,10 @@
+> 2026-10-16 combined regression after native building changes: gather/craft/
+> paid-build/chest, cottage walking,12 m drive/brake/reverse/return, and fresh
+> compound reopen pass on a source-preserving clone. Reverse failure did not
+> recur and remains unexplained; no vehicle fix claimed. Terrain receive hitches
+>133–160 ms remain. Evidence: evidence/mixed_gameplay_current/. Stop repeating
+> this unchanged route; continue uncovered project work.
+
 > 2026-10-16 local building readiness: native queries use addressed chunk-map
 > lookups when cheaper than scanning authored records. 1000 local queries in a
 > 512-chunk world perform1000 probes; wide/negative/transformed/dirty/unloaded
