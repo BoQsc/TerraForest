@@ -177,3 +177,20 @@ cost can exceed a soft quantum; it is not a hard4ms execution guarantee.
 Remaining: shared-worker latency under distant mesh load, broader visuals and
 sustained runtime qualification. Local curved compute scaling remains bounded
 in the8-sphere probe, but the entire performance objective is not complete.
+
+2026-10-15 isolate immutable cached preparation from terrain worker queue:
+Building-only patches already contain immutable terrain contacts and private
+building hulls. They now run native preparation in one Godot WorkerThreadPool
+task per water world, held alive until completion. No live terrain/core/store/
+scene/inventory access occurs there. Terrain-dependent requests keep the terrain
+worker protocol. Main-thread publication keeps epoch/revision/building guards.
+Superseding edits atomically cancel between cells; exit cancels and joins before
+releasing task data. No new water representation, mesher or simulation.
+Actual dense-region test now also supersedes a dispatched sphere before accepting
+its result and verifies no stale water removal; it tears down with a dispatched
+task. Both checks pass, as do independent full reconstruction and normal compound
+disk save/reopen. Release cached-fixture checks pass. Both DLL targets installed.
+Latest task-start wait max0.059ms; preceding shared worker waits reached147ms.
+Edit publication64.7-148.1ms across this run. Pool latency on other workloads is
+not guaranteed. Remaining: broader long-run/frame/scale qualification and visual
+coverage; terrain-dependent water updates still share the terrain worker queue.

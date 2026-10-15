@@ -50,6 +50,7 @@ func run():
  check(game.has_meta("water_bucket_review_ready"),"Actual water world ready")
  if failures:await finish();return
  game.terrain.lake_slice_profiled.connect(slice_cost)
+ game.lakes.cached_preparation_profiled.connect(slice_cost)
  var entry:Dictionary=game.lakes._lakes.values()[0]
  var cell:=Vector3i(floori(entry.seed.x),floori(entry.level)-1,floori(entry.seed.z))
  var bounds:=AABB(Vector3(cell),Vector3.ONE)

@@ -32,6 +32,7 @@ func run():
  check(game.has_meta("water_bucket_review_ready"),"Actual water world ready")
  if failures:await finish();return
  game.terrain.lake_slice_profiled.connect(slice_cost)
+ game.lakes.cached_preparation_profiled.connect(slice_cost)
  game.terrain.backend.enable_diagnostics()
  game.set_process(false);game.set_physics_process(false);game._clear_motion()
  var entry:Dictionary=game.lakes._lakes.values()[0]
@@ -61,6 +62,22 @@ func run():
   results.edits.append(await timed_edit(cell,0,"remove_%d"%cycle))
   results.edits.append(await timed_edit(cell,word,"replace_%d"%cycle))
   check(game.lakes.statistics().structure_contact_bytes==cache,"Repeated edit retains bounded occupancy cache")
+ # Supersede a dispatched cached task before its result can publish.
+ game.structures.blocks.set_cells(PackedInt32Array([cell.x,cell.y,cell.z,0]))
+ check(await ready_water(),"Cancellation fixture is empty")
+ var before_cancel:int=game.lakes.statistics().water_ml
+ game.structures.blocks.set_cells(PackedInt32Array([cell.x,cell.y,cell.z,word]))
+ var task_deadline:=Time.get_ticks_msec()+2000
+ while game.lakes._cached_task<0 and Time.get_ticks_msec()<task_deadline:await process_frame
+ check(game.lakes._cached_task>=0,"Cached task dispatched before superseding edit")
+ game.structures.blocks.set_cells(PackedInt32Array([cell.x,cell.y,cell.z,0]))
+ check(await ready_water(),"Superseding edit drains stale task and publishes")
+ check(game.lakes.statistics().water_ml==before_cancel and game.structures.blocks.get_cell(cell)==0,"Stale sphere result cannot delete water after removal")
+ # Tear down with a dispatched task: exit must cancel/join before freeing data.
+ game.structures.blocks.set_cells(PackedInt32Array([cell.x,cell.y,cell.z,word]))
+ task_deadline=Time.get_ticks_msec()+2000
+ while game.lakes._cached_task<0 and Time.get_ticks_msec()<task_deadline:await process_frame
+ check(game.lakes._cached_task>=0,"Cached task exists for shutdown check")
  await finish()
 func finish():
  results.failures=failures

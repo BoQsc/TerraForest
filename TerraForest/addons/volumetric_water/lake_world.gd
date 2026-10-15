@@ -2,6 +2,7 @@
 extends Node3D
 const PublicationBudget=preload("res://addons/volumetric_water/publication_budget.gd")
 # Native static storage/meshing. Script only coordinates worker hand-off, scene and UI.
+signal cached_preparation_profiled(worker_ms:float,queue_ms:float,status:int)
 signal bucket_completed(slot:int)
 signal interaction_finished(message:String)
 signal catalog_changed
@@ -19,6 +20,9 @@ var _catalog:RefCounted
 var water:RefCounted
 var _builder:RefCounted
 var _busy:=false
+var _cached_task:int=-1
+var _cached_job:Dictionary={}
+var _builder_reused:=false
 var _revision:=-1
 var _token:=0
 var _epoch:=-1
@@ -88,7 +92,7 @@ func _ready() -> void:
  # the committed terrain worker samples; they never flow against stale solids.
  # Accepted terrain occupancy patches remove water replaced by solid terrain.
  if blocks!=null:
-  blocks.cells_changed.connect(func(bounds:AABB):water.invalidate_buildings(blocks.global_transform*bounds);_builder=null)
+  blocks.cells_changed.connect(func(bounds:AABB):water.invalidate_buildings(blocks.global_transform*bounds);_discard_builder())
   blocks.changed.connect(func():_structure_revision+=1)
  _epoch=terrain.epoch
 func add_lake(origin:Vector3,cells:Vector3i,spacing:float,level:float,seed:Vector3) -> int:
@@ -105,14 +109,15 @@ func remove_lake(id:int) -> void:
 func clear() -> void:
  _lakes.clear();_filling_id=0;_pending_bucket.clear();_pending_dev.clear()
  for mesh:MeshInstance3D in _meshes.values():mesh.queue_free()
- _meshes.clear();_mesh_faces.clear();_staged_meshes.clear();_mesh_batch_id=0;_published_mesh_batch_id=0;water=ClassDB.instantiate("NativeRegionalWater");_builder=null
+ _meshes.clear();_mesh_faces.clear();_staged_meshes.clear();_mesh_batch_id=0;_published_mesh_batch_id=0;water=ClassDB.instantiate("NativeRegionalWater");_discard_builder()
  _have_bounds=false;_last_changes=0
 func _invalidate(bounds:AABB) -> void:
  water.invalidate(bounds)
- _builder=null
+ _discard_builder()
 func _process(delta:float) -> void:
+ _poll_cached_task()
  if terrain==null or not terrain.world_ready:return
- if _epoch!=terrain.epoch:_epoch=terrain.epoch;_builder=null
+ if _epoch!=terrain.epoch:_epoch=terrain.epoch;_discard_builder()
  var before:Dictionary=water.statistics()
  if _filling_id!=0 and not before.fill_active:
   var id:=_filling_id;_filling_id=0
@@ -132,17 +137,24 @@ func _process(delta:float) -> void:
   var request:Dictionary=water.next_request()
   if not request.is_empty():
    if _builder==null or _revision!=terrain.published_revision:
-    _builder=ClassDB.instantiate("NativeWaterTerrainPatch");_builder.configure(request.coordinate);_revision=terrain.published_revision
+    _builder=ClassDB.instantiate("NativeWaterTerrainPatch");_builder.configure(request.coordinate);_builder_reused=false;_revision=terrain.published_revision
     _builder_structure_revision=_structure_revision
     if blocks!=null:
      var hull_started:=Time.get_ticks_usec()
      var solids:Dictionary=blocks.solid_hulls(AABB(Vector3(request.coordinate)*4,Vector3(4,4,4)))
-     if not solids.ok or not _builder.set_structure_hulls(solids.hulls):_builder=null
-     if _builder!=null:water.reuse_building_occupancy(_builder)
+     if not solids.ok or not _builder.set_structure_hulls(solids.hulls):_discard_builder()
+     if _builder!=null:_builder_reused=water.reuse_building_occupancy(_builder)
      _hull_snapshot_us=Time.get_ticks_usec()-hull_started
    if _builder!=null:
     _token=_builder.get_instance_id()
-    if terrain.request_lake_slice(_builder,_token):_busy=true
+    if _builder_reused:
+     _cached_job={"builder":_builder,"token":_token,"epoch":terrain.epoch,"revision":_revision,"submitted_us":Time.get_ticks_usec()}
+     _cached_task=WorkerThreadPool.add_task(_builder.prepare_cached,false,"Water cached building occupancy")
+     if _cached_task>=0:_busy=true
+     else:
+      _cached_job={}
+      if terrain.request_lake_slice(_builder,_token):_busy=true
+    elif terrain.request_lake_slice(_builder,_token):_busy=true
  if not _pending_bucket.is_empty():
   var p:=_pending_bucket
   var result:Dictionary=_transfer_bucket(p.from,p.to,p.pour,p.inventory,p.slot,p.revision)
@@ -201,17 +213,32 @@ func _publish_meshes() -> void:
    _mesh_commit_us=Time.get_ticks_usec()-commit_started;_mesh_max_commit_us=maxi(_mesh_max_commit_us,_mesh_commit_us)
   if Time.get_ticks_usec()-mesh_started>=PublicationBudget.SOFT_TIME_US:break
  _mesh_publish_us=Time.get_ticks_usec()-mesh_started;_mesh_max_publish_us=maxi(_mesh_max_publish_us,_mesh_publish_us)
+func _discard_builder() -> void:
+ if not _cached_job.is_empty():_cached_job.builder.cancel_cached()
+ _builder=null
+func _poll_cached_task() -> void:
+ if _cached_task<0 or not WorkerThreadPool.is_task_completed(_cached_task):return
+ WorkerThreadPool.wait_for_task_completion(_cached_task)
+ var job:=_cached_job;var info:Dictionary=job.builder.statistics()
+ _cached_task=-1;_cached_job={}
+ cached_preparation_profiled.emit(info.cached_worker_us/1000.0,maxi(0,info.cached_started_us-job.submitted_us)/1000.0,info.status)
+ _slice_ready(job.token,info.status,job.epoch,job.revision)
+func _exit_tree() -> void:
+ if _cached_task>=0:
+  _cached_job.builder.cancel_cached()
+  WorkerThreadPool.wait_for_task_completion(_cached_task)
+  _cached_task=-1;_cached_job={}
 func _slice_ready(token:int,status:int,epoch_id:int,revision:int) -> void:
  if token!=_token:return
  _busy=false
- if _builder==null or _builder_structure_revision!=_structure_revision or epoch_id!=terrain.epoch or revision!=terrain.published_revision or terrain.pending_edit or status==-4:_builder=null;return
+ if _builder==null or _builder_structure_revision!=_structure_revision or epoch_id!=terrain.epoch or revision!=terrain.published_revision or terrain.pending_edit or status==-4:_discard_builder();return
  if status==0:return
  if status==1:
   var accept_started:=Time.get_ticks_usec()
   if not water.accept_patch(_builder):terrain.message_changed.emit("Water occupancy cache budget reached; quantities retained")
   _accept_patch_us=Time.get_ticks_usec()-accept_started
  else:terrain.message_changed.emit("Water terrain sampling failed; quantities retained")
- _builder=null
+ _discard_builder()
 func _transfer_bucket(from:Vector3,to:Vector3,pour:bool,inventory:RefCounted,slot:int,revision:int)->Dictionary:
  var started:=Time.get_ticks_usec()
  var result:Dictionary=water.transfer_bucket(from,to,pour,inventory,slot,revision)

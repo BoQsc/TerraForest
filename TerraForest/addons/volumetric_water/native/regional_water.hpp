@@ -9,6 +9,7 @@
 #include <godot_cpp/variant/packed_vector3_array.hpp>
 #include <godot_cpp/variant/packed_vector2_array.hpp>
 #include <vector>
+#include <atomic>
 #include <array>
 #include <deque>
 #include <map>
@@ -32,6 +33,8 @@ class NativeWaterTerrainPatch : public godot::RefCounted {
     std::array<uint16_t,512> floor{},ceiling{};
     std::vector<std::vector<WaterSolidClip::Plane>> structure_hulls;
     std::shared_ptr<StructureWaterContacts> structures;
+    std::atomic<bool> cached_cancelled{false};
+    uint64_t cached_started_us=0,cached_worker_us=0;
     bool terrain_prepared=false,structure_only=false;
     godot::AABB structure_edit_bounds;
     int structure_cursor=0;
@@ -43,6 +46,8 @@ public:
     bool configure(const godot::Vector3i &coordinate);
     bool set_structure_hulls(const godot::Array &hulls);
     int64_t sample_terrain(godot::Object *core,int64_t budget,int64_t rev,int64_t cancel);
+    void prepare_cached();
+    void cancel_cached();
     godot::Dictionary statistics() const;
 };
 

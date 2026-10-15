@@ -22,6 +22,8 @@ void NativeWaterTerrainPatch::_bind_methods(){
     ClassDB::bind_method(D_METHOD("set_structure_hulls","hulls"),&NativeWaterTerrainPatch::set_structure_hulls);
     ClassDB::bind_method(D_METHOD("sample_terrain","core","budget","revision","epoch"),&NativeWaterTerrainPatch::sample_terrain);
     ClassDB::bind_method(D_METHOD("statistics"),&NativeWaterTerrainPatch::statistics);
+    ClassDB::bind_method(D_METHOD("prepare_cached"),&NativeWaterTerrainPatch::prepare_cached);
+    ClassDB::bind_method(D_METHOD("cancel_cached"),&NativeWaterTerrainPatch::cancel_cached);
 }
 bool NativeWaterTerrainPatch::configure(const Vector3i &p){
     if(status!=-1||p.x<0||p.x>=500||p.z<0||p.z>=500||p.y<0||p.y>=64)return false;
@@ -44,6 +46,7 @@ int64_t NativeWaterTerrainPatch::prepare_structures(){
     if(!structures)structures=std::make_shared<StructureWaterContacts>();
     const uint64_t start=Time::get_singleton()->get_ticks_usec();
     while(structure_cursor<512){
+        if(cached_cancelled.load(std::memory_order_relaxed))return status=-4;
         int i=structure_cursor++,x=i%8,y=(i/8)%8,z=i/64;
         if(structure_only){
             Vector3 origin=Vector3(coord)*4+Vector3(x,y,z)*.5;
@@ -164,7 +167,17 @@ int64_t NativeWaterTerrainPatch::sample_terrain(Object *core,int64_t budget,int6
     boundary=PackedByteArray();terrain_prepared=true;
     return prepare_structures();
 }
-Dictionary NativeWaterTerrainPatch::statistics() const {Dictionary d;d["status"]=status;d["coordinate"]=coord;d["sampled_nodes"]=cursor;return d;}
+void NativeWaterTerrainPatch::cancel_cached(){cached_cancelled.store(true,std::memory_order_relaxed);}
+void NativeWaterTerrainPatch::prepare_cached(){
+    cached_started_us=Time::get_singleton()->get_ticks_usec();
+    if(!structure_only||!terrain_prepared||status!=0){status=-2;return;}
+    // Immutable cached terrain and private hulls only: no live terrain core,
+    // world store, scene tree or inventory access from the pool worker.
+    while(status==0)prepare_structures();
+    cached_worker_us=Time::get_singleton()->get_ticks_usec()-cached_started_us;
+}
+Dictionary NativeWaterTerrainPatch::statistics() const {Dictionary d;d["status"]=status;d["coordinate"]=coord;d["sampled_nodes"]=cursor;d["cached_started_us"]=int64_t(cached_started_us);d["cached_worker_us"]=int64_t(cached_worker_us);return d;}
+
 
 void NativeRegionalWater::_bind_methods(){
     ClassDB::bind_method(D_METHOD("cell_geometry","point"),&NativeRegionalWater::cell_geometry);
