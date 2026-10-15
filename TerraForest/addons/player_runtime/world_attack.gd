@@ -36,10 +36,10 @@ func target() -> Dictionary:
 			var id: int=collection.placement_for_body(hit.rid)
 			if id>0:return {"kind":"model","key":"model:%s:%d"%[asset,id],"id":id,"collection":collection,"health":90,"material":"wood" if "wood" in asset or "furniture" in asset or "storage" in asset else "other","name":"Object"}
 	if collider!=null and game.actors.pool!=null and collider.get_parent()==game.actors.pool:
-		var query: Dictionary=game.actors.store.query_sphere_nearest(collider.global_position,0.01,1,64)
-		if query.ok and query.complete and query.ids.size()==1:
-			var id: int=game.actors.store.persistent_id(query.ids[0])
-			return {"kind":"actor","key":"actor:%d"%id,"id":id,"handle":query.ids[0],"health":100,"material":"other","name":"Actor"}
+		var handle: int=collider.entity_handle(game.actors.store)
+		if handle!=0:
+			var id: int=game.actors.store.persistent_id(handle)
+			return {"kind":"actor","key":"actor:%d"%id,"id":id,"handle":handle,"health":100,"material":"other","name":"Actor"}
 	var vehicles=game.world_vehicle
 	var vehicle_id: int=vehicles.car_identity if collider!=null and collider==vehicles.car else 0
 	if vehicles.fleet_enabled and collider!=null:

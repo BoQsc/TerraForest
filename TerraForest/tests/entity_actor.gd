@@ -18,6 +18,10 @@ func run() -> void:
 	var actor: CharacterBody3D=ClassDB.instantiate("NativeEntityActor")
 	var collider:=CollisionShape3D.new();var shape:=CapsuleShape3D.new();shape.radius=0.35;shape.height=1.8;collider.shape=shape;actor.add_child(collider);world.add_child(actor)
 	check(actor.bind_entity(store,id),"near-field proxy binds persistent store record")
+	check(actor.entity_handle(store)==id,"body exposes its bound handle without a position query")
+	var foreign: RefCounted=ClassDB.instantiate("NativeEntityStore");foreign.configure(2)
+	foreign.spawn(Vector3(0,1,0),Vector3.ZERO)
+	check(actor.entity_handle(foreign)==0 and actor.entity_handle(null)==0,"foreign or absent authority cannot resolve body identity")
 	for i in 120:
 		await physics_frame
 		actor.tick(Vector3(10,1,0),1.0/60,true)
@@ -34,6 +38,11 @@ func run() -> void:
 	store.step(1.0/60)
 	check(store.statistics().last_step_visited==0,"100000 distant stationary records require no kinematic iteration")
 	store.despawn(id);before=actor.position
+	check(actor.entity_handle(store)==0,"despawn invalidates the body identity immediately")
+	var replacement: int=store.spawn(before,Vector3.ZERO)
+	check(replacement!=id and actor.entity_handle(store)==0,"slot reuse cannot retarget the old body")
+	check(actor.bind_entity(store,replacement) and actor.entity_handle(store)==replacement,"explicit rebind adopts the replacement identity")
+	store.despawn(replacement)
 	check(not actor.tick(Vector3.ZERO,1.0/60,true) and actor.position==before,"despawned handle stops proxy movement")
 	world.free();await process_frame
 	DirAccess.make_dir_recursive_absolute("res://reports")

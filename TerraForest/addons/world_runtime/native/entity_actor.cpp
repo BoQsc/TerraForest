@@ -11,6 +11,13 @@ namespace terraforest {
 void NativeEntityActor::_bind_methods() {
     ClassDB::bind_method(D_METHOD("bind_entity","store","handle"),&NativeEntityActor::bind_entity);
     ClassDB::bind_method(D_METHOD("tick","target","delta","collision_ready"),&NativeEntityActor::tick);
+    ClassDB::bind_method(D_METHOD("entity_handle","store"),&NativeEntityActor::entity_handle);
+}
+int64_t NativeEntityActor::entity_handle(const Ref<NativeEntityStore> &store) const {
+    // The hit proxy already owns identity. Never infer it from position or
+    // expose a recycled handle, detached proxy or another world's store.
+    return is_inside_tree() && store_.is_valid() && store==store_ &&
+        store_->contains(handle_) ? handle_ : 0;
 }
 bool NativeEntityActor::bind_entity(const Ref<NativeEntityStore> &store,int64_t handle) {
     if(!is_inside_tree()||store.is_null()||!store->contains(handle))return false;

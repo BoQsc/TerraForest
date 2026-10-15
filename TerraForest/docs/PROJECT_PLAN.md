@@ -1,3 +1,10 @@
+> 2026-10-15 interacting-entity identity fix: attacks now resolve the actual
+> hit native body directly, without a capped position lookup. An actual-world
+> 80-coincident-record failure now passes; only the hit actor is destroyed.
+> Debug/release checks reject foreign stores and stale/reused handles. Evidence:
+> evidence/actor_attack_identity/. Crowd avoidance and population qualification
+> remain open; water unchanged.
+
 > 2026-10-15 settlement travel checkpoint: existing road authoring creates a
 > 112 m extension; normal vehicle input drives 113.90 m including braking across
 > seven terrain regions. Fresh reopen restores road entrances, vehicle and saved

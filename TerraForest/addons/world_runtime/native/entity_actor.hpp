@@ -24,6 +24,7 @@ public:
     double arrival_distance=.15;
     uint64_t transform_us=0,motion_us=0,store_us=0;
     bool bind_entity(const godot::Ref<NativeEntityStore> &store,int64_t handle);
+    int64_t entity_handle(const godot::Ref<NativeEntityStore> &store) const;
     bool tick(const godot::Vector3 &target,double delta,bool collision_ready);
 };
 }
