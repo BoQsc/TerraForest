@@ -33,6 +33,11 @@ void fragment() {
     behind.xyz /= behind.w;
     // Distance through the water along this view ray, not nonlinear depth.
     float thickness = clamp(length(behind.xyz) - length(VERTEX), 0.0, 40.0);
+    // From inside the volume, submerged side/bottom exits reveal the opaque
+    // scene already shaded by the underwater camera. Re-applying a surface
+    // reflection here turns the terrain-contact tessellation into bright bands.
+    bool submerged_exit = !FRONT_FACING && surface_world_normal.y < 0.5;
+    if (submerged_exit) thickness = 0.0;
     float transmission = exp(-absorption * thickness);
     // At solid contact, the boundary converges to the already rendered terrain.
     // Fade surface lighting as well as tint; otherwise closed contact faces

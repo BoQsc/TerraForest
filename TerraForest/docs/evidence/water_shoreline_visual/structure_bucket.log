@@ -1,0 +1,78 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.3.280 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] New world
+[TerrainRewrite] New world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+[TerrainRewrite] Preparing your finite lake; terrain and water are being built
+[TerrainRewrite] Mined resources added to inventory
+[TerrainRewrite] Lake ready · temporary world
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Bucket review · disposable world
+PASS Actual bucket world ready
+PASS Construct bucket-test shape
+PASS Building occupancy ready for bucket
+PASS Bucket starts empty
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Bucket filled: one water unit (1 m3)
+PASS Bucket edit finishes publishing
+PASS Normal left click collects exactly one unit beside building
+PASS Scoop leaves building interior dry
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Placed one water unit (1 m3)
+PASS Bucket edit finishes publishing
+PASS Normal right click returns exactly one unit beside building
+PASS Returned water respects solid and refills adjacent space
+PASS Construct bucket-test shape
+PASS Building occupancy ready for bucket
+PASS Bucket starts empty
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Bucket filled: one water unit (1 m3)
+PASS Bucket edit finishes publishing
+PASS Normal left click collects exactly one unit beside building
+PASS Scoop leaves building interior dry
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Placed one water unit (1 m3)
+PASS Bucket edit finishes publishing
+PASS Normal right click returns exactly one unit beside building
+PASS Returned water respects solid and refills adjacent space
+PASS Construct bucket-test shape
+PASS Building occupancy ready for bucket
+PASS Bucket starts empty
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Bucket filled: one water unit (1 m3)
+PASS Bucket edit finishes publishing
+PASS Normal left click collects exactly one unit beside building
+PASS Scoop leaves building interior dry
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Placed one water unit (1 m3)
+PASS Bucket edit finishes publishing
+PASS Normal right click returns exactly one unit beside building
+PASS Returned water respects solid and refills adjacent space
+PASS Place post for edit-history check
+PASS Post replacement publishes
+PASS Undo constructed post
+PASS Undo occupancy publishes
+PASS Undo removes post without restoring deleted water
+PASS Redo constructed post
+PASS Redo occupancy publishes
+PASS Redo keeps solid interior dry
+PASS Unload authored building region
+PASS Unloading solids does not erase water occupancy cache
+PASS Reload unchanged building region
+PASS Paging unchanged region preserves exact water state
+PASS Remove post before region replacement
+PASS Post removal cache ready
+PASS Replace resident region with saved post
+PASS Resident replacement invalidates water occupancy
+PASS Resident replacement occupancy publishes
+PASS Restored resident post excludes water
+[TerrainRewrite] Temporary test world: save skipped
+WATER_STRUCTURE_BUCKET failures=0

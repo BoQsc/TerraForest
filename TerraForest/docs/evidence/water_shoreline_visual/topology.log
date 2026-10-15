@@ -1,0 +1,3 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+WATER_SURFACE_TOPOLOGY {"degenerate_triangles":0,"failures":0,"longest_edge_m":0.362593919038773,"nonmanifold_edges":0,"same_direction_pairs":0,"scope":"Exact edge conformity of the complete captured material envelope; unpaired edges may include T-junctions and require geometric diagnosis.","signed_volume_m3":-534.849556427299,"triangles":21056,"unmatched_edge_length_m":0.0,"unmatched_midpoints_1mm":0,"unpaired_edges":0,"water_ml":559128094}

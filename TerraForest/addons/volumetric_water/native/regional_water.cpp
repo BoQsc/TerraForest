@@ -117,6 +117,12 @@ int64_t NativeWaterTerrainPatch::sample_terrain(Object *core,int64_t budget,int6
         int i=x+8*y+64*z;
         floor[i]=uint16_t(std::clamp(int(std::ceil(lo)),0,500));
         ceiling[i]=uint16_t(std::clamp(int(std::floor(hi)),int(floor[i]),500));
+        // The four-column intersection may be empty even when a sloping
+        // floor leaves a large triangular air wedge in this cell. Preserve
+        // that shaped interval; explicit cubes are closed separately below.
+        float corners[8];for(int c=0;c<8;++c)corners[c]=density[x+(c&1)+9*(y+((c>>1)&1))+81*(z+((c>>2)&1))];
+        const auto shaped=WaterCellProfile::make(corners,true,floor[i],ceiling[i]);
+        if(shaped.cut&&shaped.capacity()>0){floor[i]=0;ceiling[i]=500;}
         if(coord.y*8+y<2||coord.y*8+y>=509)floor[i]=ceiling[i]=500;
     }
     // Explicit one-metre terrain cubes are separate from smooth density.
@@ -1074,7 +1080,7 @@ NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool s
     constexpr int N=16,S=N+2,V=N+1;
     constexpr float STEP=.25f,BAND=.25f;
     struct Node {float density=BAND;Vector3i owner;bool contact=false;};
-    struct Vertex {int cx,cy,cz;unsigned mask;Vector3 position;};
+    struct Vertex {int cx,cy,cz;unsigned mask;Vector3 position,normal;};
     std::array<Node,S*S*S> field;
     std::array<int,V*V*V> ids;ids.fill(-1);
     std::vector<Vertex> vertices;vertices.reserve(512);
@@ -1119,7 +1125,7 @@ NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool s
         Vector3 p((base.x*2+x+.5f+geometry.position.x)*STEP,
                   (base.y*2+y+.5f+geometry.position.y)*STEP,
                   (base.z*2+z+.5f+geometry.position.z)*STEP);
-        vertices.push_back({x,y,z,component,p});
+        vertices.push_back({x,y,z,component,p,Vector3(geometry.normal.x,geometry.normal.y,geometry.normal.z)});
         });
     }
     std::map<int,int> face_vertices;
@@ -1143,7 +1149,7 @@ NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool s
                 [&](int xx,int yy,int zz){return field[node_index(xx,yy,zz)].density;},arc);
             int key=(vertex_index(x,y,z)*3+axis)*4+arc;auto found=face_vertices.find(key);if(found!=face_vertices.end())return found->second;
             Vector3 p((base.x*2+.5f+local.x)*STEP,(base.y*2+.5f+local.y)*STEP,(base.z*2+.5f+local.z)*STEP);
-            int id=int(vertices.size());vertices.push_back({x,y,z,0,p});face_vertices[key]=id;return id;
+            int id=int(vertices.size());vertices.push_back({x,y,z,0,p,(vertices[left].normal+vertices[right].normal).normalized()});face_vertices[key]=id;return id;
         },
         [&](int a,int b,int c,int d,bool reverse,const int *middle){
             const auto v=vertices[c];
@@ -1154,10 +1160,10 @@ NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool s
             Vector3i owner=first.density<0?first.owner:second.owner;
             surface_split_quad(a,b,c,d,reverse,middle,[&](int i){return vertices[i].position;},
                 [&](int a,int b,int c,int d){Vector3 p=(vertices[a].position+vertices[b].position+vertices[c].position+vertices[d].position)*.25f;
-                    int id=int(vertices.size());vertices.push_back({v.cx,v.cy,v.cz,0,p});return id;},[&](int a,int b,int c){
+                    int id=int(vertices.size());vertices.push_back({v.cx,v.cy,v.cz,0,p,(vertices[a].normal+vertices[b].normal+vertices[c].normal+vertices[d].normal).normalized()});return id;},[&](int a,int b,int c){
                 Vector3 p=vertices[a].position,q=vertices[b].position,r=vertices[c].position;
                 Vector3 normal=(r-p).cross(q-p).normalized();if(normal.length_squared()<.5)return;
-                for(auto point:{p,q,r}){output.vertices.push_back(point);output.normals.push_back(normal);output.uv.push_back(Vector2(point.x,point.z));}
+                for(int vertex:{a,b,c}){const auto &v=vertices[vertex];output.vertices.push_back(v.position);output.normals.push_back(v.normal.length_squared()>.5?v.normal:normal);output.uv.push_back(Vector2(v.position.x,v.position.z));}
                 output.owners.push_back(owner);++triangles;
                 if(normal.y>.001)++tops;else if(normal.y<-.001)++bottoms;else ++sides;
             });
