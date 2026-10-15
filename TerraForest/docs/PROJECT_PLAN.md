@@ -1,3 +1,10 @@
+> 2026-10-15 player collision readiness: production controller preserves held W
+> while a nearby model awaits collision, then resumes walking without another
+> key press. Normal-world rendered 1080p check passes. Evidence:
+> evidence/player_structure_readiness/. Admission was deliberately delayed for
+> one real window fixture; this is not continuous dense-city travel, vehicle,
+> multiplayer, or performance qualification. Water remains parked.
+
 > 2026-10-15 dense collision travel: all five abrupt focus relocations across
 > 64 towers become ready within 32/15/6/6/6 observation frames; body/shape caps
 > and per-physics-tick creation budgets hold. Cold readiness is not instant.

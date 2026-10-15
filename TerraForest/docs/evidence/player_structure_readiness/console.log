@@ -1,0 +1,16 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.3.280 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] New world
+[TerrainRewrite] New world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+PASS normal world loads
+[TerrainRewrite] Empty hands - left mouse punches, E interacts
+PASS terrain ready independently of model fixture
+PASS unadmitted nearby model inserted
+PASS production controller holds position and retains W while structure collision is missing
+PASS native model admission completes
+PASS held W resumes walking after admission without another key press
+[TerrainRewrite] Temporary test world: save skipped
+PASS ordinary compound save completes
+COMBINED_RESOURCE_ROUTE failures=0
