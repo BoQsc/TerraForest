@@ -43,8 +43,9 @@ func run() -> void:
 		check(catalog.register(structures).size()==3,"tower furniture registered")
 		check(not preload("res://addons/structures/storage_catalog.gd").register(structures).is_empty(),"tower storage registered")
 		check(not preload("res://addons/structures/window_catalog.gd").register(structures).is_empty(),"tower windows registered")
+		check(not preload("res://addons/structures/door_catalog.gd").register(structures).is_empty(),"tower entrance registered")
 		assembly=catalog.furnished_tower(3);blocks=structures.blocks
-		check(assembly!=null and assembly.get_model_attachments().size()==60,"three floors compose sixty detailed attachments")
+		check(assembly!=null and assembly.get_model_attachments().size()==61,"three floors compose furnishings windows and entrance")
 	blocks.set_focus(Vector3(0,4,0));blocks.set_collision_radius(48)
 	if structures!=null:
 		var coordinator=preload("res://addons/player_runtime/construction_inventory.gd").new()
@@ -61,11 +62,32 @@ func run() -> void:
 	var deadline:=Time.get_ticks_msec()+10000
 	while not blocks.is_collision_region_ready(bounds) and Time.get_ticks_msec()<deadline: await process_frame
 	check(blocks.is_collision_region_ready(bounds),"native stair collision ready")
+	if "--visual" in OS.get_cmdline_user_args():
+		var environment:=WorldEnvironment.new();environment.environment=Environment.new()
+		environment.environment.background_mode=Environment.BG_COLOR
+		environment.environment.background_color=Color("91abb8")
+		environment.environment.ambient_light_source=Environment.AMBIENT_SOURCE_COLOR
+		environment.environment.ambient_light_color=Color.WHITE;environment.environment.ambient_light_energy=0.55
+		root.add_child(environment)
+		var sun:=DirectionalLight3D.new();root.add_child(sun);sun.rotation_degrees=Vector3(-45,30,0);sun.shadow_enabled=true
+		var camera:=Camera3D.new();root.add_child(camera);camera.position=Vector3(25,20,32);camera.look_at(Vector3(0,6,0));camera.current=true
 	var player:=CharacterBody3D.new();player.collision_mask=2;player.floor_snap_length=0.35
 	player.floor_max_angle=deg_to_rad(48.0);player.floor_constant_speed=true;player.safe_margin=0.01
 	var collision:=CollisionShape3D.new();var capsule:=CapsuleShape3D.new();capsule.radius=0.34;capsule.height=1.8
 	collision.shape=capsule;collision.position.y=0.9;player.add_child(collision);root.add_child(player)
 	var movement: RefCounted=ClassDB.instantiate("NativePlayerMovement")
+	if structures!=null:
+		check(blocks.get_cell(Vector3i(0,12,0))==65 and blocks.get_cell(Vector3i(0,9,0))==0,"sealed roof replaces unused upper flight")
+		check(blocks.get_cell(Vector3i(0,5,8))==65 and blocks.get_cell(Vector3i(0,9,8))==65,"upper front openings are enclosed")
+		player.position=Vector3(0.5,1.03,9.3)
+		await walk(player,movement,Vector3.FORWARD,40)
+		check(player.position.z>8.5,"closed entrance blocks approaching player")
+		var door: Node3D=structures.model("architecture/wooden_door/v1")
+		var hinges: RefCounted=ClassDB.instantiate("NativeHingedDoors")
+		check(hinges.toggle(door,door.get_ids()[0],AABB()).ok,"tower entrance opens")
+		for frame in 12:await physics_frame
+		await walk(player,movement,Vector3.FORWARD,40)
+		check(player.position.z<8 and player.is_on_floor(),"player walks through open tower entrance")
 	player.position=Vector3(0.5,1.05,-0.8)
 	for tick in 20:
 		await physics_frame
@@ -102,6 +124,9 @@ func run() -> void:
 	check(player.position.z<0.3 and player.position.y<1.2,"low ceiling prevents unsafe step-up")
 	ceiling.free()
 	DirAccess.make_dir_recursive_absolute("res://reports")
+	if "--visual" in OS.get_cmdline_user_args():
+		await RenderingServer.frame_post_draw
+		root.get_texture().get_image().save_png("res://reports/furnished_tower.png")
 	var file:=FileAccess.open("res://reports/tower_traversal.json",FileAccess.WRITE)
 	file.store_string(JSON.stringify({"failures":failures,"ascent_position":str(ascent),"landings":landing_trace,"scope":"native building collision and player capsule ascent descent and blocked clearance"}));file.close()
 	player.free()

@@ -1,3 +1,9 @@
+> 2026-10-15 tower enclosure: closed roof/front façade, removed the unused top
+> stair flight, and added hinged ground-floor entrance plus approach step.
+> Twenty checks pass including entrance and full stair route; inspected rendered
+> 1920x1080 assembly. Evidence: evidence/enclosed_tower/. Grounded tower placement,
+> human review, and combined-world scale qualification remain pending.
+
 > 2026-10-15 furnished tower: three-floor prefab now includes 60 attached
 > furnishings, storage and windows. Full native capsule ascent/descent through
 > both landings passes with all attachment collisions resident (14 checks).

@@ -61,8 +61,27 @@ static func furnished_tower(floors: int=3) -> Resource:
 	var placements:=PackedInt32Array()
 	for level in floors:
 		var module: Resource=ClassDB.instantiate("NativeBlockPrefab")
-		if not module.configure(source.get_records()):return null
+		var cells: Dictionary={}
+		var source_records: PackedInt32Array=source.get_records()
+		for i in range(0,source_records.size(),4):
+			var cell:=Vector3i(source_records[i],source_records[i+1],source_records[i+2])
+			# The final storey has no flight into the sealed roof.
+			if level==floors-1 and source_records[i+3]==67:continue
+			cells[cell]=source_records[i+3]
+		for x in range(-3,4):
+			for y in range(1,4):
+				if level==0 and x==0 and y<3:cells.erase(Vector3i(x,y,8))
+				else:cells[Vector3i(x,y,8)]=65
+		if level==0:cells[Vector3i(0,0,9)]=83
+		if level==floors-1:
+			for x in range(-8,9):
+				for z in range(-8,9):cells[Vector3i(x,4,z)]=65
+		var records:=PackedInt32Array()
+		for cell: Vector3i in cells:records.append_array(PackedInt32Array([cell.x,cell.y,cell.z,cells[cell]]))
+		if not module.configure(records):return null
 		var attachments: Array=[]
+		if level==0:
+			attachments.append({"model":"architecture/wooden_door/v1","transform":Transform3D(Basis.IDENTITY.scaled(Vector3(1,0.9,1)),Vector3(0,1,8.5))})
 		# Work areas stay outside the stair shaft and its eastern circulation aisle.
 		for x in [-5.0,5.5]:
 			attachments.append({"model":"furniture/table/v1","transform":Transform3D(Basis.IDENTITY,Vector3(x,1,-4))})
