@@ -79,7 +79,7 @@ func apply_target(t: Dictionary) -> bool:
 	if result.destroyed:durability.forget(t.key)
 	var wear: Dictionary=hud.inventory.wear_tool(hud.active_slot,1,hud.inventory.snapshot().revision) if item!=0 else {}
 	hud.refresh()
-	game._show_lake_notice("Tool broke" if wear.get("broken",false) else (t.name+" destroyed" if result.destroyed else "%s: %d / %d durability"%[t.name,result.remaining,result.maximum]))
+	game._show_lake_notice((hud.CATALOG.get(item,"Tool")+" broke · Tab → Crafting to make a replacement") if wear.get("broken",false) else (t.name+" destroyed" if result.destroyed else "%s: %d / %d durability"%[t.name,result.remaining,result.maximum]))
 	return true
 func destroy(t: Dictionary) -> bool:
 	match t.kind:

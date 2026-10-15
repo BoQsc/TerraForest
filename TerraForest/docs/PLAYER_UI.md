@@ -17,6 +17,12 @@ For loose items, the nearer aimed pickup or plant wins. Dropped tools retain
 their wear when recovered. If nothing is aimed at, nearby pickup recovery
 remains available; terrain, buildings and vehicles block that recovery ray.
 
+Tools wear out on successful attacks. A broken tool leaves empty hands, which
+can still attack and dig. To replace a pickaxe, gather three stones and two wood
+(dry twigs also yield wood), open Tab → Crafting and choose Pickaxe. Move the new
+tool to a toolbelt slot to use it. Replacement recipes also exist for the
+hatchet, building hammer and assembly tool.
+
 **Escape** opens Actions. The sidebar is the shared entry point:
 
 - **Toolbelt:** click any of the ten belt slots, including empty slots.

@@ -327,7 +327,7 @@ func craft_recipe(recipe: int) -> void:
 		message.text="Crafted supplies · "+("temporary world; not saved" if temporary_world else "F5 saves world")
 		inventory_changed.emit()
 	elif result.reason=="full": message.text="Not enough output space. Free a slot or craft fewer; inputs are retained."
-	elif result.reason=="insufficient_items": message.text="Not enough raw resources. Claim mined resources before crafting."
+	elif result.reason=="insufficient_items": message.text="Not enough materials. Gather the ingredients shown beside this recipe."
 	else: message.text="Craft rejected (%s). Inventory refreshed; try again."%result.reason
 	crafting_message.text=message.text
 	refresh()
