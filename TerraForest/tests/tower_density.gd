@@ -8,6 +8,26 @@ func check(ok: bool,label: String) -> void:
 func _initialize() -> void:run.call_deferred()
 func percentile(values: Array,p: float) -> float:
 	var sorted:=values.duplicate();sorted.sort();return sorted[mini(sorted.size()-1,int(sorted.size()*p))]
+func collision_travel(world: Node3D) -> Array:
+	var visits: Array=[]
+	for target: Vector3 in [Vector3(-84,0,-84),Vector3(84,0,84),Vector3(-84,0,84),Vector3(84,0,-84),Vector3(-12,0,-12)]:
+		world.blocks.set_focus(target);world.set_model_focus(target)
+		var bounds:=AABB(target+Vector3(-9,0,-9),Vector3(19,14,20))
+		var initially_ready: bool=world.is_collision_region_ready(bounds)
+		var previous: Dictionary={};var bounded:=true;var frames:=0
+		for key: String in world.model_collections():previous[key]=world.model(key).collision_stats().body_builds
+		while not world.is_collision_region_ready(bounds) and frames<60:
+			var prior_tick:=Engine.get_physics_frames()
+			await physics_frame;await process_frame;frames+=1
+			var elapsed_ticks:=maxi(1,Engine.get_physics_frames()-prior_tick)
+			for key: String in world.model_collections():
+				var s: Dictionary=world.model(key).collision_stats()
+				bounded=bounded and s.body_builds-previous[key]<=s.builds_per_tick*elapsed_ticks and s.resident_bodies<=s.instance_limit and s.resident_shapes<=s.shape_limit
+				previous[key]=s.body_builds
+		var ready: bool=world.is_collision_region_ready(bounds)
+		check(ready and bounded,"travel target collision becomes ready within bounded admission: %s"%target)
+		visits.append({"target":target,"initially_ready":initially_ready,"frames_until_ready":frames,"ready":ready,"bounded":bounded})
+	return visits
 func run() -> void:
 	if DisplayServer.get_name()=="headless":push_error("Rendered test required");quit(2);return
 	RenderingServer.viewport_set_measure_render_time(root.get_viewport_rid(),true)
@@ -20,7 +40,8 @@ func run() -> void:
 	var catalog=preload("res://addons/structures/furniture_catalog.gd")
 	var asset: Resource=catalog.furnished_tower(3)
 	var comparison: bool="--shadow-comparison" in OS.get_cmdline_user_args()
-	for count in ([64] if comparison else [1,16,64]):
+	var travel: bool="--collision-travel" in OS.get_cmdline_user_args()
+	for count in ([64] if comparison or travel else [1,16,64]):
 		var world=preload("res://addons/structures/structures_world.gd").new();root.add_child(world)
 		check(world.prepare() and catalog.register(world).size()==3,"fixture prepared %d"%count)
 		for c in [preload("res://addons/structures/storage_catalog.gd"),preload("res://addons/structures/window_catalog.gd"),preload("res://addons/structures/door_catalog.gd"),preload("res://addons/structures/guardrail_catalog.gd")]:check(not c.register(world).is_empty(),"model catalog registered %d"%count)
@@ -72,6 +93,7 @@ func run() -> void:
 			check(float(row.frame_p95_ms)<=20,"settled frame p95 <=20 ms diagnostic threshold %d"%count)
 			DirAccess.make_dir_recursive_absolute("res://reports")
 			await RenderingServer.frame_post_draw;root.get_texture().get_image().save_png("res://reports/tower_density_%d_%s.png"%[count,phase])
+		if travel:rows[-1]["collision_travel"]=await collision_travel(world)
 		world.free();await process_frame
 	var file:=FileAccess.open("res://reports/tower_density.json",FileAccess.WRITE)
 	file.store_string(JSON.stringify({"failures":failures,"rows":rows,"scope":"1080p capped 60, 120 measured frames per size, isolated buildings with shadows; no terrain forest actors traffic or thermal qualification"},"  "));file.close()

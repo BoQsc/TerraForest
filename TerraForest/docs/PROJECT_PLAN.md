@@ -1,3 +1,9 @@
+> 2026-10-15 dense collision travel: all five abrupt focus relocations across
+> 64 towers become ready within 32/15/6/6/6 observation frames; body/shape caps
+> and per-physics-tick creation budgets hold. Cold readiness is not instant.
+> Evidence: evidence/tower_collision_travel/. This checks production readiness,
+> not actual player freeze/resume behaviour; that integration check remains open.
+
 > 2026-10-15 shadow isolation: same-scene baseline/disabled/repeated-baseline
 > comparison added. Model-shadow draw cost is real (833→502 draws), but GPU
 > savings vary substantially between runs; window-only GPU benefit unproven.
