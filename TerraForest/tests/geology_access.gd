@@ -54,4 +54,4 @@ func run() -> void:
 	game.player.position=routes[0].a+Vector3(0,1,0);game.player.velocity=Vector3.ZERO;game.fly=false
 	game.shutdown_requested=true;check(await game.terrain.shutdown_after_edits(),"save accessible geology checkpoint")
 	var file:=FileAccess.open(DIR+"result.json",FileAccess.WRITE);file.store_string(JSON.stringify({"failures":failures,"routes":routes,"slot":game.terrain.save_slot,"scope":"Authored access tunnels to seeded ore, actual player controls and headlamp at fullscreen1080p cap60; no natural-cave discovery or performance claim."},"  "));file.close()
-	game.free();await process_frame;quit(1 if failures else 0)
+	game.free();await process_frame;print("GEOLOGY_ACCESS failures=",failures);quit(1 if failures else 0)

@@ -1,0 +1,17 @@
+2026-10-15: reproducible geology checkpoint
+
+Historical launcher dry-run failed because the previous computer's local save
+was absent. Prepare Geology Checkpoint.cmd now uses the existing authored tunnel
+workflow in a unique staging slot. The actual world walks to both iron/copper
+faces, saves, and a fresh gameplay process repeats both walks without excavation.
+Only both successful phases permit clone_once publication to geology_gameplay.
+Existing historical geology saves retain launcher precedence. Existing prepared
+progress is retained without regeneration; four publication-guard tests pass.
+
+Create/reopen logs and route evidence retained. Initial generated-component
+autosave rejection is visible in create.log; final compound save and fresh reopen
+succeed. Iron image inspected: lit ore access is usable but coarse/faceted and
+not final art. This verifies authored access and persistence, not natural cave
+discovery, ore rewards, exact archive equality or performance. The test manually
+steps ordinary player physics from each entrance; it does not walk between them.
+Water implementation and original user saves unchanged.

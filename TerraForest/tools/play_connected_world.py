@@ -36,6 +36,11 @@ def main():
     if not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]{0,47}", slot):
         parser.error("Checkpoint manifest has an invalid slot")
     save = Path(os.environ.get("APPDATA", "")) / "Godot/app_userdata/TerraForest/worlds" / (slot + ".trw")
+    if args.geology and not save.is_file():
+        slot = "geology_gameplay"
+        save = save.parent / (slot + ".trw")
+        if not save.is_file():
+            parser.error("Geology world missing: run Prepare Geology Checkpoint.cmd first.")
     if not save.is_file() and not (args.gameplay_copy and (save.parent / "combined_gameplay.trw").is_file()):
         parser.error("Gameplay world missing: run Prepare Combined Gameplay.cmd first." if args.gameplay_copy else "This locally generated checkpoint save is missing. See docs/CONNECTED_WORLD_CHECKPOINT.md; the repository does not contain user saves.")
     source_slot = slot

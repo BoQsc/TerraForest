@@ -1,0 +1,80 @@
+{
+  "slot": "geology_stage_7d6aab019394441f979f9df417916c54",
+  "revision": "27f3c4070fc44e336f73ed48d05a076866f63310",
+  "worktree_changes": [
+    " M TerraForest/tests/geology_access.gd",
+    "?? \"TerraForest/Prepare Geology Checkpoint.cmd\"",
+    "?? TerraForest/tools/prepare_geology_world.py"
+  ],
+  "git_metadata_available": true,
+  "phases": [
+    {
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--fullscreen",
+        "--resolution",
+        "1920x1080",
+        "--max-fps",
+        "60",
+        "--script",
+        "res://tests/geology_access.gd",
+        "--",
+        "--world-slot=geology_stage_7d6aab019394441f979f9df417916c54",
+        "--world-generator=4",
+        "--world-seed=1703",
+        "--checkpoint-report=C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\geology_preparation\\20261015T124709710435Z\\checkpoint.json",
+        "--derived-cache=user://geology_stage_7d6aab019394441f979f9df417916c54"
+      ],
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "pid": 17228,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 65.03455729999769,
+        "passed": true
+      }
+    },
+    {
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--fullscreen",
+        "--resolution",
+        "1920x1080",
+        "--max-fps",
+        "60",
+        "--script",
+        "res://tests/geology_access.gd",
+        "--",
+        "--world-slot=geology_stage_7d6aab019394441f979f9df417916c54",
+        "--world-generator=4",
+        "--world-seed=1703",
+        "--checkpoint-report=C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\geology_preparation\\20261015T124709710435Z\\checkpoint.json",
+        "--derived-cache=user://geology_stage_7d6aab019394441f979f9df417916c54",
+        "--reopen-access",
+        "--gameplay-construction"
+      ],
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "pid": 24172,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 30.13046679999752,
+        "passed": true
+      }
+    }
+  ],
+  "publication": {
+    "created": true,
+    "slot": "geology_gameplay",
+    "source_slot": "geology_stage_7d6aab019394441f979f9df417916c54",
+    "source_sha256": "5aec469e8074b2c88bd73752116f7ca434ef562855f2e8c5ef45555e4b6230c6"
+  }
+}

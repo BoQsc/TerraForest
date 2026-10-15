@@ -1,3 +1,10 @@
+> 2026-10-15 geology checkpoint portability: Prepare Geology Checkpoint.cmd
+> authors iron/copper access tunnels in a staging save, verifies both walks
+> after fresh-process reopening, then publishes only if gameplay is absent.
+> Play Geology Checkpoint.cmd now supports that save; historical saves retain
+> precedence. Evidence: evidence/geology_preparation/. Ore reward interaction,
+> natural discovery and visual quality still need integrated qualification.
+
 > 2026-10-15 cave human checkpoint: Review Natural Caves.cmd starts on foot
 > outside generator6 cave0 in a disposable world. Startup visual check passes;
 > normal walking to 60 metres inside and back passes six waypoints. Evidence:

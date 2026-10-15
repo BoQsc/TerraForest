@@ -1,0 +1,18 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.3.280 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] World loaded
+[TerrainRewrite] World loaded
+[terrain-hitch] receive 151.49 ms at 3736
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS editor world ready
+PASS headlamp defaults off
+[TerrainRewrite] Headlamp on
+PASS F enables bounded shadowed headlamp
+PASS inventory modal consumes headlamp input
+PASS unfocused input cannot toggle headlamp
+PASS walk surface approach to ore face 8 without jumping
+PASS walk surface approach to ore face 9 without jumping
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+PASS save accessible geology checkpoint
+GEOLOGY_ACCESS failures=0
