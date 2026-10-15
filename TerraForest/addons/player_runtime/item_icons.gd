@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: 0BSD
 extends RefCounted
 # Offline 128px tiles; one shared GPU texture and cached regions, no live viewports.
-const KEYS=["1","2","3","4","101","102","103","104","201","202","203","204","205","206","207","208","209","210","301","302","303","Metal beam","Floor panel","Doorway","Wooden table","Wooden chair","Wooden shelf","Wooden ladder","Wooden storage chest (E open)","211","Wood framed window","Wooden door (E open / close)","Metal guardrail"]
+const KEYS=["1","2","3","4","101","102","103","104","201","202","203","204","205","206","207","208","209","210","301","302","303","Metal beam","Floor panel","Doorway","Wooden table","Wooden chair","Wooden shelf","Wooden ladder","Wooden storage chest (E open)","211","Wood framed window","Wooden door (E open / close)","Metal guardrail","Wooden fence"]
 static var atlas: ImageTexture
 static var regions: Dictionary={}
 static var bucket_icon:ImageTexture

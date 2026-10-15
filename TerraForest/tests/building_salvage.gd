@@ -8,9 +8,17 @@ func run() -> void:
 	game.player_hud.equip(1)
 	var origin: Vector3=game.player.position+Vector3(0,10,-3)
 	var attack=game.world_attack
-	for entry in [["architecture/wooden_door/v1",102,3],["architecture/wooden_window/v1",102,2],["architecture/metal_guardrail/v1",104,2]]:
+	for entry in [["architecture/wooden_door/v1",102,3],["architecture/wooden_window/v1",102,2],["architecture/metal_guardrail/v1",104,2],["architecture/wooden_fence/v1",102,2]]:
 		var batch: Node3D=game.structures.model(entry[0])
 		var id: int=batch.insert_instance(game.model_tool.records(Transform3D(Basis.IDENTITY,origin),batch),AABB())
+		if entry[0]=="architecture/wooden_fence/v1":
+			batch.remove_instances(PackedInt64Array([id]))
+			game.construction_inventory.gameplay=true
+			var inventory=game.player_hud.inventory
+			inventory.grant(102,4,inventory.snapshot().revision)
+			var wood_before:=amount(102)
+			id=game._place_inventory_model(game.model_tool.history,batch,game.model_tool.records(Transform3D(Basis.IDENTITY,origin),batch),AABB(),preload("res://addons/structures/fence_catalog.gd").recipe())
+			check(id>0 and amount(102)==wood_before-4,"fence gameplay placement debits four fixture wood")
 		check(id>0,"building part inserted: "+entry[0])
 		var point:=origin+Vector3(0,1,0)
 		var feet:=origin+Vector3(0,0,2)

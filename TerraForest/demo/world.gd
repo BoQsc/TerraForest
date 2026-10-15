@@ -129,6 +129,8 @@ func _ready() -> void:
 	structures_ready = structures_ready and not door.is_empty() and doors.prepare(self)
 	var guardrail: Dictionary=preload("res://addons/structures/guardrail_catalog.gd").register(structures)
 	structures_ready = structures_ready and not guardrail.is_empty()
+	var fence: Dictionary=preload("res://addons/structures/fence_catalog.gd").register(structures)
+	structures_ready = structures_ready and not fence.is_empty()
 	player_hud.ground_tools_enabled=ground_enabled
 	if not player_hud.prepare() or not persistence.register_component("player_loadout", player_hud.capture_snapshot, player_hud.restore_snapshot, player_hud.inventory, player_hud.default_loadout):
 		push_error("Player loadout persistence initialization failed")
@@ -192,6 +194,7 @@ func _ready() -> void:
 	object_entries.append(window)
 	object_entries.append(door)
 	object_entries.append(guardrail)
+	object_entries.append(fence)
 	model_tool.configure(camera,player,object_entries,help.get_parent(),structures.blocks)
 	model_tool.notice.connect(_show_lake_notice)
 	if model_region_paging and (not temporary_world or terrain.backend.readonly_snapshot):

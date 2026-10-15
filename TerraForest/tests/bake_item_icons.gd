@@ -44,7 +44,7 @@ func run() -> void:
 		elif key in ["Metal beam","Floor panel"]:
 			tool.part(model,Vector3(4,0.2,0.2) if key=="Metal beam" else Vector3(4,0.25,4),Vector3.ZERO,Color("3b5359"))
 		else:
-			var file: String={"Wood framed window":"window","Wooden door (E open / close)":"door","Metal guardrail":"guardrail","Doorway":"doorway","Wooden table":"table","Wooden chair":"chair","Wooden shelf":"shelf","Wooden ladder":"ladder","Wooden storage chest (E open)":"storage_chest"}[key]
+			var file: String={"Wood framed window":"window","Wooden door (E open / close)":"door","Metal guardrail":"guardrail","Wooden fence":"fence","Doorway":"doorway","Wooden table":"table","Wooden chair":"chair","Wooden shelf":"shelf","Wooden ladder":"ladder","Wooden storage chest (E open)":"storage_chest"}[key]
 			model.add_child(instance(load("res://addons/structures/prefabs/"+file+"_model.tres")))
 		if id>0 and not "--icons-only" in OS.get_cmdline_user_args():bake_drop(model,id)
 		var box:=bounds(model);var center:=box.get_center();var radius:=box.size.length()*0.5

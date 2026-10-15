@@ -1,3 +1,10 @@
+> 2026-10-15 wooden fence: production object catalog now includes a baked,
+> batched two-metre fence section, four-wood gameplay cost, two-wood salvage,
+> static collision and shared atlas icon. Targeted placement/damage/wear and
+> object-menu checks pass. Evidence: evidence/wooden_fence/. No new per-frame
+> script or per-rail physics bodies; settlement generation and density remain
+> separate work. Water remains deferred as requested.
+
 > 2026-10-15 door occupancy: native toggles now query the physics broadphase
 > for active actor/vehicle layers before mutation (one result, click-time only).
 > Opening/closing rejection preserves model and hinge snapshots; fixture fails

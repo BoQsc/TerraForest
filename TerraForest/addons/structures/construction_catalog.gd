@@ -6,6 +6,7 @@ static func salvage_recipes() -> Dictionary:
 	result[preload("res://addons/structures/window_catalog.gd").KEY]=PackedInt64Array([102,2])
 	result[preload("res://addons/structures/door_catalog.gd").KEY]=PackedInt64Array([102,3])
 	result[preload("res://addons/structures/guardrail_catalog.gd").KEY]=PackedInt64Array([104,2])
+	result[preload("res://addons/structures/fence_catalog.gd").KEY]=PackedInt64Array([102,2])
 	return result
 # Recipes for model attachments use the same definitions as individual placement.
 static func recipes() -> Dictionary:
@@ -20,4 +21,6 @@ static func recipes() -> Dictionary:
 	result[door.KEY]=door.recipe()
 	var guardrail=preload("res://addons/structures/guardrail_catalog.gd")
 	result[guardrail.KEY]=guardrail.recipe()
+	var fence=preload("res://addons/structures/fence_catalog.gd")
+	result[fence.KEY]=fence.recipe()
 	return result

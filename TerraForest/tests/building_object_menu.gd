@@ -18,7 +18,7 @@ func run() -> void:
 		reachable=reachable and game.model_tool.selected==index
 	check(reachable,"all production object choices scroll into view and select their own model")
 	var last: Button=game.model_tool.choices.back()
-	check(last.icon!=null,"last guardrail choice has baked icon")
+	check(last.icon!=null,"last object choice has baked icon")
 	await RenderingServer.frame_post_draw
 	DirAccess.make_dir_recursive_absolute("res://reports/building_object_menu")
 	root.get_texture().get_image().save_png("res://reports/building_object_menu/objects.png")

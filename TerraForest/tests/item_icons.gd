@@ -11,7 +11,7 @@ func run() -> void:
 	var icons=preload("res://addons/player_runtime/item_icons.gd")
 	var structures=preload("res://addons/structures/structures_world.gd").new();root.add_child(structures)
 	check(structures.prepare(),"production structure catalog prepared")
-	for catalog in [preload("res://addons/structures/window_catalog.gd"),preload("res://addons/structures/door_catalog.gd"),preload("res://addons/structures/guardrail_catalog.gd")]:
+	for catalog in [preload("res://addons/structures/window_catalog.gd"),preload("res://addons/structures/door_catalog.gd"),preload("res://addons/structures/guardrail_catalog.gd"),preload("res://addons/structures/fence_catalog.gd")]:
 		var entry: Dictionary=catalog.register(structures)
 		check(not entry.is_empty() and icons.texture(entry.get("title",""))!=null,"production object title resolves baked icon")
 	structures.free()
