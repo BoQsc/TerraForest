@@ -83,3 +83,20 @@ Native independent curved-solid clipping at101 heights passes; release cached
 world reload still passes byte-exactly. Both native targets rebuilt/installed.
 Remaining: eliminate avoidable frame scheduling delay, further bound individual
 curved-cell preparation, and attribute intermittent stalls seen in earlier runs.
+
+2026-10-15 worker continuation scheduling:
+A native unfinished slice now requeues at the worker queue tail, retaining its
+single pending reservation and original revision/cancel epoch. Each slice keeps
+its existing native budget. Queue capacity/shutdown falls back to the existing
+main-thread continuation. Worker/queue metrics aggregate across continuations.
+Protocol test proves no interim result/poll is needed, queued save barriers hold,
+stale cancellation skips further sampling, and terminal polling releases once.
+Actual-world shape replacement and cached reload checks still pass.
+Timing is mixed: simple shapes169-254ms, sphere435ms with123ms aggregate worker.
+Sphere improvement is not proven by this run (previous run388ms/83ms worker).
+Frame intervals in this run stayed below17.2ms. Existing single-cell soft-budget
+overshoot remains; continuation does not solve it. Do not claim latency fixed.
+Next inspect unnecessary building invalidation halo: 4-8 complete water regions
+are requested per single-cell placement, each still has a main-thread roundtrip.
+Terrain's half-cell sampling halo may not be required for exact building hulls;
+neighbor mesh invalidation must remain correct if occupancy requests are reduced.

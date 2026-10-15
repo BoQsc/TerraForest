@@ -602,9 +602,27 @@ func _execute_lake_slice(job: Dictionary) -> void:
 		status=job.builder.sample_terrain(native,2048,job.density_revision,job.build_epoch)
 		cancel=_call(Codec.command(13))
 		if not Codec.reply_ok(cancel) or cancel.decode_u32(12)!=job.build_epoch:status=-4
+	var finished:=Time.get_ticks_usec()
+	var worker_ms:=float(job.get("accumulated_worker_ms",0.0))+(finished-started)/1000.0
+	var queue_ms:=float(job.get("accumulated_queue_ms",0.0))+(started-int(job.get("submitted_us",started)))/1000.0
+	# Continue bounded preparation on the worker queue instead of waiting for a
+	# main-thread result and another rendered frame after every native slice.
+	# Keep the original revision/epoch and pending reservation. Mutations ahead
+	# of this continuation still run first and invalidate its next native call.
+	if status==0:
+		mutex.lock()
+		var requeued:bool=not stopping and jobs.size()<96 and jobs.size()+results.size()<128
+		if requeued:
+			job["accumulated_worker_ms"]=worker_ms;job["accumulated_queue_ms"]=queue_ms
+			job["submitted_us"]=finished
+			jobs.push_back(job)
+		mutex.unlock()
+		if requeued:
+			semaphore.post()
+			return
 	_push({"kind":"lake_slice","status":status,"token":job.token,"epoch":job.epoch,"revision":job.revision,
 		"lake_cache":cache_event,"lake_identity":"",
-		"queue_ms":(started-int(job.get("submitted_us",started)))/1000.0,"worker_ms":(Time.get_ticks_usec()-started)/1000.0})
+		"queue_ms":queue_ms,"worker_ms":worker_ms})
 
 func _service_lake_slice() -> void:
 	var selected: Dictionary={}
