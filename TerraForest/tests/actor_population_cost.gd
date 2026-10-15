@@ -7,6 +7,27 @@ var ids:=PackedInt64Array()
 var start:=Vector3.ZERO
 var direction:=Vector3.RIGHT
 var side:=Vector3.BACK
+class PhysicsSampler extends Node:
+	var callback: Callable
+	func _physics_process(delta: float) -> void:callback.call(delta)
+var measuring:=false
+var tick_rows: Array=[]
+var visited: Dictionary={}
+var prior:=PackedInt64Array()
+var changes:=0
+func measure_tick(delta: float) -> void:
+	if not measuring:return
+	var begin:=Time.get_ticks_usec()
+	game.actors.update_simulation(delta,start,true,game._actor_collision_ready)
+	var row:={"actor_ms":(Time.get_ticks_usec()-begin)/1000.0,"delta":delta}
+	for field in ["transform","motion","store","readiness","collision"]:
+		row[field+"_ms"]=game.actors.simulation_status.get(field+"_us",0)/1000.0
+	var active: PackedInt64Array=game.actors.pool.active_handles()
+	row.active=active.size();row.held=game.actors.simulation_status.get("held",0)
+	for handle in active:
+		visited[game.actors.store.persistent_id(handle)]=true
+		if not prior.has(handle):changes+=1
+	prior=active;tick_rows.append(row)
 func check(ok: bool,label: String) -> void:
 	print("PASS " if ok else "FAIL ",label)
 	if not ok:failures+=1
@@ -22,23 +43,23 @@ func add_until(count: int) -> void:
 		var identity: int=game.actors.spawn(point);ids.append(identity)
 		game.actors.orders.set_target(identity,point+direction*12)
 func sample(label: String) -> void:
-	var rows: Array=[];var visited: Dictionary={};var prior:=PackedInt64Array();var changes:=0
+	var rows: Array=[];visited.clear();prior.clear();changes=0;tick_rows.clear()
+	await RenderingServer.frame_post_draw
+	measuring=true
 	var previous:=Time.get_ticks_usec()
 	var viewport:=root.get_viewport_rid();RenderingServer.viewport_set_measure_render_time(viewport,true)
 	for tick in 120:
-		await physics_frame
-		var begin:=Time.get_ticks_usec()
-		game.actors.update_simulation(1.0/60,start,true,game._actor_collision_ready)
-		var cost: float=(Time.get_ticks_usec()-begin)/1000.0
-		var active: PackedInt64Array=game.actors.pool.active_handles()
-		for handle in active:
-			visited[game.actors.store.persistent_id(handle)]=true
-			if not prior.has(handle):changes+=1
-		prior=active
 		await RenderingServer.frame_post_draw
 		var now:=Time.get_ticks_usec()
-		rows.append({"frame_ms":(now-previous)/1000.0,"actor_ms":cost,"transform_ms":game.actors.simulation_status.get("transform_us",0)/1000.0,"motion_ms":game.actors.simulation_status.get("motion_us",0)/1000.0,"store_ms":game.actors.simulation_status.get("store_us",0)/1000.0,"readiness_ms":game.actors.simulation_status.get("readiness_us",0)/1000.0,"collision_ms":game.actors.simulation_status.get("collision_us",0)/1000.0,"active":active.size(),"held":game.actors.simulation_status.get("held",0),"gpu_ms":RenderingServer.viewport_get_measured_render_time_gpu(viewport),"draw_calls":Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME),"queued":game.terrain.backend.queued(),"worker_busy":0 if game.terrain.backend.status()=="idle" else 1,"settled":settled()});previous=now
-	var result:={"phase":label,"stored_near":ids.size(),"distinct_simulated":visited.size(),"activation_entries":changes,"rows":rows,"summary":{}}
+		var row:={"frame_ms":(now-previous)/1000.0,"physics_ticks":tick_rows.size(),"ticks":tick_rows.duplicate(true),"active":0,"held":0,"gpu_ms":RenderingServer.viewport_get_measured_render_time_gpu(viewport),"draw_calls":Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME),"queued":game.terrain.backend.queued(),"worker_busy":0 if game.terrain.backend.status()=="idle" else 1,"settled":settled()}
+		for field in ["actor_ms","transform_ms","motion_ms","store_ms","readiness_ms","collision_ms"]:
+			row[field]=0.0
+			for observation in tick_rows:row[field]+=observation[field]
+		for observation in tick_rows:
+			row.active=maxi(row.active,observation.active);row.held=maxi(row.held,observation.held)
+		rows.append(row);tick_rows.clear();previous=now
+	measuring=false
+	var result:={"phase":label,"physics_hz":Engine.physics_ticks_per_second,"sampling":"all physics callbacks summed per rendered frame","stored_near":ids.size(),"distinct_simulated":visited.size(),"activation_entries":changes,"rows":rows,"summary":{}}
 	for field in ["frame_ms","actor_ms","transform_ms","motion_ms","store_ms","readiness_ms","collision_ms","active","held","gpu_ms","draw_calls","queued","worker_busy"]:result.summary[field]=summary(rows,field)
 	phases.append(result)
 	check(result.summary.active.max<=16 and game.actors.pool.get_child_count()==16,label+" maintains fixed16 physics cap")
@@ -69,6 +90,7 @@ func compare_contact() -> void:
 func _initialize() -> void:run.call_deferred()
 func run() -> void:
 	game=load("res://demo/world.tscn").instantiate();root.add_child(game)
+	var sampler:=PhysicsSampler.new();sampler.callback=measure_tick;root.add_child(sampler)
 	var deadline:=Time.get_ticks_msec()+60000
 	while game.loading_active and Time.get_ticks_msec()<deadline:await process_frame
 	game.actors.pool.set_profiling(true)

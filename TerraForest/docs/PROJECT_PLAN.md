@@ -1,3 +1,10 @@
+> 2026-10-15 actor benchmark correction: actor updates now run on every engine
+> physics callback with its supplied delta, summing all ticks per rendered frame.
+> A completed run recorded four physics ticks per frame at 15 FPS even in the
+> empty control. Budget gates fail; it is not comparable to the earlier 60 FPS
+> run. Rendering conditions require investigation before optimizing movement.
+> Evidence: evidence/actor_physics_cadence/. Runtime and active capacity unchanged.
+
 > 2026-10-15 mixed actor cost: 0/16/64-record phases in the eight-building world
 > retain the fixed 16-body cap with no readiness holds. Actor cost FAILS the
 > existing 1 ms p95 budget (1.177 / 1.306 ms); moving16 max 3.082 ms also fails
