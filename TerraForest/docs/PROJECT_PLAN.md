@@ -1,3 +1,10 @@
+> 2026-10-16 entity behavior: native two-point patrol is available through
+> development UI, preserving endpoints/current leg in compound saves. Four
+> rendered legs, mid-patrol restore, inactive/unready behavior, actual-world UI
+> authoring/fresh reopen and release order storage checks pass. Local1-16 m
+> routes only; crowd/endurance/multiplayer remain unqualified. Evidence:
+> evidence/actor_patrol/.
+
 > 2026-10-16 construction coverage: timber footbridge is selectable in the main
 > world.92 ordinary wood blocks,12 m deck, stairs and block railings; paid
 > placement, no-jump crossing/return, lateral containment and fresh-process

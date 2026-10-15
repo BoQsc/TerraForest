@@ -38,7 +38,7 @@ func apply(world: Node,remove: bool) -> String:
 	world.actors.select_near(world.terrain.focus)
 	return "Actor placed · F5 saves world."
 
-func command(world: Node,stop: bool) -> String:
+func command(world: Node,stop: bool,patrol: bool=false) -> String:
 	var blocked:=unavailable(world)
 	if not blocked.is_empty():return blocked
 	if selected_epoch!=world.terrain.epoch or world.actors.store.resolve_identity(selected_identity)==0:
@@ -65,5 +65,8 @@ func command(world: Node,stop: bool) -> String:
 	var shape:=CapsuleShape3D.new();shape.radius=0.35;shape.height=1.8
 	var query:=PhysicsShapeQueryParameters3D.new();query.shape=shape;query.transform=Transform3D(Basis(),point);query.collision_mask=0xFFFFFFFF
 	if not world.get_world_3d().direct_space_state.intersect_shape(query,1).is_empty():return "Destination space is occupied."
+	if patrol:
+		if not world.actors.orders.set_patrol(selected_identity,point):return "Choose a patrol endpoint 1-16 m from the selected actor."
+		return "Patrol started between the actor position and aimed point. Stop clears the patrol; F5 saves it."
 	if not world.actors.orders.set_target(selected_identity,point):return "Actor changed; select it again."
 	return "Planning a local walking route; status is shown in the HUD · F5 saves."

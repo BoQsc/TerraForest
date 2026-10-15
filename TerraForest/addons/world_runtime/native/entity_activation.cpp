@@ -138,6 +138,8 @@ Dictionary NativeEntityActivation::settle(double delta,const Callable &readiness
         p.body->arrival_distance=navigation_?.025:.15;p.body->stairs_enabled=navigation_;
         p.body->tick(target,delta,ready);
         if(navigation_){if(!ready && (p.route.state==ActorRoute::FOLLOWING || p.route.state==ActorRoute::ARRIVED))p.route.invalidate();p.route.moved(store_->get_position(p.handle),delta);}
+        if(ready && orders_.is_valid() && (!navigation_ || p.route.state==ActorRoute::ARRIVED))
+            orders_->advance_if_arrived(store_->persistent_id(p.handle),store_->get_position(p.handle));
         transform_us+=p.body->transform_us;motion_us+=p.body->motion_us;store_us+=p.body->store_us;
         ++visited;if(!ready)++held;
         if(profiling_)collision_us+=Time::get_singleton()->get_ticks_usec()-ready_done;

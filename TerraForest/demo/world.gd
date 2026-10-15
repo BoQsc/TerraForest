@@ -1245,7 +1245,8 @@ func _process(delta: float) -> void:
 		telemetry.text = "%d FPS  ·  %s trees  ·  %d cells\n%s" % [Engine.get_frames_per_second(), str(vegetation.renderer.roots.size()), ecosystem.resident.size(), activity]
 		if actors.pool!=null and actor_authoring.selected_identity!=0:
 			var actor_handle: int=actors.store.resolve_identity(actor_authoring.selected_identity)
-			telemetry.text+="\nActor route: "+str(actors.pool.navigation_status(actor_handle).state).replace("_"," ")
+			var actor_order: Dictionary=actors.orders.get_target(actor_authoring.selected_identity)
+			telemetry.text+=("\nPatrol route: " if actor_order.get("patrol",false) else "\nActor route: ")+str(actors.pool.navigation_status(actor_handle).state).replace("_"," ")
 		if actors.pool!=null and session_menu.visible_ui() and session_menu.current_page=="Development":telemetry.text+="\nJ Place actor · Shift+J Remove actor\nK Select / send · Shift+K Stop"
 	terrain._record_stage("world process",(Time.get_ticks_usec()-frame_begin)/1000.0)
 

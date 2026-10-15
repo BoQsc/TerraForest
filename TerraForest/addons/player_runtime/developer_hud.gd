@@ -82,9 +82,10 @@ Esc opens the complete road editor.")
 			else:
 				button("Place actor at aim",func():game.session_menu.run_command(KEY_J))
 				button("Select / send at aim",func():game.session_menu.run_command(KEY_K))
+				button("Patrol to aim",func():game.session_menu.patrol_actor())
 				button("Stop selected actor",func():game.session_menu.run_command(KEY_K,true))
 				button("Remove actor at aim",func():game.session_menu.run_command(KEY_J,true))
-				label("Select an actor, then aim at a destination and choose Select / send again. Nearby walking only; the selection ring and route status show progress.")
+				label("Select an actor, then aim at ground. Select / send walks once; Patrol to aim repeats between its current position and that point (1-16 m). Stop clears either order.")
 				button("Save world",game.session_menu.save_world)
 		_:
 			label("No development tool selected.")

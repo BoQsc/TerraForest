@@ -241,3 +241,9 @@ in `docs/evidence/actor_settlement_navigation/README.md`. This closes that bound
 integration check, not all furnished routes or large-population qualification.
 
 Persistence registration supports `register_components(Array[Dictionary])` for setup transactions. Each entry has `name`, `capture`, `restore`, `validator`, and `empty`; all entries validate before any is installed. Duplicate names, invalid snapshots, attached hosts, or exceeding the existing 63-provider limit reject the entire batch. `register_component` remains compatible. Pickup initialization stages all native stores and unparented renderers, then registers the batch and publishes them; failure permits retry without partial state. Repeating preparation succeeds only for its original host.
+
+### Two-point actor patrol
+
+`NativeActorOrders.set_patrol(identity, target)` records the actor current position and a finite destination1-16 metres away. It replaces a single destination or earlier patrol. Only ready active actors reverse after arrival through the existing route planner. `clear_target` stops either kind of order; `set_target` returns to one-shot movement. `get_target` reports `patrol` and, for patrols, `other` alongside the active `target`. No dormant actor ticking or catch-up is added.
+
+In the main world, enter development mode, select an actor, aim at dry static ground and click **Patrol to aim** in the actor HUD or Actions > Development. Existing routing bounds and failure states apply. Order storage remains version1 without patrols; version2 stores both endpoints and current leg when needed. Older builds reject version2. See [patrol evidence](../../docs/evidence/actor_patrol/README.md).

@@ -94,6 +94,7 @@ func _ready() -> void:
 	button(row,"Carve lake at aim",func():run_command(KEY_L))
 	row=HBoxContainer.new();dev_box.add_child(row)
 	button(row,"Place actor",func():run_command(KEY_J));button(row,"Select / send actor",func():run_command(KEY_K))
+	button(row,"Patrol to aim",patrol_actor)
 	button(row,"Remove actor",func():run_command(KEY_J,true));button(row,"Stop actor",func():run_command(KEY_K,true))
 	var options:=GridContainer.new();options.columns=3;dev_box.add_child(options)
 	for entry in [["Next test site",KEY_F2],["Next biome",KEY_F4],["LOD colours",KEY_F6],["Grass texture",KEY_F7],["Debug light",KEY_F8],["Terrain visualization",KEY_F10]]:
@@ -250,6 +251,10 @@ func leave_to_browser() -> void:
 	game._close_journal()
 	await game.terrain.shutdown_after_edits()
 	get_tree().change_scene_to_packed(browser)
+func patrol_actor() -> void:
+	if not developer:return
+	set_open(false)
+	game._show_lake_notice(game.actor_authoring.command(game,false,true))
 func run_command(key: int,shift: bool=false) -> void:
 	if not developer:return
 	set_open(false);var event:=InputEventKey.new();event.pressed=true;event.physical_keycode=key;event.shift_pressed=shift;game._unhandled_input(event)

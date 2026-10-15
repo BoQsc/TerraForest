@@ -20,11 +20,24 @@ func run() -> void:
 	check(not orders.restore_storage_snapshot(bad) and orders.capture_storage_snapshot()==snapshot,"orphan destination rejects against actor owner")
 	var positions: PackedByteArray=store.capture_storage_snapshot();store.restore_storage_snapshot(positions)
 	check(orders.restore_storage_snapshot(snapshot) and orders.get_target(id).target==Vector3(10,2,0),"orders survive handle regeneration")
+	check(orders.set_patrol(id,Vector3(4,2,0)),"native patrol accepts bounded destination")
+	var patrol: PackedByteArray=orders.capture_storage_snapshot()
+	check(patrol.decode_u32(4)==2 and orders.restore_storage_snapshot(patrol) and orders.capture_storage_snapshot()==patrol,"patrol encoding round-trips exactly")
+	bad=patrol.duplicate();bad.encode_u32(72,2)
+	check(not orders.restore_storage_snapshot(bad) and orders.capture_storage_snapshot()==patrol,"unknown patrol mode rejects without mutation")
+	check(not orders.set_patrol(id,Vector3(100,2,0)) and orders.capture_storage_snapshot()==patrol,"oversized patrol rejects without mutation")
+	check(orders.restore_storage_snapshot(snapshot) and not orders.get_target(id).patrol,"legacy restore replaces patrol with single destination")
 	var pool: Node3D=ClassDB.instantiate("NativeEntityActivation");root.add_child(pool);pool.configure(store,2)
 	check(pool.set_orders(orders),"activation pool binds matching order owner")
 	pool.select(Vector3.ZERO,10,64);await physics_frame
-	var result: Dictionary=pool.settle(1.0/60,func(_bounds: AABB):return true)
-	check(result.ok and store.get_position(store.resolve_identity(id)).x>0,"native automatic simulation executes stored target")
+	var result: Dictionary={}
+	# Avoidance velocity arrives asynchronously after activation; allow bounded
+	# physics callbacks rather than requiring motion before the first response.
+	for frame in 6:
+		result=pool.settle(1.0/60,func(_bounds: AABB):return true)
+		if store.get_position(store.resolve_identity(id)).x>0:break
+		await physics_frame
+	check(result.get("ok",false) and store.get_position(store.resolve_identity(id)).x>0,"native automatic simulation executes stored target within six physics frames")
 	check(orders.clear_target(id) and not orders.get_target(id).present,"stop clears target")
 	var x: float=store.get_position(store.resolve_identity(id)).x;await physics_frame;pool.settle(1.0/60,func(_bounds: AABB):return true)
 	check(store.get_position(store.resolve_identity(id)).x==x,"cleared order stops horizontal movement")
