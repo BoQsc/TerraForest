@@ -1,3 +1,10 @@
+> 2026-10-15 ore gameplay checkpoint: ordinary pickaxe attacks on the prepared
+> iron and copper faces yield the correct items directly, with tool wear and
+> no unclaimed rewards. Exact inventory survives fresh-process compound reload.
+> Tested on a copy; source checkpoint unchanged. Evidence:
+> evidence/geology_rewards_route/. This covers two strikes, not sustained mining
+> or natural discovery; faceted ore visuals and startup hitches remain open.
+
 > 2026-10-15 geology checkpoint portability: Prepare Geology Checkpoint.cmd
 > authors iron/copper access tunnels in a staging save, verifies both walks
 > after fresh-process reopening, then publishes only if gameplay is absent.

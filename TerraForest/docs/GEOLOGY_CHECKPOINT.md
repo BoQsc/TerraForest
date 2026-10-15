@@ -9,3 +9,5 @@ A second authored tunnel exposes copper. Its entrance is at [328.0, 90.28734, 33
 These are authored access tunnels to seeded deposits, not proof of natural cave discovery. Ore colour and texture are visible, but exposed faces remain visibly faceted. Mining continuity and sustained frame/thermal qualification remain open. The screenshots' 60 FPS HUD is not a performance test.
 
 Prepared slot: `geology_gameplay`. Historical slot: `geology_access_1791586170375323500`. Preparation evidence: `docs/evidence/geology_preparation`; historical route samples: `docs/evidence/geology_access`. The new preparation check covers access and disk reopening, not reward amounts or sustained mining.
+
+2026-10-15 interaction check: in a disposable copy, a normal pickaxe attack at each exposed face yields one iron ore and one copper ore respectively. Both items appear directly in carried slots; tool wear and exact inventory persist after a fresh-process reopen. Evidence: `docs/evidence/geology_rewards_route`. This is a two-strike correctness check, not sustained mining or a performance qualification.

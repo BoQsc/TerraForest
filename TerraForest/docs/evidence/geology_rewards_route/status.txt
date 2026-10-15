@@ -1,0 +1,17 @@
+2026-10-15: actual-world ore rewards and inventory persistence
+
+run_geology_rewards_route.py copies geology_gameplay to a unique geology_route
+slot. The test positions the player at the two previously traversed faces;
+subsequent target selection and excavation use WorldAttack's normal pickaxe path.
+No material grants, synthetic hits, terrain brushes or reward injection occur.
+One strike at each face removed exactly one native iron/copper sample and yielded
+one corresponding ore item. Tool wear increased; reward inbox remained empty.
+Fresh process verifies exact inventory bytes, including wear and both quantities.
+Source canonical save hash remains unchanged. Screenshot inspected: both item
+icons are visible; ore terrain remains faceted with a strong headlamp highlight.
+
+This is not a continuous walking route, sustained mining test, texture-quality
+acceptance or independent density/mesh restoration proof. Reopen log retains a
+133ms terrain receive hitch. The shared base fixture's completion marker is
+COMBINED_RESOURCE_ROUTE; its assertions here are geology-specific. 1080p
+fullscreen and a 60 FPS cap apply, without a performance qualification claim.

@@ -1,0 +1,81 @@
+{
+  "failures": 0,
+  "strikes": [
+    {
+      "item": 202,
+      "outcome": {
+        "epoch": 0,
+        "removed_samples": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "revision": 3,
+        "status": "published",
+        "ticket": 1
+      },
+      "quantity": 1,
+      "strike": 0,
+      "target": {
+        "health": 30,
+        "key": "terrain:363:112:368",
+        "kind": "terrain",
+        "material": "stone",
+        "name": "Terrain",
+        "normal": "(-0.913357, 0.40716, 0.0)",
+        "position": "(363.8306, 112.62, 368.0)"
+      }
+    },
+    {
+      "item": 203,
+      "outcome": {
+        "epoch": 0,
+        "removed_samples": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "revision": 4,
+        "status": "published",
+        "ticket": 2
+      },
+      "quantity": 1,
+      "strike": 0,
+      "target": {
+        "health": 30,
+        "key": "terrain:367:108:332",
+        "kind": "terrain",
+        "material": "stone",
+        "name": "Terrain",
+        "normal": "(-0.913357, 0.40716, 0.0)",
+        "position": "(367.8306, 108.62, 332.0)"
+      }
+    }
+  ]
+}

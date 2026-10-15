@@ -1,0 +1,36 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.3.280 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] World loaded
+[TerrainRewrite] World loaded
+[terrain-hitch] receive 128.6 ms at 3143
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+PASS copied geology world opens
+PASS normal mining gameplay active
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+PASS ore collision arrives
+[TerrainRewrite] Pickaxe
+[TerrainRewrite] Pickaxe: hold left mouse to attack or dig. Most effective on stone.
+PASS pickaxe targets actual ore-face terrain
+[TerrainRewrite] Terrain destroyed
+PASS ordinary pickaxe attack accepted
+[TerrainRewrite] Mined resources added to inventory
+PASS mining publishes
+PASS ore 202 enters inventory directly
+PASS successful mining wears pickaxe
+PASS no unclaimed materials with available inventory room
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+PASS ore collision arrives
+[TerrainRewrite] Pickaxe
+[TerrainRewrite] Pickaxe: hold left mouse to attack or dig. Most effective on stone.
+PASS pickaxe targets actual ore-face terrain
+[TerrainRewrite] Terrain destroyed
+PASS ordinary pickaxe attack accepted
+[TerrainRewrite] Mined resources added to inventory
+PASS mining publishes
+PASS ore 203 enters inventory directly
+PASS successful mining wears pickaxe
+PASS no unclaimed materials with available inventory room
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+PASS ordinary compound save completes
+COMBINED_RESOURCE_ROUTE failures=0

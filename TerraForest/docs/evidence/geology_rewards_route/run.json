@@ -1,0 +1,74 @@
+{
+  "copy": {
+    "created": true,
+    "slot": "geology_route_49b62e2edd35403491aa589dd87a9008",
+    "source_slot": "geology_gameplay",
+    "source_sha256": "5aec469e8074b2c88bd73752116f7ca434ef562855f2e8c5ef45555e4b6230c6"
+  },
+  "phases": [
+    {
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--fullscreen",
+        "--resolution",
+        "1920x1080",
+        "--max-fps",
+        "60",
+        "--script",
+        "res://tests/geology_rewards_route.gd",
+        "--",
+        "--world-slot=geology_route_49b62e2edd35403491aa589dd87a9008",
+        "--gameplay-construction",
+        "--route-evidence=C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\geology_rewards_route\\20261015T125249043180Z\\expected.bin"
+      ],
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "pid": 23460,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 13.050508200001786,
+        "passed": true
+      }
+    },
+    {
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--fullscreen",
+        "--resolution",
+        "1920x1080",
+        "--max-fps",
+        "60",
+        "--script",
+        "res://tests/geology_rewards_route.gd",
+        "--",
+        "--world-slot=geology_route_49b62e2edd35403491aa589dd87a9008",
+        "--gameplay-construction",
+        "--route-evidence=C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\geology_rewards_route\\20261015T125249043180Z\\expected.bin",
+        "--reopen-route"
+      ],
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "pid": 25764,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 11.944273199998861,
+        "passed": true
+      }
+    }
+  ],
+  "revision": "3b9ae8299b489d4f4e9ec8f7eabef736aff0b8d7",
+  "worktree_changes": [
+    "?? TerraForest/tests/geology_rewards_route.gd",
+    "?? TerraForest/tools/run_geology_rewards_route.py"
+  ],
+  "git_metadata_available": true,
+  "source_unchanged": true
+}
