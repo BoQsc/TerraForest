@@ -1,3 +1,9 @@
+> 2026-10-16 browser launch verification: production command policy starts two
+> sequential graphical processes; generator1/seed7129 and changed inventory
+> survive ordinary compound save and fresh reopen. Both use 1080p fullscreen.
+> Observing SceneTree substitutes for direct scene startup; actual mouse click,
+> all presets and performance are not certified. Evidence: evidence/world_browser_route/.
+
 > 2026-10-16 world entry UI: project starts at a saved-world browser with named
 > creation, seed/preset selection and gameplay-cost selection. Existing launchers
 > remain direct. Policy/UI checks and 1080p visual inspection pass; process

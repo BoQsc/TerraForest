@@ -21,8 +21,20 @@ launch arguments, filtering, invalid-create feedback and control bounds. The
 The first run failed because the fixture assigned filter text without emitting
 the user typing signal; the corrected fixture exercises the connected signal.
 
-This check does not certify the OS process handoff, fresh-world save/reopen,
-exported executables, simultaneous creators, loading time or sustained frame
-rate. Existing world-generation and persistence evidence still applies only to
-its recorded builds. Whole-world baking, thumbnails and a return-to-browser
-action remain future work.
+Follow-up `tests/world_browser_route.gd` passes production launch-policy arguments
+through `OS.create_process` to two sequential graphical Godot processes. It
+substitutes an observing SceneTree that instantiates the actual world scene.
+Generator 1 / seed 7129 creates a persistent unique slot; seven starter wood
+items are consumed and the ordinary compound save completes. Fresh reopen has
+no generation overrides and restores the chosen generator/seed and exact changed
+inventory. Both processes pass the 1920x1080 fullscreen/full-scale check. Child
+logs contain no errors or warnings. Evidence: `evidence/world_browser_route/`,
+report `reports/checks/20261015T211018720152Z`. The earlier unmodified-inventory
+run passed but was strengthened because defaults alone are weak restore evidence.
+The reopened world screenshot was inspected.
+
+This is not an actual mouse click through the browser, nor qualification of
+exported executables, simultaneous creators, all presets/seeds, loading time or
+sustained frame rate. Whole-world baking, thumbnails and a return-to-browser
+action remain future work. Other world-generation and persistence evidence
+still applies only to its recorded builds.
