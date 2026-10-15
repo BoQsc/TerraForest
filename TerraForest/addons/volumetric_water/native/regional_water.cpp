@@ -40,11 +40,16 @@ bool NativeWaterTerrainPatch::set_structure_hulls(const Array &input){
     structure_hulls=std::move(staged);return true;
 }
 int64_t NativeWaterTerrainPatch::prepare_structures(){
-    if(structure_hulls.empty())return status=1;
+    if(structure_hulls.empty()&&!structure_only)return status=1;
     if(!structures)structures=std::make_shared<StructureWaterContacts>();
     const uint64_t start=Time::get_singleton()->get_ticks_usec();
     while(structure_cursor<512){
         int i=structure_cursor++,x=i%8,y=(i/8)%8,z=i/64;
+        if(structure_only){
+            Vector3 origin=Vector3(coord)*4+Vector3(x,y,z)*.5;
+            if(!AABB(origin,Vector3(.5,.5,.5)).intersects(structure_edit_bounds))continue;
+            if(structures->cells[i]){structures->bytes-=structures->cells[i]->bytes();structures->cells[i].reset();}
+        }
         if(floor[i]==ceiling[i])continue;
         float d[8];for(int c=0;c<8;++c)d[c]=density[x+(c&1)+9*(y+((c>>1)&1))+81*(z+((c>>2)&1))];
         auto base=WaterCellProfile::make(d,true,floor[i],ceiling[i]);
@@ -167,6 +172,7 @@ void NativeRegionalWater::_bind_methods(){
     ClassDB::bind_method(D_METHOD("accept_patch","patch"),&NativeRegionalWater::accept_patch);
     ClassDB::bind_method(D_METHOD("invalidate","bounds","replace_water"),&NativeRegionalWater::invalidate,DEFVAL(false));
     ClassDB::bind_method(D_METHOD("invalidate_buildings","bounds"),&NativeRegionalWater::invalidate_buildings);
+    ClassDB::bind_method(D_METHOD("reuse_building_occupancy","patch"),&NativeRegionalWater::reuse_building_occupancy);
     ClassDB::bind_method(D_METHOD("advance","budget","seconds"),&NativeRegionalWater::advance,DEFVAL(1.0/60.0));
     ClassDB::bind_method(D_METHOD("begin_fill","bounds","level","seed","amount"),&NativeRegionalWater::begin_fill);
     ClassDB::bind_method(D_METHOD("remove_bounds","bounds"),&NativeRegionalWater::remove_bounds);
@@ -231,6 +237,17 @@ Dictionary NativeRegionalWater::next_request(){
     // Keep reservation until accepted. A stale worker can simply retry it.
     d["coordinate"]=position(k);return d;
 }
+bool NativeRegionalWater::reuse_building_occupancy(const Ref<NativeWaterTerrainPatch> &patch){
+    if(patch.is_null()||patch->status!=0||patch->cursor||patch->terrain_prepared)return false;
+    auto it=regions.find(key(patch->coord));if(it==regions.end())return false;const Region &r=it->second;
+    // Mixed/terrain invalidations cannot reuse old terrain contacts. This is
+    // called before dispatch; the worker only sees immutable cached cell data.
+    if(r.valid||!r.has_density||!r.limited_building_edit)return false;
+    patch->density=r.density;patch->floor=r.floor;patch->ceiling=r.ceiling;patch->contacts=r.contacts;
+    patch->structures=r.structures?std::make_shared<StructureWaterContacts>(*r.structures):std::make_shared<StructureWaterContacts>();
+    patch->structure_edit_bounds=r.building_edit_bounds;patch->structure_only=true;patch->terrain_prepared=true;patch->cursor=729;
+    return true;
+}
 bool NativeRegionalWater::accept_patch(const Ref<NativeWaterTerrainPatch> &patch){
     if(patch.is_null()||patch->status!=1)return false;Key k=key(patch->coord);auto it=regions.find(k);if(it==regions.end())return false;
     uint64_t old_bytes=it->second.structures?it->second.structures->bytes:0,new_bytes=patch->structures?patch->structures->bytes:0;
@@ -244,7 +261,7 @@ bool NativeRegionalWater::accept_patch(const Ref<NativeWaterTerrainPatch> &patch
     solid_cache_bytes=solid_cache_bytes-old_bytes+new_bytes;it->second.structures=patch->structures;
     it->second.density=patch->density;it->second.has_density=true;it->second.contacts=patch->contacts;
     if(mesh_set.insert(k).second)meshes.push_back(k);
-    it->second.floor=patch->floor;it->second.ceiling=patch->ceiling;it->second.valid=true;sampled+=729;
+    it->second.floor=patch->floor;it->second.ceiling=patch->ceiling;it->second.valid=true;sampled+=patch->structure_only?0:729;
     request_set.erase(k);requests.erase(std::remove(requests.begin(),requests.end(),k),requests.end());
     Vector3i base=patch->coord*8;
     for(int i=0;i<512;++i)if(it->second.water[i]){

@@ -144,3 +144,19 @@ Both native targets installed; release cached fixture reload passes. Actual
 bucket/history/region integration also passes after the curve change.
 Remaining: repeated/dense-building scaling and sustained performance evidence;
 one sphere test does not establish bounded cost as a region gains more shapes.
+
+2026-10-15 dense-region scaling and immutable cell reuse:
+New short actual-world test places8 spheres in one region then removes/replaces
+one4 times. Before, every edit rebuilt all cached shape cells: worker55ms for
+sphere2,209ms for sphere8,174-208ms per repeated removal/replacement. After,
+only touched cells prepare new immutable occupancy; unchanged cells share cached
+profiles and building-only edits reuse terrain samples. Mixed/terrain invalidation
+keeps full reconstruction. Worker stays25-29ms for sphere2 through8; repeated
+removal0.04-0.05ms/replacement25ms. Cache returns to1,347,184 bytes every cycle.
+Test forces independent complete terrain/building occupancy reconstruction and
+compares quantities and all mesh vertex hashes against the reused result: pass.
+Cached release fixture reload passes; both native targets installed.
+One update took280ms, of which214ms was measured worker-queue waiting. Another
+waited87ms. Frame intervals stayed near16.7ms. Thus local compute scaling is
+improved, but shared-worker service latency remains an observed limitation.
+This is eight shapes and four cycles, not a city or long-duration qualification.

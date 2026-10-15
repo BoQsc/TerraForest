@@ -138,6 +138,7 @@ func _process(delta:float) -> void:
      var hull_started:=Time.get_ticks_usec()
      var solids:Dictionary=blocks.solid_hulls(AABB(Vector3(request.coordinate)*4,Vector3(4,4,4)))
      if not solids.ok or not _builder.set_structure_hulls(solids.hulls):_builder=null
+     if _builder!=null:water.reuse_building_occupancy(_builder)
      _hull_snapshot_us=Time.get_ticks_usec()-hull_started
    if _builder!=null:
     _token=_builder.get_instance_id()

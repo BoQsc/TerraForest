@@ -32,7 +32,8 @@ class NativeWaterTerrainPatch : public godot::RefCounted {
     std::array<uint16_t,512> floor{},ceiling{};
     std::vector<std::vector<WaterSolidClip::Plane>> structure_hulls;
     std::shared_ptr<StructureWaterContacts> structures;
-    bool terrain_prepared=false;
+    bool terrain_prepared=false,structure_only=false;
+    godot::AABB structure_edit_bounds;
     int structure_cursor=0;
     int64_t prepare_structures();
     int cursor=0,status=-1;
@@ -152,6 +153,7 @@ public:
     bool accept_patch(const godot::Ref<NativeWaterTerrainPatch> &patch);
     void invalidate(const godot::AABB &bounds,bool replace_water=false);
     void invalidate_buildings(const godot::AABB &bounds);
+    bool reuse_building_occupancy(const godot::Ref<NativeWaterTerrainPatch> &patch);
     void advance(int64_t budget,double seconds=1.0/60.0);
     bool begin_fill(const godot::AABB &bounds,double level,const godot::Vector3 &seed,int64_t amount);
     int64_t remove_bounds(const godot::AABB &bounds);
