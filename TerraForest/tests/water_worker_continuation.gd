@@ -10,9 +10,10 @@ class Core extends RefCounted:
   return reply
 class Builder extends RefCounted:
  var calls:=0
+ var required_calls:=3
  func sample_terrain(_core:Object,_budget:int,_revision:int,_epoch:int)->int:
   calls+=1
-  return 1 if calls>=3 else 0
+  return 1 if calls>=required_calls else 0
 var failures:=0
 func check(ok:bool,label:String):
  print("PASS " if ok else "FAIL ",label)
@@ -37,6 +38,14 @@ func run():
  backend._execute_lake_slice(request(builder));core.epoch+=1
  backend._service_lake_slice();result=backend.poll()
  check(result.size()==1 and result[0].status==-4 and builder.calls==1 and backend._lake_pending==0,"Changed cancel epoch rejects continuation before sampling")
+ core.epoch=9;builder=Builder.new();builder.required_calls=7;backend._lake_pending=1
+ backend.jobs.append(request(builder))
+ backend._service_lake_slice(100000)
+ check(builder.calls==4 and backend.jobs.size()==1 and backend.results.is_empty(),"Service quantum stops after four slices even with time remaining")
+ backend.jobs.push_front({"kind":"save"});backend._service_lake_slice(100000)
+ check(builder.calls==4,"Multi-slice quantum still cannot cross save barrier")
+ backend.jobs.pop_front();backend._service_lake_slice(100000);result=backend.poll()
+ check(result.size()==1 and result[0].status==1 and backend._lake_pending==0,"Next quantum completes remaining slices")
  core.epoch=9;builder=Builder.new();backend._lake_pending=1;backend.stopping=true
  backend._execute_lake_slice(request(builder));result=backend.poll()
  check(result.size()==1 and result[0].status==0 and backend.jobs.is_empty() and backend._lake_pending==0,"Shutdown returns unfinished reservation without requeue")

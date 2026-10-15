@@ -1,13 +1,23 @@
 # SPDX-License-Identifier: 0BSD
 extends "res://tests/water_structure_occupancy.gd"
+var queue_samples:Array[Dictionary]=[]
+func sample_queue():
+ if not profiling:return
+ var snapshot:Dictionary=game.terrain.backend.diagnostic_queue_snapshot()
+ var waiting:=0
+ for job:Dictionary in snapshot.queued:
+  if job.kind=="lake_slice":waiting+=1
+ if waiting:queue_samples.append({"active":snapshot.active,"water_waiting":waiting})
 func timed_edit(cell:Vector3i,word:int,label:String)->Dictionary:
  var initial:int=game.lakes.statistics().water_ml
  var sampled:int=game.lakes.statistics().sampled_nodes
+ queue_samples.clear()
  begin_costs();var start:=Time.get_ticks_usec()
  check(game.structures.blocks.set_cells(PackedInt32Array([cell.x,cell.y,cell.z,word])),label+" accepted")
  check(await ready_water(),label+" publishes")
  var elapsed:float=(Time.get_ticks_usec()-start)/1000.0
  var costs:=end_costs();costs.publish_ms=elapsed;costs.label=label
+ costs.queue_samples=queue_samples.duplicate(true)
  costs.cache_bytes=game.lakes.statistics().structure_contact_bytes
  check(game.lakes.statistics().sampled_nodes==sampled,label+" reuses unchanged terrain sampling")
  check(game.lakes.statistics().water_ml<=initial,label+" does not create water")
@@ -15,12 +25,14 @@ func timed_edit(cell:Vector3i,word:int,label:String)->Dictionary:
  return costs
 func run():
  process_frame.connect(sample_costs)
+ process_frame.connect(sample_queue)
  game=load("res://demo/world.tscn").instantiate();game.background_fps=60;root.add_child(game)
  var deadline:=Time.get_ticks_msec()+35000
  while not game.has_meta("water_bucket_review_ready") and Time.get_ticks_msec()<deadline:await process_frame
  check(game.has_meta("water_bucket_review_ready"),"Actual water world ready")
  if failures:await finish();return
  game.terrain.lake_slice_profiled.connect(slice_cost)
+ game.terrain.backend.enable_diagnostics()
  game.set_process(false);game.set_physics_process(false);game._clear_motion()
  var entry:Dictionary=game.lakes._lakes.values()[0]
  var cell:=Vector3i(floori(entry.seed.x),floori(entry.level)-1,floori(entry.seed.z))

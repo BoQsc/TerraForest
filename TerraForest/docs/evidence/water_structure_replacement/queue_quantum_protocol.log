@@ -1,0 +1,12 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS Continuation keeps one reservation without interim result
+PASS Continuation cannot cross queued save barrier
+PASS Slices finish without a main-thread poll between them
+PASS Terminal result releases reservation exactly once
+PASS Changed cancel epoch rejects continuation before sampling
+PASS Service quantum stops after four slices even with time remaining
+PASS Multi-slice quantum still cannot cross save barrier
+PASS Next quantum completes remaining slices
+PASS Shutdown returns unfinished reservation without requeue
+WATER_WORKER_CONTINUATION failures=0

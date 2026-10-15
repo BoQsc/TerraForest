@@ -624,17 +624,24 @@ func _execute_lake_slice(job: Dictionary) -> void:
 		"lake_cache":cache_event,"lake_identity":"",
 		"queue_ms":queue_ms,"worker_ms":worker_ms})
 
-func _service_lake_slice() -> void:
-	var selected: Dictionary={}
-	mutex.lock()
-	if not stopping:
-		for index in range(jobs.size()):
-			var kind: String=jobs[index].get("kind","")
-			if kind=="lake_slice":
-				selected=jobs[index];jobs.remove_at(index);break
-			if kind not in ["mesh","relight","height","surface_batch","density_ray"]: break
-	mutex.unlock()
-	if not selected.is_empty(): _execute_lake_slice(selected)
+func _service_lake_slice(soft_budget_us:int=0) -> void:
+	# At most four native slices per service point. The normal worker loop
+	# permits a short interaction quantum before another large background mesh;
+	# nested region servicing keeps its existing single-slice default.
+	var began:=Time.get_ticks_usec()
+	for attempt in 4:
+		var selected: Dictionary={}
+		mutex.lock()
+		if not stopping:
+			for index in range(jobs.size()):
+				var kind: String=jobs[index].get("kind","")
+				if kind=="lake_slice":
+					selected=jobs[index];jobs.remove_at(index);break
+				if kind not in ["mesh","relight","height","surface_batch","density_ray"]: break
+		mutex.unlock()
+		if selected.is_empty():return
+		_execute_lake_slice(selected)
+		if Time.get_ticks_usec()-began>=soft_budget_us:return
 
 func _execute_density_batch(job: Dictionary) -> void:
 	var started:=Time.get_ticks_usec()
@@ -957,7 +964,7 @@ func _run() -> void:
 		# Whole-column meshing also admits one bounded water slice here.
 		# Selection preserves mutation/save barriers; region builds retain
 		# their finer cooperative points inside _build_regions.
-		_service_lake_slice()
+		_service_lake_slice(4000)
 		mutex.lock()
 		var should_stop: bool = stopping
 		var job: Dictionary = {}

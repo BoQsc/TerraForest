@@ -160,3 +160,20 @@ One update took280ms, of which214ms was measured worker-queue waiting. Another
 waited87ms. Frame intervals stayed near16.7ms. Thus local compute scaling is
 improved, but shared-worker service latency remains an observed limitation.
 This is eight shapes and four cycles, not a city or long-duration qualification.
+
+2026-10-15 queue attribution and bounded interaction quantum:
+The scaling test now records active terrain job/key while water is queued.
+A304ms aggregate wait spanned distant128m terrain mesh jobs; continuations
+received only one short slice per background mesh. The top-level worker now
+services up to4 native slices within a4ms soft quantum before its next job.
+Nested region service remains one slice. Each selection checks save/mutation
+barriers; native per-slice limits and pending reservation behavior are unchanged.
+Protocol tests cover the4-slice cap, save barrier and terminal reservation.
+Scaling/full-reconstruction/repeated-edit checks pass. After-run maximum queue
+wait147ms versus304ms in the preceding diagnostic run. Background job sequences
+vary, so this is observational improvement, not a deterministic latency bound.
+Individual long terrain mesh calls still cannot be preempted here. Native slice
+cost can exceed a soft quantum; it is not a hard4ms execution guarantee.
+Remaining: shared-worker latency under distant mesh load, broader visuals and
+sustained runtime qualification. Local curved compute scaling remains bounded
+in the8-sphere probe, but the entire performance objective is not complete.
