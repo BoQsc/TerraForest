@@ -60,6 +60,9 @@ class NativeRegionalWater : public godot::RefCounted {
     struct Region {
         std::array<uint16_t,512> floor{},ceiling{};
         std::array<uint64_t,512> water{};
+        // Explicit scoop vacancies, allocated only in bucket-edited regions.
+        // They store missing material, never simulated water or bucket identity.
+        std::vector<uint32_t> vacancies;
         std::array<float,729> density{};
         std::shared_ptr<const TerrainWaterContacts> contacts;
         std::shared_ptr<const StructureWaterContacts> structures;
@@ -139,6 +142,7 @@ class NativeRegionalWater : public godot::RefCounted {
     using Placement=std::vector<std::pair<godot::Vector3i,uint64_t>>;
     bool plan_connected_scoop(Placement &cells,uint64_t amount,godot::Dictionary &out) const;
     bool bucket_footprint(godot::Vector3i target,const godot::Vector3 &aim,uint64_t amount,bool collect,int &x0,int &z0,godot::Dictionary &out);
+    bool plan_vacancy_refill(godot::Vector3i target,const godot::Vector3 &aim,uint64_t amount,Placement &take) const;
     bool plan_local_refill(godot::Vector3i target,const godot::Vector3 &aim,uint64_t amount,Placement &take) const;
     bool plan_placement(godot::Vector3i target,const godot::Vector3 &aim,uint64_t amount,Placement &take,godot::Dictionary &out);
     void apply_placement(const Placement &take);
@@ -170,6 +174,7 @@ public:
     bool overlaps_occupied(const godot::AABB &bounds) const;
     godot::Dictionary cell_geometry(const godot::Vector3 &point) const;
     godot::PackedByteArray placement_mask(const godot::TypedArray<godot::Transform3D> &transforms) const;
+    godot::Dictionary raycast_vacancy(const godot::Vector3 &from,const godot::Vector3 &to) const;
     godot::Dictionary raycast_surface(const godot::Vector3 &from,const godot::Vector3 &to) const;
     bool commit_mesh_batch(int64_t id);
     godot::Dictionary next_mesh_batch();

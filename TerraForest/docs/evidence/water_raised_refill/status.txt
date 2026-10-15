@@ -1,0 +1,37 @@
+2026-10-15: Raised and partially scooped water refill regression
+
+Human review exposed that full-unit accounting did not imply shape reversibility.
+A column with an overhang loses the overhang on scoop/return and adds water above
+it instead. The native regression reproduced this before the change.
+
+Fix: bucket scoops retain per-cell missing amounts as explicit water edit state.
+A nearby pour first fills these vacancies; it does not infer their shape from the
+highest connected water. Any bucket can supply the water. A bounded native vacancy
+ray query makes an emptied aimed surface remain targetable for pouring only.
+Scoop picking still uses the actual rendered water surface.
+
+Vacancies are lazy 512-entry uint32 arrays (2 KiB per edited 4 m region, at most
+8 MiB across the existing 4096-region cap). Snapshot v9 stores only nonzero entries;
+v1-v8 remain readable, and worlds without vacancies still encode byte-exact v8.
+Solid-edit bounds clear affected vacancies. No automatic refill, flow, background
+simulation, extra rendering, or unbounded operation history is introduced.
+Refill searches at most 9^3 prepared cells. Vacancy ray query visits at most 11^3
+cells for a five-metre interaction ray, only on a pour action.
+
+Passing checks:
+- water_raised_refill, debug and release: raised column/overhang at three scoop
+  heights; exact per-cell restoration; v9 byte-exact reload; different full bucket;
+  invalid vacancy quantity rejected atomically.
+- water_raised_world: normal world, actual mouse clicks building raised water,
+  three side scoop/return cycles; all cell amounts and published vertex buffers
+  match their pre-scoop state. 1920x1080 fullscreen, 60 FPS cap. Captures inspected.
+- water_structure_bucket: existing construction/bucket/history/paging regression.
+- water_static_compound: normal compound disk save/reload regression.
+
+Limits: existing pre-v9 holes have no recorded removed shape and still use the
+older geometric refill fallback. This is bounded local targeting, not global undo
+or automatic leveling. Multiple nearby holes are filled nearest first. The old
+shapes can remain angular because water is static. These checks do not establish
+universal interaction correctness or sustained hardware/thermal performance.
+The first world cycle includes screenshot readback; its elapsed time is not a
+bucket latency measurement. Recorded max native bucket action was 2.278 ms.

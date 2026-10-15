@@ -1,0 +1,77 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.3.280 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] New world
+[TerrainRewrite] New world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+[TerrainRewrite] Preparing your finite lake; terrain and water are being built
+[TerrainRewrite] Mined resources added to inventory
+[TerrainRewrite] Lake ready · F5 saves world
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Finite lake ready · Bucket: left fill / right pour contents · Esc: Save world
+PASS Actual lake floor found
+PASS Full bucket collected before compound save
+PASS Ordinary dry ground found for saved placement
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Placed one water unit (1 m3)
+[TerrainRewrite] Placed one water unit (1 m3)
+PASS Full unit placed on terrain before disk save
+PASS Saved placement has a published surface
+PASS Bucket refilled alongside placed water before save
+PASS Ordinary terrain mining beneath lake accepted
+[TerrainRewrite] Mined resources added to inventory
+PASS Edited terrain and water geometry finish publishing
+PASS Mining does not move water quantities between cells
+PASS Mining creates no flow or settling work
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Empty hands - left mouse punches, E interacts
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Empty hands - left mouse punches, E interacts
+PASS Replacement cube starts in occupied water
+PASS Terrain cube replaces water before disk save
+PASS Terrain replacement and water deletion publish before save
+PASS Terrain replacement deletes water before compound save
+PASS Replacement cube has no hidden water
+PASS Saved building starts with water in its empty space
+PASS Place partial building before compound save
+PASS Building replacement publishes before disk save
+PASS Partial building removes only its solid water volume
+PASS Saved building starts with water in its empty space
+PASS Place partial building before compound save
+PASS Building replacement publishes before disk save
+PASS Partial building removes only its solid water volume
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+PASS Normal compound save verifies terrain, water and inventory
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+[TerrainRewrite] World loaded
+[TerrainRewrite] World loaded
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+[TerrainRewrite] Saved water world · equip or craft a bucket · left scoop / right pour
+PASS Saved combined world reopens and publishes water
+PASS Compound disk reload preserves every water-cell quantity
+PASS Disk reload republishes the placed water at its saved location
+PASS Compound disk reload preserves the filled bucket and inventory
+PASS Compound disk reload preserves the mined terrain field exactly
+PASS Water occupancy restored from cache without resampling
+PASS Disk reload does not resurrect water inside solid terrain
+PASS Compound disk reload restores prepared building occupancy
+PASS Compound disk reload restores the matching building shape
+PASS Disk reload retains water around partial building shape
+PASS Compound disk reload restores the matching building shape
+PASS Disk reload retains water around partial building shape
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Empty hands - left mouse punches, E interacts
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Empty hands - left mouse punches, E interacts
+PASS Remove saved replacement cube after disk reload
+PASS Saved cube removal and water contacts publish
+PASS Removing reloaded solid does not restore deleted water
+PASS Reloaded full bucket pours back into lake
+PASS Reloaded placed water remains targetable
+PASS Reloaded placement fills one whole bucket
+PASS Scoop removes reloaded placement without a stale surface
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+WATER_STATIC_COMPOUND failures=0

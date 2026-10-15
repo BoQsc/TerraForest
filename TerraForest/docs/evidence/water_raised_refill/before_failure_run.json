@@ -1,0 +1,61 @@
+{
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+    "--path",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+    "--log-file",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\checks\\20261015T093753625180Z\\engine.log",
+    "--headless",
+    "--max-fps",
+    "60",
+    "--script",
+    "res://tests/water_raised_refill.gd",
+    "--",
+    "--temporary",
+    "--world-slot=check_54e3b65d8b314bb5813ab97d2e93aed6",
+    "--derived-cache=user://water_raised_refill_54e3b65d8b314bb5813ab97d2e93aed6"
+  ],
+  "cache": "user://water_raised_refill_54e3b65d8b314bb5813ab97d2e93aed6",
+  "utc": "20261015T093753625180Z",
+  "timeout": 15.0,
+  "required_text": "WATER_RAISED_REFILL failures=0",
+  "headless": true,
+  "persistent": false,
+  "scope": "Fresh derived-cache argument; test code must honor it. Not save isolation or a sandbox.",
+  "cache_retained": true,
+  "revision": "cc94a17fbcc7c8583cd59488e01e708fbcfd4e69",
+  "worktree_changes": [
+    "?? TerraForest/tests/water_raised_refill.gd"
+  ],
+  "git_metadata_available": true,
+  "engine_sha256": "12310c74bdda7dcd43f28e971f33047dcecadd436b68169d61ce41009006df38",
+  "test_sha256": "29e4a530c77527ffb76d8659e9079ff82e00779bacea9520515e7c87731904b3",
+  "native_sha256": {
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "ed066843981550a6da7f2ed47f5f05eb676b1256540206cb2399e528d965c965",
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "7fe9102e113afdf3c91293fa09b2fb78f060985a2089c8fef67e4b58e0a62d6b",
+    "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "10590aa1b209bffbb93c6fab44ef51cbe2007a2ce80b065c0f4d3d7c3ea3b768",
+    "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "e75b14e2766ac5eb969d973e10ae794520338d908730bba6d25d45a9a3d0a4ba",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "0742e44096e00e13acd013a151ca4cbd7d52b5d3ac3703485a7a3d656a9a9b6f",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "13f455564dba3ebddce1f4f4a0fa470dad07ce80ef0d4097ce48527427046e04",
+    "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "91f711e3fb45491f3948f40ae4343fa13d96b5500e994c07620dc526c1e30160",
+    "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "73ca232cc326241b6ba2ebdf42fd30c4ddb2e1a5d11a568391d7c2d22d0e28fe",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "2f9e691e3dfcaa25380df84d544a8f72f493303102338916e4edff6b47ba1a06",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "60b8d18cdb9a922595634620801e64c5269628e6a15e15b23eb32f66a7528c10",
+    "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "1ca50df25678d290a9dd4f895f27881d4bb52d5e01033ece91b631ee591b2ee1",
+    "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "ed4424a4ec4177d663120c051dee89e03cffd9323e7423c44ac5fa7d5231d040",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "ac88a4acf809438bedfa06fe6508837395f84e6b0654e573cafa416d59b35e15",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "6d319a8b296f7ab998c5be91f925ec247db3c4335338d70633fc88cbfaf3bba2"
+  },
+  "result": {
+    "timed_out": false,
+    "launch_error": null,
+    "pid": 18748,
+    "exit_code": 1,
+    "diagnostics": [
+      "FAIL Returning one unit restores every cell, not only total volume"
+    ],
+    "required_text_found": false,
+    "elapsed_seconds": 0.2816671000000497,
+    "passed": false
+  }
+}

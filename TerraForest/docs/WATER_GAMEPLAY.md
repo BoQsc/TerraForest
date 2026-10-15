@@ -105,3 +105,9 @@ The graphical checks use the actual world at 1920x1080. The older flow/outlet
 checks in the historical guide are not acceptance tests for static water.
 Project code and original bucket assets remain 0BSD, built with pinned Zig and
 prebuilt godot-cpp.
+
+## Raised-water scoop/return correction (2026-10-15)
+
+Human review exposed shape loss after partially scooping raised water. Bucket scoops now retain the removed cell amounts; nearby pours restore those vacancies before using geometric refill. Empty scooped spaces are valid pour targets. This state saves in snapshot v9 and works with water from a different bucket. Existing v1-v8 saves remain readable. No flow or background simulation was added.
+
+The raised-water mouse-action regression restores exact cell amounts and published geometry across three cycles; native debug/release checks also cover overhangs and save/reload. See `evidence/water_raised_refill/status.txt` for evidence and limits. Pre-update holes cannot recover an original shape that was never recorded.
