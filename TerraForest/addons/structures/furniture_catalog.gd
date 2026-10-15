@@ -47,5 +47,9 @@ static func enclosed_cottage() -> Resource:
 		for z in [-1,2]:
 			attachments.append({"model":"architecture/wooden_window/v1","transform":Transform3D(Basis(Vector3.UP,PI/2),Vector3(x,2,z))})
 	if not asset.configure_model_attachments(attachments):return null
-	asset.resource_name="Furnished cottage with door and windows"
-	return asset
+	# Site preparation requires the foundation base at local Y=0. Composition
+	# shifts blocks and every attached model together without changing their fit.
+	var grounded: Resource=ClassDB.instantiate("NativeBlockPrefab")
+	if not grounded.compose([asset],PackedInt32Array([0,0,1,0,0])):return null
+	grounded.resource_name="Furnished cottage with door and windows"
+	return grounded

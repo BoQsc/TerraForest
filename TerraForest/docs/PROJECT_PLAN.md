@@ -1,3 +1,10 @@
+> 2026-10-15 grounded building review: `Review Buildings.cmd` opens a separately
+> published building_review save. Normal editor survey, grading and supported
+> placement passed, followed by capsule entrance and fresh disk reopen checks.
+> Normalized the enclosed prefab foundation to local Y=0 so site preparation
+> accepts it. Evidence: evidence/building_review/. Human review and furnished
+> multi-storey tower remain open; no water changes.
+
 > 2026-10-15 enclosed cottage: new prefab combines furniture, chest, fitted door
 > and eight glazed windows. Capsule walks through the opened doorway; normal
 > compound disk save and fresh process restore preserve hinge/door/window state.

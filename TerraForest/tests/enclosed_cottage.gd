@@ -25,10 +25,31 @@ func run() -> void:
 		await finish();return
 	var asset: Resource=preload("res://addons/structures/furniture_catalog.gd").enclosed_cottage()
 	check(asset!=null and asset.get_model_attachments().size()==13,"cottage combines furniture chest door and eight windows")
-	# Elevated clone-only assembly isolates passage geometry from terrain edits.
 	var origin:=Vector3i(game.player.position.floor())+Vector3i(20,12,0)
 	game.construction_inventory.gameplay=false
-	if not check(game.construction_inventory.place_prefab(game.structures.blocks,game.player_hud.inventory,asset,origin,0,game.structures.model_collections(),preload("res://addons/structures/construction_catalog.gd").recipes(),[]),"complete cottage transaction places"):await finish();return
+	if "--grounded" in OS.get_cmdline_user_args():
+		game.structure_mode=true;game.structure_rotation=0
+		for i in game.structure_prefabs.size():
+			if game.structure_prefabs[i].resource_name==asset.resource_name:game.structure_prefab_index=i;break
+		game.camera.global_position=game.player.position+Vector3(60,15,30)
+		game.camera.look_at(game.player.position+Vector3(60,-10,30),Vector3.FORWARD)
+		await physics_frame
+		game._survey_construction()
+		if not check(await wait_for(func():return not game.construction_palette.survey_busy,20) and not game._survey_plan.is_empty(),"editor surveys grounded cottage site"):print(game.construction_palette.survey_dialog.dialog_text);await finish();return
+		game._prepare_construction_site()
+		if not check(await wait_for(func():return game.site_preparation.status!="running",30) and game.site_preparation.status=="complete","editor grades cottage foundation"):print(game.site_preparation.reason);await finish();return
+		var prior: int=game.structures.blocks.stats().cells
+		game._place_prepared_site()
+		if not check(await wait_for(func():return game._foundation_placement.is_empty(),20) and game.structures.blocks.stats().cells>prior,"supported cottage publishes through editor placement"):print(game.construction_palette.survey_dialog.dialog_text);await finish();return
+		origin=game.site_preparation.plan.target
+		game.construction_palette.survey_dialog.hide()
+	else:
+		# Elevated clone-only assembly isolates geometry when no grading is requested.
+		if not check(game.construction_inventory.place_prefab(game.structures.blocks,game.player_hud.inventory,asset,origin,0,game.structures.model_collections(),preload("res://addons/structures/construction_catalog.gd").recipes(),[]),"complete cottage transaction places"):await finish();return
+	# The normalized prefab raises the original cottage coordinate system by 1 m.
+	origin+=Vector3i(0,1,0)
+	aim(Vector3(origin)+Vector3(0.5,1.03,6.8),Vector3(origin)+Vector3(0.5,2,5.5))
+	game.terrain.focus=game.player.position
 	game.structures.blocks.set_focus(Vector3(origin));game.structures.set_model_focus(Vector3(origin))
 	var bounds:=AABB(Vector3(origin)+Vector3(-5,0,-6),Vector3(11,10,14))
 	if not check(await wait_for(func():return game.structures.is_collision_region_ready(bounds)),"cottage collision is ready"):await finish();return
@@ -52,4 +73,7 @@ func run() -> void:
 	game.camera.global_position=Vector3(origin)+Vector3(12,7,16);game.camera.look_at(Vector3(origin)+Vector3(0,3,0))
 	await RenderingServer.frame_post_draw;root.get_texture().get_image().save_png(evidence+".png")
 	game.camera.position=Vector3(0,1.62,0)
+	game.yaw=PI;game.pitch=0;game.player.rotation.y=PI;game.camera.rotation=Vector3.ZERO
+	game.structure_mode=false
+	if game.session_menu.developer:game.session_menu.toggle_developer()
 	await finish()
