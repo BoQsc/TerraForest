@@ -137,3 +137,7 @@ Scope: this corrects distinct marked holes with enough missing capacity for the 
 Queued bucket and developer placements now check the five-second deadline before calling the native mutation. Previously a target becoming ready at expiry could execute the stale action before timeout was considered. The actual-world cancellation regression now includes an already-ready target with an expired queued scoop; before the fix it incorrectly filled the bucket, afterward world and inventory remain unchanged. Existing superseding-action and cold-target timeout checks also pass. Evidence: `docs/evidence/water_expired_ready_action`.
 
 Queued bucket requests still retain their click-time ray and inventory revision; camera movement does not retarget them. Continuous-swimming usability is not established by this deadline regression.
+
+## Moving player check (2026-10-15)
+
+`water_moving_player` keeps controller processing and physics enabled, disables flight, places the body in water, holds W through normal input dispatch, and pours while moving toward the scooped hole. The recorded body displacement before click is 0.13 m, water depth is 0.757 m, and forward input remains held through the transfer. Every water cell returns to baseline. The short normal-world 1920x1080 run passes; evidence is in `docs/evidence/water_moving_player`. This verifies immediate pouring while swimming, not delayed loading during motion, all viewing angles, or underwater visual quality.
