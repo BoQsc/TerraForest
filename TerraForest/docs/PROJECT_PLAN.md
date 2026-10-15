@@ -1,3 +1,9 @@
+> 2026-10-15 straight waypoint correction: bounded advancement prevents chasing
+> passed intermediate samples. Continuous-physics crossing passes 16/16;
+> separation >=0.786m, adapter p95/max 0.869/1.401ms, frame17.678/55.052ms.
+> Cottage stairs/doorway all six checks pass. Evidence: evidence/actor_waypoint_progress/.
+> One bounded result, not endurance or hitch-free qualification. Water unchanged.
+
 > 2026-10-15 crowd timing correction: screenshot writing caused the largest
 > prior interval. Independent frame sampling now records p95/max17.657/60.289ms;
 > profiled adapter1.048/2.487ms still fails. Continuous physics finishes14/16,

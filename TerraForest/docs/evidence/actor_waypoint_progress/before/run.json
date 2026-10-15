@@ -1,0 +1,51 @@
+{
+  "copy": {
+    "created": true,
+    "slot": "actor_crossing_34796e85a4c24e8cae30e9611af74f89",
+    "source_slot": "combined_gameplay",
+    "source_sha256": "25b19886c1b677c44cabce30b1bc39a9efb6614f40d6c733bfb990fa7e3d9052"
+  },
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+    "--path",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+    "--fullscreen",
+    "--resolution",
+    "1920x1080",
+    "--max-fps",
+    "60",
+    "--script",
+    "res://tests/actor_street_crossing.gd",
+    "--",
+    "--world-slot=actor_crossing_34796e85a4c24e8cae30e9611af74f89",
+    "--actors",
+    "--ground-cover",
+    "--crossing-output=C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\actor_street_crossing\\20261015T144939013109Z",
+    "--crowd"
+  ],
+  "result": {
+    "timed_out": false,
+    "launch_error": null,
+    "pid": 26932,
+    "exit_code": 1,
+    "diagnostics": [
+      "FAIL actor adapter p95 <= 1 ms and max <= 2 ms",
+      "FAIL actors arrive through ordinary main-world navigation: 12 / 16"
+    ],
+    "required_text_found": false,
+    "elapsed_seconds": 25.924470400001155,
+    "passed": false
+  },
+  "source_unchanged": true,
+  "revision": "15297984edac7f913ac0bbe340a42c6484f24a35",
+  "worktree_changes": [
+    " M TerraForest/addons/world_runtime/bin/world_runtime.windows.template_debug.x86_64.dll",
+    " M TerraForest/addons/world_runtime/bin/world_runtime.windows.template_release.x86_64.dll",
+    " M TerraForest/addons/world_runtime/native/actor_route.cpp"
+  ],
+  "git_metadata_available": true,
+  "native_sha256": {
+    "world_runtime.windows.template_debug.x86_64.dll": "1d5ccab75d2d7f84f86fa06a8f0f008f9efa2168e5292e1217bb3132fd0a95a4",
+    "world_runtime.windows.template_release.x86_64.dll": "babb713433b4ad598746e3b4810595b7d5d4fd62383020b93989a5722cfda64c"
+  }
+}

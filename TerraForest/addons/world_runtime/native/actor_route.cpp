@@ -129,7 +129,27 @@ void ActorRoute::step(PhysicsDirectSpaceState3D *space,const Callable &readiness
 }
 Vector3 ActorRoute::target(const Vector3 &position){
     if(state!=FOLLOWING)return position;
-    while(waypoint_<path_.size() && horizontal(position,path_[waypoint_])<.04)++waypoint_;
+    while(waypoint_<path_.size()){
+        const Vector3 point=path_[waypoint_];
+        bool reached=horizontal(position,point)<.04;
+        // Avoidance can carry a walker past a sample without entering its tiny
+        // point radius. Advance only along straight, level intermediate edges;
+        // retain exact corner/stair targets and the separate final arrival rule.
+        if(!reached && waypoint_>0 && waypoint_+1<path_.size()){
+            Vector3 incoming=point-path_[waypoint_-1],outgoing=path_[waypoint_+1]-point;
+            if(std::abs(incoming.y)<.05 && std::abs(outgoing.y)<.05 && std::abs(position.y-point.y)<.1){
+                incoming.y=outgoing.y=0;
+                if(incoming.length_squared()>.0001 && outgoing.length_squared()>.0001 && incoming.normalized().dot(outgoing.normalized())>.999){
+                    Vector3 offset=position-point;offset.y=0;
+                    const Vector3 direction=incoming.normalized();
+                    const real_t along=offset.dot(direction);
+                    reached=offset.length()<.15 || (along>=0 && along<.5 && (offset-direction*along).length()<.35);
+                }
+            }
+        }
+        if(!reached)break;
+        ++waypoint_;
+    }
     if(waypoint_==path_.size()){state=ARRIVED;return position;}
     return path_[waypoint_];
 }
@@ -143,6 +163,9 @@ void ActorRoute::moved(const Vector3 &position,double delta){
 Dictionary ActorRoute::status() const {
     static const char *names[]={"idle","planning","following","arrived","blocked","unavailable","search_limit"};
     Dictionary out;out["state"]=names[state];out["nodes"]=int(nodes_.size());out["expansions"]=expansions;
-    out["waypoints"]=int(path_.size());out["node_limit"]=2048;out["radius_m"]=16;return out;
+    out["waypoints"]=int(path_.size());out["waypoint_index"]=int(waypoint_);
+    if(waypoint_<path_.size())out["waypoint_target"]=path_[waypoint_];
+    out["stuck_seconds"]=stuck_;out["replans"]=stalls_;
+    out["node_limit"]=2048;out["radius_m"]=16;return out;
 }
 }
