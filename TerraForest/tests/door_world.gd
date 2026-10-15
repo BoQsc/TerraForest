@@ -12,6 +12,7 @@ func run() -> void:
 	door.set_collision_focus(origin)
 	aim(origin+Vector3(0.5,0,2),origin+Vector3(0.5,1,0))
 	for i in 15:await physics_frame;await process_frame
+	check(game.player_hud.interaction_hint.visible and game.player_hud.interaction_hint.text=="E · Open wooden door","main-world HUD shows aimed door action")
 	use()
 	check(game.doors.state.is_open(id),"normal E input opens targeted door")
 	check(game.terrain.changed_since_save,"interaction marks world dirty")
@@ -22,6 +23,7 @@ func run() -> void:
 	check(game.doors.state.restore_storage_snapshot(components.door_hinges) and door.restore_snapshot(model),"captured open door restores")
 	aim(origin+Vector3(2,0,-0.5),origin+Vector3(0,1,-0.5))
 	for i in 15:await physics_frame;await process_frame
+	check(game.player_hud.interaction_hint.visible and game.player_hud.interaction_hint.text=="E · Close wooden door","main-world HUD reflects restored open hinge")
 	use()
 	check(not game.doors.state.is_open(id),"normal E input closes restored door")
 	check(door.get_instance(id)==game.model_tool.records(pose,door),"closed door returns to original placed transform")

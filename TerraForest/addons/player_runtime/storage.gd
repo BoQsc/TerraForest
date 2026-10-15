@@ -39,14 +39,14 @@ func restore_structures(bytes: PackedByteArray) -> bool:
 	return ok
 func allowed() -> bool:
 	return game.app_focused and game.terrain.world_ready and not game.loading_active and not game.shutdown_requested and not game.terrain.pending_edit and not game.world_vehicle.driving
-func aimed_id() -> int:
+func aimed_id(shared_hit: Variant=null) -> int:
 	var origin: Vector3=game.camera.global_position
-	var hit: Dictionary=game.structures.blocks.raycast_scene(origin,origin-game.camera.global_basis.z*3.0,7,[game.player.get_rid()])
+	var hit: Dictionary=game.structures.blocks.raycast_scene(origin,origin-game.camera.global_basis.z*3.0,7,[game.player.get_rid()]) if shared_hit==null else shared_hit
 	if hit.is_empty() or hit.collider!=collection: return 0
 	return collection.placement_for_body(hit.rid)
-func try_open() -> bool:
+func try_open(shared_hit: Variant=null) -> bool:
 	if not allowed() or game.fly or game.player_hud.inventory_open: return false
-	var id:=aimed_id()
+	var id:=aimed_id(shared_hit)
 	if id<=0: return false
 	identity=id;opened=true;prior_mouse=Input.mouse_mode
 	game._clear_motion();game.player_hud.inventory_open=true;game.player_hud.enabled=false

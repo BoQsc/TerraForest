@@ -31,6 +31,7 @@ var player_hud=preload("res://addons/player_runtime/player_hud.gd").new()
 var session_menu=preload("res://addons/player_runtime/session_menu.gd").new()
 var storage=preload("res://addons/player_runtime/storage.gd").new()
 var doors=preload("res://addons/structures/door_interaction.gd").new()
+var building_interaction=preload("res://demo/building_interaction.gd").new()
 var construction_inventory=preload("res://addons/player_runtime/construction_inventory.gd").new()
 var world_attack=preload("res://addons/player_runtime/world_attack.gd").new()
 var equipped_tool:=0
@@ -770,8 +771,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo and event.physical_keycode==KEY_E and not fly:
 		if not loading_active and not shutdown_requested and app_focused and terrain.world_ready and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED:
 			# A directly aimed container takes priority over proximity-based entry.
-			if storage.try_open(): return
-			if doors.try_interact(): return
+			if building_interaction.interact(self): return
 			if world_vehicle.enter(self):
 				_clear_motion();_show_lake_notice("Driving · E exit when stopped · Space brake");return
 			# Attacks exclusively use left mouse; E remains interaction.
@@ -1188,6 +1188,7 @@ func _physics_process(delta: float) -> void:
 
 func _process(delta: float) -> void:
 	var frame_begin:=Time.get_ticks_usec()
+	building_interaction.update(self,delta)
 	road_palette.poll_submission(terrain)
 	site_preview.visible=site_preview.vertices>0 and _site_selection_current() and _survey_plan.get("epoch",-1)==terrain.epoch and structure_mode and not model_tool.active and not world_vehicle.driving and not loading_active and not player_hud.inventory_open
 	var frontage_result: Dictionary=prefab_library.poll_frontage()

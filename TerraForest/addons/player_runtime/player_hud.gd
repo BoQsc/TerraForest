@@ -51,9 +51,15 @@ var ground_species: int=-1
 var ground_hint: Label
 var mode_hint: Label
 var action_hint: Label
+var interaction_hint: Label
 var editor_hint: String=""
 var ground_feedback: String=""
 var gameplay_construction:=false
+
+func show_interaction_hint(text: String) -> void:
+	if interaction_hint==null:return
+	if interaction_hint.text!=text:interaction_hint.text=text
+	interaction_hint.visible=not text.is_empty() and not inventory_open
 
 func show_active_tool(item: int) -> void:
 	active_item=item
@@ -133,6 +139,13 @@ func _ready() -> void:
 	bar.add_theme_constant_override("separation",8)
 	add_child(bar)
 	action_hint=Label.new();action_hint.position=Vector2(370,912);add_child(action_hint)
+	interaction_hint=Label.new();interaction_hint.position=Vector2(660,580);interaction_hint.size=Vector2(600,32)
+	interaction_hint.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER
+	interaction_hint.mouse_filter=Control.MOUSE_FILTER_IGNORE
+	interaction_hint.add_theme_font_size_override("font_size",22)
+	interaction_hint.add_theme_color_override("font_shadow_color",Color.BLACK)
+	interaction_hint.add_theme_constant_override("shadow_offset_x",2);interaction_hint.add_theme_constant_override("shadow_offset_y",2)
+	add_child(interaction_hint);interaction_hint.hide()
 	ground_hint=Label.new();ground_hint.position=Vector2(500,800)
 	ground_hint.add_theme_color_override("font_shadow_color",Color.BLACK)
 	ground_hint.add_theme_constant_override("shadow_offset_x",2);ground_hint.add_theme_constant_override("shadow_offset_y",2)
