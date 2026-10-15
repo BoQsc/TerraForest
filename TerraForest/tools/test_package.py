@@ -23,6 +23,14 @@ class PackageTests(unittest.TestCase):
                     for ref in re.findall(r'res://([^"\s\)\],;]+)', path.read_text(encoding='utf-8')):
                         if (package.ROOT/ref).is_file():
                             self.assertIn(ref, names, str(path)+': '+ref)
+    def test_dynamic_asset_paths_have_declared_addon_dependencies(self):
+        for addon in package.DEPENDENCIES:
+            files, metadata = package.addon_entries(addon)
+            for path in files:
+                if path.suffix != '.gd':
+                    continue
+                for target in re.findall(r'res://addons/([a-z_]+)/', path.read_text(encoding='utf-8')):
+                    self.assertIn(target, metadata['included_addons'], str(path)+': '+target)
     def test_archive_is_deterministic_and_manifest_is_local(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)

@@ -10,7 +10,9 @@ import tempfile
 import zipfile
 from package import ROOT, DEPENDENCIES
 
-def verify(addon, engine, import_frame_delay_ms=0):
+def verify(addon, engine, import_frame_delay_ms=0, exercise_actors=False):
+    if exercise_actors and addon != "world_runtime":
+        raise ValueError("Actor exercise applies to the world_runtime bundle")
     source=ROOT/'dist'/(addon+'.zip')
     output=ROOT/'reports/addon_bundles'/addon
     if import_frame_delay_ms:
@@ -52,7 +54,25 @@ def verify(addon, engine, import_frame_delay_ms=0):
             result['steps'].append({'phase':label,'exit_code':run.returncode,'ok':ok})
             if not ok:
                 print(log[-3000:]) # Still diagnose resource loading; import failure remains fatal.
-    result['ok']=len(result['steps'])==2 and all(step['ok'] for step in result['steps'])
+        if exercise_actors and all(step['ok'] for step in result['steps']):
+            # Only the fixture is supplied externally. Every runtime resource must
+            # resolve from the extracted archive, with no main-project fallback.
+            fixture = ROOT/'tests/actor_navigation.gd'
+            (project/'actor_navigation.gd').write_bytes(fixture.read_bytes())
+            result['exercise_fixture_sha256'] = hashlib.sha256(fixture.read_bytes()).hexdigest()
+            command = [str(engine), '--path', str(project), '--fullscreen', '--resolution',
+                       '1920x1080', '--max-fps', '60', '--script', 'res://actor_navigation.gd']
+            run = subprocess.run(command, capture_output=True, text=True, encoding='utf-8', errors='replace', timeout=45)
+            log = run.stdout+'\n'+run.stderr
+            (output/'actors.log').write_text(log, encoding='utf-8')
+            evidence = project/'reports/actor_navigation'
+            for name in ('result.json', 'route.png'):
+                if (evidence/name).is_file():
+                    (output/('actors_'+name)).write_bytes((evidence/name).read_bytes())
+            report = json.loads((evidence/'result.json').read_text()) if (evidence/'result.json').is_file() else {}
+            ok = run.returncode == 0 and report.get('failures') == 0 and report.get('checks',0)>=6 and not re.search(r'(?m)^(?:SCRIPT ERROR|ERROR:|FAIL |WARNING: ObjectDB instances leaked)', log)
+            result['steps'].append({'phase':'actors', 'exit_code':run.returncode, 'ok':ok, 'command':command})
+    result['ok']=len(result['steps'])==(3 if exercise_actors else 2) and all(step['ok'] for step in result['steps'])
     (output/'result.json').write_text(json.dumps(result,indent=2)+'\n',encoding='utf-8')
     print(addon, 'PASS' if result['ok'] else 'FAIL',result['resource_count'],'resources',flush=True)
     return result['ok']
@@ -62,7 +82,8 @@ def main():
     parser.add_argument('--addon',choices=sorted(DEPENDENCIES),required=True)
     parser.add_argument('--godot',type=Path,required=True)
     parser.add_argument('--import-frame-delay-ms',type=int,default=0,choices=range(0,2001),metavar='0..2000',help='Explicit import-only workaround for Godot issue111048; default preserves ordinary import behavior')
+    parser.add_argument("--exercise-actors", action="store_true", help="Run bounded actor navigation from extracted world_runtime bundle")
     args=parser.parse_args()
-    return 0 if verify(args.addon,args.godot,args.import_frame_delay_ms) else 1
+    return 0 if verify(args.addon,args.godot,args.import_frame_delay_ms,args.exercise_actors) else 1
 if __name__=='__main__':
     raise SystemExit(main())

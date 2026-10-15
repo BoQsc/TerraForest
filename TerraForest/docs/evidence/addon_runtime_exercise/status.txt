@@ -1,0 +1,19 @@
+2026-10-15: independent world_runtime bundle exercise
+
+Before correction, freshly packaged world_runtime (SHA256
+94a8d1acc8dcaf79929eaa4952f22d0d2fe627a96a75b3e2fcae20806309157e)
+failed separate runtime resource loading: material_pickups.gd line67 preloaded
+missing res://addons/volumetric_water/bucket_model.gd. Source inspection also
+found its player-runtime inventory and dynamically named drop-mesh dependencies.
+Packaging now declares these dependencies; structures includes player runtime.
+All five static packaging contracts pass, including addon prefixes in dynamic
+resource paths. No gameplay/water implementation or native binaries changed.
+
+Corrected archive passes import with the existing explicit1000ms engine
+workaround, separate resource loading (31 resources), and rendered actor
+navigation in a disposable extracted project. Only the test script is supplied
+outside the archive; all runtime code/assets come from the bundle. Two native
+actors retain support, reach clear/obstacle goals without crossing the wall,
+and remain within two active bodies. Screenshot inspected. Archive and fixture
+hashes are in result.json. This proves a standalone actor adapter path, not
+all pickup/player/water host contracts, export, or population/performance gates.

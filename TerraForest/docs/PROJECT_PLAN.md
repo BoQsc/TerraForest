@@ -1,3 +1,11 @@
+> 2026-10-15 packaging regression fixed: current dropped-item scripts made
+> world_runtime depend on player_runtime/water assets, omitted by its ZIP.
+> Explicit dependencies now include those and structures/player dependencies.
+> Five package checks pass; clean world_runtime import/resource load and actual
+> two-actor navigation pass from extracted ZIP using the documented import
+> workaround. Evidence: evidence/addon_runtime_exercise/. Other runtime adapter
+> contracts, export and scale qualification remain open.
+
 > 2026-10-15 ore reach diagnosis: both collision and native density queries
 > find the excavated face beyond 3.5m reach. Walking forward with normal
 > collision restores targeting; mining, crafting, placement and fresh reload

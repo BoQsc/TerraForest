@@ -1,0 +1,37 @@
+{
+  "addon": "world_runtime",
+  "archive_sha256": "ccec58d9b09bd9a6e766fe5d2976dd1feaf2889bca656dbdf980d8ec70212f65",
+  "steps": [
+    {
+      "phase": "import",
+      "exit_code": 0,
+      "ok": true
+    },
+    {
+      "phase": "load",
+      "exit_code": 0,
+      "ok": true
+    },
+    {
+      "phase": "actors",
+      "exit_code": 0,
+      "ok": true,
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\.build\\addon_world_runtime_c3k7y5fu",
+        "--fullscreen",
+        "--resolution",
+        "1920x1080",
+        "--max-fps",
+        "60",
+        "--script",
+        "res://actor_navigation.gd"
+      ]
+    }
+  ],
+  "import_frame_delay_ms": 1000,
+  "resource_count": 31,
+  "exercise_fixture_sha256": "79f0e080a024e70e1a7f0eec8348442c6de7b8322c984633800d153028b76073",
+  "ok": true
+}
