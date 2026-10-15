@@ -1,0 +1,18 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS main world parses with shared building interaction
+PASS native structures prepare
+PASS native container configured
+PASS door placed
+FAIL aimed closed door has visible open prompt
+FAIL same ray executes shown open action
+FAIL open leaf has close prompt
+PASS menu immediately hides and disables interaction
+PASS loading disables hint and action
+FAIL input repicks rather than using cached door
+PASS chest placed
+FAIL chest prompt resolves native identity
+PASS wall occludes prompt and chest action
+FAIL fresh ray opens correct chest
+PASS opened inventory hides prompt
+BUILDING_INTERACTION_HINT failures=6

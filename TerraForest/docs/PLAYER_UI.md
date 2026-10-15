@@ -6,6 +6,14 @@ inventory/chest contents are preserved; old records migrate on save.
 
 ## One Actions window
 
+While aiming in the world, a prompt below the crosshair identifies nearby
+doors, chests and collectible ground cover. **E** opens/closes the aimed door,
+opens the aimed chest, or collects the named plant/stone within 2.5 metres.
+These aimed actions take priority over nearby vehicle entry. A full inventory
+leaves the collectible in place and reports that space is needed. Menus and
+unavailable world regions suppress the prompt; pressing E always checks the
+current target again. Development gathering removes cover without rewards.
+
 **Escape** opens Actions. The sidebar is the shared entry point:
 
 - **Toolbelt:** click any of the ten belt slots, including empty slots.

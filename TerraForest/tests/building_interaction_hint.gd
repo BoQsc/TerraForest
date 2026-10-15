@@ -15,6 +15,7 @@ class Game extends Node3D:
 	var terrain: Dictionary={"world_ready":true,"pending_edit":false,"changed_since_save":false}
 	var world_vehicle: Dictionary={"driving":false}
 	var fly:=false
+	var ground_enabled:=false
 	var app_focused:=true
 	var loading_active:=false
 	var shutdown_requested:=false
@@ -41,7 +42,7 @@ func run() -> void:
 	var pose:=PackedFloat32Array([1,0,0,0,0,1,0,0,0,0,1,0])
 	check(game.doors.collection.upsert_instances(PackedInt64Array([1]),pose),"door placed")
 	game.doors.collection.set_collision_focus(Vector3.ZERO);await settle()
-	var adapter=preload("res://demo/building_interaction.gd").new()
+	var adapter=preload("res://demo/world_interaction.gd").new()
 	Input.mouse_mode=Input.MOUSE_MODE_CAPTURED
 	adapter.update(game,0.1)
 	check(game.player_hud.interaction_hint.text=="E · Open wooden door" and game.player_hud.interaction_hint.visible,"aimed closed door has visible open prompt")

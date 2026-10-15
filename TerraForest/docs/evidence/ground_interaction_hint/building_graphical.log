@@ -1,0 +1,19 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.3.280 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+PASS main world parses with shared building interaction
+PASS native structures prepare
+PASS native container configured
+PASS door placed
+PASS aimed closed door has visible open prompt
+PASS same ray executes shown open action
+PASS open leaf has close prompt
+PASS menu immediately hides and disables interaction
+PASS loading disables hint and action
+PASS input repicks rather than using cached door
+PASS chest placed
+PASS chest prompt resolves native identity
+PASS wall occludes prompt and chest action
+PASS fresh ray opens correct chest
+PASS opened inventory hides prompt
+BUILDING_INTERACTION_HINT failures=0

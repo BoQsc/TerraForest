@@ -1,0 +1,26 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.3.280 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] New world
+[TerrainRewrite] New world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+PASS main world loads
+PASS ground cover and gameplay enabled
+PASS ground cover publishes
+PASS actual nearby vegetation is reachable
+PASS HUD identifies the exact collectable species
+PASS prompt has no inventory or durable world mutation
+PASS longer shared scene ray does not extend collection reach
+PASS dirty owner cannot be advertised as collectible
+PASS full inventory fixture
+[TerrainRewrite] Make room in inventory
+PASS full inventory reports rejection without entering nearby vehicle
+PASS failed collection preserves target
+PASS restore original loadout
+[TerrainRewrite] Collected ground cover
+PASS E collects aimed cover before proximity vehicle entry
+PASS collection grants exact species reward
+PASS removed identity is no longer targetable
+[TerrainRewrite] Temporary test world: save skipped
+PASS ordinary compound save completes
+COMBINED_RESOURCE_ROUTE failures=0
