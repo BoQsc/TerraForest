@@ -1,0 +1,23 @@
+2026-10-15: natural cave entrance access fails, reproduced before redesign
+
+Seed1703 generator4 canonical entrance centreline samples (-12m exterior to40m
+inward at1m spacing) find floor and1.9m headroom throughout all four routes, but
+one steep floor normal at entrances0/1/2 and two at entrance3. All four sampled
+centreline profiles fail the45-degree walking-slope gate. This does not prove
+absence of some traversable off-centre route or qualify capsule clearance.
+
+The actual main-world player on generator2 seed1703 cave0 walks from the exterior
+start into the entrance, then fails to walk back out without jumps/edits. It stalls
+at (837.759,141.8316,397.961), about7.2m horizontally from the exterior target.
+Native generator2 and4 share the cave capsule construction; generator4 additionally
+has separate lake basins and geology. No code or terrain edits in this run.
+Temporary world, fullscreen1920x1080, cap60 including background. Images inspected.
+Source user saves unchanged. Frame hitches retained; not a performance result.
+
+Decision: implement a versioned new-world entrance profile with a shallower mouth,
+then reuse this walking return check. Preserve generator1-4 saved geometry. Do not
+weaken player slope/collision rules or flatten existing saved worlds. The proposed
+new profile should retain bounded canonical capsule storage, extraction and cache
+identity; no separate cave mesh or physics workaround. Check debug/release,
+seed reproducibility, legacy save identity and actual walking in/out before giving
+a playable cave checkpoint. Natural discovery from the settlement remains open.

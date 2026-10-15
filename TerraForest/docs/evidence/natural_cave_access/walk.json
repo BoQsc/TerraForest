@@ -1,0 +1,345 @@
+{
+  "failures": 1,
+  "paths": [
+    {
+      "finish": "(813.2818, 128.8364, 398.1647)",
+      "remaining": 0.281134516000748,
+      "rows": [
+        {
+          "floor": true,
+          "loading": false,
+          "position": "(843.6245, 142.3907, 397.9114)"
+        },
+        {
+          "floor": true,
+          "loading": false,
+          "position": "(842.2493, 143.25, 397.9229)"
+        },
+        {
+          "floor": true,
+          "loading": false,
+          "position": "(840.8742, 144.0941, 397.9343)"
+        },
+        {
+          "floor": true,
+          "loading": false,
+          "position": "(839.5028, 144.2165, 397.9467)"
+        },
+        {
+          "floor": false,
+          "loading": false,
+          "position": "(838.123, 143.6332, 397.9582)"
+        },
+        {
+          "floor": false,
+          "loading": false,
+          "position": "(836.7479, 141.7999, 397.9696)"
+        },
+        {
+          "floor": true,
+          "loading": false,
+          "position": "(835.4154, 140.2418, 397.9809)"
+        },
+        {
+          "floor": true,
+          "loading": false,
+          "position": "(834.1873, 139.6042, 397.9911)"
+        },
+        {
+          "floor": true,
+          "loading": false,
+          "position": "(832.9626, 138.9686, 398.0012)"
+        },
+        {
+          "floor": true,
+          "loading": false,
+          "position": "(831.7357, 138.3369, 398.0113)"
+        },
+        {
+          "floor": true,
+          "loading": false,
+          "position": "(830.5045, 137.7032, 398.0214)"
+        },
+        {
+          "floor": true,
+          "loading": false,
+          "position": "(829.2733, 137.0694, 398.0316)"
+        },
+        {
+          "floor": true,
+          "loading": false,
+          "position": "(828.0466, 136.4378, 398.0417)"
+        },
+        {
+          "floor": true,
+          "loading": false,
+          "position": "(826.8197, 135.8066, 398.0518)"
+        },
+        {
+          "floor": true,
+          "loading": false,
+          "position": "(825.5928, 135.175, 398.062)"
+        },
+        {
+          "floor": true,
+          "loading": false,
+          "position": "(824.3616, 134.5411, 398.0723)"
+        },
+        {
+          "floor": true,
+          "loading": false,
+          "position": "(823.1306, 133.9073, 398.0826)"
+        },
+        {
+          "floor": true,
+          "loading": false,
+          "position": "(821.8994, 133.2733, 398.093)"
+        },
+        {
+          "floor": true,
+          "loading": false,
+          "position": "(820.6684, 132.6395, 398.1033)"
+        },
+        {
+          "floor": true,
+          "loading": false,
+          "position": "(819.4373, 132.0059, 398.1137)"
+        },
+        {
+          "floor": true,
+          "loading": false,
+          "position": "(818.2066, 131.371, 398.1241)"
+        },
+        {
+          "floor": true,
+          "loading": false,
+          "position": "(816.975, 130.7379, 398.1346)"
+        },
+        {
+          "floor": true,
+          "loading": false,
+          "position": "(815.7524, 130.1086, 398.1445)"
+        },
+        {
+          "floor": true,
+          "loading": false,
+          "position": "(814.5172, 129.4725, 398.1548)"
+        },
+        {
+          "floor": true,
+          "loading": false,
+          "position": "(813.2818, 128.8364, 398.1647)"
+        }
+      ],
+      "target": "(813.0007, 128.6113, 398.1667)"
+    },
+    {
+      "finish": "(837.759, 141.8316, 397.961)",
+      "remaining": 7.24085807800293,
+      "rows": [
+        {
+          "floor": true,
+          "loading": false,
+          "position": "(814.5652, 129.4872, 398.1541)"
+        },
+        {
+          "floor": true,
+          "loading": false,
+          "position": "(815.9404, 130.1947, 398.1426)"
+        },
+        {
+          "floor": true,
+          "loading": false,
+          "position": "(817.3155, 130.9035, 398.1312)"
+        },
+        {
+          "floor": true,
+          "loading": false,
+          "position": "(818.6906, 131.611, 398.1197)"
+        },
+        {
+          "floor": true,
+          "loading": false,
+          "position": "(820.0657, 132.3198, 398.1083)"
+        },
+        {
+          "floor": true,
+          "loading": false,
+          "position": "(821.4409, 133.0273, 398.0968)"
+        },
+        {
+          "floor": true,
+          "loading": false,
+          "position": "(822.816, 133.7348, 398.0854)"
+        },
+        {
+          "floor": true,
+          "loading": false,
+          "position": "(824.1911, 134.4436, 398.0739)"
+        },
+        {
+          "floor": true,
+          "loading": false,
+          "position": "(825.5662, 135.1511, 398.0625)"
+        },
+        {
+          "floor": true,
+          "loading": false,
+          "position": "(826.9413, 135.86, 398.0511)"
+        },
+        {
+          "floor": true,
+          "loading": false,
+          "position": "(828.3165, 136.5674, 398.0396)"
+        },
+        {
+          "floor": true,
+          "loading": false,
+          "position": "(829.6916, 137.2749, 398.0282)"
+        },
+        {
+          "floor": true,
+          "loading": false,
+          "position": "(831.0667, 137.9824, 398.0167)"
+        },
+        {
+          "floor": true,
+          "loading": false,
+          "position": "(832.4418, 138.6912, 398.0053)"
+        },
+        {
+          "floor": true,
+          "loading": false,
+          "position": "(833.817, 139.4014, 397.9938)"
+        },
+        {
+          "floor": true,
+          "loading": false,
+          "position": "(835.1921, 140.1089, 397.9824)"
+        },
+        {
+          "floor": true,
+          "loading": false,
+          "position": "(836.5672, 140.8656, 397.9709)"
+        },
+        {
+          "floor": true,
+          "loading": false,
+          "position": "(837.759, 141.8316, 397.961)"
+        },
+        {
+          "floor": true,
+          "loading": false,
+          "position": "(837.759, 141.8316, 397.961)"
+        },
+        {
+          "floor": true,
+          "loading": false,
+          "position": "(837.759, 141.8316, 397.961)"
+        },
+        {
+          "floor": true,
+          "loading": false,
+          "position": "(837.759, 141.8316, 397.961)"
+        },
+        {
+          "floor": true,
+          "loading": false,
+          "position": "(837.759, 141.8316, 397.961)"
+        },
+        {
+          "floor": true,
+          "loading": false,
+          "position": "(837.759, 141.8316, 397.961)"
+        },
+        {
+          "floor": true,
+          "loading": false,
+          "position": "(837.759, 141.8316, 397.961)"
+        },
+        {
+          "floor": true,
+          "loading": false,
+          "position": "(837.759, 141.8316, 397.961)"
+        },
+        {
+          "floor": true,
+          "loading": false,
+          "position": "(837.759, 141.8316, 397.961)"
+        },
+        {
+          "floor": true,
+          "loading": false,
+          "position": "(837.759, 141.8316, 397.961)"
+        },
+        {
+          "floor": true,
+          "loading": false,
+          "position": "(837.759, 141.8316, 397.961)"
+        },
+        {
+          "floor": true,
+          "loading": false,
+          "position": "(837.759, 141.8316, 397.961)"
+        },
+        {
+          "floor": true,
+          "loading": false,
+          "position": "(837.759, 141.8316, 397.961)"
+        },
+        {
+          "floor": true,
+          "loading": false,
+          "position": "(837.759, 141.8316, 397.961)"
+        },
+        {
+          "floor": true,
+          "loading": false,
+          "position": "(837.759, 141.8316, 397.961)"
+        },
+        {
+          "floor": true,
+          "loading": false,
+          "position": "(837.759, 141.8316, 397.961)"
+        },
+        {
+          "floor": true,
+          "loading": false,
+          "position": "(837.759, 141.8316, 397.961)"
+        },
+        {
+          "floor": true,
+          "loading": false,
+          "position": "(837.759, 141.8316, 397.961)"
+        },
+        {
+          "floor": true,
+          "loading": false,
+          "position": "(837.759, 141.8316, 397.961)"
+        },
+        {
+          "floor": true,
+          "loading": false,
+          "position": "(837.759, 141.8316, 397.961)"
+        },
+        {
+          "floor": true,
+          "loading": false,
+          "position": "(837.759, 141.8316, 397.961)"
+        },
+        {
+          "floor": true,
+          "loading": false,
+          "position": "(837.759, 141.8316, 397.961)"
+        },
+        {
+          "floor": true,
+          "loading": false,
+          "position": "(837.759, 141.8316, 397.961)"
+        }
+      ],
+      "target": "(844.9996, 141.4621, 397.9)"
+    }
+  ],
+  "scope": "Actual main-world player and streamed collision. Fixture relocates to exterior start; remaining travel uses walking without jumps or edits. Generator2 seed1703 cave0; no settlement-to-cave discovery claim."
+}

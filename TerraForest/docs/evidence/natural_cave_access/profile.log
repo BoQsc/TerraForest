@@ -1,0 +1,7 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+CAVE_ACCESS cave=0 missing=0 steep=1 blocked=0
+CAVE_ACCESS cave=1 missing=0 steep=1 blocked=0
+CAVE_ACCESS cave=2 missing=0 steep=1 blocked=0
+CAVE_ACCESS cave=3 missing=0 steep=2 blocked=0
+NATURAL_CAVE_ACCESS eligible=0

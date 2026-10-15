@@ -1,3 +1,10 @@
+> 2026-10-15 natural cave access is now a reproduced content gap. Four seeded
+> entrance centreline scans have steep lips; actual main-world walking enters
+> cave 0 but cannot return to the exterior without jumping/edits. Retained failure:
+> `evidence/natural_cave_access/`. Next implement a versioned new-world cave-mouth
+> profile and rerun this exact route, preserving all existing saved generator
+> geometry and player collision rules. No water work is part of this slice.
+
 > 2026-10-15 connected local travel passes: after the earned-resource route, the
 > player walks out of the furnished cottage, places/enters a car, drives 9 m and
 > reverses back, exits, and walks back up stairs into the cottage. No pose
