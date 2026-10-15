@@ -62,27 +62,46 @@ public:
         if(knots.size()>MAX_KNOTS)return false;
         staged.low=knots.front();staged.high=knots.back();staged.full=C::volume(stable);
         if(!std::isfinite(staged.full)||staged.full>.125+1e-9)return false;
-        // Fully submerged pieces contribute their cached volume; pieces above
-        // the plane contribute zero. Only intersected pieces need clipping.
-        struct Extent {double bottom,top,volume;};
-        std::vector<Extent> extents;extents.reserve(stable.size());
-        for(const auto &piece:stable){Extent e{.5,0,C::volume(piece)};
-            for(const auto &face:piece.faces)for(auto p:face){e.bottom=std::min(e.bottom,p.y);e.top=std::max(e.top,p.y);}
-            extents.push_back(e);}
-        auto at=[&](double y,double &v){v=0;
-            for(size_t i=0;i<stable.size();++i){const auto &e=extents[i];
-                if(y<=e.bottom)continue;
-                if(y>=e.top){v+=e.volume;continue;}
-                C::Polyhedron cut;if(!C::clip(stable[i],{{0,1,0},y},cut))return false;
-                double part=C::volume(cut);if(part>1e-15)v+=part;}
-            return std::isfinite(v);};
-        // Polyhedral volume below a moving plane is cubic between vertex
-        // heights. Fit in normalized local t to avoid large-coordinate loss.
+        auto fit=[](double a,double b,const double *v){
+            double d1=v[1]-v[0],d2=v[2]-v[0],d3=v[3]-v[0];
+            return Segment{a,b,{v[0],9*d1-4.5*d2+d3,-22.5*d1+18*d2-4.5*d3,13.5*d1-13.5*d2+4.5*d3}};
+        };
+        // Each convex fragment is cubic between its own vertex heights. Fit
+        // it once there, rather than clipping it at every other fragment's
+        // heights too. Combining these curves preserves the same cell knots.
+        struct PieceCurve {double bottom,top,full;std::vector<Segment> segments;};
+        std::vector<PieceCurve> curves;curves.reserve(stable.size());
+        for(const auto &piece:stable){
+            std::vector<double> heights;
+            for(const auto &face:piece.faces)for(auto p:face)heights.push_back(std::clamp(p.y,0.0,.5));
+            std::sort(heights.begin(),heights.end());
+            heights.erase(std::unique(heights.begin(),heights.end(),[](double a,double b){return b-a<1e-9;}),heights.end());
+            if(heights.size()<2||heights.size()>MAX_KNOTS)return false;
+            PieceCurve curve{heights.front(),heights.back(),C::volume(piece),{}};
+            double previous=0;
+            for(size_t i=1;i<heights.size();++i){double a=heights[i-1],b=heights[i],v[4]={previous,0,0,0};
+                for(int j=1;j<4;++j){double y=a+(b-a)*(j/3.0);
+                    if(y>=curve.top){v[j]=curve.full;continue;}
+                    C::Polyhedron cut;if(!C::clip(piece,{{0,1,0},y},cut))return false;
+                    v[j]=C::volume(cut);if(!std::isfinite(v[j]))return false;}
+                curve.segments.push_back(fit(a,b,v));previous=v[3];
+            }
+            curves.push_back(std::move(curve));
+        }
+        auto at=[&](double y){double v=0;
+            for(const auto &piece:curves){
+                if(y<=piece.bottom)continue;if(y>=piece.top){v+=piece.full;continue;}
+                auto it=std::lower_bound(piece.segments.begin(),piece.segments.end(),y,[](const Segment &s,double value){return s.high<value;});
+                if(it==piece.segments.end()){v+=piece.full;continue;}
+                double t=(y-it->low)/(it->high-it->low);const auto &c=it->polynomial;
+                v+=std::clamp(((c[3]*t+c[2])*t+c[1])*t+c[0],0.0,piece.full);
+            }
+            return v;
+        };
         for(size_t i=1;i<knots.size();++i){
             double a=knots[i-1],b=knots[i],v[4];
-            for(int j=0;j<4;++j)if(!at(a+(b-a)*(j/3.0),v[j]))return false;
-            double d1=v[1]-v[0],d2=v[2]-v[0],d3=v[3]-v[0];
-            staged.curve.push_back({a,b,{v[0],9*d1-4.5*d2+d3,-22.5*d1+18*d2-4.5*d3,13.5*d1-13.5*d2+4.5*d3}});
+            for(int j=0;j<4;++j){v[j]=at(a+(b-a)*(j/3.0));if(!std::isfinite(v[j]))return false;}
+            staged.curve.push_back(fit(a,b,v));
         }
         if(!staged.prepare_faces())return false;*this=std::move(staged);return true;
     }
