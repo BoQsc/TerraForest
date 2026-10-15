@@ -1,3 +1,10 @@
+> 2026-10-15 dropped-item bundle follow-up fixed binary asset omissions:
+> baked drop meshes referenced building textures and woodland shader outside
+> declared bundles. Required assets are now included without whole runtime
+> addons. Clean ZIP loads 54 resources; all 23 dropped types pass 92 native
+> transfer/render/snapshot checks. Six packaging guards pass. Evidence:
+> evidence/addon_pickup_exercise/. Main-world/export/scale gates remain open.
+
 > 2026-10-15 packaging regression fixed: current dropped-item scripts made
 > world_runtime depend on player_runtime/water assets, omitted by its ZIP.
 > Explicit dependencies now include those and structures/player dependencies.

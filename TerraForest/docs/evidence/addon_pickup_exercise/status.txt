@@ -1,0 +1,21 @@
+2026-10-15: standalone dropped-item adapter coverage
+
+New clean-project runtime exercise exposed embedded binary dependencies omitted
+from the prior ZIP. Retained failure identifies missing brick texture in101.res;
+inspection found the other building textures and woodland shader references.
+These shared assets are now explicit package entries. No structures/ecosystem
+runtime dependency is added just to load a texture/shader. Binary .res resources
+are included in engine resource verification. Six static guards pass, including
+existing embedded paths in uncompressed binary resources; compressed assets still
+require engine verification. Package metadata uses asset_paths for files/folders.
+
+Corrected ZIP:54 resources load;92 runtime checks pass for23 dropped item types.
+Actual native stores, inventory schemas, stack transfers and batch renderer are
+instantiated without the main scene. Every model has nonempty bounds and one
+rendered instance. All items transfer back, occlusion denies collection, exact
+compound in-memory restores recover both inventory/wear and pickup ownership.
+Screenshot inspected; small catalog overview proves presence, not final art.
+Fixture supplies initial items and has no terrain, so this is addon-contract
+coverage, not gathering, full disk persistence, gameplay or scale qualification.
+1920x1080 fullscreen/cap60; no timing gate. Existing import workaround retained.
+No water gameplay or native implementation changed.

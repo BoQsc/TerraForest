@@ -19,7 +19,9 @@ DEPENDENCIES = {
     'world_ecosystem': ['vegetation', 'volumetric_terrain', 'vegetation_runtime'],
     'vehicle_runtime': [],
 }
-ASSETS = {'vehicle_runtime': ['vehicle_demo']}
+ASSETS = {'vehicle_runtime': ['vehicle_demo'],
+          'player_runtime': ['addons/structures/textures/terraforest',
+                             'addons/world_ecosystem/woodland.gdshader']}
 
 def include_file(path, root=ROOT):
     return (path.is_file() and not any(part in EXCLUDED for part in path.relative_to(root).parts)
@@ -47,13 +49,16 @@ def addon_entries(addon, root=ROOT):
     files = {root/'LICENSE.txt'}
     for directory in directories:
         folder = root/directory
+        if folder.is_file():
+            files.add(folder)
+            continue
         if not folder.is_dir():
             raise ValueError('Missing package directory: ' + directory)
         files.update(p for p in folder.rglob('*') if include_file(p, root))
     if not all(p.is_file() for p in files):
         raise ValueError('Missing required license or package file')
     metadata = {'requested_addon': addon, 'included_addons': names,
-                'asset_directories': [d for d in directories if not d.startswith('addons/')],
+                'asset_paths': [path for name in names for path in ASSETS.get(name, [])],
                 'binary_support': 'Godot 4.7 Windows x86-64 single precision',
                 'qualification': 'Dependency bundle; host scene contracts and clean runtime qualification remain addon-specific.'}
     return sorted(files), metadata

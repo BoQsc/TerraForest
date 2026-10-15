@@ -31,6 +31,17 @@ class PackageTests(unittest.TestCase):
                     continue
                 for target in re.findall(r'res://addons/([a-z_]+)/', path.read_text(encoding='utf-8')):
                     self.assertIn(target, metadata['included_addons'], str(path)+': '+target)
+    def test_uncompressed_binary_resource_dependencies_are_bundled(self):
+        for addon in package.DEPENDENCIES:
+            files, _ = package.addon_entries(addon)
+            names = {p.relative_to(package.ROOT).as_posix() for p in files}
+            for path in files:
+                if path.suffix != '.res' or not path.read_bytes().startswith(b'RSRC'):
+                    continue  # Compressed resources require the engine verifier.
+                for raw in re.findall(rb'res://([A-Za-z0-9_./-]+)', path.read_bytes()):
+                    ref = raw.decode('ascii')
+                    if (package.ROOT/ref).is_file():
+                        self.assertIn(ref, names, str(path)+': '+ref)
     def test_archive_is_deterministic_and_manifest_is_local(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
