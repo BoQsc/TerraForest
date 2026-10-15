@@ -1,0 +1,31 @@
+2026-10-15: connected local walking/driving route
+
+The resource route now runs three graphical processes on one unique gameplay
+copy: gather/craft/build/store, continuous local travel, then exact-state reopen.
+Movement starts at the saved chest interaction position. Native player movement
+walks through the aisle, doorway and down stairs to asphalt; vehicle placement,
+approach, entry, W throttle, S braking, released/repressed S reverse, W braking,
+exit and walking back through the doorway use existing production paths. No
+body pose or velocity correction is used during travel. Fixture steering turns
+player yaw toward waypoints; the car uses keyboard events without pose steering.
+
+Outbound distance9.076m, stopped return error1.918m on a23m authored street.
+All walking targets finish supported within0.3m. Earned inventory and chest contents
+remain exact before/after travel and after fresh reopen, together with gathered
+identities and paid brick. Original combined_gameplay root hash remains unchanged.
+1920x1080 fullscreen; returned interior screenshot inspected. Existing runtime
+required no change for this route.
+
+Initial return failed against a brick jamb because the test targeted the attachment
+origin rather than the half-cell-centred doorway. Logs/positions retained; corrected
+waypoint passed. This was not a player stair regression and no collision bypass
+was introduced. The initial screenshot had background15FPS; this is correctness
+evidence, not frame-time or performance qualification. Successful returned screenshot
+shows60FPS but is likewise not sustained evidence.
+
+Limits: local street out-and-reverse, not a road-network loop or region-boundary
+journey; no high-speed, thermal, population or long-run qualification. Vehicle
+identity/pose exact-reload is not asserted by this test. A single cottage approach
+is covered, not arbitrary buildings. Resource collection phase still positions the
+player explicitly; only travel phase uses continuous movement. Human acceptance
+remains open. No water changes. Do not repeat passing checks without a relevant change.

@@ -1,3 +1,13 @@
+> 2026-10-15 connected local travel passes: after the earned-resource route, the
+> player walks out of the furnished cottage, places/enters a car, drives 9 m and
+> reverses back, exits, and walks back up stairs into the cottage. No pose
+> correction during travel. Fresh-process resource/block restoration still passes;
+> source gameplay save unchanged. `evidence/combined_travel_route/` retains the
+> initial off-centre test-waypoint failure and corrected route. This is a local
+> integration checkpoint ready for human review, not region/high-speed or M4/M5
+> performance qualification. Resume missing content coverage rather than rerun
+> this passing loop; natural cave discovery remains unverified.
+
 > 2026-10-15 connected resource checkpoint: in a copy of the prepared settlement,
 > normal E gathering, crafting UI, held-brick right-click placement and existing
 > cottage chest deposit/withdraw now pass together. Fresh-process exact inventory,

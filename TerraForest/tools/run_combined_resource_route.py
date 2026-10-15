@@ -24,11 +24,11 @@ def main():
     folder.mkdir(parents=True)
     metadata = dict(copy=copy, phases=[], **revision_metadata())
     passed = True
-    for phase in ('route', 'reopen'):
+    for phase in ('route', 'travel', 'reopen'):
         output = folder / phase
         output.mkdir()
         command = [config.godot, '--path', str(ROOT), '--fullscreen', '--resolution', '1920x1080',
-                   '--max-fps', '60', '--script', 'res://tests/combined_resource_route.gd', '--',
+                   '--max-fps', '60', '--script', ('res://tests/combined_travel_route.gd' if phase == 'travel' else 'res://tests/combined_resource_route.gd'), '--',
                    '--world-slot=' + slot, '--gameplay-construction', '--ground-cover', '--actors',
                    '--vehicle-fleet', '--route-evidence=' + str(folder / 'expected.bin'),
                    *(['--reopen-route'] if phase == 'reopen' else [])]

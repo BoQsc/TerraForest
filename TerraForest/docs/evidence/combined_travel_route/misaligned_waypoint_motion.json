@@ -1,0 +1,47 @@
+{
+  "failures": 1,
+  "walking": [
+    {
+      "loading": false,
+      "on_floor": true,
+      "position": "(811.2371, 48.99974, 1296.962)",
+      "remaining": 0.240122154355049,
+      "target": "(811.0, 49.0, 1297.0)"
+    },
+    {
+      "loading": false,
+      "on_floor": true,
+      "position": "(811.0101, 47.00829, 1309.254)",
+      "remaining": 0.246421694755554,
+      "target": "(811.0, 49.0, 1309.5)"
+    },
+    {
+      "loading": false,
+      "on_floor": true,
+      "position": "(802.2386, 47.00829, 1309.98)",
+      "remaining": 0.239394515752792,
+      "target": "(802.0, 47.0, 1310.0)"
+    },
+    {
+      "loading": false,
+      "on_floor": true,
+      "position": "(804.7138, 47.00829, 1309.998)",
+      "remaining": 0.286201357841492,
+      "target": "(805.0, 47.0, 1310.0)"
+    },
+    {
+      "loading": false,
+      "on_floor": true,
+      "position": "(810.7303, 47.00871, 1309.374)",
+      "remaining": 0.297735959291458,
+      "target": "(811.0, 49.0, 1309.5)"
+    },
+    {
+      "loading": false,
+      "on_floor": true,
+      "position": "(810.9071, 48.98254, 1301.359)",
+      "remaining": 4.35975408554077,
+      "target": "(811.0, 49.0, 1297.0)"
+    }
+  ]
+}
