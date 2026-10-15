@@ -1,0 +1,122 @@
+{
+  "slot": "combined_gameplay",
+  "source_sha256": "25b19886c1b677c44cabce30b1bc39a9efb6614f40d6c733bfb990fa7e3d9052",
+  "phases": [
+    {
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--max-fps",
+        "60",
+        "--headless",
+        "--script",
+        "res://tools/prepare_world_cache.gd",
+        "--",
+        "--world-slot=combined_gameplay",
+        "--snapshot-readonly",
+        "--gameplay-construction",
+        "--prepare-report=C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\world_preparation\\20261015T133147274725Z\\prepare\\cache.json",
+        "--derived-cache=user://world_prepare_check_20261015a"
+      ],
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "pid": 3532,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 31.021269500000926,
+        "passed": true
+      },
+      "metrics": {
+        "cache": {
+          "accounting_complete": true,
+          "byte_limit": 536870912,
+          "cache_read_only": false,
+          "corrupt": 0,
+          "disk_bytes": 201018080,
+          "enabled": true,
+          "evicted_bytes": 0,
+          "eviction_pending": false,
+          "evictions": 0,
+          "hits": 0,
+          "lease_owned": true,
+          "misses": 584,
+          "scan_entries": 2,
+          "write_failures": 0,
+          "writes": 584
+        },
+        "cache_path": "user://world_prepare_check_20261015a",
+        "elapsed_ms": 28902,
+        "ready": true,
+        "scope": "Saved spawn focus and ordinary terrain coverage; not an entire-world bake or a performance qualification.",
+        "slot": "combined_gameplay"
+      }
+    },
+    {
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--max-fps",
+        "60",
+        "--fullscreen",
+        "--resolution",
+        "1920x1080",
+        "--script",
+        "res://tools/prepare_world_cache.gd",
+        "--",
+        "--world-slot=combined_gameplay",
+        "--snapshot-readonly",
+        "--gameplay-construction",
+        "--prepare-report=C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\world_preparation\\20261015T133147274725Z\\verify\\cache.json",
+        "--derived-cache=user://world_prepare_check_20261015a"
+      ],
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "pid": 18680,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 10.69978059999994,
+        "passed": true
+      },
+      "metrics": {
+        "cache": {
+          "accounting_complete": true,
+          "byte_limit": 536870912,
+          "cache_read_only": false,
+          "corrupt": 0,
+          "disk_bytes": 201018080,
+          "enabled": true,
+          "evicted_bytes": 0,
+          "eviction_pending": false,
+          "evictions": 0,
+          "hits": 292,
+          "lease_owned": true,
+          "misses": 0,
+          "scan_entries": 879,
+          "write_failures": 0,
+          "writes": 0
+        },
+        "cache_path": "user://world_prepare_check_20261015a",
+        "elapsed_ms": 7345,
+        "ready": true,
+        "scope": "Saved spawn focus and ordinary terrain coverage; not an entire-world bake or a performance qualification.",
+        "slot": "combined_gameplay"
+      }
+    }
+  ],
+  "revision": "6ef26294f3c3d6c2fc15eae9168b9e9f148d3c90",
+  "worktree_changes": [
+    "?? \"TerraForest/Prepare World Cache.cmd\"",
+    "?? TerraForest/tools/prepare_world_cache.gd",
+    "?? TerraForest/tools/prepare_world_cache.py"
+  ],
+  "git_metadata_available": true,
+  "cache_reuse_verified": true,
+  "source_unchanged": true,
+  "passed": true
+}

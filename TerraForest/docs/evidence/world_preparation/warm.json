@@ -1,0 +1,24 @@
+{
+  "cache": {
+    "accounting_complete": true,
+    "byte_limit": 536870912,
+    "cache_read_only": false,
+    "corrupt": 0,
+    "disk_bytes": 201018080,
+    "enabled": true,
+    "evicted_bytes": 0,
+    "eviction_pending": false,
+    "evictions": 0,
+    "hits": 292,
+    "lease_owned": true,
+    "misses": 0,
+    "scan_entries": 879,
+    "write_failures": 0,
+    "writes": 0
+  },
+  "cache_path": "user://world_prepare_check_20261015a",
+  "elapsed_ms": 7345,
+  "ready": true,
+  "scope": "Saved spawn focus and ordinary terrain coverage; not an entire-world bake or a performance qualification.",
+  "slot": "combined_gameplay"
+}

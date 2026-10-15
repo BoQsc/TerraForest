@@ -1,3 +1,10 @@
+> 2026-10-15 general saved-world cache preparation added. Read-only normal
+> world loading prepares saved spawn/ordinary terrain coverage; optional fresh
+> graphical verification reports cache reuse and unchanged canonical hash.
+> Isolated settlement run:584 cold writes; warm292 hits/0 misses/0 writes.
+> Evidence: evidence/world_preparation/. Warm receive hitch128.7ms remains;
+> no instant-loading, whole-world baking or performance qualification claim.
+
 > 2026-10-15 pickup setup is transactional: late resource/provider failure
 > leaves no pickup stores, scene nodes or partial save registrations. Native
 > state stays staged until the full registration batch validates. Failure/retry

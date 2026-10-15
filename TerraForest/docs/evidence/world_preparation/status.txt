@@ -1,0 +1,18 @@
+2026-10-15: general saved-world terrain cache preparation
+
+Prepare World Cache.cmd uses existing normal world loading with snapshot-readonly
+and the native exclusive save lease. No save regeneration/publication. Default
+slot is combined_gameplay; arbitrary validated existing slots are supported.
+Default cache is ordinary runtime cache. Explicit cache option supports isolated
+tests; this test used a new user://world_prepare_check_20261015a root and did not
+evict the normal cache. Readiness requires loaded focus, no pending edit, idle
+terrain worker and empty queue for12 frames. This is terrain coverage preparation,
+not a guarantee of every addon/resource or every point in the2000m world.
+
+Cold headless preparation:584 writes,0 hits,584 misses,201018080 disk bytes,
+28902ms inside the scene. Fresh graphical verify:292 hits,0 misses,0 writes,
+7345ms. Those are DIFFERENT headless/graphical phases, not a controlled speedup
+benchmark. Warm log retains128.7ms receive hitch. 512MiB normal quota unchanged.
+Canonical source hash unchanged. Cache is disposable and may later be evicted.
+No water implementation changes. Final input guard and immediate terrain-error
+exit are straightforward follow-ups, not another measured run.

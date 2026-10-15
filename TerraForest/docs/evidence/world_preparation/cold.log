@@ -1,0 +1,10 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+[TerrainRewrite] World loaded
+[TerrainRewrite] World loaded
+[terrain-hitch] receive 130.3 ms at 1806
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+[terrain-hitch] save capture 59.43 ms at 30274
+[TerrainRewrite] Temporary test world: save skipped
+[TerrainRewrite] Temporary test world: save skipped
+WORLD_CACHE_PREPARATION failures=0
