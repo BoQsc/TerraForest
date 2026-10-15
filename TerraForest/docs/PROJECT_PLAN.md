@@ -1,3 +1,11 @@
+> 2026-10-15 persistent cave checkpoint: Play Natural Caves.cmd creates and
+> verifies a separate generator6 save, then opens ordinary gameplay preserving
+> edits. Grounded entrance pose and exact inventory survive fresh-process reopen;
+> repeated preparation preserves the save hash. Three publication safety checks
+> pass. Existing startup capture rejections/123 ms receive hitch remain recorded.
+> Next: natural ore excavation plus reward/terrain persistence in this save.
+> See NATURAL_CAVE_GAMEPLAY.md and evidence/natural_cave_preparation/.
+
 > 2026-10-15 actor investigation disposition: 256 vs 1024 collision triangles
 > gives inconsistent contact-cost changes; both fail actor budgets. Resident
 > shapes rise 252 to 814 with identical triangle counts. Keep default 1024 and

@@ -1,0 +1,21 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.3.280 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] New world
+[TerrainRewrite] New world
+[TerrainRewrite] ERROR: invalid addon capture; previous canonical snapshot retained
+[TerrainRewrite] Lake ready · F5 saves world
+[TerrainRewrite] Lake ready · F5 saves world
+[TerrainRewrite] Lake ready · F5 saves world
+[TerrainRewrite] ERROR: invalid addon capture; previous canonical snapshot retained
+[TerrainRewrite] Lake ready · F5 saves world
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS generated cave world loads
+PASS persistent generator6 seed1703 world
+PASS native generator finds cave entrance
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS entrance collision arrives
+PASS grounded player in ordinary resource-cost gameplay
+PASS generated components ready for compound save
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+NATURAL_CAVE_PREPARATION failures=0

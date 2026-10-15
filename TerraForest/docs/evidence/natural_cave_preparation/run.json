@@ -1,0 +1,83 @@
+{
+  "slot": "cave_stage_7715b685870243ae972039d1ac7294de",
+  "phases": [
+    {
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--fullscreen",
+        "--resolution",
+        "1920x1080",
+        "--max-fps",
+        "60",
+        "--script",
+        "res://tools/prepare_natural_cave.gd",
+        "--",
+        "--world-slot=cave_stage_7715b685870243ae972039d1ac7294de",
+        "--world-generator=6",
+        "--world-seed=1703",
+        "--gameplay-construction",
+        "--ground-cover",
+        "--checkpoint-report=C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\natural_cave_preparation\\20261015T191012532892Z\\checkpoint.bin",
+        "--derived-cache=user://cave_stage_7715b685870243ae972039d1ac7294de"
+      ],
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "pid": 13500,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 48.452074699998775,
+        "passed": true
+      }
+    },
+    {
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--fullscreen",
+        "--resolution",
+        "1920x1080",
+        "--max-fps",
+        "60",
+        "--script",
+        "res://tools/prepare_natural_cave.gd",
+        "--",
+        "--world-slot=cave_stage_7715b685870243ae972039d1ac7294de",
+        "--world-generator=6",
+        "--world-seed=1703",
+        "--gameplay-construction",
+        "--ground-cover",
+        "--checkpoint-report=C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\natural_cave_preparation\\20261015T191012532892Z\\checkpoint.bin",
+        "--derived-cache=user://cave_stage_7715b685870243ae972039d1ac7294de",
+        "--reopen-checkpoint"
+      ],
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "pid": 26584,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 13.083358800002316,
+        "passed": true
+      }
+    }
+  ],
+  "revision": "9e19701321ec38232bda4fbc90409ee9e804b19c",
+  "worktree_changes": [
+    "?? \"TerraForest/Play Natural Caves.cmd\"",
+    "?? TerraForest/tools/prepare_natural_cave.gd",
+    "?? TerraForest/tools/prepare_natural_cave.py"
+  ],
+  "git_metadata_available": true,
+  "publication": {
+    "created": true,
+    "slot": "natural_cave_gameplay",
+    "source_slot": "cave_stage_7715b685870243ae972039d1ac7294de",
+    "source_sha256": "05f1c0c5fcaa9c823e846af4d7a88e5abd73ca38c562d9af44c2485529f44a81"
+  }
+}
