@@ -1,0 +1,315 @@
+{
+  "block": 1,
+  "failures": 0,
+  "placed": true,
+  "shapes": [
+    {
+      "cache_bytes": 9056,
+      "costs": {
+        "dispatch_us": 1579,
+        "frame_max_ms": 17.686,
+        "frame_median_ms": 16.092,
+        "frame_samples": 15,
+        "water_peak_us": {
+          "accept_patch_us": 69,
+          "exclusion_notify_us": 139,
+          "hull_snapshot_us": 17,
+          "mesh_commit_us": 215,
+          "mesh_publish_us": 1543,
+          "mesh_us": 565,
+          "step_us": 0
+        },
+        "worker_slices": [
+          {
+            "queue_ms": 3.663,
+            "status": 1,
+            "worker_ms": 0.72
+          },
+          {
+            "queue_ms": 37.814,
+            "status": 1,
+            "worker_ms": 0.808
+          },
+          {
+            "queue_ms": 0.025,
+            "status": 1,
+            "worker_ms": 0.275
+          },
+          {
+            "queue_ms": 0.025,
+            "status": 1,
+            "worker_ms": 0.254
+          }
+        ]
+      },
+      "publish_ms": 233.246,
+      "removed_ml": 500000,
+      "shape": 2
+    },
+    {
+      "cache_bytes": 22800,
+      "costs": {
+        "dispatch_us": 1150,
+        "frame_max_ms": 17.4,
+        "frame_median_ms": 16.67,
+        "frame_samples": 16,
+        "water_peak_us": {
+          "accept_patch_us": 81,
+          "exclusion_notify_us": 147,
+          "hull_snapshot_us": 27,
+          "mesh_commit_us": 240,
+          "mesh_publish_us": 1631,
+          "mesh_us": 645,
+          "step_us": 0
+        },
+        "worker_slices": [
+          {
+            "queue_ms": 0.032,
+            "status": 1,
+            "worker_ms": 0.739
+          },
+          {
+            "queue_ms": 0.053,
+            "status": 1,
+            "worker_ms": 0.815
+          },
+          {
+            "queue_ms": 0.08,
+            "status": 1,
+            "worker_ms": 0.625
+          },
+          {
+            "queue_ms": 0.021,
+            "status": 1,
+            "worker_ms": 0.218
+          },
+          {
+            "queue_ms": 2.291,
+            "status": 1,
+            "worker_ms": 0.679
+          },
+          {
+            "queue_ms": 0.049,
+            "status": 1,
+            "worker_ms": 1.604
+          },
+          {
+            "queue_ms": 0.051,
+            "status": 1,
+            "worker_ms": 0.293
+          },
+          {
+            "queue_ms": 0.028,
+            "status": 1,
+            "worker_ms": 0.226
+          }
+        ]
+      },
+      "publish_ms": 254.134,
+      "removed_ml": 625000,
+      "shape": 3
+    },
+    {
+      "cache_bytes": 28032,
+      "costs": {
+        "dispatch_us": 1467,
+        "frame_max_ms": 16.679,
+        "frame_median_ms": 16.665,
+        "frame_samples": 13,
+        "water_peak_us": {
+          "accept_patch_us": 84,
+          "exclusion_notify_us": 144,
+          "hull_snapshot_us": 35,
+          "mesh_commit_us": 241,
+          "mesh_publish_us": 1651,
+          "mesh_us": 544,
+          "step_us": 0
+        },
+        "worker_slices": [
+          {
+            "queue_ms": 0.025,
+            "status": 1,
+            "worker_ms": 0.855
+          },
+          {
+            "queue_ms": 0.035,
+            "status": 0,
+            "worker_ms": 1.849
+          },
+          {
+            "queue_ms": 0.068,
+            "status": 1,
+            "worker_ms": 0.431
+          },
+          {
+            "queue_ms": 0.042,
+            "status": 1,
+            "worker_ms": 0.396
+          },
+          {
+            "queue_ms": 0.03,
+            "status": 1,
+            "worker_ms": 0.274
+          }
+        ]
+      },
+      "publish_ms": 186.195,
+      "removed_ml": 500000,
+      "shape": 4
+    },
+    {
+      "cache_bytes": 55168,
+      "costs": {
+        "dispatch_us": 1384,
+        "frame_max_ms": 16.884,
+        "frame_median_ms": 16.665,
+        "frame_samples": 13,
+        "water_peak_us": {
+          "accept_patch_us": 66,
+          "exclusion_notify_us": 0,
+          "hull_snapshot_us": 16,
+          "mesh_commit_us": 230,
+          "mesh_publish_us": 2253,
+          "mesh_us": 1232,
+          "step_us": 0
+        },
+        "worker_slices": [
+          {
+            "queue_ms": 0.025,
+            "status": 1,
+            "worker_ms": 0.683
+          },
+          {
+            "queue_ms": 0.062,
+            "status": 0,
+            "worker_ms": 2.154
+          },
+          {
+            "queue_ms": 0.11,
+            "status": 1,
+            "worker_ms": 0.976
+          },
+          {
+            "queue_ms": 0.059,
+            "status": 1,
+            "worker_ms": 0.273
+          },
+          {
+            "queue_ms": 0.058,
+            "status": 1,
+            "worker_ms": 0.308
+          }
+        ]
+      },
+      "publish_ms": 200.539,
+      "removed_ml": 250000,
+      "shape": 5
+    },
+    {
+      "cache_bytes": 221216,
+      "costs": {
+        "dispatch_us": 1288,
+        "frame_max_ms": 16.704,
+        "frame_median_ms": 16.667,
+        "frame_samples": 29,
+        "water_peak_us": {
+          "accept_patch_us": 172,
+          "exclusion_notify_us": 194,
+          "hull_snapshot_us": 38,
+          "mesh_commit_us": 281,
+          "mesh_publish_us": 1848,
+          "mesh_us": 728,
+          "step_us": 0
+        },
+        "worker_slices": [
+          {
+            "queue_ms": 0.036,
+            "status": 1,
+            "worker_ms": 0.9
+          },
+          {
+            "queue_ms": 0.023,
+            "status": 1,
+            "worker_ms": 0.731
+          },
+          {
+            "queue_ms": 0.059,
+            "status": 1,
+            "worker_ms": 0.457
+          },
+          {
+            "queue_ms": 0.037,
+            "status": 1,
+            "worker_ms": 0.408
+          },
+          {
+            "queue_ms": 0.034,
+            "status": 1,
+            "worker_ms": 0.799
+          },
+          {
+            "queue_ms": 0.031,
+            "status": 0,
+            "worker_ms": 15.914
+          },
+          {
+            "queue_ms": 0.04,
+            "status": 0,
+            "worker_ms": 25.216
+          },
+          {
+            "queue_ms": 0.043,
+            "status": 0,
+            "worker_ms": 15.73
+          },
+          {
+            "queue_ms": 0.076,
+            "status": 0,
+            "worker_ms": 31.626
+          },
+          {
+            "queue_ms": 0.06,
+            "status": 0,
+            "worker_ms": 17.987
+          },
+          {
+            "queue_ms": 0.033,
+            "status": 0,
+            "worker_ms": 11.869
+          },
+          {
+            "queue_ms": 0.049,
+            "status": 0,
+            "worker_ms": 15.821
+          },
+          {
+            "queue_ms": 0.035,
+            "status": 0,
+            "worker_ms": 6.978
+          },
+          {
+            "queue_ms": 0.036,
+            "status": 1,
+            "worker_ms": 0.737
+          },
+          {
+            "queue_ms": 0.037,
+            "status": 1,
+            "worker_ms": 0.349
+          },
+          {
+            "queue_ms": 0.113,
+            "status": 1,
+            "worker_ms": 0.252
+          }
+        ]
+      },
+      "publish_ms": 472.101,
+      "removed_ml": 466504,
+      "shape": 6
+    }
+  ],
+  "target": "(800, 47, 1292)",
+  "water_overlap": false,
+  "water_unchanged": false
+}

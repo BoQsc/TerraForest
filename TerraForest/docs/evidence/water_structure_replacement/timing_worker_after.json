@@ -1,0 +1,315 @@
+{
+  "block": 1,
+  "failures": 0,
+  "placed": true,
+  "shapes": [
+    {
+      "cache_bytes": 9056,
+      "costs": {
+        "dispatch_us": 1288,
+        "frame_max_ms": 16.853,
+        "frame_median_ms": 16.646,
+        "frame_samples": 12,
+        "water_peak_us": {
+          "accept_patch_us": 67,
+          "exclusion_notify_us": 140,
+          "hull_snapshot_us": 17,
+          "mesh_commit_us": 211,
+          "mesh_publish_us": 1536,
+          "mesh_us": 810,
+          "step_us": 0
+        },
+        "worker_slices": [
+          {
+            "queue_ms": 0.026,
+            "status": 1,
+            "worker_ms": 0.728
+          },
+          {
+            "queue_ms": 0.029,
+            "status": 1,
+            "worker_ms": 0.858
+          },
+          {
+            "queue_ms": 0.068,
+            "status": 1,
+            "worker_ms": 0.269
+          },
+          {
+            "queue_ms": 2.219,
+            "status": 1,
+            "worker_ms": 0.202
+          }
+        ]
+      },
+      "publish_ms": 186.064,
+      "removed_ml": 500000,
+      "shape": 2
+    },
+    {
+      "cache_bytes": 22800,
+      "costs": {
+        "dispatch_us": 2298,
+        "frame_max_ms": 16.821,
+        "frame_median_ms": 16.671,
+        "frame_samples": 17,
+        "water_peak_us": {
+          "accept_patch_us": 80,
+          "exclusion_notify_us": 146,
+          "hull_snapshot_us": 23,
+          "mesh_commit_us": 233,
+          "mesh_publish_us": 1637,
+          "mesh_us": 597,
+          "step_us": 0
+        },
+        "worker_slices": [
+          {
+            "queue_ms": 4.096,
+            "status": 1,
+            "worker_ms": 0.629
+          },
+          {
+            "queue_ms": 1.162,
+            "status": 1,
+            "worker_ms": 0.817
+          },
+          {
+            "queue_ms": 0.028,
+            "status": 1,
+            "worker_ms": 0.295
+          },
+          {
+            "queue_ms": 0.036,
+            "status": 1,
+            "worker_ms": 0.334
+          },
+          {
+            "queue_ms": 0.057,
+            "status": 1,
+            "worker_ms": 0.748
+          },
+          {
+            "queue_ms": 0.061,
+            "status": 1,
+            "worker_ms": 1.649
+          },
+          {
+            "queue_ms": 0.069,
+            "status": 1,
+            "worker_ms": 0.3
+          },
+          {
+            "queue_ms": 0.038,
+            "status": 1,
+            "worker_ms": 0.285
+          }
+        ]
+      },
+      "publish_ms": 270.567,
+      "removed_ml": 625000,
+      "shape": 3
+    },
+    {
+      "cache_bytes": 28032,
+      "costs": {
+        "dispatch_us": 1565,
+        "frame_max_ms": 16.705,
+        "frame_median_ms": 16.664,
+        "frame_samples": 13,
+        "water_peak_us": {
+          "accept_patch_us": 83,
+          "exclusion_notify_us": 143,
+          "hull_snapshot_us": 20,
+          "mesh_commit_us": 276,
+          "mesh_publish_us": 1650,
+          "mesh_us": 550,
+          "step_us": 0
+        },
+        "worker_slices": [
+          {
+            "queue_ms": 0.062,
+            "status": 1,
+            "worker_ms": 1.322
+          },
+          {
+            "queue_ms": 0.017,
+            "status": 0,
+            "worker_ms": 1.709
+          },
+          {
+            "queue_ms": 0.06,
+            "status": 1,
+            "worker_ms": 0.462
+          },
+          {
+            "queue_ms": 0.062,
+            "status": 1,
+            "worker_ms": 0.395
+          },
+          {
+            "queue_ms": 0.065,
+            "status": 1,
+            "worker_ms": 0.32
+          }
+        ]
+      },
+      "publish_ms": 186.167,
+      "removed_ml": 500000,
+      "shape": 4
+    },
+    {
+      "cache_bytes": 55168,
+      "costs": {
+        "dispatch_us": 1703,
+        "frame_max_ms": 16.707,
+        "frame_median_ms": 16.665,
+        "frame_samples": 12,
+        "water_peak_us": {
+          "accept_patch_us": 64,
+          "exclusion_notify_us": 0,
+          "hull_snapshot_us": 13,
+          "mesh_commit_us": 212,
+          "mesh_publish_us": 1540,
+          "mesh_us": 573,
+          "step_us": 0
+        },
+        "worker_slices": [
+          {
+            "queue_ms": 0.033,
+            "status": 1,
+            "worker_ms": 1.236
+          },
+          {
+            "queue_ms": 0.019,
+            "status": 0,
+            "worker_ms": 2.312
+          },
+          {
+            "queue_ms": 0.063,
+            "status": 1,
+            "worker_ms": 0.945
+          },
+          {
+            "queue_ms": 0.034,
+            "status": 1,
+            "worker_ms": 0.465
+          },
+          {
+            "queue_ms": 0.061,
+            "status": 1,
+            "worker_ms": 0.297
+          }
+        ]
+      },
+      "publish_ms": 184.629,
+      "removed_ml": 250000,
+      "shape": 5
+    },
+    {
+      "cache_bytes": 221216,
+      "costs": {
+        "dispatch_us": 1386,
+        "frame_max_ms": 16.679,
+        "frame_median_ms": 16.669,
+        "frame_samples": 24,
+        "water_peak_us": {
+          "accept_patch_us": 110,
+          "exclusion_notify_us": 149,
+          "hull_snapshot_us": 32,
+          "mesh_commit_us": 217,
+          "mesh_publish_us": 1639,
+          "mesh_us": 785,
+          "step_us": 0
+        },
+        "worker_slices": [
+          {
+            "queue_ms": 0.07,
+            "status": 1,
+            "worker_ms": 1.309
+          },
+          {
+            "queue_ms": 0.051,
+            "status": 1,
+            "worker_ms": 0.995
+          },
+          {
+            "queue_ms": 0.126,
+            "status": 1,
+            "worker_ms": 0.564
+          },
+          {
+            "queue_ms": 0.057,
+            "status": 1,
+            "worker_ms": 0.316
+          },
+          {
+            "queue_ms": 0.067,
+            "status": 1,
+            "worker_ms": 0.912
+          },
+          {
+            "queue_ms": 0.07,
+            "status": 0,
+            "worker_ms": 12.025
+          },
+          {
+            "queue_ms": 0.062,
+            "status": 0,
+            "worker_ms": 16.417
+          },
+          {
+            "queue_ms": 0.061,
+            "status": 0,
+            "worker_ms": 6.531
+          },
+          {
+            "queue_ms": 0.025,
+            "status": 0,
+            "worker_ms": 10.735
+          },
+          {
+            "queue_ms": 0.035,
+            "status": 0,
+            "worker_ms": 12.441
+          },
+          {
+            "queue_ms": 0.119,
+            "status": 0,
+            "worker_ms": 7.421
+          },
+          {
+            "queue_ms": 0.058,
+            "status": 0,
+            "worker_ms": 7.92
+          },
+          {
+            "queue_ms": 0.113,
+            "status": 0,
+            "worker_ms": 4.343
+          },
+          {
+            "queue_ms": 0.073,
+            "status": 1,
+            "worker_ms": 0.462
+          },
+          {
+            "queue_ms": 0.124,
+            "status": 1,
+            "worker_ms": 0.328
+          },
+          {
+            "queue_ms": 0.121,
+            "status": 1,
+            "worker_ms": 0.223
+          }
+        ]
+      },
+      "publish_ms": 387.736,
+      "removed_ml": 466504,
+      "shape": 6
+    }
+  ],
+  "target": "(800, 47, 1292)",
+  "water_overlap": false,
+  "water_unchanged": false
+}

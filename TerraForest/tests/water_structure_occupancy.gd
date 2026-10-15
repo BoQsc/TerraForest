@@ -6,6 +6,9 @@ var profiling:=false
 var last_frame_us:=0
 var frame_us:Array[int]=[]
 var peaks:Dictionary={}
+var slices:Array[Dictionary]=[]
+func slice_cost(worker_ms:float,queue_ms:float,status:int):
+ if profiling:slices.append({"worker_ms":worker_ms,"queue_ms":queue_ms,"status":status})
 func sample_costs(record_frame:bool=true):
  if not profiling:return
  var now:=Time.get_ticks_usec()
@@ -15,12 +18,12 @@ func sample_costs(record_frame:bool=true):
  for key in ["mesh_us","mesh_publish_us","mesh_commit_us","step_us","exclusion_notify_us","accept_patch_us","hull_snapshot_us"]:
   peaks[key]=maxi(int(peaks.get(key,0)),int(stats.get(key,0)))
 func begin_costs():
- frame_us.clear();peaks.clear();last_frame_us=Time.get_ticks_usec();profiling=true
+ frame_us.clear();peaks.clear();slices.clear();last_frame_us=Time.get_ticks_usec();profiling=true
  for key in ["_mesh_publish_us","_mesh_commit_us","_exclusion_notify_us","_accept_patch_us","_hull_snapshot_us"]:game.lakes.set(key,0)
 func end_costs()->Dictionary:
  sample_costs(false);profiling=false
  frame_us.sort()
- return {"frame_samples":frame_us.size(),"frame_max_ms":frame_us.back()/1000.0 if not frame_us.is_empty() else 0.0,"frame_median_ms":frame_us[frame_us.size()/2]/1000.0 if not frame_us.is_empty() else 0.0,"water_peak_us":peaks.duplicate()}
+ return {"frame_samples":frame_us.size(),"frame_max_ms":frame_us.back()/1000.0 if not frame_us.is_empty() else 0.0,"frame_median_ms":frame_us[frame_us.size()/2]/1000.0 if not frame_us.is_empty() else 0.0,"water_peak_us":peaks.duplicate(),"worker_slices":slices.duplicate(true)}
 
 func mesh_volume(shape:int)->float:
  var mesh:Mesh=game.structures.blocks.preview_mesh(shape,0)
@@ -38,6 +41,7 @@ func run():
  while not game.has_meta("water_bucket_review_ready") and Time.get_ticks_msec()<deadline:await process_frame
  check(game.has_meta("water_bucket_review_ready"),"Actual water world ready")
  if failures:await finish();return
+ game.terrain.lake_slice_profiled.connect(slice_cost)
  var entry:Dictionary=game.lakes._lakes.values()[0]
  var cell:=Vector3i(floori(entry.seed.x),floori(entry.level)-1,floori(entry.seed.z))
  var bounds:=AABB(Vector3(cell),Vector3.ONE)

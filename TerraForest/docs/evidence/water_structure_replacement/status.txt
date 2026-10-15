@@ -67,3 +67,19 @@ No performance fix or stable-60fps claim follows from these measurements.
 Next: use existing terrain.lake_slice_profiled worker/queue signal to separate
 worker compute from scheduling latency; correlate remaining stalls with other
 world work/rendering. Keep accepted geometry/replacement semantics unchanged.
+
+2026-10-15 worker attribution and curved-profile optimization:
+The existing lake_slice_profiled signal now records worker and queue time for
+these edit windows. Before: simple shapes needed 2-5ms worker time but 186-254ms
+publication latency; sphere needed 145.774ms worker time (largest slice31.626ms)
+and 472.101ms publication. Queue time alone does not account for elapsed time:
+frame-driven request/results and mesh publication remain substantial.
+Prepared volume curves now cache piece bounds/full volume and only clip pieces
+intersected by the moving height plane. No approximation or format change.
+After: sphere82.942ms worker (largest slice16.417ms),387.736ms publication.
+All shape correctness checks pass; frame maxima16.7-16.9ms in this after-run.
+This single paired observation is not a sustained60fps or scaling guarantee.
+Native independent curved-solid clipping at101 heights passes; release cached
+world reload still passes byte-exactly. Both native targets rebuilt/installed.
+Remaining: eliminate avoidable frame scheduling delay, further bound individual
+curved-cell preparation, and attribute intermittent stalls seen in earlier runs.

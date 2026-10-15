@@ -62,7 +62,20 @@ public:
         if(knots.size()>MAX_KNOTS)return false;
         staged.low=knots.front();staged.high=knots.back();staged.full=C::volume(stable);
         if(!std::isfinite(staged.full)||staged.full>.125+1e-9)return false;
-        auto at=[&](double y,double &v){C::Pieces cut;if(!C::below(stable,y,cut))return false;v=C::volume(cut);return std::isfinite(v);};
+        // Fully submerged pieces contribute their cached volume; pieces above
+        // the plane contribute zero. Only intersected pieces need clipping.
+        struct Extent {double bottom,top,volume;};
+        std::vector<Extent> extents;extents.reserve(stable.size());
+        for(const auto &piece:stable){Extent e{.5,0,C::volume(piece)};
+            for(const auto &face:piece.faces)for(auto p:face){e.bottom=std::min(e.bottom,p.y);e.top=std::max(e.top,p.y);}
+            extents.push_back(e);}
+        auto at=[&](double y,double &v){v=0;
+            for(size_t i=0;i<stable.size();++i){const auto &e=extents[i];
+                if(y<=e.bottom)continue;
+                if(y>=e.top){v+=e.volume;continue;}
+                C::Polyhedron cut;if(!C::clip(stable[i],{{0,1,0},y},cut))return false;
+                double part=C::volume(cut);if(part>1e-15)v+=part;}
+            return std::isfinite(v);};
         // Polyhedral volume below a moving plane is cubic between vertex
         // heights. Fit in normalized local t to avoid large-coordinate loss.
         for(size_t i=1;i<knots.size();++i){

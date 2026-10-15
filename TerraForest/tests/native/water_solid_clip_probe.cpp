@@ -70,5 +70,16 @@ int main(){
  plain.solid=nullptr;check(plain.solid_remainder(500,{box({0,.25,0},{.5,.5,.5})},actual)&&cache.prepare(actual),"Prepare occupied ceiling fixture");plain.solid=&cache;
  check(!terraforest::WaterCellProfile::vertical_overlap(plain,500,neighbour,500),"Solid ceiling blocks vertical water connection");
  check(terraforest::WaterCellProfile::vertical_overlap(neighbour,500,plain,500),"Open underside retains vertical connection");
+ // Oblique many-face solid exercises pieces crossing different height bands.
+ std::vector<C::Plane> curved;
+ for(int latitude=-2;latitude<=2;++latitude)for(int longitude=0;longitude<8;++longitude){
+  double elevation=latitude*.6,azimuth=longitude*.7853981633974483;
+  C::Point normal{std::cos(elevation)*std::cos(azimuth),std::sin(elevation),std::cos(elevation)*std::sin(azimuth)};
+  curved.push_back({normal,normal.dot({.25,.25,.25})+.21});}
+ C::Pieces small{C::box({0,0,0},{.5,.5,.5})},remainder;
+ bool exact=C::subtract(small,curved,remainder)&&cache.prepare(remainder);
+ for(int i=0;exact&&i<=100;++i){C::Pieces cut;double height=i*.005;
+  exact=C::below(remainder,height,cut)&&near(cache.volume(height),C::volume(cut));}
+ check(exact,"Curved occupancy curve matches independent clipping at 101 heights");
  std::printf("WATER_SOLID_CLIP failures=%d\n",failures);return failures?1:0;
 }
