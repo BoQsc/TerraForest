@@ -1,0 +1,44 @@
+{
+  "copy": {
+    "created": true,
+    "slot": "mixed_actor_22d630bf07704af9866ff08667695a11",
+    "source_slot": "combined_stage_7801173ed84740ee91a1b06e51a3298b",
+    "source_sha256": "51a8e5d01faf87bc35bbfd676bf179d33544d40e125e08c3bed3f815889befdc"
+  },
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+    "--path",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+    "--fullscreen",
+    "--resolution",
+    "1920x1080",
+    "--max-fps",
+    "60",
+    "--script",
+    "res://tests/actor_population_cost.gd",
+    "--",
+    "--world-slot=mixed_actor_22d630bf07704af9866ff08667695a11",
+    "--actors",
+    "--ground-cover"
+  ],
+  "result": {
+    "timed_out": false,
+    "launch_error": null,
+    "pid": 12268,
+    "exit_code": 1,
+    "diagnostics": [
+      "FAIL moving16 actor adapter p95<=1ms max<=2ms",
+      "FAIL nearby64 actor adapter p95<=1ms max<=2ms"
+    ],
+    "required_text_found": true,
+    "elapsed_seconds": 18.594075000000885,
+    "passed": false
+  },
+  "source_unchanged": true,
+  "revision": "583bed3201550d13bc8e62243001150006e493c6",
+  "worktree_changes": [
+    " M TerraForest/tests/actor_population_cost.gd",
+    "?? TerraForest/tools/check_mixed_actor_cost.py"
+  ],
+  "git_metadata_available": true
+}

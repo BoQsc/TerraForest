@@ -1,3 +1,10 @@
+> 2026-10-15 mixed actor cost: 0/16/64-record phases in the eight-building world
+> retain the fixed 16-body cap with no readiness holds. Actor cost FAILS the
+> existing 1 ms p95 budget (1.177 / 1.306 ms); moving16 max 3.082 ms also fails
+> 2 ms. Frame p95 17.201 / 17.082 ms passes only the short fixture gate. Dominant
+> measured component is collision/motion. Evidence: evidence/mixed_actor_cost/.
+> Keep active capacity unchanged; larger crowds and sustained 60 FPS unqualified.
+
 > 2026-10-15 actor removal: reproduced orphan damage after editor deletion.
 > Editor/combat now share identity-based removal and clear orders, durability,
 > selection and visuals. Stale hits reject before tool wear or damage allocation.

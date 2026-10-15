@@ -90,4 +90,5 @@ func run() -> void:
 	DirAccess.make_dir_recursive_absolute(folder)
 	var file:=FileAccess.open(folder+"/result.json",FileAccess.WRITE);file.store_string(JSON.stringify({"failures":failures,"phases":phases},"  "));file.close()
 	root.get_texture().get_image().save_png(folder+"/world.png")
+	print("MIXED_ACTOR_COST_COMPLETE failures=",failures)
 	game.terrain.shutdown();game.free();await process_frame;quit(1 if failures else 0)
