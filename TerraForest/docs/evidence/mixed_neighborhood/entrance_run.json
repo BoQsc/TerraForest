@@ -1,0 +1,46 @@
+{
+  "copy": {
+    "created": true,
+    "slot": "doorwalk_fd852d18437b47f28926549609f8067c",
+    "source_slot": "mixed_neighborhood_review",
+    "source_sha256": "51a8e5d01faf87bc35bbfd676bf179d33544d40e125e08c3bed3f815889befdc"
+  },
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+    "--path",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+    "--fullscreen",
+    "--resolution",
+    "1920x1080",
+    "--max-fps",
+    "60",
+    "--script",
+    "res://tests/enclosed_settlement_walk.gd",
+    "--",
+    "--world-slot=doorwalk_fd852d18437b47f28926549609f8067c",
+    "--gameplay-construction",
+    "--ground-cover",
+    "--expected-doors=8"
+  ],
+  "result": {
+    "timed_out": false,
+    "launch_error": null,
+    "pid": 26832,
+    "exit_code": 0,
+    "diagnostics": [],
+    "required_text_found": true,
+    "elapsed_seconds": 36.459944900001574,
+    "passed": true
+  },
+  "source_unchanged": true,
+  "revision": "b86e4407778a9dd891f52403f2941e9e0135bacd",
+  "worktree_changes": [
+    " M TerraForest/tests/enclosed_settlement_walk.gd",
+    " M TerraForest/tests/test_combined_preparation.py",
+    " M TerraForest/tools/check_enclosed_settlement_walk.py",
+    " M TerraForest/tools/prepare_combined_world.gd",
+    " M TerraForest/tools/prepare_combined_world.py",
+    "?? \"TerraForest/Review Mixed Neighborhood.cmd\""
+  ],
+  "git_metadata_available": true
+}

@@ -1,5 +1,22 @@
 # Building review
 
+## Mixed neighborhood checkpoint
+
+**Review Mixed Neighborhood.cmd** prepares and opens `mixed_neighborhood_review`
+only if that save is absent. It combines five cottages and three furnished
+three-floor towers with connected asphalt streets, forest and normal gameplay.
+Doors use E; F5 saves. The existing cottage, tower and gameplay saves are preserved.
+The first preparation includes cold world/cache generation and can take minutes;
+later launches reuse the saved world. It runs at 1920×1080 with a 60 FPS cap.
+
+All eight entrances passed actual player walking from the street through the
+opened doors. Exact blocks, furnishings, windows, doors, guardrails and roads
+survived a fresh-process reload. This is a small playable neighborhood, not a
+large-city or sustained-performance qualification. See
+[evidence and limitations](evidence/mixed_neighborhood/README.md).
+
+## Cottage checkpoint
+
 Run **Review Buildings.cmd** from the TerraForest folder. It opens the separate
 `building_review` save at 1920×1080 with the normal 60 FPS target. An existing
 review save is reused, never replaced. If absent, the launcher prepares and checks

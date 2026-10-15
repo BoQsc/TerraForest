@@ -3,6 +3,7 @@ extends SceneTree
 var game:Node
 var report_path:String
 var reopening:=false
+var mixed:=false
 func require(ok:bool,message:String)->bool:
  print("PASS " if ok else "FAIL ",message)
  return ok
@@ -12,7 +13,7 @@ func wait_until(predicate:Callable,seconds:int=30)->bool:
  return predicate.call()
 func signature()->Dictionary:
  var result:Dictionary={"blocks":Marshalls.raw_to_base64(game.structures.blocks.capture_snapshot()),"roads":Marshalls.raw_to_base64(game.road_palette.capture_anchors())}
- for asset in ["furniture/table/v1","furniture/chair/v1","furniture/shelf/v1","storage/wooden_chest/v1","architecture/wooden_door/v1","architecture/wooden_window/v1"]:
+ for asset in ["furniture/table/v1","furniture/chair/v1","furniture/shelf/v1","storage/wooden_chest/v1","architecture/wooden_door/v1","architecture/wooden_window/v1","architecture/metal_guardrail/v1"]:
   var batch=game.structures.model(asset)
   result[asset]=Marshalls.raw_to_base64(batch.capture_snapshot())
  return result
@@ -21,9 +22,12 @@ func run()->void:
  for arg in OS.get_cmdline_user_args():
   if arg.begins_with("--checkpoint-report="):report_path=arg.trim_prefix("--checkpoint-report=")
   if arg=="--reopen-checkpoint":reopening=true
+  if arg=="--checkpoint-layout=mixed":mixed=true
  if report_path.is_empty():quit(1);return
  game=load("res://demo/world.tscn").instantiate();root.add_child(game)
- var started:bool=await wait_until(func():return not game.loading_active,60)
+ # Cold offline generation includes all generated lake caches. This is not a
+ # runtime arrival budget; the independent preparation runner records duration.
+ var started:bool=await wait_until(func():return not game.loading_active,180)
  if not started:print("STARTUP_DIAGNOSTIC ",game.terrain.loading_state(game.player.position,game.fly)," lakes=",game.lakes.statistics()," catalog=",game.lakes.descriptions()," label=",game.loading_label.text)
  if not require(started,"normal generated world starts"):await finish(false);return
  game.set_physics_process(false);game._clear_motion();game.app_focused=true
@@ -36,13 +40,14 @@ func run()->void:
  else:
   if not require(game.structures.blocks.stats().cells==0,"preparation starts in an empty staging world"):await finish(false);return
   game.structure_mode=true;game.structure_rotation=0
-  var source:=-1
+  var sources:=PackedInt32Array()
   for i in game.structure_prefabs.size():
-   if game.structure_prefabs[i].resource_name=="Furnished cottage with door and windows":source=i;break
-  if not require(source>=0,"registered furnished cottage is available"):await finish(false);return
+   var title: String=game.structure_prefabs[i].resource_name
+   if title=="Furnished cottage with door and windows" or (mixed and title.begins_with("Furnished tower")):sources.append(i)
+  if not require(sources.size()==(2 if mixed else 1),"registered furnished building sources are available"):await finish(false);return
   game.prefab_library.directory="user://checkpoint_prefabs/"+game.terrain.save_slot
   var count:int=game.structure_prefabs.size()
-  game._frontage_sources_construction(PackedInt32Array([source]),1,8,3,1703,"Gameplay settlement",2)
+  game._frontage_sources_construction(sources,2 if mixed else 1,8,3,1703,"Mixed neighborhood" if mixed else "Gameplay settlement",2)
   if not require(await wait_until(func():return game.structure_prefabs.size()==count+1,10),"existing native editor composes connected furnished streets"):await finish(false);return
   game.camera.global_position=game.player.global_position+Vector3(0,15,0)
   game.camera.look_at(game.player.global_position+Vector3(10,-5,0))
@@ -54,9 +59,17 @@ func run()->void:
   if not require(await wait_until(func():return game.site_preparation.status!="running",30) and game.site_preparation.status=="complete","native grading and asphalt preparation complete"):await finish(false);return
   game._place_prepared_site()
   if not require(await wait_until(func():return game._foundation_placement.is_empty(),20) and game.structures.blocks.stats().cells>0,"staged furnished settlement publishes"):await finish(false);return
+  if mixed:
+   var door_count: int=game.doors.collection.get_ids().size()
+   var rails: int=game.structures.model("architecture/metal_guardrail/v1").get_ids().size()
+   if not require(door_count==8 and rails>0 and rails<door_count*5,"mixed generation contains eight furnished buildings including cottages and towers"):await finish(false);return
   var target:Vector3=Vector3(game.site_preparation.plan.target)
   game.needs_floor_spawn=false;game.fly=false
   game.player.position=Vector3(target.x+4.5,target.y+2.1,game.road_palette.prepared_streets[0].ends[0].z-11.0)
+  if mixed:
+   var p: PackedFloat32Array=game.doors.collection.get_instance(game.doors.collection.get_ids()[0])
+   var pose:=Transform3D(Basis(Vector3(p[0],p[4],p[8]),Vector3(p[1],p[5],p[9]),Vector3(p[2],p[6],p[10])).orthonormalized(),Vector3(p[3],p[7],p[11]))
+   game.player.position=pose*Vector3(0.5,0.1,-2.5)
   game.yaw=0;game.pitch=-0.15;game.player.rotation.y=0
   game.camera.position=Vector3(0,1.6,0);game.camera.rotation=Vector3(game.pitch,0,0)
   game.terrain.focus=game.player.position;game.structures.set_model_focus(game.player.position)

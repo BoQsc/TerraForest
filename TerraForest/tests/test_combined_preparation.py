@@ -9,6 +9,20 @@ import prepare_combined_world as prep
 
 
 class PreparationTests(unittest.TestCase):
+    def test_invalid_layout_rejected_before_writes(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            with self.assertRaises(ValueError):prep.prepare('unused', root, root/'report', layout='unknown')
+            self.assertEqual(list(root.iterdir()), [])
+
+    def test_mixed_layout_is_used_in_both_processes(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            with patch.object(prep, 'execute', return_value={'passed': True}) as run, patch.object(prep, 'clone_once', return_value={'created': True}):
+                self.assertEqual(prep.prepare('unused', root, root/'report', 'mixed_review', 'mixed'), 0)
+                for call in run.call_args_list:
+                    self.assertIn('--checkpoint-layout=mixed', call.args[0])
+
     def test_invalid_destination_rejected_before_writes(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)

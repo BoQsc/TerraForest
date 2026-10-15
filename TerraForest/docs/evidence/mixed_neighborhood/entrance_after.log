@@ -1,0 +1,76 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.3.280 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] World loaded
+[TerrainRewrite] World loaded
+[terrain-hitch] receive 177.07 ms at 4409
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS copied enclosed settlement loads
+PASS expected generated building doors present
+PASS street surface located for entrance
+PASS entrance collision ready
+ENTRANCE_APPROACH 1 local=(0.500061, 0.008774, 0.487915) street=(811.5, 47.05, 1304.0)
+PASS approach ascends stairs and stops outside closed door 1
+[TerrainRewrite] Door opened
+PASS E opens generated door 1
+ENTRANCE_RESULT 1 local=(0.500061, 0.008774, -3.637451)
+PASS production player walks inside building 1 without jumping
+PASS street surface located for entrance
+PASS entrance collision ready
+ENTRANCE_APPROACH 2 local=(0.5, 0.008591, 0.487305) street=(811.5, 47.05, 1316.0)
+PASS approach ascends stairs and stops outside closed door 2
+[TerrainRewrite] Door opened
+PASS E opens generated door 2
+ENTRANCE_RESULT 2 local=(0.5, 0.008591, -3.638062)
+PASS production player walks inside building 2 without jumping
+PASS street surface located for entrance
+PASS entrance collision ready
+ENTRANCE_APPROACH 3 local=(0.500061, 0.00806, 0.426636) street=(827.5, 47.05, 1305.0)
+PASS approach ascends stairs and stops outside closed door 3
+[TerrainRewrite] Door opened
+PASS E opens generated door 3
+ENTRANCE_RESULT 3 local=(0.500061, 0.00806, -3.69873)
+PASS production player walks inside building 3 without jumping
+PASS street surface located for entrance
+PASS entrance collision ready
+ENTRANCE_APPROACH 4 local=(0.500061, 0.008568, 0.487549) street=(823.5, 47.05, 1316.0)
+PASS approach ascends stairs and stops outside closed door 4
+[TerrainRewrite] Door opened
+PASS E opens generated door 4
+ENTRANCE_RESULT 4 local=(0.500061, 0.008568, -3.637817)
+PASS production player walks inside building 4 without jumping
+PASS street surface located for entrance
+PASS entrance collision ready
+ENTRANCE_APPROACH 5 local=(0.500061, 0.007984, 0.42688) street=(815.5, 47.05, 1354.0)
+PASS approach ascends stairs and stops outside closed door 5
+[TerrainRewrite] Door opened
+PASS E opens generated door 5
+ENTRANCE_RESULT 5 local=(0.500061, 0.007984, -3.698486)
+PASS production player walks inside building 5 without jumping
+PASS street surface located for entrance
+PASS entrance collision ready
+ENTRANCE_APPROACH 6 local=(0.5, 0.008736, 0.487915) street=(811.5, 47.05, 1365.0)
+PASS approach ascends stairs and stops outside closed door 6
+[TerrainRewrite] Door opened
+PASS E opens generated door 6
+ENTRANCE_RESULT 6 local=(0.5, 0.008736, -3.637451)
+PASS production player walks inside building 6 without jumping
+PASS street surface located for entrance
+PASS entrance collision ready
+ENTRANCE_APPROACH 7 local=(0.500061, 0.00798, 0.426758) street=(835.5, 47.05, 1354.0)
+PASS approach ascends stairs and stops outside closed door 7
+[TerrainRewrite] Door opened
+PASS E opens generated door 7
+ENTRANCE_RESULT 7 local=(0.500061, 0.00798, -3.698608)
+PASS production player walks inside building 7 without jumping
+PASS street surface located for entrance
+PASS entrance collision ready
+ENTRANCE_APPROACH 8 local=(0.5, 0.008385, 0.487427) street=(831.5, 47.05, 1365.0)
+PASS approach ascends stairs and stops outside closed door 8
+[TerrainRewrite] Door opened
+PASS E opens generated door 8
+ENTRANCE_RESULT 8 local=(0.5, 0.008385, -3.637939)
+PASS production player walks inside building 8 without jumping
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+PASS ordinary compound save completes
+COMBINED_RESOURCE_ROUTE failures=0

@@ -1,3 +1,10 @@
+> 2026-10-15 mixed neighborhood: offline preparation now supports five cottages
+> and three furnished towers on connected graded streets, with 6,771 blocks and
+> 263 attached objects. Fresh-process exact restore and all eight street-to-door
+> player approaches pass. Review Mixed Neighborhood.cmd preserves a separate save.
+> Evidence: evidence/mixed_neighborhood/. Cold preparation took 93 s, reopen
+> verification 34 s; no loading-speed, city-density or frame-time qualification.
+
 > 2026-10-15 wooden fence: production object catalog now includes a baked,
 > batched two-metre fence section, four-wood gameplay cost, two-wood salvage,
 > static collision and shared atlas icon. Targeted placement/damage/wear and
