@@ -1,3 +1,10 @@
+> 2026-10-15 structures distribution: current dependency ZIP passes clean
+> extracted import/load (102 resources) and 12 runtime building checks: native
+> world, catalogs/icons, closed/open door collision and exact hinge/model restore.
+> Explicit 100 ms import-frame-delay workaround retained. Evidence:
+> evidence/building_bundle/. Does not qualify host adapters, exports, other
+> platforms, default import reliability or broad addon independence.
+
 > 2026-10-15 building salvage: shared attack/removal now recovers 3 wood from
 > doors, 2 wood from windows and 2 metal from guardrails via existing native
 > salvage transactions. Successful door removal clears its hinge state. Actual

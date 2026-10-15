@@ -10,9 +10,11 @@ import tempfile
 import zipfile
 from package import ROOT, DEPENDENCIES
 
-def verify(addon, engine, import_frame_delay_ms=0, exercise_actors=False, exercise_pickups=False):
+def verify(addon, engine, import_frame_delay_ms=0, exercise_actors=False, exercise_pickups=False, exercise_structures=False):
     if (exercise_actors or exercise_pickups) and addon != "world_runtime":
         raise ValueError("Actor exercise applies to the world_runtime bundle")
+    if exercise_structures and addon != "structures":
+        raise ValueError("Structure exercise applies to the structures bundle")
     source=ROOT/'dist'/(addon+'.zip')
     output=ROOT/'reports/addon_bundles'/addon
     if import_frame_delay_ms:
@@ -54,7 +56,7 @@ def verify(addon, engine, import_frame_delay_ms=0, exercise_actors=False, exerci
             result['steps'].append({'phase':label,'exit_code':run.returncode,'ok':ok})
             if not ok:
                 print(log[-3000:]) # Still diagnose resource loading; import failure remains fatal.
-        for exercise, fixture_name in [('actors', 'actor_navigation')]*int(exercise_actors) + [('pickups', 'bundle_pickups')]*int(exercise_pickups):
+        for exercise, fixture_name in [('actors', 'actor_navigation')]*int(exercise_actors) + [('pickups', 'bundle_pickups')]*int(exercise_pickups) + [('structures', 'bundle_structures')]*int(exercise_structures):
             if not all(step['ok'] for step in result['steps']):break
             # Only the fixture is supplied externally. Every runtime resource must
             # resolve from the extracted archive, with no main-project fallback.
@@ -73,7 +75,7 @@ def verify(addon, engine, import_frame_delay_ms=0, exercise_actors=False, exerci
             report = json.loads((evidence/'result.json').read_text()) if (evidence/'result.json').is_file() else {}
             ok = run.returncode == 0 and report.get('failures') == 0 and report.get('checks',0)>=6 and not re.search(r'(?m)^(?:SCRIPT ERROR|ERROR:|FAIL |WARNING: ObjectDB instances leaked)', log)
             result['steps'].append({'phase':exercise, 'exit_code':run.returncode, 'ok':ok, 'command':command})
-    result['ok']=len(result['steps'])==(2+int(exercise_actors)+int(exercise_pickups)) and all(step['ok'] for step in result['steps'])
+    result['ok']=len(result['steps'])==(2+int(exercise_actors)+int(exercise_pickups)+int(exercise_structures)) and all(step['ok'] for step in result['steps'])
     (output/'result.json').write_text(json.dumps(result,indent=2)+'\n',encoding='utf-8')
     print(addon, 'PASS' if result['ok'] else 'FAIL',result['resource_count'],'resources',flush=True)
     return result['ok']
@@ -85,7 +87,8 @@ def main():
     parser.add_argument('--import-frame-delay-ms',type=int,default=0,choices=range(0,2001),metavar='0..2000',help='Explicit import-only workaround for Godot issue111048; default preserves ordinary import behavior')
     parser.add_argument("--exercise-actors", action="store_true", help="Run bounded actor navigation from extracted world_runtime bundle")
     parser.add_argument("--exercise-pickups", action="store_true", help="Exercise all dropped models and inventory transfers from extracted world_runtime bundle")
+    parser.add_argument("--exercise-structures", action="store_true", help="Exercise building models and door collision from extracted structures bundle")
     args=parser.parse_args()
-    return 0 if verify(args.addon,args.godot,args.import_frame_delay_ms,args.exercise_actors,args.exercise_pickups) else 1
+    return 0 if verify(args.addon,args.godot,args.import_frame_delay_ms,args.exercise_actors,args.exercise_pickups,args.exercise_structures) else 1
 if __name__=='__main__':
     raise SystemExit(main())
