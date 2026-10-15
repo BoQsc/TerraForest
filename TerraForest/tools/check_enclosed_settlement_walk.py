@@ -2,6 +2,7 @@
 """Check generated cottage access on an exclusive disposable save clone."""
 import datetime
 import argparse
+import re
 import hashlib
 import json
 import os
@@ -15,16 +16,20 @@ from play_checkpoint import revision_metadata
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--heights', action='store_true')
+    parser.add_argument('--actor-doors', action='store_true')
+    parser.add_argument('--source', default='combined_enclosed_review')
     args = parser.parse_args()
+    if not re.fullmatch(r'[A-Za-z_][A-Za-z0-9_]{0,47}', args.source):parser.error('Invalid source slot')
+    if args.heights and args.actor_doors:parser.error('Choose one check mode')
     config, _ = parse_args([])
     worlds = Path(os.environ['APPDATA']) / 'Godot/app_userdata/TerraForest/worlds'
-    source = worlds / 'combined_enclosed_review.trw'
+    source = worlds / (args.source+'.trw')
     before = hashlib.sha256(source.read_bytes()).hexdigest()
     slot = 'doorwalk_' + uuid.uuid4().hex
-    copied = clone_once(worlds, 'combined_enclosed_review', slot)
+    copied = clone_once(worlds, args.source, slot)
     folder = ROOT/'reports/enclosed_settlement_walk'/datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')
     folder.mkdir(parents=True)
-    fixture = 'enclosed_settlement_heights' if args.heights else 'enclosed_settlement_walk'
+    fixture = 'actor_door_navigation' if args.actor_doors else 'enclosed_settlement_heights' if args.heights else 'enclosed_settlement_walk'
     command = [config.godot, '--path', str(ROOT), '--fullscreen', '--resolution', '1920x1080', '--max-fps', '60', '--script', 'res://tests/'+fixture+'.gd', '--', '--world-slot='+slot, '--gameplay-construction', '--ground-cover']
     result = execute(command, folder, 90, 'COMBINED_RESOURCE_ROUTE failures=0')
     unchanged = hashlib.sha256(source.read_bytes()).hexdigest() == before

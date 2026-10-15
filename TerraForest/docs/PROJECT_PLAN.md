@@ -1,3 +1,10 @@
+> 2026-10-15 actor/door integration: one native actor in the generated enclosed
+> settlement stays outside a closed door, enters after the hinge changes, stays
+> inside after closing, and returns downstairs after reopening. Existing model
+> change invalidation recovers the route; planner work <=12. Evidence:
+> evidence/actor_doors/. No runtime change required. Doors are toggled by the
+> fixture, not actor AI; auto-opening, crowds and performance remain unqualified.
+
 > 2026-10-15 correction and combined-route PASS: the earlier 'cottage Y79'
 > diagnosis was wrong; that was a changed review-save PLAYER position. Actual
 > saved doors are Y49 and terrain/roads Y47; generator4 restores correctly.

@@ -1,0 +1,41 @@
+{
+  "copy": {
+    "created": true,
+    "slot": "doorwalk_bfdbf4bec7b94f09b820696174057ed6",
+    "source_slot": "combined_stage_d877dea2eec84388a81c3208eb14788b",
+    "source_sha256": "36f7a3803944c4b71607c3de1d12990ec85a04b4e13754c11b02bd421b574195"
+  },
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+    "--path",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+    "--fullscreen",
+    "--resolution",
+    "1920x1080",
+    "--max-fps",
+    "60",
+    "--script",
+    "res://tests/actor_door_navigation.gd",
+    "--",
+    "--world-slot=doorwalk_bfdbf4bec7b94f09b820696174057ed6",
+    "--gameplay-construction",
+    "--ground-cover"
+  ],
+  "result": {
+    "timed_out": false,
+    "launch_error": null,
+    "pid": 31916,
+    "exit_code": 0,
+    "diagnostics": [],
+    "required_text_found": true,
+    "elapsed_seconds": 45.60696889999963,
+    "passed": true
+  },
+  "source_unchanged": true,
+  "revision": "54d80c7a7761257d7973630b73595b2227804f6b",
+  "worktree_changes": [
+    " M TerraForest/tools/check_enclosed_settlement_walk.py",
+    "?? TerraForest/tests/actor_door_navigation.gd"
+  ],
+  "git_metadata_available": true
+}
