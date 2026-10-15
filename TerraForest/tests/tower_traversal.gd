@@ -34,8 +34,29 @@ func run() -> void:
 	assembly.compose([module],PackedInt32Array([0,0,0,0,0,0,0,4,0,0,0,0,8,0,0]))
 	var blocks: Node3D=ClassDB.instantiate("NativeBlockWorld")
 	root.add_child(blocks)
+	var structures: Node3D
+	if "--furnished" in OS.get_cmdline_user_args():
+		blocks.free()
+		structures=preload("res://addons/structures/structures_world.gd").new();root.add_child(structures)
+		check(structures.prepare(),"furnished structure world prepared")
+		var catalog=preload("res://addons/structures/furniture_catalog.gd")
+		check(catalog.register(structures).size()==3,"tower furniture registered")
+		check(not preload("res://addons/structures/storage_catalog.gd").register(structures).is_empty(),"tower storage registered")
+		check(not preload("res://addons/structures/window_catalog.gd").register(structures).is_empty(),"tower windows registered")
+		assembly=catalog.furnished_tower(3);blocks=structures.blocks
+		check(assembly!=null and assembly.get_model_attachments().size()==60,"three floors compose sixty detailed attachments")
 	blocks.set_focus(Vector3(0,4,0));blocks.set_collision_radius(48)
-	check(blocks.place_prefab(assembly,Vector3i.ZERO,0),"three-floor collision fixture placed")
+	if structures!=null:
+		var coordinator=preload("res://addons/player_runtime/construction_inventory.gd").new()
+		var inventory=ClassDB.instantiate("NativePlayerInventory")
+		check(coordinator.place_prefab(blocks,inventory,assembly,Vector3i.ZERO,0,structures.model_collections(),preload("res://addons/structures/construction_catalog.gd").recipes(),[]),"complete furnished tower placed")
+		structures.set_model_focus(Vector3(0,5,0))
+		var deadline_models:=Time.get_ticks_msec()+10000
+		var all_bounds:=AABB(Vector3(-9,0,-9),Vector3(19,14,19))
+		while not structures.is_collision_region_ready(all_bounds) and Time.get_ticks_msec()<deadline_models:await process_frame
+		check(structures.is_collision_region_ready(all_bounds),"all furniture and window collision resident")
+	else:
+		check(blocks.place_prefab(assembly,Vector3i.ZERO,0),"three-floor collision fixture placed")
 	var bounds:=AABB(Vector3(-2,0,-2),Vector3(5,13,8))
 	var deadline:=Time.get_ticks_msec()+10000
 	while not blocks.is_collision_region_ready(bounds) and Time.get_ticks_msec()<deadline: await process_frame
@@ -83,4 +104,7 @@ func run() -> void:
 	DirAccess.make_dir_recursive_absolute("res://reports")
 	var file:=FileAccess.open("res://reports/tower_traversal.json",FileAccess.WRITE)
 	file.store_string(JSON.stringify({"failures":failures,"ascent_position":str(ascent),"landings":landing_trace,"scope":"native building collision and player capsule ascent descent and blocked clearance"}));file.close()
-	player.free();blocks.free();quit(1 if failures else 0)
+	player.free()
+	if structures!=null:structures.free()
+	else:blocks.free()
+	quit(1 if failures else 0)

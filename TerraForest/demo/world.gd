@@ -357,6 +357,9 @@ func _setup_prefabs() -> void:
 	var enclosed: Resource=preload("res://addons/structures/furniture_catalog.gd").enclosed_cottage()
 	if enclosed!=null:
 		structure_prefabs.append(enclosed);enclosed.changed.connect(_invalidate_prefab_preview)
+	var tower: Resource=preload("res://addons/structures/furniture_catalog.gd").furnished_tower()
+	if tower!=null:
+		structure_prefabs.append(tower);tower.changed.connect(_invalidate_prefab_preview)
 	for asset: Resource in prefab_library.assets:
 		structure_prefabs.append(asset)
 		asset.changed.connect(_invalidate_prefab_preview)

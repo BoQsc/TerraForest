@@ -53,3 +53,32 @@ static func enclosed_cottage() -> Resource:
 	if not grounded.compose([asset],PackedInt32Array([0,0,1,0,0])):return null
 	grounded.resource_name="Furnished cottage with door and windows"
 	return grounded
+
+static func furnished_tower(floors: int=3) -> Resource:
+	if floors<2 or floors>16:return null
+	var source: Resource=load("res://addons/structures/prefabs/tower_floor.tres")
+	var modules: Array[Resource]=[]
+	var placements:=PackedInt32Array()
+	for level in floors:
+		var module: Resource=ClassDB.instantiate("NativeBlockPrefab")
+		if not module.configure(source.get_records()):return null
+		var attachments: Array=[]
+		# Work areas stay outside the stair shaft and its eastern circulation aisle.
+		for x in [-5.0,5.5]:
+			attachments.append({"model":"furniture/table/v1","transform":Transform3D(Basis.IDENTITY,Vector3(x,1,-4))})
+			attachments.append({"model":"furniture/chair/v1","transform":Transform3D(Basis.IDENTITY,Vector3(x,1,-2.5))})
+		attachments.append({"model":"furniture/shelf/v1","transform":Transform3D(Basis.IDENTITY,Vector3(-5,1,5))})
+		attachments.append({"model":"storage/wooden_chest/v1","transform":Transform3D(Basis.IDENTITY,Vector3(5.5,1,5))})
+		# Three-metre window bands fit between the existing one-metre pillars.
+		for p in [-5.5,-1.5,2.5,6.5]:
+			attachments.append({"model":"architecture/wooden_window/v1","transform":Transform3D(Basis.IDENTITY.scaled(Vector3(1.5,1,1)),Vector3(p,2,-7.5))})
+			for x in [-7.5,8.5]:
+				attachments.append({"model":"architecture/wooden_window/v1","transform":Transform3D(Basis(Vector3.UP,PI/2).scaled(Vector3(1,1,1.5)),Vector3(x,2,p))})
+		for p in [-5.5,6.5]:
+			attachments.append({"model":"architecture/wooden_window/v1","transform":Transform3D(Basis.IDENTITY.scaled(Vector3(1.5,1,1)),Vector3(p,2,8.5))})
+		if not module.configure_model_attachments(attachments):return null
+		modules.append(module);placements.append_array(PackedInt32Array([level,0,level*4,0,0]))
+	var tower: Resource=ClassDB.instantiate("NativeBlockPrefab")
+	if not tower.compose(modules,placements):return null
+	tower.resource_name="Furnished tower · %d floors"%floors
+	return tower

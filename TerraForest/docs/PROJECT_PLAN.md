@@ -1,3 +1,9 @@
+> 2026-10-15 furnished tower: three-floor prefab now includes 60 attached
+> furnishings, storage and windows. Full native capsule ascent/descent through
+> both landings passes with all attachment collisions resident (14 checks).
+> Evidence: evidence/furnished_tower/. This remains an open tower shell: roof,
+> front façade/entry, ground placement and rendered review are still pending.
+
 > 2026-10-15 grounded building review: `Review Buildings.cmd` opens a separately
 > published building_review save. Normal editor survey, grading and supported
 > placement passed, followed by capsule entrance and fresh disk reopen checks.
