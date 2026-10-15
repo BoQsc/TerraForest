@@ -1,3 +1,10 @@
+> 2026-10-15 tower density diagnostic: 1/16/64 furnished towers tested at 1080p.
+> Instrumented 64-tower run FAILS frame p95 diagnostic threshold: 25.818 ms,
+> viewport GPU p95 8.518 ms, 833 draws; nearest complete tower collision is ready.
+> Window collision reaches 256-body cap (837 deferred candidates at 64 towers).
+> Evidence: evidence/tower_density/. No dense-city performance approval; next is
+> a controlled cost comparison. No runtime settings changed to hide the failure.
+
 > 2026-10-15 tower guards: reusable batched metal guardrails now protect upper
 > shaft sides and the top rear edge. Full traversal and three deliberate fall
 > approaches pass; main-world ascent/descent and exact guard snapshot restoration
