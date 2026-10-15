@@ -1,0 +1,25 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.3.280 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] World loaded
+[TerrainRewrite] World loaded
+[terrain-hitch] receive 145.51 ms at 3166
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS world reaches60 idle frames before measurement
+PASS empty maintains fixed16 physics cap
+PASS empty no collision-readiness holds
+PASS empty actor adapter p95<=1ms max<=2ms
+PASS empty frame p95<=18.5ms
+empty {"active":{"max":0.0,"median":0.0,"p95":0.0},"actor_ms":{"max":0.117,"median":0.052,"p95":0.071},"collision_ms":{"max":0.0,"median":0.0,"p95":0.0},"draw_calls":{"max":1518.0,"median":1518.0,"p95":1518.0},"frame_ms":{"max":23.244,"median":16.674,"p95":17.849},"gpu_ms":{"max":5.98600006103516,"median":5.94999980926514,"p95":5.97700023651123},"held":{"max":0.0,"median":0.0,"p95":0.0},"motion_ms":{"max":0.0,"median":0.0,"p95":0.0},"queued":{"max":0.0,"median":0.0,"p95":0.0},"readiness_ms":{"max":0.0,"median":0.0,"p95":0.0},"store_ms":{"max":0.0,"median":0.0,"p95":0.0},"transform_ms":{"max":0.0,"median":0.0,"p95":0.0},"worker_busy":{"max":0.0,"median":0.0,"p95":0.0}} distinct=0 entries=0
+PASS moving16 maintains fixed16 physics cap
+PASS moving16 no collision-readiness holds
+FAIL moving16 actor adapter p95<=1ms max<=2ms
+PASS moving16 frame p95<=18.5ms
+moving16 {"active":{"max":16.0,"median":16.0,"p95":16.0},"actor_ms":{"max":4.143,"median":0.951,"p95":1.548},"collision_ms":{"max":3.161,"median":0.627,"p95":1.016},"draw_calls":{"max":1523.0,"median":1523.0,"p95":1523.0},"frame_ms":{"max":49.217,"median":16.687,"p95":17.92},"gpu_ms":{"max":7.53999996185303,"median":5.97800016403198,"p95":6.01100015640259},"held":{"max":0.0,"median":0.0,"p95":0.0},"motion_ms":{"max":3.112,"median":0.616,"p95":1.001},"queued":{"max":0.0,"median":0.0,"p95":0.0},"readiness_ms":{"max":0.72,"median":0.173,"p95":0.233},"store_ms":{"max":0.008,"median":0.002,"p95":0.004},"transform_ms":{"max":0.01,"median":0.002,"p95":0.005},"worker_busy":{"max":0.0,"median":0.0,"p95":0.0}} distinct=16 entries=16
+PASS nearby64 maintains fixed16 physics cap
+PASS nearby64 no collision-readiness holds
+FAIL nearby64 actor adapter p95<=1ms max<=2ms
+PASS nearby64 frame p95<=18.5ms
+nearby64 {"active":{"max":16.0,"median":16.0,"p95":16.0},"actor_ms":{"max":10.152,"median":0.89,"p95":1.717},"collision_ms":{"max":5.099,"median":0.59,"p95":1.082},"draw_calls":{"max":1523.0,"median":1523.0,"p95":1523.0},"frame_ms":{"max":56.261,"median":16.667,"p95":18.233},"gpu_ms":{"max":7.83799982070923,"median":5.43800020217896,"p95":6.85400009155273},"held":{"max":0.0,"median":0.0,"p95":0.0},"motion_ms":{"max":4.934,"median":0.571,"p95":1.066},"queued":{"max":0.0,"median":0.0,"p95":0.0},"readiness_ms":{"max":2.186,"median":0.179,"p95":0.386},"store_ms":{"max":0.025,"median":0.002,"p95":0.006},"transform_ms":{"max":0.027,"median":0.002,"p95":0.007},"worker_busy":{"max":0.0,"median":0.0,"p95":0.0}} distinct=32 entries=32
+MIXED_ACTOR_COST_COMPLETE failures=2
+[TerrainRewrite] ERROR: save blocked: snapshot writes explicitly disabled; previous canonical snapshot retained

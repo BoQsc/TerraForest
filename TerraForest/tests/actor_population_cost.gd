@@ -51,12 +51,15 @@ func sample(label: String) -> void:
 	for tick in 120:
 		await RenderingServer.frame_post_draw
 		var now:=Time.get_ticks_usec()
+		# Keep OS focus visible in evidence even though this fixture fixes both caps.
+		var focused: bool=root.has_focus()
 		var row:={"frame_ms":(now-previous)/1000.0,"physics_ticks":tick_rows.size(),"ticks":tick_rows.duplicate(true),"active":0,"held":0,"gpu_ms":RenderingServer.viewport_get_measured_render_time_gpu(viewport),"draw_calls":Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME),"queued":game.terrain.backend.queued(),"worker_busy":0 if game.terrain.backend.status()=="idle" else 1,"settled":settled()}
 		for field in ["actor_ms","transform_ms","motion_ms","store_ms","readiness_ms","collision_ms"]:
 			row[field]=0.0
 			for observation in tick_rows:row[field]+=observation[field]
 		for observation in tick_rows:
 			row.active=maxi(row.active,observation.active);row.held=maxi(row.held,observation.held)
+		row.focused=focused;row.fps_cap=Engine.max_fps
 		rows.append(row);tick_rows.clear();previous=now
 	measuring=false
 	var result:={"phase":label,"physics_hz":Engine.physics_ticks_per_second,"sampling":"all physics callbacks summed per rendered frame","stored_near":ids.size(),"distinct_simulated":visited.size(),"activation_entries":changes,"rows":rows,"summary":{}}
@@ -81,10 +84,14 @@ func compare_contact() -> void:
 		await physics_frame;await physics_frame
 		await sample(label)
 		var correct:=true
+		var movement: Array=[]
 		for i in ids.size():
 			var position: Vector3=game.actors.store.get_position(game.actors.store.resolve_identity(ids[i]))
 			var original:=start+direction*(i/4)*0.8+side*(i%4-1.5)*1.0
+			movement.append({"identity":ids[i],"forward_m":(position-original).dot(direction),"height_error_m":position.y-start.y,"route":game.actors.pool.navigation_status(game.actors.store.resolve_identity(ids[i]))})
 			correct=correct and (position-original).dot(direction)>4 and absf(position.y-start.y)<0.15
+		phases[-1].movement=movement
+		print(label," contact movement ",JSON.stringify(movement))
 		check(correct,label+" all16 actors move over4m and retain ground height")
 	floor_body.free()
 func _initialize() -> void:run.call_deferred()
@@ -94,6 +101,9 @@ func run() -> void:
 	var deadline:=Time.get_ticks_msec()+60000
 	while game.loading_active and Time.get_ticks_msec()<deadline:await process_frame
 	game.actors.pool.set_profiling(true)
+	# Measurement only: focus changes must not silently switch to the 15 FPS
+	# background cap. Production power-saving behavior remains unchanged.
+	game.max_fps=60;game.background_fps=60;game._refresh_frame_cap()
 	game.terrain.backend.disable_snapshot_writes();game.set_physics_process(false);game._clear_motion();game.app_focused=true
 	var ends: PackedVector3Array=game.road_palette.prepared_streets[0].ends
 	direction=(ends[1]-ends[0]).normalized();side=Vector3(-direction.z,0,direction.x);start=ends[0]+direction*5+Vector3.UP*0.95

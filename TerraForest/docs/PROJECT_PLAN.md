@@ -1,3 +1,9 @@
+> 2026-10-15 controlled actor contact: test-only fixed active/background 60 FPS
+> caps restore 17–18 ms frame p95; actor budget still fails. Terrain/box/terrain
+> diagnostics show motion p95 .820/.270/.844 ms, with similar grounded travel
+> of 3.3–3.6 m that FAILS the >4 m fixture requirement. No runtime optimization
+> or capacity increase. Evidence: evidence/actor_contact_comparison/.
+
 > 2026-10-15 actor benchmark correction: actor updates now run on every engine
 > physics callback with its supplied delta, summing all ticks per rendered frame.
 > A completed run recorded four physics ticks per frame at 15 FPS even in the
