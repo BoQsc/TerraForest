@@ -215,6 +215,9 @@ agent; sleeping proxies disable it. Safe velocity arrives asynchronously, so a
 newly activated actor waits for a valid result rather than moving on unfiltered
 intent. Terrain/structure readiness still gates movement; collision mask 11 also
 prevents actor interpenetration. Avoidance is transient and does not change saves.
+Stopped/unready actors retain zero horizontal motion and avoidance priority 1.0;
+moving actors use 0.5 and yield to them. The 16-actor street crossing now completes,
+but its frame/adapter cost gates fail; see `docs/evidence/actor_crowd_arrival/README.md`.
 The existing route planner remains authoritative for terrain paths; the avoidance
 agent does not request navigation-mesh paths. See
 `docs/evidence/actor_avoidance/README.md` for crossing and lifecycle evidence.

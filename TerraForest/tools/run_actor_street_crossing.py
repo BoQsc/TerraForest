@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: 0BSD
 """Check opposing actor routes on a disposable copy of the furnished settlement."""
+import argparse
 import datetime
 import hashlib
 import json
@@ -13,6 +14,9 @@ from play_checkpoint import revision_metadata
 
 
 def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--crowd', action='store_true', help='16 active opposing actors with correctness and frame/adapter cost gates')
+    args = parser.parse_args()
     config, _ = parse_args([])
     worlds = Path(os.environ['APPDATA']) / 'Godot/app_userdata/TerraForest/worlds'
     source = worlds / 'combined_gameplay.trw'
@@ -26,6 +30,7 @@ def main():
                '1920x1080', '--max-fps', '60', '--script',
                'res://tests/actor_street_crossing.gd', '--', '--world-slot=' + slot,
                '--actors', '--ground-cover', '--crossing-output=' + str(folder)]
+    if args.crowd:command.append('--crowd')
     result = execute(command, folder, 75, 'ACTOR_STREET_CROSSING failures=0')
     unchanged = hashlib.sha256(source.read_bytes()).hexdigest() == before
     metadata = dict(copy=copied, command=command, result=result,

@@ -1,3 +1,10 @@
+> 2026-10-15 sixteen-actor crossing exposed arrival drift. Stopped actors now
+> hold position with higher avoidance priority; all16 complete, separation
+> remains >=0.786m. Cost gates FAIL: frame p95 37.346ms, adapter p95/max
+> 1.205/2.672ms. No performance qualification; next attribute adapter, deferred
+> avoidance and full-world stalls before optimization. Evidence:
+> evidence/actor_crowd_arrival/. Water unchanged.
+
 > 2026-10-15 local actor avoidance is integrated: native active proxies now
 > avoid each other and retain mutual collision. Opposing routes pass on the
 > actual settlement street (minimum 0.800 m separation); cottage access and

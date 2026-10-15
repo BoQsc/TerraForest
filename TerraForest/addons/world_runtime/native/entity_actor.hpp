@@ -19,7 +19,7 @@ class NativeEntityActor : public godot::CharacterBody3D {
     godot::NavigationAgent3D *avoidance_=nullptr;
     godot::Vector3 safe_velocity_;
     uint64_t safe_frame_=0;
-    bool crowd_active_=false,safe_valid_=false;
+    bool crowd_active_=false,safe_valid_=false,crowd_moving_=false;
     void avoidance_velocity(const godot::Vector3 &velocity);
     bool step_grounded(const godot::Vector3 &velocity,double delta);
 protected:

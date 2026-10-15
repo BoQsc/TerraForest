@@ -1,0 +1,18 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.3.280 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] World loaded
+[TerrainRewrite] World loaded
+[terrain-hitch] receive 149.98 ms at 3280
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS furnished settlement loads
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+PASS street crossing preserves separation: 0.786 m
+FAIL actors arrive through ordinary main-world navigation: 12 / 16
+PASS shared route planning budget remains bounded
+PASS active collision population remains bounded
+PASS frame p95 <= 18.5 ms
+FAIL actor adapter p95 <= 1 ms and max <= 2 ms
+CROSSING_COST {"active":{"max":16.0,"p95":16.0},"actor_ms":{"max":1.564,"p95":1.082},"frame_ms":{"max":760.073,"p95":17.975},"gpu_ms":{"max":8.32600021362305,"p95":6.19799995422363},"held":{"max":0.0,"p95":0.0}}
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+ACTOR_STREET_CROSSING failures=2

@@ -1,0 +1,53 @@
+{
+  "copy": {
+    "created": true,
+    "slot": "actor_crossing_6ffc66f02d944967aa41ae2c98ea345d",
+    "source_slot": "combined_gameplay",
+    "source_sha256": "25b19886c1b677c44cabce30b1bc39a9efb6614f40d6c733bfb990fa7e3d9052"
+  },
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+    "--path",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+    "--fullscreen",
+    "--resolution",
+    "1920x1080",
+    "--max-fps",
+    "60",
+    "--script",
+    "res://tests/actor_street_crossing.gd",
+    "--",
+    "--world-slot=actor_crossing_6ffc66f02d944967aa41ae2c98ea345d",
+    "--actors",
+    "--ground-cover",
+    "--crossing-output=C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\actor_street_crossing\\20261015T142801173269Z",
+    "--crowd"
+  ],
+  "result": {
+    "timed_out": false,
+    "launch_error": null,
+    "pid": 27144,
+    "exit_code": 1,
+    "diagnostics": [
+      "FAIL actor adapter p95 <= 1 ms and max <= 2 ms",
+      "FAIL actors arrive through ordinary main-world navigation: 14 / 16"
+    ],
+    "required_text_found": false,
+    "elapsed_seconds": 27.17656100000022,
+    "passed": false
+  },
+  "source_unchanged": true,
+  "revision": "dcc14065aa2ffd9ab49f2ecfd3a2e2ed3c9eda4c",
+  "worktree_changes": [
+    " M TerraForest/addons/world_runtime/bin/world_runtime.windows.template_debug.x86_64.dll",
+    " M TerraForest/addons/world_runtime/bin/world_runtime.windows.template_release.x86_64.dll",
+    " M TerraForest/addons/world_runtime/native/entity_actor.cpp",
+    " M TerraForest/tests/actor_street_crossing.gd",
+    " M TerraForest/tools/run_actor_street_crossing.py"
+  ],
+  "git_metadata_available": true,
+  "native_sha256": {
+    "world_runtime.windows.template_debug.x86_64.dll": "8b2403fbf981f4c2cc259ca3b788656313d14af0a97bb1148c6b45734d5c245b",
+    "world_runtime.windows.template_release.x86_64.dll": "f67edc5ade6c2b0108b0d67bc1084cd1afe58a7cc539fe728cc7960544917fc5"
+  }
+}
