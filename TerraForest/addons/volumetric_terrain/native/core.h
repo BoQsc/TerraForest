@@ -7,6 +7,7 @@ constexpr u32 SAVE_MAGIC=0x32575254u, MESH_MAGIC=0x324d5254u, REPLY_MAGIC=0x3250
 // Identity of the immutable base field (height, caves and generated materials).
 // Legacy format-1 worlds use generator 1. New generators must keep that reader.
 constexpr u32 MATERIAL_FIELD_GENERATOR_ID=5; // Empty base for independently editable material channels.
+constexpr u32 WALKABLE_CAVE_GENERATOR_ID=6; // New immutable landscape profile; never repurpose saved IDs.
 constexpr u32 TERRAIN_GENERATOR_ID=1; // Default remains the legacy landscape.
 struct Page {
  u32 key=0; i16 *d=nullptr;u8 *mat=nullptr;
@@ -43,7 +44,7 @@ struct World {
  mutable u64 light_rays=0,light_steps=0,light_unresolved=0,light_probe_hits=0;
  void init(int p_seed=1703,u32 generator=1);void release();
  bool set_block(u32 key,int material);void erase_block(u32 key);
- bool has_geology()const{return generator_id==3||generator_id==4;}
+ bool has_geology()const{return generator_id==3||generator_id==4||generator_id==WALKABLE_CAVE_GENERATOR_ID;}
  float height(float x,float z)const;
  float base(V3 p,float h)const;
  float sample(int x,int y,int z,u8*mat=nullptr)const;

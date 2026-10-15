@@ -79,7 +79,7 @@ void World::init(int p_seed,u32 generator){
  seed=p_seed;generator_id=generator;basin_count=0;revision=edits=0;changed_samples=0;block_columns.resize(4096);
  edit_columns=(u32*)tr_alloc(NP*NP*sizeof(u32));if(edit_columns)zero_bytes(edit_columns,NP*NP*sizeof(u32));else tr_oom=true;
  if(generator_id==MATERIAL_FIELD_GENERATOR_ID)return;
- if(generator_id==4){
+ if(generator_id==4||generator_id==WALKABLE_CAVE_GENERATOR_ID){
   // Separate seed domains and quadrant placement keep basins away from caves.
   for(u32 i=0;i<4;i++){
    u32 h=hash32(u32(seed)^0x7a91c3b5u^(i*0x9e3779b9u));
@@ -95,7 +95,9 @@ void World::init(int p_seed,u32 generator){
    u32 a=hash32(u32(seed)^0x6d2b79f5u^(i*0x9e3779b9u)),b=hash32(a),c=hash32(b);
    float x=350.f+float(i&1)*1000.f+float(a&255),z=350.f+float(i>>1)*1000.f+float((a>>8)&255);
    float side=(b&1)?1.f:-1.f;
-   V3 entrance={x+side*230.f,0,z};entrance.y=height(entrance.x,entrance.z)-2.f;
+   V3 entrance={x+side*230.f,0,z};// Lift the radius-7 mouth so its bottom meets the surface with a shallow lip.
+   // Profiles 1-5 retain their exact base field and existing save/cache identities.
+   entrance.y=height(entrance.x,entrance.z)+(generator_id==WALKABLE_CAVE_GENERATOR_ID?6.f:-2.f);
    float floor=mx(25.f,mn(height(x,z)-45.f,75.f));
    V3 bend={x+side*110.f,floor+10.f,z+float(int(c&63)-31)},center={x,floor,z};
    caves.push({entrance,bend,7.f});caves.push({bend,center,9.f});
@@ -283,7 +285,7 @@ bool World::deserialize(const u8*data,int n){
  Reader r{data,n-4};if(r.u()!=SAVE_MAGIC)return false;u32 format=r.u();if(format!=1&&format!=2)return false;
  int s=int(r.u()),pc=int(r.u()),bc=int(r.u()),rev=int(r.u()),ed=int(r.u());
  u32 generator=format==1?1:r.u();
- if(!r.good||generator<1||generator>MATERIAL_FIELD_GENERATOR_ID)return false;
+ if(!r.good||generator<1||generator>WALKABLE_CAVE_GENERATOR_ID)return false;
  if(pc<0||pc>MAX_PAGES||bc<0||bc>2000000||i64(pc)*(4+PAGE_SAMPLES*3)+i64(bc)*8+(format==1?28:32)!=n-4)return false;
  World t;t.build_control=build_control;t.init(s,generator);t.revision=rev;t.edits=ed;t.surface_style=surface_style;
  for(int i=0;i<pc;i++){
@@ -905,7 +907,7 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
  }
  else if(cmd==4){w.serialize(out);}
  else if(cmd==5){if(!w.deserialize(data+4,n-4))out.p[8]=1;out.u(w.revision);out.u(w.pages.n);out.u(w.blocks.n);}
- else if(cmd==6){int seed=int(r.u());u32 generator=n==12?r.u():1;if(!r.good||(n!=8&&n!=12)||generator<1||generator>MATERIAL_FIELD_GENERATOR_ID){out.p[8]=1;return;}BuildControl *control=w.build_control;w.release();w=World{};w.build_control=control;w.init(seed,generator);}
+ else if(cmd==6){int seed=int(r.u());u32 generator=n==12?r.u():1;if(!r.good||(n!=8&&n!=12)||generator<1||generator>WALKABLE_CAVE_GENERATOR_ID){out.p[8]=1;return;}BuildControl *control=w.build_control;w.release();w=World{};w.build_control=control;w.init(seed,generator);}
  else if(cmd==7){V3 p=r.vec();if(!r.good||!(ab(p.x)<=10000&&ab(p.y)<=10000&&ab(p.z)<=10000)){out.p[8]=1;return;}out.f(w.height(p.x,p.z));out.f(w.sample(fl(p.x),fl(p.y),fl(p.z)));}
  else if(cmd==8){ // Deterministic construction proof; not a replay list.
   int bx=1472,bz=1440,by=int(w.height(float(bx),float(bz)))+1;

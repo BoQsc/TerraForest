@@ -1,0 +1,28 @@
+2026-10-15: versioned shallow cave entrance profile
+
+New public generator6 retains generator4 mountain/geology/lake behavior and the
+same20 canonical cave capsules. For this profile only, radius7 entrance capsule
+centres sit6m above sampled ground instead of2m below, meeting the surface with a
+shallower lip. Interior chambers/branches and original profile1-5 geometry remain.
+Generator5 remains the reserved empty material field. New profile is opt-in:
+python tools/run.py --generator 6 --seed 1703 --slot caves_v6
+Existing saves keep their stored profile, regardless of launch arguments.
+
+Seed1703 four mouth centreline scans:0 missing floors,0 steep normals,0 blocked
+headroom, versus1/1/1/2 steep samples on previous profile. Actual main-world cave0
+walk from12m outside to20m inside and back now passes without jumping, terrain
+edits or weaker collision. Fullscreen1920x1080/cap60 including background; inside
+and return images inspected. The test initializes at the exterior, not a discovery
+route from settlement. Native debug/release identity checks pass: original1-5
+snapshots/descriptors and255density probes per profile match pre-change binary;
+new profile seed determinism, exact native save/reload and cache isolation pass.
+Both DLLs built with pinned Zig/prebuiltSDK; zero godot-cpp sources rebuilt.
+
+Scope: one seed's four sampled mouths and one actual player traversal, not every
+seed or full network. Interior appearance is still coarse/faceted, and ordinary
+terrain streaming/startup hitches remain. No frame-time or thermal qualification.
+No automatic change to existing saves or default launchers. No water simulation,
+rendering or bucket change. Next: expose a convenient cave human checkpoint and
+verify broader entrance seeds and travel to deeper chambers before completion of
+natural discovery and cave content coverage. Compound generator6 persistence is
+not separately qualified by the native snapshot check.

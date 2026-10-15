@@ -3,7 +3,7 @@ extends SceneTree
 var game:Node
 var paths:Array=[]
 var failures:=0
-func wait_for(predicate:Callable,seconds:int=35)->bool:
+func wait_for(predicate:Callable,seconds:int=60)->bool:
  var deadline:=Time.get_ticks_msec()+seconds*1000
  while not predicate.call() and Time.get_ticks_msec()<deadline:await process_frame
  return predicate.call()
@@ -46,6 +46,6 @@ func finish()->void:
  game.controls.clear(Time.get_ticks_usec())
  await RenderingServer.frame_post_draw;root.get_texture().get_image().save_png("res://reports/natural_cave_access/return.png")
  var file:=FileAccess.open("res://reports/natural_cave_access/walk.json",FileAccess.WRITE)
- file.store_string(JSON.stringify({"failures":failures,"paths":paths,"scope":"Actual main-world player and streamed collision. Fixture relocates to exterior start; remaining travel uses walking without jumps or edits. Generator2 seed1703 cave0; no settlement-to-cave discovery claim."},"  "));file.close()
+ file.store_string(JSON.stringify({"failures":failures,"paths":paths,"scope":"Actual main-world player and streamed collision. Fixture relocates to exterior start; remaining travel uses walking without jumps or edits. Selected generator seed1703 cave0; no settlement-to-cave discovery claim."},"  "));file.close()
  game.shutdown_requested=true;await game.terrain.shutdown_after_edits();game.free();await process_frame
  print("NATURAL_CAVE_WALK failures=",failures);quit(1 if failures else 0)

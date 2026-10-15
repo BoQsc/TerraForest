@@ -1,3 +1,12 @@
+> 2026-10-15 cave entrance fix: opt-in generator 6 lifts the radius-7 mouth
+> capsule while preserving generator 1-5 geometry. Four seed-1703 sampled mouths
+> lose their steep lips; actual cave-0 walking in/out now passes. Debug/release
+> legacy identity, new seed determinism, native snapshot roundtrip and cache
+> separation pass. `evidence/cave_generator_v6/` records scope and remaining
+> visual/streaming limitations. Default and saved worlds remain unchanged. Next
+> make the cave checkpoint convenient for human review and cover deeper access;
+> do not treat one entrance as full cave/discovery completion.
+
 > 2026-10-15 natural cave access is now a reproduced content gap. Four seeded
 > entrance centreline scans have steep lips; actual main-world walking enters
 > cave 0 but cannot return to the exterior without jumping/edits. Retained failure:

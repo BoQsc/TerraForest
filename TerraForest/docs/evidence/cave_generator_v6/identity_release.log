@@ -1,0 +1,12 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS generator1-5 descriptors, snapshots and sampled densities match prechange binary
+PASS new cave profile accepted
+PASS same bounded twenty capsule representation
+PASS new geometry cannot reuse legacy generator cache identity
+PASS saved generator6 restores exact cave descriptors
+PASS new snapshot roundtrips exactly
+PASS same seed regenerates same new cave network
+PASS different seed changes new cave network
+CAVE_GENERATOR_IDENTITY failures=0
+

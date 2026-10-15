@@ -6,7 +6,10 @@ func point(data:PackedByteArray,offset:int)->Vector3:
 func _initialize()->void:
  GDExtensionManager.load_extension("res://addons/volumetric_terrain/terrain_core.gdextension")
  var core=ClassDB.instantiate("TerrainCore")
- core.execute(Codec.command(6,[1703,4]))
+ var generator:=4
+ for arg in OS.get_cmdline_user_args():
+  if arg.begins_with("--world-generator="):generator=int(arg.trim_prefix("--world-generator="))
+ core.execute(Codec.command(6,[1703,generator]))
  var epoch:int=core.execute(Codec.command(13)).decode_u32(12)
  var descriptors:PackedByteArray=core.execute(Codec.command(25))
  var routes:Array=[];var eligible:=0
@@ -32,6 +35,6 @@ func _initialize()->void:
   print("CAVE_ACCESS cave=",cave," missing=",missing," steep=",steep," blocked=",blocked)
  DirAccess.make_dir_recursive_absolute("res://reports/natural_cave_access")
  var file:=FileAccess.open("res://reports/natural_cave_access/profile.json",FileAccess.WRITE)
- file.store_string(JSON.stringify({"seed":1703,"generator":4,"eligible":eligible,"routes":routes,"scope":"Density floor/headroom samples at one-metre spacing along canonical mouth centre lines. Does not prove capsule clearance, traversable mesh collision or discovery from settlement."},"  "));file.close()
+ file.store_string(JSON.stringify({"seed":1703,"generator":generator,"eligible":eligible,"routes":routes,"scope":"Density floor/headroom samples at one-metre spacing along canonical mouth centre lines. Does not prove capsule clearance, traversable mesh collision or discovery from settlement."},"  "));file.close()
  print("NATURAL_CAVE_ACCESS eligible=",eligible)
  quit(0 if eligible>0 else 1)
