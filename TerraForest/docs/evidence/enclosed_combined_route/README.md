@@ -1,4 +1,11 @@
-# Enclosed combined route — open failure
+# Enclosed combined route — superseded diagnosis
+
+Correction: the Y79.5 value was the changed review save's PLAYER position,
+not a cottage floor. Actual doors are Y49, supported by terrain Y47. Source
+canonical hash changed after publication; one door was also removed. The
+retained original generation stage passes the combined route. See
+../enclosed_combined_pass/. Logs below remain evidence of the unsuitable fixture
+state, not a demonstrated grading or save/load defect.
 
 The existing gather/build/store/travel/reopen runner now accepts a validated
 `--source` slot. Testing `combined_enclosed_review` on exclusive disposable

@@ -1,0 +1,41 @@
+{
+  "copy": {
+    "created": true,
+    "slot": "doorwalk_931ad818917b4ce0a769547fc587a1f5",
+    "source_slot": "combined_enclosed_review",
+    "source_sha256": "d35b2a41e518a19caeda9829f98fc6ffc0acf07c79e5db1a11b4dc61df5c6fdd"
+  },
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+    "--path",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+    "--fullscreen",
+    "--resolution",
+    "1920x1080",
+    "--max-fps",
+    "60",
+    "--script",
+    "res://tests/enclosed_settlement_heights.gd",
+    "--",
+    "--world-slot=doorwalk_931ad818917b4ce0a769547fc587a1f5",
+    "--gameplay-construction",
+    "--ground-cover"
+  ],
+  "result": {
+    "timed_out": false,
+    "launch_error": null,
+    "pid": 29084,
+    "exit_code": 0,
+    "diagnostics": [],
+    "required_text_found": true,
+    "elapsed_seconds": 12.589079099998344,
+    "passed": true
+  },
+  "source_unchanged": true,
+  "revision": "108c962613173653a6b6923d05aaa82d180a1e01",
+  "worktree_changes": [
+    " M TerraForest/tools/check_enclosed_settlement_walk.py",
+    "?? TerraForest/tests/enclosed_settlement_heights.gd"
+  ],
+  "git_metadata_available": true
+}

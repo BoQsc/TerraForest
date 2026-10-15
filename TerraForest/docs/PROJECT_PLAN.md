@@ -1,4 +1,14 @@
-> 2026-10-15 enclosed combined route FAILS before travel: gathering finds no
+> 2026-10-15 correction and combined-route PASS: the earlier 'cottage Y79'
+> diagnosis was wrong; that was a changed review-save PLAYER position. Actual
+> saved doors are Y49 and terrain/roads Y47; generator4 restores correctly.
+> Source hashes show the review changed after publication (also one door removed).
+> Its progress is preserved. A clone of the retained ORIGINAL staging checkpoint
+> passes gather/craft/place/chest, door opening, walking, ~9 m drive/reverse/return
+> and fresh reopen with exact inventory/storage/door state. Evidence:
+> evidence/enclosed_combined_pass/. No runtime height correction was needed.
+> This short route does not qualify long-distance travel, crowds or performance.
+
+> SUPERSEDED DIAGNOSIS — 2026-10-15 enclosed combined route FAILS before travel: gathering finds no
 > stones within 25 m of saved cottage spawn Y79.5. Nearest natural stones are
 > around Y47.6; asynchronous native terrain rays confirm those ground heights.
 > The enclosed-generation save/reopen and entrance tests did not prove connection
