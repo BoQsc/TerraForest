@@ -18,7 +18,9 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--natural', action='store_true', help='Survey and test naturally exposed ore in generator6 caves')
     parser.add_argument('--source', help='Source save copied without modification')
+    parser.add_argument('--walk-iron', action='store_true', help='Walk from the saved natural cave entrance to iron; implies --natural')
     args = parser.parse_args()
+    if args.walk_iron:args.natural = True
     config, _ = parse_args([])
     worlds = Path(os.environ['APPDATA']) / 'Godot/app_userdata/TerraForest/worlds'
     source_slot = args.source or ('natural_cave_gameplay' if args.natural else 'geology_gameplay')
@@ -48,6 +50,7 @@ def main():
                    '--max-fps', '60', '--script', 'res://tests/' + test + '.gd', '--',
                    '--world-slot=' + slot, '--gameplay-construction',
                    '--route-evidence=' + str(folder / 'expected.bin'),
+                   *(['--walk-iron'] if args.walk_iron else []),
                    *(['--reopen-route'] if phase == 'reopen' else [])]
         result = execute(command, output, 90, 'COMBINED_RESOURCE_ROUTE failures=0')
         metadata['phases'].append(dict(command=command, result=result))

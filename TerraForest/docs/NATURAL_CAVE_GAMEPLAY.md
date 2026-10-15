@@ -28,8 +28,11 @@ of this world's original preparation stage. Ordinary pickaxe strikes at two
 naturally exposed floors yielded two iron items and one copper item; exact
 inventory/tool wear and sampled edited terrain survived fresh-process reopen.
 See `evidence/natural_ore_gameplay`. The fixture relocates to the ore sites:
-a continuous entrance-to-ore discovery walk and sustained mining performance
-remain open. The existing 60 m cave walk is separate supporting evidence.
+a separate continuous saved-entrance-to-iron test now passes with ordinary
+walking, mining and fresh-process edit/reward restoration. It uses known
+waypoints, so unassisted ore recognition, the copper walking route and sustained
+mining performance remain open. See `evidence/natural_ore_walk`. The existing
+60 m cave walk is separate supporting evidence.
 
 Startup retained existing generated-component capture rejections while the
 world was incomplete; the final compound save and fresh reopen succeeded.

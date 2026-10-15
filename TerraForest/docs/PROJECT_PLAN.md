@@ -1,3 +1,9 @@
+> 2026-10-15 continuous cave iron route: saved entrance to ore via ordinary
+> walking passes without relocation/flying/jumps/terrain access edits.101 sampled
+> contacts grounded; pickaxe yields2 iron; exact inventory and27 edited density
+> samples restore in a fresh process. Known waypoints, not human discovery.
+> Copper route/return walk and performance remain open. Evidence: evidence/natural_ore_walk/.
+
 > 2026-10-15 natural cave ore: read-only survey finds exposed iron/copper without
 > authored tunnels. Actual pickaxe strikes yield2 iron/1 copper with exact native
 > reward counts and tool wear. Fresh process restores inventory and54 sampled
