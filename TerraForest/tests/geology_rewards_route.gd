@@ -27,6 +27,30 @@ func run()->void:
    var before:int=amount(item);var wear:int=game.player_hud.inventory.snapshot().slots[0].wear
    for strike in 8:
     var target:Dictionary=game.world_attack.target()
+    if target.is_empty():
+     var start:Vector3=game.camera.global_position
+     var end:Vector3=start-game.camera.global_basis.z*8.0
+     var long_hit:Dictionary=game.structures.blocks.raycast_scene(start,end,3,[game.player.get_rid()])
+     var replies:Array=[]
+     var receive:=func(result:Dictionary):
+      if result.get("token")==9001:replies.append(result)
+     game.terrain.density_ray_received.connect(receive)
+     game.terrain.request_density_ray(start,end,9001)
+     await wait_for(func():return not replies.is_empty(),5)
+     game.terrain.density_ray_received.disconnect(receive)
+     print("ORE_TARGET_DIAGNOSTIC ",JSON.stringify({"start":start,"long_physics":long_hit,"native":replies,"retry":game.world_attack.target(),"previous":rows}))
+     if not long_hit.is_empty() and not replies.is_empty() and replies[0].get("status")=="hit" and start.distance_to(long_hit.position)>3.5 and start.distance_to(replies[0].position)>3.5:
+      var destination:float=game.player.position.x+0.9
+      game.yaw=-PI/2;game.player.rotation.y=game.yaw
+      game.pitch=0;game.camera.rotation=Vector3.ZERO
+      game.set_physics_process(true)
+      var deadline:int=Time.get_ticks_msec()+2000
+      while game.player.position.x<destination and Time.get_ticks_msec()<deadline:
+       game.app_focused=true;game.controls.set_key(KEY_W,true,Time.get_ticks_usec());await physics_frame
+      game.controls.clear(Time.get_ticks_usec());game.set_physics_process(false)
+      check(game.player.position.x>=destination,"walk closer to excavated face using normal collision")
+      game.camera.look_at(ore+Vector3(0.5,0,0))
+      target=game.world_attack.target()
     if not check(target.get("kind")=="terrain","pickaxe targets actual ore-face terrain"):break
     game.world_attack.next_attack=0
     if not check(game.world_attack.attack(),"ordinary pickaxe attack accepted"):break
