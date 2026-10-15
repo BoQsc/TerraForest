@@ -371,7 +371,7 @@ int64_t NativeRegionalWater::remove_bounds(const AABB &bounds){
         for(int i=0;i<512;++i)if(r.water[i]){Vector3i p=base+Vector3i(i%8,(i/8)%8,i/64);if(bounds.has_point(Vector3(p)*0.5+Vector3(0.25,0.25,0.25))){removed+=r.water[i];r.water[i]=0;changed(p);}}}
     total-=removed;return removed;
 }
-bool NativeRegionalWater::plan_connected_scoop(Placement &cells,uint64_t amount,Dictionary &out) const {
+bool NativeRegionalWater::plan_connected_scoop(Placement &cells,uint64_t amount,Dictionary &out,double floor_level) const {
     // The caller supplies at most the existing 9^3 local connected cells, in
     // aim-priority order. Peel this body without stranding disconnected pieces.
     // Only the six edges incident to a trial cell need geometric reevaluation.
@@ -438,7 +438,9 @@ bool NativeRegionalWater::plan_connected_scoop(Placement &cells,uint64_t amount,
         bool progress=false;
         for(int n=0;n<int(graph.size())&&remaining;n++){
             auto &c=graph[n];if(!c.water||c.boundary)continue;
-            uint64_t debit=std::min(remaining,c.water),left=c.water-debit;unsigned trial=0;
+            uint64_t retained=uint64_t(std::max(0.0,std::floor(c.shape.volume(std::clamp(floor_level-c.p.y*500.0,0.0,500.0))+1e-6)));
+            uint64_t debit=std::min(remaining,c.water>retained?c.water-retained:0);if(!debit)continue;
+            uint64_t left=c.water-debit;unsigned trial=0;
             for(int d=0;d<6;d++)if(c.neighbour[d]>=0&&connected(n,c.neighbour[d],d,left))trial|=1u<<d;
             int expected=alive-(left==0),count=0,head=0;
             ++generation;
@@ -494,19 +496,23 @@ bool NativeRegionalWater::bucket_footprint(Vector3i target,const Vector3 &aim,ui
 // Read only prepared local cells: no simulation, global search, or remote loads.
 bool NativeRegionalWater::plan_vacancy_refill(Vector3i target,const Vector3 &aim,uint64_t amount,Placement &take) const {
     struct Site {Vector3i p;uint64_t missing;double distance;};
-    std::vector<Site> sites;uint64_t available=0;double nearest=1e30;
-    // Same bounded 9^3 neighbourhood as scoop selection. No region requests,
-    // history search, physics, or work on frames without an explicit pour.
-    for(int z=-4;z<=4;z++)for(int y=-4;y<=4;y++)for(int x=-4;x<=4;x++){
+    std::vector<Site> sites;uint64_t available=0;double nearest=1e30;bool below_aim=false;
+    // Bounded 9*13*9 search reaches deep vacancies under refilled upper cells.
+    // No region requests, history search, physics, or per-frame work.
+    for(int z=-4;z<=4;z++)for(int y=-6;y<=6;y++)for(int x=-4;x<=4;x++){
         Vector3i p=target+Vector3i(x,y,z);if(!in_domain(p))continue;
         const Region *r=get(p);if(!r||r->vacancies.empty())continue;int i=index(p);
         uint64_t cap=profile(*r,i).capacity(),stored=r->water[i];
         uint64_t missing=std::min<uint64_t>(r->vacancies[i],cap>stored?cap-stored:0);if(!missing)continue;
         Vector3 lo=Vector3(p)*.5,hi=lo+Vector3(.5,.5,.5);
-        double distance=aim.distance_squared_to(aim.clamp(lo,hi));
+        Vector3 closest=aim.clamp(lo,hi);double distance=aim.distance_squared_to(closest);
+        // Earlier pours may cover a deeper vacancy. It remains a valid return
+        // target directly below the aimed surface, without redirecting a pour
+        // upward to a remote raised shape.
+        below_aim|=hi.y<=aim.y+0.001&&Vector2(aim.x-closest.x,aim.z-closest.z).length_squared()<=0.25;
         sites.push_back({p,missing,distance});available+=missing;nearest=std::min(nearest,distance);
     }
-    if(available<amount||nearest>1.0)return false;
+    if(available<amount||(nearest>1.0&&!below_aim))return false;
     std::sort(sites.begin(),sites.end(),[](const Site&a,const Site&b){return a.distance!=b.distance?a.distance<b.distance:key(a.p)<key(b.p);});
     uint64_t remaining=amount;
     for(const auto &s:sites){uint64_t give=std::min(remaining,s.missing);take.emplace_back(s.p,give);remaining-=give;if(!remaining)break;}
@@ -539,6 +545,14 @@ bool NativeRegionalWater::plan_local_refill(Vector3i target,const Vector3 &aim,u
         for(int d=0;d<6;d++){int j=find(a.p+directions[d]);if(j<0||sites[j].body)continue;
             if(connects(a,a.stored,sites[j],sites[j].stored)){sites[j].body=true;body.push_back(j);}}
     }
+    std::map<Key,double> surrounding;
+    for(int id:body){const auto &s=sites[id];
+        if(std::abs(s.p.x-target.x)<=1&&std::abs(s.p.z-target.z)<=1)continue;
+        Key column=key(Vector3i(s.p.x,0,s.p.z));double head=s.p.y*500.0+s.shape.head(s.stored);
+        auto found=surrounding.find(column);if(found==surrounding.end()||head>found->second)surrounding[column]=head;
+    }
+    if(!surrounding.empty()){std::vector<double> heads;for(const auto &[column,head]:surrounding)heads.push_back(head);
+        std::sort(heads.begin(),heads.end());level=heads[heads.size()/2];}
     for(auto &s:sites){double volume=s.shape.volume(std::clamp(level-s.p.y*500.0,0.0,500.0));
         s.desired=std::min(s.shape.capacity(),uint64_t(std::max(0.0,std::floor(volume+1e-6))));}
     auto rank=[&](int i){return (Vector3(sites[i].p)*.5+Vector3(.25,.25,.25)).distance_squared_to(aim);};
@@ -742,7 +756,7 @@ Dictionary NativeRegionalWater::transfer_water(const Vector3 &from,const Vector3
     if(!pour){
         uint64_t remaining=amount;
         // A full cubic metre can spread into a shallow local puddle. Search
-        // at most 9^3 cells (2 m radius), following actual wet connections.
+        // at most 9^3 cells (2 m sideways, 1 m down, 3 m up), following wet connections.
         // Prefer a one-metre cube immediately beneath the aimed surface.
         // The bounded connected search can expand for shallow sources, but its
         // traversal order must not dictate cross-shaped excavations.
@@ -757,7 +771,7 @@ Dictionary NativeRegionalWater::transfer_water(const Vector3 &from,const Vector3
             uint64_t available=other->water[j];if(!available||!profile(*other,j).capacity())continue;
             take.emplace_back(p,available);
             for(int d=0;d<6;++d){Vector3i q=p+directions[d];Vector3i distance=q-target;
-                if(std::max({std::abs(distance.x),std::abs(distance.y),std::abs(distance.z)})>4||!in_domain(q))continue;
+                if(std::abs(distance.x)>4||std::abs(distance.z)>4||distance.y< -2||distance.y>6||!in_domain(q))continue;
                 const Region *next=get(q);if(!next||!next->water[index(q)])continue;int n=index(q);bool connected=false;
                 auto a=surface_profile(p),b=surface_profile(q);
                 if(d==0)connected=joined_vertical(b,next->water[n],a,other->water[j]);
@@ -766,7 +780,31 @@ Dictionary NativeRegionalWater::transfer_water(const Vector3 &from,const Vector3
                 if(connected&&visited.insert(key(q)).second)candidates.push(q);
             }
         }
-        if(!take.empty()){if(!plan_connected_scoop(take,amount,out))return out;remaining=0;}
+        // Peel the aimed raised columns from their exposed top first. The old
+        // distance-only order carved out the support and even the lake below,
+        // leaving an overhang that the next side click could no longer reach.
+        // Stay within one half-metre cell of the aimed column in X/Z; distant
+        // high water in the connected search is not a preferred scoop target.
+        std::map<Key,double> surrounding;
+        for(const auto &[p,water]:take){
+            if(std::abs(p.x-target.x)<=1&&std::abs(p.z-target.z)<=1)continue;
+            double head=p.y*500.0+surface_profile(p).head(water);Key column=key(Vector3i(p.x,0,p.z));
+            auto found=surrounding.find(column);if(found==surrounding.end()||head>found->second)surrounding[column]=head;
+        }
+        double floor_level=-1e30;
+        if(!surrounding.empty()){
+            std::vector<double> heads;for(const auto &[column,head]:surrounding)heads.push_back(head);
+            std::sort(heads.begin(),heads.end());double level=heads[heads.size()/2];uint64_t excess=0;
+            for(const auto &[p,water]:take){uint64_t retained=uint64_t(std::max(0.0,std::floor(surface_profile(p).volume(std::clamp(level-p.y*500.0,0.0,500.0))+1e-6)));
+                if(water>retained)excess+=water-retained;}
+            if(aim.y*1000>level+1&&excess>=amount)floor_level=level;
+        }
+        auto raised=[&](Vector3i p){return p.y>=target.y&&std::abs(p.x-target.x)<=1&&std::abs(p.z-target.z)<=1;};
+        if(surrounding.empty()||floor_level> -1e20)std::stable_sort(take.begin(),take.end(),[&](const auto&a,const auto&b){
+            bool ar=raised(a.first),br=raised(b.first);if(ar!=br)return ar;
+            return ar&&a.first.y!=b.first.y?a.first.y>b.first.y:false;
+        });
+        if(!take.empty()){if(!plan_connected_scoop(take,amount,out,floor_level))return out;remaining=0;}
         amount-=remaining;
         if(!amount){
             // An explicit edit can empty the owner before its new mesh is published.

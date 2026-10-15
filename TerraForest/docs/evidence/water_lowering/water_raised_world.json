@@ -1,0 +1,65 @@
+{
+  "cycles": [
+    {
+      "cycle": 0,
+      "elapsed_ms": 675.071
+    },
+    {
+      "cycle": 1,
+      "elapsed_ms": 39.611
+    },
+    {
+      "cycle": 2,
+      "elapsed_ms": 40.785
+    }
+  ],
+  "failures": 0,
+  "statistics": {
+    "accept_patch_us": 8,
+    "active_cells": 0,
+    "bucket_native_us": 120,
+    "cache_hits": 0,
+    "cached_region_rebuilds": 0,
+    "capacity_reached": false,
+    "cell_steps": 0,
+    "changes": 5080,
+    "dirty_meshes": 0,
+    "exclusion_notify_us": 139,
+    "fill_active": false,
+    "fill_remaining_ml": -1,
+    "hull_snapshot_us": 11,
+    "lakes": 1,
+    "max_bucket_native_us": 1533,
+    "max_mesh_commit_us": 512,
+    "max_mesh_publish_us": 1707,
+    "max_mesh_us": 647,
+    "max_step_us": 591,
+    "mesh_batch_active": false,
+    "mesh_commit_us": 117,
+    "mesh_publish_pending": false,
+    "mesh_publish_us": 3,
+    "mesh_snapshot_bytes": 0,
+    "mesh_us": 169,
+    "occupancy_failure": "",
+    "outstanding_slices": 0,
+    "pending_regions": 0,
+    "pending_vertical": 0,
+    "published_mesh_batch": 216,
+    "query_builds": 0,
+    "query_cache_bytes": 996480,
+    "query_cache_hits": 160,
+    "ready": 1,
+    "regions": 50,
+    "render_ready": true,
+    "resident_cell_bytes": 1545616,
+    "resident_occupancy_bytes": 1545616,
+    "sampled_nodes": 36450,
+    "staged_meshes": 0,
+    "step_us": 137,
+    "structure_contact_bytes": 0,
+    "terrain_contact_bytes": 1077776,
+    "vacancy_bytes": 10240,
+    "vertical_steps": 0,
+    "water_ml": 536929297
+  }
+}

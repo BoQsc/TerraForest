@@ -111,3 +111,7 @@ prebuilt godot-cpp.
 Human review exposed shape loss after partially scooping raised water. Bucket scoops now retain the removed cell amounts; nearby pours restore those vacancies before using geometric refill. Empty scooped spaces are valid pour targets. This state saves in snapshot v9 and works with water from a different bucket. Existing v1-v8 saves remain readable. No flow or background simulation was added.
 
 The raised-water mouse-action regression restores exact cell amounts and published geometry across three cycles; native debug/release checks also cover overhangs and save/reload. See `evidence/water_raised_refill/status.txt` for evidence and limits. Pre-update holes cannot recover an original shape that was never recorded.
+
+## Lowering raised water (2026-10-15 follow-up)
+
+The return-to-same-shape check did not cover moving elevated water back into a lower hole. Raised side scoops now remove the top first and preserve the surrounding lake level when a complete unit is available above it. Refill no longer treats the highest nearby column as the lake level, and deeper scoop vacancies remain reachable below refilled layers. The actual-world three-bucket reversal now restores the original lake amounts and mesh exactly. See `evidence/water_lowering/status.txt`. No flow or spillage was added.

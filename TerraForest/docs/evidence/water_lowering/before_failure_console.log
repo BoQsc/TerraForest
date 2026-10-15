@@ -1,0 +1,11 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS Lake with raised column and overhang loads
+PASS Side scoop 0 fills bucket
+PASS Move collected unit out of the local test area
+FAIL Side scoop 1 fills bucket
+{ "ok": false, "pending": false, "reason": "Aim at nearby water" }
+LOWERING raised_ml=1250000 lake_changed_cells=2
+FAIL Two scoops remove the whole two-unit raised column
+FAIL Lowering the column does not dig a new hole in the lake
+WATER_LOWERING failures=3

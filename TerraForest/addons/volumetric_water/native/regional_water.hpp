@@ -140,7 +140,7 @@ class NativeRegionalWater : public godot::RefCounted {
     void request(Key k);
     void invalidate_regions(const godot::AABB &bounds,bool replace_water,bool buildings=false);
     using Placement=std::vector<std::pair<godot::Vector3i,uint64_t>>;
-    bool plan_connected_scoop(Placement &cells,uint64_t amount,godot::Dictionary &out) const;
+    bool plan_connected_scoop(Placement &cells,uint64_t amount,godot::Dictionary &out,double floor_level=-1e30) const;
     bool bucket_footprint(godot::Vector3i target,const godot::Vector3 &aim,uint64_t amount,bool collect,int &x0,int &z0,godot::Dictionary &out);
     bool plan_vacancy_refill(godot::Vector3i target,const godot::Vector3 &aim,uint64_t amount,Placement &take) const;
     bool plan_local_refill(godot::Vector3i target,const godot::Vector3 &aim,uint64_t amount,Placement &take) const;

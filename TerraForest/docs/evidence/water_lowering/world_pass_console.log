@@ -1,0 +1,109 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.3.280 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] New world
+[TerrainRewrite] New world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+[TerrainRewrite] Preparing your finite lake; terrain and water are being built
+[TerrainRewrite] Mined resources added to inventory
+[TerrainRewrite] Lake ready · temporary world
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Bucket review · disposable world
+PASS Normal disposable water world ready
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Bucket filled: one water unit (1 m3)
+PASS Collect full unit away from raised placement
+PASS Raised placement surface is targetable
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Placed one water unit (1 m3)
+PASS Place full unit on existing water
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Bucket filled: one water unit (1 m3)
+PASS Collect full unit away from raised placement
+PASS Raised placement surface is targetable
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Placed one water unit (1 m3)
+PASS Place full unit on existing water
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Bucket filled: one water unit (1 m3)
+PASS Collect full unit away from raised placement
+PASS Raised placement surface is targetable
+[TerrainRewrite] Preparing water at this location
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Placed one water unit (1 m3)
+[TerrainRewrite] Placed one water unit (1 m3)
+PASS Place full unit on existing water
+PASS Player actions made raised water
+RAISED_BASELINE center=(800.5, 48.25, 1292.5) delta={ "positive": 3000000, "negative": 3000000, "low": (799.5, 48.0, 1292.0), "high": (800.5, 50.5, 1292.5), "missing_low": (803.5, 45.5, 1292.0), "missing_high": (804.5, 48.0, 1292.5) }
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Bucket filled: one water unit (1 m3)
+PASS Side scoop of raised water fills full unit
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Placed one water unit (1 m3)
+PASS Return side scoop empties bucket
+PASS Every water cell restored after side scoop/return
+PASS Published geometry restored exactly after side scoop/return
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Bucket filled: one water unit (1 m3)
+PASS Side scoop of raised water fills full unit
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Placed one water unit (1 m3)
+PASS Return side scoop empties bucket
+PASS Every water cell restored after side scoop/return
+PASS Published geometry restored exactly after side scoop/return
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Bucket filled: one water unit (1 m3)
+PASS Side scoop of raised water fills full unit
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Placed one water unit (1 m3)
+PASS Return side scoop empties bucket
+PASS Every water cell restored after side scoop/return
+PASS Published geometry restored exactly after side scoop/return
+LOWER_AIM { "hit": true, "point": (800.0, 48.575, 1292.6), "normal": (-1.0, 0.0, 0.0), "cell": (1600, 97, 2585) }
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Bucket filled: one water unit (1 m3)
+PASS Lower raised water from the side (0)
+AFTER_LOWER { "positive": 2000000, "negative": 3000000, "low": (799.5, 48.0, 1292.0), "high": (800.5, 49.5, 1292.5), "missing_low": (803.5, 45.5, 1292.0), "missing_high": (804.5, 48.0, 1292.5) }
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Placed one water unit (1 m3)
+PASS Return raised water into the lower donor hole (0)
+LOWER_AIM { "hit": true, "point": (800.0, 48.575, 1292.6), "normal": (-1.0, 0.0, 0.0), "cell": (1600, 97, 2585) }
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Bucket filled: one water unit (1 m3)
+PASS Lower raised water from the side (1)
+AFTER_LOWER { "positive": 1000000, "negative": 2000000, "low": (799.5, 48.0, 1292.0), "high": (800.5, 49.0, 1292.5), "missing_low": (804.0, 45.5, 1292.0), "missing_high": (804.5, 47.0, 1292.5) }
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Placed one water unit (1 m3)
+PASS Return raised water into the lower donor hole (1)
+LOWER_AIM { "hit": true, "point": (800.0, 48.575, 1292.6), "normal": (-1.0, 0.0, 0.0), "cell": (1600, 97, 2585) }
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Bucket filled: one water unit (1 m3)
+PASS Lower raised water from the side (2)
+AFTER_LOWER { "positive": 0, "negative": 1000000, "low": (inf, inf, inf), "high": (-inf, -inf, -inf), "missing_low": (804.0, 45.5, 1292.0), "missing_high": (804.5, 46.0, 1292.5) }
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Holding Water bucket
+[TerrainRewrite] Placed one water unit (1 m3)
+PASS Return raised water into the lower donor hole (2)
+LOWER_FINAL { "positive": 0, "negative": 0, "low": (inf, inf, inf), "high": (-inf, -inf, -inf), "missing_low": (inf, inf, inf), "missing_high": (-inf, -inf, -inf) }
+PASS Moving raised water back restores the original flat lake cell-for-cell
+PASS Lowered lake geometry equals original flat lake
+[TerrainRewrite] Temporary test world: save skipped
+WATER_RAISED_WORLD failures=0

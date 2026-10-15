@@ -4,7 +4,7 @@ var failures := 0
 func check(ok:bool, label:String):
  print("PASS " if ok else "FAIL ", label)
  if not ok: failures += 1
-func fixture():
+func fixture(include_overhang:bool=true):
  var catalog:PackedByteArray=ClassDB.instantiate("NativeLakeCatalog").encode([])
  var bytes:=PackedByteArray();bytes.resize(32+catalog.size()+27*9076);bytes.fill(0)
  bytes.encode_u32(0,0x31575256);bytes.encode_u32(4,2);bytes.encode_u32(8,catalog.size());bytes.encode_u32(12,27)
@@ -18,7 +18,7 @@ func fixture():
     for i in 512:
      var x:int=i%8;var y:int=(i/8)%8;var z:int=i/64
      bytes.encode_u16(base+i*12,0);bytes.encode_u16(base+i*12+2,500)
-     var wet:bool=ry==10 and (y<2 or (rx==10 and rz==10 and ((x>=3 and x<=4 and y<6) or (x==2 and y==5)) and z>=3 and z<=4))
+     var wet:bool=ry==10 and (y<2 or (rx==10 and rz==10 and ((x>=3 and x<=4 and y<6) or (include_overhang and x==2 and y==5)) and z>=3 and z<=4))
      if wet:bytes.encode_u64(base+i*12+4,125000);total+=125000
     for i in 729:bytes.encode_float(base+6144+i*4,1.0)
  bytes.encode_u64(16,total)

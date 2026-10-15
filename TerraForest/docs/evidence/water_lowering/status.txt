@@ -1,0 +1,40 @@
+2026-10-15: Lowering raised water back into its source lake
+
+The previous return-to-same-shape regression was insufficient. Human review
+required removing an elevated placement and returning it to the original lower
+hole. The new native regression failed before the correction: after one side
+scoop 1.25 cubic metres remained raised, two lake cells had been damaged, and the
+next side scoop missed the remaining water.
+
+Corrections:
+- Side scoops prioritize the tops of the aimed raised columns. When the nearby
+  surrounding surface establishes a lake level and at least one full unit exists
+  above it, that underlying level is retained. Partial surface cells preserve
+  their original amount below the level, instead of creating another lake hole.
+- Geometric refill uses the median surrounding column surface instead of the
+  highest connected point. A raised column does not become the target lake level.
+- Scoop search remains at most 9^3 connected cells, biased 1 m down / 3 m up.
+  Explicit vacancy refill searches at most 9*13*9 prepared cells, reaching deeper
+  vacancies below already-refilled layers. Directly-below vacancies remain valid
+  even when the previous 1 m proximity gate would reject them.
+- Existing quantity, connectivity, atomic inventory, publication, and save paths
+  remain in use. No flow, additional storage format, or background work added.
+
+Proof:
+- water_lowering: two side scoops remove a two-unit column, leaving zero raised
+  quantity and changing no lake cells underneath; debug and release pass.
+- water_refill_bank: release shoreline/corner and different-source refill pass.
+- water_raised_world: actual mouse actions in the normal world create a three-unit
+  raised placement, perform three same-shape scoop/return checks, then remove all
+  three raised units from the side and return them to the lower donor hole.
+  Final cell amounts and published vertex buffers equal the original lake.
+  Fullscreen 1920x1080, 60 FPS cap. Final screenshot inspected.
+
+Limits: this is bounded local editing, not automatic leveling or fluid simulation.
+The surrounding-level estimate is local; arbitrary complex or taller disconnected
+arrangements are not certified by these fixtures. Earlier snapshots without scoop
+vacancies cannot recover missing historical shape information. No sustained
+performance or thermal claim is made from these short checks.
+
+Observed maximum native bucket action in this run: 1533 us.
+Existing water_structure_bucket interaction/history/paging regression also passes.
