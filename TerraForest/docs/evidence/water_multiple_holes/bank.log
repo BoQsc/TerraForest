@@ -1,0 +1,21 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS Lake restores
+PASS Scoop at shoreline/corner
+TARGET (41.0, 41.25, 41.0) { "ok": true, "pending": false, "water_ml": 1000000, "units": 1, "reason": "Placed one water unit (1 m3)", "point": (41.5, 41.5, 41.0) } RESTORED true
+PASS Refill shoreline hole from nearby water
+PASS Lake restores
+PASS Scoop at shoreline/corner
+TARGET (41.0, 41.25, 42.0) { "ok": true, "pending": false, "water_ml": 1000000, "units": 1, "reason": "Placed one water unit (1 m3)", "point": (41.5, 41.5, 42.0) } RESTORED true
+PASS Refill shoreline hole from nearby water
+PASS Lake restores
+PASS Scoop at shoreline/corner
+TARGET (42.0, 41.25, 42.0) { "ok": true, "pending": false, "water_ml": 1000000, "units": 1, "reason": "Placed one water unit (1 m3)", "point": (42.5, 41.5, 42.0) } RESTORED true
+PASS Refill shoreline hole from nearby water
+PASS Lake restores for separate-source repair
+PASS Create bank hole and retain its unit separately
+PASS Collect replacement water from another part
+PASS Fresh water instance reopens both holes before repair
+PASS Different-source bucket repairs original hole
+PASS Two buckets plus world conserve all nine units
+WATER_REFILL_BANK failures=0

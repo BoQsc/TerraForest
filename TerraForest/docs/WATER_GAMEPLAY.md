@@ -123,3 +123,11 @@ The vacancy ray previously selected distance zero when its origin lay inside rem
 Evidence: `docs/evidence/water_swimming_target`. The native reproducer fails before the change; nearby-return and raised-lowering regressions pass afterward. A 1920x1080 actual-world input check places the camera below lake level inside a scooped cavity, hits the visible wall 0.4 m ahead, pours, and restores all cell amounts and published mesh fingerprints exactly. Both native builds are installed.
 
 Limits: this is one confirmed targeting defect, not proof of all swimming aims. Nearby vacancy/geometric refill assistance remains and needs a separate multi-hole targeting check; no placement preview exists yet. The retained underwater screenshot still shows shoreline artifacts, so the interaction pass is not a visual-quality pass. The fixed camera test does not exercise moving-camera pending retries or continuous swimming physics.
+
+## Separate-hole targeting (2026-10-15)
+
+A two-hole reproducer exposed a second aim defect: sorting all nearby vacancy cells by distance split a full bucket across distinct holes at small aim offsets. Refill now chooses the nearest six-face-connected vacancy component before allocating its cells. The bounded 9x13x9 search is unchanged; the component traversal visits each candidate at most once and runs only during placement planning.
+
+Evidence: `docs/evidence/water_multiple_holes`. Two of four above-water offsets failed before the correction. All eight above-water/underwater cases now restore the intended hole exactly while leaving the other unchanged. The normal-world submerged oblique mouse-input case checks every water cell and published mesh fingerprint. Shore/corner return, raised-shape native return, and the actual-world three-unit raised-water lowering sequence also pass. Debug and release DLLs rebuilt.
+
+Scope: this corrects distinct marked holes with enough missing capacity for the full unit. The existing geometric fallback for older or partially replaced holes remains. There is still no placement preview, and these fixed-camera checks do not prove moving-camera queued-input behavior or resolve the previously recorded underwater shoreline visual artifacts.

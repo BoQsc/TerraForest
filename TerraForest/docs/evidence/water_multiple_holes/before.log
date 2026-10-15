@@ -1,0 +1,19 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS First hole scooped
+PASS Second hole scooped
+MULTI_HOLE offset=(0.0, 0.0, 0.0) result={ "ok": true, "pending": false, "water_ml": 1000000, "units": 1, "reason": "Placed one water unit (1 m3)", "point": (42.5, 41.5, 42.5) }
+PASS Targeted hole restores without changing the other hole
+PASS First hole scooped
+PASS Second hole scooped
+MULTI_HOLE offset=(-0.24, 0.0, -0.24) result={ "ok": true, "pending": false, "water_ml": 1000000, "units": 1, "reason": "Placed one water unit (1 m3)", "point": (42.5, 41.5, 42.5) }
+FAIL Targeted hole restores without changing the other hole
+PASS First hole scooped
+PASS Second hole scooped
+MULTI_HOLE offset=(0.24, 0.0, 0.24) result={ "ok": true, "pending": false, "water_ml": 1000000, "units": 1, "reason": "Placed one water unit (1 m3)", "point": (42.5, 41.5, 42.5) }
+PASS Targeted hole restores without changing the other hole
+PASS First hole scooped
+PASS Second hole scooped
+MULTI_HOLE offset=(-0.49, 0.0, -0.49) result={ "ok": true, "pending": false, "water_ml": 1000000, "units": 1, "reason": "Placed one water unit (1 m3)", "point": (42.0, 41.5, 42.0) }
+FAIL Targeted hole restores without changing the other hole
+WATER_MULTIPLE_HOLES failures=2

@@ -514,8 +514,24 @@ bool NativeRegionalWater::plan_vacancy_refill(Vector3i target,const Vector3 &aim
     }
     if(available<amount||(nearest>1.0&&!below_aim))return false;
     std::sort(sites.begin(),sites.end(),[](const Site&a,const Site&b){return a.distance!=b.distance?a.distance<b.distance:key(a.p)<key(b.p);});
+    // Select the aimed vacancy component before ranking individual cells.
+    // Otherwise a near edge of a second hole can outrank the far edge of the
+    // aimed hole, splitting one bucket between unrelated targets.
+    std::unordered_map<Key,size_t> ids;
+    for(size_t i=0;i<sites.size();++i)ids.emplace(key(sites[i].p),i);
+    std::vector<bool> connected(sites.size(),false);std::vector<size_t> queue{0};connected[0]=true;
+    uint64_t component_capacity=0;
+    constexpr int directions[6][3]={{1,0,0},{-1,0,0},{0,1,0},{0,-1,0},{0,0,1},{0,0,-1}};
+    for(size_t next=0;next<queue.size();++next){
+        const auto &site=sites[queue[next]];component_capacity+=site.missing;
+        for(const auto &d:directions){Vector3i p=site.p+Vector3i(d[0],d[1],d[2]);if(!in_domain(p))continue;
+            auto found=ids.find(key(p));if(found==ids.end()||connected[found->second])continue;
+            connected[found->second]=true;queue.push_back(found->second);}
+    }
+    if(component_capacity<amount)return false;
     uint64_t remaining=amount;
-    for(const auto &s:sites){uint64_t give=std::min(remaining,s.missing);take.emplace_back(s.p,give);remaining-=give;if(!remaining)break;}
+    for(size_t i=0;i<sites.size();++i){if(!connected[i])continue;const auto &s=sites[i];
+        uint64_t give=std::min(remaining,s.missing);take.emplace_back(s.p,give);remaining-=give;if(!remaining)break;}
     return true;
 }
 bool NativeRegionalWater::plan_local_refill(Vector3i target,const Vector3 &aim,uint64_t amount,Placement &take) const{

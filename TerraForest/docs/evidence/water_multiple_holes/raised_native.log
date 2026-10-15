@@ -1,0 +1,45 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS Lake with raised column and overhang loads
+SCOOP (41.75, 42.75, 41.75) { "ok": true, "pending": false, "water_ml": 1000000, "units": 1, "reason": "Bucket filled: one water unit (1 m3)", "point": (41.0, 42.5, 41.5) }
+PASS Side scoop of raised placement succeeds
+PASS Scoop removes exactly one unit
+PASS Scoop vacancies are saved with the water
+PASS Scoop state reloads without recomputing terrain
+PASS Vacancy save/reload is byte exact
+PASS Invalid vacancy quantity is rejected atomically
+PASS Rejected vacancy state leaves world unchanged
+PASS Independent bucket contains a full unit
+POUR { "ok": true, "pending": false, "water_ml": 1000000, "units": 1, "reason": "Placed one water unit (1 m3)", "point": (41.0, 42.5, 41.5) }
+PASS Return beside raised placement succeeds
+DIFFERENCES []
+PASS Returning one unit restores every cell, not only total volume
+PASS Lake with raised column and overhang loads
+SCOOP (41.75, 42.25, 41.75) { "ok": true, "pending": false, "water_ml": 1000000, "units": 1, "reason": "Bucket filled: one water unit (1 m3)", "point": (41.5, 42.0, 41.5) }
+PASS Side scoop of raised placement succeeds
+PASS Scoop removes exactly one unit
+PASS Scoop vacancies are saved with the water
+PASS Scoop state reloads without recomputing terrain
+PASS Vacancy save/reload is byte exact
+PASS Invalid vacancy quantity is rejected atomically
+PASS Rejected vacancy state leaves world unchanged
+PASS Independent bucket contains a full unit
+POUR { "ok": true, "pending": false, "water_ml": 1000000, "units": 1, "reason": "Placed one water unit (1 m3)", "point": (41.5, 42.0, 41.5) }
+PASS Return beside raised placement succeeds
+DIFFERENCES []
+PASS Returning one unit restores every cell, not only total volume
+PASS Lake with raised column and overhang loads
+SCOOP (41.75, 41.75, 41.75) { "ok": true, "pending": false, "water_ml": 1000000, "units": 1, "reason": "Bucket filled: one water unit (1 m3)", "point": (41.5, 41.5, 41.5) }
+PASS Side scoop of raised placement succeeds
+PASS Scoop removes exactly one unit
+PASS Scoop vacancies are saved with the water
+PASS Scoop state reloads without recomputing terrain
+PASS Vacancy save/reload is byte exact
+PASS Invalid vacancy quantity is rejected atomically
+PASS Rejected vacancy state leaves world unchanged
+PASS Independent bucket contains a full unit
+POUR { "ok": true, "pending": false, "water_ml": 1000000, "units": 1, "reason": "Placed one water unit (1 m3)", "point": (41.5, 41.5, 41.5) }
+PASS Return beside raised placement succeeds
+DIFFERENCES []
+PASS Returning one unit restores every cell, not only total volume
+WATER_RAISED_REFILL failures=0
