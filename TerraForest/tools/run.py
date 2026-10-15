@@ -16,7 +16,7 @@ def parse_args(argv=None):
     parser.add_argument('--godot', default=os.environ.get('GODOT_EXE') or shutil.which('godot') or (str(steam) if steam.is_file() else None))
     parser.add_argument('--renderer', choices=['forward_plus', 'mobile', 'gl_compatibility'], default='forward_plus')
     parser.add_argument('--temporary', action='store_true')
-    parser.add_argument('--scene', choices=['world', 'structures'], default='world')
+    parser.add_argument('--scene', choices=['world', 'structures', 'worlds'], default='world')
     parser.add_argument('--block-textures', choices=['original', 'terraforest'], help='Override the project block material set for this launch')
     parser.add_argument('--generator', type=int, choices=[1, 2, 3, 4, 6], help='New worlds: 1 original, 2 mountains/caves, 3 ore veins, 4 ore veins and lakes, 6 shallow cave entrances with ore veins and lakes')
     parser.add_argument('--seed', type=int, help='New-world seed; existing saves retain their generator and seed')

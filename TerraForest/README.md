@@ -4,6 +4,12 @@ See the [delivery plan and coverage register](docs/PROJECT_PLAN.md) for current 
 
 ## Playable checkpoints
 
+Open `Worlds.cmd` (or run the project from Godot) for the world browser. Select a
+saved world, or create a named world with a landscape preset and seed. Save from
+the Actions menu or F5 to retain a new world. Gameplay material costs can be
+enabled or disabled before opening. Initial terrain loading still takes time;
+this screen does not pre-bake an entire world.
+
 | Launcher | What to try |
 | --- | --- |
 | `Play Combined Gameplay.cmd` | Resource gathering, crafting, construction and chest storage. |
@@ -19,7 +25,7 @@ unqualified or unfinished.
 
 ## Independent building showcase
 
-Run `python tools/run.py --scene structures --godot PATH` to inspect the separate native block construction addon. It includes textured cubes, slabs, stairs, slopes, posts and spheres; chunked native mesh baking; nearby collision; a house and tower frame; and separate static-model MultiMesh batches. See [structures API](addons/structures/README.md) and [validation](docs/STRUCTURES_VALIDATION.md). The terrain demo remains the default scene.
+Run `python tools/run.py --scene structures --godot PATH` to inspect the separate native block construction addon. It includes textured cubes, slabs, stairs, slopes, posts and spheres; chunked native mesh baking; nearby collision; a house and tower frame; and separate static-model MultiMesh batches. See [structures API](addons/structures/README.md) and [validation](docs/STRUCTURES_VALIDATION.md). The project opens the world browser; `tools/run.py` still defaults to the terrain demo for existing launchers.
 
 In the main world, open **Esc → Objects** for object recipes and placement
 controls, or **Esc → Building** for block shapes and prefabs. Gameplay uses owned

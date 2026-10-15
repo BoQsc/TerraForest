@@ -1,3 +1,9 @@
+> 2026-10-16 world entry UI: project starts at a saved-world browser with named
+> creation, seed/preset selection and gameplay-cost selection. Existing launchers
+> remain direct. Policy/UI checks and 1080p visual inspection pass; process
+> handoff and full browser-driven save/reopen remain unqualified. See WORLD_BROWSER.md.
+> Water remains deferred; doors/windows are already integrated.
+
 > 2026-10-15 storage coverage: optional terrain mesh cache writes now check a
 > native caller-available disk-space query and preserve a default 1 GiB reserve.
 > Low/unknown space keeps reads available and throttles retries. Threshold,
