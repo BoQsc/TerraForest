@@ -72,14 +72,24 @@ func configure(view: Camera3D, actor: CharacterBody3D, entries: Array[Dictionary
 	var content := VBoxContainer.new()
 	panel.add_child(content)
 	content.add_child(caption)
+	var object_grid:=GridContainer.new()
+	object_grid.columns=2
+	object_grid.add_theme_constant_override("h_separation",8)
+	object_grid.add_theme_constant_override("v_separation",6)
+	content.add_child(object_grid)
 	for i in range(catalog.size()):
 		var button := Button.new()
 		button.text=catalog[i].title
 		button.icon=preload("res://addons/player_runtime/item_icons.gd").texture("Wooden ladder" if catalog[i].title.begins_with("Wooden ladder") else catalog[i].title)
-		button.expand_icon=true;button.add_theme_constant_override("icon_max_width",32)
+		button.expand_icon=true;button.add_theme_constant_override("icon_max_width",64)
+		button.custom_minimum_size.y=80
+		button.size_flags_horizontal=Control.SIZE_EXPAND_FILL
+		button.alignment=HORIZONTAL_ALIGNMENT_LEFT
+		button.text_overrun_behavior=TextServer.OVERRUN_TRIM_ELLIPSIS
+		button.tooltip_text=catalog[i].title+"\nCost: "+catalog[i].get("cost_label","Recipe unavailable")
 		button.focus_mode=Control.FOCUS_NONE
 		button.pressed.connect(select.bind(i))
-		content.add_child(button)
+		object_grid.add_child(button)
 		choices.append(button)
 	var selection_row := HBoxContainer.new()
 	content.add_child(selection_row)

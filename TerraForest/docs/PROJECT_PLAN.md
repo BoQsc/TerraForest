@@ -1,3 +1,9 @@
+> 2026-10-15 object chooser: two columns, larger baked icons and cost tooltips
+> replace thin rows. Normal-world 1080p test confirms workspace bounds, every
+> choice scrolls into view, button signals select corresponding models and
+> returning to world retains the selection. Render inspected. Evidence:
+> evidence/building_object_menu/. No placement/physics or water changes.
+
 > 2026-10-15 building object icons: windows, doors and guardrails now resolve
 > baked icons through their production catalog titles. Actual model renders
 > share the existing atlas (1024x640, 2.5 MiB uncompressed, +0.5 MiB); no runtime
