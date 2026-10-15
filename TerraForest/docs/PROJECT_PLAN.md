@@ -1,3 +1,28 @@
+## Current priority - 2026-10-15: resume the combined gameplay world
+
+The user accepts water as good enough for now and explicitly requests moving on.
+This supersedes the active-water priority and next-work statements below. Retain
+installed water behavior; no storage migration, flow, meshing, bucket, texture or
+performance iteration is scheduled. Known limits remain documented in
+WATER_GAMEPLAY.md and evidence/water_shoreline_visual. Acceptance is permission
+to advance, not full correctness, scale or thermal certification. Return only
+on explicit user request or a blocking regression in ordinary combined gameplay.
+
+Next deliverable: a reproducible playable settlement checkpoint supporting the
+existing gather/build/store loop, furnished buildings, roads, vehicles and actors.
+Use existing addons and generation/editor paths. Do not add a second implementation.
+The 2026-10-15 dry-run of Play Combined Gameplay.cmd failed because its historical
+source checkpoint and combined_gameplay save are absent on this computer. First
+remove this dependence on another computer's local save through explicit, safe
+checkpoint preparation; preserve existing saves and never silently reset progress.
+Then verify one short integrated route: gather, build/use a house and chest, drive
+away and return, save/reopen. Retain failures and give the user a working launcher
+for human review. Do not substitute isolated component checks for that route.
+
+This advances M2/M3 integration toward M4; it does not close the original scope.
+Natural cave discovery, detailed settlement scale, actor populations, loading,
+mining continuity, multiplayer and sustained 60 FPS remain tracked below.
+
 > Disk-save integration verified, 2026-10-13: the normal compound save/reopen preserves mined terrain, lake water, placed water and a full bucket together. The reloaded bucket pours and the saved placed unit can be scooped completely. Water restores with 52 cache hits and zero terrain samples. Evidence: `evidence/water_pool_recovery/compound_disk_pass.log`. Shared-storage migration remains open.
 
 > Pool recovery correction, 2026-10-13: six adjacent/stacked full-bucket pours, cached reload and complete recovery now pass in the actual world without disconnected remaining surfaces. Shared terrain/water extraction handles disconnected cell corners; scoop planning checks stored and rendered connectivity. Static water and full-unit bucket scope remain unchanged. Full TerrainCore storage migration and broader visual/performance acceptance remain open. See `evidence/water_pool_recovery/status.txt`.
