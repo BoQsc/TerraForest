@@ -20,4 +20,24 @@ func run()->void:
  check(not session.safe_exit_position(game).is_finite(),"both actor-occupied exits refuse player placement")
  check(session.car.collision_mask==15,"single vehicle chassis includes actor collision")
  check((session.car.wheel_rays[0].collision_mask & 8)==0,"wheel support rays exclude actors")
+ var handle:int=game.actors.pool.active_handles()[0]
+ var position:Vector3=game.actors.store.get_position(handle)
+ game.actors.orders.set_target(game.actors.store.persistent_id(handle),position+Vector3(0,0,2))
+ await physics_frame
+ game.actors.update_simulation(1.0/60,position,true,game._actor_collision_ready)
+ var state:String=game.actors.pool.navigation_status(handle).state
+ check(state!="idle","actor has a route before vehicle change")
+ session.capture_snapshot()
+ # Flush any initial position publication, then rebuild the affected route.
+ await physics_frame
+ game.actors.update_simulation(1.0/60,position,true,game._actor_collision_ready)
+ state=game.actors.pool.navigation_status(handle).state
+ session.fleet.set_pose(session.car_identity,session.car.global_transform)
+ check(game.actors.pool.navigation_status(handle).state==state,"unchanged vehicle leaves existing actor route intact")
+ session.car.position+=Vector3(0,0,10)
+ session.update(game,0.21)
+ check(game.actors.pool.navigation_status(handle).state=="idle","ordinary vehicle update invalidates intersecting actor route")
+ await physics_frame
+ game.actors.update_simulation(1.0/60,position,true,game._actor_collision_ready)
+ check(game.actors.pool.navigation_status(handle).state!="idle","invalidated actor starts bounded replanning")
  await finish()

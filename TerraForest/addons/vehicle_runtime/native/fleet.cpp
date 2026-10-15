@@ -9,6 +9,7 @@
 using namespace godot;
 namespace terraforest {
 void NativeVehicleFleet::_bind_methods(){
+    ADD_SIGNAL(MethodInfo("obstacles_changed",PropertyInfo(Variant::AABB,"bounds")));
     ClassDB::bind_method(D_METHOD("spawn","pose"),&NativeVehicleFleet::spawn);
     ClassDB::bind_method(D_METHOD("remove","identity"),&NativeVehicleFleet::remove);
     ClassDB::bind_method(D_METHOD("set_pose","identity","pose"),&NativeVehicleFleet::set_pose);
@@ -20,17 +21,20 @@ void NativeVehicleFleet::_bind_methods(){
     ClassDB::bind_method(D_METHOD("restore_storage_snapshot","data"),&NativeVehicleFleet::restore_storage_snapshot);
 }
 int NativeVehicleFleet::cell(const Vector3 &p){return int(p.x/32)|(int(p.y/32)<<8)|(int(p.z/32)<<16);}
+static AABB obstacle_bounds(const Transform3D &pose){return AABB(pose.origin-Vector3(5,5,5),Vector3(10,10,10));}
 void NativeVehicleFleet::remove_cell(int64_t id,const Vector3 &p){auto it=cells_.find(cell(p));if(it==cells_.end())return;it->second.erase(id);if(it->second.empty())cells_.erase(it);}
 int64_t NativeVehicleFleet::spawn(const Transform3D &pose){
     if(records_.size()>=65536 || next_==INT64_MAX || !NativeVehicleStorage::valid_pose(pose))return 0;
-    const int64_t id=next_++;records_.emplace(id,pose);cells_[cell(pose.origin)].insert(id);return id;
+    const int64_t id=next_++;records_.emplace(id,pose);cells_[cell(pose.origin)].insert(id);emit_signal("obstacles_changed",obstacle_bounds(pose));return id;
 }
-bool NativeVehicleFleet::remove(int64_t id){auto it=records_.find(id);if(it==records_.end())return false;remove_cell(id,it->second.origin);records_.erase(it);return true;}
+bool NativeVehicleFleet::remove(int64_t id){auto it=records_.find(id);if(it==records_.end())return false;const AABB bounds=obstacle_bounds(it->second);remove_cell(id,it->second.origin);records_.erase(it);emit_signal("obstacles_changed",bounds);return true;}
 bool NativeVehicleFleet::set_pose(int64_t id,const Transform3D &pose){
     auto it=records_.find(id);if(it==records_.end())return false;
     if(!NativeVehicleStorage::valid_pose(pose))return false;
+    if(it->second==pose)return true;
+    const AABB bounds=obstacle_bounds(it->second).merge(obstacle_bounds(pose));
     if(cell(it->second.origin)!=cell(pose.origin)){remove_cell(id,it->second.origin);cells_[cell(pose.origin)].insert(id);}
-    it->second=pose;return true;
+    it->second=pose;emit_signal("obstacles_changed",bounds);return true;
 }
 Dictionary NativeVehicleFleet::get_record(int64_t id) const {Dictionary out;auto it=records_.find(id);out["present"]=it!=records_.end();if(it!=records_.end()){out["identity"]=id;out["pose"]=it->second;}return out;}
 Dictionary NativeVehicleFleet::statistics() const {Dictionary out;out["records"]=int64_t(records_.size());out["cells"]=int64_t(cells_.size());out["next_identity"]=next_;return out;}
@@ -64,6 +68,6 @@ bool NativeVehicleFleet::restore_storage_snapshot(const PackedByteArray &data){
     Ref<NativeVehicleStorage> codec;codec.instantiate();Dictionary decoded=codec->decode_fleet(data);if(!bool(decoded["ok"]))return false;
     std::map<int64_t,Transform3D> records;std::unordered_map<int,std::set<int64_t>> cells;
     Array rows=decoded["records"];for(int i=0;i<rows.size();++i){Dictionary row=rows[i];int64_t id=row["identity"];Transform3D pose=row["pose"];records.emplace(id,pose);cells[cell(pose.origin)].insert(id);}
-    records_.swap(records);cells_.swap(cells);next_=decoded["next_identity"];return true;
+    records_.swap(records);cells_.swap(cells);next_=decoded["next_identity"];emit_signal("obstacles_changed",AABB());return true;
 }
 }

@@ -234,6 +234,8 @@ func _ready() -> void:
 		if actors.pool!=null:actors.pool.invalidate_navigation(bounds))
 	lakes.exclusion_changed.connect(func(bounds: AABB):
 		if actors.pool!=null:actors.pool.invalidate_navigation(bounds))
+	world_vehicle.fleet.obstacles_changed.connect(func(bounds: AABB):
+		if actors.pool!=null:actors.pool.invalidate_navigation(bounds))
 	actors.set_navigation_admission(func(point: Vector3):return lakes.depth_at(point-Vector3.UP*0.8)<=0)
 	ecosystem.harvested.connect(func():
 		terrain.changed_since_save=true

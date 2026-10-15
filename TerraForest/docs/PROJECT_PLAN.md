@@ -1,3 +1,8 @@
+> 2026-10-15 moving vehicle route invalidation: native pose changes publish
+> old/new bounds; unchanged parked cars do not restart routes. Main-world wiring
+> and bounded replanning pass; release fleet19 checks pass. Evidence:
+> evidence/vehicle_route_invalidation/. Traffic AI/damage still open; water unchanged.
+
 > 2026-10-15 actor/vehicle boundary: actor bodies and route checks now include
 > vehicle collision; chassis/placement/exit queries include actors. Retained
 > pass-through baseline now passes; route detour and main-world occupied-exit

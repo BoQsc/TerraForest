@@ -3,6 +3,7 @@
 extends Node
 var car: RigidBody3D
 var driving:=false
+var _obstacle_sync_time:=0.0
 var _camera_local: Transform3D
 var _player_layer:=0
 var _player_mask:=0
@@ -179,6 +180,11 @@ func _exit_tree() -> void:
 	if driving: Engine.physics_ticks_per_second=_physics_ticks
 func update(world: Node,delta: float) -> void:
 	if fleet_enabled:activation.update(world,delta)
+	elif is_instance_valid(car):
+		_obstacle_sync_time-=delta
+		if _obstacle_sync_time<=0:
+			_obstacle_sync_time=0.2
+			fleet.set_pose(car_identity,car.global_transform)
 	if not driving or not is_instance_valid(car): return
 	world.player.position=car.position # Existing vegetation/building focus follows the occupant.
 	world.player.velocity=Vector3.ZERO

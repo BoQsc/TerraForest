@@ -1,0 +1,21 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.3.280 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] New world
+[TerrainRewrite] New world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+PASS world loads
+PASS actor simulation enabled
+PASS native vehicle fixture installs
+PASS fixture has a supported exit
+PASS occupied exit is rejected in favour of other side
+PASS both actor-occupied exits refuse player placement
+PASS single vehicle chassis includes actor collision
+PASS wheel support rays exclude actors
+PASS actor has a route before vehicle change
+PASS unchanged vehicle leaves existing actor route intact
+PASS ordinary vehicle update invalidates intersecting actor route
+PASS invalidated actor starts bounded replanning
+[TerrainRewrite] Temporary test world: save skipped
+PASS ordinary compound save completes
+COMBINED_RESOURCE_ROUTE failures=0
