@@ -1,3 +1,9 @@
+> 2026-10-15 actor removal: reproduced orphan damage after editor deletion.
+> Editor/combat now share identity-based removal and clear orders, durability,
+> selection and visuals. Stale hits reject before tool wear or damage allocation.
+> Real-world ray/UI and combat checks preserve 80 coincident neighboring records.
+> Evidence: evidence/actor_removal/. No broader AI/population qualification.
+
 > 2026-10-15 furnished capture: editor capture now includes whole static model
 > objects alongside blocks using native region-bound filtering. Cottage capture
 > retains 13 objects, exact relative transforms under a rotated parent, library

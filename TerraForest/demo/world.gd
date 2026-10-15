@@ -1264,6 +1264,18 @@ func _pickup_reachable(point: Vector3) -> bool:
 	var query:=PhysicsRayQueryParameters3D.create(camera.global_position,point,3,[player.get_rid()])
 	return get_world_3d().direct_space_state.intersect_ray(query).is_empty()
 
+func _remove_actor(identity: int) -> bool:
+	var handle: int=actors.store.resolve_identity(identity)
+	if handle==0 or not actors.store.despawn(handle):return false
+	actors.orders.clear_target(identity)
+	world_attack.durability.forget("actor:%d"%identity)
+	if actor_authoring.selected_identity==identity:
+		actor_authoring.selected_identity=0;actor_authoring.selected_epoch=-1
+		if actors.renderer!=null:actors.renderer.set_selection_marker(actors.selection_marker,0)
+	actors.select_near(terrain.focus)
+	terrain.changed_since_save=true
+	return true
+
 func _place_inventory_model(history: RefCounted, collection: Node3D, transforms: PackedFloat32Array, protection: AABB, costs: PackedInt64Array) -> int:
 	if not _model_edit_available():
 		model_tool.placement_failure="World interaction unavailable"

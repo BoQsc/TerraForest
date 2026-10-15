@@ -21,11 +21,7 @@ func apply(world: Node,remove: bool) -> String:
 		var handle: int=hit.collider.entity_handle(world.actors.store)
 		if handle==0:return "Actor changed; try again."
 		var identity: int=world.actors.store.persistent_id(handle)
-		if not world.actors.store.despawn(handle):return "Actor changed; try again."
-		if identity==selected_identity:
-			selected_identity=0;world.actors.renderer.set_selection_marker(world.actors.selection_marker,0)
-		world.actors.orders.clear_target(identity)
-		world.actors.select_near(world.terrain.focus)
+		if not world._remove_actor(identity):return "Actor changed; try again."
 		return "Actor removed · F5 saves world."
 	if hit.collider is CharacterBody3D or hit.collider is RigidBody3D:return "Place actors on static ground or floors, not moving bodies."
 	if hit.normal.dot(Vector3.UP)<0.8:return "Choose more level ground for the actor."

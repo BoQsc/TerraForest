@@ -64,6 +64,7 @@ func apply_target(t: Dictionary) -> bool:
 	var hud=game.player_hud
 	var item: int=game.equipped_tool
 	if not TOOLS.has(item) or (item!=0 and hud.active_slot<0):return false
+	if t.kind=="actor" and (t.handle==0 or game.actors.store.resolve_identity(t.id)!=t.handle):return false
 	if t.kind=="cover" and (game.ground_cover._dirty.has(t.cell) or game.ground_cover._pending.has(t.cell)):return false
 	if t.kind=="model" and t.collection.is_removal_protected(t.id):
 		game._show_lake_notice("Empty stored contents before damaging this container");return false
@@ -93,8 +94,7 @@ func destroy(t: Dictionary) -> bool:
 			if not game.stroke_buffer.push_sweep(center,center,0.65,0,false,game.material_id,false):return false
 			game._consume_stroke();return game.terrain.pending_edit
 		"actor":
-			if not game.actors.store.despawn(t.handle):return false
-			game.actors.orders.clear_target(t.id);game.actors.select_near(game.terrain.focus);return true
+			return game._remove_actor(t.id)
 		"vehicle":
 			var vehicles=game.world_vehicle
 			if not vehicles.fleet.remove(t.id):return false

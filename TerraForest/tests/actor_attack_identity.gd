@@ -32,6 +32,8 @@ func run()->void:
  var target:Dictionary=game.world_attack.target()
  check(target.get("kind")=="actor" and target.get("id")==identity and target.get("handle")==handle,"physics hit identifies its exact actor despite coincident records")
  if "--authoring" in OS.get_cmdline_user_args():
+  var damage_before: int=game.world_attack.durability.record_count()
+  check(game.world_attack.apply_target(target) and game.world_attack.durability.record_count()==damage_before+1,"actor is wounded before editor removal")
   game.session_menu.toggle_developer();game.session_menu.activate_developer_slot(8)
   var hud=game.session_menu.developer_hud;hud.refresh()
   check(hud.panel.visible and hud.title.text=="DEVELOPMENT / Actors","actor toolbelt opens its own visible controls")
@@ -48,14 +50,22 @@ func run()->void:
   for child in hud.content.get_children():
    if child is Button and child.text=="Remove actor at aim":child.pressed.emit()
   check(game.actors.store.resolve_identity(identity)==0 and game.actor_authoring.selected_identity==0,"remove button retires exact hit and clears selection")
+  check(game.world_attack.durability.record_count()==damage_before and not game.actors.orders.get_target(identity).present,"editor removal clears persistent actor damage and orders")
   var intact:=true
   for other in others:intact=intact and game.actors.store.contains(other)
   check(intact,"editor removal preserves all eighty neighbouring records")
   game.terrain.shutdown();game.free();await process_frame
   print("ACTOR_AUTHORING_UI failures=",failures);quit(1 if failures else 0);return
  if target.get("id")==identity:
+  game.actor_authoring.selected_identity=identity
+  game.actor_authoring.selected_epoch=game.terrain.epoch
+  var damage_before: int=game.world_attack.durability.record_count()
+  game.actors.orders.set_target(identity,point+Vector3.RIGHT*3)
   for hit in 7:game.world_attack.apply_target(target)
   check(game.actors.store.resolve_identity(identity)==0,"attacked actor is retired")
+  check(game.actor_authoring.selected_identity==0 and not game.actors.orders.get_target(identity).present and game.world_attack.durability.record_count()==damage_before,"combat removal clears selected identity orders and damage")
+  var inventory_before: PackedByteArray=game.player_hud.inventory.capture_storage_snapshot()
+  check(not game.world_attack.apply_target(target) and game.world_attack.durability.record_count()==damage_before and game.player_hud.inventory.capture_storage_snapshot()==inventory_before,"stale actor hit cannot recreate damage or wear the tool")
   var intact:=true
   for other in others:intact=intact and game.actors.store.contains(other)
   check(intact,"all eighty neighbouring records remain intact")
