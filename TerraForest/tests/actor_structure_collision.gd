@@ -11,7 +11,7 @@ func _initialize() -> void:run.call_deferred()
 func run() -> void:
 	var world:=Node3D.new();root.add_child(world)
 	box(world,Vector3(0,-0.5,0),Vector3(10,1,10),2)
-	box(world,Vector3(0,1.5,0),Vector3(0.6,3,4),2)
+	box(world,Vector3(0,1.5,0),Vector3(0.6,3,4),4 if "--vehicle-layer" in OS.get_cmdline_user_args() else 2)
 	var store: RefCounted=ClassDB.instantiate("NativeEntityStore");store.configure(16)
 	var handle: int=store.spawn(Vector3(-1,1,0),Vector3.ZERO)
 	var orders: RefCounted=ClassDB.instantiate("NativeActorOrders");orders.configure(store);orders.set_target(store.persistent_id(handle),Vector3(2,1,0))
@@ -20,19 +20,19 @@ func run() -> void:
 		await physics_frame
 		pool.settle(1.0/Engine.physics_ticks_per_second,func(_bounds: AABB):return true)
 	var point: Vector3=store.get_position(handle)
-	check(point.x<-0.64 and point.x>-0.8,"active actor stops against authored-structure collision layer")
+	check(point.x<-0.64 and point.x>-0.8,"active actor stops against selected structure/vehicle collision layer")
 	check(point.y>0.88 and point.y<0.95,"authored-structure floor supports actor")
 	var body: CharacterBody3D=pool.get_child(0)
 	var avoidance: NavigationAgent3D
 	for child in body.get_children():
 		if child is NavigationAgent3D:avoidance=child
 	check(avoidance!=null and avoidance.avoidance_enabled,"active proxy participates in native avoidance")
-	check(body.collision_layer==8 and body.collision_mask==11,"actors collide with terrain, structures and other actors")
+	check(body.collision_layer==8 and body.collision_mask==15,"actors collide with terrain, structures, vehicles and other actors")
 	pool.select(Vector3(100,0,0),1,16)
 	check(body.collision_layer==0 and body.collision_mask==0,"sleeping proxy has no collision membership")
 	check(not avoidance.avoidance_enabled,"sleeping proxy leaves avoidance simulation")
 	pool.select(Vector3.ZERO,10,16)
-	check(body.collision_layer==8 and body.collision_mask==11,"reactivation restores world and actor collision layers")
+	check(body.collision_layer==8 and body.collision_mask==15,"reactivation restores world and actor collision layers")
 	check(avoidance.avoidance_enabled,"reactivation restores avoidance")
 	var before: Vector3=store.get_position(handle)
 	pool.settle(1.0/Engine.physics_ticks_per_second,func(_bounds: AABB):return false)

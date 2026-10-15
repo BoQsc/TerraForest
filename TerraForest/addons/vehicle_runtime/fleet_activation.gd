@@ -43,7 +43,7 @@ func admit(world: Node,id: int) -> bool:
 		if body==null:return false
 		bodies.append(body)
 	else:body.restore_parked(pose)
-	body.collision_layer=4;body.collision_mask=7
+	body.collision_layer=4;body.collision_mask=15
 	for wheel in body.wheel_rays:
 		wheel.collision_mask=7;wheel.add_exception(body)
 	body.show();residents[id]=body

@@ -84,7 +84,7 @@ func _install_vehicle(world: Node,pose: Transform3D) -> bool:
 	car=_vehicle_scene.instantiate()
 	car.profile_setup=profile_install
 	var allocated:=Time.get_ticks_usec() if profile_install else 0
-	car.transform=pose;car.collision_layer=4;car.collision_mask=3
+	car.transform=pose;car.collision_layer=4;car.collision_mask=15
 	world.add_child(car)
 	var attached:=Time.get_ticks_usec() if profile_install else 0
 	for wheel in car.wheel_rays: wheel.collision_mask=3
@@ -123,7 +123,7 @@ func spawn(world: Node) -> String:
 	# Vehicle art/physics use +Z forward; player view uses -Z.
 	var heading:=Basis(Vector3.UP,world.player.global_rotation.y+PI)
 	var box:=BoxShape3D.new();box.size=Vector3(2.2,1.8,4.4)
-	var query:=PhysicsShapeQueryParameters3D.new();query.shape=box;query.transform=Transform3D(heading,at+Vector3.UP*0.3);query.collision_mask=7
+	var query:=PhysicsShapeQueryParameters3D.new();query.shape=box;query.transform=Transform3D(heading,at+Vector3.UP*0.3);query.collision_mask=15
 	# Keep the ground below the initial chassis and reject walls/objects/player.
 	if bounds.has_point(world.player.global_position): return "Place vehicle farther from the player"
 	if not world.get_world_3d().direct_space_state.intersect_shape(query,1).is_empty(): return "Vehicle space is obstructed"
@@ -154,7 +154,7 @@ func safe_exit_position(world: Node) -> Vector3:
 		var feet: Vector3=hit.position+Vector3.UP*0.06
 		if not ready_bounds(world,AABB(feet-Vector3(.4,.1,.4),Vector3(.8,2,.8))): continue
 		var capsule:=CapsuleShape3D.new();capsule.height=1.8;capsule.radius=.34
-		var query:=PhysicsShapeQueryParameters3D.new();query.shape=capsule;query.transform=Transform3D(Basis.IDENTITY,feet+Vector3.UP*.9);query.collision_mask=7
+		var query:=PhysicsShapeQueryParameters3D.new();query.shape=capsule;query.transform=Transform3D(Basis.IDENTITY,feet+Vector3.UP*.9);query.collision_mask=15
 		query.exclude=[world.player.get_rid()]
 		if not world.get_world_3d().direct_space_state.intersect_shape(query,1).is_empty(): continue
 		return feet

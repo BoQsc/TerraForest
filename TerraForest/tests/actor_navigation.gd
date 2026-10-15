@@ -28,7 +28,7 @@ func _initialize() -> void:run.call_deferred()
 func run() -> void:
 	var scene:=Node3D.new();root.add_child(scene)
 	box(scene,Vector3(0,-0.5,2),Vector3(16,1,16),Color("34473d"))
-	box(scene,Vector3(0,1.5,0),Vector3(0.6,3,4),Color("936c49"),2)
+	box(scene,Vector3(0,1.5,0),Vector3(0.6,3,4),Color("936c49"),4 if "--vehicle-layer" in OS.get_cmdline_user_args() else 2)
 	var environment:=WorldEnvironment.new();environment.environment=Environment.new();environment.environment.background_mode=Environment.BG_COLOR;environment.environment.background_color=Color("17252c");environment.environment.ambient_light_source=Environment.AMBIENT_SOURCE_COLOR;environment.environment.ambient_light_color=Color.WHITE;environment.environment.ambient_light_energy=0.65;scene.add_child(environment)
 	var sun:=DirectionalLight3D.new();sun.rotation_degrees=Vector3(-50,-30,0);scene.add_child(sun)
 	var camera:=Camera3D.new();camera.projection=Camera3D.PROJECTION_ORTHOGONAL;camera.size=13;scene.add_child(camera);camera.position=Vector3(-8,12,13);camera.look_at(Vector3(0,0,2))

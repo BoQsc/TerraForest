@@ -23,9 +23,9 @@ void NativeEntityActivation::_bind_methods(){
 }
 void NativeEntityActivation::enable_navigation(const Callable &admission){
     admission_=admission;navigation_=true;
-    route_ray_.instantiate();route_ray_->set_collision_mask(3);
+    route_ray_.instantiate();route_ray_->set_collision_mask(7);
     route_shape_.instantiate();Ref<CapsuleShape3D> capsule;capsule.instantiate();capsule->set_radius(.35);capsule->set_height(1.8);
-    route_shape_->set_shape(capsule);route_shape_->set_collision_mask(3);route_shape_->set_margin(.001);
+    route_shape_->set_shape(capsule);route_shape_->set_collision_mask(7);route_shape_->set_margin(.001);
     invalidate_navigation();
 }
 void NativeEntityActivation::invalidate_navigation(const AABB &bounds){for(auto &p:proxies_)p.route.invalidate(bounds);}
@@ -80,9 +80,9 @@ Dictionary NativeEntityActivation::select(const Vector3 &center,double radius,in
         if(found!=proxies_.end())continue;
         auto empty=std::find_if(proxies_.begin(),proxies_.end(),[](const Proxy &p){return p.handle==0;});
         if(empty==proxies_.end()||!empty->body->bind_entity(store_,ids[i])){sleep_all();result["ok"]=false;return result;}
-        empty->route=ActorRoute();empty->handle=ids[i];// Actors occupy a dedicated layer; terrain (1) and authored structures (2)
+        empty->route=ActorRoute();empty->handle=ids[i];// Actors occupy a dedicated layer; terrain (1), authored structures (2), vehicles (4)
         // constrain movement; actor collision backs up active native avoidance.
-        empty->body->set_collision_layer(8);empty->body->set_collision_mask(11);
+        empty->body->set_collision_layer(8);empty->body->set_collision_mask(15);
         empty->body->set_crowd_active(true);
     }
     active_=ids;result["active"]=ids.size();return result;

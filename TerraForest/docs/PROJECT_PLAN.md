@@ -1,3 +1,9 @@
+> 2026-10-15 actor/vehicle boundary: actor bodies and route checks now include
+> vehicle collision; chassis/placement/exit queries include actors. Retained
+> pass-through baseline now passes; route detour and main-world occupied-exit
+> checks pass. Traffic AI/damage remain open. Evidence: evidence/actor_vehicle_collision/.
+> Water unchanged.
+
 > 2026-10-15 settlement actor review ready: HUD enable/place/select/send reaches
 > a real street destination; normal compound save and fresh-process reopen retain
 > exact actor/order snapshots. Review Settlement Actors.cmd opens a separate copy.
