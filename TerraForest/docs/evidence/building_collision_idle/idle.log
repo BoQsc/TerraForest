@@ -1,0 +1,14 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS 512 independent mesh chunks authored
+PASS initial nearby collision settles
+PASS idle frames and unchanged focus/radius perform zero selection scans
+PASS idle collision has no shape churn
+PASS moving focus resumes admission and retirement
+PASS edit adds a supported upper block
+PASS new mesh publication wakes collision after idle
+PASS disable drains every collision body
+PASS reenable restores nearby collision
+PASS collision returns to scan-free idle after changes
+COLLISION_IDLE_STATS {"edited":{"activate_max_ms":0.012,"attach_max_ms":0.044,"cook_max_ms":0.09,"enabled":true,"last_tick_ms":0.015,"live_pieces":12,"max_tick_ms":0.471,"pending_chunks":0,"pieces_built":20,"pieces_per_tick":1,"pieces_retired":8,"ready":true,"ready_chunks":12,"retire_max_ms":0.106,"retire_operations_per_tick":4,"retired_bodies":0,"retired_pieces":0,"selection_scans":23,"source_payload_bytes":221184,"ticks":53,"triangles_per_piece":1024,"unresolved_mesh_chunks":0},"final":{"activate_max_ms":0.012,"attach_max_ms":0.044,"cook_max_ms":0.09,"enabled":true,"last_tick_ms":0.014,"live_pieces":12,"max_tick_ms":0.471,"pending_chunks":0,"pieces_built":32,"pieces_per_tick":1,"pieces_retired":20,"ready":true,"ready_chunks":12,"retire_max_ms":0.106,"retire_operations_per_tick":4,"retired_bodies":0,"retired_pieces":0,"selection_scans":41,"source_payload_bytes":221184,"ticks":71,"triangles_per_piece":1024,"unresolved_mesh_chunks":0},"idle":{"activate_max_ms":0.012,"attach_max_ms":0.044,"cook_max_ms":0.09,"enabled":true,"last_tick_ms":0.0,"live_pieces":3,"max_tick_ms":0.471,"pending_chunks":0,"pieces_built":3,"pieces_per_tick":1,"pieces_retired":0,"ready":true,"ready_chunks":3,"retire_max_ms":0.02,"retire_operations_per_tick":4,"retired_bodies":0,"retired_pieces":0,"selection_scans":3,"source_payload_bytes":221184,"ticks":33,"triangles_per_piece":1024,"unresolved_mesh_chunks":0},"initial":{"activate_max_ms":0.012,"attach_max_ms":0.044,"cook_max_ms":0.09,"enabled":true,"last_tick_ms":0.022,"live_pieces":3,"max_tick_ms":0.471,"pending_chunks":0,"pieces_built":3,"pieces_per_tick":1,"pieces_retired":0,"ready":true,"ready_chunks":3,"retire_max_ms":0.02,"retire_operations_per_tick":4,"retired_bodies":0,"retired_pieces":0,"selection_scans":3,"source_payload_bytes":221184,"ticks":3,"triangles_per_piece":1024,"unresolved_mesh_chunks":0},"moved":{"activate_max_ms":0.012,"attach_max_ms":0.044,"cook_max_ms":0.09,"enabled":true,"last_tick_ms":0.014,"live_pieces":12,"max_tick_ms":0.471,"pending_chunks":0,"pieces_built":15,"pieces_per_tick":1,"pieces_retired":3,"ready":true,"ready_chunks":12,"retire_max_ms":0.106,"retire_operations_per_tick":4,"retired_bodies":0,"retired_pieces":0,"selection_scans":16,"source_payload_bytes":221184,"ticks":46,"triangles_per_piece":1024,"unresolved_mesh_chunks":0}}
+BUILDING_COLLISION_IDLE failures=0

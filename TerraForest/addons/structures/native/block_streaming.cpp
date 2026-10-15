@@ -12,6 +12,7 @@ double NativeBlockWorld::distance_to_focus(BlockKey k) const {
 }
 void NativeBlockWorld::set_focus(Vector3 p) {
     if(!p.is_finite())return;
+    if(p!=focus)collision_work_pending=true;
     focus=p;
     if(streaming&&p.distance_squared_to(residency_focus)>=64) {
         residency_focus=p;residency_dirty=true;set_process(true);
@@ -27,6 +28,7 @@ bool NativeBlockWorld::configure_streaming(bool enabled,double radius,int64_t ch
 }
 void NativeBlockWorld::release_visual(BlockKey key) {
     auto it=visuals.find(key);if(it==visuals.end())return;
+    collision_work_pending=true;
     mesh_bytes-=it->second.payload_bytes;
     retire_collision(it->second);
     memdelete(it->second.mesh);visuals.erase(it);

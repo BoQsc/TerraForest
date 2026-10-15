@@ -85,6 +85,8 @@ class NativeBlockWorld : public Node3D {
     Vector3 focus;
     double collision_radius=48.0;
     bool collisions=true;
+    bool collision_work_pending=true;
+    uint64_t collision_selection_scans=0;
     std::deque<StaticBody3D *> retired_collision;
     uint64_t collision_ticks=0,collision_pieces_built=0,collision_pieces_retired=0;
     double collision_last_ms=0,collision_max_ms=0;

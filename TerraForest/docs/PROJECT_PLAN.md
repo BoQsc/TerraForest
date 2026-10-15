@@ -1,3 +1,10 @@
+> 2026-10-16 native building idle cost: collision selection now sleeps after
+> settling and wakes on focus/radius/geometry changes. 512-chunk regression and
+> 480-piece streaming test pass. 64 towers/4480 models report zero idle scans,
+> frame p95 16.744 ms in one short run. Prior timing variation prevents attributing
+> the full frame result or closing intermittent hitches/thermal gates. Evidence:
+> evidence/building_collision_idle/.
+
 > 2026-10-16 stair-rail integration: a quarter-turned tower placed in the actual
 > persistent world retains exact rail identities/transforms and tower blocks
 > after save/browser return/fresh reopen. All four rail physics rays pass before

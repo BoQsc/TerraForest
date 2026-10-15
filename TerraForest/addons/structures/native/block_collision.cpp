@@ -49,8 +49,10 @@ void NativeBlockWorld::retire_collision(BlockVisual &visual) {
     visual.body=nullptr;visual.collision_at=0;visual.collision_ready=false;
 }
 bool NativeBlockWorld::update_collisions() {
-    const auto begin=Time::get_singleton()->get_ticks_usec();
     ++collision_ticks;
+    if(!collision_work_pending&&retired_collision.empty()) {collision_last_ms=0;return false;}
+    const auto begin=Time::get_singleton()->get_ticks_usec();
+    ++collision_selection_scans;
     BlockVisual *candidate=nullptr;BlockKey candidate_key;
     double best=1e300;
     for(auto &entry:visuals) {
@@ -107,6 +109,7 @@ bool NativeBlockWorld::update_collisions() {
     collision_max_ms=std::max(collision_max_ms,collision_last_ms);
     if(!retired_collision.empty())return true;
     for(const auto &entry:visuals)if(collision_near(entry.first)&&!entry.second.collision_ready)return true;
+    collision_work_pending=false;
     return false;
 }
 Dictionary NativeBlockWorld::collision_stats() const {
@@ -134,6 +137,7 @@ Dictionary NativeBlockWorld::collision_stats() const {
     result["triangles_per_piece"]=COLLISION_PIECE_TRIANGLES;result["pieces_per_tick"]=1;
     result["retire_operations_per_tick"]=COLLISION_RETIRE_PER_TICK;
     result["ticks"]=int64_t(collision_ticks);result["pieces_built"]=int64_t(collision_pieces_built);
+    result["selection_scans"]=int64_t(collision_selection_scans);
     result["pieces_retired"]=int64_t(collision_pieces_retired);
     result["last_tick_ms"]=collision_last_ms;result["max_tick_ms"]=collision_max_ms;
     result["cook_max_ms"]=collision_cook_max_ms;result["attach_max_ms"]=collision_attach_max_ms;

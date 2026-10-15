@@ -372,10 +372,13 @@ bool NativeBlockWorld::publish(BlockBake &&b) {
     Ref<ArrayMesh> mesh;mesh.instantiate();mesh->add_surface_from_arrays(Mesh::PRIMITIVE_TRIANGLES,arrays);mesh->surface_set_material(0,material);
     auto *instance=memnew(MeshInstance3D);instance->set_mesh(mesh);instance->set_position(Vector3(b.key.x*16,b.key.y*16,b.key.z*16));add_child(instance);
     visuals[b.key]={instance,nullptr,int(b.indices.size()/3),payload,b.lattice_width,vertices,indices};mesh_bytes+=payload;
+    collision_work_pending=true;
     settled.insert(b.key);budget_blocked.erase(b.key);published++;cache_bake(std::move(b));return true;
 }
 void NativeBlockWorld::set_collision_radius(double radius) {
-    if(!std::isfinite(radius)||radius<0||radius>256) return; collision_radius=radius;collisions=radius>0;
+    if(!std::isfinite(radius)||radius<0||radius>256) return;
+    if(radius!=collision_radius)collision_work_pending=true;
+    collision_radius=radius;collisions=radius>0;
 }
 void NativeBlockWorld::_process(double) {
     refresh_residency();

@@ -41,7 +41,7 @@ func run() -> void:
 	var asset: Resource=catalog.furnished_tower(3)
 	var comparison: bool="--shadow-comparison" in OS.get_cmdline_user_args()
 	var travel: bool="--collision-travel" in OS.get_cmdline_user_args()
-	for count in ([64] if comparison or travel else [1,16,64]):
+	for count in ([64] if comparison or travel or "--large-only" in OS.get_cmdline_user_args() else [1,16,64]):
 		var world=preload("res://addons/structures/structures_world.gd").new();root.add_child(world)
 		check(world.prepare() and catalog.register(world).size()==3,"fixture prepared %d"%count)
 		for c in [preload("res://addons/structures/storage_catalog.gd"),preload("res://addons/structures/window_catalog.gd"),preload("res://addons/structures/door_catalog.gd"),preload("res://addons/structures/guardrail_catalog.gd")]:check(not c.register(world).is_empty(),"model catalog registered %d"%count)
@@ -80,6 +80,7 @@ func run() -> void:
 				residents[key]["render"]=world.model(key).render_stats()
 			for frame in 60:await process_frame
 			var frames: Array=[];var cpu: Array=[];var gpu_render: Array=[];var cpu_render: Array=[];var previous:=Time.get_ticks_usec()
+			var collision_before: Dictionary=world.blocks.collision_stats()
 			for frame in 120:
 				await process_frame
 				var now:=Time.get_ticks_usec();frames.append((now-previous)/1000.0);previous=now
@@ -89,6 +90,8 @@ func run() -> void:
 			var row: Dictionary={"phase":phase,"towers":count,"blocks":world.blocks.stats(),"models":total_models,"residents":residents.duplicate(true),"nearest_tower_collision_ready":local_ready,"max_placement_call_us":maximum_call_us,"frame_p50_ms":percentile(frames,0.5),"frame_p95_ms":percentile(frames,0.95),"frame_max_ms":frames.max(),"engine_process_monitor_p95_ms":percentile(cpu,0.95),"draw_calls":Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME),"primitives":Performance.get_monitor(Performance.RENDER_TOTAL_PRIMITIVES_IN_FRAME)}
 			row["viewport_gpu_p95_ms"]=percentile(gpu_render,0.95)
 			row["viewport_render_cpu_p95_ms"]=percentile(cpu_render,0.95)
+			row["block_collision"]=world.blocks.collision_stats()
+			row["idle_collision_selection_scans"]=row.block_collision.selection_scans-collision_before.selection_scans
 			rows.append(row);print("TOWER_DENSITY_ROW ",JSON.stringify(row))
 			check(float(row.frame_p95_ms)<=20,"settled frame p95 <=20 ms diagnostic threshold %d"%count)
 			DirAccess.make_dir_recursive_absolute("res://reports")
