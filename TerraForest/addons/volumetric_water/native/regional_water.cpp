@@ -254,8 +254,10 @@ bool NativeRegionalWater::accept_patch(const Ref<NativeWaterTerrainPatch> &patch
             removed=std::min(it->second.water[i],removed);
             total-=removed;it->second.water[i]-=removed;
         }
-        changed(base+Vector3i(i%8,(i/8)%8,i/64));
+        Vector3i p=base+Vector3i(i%8,(i/8)%8,i/64);
+        if(!it->second.limited_building_edit||AABB(Vector3(p)*.5,Vector3(.5,.5,.5)).intersects(it->second.building_edit_bounds))changed(p);
     }
+    it->second.limited_building_edit=false;
     it->second.replace_water=false;
     prioritize_mesh(k);
     return true;
@@ -267,12 +269,20 @@ void NativeRegionalWater::invalidate(const AABB &bounds,bool replace_water){
 void NativeRegionalWater::invalidate_buildings(const AABB &bounds){
     // Building hulls affect only intersected volume, unlike terrain sampling.
     // accept_patch/changed still invalidate adjacent mesh owners for seams.
-    invalidate_regions(bounds,true);
+    invalidate_regions(bounds,true,true);
 }
-void NativeRegionalWater::invalidate_regions(const AABB &bounds,bool replace_water){
+void NativeRegionalWater::invalidate_regions(const AABB &bounds,bool replace_water,bool buildings){
     if(!bounds.position.is_finite()||!bounds.size.is_finite()||bounds.size.x<=0||bounds.size.y<=0||bounds.size.z<=0)return;
     cancel_mesh_batch();
-    for(auto &[k,r]:regions)if(AABB(Vector3(position(k))*4.0,Vector3(4,4,4)).intersects(bounds)){r.valid=false;r.replace_water|=replace_water;request(k);}
+    for(auto &[k,r]:regions)if(AABB(Vector3(position(k))*4.0,Vector3(4,4,4)).intersects(bounds)){
+        // Only narrow mesh notifications when every pending invalidation is a
+        // building edit. Terrain edits and restored unfinished regions retain
+        // full-region notifications. Multiple building edits merge their bounds.
+        if(buildings&&r.valid){r.limited_building_edit=true;r.building_edit_bounds=bounds;}
+        else if(buildings&&r.limited_building_edit)r.building_edit_bounds=r.building_edit_bounds.merge(bounds);
+        else r.limited_building_edit=false;
+        r.valid=false;r.replace_water|=replace_water;request(k);
+    }
 }
 bool NativeRegionalWater::begin_fill(const AABB &bounds,double level,const Vector3 &seed,int64_t amount){
     if(fill.running||!bounds.position.is_finite()||!bounds.size.is_finite()||!seed.is_finite()||!std::isfinite(level)||amount<-1||amount>int64_t(MAX_TOTAL-total))return false;

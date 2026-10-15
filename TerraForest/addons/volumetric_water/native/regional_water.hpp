@@ -58,6 +58,8 @@ class NativeRegionalWater : public godot::RefCounted {
         std::shared_ptr<const TerrainWaterContacts> contacts;
         std::shared_ptr<const StructureWaterContacts> structures;
         bool valid=false,has_density=false,replace_water=false;
+        bool limited_building_edit=false;
+        godot::AABB building_edit_bounds;
     };
     static WaterCellProfile profile(const Region &r,int i) {
         if(r.floor[i]==r.ceiling[i])return WaterCellProfile::make(nullptr,false,r.floor[i],r.ceiling[i]);
@@ -127,7 +129,7 @@ class NativeRegionalWater : public godot::RefCounted {
     const Region *get(const godot::Vector3i &p) const;
     void changed(const godot::Vector3i &p);
     void request(Key k);
-    void invalidate_regions(const godot::AABB &bounds,bool replace_water);
+    void invalidate_regions(const godot::AABB &bounds,bool replace_water,bool buildings=false);
     using Placement=std::vector<std::pair<godot::Vector3i,uint64_t>>;
     bool plan_connected_scoop(Placement &cells,uint64_t amount,godot::Dictionary &out) const;
     bool bucket_footprint(godot::Vector3i target,const godot::Vector3 &aim,uint64_t amount,bool collect,int &x0,int &z0,godot::Dictionary &out);

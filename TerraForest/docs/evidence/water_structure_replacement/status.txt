@@ -117,3 +117,16 @@ Previous continuation-only run:178,254,169,170,435ms respectively. Current frame
 maxima16.7-17.8ms. Both native targets built and installed. These short observations
 do not prove sustained60fps. Curved preparation still107ms aggregate worker;
 remaining latency and broader scale qualification stay open.
+
+2026-10-15 local building mesh notifications:
+A pending building-only region tracks merged edit bounds. On acceptance only wet
+cells intersecting those bounds notify dependent mesh owners. Terrain/mixed edits
+and restored unfinished regions retain the full notification fallback. Quantities
+and occupancy calculation are unchanged; each notified cell retains its existing
+neighbor halo. All tested unit shapes now notify8 cells rather than every wet
+cell in the4m region. Test compares per-owner vertex-buffer hashes against full
+cached reload for every shape; all agree. Compound terrain/buildings/water/bucket
+disk save/reopen passes. No snapshot format change; bounds are transient hints.
+Observed publication: slab54ms,stairs107ms,slope54ms,post42ms,sphere195ms;
+frame maxima16.2-17.1ms. Previous103,138,121,121,234ms. Not a sustained performance
+qualification; sphere preparation and broader scale remain open.

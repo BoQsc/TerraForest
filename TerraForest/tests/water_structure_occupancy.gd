@@ -25,6 +25,14 @@ func end_costs()->Dictionary:
  frame_us.sort()
  return {"frame_samples":frame_us.size(),"frame_max_ms":frame_us.back()/1000.0 if not frame_us.is_empty() else 0.0,"frame_median_ms":frame_us[frame_us.size()/2]/1000.0 if not frame_us.is_empty() else 0.0,"water_peak_us":peaks.duplicate(),"worker_slices":slices.duplicate(true)}
 
+func mesh_fingerprints()->Dictionary:
+ var fingerprints:Dictionary={}
+ for coordinate in game.lakes._meshes:
+  var mesh:Mesh=game.lakes._meshes[coordinate].mesh
+  if mesh!=null and mesh.get_surface_count()>0:
+   var vertices:PackedVector3Array=mesh.surface_get_arrays(0)[Mesh.ARRAY_VERTEX]
+   if not vertices.is_empty():fingerprints[coordinate]=hash(vertices.to_byte_array())
+ return fingerprints
 func mesh_volume(shape:int)->float:
  var mesh:Mesh=game.structures.blocks.preview_mesh(shape,0)
  var arrays:Array=mesh.surface_get_arrays(0)
@@ -79,6 +87,7 @@ func run():
   check(game.lakes.depth_at(inside)>0 and game.lakes.depth_at(outside)>0,"Shape %d starts with water inside and beside solid"%shape)
   var unchanged:Dictionary=amounts(game.lakes.capture_snapshot())
   var initial:int=game.lakes.statistics().water_ml
+  var changes_before:int=game.lakes.statistics().changes
   begin_costs()
   var started:=Time.get_ticks_usec()
   check(game.construction_inventory.place_block(game.structures.blocks,game.player_hud.inventory,target,shape),"Place actual construction shape %d"%shape)
@@ -87,6 +96,8 @@ func run():
   check(await ready_water(),"Shape %d water publishes"%shape)
   var elapsed_ms:float=(Time.get_ticks_usec()-started)/1000.0
   var costs:=end_costs();costs.dispatch_us=dispatch_us
+  costs.changed_cells=game.lakes.statistics().changes-changes_before
+  check(costs.changed_cells<=8,"Shape %d notifies only intersected half-metre cells"%shape)
   var removed:int=initial-game.lakes.statistics().water_ml
   var updated:Dictionary=amounts(game.lakes.capture_snapshot())
   var local_only:=true
@@ -100,11 +111,13 @@ func run():
   check(game.lakes.depth_at(outside)>0,"Shape %d preserves water in its empty space"%shape)
   var snapshot:PackedByteArray=game.lakes.capture_snapshot()
   var quantities:Dictionary=amounts(snapshot)
+  var incremental_meshes:=mesh_fingerprints()
   if shape==6:
    var diagnostic:=FileAccess.open("res://reports/water_building_shape_6.bin",FileAccess.WRITE);diagnostic.store_buffer(snapshot);diagnostic.close()
   check(game.lakes.restore_snapshot(snapshot),"Shape %d cached occupancy reloads"%shape)
   check(await ready_water(),"Shape %d reloaded water publishes"%shape)
   check(amounts(game.lakes.capture_snapshot())==quantities and game.lakes.depth_at(inside)==0 and game.lakes.depth_at(outside)>0,"Shape %d reload preserves geometry and quantities"%shape)
+  check(mesh_fingerprints()==incremental_meshes,"Shape %d incremental geometry matches full cached reload"%shape)
   results.shapes.append({"shape":shape,"removed_ml":removed,"cache_bytes":game.lakes.statistics().structure_contact_bytes,"publish_ms":elapsed_ms,"costs":costs})
   if shape in [3,6]:
    game.set_process(false);game.set_physics_process(false);game._clear_motion()
