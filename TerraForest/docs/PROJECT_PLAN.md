@@ -1,3 +1,9 @@
+> 2026-10-15 tower coverage audit: prior3-floor fixture walked only1 flight.
+> Extended native capsule route now reaches third floor and returns through
+> both landings/flights;8 checks pass with unchanged runtime/prefab. First test
+> settling failure retained. Evidence: evidence/tower_full_access/. This is
+> headless access only; furnished main-world tower remains the next M2 gap.
+
 > 2026-10-15 moving vehicle route invalidation: native pose changes publish
 > old/new bounds; unchanged parked cars do not restart routes. Main-world wiring
 > and bounded replanning pass; release fleet19 checks pass. Evidence:

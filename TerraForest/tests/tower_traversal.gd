@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: 0BSD
 extends SceneTree
 var failures:=0
+var landing_trace:Array=[]
 func check(ok: bool,label: String) -> void:
 	print(("PASS " if ok else "FAIL ")+label)
 	if not ok: failures+=1
@@ -14,6 +15,16 @@ func walk(player: CharacterBody3D,movement: RefCounted,direction: Vector3,ticks:
 		await physics_frame
 		player.velocity=movement.walking_velocity(direction,player.velocity,1.0/60.0,false,player.is_on_floor(),false)
 		movement.move_grounded(player,1.0/60.0)
+func walk_to(player: CharacterBody3D,movement: RefCounted,target: Vector3) -> bool:
+	for tick in 180:
+		var offset:=target-player.position;offset.y=0
+		if offset.length()<0.12 and absf(player.position.y-target.y)<0.2 and player.is_on_floor():
+			landing_trace.append({"target":target,"position":player.position,"ticks":tick,"arrived":true});return true
+		await physics_frame
+		player.velocity=movement.walking_velocity(offset.normalized() if offset.length()>=0.12 else Vector3.ZERO,player.velocity,1.0/60.0,false,player.is_on_floor(),false)
+		movement.move_grounded(player,1.0/60.0)
+	landing_trace.append({"target":target,"position":player.position,"arrived":false})
+	return false
 func run() -> void:
 	Engine.max_fps=60
 	GDExtensionManager.load_extension("res://addons/structures/structures.gdextension")
@@ -46,6 +57,15 @@ func run() -> void:
 		movement.move_grounded(player,1.0/60.0)
 	check(player.position.z>=4.5 and player.position.y>4.9,"capsule walks up flight onto next floor without jumping")
 	var ascent: Vector3=player.position
+	if "--all-floors" in OS.get_cmdline_user_args():
+		var upper:=true
+		for target: Vector3 in [Vector3(3,5,4.6),Vector3(3,5,-0.8),Vector3(0.5,5,-0.8),Vector3(0.5,9,4.6)]:
+			upper=await walk_to(player,movement,target) and upper
+		check(upper and player.position.y>8.9,"player walks the landing and second flight to the third floor")
+		var lower:=true
+		for target: Vector3 in [Vector3(0.5,5,-0.8),Vector3(3,5,-0.8),Vector3(3,5,4.6),Vector3(0.5,5,4.6)]:
+			lower=await walk_to(player,movement,target) and lower
+		check(lower,"player returns around landing to first flight")
 	await walk(player,movement,Vector3(0,0,-1),70)
 	check(player.position.z<0 and player.position.y<1.1,"capsule descends flight back to lower floor")
 	var wall:=obstacle(Vector3(3,2.5,1),Vector3(1,3,1))
@@ -62,5 +82,5 @@ func run() -> void:
 	ceiling.free()
 	DirAccess.make_dir_recursive_absolute("res://reports")
 	var file:=FileAccess.open("res://reports/tower_traversal.json",FileAccess.WRITE)
-	file.store_string(JSON.stringify({"failures":failures,"ascent_position":str(ascent),"scope":"native building collision and player capsule ascent descent and blocked clearance"}));file.close()
+	file.store_string(JSON.stringify({"failures":failures,"ascent_position":str(ascent),"landings":landing_trace,"scope":"native building collision and player capsule ascent descent and blocked clearance"}));file.close()
 	player.free();blocks.free();quit(1 if failures else 0)

@@ -1,0 +1,10 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS three-floor collision fixture placed
+PASS native stair collision ready
+PASS capsule walks up flight onto next floor without jumping
+PASS player walks the landing and second flight to the third floor
+PASS player returns around landing to first flight
+PASS capsule descends flight back to lower floor
+PASS step policy cannot climb tall wall
+PASS low ceiling prevents unsafe step-up
