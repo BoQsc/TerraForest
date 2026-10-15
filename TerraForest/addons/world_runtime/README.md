@@ -226,3 +226,5 @@ Stair clearance uses up to the movement-compatible 0.30 m lift. Starting near tr
 edges and continuing a saved route through one real furnished cottage are checked
 in `docs/evidence/actor_settlement_navigation/README.md`. This closes that bounded
 integration check, not all furnished routes or large-population qualification.
+
+Persistence registration supports `register_components(Array[Dictionary])` for setup transactions. Each entry has `name`, `capture`, `restore`, `validator`, and `empty`; all entries validate before any is installed. Duplicate names, invalid snapshots, attached hosts, or exceeding the existing 63-provider limit reject the entire batch. `register_component` remains compatible. Pickup initialization stages all native stores and unparented renderers, then registers the batch and publishes them; failure permits retry without partial state. Repeating preparation succeeds only for its original host.

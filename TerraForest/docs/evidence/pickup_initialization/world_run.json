@@ -1,0 +1,112 @@
+{
+  "copy": {
+    "created": true,
+    "slot": "combined_route_9fb1fbdfe5684b488067d11eb39094af",
+    "source_slot": "combined_gameplay",
+    "source_sha256": "25b19886c1b677c44cabce30b1bc39a9efb6614f40d6c733bfb990fa7e3d9052"
+  },
+  "phases": [
+    {
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--fullscreen",
+        "--resolution",
+        "1920x1080",
+        "--max-fps",
+        "60",
+        "--script",
+        "res://tests/combined_resource_route.gd",
+        "--",
+        "--world-slot=combined_route_9fb1fbdfe5684b488067d11eb39094af",
+        "--gameplay-construction",
+        "--ground-cover",
+        "--actors",
+        "--vehicle-fleet",
+        "--route-evidence=C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\combined_resource_route\\20261015T132611436510Z\\expected.bin"
+      ],
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "pid": 26132,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 14.177792200000113,
+        "passed": true
+      }
+    },
+    {
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--fullscreen",
+        "--resolution",
+        "1920x1080",
+        "--max-fps",
+        "60",
+        "--script",
+        "res://tests/combined_travel_route.gd",
+        "--",
+        "--world-slot=combined_route_9fb1fbdfe5684b488067d11eb39094af",
+        "--gameplay-construction",
+        "--ground-cover",
+        "--actors",
+        "--vehicle-fleet",
+        "--route-evidence=C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\combined_resource_route\\20261015T132611436510Z\\expected.bin"
+      ],
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "pid": 11064,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 26.53365020000274,
+        "passed": true
+      }
+    },
+    {
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--fullscreen",
+        "--resolution",
+        "1920x1080",
+        "--max-fps",
+        "60",
+        "--script",
+        "res://tests/combined_resource_route.gd",
+        "--",
+        "--world-slot=combined_route_9fb1fbdfe5684b488067d11eb39094af",
+        "--gameplay-construction",
+        "--ground-cover",
+        "--actors",
+        "--vehicle-fleet",
+        "--route-evidence=C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\combined_resource_route\\20261015T132611436510Z\\expected.bin",
+        "--reopen-route"
+      ],
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "pid": 6128,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 12.955826699999307,
+        "passed": true
+      }
+    }
+  ],
+  "revision": "7358350e8ecf4768ded4620ecd2d71f0225ec2e7",
+  "worktree_changes": [
+    " M TerraForest/addons/world_runtime/material_pickups.gd",
+    " M TerraForest/addons/world_runtime/world_persistence.gd",
+    "?? TerraForest/tests/pickup_initialization.gd"
+  ],
+  "git_metadata_available": true,
+  "source_unchanged": true
+}

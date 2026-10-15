@@ -1,3 +1,10 @@
+> 2026-10-15 pickup setup is transactional: late resource/provider failure
+> leaves no pickup stores, scene nodes or partial save registrations. Native
+> state stays staged until the full registration batch validates. Failure/retry
+> checks, 92 bundled item checks and the copied settlement gather/build/store/
+> travel/fresh-reopen regression pass. Source save unchanged. Evidence:
+> evidence/pickup_initialization/. No steady-state simulation changes.
+
 > 2026-10-15 dropped-item bundle follow-up fixed binary asset omissions:
 > baked drop meshes referenced building textures and woodland shader outside
 > declared bundles. Required assets are now included without whole runtime

@@ -1,0 +1,37 @@
+{
+  "addon": "world_runtime",
+  "archive_sha256": "71ae465977e4c480bc674d07714a275cdbfd42f94edc5bc9b0775933cdf08d63",
+  "steps": [
+    {
+      "phase": "import",
+      "exit_code": 0,
+      "ok": true
+    },
+    {
+      "phase": "load",
+      "exit_code": 0,
+      "ok": true
+    },
+    {
+      "phase": "pickups",
+      "exit_code": 0,
+      "ok": true,
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\.build\\addon_world_runtime_t227pusi",
+        "--fullscreen",
+        "--resolution",
+        "1920x1080",
+        "--max-fps",
+        "60",
+        "--script",
+        "res://bundle_pickups.gd"
+      ]
+    }
+  ],
+  "import_frame_delay_ms": 1000,
+  "resource_count": 54,
+  "pickups_fixture_sha256": "68ad95c7c8b5c7379c536c59fe29e664000a398793c0aa05b466d056fb3515c2",
+  "ok": true
+}

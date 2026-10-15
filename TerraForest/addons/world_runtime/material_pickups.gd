@@ -12,6 +12,7 @@ var render_status: Dictionary = {}
 var _elapsed := 0.0
 var _dirty := true
 var _transferring := false
+var _persistence: RefCounted
 
 func drop_one(inventory: RefCounted, slot: int, revision: int, point: Vector3) -> Dictionary:
 	return drop_stack(inventory,slot,revision,point,1)
@@ -45,7 +46,8 @@ func drop_stack(inventory: RefCounted, slot: int, revision: int, point: Vector3,
 	return {"ok":true,"id":id,"item":item,"reason":"Dropped %d %s"%[count,ITEMS[item]]}
 
 func prepare(persistence: RefCounted) -> bool:
-	if not stores.is_empty(): return true
+	if not stores.is_empty(): return persistence==_persistence and stores.size()==ITEMS.size() and renderers.size()==ITEMS.size()
+	if persistence==null or not persistence.has_method("register_components"):return false
 	if not ClassDB.class_exists("NativeEntityStore"):
 		GDExtensionManager.load_extension("res://addons/world_runtime/world_runtime.gdextension")
 	if not ClassDB.class_exists("NativeEntityRenderer"): return false
@@ -55,23 +57,32 @@ func prepare(persistence: RefCounted) -> bool:
 	for item: int in ITEMS:
 		schema.register_item(item,1 if item<100 or item>=301 else 999)
 		if item in [1,2,3,4]:schema.register_durable(item,200)
+	var next_stacks:Dictionary={};var next_stores:Dictionary={};var next_renderers:Dictionary={}
+	var components:Array[Dictionary]=[]
 	for item: int in ITEMS:
 		var stack: RefCounted=ClassDB.instantiate("NativeContainerStore")
-		if not stack.configure(schema,4096):return false
-		stacks[item]=stack
-		if not persistence.register_component("pickup_stacks_%d"%item,stack.capture_storage_snapshot,stack.restore_storage_snapshot,stack,stack.capture_storage_snapshot()):return false
+		if not stack.configure(schema,4096):_discard_renderers(next_renderers);return false
+		next_stacks[item]=stack
+		components.append({"name":"pickup_stacks_%d"%item,"capture":stack.capture_storage_snapshot,"restore":stack.restore_storage_snapshot,"validator":stack,"empty":stack.capture_storage_snapshot()})
 		var store: RefCounted = ClassDB.instantiate("NativeEntityStore")
-		if not store.configure(4096): return false
-		stores[item] = store
-		if not persistence.register_component("pickups_%d" % item, store.capture_storage_snapshot, _restore.bind(item), store, store.capture_storage_snapshot()): return false
+		if not store.configure(4096): _discard_renderers(next_renderers);return false
+		next_stores[item] = store
+		components.append({"name":"pickups_%d"%item,"capture":store.capture_storage_snapshot,"restore":_restore.bind(item),"validator":store,"empty":store.capture_storage_snapshot()})
 		var mesh: Mesh=preload("res://addons/volumetric_water/bucket_model.gd").mesh() if item==401 else load("res://addons/player_runtime/art/drops/%d.res"%item)
-		if mesh==null:return false
+		if mesh==null:_discard_renderers(next_renderers);return false
 		var renderer: MultiMeshInstance3D = ClassDB.instantiate("NativeEntityRenderer")
 		if not renderer.configure(store, mesh, 256):
-			renderer.free(); return false
+			renderer.free(); _discard_renderers(next_renderers);return false
 		renderer.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-		add_child(renderer); renderers[item] = renderer
+		next_renderers[item] = renderer
+	if not persistence.register_components(components):_discard_renderers(next_renderers);return false
+	_persistence=persistence
+	stores=next_stores;stacks=next_stacks;renderers=next_renderers
+	for renderer:Node in renderers.values():add_child(renderer)
 	return true
+
+func _discard_renderers(pending:Dictionary)->void:
+	for renderer:Node in pending.values():renderer.free()
 
 func _restore(data: PackedByteArray, item: int) -> bool:
 	if not stores[item].restore_storage_snapshot(data): return false

@@ -1,0 +1,19 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.3.280 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] World loaded
+[TerrainRewrite] World loaded
+[terrain-hitch] receive 133.19 ms at 2998
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS copied settlement opens
+PASS normal paid gameplay active
+PASS earned inventory restored exactly
+PASS earned chest contents restored exactly
+PASS gathered identities restored exactly
+PASS paid brick restored
+PASS E opens the existing furnished cottage chest
+PASS one stored stone protects its chest from deletion
+PASS 1920x1080 fullscreen full render scale
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+PASS ordinary compound save completes
+COMBINED_RESOURCE_ROUTE failures=0

@@ -1,0 +1,18 @@
+2026-10-15: atomic pickup initialization
+
+Previously prepare() published stores and registered providers one item at a
+time, then returned true on retry whenever stores was nonempty. Missing model
+assets or a late provider conflict could leave a partial adapter falsely ready.
+Now stores/stacks/renderers remain staged until batch registration validates.
+Unparented renderers are freed on failure; native resources leave scope. Existing
+providers remain untouched. Initialization binds to one persistence host.
+
+Atomic regression forces a last-item provider conflict twice, verifies no scene
+nodes/adapter records/registry mutations, then succeeds with a valid host. Batch
+duplicate-name and invalid-last-snapshot checks preserve the prior registry.
+Standalone extracted ZIP lifecycle passes92 checks across23 item types.
+Actual copied settlement regression passes gather/craft/place/chest, continuous
+walking/driving return and fresh-process exact inventory/chest/removal/block
+restoration. Canonical source hash unchanged. No save format or native binary
+changes. Registration work remains bounded startup orchestration, not simulation.
+This does not qualify general allocation failure, frame timing or endurance.

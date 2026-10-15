@@ -19,11 +19,22 @@ func enable_region_structures(metadata_first: bool = false, model_metadata_first
 	return true
 
 func register_component(name: String, capture: Callable, restore: Callable, validator: RefCounted, empty: PackedByteArray) -> bool:
-	if _terrain != null or _providers.size() >= 63 or _providers.has(name) or name == "terrain" or name.length()>48 or name.to_lower()!=name or name.to_utf8_buffer().size()!=name.length() or not name.is_valid_identifier() or not capture.is_valid() or not restore.is_valid() or validator == null:
-		return false
-	if not validator.validate_snapshot(empty):
-		return false
-	_providers[name] = {"capture": capture, "restore": restore, "validator": validator, "empty": empty}
+	return register_components([{"name":name,"capture":capture,"restore":restore,"validator":validator,"empty":empty}])
+
+# Setup-only transaction: validate all entries before publishing any provider.
+func register_components(components: Array[Dictionary]) -> bool:
+	if _terrain != null or components.is_empty() or _providers.size()+components.size()>63:return false
+	var staged:Dictionary={}
+	for entry:Dictionary in components:
+		for key in ["name","capture","restore","validator","empty"]:
+			if not entry.has(key):return false
+		if not entry.name is String:return false
+		var name:String=entry.name
+		if _providers.has(name) or staged.has(name) or name=="terrain" or name.length()>48 or name.to_lower()!=name or name.to_utf8_buffer().size()!=name.length() or not name.is_valid_identifier():return false
+		if not entry.capture is Callable or not entry.restore is Callable or not entry.validator is RefCounted or not entry.empty is PackedByteArray:return false
+		if not entry.capture.is_valid() or not entry.restore.is_valid() or not entry.validator.has_method("validate_snapshot") or not entry.validator.validate_snapshot(entry.empty):return false
+		staged[name]={"capture":entry.capture,"restore":entry.restore,"validator":entry.validator,"empty":entry.empty}
+	_providers.merge(staged)
 	return true
 
 func attach(terrain: Node) -> Error:
