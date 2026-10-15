@@ -27,6 +27,9 @@ var _meshes:Dictionary={}
 var _staged_meshes:Dictionary={}
 var _mesh_batch_id:int=0
 var _published_mesh_batch_id:int=0
+var _exclusion_notify_us:int=0
+var _accept_patch_us:int=0
+var _hull_snapshot_us:int=0
 var _mesh_publish_us:int=0
 var _mesh_max_publish_us:int=0
 var _mesh_commit_us:int=0
@@ -132,8 +135,10 @@ func _process(delta:float) -> void:
     _builder=ClassDB.instantiate("NativeWaterTerrainPatch");_builder.configure(request.coordinate);_revision=terrain.published_revision
     _builder_structure_revision=_structure_revision
     if blocks!=null:
+     var hull_started:=Time.get_ticks_usec()
      var solids:Dictionary=blocks.solid_hulls(AABB(Vector3(request.coordinate)*4,Vector3(4,4,4)))
      if not solids.ok or not _builder.set_structure_hulls(solids.hulls):_builder=null
+     _hull_snapshot_us=Time.get_ticks_usec()-hull_started
    if _builder!=null:
     _token=_builder.get_instance_id()
     if terrain.request_lake_slice(_builder,_token):_busy=true
@@ -161,7 +166,10 @@ func _process(delta:float) -> void:
  if after.changes!=_last_changes:terrain.changed_since_save=true;_last_changes=after.changes
  _notify_seconds+=delta
  if _have_bounds and _notify_seconds>=0.25:
-  _notify_seconds=0;_have_bounds=false;exclusion_changed.emit(_changed_bounds)
+  _notify_seconds=0;_have_bounds=false
+  var notify_started:=Time.get_ticks_usec()
+  exclusion_changed.emit(_changed_bounds)
+  _exclusion_notify_us=Time.get_ticks_usec()-notify_started
 func _publish_meshes() -> void:
  # Build/upload within the existing soft budget; only a complete immutable
  # batch becomes visible. Flow may advance between calls without mixed edges.
@@ -198,7 +206,9 @@ func _slice_ready(token:int,status:int,epoch_id:int,revision:int) -> void:
  if _builder==null or _builder_structure_revision!=_structure_revision or epoch_id!=terrain.epoch or revision!=terrain.published_revision or terrain.pending_edit or status==-4:_builder=null;return
  if status==0:return
  if status==1:
+  var accept_started:=Time.get_ticks_usec()
   if not water.accept_patch(_builder):terrain.message_changed.emit("Water occupancy cache budget reached; quantities retained")
+  _accept_patch_us=Time.get_ticks_usec()-accept_started
  else:terrain.message_changed.emit("Water terrain sampling failed; quantities retained")
  _builder=null
 func _transfer_bucket(from:Vector3,to:Vector3,pour:bool,inventory:RefCounted,slot:int,revision:int)->Dictionary:
@@ -236,6 +246,7 @@ func statistics() -> Dictionary:
  for item:Dictionary in _lakes.values():
   if not item.dirty and item.failure.is_empty():s.ready+=1
  s.bucket_native_us=_bucket_native_us;s.max_bucket_native_us=_max_bucket_native_us
+ s.exclusion_notify_us=_exclusion_notify_us;s.accept_patch_us=_accept_patch_us;s.hull_snapshot_us=_hull_snapshot_us
  s.mesh_publish_us=_mesh_publish_us;s.max_mesh_publish_us=_mesh_max_publish_us
  s.mesh_commit_us=_mesh_commit_us;s.max_mesh_commit_us=_mesh_max_commit_us;s.staged_meshes=_staged_meshes.size()
  s.render_ready=_staged_meshes.is_empty() and s.dirty_meshes==0 and s.pending_regions==0 and not s.fill_active

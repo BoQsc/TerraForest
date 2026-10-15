@@ -50,3 +50,20 @@ No water simulation or spillage was added. Release cached-fixture reload passes.
 Remaining: targeted update/frame-cost profiling, broader visual acceptance and
 scale qualification. Earlier 170-435ms edit-to-publication figures are not a
 60fps frame-time guarantee. No claim of project-wide completion is made.
+
+2026-10-15 targeted update timing (1920x1080 graphical world):
+The occupancy test now records dispatch time, edit-window process-frame intervals,
+and water publication/commit, hull snapshot, patch acceptance and notification
+costs. First post-edit interval is included; serialization and capture are outside
+these windows. See timing_current.json/log (five partial shapes, failures=0).
+Final run: dispatch 1.12-1.53ms; visible publication 208-454ms; mesh publication
+peaks 1.54-1.72ms. One slope window contains an 82.526ms frame interval despite
+small measured water main-thread sections. Other windows max 16.7-17.8ms.
+An earlier run also showed intermittent 73-92ms intervals; a second run was
+steadier (timing_second_run.json omits first interval, so is not definitive).
+These are frame intervals, not isolated CPU/GPU execution timings. Native last
+operation statistics can retain their last value when no new work occurs.
+No performance fix or stable-60fps claim follows from these measurements.
+Next: use existing terrain.lake_slice_profiled worker/queue signal to separate
+worker compute from scheduling latency; correlate remaining stalls with other
+world work/rendering. Keep accepted geometry/replacement semantics unchanged.

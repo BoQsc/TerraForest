@@ -1,6 +1,27 @@
 # SPDX-License-Identifier: 0BSD
 extends "res://tests/water_static_mining.gd"
 var results:Dictionary={}
+# Sample only edit-to-publication windows, excluding snapshot serialization and captures.
+var profiling:=false
+var last_frame_us:=0
+var frame_us:Array[int]=[]
+var peaks:Dictionary={}
+func sample_costs(record_frame:bool=true):
+ if not profiling:return
+ var now:=Time.get_ticks_usec()
+ if record_frame and last_frame_us:frame_us.append(now-last_frame_us)
+ last_frame_us=now
+ var stats:Dictionary=game.lakes.statistics()
+ for key in ["mesh_us","mesh_publish_us","mesh_commit_us","step_us","exclusion_notify_us","accept_patch_us","hull_snapshot_us"]:
+  peaks[key]=maxi(int(peaks.get(key,0)),int(stats.get(key,0)))
+func begin_costs():
+ frame_us.clear();peaks.clear();last_frame_us=Time.get_ticks_usec();profiling=true
+ for key in ["_mesh_publish_us","_mesh_commit_us","_exclusion_notify_us","_accept_patch_us","_hull_snapshot_us"]:game.lakes.set(key,0)
+func end_costs()->Dictionary:
+ sample_costs(false);profiling=false
+ frame_us.sort()
+ return {"frame_samples":frame_us.size(),"frame_max_ms":frame_us.back()/1000.0 if not frame_us.is_empty() else 0.0,"frame_median_ms":frame_us[frame_us.size()/2]/1000.0 if not frame_us.is_empty() else 0.0,"water_peak_us":peaks.duplicate()}
+
 func mesh_volume(shape:int)->float:
  var mesh:Mesh=game.structures.blocks.preview_mesh(shape,0)
  var arrays:Array=mesh.surface_get_arrays(0)
@@ -11,6 +32,7 @@ func mesh_volume(shape:int)->float:
   volume+=vertices[indices[i]].dot(vertices[indices[i+1]].cross(vertices[indices[i+2]]))/6.0
  return absf(volume)*1000000.0
 func run():
+ process_frame.connect(sample_costs)
  game=load("res://demo/world.tscn").instantiate();game.background_fps=60;root.add_child(game)
  var deadline:=Time.get_ticks_msec()+35000
  while not game.has_meta("water_bucket_review_ready") and Time.get_ticks_msec()<deadline:await process_frame
@@ -53,10 +75,13 @@ func run():
   check(game.lakes.depth_at(inside)>0 and game.lakes.depth_at(outside)>0,"Shape %d starts with water inside and beside solid"%shape)
   var unchanged:Dictionary=amounts(game.lakes.capture_snapshot())
   var initial:int=game.lakes.statistics().water_ml
+  begin_costs()
   var started:=Time.get_ticks_usec()
   check(game.construction_inventory.place_block(game.structures.blocks,game.player_hud.inventory,target,shape),"Place actual construction shape %d"%shape)
+  var dispatch_us:=Time.get_ticks_usec()-started
   check(await ready_water(),"Shape %d water publishes"%shape)
   var elapsed_ms:float=(Time.get_ticks_usec()-started)/1000.0
+  var costs:=end_costs();costs.dispatch_us=dispatch_us
   var removed:int=initial-game.lakes.statistics().water_ml
   var updated:Dictionary=amounts(game.lakes.capture_snapshot())
   var local_only:=true
@@ -75,7 +100,7 @@ func run():
   check(game.lakes.restore_snapshot(snapshot),"Shape %d cached occupancy reloads"%shape)
   check(await ready_water(),"Shape %d reloaded water publishes"%shape)
   check(amounts(game.lakes.capture_snapshot())==quantities and game.lakes.depth_at(inside)==0 and game.lakes.depth_at(outside)>0,"Shape %d reload preserves geometry and quantities"%shape)
-  results.shapes.append({"shape":shape,"removed_ml":removed,"cache_bytes":game.lakes.statistics().structure_contact_bytes,"publish_ms":elapsed_ms})
+  results.shapes.append({"shape":shape,"removed_ml":removed,"cache_bytes":game.lakes.statistics().structure_contact_bytes,"publish_ms":elapsed_ms,"costs":costs})
   if shape in [3,6]:
    game.set_process(false);game.set_physics_process(false);game._clear_motion()
    game.camera.global_position=Vector3(target)+Vector3(2,1.6,2)

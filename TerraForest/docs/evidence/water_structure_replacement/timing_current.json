@@ -1,0 +1,115 @@
+{
+  "block": 1,
+  "failures": 0,
+  "placed": true,
+  "shapes": [
+    {
+      "cache_bytes": 9056,
+      "costs": {
+        "dispatch_us": 1218,
+        "frame_max_ms": 17.809,
+        "frame_median_ms": 16.566,
+        "frame_samples": 15,
+        "water_peak_us": {
+          "accept_patch_us": 68,
+          "exclusion_notify_us": 157,
+          "hull_snapshot_us": 79,
+          "mesh_commit_us": 217,
+          "mesh_publish_us": 1540,
+          "mesh_us": 556,
+          "step_us": 0
+        }
+      },
+      "publish_ms": 235.989,
+      "removed_ml": 500000,
+      "shape": 2
+    },
+    {
+      "cache_bytes": 22800,
+      "costs": {
+        "dispatch_us": 1118,
+        "frame_max_ms": 16.831,
+        "frame_median_ms": 16.624,
+        "frame_samples": 17,
+        "water_peak_us": {
+          "accept_patch_us": 102,
+          "exclusion_notify_us": 145,
+          "hull_snapshot_us": 26,
+          "mesh_commit_us": 232,
+          "mesh_publish_us": 1550,
+          "mesh_us": 619,
+          "step_us": 0
+        }
+      },
+      "publish_ms": 271.626,
+      "removed_ml": 625000,
+      "shape": 3
+    },
+    {
+      "cache_bytes": 28032,
+      "costs": {
+        "dispatch_us": 1433,
+        "frame_max_ms": 82.526,
+        "frame_median_ms": 16.538,
+        "frame_samples": 15,
+        "water_peak_us": {
+          "accept_patch_us": 74,
+          "exclusion_notify_us": 141,
+          "hull_snapshot_us": 24,
+          "mesh_commit_us": 228,
+          "mesh_publish_us": 1541,
+          "mesh_us": 515,
+          "step_us": 0
+        }
+      },
+      "publish_ms": 271.875,
+      "removed_ml": 500000,
+      "shape": 4
+    },
+    {
+      "cache_bytes": 55168,
+      "costs": {
+        "dispatch_us": 1189,
+        "frame_max_ms": 17.048,
+        "frame_median_ms": 16.684,
+        "frame_samples": 13,
+        "water_peak_us": {
+          "accept_patch_us": 68,
+          "exclusion_notify_us": 0,
+          "hull_snapshot_us": 12,
+          "mesh_commit_us": 224,
+          "mesh_publish_us": 1620,
+          "mesh_us": 796,
+          "step_us": 0
+        }
+      },
+      "publish_ms": 207.699,
+      "removed_ml": 250000,
+      "shape": 5
+    },
+    {
+      "cache_bytes": 221216,
+      "costs": {
+        "dispatch_us": 1526,
+        "frame_max_ms": 16.707,
+        "frame_median_ms": 16.665,
+        "frame_samples": 28,
+        "water_peak_us": {
+          "accept_patch_us": 90,
+          "exclusion_notify_us": 149,
+          "hull_snapshot_us": 33,
+          "mesh_commit_us": 228,
+          "mesh_publish_us": 1717,
+          "mesh_us": 651,
+          "step_us": 0
+        }
+      },
+      "publish_ms": 453.517,
+      "removed_ml": 466504,
+      "shape": 6
+    }
+  ],
+  "target": "(800, 47, 1292)",
+  "water_overlap": false,
+  "water_unchanged": false
+}
