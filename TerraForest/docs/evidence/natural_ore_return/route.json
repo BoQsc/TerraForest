@@ -1,0 +1,1053 @@
+{
+  "failures": 0,
+  "rows": [
+    {
+      "after": [
+        0.0556640625,
+        0.0556640625,
+        0.0,
+        0.4560546875,
+        0.4560546875,
+        0.3974609375,
+        0.4560546875,
+        0.4560546875,
+        0.3974609375,
+        -0.8486328125,
+        -0.8486328125,
+        -0.5654296875,
+        -0.1171875,
+        -0.1171875,
+        0.1630859375,
+        -0.1171875,
+        -0.1171875,
+        0.1630859375,
+        -0.8486328125,
+        -0.8486328125,
+        -0.5654296875,
+        -0.1171875,
+        -0.1171875,
+        0.1630859375,
+        -0.1171875,
+        -0.1171875,
+        0.1630859375
+      ],
+      "before": [
+        0.0557279586791992,
+        0.0557279586791992,
+        0.0,
+        0.455996513366699,
+        0.455996513366699,
+        0.397674560546875,
+        0.455996513366699,
+        0.455996513366699,
+        0.397674560546875,
+        -0.848857879638672,
+        -0.848857879638672,
+        -0.899495124816895,
+        -0.117238998413086,
+        -0.117238998413086,
+        -0.193424701690674,
+        -0.117238998413086,
+        -0.117238998413086,
+        -0.193424701690674,
+        -0.848857879638672,
+        -0.848857879638672,
+        -0.899495124816895,
+        -0.117238998413086,
+        -0.117238998413086,
+        -0.193424701690674,
+        -0.117238998413086,
+        -0.117238998413086,
+        -0.193424701690674
+      ],
+      "material": 8,
+      "points": "[(721.8857, 81.78541, 399.5143), (721.8857, 81.78541, 399.9143), (721.8857, 81.78541, 400.3143), (721.8857, 82.0854, 399.5143), (721.8857, 82.0854, 399.9143), (721.8857, 82.0854, 400.3143), (721.8857, 82.38541, 399.5143), (721.8857, 82.38541, 399.9143), (721.8857, 82.38541, 400.3143), (722.2857, 81.78541, 399.5143), (722.2857, 81.78541, 399.9143), (722.2857, 81.78541, 400.3143), (722.2857, 82.0854, 399.5143), (722.2857, 82.0854, 399.9143), (722.2857, 82.0854, 400.3143), (722.2857, 82.38541, 399.5143), (722.2857, 82.38541, 399.9143), (722.2857, 82.38541, 400.3143), (722.6857, 81.78541, 399.5143), (722.6857, 81.78541, 399.9143), (722.6857, 81.78541, 400.3143), (722.6857, 82.0854, 399.5143), (722.6857, 82.0854, 399.9143), (722.6857, 82.0854, 400.3143), (722.6857, 82.38541, 399.5143), (722.6857, 82.38541, 399.9143), (722.6857, 82.38541, 400.3143)]",
+      "removed": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "target": "(722.2857, 82.38541, 399.9143)"
+    }
+  ],
+  "walk": [
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(843.7161, 142.3341, 397.9107)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(842.341, 143.1919, 397.9221)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(840.9659, 144.0429, 397.9336)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(839.5908, 144.8858, 397.945)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(838.2156, 145.7245, 397.9565)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(836.8405, 146.551, 397.9679)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(835.4654, 147.2893, 397.9793)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(834.108, 147.3174, 397.9912)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(832.8655, 146.6875, 398.0016)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(831.6585, 145.9857, 398.0117)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(830.4555, 145.2982, 398.0219)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(829.2526, 144.598, 398.0321)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(828.0504, 143.8876, 398.0425)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(826.8441, 143.1959, 398.0526)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(825.6371, 142.4845, 398.0631)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(824.4348, 141.7955, 398.0735)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(823.2241, 141.0904, 398.0843)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(822.0212, 140.3922, 398.0948)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(820.815, 139.6898, 398.1057)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(819.6124, 138.9813, 398.1164)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(818.4092, 138.2938, 398.1266)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(817.2087, 137.595, 398.1367)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(816.012, 136.8973, 398.1469)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(814.8097, 136.198, 398.1572)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(813.6072, 135.4988, 398.1675)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(812.4051, 134.7995, 398.1779)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(811.2037, 134.0946, 398.1887)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(810.003, 133.4022, 398.1989)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(808.8052, 132.7059, 398.2091)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(807.6076, 132.0092, 398.2193)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(806.4061, 131.3091, 398.2298)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(805.205, 130.6101, 398.2401)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(804.0068, 129.9143, 398.2503)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(802.8053, 129.2142, 398.2609)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(801.6064, 128.5183, 398.2715)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(800.4043, 127.808, 398.2822)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(799.1998, 127.108, 398.2934)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(797.9976, 126.4188, 398.3036)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(796.7955, 125.7194, 398.3144)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(795.5978, 125.0122, 398.3248)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(794.3914, 124.3202, 398.3364)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(793.1895, 123.6199, 398.3474)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(791.9877, 122.9205, 398.3586)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(790.7899, 122.2245, 398.3692)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(789.5876, 121.5249, 398.3803)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(788.3815, 120.8217, 398.3921)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(787.1758, 120.1157, 398.4038)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(785.9712, 119.4203, 398.4146)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(784.7646, 118.7177, 398.4264)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(783.5623, 118.0075, 398.4377)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(782.3607, 117.3186, 398.4489)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(781.1548, 116.6155, 398.4604)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(779.9564, 115.9072, 398.4708)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(778.7499, 115.217, 398.4817)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(777.5478, 114.5068, 398.492)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(776.3368, 113.8123, 398.5022)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(775.1251, 113.1072, 398.5118)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(773.9173, 112.4069, 398.5207)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(772.7095, 111.706, 398.529)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(771.4982, 111.0011, 398.5367)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(770.2902, 110.2901, 398.5446)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(769.078, 109.5961, 398.5519)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(767.8713, 108.8819, 398.5596)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(766.6583, 108.1891, 398.5675)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(765.4506, 107.4886, 398.5751)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(764.2441, 106.7866, 398.5829)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(763.0457, 106.0786, 398.5912)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(761.8367, 105.3898, 398.6001)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(760.6255, 104.6842, 398.6077)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(759.4224, 103.9759, 398.616)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(758.2154, 103.2852, 398.6242)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(757.0176, 102.579, 398.6335)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(755.8108, 101.8832, 398.6422)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(754.6018, 101.1848, 398.6509)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(753.3947, 100.4842, 398.659)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(752.192, 99.77563, 398.6682)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(750.9854, 99.08462, 398.6768)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(749.7832, 98.38644, 398.6858)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(748.5764, 97.68397, 398.6945)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(747.3738, 96.98524, 398.7039)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(746.1665, 96.28491, 398.7131)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(744.9592, 95.58338, 398.7224)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(743.7598, 94.86694, 398.732)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(742.5523, 94.18525, 398.742)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(741.3453, 93.47311, 398.7512)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(740.1389, 92.78257, 398.7606)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(738.9363, 92.08356, 398.771)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(737.7289, 91.37192, 398.7811)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(736.5175, 90.67837, 398.7906)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(735.3108, 89.97584, 398.8009)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(734.1033, 89.27506, 398.8113)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(732.9009, 88.57613, 398.8221)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(731.7085, 87.86735, 398.8332)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(730.5025, 87.18291, 398.8444)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(729.2965, 86.48068, 398.8553)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(728.0934, 85.77213, 398.8663)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(726.8863, 85.08092, 398.8773)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(725.6792, 84.37971, 398.8889)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(724.4722, 83.66733, 398.9005)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(723.2651, 82.97655, 398.9125)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(722.3449, 82.58189, 400.289)"
+    },
+    {
+      "floor": false,
+      "loading": false,
+      "position": "(722.2871, 82.19357, 399.7071)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(722.2789, 82.40087, 398.3665)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(723.65, 83.51992, 396.9984)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(725.0224, 84.34224, 396.9135)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(726.489, 85.19795, 396.9192)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(727.8641, 85.95739, 396.9307)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(729.2393, 86.77835, 396.9421)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(730.6144, 87.56512, 396.9536)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(731.9895, 88.3642, 396.965)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(733.3646, 89.15234, 396.9764)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(734.7397, 89.91178, 396.9879)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(736.1149, 90.74094, 396.9993)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(737.49, 91.52772, 397.0108)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(738.8651, 92.32407, 397.0222)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(740.2402, 93.104, 397.0337)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(741.6154, 93.88121, 397.0451)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(742.9905, 94.69122, 397.0565)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(744.3656, 95.49439, 397.068)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(745.7407, 96.2839, 397.0794)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(747.1158, 97.05563, 397.0909)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(748.491, 97.85471, 397.1023)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(749.8661, 98.65242, 397.1138)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(751.2412, 99.45561, 397.1252)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(752.6163, 100.2478, 397.1367)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(753.9915, 101.01, 397.1481)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(755.3666, 101.831, 397.1595)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(756.7417, 102.6164, 397.171)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(758.1168, 103.4196, 397.1824)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(759.4919, 104.2132, 397.1939)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(760.8671, 104.9753, 397.2053)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(762.2422, 105.8018, 397.2168)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(763.6173, 106.5831, 397.2282)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(764.9924, 107.3862, 397.2397)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(766.3676, 108.1785, 397.2511)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(767.7427, 108.9475, 397.2625)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(769.1178, 109.763, 397.274)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(770.4929, 110.5552, 397.2854)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(771.868, 111.3543, 397.2969)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(773.2432, 112.1384, 397.3083)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(774.6183, 112.932, 397.3198)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(775.9934, 113.7324, 397.3312)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(777.3685, 114.5315, 397.3427)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(778.7437, 115.3265, 397.3541)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(780.1188, 116.1064, 397.3655)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(781.4939, 116.9164, 397.377)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(782.869, 117.7046, 397.3884)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(784.2441, 118.5037, 397.3999)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(785.6193, 119.3, 397.4113)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(786.9944, 120.0813, 397.4228)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(788.3695, 120.8886, 397.4342)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(789.7446, 121.6781, 397.4456)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(791.1198, 122.4772, 397.4571)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(792.4949, 123.2735, 397.4685)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(793.87, 124.0685, 397.48)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(795.2451, 124.8621, 397.4914)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(796.6202, 125.6557, 397.5029)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(797.9954, 126.4521, 397.5143)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(799.3705, 127.2484, 397.5258)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(800.7456, 128.0447, 397.5372)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(802.1207, 128.8424, 397.5486)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(803.4958, 129.6387, 397.5601)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(804.871, 130.4336, 397.5715)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(806.2461, 131.2312, 397.583)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(807.6212, 132.0316, 397.5944)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(808.9963, 132.8293, 397.6059)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(810.3715, 133.6338, 397.6173)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(811.7466, 134.4288, 397.6288)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(813.1217, 135.2237, 397.64)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(814.4968, 136.0213, 397.6512)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(815.8719, 136.8203, 397.6624)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(817.2471, 137.6166, 397.6736)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(818.6222, 138.4157, 397.6848)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(819.9973, 139.2147, 397.696)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(821.3724, 140.0137, 397.7073)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(822.7476, 140.8114, 397.7185)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(824.1227, 141.6104, 397.7297)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(825.4978, 142.4094, 397.7409)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(826.8729, 143.2071, 397.7521)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(828.248, 144.0061, 397.7633)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(829.6232, 144.797, 397.7746)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(830.9983, 145.6042, 397.7858)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(832.3734, 146.4032, 397.797)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(833.7485, 147.1715, 397.8082)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(835.1196, 147.3619, 397.8199)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(836.3912, 146.834, 397.8316)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(837.5878, 146.1139, 397.8437)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(838.7826, 145.3893, 397.8553)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(839.9782, 144.6671, 397.8671)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(841.1682, 143.9355, 397.8784)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(842.3595, 143.1944, 397.8894)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(843.5447, 142.4435, 397.8972)"
+    },
+    {
+      "floor": true,
+      "loading": false,
+      "position": "(844.7272, 141.7098, 397.9014)"
+    }
+  ]
+}

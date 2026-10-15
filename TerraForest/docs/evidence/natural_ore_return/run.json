@@ -1,0 +1,96 @@
+{
+  "copy": {
+    "created": true,
+    "slot": "natural_ore_ddcb5a304aec44d889f55842da52f4dd",
+    "source_slot": "cave_stage_7715b685870243ae972039d1ac7294de",
+    "source_sha256": "05f1c0c5fcaa9c823e846af4d7a88e5abd73ca38c562d9af44c2485529f44a81"
+  },
+  "phases": [
+    {
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--headless",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--script",
+        "res://tests/natural_ore_survey.gd"
+      ],
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "pid": 2108,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 0.45658710000134306,
+        "passed": true
+      }
+    },
+    {
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--fullscreen",
+        "--resolution",
+        "1920x1080",
+        "--max-fps",
+        "60",
+        "--script",
+        "res://tests/natural_ore_gameplay.gd",
+        "--",
+        "--world-slot=natural_ore_ddcb5a304aec44d889f55842da52f4dd",
+        "--gameplay-construction",
+        "--route-evidence=C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\geology_rewards_route\\20261015T200253925389Z\\expected.bin",
+        "--walk-iron"
+      ],
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "pid": 28304,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 61.540749199994025,
+        "passed": true
+      }
+    },
+    {
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--fullscreen",
+        "--resolution",
+        "1920x1080",
+        "--max-fps",
+        "60",
+        "--script",
+        "res://tests/natural_ore_gameplay.gd",
+        "--",
+        "--world-slot=natural_ore_ddcb5a304aec44d889f55842da52f4dd",
+        "--gameplay-construction",
+        "--route-evidence=C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\geology_rewards_route\\20261015T200253925389Z\\expected.bin",
+        "--walk-iron",
+        "--reopen-route"
+      ],
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "pid": 29112,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 11.810248299996601,
+        "passed": true
+      }
+    }
+  ],
+  "revision": "65b58bf3ded972e69b10744daea38f2b3c5f0dad",
+  "worktree_changes": [
+    " M TerraForest/tests/natural_ore_gameplay.gd",
+    " M TerraForest/tools/run_geology_rewards_route.py"
+  ],
+  "git_metadata_available": true,
+  "source_unchanged": true
+}

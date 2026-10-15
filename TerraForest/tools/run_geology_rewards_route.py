@@ -52,7 +52,8 @@ def main():
                    '--route-evidence=' + str(folder / 'expected.bin'),
                    *(['--walk-iron'] if args.walk_iron else []),
                    *(['--reopen-route'] if phase == 'reopen' else [])]
-        result = execute(command, output, 90, 'COMBINED_RESOURCE_ROUTE failures=0')
+        # The walking case includes both descent and return, in addition to startup.
+        result = execute(command, output, 120 if args.walk_iron else 90, 'COMBINED_RESOURCE_ROUTE failures=0')
         metadata['phases'].append(dict(command=command, result=result))
         passed = passed and result['passed']
         if not passed:break

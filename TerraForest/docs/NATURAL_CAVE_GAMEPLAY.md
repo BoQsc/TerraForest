@@ -34,6 +34,12 @@ waypoints, so unassisted ore recognition, the copper walking route and sustained
 mining performance remain open. See `evidence/natural_ore_walk`. The existing
 60 m cave walk is separate supporting evidence.
 
+The same iron trip now includes walking back to the surface after mining and
+restoring that surface position after reload. The direct line caught on the
+excavation edge; walking around the removed floor succeeded. This does not
+promise automatic traversal of arbitrary mining holes. Evidence and both
+results are retained in `evidence/natural_ore_return`.
+
 Startup retained existing generated-component capture rejections while the
 world was incomplete; the final compound save and fresh reopen succeeded.
 Reopen also recorded a 123.45 ms terrain receive hitch. These are not resolved

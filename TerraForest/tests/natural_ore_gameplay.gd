@@ -41,6 +41,8 @@ func run()->void:
  if "--reopen-route" in OS.get_cmdline_user_args():
   var expected:Dictionary=FileAccess.open(evidence,FileAccess.READ).get_var()
   check(game.player_hud.inventory.capture_storage_snapshot()==expected.inventory,"exact mined inventory and tool wear restore")
+  if expected.has("return_position"):
+   check(game.player.position.distance_to(expected.return_position)<0.1 and not game.fly,"surface return position restores on foot")
   for row:Dictionary in expected.rows:
    var restored:PackedFloat32Array=await densities(row.points)
    check(restored==row.after,"excavated density samples restore exactly for ore %d"%row.material)
@@ -98,7 +100,20 @@ func run()->void:
    await RenderingServer.frame_post_draw
    root.get_texture().get_image().save_png(evidence+".%d.png"%material)
   check(rows.size()==materials.size(),"requested natural ore cases completed")
-  var file:=FileAccess.open(evidence,FileAccess.WRITE);file.store_var({"inventory":game.player_hud.inventory.capture_storage_snapshot(),"rows":rows});file.close()
+  var expected:Dictionary={"inventory":game.player_hud.inventory.capture_storage_snapshot(),"rows":rows}
+  if walking and failures==0:
+   var iron:Vector3=candidates[8].surface
+   var along:float=(iron-route.points[0]).dot(route.direction)
+   var center:Vector3=route.points[0]+route.direction*along
+   # Avoid the floor that was just removed; this is walking around the cut,
+   # not filling it or teleporting the player across its lip.
+   check(await walk_to(center+Vector3(0,0,-2)),"walk around excavated floor edge")
+   if failures==0:check(await walk_to(center-route.direction*3+Vector3(0,0,-2)),"walk uphill clear of the excavation")
+   if failures==0:check(await walk_to(route.points[0]),"return to surface through original entrance after mining")
+   expected.return_position=game.player.position
+   await RenderingServer.frame_post_draw
+   root.get_texture().get_image().save_png(evidence+".return.png")
+  var file:=FileAccess.open(evidence,FileAccess.WRITE);file.store_var(expected);file.close()
   file=FileAccess.open(evidence+".json",FileAccess.WRITE);file.store_string(JSON.stringify({"failures":failures,"rows":rows,"walk":walk_rows},"  "));file.close()
  check(preload("res://addons/presentation/fullscreen_policy.gd").measurement(root).fair_graphical_sample,"1920x1080 fullscreen full render scale")
  await finish()

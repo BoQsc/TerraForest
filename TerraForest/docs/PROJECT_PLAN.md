@@ -1,3 +1,9 @@
+> 2026-10-15 cave round trip: direct return catches on mined floor edge; explicit
+> walking detour around the excavation permits normal ascent. Surface position,
+> inventory/wear and edited density restore after fresh reopen. Both results
+> retained: evidence/natural_ore_return/. No movement/water runtime changes.
+> Root README now lists playable checkpoints and current unified controls.
+
 > 2026-10-15 continuous cave iron route: saved entrance to ore via ordinary
 > walking passes without relocation/flying/jumps/terrain access edits.101 sampled
 > contacts grounded; pickaxe yields2 iron; exact inventory and27 edited density

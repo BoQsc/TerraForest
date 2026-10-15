@@ -2,17 +2,38 @@
 
 See the [delivery plan and coverage register](docs/PROJECT_PLAN.md) for current milestones, original-scope gaps and explicit return points for deferred work. Historical validation documents describe their recorded builds, not completion of the whole project.
 
+## Playable checkpoints
+
+| Launcher | What to try |
+| --- | --- |
+| `Play Combined Gameplay.cmd` | Resource gathering, crafting, construction and chest storage. |
+| `Review Mixed Neighborhood.cmd` | Five cottages and three furnished towers, connected streets, doors and windows. |
+| `Play Natural Caves.cmd` | Persistent cave exploration and ordinary pickaxe mining from a saved entrance. |
+
+Each uses its own save slot. Preparation preserves existing progress; F5 saves.
+First-time world preparation can take longer than later launches. See the
+[building guide](docs/BUILDING_REVIEW.md), [cave guide](docs/NATURAL_CAVE_GAMEPLAY.md)
+and [player UI guide](docs/PLAYER_UI.md). These are partial gameplay checkpoints;
+sustained 60 FPS, dense cities, large active populations and multiplayer remain
+unqualified or unfinished.
+
 ## Independent building showcase
 
 Run `python tools/run.py --scene structures --godot PATH` to inspect the separate native block construction addon. It includes textured cubes, slabs, stairs, slopes, posts and spheres; chunked native mesh baking; nearby collision; a house and tower frame; and separate static-model MultiMesh batches. See [structures API](addons/structures/README.md) and [validation](docs/STRUCTURES_VALIDATION.md). The terrain demo remains the default scene.
 
-In the main world, press **M** for the object catalog: **1–3** selects a beam, floor panel or doorway, **R** rotates, **RMB** places and **LMB** removes a picked object. A ghost preview checks capacity and player clearance. **E** selects an existing model: arrows move it, Page Up/Down changes height, **R** rotates and **+/−** scales. Hold Shift for fine movement; **Q** returns to placement. Buttons provide the same transform actions. **Ctrl+Z** undoes model edits; **Ctrl+Y** or **Ctrl+Shift+Z** redoes them through bounded native history. **M** returns to block tools; **F5/F9** saves/reloads the combined world. See [transform editor validation](docs/MODEL_TRANSFORM_VALIDATION.md) and [model history validation](docs/MODEL_HISTORY_VALIDATION.md).
+In the main world, open **Esc → Objects** for object recipes and placement
+controls, or **Esc → Building** for block shapes and prefabs. Gameplay uses owned
+tools and materials. **~** switches to the separate development toolbelt and
+editor controls, including transforms and history. M/B mode switching is no
+longer the normal interaction path. See the [player UI guide](docs/PLAYER_UI.md)
+for current controls; older transform validation reports describe their tested
+builds rather than today's keyboard layout.
 
 A new Godot project combining editable volumetric terrain and streamed spruce vegetation. The terrain renderer, vegetation renderer, and their integration are separate addons. The supplied TerrainRewrite and Forest12 folders are not modified.
 
 Native development uses **Zig 0.16.0 + prebuilt godot-cpp API 4.7**. Builds compile only our extension sources. Implemented paths include native entity storage/kinematics, [static volumetric lakes](addons/volumetric_water/README.md), seeded cave/mountain/geology generation, terrain road editing, block/prefab construction and a [single world vehicle](addons/vehicle_runtime/README.md). Native [connected settlement authoring](docs/CONNECTED_SETTLEMENTS.md) now supports multiple streets. Multiplayer, vehicle fleets, automatic terrain-aware settlement placement and qualification of dense populated worlds remain incomplete. See [native development](docs/NATIVE_DEVELOPMENT.md), [delivery evidence and limitations](docs/DELIVERY_STATUS.md), and the [world systems expansion contract](docs/WORLD_SYSTEMS_DESIGN.md).
 
-In the main world, **V** places the vehicle on nearby clear, loaded ground and **E** enters or exits when stopped. **W/S** accelerates, brakes or reverses; **A/D** steers; **Space** applies the handbrake; **Shift** boosts; **R** resets. **F5** saves while seated when a clear on-foot restore location exists beside the vehicle. Reload restores you on foot beside the parked vehicle; momentum and cosmetic dents are not saved. The isolated `Launch Vehicle Demo.cmd` runs the supplied driving scene separately. Graphical checks use 1920×1080 fullscreen with a 60 FPS cap; this is a test configuration, not a sustained performance guarantee.
+In development mode, **Esc > Development > Place vehicle** places a vehicle on nearby clear, loaded ground. **E** enters or exits when stopped. **W/S** accelerates, brakes or reverses; **A/D** steers; **Space** applies the handbrake; **Shift** boosts; **R** resets. **F5** saves while seated when a clear on-foot restore location exists beside the vehicle. Reload restores you on foot beside the parked vehicle; momentum and cosmetic dents are not saved. The isolated `Launch Vehicle Demo.cmd` runs the supplied driving scene separately. Graphical checks use 1920×1080 fullscreen with a 60 FPS cap; this is a test configuration, not a sustained performance guarantee.
 
 ## Run
 
@@ -27,9 +48,18 @@ Use `--godot PATH` or `GODOT_EXE` if Godot is not on PATH. The launcher handles 
 
 The project now renders at **1920×1080 in fullscreen**, with 100% 3D scale. F11 reapplies fullscreen. Graphical benchmark reports must pass the presentation check; historical 1600×900 measurements are not 1080p evidence.
 
-WASD moves, mouse looks, Shift sprints, Space jumps, G flies, Escape releases the mouse. Left mouse digs; right mouse builds. The wheel changes brush size; 1–3 select tools. F3 opens detailed diagnostics. The inherited controller also supports save/load and biome travel; see `demo/controller.gd` for its complete shortcuts.
+WASD moves, mouse looks, Shift sprints and Space jumps. **Esc** opens Actions;
+**Tab** opens inventory. **1–9 / 0** or the mouse wheel selects any of the ten
+toolbelt slots, including empty slots. Left mouse attacks/digs with the equipped
+tool or empty hands; right mouse uses placeable items or the selected building
+recipe. **E** interacts and **G** drops one held item in gameplay. **~** switches
+development mode; flight is available in its menu. **F** toggles the headlamp.
 
-**L** carves a basin at the aimed terrain and bakes static voxel water. Terrain and lake definitions save together and restore on reopening. Basic swimming and camera-local underwater feedback are implemented; flowing/draining fluid simulation is not. Use `--temporary` for disposable experiments. See [world storage](docs/WORLD_STORAGE.md).
+The development menu offers **Carve lake at aim**. Ordinary gameplay uses the
+water bucket: one click collects or places one whole water unit. Water stays
+where placed; flow/spillage is deferred. Terrain and water save together. Use
+`--temporary` for disposable experiments. See [water gameplay](docs/WATER_GAMEPLAY.md)
+and [world storage](docs/WORLD_STORAGE.md).
 
 Automatic model region paging is available for integration qualification with
 `python tools/run.py --slot model_paging_trial --model-region-paging`. It remains
