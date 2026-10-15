@@ -175,7 +175,7 @@ func selection_within_limit() -> bool:
 	var size: Vector3i=(corner_b-corner_a).abs()+Vector3i.ONE
 	return size.x<=256 and size.y<=256 and size.z<=256 and size.x*size.y*size.z<=262144
 
-func capture(blocks: Object,title: String) -> Dictionary:
+func capture(blocks: Object,title: String,models: Array=[]) -> Dictionary:
 	if not has_a or not has_b: return {"ok":false,"reason":"Choose both corners first"}
 	title=title.strip_edges()
 	if title.is_empty() or title.length()>48: return {"ok":false,"reason":"Use a name of 1–48 characters"}
@@ -184,6 +184,11 @@ func capture(blocks: Object,title: String) -> Dictionary:
 	var size: Vector3i=(corner_b-corner_a).abs()+Vector3i.ONE
 	var asset: Resource=blocks.capture_prefab(origin,size)
 	if asset==null or asset.get_cell_count()==0: return {"ok":false,"reason":"Selection is empty, too large, or not fully loaded"}
+	if not models.is_empty():
+		var queries: RefCounted=ClassDB.instantiate("NativeStructureQueries")
+		var captured: Dictionary=queries.capture_models(blocks,models,origin,size)
+		if not captured.ok:return captured
+		if not asset.configure_model_attachments(captured.attachments):return {"ok":false,"reason":"Captured object transforms are invalid"}
 	return _save_asset(asset,title)
 
 func stack(source: Resource,count: int,title: String) -> Dictionary:

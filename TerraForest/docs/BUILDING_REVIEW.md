@@ -17,6 +17,13 @@ large-city or sustained-performance qualification. See
 
 ## Cottage checkpoint
 
+Capturing a custom building now includes whole doors, windows, furniture and
+other structure objects inside the marked block selection. Expand the selection
+if an object crosses its boundary; unloaded objects must load before capture.
+The saved prefab copies model geometry and pose, not chest contents, durability
+damage or live door hinge state. Close doors before capture if the new copies
+should start in that orientation. At least one block must be selected.
+
 To create your own layout, enable development mode with **~**, open **Esc →
 Building → Create streets / settlement from prefabs**, then choose **Cottage
 neighborhood** or **Mixed neighborhood**. Name it in the dialog and click building

@@ -1,0 +1,20 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS furnished source placed through combined transaction
+PASS production library captures furnished selection: 
+PASS capture retains every window door and furnishing plus exact block count
+PASS captured transforms are relative to block selection despite rotated parent
+PASS furnished capture survives library disk reopen exactly
+PASS capture leaves source blocks unchanged
+PASS capture leaves source model identities unchanged: furniture/table/v1
+PASS capture leaves source model identities unchanged: furniture/chair/v1
+PASS capture leaves source model identities unchanged: furniture/shelf/v1
+PASS capture leaves source model identities unchanged: storage/wooden_chest/v1
+PASS capture leaves source model identities unchanged: architecture/wooden_door/v1
+PASS capture leaves source model identities unchanged: architecture/wooden_window/v1
+PASS partly selected objects reject incomplete capture
+PASS source furniture region retires
+PASS unloaded furniture prevents incomplete prefab publication
+PASS source furniture returns exactly
+PASS captured furnished prefab places through normal combined transaction with rotation
+FURNISHED_CAPTURE failures=0

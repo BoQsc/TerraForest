@@ -619,7 +619,7 @@ func _capture_construction(action: String,title: String) -> void:
 		capture_selection.synchronize(prefab_library)
 		construction_palette.capture_status.text=prefab_library.selection_text()
 	elif action=="save":
-		var result: Dictionary=prefab_library.capture(structures.blocks,title)
+		var result: Dictionary=prefab_library.capture(structures.blocks,title,structures.model_collections().values())
 		if not result.ok:
 			construction_palette.capture_status.text=result.reason
 			return

@@ -4,6 +4,7 @@
 #include <godot_cpp/variant/transform3d.hpp>
 #include <godot_cpp/variant/aabb.hpp>
 #include <godot_cpp/variant/packed_byte_array.hpp>
+#include <godot_cpp/variant/dictionary.hpp>
 namespace terraforest {
 class NativeBlockWorld;
 class NativeStructureQueries : public godot::RefCounted {
@@ -11,6 +12,7 @@ class NativeStructureQueries : public godot::RefCounted {
 protected:
     static void _bind_methods();
 public:
+    godot::Dictionary capture_models(NativeBlockWorld *blocks,const godot::Array &models,godot::Vector3i origin,godot::Vector3i size) const;
     bool is_collision_region_ready(NativeBlockWorld *blocks,const godot::Array &models,const godot::AABB &bounds) const;
     godot::PackedByteArray overlap_mask(NativeBlockWorld *blocks,const godot::Array &models,const godot::TypedArray<godot::Transform3D> &transforms,const godot::AABB &bounds) const;
 };

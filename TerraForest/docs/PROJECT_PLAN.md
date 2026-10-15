@@ -1,3 +1,10 @@
+> 2026-10-15 furnished capture: editor capture now includes whole static model
+> objects alongside blocks using native region-bound filtering. Cottage capture
+> retains 13 objects, exact relative transforms under a rotated parent, library
+> reload and rotated placement. Partial/unloaded objects reject instead of being
+> omitted. Evidence: evidence/furnished_capture/. Captures geometry, not contents
+> or live instance state; object-only capture and dense capture timing remain open.
+
 > 2026-10-15 prefab publication: reproduced save/load mismatch for an asset with
 > metadata exceeding the library's 8 MiB read limit. Authoring now stages, reopens,
 > verifies geometry/attachments/title/metadata, then publishes; failed output is
