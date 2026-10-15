@@ -1,3 +1,10 @@
+> 2026-10-15 mixed gameplay route: two fresh-copy runs complete earned gathering,
+> crafting, paid construction, chest transfers, walking, driving/reversing and
+> exact restart persistence in the eight-building neighborhood. An earlier run
+> failed its reverse-return check; cause remains unresolved, not fixed by the
+> later passes. Bounded reverse input/support/readiness telemetry is now retained.
+> Evidence: evidence/mixed_gameplay_route/. No broad travel or frame-time closure.
+
 > 2026-10-15 mixed neighborhood: offline preparation now supports five cottages
 > and three furnished towers on connected graded streets, with 6,771 blocks and
 > 263 attached objects. Fresh-process exact restore and all eight street-to-door

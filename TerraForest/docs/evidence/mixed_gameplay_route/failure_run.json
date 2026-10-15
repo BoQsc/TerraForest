@@ -1,0 +1,78 @@
+{
+  "copy": {
+    "created": true,
+    "slot": "combined_route_d901c09cb06e490fb39a03febdd57c81",
+    "source_slot": "combined_stage_7801173ed84740ee91a1b06e51a3298b",
+    "source_sha256": "51a8e5d01faf87bc35bbfd676bf179d33544d40e125e08c3bed3f815889befdc"
+  },
+  "phases": [
+    {
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--fullscreen",
+        "--resolution",
+        "1920x1080",
+        "--max-fps",
+        "60",
+        "--script",
+        "res://tests/combined_resource_route.gd",
+        "--",
+        "--world-slot=combined_route_d901c09cb06e490fb39a03febdd57c81",
+        "--gameplay-construction",
+        "--ground-cover",
+        "--actors",
+        "--vehicle-fleet",
+        "--route-evidence=C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\combined_resource_route\\20261015T175823950861Z\\expected.bin"
+      ],
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "pid": 18780,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 13.078151099995011,
+        "passed": true
+      }
+    },
+    {
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--fullscreen",
+        "--resolution",
+        "1920x1080",
+        "--max-fps",
+        "60",
+        "--script",
+        "res://tests/combined_travel_route.gd",
+        "--",
+        "--world-slot=combined_route_d901c09cb06e490fb39a03febdd57c81",
+        "--gameplay-construction",
+        "--ground-cover",
+        "--actors",
+        "--vehicle-fleet",
+        "--route-evidence=C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\combined_resource_route\\20261015T175823950861Z\\expected.bin"
+      ],
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "pid": 31380,
+        "exit_code": 1,
+        "diagnostics": [
+          "FAIL reverse to departure point and stop without pose correction"
+        ],
+        "required_text_found": false,
+        "elapsed_seconds": 34.98792269999831,
+        "passed": false
+      }
+    }
+  ],
+  "revision": "dd8bac4e000474ca27f489286fe8ecd5ea273343",
+  "worktree_changes": [],
+  "git_metadata_available": true,
+  "source_unchanged": true
+}

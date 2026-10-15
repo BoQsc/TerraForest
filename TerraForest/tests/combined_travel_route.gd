@@ -1,6 +1,8 @@
 # SPDX-License-Identifier: 0BSD
 extends "res://tests/combined_resource_route.gd"
 var motion_rows:Array=[]
+func vehicle_state(car: RigidBody3D) -> Dictionary:
+ return {"position":car.position,"velocity":car.linear_velocity,"controls":car.controls_enabled,"W":Input.is_key_pressed(KEY_W),"S":Input.is_key_pressed(KEY_S),"freeze":car.freeze,"sleeping":car.sleeping,"waiting":car.streaming.waiting,"loaded_wheels":car.loaded_wheels,"normal":car._normal_mode,"drive_speed":car._drive_speed}
 func walk_to(target:Vector3,seconds:float=8.0)->bool:
  var deadline:int=Time.get_ticks_msec()+int(seconds*1000)
  while Time.get_ticks_msec()<deadline:
@@ -67,8 +69,13 @@ func run()->void:
  check(outbound>=distance and car.linear_velocity.length()<0.15,"drive outbound and brake using keyboard input")
  for frame in 3:await physics_frame
  key(KEY_S,true);deadline=Time.get_ticks_msec()+10000
+ print("REVERSE_START ",vehicle_state(car))
+ var next_sample: int=Time.get_ticks_msec()+500
  while (car.position-start).dot(direction)>1.0 and Time.get_ticks_msec()<deadline:
   game.app_focused=true;await physics_frame
+  if Time.get_ticks_msec()>=next_sample:
+   print("REVERSE_SAMPLE ",vehicle_state(car));next_sample=Time.get_ticks_msec()+500
+ print("REVERSE_END ",vehicle_state(car))
  key(KEY_S,false);key(KEY_W,true);deadline=Time.get_ticks_msec()+5000
  while car.linear_velocity.length()>0.15 and Time.get_ticks_msec()<deadline:await physics_frame
  key(KEY_W,false)
