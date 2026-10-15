@@ -36,6 +36,38 @@ inline const SphereTemplate &sphere_template() {
     }();
     return geometry;
 }
+struct CylinderTemplate {
+    std::array<BlockVertex,54> vertices;
+    std::array<int32_t,144> indices;
+    std::array<ShapePlane,12> planes;
+};
+inline const CylinderTemplate &cylinder_template() {
+    static const CylinderTemplate geometry=[] {
+        CylinderTemplate result{};constexpr double pi=3.14159265358979323846;
+        for(int i=0;i<=12;++i) {
+            double angle=2*pi*(i==12?0:i)/12;
+            float nx=float(std::cos(angle)),nz=float(std::sin(angle));
+            float x=.5f+nx*.5f,z=.5f+nz*.5f;
+            for(int y=0;y<2;++y) {
+                result.vertices[i*2+y]={x,float(y),z,nx,0,nz,float(pi*i/12),float(y),0};
+                result.vertices[26+i*2+y]={x,float(y),z,0,float(y*2-1),0,x,z,0};
+            }
+            if(i<12) {
+                double mid=2*pi*(i+.5)/12;
+                Vector3 n(float(std::cos(mid)),0,float(std::sin(mid)));
+                result.planes[i]={n,.5*(n.x+n.z)+.5*std::cos(pi/12)};
+            }
+        }
+        result.vertices[52]={.5,0,.5,0,-1,0,.5,.5,0};
+        result.vertices[53]={.5,1,.5,0,1,0,.5,.5,0};
+        int at=0;
+        for(int i=0;i<12;++i) {
+            int a=i*2,b=a+1,c=a+3,d=a+2;
+            for(int v:{a,c,b,a,d,c,52,26+d,26+a,53,26+b,26+c})result.indices[at++]=v;
+        }
+        return result;
+    }();return geometry;
+}
 // Shared allocation-free authored planes for picking and water occupancy.
 template<class Begin,class Plane,class End>
 void visit_shape_hulls(int shape,Begin begin,Plane plane,End end){
@@ -46,6 +78,7 @@ void visit_shape_hulls(int shape,Begin begin,Plane plane,End end){
     else if(shape==3)for(int step=0;step<4;++step)box(Vector3(0,0,step*.25),Vector3(1,(step+1)*.25,(step+1)*.25));
     else if(shape==4){begin();planes(Vector3(),Vector3(1,1,1));plane(Vector3(0,1,-1).normalized(),0);end();}
     else if(shape==5)box(Vector3(.25,0,.25),Vector3(.75,1,.75));
+    else if(shape==7){begin();planes(Vector3(),Vector3(1,1,1));for(const auto &p:cylinder_template().planes)plane(p.normal,p.offset);end();}
     else if(shape==6){begin();planes(Vector3(),Vector3(1,1,1));for(const auto &p:sphere_template().planes)plane(p.normal,p.offset);end();}
 }
 

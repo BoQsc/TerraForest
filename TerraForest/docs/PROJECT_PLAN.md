@@ -1,3 +1,9 @@
+> 2026-10-16 construction coverage: native round column shape 7 is available
+> in construction UI, with existing materials/costs, chunk rendering, collision,
+> picking, editing/history and save/prefab paths. Targeted graphical and legacy
+> mesh checks pass; dense-column performance remains unqualified. Evidence:
+> evidence/block_cylinder/. Water remains deferred.
+
 > 2026-10-16 combined regression after native building changes: gather/craft/
 > paid-build/chest, cottage walking,12 m drive/brake/reverse/return, and fresh
 > compound reopen pass on a source-preserving clone. Reverse failure did not

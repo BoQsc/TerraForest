@@ -821,7 +821,7 @@ func _unhandled_input(event: InputEvent) -> void:
 					handled = false
 				if handled:
 					_prefab_preview_timer=0.0
-					_show_lake_notice("%s · %d°" % [structure_prefabs[structure_prefab_index].resource_name,structure_rotation*90] if structure_prefab_index>=0 else "%s · %s · %d°" % [["Cube","Slab","Stairs","Slope","Post","Sphere"][structure_shape-1],["Brick","Wood","Concrete","Metal"][structure_material],structure_rotation*90])
+					_show_lake_notice("%s · %d°" % [structure_prefabs[structure_prefab_index].resource_name,structure_rotation*90] if structure_prefab_index>=0 else "%s · %s · %d°" % [["Cube","Slab","Stairs","Slope","Post","Sphere","Round column"][structure_shape-1],["Brick","Wood","Concrete","Metal"][structure_material],structure_rotation*90])
 					return
 		if structure_mode and not model_tool.active and event is InputEventMouseButton and event.pressed and event.button_index in [MOUSE_BUTTON_LEFT,MOUSE_BUTTON_RIGHT] and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 			_edit_structure(event.button_index == MOUSE_BUTTON_LEFT)

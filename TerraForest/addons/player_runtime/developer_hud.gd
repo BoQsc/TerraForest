@@ -46,7 +46,7 @@ Right mouse: fill")
 		3:
 			label("Left mouse: remove
 Right mouse: place")
-			option("Shape",["Cube","Slab","Stairs","Slope","Post","Sphere"],game.structure_shape-1,func(i: int):game._construction_selection("shape",i))
+			option("Shape",["Cube","Slab","Stairs","Slope","Post","Sphere","Round column"],game.structure_shape-1,func(i: int):game._construction_selection("shape",i))
 			option("Material",["Brick","Wood","Concrete","Metal"],game.structure_material,func(i: int):game._construction_selection("material",i))
 			option("Rotation",["0 degrees","90 degrees","180 degrees","270 degrees"],game.structure_rotation,func(i: int):game._construction_selection("rotation",i))
 			button("Prefabs / detailed settings",func():game.session_menu.show_page("Building"))

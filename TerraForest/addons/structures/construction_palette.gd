@@ -55,7 +55,7 @@ func _ready() -> void:
 	panel.add_child(margin)
 	var column:=VBoxContainer.new();column.add_theme_constant_override("separation",10);margin.add_child(column)
 	var title:=Label.new();title.text="CONSTRUCTION";title.add_theme_font_size_override("font_size",22);column.add_child(title)
-	shape=_option(column,"Shape",["Cube","Slab","Stairs","Slope","Post","Sphere"],"shape")
+	shape=_option(column,"Shape",["Cube","Slab","Stairs","Slope","Post","Sphere","Round column"],"shape")
 	material=_option(column,"Material",["Brick","Wood","Concrete","Metal"],"material")
 	rotation_choice=_option(column,"Rotation",["0°","90°","180°","270°"],"rotation")
 	prefab=_option(column,"Prefab",["Single blocks"],"prefab")

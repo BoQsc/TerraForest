@@ -25,8 +25,9 @@ func _initialize():
   [Vector3(.5,.8,.9),Vector3(.5,.8,.1)],
   [Vector3(.5,.2,.8),Vector3(.5,.8,.2)],
   [Vector3(.5,.8,.5),Vector3(.1,.5,.5)],
-  [Vector3(.5,.5,.5),Vector3(.9,.9,.9)]]
- for shape in range(1,7):
+  [Vector3(.5,.5,.5),Vector3(.9,.9,.9)],
+  [Vector3(.5,.9,.5),Vector3(.95,.5,.95)]]
+ for shape in range(1,8):
   for rotation in 4:
    check(blocks.set_cells(PackedInt32Array([0,0,0,shape+rotation*8])),"Authored shape accepted")
    var points:=PackedVector3Array()
@@ -57,5 +58,5 @@ func _initialize():
  check(not unavailable.ok and unavailable.unavailable,"Hull export never treats unloaded solids as air")
  blocks.free()
  DirAccess.make_dir_recursive_absolute("res://reports")
- var file:=FileAccess.open("res://reports/block_solid_samples.json",FileAccess.WRITE);file.store_string(JSON.stringify({"failures":failures,"shape_rotations":24}));file.close()
+ var file:=FileAccess.open("res://reports/block_solid_samples.json",FileAccess.WRITE);file.store_string(JSON.stringify({"failures":failures,"shape_rotations":28}));file.close()
  print("BLOCK_SOLID_SAMPLES failures=",failures);quit(failures)

@@ -21,7 +21,7 @@
 
 namespace terraforest {
 static constexpr int MAX_CHUNKS=2048, LIMIT=1048575;
-static bool valid_word(int w) { return w==0 || (w>0&&w<128&&(w&7)>=1&&(w&7)<=6); }
+static bool valid_word(int w) { return w==0 || (w>0&&w<128&&(w&7)>=1&&(w&7)<=7); }
 static PackedByteArray sha(const PackedByteArray &data) {
     Ref<HashingContext> h; h.instantiate(); h->start(HashingContext::HASH_SHA256); h->update(data); return h->finish();
 }
@@ -84,7 +84,7 @@ void NativeBlockWorld::invalidate(BlockKey key) {
     dirty.insert(key); tickets[key]=++revision;
 }
 Ref<Mesh> NativeBlockWorld::preview_mesh(int64_t shape,int64_t rotation) {
-    if(shape<1||shape>6||rotation<0||rotation>3)return {};
+    if(shape<1||shape>7||rotation<0||rotation>3)return {};
     auto &cached=preview_meshes[(shape-1)*4+rotation];
     if(cached.is_valid())return cached;
     std::array<uint16_t,5832> halo{};
@@ -228,10 +228,8 @@ static void triangle(BlockBake &b,Vector3 a,Vector3 c,Vector3 d,int material) {
 static Vector3 rotate_shape(Vector3 p,int r) {
     for(int i=0;i<r;i++) p=Vector3(1-p.z,p.y,p.x); return p;
 }
-static void sphere(BlockBake &out,Vector3 origin,int rotation,int material) {
-    // One immutable indexed template shared by all workers/instances. Six latitude
-    // bands and twelve sectors: 120 nondegenerate triangles, 91 seam-aware vertices.
-    const auto &geometry=sphere_template();
+template<class Geometry>
+static void curved_shape(BlockBake &out,Vector3 origin,int rotation,int material,const Geometry &geometry) {
     int base=int(out.vertices.size());
     for(auto v:geometry.vertices) {
         Vector3 p=origin+rotate_shape(Vector3(v.x,v.y,v.z),rotation),n(v.nx,v.ny,v.nz);
@@ -304,9 +302,12 @@ BlockBake NativeBlockWorld::bake(BlockKey key,uint64_t ticket,std::array<uint16_
     // Wedge boundary faces are currently conservative; see addon limitations.
     for(int z=0;z<16;z++) for(int y=0;y<16;y++) for(int x=0;x<16;x++) {
         int at=(x+1)+18*((y+1)+18*(z+1)),w=halo[at];
-        if((w&7)==6) {
+        if((w&7)==6||(w&7)==7) {
             bool enclosed=true;for(int step:{-1,1,-18,18,-324,324})if((halo[at+step]&7)!=1){enclosed=false;break;}
-            if(!enclosed)sphere(out,Vector3(x,y,z),(w>>3)&3,w>>5);
+            if(!enclosed) {
+                if((w&7)==6)curved_shape(out,Vector3(x,y,z),(w>>3)&3,w>>5,sphere_template());
+                else curved_shape(out,Vector3(x,y,z),(w>>3)&3,w>>5,cylinder_template());
+            }
             continue;
         }
         if((w&7)!=4) continue;

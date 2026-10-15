@@ -30,7 +30,7 @@ python tools/build_native.py --addon structures --target all
 
 | Field | Values |
 | --- | --- |
-| Shape | 1 cube, 2 lower half slab, 3 four-step staircase, 4 planar slope, 5 centred half-width post, 6 sphere |
+| Shape | 1 cube, 2 lower half slab, 3 four-step staircase, 4 planar slope, 5 centred half-width post, 6 sphere, 7 round column |
 | Rotation | 0–3 quarter turns about Y |
 | Material | 0 brick, 1 wood, 2 concrete, 3 metal |
 
@@ -495,3 +495,9 @@ The asynchronous prefab library captures attachments alongside immutable block r
 Combined placement requires identity world frames, streamed model collections and resident destinations. Native validation checks registered identities/capacity, actor protection, conservative block/compound-model overlap, and containment inside the surveyed building envelope. New-model overlap uses a temporary 4 m spatial grid; block probes and candidate comparisons each cap at 262144. Oversized requests reject before mutation. All authoritative stores commit before change notifications; rejection refunds gameplay material contents (inventory revisions advance through debit/refund).
 
 Combined placement establishes a history barrier: prior block undo is cleared and model history observes changed collection revisions. Grouped undo/redo is not implemented; the placement notice states this. Individual object editing remains available. Terrain grading/support belongs to the existing site workflow. Conservative cell/AABB checks can reject geometry that triangle-exact tests would accept. Correctness evidence does not qualify large-city performance.
+
+### Round column blocks
+
+Shape 7 is a one-metre-high, one-metre-diameter twelve-sided column. Select Round column in the construction palette or development HUD. It uses existing material costs, chunk meshes, collision, picking, history, prefabs and saves. The shared immutable template has 54 vertices and 48 triangles with separate cap normals. Fully cube-enclosed columns are culled; adjacent column caps are currently conservative, with no curved-shape greedy merging or dedicated LOD. This is more expensive than a greedy cube and is intended for architectural details.
+
+Existing shape IDs and saves are unchanged. Saves containing shape 7 require this build or newer; older binaries reject the new shape. Targeted validation: `tests/block_cylinder.gd` and `tests/block_solid_samples.gd`.

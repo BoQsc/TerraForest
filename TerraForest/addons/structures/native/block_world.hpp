@@ -81,7 +81,7 @@ class NativeBlockWorld : public Node3D {
     Ref<ShaderMaterial> material;
     String texture_set;
     bool load_texture_set(const String &name);
-    std::array<Ref<Mesh>,24> preview_meshes;
+    std::array<Ref<Mesh>,28> preview_meshes;
     Vector3 focus;
     double collision_radius=48.0;
     bool collisions=true;
