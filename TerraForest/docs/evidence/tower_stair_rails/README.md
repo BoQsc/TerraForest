@@ -29,3 +29,6 @@ low-ceiling rejection. Report `20261015T212537827904Z`; screenshot
 Existing saved towers are unchanged. New placed tower prefabs and newly prepared
 neighborhoods receive rails. This is an isolated structure/player test, not a
 main-world save/reopen, rotated-tower, full density or thermal qualification.
+
+Follow-up: `../tower_rail_persistence/` verifies rotated placement and exact
+full-world save/reopen with restored rail collision. Dense performance remains open.

@@ -1,3 +1,9 @@
+> 2026-10-16 stair-rail integration: a quarter-turned tower placed in the actual
+> persistent world retains exact rail identities/transforms and tower blocks
+> after save/browser return/fresh reopen. All four rail physics rays pass before
+> and after reload. Elevated free-placement fixture; grounded/paid/dense behavior
+> remains unqualified. Evidence: evidence/tower_rail_persistence/.
+
 > 2026-10-16 building access: new furnished towers gain sloping flight rails in
 > addition to existing landing guards. Three floors now have70 attachments;
 > four additional batched meshes and16 top-bar collision shapes. Placement,

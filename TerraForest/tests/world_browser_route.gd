@@ -27,7 +27,7 @@ func run()->void:
 		# Retain production engine/user flags; substitute an observing SceneTree
 		# which instantiates the same world scene and performs an ordinary save.
 		var index:=command.find("res://demo/world.tscn")
-		command.remove_at(index);command.insert(index,"res://tests/world_browser_route.gd");command.insert(index,"--script")
+		command.remove_at(index);command.insert(index,get_script().resource_path);command.insert(index,"--script")
 		command.insert(0,report.path_join("reopen.log" if reopen else "create.log"));command.insert(0,"--log-file")
 		command.append_array(PackedStringArray(["--browser-child","--browser-report="+report]))
 		if reopen:command.append("--browser-reopen")
@@ -54,6 +54,7 @@ func child(args: PackedStringArray)->void:
 		check(game.terrain.backend.world_generator==1 and game.terrain.backend.world_seed==7129,"selected generation survives fresh reopen without overrides")
 		check(game.construction_inventory.gameplay and not game.session_menu.developer,"paid gameplay active")
 		check(preload("res://addons/presentation/fullscreen_policy.gd").measurement(root).fair_graphical_sample,"1080p fullscreen full render scale")
+		await inspect_world(reopen)
 		var snapshot:=report.path_join("inventory.bin")
 		if reopen:
 			check(game.player_hud.inventory.capture_storage_snapshot()==FileAccess.open(snapshot,FileAccess.READ).get_var(),"exact inventory restored in new process")
@@ -77,3 +78,5 @@ func child(args: PackedStringArray)->void:
 	var output:=FileAccess.open(report.path_join("reopen.json" if reopen else "create.json"),FileAccess.WRITE)
 	output.store_string(JSON.stringify({"failures":failures,"slot":slot}));output.close()
 	quit(1 if failures else 0)
+func inspect_world(_reopen: bool)->void:
+	pass

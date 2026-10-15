@@ -39,7 +39,7 @@ func run() -> void:
 		await finish();return
 	var catalog=preload("res://addons/structures/furniture_catalog.gd")
 	var asset: Resource=catalog.furnished_tower(3) if tower else catalog.enclosed_cottage()
-	check(asset!=null and asset.get_model_attachments().size()==(66 if tower else 13),"building combines expected furniture storage door windows and guards")
+	check(asset!=null and asset.get_model_attachments().size()==(70 if tower else 13),"building combines expected furniture storage door windows and guards")
 	var origin:=Vector3i(game.player.position.floor())+Vector3i(20,12,0)
 	game.construction_inventory.gameplay=false
 	if "--grounded" in OS.get_cmdline_user_args():
