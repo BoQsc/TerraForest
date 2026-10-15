@@ -18,6 +18,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--source', default='mixed_neighborhood_review')
     parser.add_argument('--compare-contact', action='store_true', help='Compare terrain and a flat box using the same reset actor records')
+    parser.add_argument('--collision-piece-triangles', type=int, choices=[256,512,1024], default=1024)
     args = parser.parse_args()
     source = args.source
     if not re.fullmatch(r'[A-Za-z_][A-Za-z0-9_]{0,47}', source):parser.error('Invalid source slot')
@@ -29,6 +30,7 @@ def main():
     config, _ = parse_args([])
     command = [config.godot, '--path', str(ROOT), '--fullscreen', '--resolution', '1920x1080', '--max-fps', '60', '--script', 'res://tests/actor_population_cost.gd', '--', '--world-slot='+slot, '--actors', '--ground-cover']
     if args.compare_contact:command.append('--compare-contact')
+    command.append('--collision-piece-triangles='+str(args.collision_piece_triangles))
     metadata = dict(copy=copied, command=command, host=dict(platform=platform.platform(), processor=platform.processor()), **revision_metadata())
     metadata['test_sha256'] = hashlib.sha256((ROOT/'tests/actor_population_cost.gd').read_bytes()).hexdigest()
     metadata['native_sha256'] = {str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in (ROOT/'addons').glob('*/bin/*.dll')}

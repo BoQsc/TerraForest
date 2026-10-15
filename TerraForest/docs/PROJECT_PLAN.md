@@ -1,3 +1,11 @@
+> 2026-10-15 actor investigation disposition: 256 vs 1024 collision triangles
+> gives inconsistent contact-cost changes; both fail actor budgets. Resident
+> shapes rise 252 to 814 with identical triangle counts. Keep default 1024 and
+> active actor cap 16. Stop automatic collision tuning; preserve this open gate.
+> Next deliverable: main-world underground exploration/material gathering and
+> save/reload coverage using existing caves/geology, without water changes.
+> Evidence: evidence/actor_collision_piece_size/.
+
 > 2026-10-15 route startup diagnosis: the 16-actor travel shortfall includes
 > .53–.55 s of bounded planning. After readiness, all actors move 4.72–5.04 m
 > in two seconds, grounded; startup passes a separate 1 s gate. Runtime unchanged.

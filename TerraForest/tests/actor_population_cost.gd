@@ -7,6 +7,18 @@ var ids:=PackedInt64Array()
 var start:=Vector3.ZERO
 var direction:=Vector3.RIGHT
 var side:=Vector3.BACK
+var collision_piece_triangles:=1024
+var collision_census: Dictionary={}
+func count_collision() -> void:
+	var pending: Array[Node]=[game.terrain];var count:=0;var triangles:=0;var largest:=0
+	while not pending.is_empty():
+		var node: Node=pending.pop_back()
+		for child in node.get_children():pending.append(child)
+		if node is CollisionShape3D and node.shape is ConcavePolygonShape3D:
+			var size: int=node.shape.get_faces().size()/3
+			count+=1;triangles+=size;largest=maxi(largest,size)
+	collision_census={"configured_piece_triangles":collision_piece_triangles,"resident_shapes":count,"resident_triangles":triangles,"largest_piece_triangles":largest,"static_memory_bytes":Performance.get_monitor(Performance.MEMORY_STATIC)}
+	check(count>0 and largest<=collision_piece_triangles,"resident collision obeys configured piece limit")
 class PhysicsSampler extends Node:
 	var callback: Callable
 	func _physics_process(delta: float) -> void:callback.call(delta)
@@ -112,7 +124,12 @@ func compare_contact() -> void:
 	floor_body.free()
 func _initialize() -> void:run.call_deferred()
 func run() -> void:
-	game=load("res://demo/world.tscn").instantiate();root.add_child(game)
+	for arg in OS.get_cmdline_user_args():
+		if arg.begins_with("--collision-piece-triangles="):collision_piece_triangles=int(arg.get_slice("=",1))
+	game=load("res://demo/world.tscn").instantiate()
+	if not game.terrain.backend.configure_collision_piece_size(collision_piece_triangles):
+		game.free();push_error("Invalid collision piece size");quit(1);return
+	root.add_child(game)
 	var sampler:=PhysicsSampler.new();sampler.callback=measure_tick;root.add_child(sampler)
 	var deadline:=Time.get_ticks_msec()+60000
 	while game.loading_active and Time.get_ticks_msec()<deadline:await process_frame
@@ -128,6 +145,7 @@ func run() -> void:
 	var idle:=0;deadline=Time.get_ticks_msec()+30000
 	while idle<60 and Time.get_ticks_msec()<deadline:await process_frame;idle=idle+1 if settled() else 0
 	check(idle==60,"world reaches60 idle frames before measurement")
+	count_collision()
 	var comparison: bool="--compare-contact" in OS.get_cmdline_user_args()
 	if comparison:await compare_contact()
 	else:
@@ -136,7 +154,7 @@ func run() -> void:
 		add_until(64);await sample("nearby64")
 	var folder:="res://reports/actor_collision_comparison" if comparison else "res://reports/actor_population_cost"
 	DirAccess.make_dir_recursive_absolute(folder)
-	var file:=FileAccess.open(folder+"/result.json",FileAccess.WRITE);file.store_string(JSON.stringify({"failures":failures,"phases":phases},"  "));file.close()
+	var file:=FileAccess.open(folder+"/result.json",FileAccess.WRITE);file.store_string(JSON.stringify({"failures":failures,"collision":collision_census,"phases":phases},"  "));file.close()
 	root.get_texture().get_image().save_png(folder+"/world.png")
 	print("MIXED_ACTOR_COST_COMPLETE failures=",failures)
 	game.terrain.shutdown();game.free();await process_frame;quit(1 if failures else 0)
