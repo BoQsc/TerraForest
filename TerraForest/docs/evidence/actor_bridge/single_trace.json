@@ -1,0 +1,424 @@
+{
+  "failures": 0,
+  "legs": 2,
+  "minimum_height": 0.899954378604889,
+  "peak_route_work": 12,
+  "trace": [
+    {
+      "frame": 0,
+      "position": "(0.0, 0.924444, -2.0)",
+      "route": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "replans": 0,
+        "state": "planning",
+        "stuck_seconds": 0.0,
+        "waypoint_index": 0,
+        "waypoint_target": "(0.0, 0.93, -2.0)",
+        "waypoints": 13
+      }
+    },
+    {
+      "frame": 30,
+      "position": "(0.0, 1.363478, -0.90597)",
+      "route": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "replans": 0,
+        "state": "following",
+        "stuck_seconds": 0.0,
+        "waypoint_index": 3,
+        "waypoint_target": "(0.0, 1.68, -0.5)",
+        "waypoints": 33
+      }
+    },
+    {
+      "frame": 60,
+      "position": "(0.0, 1.901127, 0.241424)",
+      "route": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "replans": 0,
+        "state": "following",
+        "stuck_seconds": 0.0,
+        "waypoint_index": 5,
+        "waypoint_target": "(0.0, 1.93, 0.5)",
+        "waypoints": 33
+      }
+    },
+    {
+      "frame": 90,
+      "position": "(0.0, 1.901127, 1.491423)",
+      "route": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "replans": 0,
+        "state": "following",
+        "stuck_seconds": 0.0,
+        "waypoint_index": 8,
+        "waypoint_target": "(0.0, 1.93, 2.0)",
+        "waypoints": 33
+      }
+    },
+    {
+      "frame": 120,
+      "position": "(0.0, 1.901127, 2.741424)",
+      "route": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "replans": 0,
+        "state": "following",
+        "stuck_seconds": 0.0,
+        "waypoint_index": 10,
+        "waypoint_target": "(0.0, 1.93, 3.0)",
+        "waypoints": 33
+      }
+    },
+    {
+      "frame": 150,
+      "position": "(0.0, 1.901127, 3.991427)",
+      "route": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "replans": 0,
+        "state": "following",
+        "stuck_seconds": 0.0,
+        "waypoint_index": 13,
+        "waypoint_target": "(0.0, 1.93, 4.5)",
+        "waypoints": 33
+      }
+    },
+    {
+      "frame": 180,
+      "position": "(0.0, 1.901127, 5.241422)",
+      "route": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "replans": 0,
+        "state": "following",
+        "stuck_seconds": 0.0,
+        "waypoint_index": 15,
+        "waypoint_target": "(0.0, 1.93, 5.5)",
+        "waypoints": 33
+      }
+    },
+    {
+      "frame": 210,
+      "position": "(0.0, 1.899784, 6.491414)",
+      "route": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "replans": 0,
+        "state": "following",
+        "stuck_seconds": 0.0,
+        "waypoint_index": 18,
+        "waypoint_target": "(0.0, 1.93, 7.0)",
+        "waypoints": 33
+      }
+    },
+    {
+      "frame": 240,
+      "position": "(0.0, 1.899784, 7.741402)",
+      "route": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "replans": 0,
+        "state": "following",
+        "stuck_seconds": 0.0,
+        "waypoint_index": 20,
+        "waypoint_target": "(0.0, 1.93, 8.0)",
+        "waypoints": 33
+      }
+    },
+    {
+      "frame": 270,
+      "position": "(0.0, 1.899784, 8.991397)",
+      "route": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "replans": 0,
+        "state": "following",
+        "stuck_seconds": 0.0,
+        "waypoint_index": 23,
+        "waypoint_target": "(0.0, 1.93, 9.5)",
+        "waypoints": 33
+      }
+    },
+    {
+      "frame": 300,
+      "position": "(0.0, 1.899784, 10.24141)",
+      "route": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "replans": 0,
+        "state": "following",
+        "stuck_seconds": 0.0,
+        "waypoint_index": 25,
+        "waypoint_target": "(0.0, 1.93, 10.5)",
+        "waypoints": 33
+      }
+    },
+    {
+      "frame": 330,
+      "position": "(0.0, 1.899784, 11.4914)",
+      "route": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "replans": 0,
+        "state": "following",
+        "stuck_seconds": 0.0,
+        "waypoint_index": 28,
+        "waypoint_target": "(0.0, 1.93, 12.0)",
+        "waypoints": 33
+      }
+    },
+    {
+      "frame": 360,
+      "position": "(0.0, 1.720747, 12.74227)",
+      "route": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "replans": 0,
+        "state": "following",
+        "stuck_seconds": 0.0,
+        "waypoint_index": 30,
+        "waypoint_target": "(0.0, 1.18, 13.0)",
+        "waypoints": 33
+      }
+    },
+    {
+      "frame": 390,
+      "position": "(0.0, 0.900936, 13.84333)",
+      "route": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "replans": 0,
+        "state": "planning",
+        "stuck_seconds": 0.0,
+        "waypoint_index": 0,
+        "waypoint_target": "(0.0, 0.900936, 13.84333)",
+        "waypoints": 28
+      }
+    },
+    {
+      "frame": 420,
+      "position": "(0.0, 1.502898, 12.7866)",
+      "route": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "replans": 0,
+        "state": "following",
+        "stuck_seconds": 0.0,
+        "waypoint_index": 3,
+        "waypoint_target": "(0.0, 1.68, 12.34333)",
+        "waypoints": 33
+      }
+    },
+    {
+      "frame": 450,
+      "position": "(0.0, 1.900122, 11.66)",
+      "route": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "replans": 0,
+        "state": "following",
+        "stuck_seconds": 0.0,
+        "waypoint_index": 5,
+        "waypoint_target": "(0.0, 1.93, 11.34333)",
+        "waypoints": 33
+      }
+    },
+    {
+      "frame": 480,
+      "position": "(0.0, 1.900122, 10.41)",
+      "route": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "replans": 0,
+        "state": "following",
+        "stuck_seconds": 0.0,
+        "waypoint_index": 8,
+        "waypoint_target": "(0.0, 1.93, 9.843328)",
+        "waypoints": 33
+      }
+    },
+    {
+      "frame": 510,
+      "position": "(0.0, 1.900122, 9.159986)",
+      "route": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "replans": 0,
+        "state": "following",
+        "stuck_seconds": 0.0,
+        "waypoint_index": 10,
+        "waypoint_target": "(0.0, 1.93, 8.843328)",
+        "waypoints": 33
+      }
+    },
+    {
+      "frame": 540,
+      "position": "(0.0, 1.900122, 7.909977)",
+      "route": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "replans": 0,
+        "state": "following",
+        "stuck_seconds": 0.0,
+        "waypoint_index": 13,
+        "waypoint_target": "(0.0, 1.93, 7.343328)",
+        "waypoints": 33
+      }
+    },
+    {
+      "frame": 570,
+      "position": "(0.0, 1.900122, 6.659982)",
+      "route": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "replans": 0,
+        "state": "following",
+        "stuck_seconds": 0.0,
+        "waypoint_index": 15,
+        "waypoint_target": "(0.0, 1.93, 6.343328)",
+        "waypoints": 33
+      }
+    },
+    {
+      "frame": 600,
+      "position": "(0.0, 1.900122, 5.409987)",
+      "route": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "replans": 0,
+        "state": "following",
+        "stuck_seconds": 0.0,
+        "waypoint_index": 18,
+        "waypoint_target": "(0.0, 1.93, 4.843328)",
+        "waypoints": 33
+      }
+    },
+    {
+      "frame": 630,
+      "position": "(0.0, 1.900122, 4.159992)",
+      "route": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "replans": 0,
+        "state": "following",
+        "stuck_seconds": 0.0,
+        "waypoint_index": 20,
+        "waypoint_target": "(0.0, 1.93, 3.843328)",
+        "waypoints": 33
+      }
+    },
+    {
+      "frame": 660,
+      "position": "(0.0, 1.900122, 2.90999)",
+      "route": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "replans": 0,
+        "state": "following",
+        "stuck_seconds": 0.0,
+        "waypoint_index": 23,
+        "waypoint_target": "(0.0, 1.93, 2.343328)",
+        "waypoints": 33
+      }
+    },
+    {
+      "frame": 690,
+      "position": "(0.0, 1.900122, 1.659989)",
+      "route": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "replans": 0,
+        "state": "following",
+        "stuck_seconds": 0.0,
+        "waypoint_index": 25,
+        "waypoint_target": "(0.0, 1.93, 1.343328)",
+        "waypoints": 33
+      }
+    },
+    {
+      "frame": 720,
+      "position": "(0.0, 1.900122, 0.409989)",
+      "route": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "replans": 0,
+        "state": "following",
+        "stuck_seconds": 0.0,
+        "waypoint_index": 28,
+        "waypoint_target": "(0.0, 1.93, -0.156672)",
+        "waypoints": 33
+      }
+    },
+    {
+      "frame": 750,
+      "position": "(0.0, 1.627124, -0.840665)",
+      "route": {
+        "expansions": 0,
+        "node_limit": 2048,
+        "nodes": 1,
+        "radius_m": 16,
+        "replans": 0,
+        "state": "following",
+        "stuck_seconds": 0.0,
+        "waypoint_index": 30,
+        "waypoint_target": "(0.0, 0.93, -1.156672)",
+        "waypoints": 33
+      }
+    }
+  ]
+}

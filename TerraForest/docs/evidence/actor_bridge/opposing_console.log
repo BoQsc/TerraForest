@@ -1,0 +1,12 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.3.280 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+PASS production bridge prefab placed
+PASS bounded actor world prepares
+PASS patrol spans both bridge approaches
+PASS opposing actor receives reverse patrol
+PASS actor climbs bridge stairs crosses and returns on patrol
+PASS actor never falls through deck or banks
+PASS existing route-work and active-body budgets retained
+PASS opposing capsules do not overlap during crossing
+ACTOR_BRIDGE legs=2 failures=0

@@ -1,3 +1,9 @@
+> 2026-10-16 entity/construction integration: one actor and two head-on actors
+> complete patrol crossing/return over the12 m timber bridge using normal
+> block stairs and native routing. Capsule separation, support and existing
+> work/body bounds pass; no runtime change was needed. Evidence:
+> evidence/actor_bridge/. This does not qualify dense crowds or frame timing.
+
 > 2026-10-16 entity behavior: native two-point patrol is available through
 > development UI, preserving endpoints/current leg in compound saves. Four
 > rendered legs, mid-patrol restore, inactive/unready behavior, actual-world UI
