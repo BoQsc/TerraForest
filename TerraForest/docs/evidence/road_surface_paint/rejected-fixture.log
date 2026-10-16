@@ -1,0 +1,7 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS pave through natural surface height
+SCRIPT ERROR: Invalid access to property or key 'arrays' on a base object of type 'Dictionary'.
+   at: run (res://tests/road_surface_paint.gd:11)
+   GDScript backtrace (most recent call first):
+       [0] run (res://tests/road_surface_paint.gd:11)

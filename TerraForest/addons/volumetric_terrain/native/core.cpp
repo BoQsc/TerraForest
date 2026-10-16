@@ -705,7 +705,7 @@ void shade_mesh(const World&w,Mesh&m,u32 expected_epoch){
   v.ore=w.has_geology()&&v.material<5?geological_weight(v.p,h,u32(w.seed)):0;
   v.substrate=eased(.15f,.65f,h-v.p.y);v.blend={};v.asphalt=0;
   if(v.material<5){
-   int x=fl(v.p.x),y=fl(v.p.y),z=fl(v.p.z);V3 f={v.p.x-x,v.p.y-y,v.p.z-z};float delta=0,total=0,asphalt=0,original[8];V3 influence{};
+   int x=fl(v.p.x),y=fl(v.p.y),z=fl(v.p.z);V3 f={v.p.x-x,v.p.y-y,v.p.z-z};float delta=0,total=0,asphalt=0,paved=0,solid=0,original[8];V3 influence{};
    for(int k=0;k<8;k++){
     int sx=x+(k&1),sy=y+((k>>1)&1),sz=z+((k>>2)&1);u8 mat=0;
     float original_sample=w.base({float(sx),float(sy),float(sz)},owned_lattice_height(w,sx,sz));
@@ -716,6 +716,7 @@ void shade_mesh(const World&w,Mesh&m,u32 expected_epoch){
     original[k]=base;
     float weight=(k&1?f.x:1-f.x)*(k&2?f.y:1-f.y)*(k&4?f.z:1-f.z);float difference=current-base;
     delta+=difference*weight;
+    if(current<=0){solid+=weight;if(mat==4)paved+=weight;}
     float amount=ab(difference)*weight;if(mat==1)influence.x+=amount;else if(mat==2)influence.y+=amount;else if(mat==3)influence.z+=amount;else if(mat==4)asphalt+=amount;
    }
    total=influence.x+influence.y+influence.z+asphalt;
@@ -729,6 +730,10 @@ void shade_mesh(const World&w,Mesh&m,u32 expected_epoch){
     if(crossings)amount=mn(amount,eased(.025f,.28f,length(f-original_vertex/float(crossings))));
     v.blend=influence*(amount/total);v.asphalt=asphalt*(amount/total);
    }
+   // Road paint is authoritative even where grading leaves density unchanged.
+   // Only occupied samples contribute; excavated air cannot retain paint.
+   if(solid>1e-6f&&paved>0){float coverage=clampf(paved/solid,0,1);
+    v.blend=v.blend*(1-coverage);v.asphalt=v.asphalt*(1-coverage)+coverage;}
   }
  }
  if(!cancelled(w,epoch))shade_visibility(w,m,epoch);

@@ -1,3 +1,9 @@
+> 2026-10-16 road correctness: fixed grass-coloured strips where asphalt grading
+> meets unchanged natural terrain. Native occupied-material coverage now paints
+> these vertices; short regression, repaint, save/mesh restore and actual copied
+> settlement visual/patrol/reopen checks pass. Existing DLL hash invalidates
+> derived meshes. Evidence: evidence/road_surface_paint/. Water unchanged.
+
 > 2026-10-16 settlement integration: explicit development action populates an empty
 > prepared street with two native patrol residents. Actual-world walking/reversal,
 > duplicate refusal, compound save and fresh-process restoration pass on a cloned

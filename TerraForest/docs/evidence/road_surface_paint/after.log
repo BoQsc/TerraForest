@@ -1,0 +1,13 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS pave through natural surface height
+PASS native mesh response valid
+surface samples=9 minimum asphalt=1.0
+PASS unchanged-height road interior remains fully asphalt
+PASS material weights remain normalized
+PASS paved terrain snapshot restores
+PASS restored pavement reproduces exact mesh and material weights
+PASS repaint same geometry as stone
+PASS native mesh response valid
+PASS stone replacement removes asphalt colour
+ROAD_SURFACE_PAINT failures=0
