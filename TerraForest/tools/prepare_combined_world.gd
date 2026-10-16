@@ -13,9 +13,11 @@ func wait_until(predicate:Callable,seconds:int=30)->bool:
  return predicate.call()
 func signature()->Dictionary:
  var result:Dictionary={"blocks":Marshalls.raw_to_base64(game.structures.blocks.capture_snapshot()),"roads":Marshalls.raw_to_base64(game.road_palette.capture_anchors())}
- for asset in ["furniture/table/v1","furniture/chair/v1","furniture/shelf/v1","storage/wooden_chest/v1","architecture/wooden_door/v1","architecture/wooden_window/v1","architecture/metal_guardrail/v1"]:
+ for asset: String in game.structures._models:
   var batch=game.structures.model(asset)
   result[asset]=Marshalls.raw_to_base64(batch.capture_snapshot())
+ result["actors"]=Marshalls.raw_to_base64(game.actors.store.capture_storage_snapshot())
+ result["actor_orders"]=Marshalls.raw_to_base64(game.actors.orders.capture_storage_snapshot())
  return result
 func _initialize()->void:run.call_deferred()
 func run()->void:
@@ -25,6 +27,7 @@ func run()->void:
   if arg=="--checkpoint-layout=mixed":mixed=true
  if report_path.is_empty():quit(1);return
  game=load("res://demo/world.tscn").instantiate();root.add_child(game)
+ game.set_physics_process(false) # Compare restored authoritative state before any patrol tick.
  # Cold offline generation includes all generated lake caches. This is not a
  # runtime arrival budget; the independent preparation runner records duration.
  var started:bool=await wait_until(func():return not game.loading_active,180)
@@ -33,9 +36,13 @@ func run()->void:
  game.set_physics_process(false);game._clear_motion();game.app_focused=true
  if reopening:
   if not require(game.construction_inventory.gameplay and game.player_hud.gameplay_construction,"reopen uses resource-cost gameplay with actors and fleet enabled"):await finish(false);return
+  if not require(game.actors.pool!=null and game.actors.store.statistics().active==2,"reopen has exactly two residents with simulation enabled"):await finish(false);return
   var expected:Dictionary=JSON.parse_string(FileAccess.get_file_as_string(report_path))
   var ready:bool=await wait_until(func():return game.structures.blocks.stats().cells==int(expected.cells))
-  if not require(ready and signature()==expected.signature,"fresh process restores exact settlement blocks, furnishings and roads"):await finish(false);return
+  var actual:=signature()
+  for key: String in actual:
+   if actual[key]!=expected.signature.get(key):print("SIGNATURE_MISMATCH ",key)
+  if not require(ready and actual==expected.signature,"fresh process restores exact settlement blocks, all furnishings, roads and patrol residents"):await finish(false);return
   if not require(game.player.position.distance_to(Vector3(expected.spawn[0],expected.spawn[1],expected.spawn[2]))<0.1,"on-foot start survives reopen"):await finish(false);return
  else:
   if not require(game.structures.blocks.stats().cells==0,"preparation starts in an empty staging world"):await finish(false);return
@@ -74,6 +81,17 @@ func run()->void:
   game.camera.position=Vector3(0,1.6,0);game.camera.rotation=Vector3(game.pitch,0,0)
   game.terrain.focus=game.player.position;game.structures.set_model_focus(game.player.position)
   game.construction_palette.survey_dialog.hide()
+  var spawn: Vector3=game.player.position
+  var street: Dictionary=game.road_palette.prepared_streets[0]
+  var center: Vector3=(street.ends[0]+street.ends[1])*.5
+  var direction: Vector3=(street.ends[1]-street.ends[0]).normalized()
+  game.player.position=center+Vector3(-direction.z,0,direction.x)*3+Vector3.UP*1.5
+  game.terrain.focus=game.player.position;game.structures.set_model_focus(game.player.position)
+  if not require(await wait_until(func():return game._actor_collision_ready(AABB(center-Vector3(6,1,6),Vector3(12,4,12))),30),"resident street collision ready"):await finish(false);return
+  var population: Dictionary=preload("res://addons/world_runtime/settlement_actors.gd").populate(game)
+  if not require(population.ok and game.actors.store.statistics().active==2,"two native patrol residents prepared: "+population.reason):await finish(false);return
+  game.player.position=spawn;game.terrain.focus=spawn;game.structures.set_model_focus(spawn)
+
   var file:=FileAccess.open(report_path,FileAccess.WRITE)
   file.store_string(JSON.stringify({"slot":game.terrain.save_slot,"cells":game.structures.blocks.stats().cells,"spawn":[game.player.position.x,game.player.position.y,game.player.position.z],"signature":signature()},"  "));file.close()
  # Wait for existing generated components before ordinary compound persistence.

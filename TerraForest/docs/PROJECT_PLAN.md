@@ -1,3 +1,9 @@
+> 2026-10-16 combined preparation: newly prepared settlements now include two
+> native patrol residents. All registered furnishings plus actors/orders enter
+> fresh-process verification before publication. Mixed eight-building creation
+> and reopen pass; existing-destination no-op preserves exact save hash.
+> Human-review slot: populated_review_20261016. Evidence: evidence/prepared_residents/.
+
 > 2026-10-16 road correctness: fixed grass-coloured strips where asphalt grading
 > meets unchanged natural terrain. Native occupied-material coverage now paints
 > these vertices; short regression, repaint, save/mesh restore and actual copied

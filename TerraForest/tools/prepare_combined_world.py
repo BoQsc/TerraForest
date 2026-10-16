@@ -34,13 +34,13 @@ def prepare(engine, worlds, folder, destination="combined_gameplay", layout="cot
                 '1920x1080', '--max-fps', '60', '--script',
                 'res://tools/prepare_combined_world.gd', '--',
                 '--world-slot=' + slot, '--world-generator=4', '--world-seed=1703',
-                '--ground-cover', '--checkpoint-layout=' + layout, '--checkpoint-report=' + str(report),
+                '--ground-cover', '--actors', '--checkpoint-layout=' + layout, '--checkpoint-report=' + str(report),
                 '--derived-cache=user://' + slot]
         metadata = dict(slot=slot, layout=layout, **revision_metadata(), phases=[])
         for phase in ('create', 'reopen'):
             phase_dir = folder / phase
             phase_dir.mkdir()
-            command = base + (['--reopen-checkpoint', '--gameplay-construction', '--actors', '--vehicle-fleet'] if phase == 'reopen' else [])
+            command = base + (['--reopen-checkpoint', '--gameplay-construction', '--vehicle-fleet'] if phase == 'reopen' else [])
             print(f'{phase}: preparing the existing settlement workflow at 1920x1080 / cap 60.', flush=True)
             result = execute(command, phase_dir, 270, 'COMBINED_PREPARATION failures=0')
             metadata['phases'].append(dict(command=command, result=result))
