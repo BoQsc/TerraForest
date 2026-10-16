@@ -1348,3 +1348,11 @@ func _additional_loading_ready() -> bool:
 		loading_label.text+="\nPreparing water: %d cached regions, %d pending, %d surfaces"%[state.cache_hits,state.pending_regions,state.dirty_meshes]
 		return false
 	return true
+
+func _populate_settlement_actors() -> Dictionary:
+	var reason: String=actor_authoring.unavailable(self)
+	if not reason.is_empty():
+		_show_lake_notice(reason);return {"ok":false,"reason":reason}
+	var result: Dictionary=preload("res://addons/world_runtime/settlement_actors.gd").populate(self)
+	_show_lake_notice(result.reason)
+	return result

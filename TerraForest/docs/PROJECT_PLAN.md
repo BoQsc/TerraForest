@@ -1,3 +1,9 @@
+> 2026-10-16 settlement integration: explicit development action populates an empty
+> prepared street with two native patrol residents. Actual-world walking/reversal,
+> duplicate refusal, compound save and fresh-process restoration pass on a cloned
+> save; source unchanged. Grass crossing the street remains a visual defect.
+> Evidence: evidence/settlement_population/. No crowd/performance qualification.
+
 > 2026-10-16 entity/construction integration: one actor and two head-on actors
 > complete patrol crossing/return over the12 m timber bridge using normal
 > block stairs and native routing. Capsule separation, support and existing

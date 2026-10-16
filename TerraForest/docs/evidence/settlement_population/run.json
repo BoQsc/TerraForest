@@ -1,0 +1,83 @@
+{
+  "copy": {
+    "created": true,
+    "slot": "population_f79e08cac5d541dea6c775ec262c2bde",
+    "source_slot": "combined_stage_7801173ed84740ee91a1b06e51a3298b",
+    "source_sha256": "51a8e5d01faf87bc35bbfd676bf179d33544d40e125e08c3bed3f815889befdc"
+  },
+  "phases": [
+    {
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--fullscreen",
+        "--resolution",
+        "1920x1080",
+        "--max-fps",
+        "60",
+        "--script",
+        "res://tests/settlement_population.gd",
+        "--",
+        "--world-slot=population_f79e08cac5d541dea6c775ec262c2bde",
+        "--gameplay-construction",
+        "--ground-cover",
+        "--actors",
+        "--vehicle-fleet",
+        "--route-evidence=C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\settlement_population\\20261016T054904765318Z\\expected.bin"
+      ],
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "pid": 12996,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 16.593980000005104,
+        "passed": true
+      }
+    },
+    {
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--fullscreen",
+        "--resolution",
+        "1920x1080",
+        "--max-fps",
+        "60",
+        "--script",
+        "res://tests/settlement_population.gd",
+        "--",
+        "--world-slot=population_f79e08cac5d541dea6c775ec262c2bde",
+        "--gameplay-construction",
+        "--ground-cover",
+        "--actors",
+        "--vehicle-fleet",
+        "--route-evidence=C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\settlement_population\\20261016T054904765318Z\\expected.bin",
+        "--reopen-route"
+      ],
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "pid": 16800,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 12.734976499996264,
+        "passed": true
+      }
+    }
+  ],
+  "revision": "2cb01d654323d334263dcb49b18499558f8e1f97",
+  "worktree_changes": [
+    " M TerraForest/addons/player_runtime/session_menu.gd",
+    " M TerraForest/demo/world.gd",
+    "?? TerraForest/addons/world_runtime/settlement_actors.gd",
+    "?? TerraForest/tests/settlement_population.gd",
+    "?? TerraForest/tools/run_settlement_population.py"
+  ],
+  "git_metadata_available": true,
+  "source_unchanged": true
+}

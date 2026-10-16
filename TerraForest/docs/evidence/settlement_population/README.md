@@ -1,0 +1,9 @@
+# Settlement population integration — 2026-10-16
+
+Actions > Development > Populate empty settlement creates two street patrol actors through the host world callback. Actor simulation must be enabled and the world must have no actors. Stand within 32 m of a prepared street centre; its length must be at least 12 m. Four dry, supported, clear endpoints are checked before creation. Existing native activation and routing own runtime movement. This is an explicit authoring action, not automatic population of saved worlds. F5 saves normally.
+
+The 1920x1080 graphical check used a unique copy of combined_stage_7801173ed84740ee91a1b06e51a3298b. Both actors reached their opposite endpoints and reversed within the bounded 600-tick check. Repeating the action preserved exact actor/order bytes. Ordinary compound saving and a fresh process restored exact actor identities, positions and patrol legs. Source SHA-256 remained unchanged (run.json). A GDScript inferred-vector parse failure is retained; the correction declares the vector type explicitly.
+
+Reproduce: `python tools/run_settlement_population.py --source YOUR_PREPARED_SLOT` from TerraForest. The runner clones the source and never writes it. Endpoint validation does not guarantee every route is navigable; the existing bounded planner handles the route.
+
+The screenshot was inspected: two resident placeholders are visible in the furnished street with doors and windows. A grass strip crosses the road and remains a visual integration defect to investigate. These actors are functional placeholders, not finished character art or NPC schedules. The check freezes unrelated gameplay simulation and manually advances actors; it does not qualify whole-world frame timing, dense populations, multiplayer or laptop thermals. Startup receive hitches of 137/132 ms remain in the logs. Water was unchanged.
