@@ -1,0 +1,49 @@
+{
+  "named_launch": {
+    "slot": "populated_review_20261016",
+    "new_world_generator": 1,
+    "new_world_seed": 1703,
+    "temporary": false,
+    "existing_save_takes_precedence": true,
+    "command": [
+      "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+      "--log-file",
+      "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\playtests\\20261017T223528190624Z\\engine.log",
+      "--path",
+      "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+      "--rendering-method",
+      "forward_plus",
+      "--fullscreen",
+      "--resolution",
+      "1920x1080",
+      "--max-fps",
+      "60",
+      "res://demo/world.tscn",
+      "--",
+      "--world-generator=1",
+      "--world-seed=1703",
+      "--world-slot=populated_review_20261016",
+      "--ground-cover",
+      "--actors",
+      "--vehicle-fleet",
+      "--gameplay-construction",
+      "--max-fps=60"
+    ],
+    "label": "Named gameplay world",
+    "utc": "20261017T223528190624Z",
+    "actors_enabled": true,
+    "vehicle_fleet_enabled": true,
+    "ground_cover_enabled": true,
+    "notes": "Existing named save opened directly; no cloning or regeneration. 60 FPS is a target, not qualification."
+  },
+  "existing_launcher_slot": "combined_gameplay",
+  "rejected": [
+    "invalid slot",
+    "missing save"
+  ],
+  "save_hashes_unchanged": {
+    "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\populated_review_20261016.trw": "69780dfca811753a08cba79b5100eed87424239a8baf0b922c51a3d7c94b5906",
+    "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\combined_gameplay.trw": "25b19886c1b677c44cabce30b1bc39a9efb6614f40d6c733bfb990fa7e3d9052"
+  },
+  "scope": "actual CMD dry-run and Python refusal paths; no game launched or new runtime qualification"
+}

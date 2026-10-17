@@ -1,0 +1,3 @@
+# Named gameplay launcher — 2026-10-18
+
+The actual Windows `Play Combined Gameplay.cmd --slot populated_review_20261016 --dry-run` path resolves the populated review world with actors, ground cover, fleet and gameplay enabled. Default CMD dry-run still selects combined_gameplay. Invalid and missing named saves return an error before launch. SHA-256 of both existing saves remains unchanged; check.json records exact commands/hashes. No game was started by this check. Runtime preparation/reopen evidence remains in prepared_residents; this adds convenient access, not further gameplay or performance qualification.

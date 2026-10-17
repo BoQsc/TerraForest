@@ -14,6 +14,7 @@ from clone_world import clone_once
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--godot")
+    parser.add_argument("--slot", help="Open an existing named save directly; never clone or regenerate it")
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--furnished", action="store_true", help="Open the separate furnished checkpoint")
     parser.add_argument("--generated-furnished", action="store_true", help="Open the editor-generated furnished checkpoint")
@@ -22,6 +23,23 @@ def main():
     parser.add_argument("--vehicle-fleet", action="store_true", help="Enable bounded nearby vehicle activation")
     parser.add_argument("--gameplay-copy", action="store_true", help="Copy the furnished checkpoint once into a separate gameplay save")
     args = parser.parse_args()
+    if args.slot:
+        if not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]{0,47}", args.slot):
+            parser.error("Invalid save slot")
+        save = Path(os.environ.get("APPDATA", "")) / "Godot/app_userdata/TerraForest/worlds" / (args.slot + ".trw")
+        if not save.is_file():
+            parser.error("Named save is missing; select an existing world in the world browser or prepare it first.")
+        config, extra = parse_args(["--slot", args.slot, "--ground-cover", "--actors", "--vehicle-fleet", "--gameplay-construction", *(["--godot", args.godot] if args.godot else [])])
+        details = launch_details(config, extra)
+        stamp = datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')
+        folder = ROOT / 'reports' / 'playtests' / stamp
+        details['command'][1:1] = ['--log-file', str(folder / 'engine.log')]
+        details.update(label='Named gameplay world', utc=stamp, actors_enabled=True,
+                       vehicle_fleet_enabled=True, ground_cover_enabled=True,
+                       notes='Existing named save opened directly; no cloning or regeneration. 60 FPS is a target, not qualification.')
+        if args.dry_run:
+            print(json.dumps(details, indent=2));return 0
+        return record_and_run(details, folder, details['label'])
     if args.gameplay_copy and not args.generated_furnished:
         parser.error("Gameplay copy requires --generated-furnished")
     if sum([args.furnished,args.generated_furnished,args.geology])>1:

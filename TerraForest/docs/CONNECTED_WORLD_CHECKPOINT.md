@@ -159,3 +159,11 @@ The current Actions window supersedes historical M/B/H and shape-number instruct
 ## Newly prepared populated settlements
 
 `Prepare Combined Gameplay.cmd --layout mixed --destination YOUR_NEW_SLOT` now creates two patrol residents along with eight furnished buildings, doors/windows, interiors and prepared roads. Existing destinations are preserved. Open the slot from the world browser, or use `python tools/run.py --slot YOUR_NEW_SLOT --ground-cover --actors --vehicle-fleet --gameplay-construction`. The local reviewed preparation is `populated_review_20261016`; it is separate from existing gameplay progress. See [preparation evidence](evidence/prepared_residents/README.md). Resident visuals are provisional and this is not a performance qualification.
+
+The existing gameplay launcher now also accepts a named world:
+
+```bat
+"Play Combined Gameplay.cmd" --slot populated_review_20261016
+```
+
+This directly opens that existing save with gameplay costs, ground cover, actors and vehicle fleet enabled at fullscreen 1920x1080 with a 60 FPS cap. It does not copy or regenerate the world. Without `--slot`, the previous combined-gameplay behavior remains. Invalid or missing named saves are rejected. `--dry-run` prints the command without opening Godot. The world browser remains the clickable way to choose saved worlds.
