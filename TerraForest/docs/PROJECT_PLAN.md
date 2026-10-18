@@ -1,5 +1,13 @@
 ## Current integrated entry point - 2026-10-18
 
+New district creation now includes deterministic one-time chest supplies, persisted
+and compared exactly on fresh-process reopen. The prepared named world
+regional_supplies_20261018 is available through Worlds.cmd; existing saves remain
+untouched. Native withdrawal and restored protection pass. One published-world
+check hit its 60-second loading deadline; an unchanged retry passed in 20.24 s.
+Keep that intermittent readiness failure open; this is not a loading fix. Evidence:
+regional_supplies. Normal generated_world_v4 remains the default.
+
 Prepare/Play Generated World.cmd now use generated_world_v4 and the current district
 recipe, rather than the older v3 ambient-cave world. Worlds.cmd supports named/seeded
 creation of the same recipe; Regional World Review uses its independent v6 copy.

@@ -23,6 +23,7 @@ func signature()->Dictionary:
  result["actor_orders"]=Marshalls.raw_to_base64(game.actors.orders.capture_storage_snapshot())
  result["ground_cover"]=Marshalls.raw_to_base64(game.ground_cover.removed.capture_storage_snapshot())
  result["vehicles"]=Marshalls.raw_to_base64(game.world_vehicle.capture_snapshot())
+ result["chest_contents"]=Marshalls.raw_to_base64(game.storage.store.capture_storage_snapshot())
  return result
 func _initialize()->void:run.call_deferred()
 func run()->void:
@@ -140,6 +141,9 @@ func run()->void:
    if not await prepare_underground_locations():await finish(false);return
    if districts and not await prepare_woodland_locations():await finish(false);return
    if districts and not await prepare_transport():await finish(false);return
+   if districts:
+    var supplies:Dictionary=preload("res://addons/world_runtime/settlement_supplies.gd").populate(game)
+    if not require(supplies.ok,"generated chest supplies: "+str(supplies)):await finish(false);return
    game.teleport(spawn)
    if not require(await wait_until(func():return not game.loading_active,60),"central spawn reloads after outer town generation"):await finish(false);return
    game.set_physics_process(false);game._clear_motion();game.player.position=spawn

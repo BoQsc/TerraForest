@@ -50,6 +50,13 @@ checks apron publication, collision readiness and chassis clearance, then compar
 the fleet snapshot after a fresh-process reopen. No development placement is needed.
 Older saved worlds are not populated retroactively.
 
+New district worlds also stock their generated chests once during preparation:
+small wood and stone supplies, plant material in housing, and a few ore pieces in
+the eastern service area. These use normal native container storage and removal
+protection, and their exact contents are checked on fresh-process reopen. Taking
+items depletes the saved stock; opening or revisiting a world never replenishes it.
+Existing saves, including generated_world_v4, retain their previous contents.
+
 The current saved mine's main chamber and both side chambers have passed a
 production-collision walking route back to the entrance. Use F or the Actions
 menu for the headlamp; its beam now reaches the large chamber walls from the

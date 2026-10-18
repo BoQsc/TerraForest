@@ -1,0 +1,12 @@
+{
+  "timed_out": false,
+  "launch_error": null,
+  "pid": 13480,
+  "exit_code": 1,
+  "diagnostics": [
+    "FAIL integrated world loads"
+  ],
+  "required_text_found": false,
+  "elapsed_seconds": 63.801327400000446,
+  "passed": false
+}
