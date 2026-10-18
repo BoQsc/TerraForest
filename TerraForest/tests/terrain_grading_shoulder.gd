@@ -25,6 +25,20 @@ func run() -> void:
 	for shoulder in [-1.0,17.0,NAN]:
 		var bad:=packet.duplicate();bad.encode_float(44,shoulder)
 		check(not Codec.reply_ok(core.execute(bad)) and core.execute(Codec.command(4))==saved,"invalid shoulder preserves world")
+	# Excavate an existing high solid pad: cut shoulders must rise outwards.
+	var cut_core=ClassDB.instantiate("TerrainCore");cut_core.execute(Codec.command(6,[1703,2]))
+	check(Codec.reply_ok(cut_core.execute(Codec.brush(Vector3(416,180,400),Vector3(416,180,400),32,1,true,1))),"high substrate created")
+	var unchanged:=density(cut_core,Vector3(416,184,424))
+	check(Codec.reply_ok(cut_core.execute(packet)),"cut shoulder accepted")
+	check(density(cut_core,Vector3(416,179,400))<0 and density(cut_core,Vector3(416,181,400))>0,"excavation retains flat pad")
+	check(density(cut_core,Vector3(416,182,406))<0 and density(cut_core,Vector3(416,184,406))>0,"inner cut shoulder rises away from pad")
+	check(density(cut_core,Vector3(416,188,410))<0 and density(cut_core,Vector3(416,190,410))>0,"outer cut shoulder rises to surrounding ground")
+	check(density(cut_core,Vector3(392,185,400))<0 and density(cut_core,Vector3(392,187,400))>0,"cut end cap has matching slope")
+	check(density(cut_core,Vector3(416,184,424))==unchanged,"cut preserves distant substrate")
+	check(cut_core.execute(packet).decode_u32(16)==0,"repeated cut shoulder is idempotent")
+	var cut_saved:PackedByteArray=cut_core.execute(Codec.command(4)).slice(12)
+	var restored=ClassDB.instantiate("TerrainCore");var restore_packet:=Codec.command(5);restore_packet.append_array(cut_saved)
+	check(Codec.reply_ok(restored.execute(restore_packet)) and restored.execute(Codec.command(4)).slice(12)==cut_saved,"cut and fill persist in existing snapshot format")
 	var terrain=preload("res://addons/volumetric_terrain/terrain_world.gd").new();terrain.diagnostics_pause_streaming=true;terrain.backend.world_generator=2;root.add_child(terrain)
 	terrain.start(StandardMaterial3D.new(),true)
 	var deadline:=Time.get_ticks_msec()+30000

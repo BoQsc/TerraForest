@@ -263,7 +263,7 @@ Page* World::ensure(int px,int py,int pz){
  int idx=pages.push(page);pages_by_key.put(key,idx);edit_columns[px+NP*pz]|=(1u<<py);return &pages[idx];
 }
 static float box_distance(V3 p,V3 c,float r){V3 q={ab(p.x-c.x)-r,ab(p.y-c.y)-r,ab(p.z-c.z)-r};return length({mx(q.x,0),mx(q.y,0),mx(q.z,0)})+mn(mx(q.x,mx(q.y,q.z)),0);}
-static float road_bed_field(V3 p,V3 a,V3 b,float half_width,float depth,float shoulder=0,const float *curve=nullptr,int curve_count=0,int curve_index=0,float curve_offset=0){
+static float road_bed_field(V3 p,V3 a,V3 b,float half_width,float depth,float shoulder=0,const float *curve=nullptr,int curve_count=0,int curve_index=0,float curve_offset=0,bool cut_shoulder=false){
  V3 axis={b.x-a.x,0,b.z-a.z},offset={p.x-a.x,0,p.z-a.z};
  float along=dot(offset,axis)/dot(axis,axis);
  float t=clampf(along,0.f,1.f);
@@ -281,6 +281,8 @@ static float road_bed_field(V3 p,V3 a,V3 b,float half_width,float depth,float sh
  float edge=length(V3{p.x-nearest.x,0,p.z-nearest.z})-half_width;
  if(shoulder>0){
   float drop=depth*clampf(edge/shoulder,0.f,1.f);
+  // Excavation rises away from the pad; fill falls away from it.
+  if(cut_shoulder)return mx(edge-shoulder,mx(p.y-top,(top-depth-p.y+drop)/__builtin_sqrtf(1.f+(depth/shoulder)*(depth/shoulder))));
   return mx(edge-shoulder,mx((p.y-top+drop)/__builtin_sqrtf(1.f+(depth/shoulder)*(depth/shoulder)),top-depth-p.y));
  }
  return mx(edge,mx(p.y-top,top-depth-p.y));
@@ -301,7 +303,7 @@ bool World::edit(V3 a,V3 b,float radius,int shape,bool add,u8 material,V3&lo,V3&
   float h=height(float(x),float(z));int lastpy=-1,idx=-1;
   for(int y=y0;y<=y1;y++){
    V3 p={float(x),float(y),float(z)};float brush=shape==2?road_bed_field(p,a,b,radius,depth,shoulder,curve,curve_count,curve_index):(shape==1?box_distance(p,b,radius):capsule(p,a,b,radius));
-   float cut=shape==2&&clearance>0?road_bed_field(p,a+V3{0,clearance,0},b+V3{0,clearance,0},radius,clearance,0,curve,curve_count,curve_index,clearance):SDF_BAND+1;
+   float cut=shape==2&&clearance>0?road_bed_field(p,a+V3{0,clearance,0},b+V3{0,clearance,0},radius,clearance,shoulder,curve,curve_count,curve_index,clearance,true):SDF_BAND+1;
    if(brush>SDF_BAND&&cut>SDF_BAND)continue;
    int py=y>>4;if(py!=lastpy){idx=pages_by_key.get(page_key(x>>4,py,z>>4));lastpy=py;}
    int j=(x&15)+16*((z&15)+16*(y&15));float old=idx<0?base(p,h):float(pages[idx].d[j])/SDF_SCALE;

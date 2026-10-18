@@ -1,5 +1,11 @@
 ## Current integrated entry point - 2026-10-18
 
+Native foundation excavation now slopes its shoulders as fill already did.
+Cut/fill, road, snapshot and district composition checks pass; full seed-42
+creation/reopen and graphical review pass in graded_district_42_20261018.
+Northern raised/terraced shoulders remain visible: this is a cut-side correctness
+fix, not completed landscape integration. Evidence: grading_cut_shoulders.
+
 Saved northern tower traversal now passes: one integrated tower, E door opening,
 continuous ascent to the third floor and descent/exit, 18 grounded waypoints with
 no jumps or repositioning after staging. 35.60 s including loading; correctness
