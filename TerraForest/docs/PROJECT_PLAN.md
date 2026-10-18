@@ -1,3 +1,9 @@
+> 2026-10-18 startup receive cause: named provider timing attributes121.19 ms
+> of135.18 ms startup receipt to saved-water restoration; mesh receipt max0.06 ms,
+> polling0.026 ms. Water remains deferred per user direction; no implementation
+> change or performance fix. Separate1.39 s controller hitch still unresolved.
+> Evidence: evidence/startup_restore_attribution/.
+
 > 2026-10-18 startup attribution: split broad controller timing into interaction,
 > authoring, vehicle, base controller/loading, presentation and pickups. Short
 > copied-world trace did not reproduce the 1.39 s event; final controller max

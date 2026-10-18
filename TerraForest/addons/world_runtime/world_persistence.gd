@@ -68,6 +68,8 @@ func _capture() -> Dictionary:
 func _restore(sections: Dictionary, epoch_id: int) -> void:
 	for name: String in _providers:
 		if _providers[name]["restore"].is_valid():
+			var restore_begin:=Time.get_ticks_usec()
 			if not _providers[name]["restore"].call(sections.get(name, _providers[name]["empty"])):
 				_terrain.snapshot_restore_ok = false
+			if _terrain.has_method("_record_stage"):_terrain._record_stage("restore "+name,(Time.get_ticks_usec()-restore_begin)/1000.0)
 	_restored_epoch = epoch_id

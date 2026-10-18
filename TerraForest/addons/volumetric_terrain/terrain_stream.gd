@@ -231,8 +231,12 @@ func _process(delta: float) -> void:
 	if stopping:
 		return
 	var receive_begin: int = Time.get_ticks_usec()
-	for result: Dictionary in backend.poll():
+	var ready_results: Array[Dictionary]=backend.poll()
+	_record_stage("receive poll",(Time.get_ticks_usec()-receive_begin)/1000.0)
+	for result: Dictionary in ready_results:
+		var result_begin:=Time.get_ticks_usec()
 		_receive(result)
+		_record_stage("receive "+str(result.get("kind","unknown")),(Time.get_ticks_usec()-result_begin)/1000.0)
 	last_receive_ms = float(Time.get_ticks_usec() - receive_begin) / 1000.0
 	_record_stage("receive", last_receive_ms)
 	_drain_staging()
