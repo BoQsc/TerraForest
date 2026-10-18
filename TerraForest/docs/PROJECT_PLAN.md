@@ -1,3 +1,34 @@
+## Prefab cellar functional check passed - 2026-10-18
+
+The prefab-owned cellar now passes placement, full-world save/reopen and actual
+player ascent/return through its opening. Native movement supports the upright
+height-scaled ladder while retaining horizontal scale/tilt restrictions; existing
+ladder regressions pass. The integrated development world has seventeen buildings,
+the mine and 11,278 block cells. See [evidence](evidence/prefab_cellar/README.md).
+
+This closes the tested cellar functional gate, not the whole POI/world milestone.
+Preparation/loading hitches, broader seed/rotation coverage and location art remain
+open. Default launchers remain on v3. Next continue world-level integration: usable
+location access and exclusions, substantial lakes and distinct map destinations;
+do not expand underground into a ubiquitous cave network or revisit water mechanics.
+
+## Prefab-owned cellar integration started - 2026-10-18
+
+Added a cottage variant with a cellar shell, two-metre floor opening, ladder and
+storage. Surface offset and bounded underground clearance remain with the prefab;
+site preparation grades the surface first, clears the cellar second, and uses the
+existing native combined placement path for blocks/models. Four rotated site plans
+and hatch clearance pass. Actual placement into the existing generated world passes
+without engine diagnostics (reports/cellar_world_visual_20261018, about 26 seconds).
+The initial failed full-generation attempt and subsequent menu-index diagnostics
+were retained; the prefab now uses the normal registration path.
+
+Interior capture confirms the room/ladder/opening exist but includes the placement
+dialog; the capture script now hides it. Actual climb in/out, support/clearance at
+the hatch, clean visual review and persistent save/reload remain required before
+publishing. Preparation hitches remain visible; no performance qualification.
+The opt-in POI generation path includes this cottage; default launchers unchanged.
+
 ## Mine roof correction verified - 2026-10-18 (partial)
 
 Profile 11 surveys terrain above the underground footprint once during generation.

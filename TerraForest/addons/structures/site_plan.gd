@@ -6,6 +6,15 @@ const MAX_SEGMENTS:=256
 static func prepare(asset: Resource,origin: Vector3i,rotation: int,grade: int) -> Dictionary:
 	var plan:=foundation(asset,origin,rotation,grade)
 	if not plan.ok: return plan
+	if asset.get_meta("cellar_clearance",false):
+		for x in [-2,0,2]:
+			var a:=Vector3(x,1,-3);var b:=Vector3(x,1,3)
+			for turn in rotation:
+				a=Vector3(1-a.z,a.y,a.x);b=Vector3(1-b.z,b.y,b.x)
+			a+=Vector3(plan.target);b+=Vector3(plan.target)
+			var region:=AABB(a.min(b)-Vector3(1.5,1,1.5),a.max(b)-a.min(b)+Vector3(3,6,3))
+			plan.segments.append({"start":a,"finish":b,"half_width":1.5,"depth":1.0,"clearance":5.0,"shoulder":0.0,"material":1,"bounds":region})
+			plan.bounds=plan.bounds.merge(region)
 	plan["foundation_segments"]=plan.segments.size();plan["paving_segments"]=0
 	if not asset.has_meta("frontage_version"): return plan
 	var street: Variant=asset.get_meta("street_width",null)
@@ -65,9 +74,12 @@ static func prepare(asset: Resource,origin: Vector3i,rotation: int,grade: int) -
 static func foundation(asset: Resource,origin: Vector3i,rotation: int,grade: int) -> Dictionary:
 	if asset==null or not asset.is_class("NativeBlockPrefab") or rotation<0 or rotation>3:
 		return {"ok":false,"reason":"Invalid building layout"}
-	var target:=Vector3i(origin.x,grade,origin.z)
+	var surface_offset:int=asset.get_meta("site_surface_offset",0)
+	if surface_offset not in [0,5] or (surface_offset==5 and not asset.get_meta("cellar_clearance",false)):
+		return {"ok":false,"reason":"Invalid underground foundation metadata"}
+	var target:=Vector3i(origin.x,grade-surface_offset,origin.z)
 	var bounds: AABB=asset.placement_bounds(target,rotation)
-	if bounds.position.y!=grade:
+	if bounds.position.y!=grade-surface_offset:
 		return {"ok":false,"reason":"Foundation layout must have its base at local Y=0"}
 	if bounds.size.x<=0 or bounds.size.z<=0 or grade<12 or grade>238:
 		return {"ok":false,"reason":"Foundation outside grading limits"}

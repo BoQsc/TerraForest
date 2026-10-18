@@ -121,6 +121,7 @@ func run()->void:
 
   if regional:
    if not await prepare_outer_sites():await finish(false);return
+   if game.terrain.backend.world_generator>=10 and not await prepare_cellar_location():await finish(false);return
    if not await prepare_underground_locations():await finish(false);return
    game.teleport(spawn)
    if not require(await wait_until(func():return not game.loading_active,60),"central spawn reloads after outer town generation"):await finish(false);return
@@ -226,4 +227,24 @@ func prepare_underground_locations()->bool:
   if not require(game._place_combined_prefab(asset,origin,0),"mine entrance and storage publish through native combined transaction"):return false
   if not require(game.structures.blocks.stats().cells>before,"mine timber frames exist in world"):return false
   print("REGIONAL_MINE owner=",poi.owner_site," entrance=",entrance," cells=",game.structures.blocks.stats().cells)
+ return true
+
+func prepare_cellar_location()->bool:
+ var layout:Dictionary=preload("res://addons/volumetric_terrain/generated_layout.gd").describe(game.terrain.backend.world_seed,game.terrain.backend.world_generator)
+ var center:Vector3=layout.sites[1].position+Vector3(20,0,20)
+ game.teleport(center+Vector3(15,0,15))
+ if not require(await wait_until(func():return not game.loading_active,60),"cellar location loads"):return false
+ game.set_physics_process(false);game._clear_motion();game.structure_rotation=0
+ var asset:Resource=preload("res://addons/structures/cellar_catalog.gd").cottage()
+ game._accept_composed_prefab({"ok":true,"asset":asset})
+ var plan:Dictionary=preload("res://addons/structures/site_plan.gd").prepare(asset,Vector3i(center),0,int(center.y))
+ if not require(plan.ok,"cellar building site plan valid"):return false
+ game._survey_generation+=1
+ plan["epoch"]=game.terrain.epoch;plan["revision"]=game.terrain.density_revision;plan["generation"]=game._survey_generation;plan["asset"]=asset
+ game._survey_plan=plan;game._prepare_construction_site()
+ if not require(await wait_until(func():return game.site_preparation.status!="running",30) and game.site_preparation.status=="complete","cellar surface and underground preparation publishes"):return false
+ var before:int=game.doors.collection.get_ids().size()
+ game._place_prepared_site()
+ if not require(await wait_until(func():return game._foundation_placement.is_empty(),20) and game.doors.collection.get_ids().size()==before+1,"cellar cottage and attachments publish"):return false
+ print("REGIONAL_CELLAR origin=",plan.target," cells=",game.structures.blocks.stats().cells)
  return true

@@ -144,3 +144,9 @@ See [usage, verification and limits](../../docs/evidence/chest_storage/README.md
 ### Host-owned world browser
 
 Before adding `session_menu.gd` to the tree, the host may assign `world_browser_path` to its own PackedScene resource path. The default is empty, which omits the browser action. A missing/unconfigured destination refuses departure before saving or shutdown. TerraForest supplies its demo browser path from `demo/world.gd`; the player addon does not require that scene. The menu still requires its documented world-controller adapter contract.
+
+Upright ladder instances support vertical scale from 0.25 to 4 while preserving
+unit width/depth. Native movement keeps climbing speed in world metres per second;
+rotated upright instances remain supported, while tilt, shear and horizontal
+resizing are rejected. The prefab cellar uses a taller ladder through its floor
+opening. Collision remains the shared batched model proxy.

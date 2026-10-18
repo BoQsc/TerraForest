@@ -46,10 +46,12 @@ bool NativePlayerMovement::ladder_velocity(CharacterBody3D *body,Vector3 directi
     if(p.size()!=12)return false;
     Transform3D frame(Basis(p[0],p[1],p[2],p[4],p[5],p[6],p[8],p[9],p[10]),Vector3(p[3],p[7],p[11]));
     frame=collection->get_global_transform()*frame;
-    // This first ladder asset is upright and unit scale; arbitrary resized or
-    // tilted copies remain ordinary static props, never unsafe climb surfaces.
-    if(!frame.is_finite()||frame.basis.get_column(1).distance_to(Vector3(0,1,0))>0.001||
-       std::abs(frame.basis.determinant()-1)>0.001||
+    // Upright ladders may vary in height; width/depth stay unit scale so the
+    // collision probe and attachment corridor retain their physical dimensions.
+    const double height_scale=frame.basis.get_column(1).y;
+    if(!frame.is_finite()||height_scale<0.25||height_scale>4.0||
+       frame.basis.get_column(1).distance_to(Vector3(0,height_scale,0))>0.001||
+       std::abs(frame.basis.determinant()-height_scale)>0.001||
        std::abs(frame.basis.get_column(0).length()-1)>0.001||
        std::abs(frame.basis.get_column(2).length()-1)>0.001)return false;
     Vector3 local=frame.affine_inverse().xform(body->get_global_position());
