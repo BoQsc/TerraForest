@@ -1,5 +1,11 @@
 ## Current integrated entry point - 2026-10-18
 
+Northern building mix is integrated and verified: four cottages, two workshops,
+six multi-storey buildings. Seven-seed fit/support, full create/reopen, inspected
+views and all twelve entrance roundtrips pass. Review mixed_neighborhood_42_20261018;
+evidence/northern_building_mix. Worst sampled cut now 0.261 m. Planting/public spaces,
+sidewalks and vehicle turning remain required; no sustained performance acceptance.
+
 Northern streets now form a connected loop: three cross streets plus two side
 streets, replacing six raw ends. Seven-seed corridor grades/connectivity/building
 separation and native lot support pass. Full save/reopen and inspected views:

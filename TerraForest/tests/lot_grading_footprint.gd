@@ -6,7 +6,8 @@ func density(core:RefCounted,p:Vector3)->float:
  var q:=Codec.point_command(p);q.encode_u32(0,26);return core.execute(q).decode_float(16)
 func _initialize()->void:
  var center:Vector3=preload("res://addons/volumetric_terrain/generated_layout.gd").describe(42,13).sites[3].position
- var lot:Dictionary=preload("res://addons/structures/northern_lots.gd").recipe(center)[10]
+ # Freeze the original failing tower case; current neighborhood recipes may change.
+ var lot:Dictionary={"asset":preload("res://addons/structures/furniture_catalog.gd").furnished_tower(3),"origin":Vector3i(center)+Vector3i(-24,0,68),"rotation":2}
  var origin:Vector3i=lot.origin;origin.y=56
  var bounds:AABB=lot.asset.placement_bounds(origin,lot.rotation)
  var baseline=ClassDB.instantiate("TerrainCore");baseline.execute(Codec.command(6,[42,13]))

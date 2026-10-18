@@ -1,0 +1,100 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[terrain-hitch] restore volumetric_water 180.52 ms at 3068
+[TerrainRewrite] World loaded
+[TerrainRewrite] World loaded
+[terrain-hitch] receive startup 198.47 ms at 3079
+[terrain-hitch] receive 200.31 ms at 3081
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS saved world loads
+PASS twelve mixed neighborhood entrances
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS neighborhood streams
+PASS approach surface
+PASS entrance collision
+[TerrainRewrite] Ready: map coverage and local collision are active
+MIXED_APPROACH door=15 start=(1002.5, 55.05, 171.0) local=(0.500061, -0.060734, 0.945984) world=(1002.5, 56.93927, 168.446) loading=false
+PASS ground approach reaches closed door 15
+PASS door opens 15
+PASS walk inside 15
+PASS walk back outside 15
+PASS approach surface
+PASS entrance collision
+MIXED_APPROACH door=16 start=(1050.5, 55.05, 171.0) local=(0.500122, -0.062065, 0.945969) world=(1050.5, 56.93793, 168.446) loading=false
+PASS ground approach reaches closed door 16
+PASS door opens 16
+PASS walk inside 16
+PASS walk back outside 16
+PASS approach surface
+PASS entrance collision
+MIXED_APPROACH door=17 start=(1002.5, 55.05, 183.0) local=(0.5, -0.026756, 0.884872) world=(1002.5, 55.97324, 185.6151) loading=false
+PASS ground approach reaches closed door 17
+PASS door opens 17
+PASS walk inside 17
+PASS walk back outside 17
+PASS approach surface
+PASS entrance collision
+MIXED_APPROACH door=18 start=(1050.5, 55.05, 183.0) local=(0.5, -0.02676, 0.884872) world=(1050.5, 55.97324, 185.6151) loading=false
+PASS ground approach reaches closed door 18
+PASS door opens 18
+PASS walk inside 18
+PASS walk back outside 18
+PASS approach surface
+PASS entrance collision
+MIXED_APPROACH door=19 start=(1002.5, 55.05, 226.0) local=(0.5, -0.027077, 0.885025) world=(1002.5, 55.97292, 223.385) loading=false
+PASS ground approach reaches closed door 19
+PASS door opens 19
+PASS walk inside 19
+PASS walk back outside 19
+PASS approach surface
+PASS entrance collision
+MIXED_APPROACH door=20 start=(1050.5, 55.05, 226.0) local=(0.5, -0.027077, 0.885025) world=(1050.5, 55.97292, 223.385) loading=false
+PASS ground approach reaches closed door 20
+PASS door opens 20
+PASS walk inside 20
+PASS walk back outside 20
+PASS approach surface
+PASS entrance collision
+MIXED_APPROACH door=21 start=(1002.5, 55.05, 235.0) local=(0.5, -0.026791, 0.884903) world=(1002.5, 55.97321, 237.6151) loading=false
+PASS ground approach reaches closed door 21
+PASS door opens 21
+PASS walk inside 21
+PASS walk back outside 21
+PASS approach surface
+PASS entrance collision
+MIXED_APPROACH door=22 start=(1050.5, 55.05, 235.0) local=(0.5, -0.026791, 0.884903) world=(1050.5, 55.97321, 237.6151) loading=false
+PASS ground approach reaches closed door 22
+PASS door opens 22
+PASS walk inside 22
+PASS walk back outside 22
+PASS approach surface
+PASS entrance collision
+MIXED_APPROACH door=23 start=(1002.5, 55.05, 278.0) local=(0.5, -0.026825, 0.884888) world=(1002.5, 55.97318, 275.3849) loading=false
+PASS ground approach reaches closed door 23
+PASS door opens 23
+PASS walk inside 23
+PASS walk back outside 23
+PASS approach surface
+PASS entrance collision
+MIXED_APPROACH door=24 start=(1050.5, 55.05, 278.0) local=(0.5, -0.026825, 0.884888) world=(1050.5, 55.97318, 275.3849) loading=false
+PASS ground approach reaches closed door 24
+PASS door opens 24
+PASS walk inside 24
+PASS walk back outside 24
+PASS approach surface
+PASS entrance collision
+MIXED_APPROACH door=25 start=(1002.5, 55.95446, 290.0) local=(0.5, -0.062099, 0.945984) world=(1002.5, 57.9379, 292.554) loading=false
+PASS ground approach reaches closed door 25
+PASS door opens 25
+PASS walk inside 25
+PASS walk back outside 25
+PASS approach surface
+PASS entrance collision
+MIXED_APPROACH door=26 start=(1050.5, 55.05, 290.0) local=(0.5, -0.061695, 0.945709) world=(1050.5, 56.9383, 292.5543) loading=false
+PASS ground approach reaches closed door 26
+PASS door opens 26
+PASS walk inside 26
+PASS walk back outside 26
+NORTHERN_MIXED_ACCESS failures=0
+[TerrainRewrite] Temporary test world: save skipped

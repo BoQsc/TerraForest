@@ -3,14 +3,16 @@ extends RefCounted
 const SitePlan=preload("res://addons/structures/site_plan.gd")
 const Quality=preload("res://addons/world_runtime/world_building_quality.gd")
 static func recipe(center:Vector3)->Array:
- var sources:Array[Resource]=[]
- for floors in [2,3,4]:sources.append(preload("res://addons/structures/furniture_catalog.gd").furnished_tower(floors))
+ var catalog=preload("res://addons/structures/furniture_catalog.gd")
+ var sources:Array[Resource]=[catalog.enclosed_cottage(),preload("res://addons/structures/workshop_catalog.gd").workshop(),catalog.furnished_tower(2),catalog.furnished_tower(3),catalog.furnished_tower(4)]
+ # Lower houses at the perimeter, workshops beside the streets, taller centre.
+ var choices:Array[int]=[0,0,2,1,3,4,4,3,1,2,0,0]
  var lots:Array=[]
  for street in [-52,0,52]:
   for side in [-1,1]:
    for x in [-24,24]:
     var index:int=lots.size()
-    lots.append({"asset":sources[index%3],"origin":Vector3i(center)+Vector3i(x,0,street+side*16),"rotation":0 if side<0 else 2,"street_z":center.z+street,"label":"Northern lot %d"%(index+1)})
+    lots.append({"asset":sources[choices[index]],"origin":Vector3i(center)+Vector3i(x,0,street+side*16),"rotation":0 if side<0 else 2,"street_z":center.z+street,"label":"Northern lot %d"%(index+1)})
  return lots
 static func assemble(lots:Array,center:Vector3,surveys:Array)->Dictionary:
  if lots.size()!=12 or surveys.size()!=lots.size():return {"ok":false,"reason":"Incomplete lot survey"}
@@ -39,8 +41,9 @@ static func assemble(lots:Array,center:Vector3,surveys:Array)->Dictionary:
   modules.append(lot.asset)
   var offset:Vector3i=origin-target
   placements.append_array(PackedInt32Array([i,offset.x,offset.y,offset.z,lot.rotation]))
-  # The tower stair ends at local Z=10. Start beyond it and meet the road.
-  var a:=Vector3(0.5,0,10.5)
+  # Start beyond each archetype's own approach, not a fixed tower distance.
+  var local_bounds:AABB=lot.asset.placement_bounds(Vector3i.ZERO,0)
+  var a:=Vector3(0.5,0,local_bounds.end.z+0.5)
   for turn in lot.rotation:a=Vector3(1-a.z,a.y,a.x)
   a+=Vector3(origin)
   var b:=Vector3(a.x,center.y,lot.street_z)
