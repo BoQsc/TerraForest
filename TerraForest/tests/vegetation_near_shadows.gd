@@ -19,6 +19,9 @@ func run()->void:
  print("SHADOW_BASE ",game.sun.directional_shadow_mode," splits ",game.sun.directional_shadow_split_1," ",game.sun.directional_shadow_split_2," ",game.sun.directional_shadow_split_3)
  RenderingServer.viewport_set_measure_render_time(root.get_viewport_rid(),true)
  check(is_equal_approx(game.sun.directional_shadow_split_1,0.035) and game.sun.directional_shadow_blend_splits and ProjectSettings.get_setting("rendering/lights_and_shadows/directional_shadow/size")==4096,"production near-shadow configuration")
+ if "--shadow-travel" in OS.get_cmdline_user_args():
+  await shadow_travel(hit.position)
+  await done();return
  var results:Array=[]
  for variant in ["baseline","focused","focused_low_bias","focused_4096"]:
   if variant=="baseline":
@@ -48,3 +51,26 @@ func run()->void:
  check(game.ground_cover.rejected_batches==0,"no rejected cover")
  FileAccess.open("res://reports/vegetation_near_shadows/result.json",FileAccess.WRITE).store_string(JSON.stringify({"failures":failures,"phases":results},"  "))
  await done()
+
+func shadow_travel(foot:Vector3)->void:
+ var start:=foot+Vector3.UP*1.7
+ var snapshot:PackedByteArray=game.ground_cover.removed.capture_storage_snapshot()
+ var frames:Array=[];var gpu:Array=[]
+ var previous:=Time.get_ticks_usec()
+ for step in 360:
+  game.camera.global_position=start+Vector3(float(step)/30.0,0,0)
+  game.camera.look_at(foot+Vector3(0,0,-5))
+  await RenderingServer.frame_post_draw
+  var now:=Time.get_ticks_usec();frames.append((now-previous)/1000.0);previous=now
+  gpu.append(RenderingServer.viewport_get_measured_render_time_gpu(root.get_viewport_rid()))
+ # Replay representative poses for visual evidence, outside the timed route.
+ for step in [0,60,120,180,240,359]:
+  game.camera.global_position=start+Vector3(float(step)/30.0,0,0)
+  game.camera.look_at(foot+Vector3(0,0,-5))
+  for frame in 3:await RenderingServer.frame_post_draw
+  root.get_texture().get_image().save_png("res://reports/vegetation_near_shadows/travel_%03d.png"%step)
+ check(game.ground_cover.removed.capture_storage_snapshot()==snapshot,"shadow travel preserves collected and placed state")
+ check(game.ground_cover.rejected_batches==0,"shadow travel has no rejected cover")
+ check(root.size==Vector2i(1920,1080),"fullscreen 1080p viewport")
+ frames.sort();gpu.sort()
+ FileAccess.open("res://reports/vegetation_near_shadows/travel.json",FileAccess.WRITE).store_string(JSON.stringify({"failures":failures,"frame_p95":frames[int(frames.size()*0.95)],"frame_worst":frames.back(),"gpu_median":gpu[180],"scope":"12 m camera orbit/translation across directional cascade boundaries. Wind frozen, no screenshot readback during timing. Sparse replay images do not prove absence of temporal shimmer."},"  "))

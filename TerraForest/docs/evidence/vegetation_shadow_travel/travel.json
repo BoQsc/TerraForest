@@ -1,0 +1,7 @@
+{
+  "failures": 0,
+  "frame_p95": 19.057,
+  "frame_worst": 23.751,
+  "gpu_median": 10.246000289917,
+  "scope": "12 m camera orbit/translation across directional cascade boundaries. Wind frozen, no screenshot readback during timing. Sparse replay images do not prove absence of temporal shimmer."
+}
