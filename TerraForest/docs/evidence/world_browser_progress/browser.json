@@ -1,0 +1,10 @@
+{
+  "failures": 0,
+  "messages": [
+    "woodland_home: Generating terrain, locations and saved world. Elapsed 0:00. Existing saves are preserved.",
+    "woodland_home: Reopening the saved world and checking its contents. Elapsed 0:00. Existing saves are preserved.",
+    "woodland_home: Publishing the verified world. Elapsed 0:00. Existing saves are preserved.",
+    "woodland_home: World ready; preparing to open. Elapsed 0:00. Existing saves are preserved."
+  ],
+  "scope": "Actual browser polling/UI with controlled status records and live own-process sentinel; no world generation."
+}

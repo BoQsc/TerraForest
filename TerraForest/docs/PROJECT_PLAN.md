@@ -1,5 +1,11 @@
 ## Current integrated entry point - 2026-10-18
 
+World browser preparation now displays actual creating/verifying/publishing stages
+and elapsed time while the preparation process runs. Stage-order/failure tests and
+1080p browser UI checks pass. Evidence: `evidence/world_browser_progress/`. Existing
+saves and completion checks are preserved. Cancellation, standalone packaging and
+finer location progress remain open; this change does not claim faster generation.
+
 Grass ground texture now repeats at 2 m instead of 5 m, reducing oversized turf
 patterns beneath existing vegetation models. Same samples/mipmaps; no extra render
 pass. Saved-world 1/2.5/4/1 scale comparison inspected, selected 2.5 multiplier;

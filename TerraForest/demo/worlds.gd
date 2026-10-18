@@ -15,6 +15,7 @@ var preparation_status:=""
 var preparation_slot:=""
 var preparation_gameplay:=true
 var preparation_poll:=0.0
+var preparation_started_msec:=0
 func heading(parent: Node,text: String,size: int=24) -> Label:
 	var label:=Label.new();label.text=text;label.add_theme_font_size_override("font_size",size);parent.add_child(label);return label
 func button(parent: Node,text: String,action: Callable) -> Button:
@@ -73,6 +74,7 @@ func launch_selected(create: bool) -> void:
 		result.args.append_array(PackedStringArray(["--status-file",ProjectSettings.globalize_path(preparation_status)]))
 		preparation_pid=OS.create_process("python",result.args,false)
 		if preparation_pid<0:notice.text="Could not start Python for world preparation. Install Python or use the preparation command.";return
+		preparation_started_msec=Time.get_ticks_msec()
 		Engine.max_fps=10
 		notice.text="Preparing and verifying %s. The preparation window will close when finished, then your world will open. Existing saves are preserved."%slot
 		return
@@ -85,7 +87,8 @@ func _process(delta:float)->void:
 	preparation_poll-=delta
 	if preparation_poll>0:return
 	preparation_poll=0.5
-	if OS.is_process_running(preparation_pid):return
+	if OS.is_process_running(preparation_pid):
+		_update_preparation_notice();return
 	preparation_pid=-1;Engine.max_fps=60
 	var result:Variant=JSON.parse_string(FileAccess.get_file_as_string(preparation_status)) if FileAccess.file_exists(preparation_status) else null
 	refresh()
@@ -100,3 +103,16 @@ func _open_game(args:PackedStringArray)->void:
 	var pid:=OS.create_process(OS.get_executable_path(),args)
 	if pid<0:notice.text="Could not start Godot. Select the saved world to try again.";return
 	get_tree().quit()
+
+func _update_preparation_notice()->void:
+	var result:Variant=JSON.parse_string(FileAccess.get_file_as_string(preparation_status)) if FileAccess.file_exists(preparation_status) else null
+	var stage:="Starting preparation"
+	if result is Dictionary:
+		match str(result.get("state","")):
+			"creating":stage="Generating terrain, locations and saved world"
+			"verifying":stage="Reopening the saved world and checking its contents"
+			"publishing":stage="Publishing the verified world"
+			"ready":stage="World ready; preparing to open"
+			"failed":stage="Preparation failed; collecting the result"
+	var elapsed:int=maxi(0,Time.get_ticks_msec()-preparation_started_msec)/1000
+	notice.text="%s: %s. Elapsed %d:%02d. Existing saves are preserved."%[preparation_slot,stage,elapsed/60,elapsed%60]

@@ -9,6 +9,29 @@ import prepare_combined_world as prep
 
 
 class PreparationTests(unittest.TestCase):
+    def test_progress_matches_actual_work_and_never_reports_ready_early(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            stages = []
+            def run(*args):
+                self.assertEqual(stages[-1], 'creating' if len(stages) == 1 else 'verifying')
+                return {'passed': True}
+            def publish(*args):
+                self.assertEqual(stages, ['creating', 'verifying', 'publishing'])
+                return {'created': True}
+            with patch.object(prep, 'execute', side_effect=run), patch.object(prep, 'clone_once', side_effect=publish):
+                self.assertEqual(prep.prepare('unused', root, root/'report', progress=stages.append), 0)
+            self.assertEqual(stages, ['creating', 'verifying', 'publishing'])
+
+    def test_failed_creation_does_not_announce_verification_or_publication(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            stages = []
+            with patch.object(prep, 'execute', return_value={'passed': False}), patch.object(prep, 'clone_once') as publish:
+                self.assertEqual(prep.prepare('unused', root, root/'report', progress=stages.append), 1)
+                publish.assert_not_called()
+            self.assertEqual(stages, ['creating'])
+
     def test_seed_validation_and_forwarding(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
