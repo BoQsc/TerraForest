@@ -1,5 +1,12 @@
 ## Current integrated entry point - 2026-10-18
 
+A follow-up daylight comparison of directional shadow normal bias (2.0 / 0.5 /
+0.25 / 2.0) did not establish a convincing visual improvement. Production lighting
+is unchanged; retain the existing terrain-acne protection. Evidence:
+`evidence/vegetation_shadow_bias/`. Avoid repeating this lighting guess without
+new evidence; ground-cover distribution/terrain continuity remain the next visual
+work, with the existing models retained.
+
 Vegetation continuity correction is integrated and checked: native per-instance
 arrival fading, a 36-56 m grass fade band, two-cell detail preload and retained
 layers, sufficient bounded GPU residency, and a small native understory mix in
