@@ -187,11 +187,11 @@ bool NativeStaticBatch::upsert_instances(const PackedInt64Array &ids,const Packe
     for(auto &e:local_updates)if(!touched.count(e.first)) {
         if(collision_only)continue;
         if(render_streaming) {
-            // Same-group transforms preserve sorted membership. Rebuild only
+            // Same-group transforms preserve compact membership. Rebuild only
             // their draw pages; untouched pages retain both nodes and buffers.
             const auto &ordered=render_ids.at(e.first);std::set<uint32_t> pages;
             for(auto id:e.second) {
-                auto index=std::lower_bound(ordered.begin(),ordered.end(),id)-ordered.begin();
+                auto index=std::find(ordered.begin(),ordered.end(),id)-ordered.begin();
                 pages.insert(uint32_t(index/render_page_capacity()));
             }
             for(auto page:pages)release_batch({e.first,page});
@@ -215,6 +215,27 @@ bool NativeStaticBatch::set_removal_protected(int64_t id,bool enabled) {
 bool NativeStaticBatch::remove_instances(const PackedInt64Array &ids) {
     if(ids.size()>100000)return false;std::set<int64_t> unique;
     for(int64_t id:ids)if(id<=0||removal_protected.count(id)||!placements.count(id)||unloaded_regions.count(group_for(placements.at(id)))||retirement_locks(group_for(placements.at(id)))||!unique.insert(id).second)return false;
+    // Interactive single removal swaps the final member into the vacated slot.
+    // Only two bounded pages can change; never retire a whole visible group.
+    if(render_streaming&&!collision_only&&unique.size()==1) {
+        const auto id=*unique.begin();const auto key=group_for(placements.at(id));
+        auto &ordered=render_ids.at(key);
+        auto found=std::find(ordered.begin(),ordered.end(),id);
+        if(found==ordered.end())return false;
+        const uint32_t page=uint32_t((found-ordered.begin())/render_page_capacity());
+        const uint32_t tail=uint32_t((ordered.size()-1)/render_page_capacity());
+        std::set<RenderKey> resident;
+        for(auto index:{page,tail})if(batches.count({key,index}))resident.insert({key,index});
+        // Retire affected pages within this call, then republish before a frame.
+        // Release before assigning new slots (the tail may move to another page).
+        for(auto draw:resident)release_batch(draw);
+        *found=ordered.back();ordered.pop_back();
+        invalidate_proxy(id);placements.erase(id);slots.erase(id);appearance_birth.erase(id);
+        auto &members=groups.at(key);members.erase(id);if(members.empty())groups.erase(key);
+        refresh_collision_bounds({key});
+        for(auto draw:resident)if(render_page_size(draw))upload_batch(draw);
+        publish_change();return true;
+    }
     std::set<BlockKey> touched;
     for(auto id:unique) {
         invalidate_proxy(id);

@@ -1,3 +1,13 @@
+## Vegetation collection flicker correction — 2026-10-18
+
+Single-plant collection no longer retires the whole 32 m render group. Native
+swap compaction republishes at most two small pages within the removal call;
+other pages and surviving fade ages persist. Immediate and frame-by-frame dense
+native regression, actual saved-world collection, existing fade and LOD tests pass.
+Evidence: `evidence/vegetation_collect_continuity`. Bulk membership changes still
+use their existing rebuild path; this closes the verified individual-pickup gap,
+not all possible vegetation transitions or the remaining density requirement.
+
 ## Active vegetation acceptance work — 2026-10-18
 
 This section supersedes the older lighting/density status entries below.
