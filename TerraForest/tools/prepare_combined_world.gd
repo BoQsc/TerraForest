@@ -233,6 +233,8 @@ func prepare_outer_sites()->bool:
   if districts:asset.set_meta("entrance_paths",true)
   var bounds:AABB=asset.placement_bounds(Vector3i.ZERO,0)
   var origin:=Vector3i(floori(center.x-12-bounds.end.x),int(center.y),floori(center.z-12-bounds.end.z))
+  if districts and site.id==3:
+   origin.z=floori(center.z-bounds.get_center().z)
   var survey:Dictionary=await game.site_survey.assess(game.terrain,asset,origin,0)
   if not require(survey.ok,"outer site supported: "+str(survey)):return false
   var plan:Dictionary=preload("res://addons/structures/site_plan.gd").prepare(asset,origin,0,survey.grade)
@@ -247,7 +249,9 @@ func prepare_outer_sites()->bool:
   game._place_prepared_site()
   if not require(await wait_until(func():return game._foundation_placement.is_empty(),20) and game.doors.collection.get_ids().size()==doors+district.buildings,"district furnished buildings published: "+district.title):return false
   print("REGIONAL_TOWN site=",site.id," doors=",game.doors.collection.get_ids().size()," cells=",game.structures.blocks.stats().cells)
- return require(game.doors.collection.get_ids().size()==(22 if districts else 16),"five regional sites contain expected furnished buildings")
+ var expected:=8
+ for site_id in range(1,5):expected+=preload("res://addons/structures/regional_districts.gd").plan(site_id).buildings if districts else 2
+ return require(game.doors.collection.get_ids().size()==expected,"five regional sites contain expected furnished buildings")
 
 func regional_block_signature()->Dictionary:
  # Check persistent content independently of the camera's resident window.

@@ -23,7 +23,7 @@ func _initialize()->void:
   var bounds:AABB=asset.placement_bounds(Vector3i.ZERO,0)
   var origin:=Vector3i(floori(1000-12-bounds.end.x),50,floori(1000-12-bounds.end.z))
   var grading:Dictionary=preload("res://addons/structures/site_plan.gd").prepare(asset,origin,0,50)
-  ok=doors==plan.buildings and grading.get("entrance_paths",0)==doors and grading.ok and bounds.size.x<=60 and bounds.size.z<=60
+  ok=doors==plan.buildings and grading.get("entrance_paths",0)==doors and grading.ok and bounds.size.x<=80 and bounds.size.z<=120
   for turn in range(1,4):
    var rotated:Dictionary=preload("res://addons/structures/site_plan.gd").prepare(asset,Vector3i(1000,50,1000),turn,50)
    ok=ok and rotated.ok and rotated.get("entrance_paths",0)==doors and rotated.segments.size()<=256

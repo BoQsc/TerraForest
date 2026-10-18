@@ -1,5 +1,12 @@
 ## Current integrated entry point - 2026-10-18
 
+Northern district now contains twelve furnished three-storey buildings across two
+connected streets (31 buildings world-wide including cellar). Seed-42 bake/reopen,
+four-rotation approach composition and graphical residency check pass; zero deferred
+block meshes, stationary p95 16.686 ms. Select northern_district_42_20261018 in
+Worlds.cmd. Evidence: northern_district. Repeated facades, abrupt terrain shoulders,
+full neighborhood walking and broad city/long-run performance remain unfinished.
+
 Recent staged mine FPS captures included synchronous screenshot overhead: a timed
 PNG capture blocked 566 ms; the same travel/mining check without captures had
 21.32 ms max and 16.78 ms p95. Profiling mode now omits captures by default. Evidence:

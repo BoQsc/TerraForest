@@ -1,0 +1,283 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] New world
+[TerrainRewrite] New world
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS normal generated world starts
+PASS preparation starts in an empty staging world
+PASS shared native regional layout available
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS regional centre loads for settlement generation
+PASS registered furnished building sources are available
+PASS mixed central recipe contains both building types
+CENTRAL_LAYOUT world_seed=42 layout_seed=42
+PASS existing native editor composes connected furnished streets
+REGIONAL_SITE_SURVEY { "ok": true, "min_height": 56.0, "max_height": 56.0, "samples": 1532, "epoch": 0, "revision": 0, "minimum_grade": 45, "maximum_grade": 63, "grade": 56 } footprint=[P: (977.0, 56.0, 892.0), S: (37.0, 13.0, 95.0)]
+PASS regional district beside arterial has supported foundation
+PASS regional district foundation plan valid
+PASS terrain survey finds supported settlement grade
+[terrain-hitch] world authoring 65.76 ms at 68916
+[terrain-hitch] controller process 67.62 ms at 68918
+[terrain-hitch] world process 68.68 ms at 68919
+[terrain-hitch] world authoring 61.38 ms at 69155
+[terrain-hitch] controller process 63.21 ms at 69157
+[terrain-hitch] world process 64.22 ms at 69158
+[terrain-hitch] world authoring 58.72 ms at 69507
+[terrain-hitch] controller process 60.11 ms at 69508
+[terrain-hitch] world process 61.05 ms at 69509
+[terrain-hitch] world authoring 58.94 ms at 69791
+[terrain-hitch] controller process 60.31 ms at 69792
+[terrain-hitch] world process 61.28 ms at 69793
+[terrain-hitch] world authoring 59.79 ms at 70076
+[terrain-hitch] controller process 61.87 ms at 70078
+[terrain-hitch] world process 62.92 ms at 70079
+[terrain-hitch] world authoring 60.08 ms at 70246
+[terrain-hitch] controller process 61.62 ms at 70248
+[terrain-hitch] world process 62.54 ms at 70248
+[terrain-hitch] world authoring 62.42 ms at 70534
+[terrain-hitch] controller process 64.43 ms at 70536
+[terrain-hitch] world process 65.41 ms at 70537
+[terrain-hitch] world authoring 61.88 ms at 70822
+[terrain-hitch] controller process 63.21 ms at 70823
+[terrain-hitch] world process 64.09 ms at 70824
+PASS native grading and asphalt preparation complete
+PASS staged furnished settlement publishes
+PASS mixed generation contains eight furnished buildings including cottages and towers
+PASS resident street collision ready
+PASS two native patrol residents prepared: Two street patrol actors placed. F5 saves the population.
+PASS outer town furnished source available
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS outer site 1 loads
+PASS district sources available: Western residential lane
+PASS outer furnished street composed
+PASS outer site supported: { "ok": true, "min_height": 44.0, "max_height": 44.0, "samples": 420, "epoch": 0, "revision": 8, "minimum_grade": 33, "maximum_grade": 51, "grade": 44 }
+PASS outer site plan valid
+[terrain-hitch] world authoring 62.68 ms at 73092
+[terrain-hitch] controller process 63.9 ms at 73093
+[terrain-hitch] world process 64.88 ms at 73094
+[terrain-hitch] world authoring 67.85 ms at 73319
+[terrain-hitch] controller process 69.5 ms at 73321
+[terrain-hitch] world process 70.62 ms at 73322
+[terrain-hitch] world authoring 65.18 ms at 73528
+[terrain-hitch] controller process 66.6 ms at 73529
+[terrain-hitch] world process 67.95 ms at 73531
+[terrain-hitch] world authoring 68.79 ms at 73708
+[terrain-hitch] controller process 70.22 ms at 73709
+[terrain-hitch] world process 71.22 ms at 73710
+[terrain-hitch] world authoring 59.74 ms at 73878
+[terrain-hitch] controller process 61.6 ms at 73880
+[terrain-hitch] world process 62.74 ms at 73881
+[terrain-hitch] world authoring 58.52 ms at 74065
+[terrain-hitch] controller process 60.21 ms at 74066
+[terrain-hitch] world process 61.1 ms at 74067
+[terrain-hitch] world authoring 62.16 ms at 74220
+[terrain-hitch] controller process 63.19 ms at 74221
+[terrain-hitch] world process 64.22 ms at 74222
+[terrain-hitch] world authoring 62.88 ms at 74394
+[terrain-hitch] controller process 65.39 ms at 74396
+[terrain-hitch] world process 66.5 ms at 74397
+PASS outer foundation and arterial connection prepared
+PASS district furnished buildings published: Western residential lane
+REGIONAL_TOWN site=1 doors=12 cells=9660
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS outer site 2 loads
+PASS district sources available: Eastern mine service street
+PASS outer furnished street composed
+PASS outer site supported: { "ok": true, "min_height": 54.0, "max_height": 54.0, "samples": 448, "epoch": 0, "revision": 16, "minimum_grade": 43, "maximum_grade": 61, "grade": 54 }
+PASS outer site plan valid
+[terrain-hitch] world authoring 60.62 ms at 76648
+[terrain-hitch] controller process 61.76 ms at 76650
+[terrain-hitch] world process 62.71 ms at 76651
+[terrain-hitch] world authoring 59.96 ms at 76850
+[terrain-hitch] controller process 61.49 ms at 76851
+[terrain-hitch] world process 62.46 ms at 76852
+[terrain-hitch] world authoring 60.03 ms at 77037
+[terrain-hitch] controller process 61.38 ms at 77038
+[terrain-hitch] world process 62.38 ms at 77039
+[terrain-hitch] world authoring 61.84 ms at 77208
+[terrain-hitch] controller process 63.96 ms at 77210
+[terrain-hitch] world process 64.94 ms at 77211
+[terrain-hitch] world authoring 61.33 ms at 77380
+[terrain-hitch] controller process 62.79 ms at 77381
+[terrain-hitch] world process 63.7 ms at 77382
+[terrain-hitch] world authoring 60.08 ms at 77550
+[terrain-hitch] controller process 62.3 ms at 77552
+[terrain-hitch] world process 63.26 ms at 77553
+PASS outer foundation and arterial connection prepared
+PASS district furnished buildings published: Eastern mine service street
+REGIONAL_TOWN site=2 doors=14 cells=11138
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS outer site 3 loads
+PASS district sources available: Northern multi-storey district
+PASS outer furnished street composed
+PASS outer site supported: { "ok": true, "min_height": 52.7934112548828, "max_height": 62.6622047424316, "samples": 3336, "epoch": 0, "revision": 22, "minimum_grade": 52, "maximum_grade": 59, "grade": 58 }
+PASS outer site plan valid
+[terrain-hitch] world authoring 65.15 ms at 80944
+[terrain-hitch] controller process 66.46 ms at 80945
+[terrain-hitch] world process 67.47 ms at 80946
+[terrain-hitch] world authoring 60.78 ms at 81565
+[terrain-hitch] controller process 62.45 ms at 81566
+[terrain-hitch] world process 63.36 ms at 81567
+[terrain-hitch] world authoring 62.65 ms at 82102
+[terrain-hitch] controller process 64.88 ms at 82104
+[terrain-hitch] world process 65.99 ms at 82105
+[terrain-hitch] world authoring 61.24 ms at 82640
+[terrain-hitch] controller process 62.87 ms at 82641
+[terrain-hitch] world process 63.77 ms at 82642
+[terrain-hitch] world authoring 65.52 ms at 82998
+[terrain-hitch] controller process 67.13 ms at 82999
+[terrain-hitch] world process 68.02 ms at 83000
+[terrain-hitch] world authoring 60.15 ms at 83535
+[terrain-hitch] controller process 61.83 ms at 83536
+[terrain-hitch] world process 62.86 ms at 83537
+[terrain-hitch] world authoring 77.61 ms at 84089
+[terrain-hitch] controller process 79.91 ms at 84091
+[terrain-hitch] world process 81.0 ms at 84092
+[terrain-hitch] world authoring 61.38 ms at 84711
+[terrain-hitch] controller process 62.22 ms at 84711
+[terrain-hitch] world process 63.18 ms at 84712
+[terrain-hitch] world authoring 62.87 ms at 85049
+[terrain-hitch] controller process 64.25 ms at 85050
+[terrain-hitch] world process 65.21 ms at 85051
+[terrain-hitch] world authoring 60.62 ms at 85386
+[terrain-hitch] controller process 62.46 ms at 85388
+[terrain-hitch] world process 63.58 ms at 85389
+[terrain-hitch] world authoring 61.9 ms at 85708
+[terrain-hitch] controller process 63.52 ms at 85709
+[terrain-hitch] world process 64.46 ms at 85710
+[terrain-hitch] world authoring 61.25 ms at 86046
+[terrain-hitch] controller process 62.73 ms at 86047
+[terrain-hitch] world process 63.65 ms at 86048
+[terrain-hitch] world authoring 60.95 ms at 86383
+[terrain-hitch] controller process 62.65 ms at 86385
+[terrain-hitch] world process 63.64 ms at 86386
+[terrain-hitch] world authoring 59.49 ms at 86719
+[terrain-hitch] controller process 61.42 ms at 86721
+[terrain-hitch] world process 62.54 ms at 86722
+[terrain-hitch] world authoring 68.1 ms at 87248
+[terrain-hitch] controller process 70.15 ms at 87250
+[terrain-hitch] world process 71.22 ms at 87251
+[terrain-hitch] world authoring 60.47 ms at 87769
+[terrain-hitch] controller process 62.44 ms at 87770
+[terrain-hitch] world process 63.53 ms at 87771
+[terrain-hitch] world authoring 63.23 ms at 88292
+[terrain-hitch] controller process 64.62 ms at 88294
+[terrain-hitch] world process 65.71 ms at 88295
+[terrain-hitch] world authoring 60.78 ms at 88813
+[terrain-hitch] controller process 62.98 ms at 88815
+[terrain-hitch] world process 63.92 ms at 88815
+[terrain-hitch] world authoring 60.05 ms at 89350
+[terrain-hitch] controller process 62.25 ms at 89352
+[terrain-hitch] world process 63.29 ms at 89353
+[terrain-hitch] world authoring 60.63 ms at 89871
+[terrain-hitch] controller process 62.12 ms at 89872
+[terrain-hitch] world process 63.17 ms at 89873
+[terrain-hitch] world authoring 65.2 ms at 90246
+[terrain-hitch] controller process 66.82 ms at 90247
+[terrain-hitch] world process 67.96 ms at 90248
+PASS outer foundation and arterial connection prepared
+PASS district furnished buildings published: Northern multi-storey district
+REGIONAL_TOWN site=3 doors=26 cells=28742
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS outer site 4 loads
+PASS district sources available: Southern broad residential lane
+PASS outer furnished street composed
+PASS outer site supported: { "ok": true, "min_height": 61.9756774902344, "max_height": 62.0, "samples": 420, "epoch": 0, "revision": 43, "minimum_grade": 51, "maximum_grade": 68, "grade": 62 }
+PASS outer site plan valid
+[terrain-hitch] world authoring 72.7 ms at 93064
+[terrain-hitch] controller process 74.45 ms at 93065
+[terrain-hitch] world process 75.5 ms at 93066
+[terrain-hitch] world authoring 69.79 ms at 93412
+[terrain-hitch] controller process 71.06 ms at 93414
+[terrain-hitch] world process 72.02 ms at 93415
+[terrain-hitch] world authoring 68.5 ms at 93843
+[terrain-hitch] controller process 70.14 ms at 93845
+[terrain-hitch] world process 71.33 ms at 93846
+[terrain-hitch] world authoring 77.11 ms at 94300
+[terrain-hitch] controller process 78.74 ms at 94302
+[terrain-hitch] world process 79.78 ms at 94303
+[terrain-hitch] world authoring 76.83 ms at 94690
+[terrain-hitch] controller process 104.21 ms at 94717
+[terrain-hitch] world process 105.22 ms at 94718
+[terrain-hitch] world authoring 70.02 ms at 95147
+[terrain-hitch] controller process 71.91 ms at 95149
+[terrain-hitch] world process 72.98 ms at 95150
+[terrain-hitch] world authoring 60.44 ms at 95486
+[terrain-hitch] controller process 62.36 ms at 95488
+[terrain-hitch] world process 64.07 ms at 95490
+[terrain-hitch] world authoring 61.94 ms at 95827
+[terrain-hitch] controller process 63.6 ms at 95829
+[terrain-hitch] world process 64.64 ms at 95830
+[terrain-hitch] world authoring 63.21 ms at 96202
+[terrain-hitch] controller process 64.64 ms at 96203
+[terrain-hitch] world process 65.56 ms at 96204
+PASS outer foundation and arterial connection prepared
+PASS district furnished buildings published: Southern broad residential lane
+REGIONAL_TOWN site=4 doors=30 cells=30638
+PASS five regional sites contain expected furnished buildings
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS cellar location loads
+PASS cellar building site plan valid
+[terrain-hitch] world authoring 84.59 ms at 97154
+[terrain-hitch] controller process 86.26 ms at 97155
+[terrain-hitch] world process 87.18 ms at 97156
+[terrain-hitch] world authoring 62.17 ms at 97345
+[terrain-hitch] controller process 63.35 ms at 97346
+[terrain-hitch] world process 64.34 ms at 97347
+[terrain-hitch] world authoring 65.73 ms at 97506
+[terrain-hitch] controller process 66.78 ms at 97507
+[terrain-hitch] world process 67.69 ms at 97508
+[terrain-hitch] world authoring 61.58 ms at 97661
+[terrain-hitch] controller process 63.38 ms at 97663
+[terrain-hitch] world process 64.37 ms at 97664
+PASS cellar surface and underground preparation publishes
+PASS cellar cottage and attachments publish
+REGIONAL_CELLAR origin=(250, 39, 1019) cells=31279
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS mine location streams before placement
+PASS mine access plan fits world bounds
+PASS mine access does not overwrite protected placement
+PASS mine access terrain edit accepted
+PASS mine access asphalt publishes
+PASS mine access does not overwrite protected placement
+PASS mine access terrain edit accepted
+PASS mine access asphalt publishes
+PASS mine access does not overwrite protected placement
+PASS mine access terrain edit accepted
+PASS mine access asphalt publishes
+PASS mine entrance prefab builds
+PASS mine entrance and storage publish through native combined transaction
+PASS mine timber frames exist in world
+REGIONAL_MINE owner=2 entrance=(1770.0, 54.0, 1049.0) cells=31353
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS woodland location loads
+PASS woodland authored planting completes: { "ok": true, "counts": [15, 70, 797, 5, 4, 2, 22, 34], "owners": 4 }
+REGIONAL_WOODLAND center=(1088.0, 56.0, 1056.0) result={ "ok": true, "counts": [15, 70, 797, 5, 4, 2, 22, 34], "owners": 4 }
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS woodland location loads
+PASS woodland authored planting completes: { "ok": true, "counts": [21, 78, 790, 4, 6, 1, 25, 21], "owners": 4 }
+REGIONAL_WOODLAND center=(1088.0, 62.0, 1824.0) result={ "ok": true, "counts": [21, 78, 790, 4, 6, 1, 25, 21], "owners": 4 }
+PASS transport starts with an empty prepared fleet
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS parking location loads
+PASS parking apron is clear of protected structures
+PASS parking apron edit accepted
+PASS parking apron published
+PASS parking collision ready
+PASS parked chassis space is unobstructed
+PASS parked vehicle stored at site 0
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS parking location loads
+PASS parking apron is clear of protected structures
+PASS parking apron edit accepted
+PASS parking apron published
+PASS parking collision ready
+PASS parked chassis space is unobstructed
+PASS parked vehicle stored at site 2
+PASS generated chest supplies: { "ok": true, "chests": 67, "reason": "saved location supplies prepared" }
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS central spawn reloads after outer town generation
+PASS generated components ready for compound save
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+COMBINED_PREPARATION failures=0
