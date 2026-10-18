@@ -85,7 +85,9 @@ void fragment(){
   // Retain the already-filtered rock texture in ore; no additional texture fetch.
   float mineral_grain=clamp(dot(color,vec3(0.2126,0.7152,0.0722))*2.0,0.45,1.35);
   color=mix(color,mineral*mineral_grain,ore);
-  METALLIC=mix(METALLIC,0.55,ore);ROUGHNESS=mix(ROUGHNESS,0.65,ore);
+  // Unrefined mineral-bearing rock retains a faint highlight; the previous
+  // metal-like response washed out its grain under the close-range headlamp.
+  METALLIC=mix(METALLIC,0.15,ore);ROUGHNESS=mix(ROUGHNESS,0.85,ore);
  }
  ALBEDO=min(color,vec3(0.82));
  // There is no uniform ambient source inside sealed caves. This is a cached
