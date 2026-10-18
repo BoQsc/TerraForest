@@ -21,6 +21,13 @@ This integration covers block construction and registered static models, includi
 
 `ground_cover.gd` coordinates native batches with persistent interactive identities for stones, plants and grass clumps. The main world now uses `woodland_mesh.gd`: an original temperate woodland sample with a textured stone, fern-like understory plant and mixed green/dry grass tuft. Shared startup geometry and shader wind replace the earlier simple assets; there are no per-instance scripts or animation nodes. See [art source and limits](art/README.md). The earlier `ground_mesh.gd` remains for comparison fixtures.
 
-Removal/placement, inventory, save state, native picking envelopes and existing residency budgets remain. Plants/grass do not cast shadows; stones do. Native mesh LOD is retained. The artwork is a first visual pass for human review, not final art, a finished biome distribution or performance qualification.
+Removal/placement, inventory, save state, native picking envelopes and existing residency budgets remain. Near grass casts shadows within a 24 m page-distance band; other cover uses 48 m (page bounds/padding apply). Distant foliage uses approximate root self-shading, not projected ground shadows. Grass has 468/72/8/3-triangle mesh tiers and fades from 100 to 124 m. The artwork is a first visual pass for human review, not final art, a finished biome distribution or performance qualification.
 
 Evidence: `docs/evidence/woodland_art` records14 visual/geometry checks,28 native LOD checks and66 actual-world interaction/exclusion checks. One world screenshot shows51FPS; no sustained60FPS or GPU/thermal claim follows. The earlier prototype GPU-cost failure in `docs/evidence/ground_mesh` remains historical failing evidence and cannot qualify these more detailed assets.
+
+Natural ground support pipelines at most four 64-point requests for one owner.
+Terrain admission limits and edit priority remain unchanged; rejected admission
+retries the same layer. Replies are assembled by layer, so arrival order cannot
+change persistent IDs or renderer ordering. An invalid reply abandons that wave,
+drains remaining replies and retries; no partial owner is published. The resident
+limit is 81 owners, with all 16 candidate layers retained throughout residency.

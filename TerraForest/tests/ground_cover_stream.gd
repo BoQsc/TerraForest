@@ -13,7 +13,10 @@ class Terrain extends Node3D:
 	var density_requests: Array=[]
 	var published_revision:=0
 	var requests: Array=[]
+	var admission_limit:=4
+	var reverse_replies:=false
 	func request_surface_batch(points: PackedVector3Array,token: int) -> bool:
+		if requests.size()>=admission_limit:return false
 		requests.append({"points":points,"token":token});return true
 	func request_interpolated_density_batch(points: PackedVector3Array,token: int) -> bool:
 		density_requests.append({"points":points,"token":token});return true
@@ -22,10 +25,13 @@ class Terrain extends Node3D:
 		var values:=PackedFloat32Array()
 		for i in range(request.points.size()): values.append(-1.0 if i%2==0 else 1.0)
 		density_batch_ready.emit({"token":request.token,"epoch":epoch,"revision":density_revision,"status":"ok","values":values})
-	func reply() -> void:
-		var request: Dictionary=requests.pop_front()
+	func reply_one() -> void:
+		var request: Dictionary=requests.pop_back() if reverse_replies else requests.pop_front()
 		var normals:=PackedVector3Array();normals.resize(request.points.size());normals.fill(Vector3.UP)
 		surface_batch_ready.emit(request.token,request.points,normals,epoch,published_revision)
+	func reply() -> void:
+		while not requests.is_empty():reply_one()
+
 var checks:=0
 var failures:=0
 func check(ok: bool,label: String) -> void:
@@ -48,7 +54,7 @@ func run() -> void:
 	check(cover.batches.size()==8,"eight native species render collections initialized")
 	for i in range(81):
 		cover._process(0.0)
-		check(terrain.requests.size()==1,"one outstanding support batch %d"%i)
+		check(terrain.requests.size()==4,"four bounded support jobs %d"%i)
 		terrain.reply();finish_support(cover,terrain)
 	check(cover.resident.size()==81 and cover.rejected_batches==0,"81 owners publish without rejection")
 	var count:=0
@@ -78,10 +84,10 @@ func run() -> void:
 	cover._process(0.0);terrain.reply();finish_support(cover,terrain)
 	check(not cover._dirty.has(key) and cover.batches[0].get_ids().has(authored_id),"fresh support retry preserves authored identity")
 	camera.position=Vector3(1600,3,1600);cover._process(0.0)
-	check(cover.resident.is_empty() and terrain.requests.size()==1,"teleport retires old owners and submits one destination batch")
+	check(cover.resident.is_empty() and terrain.requests.size()==4,"teleport retires old owners and submits four destination jobs")
 	check(not cover.picker.pick(Vector3(970,20.1,970),Vector3(970,21,970)).hit,"unloaded owner leaves no stale interaction proxy")
 	camera.position=Vector3(960,3,960);cover._process(0.0)
-	check(terrain.requests.size()==1,"teleport does not multiply outstanding jobs")
+	check(terrain.requests.size()==4,"teleport preserves the four-job bound")
 	terrain.reply();finish_support(cover,terrain)
 	check(cover.resident.is_empty(),"obsolete destination reply does not publish")
 	cover._process(0.0);terrain.reply();finish_support(cover,terrain)
@@ -129,6 +135,22 @@ func run() -> void:
 	for owner:Vector2i in cover._dirty:dirty_current=dirty_current and cover._wanted.has(owner)
 	check(dirty_current,"teleport retires dirty owners that never published")
 	terrain.reply();finish_support(cover,terrain)
+	cover.reset();camera.position=Vector3(960,3,960)
+	cover._process(0.0);terrain.reply();finish_support(cover,terrain)
+	var reference:Array=cover.resident[Vector2i(30,30)].duplicate(true)
+	cover.reset();terrain.admission_limit=2;terrain.reverse_replies=true
+	cover._process(0.0)
+	check(terrain.requests.size()==2,"partial admission accepts only two jobs without advancing rejected layers")
+	terrain.reply();finish_support(cover,terrain)
+	check(cover.resident.get(Vector2i(30,30),[])==reference,"partial admission and reversed replies reproduce identical ordered records")
+	cover.reset();terrain.admission_limit=4
+	cover._process(0.0)
+	var bad:Dictionary=terrain.requests.pop_front()
+	terrain.surface_batch_ready.emit(bad.token,PackedVector3Array(),PackedVector3Array(),terrain.epoch,terrain.published_revision)
+	terrain.reply()
+	check(cover._requests.is_empty() and cover._scatter_job.is_empty() and cover.resident.is_empty(),"malformed reply abandons wave without publishing partial owner or stranding requests")
+	cover._process(0.0);terrain.reply();finish_support(cover,terrain)
+	check(cover.resident.get(Vector2i(30,30),[])==reference,"retry after failed wave restores exact records")
 	cover.reset()
 	check(cover.resident.is_empty() and cover.batches[0].get_ids().is_empty() and cover.batches[1].get_ids().is_empty() and cover.batches[2].get_ids().is_empty(),"reset releases generated records")
 	cover.free();terrain.free();camera.free()

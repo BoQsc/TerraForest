@@ -127,39 +127,48 @@ func _measured_step(_delta:float)->void:
 	for key in _wanted:
 		if not _scatter_job.is_empty() and _scatter_job.key!=key:continue
 		if (resident.has(key) and not _dirty.has(key)) or _pending.has(key): continue
-		if _scatter_job.is_empty():_scatter_job={"key":key,"layer":0,"layers":_layers(key),"revision":terrain.published_revision,"exclusion":_exclusion_revision,"packed":[]}
-		var data: Dictionary=native.candidates(key,seed,_scatter_job.layer)
-		var token:=Tokens.allocate()
-		if terrain.request_surface_batch(data.points,token):
-			data.key=key;_requests[token]=data;_pending[key]=token
+		if _scatter_job.is_empty():_scatter_job={"key":key,"layer":0,"next_layer":0,"layers":_layers(key),"revision":terrain.published_revision,"exclusion":_exclusion_revision,"packed":[]}
+		# Four existing 64-point jobs per wave; admission may accept fewer.
+		# Keep one owner in flight and preserve terrain's foreground priority.
+		for slot in 4:
+			if _scatter_job.next_layer>=_scatter_job.layers:break
+			var data: Dictionary=native.candidates(key,seed,_scatter_job.next_layer)
+			var token:=Tokens.allocate()
+			if not terrain.request_surface_batch(data.points,token):break
+			data.key=key;data.layer=_scatter_job.next_layer
+			_requests[token]=data;_pending[key]=token
+			_scatter_job.next_layer+=1
 		break
 
 func _surface_ready(token: int,points: PackedVector3Array,normals: PackedVector3Array,epoch: int,revision: int) -> void:
 	if not _requests.has(token): return
-	var request: Dictionary=_requests[token];_requests.erase(token);_pending.erase(request.key)
+	var request: Dictionary=_requests[token];_requests.erase(token)
+	if _requests.is_empty():_pending.erase(request.key)
 	if not _wanted.has(request.key) or epoch!=terrain.epoch or revision!=terrain.published_revision or terrain.pending_edit or _scatter_job.is_empty() or _scatter_job.exclusion!=_exclusion_revision:
 		_scatter_job.clear();return
 	var placed: Dictionary=native.place(request.ids,points,normals)
-	if not placed.ok: rejected_batches+=1;return
+	if not placed.ok: rejected_batches+=1;_scatter_job.clear();return
 	var mask: PackedByteArray=removed.mask(placed.ids)
 	var structure_mask:=PackedByteArray();var water_mask:=PackedByteArray()
 	if structures!=null: structure_mask=structures.overlap_mask(placed.transforms,AABB(Vector3(-0.4,0,-0.4),Vector3(0.8,0.8,0.8)))
 	if water!=null: water_mask=water.placement_mask(placed.transforms)
 	if (structures!=null and structure_mask.size()!=mask.size()) or (water!=null and water_mask.size()!=mask.size()):
-		rejected_batches+=1;return
+		rejected_batches+=1;_scatter_job.clear();return
 	# Only this bounded 64-candidate owner is combined in scene glue.
 	for i in range(mask.size()):
 		if (structures!=null and structure_mask[i]) or (water!=null and water_mask[i]): mask[i]=1
 	var packed: Array=native.pack(placed.ids,placed.transforms,mask)
-	if packed.size()!=Catalog.COUNT: rejected_batches+=1;return
-	if _scatter_job.packed.is_empty():_scatter_job.packed=packed
-	else:
-		for species in Catalog.COUNT:
-			_scatter_job.packed[species].ids.append_array(packed[species].ids)
-			_scatter_job.packed[species].transforms.append_array(packed[species].transforms)
+	if packed.size()!=Catalog.COUNT: rejected_batches+=1;_scatter_job.clear();return
+	# Replies may arrive in any order; concatenate by original layer for stable IDs.
+	if _scatter_job.packed.is_empty():_scatter_job.packed.resize(_scatter_job.layers)
+	_scatter_job.packed[request.layer]=packed
 	_scatter_job.layer+=1
 	if _scatter_job.layer<_scatter_job.layers:return
-	packed=_scatter_job.packed
+	packed=_scatter_job.packed[0]
+	for layer in range(1,_scatter_job.layers):
+		for species in Catalog.COUNT:
+			packed[species].ids.append_array(_scatter_job.packed[layer][species].ids)
+			packed[species].transforms.append_array(_scatter_job.packed[layer][species].transforms)
 	_resident_layers[request.key]=_scatter_job.layers
 	_scatter_job.clear()
 	var authored_poses: Array[Transform3D]=removed.sample_transforms(request.key)

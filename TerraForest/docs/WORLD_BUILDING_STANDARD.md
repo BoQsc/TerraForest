@@ -153,3 +153,13 @@ authored placements when changing presentation. Compare shadow options in the sa
 populated view; root ambient shading is not a cast shadow. Do not enable blanket
 blade shadows or replace accepted models without evidence that the gain merits
 the runtime cost. A short rendering check does not establish thermal headroom.
+
+2026-10-18 density direction: retain the accepted dense near-player vegetation
+reference. Evaluate a gradual, modest presentation-only reduction for distant
+grass after mesh simplification, not missing owner patches. Small stones retain
+their distribution and identity. Prefer very cheap silhouettes to visibly bare
+middle/far ground; remove cover only beyond its useful ordinary viewing range.
+Zoom must extend the useful detail range with bounded loading and fading. Exact
+density ratios and distances remain unaccepted pending matched ground, elevated,
+travel and zoom views. Do not interpret this direction as approval to thin the
+current world immediately or to remove persistent gathered/placeable objects.
