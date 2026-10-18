@@ -12,12 +12,19 @@ uniform float distance_fade_start = 10000.0;
 uniform float distance_fade_end = 11000.0;
 uniform vec3 cover_eye = vec3(0.0);
 uniform float cover_clock = 0.0;
+uniform float distant_self_shade : hint_range(0.0,1.0) = 0.28;
+varying float canopy_shade;
 varying float coverage;
 varying float variation;
 varying float root_shade;
 void vertex() {
     vec3 origin = MODEL_MATRIX[3].xyz;
-    float distance_weight = 1.0-smoothstep(distance_fade_start,distance_fade_end,distance(origin.xz,cover_eye.xz));
+    float view_distance=distance(origin.xz,cover_eye.xz);
+    float distance_weight = 1.0-smoothstep(distance_fade_start,distance_fade_end,view_distance);
+    // Cheap canopy self-occlusion approximation, evaluated per vertex. It is
+    // not a cast shadow and deliberately adds no shadow-map/depth/texture pass.
+    float far_weight=smoothstep(24.0,56.0,view_distance);
+    canopy_shade=1.0-distant_self_shade*far_weight*(1.0-smoothstep(0.0,0.9,UV.y));
     float age = cover_clock-INSTANCE_CUSTOM.x;
     coverage = distance_weight * (INSTANCE_CUSTOM.y>0.5?smoothstep(0.0,0.65,max(0.0,age)):1.0);
     root_shade = mix(0.64, 1.0, smoothstep(0.015, 0.19, VERTEX.y));
@@ -61,6 +68,7 @@ void fragment() {
             vec3 textured = COLOR.rgb * variation * root_shade * modulation * 0.90;
             ALBEDO = mix(ALBEDO, textured, grass_detail_strength);
         }
+        ALBEDO *= canopy_shade;
         ROUGHNESS = mix(0.84, 0.94, grass_detail_strength);
         SPECULAR = mix(0.2, 0.12, grass_detail_strength);
         BACKLIGHT = COLOR.rgb * mix(0.18, 0.10, grass_detail_strength);

@@ -30,7 +30,7 @@ func run() -> void:
 		for i in arrays[Mesh.ARRAY_VERTEX].size():
 			valid=valid and bounds.has_point(arrays[Mesh.ARRAY_VERTEX][i]) and arrays[Mesh.ARRAY_NORMAL][i].is_finite() and arrays[Mesh.ARRAY_NORMAL][i].length_squared()>0.99
 		check(valid,"species %d all LOD vertices/normals stay inside picking envelope"%species)
-		check((arrays[Mesh.ARRAY_VERTEX].size()-old[Mesh.ARRAY_VERTEX].size())/3==[48,392,80][species],"species %d distant triangle budget"%species)
+		check((arrays[Mesh.ARRAY_VERTEX].size()-old[Mesh.ARRAY_VERTEX].size())/3==[48,392,83][species],"species %d distant triangle budget"%species)
 		var batch=ClassDB.instantiate("NativeStaticBatch");root.add_child(batch)
 		check(batch.configure_asset("ground_cover/%d/v1"%species,mesh) and batch.configure_render_streaming(true,200,32,200000,4,8192),"native batch configured")
 		batch.set_casts_shadows(false)
@@ -51,6 +51,9 @@ func run() -> void:
 		# Compare the same branch, with every page in view; retain raw counters.
 		check(far_full==near_full and far_lod>0 and far_lod<=near_lod*0.55,"species %d far per-page primitives reduced: %d -> %d"%[species,near_lod,far_lod])
 		check(near_lod==batch.get_child_count()*[360,1512,468][species] and far_lod==batch.get_child_count()*[48,392,8][species],"species %d native near/far LOD counts match both mesh tiers"%species)
+		if species==2:
+			camera.position=Vector3(4,35,160);camera.look_at(Vector3(4,0,4));await settle()
+			check(primitives()==batch.get_child_count()*3,"outer grass LOD draws three triangles per instance")
 		check(batch.capture_snapshot()==snapshot and batch.get_ids()==ids,"LOD leaves all identities and placement bytes unchanged")
 		rows.append({"species":species,"near_full":near_full,"near_lod":near_lod,"far_full":far_full,"far_lod":far_lod})
 		check(batch.set_shadow_distance(12.0) and not batch.set_shadow_distance(-1.0),"native shadow radius validates")

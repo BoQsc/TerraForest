@@ -33,8 +33,8 @@ func run() -> void:
 		game.camera.global_position=expected.target+Vector3(0.7,1.5,1)
 		game.camera.look_at(expected.target+Vector3(0,0.2,0))
 		deadline=Time.get_ticks_msec()+15000
-		while game.ground_cover.resident.size()<49 and Time.get_ticks_msec()<deadline: await process_frame
-		check(game.ground_cover.resident.size()==49,"saved area repopulates bounded residency")
+		while game.ground_cover.resident.size()<81 and Time.get_ticks_msec()<deadline: await process_frame
+		check(game.ground_cover.resident.size()==81,"saved area repopulates bounded residency")
 		check(not game.ground_cover.batches[expected.species].get_ids().has(expected.natural_id),"removed natural object is not recreated by streaming")
 		check(game.ground_cover.batches[expected.species].get_ids().has(4294967296)==expected.get("active",true),"saved authored replacement respects persisted terrain support")
 	else:
@@ -83,5 +83,5 @@ func run() -> void:
 func settle_ground(game: Node) -> void:
 	var cover: Node=game.ground_cover
 	var deadline:=Time.get_ticks_msec()+15000
-	while (cover.resident.size()<49 or not cover._dirty.is_empty() or not cover._requests.is_empty() or not cover._support_job.is_empty()) and Time.get_ticks_msec()<deadline: await process_frame
-	check(cover.resident.size()==49 and cover._dirty.is_empty() and cover._requests.is_empty() and cover._support_job.is_empty(),"ground-cover support settles after reload or edit")
+	while (cover.resident.size()<81 or not cover._dirty.is_empty() or not cover._requests.is_empty() or not cover._support_job.is_empty()) and Time.get_ticks_msec()<deadline: await process_frame
+	check(cover.resident.size()==81 and cover._dirty.is_empty() and cover._requests.is_empty() and cover._support_job.is_empty(),"ground-cover support settles after reload or edit")

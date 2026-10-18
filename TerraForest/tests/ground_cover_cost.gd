@@ -20,9 +20,9 @@ func sample(label: String,enabled: bool) -> void:
 	if not enabled: cover.reset()
 	var begin:=Time.get_ticks_usec()
 	var deadline:=Time.get_ticks_msec()+12000
-	while (not settled() or (enabled and cover.resident.size()!=49)) and Time.get_ticks_msec()<deadline: await process_frame
+	while (not settled() or (enabled and cover.resident.size()!=81)) and Time.get_ticks_msec()<deadline: await process_frame
 	var arrival_ms: float=(Time.get_ticks_usec()-begin)/1000.0
-	check(settled() and (not enabled or cover.resident.size()==49),label+" reaches settled workload")
+	check(settled() and (not enabled or cover.resident.size()==81),label+" reaches settled workload")
 	var idle_frames:=0
 	deadline=Time.get_ticks_msec()+12000
 	while idle_frames<60 and Time.get_ticks_msec()<deadline:

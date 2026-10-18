@@ -68,7 +68,7 @@ func travel()->void:
   rows.append(dt*1000.0)
  check(await wait_for(settled,25),"64m travel settles new cover owners")
  check(c.removed.capture_storage_snapshot()==before,"render travel preserves gathered and planted state")
- check(c.rejected_batches==0 and c.resident.size()<=49,"travel retains bounded owners without rejected publication")
+ check(c.rejected_batches==0 and c.resident.size()<=81,"travel retains bounded owners without rejected publication")
  var render:Array=[]
  for batch in c.batches:
   var stat:Dictionary=batch.render_stats();render.append(stat)

@@ -15,10 +15,10 @@ protected:
 public:
     TypedArray<Vector2i> wanted(Vector2i center) const {
         TypedArray<Vector2i> out;
-        if(center.x<-3||center.y<-3||center.x>65||center.y>65)return out;
+        if(center.x<-4||center.y<-4||center.x>66||center.y>66)return out;
         struct Cell{Vector2i p;int d;};std::vector<Cell> cells;
-        for(int z=std::max(0,center.y-3);z<=std::min(62,center.y+3);++z)
-            for(int x=std::max(0,center.x-3);x<=std::min(62,center.x+3);++x)
+        for(int z=std::max(0,center.y-4);z<=std::min(62,center.y+4);++z)
+            for(int x=std::max(0,center.x-4);x<=std::min(62,center.x+4);++x)
                 cells.push_back({Vector2i(x,z),(x-center.x)*(x-center.x)+(z-center.y)*(z-center.y)});
         std::sort(cells.begin(),cells.end(),[](const Cell&a,const Cell&b){return a.d!=b.d?a.d<b.d:(a.p.y!=b.p.y?a.p.y<b.p.y:a.p.x<b.p.x);});
         for(const auto &c:cells)out.append(c.p);return out;

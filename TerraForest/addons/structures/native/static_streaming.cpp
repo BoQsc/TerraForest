@@ -65,7 +65,7 @@ void NativeStaticBatch::upload_batch(RenderKey page) {
 bool NativeStaticBatch::configure_render_streaming(bool enabled,double radius,int64_t batch_limit,int64_t byte_limit,int64_t uploads_per_tick,int64_t bytes_per_tick) {
     if(admission)return false;
     if(!std::isfinite(radius)||radius<0||radius>16384||batch_limit<1||batch_limit>4096||
-       byte_limit<render_stride_bytes()||byte_limit>4800000||uploads_per_tick<1||uploads_per_tick>64||
+       byte_limit<render_stride_bytes()||byte_limit>8000000||uploads_per_tick<1||uploads_per_tick>64||
        bytes_per_tick<render_stride_bytes()||bytes_per_tick>4800000)return false;
     // Reconfiguration evicts immediately, so lower budgets cannot leave a stale
     // over-budget frame. Authored placements, proxies and journals are unchanged.

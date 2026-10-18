@@ -199,6 +199,14 @@ func grass_far() -> void:
 		var tip:Vector3=base+direction*0.22+Vector3.UP*(0.27+0.12*sin(blade*1.71))
 		tri(base-side*0.045,base+side*0.045,tip,Color("64773f"),Vector2.ZERO,Vector2.RIGHT,Vector2(0.5,1))
 
+func grass_horizon() -> void:
+	# Three opaque silhouette blades for the outer visibility range.
+	for blade in 3:
+		var angle:float=blade*2.399963
+		var direction:=Vector3(cos(angle),0,sin(angle));var side:=Vector3(-direction.z,0,direction.x)
+		var base:Vector3=direction*0.035
+		tri(base-side*0.09,base+side*0.09,base+direction*0.22+Vector3.UP*0.36,Color("64773f"),Vector2.ZERO,Vector2.RIGHT,Vector2(0.5,1))
+
 static func build(species: int,with_lod: bool=true) -> ArrayMesh:
 	if species<0 or species>7:return null
 	var asset=load("res://addons/world_ecosystem/woodland_mesh.gd").new()
@@ -218,6 +226,11 @@ static func build(species: int,with_lod: bool=true) -> ArrayMesh:
 		var far_indices:=PackedInt32Array()
 		for i in range(far_start,asset.vertices.size()):far_indices.append(i)
 		lods[0.12]=far_indices
+		var horizon_start:int=asset.vertices.size()
+		asset.grass_horizon()
+		var horizon_indices:=PackedInt32Array()
+		for i in range(horizon_start,asset.vertices.size()):horizon_indices.append(i)
+		lods[0.2]=horizon_indices
 	var arrays:=[];arrays.resize(Mesh.ARRAY_MAX)
 	arrays[Mesh.ARRAY_VERTEX]=asset.vertices;arrays[Mesh.ARRAY_NORMAL]=asset.normals;arrays[Mesh.ARRAY_COLOR]=asset.colors;arrays[Mesh.ARRAY_TEX_UV]=asset.uvs;arrays[Mesh.ARRAY_INDEX]=indices
 	arrays[Mesh.ARRAY_TANGENT]=asset.tangents

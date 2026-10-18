@@ -19,8 +19,8 @@ func run() -> void:
 	var cover=game.ground_cover
 	check(game.ground_enabled,"normal-world ground cover enabled")
 	deadline=Time.get_ticks_msec()+15000
-	while cover.resident.size()<49 and Time.get_ticks_msec()<deadline: await process_frame
-	check(cover.resident.size()==49 and cover.rejected_batches==0,"real support and exclusion masks publish 49 cells")
+	while cover.resident.size()<81 and Time.get_ticks_msec()<deadline: await process_frame
+	check(cover.resident.size()==81 and cover.rejected_batches==0,"real support and exclusion masks publish 81 cells")
 	var count:=0
 	var target:=Vector3.ZERO
 	var target_id:=0

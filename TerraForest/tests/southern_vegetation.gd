@@ -45,9 +45,21 @@ func run()->void:
   gpu.append(RenderingServer.viewport_get_measured_render_time_gpu(root.get_viewport_rid()))
  timings.sort();gpu.sort()
  var performance:={"frame_median":timings[60],"frame_p95":timings[113],"worst":timings.back(),"gpu_median":gpu[60]}
+ var shade_comparison:Dictionary={}
+ if "--compare-canopy" in OS.get_cmdline_user_args():
+  for material in game.ground_cover.foliage_materials:material.set_shader_parameter("distant_self_shade",0.0)
+  for frame in 30:await RenderingServer.frame_post_draw
+  root.get_texture().get_image().save_png("res://reports/southern_vegetation/canopy_off.png")
+  for frame in 30:await RenderingServer.frame_post_draw
+  var samples:Array=[]
+  for frame in 120:
+   await RenderingServer.frame_post_draw
+   samples.append(RenderingServer.viewport_get_measured_render_time_gpu(root.get_viewport_rid()))
+  samples.sort();shade_comparison={"on_gpu_median":performance.gpu_median,"off_gpu_median":samples[60],"scope":"Single on/off stationary comparison; not thermal or sustained performance proof"}
+  for material in game.ground_cover.foliage_materials:material.set_shader_parameter("distant_self_shade",0.28)
  var render:Array=[]
  for batch in game.ground_cover.batches:
   var stat:Dictionary=batch.render_stats();render.append(stat)
   check(stat.budget_deferred==0,"no deferred vegetation pages")
- FileAccess.open("res://reports/southern_vegetation/result.json",FileAccess.WRITE).store_string(JSON.stringify({"failures":failures,"settle_ms":settle_ms,"progress":progress,"render":render,"performance":performance},"  "))
+ FileAccess.open("res://reports/southern_vegetation/result.json",FileAccess.WRITE).store_string(JSON.stringify({"failures":failures,"settle_ms":settle_ms,"progress":progress,"render":render,"performance":performance,"shade_comparison":shade_comparison},"  "))
  await done()

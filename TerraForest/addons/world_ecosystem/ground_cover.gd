@@ -50,7 +50,7 @@ func _ready() -> void:
 	for species in range(Catalog.COUNT):
 		var batch: Node3D=ClassDB.instantiate("NativeStaticBatch")
 		add_child(batch)
-		if not batch.configure_appearance_fade() or not batch.configure_asset("ground_cover/%d/v1"%species,_mesh(species)) or not batch.configure_render_streaming(true,maxf(112.0,Catalog.DISTANCES[species]),512 if species==2 else 128,4100000 if species==2 else (1000000 if species==1 else 200000),2,8192):
+		if not batch.configure_appearance_fade() or not batch.configure_asset("ground_cover/%d/v1"%species,_mesh(species)) or not batch.configure_render_streaming(true,maxf(144.0,Catalog.DISTANCES[species]),896 if species==2 else 192,7000000 if species==2 else (1600000 if species==1 else 200000),2,8192):
 			push_error("Ground cover renderer initialization failed");set_process(false);return
 		batch.set_casts_shadows(true)
 		batch.set_shadow_distance(24.0 if species==2 else 48.0)
@@ -66,8 +66,8 @@ func _ready() -> void:
 func _mesh(species: int) -> Mesh:
 	var mesh:=preload("res://addons/world_ecosystem/woodland_mesh.gd").build(species)
 	var material:ShaderMaterial=mesh.surface_get_material(0)
-	material.set_shader_parameter("distance_fade_end",92.0)
-	material.set_shader_parameter("distance_fade_start",76.0)
+	material.set_shader_parameter("distance_fade_end",124.0)
+	material.set_shader_parameter("distance_fade_start",100.0)
 	foliage_materials.append(material)
 	if species==2:grass_material=material
 	return mesh

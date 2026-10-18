@@ -46,16 +46,16 @@ func run() -> void:
 	var initial: PackedByteArray=cover.removed.capture_storage_snapshot()
 	check(cover.set_grass_texture(false) and not cover.grass_texture_enabled and cover.set_grass_texture(true) and cover.removed.capture_storage_snapshot()==initial,"texture toggle preserves world records")
 	check(cover.batches.size()==8,"eight native species render collections initialized")
-	for i in range(49):
+	for i in range(81):
 		cover._process(0.0)
 		check(terrain.requests.size()==1,"one outstanding support batch %d"%i)
 		terrain.reply();finish_support(cover,terrain)
-	check(cover.resident.size()==49 and cover.rejected_batches==0,"49 owners publish without rejection")
+	check(cover.resident.size()==81 and cover.rejected_batches==0,"81 owners publish without rejection")
 	var count:=0
 	for batch in cover.batches:
 		count+=batch.get_ids().size()
 		check(not batch.collision_stats().enabled and batch.collision_stats().resident_bodies==0,"ground cover creates no physics bodies")
-	check(count==50176,"bounded 50176 candidates maintain density through all 49 owners")
+	check(count==82944,"bounded 82944 candidates maintain density through all 81 owners")
 	var key:=Vector2i(30,30)
 	var row: Dictionary=cover.resident[key][2]
 	var removed_id: int=row.ids[0]
@@ -65,7 +65,7 @@ func run() -> void:
 	cover._exclusion_changed(AABB(Vector3(976,-1,976),Vector3(1,2,1)))
 	check(cover._dirty.size()==1,"small interior disturbance invalidates one owner")
 	cover._process(0.0);terrain.reply();finish_support(cover,terrain)
-	check(not cover.batches[2].get_ids().has(removed_id) and cover.resident.size()==49,"individual removal preserves neighbour owners")
+	check(not cover.batches[2].get_ids().has(removed_id) and cover.resident.size()==81,"individual removal preserves neighbour owners")
 	check(cover.batches[0].get_ids().has(authored_id),"authored placement joins native rendering for its owner")
 	check(cover.picker.pick(Vector3(970,20.1,970),Vector3(970,21,970)).get("id",0)==authored_id,"render publication also publishes individual interaction identity")
 	cover._dirty[key]=true
@@ -116,8 +116,8 @@ func run() -> void:
 	for i in 100:
 		cover._process(0.0)
 		if not terrain.requests.is_empty():terrain.reply();finish_support(cover,terrain)
-		if cover.resident.size()==49 and cover._dirty.is_empty() and cover._scatter_job.is_empty():break
-	var bands_ok:bool=cover.resident.size()==49 and cover._dirty.is_empty()
+		if cover.resident.size()==81 and cover._dirty.is_empty() and cover._scatter_job.is_empty():break
+	var bands_ok:bool=cover.resident.size()==81 and cover._dirty.is_empty()
 	for owner:Vector2i in cover.resident:bands_ok=bands_ok and cover._resident_layers[owner]==cover._layers(owner)
 	check(bands_ok and cover.rejected_batches==0,"crossing a cell boundary upgrades nearby cover and retains loaded layers until owner retirement")
 	# A world invalidation can mark owners dirty before their first publication.

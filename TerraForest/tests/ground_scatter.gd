@@ -11,7 +11,7 @@ func run() -> void:
 	GDExtensionManager.load_extension("res://addons/vegetation_runtime/vegetation_runtime.gdextension")
 	var scatter=ClassDB.instantiate("NativeGroundCover")
 	var wanted: Array=scatter.wanted(Vector2i(30,30))
-	check(wanted.size()==49 and wanted[0]==Vector2i(30,30),"bounded nearest-first residency")
+	check(wanted.size()==81 and wanted[0]==Vector2i(30,30),"bounded nearest-first residency")
 	var previous: int=-1
 	var ordered:=true
 	for cell in wanted:
@@ -20,7 +20,7 @@ func run() -> void:
 		previous=distance
 	check(ordered,"residency distance order")
 	check(scatter.wanted(Vector2i(-999999,0)).is_empty(),"far outside world rejects safely")
-	check(scatter.wanted(Vector2i.ZERO).size()==16,"world edge clips residency")
+	check(scatter.wanted(Vector2i.ZERO).size()==25,"world edge clips residency")
 	var valid:=true
 	var total:=0
 	# Every owner uses its own ID interval, so uniqueness is checked without a huge set.
