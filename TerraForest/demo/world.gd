@@ -370,6 +370,9 @@ func _setup_prefabs() -> void:
 	var bridge: Resource=preload("res://addons/structures/bridge_catalog.gd").footbridge()
 	if bridge!=null:
 		structure_prefabs.append(bridge);bridge.changed.connect(_invalidate_prefab_preview)
+	var metal_bridge: Resource=preload("res://addons/structures/bridge_catalog.gd").footbridge(true)
+	if metal_bridge!=null:
+		structure_prefabs.append(metal_bridge);metal_bridge.changed.connect(_invalidate_prefab_preview)
 	for asset: Resource in prefab_library.assets:
 		structure_prefabs.append(asset)
 		asset.changed.connect(_invalidate_prefab_preview)

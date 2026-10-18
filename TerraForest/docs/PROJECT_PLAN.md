@@ -1,3 +1,9 @@
+> 2026-10-18 construction content: selectable metal-railed footbridge uses 56
+> wood blocks and six batched railings (24 metal). Walking, side containment,
+> paid placement and exact fresh-process world/inventory restore pass. Manual
+> bank alignment only; no vehicle or sustained-performance claim. Evidence:
+> evidence/metal_bridge/. Water unchanged.
+
 > 2026-10-18 attachment envelope integration: player library capture preserves
 > the selected model volume; background frontage snapshots now include explicit
 > bounds, and resource publication verifies them. Captured rotated placement,
