@@ -28,6 +28,7 @@ var lakes = Lakes.new()
 var water_camera=preload("res://addons/volumetric_water/water_camera.gd").new()
 var structures = Structures.new()
 var player_hud=preload("res://addons/player_runtime/player_hud.gd").new()
+var world_map=preload("res://addons/world_runtime/world_map.gd").new()
 var session_menu=preload("res://addons/player_runtime/session_menu.gd").new()
 var destination_guide=preload("res://addons/player_runtime/destination_guide.gd").new()
 var storage=preload("res://addons/player_runtime/storage.gd").new()
@@ -215,6 +216,7 @@ func _ready() -> void:
 	add_child(storage)
 	session_menu.world_page_factory=_make_world_locations
 	session_menu.game=self;session_menu.world_browser_path="res://demo/worlds.tscn";add_child(session_menu)
+	session_menu.world_map=world_map;world_map.game=self;add_child(world_map)
 	destination_guide.game=self;add_child(destination_guide)
 	construction_palette.history_requested.connect(_construction_history)
 	add_child(construction_palette)
@@ -821,9 +823,6 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	if not loading_active and not benchmark_enabled:
 		if event is InputEventKey and event.pressed and not event.echo:
-			if event.physical_keycode==KEY_M:
-				_set_player_tool_mode(true,not model_tool.active,tool)
-				return
 			if event.physical_keycode == KEY_B:
 				_set_player_tool_mode(not structure_mode,false,tool)
 				return

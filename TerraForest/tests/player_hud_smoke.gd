@@ -78,7 +78,7 @@ func run() -> void:
 	Input.mouse_mode=Input.MOUSE_MODE_CAPTURED
 	await press(KEY_TAB)
 	check(Input.mouse_mode==Input.MOUSE_MODE_VISIBLE and hud.inventory_open and game.player.velocity==Vector3.ZERO,"inventory releases mouse and clears movement")
-	await press(KEY_M)
+	await press(KEY_B)
 	check(not game.model_tool.active and hud.active_item==1,"inventory blocks world mode shortcuts")
 	hud.select_slot(0);hud.select_slot(5)
 	check(hud.state.slots[0].item==1 and hud.state.slots[5].item==0,"clicking inventory slots only selects, never moves items")

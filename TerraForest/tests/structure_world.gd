@@ -354,9 +354,11 @@ func check_model_editor(site: Vector3) -> void:
 	game.player.position=site+Vector3(10,11,-3)
 	game.player.velocity=Vector3.ZERO
 	game.camera.look_at(site+Vector3(2,4.25,-8))
-	editor_key(KEY_M)
+	game.session_menu.show_page("Objects")
+	check(game.session_menu.workspace and game.model_tool.panel.is_visible_in_tree(),"Objects page exposes the independent model catalog")
+	game.session_menu.set_open(false)
 	editor_key(KEY_3)
-	check(game.model_tool.active and game.structure_mode and game.model_tool.panel.visible,"M opens the independent model placement catalog")
+	check(game.model_tool.active and game.structure_mode,"model placement mode activates the independent catalog")
 	check(game.model_tool.selected==2,"number keys select a model asset")
 	var collection: Node3D = game.structures.model("architecture/doorway/v1")
 	var before: PackedInt64Array = collection.get_ids()
@@ -367,7 +369,7 @@ func check_model_editor(site: Vector3) -> void:
 	var target: Dictionary = game.model_tool.target()
 	check(not target.is_empty(),"model tool finds an actual support surface")
 	if target.is_empty():
-		editor_key(KEY_M)
+		game._set_player_tool_mode(true,not game.model_tool.active,game.tool)
 		return
 	var expected: PackedFloat32Array = game.model_tool.records(target.transform,collection)
 	var click := InputEventMouseButton.new()
@@ -422,8 +424,8 @@ func check_model_editor(site: Vector3) -> void:
 	history_key.shift_pressed=false
 	game._unhandled_input(history_key)
 	check(game.structures.capture_snapshot()==before_save,"complete model redo chain returns to pre-test authored content")
-	editor_key(KEY_M)
-	check(not game.model_tool.active and game.structure_mode and not game.model_tool.preview.visible,"M returns to block editing and hides model preview")
+	game._set_player_tool_mode(true,not game.model_tool.active,game.tool)
+	check(not game.model_tool.active and game.structure_mode and not game.model_tool.preview.visible,"return to block editing hides model preview")
 	Input.mouse_mode=Input.MOUSE_MODE_VISIBLE
 
 func check_model_transforms(collection: Node3D, id: int, original: PackedFloat32Array, aim: Vector3) -> void:

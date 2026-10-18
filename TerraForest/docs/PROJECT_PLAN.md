@@ -1,5 +1,12 @@
 ## Current integrated entry point - 2026-10-18
 
+M-key regional map is integrated and verified in the saved world. Public locations,
+roads, lakes, player heading, pan/zoom and tracking now share the normal gameplay
+UI. Native survey generation and validated disk caching avoid world meshes or
+terrain-worker contention. See evidence/player_world_map for scope and timings.
+Next world-building work: intentional public spaces, vehicle turning and broader
+landscape continuity; keep overall world quality and sustained performance open.
+
 Northern neighborhood planting is integrated: four persisted native groves restore
 20 harvestable trees and two dense beds restore 407 ground-cover instances. Native
 validation, full create/reopen, real-world harvest/streaming reset, old-save loading,
@@ -8,7 +15,7 @@ to a new v7 copy of planted_neighborhood_42_20261018. Evidence: evidence/neighbo
 An initial bed exceeded the existing 256 authored records per cell; smaller dense
 beds fit that bound without increasing runtime limits. Route p95 17.14 ms / worst
 19.63 ms does not establish sustained 60 FPS or thermal headroom. Public-space design,
-vehicle turning, broader ecology continuity and the M-key map remain open.
+vehicle turning and broader ecology continuity remain open; the M-key map is now implemented.
 
 Northern concrete walkways are integrated: level two-metre paving and entrance/road
 crossings. Full create/reopen, inspected views, all twelve entrance roundtrips and
@@ -33,16 +40,22 @@ reload and inspected matching views pass in narrow_lots_42_20261018. Large cut/a
 reduced, smaller exposed cut and unfinished road ends remain. Evidence:
 evidence/narrow_lot_grading. No completed landscape or performance claim.
 
-Player world map — requested 2026-10-18, pending implementation:
-Reserve M to open/close the player map. Introduce the first usable map alongside
-coherent regional roads and destinations, before expanding world scale further;
-do not wait for final art or multiplayer. Initial scope: player position/heading,
-terrain/water overview, roads and named locations, pan/zoom, and an obvious close
-button. Use generated/cached world metadata; opening the map must not load or
-render the entire 3D world. Define discovery visibility before exposing secret POIs.
-Audit existing KEY_M model-tool binding in demo/world.gd and retire/remap it through
-the unified development UI so it cannot conflict with the player map. This note
-records the milestone only; M is not yet changed and no map implementation is claimed.
+Player world map — first version implemented 2026-10-18:
+M opens/closes the map; Esc and the close button return to play. The actions menu
+also exposes World map. Cached native cartography shows the generated terrain and
+lake basins, public settlements, four regional routes and saved authored streets.
+Player position/heading, drag pan, wheel/button zoom, Find me, Whole world and
+clickable destination tracking are connected. Secret underground POIs are omitted;
+public settlements/lakes are always charted. Discovery of secrets is future gameplay.
+The former M object-tool shortcut is retired; object authoring remains in the unified
+Objects UI/development belt. Base cartography is a static survey: excavation, water
+edits, building footprints and arbitrary painted asphalt are not live raster overlays.
+Saved street anchors refresh when reopening. No whole-world mesh/loading request.
+Evidence: evidence/player_world_map. Native/cache and actual saved-world checks,
+inspected images and refreshed unified UI checks pass. Map-open GPU p95 6.57 ms in
+a short sample versus 6.56 ms before opening; sustained 60 FPS and thermal limits
+remain unqualified. Vehicle driving with the map and full secret discovery are not
+qualified by this on-foot test.
 
 Northern production generation now replaces the single pad with twelve independently
 fitted lots and three streets. Seven-seed lot checks, seed-42 native support, full

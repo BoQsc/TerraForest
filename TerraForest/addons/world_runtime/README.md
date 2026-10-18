@@ -249,3 +249,30 @@ Persistence registration supports `register_components(Array[Dictionary])` for s
 In the main world, enter development mode, select an actor, aim at dry static ground and click **Patrol to aim** in the actor HUD or Actions > Development. Existing routing bounds and failure states apply. Order storage remains version1 without patrols; version2 stores both endpoints and current leg when needed. Older builds reject version2. See [patrol evidence](../../docs/evidence/actor_patrol/README.md).
 
 Main-world **Actions > Development > Add residents to nearby street** adds two patrol residents near the selected prepared street when actor simulation is enabled. Other streets may already have actors. Dry supported endpoints and local persistent occupancy are checked; sleeping residents also block duplicates. Runtime remains native, with newly bound collision bodies waiting one physics step before movement. Save with F5. See [multiple-street evidence](../../docs/evidence/settlement_multiple_streets/README.md).
+
+
+## Player regional map
+
+`world_map.gd` and `world_map_view.gd` provide optional host-owned UI, integrated by
+`demo/world.gd` and the player session menu. M/Esc close the modal view; left drag
+pans, wheel/buttons zoom, and public destination selection uses the existing guide.
+There are no world mesh, collision or residency queries from the map. Position/
+heading refresh at 5 Hz while open; the timer stops and frame processing is disabled
+when the worker is idle and the map is closed. Existing saves need no new component.
+
+`survey_cache.gd` creates a private TerrainCore on a worker. Its native
+`survey_overview(size)` method returns RGBA bytes of the immutable generator's
+height field/basins with hill shading. Accepted sizes 64..512; the UI uses 256,
+about 7.8 m per texel and 256 KiB of texture pixels. Cache key: survey version,
+generator and seed. Fixed size plus SHA-256 protect cache reads; corrupt data is
+rebuilt and published through a temporary file. Bump `VERSION` when changing survey
+content or colour rules. Native rendering reuses the pinned Zig/prebuilt SDK.
+
+The survey deliberately represents the original landscape, rather than claiming a
+live survey of player edits. Road overlays use generated route descriptors and the
+current saved authored street anchors (full widths). Building footprints, excavations,
+bucket edits and arbitrary painted asphalt are not rasterized. Underground/secret
+metadata is not enumerated; public settlements and basins are always visible.
+Discovery state, editing overlays, vehicle-map review and controller/touch support
+remain follow-up scope. See `docs/evidence/player_world_map` for integrated checks,
+reviewed screenshots and short paired frame/GPU timings.

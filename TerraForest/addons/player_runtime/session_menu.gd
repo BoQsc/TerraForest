@@ -4,6 +4,7 @@ extends CanvasLayer
 # Optional host-owned destination; standalone addons do not depend on demo scenes.
 var world_browser_path: String=""
 var world_page_factory:Callable
+var world_map:CanvasLayer
 var game: Node
 var opened:=false
 var workspace:=false
@@ -53,6 +54,7 @@ func _ready() -> void:
 		navigation[title]=button(sidebar,title,show_page.bind(title))
 	if world_page_factory.is_valid():navigation["World"]=button(sidebar,"World",show_page.bind("World"))
 	button(sidebar,"Inventory / crafting",open_inventory)
+	if game.has_method("_make_world_locations"):button(sidebar,"World map  ·  M",func():world_map.set_open(true))
 	button(sidebar,"Return to world",func():set_open(false))
 	scroll=ScrollContainer.new();scroll.size_flags_horizontal=Control.SIZE_EXPAND_FILL;scroll.size_flags_vertical=Control.SIZE_EXPAND_FILL;columns.add_child(scroll)
 	content=VBoxContainer.new();content.size_flags_horizontal=Control.SIZE_EXPAND_FILL;scroll.add_child(content)
@@ -121,8 +123,9 @@ func dock_palettes() -> void:
 		docked[pair[0]]=source
 	ready_to_dock=true;sync_panels()
 	developer_hud.displayed_slot=-1;developer_hud.refresh()
-func visible_ui() -> bool:return opened or workspace
+func visible_ui() -> bool:return opened or workspace or (world_map!=null and world_map.opened)
 func set_open(value: bool) -> void:
+	if value and world_map!=null and world_map.opened:world_map.set_open(false)
 	var changing_focus: bool=value or visible_ui() or game.storage.opened or game.player_hud.inventory_open
 	game.storage.close();game.player_hud.set_open(false)
 	workspace=false;opened=value;panel.visible=value
@@ -267,6 +270,14 @@ func run_command(key: int,shift: bool=false) -> void:
 	if not developer:return
 	set_open(false);var event:=InputEventKey.new();event.pressed=true;event.physical_keycode=key;event.shift_pressed=shift;game._unhandled_input(event)
 func _input(event: InputEvent) -> void:
+	if world_map!=null and world_map.opened:
+		if event is InputEventKey and event.pressed and not event.echo and event.physical_keycode in [KEY_M,KEY_ESCAPE]:world_map.set_open(false)
+		# GUI retains mouse events for pan/zoom/buttons. Block gameplay keys here.
+		if event is InputEventKey:get_viewport().set_input_as_handled()
+		return
+	if world_map!=null and event is InputEventKey and event.pressed and not event.echo and event.physical_keycode==KEY_M and tilde_down<0:
+		world_map.set_open(true);get_viewport().set_input_as_handled();return
+
 	if leaving_world:
 		get_viewport().set_input_as_handled();return
 	if event is InputEventMouseButton and event.pressed and event.button_index in [MOUSE_BUTTON_WHEEL_UP,MOUSE_BUTTON_WHEEL_DOWN]:
@@ -312,7 +323,7 @@ func _input(event: InputEvent) -> void:
 			get_viewport().set_input_as_handled();return
 		if event.physical_keycode in [KEY_1,KEY_2,KEY_3,KEY_4,KEY_5,KEY_6,KEY_7,KEY_8,KEY_9,KEY_0]:
 			game.player_hud.equip(9 if event.physical_keycode==KEY_0 else event.physical_keycode-KEY_1);get_viewport().set_input_as_handled()
-		elif (event.ctrl_pressed and event.physical_keycode==KEY_R) or event.physical_keycode in [KEY_M,KEY_B,KEY_H,KEY_P,KEY_T,KEY_G] or (not developer and event.physical_keycode in [KEY_F2,KEY_F3,KEY_F4,KEY_F6,KEY_F7,KEY_F8,KEY_F10,KEY_J,KEY_K,KEY_V,KEY_L]):
+		elif (event.ctrl_pressed and event.physical_keycode==KEY_R) or event.physical_keycode in [KEY_B,KEY_H,KEY_P,KEY_T,KEY_G] or (not developer and event.physical_keycode in [KEY_F2,KEY_F3,KEY_F4,KEY_F6,KEY_F7,KEY_F8,KEY_F10,KEY_J,KEY_K,KEY_V,KEY_L]):
 			get_viewport().set_input_as_handled()
 
 func _notification(what: int) -> void:

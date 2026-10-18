@@ -215,7 +215,7 @@ func refresh() -> void:
 	deliver_mining_rewards()
 	if action_hint!=null:
 		action_hint.text=editor_hint if not editor_hint.is_empty() else {0:"Empty hands | Left mouse: punch / dig | E interact",1:"Pickaxe | Hold left mouse: attack / dig | Best against stone",2:"Hatchet | Hold left mouse: attack / dig | Best against wood",3:"Building hammer | Right mouse: build | Left mouse: attack | Esc: shape, material, rotation",4:"Assembly tool | Right mouse: place | Left mouse: attack | Esc: object and transform settings"}.get(active_item,"Holding "+MATERIALS.get(active_item,RESOURCES.get(active_item,"item"))+(" | Right mouse: place | G drop" if active_item in MATERIALS or active_item in GROUND_ITEMS else " | G drop | E interact"))
-	if mode_hint!=null:mode_hint.text="1–9 / 0"+" / Wheel equip · Tab inventory · Esc menu · "+("Gameplay" if gameplay_construction else "Development")
+	if mode_hint!=null:mode_hint.text="1–9 / 0"+" / Wheel equip · Tab inventory · M map · Esc menu · "+("Gameplay" if gameplay_construction else "Development")
 	var latest: Dictionary=inventory.snapshot()
 	var inventory_changed_since_view: bool=latest.revision!=state.get("revision",-1)
 	state=latest

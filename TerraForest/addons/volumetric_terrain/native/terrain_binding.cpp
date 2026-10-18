@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: 0BSD
 #include "core.h"
+#include "survey_map.hpp"
 #include "terrain_planner.hpp"
 #include "road_profile.hpp"
 #include "terrain_collision.hpp"
@@ -40,6 +41,7 @@ class TerrainCore : public godot::RefCounted {
 protected:
     static void _bind_methods() {
         godot::ClassDB::bind_method(godot::D_METHOD("execute","packet"), &TerrainCore::execute);
+        godot::ClassDB::bind_method(godot::D_METHOD("survey_overview","size"), &TerrainCore::survey_overview);
         godot::ClassDB::bind_method(godot::D_METHOD("measure_material_surface","x","z","size","y_begin","y_end"), &TerrainCore::measure_material_surface);
         godot::ClassDB::bind_method(godot::D_METHOD("material_box","solid","minimum","maximum","add","solid_revision","material_revision"), &TerrainCore::material_box, DEFVAL(-1));
         godot::ClassDB::bind_method(godot::D_METHOD("geometry_cache_key","x","z","size","step"), &TerrainCore::geometry_cache_key);
@@ -59,6 +61,9 @@ protected:
         godot::ClassDB::bind_method(godot::D_METHOD("experimental_partition_mesh_budgeted","packet","workspace_bytes","output_bytes","expected_epoch"), &TerrainCore::experimental_partition_mesh_budgeted);
     }
 public:
+    godot::Dictionary survey_overview(int64_t size){
+        std::lock_guard<std::mutex> lock(mutex_);return terraforest_survey_map(world_,size);
+    }
     godot::Dictionary measure_material_surface(int64_t x,int64_t z,int64_t size,int64_t y_begin,int64_t y_end){
         godot::Dictionary result;result["valid"]=false;
         if(x<0||x>WORLD||z<0||z>WORLD||size<1||size>32||y_begin<1||y_end>255||y_end<=y_begin||y_end-y_begin>32)return result;

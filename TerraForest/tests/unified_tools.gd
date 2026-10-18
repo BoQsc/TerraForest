@@ -60,6 +60,7 @@ func run() -> void:
 	var event:=InputEventKey.new();event.pressed=true;event.physical_keycode=KEY_E;game._unhandled_input(event)
 	check(game.storage.opened,"E reaches chest inside furnished cottage")
 	if game.storage.opened:
+		var original_chest_slots:Array=game.storage.store.snapshot(game.storage.identity).slots
 		var slot:=-1
 		for i in 32:
 			if inv.snapshot().slots[i].item==102:slot=i
@@ -67,8 +68,13 @@ func run() -> void:
 		check(game.storage.move_selected(true),"interior chest accepts wood through normal UI")
 		for i in 5:await RenderingServer.frame_post_draw
 		root.get_texture().get_image().save_png("res://reports/unified_tools/open.png")
+		# Supply grants may fill slot 28. This case tests withdrawal to an empty slot;
+		# occupied-slot swaps are a different interaction.
+		var target_stack:Dictionary=inv.snapshot().slots[28]
+		if target_stack.count>0:check(inv.consume(28,target_stack.count,inv.snapshot().revision).ok,"empty supplied fixture target before withdrawal")
+		game.storage.refresh()
 		await drag(game.storage.storage_list.buttons[0],game.storage.player_list.buttons[28])
-		check(inv.snapshot().slots[28].count==2 and not game.storage.store.has_contents(game.storage.identity),"real mouse drag withdraws to exact player slot")
+		check(inv.snapshot().slots[28].count==2 and game.storage.store.snapshot(game.storage.identity).slots==original_chest_slots,"real mouse drag withdraws to exact player slot and preserves original chest supplies")
 		await drag(game.storage.player_list.buttons[28],game.storage.storage_list.buttons[31])
 		check(game.storage.store.snapshot(game.storage.identity).slots[31].count==2 and game.storage.collection.is_removal_protected(game.storage.identity),"real mouse drag deposits to exact chest slot and protects contents")
 		await drag(game.storage.storage_list.buttons[31],game.storage.storage_list.buttons[30])
@@ -123,10 +129,16 @@ func run() -> void:
 	check(game.equipped_tool==0 and game.tool_view.current==0,"moving the equipped tool away puts it down")
 	key(KEY_0);await process_frame
 	check(game.player_hud.active_slot==9 and game.equipped_tool==0 and not game.structure_mode and not game.model_tool.active,"empty tenth slot selects empty hands and clears placement")
-	key(KEY_5);await process_frame
-	check(game.equipped_tool==101 and not game.structure_mode and not game.editor_tool_active,"holding material does not enable an editor")
+	var material_slot:=-1
+	for i in inv.snapshot().slots.size():
+		if inv.snapshot().slots[i].item==101:material_slot=i;break
+	check(material_slot>=0 and inv.transfer(material_slot,8,inv.snapshot().slots[material_slot].count,inv.snapshot().revision).ok,"put known terrain material stack into empty ninth belt slot")
+	key(KEY_9);await process_frame
+	check(game.equipped_tool==101 and game.structure_mode and not game.model_tool.active and not game.editor_tool_active,"held building material enables paid right-click placement without developer tools")
 	key(KEY_M);await process_frame
-	check(not game.model_tool.active,"M no longer silently changes modes")
+	check(game.world_map.opened and not game.model_tool.active,"M opens world map without changing tool mode")
+	key(KEY_M);await process_frame
+	check(not game.world_map.opened,"M returns from map before editor chords")
 	var light_before: bool=game.headlamp.visible
 	var chord:=InputEventKey.new();chord.physical_keycode=KEY_QUOTELEFT;chord.pressed=true;Input.parse_input_event(chord);await process_frame
 	key(KEY_F);await process_frame
@@ -166,7 +178,7 @@ func run() -> void:
 	game.session_menu.set_open(false);game.player_hud.equip_item(4);game.session_menu.set_open(true)
 	game.session_menu.editor_tool(3);check(game.editor_tool_active and game.equipped_tool==0,"developer brush is separate from inventory equipment")
 	key(KEY_QUOTELEFT);await process_frame
-	check(not game.editor_tool_active and game.equipped_tool==0,"leaving development cannot retain a brush")
+	check(not game.editor_tool_active and game.equipped_tool==game.player_hud.active_item,"leaving development restores actual gameplay equipment without a brush")
 	# A real nearby terrain hit and actual held mouse input exercise pickaxe excavation.
 	var origin: Vector3=game.player.position+Vector3(15,50,15)
 	var terrain_hit: Dictionary=game.get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(origin,origin-Vector3.UP*200,1))
@@ -185,10 +197,16 @@ func run() -> void:
 		root.get_texture().get_image().save_png("res://reports/unified_tools/pickaxe.png")
 		check(game.edit_reach==3.5 and game.radius==0.65 and not game.allow_terrain_add,"pickaxe has fixed local reach and cannot fill terrain")
 		revision=game.terrain.density_revision
+		# Equipping the backpack pickaxe above may have used empty belt slot 9.
+		var held_stack:Dictionary=inv.snapshot().slots[9]
+		if held_stack.count>0:check(inv.consume(9,held_stack.count,inv.snapshot().revision).ok,"empty fixture belt slot for hand attack")
 		game.player_hud.equip(9)
+		check(game.equipped_tool==0,"empty belt slot equips hands before shared damage check")
+		var damage_before:PackedByteArray=game.world_attack.durability.capture_storage_snapshot()
+		game.world_attack.next_attack=0
 		click=InputEventMouseButton.new();click.button_index=MOUSE_BUTTON_LEFT;click.pressed=true;Input.parse_input_event(click);await process_frame;game._update_edit(0.1)
 		click=InputEventMouseButton.new();click.button_index=MOUSE_BUTTON_LEFT;Input.parse_input_event(click);await process_frame
-		check(game.terrain.density_revision==revision and not game.terrain.pending_edit,"empty hands cannot continue mining")
+		check(game.world_attack.durability.capture_storage_snapshot()!=damage_before and not game.terrain.pending_edit,"empty hands use shared terrain damage before reaching destruction health")
 
 	check(preload("res://addons/presentation/fullscreen_policy.gd").measurement(root).fair_graphical_sample and Engine.max_fps==60,"fullscreen1080p cap60")
 	game.shutdown_requested=true;check(await game.terrain.shutdown_after_edits(),"normal shutdown")
