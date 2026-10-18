@@ -1,3 +1,9 @@
+> 2026-10-18 paid staging integration: ordinary-world direct preparation rejects
+> insufficient materials and inventory revision conflicts without lost items or
+> world edits. Successful publication charges exact wood/metal; fresh-process
+> compound save restores exact bridge and inventory. Evidence:
+> evidence/paid_staged_persistence/. Functional coverage only.
+
 > 2026-10-18 furnished placement: ordinary aimed prefabs now use the existing
 > staged native transaction, preserving frontage support rules and cancellation.
 > Real-camera start/cancel/publish check passes; native suite reports 25/25.
