@@ -8,6 +8,7 @@ var structures: Node3D
 var water: Node3D
 var seed: int=1703
 var seed_source: Callable
+var shelter_source: Callable
 var picker: RefCounted
 var native: RefCounted
 var removed: RefCounted
@@ -142,12 +143,12 @@ func _measured_step(_delta:float)->void:
 	for key in _wanted:
 		if not _scatter_job.is_empty() and _scatter_job.key!=key:continue
 		if (resident.has(key) and not _dirty.has(key)) or _pending.has(key): continue
-		if _scatter_job.is_empty():_scatter_job={"key":key,"layer":0,"next_layer":0,"layers":_layers(key),"revision":terrain.published_revision,"exclusion":_exclusion_revision,"packed":[]}
+		if _scatter_job.is_empty():_scatter_job={"key":key,"layer":0,"next_layer":0,"layers":_layers(key),"revision":terrain.published_revision,"exclusion":_exclusion_revision,"packed":[],"shelter":shelter_source.call(key) if shelter_source.is_valid() else PackedVector3Array()}
 		# Four existing 64-point jobs per wave; admission may accept fewer.
 		# Keep one owner in flight and preserve terrain's foreground priority.
 		for slot in 4:
 			if _scatter_job.next_layer>=_scatter_job.layers:break
-			var data: Dictionary=native.candidates(key,seed,_scatter_job.next_layer)
+			var data: Dictionary=native.candidates(key,seed,_scatter_job.next_layer,_scatter_job.shelter)
 			var token:=Tokens.allocate()
 			if not terrain.request_surface_batch(data.points,token):break
 			data.key=key;data.layer=_scatter_job.next_layer
@@ -172,7 +173,7 @@ func _surface_ready(token: int,points: PackedVector3Array,normals: PackedVector3
 	# Only this bounded 64-candidate owner is combined in scene glue.
 	for i in range(mask.size()):
 		if (structures!=null and structure_mask[i]) or (water!=null and water_mask[i]): mask[i]=1
-	var packed: Array=native.pack(placed.ids,placed.transforms,mask)
+	var packed: Array=native.pack(placed.ids,placed.transforms,mask,_scatter_job.shelter)
 	if packed.size()!=Catalog.COUNT: rejected_batches+=1;_scatter_job.clear();return
 	# Replies may arrive in any order; concatenate by original layer for stable IDs.
 	if _scatter_job.packed.is_empty():_scatter_job.packed.resize(_scatter_job.layers)

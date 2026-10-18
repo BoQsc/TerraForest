@@ -9,9 +9,9 @@ protected:
     static void _bind_methods(){
         ClassDB::bind_method(D_METHOD("wanted","center"),&NativeGroundCover::wanted);
         ClassDB::bind_method(D_METHOD("wanted_view","eye","forward","fov","aspect"),&NativeGroundCover::wanted_view);
-        ClassDB::bind_method(D_METHOD("candidates","cell","seed","layer"),&NativeGroundCover::candidates,DEFVAL(0));
+        ClassDB::bind_method(D_METHOD("candidates","cell","seed","layer","shelter"),&NativeGroundCover::candidates,DEFVAL(0),DEFVAL(PackedVector3Array()));
         ClassDB::bind_method(D_METHOD("place","ids","points","normals"),&NativeGroundCover::place);
-        ClassDB::bind_method(D_METHOD("pack","ids","transforms","excluded"),&NativeGroundCover::pack);
+        ClassDB::bind_method(D_METHOD("pack","ids","transforms","excluded","shelter"),&NativeGroundCover::pack,DEFVAL(PackedVector3Array()));
     }
 public:
     TypedArray<Vector2i> wanted(Vector2i center) const {
@@ -51,14 +51,44 @@ public:
         for(size_t i=0;i<std::min(size_t(81),candidates.size());++i)cells.append(candidates[i].p);
         result["cells"]=cells;result["range"]=visible;return result;
     }
-    Dictionary candidates(Vector2i cell,int64_t seed,int layer=0) const {
+    Dictionary candidates(Vector2i cell,int64_t seed,int layer=0,const PackedVector3Array &shelter=PackedVector3Array()) const {
         PackedVector3Array points;PackedInt64Array ids;
-        if(cell.x>=0&&cell.y>=0&&cell.x<63&&cell.y<63&&seed>=0&&seed<=0x7fffffff&&layer>=0&&layer<16){
+        if(cell.x>=0&&cell.y>=0&&cell.x<63&&cell.y<63&&seed>=0&&seed<=0x7fffffff&&layer>=0&&layer<16&&shelter.size()<=144){
             for(int i=0;i<64;++i){
                 int64_t id=layer==0?1+(cell.y*63+cell.x)*64+i:1+63*63*64+(cell.y*63+cell.x)*960+(layer-1)*64+i;uint32_t h=hash(uint32_t(id)^uint32_t(seed));
                 float x=cell.x*32+(i%8+.15f+.7f*(h&65535)/65535.f)*4;
                 float z=cell.y*32+(i/8+.15f+.7f*(h>>16)/65535.f)*4;
                 if(layer>0){x=cell.x*32+(i%8)*4+(layer%4)+.15f+.7f*(h&65535)/65535.f;z=cell.y*32+(i/8)*4+(layer/4)+.15f+.7f*(h>>16)/65535.f;}
+                if(layer>0) {
+                    // Redistribute existing detail identities, never add candidates.
+                    // Variable-strength pockets avoid a uniformly spaced lawn.
+                    const float bx=cell.x*32+(i%8)*4,bz=cell.y*32+(i/8)*4;
+                    const uint32_t pocket=hash(uint32_t((cell.y*8+i/8)*504+cell.x*8+i%8)^uint32_t(seed));
+                    float ax=bx+1.0f+2.0f*(pocket&65535)/65535.f;
+                    float az=bz+1.0f+2.0f*(pocket>>16)/65535.f;
+                    const int64_t base_id=1+(cell.y*63+cell.x)*64+i;
+                    // Existing stone positions are untouched; nearby plants gather around them.
+                    if(hash(uint32_t(base_id))%10==0) {
+                        const auto rock=hash(uint32_t(base_id)^uint32_t(seed));
+                        ax=bx+(.15f+.7f*(rock&65535)/65535.f)*4;
+                        az=bz+(.15f+.7f*(rock>>16)/65535.f)*4;
+                    }
+                    const float strength=.12f+.48f*float(pocket%997)/996.f;
+                    x+=(ax-x)*strength;z+=(az-z)*strength;
+                    // Potential tree anchors use the same persisted grove recipe, not
+                    // currently resident trees: visit order/harvesting cannot shuffle plants.
+                    float nearest=25.f;Vector3 anchor;
+                    for(int a=0;a<shelter.size();++a) {
+                        Vector3 tree=shelter[a];if(!tree.is_finite())continue;
+                        float dx=x-tree.x,dz=z-tree.z,d=dx*dx+dz*dz;
+                        if(d<nearest){nearest=d;anchor=tree;}
+                    }
+                    if(nearest>1.f&&nearest<25.f) {
+                        float distance=std::sqrt(nearest),pull=.22f*(1.f-distance/5.f);
+                        float edge=std::clamp(std::min({x-cell.x*32,z-cell.y*32,(cell.x+1)*32-x,(cell.y+1)*32-z})/2.f,0.f,1.f);
+                        x+=(anchor.x-x)*pull*edge;z+=(anchor.z-z)*pull*edge;
+                    }
+                }
                 if(x<2||z<2||x>=1998||z>=1998)continue;
                 ids.append(id);points.append(Vector3(x,0,z));
             }
@@ -79,9 +109,9 @@ public:
         }
         out["ok"]=true;out["ids"]=accepted;out["transforms"]=transforms;return out;
     }
-    Array pack(const PackedInt64Array &ids,const TypedArray<Transform3D> &transforms,const PackedByteArray &excluded) const {
+    Array pack(const PackedInt64Array &ids,const TypedArray<Transform3D> &transforms,const PackedByteArray &excluded,const PackedVector3Array &shelter=PackedVector3Array()) const {
         Array out;
-        if(ids.size()>64||ids.size()!=transforms.size()||ids.size()!=excluded.size())return out;
+        if(shelter.size()>144||ids.size()>64||ids.size()!=transforms.size()||ids.size()!=excluded.size())return out;
         PackedInt64Array keys[9];PackedFloat32Array values[9];
         std::unordered_set<int64_t> seen;
         for(int64_t i=0;i<ids.size();++i){
@@ -101,7 +131,7 @@ public:
                 if(accent<(patch>.25f?140u:20u))species=1;
                 else if(accent>=150&&accent<165&&patch>0.0f)species=6;
                 else if(accent>=170&&accent<175)species=7;
-                else if(accent>=180&&accent<183)species=3+int(accent-180);
+                else if(accent>=180&&accent<(patch>.35f?189u:180u))species=3+int(hash(uint32_t(std::floor(t.origin.x/8))*504+uint32_t(std::floor(t.origin.z/8)))%3);
             }
             if(species==2&&accent>=190&&accent<195)species=8;
             keys[species].append(ids[i]);

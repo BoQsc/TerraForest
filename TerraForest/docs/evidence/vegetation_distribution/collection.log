@@ -1,0 +1,42 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[terrain-hitch] restore volumetric_water 513.28 ms at 8958
+[TerrainRewrite] World loaded
+[TerrainRewrite] World loaded
+[terrain-hitch] receive startup 552.32 ms at 8978
+[terrain-hitch] receive 555.6 ms at 8981
+[TerrainRewrite] Ready: map coverage and local collision are active
+[terrain-hitch] message console 62.78 ms at 37162
+[terrain-hitch] controller loading 70.72 ms at 37165
+[terrain-hitch] base controller 73.64 ms at 37168
+[terrain-hitch] controller process 76.95 ms at 37171
+[terrain-hitch] world process 80.35 ms at 37175
+PASS world ready
+[TerrainRewrite] Ready: map coverage and local collision are active
+[terrain-hitch] message console 63.47 ms at 38499
+[terrain-hitch] controller loading 69.46 ms at 38501
+[terrain-hitch] base controller 70.9 ms at 38502
+[terrain-hitch] controller process 72.62 ms at 38504
+[terrain-hitch] world process 74.46 ms at 38506
+PASS arrival ready
+PASS cover ready
+PASS ground hit
+PASS real gameplay collection accepted
+PASS only one visible instance removed immediately
+PASS survivor transforms and fade ages unchanged
+PASS survivors remain visible on subsequent frame
+PASS survivors remain visible on subsequent frame
+PASS survivors remain visible on subsequent frame
+COLLECT_USEC 6389
+PASS real gameplay collection accepted
+PASS only one visible instance removed immediately
+PASS survivor transforms and fade ages unchanged
+PASS survivors remain visible on subsequent frame
+PASS survivors remain visible on subsequent frame
+PASS survivors remain visible on subsequent frame
+COLLECT_USEC 3367
+PASS nearby production vegetation exercised
+PASS no rejected vegetation publication
+VEGETATION_LIGHTING failures=0
+[TerrainRewrite] Temporary test world: save skipped

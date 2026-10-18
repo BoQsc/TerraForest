@@ -1,0 +1,8 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS fixed candidate budget, deterministic owners and per-ID removals
+PASS tree recipe influences detail placement while base stones remain fixed
+PASS irregular occupied pockets and open one-metre cells
+PASS harvest IDs persist independently of placement recipe
+PASS anchor work capped at 144
+DISTRIBUTION bins=560 multi=120 sheltered_moves=131 failures=0

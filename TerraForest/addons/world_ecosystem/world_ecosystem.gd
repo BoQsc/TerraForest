@@ -302,3 +302,13 @@ func _exit_tree() -> void:
 		terrain.surface_batch_ready.disconnect(_surface_ready)
 		terrain.region_changed.disconnect(_region_changed)
 		terrain.reload_started.disconnect(reset)
+
+# Bounded procedural anchors, independent of residency and harvested-tree state.
+func ground_shelter(cover_owner:Vector2i)->PackedVector3Array:
+	var points:=PackedVector3Array()
+	var world_seed:int=terrain.backend.world_seed
+	for z in range(maxi(0,floori((cover_owner.y*32-5)/64.0)),mini(31,floori((cover_owner.y*32+37)/64.0))+1):
+		for x in range(maxi(0,floori((cover_owner.x*32-5)/64.0)),mini(31,floori((cover_owner.x*32+37)/64.0))+1):
+			var data:Dictionary=_scatter().candidates(Vector2i(x,z),world_seed,density)
+			points.append_array(data.points)
+	return points

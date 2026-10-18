@@ -1,3 +1,14 @@
+## Sparse placement direction — 2026-10-19
+
+User explicitly chose to retain current sparse density and improve distribution.
+This supersedes the density-increase requirement in the older acceptance entry.
+Native deterministic pockets, stable tree/stone attraction and rare flower groups
+are integrated without increasing candidate budgets or changing stone positions.
+Saved removal IDs and authored placements remain intact. Evidence and measured
+limits: `evidence/vegetation_distribution`. Short frame samples still exceed the
+16.67 ms frame target; sustained 60 FPS and thermal qualification remain open.
+Do not treat this distribution change as completion of the whole world foundation.
+
 ## Vegetation collection flicker correction — 2026-10-18
 
 Single-plant collection no longer retires the whole 32 m render group. Native

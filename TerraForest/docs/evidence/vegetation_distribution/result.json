@@ -1,0 +1,23 @@
+{
+  "center": "(1024.0, 62.0, 1792.0)",
+  "failures": 0,
+  "phases": [
+    {
+      "frame_p95": 19.56,
+      "gpu_median": 10.9219999313354,
+      "label": "normal",
+      "worst": 21.09
+    },
+    {
+      "frame_p95": 20.226,
+      "gpu_median": 10.8170003890991,
+      "label": "travel_end",
+      "worst": 22.057
+    }
+  ],
+  "planted": {
+    "density": "unchanged",
+    "ok": true
+  },
+  "scope": "Native distribution at unchanged candidate budget; 6m camera travel, no authored extra planting."
+}
