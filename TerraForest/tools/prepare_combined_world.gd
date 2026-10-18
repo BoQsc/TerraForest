@@ -4,6 +4,7 @@ var game:Node
 var report_path:String
 var reopening:=false
 var mixed:=false
+var regional:=false
 func require(ok:bool,message:String)->bool:
  print("PASS " if ok else "FAIL ",message)
  return ok
@@ -25,6 +26,7 @@ func run()->void:
   if arg.begins_with("--checkpoint-report="):report_path=arg.trim_prefix("--checkpoint-report=")
   if arg=="--reopen-checkpoint":reopening=true
   if arg=="--checkpoint-layout=mixed":mixed=true
+  if arg=="--checkpoint-layout=regional":mixed=true;regional=true
  if report_path.is_empty():quit(1);return
  game=load("res://demo/world.tscn").instantiate();root.add_child(game)
  game.set_physics_process(false) # Compare restored authoritative state before any patrol tick.
@@ -46,6 +48,13 @@ func run()->void:
   if not require(game.player.position.distance_to(Vector3(expected.spawn[0],expected.spawn[1],expected.spawn[2]))<0.1,"on-foot start survives reopen"):await finish(false);return
  else:
   if not require(game.structures.blocks.stats().cells==0,"preparation starts in an empty staging world"):await finish(false);return
+  if regional:
+   var layout:Dictionary=preload("res://addons/volumetric_terrain/generated_layout.gd").describe(game.terrain.backend.world_seed)
+   if not require(not layout.is_empty(),"shared native regional layout available"):await finish(false);return
+   var center:Vector3=layout.sites[0].position
+   game.teleport(center-Vector3(36,0,36))
+   if not require(await wait_until(func():return not game.loading_active,60),"regional centre loads for settlement generation"):await finish(false);return
+   game.set_physics_process(false);game._clear_motion()
   game.structure_mode=true;game.structure_rotation=0
   var sources:=PackedInt32Array()
   for i in game.structure_prefabs.size():
@@ -59,7 +68,21 @@ func run()->void:
   game.camera.global_position=game.player.global_position+Vector3(0,15,0)
   game.camera.look_at(game.player.global_position+Vector3(10,-5,0))
   await physics_frame
-  game._survey_construction()
+  if regional:
+   var layout:Dictionary=preload("res://addons/volumetric_terrain/generated_layout.gd").describe(game.terrain.backend.world_seed)
+   var asset:Resource=game.structure_prefabs[game.structure_prefab_index]
+   var bounds:AABB=asset.placement_bounds(Vector3i.ZERO,0)
+   var center:Vector3=layout.sites[0].position
+   var origin:=Vector3i(floori(center.x-12-bounds.end.x),int(center.y),floori(center.z-12-bounds.end.z))
+   var survey:Dictionary=await game.site_survey.assess(game.terrain,asset,origin,0)
+   print("REGIONAL_SITE_SURVEY ",survey," footprint=",asset.placement_bounds(origin,0))
+   if not require(survey.ok,"regional district beside arterial has supported foundation"):await finish(false);return
+   var plan:Dictionary=preload("res://addons/structures/site_plan.gd").prepare(asset,origin,0,survey.grade)
+   if not require(plan.ok,"regional district foundation plan valid"):await finish(false);return
+   game._survey_generation+=1
+   plan["epoch"]=game.terrain.epoch;plan["revision"]=game.terrain.density_revision;plan["generation"]=game._survey_generation;plan["asset"]=asset
+   game._survey_plan=plan
+  else:game._survey_construction()
   if not require(await wait_until(func():return not game.construction_palette.survey_busy,20) and not game._survey_plan.is_empty(),"terrain survey finds supported settlement grade"):await finish(false);return
   game.player.global_position-=Vector3(100,0,0)
   game._prepare_construction_site()

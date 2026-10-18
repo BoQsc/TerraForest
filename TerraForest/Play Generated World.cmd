@@ -1,6 +1,8 @@
 @echo off
 setlocal
 rem SPDX-License-Identifier: 0BSD
-python "%~dp0tools\run.py" --generator 3 --seed 1703 %*
-if errorlevel 1 pause
-endlocal
+rem Run Prepare Generated World.cmd first on a fresh installation. Existing progress is retained.
+python "%~dp0tools\play_connected_world.py" --slot generated_world %*
+set "GENERATION_EXIT=%ERRORLEVEL%"
+if not "%GENERATION_EXIT%"=="0" pause
+endlocal & exit /b %GENERATION_EXIT%

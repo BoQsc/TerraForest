@@ -1,3 +1,19 @@
+## Integrated regional generation — 2026-10-18 (partial, priority unchanged)
+
+Generator 7 now supplies one native seeded layout: five graded sites and approximately
+3.1 km of asphalt arterials without authored base-terrain pages. The actual saved
+world includes eight furnished central buildings and two patrol residents; creation,
+fresh-process reopening, native layout/material checks and legacy checks pass.
+Use `Play Generated World.cmd` for the prepared `generated_world` slot;
+`Prepare Generated World.cmd` creates it on a fresh installation without overwrite.
+
+This is the first integrated stage, not complete map coverage. Four outer sites are
+empty; local street connections, distinctive exploration locations, chamber caves,
+large lakes and normal-world vegetation density remain open. Startup/authoring stalls
+remain visible; no sustained 60 FPS or older-laptop qualification is claimed.
+Next: populate and connect the regional locations, continuing short combined world
+checks. Do not return to unrelated details. See [evidence](evidence/regional_world_generation/README.md).
+
 ## Priority correction — 2026-10-18: deliver the world, not more isolated coverage
 
 The user rejects continued detail work while the integrated world remains incomplete.

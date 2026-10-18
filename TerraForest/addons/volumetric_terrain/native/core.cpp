@@ -39,6 +39,36 @@ static float noise(float x,float z,u32 seed){
 static float bump(float x,float z,float cx,float cz,float r,float height){
  float a=(x-cx)/r,b=(z-cz)/r,t=mx(0.f,1.f-a*a-b*b);return height*smooth(t);
 }
+// Immutable regional layout: constant-size descriptors, no authored voxel pages.
+float World::regional_height(float x,float z,float h)const{
+ if(regional_roads)for(int i=1;i<site_count;i++){
+  const V3 a=sites[0].position,b=sites[i].position;
+  V3 delta={b.x-a.x,0,b.z-a.z},offset={x-a.x,0,z-a.z};
+  float t=clampf(dot(offset,delta)/dot(delta,delta),0,1);
+  float distance=length(offset-delta*t);
+  if(distance<36.f){float grade=a.y+(b.y-a.y)*smooth(t),blend=1.f-smooth(clampf((distance-6.f)/30.f,0,1));h=h*(1-blend)+grade*blend;}
+ }
+ for(int i=0;i<site_count;i++){
+  const auto &site=sites[i];float dx=x-site.position.x,dz=z-site.position.z;
+  float distance=__builtin_sqrtf(dx*dx+dz*dz);
+  if(distance<site.radius+32.f){float blend=1.f-smooth(clampf((distance-site.radius)/32.f,0,1));h=h*(1-blend)+site.position.y*blend;}
+ }
+ return h;
+}
+bool World::regional_asphalt(float x,float z)const{
+ if(!regional_roads)return false;
+ for(int i=1;i<site_count;i++){
+  V3 a=sites[0].position,b=sites[i].position,delta={b.x-a.x,0,b.z-a.z},offset={x-a.x,0,z-a.z};
+  float t=clampf(dot(offset,delta)/dot(delta,delta),0,1);
+  if(dot(offset-delta*t,offset-delta*t)<=20.25f)return true;
+ }
+ return false;
+}
+u8 World::base_material(V3 point,float h)const{
+ if(regional_asphalt(point.x,point.z)&&point.y>=h-1.5f&&point.y<=h+1.f)return 4;
+ if(has_geology()){float weight=geological_weight(point,h,u32(seed));return weight>.5f?8:(weight<-.5f?9:0);}
+ return 0;
+}
 float World::height(float x,float z)const{
  if(generator_id==MATERIAL_FIELD_GENERATOR_ID)return 0;
  float h=49.f+noise(x/320.f,z/320.f,u32(seed))*20.f+noise(x/100.f,z/100.f,u32(seed)+1u)*8.f+noise(x/34.f,z/34.f,u32(seed)+2u)*2.5f;
@@ -50,6 +80,7 @@ float World::height(float x,float z)const{
    h+=bump(x,z,cx,cz,330.f+float(b&127),85.f+float((b>>8)&63));
   }
   h=clampf(h,18.f,225.f);
+  if(generator_id==REGIONAL_WORLD_GENERATOR_ID)h=regional_height(x,z,h);
   for(int i=0;i<basin_count;i++){
    const auto &b=basins[i];float dx=x-b.x,dz=z-b.z,d2=dx*dx+dz*dz;
    if(d2>=1600.f)continue;
@@ -76,10 +107,17 @@ float World::base(V3 p,float h)const{
  return clampf(d,-SDF_BAND,SDF_BAND);
 }
 void World::init(int p_seed,u32 generator){
- seed=p_seed;generator_id=generator;basin_count=0;revision=edits=0;changed_samples=0;block_columns.resize(4096);
+ seed=p_seed;generator_id=generator;basin_count=0;site_count=0;regional_roads=false;revision=edits=0;changed_samples=0;block_columns.resize(4096);
  edit_columns=(u32*)tr_alloc(NP*NP*sizeof(u32));if(edit_columns)zero_bytes(edit_columns,NP*NP*sizeof(u32));else tr_oom=true;
  if(generator_id==MATERIAL_FIELD_GENERATOR_ID)return;
- if(generator_id==4||generator_id==WALKABLE_CAVE_GENERATOR_ID){
+ if(generator_id==REGIONAL_WORLD_GENERATOR_ID){
+  const u32 layout_seed=hash32(u32(seed)^0x71c9e15bu);
+  const float cx=1000.f+float(int(layout_seed&63)-31),cz=1000.f+float(int((layout_seed>>8)&63)-31);
+  V3 centers[5]={{cx,0,cz},{230,0,cz},{1770,0,cz},{cx,0,230},{cx,0,1770}};
+  for(int i=0;i<5;i++){centers[i].y=float(fl(height(centers[i].x,centers[i].z)));sites[i]={centers[i],i==0?160.f:72.f};}
+  site_count=5;regional_roads=true;
+ }
+ if(generator_id==4||generator_id==WALKABLE_CAVE_GENERATOR_ID||generator_id==REGIONAL_WORLD_GENERATOR_ID){
   // Separate seed domains and quadrant placement keep basins away from caves.
   for(u32 i=0;i<4;i++){
    u32 h=hash32(u32(seed)^0x7a91c3b5u^(i*0x9e3779b9u));
@@ -97,7 +135,7 @@ void World::init(int p_seed,u32 generator){
    float side=(b&1)?1.f:-1.f;
    V3 entrance={x+side*230.f,0,z};// Lift the radius-7 mouth so its bottom meets the surface with a shallow lip.
    // Profiles 1-5 retain their exact base field and existing save/cache identities.
-   entrance.y=height(entrance.x,entrance.z)+(generator_id==WALKABLE_CAVE_GENERATOR_ID?6.f:-2.f);
+   entrance.y=height(entrance.x,entrance.z)+(generator_id>=WALKABLE_CAVE_GENERATOR_ID?6.f:-2.f);
    float floor=mx(25.f,mn(height(x,z)-45.f,75.f));
    V3 bend={x+side*110.f,floor+10.f,z+float(int(c&63)-31)},center={x,floor,z};
    caves.push({entrance,bend,7.f});caves.push({bend,center,9.f});
@@ -133,7 +171,7 @@ float World::sample(int x,int y,int z,u8*mat)const{
  int index=pages_by_key.get(page_key(x>>4,y>>4,z>>4));
  if(index>=0){const Page&p=pages[index];int j=(x&15)+16*((z&15)+16*(y&15));if(mat)*mat=p.mat[j];return float(p.d[j])/SDF_SCALE;}
  V3 point={float(x),float(y),float(z)};float h=height(point.x,point.z);
- if(mat&&has_geology()){float weight=geological_weight(point,h,u32(seed));*mat=weight>.5f?8:(weight<-.5f?9:0);}
+ if(mat)*mat=base_material(point,h);
  return base(point,h);
 }
 Page* World::ensure(int px,int py,int pz){
@@ -145,7 +183,7 @@ Page* World::ensure(int px,int py,int pz){
   float wx=float(px*16+x),wz=float(pz*16+z),h=height(wx,wz);
   for(int y=0;y<16;y++){
    int index=x+16*(z+16*y);V3 point={wx,float(py*16+y),wz};page.d[index]=quant(base(point,h));
-   if(has_geology()){float weight=geological_weight(point,h,u32(seed));page.mat[index]=weight>.5f?8:(weight<-.5f?9:0);}
+   page.mat[index]=base_material(point,h);
   }
  }
  int idx=pages.push(page);pages_by_key.put(key,idx);edit_columns[px+NP*pz]|=(1u<<py);return &pages[idx];
@@ -285,7 +323,7 @@ bool World::deserialize(const u8*data,int n){
  Reader r{data,n-4};if(r.u()!=SAVE_MAGIC)return false;u32 format=r.u();if(format!=1&&format!=2)return false;
  int s=int(r.u()),pc=int(r.u()),bc=int(r.u()),rev=int(r.u()),ed=int(r.u());
  u32 generator=format==1?1:r.u();
- if(!r.good||generator<1||generator>WALKABLE_CAVE_GENERATOR_ID)return false;
+ if(!r.good||generator<1||generator>REGIONAL_WORLD_GENERATOR_ID)return false;
  if(pc<0||pc>MAX_PAGES||bc<0||bc>2000000||i64(pc)*(4+PAGE_SAMPLES*3)+i64(bc)*8+(format==1?28:32)!=n-4)return false;
  World t;t.build_control=build_control;t.init(s,generator);t.revision=rev;t.edits=ed;t.surface_style=surface_style;
  for(int i=0;i<pc;i++){
@@ -708,7 +746,9 @@ void shade_mesh(const World&w,Mesh&m,u32 expected_epoch){
    int x=fl(v.p.x),y=fl(v.p.y),z=fl(v.p.z);V3 f={v.p.x-x,v.p.y-y,v.p.z-z};float delta=0,total=0,asphalt=0,paved=0,solid=0,original[8];V3 influence{};
    for(int k=0;k<8;k++){
     int sx=x+(k&1),sy=y+((k>>1)&1),sz=z+((k>>2)&1);u8 mat=0;
-    float original_sample=w.base({float(sx),float(sy),float(sz)},owned_lattice_height(w,sx,sz));
+    float sample_height=owned_lattice_height(w,sx,sz);
+    float original_sample=w.base({float(sx),float(sy),float(sz)},sample_height);
+    if(w.generator_id==REGIONAL_WORLD_GENERATOR_ID && sy>=sample_height-1.5f && sy<=sample_height+1.f && w.regional_asphalt(float(sx),float(sz)))mat=4;
     float base=float(quant(original_sample))/SDF_SCALE;
     float current=original_sample;
     if(sx<0||sx>WORLD||sz<0||sz>WORLD||sy<0||sy>WORLD_Y)current=SDF_BAND;
@@ -912,7 +952,7 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
  }
  else if(cmd==4){w.serialize(out);}
  else if(cmd==5){if(!w.deserialize(data+4,n-4))out.p[8]=1;out.u(w.revision);out.u(w.pages.n);out.u(w.blocks.n);}
- else if(cmd==6){int seed=int(r.u());u32 generator=n==12?r.u():1;if(!r.good||(n!=8&&n!=12)||generator<1||generator>WALKABLE_CAVE_GENERATOR_ID){out.p[8]=1;return;}BuildControl *control=w.build_control;w.release();w=World{};w.build_control=control;w.init(seed,generator);}
+ else if(cmd==6){int seed=int(r.u());u32 generator=n==12?r.u():1;if(!r.good||(n!=8&&n!=12)||generator<1||generator>REGIONAL_WORLD_GENERATOR_ID){out.p[8]=1;return;}BuildControl *control=w.build_control;w.release();w=World{};w.build_control=control;w.init(seed,generator);}
  else if(cmd==7){V3 p=r.vec();if(!r.good||!(ab(p.x)<=10000&&ab(p.y)<=10000&&ab(p.z)<=10000)){out.p[8]=1;return;}out.f(w.height(p.x,p.z));out.f(w.sample(fl(p.x),fl(p.y),fl(p.z)));}
  else if(cmd==8){ // Deterministic construction proof; not a replay list.
   int bx=1472,bz=1440,by=int(w.height(float(bx),float(bz)))+1;
@@ -1073,6 +1113,13 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
    for(u32 down=1;down<=depth;down++)value=mx(value,w.sample(fl(p.x),int(mx(3.f,float(fl(p.y))-down)),fl(p.z)));
    out.f(value);
   }
+ }
+ else if(cmd==34){
+  if(n!=4){out.p[8]=1;return;}
+  out.u(w.site_count);
+  for(int i=0;i<w.site_count;i++){out.vec(w.sites[i].position);out.f(w.sites[i].radius);out.u(i==0?1:2);}
+  out.u(w.regional_roads?4:0);
+  if(w.regional_roads)for(int i=1;i<5;i++){out.u(0);out.u(i);out.f(4.5f);}
  }
  else if(cmd==27){
   if(n!=4){out.p[8]=1;return;}

@@ -112,3 +112,9 @@ Terrain operations currently have no block-history undo.
 Use **Level end to start height** after marking both endpoints to create a
 level foundation preview. This changes the selection only; press the build
 button to submit grading. The chosen start elevation is retained.
+
+## Regional generator 7
+
+`generated_layout.gd.describe(seed)` returns native settlement sites and road edges for generator 7. The immutable layout supplies base-field grading and asphalt; it does not instantiate buildings. Existing generator identities 1-6 remain supported. Native command 34 takes only its four-byte opcode and returns the standard 12-byte response header, a u32 site count, sites (vec3 position, f32 radius, u32 kind), a u32 road count, and roads (u32 from, u32 to, f32 half-width). Kind 1 is the central site; kind 2 is an outer town site. Generator 7 has five sites and four roads (168-byte response).
+
+The project preparation launcher populates the central district and verifies saving/reopening; outer settlements and full-map qualification remain unfinished.

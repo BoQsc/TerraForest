@@ -1,0 +1,71 @@
+{
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+    "--path",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+    "--log-file",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\checks\\20261018T054115829776Z\\engine.log",
+    "--headless",
+    "--max-fps",
+    "60",
+    "--script",
+    "res://tests/regional_world_generation.gd",
+    "--",
+    "--temporary",
+    "--world-slot=check_9a0eb931ec6d47f888de7791156cc0e1",
+    "--derived-cache=user://regional_world_generation_9a0eb931ec6d47f888de7791156cc0e1"
+  ],
+  "cache": "user://regional_world_generation_9a0eb931ec6d47f888de7791156cc0e1",
+  "utc": "20261018T054115829776Z",
+  "timeout": 30.0,
+  "required_text": "REGIONAL_WORLD_GENERATION failures=0",
+  "headless": true,
+  "persistent": false,
+  "scope": "Fresh derived-cache argument; test code must honor it. Not save isolation or a sandbox.",
+  "cache_retained": true,
+  "revision": "bffbef9ca87da18fb2d55e482228641894736053",
+  "worktree_changes": [
+    " M TerraForest/addons/volumetric_terrain/bin/terrain_core.windows.template_release.x86_64.dll",
+    " M TerraForest/addons/volumetric_terrain/bin/terrain_core.windows.x86_64.dll",
+    " M TerraForest/addons/volumetric_terrain/native/core.cpp",
+    " M TerraForest/addons/volumetric_terrain/native/core.h",
+    " M TerraForest/addons/volumetric_terrain/terrain_backend.gd",
+    " M TerraForest/demo/world_launch.gd",
+    " M TerraForest/tools/prepare_combined_world.gd",
+    " M TerraForest/tools/prepare_combined_world.py",
+    " M TerraForest/tools/run.py",
+    "?? TerraForest/addons/world_runtime/generated_layout.gd",
+    "?? TerraForest/tests/regional_world_generation.gd"
+  ],
+  "git_metadata_available": true,
+  "engine_sha256": "12310c74bdda7dcd43f28e971f33047dcecadd436b68169d61ce41009006df38",
+  "test_sha256": "ac052c2121c0314397458b71b5e859dc844c4bccc5537546387da8aa8db0fe24",
+  "native_sha256": {
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "ed066843981550a6da7f2ed47f5f05eb676b1256540206cb2399e528d965c965",
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "7fe9102e113afdf3c91293fa09b2fb78f060985a2089c8fef67e4b58e0a62d6b",
+    "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "73314ee4573a01fd35e92972d8267c14f1a0ea40099ff343284c5c0b079265f1",
+    "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "8094a60124cda8045c5c65506bec6dc74fbed13785ec95ea6facb6e664e0dc7e",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "0742e44096e00e13acd013a151ca4cbd7d52b5d3ac3703485a7a3d656a9a9b6f",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "13f455564dba3ebddce1f4f4a0fa470dad07ce80ef0d4097ce48527427046e04",
+    "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "d6479d2a000657a5b5fd6a516220efc67a34ff3183eae8c93c622b27fcaf3934",
+    "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "c133f46b04d9cdefdbbf447323f1e65d4c7371e62530ed51276658bf2c931943",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "b2a8749684f86013a701fff7e3a433aa031736c1af51a9bf59a779eaaea01a42",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "173b19e3ae0c24d416e1c997549578d5255fdc07bad9ab44215d6fe659a972cf",
+    "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "8d7631c96ca3f186522ec4428f741baa9bd1581f01dedc57b835ea2b534a17c5",
+    "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "65fcad69f40898fb10db522a5741fd7c8f4953f0c96e1ec1cec863531272ce52",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "61e5c970509ddf87ed8c07eae8fdce9d790e851c9d3761d81816a4c45baf6301",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "c761723b56ffa5f71031f094f98876781702863cd92c6d1071452740630d7257"
+  },
+  "result": {
+    "timed_out": false,
+    "launch_error": null,
+    "pid": 9968,
+    "exit_code": 1,
+    "diagnostics": [
+      "\nFAIL one shared native layout exposes five settlement sites and four connecting roads"
+    ],
+    "required_text_found": false,
+    "elapsed_seconds": 1.73686589999852,
+    "passed": false
+  }
+}
