@@ -57,7 +57,7 @@ void NativeStaticBatch::upload_batch(RenderKey page) {
     }
     multi->set_instance_count(count);multi->set_buffer(buffer);
     auto *instance=memnew(MultiMeshInstance3D);instance->set_multimesh(multi);
-    instance->set_cast_shadows_setting(casts_shadows?GeometryInstance3D::SHADOW_CASTING_SETTING_ON:GeometryInstance3D::SHADOW_CASTING_SETTING_OFF);
+    instance->set_cast_shadows_setting(page_casts_shadows(page)?GeometryInstance3D::SHADOW_CASTING_SETTING_ON:GeometryInstance3D::SHADOW_CASTING_SETTING_OFF);
     instance->set_position(Vector3(key.x*32,key.y*32,key.z*32));
     add_child(instance);batches.emplace(page,instance);
     render_bytes+=count*render_stride_bytes();render_uploaded_bytes+=count*render_stride_bytes();++uploads;
@@ -123,6 +123,7 @@ void NativeStaticBatch::select_render_batches() {
     std::vector<RenderKey> evict;
     for(const auto &batch:batches)if(!wanted.count(batch.first))evict.push_back(batch.first);
     for(auto key:evict)release_batch(key);
+    for(auto &entry:batches)entry.second->set_cast_shadows_setting(page_casts_shadows(entry.first)?GeometryInstance3D::SHADOW_CASTING_SETTING_ON:GeometryInstance3D::SHADOW_CASTING_SETTING_OFF);
     render_pending.clear();
     for(auto it=ordered.rbegin();it!=ordered.rend();++it)if(!batches.count(*it))render_pending.push_back(*it);
 }
@@ -142,12 +143,27 @@ bool NativeStaticBatch::configure_appearance_fade() {
     if(!placements.empty()||!unloaded_regions.empty()||!batches.empty()||admission||render_tick_bytes<64||render_byte_limit<64)return false;
     appearance_fade=true;return true;
 }
+bool NativeStaticBatch::page_casts_shadows(RenderKey key) const {
+    if(!casts_shadows)return false;
+    if(shadow_distance==0)return true;
+    auto found=render_bounds.find(key.first);if(found==render_bounds.end())return false;
+    const AABB &box=found->second;const Vector3 end=box.position+box.size;
+    const double dx=render_focus.x-std::clamp(render_focus.x,box.position.x,end.x);
+    const double dz=render_focus.z-std::clamp(render_focus.z,box.position.z,end.z);
+    return dx*dx+dz*dz<=(shadow_distance+4)*(shadow_distance+4);
+}
+bool NativeStaticBatch::set_shadow_distance(double radius) {
+    if(!std::isfinite(radius)||radius<0||radius>16384)return false;
+    shadow_distance=radius;render_dirty=true;
+    set_casts_shadows(casts_shadows);return true;
+}
 void NativeStaticBatch::set_casts_shadows(bool enabled) {
     casts_shadows=enabled;
-    for(auto &entry:batches)entry.second->set_cast_shadows_setting(enabled?GeometryInstance3D::SHADOW_CASTING_SETTING_ON:GeometryInstance3D::SHADOW_CASTING_SETTING_OFF);
+    for(auto &entry:batches)entry.second->set_cast_shadows_setting(page_casts_shadows(entry.first)?GeometryInstance3D::SHADOW_CASTING_SETTING_ON:GeometryInstance3D::SHADOW_CASTING_SETTING_OFF);
 }
 Dictionary NativeStaticBatch::render_stats() const {
-    Dictionary d;d["enabled"]=render_streaming;d["casts_shadows"]=casts_shadows;d["radius"]=render_radius;
+    Dictionary d;d["enabled"]=render_streaming;d["shadow_distance"]=shadow_distance;
+    int shadow_pages=0;for(const auto &entry:batches)if(entry.second->get_cast_shadows_setting()!=GeometryInstance3D::SHADOW_CASTING_SETTING_OFF)++shadow_pages;d["shadow_batches"]=shadow_pages;d["casts_shadows"]=casts_shadows;d["radius"]=render_radius;
     d["batch_limit"]=render_batch_limit;d["byte_limit"]=int64_t(render_byte_limit);
     d["uploads_per_tick"]=render_upload_limit;d["bytes_per_tick"]=int64_t(render_tick_bytes);
     d["resident_batches"]=int(batches.size());d["resident_instances"]=int(slots.size());

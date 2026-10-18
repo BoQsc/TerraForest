@@ -55,7 +55,7 @@ func run() -> void:
 	for batch in cover.batches:
 		count+=batch.get_ids().size()
 		check(not batch.collision_stats().enabled and batch.collision_stats().resident_bodies==0,"ground cover creates no physics bodies")
-	check(count==27136,"bounded 27136 candidates: 25 preloaded dense owners and 24 sparse distant owners")
+	check(count==50176,"bounded 50176 candidates maintain density through all 49 owners")
 	var key:=Vector2i(30,30)
 	var row: Dictionary=cover.resident[key][2]
 	var removed_id: int=row.ids[0]

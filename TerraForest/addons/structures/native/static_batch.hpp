@@ -81,6 +81,8 @@ class NativeStaticBatch : public Node3D {
     bool render_streaming=false,render_dirty=true;
     bool collision_only=false;
     bool casts_shadows=true;
+    double shadow_distance=0;
+    bool page_casts_shadows(RenderKey key) const;
     bool appearance_fade=false;
     std::map<int64_t,float> appearance_birth;
     uint64_t render_stride_bytes() const { return appearance_fade?64:48; }
@@ -165,6 +167,7 @@ public:
     void set_render_focus(Vector3 focus);
     Dictionary render_stats() const;
     void set_casts_shadows(bool enabled);
+    bool set_shadow_distance(double radius);
     bool configure_appearance_fade();
     bool configure_collision(const AABB &box,double radius,int64_t instance_limit,int64_t builds_per_tick);
     bool configure_compound_collision(const TypedArray<AABB> &boxes,double radius,int64_t instance_limit,int64_t builds_per_tick,int64_t shape_limit,int64_t shapes_per_tick);

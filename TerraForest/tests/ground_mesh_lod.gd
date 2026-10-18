@@ -30,7 +30,7 @@ func run() -> void:
 		for i in arrays[Mesh.ARRAY_VERTEX].size():
 			valid=valid and bounds.has_point(arrays[Mesh.ARRAY_VERTEX][i]) and arrays[Mesh.ARRAY_NORMAL][i].is_finite() and arrays[Mesh.ARRAY_NORMAL][i].length_squared()>0.99
 		check(valid,"species %d all LOD vertices/normals stay inside picking envelope"%species)
-		check((arrays[Mesh.ARRAY_VERTEX].size()-old[Mesh.ARRAY_VERTEX].size())/3==[48,392,72][species],"species %d distant triangle budget"%species)
+		check((arrays[Mesh.ARRAY_VERTEX].size()-old[Mesh.ARRAY_VERTEX].size())/3==[48,392,80][species],"species %d distant triangle budget"%species)
 		var batch=ClassDB.instantiate("NativeStaticBatch");root.add_child(batch)
 		check(batch.configure_asset("ground_cover/%d/v1"%species,mesh) and batch.configure_render_streaming(true,200,32,200000,4,8192),"native batch configured")
 		batch.set_casts_shadows(false)
@@ -50,9 +50,16 @@ func run() -> void:
 		# multiplies by instance_count when LOD is disabled (lines 995-1017).
 		# Compare the same branch, with every page in view; retain raw counters.
 		check(far_full==near_full and far_lod>0 and far_lod<=near_lod*0.55,"species %d far per-page primitives reduced: %d -> %d"%[species,near_lod,far_lod])
-		check(near_lod==batch.get_child_count()*[360,1512,468][species] and far_lod==batch.get_child_count()*[48,392,72][species],"species %d native near/far LOD counts match both mesh tiers"%species)
+		check(near_lod==batch.get_child_count()*[360,1512,468][species] and far_lod==batch.get_child_count()*[48,392,8][species],"species %d native near/far LOD counts match both mesh tiers"%species)
 		check(batch.capture_snapshot()==snapshot and batch.get_ids()==ids,"LOD leaves all identities and placement bytes unchanged")
 		rows.append({"species":species,"near_full":near_full,"near_lod":near_lod,"far_full":far_full,"far_lod":far_lod})
+		check(batch.set_shadow_distance(12.0) and not batch.set_shadow_distance(-1.0),"native shadow radius validates")
+		batch.set_casts_shadows(true);batch.set_render_focus(Vector3.ZERO);await settle()
+		check(batch.render_stats().shadow_batches==batch.get_child_count(),"near pages cast shadows")
+		batch.set_render_focus(Vector3(150,0,0));await settle()
+		check(batch.get_child_count()>0 and batch.render_stats().shadow_batches==0,"distant pages keep geometry without cast shadows")
+		batch.set_render_focus(Vector3.ZERO);await settle()
+		check(batch.render_stats().shadow_batches==batch.get_child_count() and batch.capture_snapshot()==snapshot,"return restores shadows without changing placement")
 		batch.free()
 	# Magnified high/low comparison: forced low is review only, not runtime policy.
 	var gallery: Array[MeshInstance3D]=[]

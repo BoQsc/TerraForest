@@ -27,10 +27,8 @@ var _exclusion_revision:=0
 var _scatter_job:Dictionary={}
 var _resident_layers:Dictionary={}
 func _layers(key:Vector2i)->int:
-	# Prepare detail before its 56m visibility boundary. Retain loaded layers until
-	# owner retirement, avoiding repeated regeneration at camera-cell boundaries.
-	var offset:=key-_last_cell
-	return 16 if maxi(absi(offset.x),absi(offset.y))<=2 or _resident_layers.get(key,1)==16 else 1
+	# Maintain cover density through the full resident area; mesh LOD reduces cost.
+	return 16
 
 func prepare(persistence: RefCounted) -> bool:
 	for addon in ["vegetation_runtime","structures"]:
@@ -52,9 +50,10 @@ func _ready() -> void:
 	for species in range(Catalog.COUNT):
 		var batch: Node3D=ClassDB.instantiate("NativeStaticBatch")
 		add_child(batch)
-		if not batch.configure_appearance_fade() or not batch.configure_asset("ground_cover/%d/v1"%species,_mesh(species)) or not batch.configure_render_streaming(true,Catalog.DISTANCES[species],512 if species==2 else 128,4100000 if species==2 else (1000000 if species==1 else 200000),2,8192):
+		if not batch.configure_appearance_fade() or not batch.configure_asset("ground_cover/%d/v1"%species,_mesh(species)) or not batch.configure_render_streaming(true,maxf(112.0,Catalog.DISTANCES[species]),512 if species==2 else 128,4100000 if species==2 else (1000000 if species==1 else 200000),2,8192):
 			push_error("Ground cover renderer initialization failed");set_process(false);return
-		batch.set_casts_shadows(species in [0,1,6,7])
+		batch.set_casts_shadows(true)
+		batch.set_shadow_distance(24.0 if species==2 else 48.0)
 		batches.append(batch)
 	if not set_grass_texture(true):push_warning("Grass detail unavailable; using untextured material")
 	terrain.surface_batch_ready.connect(_surface_ready)
@@ -67,8 +66,8 @@ func _ready() -> void:
 func _mesh(species: int) -> Mesh:
 	var mesh:=preload("res://addons/world_ecosystem/woodland_mesh.gd").build(species)
 	var material:ShaderMaterial=mesh.surface_get_material(0)
-	material.set_shader_parameter("distance_fade_end",56.0 if species==2 else Catalog.DISTANCES[species]-8.0)
-	material.set_shader_parameter("distance_fade_start",36.0 if species==2 else Catalog.DISTANCES[species]-24.0)
+	material.set_shader_parameter("distance_fade_end",92.0)
+	material.set_shader_parameter("distance_fade_start",76.0)
 	foliage_materials.append(material)
 	if species==2:grass_material=material
 	return mesh

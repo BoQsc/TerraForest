@@ -16,7 +16,7 @@ func run()->void:
  game.set_physics_process(false);game._clear_motion()
  var begin:=Time.get_ticks_msec()
  var progress:Array=[]
- while not settled() and Time.get_ticks_msec()-begin<15000:
+ while not settled() and Time.get_ticks_msec()-begin<25000:
   var c=game.ground_cover
   progress.append({"ms":Time.get_ticks_msec()-begin,"resident":c.resident.size(),"wanted":c._wanted.size(),"dirty":str(c._dirty.keys()),"pending":str(c._pending),"requests":str(c._requests.keys()),"scatter_key":str(c._scatter_job.get("key")),"layer":c._scatter_job.get("layer",-1),"support":str(c._support_job.keys()),"queue":game.terrain.backend.queued(),"worker":game.terrain.backend.status(),"pending_edit":game.terrain.pending_edit,"revision":game.terrain.published_revision,"rejected":c.rejected_batches})
   var until:=Time.get_ticks_msec()+500
@@ -36,9 +36,18 @@ func run()->void:
   game.camera.look_at(center+Vector3(0,1.5,0))
  for frame in 60:await RenderingServer.frame_post_draw
  root.get_texture().get_image().save_png("res://reports/southern_vegetation/ground.png")
+ RenderingServer.viewport_set_measure_render_time(root.get_viewport_rid(),true)
+ for frame in 30:await RenderingServer.frame_post_draw
+ var timings:Array=[];var gpu:Array=[];var previous:=Time.get_ticks_usec()
+ for frame in 120:
+  await RenderingServer.frame_post_draw
+  var now:=Time.get_ticks_usec();timings.append((now-previous)/1000.0);previous=now
+  gpu.append(RenderingServer.viewport_get_measured_render_time_gpu(root.get_viewport_rid()))
+ timings.sort();gpu.sort()
+ var performance:={"frame_median":timings[60],"frame_p95":timings[113],"worst":timings.back(),"gpu_median":gpu[60]}
  var render:Array=[]
  for batch in game.ground_cover.batches:
   var stat:Dictionary=batch.render_stats();render.append(stat)
   check(stat.budget_deferred==0,"no deferred vegetation pages")
- FileAccess.open("res://reports/southern_vegetation/result.json",FileAccess.WRITE).store_string(JSON.stringify({"failures":failures,"settle_ms":settle_ms,"progress":progress,"render":render},"  "))
+ FileAccess.open("res://reports/southern_vegetation/result.json",FileAccess.WRITE).store_string(JSON.stringify({"failures":failures,"settle_ms":settle_ms,"progress":progress,"render":render,"performance":performance},"  "))
  await done()
