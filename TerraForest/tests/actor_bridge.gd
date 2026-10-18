@@ -3,14 +3,19 @@ extends "res://tests/actor_navigation.gd"
 func run()->void:
  Engine.max_fps=60
  var scene:=Node3D.new();root.add_child(scene)
- var blocks: Node3D=ClassDB.instantiate("NativeBlockWorld");scene.add_child(blocks)
- var bridge: Resource=preload("res://addons/structures/bridge_catalog.gd").footbridge()
- check(blocks.place_prefab(bridge,Vector3i.ZERO,0),"production bridge prefab placed")
+ var structures=preload("res://addons/structures/structures_world.gd").new();scene.add_child(structures)
+ check(structures.prepare(),"native structures prepare")
+ var blocks: Node3D=structures.blocks
+ var metal_rails: bool="--metal-rails" in OS.get_cmdline_user_args()
+ if metal_rails:preload("res://addons/structures/guardrail_catalog.gd").register(structures)
+ var bridge: Resource=preload("res://addons/structures/bridge_catalog.gd").footbridge(metal_rails)
+ var placement: RefCounted=ClassDB.instantiate("NativePrefabPlacement")
+ check(placement.place(blocks,bridge,Vector3i.ZERO,0,structures.model_collections(),[]).ok,"production bridge and attached rails placed")
  var banks:=PackedInt32Array()
  for x in range(-4,4):
   for z in range(-5,17):
    if z<0 or z>=12:banks.append_array(PackedInt32Array([x,-1,z,65]))
- blocks.set_cells(banks);blocks.flush_bakes()
+ blocks.set_cells(banks);blocks.flush_bakes();structures.set_model_focus(Vector3(0,1,6))
  for i in 4:await physics_frame
  var persistence=preload("res://addons/world_runtime/world_persistence.gd").new()
  actors=preload("res://addons/world_runtime/actor_world.gd").new();scene.add_child(actors)
@@ -29,7 +34,7 @@ func run()->void:
  var legs:=0;var minimum_height:=100.0;var minimum_separation:=100.0;var peak_work:=0;var trace:Array=[]
  for tick in 1680:
   await physics_frame
-  actors.update_simulation(1.0/60,Vector3(0,1,6),true,func(bounds: AABB):return blocks.is_collision_region_ready(bounds))
+  actors.update_simulation(1.0/60,Vector3(0,1,6),true,func(bounds: AABB):return structures.is_collision_region_ready(bounds))
   var positions:Array[Vector3]=[];var statuses:Array=[]
   for i in ids.size():
    var position: Vector3=actors.store.get_position(actor_handles[i]);positions.append(position)

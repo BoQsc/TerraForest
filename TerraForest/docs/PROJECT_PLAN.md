@@ -1,3 +1,9 @@
+> 2026-10-18 bridge/resident integration: two opposing patrol residents cross
+> and return over the metal-railed bridge with combined model/block readiness.
+> Minimum separation 0.789 m; route work remains capped at 12. Functional
+> fixture only; main-world streaming and crowd cost remain unqualified.
+> Evidence: evidence/actor_metal_bridge/. Water unchanged.
+
 > 2026-10-18 construction content: selectable metal-railed footbridge uses 56
 > wood blocks and six batched railings (24 metal). Walking, side containment,
 > paid placement and exact fresh-process world/inventory restore pass. Manual
