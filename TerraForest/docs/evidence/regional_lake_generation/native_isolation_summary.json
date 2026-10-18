@@ -1,0 +1,22 @@
+{
+  "frame_samples": {
+    "median_ms": 16.674,
+    "p95_ms": 80.319,
+    "max_ms": 85.635
+  },
+  "native_disabled_samples": {
+    "median_ms": 16.662,
+    "p95_ms": 16.941,
+    "max_ms": 17.124
+  },
+  "controller_disabled_samples": {
+    "median_ms": 16.658,
+    "p95_ms": 17.046,
+    "max_ms": 17.794
+  },
+  "restored_samples": {
+    "median_ms": 16.689,
+    "p95_ms": 17.357,
+    "max_ms": 17.475
+  }
+}

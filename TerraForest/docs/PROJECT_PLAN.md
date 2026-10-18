@@ -1,3 +1,18 @@
+## Integrated world is available for human review - 2026-10-18
+
+Play Regional World Review.cmd now opens a separate persistent copy of the prepared
+profile-12 world. Esc > World lists five settlement sites, the owned eastern mine
+and four lake shores. Development-only travel uses the normal destination loader;
+gameplay remains on-foot/vehicle travel. The menu/arrival test passes in 22.4 s,
+including gameplay restrictions and actual western-site arrival. See
+REGIONAL_WORLD_REVIEW.md and evidence/world_destinations.
+
+The normal generated-world launcher stays unchanged. This is a human-review entry,
+not a claim of resolved frame spikes or completed cities. The last native isolation
+run recovered even after updates were restored, so its result does not establish
+a specific culprit. Retain that issue while continuing designed locations and world
+coverage; do not spend all project work on repeated inconclusive stationary checks.
+
 ## Integrated world frame-spike diagnosis - 2026-10-18
 
 Short instrumented checks narrow the intermittent lake-shore slowdown: GPU p95

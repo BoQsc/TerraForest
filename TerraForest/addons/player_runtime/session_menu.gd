@@ -3,6 +3,7 @@ extends CanvasLayer
 # One entry point and dock for gameplay equipment and development authoring.
 # Optional host-owned destination; standalone addons do not depend on demo scenes.
 var world_browser_path: String=""
+var world_page_factory:Callable
 var game: Node
 var opened:=false
 var workspace:=false
@@ -50,10 +51,12 @@ func _ready() -> void:
 	var sidebar:=VBoxContainer.new();sidebar.custom_minimum_size.x=240;columns.add_child(sidebar)
 	for title in ["Session","Toolbelt","Building","Objects","Vegetation","Development","Roads","Water"]:
 		navigation[title]=button(sidebar,title,show_page.bind(title))
+	if world_page_factory.is_valid():navigation["World"]=button(sidebar,"World",show_page.bind("World"))
 	button(sidebar,"Inventory / crafting",open_inventory)
 	button(sidebar,"Return to world",func():set_open(false))
 	scroll=ScrollContainer.new();scroll.size_flags_horizontal=Control.SIZE_EXPAND_FILL;scroll.size_flags_vertical=Control.SIZE_EXPAND_FILL;columns.add_child(scroll)
 	content=VBoxContainer.new();content.size_flags_horizontal=Control.SIZE_EXPAND_FILL;scroll.add_child(content)
+	if world_page_factory.is_valid():page("World").add_child(world_page_factory.call())
 	var session:=page("Session")
 	label(session,"Your world").add_theme_font_size_override("font_size",22)
 	label(session,"Choose equipment or configure an action here, then return to the world to aim and use it. Building and Objects keep their detailed settings in this same window.")

@@ -51,6 +51,19 @@ func run()->void:
   stats["paused_world_samples"]=paused
   game.process_mode=Node.PROCESS_MODE_INHERIT
 
+ if "--lake-native-isolation" in OS.get_cmdline_user_args():
+  var native_nodes:Array=[]
+  for node:Node in game.find_children("*","",true,false):
+   if node.get_class() in ["NativeBlockWorld","NativeStaticBatch"]:
+    native_nodes.append({"node":node,"process":node.is_processing(),"physics":node.is_physics_processing()})
+  stats["isolated_native_nodes"]=native_nodes.size()
+  for entry:Dictionary in native_nodes:entry.node.set_process(false);entry.node.set_physics_process(false)
+  stats["native_disabled_samples"]=await sample_frames(120)
+  for entry:Dictionary in native_nodes:entry.node.set_process(entry.process);entry.node.set_physics_process(entry.physics)
+  game.set_process(false)
+  stats["controller_disabled_samples"]=await sample_frames(120)
+  game.set_process(true)
+  stats["restored_samples"]=await sample_frames(120)
  var submerged_roots:=0
  var visible_roots:=0
  for packed:Array in game.ground_cover.resident.values():
@@ -67,3 +80,13 @@ func run()->void:
  var file:=FileAccess.open("res://reports/regional_lake_world.json",FileAccess.WRITE);file.store_string(JSON.stringify(stats,"  "));file.close()
  print("REGIONAL_LAKE_WORLD failures=",0 if ok else 1," stats=",JSON.stringify(stats))
  game.shutdown_requested=true;await game.terrain.shutdown_after_edits();game.free();await process_frame;quit(0 if ok else 1)
+
+func sample_frames(count:int)->Array:
+ for frame in 20:await process_frame
+ var samples:Array=[]
+ var previous:=Time.get_ticks_usec()
+ for frame in count:
+  await process_frame
+  var now:=Time.get_ticks_usec()
+  samples.append({"frame_ms":(now-previous)/1000.0,"gpu_ms":RenderingServer.viewport_get_measured_render_time_gpu(root.get_viewport_rid()),"render_cpu_ms":RenderingServer.viewport_get_measured_render_time_cpu(root.get_viewport_rid())});previous=now
+ return samples

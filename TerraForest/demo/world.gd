@@ -212,6 +212,7 @@ func _ready() -> void:
 	player_hud.temporary_world=temporary_world
 	add_child(player_hud)
 	add_child(storage)
+	session_menu.world_page_factory=_make_world_locations
 	session_menu.game=self;session_menu.world_browser_path="res://demo/worlds.tscn";add_child(session_menu)
 	construction_palette.history_requested.connect(_construction_history)
 	add_child(construction_palette)
@@ -1424,3 +1425,6 @@ func _populate_settlement_actors() -> Dictionary:
 	var result: Dictionary=preload("res://addons/world_runtime/settlement_actors.gd").populate(self)
 	_show_lake_notice(result.reason)
 	return result
+
+func _make_world_locations()->Control:
+	var view=preload("res://demo/world_locations.gd").new();view.game=self;return view

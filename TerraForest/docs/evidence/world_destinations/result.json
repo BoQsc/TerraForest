@@ -1,0 +1,28 @@
+{
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+    "--path",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+    "--fullscreen",
+    "--resolution",
+    "1920x1080",
+    "--max-fps",
+    "60",
+    "--script",
+    "res://tests/world_destinations_scene.gd",
+    "--",
+    "--snapshot-readonly",
+    "--world-slot=regional_lake_20261018",
+    "--ground-cover",
+    "--actors",
+    "--gameplay-construction"
+  ],
+  "timed_out": false,
+  "launch_error": null,
+  "pid": 20980,
+  "exit_code": 0,
+  "diagnostics": [],
+  "required_text_found": true,
+  "elapsed_seconds": 22.37667239999996,
+  "passed": true
+}

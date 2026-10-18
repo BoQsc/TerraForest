@@ -57,3 +57,10 @@ available. In the slow repeat their maxima were 2.494 ms, 0.104 ms, 0.054 ms and
 zero respectively. Another instrumented run reached 16.757 ms p95 without an
 optimization. Do not call the intermittent failure fixed or promote based on that
 passing run. Next isolate native node updates while retaining these traces.
+
+The subsequent native-isolation run (`native_isolation_summary.json`) started at
+80.319 ms p95, then reached 16.941 ms with 22 native block/static nodes disabled,
+17.046 ms with only the controller disabled, and 17.357 ms after all updates were
+restored. Because the slowdown did not return on restoration, this comparison
+cannot attribute the failure to native callbacks. Keep it unresolved; do not use
+this as a reason to rewrite rendering or block integrated-world content work.
