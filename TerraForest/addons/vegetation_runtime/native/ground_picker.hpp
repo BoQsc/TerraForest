@@ -17,11 +17,11 @@ protected:
     }
 public:
     bool replace_cell(Vector2i key,const Array &species){
-        if(!valid_cell(key)||species.size()!=8)return false;
+        if(!valid_cell(key)||species.size()!=9)return false;
         int owner=key.y*63+key.x;
         if(!cells.count(owner)&&cells.size()>=81)return false;
         std::vector<Item> staged;std::unordered_set<int64_t> seen;
-        for(int s=0;s<8;++s){
+        for(int s=0;s<9;++s){
             if(species[s].get_type()!=Variant::DICTIONARY)return false;
             Dictionary row=species[s];
             if(!row.has("ids")||!row.has("transforms")||row["ids"].get_type()!=Variant::PACKED_INT64_ARRAY||row["transforms"].get_type()!=Variant::PACKED_FLOAT32_ARRAY)return false;
@@ -33,7 +33,7 @@ public:
                 Transform3D t;for(int r=0;r<3;++r){for(int c=0;c<3;++c)t.basis[r][c]=p[r*4+c];t.origin[r]=p[r*4+3];}
                 if(!t.is_finite()||std::abs(t.basis.determinant())<.001||t.origin.x<key.x*32||t.origin.x>=(key.x+1)*32||t.origin.z<key.y*32||t.origin.z>=(key.y+1)*32)return false;
                 // Row norm bounds guarantee the proxy never extends beyond the 8m query padding, even for shear.
-                for(int r=0;r<3;++r)if(t.basis[r].length_squared()>48.f)return false;
+                for(int r=0;r<3;++r)if(t.basis[r].length_squared()>(s==8?40.f:48.f))return false;
                 staged.push_back({ids[i],s,t.affine_inverse()});
             }
         }
@@ -50,7 +50,7 @@ public:
             ++visited;auto found=cells.find(z*63+x);if(found==cells.end())continue;
             for(const auto &item:found->second){
                 ++tested;Vector3 start=item.inverse.xform(from),end=item.inverse.xform(to),direction=end-start;
-                Vector3 low(-.4,item.species==0?-.2:0,-.4),high(.4,item.species==0?.2:.75,.4);
+                Vector3 low(-.4,item.species==0?-.2:0,-.4),high(.4,item.species==0?.2:(item.species==8?1.1:.75),.4);
                 double enter=0,leave=1;bool hit=true;
                 for(int axis=0;axis<3;++axis){
                     if(std::abs(direction[axis])<1e-9){if(start[axis]<low[axis]||start[axis]>high[axis]){hit=false;break;}}

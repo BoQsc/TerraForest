@@ -82,7 +82,7 @@ public:
     Array pack(const PackedInt64Array &ids,const TypedArray<Transform3D> &transforms,const PackedByteArray &excluded) const {
         Array out;
         if(ids.size()>64||ids.size()!=transforms.size()||ids.size()!=excluded.size())return out;
-        PackedInt64Array keys[8];PackedFloat32Array values[8];
+        PackedInt64Array keys[9];PackedFloat32Array values[9];
         std::unordered_set<int64_t> seen;
         for(int64_t i=0;i<ids.size();++i){
             if(ids[i]<1||ids[i]>63*63*1024||!seen.insert(ids[i]).second)return Array();
@@ -103,10 +103,11 @@ public:
                 else if(accent>=170&&accent<175)species=7;
                 else if(accent>=180&&accent<183)species=3+int(accent-180);
             }
+            if(species==2&&accent>=190&&accent<195)species=8;
             keys[species].append(ids[i]);
             for(int row=0;row<3;++row){for(int col=0;col<3;++col)values[species].append(t.basis[row][col]);values[species].append(t.origin[row]);}
         }
-        for(int i=0;i<8;++i){Dictionary row;row["ids"]=keys[i];row["transforms"]=values[i];out.append(row);}return out;
+        for(int i=0;i<9;++i){Dictionary row;row["ids"]=keys[i];row["transforms"]=values[i];out.append(row);}return out;
     }
 };
 }

@@ -9,7 +9,7 @@ func check(ok: bool,label: String) -> void:
 func _initialize() -> void: call_deferred("run")
 func records(ids: PackedInt64Array,poses: Array[Transform3D],species: int=0) -> Array:
 	var out:=[]
-	for i in range(8): out.append({"ids":PackedInt64Array(),"transforms":PackedFloat32Array()})
+	for i in range(9): out.append({"ids":PackedInt64Array(),"transforms":PackedFloat32Array()})
 	out[species].ids=ids
 	for t in poses:
 		out[species].transforms.append_array(PackedFloat32Array([t.basis.x.x,t.basis.y.x,t.basis.z.x,t.origin.x,t.basis.x.y,t.basis.y.y,t.basis.z.y,t.origin.y,t.basis.x.z,t.basis.y.z,t.basis.z.z,t.origin.z]))

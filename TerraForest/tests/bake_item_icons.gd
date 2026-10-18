@@ -25,8 +25,8 @@ func run() -> void:
 		elif id in [101,102,103,104]:
 			var mesh:=BoxMesh.new();mesh.size=Vector3.ONE
 			var material:=StandardMaterial3D.new();material.albedo_texture=load("res://addons/structures/textures/terraforest/"+["brick","wood","concrete","metal"][id-101]+"_albedo.png");mesh.material=material;model.add_child(instance(mesh))
-		elif id>=201 and id<=211:
-			var species: int={201:0,202:0,203:0,204:1,205:2,206:3,207:4,208:5,209:6,210:7,211:0}[id]
+		elif id>=201 and id<=212:
+			var species: int={201:0,202:0,203:0,204:1,205:2,206:3,207:4,208:5,209:6,210:7,211:0,212:8}[id]
 			var mesh: Mesh=preload("res://addons/world_ecosystem/woodland_mesh.gd").build(species,false)
 			mesh.surface_get_material(0).set_shader_parameter("wind_strength",0.0)
 			if species==2:preload("res://addons/world_ecosystem/woodland_mesh.gd").set_grass_detail(mesh.surface_get_material(0),true)
@@ -46,7 +46,7 @@ func run() -> void:
 		else:
 			var file: String={"Wood framed window":"window","Wooden door (E open / close)":"door","Metal guardrail":"guardrail","Wooden fence":"fence","Doorway":"doorway","Wooden table":"table","Wooden chair":"chair","Wooden shelf":"shelf","Wooden ladder":"ladder","Wooden storage chest (E open)":"storage_chest"}[key]
 			model.add_child(instance(load("res://addons/structures/prefabs/"+file+"_model.tres")))
-		if id>0 and not "--icons-only" in OS.get_cmdline_user_args():bake_drop(model,id)
+		if id>0 and not "--icons-only" in OS.get_cmdline_user_args() and (not "--woody-bush-only" in OS.get_cmdline_user_args() or id==212):bake_drop(model,id)
 		var box:=bounds(model);var center:=box.get_center();var radius:=box.size.length()*0.5
 		camera.position=center+Vector3(1.3,0.9,2).normalized()*maxf(4,radius*3);camera.look_at(center);camera.size=maxf(0.1,radius*2.2)
 		viewport.render_target_update_mode=SubViewport.UPDATE_ALWAYS

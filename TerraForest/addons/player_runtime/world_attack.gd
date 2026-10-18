@@ -18,7 +18,7 @@ func target() -> Dictionary:
 		var cover: Dictionary=game.ground_cover.picker.pick(start,hit.position if not hit.is_empty() else end)
 		if cover.get("hit",false):
 			if game.ground_cover._dirty.has(cover.cell) or game.ground_cover._pending.has(cover.cell):return {}
-			return {"kind":"cover","key":"cover:%d"%cover.id,"id":cover.id,"cell":cover.cell,"health":45 if cover.species==0 else (40 if cover.species==6 else 10),"material":"stone" if cover.species==0 else "wood","name":game.player_hud.GroundCatalog.NAMES[cover.species],"end":end}
+			return {"kind":"cover","key":"cover:%d"%cover.id,"id":cover.id,"cell":cover.cell,"species":cover.species,"health":2 if cover.species==8 else (45 if cover.species==0 else (40 if cover.species==6 else 10)),"material":"stone" if cover.species==0 else "wood","name":game.player_hud.GroundCatalog.NAMES[cover.species],"end":end}
 	if hit.is_empty():
 		if game.terrain.backend.region_terrain:hit=game._terrain_pick(start,end)
 		if hit.is_empty():return {}
@@ -68,7 +68,7 @@ func apply_target(t: Dictionary) -> bool:
 	if t.kind=="cover" and (game.ground_cover._dirty.has(t.cell) or game.ground_cover._pending.has(t.cell)):return false
 	if t.kind=="model" and t.collection.is_removal_protected(t.id):
 		game._show_lake_notice("Empty stored contents before damaging this container");return false
-	var result: Dictionary=durability.hit(t.key,t.health,TOOLS[item][t.material])
+	var result: Dictionary=durability.hit(t.key,t.health,1 if t.kind=="cover" and t.get("species",-1)==8 else TOOLS[item][t.material])
 	if not result.ok:game._show_lake_notice(result.get("reason","Damage unavailable"));return false
 	game.terrain.changed_since_save=true
 	rejection_reason=""
@@ -87,7 +87,7 @@ func destroy(t: Dictionary) -> bool:
 		"tree":return game.ecosystem.harvest_root(t.id,game.player_hud.inventory).ok
 		"model":return game._remove_inventory_model(game.model_tool.history,t.collection,t.id)
 		"cover":
-			var collected: Dictionary=game.ground_interaction.collect(game.camera.global_position,t.end,game.player_hud.inventory,true)
+			var collected: Dictionary=game.ground_interaction.collect(game.camera.global_position,t.end,game.player_hud.inventory,true,null,t.id)
 			rejection_reason=collected.reason;return collected.ok
 		"terrain":
 			var center: Vector3=t.position-t.normal*0.35

@@ -218,6 +218,19 @@ func _publish(key: Vector2i,packed: Array,authored_poses: Array[Transform3D],uns
 	for species in range(Catalog.COUNT):
 		packed[species].ids.append_array(authored[species].ids)
 		packed[species].transforms.append_array(authored[species].transforms)
+	# Check the taller species separately; existing low cover keeps its old bounds.
+	if structures!=null and not packed[8].ids.is_empty():
+		var poses: Array[Transform3D]=[]
+		var values: PackedFloat32Array=packed[8].transforms
+		for i in packed[8].ids.size():
+			var j: int=i*12
+			poses.append(Transform3D(Basis(Vector3(values[j],values[j+4],values[j+8]),Vector3(values[j+1],values[j+5],values[j+9]),Vector3(values[j+2],values[j+6],values[j+10])),Vector3(values[j+3],values[j+7],values[j+11])))
+		var tall_mask: PackedByteArray=structures.overlap_mask(poses,AABB(Vector3(-0.4,0,-0.4),Vector3(0.8,1.1,0.8)))
+		if tall_mask.size()!=poses.size():rejected_batches+=1;return
+		for i in range(tall_mask.size()-1,-1,-1):
+			if tall_mask[i]:
+				packed[8].ids.remove_at(i)
+				packed[8].transforms=packed[8].transforms.slice(0,i*12)+packed[8].transforms.slice((i+1)*12)
 	if resident.get(key,[])==packed: _dirty.erase(key);return
 	var previous: Array=resident.get(key,[])
 	if not picker.replace_cell(key,packed): rejected_batches+=1;return

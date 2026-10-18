@@ -37,3 +37,23 @@ keeps124 m; zoom can extend to248 m while retaining nearby cells and no more
 than81 owners. Native render-radius updates preserve existing pages. This is
 ready for camera zoom consumers; no new gameplay zoom binding is added. New
 cells still load asynchronously. See docs/evidence/vegetation_zoom for limits.
+
+
+### Gatherable woody bush
+
+Species 8 (item 212) is a taller variant of the existing low bush, approximately
+twice the grass mesh height. It occurs sparsely among natural cover and is also
+available in the development vegetation palette. Its shared near/far meshes use
+638/294 triangles, existing wind/fading, and normal nearby cast shadows. No
+per-instance script or physics body is added. Existing grass candidate identities,
+density and the 81-owner streaming cap remain; roughly 0.5% of eligible grass
+candidates now become woody bushes.
+
+Gameplay attacks with any of the four tools or empty hands require two hits and
+yield one wood on destruction. Tool wear follows the shared attack path. Collect
+cannot bypass bush health. Item 212 can be placed, has an offline inventory icon
+and a matching batched dropped model. State format 3 adds species 8 and still
+reads formats 1 and 2. Existing authored species and removal identities persist.
+
+See `docs/evidence/woody_bush` for the integrated interaction and visual check.
+This feature check is not a sustained performance or final art acceptance claim.

@@ -51,7 +51,7 @@ func run() -> void:
 	check(cover.grass_texture_enabled and cover.grass_material.get_shader_parameter("grass_detail_strength")==0.8,"accepted grass texture enabled in world coordinator")
 	var initial: PackedByteArray=cover.removed.capture_storage_snapshot()
 	check(cover.set_grass_texture(false) and not cover.grass_texture_enabled and cover.set_grass_texture(true) and cover.removed.capture_storage_snapshot()==initial,"texture toggle preserves world records")
-	check(cover.batches.size()==8,"eight native species render collections initialized")
+	check(cover.batches.size()==9,"nine native species render collections initialized")
 	for i in range(81):
 		cover._process(0.0)
 		check(terrain.requests.size()==4,"four bounded support jobs %d"%i)

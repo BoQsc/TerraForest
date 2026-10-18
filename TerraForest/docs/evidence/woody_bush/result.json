@@ -1,0 +1,26 @@
+{
+  "attacks": [
+    {
+      "tool": 1,
+      "wood_delta": 1
+    },
+    {
+      "tool": 2,
+      "wood_delta": 1
+    },
+    {
+      "tool": 3,
+      "wood_delta": 1
+    },
+    {
+      "tool": 4,
+      "wood_delta": 1
+    },
+    {
+      "tool": 0,
+      "wood_delta": 1
+    }
+  ],
+  "failures": 0,
+  "natural_bushes": 399
+}

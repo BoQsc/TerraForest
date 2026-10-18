@@ -21,10 +21,12 @@ func collection_probe(from: Vector3,to: Vector3,shared_hit: Variant=null) -> Dic
 	if cover._dirty.has(key) or cover._pending.has(key) or not cover.resident.has(key): return {"ok":false,"reason":"Ground cover updating"}
 	return {"ok":true,"hit":hit}
 
-func collect(from: Vector3,to: Vector3,inventory: RefCounted,gameplay: bool,shared_hit: Variant=null) -> Dictionary:
+func collect(from: Vector3,to: Vector3,inventory: RefCounted,gameplay: bool,shared_hit: Variant=null,attack_target: int=0) -> Dictionary:
 	var candidate:=collection_probe(from,to,shared_hit)
 	if not candidate.ok:return candidate
 	var hit: Dictionary=candidate.hit
+	if attack_target!=0 and hit.id!=attack_target:return {"ok":false,"reason":"Target changed"}
+	if gameplay and hit.species==8 and attack_target!=hit.id:return {"ok":false,"reason":"Strike the woody bush twice to gather wood"}
 	var key: Vector2i=hit.cell
 	var previous: Array=cover.resident[key]
 	var next: Array=previous.duplicate(true)
@@ -62,7 +64,7 @@ func placement_probe(species: int,from: Vector3,to: Vector3,inventory: RefCounte
 	if not cover.resident.has(key) or cover._dirty.has(key) or cover._pending.has(key): return {"ok":false,"reason":"Ground cover updating"}
 	var poses: Array[Transform3D]=[Transform3D(Basis.IDENTITY,point)]
 	if cover.structures!=null:
-		var mask: PackedByteArray=cover.structures.overlap_mask(poses,AABB(Vector3(-0.4,0,-0.4),Vector3(0.8,0.8,0.8)))
+		var mask: PackedByteArray=cover.structures.overlap_mask(poses,AABB(Vector3(-0.4,0,-0.4),Vector3(0.8,1.1 if species==8 else 0.8,0.8)))
 		if mask.size()!=1 or mask[0]: return {"ok":false,"reason":"Placement overlaps a structure"}
 	if cover.water!=null:
 		var mask: PackedByteArray=cover.water.placement_mask(poses)

@@ -167,6 +167,14 @@ func bush(low: bool) -> void:
 				var tip: Vector3=root_point+side*sign_value*(0.15+0.015*sin(i+j))+axis*0.05+Vector3.UP*0.065
 				ribbon([root_point,root_point.lerp(tip,0.5)+Vector3.UP*0.035,tip],[0.0,0.062,0.0],axis,Color("395539").lerp(Color("87964f"),0.25+0.4*(0.5+0.5*sin(i*1.7+j))),0.3)
 
+func woody_bush(low: bool) -> void:
+	var start:=vertices.size()
+	bush(low)
+	# Taller woody stems, same compact footprint; both LODs share proportions.
+	for i in range(start,vertices.size()):
+		vertices[i].y*=1.4
+		normals[i]=Vector3(normals[i].x,normals[i].y/1.4,normals[i].z).normalized()
+
 func flower(low: bool,tint: Color,petals: int) -> void:
 	for i in (2 if low else 3):
 		var angle: float=i*2.399963
@@ -208,9 +216,9 @@ func grass_horizon() -> void:
 		tri(base-side*0.09,base+side*0.09,base+direction*0.22+Vector3.UP*0.36,Color("64773f"),Vector2.ZERO,Vector2.RIGHT,Vector2(0.5,1))
 
 static func build(species: int,with_lod: bool=true) -> ArrayMesh:
-	if species<0 or species>7:return null
+	if species<0 or species>8:return null
 	var asset=load("res://addons/world_ecosystem/woodland_mesh.gd").new()
-	var method: String=["stone_mesh","fern","grass","white_flower","gold_flower","violet_flower","bush","twigs"][species]
+	var method: String=["stone_mesh","fern","grass","white_flower","gold_flower","violet_flower","bush","twigs","woody_bush"][species]
 	asset.call(method,false)
 	var full_count: int=asset.vertices.size();var indices:=PackedInt32Array()
 	for i in full_count:indices.append(i)
@@ -219,7 +227,7 @@ static func build(species: int,with_lod: bool=true) -> ArrayMesh:
 		asset.call(method,true)
 		var distant:=PackedInt32Array()
 		for i in range(full_count,asset.vertices.size()):distant.append(i)
-		lods[[0.03,0.025,0.02,0.02,0.02,0.02,0.025,0.02][species]]=distant
+		lods[[0.03,0.025,0.02,0.02,0.02,0.02,0.025,0.02,0.025][species]]=distant
 	if with_lod and species==2:
 		var far_start:int=asset.vertices.size()
 		asset.grass_far()
@@ -235,7 +243,7 @@ static func build(species: int,with_lod: bool=true) -> ArrayMesh:
 	arrays[Mesh.ARRAY_VERTEX]=asset.vertices;arrays[Mesh.ARRAY_NORMAL]=asset.normals;arrays[Mesh.ARRAY_COLOR]=asset.colors;arrays[Mesh.ARRAY_TEX_UV]=asset.uvs;arrays[Mesh.ARRAY_INDEX]=indices
 	arrays[Mesh.ARRAY_TANGENT]=asset.tangents
 	var mesh:=ArrayMesh.new();mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES,arrays,[],lods)
-	mesh.custom_aabb=AABB(Vector3(-0.4,-0.2 if species==0 else 0,-0.4),Vector3(0.8,0.4 if species==0 else 0.75,0.8))
+	mesh.custom_aabb=AABB(Vector3(-0.4,-0.2 if species==0 else 0,-0.4),Vector3(0.8,0.4 if species==0 else (1.1 if species==8 else 0.75),0.8))
 	var material:=ShaderMaterial.new();material.shader=preload("res://addons/world_ecosystem/woodland.gdshader");material.set_shader_parameter("stone",species==0)
 	material.set_shader_parameter("grass_detail_strength",0.0)
 	if species==7: material.set_shader_parameter("wind_strength",0.0)

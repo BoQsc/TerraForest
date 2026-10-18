@@ -14,6 +14,7 @@ func describe(game: Node, target: Dictionary) -> String:
 	var loose:=loose_target(game,target)
 	if loose.get("kind")=="pickup":return "E · Pick up "+game.pickups.ITEMS[loose.item]
 	if loose.get("kind")=="ground":
+		if game.construction_inventory.gameplay and loose.hit.species==8:return "Left mouse · Harvest woody bush (two hits)"
 		var name: String=preload("res://addons/world_ecosystem/ground_catalog.gd").NAMES[loose.hit.species]
 		return "E · "+("Collect " if game.construction_inventory.gameplay else "Remove ")+name
 	return ""

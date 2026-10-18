@@ -1,0 +1,132 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS removal provider registers with world persistence
+PASS accepted grass texture enabled in world coordinator
+PASS texture toggle preserves world records
+PASS nine native species render collections initialized
+PASS four bounded support jobs 0
+PASS four bounded support jobs 1
+PASS four bounded support jobs 2
+PASS four bounded support jobs 3
+PASS four bounded support jobs 4
+PASS four bounded support jobs 5
+PASS four bounded support jobs 6
+PASS four bounded support jobs 7
+PASS four bounded support jobs 8
+PASS four bounded support jobs 9
+PASS four bounded support jobs 10
+PASS four bounded support jobs 11
+PASS four bounded support jobs 12
+PASS four bounded support jobs 13
+PASS four bounded support jobs 14
+PASS four bounded support jobs 15
+PASS four bounded support jobs 16
+PASS four bounded support jobs 17
+PASS four bounded support jobs 18
+PASS four bounded support jobs 19
+PASS four bounded support jobs 20
+PASS four bounded support jobs 21
+PASS four bounded support jobs 22
+PASS four bounded support jobs 23
+PASS four bounded support jobs 24
+PASS four bounded support jobs 25
+PASS four bounded support jobs 26
+PASS four bounded support jobs 27
+PASS four bounded support jobs 28
+PASS four bounded support jobs 29
+PASS four bounded support jobs 30
+PASS four bounded support jobs 31
+PASS four bounded support jobs 32
+PASS four bounded support jobs 33
+PASS four bounded support jobs 34
+PASS four bounded support jobs 35
+PASS four bounded support jobs 36
+PASS four bounded support jobs 37
+PASS four bounded support jobs 38
+PASS four bounded support jobs 39
+PASS four bounded support jobs 40
+PASS four bounded support jobs 41
+PASS four bounded support jobs 42
+PASS four bounded support jobs 43
+PASS four bounded support jobs 44
+PASS four bounded support jobs 45
+PASS four bounded support jobs 46
+PASS four bounded support jobs 47
+PASS four bounded support jobs 48
+PASS four bounded support jobs 49
+PASS four bounded support jobs 50
+PASS four bounded support jobs 51
+PASS four bounded support jobs 52
+PASS four bounded support jobs 53
+PASS four bounded support jobs 54
+PASS four bounded support jobs 55
+PASS four bounded support jobs 56
+PASS four bounded support jobs 57
+PASS four bounded support jobs 58
+PASS four bounded support jobs 59
+PASS four bounded support jobs 60
+PASS four bounded support jobs 61
+PASS four bounded support jobs 62
+PASS four bounded support jobs 63
+PASS four bounded support jobs 64
+PASS four bounded support jobs 65
+PASS four bounded support jobs 66
+PASS four bounded support jobs 67
+PASS four bounded support jobs 68
+PASS four bounded support jobs 69
+PASS four bounded support jobs 70
+PASS four bounded support jobs 71
+PASS four bounded support jobs 72
+PASS four bounded support jobs 73
+PASS four bounded support jobs 74
+PASS four bounded support jobs 75
+PASS four bounded support jobs 76
+PASS four bounded support jobs 77
+PASS four bounded support jobs 78
+PASS four bounded support jobs 79
+PASS four bounded support jobs 80
+PASS 81 owners publish without rejection
+PASS ground cover creates no physics bodies
+PASS ground cover creates no physics bodies
+PASS ground cover creates no physics bodies
+PASS ground cover creates no physics bodies
+PASS ground cover creates no physics bodies
+PASS ground cover creates no physics bodies
+PASS ground cover creates no physics bodies
+PASS ground cover creates no physics bodies
+PASS ground cover creates no physics bodies
+PASS bounded 82944 candidates maintain density through all 81 owners
+PASS individual removal persists separately from rendering
+PASS authored stone gets independent durable identity
+PASS small interior disturbance invalidates one owner
+PASS individual removal preserves neighbour owners
+PASS authored placement joins native rendering for its owner
+PASS render publication also publishes individual interaction identity
+PASS authored owner enters bounded asynchronous support stage
+PASS support stage admits only one outstanding density request
+PASS stale density reply cannot finalize edited owner
+PASS fresh support retry preserves authored identity
+PASS teleport retires old owners and submits four destination jobs
+PASS unloaded owner leaves no stale interaction proxy
+PASS teleport preserves the four-job bound
+PASS obsolete destination reply does not publish
+PASS return regeneration retains individual removal and authored placement
+PASS return restores same authored interaction identity
+PASS scene obstruction prevents collection through geometry
+PASS rejected inventory grant preserves authored object
+PASS collection immediately removes authored render query and durable record
+PASS collection grants exactly one stone and cannot repeat
+PASS gameplay placement consumes collected stone
+PASS placed stone reaches rendering through support publication
+PASS occupied spot rejects duplicate placement
+PASS gameplay placement refuses missing plant item
+PASS editor placement stays free
+PASS editor removal stays free and grants no gameplay resources
+PASS crossing a cell boundary upgrades nearby cover and retains loaded layers until owner retirement
+PASS teleport retires dirty owners that never published
+PASS partial admission accepts only two jobs without advancing rejected layers
+PASS partial admission and reversed replies reproduce identical ordered records
+PASS malformed reply abandons wave without publishing partial owner or stranding requests
+PASS retry after failed wave restores exact records
+PASS reset releases generated records
+GROUND_COVER_STREAM {"checks":129,"failures":0}
