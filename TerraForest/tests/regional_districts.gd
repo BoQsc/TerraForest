@@ -5,6 +5,8 @@ func _initialize()->void:
  var catalog=preload("res://addons/structures/furniture_catalog.gd")
  var cottage:Resource=catalog.enclosed_cottage();var tower:Resource=catalog.furnished_tower(3)
  var available:Dictionary={cottage.resource_name:cottage,tower.resource_name:tower}
+ var workshop:Resource=preload("res://addons/structures/workshop_catalog.gd").workshop()
+ available[workshop.resource_name]=workshop
  var failures:=0
  for site in range(1,5):
   var plan:Dictionary=preload("res://addons/structures/regional_districts.gd").plan(site)

@@ -379,6 +379,9 @@ func _setup_prefabs() -> void:
 	if tower!=null:
 		structure_prefabs.append(tower);tower.changed.connect(_invalidate_prefab_preview)
 	var bridge: Resource=preload("res://addons/structures/bridge_catalog.gd").footbridge()
+	var workshop: Resource=preload("res://addons/structures/workshop_catalog.gd").workshop()
+	if workshop!=null:
+		structure_prefabs.append(workshop);workshop.changed.connect(_invalidate_prefab_preview)
 	if bridge!=null:
 		structure_prefabs.append(bridge);bridge.changed.connect(_invalidate_prefab_preview)
 	var metal_bridge: Resource=preload("res://addons/structures/bridge_catalog.gd").footbridge(true)

@@ -20,6 +20,13 @@ The regional topology and prefab palette are currently fixed; a different seed
 changes terrain/layout parameters and central prefab choices, not the entire
 settlement design vocabulary. This is not a finished procedural-city generator.
 
+New district worlds use two mine workshops and stores at the eastern service
+street, with workbenches, separate rear stores, chests, windows and entrance doors.
+Existing saves keep their buildings. `Play Regional World Review.cmd` defaults to
+the v4 review copy containing these workshops; `--review-version 3` preserves access
+to the earlier cottage-based review. Both workshops have passed a saved-world player
+route from their approach stairs through the doorway into the rear stores.
+
 The tool bakes a staging world, saves, reopens in a fresh process, compares building,
 road, furnishing and resident state, and checks restored seed/generator identity.
 Only a passing preparation is copied to the named destination. Existing destination

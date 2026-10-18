@@ -13,12 +13,12 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--dry-run', action='store_true')
     parser.add_argument('--godot')
-    parser.add_argument('--review-version', type=int, choices=[1,2,3], default=3)
+    parser.add_argument('--review-version', type=int, choices=[1,2,3,4], default=4)
     parser.add_argument('--previous-review', action='store_true', help='Open the preserved v1 review save')
     args = parser.parse_args()
     worlds = Path(os.environ['APPDATA']) / 'Godot/app_userdata/TerraForest/worlds'
     version = 1 if args.previous_review else args.review_version
-    source = {1:'regional_lake_20261018', 2:'regional_districts_20261018', 3:'regional_access_20261018'}[version]
+    source = {1:'regional_lake_20261018', 2:'regional_districts_20261018', 3:'regional_access_20261018', 4:'regional_workshops_20261018'}[version]
     target = f'regional_world_review_v{version}'
     layout = 'lakes' if version == 1 else 'districts'
     if not (worlds / (target + '.trw')).is_file() and not (worlds / (source + '.trw')).is_file():
