@@ -69,6 +69,8 @@ static func prepare(asset: Resource,origin: Vector3i,rotation: int,grade: int) -
 	plan.paving_segments=plan.segments.size()-plan.foundation_segments
 	plan["street_width"]=street;plan["street_lines"]=world_lines
 	plan["street_ends"]=world_lines.slice(0,2)
+	if asset.get_meta("entrance_paths",false):
+		return _entrance_paths(asset,plan,lines,rotation,grade)
 	return plan
 
 static func foundation(asset: Resource,origin: Vector3i,rotation: int,grade: int) -> Dictionary:
@@ -115,3 +117,49 @@ static func foundation(asset: Resource,origin: Vector3i,rotation: int,grade: int
 			protection=region if segments.is_empty() else protection.merge(region)
 			segments.append({"start":a,"finish":b,"half_width":half_width,"depth":8.0,"clearance":12.0,"shoulder":8.0,"material":1,"bounds":region})
 	return {"ok":true,"target":target,"rotation":rotation,"bounds":protection,"segments":segments}
+
+
+static func _entrance_paths(asset:Resource,plan:Dictionary,lines:PackedVector3Array,rotation:int,grade:int)->Dictionary:
+	# Offline authoring only: discover the end of each stair approach from cells.
+	var occupied:Dictionary={}
+	var records:PackedInt32Array=asset.get_records()
+	for i in range(0,records.size(),4):
+		occupied[Vector2i(records[i],records[i+2])]=true
+	plan["entrance_paths"]=0
+	for model:Dictionary in asset.get_model_attachments():
+		if model.model!="architecture/wooden_door/v1":continue
+		var pose:Transform3D=model.transform
+		var forward:=pose.basis.z.normalized()
+		var start:=pose.origin+pose.basis.x.normalized()*0.5
+		start.y=0
+		var found:=false
+		for step in range(1,33):
+			var candidate:=start+forward*(step*0.5)
+			var clear:=true
+			for lateral in [-0.7,0.0,0.7]:
+				var p:Vector3=candidate+pose.basis.x.normalized()*lateral
+				clear=clear and not occupied.has(Vector2i(floori(p.x),floori(p.z)))
+			if clear:start=candidate+forward*0.75;found=true;break
+		if not found:return {"ok":false,"reason":"Entrance has no clear approach"}
+		var finish:=Vector3.INF
+		var best:=INF
+		for i in range(0,lines.size(),2):
+			var span:=lines[i+1]-lines[i]
+			var near:=lines[i]+span*clampf((start-lines[i]).dot(span)/span.length_squared(),0,1)
+			var offset:=near-start
+			if offset.dot(forward)<=0 or absf(offset.dot(pose.basis.x.normalized()))>0.1:continue
+			if offset.length()<best:best=offset.length();finish=near
+		if not finish.is_finite() or best>32:return {"ok":false,"reason":"Entrance does not face a nearby street"}
+		if plan.segments.size()>=MAX_SEGMENTS:return {"ok":false,"reason":"Entrance paths exceed site segment budget"}
+		for turn in rotation:
+			start=Vector3(1-start.z,0,start.x);finish=Vector3(1-finish.z,0,finish.x)
+		start+=Vector3(plan.target);finish+=Vector3(plan.target)
+		start.y=grade;finish.y=grade
+		var low:=start.min(finish)-Vector3(0.75,2,0.75)
+		var high:=start.max(finish)+Vector3(0.75,3,0.75)
+		if low.x<5 or low.z<5 or high.x>1995 or high.z>1995:return {"ok":false,"reason":"Entrance path reaches world boundary"}
+		var region:=AABB(low,high-low)
+		plan.bounds=plan.bounds.merge(region)
+		plan.segments.append({"start":start,"finish":finish,"half_width":0.75,"depth":2.0,"clearance":3.0,"shoulder":0.0,"material":4,"bounds":region})
+		plan.entrance_paths+=1;plan.paving_segments+=1
+	return plan

@@ -189,6 +189,7 @@ func prepare_outer_sites()->bool:
   game._frontage_sources_construction(selection,district.lots,district.width,district.gap,1703+int(site.id),district.title,district.streets)
   if not require(await wait_until(func():return game.structure_prefabs.size()==count+1,10),"outer furnished street composed"):return false
   var asset:Resource=game.structure_prefabs[game.structure_prefab_index]
+  if districts:asset.set_meta("entrance_paths",true)
   var bounds:AABB=asset.placement_bounds(Vector3i.ZERO,0)
   var origin:=Vector3i(floori(center.x-12-bounds.end.x),int(center.y),floori(center.z-12-bounds.end.z))
   var survey:Dictionary=await game.site_survey.assess(game.terrain,asset,origin,0)

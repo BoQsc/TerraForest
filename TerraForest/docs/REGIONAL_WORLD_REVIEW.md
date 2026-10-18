@@ -1,6 +1,6 @@
 # Integrated regional world review
 
-Run `Play Regional World Review.cmd`. It opens `regional_world_review_v2`, a
+Run `Play Regional World Review.cmd`. It opens `regional_world_review_v3`, a
 separate editable copy of the prepared profile-12 world. Repeated launches preserve
 your review progress. Existing gameplay worlds and the prepared source are retained.
 The viewport is 1920x1080 fullscreen, capped at 60 FPS. Frame spikes remain unresolved;
@@ -21,7 +21,7 @@ Further work should improve the actual locations and travel between them. Water
 flow, food/vitals and multiplayer implementation remain deferred.
 
 On a fresh installation without the prepared save:
-`python tools/prepare_combined_world.py --layout districts --destination regional_districts_20261018`
+`python tools/prepare_combined_world.py --layout districts --destination regional_access_20261018`
 Then use the review launcher. This cold preparation can take minutes; it is not
 repeated on normal launch.
 
@@ -36,3 +36,6 @@ cottage brings the total to 23. These reuse existing furnished prefabs. The prev
 review save remains accessible with `Play Regional World Review.cmd --previous-review`.
 The updated save passed fresh-process reopening and a 25.8 s district arrival/count
 check with inspected north/south screenshots. See evidence/regional_districts.
+
+Version 3 adds baked entrance paths to the 14 outer-district buildings. Use
+`--review-version 2` to open the earlier district review, or `--previous-review` for v1.

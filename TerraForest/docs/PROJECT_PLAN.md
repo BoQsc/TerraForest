@@ -1,3 +1,12 @@
+## Baked district entrance paths - 2026-10-18
+
+Fourteen outer-district buildings now have paved approaches connecting streets to
+stairs. Offline site preparation uses existing native terrain edits and vegetation
+exclusion; no new runtime update system. Four-rotation composition checks, full
+save/reopen and inspected southern entrance view pass. Review launcher selects a
+separate v3 save; v1/v2 retained. See evidence/regional_entrance_paths. Central and
+cellar approaches unchanged; these paths are not a claim of completed location design.
+
 ## Regional vehicle streaming journey checked - 2026-10-18
 
 The saved district world completed a 574 m full-throttle arterial drive at up to

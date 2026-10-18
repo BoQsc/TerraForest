@@ -1,0 +1,7 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS Western residential lane buildings=4 bounds=[P: (0.0, 0.0, -21.0), S: (22.0, 11.0, 42.0)] grading=true
+PASS Eastern mine service street buildings=2 bounds=[P: (0.0, 0.0, -22.0), S: (9.0, 11.0, 44.0)] grading=true
+PASS Northern multi-storey district buildings=4 bounds=[P: (0.0, 0.0, -28.0), S: (39.0, 13.0, 56.0)] grading=true
+PASS Southern broad residential lane buildings=4 bounds=[P: (0.0, 0.0, -28.0), S: (26.0, 11.0, 56.0)] grading=true
+REGIONAL_DISTRICTS failures=0
