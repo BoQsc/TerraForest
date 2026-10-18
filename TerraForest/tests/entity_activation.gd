@@ -27,6 +27,7 @@ func run() -> void:
 	check(not pool.tick(targets,1.0/60,PackedByteArray([1,1])) and store.capture_storage_snapshot()==snapshot,"mismatched readiness rejects before mutation")
 	var invalid:=targets.duplicate();invalid[2]=Vector3(NAN,0,0)
 	check(not pool.tick(invalid,1.0/60,PackedByteArray([1,1,1])) and store.capture_storage_snapshot()==snapshot,"invalid last target rejects whole batch")
+	check(pool.tick(targets,1.0/60,PackedByteArray([1,1,1])) and store.capture_storage_snapshot()==snapshot,"newly bound proxies wait for physics synchronization before movement")
 	await physics_frame
 	check(pool.tick(targets,1.0/60,PackedByteArray([1,1,1])),"native batch submits avoidance intent")
 	# NavigationServer returns safe velocity on a subsequent physics update.

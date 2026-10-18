@@ -1,3 +1,10 @@
+> 2026-10-18 world population: add residents to separate prepared streets without
+> clearing existing actors. Local native occupancy rejects dormant duplicates.
+> Testing exposed a 24 m pooled-body reactivation jump; native binding now holds
+> movement for one physics frame. Four residents complete separate street patrols
+> with bounded per-frame displacement; native actor regressions pass. Evidence:
+> evidence/settlement_multiple_streets/. No crowd or sustained-FPS claim.
+
 > 2026-10-18 scope decision: quick-use food and player health/hunger are deferred
 > by user request; continue world systems. Water remains accepted/deferred.
 > Finished character drag validation: 33 actual-world checks pass, including

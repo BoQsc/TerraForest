@@ -48,6 +48,7 @@ int64_t NativeEntityActor::entity_handle(const Ref<NativeEntityStore> &store) co
 }
 bool NativeEntityActor::bind_entity(const Ref<NativeEntityStore> &store,int64_t handle) {
     if(!is_inside_tree()||store.is_null()||!store->contains(handle))return false;
+    bound_frame_=Engine::get_singleton()->get_physics_frames();
     stepped_before_=false;safe_valid_=false;store_=store;handle_=handle;set_global_position(store_->get_position(handle));
     set_velocity(Vector3());store_->set_velocity(handle_,Vector3());return true;
 }
@@ -85,6 +86,10 @@ bool NativeEntityActor::tick(const Vector3 &target,double delta,bool collision_r
     transform_us=motion_us=store_us=0;
     if(!is_inside_tree()||store_.is_null()||!store_->contains(handle_)||!target.is_finite()||
        !std::isfinite(delta)||delta<=0||delta>0.1)return false;
+    // Reused proxies can change owners/positions in this physics step. Let
+    // PhysicsServer synchronize the entire activation batch before any body
+    // queries or integrates against its peers at their previous transforms.
+    if(Engine::get_singleton()->get_physics_frames()<=bound_frame_)return false;
     if(!collision_ready){
         set_velocity(Vector3());safe_valid_=false;
         if(avoidance_){

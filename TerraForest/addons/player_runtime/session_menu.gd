@@ -96,7 +96,7 @@ func _ready() -> void:
 	button(row,"Place actor",func():run_command(KEY_J));button(row,"Select / send actor",func():run_command(KEY_K))
 	button(row,"Patrol to aim",patrol_actor)
 	button(row,"Remove actor",func():run_command(KEY_J,true));button(row,"Stop actor",func():run_command(KEY_K,true))
-	if game.has_method("_populate_settlement_actors"):button(dev_box,"Populate empty settlement",populate_settlement)
+	if game.has_method("_populate_settlement_actors"):button(dev_box,"Add residents to nearby street",populate_settlement)
 	var options:=GridContainer.new();options.columns=3;dev_box.add_child(options)
 	for entry in [["Next test site",KEY_F2],["Next biome",KEY_F4],["LOD colours",KEY_F6],["Grass texture",KEY_F7],["Debug light",KEY_F8],["Terrain visualization",KEY_F10]]:
 		button(options,entry[0],run_command.bind(entry[1]))

@@ -1,0 +1,30 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] New world
+[TerrainRewrite] New world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+PASS actual world ready
+COLLISION_READY true true true
+FIRST_POPULATION { "ok": true, "ids": [1, 2], "reason": "Two street patrol actors placed. F5 saves the population." }
+PASS populate first street through actual world action
+SECOND_POPULATION { "ok": true, "ids": [3, 4], "reason": "Two street patrol actors placed. F5 saves the population." }
+PASS second street accepts residents while first population exists
+PASS two streets own four distinct residents
+PASS existing resident identity position and order preserved
+PASS existing resident identity position and order preserved
+PASS dormant street residents block duplicates without mutation
+JUMP frame=0 id=1 from=(789.5, 62.93, 1306.0) to=(788.7994, 63.18734, 1306.0)
+JUMP frame=0 id=2 from=(786.5, 62.93, 1314.0) to=(786.5, 64.05152, 1314.0)
+JUMP frame=1 id=2 from=(786.5, 64.05152, 1314.0) to=(810.5, 64.63734, 1314.0)
+FALL frame=88 actor=2 position=(807.4145, 62.63079, 1314.071) floor_ray={  } block=0
+RESIDENT 1 position=(789.4999, 62.9005, 1309.122) goal=(789.5, 62.93, 1314.0) navigation={ "state": "following", "nodes": 1, "expansions": 0, "waypoints": 17, "waypoint_index": 7, "waypoint_target": (789.5, 62.93, 1309.5), "stuck_seconds": 0.0, "replans": 0, "node_limit": 2048, "radius_m": 16 }
+RESIDENT 2 position=(807.4145, 62.63079, 1314.071) goal=(786.5, 62.93, 1306.0) navigation={ "state": "following", "nodes": 1, "expansions": 0, "waypoints": 17, "waypoint_index": 1, "waypoint_target": (786.5, 62.93, 1313.5), "stuck_seconds": 0.0, "replans": 0, "node_limit": 2048, "radius_m": 16 }
+RESIDENT 3 position=(813.5, 62.90005, 1309.455) goal=(813.5, 62.93, 1314.0) navigation={ "state": "following", "nodes": 1, "expansions": 0, "waypoints": 17, "waypoint_index": 8, "waypoint_target": (813.5, 62.93, 1310.0), "stuck_seconds": 0.0, "replans": 0, "node_limit": 2048, "radius_m": 16 }
+RESIDENT 4 position=(810.5001, 62.90019, 1311.137) goal=(810.5, 62.93, 1306.0) navigation={ "state": "following", "nodes": 1, "expansions": 0, "waypoints": 17, "waypoint_index": 6, "waypoint_target": (810.5, 62.93, 1311.0), "stuck_seconds": 0.0, "replans": 0, "node_limit": 2048, "radius_m": 16 }
+FAIL all four residents walk and reverse on their own streets
+PASS combined population restores into fresh native owner
+PASS all patrol legs restore exactly
+PASS all resident identities and positions restore exactly
+[TerrainRewrite] Temporary test world: save skipped
+MULTIPLE_STREETS failures=1
