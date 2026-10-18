@@ -59,6 +59,7 @@ func _ready() -> void:
 	material=_option(column,"Material",["Brick","Wood","Concrete","Metal"],"material")
 	rotation_choice=_option(column,"Rotation",["0°","90°","180°","270°"],"rotation")
 	prefab=_option(column,"Prefab",["Single blocks"],"prefab")
+	prefab.tooltip_text="Outline: red = blocked; amber = furnishing or ground checks on placement; green = block space clear. Materials are checked when placing."
 	survey_button=Button.new();survey_button.text="Survey ground for selected prefab";survey_button.focus_mode=Control.FOCUS_NONE;column.add_child(survey_button)
 	survey_button.pressed.connect(func(): survey_requested.emit())
 	preparation_status_button=Button.new();preparation_status_button.text="Reopen site preparation";preparation_status_button.focus_mode=Control.FOCUS_NONE;column.add_child(preparation_status_button);preparation_status_button.hide()

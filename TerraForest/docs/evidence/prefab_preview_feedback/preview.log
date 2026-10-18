@@ -1,0 +1,15 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] New world
+[TerrainRewrite] New world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+PASS actual world ready
+PASS real camera ray targets the construction fixture
+PASS clear block-only prefab shows green
+PASS furnished prefab shows amber for deferred attachment checks
+PASS preview checks do not change blocks or models
+PASS construction legend fits the visible developer panel
+PASS player overlap overrides amber with blocked red
+[TerrainRewrite] Temporary test world: save skipped
+PREFAB_PREVIEW_FEEDBACK failures=0

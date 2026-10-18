@@ -11,11 +11,12 @@ func key(code: int,pressed: bool) -> void:
 func tap(code: int) -> void:key(code,true);key(code,false)
 func _initialize() -> void:run.call_deferred()
 func run() -> void:
-	var game=load("res://demo/world.tscn").instantiate();game.temporary_world=true;root.add_child(game)
+	var game=load("res://demo/world.tscn").instantiate();game.temporary_world=true;game.ground_enabled=true;root.add_child(game)
 	var deadline:=Time.get_ticks_msec()+45000
 	while game.loading_active and Time.get_ticks_msec()<deadline:await process_frame
 	check(not game.loading_active,"world ready")
 	game.set_physics_process(false);game._clear_motion();game.app_focused=true;Input.mouse_mode=Input.MOUSE_MODE_CAPTURED
+	if game.session_menu.developer:game.session_menu.toggle_developer()
 	var hud=game.player_hud;hud.equip(1)
 	var before: PackedByteArray=hud.capture_snapshot()
 	key(KEY_W,true);tap(KEY_QUOTELEFT)
@@ -40,7 +41,7 @@ func run() -> void:
 	for i in 4:await RenderingServer.frame_post_draw
 	root.get_texture().get_image().save_png("res://reports/developer_belt/development.png")
 	tap(KEY_QUOTELEFT)
-	check(not hud.developer_belt and hud.active_slot==1 and game.equipped_tool==2 and hud.belt[0].text.contains("Pickaxe"),"leaving dev restores gameplay belt and previously selected item")
+	check(not hud.developer_belt and hud.active_slot==1 and game.equipped_tool==2 and hud.belt[0].item_label.text=="Pickaxe","leaving dev restores gameplay belt and previously selected item")
 	check(hud.capture_snapshot()==before,"editor actions do not mutate carried inventory")
 	tap(KEY_QUOTELEFT);check(hud.developer_slot==1 and game.tool==2,"returning to dev restores its previous selection")
 	tap(KEY_QUOTELEFT);key(KEY_W,false)

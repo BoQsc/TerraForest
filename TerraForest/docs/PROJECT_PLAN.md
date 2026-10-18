@@ -1,3 +1,9 @@
+> 2026-10-18 editor feedback: furnished prefab previews now show amber for
+> deferred attachment checks, with a visible colour legend; vehicle/player
+> overlap blocks preview. Real-ray non-mutating preview and developer-belt
+> regression pass. Exact model-conflict preview remains deferred to placement.
+> Evidence: evidence/prefab_preview_feedback/. Water unchanged.
+
 > 2026-10-18 bridge/resident integration: two opposing patrol residents cross
 > and return over the metal-railed bridge with combined model/block readiness.
 > Minimum separation 0.789 m; route work remains capped at 12. Functional

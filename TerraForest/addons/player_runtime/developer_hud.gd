@@ -50,6 +50,7 @@ Right mouse: place")
 			option("Material",["Brick","Wood","Concrete","Metal"],game.structure_material,func(i: int):game._construction_selection("material",i))
 			option("Rotation",["0 degrees","90 degrees","180 degrees","270 degrees"],game.structure_rotation,func(i: int):game._construction_selection("rotation",i))
 			button("Prefabs / detailed settings",func():game.session_menu.show_page("Building"))
+			label("Prefab outline: red means blocked; amber needs furnishing or ground checks on placement; green means block space is clear. Materials are checked when placing.")
 		4:
 			label("Left mouse: remove
 Right mouse: place")

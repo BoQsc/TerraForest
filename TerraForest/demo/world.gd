@@ -60,6 +60,8 @@ var _prefab_preview_material := StandardMaterial3D.new()
 var _prefab_preview_timer := 0.0
 var _prefab_preview_signature: Array = []
 var _prefab_preview_clear := false
+var _prefab_preview_needs_checks := false
+var _prefab_preview_asset: Resource
 var telemetry := Label.new()
 var _telemetry_time: float = 0.0
 var _lake_notice: String = ""
@@ -406,6 +408,7 @@ func _prefab_player_clear(bounds: AABB) -> bool:
 
 func _invalidate_prefab_preview() -> void:
 	_survey_generation+=1
+	_prefab_preview_asset=null
 	_prefab_preview_signature.clear()
 	if not _foundation_placement.is_empty(): foundation_check.status="Layout changed; place again"
 	_prefab_preview_timer=0.0
@@ -449,11 +452,15 @@ func _update_prefab_preview(delta: float) -> void:
 	if signature != _prefab_preview_signature:
 		_prefab_preview_clear=structures.blocks.can_place_prefab(asset,hit.target,structure_rotation)
 		_prefab_preview_signature=signature
+	if _prefab_preview_asset!=asset:
+		_prefab_preview_asset=asset
+		_prefab_preview_needs_checks=asset.has_meta("frontage_version") or not asset.get_model_attachments().is_empty()
 	prefab_preview.position=bounds.position
 	prefab_preview.scale=bounds.size
-	_prefab_preview_material.albedo_color=Color("66f2b3") if _prefab_preview_clear and _prefab_player_clear(bounds) else Color("ff705f")
-	if asset.has_meta("frontage_version") and _prefab_preview_clear and _prefab_player_clear(bounds):
-		_prefab_preview_material.albedo_color=Color("edc66a") # Support is checked on placement.
+	var clear: bool=_prefab_preview_clear and _prefab_player_clear(bounds) and not world_vehicle.overlaps_edit(bounds)
+	_prefab_preview_material.albedo_color=Color("ff705f")
+	if clear:
+		_prefab_preview_material.albedo_color=Color("edc66a") if _prefab_preview_needs_checks else Color("66f2b3")
 	prefab_preview.show()
 
 func _message(text: String) -> void:
