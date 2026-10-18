@@ -269,7 +269,7 @@ func _process(delta: float) -> void:
 	_record_stage("lighting schedule",(Time.get_ticks_usec()-lighting_begin)/1000.0)
 	autosave_timer += delta
 	var quiet: bool = Time.get_ticks_usec() - last_interaction_us >= 3000000
-	if autosave_timer >= 15.0 and changed_since_save and not pending_edit and quiet and backend.status() == "idle" and backend.queued() == 0:
+	if not temporary and autosave_timer >= 15.0 and changed_since_save and not pending_edit and quiet and backend.status() == "idle" and backend.queued() == 0:
 		var save_begin:=Time.get_ticks_usec()
 		if backend.submit({"kind": "save"}):
 			autosave_timer = 0.0
@@ -384,8 +384,8 @@ func _receive(result: Dictionary) -> void:
 			message_changed.emit(text)
 			return
 		if material is ShaderMaterial:
-			material.set_shader_parameter("regional_temperate",backend.world_generator in [7,8,9,10,11])
-			material.set_shader_parameter("alpine_snow_enabled",backend.world_generator in [7,8,9,10,11])
+			material.set_shader_parameter("regional_temperate",backend.world_generator in [7,8,9,10,11,12])
+			material.set_shader_parameter("alpine_snow_enabled",backend.world_generator in [7,8,9,10,11,12])
 		message_changed.emit(text)
 		initialized.emit(text)
 		schedule_timer = 0.0

@@ -1,0 +1,34 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] New world
+[TerrainRewrite] New world
+[terrain-hitch] mesh upload/create 801.06 ms at 15947
+[terrain-hitch] staging frame 15109.95 ms at 30256
+[terrain-hitch] controller loading 5485.85 ms at 35746
+[terrain-hitch] base controller 5517.05 ms at 35777
+[terrain-hitch] controller process 5518.92 ms at 35779
+[terrain-hitch] world process 5520.53 ms at 35781
+[terrain-hitch] prepared subtree attach 104.78 ms at 77023
+[terrain-hitch] staging frame 356.03 ms at 77274
+[terrain-hitch] controller loading 51.17 ms at 77425
+[terrain-hitch] base controller 169.6 ms at 77544
+[terrain-hitch] controller process 277.67 ms at 77652
+[terrain-hitch] world process 347.5 ms at 77722
+[terrain-hitch] LOD coverage 244.21 ms at 78657
+[terrain-hitch] LOD schedule/cut/evict 253.0 ms at 78665
+[terrain-hitch] base controller 7630.31 ms at 107302
+[terrain-hitch] controller process 7631.4 ms at 107303
+[terrain-hitch] world process 7632.4 ms at 107304
+[terrain-hitch] controller loading 7986.08 ms at 115615
+[terrain-hitch] base controller 7987.55 ms at 115616
+[terrain-hitch] controller process 7988.52 ms at 115617
+[terrain-hitch] world process 7989.58 ms at 115618
+STARTUP_DIAGNOSTIC { "ready": true, "roots": 64, "root_total": 64, "local": 9, "local_total": 9, "queued": 0, "worker": "idle" } lakes={ "structure_contact_bytes": 0, "terrain_contact_bytes": 46219424, "pending_vertical": 0, "vertical_steps": 0, "water_ml": 46636175680, "active_cells": 0, "regions": 2596, "pending_regions": 1, "dirty_meshes": 2733, "mesh_batch_active": false, "mesh_publish_pending": false, "published_mesh_batch": 0, "query_cache_bytes": 0, "query_builds": 0, "query_cache_hits": 0, "mesh_snapshot_bytes": 0, "fill_active": true, "fill_remaining_ml": -1, "sampled_nodes": 1891755, "cache_hits": 0, "cached_region_rebuilds": 0, "cell_steps": 0, "changes": 422326, "step_us": 24, "max_step_us": 10361, "mesh_us": 0, "max_mesh_us": 0, "capacity_reached": false, "vacancy_bytes": 0, "resident_cell_bytes": 69978016, &"lakes": 4, &"ready": 3, &"outstanding_slices": 1, &"resident_occupancy_bytes": 69978016, &"occupancy_failure": "", &"bucket_native_us": 0, &"max_bucket_native_us": 0, &"exclusion_notify_us": 0, &"accept_patch_us": 19, &"hull_snapshot_us": 16, &"mesh_publish_us": 0, &"max_mesh_publish_us": 0, &"mesh_commit_us": 0, &"max_mesh_commit_us": 0, &"staged_meshes": 0, &"render_ready": false } catalog=[{ "id": 1, "state": "Ready", "reason": "", "level": 36.4662971496582, "origin": (174.0, 30.0, 157.0) }, { "id": 2, "state": "Ready", "reason": "", "level": 72.1398773193359, "origin": (1205.0, 60.0, 203.0) }, { "id": 3, "state": "Ready", "reason": "", "level": 38.8414192199707, "origin": (169.0, 26.0, 1172.0) }, { "id": 4, "state": "Preparing", "reason": "", "level": 112.570587158203, "origin": (1184.0, 100.0, 1189.0) }] label=Preparing destination
+World overview: 64/64 regions | Local collision: 9/9
+Nearby-first: explicit 320 m view until outer coverage is ready
+Worker: idle | queued 0 | elapsed 179.9 s
+Preparing water: 0 cached regions, 0 pending, 2733 surfaces
+FAIL normal generated world starts
+[TerrainRewrite] ERROR: invalid addon capture; previous canonical snapshot retained
+COMBINED_PREPARATION failures=1

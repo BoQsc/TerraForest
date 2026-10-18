@@ -1,0 +1,8 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS Terrain contact triangle cache restores
+PASS Analytic pyramid volume sets the correct water height rather than interpolating four flat corners
+PASS Contact retains the interior terrain peak and corner heights
+PASS Buried root reproduces dry-origin/wet-shoot mismatch
+PASS Vegetation rejects submerged buried roots while preserving above-water and dry roots
+WATER_VEGETATION_ROOTS failures=0

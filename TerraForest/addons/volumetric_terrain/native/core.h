@@ -8,6 +8,7 @@ constexpr u32 SAVE_MAGIC=0x32575254u, MESH_MAGIC=0x324d5254u, REPLY_MAGIC=0x3250
 // Legacy format-1 worlds use generator 1. New generators must keep that reader.
 constexpr u32 MATERIAL_FIELD_GENERATOR_ID=5; // Empty base for independently editable material channels.
 constexpr u32 WALKABLE_CAVE_GENERATOR_ID=6; // New immutable landscape profile; never repurpose saved IDs.
+constexpr u32 LAKE_WORLD_GENERATOR_ID=12; // Regional world with one substantial lake.
 constexpr u32 COVERED_MINE_GENERATOR_ID=11; // Terrain-aware mine floor datum.
 constexpr u32 POI_UNDERGROUND_GENERATOR_ID=10; // Rare underground owned by surface locations.
 constexpr u32 ROUTED_CHAMBER_GENERATOR_ID=9; // Continuous network floors.

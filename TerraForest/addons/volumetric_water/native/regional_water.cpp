@@ -928,7 +928,19 @@ double NativeRegionalWater::depth_at(const Vector3 &point) const {
     return std::max(0.0,top-point.y);
 }
 PackedByteArray NativeRegionalWater::placement_mask(const TypedArray<Transform3D> &transforms) const {
-    PackedByteArray result;if(transforms.size()>512)return result;result.resize(transforms.size());for(int i=0;i<transforms.size();++i){Transform3D t=transforms[i];result.set(i,depth_at(t.origin)>0?1:0);}return result;
+    PackedByteArray result;if(transforms.size()>512)return result;result.resize(transforms.size());
+    // Vegetation roots are sunk into terrain (ground cover by 3 cm). Probe the
+    // root and just above it; a solid root alone must not admit submerged grass.
+    // Only local occupancy matters here, not the full swimming-depth column.
+    auto wet=[&](Vector3 point){
+        if(!point.is_finite())return true;
+        Vector3i p=cell(point);const Region *r=get(p);if(!r)return false;
+        int j=index(p);if(!r->water[j])return false;
+        auto shape=surface_profile(p);double lo=0,hi=0;
+        return shape.wet_interval(point.x-p.x*.5,point.y-p.y*.5,point.z-p.z*.5,shape.head(r->water[j]),lo,hi)&&hi>point.y-p.y*.5;
+    };
+    for(int i=0;i<transforms.size();++i){Transform3D t=transforms[i];result.set(i,wet(t.origin)||wet(t.origin+Vector3(0,.08,0))?1:0);}
+    return result;
 }
 void NativeRegionalWater::preserve_mesh_region(Key k){
     if(!batch_active||!mesh_snapshot_dependencies.count(k)||mesh_snapshot.count(k)||mesh_snapshot_absent.count(k))return;

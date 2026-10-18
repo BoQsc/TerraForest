@@ -14,7 +14,7 @@ from run_godot_check import execute
 
 
 def prepare(engine, worlds, folder, destination="combined_gameplay", layout="cottages"):
-    if layout not in ('cottages', 'mixed', 'regional', 'poi'):
+    if layout not in ('cottages', 'mixed', 'regional', 'poi', 'lakes'):
         raise ValueError("Invalid settlement layout")
     if not re.fullmatch(r'[A-Za-z_][A-Za-z0-9_]{0,47}', destination):
         raise ValueError("Invalid destination slot")
@@ -33,7 +33,7 @@ def prepare(engine, worlds, folder, destination="combined_gameplay", layout="cot
         base = [str(engine), '--path', str(ROOT), '--fullscreen', '--resolution',
                 '1920x1080', '--max-fps', '60', '--script',
                 'res://tools/prepare_combined_world.gd', '--',
-                '--world-slot=' + slot, '--world-generator=' + ('11' if layout == 'poi' else '8' if layout == 'regional' else '4'), '--world-seed=1703',
+                '--world-slot=' + slot, '--world-generator=' + ('12' if layout == 'lakes' else '11' if layout == 'poi' else '8' if layout == 'regional' else '4'), '--world-seed=1703',
                 '--ground-cover', '--actors', '--checkpoint-layout=' + layout, '--checkpoint-report=' + str(report),
                 '--derived-cache=user://' + slot]
         metadata = dict(slot=slot, layout=layout, **revision_metadata(), phases=[])
@@ -42,7 +42,7 @@ def prepare(engine, worlds, folder, destination="combined_gameplay", layout="cot
             phase_dir.mkdir()
             command = base + (['--reopen-checkpoint', '--gameplay-construction', '--vehicle-fleet'] if phase == 'reopen' else [])
             print(f'{phase}: preparing the existing settlement workflow at 1920x1080 / cap 60.', flush=True)
-            result = execute(command, phase_dir, 270, 'COMBINED_PREPARATION failures=0')
+            result = execute(command, phase_dir, 540 if layout == "lakes" and phase == "create" else 270, 'COMBINED_PREPARATION failures=0')
             metadata['phases'].append(dict(command=command, result=result))
             (folder / 'run.json').write_text(json.dumps(metadata, indent=2))
             if not result['passed']:
@@ -60,7 +60,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--godot')
     parser.add_argument('--destination', default='combined_gameplay', help='Create only when this save slot is absent')
-    parser.add_argument('--layout', choices=('cottages', 'mixed', 'regional', 'poi'), default='cottages')
+    parser.add_argument('--layout', choices=('cottages', 'mixed', 'regional', 'poi', 'lakes'), default='cottages')
     args = parser.parse_args()
     config, _ = parse_args(['--godot', args.godot] if args.godot else [])
     worlds = Path(os.environ['APPDATA']) / 'Godot/app_userdata/TerraForest/worlds'

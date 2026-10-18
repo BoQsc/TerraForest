@@ -83,6 +83,13 @@ float World::height(float x,float z)const{
   if(generator_id>=REGIONAL_WORLD_GENERATOR_ID)h=regional_height(x,z,h);
   for(int i=0;i<basin_count;i++){
    const auto &b=basins[i];float dx=x-b.x,dz=z-b.z,d2=dx*dx+dz*dz;
+   if(generator_id>=LAKE_WORLD_GENERATOR_ID&&i==0){
+    // Wide shallow basin: about 126 m wet diameter, five metres maximum depth.
+    if(d2>=9216.f)continue;
+    if(d2<=6400.f)return b.level-5.f+8.f*d2/6400.f;
+    float t=smooth((__builtin_sqrtf(d2)-80.f)/16.f);
+    return (b.level+3.f)*(1.f-t)+h*t;
+   }
    if(d2>=1600.f)continue;
    // Closed rim at radius 24; outer annulus blends back into the landscape.
    if(d2<=576.f)return b.level-9.f+12.f*d2/576.f;
@@ -143,7 +150,7 @@ void World::init(int p_seed,u32 generator){
   // Entrance is inside that site's graded footprint, away from its arterial.
   const V3 owner=sites[2].position;
   float floor=mx(12.f,owner.y-24.f);
-  if(generator_id==COVERED_MINE_GENERATOR_ID){
+  if(generator_id>=COVERED_MINE_GENERATOR_ID){
    // Survey once during generation, not on density queries. Reserve cover for
    // the largest dome over the entire underground footprint, including branches.
    float ceiling=255.f;
@@ -374,7 +381,7 @@ bool World::deserialize(const u8*data,int n){
  Reader r{data,n-4};if(r.u()!=SAVE_MAGIC)return false;u32 format=r.u();if(format!=1&&format!=2)return false;
  int s=int(r.u()),pc=int(r.u()),bc=int(r.u()),rev=int(r.u()),ed=int(r.u());
  u32 generator=format==1?1:r.u();
- if(!r.good||generator<1||generator>COVERED_MINE_GENERATOR_ID)return false;
+ if(!r.good||generator<1||generator>LAKE_WORLD_GENERATOR_ID)return false;
  if(pc<0||pc>MAX_PAGES||bc<0||bc>2000000||i64(pc)*(4+PAGE_SAMPLES*3)+i64(bc)*8+(format==1?28:32)!=n-4)return false;
  World t;t.build_control=build_control;t.init(s,generator);t.revision=rev;t.edits=ed;t.surface_style=surface_style;
  for(int i=0;i<pc;i++){
@@ -1003,7 +1010,7 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
  }
  else if(cmd==4){w.serialize(out);}
  else if(cmd==5){if(!w.deserialize(data+4,n-4))out.p[8]=1;out.u(w.revision);out.u(w.pages.n);out.u(w.blocks.n);}
- else if(cmd==6){int seed=int(r.u());u32 generator=n==12?r.u():1;if(!r.good||(n!=8&&n!=12)||generator<1||generator>COVERED_MINE_GENERATOR_ID){out.p[8]=1;return;}BuildControl *control=w.build_control;w.release();w=World{};w.build_control=control;w.init(seed,generator);}
+ else if(cmd==6){int seed=int(r.u());u32 generator=n==12?r.u():1;if(!r.good||(n!=8&&n!=12)||generator<1||generator>LAKE_WORLD_GENERATOR_ID){out.p[8]=1;return;}BuildControl *control=w.build_control;w.release();w=World{};w.build_control=control;w.init(seed,generator);}
  else if(cmd==7){V3 p=r.vec();if(!r.good||!(ab(p.x)<=10000&&ab(p.y)<=10000&&ab(p.z)<=10000)){out.p[8]=1;return;}out.f(w.height(p.x,p.z));out.f(w.sample(fl(p.x),fl(p.y),fl(p.z)));}
  else if(cmd==8){ // Deterministic construction proof; not a replay list.
   int bx=1472,bz=1440,by=int(w.height(float(bx),float(bz)))+1;
@@ -1191,6 +1198,12 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
   out.u(w.basin_count);
   for(int i=0;i<w.basin_count;i++){
    const auto &b=w.basins[i];
+   if(w.generator_id>=LAKE_WORLD_GENERATOR_ID&&i==0){
+    // Catalog spacing defines bounds only; regional water retains 0.5 m cells.
+    out.vec({b.x-68.f,float(fl(b.level))-6.f,b.z-68.f});
+    out.u(68);out.u(4);out.u(68);out.f(2.f);out.f(b.level);
+    out.vec({b.x,b.level-4.f,b.z});continue;
+   }
    out.vec({b.x-28.f,float(fl(b.level))-12.f,b.z-28.f});
    out.u(56);out.u(16);out.u(56);out.f(1.f);out.f(b.level);
    out.vec({b.x,b.level-4.f,b.z});

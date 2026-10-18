@@ -1,0 +1,12 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS Terrain contact triangle cache restores
+PASS Analytic pyramid volume sets the correct water height rather than interpolating four flat corners
+PASS Contact retains the interior terrain peak and corner heights
+FAIL Contact triangles and exact quantity roundtrip byte-for-byte
+PASS Oversized contact list is rejected atomically
+PASS Non-finite cached triangle is rejected atomically
+PASS Partial fill exposes the terrain peak above water
+FAIL Rendered top triangles respect the interior terrain peak, not only floor corners
+PASS Contact clipping does not delete stored water
+WATER_CONTACT_VOLUME failures=2

@@ -26,16 +26,17 @@ func run()->void:
   if arg.begins_with("--checkpoint-report="):report_path=arg.trim_prefix("--checkpoint-report=")
   if arg=="--reopen-checkpoint":reopening=true
   if arg=="--checkpoint-layout=mixed":mixed=true
-  if arg in ["--checkpoint-layout=regional","--checkpoint-layout=poi"]:mixed=true;regional=true
+  if arg in ["--checkpoint-layout=regional","--checkpoint-layout=poi","--checkpoint-layout=lakes"]:mixed=true;regional=true
  if report_path.is_empty():quit(1);return
- game=load("res://demo/world.tscn").instantiate();root.add_child(game)
+ game=load("res://demo/world.tscn").instantiate();game.max_fps=60;game.background_fps=60;game.lakes.offline_preparation=true;root.add_child(game)
  # Offline staging is committed explicitly after the complete generation batch.
  # A periodic save between survey and grading can invalidate admission.
  game.terrain.autosave_timer=-3600.0
  game.set_physics_process(false) # Compare restored authoritative state before any patrol tick.
  # Cold offline generation includes all generated lake caches. This is not a
  # runtime arrival budget; the independent preparation runner records duration.
- var started:bool=await wait_until(func():return not game.loading_active,180)
+ var bake_timeout:int=360 if "--checkpoint-layout=lakes" in OS.get_cmdline_user_args() else 180
+ var started:bool=await wait_until(func():return not game.loading_active,bake_timeout)
  if not started:print("STARTUP_DIAGNOSTIC ",game.terrain.loading_state(game.player.position,game.fly)," lakes=",game.lakes.statistics()," catalog=",game.lakes.descriptions()," label=",game.loading_label.text)
  if not require(started,"normal generated world starts"):await finish(false);return
  game.set_physics_process(false);game._clear_motion();game.app_focused=true

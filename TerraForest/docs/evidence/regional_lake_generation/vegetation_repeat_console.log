@@ -1,0 +1,12 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[terrain-hitch] restore volumetric_water 211.0 ms at 6573
+[TerrainRewrite] World loaded
+[TerrainRewrite] World loaded
+[terrain-hitch] receive startup 247.18 ms at 6590
+[terrain-hitch] receive 248.76 ms at 6591
+[TerrainRewrite] Ready: map coverage and local collision are active
+[TerrainRewrite] Ready: map coverage and local collision are active
+REGIONAL_LAKE_WORLD failures=0 stats={"accept_patch_us":0,"active_cells":0,"arrival_ms":860,"bucket_native_us":0,"cache_hits":2754,"cached_load_ms":24871,"cached_region_rebuilds":0,"capacity_reached":false,"cell_steps":0,"changes":0,"dirty_meshes":0,"exclusion_notify_us":142,"fill_active":false,"fill_remaining_ml":-1,"hull_snapshot_us":0,"lakes":4,"max_bucket_native_us":0,"max_mesh_commit_us":20376,"max_mesh_publish_us":21063,"max_mesh_us":2519,"max_step_us":0,"mesh_batch_active":false,"mesh_commit_us":2400,"mesh_publish_pending":false,"mesh_publish_us":3,"mesh_snapshot_bytes":0,"mesh_us":162,"occupancy_failure":"","outstanding_slices":0,"pending_regions":0,"pending_vertical":0,"published_mesh_batch":4,"query_builds":0,"query_cache_bytes":57367296,"query_cache_hits":0,"ready":4,"refill_seen":false,"regions":2754,"render_ready":true,"resident_cell_bytes":84803384,"resident_occupancy_bytes":84803384,"sampled_nodes":0,"staged_meshes":0,"stationary_frame_max_ms":83.686,"stationary_frame_p95_ms":79.106,"step_us":0,"structure_contact_bytes":0,"submerged_ground_roots":0,"terrain_contact_bytes":59598776,"vacancy_bytes":0,"vertical_steps":0,"visible_ground_roots":4221,"water_ml":49666489221}
+[TerrainRewrite] Temporary test world: save skipped

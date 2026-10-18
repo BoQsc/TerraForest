@@ -1,0 +1,7 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS large closed shallow basin seed=1703
+PASS large closed shallow basin seed=1
+PASS large closed shallow basin seed=42
+PASS large closed shallow basin seed=9999
+REGIONAL_LAKE_LAYOUT failures=0

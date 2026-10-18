@@ -27,6 +27,8 @@ var _builder_reused:=false
 var _revision:=-1
 var _token:=0
 var _epoch:=-1
+# Offline preparation publishes completed generated fills, not each frontier.
+var offline_preparation:=false
 var _filling_id:=0
 var _meshes:Dictionary={}
 var _staged_meshes:Dictionary={}
@@ -133,7 +135,7 @@ func _process(delta:float) -> void:
    break
  # Show edits before advancing their flow. Native immutable batches retain
  # that state if publication spans more than one frame.
- _publish_meshes()
+ if not offline_preparation or _filling_id==0:_publish_meshes()
  # Explicit lake creation only. Resting or edited water has no flow tick.
  if _filling_id!=0:water.advance(2048,delta)
  if not _busy and not terrain.pending_edit and _occupancy_failure.is_empty():

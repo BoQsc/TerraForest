@@ -18,7 +18,7 @@ def parse_args(argv=None):
     parser.add_argument('--temporary', action='store_true')
     parser.add_argument('--scene', choices=['world', 'structures', 'worlds'], default='world')
     parser.add_argument('--block-textures', choices=['original', 'terraforest'], help='Override the project block material set for this launch')
-    parser.add_argument('--generator', type=int, choices=[1, 2, 3, 4, 6, 7, 8, 9, 10, 11], help='New worlds: 1 original, 2 mountains/caves, 3 ore veins, 4 ore veins and lakes, 6 shallow cave entrances with ore veins and lakes, 7 regional roads and settlement ground, 8 regional world with floored dome caves, 9 connected cave floors, 10 provisional owned mine, 11 owned mine with terrain cover')
+    parser.add_argument('--generator', type=int, choices=[1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12], help='New worlds: 1 original, 2 mountains/caves, 3 ore veins, 4 ore veins and lakes, 6 shallow cave entrances with ore veins and lakes, 7 regional roads and settlement ground, 8 regional world with floored dome caves, 9 connected cave floors, 10 provisional owned mine, 11 owned mine with terrain cover, 12 regional world with a larger lake')
     parser.add_argument('--seed', type=int, help='New-world seed; existing saves retain their generator and seed')
     parser.add_argument('--slot', help='Save slot; generated profiles automatically receive separate slots')
     parser.add_argument('--dry-run', action='store_true', help='Print launch settings without running Godot')

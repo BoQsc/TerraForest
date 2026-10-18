@@ -1,3 +1,31 @@
+## Integrated larger lake: cached review passed, shoreline integration open - 2026-10-18
+
+Profile 12 preserves POI-owned underground and adds a roughly 126-metre wet-diameter,
+five-metre-deep lake alongside three ponds. Four-seed layout checks pass. Full
+17-building world preparation and fresh-process reopen passed (134 s and 25 s),
+publishing development save regional_lake_20261018. Earlier failed bake logs remain
+in docs/evidence/regional_lake_generation; offline generation now suppresses
+intermediate water mesh publication. Existing static water mechanics are unchanged.
+
+A repeated cached review exposed a 36.9-second unnecessary addon snapshot capture
+in a temporary world. Capture now exits for temporary/write-disabled worlds, and
+temporary streams skip autosave scheduling. A focused callback-count regression
+preserves writable save/shutdown capture. The corrected 1920x1080 shore review
+passes in 30.85 seconds: cached load 18.28 s, arrival 0.90 s, 2,754 cache hits,
+zero refill/sampling/rebuilds, all four lakes ready. Stationary 180-frame p95 is
+16.713 ms, max 16.859 ms; this is not a travel or long-run performance qualification.
+
+Shoreline ground cover is corrected: native placement checks just above the buried
+root as well as the root itself. A contact fixture and two integrated checks pass;
+zero submerged roots among 4,221 retained instances, confirmed visually. However,
+the repeated stationary p95 is now about 79 ms: unresolved performance failure.
+Investigate scene work/frame pacing before launcher promotion. Cached loads in
+these runs were 24.9-26.5 s with no refill/rebuild. The old contact-volume test also
+has two failing assertions (retained separately); do not claim full-suite success.
+The basin is still circular and visually sparse; distinct location composition and
+broad travel/loading remain unfinished. Default launchers remain generated_world_v3.
+Do not expand ambient cave networks or reopen accepted water mechanics.
+
 ## Mine road/yard integration verified - 2026-10-18
 
 The development POI world now connects the mine yard to the eastern arterial with

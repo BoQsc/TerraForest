@@ -1,0 +1,100 @@
+{
+  "slot": "combined_stage_6b20ff2c13c24b96b7b90fccc050a949",
+  "layout": "lakes",
+  "revision": "45d537852f600f2758d0ad4f4ac02cde924bd8dc",
+  "worktree_changes": [
+    " M TerraForest/addons/volumetric_terrain/bin/terrain_core.windows.template_release.x86_64.dll",
+    " M TerraForest/addons/volumetric_terrain/bin/terrain_core.windows.x86_64.dll",
+    " M TerraForest/addons/volumetric_terrain/generated_layout.gd",
+    " M TerraForest/addons/volumetric_terrain/native/core.cpp",
+    " M TerraForest/addons/volumetric_terrain/native/core.h",
+    " M TerraForest/addons/volumetric_terrain/terrain_backend.gd",
+    " M TerraForest/addons/volumetric_terrain/terrain_stream.gd",
+    " M TerraForest/addons/volumetric_water/lake_world.gd",
+    " M TerraForest/demo/world_launch.gd",
+    " M TerraForest/tests/regional_world_view.gd",
+    " M TerraForest/tools/prepare_combined_world.gd",
+    " M TerraForest/tools/prepare_combined_world.py",
+    " M TerraForest/tools/run.py",
+    "?? TerraForest/tests/regional_lake_layout.gd",
+    "?? TerraForest/tests/regional_lake_world.gd"
+  ],
+  "git_metadata_available": true,
+  "phases": [
+    {
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--fullscreen",
+        "--resolution",
+        "1920x1080",
+        "--max-fps",
+        "60",
+        "--script",
+        "res://tools/prepare_combined_world.gd",
+        "--",
+        "--world-slot=combined_stage_6b20ff2c13c24b96b7b90fccc050a949",
+        "--world-generator=12",
+        "--world-seed=1703",
+        "--ground-cover",
+        "--actors",
+        "--checkpoint-layout=lakes",
+        "--checkpoint-report=C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\combined_preparation\\20261018T074957422425Z\\checkpoint.json",
+        "--derived-cache=user://combined_stage_6b20ff2c13c24b96b7b90fccc050a949"
+      ],
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "pid": 16264,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 133.98293289999856,
+        "passed": true
+      }
+    },
+    {
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--fullscreen",
+        "--resolution",
+        "1920x1080",
+        "--max-fps",
+        "60",
+        "--script",
+        "res://tools/prepare_combined_world.gd",
+        "--",
+        "--world-slot=combined_stage_6b20ff2c13c24b96b7b90fccc050a949",
+        "--world-generator=12",
+        "--world-seed=1703",
+        "--ground-cover",
+        "--actors",
+        "--checkpoint-layout=lakes",
+        "--checkpoint-report=C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\combined_preparation\\20261018T074957422425Z\\checkpoint.json",
+        "--derived-cache=user://combined_stage_6b20ff2c13c24b96b7b90fccc050a949",
+        "--reopen-checkpoint",
+        "--gameplay-construction",
+        "--vehicle-fleet"
+      ],
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "pid": 11260,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 25.24665190000087,
+        "passed": true
+      }
+    }
+  ],
+  "publication": {
+    "created": true,
+    "slot": "regional_lake_20261018",
+    "source_slot": "combined_stage_6b20ff2c13c24b96b7b90fccc050a949",
+    "source_sha256": "32a9b6312ad2bfcf74ea8d5ace709fcbc6436b6dfe6d2fd1cb4c64920a90379f"
+  }
+}

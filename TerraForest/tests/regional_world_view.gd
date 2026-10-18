@@ -5,7 +5,7 @@ func run()->void:
  var game=load("res://demo/world.tscn").instantiate();game.temporary_world=true;root.add_child(game)
  var deadline:=Time.get_ticks_msec()+60000
  while game.loading_active and Time.get_ticks_msec()<deadline:await process_frame
- if game.loading_active or game.terrain.backend.world_generator not in [7,8,9,10,11]:quit(1);return
+ if game.loading_active or game.terrain.backend.world_generator not in [7,8,9,10,11,12]:quit(1);return
  game.set_physics_process(false);game._clear_motion()
  var plan:Dictionary=preload("res://addons/volumetric_terrain/generated_layout.gd").describe(game.terrain.backend.world_seed,game.terrain.backend.world_generator)
  var site_index:=0
