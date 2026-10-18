@@ -256,7 +256,14 @@ func prepare_outer_sites()->bool:
     for i in game.structure_prefabs.size():
      if game.structure_prefabs[i].resource_name==title:selection.append(i);break
    if not require(selection.size()==district.sources.size(),"district sources available: "+district.title):return false
-  game._frontage_sources_construction(selection,district.lots,district.width,district.gap,game.terrain.backend.world_seed+int(site.id),district.title,district.streets)
+  var layout_seed:int=game.terrain.backend.world_seed+int(site.id)
+  if districts and selection.size()==2:
+   var sources:Array[Resource]=[]
+   for index:int in selection:sources.append(game.structure_prefabs[index])
+   var mixed:Dictionary=preload("res://addons/structures/regional_districts.gd").mixed_layout_seed(sources,layout_seed,district.lots,district.streets)
+   if not require(mixed.get("ok",false),"regional mixed building choices available"):return false
+   layout_seed=mixed.seed
+  game._frontage_sources_construction(selection,district.lots,district.width,district.gap,layout_seed,district.title,district.streets)
   if not require(await wait_until(func():return game.structure_prefabs.size()==count+1,10),"outer furnished street composed"):return false
   var asset:Resource=game.structure_prefabs[game.structure_prefab_index]
   if districts:asset.set_meta("entrance_paths",true)

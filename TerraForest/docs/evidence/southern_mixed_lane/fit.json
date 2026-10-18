@@ -1,0 +1,110 @@
+{
+  "failures": 0,
+  "rows": [
+    {
+      "doors": 4,
+      "layout_seed": 4,
+      "ok": true,
+      "quality": {
+        "grade": 45.0,
+        "issues": [],
+        "max_cut": 0.0005340576171875,
+        "max_fill": 0.14434814453125,
+        "relief": 0.144882202148438,
+        "site": "Southern homes/workshop",
+        "status": "pass"
+      },
+      "seed": 0
+    },
+    {
+      "doors": 4,
+      "layout_seed": 5,
+      "ok": true,
+      "quality": {
+        "grade": 43.0,
+        "issues": [],
+        "max_cut": 0.0,
+        "max_fill": 1.12097930908203,
+        "relief": 1.12097930908203,
+        "site": "Southern homes/workshop",
+        "status": "pass"
+      },
+      "seed": 1
+    },
+    {
+      "doors": 4,
+      "layout_seed": 46,
+      "ok": true,
+      "quality": {
+        "grade": 62.0,
+        "issues": [],
+        "max_cut": 0.354179382324219,
+        "max_fill": 0.0951004028320313,
+        "relief": 0.44927978515625,
+        "site": "Southern homes/workshop",
+        "status": "pass"
+      },
+      "seed": 42
+    },
+    {
+      "doors": 4,
+      "layout_seed": 54,
+      "ok": true,
+      "quality": {
+        "grade": 45.0,
+        "issues": [],
+        "max_cut": 0.454452514648438,
+        "max_fill": 0.0,
+        "relief": 0.454452514648438,
+        "site": "Southern homes/workshop",
+        "status": "pass"
+      },
+      "seed": 50
+    },
+    {
+      "doors": 4,
+      "layout_seed": 145,
+      "ok": true,
+      "quality": {
+        "grade": 45.0,
+        "issues": [],
+        "max_cut": 1.38386917114258,
+        "max_fill": 0.0,
+        "relief": 1.38386917114258,
+        "site": "Southern homes/workshop",
+        "status": "pass"
+      },
+      "seed": 141
+    },
+    {
+      "doors": 4,
+      "layout_seed": 1707,
+      "ok": true,
+      "quality": {
+        "grade": 46.0,
+        "issues": [],
+        "max_cut": 0.451587677001953,
+        "max_fill": 0.0,
+        "relief": 0.451587677001953,
+        "site": "Southern homes/workshop",
+        "status": "pass"
+      },
+      "seed": 1703
+    },
+    {
+      "doors": 4,
+      "layout_seed": 10003,
+      "ok": true,
+      "quality": {
+        "grade": 64.0,
+        "issues": [],
+        "max_cut": 2.12322235107422,
+        "max_fill": 0.0,
+        "relief": 2.12322235107422,
+        "site": "Southern homes/workshop",
+        "status": "pass"
+      },
+      "seed": 9999
+    }
+  ]
+}
