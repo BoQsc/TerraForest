@@ -51,6 +51,12 @@ identity takes precedence over launch defaults. These commands do not replace th
 existing regional review worlds. Esc > World lists generated destinations; travel
 buttons are available only in development mode.
 
+In normal gameplay, use **Esc > World > Track** to show the selected destination's
+direction, horizontal distance and significant height difference. Tracking does
+not teleport or preload the destination. Follow roads and entrances: this is a
+direct bearing, not pathfinding. **Stop tracking** on the same page removes the
+guide. Selection lasts for the current session and is not stored in world saves.
+
 Supported seed range: 0 through 2147483647. Passing preparation is not a guarantee
 of all-seed terrain suitability, continuous-travel performance or long-run thermal
 behavior. Those require separate checks of the actual generated world.

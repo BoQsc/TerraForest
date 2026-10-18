@@ -19,14 +19,19 @@ func refresh()->void:
  if key!=layout_key:
   destinations=describe(game.terrain.backend.world_seed,game.terrain.backend.world_generator);layout_key=key
  menu.label(self,"Follow the regional roads from the central settlement to the western, eastern, northern and southern districts. Explore the eastern mine or visit the lake shores.")
- menu.label(self,"Development mode enables travel buttons. Gameplay travel remains on foot or by vehicle.")
+ menu.label(self,"Track a destination for its direction and distance while walking or driving. The guide points directly toward the location; use roads and entrances to get there. Development mode enables travel buttons.")
+ if not game.destination_guide.destination.is_empty():
+  menu.button(self,"Stop tracking: "+str(game.destination_guide.destination.title),func():game.destination_guide.clear();refresh())
  if destinations.is_empty():menu.label(self,"This generator has no regional destination directory.")
  for destination:Dictionary in destinations:
   var row:=HBoxContainer.new();add_child(row)
   var distance:=Vector2(game.player.position.x-destination.position.x,game.player.position.z-destination.position.z).length()
   var caption=menu.label(row,"%s  ·  %.0f m away\n%s"%[destination.title,distance,destination.detail]);caption.size_flags_horizontal=Control.SIZE_EXPAND_FILL
+  menu.button(row,"Track",track.bind(destination))
   if menu.developer:
    var go=menu.button(row,"Travel here",travel.bind(destination.position));go.disabled=game.world_vehicle.driving
+func track(destination:Dictionary)->void:
+ if game.destination_guide.track(destination):game.session_menu.set_open(false)
 func travel(position:Vector3)->void:
  if not game.session_menu.developer:return
  if game.loading_active or game.shutdown_requested or game.world_vehicle.driving or game.terrain.pending_edit or game.site_preparation.status=="running" or game.site_survey.busy or not game._foundation_placement.is_empty() or not game.road_authoring.phase.is_empty():
