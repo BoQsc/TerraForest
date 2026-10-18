@@ -20,7 +20,14 @@ func run()->void:
  game.camera.global_position=center+Vector3(35,25,125);game.camera.look_at(center+Vector3(0,0,50))
  if site_index>0:
   game.camera.global_position=center+Vector3(25,18,20);game.camera.look_at(center+Vector3(-15,2,-20))
- for i in 30:await process_frame
+ for i in 120:await process_frame
+ var frames:Array[float]=[]
+ var last:=Time.get_ticks_usec()
+ for i in 180:
+  await process_frame
+  var now:=Time.get_ticks_usec();frames.append(float(now-last)/1000.0);last=now
+ frames.sort()
+ print("REGIONAL_VIEW_FRAME_MS median=",frames[90]," p95=",frames[171]," max=",frames[179]," scope=stationary_after_arrival")
  await RenderingServer.frame_post_draw
  root.get_texture().get_image().save_png("res://reports/regional_world_view_%d.png" % site_index)
  print("REGIONAL_WORLD_VIEW generator=",game.terrain.backend.world_generator," buildings_cells=",game.structures.blocks.stats().cells," roads=",plan.roads.size())

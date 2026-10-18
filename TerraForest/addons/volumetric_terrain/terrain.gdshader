@@ -12,6 +12,7 @@ uniform bool show_visibility = false;
 uniform vec3 sky_fill : source_color = vec3(0.30, 0.34, 0.40);
 uniform float snow_reflectance = 0.68;
 uniform bool alpine_snow_enabled = false;
+uniform bool regional_temperate = false;
 uniform int debug_view = 0;
 uniform bool cached_sun_enabled = true;
 varying vec3 wp;
@@ -65,6 +66,8 @@ void fragment(){
   if(biome_weight>0.001){
    vec2 climate=smoothstep(vec2(940.0),vec2(1060.0),wp.xz);
    vec4 biome=vec4((1.0-climate.x)*climate.y,(1.0-climate.x)*(1.0-climate.y),climate.x*climate.y,climate.x*(1.0-climate.y));
+   // Regional worlds use woodland ground, not the four-quadrant material demo.
+   if(regional_temperate)biome=vec4(1.0,0.0,0.0,0.0);
    vec3 natural=vec3(0.0);
    // One texture in biome interiors; extra samples only inside transition bands.
    if(biome.x>0.001)natural+=triplanar(grass,p,w,dx,dy)*biome.x;

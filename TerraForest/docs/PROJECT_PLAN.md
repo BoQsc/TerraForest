@@ -1,3 +1,16 @@
+## Regional material integration - 2026-10-18
+
+Generator 7 uses temperate natural ground and the existing alpine snow blend instead
+of the old four-quadrant material demonstration. Saved-world visual inspection
+confirms the change; asphalt/exposed rock remain. No terrain regeneration is needed.
+The first run retains a large loading stall; a short settled repeat has frame p95
+16.798 ms, not a travel/endurance qualification. See
+[evidence](evidence/regional_temperate/README.md).
+
+Normal ground cover still uses 64 candidates per 32x32 m cell, a four-metre grid.
+Next address this sparse default through native bounded scatter while preserving
+editable identities. Keep the broader integrated locations/caves/lakes work active.
+
 ## Regional sites populated and connected - 2026-10-18 (partial)
 
 All five regional sites now have buildings: eight in the central district and two
