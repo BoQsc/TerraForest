@@ -14,6 +14,8 @@ func run()->void:
  game.structure_mode=true;game.model_tool.active=false;game.construction_inventory.gameplay=false
  game.player.position=Vector3(2000,65,2000)
  Input.mouse_mode=Input.MOUSE_MODE_CAPTURED
+ var visibility: Dictionary={"changes":0}
+ game.construction_palette.panel.visibility_changed.connect(func():visibility.changes+=1)
  var rows: Array=[]
  var maxima: Dictionary={}
  game.terrain.stage_measured.connect(func(label: String,ms: float):maxima[label]=maxf(float(maxima.get(label,0)),ms))
@@ -48,6 +50,7 @@ func run()->void:
   var maximum: int=calls.max() if not calls.is_empty() else 0
   rows.append({"stages_ms":maxima.duplicate(),"cottages":count,"cells":asset.get_cell_count(),"attachments":asset.get_model_attachments().size(),"input_us":begin_us,"max_update_us":maximum,"calls_us":calls,"post_draw_intervals_us":frames})
   check(begin_us<=4000 and maximum<=4000,"world placement calls stay within 4 ms at "+str(count))
+ check(visibility.changes==0,"placement notices do not toggle the docked construction panel")
  FileAccess.open("res://reports/direct_prefab_cost.json",FileAccess.WRITE).store_string(JSON.stringify({"failures":failures,"rows":rows},"  "))
  game.shutdown_requested=true;await game.terrain.shutdown_after_edits();game.free();await process_frame
  print("DIRECT_PREFAB_COST failures=",failures);quit(1 if failures else 0)

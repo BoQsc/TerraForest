@@ -1,0 +1,67 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] New world
+[TerrainRewrite] New world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+[terrain-hitch] controller loading 93.45 ms at 27581
+[terrain-hitch] base controller 95.97 ms at 27584
+[terrain-hitch] controller process 115.37 ms at 27603
+[terrain-hitch] world process 118.58 ms at 27606
+PASS world ready
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Empty hands - left mouse punches, E interacts
+[TerrainRewrite] Hatchet
+[TerrainRewrite] Hatchet: hold left mouse to attack or dig. Most effective on wood.
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Empty hands - left mouse punches, E interacts
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Empty hands - left mouse punches, E interacts
+PASS tilde replaces gameplay items with development belt
+PASS mode switch preserves held movement
+[TerrainRewrite] Terrain editing
+PASS dev number selects editor brush 3
+[TerrainRewrite] Terrain editing
+PASS dev number selects editor brush 2
+[TerrainRewrite] Terrain editing
+PASS dev number selects editor brush 1
+[TerrainRewrite] Terrain editing
+PASS development block tool
+[TerrainRewrite] Terrain editing
+PASS development object tool
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Stone; LMB/E remove; RMB place
+PASS development vegetation tool
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Empty hands - left mouse punches, E interacts
+PASS road slot selects without interrupting movement
+PASS Escape configures selected road tool
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Empty hands - left mouse punches, E interacts
+[terrain-hitch] notice message 57.52 ms at 28581
+PASS world tools select without opening a modal
+PASS Escape opens selected world settings
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Empty hands - left mouse punches, E interacts
+[terrain-hitch] notice message 831.41 ms at 29492
+[TerrainRewrite] Terrain editing
+PASS wheel wraps development slots
+PASS dev tools cannot be dragged into inventory or overwritten with items
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Empty hands - left mouse punches, E interacts
+[TerrainRewrite] Hatchet
+[TerrainRewrite] Hatchet: hold left mouse to attack or dig. Most effective on wood.
+PASS leaving dev restores gameplay belt and previously selected item
+PASS editor actions do not mutate carried inventory
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Empty hands - left mouse punches, E interacts
+[TerrainRewrite] Terrain editing
+PASS returning to dev restores its previous selection
+[TerrainRewrite] Terrain editing
+[TerrainRewrite] Empty hands - left mouse punches, E interacts
+[TerrainRewrite] Hatchet
+[TerrainRewrite] Hatchet: hold left mouse to attack or dig. Most effective on wood.
+[TerrainRewrite] Temporary test world: save skipped
+PASS clean shutdown
+DEVELOPER_BELT checks=19 failures=0

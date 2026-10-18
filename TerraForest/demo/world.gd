@@ -297,11 +297,15 @@ func _ready() -> void:
 	lakes.lake_failed.connect(func(_id: int, code: int): _show_lake_notice("Lake rejected (%d): open basin or blocked seed" % code))
 
 func _show_lake_notice(text: String) -> void:
+	var sync_started:=Time.get_ticks_usec()
 	_sync_construction_palette()
+	terrain._record_stage("notice panel sync",(Time.get_ticks_usec()-sync_started)/1000.0)
 	_lake_notice = text
 	_lake_notice_until = Time.get_ticks_msec()+6000
 	_telemetry_time = 0.5 # Publish action feedback on the next frame.
+	var message_started:=Time.get_ticks_usec()
 	_message(text)
+	terrain._record_stage("notice message",(Time.get_ticks_usec()-message_started)/1000.0)
 
 func _capture_player_pose() -> PackedByteArray:
 	# Resource placement is transient; the v1 pose stores only original tool IDs.
@@ -590,7 +594,7 @@ func _sync_player_tool() -> void:
 	player_hud.show_active_tool(equipped_tool)
 
 func _sync_construction_palette() -> void:
-	construction_palette.synchronize(structure_mode and not model_tool.active,structure_shape,structure_material,structure_rotation,structure_prefab_index)
+	construction_palette.synchronize(structure_mode and not model_tool.active,structure_shape,structure_material,structure_rotation,structure_prefab_index,not session_menu.ready_to_dock)
 	if construction_palette.archive_button!=null:
 		construction_palette.archive_button.disabled=structure_prefab_index<0 or not prefab_library.owns(structure_prefabs[structure_prefab_index])
 	session_menu.sync_panels()

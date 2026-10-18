@@ -1,3 +1,9 @@
+> 2026-10-18 notice UI: docked construction visibility now has one owner;
+> zero notice-triggered panel toggles verified and developer-belt checks pass.
+> 64-cottage placement still FAILS 4 ms gate (5.82 ms); notice message4.48 ms,
+> panel sync0.07 ms. Next separate status label from console output.
+> Evidence: evidence/notice_panel_visibility/.
+
 > 2026-10-18 world placement cost: 64 furnished cottages FAIL the unchanged
 > 4 ms call gate. Removed unchanged-inventory UI refresh (11.76 to 0.12 ms
 > observed); remaining notification spike138 ms makes update141.56 ms.

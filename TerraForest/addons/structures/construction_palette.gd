@@ -189,9 +189,9 @@ func _request_frontage() -> void:
 		frontage_sources_requested.emit(frontage_sources.get_selected_items(),int(frontage_lots.value),int(frontage_width.value),int(frontage_gap.value),int(frontage_seed.value),capture_name.text)
 	else:
 		frontage_requested.emit(int(frontage_lots.value),int(frontage_width.value),int(frontage_gap.value),int(frontage_seed.value),capture_name.text)
-func synchronize(active: bool,shape_id: int,material_id: int,quarter_turn: int,prefab_index: int) -> void:
+func synchronize(active: bool,shape_id: int,material_id: int,quarter_turn: int,prefab_index: int,manage_visibility: bool=true) -> void:
 	if panel==null: return
-	panel.visible=active
+	if manage_visibility:panel.visible=active
 	shape.select(shape_id-1);material.select(material_id);rotation_choice.select(quarter_turn);prefab.select(prefab_index+1)
 	shape.disabled=prefab_index>=0
 	material.disabled=prefab_index>=0
