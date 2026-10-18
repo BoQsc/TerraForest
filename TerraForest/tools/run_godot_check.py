@@ -37,9 +37,9 @@ def command_for(engine, test, folder, extra, headless=False, persistent=False):
     return command, cache
 
 
-def execute(command, folder, timeout, required_text):
+def execute(command, folder, timeout, required_text, cancel_requested=None):
     started = time.monotonic()
-    result = {"timed_out": False, "launch_error": None}
+    result = {"timed_out": False, "launch_error": None, "cancelled": False}
     log_path = folder / "console.log"
     with log_path.open("w", encoding="utf-8") as output:
         try:
@@ -47,11 +47,29 @@ def execute(command, folder, timeout, required_text):
                                        creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
             result["pid"] = process.pid
             try:
-                result["exit_code"] = process.wait(timeout=timeout)
+                if cancel_requested is None:
+                    result["exit_code"] = process.wait(timeout=timeout)
+                else:
+                    deadline = started + timeout
+                    while process.poll() is None:
+                        if cancel_requested():
+                            result["cancelled"] = True
+                            process.kill()
+                            break
+                        remaining = deadline - time.monotonic()
+                        if remaining <= 0: raise subprocess.TimeoutExpired(command, timeout)
+                        try: process.wait(timeout=min(0.2, remaining))
+                        except subprocess.TimeoutExpired: pass
+                    result["exit_code"] = process.wait()
             except subprocess.TimeoutExpired:
                 process.kill()
                 result["exit_code"] = process.wait()
                 result["timed_out"] = True
+            finally:
+                # Only the child represented by this owned Popen handle is stopped.
+                if process.poll() is None:
+                    process.kill()
+                    process.wait()
         except OSError as error:
             result.update(exit_code=None, launch_error=str(error))
     log = log_path.read_text(encoding="utf-8", errors="replace")
@@ -64,7 +82,7 @@ def execute(command, folder, timeout, required_text):
     result["required_text_found"] = required_text in log
     result["elapsed_seconds"] = time.monotonic() - started
     result["passed"] = (result["exit_code"] == 0 and not result["timed_out"]
-                        and not result["diagnostics"] and result["required_text_found"])
+                        and not result["cancelled"] and not result["diagnostics"] and result["required_text_found"])
     return result
 
 

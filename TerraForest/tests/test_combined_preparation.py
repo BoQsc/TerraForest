@@ -9,6 +9,34 @@ import prepare_combined_world as prep
 
 
 class PreparationTests(unittest.TestCase):
+    def test_cancel_before_start_releases_lock_and_never_publishes(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            with patch.object(prep, 'execute') as run, patch.object(prep, 'clone_once') as publish:
+                self.assertEqual(prep.prepare('unused', root, root/'report', cancel_requested=lambda: True), 2)
+                run.assert_not_called(); publish.assert_not_called()
+            self.assertFalse((root/'combined_gameplay.prepare.lock').exists())
+
+    def test_cancel_at_publication_boundary_does_not_publish(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp); stages = []
+            with patch.object(prep, 'execute', return_value={'passed': True}), patch.object(prep, 'clone_once') as publish:
+                self.assertEqual(prep.prepare('unused', root, root/'report', progress=stages.append,
+                    cancel_requested=lambda: bool(stages and stages[-1]=='publishing')), 2)
+                publish.assert_not_called()
+            self.assertFalse((root/'combined_gameplay.prepare.lock').exists())
+
+    def test_real_child_is_stopped_and_reaped_on_cancel(self):
+        import time
+        from run_godot_check import execute
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp); marker=root/'started'
+            command=[sys.executable, '-c', "from pathlib import Path; import time; Path("+repr(str(marker))+").write_text('alive'); time.sleep(30)"]
+            began=time.monotonic()
+            result=execute(command, root, 10, 'must not finish', cancel_requested=marker.exists)
+            self.assertTrue(result['cancelled']);self.assertFalse(result['passed'])
+            self.assertIsNotNone(result['exit_code']);self.assertLess(time.monotonic()-began,5)
+
     def test_progress_matches_actual_work_and_never_reports_ready_early(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)

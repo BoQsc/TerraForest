@@ -13,7 +13,7 @@ from run import ROOT, parse_args
 from run_godot_check import execute
 
 
-def prepare(engine, worlds, folder, destination="combined_gameplay", layout="cottages", seed=1703, progress=None):
+def prepare(engine, worlds, folder, destination="combined_gameplay", layout="cottages", seed=1703, progress=None, cancel_requested=None):
     if type(seed) is not int or not 0 <= seed <= 2147483647:
         raise ValueError("Seed must be an integer between 0 and 2147483647")
     if layout not in ('cottages', 'mixed', 'regional', 'poi', 'lakes', 'districts'):
@@ -40,18 +40,23 @@ def prepare(engine, worlds, folder, destination="combined_gameplay", layout="cot
                 '--derived-cache=user://' + slot]
         metadata = dict(slot=slot, layout=layout, seed=seed, **revision_metadata(), phases=[])
         for phase in ('create', 'reopen'):
+            if cancel_requested is not None and cancel_requested(): return 2
             phase_dir = folder / phase
             phase_dir.mkdir()
             command = base + (['--reopen-checkpoint', '--gameplay-construction', '--vehicle-fleet'] if phase == 'reopen' else [])
             if progress is not None: progress('creating' if phase == 'create' else 'verifying')
             print(f'{phase}: preparing the existing settlement workflow at 1920x1080 / cap 60.', flush=True)
-            result = execute(command, phase_dir, 540 if layout in ("lakes", "districts") and phase == "create" else 270, 'COMBINED_PREPARATION failures=0')
+            options = {'cancel_requested': cancel_requested} if cancel_requested is not None else {}
+            result = execute(command, phase_dir, 540 if layout in ("lakes", "districts") and phase == "create" else 270, 'COMBINED_PREPARATION failures=0', **options)
             metadata['phases'].append(dict(command=command, result=result))
             (folder / 'run.json').write_text(json.dumps(metadata, indent=2))
+            if result.get('cancelled', False): return 2
             if not result['passed']:
                 print('Preparation failed; gameplay save not published. Evidence: ' + str(phase_dir))
                 return 1
+        if cancel_requested is not None and cancel_requested(): return 2
         if progress is not None: progress('publishing')
+        if cancel_requested is not None and cancel_requested(): return 2
         metadata['publication'] = clone_once(worlds, slot, destination)
         (folder / 'run.json').write_text(json.dumps(metadata, indent=2))
         print('Prepared and reopened slot ' + destination + '. Evidence: ' + str(folder))
@@ -67,6 +72,7 @@ def main():
     parser.add_argument('--layout', choices=('cottages', 'mixed', 'regional', 'poi', 'lakes', 'districts'), default='cottages')
     parser.add_argument('--seed', type=int, default=1703, help='Deterministic new-world seed (0..2147483647); existing saves are preserved')
     parser.add_argument('--status-file', type=Path, help='Optional browser completion status file')
+    parser.add_argument('--cancel-file', type=Path, help='Cancel before publication when this request file appears')
     args = parser.parse_args()
     if not 0 <= args.seed <= 2147483647: parser.error('Seed must be between 0 and 2147483647')
     config, _ = parse_args(['--godot', args.godot] if args.godot else [])
@@ -82,11 +88,11 @@ def main():
         temporary.replace(args.status_file)
     status('running')
     try:
-        code = prepare(config.godot, worlds, folder, args.destination, args.layout, args.seed, progress=status)
+        code = prepare(config.godot, worlds, folder, args.destination, args.layout, args.seed, progress=status, cancel_requested=(lambda: args.cancel_file.exists()) if args.cancel_file is not None else None)
     except Exception as error:
         status('failed', str(error))
         raise
-    status('ready' if code == 0 else 'failed', '' if code == 0 else 'Generation or save verification failed')
+    status('ready' if code == 0 else 'cancelled' if code == 2 else 'failed', '' if code == 0 else 'Preparation cancelled; no world published' if code == 2 else 'Generation or save verification failed')
     return code
 
 

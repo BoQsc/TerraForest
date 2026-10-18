@@ -1,5 +1,13 @@
 ## Current integrated entry point - 2026-10-18
 
+World preparation cancellation is implemented. Cancel/quit requests stop the
+owned preparation child, release the destination lock and return without launching
+gameplay. Late requests during publication retain the verified save and suppress
+launch.15 preparation tests and an actual browser-started cancellation pass (814ms,
+no destination save/lock/remainingGodotprocess). Evidence:
+`evidence/world_browser_cancel/`. Staged diagnostic artifacts are retained.
+Standalone packaging and finer per-location progress remain open.
+
 World browser preparation now displays actual creating/verifying/publishing stages
 and elapsed time while the preparation process runs. Stage-order/failure tests and
 1080p browser UI checks pass. Evidence: `evidence/world_browser_progress/`. Existing

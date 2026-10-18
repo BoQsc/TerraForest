@@ -1,0 +1,13 @@
+{
+  "failures": 0,
+  "notice": "Preparation cancelled. Existing saves are preserved.",
+  "opened": false,
+  "slot": "cancel_review_944604",
+  "status": {
+    "reason": "Preparation cancelled; no world published",
+    "report": "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\combined_preparation\\20261018T160810944767Z",
+    "slot": "cancel_review_944604",
+    "state": "cancelled"
+  },
+  "stop_ms": 814
+}
