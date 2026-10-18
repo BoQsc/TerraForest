@@ -1,5 +1,10 @@
 ## Current integrated entry point - 2026-10-18
 
+World quality: the current northern district is REJECTED, despite passing engineering
+checks. Single-grade fill/cut and repeated towers fail the new WORLD_BUILDING_STANDARD.md.
+Preparation now records separate earthworks quality/pending review results. Next work
+is terrain-fitting blocks/lots and meaningful location design, not pad-detail polish.
+
 Settlement road beds now have additive sloped mineral support below shallow asphalt.
 Regional placement reserves actual road corridor width, fixing overlapping streets
 at different elevations. Native paving/overlap tests, full seed-42 creation/reopen,

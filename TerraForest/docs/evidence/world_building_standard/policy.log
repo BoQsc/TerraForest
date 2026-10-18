@@ -1,0 +1,4 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+CURRENT_NORTHERN_QUALITY {"grade":58.0,"issues":["Single-grade layout requires more than 2 m fill; relocate or divide into independently graded blocks","Single-grade layout requires more than 3 m cut; relocate or divide into independently graded blocks"],"max_cut":5.8556709289551,"max_fill":6.7471389770508,"relief":12.6028099060059,"site":"seed-42 northern district","status":"rejected"}
+WORLD_BUILDING_QUALITY failures=0

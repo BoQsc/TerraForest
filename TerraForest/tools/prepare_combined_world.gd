@@ -7,6 +7,8 @@ var mixed:=false
 var regional:=false
 var districts:=false
 var central_layout_seed:=0
+var world_quality_sites:Array=[]
+const WorldQuality=preload("res://addons/world_runtime/world_building_quality.gd")
 func require(ok:bool,message:String)->bool:
  print("PASS " if ok else "FAIL ",message)
  return ok
@@ -94,6 +96,7 @@ func run()->void:
    var center:Vector3=layout.sites[0].position
    var origin:Vector3i=preload("res://addons/structures/site_plan.gd").regional_origin(asset,center)
    var survey:Dictionary=await game.site_survey.assess(game.terrain,asset,origin,0)
+   world_quality_sites.append(WorldQuality.site(survey,"Central settlement"))
    print("REGIONAL_SITE_SURVEY ",survey," footprint=",asset.placement_bounds(origin,0))
    if not require(survey.ok,"regional district beside arterial has supported foundation"):await finish(false);return
    var plan:Dictionary=preload("res://addons/structures/site_plan.gd").prepare(asset,origin,0,survey.grade)
@@ -151,8 +154,10 @@ func run()->void:
    game.yaw=0;game.pitch=-0.15;game.player.rotation.y=0
    game.camera.position=Vector3(0,1.6,0);game.camera.rotation=Vector3(game.pitch,0,0)
 
+  var quality:Dictionary=WorldQuality.summary(world_quality_sites)
+  print("WORLD_QUALITY_REVIEW ",JSON.stringify(quality))
   var file:=FileAccess.open(report_path,FileAccess.WRITE)
-  file.store_string(JSON.stringify({"slot":game.terrain.save_slot,"seed":game.terrain.backend.world_seed,"central_layout_seed":central_layout_seed,"generator":game.terrain.backend.world_generator,"cells":game.structures.blocks.stats().cells,"spawn":[game.player.position.x,game.player.position.y,game.player.position.z],"signature":signature()},"  "));file.close()
+  file.store_string(JSON.stringify({"slot":game.terrain.save_slot,"seed":game.terrain.backend.world_seed,"central_layout_seed":central_layout_seed,"world_quality":quality,"generator":game.terrain.backend.world_generator,"cells":game.structures.blocks.stats().cells,"spawn":[game.player.position.x,game.player.position.y,game.player.position.z],"signature":signature()},"  "));file.close()
  # Wait for existing generated components before ordinary compound persistence.
  if not require(await wait_until(func():return not game.lakes.capture_snapshot().is_empty(),60),"generated components ready for compound save"):await finish(false);return
  for frame in 10:await process_frame
@@ -236,6 +241,7 @@ func prepare_outer_sites()->bool:
   if districts and site.id==3:
    origin.z=floori(center.z-bounds.get_center().z)
   var survey:Dictionary=await game.site_survey.assess(game.terrain,asset,origin,0)
+  world_quality_sites.append(WorldQuality.site(survey,district.title))
   if not require(survey.ok,"outer site supported: "+str(survey)):return false
   var plan:Dictionary=preload("res://addons/structures/site_plan.gd").prepare(asset,origin,0,survey.grade)
   if not require(plan.ok,"outer site plan valid"):return false
