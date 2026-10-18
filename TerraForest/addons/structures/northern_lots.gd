@@ -58,9 +58,36 @@ static func assemble(lots:Array,center:Vector3,surveys:Array)->Dictionary:
   plan.street_lines.append(road.start);plan.street_lines.append(road.finish)
  for road:Dictionary in roads:plan.segments.append(road);plan.bounds=plan.bounds.merge(road.bounds)
  if not SitePlan._support_roads(plan,roads):return {"ok":false,"reason":"Road support outside world budget"}
+ var pavement:Dictionary=sidewalks(center)
+ if not pavement.ok:return pavement
+ plan.sidewalk_asset=pavement.asset;plan.sidewalk_origin=Vector3i(center)-Vector3i(0,1,0)
+ for bed:Dictionary in pavement.beds:plan.segments.append(bed);plan.bounds=plan.bounds.merge(bed.bounds)
  for path:Dictionary in paths:plan.segments.append(path);plan.bounds=plan.bounds.merge(path.bounds)
  plan.paving_segments=roads.size()+paths.size();plan.street_ends=plan.street_lines.slice(0,2)
  return plan
+static func sidewalks(center:Vector3)->Dictionary:
+ var cells:Dictionary={};var beds:Array=[]
+ # Two-metre inner sidewalks, interrupted at the arterial and entrance paths.
+ for street in [-52,0,52]:
+  for side in [-1,1]:
+   var z:int=street+(4 if side>0 else -6)
+   for x in range(-38,38):
+    if absf(x+0.5)<8 or minf(absf(x+0.5+23.5),absf(x+0.5-24.5))<1.5:continue
+    for dz in 2:cells[Vector3i(x,0,z+dz)]=65
+   for ends:Array in [[-38,-8],[8,38]]:
+    beds.append(_segment(center+Vector3(ends[0],-0.1,z+1),center+Vector3(ends[1],-0.1,z+1),1,1,4,0,1))
+ for x in [-38,36]:
+  for z in range(-56,58):
+   if absf(z+0.5)<4 or absf(absf(z+0.5)-52)<4:continue
+   for dx in 2:cells[Vector3i(x+dx,0,z)]=65
+  for ends:Array in [[-48,-4],[4,48]]:
+   beds.append(_segment(center+Vector3(x+1,-0.1,ends[0]),center+Vector3(x+1,-0.1,ends[1]),1,1,4,0,1))
+ var records:=PackedInt32Array()
+ for cell:Vector3i in cells:records.append_array(PackedInt32Array([cell.x,cell.y,cell.z,cells[cell]]))
+ var asset:Resource=ClassDB.instantiate("NativeBlockPrefab")
+ if not asset.configure(records):return {"ok":false,"reason":"Sidewalk block geometry rejected"}
+ asset.resource_name="Northern concrete walkways"
+ return {"ok":true,"asset":asset,"beds":beds}
 static func street_segments(center:Vector3)->Array:
  var roads:Array=[]
  # Side streets join the three cross streets into a connected neighborhood loop.

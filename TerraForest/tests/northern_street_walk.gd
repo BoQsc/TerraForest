@@ -25,6 +25,9 @@ func run()->void:
    if a.distance_to(center)<100 and b.distance_to(center)<100 and absf(a.x-b.x)<0.1 and absf(a.z-b.z)>100:side_count+=1
   if side_count!=2:failure="expected two saved neighborhood side streets";await finish();return
   route=[corner,left,right,streets[2][1],streets[2][0],left,streets[1][0],streets[1][1],center]
+ if "--sidewalks" in OS.get_cmdline_user_args():
+  route=[]
+  for offset:Vector3 in [Vector3(0,0,-47),Vector3(-37,0,-47),Vector3(-37,0,47),Vector3(37,0,47),Vector3(37,0,-47),Vector3(0,0,-47),Vector3.ZERO]:route.append(center+offset)
  game.teleport(center)
  if not await ready_world(45):failure="north arrival timeout";await finish();return
  game.fly=false;game.app_focused=true;Input.mouse_mode=Input.MOUSE_MODE_CAPTURED

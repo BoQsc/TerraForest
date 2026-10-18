@@ -354,4 +354,5 @@ func prepare_northern_lots(center:Vector3)->bool:
   # Support/clearance bands belong to each lot's base, not one global height.
   game._begin_frontage_placement(lot.asset,lot.origin,true)
   if not require(await wait_until(func():return game._foundation_placement.is_empty(),20) and game.doors.collection.get_ids().size()==doors+1,"terrain-fitted building published: "+lot.label+" support="+game.foundation_check.status):return false
+ if not require(game._place_combined_prefab(plan.sidewalk_asset,plan.sidewalk_origin,0),"native concrete walkways published"):return false
  return true

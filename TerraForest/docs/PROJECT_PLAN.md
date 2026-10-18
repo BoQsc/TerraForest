@@ -1,5 +1,10 @@
 ## Current integrated entry point - 2026-10-18
 
+Northern concrete walkways are integrated: level two-metre paving and entrance/road
+crossings. Full create/reopen, inspected views, all twelve entrance roundtrips and
+seven continuous pedestrian waypoints pass. Review walkways_42_20261018; evidence/
+northern_walkways. Planting/public spaces and vehicle turning remain required.
+
 Northern building mix is integrated and verified: four cottages, two workshops,
 six multi-storey buildings. Seven-seed fit/support, full create/reopen, inspected
 views and all twelve entrance roundtrips pass. Review mixed_neighborhood_42_20261018;

@@ -51,6 +51,13 @@ func _initialize()->void:
   if road_quality.status!="pass":failures+=1
   var plan:Dictionary=Lots.assemble(lots,center,surveys)
   if not plan.ok:print("LOT_FIT_REJECT seed=",seed_value," detail=",plan);failures+=1;continue
+  var paving:PackedInt32Array=plan.sidewalk_asset.get_records()
+  for i in range(0,paving.size(),4):
+   var point:Vector3=Vector3(plan.sidewalk_origin)+Vector3(paving[i]+0.5,1,paving[i+2]+0.5)
+   for road:Dictionary in roads:
+    var span:Vector3=road.finish-road.start
+    var near:Vector3=road.start+span*clampf((point-road.start).dot(span)/span.length_squared(),0,1)
+    if point.distance_to(near)<road.half_width:print("SIDEWALK_ROAD_OVERLAP ",point);failures+=1
   if seed_value==42:
    var revision:=0
    for segment:Dictionary in plan.segments:
@@ -61,6 +68,7 @@ func _initialize()->void:
     else:revision=result.decode_u32(12)
    var supports:=PackedVector3Array()
    for lot:Dictionary in plan.lots:supports.append_array(lot.asset.foundation_samples(lot.origin,lot.rotation,0))
+   supports.append_array(plan.sidewalk_asset.foundation_samples(plan.sidewalk_origin,0,0))
    var unsupported:=0
    for offset in range(0,supports.size(),512):
     var batch:PackedVector3Array=supports.slice(offset,mini(offset+512,supports.size()))
