@@ -82,7 +82,13 @@ func _retire(key: Vector2i) -> void:
 	for species in range(Catalog.COUNT):
 		batches[species].remove_instances(resident[key][species].ids)
 
+var last_process_us:int=0
 func _process(_delta: float) -> void:
+	var measured_begin:=Time.get_ticks_usec()
+	_measured_step(_delta)
+	last_process_us=Time.get_ticks_usec()-measured_begin
+
+func _measured_step(_delta:float)->void:
 	if not terrain.world_ready or terrain.stopping: return
 	if seed_source.is_valid(): seed=seed_source.call()
 	if not removed.bind_world(seed,1):

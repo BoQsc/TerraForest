@@ -119,7 +119,13 @@ func _invalidate(bounds:AABB) -> void:
  _occupancy_failure=""
  water.invalidate(bounds)
  _discard_builder()
+var last_process_us:int=0
 func _process(delta:float) -> void:
+ var measured_begin:=Time.get_ticks_usec()
+ _measured_step(delta)
+ last_process_us=Time.get_ticks_usec()-measured_begin
+
+func _measured_step(delta:float)->void:
  _poll_cached_task()
  if terrain==null or not terrain.world_ready:return
  if _epoch!=terrain.epoch:_epoch=terrain.epoch;_occupancy_failure="";_discard_builder()

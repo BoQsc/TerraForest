@@ -125,7 +125,13 @@ func statistics() -> Dictionary:
 	result["event_heap"] = renderer._heap_id.size()
 	return result
 
+var last_process_us:int=0
 func _process(delta: float) -> void:
+	var measured_begin:=Time.get_ticks_usec()
+	_measured_step(delta)
+	last_process_us=Time.get_ticks_usec()-measured_begin
+
+func _measured_step(delta:float)->void:
 	if not ready_to_render or not is_instance_valid(camera):
 		return
 	_clock += delta

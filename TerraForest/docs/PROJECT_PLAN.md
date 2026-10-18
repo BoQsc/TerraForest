@@ -1,3 +1,14 @@
+## Integrated world frame-spike diagnosis - 2026-10-18
+
+Short instrumented checks narrow the intermittent lake-shore slowdown: GPU p95
+6-9 ms; wall p95 75-84 ms in slow runs. Disabling world subtree updates while
+retaining rendering yielded 17.82 ms p95. Water/ground/forest update timings do
+not explain the spikes (slow-repeat maxima 2.494/0.104/0.054 ms). Native node
+callbacks and deferred engine work remain to isolate. One identical instrumented
+run passed 16.757 ms p95 without an optimization; do not claim a fix. Evidence:
+docs/evidence/regional_lake_generation/update_profile_summary.json. Normal launcher
+unchanged. Continue bounded diagnosis, then integrated world travel and destinations.
+
 ## Integrated larger lake: cached review passed, shoreline integration open - 2026-10-18
 
 Profile 12 preserves POI-owned underground and adds a roughly 126-metre wet-diameter,

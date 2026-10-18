@@ -50,7 +50,13 @@ func _save_completed(success: bool) -> void:
 func _restored(_sections: Dictionary, _epoch: int) -> void:
 	if operation!="shutdown":operation=""
 
+var last_process_us:int=0
 func _process(_delta: float) -> void:
+	var measured_begin:=Time.get_ticks_usec()
+	_measured_step(_delta)
+	last_process_us=Time.get_ticks_usec()-measured_begin
+
+func _measured_step(_delta:float)->void:
 	if not attached or terrain.stopping:return
 	var archive: RefCounted=terrain.backend.snapshot_codec
 	if terrain.world_ready and not terrain.closing and operation=="" and structures._model_scheduler==null:

@@ -43,3 +43,17 @@ reclassified as passing. The dedicated vegetation test is separate.
 The circular basin is visually basic.
 This is not long-run, travel, thermal, city-scale, or older-laptop qualification.
 Default generated-world launchers have not been promoted.
+
+## Frame spike investigation
+
+`update_profile_summary.json` retains four short diagnostic runs. GPU p95 is
+roughly 6-9 ms, while slow runs have 75-84 ms wall-frame p95. A diagnostic-only
+phase disabling world subtree updates, with the same scene still rendered, reached
+17.82 ms p95. This suggests CPU update work; it does not identify the exact source.
+Native node callbacks and engine/deferred work are not yet fully attributed.
+
+Per-frame water, ground-cover, forest and optional model-paging timings are now
+available. In the slow repeat their maxima were 2.494 ms, 0.104 ms, 0.054 ms and
+zero respectively. Another instrumented run reached 16.757 ms p95 without an
+optimization. Do not call the intermittent failure fixed or promote based on that
+passing run. Next isolate native node updates while retaining these traces.

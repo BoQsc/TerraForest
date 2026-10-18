@@ -26,12 +26,31 @@ func run()->void:
  ok=ok and game.lakes.depth_at(center+Vector3(85,-.5,0))==0
  game.set_physics_process(false);game.camera.global_position=center+Vector3(72,15,20);game.camera.look_at(center)
  for frame in 120:await process_frame
+ RenderingServer.viewport_set_measure_render_time(root.get_viewport_rid(),true)
+ var rows:Array=[]
+ var stages:Dictionary={}
+ game.terrain.stage_measured.connect(func(label:String,ms:float):stages[label]=maxf(float(stages.get(label,0)),ms))
  var frames:Array[float]=[]
  var previous:=Time.get_ticks_usec()
  for frame in 180:
   await process_frame
   var now:=Time.get_ticks_usec();frames.append(float(now-previous)/1000.0);previous=now
+  rows.append({"frame_ms":frames[-1],"gpu_ms":RenderingServer.viewport_get_measured_render_time_gpu(root.get_viewport_rid()),"render_cpu_ms":RenderingServer.viewport_get_measured_render_time_cpu(root.get_viewport_rid()),"engine_process_ms":Performance.get_monitor(Performance.TIME_PROCESS)*1000,"engine_physics_ms":Performance.get_monitor(Performance.TIME_PHYSICS_PROCESS)*1000,"cap":Engine.max_fps,"focused":game.app_focused,"queued":game.terrain.backend.queued(),"worker":game.terrain.backend.status(),"ground_dirty":game.ground_cover._dirty.size(),"ground_requests":game.ground_cover._requests.size(),"ground_job":not game.ground_cover._scatter_job.is_empty(),"ecosystem_us":game.ecosystem.last_process_us,"water_process_us":game.lakes.last_process_us,"ground_process_us":game.ground_cover.last_process_us,"paging_process_us":game.model_paging.last_process_us if game.model_paging!=null else 0,"forest_process_us":game.vegetation.last_process_us,"vegetation_us":game.vegetation.renderer.stats.get("update_us",0),"stages":stages.duplicate()})
+  stages.clear()
  frames.sort();stats["stationary_frame_p95_ms"]=frames[171];stats["stationary_frame_max_ms"]=frames[179]
+ stats["frame_samples"]=rows
+ if "--lake-profile-isolation" in OS.get_cmdline_user_args():
+  game.process_mode=Node.PROCESS_MODE_DISABLED
+  for frame in 30:await process_frame
+  var paused:Array=[]
+  previous=Time.get_ticks_usec()
+  for frame in 120:
+   await process_frame
+   var now:=Time.get_ticks_usec()
+   paused.append({"frame_ms":(now-previous)/1000.0,"gpu_ms":RenderingServer.viewport_get_measured_render_time_gpu(root.get_viewport_rid()),"render_cpu_ms":RenderingServer.viewport_get_measured_render_time_cpu(root.get_viewport_rid())});previous=now
+  stats["paused_world_samples"]=paused
+  game.process_mode=Node.PROCESS_MODE_INHERIT
+
  var submerged_roots:=0
  var visible_roots:=0
  for packed:Array in game.ground_cover.resident.values():

@@ -1,0 +1,147 @@
+{
+  "regional_lake_profile_20261018": {
+    "cached_load_ms": 27599,
+    "phases": {
+      "frame_samples": {
+        "frame_ms": {
+          "median": 16.68,
+          "p95": 84.081,
+          "max": 131.114
+        },
+        "gpu_ms": {
+          "median": 7.78599977493286,
+          "p95": 8.88599967956543,
+          "max": 9.72200012207031
+        },
+        "render_cpu_ms": {
+          "median": 2.40799999237061,
+          "p95": 4.6269998550415,
+          "max": 4.79400014877319
+        }
+      }
+    }
+  },
+  "regional_lake_isolation_20261018": {
+    "cached_load_ms": 40264,
+    "phases": {
+      "frame_samples": {
+        "frame_ms": {
+          "median": 16.652,
+          "p95": 75.061,
+          "max": 945.234
+        },
+        "gpu_ms": {
+          "median": 6.15700006484985,
+          "p95": 7.90299987792969,
+          "max": 8.75599956512451
+        },
+        "render_cpu_ms": {
+          "median": 1.56099998950958,
+          "p95": 2.42799997329712,
+          "max": 3.66899991035461
+        }
+      },
+      "paused_world_samples": {
+        "frame_ms": {
+          "median": 16.675,
+          "p95": 17.82,
+          "max": 21.463
+        },
+        "gpu_ms": {
+          "median": 5.86499977111816,
+          "p95": 6.42199993133545,
+          "max": 6.52099990844727
+        },
+        "render_cpu_ms": {
+          "median": 1.63199996948242,
+          "p95": 2.55599999427795,
+          "max": 4.80299997329712
+        }
+      }
+    }
+  },
+  "regional_lake_update_profile_20261018": {
+    "cached_load_ms": 20800,
+    "phases": {
+      "frame_samples": {
+        "frame_ms": {
+          "median": 16.666,
+          "p95": 16.757,
+          "max": 16.858
+        },
+        "gpu_ms": {
+          "median": 6.20800018310547,
+          "p95": 6.28700017929077,
+          "max": 6.5479998588562
+        },
+        "render_cpu_ms": {
+          "median": 1.99699997901917,
+          "p95": 2.24900007247925,
+          "max": 2.35800004005432
+        },
+        "water_process_us": {
+          "median": 677,
+          "p95": 757,
+          "max": 909
+        },
+        "ground_process_us": {
+          "median": 62,
+          "p95": 102,
+          "max": 114
+        },
+        "paging_process_us": {
+          "median": 0,
+          "p95": 0,
+          "max": 0
+        },
+        "forest_process_us": {
+          "median": 38,
+          "p95": 43,
+          "max": 52
+        }
+      }
+    }
+  },
+  "regional_lake_update_repeat_20261018": {
+    "cached_load_ms": 28650,
+    "phases": {
+      "frame_samples": {
+        "frame_ms": {
+          "median": 16.751,
+          "p95": 79.64,
+          "max": 86.27
+        },
+        "gpu_ms": {
+          "median": 7.625,
+          "p95": 8.97200012207031,
+          "max": 9.38199996948242
+        },
+        "render_cpu_ms": {
+          "median": 1.50999999046326,
+          "p95": 2.30900001525879,
+          "max": 4.27099990844727
+        },
+        "water_process_us": {
+          "median": 541,
+          "p95": 754,
+          "max": 2494
+        },
+        "ground_process_us": {
+          "median": 50,
+          "p95": 84,
+          "max": 104
+        },
+        "paging_process_us": {
+          "median": 0,
+          "p95": 0,
+          "max": 0
+        },
+        "forest_process_us": {
+          "median": 29,
+          "p95": 42,
+          "max": 54
+        }
+      }
+    }
+  }
+}
