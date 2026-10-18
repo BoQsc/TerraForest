@@ -1,3 +1,11 @@
+## Seed-independent mixed-content admission - 2026-10-18
+
+Seeds 50/141 exposed all-one-type central layouts and would fail only after placement.
+Preparation now validates native choice counts before composition, retaining the world
+seed and recording a deterministic separate layout seed where necessary. Actual native
+prefab composition passes 13 targeted seeds; reviewed seeds 42/1703 are unchanged.
+Evidence: mixed_regional_recipe. No additional full-world/performance claim.
+
 ## Seeded integrated generation and height connection fix - 2026-10-18
 
 The preparation CLI now accepts --seed, using it for terrain and prefab selection,

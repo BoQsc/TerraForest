@@ -35,3 +35,7 @@ buttons are available only in development mode.
 Supported seed range: 0 through 2147483647. Passing preparation is not a guarantee
 of all-seed terrain suitability, continuous-travel performance or long-run thermal
 behavior. Those require separate checks of the actual generated world.
+
+Mixed central settlements validate both building types before placement. When a
+world seed would choose only one type, a deterministic alternative building-layout
+seed is recorded in the checkpoint report; the terrain seed stays unchanged.

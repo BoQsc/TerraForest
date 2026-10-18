@@ -6,6 +6,7 @@ var reopening:=false
 var mixed:=false
 var regional:=false
 var districts:=false
+var central_layout_seed:=0
 func require(ok:bool,message:String)->bool:
  print("PASS " if ok else "FAIL ",message)
  return ok
@@ -69,8 +70,16 @@ func run()->void:
    if title=="Furnished cottage with door and windows" or (mixed and title.begins_with("Furnished tower")):sources.append(i)
   if not require(sources.size()==(2 if mixed else 1),"registered furnished building sources are available"):await finish(false);return
   game.prefab_library.directory="user://checkpoint_prefabs/"+game.terrain.save_slot
+  central_layout_seed=game.terrain.backend.world_seed
+  if mixed:
+   var assets:Array[Resource]=[]
+   for index:int in sources:assets.append(game.structure_prefabs[index])
+   var choice:Dictionary=preload("res://addons/structures/regional_districts.gd").mixed_layout_seed(assets,central_layout_seed)
+   if not require(choice.get("ok",false),"mixed central recipe contains both building types"):await finish(false);return
+   central_layout_seed=choice.seed
+   print("CENTRAL_LAYOUT world_seed=",game.terrain.backend.world_seed," layout_seed=",central_layout_seed)
   var count:int=game.structure_prefabs.size()
-  game._frontage_sources_construction(sources,2 if mixed else 1,8,3,game.terrain.backend.world_seed,"Mixed neighborhood" if mixed else "Gameplay settlement",2)
+  game._frontage_sources_construction(sources,2 if mixed else 1,8,3,central_layout_seed,"Mixed neighborhood" if mixed else "Gameplay settlement",2)
   if not require(await wait_until(func():return game.structure_prefabs.size()==count+1,10),"existing native editor composes connected furnished streets"):await finish(false);return
   game.camera.global_position=game.player.global_position+Vector3(0,15,0)
   game.camera.look_at(game.player.global_position+Vector3(10,-5,0))
@@ -135,7 +144,7 @@ func run()->void:
    game.camera.position=Vector3(0,1.6,0);game.camera.rotation=Vector3(game.pitch,0,0)
 
   var file:=FileAccess.open(report_path,FileAccess.WRITE)
-  file.store_string(JSON.stringify({"slot":game.terrain.save_slot,"seed":game.terrain.backend.world_seed,"generator":game.terrain.backend.world_generator,"cells":game.structures.blocks.stats().cells,"spawn":[game.player.position.x,game.player.position.y,game.player.position.z],"signature":signature()},"  "));file.close()
+  file.store_string(JSON.stringify({"slot":game.terrain.save_slot,"seed":game.terrain.backend.world_seed,"central_layout_seed":central_layout_seed,"generator":game.terrain.backend.world_generator,"cells":game.structures.blocks.stats().cells,"spawn":[game.player.position.x,game.player.position.y,game.player.position.z],"signature":signature()},"  "));file.close()
  # Wait for existing generated components before ordinary compound persistence.
  if not require(await wait_until(func():return not game.lakes.capture_snapshot().is_empty(),60),"generated components ready for compound save"):await finish(false);return
  for frame in 10:await process_frame
