@@ -118,3 +118,5 @@ button to submit grading. The chosen start elevation is retained.
 `generated_layout.gd.describe(seed)` returns native settlement sites and road edges for generator 7. The immutable layout supplies base-field grading and asphalt; it does not instantiate buildings. Existing generator identities 1-6 remain supported. Native command 34 takes only its four-byte opcode and returns the standard 12-byte response header, a u32 site count, sites (vec3 position, f32 radius, u32 kind), a u32 road count, and roads (u32 from, u32 to, f32 half-width). Kind 1 is the central site; kind 2 is an outer town site. Generator 7 has five sites and four roads (168-byte response).
 
 The project preparation launcher populates the central district and verifies saving/reopening; outer settlements and full-map qualification remain unfinished.
+
+Generator 8 keeps the regional layout and introduces floored domed cave networks. Pass `describe(seed, 8)` to the layout wrapper; the default remains 7 for existing callers. Old saved profiles retain their geometry. See ../../docs/evidence/chamber_world_v8/README.md for verification and limits.

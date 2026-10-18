@@ -8,6 +8,7 @@ constexpr u32 SAVE_MAGIC=0x32575254u, MESH_MAGIC=0x324d5254u, REPLY_MAGIC=0x3250
 // Legacy format-1 worlds use generator 1. New generators must keep that reader.
 constexpr u32 MATERIAL_FIELD_GENERATOR_ID=5; // Empty base for independently editable material channels.
 constexpr u32 WALKABLE_CAVE_GENERATOR_ID=6; // New immutable landscape profile; never repurpose saved IDs.
+constexpr u32 CHAMBER_WORLD_GENERATOR_ID=8; // Regional world with floored dome chambers.
 constexpr u32 REGIONAL_WORLD_GENERATOR_ID=7; // Shared settlement/road base layout.
 constexpr u32 TERRAIN_GENERATOR_ID=1; // Default remains the legacy landscape.
 struct Page {
@@ -16,7 +17,7 @@ struct Page {
  mutable bool geometry_digest_valid=false;
  mutable u8 geometry_digest[32]{};
 };
-struct Cave {V3 a,b;float r;};
+struct Cave {V3 a,b;float r;float floor_drop=0;};
 struct Basin {float x,z,level;};
 struct RegionalSite {V3 position;float radius;};
 struct SkyProbe {V3 p,n;float sky;};
@@ -47,7 +48,7 @@ struct World {
  mutable u64 light_rays=0,light_steps=0,light_unresolved=0,light_probe_hits=0;
  void init(int p_seed=1703,u32 generator=1);void release();
  bool set_block(u32 key,int material);void erase_block(u32 key);
- bool has_geology()const{return generator_id==3||generator_id==4||generator_id==WALKABLE_CAVE_GENERATOR_ID||generator_id==REGIONAL_WORLD_GENERATOR_ID;}
+ bool has_geology()const{return generator_id==3||generator_id==4||generator_id==WALKABLE_CAVE_GENERATOR_ID||generator_id>=REGIONAL_WORLD_GENERATOR_ID;}
  float height(float x,float z)const;
  float regional_height(float x,float z,float original)const;
  bool regional_asphalt(float x,float z)const;

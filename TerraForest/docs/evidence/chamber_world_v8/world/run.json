@@ -1,0 +1,31 @@
+{
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+    "--path",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+    "--fullscreen",
+    "--resolution",
+    "1920x1080",
+    "--max-fps",
+    "60",
+    "--script",
+    "res://tests/chamber_world.gd",
+    "--",
+    "--snapshot-readonly",
+    "--world-slot=regional_chambers_20261018",
+    "--ground-cover",
+    "--actors",
+    "--vehicle-fleet",
+    "--gameplay-construction"
+  ],
+  "result": {
+    "timed_out": false,
+    "launch_error": null,
+    "pid": 26492,
+    "exit_code": 0,
+    "diagnostics": [],
+    "required_text_found": true,
+    "elapsed_seconds": 18.8173375999977,
+    "passed": true
+  }
+}

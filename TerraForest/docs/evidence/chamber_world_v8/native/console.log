@@ -1,0 +1,16 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS chamber generator accepted
+PASS four networks with three chambers and four connecting passages each
+PASS wide supported floor in chamber 0
+PASS domed ceiling has more than thirty metres of headroom
+PASS wide supported floor in chamber 1
+PASS domed ceiling has more than thirty metres of headroom
+PASS wide supported floor in chamber 2
+PASS domed ceiling has more than thirty metres of headroom
+PASS wide supported floor in chamber 3
+PASS domed ceiling has more than thirty metres of headroom
+PASS seed changes chamber locations
+PASS saved generator restores exact chamber geometry
+PASS chamber world retains regional layout metadata
+CHAMBER_GENERATOR failures=0

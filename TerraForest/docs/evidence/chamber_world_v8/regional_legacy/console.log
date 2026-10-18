@@ -1,0 +1,21 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS one shared native layout exposes five settlement sites and four connecting roads
+PASS map-wide roads and grading require no authored voxel pages
+PASS entire connector is paved, vegetation-free and below 25 percent sampled grade
+PASS entire connector is paved, vegetation-free and below 25 percent sampled grade
+PASS entire connector is paved, vegetation-free and below 25 percent sampled grade
+PASS entire connector is paved, vegetation-free and below 25 percent sampled grade
+PASS settlement footprint has native level foundation ground
+PASS settlement footprint has native level foundation ground
+PASS settlement footprint has native level foundation ground
+PASS settlement footprint has native level foundation ground
+PASS settlement footprint has native level foundation ground
+PASS connected arterial network exceeds three kilometres
+PASS native generated road mesh carries asphalt surface weight
+PASS fresh native owner restores the exact generated layout
+PASS generator identity roundtrips exactly
+PASS existing lake and cave systems remain in the generated world
+PASS layout is seed-dependent and reproducible
+REGIONAL_METRICS road_metres=3080.13134765625 samples=196 max_grade=0.06327801730793 save_bytes=36
+REGIONAL_WORLD_GENERATION failures=0

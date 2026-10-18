@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: 0BSD
 extends RefCounted
-const PRESETS={1:"Original woodland",4:"Mountains, caves, ore veins and lakes",6:"Accessible cave entrances, ore veins and lakes",7:"Regional roads and settlement ground (in development)"}
+const PRESETS={1:"Original woodland",4:"Mountains, caves, ore veins and lakes",6:"Accessible cave entrances, ore veins and lakes",7:"Regional roads and settlement ground (in development)",8:"Regional world with domed cave chambers"}
 static func valid_slot(slot: String) -> bool:
 	var pattern:=RegEx.new();pattern.compile("^[A-Za-z_][A-Za-z0-9_]{0,47}$")
 	return pattern.search(slot)!=null

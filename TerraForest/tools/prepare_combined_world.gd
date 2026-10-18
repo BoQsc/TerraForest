@@ -52,7 +52,7 @@ func run()->void:
  else:
   if not require(game.structures.blocks.stats().cells==0,"preparation starts in an empty staging world"):await finish(false);return
   if regional:
-   var layout:Dictionary=preload("res://addons/volumetric_terrain/generated_layout.gd").describe(game.terrain.backend.world_seed)
+   var layout:Dictionary=preload("res://addons/volumetric_terrain/generated_layout.gd").describe(game.terrain.backend.world_seed,game.terrain.backend.world_generator)
    if not require(not layout.is_empty(),"shared native regional layout available"):await finish(false);return
    var center:Vector3=layout.sites[0].position
    game.teleport(center-Vector3(36,0,36))
@@ -72,7 +72,7 @@ func run()->void:
   game.camera.look_at(game.player.global_position+Vector3(10,-5,0))
   await physics_frame
   if regional:
-   var layout:Dictionary=preload("res://addons/volumetric_terrain/generated_layout.gd").describe(game.terrain.backend.world_seed)
+   var layout:Dictionary=preload("res://addons/volumetric_terrain/generated_layout.gd").describe(game.terrain.backend.world_seed,game.terrain.backend.world_generator)
    var asset:Resource=game.structure_prefabs[game.structure_prefab_index]
    var bounds:AABB=asset.placement_bounds(Vector3i.ZERO,0)
    var center:Vector3=layout.sites[0].position
@@ -161,7 +161,7 @@ func connect_regional_street(plan:Dictionary,center:Vector3)->void:
   plan.street_lines.append(a);plan.street_lines.append(b)
 
 func prepare_outer_sites()->bool:
- var layout:Dictionary=preload("res://addons/volumetric_terrain/generated_layout.gd").describe(game.terrain.backend.world_seed)
+ var layout:Dictionary=preload("res://addons/volumetric_terrain/generated_layout.gd").describe(game.terrain.backend.world_seed,game.terrain.backend.world_generator)
  var cottage:=-1
  for i in game.structure_prefabs.size():
   if game.structure_prefabs[i].resource_name=="Furnished cottage with door and windows":cottage=i;break

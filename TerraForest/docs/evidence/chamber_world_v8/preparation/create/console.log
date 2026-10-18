@@ -1,0 +1,94 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] New world
+[TerrainRewrite] New world
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS normal generated world starts
+PASS preparation starts in an empty staging world
+PASS shared native regional layout available
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS regional centre loads for settlement generation
+PASS registered furnished building sources are available
+PASS existing native editor composes connected furnished streets
+REGIONAL_SITE_SURVEY { "ok": true, "min_height": 45.0, "max_height": 45.0, "samples": 1359, "epoch": 0, "revision": 0, "minimum_grade": 34, "maximum_grade": 52, "grade": 45 } footprint=[P: (940.0, 45.0, 890.0), S: (37.0, 13.0, 95.0)]
+PASS regional district beside arterial has supported foundation
+PASS regional district foundation plan valid
+PASS terrain survey finds supported settlement grade
+[terrain-hitch] world authoring 56.55 ms at 47523
+[terrain-hitch] controller process 57.88 ms at 47524
+[terrain-hitch] world process 58.85 ms at 47525
+[terrain-hitch] world authoring 55.3 ms at 47806
+[terrain-hitch] controller process 56.19 ms at 47807
+[terrain-hitch] world process 57.32 ms at 47808
+[terrain-hitch] world authoring 50.8 ms at 48466
+[terrain-hitch] controller process 52.37 ms at 48467
+[terrain-hitch] world process 53.37 ms at 48468
+[terrain-hitch] world authoring 50.11 ms at 48626
+[terrain-hitch] controller process 51.43 ms at 48627
+[terrain-hitch] world process 52.65 ms at 48629
+[terrain-hitch] world authoring 56.28 ms at 48827
+[terrain-hitch] controller process 57.49 ms at 48828
+[terrain-hitch] world process 58.6 ms at 48829
+PASS native grading and asphalt preparation complete
+PASS staged furnished settlement publishes
+PASS mixed generation contains eight furnished buildings including cottages and towers
+PASS resident street collision ready
+PASS two native patrol residents prepared: Two street patrol actors placed. F5 saves the population.
+PASS outer town furnished source available
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS outer site 1 loads
+PASS outer furnished street composed
+PASS outer site supported: { "ok": true, "min_height": 35.0, "max_height": 35.0, "samples": 210, "epoch": 0, "revision": 8, "minimum_grade": 24, "maximum_grade": 42, "grade": 35 }
+PASS outer site plan valid
+[terrain-hitch] world authoring 58.16 ms at 52049
+[terrain-hitch] controller process 59.94 ms at 52051
+[terrain-hitch] world process 61.39 ms at 52053
+[terrain-hitch] world authoring 62.88 ms at 52241
+[terrain-hitch] controller process 64.63 ms at 52242
+[terrain-hitch] world process 65.81 ms at 52243
+PASS outer foundation and arterial connection prepared
+PASS outer two furnished buildings published
+REGIONAL_TOWN site=1 doors=10 cells=7719
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS outer site 2 loads
+PASS outer furnished street composed
+PASS outer site supported: { "ok": true, "min_height": 51.0, "max_height": 51.0, "samples": 210, "epoch": 0, "revision": 12, "minimum_grade": 40, "maximum_grade": 58, "grade": 51 }
+PASS outer site plan valid
+[terrain-hitch] world authoring 64.42 ms at 54753
+[terrain-hitch] controller process 65.98 ms at 54755
+[terrain-hitch] world process 67.1 ms at 54756
+PASS outer foundation and arterial connection prepared
+PASS outer two furnished buildings published
+REGIONAL_TOWN site=2 doors=12 cells=8667
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS outer site 3 loads
+PASS outer furnished street composed
+PASS outer site supported: { "ok": true, "min_height": 53.0, "max_height": 53.0, "samples": 210, "epoch": 0, "revision": 16, "minimum_grade": 42, "maximum_grade": 60, "grade": 53 }
+PASS outer site plan valid
+PASS outer foundation and arterial connection prepared
+PASS outer two furnished buildings published
+REGIONAL_TOWN site=3 doors=14 cells=9615
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS outer site 4 loads
+PASS outer furnished street composed
+PASS outer site supported: { "ok": true, "min_height": 46.0, "max_height": 46.0, "samples": 210, "epoch": 0, "revision": 20, "minimum_grade": 35, "maximum_grade": 53, "grade": 46 }
+PASS outer site plan valid
+[terrain-hitch] world authoring 51.5 ms at 62025
+[terrain-hitch] controller process 52.53 ms at 62026
+[terrain-hitch] world process 53.52 ms at 62027
+[terrain-hitch] world authoring 66.47 ms at 62375
+[terrain-hitch] controller process 68.16 ms at 62377
+[terrain-hitch] world process 69.17 ms at 62378
+[terrain-hitch] world authoring 51.12 ms at 62522
+[terrain-hitch] controller process 53.11 ms at 62523
+[terrain-hitch] world process 54.08 ms at 62524
+PASS outer foundation and arterial connection prepared
+PASS outer two furnished buildings published
+REGIONAL_TOWN site=4 doors=16 cells=10563
+PASS five regional sites contain sixteen furnished buildings
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS central spawn reloads after outer town generation
+PASS generated components ready for compound save
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+COMBINED_PREPARATION failures=0

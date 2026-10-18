@@ -1,3 +1,17 @@
+## Domed caves integrated into generator 8 - 2026-10-18
+
+New profile 8 keeps the regional map and adds four cave networks, each with three
+floored dome chambers connected by arched passages (28 native primitives total).
+Main chambers span 64-78 m. Full sixteen-building world creation/save/reopen passes;
+actual chamber streaming and nine floor collision probes pass. Legacy checks pass.
+Prepare/Play Generated World.cmd now use generated_world_v3 without overwriting v2.
+See [evidence](evidence/chamber_world_v8/README.md).
+
+Normal headlamp illumination is insufficient to show the larger rooms clearly;
+geometry inspection required explicitly test-only lighting. Full route traversal,
+lighting, natural detailing and ore access remain open. Large lakes and distinct
+exploration destinations remain next integrated-world work, not completed claims.
+
 ## Normal-world ground-cover density - 2026-10-18
 
 Integrated denser native grass scatter into normal worlds: nine near cells use up to

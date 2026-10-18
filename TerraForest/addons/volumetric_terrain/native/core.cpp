@@ -80,7 +80,7 @@ float World::height(float x,float z)const{
    h+=bump(x,z,cx,cz,330.f+float(b&127),85.f+float((b>>8)&63));
   }
   h=clampf(h,18.f,225.f);
-  if(generator_id==REGIONAL_WORLD_GENERATOR_ID)h=regional_height(x,z,h);
+  if(generator_id>=REGIONAL_WORLD_GENERATOR_ID)h=regional_height(x,z,h);
   for(int i=0;i<basin_count;i++){
    const auto &b=basins[i];float dx=x-b.x,dz=z-b.z,d2=dx*dx+dz*dz;
    if(d2>=1600.f)continue;
@@ -101,7 +101,14 @@ float World::base(V3 p,float h)const{
  for(int i=0;i<caves.n;i++){
   const Cave&c=caves[i];
   if(p.x<mn(c.a.x,c.b.x)-c.r-5||p.x>mx(c.a.x,c.b.x)+c.r+5||p.z<mn(c.a.z,c.b.z)-c.r-5||p.z>mx(c.a.z,c.b.z)+c.r+5||p.y<mn(c.a.y,c.b.y)-c.r-5||p.y>mx(c.a.y,c.b.y)+c.r+5)continue;
-  d=mx(d,-capsule(p,c.a,c.b,c.r));
+  float air=-capsule(p,c.a,c.b,c.r);
+  if(generator_id==CHAMBER_WORLD_GENERATOR_ID){
+   V3 along=c.b-c.a;along.y=0;V3 offset=p-c.a;offset.y=0;
+   float t=clampf(dot(offset,along)/mx(dot(along,along),1e-8f),0,1);
+   float floor=c.a.y+(c.b.y-c.a.y)*t-c.floor_drop;
+   air=mn(air,p.y-floor); // Flat chamber floors and continuous passage ramps.
+  }
+  d=mx(d,air);
  }
  d=mx(d,1.f-p.y);d=mx(d,p.y-255.f);d=mx(d,-p.x);d=mx(d,p.x-WORLD);d=mx(d,-p.z);d=mx(d,p.z-WORLD);
  return clampf(d,-SDF_BAND,SDF_BAND);
@@ -110,14 +117,14 @@ void World::init(int p_seed,u32 generator){
  seed=p_seed;generator_id=generator;basin_count=0;site_count=0;regional_roads=false;revision=edits=0;changed_samples=0;block_columns.resize(4096);
  edit_columns=(u32*)tr_alloc(NP*NP*sizeof(u32));if(edit_columns)zero_bytes(edit_columns,NP*NP*sizeof(u32));else tr_oom=true;
  if(generator_id==MATERIAL_FIELD_GENERATOR_ID)return;
- if(generator_id==REGIONAL_WORLD_GENERATOR_ID){
+ if(generator_id>=REGIONAL_WORLD_GENERATOR_ID){
   const u32 layout_seed=hash32(u32(seed)^0x71c9e15bu);
   const float cx=1000.f+float(int(layout_seed&63)-31),cz=1000.f+float(int((layout_seed>>8)&63)-31);
   V3 centers[5]={{cx,0,cz},{230,0,cz},{1770,0,cz},{cx,0,230},{cx,0,1770}};
   for(int i=0;i<5;i++){centers[i].y=float(fl(height(centers[i].x,centers[i].z)));sites[i]={centers[i],i==0?160.f:72.f};}
   site_count=5;regional_roads=true;
  }
- if(generator_id==4||generator_id==WALKABLE_CAVE_GENERATOR_ID||generator_id==REGIONAL_WORLD_GENERATOR_ID){
+ if(generator_id==4||generator_id==WALKABLE_CAVE_GENERATOR_ID||generator_id>=REGIONAL_WORLD_GENERATOR_ID){
   // Separate seed domains and quadrant placement keep basins away from caves.
   for(u32 i=0;i<4;i++){
    u32 h=hash32(u32(seed)^0x7a91c3b5u^(i*0x9e3779b9u));
@@ -138,6 +145,21 @@ void World::init(int p_seed,u32 generator){
    entrance.y=height(entrance.x,entrance.z)+(generator_id>=WALKABLE_CAVE_GENERATOR_ID?6.f:-2.f);
    float floor=mx(25.f,mn(height(x,z)-45.f,75.f));
    V3 bend={x+side*110.f,floor+10.f,z+float(int(c&63)-31)},center={x,floor,z};
+   if(generator_id==CHAMBER_WORLD_GENERATOR_ID){
+    // Shared floor datum: wide domes, not deep spherical bowls. Passage
+    // centerlines meet five metres above that floor and retain arched ceilings.
+    float ground=mx(12.f,mn(height(x,z)-55.f,60.f));
+    entrance.y=height(entrance.x,entrance.z)+5.f;
+    V3 hall={x,ground,z},end={x,ground+5.f,z};
+    bend.y=entrance.y+(end.y-entrance.y)*(120.f/230.f);
+    caves.push({entrance,bend,7.f,5.f});caves.push({bend,end,8.f,5.f});
+    caves.push({hall,hall,32.f+float((c>>8)&7),0.f});
+    V3 second={x-side*90.f,ground,z+65.f},second_entry=second+V3{0,5,0};
+    caves.push({end,second_entry,7.f,5.f});caves.push({second,second,22.f,0.f});
+    V3 alcove={x+side*25.f,ground,z-65.f};
+    caves.push({end,alcove+V3{0,5,0},6.f,5.f});caves.push({alcove,alcove,18.f,0.f});
+    continue;
+   }
    caves.push({entrance,bend,7.f});caves.push({bend,center,9.f});
    caves.push({center,center,18.f+float((c>>8)&7)});
    V3 branch={x-side*110.f,floor-5.f,z+80.f};
@@ -323,7 +345,7 @@ bool World::deserialize(const u8*data,int n){
  Reader r{data,n-4};if(r.u()!=SAVE_MAGIC)return false;u32 format=r.u();if(format!=1&&format!=2)return false;
  int s=int(r.u()),pc=int(r.u()),bc=int(r.u()),rev=int(r.u()),ed=int(r.u());
  u32 generator=format==1?1:r.u();
- if(!r.good||generator<1||generator>REGIONAL_WORLD_GENERATOR_ID)return false;
+ if(!r.good||generator<1||generator>CHAMBER_WORLD_GENERATOR_ID)return false;
  if(pc<0||pc>MAX_PAGES||bc<0||bc>2000000||i64(pc)*(4+PAGE_SAMPLES*3)+i64(bc)*8+(format==1?28:32)!=n-4)return false;
  World t;t.build_control=build_control;t.init(s,generator);t.revision=rev;t.edits=ed;t.surface_style=surface_style;
  for(int i=0;i<pc;i++){
@@ -748,7 +770,7 @@ void shade_mesh(const World&w,Mesh&m,u32 expected_epoch){
     int sx=x+(k&1),sy=y+((k>>1)&1),sz=z+((k>>2)&1);u8 mat=0;
     float sample_height=owned_lattice_height(w,sx,sz);
     float original_sample=w.base({float(sx),float(sy),float(sz)},sample_height);
-    if(w.generator_id==REGIONAL_WORLD_GENERATOR_ID && sy>=sample_height-1.5f && sy<=sample_height+1.f && w.regional_asphalt(float(sx),float(sz)))mat=4;
+    if(w.generator_id>=REGIONAL_WORLD_GENERATOR_ID && sy>=sample_height-1.5f && sy<=sample_height+1.f && w.regional_asphalt(float(sx),float(sz)))mat=4;
     float base=float(quant(original_sample))/SDF_SCALE;
     float current=original_sample;
     if(sx<0||sx>WORLD||sz<0||sz>WORLD||sy<0||sy>WORLD_Y)current=SDF_BAND;
@@ -952,7 +974,7 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
  }
  else if(cmd==4){w.serialize(out);}
  else if(cmd==5){if(!w.deserialize(data+4,n-4))out.p[8]=1;out.u(w.revision);out.u(w.pages.n);out.u(w.blocks.n);}
- else if(cmd==6){int seed=int(r.u());u32 generator=n==12?r.u():1;if(!r.good||(n!=8&&n!=12)||generator<1||generator>REGIONAL_WORLD_GENERATOR_ID){out.p[8]=1;return;}BuildControl *control=w.build_control;w.release();w=World{};w.build_control=control;w.init(seed,generator);}
+ else if(cmd==6){int seed=int(r.u());u32 generator=n==12?r.u():1;if(!r.good||(n!=8&&n!=12)||generator<1||generator>CHAMBER_WORLD_GENERATOR_ID){out.p[8]=1;return;}BuildControl *control=w.build_control;w.release();w=World{};w.build_control=control;w.init(seed,generator);}
  else if(cmd==7){V3 p=r.vec();if(!r.good||!(ab(p.x)<=10000&&ab(p.y)<=10000&&ab(p.z)<=10000)){out.p[8]=1;return;}out.f(w.height(p.x,p.z));out.f(w.sample(fl(p.x),fl(p.y),fl(p.z)));}
  else if(cmd==8){ // Deterministic construction proof; not a replay list.
   int bx=1472,bz=1440,by=int(w.height(float(bx),float(bz)))+1;
