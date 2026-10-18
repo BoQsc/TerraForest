@@ -1,0 +1,14 @@
+{
+  "timed_out": false,
+  "launch_error": null,
+  "cancelled": false,
+  "pid": 37556,
+  "exit_code": 1,
+  "diagnostics": [
+    "FAIL all ground cover owners settled",
+    "FAIL walking height terrain hit"
+  ],
+  "required_text_found": false,
+  "elapsed_seconds": 69.56284389999928,
+  "passed": false
+}

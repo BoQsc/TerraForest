@@ -1,0 +1,13 @@
+{
+  "timed_out": false,
+  "launch_error": null,
+  "cancelled": false,
+  "pid": 41036,
+  "exit_code": 1,
+  "diagnostics": [
+    "FAIL all ground cover owners settled"
+  ],
+  "required_text_found": false,
+  "elapsed_seconds": 67.60277510000014,
+  "passed": false
+}
