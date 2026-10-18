@@ -1,0 +1,39 @@
+{
+  "candidates": {
+    "8": {
+      "chamber": 2,
+      "depth": 0.5,
+      "material": 8,
+      "sample": "(1608.0, 10.32324, 1037.0)",
+      "surface": "(1608.0, 10.82324, 1037.0)"
+    },
+    "9": {
+      "chamber": 4,
+      "depth": 0.5,
+      "material": 9,
+      "sample": "(1577.0, 10.32324, 1063.0)",
+      "surface": "(1577.0, 10.82324, 1063.0)"
+    }
+  },
+  "chambers": [
+    {
+      "floor": 10.8230171203613,
+      "index": 2,
+      "radius": 18.0
+    },
+    {
+      "floor": 10.8230171203613,
+      "index": 4,
+      "radius": 12.0
+    },
+    {
+      "floor": 10.8230171203613,
+      "index": 6,
+      "radius": 10.0
+    }
+  ],
+  "floor_hits": 327,
+  "generator": 12,
+  "queries": 423,
+  "seed": 1703
+}

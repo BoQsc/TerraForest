@@ -1,0 +1,79 @@
+[
+  {
+    "seed": 0,
+    "timed_out": false,
+    "launch_error": null,
+    "pid": 28212,
+    "exit_code": 1,
+    "diagnostics": [],
+    "required_text_found": false,
+    "elapsed_seconds": 0.2655761000005441,
+    "passed": false
+  },
+  {
+    "seed": 1,
+    "timed_out": false,
+    "launch_error": null,
+    "pid": 22884,
+    "exit_code": 1,
+    "diagnostics": [],
+    "required_text_found": false,
+    "elapsed_seconds": 0.1697894000008091,
+    "passed": false
+  },
+  {
+    "seed": 42,
+    "timed_out": false,
+    "launch_error": null,
+    "pid": 29424,
+    "exit_code": 1,
+    "diagnostics": [],
+    "required_text_found": false,
+    "elapsed_seconds": 0.16548169999987294,
+    "passed": false
+  },
+  {
+    "seed": 50,
+    "timed_out": false,
+    "launch_error": null,
+    "pid": 23008,
+    "exit_code": 1,
+    "diagnostics": [],
+    "required_text_found": false,
+    "elapsed_seconds": 0.16908730000068317,
+    "passed": false
+  },
+  {
+    "seed": 141,
+    "timed_out": false,
+    "launch_error": null,
+    "pid": 22860,
+    "exit_code": 1,
+    "diagnostics": [],
+    "required_text_found": false,
+    "elapsed_seconds": 0.17261520000101882,
+    "passed": false
+  },
+  {
+    "seed": 1703,
+    "timed_out": false,
+    "launch_error": null,
+    "pid": 17684,
+    "exit_code": 0,
+    "diagnostics": [],
+    "required_text_found": true,
+    "elapsed_seconds": 0.16804430000047432,
+    "passed": true
+  },
+  {
+    "seed": 9999,
+    "timed_out": false,
+    "launch_error": null,
+    "pid": 6728,
+    "exit_code": 0,
+    "diagnostics": [],
+    "required_text_found": true,
+    "elapsed_seconds": 0.2656124000004638,
+    "passed": true
+  }
+]

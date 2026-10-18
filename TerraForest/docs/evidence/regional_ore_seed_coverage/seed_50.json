@@ -1,0 +1,32 @@
+{
+  "candidates": {
+    "9": {
+      "chamber": 2,
+      "depth": 4.0,
+      "material": 9,
+      "sample": "(1614.0, 12.36816, 1071.0)",
+      "surface": "(1614.0, 16.36816, 1071.0)"
+    }
+  },
+  "chambers": [
+    {
+      "floor": 16.3679809570313,
+      "index": 2,
+      "radius": 18.0
+    },
+    {
+      "floor": 16.3679809570313,
+      "index": 4,
+      "radius": 12.0
+    },
+    {
+      "floor": 16.3679809570313,
+      "index": 6,
+      "radius": 10.0
+    }
+  ],
+  "floor_hits": 327,
+  "generator": 12,
+  "queries": 423,
+  "seed": 50
+}

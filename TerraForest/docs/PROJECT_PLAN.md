@@ -1,5 +1,12 @@
 ## Current integrated entry point - 2026-10-18
 
+Seed coverage found an open location-design gap: only 1703/9999 among seven seeds
+have both strong iron/copper samples within four metres of mine floors or standing-
+height walls. All sampled floors exist; mine layout and geological veins are
+independent. See regional_ore_seed_coverage. Next generator recipe must deliberately
+connect resource-bearing workings to the POI while preserving existing save fields.
+This is bounded sample evidence, not a claim those worlds contain no ore.
+
 Follow-up loading trace reproduced the supplies timeout while cached water surfaces
 continued publishing. Controlled 15-to-60 FPS testing changed throughput from about
 40 to 170 regions/s and completed without reset. Automated supplies checks now fix
