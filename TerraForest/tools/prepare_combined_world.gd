@@ -5,6 +5,7 @@ var report_path:String
 var reopening:=false
 var mixed:=false
 var regional:=false
+var districts:=false
 func require(ok:bool,message:String)->bool:
  print("PASS " if ok else "FAIL ",message)
  return ok
@@ -25,8 +26,9 @@ func run()->void:
  for arg in OS.get_cmdline_user_args():
   if arg.begins_with("--checkpoint-report="):report_path=arg.trim_prefix("--checkpoint-report=")
   if arg=="--reopen-checkpoint":reopening=true
+  if arg=="--checkpoint-layout=districts":districts=true
   if arg=="--checkpoint-layout=mixed":mixed=true
-  if arg in ["--checkpoint-layout=regional","--checkpoint-layout=poi","--checkpoint-layout=lakes"]:mixed=true;regional=true
+  if arg in ["--checkpoint-layout=regional","--checkpoint-layout=poi","--checkpoint-layout=lakes","--checkpoint-layout=districts"]:mixed=true;regional=true
  if report_path.is_empty():quit(1);return
  game=load("res://demo/world.tscn").instantiate();game.max_fps=60;game.background_fps=60;game.lakes.offline_preparation=true;root.add_child(game)
  # Offline staging is committed explicitly after the complete generation batch.
@@ -35,7 +37,7 @@ func run()->void:
  game.set_physics_process(false) # Compare restored authoritative state before any patrol tick.
  # Cold offline generation includes all generated lake caches. This is not a
  # runtime arrival budget; the independent preparation runner records duration.
- var bake_timeout:int=360 if "--checkpoint-layout=lakes" in OS.get_cmdline_user_args() else 180
+ var bake_timeout:int=360 if districts or "--checkpoint-layout=lakes" in OS.get_cmdline_user_args() else 180
  var started:bool=await wait_until(func():return not game.loading_active,bake_timeout)
  if not started:print("STARTUP_DIAGNOSTIC ",game.terrain.loading_state(game.player.position,game.fly)," lakes=",game.lakes.statistics()," catalog=",game.lakes.descriptions()," label=",game.loading_label.text)
  if not require(started,"normal generated world starts"):await finish(false);return
@@ -176,7 +178,15 @@ func prepare_outer_sites()->bool:
   if not require(await wait_until(func():return not game.loading_active,60),"outer site %d loads" % site.id):return false
   game.set_physics_process(false);game._clear_motion();game.structure_mode=true;game.structure_rotation=0
   var count:int=game.structure_prefabs.size()
-  game._frontage_sources_construction(PackedInt32Array([cottage]),1,8,3,1703+int(site.id),"Regional village %d" % site.id,1)
+  var selection:=PackedInt32Array([cottage])
+  var district:Dictionary={"title":"Regional village %d"%site.id,"lots":1,"width":8,"gap":3,"streets":1,"buildings":2}
+  if districts:
+   district=preload("res://addons/structures/regional_districts.gd").plan(site.id);selection=PackedInt32Array()
+   for title:String in district.sources:
+    for i in game.structure_prefabs.size():
+     if game.structure_prefabs[i].resource_name==title:selection.append(i);break
+   if not require(selection.size()==district.sources.size(),"district sources available: "+district.title):return false
+  game._frontage_sources_construction(selection,district.lots,district.width,district.gap,1703+int(site.id),district.title,district.streets)
   if not require(await wait_until(func():return game.structure_prefabs.size()==count+1,10),"outer furnished street composed"):return false
   var asset:Resource=game.structure_prefabs[game.structure_prefab_index]
   var bounds:AABB=asset.placement_bounds(Vector3i.ZERO,0)
@@ -193,9 +203,9 @@ func prepare_outer_sites()->bool:
   if not require(await wait_until(func():return game.site_preparation.status!="running",30) and game.site_preparation.status=="complete","outer foundation and arterial connection prepared"):return false
   var doors:int=game.doors.collection.get_ids().size()
   game._place_prepared_site()
-  if not require(await wait_until(func():return game._foundation_placement.is_empty(),20) and game.doors.collection.get_ids().size()==doors+2,"outer two furnished buildings published"):return false
+  if not require(await wait_until(func():return game._foundation_placement.is_empty(),20) and game.doors.collection.get_ids().size()==doors+district.buildings,"district furnished buildings published: "+district.title):return false
   print("REGIONAL_TOWN site=",site.id," doors=",game.doors.collection.get_ids().size()," cells=",game.structures.blocks.stats().cells)
- return require(game.doors.collection.get_ids().size()==16,"five regional sites contain sixteen furnished buildings")
+ return require(game.doors.collection.get_ids().size()==(22 if districts else 16),"five regional sites contain expected furnished buildings")
 
 func regional_block_signature()->Dictionary:
  # Check persistent content independently of the camera's resident window.

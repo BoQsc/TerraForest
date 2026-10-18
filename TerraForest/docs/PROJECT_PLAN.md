@@ -1,3 +1,13 @@
+## Regional district composition available - 2026-10-18
+
+The review launcher now opens a separate v2 save with 23 buildings across five
+sites, including four northern three-storey buildings and wider southern housing.
+The v1 save is preserved (--previous-review). Composition, full save/reopen and
+a 25.8 s saved-world arrival/count/visual check pass. Evidence: regional_districts.
+This expands actual world content using existing furnished prefabs; it does not
+qualify cities, continuous map travel, long-run performance or new architectural art.
+Next: verify continuous travel between locations and improve their exploration value.
+
 ## Integrated world is available for human review - 2026-10-18
 
 Play Regional World Review.cmd now opens a separate persistent copy of the prepared

@@ -13,11 +13,13 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--dry-run', action='store_true')
     parser.add_argument('--godot')
+    parser.add_argument('--previous-review', action='store_true', help='Open the preserved v1 review save')
     args = parser.parse_args()
     worlds = Path(os.environ['APPDATA']) / 'Godot/app_userdata/TerraForest/worlds'
-    source, target = 'regional_lake_20261018', 'regional_world_review_v1'
+    source, target = ('regional_lake_20261018', 'regional_world_review_v1') if args.previous_review else ('regional_districts_20261018', 'regional_world_review_v2')
+    layout = 'lakes' if args.previous_review else 'districts'
     if not (worlds / (target + '.trw')).is_file() and not (worlds / (source + '.trw')).is_file():
-        parser.error('Prepare the integrated world first: python tools/prepare_combined_world.py --layout lakes --destination regional_lake_20261018')
+        parser.error(f'Prepare the integrated world first: python tools/prepare_combined_world.py --layout {layout} --destination {source}')
     copied = {'pending': not (worlds / (target + '.trw')).exists()}
     if not args.dry_run:
         copied = clone_once(worlds, source, target)
