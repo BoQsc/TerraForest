@@ -64,7 +64,17 @@ public:
             // Preserve stones/ferns and all identities; enrich a small subset of grass.
             uint32_t accent=hash(uint32_t(ids[i])^0x739ac51du)%1000;
             if(species==2){if(accent<15)species=3+accent/5;else if(accent<40)species=6;else if(accent<70)species=7;}
-            if(ids[i]>63*63*64)species=2; // Added density is grass; rare resources retain original abundance.
+            if(ids[i]>63*63*64) {
+                // Detail layers formerly forced every candidate to grass, overwhelming
+                // the sparse base species. Small coherent understory pockets retain
+                // the same candidate count, identities and persisted removal masks.
+                const float patch=std::sin(t.origin.x*.17f)*std::cos(t.origin.z*.13f);
+                species=2;
+                if(accent<(patch>.25f?140u:20u))species=1;
+                else if(accent>=150&&accent<165&&patch>0.0f)species=6;
+                else if(accent>=170&&accent<175)species=7;
+                else if(accent>=180&&accent<183)species=3+int(accent-180);
+            }
             keys[species].append(ids[i]);
             for(int row=0;row<3;++row){for(int col=0;col<3;++col)values[species].append(t.basis[row][col]);values[species].append(t.origin[row]);}
         }

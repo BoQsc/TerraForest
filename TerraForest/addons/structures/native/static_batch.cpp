@@ -44,6 +44,7 @@ void NativeStaticBatch::_bind_methods() {
     ClassDB::bind_method(D_METHOD("configure_render_streaming","enabled","radius","batch_limit","byte_limit","uploads_per_tick","bytes_per_tick"),&NativeStaticBatch::configure_render_streaming);
     ClassDB::bind_method(D_METHOD("set_render_focus","focus"),&NativeStaticBatch::set_render_focus);
     ClassDB::bind_method(D_METHOD("render_stats"),&NativeStaticBatch::render_stats);
+    ClassDB::bind_method(D_METHOD("configure_appearance_fade"),&NativeStaticBatch::configure_appearance_fade);
     ClassDB::bind_method(D_METHOD("set_casts_shadows","enabled"),&NativeStaticBatch::set_casts_shadows);
     ClassDB::bind_method(D_METHOD("configure_collision","box","radius","instance_limit","builds_per_tick"),&NativeStaticBatch::configure_collision);
     ClassDB::bind_method(D_METHOD("configure_compound_collision","boxes","radius","instance_limit","builds_per_tick","shape_limit","shapes_per_tick"),&NativeStaticBatch::configure_compound_collision);
@@ -216,7 +217,7 @@ bool NativeStaticBatch::remove_instances(const PackedInt64Array &ids) {
     for(auto id:unique) {
         invalidate_proxy(id);
         auto old=placements.find(id);auto k=group_for(old->second);auto &g=groups.at(k);g.erase(id);if(g.empty())groups.erase(k);
-        placements.erase(old);slots.erase(id);touched.insert(k);
+        placements.erase(old);slots.erase(id);appearance_birth.erase(id);touched.insert(k);
     }
     rebuild(touched);if(!touched.empty())publish_change();return true;
 }

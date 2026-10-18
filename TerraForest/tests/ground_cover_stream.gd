@@ -55,7 +55,7 @@ func run() -> void:
 	for batch in cover.batches:
 		count+=batch.get_ids().size()
 		check(not batch.collision_stats().enabled and batch.collision_stats().resident_bodies==0,"ground cover creates no physics bodies")
-	check(count==11776,"bounded 11776 candidates: dense nine near owners and sparse forty distant owners")
+	check(count==27136,"bounded 27136 candidates: 25 preloaded dense owners and 24 sparse distant owners")
 	var key:=Vector2i(30,30)
 	var row: Dictionary=cover.resident[key][2]
 	var removed_id: int=row.ids[0]
@@ -119,7 +119,7 @@ func run() -> void:
 		if cover.resident.size()==49 and cover._dirty.is_empty() and cover._scatter_job.is_empty():break
 	var bands_ok:bool=cover.resident.size()==49 and cover._dirty.is_empty()
 	for owner:Vector2i in cover.resident:bands_ok=bands_ok and cover._resident_layers[owner]==cover._layers(owner)
-	check(bands_ok and cover.rejected_batches==0,"crossing a cell boundary upgrades nearby cover and retires distant extra density")
+	check(bands_ok and cover.rejected_batches==0,"crossing a cell boundary upgrades nearby cover and retains loaded layers until owner retirement")
 	cover.reset()
 	check(cover.resident.is_empty() and cover.batches[0].get_ids().is_empty() and cover.batches[1].get_ids().is_empty() and cover.batches[2].get_ids().is_empty(),"reset releases generated records")
 	cover.free();terrain.free();camera.free()

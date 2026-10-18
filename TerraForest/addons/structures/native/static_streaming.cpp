@@ -1,13 +1,14 @@
 #include "static_batch.hpp"
 #include <godot_cpp/classes/multi_mesh.hpp>
 #include <algorithm>
+#include <godot_cpp/classes/time.hpp>
 #include <cmath>
 
 namespace terraforest {
 uint32_t NativeStaticBatch::render_page_capacity() const {
     // Even a dense origin group uploads in small independent draw pages. Tiny
     // application budgets reduce capacity rather than making the group invisible.
-    return render_streaming?uint32_t(std::min({uint64_t(1024),render_tick_bytes/48,render_byte_limit/48})):100000;
+    return render_streaming?uint32_t(std::min({uint64_t(1024),render_tick_bytes/render_stride_bytes(),render_byte_limit/render_stride_bytes()})):100000;
 }
 uint64_t NativeStaticBatch::render_page_size(RenderKey key) const {
     auto group=render_ids.find(key.first);if(group==render_ids.end())return 0;
@@ -18,8 +19,8 @@ void NativeStaticBatch::release_batch(RenderKey key) {
     auto batch=batches.find(key);if(batch==batches.end())return;
     auto ids=resident_ids.find(key);
     if(ids!=resident_ids.end()) {
-        render_bytes-=ids->second.size()*48;
-        for(auto id:ids->second)slots.erase(id);
+        render_bytes-=ids->second.size()*render_stride_bytes();
+        for(auto id:ids->second){slots.erase(id);if(!placements.count(id))appearance_birth.erase(id);}
         resident_ids.erase(ids);
     }
     memdelete(batch->second);batches.erase(batch);++render_evictions;
@@ -37,26 +38,35 @@ void NativeStaticBatch::upload_batch(RenderKey page) {
     uint64_t start=uint64_t(page.second)*render_page_capacity();
     Ref<MultiMesh> multi;multi.instantiate();
     multi->set_transform_format(MultiMesh::TRANSFORM_3D);multi->set_mesh(source_mesh);
-    PackedFloat32Array buffer;buffer.resize(count*12);int offset=0;
+    const int stride=appearance_fade?16:12;
+    multi->set_use_custom_data(appearance_fade);
+    const float birth=float(Time::get_singleton()->get_ticks_msec()/1000.0);
+    PackedFloat32Array buffer;buffer.resize(count*stride);int offset=0;
     auto &ids=resident_ids[page];ids.reserve(count);
     for(uint64_t i=start;i<start+count;i++) {
         auto id=ordered[i];
-        slots[id]=offset/12;ids.push_back(id);
+        slots[id]=offset/stride;ids.push_back(id);
         const auto &t=placements.at(id);std::copy(t.begin(),t.end(),buffer.ptrw()+offset);
-        buffer[offset+3]-=key.x*32;buffer[offset+7]-=key.y*32;buffer[offset+11]-=key.z*32;offset+=12;
+        buffer[offset+3]-=key.x*32;buffer[offset+7]-=key.y*32;buffer[offset+11]-=key.z*32;
+        if(appearance_fade) {
+            auto inserted=appearance_birth.emplace(id,birth);
+            buffer[offset+12]=inserted.first->second;
+            buffer[offset+13]=1.0f;buffer[offset+14]=0;buffer[offset+15]=0;
+        }
+        offset+=stride;
     }
     multi->set_instance_count(count);multi->set_buffer(buffer);
     auto *instance=memnew(MultiMeshInstance3D);instance->set_multimesh(multi);
     instance->set_cast_shadows_setting(casts_shadows?GeometryInstance3D::SHADOW_CASTING_SETTING_ON:GeometryInstance3D::SHADOW_CASTING_SETTING_OFF);
     instance->set_position(Vector3(key.x*32,key.y*32,key.z*32));
     add_child(instance);batches.emplace(page,instance);
-    render_bytes+=count*48;render_uploaded_bytes+=count*48;++uploads;
+    render_bytes+=count*render_stride_bytes();render_uploaded_bytes+=count*render_stride_bytes();++uploads;
 }
 bool NativeStaticBatch::configure_render_streaming(bool enabled,double radius,int64_t batch_limit,int64_t byte_limit,int64_t uploads_per_tick,int64_t bytes_per_tick) {
     if(admission)return false;
     if(!std::isfinite(radius)||radius<0||radius>16384||batch_limit<1||batch_limit>4096||
-       byte_limit<48||byte_limit>4800000||uploads_per_tick<1||uploads_per_tick>64||
-       bytes_per_tick<48||bytes_per_tick>4800000)return false;
+       byte_limit<render_stride_bytes()||byte_limit>4800000||uploads_per_tick<1||uploads_per_tick>64||
+       bytes_per_tick<render_stride_bytes()||bytes_per_tick>4800000)return false;
     // Reconfiguration evicts immediately, so lower budgets cannot leave a stale
     // over-budget frame. Authored placements, proxies and journals are unchanged.
     while(!batches.empty())release_batch(batches.begin()->first);
@@ -99,7 +109,7 @@ void NativeStaticBatch::select_render_batches() {
         render_candidates+=pages;
         for(uint32_t page=0;page<pages;page++) {
             if(wanted.size()>=size_t(render_batch_limit)) {render_blocked+=pages-page;break;}
-            RenderKey key{candidate.key,page};uint64_t cost=render_page_size(key)*48;
+            RenderKey key{candidate.key,page};uint64_t cost=render_page_size(key)*render_stride_bytes();
             if(bytes+cost>render_byte_limit) {
                 ++render_blocked;
                 // All intervening full pages have identical cost. The final
@@ -122,10 +132,15 @@ void NativeStaticBatch::_process(double) {
     if(render_dirty)select_render_batches();
     uint64_t uploaded=0;int count=0;
     while(!render_pending.empty()&&count<render_upload_limit) {
-        RenderKey key=render_pending.back();uint64_t cost=render_page_size(key)*48;
+        RenderKey key=render_pending.back();uint64_t cost=render_page_size(key)*render_stride_bytes();
         if(uploaded+cost>render_tick_bytes)break;
         render_pending.pop_back();upload_batch(key);uploaded+=cost;++count;
     }
+}
+bool NativeStaticBatch::configure_appearance_fade() {
+    // Opt-in before data admission; default static props retain their 48-byte layout.
+    if(!placements.empty()||!unloaded_regions.empty()||!batches.empty()||admission||render_tick_bytes<64||render_byte_limit<64)return false;
+    appearance_fade=true;return true;
 }
 void NativeStaticBatch::set_casts_shadows(bool enabled) {
     casts_shadows=enabled;
@@ -142,6 +157,8 @@ Dictionary NativeStaticBatch::render_stats() const {
     d["selection_queries"]=int64_t(render_queries);d["evictions"]=int64_t(render_evictions);
     d["uploaded_transform_bytes"]=int64_t(render_uploaded_bytes);
     d["page_capacity"]=int(render_page_capacity());
+    d["instance_stride_bytes"]=int(render_stride_bytes());
+    d["appearance_records"]=int(appearance_birth.size());
     uint64_t indexed=0,index_capacity=0;
     for(const auto &group:render_ids) {indexed+=group.second.size();index_capacity+=group.second.capacity()*sizeof(int64_t);}
     d["indexed_instances"]=int64_t(indexed);d["index_capacity_bytes"]=int64_t(index_capacity);

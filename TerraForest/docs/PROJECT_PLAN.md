@@ -1,5 +1,14 @@
 ## Current integrated entry point - 2026-10-18
 
+Vegetation continuity correction is integrated and checked: native per-instance
+arrival fading, a 36-56 m grass fade band, two-cell detail preload and retained
+layers, sufficient bounded GPU residency, and a small native understory mix in
+previously grass-only detail layers. Models and authored/harvest identities are
+retained. Larger understory species cast shadows; grass uses root shading rather
+than blanket blade shadow rendering. Evidence and final measurements are in
+`evidence/vegetation_continuity/`. This does not accept overall landscape quality
+or qualify old-laptop thermals.
+
 Northern common is integrated: a connected 2 m path with two furnished areas,
 retained planting and a public supply chest. The existing native stores/rendering,
 collision and storage UI own its 184 paving cells and seven shared props. Initial

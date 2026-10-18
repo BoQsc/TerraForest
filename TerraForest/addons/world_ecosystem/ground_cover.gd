@@ -13,6 +13,7 @@ var native: RefCounted
 var removed: RefCounted
 var grass_material: ShaderMaterial
 var grass_texture_enabled:=false
+var foliage_materials:Array[ShaderMaterial]=[]
 var batches: Array[Node3D]=[]
 var resident: Dictionary={}
 var _wanted: Dictionary={}
@@ -26,7 +27,10 @@ var _exclusion_revision:=0
 var _scatter_job:Dictionary={}
 var _resident_layers:Dictionary={}
 func _layers(key:Vector2i)->int:
-	return 16 if (key-_last_cell).length_squared()<=2 else 1
+	# Prepare detail before its 56m visibility boundary. Retain loaded layers until
+	# owner retirement, avoiding repeated regeneration at camera-cell boundaries.
+	var offset:=key-_last_cell
+	return 16 if maxi(absi(offset.x),absi(offset.y))<=2 or _resident_layers.get(key,1)==16 else 1
 
 func prepare(persistence: RefCounted) -> bool:
 	for addon in ["vegetation_runtime","structures"]:
@@ -48,9 +52,9 @@ func _ready() -> void:
 	for species in range(Catalog.COUNT):
 		var batch: Node3D=ClassDB.instantiate("NativeStaticBatch")
 		add_child(batch)
-		if not batch.configure_asset("ground_cover/%d/v1"%species,_mesh(species)) or not batch.configure_render_streaming(true,Catalog.DISTANCES[species],128,200000,2,8192):
+		if not batch.configure_appearance_fade() or not batch.configure_asset("ground_cover/%d/v1"%species,_mesh(species)) or not batch.configure_render_streaming(true,Catalog.DISTANCES[species],512 if species==2 else 128,4100000 if species==2 else (1000000 if species==1 else 200000),2,8192):
 			push_error("Ground cover renderer initialization failed");set_process(false);return
-		batch.set_casts_shadows(species==0)
+		batch.set_casts_shadows(species in [0,1,6,7])
 		batches.append(batch)
 	if not set_grass_texture(true):push_warning("Grass detail unavailable; using untextured material")
 	terrain.surface_batch_ready.connect(_surface_ready)
@@ -62,7 +66,11 @@ func _ready() -> void:
 
 func _mesh(species: int) -> Mesh:
 	var mesh:=preload("res://addons/world_ecosystem/woodland_mesh.gd").build(species)
-	if species==2:grass_material=mesh.surface_get_material(0)
+	var material:ShaderMaterial=mesh.surface_get_material(0)
+	material.set_shader_parameter("distance_fade_end",56.0 if species==2 else Catalog.DISTANCES[species]-8.0)
+	material.set_shader_parameter("distance_fade_start",36.0 if species==2 else Catalog.DISTANCES[species]-24.0)
+	foliage_materials.append(material)
+	if species==2:grass_material=material
 	return mesh
 
 func set_grass_texture(enabled: bool) -> bool:
@@ -94,6 +102,9 @@ func _measured_step(_delta:float)->void:
 	if not removed.bind_world(seed,1):
 		push_error("Ground-cover save belongs to a different generation profile")
 		set_process(false);return
+	for material in foliage_materials:
+		material.set_shader_parameter("cover_eye",camera.global_position)
+		material.set_shader_parameter("cover_clock",Time.get_ticks_msec()/1000.0)
 	for batch in batches: batch.set_render_focus(camera.global_position)
 	var center:=Vector2i(floori(camera.global_position.x/32.0),floori(camera.global_position.z/32.0))
 	if center!=_last_cell:

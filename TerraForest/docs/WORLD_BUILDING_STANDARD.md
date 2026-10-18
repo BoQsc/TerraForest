@@ -135,3 +135,21 @@ checks pass, but the inspected replacement is still rejected for overall design:
 repeated facade family, missing trees/public-space landscape, exposed end cut and
 raw road ends. These are required follow-up work, not optional polish. Passing
 lot checks must not promote this recipe to accepted world quality.
+
+
+## Vegetation continuity and shading
+
+Review vegetation during travel and in open daylight, as well as the shaded
+showcase. Ground detail must fade in on publication and across its distance band;
+whole owner cells must not appear/disappear visibly at streaming boundaries.
+Check native resident-page admission: a generated plant count is not proof that
+those plants are actually rendered. Record deferred pages and upload/resident byte
+budgets alongside images. Preload detail outside the visible band and retain it
+until owner retirement to avoid repeated boundary regeneration.
+
+Keep grass, understory, bushes and rare accents in ordinary world areas. Authored
+showcase patches alone do not establish biome coverage. Preserve gathered IDs and
+authored placements when changing presentation. Compare shadow options in the same
+populated view; root ambient shading is not a cast shadow. Do not enable blanket
+blade shadows or replace accepted models without evidence that the gain merits
+the runtime cost. A short rendering check does not establish thermal headroom.

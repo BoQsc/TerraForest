@@ -8,10 +8,18 @@ uniform sampler2D grass_detail : source_color, filter_linear_mipmap_anisotropic,
 uniform sampler2D stone_color : source_color, filter_linear_mipmap_anisotropic, repeat_enable;
 uniform sampler2D stone_normal : hint_normal, filter_linear_mipmap_anisotropic, repeat_enable;
 uniform float wind_strength : hint_range(0.0, 1.0) = 1.0;
+uniform float distance_fade_start = 10000.0;
+uniform float distance_fade_end = 11000.0;
+uniform vec3 cover_eye = vec3(0.0);
+uniform float cover_clock = 0.0;
+varying float coverage;
 varying float variation;
 varying float root_shade;
 void vertex() {
     vec3 origin = MODEL_MATRIX[3].xyz;
+    float distance_weight = 1.0-smoothstep(distance_fade_start,distance_fade_end,distance(origin.xz,cover_eye.xz));
+    float age = cover_clock-INSTANCE_CUSTOM.x;
+    coverage = distance_weight * (INSTANCE_CUSTOM.y>0.5?smoothstep(0.0,0.65,max(0.0,age)):1.0);
     root_shade = mix(0.64, 1.0, smoothstep(0.015, 0.19, VERTEX.y));
     float phase = dot(origin.xz, vec2(0.71, 0.43));
     variation = 0.95 + 0.05 * sin(phase * 3.7);
@@ -23,6 +31,9 @@ void vertex() {
     }
 }
 void fragment() {
+    // Opaque coverage dithering keeps depth writes and avoids alpha sorting/overdraw.
+    float threshold=fract(52.9829189*fract(dot(floor(FRAGCOORD.xy),vec2(0.06711056,0.00583715))));
+    if(coverage<=threshold)discard;
     if (stone) {
         vec4 rock = texture(stone_color, UV);
         ALBEDO = rock.rgb * COLOR.rgb * variation;
@@ -37,6 +48,8 @@ void fragment() {
         float ribs = 0.96 + 0.04 * sin((UV.y - abs(UV.x - 0.5) * 0.35) * 95.0);
         ALBEDO = COLOR.rgb * variation * mix(1.0, 0.79, edge * edge) * ribs + COLOR.rgb * vein * 0.16;
         ALBEDO *= root_shade;
+        AO = mix(0.62,1.0,smoothstep(0.0,0.30,UV.y));
+        AO_LIGHT_AFFECT = 0.35;
         if (grass_detail_strength > 0.0) {
             // UV.y runs root to tip; image top is the warm tip.
             // A blade is much narrower than it is long: sample a narrow surface strip.

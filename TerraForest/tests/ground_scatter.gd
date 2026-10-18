@@ -78,13 +78,22 @@ func run() -> void:
 	var dense_state=ClassDB.instantiate("NativeGroundCoverState")
 	check(dense_state.bind_world(1703,1),"dense cover retains legacy persistence profile")
 	var extra_id:=0
+	var detail_counts:Array[int]=[0,0,0,0,0,0,0,0]
 	for layer in 16:
 		var batch:Dictionary=scatter.candidates(Vector2i(30,30),1703,layer)
 		check(batch.ids.size()==64,"density layer keeps 64-query bound")
 		for id in batch.ids:
 			check(not dense_ids.has(id),"layer identity unique")
 			dense_ids[id]=true
-		if layer>0:extra_id=batch.ids[0]
+		if layer>0:
+			extra_id=batch.ids[0]
+			var up:=PackedVector3Array();up.resize(batch.ids.size());up.fill(Vector3.UP)
+			var support:Dictionary=scatter.place(batch.ids,batch.points,up)
+			var empty:=PackedByteArray();empty.resize(support.ids.size())
+			var mix:Array=scatter.pack(support.ids,support.transforms,empty)
+			check(mix==scatter.pack(support.ids,support.transforms,empty),"detail species distribution remains deterministic")
+			for species in 8:detail_counts[species]+=mix[species].ids.size()
+	check(detail_counts[1]>0 and detail_counts[2]>800 and detail_counts[6]>0 and detail_counts[3]+detail_counts[4]+detail_counts[5]<15,"detail layers mix understory while grass dominates and flowers remain rare")
 	check(dense_ids.size()==1024 and dense_state.mark(extra_id),"1024 unique natural clumps with editable added grass")
 	var dense_restore=ClassDB.instantiate("NativeGroundCoverState")
 	check(dense_restore.restore_storage_snapshot(dense_state.capture_storage_snapshot()) and dense_restore.contains(extra_id),"added grass removal survives reload")

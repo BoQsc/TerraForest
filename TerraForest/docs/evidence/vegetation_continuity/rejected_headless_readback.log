@@ -1,0 +1,11 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS asset configured
+PASS native appearance packet enabled
+PASS strict 64-byte upload/residency budgets
+FAIL both native instances carry fade start
+FAIL page rebuild preserves old appearances and fades only new identities
+PASS GPU byte accounting includes fade packet
+PASS visual fades leave authoritative snapshot unchanged
+PASS retirement releases appearance records
+GROUND_COVER_FADE failures=2
