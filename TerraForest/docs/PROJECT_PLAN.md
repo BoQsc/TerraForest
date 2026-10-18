@@ -1,5 +1,12 @@
 ## Current integrated entry point - 2026-10-18
 
+Expanded northern neighborhood street loop now passes all eight waypoints with
+ordinary W/Shift movement, including both streets/cross-connections and the graded
+return to the arterial. Seed-42 saved-world check: p95 16.883 ms, max 17.866 ms over
+the movement sample; 54.26 s total including loading. Evidence: northern_street_walk.
+This closes street-loop coverage only; individual entrances/interiors, visual terrain
+shoulders, vehicles and sustained scaling remain open.
+
 Northern district now contains twelve furnished three-storey buildings across two
 connected streets (31 buildings world-wide including cellar). Seed-42 bake/reopen,
 four-rotation approach composition and graphical residency check pass; zero deferred

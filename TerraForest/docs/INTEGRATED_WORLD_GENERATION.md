@@ -41,6 +41,9 @@ envelope is centred north/south beside the arterial and passes the normal terrai
 survey before grading. New worlds contain 31 buildings across the five sites
 (including the western cellar building). This remains an initial neighborhood
 recipe, not a complete city or proof of city-scale simulation performance.
+The saved seed-42 expanded neighborhood passed an ordinary on-foot loop through
+both streets/cross-connections and back to the arterial, including its grade change.
+This does not yet cover every building interior or vehicle cornering route.
 Existing saves keep their buildings. `Play Regional World Review.cmd` defaults to
 the v6 review copy containing workshops, planted meadow paths and parked vehicles; `--review-version 3` preserves access
 to the earlier cottage-based review. Both workshops have passed a saved-world player
