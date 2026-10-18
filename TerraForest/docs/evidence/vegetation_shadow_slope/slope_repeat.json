@@ -1,0 +1,7 @@
+{
+  "roi": "full width, y=200..799; HUD/hands excluded",
+  "repeat_max_channel_difference": 33,
+  "repeat_changed_pixel_fraction": 1.7361111111111112e-06,
+  "shadow_toggle_mean_channel_difference": 0.36785590277777774,
+  "shadow_toggle_changed_pixel_fraction": 0.06720225694444444
+}
