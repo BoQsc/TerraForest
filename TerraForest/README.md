@@ -5,19 +5,26 @@ See the [delivery plan and coverage register](docs/PROJECT_PLAN.md) for current 
 ## Playable checkpoints
 
 Open `Worlds.cmd` (or run the project from Godot) for the world browser. Select a
-saved world, or create a named world with a landscape preset and seed. Save from
-the Actions menu or F5 to retain a new world. Gameplay material costs can be
-enabled or disabled before opening. Initial terrain loading still takes time;
-this screen does not pre-bake an entire world.
+saved world, or create a named world with a preset and seed. The default integrated
+regional preset prepares settlements, roads, mine/cellar locations, lakes, planted
+meadow paths and parked vehicles, then verifies the saved world in a fresh process
+before opening it. Preparation can take minutes. Simpler landscape presets remain
+available. Save from the Actions menu or F5; gameplay material costs can be enabled
+or disabled before opening. Runtime loading and performance limits remain.
 Use **Esc > Session > World browser** to save and choose another world.
 
 | Launcher | What to try |
 | --- | --- |
+| `Prepare Generated World.cmd`, then `Play Generated World.cmd` | Current integrated world in `generated_world_v4`: five settlement sites, workshops, rare owned underground locations, lakes, vegetation and saved vehicles. Preparation preserves existing progress. |
+| `Play Regional World Review.cmd` | Separate editable v6 copy of the same integrated content for review. |
 | `Play Combined Gameplay.cmd` | Resource gathering, crafting, construction and chest storage. |
 | `Review Mixed Neighborhood.cmd` | Five cottages and three furnished towers, connected streets, doors and windows. |
 | `Play Natural Caves.cmd` | Persistent cave exploration and ordinary pickaxe mining from a saved entrance. |
 
 Each uses its own save slot. Preparation preserves existing progress; F5 saves.
+Earlier generated worlds are available through `Worlds.cmd`; their saves are not
+migrated or replaced. Use **Esc > World > Track** for directions to destinations.
+See [integrated generation](docs/INTEGRATED_WORLD_GENERATION.md) for scope and limits.
 First-time world preparation can take longer than later launches. See the
 [building guide](docs/BUILDING_REVIEW.md), [cave guide](docs/NATURAL_CAVE_GAMEPLAY.md)
 and [player UI guide](docs/PLAYER_UI.md). These are partial gameplay checkpoints;

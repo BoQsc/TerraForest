@@ -1,3 +1,18 @@
+## Current integrated entry point - 2026-10-18
+
+Prepare/Play Generated World.cmd now use generated_world_v4 and the current district
+recipe, rather than the older v3 ambient-cave world. Worlds.cmd supports named/seeded
+creation of the same recipe; Regional World Review uses its independent v6 copy.
+Current additions include eastern mine workshops, two planted meadow paths, gameplay
+destination tracking and two saved vehicles on parking aprons. Their scoped creation,
+save/reopen and interaction evidence is in regional_workshops, regional_meadows,
+destination_guide and regional_transport. Previous user saves remain available.
+
+This remains partial M2 coverage. Large designed cities, richer POIs, broader ecology,
+entity scaling, multiplayer, mining-tail work and sustained performance/thermal gates
+remain open. Later historical entries naming older default saves describe their dated
+builds, not today's launcher configuration.
+
 ## Integrated generation available from world browser - 2026-10-18
 
 Worlds.cmd now offers integrated creation by name/seed and waits for verified offline

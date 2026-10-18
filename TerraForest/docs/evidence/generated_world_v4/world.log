@@ -1,0 +1,30 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[terrain-hitch] restore volumetric_water 232.33 ms at 3112
+[TerrainRewrite] World loaded
+[TerrainRewrite] World loaded
+[terrain-hitch] receive startup 247.07 ms at 3121
+[terrain-hitch] receive 248.7 ms at 3123
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS transport world loads
+PASS two prepared vehicles restore without test spawning
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS parking area streams
+Visual vehicle dents repaired.
+PASS saved parked car activates nearby
+PASS E enters saved vehicle in gameplay
+PASS saved vehicle drives off its parking position and brakes
+PREPARED_VEHICLE id=1 distance=28.1743774414063 speed=0.1256545484066
+PASS E exits stopped saved vehicle
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS parking area streams
+Visual vehicle dents repaired.
+PASS saved parked car activates nearby
+PASS E enters saved vehicle in gameplay
+PASS saved vehicle drives off its parking position and brakes
+PREPARED_VEHICLE id=2 distance=28.174560546875 speed=0.12565456330776
+PASS E exits stopped saved vehicle
+PASS interaction preserves fleet identities without duplication
+REGIONAL_TRANSPORT failures=0
+[TerrainRewrite] Temporary test world: save skipped

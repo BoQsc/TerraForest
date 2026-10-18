@@ -1,5 +1,11 @@
 # Integrated world generation
 
+The default fixed-slot launchers are now **Prepare Generated World.cmd** and
+**Play Generated World.cmd**, using `generated_world_v4` with the district recipe
+and profile 12. Preparation retains an existing v4 save; earlier `generated_world`,
+v2 and v3 slots remain selectable in Worlds.cmd. This promotes current integrated
+content, not a claim that large cities or sustained 60 FPS are qualified.
+
 Open `Worlds.cmd`, choose the integrated regional preset, enter a name and seed,
 and click **Create and play**. The browser waits for preparation and save verification
 before opening the world. Existing saved worlds open directly. This local development
