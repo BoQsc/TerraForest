@@ -1,3 +1,10 @@
+> 2026-10-18 placement-cost disposition: routine action feedback stays onscreen
+> and in a64-message history; console mirroring is opt-in (--log-actions).
+> Save/load and errors still log. Two short4/64-cottage checks pass the unchanged
+> 4 ms call gate (64 final input/update0.59/1.22 ms). Not sustained frame/thermal
+> qualification; stop this focused pass and resume broader coverage.
+> Evidence: evidence/action_message_cost/.
+
 > 2026-10-18 notice UI: docked construction visibility now has one owner;
 > zero notice-triggered panel toggles verified and developer-belt checks pass.
 > 64-cottage placement still FAILS 4 ms gate (5.82 ms); notice message4.48 ms,

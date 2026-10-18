@@ -50,7 +50,13 @@ func run()->void:
   var maximum: int=calls.max() if not calls.is_empty() else 0
   rows.append({"stages_ms":maxima.duplicate(),"cottages":count,"cells":asset.get_cell_count(),"attachments":asset.get_model_attachments().size(),"input_us":begin_us,"max_update_us":maximum,"calls_us":calls,"post_draw_intervals_us":frames})
   check(begin_us<=4000 and maximum<=4000,"world placement calls stay within 4 ms at "+str(count))
+ check(game.recent_action_messages.size()<=64 and game.recent_action_messages.back().contains("placed") and game.status.text==game.recent_action_messages.back(),"routine action feedback stays visible and retained")
  check(visibility.changes==0,"placement notices do not toggle the docked construction panel")
+ for i in 70:game._show_lake_notice("History check "+str(i))
+ check(game.recent_action_messages.size()==64 and game.recent_action_messages.front()=="History check 6" and game.recent_action_messages.back()=="History check 69","action history retains exactly the latest 64 notices")
+ game.log_action_messages=true
+ game._show_lake_notice("ACTION_CONSOLE_OPT_IN")
+ check(game.status.text=="ACTION_CONSOLE_OPT_IN","console opt-in preserves onscreen feedback")
  FileAccess.open("res://reports/direct_prefab_cost.json",FileAccess.WRITE).store_string(JSON.stringify({"failures":failures,"rows":rows},"  "))
  game.shutdown_requested=true;await game.terrain.shutdown_after_edits();game.free();await process_frame
  print("DIRECT_PREFAB_COST failures=",failures);quit(1 if failures else 0)

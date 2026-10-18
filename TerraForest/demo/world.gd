@@ -62,6 +62,8 @@ var _prefab_preview_signature: Array = []
 var _prefab_preview_clear := false
 var _prefab_preview_needs_checks := false
 var _prefab_preview_asset: Resource
+var recent_action_messages: Array[String]=[]
+var log_action_messages: bool="--log-actions" in OS.get_cmdline_user_args()
 var telemetry := Label.new()
 var _telemetry_time: float = 0.0
 var _lake_notice: String = ""
@@ -304,7 +306,9 @@ func _show_lake_notice(text: String) -> void:
 	_lake_notice_until = Time.get_ticks_msec()+6000
 	_telemetry_time = 0.5 # Publish action feedback on the next frame.
 	var message_started:=Time.get_ticks_usec()
-	_message(text)
+	recent_action_messages.append(text)
+	if recent_action_messages.size()>64:recent_action_messages.pop_front()
+	_present_message(text,log_action_messages or text.begins_with("ERROR:"))
 	terrain._record_stage("notice message",(Time.get_ticks_usec()-message_started)/1000.0)
 
 func _capture_player_pose() -> PackedByteArray:
@@ -470,7 +474,18 @@ func _update_prefab_preview(delta: float) -> void:
 	prefab_preview.show()
 
 func _message(text: String) -> void:
-	super._message(text)
+	_present_message(text,true)
+
+func _present_message(text: String,console_output: bool) -> void:
+	var label_started:=Time.get_ticks_usec()
+	status.text=text
+	var label_us:=Time.get_ticks_usec()-label_started
+	var log_started:=Time.get_ticks_usec()
+	if console_output:print("[TerrainRewrite] ",text)
+	var log_us:=Time.get_ticks_usec()-log_started
+	if terrain!=null:
+		terrain._record_stage("message label",label_us/1000.0)
+		terrain._record_stage("message console",log_us/1000.0)
 	if text.begins_with("World saved") or text.begins_with("World loaded") or text.begins_with("Temporary") or text.begins_with("ERROR:"):
 		_lake_notice = "World saved" if text.begins_with("World saved") else "World loaded"
 		if text.begins_with("Temporary"):
