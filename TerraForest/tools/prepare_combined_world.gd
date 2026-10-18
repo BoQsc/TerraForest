@@ -21,6 +21,7 @@ func signature()->Dictionary:
   result[asset]=Marshalls.raw_to_base64(batch.capture_snapshot())
  result["actors"]=Marshalls.raw_to_base64(game.actors.store.capture_storage_snapshot())
  result["actor_orders"]=Marshalls.raw_to_base64(game.actors.orders.capture_storage_snapshot())
+ result["ground_cover"]=Marshalls.raw_to_base64(game.ground_cover.removed.capture_storage_snapshot())
  return result
 func _initialize()->void:run.call_deferred()
 func run()->void:
@@ -136,6 +137,7 @@ func run()->void:
    if not await prepare_outer_sites():await finish(false);return
    if game.terrain.backend.world_generator>=10 and not await prepare_cellar_location():await finish(false);return
    if not await prepare_underground_locations():await finish(false);return
+   if districts and not await prepare_woodland_locations():await finish(false);return
    game.teleport(spawn)
    if not require(await wait_until(func():return not game.loading_active,60),"central spawn reloads after outer town generation"):await finish(false);return
    game.set_physics_process(false);game._clear_motion();game.player.position=spawn
@@ -162,6 +164,19 @@ func finish(ok:bool)->void:
 # Offline composition only. Native terrain edits and prefab transactions own work.
 func connect_regional_street(plan:Dictionary,center:Vector3)->void:
  preload("res://addons/structures/site_plan.gd").connect_regional_street(plan,center)
+
+func prepare_woodland_locations()->bool:
+ var author=preload("res://addons/world_ecosystem/woodland_authoring.gd")
+ var index:=0
+ for center:Vector3 in author.centers(game.terrain.backend.world_seed,game.terrain.backend.world_generator):
+  game.teleport(center)
+  if not require(await wait_until(func():return not game.loading_active,60),"woodland location loads"):return false
+  game.set_physics_process(false);game._clear_motion()
+  var result:Dictionary=await author.plant(game,center,game.terrain.backend.world_seed+index)
+  if not require(result.ok,"woodland authored planting completes: "+str(result)):return false
+  print("REGIONAL_WOODLAND center=",center," result=",result)
+  index+=1
+ return index==2
 
 func prepare_outer_sites()->bool:
  var layout:Dictionary=preload("res://addons/volumetric_terrain/generated_layout.gd").describe(game.terrain.backend.world_seed,game.terrain.backend.world_generator)

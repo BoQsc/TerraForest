@@ -18,6 +18,7 @@ func refresh()->void:
  var key:="%d/%d"%[game.terrain.backend.world_seed,game.terrain.backend.world_generator]
  if key!=layout_key:
   destinations=describe(game.terrain.backend.world_seed,game.terrain.backend.world_generator);layout_key=key
+  destinations.append_array(planted_woodland())
  menu.label(self,"Follow the regional roads from the central settlement to the western, eastern, northern and southern districts. Explore the eastern mine or visit the lake shores.")
  menu.label(self,"Track a destination for its direction and distance while walking or driving. The guide points directly toward the location; use roads and entrances to get there. Development mode enables travel buttons.")
  if not game.destination_guide.destination.is_empty():
@@ -32,6 +33,20 @@ func refresh()->void:
    var go=menu.button(row,"Travel here",travel.bind(destination.position));go.disabled=game.world_vehicle.driving
 func track(destination:Dictionary)->void:
  if game.destination_guide.track(destination):game.session_menu.set_open(false)
+func planted_woodland()->Array[Dictionary]:
+ var result:Array[Dictionary]=[]
+ var centers:=preload("res://addons/world_ecosystem/woodland_authoring.gd").centers(game.terrain.backend.world_seed,game.terrain.backend.world_generator)
+ for index in centers.size():
+  var center:Vector3=centers[index]
+  var key:=Vector2i(roundi(center.x/32),roundi(center.z/32))
+  var closest:=Vector3.INF;var best:=INF
+  for owner:Vector2i in [key,key-Vector2i(1,0),key-Vector2i(0,1),key-Vector2i(1,1)]:
+   for pose:Transform3D in game.ground_cover.removed.sample_transforms(owner):
+    var distance:=Vector2(pose.origin.x-center.x,pose.origin.z-center.z).length_squared()
+    if distance<best:best=distance;closest=pose.origin
+  if best<100:
+   result.append({"title":"Central meadow path" if index==0 else "Southern meadow path","position":Vector3(center.x,closest.y,center.z),"detail":"Planted ferns, grasses, rare flowers and gatherable ground cover."})
+ return result
 func travel(position:Vector3)->void:
  if not game.session_menu.developer:return
  if game.loading_active or game.shutdown_requested or game.world_vehicle.driving or game.terrain.pending_edit or game.site_preparation.status=="running" or game.site_survey.busy or not game._foundation_placement.is_empty() or not game.road_authoring.phase.is_empty():

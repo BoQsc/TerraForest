@@ -23,9 +23,18 @@ settlement design vocabulary. This is not a finished procedural-city generator.
 New district worlds use two mine workshops and stores at the eastern service
 street, with workbenches, separate rear stores, chests, windows and entrance doors.
 Existing saves keep their buildings. `Play Regional World Review.cmd` defaults to
-the v4 review copy containing these workshops; `--review-version 3` preserves access
+the v5 review copy containing workshops and planted meadow paths; `--review-version 3` preserves access
 to the earlier cottage-based review. Both workshops have passed a saved-world player
 route from their approach stairs through the doorway into the rear stores.
+
+New district preparation also plants two 14.4-metre patches near the central and
+southern sites using the accepted woodland-review species mix and curved open
+path. They are dense meadow patches, not a claim of map-wide ecological coverage.
+Planting uses saved native authored ground-cover records, within four existing
+owner cells per patch. Surface support, structures and water exclude unsuitable
+placements. Preparation now compares the complete ground-cover state on reopen.
+Esc > World lists **Central meadow path** and **Southern meadow path** when their
+saved planting is present; Track guides you there. Earlier saves are preserved.
 
 The tool bakes a staging world, saves, reopens in a fresh process, compares building,
 road, furnishing and resident state, and checks restored seed/generator identity.
