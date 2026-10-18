@@ -51,7 +51,10 @@ func run() -> void:
 	check(opened,"new disk world starts with registered harvest and inventory providers")
 	var expected_inventory:=PackedByteArray()
 	var expected_harvest:=PackedByteArray()
+	var expected_groves:=PackedByteArray()
 	if opened:
+		check(ecosystem.configure_groves(PackedVector3Array([Vector3(1024,16,256)])),"grove region configured before saving")
+		expected_groves=ecosystem._scatter().capture_storage_snapshot()
 		publish_trees()
 		check(ecosystem.harvest_root(1,inventory).ok,"live harvest removes tree and grants wood")
 		expected_inventory=inventory.capture_storage_snapshot()
@@ -65,6 +68,7 @@ func run() -> void:
 	opened=await open_world()
 	check(opened,"fresh worker and fresh providers reopen the saved world")
 	if opened:
+		check(ecosystem._scatter().capture_storage_snapshot()==expected_groves,"fresh grove provider restores exact disk regions")
 		check(inventory.capture_storage_snapshot()==expected_inventory and inventory.can_afford(PackedInt64Array([102,4]),inventory.snapshot().revision).ok,"fresh inventory restores exactly the harvested wood")
 		check(ecosystem.harvest_state.capture_storage_snapshot()==expected_harvest and ecosystem.harvest_state.contains(1),"fresh harvest store restores exact disk exclusions")
 		publish_trees()

@@ -1,0 +1,96 @@
+{
+  "slot": "combined_stage_96889f58819147ec87be9ed288eda93a",
+  "layout": "districts",
+  "seed": 42,
+  "revision": "3401b90164af265cb8dada173a659381d804044b",
+  "worktree_changes": [
+    " M TerraForest/addons/vegetation_runtime/bin/vegetation_runtime.windows.template_debug.x86_64.dll",
+    " M TerraForest/addons/vegetation_runtime/bin/vegetation_runtime.windows.template_release.x86_64.dll",
+    " M TerraForest/addons/vegetation_runtime/native/scatter.hpp",
+    " M TerraForest/addons/world_ecosystem/woodland_authoring.gd",
+    " M TerraForest/addons/world_ecosystem/world_ecosystem.gd",
+    " M TerraForest/tools/prepare_combined_world.gd",
+    "?? TerraForest/tests/planted_neighborhood.gd",
+    "?? TerraForest/tests/vegetation_groves.gd"
+  ],
+  "git_metadata_available": true,
+  "phases": [
+    {
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--fullscreen",
+        "--resolution",
+        "1920x1080",
+        "--max-fps",
+        "60",
+        "--script",
+        "res://tools/prepare_combined_world.gd",
+        "--",
+        "--world-slot=combined_stage_96889f58819147ec87be9ed288eda93a",
+        "--world-generator=13",
+        "--world-seed=42",
+        "--ground-cover",
+        "--actors",
+        "--vehicle-fleet",
+        "--checkpoint-layout=districts",
+        "--checkpoint-report=C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\combined_preparation\\20261018T134500318482Z\\checkpoint.json",
+        "--derived-cache=user://combined_stage_96889f58819147ec87be9ed288eda93a"
+      ],
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "pid": 36356,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 117.78612430000067,
+        "passed": true
+      }
+    },
+    {
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--fullscreen",
+        "--resolution",
+        "1920x1080",
+        "--max-fps",
+        "60",
+        "--script",
+        "res://tools/prepare_combined_world.gd",
+        "--",
+        "--world-slot=combined_stage_96889f58819147ec87be9ed288eda93a",
+        "--world-generator=13",
+        "--world-seed=42",
+        "--ground-cover",
+        "--actors",
+        "--vehicle-fleet",
+        "--checkpoint-layout=districts",
+        "--checkpoint-report=C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\combined_preparation\\20261018T134500318482Z\\checkpoint.json",
+        "--derived-cache=user://combined_stage_96889f58819147ec87be9ed288eda93a",
+        "--reopen-checkpoint",
+        "--gameplay-construction",
+        "--vehicle-fleet"
+      ],
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "pid": 21360,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 21.106411699998716,
+        "passed": true
+      }
+    }
+  ],
+  "publication": {
+    "created": true,
+    "slot": "planted_neighborhood_42_20261018",
+    "source_slot": "combined_stage_96889f58819147ec87be9ed288eda93a",
+    "source_sha256": "f5e221d3fd85ab7c80a6879bd09905d2f59d816900b9296520b5a161d0b4937d"
+  }
+}

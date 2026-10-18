@@ -1,0 +1,22 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[terrain-hitch] restore volumetric_water 177.59 ms at 2954
+[TerrainRewrite] World loaded
+[TerrainRewrite] World loaded
+[terrain-hitch] receive startup 192.65 ms at 2963
+[terrain-hitch] receive 194.09 ms at 2964
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS saved world loads
+PASS four exact grove regions restored from disk
+PASS dense planting beds restored: [196, 211]
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS neighborhood collision loads
+PASS native tree owners settle
+PASS each planted grove has live trees: [6, 5, 5, 4]
+PASS live grove tree harvest grants four wood and removes tree: { "ok": true, "reason": "Harvested 4 wood" }
+PASS owners republish after unload
+PASS harvested grove tree stays removed after streaming reset
+PASS repeated harvest cannot duplicate wood
+PLANTED_NEIGHBORHOOD failures=0
+[TerrainRewrite] Temporary test world: save skipped

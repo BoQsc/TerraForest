@@ -23,6 +23,7 @@ func signature()->Dictionary:
   result[asset]=Marshalls.raw_to_base64(batch.capture_snapshot())
  result["actors"]=Marshalls.raw_to_base64(game.actors.store.capture_storage_snapshot())
  result["actor_orders"]=Marshalls.raw_to_base64(game.actors.orders.capture_storage_snapshot())
+ result["tree_groves"]=Marshalls.raw_to_base64(game.ecosystem._scatter().capture_storage_snapshot())
  result["ground_cover"]=Marshalls.raw_to_base64(game.ground_cover.removed.capture_storage_snapshot())
  result["vehicles"]=Marshalls.raw_to_base64(game.world_vehicle.capture_snapshot())
  result["chest_contents"]=Marshalls.raw_to_base64(game.storage.store.capture_storage_snapshot())
@@ -205,11 +206,11 @@ func prepare_woodland_locations()->bool:
   game.teleport(center)
   if not require(await wait_until(func():return not game.loading_active,60),"woodland location loads"):return false
   game.set_physics_process(false);game._clear_motion()
-  var result:Dictionary=await author.plant(game,center,game.terrain.backend.world_seed+index)
+  var result:Dictionary=await author.plant(game,center,game.terrain.backend.world_seed+index,16 if index>=2 else 32)
   if not require(result.ok,"woodland authored planting completes: "+str(result)):return false
   print("REGIONAL_WOODLAND center=",center," result=",result)
   index+=1
- return index==2
+ return index==4
 
 func prepare_outer_sites()->bool:
  var layout:Dictionary=preload("res://addons/volumetric_terrain/generated_layout.gd").describe(game.terrain.backend.world_seed,game.terrain.backend.world_generator)
@@ -355,4 +356,8 @@ func prepare_northern_lots(center:Vector3)->bool:
   game._begin_frontage_placement(lot.asset,lot.origin,true)
   if not require(await wait_until(func():return game._foundation_placement.is_empty(),20) and game.doors.collection.get_ids().size()==doors+1,"terrain-fitted building published: "+lot.label+" support="+game.foundation_check.status):return false
  if not require(game._place_combined_prefab(plan.sidewalk_asset,plan.sidewalk_origin,0),"native concrete walkways published"):return false
+ var groves:=PackedVector3Array()
+ for x in [-60,60]:
+  for z in [-26,26]:groves.append(Vector3(center.x+x,16,center.z+z))
+ if not require(game.ecosystem.configure_groves(groves),"persistent native neighborhood groves configured"):return false
  return true

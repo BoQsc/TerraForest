@@ -1,5 +1,15 @@
 ## Current integrated entry point - 2026-10-18
 
+Northern neighborhood planting is integrated: four persisted native groves restore
+20 harvestable trees and two dense beds restore 407 ground-cover instances. Native
+validation, full create/reopen, real-world harvest/streaming reset, old-save loading,
+inspected views and the seven-waypoint pedestrian loop pass. Review launcher defaults
+to a new v7 copy of planted_neighborhood_42_20261018. Evidence: evidence/neighborhood_planting.
+An initial bed exceeded the existing 256 authored records per cell; smaller dense
+beds fit that bound without increasing runtime limits. Route p95 17.14 ms / worst
+19.63 ms does not establish sustained 60 FPS or thermal headroom. Public-space design,
+vehicle turning, broader ecology continuity and the M-key map remain open.
+
 Northern concrete walkways are integrated: level two-metre paving and entrance/road
 crossings. Full create/reopen, inspected views, all twelve entrance roundtrips and
 seven continuous pedestrian waypoints pass. Review walkways_42_20261018; evidence/

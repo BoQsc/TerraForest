@@ -9,14 +9,18 @@ static func centers(seed_value:int,generator:int)->PackedVector3Array:
  for site in [0,4]:
   var at:Vector3=layout.sites[site].position+Vector3(64,0,64)
   result.append(Vector3(roundf(at.x/32)*32,at.y,roundf(at.z/32)*32))
+ if generator>=13:
+  var north:Vector3=layout.sites[3].position
+  for x in [-12,12]:result.append(north+Vector3(x,0,26))
  return result
-static func plant(game:Node,center:Vector3,patch_seed:int)->Dictionary:
+static func plant(game:Node,center:Vector3,patch_seed:int, side:int=32)->Dictionary:
+ if side<1 or side>32:return {"ok":false,"reason":"Invalid planting size"}
  var rng:=RandomNumberGenerator.new();rng.seed=patch_seed
  var counts:Array[int]=[0,0,0,0,0,0,0,0]
  var owners:Dictionary={}
- for row in 32:
+ for row in side:
   var points:=PackedVector3Array()
-  for col in 32:points.append(center+Vector3((col-15.5)*0.45+rng.randf_range(-0.12,0.12),0,(row-15.5)*0.45+rng.randf_range(-0.12,0.12)))
+  for col in side:points.append(center+Vector3((col-(side-1)*0.5)*0.45+rng.randf_range(-0.12,0.12),0,(row-(side-1)*0.5)*0.45+rng.randf_range(-0.12,0.12)))
   var token:=Tokens.allocate();var replies:Array=[]
   var receive:=func(id:int,positions:PackedVector3Array,normals:PackedVector3Array,_epoch:int,_revision:int):
    if id==token:replies.append({"points":positions,"normals":normals})
@@ -28,7 +32,7 @@ static func plant(game:Node,center:Vector3,patch_seed:int)->Dictionary:
   game.terrain.surface_batch_ready.disconnect(receive)
   if replies.is_empty():return {"ok":false,"reason":"Woodland surface sampling timed out"}
   var poses:Array[Transform3D]=[];var species:Array[int]=[]
-  for col in 32:
+  for col in side:
    var point:Vector3=replies[0].points[col]
    if replies[0].normals[col].y<0.82:continue
    var local:Vector3=point-center

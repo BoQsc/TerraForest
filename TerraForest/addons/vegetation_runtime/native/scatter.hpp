@@ -8,6 +8,7 @@
 #include <godot_cpp/variant/packed_vector3_array.hpp>
 #include <godot_cpp/variant/packed_int64_array.hpp>
 #include <godot_cpp/variant/packed_float32_array.hpp>
+#include <godot_cpp/variant/packed_byte_array.hpp>
 #include <godot_cpp/variant/vector2i.hpp>
 #include <godot_cpp/variant/typed_array.hpp>
 #include <godot_cpp/variant/transform3d.hpp>
@@ -19,13 +20,50 @@ namespace terraforest {
 using namespace godot;
 class NativeVegetationScatter : public RefCounted {
     GDCLASS(NativeVegetationScatter,RefCounted)
+    std::vector<Vector3> groves; // X/Z centre, Y radius; bounded offline-authored regions.
+    static uint32_t read32(const uint8_t *p){return uint32_t(p[0])|(uint32_t(p[1])<<8)|(uint32_t(p[2])<<16)|(uint32_t(p[3])<<24);}
+    static void write32(uint8_t *p,uint32_t v){for(int i=0;i<4;++i)p[i]=uint8_t(v>>(i*8));}
+    static bool valid_grove(Vector3 p){return p.is_finite()&&p.x>=2&&p.x<=1998&&p.z>=2&&p.z<=1998&&p.y>=4&&p.y<=64&&std::floor(p.x)==p.x&&std::floor(p.y)==p.y&&std::floor(p.z)==p.z;}
+
 protected:
     static void _bind_methods(){
+        ClassDB::bind_method(D_METHOD("configure_groves","regions"),&NativeVegetationScatter::configure_groves);
+        ClassDB::bind_method(D_METHOD("capture_storage_snapshot"),&NativeVegetationScatter::capture_storage_snapshot);
+        ClassDB::bind_method(D_METHOD("validate_snapshot","data"),&NativeVegetationScatter::validate_snapshot);
+        ClassDB::bind_method(D_METHOD("restore_storage_snapshot","data"),&NativeVegetationScatter::restore_storage_snapshot);
+
         ClassDB::bind_method(D_METHOD("wanted_cells","center","radius_world","limit"),&NativeVegetationScatter::wanted_cells);
         ClassDB::bind_method(D_METHOD("candidates","cell","seed","density"),&NativeVegetationScatter::candidates);
         ClassDB::bind_method(D_METHOD("place_surface","ids","points","normals","rotations","scales","min_up"),&NativeVegetationScatter::place_surface);
     }
 public:
+    bool configure_groves(const PackedVector3Array &regions){
+        if(regions.size()>32)return false;
+        std::vector<Vector3> staged;
+        for(int64_t i=0;i<regions.size();++i){if(!valid_grove(regions[i]))return false;staged.push_back(regions[i]);}
+        groves.swap(staged);return true;
+    }
+    PackedByteArray capture_storage_snapshot() const {
+        PackedByteArray out;out.resize(8+groves.size()*12);auto *p=out.ptrw();
+        write32(p,0x31565247);write32(p+4,uint32_t(groves.size()));
+        for(size_t i=0;i<groves.size();++i){write32(p+8+i*12,uint32_t(groves[i].x));write32(p+12+i*12,uint32_t(groves[i].y));write32(p+16+i*12,uint32_t(groves[i].z));}
+        return out;
+    }
+    bool validate_snapshot(const PackedByteArray &data) const {
+        // Pure validation: safe on the archive worker, no mutable state reads.
+        if(data.size()<8||data.size()>392)return false;
+        const auto *p=data.ptr();const auto count=read32(p+4);
+        if(read32(p)!=0x31565247||count>32||data.size()!=8+int64_t(count)*12)return false;
+        for(uint32_t i=0;i<count;++i)if(!valid_grove(Vector3(read32(p+8+i*12),read32(p+12+i*12),read32(p+16+i*12))))return false;
+        return true;
+    }
+    bool restore_storage_snapshot(const PackedByteArray &data){
+        if(!validate_snapshot(data))return false;
+        const auto *p=data.ptr();std::vector<Vector3> staged;
+        for(uint32_t i=0;i<read32(p+4);++i)staged.push_back(Vector3(read32(p+8+i*12),read32(p+12+i*12),read32(p+16+i*12)));
+        groves.swap(staged);return true;
+    }
+
     TypedArray<Vector2i> wanted_cells(Vector2i center,double radius_world,int64_t limit) const {
         TypedArray<Vector2i> out;
         // The current world has 32 x 32 owners. Bound work before allocating.
@@ -79,7 +117,11 @@ public:
                 const double roll=rng->randf();
                 const double yaw=rng->randf_range(0.0,6.283185307179586);
                 const double scale=rng->randf_range(0.7,1.18);
-                const double biome=std::clamp((1000.0-point.x)/100.0,0.0,1.0)*std::clamp((point.z-1000.0)/100.0,0.0,1.0);
+                double biome=std::clamp((1000.0-point.x)/100.0,0.0,1.0)*std::clamp((point.z-1000.0)/100.0,0.0,1.0);
+                for(const auto &grove:groves){
+                    const double dx=px-grove.x,dz=pz-grove.z;
+                    biome=std::max(biome,std::clamp((double(grove.y)-std::sqrt(dx*dx+dz*dz))/4.0,0.0,1.0));
+                }
                 if(roll>=density*biome||point.x<2||point.z<2||point.x>=1998||point.z>=1998)continue;
                 points.append(point);ids.append(1+(cell.y*32+cell.x)*36+z*6+x);
                 rotations.append(yaw);scales.append(scale);

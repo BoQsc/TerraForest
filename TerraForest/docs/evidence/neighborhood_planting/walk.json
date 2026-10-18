@@ -1,0 +1,57 @@
+{
+  "failure": "",
+  "max_ms": 19.63,
+  "p95_ms": 17.14,
+  "reached": 7,
+  "samples": [
+    {
+      "loading": false,
+      "on_floor": true,
+      "position": "(1026.0, 55.00942, 183.9669)",
+      "remaining": 0.96685791015625,
+      "target": "(1026.0, 55.0, 183.0)"
+    },
+    {
+      "loading": false,
+      "on_floor": true,
+      "position": "(989.889, 55.00902, 183.0232)",
+      "remaining": 0.889280378818512,
+      "target": "(989.0, 55.0, 183.0)"
+    },
+    {
+      "loading": false,
+      "on_floor": true,
+      "position": "(989.0087, 55.00932, 276.0723)",
+      "remaining": 0.927714407444,
+      "target": "(989.0, 55.0, 277.0)"
+    },
+    {
+      "loading": false,
+      "on_floor": true,
+      "position": "(1062.099, 55.00901, 276.9901)",
+      "remaining": 0.900811433792114,
+      "target": "(1063.0, 55.0, 277.0)"
+    },
+    {
+      "loading": false,
+      "on_floor": true,
+      "position": "(1062.991, 55.00843, 183.9407)",
+      "remaining": 0.940744280815125,
+      "target": "(1063.0, 55.0, 183.0)"
+    },
+    {
+      "loading": false,
+      "on_floor": true,
+      "position": "(1026.876, 55.00881, 183.0222)",
+      "remaining": 0.876137018203735,
+      "target": "(1026.0, 55.0, 183.0)"
+    },
+    {
+      "loading": false,
+      "on_floor": true,
+      "position": "(1026.018, 55.00941, 229.0469)",
+      "remaining": 0.953309178352356,
+      "target": "(1026.0, 55.0, 230.0)"
+    }
+  ]
+}

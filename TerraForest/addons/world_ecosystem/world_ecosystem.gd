@@ -72,7 +72,19 @@ func prepare_persistence(persistence: RefCounted) -> bool:
 		GDExtensionManager.load_extension("res://addons/vegetation_runtime/vegetation_runtime.gdextension")
 	if not ClassDB.class_exists("NativeHarvestState"): return false
 	harvest_state=ClassDB.instantiate("NativeHarvestState")
-	return persistence.register_component("harvested_trees",harvest_state.capture_storage_snapshot,_restore_harvest,harvest_state,harvest_state.capture_storage_snapshot())
+	if not persistence.register_component("harvested_trees",harvest_state.capture_storage_snapshot,_restore_harvest,harvest_state,harvest_state.capture_storage_snapshot()):return false
+	var scatter:RefCounted=_scatter()
+	return persistence.register_component("tree_groves_v1",scatter.capture_storage_snapshot,_restore_groves,scatter,scatter.capture_storage_snapshot())
+
+func _restore_groves(data:PackedByteArray)->bool:
+	if not _scatter().restore_storage_snapshot(data):return false
+	if terrain!=null and vegetation!=null:reset()
+	return true
+
+func configure_groves(regions:PackedVector3Array)->bool:
+	if not _scatter().configure_groves(regions):return false
+	reset()
+	return true
 
 func _restore_harvest(data: PackedByteArray) -> bool:
 	if not harvest_state.restore_storage_snapshot(data): return false
