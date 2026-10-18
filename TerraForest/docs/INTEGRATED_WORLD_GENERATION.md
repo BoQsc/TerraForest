@@ -2,7 +2,8 @@
 
 The default fixed-slot launchers are now **Prepare Generated World.cmd** and
 **Play Generated World.cmd**, using `generated_world_v4` with the district recipe
-and profile 12. Preparation retains an existing v4 save; earlier `generated_world`,
+and profile 13 for newly prepared worlds. The existing v4 save remains profile 12.
+Preparation retains an existing v4 save; earlier `generated_world`,
 v2 and v3 slots remain selectable in Worlds.cmd. This promotes current integrated
 content, not a claim that large cities or sustained 60 FPS are qualified.
 

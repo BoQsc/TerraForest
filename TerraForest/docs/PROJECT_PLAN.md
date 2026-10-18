@@ -1,5 +1,11 @@
 ## Current integrated entry point - 2026-10-18
 
+Saved northern tower traversal now passes: one integrated tower, E door opening,
+continuous ascent to the third floor and descent/exit, 18 grounded waypoints with
+no jumps or repositioning after staging. 35.60 s including loading; correctness
+check only, not a performance benchmark. Evidence: northern_tower_walk. Other
+entrances/interiors and world-scale coverage remain open.
+
 Expanded northern neighborhood street loop now passes all eight waypoints with
 ordinary W/Shift movement, including both streets/cross-connections and the graded
 return to the arterial. Seed-42 saved-world check: p95 16.883 ms, max 17.866 ms over
