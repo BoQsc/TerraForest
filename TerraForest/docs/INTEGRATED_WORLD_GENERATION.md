@@ -116,3 +116,9 @@ behavior. Those require separate checks of the actual generated world.
 Mixed central settlements validate both building types before placement. When a
 world seed would choose only one type, a deterministic alternative building-layout
 seed is recorded in the checkpoint report; the terrain seed stays unchanged.
+
+New settlement preparation now bakes sloped mineral road foundations before shallow
+asphalt and reserves parallel road separation beside regional arterials. Existing
+saves are retained. The verified seed-42 comparison is connected_district_42_20261018
+in Worlds.cmd; intermediate embanked_district and road_shoulders worlds are
+diagnostic drafts. Evidence: settlement_road_embankments.

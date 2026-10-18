@@ -22,14 +22,20 @@ func _initialize()->void:
    if model.model=="architecture/wooden_door/v1":doors+=1
   var bounds:AABB=asset.placement_bounds(Vector3i.ZERO,0)
   var origin:=Vector3i(floori(1000-12-bounds.end.x),50,floori(1000-12-bounds.end.z))
+  var regional:Vector3i=preload("res://addons/structures/site_plan.gd").regional_origin(asset,Vector3(1000,50,1000))
+  var separated:=true
+  var lines:PackedVector3Array=asset.get_meta("street_lines",PackedVector3Array())
+  separated=separated and (plan.streets==1 or lines.size()>=8) and bounds.end.x+regional.x<=988
+  for point:Vector3 in lines:
+   separated=separated and point.x+regional.x+plan.width*0.5<=994
   var grading:Dictionary=preload("res://addons/structures/site_plan.gd").prepare(asset,origin,0,50)
-  ok=doors==plan.buildings and grading.get("entrance_paths",0)==doors and grading.ok and bounds.size.x<=80 and bounds.size.z<=120
+  ok=separated and doors==plan.buildings and grading.get("entrance_paths",0)==doors and grading.ok and bounds.size.x<=80 and bounds.size.z<=120
   for turn in range(1,4):
    var rotated:Dictionary=preload("res://addons/structures/site_plan.gd").prepare(asset,Vector3i(1000,50,1000),turn,50)
    ok=ok and rotated.ok and rotated.get("entrance_paths",0)==doors and rotated.segments.size()<=256
    if rotated.ok:
     for path:Dictionary in rotated.segments.slice(rotated.foundation_segments):
      ok=ok and path.start.y==50 and path.finish.y==50 and path.bounds.has_point(path.start) and path.bounds.has_point(path.finish)
-  print("PASS " if ok else "FAIL ",plan.title," buildings=",doors," bounds=",bounds," grading=",grading.get("ok",false))
+  print("PASS " if ok else "FAIL ",plan.title," buildings=",doors," bounds=",bounds," grading=",grading.get("ok",false)," regional_origin=",regional," street_samples=",lines.size())
   if not ok:failures+=1
  print("REGIONAL_DISTRICTS failures=",failures);quit(1 if failures else 0)

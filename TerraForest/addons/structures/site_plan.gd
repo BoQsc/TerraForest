@@ -62,11 +62,13 @@ static func prepare(asset: Resource,origin: Vector3i,rotation: int,grade: int) -
 					return {"ok":false,"reason":"Street paving reaches world boundary"}
 				var region:=AABB(low,high-low)
 				plan.bounds=plan.bounds.merge(region)
-				plan.segments.append({"start":start,"finish":finish,"half_width":half_width,"depth":8.0,"clearance":12.0,"shoulder":0.0,"material":4,"bounds":region})
+				plan.segments.append({"start":start,"finish":finish,"half_width":half_width,"depth":1.0,"clearance":12.0,"shoulder":0.0,"material":4,"bounds":region})
 		for point in [a,b]:
 			for turn in rotation: point=Vector3(1-point.z,0,point.x)
 			world_lines.append(point+Vector3(plan.target))
-	plan.paving_segments=plan.segments.size()-plan.foundation_segments
+	var paving:Array=plan.segments.slice(plan.foundation_segments)
+	if not _support_roads(plan,paving):return {"ok":false,"reason":"Road foundations exceed site limits"}
+	plan.paving_segments=paving.size()
 	plan["street_width"]=street;plan["street_lines"]=world_lines
 	plan["street_ends"]=world_lines.slice(0,2)
 	if asset.get_meta("entrance_paths",false):
@@ -164,7 +166,7 @@ static func _entrance_paths(asset:Resource,plan:Dictionary,lines:PackedVector3Ar
 		plan.entrance_paths+=1;plan.paving_segments+=1
 	return plan
 
-static func connect_regional_street(plan:Dictionary,center:Vector3)->void:
+static func connect_regional_street(plan:Dictionary,center:Vector3)->bool:
 	var lines:PackedVector3Array=plan.street_lines
 	var start:=lines[0]
 	for point:Vector3 in lines:
@@ -173,10 +175,50 @@ static func connect_regional_street(plan:Dictionary,center:Vector3)->void:
 	# The surveyed foundation can differ from the generated arterial grade.
 	# Meet the actual road surface instead of leaving a height step at its centre.
 	var finish:=Vector3(center.x,center.y,center.z)
+	var paving:Array=[]
 	for pair in [[start,corner],[corner,finish]]:
 		var a:Vector3=pair[0];var b:Vector3=pair[1]
 		if a.distance_to(b)<1:continue
 		var region:=AABB(a.min(b)-Vector3(4,8,4),a.max(b)-a.min(b)+Vector3(8,20,8))
-		plan.segments.append({"start":a,"finish":b,"half_width":4.0,"depth":8.0,"clearance":12.0,"shoulder":0.0,"material":4,"bounds":region})
+		var segment:Dictionary={"start":a,"finish":b,"half_width":4.0,"depth":1.0,"clearance":12.0,"shoulder":0.0,"material":4,"bounds":region}
+		plan.segments.append(segment);paving.append(segment)
 		plan.bounds=plan.bounds.merge(region);plan.paving_segments+=1
 		plan.street_lines.append(a);plan.street_lines.append(b)
+	return _support_roads(plan,paving)
+
+static func _support_roads(plan:Dictionary,paving:Array)->bool:
+	# Bake mineral embankments before any asphalt so overlapping beds cannot
+	# repaint the finished road. Runtime uses ordinary saved terrain pages.
+	if plan.segments.size()+paving.size()>MAX_SEGMENTS:return false
+	var supports:Array=[]
+	var combined:AABB=plan.bounds
+	for road:Dictionary in paving:
+		# Support is additive: a wide cut here could excavate a neighboring road.
+		var support:Dictionary=road.duplicate()
+		support.material=1;support.depth=8.0;support.shoulder=12.0;support.clearance=0.0
+		support.half_width=road.half_width+1.0
+		var extent:float=support.half_width+support.shoulder
+		var span:Vector3=road.finish-road.start
+		var cap_rise:float=absf(span.y)*extent/Vector2(span.x,span.z).length()
+		var low:Vector3=road.start.min(road.finish)-Vector3(extent,8+cap_rise,extent)
+		var high:Vector3=road.start.max(road.finish)+Vector3(extent,cap_rise,extent)
+		if low.x<5 or low.z<5 or high.x>1995 or high.z>1995:return false
+		support.bounds=AABB(low,high-low);combined=combined.merge(support.bounds)
+		supports.append(support)
+	var index:=0
+	while index<plan.segments.size() and plan.segments[index].material!=4:index+=1
+	for support:Dictionary in supports:
+		plan.segments.insert(index,support);index+=1
+	plan.bounds=combined
+	plan.foundation_segments=plan.get("foundation_segments",0)+supports.size()
+	return true
+
+static func regional_origin(asset:Resource,center:Vector3)->Vector3i:
+	var bounds:AABB=asset.placement_bounds(Vector3i.ZERO,0)
+	var east:float=bounds.end.x+6.0
+	var lines:PackedVector3Array=asset.get_meta("street_lines",PackedVector3Array())
+	var width:float=asset.get_meta("street_width",8)
+	for point:Vector3 in lines:east=maxf(east,point.x+width*0.5)
+	# Reserve the connector's four-metre half-width plus two metres of separation.
+	# Differently graded parallel roads must not excavate one another.
+	return Vector3i(floori(center.x-east-6),int(center.y),floori(center.z-12-bounds.end.z))

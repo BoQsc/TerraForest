@@ -1,5 +1,12 @@
 ## Current integrated entry point - 2026-10-18
 
+Settlement road beds now have additive sloped mineral support below shallow asphalt.
+Regional placement reserves actual road corridor width, fixing overlapping streets
+at different elevations. Native paving/overlap tests, full seed-42 creation/reopen,
+visual review and all eight northern street waypoints pass. Review world:
+connected_district_42_20261018. Route p95 16.904 ms, max 18.434 ms; no long-run claim.
+Raised pads and landscape/art integration remain open. Evidence: settlement_road_embankments.
+
 Native foundation excavation now slopes its shoulders as fill already did.
 Cut/fill, road, snapshot and district composition checks pass; full seed-42
 creation/reopen and graphical review pass in graded_district_42_20261018.

@@ -92,13 +92,13 @@ func run()->void:
    var asset:Resource=game.structure_prefabs[game.structure_prefab_index]
    var bounds:AABB=asset.placement_bounds(Vector3i.ZERO,0)
    var center:Vector3=layout.sites[0].position
-   var origin:=Vector3i(floori(center.x-12-bounds.end.x),int(center.y),floori(center.z-12-bounds.end.z))
+   var origin:Vector3i=preload("res://addons/structures/site_plan.gd").regional_origin(asset,center)
    var survey:Dictionary=await game.site_survey.assess(game.terrain,asset,origin,0)
    print("REGIONAL_SITE_SURVEY ",survey," footprint=",asset.placement_bounds(origin,0))
    if not require(survey.ok,"regional district beside arterial has supported foundation"):await finish(false);return
    var plan:Dictionary=preload("res://addons/structures/site_plan.gd").prepare(asset,origin,0,survey.grade)
    if not require(plan.ok,"regional district foundation plan valid"):await finish(false);return
-   connect_regional_street(plan,center)
+   if not connect_regional_street(plan,center):await finish(false);return
    game._survey_generation+=1
    plan["epoch"]=game.terrain.epoch;plan["revision"]=game.terrain.density_revision;plan["generation"]=game._survey_generation;plan["asset"]=asset
    game._survey_plan=plan
@@ -168,8 +168,8 @@ func finish(ok:bool)->void:
  quit(0 if ok else 1)
 
 # Offline composition only. Native terrain edits and prefab transactions own work.
-func connect_regional_street(plan:Dictionary,center:Vector3)->void:
- preload("res://addons/structures/site_plan.gd").connect_regional_street(plan,center)
+func connect_regional_street(plan:Dictionary,center:Vector3)->bool:
+ return require(preload("res://addons/structures/site_plan.gd").connect_regional_street(plan,center),"regional road foundations fit protected authoring bounds")
 
 func prepare_transport()->bool:
  var layout:Dictionary=preload("res://addons/volumetric_terrain/generated_layout.gd").describe(game.terrain.backend.world_seed,game.terrain.backend.world_generator)
@@ -232,14 +232,14 @@ func prepare_outer_sites()->bool:
   var asset:Resource=game.structure_prefabs[game.structure_prefab_index]
   if districts:asset.set_meta("entrance_paths",true)
   var bounds:AABB=asset.placement_bounds(Vector3i.ZERO,0)
-  var origin:=Vector3i(floori(center.x-12-bounds.end.x),int(center.y),floori(center.z-12-bounds.end.z))
+  var origin:Vector3i=preload("res://addons/structures/site_plan.gd").regional_origin(asset,center)
   if districts and site.id==3:
    origin.z=floori(center.z-bounds.get_center().z)
   var survey:Dictionary=await game.site_survey.assess(game.terrain,asset,origin,0)
   if not require(survey.ok,"outer site supported: "+str(survey)):return false
   var plan:Dictionary=preload("res://addons/structures/site_plan.gd").prepare(asset,origin,0,survey.grade)
   if not require(plan.ok,"outer site plan valid"):return false
-  connect_regional_street(plan,center)
+  if not connect_regional_street(plan,center):return false
   game._survey_generation+=1
   plan["epoch"]=game.terrain.epoch;plan["revision"]=game.terrain.density_revision;plan["generation"]=game._survey_generation;plan["asset"]=asset
   game._survey_plan=plan
