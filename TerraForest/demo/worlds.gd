@@ -8,6 +8,7 @@ var preset: OptionButton
 var gameplay: CheckBox
 var notice: Label
 var filter_field: LineEdit
+var show_preparation:CheckBox
 var slots:=PackedStringArray()
 var preparation_pid:=-1
 var preparation_status:=""
@@ -29,7 +30,9 @@ func _ready() -> void:
 	var columns:=HBoxContainer.new();columns.size_flags_vertical=Control.SIZE_EXPAND_FILL;columns.add_theme_constant_override("separation",48);panel.add_child(columns)
 	var saved:=VBoxContainer.new();saved.custom_minimum_size.x=850;saved.add_theme_constant_override("separation",16);columns.add_child(saved)
 	heading(saved,"Saved worlds")
-	filter_field=LineEdit.new();filter_field.placeholder_text="Filter saved worlds";filter_field.text_changed.connect(func(_text: String):filter_list());saved.add_child(filter_field)
+	var filters:=HBoxContainer.new();saved.add_child(filters)
+	filter_field=LineEdit.new();filter_field.size_flags_horizontal=Control.SIZE_EXPAND_FILL;filter_field.placeholder_text="Filter saved worlds";filter_field.text_changed.connect(func(_text: String):filter_list());filters.add_child(filter_field)
+	show_preparation=CheckBox.new();show_preparation.text="Preparation saves (read-only)";show_preparation.toggled.connect(func(_on:bool):refresh());filters.add_child(show_preparation)
 	worlds=ItemList.new();worlds.size_flags_vertical=Control.SIZE_EXPAND_FILL;worlds.custom_minimum_size.y=360;saved.add_child(worlds)
 	button(saved,"Open selected world",func():launch_selected(false))
 	button(saved,"Refresh saved worlds",refresh)
@@ -48,18 +51,20 @@ func _ready() -> void:
 	refresh()
 func refresh() -> void:
 	if preparation_pid>=0:return
-	slots=Launch.saved_slots();filter_list()
+	slots=Launch.saved_slots("user://worlds",show_preparation.button_pressed);filter_list()
 	notice.text="%d saved worlds. Save from the Actions menu or with F5 while playing."%slots.size()
 func filter_list() -> void:
 	worlds.clear()
 	for slot: String in slots:
-		if filter_field.text.is_empty() or slot.to_lower().contains(filter_field.text.to_lower()):worlds.add_item(slot)
+		if filter_field.text.is_empty() or slot.to_lower().contains(filter_field.text.to_lower()):
+			worlds.add_item(("[Preparation] " if Launch.preparation_slot(slot) else "")+slot)
+			worlds.set_item_metadata(worlds.item_count-1,slot)
 func launch_selected(create: bool) -> void:
 	if preparation_pid>=0:return
 	var slot:=name_field.text.strip_edges()
 	if not create:
 		if worlds.get_selected_items().is_empty():notice.text="Select a saved world first.";return
-		slot=worlds.get_item_text(worlds.get_selected_items()[0])
+		slot=str(worlds.get_item_metadata(worlds.get_selected_items()[0]))
 	var result:=Launch.command(slot,create,preset.get_selected_id(),int(seed_field.value),gameplay.button_pressed)
 	if not result.ok:notice.text=result.reason;return
 	if result.get("prepare",false):

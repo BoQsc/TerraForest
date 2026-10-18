@@ -27,6 +27,13 @@ func run() -> void:
 	file=FileAccess.open(path.path_join("preparing.prepare.lock"),FileAccess.WRITE);file.close()
 	check(not Launch.command("preparing",true,6,1703,true,path).ok,"in-progress preparation name is reserved")
 	check(Launch.saved_slots(path)==PackedStringArray(["saved_world"]) and not Launch.command("missing",false,6,1703,true,path).ok,"listing selects canonical saves and missing save fails")
+	var staging:="combined_stage_"+"a".repeat(32)
+	file=FileAccess.open(path.path_join(staging+".trw"),FileAccess.WRITE);file.store_string("unverified stage");file.close()
+	check(not staging in Launch.saved_slots(path) and staging in Launch.saved_slots(path,true),"unverified staging saves are hidden by default and retained for recovery")
+	check(not Launch.preparation_slot("combined_stage_my_home"),"ordinary similarly named worlds remain visible")
+	check(not Launch.command(staging,true,Launch.INTEGRATED_PRESET,50,true,path).ok,"reserved staging identity cannot be used for new playable world")
+	check("--snapshot-readonly" in Launch.command(staging,false,12,50,true,path).args,"explicit preparation review disables snapshot writes")
+	check(FileAccess.get_file_as_string(path.path_join(staging+".trw"))=="unverified stage","listing and launch preparation preserve stage bytes")
 	auto_accept_quit=false
 	var browser=load("res://demo/worlds.tscn").instantiate();root.add_child(browser)
 	check(auto_accept_quit,"browser restores window close after returning from a world")

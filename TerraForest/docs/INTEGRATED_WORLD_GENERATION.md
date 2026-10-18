@@ -27,6 +27,12 @@ saves are never overwritten, even when a different seed is supplied. Use a new
 name to generate a new world. Failures retain logs in reports/combined_preparation.
 Cold preparation can take minutes; normal launches load the prepared save.
 
+Internal preparation saves are hidden from the normal browser list. Enable
+**Preparation saves (read-only)** to inspect them for recovery; they are labelled
+and opened with snapshot saving disabled. The files are retained. This filter
+applies only to the pipeline's exact `combined_stage_` plus 32 hexadecimal digits
+identifier, not to other worlds or test saves.
+
 Open the generated world for gameplay:
 
 ```powershell
