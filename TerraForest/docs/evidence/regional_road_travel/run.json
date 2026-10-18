@@ -1,0 +1,30 @@
+{
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+    "--path",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+    "--fullscreen",
+    "--resolution",
+    "1920x1080",
+    "--max-fps",
+    "60",
+    "--script",
+    "res://tests/regional_road_travel.gd",
+    "--",
+    "--snapshot-readonly",
+    "--world-slot=regional_districts_20261018",
+    "--ground-cover",
+    "--actors",
+    "--gameplay-construction"
+  ],
+  "result": {
+    "timed_out": false,
+    "launch_error": null,
+    "pid": 10808,
+    "exit_code": 0,
+    "diagnostics": [],
+    "required_text_found": true,
+    "elapsed_seconds": 78.87061590000008,
+    "passed": true
+  }
+}

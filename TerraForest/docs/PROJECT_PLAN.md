@@ -1,3 +1,12 @@
+## Continuous regional road journey checked - 2026-10-18
+
+Normal player movement completed approximately 572 m from central to western
+approach in the saved district world. 115 half-second samples showed no loading
+or missing terrain collision; p95 frame 17.543 ms, max 19.169 ms. This is one route,
+not sustained 60 FPS qualification or a fix for intermittent spikes. Four-seed
+native road field checks also pass (18,546 samples). See evidence/regional_road_travel.
+Continue location quality and full travel coverage, including vehicles and interiors.
+
 ## Regional district composition available - 2026-10-18
 
 The review launcher now opens a separate v2 save with 23 buildings across five

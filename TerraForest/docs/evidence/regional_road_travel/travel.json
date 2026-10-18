@@ -1,0 +1,1274 @@
+{
+  "failure": "",
+  "frame_max_ms": 19.169,
+  "frame_p95_ms": 17.543,
+  "remaining_m": 1.89706420898438,
+  "samples": [
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": false,
+      "position": [
+        888.835021972656,
+        45.0633201599121,
+        997.0
+      ],
+      "remaining_m": 574.0
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        883.885681152344,
+        45.0088844299316,
+        997.0
+      ],
+      "remaining_m": 569.050659179688
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        878.936340332031,
+        45.0088844299316,
+        997.0
+      ],
+      "remaining_m": 564.101318359375
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        873.986999511719,
+        45.0088844299316,
+        997.0
+      ],
+      "remaining_m": 559.151977539063
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        869.037658691406,
+        45.0088844299316,
+        997.0
+      ],
+      "remaining_m": 554.20263671875
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        864.088317871094,
+        45.0088844299316,
+        997.0
+      ],
+      "remaining_m": 549.253295898438
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        858.973999023438,
+        45.0088844299316,
+        997.0
+      ],
+      "remaining_m": 544.138977050781
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        854.024658203125,
+        45.0088844299316,
+        997.0
+      ],
+      "remaining_m": 539.189636230469
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        849.075317382813,
+        45.0088844299316,
+        997.0
+      ],
+      "remaining_m": 534.240295410156
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        844.1259765625,
+        45.0088844299316,
+        997.0
+      ],
+      "remaining_m": 529.290954589844
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        839.176635742188,
+        45.0088844299316,
+        997.0
+      ],
+      "remaining_m": 524.341613769531
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        834.062316894531,
+        45.0088844299316,
+        997.0
+      ],
+      "remaining_m": 519.227294921875
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        829.112976074219,
+        45.0089378356934,
+        997.0
+      ],
+      "remaining_m": 514.277954101563
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        824.163452148438,
+        44.9324645996094,
+        997.0
+      ],
+      "remaining_m": 509.32861328125
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        819.216674804688,
+        44.722843170166,
+        996.999877929688
+      ],
+      "remaining_m": 504.3818359375
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        814.275329589844,
+        44.4174461364746,
+        997.000122070313
+      ],
+      "remaining_m": 499.43994140625
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        809.338134765625,
+        44.0640068054199,
+        997.000122070313
+      ],
+      "remaining_m": 494.502685546875
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        804.235168457031,
+        43.7157516479492,
+        997.000122070313
+      ],
+      "remaining_m": 489.399841308594
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        799.126525878906,
+        43.4670486450195,
+        997.000122070313
+      ],
+      "remaining_m": 484.291442871094
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        794.177429199219,
+        43.3714179992676,
+        997.000122070313
+      ],
+      "remaining_m": 479.342407226563
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        789.228088378906,
+        43.2959785461426,
+        997.000122070313
+      ],
+      "remaining_m": 474.39306640625
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        784.278747558594,
+        43.2195777893066,
+        997.000122070313
+      ],
+      "remaining_m": 469.443725585938
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        779.329406738281,
+        43.1416549682617,
+        997.000122070313
+      ],
+      "remaining_m": 464.494384765625
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        774.215087890625,
+        43.0606727600098,
+        997.000122070313
+      ],
+      "remaining_m": 459.380065917969
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        769.100769042969,
+        42.9777908325195,
+        997.000122070313
+      ],
+      "remaining_m": 454.265747070313
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        763.986450195313,
+        42.8941650390625,
+        997.000122070313
+      ],
+      "remaining_m": 449.151428222656
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        758.872131347656,
+        42.8092575073242,
+        997.000122070313
+      ],
+      "remaining_m": 444.037109375
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        753.922790527344,
+        42.7261276245117,
+        997.000122070313
+      ],
+      "remaining_m": 439.087768554688
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        748.973449707031,
+        42.6417961120605,
+        997.000122070313
+      ],
+      "remaining_m": 434.138427734375
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        743.859130859375,
+        42.5541648864746,
+        997.000122070313
+      ],
+      "remaining_m": 429.024108886719
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        738.909790039063,
+        42.4681510925293,
+        997.000122070313
+      ],
+      "remaining_m": 424.074768066406
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        733.795471191406,
+        42.3782768249512,
+        997.000122070313
+      ],
+      "remaining_m": 418.96044921875
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        728.846130371094,
+        42.2905807495117,
+        997.000122070313
+      ],
+      "remaining_m": 414.011108398438
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        723.896789550781,
+        42.2021636962891,
+        997.000122070313
+      ],
+      "remaining_m": 409.061767578125
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        718.782470703125,
+        42.109806060791,
+        997.000122070313
+      ],
+      "remaining_m": 403.947448730469
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        713.833129882813,
+        42.0198211669922,
+        997.000122070313
+      ],
+      "remaining_m": 398.998107910156
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        708.8837890625,
+        41.929027557373,
+        997.000122070313
+      ],
+      "remaining_m": 394.048767089844
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        703.769470214844,
+        41.8349075317383,
+        997.000122070313
+      ],
+      "remaining_m": 388.934448242188
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        698.655151367188,
+        41.7400665283203,
+        997.000122070313
+      ],
+      "remaining_m": 383.820129394531
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        693.705810546875,
+        41.6471939086914,
+        997.000122070313
+      ],
+      "remaining_m": 378.870788574219
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        688.756469726563,
+        41.5535659790039,
+        997.000122070313
+      ],
+      "remaining_m": 373.921447753906
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        683.80712890625,
+        41.4597702026367,
+        997.000122070313
+      ],
+      "remaining_m": 368.972106933594
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        678.857788085938,
+        41.3654708862305,
+        997.000122070313
+      ],
+      "remaining_m": 364.022766113281
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        673.743469238281,
+        41.2675476074219,
+        997.000122070313
+      ],
+      "remaining_m": 358.908447265625
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        668.794128417969,
+        41.1719665527344,
+        997.000122070313
+      ],
+      "remaining_m": 353.959106445313
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        663.844787597656,
+        41.0764656066895,
+        997.000122070313
+      ],
+      "remaining_m": 349.009765625
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        658.895446777344,
+        40.9804840087891,
+        997.000122070313
+      ],
+      "remaining_m": 344.060424804688
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        653.946105957031,
+        40.8837814331055,
+        997.000122070313
+      ],
+      "remaining_m": 339.111083984375
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        648.996765136719,
+        40.7870788574219,
+        997.000122070313
+      ],
+      "remaining_m": 334.161743164063
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        644.047424316406,
+        40.6903762817383,
+        997.000122070313
+      ],
+      "remaining_m": 329.21240234375
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        638.93310546875,
+        40.5904502868652,
+        997.000122070313
+      ],
+      "remaining_m": 324.098083496094
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        633.983764648438,
+        40.4927864074707,
+        997.000122070313
+      ],
+      "remaining_m": 319.148742675781
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        629.034423828125,
+        40.3951225280762,
+        997.000122070313
+      ],
+      "remaining_m": 314.199401855469
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        624.085083007813,
+        40.2976951599121,
+        997.000122070313
+      ],
+      "remaining_m": 309.250061035156
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        619.1357421875,
+        40.1998176574707,
+        997.000122070313
+      ],
+      "remaining_m": 304.300720214844
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        614.186401367188,
+        40.1021537780762,
+        997.000122070313
+      ],
+      "remaining_m": 299.351379394531
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        609.237060546875,
+        40.0044898986816,
+        997.000122070313
+      ],
+      "remaining_m": 294.402038574219
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        604.287719726563,
+        39.9067459106445,
+        997.000122070313
+      ],
+      "remaining_m": 289.452697753906
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        599.33837890625,
+        39.8091621398926,
+        997.000122070313
+      ],
+      "remaining_m": 284.503356933594
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        594.224060058594,
+        39.7078742980957,
+        997.000122070313
+      ],
+      "remaining_m": 279.389038085938
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        589.274719238281,
+        39.6105537414551,
+        997.000122070313
+      ],
+      "remaining_m": 274.439697265625
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        584.325378417969,
+        39.5129852294922,
+        997.000122070313
+      ],
+      "remaining_m": 269.490356445313
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        579.375915527344,
+        39.4153366088867,
+        997.000122070313
+      ],
+      "remaining_m": 264.540893554688
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        574.261596679688,
+        39.3154487609863,
+        997.000122070313
+      ],
+      "remaining_m": 259.426574707031
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        569.312255859375,
+        39.2187805175781,
+        997.000122070313
+      ],
+      "remaining_m": 254.477233886719
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        564.362915039063,
+        39.1221122741699,
+        997.000122070313
+      ],
+      "remaining_m": 249.527893066406
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        559.41357421875,
+        39.025447845459,
+        997.000122070313
+      ],
+      "remaining_m": 244.578552246094
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        554.464233398438,
+        38.9297714233398,
+        997.000122070313
+      ],
+      "remaining_m": 239.629211425781
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        549.349914550781,
+        38.8309097290039,
+        997.000122070313
+      ],
+      "remaining_m": 234.514892578125
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        544.235595703125,
+        38.7325439453125,
+        997.000122070313
+      ],
+      "remaining_m": 229.400573730469
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        539.121276855469,
+        38.6346626281738,
+        997.000122070313
+      ],
+      "remaining_m": 224.286254882813
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        534.171447753906,
+        38.5392227172852,
+        997.000122070313
+      ],
+      "remaining_m": 219.336547851563
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        529.222106933594,
+        38.4466972351074,
+        997.000122070313
+      ],
+      "remaining_m": 214.387084960938
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        524.272766113281,
+        38.3534927368164,
+        997.000122070313
+      ],
+      "remaining_m": 209.437744140625
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        519.323425292969,
+        38.2607040405273,
+        997.000122070313
+      ],
+      "remaining_m": 204.488403320313
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        514.209106445313,
+        38.1658630371094,
+        997.000122070313
+      ],
+      "remaining_m": 199.374084472656
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        509.094787597656,
+        38.0719833374023,
+        997.000122070313
+      ],
+      "remaining_m": 194.259765625
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        504.145446777344,
+        37.981143951416,
+        997.000122070313
+      ],
+      "remaining_m": 189.310424804688
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        499.031127929688,
+        37.8883056640625,
+        997.000122070313
+      ],
+      "remaining_m": 184.196105957031
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        494.081787109375,
+        37.7990875244141,
+        997.000122070313
+      ],
+      "remaining_m": 179.246765136719
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        489.132446289063,
+        37.7106704711914,
+        997.000122070313
+      ],
+      "remaining_m": 174.297424316406
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        484.018127441406,
+        37.620475769043,
+        997.000122070313
+      ],
+      "remaining_m": 169.18310546875
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        478.90380859375,
+        37.5306015014648,
+        997.000122070313
+      ],
+      "remaining_m": 164.068786621094
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        473.789489746094,
+        37.442008972168,
+        997.000122070313
+      ],
+      "remaining_m": 158.954467773438
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        468.840148925781,
+        37.3574371337891,
+        997.000122070313
+      ],
+      "remaining_m": 154.005126953125
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        463.890808105469,
+        37.2735862731934,
+        997.000122070313
+      ],
+      "remaining_m": 149.055786132813
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        458.941467285156,
+        37.1904563903809,
+        997.000122070313
+      ],
+      "remaining_m": 144.1064453125
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        453.8271484375,
+        37.1055488586426,
+        997.000122070313
+      ],
+      "remaining_m": 138.992126464844
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        448.712829589844,
+        37.022403717041,
+        997.000122070313
+      ],
+      "remaining_m": 133.877807617188
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        443.763488769531,
+        36.9425010681152,
+        997.000122070313
+      ],
+      "remaining_m": 128.928466796875
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        438.814147949219,
+        36.8641777038574,
+        997.000122070313
+      ],
+      "remaining_m": 123.979125976563
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        433.864807128906,
+        36.78662109375,
+        997.000122070313
+      ],
+      "remaining_m": 119.02978515625
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        428.915466308594,
+        36.7101745605469,
+        997.000122070313
+      ],
+      "remaining_m": 114.080444335938
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        423.966125488281,
+        36.6350059509277,
+        997.000122070313
+      ],
+      "remaining_m": 109.131103515625
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        418.851806640625,
+        36.5591125488281,
+        997.000122070313
+      ],
+      "remaining_m": 104.016784667969
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        413.737487792969,
+        36.4842567443848,
+        997.000122070313
+      ],
+      "remaining_m": 98.9024658203125
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        408.788146972656,
+        36.412712097168,
+        997.000122070313
+      ],
+      "remaining_m": 93.953125
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        403.838806152344,
+        36.3430671691895,
+        997.000122070313
+      ],
+      "remaining_m": 89.0037841796875
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        398.889465332031,
+        36.2747116088867,
+        997.000122070313
+      ],
+      "remaining_m": 84.054443359375
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        393.940124511719,
+        36.2077980041504,
+        997.000122070313
+      ],
+      "remaining_m": 79.1051025390625
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        388.990783691406,
+        36.1420860290527,
+        997.000122070313
+      ],
+      "remaining_m": 74.15576171875
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        383.87646484375,
+        36.0763626098633,
+        997.000122070313
+      ],
+      "remaining_m": 69.0414428710938
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        378.927124023438,
+        36.0135345458984,
+        997.000122070313
+      ],
+      "remaining_m": 64.0921020507813
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        373.977783203125,
+        35.9524040222168,
+        997.000122070313
+      ],
+      "remaining_m": 59.1427612304688
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        369.028442382813,
+        35.8935012817383,
+        997.000122070313
+      ],
+      "remaining_m": 54.1934204101563
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        364.0791015625,
+        35.8356742858887,
+        997.000122070313
+      ],
+      "remaining_m": 49.2440795898438
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        359.129760742188,
+        35.7792778015137,
+        997.000122070313
+      ],
+      "remaining_m": 44.2947387695313
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        354.015441894531,
+        35.7235374450684,
+        997.000122070313
+      ],
+      "remaining_m": 39.180419921875
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        349.066101074219,
+        35.6705894470215,
+        997.000122070313
+      ],
+      "remaining_m": 34.2310791015625
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        344.116760253906,
+        35.6198692321777,
+        997.000122070313
+      ],
+      "remaining_m": 29.28173828125
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        339.167419433594,
+        35.5707740783691,
+        997.000122070313
+      ],
+      "remaining_m": 24.3323974609375
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        334.053100585938,
+        35.521671295166,
+        997.000122070313
+      ],
+      "remaining_m": 19.2180786132813
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        329.103759765625,
+        35.4478797912598,
+        997.000122070313
+      ],
+      "remaining_m": 14.2687377929688
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        324.154846191406,
+        35.3374977111816,
+        997.000122070313
+      ],
+      "remaining_m": 9.31979370117188
+    },
+    {
+      "collision_ready": true,
+      "loading": false,
+      "on_floor": true,
+      "position": [
+        319.041473388672,
+        35.2187385559082,
+        997.000122070313
+      ],
+      "remaining_m": 4.2064208984375
+    }
+  ],
+  "scope": "One continuous sprint along the central-west arterial; one initial staging teleport. No vehicle or long-run thermal claim."
+}
