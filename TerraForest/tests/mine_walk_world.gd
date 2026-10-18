@@ -6,10 +6,11 @@ func run()->void:
  var game=load("res://demo/world.tscn").instantiate();game.temporary_world=true;game.max_fps=60;game.background_fps=60;root.add_child(game)
  var deadline:=Time.get_ticks_msec()+60000
  while game.loading_active and Time.get_ticks_msec()<deadline:await process_frame
- if game.loading_active or game.terrain.backend.world_generator!=11:quit(1);return
+ if game.loading_active or game.terrain.backend.world_generator not in [11,12]:quit(1);return
  game.set_physics_process(false);game._clear_motion()
- var core=ClassDB.instantiate("TerrainCore");core.execute(Codec.command(6,[game.terrain.backend.world_seed,11]))
+ var core=ClassDB.instantiate("TerrainCore");core.execute(Codec.command(6,[game.terrain.backend.world_seed,game.terrain.backend.world_generator]))
  var data:PackedByteArray=core.execute(Codec.command(25))
+ if not Codec.reply_ok(data) or data.size()<24+7*28 or data.decode_u32(20)!=7:quit(1);return
  var entrance:=Vector3(data.decode_float(24),data.decode_float(28)-5,data.decode_float(32))
  var at:=24+2*28
  var chamber:=Vector3(data.decode_float(at),data.decode_float(at+4),data.decode_float(at+8))
@@ -49,7 +50,14 @@ func run()->void:
  game.camera.position=Vector3(0,1.6,0)
  game.camera.look_at(chamber+Vector3.UP*1.6)
  var failed:=false;var grounded:=0;var ticks:=0
- for target:Vector3 in [chamber,entrance]:
+ var route:Array[Vector3]=[chamber,entrance]
+ if "--mine-all-chambers" in OS.get_cmdline_user_args():
+  var workings:=Vector3(data.decode_float(24+4*28),data.decode_float(28+4*28),data.decode_float(32+4*28))
+  var secret:=Vector3(data.decode_float(24+6*28),data.decode_float(28+6*28),data.decode_float(32+6*28))
+  route=[chamber,workings,chamber,secret,chamber,entrance]
+ var waypoint:=0
+ for target:Vector3 in route:
+  game.camera.look_at(target+Vector3.UP*1.6)
   deadline=Time.get_ticks_msec()+60000
   while game.player.position.distance_to(target)>1 and Time.get_ticks_msec()<deadline:
    await physics_frame
@@ -67,5 +75,12 @@ func run()->void:
   print("PASS " if reached else "FAIL ","player reaches cave waypoint ",target," actual=",game.player.position)
   failed=failed or not reached
   if failed:break
+  if "--mine-all-chambers" in OS.get_cmdline_user_args():
+   for frame in 15:await process_frame
+   await RenderingServer.frame_post_draw
+   for arg in OS.get_cmdline_user_args():
+    if arg.begins_with("--mine-screenshot="):
+     root.get_texture().get_image().save_png(arg.trim_prefix("--mine-screenshot=").trim_suffix(".png")+"_%d.png"%waypoint)
+  waypoint+=1
  print("MINE_WALK_WORLD failures=",1 if failed else 0," physics_ticks=",ticks," grounded=",grounded)
  game.shutdown_requested=true;await game.terrain.shutdown_after_edits();game.free();await process_frame;quit(1 if failed else 0)

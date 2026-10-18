@@ -4,7 +4,9 @@ extends SpotLight3D
 func _init() -> void:
 	name="Headlamp"
 	visible=false
-	spot_range=14.0
+	# The largest current mine chamber has an 18 m radius. Keep its walls visible
+	# from the centre with this same single shadowed light.
+	spot_range=24.0
 	spot_angle=38.0
 	spot_attenuation=1.2
 	light_energy=2.5

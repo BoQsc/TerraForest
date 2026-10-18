@@ -50,6 +50,11 @@ checks apron publication, collision readiness and chassis clearance, then compar
 the fleet snapshot after a fresh-process reopen. No development placement is needed.
 Older saved worlds are not populated retroactively.
 
+The current saved mine's main chamber and both side chambers have passed a
+production-collision walking route back to the entrance. Use F or the Actions
+menu for the headlamp; its beam now reaches the large chamber walls from the
+centre. This does not establish mining latency or full mine-location gameplay.
+
 The tool bakes a staging world, saves, reopens in a fresh process, compares building,
 road, furnishing and resident state, and checks restored seed/generator identity.
 Only a passing preparation is copied to the named destination. Existing destination
