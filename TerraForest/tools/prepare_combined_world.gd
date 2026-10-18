@@ -22,6 +22,7 @@ func signature()->Dictionary:
  result["actors"]=Marshalls.raw_to_base64(game.actors.store.capture_storage_snapshot())
  result["actor_orders"]=Marshalls.raw_to_base64(game.actors.orders.capture_storage_snapshot())
  result["ground_cover"]=Marshalls.raw_to_base64(game.ground_cover.removed.capture_storage_snapshot())
+ result["vehicles"]=Marshalls.raw_to_base64(game.world_vehicle.capture_snapshot())
  return result
 func _initialize()->void:run.call_deferred()
 func run()->void:
@@ -138,6 +139,7 @@ func run()->void:
    if game.terrain.backend.world_generator>=10 and not await prepare_cellar_location():await finish(false);return
    if not await prepare_underground_locations():await finish(false);return
    if districts and not await prepare_woodland_locations():await finish(false);return
+   if districts and not await prepare_transport():await finish(false);return
    game.teleport(spawn)
    if not require(await wait_until(func():return not game.loading_active,60),"central spawn reloads after outer town generation"):await finish(false);return
    game.set_physics_process(false);game._clear_motion();game.player.position=spawn
@@ -164,6 +166,28 @@ func finish(ok:bool)->void:
 # Offline composition only. Native terrain edits and prefab transactions own work.
 func connect_regional_street(plan:Dictionary,center:Vector3)->void:
  preload("res://addons/structures/site_plan.gd").connect_regional_street(plan,center)
+
+func prepare_transport()->bool:
+ var layout:Dictionary=preload("res://addons/volumetric_terrain/generated_layout.gd").describe(game.terrain.backend.world_seed,game.terrain.backend.world_generator)
+ if not require(game.world_vehicle.fleet_enabled and game.world_vehicle.fleet.statistics().records==0,"transport starts with an empty prepared fleet"):return false
+ for site in [0,2]:
+  var center:Vector3=layout.sites[site].position
+  var bay:Vector3=center+Vector3(12,0,16)
+  game.teleport(center+Vector3(5,0,5))
+  if not require(await wait_until(func():return not game.loading_active,60),"parking location loads"):return false
+  game.set_physics_process(false);game._clear_motion()
+  var start:=center+Vector3(0,0,16);var finish:=center+Vector3(17,0,16)
+  var bounds:=AABB(start-Vector3(4,5,4),Vector3(25,12,8))
+  if not require(game._road_protection_error(bounds).is_empty(),"parking apron is clear of protected structures"):return false
+  if not require(game.terrain.construct_graded_bed(start,finish,4.0,4.0,7.0,4,0.0),"parking apron edit accepted"):return false
+  if not require(await wait_until(func():return not game.terrain.pending_edit,30) and game.terrain.last_edit_outcome.get("status","") in ["published","unchanged"],"parking apron published"):return false
+  var pose:=Transform3D(Basis(Vector3.UP,-PI/2),bay+Vector3.UP*0.85)
+  if not require(await wait_until(func():return game.world_vehicle.ready_bounds(game,AABB(pose.origin-Vector3(3.25,1,3.25),Vector3(6.5,3,6.5))),20),"parking collision ready"):return false
+  var box:=BoxShape3D.new();box.size=Vector3(2.2,1.8,4.4)
+  var query:=PhysicsShapeQueryParameters3D.new();query.shape=box;query.transform=Transform3D(pose.basis,pose.origin+Vector3.UP*0.3);query.collision_mask=15
+  if not require(game.get_world_3d().direct_space_state.intersect_shape(query,1).is_empty(),"parked chassis space is unobstructed"):return false
+  if not require(game.world_vehicle.fleet.spawn(pose)>0,"parked vehicle stored at site %d"%site):return false
+ return game.world_vehicle.fleet.statistics().records==2
 
 func prepare_woodland_locations()->bool:
  var author=preload("res://addons/world_ecosystem/woodland_authoring.gd")

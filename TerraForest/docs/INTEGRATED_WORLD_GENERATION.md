@@ -23,7 +23,7 @@ settlement design vocabulary. This is not a finished procedural-city generator.
 New district worlds use two mine workshops and stores at the eastern service
 street, with workbenches, separate rear stores, chests, windows and entrance doors.
 Existing saves keep their buildings. `Play Regional World Review.cmd` defaults to
-the v5 review copy containing workshops and planted meadow paths; `--review-version 3` preserves access
+the v6 review copy containing workshops, planted meadow paths and parked vehicles; `--review-version 3` preserves access
 to the earlier cottage-based review. Both workshops have passed a saved-world player
 route from their approach stairs through the doorway into the rear stores.
 
@@ -35,6 +35,14 @@ owner cells per patch. Surface support, structures and water exclude unsuitable
 placements. Preparation now compares the complete ground-cover state on reopen.
 Esc > World lists **Central meadow path** and **Southern meadow path** when their
 saved planting is present; Track guides you there. Earlier saves are preserved.
+
+Two vehicles are prepared on asphalt parking aprons just southeast of the central
+and eastern road junctions (12 m east, 16 m south of each site centre). They are
+ordinary persisted fleet records: approach and press E to enter, drive with the
+normal controls, brake with Space, and press E when stopped to exit. Preparation
+checks apron publication, collision readiness and chassis clearance, then compares
+the fleet snapshot after a fresh-process reopen. No development placement is needed.
+Older saved worlds are not populated retroactively.
 
 The tool bakes a staging world, saves, reopens in a fresh process, compares building,
 road, furnishing and resident state, and checks restored seed/generator identity.
