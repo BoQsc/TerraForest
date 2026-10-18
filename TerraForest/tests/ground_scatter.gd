@@ -74,6 +74,21 @@ func run() -> void:
 	poses[0]=Transform3D(Basis(Vector3.ZERO,Vector3.ZERO,Vector3.ZERO),Vector3.ZERO)
 	check(scatter.pack(placed.ids,poses,fresh.mask(placed.ids)).is_empty(),"singular transform rejected before renderer mutation")
 	check(scatter.pack(placed.ids,placed.transforms,PackedByteArray()).is_empty(),"mismatched exclusion mask rejected")
+	var dense_ids:Dictionary={}
+	var dense_state=ClassDB.instantiate("NativeGroundCoverState")
+	check(dense_state.bind_world(1703,1),"dense cover retains legacy persistence profile")
+	var extra_id:=0
+	for layer in 16:
+		var batch:Dictionary=scatter.candidates(Vector2i(30,30),1703,layer)
+		check(batch.ids.size()==64,"density layer keeps 64-query bound")
+		for id in batch.ids:
+			check(not dense_ids.has(id),"layer identity unique")
+			dense_ids[id]=true
+		if layer>0:extra_id=batch.ids[0]
+	check(dense_ids.size()==1024 and dense_state.mark(extra_id),"1024 unique natural clumps with editable added grass")
+	var dense_restore=ClassDB.instantiate("NativeGroundCoverState")
+	check(dense_restore.restore_storage_snapshot(dense_state.capture_storage_snapshot()) and dense_restore.contains(extra_id),"added grass removal survives reload")
+	check(scatter.candidates(Vector2i(30,30),1703,16).ids.is_empty(),"out of range density layer rejects")
 	var report:={"checks":checks,"failures":failures,"world_candidates":total}
 	DirAccess.make_dir_recursive_absolute("res://reports")
 	var file:=FileAccess.open("res://reports/ground_scatter.json",FileAccess.WRITE)

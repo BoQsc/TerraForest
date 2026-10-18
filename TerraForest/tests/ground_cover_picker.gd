@@ -56,16 +56,16 @@ func run() -> void:
 	for z in range(27,34):
 		for x in range(27,34):
 			var ids:=PackedInt64Array();var poses: Array[Transform3D]=[]
-			for i in range(320):
-				ids.append((z*63+x)*320+i+1)
+			for i in range(1280):
+				ids.append((z*63+x)*1280+i+1)
 				poses.append(Transform3D(Basis.IDENTITY,Vector3(x*32+10,20,z*32+10)))
 			accepted=dense.replace_cell(Vector2i(x,z),records(ids,poses)) and accepted
-	check(accepted,"maximum 15680 resident interaction records accepted within owner bounds")
+	check(accepted,"maximum 62720 resident interaction records accepted within owner bounds")
 	hit=dense.pick(Vector3(968,20,970),Vector3(972,20,970))
-	check(hit.hit and hit.tested==320 and hit.cells<=4,"dense local query tests 320 records rather than scanning all 15680")
-	check(hit.id==(30*63+30)*320+1,"coincident proxy ties choose stable lowest identity")
+	check(hit.hit and hit.tested==1280 and hit.cells<=4,"dense local query tests 1280 records rather than scanning all 62720")
+	check(hit.id==(30*63+30)*1280+1,"coincident proxy ties choose stable lowest identity")
 	var many_ids:=PackedInt64Array();var many_poses: Array[Transform3D]=[]
-	for i in range(321): many_ids.append(i+1);many_poses.append(Transform3D(Basis.IDENTITY,Vector3(970,20,970)))
+	for i in range(1281): many_ids.append(i+1);many_poses.append(Transform3D(Basis.IDENTITY,Vector3(970,20,970)))
 	check(not dense.replace_cell(Vector2i(30,30),records(many_ids,many_poses)),"oversized owner rejected before replacing existing queries")
 	var report:={"checks":checks,"failures":failures}
 	DirAccess.make_dir_recursive_absolute("res://reports")

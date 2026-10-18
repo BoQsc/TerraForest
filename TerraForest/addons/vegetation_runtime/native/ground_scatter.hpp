@@ -8,7 +8,7 @@ class NativeGroundCover : public RefCounted {
 protected:
     static void _bind_methods(){
         ClassDB::bind_method(D_METHOD("wanted","center"),&NativeGroundCover::wanted);
-        ClassDB::bind_method(D_METHOD("candidates","cell","seed"),&NativeGroundCover::candidates);
+        ClassDB::bind_method(D_METHOD("candidates","cell","seed","layer"),&NativeGroundCover::candidates,DEFVAL(0));
         ClassDB::bind_method(D_METHOD("place","ids","points","normals"),&NativeGroundCover::place);
         ClassDB::bind_method(D_METHOD("pack","ids","transforms","excluded"),&NativeGroundCover::pack);
     }
@@ -23,13 +23,14 @@ public:
         std::sort(cells.begin(),cells.end(),[](const Cell&a,const Cell&b){return a.d!=b.d?a.d<b.d:(a.p.y!=b.p.y?a.p.y<b.p.y:a.p.x<b.p.x);});
         for(const auto &c:cells)out.append(c.p);return out;
     }
-    Dictionary candidates(Vector2i cell,int64_t seed) const {
+    Dictionary candidates(Vector2i cell,int64_t seed,int layer=0) const {
         PackedVector3Array points;PackedInt64Array ids;
-        if(cell.x>=0&&cell.y>=0&&cell.x<63&&cell.y<63&&seed>=0&&seed<=0x7fffffff){
+        if(cell.x>=0&&cell.y>=0&&cell.x<63&&cell.y<63&&seed>=0&&seed<=0x7fffffff&&layer>=0&&layer<16){
             for(int i=0;i<64;++i){
-                int64_t id=1+(cell.y*63+cell.x)*64+i;uint32_t h=hash(uint32_t(id)^uint32_t(seed));
-                const float x=cell.x*32+(i%8+.15f+.7f*(h&65535)/65535.f)*4;
-                const float z=cell.y*32+(i/8+.15f+.7f*(h>>16)/65535.f)*4;
+                int64_t id=layer==0?1+(cell.y*63+cell.x)*64+i:1+63*63*64+(cell.y*63+cell.x)*960+(layer-1)*64+i;uint32_t h=hash(uint32_t(id)^uint32_t(seed));
+                float x=cell.x*32+(i%8+.15f+.7f*(h&65535)/65535.f)*4;
+                float z=cell.y*32+(i/8+.15f+.7f*(h>>16)/65535.f)*4;
+                if(layer>0){x=cell.x*32+(i%8)*4+(layer%4)+.15f+.7f*(h&65535)/65535.f;z=cell.y*32+(i/8)*4+(layer/4)+.15f+.7f*(h>>16)/65535.f;}
                 if(x<2||z<2||x>=1998||z>=1998)continue;
                 ids.append(id);points.append(Vector3(x,0,z));
             }
@@ -40,7 +41,7 @@ public:
         Dictionary out;out["ok"]=false;
         if(ids.size()>64||points.size()!=ids.size()||normals.size()!=ids.size())return out;
         std::unordered_set<int64_t> seen;
-        for(int64_t i=0;i<ids.size();++i)if(ids[i]<1||ids[i]>63*63*64||!seen.insert(ids[i]).second)return out;
+        for(int64_t i=0;i<ids.size();++i)if(ids[i]<1||ids[i]>63*63*1024||!seen.insert(ids[i]).second)return out;
         PackedInt64Array accepted;TypedArray<Transform3D> transforms;
         for(int64_t i=0;i<ids.size();++i){
             if(!points[i].is_finite()||!normals[i].is_finite()||normals[i].length_squared()<1e-12f||normals[i].normalized().y<.82f)continue;
@@ -56,13 +57,14 @@ public:
         PackedInt64Array keys[8];PackedFloat32Array values[8];
         std::unordered_set<int64_t> seen;
         for(int64_t i=0;i<ids.size();++i){
-            if(ids[i]<1||ids[i]>63*63*64||!seen.insert(ids[i]).second)return Array();
+            if(ids[i]<1||ids[i]>63*63*1024||!seen.insert(ids[i]).second)return Array();
             Transform3D t=transforms[i];if(!t.origin.is_finite()||!t.basis.is_finite()||std::abs(t.basis.determinant())<1e-12)return Array();
             if(excluded[i])continue;
             int pick=hash(uint32_t(ids[i]))%10;int species=pick==0?0:(pick<3?1:2);
             // Preserve stones/ferns and all identities; enrich a small subset of grass.
             uint32_t accent=hash(uint32_t(ids[i])^0x739ac51du)%1000;
             if(species==2){if(accent<15)species=3+accent/5;else if(accent<40)species=6;else if(accent<70)species=7;}
+            if(ids[i]>63*63*64)species=2; // Added density is grass; rare resources retain original abundance.
             keys[species].append(ids[i]);
             for(int row=0;row<3;++row){for(int col=0;col<3;++col)values[species].append(t.basis[row][col]);values[species].append(t.origin[row]);}
         }

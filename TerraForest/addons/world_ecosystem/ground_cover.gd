@@ -23,6 +23,10 @@ var _last_cell:=Vector2i(-999,-999)
 var rejected_batches:=0
 var _support_job: Dictionary={}
 var _exclusion_revision:=0
+var _scatter_job:Dictionary={}
+var _resident_layers:Dictionary={}
+func _layers(key:Vector2i)->int:
+	return 16 if (key-_last_cell).length_squared()<=2 else 1
 
 func prepare(persistence: RefCounted) -> bool:
 	for addon in ["vegetation_runtime","structures"]:
@@ -70,6 +74,7 @@ func set_grass_texture(enabled: bool) -> bool:
 func reset() -> void:
 	for key in resident: _retire(key)
 	resident.clear();_wanted.clear();_dirty.clear();_pending.clear();_requests.clear();_support_job.clear()
+	_scatter_job.clear();_resident_layers.clear()
 	_last_cell=Vector2i(-999,-999)
 
 func _retire(key: Vector2i) -> void:
@@ -90,15 +95,20 @@ func _process(_delta: float) -> void:
 		for key in native.wanted(center): _wanted[key]=true
 		for key in resident.keys():
 			if not _wanted.has(key):
-				_retire(key);resident.erase(key);_dirty.erase(key)
+				_retire(key);resident.erase(key);_dirty.erase(key);_resident_layers.erase(key)
+	for key in resident:
+		if _resident_layers.get(key,1)!=_layers(key):_dirty[key]=true
 	if terrain.pending_edit or _requests.size()>=1: return
 	if not _support_job.is_empty():
 		if not _support_job.waiting:
 			_support_job.waiting=terrain.request_interpolated_density_batch(_support_job.points,_support_job.token)
 		return
+	if not _scatter_job.is_empty() and (not _wanted.has(_scatter_job.key) or _scatter_job.layers!=_layers(_scatter_job.key) or _scatter_job.revision!=terrain.published_revision or _scatter_job.exclusion!=_exclusion_revision):_scatter_job.clear()
 	for key in _wanted:
+		if not _scatter_job.is_empty() and _scatter_job.key!=key:continue
 		if (resident.has(key) and not _dirty.has(key)) or _pending.has(key): continue
-		var data: Dictionary=native.candidates(key,seed)
+		if _scatter_job.is_empty():_scatter_job={"key":key,"layer":0,"layers":_layers(key),"revision":terrain.published_revision,"exclusion":_exclusion_revision,"packed":[]}
+		var data: Dictionary=native.candidates(key,seed,_scatter_job.layer)
 		var token:=Tokens.allocate()
 		if terrain.request_surface_batch(data.points,token):
 			data.key=key;_requests[token]=data;_pending[key]=token
@@ -107,7 +117,8 @@ func _process(_delta: float) -> void:
 func _surface_ready(token: int,points: PackedVector3Array,normals: PackedVector3Array,epoch: int,revision: int) -> void:
 	if not _requests.has(token): return
 	var request: Dictionary=_requests[token];_requests.erase(token);_pending.erase(request.key)
-	if not _wanted.has(request.key) or epoch!=terrain.epoch or revision!=terrain.published_revision or terrain.pending_edit: return
+	if not _wanted.has(request.key) or epoch!=terrain.epoch or revision!=terrain.published_revision or terrain.pending_edit or _scatter_job.is_empty() or _scatter_job.exclusion!=_exclusion_revision:
+		_scatter_job.clear();return
 	var placed: Dictionary=native.place(request.ids,points,normals)
 	if not placed.ok: rejected_batches+=1;return
 	var mask: PackedByteArray=removed.mask(placed.ids)
@@ -121,6 +132,16 @@ func _surface_ready(token: int,points: PackedVector3Array,normals: PackedVector3
 		if (structures!=null and structure_mask[i]) or (water!=null and water_mask[i]): mask[i]=1
 	var packed: Array=native.pack(placed.ids,placed.transforms,mask)
 	if packed.size()!=Catalog.COUNT: rejected_batches+=1;return
+	if _scatter_job.packed.is_empty():_scatter_job.packed=packed
+	else:
+		for species in Catalog.COUNT:
+			_scatter_job.packed[species].ids.append_array(packed[species].ids)
+			_scatter_job.packed[species].transforms.append_array(packed[species].transforms)
+	_scatter_job.layer+=1
+	if _scatter_job.layer<_scatter_job.layers:return
+	packed=_scatter_job.packed
+	_resident_layers[request.key]=_scatter_job.layers
+	_scatter_job.clear()
 	var authored_poses: Array[Transform3D]=removed.sample_transforms(request.key)
 	if authored_poses.is_empty():
 		_publish(request.key,packed,authored_poses,PackedByteArray());return

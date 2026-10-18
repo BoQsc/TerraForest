@@ -16,7 +16,7 @@ func run() -> void:
 	check(not state.mark(1) and state.add(0,pose)==0,"unbound state cannot accept edits")
 	check(state.bind_world(1703,1) and state.bind_world(1703,1),"matching generation profile binds idempotently")
 	check(not state.bind_world(1704,1) and not state.bind_world(1703,2),"different seed or generator is rejected")
-	check(state.mark(1) and not state.mark(1) and not state.mark(0) and not state.mark(254017),"natural removal range and duplicates validated")
+	check(state.mark(1) and not state.mark(1) and not state.mark(0) and not state.mark(4064257),"natural removal range and duplicates validated")
 	var id: int=state.add(2,pose)
 	check(id==4294967296,"authored identity is separate from all natural identities")
 	var rows: Array=state.query(Vector2i(30,30))

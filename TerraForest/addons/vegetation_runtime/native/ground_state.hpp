@@ -10,7 +10,7 @@ namespace terraforest {
 class NativeGroundCoverState : public RefCounted {
     GDCLASS(NativeGroundCoverState, RefCounted)
     static constexpr uint64_t MAGIC=0x315453444e554f47ULL; // GOUNDST1
-    static constexpr int64_t NATURAL_LIMIT=63*63*64;
+    static constexpr int64_t NATURAL_LIMIT=63*63*1024;
     static constexpr int64_t AUTHORED_FIRST=int64_t(1)<<32;
     static constexpr size_t PLACED_LIMIT=100000, CELL_LIMIT=256;
     struct Placement {int species;std::array<float,12> t;};

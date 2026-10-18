@@ -1,0 +1,15 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[terrain-hitch] restore volumetric_water 118.77 ms at 3051
+[TerrainRewrite] World loaded
+[TerrainRewrite] World loaded
+[terrain-hitch] receive startup 135.4 ms at 3062
+[terrain-hitch] receive 137.35 ms at 3064
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+[TerrainRewrite] Temporary test world: save skipped
+REGIONAL_DENSE_GROUND ready=true clumps=10017 rejected=0
+REGIONAL_VIEW_FRAME_MS median=16.664 p95=16.785 max=16.844 scope=stationary_after_arrival
+REGIONAL_WORLD_VIEW generator=7 buildings_cells=948 roads=4
+[TerrainRewrite] Temporary test world: save skipped

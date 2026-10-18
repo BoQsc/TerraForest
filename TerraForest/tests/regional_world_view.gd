@@ -20,6 +20,23 @@ func run()->void:
  game.camera.global_position=center+Vector3(35,25,125);game.camera.look_at(center+Vector3(0,0,50))
  if site_index>0:
   game.camera.global_position=center+Vector3(25,18,20);game.camera.look_at(center+Vector3(-15,2,-20))
+ if "--ground-eye" in OS.get_cmdline_user_args():
+  game.camera.global_position=center+Vector3(25,2,20);game.camera.look_at(center+Vector3(10,0,5))
+ if "--dense-ground-check" in OS.get_cmdline_user_args():
+  deadline=Time.get_ticks_msec()+45000
+  var ready:=false
+  while not ready and Time.get_ticks_msec()<deadline:
+   await process_frame
+   ready=true
+   var owner:=Vector2i(floori(game.camera.global_position.x/32),floori(game.camera.global_position.z/32))
+   for x in range(-1,2):
+    for z in range(-1,2):
+     var key:=owner+Vector2i(x,z)
+     ready=ready and game.ground_cover.resident.has(key) and game.ground_cover._resident_layers.get(key,0)==16 and not game.ground_cover._dirty.has(key)
+  var clumps:=0
+  for batch in game.ground_cover.batches:clumps+=batch.get_ids().size()
+  print("REGIONAL_DENSE_GROUND ready=",ready," clumps=",clumps," rejected=",game.ground_cover.rejected_batches)
+  if not ready or game.ground_cover.rejected_batches>0:quit(1);return
  for i in 120:await process_frame
  var frames:Array[float]=[]
  var last:=Time.get_ticks_usec()

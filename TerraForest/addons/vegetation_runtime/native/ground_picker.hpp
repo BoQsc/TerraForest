@@ -26,7 +26,7 @@ public:
             Dictionary row=species[s];
             if(!row.has("ids")||!row.has("transforms")||row["ids"].get_type()!=Variant::PACKED_INT64_ARRAY||row["transforms"].get_type()!=Variant::PACKED_FLOAT32_ARRAY)return false;
             PackedInt64Array ids=row["ids"];PackedFloat32Array values=row["transforms"];
-            if(staged.size()+ids.size()>320||values.size()!=ids.size()*12)return false;
+            if(staged.size()+ids.size()>1280||values.size()!=ids.size()*12)return false;
             for(int64_t i=0;i<ids.size();++i){
                 if(ids[i]<=0||!seen.insert(ids[i]).second)return false;
                 const float *p=values.ptr()+i*12;

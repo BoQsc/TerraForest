@@ -1,3 +1,18 @@
+## Normal-world ground-cover density - 2026-10-18
+
+Integrated denser native grass scatter into normal worlds: nine near cells use up to
+1,024 candidates each, outer cells retain 64. Original resource identities and
+abundance remain; added grass supports individual removal/save. Query work remains
+64 candidates per request, with bounded residency and no grass physics bodies.
+Native scatter/state/picker and streaming/interaction checks pass, including movement
+between density bands. Actual saved regional world shows 10,017 accepted items;
+short stationary frame p95 16.785 ms. Travel, thermal and sustained performance remain
+unqualified. Density transitions and fuller ecological distribution remain open.
+See [evidence](evidence/regional_ground_density/README.md).
+
+Continue integrated world generation: chamber caves, substantial lakes and distinct
+exploration destinations. Do not replace those priorities with grass art iteration.
+
 ## Regional material integration - 2026-10-18
 
 Generator 7 uses temperate natural ground and the existing alpine snow blend instead

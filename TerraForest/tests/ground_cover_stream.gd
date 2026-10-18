@@ -55,7 +55,7 @@ func run() -> void:
 	for batch in cover.batches:
 		count+=batch.get_ids().size()
 		check(not batch.collision_stats().enabled and batch.collision_stats().resident_bodies==0,"ground cover creates no physics bodies")
-	check(count==3136,"bounded 3136 individual candidates resident")
+	check(count==11776,"bounded 11776 candidates: dense nine near owners and sparse forty distant owners")
 	var key:=Vector2i(30,30)
 	var row: Dictionary=cover.resident[key][2]
 	var removed_id: int=row.ids[0]
@@ -69,7 +69,7 @@ func run() -> void:
 	check(cover.batches[0].get_ids().has(authored_id),"authored placement joins native rendering for its owner")
 	check(cover.picker.pick(Vector3(970,20.1,970),Vector3(970,21,970)).get("id",0)==authored_id,"render publication also publishes individual interaction identity")
 	cover._dirty[key]=true
-	cover._process(0.0);terrain.reply()
+	cover._process(0.0);terrain.reply();finish_natural(cover,terrain)
 	check(not cover._support_job.is_empty(),"authored owner enters bounded asynchronous support stage")
 	cover._process(0.0);cover._process(0.0)
 	check(terrain.density_requests.size()==1,"support stage admits only one outstanding density request")
@@ -112,12 +112,28 @@ func run() -> void:
 	cover._process(0.0);terrain.reply();finish_support(cover,terrain)
 	interaction.scene_ray=func(_from,_to):return {}
 	check(interaction.collect(Vector3(978,22,978),Vector3(978,18,978),inventory,false).ok and inventory.capture_storage_snapshot()==before_inventory,"editor removal stays free and grants no gameplay resources")
+	camera.position+=Vector3(32,0,0)
+	for i in 100:
+		cover._process(0.0)
+		if not terrain.requests.is_empty():terrain.reply();finish_support(cover,terrain)
+		if cover.resident.size()==49 and cover._dirty.is_empty() and cover._scatter_job.is_empty():break
+	var bands_ok:bool=cover.resident.size()==49 and cover._dirty.is_empty()
+	for owner:Vector2i in cover.resident:bands_ok=bands_ok and cover._resident_layers[owner]==cover._layers(owner)
+	check(bands_ok and cover.rejected_batches==0,"crossing a cell boundary upgrades nearby cover and retires distant extra density")
 	cover.reset()
 	check(cover.resident.is_empty() and cover.batches[0].get_ids().is_empty() and cover.batches[1].get_ids().is_empty() and cover.batches[2].get_ids().is_empty(),"reset releases generated records")
 	cover.free();terrain.free();camera.free()
 	print("GROUND_COVER_STREAM ",JSON.stringify({"checks":checks,"failures":failures}))
 	quit(1 if failures else 0)
 
+func finish_natural(cover:Node,terrain:Node)->void:
+	for i in 16:
+		if cover._scatter_job.is_empty():break
+		cover._process(0.0)
+		if terrain.requests.is_empty():break
+		terrain.reply()
+
 func finish_support(cover: Node,terrain: Node) -> void:
+	finish_natural(cover,terrain)
 	if not cover._support_job.is_empty():
 		cover._process(0.0);terrain.reply_density()
