@@ -34,21 +34,25 @@ func begin_frontage_sources(sources: Array,lots: int,width: int,gap: int,seed: i
 	# live authoring resource and publishes its private result only after join.
 	var records: Array[PackedInt32Array]=[]
 	var attachments: Array[Array]=[]
+	var envelopes: Array[AABB]=[]
 	for source: Resource in sources:
 		records.append(source.get_records())
 		attachments.append(source.get_model_attachments())
+		envelopes.append(source.get_attachment_envelope())
 	var path:=directory.path_join("prefab_%d_%d.res" % [Time.get_unix_time_from_system()*1000000,Time.get_ticks_usec()])
-	var error:=_frontage_thread.start(_build_frontage.bind(records,lots,width,gap,seed,title,path,streets,attachments),Thread.PRIORITY_LOW)
+	var error:=_frontage_thread.start(_build_frontage.bind(records,lots,width,gap,seed,title,path,streets,attachments,envelopes),Thread.PRIORITY_LOW)
 	if error!=OK: return {"ok":false,"reason":"Could not start frontage worker"}
 	return {"ok":true}
 
-static func _build_frontage(records: Array[PackedInt32Array],lots: int,width: int,gap: int,seed: int,title: String,path: String,streets: int=1,attachments: Array[Array]=[]) -> Dictionary:
+static func _build_frontage(records: Array[PackedInt32Array],lots: int,width: int,gap: int,seed: int,title: String,path: String,streets: int=1,attachments: Array[Array]=[],envelopes: Array[AABB]=[]) -> Dictionary:
 	if not attachments.is_empty() and attachments.size()!=records.size(): return {"ok":false,"reason":"Attachment/source count mismatch"}
+	if not envelopes.is_empty() and envelopes.size()!=records.size():return {"ok":false,"reason":"Envelope/source count mismatch"}
 	var sources: Array[Resource]=[]
 	for snapshot: PackedInt32Array in records:
 		var source: Resource=ClassDB.instantiate("NativeBlockPrefab")
 		if not source.configure(snapshot): return {"ok":false,"reason":"Invalid source prefab"}
 		if not attachments.is_empty() and not source.configure_model_attachments(attachments[sources.size()]): return {"ok":false,"reason":"Invalid model attachments"}
+		if not envelopes.is_empty() and not source.configure_attachment_envelope(envelopes[sources.size()]):return {"ok":false,"reason":"Invalid attachment envelope"}
 		sources.append(source)
 	var asset: Resource=ClassDB.instantiate("NativeBlockPrefab")
 	var ok: bool=asset.compose_frontage(sources,lots,width,gap,seed) if streets==1 else asset.compose_settlement(sources,lots,width,gap,seed,streets)
@@ -112,7 +116,7 @@ static func _write_verified_asset(asset: Resource,path: String) -> Dictionary:
 	if FileAccess.file_exists(pending):return {"ok":false,"reason":"Prefab staging filename already exists; retry"}
 	var error:=ResourceSaver.save(asset,pending)
 	var verified: Resource=_read_asset(pending) if error==OK else null
-	var valid: bool=verified!=null and verified.get_records()==asset.get_records() and verified.get_model_attachments()==asset.get_model_attachments() and verified.resource_name==asset.resource_name
+	var valid: bool=verified!=null and verified.get_records()==asset.get_records() and verified.get_model_attachments()==asset.get_model_attachments() and verified.resource_name==asset.resource_name and verified.get_attachment_envelope()==asset.get_attachment_envelope()
 	if valid:
 		for key in asset.get_meta_list():
 			if not verified.has_meta(key) or verified.get_meta(key)!=asset.get_meta(key):valid=false;break
@@ -189,6 +193,7 @@ func capture(blocks: Object,title: String,models: Array=[]) -> Dictionary:
 		var captured: Dictionary=queries.capture_models(blocks,models,origin,size)
 		if not captured.ok:return captured
 		if not asset.configure_model_attachments(captured.attachments):return {"ok":false,"reason":"Captured object transforms are invalid"}
+		if not captured.attachments.is_empty() and not asset.configure_attachment_envelope(AABB(Vector3.ZERO,Vector3(size))):return {"ok":false,"reason":"Captured attachment bounds are invalid"}
 	return _save_asset(asset,title)
 
 func stack(source: Resource,count: int,title: String) -> Dictionary:

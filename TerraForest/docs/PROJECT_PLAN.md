@@ -1,3 +1,9 @@
+> 2026-10-18 attachment envelope integration: player library capture preserves
+> the selected model volume; background frontage snapshots now include explicit
+> bounds, and resource publication verifies them. Captured rotated placement,
+> worker composition, fresh-library reload and mixed-frontage regression pass.
+> Evidence: evidence/prefab_library_envelope/.
+
 > 2026-10-18 prefab authoring: explicit serialized attachment envelope supports
 > models outside block walls while preserving survey/protection and overlap
 > guards. Rotations, composition, invalidation, resource persistence and legacy

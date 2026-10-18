@@ -1,0 +1,13 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS library captures blocks and overhanging object
+PASS capture retains complete selected volume
+PASS captured overhang places through native rotated transaction
+PASS reference layout uses explicit envelope
+PASS background frontage starts
+PASS background frontage publishes
+PASS worker preserves source envelope and exact layout
+PASS fresh library reopens both assets
+PASS library verification preserves explicit envelope
+PASS library verification preserves explicit envelope
+PREFAB_LIBRARY_ENVELOPE failures=0
