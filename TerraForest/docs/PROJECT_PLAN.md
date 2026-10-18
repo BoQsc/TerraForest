@@ -1,5 +1,11 @@
 ## Current integrated entry point - 2026-10-18
 
+Recent staged mine FPS captures included synchronous screenshot overhead: a timed
+PNG capture blocked 566 ms; the same travel/mining check without captures had
+21.32 ms max and 16.78 ms p95. Profiling mode now omits captures by default. Evidence:
+ore_capture_cost. This removes a measurement confound; earlier independent runtime
+spikes and sustained performance qualification remain open.
+
 Resource-bearing mine profile 13 now addresses the sampled seeded-location gap:
 all seven surveyed seeds have shallow iron/copper at their owned workings. New
 district creation uses 13; older saves keep their existing fields. Full seed-42

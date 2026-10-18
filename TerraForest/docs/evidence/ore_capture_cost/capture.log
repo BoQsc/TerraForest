@@ -1,0 +1,43 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[terrain-hitch] restore volumetric_water 180.82 ms at 3143
+[TerrainRewrite] World loaded
+[TerrainRewrite] World loaded
+[terrain-hitch] receive startup 196.39 ms at 3153
+[terrain-hitch] receive 198.03 ms at 3154
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS integrated saved world loads
+PASS regional mining gameplay
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS chamber collision ready
+PASS pickaxe targets chamber floor
+PASS normal pickaxe attack accepted
+[TerrainRewrite] Mined resources added to inventory
+PASS mining publishes
+PASS natural ore removed: 8
+PASS inventory equals removed material: 201
+PASS inventory equals removed material: 202
+PASS inventory equals removed material: 203
+PASS inventory equals removed material: 211
+PASS pickaxe wears normally
+PASS rewards delivered directly
+REGIONAL_MINED material=8 removed=[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0] target=<null>
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS chamber collision ready
+PASS pickaxe targets chamber floor
+PASS normal pickaxe attack accepted
+[TerrainRewrite] Mined resources added to inventory
+PASS mining publishes
+PASS natural ore removed: 9
+PASS inventory equals removed material: 201
+PASS inventory equals removed material: 202
+PASS inventory equals removed material: 203
+PASS inventory equals removed material: 211
+PASS pickaxe wears normally
+PASS rewards delivered directly
+REGIONAL_MINED material=9 removed=[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0] target=<null>
+PASS 1920x1080 fullscreen
+[TerrainRewrite] Temporary test world: save skipped
+PASS pending terrain edits drained; read-only session does not save
+REGIONAL_ORE_GAMEPLAY failures=0

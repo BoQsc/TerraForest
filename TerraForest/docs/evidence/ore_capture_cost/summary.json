@@ -1,0 +1,25 @@
+{
+  "capture": {
+    "samples": 180,
+    "median_ms": 16.663,
+    "p95_ms": 16.995,
+    "max_ms": 586.428,
+    "captures": [
+      {
+        "capture_ms": 565.563,
+        "material": 8
+      },
+      {
+        "capture_ms": 234.689,
+        "material": 9
+      }
+    ]
+  },
+  "no_capture": {
+    "samples": 166,
+    "median_ms": 16.665,
+    "p95_ms": 16.783,
+    "max_ms": 21.316,
+    "captures": []
+  }
+}
