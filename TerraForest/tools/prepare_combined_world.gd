@@ -13,7 +13,7 @@ func wait_until(predicate:Callable,seconds:int=30)->bool:
  while not predicate.call() and Time.get_ticks_msec()<deadline:await process_frame
  return predicate.call()
 func signature()->Dictionary:
- var result:Dictionary={"blocks":Marshalls.raw_to_base64(game.structures.blocks.capture_snapshot()),"roads":Marshalls.raw_to_base64(game.road_palette.capture_anchors())}
+ var result:Dictionary={"blocks":regional_block_signature() if regional else Marshalls.raw_to_base64(game.structures.blocks.capture_snapshot()),"roads":Marshalls.raw_to_base64(game.road_palette.capture_anchors())}
  for asset: String in game.structures._models:
   var batch=game.structures.model(asset)
   result[asset]=Marshalls.raw_to_base64(batch.capture_snapshot())
@@ -29,6 +29,9 @@ func run()->void:
   if arg=="--checkpoint-layout=regional":mixed=true;regional=true
  if report_path.is_empty():quit(1);return
  game=load("res://demo/world.tscn").instantiate();root.add_child(game)
+ # Offline staging is committed explicitly after the complete generation batch.
+ # A periodic save between survey and grading can invalidate admission.
+ game.terrain.autosave_timer=-3600.0
  game.set_physics_process(false) # Compare restored authoritative state before any patrol tick.
  # Cold offline generation includes all generated lake caches. This is not a
  # runtime arrival budget; the independent preparation runner records duration.
@@ -40,7 +43,7 @@ func run()->void:
   if not require(game.construction_inventory.gameplay and game.player_hud.gameplay_construction,"reopen uses resource-cost gameplay with actors and fleet enabled"):await finish(false);return
   if not require(game.actors.pool!=null and game.actors.store.statistics().active==2,"reopen has exactly two residents with simulation enabled"):await finish(false);return
   var expected:Dictionary=JSON.parse_string(FileAccess.get_file_as_string(report_path))
-  var ready:bool=await wait_until(func():return game.structures.blocks.stats().cells==int(expected.cells))
+  var ready:bool=regional or await wait_until(func():return game.structures.blocks.stats().cells==int(expected.cells))
   var actual:=signature()
   for key: String in actual:
    if actual[key]!=expected.signature.get(key):print("SIGNATURE_MISMATCH ",key)
@@ -79,6 +82,7 @@ func run()->void:
    if not require(survey.ok,"regional district beside arterial has supported foundation"):await finish(false);return
    var plan:Dictionary=preload("res://addons/structures/site_plan.gd").prepare(asset,origin,0,survey.grade)
    if not require(plan.ok,"regional district foundation plan valid"):await finish(false);return
+   connect_regional_street(plan,center)
    game._survey_generation+=1
    plan["epoch"]=game.terrain.epoch;plan["revision"]=game.terrain.density_revision;plan["generation"]=game._survey_generation;plan["asset"]=asset
    game._survey_plan=plan
@@ -115,6 +119,15 @@ func run()->void:
   if not require(population.ok and game.actors.store.statistics().active==2,"two native patrol residents prepared: "+population.reason):await finish(false);return
   game.player.position=spawn;game.terrain.focus=spawn;game.structures.set_model_focus(spawn)
 
+  if regional:
+   if not await prepare_outer_sites():await finish(false);return
+   game.teleport(spawn)
+   if not require(await wait_until(func():return not game.loading_active,60),"central spawn reloads after outer town generation"):await finish(false);return
+   game.set_physics_process(false);game._clear_motion();game.player.position=spawn
+   game.fly=false;game.needs_floor_spawn=false
+   game.yaw=0;game.pitch=-0.15;game.player.rotation.y=0
+   game.camera.position=Vector3(0,1.6,0);game.camera.rotation=Vector3(game.pitch,0,0)
+
   var file:=FileAccess.open(report_path,FileAccess.WRITE)
   file.store_string(JSON.stringify({"slot":game.terrain.save_slot,"cells":game.structures.blocks.stats().cells,"spawn":[game.player.position.x,game.player.position.y,game.player.position.z],"signature":signature()},"  "));file.close()
  # Wait for existing generated components before ordinary compound persistence.
@@ -130,3 +143,70 @@ func finish(ok:bool)->void:
  game.free();await process_frame
  print("COMBINED_PREPARATION failures=",0 if ok else 1)
  quit(0 if ok else 1)
+
+# Offline composition only. Native terrain edits and prefab transactions own work.
+func connect_regional_street(plan:Dictionary,center:Vector3)->void:
+ var lines:PackedVector3Array=plan.street_lines
+ var start:=lines[0]
+ for point:Vector3 in lines:
+  if point.x>start.x:start=point
+ var corner:=Vector3(center.x,start.y,start.z)
+ var finish:=Vector3(center.x,start.y,center.z)
+ for pair in [[start,corner],[corner,finish]]:
+  var a:Vector3=pair[0];var b:Vector3=pair[1]
+  if a.distance_to(b)<1:continue
+  var region:=AABB(a.min(b)-Vector3(4,8,4),a.max(b)-a.min(b)+Vector3(8,20,8))
+  plan.segments.append({"start":a,"finish":b,"half_width":4.0,"depth":8.0,"clearance":12.0,"shoulder":0.0,"material":4,"bounds":region})
+  plan.bounds=plan.bounds.merge(region);plan.paving_segments+=1
+  plan.street_lines.append(a);plan.street_lines.append(b)
+
+func prepare_outer_sites()->bool:
+ var layout:Dictionary=preload("res://addons/volumetric_terrain/generated_layout.gd").describe(game.terrain.backend.world_seed)
+ var cottage:=-1
+ for i in game.structure_prefabs.size():
+  if game.structure_prefabs[i].resource_name=="Furnished cottage with door and windows":cottage=i;break
+ if not require(cottage>=0,"outer town furnished source available"):return false
+ for site:Dictionary in layout.sites.slice(1):
+  var center:Vector3=site.position
+  game.construction_palette.survey_dialog.hide()
+  game.teleport(center+Vector3(30,0,30))
+  if not require(await wait_until(func():return not game.loading_active,60),"outer site %d loads" % site.id):return false
+  game.set_physics_process(false);game._clear_motion();game.structure_mode=true;game.structure_rotation=0
+  var count:int=game.structure_prefabs.size()
+  game._frontage_sources_construction(PackedInt32Array([cottage]),1,8,3,1703+int(site.id),"Regional village %d" % site.id,1)
+  if not require(await wait_until(func():return game.structure_prefabs.size()==count+1,10),"outer furnished street composed"):return false
+  var asset:Resource=game.structure_prefabs[game.structure_prefab_index]
+  var bounds:AABB=asset.placement_bounds(Vector3i.ZERO,0)
+  var origin:=Vector3i(floori(center.x-12-bounds.end.x),int(center.y),floori(center.z-12-bounds.end.z))
+  var survey:Dictionary=await game.site_survey.assess(game.terrain,asset,origin,0)
+  if not require(survey.ok,"outer site supported: "+str(survey)):return false
+  var plan:Dictionary=preload("res://addons/structures/site_plan.gd").prepare(asset,origin,0,survey.grade)
+  if not require(plan.ok,"outer site plan valid"):return false
+  connect_regional_street(plan,center)
+  game._survey_generation+=1
+  plan["epoch"]=game.terrain.epoch;plan["revision"]=game.terrain.density_revision;plan["generation"]=game._survey_generation;plan["asset"]=asset
+  game._survey_plan=plan
+  game._prepare_construction_site()
+  if not require(await wait_until(func():return game.site_preparation.status!="running",30) and game.site_preparation.status=="complete","outer foundation and arterial connection prepared"):return false
+  var doors:int=game.doors.collection.get_ids().size()
+  game._place_prepared_site()
+  if not require(await wait_until(func():return game._foundation_placement.is_empty(),20) and game.doors.collection.get_ids().size()==doors+2,"outer two furnished buildings published"):return false
+  print("REGIONAL_TOWN site=",site.id," doors=",game.doors.collection.get_ids().size()," cells=",game.structures.blocks.stats().cells)
+ return require(game.doors.collection.get_ids().size()==16,"five regional sites contain sixteen furnished buildings")
+
+func regional_block_signature()->Dictionary:
+ # Check persistent content independently of the camera's resident window.
+ var result:Dictionary={}
+ var state:Dictionary=game.structures.blocks.capture_storage_state()
+ var keys:PackedInt32Array=state.unavailable_keys
+ var checksums:PackedByteArray=state.unavailable_checksums
+ for i in keys.size()/3:
+  result["%d,%d,%d" % [keys[i*3],keys[i*3+1],keys[i*3+2]]]=checksums.slice(i*32,(i+1)*32).hex_encode()
+ for x in 32:
+  for y in 4:
+   for z in 32:
+    var key:="%d,%d,%d" % [x,y,z]
+    if result.has(key):continue
+    var packet:PackedByteArray=game.structures.blocks.capture_region(Vector3i(x,y,z))
+    if packet.size()>=100 and packet.decode_u32(32)>0:result[key]=packet.slice(packet.size()-32).hex_encode()
+ return result

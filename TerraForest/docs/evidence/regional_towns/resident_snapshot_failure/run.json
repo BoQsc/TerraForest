@@ -1,0 +1,46 @@
+{
+  "slot": "combined_stage_8bbd3808f73649baae70671d8c434b87",
+  "layout": "regional",
+  "revision": "f6bac76d852fa98124c8982b2677e90db7daacfe",
+  "worktree_changes": [
+    " M TerraForest/tools/prepare_combined_world.gd"
+  ],
+  "git_metadata_available": true,
+  "phases": [
+    {
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--fullscreen",
+        "--resolution",
+        "1920x1080",
+        "--max-fps",
+        "60",
+        "--script",
+        "res://tools/prepare_combined_world.gd",
+        "--",
+        "--world-slot=combined_stage_8bbd3808f73649baae70671d8c434b87",
+        "--world-generator=7",
+        "--world-seed=1703",
+        "--ground-cover",
+        "--actors",
+        "--checkpoint-layout=regional",
+        "--checkpoint-report=C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\combined_preparation\\20261018T055848322470Z\\checkpoint.json",
+        "--derived-cache=user://combined_stage_8bbd3808f73649baae70671d8c434b87"
+      ],
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "pid": 25568,
+        "exit_code": 0,
+        "diagnostics": [
+          "ERROR: Condition \"ret.is_empty()\" is true. Returning: ret"
+        ],
+        "required_text_found": true,
+        "elapsed_seconds": 107.11926020000101,
+        "passed": false
+      }
+    }
+  ]
+}

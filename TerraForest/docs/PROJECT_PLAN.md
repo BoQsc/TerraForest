@@ -1,3 +1,19 @@
+## Regional sites populated and connected - 2026-10-18 (partial)
+
+All five regional sites now have buildings: eight in the central district and two
+furnished cottages at each outer site (sixteen total, 10,563 block cells). Explicit
+local asphalt connections join the arterial network. Creation and fresh-process
+reload match per-region persistent block checksums, furnishings, road anchors,
+residents and spawn, including unloaded block regions. See
+[evidence](evidence/regional_towns/README.md).
+
+Prepare/Play Generated World.cmd now use generated_world_v2 without overwriting the
+previous generated_world. These small repeated settlement starts are not finished
+towns or a city. Visual review shows broad bare-looking grades and sparse cover.
+Continue distinct location layout, chamber caves, substantial lakes and vegetation
+integration, with combined travel/performance checks. No sustained-performance
+qualification is claimed. Water implementation and food stay deferred.
+
 ## Integrated regional generation — 2026-10-18 (partial, priority unchanged)
 
 Generator 7 now supplies one native seeded layout: five graded sites and approximately

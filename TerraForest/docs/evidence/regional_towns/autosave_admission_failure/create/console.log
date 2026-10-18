@@ -1,0 +1,116 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] New world
+[TerrainRewrite] New world
+[TerrainRewrite] ERROR: invalid addon capture; previous canonical snapshot retained
+[TerrainRewrite] ERROR: invalid addon capture; previous canonical snapshot retained
+[TerrainRewrite] Ready: map coverage and local collision are active
+[terrain-hitch] controller loading 601.9 ms at 67502
+[terrain-hitch] base controller 621.18 ms at 67521
+[terrain-hitch] world pickups 105.05 ms at 67710
+[terrain-hitch] controller process 918.21 ms at 67818
+[terrain-hitch] world process 1057.17 ms at 67957
+PASS normal generated world starts
+PASS preparation starts in an empty staging world
+PASS shared native regional layout available
+[terrain-hitch] LOD coverage 100.32 ms at 68690
+[terrain-hitch] LOD schedule/cut/evict 197.96 ms at 68787
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS regional centre loads for settlement generation
+PASS registered furnished building sources are available
+PASS existing native editor composes connected furnished streets
+REGIONAL_SITE_SURVEY { "ok": true, "min_height": 45.0, "max_height": 45.0, "samples": 1359, "epoch": 0, "revision": 0, "minimum_grade": 34, "maximum_grade": 52, "grade": 45 } footprint=[P: (940.0, 45.0, 890.0), S: (37.0, 13.0, 95.0)]
+PASS regional district beside arterial has supported foundation
+PASS regional district foundation plan valid
+PASS terrain survey finds supported settlement grade
+[terrain-hitch] world authoring 72.91 ms at 72261
+[terrain-hitch] controller process 75.22 ms at 72263
+[terrain-hitch] world process 76.26 ms at 72264
+[terrain-hitch] world authoring 56.28 ms at 72552
+[terrain-hitch] controller process 57.88 ms at 72553
+[terrain-hitch] world process 59.02 ms at 72555
+[terrain-hitch] world authoring 57.54 ms at 72836
+[terrain-hitch] controller process 59.31 ms at 72838
+[terrain-hitch] world process 60.26 ms at 72839
+[terrain-hitch] world authoring 70.75 ms at 73018
+[terrain-hitch] controller process 71.87 ms at 73019
+[terrain-hitch] world process 73.38 ms at 73020
+[terrain-hitch] world authoring 63.45 ms at 73209
+[terrain-hitch] controller process 64.78 ms at 73210
+[terrain-hitch] world process 65.9 ms at 73211
+[terrain-hitch] world authoring 76.36 ms at 73446
+[terrain-hitch] controller process 77.39 ms at 73447
+[terrain-hitch] world process 78.52 ms at 73448
+[terrain-hitch] world authoring 76.14 ms at 73664
+[terrain-hitch] controller process 77.08 ms at 73665
+[terrain-hitch] world process 78.22 ms at 73666
+[terrain-hitch] world authoring 60.3 ms at 73819
+[terrain-hitch] controller process 61.78 ms at 73820
+[terrain-hitch] world process 62.71 ms at 73821
+PASS native grading and asphalt preparation complete
+[terrain-hitch] world authoring 76.42 ms at 77106
+[terrain-hitch] controller process 79.35 ms at 77109
+[terrain-hitch] world process 80.98 ms at 77111
+[terrain-hitch] prefab transaction 173.1 ms at 77625
+[terrain-hitch] prefab publication_us 170.49 ms at 77626
+[terrain-hitch] world authoring 180.64 ms at 77632
+[terrain-hitch] controller process 181.77 ms at 77633
+[terrain-hitch] world process 183.02 ms at 77635
+PASS staged furnished settlement publishes
+PASS mixed generation contains eight furnished buildings including cottages and towers
+PASS resident street collision ready
+PASS two native patrol residents prepared: Two street patrol actors placed. F5 saves the population.
+PASS outer town furnished source available
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS outer site 1 loads
+PASS outer furnished street composed
+PASS outer site supported: { "ok": true, "min_height": 35.0, "max_height": 35.0, "samples": 210, "epoch": 0, "revision": 8, "minimum_grade": 24, "maximum_grade": 42, "grade": 35 }
+PASS outer site plan valid
+[terrain-hitch] world authoring 79.94 ms at 83375
+[terrain-hitch] controller process 81.46 ms at 83377
+[terrain-hitch] world process 83.18 ms at 83378
+[terrain-hitch] world authoring 73.6 ms at 83631
+[terrain-hitch] controller process 75.69 ms at 83633
+[terrain-hitch] world process 76.92 ms at 83634
+[terrain-hitch] world authoring 64.07 ms at 83859
+[terrain-hitch] controller process 65.2 ms at 83859
+[terrain-hitch] world process 66.34 ms at 83861
+[terrain-hitch] world authoring 65.54 ms at 84070
+[terrain-hitch] controller process 68.26 ms at 84073
+[terrain-hitch] world process 70.0 ms at 84074
+PASS outer foundation and arterial connection prepared
+PASS outer two furnished buildings published
+REGIONAL_TOWN site=1 doors=10 cells=7719
+[terrain-hitch] LOD eviction 114.07 ms at 86173
+[terrain-hitch] LOD schedule/cut/evict 117.79 ms at 86174
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS outer site 2 loads
+PASS outer furnished street composed
+PASS outer site supported: { "ok": true, "min_height": 51.0, "max_height": 51.0, "samples": 210, "epoch": 0, "revision": 12, "minimum_grade": 40, "maximum_grade": 58, "grade": 51 }
+PASS outer site plan valid
+[terrain-hitch] world authoring 82.23 ms at 87116
+[terrain-hitch] controller process 83.87 ms at 87117
+[terrain-hitch] world process 85.21 ms at 87119
+[terrain-hitch] world authoring 77.43 ms at 87442
+[terrain-hitch] controller process 79.48 ms at 87444
+[terrain-hitch] world process 80.69 ms at 87445
+[terrain-hitch] world authoring 70.89 ms at 87677
+[terrain-hitch] controller process 72.66 ms at 87678
+[terrain-hitch] world process 74.35 ms at 87680
+[terrain-hitch] world authoring 72.6 ms at 88007
+[terrain-hitch] controller process 74.22 ms at 88009
+[terrain-hitch] world process 75.46 ms at 88010
+PASS outer foundation and arterial connection prepared
+PASS outer two furnished buildings published
+REGIONAL_TOWN site=2 doors=12 cells=8667
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS outer site 3 loads
+PASS outer furnished street composed
+PASS outer site supported: { "ok": true, "min_height": 53.0, "max_height": 53.0, "samples": 210, "epoch": 0, "revision": 16, "minimum_grade": 42, "maximum_grade": 60, "grade": 53 }
+PASS outer site plan valid
+[terrain-hitch] save capture 50.66 ms at 92959
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+FAIL outer foundation and arterial connection prepared
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+COMBINED_PREPARATION failures=1
