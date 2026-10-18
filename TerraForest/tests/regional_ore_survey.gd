@@ -5,10 +5,12 @@ const Codec=preload("res://addons/volumetric_terrain/mesh_codec.gd")
 func _initialize()->void:run.call_deferred()
 func run()->void:
  var seed:=1703
+ var generator:=12
  for arg in OS.get_cmdline_user_args():
   if arg.begins_with("--survey-seed="):seed=int(arg.trim_prefix("--survey-seed="))
+  if arg.begins_with("--survey-generator="):generator=int(arg.trim_prefix("--survey-generator="))
  var core=ClassDB.instantiate("TerrainCore")
- core.execute(Codec.command(6,[seed,12]))
+ if not Codec.reply_ok(core.execute(Codec.command(6,[seed,generator]))):quit(1);return
  var descriptors:PackedByteArray=core.execute(Codec.command(25))
  if not Codec.reply_ok(descriptors) or descriptors.size()<24+7*28:quit(1);return
  var epoch:int=core.execute(Codec.command(13)).decode_u32(12)
@@ -55,10 +57,11 @@ func run()->void:
      found[material]={"material":material,"surface":hit.position,"sample":point,"chamber":index,"depth":depth,"wall":true}
  var folder:="res://reports/regional_ore_survey"
  if seed!=1703:folder+="_%d"%seed
+ if generator!=12:folder+="_g%d"%generator
  if deeper:folder+="_deep"
  DirAccess.make_dir_recursive_absolute(folder)
  var file:=FileAccess.open(folder+"/candidates.bin",FileAccess.WRITE);file.store_var(found);file.close()
  file=FileAccess.open(folder+"/result.json",FileAccess.WRITE)
- file.store_string(JSON.stringify({"seed":seed,"generator":12,"candidates":found,"queries":queries,"floor_hits":floor_hits,"chambers":chambers},"  "));file.close()
+ file.store_string(JSON.stringify({"seed":seed,"generator":generator,"candidates":found,"queries":queries,"floor_hits":floor_hits,"chambers":chambers},"  "));file.close()
  print("REGIONAL_ORE_SURVEY seed=",seed," ",found," failures=",0 if found.size()==2 else 1)
  quit(0 if found.size()==2 else 1)

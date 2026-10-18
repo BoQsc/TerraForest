@@ -3,7 +3,7 @@ extends RefCounted
 # One-time generation metadata. The native terrain field owns layout and grading.
 const Codec=preload("res://addons/volumetric_terrain/mesh_codec.gd")
 static func describe(seed_value:int,generator:int=7)->Dictionary:
- if generator not in [7,8,9,10,11,12] or seed_value<0 or seed_value>2147483647:return {}
+ if generator not in [7,8,9,10,11,12,13] or seed_value<0 or seed_value>2147483647:return {}
  if not ClassDB.class_exists("TerrainCore"):GDExtensionManager.load_extension("res://addons/volumetric_terrain/terrain_core.gdextension")
  var core=ClassDB.instantiate("TerrainCore")
  if not Codec.reply_ok(core.execute(Codec.command(6,[seed_value,generator]))):return {}

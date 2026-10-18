@@ -9,6 +9,7 @@ constexpr u32 SAVE_MAGIC=0x32575254u, MESH_MAGIC=0x324d5254u, REPLY_MAGIC=0x3250
 constexpr u32 MATERIAL_FIELD_GENERATOR_ID=5; // Empty base for independently editable material channels.
 constexpr u32 WALKABLE_CAVE_GENERATOR_ID=6; // New immutable landscape profile; never repurpose saved IDs.
 constexpr u32 LAKE_WORLD_GENERATOR_ID=12; // Regional world with one substantial lake.
+constexpr u32 RESOURCE_MINE_GENERATOR_ID=13; // Resource-bearing owned mine workings.
 constexpr u32 COVERED_MINE_GENERATOR_ID=11; // Terrain-aware mine floor datum.
 constexpr u32 POI_UNDERGROUND_GENERATOR_ID=10; // Rare underground owned by surface locations.
 constexpr u32 ROUTED_CHAMBER_GENERATOR_ID=9; // Continuous network floors.
@@ -57,6 +58,7 @@ struct World {
  float regional_height(float x,float z,float original)const;
  bool regional_asphalt(float x,float z)const;
  u8 base_material(V3 point,float height)const;
+ float ore_weight(V3 point,float height)const;
  float base(V3 p,float h)const;
  float sample(int x,int y,int z,u8*mat=nullptr)const;
  Page *ensure(int px,int py,int pz);

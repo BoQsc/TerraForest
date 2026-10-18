@@ -1,5 +1,12 @@
 ## Current integrated entry point - 2026-10-18
 
+Resource-bearing mine profile 13 now addresses the sampled seeded-location gap:
+all seven surveyed seeds have shallow iron/copper at their owned workings. New
+district creation uses 13; older saves keep their existing fields. Full seed-42
+generation/reopen and normal ore mining/reward checks pass; select
+resource_mine_42_20261018 in Worlds.cmd. Evidence: resource_mine_generator. This
+does not resolve intermittent FPS drops or qualify the complete world foundation.
+
 Seed coverage found an open location-design gap: only 1703/9999 among seven seeds
 have both strong iron/copper samples within four metres of mine floors or standing-
 height walls. All sampled floors exist; mine layout and geological veins are

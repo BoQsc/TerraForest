@@ -20,7 +20,7 @@ class PreparationTests(unittest.TestCase):
                 self.assertEqual(run.call_count, 2)
                 for call in run.call_args_list:
                     self.assertIn('--world-seed=42', call.args[0])
-                    self.assertIn('--world-generator=12', call.args[0])
+                    self.assertIn('--world-generator=13', call.args[0])
 
     def test_browser_failure_status_is_written(self):
         import json

@@ -5,8 +5,10 @@ func run()->void:
  game=load("res://demo/world.tscn").instantiate();game.max_fps=60;game.background_fps=60;root.add_child(game)
  if not check(await wait_for(func():return not game.loading_active,60),"integrated saved world loads"):await finish();return
  game.set_physics_process(false);game._clear_motion()
- if not check(game.terrain.backend.world_generator==12 and game.terrain.backend.world_seed==1703 and game.construction_inventory.gameplay,"regional seed1703 gameplay"):await finish();return
- var candidates:Dictionary=FileAccess.open("res://reports/regional_ore_survey/candidates.bin",FileAccess.READ).get_var()
+ var generator:int=game.terrain.backend.world_generator;var seed:int=game.terrain.backend.world_seed
+ if not check(generator in [12,13] and game.construction_inventory.gameplay,"regional mining gameplay"):await finish();return
+ var folder:="res://reports/regional_ore_survey"+("_%d"%seed if seed!=1703 else "")+("_g%d"%generator if generator!=12 else "")
+ var candidates:Dictionary=FileAccess.open(folder+"/candidates.bin",FileAccess.READ).get_var()
  for material in [8,9]:
   var surface:Vector3=candidates[material].surface
   game.teleport(surface+Vector3(0,0.15,1.2))
@@ -32,7 +34,7 @@ func run()->void:
   print("REGIONAL_MINED material=",material," removed=",removed," target=",target.get("point"))
   for frame in 30:await process_frame
   await RenderingServer.frame_post_draw
-  root.get_texture().get_image().save_png("res://reports/regional_ore_survey/mined_%d.png"%material)
+  root.get_texture().get_image().save_png(folder+"/mined_%d.png"%material)
  check(preload("res://addons/presentation/fullscreen_policy.gd").measurement(root).fair_graphical_sample,"1920x1080 fullscreen")
  await finish()
 func finish()->void:

@@ -64,9 +64,25 @@ bool World::regional_asphalt(float x,float z)const{
  }
  return false;
 }
+float World::ore_weight(V3 point,float h)const{
+ float natural=geological_weight(point,h,u32(seed));
+ if(generator_id<RESOURCE_MINE_GENERATOR_ID||caves.n<7)return natural;
+ // Two finite workings deposits, tied to the same chamber descriptors as
+ // density. Reject outside their small bounds before evaluating the capsule.
+ // No new voxel pages, scans, per-frame work or independently shaded ore field.
+ for(int i=0;i<2;i++){
+  V3 center=caves[i?4:2].a+V3{-6.f,-1.f,0};
+  V3 q=point-center;
+  if(ab(q.x)>6.f||ab(q.y)>3.f||ab(q.z)>3.f)continue;
+  q.x-=clampf(q.x,-3.f,3.f);
+  float weight=clampf(3.f-length(q),0,1);
+  if(weight>0)return natural+((i?-1.f:1.f)-natural)*weight;
+ }
+ return natural;
+}
 u8 World::base_material(V3 point,float h)const{
  if(regional_asphalt(point.x,point.z)&&point.y>=h-1.5f&&point.y<=h+1.f)return 4;
- if(has_geology()){float weight=geological_weight(point,h,u32(seed));return weight>.5f?8:(weight<-.5f?9:0);}
+ if(has_geology()){float weight=ore_weight(point,h);return weight>.5f?8:(weight<-.5f?9:0);}
  return 0;
 }
 float World::height(float x,float z)const{
@@ -381,7 +397,7 @@ bool World::deserialize(const u8*data,int n){
  Reader r{data,n-4};if(r.u()!=SAVE_MAGIC)return false;u32 format=r.u();if(format!=1&&format!=2)return false;
  int s=int(r.u()),pc=int(r.u()),bc=int(r.u()),rev=int(r.u()),ed=int(r.u());
  u32 generator=format==1?1:r.u();
- if(!r.good||generator<1||generator>LAKE_WORLD_GENERATOR_ID)return false;
+ if(!r.good||generator<1||generator>RESOURCE_MINE_GENERATOR_ID)return false;
  if(pc<0||pc>MAX_PAGES||bc<0||bc>2000000||i64(pc)*(4+PAGE_SAMPLES*3)+i64(bc)*8+(format==1?28:32)!=n-4)return false;
  World t;t.build_control=build_control;t.init(s,generator);t.revision=rev;t.edits=ed;t.surface_style=surface_style;
  for(int i=0;i<pc;i++){
@@ -798,7 +814,7 @@ void shade_mesh(const World&w,Mesh&m,u32 expected_epoch){
  for(int i=0;i<m.v.n;i++){
   if((i&31)==0&&cancelled(w,epoch))return;
   Vertex&v=m.v[i];float h=w.height(v.p.x,v.p.z);
-  v.ore=w.has_geology()&&v.material<5?geological_weight(v.p,h,u32(w.seed)):0;
+  v.ore=w.has_geology()&&v.material<5?w.ore_weight(v.p,h):0;
   v.substrate=eased(.15f,.65f,h-v.p.y);v.blend={};v.asphalt=0;
   if(v.material<5){
    int x=fl(v.p.x),y=fl(v.p.y),z=fl(v.p.z);V3 f={v.p.x-x,v.p.y-y,v.p.z-z};float delta=0,total=0,asphalt=0,paved=0,solid=0,original[8];V3 influence{};
@@ -1010,7 +1026,7 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
  }
  else if(cmd==4){w.serialize(out);}
  else if(cmd==5){if(!w.deserialize(data+4,n-4))out.p[8]=1;out.u(w.revision);out.u(w.pages.n);out.u(w.blocks.n);}
- else if(cmd==6){int seed=int(r.u());u32 generator=n==12?r.u():1;if(!r.good||(n!=8&&n!=12)||generator<1||generator>LAKE_WORLD_GENERATOR_ID){out.p[8]=1;return;}BuildControl *control=w.build_control;w.release();w=World{};w.build_control=control;w.init(seed,generator);}
+ else if(cmd==6){int seed=int(r.u());u32 generator=n==12?r.u():1;if(!r.good||(n!=8&&n!=12)||generator<1||generator>RESOURCE_MINE_GENERATOR_ID){out.p[8]=1;return;}BuildControl *control=w.build_control;w.release();w=World{};w.build_control=control;w.init(seed,generator);}
  else if(cmd==7){V3 p=r.vec();if(!r.good||!(ab(p.x)<=10000&&ab(p.y)<=10000&&ab(p.z)<=10000)){out.p[8]=1;return;}out.f(w.height(p.x,p.z));out.f(w.sample(fl(p.x),fl(p.y),fl(p.z)));}
  else if(cmd==8){ // Deterministic construction proof; not a replay list.
   int bx=1472,bz=1440,by=int(w.height(float(bx),float(bz)))+1;
@@ -1125,7 +1141,7 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
  else if(cmd==26){
   V3 point=r.vec();if(!r.good||n!=16||!(point.x>=0&&point.x<=WORLD&&point.z>=0&&point.z<=WORLD&&point.y>=0&&point.y<WORLD_Y)){out.p[8]=1;return;}
   u8 material=0;float density=w.sample(fl(point.x),fl(point.y),fl(point.z),&material);
-  out.u(material);out.f(density);out.f(w.has_geology()?geological_weight(point,w.height(point.x,point.z),u32(w.seed)):0);
+  out.u(material);out.f(density);out.f(w.has_geology()?w.ore_weight(point,w.height(point.x,point.z)):0);
  }
  else if(cmd==32){
   // Worker-owned boundary packet for material integration. Reuse the exact

@@ -18,13 +18,20 @@ Create a new prepared world with a chosen seed:
 python tools/prepare_combined_world.py --layout districts --seed 42 --destination my_world_42
 ```
 
-This generates profile-12 terrain, regional roads, five furnished settlement sites,
+This generates profile-13 terrain, regional roads, five furnished settlement sites,
 entrance paths, a western cellar, the eastern mine, four lakes and two central
 patrol residents. Terrain generation and runtime representation remain native;
 the preparation script coordinates existing addon authoring operations offline.
 The regional topology and prefab palette are currently fixed; a different seed
 changes terrain/layout parameters and central prefab choices, not the entire
 settlement design vocabulary. This is not a finished procedural-city generator.
+
+Profile 13 adds finite iron and copper deposits at the owned mine's main chamber
+and workings. Deposits share the native material field used by mesh shading,
+excavation and rewards, and do not add voxel pages or runtime scanning. Older
+profiles keep their original ore placement and geometry. New named integrated
+worlds use this profile; existing generated_world_v4 remains profile 12. The
+prepared seed-42 world `resource_mine_42_20261018` is available in Worlds.cmd.
 
 New district worlds use two mine workshops and stores at the eastern service
 street, with workbenches, separate rear stores, chests, windows and entrance doors.

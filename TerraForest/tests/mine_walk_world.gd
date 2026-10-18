@@ -6,7 +6,7 @@ func run()->void:
  var game=load("res://demo/world.tscn").instantiate();game.temporary_world=true;game.max_fps=60;game.background_fps=60;root.add_child(game)
  var deadline:=Time.get_ticks_msec()+60000
  while game.loading_active and Time.get_ticks_msec()<deadline:await process_frame
- if game.loading_active or game.terrain.backend.world_generator not in [11,12]:quit(1);return
+ if game.loading_active or game.terrain.backend.world_generator not in [11,12,13]:quit(1);return
  game.set_physics_process(false);game._clear_motion()
  var core=ClassDB.instantiate("TerrainCore");core.execute(Codec.command(6,[game.terrain.backend.world_seed,game.terrain.backend.world_generator]))
  var data:PackedByteArray=core.execute(Codec.command(25))
