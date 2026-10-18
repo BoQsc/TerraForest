@@ -1,0 +1,33 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] New world
+[TerrainRewrite] New world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+[terrain-hitch] controller loading 119.09 ms at 9081
+[terrain-hitch] base controller 137.73 ms at 9099
+[terrain-hitch] controller process 205.93 ms at 9167
+[terrain-hitch] world process 233.48 ms at 9195
+PASS actual world ready
+[terrain-hitch] world interaction 70.35 ms at 9721
+[terrain-hitch] controller process 216.1 ms at 9867
+[terrain-hitch] world process 455.57 ms at 10106
+PASS real camera ray targets the construction fixture
+[TerrainRewrite] Preparing furnished building...
+PASS ordinary aimed placement starts native staging
+PASS input handler does not publish blocks or models
+[TerrainRewrite] Placement changed during preparation; place again
+PASS changing rotation cancels staged placement
+PASS cancel preserves world and inventory
+[TerrainRewrite] Preparing furnished building...
+PASS occupied furnished placement reaches staged validation instead of eager scan
+[TerrainRewrite] Prefab block occupied
+PASS native occupied-cell rejection preserves obstruction and inventory
+[TerrainRewrite] Preparing furnished building...
+[TerrainRewrite] Timber footbridge with metal rails - 12 m span placed - F5 saves; combined undo unavailable
+PASS bounded preparation completes
+PASS staged publication installs bridge deck at aimed cell
+PASS same publication installs all six batched rails
+DIRECT_PREFAB_SLICES 1
+[TerrainRewrite] Temporary test world: save skipped
+DIRECT_PREFAB_STAGING failures=0

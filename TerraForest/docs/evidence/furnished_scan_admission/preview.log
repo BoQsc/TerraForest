@@ -1,0 +1,20 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] New world
+[TerrainRewrite] New world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+[terrain-hitch] controller loading 201.23 ms at 10077
+[terrain-hitch] base controller 351.29 ms at 10227
+[terrain-hitch] controller process 520.0 ms at 10396
+[terrain-hitch] world process 645.68 ms at 10522
+PASS actual world ready
+[terrain-hitch] world process 55.46 ms at 11064
+PASS real camera ray targets the construction fixture
+PASS clear block-only prefab shows green
+PASS furnished prefab shows amber for deferred attachment checks
+PASS preview checks do not change blocks or models
+PASS construction legend fits the visible developer panel
+PASS player overlap overrides amber with blocked red
+[TerrainRewrite] Temporary test world: save skipped
+PREFAB_PREVIEW_FEEDBACK failures=0

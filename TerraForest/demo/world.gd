@@ -449,12 +449,14 @@ func _update_prefab_preview(delta: float) -> void:
 		return
 	var bounds: AABB = asset.placement_bounds(hit.target,structure_rotation)
 	var signature: Array = [structure_prefab_index,hit.target,structure_rotation]
-	if signature != _prefab_preview_signature:
-		_prefab_preview_clear=structures.blocks.can_place_prefab(asset,hit.target,structure_rotation)
-		_prefab_preview_signature=signature
 	if _prefab_preview_asset!=asset:
 		_prefab_preview_asset=asset
 		_prefab_preview_needs_checks=asset.has_meta("frontage_version") or not asset.get_model_attachments().is_empty()
+	if signature != _prefab_preview_signature:
+		# Pending placement checks are amber. Do not scan an entire furnished
+		# building every time the aim moves; its native transaction checks cells.
+		_prefab_preview_clear=_prefab_preview_needs_checks or structures.blocks.can_place_prefab(asset,hit.target,structure_rotation)
+		_prefab_preview_signature=signature
 	prefab_preview.position=bounds.position
 	prefab_preview.scale=bounds.size
 	var clear: bool=_prefab_preview_clear and _prefab_player_clear(bounds) and not world_vehicle.overlaps_edit(bounds)
@@ -1005,14 +1007,17 @@ func _edit_structure(remove: bool) -> void:
 	var target: Vector3i = hit.target
 	if not remove and structure_prefab_index>=0:
 		var asset: Resource = structure_prefabs[structure_prefab_index]
+		if not asset.has_meta("frontage_version") and not asset.get_model_attachments().is_empty():
+			var bounds: AABB=asset.placement_bounds(target,structure_rotation)
+			if not _prefab_player_clear(bounds) or world_vehicle.overlaps_edit(bounds):
+				_show_lake_notice("Move clear of the prefab before placing it");return
+			_begin_direct_prefab(asset,target)
+			return
 		if not _prefab_allowed(asset,target):
 			_show_lake_notice("Prefab blocked · clear existing blocks and move outside its bounds")
 			return
 		if asset.has_meta("frontage_version"):
 			_begin_frontage_placement(asset,target)
-			return
-		if not asset.get_model_attachments().is_empty():
-			_begin_direct_prefab(asset,target)
 			return
 		if _place_combined_prefab(asset,target,structure_rotation):
 			_show_lake_notice(_prefab_placement_text(asset))

@@ -1,3 +1,9 @@
+> 2026-10-18 furnished admission: removed duplicate full-cell scans from direct
+> furnished preview/input; native staged validation rejects occupied cells.
+> Real-ray obstruction preservation, successful placement and preview checks
+> pass. Other synchronous admission/publication costs remain unqualified.
+> Evidence: evidence/furnished_scan_admission/.
+
 > 2026-10-18 paid staging integration: ordinary-world direct preparation rejects
 > insufficient materials and inventory revision conflicts without lost items or
 > world edits. Successful publication charges exact wood/metal; fresh-process

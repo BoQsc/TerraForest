@@ -34,6 +34,16 @@ func run()->void:
   check(game._foundation_placement.is_empty() and game.construction_inventory.pending_prefab.is_empty(),"changing rotation cancels staged placement")
   check(game.structures.capture_snapshot()==before and game.player_hud.inventory.capture_storage_snapshot()==inventory,"cancel preserves world and inventory")
   game.structure_rotation=0
+  var obstruction: Vector3i=hit.target+Vector3i(1,0,6)
+  game.structures.blocks.set_cells(PackedInt32Array([obstruction.x,obstruction.y,obstruction.z,65]))
+  var occupied: PackedByteArray=game.structures.capture_snapshot()
+  game._edit_structure(false)
+  check(not game._foundation_placement.is_empty(),"occupied furnished placement reaches staged validation instead of eager scan")
+  for i in 120:
+   if game._foundation_placement.is_empty():break
+   game._advance_frontage_placement();await process_frame
+  check(game._foundation_placement.is_empty() and game.structures.capture_snapshot()==occupied and game.player_hud.inventory.capture_storage_snapshot()==inventory,"native occupied-cell rejection preserves obstruction and inventory")
+  game.structures.blocks.set_cells(PackedInt32Array([obstruction.x,obstruction.y,obstruction.z,0]))
   game._edit_structure(false)
   var slices:=0
   while not game._foundation_placement.is_empty() and slices<120:
