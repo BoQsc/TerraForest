@@ -165,6 +165,7 @@ public:
     void _process(double delta) override;
     bool configure_render_streaming(bool enabled,double radius,int64_t batch_limit,int64_t byte_limit,int64_t uploads_per_tick,int64_t bytes_per_tick);
     void set_render_focus(Vector3 focus);
+    bool set_render_radius(double radius);
     Dictionary render_stats() const;
     void set_casts_shadows(bool enabled);
     bool set_shadow_distance(double radius);

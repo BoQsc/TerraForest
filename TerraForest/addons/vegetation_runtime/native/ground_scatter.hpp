@@ -8,6 +8,7 @@ class NativeGroundCover : public RefCounted {
 protected:
     static void _bind_methods(){
         ClassDB::bind_method(D_METHOD("wanted","center"),&NativeGroundCover::wanted);
+        ClassDB::bind_method(D_METHOD("wanted_view","eye","forward","fov","aspect"),&NativeGroundCover::wanted_view);
         ClassDB::bind_method(D_METHOD("candidates","cell","seed","layer"),&NativeGroundCover::candidates,DEFVAL(0));
         ClassDB::bind_method(D_METHOD("place","ids","points","normals"),&NativeGroundCover::place);
         ClassDB::bind_method(D_METHOD("pack","ids","transforms","excluded"),&NativeGroundCover::pack);
@@ -22,6 +23,33 @@ public:
                 cells.push_back({Vector2i(x,z),(x-center.x)*(x-center.x)+(z-center.y)*(z-center.y)});
         std::sort(cells.begin(),cells.end(),[](const Cell&a,const Cell&b){return a.d!=b.d?a.d<b.d:(a.p.y!=b.p.y?a.p.y<b.p.y:a.p.x<b.p.x);});
         for(const auto &c:cells)out.append(c.p);return out;
+    }
+    Dictionary wanted_view(Vector3 eye,Vector3 forward,double fov,double aspect) const {
+        Dictionary result;TypedArray<Vector2i> cells;result["range"]=124.0;result["cells"]=cells;
+        if(!eye.is_finite()||!forward.is_finite()||!std::isfinite(fov)||!std::isfinite(aspect)||fov<1||fov>=179||aspect<=0||aspect>4||eye.x<-128||eye.z<-128||eye.x>2144||eye.z>2144)return result;
+        Vector2i center(int(std::floor(eye.x/32)),int(std::floor(eye.z/32)));
+        double zoom=std::clamp(std::tan(75.0*3.141592653589793/360.0)/std::tan(fov*3.141592653589793/360.0),1.0,2.0);
+        Vector2 direction(forward.x,forward.z);
+        if(zoom<=1.05||direction.length_squared()<0.04){result["cells"]=wanted(center);return result;}
+        direction=direction.normalized();
+        const double reach=124.0*zoom;
+        // Expanded horizontal cone covers cell corners and small yaw changes.
+        const double tangent=std::tan(std::atan(std::tan(fov*3.141592653589793/360.0)*aspect)+0.10);
+        struct Candidate{Vector2i p;double distance;};std::vector<Candidate> candidates;
+        int radius=int(std::ceil((reach+48)/32));
+        for(int z=std::max(0,center.y-radius);z<=std::min(62,center.y+radius);++z)
+            for(int x=std::max(0,center.x-radius);x<=std::min(62,center.x+radius);++x){
+                Vector2 delta(x*32+16-eye.x,z*32+16-eye.z);
+                double distance=delta.length(),along=delta.dot(direction),side=std::abs(delta.x*direction.y-delta.y*direction.x);
+                if(distance>reach+24)continue;
+                if(distance>72&&(along<0||side>along*tangent+32))continue;
+                candidates.push_back({Vector2i(x,z),distance});
+            }
+        std::sort(candidates.begin(),candidates.end(),[](const Candidate&a,const Candidate&b){return a.distance!=b.distance?a.distance<b.distance:(a.p.y!=b.p.y?a.p.y<b.p.y:a.p.x<b.p.x);});
+        double visible=reach;
+        if(candidates.size()>81)visible=std::min(visible,std::max(124.0,candidates[81].distance-24.0));
+        for(size_t i=0;i<std::min(size_t(81),candidates.size());++i)cells.append(candidates[i].p);
+        result["cells"]=cells;result["range"]=visible;return result;
     }
     Dictionary candidates(Vector2i cell,int64_t seed,int layer=0) const {
         PackedVector3Array points;PackedInt64Array ids;

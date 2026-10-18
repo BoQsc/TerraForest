@@ -21,6 +21,31 @@ func run() -> void:
 	check(ordered,"residency distance order")
 	check(scatter.wanted(Vector2i(-999999,0)).is_empty(),"far outside world rejects safely")
 	check(scatter.wanted(Vector2i.ZERO).size()==25,"world edge clips residency")
+	var eye:=Vector3(976,3,976)
+	var ordinary:Dictionary=scatter.wanted_view(eye,Vector3.FORWARD,75.0,16.0/9.0)
+	check(ordinary.cells==wanted and ordinary.range==124.0,"ordinary camera preserves exact original owners")
+	var zoom:Dictionary=scatter.wanted_view(eye,Vector3.FORWARD,35.0,16.0/9.0)
+	check(zoom.cells.size()<=81 and zoom.range>180.0 and zoom.range<=248.0,"zoom extends visible range with fixed owner bound")
+	var keeps_near:=true
+	for z in range(29,32):
+		for x in range(29,32):keeps_near=keeps_near and zoom.cells.has(Vector2i(x,z))
+	check(keeps_near,"zoom retains nearby owners including behind player")
+	var opposite:Dictionary=scatter.wanted_view(eye,Vector3.BACK,35.0,16.0/9.0)
+	check(zoom.cells!=opposite.cells and zoom.cells.has(Vector2i(30,24)) and not opposite.cells.has(Vector2i(30,24)),"zoom selects distant owners in viewing direction")
+	check(scatter.wanted_view(Vector3(NAN,0,0),Vector3.FORWARD,35,1.7).cells.is_empty(),"invalid view rejects safely")
+	check(scatter.wanted_view(eye,Vector3.UP,35,1.7).cells==wanted,"vertical view safely retains local cover")
+	var cone_complete:=true
+	for angle in range(0,360,45):
+		var direction:=Vector3(sin(deg_to_rad(angle)),0,cos(deg_to_rad(angle)))
+		for fov in [20.0,35.0,55.0]:
+			var view:Dictionary=scatter.wanted_view(eye,direction,fov,16.0/9.0)
+			var half:float=atan(tan(deg_to_rad(fov)*0.5)*16.0/9.0)
+			for side in [-0.99,0.0,0.99]:
+				var ray:Vector3=direction.rotated(Vector3.UP,half*side)
+				for distance in range(1,int(view.range),8):
+					var point:Vector3=eye+ray*distance
+					cone_complete=cone_complete and view.cells.has(Vector2i(floori(point.x/32),floori(point.z/32)))
+	check(cone_complete,"zoom center and frustum edges have no owner gaps throughout reported range")
 	var valid:=true
 	var total:=0
 	# Every owner uses its own ID interval, so uniqueness is checked without a huge set.

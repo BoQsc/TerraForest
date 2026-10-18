@@ -77,6 +77,11 @@ bool NativeStaticBatch::configure_render_streaming(bool enabled,double radius,in
     if(!enabled)for(const auto &group:groups)upload_batch({group.first,0});
     return true;
 }
+bool NativeStaticBatch::set_render_radius(double radius) {
+    if(!std::isfinite(radius)||radius<0||radius>16384)return false;
+    if(render_radius!=radius){render_radius=radius;render_dirty=true;}
+    return true;
+}
 void NativeStaticBatch::set_render_focus(Vector3 focus) {
     if(!focus.is_finite())return;
     render_focus=focus;

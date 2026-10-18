@@ -19,6 +19,9 @@ func run()->void:
  print("SHADOW_BASE ",game.sun.directional_shadow_mode," splits ",game.sun.directional_shadow_split_1," ",game.sun.directional_shadow_split_2," ",game.sun.directional_shadow_split_3)
  RenderingServer.viewport_set_measure_render_time(root.get_viewport_rid(),true)
  check(is_equal_approx(game.sun.directional_shadow_split_1,0.035) and game.sun.directional_shadow_blend_splits and ProjectSettings.get_setting("rendering/lights_and_shadows/directional_shadow/size")==4096,"production near-shadow configuration")
+ if "--cover-zoom" in OS.get_cmdline_user_args():
+  await cover_zoom(hit.position)
+  await done();return
  if "--shadow-slope" in OS.get_cmdline_user_args():
   await shadow_slope(center)
   await done();return
@@ -111,3 +114,27 @@ func shadow_slope(center:Vector3)->void:
   for frame in 45:await RenderingServer.frame_post_draw
   root.get_texture().get_image().save_png("res://reports/vegetation_near_shadows/"+label+".png")
  FileAccess.open("res://reports/vegetation_near_shadows/slope.json",FileAccess.WRITE).store_string(JSON.stringify({"failures":failures,"point":str(foot),"normal_y":best,"angle_degrees":rad_to_deg(acos(best)),"scope":"Fixed downhill view, frozen foliage wind; shadow on/off/repeat. No claim for moving-view shimmer or all terrain slopes."},"  "))
+
+func cover_zoom(foot:Vector3)->void:
+ var state:PackedByteArray=game.ground_cover.removed.capture_storage_snapshot()
+ game.camera.global_position=foot+Vector3.UP*3
+ game.camera.look_at(foot+Vector3(0,0,-100))
+ var rows:Array=[]
+ for fov in [75.0,35.0,75.0]:
+  game.camera.fov=fov
+  await process_frame
+  var begin:=Time.get_ticks_msec()
+  check(await wait_for(func():return is_equal_approx(game.ground_cover._view_fov,fov) and settled() and game.ground_cover.batches.all(func(b):return b.render_stats().pending_batches==0 and not b.render_stats().selection_pending),20),"zoom owners settle at FOV %s"%fov)
+  var c=game.ground_cover
+  check(c._wanted.size()<=81 and c.resident.size()<=81,"zoom owner cap")
+  check(c._view_range>180 if fov==35 else c._view_range==124,"zoom changes coverage distance")
+  var render:Array=[]
+  for batch in c.batches:
+   var stats:Dictionary=batch.render_stats();render.append(stats)
+   check(stats.budget_deferred==0 and stats.resident_transform_bytes<=stats.byte_limit,"zoom page/byte budgets")
+  var label:="zoom_%d"%rows.size()
+  for frame in 45:await RenderingServer.frame_post_draw
+  root.get_texture().get_image().save_png("res://reports/vegetation_near_shadows/"+label+".png")
+  rows.append({"fov":fov,"range":c._view_range,"settle_ms":Time.get_ticks_msec()-begin,"owners":c.resident.size(),"render":render})
+ check(game.ground_cover.removed.capture_storage_snapshot()==state,"zoom preserves item identities and saved edits")
+ FileAccess.open("res://reports/vegetation_near_shadows/zoom.json",FileAccess.WRITE).store_string(JSON.stringify({"failures":failures,"views":rows,"scope":"Camera FOV coverage integration; no player zoom binding or thermal qualification."},"  "))

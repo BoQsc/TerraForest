@@ -63,6 +63,11 @@ func run() -> void:
 		check(batch.get_child_count()>0 and batch.render_stats().shadow_batches==0,"distant pages keep geometry without cast shadows")
 		batch.set_render_focus(Vector3.ZERO);await settle()
 		check(batch.render_stats().shadow_batches==batch.get_child_count() and batch.capture_snapshot()==snapshot,"return restores shadows without changing placement")
+		var existing_pages:int=batch.get_child_count()
+		check(batch.set_render_radius(300.0) and batch.get_child_count()==existing_pages,"range extension retains existing render pages immediately")
+		check(not batch.set_render_radius(NAN) and not batch.set_render_radius(-1.0),"invalid render range rejected")
+		await settle()
+		check(batch.capture_snapshot()==snapshot and batch.render_stats().budget_deferred==0,"range update preserves placements and page budgets")
 		batch.free()
 	# Magnified high/low comparison: forced low is review only, not runtime policy.
 	var gallery: Array[MeshInstance3D]=[]

@@ -31,3 +31,9 @@ retries the same layer. Replies are assembled by layer, so arrival order cannot
 change persistent IDs or renderer ordering. An invalid reply abandons that wave,
 drains remaining replies and retries; no partial owner is published. The resident
 limit is 81 owners, with all 16 candidate layers retained throughout residency.
+
+Camera FOV now selects bounded directional ground coverage: ordinary75 degrees
+keeps124 m; zoom can extend to248 m while retaining nearby cells and no more
+than81 owners. Native render-radius updates preserve existing pages. This is
+ready for camera zoom consumers; no new gameplay zoom binding is added. New
+cells still load asynchronously. See docs/evidence/vegetation_zoom for limits.

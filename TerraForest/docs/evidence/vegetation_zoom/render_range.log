@@ -1,0 +1,54 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+PASS species 0 near geometry is unchanged
+PASS species 0 all LOD vertices/normals stay inside picking envelope
+PASS species 0 distant triangle budget
+PASS native batch configured
+PASS 256 interactive identities accepted
+PASS species 0 near pixels match LOD-disabled image
+PASS species 0 far per-page primitives reduced: 720 -> 96
+PASS species 0 native near/far LOD counts match both mesh tiers
+PASS LOD leaves all identities and placement bytes unchanged
+PASS native shadow radius validates
+PASS near pages cast shadows
+PASS distant pages keep geometry without cast shadows
+PASS return restores shadows without changing placement
+PASS range extension retains existing render pages immediately
+PASS invalid render range rejected
+PASS range update preserves placements and page budgets
+PASS species 1 near geometry is unchanged
+PASS species 1 all LOD vertices/normals stay inside picking envelope
+PASS species 1 distant triangle budget
+PASS native batch configured
+PASS 256 interactive identities accepted
+PASS species 1 near pixels match LOD-disabled image
+PASS species 1 far per-page primitives reduced: 3024 -> 784
+PASS species 1 native near/far LOD counts match both mesh tiers
+PASS LOD leaves all identities and placement bytes unchanged
+PASS native shadow radius validates
+PASS near pages cast shadows
+PASS distant pages keep geometry without cast shadows
+PASS return restores shadows without changing placement
+PASS range extension retains existing render pages immediately
+PASS invalid render range rejected
+PASS range update preserves placements and page budgets
+PASS species 2 near geometry is unchanged
+PASS species 2 all LOD vertices/normals stay inside picking envelope
+PASS species 2 distant triangle budget
+PASS native batch configured
+PASS 256 interactive identities accepted
+PASS species 2 near pixels match LOD-disabled image
+PASS species 2 far per-page primitives reduced: 936 -> 16
+PASS species 2 native near/far LOD counts match both mesh tiers
+PASS outer grass LOD draws three triangles per instance
+PASS LOD leaves all identities and placement bytes unchanged
+PASS native shadow radius validates
+PASS near pages cast shadows
+PASS distant pages keep geometry without cast shadows
+PASS return restores shadows without changing placement
+PASS range extension retains existing render pages immediately
+PASS invalid render range rejected
+PASS range update preserves placements and page budgets
+PASS fullscreen1080p cap60
+GROUND_MESH_LOD {"checks":50,"failures":0,"rows":[{"far_full":92160,"far_lod":96,"near_full":92160,"near_lod":720,"species":0},{"far_full":387072,"far_lod":784,"near_full":387072,"near_lod":3024,"species":1},{"far_full":119808,"far_lod":16,"near_full":119808,"near_lod":936,"species":2}],"scope":"Native batched draw-count/identity regression. Not GPU speedup, density, mixed-world or endurance qualification. Gallery back high/front forced distant LOD."}

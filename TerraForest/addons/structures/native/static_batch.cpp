@@ -43,6 +43,7 @@ void NativeStaticBatch::_bind_methods() {
     ClassDB::bind_method(D_METHOD("stats"),&NativeStaticBatch::stats);
     ClassDB::bind_method(D_METHOD("configure_render_streaming","enabled","radius","batch_limit","byte_limit","uploads_per_tick","bytes_per_tick"),&NativeStaticBatch::configure_render_streaming);
     ClassDB::bind_method(D_METHOD("set_render_focus","focus"),&NativeStaticBatch::set_render_focus);
+    ClassDB::bind_method(D_METHOD("set_render_radius","radius"),&NativeStaticBatch::set_render_radius);
     ClassDB::bind_method(D_METHOD("render_stats"),&NativeStaticBatch::render_stats);
     ClassDB::bind_method(D_METHOD("configure_appearance_fade"),&NativeStaticBatch::configure_appearance_fade);
     ClassDB::bind_method(D_METHOD("set_casts_shadows","enabled"),&NativeStaticBatch::set_casts_shadows);
