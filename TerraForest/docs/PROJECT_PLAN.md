@@ -1,3 +1,49 @@
+## Priority correction — 2026-10-18: deliver the world, not more isolated coverage
+
+The user rejects continued detail work while the integrated world remains incomplete.
+This priority supersedes earlier "next" statements and component-driven scheduling.
+Food/vitals and further water-implementation work remain deferred. Large lakes and
+water locations must still be integrated using the accepted existing water system.
+
+Current audit: native seeded terrain generates four simple basin locations and
+four capsule/sphere cave networks. tools/prepare_combined_world.gd composes one
+small furnished neighborhood through editor operations. These are reusable pieces,
+not an integrated map generator. Small fixture successes do not establish a complete
+world or justify describing towns, cities, caves, density or performance as finished.
+
+Next deliverable: a reproducibly generated, saved and explorable complete map within
+the current supported approximately 2 km by 2 km terrain domain. This is the first
+integrated large-world workload, not a reduction of the eventual larger-world scope.
+
+- Introduce one seeded world layout that coordinates terrain regions, settlements,
+  major roads, exploration locations, cave entrances, lake basins and vegetation.
+  Generation must produce these together, without dependence on a local review save.
+- Connect settlements and destinations with a map-wide road network. Town/city areas
+  require streets, accessible furnished buildings and distinct destinations; counts
+  of identical shells do not satisfy exploration or city coverage.
+- Replace pipe-dominated cave layouts with connected chambers, domed spaces, varied
+  passages, traversable floors and accessible ore areas under a new generator version.
+- Integrate representative woodland density and distribution from the accepted art
+  work into normal generated worlds, rather than only density-review scenes.
+- Place substantial lakes and distinct water-source locations using accepted static
+  water. Do not reopen flow, bucket or water mesher redesign as an incidental detour.
+- Own generation, save identity, derived-cache preparation and loading as one workflow.
+  Bake reusable immutable data; retain correct editable state and bounded runtime
+  residency. Do not assume precomputing a world removes rendering/streaming costs.
+- Validate the same generated world from the player perspective: walk, drive between
+  destinations, enter buildings/caves, gather, edit, save, reload and revisit. Keep a
+  working human-review launcher available during development.
+- Run short representative combined checks as content is integrated at 1920x1080,
+  with the existing 60 FPS objective and reported frame tails, stalls and resource
+  use. Do not postpone first performance evidence until the map is finished, and do
+  not use isolated fixture FPS as proof. Larger scale and endurance remain separate.
+
+Implementation starts by replacing the single-neighborhood preparation orchestration
+with a shared generated-world layout and creation path, reusing existing native
+terrain, road, grading, structure, vegetation and persistence systems. Component fixes
+are scheduled only when they block this deliverable, prevent corruption or address a
+human-reported blocker. This document records direction; it is not completion evidence.
+
 > 2026-10-18 world population: add residents to separate prepared streets without
 > clearing existing actors. Local native occupancy rejects dormant duplicates.
 > Testing exposed a 24 m pooled-body reactivation jump; native binding now holds
