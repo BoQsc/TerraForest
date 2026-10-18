@@ -1,0 +1,42 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] New world
+[TerrainRewrite] New world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+PASS world ready
+PASS clothing recipes use native crafting
+PASS invalid equipment source slot rejects safely: -1
+PASS invalid equipment source slot rejects safely: 32
+PASS invalid equipment source slot rejects safely: 999999
+PASS invalid equipment source slot rejects safely: 0
+PASS invalid equipment source slot rejects safely: <null>
+PASS missing equipment drag field rejects
+PASS invalid equipment source controls reject
+PASS malformed drags preserve carried and equipped items
+PASS Character tab replaces crafting
+PASS tools rejected by clothing slots without world drop
+PASS crafted wearable exists
+PASS wearable moves into matching character slot
+PASS crafted wearable exists
+PASS wearable moves into matching character slot
+PASS crafted wearable exists
+PASS wearable moves into matching character slot
+PASS equipment saved with world
+PASS unequip by dragging into backpack
+PASS equipment native save restore retains slots
+PASS Crafting tab returns to recipes
+PASS release over panel whitespace cancels rather than world-dropping
+PASS unfocused world drop preserves inventory
+DROP_NOTICE Dropped 64 Brick
+PASS outside release drops full stack as one world pickup
+PASS world pickup carries full stack count
+PASS all component sections plus terrain fit native archive limit
+PASS drop count survives native persistence
+PASS recollection conserves entire stack
+PASS Shift outside drag drops half as one pickup
+FAIL blocked ground drop preserves tool
+PASS tools can be dropped by outside release
+[TerrainRewrite] Temporary test world: save skipped
+PASS clean shutdown
+CHARACTER_DROPS checks=33 failures=1

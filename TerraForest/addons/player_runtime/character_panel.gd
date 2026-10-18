@@ -19,14 +19,18 @@ func refresh() -> void:
 		var item: int=state.slots[i].item
 		buttons[i].present(state.slots[i],hud.RESOURCES.get(item,"Empty"),NAMES[i])
 		buttons[i].set_appearance(item==0,item!=0,false)
-func drag_data(_side: String,slot: int) -> Dictionary:
+func drag_data(side: String,slot: int) -> Dictionary:
+	if side!="equipment" or slot<0 or slot>=NAMES.size() or not hud.inventory_open:return {}
 	var state: Dictionary=hud.equipment.snapshot(1)
 	if not hud.inventory_open or state.slots[slot].count==0:return {}
 	return {"owner":hud.get_instance_id(),"side":"equipment","slot":slot,"count":1,"revision":hud.inventory.snapshot().revision,"equipment_revision":state.store_revision}
-func accepts_drag(_side: String,slot: int,data: Variant) -> bool:
-	if not hud.inventory_open or not data is Dictionary or data.get("owner",0)!=hud.get_instance_id() or data.get("side","")!="player":return false
+func accepts_drag(side: String,slot: int,data: Variant) -> bool:
+	if side!="equipment" or slot<0 or slot>=NAMES.size() or not hud.inventory_open or not data is Dictionary or data.get("owner",0)!=hud.get_instance_id() or data.get("side","")!="player":return false
+	for field in ["slot","count","revision","equipment_revision"]:
+		if not data.has(field) or typeof(data[field])!=TYPE_INT:return false
+	if data.slot<0 or data.slot>=32 or data.count<1 or data.revision<0 or data.equipment_revision<0:return false
 	var state: Dictionary=hud.inventory.snapshot()
-	return state.revision==data.revision and TYPES.get(int(state.slots[data.slot].item),-1)==slot
+	return state.revision==data.revision and hud.equipment.snapshot(1).store_revision==data.equipment_revision and state.slots[data.slot].count>0 and TYPES.get(int(state.slots[data.slot].item),-1)==slot
 func drop_stack(side: String,slot: int,data: Variant) -> void:
 	if not accepts_drag(side,slot,data):return
 	var result: Dictionary=hud.equipment.drag_slots(1,hud.inventory,false,true,data.slot,slot,1,data.revision,data.equipment_revision)

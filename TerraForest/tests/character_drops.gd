@@ -41,6 +41,16 @@ func run() -> void:
 	hud.inventory.grant(204,9,hud.inventory.snapshot().revision);hud.refresh()
 	for recipe in [4,5,6]:hud.craft_recipe(recipe)
 	check(hud.message.text.begins_with("Crafted"),"clothing recipes use native crafting")
+	var drag_before: PackedByteArray=hud.capture_snapshot()
+	var candidate: Dictionary={"owner":hud.get_instance_id(),"side":"player","slot":-1,"count":1,"revision":hud.inventory.snapshot().revision,"equipment_revision":hud.equipment.snapshot(1).store_revision}
+	for invalid in [-1,32,999999,"0",null]:
+		candidate.slot=invalid
+		check(not hud.character_panel.accepts_drag("equipment",0,candidate),"invalid equipment source slot rejects safely: "+str(invalid))
+		hud.character_panel.drop_stack("equipment",0,candidate)
+	candidate.erase("slot")
+	check(not hud.character_panel.accepts_drag("equipment",0,candidate),"missing equipment drag field rejects")
+	check(hud.character_panel.drag_data("equipment",-1).is_empty() and hud.character_panel.drag_data("equipment",3).is_empty(),"invalid equipment source controls reject")
+	check(hud.capture_snapshot()==drag_before,"malformed drags preserve carried and equipped items")
 	await click(hud.side_tabs.get_child(1))
 	check(hud.character_panel.visible and not hud.crafting_content.visible,"Character tab replaces crafting")
 	var before: PackedByteArray=hud.capture_snapshot()
@@ -89,8 +99,13 @@ func run() -> void:
 	shift=InputEventKey.new();shift.keycode=KEY_SHIFT;shift.physical_keycode=KEY_SHIFT;Input.parse_input_event(shift)
 	ids=game.pickups.stacks[101].get_ids()
 	check(hud.state.slots[4].count==32 and ids.size()==1 and game.pickups.stacks[101].snapshot(ids[0]).slots[0].count==32,"Shift outside drag drops half as one pickup")
+	# Remove the elevated support so every candidate has no reachable ground.
+	floor_body.collision_layer=0
+	await physics_frame;await physics_frame
 	before=hud.capture_snapshot();await drag(hud.belt[0],target)
-	check(hud.capture_snapshot()==before,"blocked ground drop preserves tool")
+	check(hud.capture_snapshot()==before,"drop without reachable ground preserves tool")
+	floor_body.collision_layer=1
+	await physics_frame;await physics_frame
 	game.pickups.collect_near(game.player.global_position+Vector3.UP*0.5,hud.inventory,game._pickup_reachable);hud.refresh()
 	await drag(hud.belt[0],target)
 	check(hud.state.slots[0].count==0 and game.pickups.stores[1].statistics().active==1,"tools can be dropped by outside release")

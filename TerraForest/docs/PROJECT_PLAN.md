@@ -1,3 +1,9 @@
+> 2026-10-18 scope decision: quick-use food and player health/hunger are deferred
+> by user request; continue world systems. Water remains accepted/deferred.
+> Finished character drag validation: 33 actual-world checks pass, including
+> malformed input rejection, equip/unequip, persistence and item conservation.
+> Evidence: evidence/character_drag_validation/. Functional coverage only.
+
 > 2026-10-18 placement-cost disposition: routine action feedback stays onscreen
 > and in a64-message history; console mirroring is opt-in (--log-actions).
 > Save/load and errors still log. Two short4/64-cottage checks pass the unchanged
