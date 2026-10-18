@@ -1,5 +1,12 @@
 ## Current integrated entry point - 2026-10-18
 
+Grass ground texture now repeats at 2 m instead of 5 m, reducing oversized turf
+patterns beneath existing vegetation models. Same samples/mipmaps; no extra render
+pass. Saved-world 1/2.5/4/1 scale comparison inspected, selected 2.5 multiplier;
+GPU medians approximately 7.8 ms throughout. Evidence:
+`evidence/vegetation_ground_scale/`. This is a limited material correction; overall
+art acceptance and sustained 60 FPS remain open.
+
 A follow-up daylight comparison of directional shadow normal bias (2.0 / 0.5 /
 0.25 / 2.0) did not establish a convincing visual improvement. Production lighting
 is unchanged; retain the existing terrain-acne protection. Evidence:

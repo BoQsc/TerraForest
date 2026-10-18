@@ -6,6 +6,7 @@ uniform sampler2D grass : source_color, repeat_enable, filter_linear_mipmap_anis
 uniform sampler2D gravel : source_color, repeat_enable, filter_linear_mipmap_anisotropic;
 uniform sampler2D sand : source_color, repeat_enable, filter_linear_mipmap_anisotropic;
 uniform sampler2D snow : source_color, repeat_enable, filter_linear_mipmap_anisotropic;
+uniform float grass_surface_scale : hint_range(1.0,4.0) = 2.5;
 uniform bool show_lod = false;
 uniform bool show_material = false;
 uniform bool show_visibility = false;
@@ -70,7 +71,7 @@ void fragment(){
    if(regional_temperate)biome=vec4(1.0,0.0,0.0,0.0);
    vec3 natural=vec3(0.0);
    // One texture in biome interiors; extra samples only inside transition bands.
-   if(biome.x>0.001)natural+=triplanar(grass,p,w,dx,dy)*biome.x;
+   if(biome.x>0.001)natural+=triplanar(grass,p*grass_surface_scale,w,dx*grass_surface_scale,dy*grass_surface_scale)*biome.x;
    if(biome.y>0.001)natural+=triplanar(gravel,p,w,dx,dy)*biome.y;
    if(biome.z>0.001)natural+=triplanar(sand,p,w,dx,dy)*biome.z;
    if(biome.w>0.001)natural+=triplanar(snow,p,w,dx,dy)*snow_reflectance*biome.w;
