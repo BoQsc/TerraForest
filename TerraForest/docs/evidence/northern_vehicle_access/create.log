@@ -1,0 +1,464 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] New world
+[TerrainRewrite] New world
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS normal generated world starts
+PASS preparation starts in an empty staging world
+PASS shared native regional layout available
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS regional centre loads for settlement generation
+PASS registered furnished building sources are available
+PASS mixed central recipe contains both building types
+CENTRAL_LAYOUT world_seed=42 layout_seed=42
+PASS existing native editor composes connected furnished streets
+REGIONAL_SITE_SURVEY { "ok": true, "min_height": 56.0, "max_height": 56.0, "samples": 1532, "epoch": 0, "revision": 0, "minimum_grade": 45, "maximum_grade": 63, "grade": 56 } footprint=[P: (972.0, 56.0, 892.0), S: (37.0, 13.0, 95.0)]
+PASS regional district beside arterial has supported foundation
+PASS regional district foundation plan valid
+PASS regional road foundations fit protected authoring bounds
+PASS terrain survey finds supported settlement grade
+[terrain-hitch] world authoring 72.68 ms at 69303
+[terrain-hitch] controller process 74.33 ms at 69305
+[terrain-hitch] world process 75.41 ms at 69306
+[terrain-hitch] world authoring 63.79 ms at 69578
+[terrain-hitch] controller process 65.85 ms at 69580
+[terrain-hitch] world process 66.85 ms at 69581
+[terrain-hitch] world authoring 69.03 ms at 69824
+[terrain-hitch] controller process 70.5 ms at 69825
+[terrain-hitch] world process 71.54 ms at 69826
+[terrain-hitch] world authoring 88.23 ms at 70204
+[terrain-hitch] controller process 89.69 ms at 70205
+[terrain-hitch] world process 90.74 ms at 70206
+[terrain-hitch] world authoring 65.97 ms at 70562
+[terrain-hitch] controller process 67.6 ms at 70564
+[terrain-hitch] world process 68.8 ms at 70565
+[terrain-hitch] world authoring 79.34 ms at 70919
+[terrain-hitch] controller process 81.93 ms at 70921
+[terrain-hitch] world process 82.89 ms at 70922
+[terrain-hitch] world authoring 60.37 ms at 71273
+[terrain-hitch] controller process 62.03 ms at 71275
+[terrain-hitch] world process 63.09 ms at 71276
+[terrain-hitch] world authoring 62.87 ms at 71595
+[terrain-hitch] controller process 64.71 ms at 71597
+[terrain-hitch] world process 65.72 ms at 71598
+[terrain-hitch] world authoring 75.66 ms at 71964
+[terrain-hitch] controller process 77.11 ms at 71965
+[terrain-hitch] world process 78.34 ms at 71966
+[terrain-hitch] world authoring 65.41 ms at 72372
+[terrain-hitch] controller process 67.31 ms at 72373
+[terrain-hitch] world process 68.41 ms at 72375
+[terrain-hitch] world authoring 62.92 ms at 72694
+[terrain-hitch] controller process 64.95 ms at 72696
+[terrain-hitch] world process 66.17 ms at 72697
+[terrain-hitch] world authoring 63.06 ms at 72884
+[terrain-hitch] controller process 65.0 ms at 72886
+[terrain-hitch] world process 66.02 ms at 72887
+[terrain-hitch] world authoring 66.38 ms at 73211
+[terrain-hitch] controller process 68.12 ms at 73213
+[terrain-hitch] world process 69.2 ms at 73214
+[terrain-hitch] world authoring 68.7 ms at 73506
+[terrain-hitch] controller process 70.51 ms at 73507
+[terrain-hitch] world process 71.5 ms at 73508
+PASS native grading and asphalt preparation complete
+PASS staged furnished settlement publishes
+PASS mixed generation contains eight furnished buildings including cottages and towers
+PASS resident street collision ready
+PASS two native patrol residents prepared: Two street patrol actors placed. F5 saves the population.
+PASS outer town furnished source available
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS outer site 1 loads
+PASS district sources available: Western residential lane
+PASS outer furnished street composed
+PASS outer site supported: { "ok": true, "min_height": 44.0, "max_height": 44.0, "samples": 420, "epoch": 0, "revision": 14, "minimum_grade": 33, "maximum_grade": 51, "grade": 44 }
+PASS outer site plan valid
+PASS regional road foundations fit protected authoring bounds
+[terrain-hitch] world authoring 59.27 ms at 75742
+[terrain-hitch] controller process 60.45 ms at 75743
+[terrain-hitch] world process 61.51 ms at 75744
+[terrain-hitch] world authoring 62.6 ms at 75963
+[terrain-hitch] controller process 64.38 ms at 75965
+[terrain-hitch] world process 65.32 ms at 75966
+[terrain-hitch] world authoring 79.48 ms at 76186
+[terrain-hitch] controller process 81.6 ms at 76188
+[terrain-hitch] world process 82.78 ms at 76190
+[terrain-hitch] world authoring 61.25 ms at 76375
+[terrain-hitch] controller process 62.8 ms at 76377
+[terrain-hitch] world process 63.7 ms at 76378
+[terrain-hitch] world authoring 66.37 ms at 76585
+[terrain-hitch] controller process 68.55 ms at 76587
+[terrain-hitch] world process 69.74 ms at 76589
+[terrain-hitch] world authoring 60.68 ms at 76774
+[terrain-hitch] controller process 62.28 ms at 76775
+[terrain-hitch] world process 63.35 ms at 76776
+[terrain-hitch] world authoring 60.33 ms at 76961
+[terrain-hitch] controller process 61.79 ms at 76963
+[terrain-hitch] world process 62.92 ms at 76964
+[terrain-hitch] world authoring 65.22 ms at 77121
+[terrain-hitch] controller process 66.66 ms at 77123
+[terrain-hitch] world process 67.63 ms at 77124
+[terrain-hitch] world authoring 71.46 ms at 77320
+[terrain-hitch] controller process 73.0 ms at 77321
+[terrain-hitch] world process 73.97 ms at 77322
+[terrain-hitch] world authoring 75.81 ms at 77489
+[terrain-hitch] controller process 77.99 ms at 77491
+[terrain-hitch] world process 79.01 ms at 77492
+[terrain-hitch] world authoring 72.87 ms at 77690
+[terrain-hitch] controller process 74.63 ms at 77692
+[terrain-hitch] world process 75.59 ms at 77693
+PASS outer foundation and arterial connection prepared
+PASS district furnished buildings published: Western residential lane
+REGIONAL_TOWN site=1 doors=12 cells=9660
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS outer site 2 loads
+PASS district sources available: Eastern mine service street
+PASS outer furnished street composed
+PASS outer site supported: { "ok": true, "min_height": 54.0, "max_height": 54.0, "samples": 448, "epoch": 0, "revision": 25, "minimum_grade": 43, "maximum_grade": 61, "grade": 54 }
+PASS outer site plan valid
+PASS regional road foundations fit protected authoring bounds
+[terrain-hitch] world authoring 63.59 ms at 79899
+[terrain-hitch] controller process 65.06 ms at 79900
+[terrain-hitch] world process 66.06 ms at 79901
+[terrain-hitch] world authoring 61.53 ms at 80103
+[terrain-hitch] controller process 63.08 ms at 80104
+[terrain-hitch] world process 64.19 ms at 80105
+[terrain-hitch] world authoring 63.31 ms at 80310
+[terrain-hitch] controller process 65.05 ms at 80311
+[terrain-hitch] world process 66.33 ms at 80313
+[terrain-hitch] world authoring 88.98 ms at 80527
+[terrain-hitch] controller process 90.15 ms at 80528
+[terrain-hitch] world process 91.29 ms at 80529
+[terrain-hitch] world authoring 68.74 ms at 80792
+[terrain-hitch] controller process 70.89 ms at 80794
+[terrain-hitch] world process 72.06 ms at 80795
+[terrain-hitch] world authoring 91.51 ms at 81147
+[terrain-hitch] controller process 93.5 ms at 81149
+[terrain-hitch] world process 94.64 ms at 81150
+[terrain-hitch] world authoring 82.61 ms at 81359
+[terrain-hitch] controller process 84.63 ms at 81361
+[terrain-hitch] world process 85.77 ms at 81362
+[terrain-hitch] world authoring 75.19 ms at 81562
+[terrain-hitch] controller process 76.58 ms at 81564
+[terrain-hitch] world process 77.65 ms at 81565
+[terrain-hitch] world authoring 73.5 ms at 81780
+[terrain-hitch] controller process 75.35 ms at 81781
+[terrain-hitch] world process 76.44 ms at 81782
+PASS outer foundation and arterial connection prepared
+PASS district furnished buildings published: Eastern mine service street
+REGIONAL_TOWN site=2 doors=14 cells=11138
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS outer site 3 loads
+PASS lot surveyed before any grading: Northern lot 1
+PASS lot surveyed before any grading: Northern lot 2
+PASS lot surveyed before any grading: Northern lot 3
+PASS lot surveyed before any grading: Northern lot 4
+PASS lot surveyed before any grading: Northern lot 5
+PASS lot surveyed before any grading: Northern lot 6
+PASS lot surveyed before any grading: Northern lot 7
+PASS lot surveyed before any grading: Northern lot 8
+PASS lot surveyed before any grading: Northern lot 9
+PASS lot surveyed before any grading: Northern lot 10
+PASS lot surveyed before any grading: Northern lot 11
+PASS lot surveyed before any grading: Northern lot 12
+PASS independent northern lot plan: accepted
+PASS northern road survey geometry
+PASS street earthworks fit: { "site": "Northern street corridors", "status": "pass", "issues": [], &"max_fill": 0.0, &"max_cut": 0.0, &"relief": 0.0, &"grade": 55.0 } survey={ "ok": true, "min_height": 55.0, "max_height": 55.0, "samples": 3622, "epoch": 0, "revision": 34, "minimum_grade": 44, "maximum_grade": 62, "grade": 55.0 }
+NORTHERN_LOT_QUALITY [{"grade":55.0,"issues":[],"max_cut":0.0,"max_fill":0.314273834228516,"relief":0.314273834228516,"site":"Northern lot 1","status":"pass"},{"grade":55.0,"issues":[],"max_cut":0.0,"max_fill":0.72320556640625,"relief":0.72320556640625,"site":"Northern lot 2","status":"pass"},{"grade":55.0,"issues":[],"max_cut":0.0,"max_fill":0.0,"relief":0.0,"site":"Northern lot 3","status":"pass"},{"grade":55.0,"issues":[],"max_cut":0.0,"max_fill":0.0,"relief":0.0,"site":"Northern lot 4","status":"pass"},{"grade":55.0,"issues":[],"max_cut":0.0,"max_fill":0.0,"relief":0.0,"site":"Northern lot 5","status":"pass"},{"grade":55.0,"issues":[],"max_cut":0.0,"max_fill":0.0,"relief":0.0,"site":"Northern lot 6","status":"pass"},{"grade":55.0,"issues":[],"max_cut":0.0,"max_fill":0.0,"relief":0.0,"site":"Northern lot 7","status":"pass"},{"grade":55.0,"issues":[],"max_cut":0.0,"max_fill":0.0,"relief":0.0,"site":"Northern lot 8","status":"pass"},{"grade":55.0,"issues":[],"max_cut":0.0,"max_fill":0.0,"relief":0.0,"site":"Northern lot 9","status":"pass"},{"grade":55.0,"issues":[],"max_cut":0.0,"max_fill":0.0,"relief":0.0,"site":"Northern lot 10","status":"pass"},{"grade":56.0,"issues":[],"max_cut":0.261028289794922,"max_fill":1.0,"relief":1.26102828979492,"site":"Northern lot 11","status":"pass"},{"grade":55.0,"issues":[],"max_cut":0.225631713867188,"max_fill":0.0,"relief":0.225631713867188,"site":"Northern lot 12","status":"pass"}]
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS move outside northern preparation bounds
+[terrain-hitch] world authoring 74.75 ms at 89652
+[terrain-hitch] controller process 77.01 ms at 89654
+[terrain-hitch] world process 78.77 ms at 89656
+[terrain-hitch] world authoring 65.11 ms at 89847
+[terrain-hitch] controller process 66.36 ms at 89848
+[terrain-hitch] world process 67.48 ms at 89849
+[terrain-hitch] world authoring 64.44 ms at 90056
+[terrain-hitch] controller process 65.92 ms at 90057
+[terrain-hitch] world process 66.95 ms at 90058
+[terrain-hitch] world authoring 64.99 ms at 90347
+[terrain-hitch] controller process 66.62 ms at 90349
+[terrain-hitch] world process 67.57 ms at 90350
+[terrain-hitch] world authoring 69.69 ms at 90543
+[terrain-hitch] controller process 71.81 ms at 90545
+[terrain-hitch] world process 72.88 ms at 90546
+[terrain-hitch] world authoring 64.55 ms at 90735
+[terrain-hitch] controller process 66.08 ms at 90736
+[terrain-hitch] world process 67.21 ms at 90738
+[terrain-hitch] world authoring 88.7 ms at 90950
+[terrain-hitch] controller process 90.46 ms at 90952
+[terrain-hitch] world process 91.51 ms at 90953
+[terrain-hitch] world authoring 62.45 ms at 91139
+[terrain-hitch] controller process 64.79 ms at 91142
+[terrain-hitch] world process 65.92 ms at 91143
+[terrain-hitch] world authoring 62.7 ms at 91330
+[terrain-hitch] controller process 64.17 ms at 91331
+[terrain-hitch] world process 65.16 ms at 91332
+[terrain-hitch] world authoring 61.92 ms at 91518
+[terrain-hitch] controller process 63.62 ms at 91520
+[terrain-hitch] world process 64.77 ms at 91521
+[terrain-hitch] world authoring 79.28 ms at 91724
+[terrain-hitch] controller process 80.17 ms at 91725
+[terrain-hitch] world process 81.19 ms at 91726
+[terrain-hitch] world authoring 78.71 ms at 91930
+[terrain-hitch] controller process 80.62 ms at 91932
+[terrain-hitch] world process 81.87 ms at 91933
+[terrain-hitch] world authoring 60.5 ms at 92118
+[terrain-hitch] controller process 62.8 ms at 92120
+[terrain-hitch] world process 63.95 ms at 92121
+[terrain-hitch] world authoring 62.95 ms at 92359
+[terrain-hitch] controller process 65.15 ms at 92361
+[terrain-hitch] world process 66.22 ms at 92362
+[terrain-hitch] world authoring 64.65 ms at 92567
+[terrain-hitch] controller process 66.06 ms at 92569
+[terrain-hitch] world process 67.47 ms at 92570
+[terrain-hitch] world authoring 63.14 ms at 92791
+[terrain-hitch] controller process 64.7 ms at 92792
+[terrain-hitch] world process 66.46 ms at 92794
+[terrain-hitch] world authoring 76.73 ms at 93062
+[terrain-hitch] controller process 77.85 ms at 93063
+[terrain-hitch] world process 78.74 ms at 93064
+[terrain-hitch] world authoring 68.33 ms at 93324
+[terrain-hitch] controller process 69.65 ms at 93325
+[terrain-hitch] world process 70.71 ms at 93326
+[terrain-hitch] world authoring 61.64 ms at 93512
+[terrain-hitch] controller process 63.2 ms at 93513
+[terrain-hitch] world process 64.19 ms at 93514
+[terrain-hitch] world authoring 66.91 ms at 93706
+[terrain-hitch] controller process 68.31 ms at 93707
+[terrain-hitch] world process 69.54 ms at 93709
+[terrain-hitch] world authoring 63.11 ms at 93912
+[terrain-hitch] controller process 64.91 ms at 93914
+[terrain-hitch] world process 65.94 ms at 93915
+[terrain-hitch] world authoring 64.26 ms at 94137
+[terrain-hitch] controller process 65.48 ms at 94138
+[terrain-hitch] world process 66.38 ms at 94139
+[terrain-hitch] world authoring 61.44 ms at 94324
+[terrain-hitch] controller process 62.66 ms at 94325
+[terrain-hitch] world process 63.52 ms at 94326
+[terrain-hitch] world authoring 63.64 ms at 94514
+[terrain-hitch] controller process 65.0 ms at 94515
+[terrain-hitch] world process 66.13 ms at 94516
+[terrain-hitch] world authoring 70.35 ms at 94710
+[terrain-hitch] controller process 71.55 ms at 94711
+[terrain-hitch] world process 72.38 ms at 94712
+[terrain-hitch] world authoring 67.99 ms at 94888
+[terrain-hitch] controller process 69.36 ms at 94889
+[terrain-hitch] world process 70.35 ms at 94890
+[terrain-hitch] world authoring 74.66 ms at 95072
+[terrain-hitch] controller process 76.08 ms at 95073
+[terrain-hitch] world process 77.06 ms at 95074
+[terrain-hitch] world authoring 62.58 ms at 95265
+[terrain-hitch] controller process 64.26 ms at 95267
+[terrain-hitch] world process 65.39 ms at 95268
+[terrain-hitch] world authoring 73.65 ms at 95448
+[terrain-hitch] controller process 74.74 ms at 95449
+[terrain-hitch] world process 75.76 ms at 95450
+[terrain-hitch] world authoring 67.64 ms at 95626
+[terrain-hitch] controller process 68.87 ms at 95627
+[terrain-hitch] world process 69.81 ms at 95628
+[terrain-hitch] world authoring 61.91 ms at 95797
+[terrain-hitch] controller process 63.27 ms at 95798
+[terrain-hitch] world process 64.28 ms at 95799
+[terrain-hitch] world authoring 70.61 ms at 95978
+[terrain-hitch] controller process 72.34 ms at 95979
+[terrain-hitch] world process 73.59 ms at 95981
+[terrain-hitch] world authoring 63.31 ms at 96152
+[terrain-hitch] controller process 64.74 ms at 96153
+[terrain-hitch] world process 65.8 ms at 96154
+[terrain-hitch] world authoring 63.99 ms at 96342
+[terrain-hitch] controller process 65.45 ms at 96343
+[terrain-hitch] world process 66.6 ms at 96344
+[terrain-hitch] world authoring 67.3 ms at 96519
+[terrain-hitch] controller process 68.57 ms at 96520
+[terrain-hitch] world process 69.71 ms at 96521
+[terrain-hitch] world authoring 70.03 ms at 96715
+[terrain-hitch] controller process 71.41 ms at 96716
+[terrain-hitch] world process 72.38 ms at 96717
+[terrain-hitch] world authoring 62.8 ms at 96904
+[terrain-hitch] controller process 64.21 ms at 96905
+[terrain-hitch] world process 65.16 ms at 96906
+[terrain-hitch] world authoring 67.16 ms at 97080
+[terrain-hitch] controller process 68.45 ms at 97082
+[terrain-hitch] world process 69.44 ms at 97083
+[terrain-hitch] world authoring 68.94 ms at 97242
+[terrain-hitch] controller process 70.59 ms at 97244
+[terrain-hitch] world process 71.57 ms at 97245
+[terrain-hitch] world authoring 62.19 ms at 97414
+[terrain-hitch] controller process 63.47 ms at 97415
+[terrain-hitch] world process 64.38 ms at 97416
+[terrain-hitch] world authoring 63.92 ms at 97588
+[terrain-hitch] controller process 65.31 ms at 97589
+[terrain-hitch] world process 66.35 ms at 97590
+[terrain-hitch] world authoring 64.91 ms at 97746
+[terrain-hitch] controller process 66.33 ms at 97747
+[terrain-hitch] world process 67.25 ms at 97748
+[terrain-hitch] world authoring 59.56 ms at 97915
+[terrain-hitch] controller process 60.95 ms at 97916
+[terrain-hitch] world process 61.55 ms at 97916
+[terrain-hitch] world authoring 61.95 ms at 98086
+[terrain-hitch] controller process 63.24 ms at 98087
+[terrain-hitch] world process 64.38 ms at 98088
+[terrain-hitch] world authoring 65.74 ms at 98262
+[terrain-hitch] controller process 67.86 ms at 98263
+[terrain-hitch] world process 68.97 ms at 98265
+[terrain-hitch] world authoring 58.95 ms at 98414
+[terrain-hitch] controller process 60.25 ms at 98416
+[terrain-hitch] world process 61.21 ms at 98416
+[terrain-hitch] world authoring 63.02 ms at 98570
+[terrain-hitch] controller process 64.94 ms at 98572
+[terrain-hitch] world process 65.92 ms at 98573
+[terrain-hitch] world authoring 61.77 ms at 98742
+[terrain-hitch] controller process 63.19 ms at 98744
+[terrain-hitch] world process 64.17 ms at 98745
+[terrain-hitch] world authoring 63.3 ms at 98915
+[terrain-hitch] controller process 64.69 ms at 98916
+[terrain-hitch] world process 65.7 ms at 98917
+[terrain-hitch] world authoring 67.32 ms at 99093
+[terrain-hitch] controller process 68.78 ms at 99095
+[terrain-hitch] world process 69.78 ms at 99096
+PASS independent lots and streets prepared
+PASS terrain-fitted building published: Northern lot 1 support=supported
+PASS terrain-fitted building published: Northern lot 2 support=supported
+PASS terrain-fitted building published: Northern lot 3 support=supported
+PASS terrain-fitted building published: Northern lot 4 support=supported
+PASS terrain-fitted building published: Northern lot 5 support=supported
+PASS terrain-fitted building published: Northern lot 6 support=supported
+PASS terrain-fitted building published: Northern lot 7 support=supported
+PASS terrain-fitted building published: Northern lot 8 support=supported
+PASS terrain-fitted building published: Northern lot 9 support=supported
+PASS terrain-fitted building published: Northern lot 10 support=supported
+PASS terrain-fitted building published: Northern lot 11 support=supported
+PASS terrain-fitted building published: Northern lot 12 support=supported
+PASS native concrete walkways published
+PASS persistent native neighborhood groves configured
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS outer site 4 loads
+PASS district sources available: Southern broad residential lane
+PASS outer furnished street composed
+PASS outer site supported: { "ok": true, "min_height": 61.9756774902344, "max_height": 62.0, "samples": 420, "epoch": 0, "revision": 84, "minimum_grade": 51, "maximum_grade": 68, "grade": 62 }
+PASS outer site plan valid
+PASS regional road foundations fit protected authoring bounds
+[terrain-hitch] world authoring 73.55 ms at 102178
+[terrain-hitch] controller process 74.86 ms at 102179
+[terrain-hitch] world process 75.76 ms at 102180
+[terrain-hitch] world authoring 61.77 ms at 102534
+[terrain-hitch] controller process 63.39 ms at 102536
+[terrain-hitch] world process 64.39 ms at 102537
+[terrain-hitch] world authoring 65.73 ms at 102895
+[terrain-hitch] controller process 67.14 ms at 102896
+[terrain-hitch] world process 68.13 ms at 102897
+[terrain-hitch] world authoring 79.73 ms at 103320
+[terrain-hitch] controller process 81.49 ms at 103321
+[terrain-hitch] world process 82.68 ms at 103322
+[terrain-hitch] world authoring 84.35 ms at 103783
+[terrain-hitch] controller process 86.25 ms at 103784
+[terrain-hitch] world process 87.6 ms at 103786
+[terrain-hitch] world authoring 80.28 ms at 104410
+[terrain-hitch] controller process 81.82 ms at 104412
+[terrain-hitch] world process 82.73 ms at 104412
+[terrain-hitch] world authoring 88.61 ms at 104812
+[terrain-hitch] controller process 90.21 ms at 104813
+[terrain-hitch] world process 91.37 ms at 104814
+[terrain-hitch] world authoring 61.84 ms at 105185
+[terrain-hitch] controller process 63.44 ms at 105187
+[terrain-hitch] world process 64.37 ms at 105188
+[terrain-hitch] world authoring 63.88 ms at 105544
+[terrain-hitch] controller process 65.78 ms at 105546
+[terrain-hitch] world process 66.72 ms at 105546
+[terrain-hitch] world authoring 61.61 ms at 105867
+[terrain-hitch] controller process 62.49 ms at 105868
+[terrain-hitch] world process 63.5 ms at 105869
+[terrain-hitch] world authoring 60.5 ms at 106238
+[terrain-hitch] controller process 61.85 ms at 106240
+[terrain-hitch] world process 62.76 ms at 106240
+[terrain-hitch] world authoring 65.78 ms at 106599
+[terrain-hitch] controller process 67.15 ms at 106600
+[terrain-hitch] world process 68.04 ms at 106601
+PASS outer foundation and arterial connection prepared
+PASS district furnished buildings published: Southern broad residential lane
+REGIONAL_TOWN site=4 doors=30 cells=26178
+PASS five regional sites contain expected furnished buildings
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS cellar location loads
+PASS cellar building site plan valid
+[terrain-hitch] world authoring 77.73 ms at 107878
+[terrain-hitch] controller process 79.52 ms at 107880
+[terrain-hitch] world process 80.55 ms at 107881
+[terrain-hitch] world authoring 76.82 ms at 108069
+[terrain-hitch] controller process 78.89 ms at 108071
+[terrain-hitch] world process 80.0 ms at 108073
+[terrain-hitch] world authoring 66.2 ms at 108231
+[terrain-hitch] controller process 67.51 ms at 108232
+[terrain-hitch] world process 68.5 ms at 108233
+[terrain-hitch] world authoring 70.04 ms at 108395
+[terrain-hitch] controller process 71.02 ms at 108396
+[terrain-hitch] world process 71.87 ms at 108397
+PASS cellar surface and underground preparation publishes
+PASS cellar cottage and attachments publish
+REGIONAL_CELLAR origin=(250, 39, 1019) cells=26819
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS mine location streams before placement
+PASS mine access plan fits world bounds
+PASS mine access does not overwrite protected placement
+PASS mine access terrain edit accepted
+PASS mine access asphalt publishes
+PASS mine access does not overwrite protected placement
+PASS mine access terrain edit accepted
+PASS mine access asphalt publishes
+PASS mine access does not overwrite protected placement
+PASS mine access terrain edit accepted
+PASS mine access asphalt publishes
+PASS mine entrance prefab builds
+PASS mine entrance and storage publish through native combined transaction
+PASS mine timber frames exist in world
+REGIONAL_MINE owner=2 entrance=(1770.0, 54.0, 1049.0) cells=26893
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS woodland location loads
+PASS woodland authored planting completes: { "ok": true, "counts": [15, 70, 797, 5, 4, 2, 22, 34], "owners": 4 }
+REGIONAL_WOODLAND center=(1088.0, 56.0, 1056.0) result={ "ok": true, "counts": [15, 70, 797, 5, 4, 2, 22, 34], "owners": 4 }
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS woodland location loads
+PASS woodland authored planting completes: { "ok": true, "counts": [21, 78, 790, 4, 6, 1, 25, 21], "owners": 4 }
+REGIONAL_WOODLAND center=(1088.0, 62.0, 1824.0) result={ "ok": true, "counts": [21, 78, 790, 4, 6, 1, 25, 21], "owners": 4 }
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS woodland location loads
+PASS woodland authored planting completes: { "ok": true, "counts": [9, 11, 162, 0, 2, 1, 4, 7], "owners": 2 }
+REGIONAL_WOODLAND center=(1014.0, 55.0, 256.0) result={ "ok": true, "counts": [9, 11, 162, 0, 2, 1, 4, 7], "owners": 2 }
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS woodland location loads
+PASS woodland authored planting completes: { "ok": true, "counts": [4, 11, 183, 0, 0, 1, 4, 8], "owners": 2 }
+REGIONAL_WOODLAND center=(1038.0, 55.0, 256.0) result={ "ok": true, "counts": [4, 11, 183, 0, 0, 1, 4, 8], "owners": 2 }
+PASS transport starts with an empty prepared fleet
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS parking location loads
+PASS parking apron is clear of protected structures
+PASS parking apron edit accepted
+PASS parking apron published
+PASS parking collision ready
+PASS parked chassis space is unobstructed
+PASS parked vehicle stored at site 0
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS parking location loads
+PASS parking apron is clear of protected structures
+PASS parking apron edit accepted
+PASS parking apron published
+PASS parking collision ready
+PASS parked chassis space is unobstructed
+PASS parked vehicle stored at site 2
+PASS northern bay recipe fits world
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS northern bay loads
+PASS northern bay earthworks fit: { "site": "Northern parking bay", "status": "pass", "issues": [], &"max_fill": 0.0, &"max_cut": 0.25035095214844, &"relief": 0.25035095214844, &"grade": 55.0 } survey={ "ok": true, "min_height": 55.0, "max_height": 55.2503509521484, "samples": 99, "epoch": 0, "revision": 105, "minimum_grade": 45, "maximum_grade": 62, "grade": 55.0 }
+PASS northern bay clears homes, paths and protected objects
+PASS northern bay asphalt admitted
+PASS northern bay asphalt publishes
+PASS northern bay collision ready
+PASS northern parked chassis is unobstructed
+PASS northern off-road vehicle stored
+PASS generated chest supplies: { "ok": true, "chests": 57, "reason": "saved location supplies prepared" }
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS central spawn reloads after outer town generation
+WORLD_QUALITY_REVIEW {"pending":["landscape and shoreline review","building variety and exploration review","road and pedestrian connectivity","ecology continuity","streaming and representative performance"],"sites":[{"grade":56.0,"issues":[],"max_cut":0.0,"max_fill":0.0,"relief":0.0,"site":"Central settlement","status":"pass"},{"grade":44.0,"issues":[],"max_cut":0.0,"max_fill":0.0,"relief":0.0,"site":"Western residential lane","status":"pass"},{"grade":54.0,"issues":[],"max_cut":0.0,"max_fill":0.0,"relief":0.0,"site":"Eastern mine service street","status":"pass"},{"grade":55.0,"issues":[],"max_cut":0.0,"max_fill":0.314273834228516,"relief":0.314273834228516,"site":"Northern lot 1","status":"pass"},{"grade":55.0,"issues":[],"max_cut":0.0,"max_fill":0.72320556640625,"relief":0.72320556640625,"site":"Northern lot 2","status":"pass"},{"grade":55.0,"issues":[],"max_cut":0.0,"max_fill":0.0,"relief":0.0,"site":"Northern lot 3","status":"pass"},{"grade":55.0,"issues":[],"max_cut":0.0,"max_fill":0.0,"relief":0.0,"site":"Northern lot 4","status":"pass"},{"grade":55.0,"issues":[],"max_cut":0.0,"max_fill":0.0,"relief":0.0,"site":"Northern lot 5","status":"pass"},{"grade":55.0,"issues":[],"max_cut":0.0,"max_fill":0.0,"relief":0.0,"site":"Northern lot 6","status":"pass"},{"grade":55.0,"issues":[],"max_cut":0.0,"max_fill":0.0,"relief":0.0,"site":"Northern lot 7","status":"pass"},{"grade":55.0,"issues":[],"max_cut":0.0,"max_fill":0.0,"relief":0.0,"site":"Northern lot 8","status":"pass"},{"grade":55.0,"issues":[],"max_cut":0.0,"max_fill":0.0,"relief":0.0,"site":"Northern lot 9","status":"pass"},{"grade":55.0,"issues":[],"max_cut":0.0,"max_fill":0.0,"relief":0.0,"site":"Northern lot 10","status":"pass"},{"grade":56.0,"issues":[],"max_cut":0.261028289794922,"max_fill":1.0,"relief":1.26102828979492,"site":"Northern lot 11","status":"pass"},{"grade":55.0,"issues":[],"max_cut":0.225631713867188,"max_fill":0.0,"relief":0.225631713867188,"site":"Northern lot 12","status":"pass"},{"grade":55.0,"issues":[],"max_cut":0.0,"max_fill":0.0,"relief":0.0,"site":"Northern street corridors","status":"pass"},{"grade":62.0,"issues":[],"max_cut":0.0,"max_fill":0.024322509765625,"relief":0.024322509765625,"site":"Southern broad residential lane","status":"pass"},{"grade":55.0,"issues":[],"max_cut":0.250350952148438,"max_fill":0.0,"relief":0.250350952148438,"site":"Northern parking bay","status":"pass"}],"standard_version":1,"status":"unreviewed"}
+PASS generated components ready for compound save
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+COMBINED_PREPARATION failures=0

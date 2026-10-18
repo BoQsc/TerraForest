@@ -1,0 +1,15 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[terrain-hitch] restore volumetric_water 180.71 ms at 3379
+[TerrainRewrite] World loaded
+[TerrainRewrite] World loaded
+[terrain-hitch] receive startup 196.32 ms at 3388
+[terrain-hitch] receive 197.95 ms at 3389
+[TerrainRewrite] Ready: map coverage and local collision are active
+[TerrainRewrite] Ready: map coverage and local collision are active
+Visual vehicle dents repaired.
+NEIGHBORHOOD_VEHICLE_LOOP failures=0 reached=28 
+REGIONAL_VEHICLE_TRAVEL failures=0 
+[TerrainRewrite] Temporary test world: save skipped
+REGIONAL_ROAD_TRAVEL failures=0 

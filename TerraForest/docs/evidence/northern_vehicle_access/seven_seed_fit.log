@@ -1,0 +1,10 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+BAY_FIT seed=0 quality={ "site": "Northern parking bay", "status": "pass", "issues": [], &"max_fill": 0.0, &"max_cut": 0.07699584960938, &"relief": 0.07699584960938, &"grade": 33.0 }
+BAY_FIT seed=1 quality={ "site": "Northern parking bay", "status": "pass", "issues": [], &"max_fill": 0.00430679321289, &"max_cut": 0.13706970214844, &"relief": 0.14137649536133, &"grade": 45.0 }
+BAY_FIT seed=42 quality={ "site": "Northern parking bay", "status": "pass", "issues": [], &"max_fill": 0.0, &"max_cut": 0.25035095214844, &"relief": 0.25035095214844, &"grade": 55.0 }
+BAY_FIT seed=50 quality={ "site": "Northern parking bay", "status": "pass", "issues": [], &"max_fill": 0.10048675537109, &"max_cut": 0.0, &"relief": 0.10048675537109, &"grade": 50.0 }
+BAY_FIT seed=141 quality={ "site": "Northern parking bay", "status": "pass", "issues": [], &"max_fill": 0.088623046875, &"max_cut": 0.00382232666016, &"relief": 0.09244537353516, &"grade": 45.0 }
+BAY_FIT seed=1703 quality={ "site": "Northern parking bay", "status": "pass", "issues": [], &"max_fill": 0.00321197509766, &"max_cut": 0.14547729492188, &"relief": 0.14868927001953, &"grade": 53.0 }
+BAY_FIT seed=9999 quality={ "site": "Northern parking bay", "status": "pass", "issues": [], &"max_fill": 0.00452423095703, &"max_cut": 0.02361297607422, &"relief": 0.02813720703125, &"grade": 63.0 }
+NEIGHBORHOOD_PARKING_FIT failures=0

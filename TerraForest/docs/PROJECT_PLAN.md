@@ -1,10 +1,22 @@
 ## Current integrated entry point - 2026-10-18
 
+Northern vehicle access is integrated in a new saved world: a surveyed off-road bay
+and third parked vehicle, preserving the existing fleet/activation/storage paths.
+Seven-seed fit and home clearance, full generation/fresh-process restoration,
+inspected bay views and a 28-waypoint keyboard-driven departure/perimeter loop pass.
+Four loaded wheels throughout; zero collision holds; max centre-line deviation
+2.792 m at up to 18.47 km/h. Stopping, seated M-map throttle blocking, E exit and
+capture of the moved fleet pose pass. Review launcher now uses a separate v8 copy
+of northern_transport_42_20261018. Evidence: evidence/northern_vehicle_access.
+Route p95 17.063 ms / worst 18.481 ms remains above the steady 60 FPS target;
+this is bounded local turning, not traffic, high-speed corners or thermal acceptance.
+Next: intentional public spaces and broader landscape continuity.
+
 M-key regional map is integrated and verified in the saved world. Public locations,
 roads, lakes, player heading, pan/zoom and tracking now share the normal gameplay
 UI. Native survey generation and validated disk caching avoid world meshes or
 terrain-worker contention. See evidence/player_world_map for scope and timings.
-Next world-building work: intentional public spaces, vehicle turning and broader
+Next world-building work: intentional public spaces and broader
 landscape continuity; keep overall world quality and sustained performance open.
 
 Northern neighborhood planting is integrated: four persisted native groves restore

@@ -197,7 +197,27 @@ func prepare_transport()->bool:
   var query:=PhysicsShapeQueryParameters3D.new();query.shape=box;query.transform=Transform3D(pose.basis,pose.origin+Vector3.UP*0.3);query.collision_mask=15
   if not require(game.get_world_3d().direct_space_state.intersect_shape(query,1).is_empty(),"parked chassis space is unobstructed"):return false
   if not require(game.world_vehicle.fleet.spawn(pose)>0,"parked vehicle stored at site %d"%site):return false
- return game.world_vehicle.fleet.statistics().records==2
+ var north:Vector3=layout.sites[3].position
+ var bay:Dictionary=preload("res://addons/structures/northern_lots.gd").parking(north)
+ if not require(bay.ok,"northern bay recipe fits world"):return false
+ game.teleport(north+Vector3(4,0,60))
+ if not require(await wait_until(func():return not game.loading_active,60),"northern bay loads"):return false
+ game.set_physics_process(false);game._clear_motion()
+ var survey:Dictionary=await game.site_survey.assess(game.terrain,bay.probe,Vector3i(north),0)
+ survey.grade=north.y
+ var quality:Dictionary=WorldQuality.site(survey,"Northern parking bay")
+ if not require(quality.status=="pass","northern bay earthworks fit: "+str(quality)+" survey="+str(survey)):return false
+ world_quality_sites.append(quality)
+ if not require(game._road_protection_error(bay.bounds).is_empty(),"northern bay clears homes, paths and protected objects"):return false
+ if not require(game.terrain.construct_graded_bed(bay.start,bay.finish,4,1,4,4,0),"northern bay asphalt admitted"):return false
+ if not require(await wait_until(func():return not game.terrain.pending_edit,30) and game.terrain.last_edit_outcome.get("status","") in ["published","unchanged"],"northern bay asphalt publishes"):return false
+ game.road_palette.register_prepared_street(bay,game.terrain.epoch)
+ if not require(await wait_until(func():return game.world_vehicle.ready_bounds(game,AABB(bay.pose.origin-Vector3(3.25,1,3.25),Vector3(6.5,3,6.5))),20),"northern bay collision ready"):return false
+ var shape:=BoxShape3D.new();shape.size=Vector3(2.2,1.8,4.4)
+ var query:=PhysicsShapeQueryParameters3D.new();query.shape=shape;query.transform=Transform3D(bay.pose.basis,bay.pose.origin+Vector3.UP*0.3);query.collision_mask=15
+ if not require(game.get_world_3d().direct_space_state.intersect_shape(query,1).is_empty(),"northern parked chassis is unobstructed"):return false
+ if not require(game.world_vehicle.fleet.spawn(bay.pose)>0,"northern off-road vehicle stored"):return false
+ return game.world_vehicle.fleet.statistics().records==3
 
 func prepare_woodland_locations()->bool:
  var author=preload("res://addons/world_ecosystem/woodland_authoring.gd")

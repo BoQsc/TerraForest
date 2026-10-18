@@ -115,3 +115,16 @@ static func _segment(a:Vector3,b:Vector3,width:float,depth:float,clearance:float
  var low:Vector3=a.min(b)-Vector3(extent,depth+rise,extent)
  var high:Vector3=a.max(b)+Vector3(extent,clearance+rise,extent)
  return {"start":a,"finish":b,"half_width":width,"depth":depth,"clearance":clearance,"shoulder":shoulder,"material":material,"bounds":AABB(low,high-low)}
+
+# A small off-road bay, clear of homes, corner turning space and the tree groves.
+static func parking(center:Vector3)->Dictionary:
+ var start:=center+Vector3(0,0,70);var finish:=center+Vector3(-14,0,70)
+ var records:=PackedInt32Array()
+ # New ground and transition shoulder. The omitted |x|<8 strip is the already
+ # paved, level regional arterial, not new earthworks or a natural-root surface.
+ for x in range(-18,-7):
+  for z in range(66,75):records.append_array(PackedInt32Array([x,0,z,1]))
+ var probe:Resource=ClassDB.instantiate("NativeBlockPrefab")
+ if not probe.configure(records):return {"ok":false}
+ var road:Dictionary=_segment(start,finish,4,1,4,0,4)
+ return {"ok":true,"start":start,"finish":finish,"bounds":road.bounds,"probe":probe,"pose":Transform3D(Basis(Vector3.UP,PI/2),center+Vector3(-10,0.85,70)),"paving_segments":1,"street_width":8,"street_ends":PackedVector3Array([start,finish])}

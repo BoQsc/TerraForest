@@ -1,0 +1,3642 @@
+{
+  "collision_hold_frames": 0,
+  "expected": 28,
+  "failure": "",
+  "frame_max_ms": 18.481,
+  "frame_p95_ms": 17.063,
+  "max_deviation_m": 2.7918701171875,
+  "max_speed_kph": 18.4712963104248,
+  "minimum_loaded_wheels": 4,
+  "samples": [
+    {
+      "angle": 0.0,
+      "deviation": 0.0,
+      "loaded_wheels": 4,
+      "position": "(1015.999, 55.62392, 300.0)",
+      "speed_kph": 0.268666604161263,
+      "waiting": false,
+      "waypoint": 0
+    },
+    {
+      "angle": 0.0,
+      "deviation": 0.0,
+      "loaded_wheels": 4,
+      "position": "(1016.209, 55.62575, 300.0)",
+      "speed_kph": 6.91178612709045,
+      "waiting": false,
+      "waypoint": 0
+    },
+    {
+      "angle": 0.0,
+      "deviation": 0.0,
+      "loaded_wheels": 4,
+      "position": "(1016.747, 55.62582, 300.0)",
+      "speed_kph": 12.6985825538635,
+      "waiting": false,
+      "waypoint": 0
+    },
+    {
+      "angle": 0.0,
+      "deviation": 0.0,
+      "loaded_wheels": 4,
+      "position": "(1017.599, 55.6258, 300.0)",
+      "speed_kph": 18.178172492981,
+      "waiting": false,
+      "waypoint": 0
+    },
+    {
+      "angle": 0.0,
+      "deviation": 0.0,
+      "loaded_wheels": 4,
+      "position": "(1018.606, 55.6258, 300.0)",
+      "speed_kph": 18.1974620819092,
+      "waiting": false,
+      "waypoint": 0
+    },
+    {
+      "angle": 0.0,
+      "deviation": 0.0,
+      "loaded_wheels": 4,
+      "position": "(1019.614, 55.6258, 300.0)",
+      "speed_kph": 18.2165679931641,
+      "waiting": false,
+      "waypoint": 0
+    },
+    {
+      "angle": 0.0,
+      "deviation": 0.0,
+      "loaded_wheels": 4,
+      "position": "(1020.623, 55.6258, 300.0)",
+      "speed_kph": 18.2355091094971,
+      "waiting": false,
+      "waypoint": 0
+    },
+    {
+      "angle": 0.401315366237605,
+      "deviation": 0.033416748046875,
+      "loaded_wheels": 4,
+      "position": "(1021.633, 55.6258, 299.9666)",
+      "speed_kph": 18.2542631149292,
+      "waiting": false,
+      "waypoint": 1
+    },
+    {
+      "angle": 0.304608569654588,
+      "deviation": 0.3115234375,
+      "loaded_wheels": 4,
+      "position": "(1022.618, 55.6258, 299.6885)",
+      "speed_kph": 18.2732110977173,
+      "waiting": false,
+      "waypoint": 1
+    },
+    {
+      "angle": 0.121006115792969,
+      "deviation": 0.793975830078125,
+      "loaded_wheels": 4,
+      "position": "(1023.531, 55.6258, 299.206)",
+      "speed_kph": 18.2925882339478,
+      "waiting": false,
+      "waypoint": 1
+    },
+    {
+      "angle": 0.798291451940986,
+      "deviation": 1.37698364257813,
+      "loaded_wheels": 4,
+      "position": "(1024.374, 55.6258, 298.623)",
+      "speed_kph": 18.3115465164185,
+      "waiting": false,
+      "waypoint": 2
+    },
+    {
+      "angle": 0.738105339759197,
+      "deviation": 0.893310546875,
+      "loaded_wheels": 4,
+      "position": "(1025.107, 55.6258, 297.8987)",
+      "speed_kph": 18.3303949356079,
+      "waiting": false,
+      "waypoint": 2
+    },
+    {
+      "angle": 0.660421279550718,
+      "deviation": 0.3116455078125,
+      "loaded_wheels": 4,
+      "position": "(1025.688, 55.6258, 297.0421)",
+      "speed_kph": 18.3493635177612,
+      "waiting": false,
+      "waypoint": 2
+    },
+    {
+      "angle": 0.590445361474479,
+      "deviation": 0.10595703125,
+      "loaded_wheels": 4,
+      "position": "(1026.106, 55.6258, 296.0988)",
+      "speed_kph": 18.368529510498,
+      "waiting": false,
+      "waypoint": 2
+    },
+    {
+      "angle": 0.538481488723007,
+      "deviation": 0.3485107421875,
+      "loaded_wheels": 4,
+      "position": "(1026.349, 55.6258, 295.0946)",
+      "speed_kph": 18.387314414978,
+      "waiting": false,
+      "waypoint": 2
+    },
+    {
+      "angle": 0.303964159609929,
+      "deviation": 0.4078369140625,
+      "loaded_wheels": 4,
+      "position": "(1026.408, 55.6258, 294.0624)",
+      "speed_kph": 18.406732749939,
+      "waiting": false,
+      "waypoint": 3
+    },
+    {
+      "angle": 0.120340522408213,
+      "deviation": 0.2811279296875,
+      "loaded_wheels": 4,
+      "position": "(1026.281, 55.6258, 293.0354)",
+      "speed_kph": 18.4254060745239,
+      "waiting": false,
+      "waypoint": 3
+    },
+    {
+      "angle": -0.0910968654809736,
+      "deviation": 0.041748046875,
+      "loaded_wheels": 4,
+      "position": "(1026.042, 55.6258, 292.0371)",
+      "speed_kph": 18.4440141677856,
+      "waiting": false,
+      "waypoint": 3
+    },
+    {
+      "angle": 0.0417071047447606,
+      "deviation": 0.103759765625,
+      "loaded_wheels": 4,
+      "position": "(1025.896, 55.6258, 291.0388)",
+      "speed_kph": 17.9315534591675,
+      "waiting": false,
+      "waypoint": 4
+    },
+    {
+      "angle": 0.0517812347651142,
+      "deviation": 0.2379150390625,
+      "loaded_wheels": 4,
+      "position": "(1025.762, 55.6258, 290.0399)",
+      "speed_kph": 17.9507040023804,
+      "waiting": false,
+      "waypoint": 4
+    },
+    {
+      "angle": 0.0565288501279516,
+      "deviation": 0.3848876953125,
+      "loaded_wheels": 4,
+      "position": "(1025.615, 55.6258, 289.0416)",
+      "speed_kph": 17.9696914672852,
+      "waiting": false,
+      "waypoint": 4
+    },
+    {
+      "angle": 0.0546289856742035,
+      "deviation": 0.5546875,
+      "loaded_wheels": 4,
+      "position": "(1025.445, 55.6258, 288.0458)",
+      "speed_kph": 17.988507270813,
+      "waiting": false,
+      "waypoint": 4
+    },
+    {
+      "angle": 0.46829813918016,
+      "deviation": 0.7862548828125,
+      "loaded_wheels": 4,
+      "position": "(1025.214, 55.6258, 287.0604)",
+      "speed_kph": 18.0071445465088,
+      "waiting": false,
+      "waypoint": 5
+    },
+    {
+      "angle": 0.350125500154352,
+      "deviation": 1.2760009765625,
+      "loaded_wheels": 4,
+      "position": "(1024.724, 55.6258, 286.1562)",
+      "speed_kph": 18.0264959335327,
+      "waiting": false,
+      "waypoint": 5
+    },
+    {
+      "angle": 0.181377067168862,
+      "deviation": 1.9324951171875,
+      "loaded_wheels": 4,
+      "position": "(1024.068, 55.6258, 285.3583)",
+      "speed_kph": 18.045546913147,
+      "waiting": false,
+      "waypoint": 5
+    },
+    {
+      "angle": -0.0380532789662343,
+      "deviation": 2.67092895507813,
+      "loaded_wheels": 4,
+      "position": "(1023.3, 55.6258, 284.6709)",
+      "speed_kph": 18.0644416809082,
+      "waiting": false,
+      "waypoint": 5
+    },
+    {
+      "angle": 0.406640745737389,
+      "deviation": 2.03326416015625,
+      "loaded_wheels": 4,
+      "position": "(1022.506, 55.6258, 284.0333)",
+      "speed_kph": 18.0831579208374,
+      "waiting": false,
+      "waypoint": 6
+    },
+    {
+      "angle": 0.24655371576183,
+      "deviation": 1.5980224609375,
+      "loaded_wheels": 4,
+      "position": "(1021.568, 55.6258, 283.598)",
+      "speed_kph": 18.101997756958,
+      "waiting": false,
+      "waypoint": 6
+    },
+    {
+      "angle": 0.0484356106032113,
+      "deviation": 1.33807373046875,
+      "loaded_wheels": 4,
+      "position": "(1020.568, 55.6258, 283.3381)",
+      "speed_kph": 18.1213285446167,
+      "waiting": false,
+      "waypoint": 6
+    },
+    {
+      "angle": -0.096334261815131,
+      "deviation": 1.10797119140625,
+      "loaded_wheels": 4,
+      "position": "(1019.579, 55.6258, 283.108)",
+      "speed_kph": 18.1403039932251,
+      "waiting": false,
+      "waypoint": 6
+    },
+    {
+      "angle": 0.340250308985908,
+      "deviation": 0.692047119140625,
+      "loaded_wheels": 4,
+      "position": "(1018.656, 55.6258, 282.692)",
+      "speed_kph": 18.1591524124146,
+      "waiting": false,
+      "waypoint": 7
+    },
+    {
+      "angle": 0.40738762365763,
+      "deviation": 0.245849609375,
+      "loaded_wheels": 4,
+      "position": "(1017.747, 55.6258, 282.2458)",
+      "speed_kph": 18.1778171539307,
+      "waiting": false,
+      "waypoint": 7
+    },
+    {
+      "angle": 0.30789005245135,
+      "deviation": 0.029022216796875,
+      "loaded_wheels": 4,
+      "position": "(1016.754, 55.6258, 282.029)",
+      "speed_kph": 18.1971445083618,
+      "waiting": false,
+      "waypoint": 7
+    },
+    {
+      "angle": 0.127361462622705,
+      "deviation": 0.049652099609375,
+      "loaded_wheels": 4,
+      "position": "(1015.721, 55.6258, 282.0497)",
+      "speed_kph": 18.2161954879761,
+      "waiting": false,
+      "waypoint": 7
+    },
+    {
+      "angle": -0.0315748361417411,
+      "deviation": 0.199951171875,
+      "loaded_wheels": 4,
+      "position": "(1014.705, 55.6258, 282.2)",
+      "speed_kph": 18.2351881027222,
+      "waiting": false,
+      "waypoint": 7
+    },
+    {
+      "angle": -0.0564256729269533,
+      "deviation": 0.26116943359375,
+      "loaded_wheels": 4,
+      "position": "(1013.697, 55.6258, 282.2612)",
+      "speed_kph": 18.2539421081543,
+      "waiting": false,
+      "waypoint": 7
+    },
+    {
+      "angle": -0.0592986557691871,
+      "deviation": 0.305511474609375,
+      "loaded_wheels": 4,
+      "position": "(1012.689, 55.6258, 282.3055)",
+      "speed_kph": 18.2729467391968,
+      "waiting": false,
+      "waypoint": 7
+    },
+    {
+      "angle": -0.0582885328242324,
+      "deviation": 0.342498779296875,
+      "loaded_wheels": 4,
+      "position": "(1011.683, 55.6258, 282.3425)",
+      "speed_kph": 18.2921453475952,
+      "waiting": false,
+      "waypoint": 7
+    },
+    {
+      "angle": -0.0574392171023047,
+      "deviation": 0.376922607421875,
+      "loaded_wheels": 4,
+      "position": "(1010.675, 55.6258, 282.3769)",
+      "speed_kph": 18.3111808776855,
+      "waiting": false,
+      "waypoint": 7
+    },
+    {
+      "angle": -0.0574595288524251,
+      "deviation": 0.408172607421875,
+      "loaded_wheels": 4,
+      "position": "(1009.666, 55.6258, 282.4082)",
+      "speed_kph": 18.3300567626953,
+      "waiting": false,
+      "waypoint": 7
+    },
+    {
+      "angle": -0.0601358599052752,
+      "deviation": 0.43902587890625,
+      "loaded_wheels": 4,
+      "position": "(1008.657, 55.6258, 282.439)",
+      "speed_kph": 18.3487678527832,
+      "waiting": false,
+      "waypoint": 7
+    },
+    {
+      "angle": -0.060086235012831,
+      "deviation": 0.464691162109375,
+      "loaded_wheels": 4,
+      "position": "(1007.65, 55.6258, 282.4647)",
+      "speed_kph": 18.3680797576904,
+      "waiting": false,
+      "waypoint": 7
+    },
+    {
+      "angle": -0.060044723057165,
+      "deviation": 0.485198974609375,
+      "loaded_wheels": 4,
+      "position": "(1006.643, 55.6258, 282.4852)",
+      "speed_kph": 18.3872234344482,
+      "waiting": false,
+      "waypoint": 7
+    },
+    {
+      "angle": -0.0603116415445992,
+      "deviation": 0.501953125,
+      "loaded_wheels": 4,
+      "position": "(1005.635, 55.6258, 282.502)",
+      "speed_kph": 18.4061782836914,
+      "waiting": false,
+      "waypoint": 7
+    },
+    {
+      "angle": -0.0589514967657888,
+      "deviation": 0.50360107421875,
+      "loaded_wheels": 4,
+      "position": "(1004.625, 55.64812, 282.5036)",
+      "speed_kph": 18.315571975708,
+      "waiting": false,
+      "waypoint": 7
+    },
+    {
+      "angle": -0.0599350854066511,
+      "deviation": 0.51092529296875,
+      "loaded_wheels": 4,
+      "position": "(1003.616, 55.66184, 282.5109)",
+      "speed_kph": 17.9693687438965,
+      "waiting": false,
+      "waypoint": 7
+    },
+    {
+      "angle": -0.0588402526901059,
+      "deviation": 0.518157958984375,
+      "loaded_wheels": 4,
+      "position": "(1002.604, 55.63174, 282.5182)",
+      "speed_kph": 18.0973852157593,
+      "waiting": false,
+      "waypoint": 7
+    },
+    {
+      "angle": -0.0588720012668832,
+      "deviation": 0.502838134765625,
+      "loaded_wheels": 4,
+      "position": "(1001.601, 55.65561, 282.5028)",
+      "speed_kph": 18.0457460403442,
+      "waiting": false,
+      "waypoint": 7
+    },
+    {
+      "angle": -0.057279328444349,
+      "deviation": 0.48638916015625,
+      "loaded_wheels": 4,
+      "position": "(1000.595, 55.65828, 282.4864)",
+      "speed_kph": 18.4009511947632,
+      "waiting": false,
+      "waypoint": 7
+    },
+    {
+      "angle": -0.0610276470945758,
+      "deviation": 0.47686767578125,
+      "loaded_wheels": 4,
+      "position": "(999.5853, 55.62077, 282.4769)",
+      "speed_kph": 18.4712963104248,
+      "waiting": false,
+      "waypoint": 7
+    },
+    {
+      "angle": -0.0602122917671712,
+      "deviation": 0.4476318359375,
+      "loaded_wheels": 4,
+      "position": "(998.5754, 55.62411, 282.4476)",
+      "speed_kph": 18.0155164718628,
+      "waiting": false,
+      "waypoint": 7
+    },
+    {
+      "angle": -0.0609163177695621,
+      "deviation": 0.409942626953125,
+      "loaded_wheels": 4,
+      "position": "(997.5688, 55.62573, 282.4099)",
+      "speed_kph": 18.0272478103638,
+      "waiting": false,
+      "waypoint": 7
+    },
+    {
+      "angle": -0.0575030898837937,
+      "deviation": 0.35699462890625,
+      "loaded_wheels": 4,
+      "position": "(996.5618, 55.62578, 282.357)",
+      "speed_kph": 18.0456035614014,
+      "waiting": false,
+      "waypoint": 7
+    },
+    {
+      "angle": -0.0613407431122346,
+      "deviation": 0.296630859375,
+      "loaded_wheels": 4,
+      "position": "(995.5543, 55.62578, 282.2966)",
+      "speed_kph": 18.0644811630249,
+      "waiting": false,
+      "waypoint": 7
+    },
+    {
+      "angle": -0.105615859229496,
+      "deviation": 0.197296142578125,
+      "loaded_wheels": 4,
+      "position": "(994.5482, 55.62578, 282.1973)",
+      "speed_kph": 18.0832815170288,
+      "waiting": false,
+      "waypoint": 8
+    },
+    {
+      "angle": -0.000286594042477032,
+      "deviation": 0.0518798828125,
+      "loaded_wheels": 4,
+      "position": "(993.5626, 55.62578, 281.9481)",
+      "speed_kph": 18.10217628479,
+      "waiting": false,
+      "waypoint": 8
+    },
+    {
+      "angle": 0.0222689426537567,
+      "deviation": 0.249176025390625,
+      "loaded_wheels": 4,
+      "position": "(992.5744, 55.62578, 281.7508)",
+      "speed_kph": 18.1213869094849,
+      "waiting": false,
+      "waypoint": 8
+    },
+    {
+      "angle": 0.0283242942733535,
+      "deviation": 0.435089111328125,
+      "loaded_wheels": 4,
+      "position": "(991.5831, 55.62578, 281.5649)",
+      "speed_kph": 18.1403932571411,
+      "waiting": false,
+      "waypoint": 8
+    },
+    {
+      "angle": 0.0388919255705657,
+      "deviation": 0.621124267578125,
+      "loaded_wheels": 4,
+      "position": "(990.5907, 55.62578, 281.3789)",
+      "speed_kph": 18.159238243103,
+      "waiting": false,
+      "waypoint": 8
+    },
+    {
+      "angle": -0.410977830555591,
+      "deviation": 0.816864013671875,
+      "loaded_wheels": 4,
+      "position": "(989.5991, 55.62578, 281.1831)",
+      "speed_kph": 18.177911567688,
+      "waiting": false,
+      "waypoint": 9
+    },
+    {
+      "angle": -0.353222166018733,
+      "deviation": 1.20376586914063,
+      "loaded_wheels": 4,
+      "position": "(988.6591, 55.62578, 280.7962)",
+      "speed_kph": 18.197158241272,
+      "waiting": false,
+      "waypoint": 9
+    },
+    {
+      "angle": -0.183875630105819,
+      "deviation": 1.80972290039063,
+      "loaded_wheels": 4,
+      "position": "(987.8224, 55.62578, 280.1903)",
+      "speed_kph": 18.2163276672363,
+      "waiting": false,
+      "waypoint": 9
+    },
+    {
+      "angle": 0.0339033852957754,
+      "deviation": 2.54049682617188,
+      "loaded_wheels": 4,
+      "position": "(987.0945, 55.62578, 279.4595)",
+      "speed_kph": 18.2353168487549,
+      "waiting": false,
+      "waypoint": 9
+    },
+    {
+      "angle": -0.476811364761399,
+      "deviation": 2.3524169921875,
+      "loaded_wheels": 4,
+      "position": "(986.3524, 55.62578, 278.7712)",
+      "speed_kph": 18.25433177948,
+      "waiting": false,
+      "waypoint": 10
+    },
+    {
+      "angle": -0.413587773934715,
+      "deviation": 1.73321533203125,
+      "loaded_wheels": 4,
+      "position": "(985.7332, 55.62578, 277.9614)",
+      "speed_kph": 18.2729038238525,
+      "waiting": false,
+      "waypoint": 10
+    },
+    {
+      "angle": -0.257123526873522,
+      "deviation": 1.30950927734375,
+      "loaded_wheels": 4,
+      "position": "(985.3095, 55.62568, 277.0199)",
+      "speed_kph": 18.2887035369873,
+      "waiting": false,
+      "waypoint": 10
+    },
+    {
+      "angle": -0.0590017016278282,
+      "deviation": 1.06011962890625,
+      "loaded_wheels": 4,
+      "position": "(985.0601, 55.62564, 276.0168)",
+      "speed_kph": 18.3119722366333,
+      "waiting": false,
+      "waypoint": 10
+    },
+    {
+      "angle": 0.0945152550041285,
+      "deviation": 0.84088134765625,
+      "loaded_wheels": 4,
+      "position": "(984.8409, 55.62578, 275.0245)",
+      "speed_kph": 18.3301460266113,
+      "waiting": false,
+      "waypoint": 10
+    },
+    {
+      "angle": -0.293740974614032,
+      "deviation": 0.538818359375,
+      "loaded_wheels": 4,
+      "position": "(984.5388, 55.62578, 274.0604)",
+      "speed_kph": 18.3488245010376,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": -0.17252131251871,
+      "deviation": 0.4639892578125,
+      "loaded_wheels": 4,
+      "position": "(984.464, 55.62578, 273.0447)",
+      "speed_kph": 18.3682222366333,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.000317337912099573,
+      "deviation": 0.60009765625,
+      "loaded_wheels": 4,
+      "position": "(984.6001, 55.62578, 272.0236)",
+      "speed_kph": 18.3872732162476,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0482879641865957,
+      "deviation": 0.67962646484375,
+      "loaded_wheels": 4,
+      "position": "(984.6796, 55.62578, 271.0164)",
+      "speed_kph": 18.4062589645386,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0488761589510049,
+      "deviation": 0.72039794921875,
+      "loaded_wheels": 4,
+      "position": "(984.7204, 55.62578, 270.0076)",
+      "speed_kph": 18.4250661849976,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0494797410171415,
+      "deviation": 0.76123046875,
+      "loaded_wheels": 4,
+      "position": "(984.7612, 55.62578, 268.9977)",
+      "speed_kph": 18.4436983108521,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0500974242068221,
+      "deviation": 0.80194091796875,
+      "loaded_wheels": 4,
+      "position": "(984.8019, 55.62578, 267.9899)",
+      "speed_kph": 17.9313302993774,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0507289437772565,
+      "deviation": 0.84259033203125,
+      "loaded_wheels": 4,
+      "position": "(984.8426, 55.62578, 266.9828)",
+      "speed_kph": 17.9504842758179,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0513774744183058,
+      "deviation": 0.88336181640625,
+      "loaded_wheels": 4,
+      "position": "(984.8834, 55.62578, 265.9747)",
+      "speed_kph": 17.9694665908814,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0520436802794845,
+      "deviation": 0.92413330078125,
+      "loaded_wheels": 4,
+      "position": "(984.9241, 55.62578, 264.9656)",
+      "speed_kph": 17.9882841110229,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0527274947228838,
+      "deviation": 0.9649658203125,
+      "loaded_wheels": 4,
+      "position": "(984.965, 55.62578, 263.9554)",
+      "speed_kph": 18.0069351196289,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.053486692140138,
+      "deviation": 1.0089111328125,
+      "loaded_wheels": 4,
+      "position": "(985.0089, 55.62578, 262.8658)",
+      "speed_kph": 17.9391889572144,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.054206957461381,
+      "deviation": 1.04962158203125,
+      "loaded_wheels": 4,
+      "position": "(985.0496, 55.62578, 261.8584)",
+      "speed_kph": 17.958274269104,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0550107426955718,
+      "deviation": 1.09375,
+      "loaded_wheels": 4,
+      "position": "(985.0938, 55.62578, 260.7662)",
+      "speed_kph": 18.4215900421143,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0557749557458182,
+      "deviation": 1.134521484375,
+      "loaded_wheels": 4,
+      "position": "(985.1345, 55.62578, 259.7566)",
+      "speed_kph": 18.4402565002441,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0565603055387342,
+      "deviation": 1.17523193359375,
+      "loaded_wheels": 4,
+      "position": "(985.1752, 55.62578, 258.7489)",
+      "speed_kph": 17.9279022216797,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0573659449987014,
+      "deviation": 1.21588134765625,
+      "loaded_wheels": 4,
+      "position": "(985.2159, 55.62578, 257.742)",
+      "speed_kph": 17.9470853805542,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0581959272962181,
+      "deviation": 1.25665283203125,
+      "loaded_wheels": 4,
+      "position": "(985.2567, 55.62578, 256.7341)",
+      "speed_kph": 17.9660985946655,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.059051363949661,
+      "deviation": 1.29742431640625,
+      "loaded_wheels": 4,
+      "position": "(985.2974, 55.62578, 255.7252)",
+      "speed_kph": 17.9849435806274,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0599325424770157,
+      "deviation": 1.3382568359375,
+      "loaded_wheels": 4,
+      "position": "(985.3383, 55.62578, 254.7152)",
+      "speed_kph": 18.0036254882813,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0598452833821074,
+      "deviation": 1.3765869140625,
+      "loaded_wheels": 4,
+      "position": "(985.3766, 55.62578, 253.709)",
+      "speed_kph": 18.0229047775269,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0597561730236104,
+      "deviation": 1.41412353515625,
+      "loaded_wheels": 4,
+      "position": "(985.4141, 55.62578, 252.7016)",
+      "speed_kph": 18.0420209884644,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0596873074922715,
+      "deviation": 1.4510498046875,
+      "loaded_wheels": 4,
+      "position": "(985.451, 55.62578, 251.6932)",
+      "speed_kph": 18.0609603881836,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0596366601149459,
+      "deviation": 1.4869384765625,
+      "loaded_wheels": 4,
+      "position": "(985.4869, 55.62578, 250.6837)",
+      "speed_kph": 18.0797487258911,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0595974567971776,
+      "deviation": 1.52178955078125,
+      "loaded_wheels": 4,
+      "position": "(985.5218, 55.62578, 249.6756)",
+      "speed_kph": 18.0987413406372,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0595758252456078,
+      "deviation": 1.5557861328125,
+      "loaded_wheels": 4,
+      "position": "(985.5558, 55.62578, 248.6689)",
+      "speed_kph": 18.1179468154907,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0595718653594202,
+      "deviation": 1.5888671875,
+      "loaded_wheels": 4,
+      "position": "(985.5889, 55.62578, 247.661)",
+      "speed_kph": 18.136997795105,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0595834918078049,
+      "deviation": 1.6209716796875,
+      "loaded_wheels": 4,
+      "position": "(985.621, 55.62578, 246.6521)",
+      "speed_kph": 18.1558650970459,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0596049002395049,
+      "deviation": 1.652099609375,
+      "loaded_wheels": 4,
+      "position": "(985.6521, 55.62578, 245.6421)",
+      "speed_kph": 18.17457447052,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0596412217574084,
+      "deviation": 1.68212890625,
+      "loaded_wheels": 4,
+      "position": "(985.6821, 55.62578, 244.6359)",
+      "speed_kph": 18.1938829421997,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0596935535299381,
+      "deviation": 1.71112060546875,
+      "loaded_wheels": 4,
+      "position": "(985.7111, 55.62578, 243.6286)",
+      "speed_kph": 18.2130266189575,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0597640326413044,
+      "deviation": 1.7391357421875,
+      "loaded_wheels": 4,
+      "position": "(985.7391, 55.62578, 242.6203)",
+      "speed_kph": 18.2319917678833,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0598716628506109,
+      "deviation": 1.76611328125,
+      "loaded_wheels": 4,
+      "position": "(985.7661, 55.62578, 241.6109)",
+      "speed_kph": 18.2507989883423,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0599961915665777,
+      "deviation": 1.79205322265625,
+      "loaded_wheels": 4,
+      "position": "(985.7921, 55.62578, 240.6004)",
+      "speed_kph": 18.2694328308105,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.059883735369426,
+      "deviation": 1.815673828125,
+      "loaded_wheels": 4,
+      "position": "(985.8157, 55.62578, 239.5937)",
+      "speed_kph": 18.2886777877808,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0593055637019806,
+      "deviation": 1.83935546875,
+      "loaded_wheels": 4,
+      "position": "(985.8394, 55.62578, 238.586)",
+      "speed_kph": 18.3077493667603,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.059487428718473,
+      "deviation": 1.8616943359375,
+      "loaded_wheels": 4,
+      "position": "(985.8617, 55.62578, 237.5772)",
+      "speed_kph": 18.3266510009766,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0597753321586177,
+      "deviation": 1.88360595703125,
+      "loaded_wheels": 4,
+      "position": "(985.8836, 55.62391, 236.567)",
+      "speed_kph": 18.3469877243042,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0600093048555181,
+      "deviation": 1.90185546875,
+      "loaded_wheels": 4,
+      "position": "(985.9019, 55.6253, 235.5563)",
+      "speed_kph": 18.3479885101318,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.057495613056398,
+      "deviation": 1.91644287109375,
+      "loaded_wheels": 4,
+      "position": "(985.9164, 55.62585, 234.5491)",
+      "speed_kph": 18.3834623336792,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0585790070359068,
+      "deviation": 1.93438720703125,
+      "loaded_wheels": 4,
+      "position": "(985.9344, 55.62365, 233.5412)",
+      "speed_kph": 18.4029253005981,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0597439664738291,
+      "deviation": 1.95159912109375,
+      "loaded_wheels": 4,
+      "position": "(985.9516, 55.62573, 232.5317)",
+      "speed_kph": 18.4230560302734,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0600862611821058,
+      "deviation": 1.52134704589844,
+      "loaded_wheels": 4,
+      "position": "(985.9666, 55.62582, 231.5213)",
+      "speed_kph": 18.4394033432007,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0594387667682641,
+      "deviation": 0.512969970703125,
+      "loaded_wheels": 4,
+      "position": "(985.9792, 55.62579, 230.513)",
+      "speed_kph": 17.927289390564,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0598456998676711,
+      "deviation": 0.494613647460938,
+      "loaded_wheels": 4,
+      "position": "(985.9918, 55.62579, 229.5054)",
+      "speed_kph": 17.9464845657349,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0592669960783726,
+      "deviation": 1.50325012207031,
+      "loaded_wheels": 4,
+      "position": "(986.0015, 55.62579, 228.4967)",
+      "speed_kph": 17.9655012130737,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0597300052024854,
+      "deviation": 2.01141357421875,
+      "loaded_wheels": 4,
+      "position": "(986.0114, 55.62579, 227.487)",
+      "speed_kph": 17.984351348877,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0593533593767068,
+      "deviation": 2.01904296875,
+      "loaded_wheels": 4,
+      "position": "(986.019, 55.62301, 226.4782)",
+      "speed_kph": 18.0028272628784,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0601569485576858,
+      "deviation": 2.02508544921875,
+      "loaded_wheels": 4,
+      "position": "(986.0251, 55.62523, 225.4717)",
+      "speed_kph": 18.0050022125244,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0577488661466864,
+      "deviation": 2.02508544921875,
+      "loaded_wheels": 4,
+      "position": "(986.0251, 55.62569, 224.4638)",
+      "speed_kph": 18.0316286087036,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0591594701721093,
+      "deviation": 2.03009033203125,
+      "loaded_wheels": 4,
+      "position": "(986.0301, 55.62281, 223.455)",
+      "speed_kph": 18.0625551223755,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0597158470041377,
+      "deviation": 2.03204345703125,
+      "loaded_wheels": 4,
+      "position": "(986.032, 55.62585, 222.447)",
+      "speed_kph": 18.0814825057983,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0573949946625975,
+      "deviation": 2.0272216796875,
+      "loaded_wheels": 4,
+      "position": "(986.0272, 55.62581, 221.4383)",
+      "speed_kph": 18.0985404968262,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0591104179364778,
+      "deviation": 2.0257568359375,
+      "loaded_wheels": 4,
+      "position": "(986.0258, 55.62578, 220.431)",
+      "speed_kph": 18.1181304931641,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0599139668668673,
+      "deviation": 2.0224609375,
+      "loaded_wheels": 4,
+      "position": "(986.0225, 55.62578, 219.4226)",
+      "speed_kph": 18.1371780395508,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0597902337720832,
+      "deviation": 2.01654052734375,
+      "loaded_wheels": 4,
+      "position": "(986.0165, 55.62578, 218.4131)",
+      "speed_kph": 18.156050491333,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0578154453128327,
+      "deviation": 2.00360107421875,
+      "loaded_wheels": 4,
+      "position": "(986.0036, 55.62578, 217.3188)",
+      "speed_kph": 18.0877550125122,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0597858801943,
+      "deviation": 1.99542236328125,
+      "loaded_wheels": 4,
+      "position": "(985.9954, 55.62578, 216.3121)",
+      "speed_kph": 18.1070600509644,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0578010383321378,
+      "deviation": 1.97991943359375,
+      "loaded_wheels": 4,
+      "position": "(985.9799, 55.62578, 215.3044)",
+      "speed_kph": 18.1262037277222,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0599330180126178,
+      "deviation": 1.96820068359375,
+      "loaded_wheels": 4,
+      "position": "(985.9682, 55.62578, 214.2956)",
+      "speed_kph": 18.1451740264893,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0581038382123077,
+      "deviation": 1.9481201171875,
+      "loaded_wheels": 4,
+      "position": "(985.9481, 55.62578, 213.2859)",
+      "speed_kph": 18.1639709472656,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0593746413621879,
+      "deviation": 1.9306640625,
+      "loaded_wheels": 4,
+      "position": "(985.9307, 55.62578, 212.2751)",
+      "speed_kph": 18.1826065063477,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.057694407562914,
+      "deviation": 1.90704345703125,
+      "loaded_wheels": 4,
+      "position": "(985.907, 55.62578, 211.2683)",
+      "speed_kph": 18.2018463134766,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0601838783800281,
+      "deviation": 1.88623046875,
+      "loaded_wheels": 4,
+      "position": "(985.8862, 55.62578, 210.2604)",
+      "speed_kph": 18.2209230422974,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0586985684308151,
+      "deviation": 1.8572998046875,
+      "loaded_wheels": 4,
+      "position": "(985.8573, 55.62578, 209.2516)",
+      "speed_kph": 18.2398195266724,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0573438477491329,
+      "deviation": 1.826171875,
+      "loaded_wheels": 4,
+      "position": "(985.8262, 55.62578, 208.2419)",
+      "speed_kph": 18.258554649353,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0601864660874126,
+      "deviation": 1.797607421875,
+      "loaded_wheels": 4,
+      "position": "(985.7976, 55.62578, 207.2335)",
+      "speed_kph": 18.2775146484375,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.059055123049945,
+      "deviation": 1.76123046875,
+      "loaded_wheels": 4,
+      "position": "(985.7612, 55.62578, 206.2267)",
+      "speed_kph": 18.296675491333,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0580760342034656,
+      "deviation": 1.72186279296875,
+      "loaded_wheels": 4,
+      "position": "(985.7219, 55.62578, 205.2189)",
+      "speed_kph": 18.3156801223755,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0573155093533017,
+      "deviation": 1.6798095703125,
+      "loaded_wheels": 4,
+      "position": "(985.6798, 55.62578, 204.2103)",
+      "speed_kph": 18.3345096588135,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0592588726821082,
+      "deviation": 1.63555908203125,
+      "loaded_wheels": 4,
+      "position": "(985.6356, 55.62578, 203.2006)",
+      "speed_kph": 18.3531829833984,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0601577852317705,
+      "deviation": 1.58892822265625,
+      "loaded_wheels": 4,
+      "position": "(985.5889, 55.62578, 202.195)",
+      "speed_kph": 18.3724416732788,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0602317705583238,
+      "deviation": 1.5379638671875,
+      "loaded_wheels": 4,
+      "position": "(985.538, 55.62578, 201.1885)",
+      "speed_kph": 18.3915578842163,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0603259151689447,
+      "deviation": 1.48193359375,
+      "loaded_wheels": 4,
+      "position": "(985.4819, 55.62578, 200.1813)",
+      "speed_kph": 18.4104835510254,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0604695802920333,
+      "deviation": 1.420166015625,
+      "loaded_wheels": 4,
+      "position": "(985.4202, 55.62578, 199.1733)",
+      "speed_kph": 18.4292495727539,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0579890646321189,
+      "deviation": 1.35235595703125,
+      "loaded_wheels": 4,
+      "position": "(985.3524, 55.62578, 198.1652)",
+      "speed_kph": 17.916548538208,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0584582893138232,
+      "deviation": 1.2830810546875,
+      "loaded_wheels": 4,
+      "position": "(985.2831, 55.62578, 197.1605)",
+      "speed_kph": 17.9358346939087,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0602688282325981,
+      "deviation": 1.208740234375,
+      "loaded_wheels": 4,
+      "position": "(985.2087, 55.62578, 196.1552)",
+      "speed_kph": 17.9549577713013,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0582644215131162,
+      "deviation": 1.12396240234375,
+      "loaded_wheels": 4,
+      "position": "(985.124, 55.62578, 195.1495)",
+      "speed_kph": 17.973893737793,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0597761127566157,
+      "deviation": 1.033447265625,
+      "loaded_wheels": 4,
+      "position": "(985.0334, 55.62578, 194.1433)",
+      "speed_kph": 17.9926666259766,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0554652094454852,
+      "deviation": 0.931884765625,
+      "loaded_wheels": 4,
+      "position": "(984.9319, 55.62578, 193.1396)",
+      "speed_kph": 18.011671257019,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0549530705774753,
+      "deviation": 0.8232421875,
+      "loaded_wheels": 4,
+      "position": "(984.8232, 55.62578, 192.138)",
+      "speed_kph": 18.0308784484863,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0562216454074827,
+      "deviation": 0.705810546875,
+      "loaded_wheels": 4,
+      "position": "(984.7058, 55.62578, 191.1363)",
+      "speed_kph": 18.0499242782593,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0508188032946498,
+      "deviation": 0.56781005859375,
+      "loaded_wheels": 4,
+      "position": "(984.5678, 55.62578, 190.1361)",
+      "speed_kph": 18.0687984466553,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": 0.0515766645363829,
+      "deviation": 0.41741943359375,
+      "loaded_wheels": 4,
+      "position": "(984.4174, 55.62578, 189.1366)",
+      "speed_kph": 18.0875009536743,
+      "waiting": false,
+      "waypoint": 11
+    },
+    {
+      "angle": -0.219548334072917,
+      "deviation": 0.3321533203125,
+      "loaded_wheels": 4,
+      "position": "(984.3322, 55.62578, 188.1329)",
+      "speed_kph": 18.10689868927,
+      "waiting": false,
+      "waypoint": 12
+    },
+    {
+      "angle": -0.0533312484553527,
+      "deviation": 0.51220703125,
+      "loaded_wheels": 4,
+      "position": "(984.5122, 55.62578, 187.1214)",
+      "speed_kph": 18.1259616851807,
+      "waiting": false,
+      "waypoint": 12
+    },
+    {
+      "angle": 0.07529966154195,
+      "deviation": 0.73309326171875,
+      "loaded_wheels": 4,
+      "position": "(984.7331, 55.62578, 186.1299)",
+      "speed_kph": 18.144930267334,
+      "waiting": false,
+      "waypoint": 12
+    },
+    {
+      "angle": 0.0240686821465245,
+      "deviation": 0.785400390625,
+      "loaded_wheels": 4,
+      "position": "(984.7854, 55.62578, 185.1194)",
+      "speed_kph": 18.163715171814,
+      "waiting": false,
+      "waypoint": 12
+    },
+    {
+      "angle": 0.0179618959810464,
+      "deviation": 0.8636474609375,
+      "loaded_wheels": 4,
+      "position": "(984.8636, 55.62578, 184.1115)",
+      "speed_kph": 18.1823713302612,
+      "waiting": false,
+      "waypoint": 12
+    },
+    {
+      "angle": -0.499247400937487,
+      "deviation": 1.02093505859375,
+      "loaded_wheels": 4,
+      "position": "(985.0209, 55.62578, 183.1156)",
+      "speed_kph": 18.2016780853271,
+      "waiting": false,
+      "waypoint": 13
+    },
+    {
+      "angle": -0.389337758692839,
+      "deviation": 1.4434814453125,
+      "loaded_wheels": 4,
+      "position": "(985.4435, 55.62578, 182.1765)",
+      "speed_kph": 18.2207273483276,
+      "waiting": false,
+      "waypoint": 13
+    },
+    {
+      "angle": -0.233587065088579,
+      "deviation": 2.039794921875,
+      "loaded_wheels": 4,
+      "position": "(986.0398, 55.62578, 181.3313)",
+      "speed_kph": 18.2393182754517,
+      "waiting": false,
+      "waypoint": 13
+    },
+    {
+      "angle": -0.0163217582325698,
+      "deviation": 2.60226440429688,
+      "loaded_wheels": 4,
+      "position": "(986.7739, 55.62578, 180.6023)",
+      "speed_kph": 18.2582817077637,
+      "waiting": false,
+      "waypoint": 13
+    },
+    {
+      "angle": -0.413040394137594,
+      "deviation": 1.98930358886719,
+      "loaded_wheels": 4,
+      "position": "(987.5988, 55.62578, 179.9893)",
+      "speed_kph": 18.2773309707642,
+      "waiting": false,
+      "waypoint": 14
+    },
+    {
+      "angle": -0.254018135504507,
+      "deviation": 1.55021667480469,
+      "loaded_wheels": 4,
+      "position": "(988.5336, 55.62578, 179.5502)",
+      "speed_kph": 18.2964437484741,
+      "waiting": false,
+      "waypoint": 14
+    },
+    {
+      "angle": -0.057244716411546,
+      "deviation": 1.285400390625,
+      "loaded_wheels": 4,
+      "position": "(989.5328, 55.62488, 179.2854)",
+      "speed_kph": 18.3168182373047,
+      "waiting": false,
+      "waypoint": 14
+    },
+    {
+      "angle": 0.0868003022949778,
+      "deviation": 1.05023193359375,
+      "loaded_wheels": 4,
+      "position": "(990.522, 55.62576, 179.0502)",
+      "speed_kph": 18.3345560073853,
+      "waiting": false,
+      "waypoint": 14
+    },
+    {
+      "angle": -0.361335066707813,
+      "deviation": 0.635208129882813,
+      "loaded_wheels": 4,
+      "position": "(991.4466, 55.62579, 178.6352)",
+      "speed_kph": 18.3529735565186,
+      "waiting": false,
+      "waypoint": 15
+    },
+    {
+      "angle": -0.392659724742951,
+      "deviation": 0.230316162109375,
+      "loaded_wheels": 4,
+      "position": "(992.3687, 55.62579, 178.2303)",
+      "speed_kph": 18.3721996307373,
+      "waiting": false,
+      "waypoint": 15
+    },
+    {
+      "angle": -0.26501158199671,
+      "deviation": 0.071746826171875,
+      "loaded_wheels": 4,
+      "position": "(993.3772, 55.62579, 178.0717)",
+      "speed_kph": 18.3912368774414,
+      "waiting": false,
+      "waypoint": 15
+    },
+    {
+      "angle": -0.0838091041721193,
+      "deviation": 0.137176513671875,
+      "loaded_wheels": 4,
+      "position": "(994.4093, 55.62579, 178.1372)",
+      "speed_kph": 18.4102071762085,
+      "waiting": false,
+      "waypoint": 15
+    },
+    {
+      "angle": 0.0410815082012381,
+      "deviation": 0.276412963867188,
+      "loaded_wheels": 4,
+      "position": "(995.421, 55.62579, 178.2764)",
+      "speed_kph": 18.4290126800537,
+      "waiting": false,
+      "waypoint": 15
+    },
+    {
+      "angle": 0.0476194206038286,
+      "deviation": 0.322662353515625,
+      "loaded_wheels": 4,
+      "position": "(996.4302, 55.62579, 178.3227)",
+      "speed_kph": 17.9163373947144,
+      "waiting": false,
+      "waypoint": 15
+    },
+    {
+      "angle": 0.048396782627724,
+      "deviation": 0.365463256835938,
+      "loaded_wheels": 4,
+      "position": "(997.4363, 55.62579, 178.3655)",
+      "speed_kph": 17.9356252670288,
+      "waiting": false,
+      "waypoint": 15
+    },
+    {
+      "angle": 0.0492010834274049,
+      "deviation": 0.4083251953125,
+      "loaded_wheels": 4,
+      "position": "(998.4435, 55.62579, 178.4083)",
+      "speed_kph": 17.9547380447388,
+      "waiting": false,
+      "waypoint": 15
+    },
+    {
+      "angle": 0.0500334410827694,
+      "deviation": 0.45123291015625,
+      "loaded_wheels": 4,
+      "position": "(999.4518, 55.62579, 178.4512)",
+      "speed_kph": 17.9736877441406,
+      "waiting": false,
+      "waypoint": 15
+    },
+    {
+      "angle": 0.0508950995011958,
+      "deviation": 0.494171142578125,
+      "loaded_wheels": 4,
+      "position": "(1000.461, 55.62579, 178.4942)",
+      "speed_kph": 17.9924657821655,
+      "waiting": false,
+      "waypoint": 15
+    },
+    {
+      "angle": 0.0517853698297017,
+      "deviation": 0.53704833984375,
+      "loaded_wheels": 4,
+      "position": "(1001.469, 55.62579, 178.537)",
+      "speed_kph": 18.0114635467529,
+      "waiting": false,
+      "waypoint": 15
+    },
+    {
+      "angle": 0.0527062601550581,
+      "deviation": 0.579864501953125,
+      "loaded_wheels": 4,
+      "position": "(1002.475, 55.62579, 178.5799)",
+      "speed_kph": 18.0306793212891,
+      "waiting": false,
+      "waypoint": 15
+    },
+    {
+      "angle": 0.0536615050930109,
+      "deviation": 0.62274169921875,
+      "loaded_wheels": 4,
+      "position": "(1003.483, 55.62579, 178.6227)",
+      "speed_kph": 18.0497234344482,
+      "waiting": false,
+      "waypoint": 15
+    },
+    {
+      "angle": 0.0546533392259397,
+      "deviation": 0.665664672851563,
+      "loaded_wheels": 4,
+      "position": "(1004.492, 55.62579, 178.6657)",
+      "speed_kph": 18.0686010360718,
+      "waiting": false,
+      "waypoint": 15
+    },
+    {
+      "angle": 0.055683028221019,
+      "deviation": 0.708602905273438,
+      "loaded_wheels": 4,
+      "position": "(1005.501, 55.62579, 178.7086)",
+      "speed_kph": 18.0873086929321,
+      "waiting": false,
+      "waypoint": 15
+    },
+    {
+      "angle": 0.056748295764577,
+      "deviation": 0.751388549804688,
+      "loaded_wheels": 4,
+      "position": "(1006.507, 55.62579, 178.7514)",
+      "speed_kph": 18.1066205978394,
+      "waiting": false,
+      "waypoint": 15
+    },
+    {
+      "angle": 0.0578565860552092,
+      "deviation": 0.794235229492188,
+      "loaded_wheels": 4,
+      "position": "(1007.514, 55.62579, 178.7942)",
+      "speed_kph": 18.1257608413696,
+      "waiting": false,
+      "waypoint": 15
+    },
+    {
+      "angle": 0.0590101828000491,
+      "deviation": 0.837127685546875,
+      "loaded_wheels": 4,
+      "position": "(1008.522, 55.62579, 178.8371)",
+      "speed_kph": 18.1447345733643,
+      "waiting": false,
+      "waypoint": 15
+    },
+    {
+      "angle": 0.059206893975277,
+      "deviation": 0.878677368164063,
+      "loaded_wheels": 4,
+      "position": "(1009.531, 55.62579, 178.8787)",
+      "speed_kph": 18.1635349273682,
+      "waiting": false,
+      "waypoint": 15
+    },
+    {
+      "angle": 0.0594452883199718,
+      "deviation": 0.919113159179688,
+      "loaded_wheels": 4,
+      "position": "(1010.541, 55.62579, 178.9191)",
+      "speed_kph": 18.1821739196777,
+      "waiting": false,
+      "waypoint": 15
+    },
+    {
+      "angle": 0.0596988294874842,
+      "deviation": 0.958267211914063,
+      "loaded_wheels": 4,
+      "position": "(1011.547, 55.62579, 178.9583)",
+      "speed_kph": 18.2014188766479,
+      "waiting": false,
+      "waypoint": 15
+    },
+    {
+      "angle": 0.0599902575691932,
+      "deviation": 0.996231079101563,
+      "loaded_wheels": 4,
+      "position": "(1012.555, 55.62579, 178.9962)",
+      "speed_kph": 18.2204887390137,
+      "waiting": false,
+      "waypoint": 15
+    },
+    {
+      "angle": 0.0592995889871485,
+      "deviation": 1.03173828125,
+      "loaded_wheels": 4,
+      "position": "(1013.563, 55.62579, 179.0317)",
+      "speed_kph": 18.2393886566162,
+      "waiting": false,
+      "waypoint": 15
+    },
+    {
+      "angle": 0.0596404748031019,
+      "deviation": 1.06716918945313,
+      "loaded_wheels": 4,
+      "position": "(1014.573, 55.62579, 179.0672)",
+      "speed_kph": 18.258130645752,
+      "waiting": false,
+      "waypoint": 15
+    },
+    {
+      "angle": 0.0600005378719997,
+      "deviation": 1.10101318359375,
+      "loaded_wheels": 4,
+      "position": "(1015.581, 55.62579, 179.101)",
+      "speed_kph": 18.2770872116089,
+      "waiting": false,
+      "waypoint": 15
+    },
+    {
+      "angle": 0.0594021103987552,
+      "deviation": 1.13265991210938,
+      "loaded_wheels": 4,
+      "position": "(1016.588, 55.62579, 179.1327)",
+      "speed_kph": 18.2962686538696,
+      "waiting": false,
+      "waypoint": 15
+    },
+    {
+      "angle": 0.0598279459091131,
+      "deviation": 1.16403198242188,
+      "loaded_wheels": 4,
+      "position": "(1017.596, 55.62579, 179.164)",
+      "speed_kph": 18.3152612686157,
+      "waiting": false,
+      "waypoint": 15
+    },
+    {
+      "angle": 0.0593077981076119,
+      "deviation": 1.19273376464844,
+      "loaded_wheels": 4,
+      "position": "(1018.605, 55.62579, 179.1927)",
+      "speed_kph": 18.3341028213501,
+      "waiting": false,
+      "waypoint": 15
+    },
+    {
+      "angle": 0.0598046747473315,
+      "deviation": 1.22126770019531,
+      "loaded_wheels": 4,
+      "position": "(1019.615, 55.62579, 179.2213)",
+      "speed_kph": 18.3527795791626,
+      "waiting": false,
+      "waypoint": 15
+    },
+    {
+      "angle": 0.0593552291659814,
+      "deviation": 1.2469482421875,
+      "loaded_wheels": 4,
+      "position": "(1020.621, 55.62579, 179.2469)",
+      "speed_kph": 18.3720520019531,
+      "waiting": false,
+      "waypoint": 15
+    },
+    {
+      "angle": 0.0599444289161109,
+      "deviation": 1.27238464355469,
+      "loaded_wheels": 4,
+      "position": "(1021.629, 55.62579, 179.2724)",
+      "speed_kph": 18.3911510467529,
+      "waiting": false,
+      "waypoint": 15
+    },
+    {
+      "angle": 0.0595566586705554,
+      "deviation": 1.29498291015625,
+      "loaded_wheels": 4,
+      "position": "(1022.637, 55.62579, 179.295)",
+      "speed_kph": 18.4100870132446,
+      "waiting": false,
+      "waypoint": 15
+    },
+    {
+      "angle": 0.0599827879394879,
+      "deviation": 1.31614685058594,
+      "loaded_wheels": 4,
+      "position": "(1023.647, 55.62579, 179.3161)",
+      "speed_kph": 18.4288547515869,
+      "waiting": false,
+      "waypoint": 15
+    },
+    {
+      "angle": 0.0599498421622981,
+      "deviation": 1.33682250976563,
+      "loaded_wheels": 4,
+      "position": "(1024.657, 55.62579, 179.3368)",
+      "speed_kph": 17.9161571502686,
+      "waiting": false,
+      "waypoint": 15
+    },
+    {
+      "angle": 0.0567100032923946,
+      "deviation": 0.3359375,
+      "loaded_wheels": 4,
+      "position": "(1025.664, 55.62579, 179.3502)",
+      "speed_kph": 17.9354621887207,
+      "waiting": false,
+      "waypoint": 15
+    },
+    {
+      "angle": 0.0584715881305459,
+      "deviation": 0.672119140625,
+      "loaded_wheels": 4,
+      "position": "(1026.672, 55.62579, 179.3667)",
+      "speed_kph": 17.9545749664307,
+      "waiting": false,
+      "waypoint": 15
+    },
+    {
+      "angle": 0.0593390634216606,
+      "deviation": 1.38189697265625,
+      "loaded_wheels": 4,
+      "position": "(1027.681, 55.62579, 179.3819)",
+      "speed_kph": 17.9735229492188,
+      "waiting": false,
+      "waypoint": 15
+    },
+    {
+      "angle": 0.0572694453169267,
+      "deviation": 1.39070129394531,
+      "loaded_wheels": 4,
+      "position": "(1028.691, 55.62579, 179.3907)",
+      "speed_kph": 17.9923044204712,
+      "waiting": false,
+      "waypoint": 15
+    },
+    {
+      "angle": 0.0592326265454478,
+      "deviation": 1.40238952636719,
+      "loaded_wheels": 4,
+      "position": "(1029.7, 55.62579, 179.4024)",
+      "speed_kph": 18.0113056182861,
+      "waiting": false,
+      "waypoint": 15
+    },
+    {
+      "angle": 0.057297974304488,
+      "deviation": 1.40731811523438,
+      "loaded_wheels": 4,
+      "position": "(1030.707, 55.62579, 179.4073)",
+      "speed_kph": 18.0305213928223,
+      "waiting": false,
+      "waypoint": 15
+    },
+    {
+      "angle": 0.0594032925913218,
+      "deviation": 1.41510009765625,
+      "loaded_wheels": 4,
+      "position": "(1031.716, 55.62579, 179.4151)",
+      "speed_kph": 18.0495672225952,
+      "waiting": false,
+      "waypoint": 15
+    },
+    {
+      "angle": 0.0575859063654702,
+      "deviation": 1.41587829589844,
+      "loaded_wheels": 4,
+      "position": "(1032.725, 55.62579, 179.4159)",
+      "speed_kph": 18.0684413909912,
+      "waiting": false,
+      "waypoint": 15
+    },
+    {
+      "angle": 0.0598788385617978,
+      "deviation": 1.41990661621094,
+      "loaded_wheels": 4,
+      "position": "(1033.736, 55.62579, 179.4199)",
+      "speed_kph": 18.0871507644653,
+      "waiting": false,
+      "waypoint": 15
+    },
+    {
+      "angle": 0.0584212380129276,
+      "deviation": 1.41580200195313,
+      "loaded_wheels": 4,
+      "position": "(1034.826, 55.62579, 179.4158)",
+      "speed_kph": 18.0194629669189,
+      "waiting": false,
+      "waypoint": 15
+    },
+    {
+      "angle": 0.0568457655498164,
+      "deviation": 1.41001892089844,
+      "loaded_wheels": 4,
+      "position": "(1035.834, 55.62579, 179.41)",
+      "speed_kph": 18.0386083602905,
+      "waiting": false,
+      "waypoint": 15
+    },
+    {
+      "angle": 0.0596476391810383,
+      "deviation": 1.40605163574219,
+      "loaded_wheels": 4,
+      "position": "(1036.926, 55.62579, 179.4061)",
+      "speed_kph": 17.9705806732178,
+      "waiting": false,
+      "waypoint": 15
+    },
+    {
+      "angle": 0.0582863279720486,
+      "deviation": 1.39451599121094,
+      "loaded_wheels": 4,
+      "position": "(1037.936, 55.62579, 179.3945)",
+      "speed_kph": 17.989386177063,
+      "waiting": false,
+      "waypoint": 15
+    },
+    {
+      "angle": 0.0570729371834179,
+      "deviation": 1.38101196289063,
+      "loaded_wheels": 4,
+      "position": "(1038.948, 55.62579, 179.381)",
+      "speed_kph": 18.0080286026001,
+      "waiting": false,
+      "waypoint": 15
+    },
+    {
+      "angle": 0.0600691429853416,
+      "deviation": 1.36915588378906,
+      "loaded_wheels": 4,
+      "position": "(1039.955, 55.62579, 179.3692)",
+      "speed_kph": 18.0272735595703,
+      "waiting": false,
+      "waypoint": 15
+    },
+    {
+      "angle": 0.0591423221079095,
+      "deviation": 1.349609375,
+      "loaded_wheels": 4,
+      "position": "(1040.963, 55.62579, 179.3496)",
+      "speed_kph": 18.0463382720947,
+      "waiting": false,
+      "waypoint": 15
+    },
+    {
+      "angle": 0.0583912666012421,
+      "deviation": 1.32708740234375,
+      "loaded_wheels": 4,
+      "position": "(1041.972, 55.62579, 179.3271)",
+      "speed_kph": 18.0652519226074,
+      "waiting": false,
+      "waypoint": 15
+    },
+    {
+      "angle": 0.0578337198483134,
+      "deviation": 1.30134582519531,
+      "loaded_wheels": 4,
+      "position": "(1042.982, 55.62579, 179.3013)",
+      "speed_kph": 18.084002494812,
+      "waiting": false,
+      "waypoint": 15
+    },
+    {
+      "angle": 0.057490169419372,
+      "deviation": 1.27212524414063,
+      "loaded_wheels": 4,
+      "position": "(1043.99, 55.62579, 179.2721)",
+      "speed_kph": 18.1029539108276,
+      "waiting": false,
+      "waypoint": 15
+    },
+    {
+      "angle": 0.0573453239554203,
+      "deviation": 1.2393798828125,
+      "loaded_wheels": 4,
+      "position": "(1044.997, 55.62579, 179.2394)",
+      "speed_kph": 18.1221302032471,
+      "waiting": false,
+      "waypoint": 15
+    },
+    {
+      "angle": 0.0574757581699233,
+      "deviation": 1.20271301269531,
+      "loaded_wheels": 4,
+      "position": "(1046.005, 55.62579, 179.2027)",
+      "speed_kph": 18.1411348342896,
+      "waiting": false,
+      "waypoint": 15
+    },
+    {
+      "angle": 0.0583617082338472,
+      "deviation": 1.15863037109375,
+      "loaded_wheels": 4,
+      "position": "(1047.098, 55.62579, 179.1586)",
+      "speed_kph": 18.0729681015015,
+      "waiting": false,
+      "waypoint": 15
+    },
+    {
+      "angle": 0.0592505698425356,
+      "deviation": 1.11282348632813,
+      "loaded_wheels": 4,
+      "position": "(1048.108, 55.62579, 179.1128)",
+      "speed_kph": 18.0916397094727,
+      "waiting": false,
+      "waypoint": 15
+    },
+    {
+      "angle": 0.0603307746413364,
+      "deviation": 1.06071472167969,
+      "loaded_wheels": 4,
+      "position": "(1049.113, 55.62579, 179.0607)",
+      "speed_kph": 18.1109121322632,
+      "waiting": false,
+      "waypoint": 15
+    },
+    {
+      "angle": 0.0581694732862286,
+      "deviation": 1.00190734863281,
+      "loaded_wheels": 4,
+      "position": "(1050.12, 55.62579, 179.0019)",
+      "speed_kph": 18.1300128936768,
+      "waiting": false,
+      "waypoint": 15
+    },
+    {
+      "angle": 0.0605023771747798,
+      "deviation": 0.938735961914063,
+      "loaded_wheels": 4,
+      "position": "(1051.127, 55.62579, 178.9387)",
+      "speed_kph": 18.1489488601685,
+      "waiting": false,
+      "waypoint": 15
+    },
+    {
+      "angle": 0.0605708599585031,
+      "deviation": 0.861801147460938,
+      "loaded_wheels": 4,
+      "position": "(1052.218, 55.62579, 178.8618)",
+      "speed_kph": 18.0807271957397,
+      "waiting": false,
+      "waypoint": 15
+    },
+    {
+      "angle": 0.0592952462415126,
+      "deviation": 0.7783203125,
+      "loaded_wheels": 4,
+      "position": "(1053.223, 55.62579, 178.7783)",
+      "speed_kph": 18.0997095108032,
+      "waiting": false,
+      "waypoint": 15
+    },
+    {
+      "angle": 0.0594720318534894,
+      "deviation": 0.686767578125,
+      "loaded_wheels": 4,
+      "position": "(1054.227, 55.62579, 178.6868)",
+      "speed_kph": 18.1189115524292,
+      "waiting": false,
+      "waypoint": 15
+    },
+    {
+      "angle": 0.0616220758224124,
+      "deviation": 0.584487915039063,
+      "loaded_wheels": 4,
+      "position": "(1055.23, 55.62579, 178.5845)",
+      "speed_kph": 18.1379505157471,
+      "waiting": false,
+      "waypoint": 15
+    },
+    {
+      "angle": 0.0566668060830011,
+      "deviation": 0.463058471679688,
+      "loaded_wheels": 4,
+      "position": "(1056.233, 55.62579, 178.4631)",
+      "speed_kph": 18.1568040847778,
+      "waiting": false,
+      "waypoint": 15
+    },
+    {
+      "angle": -0.21970064874059,
+      "deviation": 0.32891845703125,
+      "loaded_wheels": 4,
+      "position": "(1057.234, 55.62579, 178.3289)",
+      "speed_kph": 18.1755117416382,
+      "waiting": false,
+      "waypoint": 16
+    },
+    {
+      "angle": -0.152146289508037,
+      "deviation": 0.362518310546875,
+      "loaded_wheels": 4,
+      "position": "(1058.246, 55.62579, 178.3625)",
+      "speed_kph": 18.1948270797729,
+      "waiting": false,
+      "waypoint": 16
+    },
+    {
+      "angle": 0.0338768089354641,
+      "deviation": 0.613983154296875,
+      "loaded_wheels": 4,
+      "position": "(1059.242, 55.62579, 178.614)",
+      "speed_kph": 18.2139175415039,
+      "waiting": false,
+      "waypoint": 16
+    },
+    {
+      "angle": 0.0701031725992358,
+      "deviation": 0.758331298828125,
+      "loaded_wheels": 4,
+      "position": "(1060.241, 55.62579, 178.7583)",
+      "speed_kph": 18.2328826904297,
+      "waiting": false,
+      "waypoint": 16
+    },
+    {
+      "angle": 0.0148857603383444,
+      "deviation": 0.803955078125,
+      "loaded_wheels": 4,
+      "position": "(1061.251, 55.62579, 178.804)",
+      "speed_kph": 18.2517036437988,
+      "waiting": false,
+      "waypoint": 16
+    },
+    {
+      "angle": -0.484799769382212,
+      "deviation": 0.896148681640625,
+      "loaded_wheels": 4,
+      "position": "(1062.255, 55.62579, 178.8961)",
+      "speed_kph": 18.2707082748413,
+      "waiting": false,
+      "waypoint": 17
+    },
+    {
+      "angle": -0.458193309172659,
+      "deviation": 1.16433715820313,
+      "loaded_wheels": 4,
+      "position": "(1063.234, 55.62579, 179.1643)",
+      "speed_kph": 18.2898931503296,
+      "waiting": false,
+      "waypoint": 17
+    },
+    {
+      "angle": -0.317134637012508,
+      "deviation": 1.671142578125,
+      "loaded_wheels": 4,
+      "position": "(1064.135, 55.62579, 179.6711)",
+      "speed_kph": 18.3088651657105,
+      "waiting": false,
+      "waypoint": 17
+    },
+    {
+      "angle": -0.137703418122603,
+      "deviation": 2.33198547363281,
+      "loaded_wheels": 4,
+      "position": "(1064.931, 55.62579, 180.332)",
+      "speed_kph": 18.3279693603516,
+      "waiting": false,
+      "waypoint": 17
+    },
+    {
+      "angle": -0.480866588097844,
+      "deviation": 2.3795166015625,
+      "loaded_wheels": 4,
+      "position": "(1065.62, 55.62579, 181.0981)",
+      "speed_kph": 18.3467130661011,
+      "waiting": false,
+      "waypoint": 18
+    },
+    {
+      "angle": -0.322359195969829,
+      "deviation": 1.8095703125,
+      "loaded_wheels": 4,
+      "position": "(1066.19, 55.62579, 182.0623)",
+      "speed_kph": 18.2783832550049,
+      "waiting": false,
+      "waypoint": 18
+    },
+    {
+      "angle": -0.144135020541761,
+      "deviation": 1.4595947265625,
+      "loaded_wheels": 4,
+      "position": "(1066.54, 55.62551, 183.0341)",
+      "speed_kph": 18.2911926269531,
+      "waiting": false,
+      "waypoint": 18
+    },
+    {
+      "angle": 0.0480182194260844,
+      "deviation": 1.23583984375,
+      "loaded_wheels": 4,
+      "position": "(1066.764, 55.62539, 184.036)",
+      "speed_kph": 18.3214839935303,
+      "waiting": false,
+      "waypoint": 18
+    },
+    {
+      "angle": 0.0808823744800612,
+      "deviation": 0.8978271484375,
+      "loaded_wheels": 4,
+      "position": "(1067.102, 55.62581, 184.9874)",
+      "speed_kph": 18.3354417800903,
+      "waiting": false,
+      "waypoint": 18
+    },
+    {
+      "angle": -0.411305054366271,
+      "deviation": 0.4285888671875,
+      "loaded_wheels": 4,
+      "position": "(1067.571, 55.6258, 185.8878)",
+      "speed_kph": 18.3542026519775,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": -0.347444713678036,
+      "deviation": 0.1414794921875,
+      "loaded_wheels": 4,
+      "position": "(1067.859, 55.6258, 186.8567)",
+      "speed_kph": 18.3733171463013,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": -0.170684648183361,
+      "deviation": 0.115966796875,
+      "loaded_wheels": 4,
+      "position": "(1067.884, 55.6258, 187.8892)",
+      "speed_kph": 18.3924385070801,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0024152943225279,
+      "deviation": 0.2576904296875,
+      "loaded_wheels": 4,
+      "position": "(1067.742, 55.6258, 188.9108)",
+      "speed_kph": 18.4113212585449,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0504881653524976,
+      "deviation": 0.3433837890625,
+      "loaded_wheels": 4,
+      "position": "(1067.657, 55.6258, 189.9187)",
+      "speed_kph": 18.430224609375,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0511088185223546,
+      "deviation": 0.3902587890625,
+      "loaded_wheels": 4,
+      "position": "(1067.61, 55.6258, 190.928)",
+      "speed_kph": 17.9175338745117,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0517447379315511,
+      "deviation": 0.4371337890625,
+      "loaded_wheels": 4,
+      "position": "(1067.563, 55.6258, 191.934)",
+      "speed_kph": 17.9368131637573,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0523966970406218,
+      "deviation": 0.4840087890625,
+      "loaded_wheels": 4,
+      "position": "(1067.516, 55.6258, 192.9411)",
+      "speed_kph": 17.9559190750122,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0530653380025982,
+      "deviation": 0.5308837890625,
+      "loaded_wheels": 4,
+      "position": "(1067.469, 55.6258, 193.9493)",
+      "speed_kph": 17.9748550415039,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0537513175887336,
+      "deviation": 0.5777587890625,
+      "loaded_wheels": 4,
+      "position": "(1067.422, 55.6258, 194.9585)",
+      "speed_kph": 17.99362449646,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.05451452254507,
+      "deviation": 0.6285400390625,
+      "loaded_wheels": 4,
+      "position": "(1067.371, 55.6258, 196.0493)",
+      "speed_kph": 17.9256122589111,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0552383591831145,
+      "deviation": 0.6754150390625,
+      "loaded_wheels": 4,
+      "position": "(1067.325, 55.6258, 197.0558)",
+      "speed_kph": 17.9448125839233,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0559817386004686,
+      "deviation": 0.7222900390625,
+      "loaded_wheels": 4,
+      "position": "(1067.278, 55.6258, 198.0633)",
+      "speed_kph": 17.9638498306274,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0567454964914066,
+      "deviation": 0.7691650390625,
+      "loaded_wheels": 4,
+      "position": "(1067.231, 55.6258, 199.0719)",
+      "speed_kph": 17.9827154159546,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0575304996981767,
+      "deviation": 0.8160400390625,
+      "loaded_wheels": 4,
+      "position": "(1067.184, 55.6258, 200.0815)",
+      "speed_kph": 18.0014162063599,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0584050275162744,
+      "deviation": 0.8668212890625,
+      "loaded_wheels": 4,
+      "position": "(1067.133, 55.6258, 201.1704)",
+      "speed_kph": 17.9337163925171,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0592363744816403,
+      "deviation": 0.9136962890625,
+      "loaded_wheels": 4,
+      "position": "(1067.086, 55.6258, 202.1773)",
+      "speed_kph": 17.9528480529785,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0598399181800635,
+      "deviation": 0.959228515625,
+      "loaded_wheels": 4,
+      "position": "(1067.041, 55.6258, 203.1853)",
+      "speed_kph": 17.9718097686768,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0599861230786469,
+      "deviation": 1.005859375,
+      "loaded_wheels": 4,
+      "position": "(1066.994, 55.6258, 204.1944)",
+      "speed_kph": 17.9906015396118,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0598608879764964,
+      "deviation": 1.0489501953125,
+      "loaded_wheels": 4,
+      "position": "(1066.951, 55.6258, 205.2046)",
+      "speed_kph": 18.0092370986938,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0597568609721472,
+      "deviation": 1.091796875,
+      "loaded_wheels": 4,
+      "position": "(1066.908, 55.6258, 206.211)",
+      "speed_kph": 18.0284717559814,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0596769670498351,
+      "deviation": 1.1341552734375,
+      "loaded_wheels": 4,
+      "position": "(1066.866, 55.6258, 207.2184)",
+      "speed_kph": 18.0475330352783,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0596079711928721,
+      "deviation": 1.1749267578125,
+      "loaded_wheels": 4,
+      "position": "(1066.825, 55.6258, 208.2269)",
+      "speed_kph": 18.0664278030396,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0595541079941944,
+      "deviation": 1.21484375,
+      "loaded_wheels": 4,
+      "position": "(1066.785, 55.6258, 209.2365)",
+      "speed_kph": 18.0851560592651,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.059520269876873,
+      "deviation": 1.2542724609375,
+      "loaded_wheels": 4,
+      "position": "(1066.746, 55.6258, 210.2448)",
+      "speed_kph": 18.1041040420532,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.059577264205351,
+      "deviation": 1.2955322265625,
+      "loaded_wheels": 4,
+      "position": "(1066.704, 55.6258, 211.3353)",
+      "speed_kph": 18.0362703323364,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0596528634087164,
+      "deviation": 1.335693359375,
+      "loaded_wheels": 4,
+      "position": "(1066.664, 55.6258, 212.4268)",
+      "speed_kph": 17.9682598114014,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0596763091747328,
+      "deviation": 1.3724365234375,
+      "loaded_wheels": 4,
+      "position": "(1066.628, 55.6258, 213.436)",
+      "speed_kph": 17.9870927810669,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0597014134645777,
+      "deviation": 1.4073486328125,
+      "loaded_wheels": 4,
+      "position": "(1066.593, 55.6258, 214.4463)",
+      "speed_kph": 18.0057489395142,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0597396276153095,
+      "deviation": 1.44140625,
+      "loaded_wheels": 4,
+      "position": "(1066.559, 55.6258, 215.4528)",
+      "speed_kph": 18.0250144958496,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0598944024041278,
+      "deviation": 1.4781494140625,
+      "loaded_wheels": 4,
+      "position": "(1066.522, 55.6258, 216.5437)",
+      "speed_kph": 17.957105255127,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0599598624564954,
+      "deviation": 1.509521484375,
+      "loaded_wheels": 4,
+      "position": "(1066.49, 55.6258, 217.5525)",
+      "speed_kph": 17.9760326385498,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.060053430688124,
+      "deviation": 1.540283203125,
+      "loaded_wheels": 4,
+      "position": "(1066.46, 55.6258, 218.5624)",
+      "speed_kph": 17.9947900772095,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.059197937202318,
+      "deviation": 1.5697021484375,
+      "loaded_wheels": 4,
+      "position": "(1066.43, 55.6258, 219.5709)",
+      "speed_kph": 18.0137689590454,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0593197183457128,
+      "deviation": 1.597900390625,
+      "loaded_wheels": 4,
+      "position": "(1066.402, 55.6258, 220.578)",
+      "speed_kph": 18.0329675674438,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0594782672404029,
+      "deviation": 1.6258544921875,
+      "loaded_wheels": 4,
+      "position": "(1066.374, 55.6258, 221.5862)",
+      "speed_kph": 18.0519876480103,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0596755284201663,
+      "deviation": 1.6524658203125,
+      "loaded_wheels": 4,
+      "position": "(1066.348, 55.6258, 222.5955)",
+      "speed_kph": 18.0708429336548,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0599686221462344,
+      "deviation": 1.677734375,
+      "loaded_wheels": 4,
+      "position": "(1066.322, 55.62539, 223.6059)",
+      "speed_kph": 18.0901411056519,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0594689276155846,
+      "deviation": 1.702880859375,
+      "loaded_wheels": 4,
+      "position": "(1066.297, 55.62579, 224.696)",
+      "speed_kph": 18.0217735290527,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0597249224540407,
+      "deviation": 1.7252197265625,
+      "loaded_wheels": 4,
+      "position": "(1066.275, 55.6258, 225.7038)",
+      "speed_kph": 18.0409755706787,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0598402305443458,
+      "deviation": 1.74755859375,
+      "loaded_wheels": 4,
+      "position": "(1066.252, 55.6253, 226.7125)",
+      "speed_kph": 18.0595802307129,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0599462953572592,
+      "deviation": 1.7679443359375,
+      "loaded_wheels": 4,
+      "position": "(1066.232, 55.62576, 227.8059)",
+      "speed_kph": 17.991955947876,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0595536135800513,
+      "deviation": 1.185546875,
+      "loaded_wheels": 4,
+      "position": "(1066.213, 55.62578, 228.8145)",
+      "speed_kph": 18.0107082366943,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0600403690287125,
+      "deviation": 0.0950775146484375,
+      "loaded_wheels": 4,
+      "position": "(1066.194, 55.62578, 229.9049)",
+      "speed_kph": 17.9429122924805,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0594633467205347,
+      "deviation": 0.913345336914063,
+      "loaded_wheels": 4,
+      "position": "(1066.179, 55.62578, 230.9133)",
+      "speed_kph": 17.9619632720947,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0599171123586494,
+      "deviation": 1.835693359375,
+      "loaded_wheels": 4,
+      "position": "(1066.164, 55.62578, 231.9228)",
+      "speed_kph": 17.9808494567871,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0593862715360904,
+      "deviation": 1.847900390625,
+      "loaded_wheels": 4,
+      "position": "(1066.152, 55.62571, 232.9333)",
+      "speed_kph": 18.0061540603638,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0600881536542847,
+      "deviation": 1.8594970703125,
+      "loaded_wheels": 4,
+      "position": "(1066.141, 55.62424, 233.9403)",
+      "speed_kph": 18.0181943893433,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.05691247982169,
+      "deviation": 1.865234375,
+      "loaded_wheels": 4,
+      "position": "(1066.135, 55.62581, 235.0311)",
+      "speed_kph": 17.9509958267212,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.058403833976805,
+      "deviation": 1.8740234375,
+      "loaded_wheels": 4,
+      "position": "(1066.126, 55.62429, 236.0398)",
+      "speed_kph": 17.9640558242798,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0598692833931733,
+      "deviation": 1.8828125,
+      "loaded_wheels": 4,
+      "position": "(1066.117, 55.62485, 237.0499)",
+      "speed_kph": 18.008111000061,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0572207831038753,
+      "deviation": 1.8826904296875,
+      "loaded_wheels": 4,
+      "position": "(1066.117, 55.62585, 238.0586)",
+      "speed_kph": 18.0074466705322,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0583826594166612,
+      "deviation": 1.8858642578125,
+      "loaded_wheels": 4,
+      "position": "(1066.114, 55.62579, 239.149)",
+      "speed_kph": 17.9400644302368,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0599099775509365,
+      "deviation": 1.887451171875,
+      "loaded_wheels": 4,
+      "position": "(1066.113, 55.62579, 240.1574)",
+      "speed_kph": 17.9591720581055,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0600277242769926,
+      "deviation": 1.8875732421875,
+      "loaded_wheels": 4,
+      "position": "(1066.112, 55.62579, 241.1668)",
+      "speed_kph": 17.9780788421631,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0569047494558857,
+      "deviation": 1.880859375,
+      "loaded_wheels": 4,
+      "position": "(1066.119, 55.62579, 242.1772)",
+      "speed_kph": 17.9968191146851,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0588532993328966,
+      "deviation": 1.8779296875,
+      "loaded_wheels": 4,
+      "position": "(1066.122, 55.62579, 243.1863)",
+      "speed_kph": 18.0157808303833,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0599024557081376,
+      "deviation": 1.8726806640625,
+      "loaded_wheels": 4,
+      "position": "(1066.127, 55.62579, 244.1939)",
+      "speed_kph": 18.0349536895752,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0569739843935706,
+      "deviation": 1.85986328125,
+      "loaded_wheels": 4,
+      "position": "(1066.14, 55.62579, 245.2025)",
+      "speed_kph": 18.0539651870728,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0591441407854289,
+      "deviation": 1.85107421875,
+      "loaded_wheels": 4,
+      "position": "(1066.149, 55.62579, 246.2122)",
+      "speed_kph": 18.0728015899658,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0573917447204094,
+      "deviation": 1.834716796875,
+      "loaded_wheels": 4,
+      "position": "(1066.165, 55.62579, 247.2228)",
+      "speed_kph": 18.0914766311646,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0596660772276375,
+      "deviation": 1.820068359375,
+      "loaded_wheels": 4,
+      "position": "(1066.18, 55.62579, 248.2297)",
+      "speed_kph": 18.1107524871826,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0580104288781478,
+      "deviation": 1.798583984375,
+      "loaded_wheels": 4,
+      "position": "(1066.201, 55.62579, 249.2374)",
+      "speed_kph": 18.12985496521,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0589771479270777,
+      "deviation": 1.7767333984375,
+      "loaded_wheels": 4,
+      "position": "(1066.223, 55.62579, 250.2462)",
+      "speed_kph": 18.1487909317017,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0591404151580414,
+      "deviation": 1.75537109375,
+      "loaded_wheels": 4,
+      "position": "(1066.245, 55.62579, 251.2561)",
+      "speed_kph": 18.1675569534302,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0578216138685365,
+      "deviation": 1.7269287109375,
+      "loaded_wheels": 4,
+      "position": "(1066.273, 55.62579, 252.2644)",
+      "speed_kph": 18.1865478515625,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0591001744643536,
+      "deviation": 1.696533203125,
+      "loaded_wheels": 4,
+      "position": "(1066.303, 55.62579, 253.2712)",
+      "speed_kph": 18.2057378768921,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0596170807687882,
+      "deviation": 1.66650390625,
+      "loaded_wheels": 4,
+      "position": "(1066.333, 55.62579, 254.2791)",
+      "speed_kph": 18.2247905731201,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0587831583171629,
+      "deviation": 1.63037109375,
+      "loaded_wheels": 4,
+      "position": "(1066.37, 55.62579, 255.2879)",
+      "speed_kph": 18.243657875061,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0583814326475255,
+      "deviation": 1.587646484375,
+      "loaded_wheels": 4,
+      "position": "(1066.412, 55.62579, 256.3819)",
+      "speed_kph": 18.1753589630127,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0578927443485969,
+      "deviation": 1.54443359375,
+      "loaded_wheels": 4,
+      "position": "(1066.456, 55.62579, 257.3877)",
+      "speed_kph": 18.1946588516235,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0576537056685745,
+      "deviation": 1.4979248046875,
+      "loaded_wheels": 4,
+      "position": "(1066.502, 55.62579, 258.3943)",
+      "speed_kph": 18.2137870788574,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0576838444446381,
+      "deviation": 1.4476318359375,
+      "loaded_wheels": 4,
+      "position": "(1066.552, 55.62579, 259.4019)",
+      "speed_kph": 18.2327590942383,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0579627593841297,
+      "deviation": 1.3929443359375,
+      "loaded_wheels": 4,
+      "position": "(1066.607, 55.62579, 260.4102)",
+      "speed_kph": 18.2515560150147,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0585928379059848,
+      "deviation": 1.334228515625,
+      "loaded_wheels": 4,
+      "position": "(1066.666, 55.62579, 261.4194)",
+      "speed_kph": 18.2701795578003,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0596706579602068,
+      "deviation": 1.2716064453125,
+      "loaded_wheels": 4,
+      "position": "(1066.728, 55.62579, 262.4245)",
+      "speed_kph": 18.2894159317017,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0580951970516384,
+      "deviation": 1.1927490234375,
+      "loaded_wheels": 4,
+      "position": "(1066.807, 55.62579, 263.5143)",
+      "speed_kph": 18.2214826583862,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.059570032219056,
+      "deviation": 1.1187744140625,
+      "loaded_wheels": 4,
+      "position": "(1066.881, 55.62579, 264.5208)",
+      "speed_kph": 18.2403705596924,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0582018610288944,
+      "deviation": 1.0301513671875,
+      "loaded_wheels": 4,
+      "position": "(1066.97, 55.62579, 265.5273)",
+      "speed_kph": 18.2591382980347,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0605179856110682,
+      "deviation": 0.94287109375,
+      "loaded_wheels": 4,
+      "position": "(1067.057, 55.62579, 266.5324)",
+      "speed_kph": 18.2780433654785,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0597678699598736,
+      "deviation": 0.841552734375,
+      "loaded_wheels": 4,
+      "position": "(1067.158, 55.62579, 267.5348)",
+      "speed_kph": 18.2972110748291,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0607545495536302,
+      "deviation": 0.7315673828125,
+      "loaded_wheels": 4,
+      "position": "(1067.268, 55.62579, 268.5374)",
+      "speed_kph": 18.3162002563477,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0593947822440371,
+      "deviation": 0.6041259765625,
+      "loaded_wheels": 4,
+      "position": "(1067.396, 55.62579, 269.5391)",
+      "speed_kph": 18.3350280761719,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": 0.0528446744626358,
+      "deviation": 0.4605712890625,
+      "loaded_wheels": 4,
+      "position": "(1067.539, 55.62579, 270.5396)",
+      "speed_kph": 18.3536825180054,
+      "waiting": false,
+      "waypoint": 19
+    },
+    {
+      "angle": -0.236530807841455,
+      "deviation": 0.3260498046875,
+      "loaded_wheels": 4,
+      "position": "(1067.674, 55.62579, 271.5372)",
+      "speed_kph": 18.3729463577271,
+      "waiting": false,
+      "waypoint": 20
+    },
+    {
+      "angle": -0.150166370864736,
+      "deviation": 0.3787841796875,
+      "loaded_wheels": 4,
+      "position": "(1067.621, 55.62579, 272.5518)",
+      "speed_kph": 18.3920471191406,
+      "waiting": false,
+      "waypoint": 20
+    },
+    {
+      "angle": 0.0399639065601017,
+      "deviation": 0.6365966796875,
+      "loaded_wheels": 4,
+      "position": "(1067.363, 55.62579, 273.5472)",
+      "speed_kph": 18.4110774993896,
+      "waiting": false,
+      "waypoint": 20
+    },
+    {
+      "angle": 0.0797973850975482,
+      "deviation": 0.788330078125,
+      "loaded_wheels": 4,
+      "position": "(1067.212, 55.62579, 274.5458)",
+      "speed_kph": 18.4297954559326,
+      "waiting": false,
+      "waypoint": 20
+    },
+    {
+      "angle": -0.000443309569323357,
+      "deviation": 0.8115234375,
+      "loaded_wheels": 4,
+      "position": "(1067.188, 55.62579, 275.5593)",
+      "speed_kph": 17.9170532226563,
+      "waiting": false,
+      "waypoint": 20
+    },
+    {
+      "angle": -0.513624973433984,
+      "deviation": 0.911865234375,
+      "loaded_wheels": 4,
+      "position": "(1067.088, 55.62579, 276.5615)",
+      "speed_kph": 17.9363153457642,
+      "waiting": false,
+      "waypoint": 21
+    },
+    {
+      "angle": -0.448794923326118,
+      "deviation": 1.2415771484375,
+      "loaded_wheels": 4,
+      "position": "(1066.758, 55.62579, 277.5285)",
+      "speed_kph": 17.9554487228394,
+      "waiting": false,
+      "waypoint": 21
+    },
+    {
+      "angle": -0.308110186546651,
+      "deviation": 1.77978515625,
+      "loaded_wheels": 4,
+      "position": "(1066.22, 55.62579, 278.4116)",
+      "speed_kph": 17.9742765426636,
+      "waiting": false,
+      "waypoint": 21
+    },
+    {
+      "angle": -0.124839224331006,
+      "deviation": 2.4688720703125,
+      "loaded_wheels": 4,
+      "position": "(1065.531, 55.62579, 279.1844)",
+      "speed_kph": 17.9931198120117,
+      "waiting": false,
+      "waypoint": 21
+    },
+    {
+      "angle": -0.451084569598357,
+      "deviation": 2.17239379882813,
+      "loaded_wheels": 4,
+      "position": "(1064.723, 55.62579, 279.8276)",
+      "speed_kph": 18.0122085571289,
+      "waiting": false,
+      "waypoint": 22
+    },
+    {
+      "angle": -0.298023773914331,
+      "deviation": 1.68850708007813,
+      "loaded_wheels": 4,
+      "position": "(1063.81, 55.62579, 280.3115)",
+      "speed_kph": 18.0311857223511,
+      "waiting": false,
+      "waypoint": 22
+    },
+    {
+      "angle": -0.113646457437746,
+      "deviation": 1.37576293945313,
+      "loaded_wheels": 4,
+      "position": "(1062.825, 55.62566, 280.6242)",
+      "speed_kph": 18.04515209198,
+      "waiting": false,
+      "waypoint": 22
+    },
+    {
+      "angle": 0.0870635350822259,
+      "deviation": 1.15560913085938,
+      "loaded_wheels": 4,
+      "position": "(1061.738, 55.62568, 280.8444)",
+      "speed_kph": 17.9831342697144,
+      "waiting": false,
+      "waypoint": 22
+    },
+    {
+      "angle": 0.0933841871636141,
+      "deviation": 0.804473876953125,
+      "loaded_wheels": 4,
+      "position": "(1060.789, 55.62579, 281.1955)",
+      "speed_kph": 18.0010540008545,
+      "waiting": false,
+      "waypoint": 22
+    },
+    {
+      "angle": -0.375488695268966,
+      "deviation": 0.3736572265625,
+      "loaded_wheels": 4,
+      "position": "(1059.876, 55.62579, 281.6263)",
+      "speed_kph": 18.0202680587769,
+      "waiting": false,
+      "waypoint": 23
+    },
+    {
+      "angle": -0.28934639919315,
+      "deviation": 0.159942626953125,
+      "loaded_wheels": 4,
+      "position": "(1058.883, 55.62579, 281.8401)",
+      "speed_kph": 18.0394014358521,
+      "waiting": false,
+      "waypoint": 23
+    },
+    {
+      "angle": -0.107781644352627,
+      "deviation": 0.1942138671875,
+      "loaded_wheels": 4,
+      "position": "(1057.85, 55.62579, 281.8058)",
+      "speed_kph": 18.0583734512329,
+      "waiting": false,
+      "waypoint": 23
+    },
+    {
+      "angle": 0.0427270711269293,
+      "deviation": 0.34210205078125,
+      "loaded_wheels": 4,
+      "position": "(1056.834, 55.62579, 281.6579)",
+      "speed_kph": 18.0771566390991,
+      "waiting": false,
+      "waypoint": 23
+    },
+    {
+      "angle": 0.0570307144368446,
+      "deviation": 0.390289306640625,
+      "loaded_wheels": 4,
+      "position": "(1055.824, 55.62579, 281.6097)",
+      "speed_kph": 18.0958162307739,
+      "waiting": false,
+      "waypoint": 23
+    },
+    {
+      "angle": 0.0599130074664914,
+      "deviation": 0.429046630859375,
+      "loaded_wheels": 4,
+      "position": "(1054.818, 55.62579, 281.571)",
+      "speed_kph": 18.1150388717651,
+      "waiting": false,
+      "waypoint": 23
+    },
+    {
+      "angle": 0.0591455905216536,
+      "deviation": 0.462799072265625,
+      "loaded_wheels": 4,
+      "position": "(1053.727, 55.62579, 281.5372)",
+      "speed_kph": 18.0471124649048,
+      "waiting": false,
+      "waypoint": 23
+    },
+    {
+      "angle": 0.0585625840924666,
+      "deviation": 0.493316650390625,
+      "loaded_wheels": 4,
+      "position": "(1052.634, 55.62579, 281.5067)",
+      "speed_kph": 17.9790143966675,
+      "waiting": false,
+      "waypoint": 23
+    },
+    {
+      "angle": 0.0578718415310567,
+      "deviation": 0.518035888671875,
+      "loaded_wheels": 4,
+      "position": "(1051.624, 55.62579, 281.482)",
+      "speed_kph": 17.9977443695068,
+      "waiting": false,
+      "waypoint": 23
+    },
+    {
+      "angle": 0.0573835169294191,
+      "deviation": 0.539520263671875,
+      "loaded_wheels": 4,
+      "position": "(1050.615, 55.62579, 281.4605)",
+      "speed_kph": 18.01669921875,
+      "waiting": false,
+      "waypoint": 23
+    },
+    {
+      "angle": 0.057448192445665,
+      "deviation": 0.558990478515625,
+      "loaded_wheels": 4,
+      "position": "(1049.524, 55.62579, 281.441)",
+      "speed_kph": 17.9488706588745,
+      "waiting": false,
+      "waypoint": 23
+    },
+    {
+      "angle": 0.057453297347053,
+      "deviation": 0.57269287109375,
+      "loaded_wheels": 4,
+      "position": "(1048.515, 55.62579, 281.4273)",
+      "speed_kph": 17.9678615570068,
+      "waiting": false,
+      "waypoint": 23
+    },
+    {
+      "angle": 0.057718028182774,
+      "deviation": 0.58209228515625,
+      "loaded_wheels": 4,
+      "position": "(1047.505, 55.62579, 281.4179)",
+      "speed_kph": 17.9866928100586,
+      "waiting": false,
+      "waypoint": 23
+    },
+    {
+      "angle": 0.0583602841191335,
+      "deviation": 0.58740234375,
+      "loaded_wheels": 4,
+      "position": "(1046.495, 55.62579, 281.4126)",
+      "speed_kph": 18.0053575515747,
+      "waiting": false,
+      "waypoint": 23
+    },
+    {
+      "angle": 0.0594492885867168,
+      "deviation": 0.58807373046875,
+      "loaded_wheels": 4,
+      "position": "(1045.487, 55.62579, 281.4119)",
+      "speed_kph": 18.0246248245239,
+      "waiting": false,
+      "waypoint": 23
+    },
+    {
+      "angle": 0.0607723404891841,
+      "deviation": 0.582183837890625,
+      "loaded_wheels": 4,
+      "position": "(1044.479, 55.62579, 281.4178)",
+      "speed_kph": 18.0437187194824,
+      "waiting": false,
+      "waypoint": 23
+    },
+    {
+      "angle": 0.058910237730072,
+      "deviation": 0.569366455078125,
+      "loaded_wheels": 4,
+      "position": "(1043.47, 55.62579, 281.4306)",
+      "speed_kph": 18.0626512527466,
+      "waiting": false,
+      "waypoint": 23
+    },
+    {
+      "angle": 0.0601610384241761,
+      "deviation": 0.54876708984375,
+      "loaded_wheels": 4,
+      "position": "(1042.46, 55.62579, 281.4512)",
+      "speed_kph": 18.0814378738403,
+      "waiting": false,
+      "waypoint": 23
+    },
+    {
+      "angle": 0.0599674249053719,
+      "deviation": 0.522613525390625,
+      "loaded_wheels": 4,
+      "position": "(1041.452, 55.62579, 281.4774)",
+      "speed_kph": 18.1003927230835,
+      "waiting": false,
+      "waypoint": 23
+    },
+    {
+      "angle": 0.0592198552796121,
+      "deviation": 0.484954833984375,
+      "loaded_wheels": 4,
+      "position": "(1040.445, 55.62579, 281.515)",
+      "speed_kph": 18.1195913314819,
+      "waiting": false,
+      "waypoint": 23
+    },
+    {
+      "angle": 0.060071069205238,
+      "deviation": 0.43829345703125,
+      "loaded_wheels": 4,
+      "position": "(1039.437, 55.62579, 281.5617)",
+      "speed_kph": 18.1386234283447,
+      "waiting": false,
+      "waypoint": 23
+    },
+    {
+      "angle": 0.0616399298083599,
+      "deviation": 0.37774658203125,
+      "loaded_wheels": 4,
+      "position": "(1038.429, 55.62579, 281.6223)",
+      "speed_kph": 18.1574872970581,
+      "waiting": false,
+      "waypoint": 23
+    },
+    {
+      "angle": 0.0611602621629741,
+      "deviation": 0.302642822265625,
+      "loaded_wheels": 4,
+      "position": "(1037.421, 55.62579, 281.6974)",
+      "speed_kph": 18.1761743545532,
+      "waiting": false,
+      "waypoint": 23
+    },
+    {
+      "angle": 0.0935350406934498,
+      "deviation": 0.184906005859375,
+      "loaded_wheels": 4,
+      "position": "(1036.421, 55.62579, 281.8151)",
+      "speed_kph": 18.1954536437988,
+      "waiting": false,
+      "waypoint": 24
+    },
+    {
+      "angle": -0.00350961802807025,
+      "deviation": 0.0623779296875,
+      "loaded_wheels": 4,
+      "position": "(1035.438, 55.62579, 282.0624)",
+      "speed_kph": 18.2145750045776,
+      "waiting": false,
+      "waypoint": 24
+    },
+    {
+      "angle": -0.0102029864278994,
+      "deviation": 0.2437744140625,
+      "loaded_wheels": 4,
+      "position": "(1034.445, 55.62579, 282.2438)",
+      "speed_kph": 18.2335521697998,
+      "waiting": false,
+      "waypoint": 24
+    },
+    {
+      "angle": -0.0130689290164846,
+      "deviation": 0.423431396484375,
+      "loaded_wheels": 4,
+      "position": "(1033.452, 55.62579, 282.4234)",
+      "speed_kph": 18.2523336410522,
+      "waiting": false,
+      "waypoint": 24
+    },
+    {
+      "angle": -0.0181997040238466,
+      "deviation": 0.602935791015625,
+      "loaded_wheels": 4,
+      "position": "(1032.459, 55.62579, 282.6029)",
+      "speed_kph": 18.2713468551636,
+      "waiting": false,
+      "waypoint": 24
+    },
+    {
+      "angle": 0.425026144879936,
+      "deviation": 0.805328369140625,
+      "loaded_wheels": 4,
+      "position": "(1031.473, 55.62579, 282.8053)",
+      "speed_kph": 18.2906055450439,
+      "waiting": false,
+      "waypoint": 25
+    },
+    {
+      "angle": 0.340355653444719,
+      "deviation": 1.23223876953125,
+      "loaded_wheels": 4,
+      "position": "(1030.545, 55.62579, 283.2322)",
+      "speed_kph": 18.3096633911133,
+      "waiting": false,
+      "waypoint": 25
+    },
+    {
+      "angle": 0.167393489902731,
+      "deviation": 1.85842895507813,
+      "loaded_wheels": 4,
+      "position": "(1029.721, 55.62579, 283.8584)",
+      "speed_kph": 18.3284826278687,
+      "waiting": false,
+      "waypoint": 25
+    },
+    {
+      "angle": -0.0537309391170121,
+      "deviation": 2.6495361328125,
+      "loaded_wheels": 4,
+      "position": "(1028.935, 55.62579, 284.6495)",
+      "speed_kph": 18.2602832794189,
+      "waiting": false,
+      "waypoint": 25
+    },
+    {
+      "angle": 0.49910416861222,
+      "deviation": 2.1807861328125,
+      "loaded_wheels": 4,
+      "position": "(1028.181, 55.62579, 285.3207)",
+      "speed_kph": 18.2791299819946,
+      "waiting": false,
+      "waypoint": 26
+    },
+    {
+      "angle": 0.426007186421239,
+      "deviation": 1.57666015625,
+      "loaded_wheels": 4,
+      "position": "(1027.577, 55.62579, 286.1429)",
+      "speed_kph": 18.2983148574829,
+      "waiting": false,
+      "waypoint": 26
+    },
+    {
+      "angle": 0.25892206511582,
+      "deviation": 1.13427734375,
+      "loaded_wheels": 4,
+      "position": "(1027.134, 55.62579, 287.1723)",
+      "speed_kph": 18.2302528381348,
+      "waiting": false,
+      "waypoint": 26
+    },
+    {
+      "angle": 0.0398444158237705,
+      "deviation": 0.8973388671875,
+      "loaded_wheels": 4,
+      "position": "(1026.897, 55.62579, 288.268)",
+      "speed_kph": 18.1620826721191,
+      "waiting": false,
+      "waypoint": 26
+    },
+    {
+      "angle": 0.241156840462707,
+      "deviation": 0.692626953125,
+      "loaded_wheels": 4,
+      "position": "(1026.693, 55.62579, 289.2629)",
+      "speed_kph": 18.1807817459106,
+      "waiting": false,
+      "waypoint": 27
+    },
+    {
+      "angle": 0.191777483751415,
+      "deviation": 0.529296875,
+      "loaded_wheels": 4,
+      "position": "(1026.529, 55.62579, 290.2591)",
+      "speed_kph": 18.2001314163208,
+      "waiting": false,
+      "waypoint": 27
+    },
+    {
+      "angle": 0.0165862756114378,
+      "deviation": 0.62939453125,
+      "loaded_wheels": 4,
+      "position": "(1026.629, 55.62579, 291.2852)",
+      "speed_kph": 18.2192373275757,
+      "waiting": false,
+      "waypoint": 27
+    },
+    {
+      "angle": -0.0586217087464963,
+      "deviation": 0.7142333984375,
+      "loaded_wheels": 4,
+      "position": "(1026.714, 55.62579, 292.2943)",
+      "speed_kph": 18.2380411148071,
+      "waiting": false,
+      "waypoint": 27
+    },
+    {
+      "angle": -0.0572451558936959,
+      "deviation": 0.735595703125,
+      "loaded_wheels": 4,
+      "position": "(1026.736, 55.62579, 293.3042)",
+      "speed_kph": 18.2567848205566,
+      "waiting": false,
+      "waypoint": 27
+    },
+    {
+      "angle": -0.0600051409043053,
+      "deviation": 0.7587890625,
+      "loaded_wheels": 4,
+      "position": "(1026.759, 55.62579, 294.3126)",
+      "speed_kph": 18.2757448196411,
+      "waiting": false,
+      "waypoint": 27
+    },
+    {
+      "angle": -0.0580585037425155,
+      "deviation": 0.775634765625,
+      "loaded_wheels": 4,
+      "position": "(1026.776, 55.62579, 295.4043)",
+      "speed_kph": 18.2079437255859,
+      "waiting": false,
+      "waypoint": 27
+    },
+    {
+      "angle": -0.0570495134114528,
+      "deviation": 0.788330078125,
+      "loaded_wheels": 4,
+      "position": "(1026.788, 55.62579, 296.4126)",
+      "speed_kph": 18.2269603729248,
+      "waiting": false,
+      "waypoint": 27
+    },
+    {
+      "angle": -0.0602815216133719,
+      "deviation": 0.802734375,
+      "loaded_wheels": 4,
+      "position": "(1026.803, 55.62579, 297.4221)",
+      "speed_kph": 18.245810508728,
+      "waiting": false,
+      "waypoint": 27
+    },
+    {
+      "angle": -0.0596410733425088,
+      "deviation": 0.8101806640625,
+      "loaded_wheels": 4,
+      "position": "(1026.81, 55.62579, 298.4326)",
+      "speed_kph": 18.2644924163818,
+      "waiting": false,
+      "waypoint": 27
+    },
+    {
+      "angle": -0.0592271241173535,
+      "deviation": 0.814208984375,
+      "loaded_wheels": 4,
+      "position": "(1026.814, 55.62579, 299.4393)",
+      "speed_kph": 18.2837648391724,
+      "waiting": false,
+      "waypoint": 27
+    },
+    {
+      "angle": -0.0590123727696273,
+      "deviation": 0.814208984375,
+      "loaded_wheels": 4,
+      "position": "(1026.814, 55.62579, 300.4471)",
+      "speed_kph": 18.3028776168823,
+      "waiting": false,
+      "waypoint": 27
+    },
+    {
+      "angle": -0.0590431432982811,
+      "deviation": 0.810546875,
+      "loaded_wheels": 4,
+      "position": "(1026.811, 55.62579, 301.4559)",
+      "speed_kph": 18.3218238830566,
+      "waiting": false,
+      "waypoint": 27
+    },
+    {
+      "angle": -0.059438346375874,
+      "deviation": 0.8037109375,
+      "loaded_wheels": 4,
+      "position": "(1026.804, 55.62579, 302.4657)",
+      "speed_kph": 18.3405967712402,
+      "waiting": false,
+      "waypoint": 27
+    },
+    {
+      "angle": -0.0601420763771923,
+      "deviation": 0.7913818359375,
+      "loaded_wheels": 4,
+      "position": "(1026.791, 55.6261, 303.4741)",
+      "speed_kph": 18.3586761474609,
+      "waiting": false,
+      "waypoint": 27
+    },
+    {
+      "angle": -0.0595785097936455,
+      "deviation": 0.7711181640625,
+      "loaded_wheels": 4,
+      "position": "(1026.771, 55.62634, 304.481)",
+      "speed_kph": 18.3779417037964,
+      "waiting": false,
+      "waypoint": 27
+    },
+    {
+      "angle": -0.0585496157804268,
+      "deviation": 0.7489013671875,
+      "loaded_wheels": 4,
+      "position": "(1026.749, 55.62669, 305.4889)",
+      "speed_kph": 18.3973669052124,
+      "waiting": false,
+      "waypoint": 27
+    },
+    {
+      "angle": -0.0604976663258128,
+      "deviation": 0.7200927734375,
+      "loaded_wheels": 4,
+      "position": "(1026.72, 55.62758, 306.4976)",
+      "speed_kph": 18.4158496856689,
+      "waiting": false,
+      "waypoint": 27
+    },
+    {
+      "angle": -0.0544015500946659,
+      "deviation": 0.677490234375,
+      "loaded_wheels": 4,
+      "position": "(1026.677, 55.62831, 307.507)",
+      "speed_kph": 18.4345590591431,
+      "waiting": false,
+      "waypoint": 27
+    },
+    {
+      "angle": -0.0603380656471391,
+      "deviation": 0.6370849609375,
+      "loaded_wheels": 4,
+      "position": "(1026.637, 55.62919, 308.5168)",
+      "speed_kph": 17.9228141784668,
+      "waiting": false,
+      "waypoint": 27
+    },
+    {
+      "angle": -0.0611658502794061,
+      "deviation": 0.585205078125,
+      "loaded_wheels": 4,
+      "position": "(1026.585, 55.63027, 309.5228)",
+      "speed_kph": 17.9410291671753,
+      "waiting": false,
+      "waypoint": 27
+    },
+    {
+      "angle": -0.0606659188678634,
+      "deviation": 0.519287109375,
+      "loaded_wheels": 4,
+      "position": "(1026.519, 55.63151, 310.5291)",
+      "speed_kph": 17.9600612640381,
+      "waiting": false,
+      "waypoint": 27
+    },
+    {
+      "angle": -0.057617491589417,
+      "deviation": 0.4404296875,
+      "loaded_wheels": 4,
+      "position": "(1026.44, 55.63272, 311.5357)",
+      "speed_kph": 17.9790298461914,
+      "waiting": false,
+      "waypoint": 27
+    },
+    {
+      "angle": -0.0533312893752831,
+      "deviation": 0.3365478515625,
+      "loaded_wheels": 4,
+      "position": "(1026.337, 55.63435, 312.6251)",
+      "speed_kph": 18.4420932769775,
+      "waiting": false,
+      "waypoint": 27
+    }
+  ],
+  "saved_vehicle": true,
+  "seated_map_checked": true,
+  "waypoints": 28
+}
