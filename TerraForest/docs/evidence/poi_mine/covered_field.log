@@ -1,0 +1,51 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS profile initializes
+PASS one owned mine
+PASS east location owns all seven primitives
+PASS entrance belongs to graded surface location
+PASS no unrelated ambient networks
+PASS floor route seed=1703 segment=0
+PASS floor route seed=1703 segment=1
+PASS floor route seed=1703 segment=3
+PASS floor route seed=1703 segment=5
+PASS solid terrain roof over all underground chambers and branches
+PASS save restores exact owned underground
+PASS shared layout exposes mine ownership
+PASS profile initializes
+PASS one owned mine
+PASS east location owns all seven primitives
+PASS entrance belongs to graded surface location
+PASS no unrelated ambient networks
+PASS floor route seed=1 segment=0
+PASS floor route seed=1 segment=1
+PASS floor route seed=1 segment=3
+PASS floor route seed=1 segment=5
+PASS solid terrain roof over all underground chambers and branches
+PASS save restores exact owned underground
+PASS shared layout exposes mine ownership
+PASS profile initializes
+PASS one owned mine
+PASS east location owns all seven primitives
+PASS entrance belongs to graded surface location
+PASS no unrelated ambient networks
+PASS floor route seed=42 segment=0
+PASS floor route seed=42 segment=1
+PASS floor route seed=42 segment=3
+PASS floor route seed=42 segment=5
+PASS solid terrain roof over all underground chambers and branches
+PASS save restores exact owned underground
+PASS shared layout exposes mine ownership
+PASS profile initializes
+PASS one owned mine
+PASS east location owns all seven primitives
+PASS entrance belongs to graded surface location
+PASS no unrelated ambient networks
+PASS floor route seed=9999 segment=0
+PASS floor route seed=9999 segment=1
+PASS floor route seed=9999 segment=3
+PASS floor route seed=9999 segment=5
+PASS solid terrain roof over all underground chambers and branches
+PASS save restores exact owned underground
+PASS shared layout exposes mine ownership
+POI_UNDERGROUND failures=0

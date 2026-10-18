@@ -26,7 +26,7 @@ func run()->void:
   if arg.begins_with("--checkpoint-report="):report_path=arg.trim_prefix("--checkpoint-report=")
   if arg=="--reopen-checkpoint":reopening=true
   if arg=="--checkpoint-layout=mixed":mixed=true
-  if arg=="--checkpoint-layout=regional":mixed=true;regional=true
+  if arg in ["--checkpoint-layout=regional","--checkpoint-layout=poi"]:mixed=true;regional=true
  if report_path.is_empty():quit(1);return
  game=load("res://demo/world.tscn").instantiate();root.add_child(game)
  # Offline staging is committed explicitly after the complete generation batch.
@@ -121,6 +121,7 @@ func run()->void:
 
   if regional:
    if not await prepare_outer_sites():await finish(false);return
+   if not await prepare_underground_locations():await finish(false);return
    game.teleport(spawn)
    if not require(await wait_until(func():return not game.loading_active,60),"central spawn reloads after outer town generation"):await finish(false);return
    game.set_physics_process(false);game._clear_motion();game.player.position=spawn
@@ -210,3 +211,19 @@ func regional_block_signature()->Dictionary:
     var packet:PackedByteArray=game.structures.blocks.capture_region(Vector3i(x,y,z))
     if packet.size()>=100 and packet.decode_u32(32)>0:result[key]=packet.slice(packet.size()-32).hex_encode()
  return result
+
+func prepare_underground_locations()->bool:
+ var layout:Dictionary=preload("res://addons/volumetric_terrain/generated_layout.gd").describe(game.terrain.backend.world_seed,game.terrain.backend.world_generator)
+ for poi:Dictionary in layout.get("underground",[]):
+  var entrance:Vector3=poi.entrance
+  game.teleport(entrance+Vector3(15,0,0))
+  if not require(await wait_until(func():return not game.loading_active,60),"mine location streams before placement"):return false
+  game.set_physics_process(false);game._clear_motion();game.structure_rotation=0
+  var asset:Resource=preload("res://addons/structures/mine_catalog.gd").entrance()
+  if not require(asset!=null,"mine entrance prefab builds"):return false
+  var origin:=Vector3i(entrance)
+  var before:int=game.structures.blocks.stats().cells
+  if not require(game._place_combined_prefab(asset,origin,0),"mine entrance and storage publish through native combined transaction"):return false
+  if not require(game.structures.blocks.stats().cells>before,"mine timber frames exist in world"):return false
+  print("REGIONAL_MINE owner=",poi.owner_site," entrance=",entrance," cells=",game.structures.blocks.stats().cells)
+ return true

@@ -484,7 +484,7 @@ func _save() -> String:
 
 func _initialize_generated_components() -> bool:
 	components = {}
-	if world_generator in [4,6,7,8] and snapshot_validators.has("volumetric_water"):
+	if world_generator in [4,6,7,8,9,10,11] and snapshot_validators.has("volumetric_water"):
 		var definitions: PackedByteArray=_call(Codec.command(27))
 		var records: Array=[]
 		if not Codec.reply_ok(definitions) or definitions.size()!=192:

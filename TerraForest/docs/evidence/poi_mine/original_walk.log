@@ -1,0 +1,18 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[terrain-hitch] restore volumetric_water 116.39 ms at 2885
+[TerrainRewrite] World loaded
+[TerrainRewrite] World loaded
+[terrain-hitch] receive startup 131.78 ms at 2895
+[terrain-hitch] receive 133.23 ms at 2896
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+[TerrainRewrite] Temporary test world: save skipped
+MINE_WALK_PROGRESS pos=(1672.872, 31.59078, 1047.0) target=(1620.0, 27.0, 1047.0)
+PASS player reaches cave waypoint (1620.0, 27.0, 1047.0) actual=(1620.851, 27.0083, 1047.0)
+MINE_WALK_PROGRESS pos=(1667.392, 30.48693, 1047.0) target=(1770.0, 51.0, 1047.0)
+MINE_WALK_PROGRESS pos=(1766.415, 50.2916, 1047.0) target=(1770.0, 51.0, 1047.0)
+PASS player reaches cave waypoint (1770.0, 51.0, 1047.0) actual=(1769.056, 50.81775, 1047.0)
+MINE_WALK_WORLD failures=0 physics_ticks=1816 grounded=1803
+[TerrainRewrite] Temporary test world: save skipped

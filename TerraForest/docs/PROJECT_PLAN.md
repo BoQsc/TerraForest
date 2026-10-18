@@ -1,3 +1,78 @@
+## Mine roof correction verified - 2026-10-18 (partial)
+
+Profile 11 surveys terrain above the underground footprint once during generation.
+Four-seed cover/floor/save checks pass. Full world create and reopen pass, and actual
+player descent/return passes (1,841 physics ticks, 1,821 grounded). Exterior review
+confirms the unintended exposed chamber holes seen in profile 10 are gone.
+See [evidence](evidence/poi_mine/README.md), including retained failure images.
+
+This supersedes the roof blocker below for the reviewed world, not all seeds.
+The basic entrance needs location design, the yard needs vegetation exclusion,
+and the prefab cellar remains unfinished. No sustained-performance claim. Default
+launchers remain on v3; the development save is poi_covered_20261018. Continue with
+integrated POIs and basements, then substantial lakes and other map coverage.
+
+## Integrated mine review - 2026-10-18 (not ready to publish)
+
+The opt-in `--layout poi` preparation now places a native batched timber entrance
+and chest beside site 2, using the native-owned entrance coordinate. Full world
+creation and fresh-process reload pass with sixteen buildings and 10,637 block
+cells: reports/combined_preparation/20261018T064911463133Z.
+Actual player descent and return pass (1,816 physics ticks, 1,803 grounded) in
+reports/mine_walk_20261018. This does not establish branch access or performance.
+
+Exterior capture in reports/mine_walk_exterior_20261018/entrance.png reveals a
+blocking design defect: the chosen mine cuts through low terrain and exposes parts
+of its underground geometry at the surface. The frames/storage are present, but
+the location is not visually acceptable. Do not promote this saved review world.
+Next fix mine siting/roof containment against the actual terrain envelope, then
+recheck the integrated exterior and traversal. Prefab cellar remains unfinished.
+
+## POI-owned underground implementation started - 2026-10-18
+
+Opt-in native generator 10 now generates one mine owned by eastern regional site 2,
+with its entrance on the site's graded footprint. It generates no ambient cave
+networks. Native command 35 and GeneratedLayout expose stable ownership, entrance,
+bounds and primitive range for surface-prefab composition and placement exclusions.
+The field uses seven constant-size primitives and the common terrain extraction path.
+
+Four-seed ownership, floor-route, exact save/restore and shared-layout checks pass:
+reports/checks/20261018T064717852407Z. Both native targets built using the existing
+prebuilt SDK. This is geometry/metadata evidence, not a finished explorable mine.
+Surface mine buildings, entrance dressing, prefab cellar, actual player traversal,
+roof containment across terrain variation and combined performance remain unfinished.
+Public generated-world launchers remain on profile 8/v3; profile 10 is not promoted.
+Next connect the mine metadata to the actual location composition and validate the
+whole entrance/underground experience before publishing a new generated world.
+
+## Underground direction correction - 2026-10-18 (current priority)
+
+Underground spaces belong to selected points of interest and building prefabs.
+They are rarer exploration destinations, not a general map-wide cave network.
+This supersedes earlier cave-network distribution and "next" statements below.
+
+- Basements and cellars belong to specific building prefabs with usable entrances.
+- Mines and mineshafts belong to selected surface locations, with deliberate access,
+  chambers, branches and an exploration purpose.
+- Secret caverns are rare discoveries reached through concealed entrances or those
+  locations; most buildings and regions have no underground complex.
+- The generator must record ownership, entrance and bounds with the POI layout so
+  terrain, buildings, roads, placement exclusions and saved identity agree.
+- Keep underground generation deterministic and local to selected POIs; do not add
+  a permanently simulated global cave network.
+
+Profiles 8 and 9 contain provisional standalone networks. Their chamber geometry
+and route corrections are reusable work, not completion of the requested design.
+Profile 9 route field checks passed (893 samples), and its regional world preparation
+and reopen passed in reports/combined_preparation/20261018T063826330590Z.
+Actual player route traversal remains unverified. Do not promote that experimental
+world as the finished POI layout. The public launchers remain on generated_world_v3.
+
+Next underground deliverable: one integrated surface mine POI with its owned
+underground space and usable entrance, plus a prefab-owned cellar example in the
+same world. Verify access, ownership, save/reload and combined world behavior before
+expanding the distribution. Water work and food remain deferred.
+
 ## Domed caves integrated into generator 8 - 2026-10-18
 
 New profile 8 keeps the regional map and adds four cave networks, each with three

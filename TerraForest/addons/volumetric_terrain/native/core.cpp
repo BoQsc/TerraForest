@@ -102,10 +102,15 @@ float World::base(V3 p,float h)const{
   const Cave&c=caves[i];
   if(p.x<mn(c.a.x,c.b.x)-c.r-5||p.x>mx(c.a.x,c.b.x)+c.r+5||p.z<mn(c.a.z,c.b.z)-c.r-5||p.z>mx(c.a.z,c.b.z)+c.r+5||p.y<mn(c.a.y,c.b.y)-c.r-5||p.y>mx(c.a.y,c.b.y)+c.r+5)continue;
   float air=-capsule(p,c.a,c.b,c.r);
-  if(generator_id==CHAMBER_WORLD_GENERATOR_ID){
+  if(generator_id>=CHAMBER_WORLD_GENERATOR_ID){
    V3 along=c.b-c.a;along.y=0;V3 offset=p-c.a;offset.y=0;
    float t=clampf(dot(offset,along)/mx(dot(along,along),1e-8f),0,1);
    float floor=c.a.y+(c.b.y-c.a.y)*t-c.floor_drop;
+   if(generator_id>=ROUTED_CHAMBER_GENERATOR_ID){
+    const Cave &ramp=caves[(i/7)*7];
+    float t=clampf((p.x-ramp.b.x)/(ramp.a.x-ramp.b.x),0,1);
+    floor=ramp.b.y-5.f+(ramp.a.y-ramp.b.y)*t;
+   }
    air=mn(air,p.y-floor); // Flat chamber floors and continuous passage ramps.
   }
   d=mx(d,air);
@@ -133,6 +138,29 @@ void World::init(int p_seed,u32 generator){
   }
   basin_count=4;
  }
+ if(generator_id>=POI_UNDERGROUND_GENERATOR_ID){
+  // One mine belongs to east regional site 2. No ambient cave networks.
+  // Entrance is inside that site's graded footprint, away from its arterial.
+  const V3 owner=sites[2].position;
+  float floor=mx(12.f,owner.y-24.f);
+  if(generator_id==COVERED_MINE_GENERATOR_ID){
+   // Survey once during generation, not on density queries. Reserve cover for
+   // the largest dome over the entire underground footprint, including branches.
+   float ceiling=255.f;
+   for(int dx=-212;dx<=-100;dx+=2)for(int dz=-52;dz<=36;dz+=2)
+    ceiling=mn(ceiling,height(owner.x+dx,owner.z+50.f+dz));
+   floor=mn(floor,ceiling-24.f);
+  }
+  V3 entrance={owner.x,owner.y+5.f,owner.z+50.f};
+  V3 landing={owner.x-120.f,floor+5.f,owner.z+50.f};
+  V3 hall={owner.x-150.f,floor,owner.z+50.f},end=hall+V3{0,5,0};
+  caves.push({entrance,landing,6.f,5.f});caves.push({landing,end,6.f,5.f});
+  caves.push({hall,hall,18.f,0.f});
+  V3 workings=hall+V3{-45.f,0,20.f},secret=hall+V3{0,0,-40.f};
+  caves.push({end,workings+V3{0,5,0},6.f,5.f});caves.push({workings,workings,12.f,0.f});
+  caves.push({end,secret+V3{0,5,0},6.f,5.f});caves.push({secret,secret,10.f,0.f});
+  return;
+ }
  if(generator_id>=2){
   // Four connected entrance/tunnel/chamber systems. All capsules remain in the
   // canonical cave list used by density, mesh envelopes and visibility queries.
@@ -145,13 +173,14 @@ void World::init(int p_seed,u32 generator){
    entrance.y=height(entrance.x,entrance.z)+(generator_id>=WALKABLE_CAVE_GENERATOR_ID?6.f:-2.f);
    float floor=mx(25.f,mn(height(x,z)-45.f,75.f));
    V3 bend={x+side*110.f,floor+10.f,z+float(int(c&63)-31)},center={x,floor,z};
-   if(generator_id==CHAMBER_WORLD_GENERATOR_ID){
+   if(generator_id>=CHAMBER_WORLD_GENERATOR_ID){
     // Shared floor datum: wide domes, not deep spherical bowls. Passage
     // centerlines meet five metres above that floor and retain arched ceilings.
     float ground=mx(12.f,mn(height(x,z)-55.f,60.f));
     entrance.y=height(entrance.x,entrance.z)+5.f;
     V3 hall={x,ground,z},end={x,ground+5.f,z};
     bend.y=entrance.y+(end.y-entrance.y)*(120.f/230.f);
+    if(generator_id==ROUTED_CHAMBER_GENERATOR_ID)bend={x+side*(46.f+float((c>>8)&7)),ground+5.f,z};
     caves.push({entrance,bend,7.f,5.f});caves.push({bend,end,8.f,5.f});
     caves.push({hall,hall,32.f+float((c>>8)&7),0.f});
     V3 second={x-side*90.f,ground,z+65.f},second_entry=second+V3{0,5,0};
@@ -345,7 +374,7 @@ bool World::deserialize(const u8*data,int n){
  Reader r{data,n-4};if(r.u()!=SAVE_MAGIC)return false;u32 format=r.u();if(format!=1&&format!=2)return false;
  int s=int(r.u()),pc=int(r.u()),bc=int(r.u()),rev=int(r.u()),ed=int(r.u());
  u32 generator=format==1?1:r.u();
- if(!r.good||generator<1||generator>CHAMBER_WORLD_GENERATOR_ID)return false;
+ if(!r.good||generator<1||generator>COVERED_MINE_GENERATOR_ID)return false;
  if(pc<0||pc>MAX_PAGES||bc<0||bc>2000000||i64(pc)*(4+PAGE_SAMPLES*3)+i64(bc)*8+(format==1?28:32)!=n-4)return false;
  World t;t.build_control=build_control;t.init(s,generator);t.revision=rev;t.edits=ed;t.surface_style=surface_style;
  for(int i=0;i<pc;i++){
@@ -974,7 +1003,7 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
  }
  else if(cmd==4){w.serialize(out);}
  else if(cmd==5){if(!w.deserialize(data+4,n-4))out.p[8]=1;out.u(w.revision);out.u(w.pages.n);out.u(w.blocks.n);}
- else if(cmd==6){int seed=int(r.u());u32 generator=n==12?r.u():1;if(!r.good||(n!=8&&n!=12)||generator<1||generator>CHAMBER_WORLD_GENERATOR_ID){out.p[8]=1;return;}BuildControl *control=w.build_control;w.release();w=World{};w.build_control=control;w.init(seed,generator);}
+ else if(cmd==6){int seed=int(r.u());u32 generator=n==12?r.u():1;if(!r.good||(n!=8&&n!=12)||generator<1||generator>COVERED_MINE_GENERATOR_ID){out.p[8]=1;return;}BuildControl *control=w.build_control;w.release();w=World{};w.build_control=control;w.init(seed,generator);}
  else if(cmd==7){V3 p=r.vec();if(!r.good||!(ab(p.x)<=10000&&ab(p.y)<=10000&&ab(p.z)<=10000)){out.p[8]=1;return;}out.f(w.height(p.x,p.z));out.f(w.sample(fl(p.x),fl(p.y),fl(p.z)));}
  else if(cmd==8){ // Deterministic construction proof; not a replay list.
   int bx=1472,bz=1440,by=int(w.height(float(bx),float(bz)))+1;
@@ -1134,6 +1163,20 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
    }else value=w.sample(fl(p.x),fl(p.y),fl(p.z));
    for(u32 down=1;down<=depth;down++)value=mx(value,w.sample(fl(p.x),int(mx(3.f,float(fl(p.y))-down)),fl(p.z)));
    out.f(value);
+  }
+ }
+ else if(cmd==35){
+  if(n!=4){out.p[8]=1;return;}
+  // Version, count; each record: stable POI id, surface owner, kind,
+  // entrance floor, conservative bounds, first primitive, primitive count.
+  out.u(1);out.u(w.generator_id>=POI_UNDERGROUND_GENERATOR_ID?1:0);
+  if(w.generator_id>=POI_UNDERGROUND_GENERATOR_ID){
+   V3 lo={WORLD,WORLD_Y,WORLD},hi={0,0,0};
+   for(int i=0;i<w.caves.n;i++){const Cave &c=w.caves[i];
+    lo={mn(lo.x,mn(c.a.x,c.b.x)-c.r),mn(lo.y,mn(c.a.y,c.b.y)-c.r),mn(lo.z,mn(c.a.z,c.b.z)-c.r)};
+    hi={mx(hi.x,mx(c.a.x,c.b.x)+c.r),mx(hi.y,mx(c.a.y,c.b.y)+c.r),mx(hi.z,mx(c.a.z,c.b.z)+c.r)};
+   }
+   out.u(1);out.u(2);out.u(1);out.vec(w.caves[0].a-V3{0,5,0});out.vec(lo);out.vec(hi);out.u(0);out.u(w.caves.n);
   }
  }
  else if(cmd==34){
