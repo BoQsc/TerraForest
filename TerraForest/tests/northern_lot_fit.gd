@@ -69,6 +69,7 @@ func _initialize()->void:
    var supports:=PackedVector3Array()
    for lot:Dictionary in plan.lots:supports.append_array(lot.asset.foundation_samples(lot.origin,lot.rotation,0))
    supports.append_array(plan.sidewalk_asset.foundation_samples(plan.sidewalk_origin,0,0))
+   supports.append_array(plan.common.asset.foundation_samples(plan.common.origin,0,0))
    var unsupported:=0
    for offset in range(0,supports.size(),512):
     var batch:PackedVector3Array=supports.slice(offset,mini(offset+512,supports.size()))

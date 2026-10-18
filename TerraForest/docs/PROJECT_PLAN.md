@@ -1,5 +1,18 @@
 ## Current integrated entry point - 2026-10-18
 
+Northern common is integrated: a connected 2 m path with two furnished areas,
+retained planting and a public supply chest. The existing native stores/rendering,
+collision and storage UI own its 184 paving cells and seven shared props. Initial
+survey and terrain beds are now part of the neighborhood master plan, before
+structure publication. Seven-seed layout/fit, all 3,688 native support samples,
+four-rotation combined placement/snapshot checks, full world generation/reopen,
+13 actual walking waypoints, E/loot UI and depleted chest/inventory disk restoration
+pass. Views inspected; evidence/neighborhood_common retains rejected staging runs.
+Review launcher now opens a separate v9 copy of northern_common_42_20261018.
+Walking p95 16.828 ms / worst 17.755 ms; no steady 60 FPS or thermal qualification.
+The common's furniture is destructible static furnishing; sitting remains future
+character gameplay. Broader landscape continuity and whole-world quality remain open.
+
 Northern vehicle access is integrated in a new saved world: a surveyed off-road bay
 and third parked vehicle, preserving the existing fleet/activation/storage paths.
 Seven-seed fit and home clearance, full generation/fresh-process restoration,

@@ -348,8 +348,16 @@ func prepare_northern_lots(center:Vector3)->bool:
   var survey:Dictionary=await game.site_survey.assess(game.terrain,lot.asset,lot.origin,lot.rotation)
   if not require(survey.ok,"lot surveyed before any grading: "+lot.label):return false
   surveys.append(survey)
+ var common:Dictionary=preload("res://addons/structures/neighborhood_common.gd").build(center)
+ if not require(common.ok,"northern common recipe builds before grading"):return false
+ var common_survey:Dictionary=await game.site_survey.assess(game.terrain,common.asset,common.origin,0)
+ common_survey.grade=center.y
+ var common_quality:Dictionary=WorldQuality.site(common_survey,"Northern common paths and furniture")
+ if not require(common_quality.status=="pass","common pre-edit earthworks fit: "+str(common_quality)+" survey="+str(common_survey)):return false
+ world_quality_sites.append(common_quality)
  var plan:Dictionary=builder.assemble(lots,center,surveys)
  if not require(plan.ok,"independent northern lot plan: "+str(plan.get("reason","accepted"))):return false
+ plan.common["survey"]=common_survey
  var road_probe:Resource=builder.street_probe(center)
  if not require(road_probe!=null,"northern road survey geometry"):return false
  var road_survey:Dictionary=await game.site_survey.assess(game.terrain,road_probe,Vector3i(center),0)
@@ -376,8 +384,15 @@ func prepare_northern_lots(center:Vector3)->bool:
   game._begin_frontage_placement(lot.asset,lot.origin,true)
   if not require(await wait_until(func():return game._foundation_placement.is_empty(),20) and game.doors.collection.get_ids().size()==doors+1,"terrain-fitted building published: "+lot.label+" support="+game.foundation_check.status):return false
  if not require(game._place_combined_prefab(plan.sidewalk_asset,plan.sidewalk_origin,0),"native concrete walkways published"):return false
+ if not prepare_northern_common(plan.common):return false
  var groves:=PackedVector3Array()
  for x in [-60,60]:
   for z in [-26,26]:groves.append(Vector3(center.x+x,16,center.z+z))
  if not require(game.ecosystem.configure_groves(groves),"persistent native neighborhood groves configured"):return false
+ return true
+
+func prepare_northern_common(common:Dictionary)->bool:
+ # Terrain beds belong to the master plan and run before any structure publication.
+ if not require(game._place_combined_prefab(common.asset,common.origin,0),"common paving, shared furniture and public chest publish together: "+game.construction_inventory.reason):return false
+ print("NORTHERN_COMMON origin=",common.origin," blocks=",common.asset.get_records().size()/4," props=",common.asset.get_model_attachments().size()," survey=",common.survey)
  return true

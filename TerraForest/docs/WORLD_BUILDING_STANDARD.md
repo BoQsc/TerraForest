@@ -85,6 +85,24 @@ residency and test scope; 60 FPS caps do not prove spare GPU/CPU capacity. Hardw
 changes require separate baselines. Long-run/thermal, larger world and multiplayer
 readiness require their own evidence and must remain open until demonstrated.
 
+## Check authoring primitives before a complete bake
+
+Before an integrated bake, run short checks against the actual native placement API,
+not only recipe counts or diagrams. Cover the occupied footprint, connected paths,
+prop support, attachment envelopes and combined block/model publication. A mesh
+attachment's collision parts must fit inside its declared placement envelope.
+
+Survey the planned common spaces together with lots and roads before the related
+earthworks. Natural-root sampling after grading is not an edited-surface survey.
+Put all related ground preparation into the master plan, then publish paving,
+buildings and attached models. Do not schedule new terrain cuts through blocks that
+have already been placed, or bypass normal protection to make that ordering work.
+
+Use a direct native or targeted saved-world reproduction for a publication failure
+before repeating a complete world bake. Retain failed staging evidence and do not
+publish those partial worlds as review saves. Native checks do not replace the
+subsequent complete-world restore, traversal, interaction and image review.
+
 ## Required review evidence and current disposition
 
 For each generator recipe/location, retain the seed/version, pre-edit survey and

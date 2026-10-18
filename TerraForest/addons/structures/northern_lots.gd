@@ -62,6 +62,10 @@ static func assemble(lots:Array,center:Vector3,surveys:Array)->Dictionary:
  if not pavement.ok:return pavement
  plan.sidewalk_asset=pavement.asset;plan.sidewalk_origin=Vector3i(center)-Vector3i(0,1,0)
  for bed:Dictionary in pavement.beds:plan.segments.append(bed);plan.bounds=plan.bounds.merge(bed.bounds)
+ var common:Dictionary=preload("res://addons/structures/neighborhood_common.gd").build(center)
+ if not common.ok:return common
+ plan.common=common
+ for bed:Dictionary in common.segments:plan.segments.append(bed);plan.bounds=plan.bounds.merge(bed.bounds)
  for path:Dictionary in paths:plan.segments.append(path);plan.bounds=plan.bounds.merge(path.bounds)
  plan.paving_segments=roads.size()+paths.size();plan.street_ends=plan.street_lines.slice(0,2)
  return plan

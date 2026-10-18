@@ -1,0 +1,73 @@
+{
+  "clone": {
+    "created": true,
+    "slot": "common_walk_c59fe92f0fa74e23",
+    "source_slot": "northern_common_42_20261018",
+    "source_sha256": "f528d089c0d38d29cfa79f76e1fa7379af1b29a08a9d0603b92ff8312f79aa6b"
+  },
+  "phases": [
+    {
+      "phase": "collect",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "pid": 31188,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 36.828835100001015,
+        "passed": true
+      },
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--fullscreen",
+        "--resolution",
+        "1920x1080",
+        "--max-fps",
+        "60",
+        "--script",
+        "res://tests/neighborhood_common_world.gd",
+        "--",
+        "--world-slot=common_walk_c59fe92f0fa74e23",
+        "--ground-cover",
+        "--actors",
+        "--vehicle-fleet",
+        "--gameplay-construction"
+      ]
+    },
+    {
+      "phase": "reopen",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "pid": 36128,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 20.133753199999774,
+        "passed": true
+      },
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--fullscreen",
+        "--resolution",
+        "1920x1080",
+        "--max-fps",
+        "60",
+        "--script",
+        "res://tests/neighborhood_common_world.gd",
+        "--",
+        "--world-slot=common_walk_c59fe92f0fa74e23",
+        "--ground-cover",
+        "--actors",
+        "--vehicle-fleet",
+        "--gameplay-construction",
+        "--common-reopen"
+      ]
+    }
+  ]
+}
