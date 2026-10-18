@@ -1,5 +1,11 @@
 ## Current integrated entry point - 2026-10-18
 
+Northern streets now form a connected loop: three cross streets plus two side
+streets, replacing six raw ends. Seven-seed corridor grades/connectivity/building
+separation and native lot support pass. Full save/reopen and inspected views:
+loop_district_42_20261018; evidence/northern_street_loop. Sidewalks, vehicle turning,
+building variety and landscape acceptance remain open.
+
 Northern lot grading now uses narrower capsule strips: affected-lot outside-surface
 excavation samples fall 157 to 37; all 3,336 foundation supports pass. Full creation,
 reload and inspected matching views pass in narrow_lots_42_20261018. Large cut/apron

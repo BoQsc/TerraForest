@@ -18,6 +18,13 @@ func run()->void:
  if fitted:
   # Use the arterial between parallel streets, never cut across building lots.
   route=[corner,streets[0][0],streets[0][1],corner,center,streets[1][0],streets[1][1],center,Vector3(center.x,center.y,streets[2][0].z),streets[2][0],streets[2][1]]
+ if "--loop-roads" in OS.get_cmdline_user_args():
+  var side_count:=0
+  for street:Dictionary in game.road_palette.prepared_streets:
+   var a:Vector3=street.ends[0];var b:Vector3=street.ends[1]
+   if a.distance_to(center)<100 and b.distance_to(center)<100 and absf(a.x-b.x)<0.1 and absf(a.z-b.z)>100:side_count+=1
+  if side_count!=2:failure="expected two saved neighborhood side streets";await finish();return
+  route=[corner,left,right,streets[2][1],streets[2][0],left,streets[1][0],streets[1][1],center]
  game.teleport(center)
  if not await ready_world(45):failure="north arrival timeout";await finish();return
  game.fly=false;game.app_focused=true;Input.mouse_mode=Input.MOUSE_MODE_CAPTURED

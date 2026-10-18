@@ -329,14 +329,8 @@ func prepare_northern_lots(center:Vector3)->bool:
   surveys.append(survey)
  var plan:Dictionary=builder.assemble(lots,center,surveys)
  if not require(plan.ok,"independent northern lot plan: "+str(plan.get("reason","accepted"))):return false
- var records:=PackedInt32Array()
- for z in [-52,0,52]:
-  for x in range(-50,51):
-   # The existing arterial crossing is already paved; natural-root surveys reject asphalt.
-   if absi(x)<8:continue
-   for dz in range(-4,5):records.append_array(PackedInt32Array([x,0,z+dz,1]))
- var road_probe:Resource=ClassDB.instantiate("NativeBlockPrefab")
- if not road_probe.configure(records):return false
+ var road_probe:Resource=builder.street_probe(center)
+ if not require(road_probe!=null,"northern road survey geometry"):return false
  var road_survey:Dictionary=await game.site_survey.assess(game.terrain,road_probe,Vector3i(center),0)
  road_survey.grade=center.y
  var road_quality:Dictionary=WorldQuality.site(road_survey,"Northern street corridors")

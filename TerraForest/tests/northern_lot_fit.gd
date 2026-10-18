@@ -21,6 +21,34 @@ func _initialize()->void:
      var height:float=reply.decode_float(20+i*12)
      low=minf(low,height);high=maxf(high,height)
    surveys.append({"ok":is_finite(low) and is_finite(high),"min_height":low,"max_height":high})
+  var roads:Array=Lots.street_segments(center)
+  for road:Dictionary in roads:
+   for endpoint:Vector3 in [road.start,road.finish]:
+    var connected:=false
+    for other:Dictionary in roads:
+     if other==road:continue
+     var span:Vector3=other.finish-other.start
+     var near:Vector3=other.start+span*clampf((endpoint-other.start).dot(span)/span.length_squared(),0,1)
+     connected=connected or near.distance_to(endpoint)<0.01
+    if not connected:print("LOOP_DANGLING_END ",endpoint);failures+=1
+   for lot:Dictionary in lots:
+    for point:Vector3 in lot.asset.foundation_samples(lot.origin,lot.rotation,0):
+     point.y=center.y
+     var span:Vector3=road.finish-road.start
+     var near:Vector3=road.start+span*clampf((point-road.start).dot(span)/span.length_squared(),0,1)
+     if near.distance_to(point)<road.half_width+0.5:print("LOOP_BUILDING_OVERLAP ",point);failures+=1;break
+  var road_points:PackedVector3Array=Lots.street_probe(center).foundation_samples(Vector3i(center),0,0)
+  var road_low:=INF;var road_high:=-INF
+  for offset in range(0,road_points.size(),64):
+   var batch:PackedVector3Array=road_points.slice(offset,mini(offset+64,road_points.size()))
+   var query:=Codec.command(17,[batch.size()]);query.append_array(batch.to_byte_array())
+   var reply:PackedByteArray=core.execute(query)
+   if not Codec.reply_ok(reply):failures+=1;continue
+   for i in batch.size():
+    road_low=minf(road_low,reply.decode_float(20+i*12));road_high=maxf(road_high,reply.decode_float(20+i*12))
+  var road_quality:Dictionary=preload("res://addons/world_runtime/world_building_quality.gd").site({"ok":is_finite(road_low) and is_finite(road_high),"min_height":road_low,"max_height":road_high,"grade":center.y},"Loop roads")
+  print("LOOP_ROAD_FIT seed=",seed_value," quality=",road_quality)
+  if road_quality.status!="pass":failures+=1
   var plan:Dictionary=Lots.assemble(lots,center,surveys)
   if not plan.ok:print("LOT_FIT_REJECT seed=",seed_value," detail=",plan);failures+=1;continue
   if seed_value==42:

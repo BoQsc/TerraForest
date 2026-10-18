@@ -50,16 +50,35 @@ static func assemble(lots:Array,center:Vector3,surveys:Array)->Dictionary:
  if not asset.compose(modules,placements):return {"ok":false,"reason":"Lot composition failed"}
  asset.resource_name="Northern neighborhood · independently fitted lots"
  var plan:Dictionary={"ok":true,"asset":asset,"target":target,"rotation":0,"bounds":protection,"segments":segments,"foundation_segments":segments.size(),"paving_segments":0,"street_width":8,"street_lines":PackedVector3Array(),"qualities":qualities,"lots":fitted}
- var roads:Array=[]
- for z in [-52,0,52]:
-  var a:=center+Vector3(-50,0,z);var b:=center+Vector3(50,0,z)
-  roads.append(_segment(a,b,4,1,4,0,4))
-  plan.street_lines.append(a);plan.street_lines.append(b)
+ var roads:Array=street_segments(center)
+ for road:Dictionary in roads:
+  plan.street_lines.append(road.start);plan.street_lines.append(road.finish)
  for road:Dictionary in roads:plan.segments.append(road);plan.bounds=plan.bounds.merge(road.bounds)
  if not SitePlan._support_roads(plan,roads):return {"ok":false,"reason":"Road support outside world budget"}
  for path:Dictionary in paths:plan.segments.append(path);plan.bounds=plan.bounds.merge(path.bounds)
  plan.paving_segments=roads.size()+paths.size();plan.street_ends=plan.street_lines.slice(0,2)
  return plan
+static func street_segments(center:Vector3)->Array:
+ var roads:Array=[]
+ # Side streets join the three cross streets into a connected neighborhood loop.
+ for z in [-52,0,52]:roads.append(_segment(center+Vector3(-42,0,z),center+Vector3(42,0,z),4,1,4,0,4))
+ for x in [-42,42]:roads.append(_segment(center+Vector3(x,0,-52),center+Vector3(x,0,52),4,1,4,0,4))
+ return roads
+static func street_probe(center:Vector3)->Resource:
+ var occupied:Dictionary={}
+ for road:Dictionary in street_segments(center):
+  var a:Vector3=road.start-center;var b:Vector3=road.finish-center
+  var span:=b-a
+  for x in range(floori(minf(a.x,b.x)-4),ceili(maxf(a.x,b.x)+4)+1):
+   # Existing arterial is already paved and excluded from natural-root surveys.
+   if absi(x)<8:continue
+   for z in range(floori(minf(a.z,b.z)-4),ceili(maxf(a.z,b.z)+4)+1):
+    var p:=Vector3(x,0,z);var near:Vector3=a+span*clampf((p-a).dot(span)/span.length_squared(),0,1)
+    if p.distance_to(near)<=4:occupied[Vector2i(x,z)]=true
+ var records:=PackedInt32Array()
+ for p:Vector2i in occupied:records.append_array(PackedInt32Array([p.x,0,p.y,1]))
+ var asset:Resource=ClassDB.instantiate("NativeBlockPrefab")
+ return asset if asset.configure(records) else null
 static func _segment(a:Vector3,b:Vector3,width:float,depth:float,clearance:float,shoulder:float,material:int)->Dictionary:
  var span:Vector3=b-a;var extent:float=width+shoulder
  var rise:float=absf(span.y)*extent/Vector2(span.x,span.z).length()
