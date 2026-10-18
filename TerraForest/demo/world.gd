@@ -1178,11 +1178,23 @@ func _advance_frontage_placement() -> void:
 			_placement_notice(request,"Placement changed during preparation; place again");return
 		# Detach during publication so our own change signals do not cancel it.
 		_foundation_placement={}
+		var transaction_started:=Time.get_ticks_usec()
 		var result: Dictionary=construction_inventory.advance_prefab([model_tool.protection()])
+		terrain._record_stage("prefab transaction",(Time.get_ticks_usec()-transaction_started)/1000.0)
+		for stage: String in result.get("timing",{}):
+			terrain._record_stage("prefab "+stage,float(result.timing[stage])/1000.0)
 		if result.ok and result.status=="preparing":
 			_foundation_placement=request;return
+		var feedback_started:=Time.get_ticks_usec()
 		_placement_notice(request,_prefab_placement_text(request.asset) if result.ok else result.reason,result.ok)
-		player_hud.refresh();_prefab_preview_timer=0.0;return
+		terrain._record_stage("prefab notice",(Time.get_ticks_usec()-feedback_started)/1000.0)
+		var inventory_started:=Time.get_ticks_usec()
+		# Free-editor placement and rejected transactions do not change inventory.
+		# Avoid rebuilding item presentation and recipes when its revision is current.
+		if player_hud.inventory.snapshot().revision!=player_hud.state.get("revision",-1):player_hud.refresh()
+		_prefab_preview_timer=0.0
+		terrain._record_stage("prefab inventory refresh",(Time.get_ticks_usec()-inventory_started)/1000.0)
+		terrain._record_stage("prefab feedback",(Time.get_ticks_usec()-feedback_started)/1000.0);return
 	foundation_check.tick(terrain)
 	if foundation_check.status=="checking": return
 	_foundation_placement={}

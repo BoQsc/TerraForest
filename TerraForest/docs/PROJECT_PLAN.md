@@ -1,3 +1,10 @@
+> 2026-10-18 world placement cost: 64 furnished cottages FAIL the unchanged
+> 4 ms call gate. Removed unchanged-inventory UI refresh (11.76 to 0.12 ms
+> observed); remaining notification spike138 ms makes update141.56 ms.
+> Native transaction max1.14 ms. Paid conflicts/save/reopen still pass.
+> Next split notification/panel/message cost. Evidence:
+> evidence/direct_prefab_world_cost/. No overall latency fix claimed.
+
 > 2026-10-18 furnished admission: removed duplicate full-cell scans from direct
 > furnished preview/input; native staged validation rejects occupied cells.
 > Real-ray obstruction preservation, successful placement and preview checks
