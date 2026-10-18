@@ -1,0 +1,39 @@
+{
+  "center": "(1024.0, 62.0, 1792.0)",
+  "failures": 0,
+  "phases": [
+    {
+      "frame_p95": 17.482,
+      "gpu_median": 10.1110000610352,
+      "label": "normal",
+      "worst": 17.661
+    },
+    {
+      "frame_p95": 18.158,
+      "gpu_median": 11.1219997406006,
+      "label": "reference",
+      "worst": 19.162
+    },
+    {
+      "frame_p95": 17.264,
+      "gpu_median": 10.1940002441406,
+      "label": "normal_repeat",
+      "worst": 17.487
+    }
+  ],
+  "planted": {
+    "counts": [
+      6,
+      39,
+      448,
+      0,
+      6,
+      0,
+      8,
+      15
+    ],
+    "ok": true,
+    "owners": 4
+  },
+  "scope": "Same saved location, normal/reference/normal with frozen wind. Screenshot readback excluded. Reference adds authored review density over natural cover; not an exact replacement or long-run qualification."
+}

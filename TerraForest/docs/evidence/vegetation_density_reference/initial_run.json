@@ -1,0 +1,13 @@
+{
+  "timed_out": false,
+  "launch_error": null,
+  "cancelled": false,
+  "pid": 42904,
+  "exit_code": 1,
+  "diagnostics": [
+    "FAIL reference planting fits existing bounded authored capacity"
+  ],
+  "required_text_found": false,
+  "elapsed_seconds": 44.272879200005264,
+  "passed": false
+}

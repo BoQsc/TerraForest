@@ -1,0 +1,23 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[terrain-hitch] restore volumetric_water 175.25 ms at 5953
+[TerrainRewrite] World loaded
+[TerrainRewrite] World loaded
+[terrain-hitch] receive startup 192.41 ms at 5963
+[terrain-hitch] receive 194.14 ms at 5965
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS world ready
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS arrival ready
+PASS cover ready
+PASS ground hit
+FAIL reference planting fits existing bounded authored capacity
+PASS reference cover publishes
+PASS restore original authoritative edits
+PASS restored cover publishes
+PASS source vegetation state unchanged
+PASS no rejected publications
+PASS 1080p comparison
+VEGETATION_LIGHTING failures=1
+[TerrainRewrite] Temporary test world: save skipped

@@ -15,6 +15,7 @@ static func centers(seed_value:int,generator:int)->PackedVector3Array:
  return result
 static func plant(game:Node,center:Vector3,patch_seed:int, side:int=32)->Dictionary:
  if side<1 or side>32:return {"ok":false,"reason":"Invalid planting size"}
+ var original:PackedByteArray=game.ground_cover.removed.capture_storage_snapshot()
  var rng:=RandomNumberGenerator.new();rng.seed=patch_seed
  var counts:Array[int]=[0,0,0,0,0,0,0,0]
  var owners:Dictionary={}
@@ -30,7 +31,7 @@ static func plant(game:Node,center:Vector3,patch_seed:int, side:int=32)->Diction
    if not accepted:accepted=game.terrain.request_surface_batch(points,token)
    await game.get_tree().process_frame
   game.terrain.surface_batch_ready.disconnect(receive)
-  if replies.is_empty():return {"ok":false,"reason":"Woodland surface sampling timed out"}
+  if replies.is_empty():return rollback(game,original,"Woodland surface sampling timed out")
   var poses:Array[Transform3D]=[];var species:Array[int]=[]
   for col in side:
    var point:Vector3=replies[0].points[col]
@@ -49,12 +50,18 @@ static func plant(game:Node,center:Vector3,patch_seed:int, side:int=32)->Diction
    poses.append(pose);species.append(kind)
   var blocked:PackedByteArray=game.structures.overlap_mask(poses,AABB(Vector3(-0.4,0,-0.4),Vector3(0.8,0.8,0.8)))
   var wet:PackedByteArray=game.lakes.placement_mask(poses)
-  if blocked.size()!=poses.size() or wet.size()!=poses.size():return {"ok":false,"reason":"Woodland exclusion query failed"}
+  if blocked.size()!=poses.size() or wet.size()!=poses.size():return rollback(game,original,"Woodland exclusion query failed")
   for index in poses.size():
    if blocked[index] or wet[index]:continue
-   if game.ground_cover.removed.add(species[index],poses[index])==0:return {"ok":false,"reason":"Woodland authored capacity exceeded"}
+   if game.ground_cover.removed.add(species[index],poses[index])==0:return rollback(game,original,"Woodland authored capacity exceeded")
    counts[species[index]]+=1
    var at:Vector3=poses[index].origin
    owners[Vector2i(floori(at.x/32),floori(at.z/32))]=true
  for key in owners:game.ground_cover._dirty[key]=true
  return {"ok":true,"counts":counts,"owners":owners.size()}
+
+static func rollback(game:Node,original:PackedByteArray,reason:String)->Dictionary:
+ if not game.ground_cover.removed.restore_storage_snapshot(original):push_error("Woodland planting rollback failed")
+ # Intermediate records may have been published during awaited surface requests.
+ for owner in game.ground_cover.resident:game.ground_cover._dirty[owner]=true
+ return {"ok":false,"reason":reason}

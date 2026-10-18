@@ -1,3 +1,35 @@
+## Active vegetation acceptance work — 2026-10-18
+
+This section supersedes the older lighting/density status entries below.
+
+- Nearby vegetation now uses real cast shadows (grass 24 m, other cover 48 m,
+  page bounds apply), with focused four-cascade splits and a 4096 shadow atlas.
+  Still/moving/slope captures are in `evidence/vegetation_near_shadows`,
+  `vegetation_shadow_travel` and `vegetation_shadow_slope`. Temporal shimmer and
+  sustained older-laptop performance are not fully qualified.
+- All 81 ordinary view owners retain 16 candidate layers; grass has
+  468/72/8/3-triangle tiers and fades at 100–124 m. FOV-aware view selection extends
+  the viewed cone up to 248 m without raising the owner cap. New cells still load
+  asynchronously. See `evidence/vegetation_outer_lod` and `vegetation_zoom`.
+- Woody bush species 8 is integrated: approximately twice grass height, two hits
+  with any tool or hands, one wood, saved durability, placement and offline icon.
+  Actual-world interaction checks pass; see `evidence/woody_bush`.
+- **Still unfinished:** normal natural cover has about one candidate/m², while the
+  accepted woodland review used 0.45 m spacing (about 4.94 candidates/m² before
+  exclusions). Better LOD visibility is not evidence that nearby density matches.
+  Same-location comparison now confirms the visible gap: 522 added reference
+  plants raised median GPU time about 1 ms (10.1 to 11.1 ms), but this small
+  stationary patch does not qualify world-scale cost. Images and measured limits:
+  `evidence/vegetation_density_reference`. Next: native procedural density with
+  stable identities and bounded support/picking, retaining the existing stone
+  distribution and seamless mesh LOD transitions.
+- The existing authored planting route has a 256-record per-owner limit; it cannot
+  be used to blanket the world at reference density. Failed offline planting now
+  rolls back its partial records and invalidates potentially published owners.
+  Native generation, stable removal IDs, bounded picking/support and LOD budgets
+  must be addressed together before increasing production density. Do not silently
+  accept sparse cover as a completed substitute for the requested vegetation.
+
 ## Current integrated entry point - 2026-10-18
 
 World preparation cancellation is implemented. Cancel/quit requests stop the
