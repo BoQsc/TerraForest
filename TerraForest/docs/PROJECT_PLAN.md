@@ -1,3 +1,12 @@
+## Regional vehicle streaming journey checked - 2026-10-18
+
+The saved district world completed a 574 m full-throttle arterial drive at up to
+158 km/h without recorded collision-loading holds. Frame p95 17.669 ms, max 18.465 ms;
+44.35 s whole check. Braking stopped beyond the approach on grass, so controlled
+arrival remains unverified. See evidence/regional_vehicle_travel. No broad performance
+qualification or intermittent-spike fix claimed. Next: controlled arrival and useful
+location entry, rather than repeating stationary or straight-line tests.
+
 ## Continuous regional road journey checked - 2026-10-18
 
 Normal player movement completed approximately 572 m from central to western
