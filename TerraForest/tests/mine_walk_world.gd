@@ -3,7 +3,7 @@ extends SceneTree
 const Codec=preload("res://addons/volumetric_terrain/mesh_codec.gd")
 func _initialize()->void:run.call_deferred()
 func run()->void:
- var game=load("res://demo/world.tscn").instantiate();game.temporary_world=true;root.add_child(game)
+ var game=load("res://demo/world.tscn").instantiate();game.temporary_world=true;game.max_fps=60;game.background_fps=60;root.add_child(game)
  var deadline:=Time.get_ticks_msec()+60000
  while game.loading_active and Time.get_ticks_msec()<deadline:await process_frame
  if game.loading_active or game.terrain.backend.world_generator!=11:quit(1);return
@@ -17,6 +17,25 @@ func run()->void:
  deadline=Time.get_ticks_msec()+45000
  while game.loading_active and Time.get_ticks_msec()<deadline:await process_frame
  if game.loading_active:quit(1);return
+ if "--mine-access-check" in OS.get_cmdline_user_args():
+  var token:int=preload("res://addons/volumetric_terrain/surface_tokens.gd").allocate()
+  var replies:Array=[]
+  var receive:=func(id:int,points:PackedVector3Array,normals:PackedVector3Array,_epoch:int,_revision:int):
+   if id==token:replies.append({"points":points,"normals":normals})
+  game.terrain.surface_batch_ready.connect(receive)
+  var points:=PackedVector3Array([entrance+Vector3(10,0,0),entrance+Vector3(14,0,-25),entrance+Vector3(7,0,-50),entrance+Vector3(27,0,0)])
+  var accepted:bool=game.terrain.request_surface_batch(points,token)
+  deadline=Time.get_ticks_msec()+20000
+  while replies.is_empty() and Time.get_ticks_msec()<deadline:
+   await process_frame
+   if not accepted:accepted=game.terrain.request_surface_batch(points,token)
+  game.terrain.surface_batch_ready.disconnect(receive)
+  var clear:bool=not replies.is_empty() and replies[0].normals.size()==4
+  if clear:
+   for i in 3:clear=clear and replies[0].normals[i].length_squared()<.01
+   clear=clear and replies[0].normals[3].y>.5
+  print("PASS " if clear else "FAIL ","mine access rejects vegetation roots while adjacent ground remains eligible")
+  if not clear:quit(1);return
  game.set_physics_process(false);game.fly=false;game.needs_floor_spawn=false
  game.player.position=entrance+Vector3.UP*.1;game.player.velocity=Vector3.ZERO
  game.headlamp.visible=true

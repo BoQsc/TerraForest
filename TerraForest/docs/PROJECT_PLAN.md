@@ -1,3 +1,18 @@
+## Mine road/yard integration verified - 2026-10-18
+
+The development POI world now connects the mine yard to the eastern arterial with
+native asphalt grading and saved road anchors. Existing asphalt root rejection
+keeps the yard clear without a separate vegetation-removal mechanism. Full world
+save/reopen, three paved/one adjacent natural-ground probes, exterior inspection,
+and player mine descent/return pass. See [evidence](evidence/mine_access/README.md).
+Development save is poi_access_20261018; normal launchers remain unchanged.
+
+Continue larger-world coverage next: substantial lakes using accepted static water,
+distinct destinations and combined loading/travel. Do not remain on mine decoration.
+Existing water has a 4,096-region residency limit; inspect actual lake capacity and
+cache behavior before increasing basin sizes. Do not claim world-scale performance
+from the access check. Water flow/mechanics remain out of scope.
+
 ## Prefab cellar functional check passed - 2026-10-18
 
 The prefab-owned cellar now passes placement, full-world save/reopen and actual

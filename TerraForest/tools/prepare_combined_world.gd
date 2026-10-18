@@ -217,9 +217,17 @@ func prepare_underground_locations()->bool:
  var layout:Dictionary=preload("res://addons/volumetric_terrain/generated_layout.gd").describe(game.terrain.backend.world_seed,game.terrain.backend.world_generator)
  for poi:Dictionary in layout.get("underground",[]):
   var entrance:Vector3=poi.entrance
-  game.teleport(entrance+Vector3(15,0,0))
+  game.teleport(entrance+Vector3(30,0,20))
   if not require(await wait_until(func():return not game.loading_active,60),"mine location streams before placement"):return false
   game.set_physics_process(false);game._clear_motion();game.structure_rotation=0
+  var access:Dictionary=preload("res://addons/structures/mine_catalog.gd").access_plan(entrance,layout.sites[int(poi.owner_site)].position)
+  if not require(access.ok,"mine access plan fits world bounds"):return false
+  for segment:Dictionary in access.segments:
+   if not require(game._road_protection_error(segment.bounds).is_empty(),"mine access does not overwrite protected placement"):return false
+   var accepted:bool=game.terrain.construct_graded_bed(segment.start,segment.finish,segment.half_width,segment.depth,segment.clearance,segment.material,segment.shoulder)
+   if not require(accepted,"mine access terrain edit accepted"):return false
+   if not require(await wait_until(func():return not game.terrain.pending_edit,30) and game.terrain.last_edit_outcome.get("status","") in ["published","unchanged"],"mine access asphalt publishes"):return false
+  game.road_palette.register_prepared_street(access,game.terrain.epoch)
   var asset:Resource=preload("res://addons/structures/mine_catalog.gd").entrance()
   if not require(asset!=null,"mine entrance prefab builds"):return false
   var origin:=Vector3i(entrance)
