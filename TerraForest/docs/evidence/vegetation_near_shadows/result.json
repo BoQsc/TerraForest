@@ -1,0 +1,21 @@
+{
+  "failures": 0,
+  "phases": [
+    {
+      "gpu_median": 10.1440000534058,
+      "variant": "baseline"
+    },
+    {
+      "gpu_median": 10.1979999542236,
+      "variant": "focused"
+    },
+    {
+      "gpu_median": 10.5819997787476,
+      "variant": "focused_low_bias"
+    },
+    {
+      "gpu_median": 10.3909997940063,
+      "variant": "focused_4096"
+    }
+  ]
+}

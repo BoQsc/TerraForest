@@ -233,6 +233,12 @@ func _setup_scene() -> void:
 	sun.light_energy = 0.95
 	sun.shadow_enabled = true
 	sun.directional_shadow_max_distance = 256.0
+	# Reserve fine shadow detail for nearby vegetation, then blend into wider cascades.
+	sun.directional_shadow_mode = DirectionalLight3D.SHADOW_PARALLEL_4_SPLITS
+	sun.directional_shadow_split_1 = 0.035
+	sun.directional_shadow_split_2 = 0.12
+	sun.directional_shadow_split_3 = 0.35
+	sun.directional_shadow_blend_splits = true
 	# Restore useful depth separation on broad smooth terrain. 0.02/0.25
 	# is a likely source of the reported contour/moire-like shadow acne.
 	sun.shadow_bias = 0.10

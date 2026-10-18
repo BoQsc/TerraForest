@@ -163,3 +163,10 @@ Zoom must extend the useful detail range with bounded loading and fading. Exact
 density ratios and distances remain unaccepted pending matched ground, elevated,
 travel and zoom views. Do not interpret this direction as approval to thin the
 current world immediately or to remove persistent gathered/placeable objects.
+
+Near-player vegetation requires resolved cast shadows, not merely an enabled
+shadow flag or root darkening. Inspect contact, silhouette, movement stability and
+cascade transitions in daylight. Distant approximations must not replace near
+cast shadows. The current correction reserves the first directional cascade for
+roughly 9 m, uses blended splits and a 4096 atlas; runtime and atlas-memory costs
+are explicit. Moving-view and broader terrain-acne review remain required.
