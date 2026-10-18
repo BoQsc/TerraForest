@@ -1,0 +1,47 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] World loaded
+[TerrainRewrite] World loaded
+[terrain-hitch] receive 172.18 ms at 4640
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+PASS earned settlement opens for movement
+TRAVEL_RESIDENTS 2
+PASS walk from saved chest position into central aisle
+PASS walk within reach of enclosed cottage door
+[TerrainRewrite] Door opened
+PASS interact with generated cottage door before departure
+[terrain-hitch] mesh upload/create 71.94 ms at 14758
+[terrain-hitch] staging frame 74.16 ms at 14760
+PASS walk through doorway and down stairs to street without jumping
+TRAVEL_STREET (801.0, 47.0, 1310.0) -> (852.0, 47.0, 1310.0)
+PASS walk along street to vehicle departure point
+TRAVEL_VEHICLE Vehicle placed; preparing visuals · F5 saves world
+PASS normal vehicle placement on authored street
+Visual vehicle dents repaired.
+[terrain-hitch] controller process 463.8 ms at 17768
+[terrain-hitch] world process 464.86 ms at 17769
+PASS walk up to placed car
+PASS enter nearby car
+PASS authored street supports a meaningful short drive
+PASS drive outbound and brake using keyboard input
+REVERSE_START { "position": (826.5388, 47.6258, 1310.0), "velocity": (0.07802, 0.00015, 0.0), "controls": true, "W": false, "S": true, "freeze": false, "sleeping": false, "waiting": false, "loaded_wheels": 4, "normal": true, "drive_speed": 0.07810790836811, "app_focused": true, "window_focused": true, "physics_frame": 1166, "time_ms": 21076 }
+REVERSE_SAMPLE { "position": (825.675, 47.6258, 1310.0), "velocity": (-2.928211, 0.000149, -0.0), "controls": true, "W": false, "S": true, "freeze": false, "sleeping": false, "waiting": false, "loaded_wheels": 4, "normal": true, "drive_speed": -2.93150901794434, "app_focused": true, "window_focused": true, "physics_frame": 1235, "time_ms": 21722 }
+REVERSE_SAMPLE { "position": (823.5693, 47.6258, 1310.0), "velocity": (-5.114385, -0.00018, -0.0), "controls": true, "W": false, "S": true, "freeze": false, "sleeping": false, "waiting": false, "loaded_wheels": 4, "normal": true, "drive_speed": -5.12014532089233, "app_focused": true, "window_focused": true, "physics_frame": 1297, "time_ms": 22239 }
+REVERSE_SAMPLE { "position": (820.4991, 47.62577, 1310.0), "velocity": (-6.87798, -0.000213, -0.000001), "controls": true, "W": false, "S": true, "freeze": false, "sleeping": false, "waiting": false, "loaded_wheels": 4, "normal": true, "drive_speed": -6.88572645187378, "app_focused": true, "window_focused": true, "physics_frame": 1358, "time_ms": 22740 }
+REVERSE_SAMPLE { "position": (816.6165, 47.62574, 1310.0), "velocity": (-8.326407, -0.000221, -0.000001), "controls": true, "W": false, "S": true, "freeze": false, "sleeping": false, "waiting": false, "loaded_wheels": 4, "normal": true, "drive_speed": -8.33578491210938, "app_focused": true, "window_focused": true, "physics_frame": 1419, "time_ms": 23256 }
+REVERSE_SAMPLE { "position": (811.3464, 47.6257, 1310.0), "velocity": (-9.672518, -0.000204, -0.000001), "controls": true, "W": false, "S": true, "freeze": false, "sleeping": false, "waiting": false, "loaded_wheels": 4, "normal": true, "drive_speed": -9.68341159820557, "app_focused": true, "window_focused": true, "physics_frame": 1489, "time_ms": 24192 }
+REVERSE_END { "position": (809.9547, 47.62569, 1310.0), "velocity": (-9.956041, -0.000222, -0.000001), "controls": true, "W": false, "S": true, "freeze": false, "sleeping": false, "waiting": false, "loaded_wheels": 4, "normal": true, "drive_speed": -9.96725463867188, "app_focused": true, "window_focused": true, "physics_frame": 1506, "time_ms": 24326 }
+PASS reverse to departure point and stop without pose correction
+TRAVEL_DISTANCE outbound=12.0230712890625 return_error=2.54791331291199
+TRAVEL_EXIT On foot · E nearby to enter vehicle
+PASS exit stopped car restores walking
+PASS walk from parked car back to cottage approach
+PASS walk back up stairs through doorway without jumping
+PASS earned inventory and chest contents unchanged after travel
+PASS resident identity and patrol survive combined travel
+PASS resident identity and patrol survive combined travel
+PASS resident simulation advances during ordinary player and vehicle gameplay
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+PASS ordinary compound save completes
+COMBINED_RESOURCE_ROUTE failures=0

@@ -1,0 +1,54 @@
+{
+  "failures": 0,
+  "walking": [
+    {
+      "loading": false,
+      "on_floor": true,
+      "position": "(812.7918, 49.00264, 1296.942)",
+      "remaining": 0.297609597444534,
+      "target": "(812.5, 49.0, 1297.0)"
+    },
+    {
+      "loading": false,
+      "on_floor": true,
+      "position": "(812.5343, 49.00872, 1298.758)",
+      "remaining": 0.244725435972214,
+      "target": "(812.5, 49.0, 1299.0)"
+    },
+    {
+      "loading": false,
+      "on_floor": true,
+      "position": "(812.5009, 47.00918, 1309.213)",
+      "remaining": 0.287232726812363,
+      "target": "(812.5, 49.0, 1309.5)"
+    },
+    {
+      "loading": false,
+      "on_floor": true,
+      "position": "(803.2725, 47.00918, 1309.977)",
+      "remaining": 0.273466169834137,
+      "target": "(803.0, 47.0, 1310.0)"
+    },
+    {
+      "loading": false,
+      "on_floor": true,
+      "position": "(805.7477, 47.00918, 1309.998)",
+      "remaining": 0.252267867326736,
+      "target": "(806.0, 47.0, 1310.0)"
+    },
+    {
+      "loading": false,
+      "on_floor": true,
+      "position": "(812.278, 47.00843, 1309.416)",
+      "remaining": 0.237484365701675,
+      "target": "(812.5, 49.0, 1309.5)"
+    },
+    {
+      "loading": false,
+      "on_floor": true,
+      "position": "(812.4958, 49.00848, 1297.235)",
+      "remaining": 0.235388159751892,
+      "target": "(812.5, 49.0, 1297.0)"
+    }
+  ]
+}

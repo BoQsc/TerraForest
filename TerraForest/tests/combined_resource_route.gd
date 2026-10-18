@@ -36,13 +36,18 @@ func run()->void:
   if arg.begins_with("--world-slot="):slot=arg.trim_prefix("--world-slot=")
  if evidence.is_empty() or not slot.begins_with("combined_route_") or not slot.is_valid_identifier():quit(2);return
  game=load("res://demo/world.tscn").instantiate();root.add_child(game)
+ game.set_physics_process(false)
  if not check(await wait_for(func():return not game.loading_active,45),"copied settlement opens"):await finish();return
  game.set_physics_process(false);game._clear_motion();game.app_focused=true
+ game.terrain.focus=game.player.position;game.structures.set_model_focus(game.player.position)
  check(game.construction_inventory.gameplay and not game.session_menu.developer,"normal paid gameplay active")
  var reopening:bool="--reopen-route" in OS.get_cmdline_user_args()
  var expected:Dictionary={}
  if reopening:
   expected=FileAccess.open(evidence,FileAccess.READ).get_var()
+  if expected.has("actors"):
+   check(game.actors.store.capture_storage_snapshot()==expected.actors,"post-travel resident positions and identities restore exactly")
+   check(game.actors.orders.capture_storage_snapshot()==expected.actor_orders,"post-travel patrol endpoints and legs restore exactly")
   check(game.player_hud.inventory.capture_storage_snapshot()==expected.inventory,"earned inventory restored exactly")
   check(game.storage.store.capture_storage_snapshot()==expected.storage,"earned chest contents restored exactly")
   check(game.ground_cover.removed.capture_storage_snapshot()==expected.removed,"gathered identities restored exactly")

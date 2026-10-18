@@ -1,3 +1,10 @@
+> 2026-10-18 populated combined route: gathered resources, crafted/placed a paid
+> brick, used chest storage, walked door/stairs, drove/returned, and saved/reopened
+> while native residents participated. Both actor identities/orders survive;
+> exact post-travel actors/orders restore. Source save unchanged. Functional pass
+> only: reopen logged a 1388.89 ms startup world-process hitch. Evidence:
+> evidence/populated_combined_route/. Performance and full scope remain open.
+
 > 2026-10-16 combined preparation: newly prepared settlements now include two
 > native patrol residents. All registered furnishings plus actors/orders enter
 > fresh-process verification before publication. Mixed eight-building creation

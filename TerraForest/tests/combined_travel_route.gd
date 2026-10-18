@@ -29,6 +29,13 @@ func run()->void:
  game=load("res://demo/world.tscn").instantiate();root.add_child(game)
  if not check(await wait_for(func():return not game.loading_active,45),"earned settlement opens for movement"):await finish();return
  game.fly=false;game.needs_floor_spawn=false;game.app_focused=true;Input.mouse_mode=Input.MOUSE_MODE_CAPTURED
+ var resident_ids: Array[int]=[]
+ var resident_positions: Dictionary={}
+ for handle: int in game.actors.store.query_sphere(game.player.position,128,1024,4096).ids:
+  var id: int=game.actors.store.persistent_id(handle)
+  resident_ids.append(id);resident_positions[id]=game.actors.store.get_position(handle)
+ print("TRAVEL_RESIDENTS ",resident_ids.size())
+
  var t:PackedFloat32Array=game.storage.collection.get_instance(expected.chest)
  var right:=Vector3(t[0],t[4],t[8]).normalized()
  var front:=Vector3(t[2],t[6],t[10]).normalized()
@@ -86,6 +93,16 @@ func run()->void:
  if not check(await walk_to(center+front*14.5),"walk from parked car back to cottage approach"):await finish();return
  if not check(await walk_to(center+front*2),"walk back up stairs through doorway without jumping"):await finish();return
  check(game.player_hud.inventory.capture_storage_snapshot()==expected.inventory and game.storage.store.capture_storage_snapshot()==expected.storage,"earned inventory and chest contents unchanged after travel")
+
+ var resident_moved:=false
+ for id: int in resident_ids:
+  var handle: int=game.actors.store.resolve_identity(id)
+  check(handle!=0 and game.actors.orders.get_target(id).get("patrol",false),"resident identity and patrol survive combined travel")
+  if handle!=0 and game.actors.store.get_position(handle).distance_to(resident_positions[id])>.25:resident_moved=true
+ if not resident_ids.is_empty():check(resident_moved,"resident simulation advances during ordinary player and vehicle gameplay")
+ game.set_physics_process(false)
+ expected.actors=game.actors.store.capture_storage_snapshot()
+ expected.actor_orders=game.actors.orders.capture_storage_snapshot()
  expected.hinges=game.doors.state.capture_storage_snapshot()
  expected.doors=game.doors.collection.capture_snapshot()
  var saved:=FileAccess.open(evidence,FileAccess.WRITE);saved.store_var(expected);saved.close()
