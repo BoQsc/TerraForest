@@ -163,3 +163,20 @@ static func _entrance_paths(asset:Resource,plan:Dictionary,lines:PackedVector3Ar
 		plan.segments.append({"start":start,"finish":finish,"half_width":0.75,"depth":2.0,"clearance":3.0,"shoulder":0.0,"material":4,"bounds":region})
 		plan.entrance_paths+=1;plan.paving_segments+=1
 	return plan
+
+static func connect_regional_street(plan:Dictionary,center:Vector3)->void:
+	var lines:PackedVector3Array=plan.street_lines
+	var start:=lines[0]
+	for point:Vector3 in lines:
+		if point.x>start.x:start=point
+	var corner:=Vector3(center.x,start.y,start.z)
+	# The surveyed foundation can differ from the generated arterial grade.
+	# Meet the actual road surface instead of leaving a height step at its centre.
+	var finish:=Vector3(center.x,center.y,center.z)
+	for pair in [[start,corner],[corner,finish]]:
+		var a:Vector3=pair[0];var b:Vector3=pair[1]
+		if a.distance_to(b)<1:continue
+		var region:=AABB(a.min(b)-Vector3(4,8,4),a.max(b)-a.min(b)+Vector3(8,20,8))
+		plan.segments.append({"start":a,"finish":b,"half_width":4.0,"depth":8.0,"clearance":12.0,"shoulder":0.0,"material":4,"bounds":region})
+		plan.bounds=plan.bounds.merge(region);plan.paving_segments+=1
+		plan.street_lines.append(a);plan.street_lines.append(b)

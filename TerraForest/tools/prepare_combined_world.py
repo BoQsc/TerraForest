@@ -13,7 +13,9 @@ from run import ROOT, parse_args
 from run_godot_check import execute
 
 
-def prepare(engine, worlds, folder, destination="combined_gameplay", layout="cottages"):
+def prepare(engine, worlds, folder, destination="combined_gameplay", layout="cottages", seed=1703):
+    if type(seed) is not int or not 0 <= seed <= 2147483647:
+        raise ValueError("Seed must be an integer between 0 and 2147483647")
     if layout not in ('cottages', 'mixed', 'regional', 'poi', 'lakes', 'districts'):
         raise ValueError("Invalid settlement layout")
     if not re.fullmatch(r'[A-Za-z_][A-Za-z0-9_]{0,47}', destination):
@@ -33,10 +35,10 @@ def prepare(engine, worlds, folder, destination="combined_gameplay", layout="cot
         base = [str(engine), '--path', str(ROOT), '--fullscreen', '--resolution',
                 '1920x1080', '--max-fps', '60', '--script',
                 'res://tools/prepare_combined_world.gd', '--',
-                '--world-slot=' + slot, '--world-generator=' + ('12' if layout in ('lakes', 'districts') else '11' if layout == 'poi' else '8' if layout == 'regional' else '4'), '--world-seed=1703',
+                '--world-slot=' + slot, '--world-generator=' + ('12' if layout in ('lakes', 'districts') else '11' if layout == 'poi' else '8' if layout == 'regional' else '4'), '--world-seed=' + str(seed),
                 '--ground-cover', '--actors', '--checkpoint-layout=' + layout, '--checkpoint-report=' + str(report),
                 '--derived-cache=user://' + slot]
-        metadata = dict(slot=slot, layout=layout, **revision_metadata(), phases=[])
+        metadata = dict(slot=slot, layout=layout, seed=seed, **revision_metadata(), phases=[])
         for phase in ('create', 'reopen'):
             phase_dir = folder / phase
             phase_dir.mkdir()
@@ -61,11 +63,13 @@ def main():
     parser.add_argument('--godot')
     parser.add_argument('--destination', default='combined_gameplay', help='Create only when this save slot is absent')
     parser.add_argument('--layout', choices=('cottages', 'mixed', 'regional', 'poi', 'lakes', 'districts'), default='cottages')
+    parser.add_argument('--seed', type=int, default=1703, help='Deterministic new-world seed (0..2147483647); existing saves are preserved')
     args = parser.parse_args()
+    if not 0 <= args.seed <= 2147483647: parser.error('Seed must be between 0 and 2147483647')
     config, _ = parse_args(['--godot', args.godot] if args.godot else [])
     worlds = Path(os.environ['APPDATA']) / 'Godot/app_userdata/TerraForest/worlds'
     stamp = datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')
-    return prepare(config.godot, worlds, ROOT / 'reports/combined_preparation' / stamp, args.destination, args.layout)
+    return prepare(config.godot, worlds, ROOT / 'reports/combined_preparation' / stamp, args.destination, args.layout, args.seed)
 
 
 if __name__ == '__main__':

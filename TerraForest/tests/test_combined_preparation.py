@@ -9,6 +9,19 @@ import prepare_combined_world as prep
 
 
 class PreparationTests(unittest.TestCase):
+    def test_seed_validation_and_forwarding(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            for seed in (-1, 2147483648, True, 1.5):
+                with self.assertRaises(ValueError): prep.prepare('unused', root, root/'report', seed=seed)
+            self.assertEqual(list(root.iterdir()), [])
+            with patch.object(prep, 'execute', return_value={'passed': True}) as run, patch.object(prep, 'clone_once', return_value={'created': True}):
+                self.assertEqual(prep.prepare('unused', root, root/'report', 'seed42', 'districts', 42), 0)
+                self.assertEqual(run.call_count, 2)
+                for call in run.call_args_list:
+                    self.assertIn('--world-seed=42', call.args[0])
+                    self.assertIn('--world-generator=12', call.args[0])
+
     def test_invalid_layout_rejected_before_writes(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)

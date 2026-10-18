@@ -1,3 +1,13 @@
+## Seeded integrated generation and height connection fix - 2026-10-18
+
+The preparation CLI now accepts --seed, using it for terrain and prefab selection,
+and validates seed/generator identity on reopen. Seed 42 completed a second integrated
+23-building world. It exposed a connector ending at district height instead of road
+height; the connector now meets the generated arterial. Targeted grade checks and
+saved-world visual review pass. See INTEGRATED_WORLD_GENERATION.md and evidence/
+seeded_integrated_generation. Fixed regional topology and initial prefab vocabulary
+remain limitations; full city design, all-seed suitability and performance are open.
+
 ## Baked district entrance paths - 2026-10-18
 
 Fourteen outer-district buildings now have paved approaches connecting streets to

@@ -1,0 +1,80 @@
+{
+  "seed": 42,
+  "layout": "districts",
+  "phases": [
+    {
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--fullscreen",
+        "--resolution",
+        "1920x1080",
+        "--max-fps",
+        "60",
+        "--script",
+        "res://tools/prepare_combined_world.gd",
+        "--",
+        "--world-slot=combined_stage_eea3f5920caf49a6bec251d53ecd673f",
+        "--world-generator=12",
+        "--world-seed=42",
+        "--ground-cover",
+        "--actors",
+        "--checkpoint-layout=districts",
+        "--checkpoint-report=C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\combined_preparation\\20261018T094510551913Z\\checkpoint.json",
+        "--derived-cache=user://combined_stage_eea3f5920caf49a6bec251d53ecd673f"
+      ],
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "pid": 12768,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 91.42087290000018,
+        "passed": true
+      }
+    },
+    {
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--fullscreen",
+        "--resolution",
+        "1920x1080",
+        "--max-fps",
+        "60",
+        "--script",
+        "res://tools/prepare_combined_world.gd",
+        "--",
+        "--world-slot=combined_stage_eea3f5920caf49a6bec251d53ecd673f",
+        "--world-generator=12",
+        "--world-seed=42",
+        "--ground-cover",
+        "--actors",
+        "--checkpoint-layout=districts",
+        "--checkpoint-report=C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\combined_preparation\\20261018T094510551913Z\\checkpoint.json",
+        "--derived-cache=user://combined_stage_eea3f5920caf49a6bec251d53ecd673f",
+        "--reopen-checkpoint",
+        "--gameplay-construction",
+        "--vehicle-fleet"
+      ],
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "pid": 26644,
+        "exit_code": 1,
+        "diagnostics": [
+          "\nSCRIPT ERROR: Parse Error: Could not preload resource script \"res://addons/world_runtime/regional_road_connections.gd\".",
+          "ERROR: Failed to load script \"res://tools/prepare_combined_world.gd\" with error \"Parse error\".",
+          "SCRIPT ERROR: Parse Error: Could not resolve script \"res://addons/world_runtime/regional_road_connections.gd\"."
+        ],
+        "required_text_found": false,
+        "elapsed_seconds": 1.4567345000000387,
+        "passed": false
+      }
+    }
+  ],
+  "slot": "combined_stage_eea3f5920caf49a6bec251d53ecd673f"
+}

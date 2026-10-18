@@ -47,6 +47,7 @@ func run()->void:
   if not require(game.actors.pool!=null and game.actors.store.statistics().active==2,"reopen has exactly two residents with simulation enabled"):await finish(false);return
   var expected:Dictionary=JSON.parse_string(FileAccess.get_file_as_string(report_path))
   var ready:bool=regional or await wait_until(func():return game.structures.blocks.stats().cells==int(expected.cells))
+  if not require(game.terrain.backend.world_seed==int(expected.seed) and game.terrain.backend.world_generator==int(expected.generator),"seed and generator identity survive reopen"):await finish(false);return
   var actual:=signature()
   for key: String in actual:
    if actual[key]!=expected.signature.get(key):print("SIGNATURE_MISMATCH ",key)
@@ -69,7 +70,7 @@ func run()->void:
   if not require(sources.size()==(2 if mixed else 1),"registered furnished building sources are available"):await finish(false);return
   game.prefab_library.directory="user://checkpoint_prefabs/"+game.terrain.save_slot
   var count:int=game.structure_prefabs.size()
-  game._frontage_sources_construction(sources,2 if mixed else 1,8,3,1703,"Mixed neighborhood" if mixed else "Gameplay settlement",2)
+  game._frontage_sources_construction(sources,2 if mixed else 1,8,3,game.terrain.backend.world_seed,"Mixed neighborhood" if mixed else "Gameplay settlement",2)
   if not require(await wait_until(func():return game.structure_prefabs.size()==count+1,10),"existing native editor composes connected furnished streets"):await finish(false);return
   game.camera.global_position=game.player.global_position+Vector3(0,15,0)
   game.camera.look_at(game.player.global_position+Vector3(10,-5,0))
@@ -134,7 +135,7 @@ func run()->void:
    game.camera.position=Vector3(0,1.6,0);game.camera.rotation=Vector3(game.pitch,0,0)
 
   var file:=FileAccess.open(report_path,FileAccess.WRITE)
-  file.store_string(JSON.stringify({"slot":game.terrain.save_slot,"cells":game.structures.blocks.stats().cells,"spawn":[game.player.position.x,game.player.position.y,game.player.position.z],"signature":signature()},"  "));file.close()
+  file.store_string(JSON.stringify({"slot":game.terrain.save_slot,"seed":game.terrain.backend.world_seed,"generator":game.terrain.backend.world_generator,"cells":game.structures.blocks.stats().cells,"spawn":[game.player.position.x,game.player.position.y,game.player.position.z],"signature":signature()},"  "));file.close()
  # Wait for existing generated components before ordinary compound persistence.
  if not require(await wait_until(func():return not game.lakes.capture_snapshot().is_empty(),60),"generated components ready for compound save"):await finish(false);return
  for frame in 10:await process_frame
@@ -151,19 +152,7 @@ func finish(ok:bool)->void:
 
 # Offline composition only. Native terrain edits and prefab transactions own work.
 func connect_regional_street(plan:Dictionary,center:Vector3)->void:
- var lines:PackedVector3Array=plan.street_lines
- var start:=lines[0]
- for point:Vector3 in lines:
-  if point.x>start.x:start=point
- var corner:=Vector3(center.x,start.y,start.z)
- var finish:=Vector3(center.x,start.y,center.z)
- for pair in [[start,corner],[corner,finish]]:
-  var a:Vector3=pair[0];var b:Vector3=pair[1]
-  if a.distance_to(b)<1:continue
-  var region:=AABB(a.min(b)-Vector3(4,8,4),a.max(b)-a.min(b)+Vector3(8,20,8))
-  plan.segments.append({"start":a,"finish":b,"half_width":4.0,"depth":8.0,"clearance":12.0,"shoulder":0.0,"material":4,"bounds":region})
-  plan.bounds=plan.bounds.merge(region);plan.paving_segments+=1
-  plan.street_lines.append(a);plan.street_lines.append(b)
+ preload("res://addons/structures/site_plan.gd").connect_regional_street(plan,center)
 
 func prepare_outer_sites()->bool:
  var layout:Dictionary=preload("res://addons/volumetric_terrain/generated_layout.gd").describe(game.terrain.backend.world_seed,game.terrain.backend.world_generator)
@@ -186,7 +175,7 @@ func prepare_outer_sites()->bool:
     for i in game.structure_prefabs.size():
      if game.structure_prefabs[i].resource_name==title:selection.append(i);break
    if not require(selection.size()==district.sources.size(),"district sources available: "+district.title):return false
-  game._frontage_sources_construction(selection,district.lots,district.width,district.gap,1703+int(site.id),district.title,district.streets)
+  game._frontage_sources_construction(selection,district.lots,district.width,district.gap,game.terrain.backend.world_seed+int(site.id),district.title,district.streets)
   if not require(await wait_until(func():return game.structure_prefabs.size()==count+1,10),"outer furnished street composed"):return false
   var asset:Resource=game.structure_prefabs[game.structure_prefab_index]
   if districts:asset.set_meta("entrance_paths",true)
