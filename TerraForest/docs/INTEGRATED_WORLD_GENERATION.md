@@ -1,5 +1,11 @@
 # Integrated world generation
 
+Open `Worlds.cmd`, choose the integrated regional preset, enter a name and seed,
+and click **Create and play**. The browser waits for preparation and save verification
+before opening the world. Existing saved worlds open directly. This local development
+workflow requires Python on PATH; failures remain visible in the browser.
+
+
 Create a new prepared world with a chosen seed:
 
 ```powershell

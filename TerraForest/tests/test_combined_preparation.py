@@ -22,6 +22,19 @@ class PreparationTests(unittest.TestCase):
                     self.assertIn('--world-seed=42', call.args[0])
                     self.assertIn('--world-generator=12', call.args[0])
 
+    def test_browser_failure_status_is_written(self):
+        import json
+        with tempfile.TemporaryDirectory() as temp:
+            status = Path(temp)/'completion.json'
+            with patch.object(sys, 'argv', ['prepare', '--status-file', str(status)]), patch.object(prep, 'prepare', return_value=1):
+                self.assertEqual(prep.main(), 1)
+            self.assertEqual(json.loads(status.read_text())['state'], 'failed')
+            with patch.object(sys, 'argv', ['prepare', '--status-file', str(status)]), patch.object(prep, 'prepare', side_effect=RuntimeError('test lock rejection')):
+                with self.assertRaises(RuntimeError): prep.main()
+            result = json.loads(status.read_text())
+            self.assertEqual(result['state'], 'failed')
+            self.assertIn('test lock rejection', result['reason'])
+
     def test_invalid_layout_rejected_before_writes(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)

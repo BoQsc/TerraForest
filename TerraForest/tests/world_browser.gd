@@ -11,6 +11,8 @@ func run() -> void:
 	DirAccess.make_dir_recursive_absolute(path)
 	check(not Launch.command("../world",true,6,1703,true,path).ok and not Launch.valid_slot("1world") and not Launch.valid_slot("x".repeat(49)),"invalid names cannot escape or alias save paths")
 	check(not Launch.command("new_world",true,6,-1,true,path).ok and not Launch.command("new_world",true,99,1703,true,path).ok,"invalid seed and generator rejected")
+	var integrated:=Launch.command("integrated",true,Launch.INTEGRATED_PRESET,50,true,path)
+	check(integrated.ok and integrated.get("prepare",false) and "districts" in integrated.args and "50" in integrated.args,"integrated preset routes through verified offline preparation")
 	var created:=Launch.command("new_world",true,6,1703,true,path)
 	check(created.ok and "--world-generator=6" in created.args and "--world-seed=1703" in created.args and "--gameplay-construction" in created.args and "--ground-cover" in created.args,"new world command uses chosen generation and gameplay settings")
 	check("--fullscreen" in created.args and "1920x1080" in created.args and "res://demo/world.tscn" in created.args,"launch targets actual world at full resolution")

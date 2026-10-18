@@ -1,0 +1,28 @@
+{
+  "notice": "World preparation did not finish. Existing saves are preserved. test verification rejection Logs: test report",
+  "ok": true,
+  "opened": [
+    "--path",
+    "C:/Users/windows10/Documents/ChatGPT/Godot Terrain/TerraForest/",
+    "--fullscreen",
+    "--resolution",
+    "1920x1080",
+    "--max-fps",
+    "60",
+    "res://demo/world.tscn",
+    "--",
+    "--world-slot=browser_seed50_137350",
+    "--ground-cover",
+    "--actors",
+    "--vehicle-fleet",
+    "--max-fps=60",
+    "--gameplay-construction"
+  ],
+  "slot": "browser_seed50_137350",
+  "status": {
+    "reason": "",
+    "report": "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\combined_preparation\\20261018T095949153076Z",
+    "slot": "browser_seed50_137350",
+    "state": "ready"
+  }
+}

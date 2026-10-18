@@ -1,3 +1,11 @@
+## Integrated generation available from world browser - 2026-10-18
+
+Worlds.cmd now offers integrated creation by name/seed and waits for verified offline
+preparation before opening gameplay. Actual seed-50 UI creation/save/reopen/handoff
+completed. Failure and duplicate-click handling checks pass; 1920x1080 UI inspected.
+See evidence/world_browser_generation. Python remains a local dependency; standalone
+packaging, cancellation and richer progress reporting remain unfinished.
+
 ## Seed-independent mixed-content admission - 2026-10-18
 
 Seeds 50/141 exposed all-one-type central layouts and would fail only after placement.

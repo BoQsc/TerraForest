@@ -1,0 +1,20 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+PASS invalid names cannot escape or alias save paths
+PASS invalid seed and generator rejected
+PASS integrated preset routes through verified offline preparation
+PASS new world command uses chosen generation and gameplay settings
+PASS launch targets actual world at full resolution
+PASS command preparation never creates or changes canonical data
+PASS creation refuses an existing world
+PASS opening preserves saved generation and permits chosen editor mode
+PASS opening command preserves canonical bytes
+PASS orphan model data prevents accidental name reuse
+PASS in-progress preparation name is reserved
+PASS listing selects canonical saves and missing save fails
+PASS browser restores window close after returning from a world
+PASS saved-world filtering ignores case
+PASS invalid create action stays in browser with guidance
+PASS primary world controls fit 1920x1080
+WORLD_BROWSER failures=0

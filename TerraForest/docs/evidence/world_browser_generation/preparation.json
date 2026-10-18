@@ -1,0 +1,81 @@
+{
+  "seed": 50,
+  "layout": "districts",
+  "phases": [
+    {
+      "command": [
+        "C:/Program Files (x86)/Steam/steamapps/common/Godot Engine/Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--fullscreen",
+        "--resolution",
+        "1920x1080",
+        "--max-fps",
+        "60",
+        "--script",
+        "res://tools/prepare_combined_world.gd",
+        "--",
+        "--world-slot=combined_stage_a95b55d2400046a982e8b5c02bb1edfe",
+        "--world-generator=12",
+        "--world-seed=50",
+        "--ground-cover",
+        "--actors",
+        "--checkpoint-layout=districts",
+        "--checkpoint-report=C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\combined_preparation\\20261018T095949153076Z\\checkpoint.json",
+        "--derived-cache=user://combined_stage_a95b55d2400046a982e8b5c02bb1edfe"
+      ],
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "pid": 27624,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 93.32150159999992,
+        "passed": true
+      }
+    },
+    {
+      "command": [
+        "C:/Program Files (x86)/Steam/steamapps/common/Godot Engine/Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--fullscreen",
+        "--resolution",
+        "1920x1080",
+        "--max-fps",
+        "60",
+        "--script",
+        "res://tools/prepare_combined_world.gd",
+        "--",
+        "--world-slot=combined_stage_a95b55d2400046a982e8b5c02bb1edfe",
+        "--world-generator=12",
+        "--world-seed=50",
+        "--ground-cover",
+        "--actors",
+        "--checkpoint-layout=districts",
+        "--checkpoint-report=C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\combined_preparation\\20261018T095949153076Z\\checkpoint.json",
+        "--derived-cache=user://combined_stage_a95b55d2400046a982e8b5c02bb1edfe",
+        "--reopen-checkpoint",
+        "--gameplay-construction",
+        "--vehicle-fleet"
+      ],
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "pid": 21704,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 20.759211099999902,
+        "passed": true
+      }
+    }
+  ],
+  "publication": {
+    "created": true,
+    "slot": "browser_seed50_137350",
+    "source_slot": "combined_stage_a95b55d2400046a982e8b5c02bb1edfe",
+    "source_sha256": "3a4f8c0ca9b2328c7468745b774880e30011fc7b07f8780648b7b3b7797b1b45"
+  }
+}

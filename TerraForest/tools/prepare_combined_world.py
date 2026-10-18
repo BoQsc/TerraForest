@@ -64,12 +64,28 @@ def main():
     parser.add_argument('--destination', default='combined_gameplay', help='Create only when this save slot is absent')
     parser.add_argument('--layout', choices=('cottages', 'mixed', 'regional', 'poi', 'lakes', 'districts'), default='cottages')
     parser.add_argument('--seed', type=int, default=1703, help='Deterministic new-world seed (0..2147483647); existing saves are preserved')
+    parser.add_argument('--status-file', type=Path, help='Optional browser completion status file')
     args = parser.parse_args()
     if not 0 <= args.seed <= 2147483647: parser.error('Seed must be between 0 and 2147483647')
     config, _ = parse_args(['--godot', args.godot] if args.godot else [])
     worlds = Path(os.environ['APPDATA']) / 'Godot/app_userdata/TerraForest/worlds'
     stamp = datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')
-    return prepare(config.godot, worlds, ROOT / 'reports/combined_preparation' / stamp, args.destination, args.layout, args.seed)
+    folder = ROOT / 'reports/combined_preparation' / stamp
+    def status(state, reason=''):
+        if args.status_file is None: return
+        value = dict(state=state, slot=args.destination, report=str(folder), reason=reason)
+        temporary = args.status_file.with_suffix('.tmp')
+        temporary.parent.mkdir(parents=True, exist_ok=True)
+        temporary.write_text(json.dumps(value), encoding='utf-8')
+        temporary.replace(args.status_file)
+    status('running')
+    try:
+        code = prepare(config.godot, worlds, folder, args.destination, args.layout, args.seed)
+    except Exception as error:
+        status('failed', str(error))
+        raise
+    status('ready' if code == 0 else 'failed', '' if code == 0 else 'Generation or save verification failed')
+    return code
 
 
 if __name__ == '__main__':

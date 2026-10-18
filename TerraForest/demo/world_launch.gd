@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: 0BSD
 extends RefCounted
-const PRESETS={1:"Original woodland",4:"Mountains, caves, ore veins and lakes",6:"Accessible cave entrances, ore veins and lakes",7:"Regional roads and settlement ground (in development)",8:"Regional world with domed cave chambers",9:"Regional world with connected cave floors",10:"Provisional mine layout",11:"Regional world with owned mine (in development)",12:"Regional world with larger lake (in development)"}
+const INTEGRATED_PRESET:=10012
+const PRESETS={10012:"Integrated regional world (prepared settlements, roads and lakes)",1:"Original woodland",4:"Mountains, caves, ore veins and lakes",6:"Accessible cave entrances, ore veins and lakes",7:"Regional roads and settlement ground (in development)",8:"Regional world with domed cave chambers",9:"Regional world with connected cave floors",10:"Provisional mine layout",11:"Regional world with owned mine (in development)",12:"Regional world with larger lake (in development)"}
 static func valid_slot(slot: String) -> bool:
 	var pattern:=RegEx.new();pattern.compile("^[A-Za-z_][A-Za-z0-9_]{0,47}$")
 	return pattern.search(slot)!=null
@@ -20,6 +21,9 @@ static func command(slot: String,create: bool,generator: int,seed: int,gameplay:
 		for suffix in [".clone.lock",".prepare.lock"]:
 			if FileAccess.file_exists(directory.path_join(slot+suffix)):return {"ok":false,"reason":"That world is being prepared. Choose another name."}
 	elif not FileAccess.file_exists(canonical):return {"ok":false,"reason":"The selected save is no longer available. Refresh the list."}
+	if create and generator==INTEGRATED_PRESET:
+		var preparation:=PackedStringArray([ProjectSettings.globalize_path("res://tools/prepare_combined_world.py"),"--godot",OS.get_executable_path(),"--layout","districts","--seed",str(seed),"--destination",slot])
+		return {"ok":true,"prepare":true,"args":preparation}
 	var args:=PackedStringArray(["--path",ProjectSettings.globalize_path("res://"),"--fullscreen","--resolution","1920x1080","--max-fps","60","res://demo/world.tscn","--","--world-slot="+slot,"--ground-cover","--actors","--vehicle-fleet","--max-fps=60"])
 	if create:args.append_array(PackedStringArray(["--world-generator="+str(generator),"--world-seed="+str(seed)]))
 	if gameplay:args.append("--gameplay-construction")
