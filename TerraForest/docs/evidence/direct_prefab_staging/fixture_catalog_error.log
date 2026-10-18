@@ -1,0 +1,94 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] New world
+[TerrainRewrite] New world
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+PASS actual world ready
+PASS real camera ray targets the construction fixture
+ERROR: Index p_which = 11 is out of bounds (popup->get_item_count() = 11).
+   at: _select (scene/gui/option_button.cpp:456)
+   GDScript backtrace (most recent call first):
+       [0] synchronize (res://addons/structures/construction_palette.gd:195)
+       [1] _sync_construction_palette (res://demo/world.gd:591)
+       [2] _show_lake_notice (res://demo/world.gd:300)
+       [3] _begin_direct_prefab (res://demo/world.gd:1160)
+       [4] _edit_structure (res://demo/world.gd:1015)
+       [5] run (res://tests/direct_prefab_staging.gd:29)
+ERROR: Index p_idx = 10 is out of bounds (items.size() = 10).
+   at: select (scene/gui/item_list.cpp:430)
+   GDScript backtrace (most recent call first):
+       [0] synchronize (res://addons/structures/construction_palette.gd:201)
+       [1] _sync_construction_palette (res://demo/world.gd:591)
+       [2] _show_lake_notice (res://demo/world.gd:300)
+       [3] _begin_direct_prefab (res://demo/world.gd:1160)
+       [4] _edit_structure (res://demo/world.gd:1015)
+       [5] run (res://tests/direct_prefab_staging.gd:29)
+[TerrainRewrite] Preparing furnished building...
+PASS ordinary aimed placement starts native staging
+PASS input handler does not publish blocks or models
+ERROR: Index p_which = 11 is out of bounds (popup->get_item_count() = 11).
+   at: _select (scene/gui/option_button.cpp:456)
+   GDScript backtrace (most recent call first):
+       [0] synchronize (res://addons/structures/construction_palette.gd:195)
+       [1] _sync_construction_palette (res://demo/world.gd:591)
+       [2] _show_lake_notice (res://demo/world.gd:300)
+       [3] _placement_notice (res://demo/world.gd:1143)
+       [4] _advance_frontage_placement (res://demo/world.gd:1173)
+       [5] run (res://tests/direct_prefab_staging.gd:33)
+ERROR: Index p_idx = 10 is out of bounds (items.size() = 10).
+   at: select (scene/gui/item_list.cpp:430)
+   GDScript backtrace (most recent call first):
+       [0] synchronize (res://addons/structures/construction_palette.gd:201)
+       [1] _sync_construction_palette (res://demo/world.gd:591)
+       [2] _show_lake_notice (res://demo/world.gd:300)
+       [3] _placement_notice (res://demo/world.gd:1143)
+       [4] _advance_frontage_placement (res://demo/world.gd:1173)
+       [5] run (res://tests/direct_prefab_staging.gd:33)
+[TerrainRewrite] Placement changed during preparation; place again
+PASS changing rotation cancels staged placement
+PASS cancel preserves world and inventory
+ERROR: Index p_which = 11 is out of bounds (popup->get_item_count() = 11).
+   at: _select (scene/gui/option_button.cpp:456)
+   GDScript backtrace (most recent call first):
+       [0] synchronize (res://addons/structures/construction_palette.gd:195)
+       [1] _sync_construction_palette (res://demo/world.gd:591)
+       [2] _show_lake_notice (res://demo/world.gd:300)
+       [3] _begin_direct_prefab (res://demo/world.gd:1160)
+       [4] _edit_structure (res://demo/world.gd:1015)
+       [5] run (res://tests/direct_prefab_staging.gd:37)
+ERROR: Index p_idx = 10 is out of bounds (items.size() = 10).
+   at: select (scene/gui/item_list.cpp:430)
+   GDScript backtrace (most recent call first):
+       [0] synchronize (res://addons/structures/construction_palette.gd:201)
+       [1] _sync_construction_palette (res://demo/world.gd:591)
+       [2] _show_lake_notice (res://demo/world.gd:300)
+       [3] _begin_direct_prefab (res://demo/world.gd:1160)
+       [4] _edit_structure (res://demo/world.gd:1015)
+       [5] run (res://tests/direct_prefab_staging.gd:37)
+[TerrainRewrite] Preparing furnished building...
+ERROR: Index p_which = 11 is out of bounds (popup->get_item_count() = 11).
+   at: _select (scene/gui/option_button.cpp:456)
+   GDScript backtrace (most recent call first):
+       [0] synchronize (res://addons/structures/construction_palette.gd:195)
+       [1] _sync_construction_palette (res://demo/world.gd:591)
+       [2] _show_lake_notice (res://demo/world.gd:300)
+       [3] _placement_notice (res://demo/world.gd:1143)
+       [4] _advance_frontage_placement (res://demo/world.gd:1179)
+       [5] run (res://tests/direct_prefab_staging.gd:40)
+ERROR: Index p_idx = 10 is out of bounds (items.size() = 10).
+   at: select (scene/gui/item_list.cpp:430)
+   GDScript backtrace (most recent call first):
+       [0] synchronize (res://addons/structures/construction_palette.gd:201)
+       [1] _sync_construction_palette (res://demo/world.gd:591)
+       [2] _show_lake_notice (res://demo/world.gd:300)
+       [3] _placement_notice (res://demo/world.gd:1143)
+       [4] _advance_frontage_placement (res://demo/world.gd:1179)
+       [5] run (res://tests/direct_prefab_staging.gd:40)
+[TerrainRewrite] Timber footbridge with metal rails - 12 m span placed - F5 saves; combined undo unavailable
+PASS bounded preparation completes
+PASS staged publication installs bridge deck at aimed cell
+PASS same publication installs all six batched rails
+DIRECT_PREFAB_SLICES 2
+[TerrainRewrite] Temporary test world: save skipped
+DIRECT_PREFAB_STAGING failures=0

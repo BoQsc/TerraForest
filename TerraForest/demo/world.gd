@@ -1011,6 +1011,9 @@ func _edit_structure(remove: bool) -> void:
 		if asset.has_meta("frontage_version"):
 			_begin_frontage_placement(asset,target)
 			return
+		if not asset.get_model_attachments().is_empty():
+			_begin_direct_prefab(asset,target)
+			return
 		if _place_combined_prefab(asset,target,structure_rotation):
 			_show_lake_notice(_prefab_placement_text(asset))
 		else: _show_lake_notice(construction_inventory.reason)
@@ -1150,14 +1153,22 @@ func _begin_frontage_placement(asset: Resource,target: Vector3i,from_dialog: boo
 		_show_lake_notice("Checking foundation support…")
 	else: _show_lake_notice("Foundation check unavailable; wait and place again")
 
+func _begin_direct_prefab(asset: Resource,target: Vector3i) -> void:
+	if not _foundation_placement.is_empty():_show_lake_notice("Wait for the current placement");return
+	if construction_inventory.begin_prefab(structures.blocks,player_hud.inventory,asset,target,structure_rotation,structures.model_collections(),preload("res://addons/structures/construction_catalog.gd").recipes(),[model_tool.protection()]):
+		_foundation_placement={"asset":asset,"target":target,"rotation":structure_rotation,"index":structure_prefab_index,"preparing":true,"require_support":false,"terrain_epoch":terrain.epoch,"terrain_revision":terrain.density_revision}
+		_show_lake_notice("Preparing furnished building...")
+	else:_show_lake_notice(construction_inventory.reason)
+
 func _advance_frontage_placement() -> void:
 	if _foundation_placement.is_empty(): return
 	var request:=_foundation_placement
-	if loading_active or shutdown_requested or (not app_focused and not request.get("from_dialog",false)) or player_hud.inventory_open or world_vehicle.driving or not structure_mode or model_tool.active or request.index!=structure_prefab_index or request.rotation!=structure_rotation or structure_prefabs[structure_prefab_index]!=request.asset:
+	var cancelled: bool=loading_active or shutdown_requested or (not app_focused and not request.get("from_dialog",false)) or player_hud.inventory_open or world_vehicle.driving or not structure_mode or model_tool.active or request.index!=structure_prefab_index or request.rotation!=structure_rotation or structure_prefabs[structure_prefab_index]!=request.asset
+	if cancelled:
 		foundation_check.status="Placement cancelled"
 	if request.get("preparing",false):
 		var bounds: AABB=request.asset.placement_bounds(request.target,request.rotation)
-		if foundation_check.status!="supported" or terrain.pending_edit or terrain.foreground_brush or not terrain.world_ready or terrain.epoch!=request.terrain_epoch or terrain.density_revision!=request.terrain_revision or not _prefab_player_clear(bounds) or world_vehicle.overlaps_edit(bounds):
+		if cancelled or (request.get("require_support",true) and foundation_check.status!="supported") or terrain.pending_edit or terrain.foreground_brush or not terrain.world_ready or terrain.epoch!=request.terrain_epoch or terrain.density_revision!=request.terrain_revision or not _prefab_player_clear(bounds) or world_vehicle.overlaps_edit(bounds):
 			construction_inventory.cancel_prefab();_foundation_placement={}
 			_placement_notice(request,"Placement changed during preparation; place again");return
 		# Detach during publication so our own change signals do not cancel it.

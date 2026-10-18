@@ -1,3 +1,9 @@
+> 2026-10-18 furnished placement: ordinary aimed prefabs now use the existing
+> staged native transaction, preserving frontage support rules and cancellation.
+> Real-camera start/cancel/publish check passes; native suite reports 25/25.
+> Initial admission and final publication remain synchronous; no frame-time
+> qualification claimed. Evidence: evidence/direct_prefab_staging/.
+
 > 2026-10-18 editor feedback: furnished prefab previews now show amber for
 > deferred attachment checks, with a visible colour legend; vehicle/player
 > overlap blocks preview. Real-ray non-mutating preview and developer-belt

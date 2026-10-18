@@ -1,0 +1,11 @@
+# Direct furnished placement staging - 2026-10-18
+
+Ordinary aimed placement of furnished prefabs previously called the synchronous combined transaction. Only prepared frontages used incremental preparation. Direct furnished placement now starts that same native transaction and advances through the existing world update path: at most 2048 cells/16 models with a cooperative 1000-microsecond target per call, followed by atomic paid publication. Direct placement does not add a foundation requirement; frontages retain their support check. Block-only placement/undo remains unchanged.
+
+The actual-world test aims the real camera at a temporary block and invokes the normal edit handler with the production metal bridge selected. No blocks or models publish in the initiating handler. Rotation changes cancel both pending states without world or inventory mutation. An unchanged request commits the bridge deck and all six rails in two slices. The initial fixture appended a duplicate prefab without updating the UI catalog; its out-of-range errors are retained. Final fixture selects the existing catalog asset and passes cleanly.
+
+Existing native staged suite reports 25 checks, zero failures, including source/world/model invalidation, actor protection, cancellation without inventory debit, and preservation of unrelated cells. The wrapper was mistakenly asked for the text failures=0 whereas this suite prints JSON; its failed marker verdict is retained alongside native_results.json and full output. No test rerun was needed to establish those explicit results.
+
+Reproduce actual-world check: python tools/run_godot_check.py direct_prefab_staging --timeout 65 --require 'DIRECT_PREFAB_STAGING failures=0'. Native regression: prefab_staged --timeout 40 --headless (read emitted JSON failures). Human saves and water unchanged.
+
+This closes the synchronous preparation bypass for direct furnished placement. Initial block occupancy preview/admission, registry snapshot, inventory publication and rendering updates still have synchronous work; the time target is cooperative, not a hard frame guarantee. Combined large-city placement and sustained performance remain unqualified. No new worker or alternate placement implementation was introduced.
