@@ -1,5 +1,12 @@
 ## Current integrated entry point - 2026-10-18
 
+Follow-up loading trace reproduced the supplies timeout while cached water surfaces
+continued publishing. Controlled 15-to-60 FPS testing changed throughput from about
+40 to 170 regions/s and completed without reset. Automated supplies checks now fix
+both active/background caps at 60; normal background power saving is preserved.
+Evidence: regional_loading_caps. Original failing-run focus was not recorded, so
+do not claim every startup delay or the separate runtime frame spikes are resolved.
+
 New district creation now includes deterministic one-time chest supplies, persisted
 and compared exactly on fresh-process reopen. The prepared named world
 regional_supplies_20261018 is available through Worlds.cmd; existing saves remain

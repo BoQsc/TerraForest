@@ -3,7 +3,7 @@ extends "res://tests/combined_resource_route.gd"
 const Supplies=preload("res://addons/world_runtime/settlement_supplies.gd")
 func run()->void:
  if "--snapshot-readonly" not in OS.get_cmdline_user_args():quit(2);return
- game=load("res://demo/world.tscn").instantiate();root.add_child(game)
+ game=load("res://demo/world.tscn").instantiate();game.max_fps=60;game.background_fps=60;root.add_child(game)
  if not check(await wait_for(func():return not game.loading_active,60),"integrated world loads"):
   print("SUPPLIES_LOAD_STATE ",game.terrain.loading_state(game.player.position,game.fly)," label=",game.loading_label.text," player=",game.player.position)
   await finish();return

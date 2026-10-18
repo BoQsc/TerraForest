@@ -1,0 +1,58 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[terrain-hitch] restore volumetric_water 233.06 ms at 3180
+[TerrainRewrite] World loaded
+[TerrainRewrite] World loaded
+[terrain-hitch] receive startup 248.69 ms at 3190
+[terrain-hitch] receive 250.41 ms at 3191
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS integrated world loads
+PASS repeat preparation refuses without overwriting contents
+PASS stocking never changes player inventory
+PASS every generated chest contains saved supplies
+PASS stocked chest protected: 1
+PASS stocked chest protected: 2
+PASS stocked chest protected: 3
+PASS stocked chest protected: 4
+PASS stocked chest protected: 5
+PASS stocked chest protected: 6
+PASS stocked chest protected: 7
+PASS stocked chest protected: 8
+PASS stocked chest protected: 9
+PASS stocked chest protected: 10
+PASS stocked chest protected: 11
+PASS stocked chest protected: 12
+PASS stocked chest protected: 13
+PASS stocked chest protected: 14
+PASS stocked chest protected: 15
+PASS stocked chest protected: 16
+PASS stocked chest protected: 17
+PASS stocked chest protected: 18
+PASS stocked chest protected: 19
+PASS stocked chest protected: 20
+PASS stocked chest protected: 21
+PASS stocked chest protected: 22
+PASS stocked chest protected: 23
+PASS stocked chest protected: 24
+PASS stocked chest protected: 25
+PASS stocked chest protected: 26
+PASS stocked chest protected: 27
+PASS stocked chest protected: 28
+PASS stocked chest protected: 29
+PASS stocked chest protected: 30
+PASS stocked chest protected: 31
+PASS stocked chest protected: 32
+PASS stocked chest protected: 33
+PASS stocked chest protected: 34
+PASS stocked chest protected: 35
+PASS stocked chest protected: 36
+PASS stocked chest protected: 37
+PASS stocked chest protected: 38
+PASS stocked chest protected: 39
+PASS stocked chest protected: 40
+PASS stocked chest protected: 41
+PASS ordinary native withdrawal transfers generated supply
+PASS supplies roundtrip exactly
+[TerrainRewrite] Temporary test world: save skipped
+REGIONAL_SUPPLIES failures=0
