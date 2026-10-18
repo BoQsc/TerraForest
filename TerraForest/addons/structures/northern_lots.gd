@@ -29,7 +29,8 @@ static func assemble(lots:Array,center:Vector3,surveys:Array)->Dictionary:
   if quality.status!="pass":return {"ok":false,"reason":"Lot exceeds earthworks budget","quality":quality}
   var origin:Vector3i=lot.origin;origin.y=survey.grade
   fitted.append({"asset":lot.asset,"origin":origin,"rotation":lot.rotation,"label":lot.label})
-  var part:Dictionary=SitePlan.foundation(lot.asset,origin,lot.rotation,survey.grade)
+  # Narrow authoring strips limit capsule-end excavation outside the lot.
+  var part:Dictionary=SitePlan.foundation(lot.asset,origin,lot.rotation,survey.grade,4.0)
   if not part.ok:return part
   # Preserve untouched natural ground where the floor already fits exactly.
   if absf(survey.min_height-survey.grade)>0.01 or absf(survey.max_height-survey.grade)>0.01:

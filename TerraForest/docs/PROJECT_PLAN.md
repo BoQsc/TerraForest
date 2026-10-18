@@ -1,5 +1,11 @@
 ## Current integrated entry point - 2026-10-18
 
+Northern lot grading now uses narrower capsule strips: affected-lot outside-surface
+excavation samples fall 157 to 37; all 3,336 foundation supports pass. Full creation,
+reload and inspected matching views pass in narrow_lots_42_20261018. Large cut/apron
+reduced, smaller exposed cut and unfinished road ends remain. Evidence:
+evidence/narrow_lot_grading. No completed landscape or performance claim.
+
 Player world map — requested 2026-10-18, pending implementation:
 Reserve M to open/close the player map. Introduce the first usable map alongside
 coherent regional roads and destinations, before expanding world scale further;

@@ -75,8 +75,8 @@ static func prepare(asset: Resource,origin: Vector3i,rotation: int,grade: int) -
 		return _entrance_paths(asset,plan,lines,rotation,grade)
 	return plan
 
-static func foundation(asset: Resource,origin: Vector3i,rotation: int,grade: int) -> Dictionary:
-	if asset==null or not asset.is_class("NativeBlockPrefab") or rotation<0 or rotation>3:
+static func foundation(asset: Resource,origin: Vector3i,rotation: int,grade: int,max_strip_width:float=24.0) -> Dictionary:
+	if asset==null or not asset.is_class("NativeBlockPrefab") or rotation<0 or rotation>3 or not is_finite(max_strip_width) or max_strip_width<1.0 or max_strip_width>24.0:
 		return {"ok":false,"reason":"Invalid building layout"}
 	var surface_offset:int=asset.get_meta("site_surface_offset",0)
 	if surface_offset not in [0,5] or (surface_offset==5 and not asset.get_meta("cellar_clearance",false)):
@@ -93,7 +93,7 @@ static func foundation(asset: Resource,origin: Vector3i,rotation: int,grade: int
 	var length: float=bounds.size.x if along_x else bounds.size.z
 	var breadth: float=bounds.size.z if along_x else bounds.size.x
 	var columns:=ceili(length/120.0)
-	var rows:=ceili(breadth/24.0)
+	var rows:=ceili(breadth/max_strip_width)
 	if columns*rows>MAX_SEGMENTS:
 		return {"ok":false,"reason":"Site exceeds 256 grading segments; divide the layout"}
 	var half_width:=maxf(0.5,breadth/rows*0.5)
