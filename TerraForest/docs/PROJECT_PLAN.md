@@ -1,3 +1,9 @@
+> 2026-10-18 prefab authoring: explicit serialized attachment envelope supports
+> models outside block walls while preserving survey/protection and overlap
+> guards. Rotations, composition, invalidation, resource persistence and legacy
+> furnished transactions pass. Authoring API only; automatic inference and
+> arbitrary attachment terrain clearance remain open. Evidence: evidence/prefab_envelope/.
+
 > 2026-10-18 startup receive cause: named provider timing attributes121.19 ms
 > of135.18 ms startup receipt to saved-water restoration; mesh receipt max0.06 ms,
 > polling0.026 ms. Water remains deferred per user direction; no implementation

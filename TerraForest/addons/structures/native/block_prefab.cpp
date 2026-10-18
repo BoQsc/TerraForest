@@ -32,6 +32,10 @@ void NativeBlockPrefab::_bind_methods() {
     ClassDB::bind_method(D_METHOD("configure_model_attachments","attachments"),&NativeBlockPrefab::configure_model_attachments);
     ClassDB::bind_method(D_METHOD("set_model_attachments","attachments"),&NativeBlockPrefab::set_model_attachments);
     ClassDB::bind_method(D_METHOD("get_model_attachments"),&NativeBlockPrefab::get_model_attachments);
+    ClassDB::bind_method(D_METHOD("configure_attachment_envelope","box"),&NativeBlockPrefab::configure_attachment_envelope);
+    ClassDB::bind_method(D_METHOD("set_attachment_envelope","box"),&NativeBlockPrefab::set_attachment_envelope);
+    ClassDB::bind_method(D_METHOD("get_attachment_envelope"),&NativeBlockPrefab::get_attachment_envelope);
+    ADD_PROPERTY(PropertyInfo(Variant::AABB,"attachment_envelope"),"set_attachment_envelope","get_attachment_envelope");
     ADD_PROPERTY(PropertyInfo(Variant::PACKED_INT32_ARRAY,"records"),"set_records","get_records");
     ADD_PROPERTY(PropertyInfo(Variant::ARRAY,"model_attachments"),"set_model_attachments","get_model_attachments");
 }
@@ -57,6 +61,21 @@ bool valid_attachments(const Array &items) {
     }
     return true;
 }
+}
+namespace {
+bool valid_envelope(const AABB &box) {
+    if(box==AABB())return true;
+    for(int a=0;a<3;++a)if(!std::isfinite(box.position[a])||!std::isfinite(box.size[a])||box.size[a]<=0||box.position[a]<-4095||box.get_end()[a]>4096)return false;
+    return true;
+}
+}
+bool NativeBlockPrefab::configure_attachment_envelope(AABB box) {
+    if(!valid_envelope(box))return false;
+    if(box==attachment_envelope)return true;
+    attachment_envelope=box;++definition_revision;emit_changed();return true;
+}
+void NativeBlockPrefab::set_attachment_envelope(AABB box) {
+    ERR_FAIL_COND_MSG(!configure_attachment_envelope(box),"Invalid attachment envelope; previous bounds preserved");
 }
 bool NativeBlockPrefab::configure_model_attachments(const Array &items) {
     if(!valid_attachments(items))return false;
@@ -182,8 +201,12 @@ bool NativeBlockPrefab::compose(const Array &sources,const PackedInt32Array &pla
             records.set(at++,(c.word&~24)|((((c.word>>3)+turns)&3)<<3));
         }
     }
+    AABB composed_envelope;bool has_envelope=false;
     Array attached;
     for(int64_t i=0;i<placements.size();i+=5) {
+        const AABB source_bounds=assets[placements[i]]->placement_bounds(Vector3i(placements[i+1],placements[i+2],placements[i+3]),placements[i+4]);
+        composed_envelope=has_envelope?composed_envelope.merge(source_bounds):source_bounds;has_envelope=true;
+        if(!valid_envelope(composed_envelope))return false;
         const Array &source=assets[placements[i]]->model_attachments;
         if(attached.size()+source.size()>4096)return false;
         Vector3 x_axis(1,0,0),z_axis(0,0,1);
@@ -205,7 +228,7 @@ bool NativeBlockPrefab::compose(const Array &sources,const PackedInt32Array &pla
     // configure rejects any duplicated cells and commits only after validation;
     // this remains safe when this resource also occurs among the sources.
     if(!configure_impl(records,false))return false;
-    model_attachments=attached;emit_changed();return true;
+    model_attachments=attached;attachment_envelope=composed_envelope;emit_changed();return true;
 }
 Dictionary NativeBlockPrefab::layout_counts(const Array &sources,int64_t lots,int64_t seed,int64_t streets) const {
     Dictionary result;result["ok"]=false;result["reason"]="Select valid sources, 1-64 lots and 1-8 streets";
@@ -293,7 +316,8 @@ PackedInt32Array NativeBlockPrefab::get_records() const {
 }
 AABB NativeBlockPrefab::placement_bounds(Vector3i origin,int turns) const {
     if(turns<0||turns>3||cells.empty())return AABB();
-    Vector3 lo=bounds.position,hi=bounds.get_end();
+    const AABB complete=get_bounds();
+    Vector3 lo=complete.position,hi=complete.get_end();
     // Integer cell rotation about the centre of local cell (0,0,0).
     for(int r=0;r<turns;r++) {Vector3 old=lo;lo=Vector3(1-hi.z,lo.y,old.x);hi=Vector3(1-old.z,hi.y,hi.x);}
     return AABB(Vector3(origin)+lo,hi-lo);

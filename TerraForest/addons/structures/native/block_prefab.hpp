@@ -21,7 +21,7 @@ class NativeBlockPrefab : public Resource {
     std::vector<PrefabCell> foundation_columns;
     struct ClearanceColumn { int x,z,low,high; int64_t end; };
     std::vector<ClearanceColumn> clearance_columns;
-    AABB bounds;
+    AABB bounds, attachment_envelope;
     uint64_t definition_revision=0;
     Array model_attachments;
     bool configure_impl(const PackedInt32Array &records,bool notify);
@@ -40,7 +40,10 @@ public:
     PackedInt32Array get_records() const;
     int get_cell_count() const { return int(cells.size()); }
     PackedInt64Array get_material_counts() const;
-    AABB get_bounds() const { return bounds; }
+    bool configure_attachment_envelope(AABB box);
+    void set_attachment_envelope(AABB box);
+    AABB get_attachment_envelope() const { return attachment_envelope; }
+    AABB get_bounds() const { return attachment_envelope.size==Vector3()?bounds:bounds.merge(attachment_envelope); }
     AABB placement_bounds(Vector3i origin,int quarter_turns) const;
     PackedVector3Array foundation_samples(Vector3i origin,int quarter_turns,int max_base_y) const;
     int64_t clearance_sample_count() const { return clearance_columns.empty()?0:clearance_columns.back().end; }

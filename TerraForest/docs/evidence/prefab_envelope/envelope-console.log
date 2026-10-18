@@ -1,0 +1,22 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS undeclared overhang rejected
+PASS explicit attachment envelope accepted
+PASS invalid envelope preserves definition
+PASS invalid envelope preserves definition
+PASS invalid envelope preserves definition
+PASS expanded rotated bounds protect actors
+PASS declared rotated attachment places: 
+PASS expanded rotated bounds protect actors
+PASS declared rotated attachment places: 
+PASS expanded rotated bounds protect actors
+PASS declared rotated attachment places: 
+PASS expanded rotated bounds protect actors
+PASS declared rotated attachment places: 
+PASS staged placement starts
+PASS changed envelope cancels staged placement without mutation
+PASS composition retains rotated attachment envelope
+PASS resource saves explicit envelope
+PASS fresh resource load retains envelope
+PASS empty envelope restores legacy block bounds
+PREFAB_ENVELOPE failures=0
