@@ -9,11 +9,15 @@ func run()->void:
  for street:Dictionary in game.road_palette.prepared_streets:
   var a:Vector3=street.ends[0];var b:Vector3=street.ends[1]
   if a.distance_to(center)<150 and b.distance_to(center)<150 and absf(a.z-b.z)<0.1 and absf(a.x-b.x)>40:streets.append([a,b] if a.x<b.x else [b,a])
- if streets.size()!=2:failure="expected two saved northern streets";await finish();return
+ var fitted:bool="--fitted-lots" in OS.get_cmdline_user_args()
+ if streets.size()!=(3 if fitted else 2):failure="unexpected saved northern street count";await finish();return
  streets.sort_custom(func(a:Array,b:Array):return a[0].z<b[0].z)
  var left:Vector3=streets[0][0];var right:Vector3=streets[0][1]
  var corner:=Vector3(center.x,right.y,right.z)
  var route:Array[Vector3]=[corner,right,left,streets[1][0],streets[1][1],right,corner,center]
+ if fitted:
+  # Use the arterial between parallel streets, never cut across building lots.
+  route=[corner,streets[0][0],streets[0][1],corner,center,streets[1][0],streets[1][1],center,Vector3(center.x,center.y,streets[2][0].z),streets[2][0],streets[2][1]]
  game.teleport(center)
  if not await ready_world(45):failure="north arrival timeout";await finish();return
  game.fly=false;game.app_focused=true;Input.mouse_mode=Input.MOUSE_MODE_CAPTURED

@@ -1,5 +1,13 @@
 ## Current integrated entry point - 2026-10-18
 
+Northern production generation now replaces the single pad with twelve independently
+fitted lots and three streets. Seven-seed lot checks, seed-42 native support, full
+creation/reopen and inspected overview/ground images: evidence/northern_fitted_lots.
+New review save: fitted_lots_42_20261018. Maximum sampled fill/cut: 1.07/2.66 m.
+Overall visual quality remains REJECTED: repeated facades, missing trees/public-space
+design and an exposed end cut remain visible. These are required work, not polish.
+The historical single-pad results below do not describe the replacement layout.
+
 World quality: the current northern district is REJECTED, despite passing engineering
 checks. Single-grade fill/cut and repeated towers fail the new WORLD_BUILDING_STANDARD.md.
 Preparation now records separate earthworks quality/pending review results. Next work

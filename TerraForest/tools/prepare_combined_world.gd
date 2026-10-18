@@ -223,6 +223,9 @@ func prepare_outer_sites()->bool:
   game.teleport(center+Vector3(30,0,30))
   if not require(await wait_until(func():return not game.loading_active,60),"outer site %d loads" % site.id):return false
   game.set_physics_process(false);game._clear_motion();game.structure_mode=true;game.structure_rotation=0
+  if districts and site.id==3:
+   if not await prepare_northern_lots(center):return false
+   continue
   var count:int=game.structure_prefabs.size()
   var selection:=PackedInt32Array([cottage])
   var district:Dictionary={"title":"Regional village %d"%site.id,"lots":1,"width":8,"gap":3,"streets":1,"buildings":2}
@@ -236,10 +239,7 @@ func prepare_outer_sites()->bool:
   if not require(await wait_until(func():return game.structure_prefabs.size()==count+1,10),"outer furnished street composed"):return false
   var asset:Resource=game.structure_prefabs[game.structure_prefab_index]
   if districts:asset.set_meta("entrance_paths",true)
-  var bounds:AABB=asset.placement_bounds(Vector3i.ZERO,0)
   var origin:Vector3i=preload("res://addons/structures/site_plan.gd").regional_origin(asset,center)
-  if districts and site.id==3:
-   origin.z=floori(center.z-bounds.get_center().z)
   var survey:Dictionary=await game.site_survey.assess(game.terrain,asset,origin,0)
   world_quality_sites.append(WorldQuality.site(survey,district.title))
   if not require(survey.ok,"outer site supported: "+str(survey)):return false
@@ -318,4 +318,46 @@ func prepare_cellar_location()->bool:
  game._place_prepared_site()
  if not require(await wait_until(func():return game._foundation_placement.is_empty(),20) and game.doors.collection.get_ids().size()==before+1,"cellar cottage and attachments publish"):return false
  print("REGIONAL_CELLAR origin=",plan.target," cells=",game.structures.blocks.stats().cells)
+ return true
+
+func prepare_northern_lots(center:Vector3)->bool:
+ var builder=preload("res://addons/structures/northern_lots.gd")
+ var lots:Array=builder.recipe(center);var surveys:Array=[]
+ for lot:Dictionary in lots:
+  var survey:Dictionary=await game.site_survey.assess(game.terrain,lot.asset,lot.origin,lot.rotation)
+  if not require(survey.ok,"lot surveyed before any grading: "+lot.label):return false
+  surveys.append(survey)
+ var plan:Dictionary=builder.assemble(lots,center,surveys)
+ if not require(plan.ok,"independent northern lot plan: "+str(plan.get("reason","accepted"))):return false
+ var records:=PackedInt32Array()
+ for z in [-52,0,52]:
+  for x in range(-50,51):
+   # The existing arterial crossing is already paved; natural-root surveys reject asphalt.
+   if absi(x)<8:continue
+   for dz in range(-4,5):records.append_array(PackedInt32Array([x,0,z+dz,1]))
+ var road_probe:Resource=ClassDB.instantiate("NativeBlockPrefab")
+ if not road_probe.configure(records):return false
+ var road_survey:Dictionary=await game.site_survey.assess(game.terrain,road_probe,Vector3i(center),0)
+ road_survey.grade=center.y
+ var road_quality:Dictionary=WorldQuality.site(road_survey,"Northern street corridors")
+ if not require(road_quality.status=="pass","street earthworks fit: "+str(road_quality)+" survey="+str(road_survey)):return false
+ world_quality_sites.append_array(plan.qualities);world_quality_sites.append(road_quality)
+ print("NORTHERN_LOT_QUALITY ",JSON.stringify(plan.qualities))
+ game.teleport(center+Vector3(100,0,0))
+ if not require(await wait_until(func():return not game.loading_active,45),"move outside northern preparation bounds"):return false
+ game.set_physics_process(false);game._clear_motion();game.structure_mode=true;game.structure_rotation=0
+ game._accept_composed_prefab({"ok":true,"asset":plan.asset})
+ game._survey_generation+=1
+ plan["epoch"]=game.terrain.epoch;plan["revision"]=game.terrain.density_revision;plan["generation"]=game._survey_generation
+ game._survey_plan=plan;game._prepare_construction_site()
+ if not require(await wait_until(func():return game.site_preparation.status!="running",45) and game.site_preparation.status=="complete","independent lots and streets prepared"):return false
+ for lot:Dictionary in plan.lots:
+  var index:int=game.structure_prefabs.find(lot.asset)
+  if index<0:
+   game._accept_composed_prefab({"ok":true,"asset":lot.asset});index=game.structure_prefab_index
+  game.structure_prefab_index=index;game.structure_rotation=lot.rotation
+  var doors:int=game.doors.collection.get_ids().size()
+  # Support/clearance bands belong to each lot's base, not one global height.
+  game._begin_frontage_placement(lot.asset,lot.origin,true)
+  if not require(await wait_until(func():return game._foundation_placement.is_empty(),20) and game.doors.collection.get_ids().size()==doors+1,"terrain-fitted building published: "+lot.label+" support="+game.foundation_check.status):return false
  return true

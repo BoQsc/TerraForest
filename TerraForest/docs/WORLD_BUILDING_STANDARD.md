@@ -108,3 +108,12 @@ continue adding detail onto the rejected single-pad layout as though it were fin
 Preparation reports preserve that result and explicitly leave the remaining review
 categories pending. Development saves can still be generated for inspection; this
 is not a release/promotion gate and must not be described as full enforcement yet.
+
+## Application to the first replacement layout
+
+The new `northern_lots.gd` production recipe removes the single pad and checks
+independent lot grades. Evidence: `evidence/northern_fitted_lots/`. Its earthworks
+checks pass, but the inspected replacement is still rejected for overall design:
+repeated facade family, missing trees/public-space landscape, exposed end cut and
+raw road ends. These are required follow-up work, not optional polish. Passing
+lot checks must not promote this recipe to accepted world quality.

@@ -1,0 +1,85 @@
+{
+  "failure": "",
+  "max_ms": 18.423,
+  "p95_ms": 16.843,
+  "reached": 11,
+  "samples": [
+    {
+      "loading": false,
+      "on_floor": true,
+      "position": "(1026.0, 55.00942, 178.8521)",
+      "remaining": 0.852066040039063,
+      "target": "(1026.0, 55.0, 178.0)"
+    },
+    {
+      "loading": false,
+      "on_floor": true,
+      "position": "(976.8373, 55.00942, 178.0143)",
+      "remaining": 0.837402045726776,
+      "target": "(976.0, 55.0, 178.0)"
+    },
+    {
+      "loading": false,
+      "on_floor": true,
+      "position": "(1075.017, 55.00842, 178.0)",
+      "remaining": 0.983154296875,
+      "target": "(1076.0, 55.0, 178.0)"
+    },
+    {
+      "loading": false,
+      "on_floor": true,
+      "position": "(1026.992, 55.00845, 177.9999)",
+      "remaining": 0.9915771484375,
+      "target": "(1026.0, 55.0, 178.0)"
+    },
+    {
+      "loading": false,
+      "on_floor": true,
+      "position": "(1026.016, 55.00939, 229.1383)",
+      "remaining": 0.861832022666931,
+      "target": "(1026.0, 55.0, 230.0)"
+    },
+    {
+      "loading": false,
+      "on_floor": true,
+      "position": "(976.8535, 55.00939, 229.9853)",
+      "remaining": 0.853642642498016,
+      "target": "(976.0, 55.0, 230.0)"
+    },
+    {
+      "loading": false,
+      "on_floor": true,
+      "position": "(1075.034, 55.00939, 229.9999)",
+      "remaining": 0.9656982421875,
+      "target": "(1076.0, 55.0, 230.0)"
+    },
+    {
+      "loading": false,
+      "on_floor": true,
+      "position": "(1026.843, 55.00939, 230.0)",
+      "remaining": 0.8428955078125,
+      "target": "(1026.0, 55.0, 230.0)"
+    },
+    {
+      "loading": false,
+      "on_floor": true,
+      "position": "(1026.014, 55.00939, 281.1431)",
+      "remaining": 0.856981635093689,
+      "target": "(1026.0, 55.0, 282.0)"
+    },
+    {
+      "loading": false,
+      "on_floor": true,
+      "position": "(976.851, 55.00939, 281.9854)",
+      "remaining": 0.851076662540436,
+      "target": "(976.0, 55.0, 282.0)"
+    },
+    {
+      "loading": false,
+      "on_floor": true,
+      "position": "(1075.032, 55.00939, 281.9999)",
+      "remaining": 0.96826171875,
+      "target": "(1076.0, 55.0, 282.0)"
+    }
+  ]
+}

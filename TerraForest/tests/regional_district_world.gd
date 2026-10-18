@@ -26,6 +26,8 @@ func run()->void:
   game.camera.global_position=center+Vector3(28,25,-30);game.camera.look_at(center+Vector3(-30,5,-35))
   if expanded:
    game.camera.global_position=center+Vector3(30,42,-55);game.camera.look_at(center+Vector3(-40,4,0))
+  if "--fitted-lots" in OS.get_cmdline_user_args():
+   game.camera.global_position=center+Vector3(80,55,-110);game.camera.look_at(center+Vector3(0,5,0))
   for frame in 90:await process_frame
   if expanded:
    RenderingServer.viewport_set_measure_render_time(root.get_viewport_rid(),true)
@@ -38,6 +40,13 @@ func run()->void:
    metrics.append({"site":index,"frames":samples,"streaming":stream,"blocks":game.structures.blocks.stats()})
   await RenderingServer.frame_post_draw
   root.get_texture().get_image().save_png("res://reports/regional_district_%d.png"%index)
+  if "--fitted-lots" in OS.get_cmdline_user_args():
+   var views:Array=[{ "from":Vector3(0,2,-62),"to":Vector3(24,5,-68)}, {"from":Vector3(48,3,86),"to":Vector3(24,3,68)}]
+   for n in views.size():
+    game.camera.global_position=center+views[n].from;game.camera.look_at(center+views[n].to)
+    for frame in 30:await process_frame
+    await RenderingServer.frame_post_draw
+    root.get_texture().get_image().save_png("res://reports/fitted_lot_ground_%d.png"%n)
  print("REGIONAL_DISTRICT_WORLD failures=",0 if ok else 1," buildings_by_site=",counts)
  if expanded:
   var file:=FileAccess.open("res://reports/northern_district_metrics.json",FileAccess.WRITE);file.store_string(JSON.stringify({"counts":counts,"metrics":metrics},"  "));file.close()
