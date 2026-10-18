@@ -1,5 +1,16 @@
 ## Current integrated entry point - 2026-10-18
 
+Player world map — requested 2026-10-18, pending implementation:
+Reserve M to open/close the player map. Introduce the first usable map alongside
+coherent regional roads and destinations, before expanding world scale further;
+do not wait for final art or multiplayer. Initial scope: player position/heading,
+terrain/water overview, roads and named locations, pan/zoom, and an obvious close
+button. Use generated/cached world metadata; opening the map must not load or
+render the entire 3D world. Define discovery visibility before exposing secret POIs.
+Audit existing KEY_M model-tool binding in demo/world.gd and retire/remap it through
+the unified development UI so it cannot conflict with the player map. This note
+records the milestone only; M is not yet changed and no map implementation is claimed.
+
 Northern production generation now replaces the single pad with twelve independently
 fitted lots and three streets. Seven-seed lot checks, seed-42 native support, full
 creation/reopen and inspected overview/ground images: evidence/northern_fitted_lots.
