@@ -1,0 +1,9 @@
+# Populated startup attribution — 2026-10-18
+
+The earlier populated_combined_route reopen logged controller process1386.83 ms/world process1388.89 ms. That broad controller timer included interaction, authoring, vehicle, base controller, presentation and pickups, so it could not identify a cause. Named substage timings now use the existing terrain stage signal/slow-stage logger. Base-controller loading is separately measured. Timings are elapsed main-thread scope durations, not CPU utilization or exclusive samples; nested maxima must not be added.
+
+Two short copied-world startup checks completed with two residents. The initial trace had receive268.644 ms/controller29.281 ms, and its presentation label still included base-controller time. The corrected split trace has receive146.703 ms, base controller6.085 ms (loading6.018), world vehicle1.679, interaction1.333, pickups0.538, presentation0.243, world total6.868. The former1.39 s event did not recur; its cause is unresolved. No performance fix is claimed. Terrain receive remains a separately observed loading cost.
+
+Runner: `python tools/run_populated_startup_trace.py --source populated_review_20261016`. It clones to a unique slot, waits at most45s for readiness, observes120 frames and shuts down. The final manifest includes native hashes and confirms the original save unchanged. Shutdown can save the disposable copy. No source world is edited. Normal actor/player simulation remains enabled; the test does not inject movement. Startup completion is the PASS criterion, not any FPS/latency threshold. The initial trace predates the reusable runner's full provenance fields and is retained as preliminary evidence.
+
+This bounded investigation improves attribution for recurrence. It does not close loading, long-session, thermal or frame-tail gates. Water unchanged.

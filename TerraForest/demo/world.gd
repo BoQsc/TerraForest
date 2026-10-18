@@ -1189,13 +1189,18 @@ func _physics_process(delta: float) -> void:
 func _process(delta: float) -> void:
 	var frame_begin:=Time.get_ticks_usec()
 	world_interaction.update(self,delta)
+	terrain._record_stage("world interaction",(Time.get_ticks_usec()-frame_begin)/1000.0)
+	var section_begin:=Time.get_ticks_usec()
 	road_palette.poll_submission(terrain)
 	site_preview.visible=site_preview.vertices>0 and _site_selection_current() and _survey_plan.get("epoch",-1)==terrain.epoch and structure_mode and not model_tool.active and not world_vehicle.driving and not loading_active and not player_hud.inventory_open
 	var frontage_result: Dictionary=prefab_library.poll_frontage()
 	if not frontage_result.is_empty(): _accept_composed_prefab(frontage_result)
 	_advance_frontage_placement()
 	_advance_site_preparation()
+	terrain._record_stage("world authoring",(Time.get_ticks_usec()-section_begin)/1000.0)
+	section_begin=Time.get_ticks_usec()
 	world_vehicle.update(self,delta)
+	terrain._record_stage("world vehicle",(Time.get_ticks_usec()-section_begin)/1000.0)
 	if world_vehicle.driving!=_vehicle_ui_active:
 		_vehicle_ui_active=world_vehicle.driving
 		player_hud.visible=not _vehicle_ui_active;player_hud.enabled=not _vehicle_ui_active
@@ -1205,11 +1210,17 @@ func _process(delta: float) -> void:
 			_walking_help=help.text
 			help.text="W / S  Accelerate / Brake or reverse    A / D  Steer    Space  Handbrake    Shift  Boost\nE  Exit when stopped    R  Reset vehicle    Esc  Release mouse\nF5 Save · reload on foot beside the parked vehicle. Cosmetic dents are not saved."
 		else: help.text=_walking_help
+	section_begin=Time.get_ticks_usec()
 	super._process(delta)
+	terrain._record_stage("base controller",(Time.get_ticks_usec()-section_begin)/1000.0)
+	section_begin=Time.get_ticks_usec()
 	road_palette.panel.visible=session_menu.workspace and session_menu.current_page=="Roads" and session_menu.developer
 	road_preview.visible=not world_vehicle.driving and not structure_mode and not model_tool.active and not loading_active and not shutdown_requested and not player_hud.inventory_open
 	water_camera.update()
+	terrain._record_stage("world presentation",(Time.get_ticks_usec()-section_begin)/1000.0)
+	section_begin=Time.get_ticks_usec()
 	pickups.update_view(delta,player.global_position,not loading_active and not shutdown_requested)
+	terrain._record_stage("world pickups",(Time.get_ticks_usec()-section_begin)/1000.0)
 	terrain._record_stage("controller process",(Time.get_ticks_usec()-frame_begin)/1000.0)
 	ground_preview.update(self,delta)
 	_update_prefab_preview(delta)

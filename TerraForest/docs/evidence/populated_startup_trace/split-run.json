@@ -1,0 +1,61 @@
+{
+  "copy": {
+    "created": true,
+    "slot": "startup_trace_19b8bee66253473cb9ac7514a331c76d",
+    "source_slot": "populated_review_20261016",
+    "source_sha256": "69780dfca811753a08cba79b5100eed87424239a8baf0b922c51a3d7c94b5906"
+  },
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+    "--path",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+    "--fullscreen",
+    "--resolution",
+    "1920x1080",
+    "--max-fps",
+    "60",
+    "--script",
+    "res://tests/populated_startup_trace.gd",
+    "--",
+    "--world-slot=startup_trace_19b8bee66253473cb9ac7514a331c76d",
+    "--ground-cover",
+    "--actors",
+    "--vehicle-fleet",
+    "--gameplay-construction"
+  ],
+  "result": {
+    "timed_out": false,
+    "launch_error": null,
+    "pid": 2648,
+    "exit_code": 0,
+    "diagnostics": [],
+    "required_text_found": true,
+    "elapsed_seconds": 22.016634300001897,
+    "passed": true
+  },
+  "source_unchanged": true,
+  "revision": "40e923a96978a3ab29e26ec304d911186d42abe4",
+  "worktree_changes": [
+    " M TerraForest/demo/controller.gd",
+    " M TerraForest/demo/world.gd",
+    "?? TerraForest/tests/populated_startup_trace.gd",
+    "?? TerraForest/tools/run_populated_startup_trace.py"
+  ],
+  "git_metadata_available": true,
+  "native_sha256": {
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "ed066843981550a6da7f2ed47f5f05eb676b1256540206cb2399e528d965c965",
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "7fe9102e113afdf3c91293fa09b2fb78f060985a2089c8fef67e4b58e0a62d6b",
+    "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "667c7e25f84b8c7ebc25057962fe26025a38291d8c921911a43e698b6fa4283b",
+    "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "dce4cdeba56c416504f880e748e98756326990d59977452f85c047305ff982dd",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "0742e44096e00e13acd013a151ca4cbd7d52b5d3ac3703485a7a3d656a9a9b6f",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "13f455564dba3ebddce1f4f4a0fa470dad07ce80ef0d4097ce48527427046e04",
+    "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "d6479d2a000657a5b5fd6a516220efc67a34ff3183eae8c93c622b27fcaf3934",
+    "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "c133f46b04d9cdefdbbf447323f1e65d4c7371e62530ed51276658bf2c931943",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "93786729f1824a70858ceeab4195d89bbaf6ea40d36504babc614fff85206118",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "3640055c27a61d333e4f1b883f915c58874250b1d137ee4933a5116d527212c0",
+    "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "8d7631c96ca3f186522ec4428f741baa9bd1581f01dedc57b835ea2b534a17c5",
+    "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "65fcad69f40898fb10db522a5741fd7c8f4953f0c96e1ec1cec863531272ce52",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "8d9760afd9ab6a0c494534ed63b677cdedcdf8cf5beb4d5b47fdc9bfece53499",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "335fce31b860456ecc65042094af8fd596f9422549ebbd84e51267ddb41728fb"
+  }
+}

@@ -1,0 +1,11 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[TerrainRewrite] World loaded
+[TerrainRewrite] World loaded
+[terrain-hitch] receive 268.64 ms at 12605
+[TerrainRewrite] Ready: nearby coverage/collision active; distant terrain still streaming
+STARTUP_STAGE_MAXIMA {"LOD coverage":2.744,"LOD eviction":0.06,"LOD requests":2.555,"LOD schedule/cut/evict":3.482,"collision exact match":0.003,"collision node attach":1.89,"collision physics cook":1.987,"collision piece":2.95,"controller loading":24.566,"controller process":29.281,"lighting schedule":0.098,"mesh upload/create":3.169,"prepared subtree attach":0.148,"receive":268.644,"retire collision/mesh":0.002,"staging frame":5.391,"world authoring":0.147,"world interaction":3.307,"world pickups":3.976,"world presentation":25.242,"world process":29.429,"world vehicle":6.075}
+STARTUP_RESIDENTS 2
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+POPULATED_STARTUP_TRACE failures=0

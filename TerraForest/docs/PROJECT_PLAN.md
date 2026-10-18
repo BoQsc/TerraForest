@@ -1,3 +1,9 @@
+> 2026-10-18 startup attribution: split broad controller timing into interaction,
+> authoring, vehicle, base controller/loading, presentation and pickups. Short
+> copied-world trace did not reproduce the 1.39 s event; final controller max
+> 6.74 ms, terrain receive146.70 ms. Cause of original event remains unresolved;
+> no performance fix claimed. Evidence: evidence/populated_startup_trace/.
+
 > 2026-10-18 populated combined route: gathered resources, crafted/placed a paid
 > brick, used chest storage, walked door/stairs, drove/returned, and saved/reopened
 > while native residents participated. Both actor identities/orders survive;

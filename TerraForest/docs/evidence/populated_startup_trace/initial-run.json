@@ -1,0 +1,36 @@
+{
+  "copy": {
+    "created": true,
+    "slot": "startup_trace_9b0645bde03742148d038d53a097dae4",
+    "source_slot": "populated_review_20261016",
+    "source_sha256": "69780dfca811753a08cba79b5100eed87424239a8baf0b922c51a3d7c94b5906"
+  },
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+    "--path",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+    "--fullscreen",
+    "--resolution",
+    "1920x1080",
+    "--max-fps",
+    "60",
+    "--script",
+    "res://tests/populated_startup_trace.gd",
+    "--",
+    "--world-slot=startup_trace_9b0645bde03742148d038d53a097dae4",
+    "--ground-cover",
+    "--actors",
+    "--vehicle-fleet",
+    "--gameplay-construction"
+  ],
+  "result": {
+    "timed_out": false,
+    "launch_error": null,
+    "pid": 6672,
+    "exit_code": 0,
+    "diagnostics": [],
+    "required_text_found": true,
+    "elapsed_seconds": 28.590905099998054,
+    "passed": true
+  }
+}

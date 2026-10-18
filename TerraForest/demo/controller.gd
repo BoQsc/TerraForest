@@ -752,7 +752,9 @@ func _brush_overlaps_player(center: Vector3, r: float) -> bool:
 func _process(delta: float) -> void:
 	if shutdown_requested:
 		return
+	var loading_begin:=Time.get_ticks_usec()
 	_update_loading()
+	terrain._record_stage("controller loading",(Time.get_ticks_usec()-loading_begin)/1000.0)
 	if terrain.nearby_first:
 		camera.far = 3300.0 if terrain.root_coverage == terrain.roots.size() else 320.0
 	_consume_stroke()
