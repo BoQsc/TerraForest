@@ -110,6 +110,10 @@ func _measured_step(_delta:float)->void:
 	if center!=_last_cell:
 		_last_cell=center;_wanted.clear()
 		for key in native.wanted(center): _wanted[key]=true
+		# Invalidations also cover owners still awaiting first publication. They
+		# have no resident entry to retire below; discard their obsolete work.
+		for key in _dirty.keys():
+			if not _wanted.has(key):_dirty.erase(key)
 		for key in resident.keys():
 			if not _wanted.has(key):
 				_retire(key);resident.erase(key);_dirty.erase(key);_resident_layers.erase(key)

@@ -120,6 +120,15 @@ func run() -> void:
 	var bands_ok:bool=cover.resident.size()==49 and cover._dirty.is_empty()
 	for owner:Vector2i in cover.resident:bands_ok=bands_ok and cover._resident_layers[owner]==cover._layers(owner)
 	check(bands_ok and cover.rejected_batches==0,"crossing a cell boundary upgrades nearby cover and retains loaded layers until owner retirement")
+	# A world invalidation can mark owners dirty before their first publication.
+	# Leaving during that load must retire those requests as well as resident cells.
+	cover.reset();camera.position=Vector3(960,3,960);cover._process(0.0)
+	cover._exclusion_changed(AABB())
+	camera.position=Vector3(1600,3,1600);cover._process(0.0)
+	var dirty_current:=true
+	for owner:Vector2i in cover._dirty:dirty_current=dirty_current and cover._wanted.has(owner)
+	check(dirty_current,"teleport retires dirty owners that never published")
+	terrain.reply();finish_support(cover,terrain)
 	cover.reset()
 	check(cover.resident.is_empty() and cover.batches[0].get_ids().is_empty() and cover.batches[1].get_ids().is_empty() and cover.batches[2].get_ids().is_empty(),"reset releases generated records")
 	cover.free();terrain.free();camera.free()

@@ -8,11 +8,20 @@ func run()->void:
  game=load("res://demo/world.tscn").instantiate();game.temporary_world=true;game.background_fps=60;game.max_fps=60;root.add_child(game)
  if not check(await wait_for(func():return not game.loading_active,60),"saved world ready"):await done();return
  var center:Vector3=preload("res://addons/volumetric_terrain/generated_layout.gd").describe(game.terrain.backend.world_seed,game.terrain.backend.world_generator).sites[4].position
+ if "--invalidate-before-travel" in OS.get_cmdline_user_args():
+  game.ground_cover.reset();game.ground_cover._process(0.0)
+  game.ground_cover._exclusion_changed(AABB())
  game.teleport(center+Vector3(28,0,32))
  if not check(await wait_for(func():return not game.loading_active,45),"southern arrival ready"):await done();return
  game.set_physics_process(false);game._clear_motion()
  var begin:=Time.get_ticks_msec()
- check(await wait_for(settled,15),"all ground cover owners settled")
+ var progress:Array=[]
+ while not settled() and Time.get_ticks_msec()-begin<15000:
+  var c=game.ground_cover
+  progress.append({"ms":Time.get_ticks_msec()-begin,"resident":c.resident.size(),"wanted":c._wanted.size(),"dirty":str(c._dirty.keys()),"pending":str(c._pending),"requests":str(c._requests.keys()),"scatter_key":str(c._scatter_job.get("key")),"layer":c._scatter_job.get("layer",-1),"support":str(c._support_job.keys()),"queue":game.terrain.backend.queued(),"worker":game.terrain.backend.status(),"pending_edit":game.terrain.pending_edit,"revision":game.terrain.published_revision,"rejected":c.rejected_batches})
+  var until:=Time.get_ticks_msec()+500
+  while Time.get_ticks_msec()<until:await process_frame
+ check(settled(),"all ground cover owners settled")
  var settle_ms:=Time.get_ticks_msec()-begin
  var c=game.ground_cover
  print("COVER_STATE residents=",c.resident.size()," wanted=",c._wanted.size()," dirty=",c._dirty.size()," requests=",c._requests.size()," scatter_owner=",c._scatter_job.get("key")," layer=",c._scatter_job.get("layer")," support=",c._support_job.keys())
@@ -31,5 +40,5 @@ func run()->void:
  for batch in game.ground_cover.batches:
   var stat:Dictionary=batch.render_stats();render.append(stat)
   check(stat.budget_deferred==0,"no deferred vegetation pages")
- FileAccess.open("res://reports/southern_vegetation/result.json",FileAccess.WRITE).store_string(JSON.stringify({"failures":failures,"settle_ms":settle_ms,"render":render},"  "))
+ FileAccess.open("res://reports/southern_vegetation/result.json",FileAccess.WRITE).store_string(JSON.stringify({"failures":failures,"settle_ms":settle_ms,"progress":progress,"render":render},"  "))
  await done()
