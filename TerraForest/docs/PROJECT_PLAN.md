@@ -1,3 +1,14 @@
+## Actual player vegetation travel — 2026-10-19
+
+The sparse placement now passes an actual W+Shift route crossing two 32 m streaming
+boundaries in the saved southern world. All 387 frames grounded; native owner,
+request and arrival rendering budgets pass; authoritative plant state unchanged.
+Evidence: `evidence/vegetation_player_travel`. Frame p95 17.217 ms / worst 37.43 ms
+still fails strict 60 FPS acceptance. Endpoint inspection exposes distant speckled
+patterning; visual LOD continuity remains unfinished. Start/end captures do not
+prove absence of popping during movement. Next: attribute frame spikes and inspect
+mid/far representation during travel without increasing density or replacing models.
+
 ## Placement cost verification — 2026-10-19
 
 Repeated anchor validation moved outside the per-plant loop. Pre/post candidate
