@@ -1,3 +1,12 @@
+## Distant vegetation attribution — 2026-10-19
+
+Matched world views reject disabling distance dithering or distant self-shading as
+solutions to the speckled far cover. Speckling persists; no production visual
+settings changed. Evidence: `evidence/vegetation_far_diagnostic`. Next isolate
+simplified silhouette/subpixel coverage with unchanged density and near models,
+then inspect moving views. The defect remains open; this is diagnostic evidence,
+not a finished visual correction or overall performance acceptance.
+
 ## Actual player vegetation travel — 2026-10-19
 
 The sparse placement now passes an actual W+Shift route crossing two 32 m streaming

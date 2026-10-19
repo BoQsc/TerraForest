@@ -1,0 +1,31 @@
+{
+  "center": "(1089.0, 62.0, 1792.0)",
+  "failures": 0,
+  "phases": [
+    {
+      "frame_p95": 19.232,
+      "gpu_median": 6.54300022125244,
+      "label": "normal",
+      "worst": 19.89
+    },
+    {
+      "frame_p95": 20.108,
+      "gpu_median": 6.54300022125244,
+      "label": "no_distance_dither",
+      "worst": 20.606
+    },
+    {
+      "frame_p95": 20.104,
+      "gpu_median": 6.54400014877319,
+      "label": "no_self_shade",
+      "worst": 20.547
+    },
+    {
+      "frame_p95": 20.857,
+      "gpu_median": 6.54300022125244,
+      "label": "normal_repeat",
+      "worst": 21.712
+    }
+  ],
+  "scope": "Same-view distance dithering/self-shading diagnostic; no production settings changed."
+}
