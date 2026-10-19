@@ -154,15 +154,15 @@ populated view; root ambient shading is not a cast shadow. Do not enable blanket
 blade shadows or replace accepted models without evidence that the gain merits
 the runtime cost. A short rendering check does not establish thermal headroom.
 
-2026-10-18 density direction: retain the accepted dense near-player vegetation
-reference. Evaluate a gradual, modest presentation-only reduction for distant
-grass after mesh simplification, not missing owner patches. Small stones retain
-their distribution and identity. Prefer very cheap silhouettes to visibly bare
-middle/far ground; remove cover only beyond its useful ordinary viewing range.
-Zoom must extend the useful detail range with bounded loading and fading. Exact
-density ratios and distances remain unaccepted pending matched ground, elevated,
-travel and zoom views. Do not interpret this direction as approval to thin the
-current world immediately or to remove persistent gathered/placeable objects.
+2026-10-19 density direction (supersedes the 2026-10-18 density requirement):
+The user chose to retain current sparse production cover and improve its spatial
+placement. Use deterministic irregular groups and openings at the existing candidate
+budget. Preserve small stones, harvest identities, authored objects, LOD continuity
+and near shadows. Do not increase density back to the old showcase reference without
+new user direction. Sparse cover is intentional; missing resident owner patches,
+popping and visibly absent middle-distance representation remain defects. Zoom must
+extend useful detail with bounded loading and fading. Ground/elevated/travel views
+and sustained performance still require evidence.
 
 Near-player vegetation requires resolved cast shadows, not merely an enabled
 shadow flag or root darkening. Inspect contact, silhouette, movement stability and

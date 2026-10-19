@@ -54,6 +54,12 @@ public:
     Dictionary candidates(Vector2i cell,int64_t seed,int layer=0,const PackedVector3Array &shelter=PackedVector3Array()) const {
         PackedVector3Array points;PackedInt64Array ids;
         if(cell.x>=0&&cell.y>=0&&cell.x<63&&cell.y<63&&seed>=0&&seed<=0x7fffffff&&layer>=0&&layer<16&&shelter.size()<=144){
+            // Validate/copy the bounded anchor set once per batch, not per plant.
+            Vector3 anchors[144];int anchor_count=0;
+            for(int a=0;a<shelter.size();++a) {
+                const Vector3 tree=shelter[a];
+                if(tree.is_finite())anchors[anchor_count++]=tree;
+            }
             for(int i=0;i<64;++i){
                 int64_t id=layer==0?1+(cell.y*63+cell.x)*64+i:1+63*63*64+(cell.y*63+cell.x)*960+(layer-1)*64+i;uint32_t h=hash(uint32_t(id)^uint32_t(seed));
                 float x=cell.x*32+(i%8+.15f+.7f*(h&65535)/65535.f)*4;
@@ -78,8 +84,8 @@ public:
                     // Potential tree anchors use the same persisted grove recipe, not
                     // currently resident trees: visit order/harvesting cannot shuffle plants.
                     float nearest=25.f;Vector3 anchor;
-                    for(int a=0;a<shelter.size();++a) {
-                        Vector3 tree=shelter[a];if(!tree.is_finite())continue;
+                    for(int a=0;a<anchor_count;++a) {
+                        const Vector3 &tree=anchors[a];
                         float dx=x-tree.x,dz=z-tree.z,d=dx*dx+dz*dz;
                         if(d<nearest){nearest=d;anchor=tree;}
                     }

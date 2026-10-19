@@ -1,3 +1,13 @@
+## Placement cost verification — 2026-10-19
+
+Repeated anchor validation moved outside the per-plant loop. Pre/post candidate
+bytes match across four seeds, five owners and all layers. Maximum-anchor median
+owner generation measured 2.047 -> 0.861 ms in the targeted debug sample; streaming,
+identity/removal persistence and bounds checks pass. Evidence: `evidence/vegetation_anchor_cost`.
+This closes the placement CPU-cost investigation, not overall frame pacing or
+world completion. The world-building standard now follows the user's sparse-density
+direction. Human art acceptance and existing sustained-performance limits stay open.
+
 ## Sparse placement direction — 2026-10-19
 
 User explicitly chose to retain current sparse density and improve distribution.

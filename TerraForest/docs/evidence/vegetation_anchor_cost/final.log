@@ -1,0 +1,13 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+POSITION_SHA256 ad79424d62afe690c4b8321c73c36a5121a55b7ccb8bf522ce8ac65fc22c3e6a
+PASS placement matches captured pre-optimization output
+PASS all seeds, corner owners and maximum anchors preserve deterministic world bounds
+PASS invalid anchors remain ignored without changing nearest-anchor order
+PASS candidate count remains bounded at anchor count 0
+SCATTER_COST anchors=0 owner_median_ms=0.137 owner_p95_ms=0.269 owner_max_ms=6.075
+PASS candidate count remains bounded at anchor count 36
+SCATTER_COST anchors=36 owner_median_ms=0.336 owner_p95_ms=0.505 owner_max_ms=5.998
+PASS candidate count remains bounded at anchor count 144
+SCATTER_COST anchors=144 owner_median_ms=0.854 owner_p95_ms=1.05 owner_max_ms=8.43
+DISTRIBUTION_SCALE failures=0
