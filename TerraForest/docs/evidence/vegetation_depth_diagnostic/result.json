@@ -1,0 +1,25 @@
+{
+  "center": "(1089.0, 62.0, 1792.0)",
+  "failures": 0,
+  "phases": [
+    {
+      "frame_p95": 18.05,
+      "gpu_median": 6.91499996185303,
+      "label": "normal",
+      "worst": 18.261
+    },
+    {
+      "frame_p95": 18.237,
+      "gpu_median": 7.10099983215332,
+      "label": "lifted_far_cover",
+      "worst": 18.463
+    },
+    {
+      "frame_p95": 18.229,
+      "gpu_median": 7.69299983978271,
+      "label": "normal_repeat",
+      "worst": 22.28
+    }
+  ],
+  "scope": "Temporary far-cover elevation isolates terrain depth intersections; not a proposed production fix."
+}

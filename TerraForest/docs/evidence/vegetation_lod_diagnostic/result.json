@@ -1,0 +1,31 @@
+{
+  "center": "(1089.0, 62.0, 1792.0)",
+  "failures": 0,
+  "phases": [
+    {
+      "frame_p95": 20.158,
+      "gpu_median": 6.52699995040894,
+      "label": "normal",
+      "worst": 21.054
+    },
+    {
+      "frame_p95": 20.381,
+      "gpu_median": 11.6520004272461,
+      "label": "higher_lod_detail",
+      "worst": 20.962
+    },
+    {
+      "frame_p95": 20.377,
+      "gpu_median": 7.03900003433228,
+      "label": "msaa4",
+      "worst": 20.623
+    },
+    {
+      "frame_p95": 20.187,
+      "gpu_median": 6.5310001373291,
+      "label": "normal_repeat",
+      "worst": 21.133
+    }
+  ],
+  "scope": "Same-view LOD threshold and MSAA diagnostic; no production settings changed."
+}

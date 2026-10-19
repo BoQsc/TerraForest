@@ -1,3 +1,13 @@
+## Far-cover comparison results — 2026-10-19
+
+Higher LOD detail and 4x MSAA did not resolve the inspected speckled pattern;
+median GPU increased from 6.53 ms to 11.65 / 7.04 ms respectively. A temporary
+0.75 m far-cover elevation also retained the pattern, so no floating-height fix
+is justified. Production remains unchanged. Evidence: `evidence/vegetation_lod_diagnostic`
+and `evidence/vegetation_depth_diagnostic`. These are stationary diagnostics only;
+the intended moving-view check and temporal/coverage measurement remain required.
+Do not repeat these rejected blanket settings without new evidence.
+
 ## Distant vegetation attribution — 2026-10-19
 
 Matched world views reject disabling distance dithering or distant self-shading as
