@@ -66,6 +66,10 @@ func natural_column_available(point: Vector3) -> bool:
 		return false
 	return not modified_columns.has(Vector2i(floori(point.x / 16.0), floori(point.z / 16.0)))
 
+func request_survey_identity(token: int) -> bool:
+	if not world_ready or pending_edit or foreground_brush or stopping or backend.queued()>2:return false
+	return backend.submit({"kind":"survey_identity","token":token,"epoch":epoch})
+
 func request_survey_patch(rect: Rect2i, token: int) -> bool:
 	if not world_ready or pending_edit or foreground_brush or stopping or backend.queued()>2:return false
 	if rect.position.x<0 or rect.position.y<0 or rect.end.x>256 or rect.end.y>256 or rect.size.x<1 or rect.size.y<1 or rect.size.x>4 or rect.size.y>4:return false
@@ -81,7 +85,7 @@ func request_surface_batch(points: PackedVector3Array, token: int) -> bool:
 	return backend.submit({"kind": "surface_batch", "points": points.duplicate(), "token": token, "epoch": epoch, "revision": published_revision})
 
 func _receive(result: Dictionary) -> void:
-	if result.get("kind","")=="survey_patch":
+	if result.get("kind","") in ["survey_patch","survey_identity"]:
 		survey_patch_ready.emit(result)
 		return
 	var tracks_edit: bool=result.get("kind","") in ["edit","edit_begin"] and pending_edit and result.get("epoch",-1)==epoch and result.get("ticket",-1)==edit_ticket

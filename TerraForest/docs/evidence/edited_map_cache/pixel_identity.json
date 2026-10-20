@@ -1,0 +1,7 @@
+{
+  "passed": true,
+  "original_pixels": "503290e97bb0e937519e8d665f9086b2eddd0fa7fe3fe08e851cacdbda1d9912",
+  "saved_edit_pixels": "3fe472133e33009ca0ffde13f8a9094700149aec6340e9aee01fada42aff2b0f",
+  "cold_equals_warm_and_discarded_edit_reopen": true,
+  "saved_edit_equals_fresh_process_reopen": true
+}

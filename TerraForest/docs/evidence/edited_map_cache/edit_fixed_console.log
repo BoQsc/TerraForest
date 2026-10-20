@@ -1,0 +1,18 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[terrain-hitch] restore volumetric_water 212.17 ms at 3830
+[terrain-hitch] receive startup 225.39 ms at 3836
+[terrain-hitch] receive 227.08 ms at 3837
+PASS saved world loads
+PASS saved terrain patches complete
+PASS native excavation admitted
+PASS excavation publishes
+PASS edited map patch queue drains
+PASS excavation changes displayed terrain pixels
+PASS local edit avoids whole-world survey
+PASS map updates do not move streaming focus
+PASS unsaved edit cannot overwrite saved terrain cache
+MAP_PATCH_PROFILE total=6 local=6 max_native_ms=4.9261
+WORLD_MAP_EDITS failures=0
+[TerrainRewrite] Temporary test world: save skipped

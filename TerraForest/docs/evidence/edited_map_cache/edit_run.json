@@ -1,0 +1,13 @@
+{
+  "timed_out": false,
+  "launch_error": null,
+  "cancelled": false,
+  "pid": 41600,
+  "exit_code": 1,
+  "diagnostics": [
+    "FAIL unsaved edit cannot overwrite saved terrain cache"
+  ],
+  "required_text_found": false,
+  "elapsed_seconds": 19.814764700000524,
+  "passed": false
+}

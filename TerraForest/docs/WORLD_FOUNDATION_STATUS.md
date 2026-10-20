@@ -1,3 +1,39 @@
+## Persistent edited-map cache - 2026-10-20
+
+Edited terrain map pixels now persist in a disposable checked cache. The ordered
+terrain worker supplies the exact certified terrain snapshot digest plus native
+compatibility fingerprint; the UI does not guess identity from seed/revision or
+read mutable terrain on another thread. Unsaved mutations invalidate certification.
+Reads/writes/checksums run on a low-priority file worker, outside the terrain worker.
+One in-flight IO job and one entry per slot; the dedicated cache keeps at most 64
+completed entries (about 16 MiB), with temporary-file rename publication. Existing
+world files are never cleanup targets. Header identity, exact size and SHA256 are
+validated; a miss/corruption falls back to the bounded native patch queue.
+
+Checks cover wrong identity, corrupted bytes, truncation, atomic replacement,
+invalid input and bounded eviction. Actual combined-world checks use an isolated
+copy of v13: cold open surveys 150 patches and writes once; a fresh process reuses
+exactly identical pixels with zero native patches. Unsaved excavation changes six
+patches but preserves the saved cache; a fresh process recovers the original map.
+Then ordinary durable save gives the edited map a new identity, replaces its cache,
+and another fresh process recovers exactly those new pixels with zero resurvey.
+Pixel hashes are compared in evidence/edited_map_cache/pixel_identity.json.
+
+The first unsaved-edit check exposed a missing in-memory identity reset. Revision
+checks already prevented a disk overwrite; the stale identity state is now cleared
+on invalidation, and the rerun passes. Failed and successful evidence are retained.
+Warm full test process duration is about 19 s including world loading; this is not
+map-cache IO latency, a speedup claim or thermal proof. No world-generation, save
+format or native terrain algorithm was changed in this pass.
+
+The cache currently warms on first map use, not during offline world preparation.
+Continue this map scope with preparation-time warming/clone reuse, live water-field
+coverage and useful building footprints. The water overlay remains explicitly the
+base survey, and 7.8 m raster resolution still limits visible small changes. Native
+surveys for a cache miss remain bounded rather than synchronously surveying the
+whole world. Overall world generation/design, storage scale, sustained travel and
+remaining gameplay qualification gaps are still open.
+
 ## Edited terrain on the player map - 2026-10-20
 
 The M map now overlays native surface surveys of modified terrain on its cached
@@ -439,7 +475,7 @@ visual tuning after unsuccessful bounded cycles and return to the world blocker.
 |---|---|---|
 | Generator | Native terrain profiles; offline five-site composition with roads, buildings, POI undergrounds and lakes | Mostly fixed topology/palette; broader seed coverage and coherent landscape/design acceptance |
 | Preparation | Staged creation, fresh-process verification, no-overwrite publication, progress and cancellation | Whole-route cache coverage; standalone workflow without local Python/toolchain |
-| Player map | M map, cached base survey plus bounded native terrain-edit patches, saved roads, public destinations, pan/zoom/tracking | Persistent edited-patch cache, live water, building footprints and finer zoom detail remain incomplete; see latest evidence above |
+| Player map | M map, content-checked persistent edited-terrain cache, bounded native patch updates, saved roads, destinations, pan/zoom/tracking | Preparation-time warming, live water, building footprints and finer zoom detail remain incomplete; see latest evidence above |
 | Terrain and distant world | Native streaming and derived caches, local edits | Distant edits must remain visible; mining/travel tails and cache/resource growth are not fully qualified |
 | Buildings and static props | Native blocks, batched props, furniture, doors/windows, storage, regional block paging | Detailed populated-world residency capacity; mixed interiors/approach acceptance |
 | Roads and travel | Regional routes, local streets, normal collision loading, parked/drivable vehicles | All shoulders/junctions and high-speed arrival at declared speed; bounded repeated cross-world travel |

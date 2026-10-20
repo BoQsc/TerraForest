@@ -60,7 +60,7 @@ func set_open(value:bool)->void:
  game._clear_motion();Input.mouse_mode=Input.MOUSE_MODE_VISIBLE if value else Input.MOUSE_MODE_CAPTURED
  game.session_menu.refresh();game.session_menu.sync_panels()
  if value:
-  refresh_world();view.follow_player();timer.start();update_position()
+  refresh_world();updates.recheck_identity();view.follow_player();timer.start();update_position()
  else:timer.stop()
 func refresh_world()->void:
  var seed_value:int=game.terrain.backend.world_seed;var generator:int=game.terrain.backend.world_generator

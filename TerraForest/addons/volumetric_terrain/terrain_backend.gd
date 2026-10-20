@@ -53,6 +53,7 @@ var surface_style: int = 0
 const DiskCache = preload("res://addons/volumetric_terrain/derived_cache.gd")
 var disk_cache = DiskCache.new()
 var snapshot_id: String = ""
+var survey_compatibility: String = ""
 var cache_valid: bool = true
 var readonly_snapshot: bool = false
 var cache_path: String = "user://derived_046"
@@ -1048,6 +1049,7 @@ func _run() -> void:
 	var load_message: String = _load()
 	_startup_mark("cache_fingerprint")
 	var compatibility:=_compatibility()
+	survey_compatibility=compatibility
 	_startup_mark("cache_configuration")
 	disk_cache.configure(compatibility, snapshot_id, surface_style, cache_path)
 	_startup_mark("native_configuration")
@@ -1266,6 +1268,9 @@ func _run() -> void:
 			_execute_material_edit(job)
 		elif kind == "lake_slice":
 			_execute_lake_slice(job)
+		elif kind == "survey_identity":
+			var survey_stats:PackedByteArray=_call(Codec.command(0))
+			_push({"kind":"survey_identity","token":job.token,"epoch":job.epoch,"revision":survey_stats.decode_u32(12) if Codec.reply_ok(survey_stats) else -1,"identity":snapshot_id+"|"+survey_compatibility if cache_valid and Codec.reply_ok(survey_stats) else ""})
 		elif kind == "survey_patch":
 			var rect:Rect2i=job.rect
 			var surveyed:Dictionary=native.survey_patch(256,rect.position.x,rect.position.y,rect.size.x,rect.size.y)
