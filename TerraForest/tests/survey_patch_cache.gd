@@ -18,6 +18,10 @@ func _initialize()->void:
   if not Cache.write(str(i),"terrain-B",data,root_path,3).persisted:failures+=1
  if DirAccess.get_files_at(root_path).size()!=3:failures+=1
  if Cache.write("bad","",data,root_path).persisted or Cache.write("bad","x",PackedByteArray(),root_path).persisted:failures+=1
+ var large:=PackedByteArray();large.resize(512*512*4);large.fill(92)
+ if not Cache.write("blocks","blocks-v1",large,root_path,3,512).persisted:failures+=1
+ if Cache.read("blocks","blocks-v1",root_path,512).get("pixels")!=large or Cache.read("blocks","blocks-v1",root_path).hit:failures+=1
+ if Cache.write("bad-size","x",large,root_path,3,1024).persisted:failures+=1
  for name in DirAccess.get_files_at(root_path):DirAccess.remove_absolute(root_path+"/"+name)
  DirAccess.remove_absolute(root_path)
  print("SURVEY_PATCH_CACHE failures=",failures);quit(1 if failures else 0)

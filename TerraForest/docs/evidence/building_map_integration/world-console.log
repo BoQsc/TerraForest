@@ -1,0 +1,22 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[terrain-hitch] restore volumetric_water 211.86 ms at 3589
+[terrain-hitch] receive startup 225.62 ms at 3596
+[terrain-hitch] receive 228.01 ms at 3598
+PASS saved world loads
+PASS all actual map layers complete
+PASS map includes archived buildings without admitting gameplay regions
+PASS unchanged reopen reuses map
+PASS temporary overhead footprint is in available region
+PASS actual block placement changes authored world
+PASS building edit invalidates and refreshes footprint
+PASS new construction changes map pixels
+PASS original region restored
+PASS restored footprint settles
+PASS restoration reproduces original footprint
+PASS map has one cancellable archive request
+PASS closing map releases survey request and checkpoint lease
+BLOCK_MAP_PROFILE builds=4 archived_reads=66 cache_hits=1 cache_writes=2 native_ms=3.7869
+WORLD_MAP_BLOCKS failures=0
+[TerrainRewrite] Temporary test world: save skipped

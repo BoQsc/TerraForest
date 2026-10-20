@@ -149,6 +149,7 @@ public:
     bool is_region_loaded(Vector3i region) const;
     Dictionary region_stats() const;
     Dictionary survey_index() const;
+    int64_t survey_revision_id() const {return int64_t(mutation_revision);}
     Dictionary survey_columns(Vector3i region,int64_t offset,int64_t expected_revision) const;
     Dictionary capture_storage_state() const;
     bool restore_storage_state(const PackedByteArray &resident,const PackedInt32Array &keys,const PackedByteArray &checksums);

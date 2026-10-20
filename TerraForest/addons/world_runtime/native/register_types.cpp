@@ -1,5 +1,5 @@
 #include "entity_store.hpp"
-#include "water_map_raster.hpp"
+#include "surface_map_raster.hpp"
 #include "entity_actor.hpp"
 #include "entity_activation.hpp"
 #include "entity_renderer.hpp"
@@ -14,7 +14,7 @@ using namespace godot;
 static void initialize(ModuleInitializationLevel level) {
     if (level == MODULE_INITIALIZATION_LEVEL_SCENE) {
         GDREGISTER_CLASS(terraforest::NativeEntityStore);
-        GDREGISTER_CLASS(terraforest::NativeWaterMapRaster);
+        GDREGISTER_CLASS(terraforest::NativeSurfaceMapRaster);
         GDREGISTER_CLASS(terraforest::NativeEntityActor);
         GDREGISTER_CLASS(terraforest::NativeActorOrders);
         GDREGISTER_CLASS(terraforest::NativeEntityActivation);

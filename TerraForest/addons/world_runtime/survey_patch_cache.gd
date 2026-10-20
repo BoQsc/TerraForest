@@ -8,19 +8,19 @@ static func header(identity:String)->PackedByteArray:
  return MAGIC.to_utf8_buffer()+Survey.digest(("base=%d|"%Survey.VERSION+identity).to_utf8_buffer())
 static func path_for(slot:String,folder:String)->String:
  return folder+"/"+Survey.digest(slot.to_utf8_buffer()).hex_encode()+".bin"
-static func read(slot:String,identity:String,folder:String=ROOT)->Dictionary:
+static func read(slot:String,identity:String,folder:String=ROOT,size:int=256)->Dictionary:
  var result:Dictionary={"hit":false}
- if identity.is_empty():return result
+ if identity.is_empty() or size not in [256,512]:return result
  var file:=FileAccess.open(path_for(slot,folder),FileAccess.READ)
- if file==null or file.get_length()!=40+32+BYTES:return result
+ if file==null or file.get_length()!=40+32+size*size*4:return result
  var expected:=header(identity)
  if file.get_buffer(40)!=expected:return result
- var checksum:=file.get_buffer(32);var pixels:=file.get_buffer(BYTES)
+ var checksum:=file.get_buffer(32);var pixels:=file.get_buffer(size*size*4)
  if Survey.digest(expected+pixels)!=checksum:return result
  return {"hit":true,"pixels":pixels}
-static func write(slot:String,identity:String,pixels:PackedByteArray,folder:String=ROOT,limit:int=64)->Dictionary:
+static func write(slot:String,identity:String,pixels:PackedByteArray,folder:String=ROOT,limit:int=64,size:int=256)->Dictionary:
  var result:Dictionary={"persisted":false}
- if identity.is_empty() or pixels.size()!=BYTES or limit<1 or limit>64:return result
+ if identity.is_empty() or size not in [256,512] or pixels.size()!=size*size*4 or limit<1 or limit>64:return result
  if DirAccess.make_dir_recursive_absolute(folder)!=OK:return result
  var path:=path_for(slot,folder);var temporary:=path+".tmp_%d_%d"%[OS.get_process_id(),Time.get_ticks_usec()]
  var file:=FileAccess.open(temporary,FileAccess.WRITE)
@@ -30,7 +30,8 @@ static func write(slot:String,identity:String,pixels:PackedByteArray,folder:Stri
  if error==OK:result.persisted=DirAccess.rename_absolute(temporary,path)==OK
  if FileAccess.file_exists(temporary):DirAccess.remove_absolute(temporary)
  if not result.persisted:return result
- # Dedicated disposable cache, max 64 * 262216 bytes. Never enumerate/delete saves.
+ # Dedicated disposable cache. Caller limits entries for its fixed raster size.
+ # Only this folder is pruned; saves are never enumerated or deleted.
  var files:Array=[]
  for name in DirAccess.get_files_at(folder):
   if name.length()!=68 or not name.ends_with(".bin") or not name.trim_suffix(".bin").is_valid_hex_number():continue

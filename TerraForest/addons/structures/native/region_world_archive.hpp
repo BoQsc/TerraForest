@@ -30,7 +30,7 @@ class NativeRegionWorldArchive : public RefCounted {
     struct RegionRead {
         int64_t ticket=0,epoch=0;
         String asset;
-        bool metadata=false,strict_checkpoint=false;
+        bool metadata=false,strict_checkpoint=false,survey=false;
         Vector3i region;
         PackedByteArray expected,checkpoint;
     };
@@ -47,14 +47,17 @@ class NativeRegionWorldArchive : public RefCounted {
     std::deque<RegionRead> read_pending_;
     std::deque<Dictionary> read_completed_;
     std::deque<Dictionary> model_read_completed_;
+    std::deque<Dictionary> survey_read_completed_;
+    int64_t read_active_survey_ticket_=0;
     int64_t read_active_model_ticket_=0;
     bool read_discard_active_=false;
     bool read_running_=false,read_stopping_=false,read_active_=false;
     int read_request_limit_=0,read_outstanding_=0,read_high_requests_=0;
     int64_t read_byte_limit_=0,read_reserved_=0,read_high_bytes_=0,read_next_ticket_=1;
+    int64_t read_cancelled_before_start_=0;
     int64_t read_accepted_=0,read_finished_=0,read_rejected_=0,read_starts_=0;
     void run_region_reads(Ref<NativeBlockRegionStore> store);
-    int64_t request_read(const String &asset,Vector3i region,const PackedByteArray &expected,const PackedByteArray &checkpoint,int64_t epoch,bool metadata=false,bool strict_checkpoint=false);
+    int64_t request_read(const String &asset,Vector3i region,const PackedByteArray &expected,const PackedByteArray &checkpoint,int64_t epoch,bool metadata=false,bool strict_checkpoint=false,bool survey=false);
     Array poll_reads(int max_results,bool models);
     bool reference_in_file(const String &path,std::set<String> &keep,std::map<String,std::set<String>> &model_keep) const;
     bool retire_unreferenced();
@@ -86,6 +89,9 @@ public:
     int64_t retain_read_checkpoint(const String &asset,const PackedByteArray &checkpoint);
     bool release_read_checkpoint(int64_t lease);
     Dictionary take_model_region_read(int64_t ticket);
+    int64_t request_survey_region_read(Vector3i region,const PackedByteArray &expected,const PackedByteArray &checkpoint,int64_t epoch);
+    Dictionary take_survey_region_read(int64_t ticket);
+    bool discard_survey_region_read(int64_t ticket);
     bool discard_model_region_read(int64_t ticket);
     Array poll_model_region_reads(int max_results=4);
     Array poll_region_reads(int max_results=4);

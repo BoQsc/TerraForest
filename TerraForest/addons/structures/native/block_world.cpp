@@ -39,6 +39,7 @@ void NativeBlockWorld::_bind_methods() {
     ClassDB::bind_method(D_METHOD("is_region_loaded","region"),&NativeBlockWorld::is_region_loaded);
     ClassDB::bind_method(D_METHOD("region_stats"),&NativeBlockWorld::region_stats);
     ClassDB::bind_method(D_METHOD("survey_index"),&NativeBlockWorld::survey_index);
+    ClassDB::bind_method(D_METHOD("survey_revision_id"),&NativeBlockWorld::survey_revision_id);
     ClassDB::bind_method(D_METHOD("survey_columns","region","offset","expected_revision"),&NativeBlockWorld::survey_columns);
     ClassDB::bind_method(D_METHOD("capture_storage_state"),&NativeBlockWorld::capture_storage_state);
     ClassDB::bind_method(D_METHOD("restore_storage_state","resident","keys","checksums"),&NativeBlockWorld::restore_storage_state);

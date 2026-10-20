@@ -67,6 +67,9 @@ func run()->void:
   var water_map:Node=game.world_map.water_survey
   if not require(await wait_until(func():return water_map.complete and water_map.io==null,90) and (water_map.cache_hits>0 or water_map.cache_writes>0),"actual water cartography cached before publication"):await finish(false);return
   print("PREPARED_WATER_CARTOGRAPHY hits=",water_map.cache_hits," writes=",water_map.cache_writes," source_calls=",water_map.source_calls," visibility_calls=",water_map.visibility_calls)
+  var block_map:Node=game.world_map.block_survey
+  if not require(await wait_until(func():return block_map.complete and block_map.io==null,90) and (block_map.cache_hits>0 or block_map.cache_writes>0),"actual block cartography cached before publication"):await finish(false);return
+  print("PREPARED_BLOCK_CARTOGRAPHY hits=",block_map.cache_hits," writes=",block_map.cache_writes," archived_reads=",block_map.archived_reads," visibility_calls=",block_map.visibility_calls)
   game.world_map.set_open(false)
 
 

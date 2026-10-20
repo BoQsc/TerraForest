@@ -1,3 +1,44 @@
+## Building coverage integrated into the playable world map — 2026-10-20
+
+This supersedes the source-only limitation below. The M-map now draws constructed
+block coverage from both resident and archived regions. A dedicated archive worker
+completion channel decodes one checksum-bound region at a time without admitting
+it to gameplay residency or constructing meshes/collision. Closing an incomplete
+map cancels its request and releases its checkpoint lease; normal paging cannot
+consume its replies. Archive cancellation accounting now includes queued requests
+cancelled before worker execution.
+
+Water and blocks share a native sparse regional raster and bounded survey
+orchestration. Blocks use 512-square coverage (approximately 3.9 metres per pixel),
+with terrain occlusion in batches of 16 samples. The raster admits up to 262144
+subcell samples and fails explicitly at capacity. Source calls yield cooperatively
+after about 1 ms; allocation growth and full pixel publication are not yet qualified
+at the maximum capacity. Runtime drawing adds one building texture draw.
+
+Derived block caches are checksum validated, keyed by certified terrain identity
+and deterministic block-source content, and limited to 16 entries (about 16 MiB).
+Cache hits avoid visibility jobs but still scan/read source data to establish its
+identity. Preparation now requires the building layer to be ready and cached.
+No authoritative world format changed; tests used a read-only snapshot.
+
+Verification: native archive isolation/cancellation, sparse raster and 256/512 cache
+checks passed. In the actual 1920x1080 fullscreen world, archived coverage did not
+change block residency; a temporary 144-block platform changed map pixels and
+restoring the original region reproduced the original pixels. Fresh-process tests
+hit all three block state caches with zero visibility queries. Water regression
+also passed with zero visibility queries. The prepared-world reopen passed with
+22 archived block reads, a cache hit and zero block visibility queries. Before,
+edited and distant-neighborhood screenshots were inspected: useful regional
+coverage, not exact building outlines. Evidence: `evidence/building_map_integration`.
+
+**Still open:** model-only structures, finer detail, local incremental overlay
+updates, avoiding full source traversal on cache hits, and large-city/capacity
+qualification. A startup receive hitch reached about 197 ms in this run; the edited
+map capture showed 37 FPS. These checks do not certify steady 60 FPS, old-laptop
+thermal behavior, world-art acceptance or a game-ready foundation. The generator,
+location variety, complete travel/interior coverage, storage endurance and broader
+runtime limits listed in this document remain required work.
+
 ## Building-map source includes unloaded world regions — 2026-10-20
 
 Native block cartography now exposes a metadata index covering both resident

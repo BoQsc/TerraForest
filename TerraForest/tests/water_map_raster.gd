@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: 0BSD
 extends SceneTree
 func _initialize()->void:
- var r=ClassDB.instantiate("NativeWaterMapRaster");var failures:=0
+ var r=ClassDB.instantiate("NativeSurfaceMapRaster");var failures:=0
  if not r.offer(PackedVector3Array([Vector3(1,10,1),Vector3(1,20,1),Vector3(5,15,1)])) or r.count()!=2:failures+=1
  if r.batch(0)!=PackedVector3Array([Vector3(1,20,1),Vector3(5,15,1)]):failures+=1
  if not r.accept(0,PackedByteArray([1,0])) or r.pixels()[3]!=63:failures+=1
@@ -9,4 +9,8 @@ func _initialize()->void:
  if r.accept(0,PackedByteArray([1])) or r.offer(PackedVector3Array([Vector3(NAN,2,2)])) or not r.batch(-1).is_empty():failures+=1
  var overflow:=PackedVector3Array();overflow.resize(257)
  if r.offer(overflow) or r.count()!=2:failures+=1
+ var large=ClassDB.instantiate("NativeSurfaceMapRaster")
+ if not large.configure(512) or not large.offer(PackedVector3Array([Vector3(1,10,1),Vector3(-1,10,1)])) or large.count()!=1:failures+=1
+ if not large.accept(0,PackedByteArray([1])) or large.pixels(Color("d9c9ad")).size()!=512*512*4:failures+=1
+ if large.configure(256):failures+=1
  print("WATER_MAP_RASTER failures=",failures);quit(1 if failures else 0)
