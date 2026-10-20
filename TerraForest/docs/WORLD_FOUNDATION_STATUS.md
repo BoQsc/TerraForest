@@ -1,3 +1,31 @@
+## Terrain-fitted planning implementation — 2026-10-20
+
+Added offline terrain_lot_planner.gd, not yet wired into world preparation. It
+surveys all occupied foundation cells against native undeveloped terrain, searches
+25 placements per frontage, chooses integer grades within 2 m fill / 3 m cut,
+reserves building/street clearance, and rejects missing plots explicitly. Streets
+have shared elevation vertices and a bounded interval propagation solve for 12%
+grade. Width and interior probes reject cut/fill violations. Entrance paths connect
+each building to its actual street grade, with 25% maximum slope and raw-terrain
+cut/fill checks. A bounded 81-location search relocates the whole neighborhood when
+its original site cannot fit; it never increases the terrain-change allowances.
+
+Seven seeds now find all 12 plots with street/entrance plans, in 2–24 candidate
+locations. Seed42 requires a 96 m southward relocation. The independent check uses
+additional street sampling locations and rechecks all final foundation elevations.
+The complete check takes under five seconds headless. Evidence is in
+ docs/evidence/terrain_lot_planner. This is engineering evidence of prospective
+plans, not visual, collision, earthworks-edit or integrated world acceptance.
+
+Still required before replacing the current world: versioned native unflattened
+settlement field; regenerate regional road endpoint/grade at the chosen site;
+lake/mine/existing-site clearance; terrain-fitting sidewalks, common furniture and
+parking; complete foundation and shoulder edit bounds; avoid entrance-road overlap
+with neighboring buildings; apply/validate plans with native terrain edits; save/reopen,
+render and walk the real generated location. Do not publish this helper as a finished
+world or switch the launcher until those dependencies have been integrated.
+Keep current generator IDs and player saves unchanged. Continue settlement work.
+
 ## Raw terrain earthworks rejection — 2026-10-20
 
 The previous lot checks sampled already-flattened generator terrain. They verify
