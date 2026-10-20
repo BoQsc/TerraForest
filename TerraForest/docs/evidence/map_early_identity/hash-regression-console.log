@@ -1,0 +1,27 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[terrain-hitch] restore volumetric_water 302.25 ms at 3432
+[terrain-hitch] receive startup 317.35 ms at 3440
+[terrain-hitch] receive 319.12 ms at 3442
+PASS normal generated world starts
+PASS cartography preparation worker starts
+PASS cartography persisted and reopened before gameplay
+PREPARED_CARTOGRAPHY {"cache_hit":true,"cache_persisted":true,"native_ms":0.0,"ok":true,"reopen_verified":true,"worker_ms":2.356}
+PASS edited terrain cartography cached before publication
+PREPARED_EDITED_CARTOGRAPHY hits=1 writes=0 patches=0
+PREPARED_WATER_IDENTITY hash_us=107730
+PASS actual water cartography cached before publication
+PREPARED_WATER_CARTOGRAPHY hits=1 writes=0 source_calls=0 visibility_calls=0
+PASS actual block cartography cached before publication
+PREPARED_BLOCK_CARTOGRAPHY hits=1 writes=0 archived_reads=0 visibility_calls=0
+PASS actual model cartography cached before publication
+PREPARED_MODEL_CARTOGRAPHY hits=1 writes=0 archived_reads=0 visibility_calls=0
+PASS reopen uses resource-cost gameplay with actors and fleet enabled
+PASS reopen has exactly two residents with simulation enabled
+PASS seed and generator identity survive reopen
+PASS fresh process restores exact settlement blocks, all furnishings, roads and patrol residents
+PASS on-foot start survives reopen
+PASS generated components ready for compound save
+[TerrainRewrite] Temporary test world: save skipped
+COMBINED_PREPARATION failures=0

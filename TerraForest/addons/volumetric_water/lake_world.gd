@@ -74,14 +74,19 @@ func _capture(deferred:bool) -> Variant:
  for item:Dictionary in _lakes.values():records.append({"id":item.id,"origin":item.origin,"cells":item.cells,"spacing":item.spacing,"level":item.level,"seed":item.seed})
  var catalog:PackedByteArray=_catalog.encode(records,_next_id)
  return water.capture_storage_snapshot(catalog) if deferred else water.capture_snapshot(catalog)
-func restore_snapshot(bytes:PackedByteArray) -> bool:
+func snapshot_preparer()->RefCounted:
+ return ClassDB.instantiate("NativeWaterMapIdentity")
+func restore_prepared_snapshot(prepared:RefCounted)->bool:
+ return restore_snapshot(prepared.get_bytes(),prepared)
+func restore_snapshot(bytes:PackedByteArray,prepared:RefCounted=null) -> bool:
  var catalog_bytes:PackedByteArray=water.snapshot_catalog(bytes)
  if catalog_bytes.is_empty():return false
  var decoded:Dictionary=_catalog.decode(catalog_bytes)
  if not decoded.ok:return false
  clear();_next_id=decoded.next_id
  var cached:bool=bytes.decode_u32(0)==0x31575256
- if cached and not water.restore_snapshot(bytes):return false
+ if cached:
+  if not (water.restore_prepared(prepared) if prepared!=null else water.restore_snapshot(bytes)):return false
  # Old saves retain quantities but rebuild contacts to include explicit terrain cubes.
  if cached and bytes.decode_u32(4)<8:water.invalidate(AABB(Vector3.ZERO,Vector3(2000,256,2000)),true)
  for record:Dictionary in decoded.records:

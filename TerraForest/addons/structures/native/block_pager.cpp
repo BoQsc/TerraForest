@@ -71,7 +71,7 @@ bool NativeBlockPager::evict_one(NativeBlockWorld *blocks,Vector3 focus) {
     // This packet was captured from the current scene, not supplied externally.
     // Exact committed digest plus history protection authorize the transfer.
     blocks->unloaded_regions.emplace(selected,digest);
-    blocks->replace_region_chunks(selected,{},false);
+    blocks->replace_region_chunks(selected,{},false,true);
     admitted_versions_.erase(selected);blocked_.erase(selected);++evicted_;
     blocks->emit_signal("changed");return true;
 }

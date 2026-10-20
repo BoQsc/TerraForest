@@ -7,9 +7,11 @@ func run()->void:
  var atlas=game.world_map;var survey=atlas.block_survey;var blocks=game.structures.blocks
  var residency:Dictionary=blocks.region_stats()
  if not check(await wait_for(func():return survey.complete and survey.io==null and atlas.water_survey.complete and atlas.texture!=null,40),"all actual map layers complete"):await done();return
+ check(not survey.fast_identity().is_empty(),"loaded blocks have certified map identity")
+ check(survey.ticket==0 and survey.lease==0,"completed block map retains no source lease or request")
  var before:PackedByteArray=survey.texture.get_image().get_data()
- check(survey.archived_reads>0 and blocks.region_stats()==residency,"map includes archived buildings without admitting gameplay regions")
- if "--expect-block-map-hit" in OS.get_cmdline_user_args():check(survey.cache_hits==1 and survey.visibility_calls==0,"fresh process reuses building raster cache")
+ check((survey.archived_reads>0 or survey.fast_cache_hits>0) and blocks.region_stats()==residency,"map includes archived buildings without admitting gameplay regions")
+ if "--expect-block-map-hit" in OS.get_cmdline_user_args():check(survey.cache_hits==1 and survey.fast_cache_hits==1 and survey.visibility_calls==0 and survey.source_calls==0 and survey.archived_reads==0,"fresh process reuses building cache without archive or source scans")
  atlas.view.center=Vector2(1000,1000);atlas.view.zoom=4;atlas.view.queue_redraw()
  await RenderingServer.frame_post_draw;root.get_texture().get_image().save_png("res://reports/world_map_blocks_before.png")
  var north:Vector3=atlas.places.filter(func(place:Dictionary):return place.title=="North neighborhood")[0].position

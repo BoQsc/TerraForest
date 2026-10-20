@@ -104,6 +104,7 @@ func _process(_delta:float)->void:
   io_stamp=stamp;io_kind="write";io=Thread.new()
   if io.start(Cache.write.bind(cache_key,cache_key,pixels,cache_root,16 if image_size==512 else 64,image_size),Thread.PRIORITY_LOW)!=OK:io=null
 func publish(pixels:PackedByteArray)->void:
+ stop_source()
  texture=ImageTexture.create_from_image(Image.create_from_data(image_size,image_size,false,Image.FORMAT_RGBA8,pixels))
  drawing_texture=texture
  if image_size==512:

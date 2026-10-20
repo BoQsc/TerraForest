@@ -6,6 +6,7 @@
 #include "lake_catalog.hpp"
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/classes/time.hpp>
+#include <godot_cpp/classes/hashing_context.hpp>
 #include <godot_cpp/classes/mesh.hpp>
 #include <godot_cpp/variant/packed_vector3_array.hpp>
 #include <godot_cpp/variant/packed_vector2_array.hpp>
@@ -203,6 +204,7 @@ void NativeRegionalWater::_bind_methods(){
     ClassDB::bind_method(D_METHOD("surface_near","point","radius"),&NativeRegionalWater::surface_near);
     ClassDB::bind_method(D_METHOD("depth_at","point"),&NativeRegionalWater::depth_at);
     ClassDB::bind_method(D_METHOD("survey_columns","cursor","expected_revision","region_budget"),&NativeRegionalWater::survey_columns);
+    ClassDB::bind_method(D_METHOD("survey_cache_identity"),&NativeRegionalWater::survey_cache_identity);
     ClassDB::bind_method(D_METHOD("survey_revision_id"),&NativeRegionalWater::survey_revision_id);
     ClassDB::bind_method(D_METHOD("survey_surfaces","cursor","expected_revision","region_budget"),&NativeRegionalWater::survey_surfaces);
     ClassDB::bind_method(D_METHOD("overlaps_occupied","bounds"),&NativeRegionalWater::overlaps_occupied);
@@ -214,6 +216,7 @@ void NativeRegionalWater::_bind_methods(){
     ClassDB::bind_method(D_METHOD("statistics"),&NativeRegionalWater::statistics);
     ClassDB::bind_method(D_METHOD("capture_snapshot","catalog"),&NativeRegionalWater::capture_snapshot);
     ClassDB::bind_method(D_METHOD("capture_storage_snapshot","catalog"),&NativeRegionalWater::capture_storage_snapshot);
+    ClassDB::bind_method(D_METHOD("restore_prepared","prepared"),&NativeRegionalWater::restore_prepared);
     ClassDB::bind_method(D_METHOD("restore_snapshot","bytes"),&NativeRegionalWater::restore_snapshot);
     ClassDB::bind_method(D_METHOD("validate_snapshot","bytes"),&NativeRegionalWater::validate_snapshot);
     ClassDB::bind_method(D_METHOD("snapshot_catalog","bytes"),&NativeRegionalWater::snapshot_catalog);
@@ -226,7 +229,7 @@ int NativeRegionalWater::index(const Vector3i &p){return (p.x&7)+8*(p.y&7)+64*(p
 bool NativeRegionalWater::in_domain(const Vector3i &p){return p.x>=0&&p.x<4000&&p.z>=0&&p.z<4000&&p.y>=2&&p.y<509;}
 void NativeRegionalWater::request(Key k){if(request_set.insert(k).second)requests.push_back(k);}
 void NativeRegionalWater::invalidate_snapshot() const {
-    ++survey_revision;
+    ++survey_revision;survey_saved_identity=String();
     if(!snapshot_cached&&saved_frozen.is_null())return;
     snapshot_cached=false;saved_snapshot=PackedByteArray();saved_catalog=PackedByteArray();
     saved_frozen.unref();frozen_catalog=PackedByteArray();
@@ -1200,7 +1203,7 @@ NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool s
 Dictionary NativeRegionalWater::statistics() const {
     uint64_t contact_bytes=0;for(const auto &[k,r]:regions)if(r.contacts)contact_bytes+=r.contacts->bytes;
     Dictionary d;d["structure_contact_bytes"]=int64_t(solid_cache_bytes);d["terrain_contact_bytes"]=int64_t(contact_bytes);d["pending_vertical"]=int64_t(0);d["vertical_steps"]=int64_t(0);d["water_ml"]=int64_t(total);d["active_cells"]=int64_t(0);d["regions"]=int64_t(regions.size());d["pending_regions"]=int64_t(requests.size());d["dirty_meshes"]=int64_t(meshes.size()+batch_queue.size());d["mesh_batch_active"]=batch_active;d["mesh_publish_pending"]=publish_pending;d["published_mesh_batch"]=int64_t(published_batch);d["query_cache_bytes"]=int64_t(query_cache_bytes);d["query_builds"]=int64_t(query_builds);d["query_cache_hits"]=int64_t(query_cache_hits);d["mesh_snapshot_bytes"]=int64_t(mesh_snapshot.size()*sizeof(Region));d["fill_active"]=fill.running;d["fill_remaining_ml"]=fill.remaining;d["sampled_nodes"]=int64_t(sampled);d["cache_hits"]=int64_t(cache_hits);d["cached_region_rebuilds"]=int64_t(cache_rebuilds);d["cell_steps"]=int64_t(0);d["changes"]=int64_t(changes);d["step_us"]=int64_t(last_us);d["max_step_us"]=int64_t(max_us);d["mesh_us"]=int64_t(mesh_us);d["max_mesh_us"]=int64_t(max_mesh_us);d["capacity_reached"]=limit;uint64_t vacancy_bytes=0;for(const auto &[k,r]:regions)vacancy_bytes+=r.vacancies.capacity()*sizeof(uint32_t);
-    d["snapshot_cache_bytes"]=saved_snapshot.size()+saved_catalog.size();d["snapshot_pending_bytes"]=int64_t(NativeWaterSnapshot::pending_bytes.load());d["snapshot_builds"]=int64_t(snapshot_builds);d["snapshot_hits"]=int64_t(snapshot_hits);
+    d["map_identity_scene_hash_us"]=int64_t(survey_identity_scene_hash_us);d["map_identity_hash_us"]=int64_t(survey_identity_hash_us);d["snapshot_cache_bytes"]=saved_snapshot.size()+saved_catalog.size();d["snapshot_pending_bytes"]=int64_t(NativeWaterSnapshot::pending_bytes.load());d["snapshot_builds"]=int64_t(snapshot_builds);d["snapshot_hits"]=int64_t(snapshot_hits);
     d["vacancy_bytes"]=int64_t(vacancy_bytes);d["resident_cell_bytes"]=int64_t(regions.size()*sizeof(Region)+contact_bytes+solid_cache_bytes+vacancy_bytes);return d;
 }
 // Self-contained compound snapshot: authoritative amounts + derived occupancy.
@@ -1360,7 +1363,27 @@ bool NativeRegionalWater::decode(const PackedByteArray &data,bool install){
     }
     return true;
 }
-bool NativeRegionalWater::restore_snapshot(const PackedByteArray &data){return decode(data,true);}
+void NativeWaterMapIdentity::_bind_methods(){
+ ClassDB::bind_method(D_METHOD("prepare","bytes"),&NativeWaterMapIdentity::prepare);
+ ClassDB::bind_method(D_METHOD("get_bytes"),&NativeWaterMapIdentity::get_bytes);
+}
+Ref<NativeWaterMapIdentity> NativeWaterMapIdentity::prepare(const PackedByteArray &data) const {
+ if(data.is_empty()||data.size()>64*1024*1024)return {};
+ Ref<NativeWaterMapIdentity> result;result.instantiate();result->bytes=data;
+ const auto started=Time::get_singleton()->get_ticks_usec();
+ Ref<HashingContext> hash;hash.instantiate();hash->start(HashingContext::HASH_SHA256);hash->update(data);
+ result->identity="snapshot-v1|"+hash->finish().hex_encode();result->hash_us=Time::get_singleton()->get_ticks_usec()-started;return result;
+}
+bool NativeRegionalWater::restore_prepared(const Ref<NativeWaterMapIdentity> &prepared){
+ if(prepared.is_null()||prepared->identity.is_empty()||!decode(prepared->bytes,true))return false;
+ survey_saved_identity=prepared->identity;survey_identity_hash_us=prepared->hash_us;survey_identity_scene_hash_us=0;return true;
+}
+bool NativeRegionalWater::restore_snapshot(const PackedByteArray &data){
+ if(!decode(data,true))return false;
+ Ref<NativeWaterMapIdentity> factory;factory.instantiate();auto prepared=factory->prepare(data);
+ if(prepared.is_valid()){survey_saved_identity=prepared->identity;survey_identity_hash_us=survey_identity_scene_hash_us=prepared->hash_us;}
+ return true;
+}
 bool NativeRegionalWater::validate_snapshot(const PackedByteArray &data) const {
     if(data.size()>=4&&data.decode_u32(0)==MAGIC){return const_cast<NativeRegionalWater*>(this)->decode(data,false);}Ref<NativeLakeCatalog> legacy;legacy.instantiate();return legacy->validate_snapshot(data);
 }

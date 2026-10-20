@@ -55,6 +55,10 @@ func attach(terrain: Node) -> Error:
 	terrain.backend.snapshot_codec = archive
 	terrain.backend.snapshot_capture = _capture
 	for name: String in _providers:
+		var owner=_providers[name]["restore"].get_object()
+		if owner!=null and owner.has_method("snapshot_preparer") and owner.has_method("restore_prepared_snapshot"):
+			var preparer:RefCounted=owner.snapshot_preparer()
+			if preparer!=null:terrain.backend.snapshot_preparers[name]=preparer
 		terrain.backend.snapshot_validators[name] = archive if _region_structures and name == "structures" else _providers[name]["validator"]
 	terrain.snapshot_restored.connect(_restore)
 	return OK
@@ -75,7 +79,10 @@ func _restore(sections: Dictionary, epoch_id: int) -> void:
 	for name: String in _providers:
 		if _providers[name]["restore"].is_valid():
 			var restore_begin:=Time.get_ticks_usec()
-			if not _providers[name]["restore"].call(sections.get(name, _providers[name]["empty"])):
+			var owner=_providers[name]["restore"].get_object()
+			var prepared=_terrain.prepared_snapshot_components.get(name)
+			var restored:bool=owner.restore_prepared_snapshot(prepared) if prepared!=null and owner.has_method("restore_prepared_snapshot") else _providers[name]["restore"].call(sections.get(name,_providers[name]["empty"]))
+			if not restored:
 				_terrain.snapshot_restore_ok = false
 			if _terrain.has_method("_record_stage"):_terrain._record_stage("restore "+name,(Time.get_ticks_usec()-restore_begin)/1000.0)
 	_restored_epoch = epoch_id

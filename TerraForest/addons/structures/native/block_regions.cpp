@@ -71,7 +71,8 @@ bool NativeBlockWorld::parse_region(const PackedByteArray &bytes,BlockKey &regio
 bool NativeBlockWorld::validate_region_snapshot(const PackedByteArray &bytes) const {
     BlockKey region;std::map<BlockKey,BlockChunk> restored;return parse_region(bytes,region,restored);
 }
-void NativeBlockWorld::replace_region_chunks(BlockKey region,std::map<BlockKey,BlockChunk> &&restored,bool reset_history) {
+void NativeBlockWorld::replace_region_chunks(BlockKey region,std::map<BlockKey,BlockChunk> &&restored,bool reset_history,bool storage_only) {
+    if(!storage_only)survey_saved_identity=String();
     ++mutation_revision;
     std::set<BlockKey> affected;
     for(int z=0;z<4;z++)for(int y=0;y<4;y++)for(int x=0;x<4;x++) {
@@ -92,7 +93,7 @@ bool NativeBlockWorld::unload_region(const PackedByteArray &expected_snapshot) {
     if(unloaded_regions.size()>=MAX_UNLOADED||!parse_region(expected_snapshot,region,parsed))return false;
     if(capture_region(Vector3i(region.x,region.y,region.z))!=expected_snapshot)return false;
     unloaded_regions.emplace(region,expected_snapshot.slice(expected_snapshot.size()-32));
-    replace_region_chunks(region,{});
+    replace_region_chunks(region,{},true,true);
     emit_signal("changed");return true;
 }
 bool NativeBlockWorld::restore_region(const PackedByteArray &bytes,const PackedByteArray &expected_current) {
@@ -110,7 +111,7 @@ bool NativeBlockWorld::restore_region_impl(const PackedByteArray &bytes,const Pa
     if(chunks.size()-removed+restored.size()>2048)return false;
     if(unloaded==unloaded_regions.end()&&bytes==expected_current)return true;
     const bool replaces_resident=unloaded==unloaded_regions.end();
-    unloaded_regions.erase(region);replace_region_chunks(region,std::move(restored),!preserve_history);
+    unloaded_regions.erase(region);replace_region_chunks(region,std::move(restored),!preserve_history,!replaces_resident);
     // Paging the same saved region preserves water caches. Replacing resident
     // authored geometry must invalidate occupancy just like ordinary edits.
     if(replaces_resident)emit_signal("cells_changed",AABB(Vector3(region.x*64,region.y*64,region.z*64),Vector3(64,64,64)));
@@ -132,7 +133,7 @@ bool NativeBlockWorld::initialize_region_index(const PackedInt32Array &keys,cons
         selected.emplace(key,checksums.slice(i*32,(i+1)*32));previous=key;
     }
     if(selected.empty())return true;
-    ++mutation_revision;++storage_epoch;unloaded_regions=std::move(selected);clear_history();
+    survey_saved_identity=String();++mutation_revision;++storage_epoch;unloaded_regions=std::move(selected);clear_history();
     emit_signal("changed");return true;
 }
 bool NativeBlockWorld::restore_storage_state(const PackedByteArray &resident,const PackedInt32Array &keys,const PackedByteArray &checksums) {
@@ -146,7 +147,8 @@ bool NativeBlockWorld::restore_storage_state(const PackedByteArray &resident,con
         if(!valid_region(key)||(i&&!(previous<key))||occupied.count(key))return false;
         unavailable.emplace(key,checksums.slice(i*32,(i+1)*32));previous=key;
     }
-    replace_storage(std::move(restored),std::move(unavailable));return true;
+    PackedByteArray identity_bytes=resident.slice(resident.size()-32);identity_bytes.append_array(keys.to_byte_array());identity_bytes.append_array(checksums);
+    replace_storage(std::move(restored),std::move(unavailable),"storage-v1|"+region_hash(identity_bytes).hex_encode());return true;
 }
 Dictionary NativeBlockWorld::capture_storage_state() const {
     // One scene-owner capture: the caller must transfer these immutable values

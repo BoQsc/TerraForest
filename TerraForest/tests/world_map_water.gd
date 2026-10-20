@@ -6,6 +6,9 @@ func run()->void:
  game.app_focused=true;game.world_map.set_open(true)
  var atlas=game.world_map;var survey=atlas.water_survey
  if not check(await wait_for(func():return survey.complete and atlas.texture!=null and atlas.updates.dirty.is_empty() and atlas.updates.pending.is_empty(),40),"terrain and actual water map complete"):await done();return
+ check(not survey.fast_identity().is_empty(),"loaded water has certified map identity")
+ check(game.lakes.water.statistics().map_identity_scene_hash_us==0,"world loading prepares water identity off scene thread")
+ if "--expect-water-map-hit" in OS.get_cmdline_user_args():check(survey.fast_cache_hits==1 and survey.source_calls==0 and survey.visibility_calls==0,"fresh process reuses water cache without source scans")
  var before:PackedByteArray=survey.texture.get_image().get_data();var land:PackedByteArray=atlas.updates.image.get_data()
  var has_water:=false
  for i in range(3,before.size(),4):has_water=has_water or before[i]>0
@@ -19,6 +22,7 @@ func run()->void:
  var snapshot:PackedByteArray=game.lakes.capture_snapshot()
  var removed:int=game.lakes.water.remove_bounds(AABB(Vector3.ZERO,Vector3(2000,256,2000)))
  check(removed>0,"real water store changes")
+ check(game.lakes.water.survey_cache_identity().is_empty(),"water removal clears certified shortcut")
  if not check(await wait_for(func():return survey.complete and survey.builds>builds,30),"water removal rebuilds map layer"):await done();return
  var empty:PackedByteArray=survey.texture.get_image().get_data();var clear:=true
  for i in range(3,empty.size(),4):clear=clear and empty[i]==0

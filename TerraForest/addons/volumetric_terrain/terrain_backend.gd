@@ -85,6 +85,7 @@ func save_profile() -> Dictionary:
 	return result
 
 var snapshot_validators: Dictionary = {}
+var snapshot_preparers:Dictionary={}
 var components: Dictionary = {} # Worker-owned; unknown addon sections survive round trips.
 var component_epoch: int = 0
 var component_generation: int = -1
@@ -580,6 +581,14 @@ func _save() -> String:
 	_last_save_success = true
 	return "World saved and verified; previous snapshot retained as .bak"
 
+func _prepare_component_restores()->Dictionary:
+	var prepared:Dictionary={}
+	for name:String in snapshot_preparers:
+		if components.has(name):
+			var value=snapshot_preparers[name].prepare(components[name])
+			if value!=null:prepared[name]=value
+	return prepared
+
 func _initialize_generated_components() -> bool:
 	components = {}
 	if world_generator in [4,6,7,8,9,10,11,12,13] and snapshot_validators.has("volumetric_water"):
@@ -1059,7 +1068,7 @@ func _run() -> void:
 	var modified:=_call(Codec.command(10))
 	var stats:=_call(Codec.command(0))
 	_push({"kind": "startup", "message": load_message,
-		"components": components.duplicate(), "modified": modified, "stats": stats})
+		"components": components.duplicate(), "prepared_components":_prepare_component_restores(), "modified": modified, "stats": stats})
 	_startup_mark("published")
 	while true:
 		_finish_publication()
@@ -1261,7 +1270,7 @@ func _run() -> void:
 				snapshot_id = "new_generator_%d_seed_%d"%[world_generator,world_seed]
 			_set_cache_snapshot(snapshot_id)
 			_push({"kind": "reload", "epoch": job["epoch"], "message": message,
-				"components": components.duplicate(), "modified": _call(Codec.command(10)), "stats": _call(Codec.command(0))})
+				"components": components.duplicate(), "prepared_components":_prepare_component_restores(), "modified": _call(Codec.command(10)), "stats": _call(Codec.command(0))})
 		elif kind == "density_batch":
 			_execute_density_batch(job)
 		elif kind == "material_edit":

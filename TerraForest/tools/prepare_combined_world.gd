@@ -64,6 +64,8 @@ func run()->void:
   var ready_map:bool=await wait_until(func():return updates.image!=null and updates.identity_checked and updates.dirty.is_empty() and updates.pending.is_empty() and updates.cache_saved and updates.io==null,90)
   if not require(ready_map and (updates.cache_hits>0 or updates.cache_writes>0),"edited terrain cartography cached before publication"):await finish(false);return
   print("PREPARED_EDITED_CARTOGRAPHY hits=",updates.cache_hits," writes=",updates.cache_writes," patches=",updates.patches)
+  print("PREPARED_WATER_IDENTITY hash_us=",game.lakes.water.statistics().get("map_identity_hash_us",-1)," scene_hash_us=",game.lakes.water.statistics().get("map_identity_scene_hash_us",-1))
+  if not require(game.lakes.water.statistics().get("map_identity_scene_hash_us",-1)==0,"world load water identity hashing stays off scene thread"):await finish(false);return
   var water_map:Node=game.world_map.water_survey
   if not require(await wait_until(func():return water_map.complete and water_map.io==null,90) and (water_map.cache_hits>0 or water_map.cache_writes>0),"actual water cartography cached before publication"):await finish(false);return
   print("PREPARED_WATER_CARTOGRAPHY hits=",water_map.cache_hits," writes=",water_map.cache_writes," source_calls=",water_map.source_calls," visibility_calls=",water_map.visibility_calls)

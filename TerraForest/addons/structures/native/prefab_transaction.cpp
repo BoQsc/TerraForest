@@ -215,7 +215,7 @@ Dictionary NativePrefabPlacement::commit(const Array &protected_boxes) {
         if(existing!=blocks->chunks.end()){existing->second=std::move(it->second);it=p.chunks.erase(it);}
         else {auto next=it++;blocks->chunks.insert(p.chunks.extract(next));}
     }
-    ++blocks->mutation_revision;
+    ++blocks->mutation_revision;blocks->survey_saved_identity=String();
     for(auto key:p.invalidations)blocks->invalidate(key);
     blocks->clear_history();blocks->set_process(true);
     const auto blocks_committed=Time::get_singleton()->get_ticks_usec();

@@ -1,3 +1,48 @@
+## Block and water map caches now skip initial source scans — 2026-10-20
+
+Both layers now use certified loaded-state identities before collecting geometry.
+Block identities survive exact paging and are cleared by authored cell replacement,
+resident-region replacement, combined prefab placement and unverified index changes.
+Snapshot/storage/bootstrap validation installs identities before publication. Exact
+collection transforms remain part of the cache key. Region metadata is captured only
+after an early-cache miss. Publishing any overlay now releases its source resources,
+including a checkpoint lease if a shortcut bypasses normal source completion.
+
+Water snapshot restoration installs a content identity. Any existing snapshot
+invalidation clears it conservatively, including water/contact changes. World load
+prepares the content hash on the existing terrain loading worker. An immutable native
+packet binds the hash to its exact bytes; main-thread restoration still validates
+and decodes that packet before using its identity. The component persistence layer
+supports optional native preparation without changing serialized save sections or
+introducing an extra worker. Other providers keep their existing restore path.
+
+An initial implementation added approximately 108 ms of hashing on the scene thread.
+This regression was measured and corrected before committing: the final integrated
+prepared-world check recorded 133845 microseconds on the worker and **zero scene-thread
+hash time**. Native tests cover immutable packet ownership, invalid payload rejection
+and identical prepared/ordinary identities. Direct synchronous restore remains a
+synchronous compatibility API; world startup/reload use the prepared path.
+
+At 1920x1080 fullscreen, fresh-process block cache lookup required zero source queries,
+zero archived reads and zero visibility calls. Water likewise required zero initial
+source queries and visibility calls. Temporary block placement/restoration and water
+removal/restoration still changed/reproduced the expected pixels; stale certified
+caches were not reused after edits. Completed block maps retain no source request or
+checkpoint lease. Preparation reopened all four layers from caches with no block/model
+archive reads, no water source calls and no visibility calls. Model identity shortcut
+continues to apply. Canonical world SHA-256 remains unchanged. Structures and water
+debug/release DLLs rebuilt. Evidence: `evidence/map_early_identity`.
+
+**Still unfinished:** edited states can trigger a full overlay resurvey; these tests
+still read 44 block regions across two edited states and scan water after removal.
+Certificates are not yet refreshed on live saves, and equivalent snapshot/bootstrap
+encodings can produce separate valid caches. Fine-detail maps, cross-layer height
+ordering and large-world capacity/endurance remain open. Startup receive still took
+about 215–248 ms in final checks, largely in water restoration; removing the hashing
+regression does not resolve that existing loading cost. Do not treat the current
+map milestones as whole-world performance or game-ready acceptance. Continue from
+these measured loading/update limits while preserving the wider foundation gates.
+
 ## Certified model-map cache skips archive scanning — 2026-10-20
 
 Validated full model snapshots and bootstrap metadata now install a native map

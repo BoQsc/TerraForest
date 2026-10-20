@@ -38,6 +38,7 @@ void NativeBlockWorld::_bind_methods() {
     ClassDB::bind_method(D_METHOD("initialize_region_index","keys","checksums"),&NativeBlockWorld::initialize_region_index);
     ClassDB::bind_method(D_METHOD("is_region_loaded","region"),&NativeBlockWorld::is_region_loaded);
     ClassDB::bind_method(D_METHOD("region_stats"),&NativeBlockWorld::region_stats);
+    ClassDB::bind_method(D_METHOD("survey_cache_identity"),&NativeBlockWorld::survey_cache_identity);
     ClassDB::bind_method(D_METHOD("survey_index"),&NativeBlockWorld::survey_index);
     ClassDB::bind_method(D_METHOD("survey_revision_id"),&NativeBlockWorld::survey_revision_id);
     ClassDB::bind_method(D_METHOD("survey_columns","region","offset","expected_revision"),&NativeBlockWorld::survey_columns);
@@ -155,7 +156,7 @@ bool NativeBlockWorld::apply_cells(const PackedInt32Array &records,bool record_h
         invalidate({k.x,k.y,k.z-1}); invalidate({k.x,k.y,k.z+1});
     }
     if(changed) {
-        ++mutation_revision;
+        ++mutation_revision;survey_saved_identity=String();
         if(record_history)remember_edit(std::move(changes));
         set_process(true);
         if(deferred_bounds)*deferred_bounds=changed_bounds;
@@ -567,9 +568,10 @@ bool NativeBlockWorld::parse(const PackedByteArray &bytes,std::map<BlockKey,Bloc
 }
 bool NativeBlockWorld::restore_snapshot(const PackedByteArray &bytes) {
     std::map<BlockKey,BlockChunk> restored;if(!parse(bytes,&restored))return false;
-    replace_storage(std::move(restored),{});return true;
+    replace_storage(std::move(restored),{},"snapshot-v1|"+bytes.slice(bytes.size()-32).hex_encode());return true;
 }
-void NativeBlockWorld::replace_storage(std::map<BlockKey,BlockChunk> &&restored,std::map<BlockKey,PackedByteArray> &&unavailable) {
+void NativeBlockWorld::replace_storage(std::map<BlockKey,BlockChunk> &&restored,std::map<BlockKey,PackedByteArray> &&unavailable,const String &identity) {
+    survey_saved_identity=identity;
     ++mutation_revision;++storage_epoch;unloaded_regions=std::move(unavailable);
     std::set<BlockKey> affected;for(auto &e:chunks)affected.insert(e.first);for(auto &e:restored)affected.insert(e.first);
     for(auto &e:visuals)affected.insert(e.first);

@@ -1,0 +1,26 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[terrain-hitch] restore volumetric_water 195.13 ms at 3221
+[terrain-hitch] receive startup 213.37 ms at 3229
+[terrain-hitch] receive 215.15 ms at 3231
+PASS saved world loads
+PASS terrain and actual water map complete
+PASS loaded water has certified map identity
+PASS world loading prepares water identity off scene thread
+PASS fresh process reuses water cache without source scans
+PASS actual lakes contribute visible blue coverage
+PASS unchanged map reopening reuses completed water raster
+PASS real water store changes
+PASS water removal clears certified shortcut
+PASS water removal rebuilds map layer
+PASS removed lakes leave no stale blue pixels and do not rebuild terrain
+PASS original water snapshot restores
+PASS restored water resurvey completes
+PASS restored water produces identical map coverage
+PASS water cache I/O completes
+PASS fresh process reuses independently keyed water rasters
+MAP_WATER_CACHE hits=3 writes=0
+MAP_WATER_PROFILE builds=3 source_calls=506 reduced_points=0 visibility_calls=0 max_source_us=11 max_visibility_ms=0.0
+WORLD_MAP_WATER failures=0
+[TerrainRewrite] Temporary test world: save skipped

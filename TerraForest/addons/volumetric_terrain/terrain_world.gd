@@ -12,6 +12,7 @@ signal lake_cache_result(event: String, identity: String)
 signal lake_slice_profiled(worker_ms: float, queue_ms: float, status: int)
 signal survey_patch_ready(result: Dictionary)
 signal density_batch_ready(result: Dictionary)
+var prepared_snapshot_components:Dictionary={}
 signal snapshot_restored(sections: Dictionary, epoch_id: int)
 const TerrainAssets = preload("res://addons/volumetric_terrain/runtime_assets.gd")
 static var _active_world: WeakRef
@@ -106,7 +107,9 @@ func _receive(result: Dictionary) -> void:
 	if result.get("kind", "") in ["startup", "reload"] and not str(result.get("message", "")).begins_with("ERROR:"):
 		if result.get("kind") == "startup" or int(result.get("epoch", -1)) == epoch:
 			snapshot_restore_ok = true
+			prepared_snapshot_components=result.get("prepared_components",{})
 			snapshot_restored.emit(result.get("components", {}), epoch)
+			prepared_snapshot_components={}
 			if not snapshot_restore_ok:
 				backend.disable_snapshot_writes("addon restoration failed")
 				result["message"] = "ERROR: addon restoration failed; canonical save protected"

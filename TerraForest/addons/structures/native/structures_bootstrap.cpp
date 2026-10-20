@@ -55,7 +55,7 @@ bool NativeStructuresSnapshot::restore_bootstrap(const PackedByteArray &bytes,Na
     const bool block_signals=blocks->is_blocking_signals();const uint64_t block_id=blocks->get_instance_id();
     blocks->set_block_signals(true);
     for(auto &stage:prepared)stage.batch->set_block_signals(true);
-    blocks->replace_storage(std::move(resident),std::move(unavailable));
+    blocks->replace_storage(std::move(resident),std::move(unavailable),"bootstrap-v1|"+bytes.slice(bytes.size()-32).hex_encode());
     for(auto &stage:prepared) {
         stage.batch->install_metadata(std::move(stage.regions),std::move(stage.ids),stage.survey_identity);
         stage.batch->paging_checkpoint.reset();

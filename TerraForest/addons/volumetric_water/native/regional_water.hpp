@@ -20,6 +20,17 @@
 #include "water_cell_profile.hpp"
 
 namespace terraforest {
+class NativeWaterMapIdentity : public godot::RefCounted {
+ GDCLASS(NativeWaterMapIdentity,godot::RefCounted)
+ friend class NativeRegionalWater;
+ godot::PackedByteArray bytes;
+ godot::String identity;
+ uint64_t hash_us=0;
+protected: static void _bind_methods();
+public:
+ godot::Ref<NativeWaterMapIdentity> prepare(const godot::PackedByteArray &data) const;
+ godot::PackedByteArray get_bytes() const{return bytes;}
+};
 class NativeWaterSnapshot;
 struct TerrainWaterContacts {uint64_t bytes=0;std::array<std::vector<WaterCellProfile::Triangle>,512> floors;};
 struct StructureWaterContacts {uint64_t bytes=sizeof(std::shared_ptr<const WaterSolidProfile>)*512;std::array<std::shared_ptr<const WaterSolidProfile>,512> cells;};
@@ -113,6 +124,8 @@ class NativeRegionalWater : public godot::RefCounted {
     mutable uint64_t snapshot_builds=0,snapshot_hits=0;
     void invalidate_snapshot() const;
     mutable uint64_t survey_revision=0;
+    mutable godot::String survey_saved_identity;
+    uint64_t survey_identity_hash_us=0,survey_identity_scene_hash_us=0;
 
     std::map<Key,Region> mesh_snapshot;
     std::unordered_set<Key> mesh_snapshot_absent,mesh_snapshot_dependencies;
@@ -173,6 +186,7 @@ protected: static void _bind_methods();
 public:
     // Conservative occupied-cell column envelope for cartography, not a mesh surface.
     godot::Dictionary survey_columns(int64_t cursor,int64_t expected_revision,int64_t region_budget) const;
+    godot::String survey_cache_identity() const{return survey_saved_identity;}
     int64_t survey_revision_id() const {return int64_t(survey_revision);}
     godot::Dictionary survey_surfaces(int64_t cursor,int64_t expected_revision,int64_t region_budget) const;
     godot::Dictionary next_request();
@@ -201,6 +215,7 @@ public:
     godot::Dictionary statistics() const;
     godot::Variant capture_storage_snapshot(const godot::PackedByteArray &catalog) const;
     godot::PackedByteArray capture_snapshot(const godot::PackedByteArray &catalog) const;
+    bool restore_prepared(const godot::Ref<NativeWaterMapIdentity> &prepared);
     bool restore_snapshot(const godot::PackedByteArray &data);
     bool validate_snapshot(const godot::PackedByteArray &data) const;
     godot::PackedByteArray snapshot_catalog(const godot::PackedByteArray &data) const;
