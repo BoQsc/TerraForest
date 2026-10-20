@@ -192,6 +192,7 @@ void NativeRegionalWater::_bind_methods(){
     ClassDB::bind_method(D_METHOD("cell_geometry","point"),&NativeRegionalWater::cell_geometry);
     ClassDB::bind_method(D_METHOD("next_request"),&NativeRegionalWater::next_request);
     ClassDB::bind_method(D_METHOD("accept_patch","patch"),&NativeRegionalWater::accept_patch);
+    ClassDB::bind_method(D_METHOD("set_western_ocean","enabled"),&NativeRegionalWater::set_western_ocean);
     ClassDB::bind_method(D_METHOD("invalidate","bounds","replace_water"),&NativeRegionalWater::invalidate,DEFVAL(false));
     ClassDB::bind_method(D_METHOD("invalidate_buildings","bounds"),&NativeRegionalWater::invalidate_buildings);
     ClassDB::bind_method(D_METHOD("reuse_building_occupancy","patch"),&NativeRegionalWater::reuse_building_occupancy);
@@ -1141,6 +1142,18 @@ NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool s
                 sample.contact=below>=std::max(horizontal,above)&&!shape.open_bottom;}
         }
         if(x>=0&&x<8&&y>=0&&y<8&&z>=0&&z<8){++wet_cells;if(!represented)++unresolved;}
+    }
+    // The coastal profile terminates at an ocean boundary, not an air wall.
+    // Supply its immutable outer halo only; interior cells/quantities remain
+    // authoritative and bucket edits retain their normal local geometry.
+    if(western_ocean&&base.x==0){
+        for(int z=-1;z<=N;++z)for(int y=-1;y<=N;++y){
+            Node &sample=field[node_index(-1,y,z)];
+            float height=(base.y*2+y+.5f)*STEP;
+            sample.density=std::clamp(height-40.f,-BAND,BAND);
+            sample.owner=Vector3i(0,std::clamp(base.y+y/2,2,508),std::clamp(base.z+z/2,0,3999));
+            sample.contact=false;
+        }
     }
     for(int z=-1;z<N;++z)for(int y=-1;y<N;++y)for(int x=-1;x<N;++x){
         float d[8];unsigned signs=0;

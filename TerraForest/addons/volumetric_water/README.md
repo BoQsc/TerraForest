@@ -21,3 +21,9 @@ Connected surface cells share corners across region and adjacent height-layer bo
 The same regional cache now retains terrain samples for clipped shore geometry. [Shoreline evidence](../../docs/evidence/water_shore_clipping/README.md) records cache migration, correctness checks and remaining representation/performance limits.
 
 Bucket targeting and shallow depth queries now share the native shoreline clipper with rendering. [Interaction evidence](../../docs/evidence/water_shore_interaction/README.md) includes actual-world mouse input and remaining limits.
+
+Generator 18 adds a first coastal inlet using this same native store. The two-triangle
+horizon beyond the western map boundary is presentation only, not navigable or
+editable offshore volume. Coastal boundary configuration must be set before mesh
+publication. See `docs/evidence/coastal_inlet` and `docs/WORLD_FOUNDATION_STATUS.md`
+for tested scope, resource counts and remaining ocean-streaming work.

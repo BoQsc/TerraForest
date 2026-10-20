@@ -1,0 +1,15 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS Insufficient source leaves world and bucket unchanged (62500 ml)
+PASS Empty bucket cannot pour
+PASS Stale click changes neither inventory nor water
+PASS No alternate litre gameplay transfer API
+PASS Insufficient source leaves world and bucket unchanged (3570 ml)
+PASS Empty bucket cannot pour
+PASS Stale click changes neither inventory nor water
+PASS No alternate litre gameplay transfer API
+PASS Insufficient source leaves world and bucket unchanged (570 ml)
+PASS Empty bucket cannot pour
+PASS Stale click changes neither inventory nor water
+PASS No alternate litre gameplay transfer API
+PASS Water remains static without automatic flow

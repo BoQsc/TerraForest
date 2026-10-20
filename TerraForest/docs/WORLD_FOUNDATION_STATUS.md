@@ -1518,3 +1518,43 @@ Scope: bounded placement-time native work, no added per-frame global scan. This
 fix does not prove exact contact against every simplified rendered triangle, or
 reproduce the user's exact camera location. The reported 15 FPS remains unexplained
 and is not claimed resolved by this placement correction.
+
+## First coastal inlet — 2026-10-20
+
+`Play Coastal World.cmd` opens a new version-5 copy of
+`coastal_settlements_20261020`, seed 42 / generator 18. Existing generator fields
+and review saves are preserved; the usual neighborhood launcher still defaults
+to version 4. The same world contains 20 buildings, the connecting forest road
+and a new western beach location on the M map. First bake: 93.72 s.
+
+Generator 18 adds one bounded western inlet (x < 72, z 968–1048), shallow shelf,
+sand shading and a bare beach below 44.5 m. Inland terrain at the checked old
+settlement/edge points is unchanged. The water is the existing NativeRegionalWater
+store: fixed-unit bucket transactions, terrain clipping and compound saves.
+The outer map edge has a sea-level meshing halo instead of an artificial air wall.
+Its presentation configuration is derived from generator 18 before publication,
+not a new serialized water format. Interior quantities remain authoritative.
+
+Offshore is currently a two-triangle horizon outside the editable map, sharing
+water lighting and world-space ripples, without scene-color/depth transmission
+samples or cast shadows. An 8 m shallow-to-deep appearance blend meets that horizon.
+This is a bounded coastal milestone, NOT dynamic ocean volume streaming or a
+whole-world ocean LOD system. Offshore swimming/boats, distant edited ocean tiles,
+all-side coast generation and moving near/far streaming remain unfinished.
+Do not expand the existing 4096-region store limit to fill an entire ocean.
+
+Targeted actual-world review passed: saved terrain + 3 places load, all 80 water
+regions reuse cached terrain contacts with zero rebuilds, normal gameplay scoop
+and return transfer exactly one unit, edited water snapshot restores, and native
+ray intersection at x=0.01 meets the horizon at y=40 within 1 mm.
+Cached water occupancy: 2,615,664 bytes; query mesh cache: 3,308,928 bytes;
+no active simulation cells. Inspected near and overview images after removing the
+initial beach vegetation and correcting the visible edge seam. Shoreline silhouette
+variety and exposed headland ends remain draft quality.
+
+1080p capped-60 short fixed-view horizon on/off sample (90 frames each): GPU median
+5.623 ms hidden / 5.556 ms visible; p95 6.629 / 6.460 ms. The negative difference is
+noise/warm-up, not a speedup or zero-cost proof. This measures only horizon toggle,
+not total water cost, long-run thermals or an older laptop. Functional checks plus
+the short images do not establish complete world-quality acceptance.
+Evidence: `evidence/coastal_inlet/`.

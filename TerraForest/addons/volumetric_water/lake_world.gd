@@ -44,6 +44,7 @@ var _mesh_max_publish_us:int=0
 var _mesh_commit_us:int=0
 var _mesh_max_commit_us:int=0
 var _mesh_faces:Dictionary={}
+var _ocean_horizon:MeshInstance3D
 var _material:=ShaderMaterial.new()
 var _pending_bucket:Dictionary={}
 var _bucket_native_us:=0
@@ -153,6 +154,13 @@ func _measured_step(delta:float)->void:
    WorkerThreadPool.wait_for_task_completion(_retirement_jobs[i].task);_retirement_jobs.remove_at(i)
  _poll_cached_task()
  if terrain==null or not terrain.world_ready:return
+ water.set_western_ocean(terrain.backend.world_generator==18)
+ if terrain.backend.world_generator==18 and _ocean_horizon==null:
+  _material.set_shader_parameter("coastal_join",true)
+  _ocean_horizon=preload("res://addons/volumetric_water/coastal_inlet.gd").horizon(_material);add_child(_ocean_horizon)
+ elif terrain.backend.world_generator!=18 and _ocean_horizon!=null:
+  _ocean_horizon.queue_free();_ocean_horizon=null
+  _material.set_shader_parameter("coastal_join",false)
  if _epoch!=terrain.epoch:_epoch=terrain.epoch;_occupancy_failure="";_discard_builder()
  var before:Dictionary=water.statistics()
  if _filling_id!=0 and not before.fill_active:

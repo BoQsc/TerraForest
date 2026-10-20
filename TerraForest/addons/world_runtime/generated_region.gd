@@ -14,10 +14,10 @@ func describe(seed_value:int,generator:int)->Dictionary:
  var result:Dictionary=store.get_plan()
  if not result.get("present",false) or result.seed!=seed_value or result.generator!=generator:return {}
  return result
-func publish_neighborhood(seed_value:int,plan:Dictionary)->bool:
+func publish_neighborhood(seed_value:int,plan:Dictionary,generator:int=17)->bool:
  if store==null:return false
  var data:Dictionary=neighborhood_metadata(plan,3,"North neighborhood","Homes and local streets fitted to the hillside.")
- return not data.is_empty() and store.set_plan(seed_value,17,data.places,data.roads)
+ return not data.is_empty() and store.set_plan(seed_value,generator,data.places,data.roads)
 static func neighborhood_metadata(plan:Dictionary,id:int,title:String,detail:String)->Dictionary:
  if not plan.get("ok",false):return {}
  var roads:Array=[];var arrival:=Vector3.ZERO;var closest:=INF

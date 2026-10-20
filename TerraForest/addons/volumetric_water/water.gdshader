@@ -17,13 +17,20 @@ uniform float surface_tint : hint_range(0.0, 0.3) = 0.22;
 uniform sampler2D ripple_normal : hint_normal, repeat_enable, filter_linear_mipmap;
 uniform float ripple_strength : hint_range(0.0, 1.0) = 0.55;
 uniform float ripple_scale = 0.25;
+uniform bool ocean_horizon = false;
+uniform bool coastal_join = false;
+varying float coastal_x;
 varying vec3 surface_world_normal;
 
 void vertex() {
+    coastal_x = (MODEL_MATRIX * vec4(VERTEX,1.0)).x;
     surface_world_normal = normalize(MODEL_NORMAL_MATRIX * NORMAL);
+    if (ocean_horizon) UV = (MODEL_MATRIX * vec4(VERTEX,1.0)).xz;
 }
 
 void fragment() {
+    float thickness = 40.0;
+    if (!ocean_horizon) {
     float depth = textureLod(scene_depth, SCREEN_UV, 0.0).r;
     vec3 ndc = vec3(SCREEN_UV * 2.0 - 1.0, depth);
 #if CURRENT_RENDERER == RENDERER_COMPATIBILITY
@@ -32,12 +39,15 @@ void fragment() {
     vec4 behind = INV_PROJECTION_MATRIX * vec4(ndc, 1.0);
     behind.xyz /= behind.w;
     // Distance through the water along this view ray, not nonlinear depth.
-    float thickness = clamp(length(behind.xyz) - length(VERTEX), 0.0, 40.0);
+    thickness = clamp(length(behind.xyz) - length(VERTEX), 0.0, 40.0);
+    }
     // From inside the volume, submerged side/bottom exits reveal the opaque
     // scene already shaded by the underwater camera. Re-applying a surface
     // reflection here turns the terrain-contact tessellation into bright bands.
     bool submerged_exit = !FRONT_FACING && surface_world_normal.y < 0.5;
     if (submerged_exit) thickness = 0.0;
+    // Resolve the shallow inlet into the opaque offshore horizon over 8 m.
+    if (coastal_join && surface_world_normal.y > 0.5) thickness = mix(40.0, thickness, smoothstep(0.0,8.0,coastal_x));
     float transmission = exp(-absorption * thickness);
     // At solid contact, the boundary converges to the already rendered terrain.
     // Fade surface lighting as well as tint; otherwise closed contact faces
@@ -54,7 +64,9 @@ void fragment() {
     float fresnel = 0.02 + 0.98 * pow(1.0 - facing, 5.0);
     float through = transmission * (1.0 - fresnel * contact_visibility) * (1.0 - surface_tint * contact_visibility);
     ALBEDO = water_color * (1.0 - through) * 0.5;
-    EMISSION = textureLod(scene_color, SCREEN_UV, 0.0).rgb * through + water_color * (1.0 - through) * 0.5;
+    vec3 scene = vec3(0.0);
+    if (!ocean_horizon) scene = textureLod(scene_color, SCREEN_UV, 0.0).rgb;
+    EMISSION = scene * through + water_color * (1.0 - through) * 0.5;
     METALLIC = 0.0;
     ROUGHNESS = 0.16;
     // Godot's dielectric F0 = 0.16 * SPECULAR^2; water F0 is about 0.02.

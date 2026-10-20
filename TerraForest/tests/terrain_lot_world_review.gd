@@ -7,7 +7,8 @@ func wait_until(condition:Callable,seconds:float)->bool:
  while not condition.call() and Time.get_ticks_msec()<deadline:await process_frame
  return condition.call()
 func run()->void:
- var core=ClassDB.instantiate("TerrainCore");core.execute(Codec.command(6,[42,17]))
+ var generator:int=18 if "--coastal-inlet" in OS.get_cmdline_user_args() else 17
+ var core=ClassDB.instantiate("TerrainCore");core.execute(Codec.command(6,[42,generator]))
  var layout:Dictionary=preload("res://addons/volumetric_terrain/generated_layout.gd").describe(42,16)
  var plan:Dictionary=Planner.locate(core,layout.sites[3].position)
  if not plan.ok:quit(1);return
@@ -36,11 +37,11 @@ func run()->void:
   if slot.is_empty() or FileAccess.file_exists("user://worlds/"+slot+".trw"):
    print("REFUSING_EXISTING_OR_UNNAMED_BAKE");game.free();quit(1);return
  game.temporary_world=not bake;game.max_fps=60;game.background_fps=60;root.add_child(game)
- if not await ready_world(game) or game.terrain.backend.world_generator!=17:print("WRONG_WORLD");quit(1);return
+ if not await ready_world(game) or game.terrain.backend.world_generator!=generator:print("WRONG_WORLD");quit(1);return
  game.set_physics_process(false);game._clear_motion()
  if reopen:
   var expected=FileAccess.get_file_as_bytes("res://reports/terrain_lot_region_expected.bin")
-  if expected.is_empty() or game.generated_region.store.capture_snapshot()!=expected or game.generated_region.describe(42,17).is_empty():
+  if expected.is_empty() or game.generated_region.store.capture_snapshot()!=expected or game.generated_region.describe(42,generator).is_empty():
    print("REGION_REOPEN_FAILED");game.free();quit(1);return
   game.world_map.refresh_world()
   if not connection.is_empty():
@@ -94,7 +95,7 @@ func run()->void:
  var saved_paving:PackedByteArray=collection.capture_snapshot()
  if not collection.remove_instances(collection.get_ids()) or not collection.restore_snapshot(saved_paving) or collection.capture_snapshot()!=saved_paving:
   print("PAVING_ROUNDTRIP_FAILED");quit(1);return
- if not game.generated_region.publish_neighborhood(42,plan):print("REGION_PUBLICATION_FAILED");quit(1);return
+ if not game.generated_region.publish_neighborhood(42,plan,generator):print("REGION_PUBLICATION_FAILED");quit(1);return
  if not connection.is_empty():
   var metadata:Dictionary=game.generated_region.store.get_plan()
   for i in range(1,connection.points.size()):metadata.roads.append({"a":connection.points[i-1],"b":connection.points[i],"width":8.0})
@@ -103,12 +104,20 @@ func run()->void:
   else:
    var market_metadata:Dictionary=game.generated_region.neighborhood_metadata(market,0,"Central market","Shops, workshops and homes around two connected streets.")
    metadata.places.append_array(market_metadata.places);metadata.roads.append_array(market_metadata.roads)
-  if not game.generated_region.store.set_plan(42,17,metadata.places,metadata.roads):print("CONNECTION_MAP_FAILED");quit(1);return
+  if not game.generated_region.store.set_plan(42,generator,metadata.places,metadata.roads):print("CONNECTION_MAP_FAILED");quit(1);return
+ if generator==18:
+  game.lakes.offline_preparation=true
+  if preload("res://addons/volumetric_water/coastal_inlet.gd").prepare(game.lakes)<=0:print("COAST_FILL_REJECTED");quit(1);return
+  if not await wait_until(func():return game.lakes.statistics().ready==1 and game.lakes.statistics().render_ready,120):print("COAST_FILL_TIMEOUT ",game.lakes.statistics());quit(1);return
+  game.lakes.offline_preparation=false
+  var region:Dictionary=game.generated_region.store.get_plan()
+  region.places.append({"id":10,"title":"Western beach","detail":"First coastal inlet; offshore horizon is not navigable ocean yet.","position":preload("res://addons/volumetric_water/coastal_inlet.gd").ARRIVAL})
+  if not game.generated_region.store.set_plan(42,generator,region.places,region.roads):quit(1);return
  game.ecosystem._structures_changed()
  game.ground_cover._exclusion_changed(works.bounds)
  game.terrain.changed_since_save=true
  game.world_map.refresh_world()
- if game.world_map.places.size()!=(1 if connection.is_empty() else 2) or game.world_map.roads.is_empty():print("BAKED_MAP_FAILED");quit(1);return
+ if game.world_map.places.size()!=((1 if connection.is_empty() else 2)+(1 if generator==18 else 0)) or game.world_map.roads.is_empty():print("BAKED_MAP_FAILED");quit(1);return
  game.construction_palette.survey_dialog.hide()
  var center:Vector3=plan.center
  center.y=plan.lots[5].origin.y
@@ -172,6 +181,14 @@ func run()->void:
  game.controls.clear(Time.get_ticks_usec())
  print("PAVEMENT_WALK arrived=",arrived," start=",start," target=",target," actual=",game.player.position)
  if not arrived:game.free();quit(1);return
+ if generator==18:
+  game.teleport(Vector3(39,43,1008))
+  if not await ready_world(game):quit(1);return
+  game.set_physics_process(false);game._clear_motion()
+  game.camera.global_position=Vector3(39,44.7,1008);game.camera.look_at(Vector3(0,40,1008))
+  for frame in 120:await process_frame
+  await RenderingServer.frame_post_draw
+  root.get_texture().get_image().save_png("res://reports/coastal_inlet.png")
  if bake:
   var file=FileAccess.open("res://reports/terrain_lot_region_expected.bin",FileAccess.WRITE)
   file.store_buffer(game.generated_region.store.capture_snapshot());file.close()
