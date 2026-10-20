@@ -1,3 +1,33 @@
+## Populated-world reload retirement — 2026-10-20
+
+A new integrated `world_reload_foundation.gd` check loads the saved regional world,
+reloads it in the same process, and checks component restoration, water quantity and
+identity, worker cleanup, republished water interaction targets, and cached map reuse.
+It runs readonly at 1920x1080 fullscreen with vegetation, actors and vehicle fleet.
+
+The initial populated reload exposed 25.441 ms in water restoration (34.997 ms total
+reload-result processing). Installing the prepared store still discarded old native
+regions and mesh/query buffers on the scene thread. The handoff now transfers those
+retired containers, including frozen snapshot buffers, to its private store. A pool
+worker destroys that state; the addon retains the handoff until task completion and
+joins outstanding retirement tasks at shutdown. Live state remains on the scene
+thread. Consumed/retired handoffs cannot be installed again.
+
+Final measured water restoration: **3.649 ms**, including 3.555 ms clearing scene
+references and **12 microseconds** native installation. Total reload-result processing:
+**14.149 ms**. Water surface targeting republishes at the same location within 1 mm;
+water quantities and content identity remain equal. All component maps complete and
+the water map reuses its certified cache without source scans. Native ownership tests
+pass; debug/release binaries rebuilt. Canonical save SHA-256 unchanged. Evidence:
+`evidence/world_reload_retirement`.
+
+**Next unresolved measured gate:** initiating reload itself still takes **23.582 ms**
+(29.847 ms in the initial run), before the worker loads the snapshot. Terrain retirement
+and vegetation reload handlers must be profiled separately before changing them. Scene
+water-reference retirement is still synchronous (~3.6 ms here); larger saves and longer
+runs are not qualified. This is not evidence of hitch-free reloads or sustained 60 FPS.
+The wider generator, settlement, storage-capacity and streaming gates remain open.
+
 ## Water startup decoding moved off the scene thread — 2026-10-20
 
 The existing loading worker now validates and decodes the complete native water

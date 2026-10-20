@@ -35,6 +35,7 @@ public:
  godot::Ref<NativeWaterMapIdentity> prepare(const godot::PackedByteArray &data) const;
  godot::PackedByteArray get_bytes() const{return bytes;}
  godot::PackedByteArray get_catalog() const{return catalog;}
+ void retire();
 };
 class NativeWaterSnapshot;
 struct TerrainWaterContacts {uint64_t bytes=0;std::array<std::vector<WaterCellProfile::Triangle>,512> floors;};

@@ -21,6 +21,8 @@ var water:RefCounted
 var _builder:RefCounted
 var _busy:=false
 var _occupancy_failure:String=""
+var last_restore_profile:Dictionary={}
+var _retirement_jobs:Array[Dictionary]=[]
 var _cached_task:int=-1
 var _cached_job:Dictionary={}
 var _builder_reused:=false
@@ -77,16 +79,24 @@ func _capture(deferred:bool) -> Variant:
 func snapshot_preparer()->RefCounted:
  return ClassDB.instantiate("NativeWaterMapIdentity")
 func restore_prepared_snapshot(prepared:RefCounted)->bool:
- return restore_snapshot(prepared.get_bytes(),prepared)
+ var restored:=restore_snapshot(prepared.get_bytes(),prepared)
+ if restored:
+  # Keep the handoff alive until the pool has destroyed its retired native store.
+  _retirement_jobs.append({"state":prepared,"task":WorkerThreadPool.add_task(prepared.retire,false,"Retire loaded water state")})
+ return restored
 func restore_snapshot(bytes:PackedByteArray,prepared:RefCounted=null) -> bool:
  var catalog_bytes:PackedByteArray=prepared.get_catalog() if prepared!=null else water.snapshot_catalog(bytes)
  if catalog_bytes.is_empty():return false
  var decoded:Dictionary=_catalog.decode(catalog_bytes)
  if not decoded.ok:return false
- clear();_next_id=decoded.next_id
+ var restore_begin:=Time.get_ticks_usec()
+ clear(prepared!=null);_next_id=decoded.next_id
+ last_restore_profile={"scene_clear_us":Time.get_ticks_usec()-restore_begin}
+ restore_begin=Time.get_ticks_usec()
  var cached:bool=bytes.decode_u32(0)==0x31575256
  if cached:
   if not (water.restore_prepared(prepared) if prepared!=null else water.restore_snapshot(bytes)):return false
+ last_restore_profile["native_install_us"]=Time.get_ticks_usec()-restore_begin
  # Old saves retain quantities but rebuild contacts to include explicit terrain cubes.
  if cached and bytes.decode_u32(4)<8:water.invalidate(AABB(Vector3.ZERO,Vector3(2000,256,2000)),true)
  for record:Dictionary in decoded.records:
@@ -119,11 +129,13 @@ func remove_lake(id:int) -> void:
  var item:Dictionary=_lakes[id]
  water.remove_bounds(AABB(item.origin,Vector3(item.cells)*item.spacing))
  _lakes.erase(id);terrain.changed_since_save=true;catalog_changed.emit()
-func clear() -> void:
+func clear(preserve_store:bool=false) -> void:
  _occupancy_failure=""
  _lakes.clear();_filling_id=0;_pending_bucket.clear();_pending_dev.clear()
  for mesh:MeshInstance3D in _meshes.values():mesh.queue_free()
- _meshes.clear();_mesh_faces.clear();_staged_meshes.clear();_mesh_batch_id=0;_published_mesh_batch_id=0;water=ClassDB.instantiate("NativeRegionalWater");_discard_builder()
+ _meshes.clear();_mesh_faces.clear();_staged_meshes.clear();_mesh_batch_id=0;_published_mesh_batch_id=0
+ if not preserve_store:water=ClassDB.instantiate("NativeRegionalWater")
+ _discard_builder()
  _have_bounds=false;_last_changes=0
 func _invalidate(bounds:AABB) -> void:
  _occupancy_failure=""
@@ -136,6 +148,9 @@ func _process(delta:float) -> void:
  last_process_us=Time.get_ticks_usec()-measured_begin
 
 func _measured_step(delta:float)->void:
+ for i in range(_retirement_jobs.size()-1,-1,-1):
+  if WorkerThreadPool.is_task_completed(_retirement_jobs[i].task):
+   WorkerThreadPool.wait_for_task_completion(_retirement_jobs[i].task);_retirement_jobs.remove_at(i)
  _poll_cached_task()
  if terrain==null or not terrain.world_ready:return
  if _epoch!=terrain.epoch:_epoch=terrain.epoch;_occupancy_failure="";_discard_builder()
@@ -247,6 +262,8 @@ func _poll_cached_task() -> void:
  cached_preparation_profiled.emit(info.cached_worker_us/1000.0,maxi(0,info.cached_started_us-job.submitted_us)/1000.0,info.status)
  _slice_ready(job.token,info.status,job.epoch,job.revision)
 func _exit_tree() -> void:
+ for job:Dictionary in _retirement_jobs:WorkerThreadPool.wait_for_task_completion(job.task)
+ _retirement_jobs.clear()
  if _cached_task>=0:
   _cached_job.builder.cancel_cached()
   WorkerThreadPool.wait_for_task_completion(_cached_task)

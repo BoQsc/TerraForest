@@ -1,0 +1,12 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS worker prepares exact immutable water packet
+PASS caller mutation cannot change prepared bytes
+PASS prepared restore hashes no bytes on scene thread
+PASS prepared catalog matches validated packet
+PASS prepared state cannot be consumed twice
+PASS retired handoff cannot install discarded state
+PASS prepared and ordinary restore certify identical content
+PASS invalid prepared payload cannot replace certified state
+PASS missing prepared payload rejected
+WATER_MAP_IDENTITY failures=0

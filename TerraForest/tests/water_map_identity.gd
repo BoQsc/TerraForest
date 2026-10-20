@@ -19,6 +19,10 @@ func run()->void:
  check(water.restore_prepared(prepared) and water.statistics().map_identity_scene_hash_us==0,"prepared restore hashes no bytes on scene thread")
  check(prepared.get_catalog()==catalog.encode([],1),"prepared catalog matches validated packet")
  check(not water.restore_prepared(prepared),"prepared state cannot be consumed twice")
+ var retire_worker:=Thread.new();retire_worker.start(prepared.retire)
+ while retire_worker.is_alive():await process_frame
+ retire_worker.wait_to_finish()
+ check(not water.restore_prepared(prepared),"retired handoff cannot install discarded state")
  var identity:String=water.survey_cache_identity()
  check(not identity.is_empty() and water.restore_snapshot(packet) and water.survey_cache_identity()==identity,"prepared and ordinary restore certify identical content")
  var bad= factory.prepare(PackedByteArray([1,2,3]))
