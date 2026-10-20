@@ -1,0 +1,17 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS budget yields between ordered providers
+PASS partial restoration cannot capture a save
+PASS failed provider completes barrier with explicit failure
+PASS restored epoch advances only at completion
+PASS failed restoration cannot capture a save
+PASS completed step never restores twice
+PASS synchronous compatibility path restores all providers
+PASS reload preparation registers
+PASS facade holds world publication until restoration completes
+PASS component restoration waits for all preparation frames
+PASS component restoration starts on frame after preparation
+PASS second reload cannot interrupt partial restoration
+PASS shutdown during restoration blocks partial snapshot publication
+PASS failed reload preparation terminates with save publication blocked
+COMPONENT_RESTORE_BUDGET failures=0

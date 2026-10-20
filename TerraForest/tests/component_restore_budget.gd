@@ -9,6 +9,11 @@ class Provider extends RefCounted:
  func restore(_bytes:PackedByteArray)->bool:
   calls+=1;OS.delay_usec(100);return succeeds
  func capture()->PackedByteArray:return PackedByteArray([calls])
+class Preparation extends RefCounted:
+ var steps:=0
+ func begin()->void:steps=0
+ func advance(_budget:int)->int:
+  steps+=1;return 1 if steps>=3 else 0
 var failures:=0
 func check(ok:bool,label:String)->void:
  if not ok:failures+=1
@@ -29,13 +34,29 @@ func _initialize()->void:
  check(persistence._restored_epoch==8 and a.calls==2 and b.calls==2 and host.snapshot_restore_ok,"synchronous compatibility path restores all providers")
  var terrain=preload("res://addons/volumetric_terrain/terrain_world.gd").new()
  var begin:=func(_sections:Dictionary,_epoch:int)->void:pass
- var step:=func(_budget:int)->bool:return false
+ var restore_calls:Array=[0]
+ var step:=func(_budget:int)->bool:
+  restore_calls[0]+=1;return false
  terrain.configure_snapshot_restore(begin,step)
+ var preparation:=Preparation.new()
+ check(terrain.register_reload_preparation(preparation.begin,preparation.advance),"reload preparation registers")
+ terrain.reload_started.emit()
  terrain._receive({"kind":"startup","message":"loaded","components":{}})
  check(not terrain.world_ready and not terrain._restore_pending.is_empty(),"facade holds world publication until restoration completes")
+ terrain._process(0);terrain._process(0);terrain._process(0)
+ check(preparation.steps==3 and restore_calls[0]==0,"component restoration waits for all preparation frames")
+ terrain._process(0)
+ check(restore_calls[0]==1,"component restoration starts on frame after preparation")
  var epoch:int=terrain.epoch;terrain.reload_world()
  check(terrain.epoch==epoch,"second reload cannot interrupt partial restoration")
  terrain.shutdown()
  check(not terrain.backend._snapshot_writable() and terrain.backend._shutdown_snapshot.is_empty() and terrain._restore_pending.is_empty(),"shutdown during restoration blocks partial snapshot publication")
  terrain.free()
+ var failed=preload("res://addons/volumetric_terrain/terrain_world.gd").new()
+ var fail_step:=func(_budget:int)->int:return -1
+ var fail_begin:=func()->void:pass
+ failed.register_reload_preparation(fail_begin,fail_step)
+ failed.reload_started.emit();failed._advance_reload_preparations()
+ check(not failed._reload_preparing and not failed.snapshot_restore_ok and not failed.backend._snapshot_writable(),"failed reload preparation terminates with save publication blocked")
+ failed.shutdown();failed.free()
  host.free();print("COMPONENT_RESTORE_BUDGET failures=",failures);quit(1 if failures else 0)

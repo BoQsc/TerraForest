@@ -151,8 +151,19 @@ func run() -> void:
 	check(cover._requests.is_empty() and cover._scatter_job.is_empty() and cover.resident.is_empty(),"malformed reply abandons wave without publishing partial owner or stranding requests")
 	cover._process(0.0);terrain.reply();finish_support(cover,terrain)
 	check(cover.resident.get(Vector2i(30,30),[])==reference,"retry after failed wave restores exact records")
-	cover.reset()
+	var saved_edits:PackedByteArray=cover.removed.capture_storage_snapshot()
+	cover._begin_reset()
+	var hidden:=true
+	for batch in cover.batches:hidden=hidden and not batch.visible
+	check(hidden,"staged reset hides every old vegetation batch immediately")
+	var reset_steps:=0;var status:=0
+	while status==0 and reset_steps<128:
+		status=cover._advance_reset(1);reset_steps+=1
+	check(status==1 and reset_steps>1 and not cover._reset_active,"staged reset completes through bounded preparation steps")
+	check(cover.removed.capture_storage_snapshot()==saved_edits,"runtime reset preserves saved vegetation edits")
 	check(cover.resident.is_empty() and cover.batches[0].get_ids().is_empty() and cover.batches[1].get_ids().is_empty() and cover.batches[2].get_ids().is_empty(),"reset releases generated records")
+	cover._process(0.0);terrain.reply();finish_support(cover,terrain)
+	check(cover.resident.get(Vector2i(30,30),[])==reference,"staged reset regenerates exactly the same vegetation records")
 	cover.free();terrain.free();camera.free()
 	print("GROUND_COVER_STREAM ",JSON.stringify({"checks":checks,"failures":failures}))
 	quit(1 if failures else 0)

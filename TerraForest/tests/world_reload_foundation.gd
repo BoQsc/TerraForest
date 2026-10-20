@@ -3,10 +3,12 @@ extends "res://tests/combined_resource_route.gd"
 var stages:Dictionary={}
 var max_retire_ms:=0.0
 var restore_frames:=0
+var preparation_frames:=0
 func run()->void:
  game=load("res://demo/world.tscn").instantiate();game.temporary_world=true;game.max_fps=60;game.background_fps=60
  game.terrain.stage_measured.connect(func(label:String,ms:float):
   if label=="retire collision/mesh":max_retire_ms=maxf(max_retire_ms,ms)
+  if label=="reload preparation frame":preparation_frames+=1
   if label=="restore frame":
    restore_frames+=1
    if game.terrain.world_ready:check(false,"partial component restoration must not publish world readiness")
@@ -22,7 +24,7 @@ func run()->void:
  var before:Dictionary=game.lakes.water.statistics()
  var identity:String=game.lakes.water.survey_cache_identity()
  var old_epoch:int=game.terrain.epoch
- stages.clear();restore_frames=0
+ stages.clear();restore_frames=0;preparation_frames=0
  var old_roots:Array=[]
  for entry:Dictionary in game.terrain.tiles.values():old_roots.append(entry.node)
  var began:=Time.get_ticks_usec();game.terrain.reload_world()
@@ -34,6 +36,8 @@ func run()->void:
  check(game.terrain.snapshot_restore_ok,"all components restore successfully")
  check(restore_frames>1 and game.terrain._restore_pending.is_empty(),"component restoration spans frames and closes publication barrier")
  print("COMPONENT_RESTORE_FRAMES ",restore_frames)
+ check(preparation_frames>1 and not game.ground_cover._reset_active and not game.terrain._reload_preparing,"ground cover preparation spans frames and finishes before readiness")
+ print("RELOAD_PREPARATION_FRAMES ",preparation_frames)
  check(game.lakes.water.survey_cache_identity()==identity,"water content identity survives reload")
  check(game.lakes.water.statistics().water_ml==before.water_ml,"reload preserves generated water quantity")
  check(game.lakes.water.statistics().map_identity_scene_hash_us==0,"reload hashes water off scene thread")

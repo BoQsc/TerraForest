@@ -1,3 +1,33 @@
+## Reload preparation barrier for ground cover — 2026-10-20
+
+The terrain facade now supports ordered cooperative reload-preparation jobs. The
+existing reload signal starts lightweight preparation; its frame steps run while the
+world is unavailable. Component restoration cannot start until preparation finishes,
+and begins on a subsequent frame to avoid combining two preparation/restoration slices.
+A repeated reload cannot interrupt either phase. Failed preparation blocks save
+publication and world readiness; shutdown during preparation also protects the save.
+
+Ground cover uses this path: old batches hide immediately, native species collections
+are cleared incrementally, and resident interaction-cell records are retired between
+budget checks. Reply callbacks ignore stale responses while reset is active. Generator
+work is suspended until completion. The synchronous reset API remains for direct use
+and compatibility. Saved vegetation edits, assets, density and LOD settings are unchanged.
+
+Tests verify ordered preparation before restoration, failure termination with writes
+blocked, immediate vegetation hiding, staged completion and exact vegetation regeneration.
+The integrated readonly regional reload at 1920x1080 fullscreen passed with **6.171 ms**
+initiation, **8 preparation frames** and **5 component-restoration frames**. Largest
+preparation slice was **12.056 ms**; largest restoration slice was **3.217 ms**. Water
+interaction/quantities, retirement drainage and map-cache reuse passed. Canonical save
+SHA-256 unchanged. Evidence: `evidence/reload_preparation_budget`.
+
+**Not a hard timing guarantee:** an individual native collection clear is still atomic,
+so preparation can exceed the configured 1 ms cooperative budget. The 12.056 ms maximum
+needs further investigation before claiming ample headroom on older hardware. The
+world remains gated during these operations; no partial runtime state is exposed.
+Repeated reload/backlog limits and the broader generator/design/storage/travel/gameplay
+qualification remain open.
+
 ## Component restoration now yields between providers — 2026-10-20
 
 Startup and reload no longer execute all addon restoration in one uninterrupted

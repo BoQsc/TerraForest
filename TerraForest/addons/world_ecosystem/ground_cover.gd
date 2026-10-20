@@ -31,6 +31,9 @@ var _support_job: Dictionary={}
 var _exclusion_revision:=0
 var _scatter_job:Dictionary={}
 var _resident_layers:Dictionary={}
+var _reset_active:=false
+var _reset_batch:=0
+var _reset_keys:Array=[]
 func _layers(key:Vector2i)->int:
 	# Maintain cover density through the full resident area; mesh LOD reduces cost.
 	return 16
@@ -64,7 +67,9 @@ func _ready() -> void:
 	terrain.surface_batch_ready.connect(_surface_ready)
 	terrain.density_batch_ready.connect(_density_ready)
 	terrain.region_changed.connect(_terrain_changed)
-	terrain.reload_started.connect(reset)
+	if terrain.has_method("register_reload_preparation"):
+		if not terrain.register_reload_preparation(_begin_reset,_advance_reset):push_error("Ground cover reload preparation registration failed")
+	else:terrain.reload_started.connect(reset)
 	if structures!=null: structures.vegetation_changed.connect(_exclusion_changed)
 	if water!=null: water.exclusion_changed.connect(_exclusion_changed)
 
@@ -83,17 +88,33 @@ func set_grass_texture(enabled: bool) -> bool:
 	grass_texture_enabled=enabled
 	return true
 
-func reset() -> void:
-	var reset_begin:=Time.get_ticks_usec()
-	# Reset each native collection once; cell-by-cell removal repeatedly rebuilds
-	# the same 32m render groups during a whole-world reload.
-	for batch:Node3D in batches:
-		if not batch.clear_instances():push_error("Ground cover reset rejected native collection ownership");return
-	for key in resident:picker.remove_cell(key)
+func _begin_reset()->void:
+	if _reset_active:return
+	_reset_active=true;_reset_batch=0;_reset_keys=resident.keys()
+	for batch:Node3D in batches:batch.visible=false
+
+func _advance_reset(budget_us:int)->int:
+	if not _reset_active:return 1
+	var began:=Time.get_ticks_usec()
+	while _reset_batch<batches.size():
+		if not batches[_reset_batch].clear_instances():return -1
+		_reset_batch+=1
+		if budget_us>0 and Time.get_ticks_usec()-began>=budget_us:return 0
+	while not _reset_keys.is_empty():
+		var key:Vector2i=_reset_keys.pop_back()
+		picker.remove_cell(key);resident.erase(key)
+		if budget_us>0 and Time.get_ticks_usec()-began>=budget_us:return 0
 	resident.clear();_wanted.clear();_dirty.clear();_pending.clear();_requests.clear();_support_job.clear()
-	_scatter_job.clear();_resident_layers.clear()
-	_last_cell=Vector2i(-999,-999)
-	if terrain.has_method("_record_stage"):terrain._record_stage("reload ground cover",(Time.get_ticks_usec()-reset_begin)/1000.0)
+	_scatter_job.clear();_resident_layers.clear();_last_cell=Vector2i(-999,-999)
+	for batch:Node3D in batches:batch.visible=true
+	_reset_active=false
+	return 1
+
+func reset() -> void:
+	var began:=Time.get_ticks_usec()
+	_begin_reset()
+	if _advance_reset(0)<0:push_error("Ground cover reset rejected native collection ownership")
+	if terrain.has_method("_record_stage"):terrain._record_stage("reload ground cover",(Time.get_ticks_usec()-began)/1000.0)
 
 func _retire(key: Vector2i) -> void:
 	picker.remove_cell(key)
@@ -107,7 +128,7 @@ func _process(_delta: float) -> void:
 	last_process_us=Time.get_ticks_usec()-measured_begin
 
 func _measured_step(_delta:float)->void:
-	if not terrain.world_ready or terrain.stopping: return
+	if _reset_active or not terrain.world_ready or terrain.stopping: return
 	if seed_source.is_valid(): seed=seed_source.call()
 	if not removed.bind_world(seed,1):
 		push_error("Ground-cover save belongs to a different generation profile")
@@ -163,6 +184,7 @@ func _measured_step(_delta:float)->void:
 		break
 
 func _surface_ready(token: int,points: PackedVector3Array,normals: PackedVector3Array,epoch: int,revision: int) -> void:
+	if _reset_active:return
 	if not _requests.has(token): return
 	var request: Dictionary=_requests[token];_requests.erase(token)
 	if _requests.is_empty():_pending.erase(request.key)
@@ -200,6 +222,7 @@ func _surface_ready(token: int,points: PackedVector3Array,normals: PackedVector3
 	_pending[request.key]=-1
 
 func _density_ready(result: Dictionary) -> void:
+	if _reset_active:return
 	if _support_job.is_empty() or result.token!=_support_job.token: return
 	var job:=_support_job;_support_job={};_pending.erase(job.key)
 	if job.exclusion_revision!=_exclusion_revision or not _wanted.has(job.key) or result.status!="ok" or result.epoch!=terrain.epoch or job.epoch!=terrain.epoch or result.revision!=job.density_revision or terrain.density_revision!=job.density_revision or terrain.published_revision!=job.revision or terrain.pending_edit: return

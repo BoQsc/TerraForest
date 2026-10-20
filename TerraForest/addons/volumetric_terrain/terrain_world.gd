@@ -16,12 +16,46 @@ var prepared_snapshot_components:Dictionary={}
 var _snapshot_begin:Callable
 var _snapshot_step:Callable
 var _restore_pending:Dictionary={}
+var _reload_jobs:Array[Dictionary]=[]
+var _reload_job_cursor:=0
+var _reload_preparing:=false
+var _reload_prepare_failed:=false
+func register_reload_preparation(begin:Callable,step:Callable)->bool:
+	if not begin.is_valid() or not step.is_valid():return false
+	for job:Dictionary in _reload_jobs:
+		if job.begin==begin:return false
+	if _reload_jobs.is_empty():reload_started.connect(_begin_reload_preparations)
+	_reload_jobs.append({"begin":begin,"step":step});return true
+
+func _begin_reload_preparations()->void:
+	_reload_job_cursor=0;_reload_prepare_failed=false;_reload_preparing=true
+	for job:Dictionary in _reload_jobs:
+		if job.begin.is_valid():job.begin.call()
+		else:_reload_prepare_failed=true
+
+func _advance_reload_preparations()->void:
+	var began:=Time.get_ticks_usec()
+	while _reload_job_cursor<_reload_jobs.size():
+		var job:Dictionary=_reload_jobs[_reload_job_cursor]
+		var status:int=job.step.call(snapshot_restore_budget_us) if job.step.is_valid() else -1
+		if status<0:_reload_prepare_failed=true
+		if status==0:break
+		_reload_job_cursor+=1
+		if Time.get_ticks_usec()-began>=snapshot_restore_budget_us:break
+	_reload_preparing=_reload_job_cursor<_reload_jobs.size()
+	if _reload_prepare_failed:
+		snapshot_restore_ok=false
+		backend.disable_snapshot_writes("addon reload preparation failed")
+	_record_stage("reload preparation frame",(Time.get_ticks_usec()-began)/1000.0)
+
 @export_range(100,10000,100) var snapshot_restore_budget_us:int=1000
 func configure_snapshot_restore(begin:Callable,step:Callable)->void:
 	_snapshot_begin=begin;_snapshot_step=step
 
 func _process(delta:float)->void:
-	if not stopping and not _restore_pending.is_empty():
+	var preparing_this_frame:=_reload_preparing
+	if not stopping and preparing_this_frame:_advance_reload_preparations()
+	if not stopping and not preparing_this_frame and not _restore_pending.is_empty():
 		var began:=Time.get_ticks_usec()
 		var complete:bool=_snapshot_step.call(snapshot_restore_budget_us)
 		_record_stage("restore frame",(Time.get_ticks_usec()-began)/1000.0)
@@ -31,7 +65,7 @@ func _process(delta:float)->void:
 	super._process(delta)
 
 func reload_world(reset:bool=false)->void:
-	if not _restore_pending.is_empty():
+	if _reload_preparing or not _restore_pending.is_empty():
 		message_changed.emit("Wait for world component restoration before loading again")
 		return
 	super.reload_world(reset)
@@ -80,9 +114,9 @@ func start(terrain_material: Material = null, temporary_world: bool = false) -> 
 	return error
 
 func shutdown() -> void:
-	if not _restore_pending.is_empty():backend.disable_snapshot_writes("shutdown interrupted component restoration")
+	if _reload_preparing or not _restore_pending.is_empty():backend.disable_snapshot_writes("shutdown interrupted component restoration")
 	super.shutdown()
-	_restore_pending={};prepared_snapshot_components={}
+	_restore_pending={};prepared_snapshot_components={};_reload_preparing=false
 	if _active_world != null and _active_world.get_ref() == self:
 		_active_world = null
 	_started = false
@@ -132,7 +166,7 @@ func _receive(result: Dictionary) -> void:
 	if result.get("kind", "") in ["startup", "reload"] and not str(result.get("message", "")).begins_with("ERROR:"):
 		if result.get("kind") == "startup" or int(result.get("epoch", -1)) == epoch:
 			if not result.get("components_restored",false):
-				snapshot_restore_ok=true
+				snapshot_restore_ok=not _reload_prepare_failed
 				prepared_snapshot_components=result.get("prepared_components",{})
 				if _snapshot_begin.is_valid() and _snapshot_step.is_valid():
 					_restore_pending=result
