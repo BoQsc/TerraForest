@@ -125,6 +125,7 @@ func _ready() -> void:
 	var doorway: Mesh = load("res://addons/structures/prefabs/doorway_model.tres")
 	var door_models: Node3D = structures.register_model("architecture/doorway/v1",doorway)
 	structures_ready = structures_ready and door_models != null
+	structures_ready = structures_ready and preload("res://addons/structures/paving_catalog.gd").register(structures)
 	var furniture: Array[Dictionary]=preload("res://addons/structures/furniture_catalog.gd").register(structures)
 	structures_ready = structures_ready and furniture.size()==3
 	var ladder: Dictionary=preload("res://addons/structures/ladder_catalog.gd").register(structures)

@@ -1,3 +1,36 @@
+## Terrain-supported pedestrian paving — 2026-10-20
+
+The new terrain-fitting neighborhood now reserves pedestrian corridors before
+placing buildings. Residential carriageways are 6m wide, with1.5m walkways on each
+side and an additional surveyed1m terrain support margin. Native soil beds precede
+asphalt so the final surface keeps its road material. Paving uses one registered
+shared concrete box mesh, existing concrete texture and NativeStaticBatch storage/
+rendering. Terrain supplies collision; there are no added per-slab collision bodies
+or runtime GDScript placement loop. The visual layer sits15mm above its support.
+
+Planning considers49 local positions per plot and169 bounded district candidates,
+with four permutations of the same12 building assets. It never silently drops an
+unfitting building or increases cut/fill allowances. All seven seeds locate12 plots
+and entrances with pedestrian clearance. Seed42 now moves120m south. Planning-only
+checks take about10 seconds; they are offline and not runtime performance evidence.
+
+The native seed42 check applies210 sections, verifies2,608 building support points,
+checks road interiors and pavement surface probes, and roundtrips terrain bytes.
+Pavement originally intersected terrain at the grading edge; the corrected road/
+walkway widths and support margin remove those mismatches. The31.54-second real-world
+visual check passes without diagnostics, restores exact paving model snapshots, and
+walks the actual player about5m along a sloping pavement without jumping/flying.
+This short walk is not coverage of every sidewalk/crossing/entrance.
+
+Inspected street/overview evidence: docs/evidence/terrain_lot_paving. Paving follows
+the street grade, but road cuts remain visually exposed, the repeated building layout
+is not accepted, junction-crossing continuity needs more walking, and vegetation
+residency/coverage varies between captures and remains unqualified. This is still a
+temporary neighborhood check, not the new full-region review save. Public areas,
+parking, regional road connections, baked map/destination metadata, exclusions and
+fresh-process full-world restore remain mandatory before promotion. Continue these
+integration tasks; do not call the world foundation complete.
+
 ## Native earthworks and rendered neighborhood — 2026-10-20
 
 Generator17 is an immutable ungraded regional landscape: the natural mountain/lake

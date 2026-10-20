@@ -33,6 +33,14 @@ func run()->void:
   game._begin_frontage_placement(lot.asset,lot.origin,true)
   if not await wait_until(func():return game._foundation_placement.is_empty(),20) or game.doors.collection.get_ids().size()!=doors+1:
    print("BUILDING_FAILED ",lot.label," ",game.foundation_check.status);quit(1);return
+ var poses:Array=Planner.paving(plan)
+ var collection=game.structures.model(preload("res://addons/structures/paving_catalog.gd").KEY)
+ for pose:Transform3D in poses:
+  var records:PackedFloat32Array=preload("res://addons/structures/paving_catalog.gd").records([pose])
+  if collection.insert_instance(records,AABB())<=0:print("PAVING_FAILED");quit(1);return
+ var saved_paving:PackedByteArray=collection.capture_snapshot()
+ if not collection.remove_instances(collection.get_ids()) or not collection.restore_snapshot(saved_paving) or collection.capture_snapshot()!=saved_paving:
+  print("PAVING_ROUNDTRIP_FAILED");quit(1);return
  game.construction_palette.survey_dialog.hide()
  var center:Vector3=plan.center
  center.y=plan.lots[5].origin.y
@@ -48,5 +56,23 @@ func run()->void:
  for i in 90:await process_frame
  await RenderingServer.frame_post_draw
  root.get_texture().get_image().save_png("res://reports/terrain_lot_world_street.png")
+ # Short actual-player traversal along a sloping walkway; no jumping or flying.
+ var direction:Vector3=(road.finish-road.start).normalized()
+ var across:Vector3=Vector3.UP.cross(direction).normalized()
+ var start:Vector3=road.start+direction*0.8+across*3.75
+ var target:Vector3=road.finish-direction*0.8+across*3.75
+ game.fly=false;game.needs_floor_spawn=false;game.player.position=start+Vector3.UP*0.08
+ game.player.velocity=Vector3.ZERO;game.controls.clear(Time.get_ticks_usec())
+ game.camera.position=Vector3(0,1.65,0);game.camera.rotation=Vector3.ZERO
+ var arrived:=false
+ for tick in 240:
+  var offset:Vector3=target-game.player.position;offset.y=0
+  if offset.length()<0.25 and game.player.is_on_floor():arrived=true;break
+  game.yaw=atan2(-offset.x,-offset.z);game.player.rotation.y=game.yaw
+  game.controls.set_key(KEY_W,offset.length()>0.15,Time.get_ticks_usec())
+  await physics_frame;game.app_focused=true;game._physics_process(1.0/60)
+ game.controls.clear(Time.get_ticks_usec())
+ print("PAVEMENT_WALK arrived=",arrived," start=",start," target=",target," actual=",game.player.position)
+ if not arrived:game.free();quit(1);return
  print("TERRAIN_LOT_WORLD_REVIEW failures=0 buildings=",plan.lots.size()," edits=",runner.completed)
  game.free();quit()

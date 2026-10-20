@@ -26,7 +26,7 @@ func _initialize()->void:
    "streets_fit":roads.ok,"street_reason":roads.get("reason",""),"foundations_and_streets_fit":plan.ok and roads.ok}
   var located:Dictionary=Planner.locate(core,center)
   summary["located"]=located.ok;summary["attempts"]=located.attempts
-  if not located.ok:failures+=1
+  if not located.ok:failures+=1;print("LOCATE_REJECT ",located)
   if located.ok:
    summary["offset"]=str(located.center-center)
    summary["entrances"]=located.lots.size()

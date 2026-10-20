@@ -24,8 +24,8 @@ static func streets(core,center:Vector3)->Dictionary:
     var p:Vector3=pair[1]
     # All directions at a shared node, including junction corners.
     var points:=PackedVector3Array()
-    for dx in [-4,0,4]:
-     for dz in [-4,0,4]:points.append(p+Vector3(dx,0,dz))
+    for dx in [-5.5,0,5.5]:
+     for dz in [-5.5,0,5.5]:points.append(p+Vector3(dx,0,dz))
     var raw:PackedFloat32Array=heights(core,points)
     if raw.size()!=points.size():return {"ok":false,"reason":"Street survey failed"}
     var low:=INF;var high:=-INF
@@ -56,7 +56,7 @@ static func streets(core,center:Vector3)->Dictionary:
   var across:Vector3=Vector3(-(b-a).z,0,(b-a).x).normalized()
   var points:=PackedVector3Array()
   for step in 9:
-   for lateral in [-4,-2,0,2,4]:
+   for lateral in [-5.5,-4,-2,0,2,4,5.5]:
     var p:Vector3=a.lerp(b,step/8.0)+across*lateral
     p.y=lerpf(a.y,b.y,smoothstep(0.0,1.0,step/8.0));points.append(p)
   var raw:PackedFloat32Array=heights(core,points)
@@ -65,7 +65,7 @@ static func streets(core,center:Vector3)->Dictionary:
    var fill:float=points[i].y-raw[i]
    max_fill=maxf(max_fill,fill);max_cut=maxf(max_cut,-fill)
    if fill>2.001 or fill< -3.001:return {"ok":false,"reason":"Street interior exceeds earthworks budget","point":points[i]}
-  segments.append(Lots._segment(a,b,4,1,4,0,4))
+  segments.append(Lots._segment(a,b,3,1,4,0,4))
  for i in segments.size():
   var edge:Dictionary=edges[i];var coefficients:=PackedFloat64Array()
   for j in range(edge.chain_start,edge.chain_start+edge.chain_count):
@@ -79,14 +79,14 @@ static func streets(core,center:Vector3)->Dictionary:
    var vertex:Dictionary=vertices[key]
    var p:Vector3=vertex.point;p.y=(vertex.low+vertex.high)*0.5
    var probes:=PackedVector3Array()
-   for dx in range(-4,5):
-    for dz in range(-4,5):
-     if Vector2(dx,dz).length()<=4:probes.append(p+Vector3(dx,0,dz))
+   for dx in range(-6,7):
+    for dz in range(-6,7):
+     if Vector2(dx,dz).length()<=5.5:probes.append(p+Vector3(dx,0,dz))
    var raw:PackedFloat32Array=heights(core,probes)
    if raw.size()!=probes.size():return {"ok":false,"reason":"Junction survey failed"}
    for h in raw:
     if p.y-h>2 or h-p.y>3:return {"ok":false,"reason":"Junction exceeds earthworks budget"}
-   var junction:Dictionary=Lots._segment(p-Vector3(0.5,0,0),p+Vector3(0.5,0,0),4,3,4,2,4)
+   var junction:Dictionary=Lots._segment(p-Vector3(0.5,0,0),p+Vector3(0.5,0,0),3,3,4,2,4)
    junction["coefficients"]=PackedFloat64Array([0,0,0,p.y]);junction["curve_index"]=0
    segments.append(junction)
  return {"ok":true,"segments":segments,"max_fill":max_fill,"max_cut":max_cut}
@@ -126,16 +126,17 @@ static func frontage(core,lot:Dictionary,origin:Vector3i,roads:Array)->Dictionar
   if points[i].y-raw[i]>2 or raw[i]-points[i].y>3:return {"ok":false}
  return {"ok":true,"segment":Lots._segment(a,b,0.75,1,4,0,1)}
 
-static func plan(core,center:Vector3,roads:Array=[])->Dictionary:
+static func plan(core,center:Vector3,roads:Array=[],variant:int=0)->Dictionary:
  var fitted:Array=[];var reserved:Array[AABB]=[];var rejected:Array=[]
  var source:Array=Lots.recipe(center)
  for index in source.size():
-  var lot:Dictionary=source[index]
+  var lot:Dictionary=source[index].duplicate()
+  lot.asset=source[(index+variant)%source.size()].asset
   var best:Dictionary={};var best_cost:=INF
-  # Bounded 25-location search within each original frontage zone.
+  # Bounded 49-location search within each original frontage zone.
   # Reserve streets independently; no building may occupy their corridors.
-  for dx in [0,-3,3,-6,6]:
-   for dz in [0,-3,3,-6,6]:
+  for dx in [0,-3,3,-6,6,-9,9]:
+   for dz in [0,-3,3,-6,6,-9,9]:
     var origin:Vector3i=lot.origin+Vector3i(dx,0,dz)
     var bounds:AABB=lot.asset.placement_bounds(origin,lot.rotation)
     var blocked:=false
@@ -148,9 +149,9 @@ static func plan(core,center:Vector3,roads:Array=[])->Dictionary:
     for point:Vector3 in points:
      if absf(point.x-center.x)<8:blocked=true;break
      for street in [-52,0,52]:
-      if absf(point.z-center.z-street)<5:blocked=true;break
+      if absf(point.z-center.z-street)<6.5:blocked=true;break
      if blocked:break
-     if absf(absf(point.x-center.x)-42)<5 and absf(point.z-center.z)<=57:blocked=true;break
+     if absf(absf(point.x-center.x)-42)<6.5 and absf(point.z-center.z)<=57:blocked=true;break
     if blocked:continue
     var raw:PackedFloat32Array=heights(core,points)
     if raw.size()!=points.size():return {"ok":false,"reason":"Native raw survey failed"}
@@ -186,17 +187,20 @@ static func plan(core,center:Vector3,roads:Array=[])->Dictionary:
   "reason":"" if rejected.is_empty() else "Frontage zones require relocation or a different street layout"}
 
 static func locate(core,center:Vector3)->Dictionary:
- var attempts:=0
- for dx in [0,-24,24,-48,48,-72,72,-96,96]:
-  for dz in [0,-24,24,-48,48,-72,72,-96,96]:
+ var attempts:=0;var reasons:Dictionary={};var best_missing:=12
+ for dx in [0,-24,24,-48,48,-72,72,-96,96,-120,120,-144,144]:
+  for dz in [0,-24,24,-48,48,-72,72,-96,96,-120,120,-144,144]:
    var candidate:=center+Vector3(dx,0,dz)
    if candidate.x<120 or candidate.z<120 or candidate.x>1880 or candidate.z>1880:continue
    attempts+=1
    var roads:Dictionary=streets(core,candidate)
-   if not roads.ok:continue
-   var lots:Dictionary=plan(core,candidate,roads.segments)
-   if lots.ok:return {"ok":true,"center":candidate,"lots":lots.lots,"roads":roads.segments,"attempts":attempts}
- return {"ok":false,"reason":"No complete terrain-fitting layout in bounded search","attempts":attempts}
+   if not roads.ok:
+    reasons[roads.reason]=int(reasons.get(roads.reason,0))+1;continue
+   for variant in [0,1,2,3]:
+    var lots:Dictionary=plan(core,candidate,roads.segments,variant)
+    best_missing=mini(best_missing,lots.rejected.size())
+    if lots.ok:return {"ok":true,"center":candidate,"lots":lots.lots,"roads":roads.segments,"attempts":attempts,"variant":variant}
+ return {"ok":false,"reason":"No complete terrain-fitting layout in bounded search","attempts":attempts,"road_rejections":reasons,"best_missing":best_missing}
 
 static func earthworks(plan:Dictionary)->Dictionary:
  if not plan.get("ok",false):return {"ok":false,"reason":"Incomplete layout"}
@@ -212,9 +216,39 @@ static func earthworks(plan:Dictionary)->Dictionary:
   var path:Dictionary=lot.entrance.segment
   segments.append(Lots._segment(path.start,path.finish,path.half_width,3,4,1,1))
  for road:Dictionary in plan.roads:
-  var segment:Dictionary=Lots._segment(road.start,road.finish,road.half_width,3,4,2,4)
+  var support:Dictionary=Lots._segment(road.start,road.finish,5.5,3,4,2,1)
+  support["coefficients"]=road.coefficients;support["curve_index"]=road.curve_index
+  segments.append(support)
+ for road:Dictionary in plan.roads:
+  var segment:Dictionary=Lots._segment(road.start,road.finish,road.half_width,3,4,0,4)
   segment["coefficients"]=road.coefficients;segment["curve_index"]=road.curve_index
   segments.append(segment)
  for segment:Dictionary in segments:
   bounds=segment.bounds if first else bounds.merge(segment.bounds);first=false
  return {"ok":true,"segments":segments,"bounds":bounds}
+
+static func paving(plan:Dictionary)->Array:
+ var poses:Array=[]
+ for road:Dictionary in plan.roads:
+  var span:Vector3=road.finish-road.start
+  var horizontal:float=Vector2(span.x,span.z).length()
+  if horizontal<2:continue # Shared junctions stay flush asphalt crossings.
+  var steps:int=ceili(horizontal/2.0)
+  var across:Vector3=Vector3.UP.cross(span).normalized()
+  for i in steps:
+   var a:Vector3=road.start.lerp(road.finish,float(i)/steps)
+   var b:Vector3=road.start.lerp(road.finish,float(i+1)/steps)
+   a.y=lerpf(road.start.y,road.finish.y,smoothstep(0,1,float(i)/steps))
+   b.y=lerpf(road.start.y,road.finish.y,smoothstep(0,1,float(i+1)/steps))
+   for side in [-1,1]:
+    var midpoint:Vector3=(a+b)*0.5+across*side*3.75
+    var crossing:=false
+    for x in [-42,42]:
+     for z in [-52,0,52]:
+      if Vector2(midpoint.x-plan.center.x-x,midpoint.z-plan.center.z-z).length()<6.5:crossing=true
+    if crossing:continue
+    var forward:Vector3=(b-a).normalized()
+    var up:Vector3=forward.cross(across).normalized()
+    var basis:=Basis(across*1.5,up*0.08,forward*(a.distance_to(b)+0.015))
+    poses.append(Transform3D(basis,midpoint+up*(-0.04+0.015)))
+ return poses
