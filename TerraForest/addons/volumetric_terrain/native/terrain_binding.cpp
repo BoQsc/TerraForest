@@ -42,6 +42,7 @@ protected:
     static void _bind_methods() {
         godot::ClassDB::bind_method(godot::D_METHOD("execute","packet"), &TerrainCore::execute);
         godot::ClassDB::bind_method(godot::D_METHOD("survey_overview","size"), &TerrainCore::survey_overview);
+        godot::ClassDB::bind_method(godot::D_METHOD("survey_water_visibility","points"), &TerrainCore::survey_water_visibility);
         godot::ClassDB::bind_method(godot::D_METHOD("survey_patch","size","x","z","width","height"), &TerrainCore::survey_patch);
         godot::ClassDB::bind_method(godot::D_METHOD("measure_material_surface","x","z","size","y_begin","y_end"), &TerrainCore::measure_material_surface);
         godot::ClassDB::bind_method(godot::D_METHOD("material_box","solid","minimum","maximum","add","solid_revision","material_revision"), &TerrainCore::material_box, DEFVAL(-1));
@@ -62,6 +63,9 @@ protected:
         godot::ClassDB::bind_method(godot::D_METHOD("experimental_partition_mesh_budgeted","packet","workspace_bytes","output_bytes","expected_epoch"), &TerrainCore::experimental_partition_mesh_budgeted);
     }
 public:
+    godot::Dictionary survey_water_visibility(const godot::PackedVector3Array &points){
+        std::lock_guard<std::mutex> lock(mutex_);return terraforest_survey_water_visibility(world_,points);
+    }
     godot::Dictionary survey_patch(int64_t size,int64_t x,int64_t z,int64_t width,int64_t height){
         if(size<64||size>512||x<0||z<0||x>=size||z>=size||width<1||height<1||width>4||height>4)return {};
         std::lock_guard<std::mutex> lock(mutex_);return terraforest_survey_patch(world_,int(size),int(x),int(z),int(width),int(height));

@@ -203,6 +203,7 @@ void NativeRegionalWater::_bind_methods(){
     ClassDB::bind_method(D_METHOD("surface_near","point","radius"),&NativeRegionalWater::surface_near);
     ClassDB::bind_method(D_METHOD("depth_at","point"),&NativeRegionalWater::depth_at);
     ClassDB::bind_method(D_METHOD("survey_columns","cursor","expected_revision","region_budget"),&NativeRegionalWater::survey_columns);
+    ClassDB::bind_method(D_METHOD("survey_surfaces","cursor","expected_revision","region_budget"),&NativeRegionalWater::survey_surfaces);
     ClassDB::bind_method(D_METHOD("overlaps_occupied","bounds"),&NativeRegionalWater::overlaps_occupied);
     ClassDB::bind_method(D_METHOD("placement_mask","transforms"),&NativeRegionalWater::placement_mask);
     ClassDB::bind_method(D_METHOD("raycast_surface","from","to"),&NativeRegionalWater::raycast_surface);
@@ -1388,4 +1389,31 @@ Dictionary terraforest::NativeRegionalWater::survey_columns(int64_t cursor,int64
     out["ok"]=true;out["complete"]=it==regions.end();out["cursor"]=it==regions.end()?int64_t(0):int64_t(it->first);
     out["regions"]=processed;out["columns"]=columns;out["water_ml"]=int64_t(amount);
     out["worker_us"]=int64_t(Time::get_singleton()->get_ticks_usec()-begin);return out;
+}
+
+// Cartographic point samples, not rendered triangles. Cached contact profiles
+// supply actual height; occupied cell envelopes are deliberately not used here.
+Dictionary terraforest::NativeRegionalWater::survey_surfaces(int64_t cursor,int64_t expected_revision,int64_t region_budget) const {
+    Dictionary out;out["ok"]=false;out["revision"]=int64_t(survey_revision);
+    if(cursor<0||region_budget<1||region_budget>4||expected_revision<-1)return out;
+    if(expected_revision>=0&&uint64_t(expected_revision)!=survey_revision){out["stale"]=true;return out;}
+    const uint64_t begin=Time::get_singleton()->get_ticks_usec();
+    auto it=regions.lower_bound(Key(cursor));int processed=0;PackedVector3Array points;bool ready=true;
+    while(it!=regions.end()&&processed<region_budget){
+        const auto coordinate=position(it->first);const auto &r=it->second;
+        for(int z=0;z<8;++z)for(int x=0;x<8;++x)for(int y=7;y>=0;--y){
+            int i=x+8*y+64*z;if(!r.water[i])continue;
+            if(!r.valid){ready=false;break;}
+            auto shape=profile(r,i);if(!shape.capacity())continue;
+            double h=shape.head(r.water[i]),lo=0,hi=0;
+            // Probe immediately below the head: wet_interval requires a point
+            // inside the water, and rejects solid/cut-away column centres.
+            double probe=std::min(double(shape.ceiling),h)*.001-.0000001;
+            if(!shape.wet_interval(.25,probe,.25,h,lo,hi))continue;
+            points.push_back(Vector3(coordinate.x*4+x*.5+.25,coordinate.y*4+y*.5+hi,coordinate.z*4+z*.5+.25));break;
+        }
+        ++it;++processed;if(Time::get_singleton()->get_ticks_usec()-begin>=500)break;
+    }
+    out["ok"]=true;out["ready"]=ready;out["complete"]=it==regions.end();out["cursor"]=it==regions.end()?int64_t(0):int64_t(it->first);
+    out["regions"]=processed;out["points"]=points;out["worker_us"]=int64_t(Time::get_singleton()->get_ticks_usec()-begin);return out;
 }

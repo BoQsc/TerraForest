@@ -1,3 +1,37 @@
+## Water-map height and terrain occlusion established — 2026-10-20
+
+Native water cartography now has a separate bounded surface-sampling query. It
+uses cached contact profiles and stored amounts to locate wet column centres;
+occupied voxel upper bounds are not treated as water height. Each call visits
+at most four regions (256 samples), with the existing cooperative 500 microsecond
+stop after a region. Unready contacts are reported explicitly and mutations
+invalidate continuation. This changes neither bucket behavior nor save bytes.
+
+The ordered terrain worker now accepts at most 16 water points per visibility
+request, yielding a mask from actual edited density above those points. It checks
+roofs/overhangs rather than relying on generated terrain height. It has the same
+queue admission guards as terrain-map patches, and returns epoch/revision for
+stale-result rejection by the eventual map consumer.
+
+Actual saved-world check: 102728 surface samples; sampled points touch stored
+water; maximum native source call 204 microseconds; one integrated 16-point
+visibility request 1.1339 ms. Mutation rejection, removal accounting and existing
+storage restoration checks pass. Native occlusion test rejects covered/solid
+points, admits them after roof excavation, preserves the result through storage
+restoration, and rejects invalid/oversized input. Debug/release DLLs rebuilt using
+the pinned prebuilt SDK. Evidence: evidence/water_map_visibility.
+
+The first occlusion fixture incorrectly expected a sphere brush to excavate a
+segment; the retained failure was corrected by explicitly excavating overlapping
+spheres through the roof. No production algorithm was changed to satisfy it.
+
+**Still open:** M-map live-water raster accumulation, live-water cache identity,
+removing obsolete generated-water colours, building footprints and finer zoom.
+The current visible map remains explicitly labelled as a base-water survey. The
+new source samples are cartographic point samples, not an exact mesh silhouette;
+thin shore fragments between samples need a deliberate raster coverage policy.
+No graphical water-layer quality or whole-world performance acceptance is claimed.
+
 ## Native water-map source established - 2026-10-20
 
 The existing native regional water store now exposes a bounded cartographic

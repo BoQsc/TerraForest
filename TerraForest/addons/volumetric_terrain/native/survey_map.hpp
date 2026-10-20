@@ -5,6 +5,7 @@
 #include <godot_cpp/variant/dictionary.hpp>
 #include <godot_cpp/variant/packed_byte_array.hpp>
 #include <vector>
+#include <godot_cpp/variant/packed_vector3_array.hpp>
 #include <chrono>
 // Cartographic base survey only. No density pages, meshes or renderer residency.
 // Called on an isolated TerrainCore from the map worker; never borrow the live worker.
@@ -69,5 +70,24 @@ static godot::Dictionary terraforest_survey_patch(const World &w,int size,int ox
   size_t dst=(x+z*width)*4;p[dst]=u8(clampf(r*shade,0,255));p[dst+1]=u8(clampf(g*shade,0,255));p[dst+2]=u8(clampf(b*shade,0,255));p[dst+3]=255;
  }
  out["ok"]=true;out["pixels"]=pixels;out["revision"]=w.revision;
+ out["generation_ms"]=std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-start).count();return out;
+}
+
+// Top-down visibility at exact water sample coordinates. Bounded to 16 points
+// on the ordered worker. Scan above the point, including cave/overhang roofs;
+// generated height alone cannot establish visibility after terrain edits.
+static godot::Dictionary terraforest_survey_water_visibility(const World &w,const godot::PackedVector3Array &points){
+ godot::Dictionary out;out["ok"]=false;
+ if(points.is_empty()||points.size()>16)return out;
+ for(int i=0;i<points.size();++i){auto p=points[i];if(!p.is_finite()||p.x<0||p.z<0||p.x>=WORLD-1||p.z>=WORLD-1||p.y<0||p.y>=WORLD_Y-1)return out;}
+ auto start=std::chrono::steady_clock::now();godot::PackedByteArray visible;visible.resize(points.size());
+ for(int i=0;i<points.size();++i){auto p=points[i];int ix=fl(p.x),iz=fl(p.z);float dx=p.x-ix,dz=p.z-iz;
+  auto sample=[&](int y){float d=0;for(int k=0;k<4;++k){float weight=(k&1?dx:1-dx)*(k&2?dz:1-dz);if(weight>0)d+=w.sample(ix+(k&1),y,iz+((k>>1)&1))*weight;}return d;};
+  float y=mn(float(WORLD_Y-1),float(p.y)+.0001f);int bottom=fl(y);float t=y-bottom;
+  bool open=sample(bottom)*(1-t)+sample(mn(bottom+1,WORLD_Y-1))*t>=0;
+  for(int h=bottom+1;open&&h<WORLD_Y;++h)if(sample(h)<0)open=false;
+  visible.set(i,open?1:0);
+ }
+ out["ok"]=true;out["visible"]=visible;out["revision"]=w.revision;
  out["generation_ms"]=std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-start).count();return out;
 }

@@ -16,10 +16,29 @@ func run()->void:
  var water:RefCounted=game.lakes.water
  var before:Dictionary=survey(water)
  if not check(not before.is_empty() and before.amount==water.statistics().water_ml and before.amount>0,"bounded survey covers all stored water amounts"):await done();return
+ var surface_cursor:=0;var surface_revision:=-1;var surfaces:=PackedVector3Array();var surface_peak:=0
+ for n in 20000:
+  var part:Dictionary=water.survey_surfaces(surface_cursor,surface_revision,4)
+  if not part.get("ok",false) or not part.get("ready",false) or part.points.size()>256:
+   check(false,"bounded actual water surfaces ready");break
+  surface_cursor=part.cursor;surface_revision=part.revision;surface_peak=maxi(surface_peak,part.worker_us);surfaces.append_array(part.points)
+  if part.complete:break
+ check(not surfaces.is_empty(),"surface samples exist")
+ var wet:=true
+ for n in range(0,surfaces.size(),maxi(1,surfaces.size()/64)):
+  wet=wet and water.depth_at(surfaces[n]-Vector3(0,.0001,0))>0
+ check(wet,"sample heights touch stored water, not empty cell envelopes")
+ var response:Dictionary={}
+ game.terrain.survey_patch_ready.connect(func(reply:Dictionary):
+  if reply.get("kind","")=="survey_water_visibility":response.merge(reply,true))
+ check(await wait_for(func():return game.terrain.request_water_visibility(surfaces.slice(0,16),9017),5),"actual terrain worker accepts bounded visibility request")
+ check(await wait_for(func():return not response.is_empty(),5) and response.get("ok",false) and response.get("visible",PackedByteArray()).size()==16,"ordered terrain worker returns map occlusion")
+ print("WATER_SURFACE_PROFILE points=",surfaces.size()," max_call_us=",surface_peak," visibility_ms=",response.get("generation_ms",-1))
  var first:Dictionary=water.survey_columns(0,-1,1)
  var point:Vector3=before.columns[0]
  var removed:int=water.remove_bounds(AABB(point-Vector3(1,1,1),Vector3(2,2,2)))
  check(removed>0,"real stored water removed")
+ check(water.survey_surfaces(surface_cursor,surface_revision,1).get("stale",false),"surface continuation rejects mutated water")
  check(water.survey_columns(first.cursor,first.revision,1).get("stale",false),"mutation invalidates partially accumulated survey")
  var after:Dictionary=survey(water)
  check(not after.is_empty() and after.amount==before.amount-removed,"fresh survey accounts exactly for removal")

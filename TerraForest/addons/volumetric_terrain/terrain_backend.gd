@@ -1268,6 +1268,10 @@ func _run() -> void:
 			_execute_material_edit(job)
 		elif kind == "lake_slice":
 			_execute_lake_slice(job)
+		elif kind == "survey_water_visibility":
+			var surveyed:Dictionary=native.survey_water_visibility(job.points)
+			surveyed.merge({"kind":"survey_water_visibility","token":job.token,"epoch":job.epoch})
+			_push(surveyed)
 		elif kind == "survey_identity":
 			var survey_stats:PackedByteArray=_call(Codec.command(0))
 			_push({"kind":"survey_identity","token":job.token,"epoch":job.epoch,"revision":survey_stats.decode_u32(12) if Codec.reply_ok(survey_stats) else -1,"identity":snapshot_id+"|"+survey_compatibility if cache_valid and Codec.reply_ok(survey_stats) else ""})

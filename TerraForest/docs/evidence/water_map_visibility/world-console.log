@@ -1,0 +1,23 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[terrain-hitch] restore volumetric_water 191.13 ms at 3815
+[terrain-hitch] receive startup 204.68 ms at 3822
+[terrain-hitch] receive 206.27 ms at 3823
+PASS saved world loads
+PASS bounded survey covers all stored water amounts
+PASS surface samples exist
+PASS sample heights touch stored water, not empty cell envelopes
+PASS actual terrain worker accepts bounded visibility request
+PASS ordered terrain worker returns map occlusion
+WATER_SURFACE_PROFILE points=102728 max_call_us=204 visibility_ms=1.1339
+PASS real stored water removed
+PASS surface continuation rejects mutated water
+PASS mutation invalidates partially accumulated survey
+PASS fresh survey accounts exactly for removal
+PASS water storage restores
+PASS restored survey has identical occupied columns and amounts
+PASS invalid survey budgets rejected
+WATER_MAP_PROFILE regions_calls=506 columns=104588 max_call_us=99
+WATER_MAP_SURVEY failures=0
+[TerrainRewrite] Temporary test world: save skipped
