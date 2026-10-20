@@ -271,9 +271,11 @@ Dictionary NativeModelTransferScheduler::tick(int records,int bytes,int usec,int
             job.transfer_ticket=job.retiring?history->begin_region_retirement(collection,job.packet):history->begin_region_admission(collection,job.packet);
             if(!job.transfer_ticket)finish(job,"failed","transfer_rejected");
             else {job.stage=TRANSFERRING;job.packet=PackedByteArray();}
-            continue;
+            // Advance immediately when shared operation/time/record budgets permit.
+            // Preparing a transfer is not a reason to impose another frame of latency.
         }
         if(job.stage==TRANSFERRING) {
+            if(last_operations>=operations)break;
             if(last_records>=records||last_bytes>=bytes)continue;
             const auto remaining=std::chrono::duration_cast<std::chrono::microseconds>(deadline-std::chrono::steady_clock::now()).count();
             if(remaining<1)break;

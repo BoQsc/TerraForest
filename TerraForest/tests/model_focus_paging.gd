@@ -17,7 +17,7 @@ func drive(focus: Vector3, loaded: Vector3i, absent: Vector3i) -> bool:
     var end:=Time.get_ticks_msec()+8000
     while Time.get_ticks_msec()<end:
         var state: Dictionary=live.step_model_paging(focus,64,160)
-        if state.selection_scans>64 or state.step_records>256 or state.step_hash_bytes>65536 or state.step_operations>8 or state.jobs>8:
+        if state.selection_scans>64 or state.step_records>256 or state.step_hash_bytes>65536 or state.step_operations>16 or state.jobs>8:
             check(false,"shared native budgets exceeded");return false
         var ready:=true
         for id in assets:

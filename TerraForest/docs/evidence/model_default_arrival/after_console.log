@@ -1,0 +1,53 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[terrain-hitch] restore volumetric_water 191.39 ms at 3194
+[terrain-hitch] receive startup 204.1 ms at 3201
+[terrain-hitch] receive 205.8 ms at 3202
+PASS populated world ready
+PASS destination terrain ready 0
+PASS native arrival work limits respected 0
+PASS destination arrival within 1000 ms 0
+PASS all nearby saved records ready when loading releases 0
+PASS nearby render pages ready at release 0
+PASS local collision ready when loading releases 0
+MODEL_STATE { "selection_scans": 64, "selection_requests": 0, "selection_usec": 33, "jobs": 0, "active": true, "reading": 0, "completed": 0, "collections": 12, "job_limit": 8, "byte_limit": 67108864, "reserved_bytes": 0, "packet_reservation": 5600232, "epoch": 0, "stopping": false, "busy": false, "ticks": 853, "step_records": 0, "step_hash_bytes": 0, "step_operations": 0, "step_usec": 0, "peak_usec": 262, "drained": false, "failed_transfers": 0, "last_failure": {  } }
+PASS all nearby saved furnishing transforms exact 0
+Visual vehicle dents repaired.
+PASS distant model regions actually unload 0
+PASS no failed transfers 0
+PASS destination terrain ready 3
+PASS native arrival work limits respected 3
+PASS destination arrival within 1000 ms 3
+PASS all nearby saved records ready when loading releases 3
+PASS nearby render pages ready at release 3
+PASS local collision ready when loading releases 3
+MODEL_STATE { "selection_scans": 64, "selection_requests": 1, "selection_usec": 46, "jobs": 2, "active": true, "reading": 1, "completed": 0, "collections": 12, "job_limit": 8, "byte_limit": 67108864, "reserved_bytes": 11200464, "packet_reservation": 5600232, "epoch": 0, "stopping": false, "busy": false, "ticks": 1011, "step_records": 2, "step_hash_bytes": 348, "step_operations": 4, "step_usec": 116, "peak_usec": 312, "drained": false, "failed_transfers": 0, "last_failure": {  } }
+PASS all nearby saved furnishing transforms exact 3
+Visual vehicle dents repaired.
+PASS distant model regions actually unload 3
+PASS no failed transfers 3
+PASS destination terrain ready 4
+PASS native arrival work limits respected 4
+PASS destination arrival within 1000 ms 4
+PASS all nearby saved records ready when loading releases 4
+PASS nearby render pages ready at release 4
+PASS local collision ready when loading releases 4
+MODEL_STATE { "selection_scans": 64, "selection_requests": 0, "selection_usec": 36, "jobs": 1, "active": true, "reading": 0, "completed": 0, "collections": 12, "job_limit": 8, "byte_limit": 67108864, "reserved_bytes": 5600232, "packet_reservation": 5600232, "epoch": 0, "stopping": false, "busy": false, "ticks": 1160, "step_records": 11, "step_hash_bytes": 710, "step_operations": 4, "step_usec": 117, "peak_usec": 371, "drained": false, "failed_transfers": 0, "last_failure": {  } }
+PASS all nearby saved furnishing transforms exact 4
+PASS distant model regions actually unload 4
+PASS no failed transfers 4
+PASS destination terrain ready 0
+PASS native arrival work limits respected 0
+PASS destination arrival within 1000 ms 0
+PASS all nearby saved records ready when loading releases 0
+PASS nearby render pages ready at release 0
+PASS local collision ready when loading releases 0
+MODEL_STATE { "selection_scans": 64, "selection_requests": 1, "selection_usec": 39, "jobs": 1, "active": true, "reading": 1, "completed": 0, "collections": 12, "job_limit": 8, "byte_limit": 67108864, "reserved_bytes": 5600232, "packet_reservation": 5600232, "epoch": 0, "stopping": false, "busy": false, "ticks": 1304, "step_records": 1, "step_hash_bytes": 0, "step_operations": 2, "step_usec": 20, "peak_usec": 382, "drained": false, "failed_transfers": 0, "last_failure": {  } }
+PASS all nearby saved furnishing transforms exact 0
+Visual vehicle dents repaired.
+PASS distant model regions actually unload 0
+PASS no failed transfers 0
+PASS background retirement drains far records after travel
+[TerrainRewrite] Temporary test world: save skipped
+POPULATED_MODEL_PAGING failures=0

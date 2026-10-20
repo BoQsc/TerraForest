@@ -1,0 +1,56 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[terrain-hitch] restore volumetric_water 169.49 ms at 3118
+[terrain-hitch] receive startup 181.99 ms at 3124
+[terrain-hitch] receive 183.82 ms at 3126
+PASS populated world ready
+PASS destination terrain ready 0
+PASS native arrival work limits respected 0
+PASS destination arrival within 1000 ms 0
+PASS all nearby saved records ready when loading releases 0
+PASS nearby render pages ready at release 0
+PASS local collision ready when loading releases 0
+MODEL_STATE { "selection_scans": 64, "selection_requests": 0, "selection_usec": 53, "jobs": 0, "active": true, "reading": 0, "completed": 0, "collections": 12, "job_limit": 8, "byte_limit": 67108864, "reserved_bytes": 0, "packet_reservation": 5600232, "epoch": 0, "stopping": false, "busy": false, "ticks": 990, "step_records": 0, "step_hash_bytes": 0, "step_operations": 0, "step_usec": 0, "peak_usec": 273, "drained": false, "failed_transfers": 0, "last_failure": {  } }
+PASS all nearby saved furnishing transforms exact 0
+Visual vehicle dents repaired.
+PASS distant model regions actually unload 0
+PASS no failed transfers 0
+PASS destination terrain ready 3
+PASS native arrival work limits respected 3
+PASS destination arrival within 1000 ms 3
+PASS all nearby saved records ready when loading releases 3
+PASS nearby render pages ready at release 3
+PASS local collision ready when loading releases 3
+MODEL_STATE { "selection_scans": 64, "selection_requests": 1, "selection_usec": 79, "jobs": 2, "active": true, "reading": 1, "completed": 0, "collections": 12, "job_limit": 8, "byte_limit": 67108864, "reserved_bytes": 11200464, "packet_reservation": 5600232, "epoch": 0, "stopping": false, "busy": false, "ticks": 1148, "step_records": 14, "step_hash_bytes": 1714, "step_operations": 4, "step_usec": 216, "peak_usec": 552, "drained": false, "failed_transfers": 0, "last_failure": {  } }
+PASS all nearby saved furnishing transforms exact 3
+Visual vehicle dents repaired.
+PASS distant model regions actually unload 3
+PASS no failed transfers 3
+PASS destination terrain ready 4
+PASS native arrival work limits respected 4
+PASS destination arrival within 1000 ms 4
+PASS all nearby saved records ready when loading releases 4
+PASS nearby render pages ready at release 4
+PASS local collision ready when loading releases 4
+MODEL_STATE { "selection_scans": 64, "selection_requests": 1, "selection_usec": 80, "jobs": 2, "active": true, "reading": 1, "completed": 0, "collections": 12, "job_limit": 8, "byte_limit": 67108864, "reserved_bytes": 11200464, "packet_reservation": 5600232, "epoch": 0, "stopping": false, "busy": false, "ticks": 1304, "step_records": 2, "step_hash_bytes": 348, "step_operations": 4, "step_usec": 210, "peak_usec": 552, "drained": false, "failed_transfers": 0, "last_failure": {  } }
+PASS all nearby saved furnishing transforms exact 4
+PASS distant model regions actually unload 4
+PASS no failed transfers 4
+PASS destination terrain ready 0
+PASS native arrival work limits respected 0
+PASS destination arrival within 1000 ms 0
+PASS all nearby saved records ready when loading releases 0
+PASS nearby render pages ready at release 0
+PASS local collision ready when loading releases 0
+MODEL_STATE { "selection_scans": 64, "selection_requests": 0, "selection_usec": 63, "jobs": 2, "active": true, "reading": 0, "completed": 0, "collections": 12, "job_limit": 8, "byte_limit": 67108864, "reserved_bytes": 11200464, "packet_reservation": 5600232, "epoch": 0, "stopping": false, "busy": false, "ticks": 1447, "step_records": 3, "step_hash_bytes": 602, "step_operations": 6, "step_usec": 247, "peak_usec": 552, "drained": false, "failed_transfers": 0, "last_failure": {  } }
+PASS all nearby saved furnishing transforms exact 0
+Visual vehicle dents repaired.
+PASS distant model regions actually unload 0
+PASS no failed transfers 0
+PASS background retirement drains far records after travel
+PASS prefab-only stairrail available for edit
+PASS prefab-only model edit uses same native journal
+PASS paged world edit saved through normal lifecycle
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+POPULATED_MODEL_PAGING failures=0

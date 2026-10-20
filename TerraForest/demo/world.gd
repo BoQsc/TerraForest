@@ -8,7 +8,8 @@ var persistence = Persistence.new()
 var actor_authoring=preload("res://addons/world_runtime/actor_authoring.gd").new()
 var actors=preload("res://addons/world_runtime/actor_world.gd").new()
 var model_paging: Node
-var model_region_paging := "--model-region-paging" in OS.get_cmdline_user_args() and not "--no-model-region-paging" in OS.get_cmdline_user_args()
+# Native regional residency is the normal world path; retain an explicit diagnostic fallback.
+var model_region_paging := not "--no-model-region-paging" in OS.get_cmdline_user_args()
 var pickups = preload("res://addons/world_runtime/material_pickups.gd").new()
 var player_pose: RefCounted
 var world_vehicle=preload("res://addons/vehicle_runtime/world_vehicle.gd").new()

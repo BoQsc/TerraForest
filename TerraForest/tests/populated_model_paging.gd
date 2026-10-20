@@ -25,7 +25,7 @@ func run()->void:
    game.teleport(center+Vector3(0,0,20))
    var arrival_trace:Array=[]
    var arrived:bool=await wait_for(func():
-    arrival_trace.append({"ms":(Time.get_ticks_usec()-arrival_begin)/1000.0,"models":game.model_paging.last_state.duplicate(),"coordinator_us":game.model_paging.last_process_us,"reads":game.terrain.backend.snapshot_codec.region_read_stats(),"label":game.loading_label.text})
+    arrival_trace.append({"ms":(Time.get_ticks_usec()-arrival_begin)/1000.0,"models":game.model_paging.last_state.duplicate(),"coordinator_us":game.model_paging.last_process_us,"reads":game.terrain.backend.snapshot_codec.region_read_stats(),"label":game.loading_label.text,"model_visual_ready":game.structures.is_model_render_region_ready(AABB(game.player.position-Vector3(128,128,128),Vector3(256,256,256))),"local_collision_ready":game.structures.is_collision_region_ready(AABB(game.player.position-Vector3(2,2,2),Vector3(4,5,4)))})
     return not game.loading_active,45)
    if not check(arrived,"destination terrain ready %d"%site):break
    game.set_physics_process(false);game._clear_motion()

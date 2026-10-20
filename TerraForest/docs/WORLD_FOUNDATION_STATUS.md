@@ -1,3 +1,36 @@
+## Regional model loading is now the normal world path - 2026-10-20
+
+Native transfer preparation now advances directly into bounded transfer work in
+the same tick. Previously it forced another frame even with budget remaining.
+The shared operation, 500 us, 256-record and 64 KiB budgets still apply; the new
+fall-through explicitly rechecks the operation guard. Both native variants built.
+Scheduler (42), focus (24) and real paging lifecycle (23) checks pass. The focus
+test's stale 8-operation assertion now matches the existing 16-operation adapter.
+
+On the same 995-model populated world, northern arrival improved from 961 ms to
+660 ms, south 684 to 483 ms, return 535 to 401 ms. Subsequent real edit/save and
+fresh-process reopen pass, with northern arrivals 694/692 ms. All nearby saved
+transforms, 128 m render readiness and local collision remain required at release.
+Normal launch now enables paging; --no-model-region-paging remains a diagnostic
+fallback. Offline preparation already explicitly uses full residency for complete
+signature validation. The default-path four-stop route also passes. Evidence:
+`evidence/model_default_arrival`. The source save SHA-256 is unchanged; only the
+named disposable clone contains the intentional stairrail edit.
+
+This closes opt-in-only model residency and the short-route arrival blocker. It
+does NOT close strict frame-time, high-speed predictive arrival, full resident-memory
+bounds, storage growth, or sustained performance gates. Measured post-arrival
+frame maxima across the edit/reopen checks were 16.7-20.4 ms; earlier larger spikes
+remain in evidence. Selection scans and native work caps still apply. Models pinned
+by edit history and retirement in progress can remain resident beyond the radius.
+
+Next: qualify continuous world travel with production player/vehicle collision and
+attribute frame outliers, then connected generated-location/multi-seed acceptance.
+No world-quality approval follows from this engineering check. Earlier opt-in
+statements below describe historical state and are superseded here. To regenerate
+the test manifest with full residency, explicitly pass --no-model-region-paging;
+normal runs now validate paged data against that manifest.
+
 ## Durable saves no longer occupy the terrain worker - 2026-10-20
 
 Compound saves freeze their sections on the ordered terrain worker, then publish
@@ -236,7 +269,7 @@ visual tuning after unsuccessful bounded cycles and return to the world blocker.
 | Preparation | Staged creation, fresh-process verification, no-overwrite publication, progress and cancellation | Whole-route cache coverage; standalone workflow without local Python/toolchain |
 | Player map | M map, native cached 256x256 base survey, roads, public destinations, pan/zoom/tracking | Base survey is not a live edited-world raster; document and verify world-representation requirements separately from this UI |
 | Terrain and distant world | Native streaming and derived caches, local edits | Distant edits must remain visible; mining/travel tails and cache/resource growth are not fully qualified |
-| Buildings and static props | Native blocks, batched props, furniture, doors/windows, storage, regional block paging | Default bounded model paging and detailed populated-world capacity; mixed interiors/approach acceptance |
+| Buildings and static props | Native blocks, batched props, furniture, doors/windows, storage, regional block paging | Detailed populated-world residency capacity; mixed interiors/approach acceptance |
 | Roads and travel | Regional routes, local streets, normal collision loading, parked/drivable vehicles | All shoulders/junctions and high-speed arrival at declared speed; bounded repeated cross-world travel |
 | Underground resources | POI mine/cellar, chambers, ore materials and gathering | Rare authored-location quality, circulation, excavation correctness and persistence on a combined route |
 | Vegetation | Native sparse clustered distribution, species, harvesting, near shadows, distant LODs | Distant speckling/continuity, bulk-change continuity and combined resource budgets; density increase superseded by user's sparse direction |
