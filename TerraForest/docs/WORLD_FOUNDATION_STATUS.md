@@ -1,3 +1,21 @@
+## Checkpoint retention scans unified - 2026-10-20
+
+Native publication profiling identified pre/post-publication checkpoint cleanup
+as 0.94-1.27 seconds of repeated root validation. Block and model checkpoint
+references now come from one validated read of each canonical/backup root per
+sweep, retaining lease protection, missing-checkpoint and corruption rejection.
+Cold/warm archive publication fell from 1.44/1.77 s to 0.97/1.11 s on fresh clones
+of the same populated world. Full write stages remain 1.14/1.28 s. Native archive
+and checkpoint-retention tests pass, including corrupted backups and partial
+resident state. Both native builds updated. Evidence: `evidence/publication_root_scans`.
+
+Publication blocking remains OPEN. Next remove redundant intermediate archive
+encoding/decoding or isolate publication while retaining the ordered durable
+commit contract. Remaining profile: ~140 ms intermediate encode, ~137 ms decode,
+~134 ms final encode, ~200 ms durable root publication and ~620 ms retention scans
+on a warm save. Do not treat these short smooth save windows as complete streaming
+or mining latency qualification. Baseline frame outlier remains ~35 ms.
+
 ## Actual flight-and-save attribution - 2026-10-20
 
 A disposable clone of the populated world travelled 360 m using native player

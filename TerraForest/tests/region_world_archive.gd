@@ -74,6 +74,7 @@ func run() -> void:
 	var file := FileAccess.open("res://reports/region_world_archive.json",FileAccess.WRITE)
 	file.store_string(JSON.stringify({"checks":checks,"failures":failures,"scope":"Native full and partial structure envelopes, checkpoint references and world-root publication; automatic paging is not exercised."},"  "))
 	file.close()
+	print("REGION_WORLD_ARCHIVE checks=",checks," failures=",failures)
 	quit(1 if failures else 0)
 
 func check_adapter(path: String,original: PackedByteArray,newer: PackedByteArray,empty: PackedByteArray) -> void:

@@ -466,6 +466,7 @@ func _save() -> String:
 		if packed.is_empty() or snapshot_codec.publish(ProjectSettings.globalize_path(save_path), packed) != OK:
 			return "ERROR: compound save failed; previous canonical snapshot retained"
 		_save_write_stages["archive_publish_us"]=Time.get_ticks_usec()-phase_begin
+		if snapshot_codec.has_method("publication_profile"):_save_write_stages["regional"]=snapshot_codec.publication_profile()
 		phase_begin=Time.get_ticks_usec()
 		_set_cache_snapshot(DiskCache.digest(payload).hex_encode())
 		_flush_current_packets()

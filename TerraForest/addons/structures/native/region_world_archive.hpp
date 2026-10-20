@@ -16,10 +16,11 @@ class NativeRegionWorldArchive : public RefCounted {
     Ref<NativeStructuresSnapshot> codec_;
     Ref<NativeBlockRegionStore> store_;
     String path_;
+    Dictionary publication_profile_; // Save-worker owned diagnostics.
     mutable std::map<String,Ref<NativeModelRegionStore>> model_stores_;
     mutable std::mutex model_mutex_;
     Ref<NativeModelRegionStore> model_store(const String &asset,bool create) const;
-    bool model_references_in_file(const String &path,std::map<String,std::set<String>> &keep) const;
+
     bool metadata_first_=false,model_metadata_first_=false;
     int64_t published_index_revision_=0;
     PackedInt32Array published_keys_;
@@ -55,12 +56,13 @@ class NativeRegionWorldArchive : public RefCounted {
     void run_region_reads(Ref<NativeBlockRegionStore> store);
     int64_t request_read(const String &asset,Vector3i region,const PackedByteArray &expected,const PackedByteArray &checkpoint,int64_t epoch,bool metadata=false,bool strict_checkpoint=false);
     Array poll_reads(int max_results,bool models);
-    bool reference_in_file(const String &path,std::set<String> &keep) const;
+    bool reference_in_file(const String &path,std::set<String> &keep,std::map<String,std::set<String>> &model_keep) const;
     bool retire_unreferenced();
 protected:
     static void _bind_methods();
 public:
     ~NativeRegionWorldArchive();
+    Dictionary publication_profile() const {return publication_profile_.duplicate();}
     bool configure(const Ref<RefCounted> &archive,const Ref<NativeStructuresSnapshot> &codec,bool metadata_first=false,bool model_metadata_first=false);
     bool acquire(const String &absolute_path);
     void release();

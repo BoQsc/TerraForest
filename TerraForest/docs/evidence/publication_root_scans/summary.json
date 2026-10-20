@@ -1,0 +1,156 @@
+{
+  "before": {
+    "run": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 40304,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 28.992921500001103,
+      "passed": true
+    },
+    "samples": [
+      {
+        "mode": "baseline",
+        "dispatch_us": 0,
+        "worker": {},
+        "frame_p95_ms": 16.812,
+        "frame_max_ms": 34.037,
+        "distance": 120.003662109375
+      },
+      {
+        "mode": "cold_save",
+        "dispatch_us": 8076,
+        "worker": {
+          "apply_us": 107091,
+          "stages": {
+            "archive_encode_us": 148624,
+            "archive_publish_us": 1442636,
+            "cache_us": 14892,
+            "regional": {
+              "blocks_us": 1080,
+              "compact_encode_us": 134459,
+              "decode_root_us": 144452,
+              "models_us": 10281,
+              "retire_after_us": 638591,
+              "retire_before_us": 306323,
+              "root_publish_us": 201172
+            },
+            "terrain_capture_us": 12222
+          },
+          "success": true,
+          "write_us": 1621900
+        },
+        "frame_p95_ms": 16.765,
+        "frame_max_ms": 16.863,
+        "distance": 240.00732421875
+      },
+      {
+        "mode": "warm_save",
+        "dispatch_us": 2206,
+        "worker": {
+          "apply_us": 90675,
+          "stages": {
+            "archive_encode_us": 138153,
+            "archive_publish_us": 1772337,
+            "cache_us": 15092,
+            "regional": {
+              "blocks_us": 1474,
+              "compact_encode_us": 135502,
+              "decode_root_us": 147562,
+              "models_us": 9265,
+              "retire_after_us": 644144,
+              "retire_before_us": 621547,
+              "root_publish_us": 207121
+            },
+            "terrain_capture_us": 12434
+          },
+          "success": true,
+          "write_us": 1941787
+        },
+        "frame_p95_ms": 16.78,
+        "frame_max_ms": 16.903,
+        "distance": 360.010986328125
+      }
+    ]
+  },
+  "after": {
+    "run": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 41980,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 28.365314299997408,
+      "passed": true
+    },
+    "samples": [
+      {
+        "mode": "baseline",
+        "dispatch_us": 0,
+        "worker": {},
+        "frame_p95_ms": 16.799,
+        "frame_max_ms": 35.345,
+        "distance": 120.003662109375
+      },
+      {
+        "mode": "cold_save",
+        "dispatch_us": 8376,
+        "worker": {
+          "apply_us": 109709,
+          "stages": {
+            "archive_encode_us": 140392,
+            "archive_publish_us": 966414,
+            "cache_us": 14730,
+            "regional": {
+              "blocks_us": 1048,
+              "compact_encode_us": 134573,
+              "decode_root_us": 137743,
+              "models_us": 11111,
+              "retire_after_us": 325580,
+              "retire_before_us": 155651,
+              "root_publish_us": 194706
+            },
+            "terrain_capture_us": 12312
+          },
+          "success": true,
+          "write_us": 1137527
+        },
+        "frame_p95_ms": 16.817,
+        "frame_max_ms": 16.936,
+        "distance": 240.00732421875
+      },
+      {
+        "mode": "warm_save",
+        "dispatch_us": 2126,
+        "worker": {
+          "apply_us": 84606,
+          "stages": {
+            "archive_encode_us": 138260,
+            "archive_publish_us": 1106961,
+            "cache_us": 15071,
+            "regional": {
+              "blocks_us": 1428,
+              "compact_encode_us": 134175,
+              "decode_root_us": 136888,
+              "models_us": 9584,
+              "retire_after_us": 314098,
+              "retire_before_us": 305210,
+              "root_publish_us": 200012
+            },
+            "terrain_capture_us": 12269
+          },
+          "success": true,
+          "write_us": 1276275
+        },
+        "frame_p95_ms": 16.812,
+        "frame_max_ms": 16.896,
+        "distance": 360.010986328125
+      }
+    ]
+  }
+}
