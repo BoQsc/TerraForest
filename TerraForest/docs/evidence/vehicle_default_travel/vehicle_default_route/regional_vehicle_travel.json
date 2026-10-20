@@ -1,0 +1,405 @@
+{
+  "collision_hold_frames": 0,
+  "distance_m": 611.313110351563,
+  "failure": "",
+  "frame_max_ms": 20.88,
+  "frame_p95_ms": 16.974,
+  "max_consecutive_hold_frames": 0,
+  "max_speed_kph": 160.093006896973,
+  "model_region_paging": true,
+  "samples": [
+    {
+      "loaded_wheels": 4,
+      "position": [
+        926.001159667969,
+        56.6232070922852,
+        999.0
+      ],
+      "speed_kph": 0.533572858572006,
+      "waiting": false
+    },
+    {
+      "loaded_wheels": 4,
+      "position": [
+        924.829223632813,
+        56.6258201599121,
+        999.0
+      ],
+      "speed_kph": 15.7032960891724,
+      "waiting": false
+    },
+    {
+      "loaded_wheels": 4,
+      "position": [
+        921.758178710938,
+        56.6257514953613,
+        999.0
+      ],
+      "speed_kph": 28.5076040267944,
+      "waiting": false
+    },
+    {
+      "loaded_wheels": 4,
+      "position": [
+        917.017395019531,
+        56.625659942627,
+        999.0
+      ],
+      "speed_kph": 39.7924324035645,
+      "waiting": false
+    },
+    {
+      "loaded_wheels": 4,
+      "position": [
+        910.800109863281,
+        56.6255569458008,
+        999.0
+      ],
+      "speed_kph": 49.8120494842529,
+      "waiting": false
+    },
+    {
+      "loaded_wheels": 4,
+      "position": [
+        903.267395019531,
+        56.6254463195801,
+        999.0
+      ],
+      "speed_kph": 58.7669815063477,
+      "waiting": false
+    },
+    {
+      "loaded_wheels": 4,
+      "position": [
+        894.5556640625,
+        56.6253280639648,
+        999.0
+      ],
+      "speed_kph": 66.8174674987793,
+      "waiting": false
+    },
+    {
+      "loaded_wheels": 4,
+      "position": [
+        884.78125,
+        56.6252059936523,
+        999.0
+      ],
+      "speed_kph": 74.0931770324707,
+      "waiting": false
+    },
+    {
+      "loaded_wheels": 4,
+      "position": [
+        874.044372558594,
+        56.6250877380371,
+        999.0
+      ],
+      "speed_kph": 80.7000526428223,
+      "waiting": false
+    },
+    {
+      "loaded_wheels": 4,
+      "position": [
+        862.426025390625,
+        56.5822944641113,
+        999.0
+      ],
+      "speed_kph": 86.8984703063965,
+      "waiting": false
+    },
+    {
+      "loaded_wheels": 4,
+      "position": [
+        849.59130859375,
+        55.8497657775879,
+        999.0
+      ],
+      "speed_kph": 92.4537071228027,
+      "waiting": false
+    },
+    {
+      "loaded_wheels": 4,
+      "position": [
+        836.456298828125,
+        54.9289932250977,
+        999.0
+      ],
+      "speed_kph": 97.2757301330566,
+      "waiting": false
+    },
+    {
+      "loaded_wheels": 4,
+      "position": [
+        822.6171875,
+        54.6748390197754,
+        999.0
+      ],
+      "speed_kph": 102.138951873779,
+      "waiting": false
+    },
+    {
+      "loaded_wheels": 4,
+      "position": [
+        808.150268554688,
+        54.4202919006348,
+        999.0
+      ],
+      "speed_kph": 106.450193023682,
+      "waiting": false
+    },
+    {
+      "loaded_wheels": 4,
+      "position": [
+        793.107116699219,
+        54.1440887451172,
+        999.0
+      ],
+      "speed_kph": 110.451235198975,
+      "waiting": false
+    },
+    {
+      "loaded_wheels": 4,
+      "position": [
+        777.528869628906,
+        53.8469429016113,
+        999.0
+      ],
+      "speed_kph": 114.169812011719,
+      "waiting": false
+    },
+    {
+      "loaded_wheels": 4,
+      "position": [
+        761.452453613281,
+        53.5290870666504,
+        999.0
+      ],
+      "speed_kph": 117.638291931152,
+      "waiting": false
+    },
+    {
+      "loaded_wheels": 4,
+      "position": [
+        744.91064453125,
+        53.191822052002,
+        999.0
+      ],
+      "speed_kph": 120.870771789551,
+      "waiting": false
+    },
+    {
+      "loaded_wheels": 4,
+      "position": [
+        727.934326171875,
+        52.8366928100586,
+        999.0
+      ],
+      "speed_kph": 123.912185668945,
+      "waiting": false
+    },
+    {
+      "loaded_wheels": 4,
+      "position": [
+        710.550537109375,
+        52.4639892578125,
+        999.0
+      ],
+      "speed_kph": 126.751162719727,
+      "waiting": false
+    },
+    {
+      "loaded_wheels": 4,
+      "position": [
+        692.783996582031,
+        52.0761528015137,
+        999.0
+      ],
+      "speed_kph": 129.426141357422,
+      "waiting": false
+    },
+    {
+      "loaded_wheels": 4,
+      "position": [
+        674.657470703125,
+        51.6741333007813,
+        999.0
+      ],
+      "speed_kph": 131.94137878418,
+      "waiting": false
+    },
+    {
+      "loaded_wheels": 4,
+      "position": [
+        656.191711425781,
+        51.2600631713867,
+        999.0
+      ],
+      "speed_kph": 134.319094848633,
+      "waiting": false
+    },
+    {
+      "loaded_wheels": 4,
+      "position": [
+        637.405639648438,
+        50.8365898132324,
+        999.0
+      ],
+      "speed_kph": 136.567680358887,
+      "waiting": false
+    },
+    {
+      "loaded_wheels": 4,
+      "position": [
+        618.31689453125,
+        50.4047203063965,
+        999.0
+      ],
+      "speed_kph": 138.689263916016,
+      "waiting": false
+    },
+    {
+      "loaded_wheels": 4,
+      "position": [
+        598.941650390625,
+        49.9680557250977,
+        999.0
+      ],
+      "speed_kph": 140.694543457031,
+      "waiting": false
+    },
+    {
+      "loaded_wheels": 4,
+      "position": [
+        579.294494628906,
+        49.5276565551758,
+        999.0
+      ],
+      "speed_kph": 142.602731323242,
+      "waiting": false
+    },
+    {
+      "loaded_wheels": 4,
+      "position": [
+        559.389343261719,
+        49.0873146057129,
+        999.0
+      ],
+      "speed_kph": 144.411877441406,
+      "waiting": false
+    },
+    {
+      "loaded_wheels": 4,
+      "position": [
+        539.239196777344,
+        48.6494178771973,
+        999.0
+      ],
+      "speed_kph": 146.132556152344,
+      "waiting": false
+    },
+    {
+      "loaded_wheels": 4,
+      "position": [
+        518.85595703125,
+        48.2172088623047,
+        999.0
+      ],
+      "speed_kph": 147.772485351562,
+      "waiting": false
+    },
+    {
+      "loaded_wheels": 4,
+      "position": [
+        498.250885009766,
+        47.7931060791016,
+        999.0
+      ],
+      "speed_kph": 149.333134460449,
+      "waiting": false
+    },
+    {
+      "loaded_wheels": 4,
+      "position": [
+        477.433380126953,
+        47.3806304931641,
+        999.0
+      ],
+      "speed_kph": 150.821974182129,
+      "waiting": false
+    },
+    {
+      "loaded_wheels": 4,
+      "position": [
+        455.709625244141,
+        46.970272064209,
+        999.0
+      ],
+      "speed_kph": 152.287907409668,
+      "waiting": false
+    },
+    {
+      "loaded_wheels": 4,
+      "position": [
+        434.490325927734,
+        46.5918731689453,
+        999.0
+      ],
+      "speed_kph": 153.64507598877,
+      "waiting": false
+    },
+    {
+      "loaded_wheels": 4,
+      "position": [
+        413.086456298828,
+        46.2351493835449,
+        999.0
+      ],
+      "speed_kph": 154.946310424805,
+      "waiting": false
+    },
+    {
+      "loaded_wheels": 4,
+      "position": [
+        391.506042480469,
+        45.9043045043945,
+        999.0
+      ],
+      "speed_kph": 156.190223693848,
+      "waiting": false
+    },
+    {
+      "loaded_wheels": 4,
+      "position": [
+        369.756469726563,
+        45.602294921875,
+        999.0
+      ],
+      "speed_kph": 157.379067993164,
+      "waiting": false
+    },
+    {
+      "loaded_wheels": 4,
+      "position": [
+        347.844879150391,
+        45.3334083557129,
+        999.0
+      ],
+      "speed_kph": 158.524378967285,
+      "waiting": false
+    },
+    {
+      "loaded_wheels": 4,
+      "position": [
+        325.774780273438,
+        45.0340538024902,
+        999.0
+      ],
+      "speed_kph": 159.657357788086,
+      "waiting": false
+    }
+  ],
+  "scope": "One full-throttle regional arterial drive then handbrake; no pose correction after entry. Arrival is not performance qualification.",
+  "slow_frames": [],
+  "target_m": 611.001770019531
+}

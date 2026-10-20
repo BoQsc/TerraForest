@@ -1,0 +1,17 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS saved terrain restores
+ROAD_IDENTITY 42 13 [{ "id": 0, "position": (1026.0, 56.0, 999.0), "radius": 160.0, "kind": "city" }, { "id": 1, "position": (230.0, 44.0, 999.0), "radius": 72.0, "kind": "town" }, { "id": 2, "position": (1770.0, 54.0, 999.0), "radius": 72.0, "kind": "town" }, { "id": 3, "position": (1026.0, 55.0, 230.0), "radius": 72.0, "kind": "town" }, { "id": 4, "position": (1026.0, 62.0, 1770.0), "radius": 72.0, "kind": "town" }]
+PASS saved arterial 1 lane -0.6 rejects vegetation roots
+PASS saved arterial 1 lane 0.0 rejects vegetation roots
+PASS saved arterial 1 lane 0.6 rejects vegetation roots
+PASS saved arterial 2 lane -0.6 rejects vegetation roots
+PASS saved arterial 2 lane 0.0 rejects vegetation roots
+PASS saved arterial 2 lane 0.6 rejects vegetation roots
+PASS saved arterial 3 lane -0.6 rejects vegetation roots
+PASS saved arterial 3 lane 0.0 rejects vegetation roots
+PASS saved arterial 3 lane 0.6 rejects vegetation roots
+PASS saved arterial 4 lane -0.6 rejects vegetation roots
+PASS saved arterial 4 lane 0.0 rejects vegetation roots
+PASS saved arterial 4 lane 0.6 rejects vegetation roots
+SAVED_ROAD_SURFACE failures=0

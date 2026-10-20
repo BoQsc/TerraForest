@@ -1,3 +1,29 @@
+## Continuous vehicle travel with default paging - 2026-10-20
+
+The real native car drove the saved seed42/generator13 central-west arterial at
+1920x1080/fullscreen capped60, with default model paging, vegetation, actors and
+fleet enabled. No pose corrections after initial staging/entry. A disposable
+read-only clone preserves the source save. No collision streaming holds occurred.
+Exact distance, speed, frame intervals and final stopping position are recorded
+in `evidence/vehicle_default_travel/vehicle_paved_stop`.
+
+The original travel test falsely accepted a stop beyond the road: 104 m braking
+from approximately160 km/h overran its 85 m stopping allowance, ending20 m beyond
+the arterial endpoint on grass. Retained diagnostic image/data expose the error.
+The test now begins braking150 m before the endpoint and requires final corridor
+containment plus native saved-surface support validation. Slow frames and collision
+hold runs are recorded. Separate saved-terrain sampling passes228 points across
+three lanes on each of the four arterials. That root-support check is not a mesh,
+road-shoulder or navigability proof for those other three roads.
+
+The corrected final image was inspected: vehicle on asphalt, buildings and vegetation
+present. Western location remains visually unfinished: repeated cottage massing,
+sparse landscaping and unresolved arrival/road-end design. Do not accept that as
+world quality. The drive is one straight arterial, not junctions, turning, all-site
+collision coverage, save-during-driving or endurance. Those gaps remain explicit.
+Next finish the connected-world approach/entrance checks and generator design
+requirements, retaining performance sampling on those actual routes.
+
 ## Regional model loading is now the normal world path - 2026-10-20
 
 Native transfer preparation now advances directly into bounded transfer work in
