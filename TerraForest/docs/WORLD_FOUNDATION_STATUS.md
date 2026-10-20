@@ -1,3 +1,33 @@
+## Component restoration now yields between providers — 2026-10-20
+
+Startup and reload no longer execute all addon restoration in one uninterrupted
+scene-thread call. The terrain facade holds the loaded result, and the persistence
+coordinator restores providers in registration order with a configurable 1000-us
+cooperative budget. World readiness, initialization and snapshot-restored notification
+are published only after every provider finishes. Prepared native data remains owned
+through the barrier. Legacy synchronous restoration remains available.
+
+Captures during partial or failed restoration return an invalid epoch with no sections.
+A second reload is rejected while restoration is pending. Shutdown during this phase
+blocks snapshot writes before the backend captures shutdown state, preserving the
+previous canonical save. Missing/failed provider callbacks mark restoration failed.
+
+Targeted tests cover ordered yielding, no repeated provider calls, failure handling,
+partial/failed capture rejection, publication gating, repeat-reload rejection and
+shutdown protection. The integrated readonly regional reload restored components over
+**8 frames**, with largest restoration slice **8.307 ms** (structures alone: 8.215 ms).
+Water targeting/quantities, retirement cleanup and map-cache reuse passed. A separate
+fresh-process full checkpoint comparison matched settlement blocks, all furnishings,
+roads, residents and player position. Canonical save SHA-256 unchanged. Evidence:
+`evidence/component_restore_budget`.
+
+**Still open:** provider calls are atomic; this budget cannot preempt a slow provider.
+Reload initiation remains synchronous and variable: this run measured 30.649 ms, with
+23.510 ms in ground-cover reset. Do not present the component barrier as proof of
+hitch-free world loading or sustained 60 FPS. Further lifecycle qualification must
+include reset handlers, individual heavy providers and repeated loading/backlog limits,
+alongside the broader generation, settlement, storage and gameplay gates below.
+
 ## Terrain reload payload retirement is budgeted — 2026-10-20
 
 Profiling separated immediate terrain deactivation from releasing retained CPU mesh

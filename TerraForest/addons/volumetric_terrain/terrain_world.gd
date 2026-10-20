@@ -13,6 +13,29 @@ signal lake_slice_profiled(worker_ms: float, queue_ms: float, status: int)
 signal survey_patch_ready(result: Dictionary)
 signal density_batch_ready(result: Dictionary)
 var prepared_snapshot_components:Dictionary={}
+var _snapshot_begin:Callable
+var _snapshot_step:Callable
+var _restore_pending:Dictionary={}
+@export_range(100,10000,100) var snapshot_restore_budget_us:int=1000
+func configure_snapshot_restore(begin:Callable,step:Callable)->void:
+	_snapshot_begin=begin;_snapshot_step=step
+
+func _process(delta:float)->void:
+	if not stopping and not _restore_pending.is_empty():
+		var began:=Time.get_ticks_usec()
+		var complete:bool=_snapshot_step.call(snapshot_restore_budget_us)
+		_record_stage("restore frame",(Time.get_ticks_usec()-began)/1000.0)
+		if complete:
+			var result:Dictionary=_restore_pending;_restore_pending={}
+			result["components_restored"]=true;_receive(result)
+	super._process(delta)
+
+func reload_world(reset:bool=false)->void:
+	if not _restore_pending.is_empty():
+		message_changed.emit("Wait for world component restoration before loading again")
+		return
+	super.reload_world(reset)
+
 signal snapshot_restored(sections: Dictionary, epoch_id: int)
 const TerrainAssets = preload("res://addons/volumetric_terrain/runtime_assets.gd")
 static var _active_world: WeakRef
@@ -57,7 +80,9 @@ func start(terrain_material: Material = null, temporary_world: bool = false) -> 
 	return error
 
 func shutdown() -> void:
+	if not _restore_pending.is_empty():backend.disable_snapshot_writes("shutdown interrupted component restoration")
 	super.shutdown()
+	_restore_pending={};prepared_snapshot_components={}
 	if _active_world != null and _active_world.get_ref() == self:
 		_active_world = null
 	_started = false
@@ -106,8 +131,13 @@ func _receive(result: Dictionary) -> void:
 		return
 	if result.get("kind", "") in ["startup", "reload"] and not str(result.get("message", "")).begins_with("ERROR:"):
 		if result.get("kind") == "startup" or int(result.get("epoch", -1)) == epoch:
-			snapshot_restore_ok = true
-			prepared_snapshot_components=result.get("prepared_components",{})
+			if not result.get("components_restored",false):
+				snapshot_restore_ok=true
+				prepared_snapshot_components=result.get("prepared_components",{})
+				if _snapshot_begin.is_valid() and _snapshot_step.is_valid():
+					_restore_pending=result
+					_snapshot_begin.call(result.get("components",{}),epoch)
+					return
 			snapshot_restored.emit(result.get("components", {}), epoch)
 			prepared_snapshot_components={}
 			if not snapshot_restore_ok:

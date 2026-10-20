@@ -2,6 +2,11 @@ extends RefCounted
 ## Main-thread registration/capture only. Packing, checksums, validation and disk
 ## publication run in native code on the terrain-owned worker.
 var last_capture: Dictionary = {}
+var _restore_names:Array=[]
+var _restore_sections:Dictionary={}
+var _restore_cursor:=0
+var _restore_epoch:=-1
+var _restoring:=false
 var _terrain: Node
 var _providers: Dictionary = {}
 var _restored_epoch: int = -1
@@ -60,10 +65,13 @@ func attach(terrain: Node) -> Error:
 			var preparer:RefCounted=owner.snapshot_preparer()
 			if preparer!=null:terrain.backend.snapshot_preparers[name]=preparer
 		terrain.backend.snapshot_validators[name] = archive if _region_structures and name == "structures" else _providers[name]["validator"]
-	terrain.snapshot_restored.connect(_restore)
+	if terrain.has_method("configure_snapshot_restore"):
+		terrain.configure_snapshot_restore(_begin_restore,_advance_restore)
+	else:terrain.snapshot_restored.connect(_restore)
 	return OK
 
 func _capture() -> Dictionary:
+	if _restoring or (_terrain!=null and not _terrain.snapshot_restore_ok):return {"epoch":-1,"sections":{}}
 	var sections: Dictionary = {}
 	var measurements: Dictionary = {}
 	var began:=Time.get_ticks_usec()
@@ -75,14 +83,28 @@ func _capture() -> Dictionary:
 	last_capture={"total_us":Time.get_ticks_usec()-began,"sections":measurements}
 	return {"epoch": _restored_epoch, "sections": sections}
 
-func _restore(sections: Dictionary, epoch_id: int) -> void:
-	for name: String in _providers:
+func _begin_restore(sections:Dictionary,epoch_id:int)->void:
+	_restore_names=_providers.keys();_restore_sections=sections
+	_restore_cursor=0;_restore_epoch=epoch_id;_restoring=true
+
+func _advance_restore(budget_us:int)->bool:
+	if not _restoring:return true
+	var began:=Time.get_ticks_usec()
+	while _restore_cursor<_restore_names.size():
+		var name:String=_restore_names[_restore_cursor];_restore_cursor+=1
 		if _providers[name]["restore"].is_valid():
 			var restore_begin:=Time.get_ticks_usec()
 			var owner=_providers[name]["restore"].get_object()
 			var prepared=_terrain.prepared_snapshot_components.get(name)
-			var restored:bool=owner.restore_prepared_snapshot(prepared) if prepared!=null and owner.has_method("restore_prepared_snapshot") else _providers[name]["restore"].call(sections.get(name,_providers[name]["empty"]))
-			if not restored:
-				_terrain.snapshot_restore_ok = false
+			var restored:bool=owner.restore_prepared_snapshot(prepared) if prepared!=null and owner.has_method("restore_prepared_snapshot") else _providers[name]["restore"].call(_restore_sections.get(name,_providers[name]["empty"]))
+			if not restored:_terrain.snapshot_restore_ok=false
 			if _terrain.has_method("_record_stage"):_terrain._record_stage("restore "+name,(Time.get_ticks_usec()-restore_begin)/1000.0)
-	_restored_epoch = epoch_id
+		else:_terrain.snapshot_restore_ok=false
+		if budget_us>0 and Time.get_ticks_usec()-began>=budget_us:break
+	if _restore_cursor<_restore_names.size():return false
+	_restored_epoch=_restore_epoch;_restoring=false;_restore_names=[];_restore_sections={}
+	return true
+
+func _restore(sections: Dictionary, epoch_id: int) -> void:
+	_begin_restore(sections,epoch_id)
+	_advance_restore(0)

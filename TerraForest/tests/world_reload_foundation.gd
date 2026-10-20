@@ -2,10 +2,14 @@
 extends "res://tests/combined_resource_route.gd"
 var stages:Dictionary={}
 var max_retire_ms:=0.0
+var restore_frames:=0
 func run()->void:
  game=load("res://demo/world.tscn").instantiate();game.temporary_world=true;game.max_fps=60;game.background_fps=60
  game.terrain.stage_measured.connect(func(label:String,ms:float):
   if label=="retire collision/mesh":max_retire_ms=maxf(max_retire_ms,ms)
+  if label=="restore frame":
+   restore_frames+=1
+   if game.terrain.world_ready:check(false,"partial component restoration must not publish world readiness")
   if label.begins_with("restore ") or label.begins_with("reload ") or label=="receive reload":stages[label]=maxf(stages.get(label,0.0),ms))
  root.add_child(game)
  if not check(await wait_for(func():return not game.loading_active,60),"saved world starts before reload"):await done();return
@@ -18,7 +22,7 @@ func run()->void:
  var before:Dictionary=game.lakes.water.statistics()
  var identity:String=game.lakes.water.survey_cache_identity()
  var old_epoch:int=game.terrain.epoch
- stages.clear()
+ stages.clear();restore_frames=0
  var old_roots:Array=[]
  for entry:Dictionary in game.terrain.tiles.values():old_roots.append(entry.node)
  var began:=Time.get_ticks_usec();game.terrain.reload_world()
@@ -28,6 +32,8 @@ func run()->void:
  check(hidden,"old terrain is hidden immediately before deferred data retirement")
  if not check(await wait_for(func():return game.terrain.epoch>old_epoch and game.terrain.world_ready and not game.loading_active,60),"populated world reload completes"):await done();return
  check(game.terrain.snapshot_restore_ok,"all components restore successfully")
+ check(restore_frames>1 and game.terrain._restore_pending.is_empty(),"component restoration spans frames and closes publication barrier")
+ print("COMPONENT_RESTORE_FRAMES ",restore_frames)
  check(game.lakes.water.survey_cache_identity()==identity,"water content identity survives reload")
  check(game.lakes.water.statistics().water_ml==before.water_ml,"reload preserves generated water quantity")
  check(game.lakes.water.statistics().map_identity_scene_hash_us==0,"reload hashes water off scene thread")
