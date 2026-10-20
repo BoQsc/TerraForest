@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: 0BSD
 #include "block_world.hpp"
+#include "block_map_region.hpp"
 #include <godot_cpp/classes/hashing_context.hpp>
 #include <algorithm>
 #include <cmath>
@@ -158,5 +159,23 @@ Dictionary NativeBlockWorld::capture_storage_state() const {
         std::memcpy(checksums.ptrw()+digest_at,entry.second.ptr(),32);digest_at+=32;
     }
     Dictionary out;out["resident"]=encode_chunks(chunks);out["unavailable_keys"]=keys;out["unavailable_checksums"]=checksums;return out;
+}
+}
+
+namespace terraforest {
+Dictionary NativeBlockWorld::survey_index() const {
+ std::set<BlockKey> keys;for(const auto &v:chunks)keys.insert(region_for(v.first));for(const auto &v:unloaded_regions)keys.insert(v.first);
+ PackedInt32Array positions;positions.resize(keys.size()*3);PackedByteArray checksums;checksums.resize(keys.size()*32);checksums.fill(0);int n=0;
+ for(auto k:keys){positions.set(n*3,k.x);positions.set(n*3+1,k.y);positions.set(n*3+2,k.z);auto found=unloaded_regions.find(k);
+  if(found!=unloaded_regions.end())std::memcpy(checksums.ptrw()+n*32,found->second.ptr(),32);++n;}
+ Dictionary out;out["keys"]=positions;out["checksums"]=checksums;out["revision"]=int64_t(mutation_revision);
+ out["transform"]=is_inside_tree()?get_global_transform():get_transform();return out;
+}
+Dictionary NativeBlockWorld::survey_columns(Vector3i p,int64_t offset,int64_t expected_revision) const {
+ Dictionary out;out["ok"]=false;out["revision"]=int64_t(mutation_revision);BlockKey region{p.x,p.y,p.z};
+ if(!valid_region(region)||offset<0||offset>=64||expected_revision<0)return out;
+ if(uint64_t(expected_revision)!=mutation_revision){out["stale"]=true;return out;}
+ if(unloaded_regions.count(region)){out["unloaded"]=true;return out;}
+ out=block_map_columns(chunks,region,offset);out["revision"]=int64_t(mutation_revision);return out;
 }
 }

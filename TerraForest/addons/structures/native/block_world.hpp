@@ -48,6 +48,7 @@ class NativeBlockWorld : public Node3D {
     bool region_has_history(BlockKey region) const;
     bool restore_region_impl(const PackedByteArray &bytes,const PackedByteArray &expected,bool preserve_history);
     friend class NativeBlockRegionStore;
+    friend class NativeBlockMapRegion;
     std::map<BlockKey,BlockChunk> chunks;
     // Only checksums remain after an explicit authored-region transfer.
     std::map<BlockKey,PackedByteArray> unloaded_regions;
@@ -147,6 +148,8 @@ public:
     bool initialize_region_index(const PackedInt32Array &keys,const PackedByteArray &checksums);
     bool is_region_loaded(Vector3i region) const;
     Dictionary region_stats() const;
+    Dictionary survey_index() const;
+    Dictionary survey_columns(Vector3i region,int64_t offset,int64_t expected_revision) const;
     Dictionary capture_storage_state() const;
     bool restore_storage_state(const PackedByteArray &resident,const PackedInt32Array &keys,const PackedByteArray &checksums);
     // Bounded main-thread sampling: 0 air, 1 solid, 2 unavailable resident data.

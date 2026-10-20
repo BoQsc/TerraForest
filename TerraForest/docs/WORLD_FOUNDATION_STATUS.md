@@ -1,3 +1,39 @@
+## Building-map source includes unloaded world regions — 2026-10-20
+
+Native block cartography now exposes a metadata index covering both resident
+chunks and checksum-only unloaded regions. The index carries a mutation revision
+and world transform; a live region query rejects a stale revision or explicitly
+reports unloaded data instead of treating it as empty. The index is a bounded
+metadata capture (existing resident/unloaded store limits), intended for survey
+start/invalidation, not every frame.
+
+Each column query visits at most one occupied 16-cube chunk and returns no more
+than 256 local-space samples; empty chunk positions are skipped within the
+64-chunk region bound. Samples use the highest occupied cell in each chunk column
+and the actual shape height at its centre, including slabs, stairs and slopes.
+These are cartographic samples, not exact silhouettes or already occlusion-tested
+building footprints.
+
+NativeBlockMapRegion decodes one existing checksum-bound archive packet off the
+scene thread and exposes the same bounded queries. It neither admits the region
+to gameplay storage nor builds rendering/collision. No new authoritative save
+format is introduced. Existing archive checkpoint leases retain the requested
+versions while a worker reads them.
+
+Verification: signed coordinates, highest columns, cube/slab/stair/slope heights,
+resident/archive equivalence, stale revisions, explicit unloaded state and corrupt
+packets pass. The actual saved world survey included 22 unloaded and 6 resident
+regions, yielding 11096 column samples; maximum measured query was 49 microseconds.
+Block storage/residency statistics and mutation revision remained unchanged.
+Debug/release structures DLLs rebuilt against the pinned SDK. Evidence:
+`evidence/building_map_source`.
+
+**Not yet complete:** this source is not yet drawn on the M-map. Native reduction,
+terrain occlusion, cached publication and map invalidation still need integration.
+Free-standing model-only structures are not covered by block columns. Existing
+building-footprint/finer-map and broader foundation gates remain open. No final
+visual or large-city performance acceptance follows from the source checks.
+
 ## Actual water integrated into the M-map — 2026-10-20
 
 The playable map now draws a separate native-reduced live-water overlay instead

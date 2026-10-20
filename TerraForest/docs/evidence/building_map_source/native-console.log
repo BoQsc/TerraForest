@@ -1,0 +1,14 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS author cube, slab, slope, stair and signed-coordinate samples
+PASS survey uses highest column and shape centre height
+PASS checksum-bound archived region decodes
+PASS archived and resident columns match
+PASS real region unloaded
+PASS changed storage rejects old cursor revision
+PASS nonresident region remains in survey index with exact checksum
+PASS unloaded geometry is explicit, never treated as empty
+PASS map decoder does not repopulate gameplay residency
+PASS corrupt region cannot expose old map data
+PASS bad checksum and cursor rejected
+BLOCK_MAP_SURVEY failures=0
