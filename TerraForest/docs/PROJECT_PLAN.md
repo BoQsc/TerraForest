@@ -1,3 +1,13 @@
+## Nearby visual readiness implemented - 2026-10-20
+
+Loading now waits for native model metadata admission AND published render pages
+within the 128 m arrival extent. Actual four-stop populated route has zero missing
+nearby models at release and local collision ready. Native edge cases, capture
+replay and normal startup pass; both native builds updated. Evidence:
+`evidence/model_visual_readiness`. Northern/southern arrivals take 1.745/1.249 s,
+exceeding the earlier 1 s gate. Keep paging opt-in; next attribute and reduce native
+admission latency without weakening readiness. Sustained performance remains open.
+
 ## Arrival collision gap corrected - 2026-10-20
 
 Populated-world paging released the northern loading screen before nearby model

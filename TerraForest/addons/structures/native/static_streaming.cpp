@@ -166,6 +166,38 @@ void NativeStaticBatch::set_casts_shadows(bool enabled) {
     casts_shadows=enabled;
     for(auto &entry:batches)entry.second->set_cast_shadows_setting(page_casts_shadows(entry.first)?GeometryInstance3D::SHADOW_CASTING_SETTING_ON:GeometryInstance3D::SHADOW_CASTING_SETTING_OFF);
 }
+bool NativeStaticBatch::is_render_region_ready(const AABB &world_bounds) const {
+    if(!world_bounds.position.is_finite()||!world_bounds.size.is_finite()||
+       world_bounds.size.x<=0||world_bounds.size.y<=0||world_bounds.size.z<=0)return false;
+    if(collision_only)return true;
+    const Transform3D transform=is_inside_tree()?get_global_transform():get_transform();
+    const double determinant=transform.basis.determinant();
+    if(!transform.is_finite()||!std::isfinite(determinant)||std::abs(determinant)<1e-9)return false;
+    const AABB local=transform.affine_inverse().xform(world_bounds);
+    if(!local.position.is_finite()||!local.get_end().is_finite())return false;
+    // Missing metadata has no pending upload yet. Traverse its existing spatial
+    // hierarchy, pruning whole subtrees outside the requested arrival region.
+    const auto overlaps=[&](const auto &self,const ModelBoundsIndex::Node *node)->bool {
+        if(!node||!node->bounds.intersects(local))return false;
+        return node->box.intersects(local)||self(self,node->left.get())||self(self,node->right.get());
+    };
+    if(overlaps(overlaps,unloaded_bounds.root()))return false;
+    // Require whole intersecting origin groups, conservatively including their
+    // edge pages. Work scales with bounded resident groups/pages, not instances.
+    for(const auto &group:render_bounds) {
+        if(!group.second.intersects(local))continue;
+        const auto ids=render_ids.find(group.first);
+        if(ids==render_ids.end()||ids->second.empty())continue;
+        if(!is_inside_tree()||retirement_locks(group.first))return false;
+        const uint64_t pages=(ids->second.size()+render_page_capacity()-1)/render_page_capacity();
+        for(uint64_t page=0;page<pages;++page) {
+            RenderKey key{group.first,uint32_t(page)};
+            const auto resident=resident_ids.find(key);
+            if(!batches.count(key)||resident==resident_ids.end()||resident->second.size()!=render_page_size(key))return false;
+        }
+    }
+    return true;
+}
 Dictionary NativeStaticBatch::render_stats() const {
     Dictionary d;d["enabled"]=render_streaming;d["shadow_distance"]=shadow_distance;
     int shadow_pages=0;for(const auto &entry:batches)if(entry.second->get_cast_shadows_setting()!=GeometryInstance3D::SHADOW_CASTING_SETTING_OFF)++shadow_pages;d["shadow_batches"]=shadow_pages;d["casts_shadows"]=casts_shadows;d["radius"]=render_radius;

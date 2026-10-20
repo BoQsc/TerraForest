@@ -167,6 +167,7 @@ public:
     void set_render_focus(Vector3 focus);
     bool set_render_radius(double radius);
     Dictionary render_stats() const;
+    bool is_render_region_ready(const AABB &world_bounds) const;
     void set_casts_shadows(bool enabled);
     bool set_shadow_distance(double radius);
     bool configure_appearance_fade();

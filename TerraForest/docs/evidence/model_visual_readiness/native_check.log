@@ -1,0 +1,16 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS asset configured
+PASS one-instance pages with bounded uploads
+PASS near and distant records
+PASS authored records without pages are not ready
+PASS published nearby pages ready
+PASS distant records without pages not ready
+PASS invalid bounds rejected
+PASS world-space query respects collection transform
+PASS cold records retire to metadata
+PASS unloaded metadata rejects readiness despite no queued near uploads
+PASS restore exact region
+PASS restored records await publication
+PASS restored pages become ready
+MODEL_VISUAL_READINESS failures=0

@@ -33,6 +33,8 @@ func run()->void:
    var local_bounds:=AABB(game.player.position-Vector3(2,2,2),Vector3(4,5,4))
    var collision_at_release:bool=game.structures.is_collision_region_ready(local_bounds)
    for batch in game.structures._models.values():pending_at_release+=int(batch.render_stats().pending_batches)
+   check(missing_at_release==0,"all nearby saved records ready when loading releases %d"%site)
+   check(game.structures.is_model_render_region_ready(AABB(game.player.position-Vector3(128,128,128),Vector3(256,256,256))),"nearby render pages ready at release %d"%site)
    check(collision_at_release,"local collision ready when loading releases %d"%site)
    var ready:bool=await wait_for(func():
     for r:Dictionary in expected:
@@ -54,6 +56,10 @@ func run()->void:
    check(unloaded>0,"distant model regions actually unload %d"%site)
    check(game.model_paging.last_state.get("failed_transfers",0)==0,"no failed transfers %d"%site)
    samples.append({"site":site,"arrival_ms":released_ms,"missing_at_release":missing_at_release,"pending_render_at_release":pending_at_release,"collision_at_release":collision_at_release,"frame_p95_ms":frame_times[113],"frame_max_ms":frame_times.back(),"expected_nearby":expected.size(),"resident_instances":resident,"unloaded_regions":unloaded,"scheduler":game.model_paging.last_state})
+   if "--capture-arrival" in OS.get_cmdline_user_args():
+    game.camera.global_position=center+Vector3(75,35,75);game.camera.look_at(center+Vector3.UP*5)
+    for frame in 4:await RenderingServer.frame_post_draw
+    root.get_texture().get_image().save_png(OUT+"arrival_%d.png"%site)
   if "--edit-check" in OS.get_cmdline_user_args():
    var asset:="architecture/metal_stairrail/v1"
    var batch=game.structures.model(asset)

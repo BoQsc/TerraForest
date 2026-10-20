@@ -205,6 +205,11 @@ func register_model(asset_id: String, mesh: Mesh) -> Node3D:
 func model(asset_id: String) -> Node3D:
 	return _models.get(asset_id)
 
+func is_model_render_region_ready(bounds: AABB) -> bool:
+	for collection in _models.values():
+		if not collection.is_render_region_ready(bounds):return false
+	return true
+
 func is_collision_region_ready(bounds: AABB) -> bool:
 	return blocks != null and _queries.is_collision_region_ready(blocks,_models.values(),bounds)
 
