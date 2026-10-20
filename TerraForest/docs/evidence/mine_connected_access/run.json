@@ -1,0 +1,11 @@
+{
+  "timed_out": false,
+  "launch_error": null,
+  "cancelled": false,
+  "pid": 23516,
+  "exit_code": 0,
+  "diagnostics": [],
+  "required_text_found": false,
+  "elapsed_seconds": 94.93491339999309,
+  "passed": false
+}

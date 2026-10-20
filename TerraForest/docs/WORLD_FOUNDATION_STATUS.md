@@ -1,3 +1,34 @@
+## Connected mine route and parking correction - 2026-10-20
+
+A full route from the eastern arterial exposed a real generator defect missed by
+entrance-only tests: the parked vehicle overlapped the six-metre mine approach.
+Collision diagnostics identified the Car body. The mine recipe now places it ten
+metres farther into a widened parking apron, outside the access corridor. No
+runtime hot path, storage format or native meshing change was needed.
+
+Seven seed layouts pass transformed-chassis corridor clearance checks. Newly
+prepared seed42/generator13 world foundation_access_42_20261020 passes creation
+and fresh-process restoration. In that world, the native player walks from the
+arterial through the mine entrance, both underground branches, and back to the
+arterial: all twelve waypoints pass, with 3796 grounded ticks out of 3801. The
+short stall check reports the blocking collider instead of waiting a full minute.
+Evidence: `evidence/mine_connected_access`. Raw runner metadata retains a mistaken
+completion-token failure; the separate assessment verifies the actual test token,
+zero exit, clean diagnostics and complete trace without hiding that mistake.
+
+Play Regional World Review.cmd now opens a separate v12 editable copy. Older
+review worlds and original saves remain intact. This fixes newly generated worlds;
+existing player vehicle positions are intentionally not overwritten.
+
+Images inspected: entrance overview and underground workings. They establish
+neither art acceptance nor an interesting finished mine: the entrance remains a
+plain large frame and underground branches need authored purpose/detail. This
+walk is a connectivity check at 1920x1080 fullscreen capped60, not a performance
+benchmark or sustained-60 claim. Connected cellar access, remaining building and
+junction topology, multi-seed integrated qualification, map edit representation,
+world storage growth and sustained populated travel remain required foundation
+work. Do not replace those with unrelated item or vegetation polish.
+
 ## Connected access and tower ground-floor correction - 2026-10-20
 
 New actual-world checks start at the regional arterial, follow saved street

@@ -14,7 +14,14 @@ func run()->void:
  var entrance:=Vector3(data.decode_float(24),data.decode_float(28)-5,data.decode_float(32))
  var at:=24+2*28
  var chamber:=Vector3(data.decode_float(at),data.decode_float(at+4),data.decode_float(at+8))
- game.teleport(entrance+Vector3.UP*.1)
+ var start:=entrance
+ var access_points:Array[Vector3]=[]
+ if "--mine-connected-route" in OS.get_cmdline_user_args():
+  var layout:Dictionary=preload("res://addons/volumetric_terrain/generated_layout.gd").describe(game.terrain.backend.world_seed,game.terrain.backend.world_generator)
+  var access:Dictionary=preload("res://addons/structures/mine_catalog.gd").access_plan(entrance,layout.sites[2].position)
+  start=access.street_lines[0]
+  access_points=[access.street_lines[1],access.street_lines[3],entrance]
+ game.teleport(start+Vector3.UP*.1)
  deadline=Time.get_ticks_msec()+45000
  while game.loading_active and Time.get_ticks_msec()<deadline:await process_frame
  if game.loading_active:quit(1);return
@@ -38,7 +45,7 @@ func run()->void:
   print("PASS " if clear else "FAIL ","mine access rejects vegetation roots while adjacent ground remains eligible")
   if not clear:quit(1);return
  game.set_physics_process(false);game.fly=false;game.needs_floor_spawn=false
- game.player.position=entrance+Vector3.UP*.1;game.player.velocity=Vector3.ZERO
+ game.player.position=start+Vector3.UP*.1;game.player.velocity=Vector3.ZERO
  game.headlamp.visible=true
  game.camera.position=Vector3(0,1.6,0)
  game.camera.global_position=entrance+Vector3(18,8,16)
@@ -55,10 +62,17 @@ func run()->void:
   var workings:=Vector3(data.decode_float(24+4*28),data.decode_float(28+4*28),data.decode_float(32+4*28))
   var secret:=Vector3(data.decode_float(24+6*28),data.decode_float(28+6*28),data.decode_float(32+6*28))
   route=[chamber,workings,chamber,secret,chamber,entrance]
+ if not access_points.is_empty():
+  var connected_route:Array[Vector3]=access_points.duplicate()
+  connected_route.append_array(route)
+  connected_route.append_array([access_points[1],access_points[0],start])
+  route=connected_route
+ var trace:Array=[]
  var waypoint:=0
  for target:Vector3 in route:
   game.camera.look_at(target+Vector3.UP*1.6)
   deadline=Time.get_ticks_msec()+60000
+  var progress_position:Vector3=game.player.position;var stalled:=0
   while game.player.position.distance_to(target)>1 and Time.get_ticks_msec()<deadline:
    await physics_frame
    var direction:Vector3=target-game.player.position;direction.y=0
@@ -68,13 +82,24 @@ func run()->void:
    game.player.velocity=game.movement.walking_velocity(direction,game.player.velocity,1.0/60,true,game.player.is_on_floor(),false)
    game.movement.move_grounded(game.player,1.0/60)
    ticks+=1
+   if game.player.position.distance_to(progress_position)>0.1:progress_position=game.player.position;stalled=0
+   else:stalled+=1
+   if stalled>=120:break
    if game.player.is_on_floor():grounded+=1
    if ticks%600==0:print("MINE_WALK_PROGRESS pos=",game.player.position," target=",target)
    if game.player.position.y<chamber.y-3:failed=true;break
   var reached:bool=game.player.position.distance_to(target)<=1
   print("PASS " if reached else "FAIL ","player reaches cave waypoint ",target," actual=",game.player.position)
+  trace.append({"target":target,"position":game.player.position,"reached":reached})
   failed=failed or not reached
-  if failed:break
+  if failed:
+   for i in game.player.get_slide_collision_count():
+    var collision:KinematicCollision3D=game.player.get_slide_collision(i)
+    print("MINE_BLOCKER ",collision.get_collider()," at=",collision.get_position()," normal=",collision.get_normal())
+   await RenderingServer.frame_post_draw
+   for arg in OS.get_cmdline_user_args():
+    if arg.begins_with("--mine-screenshot="):root.get_texture().get_image().save_png(arg.trim_prefix("--mine-screenshot=").trim_suffix(".png")+"_failure.png")
+   break
   if "--mine-all-chambers" in OS.get_cmdline_user_args():
    for frame in 15:await process_frame
    await RenderingServer.frame_post_draw
@@ -82,5 +107,6 @@ func run()->void:
     if arg.begins_with("--mine-screenshot="):
      root.get_texture().get_image().save_png(arg.trim_prefix("--mine-screenshot=").trim_suffix(".png")+"_%d.png"%waypoint)
   waypoint+=1
+ FileAccess.open("res://reports/mine_walk_world.json",FileAccess.WRITE).store_string(JSON.stringify({"failures":1 if failed else 0,"connected":not access_points.is_empty(),"trace":trace,"physics_ticks":ticks,"grounded":grounded},"  "))
  print("MINE_WALK_WORLD failures=",1 if failed else 0," physics_ticks=",ticks," grounded=",grounded)
  game.shutdown_requested=true;await game.terrain.shutdown_after_edits();game.free();await process_frame;quit(1 if failed else 0)

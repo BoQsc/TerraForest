@@ -193,11 +193,13 @@ func prepare_transport()->bool:
  for site in [0,2]:
   var center:Vector3=layout.sites[site].position
   var bay:Vector3=center+Vector3(12,0,16)
+  var mine_parking:Dictionary=preload("res://addons/structures/mine_catalog.gd").parking(center) if site==2 else {}
   game.teleport(center+Vector3(5,0,5))
   if not require(await wait_until(func():return not game.loading_active,60),"parking location loads"):return false
   game.set_physics_process(false);game._clear_motion()
   var start:=center+Vector3(0,0,16);var finish:=center+Vector3(17,0,16)
-  var bounds:=AABB(start-Vector3(4,5,4),Vector3(25,12,8))
+  if site==2:start=mine_parking.start;finish=mine_parking.finish;bay=mine_parking.pose.origin-Vector3.UP*0.85
+  var bounds:=AABB(start-Vector3(4,5,4),finish-start+Vector3(8,12,8))
   if not require(game._road_protection_error(bounds).is_empty(),"parking apron is clear of protected structures"):return false
   if not require(game.terrain.construct_graded_bed(start,finish,4.0,4.0,7.0,4,0.0),"parking apron edit accepted"):return false
   if not require(await wait_until(func():return not game.terrain.pending_edit,30) and game.terrain.last_edit_outcome.get("status","") in ["published","unchanged"],"parking apron published"):return false

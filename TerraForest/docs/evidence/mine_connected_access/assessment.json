@@ -1,0 +1,5 @@
+{
+  "passed": true,
+  "note": "Raw runner was given MINE_WALK failures=0 instead of the actual MINE_WALK_WORLD failures=0 token. Raw result retained unchanged. This assessment checks the actual completion token, exit status, diagnostics and all twelve waypoint outcomes; no graphical rerun needed.",
+  "scope": "Connected walk and physical access, not frame-time or art acceptance."
+}

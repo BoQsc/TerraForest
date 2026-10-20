@@ -44,6 +44,9 @@ Plan road corridors and grades before buildings. Account for road widths, turnin
 space, shoulders and elevation at crossings. Different elevations require a proper
 connection or physical separation, never overlapping cut/fill stamps. Check on-foot
 and vehicle approaches, entrances and departure, not only straight-line travel.
+Parked vehicles and props must leave the full access corridor and pedestrian
+clearance unobstructed. Validate their transformed collision bounds against planned
+roads and paths; avoiding other objects alone is insufficient.
 Road material must read as pavement over a supported surface, not a thick asphalt
 wall. Footpaths and door approaches must connect to the street.
 

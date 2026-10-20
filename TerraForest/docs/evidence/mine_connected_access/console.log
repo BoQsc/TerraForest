@@ -1,0 +1,29 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[terrain-hitch] restore volumetric_water 205.25 ms at 3407
+[terrain-hitch] receive startup 217.39 ms at 3413
+[terrain-hitch] receive 219.15 ms at 3414
+PASS mine access rejects vegetation roots while adjacent ground remains eligible
+Visual vehicle dents repaired.
+PASS player reaches cave waypoint (1784.0, 54.0, 999.0) actual=(1783.038, 54.00867, 999.0001)
+PASS player reaches cave waypoint (1784.0, 54.0, 1049.0) actual=(1783.984, 54.00867, 1048.155)
+PASS player reaches cave waypoint (1770.0, 54.0, 1049.0) actual=(1770.975, 54.00867, 1048.941)
+MINE_WALK_PROGRESS pos=(1747.647, 49.54586, 1048.952) target=(1620.0, 30.0, 1049.0)
+MINE_WALK_PROGRESS pos=(1650.572, 30.13101, 1048.989) target=(1620.0, 30.0, 1049.0)
+PASS player reaches cave waypoint (1620.0, 30.0, 1049.0) actual=(1620.878, 30.00846, 1049.0)
+PASS player reaches cave waypoint (1575.0, 30.0, 1069.0) actual=(1575.807, 30.00846, 1068.648)
+MINE_WALK_PROGRESS pos=(1594.199, 30.00846, 1060.472) target=(1620.0, 30.0, 1049.0)
+PASS player reaches cave waypoint (1620.0, 30.0, 1049.0) actual=(1619.225, 30.00846, 1049.345)
+PASS player reaches cave waypoint (1620.0, 30.0, 1009.0) actual=(1619.983, 30.00846, 1009.925)
+MINE_WALK_PROGRESS pos=(1619.997, 30.00846, 1042.102) target=(1620.0, 30.0, 1049.0)
+PASS player reaches cave waypoint (1620.0, 30.0, 1049.0) actual=(1620.0, 30.00846, 1048.043)
+MINE_WALK_PROGRESS pos=(1713.082, 42.62331, 1048.642) target=(1770.0, 54.0, 1049.0)
+Visual vehicle dents repaired.
+PASS player reaches cave waypoint (1770.0, 54.0, 1049.0) actual=(1769.03, 53.81377, 1048.994)
+PASS player reaches cave waypoint (1784.0, 54.0, 1049.0) actual=(1783.058, 54.00847, 1049.0)
+MINE_WALK_PROGRESS pos=(1783.604, 54.00847, 1019.973) target=(1784.0, 54.0, 999.0)
+PASS player reaches cave waypoint (1784.0, 54.0, 999.0) actual=(1783.984, 54.00847, 999.8454)
+PASS player reaches cave waypoint (1770.0, 54.0, 999.0) actual=(1770.975, 54.00847, 999.0591)
+MINE_WALK_WORLD failures=0 physics_ticks=3801 grounded=3796
+[TerrainRewrite] Temporary test world: save skipped

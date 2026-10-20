@@ -34,3 +34,8 @@ static func access_plan(entrance:Vector3,site:Vector3)->Dictionary:
   bounds=region if segments.is_empty() else bounds.merge(region)
   segments.append({"start":a,"finish":b,"half_width":width,"depth":8.0,"clearance":12.0,"material":4,"shoulder":0.0,"bounds":region})
  return {"ok":true,"bounds":bounds,"segments":segments,"street_lines":lines,"street_ends":lines.slice(0,2),"street_width":6,"paving_segments":2}
+
+# Keep parked chassis outside the six-metre access road at center.x + 14.
+static func parking(center:Vector3)->Dictionary:
+ var start:=center+Vector3(0,0,16);var finish:=center+Vector3(27,0,16)
+ return {"start":start,"finish":finish,"pose":Transform3D(Basis(Vector3.UP,-PI/2),center+Vector3(22,0.85,16)),"bounds":AABB(start-Vector3(4,5,4),finish-start+Vector3(8,12,8))}

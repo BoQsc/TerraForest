@@ -1,0 +1,10 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS mine parked chassis leaves access corridor clear seed=0
+PASS mine parked chassis leaves access corridor clear seed=1
+PASS mine parked chassis leaves access corridor clear seed=42
+PASS mine parked chassis leaves access corridor clear seed=50
+PASS mine parked chassis leaves access corridor clear seed=141
+PASS mine parked chassis leaves access corridor clear seed=1703
+PASS mine parked chassis leaves access corridor clear seed=9999
+MINE_PARKING_CLEARANCE failures=0
