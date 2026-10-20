@@ -1,0 +1,13 @@
+{
+  "timed_out": false,
+  "launch_error": null,
+  "cancelled": false,
+  "pid": 43036,
+  "exit_code": 0,
+  "diagnostics": [
+    "ERROR: Condition \"len == 0\" is true. Returning: FAILED"
+  ],
+  "required_text_found": true,
+  "elapsed_seconds": 33.39540350000607,
+  "passed": false
+}

@@ -1,0 +1,20 @@
+{
+  "timed_out": false,
+  "launch_error": null,
+  "cancelled": false,
+  "pid": 37312,
+  "exit_code": 1,
+  "diagnostics": [
+    "\nSCRIPT ERROR: Parse Error: Member \"ready\" redefined (original in native class 'Node')",
+    "ERROR: Failed to load script \"res://demo/world.gd\" with error \"Compilation failed\".",
+    "FAIL terrain and actual water map complete",
+    "SCRIPT ERROR: Compile Error: Failed to compile depended scripts.",
+    "SCRIPT ERROR: Invalid access to property or key 'ready' on a base object of type 'Nil'.",
+    "SCRIPT ERROR: Invalid assignment of property or key 'visible' with value of type 'bool' on a base object of type 'Nil'.",
+    "SCRIPT ERROR: Invalid call. Nonexistent function 'new' in base 'GDScript'.",
+    "SCRIPT ERROR: Trying to return a value of type \"Nil\" from a function whose return type is \"bool\"."
+  ],
+  "required_text_found": false,
+  "elapsed_seconds": 58.535974900005385,
+  "passed": false
+}

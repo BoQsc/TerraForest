@@ -38,6 +38,7 @@ func _draw()->void:
  draw_rect(Rect2(Vector2.ZERO,size),Color("101e23"))
  var low:=world_to_map(Vector3.ZERO);var edge:=Vector2.ONE*2000*pixels_per_metre()
  if atlas.texture!=null:draw_texture_rect(atlas.texture,Rect2(low,edge),false)
+ if atlas.water_survey.texture!=null:draw_texture_rect(atlas.water_survey.texture,Rect2(low,edge),false)
  var step:=250 if zoom<4 else 100
  for n in range(0,2001,step):
   var x:=world_to_map(Vector3(n,0,0));var z:=world_to_map(Vector3(0,0,n))

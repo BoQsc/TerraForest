@@ -19,9 +19,11 @@ var roads:Array[Dictionary]=[]
 var places:Array[Dictionary]=[]
 var timer:Timer
 var updates:Node
+var water_survey:Node
 func _ready()->void:
  layer=50
  updates=preload("res://addons/world_runtime/survey_updates.gd").new();updates.atlas=self;add_child(updates)
+ water_survey=preload("res://addons/world_runtime/survey_water.gd").new();water_survey.atlas=self;add_child(water_survey)
  panel=PanelContainer.new();panel.position=Vector2(100,50);panel.size=Vector2(1720,980);add_child(panel)
  var style:=StyleBoxFlat.new();style.bg_color=Color("12262b")
  for side in [SIDE_LEFT,SIDE_RIGHT,SIDE_TOP,SIDE_BOTTOM]:style.set_content_margin(side,22)
@@ -55,7 +57,7 @@ func set_open(value:bool)->void:
  if value:
   game.session_menu.set_open(false);game.storage.close();game.player_hud.set_open(false)
   game.session_menu.developer_hud.mouse_access=false
- opened=value;panel.visible=value;view.dragging=false;updates.set_process(value)
+ opened=value;panel.visible=value;view.dragging=false;updates.set_process(value);water_survey.set_process(value)
  game.player_hud.inventory_open=value;game.player_hud.enabled=not value and not game.world_vehicle.driving
  game._clear_motion();Input.mouse_mode=Input.MOUSE_MODE_VISIBLE if value else Input.MOUSE_MODE_CAPTURED
  game.session_menu.refresh();game.session_menu.sync_panels()

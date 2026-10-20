@@ -1,0 +1,11 @@
+{
+  "timed_out": false,
+  "launch_error": null,
+  "cancelled": false,
+  "pid": 20744,
+  "exit_code": 0,
+  "diagnostics": [],
+  "required_text_found": true,
+  "elapsed_seconds": 28.16220630001044,
+  "passed": true
+}

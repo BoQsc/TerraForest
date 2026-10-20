@@ -203,6 +203,7 @@ void NativeRegionalWater::_bind_methods(){
     ClassDB::bind_method(D_METHOD("surface_near","point","radius"),&NativeRegionalWater::surface_near);
     ClassDB::bind_method(D_METHOD("depth_at","point"),&NativeRegionalWater::depth_at);
     ClassDB::bind_method(D_METHOD("survey_columns","cursor","expected_revision","region_budget"),&NativeRegionalWater::survey_columns);
+    ClassDB::bind_method(D_METHOD("survey_revision_id"),&NativeRegionalWater::survey_revision_id);
     ClassDB::bind_method(D_METHOD("survey_surfaces","cursor","expected_revision","region_budget"),&NativeRegionalWater::survey_surfaces);
     ClassDB::bind_method(D_METHOD("overlaps_occupied","bounds"),&NativeRegionalWater::overlaps_occupied);
     ClassDB::bind_method(D_METHOD("placement_mask","transforms"),&NativeRegionalWater::placement_mask);

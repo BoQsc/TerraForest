@@ -26,11 +26,6 @@ static godot::Dictionary terraforest_survey_map(const World &w,int64_t size){
   float r=90+t*86,g=119+t*35,b=83+t*52;
   // Contour bands remain subtle so roads and labels keep their contrast.
   if(h>0&&int(h)%20==0)shade*=.9f;
-  for(int i=0;i<w.basin_count;++i){
-   float wx=(x+.5f)*step-w.basins[i].x,wz=(z+.5f)*step-w.basins[i].z;
-   float radius=w.generator_id>=LAKE_WORLD_GENERATOR_ID&&i==0?80.f:24.f;
-   if(wx*wx+wz*wz<radius*radius&&h<w.basins[i].level){r=54;g=117;b=140;shade=1;break;}
-  }
   size_t at=(x+z*size)*4;p[at]=u8(clampf(r*shade,0,255));p[at+1]=u8(clampf(g*shade,0,255));p[at+2]=u8(clampf(b*shade,0,255));p[at+3]=255;
  }
  out["ok"]=true;out["pixels"]=pixels;out["size"]=size;
@@ -62,11 +57,6 @@ static godot::Dictionary terraforest_survey_patch(const World &w,int size,int ox
   float shade=clampf(.88f+(-dx-dz)*.22f,.52f,1.12f),t=clampf((h-40)/150,0,1);
   float r=90+t*86,g=119+t*35,b=83+t*52;if(h>0&&int(h)%20==0)shade*=.9f;
   if(materials[at]==4){r=75;g=78;b=78;}else if(materials[at]==3){r=123;g=119;b=109;}
-  // Water edits are a separate authoritative field; retain the explicitly labelled
-  // generated-water overlay until that field participates in map surveying.
-  for(int i=0;i<w.basin_count;++i){float wx=(ox+x+.5f)*step-w.basins[i].x,wz=(oz+z+.5f)*step-w.basins[i].z;
-   float radius=w.generator_id>=LAKE_WORLD_GENERATOR_ID&&i==0?80.f:24.f;
-   if(wx*wx+wz*wz<radius*radius&&h<w.basins[i].level){r=54;g=117;b=140;shade=1;break;}}
   size_t dst=(x+z*width)*4;p[dst]=u8(clampf(r*shade,0,255));p[dst+1]=u8(clampf(g*shade,0,255));p[dst+2]=u8(clampf(b*shade,0,255));p[dst+3]=255;
  }
  out["ok"]=true;out["pixels"]=pixels;out["revision"]=w.revision;

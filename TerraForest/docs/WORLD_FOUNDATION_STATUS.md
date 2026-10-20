@@ -1,3 +1,53 @@
+## Actual water integrated into the M-map — 2026-10-20
+
+The playable map now draws a separate native-reduced live-water overlay instead
+of painting generated basin circles into terrain. Base survey version 3 invalidates
+old blue terrain caches. Actual water removal clears blue coverage; snapshot
+restoration reproduces identical coverage. Native reduction keeps the highest
+sample per 3.90625 m subcell and filters it against actual terrain above, then
+reduces 2x2 coverage to the 256-square map. This is approximate regional coverage,
+not exact shoreline geometry. Rendering uses one additional texture draw.
+
+Source orchestration admits at most four four-region calls per frame and yields
+after approximately 1 ms. Each visibility job has at most 16 points on the ordered
+terrain worker. World epoch, terrain revision, water revision and store identity
+invalidate work; stale replies cannot publish. Native raster working storage is
+bounded (under 5 MiB excluding Godot images/textures). Completed runtime maps are
+reused while these identities remain unchanged; closed maps submit no new work.
+
+The water layer has its own checksum-validated, content-keyed derived cache,
+limited to 64 entries (about 16 MiB). Its identity combines certified terrain state
+and native compatibility, a water-map version, and the deterministic source-point
+hash. Unsaved water cannot overwrite the terrain map cache. Unsaved terrain is
+surveyed but does not acquire a certified water-cache entry. Disk I/O runs on a
+low-priority worker; corrupt/mismatched data uses the normal recomputation path.
+Preparation now requires the actual water map to be cached before publication.
+
+Verification in the saved v14 world at 1920x1080 fullscreen: original water,
+complete removal, restoration and unchanged reopen pass. Approximately 103000
+source samples reduce to 1199 visibility candidates. The uncached integrated run
+recorded a maximum 0.268 ms source call and 3.753 ms visibility job. Fresh-process
+cache reuse passed for original/empty/restored states with three cache hits and
+zero visibility queries. Preparation reopen passed with both map caches reused
+and exact settlement blocks, furnishing, roads, resident and spawn signatures.
+Base cache corruption/identity tests and native raster validation pass. Debug and
+release DLLs rebuilt with the pinned prebuilt SDK.
+
+Inspected before/after overview images confirm blue lake coverage is removed;
+public named basin/destination markers intentionally remain. A first script-name
+collision and an empty-buffer hashing diagnostic were caught and corrected;
+retained failed run summaries and subsequent clean evidence are in
+`evidence/live_water_map`. Original authoritative saved-world bytes are preserved.
+
+**Still open:** finer zoom, building footprints, large-population/world limits and
+the broader foundation gates below. Cold water maps still incrementally traverse
+stored water once; disk hits avoid terrain visibility queries, not that source
+scan. Water edits currently invalidate the whole small map layer rather than only
+local map tiles. Highest-sample subcells can miss smaller lower exposed water
+beside covered water; this approximation must not be called an exact shoreline
+survey. This work does not establish ocean-scale or older-laptop performance,
+steady 60 FPS, or final world-art acceptance. Water gameplay remains unchanged.
+
 ## Water-map height and terrain occlusion established — 2026-10-20
 
 Native water cartography now has a separate bounded surface-sampling query. It

@@ -173,6 +173,7 @@ protected: static void _bind_methods();
 public:
     // Conservative occupied-cell column envelope for cartography, not a mesh surface.
     godot::Dictionary survey_columns(int64_t cursor,int64_t expected_revision,int64_t region_budget) const;
+    int64_t survey_revision_id() const {return int64_t(survey_revision);}
     godot::Dictionary survey_surfaces(int64_t cursor,int64_t expected_revision,int64_t region_budget) const;
     godot::Dictionary next_request();
     bool accept_patch(const godot::Ref<NativeWaterTerrainPatch> &patch);
