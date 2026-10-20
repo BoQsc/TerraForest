@@ -64,6 +64,15 @@ var snapshot_capture: Callable
 var snapshot_ready: Callable
 signal snapshot_save_submitted
 var _last_save_success := false
+var _last_save_profile: Dictionary = {}
+var _save_write_stages: Dictionary = {} # Worker-owned; copied into profile after save.
+
+func save_profile() -> Dictionary:
+	mutex.lock()
+	var result:=_last_save_profile.duplicate()
+	mutex.unlock()
+	return result
+
 var snapshot_validators: Dictionary = {}
 var components: Dictionary = {} # Worker-owned; unknown addon sections survive round trips.
 var component_epoch: int = 0
@@ -431,6 +440,8 @@ func _call(data: PackedByteArray) -> PackedByteArray:
 	return native.call("execute", data)
 
 func _save() -> String:
+	_save_write_stages={}
+	var phase_begin:=Time.get_ticks_usec()
 	_last_save_success = false
 	if temporary:
 		return "Temporary test world: save skipped"
@@ -444,14 +455,21 @@ func _save() -> String:
 	if not Codec.reply_ok(response):
 		return "ERROR: native save failed; previous save retained"
 	var payload: PackedByteArray = response.slice(12)
+	_save_write_stages["terrain_capture_us"]=Time.get_ticks_usec()-phase_begin
+	phase_begin=Time.get_ticks_usec()
 	if snapshot_codec != null:
 		var sections: Dictionary = components.duplicate()
 		sections["terrain"] = payload
 		var packed: PackedByteArray = snapshot_codec.encode(sections)
+		_save_write_stages["archive_encode_us"]=Time.get_ticks_usec()-phase_begin
+		phase_begin=Time.get_ticks_usec()
 		if packed.is_empty() or snapshot_codec.publish(ProjectSettings.globalize_path(save_path), packed) != OK:
 			return "ERROR: compound save failed; previous canonical snapshot retained"
+		_save_write_stages["archive_publish_us"]=Time.get_ticks_usec()-phase_begin
+		phase_begin=Time.get_ticks_usec()
 		_set_cache_snapshot(DiskCache.digest(payload).hex_encode())
 		_flush_current_packets()
+		_save_write_stages["cache_us"]=Time.get_ticks_usec()-phase_begin
 		_last_save_success = true
 		return "World saved and verified; terrain and addon state published together"
 	var tmp: String = save_path + ".tmp.%d" % OS.get_process_id()
@@ -1140,9 +1158,14 @@ func _run() -> void:
 			update["light_ticket"] = job["light_ticket"]
 			_push(update)
 		elif kind == "save":
+			var apply_begin:=Time.get_ticks_usec()
 			_apply_components(job.get("component_snapshot", {}))
+			var write_begin:=Time.get_ticks_usec()
 			var saved_message: String = _save()
-			_push({"kind": "message", "message": saved_message,"operation":"save","success":_last_save_success})
+			mutex.lock()
+			_last_save_profile={"apply_us":write_begin-apply_begin,"write_us":Time.get_ticks_usec()-write_begin,"success":_last_save_success,"stages":_save_write_stages.duplicate()}
+			mutex.unlock()
+			_push({"kind": "message", "message": saved_message,"operation":"save","success":_last_save_success,"stages":_save_write_stages.duplicate()})
 		elif kind == "load" or kind == "reset":
 			component_epoch = int(job["epoch"])
 			component_generation = -1

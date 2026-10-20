@@ -490,7 +490,7 @@ func _present_message(text: String,console_output: bool) -> void:
 	status.text=text
 	var label_us:=Time.get_ticks_usec()-label_started
 	var log_started:=Time.get_ticks_usec()
-	if console_output:print("[TerrainRewrite] ",text)
+	if console_output and (text.begins_with("ERROR:") or "--verbose-world-events" in OS.get_cmdline_user_args()):print("[TerrainRewrite] ",text)
 	var log_us:=Time.get_ticks_usec()-log_started
 	if terrain!=null:
 		terrain._record_stage("message label",label_us/1000.0)

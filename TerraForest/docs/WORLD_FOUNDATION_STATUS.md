@@ -1,3 +1,22 @@
+## Actual flight-and-save attribution - 2026-10-20
+
+A disposable clone of the populated world travelled 360 m using native player
+flight at 1920x1080/60 FPS, with cold and warm normal disk saves. Production
+full-resident model settings were used (paging still opt-in). Main dispatch was
+7.6/2.1 ms; save-window frame maxima were 16.9/17.0 ms after routine console writes
+were made opt-in (`--verbose-world-events`). Errors still log and all status text
+still displays. Test callbacks no longer print inside measured frames. The initial
+38 ms completion sample included both game and test synchronous logging.
+
+Do not declare global frame stability: baseline maximum was 34.2 ms. More
+importantly, archive publication occupies the terrain worker for 1.38/1.79 s;
+packing adds ~130 ms and component serialization/validation 84-103 ms. This can
+stall streaming or edits even while rendered frames remain smooth. Next inspect
+regional/archive publication stages and eliminate unnecessary repeated work or
+isolate durable publication from terrain work, preserving atomic roots, backups,
+checksums and save ordering. Flight does not qualify walking/high-speed collision
+or long-run performance. Evidence: `evidence/world_travel_save`.
+
 ## Cold water serialization moved to ordered world worker - 2026-10-20
 
 Normal world capture now freezes native water records and shares immutable
