@@ -1266,6 +1266,11 @@ func _run() -> void:
 			_execute_material_edit(job)
 		elif kind == "lake_slice":
 			_execute_lake_slice(job)
+		elif kind == "survey_patch":
+			var rect:Rect2i=job.rect
+			var surveyed:Dictionary=native.survey_patch(256,rect.position.x,rect.position.y,rect.size.x,rect.size.y)
+			surveyed.merge({"kind":"survey_patch","rect":rect,"token":job.token,"epoch":job.epoch})
+			_push(surveyed)
 		elif kind == "surface_batch":
 			var points: PackedVector3Array = job["points"]
 			var normals := PackedVector3Array()

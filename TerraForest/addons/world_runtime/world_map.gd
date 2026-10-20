@@ -18,8 +18,10 @@ var builds:=0
 var roads:Array[Dictionary]=[]
 var places:Array[Dictionary]=[]
 var timer:Timer
+var updates:Node
 func _ready()->void:
  layer=50
+ updates=preload("res://addons/world_runtime/survey_updates.gd").new();updates.atlas=self;add_child(updates)
  panel=PanelContainer.new();panel.position=Vector2(100,50);panel.size=Vector2(1720,980);add_child(panel)
  var style:=StyleBoxFlat.new();style.bg_color=Color("12262b")
  for side in [SIDE_LEFT,SIDE_RIGHT,SIDE_TOP,SIDE_BOTTOM]:style.set_content_margin(side,22)
@@ -53,7 +55,7 @@ func set_open(value:bool)->void:
  if value:
   game.session_menu.set_open(false);game.storage.close();game.player_hud.set_open(false)
   game.session_menu.developer_hud.mouse_access=false
- opened=value;panel.visible=value;view.dragging=false
+ opened=value;panel.visible=value;view.dragging=false;updates.set_process(value)
  game.player_hud.inventory_open=value;game.player_hud.enabled=not value and not game.world_vehicle.driving
  game._clear_motion();Input.mouse_mode=Input.MOUSE_MODE_VISIBLE if value else Input.MOUSE_MODE_CAPTURED
  game.session_menu.refresh();game.session_menu.sync_panels()
@@ -62,9 +64,9 @@ func set_open(value:bool)->void:
  else:timer.stop()
 func refresh_world()->void:
  var seed_value:int=game.terrain.backend.world_seed;var generator:int=game.terrain.backend.world_generator
- var next_key:="%d/%d"%[seed_value,generator]
+ var next_key:="%d/%d/%d"%[seed_value,generator,game.terrain.epoch]
  if next_key!=key:
-  key=next_key;texture=null;places.clear()
+  key=next_key;texture=null;places.clear();updates.reset()
   var layout:Dictionary=Layout.describe(seed_value,generator)
   if not layout.is_empty():
    var names:=["Central settlement","West settlement","East settlement","North neighborhood","South settlement"]
@@ -88,7 +90,7 @@ func refresh_world()->void:
   job_key=key;worker=Thread.new();builds+=1
   if worker.start(Survey.build.bind(seed_value,generator))==OK:set_process(true)
   else:worker=null;status.text="Survey unavailable. Close and reopen to retry."
- else:status.text="Regional survey · Base landscape and public routes · Player edits are not surveyed"
+ else:status.text=updates.description()
 func _process(_delta:float)->void:
  if worker==null:set_process(false);return
  if worker.is_alive():return
@@ -98,8 +100,9 @@ func _process(_delta:float)->void:
   return
  if not result.get("ok",false):status.text="Survey unavailable. Close and reopen to retry.";return
  last_profile=result.duplicate();last_profile.erase("pixels")
- texture=ImageTexture.create_from_image(Image.create_from_data(Survey.SIZE,Survey.SIZE,false,Image.FORMAT_RGBA8,result.pixels))
- status.text="Regional survey · Base landscape and public routes · Player edits are not surveyed"
+ updates.image=Image.create_from_data(Survey.SIZE,Survey.SIZE,false,Image.FORMAT_RGBA8,result.pixels)
+ texture=ImageTexture.create_from_image(updates.image)
+ status.text=updates.description()
  view.queue_redraw()
 func update_position()->void:
  if not opened:return

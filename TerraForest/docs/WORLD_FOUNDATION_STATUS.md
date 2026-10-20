@@ -1,3 +1,40 @@
+## Edited terrain on the player map - 2026-10-20
+
+The M map now overlays native surface surveys of modified terrain on its cached
+base landscape. Saved modified-column metadata seeds a bounded 4096-tile dirty
+set; published terrain bounds invalidate only intersecting tiles plus a shading
+halo. Each worker request covers at most 4x4 pixels (36 columns including halo),
+one request in flight. It waits behind existing terrain work and is admitted only
+without active edits/brushes and with a small queue. Closing the map stops new
+requests. Epoch/revision checks reject obsolete replies; reopening retains the
+current image instead of surveying the whole world again. All density sampling
+runs in C++; GDScript manages the bounded presentation queue and image upload.
+
+Native tests cover excavation changing pixels, exact reproduction after terrain
+serialization/restoration and rejected out-of-bounds/oversized patches. The actual
+v13 world initialized 150 patches and updated six after one 24 m excavation, with
+no base-map rebuild or streaming-focus movement. The complete check passed in
+22.1 seconds including world loading. Native patch microcheck was about 3.1 ms;
+maximum observed integrated patch was 7.39 ms on the current laptop. This cost is
+bounded work, not a hard millisecond guarantee on older hardware.
+
+Existing map control checks pass: M/Escape, pan/zoom, equipment/input isolation,
+public-only destination labels, exact saved road widths and reopen reuse. Short
+120-frame samples: map-open p95 16.894 ms/max 17.030 ms, closed-after p95 16.860 ms/
+max 17.044 ms at 1920x1080 fullscreen cap60. These are not endurance or thermal
+proof. Initial world restoration still has loading hitches. Evidence and inspected
+map images: `evidence/edited_world_map`. The excavation is a subtle topographic
+change at regional scale, not a detailed excavation diagram.
+
+Still required in this same representation work: persistent edited-patch cache
+keyed to authoritative saved content, live water-field coverage, and representation
+of constructed building footprints/placed objects where useful at map scale.
+Water remains explicitly labelled as the base survey, not current bucket state.
+The 256x256 raster resolves roughly 7.8 m per pixel, so subpixel edits cannot be
+promised visible; zoom magnifies the survey rather than resampling detail. This
+closes the missing terrain-edit update path, not the complete world-map requirement.
+Next continue cache identity/persistence and remaining layers before changing scope.
+
 ## Connected cellar access and durable-close correctness - 2026-10-20
 
 The combined-world player now has an authored 1.5 m footpath from the western
@@ -402,7 +439,7 @@ visual tuning after unsuccessful bounded cycles and return to the world blocker.
 |---|---|---|
 | Generator | Native terrain profiles; offline five-site composition with roads, buildings, POI undergrounds and lakes | Mostly fixed topology/palette; broader seed coverage and coherent landscape/design acceptance |
 | Preparation | Staged creation, fresh-process verification, no-overwrite publication, progress and cancellation | Whole-route cache coverage; standalone workflow without local Python/toolchain |
-| Player map | M map, native cached 256x256 base survey, roads, public destinations, pan/zoom/tracking | Base survey is not a live edited-world raster; document and verify world-representation requirements separately from this UI |
+| Player map | M map, cached base survey plus bounded native terrain-edit patches, saved roads, public destinations, pan/zoom/tracking | Persistent edited-patch cache, live water, building footprints and finer zoom detail remain incomplete; see latest evidence above |
 | Terrain and distant world | Native streaming and derived caches, local edits | Distant edits must remain visible; mining/travel tails and cache/resource growth are not fully qualified |
 | Buildings and static props | Native blocks, batched props, furniture, doors/windows, storage, regional block paging | Detailed populated-world residency capacity; mixed interiors/approach acceptance |
 | Roads and travel | Regional routes, local streets, normal collision loading, parked/drivable vehicles | All shoulders/junctions and high-speed arrival at declared speed; bounded repeated cross-world travel |
