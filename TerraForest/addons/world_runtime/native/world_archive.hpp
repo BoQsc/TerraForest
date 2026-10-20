@@ -13,6 +13,7 @@ public:
     ~NativeWorldArchive();
     bool acquire(const godot::String &absolute_path);
     void release();
+    bool validate_sections(const godot::Dictionary &sections) const;
     godot::PackedByteArray encode(const godot::Dictionary &sections) const;
     godot::Dictionary decode(const godot::PackedByteArray &bytes) const;
     godot::PackedByteArray read(const godot::String &absolute_path) const;

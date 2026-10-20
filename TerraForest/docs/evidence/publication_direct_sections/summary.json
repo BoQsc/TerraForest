@@ -1,0 +1,77 @@
+{
+  "run": {
+    "timed_out": false,
+    "launch_error": null,
+    "cancelled": false,
+    "pid": 40744,
+    "exit_code": 0,
+    "diagnostics": [],
+    "required_text_found": true,
+    "elapsed_seconds": 28.06923170000664,
+    "passed": true
+  },
+  "samples": [
+    {
+      "mode": "baseline",
+      "dispatch_us": 0,
+      "worker": {},
+      "frame_p95_ms": 16.793,
+      "frame_max_ms": 34.214,
+      "distance": 120.003662109375
+    },
+    {
+      "mode": "cold_save",
+      "dispatch_us": 7786,
+      "worker": {
+        "apply_us": 109290,
+        "stages": {
+          "archive_encode_us": 0,
+          "archive_publish_us": 803305,
+          "cache_us": 14071,
+          "regional": {
+            "blocks_us": 1051,
+            "compact_encode_us": 131301,
+            "models_us": 10240,
+            "retire_after_us": 311435,
+            "retire_before_us": 155836,
+            "root_publish_us": 189501,
+            "validate_sections_us": 1070
+          },
+          "terrain_capture_us": 21388
+        },
+        "success": true,
+        "write_us": 839466
+      },
+      "frame_p95_ms": 16.749,
+      "frame_max_ms": 16.858,
+      "distance": 240.00732421875
+    },
+    {
+      "mode": "warm_save",
+      "dispatch_us": 2117,
+      "worker": {
+        "apply_us": 88821,
+        "stages": {
+          "archive_encode_us": 0,
+          "archive_publish_us": 969574,
+          "cache_us": 16096,
+          "regional": {
+            "blocks_us": 1414,
+            "compact_encode_us": 131179,
+            "models_us": 8857,
+            "retire_after_us": 320034,
+            "retire_before_us": 315826,
+            "root_publish_us": 188254,
+            "validate_sections_us": 1068
+          },
+          "terrain_capture_us": 12002
+        },
+        "success": true,
+        "write_us": 998471
+      },
+      "frame_p95_ms": 16.824,
+      "frame_max_ms": 20.386,
+      "distance": 360.010986328125
+    }
+  ]
+}

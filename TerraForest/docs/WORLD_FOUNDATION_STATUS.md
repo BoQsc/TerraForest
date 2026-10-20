@@ -1,3 +1,25 @@
+## Direct section publication removes temporary archive round-trip - 2026-10-20
+
+The terrain save worker passes sections directly to the regional archive adapter.
+The base archive exposes the SAME name/type/count/size validation used by encoding;
+validation happens before any region-store changes. The adapter copies the input
+mapping, commits checkpoints, and encodes/checksums only the final root. Existing
+packed-archive publication remains supported. Final checksum validation, flushed
+readback verification, backup retention and atomic root replacement are unchanged.
+
+Cold/warm write phases measured 0.84/1.00 seconds versus 1.14/1.28 seconds before;
+the temporary encode (~140 ms) and decode (~137 ms) are removed. Native archive,
+87-check regional archive, 34-check retention and actual gameplay compound
+save/reopen checks pass. An old catalog test now checks current v2 bytes and explicit
+v1 compatibility. Both native variants updated. Evidence:
+`evidence/publication_direct_sections`.
+
+Blocking remains OPEN: serialization/validation plus durable publication still
+occupy the terrain worker for roughly 0.95/1.09 seconds in this short check. Next
+isolate durable publication on a bounded worker with explicit ordering/barriers
+for repeated saves, reload and shutdown; verify mining/streaming can progress
+while a save is pending. Do not remove integrity work to claim a latency pass.
+
 ## Checkpoint retention scans unified - 2026-10-20
 
 Native publication profiling identified pre/post-publication checkpoint cleanup

@@ -460,10 +460,16 @@ func _save() -> String:
 	if snapshot_codec != null:
 		var sections: Dictionary = components.duplicate()
 		sections["terrain"] = payload
-		var packed: PackedByteArray = snapshot_codec.encode(sections)
-		_save_write_stages["archive_encode_us"]=Time.get_ticks_usec()-phase_begin
-		phase_begin=Time.get_ticks_usec()
-		if packed.is_empty() or snapshot_codec.publish(ProjectSettings.globalize_path(save_path), packed) != OK:
+		var publish_error:int
+		if snapshot_codec.has_method("publish_sections"):
+			_save_write_stages["archive_encode_us"]=0
+			publish_error=snapshot_codec.publish_sections(ProjectSettings.globalize_path(save_path),sections)
+		else:
+			var packed: PackedByteArray = snapshot_codec.encode(sections)
+			_save_write_stages["archive_encode_us"]=Time.get_ticks_usec()-phase_begin
+			phase_begin=Time.get_ticks_usec()
+			publish_error=ERR_INVALID_DATA if packed.is_empty() else snapshot_codec.publish(ProjectSettings.globalize_path(save_path),packed)
+		if publish_error!=OK:
 			return "ERROR: compound save failed; previous canonical snapshot retained"
 		_save_write_stages["archive_publish_us"]=Time.get_ticks_usec()-phase_begin
 		if snapshot_codec.has_method("publication_profile"):_save_write_stages["regional"]=snapshot_codec.publication_profile()

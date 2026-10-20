@@ -24,7 +24,10 @@ func run() -> void:
 	var catalog: RefCounted = ClassDB.instantiate("NativeLakeCatalog")
 	var record: Dictionary = {"id":7,"origin":Vector3(2,10,2),"cells":Vector3i(16,16,16),"spacing":1.0,"level":20.0,"seed":Vector3(10,15,10)}
 	var water: PackedByteArray = catalog.encode([record])
-	check(water.size()==76 and catalog.decode(water)["records"][0]==record,"native lake catalog round-trips stable IDs and definitions")
+	var current_record:Dictionary=record.duplicate();current_record["water_state"]=PackedByteArray()
+	check(water.size()==80 and catalog.decode(water)["records"][0]==current_record,"native lake catalog round-trips stable IDs and definitions")
+	var legacy:PackedByteArray=water.slice(0,76);legacy.encode_u32(4,1)
+	check(catalog.decode(legacy)["records"][0]==record,"legacy lake catalog retains version-one compatibility")
 	check(catalog.decode(catalog.encode([],500))["next_id"]==500,"empty catalog retains persistent ID allocation cursor")
 	check(catalog.encode([record],7).is_empty(),"catalog rejects cursor that would reuse a live ID")
 	check(catalog.encode([record,record]).is_empty(),"duplicate lake IDs rejected")

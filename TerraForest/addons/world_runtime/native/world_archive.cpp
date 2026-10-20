@@ -33,6 +33,7 @@ void NativeWorldArchive::_bind_methods() {
     ClassDB::bind_method(D_METHOD("acquire","absolute_path"),&NativeWorldArchive::acquire);
     ClassDB::bind_method(D_METHOD("release"),&NativeWorldArchive::release);
     ClassDB::bind_method(D_METHOD("encode","sections"),&NativeWorldArchive::encode);
+    ClassDB::bind_method(D_METHOD("validate_sections","sections"),&NativeWorldArchive::validate_sections);
     ClassDB::bind_method(D_METHOD("decode","bytes"),&NativeWorldArchive::decode);
     ClassDB::bind_method(D_METHOD("read","absolute_path"),&NativeWorldArchive::read);
     ClassDB::bind_method(D_METHOD("publish","absolute_path","bytes"),&NativeWorldArchive::publish);
@@ -46,19 +47,25 @@ bool NativeWorldArchive::acquire(const String &path) {
     lease_=handle; leased_path_=path; return true;
 }
 void NativeWorldArchive::release(){if(lease_){CloseHandle(static_cast<HANDLE>(lease_));lease_=nullptr;leased_path_=String();}}
-PackedByteArray NativeWorldArchive::encode(const Dictionary &sections) const {
-    if(sections.size()<1 || sections.size()>64 || !sections.has("terrain"))return {};
+static int64_t archive_section_size(const Dictionary &sections) {
+    if(sections.size()<1 || sections.size()>64 || !sections.has("terrain"))return -1;
     Array keys=sections.keys();
     int64_t total=48;
     for(int64_t i=0;i<keys.size();++i) {
-        if(keys[i].get_type()!=Variant::STRING)return {};
+        if(keys[i].get_type()!=Variant::STRING)return -1;
         const String name=keys[i]; const Variant value=sections[name];
-        if(!valid_name(name) || value.get_type()!=Variant::PACKED_BYTE_ARRAY)return {};
+        if(!valid_name(name) || value.get_type()!=Variant::PACKED_BYTE_ARRAY)return -1;
         const PackedByteArray part=value;
-        if(part.size()>LIMIT || (name!="terrain" && part.size()>64*1024*1024))return {};
+        if(part.size()>LIMIT || (name!="terrain" && part.size()>64*1024*1024))return -1;
         total+=8+name.length()+part.size();
-        if(total>LIMIT)return {};
+        if(total>LIMIT)return -1;
     }
+    return total;
+}
+bool NativeWorldArchive::validate_sections(const Dictionary &sections) const {return archive_section_size(sections)>=0;}
+PackedByteArray NativeWorldArchive::encode(const Dictionary &sections) const {
+    int64_t total=archive_section_size(sections);if(total<0)return {};
+    Array keys=sections.keys();
     keys.sort();
     PackedByteArray out; if(out.resize(total)!=OK)return {};
     std::memcpy(out.ptrw(),MAGIC,8); out.encode_u32(8,1);out.encode_u32(12,uint32_t(keys.size()));

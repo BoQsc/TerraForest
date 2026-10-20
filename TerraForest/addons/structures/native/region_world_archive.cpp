@@ -19,6 +19,7 @@ void NativeRegionWorldArchive::_bind_methods() {
     ClassDB::bind_method(D_METHOD("decode","bytes"),&NativeRegionWorldArchive::decode);
     ClassDB::bind_method(D_METHOD("read","absolute_path"),&NativeRegionWorldArchive::read);
     ClassDB::bind_method(D_METHOD("publish","absolute_path","bytes"),&NativeRegionWorldArchive::publish);
+    ClassDB::bind_method(D_METHOD("publish_sections","absolute_path","sections"),&NativeRegionWorldArchive::publish_sections);
     ClassDB::bind_method(D_METHOD("validate_snapshot","bytes"),&NativeRegionWorldArchive::validate_snapshot);
     ClassDB::bind_method(D_METHOD("read_storage_region","region","expected","checkpoint"),&NativeRegionWorldArchive::read_storage_region,DEFVAL(PackedByteArray()));
     ClassDB::bind_method(D_METHOD("start_region_reads","request_limit","byte_limit"),&NativeRegionWorldArchive::start_region_reads,DEFVAL(8),DEFVAL(int64_t(8)*(2*1024*1024+96)));
@@ -176,17 +177,24 @@ bool NativeRegionWorldArchive::retire_unreferenced() {
     return true;
 }
 int64_t NativeRegionWorldArchive::publish(const String &path,const PackedByteArray &bytes) {
+    if(path_!=path||path_.is_empty()||store_.is_null())return ERR_UNCONFIGURED;
+    Dictionary root=archive_->call("decode",bytes);if(!bool(root.get("ok",false)))return ERR_INVALID_DATA;
+    return publish_sections(path,root["sections"]);
+}
+int64_t NativeRegionWorldArchive::publish_sections(const String &path,const Dictionary &input) {
     publication_profile_.clear();uint64_t phase=Time::get_singleton()->get_ticks_usec();
     auto mark=[&](const char *name){uint64_t now=Time::get_singleton()->get_ticks_usec();publication_profile_[name]=int64_t(now-phase);phase=now;};
     if(path_!=path||path_.is_empty()||store_.is_null())return ERR_UNCONFIGURED;
-    Dictionary root=archive_->call("decode",bytes);if(!bool(root.get("ok",false)))return ERR_INVALID_DATA;
-    Dictionary sections=root["sections"];
+    // Check the exact same section contract as encoding before touching stores.
+    // This worker-owned in-memory input does not need a temporary archive/hash.
+    if(!bool(archive_->call("validate_sections",input)))return ERR_INVALID_DATA;
+    Dictionary sections=input.duplicate();
     if(!sections.has("structures"))return ERR_INVALID_DATA;
     Dictionary structure=codec_->decode(sections["structures"]);
     const bool partial=!bool(structure["ok"]);
     if(partial)structure=codec_->decode_storage(sections["structures"]);
     if(!bool(structure["ok"]))return ERR_INVALID_DATA;
-    mark("decode_root_us");
+    mark("validate_sections_us");
     // Failed previous saves can leave extra pins. Retire only after validating
     // both published roots, before allocating another pin.
     if(!retire_unreferenced())return ERR_FILE_CORRUPT;

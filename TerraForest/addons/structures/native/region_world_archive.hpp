@@ -69,6 +69,7 @@ public:
     PackedByteArray encode(const Dictionary &sections) const;
     Dictionary decode(const PackedByteArray &bytes) const;
     PackedByteArray read(const String &absolute_path) const;
+    int64_t publish_sections(const String &absolute_path,const Dictionary &sections);
     int64_t publish(const String &absolute_path,const PackedByteArray &bytes);
     Dictionary storage_stats() const;
     Dictionary read_storage_region(Vector3i region,const PackedByteArray &expected,const PackedByteArray &checkpoint=PackedByteArray()) const;

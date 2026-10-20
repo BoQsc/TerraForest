@@ -89,6 +89,11 @@ func check_adapter(path: String,original: PackedByteArray,newer: PackedByteArray
 	var sections := {"terrain":PackedByteArray([1,2,3]),"water":PackedByteArray([8,9]),"structures":codec.encode(original,{})}
 	var first: PackedByteArray = adapter.encode(sections)
 	check(adapter.publish(path,first)==OK,"adapter commits regions and pin before world root")
+	var supplied:Dictionary=sections.duplicate(true)
+	check(raw.validate_sections(sections) and adapter.publish_sections(path,sections)==OK and sections==supplied,"direct sections publish without mutating caller input")
+	var stable:PackedByteArray=adapter.read(path)
+	for malformed:Dictionary in [{"structures":sections.structures},{"terrain":sections.terrain,"structures":sections.structures,"Bad":PackedByteArray()},{"terrain":sections.terrain,"structures":sections.structures,"water":42},{"terrain":sections.terrain,"structures":PackedByteArray([1,2,3])}]:
+		check(adapter.publish_sections(path,malformed)!=OK and adapter.read(path)==stable,"invalid direct sections preserve canonical archive")
 	var disk: PackedByteArray = adapter.read(path)
 	var root: Dictionary = raw.decode(disk)
 	check(root.ok and codec.decode_reference(root.sections.structures).ok and root.sections.terrain==sections.terrain and root.sections.water==sections.water,"world root stores reference while other sections remain exact")
