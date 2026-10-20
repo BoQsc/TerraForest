@@ -38,6 +38,9 @@ func run()->void:
  print("COMPONENT_RESTORE_FRAMES ",restore_frames)
  check(preparation_frames>1 and not game.ground_cover._reset_active and not game.terrain._reload_preparing,"ground cover preparation spans frames and finishes before readiness")
  print("RELOAD_PREPARATION_FRAMES ",preparation_frames)
+ var released:=true
+ for batch:Node3D in game.ground_cover.batches:released=released and batch.stats().retired_collection_units==0 and batch.render_stats().retired_render_bytes==0
+ check(released,"all native vegetation retirement records and render buffers drain")
  check(game.lakes.water.survey_cache_identity()==identity,"water content identity survives reload")
  check(game.lakes.water.statistics().water_ml==before.water_ml,"reload preserves generated water quantity")
  check(game.lakes.water.statistics().map_identity_scene_hash_us==0,"reload hashes water off scene thread")

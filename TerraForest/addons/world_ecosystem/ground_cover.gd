@@ -33,6 +33,7 @@ var _scatter_job:Dictionary={}
 var _resident_layers:Dictionary={}
 var _reset_active:=false
 var _reset_batch:=0
+var _reset_native_started:=false
 var _reset_keys:Array=[]
 func _layers(key:Vector2i)->int:
 	# Maintain cover density through the full resident area; mesh LOD reduces cost.
@@ -97,8 +98,13 @@ func _advance_reset(budget_us:int)->int:
 	if not _reset_active:return 1
 	var began:=Time.get_ticks_usec()
 	while _reset_batch<batches.size():
-		if not batches[_reset_batch].clear_instances():return -1
-		_reset_batch+=1
+		if not _reset_native_started:
+			if not batches[_reset_batch].begin_transient_clear():return -1
+			_reset_native_started=true
+		var remaining:=maxi(1,budget_us-int(Time.get_ticks_usec()-began)) if budget_us>0 else 10000
+		var progress:Dictionary=batches[_reset_batch].advance_transient_clear(4096,remaining)
+		if not progress.ok:return -1
+		if progress.complete:_reset_native_started=false;_reset_batch+=1
 		if budget_us>0 and Time.get_ticks_usec()-began>=budget_us:return 0
 	while not _reset_keys.is_empty():
 		var key:Vector2i=_reset_keys.pop_back()

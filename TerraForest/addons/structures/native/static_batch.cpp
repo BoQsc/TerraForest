@@ -3,6 +3,7 @@
 #include <godot_cpp/classes/multi_mesh.hpp>
 #include <godot_cpp/classes/hashing_context.hpp>
 #include <godot_cpp/core/class_db.hpp>
+#include <godot_cpp/classes/time.hpp>
 #include <cmath>
 #include <cstring>
 namespace terraforest {
@@ -40,6 +41,8 @@ void NativeStaticBatch::_bind_methods() {
     ClassDB::bind_method(D_METHOD("upsert_instances","ids","transforms"),&NativeStaticBatch::upsert_instances);
     ClassDB::bind_method(D_METHOD("remove_instances","ids"),&NativeStaticBatch::remove_instances);
     ClassDB::bind_method(D_METHOD("clear_instances"),&NativeStaticBatch::clear_instances);
+    ClassDB::bind_method(D_METHOD("begin_transient_clear"),&NativeStaticBatch::begin_transient_clear);
+    ClassDB::bind_method(D_METHOD("advance_transient_clear","max_records","max_usec"),&NativeStaticBatch::advance_transient_clear);
     ClassDB::bind_method(D_METHOD("get_instance","id"),&NativeStaticBatch::get_instance);
     ClassDB::bind_method(D_METHOD("get_ids"),&NativeStaticBatch::get_ids);
     ClassDB::bind_method(D_METHOD("capture_snapshot"),&NativeStaticBatch::capture_snapshot);
@@ -221,10 +224,50 @@ bool NativeStaticBatch::set_removal_protected(int64_t id,bool enabled) {
     if(!placements.count(id)&&!unloaded_ids.count(id))return false;
     removal_protected.insert(id);return true;
 }
+bool NativeStaticBatch::begin_transient_clear() {
+    if(collection_retirement||admission||paging_checkpoint||!unloaded_regions.empty()||!removal_protected.empty()||
+       !render_streaming||!proxy_parts.empty()||!collision_bodies.empty())return false;
+    if(placements.empty())return true;
+    auto retired=std::make_unique<CollectionRetirement>();
+    retired->render_bytes=render_bytes;retired->stride_bytes=render_stride_bytes();
+    retired->units=placements.size()*2+groups.size()+batches.size()+slots.size()+appearance_birth.size()+
+        resident_ids.size()+render_ids.size()+render_bounds.size()+collision_bounds.size();
+    retired->old_placements.swap(placements);retired->old_groups.swap(groups);retired->old_batches.swap(batches);
+    retired->old_slots.swap(slots);retired->old_birth.swap(appearance_birth);retired->old_resident.swap(resident_ids);
+    retired->old_render.swap(render_ids);retired->old_bounds.swap(render_bounds);retired->old_collision_bounds.swap(collision_bounds);
+    for(auto &entry:retired->old_batches)entry.second->set_visible(false);
+    render_pending.clear();render_bytes=0;render_candidates=0;render_blocked=0;render_dirty=true;collision_dirty=true;
+    collection_retirement=std::move(retired);publish_change();return true;
+}
+Dictionary NativeStaticBatch::advance_transient_clear(int64_t max_records,int64_t max_usec) {
+    Dictionary result;result["ok"]=false;result["complete"]=false;
+    if(max_records<1||max_records>16384||max_usec<1||max_usec>10000)return result;
+    const auto began=Time::get_singleton()->get_ticks_usec();int64_t processed=0;
+    auto erase_one=[](auto &values){if(values.empty())return false;values.erase(values.begin());return true;};
+    while(collection_retirement&&processed<max_records&&(processed==0||Time::get_singleton()->get_ticks_usec()-began<uint64_t(max_usec))) {
+        auto &r=*collection_retirement;
+        if(!r.old_batches.empty()) {
+            auto it=r.old_batches.begin();auto ids=r.old_resident.find(it->first);
+            if(ids!=r.old_resident.end())r.render_bytes-=ids->second.size()*r.stride_bytes;
+            memdelete(it->second);r.old_batches.erase(it);++render_evictions;
+        }
+        else if(erase_one(r.old_placements)){}
+        else if(!r.old_groups.empty()) {
+            auto it=r.old_groups.begin();if(it->second.empty())r.old_groups.erase(it);else it->second.erase(it->second.begin());
+        }
+        else if(erase_one(r.old_slots)||erase_one(r.old_birth)||erase_one(r.old_resident)||erase_one(r.old_render)||erase_one(r.old_bounds)||erase_one(r.old_collision_bounds)){}
+        else {collection_retirement.reset();break;}
+        --r.units;++processed;
+        if(!r.units)collection_retirement.reset();
+    }
+    result["ok"]=true;result["complete"]=!collection_retirement;result["processed"]=processed;
+    result["remaining"]=int64_t(collection_retirement?collection_retirement->units:0);
+    result["elapsed_us"]=int64_t(Time::get_singleton()->get_ticks_usec()-began);return result;
+}
 bool NativeStaticBatch::clear_instances() {
     // Whole transient collection reset. Do not bypass persistence ownership,
     // an in-flight region transfer, or protected object contents.
-    if(admission||paging_checkpoint||!unloaded_regions.empty()||!removal_protected.empty())return false;
+    if(collection_retirement||admission||paging_checkpoint||!unloaded_regions.empty()||!removal_protected.empty())return false;
     if(placements.empty())return true;
     // No surviving slots need repair when every page is being removed.
     // Avoid release_batch's per-instance tree lookups for this whole reset.
@@ -335,7 +378,10 @@ bool NativeStaticBatch::restore_snapshot(const PackedByteArray &bytes) {
     rebuild(touched);publish_change(true);return true;
 }
 Dictionary NativeStaticBatch::stats() const {
+    // Retirement is excluded from live placements but remains explicitly accounted.
     Dictionary d;d["removal_protected"]=int(removal_protected.size());d["instances"]=int(placements.size()-hidden_record_count());d["staged_instances"]=int(admission_retiring?0:hidden_record_count());d["retiring_instances"]=int(admission_retiring?hidden_record_count():0);d["spatial_batches"]=int(batches.size());d["transform_bytes"]=int(placements.size())*48;
+    d["retired_collection_units"]=int64_t(collection_retirement?collection_retirement->units:0);
+    d["retired_transform_bytes"]=int64_t(collection_retirement?collection_retirement->old_placements.size()*48:0);
     d["asset_id"]=asset_id;d["batch_uploads"]=int64_t(uploads);d["instance_updates"]=int64_t(instance_updates);d["slot_entries"]=int(slots.size());return d;
 }
 }

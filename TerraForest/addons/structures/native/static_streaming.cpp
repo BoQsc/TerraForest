@@ -63,7 +63,7 @@ void NativeStaticBatch::upload_batch(RenderKey page) {
     render_bytes+=count*render_stride_bytes();render_uploaded_bytes+=count*render_stride_bytes();++uploads;
 }
 bool NativeStaticBatch::configure_render_streaming(bool enabled,double radius,int64_t batch_limit,int64_t byte_limit,int64_t uploads_per_tick,int64_t bytes_per_tick) {
-    if(admission)return false;
+    if(admission||collection_retirement)return false;
     if(!std::isfinite(radius)||radius<0||radius>16384||batch_limit<1||batch_limit>4096||
        byte_limit<render_stride_bytes()||byte_limit>8000000||uploads_per_tick<1||uploads_per_tick>64||
        bytes_per_tick<render_stride_bytes()||bytes_per_tick>4800000)return false;
@@ -133,6 +133,7 @@ void NativeStaticBatch::select_render_batches() {
     for(auto it=ordered.rbegin();it!=ordered.rend();++it)if(!batches.count(*it))render_pending.push_back(*it);
 }
 void NativeStaticBatch::_process(double) {
+    if(collection_retirement)return; // Retired GPU pages count against the collection budget.
     if(collision_only)return;
     if(!render_streaming||!is_inside_tree())return;
     if(render_dirty)select_render_batches();
@@ -145,7 +146,7 @@ void NativeStaticBatch::_process(double) {
 }
 bool NativeStaticBatch::configure_appearance_fade() {
     // Opt-in before data admission; default static props retain their 48-byte layout.
-    if(!placements.empty()||!unloaded_regions.empty()||!batches.empty()||admission||render_tick_bytes<64||render_byte_limit<64)return false;
+    if(collection_retirement||!placements.empty()||!unloaded_regions.empty()||!batches.empty()||admission||render_tick_bytes<64||render_byte_limit<64)return false;
     appearance_fade=true;return true;
 }
 bool NativeStaticBatch::page_casts_shadows(RenderKey key) const {
@@ -204,6 +205,9 @@ Dictionary NativeStaticBatch::render_stats() const {
     d["batch_limit"]=render_batch_limit;d["byte_limit"]=int64_t(render_byte_limit);
     d["uploads_per_tick"]=render_upload_limit;d["bytes_per_tick"]=int64_t(render_tick_bytes);
     d["resident_batches"]=int(batches.size());d["resident_instances"]=int(slots.size());
+    d["retired_batches"]=int64_t(collection_retirement?collection_retirement->old_batches.size():0);
+    d["retired_render_bytes"]=int64_t(collection_retirement?collection_retirement->render_bytes:0);
+    d["retained_render_bytes"]=int64_t(render_bytes+(collection_retirement?collection_retirement->render_bytes:0));
     d["resident_transform_bytes"]=int64_t(render_bytes);d["authored_groups"]=int(groups.size());
     d["candidate_batches"]=render_candidates;d["budget_deferred"]=render_blocked;
     d["pending_batches"]=int(render_pending.size());d["selection_pending"]=render_dirty;

@@ -134,6 +134,19 @@ class NativeStaticBatch : public Node3D {
     static bool valid_asset(const String &id);
     static bool parse(const PackedByteArray &bytes,String &asset,std::map<int64_t,Placement> *out);
     void rebuild(const std::set<BlockKey> &keys);
+    struct CollectionRetirement {
+        decltype(placements) old_placements;
+        decltype(groups) old_groups;
+        decltype(batches) old_batches;
+        decltype(slots) old_slots;
+        decltype(appearance_birth) old_birth;
+        decltype(resident_ids) old_resident;
+        decltype(render_ids) old_render;
+        decltype(render_bounds) old_bounds;
+        decltype(collision_bounds) old_collision_bounds;
+        uint64_t units=0,render_bytes=0,stride_bytes=48;
+    };
+    std::unique_ptr<CollectionRetirement> collection_retirement;
 protected:
     static void _bind_methods();
     void _notification(int what);
@@ -190,6 +203,8 @@ public:
     bool upsert_instances(const PackedInt64Array &ids,const PackedFloat32Array &transforms);
     bool remove_instances(const PackedInt64Array &ids);
     bool clear_instances();
+    bool begin_transient_clear();
+    Dictionary advance_transient_clear(int64_t max_records,int64_t max_usec);
     PackedFloat32Array get_instance(int64_t id) const;
     PackedInt64Array get_ids() const;
     PackedByteArray capture_snapshot() const;

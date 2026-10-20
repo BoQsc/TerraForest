@@ -1,0 +1,61 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS configure streamed collection
+PASS populate 1024 records
+PASS render pages exist before retirement
+PASS protected collection rejects retirement atomically
+PASS detach full collection
+PASS logical state clears once and retired pages hide immediately
+PASS second reset cannot overwrite pending retirement
+PASS render reconfiguration cannot bypass retirement budget
+PASS retired data remains visible in memory accounting
+PASS invalid step budget rejected
+PASS reuse ID while old state retires
+PASS new rendering waits for retired pages to avoid double residency
+PASS minimum valid budget guarantees forward progress
+PASS retirement obeys record cap and drains completely
+PASS retirement cannot erase newly placed object with reused ID
+PASS retirement accounting drains to zero
+PASS new rendering resumes after retirement
+TRANSIENT_RETIRE_PROFILE records=1024 detach_us=16 calls=49 max_step_us=18
+PASS prepare partial-retirement shutdown
+PASS configure streamed collection
+PASS populate 16384 records
+PASS render pages exist before retirement
+PASS protected collection rejects retirement atomically
+PASS detach full collection
+PASS logical state clears once and retired pages hide immediately
+PASS second reset cannot overwrite pending retirement
+PASS render reconfiguration cannot bypass retirement budget
+PASS retired data remains visible in memory accounting
+PASS invalid step budget rejected
+PASS reuse ID while old state retires
+PASS new rendering waits for retired pages to avoid double residency
+PASS minimum valid budget guarantees forward progress
+PASS retirement obeys record cap and drains completely
+PASS retirement cannot erase newly placed object with reused ID
+PASS retirement accounting drains to zero
+PASS new rendering resumes after retirement
+TRANSIENT_RETIRE_PROFILE records=16384 detach_us=13 calls=545 max_step_us=58
+PASS prepare partial-retirement shutdown
+PASS exercise custom-data render stride
+PASS configure streamed collection
+PASS populate 65536 records
+PASS render pages exist before retirement
+PASS protected collection rejects retirement atomically
+PASS detach full collection
+PASS logical state clears once and retired pages hide immediately
+PASS second reset cannot overwrite pending retirement
+PASS render reconfiguration cannot bypass retirement budget
+PASS retired data remains visible in memory accounting
+PASS invalid step budget rejected
+PASS reuse ID while old state retires
+PASS new rendering waits for retired pages to avoid double residency
+PASS minimum valid budget guarantees forward progress
+PASS retirement obeys record cap and drains completely
+PASS retirement cannot erase newly placed object with reused ID
+PASS retirement accounting drains to zero
+PASS new rendering resumes after retirement
+TRANSIENT_RETIRE_PROFILE records=65536 detach_us=10 calls=2113 max_step_us=75
+PASS prepare partial-retirement shutdown
+TRANSIENT_COLLECTION_RETIREMENT failures=0

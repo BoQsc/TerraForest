@@ -157,8 +157,8 @@ func run() -> void:
 	for batch in cover.batches:hidden=hidden and not batch.visible
 	check(hidden,"staged reset hides every old vegetation batch immediately")
 	var reset_steps:=0;var status:=0
-	while status==0 and reset_steps<128:
-		status=cover._advance_reset(1);reset_steps+=1
+	while status==0 and reset_steps<8192:
+		status=cover._advance_reset(100);reset_steps+=1
 	check(status==1 and reset_steps>1 and not cover._reset_active,"staged reset completes through bounded preparation steps")
 	check(cover.removed.capture_storage_snapshot()==saved_edits,"runtime reset preserves saved vegetation edits")
 	check(cover.resident.is_empty() and cover.batches[0].get_ids().is_empty() and cover.batches[1].get_ids().is_empty() and cover.batches[2].get_ids().is_empty(),"reset releases generated records")
