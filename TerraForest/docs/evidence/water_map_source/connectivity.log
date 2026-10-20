@@ -1,0 +1,5 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS Disconnected air intervals cannot create water across a solid gap
+PASS An actual shared opening fills both cells with exact capacity
+REGIONAL_CONNECTIVITY failures=0

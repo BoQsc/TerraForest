@@ -202,6 +202,7 @@ void NativeRegionalWater::_bind_methods(){
     ClassDB::bind_method(D_METHOD("transfer_bucket","from","to","pour","inventory","slot","revision"),&NativeRegionalWater::transfer_water);
     ClassDB::bind_method(D_METHOD("surface_near","point","radius"),&NativeRegionalWater::surface_near);
     ClassDB::bind_method(D_METHOD("depth_at","point"),&NativeRegionalWater::depth_at);
+    ClassDB::bind_method(D_METHOD("survey_columns","cursor","expected_revision","region_budget"),&NativeRegionalWater::survey_columns);
     ClassDB::bind_method(D_METHOD("overlaps_occupied","bounds"),&NativeRegionalWater::overlaps_occupied);
     ClassDB::bind_method(D_METHOD("placement_mask","transforms"),&NativeRegionalWater::placement_mask);
     ClassDB::bind_method(D_METHOD("raycast_surface","from","to"),&NativeRegionalWater::raycast_surface);
@@ -223,6 +224,7 @@ int NativeRegionalWater::index(const Vector3i &p){return (p.x&7)+8*(p.y&7)+64*(p
 bool NativeRegionalWater::in_domain(const Vector3i &p){return p.x>=0&&p.x<4000&&p.z>=0&&p.z<4000&&p.y>=2&&p.y<509;}
 void NativeRegionalWater::request(Key k){if(request_set.insert(k).second)requests.push_back(k);}
 void NativeRegionalWater::invalidate_snapshot() const {
+    ++survey_revision;
     if(!snapshot_cached&&saved_frozen.is_null())return;
     snapshot_cached=false;saved_snapshot=PackedByteArray();saved_catalog=PackedByteArray();
     saved_frozen.unref();frozen_catalog=PackedByteArray();
@@ -1363,4 +1365,27 @@ bool NativeRegionalWater::validate_snapshot(const PackedByteArray &data) const {
 PackedByteArray NativeRegionalWater::snapshot_catalog(const PackedByteArray &data) const {
     if(!validate_snapshot(data))return PackedByteArray();return data.decode_u32(0)==MAGIC?data.slice(32,32+data.decode_u32(8)):data;
 }
+}
+
+Dictionary terraforest::NativeRegionalWater::survey_columns(int64_t cursor,int64_t expected_revision,int64_t region_budget) const {
+    Dictionary out;out["ok"]=false;out["revision"]=int64_t(survey_revision);
+    if(cursor<0||region_budget<1||region_budget>16||expected_revision<-1)return out;
+    if(expected_revision>=0&&uint64_t(expected_revision)!=survey_revision){out["stale"]=true;return out;}
+    const uint64_t begin=Time::get_singleton()->get_ticks_usec();
+    auto it=regions.lower_bound(Key(cursor));int processed=0;PackedVector3Array columns;
+    uint64_t amount=0;
+    while(it!=regions.end()&&processed<region_budget){
+        const auto coordinate=position(it->first);const auto &r=it->second;
+        // Inspect amounts even while derived terrain contacts are being refreshed.
+        // These are occupied voxel envelopes; terrain occlusion is a separate map layer.
+        for(int z=0;z<8;++z)for(int x=0;x<8;++x){int highest=-1;
+            for(int y=0;y<8;++y){auto value=r.water[x+8*y+64*z];amount+=value;if(value)highest=y;}
+            if(highest>=0)columns.push_back(Vector3(coordinate.x*4+x*.5+.25,coordinate.y*4+(highest+1)*.5,coordinate.z*4+z*.5+.25));
+        }
+        ++it;++processed;
+        if(Time::get_singleton()->get_ticks_usec()-begin>=500)break;
+    }
+    out["ok"]=true;out["complete"]=it==regions.end();out["cursor"]=it==regions.end()?int64_t(0):int64_t(it->first);
+    out["regions"]=processed;out["columns"]=columns;out["water_ml"]=int64_t(amount);
+    out["worker_us"]=int64_t(Time::get_singleton()->get_ticks_usec()-begin);return out;
 }

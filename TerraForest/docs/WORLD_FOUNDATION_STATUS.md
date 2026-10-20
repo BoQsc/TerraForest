@@ -1,3 +1,31 @@
+## Native water-map source established - 2026-10-20
+
+The existing native regional water store now exposes a bounded cartographic
+column survey independent of visible mesh residency. Each call visits at most
+16 regions, with a cooperative 500 microsecond stop checked after each region.
+At most 1024 occupied-column records are returned per call. A monotonic store
+revision rejects continuation after any authoritative/cache mutation; restart is
+explicit rather than silently combining old and new water. This introduces no
+water flow, changes to bucket rules or changes to snapshot bytes.
+
+Actual saved v14 world verification traversed all stored regions in 506 calls
+at a four-region budget, returning 104588 occupied column records. The maximum
+observed native call was 13 microseconds on this machine. Summed quantities exactly
+match the stored total. Removing real water invalidates an in-progress cursor;
+a fresh survey reports exactly the reduced amount. Saving/restoring reproduces
+identical columns and amounts. Invalid budgets/cursors are rejected. Evidence:
+evidence/water_map_source. The existing connectivity check also passes.
+
+This is the native source dependency, NOT completed live water on the M map.
+Columns describe conservative occupied 0.5 m voxel upper bounds, not exact rendered
+surface height or terrain visibility. Next accumulate them into a bounded map
+layer, combine with terrain surface visibility, invalidate on water mutations,
+and qualify cache identity/reload before removing the base-water disclaimer.
+Do not render the raw columns as final lake shapes or reveal underground volumes.
+The test intentionally collects columns for equality checking; production must
+consume incremental batches rather than rebuilding a full record list per frame.
+Building map coverage and existing world-foundation gates remain open.
+
 ## Prepared cartography reaches gameplay copies - 2026-10-20
 
 The ordinary complete-world workflow now warms edited terrain cartography during

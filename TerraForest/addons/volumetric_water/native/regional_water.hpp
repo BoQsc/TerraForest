@@ -112,6 +112,7 @@ class NativeRegionalWater : public godot::RefCounted {
     mutable bool snapshot_cached=false;
     mutable uint64_t snapshot_builds=0,snapshot_hits=0;
     void invalidate_snapshot() const;
+    mutable uint64_t survey_revision=0;
 
     std::map<Key,Region> mesh_snapshot;
     std::unordered_set<Key> mesh_snapshot_absent,mesh_snapshot_dependencies;
@@ -170,6 +171,8 @@ class NativeRegionalWater : public godot::RefCounted {
     bool decode(const godot::PackedByteArray &data,bool install);
 protected: static void _bind_methods();
 public:
+    // Conservative occupied-cell column envelope for cartography, not a mesh surface.
+    godot::Dictionary survey_columns(int64_t cursor,int64_t expected_revision,int64_t region_budget) const;
     godot::Dictionary next_request();
     bool accept_patch(const godot::Ref<NativeWaterTerrainPatch> &patch);
     void invalidate(const godot::AABB &bounds,bool replace_water=false);
