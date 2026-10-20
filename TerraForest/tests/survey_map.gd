@@ -13,12 +13,19 @@ func _initialize()->void:
  var different:Dictionary=Cache.build(43,13,path)
  if not different.ok or different.pixels==first.pixels:failures+=1
  # Correct-length corrupted bytes must be regenerated rather than displayed.
- var file:=FileAccess.open(path+"/survey_1_13_42.bin",FileAccess.WRITE)
- var bad:=PackedByteArray();bad.resize(256*256*4+32);bad.fill(0);file.store_buffer(bad);file.close()
+ var file:=FileAccess.open(Cache.cache_path(42,13,path),FileAccess.WRITE)
+ var bad:=PackedByteArray();bad.resize(256*256*4+32+Cache.HEADER_BYTES);bad.fill(0);file.store_buffer(bad);file.close()
  var repaired:Dictionary=Cache.build(42,13,path)
  if not repaired.ok or repaired.cache_hit or repaired.pixels!=first.pixels:failures+=1
  var repaired_hit:Dictionary=Cache.build(42,13,path)
  if not repaired_hit.cache_hit or repaired_hit.pixels!=first.pixels:failures+=1
+ # A valid checksum from another seed must not be accepted under this key.
+ var other:=FileAccess.get_file_as_bytes(Cache.cache_path(43,13,path))
+ file=FileAccess.open(Cache.cache_path(42,13,path),FileAccess.WRITE);file.store_buffer(other);file.close()
+ var swapped:Dictionary=Cache.build(42,13,path)
+ if not swapped.ok or swapped.cache_hit or swapped.pixels!=first.pixels:failures+=1
+ var prepared:Dictionary=Cache.prepare(42,13,path)
+ if not prepared.ok or not prepared.reopen_verified or prepared.has("pixels"):failures+=1
  for name in DirAccess.get_files_at(path):DirAccess.remove_absolute(path+"/"+name)
  DirAccess.remove_absolute(path)
  print("SURVEY_MAP failures=",failures," native_ms=",first.native_ms," cold_ms=",first.worker_ms," cached_ms=",second.worker_ms)

@@ -1,3 +1,11 @@
+## Current priority - 2026-10-20
+
+The user has reaffirmed complete playable-world generation, representation,
+storage and performance as the main objective. Follow
+[the current world-foundation coverage register](WORLD_FOUNDATION_STATUS.md).
+It supersedes historical next-action directives below. Vegetation AA tuning is
+not the active delivery milestone. All unresolved defects remain recorded.
+
 ## Moving-view comparison - 2026-10-20
 
 Six-metre camera-path evidence: `evidence/vegetation_motion_diagnostic`.

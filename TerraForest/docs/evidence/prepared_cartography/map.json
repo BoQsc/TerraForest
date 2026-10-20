@@ -1,0 +1,33 @@
+{
+  "builds": 1,
+  "failures": 0,
+  "frames": [
+    {
+      "gpu_p95_ms": 6.83400011062622,
+      "max_ms": 17.476,
+      "p95_ms": 17.199,
+      "stage": "closed_before"
+    },
+    {
+      "gpu_p95_ms": 6.90399980545044,
+      "max_ms": 17.481,
+      "p95_ms": 17.205,
+      "stage": "open"
+    },
+    {
+      "gpu_p95_ms": 6.95699977874756,
+      "max_ms": 17.011,
+      "p95_ms": 16.781,
+      "stage": "closed_after"
+    }
+  ],
+  "places": 9,
+  "profile": {
+    "cache_hit": true,
+    "cache_persisted": true,
+    "native_ms": 0.0,
+    "ok": true,
+    "worker_ms": 2.477
+  },
+  "roads": 27
+}

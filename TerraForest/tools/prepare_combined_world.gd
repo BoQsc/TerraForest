@@ -49,6 +49,15 @@ func run()->void:
  if not started:print("STARTUP_DIAGNOSTIC ",game.terrain.loading_state(game.player.position,game.fly)," lakes=",game.lakes.statistics()," catalog=",game.lakes.descriptions()," label=",game.loading_label.text)
  if not require(started,"normal generated world starts"):await finish(false);return
  game.set_physics_process(false);game._clear_motion();game.app_focused=true
+ # Prepare the same derived map consumed by M before publishing a playable world.
+ var map_worker:=Thread.new()
+ var map_job:=preload("res://addons/world_runtime/survey_cache.gd").prepare.bind(game.terrain.backend.world_seed,game.terrain.backend.world_generator)
+ if not require(map_worker.start(map_job)==OK,"cartography preparation worker starts"):await finish(false);return
+ while map_worker.is_alive():await process_frame
+ var map_result:Dictionary=map_worker.wait_to_finish()
+ if not require(map_result.get("ok",false),"cartography persisted and reopened before gameplay"):await finish(false);return
+ print("PREPARED_CARTOGRAPHY ",JSON.stringify(map_result))
+
  if reopening:
   if not require(game.construction_inventory.gameplay and game.player_hud.gameplay_construction,"reopen uses resource-cost gameplay with actors and fleet enabled"):await finish(false);return
   if not require(game.actors.pool!=null and game.actors.store.statistics().active==2,"reopen has exactly two residents with simulation enabled"):await finish(false);return

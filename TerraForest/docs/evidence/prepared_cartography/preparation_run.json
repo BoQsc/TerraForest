@@ -1,0 +1,147 @@
+{
+  "slot": "southern_mixed_42_20261018",
+  "source_sha256": "3a76b6fa3e86aecf6c529263d22cf59174d73644dcb67d21b8332c4048ed4995",
+  "phases": [
+    {
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--max-fps",
+        "60",
+        "--headless",
+        "--script",
+        "res://tools/prepare_world_cache.gd",
+        "--",
+        "--world-slot=southern_mixed_42_20261018",
+        "--snapshot-readonly",
+        "--gameplay-construction",
+        "--prepare-report=C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\world_preparation\\20261020T084214809770Z\\prepare\\cache.json"
+      ],
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 18192,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 48.94032010000956,
+        "passed": true
+      },
+      "metrics": {
+        "cache": {
+          "accounting_complete": true,
+          "byte_limit": 536870912,
+          "cache_read_only": false,
+          "corrupt": 0,
+          "disk_bytes": 536606084,
+          "enabled": true,
+          "evicted_bytes": 0,
+          "eviction_pending": true,
+          "evictions": 0,
+          "hits": 262,
+          "last_available_bytes": -1,
+          "lease_owned": true,
+          "minimum_free_bytes": 1073741824,
+          "misses": 306,
+          "reserve_blocked": false,
+          "reserve_skips": 0,
+          "scan_entries": 14207,
+          "write_failures": 0,
+          "writes": 0
+        },
+        "cache_path": "user://terrain_cache",
+        "cartography": {
+          "cache_hit": false,
+          "cache_persisted": true,
+          "native_ms": 17.7993,
+          "ok": true,
+          "reopen_verified": true,
+          "worker_ms": 33.675
+        },
+        "elapsed_ms": 45758,
+        "ready": true,
+        "scope": "Saved spawn focus and ordinary terrain coverage; not an entire-world bake or a performance qualification.",
+        "slot": "southern_mixed_42_20261018"
+      }
+    },
+    {
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--max-fps",
+        "60",
+        "--fullscreen",
+        "--resolution",
+        "1920x1080",
+        "--script",
+        "res://tools/prepare_world_cache.gd",
+        "--",
+        "--world-slot=southern_mixed_42_20261018",
+        "--snapshot-readonly",
+        "--gameplay-construction",
+        "--prepare-report=C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\world_preparation\\20261020T084214809770Z\\verify\\cache.json"
+      ],
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 19132,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 18.717109399993205,
+        "passed": true
+      },
+      "metrics": {
+        "cache": {
+          "accounting_complete": true,
+          "byte_limit": 536870912,
+          "cache_read_only": false,
+          "corrupt": 0,
+          "disk_bytes": 536606084,
+          "enabled": true,
+          "evicted_bytes": 0,
+          "eviction_pending": true,
+          "evictions": 0,
+          "hits": 262,
+          "last_available_bytes": -1,
+          "lease_owned": true,
+          "minimum_free_bytes": 1073741824,
+          "misses": 306,
+          "reserve_blocked": false,
+          "reserve_skips": 0,
+          "scan_entries": 14207,
+          "write_failures": 0,
+          "writes": 0
+        },
+        "cache_path": "user://terrain_cache",
+        "cartography": {
+          "cache_hit": true,
+          "cache_persisted": true,
+          "native_ms": 0.0,
+          "ok": true,
+          "reopen_verified": true,
+          "worker_ms": 3.729
+        },
+        "elapsed_ms": 14720,
+        "ready": true,
+        "scope": "Saved spawn focus and ordinary terrain coverage; not an entire-world bake or a performance qualification.",
+        "slot": "southern_mixed_42_20261018"
+      }
+    }
+  ],
+  "revision": "34ed7a5d45bc4d3b9188c6eb7a857c6e6bb0f1d5",
+  "worktree_changes": [
+    " M TerraForest/addons/world_runtime/survey_cache.gd",
+    " M TerraForest/tests/survey_map.gd",
+    " M TerraForest/tools/prepare_combined_world.gd",
+    " M TerraForest/tools/prepare_world_cache.gd"
+  ],
+  "git_metadata_available": true,
+  "cache_reuse_verified": true,
+  "source_unchanged": true,
+  "passed": true
+}

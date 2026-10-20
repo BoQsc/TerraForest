@@ -1,3 +1,10 @@
+Current scope and remaining gates: [World foundation](WORLD_FOUNDATION_STATUS.md).
+
+Map cartography is now prepared and read back before the preparation pipeline
+continues. The M map consumes this same validated derived cache. Existing worlds
+can prepare it with `python tools/prepare_world_cache.py --slot NAME --verify`;
+canonical saves are not modified. This does not bake every terrain region.
+
 # Integrated world generation
 
 The default fixed-slot launchers are now **Prepare Generated World.cmd** and

@@ -1,0 +1,36 @@
+{
+  "cache": {
+    "accounting_complete": true,
+    "byte_limit": 536870912,
+    "cache_read_only": false,
+    "corrupt": 0,
+    "disk_bytes": 536606084,
+    "enabled": true,
+    "evicted_bytes": 0,
+    "eviction_pending": true,
+    "evictions": 0,
+    "hits": 262,
+    "last_available_bytes": -1,
+    "lease_owned": true,
+    "minimum_free_bytes": 1073741824,
+    "misses": 306,
+    "reserve_blocked": false,
+    "reserve_skips": 0,
+    "scan_entries": 14207,
+    "write_failures": 0,
+    "writes": 0
+  },
+  "cache_path": "user://terrain_cache",
+  "cartography": {
+    "cache_hit": false,
+    "cache_persisted": true,
+    "native_ms": 17.7993,
+    "ok": true,
+    "reopen_verified": true,
+    "worker_ms": 33.675
+  },
+  "elapsed_ms": 45758,
+  "ready": true,
+  "scope": "Saved spawn focus and ordinary terrain coverage; not an entire-world bake or a performance qualification.",
+  "slot": "southern_mixed_42_20261018"
+}
