@@ -61,6 +61,13 @@ every distinct entrance/stair topology. Basements, chambers and mineshafts belon
 to specific POIs and remain rare and intentional; no ambient pipe-cave network as
 a substitute for designed underground places.
 
+Repeated floor modules must distinguish ground, intermediate and roof conditions.
+An opening needed for stairs from the floor below must not leave exposed terrain
+in a ground-floor interior. Verify the ground slab and upper stair clearance
+separately. Access checks must start on a connected street and wait for destination
+residency before enumerating nearby doors; teleporting beside a door proves only
+that entrance, not the connection from the world.
+
 ## Landscape, vegetation and water belong together
 
 Keep coherent transitions between settlement, paths, yards and surrounding biome.

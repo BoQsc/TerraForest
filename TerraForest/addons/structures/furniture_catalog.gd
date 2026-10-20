@@ -72,7 +72,12 @@ static func furnished_tower(floors: int=3) -> Resource:
 			for y in range(1,4):
 				if level==0 and x==0 and y<3:cells.erase(Vector3i(x,y,8))
 				else:cells[Vector3i(x,y,8)]=65
-		if level==0:cells[Vector3i(0,0,9)]=83
+		if level==0:
+			# The reusable upper-floor module has a stair opening. At ground
+			# level there is no lower flight: close it with the normal slab.
+			for x in range(-1,2):
+				for z in range(0,4):cells[Vector3i(x,0,z)]=65
+			cells[Vector3i(0,0,9)]=83
 		if level==floors-1:
 			for x in range(-8,9):
 				for z in range(-8,9):cells[Vector3i(x,4,z)]=65

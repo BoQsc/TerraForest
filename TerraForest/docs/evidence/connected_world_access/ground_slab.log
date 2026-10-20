@@ -1,0 +1,7 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS tower floors=2 sealed ground slab and open upper stair shafts
+PASS tower floors=3 sealed ground slab and open upper stair shafts
+PASS tower floors=4 sealed ground slab and open upper stair shafts
+PASS tower floors=16 sealed ground slab and open upper stair shafts
+TOWER_GROUND_FLOOR failures=0

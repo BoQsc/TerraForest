@@ -1,0 +1,153 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+PASS normal generated world starts
+PASS cartography preparation worker starts
+PASS cartography persisted and reopened before gameplay
+PREPARED_CARTOGRAPHY {"cache_hit":true,"cache_persisted":true,"native_ms":0.0,"ok":true,"reopen_verified":true,"worker_ms":12.043}
+PASS preparation starts in an empty staging world
+PASS shared native regional layout available
+PASS regional centre loads for settlement generation
+PASS registered furnished building sources are available
+PASS mixed central recipe contains both building types
+CENTRAL_LAYOUT world_seed=42 layout_seed=42
+PASS existing native editor composes connected furnished streets
+REGIONAL_SITE_SURVEY { "ok": true, "min_height": 56.0, "max_height": 56.0, "samples": 1580, "epoch": 0, "revision": 0, "minimum_grade": 45, "maximum_grade": 63, "grade": 56 } footprint=[P: (972.0, 56.0, 892.0), S: (37.0, 13.0, 95.0)]
+PASS regional district beside arterial has supported foundation
+PASS regional district foundation plan valid
+PASS regional road foundations fit protected authoring bounds
+PASS terrain survey finds supported settlement grade
+PASS native grading and asphalt preparation complete
+PASS staged furnished settlement publishes
+PASS mixed generation contains eight furnished buildings including cottages and towers
+PASS resident street collision ready
+PASS two native patrol residents prepared: Two street patrol actors placed. F5 saves the population.
+PASS outer town furnished source available
+PASS outer site 1 loads
+PASS district sources available: Western residential lane
+PASS outer furnished street composed
+PASS outer site supported: { "ok": true, "min_height": 44.0, "max_height": 44.0, "samples": 420, "epoch": 0, "revision": 14, "minimum_grade": 33, "maximum_grade": 51, "grade": 44 }
+PASS outer site plan valid
+PASS regional road foundations fit protected authoring bounds
+PASS outer foundation and arterial connection prepared
+PASS district furnished buildings published: Western residential lane
+REGIONAL_TOWN site=1 doors=12 cells=9708
+PASS outer site 2 loads
+PASS district sources available: Eastern mine service street
+PASS outer furnished street composed
+PASS outer site supported: { "ok": true, "min_height": 54.0, "max_height": 54.0, "samples": 448, "epoch": 0, "revision": 25, "minimum_grade": 43, "maximum_grade": 61, "grade": 54 }
+PASS outer site plan valid
+PASS regional road foundations fit protected authoring bounds
+PASS outer foundation and arterial connection prepared
+PASS district furnished buildings published: Eastern mine service street
+REGIONAL_TOWN site=2 doors=14 cells=11186
+PASS outer site 3 loads
+PASS lot surveyed before any grading: Northern lot 1
+PASS lot surveyed before any grading: Northern lot 2
+PASS lot surveyed before any grading: Northern lot 3
+PASS lot surveyed before any grading: Northern lot 4
+PASS lot surveyed before any grading: Northern lot 5
+PASS lot surveyed before any grading: Northern lot 6
+PASS lot surveyed before any grading: Northern lot 7
+PASS lot surveyed before any grading: Northern lot 8
+PASS lot surveyed before any grading: Northern lot 9
+PASS lot surveyed before any grading: Northern lot 10
+PASS lot surveyed before any grading: Northern lot 11
+PASS lot surveyed before any grading: Northern lot 12
+PASS northern common recipe builds before grading
+PASS common pre-edit earthworks fit: { "site": "Northern common paths and furniture", "status": "pass", "issues": [], &"max_fill": 0.0, &"max_cut": 0.0, &"relief": 0.0, &"grade": 55.0 } survey={ "ok": true, "min_height": 55.0, "max_height": 55.0, "samples": 184, "epoch": 0, "revision": 34, "minimum_grade": 44, "maximum_grade": 62, "grade": 55.0 }
+PASS independent northern lot plan: accepted
+PASS northern road survey geometry
+PASS street earthworks fit: { "site": "Northern street corridors", "status": "pass", "issues": [], &"max_fill": 0.0, &"max_cut": 0.0, &"relief": 0.0, &"grade": 55.0 } survey={ "ok": true, "min_height": 55.0, "max_height": 55.0, "samples": 3622, "epoch": 0, "revision": 34, "minimum_grade": 44, "maximum_grade": 62, "grade": 55.0 }
+NORTHERN_LOT_QUALITY [{"grade":55.0,"issues":[],"max_cut":0.0,"max_fill":0.314273834228516,"relief":0.314273834228516,"site":"Northern lot 1","status":"pass"},{"grade":55.0,"issues":[],"max_cut":0.0,"max_fill":0.72320556640625,"relief":0.72320556640625,"site":"Northern lot 2","status":"pass"},{"grade":55.0,"issues":[],"max_cut":0.0,"max_fill":0.0,"relief":0.0,"site":"Northern lot 3","status":"pass"},{"grade":55.0,"issues":[],"max_cut":0.0,"max_fill":0.0,"relief":0.0,"site":"Northern lot 4","status":"pass"},{"grade":55.0,"issues":[],"max_cut":0.0,"max_fill":0.0,"relief":0.0,"site":"Northern lot 5","status":"pass"},{"grade":55.0,"issues":[],"max_cut":0.0,"max_fill":0.0,"relief":0.0,"site":"Northern lot 6","status":"pass"},{"grade":55.0,"issues":[],"max_cut":0.0,"max_fill":0.0,"relief":0.0,"site":"Northern lot 7","status":"pass"},{"grade":55.0,"issues":[],"max_cut":0.0,"max_fill":0.0,"relief":0.0,"site":"Northern lot 8","status":"pass"},{"grade":55.0,"issues":[],"max_cut":0.0,"max_fill":0.0,"relief":0.0,"site":"Northern lot 9","status":"pass"},{"grade":55.0,"issues":[],"max_cut":0.0,"max_fill":0.0,"relief":0.0,"site":"Northern lot 10","status":"pass"},{"grade":56.0,"issues":[],"max_cut":0.261028289794922,"max_fill":1.0,"relief":1.26102828979492,"site":"Northern lot 11","status":"pass"},{"grade":55.0,"issues":[],"max_cut":0.225631713867188,"max_fill":0.0,"relief":0.225631713867188,"site":"Northern lot 12","status":"pass"}]
+PASS move outside northern preparation bounds
+PASS independent lots and streets prepared
+PASS terrain-fitted building published: Northern lot 1 support=supported
+PASS terrain-fitted building published: Northern lot 2 support=supported
+PASS terrain-fitted building published: Northern lot 3 support=supported
+PASS terrain-fitted building published: Northern lot 4 support=supported
+PASS terrain-fitted building published: Northern lot 5 support=supported
+PASS terrain-fitted building published: Northern lot 6 support=supported
+PASS terrain-fitted building published: Northern lot 7 support=supported
+PASS terrain-fitted building published: Northern lot 8 support=supported
+PASS terrain-fitted building published: Northern lot 9 support=supported
+PASS terrain-fitted building published: Northern lot 10 support=supported
+PASS terrain-fitted building published: Northern lot 11 support=supported
+PASS terrain-fitted building published: Northern lot 12 support=supported
+PASS native concrete walkways published
+PASS common paving, shared furniture and public chest publish together: 
+NORTHERN_COMMON origin=(1026, 54, 230) blocks=184 props=7 survey={ "ok": true, "min_height": 55.0, "max_height": 55.0, "samples": 184, "epoch": 0, "revision": 34, "minimum_grade": 44, "maximum_grade": 62, "grade": 55.0 }
+PASS persistent native neighborhood groves configured
+PASS outer site 4 loads
+PASS district sources available: Southern homes and workshop lane
+PASS regional mixed building choices available
+PASS outer furnished street composed
+PASS outer site supported: { "ok": true, "min_height": 61.904899597168, "max_height": 62.3541793823242, "samples": 658, "epoch": 0, "revision": 91, "minimum_grade": 52, "maximum_grade": 68, "grade": 62 }
+PASS outer site plan valid
+PASS regional road foundations fit protected authoring bounds
+PASS outer foundation and arterial connection prepared
+PASS district furnished buildings published: Southern homes and workshop lane
+REGIONAL_TOWN site=4 doors=30 cells=27012
+PASS five regional sites contain expected furnished buildings
+PASS cellar location loads
+PASS cellar building site plan valid
+PASS cellar surface and underground preparation publishes
+PASS cellar cottage and attachments publish
+REGIONAL_CELLAR origin=(250, 39, 1019) cells=27653
+PASS mine location streams before placement
+PASS mine access plan fits world bounds
+PASS mine access does not overwrite protected placement
+PASS mine access terrain edit accepted
+PASS mine access asphalt publishes
+PASS mine access does not overwrite protected placement
+PASS mine access terrain edit accepted
+PASS mine access asphalt publishes
+PASS mine access does not overwrite protected placement
+PASS mine access terrain edit accepted
+PASS mine access asphalt publishes
+PASS mine entrance prefab builds
+PASS mine entrance and storage publish through native combined transaction
+PASS mine timber frames exist in world
+REGIONAL_MINE owner=2 entrance=(1770.0, 54.0, 1049.0) cells=27727
+PASS woodland location loads
+PASS woodland authored planting completes: { "ok": true, "counts": [15, 70, 797, 5, 4, 2, 22, 34], "owners": 4 }
+REGIONAL_WOODLAND center=(1088.0, 56.0, 1056.0) result={ "ok": true, "counts": [15, 70, 797, 5, 4, 2, 22, 34], "owners": 4 }
+PASS woodland location loads
+PASS woodland authored planting completes: { "ok": true, "counts": [21, 78, 790, 4, 6, 1, 25, 21], "owners": 4 }
+REGIONAL_WOODLAND center=(1088.0, 62.0, 1824.0) result={ "ok": true, "counts": [21, 78, 790, 4, 6, 1, 25, 21], "owners": 4 }
+PASS woodland location loads
+PASS woodland authored planting completes: { "ok": true, "counts": [8, 11, 158, 0, 2, 1, 4, 7], "owners": 2 }
+REGIONAL_WOODLAND center=(1014.0, 55.0, 256.0) result={ "ok": true, "counts": [8, 11, 158, 0, 2, 1, 4, 7], "owners": 2 }
+PASS woodland location loads
+PASS woodland authored planting completes: { "ok": true, "counts": [4, 11, 183, 0, 0, 1, 4, 8], "owners": 2 }
+REGIONAL_WOODLAND center=(1038.0, 55.0, 256.0) result={ "ok": true, "counts": [4, 11, 183, 0, 0, 1, 4, 8], "owners": 2 }
+PASS transport starts with an empty prepared fleet
+PASS parking location loads
+PASS parking apron is clear of protected structures
+PASS parking apron edit accepted
+PASS parking apron published
+PASS parking collision ready
+PASS parked chassis space is unobstructed
+PASS parked vehicle stored at site 0
+PASS parking location loads
+PASS parking apron is clear of protected structures
+PASS parking apron edit accepted
+PASS parking apron published
+PASS parking collision ready
+PASS parked chassis space is unobstructed
+PASS parked vehicle stored at site 2
+PASS northern bay recipe fits world
+PASS northern bay loads
+PASS northern bay earthworks fit: { "site": "Northern parking bay", "status": "pass", "issues": [], &"max_fill": 0.0, &"max_cut": 0.25035095214844, &"relief": 0.25035095214844, &"grade": 55.0 } survey={ "ok": true, "min_height": 55.0, "max_height": 55.2503509521484, "samples": 99, "epoch": 0, "revision": 112, "minimum_grade": 45, "maximum_grade": 62, "grade": 55.0 }
+PASS northern bay clears homes, paths and protected objects
+PASS northern bay asphalt admitted
+PASS northern bay asphalt publishes
+PASS northern bay collision ready
+PASS northern parked chassis is unobstructed
+PASS northern off-road vehicle stored
+PASS generated chest supplies: { "ok": true, "chests": 60, "reason": "saved location supplies prepared" }
+PASS central spawn reloads after outer town generation
+WORLD_QUALITY_REVIEW {"pending":["landscape and shoreline review","building variety and exploration review","road and pedestrian connectivity","ecology continuity","streaming and representative performance"],"sites":[{"grade":56.0,"issues":[],"max_cut":0.0,"max_fill":0.0,"relief":0.0,"site":"Central settlement","status":"pass"},{"grade":44.0,"issues":[],"max_cut":0.0,"max_fill":0.0,"relief":0.0,"site":"Western residential lane","status":"pass"},{"grade":54.0,"issues":[],"max_cut":0.0,"max_fill":0.0,"relief":0.0,"site":"Eastern mine service street","status":"pass"},{"grade":55.0,"issues":[],"max_cut":0.0,"max_fill":0.0,"relief":0.0,"site":"Northern common paths and furniture","status":"pass"},{"grade":55.0,"issues":[],"max_cut":0.0,"max_fill":0.314273834228516,"relief":0.314273834228516,"site":"Northern lot 1","status":"pass"},{"grade":55.0,"issues":[],"max_cut":0.0,"max_fill":0.72320556640625,"relief":0.72320556640625,"site":"Northern lot 2","status":"pass"},{"grade":55.0,"issues":[],"max_cut":0.0,"max_fill":0.0,"relief":0.0,"site":"Northern lot 3","status":"pass"},{"grade":55.0,"issues":[],"max_cut":0.0,"max_fill":0.0,"relief":0.0,"site":"Northern lot 4","status":"pass"},{"grade":55.0,"issues":[],"max_cut":0.0,"max_fill":0.0,"relief":0.0,"site":"Northern lot 5","status":"pass"},{"grade":55.0,"issues":[],"max_cut":0.0,"max_fill":0.0,"relief":0.0,"site":"Northern lot 6","status":"pass"},{"grade":55.0,"issues":[],"max_cut":0.0,"max_fill":0.0,"relief":0.0,"site":"Northern lot 7","status":"pass"},{"grade":55.0,"issues":[],"max_cut":0.0,"max_fill":0.0,"relief":0.0,"site":"Northern lot 8","status":"pass"},{"grade":55.0,"issues":[],"max_cut":0.0,"max_fill":0.0,"relief":0.0,"site":"Northern lot 9","status":"pass"},{"grade":55.0,"issues":[],"max_cut":0.0,"max_fill":0.0,"relief":0.0,"site":"Northern lot 10","status":"pass"},{"grade":56.0,"issues":[],"max_cut":0.261028289794922,"max_fill":1.0,"relief":1.26102828979492,"site":"Northern lot 11","status":"pass"},{"grade":55.0,"issues":[],"max_cut":0.225631713867188,"max_fill":0.0,"relief":0.225631713867188,"site":"Northern lot 12","status":"pass"},{"grade":55.0,"issues":[],"max_cut":0.0,"max_fill":0.0,"relief":0.0,"site":"Northern street corridors","status":"pass"},{"grade":62.0,"issues":[],"max_cut":0.354179382324219,"max_fill":0.0951004028320313,"relief":0.44927978515625,"site":"Southern homes and workshop lane","status":"pass"},{"grade":55.0,"issues":[],"max_cut":0.250350952148438,"max_fill":0.0,"relief":0.250350952148438,"site":"Northern parking bay","status":"pass"}],"standard_version":1,"status":"unreviewed"}
+PASS generated components ready for compound save
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+COMBINED_PREPARATION failures=0

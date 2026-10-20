@@ -1,3 +1,34 @@
+## Connected access and tower ground-floor correction - 2026-10-20
+
+New actual-world checks start at the regional arterial, follow saved street
+connections, climb entrance steps, open the door and enter a building without
+intermediate teleports. Representative western, eastern, northern and southern
+routes pass with default model paging. The test splits street segments at joining
+points; its initial endpoint-only northern graph failure is retained as a test
+limitation, not a generator defect. Old southern/northern entrance tests now wait
+for destination residency before discovering doors. All four southern approaches
+and entry/exit checks pass with paging.
+
+Inspection exposed a real tower defect: the reusable upper-floor opening also
+existed at ground level, exposing terrain and grass inside. Furnished towers now
+fill those twelve ground cells with the existing slab material. Upper openings
+remain unchanged. Native prefab checks cover 2/3/4/16 storeys. New seed42 world
+foundation_42_20261020 was fully prepared and reopened through the ordinary
+workflow. Its tower ascent/descent passes, and matching interior imagery confirms
+the ground opening is closed. Runtime batching and terrain formats are unchanged.
+
+Play Regional World Review.cmd now uses a separate v11 copy of that new world.
+Versions1-10 and source/player saves are preserved; the launcher dry run was checked.
+No automatic retrofit of existing edited buildings is attempted. Evidence:
+`evidence/connected_world_access` (including pre-fix hole and regenerated interior).
+
+Coverage remains limited: one connected representative entrance per outer location,
+all four southern door approaches, and one tower's upper-floor route. This does not
+qualify every building, basement/mine circulation, all junctions or multiple seeds.
+Location design still needs meaningful interiors/variety and landscape transitions;
+the plain tower interior is not art acceptance. Next address those remaining
+connected-world and generator requirements, retaining the world-quality standard.
+
 ## Continuous vehicle travel with default paging - 2026-10-20
 
 The real native car drove the saved seed42/generator13 central-west arterial at

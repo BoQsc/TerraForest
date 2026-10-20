@@ -1,0 +1,13 @@
+{
+  "timed_out": false,
+  "launch_error": null,
+  "cancelled": false,
+  "pid": 39136,
+  "exit_code": 1,
+  "diagnostics": [
+    "FAIL saved street graph connects arterial origin"
+  ],
+  "required_text_found": false,
+  "elapsed_seconds": 19.05478980000771,
+  "passed": false
+}

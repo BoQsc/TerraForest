@@ -17,6 +17,8 @@ func run()->void:
  if not check(await wait_for(func():return not game.loading_active,60),"saved world loads"):await done();return
  var layout:Dictionary=preload("res://addons/volumetric_terrain/generated_layout.gd").describe(game.terrain.backend.world_seed,game.terrain.backend.world_generator)
  var center:Vector3=layout.sites[3].position
+ game.teleport(center)
+ if not check(await wait_for(func():return not game.loading_active,45),"northern entrance residency ready"):await done();return
  var doors:Array=[]
  for id:int in game.doors.collection.get_ids():
   var p:PackedFloat32Array=game.doors.collection.get_instance(id)

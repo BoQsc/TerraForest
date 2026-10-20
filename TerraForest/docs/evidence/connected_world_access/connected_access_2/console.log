@@ -1,0 +1,22 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[terrain-hitch] restore volumetric_water 178.12 ms at 3149
+[terrain-hitch] receive startup 191.43 ms at 3156
+[terrain-hitch] receive 193.64 ms at 3158
+PASS world loads
+PASS destination residency ready before discovering entrances
+PASS destination has resident entrances
+PASS saved street graph connects arterial origin
+PASS street graph reaches selected entrance frontage
+PASS walk connected street waypoint (1770.0, 54.0, 999.0)
+Visual vehicle dents repaired.
+PASS walk connected street waypoint (1770.0, 54.0, 961.0)
+PASS walk connected street waypoint (1758.0, 54.0, 961.0)
+PASS walk connected street waypoint (1751.5, 54.0, 961.0)
+PASS walk connected street waypoint (1751.5, 55.0, 966.5)
+PASS walk entrance steps from street
+PASS open destination door
+PASS enter building from arterial without teleport
+REGIONAL_CONNECTED_ACCESS failures=0
+[TerrainRewrite] Temporary test world: save skipped
