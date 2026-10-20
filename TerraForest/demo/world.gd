@@ -169,7 +169,7 @@ func _ready() -> void:
 		push_error("Road anchor persistence initialization failed")
 		get_tree().quit(2)
 		return
-	if not storage.prepare(self,persistence) or not structures_ready or not lakes.prepare() or not persistence.register_component("structures", structures.capture_storage_snapshot, storage.restore_structures, structures.snapshot_validator(), structures.empty_snapshot()) or not persistence.register_component("volumetric_water", lakes.capture_snapshot, lakes.restore_snapshot, lakes.snapshot_validator(), lakes.empty_snapshot()) or not persistence.enable_region_structures(true,model_region_paging) or persistence.attach(terrain) != OK:
+	if not storage.prepare(self,persistence) or not structures_ready or not lakes.prepare() or not persistence.register_component("structures", structures.capture_storage_snapshot, storage.restore_structures, structures.snapshot_validator(), structures.empty_snapshot()) or not persistence.register_component("volumetric_water", lakes.capture_storage_snapshot, lakes.restore_snapshot, lakes.snapshot_validator(), lakes.empty_snapshot()) or not persistence.enable_region_structures(true,model_region_paging) or persistence.attach(terrain) != OK:
 		push_error("World persistence initialization failed")
 		get_tree().quit(2)
 		return

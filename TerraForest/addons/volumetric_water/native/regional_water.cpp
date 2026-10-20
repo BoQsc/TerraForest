@@ -210,6 +210,7 @@ void NativeRegionalWater::_bind_methods(){
     ClassDB::bind_method(D_METHOD("next_mesh","include_contacts"),&NativeRegionalWater::next_mesh,DEFVAL(false));
     ClassDB::bind_method(D_METHOD("statistics"),&NativeRegionalWater::statistics);
     ClassDB::bind_method(D_METHOD("capture_snapshot","catalog"),&NativeRegionalWater::capture_snapshot);
+    ClassDB::bind_method(D_METHOD("capture_storage_snapshot","catalog"),&NativeRegionalWater::capture_storage_snapshot);
     ClassDB::bind_method(D_METHOD("restore_snapshot","bytes"),&NativeRegionalWater::restore_snapshot);
     ClassDB::bind_method(D_METHOD("validate_snapshot","bytes"),&NativeRegionalWater::validate_snapshot);
     ClassDB::bind_method(D_METHOD("snapshot_catalog","bytes"),&NativeRegionalWater::snapshot_catalog);
@@ -222,8 +223,9 @@ int NativeRegionalWater::index(const Vector3i &p){return (p.x&7)+8*(p.y&7)+64*(p
 bool NativeRegionalWater::in_domain(const Vector3i &p){return p.x>=0&&p.x<4000&&p.z>=0&&p.z<4000&&p.y>=2&&p.y<509;}
 void NativeRegionalWater::request(Key k){if(request_set.insert(k).second)requests.push_back(k);}
 void NativeRegionalWater::invalidate_snapshot() const {
-    if(!snapshot_cached)return;
+    if(!snapshot_cached&&saved_frozen.is_null())return;
     snapshot_cached=false;saved_snapshot=PackedByteArray();saved_catalog=PackedByteArray();
+    saved_frozen.unref();frozen_catalog=PackedByteArray();
 }
 NativeRegionalWater::Region *NativeRegionalWater::get(const Vector3i &p,bool ask){
     if(!in_domain(p))return nullptr;
@@ -1194,7 +1196,7 @@ NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool s
 Dictionary NativeRegionalWater::statistics() const {
     uint64_t contact_bytes=0;for(const auto &[k,r]:regions)if(r.contacts)contact_bytes+=r.contacts->bytes;
     Dictionary d;d["structure_contact_bytes"]=int64_t(solid_cache_bytes);d["terrain_contact_bytes"]=int64_t(contact_bytes);d["pending_vertical"]=int64_t(0);d["vertical_steps"]=int64_t(0);d["water_ml"]=int64_t(total);d["active_cells"]=int64_t(0);d["regions"]=int64_t(regions.size());d["pending_regions"]=int64_t(requests.size());d["dirty_meshes"]=int64_t(meshes.size()+batch_queue.size());d["mesh_batch_active"]=batch_active;d["mesh_publish_pending"]=publish_pending;d["published_mesh_batch"]=int64_t(published_batch);d["query_cache_bytes"]=int64_t(query_cache_bytes);d["query_builds"]=int64_t(query_builds);d["query_cache_hits"]=int64_t(query_cache_hits);d["mesh_snapshot_bytes"]=int64_t(mesh_snapshot.size()*sizeof(Region));d["fill_active"]=fill.running;d["fill_remaining_ml"]=fill.remaining;d["sampled_nodes"]=int64_t(sampled);d["cache_hits"]=int64_t(cache_hits);d["cached_region_rebuilds"]=int64_t(cache_rebuilds);d["cell_steps"]=int64_t(0);d["changes"]=int64_t(changes);d["step_us"]=int64_t(last_us);d["max_step_us"]=int64_t(max_us);d["mesh_us"]=int64_t(mesh_us);d["max_mesh_us"]=int64_t(max_mesh_us);d["capacity_reached"]=limit;uint64_t vacancy_bytes=0;for(const auto &[k,r]:regions)vacancy_bytes+=r.vacancies.capacity()*sizeof(uint32_t);
-    d["snapshot_cache_bytes"]=saved_snapshot.size()+saved_catalog.size();d["snapshot_builds"]=int64_t(snapshot_builds);d["snapshot_hits"]=int64_t(snapshot_hits);
+    d["snapshot_cache_bytes"]=saved_snapshot.size()+saved_catalog.size();d["snapshot_pending_bytes"]=int64_t(NativeWaterSnapshot::pending_bytes.load());d["snapshot_builds"]=int64_t(snapshot_builds);d["snapshot_hits"]=int64_t(snapshot_hits);
     d["vacancy_bytes"]=int64_t(vacancy_bytes);d["resident_cell_bytes"]=int64_t(regions.size()*sizeof(Region)+contact_bytes+solid_cache_bytes+vacancy_bytes);return d;
 }
 // Self-contained compound snapshot: authoritative amounts + derived occupancy.
@@ -1202,6 +1204,37 @@ Dictionary NativeRegionalWater::statistics() const {
 // Accepted edits invalidate it before capture. Invalid regions are re-sampled on
 // reopen. All data has strict bounds; the outer world archive supplies checksums.
 static constexpr uint32_t MAGIC=0x31575256,OLD_REGION_BYTES=16+512*12,REGION_BYTES=OLD_REGION_BYTES+729*4;
+
+std::atomic<uint64_t> NativeWaterSnapshot::pending_bytes{0};
+void NativeWaterSnapshot::_bind_methods(){ClassDB::bind_method(D_METHOD("serialize_snapshot"),&NativeWaterSnapshot::serialize_snapshot);}
+NativeWaterSnapshot::~NativeWaterSnapshot(){if(reserved_bytes)pending_bytes.fetch_sub(reserved_bytes);}
+PackedByteArray NativeWaterSnapshot::serialize_snapshot(){
+    if(frozen.is_valid()){
+        serialized=frozen->capture_snapshot(catalog);
+        // Only immutable bytes remain after serialization; release the copied
+        // mutable records and shared contacts on the worker, never at edit time.
+        frozen.unref();catalog=PackedByteArray();
+    }
+    return serialized;
+}
+Variant NativeRegionalWater::capture_storage_snapshot(const PackedByteArray &catalog) const {
+    if(fill.running)return PackedByteArray();
+    if(snapshot_cached&&catalog==saved_catalog){++snapshot_hits;return saved_snapshot;}
+    if(saved_frozen.is_valid()&&catalog==frozen_catalog){++snapshot_hits;return saved_frozen;}
+    Ref<NativeLakeCatalog> validator;validator.instantiate();if(!validator->validate_snapshot(catalog))return PackedByteArray();
+    // Account retained immutable contacts conservatively too. Fail closed when
+    // queued snapshots exhaust this bound; the backend retains the canonical save.
+    uint64_t bytes=catalog.size()+regions.size()*(sizeof(Region)+64);
+    for(const auto &[k,r]:regions){bytes+=r.vacancies.size()*sizeof(uint32_t);if(r.contacts)bytes+=r.contacts->bytes;if(r.structures)bytes+=r.structures->bytes;}
+    uint64_t previous=NativeWaterSnapshot::pending_bytes.load();
+    do{if(bytes>128*1024*1024||previous>128*1024*1024-bytes)return PackedByteArray();}
+    while(!NativeWaterSnapshot::pending_bytes.compare_exchange_weak(previous,previous+bytes));
+    Ref<NativeWaterSnapshot> snapshot;snapshot.instantiate();snapshot->reserved_bytes=bytes;
+    snapshot->catalog=catalog;snapshot->frozen.instantiate();
+    snapshot->frozen->regions=regions;snapshot->frozen->total=total;
+    saved_frozen=snapshot;frozen_catalog=catalog;
+    return snapshot;
+}
 PackedByteArray NativeRegionalWater::capture_snapshot(const PackedByteArray &catalog) const {
     PackedByteArray out;if(fill.running)return out;
     if(snapshot_cached&&catalog==saved_catalog){++snapshot_hits;return saved_snapshot;}

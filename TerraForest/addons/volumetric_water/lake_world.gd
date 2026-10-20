@@ -63,12 +63,17 @@ func empty_snapshot() -> PackedByteArray:
  var empty=ClassDB.instantiate("NativeRegionalWater")
  return empty.capture_snapshot(_catalog.encode([]))
 func capture_snapshot() -> PackedByteArray:
+ return _capture(false)
+func capture_storage_snapshot() -> Variant:
+ return _capture(true)
+func _capture(deferred:bool) -> Variant:
  # Do not silently save a partially authored/generated lake as a completed one.
  for item:Dictionary in _lakes.values():
   if item.dirty:return PackedByteArray()
  var records:Array=[]
  for item:Dictionary in _lakes.values():records.append({"id":item.id,"origin":item.origin,"cells":item.cells,"spacing":item.spacing,"level":item.level,"seed":item.seed})
- return water.capture_snapshot(_catalog.encode(records,_next_id))
+ var catalog:PackedByteArray=_catalog.encode(records,_next_id)
+ return water.capture_storage_snapshot(catalog) if deferred else water.capture_snapshot(catalog)
 func restore_snapshot(bytes:PackedByteArray) -> bool:
  var catalog_bytes:PackedByteArray=water.snapshot_catalog(bytes)
  if catalog_bytes.is_empty():return false

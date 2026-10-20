@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: 0BSD
 #pragma once
+#include <godot_cpp/classes/ref.hpp>
 #include <godot_cpp/classes/ref_counted.hpp>
 #include <godot_cpp/variant/packed_byte_array.hpp>
 #include <godot_cpp/variant/dictionary.hpp>
@@ -19,6 +20,7 @@
 #include "water_cell_profile.hpp"
 
 namespace terraforest {
+class NativeWaterSnapshot;
 struct TerrainWaterContacts {uint64_t bytes=0;std::array<std::vector<WaterCellProfile::Triangle>,512> floors;};
 struct StructureWaterContacts {uint64_t bytes=sizeof(std::shared_ptr<const WaterSolidProfile>)*512;std::array<std::shared_ptr<const WaterSolidProfile>,512> cells;};
 // Immutable hand-off: only the terrain worker writes this object. No scene,
@@ -56,6 +58,7 @@ public:
 // Only the main thread owns this store; all loops have explicit work bounds.
 class NativeRegionalWater : public godot::RefCounted {
     GDCLASS(NativeRegionalWater,godot::RefCounted)
+    friend class NativeWaterSnapshot;
     using Key=uint64_t;
     struct Region {
         std::array<uint16_t,512> floor{},ceiling{};
@@ -104,7 +107,8 @@ class NativeRegionalWater : public godot::RefCounted {
     // Main-thread snapshot cache. PackedByteArray copy-on-write keeps an older
     // worker-owned save immutable when the live store changes. Never retain more
     // than 64 MiB here; larger captures remain uncached.
-    mutable godot::PackedByteArray saved_snapshot,saved_catalog;
+    mutable godot::PackedByteArray saved_snapshot,saved_catalog,frozen_catalog;
+    mutable godot::Ref<godot::RefCounted> saved_frozen;
     mutable bool snapshot_cached=false;
     mutable uint64_t snapshot_builds=0,snapshot_hits=0;
     void invalidate_snapshot() const;
@@ -190,9 +194,24 @@ public:
     // Runtime publication and picking use the same closed material boundary.
     godot::Dictionary next_mesh(bool include_contacts=false);
     godot::Dictionary statistics() const;
+    godot::Variant capture_storage_snapshot(const godot::PackedByteArray &catalog) const;
     godot::PackedByteArray capture_snapshot(const godot::PackedByteArray &catalog) const;
     bool restore_snapshot(const godot::PackedByteArray &data);
     bool validate_snapshot(const godot::PackedByteArray &data) const;
     godot::PackedByteArray snapshot_catalog(const godot::PackedByteArray &data) const;
+};
+
+// Single worker owns serialization; no live scene/runtime references escape.
+class NativeWaterSnapshot : public godot::RefCounted {
+    GDCLASS(NativeWaterSnapshot,godot::RefCounted)
+    friend class NativeRegionalWater;
+    godot::Ref<NativeRegionalWater> frozen;
+    godot::PackedByteArray catalog,serialized;
+    uint64_t reserved_bytes=0;
+    static std::atomic<uint64_t> pending_bytes;
+protected: static void _bind_methods();
+public:
+    godot::PackedByteArray serialize_snapshot();
+    ~NativeWaterSnapshot();
 };
 }

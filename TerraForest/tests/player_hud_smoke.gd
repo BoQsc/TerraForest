@@ -87,6 +87,10 @@ func run() -> void:
 	hud.equip(5)
 	check(game.tool==3 and not game.structure_mode,"reassigned toolbelt slot invokes the same tool")
 	var saved: Dictionary=game.persistence._capture()
+	# This direct restore fixture resolves the immutable storage payload; normal
+	# saves do this on the terrain worker before validation/publication.
+	for key:String in saved.sections:
+		if saved.sections[key] is RefCounted:saved.sections[key]=saved.sections[key].serialize_snapshot()
 	check(saved.sections.has("player_loadout"),"compound world capture includes player loadout")
 	hud.drop_stack("player",0,hud.drag_data("player",5))
 	game.persistence._restore(saved.sections,game.persistence._restored_epoch)

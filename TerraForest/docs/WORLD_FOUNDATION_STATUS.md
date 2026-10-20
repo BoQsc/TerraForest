@@ -1,3 +1,24 @@
+## Cold water serialization moved to ordered world worker - 2026-10-20
+
+Normal world capture now freezes native water records and shares immutable
+terrain/building contact geometry. The existing terrain worker materializes the
+payload before component validation and archive publication; no live water object
+is read by that worker. Unchanged captures share the same frozen payload. Copied
+records are released on the worker after serialization, retaining immutable bytes.
+
+Actual populated-world main-thread capture is 8.5-9.0 ms cold, 0.46-0.56 ms repeated
+(previous cold 19-21 ms). Worker serialization preserves the prior SHA-256. Later
+live edits cannot change a queued snapshot. The 128 MiB conservative staging
+reservation is finite, fails closed and recovers on release. Existing 64 MiB byte
+cache bound remains. Actual compound bucket/mining/building save/reopen and manual
+save ordering pass. Both native builds updated; format/gameplay unchanged.
+Evidence: `evidence/world_capture_worker`.
+
+This is not a sustained frame-rate guarantee: cold capture still consumes about
+half a 60 FPS frame, worker serialization may delay queued work, and world size
+scaling remains to qualify. Next measure actual save dispatch while travelling
+and address the measured limiting stage. Full foundation coverage remains open.
+
 ## Unchanged world captures reuse immutable native snapshots - 2026-10-20
 
 Water snapshot reuse now retains at most 64 MiB including catalog bytes, with

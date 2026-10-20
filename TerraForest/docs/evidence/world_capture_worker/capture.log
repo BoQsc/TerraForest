@@ -1,0 +1,49 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[terrain-hitch] restore volumetric_water 180.39 ms at 3350
+[TerrainRewrite] World loaded
+[TerrainRewrite] World loaded
+[terrain-hitch] receive startup 196.34 ms at 3360
+[terrain-hitch] receive 197.99 ms at 3361
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS world ready
+PASS snapshot worker starts
+PASS snapshot cache respects 64 MiB bound
+PASS complete captured sections
+Visual vehicle dents repaired.
+PASS snapshot worker starts
+PASS unchanged capture stays below 5 ms
+PASS snapshot cache respects 64 MiB bound
+PASS complete captured sections
+PASS snapshot worker starts
+PASS unchanged capture stays below 5 ms
+PASS snapshot cache respects 64 MiB bound
+PASS complete captured sections
+PASS captured world restores
+PASS cold storage capture freezes native records
+PASS frozen snapshot serializes on worker
+PASS later live mutations cannot alter queued snapshot
+PASS restore source after queued snapshot test
+PASS restored world is byte-identical
+PASS unchanged snapshot reuses immutable bytes
+PASS caller mutation cannot corrupt cached snapshot
+PASS terrain invalidation changes cached occupancy
+PASS restore invalidates older cached state
+PASS building invalidation changes cached occupancy
+PASS original occupancy restored
+PASS catalog identity invalidates cached archive
+PASS original catalog recaptures exactly
+PASS fixture contains removable water
+PASS edited snapshot differs and validates
+PASS edited quantities survive restore
+PASS edited snapshot roundtrips exactly
+PASS truncation rejected
+PASS failed restore preserves live data
+PASS independent capture edits preserve original world
+PASS snapshot pressure fails closed
+PASS queued immutable snapshots have a finite bound
+PASS queued snapshot reservation stays below 128 MiB
+PASS snapshot capacity recovers after release
+[TerrainRewrite] Temporary test world: save skipped
+WORLD_CAPTURE_COST failures=0

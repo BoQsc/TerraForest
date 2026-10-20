@@ -67,7 +67,7 @@ func _capture() -> Dictionary:
 		if _providers[name]["capture"].is_valid():
 			var section_begin:=Time.get_ticks_usec()
 			sections[name] = _providers[name]["capture"].call()
-			measurements[name]={"us":Time.get_ticks_usec()-section_begin,"bytes":sections[name].size()}
+			measurements[name]={"us":Time.get_ticks_usec()-section_begin,"bytes":sections[name].size() if sections[name] is PackedByteArray else -1}
 	last_capture={"total_us":Time.get_ticks_usec()-began,"sections":measurements}
 	return {"epoch": _restored_epoch, "sections": sections}
 

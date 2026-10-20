@@ -8,6 +8,7 @@ static void initialize(ModuleInitializationLevel level) {
         GDREGISTER_CLASS(terraforest::NativeLakeCatalog);
         GDREGISTER_CLASS(terraforest::NativeWaterTerrainPatch);
         GDREGISTER_CLASS(terraforest::NativeRegionalWater);
+        GDREGISTER_CLASS(terraforest::NativeWaterSnapshot);
     }
 }
 static void terminate(ModuleInitializationLevel) {}

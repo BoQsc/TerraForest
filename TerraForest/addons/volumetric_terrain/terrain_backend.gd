@@ -130,6 +130,14 @@ func _apply_components(state: Dictionary) -> void:
 		return
 	var selected: Dictionary = state.get("sections", {})
 	component_generation = int(state["generation"])
+	# Resolve immutable native payloads only on this existing ordered worker.
+	for key: String in selected:
+		var value:Variant=selected[key]
+		if value is RefCounted and value.has_method("serialize_snapshot"):
+			selected[key]=value.serialize_snapshot()
+		if not selected[key] is PackedByteArray:
+			_component_capture_valid=false
+			return
 	for key: String in selected:
 		if snapshot_validators.has(key) and not snapshot_validators[key].validate_snapshot(selected[key]):
 			_component_capture_valid = false
