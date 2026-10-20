@@ -1,3 +1,15 @@
+## Startup autosave corrected; paging promotion withheld - 2026-10-20
+
+Default-on compatibility checks passed model edit/save/fresh reopen and browser
+create/reopen. Writable startup exposed autosave consuming loading time and then
+blocking first travel (1932 ms). Controller now pauses automatic-save timing and
+submission during loading; manual/shutdown saves remain. Offline generation
+explicitly keeps full model residency for complete signature verification.
+Fresh reopen still took 1103 ms north, so the one-second gate is not reliable:
+production model paging remains opt-in. Evidence: `evidence/model_default_compatibility`.
+Prior frame spike and main-thread save capture remain open. Next assess real
+travel/loading and save stalls before promotion; do not weaken readiness.
+
 ## Short-route arrival gate passes - 2026-10-20
 
 Native completed reads now advance through local stages within each tick. The

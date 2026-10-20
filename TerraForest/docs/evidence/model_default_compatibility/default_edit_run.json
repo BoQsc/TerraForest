@@ -1,0 +1,13 @@
+{
+  "timed_out": false,
+  "launch_error": null,
+  "cancelled": false,
+  "pid": 36796,
+  "exit_code": 1,
+  "diagnostics": [
+    "FAIL destination arrival within 1000 ms 0"
+  ],
+  "required_text_found": false,
+  "elapsed_seconds": 27.485167600010755,
+  "passed": false
+}

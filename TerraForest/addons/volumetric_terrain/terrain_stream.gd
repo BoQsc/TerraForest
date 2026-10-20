@@ -93,6 +93,7 @@ var blocks: int = 0
 var total_edits: int = 0
 var schedule_timer: float = 0.0
 var autosave_timer: float = 0.0
+var autosave_paused: bool = false
 var last_interaction_us: int = 0
 var changed_since_save: bool = false
 var _manual_save_requested: bool = false
@@ -267,9 +268,11 @@ func _process(delta: float) -> void:
 	var lighting_begin:=Time.get_ticks_usec()
 	_schedule_lighting()
 	_record_stage("lighting schedule",(Time.get_ticks_usec()-lighting_begin)/1000.0)
-	autosave_timer += delta
+	# Loading time must not consume the playable autosave interval.
+	# Otherwise long startup submits a save immediately before first travel.
+	if not autosave_paused:autosave_timer += delta
 	var quiet: bool = Time.get_ticks_usec() - last_interaction_us >= 3000000
-	if not temporary and autosave_timer >= 15.0 and changed_since_save and not pending_edit and quiet and backend.status() == "idle" and backend.queued() == 0:
+	if not autosave_paused and not temporary and autosave_timer >= 15.0 and changed_since_save and not pending_edit and quiet and backend.status() == "idle" and backend.queued() == 0:
 		var save_begin:=Time.get_ticks_usec()
 		if backend.submit({"kind": "save"}):
 			autosave_timer = 0.0

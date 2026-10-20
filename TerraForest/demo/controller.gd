@@ -355,6 +355,7 @@ func _begin_loading(reason: String) -> void:
 	loading_started_us = Time.get_ticks_usec()
 	loading_ready_frames = 0
 	terrain.initial_loading = true
+	terrain.autosave_paused = true
 	loading_layer.visible = true
 	stroke_buffer.clear()
 	_clear_motion()
@@ -386,6 +387,7 @@ func _update_loading() -> void:
 	loading_layer.visible = false
 	loading_active = false
 	terrain.initial_loading = false
+	terrain.autosave_paused = false
 	travel_blocked_s = 0.0
 	_clear_motion()
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
