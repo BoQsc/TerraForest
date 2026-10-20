@@ -1,3 +1,43 @@
+## First baked regional connection — 2026-10-20
+
+The terrain-fitting seed42 neighborhood now has an approximately 413 m forest
+road toward the central site, baked as ordinary native terrain edits and persisted
+with the neighborhood. Play Terrain-Fitting Neighborhood.cmd defaults to a separate
+v3 editable copy of terrain_connected_clear_20261020. --review-version 1 or2 keeps
+previous sources/copies accessible. Existing saves were not overwritten.
+
+The bounded offline planner surveys a16m grid within a256m corridor margin, uses
+native AStar3D over grade-limited adjacent nodes, excludes lake/POI/other-site areas,
+and verifies actual candidate corridors at2m stations including lateral support.
+Invalid edges are removed and search retries at most32 times; no relaxed grade or
+cut/fill fallback. Shortcut removal also requires full corridor survey and native
+128m segment limits. Terrain and native path search own heavy queries; GDScript
+coordinates offline planning. No route search runs during normal play. Seed42
+uses2,474 graph nodes and six route points. Other seeds/routes are not yet qualified.
+
+Native application verifies1,290 road surface probes with zero mismatches. The
+35.49-second integrated creation check prepares the arterial before local streets,
+places all12 buildings, walks the existing sidewalk and durably saves. The14.92-
+second fresh-process check restores two public destinations and277 map segments.
+The central marker explicitly says construction is unfinished; no nonexistent town
+is advertised. Evidence: evidence/terrain_regional_connection.
+
+Initial rendering exposed trees on new roads. Saved native region metadata now
+builds a64m spatial index for vegetation clearance queries; tree and procedural
+ground-cover publication filter against it, including subsequent stream-in/reload.
+It uses a2m tree-root margin and0.3m ground-cover margin beyond road width, with
+vertical separation to avoid suppressing unrelated levels. Native tests cover mask,
+invalid margin and index rebuild on snapshot restore. Reopened runtime found zero
+road-root overlaps among3,370 rendered trees. Hand-authored ground-cover objects
+are not automatically removed. Root exclusion is not canopy or all-prop clearance.
+
+Inspected ground/overview images show the forest road exists and is clear at the
+reviewed position. Exposed scalloped banks still need landscape treatment. This is
+not full visual acceptance: junction, complete vehicle traversal, turning comfort,
+central-site construction and remaining roads/lakes/POIs remain mandatory next work.
+Screenshots at60FPS do not establish sustained performance or thermal headroom.
+The earlier legacy lake-persistence failures remain recorded and unresolved.
+
 ## Regional exclusion planning — 2026-10-20
 
 Terrain-lot selection now reserves native lake catalog bounds plus 12 m shore

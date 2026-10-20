@@ -2,6 +2,7 @@
 extends Node3D
 const Catalog=preload("res://addons/world_ecosystem/ground_catalog.gd")
 const Tokens=preload("res://addons/volumetric_terrain/surface_tokens.gd")
+var road_regions:RefCounted
 var terrain: Node3D
 var camera: Camera3D
 var structures: Node3D
@@ -200,6 +201,8 @@ func _surface_ready(token: int,points: PackedVector3Array,normals: PackedVector3
 	if not placed.ok: rejected_batches+=1;_scatter_job.clear();return
 	var mask: PackedByteArray=removed.mask(placed.ids)
 	var structure_mask:=PackedByteArray();var water_mask:=PackedByteArray()
+	var road_mask:PackedByteArray=road_regions.placement_mask(placed.transforms,0.3) if road_regions!=null else PackedByteArray()
+	if road_regions!=null and road_mask.size()!=mask.size():return
 	if structures!=null: structure_mask=structures.overlap_mask(placed.transforms,AABB(Vector3(-0.4,0,-0.4),Vector3(0.8,0.8,0.8)))
 	if water!=null: water_mask=water.placement_mask(placed.transforms)
 	if (structures!=null and structure_mask.size()!=mask.size()) or (water!=null and water_mask.size()!=mask.size()):
@@ -207,6 +210,7 @@ func _surface_ready(token: int,points: PackedVector3Array,normals: PackedVector3
 	# Only this bounded 64-candidate owner is combined in scene glue.
 	for i in range(mask.size()):
 		if (structures!=null and structure_mask[i]) or (water!=null and water_mask[i]): mask[i]=1
+		if road_regions!=null and road_mask[i]:mask[i]=1
 	var packed: Array=native.pack(placed.ids,placed.transforms,mask,_scatter_job.shelter)
 	if packed.size()!=Catalog.COUNT: rejected_batches+=1;_scatter_job.clear();return
 	# Replies may arrive in any order; concatenate by original layer for stable IDs.

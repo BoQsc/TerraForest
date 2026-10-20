@@ -6,12 +6,30 @@
 #include <godot_cpp/variant/dictionary.hpp>
 #include <godot_cpp/variant/array.hpp>
 #include <set>
+#include <map>
+#include <algorithm>
+#include <vector>
+#include <godot_cpp/variant/transform3d.hpp>
 #include <cmath>
 namespace terraforest {
 class NativeGeneratedRegion : public godot::RefCounted {
  GDCLASS(NativeGeneratedRegion,godot::RefCounted)
  godot::PackedByteArray snapshot;
  int64_t revision=0;
+ struct Road {godot::Vector3 a,b;float width;};
+ std::vector<Road> corridors;
+ std::map<std::pair<int,int>,std::vector<int>> bins;
+ void index_roads(){
+  corridors.clear();bins.clear();auto plan=decode(snapshot);godot::Array roads=plan["roads"];
+  for(int i=0;i<roads.size();i++){
+   godot::Dictionary item=roads[i];Road road{item["a"],item["b"],float(double(item["width"]))};
+   corridors.push_back(road);float radius=road.width*.5f+4.f;
+   int x0=int(std::floor((std::min(road.a.x,road.b.x)-radius)/64.f)),x1=int(std::floor((std::max(road.a.x,road.b.x)+radius)/64.f));
+   int z0=int(std::floor((std::min(road.a.z,road.b.z)-radius)/64.f)),z1=int(std::floor((std::max(road.a.z,road.b.z)+radius)/64.f));
+   for(int z=z0;z<=z1;z++)for(int x=x0;x<=x1;x++)bins[{x,z}].push_back(i);
+  }
+ }
+
  static bool position(godot::Vector3 p){return p.is_finite()&&p.x>=0&&p.x<=2000&&p.z>=0&&p.z<=2000&&p.y>=0&&p.y<=250;}
  static bool label(const godot::PackedByteArray &s,int limit){
   if(s.is_empty()||s.size()>limit)return false;
@@ -52,6 +70,7 @@ class NativeGeneratedRegion : public godot::RefCounted {
 protected:
  static void _bind_methods(){
   using namespace godot;
+  ClassDB::bind_method(D_METHOD("placement_mask","poses","margin"),&NativeGeneratedRegion::placement_mask);
   ClassDB::bind_method(D_METHOD("set_plan","seed","generator","places","roads"),&NativeGeneratedRegion::set_plan);
   ClassDB::bind_method(D_METHOD("get_plan"),&NativeGeneratedRegion::get_plan);
   ClassDB::bind_method(D_METHOD("get_revision"),&NativeGeneratedRegion::get_revision);
@@ -81,8 +100,27 @@ public:
   }
   return restore_snapshot(out);
  }
+ godot::PackedByteArray placement_mask(const godot::Array &poses,double margin)const{
+  godot::PackedByteArray result;
+  if(poses.size()>65536||!std::isfinite(margin)||margin<0||margin>4)return result;
+  result.resize(poses.size());result.fill(0);
+  for(int i=0;i<poses.size();i++){
+   if(poses[i].get_type()!=godot::Variant::TRANSFORM3D)return {};
+   godot::Vector3 p=godot::Transform3D(poses[i]).origin;
+   if(!p.is_finite())return {};
+   auto found=bins.find({int(std::floor(p.x/64.f)),int(std::floor(p.z/64.f))});if(found==bins.end())continue;
+   for(int id:found->second){
+    const Road &r=corridors[id];auto span=r.b-r.a;float length=span.x*span.x+span.z*span.z;
+    if(length<.0001f)continue;
+    float t=std::clamp(((p.x-r.a.x)*span.x+(p.z-r.a.z)*span.z)/length,0.f,1.f);
+    auto near=r.a+span*t;float dx=p.x-near.x,dz=p.z-near.z,radius=r.width*.5f+float(margin);
+    if(dx*dx+dz*dz<=radius*radius&&std::abs(p.y-near.y)<4){result.set(i,1);break;}
+   }
+  }
+  return result;
+ }
  bool validate_snapshot(const godot::PackedByteArray &in)const{return bool(decode(in)["ok"]);}
- bool restore_snapshot(const godot::PackedByteArray &in){if(!validate_snapshot(in))return false;snapshot=in;revision++;return true;}
+ bool restore_snapshot(const godot::PackedByteArray &in){if(!validate_snapshot(in))return false;snapshot=in;index_roads();revision++;return true;}
  godot::PackedByteArray capture_snapshot()const{return snapshot;}
  godot::Dictionary get_plan()const{return decode(snapshot);}
  int64_t get_revision()const{return revision;}

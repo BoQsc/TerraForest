@@ -292,6 +292,8 @@ func _ready() -> void:
 	ecosystem.camera = camera
 	ecosystem.structures = structures
 	ecosystem.water = lakes
+	ecosystem.road_regions=generated_region.store
+	ground_cover.road_regions=generated_region.store
 	add_child(ecosystem)
 	ground_cover.terrain=terrain;ground_cover.camera=camera;ground_cover.structures=structures;ground_cover.water=lakes
 	ground_cover.seed_source=func():return terrain.backend.world_seed

@@ -17,6 +17,10 @@ func _initialize()->void:
  var roads:Array=[{"a":Vector3(900,60,400),"b":Vector3(910,61,400),"width":6.0}]
  check(region.set_plan(42,17,places,roads),"valid publication")
  var saved:PackedByteArray=region.capture_snapshot()
+ var poses:Array=[Transform3D(Basis.IDENTITY,Vector3(905,60.5,400)),Transform3D(Basis.IDENTITY,Vector3(905,60.5,406)),Transform3D(Basis.IDENTITY,Vector3(905,70,400))]
+ check(region.placement_mask(poses,2.0)==PackedByteArray([1,0,0]),"road root clearance and vertical separation")
+ check(region.placement_mask(poses,5.0).is_empty(),"bounded clearance margin")
+
  for length in saved.size():
   if length==0:continue
   check(not region.restore_snapshot(saved.slice(0,length)),"reject truncated")
@@ -30,6 +34,7 @@ func _initialize()->void:
  check(region.capture_snapshot()==saved,"failed publications preserve state")
  var other=ClassDB.instantiate("NativeGeneratedRegion")
  check(other.restore_snapshot(saved) and other.capture_snapshot()==saved,"exact roundtrip")
+ check(other.placement_mask(poses,2.0)==PackedByteArray([1,0,0]),"road index rebuilt on restore")
  check(other.get_plan().places[0].position==places[0].position,"decoded position")
  print("GENERATED_REGION failures=",failures)
  quit(0 if failures==0 else 1)

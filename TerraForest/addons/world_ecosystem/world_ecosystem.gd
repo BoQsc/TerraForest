@@ -4,6 +4,7 @@ signal harvested
 ## Candidate IDs and transforms depend only on world seed and cell, never visit order.
 const CELL_SIZE: float = 64.0
 const GRID: int = 6
+var road_regions:RefCounted
 @export var terrain: Node3D
 @export var vegetation: Node3D
 @export var camera: Camera3D
@@ -265,6 +266,8 @@ func _publish_samples(key: Vector2i) -> void:
 		water_mask=water.placement_mask(surface_roots)
 		if water_mask.size()!=transforms.size():
 			rejected_batches+=1;_reconcile[key]=true;return
+	var road_mask:PackedByteArray=road_regions.placement_mask(transforms,2.0) if road_regions!=null else PackedByteArray()
+	if road_regions!=null and road_mask.size()!=transforms.size():rejected_batches+=1;_reconcile[key]=true;return
 	var accepted: Array[Transform3D] = []
 	var harvested:=PackedByteArray()
 	if harvest_state!=null:
@@ -273,6 +276,7 @@ func _publish_samples(key: Vector2i) -> void:
 			rejected_batches+=1;_reconcile[key]=true;return
 	for i in range(transforms.size()):
 		if harvest_state!=null and harvested[i]!=0: continue
+		if road_regions!=null and road_mask[i]!=0:continue
 		if (structures == null or mask[i] == 0) and (water==null or water_mask[i]==0):
 			ids.append(sample["ids"][i])
 			accepted.append(transforms[i])

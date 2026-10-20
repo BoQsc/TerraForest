@@ -14,9 +14,11 @@ def main():
     parser.add_argument('--dry-run', action='store_true')
     parser.add_argument('--godot')
     parser.add_argument('--previous-review', action='store_true')
+    parser.add_argument('--review-version', type=int, choices=[1,2,3], default=3)
     options = parser.parse_args()
-    source = 'terrain_fitted_neighborhood_20261020' if options.previous_review else 'terrain_ranked_neighborhood_20261020'
-    target = 'terrain_fitted_neighborhood_review' if options.previous_review else 'terrain_fitted_neighborhood_review_v2'
+    version = 1 if options.previous_review else options.review_version
+    source = {1:'terrain_fitted_neighborhood_20261020',2:'terrain_ranked_neighborhood_20261020',3:'terrain_connected_clear_20261020'}[version]
+    target = 'terrain_fitted_neighborhood_review' if version == 1 else f'terrain_fitted_neighborhood_review_v{version}'
     worlds = Path(os.environ['APPDATA']) / 'Godot/app_userdata/TerraForest/worlds'
     if not (worlds / (source + '.trw')).is_file() and not (worlds / (target + '.trw')).is_file():
         parser.error('The prepared neighborhood is missing. This launcher requires its baked save.')
@@ -26,7 +28,7 @@ def main():
         '--ground-cover', *(['--godot', options.godot] if options.godot else [])])
     details = launch_details(config, extra)
     details.update(label='Terrain-fitting neighborhood review', source_slot=source,
-        notes='Twelve buildings on surveyed hillside lots. Regional connections, lakes and broader settlement generation remain unfinished for this profile.')
+        notes='Twelve buildings on surveyed hillside lots. Version3 includes a forest road to the central site. Central buildings, remaining regional roads and lakes are unfinished.')
     if options.dry_run:
         print(json.dumps(details, indent=2)); return 0
     folder = ROOT / 'reports/playtests' / datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')
