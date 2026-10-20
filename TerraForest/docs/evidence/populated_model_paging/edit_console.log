@@ -1,0 +1,25 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[terrain-hitch] restore volumetric_water 255.49 ms at 4177
+[TerrainRewrite] World loaded
+[TerrainRewrite] World loaded
+[terrain-hitch] receive startup 271.83 ms at 4187
+[terrain-hitch] receive 273.68 ms at 4188
+[terrain-hitch] save capture 73.11 ms at 19174
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS populated world ready
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS destination terrain ready 0
+MODEL_STATE { "selection_scans": 64, "selection_requests": 0, "selection_usec": 34, "jobs": 0, "active": true, "reading": 0, "completed": 0, "collections": 12, "job_limit": 8, "byte_limit": 67108864, "reserved_bytes": 0, "packet_reservation": 5600232, "epoch": 1, "stopping": false, "busy": false, "ticks": 1020, "step_records": 0, "step_hash_bytes": 0, "step_operations": 0, "step_usec": 0, "peak_usec": 540, "drained": false, "failed_transfers": 0, "last_failure": {  } }
+PASS all nearby saved furnishing transforms exact 0
+Visual vehicle dents repaired.
+PASS distant model regions actually unload 0
+PASS no failed transfers 0
+PASS prefab-only stairrail available for edit
+PASS prefab-only model edit uses same native journal
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+PASS paged world edit saved through normal lifecycle
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+POPULATED_MODEL_PAGING failures=0

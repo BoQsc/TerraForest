@@ -202,7 +202,7 @@ func _ready() -> void:
 	object_entries.append(door)
 	object_entries.append(guardrail)
 	object_entries.append(fence)
-	model_tool.configure(camera,player,object_entries,help.get_parent(),structures.blocks)
+	model_tool.configure(camera,player,object_entries,help.get_parent(),structures.blocks,structures._models.values())
 	model_tool.notice.connect(_show_lake_notice)
 	if model_region_paging and (not temporary_world or terrain.backend.readonly_snapshot):
 		model_paging=preload("res://addons/structures/model_paging_coordinator.gd").new()

@@ -37,13 +37,14 @@ var history_controls: HBoxContainer
 func can_edit() -> bool:
 	return active and edit_available and (not availability.is_valid() or availability.call())
 
-func configure(view: Camera3D, actor: CharacterBody3D, entries: Array[Dictionary], ui: Node, blocks: Node3D = null) -> void:
+func configure(view: Camera3D, actor: CharacterBody3D, entries: Array[Dictionary], ui: Node, blocks: Node3D = null, world_collections: Array = []) -> void:
 	camera=view
 	player=actor
 	block_world=blocks
 	catalog=entries
 	history=ClassDB.instantiate("NativeStaticHistory")
-	var collections: Array = []
+	# Prefab-only models also need journal ownership for native paging transfers.
+	var collections: Array = world_collections.duplicate()
 	for entry in catalog:
 		if not collections.has(entry.collection):
 			collections.append(entry.collection)

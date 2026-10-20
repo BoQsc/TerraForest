@@ -21,6 +21,7 @@ var _model_paging_archive: RefCounted
 var _model_paging_draining := false
 var _model_paging_assets: Array[String] = []
 var _model_paging_failures := 0
+var _model_paging_last_failure: Dictionary = {}
 
 func enable_model_paging(archive: RefCounted, history: RefCounted) -> bool:
 	if _model_scheduler != null:
@@ -58,10 +59,12 @@ func step_model_paging(world_focus: Vector3, load_radius: float = 384, unload_ra
 	for result: Dictionary in _model_scheduler.poll(8):
 		if result.result == "failed":
 			_model_paging_failures += 1
+			_model_paging_last_failure = result.duplicate(true)
 	var state: Dictionary = _model_scheduler.stats()
 	state["active"] = true
 	state["drained"] = _model_paging_draining and state.jobs == 0
 	state["failed_transfers"] = _model_paging_failures
+	state["last_failure"] = _model_paging_last_failure
 	return state
 
 func drain_model_paging() -> bool:

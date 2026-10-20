@@ -1,3 +1,13 @@
+## Populated model paging defect corrected - 2026-10-20
+
+The real generated world revealed rejected transfers for prefab-only stair rails
+missing from the native history registry. All registered world models now join
+that registry, independently of the editor palette. 995-model baseline and
+central/north/south/return checks, journal edit, normal save and fresh-process
+reopen pass; rejected runs retained in `evidence/populated_model_paging`.
+Model paging stays opt-in pending destination collision/render readiness and
+arrival/frame bounds. This closes an actual correctness defect, not scale acceptance.
+
 ## Current priority - 2026-10-20
 
 The user has reaffirmed complete playable-world generation, representation,

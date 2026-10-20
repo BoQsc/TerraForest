@@ -1,0 +1,39 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[terrain-hitch] restore volumetric_water 276.95 ms at 3266
+[TerrainRewrite] World loaded
+[TerrainRewrite] World loaded
+[terrain-hitch] receive startup 297.84 ms at 3275
+[terrain-hitch] receive 299.22 ms at 3276
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS populated world ready
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS destination terrain ready 0
+MODEL_STATE { "selection_scans": 64, "selection_requests": 0, "selection_usec": 44, "jobs": 0, "active": true, "reading": 0, "completed": 0, "collections": 12, "job_limit": 8, "byte_limit": 67108864, "reserved_bytes": 0, "packet_reservation": 5600232, "epoch": 0, "stopping": false, "busy": false, "ticks": 907, "step_records": 0, "step_hash_bytes": 0, "step_operations": 0, "step_usec": 0, "peak_usec": 381, "drained": false, "failed_transfers": 0, "last_failure": {  } }
+PASS all nearby saved furnishing transforms exact 0
+Visual vehicle dents repaired.
+PASS distant model regions actually unload 0
+PASS no failed transfers 0
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS destination terrain ready 3
+MODEL_STATE { "selection_scans": 64, "selection_requests": 1, "selection_usec": 82, "jobs": 6, "active": true, "reading": 1, "completed": 0, "collections": 12, "job_limit": 8, "byte_limit": 67108864, "reserved_bytes": 33601392, "packet_reservation": 5600232, "epoch": 0, "stopping": false, "busy": false, "ticks": 1119, "step_records": 9, "step_hash_bytes": 1554, "step_operations": 7, "step_usec": 343, "peak_usec": 522, "drained": false, "failed_transfers": 0, "last_failure": {  } }
+PASS all nearby saved furnishing transforms exact 3
+Visual vehicle dents repaired.
+PASS distant model regions actually unload 3
+PASS no failed transfers 3
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS destination terrain ready 4
+MODEL_STATE { "selection_scans": 64, "selection_requests": 2, "selection_usec": 53, "jobs": 6, "active": true, "reading": 2, "completed": 0, "collections": 12, "job_limit": 8, "byte_limit": 67108864, "reserved_bytes": 33601392, "packet_reservation": 5600232, "epoch": 0, "stopping": false, "busy": false, "ticks": 1300, "step_records": 5, "step_hash_bytes": 254, "step_operations": 6, "step_usec": 138, "peak_usec": 545, "drained": false, "failed_transfers": 0, "last_failure": {  } }
+PASS all nearby saved furnishing transforms exact 4
+PASS distant model regions actually unload 4
+PASS no failed transfers 4
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS destination terrain ready 0
+Visual vehicle dents repaired.
+MODEL_STATE { "selection_scans": 64, "selection_requests": 2, "selection_usec": 38, "jobs": 6, "active": true, "reading": 2, "completed": 0, "collections": 12, "job_limit": 8, "byte_limit": 67108864, "reserved_bytes": 33601392, "packet_reservation": 5600232, "epoch": 0, "stopping": false, "busy": false, "ticks": 1465, "step_records": 3, "step_hash_bytes": 482, "step_operations": 7, "step_usec": 176, "peak_usec": 545, "drained": false, "failed_transfers": 0, "last_failure": {  } }
+PASS all nearby saved furnishing transforms exact 0
+PASS distant model regions actually unload 0
+PASS no failed transfers 0
+[TerrainRewrite] Temporary test world: save skipped
+POPULATED_MODEL_PAGING failures=0

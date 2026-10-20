@@ -76,3 +76,12 @@ world cache preparation does the same without changing the canonical save. Cache
 headers bind version, seed, generator and resolution to the checksum, so a valid
 other-world cache cannot be accepted under a renamed file. This closes a small
 prepared-loading gap, not whole-world baking or foundation completion.
+
+## Populated model paging correction - 2026-10-20
+
+Actual-world travel exposed missing prefab-only stair rails: the native history
+registry omitted non-UI collections. All world model collections now participate.
+995-model baseline, central/north/south/return exact nearby records, native journal
+edit, normal save and fresh-process return pass. Original failures retained in
+`evidence/populated_model_paging`. No source save changed. Next: destination model
+collision/render readiness and measured arrival/frame bounds before default enable.

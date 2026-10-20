@@ -1,0 +1,14 @@
+{
+  "timed_out": false,
+  "launch_error": null,
+  "cancelled": false,
+  "pid": 26668,
+  "exit_code": 1,
+  "diagnostics": [
+    "FAIL all nearby saved furnishing transforms exact 0",
+    "FAIL no failed transfers 0"
+  ],
+  "required_text_found": false,
+  "elapsed_seconds": 37.525826199998846,
+  "passed": false
+}
