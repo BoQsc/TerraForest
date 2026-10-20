@@ -50,6 +50,27 @@ func _initialize() -> void:
 	check(not Codec.reply_ok(query(31,large)),"oversize query rejected")
 	var integer:=PackedVector3Array([Vector3(800,40,1312),Vector3(801,41,1313)])
 	check(query(31,integer).slice(12)==query(29,integer).slice(12),"integer queries retain existing payload values and layout")
+	# Shallow grading must return the edited root, not just accept its old height.
+	core.execute(Codec.command(6,[42,17]))
+	var root_query:=Codec.command(17,[1])
+	root_query.append_array(PackedVector3Array([Vector3(906.25,0,855.25)]).to_byte_array())
+	var initial:PackedByteArray=core.execute(root_query)
+	var root_point:=Vector3(initial.decode_float(16),initial.decode_float(20),initial.decode_float(24))
+	check(initial.decode_float(32)>0.82,"shallow grading fixture has supported ground")
+	var grade:=root_point.y-0.2
+	var a:=Vector3(root_point.x-3,grade,root_point.z)
+	var b:=Vector3(root_point.x+3,grade,root_point.z)
+	check(Codec.reply_ok(core.execute(Codec.graded_bed(a,b,2,3,4,1))),"shallow road shoulder cut accepted")
+	var cut:PackedByteArray=core.execute(root_query)
+	var cut_point:=Vector3(cut.decode_float(16),cut.decode_float(20),cut.decode_float(24))
+	var residual:PackedByteArray=query(31,PackedVector3Array([cut_point]),1)
+	check(cut.decode_float(32)>0.82 and absf(residual.decode_float(20))<0.002 and cut_point.y<root_point.y-0.1,"accepted root follows edited zero surface rather than original height")
+	var saved:PackedByteArray=core.execute(Codec.command(4)).slice(12)
+	var fresh=ClassDB.instantiate("TerrainCore")
+	var restore:=Codec.command(5);restore.append_array(saved)
+	check(Codec.reply_ok(fresh.execute(restore)) and fresh.execute(root_query)==cut,"edited root placement survives native save/reload exactly")
+	core.execute(Codec.brush(cut_point,cut_point,1.5,0,false,1))
+	check(core.execute(root_query).decode_float(32)==0.0,"deeper mining rejects root instead of relocating vegetation into excavation")
 	core=null
 	var result:={"checks":checks,"failures":failures,"accepted":accepted,"legacy_rejections":mismatch,"max_error":max_error}
 	DirAccess.make_dir_recursive_absolute("res://reports")

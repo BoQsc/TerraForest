@@ -1218,6 +1218,8 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
     float weight=(k&1?dx:1-dx)*(k&2?dy:1-dy)*(k&4?dz:1-dz);
     if(weight<=0)continue;
     u8 material=0;float sample=w.sample(x+(k&1),y+((k>>1)&1),z+((k>>2)&1),paved?&material:nullptr);
+    // Match meshing quantization even before a neighboring edit allocates a page.
+    sample=float(quant(sample))/SDF_SCALE;
     value+=sample*weight;
     if(paved&&sample<0&&material==4)*paved=true;
    }
@@ -1231,9 +1233,22 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
    p.y=(h00*(1-dx)+h10*dx)*(1-dz)+(h01*(1-dx)+h11*dx)*dz;
    V3 normal{};bool paved=false;
    if(density(p+V3{0,-.35f,0},&paved)<0&&!paved&&density(p+V3{0,.35f,0})>0){
-    // Natural vegetation cannot root in asphalt. Inspect only contributing
-    // solid support corners, not the whole owner cell or unrelated air paint.
-    normal=::normal(V3{(h00-h10)*(1-dz)+(h01-h11)*dz,1,(h00-h01)*(1-dx)+(h10-h11)*dx});
+    // The support bracket is not the root. Solve the edited lattice crossing
+    // locally, without searching down into excavations and regrowing pits.
+    // Density is linear in Y per lattice interval: at most two segments here.
+    float low=p.y-.35f,high=p.y+.35f;
+    float dl=density(V3{p.x,low,p.z}),dh=density(V3{p.x,high,p.z});
+    float boundary=float(fl(low)+1);
+    if(boundary<high){
+     float dm=density(V3{p.x,boundary,p.z});
+     if(dm>0){high=boundary;dh=dm;}else{low=boundary;dl=dm;}
+    }
+    p.y=low+(high-low)*(-dl)/(dh-dl);
+    // Reject steep edited banks using their actual slope, not the old hill.
+    const float e=.05f;
+    normal=::normal(V3{density(p+V3{e,0,0})-density(p-V3{e,0,0}),
+      density(p+V3{0,e,0})-density(p-V3{0,e,0}),
+      density(p+V3{0,0,e})-density(p-V3{0,0,e})});
    }
    out.vec(p);normals[i]=normal;
   }

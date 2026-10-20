@@ -1496,3 +1496,25 @@ Next required world work: move the combined bake out of the review harness into 
 reusable production generator entry point; connect the remaining regional locations,
 accepted static lakes and POI-owned underground; improve settlement variety and
 landscape transitions. The broader legacy water persistence failures remain open.
+
+## Vegetation roots after shallow grading — 2026-10-20
+
+Native surface query 17 previously accepted support within +/-0.35 m of the
+original generator height but returned that original height and slope. Shallow
+road cuts could therefore leave accepted grass hovering. It now solves the local
+edited lattice zero crossing and evaluates its slope. The existing bounded
+support window remains: deeper excavation rejects roots instead of regrowing
+plants in a pit. Sampling uses the same quantization as meshing, preserving exact
+neighbor transforms when an edit merely allocates their shared terrain page.
+
+Both native DLL variants rebuilt. Shallow-cut support, deeper mining, snapshot
+restore, asphalt rejection, exact untouched tree transform/transition preservation,
+terrain native and ground-cover streaming tests pass. Fresh graphical reopen of
+the two-settlement save passes; road capture inspected. Evidence in
+`evidence/vegetation_edited_roots/` includes the rejected intermediate neighbor
+regression and initial test revision error. No save format or vegetation IDs change.
+
+Scope: bounded placement-time native work, no added per-frame global scan. This
+fix does not prove exact contact against every simplified rendered triangle, or
+reproduce the user's exact camera location. The reported 15 FPS remains unexplained
+and is not claimed resolved by this placement correction.
