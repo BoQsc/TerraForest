@@ -105,6 +105,7 @@ var latest_error: String = ""
 var preparation: Dictionary = {}
 var paused_preparations: Array[Dictionary] = []
 var retired_nodes: Array[Node] = []
+var retired_payloads: Array[Dictionary] = []
 var last_queue_ms: float = 0.0
 var last_worker_finished_us: int = 0
 var last_prepare_latency_ms: float = 0.0
@@ -223,6 +224,7 @@ func shutdown() -> void:
 		if is_instance_valid(retired):
 			retired.free()
 	retired_nodes.clear()
+	retired_payloads.clear()
 	staging.clear()
 
 func _exit_tree() -> void:
@@ -294,6 +296,10 @@ func _retire_some() -> void:
 	# Free one collision piece at a time, not an entire old collision subtree.
 	# Detach from physics only on the main thread; this budget is not preemptive.
 	var begin: int = Time.get_ticks_usec()
+	# Mesh arrays and collision-cache dictionaries can own substantial CPU data.
+	# Release detached entries under the same budget as retired scene nodes.
+	while not retired_payloads.is_empty() and Time.get_ticks_usec() - begin < retire_budget_us:
+		retired_payloads.pop_back()
 	while not retired_nodes.is_empty() and Time.get_ticks_usec() - begin < retire_budget_us:
 		var retired: Node = retired_nodes[0]
 		if not is_instance_valid(retired):
@@ -1395,16 +1401,24 @@ func reload_world(reset: bool = false) -> void:
 	latest_error = ""
 	world_ready = false
 	_cancel_density_requests("stale")
+	var teardown_begin:=Time.get_ticks_usec()
 	for key: Vector3i in tiles:
 		_destroy_entry(tiles[key])
 	for key: Vector3i in staged_batch:
 		_destroy_entry(staged_batch[key])
+	_record_stage("reload deactivate",(Time.get_ticks_usec()-teardown_begin)/1000.0)
+	teardown_begin=Time.get_ticks_usec()
+	retired_payloads.append_array(tiles.values())
+	retired_payloads.append_array(staged_batch.values())
+	retired_payloads.append_array(staging)
 	tiles.clear()
 	if not preparation.is_empty():
 		_destroy_entry(preparation["entry"])
-		preparation.clear()
+		retired_payloads.append(preparation)
+		preparation={}
 	for paused: Dictionary in paused_preparations:
 		_destroy_entry(paused.entry)
+	retired_payloads.append_array(paused_preparations)
 	paused_preparations.clear()
 	staged_batch.clear()
 	staging.clear()
@@ -1414,6 +1428,7 @@ func reload_world(reset: bool = false) -> void:
 	visible_cut.clear()
 	active_leaves.clear()
 	cache_bytes = 0
+	_record_stage("reload records",(Time.get_ticks_usec()-teardown_begin)/1000.0)
 	_record_stage("reload terrain retirement",(Time.get_ticks_usec()-dispatch_begin)/1000.0)
 	dispatch_begin=Time.get_ticks_usec()
 	backend.submit({"kind": "reset" if reset else "load", "epoch": epoch}, true)

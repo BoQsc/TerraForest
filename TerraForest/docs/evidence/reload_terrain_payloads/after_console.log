@@ -1,0 +1,23 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+PASS saved world starts before reload
+PASS water surface query publishes before reload
+RELOAD_DISPATCH ms=19.829
+PASS old terrain is hidden immediately before deferred data retirement
+PASS populated world reload completes
+PASS all components restore successfully
+PASS water content identity survives reload
+PASS reload preserves generated water quantity
+PASS reload hashes water off scene thread
+PASS retired water worker releases its state
+PASS water interaction surface republishes after reload
+PASS republished interaction surface retains exact target
+PASS retired terrain payloads and nodes drain completely
+TERRAIN_RETIRE_MAX ms=2.939
+WATER_RESTORE_PROFILE {"native_install_us":15,"scene_clear_us":3288}
+RELOAD_STAGES {"receive reload":25.84,"reload deactivate":1.085,"reload ground cover":10.576,"reload handlers":16.559,"reload records":0.392,"reload submit":0.273,"reload terrain retirement":1.509,"reload trees":2.804,"restore actor_orders":0.006,"restore chest_contents":0.062,"restore door_hinges":0.251,"restore ground_cover_edits_v1":0.658,"restore harvested_trees":0.007,"restore pending_rewards":0.003,"restore pickup_stacks_1":0.007,"restore pickup_stacks_101":0.002,"restore pickup_stacks_102":0.002,"restore pickup_stacks_103":0.001,"restore pickup_stacks_104":0.003,"restore pickup_stacks_2":0.002,"restore pickup_stacks_201":0.002,"restore pickup_stacks_202":0.002,"restore pickup_stacks_203":0.002,"restore pickup_stacks_204":0.002,"restore pickup_stacks_205":0.002,"restore pickup_stacks_206":0.001,"restore pickup_stacks_207":0.002,"restore pickup_stacks_208":0.002,"restore pickup_stacks_209":0.002,"restore pickup_stacks_210":0.001,"restore pickup_stacks_211":0.001,"restore pickup_stacks_3":0.002,"restore pickup_stacks_301":0.001,"restore pickup_stacks_302":0.001,"restore pickup_stacks_303":0.001,"restore pickup_stacks_4":0.002,"restore pickup_stacks_401":0.001,"restore pickups_1":0.076,"restore pickups_101":0.035,"restore pickups_102":0.035,"restore pickups_103":0.035,"restore pickups_104":0.035,"restore pickups_2":0.035,"restore pickups_201":0.034,"restore pickups_202":0.034,"restore pickups_203":0.036,"restore pickups_204":0.037,"restore pickups_205":0.036,"restore pickups_206":0.036,"restore pickups_207":0.033,"restore pickups_208":0.036,"restore pickups_209":0.035,"restore pickups_210":0.036,"restore pickups_211":0.038,"restore pickups_3":0.036,"restore pickups_301":0.035,"restore pickups_302":0.036,"restore pickups_303":0.037,"restore pickups_4":0.034,"restore pickups_401":0.034,"restore player_equipment":0.003,"restore player_loadout":3.844,"restore player_pose":0.391,"restore road_anchors":2.276,"restore road_editor":0.464,"restore structures":5.922,"restore tree_groves_v1":0.01,"restore vehicles":1.442,"restore volumetric_water":3.747,"restore world_actors":0.119,"restore world_durability":0.007}
+PASS all component maps complete after reload
+PASS reload water map reuses certified cache
+WORLD_RELOAD_FOUNDATION failures=0
+[TerrainRewrite] Temporary test world: save skipped

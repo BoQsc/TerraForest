@@ -1,3 +1,27 @@
+## Terrain reload payload retirement is budgeted — 2026-10-20
+
+Profiling separated immediate terrain deactivation from releasing retained CPU mesh
+arrays/collision dictionaries. In the baseline, record release took **7.386 ms** of
+**8.124 ms** terrain retirement. Reload now retains the detached tile, staging and
+preparation payloads in the existing retirement queue before clearing active ownership.
+Old nodes are still hidden and collision-disabled immediately. Detached dictionaries
+are released between entries under the same per-frame budget as old scene nodes;
+shutdown also clears any outstanding payloads.
+
+The readonly integrated regional-world check at 1920x1080 fullscreen passed: old
+terrain roots were hidden immediately, populated reload completed, all retired nodes
+and payloads drained, water quantities/targeting survived, and map cache reuse remained
+correct. Terrain retirement measured **1.509 ms**, down from 8.124 ms. Largest observed
+retirement slice was **2.939 ms**: this is cooperative scheduling, not a preemptive
+hard bound on freeing an individual entry. Evidence: `evidence/reload_terrain_payloads`.
+
+**Remaining qualification:** total reload initiation was 19.829 ms and result processing
+25.840 ms in this run; other stages varied upward (including ground-cover cleanup and
+component restoration). Do not claim an overall 60 FPS reload guarantee from the
+terrain improvement. Larger payloads, accumulated retirement backlog, repeated travel
+and variable component-restoration costs remain relevant to the wider loading budget.
+No save format, terrain generation, density, vegetation amount or gameplay rules changed.
+
 ## Native whole-collection vegetation reset — 2026-10-20
 
 Reload initiation is now instrumented separately for handlers, ground cover, trees,

@@ -1,9 +1,11 @@
 # SPDX-License-Identifier: 0BSD
 extends "res://tests/combined_resource_route.gd"
 var stages:Dictionary={}
+var max_retire_ms:=0.0
 func run()->void:
  game=load("res://demo/world.tscn").instantiate();game.temporary_world=true;game.max_fps=60;game.background_fps=60
  game.terrain.stage_measured.connect(func(label:String,ms:float):
+  if label=="retire collision/mesh":max_retire_ms=maxf(max_retire_ms,ms)
   if label.begins_with("restore ") or label.begins_with("reload ") or label=="receive reload":stages[label]=maxf(stages.get(label,0.0),ms))
  root.add_child(game)
  if not check(await wait_for(func():return not game.loading_active,60),"saved world starts before reload"):await done();return
@@ -17,8 +19,13 @@ func run()->void:
  var identity:String=game.lakes.water.survey_cache_identity()
  var old_epoch:int=game.terrain.epoch
  stages.clear()
+ var old_roots:Array=[]
+ for entry:Dictionary in game.terrain.tiles.values():old_roots.append(entry.node)
  var began:=Time.get_ticks_usec();game.terrain.reload_world()
  print("RELOAD_DISPATCH ms=",(Time.get_ticks_usec()-began)/1000.0)
+ var hidden:=true
+ for node:Node3D in old_roots: hidden=hidden and (not is_instance_valid(node) or not node.visible)
+ check(hidden,"old terrain is hidden immediately before deferred data retirement")
  if not check(await wait_for(func():return game.terrain.epoch>old_epoch and game.terrain.world_ready and not game.loading_active,60),"populated world reload completes"):await done();return
  check(game.terrain.snapshot_restore_ok,"all components restore successfully")
  check(game.lakes.water.survey_cache_identity()==identity,"water content identity survives reload")
@@ -27,6 +34,8 @@ func run()->void:
  check(await wait_for(func():return game.lakes._retirement_jobs.is_empty(),5),"retired water worker releases its state")
  if check(await wait_for(func():return game.lakes.water.raycast_surface(ray_from,ray_to).hit,30),"water interaction surface republishes after reload"):
   check(game.lakes.water.raycast_surface(ray_from,ray_to).point.distance_to(hit_before.point)<0.001,"republished interaction surface retains exact target")
+ check(await wait_for(func():return game.terrain.retired_payloads.is_empty() and game.terrain.retired_nodes.is_empty(),20),"retired terrain payloads and nodes drain completely")
+ print("TERRAIN_RETIRE_MAX ms=",max_retire_ms)
  print("WATER_RESTORE_PROFILE ",JSON.stringify(game.lakes.last_restore_profile))
  print("RELOAD_STAGES ",JSON.stringify(stages))
  game.world_map.set_open(true)
