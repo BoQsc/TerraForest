@@ -2,6 +2,7 @@
 // v0.4.5: continuous material weights; cached cavity visibility; no field rays per pixel.
 shader_type spatial;
 uniform bool coastal_inlet = false;
+uniform bool surrounding_coast = false;
 render_mode cull_back, diffuse_lambert, specular_schlick_ggx, ambient_light_disabled;
 uniform sampler2D grass : source_color, repeat_enable, filter_linear_mipmap_anisotropic;
 uniform sampler2D gravel : source_color, repeat_enable, filter_linear_mipmap_anisotropic;
@@ -70,6 +71,11 @@ void fragment(){
    vec4 biome=vec4((1.0-climate.x)*climate.y,(1.0-climate.x)*(1.0-climate.y),climate.x*climate.y,climate.x*(1.0-climate.y));
    // Regional worlds use woodland ground, not the four-quadrant material demo.
    if(regional_temperate)biome=vec4(1.0,0.0,0.0,0.0);
+   if(surrounding_coast){
+    float edge=min(min(wp.x,wp.z),min(2000.0-wp.x,2000.0-wp.z));
+    float beach=(1.0-smoothstep(42.0,46.0,wp.y))*(1.0-smoothstep(130.0,150.0,edge));
+    biome=mix(biome,vec4(0.0,0.0,1.0,0.0),beach);
+   }
    if(coastal_inlet){
     float beach=(1.0-smoothstep(42.0,45.0,wp.y))*(1.0-smoothstep(44.0,64.0,wp.x))*(1.0-smoothstep(25.0,40.0,abs(wp.z-1008.0)));
     biome=mix(biome,vec4(0.0,0.0,1.0,0.0),beach);

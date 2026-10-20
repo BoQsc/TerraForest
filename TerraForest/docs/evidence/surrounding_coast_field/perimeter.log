@@ -1,0 +1,27 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS coast profile accepted seed 0
+PASS entire perimeter including all corners below sea
+PASS continuous dry inner rim excludes inland flooding
+PASS interior unchanged outside 240m coast band
+PASS coast/interior join continuous
+PASS profile identity survives snapshot
+PASS coast profile accepted seed 42
+PASS entire perimeter including all corners below sea
+PASS continuous dry inner rim excludes inland flooding
+PASS interior unchanged outside 240m coast band
+PASS coast/interior join continuous
+PASS profile identity survives snapshot
+PASS coast profile accepted seed 1703
+PASS entire perimeter including all corners below sea
+PASS continuous dry inner rim excludes inland flooding
+PASS interior unchanged outside 240m coast band
+PASS coast/interior join continuous
+PASS profile identity survives snapshot
+PASS coast profile accepted seed 2147483647
+PASS entire perimeter including all corners below sea
+PASS continuous dry inner rim excludes inland flooding
+PASS interior unchanged outside 240m coast band
+PASS coast/interior join continuous
+PASS profile identity survives snapshot
+SURROUNDING_COAST failures=0

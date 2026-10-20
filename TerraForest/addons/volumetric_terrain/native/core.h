@@ -9,6 +9,7 @@ constexpr u32 SAVE_MAGIC=0x32575254u, MESH_MAGIC=0x324d5254u, REPLY_MAGIC=0x3250
 constexpr u32 MATERIAL_FIELD_GENERATOR_ID=5; // Empty base for independently editable material channels.
 constexpr u32 WALKABLE_CAVE_GENERATOR_ID=6; // New immutable landscape profile; never repurpose saved IDs.
 constexpr u32 LAKE_WORLD_GENERATOR_ID=12; // Regional world with one substantial lake.
+constexpr u32 SURROUNDING_COAST_GENERATOR_ID=19; // All-side coast; prior saved fields stay immutable.
 constexpr u32 COASTAL_REGION_GENERATOR_ID=18; // First western coastal inlet; prior fields immutable.
 constexpr u32 UNGRADED_REGION_GENERATOR_ID=17; // Natural regional field; roads and lots must be baked as edits.
 constexpr u32 SITED_REGION_GENERATOR_ID=16; // Surveyed outer settlements with preserved approach corridors.
@@ -63,6 +64,7 @@ struct World {
  bool set_block(u32 key,int material);void erase_block(u32 key);
  bool has_geology()const{return generator_id==3||generator_id==4||generator_id==WALKABLE_CAVE_GENERATOR_ID||generator_id>=REGIONAL_WORLD_GENERATOR_ID;}
  float height(float x,float z,bool developed=true)const;
+ float inland_height(float x,float z,bool developed)const;
  float regional_height(float x,float z,float original)const;
  bool regional_asphalt(float x,float z)const;
  u8 base_material(V3 point,float height)const;

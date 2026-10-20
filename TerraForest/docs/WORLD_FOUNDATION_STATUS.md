@@ -1584,3 +1584,32 @@ ends of the limited inlet. The all-edge solution needs bounded detailed-water
 residency and persistent edits with a continuous far representation. Filling the
 whole boundary into the current 4096-region resident store is not an acceptable
 implementation. No whole-ocean, offshore gameplay or sustained-performance claim.
+
+## Continuous coastal terrain prerequisite - 2026-10-21
+
+Native generator 19 adds a continuous coastal band to all four edges and corners.
+The coast uses shared world-space noise, a rounded corner distance and a smooth
+join to the original interior at 240 m. Sea datum remains 40 m. Sand and gradual
+root placement now support this profile. Generator IDs 1-18 retain their fields;
+no existing save is migrated. Profile 19 is deliberately not in the creation UI
+until its water residency and interaction paths are implemented.
+
+A targeted native test exposed an ordering error in the first implementation:
+coastal heights changed derived lake levels and lake basins interrupted the dry
+coastal rim. Fixed by preparing inland site/lake/underground parameters with the
+original generator-17 field, then applying the coast after the complete inland
+height calculation. Tests across seeds 0, 42, 1703 and 2147483647 pass: all perimeter
+samples including corners are submerged, a continuous dry inner rim encloses the
+land, inland samples outside 240 m are unchanged, the inner join is continuous,
+and exact snapshot roundtrip retains profile identity. Legacy coast and native
+terrain regression checks pass. Both DLL variants rebuilt with the pinned SDK.
+Evidence: `evidence/surrounding_coast_field/`, including the rejected first field.
+
+This is engineering evidence for the land field only, not in-world visual or ocean
+acceptance. Remaining required work: bounded native ocean detail residency, durable
+edited-region retention, a far representation joined to published detail, actual
+four-side/corner visual and bucket/travel checks, default-on opt-out generation
+settings and integrated fresh-save/reopen. Offshore travel remains separate and
+unsupported. The existing 4096-region water store must not be expanded into an eager
+whole-ocean allocation. Keep working on these dependencies before promoting the
+coastal generator or moving to an unrelated feature.
