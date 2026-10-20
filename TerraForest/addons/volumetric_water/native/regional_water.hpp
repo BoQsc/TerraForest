@@ -89,6 +89,8 @@ class NativeRegionalWater : public godot::RefCounted {
         std::shared_ptr<const TerrainWaterContacts> contacts;
         std::shared_ptr<const StructureWaterContacts> structures;
         bool valid=false,has_density=false,replace_water=false;
+        // 0 ordinary, 1 regenerable ocean, 2 ocean touched by gameplay/terrain.
+        uint8_t ocean_state=0;
         bool limited_building_edit=false;
         godot::AABB building_edit_bounds;
     };
@@ -120,6 +122,7 @@ class NativeRegionalWater : public godot::RefCounted {
     std::map<Key,QuerySurface> published_surfaces,staged_surfaces;
     bool publication_enabled=false,publish_pending=false;
     bool western_ocean=false;
+    bool generating_ocean=false;
     uint64_t published_batch=0,query_cache_bytes=0;
     mutable uint64_t query_builds=0,query_cache_hits=0;
     const QuerySurface *query_surface(Key k,QuerySurface &temporary) const;
@@ -194,6 +197,7 @@ class NativeRegionalWater : public godot::RefCounted {
 protected: static void _bind_methods();
 public:
     void set_western_ocean(bool enabled){western_ocean=enabled;}
+    godot::Dictionary update_ocean_residency(const godot::Vector3 &center,int64_t budget);
     // Conservative occupied-cell column envelope for cartography, not a mesh surface.
     godot::Dictionary survey_columns(int64_t cursor,int64_t expected_revision,int64_t region_budget) const;
     godot::String survey_cache_identity() const{return survey_saved_identity;}

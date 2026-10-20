@@ -1613,3 +1613,37 @@ settings and integrated fresh-save/reopen. Offshore travel remains separate and
 unsupported. The existing 4096-region water store must not be expanded into an eager
 whole-ocean allocation. Keep working on these dependencies before promoting the
 coastal generator or moving to an unrelated feature.
+
+## Native ocean residency prerequisite - 2026-10-21
+
+Added bounded `NativeRegionalWater.update_ocean_residency(center,budget)` admission
+and retirement using the existing half-metre cells, terrain occupancy patches and
+surface publication path. The call admits/retires at most 32 regions, prioritizes
+nearby regions and retains a wider hysteresis band. It is not called by the live
+world yet: near/far publication must be integrated before showing streamed ocean.
+
+Regions now distinguish ordinary water, pristine generated ocean, and ocean touched
+by gameplay/terrain. Only pristine regions may retire. Initial occupancy acceptance
+fills sea-level water once; invalidation makes it durable before asynchronous
+replacement. Material mutation also makes it durable. Snapshot version 10 retains
+ownership, including worker-frozen snapshots; ordinary lake saves still emit their
+existing version 8/9 layout. The reader continues accepting older versions. No
+flow/spillage or new mesher was added; the 4096-region limit was not increased.
+
+Targeted native test passes initial occupancy/fill, material removal, exact edited
+quantity and ownership through worker snapshot/restore, terrain invalidation,
+retirement of pristine detail, and retention of edited detail after restore.
+An 80-stop admission/retirement sweep peaks at 480 regions. That sweep does NOT
+sample terrain or render every admitted region and is not a travel FPS benchmark.
+Existing bucket/single-runtime checks pass. Actual saved inlet gameplay check at
+1080p/cap60 passes in 16.81 s; near image inspected. Evidence: `evidence/ocean_residency/`.
+
+Remaining: connect async worker cancellation/admission to the live world; publish
+complete local detail with an ocean halo and far-surface mask (never expose partial
+fill or reset edits); unload edited regions into durable cache instead of keeping
+all touched regions resident; ensure map representation describes the implicit sea,
+not just resident detail; actual all-side/corner bucket/travel and save/reopen
+checks; default-on opt-out world creation. Current `water_ml` counts resident
+explicit quantities, not total implicit ocean volume. Offshore travel remains
+unsupported. These dependencies remain part of this work; do not promote the new
+generator or treat this test as a playable surrounding ocean.
