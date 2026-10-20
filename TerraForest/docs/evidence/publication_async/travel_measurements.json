@@ -1,0 +1,702 @@
+{
+  "failures": 0,
+  "samples": [
+    {
+      "capture": {},
+      "dispatch_us": 0,
+      "distance": 120.670349121094,
+      "frame_max_ms": 33.494,
+      "frame_p95_ms": 16.788,
+      "mode": "baseline",
+      "progress_probe": {},
+      "stages": {
+        "LOD coverage": 1.08,
+        "LOD eviction": 0.002,
+        "LOD requests": 0.74,
+        "LOD schedule/cut/evict": 1.832,
+        "base controller": 0.295,
+        "collision exact match": 0.001,
+        "collision node attach": 0.532,
+        "collision physics cook": 0.629,
+        "collision piece": 1.159,
+        "controller loading": 0.002,
+        "controller process": 0.763,
+        "lighting schedule": 0.005,
+        "mesh upload/create": 0.359,
+        "prepared subtree attach": 0.108,
+        "receive": 1.888,
+        "receive cache_accounting": 0.031,
+        "receive mesh": 0.072,
+        "receive poll": 0.049,
+        "receive surface_batch": 1.284,
+        "retire collision/mesh": 0.001,
+        "staging frame": 3.304,
+        "world authoring": 0.016,
+        "world interaction": 0.098,
+        "world pickups": 0.32,
+        "world presentation": 0.036,
+        "world process": 0.859,
+        "world vehicle": 0.667
+      },
+      "worker": {}
+    },
+    {
+      "capture": {
+        "sections": {
+          "actor_orders": {
+            "bytes": 144,
+            "us": 2
+          },
+          "chest_contents": {
+            "bytes": 31696,
+            "us": 49
+          },
+          "door_hinges": {
+            "bytes": 8,
+            "us": 3
+          },
+          "ground_cover_edits_v1": {
+            "bytes": 147072,
+            "us": 3
+          },
+          "harvested_trees": {
+            "bytes": 16,
+            "us": 1
+          },
+          "pending_rewards": {
+            "bytes": 400,
+            "us": 2
+          },
+          "pickup_stacks_1": {
+            "bytes": 16,
+            "us": 3
+          },
+          "pickup_stacks_101": {
+            "bytes": 16,
+            "us": 1
+          },
+          "pickup_stacks_102": {
+            "bytes": 16,
+            "us": 1
+          },
+          "pickup_stacks_103": {
+            "bytes": 16,
+            "us": 2
+          },
+          "pickup_stacks_104": {
+            "bytes": 16,
+            "us": 0
+          },
+          "pickup_stacks_2": {
+            "bytes": 16,
+            "us": 1
+          },
+          "pickup_stacks_201": {
+            "bytes": 16,
+            "us": 1
+          },
+          "pickup_stacks_202": {
+            "bytes": 16,
+            "us": 1
+          },
+          "pickup_stacks_203": {
+            "bytes": 16,
+            "us": 1
+          },
+          "pickup_stacks_204": {
+            "bytes": 16,
+            "us": 1
+          },
+          "pickup_stacks_205": {
+            "bytes": 16,
+            "us": 1
+          },
+          "pickup_stacks_206": {
+            "bytes": 16,
+            "us": 1
+          },
+          "pickup_stacks_207": {
+            "bytes": 16,
+            "us": 1
+          },
+          "pickup_stacks_208": {
+            "bytes": 16,
+            "us": 3
+          },
+          "pickup_stacks_209": {
+            "bytes": 16,
+            "us": 1
+          },
+          "pickup_stacks_210": {
+            "bytes": 16,
+            "us": 1
+          },
+          "pickup_stacks_211": {
+            "bytes": 16,
+            "us": 0
+          },
+          "pickup_stacks_3": {
+            "bytes": 16,
+            "us": 0
+          },
+          "pickup_stacks_301": {
+            "bytes": 16,
+            "us": 0
+          },
+          "pickup_stacks_302": {
+            "bytes": 16,
+            "us": 0
+          },
+          "pickup_stacks_303": {
+            "bytes": 16,
+            "us": 0
+          },
+          "pickup_stacks_4": {
+            "bytes": 16,
+            "us": 0
+          },
+          "pickup_stacks_401": {
+            "bytes": 16,
+            "us": 0
+          },
+          "pickups_1": {
+            "bytes": 24,
+            "us": 1
+          },
+          "pickups_101": {
+            "bytes": 24,
+            "us": 1
+          },
+          "pickups_102": {
+            "bytes": 24,
+            "us": 1
+          },
+          "pickups_103": {
+            "bytes": 24,
+            "us": 0
+          },
+          "pickups_104": {
+            "bytes": 24,
+            "us": 1
+          },
+          "pickups_2": {
+            "bytes": 24,
+            "us": 1
+          },
+          "pickups_201": {
+            "bytes": 24,
+            "us": 1
+          },
+          "pickups_202": {
+            "bytes": 24,
+            "us": 1
+          },
+          "pickups_203": {
+            "bytes": 24,
+            "us": 1
+          },
+          "pickups_204": {
+            "bytes": 24,
+            "us": 1
+          },
+          "pickups_205": {
+            "bytes": 24,
+            "us": 1
+          },
+          "pickups_206": {
+            "bytes": 24,
+            "us": 1
+          },
+          "pickups_207": {
+            "bytes": 24,
+            "us": 1
+          },
+          "pickups_208": {
+            "bytes": 24,
+            "us": 1
+          },
+          "pickups_209": {
+            "bytes": 24,
+            "us": 1
+          },
+          "pickups_210": {
+            "bytes": 24,
+            "us": 1
+          },
+          "pickups_211": {
+            "bytes": 24,
+            "us": 0
+          },
+          "pickups_3": {
+            "bytes": 24,
+            "us": 1
+          },
+          "pickups_301": {
+            "bytes": 24,
+            "us": 1
+          },
+          "pickups_302": {
+            "bytes": 24,
+            "us": 1
+          },
+          "pickups_303": {
+            "bytes": 24,
+            "us": 0
+          },
+          "pickups_4": {
+            "bytes": 24,
+            "us": 1
+          },
+          "pickups_401": {
+            "bytes": 24,
+            "us": 1
+          },
+          "player_equipment": {
+            "bytes": 16,
+            "us": 1
+          },
+          "player_loadout": {
+            "bytes": 520,
+            "us": 4
+          },
+          "player_pose": {
+            "bytes": 56,
+            "us": 15
+          },
+          "road_anchors": {
+            "bytes": 1488,
+            "us": 97
+          },
+          "road_editor": {
+            "bytes": 48,
+            "us": 9
+          },
+          "structures": {
+            "bytes": 77241,
+            "us": 15
+          },
+          "tree_groves_v1": {
+            "bytes": 56,
+            "us": 1
+          },
+          "vehicles": {
+            "bytes": 216,
+            "us": 33
+          },
+          "volumetric_water": {
+            "bytes": -1,
+            "us": 57
+          },
+          "world_actors": {
+            "bytes": 88,
+            "us": 4
+          },
+          "world_durability": {
+            "bytes": 8,
+            "us": 1
+          }
+        },
+        "total_us": 451
+      },
+      "dispatch_us": 8516,
+      "distance": 240.674011230469,
+      "frame_max_ms": 16.861,
+      "frame_p95_ms": 16.753,
+      "mode": "cold_save",
+      "progress_probe": {
+        "mining_admitted": true,
+        "mining_before_save": true,
+        "mining_ms": 116.61,
+        "publication_pending": true,
+        "query_admitted": true,
+        "query_before_save": true,
+        "query_ms": 16.749
+      },
+      "stages": {
+        "LOD coverage": 0.948,
+        "LOD eviction": 0.002,
+        "LOD requests": 0.794,
+        "LOD schedule/cut/evict": 1.755,
+        "atomic publish": 0.933,
+        "base controller": 0.503,
+        "collision exact match": 0.032,
+        "collision node attach": 0.657,
+        "collision physics cook": 0.614,
+        "collision piece": 1.258,
+        "controller loading": 0.003,
+        "controller process": 0.614,
+        "lighting schedule": 0.009,
+        "mesh upload/create": 0.284,
+        "message console": 0.004,
+        "message label": 0.002,
+        "prepared subtree attach": 0.049,
+        "receive": 3.203,
+        "receive batch": 0.013,
+        "receive cache_accounting": 0.028,
+        "receive edit_begin": 0.304,
+        "receive edit_done": 0.004,
+        "receive height": 1.529,
+        "receive mesh": 0.049,
+        "receive message": 0.026,
+        "receive poll": 0.022,
+        "receive surface_batch": 2.55,
+        "retire collision/mesh": 0.456,
+        "staging frame": 5.72,
+        "world authoring": 0.042,
+        "world interaction": 0.021,
+        "world pickups": 0.286,
+        "world presentation": 0.044,
+        "world process": 0.779,
+        "world vehicle": 0.032
+      },
+      "worker": {
+        "apply_us": 108667,
+        "async": true,
+        "stages": {
+          "archive_encode_us": 0,
+          "archive_publish_us": 900568,
+          "regional": {
+            "blocks_us": 2003,
+            "compact_encode_us": 152129,
+            "models_us": 10576,
+            "retire_after_us": 342952,
+            "retire_before_us": 174107,
+            "root_publish_us": 214804,
+            "validate_sections_us": 941
+          }
+        },
+        "success": true,
+        "write_us": 913886
+      }
+    },
+    {
+      "capture": {
+        "sections": {
+          "actor_orders": {
+            "bytes": 144,
+            "us": 2
+          },
+          "chest_contents": {
+            "bytes": 31696,
+            "us": 49
+          },
+          "door_hinges": {
+            "bytes": 8,
+            "us": 2
+          },
+          "ground_cover_edits_v1": {
+            "bytes": 147072,
+            "us": 2
+          },
+          "harvested_trees": {
+            "bytes": 16,
+            "us": 2
+          },
+          "pending_rewards": {
+            "bytes": 400,
+            "us": 2
+          },
+          "pickup_stacks_1": {
+            "bytes": 16,
+            "us": 2
+          },
+          "pickup_stacks_101": {
+            "bytes": 16,
+            "us": 1
+          },
+          "pickup_stacks_102": {
+            "bytes": 16,
+            "us": 1
+          },
+          "pickup_stacks_103": {
+            "bytes": 16,
+            "us": 1
+          },
+          "pickup_stacks_104": {
+            "bytes": 16,
+            "us": 1
+          },
+          "pickup_stacks_2": {
+            "bytes": 16,
+            "us": 1
+          },
+          "pickup_stacks_201": {
+            "bytes": 16,
+            "us": 1
+          },
+          "pickup_stacks_202": {
+            "bytes": 16,
+            "us": 1
+          },
+          "pickup_stacks_203": {
+            "bytes": 16,
+            "us": 1
+          },
+          "pickup_stacks_204": {
+            "bytes": 16,
+            "us": 1
+          },
+          "pickup_stacks_205": {
+            "bytes": 16,
+            "us": 1
+          },
+          "pickup_stacks_206": {
+            "bytes": 16,
+            "us": 1
+          },
+          "pickup_stacks_207": {
+            "bytes": 16,
+            "us": 1
+          },
+          "pickup_stacks_208": {
+            "bytes": 16,
+            "us": 2
+          },
+          "pickup_stacks_209": {
+            "bytes": 16,
+            "us": 1
+          },
+          "pickup_stacks_210": {
+            "bytes": 16,
+            "us": 1
+          },
+          "pickup_stacks_211": {
+            "bytes": 16,
+            "us": 1
+          },
+          "pickup_stacks_3": {
+            "bytes": 16,
+            "us": 0
+          },
+          "pickup_stacks_301": {
+            "bytes": 16,
+            "us": 1
+          },
+          "pickup_stacks_302": {
+            "bytes": 16,
+            "us": 0
+          },
+          "pickup_stacks_303": {
+            "bytes": 16,
+            "us": 0
+          },
+          "pickup_stacks_4": {
+            "bytes": 16,
+            "us": 1
+          },
+          "pickup_stacks_401": {
+            "bytes": 16,
+            "us": 1
+          },
+          "pickups_1": {
+            "bytes": 24,
+            "us": 1
+          },
+          "pickups_101": {
+            "bytes": 24,
+            "us": 1
+          },
+          "pickups_102": {
+            "bytes": 24,
+            "us": 1
+          },
+          "pickups_103": {
+            "bytes": 24,
+            "us": 1
+          },
+          "pickups_104": {
+            "bytes": 24,
+            "us": 1
+          },
+          "pickups_2": {
+            "bytes": 24,
+            "us": 1
+          },
+          "pickups_201": {
+            "bytes": 24,
+            "us": 0
+          },
+          "pickups_202": {
+            "bytes": 24,
+            "us": 1
+          },
+          "pickups_203": {
+            "bytes": 24,
+            "us": 1
+          },
+          "pickups_204": {
+            "bytes": 24,
+            "us": 1
+          },
+          "pickups_205": {
+            "bytes": 24,
+            "us": 0
+          },
+          "pickups_206": {
+            "bytes": 24,
+            "us": 1
+          },
+          "pickups_207": {
+            "bytes": 24,
+            "us": 1
+          },
+          "pickups_208": {
+            "bytes": 24,
+            "us": 1
+          },
+          "pickups_209": {
+            "bytes": 24,
+            "us": 1
+          },
+          "pickups_210": {
+            "bytes": 24,
+            "us": 1
+          },
+          "pickups_211": {
+            "bytes": 24,
+            "us": 1
+          },
+          "pickups_3": {
+            "bytes": 24,
+            "us": 0
+          },
+          "pickups_301": {
+            "bytes": 24,
+            "us": 1
+          },
+          "pickups_302": {
+            "bytes": 24,
+            "us": 0
+          },
+          "pickups_303": {
+            "bytes": 24,
+            "us": 1
+          },
+          "pickups_4": {
+            "bytes": 24,
+            "us": 0
+          },
+          "pickups_401": {
+            "bytes": 24,
+            "us": 1
+          },
+          "player_equipment": {
+            "bytes": 16,
+            "us": 0
+          },
+          "player_loadout": {
+            "bytes": 520,
+            "us": 3
+          },
+          "player_pose": {
+            "bytes": 56,
+            "us": 9
+          },
+          "road_anchors": {
+            "bytes": 1488,
+            "us": 113
+          },
+          "road_editor": {
+            "bytes": 48,
+            "us": 10
+          },
+          "structures": {
+            "bytes": 85493,
+            "us": 12
+          },
+          "tree_groves_v1": {
+            "bytes": 56,
+            "us": 1
+          },
+          "vehicles": {
+            "bytes": 216,
+            "us": 29
+          },
+          "volumetric_water": {
+            "bytes": -1,
+            "us": 57
+          },
+          "world_actors": {
+            "bytes": 88,
+            "us": 2
+          },
+          "world_durability": {
+            "bytes": 8,
+            "us": 1
+          }
+        },
+        "total_us": 463
+      },
+      "dispatch_us": 2333,
+      "distance": 360.677673339844,
+      "frame_max_ms": 16.982,
+      "frame_p95_ms": 16.764,
+      "mode": "warm_save",
+      "progress_probe": {
+        "mining_admitted": true,
+        "mining_before_save": true,
+        "mining_ms": 116.017,
+        "publication_pending": true,
+        "query_admitted": true,
+        "query_before_save": true,
+        "query_ms": 50.554
+      },
+      "stages": {
+        "LOD coverage": 1.182,
+        "LOD eviction": 0.582,
+        "LOD requests": 0.967,
+        "LOD schedule/cut/evict": 2.338,
+        "atomic publish": 1.0,
+        "base controller": 0.286,
+        "collision exact match": 0.001,
+        "collision node attach": 0.571,
+        "collision physics cook": 0.86,
+        "collision piece": 1.414,
+        "controller loading": 0.002,
+        "controller process": 0.456,
+        "lighting schedule": 0.006,
+        "mesh upload/create": 0.304,
+        "message console": 0.004,
+        "message label": 0.005,
+        "prepared subtree attach": 0.038,
+        "receive": 2.399,
+        "receive batch": 0.009,
+        "receive cache_accounting": 0.03,
+        "receive edit_begin": 0.299,
+        "receive edit_done": 0.005,
+        "receive height": 0.852,
+        "receive mesh": 0.034,
+        "receive message": 0.024,
+        "receive poll": 0.018,
+        "receive surface_batch": 1.477,
+        "retire collision/mesh": 0.168,
+        "staging frame": 3.409,
+        "world authoring": 0.082,
+        "world interaction": 0.022,
+        "world pickups": 0.285,
+        "world presentation": 0.04,
+        "world process": 0.784,
+        "world vehicle": 0.028
+      },
+      "worker": {
+        "apply_us": 175585,
+        "async": true,
+        "stages": {
+          "archive_encode_us": 0,
+          "archive_publish_us": 1017793,
+          "regional": {
+            "blocks_us": 1528,
+            "compact_encode_us": 151516,
+            "models_us": 9751,
+            "retire_after_us": 328770,
+            "retire_before_us": 329305,
+            "root_publish_us": 192860,
+            "validate_sections_us": 1076
+          }
+        },
+        "success": true,
+        "write_us": 1031737
+      }
+    }
+  ]
+}

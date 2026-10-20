@@ -1,3 +1,32 @@
+## Durable saves no longer occupy the terrain worker - 2026-10-20
+
+Compound saves freeze their sections on the ordered terrain worker, then publish
+on one bounded background job. New saves receive backpressure while it is pending.
+Reload/reset and shutdown join publication before replacing state or releasing the
+archive lease. Completion certifies derived caches only if the captured terrain
+revision and component epoch still match. Native validation, checkpoint retention,
+checksums, verified root publication and backups remain in place.
+
+In the populated-world 360 m flight/save check at 1920x1080/60 FPS, height queries
+completed in 17-51 ms and mining published in about 116 ms while disk publication
+was still pending. Save-window frame maxima were 16.9/17.0 ms. Controlled publication
+barriers pass 15 checks; native model paging's real manual/autosave/reload/reset/
+shutdown lifecycle passes 23; combined bucket/mining/building save/reopen passes.
+Evidence: `evidence/publication_async`. No player save was modified.
+
+Limits remain explicit: component materialization/validation takes 109-176 ms on
+the terrain worker before publication; cold main-thread capture is still around
+8-9 ms. Baseline flight had a 33.5 ms frame outlier. These short checks do not prove
+sustained 60 FPS, walking/vehicle collision readiness, old-laptop thermals or world
+capacity. Publication overlap is verified; all save latency is NOT resolved.
+
+Next foundation gate: populated regional model arrival and repeated travel with
+editing/saving, then connected generated-world routes and multi-seed landscape
+acceptance. Model paging remains opt-in until its arrival/frame bounds pass. Do
+not let optional cosmetic work displace the coverage table below. Historical
+sections record previous limitations; this section supersedes the synchronous
+publication blocker described immediately below.
+
 ## Direct section publication removes temporary archive round-trip - 2026-10-20
 
 The terrain save worker passes sections directly to the regional archive adapter.

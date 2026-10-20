@@ -65,6 +65,16 @@ var snapshot_ready: Callable
 signal snapshot_save_submitted
 var _last_save_success := false
 var _last_save_profile: Dictionary = {}
+var publication_thread:=Thread.new()
+var _save_reserved:=false # Main/terrain/publication threads: mutex protected.
+var _publication_done:=false # Published under mutex before waking terrain owner.
+var _publication_epoch:=-1 # Terrain-worker owned frozen source identity.
+var _publication_revision:=-1
+var _publication_apply_us:=0
+
+func publication_pending() -> bool:
+	mutex.lock();var value:=_save_reserved;mutex.unlock();return value
+
 var _save_write_stages: Dictionary = {} # Worker-owned; copied into profile after save.
 
 func save_profile() -> Dictionary:
@@ -250,6 +260,7 @@ func start(use_temporary: bool) -> Error:
 
 var _site_pending:=0
 func submit(job: Dictionary, priority: bool = false) -> bool:
+	if job.get("kind","")=="save" and publication_pending():return false
 	if job.get("kind","")=="save" and snapshot_ready.is_valid() and not snapshot_ready.call("save"):
 		return false
 	if job.get("kind","")=="material_edit":
@@ -357,6 +368,7 @@ func submit(job: Dictionary, priority: bool = false) -> bool:
 		var cancellation: PackedByteArray = _call(Codec.command(12))
 		if Codec.reply_ok(cancellation) and cancellation.size() >= 16:
 			build_epoch = cancellation.decode_u32(12)
+	if job.get("kind","")=="save":_save_reserved=true
 	job["build_epoch"] = build_epoch
 	if job.get("kind","")=="material_edit": _material_pending+=1
 	if job.get("kind","")=="density_ray": _density_pending+=1
@@ -438,6 +450,55 @@ func _push(result: Dictionary) -> void:
 
 func _call(data: PackedByteArray) -> PackedByteArray:
 	return native.call("execute", data)
+
+func _publish_frozen(sections:Dictionary,payload:PackedByteArray,path:String,codec:RefCounted) -> Dictionary:
+	var stages:Dictionary={};var start:=Time.get_ticks_usec();var phase:=start
+	var error:int
+	if codec.has_method("publish_sections"):
+		stages.archive_encode_us=0
+		error=codec.publish_sections(path,sections)
+	else:
+		var packed:PackedByteArray=codec.encode(sections)
+		stages.archive_encode_us=Time.get_ticks_usec()-phase;phase=Time.get_ticks_usec()
+		error=ERR_INVALID_DATA if packed.is_empty() else codec.publish(path,packed)
+	stages.archive_publish_us=Time.get_ticks_usec()-phase
+	if codec.has_method("publication_profile"):stages.regional=codec.publication_profile()
+	var id:=DiskCache.digest(payload).hex_encode() if error==OK else ""
+	var result:Dictionary={"success":error==OK,"snapshot_id":id,"write_us":Time.get_ticks_usec()-start,"stages":stages,"message":"World saved and verified; terrain and addon state published together" if error==OK else "ERROR: compound save failed; previous canonical snapshot retained"}
+	mutex.lock();_publication_done=true;mutex.unlock()
+	semaphore.post()
+	return result
+
+func _finish_publication(wait:bool=false) -> void:
+	if not publication_thread.is_started():return
+	mutex.lock();var done:=_publication_done;mutex.unlock()
+	if not wait and not done:return
+	var result:Dictionary=publication_thread.wait_to_finish()
+	_last_save_success=result.success
+	# Terrain edits may have progressed since capture. Never certify those newer
+	# derived packets under the identity of this older, now-durable save.
+	var stats:PackedByteArray=_call(Codec.command(0))
+	if result.success and component_epoch==_publication_epoch and Codec.reply_ok(stats) and stats.decode_u32(12)==_publication_revision:
+		_set_cache_snapshot(result.snapshot_id)
+	mutex.lock()
+	_last_save_profile={"apply_us":_publication_apply_us,"write_us":result.write_us,"success":result.success,"stages":result.stages,"async":true}
+	_save_reserved=false;_publication_done=false
+	mutex.unlock()
+	_push({"kind":"message","message":result.message,"operation":"save","success":result.success})
+
+func _begin_publication(apply_us:int) -> bool:
+	# Legacy standalone saves keep their original path. Compound world saves use
+	# native publication on a single bounded job, retaining their existing lease.
+	if snapshot_codec==null or temporary or not _snapshot_writable() or not write_allowed or not _component_capture_valid:return false
+	var response:PackedByteArray=_call(Codec.command(4))
+	if not Codec.reply_ok(response):return false
+	var payload:PackedByteArray=response.slice(12)
+	var sections:Dictionary=components.duplicate();sections["terrain"]=payload
+	var stats:PackedByteArray=_call(Codec.command(0))
+	if not Codec.reply_ok(stats):return false
+	_publication_epoch=component_epoch;_publication_revision=stats.decode_u32(12);_publication_apply_us=apply_us
+	mutex.lock();_publication_done=false;mutex.unlock()
+	return publication_thread.start(_publish_frozen.bind(sections,payload,ProjectSettings.globalize_path(save_path),snapshot_codec),Thread.PRIORITY_NORMAL)==OK
 
 func _save() -> String:
 	_save_write_stages={}
@@ -999,8 +1060,10 @@ func _run() -> void:
 		"components": components.duplicate(), "modified": modified, "stats": stats})
 	_startup_mark("published")
 	while true:
+		_finish_publication()
 		_advance_cache_when_idle()
 		semaphore.wait()
+		_finish_publication()
 		# All meshing modes serve bounded queries before taking another background
 		# job. The selector cannot cross an already queued mutation or save.
 		_service_density_query()
@@ -1024,6 +1087,7 @@ func _run() -> void:
 			diagnostic_active={"kind":active_kind,"key":str(job.get("key","")),"started_us":Time.get_ticks_usec(),"submitted_us":job.get("submitted_us",0)}
 		mutex.unlock()
 		if should_stop:
+			_finish_publication(true)
 			# Preserve accepted mutations even if their render jobs have not run.
 			# No new submissions are admitted after stopping was set under mutex.
 			for remaining: Dictionary in jobs:
@@ -1167,13 +1231,17 @@ func _run() -> void:
 		elif kind == "save":
 			var apply_begin:=Time.get_ticks_usec()
 			_apply_components(job.get("component_snapshot", {}))
-			var write_begin:=Time.get_ticks_usec()
-			var saved_message: String = _save()
-			mutex.lock()
-			_last_save_profile={"apply_us":write_begin-apply_begin,"write_us":Time.get_ticks_usec()-write_begin,"success":_last_save_success,"stages":_save_write_stages.duplicate()}
-			mutex.unlock()
-			_push({"kind": "message", "message": saved_message,"operation":"save","success":_last_save_success,"stages":_save_write_stages.duplicate()})
+			var apply_us:=Time.get_ticks_usec()-apply_begin
+			if not _begin_publication(apply_us):
+				var write_begin:=Time.get_ticks_usec()
+				var saved_message: String = _save()
+				mutex.lock()
+				_last_save_profile={"apply_us":apply_us,"write_us":Time.get_ticks_usec()-write_begin,"success":_last_save_success,"stages":_save_write_stages.duplicate(),"async":false}
+				_save_reserved=false
+				mutex.unlock()
+				_push({"kind":"message","message":saved_message,"operation":"save","success":_last_save_success})
 		elif kind == "load" or kind == "reset":
+			_finish_publication(true)
 			component_epoch = int(job["epoch"])
 			component_generation = -1
 			_component_capture_valid = true
