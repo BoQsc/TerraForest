@@ -1261,8 +1261,13 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
       density(p+V3{0,e,0})-density(p-V3{0,e,0}),
       density(p+V3{0,0,e})-density(p-V3{0,0,e})});
    }
-   // Bare beach belongs to this immutable coastal recipe, not a broad edit mask.
-   if(w.generator_id==COASTAL_REGION_GENERATOR_ID&&p.x<55.f&&ab(p.z-1008.f)<36.f&&p.y<44.5f)normal=V3{};
+   // Dry beach grades into the woodland instead of clearing a rectangle.
+   // Placement-time, deterministic grouping; no per-frame vegetation scan.
+   if(w.generator_id==COASTAL_REGION_GENERATOR_ID&&p.x<55.f&&ab(p.z-1008.f)<36.f){
+    float coverage=smooth(clampf((p.y-40.15f)/4.35f,0.f,1.f));
+    float patch=.5f+.5f*noise(p.x/3.f,p.z/3.f,u32(w.seed)+947u);
+    if(p.y<=40.15f||patch>coverage)normal=V3{};
+   }
    out.vec(p);normals[i]=normal;
   }
   for(u32 i=0;i<count;i++)out.vec(normals[i]);

@@ -1558,3 +1558,29 @@ noise/warm-up, not a speedup or zero-cost proof. This measures only horizon togg
 not total water cost, long-run thermals or an older laptop. Functional checks plus
 the short images do not establish complete world-quality acceptance.
 Evidence: `evidence/coastal_inlet/`.
+
+## Coast direction and beach vegetation correction - 2026-10-20
+
+The user requires ocean and beaches enabled by default for newly generated worlds,
+with a disable option; existing saves retain their generation settings. This policy
+is recorded in WORLD_BUILDING_STANDARD.md. The browser toggle and surrounding
+coast are NOT implemented. The first inlet does not satisfy all-edge continuity.
+Offshore travel is separately optional and remains unsupported: both movement and
+native pose validation constrain walking positions to [2,1998].
+
+Removed the blanket bare-beach root rejection from generator 18. Dry-beach roots
+now have a deterministic grouped transition between 40.15 and 44.5 m. Wet roots
+remain rejected. Terrain heights and saved authoritative state are unchanged.
+Both native variants rebuilt with the pinned SDK. The native coastal check passes
+(inland height preservation, deterministic dry roots/openings, wet-root rejection,
+snapshot roundtrip). Initial test fixture exceeded the 64-point surface-query
+limit; corrected to 60 points. Actual saved-world graphical check passed in 15.62 s,
+including full-unit bucket return and water snapshot restoration. Near and overview
+captures inspected: dry-beach vegetation is visible again. Evidence:
+`evidence/coastal_vegetation_restore/`.
+
+Overall coast quality remains unfinished: the overview still exposes artificial
+ends of the limited inlet. The all-edge solution needs bounded detailed-water
+residency and persistent edits with a continuous far representation. Filling the
+whole boundary into the current 4096-region resident store is not an acceptable
+implementation. No whole-ocean, offshore gameplay or sustained-performance claim.

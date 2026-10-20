@@ -187,3 +187,26 @@ are explicit. Moving-view and broader terrain-acne review remain required.
 2026-10-20 correction: earlier independent-lot checks measured generator-flattened
 ground, not raw terrain. They do not establish earthworks acceptance. See the raw
 terrain audit and native terrain-lot evidence in WORLD_FOUNDATION_STATUS.md.
+
+## Optional surrounding coast — user direction 2026-10-20
+
+For newly generated worlds, ocean and beaches are **enabled by default, with an
+explicit option to disable them**. Preserve generation settings in existing saves;
+opening an old world must not add a coast. This is the required new-world policy,
+not a claim that the existing browser implements it yet.
+
+The coast must surround all four generated-world edges continuously, including
+corners. A short inlet plus an offshore plane does not satisfy this requirement.
+Keep vegetation extending onto dry beach through a gradual deterministic transition;
+do not clear a rectangular strip. Wet ground still rejects ordinary land vegetation.
+
+Travel beyond generated land is a separate, optional capability. Keep the generated
+land bounds defined even if travel is allowed. Do not enable this by removing only
+the movement clamp: swimming, placement, interaction, pose saving and restore must
+all support the advertised playable domain. Do not expose an enabled travel option
+until these paths work together.
+
+Near water remains the accepted editable static volumetric water. Far ocean is a
+presentation LOD of that same world water; it must not hide missing near residency,
+reset edits on approach or introduce seams. Do not allocate the entire ocean into
+the current finite water-region store or increase its limit to disguise that issue.
