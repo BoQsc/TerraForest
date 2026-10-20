@@ -4,7 +4,7 @@ const Codec=preload("res://addons/volumetric_terrain/mesh_codec.gd")
 const Lots=preload("res://addons/structures/northern_lots.gd")
 func _initialize()->void:
  var failures:=0
- var generator:int=14 if "--natural" in OS.get_cmdline_user_args() else 13
+ var generator:int=15 if "--routed" in OS.get_cmdline_user_args() else 14 if "--natural" in OS.get_cmdline_user_args() else 13
  for seed_value in [0,1,42,50,141,1703,9999]:
   var layout:Dictionary=preload("res://addons/volumetric_terrain/generated_layout.gd").describe(seed_value,generator)
   var center:Vector3=layout.sites[3].position

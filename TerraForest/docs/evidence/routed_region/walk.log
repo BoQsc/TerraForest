@@ -1,0 +1,13 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+PASS routed world loads
+PASS road bend collision loads
+PASS walk curved road station 12 fraction 0.5
+PASS walk curved road station 12 fraction 1.0
+PASS walk curved road station 13 fraction 0.5
+PASS walk curved road station 13 fraction 1.0
+PASS walk curved road station 14 fraction 0.5
+PASS walk curved road station 14 fraction 1.0
+ROUTED_ROAD_WALK failures=0
+[TerrainRewrite] Temporary test world: save skipped

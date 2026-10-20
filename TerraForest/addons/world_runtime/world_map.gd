@@ -90,7 +90,9 @@ func refresh_world()->void:
  roads.clear()
  var layout:Dictionary=Layout.describe(seed_value,generator)
  if not layout.is_empty():
-  for road:Dictionary in layout.roads:roads.append({"a":layout.sites[road.from].position,"b":layout.sites[road.to].position,"width":road.half_width*2})
+  for road:Dictionary in layout.roads:
+   var points:PackedVector3Array=road.get("points",PackedVector3Array([layout.sites[road.from].position,layout.sites[road.to].position]))
+   for i in range(1,points.size()):roads.append({"a":points[i-1],"b":points[i],"width":road.half_width*2})
  for street:Dictionary in game.road_palette.prepared_streets:
   if street.ends.size()==2:roads.append({"a":street.ends[0],"b":street.ends[1],"width":street.width})
  if texture==null and worker==null:

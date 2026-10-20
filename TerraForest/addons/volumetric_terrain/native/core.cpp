@@ -39,9 +39,87 @@ static float noise(float x,float z,u32 seed){
 static float bump(float x,float z,float cx,float cz,float r,float height){
  float a=(x-cx)/r,b=(z-cz)/r,t=mx(0.f,1.f-a*a-b*b);return height*smooth(t);
 }
+// Offline bounded corridor search: 25 stations x 9 lateral choices per road.
+// Keep settlement approaches straight; choose the intervening corridor from terrain
+// cost, then smooth bends and constrain vertical grades. No runtime path searches.
+void World::plan_roads(){
+ for(int road=0;road<4;road++){
+  V3 a=sites[0].position,b=sites[road+1].position,axis=b-a;axis.y=0;
+  float span=length(axis),step=span/24.f;axis=axis/span;V3 side={-axis.z,0,axis.x};
+  float cost[25][9]{},surface[25][9]{},lateral[25][9]{};int previous[25][9]{};
+  for(int k=0;k<25;k++){
+   float t=float(k)/24.f,dist=t*span;
+   float envelope=smooth(clampf((dist-sites[0].radius-24.f)/90.f,0,1))*smooth(clampf((span-dist-sites[road+1].radius-24.f)/90.f,0,1));
+   for(int j=0;j<9;j++){
+    lateral[k][j]=(j-4)*24.f*envelope;
+    V3 p=a+axis*dist+side*lateral[k][j];
+    float h=height(p.x,p.z);
+    if(dist<=sites[0].radius+12.f)h=a.y;
+    if(span-dist<=sites[road+1].radius+12.f)h=b.y;
+    surface[k][j]=h;float desired=a.y+(b.y-a.y)*smooth(t);
+    float local=ab(h-desired)*2.f+ab(lateral[k][j])*.012f;
+    if(!k){cost[k][j]=j==4?0.f:1e20f;continue;}
+    cost[k][j]=1e20f;
+    for(int prev=0;prev<9;prev++){
+     float shift=lateral[k][j]-lateral[k-1][prev];
+     if(ab(shift)>step*.75f)continue;
+     float rise=ab(h-surface[k-1][prev]);
+     float trial=cost[k-1][prev]+local+rise*5.f+shift*shift/step;
+     if(trial<cost[k][j]){cost[k][j]=trial;previous[k][j]=prev;}
+    }
+   }
+  }
+  int choice=4;
+  for(int k=24;k>=0;k--){road_points[road][k]=a+axis*(step*k)+side*lateral[k][choice];road_points[road][k].y=surface[k][choice];choice=previous[k][choice];}
+  road_points[road][0]=a;road_points[road][24]=b;
+  for(int pass=0;pass<3;pass++){
+   V3 smooth_points[25];copy_bytes(smooth_points,road_points[road],sizeof(smooth_points));
+   for(int k=1;k<24;k++){
+    float dist=k*step;if(dist<sites[0].radius+24.f||span-dist<sites[road+1].radius+24.f)continue;
+    V3 p=(smooth_points[k-1]+smooth_points[k]*2.f+smooth_points[k+1])*.25f;
+    p.y=height(p.x,p.z);road_points[road][k]=p;
+   }
+  }
+  // Reserve the entire settlement blend band as a level approach. Otherwise
+  // the settlement field would lift a sloping road after route planning.
+  for(int k=0;k<25;k++){
+   float da=mx(0.f,k*step-sites[0].radius-36.f),db=mx(0.f,span-k*step-sites[road+1].radius-36.f);
+   float low=mx(a.y-da*.12f,b.y-db*.12f),high=mn(a.y+da*.12f,b.y+db*.12f);
+   road_points[road][k].y=clampf(road_points[road][k].y,low,high);
+  }
+  // The endpoint grade difference is feasible for every existing regional pair.
+  // Alternating projections retain fixed junctions and cap all grades at 12%.
+  for(int pass=0;pass<3;pass++){
+   for(int k=1;k<24;k++)road_points[road][k].y=clampf(road_points[road][k].y,road_points[road][k-1].y-step*.12f,road_points[road][k-1].y+step*.12f);
+   for(int k=23;k>0;k--)road_points[road][k].y=clampf(road_points[road][k].y,road_points[road][k+1].y-step*.12f,road_points[road][k+1].y+step*.12f);
+  }
+ }
+}
+float World::road_distance(int road,float x,float z,float &grade)const{
+ V3 a=road_points[road][0],b=road_points[road][24],axis=b-a;axis.y=0;
+ V3 point={x,0,z},offset={x-a.x,0,z-a.z};
+ float axis_length=length(axis);
+ // All planned lateral offsets are <=96m; the terrain shoulder adds36m.
+ if(ab(offset.x*axis.z-offset.z*axis.x)>132.f*axis_length)return 1e20f;
+ float station=dot(offset,axis)/dot(axis,axis)*24.f;
+ int middle=fl(station);float best=1e20f;
+ // Stations are monotone on the main axis. At most five can influence the
+ // 36m supported corridor; distant stations need no density work.
+ for(int k=imx(0,middle-2);k<=imn(23,middle+2);k++){
+  V3 p=road_points[road][k],q=road_points[road][k+1],v=q-p;v.y=0;
+  V3 d={point.x-p.x,0,point.z-p.z};float t=clampf(dot(d,v)/dot(v,v),0,1),distance=length(d-v*t);
+  if(distance<best){best=distance;grade=p.y+(q.y-p.y)*t;}
+ }
+ return best;
+}
 // Immutable regional layout: constant-size descriptors, no authored voxel pages.
 float World::regional_height(float x,float z,float h)const{
  if(regional_roads)for(int i=1;i<site_count;i++){
+  if(generator_id>=ROUTED_REGION_GENERATOR_ID){
+   float grade=0,distance=road_distance(i-1,x,z,grade);
+   if(distance<36.f){float blend=1.f-smooth(clampf((distance-6.f)/30.f,0,1));h=h*(1-blend)+grade*blend;}
+   continue;
+  }
   const V3 a=sites[0].position,b=sites[i].position;
   V3 delta={b.x-a.x,0,b.z-a.z},offset={x-a.x,0,z-a.z};
   float t=clampf(dot(offset,delta)/dot(delta,delta),0,1);
@@ -58,6 +136,7 @@ float World::regional_height(float x,float z,float h)const{
 bool World::regional_asphalt(float x,float z)const{
  if(!regional_roads)return false;
  for(int i=1;i<site_count;i++){
+  if(generator_id>=ROUTED_REGION_GENERATOR_ID){float grade=0;if(road_distance(i-1,x,z,grade)<=4.5f)return true;continue;}
   V3 a=sites[0].position,b=sites[i].position,delta={b.x-a.x,0,b.z-a.z},offset={x-a.x,0,z-a.z};
   float t=clampf(dot(offset,delta)/dot(delta,delta),0,1);
   if(dot(offset-delta*t,offset-delta*t)<=20.25f)return true;
@@ -169,6 +248,7 @@ void World::init(int p_seed,u32 generator){
   const float cx=1000.f+float(int(layout_seed&63)-31),cz=1000.f+float(int((layout_seed>>8)&63)-31);
   V3 centers[5]={{cx,0,cz},{230,0,cz},{1770,0,cz},{cx,0,230},{cx,0,1770}};
   for(int i=0;i<5;i++){centers[i].y=float(fl(height(centers[i].x,centers[i].z)));sites[i]={centers[i],i==0?160.f:72.f};}
+  if(generator_id>=ROUTED_REGION_GENERATOR_ID)plan_roads();
   site_count=5;regional_roads=true;
  }
  if(generator_id==4||generator_id==WALKABLE_CAVE_GENERATOR_ID||generator_id>=REGIONAL_WORLD_GENERATOR_ID){
@@ -418,7 +498,7 @@ bool World::deserialize(const u8*data,int n){
  Reader r{data,n-4};if(r.u()!=SAVE_MAGIC)return false;u32 format=r.u();if(format!=1&&format!=2)return false;
  int s=int(r.u()),pc=int(r.u()),bc=int(r.u()),rev=int(r.u()),ed=int(r.u());
  u32 generator=format==1?1:r.u();
- if(!r.good||generator<1||generator>NATURAL_REGION_GENERATOR_ID)return false;
+ if(!r.good||generator<1||generator>ROUTED_REGION_GENERATOR_ID)return false;
  if(pc<0||pc>MAX_PAGES||bc<0||bc>2000000||i64(pc)*(4+PAGE_SAMPLES*3)+i64(bc)*8+(format==1?28:32)!=n-4)return false;
  World t;t.build_control=build_control;t.init(s,generator);t.revision=rev;t.edits=ed;t.surface_style=surface_style;
  for(int i=0;i<pc;i++){
@@ -1047,7 +1127,7 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
  }
  else if(cmd==4){w.serialize(out);}
  else if(cmd==5){if(!w.deserialize(data+4,n-4))out.p[8]=1;out.u(w.revision);out.u(w.pages.n);out.u(w.blocks.n);}
- else if(cmd==6){int seed=int(r.u());u32 generator=n==12?r.u():1;if(!r.good||(n!=8&&n!=12)||generator<1||generator>NATURAL_REGION_GENERATOR_ID){out.p[8]=1;return;}BuildControl *control=w.build_control;w.release();w=World{};w.build_control=control;w.init(seed,generator);}
+ else if(cmd==6){int seed=int(r.u());u32 generator=n==12?r.u():1;if(!r.good||(n!=8&&n!=12)||generator<1||generator>ROUTED_REGION_GENERATOR_ID){out.p[8]=1;return;}BuildControl *control=w.build_control;w.release();w=World{};w.build_control=control;w.init(seed,generator);}
  else if(cmd==7){V3 p=r.vec();if(!r.good||!(ab(p.x)<=10000&&ab(p.y)<=10000&&ab(p.z)<=10000)){out.p[8]=1;return;}out.f(w.height(p.x,p.z));out.f(w.sample(fl(p.x),fl(p.y),fl(p.z)));}
  else if(cmd==8){ // Deterministic construction proof; not a replay list.
   int bx=1472,bz=1440,by=int(w.height(float(bx),float(bz)))+1;
@@ -1222,6 +1302,11 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
    }
    out.u(1);out.u(2);out.u(1);out.vec(w.caves[0].a-V3{0,5,0});out.vec(lo);out.vec(hi);out.u(0);out.u(w.caves.n);
   }
+ }
+ else if(cmd==36){
+  if(n!=4||w.generator_id<ROUTED_REGION_GENERATOR_ID){out.p[8]=1;return;}
+  out.u(4);out.u(25);
+  for(int road=0;road<4;road++)for(int k=0;k<25;k++)out.vec(w.road_points[road][k]);
  }
  else if(cmd==34){
   if(n!=4){out.p[8]=1;return;}
