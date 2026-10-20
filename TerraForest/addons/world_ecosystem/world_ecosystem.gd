@@ -185,7 +185,7 @@ func _refresh(center: Vector2i) -> void:
 			_resample.erase(key)
 
 func _candidates(key: Vector2i) -> Dictionary:
-	return _scatter().candidates(key,seed,density)
+	return _scatter().candidates(key,seed,density,terrain!=null and terrain.backend.world_generator>=14)
 
 func _scatter() -> RefCounted:
 	if _native_scatter==null:
@@ -256,7 +256,13 @@ func _publish_samples(key: Vector2i) -> void:
 	var ids := PackedInt64Array()
 	var water_mask:=PackedByteArray()
 	if water!=null and not transforms.is_empty():
-		water_mask=water.placement_mask(transforms)
+		# Tree rendering sinks roots by 20 cm. Water exclusion must probe the
+		# supported ground surface, not the solid soil below the lake bed.
+		var surface_roots:Array[Transform3D]=[]
+		for pose:Transform3D in transforms:
+			pose.origin.y+=0.2
+			surface_roots.append(pose)
+		water_mask=water.placement_mask(surface_roots)
 		if water_mask.size()!=transforms.size():
 			rejected_batches+=1;_reconcile[key]=true;return
 	var accepted: Array[Transform3D] = []
@@ -311,6 +317,6 @@ func ground_shelter(cover_owner:Vector2i)->PackedVector3Array:
 	var world_seed:int=terrain.backend.world_seed
 	for z in range(maxi(0,floori((cover_owner.y*32-5)/64.0)),mini(31,floori((cover_owner.y*32+37)/64.0))+1):
 		for x in range(maxi(0,floori((cover_owner.x*32-5)/64.0)),mini(31,floori((cover_owner.x*32+37)/64.0))+1):
-			var data:Dictionary=_scatter().candidates(Vector2i(x,z),world_seed,density)
+			var data:Dictionary=_scatter().candidates(Vector2i(x,z),world_seed,density,terrain.backend.world_generator>=14)
 			points.append_array(data.points)
 	return points

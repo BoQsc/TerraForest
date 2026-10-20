@@ -4,10 +4,11 @@ const Codec=preload("res://addons/volumetric_terrain/mesh_codec.gd")
 const Lots=preload("res://addons/structures/northern_lots.gd")
 func _initialize()->void:
  var failures:=0
+ var generator:int=14 if "--natural" in OS.get_cmdline_user_args() else 13
  for seed_value in [0,1,42,50,141,1703,9999]:
-  var layout:Dictionary=preload("res://addons/volumetric_terrain/generated_layout.gd").describe(seed_value,13)
+  var layout:Dictionary=preload("res://addons/volumetric_terrain/generated_layout.gd").describe(seed_value,generator)
   var center:Vector3=layout.sites[3].position
-  var core=ClassDB.instantiate("TerrainCore");core.execute(Codec.command(6,[seed_value,13]))
+  var core=ClassDB.instantiate("TerrainCore");core.execute(Codec.command(6,[seed_value,generator]))
   var lots:Array=Lots.recipe(center);var surveys:Array=[]
   for lot:Dictionary in lots:
    var points:PackedVector3Array=lot.asset.foundation_samples(lot.origin,lot.rotation,0)

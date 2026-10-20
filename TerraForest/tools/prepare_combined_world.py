@@ -13,7 +13,7 @@ from run import ROOT, parse_args
 from run_godot_check import execute
 
 
-def prepare(engine, worlds, folder, destination="combined_gameplay", layout="cottages", seed=1703, progress=None, cancel_requested=None):
+def prepare(engine, worlds, folder, destination="combined_gameplay", layout="cottages", seed=1703, progress=None, cancel_requested=None, natural=False):
     if type(seed) is not int or not 0 <= seed <= 2147483647:
         raise ValueError("Seed must be an integer between 0 and 2147483647")
     if layout not in ('cottages', 'mixed', 'regional', 'poi', 'lakes', 'districts'):
@@ -35,7 +35,7 @@ def prepare(engine, worlds, folder, destination="combined_gameplay", layout="cot
         base = [str(engine), '--path', str(ROOT), '--fullscreen', '--resolution',
                 '1920x1080', '--max-fps', '60', '--script',
                 'res://tools/prepare_combined_world.gd', '--',
-                '--world-slot=' + slot, '--world-generator=' + ('13' if layout == 'districts' else '12' if layout == 'lakes' else '11' if layout == 'poi' else '8' if layout == 'regional' else '4'), '--world-seed=' + str(seed),
+                '--world-slot=' + slot, '--world-generator=' + ('14' if natural and layout == 'districts' else '13' if layout == 'districts' else '12' if layout == 'lakes' else '11' if layout == 'poi' else '8' if layout == 'regional' else '4'), '--world-seed=' + str(seed),
                 '--ground-cover', '--actors', '--vehicle-fleet', '--checkpoint-layout=' + layout, '--checkpoint-report=' + str(report),
                 '--derived-cache=user://' + slot]
         metadata = dict(slot=slot, layout=layout, seed=seed, **revision_metadata(), phases=[])
@@ -70,11 +70,13 @@ def main():
     parser.add_argument('--godot')
     parser.add_argument('--destination', default='combined_gameplay', help='Create only when this save slot is absent')
     parser.add_argument('--layout', choices=('cottages', 'mixed', 'regional', 'poi', 'lakes', 'districts'), default='cottages')
+    parser.add_argument('--natural', action='store_true', help='Use the new natural-region generator for districts')
     parser.add_argument('--seed', type=int, default=1703, help='Deterministic new-world seed (0..2147483647); existing saves are preserved')
     parser.add_argument('--status-file', type=Path, help='Optional browser completion status file')
     parser.add_argument('--cancel-file', type=Path, help='Cancel before publication when this request file appears')
     args = parser.parse_args()
     if not 0 <= args.seed <= 2147483647: parser.error('Seed must be between 0 and 2147483647')
+    if args.natural and args.layout != 'districts': parser.error('--natural requires --layout districts')
     config, _ = parse_args(['--godot', args.godot] if args.godot else [])
     worlds = Path(os.environ['APPDATA']) / 'Godot/app_userdata/TerraForest/worlds'
     stamp = datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')
@@ -88,7 +90,7 @@ def main():
         temporary.replace(args.status_file)
     status('running')
     try:
-        code = prepare(config.godot, worlds, folder, args.destination, args.layout, args.seed, progress=status, cancel_requested=(lambda: args.cancel_file.exists()) if args.cancel_file is not None else None)
+        code = prepare(config.godot, worlds, folder, args.destination, args.layout, args.seed, natural=args.natural, progress=status, cancel_requested=(lambda: args.cancel_file.exists()) if args.cancel_file is not None else None)
     except Exception as error:
         status('failed', str(error))
         raise

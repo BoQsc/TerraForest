@@ -21,3 +21,5 @@ Screenshots are visual evidence, not a frame-time or thermal qualification. Evid
 `evidence/village_shop_world`. Next work stays on generated place quality and connected
 exploration, not additional reload optimization.
 
+
+Continuous shop route also passed: cross street, closed door, E to open, customer aisle, rear stores and return to the street, with no teleports after initial street placement. Initial test needed to await the asynchronous terrain-ray result; corrected route passed. Evidence walk.log and walk.json.

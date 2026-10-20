@@ -33,7 +33,7 @@ protected:
         ClassDB::bind_method(D_METHOD("restore_storage_snapshot","data"),&NativeVegetationScatter::restore_storage_snapshot);
 
         ClassDB::bind_method(D_METHOD("wanted_cells","center","radius_world","limit"),&NativeVegetationScatter::wanted_cells);
-        ClassDB::bind_method(D_METHOD("candidates","cell","seed","density"),&NativeVegetationScatter::candidates);
+        ClassDB::bind_method(D_METHOD("candidates","cell","seed","density","natural_region"),&NativeVegetationScatter::candidates,DEFVAL(false));
         ClassDB::bind_method(D_METHOD("place_surface","ids","points","normals","rotations","scales","min_up"),&NativeVegetationScatter::place_surface);
     }
 public:
@@ -103,7 +103,13 @@ public:
         }
         out["ok"]=true;out["ids"]=accepted;out["transforms"]=transforms;return out;
     }
-    Dictionary candidates(Vector2i cell,int64_t seed,double density) const {
+    static double woodland_noise(double x,double z,uint32_t seed) {
+        const int ix=int(std::floor(x)),iz=int(std::floor(z));
+        auto sample=[&](int a,int b){uint32_t h=uint32_t(a)*73856093u^uint32_t(b)*19349663u^seed;h^=h>>16;h*=0x7feb352du;h^=h>>15;h*=0x846ca68bu;h^=h>>16;return double(h&65535u)/65535.0;};
+        double u=x-ix,v=z-iz;u=u*u*(3-2*u);v=v*v*(3-2*v);
+        return (sample(ix,iz)*(1-u)+sample(ix+1,iz)*u)*(1-v)+(sample(ix,iz+1)*(1-u)+sample(ix+1,iz+1)*u)*v;
+    }
+    Dictionary candidates(Vector2i cell,int64_t seed,double density,bool natural_region=false) const {
         PackedVector3Array points;PackedInt64Array ids;PackedFloat32Array rotations,scales;
         if(cell.x>=0&&cell.x<32&&cell.y>=0&&cell.y<32&&std::isfinite(density)&&density>=0&&density<=1){
             Ref<RandomNumberGenerator> rng;rng.instantiate();
@@ -118,6 +124,13 @@ public:
                 const double yaw=rng->randf_range(0.0,6.283185307179586);
                 const double scale=rng->randf_range(0.7,1.18);
                 double biome=std::clamp((1000.0-point.x)/100.0,0.0,1.0)*std::clamp((point.z-1000.0)/100.0,0.0,1.0);
+                if(natural_region){
+                    // Coherent woodland and meadow boundaries across the whole map.
+                    // Same candidate budget/IDs; only generation14 opts into this field.
+                    const double broad=woodland_noise(px/230.0,pz/230.0,uint32_t(seed)^0x76b3a921u);
+                    const double edge=woodland_noise(px/65.0,pz/65.0,uint32_t(seed)^0x1b873593u);
+                    biome=std::clamp((broad*.8+edge*.2-.34)*4.0,0.0,1.0);
+                }
                 for(const auto &grove:groves){
                     const double dx=px-grove.x,dz=pz-grove.z;
                     biome=std::max(biome,std::clamp((double(grove.y)-std::sqrt(dx*dx+dz*dz))/4.0,0.0,1.0));
