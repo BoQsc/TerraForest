@@ -1,3 +1,20 @@
+## Save capture attribution and native serialization - 2026-10-20
+
+Actual populated-world captures identified water serialization as the dominant
+main-thread cost (59-77 ms for 36.9 MB). Replacing per-field extension API calls
+with one writable buffer and explicit little-endian encoding reduces complete
+capture from 61-78 ms to 21-22 ms in the paired check. SHA-256 remains identical.
+Edited and unchanged snapshots roundtrip exactly; truncated restore is rejected
+without changing live data. Both native builds updated. Evidence:
+`evidence/world_capture_serialization/summary.json`.
+
+This does NOT close the save-frame budget: 21 ms still exceeds a 60 FPS frame.
+Next address bounded capture / unchanged section reuse with explicit mutation
+invalidation, and measure actual save dispatch during travel. No water gameplay
+or archive format change. Paging stays opt-in; arrival tail latency, the earlier
+43.523 ms travel spike, storage growth, world-quality acceptance and sustained
+whole-world performance remain open under the foundation register below.
+
 ## Startup autosave corrected; paging promotion withheld - 2026-10-20
 
 Default-on compatibility checks passed model edit/save/fresh reopen and browser

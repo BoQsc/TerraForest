@@ -1,6 +1,7 @@
 extends RefCounted
 ## Main-thread registration/capture only. Packing, checksums, validation and disk
 ## publication run in native code on the terrain-owned worker.
+var last_capture: Dictionary = {}
 var _terrain: Node
 var _providers: Dictionary = {}
 var _restored_epoch: int = -1
@@ -60,9 +61,14 @@ func attach(terrain: Node) -> Error:
 
 func _capture() -> Dictionary:
 	var sections: Dictionary = {}
+	var measurements: Dictionary = {}
+	var began:=Time.get_ticks_usec()
 	for name: String in _providers:
 		if _providers[name]["capture"].is_valid():
+			var section_begin:=Time.get_ticks_usec()
 			sections[name] = _providers[name]["capture"].call()
+			measurements[name]={"us":Time.get_ticks_usec()-section_begin,"bytes":sections[name].size()}
+	last_capture={"total_us":Time.get_ticks_usec()-began,"sections":measurements}
 	return {"epoch": _restored_epoch, "sections": sections}
 
 func _restore(sections: Dictionary, epoch_id: int) -> void:

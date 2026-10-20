@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: 0BSD
 #include <map>
+#include <cstring>
 #include "regional_water.hpp"
 #include "../../volumetric_terrain/native/density_surface.hpp"
 #include "lake_catalog.hpp"
@@ -1204,25 +1205,34 @@ PackedByteArray NativeRegionalWater::capture_snapshot(const PackedByteArray &cat
     bool vacancies=false;for(const auto &[k,r]:regions)for(uint32_t missing:r.vacancies)vacancies|=missing!=0;
     if(vacancies){contact_bytes+=regions.size()*4;for(const auto &[k,r]:regions)for(uint32_t missing:r.vacancies)if(missing)contact_bytes+=8;}
     if(contact_bytes>64*1024*1024)return out;
-    out.resize(32+catalog.size()+regions.size()*REGION_BYTES+contact_bytes);out.encode_u32(0,MAGIC);out.encode_u32(4,vacancies?9:8);out.encode_u32(8,catalog.size());out.encode_u32(12,regions.size());out.encode_u64(16,total);out.encode_u64(24,contact_bytes);
-    for(int i=0;i<catalog.size();++i)out.set(32+i,catalog[i]);int64_t offset=32+catalog.size();
-    for(const auto &[k,r]:regions){out.encode_u64(offset,k);out.encode_u32(offset+8,r.valid?1:0);out.encode_u32(offset+12,(r.has_density?1:0)|(r.replace_water?2:0));offset+=16;
-        for(int i=0;i<512;++i){out.encode_u16(offset,r.floor[i]);out.encode_u16(offset+2,r.ceiling[i]);out.encode_u64(offset+4,r.water[i]);offset+=12;}
-        for(float value:r.density){out.encode_float(offset,value);offset+=4;}}
-    for(const auto &[k,r]:regions){out.encode_u32(offset,r.contacts?1:0);offset+=4;if(!r.contacts)continue;
-        for(const auto &cell:r.contacts->floors){out.encode_u32(offset,cell.size());offset+=4;
-            for(const auto &triangle:cell)for(auto p:triangle){out.encode_float(offset,p.x);out.encode_float(offset+4,p.z);out.encode_float(offset+8,p.y);offset+=12;}}}
+    if(out.resize(32+catalog.size()+regions.size()*REGION_BYTES+contact_bytes)!=OK)return out;
+    // One writable borrow avoids millions of GDExtension calls. Explicit little
+    // endian writes preserve the existing archive on every host; no struct dumps.
+    uint8_t *bytes=out.ptrw();
+    auto u16=[&](int64_t at,uint16_t v){for(int n=0;n<2;++n)bytes[at+n]=uint8_t(v>>(8*n));};
+    auto u32=[&](int64_t at,uint32_t v){for(int n=0;n<4;++n)bytes[at+n]=uint8_t(v>>(8*n));};
+    auto u64=[&](int64_t at,uint64_t v){for(int n=0;n<8;++n)bytes[at+n]=uint8_t(v>>(8*n));};
+    auto f32=[&](int64_t at,float v){uint32_t bits;std::memcpy(&bits,&v,sizeof(bits));u32(at,bits);};
+    auto f64=[&](int64_t at,double v){uint64_t bits;std::memcpy(&bits,&v,sizeof(bits));u64(at,bits);};
+    u32(0,MAGIC);u32(4,vacancies?9:8);u32(8,catalog.size());u32(12,regions.size());u64(16,total);u64(24,contact_bytes);
+    if(catalog.size())std::memcpy(bytes+32,catalog.ptr(),catalog.size());int64_t offset=32+catalog.size();
+    for(const auto &[k,r]:regions){u64(offset,k);u32(offset+8,r.valid?1:0);u32(offset+12,(r.has_density?1:0)|(r.replace_water?2:0));offset+=16;
+        for(int i=0;i<512;++i){u16(offset,r.floor[i]);u16(offset+2,r.ceiling[i]);u64(offset+4,r.water[i]);offset+=12;}
+        for(float value:r.density){f32(offset,value);offset+=4;}}
+    for(const auto &[k,r]:regions){u32(offset,r.contacts?1:0);offset+=4;if(!r.contacts)continue;
+        for(const auto &cell:r.contacts->floors){u32(offset,cell.size());offset+=4;
+            for(const auto &triangle:cell)for(auto p:triangle){f32(offset,p.x);f32(offset+4,p.z);f32(offset+8,p.y);offset+=12;}}}
     for(const auto &[k,r]:regions){
         uint32_t count=0;if(r.structures)for(const auto &cell:r.structures->cells)if(cell)++count;
-        out.encode_u32(offset,count);offset+=4;if(!count)continue;
+        u32(offset,count);offset+=4;if(!count)continue;
         for(int i=0;i<512;++i)if(r.structures->cells[i]){auto data=r.structures->cells[i]->encode();
-            out.encode_u32(offset,i);out.encode_u32(offset+4,data.size());offset+=8;
-            for(double value:data){out.encode_double(offset,value);offset+=8;}}
+            u32(offset,i);u32(offset+4,data.size());offset+=8;
+            for(double value:data){f64(offset,value);offset+=8;}}
     }
     if(vacancies)for(const auto &[k,r]:regions){
         uint32_t count=0;for(uint32_t missing:r.vacancies)if(missing)++count;
-        out.encode_u32(offset,count);offset+=4;
-        for(int i=0;i<int(r.vacancies.size());i++)if(r.vacancies[i]){out.encode_u32(offset,i);out.encode_u32(offset+4,r.vacancies[i]);offset+=8;}
+        u32(offset,count);offset+=4;
+        for(int i=0;i<int(r.vacancies.size());i++)if(r.vacancies[i]){u32(offset,i);u32(offset+4,r.vacancies[i]);offset+=8;}
     }
     return out;
 }

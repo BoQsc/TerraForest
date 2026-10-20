@@ -1,0 +1,120 @@
+{
+  "before": {
+    "run": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 34996,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 19.391879600007087,
+      "passed": true
+    },
+    "samples": [
+      {
+        "total_us": 61260,
+        "water": {
+          "bytes": 36909584,
+          "us": 59162
+        },
+        "water_sha256": "478c92a8b46e664de65ab0fb926ed4d5972777e555aab77c97dffac337dd4fe6"
+      },
+      {
+        "total_us": 60556,
+        "water": {
+          "bytes": 36909584,
+          "us": 60148
+        },
+        "water_sha256": "478c92a8b46e664de65ab0fb926ed4d5972777e555aab77c97dffac337dd4fe6"
+      },
+      {
+        "total_us": 77660,
+        "water": {
+          "bytes": 36909584,
+          "us": 77245
+        },
+        "water_sha256": "478c92a8b46e664de65ab0fb926ed4d5972777e555aab77c97dffac337dd4fe6"
+      }
+    ]
+  },
+  "after": {
+    "run": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 15772,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 22.204830200003926,
+      "passed": true
+    },
+    "samples": [
+      {
+        "total_us": 21201,
+        "water": {
+          "bytes": 36909584,
+          "us": 19088
+        },
+        "water_sha256": "478c92a8b46e664de65ab0fb926ed4d5972777e555aab77c97dffac337dd4fe6"
+      },
+      {
+        "total_us": 21828,
+        "water": {
+          "bytes": 36909584,
+          "us": 21376
+        },
+        "water_sha256": "478c92a8b46e664de65ab0fb926ed4d5972777e555aab77c97dffac337dd4fe6"
+      },
+      {
+        "total_us": 20921,
+        "water": {
+          "bytes": 36909584,
+          "us": 20486
+        },
+        "water_sha256": "478c92a8b46e664de65ab0fb926ed4d5972777e555aab77c97dffac337dd4fe6"
+      }
+    ]
+  },
+  "verified": {
+    "run": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 37792,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 23.55933709999954,
+      "passed": true
+    },
+    "samples": [
+      {
+        "total_us": 29924,
+        "water": {
+          "bytes": 36909584,
+          "us": 25168
+        },
+        "water_sha256": "478c92a8b46e664de65ab0fb926ed4d5972777e555aab77c97dffac337dd4fe6"
+      },
+      {
+        "total_us": 20687,
+        "water": {
+          "bytes": 36909584,
+          "us": 20071
+        },
+        "water_sha256": "478c92a8b46e664de65ab0fb926ed4d5972777e555aab77c97dffac337dd4fe6"
+      },
+      {
+        "total_us": 22117,
+        "water": {
+          "bytes": 36909584,
+          "us": 21345
+        },
+        "water_sha256": "478c92a8b46e664de65ab0fb926ed4d5972777e555aab77c97dffac337dd4fe6"
+      }
+    ]
+  },
+  "byte_identical": true
+}
