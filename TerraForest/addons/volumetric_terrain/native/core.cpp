@@ -143,7 +143,7 @@ float World::regional_height(float x,float z,float h)const{
  return h;
 }
 bool World::regional_asphalt(float x,float z)const{
- if(!regional_roads)return false;
+ if(!regional_roads||generator_id==UNGRADED_REGION_GENERATOR_ID)return false;
  for(int i=1;i<site_count;i++){
   if(generator_id>=ROUTED_REGION_GENERATOR_ID){float grade=0;if(road_distance(i-1,x,z,grade)<=4.5f)return true;continue;}
   V3 a=sites[0].position,b=sites[i].position,delta={b.x-a.x,0,b.z-a.z},offset={x-a.x,0,z-a.z};
@@ -195,7 +195,7 @@ float World::height(float x,float z,bool developed)const{
    }else h+=bump(x,z,cx,cz,330.f+float(b&127),85.f+float((b>>8)&63));
   }
   h=clampf(h,18.f,225.f);
-  if(developed&&generator_id>=REGIONAL_WORLD_GENERATOR_ID)h=regional_height(x,z,h);
+  if(developed&&generator_id>=REGIONAL_WORLD_GENERATOR_ID&&generator_id!=UNGRADED_REGION_GENERATOR_ID)h=regional_height(x,z,h);
   for(int i=0;i<basin_count;i++){
    const auto &b=basins[i];float dx=x-b.x,dz=z-b.z,d2=dx*dx+dz*dz;
    if(generator_id>=NATURAL_REGION_GENERATOR_ID){
@@ -531,7 +531,7 @@ bool World::deserialize(const u8*data,int n){
  Reader r{data,n-4};if(r.u()!=SAVE_MAGIC)return false;u32 format=r.u();if(format!=1&&format!=2)return false;
  int s=int(r.u()),pc=int(r.u()),bc=int(r.u()),rev=int(r.u()),ed=int(r.u());
  u32 generator=format==1?1:r.u();
- if(!r.good||generator<1||generator>SITED_REGION_GENERATOR_ID)return false;
+ if(!r.good||generator<1||generator>UNGRADED_REGION_GENERATOR_ID)return false;
  if(pc<0||pc>MAX_PAGES||bc<0||bc>2000000||i64(pc)*(4+PAGE_SAMPLES*3)+i64(bc)*8+(format==1?28:32)!=n-4)return false;
  World t;t.build_control=build_control;t.init(s,generator);t.revision=rev;t.edits=ed;t.surface_style=surface_style;
  for(int i=0;i<pc;i++){
@@ -1160,7 +1160,7 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
  }
  else if(cmd==4){w.serialize(out);}
  else if(cmd==5){if(!w.deserialize(data+4,n-4))out.p[8]=1;out.u(w.revision);out.u(w.pages.n);out.u(w.blocks.n);}
- else if(cmd==6){int seed=int(r.u());u32 generator=n==12?r.u():1;if(!r.good||(n!=8&&n!=12)||generator<1||generator>SITED_REGION_GENERATOR_ID){out.p[8]=1;return;}BuildControl *control=w.build_control;w.release();w=World{};w.build_control=control;w.init(seed,generator);}
+ else if(cmd==6){int seed=int(r.u());u32 generator=n==12?r.u():1;if(!r.good||(n!=8&&n!=12)||generator<1||generator>UNGRADED_REGION_GENERATOR_ID){out.p[8]=1;return;}BuildControl *control=w.build_control;w.release();w=World{};w.build_control=control;w.init(seed,generator);}
  else if(cmd==7){V3 p=r.vec();if(!r.good||!(ab(p.x)<=10000&&ab(p.y)<=10000&&ab(p.z)<=10000)){out.p[8]=1;return;}out.f(w.height(p.x,p.z));out.f(w.sample(fl(p.x),fl(p.y),fl(p.z)));}
  else if(cmd==8){ // Deterministic construction proof; not a replay list.
   int bx=1472,bz=1440,by=int(w.height(float(bx),float(bz)))+1;

@@ -47,6 +47,9 @@ func tick(terrain: Node,guard: Callable) -> void:
 	var error: String=guard.call(plan.bounds)
 	if not error.is_empty(): status="stopped";reason=error;return
 	var segment: Dictionary=plan.segments[completed]
-	waiting=terrain.construct_graded_bed(segment.start,segment.finish,segment.half_width,segment.depth,segment.clearance,segment.material,segment.shoulder)
+	if segment.has("coefficients"):
+		waiting=terrain.construct_curved_road_bed(segment.start,segment.finish,segment.coefficients,segment.curve_index,segment.half_width,segment.depth,segment.clearance,segment.material,segment.shoulder)
+	else:
+		waiting=terrain.construct_graded_bed(segment.start,segment.finish,segment.half_width,segment.depth,segment.clearance,segment.material,segment.shoulder)
 	if waiting: ticket=terrain.edit_ticket
 	if not waiting: status="stopped";reason="Terrain edit not accepted; retry when terrain is ready"

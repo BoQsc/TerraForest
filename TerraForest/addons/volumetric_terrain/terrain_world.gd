@@ -310,5 +310,8 @@ func construct_graded_bed(a: Vector3,b: Vector3,half_width: float,depth: float,c
 		packet.resize(48);packet.encode_float(44,shoulder)
 	return edit(packet,a.min(b),a.max(b))
 
-func construct_curved_road_bed(a: Vector3,b: Vector3,coefficients: PackedFloat64Array,index: int,half_width: float=4,depth: float=4,clearance: float=16) -> bool:
-	return edit(Codec.curved_road_bed(a,b,half_width,depth,clearance,coefficients,index),a.min(b),a.max(b))
+func construct_curved_road_bed(a: Vector3,b: Vector3,coefficients: PackedFloat64Array,index: int,half_width: float=4,depth: float=4,clearance: float=16,material_id: int=4,shoulder: float=0.0) -> bool:
+	var packet:=Codec.curved_road_bed(a,b,half_width,depth,clearance,coefficients,index)
+	if packet.is_empty():return false
+	packet.encode_u32(40,material_id);packet.encode_float(44,shoulder)
+	return edit(packet,a.min(b),a.max(b))

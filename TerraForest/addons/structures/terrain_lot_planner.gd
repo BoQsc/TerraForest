@@ -13,6 +13,7 @@ static func streets(core,center:Vector3)->Dictionary:
  # ground; a bounded constraint solve limits grade without flattening a district.
  for road:Dictionary in Lots.street_segments(center):
   var count:int=ceili(road.start.distance_to(road.finish)/14.0)*2
+  var chain_start:int=edges.size()
   for i in count:
    var a:Vector3=road.start.lerp(road.finish,float(i)/count)
    var b:Vector3=road.start.lerp(road.finish,float(i+1)/count)
@@ -31,14 +32,14 @@ static func streets(core,center:Vector3)->Dictionary:
     for h in raw:low=minf(low,h);high=maxf(high,h)
     if high-3>low+2:return {"ok":false,"reason":"Street node exceeds earthworks budget","point":p}
     vertices[pair[0]]={"point":p,"low":high-3,"high":low+2,"grade":raw[4]}
-   edges.append({"a":ka,"b":kb,"length":a.distance_to(b)})
+   edges.append({"a":ka,"b":kb,"length":a.distance_to(b),"chain_start":chain_start,"chain_count":count})
  # Propagate feasible grade intervals, then choose compatible grades. Interval
  # rejection is a layout failure, not permission to increase the road slope.
  for iteration in 128:
   var changed:=false
   for edge:Dictionary in edges:
    var a:Dictionary=vertices[edge.a];var b:Dictionary=vertices[edge.b]
-   var rise:float=edge.length*0.12
+   var rise:float=edge.length*0.08
    for pair:Array in [[a,b],[b,a]]:
     var lo:float=maxf(pair[0].low,pair[1].low-rise)
     var hi:float=minf(pair[0].high,pair[1].high+rise)
@@ -51,11 +52,13 @@ static func streets(core,center:Vector3)->Dictionary:
  for edge:Dictionary in edges:
   var a:Vector3=vertices[edge.a].point;var b:Vector3=vertices[edge.b].point
   a.y=(vertices[edge.a].low+vertices[edge.a].high)*0.5;b.y=(vertices[edge.b].low+vertices[edge.b].high)*0.5
-  if absf(a.y-b.y)>edge.length*0.12001:return {"ok":false,"reason":"Street grade solver did not converge"}
+  if absf(a.y-b.y)>edge.length*0.08001:return {"ok":false,"reason":"Street grade solver did not converge"}
   var across:Vector3=Vector3(-(b-a).z,0,(b-a).x).normalized()
   var points:=PackedVector3Array()
   for step in 9:
-   for lateral in [-4,-2,0,2,4]:points.append(a.lerp(b,step/8.0)+across*lateral)
+   for lateral in [-4,-2,0,2,4]:
+    var p:Vector3=a.lerp(b,step/8.0)+across*lateral
+    p.y=lerpf(a.y,b.y,smoothstep(0.0,1.0,step/8.0));points.append(p)
   var raw:PackedFloat32Array=heights(core,points)
   if raw.size()!=points.size():return {"ok":false,"reason":"Street surface survey failed"}
   for i in points.size():
@@ -63,6 +66,29 @@ static func streets(core,center:Vector3)->Dictionary:
    max_fill=maxf(max_fill,fill);max_cut=maxf(max_cut,-fill)
    if fill>2.001 or fill< -3.001:return {"ok":false,"reason":"Street interior exceeds earthworks budget","point":points[i]}
   segments.append(Lots._segment(a,b,4,1,4,0,4))
+ for i in segments.size():
+  var edge:Dictionary=edges[i];var coefficients:=PackedFloat64Array()
+  for j in range(edge.chain_start,edge.chain_start+edge.chain_count):
+   var segment:Dictionary=segments[j];var delta:float=segment.finish.y-segment.start.y
+   coefficients.append_array(PackedFloat64Array([-2*delta,3*delta,0,segment.start.y]))
+  segments[i]["coefficients"]=coefficients;segments[i]["curve_index"]=i-edge.chain_start
+ # Shared level junction footprints, applied after adjoining sloped roads.
+ for x in [-42,42]:
+  for z in [-52,0,52]:
+   var key:=Vector2i(roundi((center.x+x)*100),roundi((center.z+z)*100))
+   var vertex:Dictionary=vertices[key]
+   var p:Vector3=vertex.point;p.y=(vertex.low+vertex.high)*0.5
+   var probes:=PackedVector3Array()
+   for dx in range(-4,5):
+    for dz in range(-4,5):
+     if Vector2(dx,dz).length()<=4:probes.append(p+Vector3(dx,0,dz))
+   var raw:PackedFloat32Array=heights(core,probes)
+   if raw.size()!=probes.size():return {"ok":false,"reason":"Junction survey failed"}
+   for h in raw:
+    if p.y-h>2 or h-p.y>3:return {"ok":false,"reason":"Junction exceeds earthworks budget"}
+   var junction:Dictionary=Lots._segment(p-Vector3(0.5,0,0),p+Vector3(0.5,0,0),4,3,4,2,4)
+   junction["coefficients"]=PackedFloat64Array([0,0,0,p.y]);junction["curve_index"]=0
+   segments.append(junction)
  return {"ok":true,"segments":segments,"max_fill":max_fill,"max_cut":max_cut}
 
 static func heights(core,points:PackedVector3Array)->PackedFloat32Array:
@@ -85,7 +111,7 @@ static func frontage(core,lot:Dictionary,origin:Vector3i,roads:Array)->Dictionar
  for road:Dictionary in roads:
   if absf(road.start.z-b.z)>0.001 or absf(road.finish.z-b.z)>0.001:continue
   if b.x<minf(road.start.x,road.finish.x) or b.x>maxf(road.start.x,road.finish.x):continue
-  b.y=lerpf(road.start.y,road.finish.y,(b.x-road.start.x)/(road.finish.x-road.start.x))
+  b.y=lerpf(road.start.y,road.finish.y,smoothstep(0.0,1.0,(b.x-road.start.x)/(road.finish.x-road.start.x)))
   found=true;break
  if not found:return {"ok":false}
  var length:float=Vector2(a.x-b.x,a.z-b.z).length()
@@ -171,3 +197,24 @@ static func locate(core,center:Vector3)->Dictionary:
    var lots:Dictionary=plan(core,candidate,roads.segments)
    if lots.ok:return {"ok":true,"center":candidate,"lots":lots.lots,"roads":roads.segments,"attempts":attempts}
  return {"ok":false,"reason":"No complete terrain-fitting layout in bounded search","attempts":attempts}
+
+static func earthworks(plan:Dictionary)->Dictionary:
+ if not plan.get("ok",false):return {"ok":false,"reason":"Incomplete layout"}
+ var segments:Array=[];var bounds:=AABB();var first:=true
+ for lot:Dictionary in plan.lots:
+  var foundation:Dictionary=preload("res://addons/structures/site_plan.gd").foundation(lot.asset,lot.origin,lot.rotation,lot.origin.y,4.0)
+  if not foundation.ok:return foundation
+  for strip:Dictionary in foundation.segments:
+   # Only the surveyed 2m fill / 3m cut is needed. Keep transition shoulders
+   # local so one building's foundation cannot flatten adjacent streets.
+   segments.append(Lots._segment(strip.start,strip.finish,strip.half_width,3,4,2,1))
+ for lot:Dictionary in plan.lots:
+  var path:Dictionary=lot.entrance.segment
+  segments.append(Lots._segment(path.start,path.finish,path.half_width,3,4,1,1))
+ for road:Dictionary in plan.roads:
+  var segment:Dictionary=Lots._segment(road.start,road.finish,road.half_width,3,4,2,4)
+  segment["coefficients"]=road.coefficients;segment["curve_index"]=road.curve_index
+  segments.append(segment)
+ for segment:Dictionary in segments:
+  bounds=segment.bounds if first else bounds.merge(segment.bounds);first=false
+ return {"ok":true,"segments":segments,"bounds":bounds}

@@ -1,3 +1,39 @@
+## Native earthworks and rendered neighborhood — 2026-10-20
+
+Generator17 is an immutable ungraded regional landscape: the natural mountain/lake
+field remains, but automatic regional road/settlement grading and asphalt are absent.
+It is for baking terrain-fitting development as ordinary saved edits. IDs1–16 are
+unchanged. It is NOT selected by the public review launcher or preparation default.
+Its legacy site/road descriptors are planning hints, not built roads or accepted
+settlement locations; map/destination integration must use the eventual baked plan.
+
+Terrain-lot earthworks now run through the normal asynchronous site-preparation
+path. Curved sections preserve selected material/shoulder values. Seed42 prepares
+136 sections and places all 12 furnished buildings in the real world scene. Native
+checks cover 2,608 foundation support samples, road surfaces within +/-0.5m of their
+planned height, and an exact native terrain snapshot roundtrip. The street test
+initially found ten bad samples from overlapping sloped end caps. Continuous cubic
+profiles, shared level junction footprints and painting roads after entrances fix
+those failures. Cubic sections reserve their 1.5x peak derivative within 12% grade.
+All seven seed planning checks still pass; native edited-surface checks cover seed42.
+Existing no-op preparation and graded-bed persistence checks also pass.
+
+The clean 1920x1080 world capture took26.33 seconds, with no engine diagnostics.
+Inspected overview/street images in docs/evidence/terrain_lot_native show actual
+buildings and sloped streets on preserved natural ground. The first capture caught
+a duplicate resource registration in the test harness; registration was corrected
+and the check rerun cleanly. The final images are NOT final-quality acceptance:
+road cuts remain exposed, layouts repeat, sidewalks/common areas/parking are absent,
+and surrounding vegetation/far-field transitions still need review. Captured60FPS
+is not sustained-performance evidence. No human review save was replaced.
+
+Required next: integrate this plan into full region preparation with regional road
+connections, mapped baked geometry/destinations, water/mine/site exclusions,
+terrain-fitted sidewalks/common areas/parking and saved attachments; assess shoulders
+and all edited footprint displacement; walk and drive entrances/junctions; verify
+full-world fresh-process restore, then promote a new review copy. The current raw
+profile is not a drop-in replacement for existing level district recipes.
+
 ## Terrain-fitted planning implementation — 2026-10-20
 
 Added offline terrain_lot_planner.gd, not yet wired into world preparation. It

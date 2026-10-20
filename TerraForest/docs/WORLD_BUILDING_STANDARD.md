@@ -183,3 +183,7 @@ cascade transitions in daylight. Distant approximations must not replace near
 cast shadows. The current correction reserves the first directional cascade for
 roughly 9 m, uses blended splits and a 4096 atlas; runtime and atlas-memory costs
 are explicit. Moving-view and broader terrain-acne review remain required.
+
+2026-10-20 correction: earlier independent-lot checks measured generator-flattened
+ground, not raw terrain. They do not establish earthworks acceptance. See the raw
+terrain audit and native terrain-lot evidence in WORLD_FOUNDATION_STATUS.md.

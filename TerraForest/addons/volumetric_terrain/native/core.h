@@ -9,6 +9,7 @@ constexpr u32 SAVE_MAGIC=0x32575254u, MESH_MAGIC=0x324d5254u, REPLY_MAGIC=0x3250
 constexpr u32 MATERIAL_FIELD_GENERATOR_ID=5; // Empty base for independently editable material channels.
 constexpr u32 WALKABLE_CAVE_GENERATOR_ID=6; // New immutable landscape profile; never repurpose saved IDs.
 constexpr u32 LAKE_WORLD_GENERATOR_ID=12; // Regional world with one substantial lake.
+constexpr u32 UNGRADED_REGION_GENERATOR_ID=17; // Natural regional field; roads and lots must be baked as edits.
 constexpr u32 SITED_REGION_GENERATOR_ID=16; // Surveyed outer settlements with preserved approach corridors.
 constexpr u32 ROUTED_REGION_GENERATOR_ID=15; // Terrain-cost road corridors, shared with the map.
 constexpr u32 NATURAL_REGION_GENERATOR_ID=14; // Irregular ridgelines and lake shores; older fields remain immutable.
