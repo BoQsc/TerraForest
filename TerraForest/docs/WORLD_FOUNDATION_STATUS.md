@@ -1,3 +1,20 @@
+## Unchanged world captures reuse immutable native snapshots - 2026-10-20
+
+Water snapshot reuse now retains at most 64 MiB including catalog bytes, with
+copy-on-write ownership for worker saves. Water quantity edits, mutable-region
+access/creation, terrain/building invalidation, accepted occupancy patches and
+successful restore invalidate it. Catalog identity must also match. No frame
+polling or background simulation was added. The populated-world repeated capture
+fell from ~21 ms to 0.46-0.49 ms; first captures remained 19-21 ms. Actual compound
+save/reopen with bucket edits, terrain mining and partial buildings passes.
+
+Cold/edited capture is still synchronous and remains unfinished. Next implement
+bounded preparation or immutable worker serialization for those captures, then
+measure real save dispatch while travelling. This cache alone is not proof of
+sustained 60 FPS. Memory retention is explicit in native statistics. No gameplay
+or archive format change; paging promotion and other foundation gates stay open.
+Evidence: `evidence/world_capture_cache`.
+
 ## Save capture attribution and native serialization - 2026-10-20
 
 Actual populated-world captures identified water serialization as the dominant

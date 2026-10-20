@@ -101,6 +101,14 @@ class NativeRegionalWater : public godot::RefCounted {
     mutable uint64_t query_builds=0,query_cache_hits=0;
     const QuerySurface *query_surface(Key k,QuerySurface &temporary) const;
     std::map<Key,Region> regions;
+    // Main-thread snapshot cache. PackedByteArray copy-on-write keeps an older
+    // worker-owned save immutable when the live store changes. Never retain more
+    // than 64 MiB here; larger captures remain uncached.
+    mutable godot::PackedByteArray saved_snapshot,saved_catalog;
+    mutable bool snapshot_cached=false;
+    mutable uint64_t snapshot_builds=0,snapshot_hits=0;
+    void invalidate_snapshot() const;
+
     std::map<Key,Region> mesh_snapshot;
     std::unordered_set<Key> mesh_snapshot_absent,mesh_snapshot_dependencies;
     std::deque<Key> batch_queue;

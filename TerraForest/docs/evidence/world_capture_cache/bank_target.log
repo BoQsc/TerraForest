@@ -1,0 +1,9 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS Prepared bank fixture restores
+PASS Scoop one unit
+PASS Aim bypasses the lake and vacancy
+BANK_TARGET { "ok": true, "pending": false, "water_ml": 1000000, "units": 1, "reason": "Placed one water unit (1 m3)", "point": (43.0, 42.5, 42.0) }
+PASS Targeted placement uses the bucket
+PASS Aiming beside and above water leaves the scooped hole untouched
+WATER_BANK_TARGET failures=0

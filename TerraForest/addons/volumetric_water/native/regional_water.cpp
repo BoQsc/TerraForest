@@ -221,16 +221,20 @@ NativeRegionalWater::Key NativeRegionalWater::region_key(const Vector3i &p){retu
 int NativeRegionalWater::index(const Vector3i &p){return (p.x&7)+8*(p.y&7)+64*(p.z&7);}
 bool NativeRegionalWater::in_domain(const Vector3i &p){return p.x>=0&&p.x<4000&&p.z>=0&&p.z<4000&&p.y>=2&&p.y<509;}
 void NativeRegionalWater::request(Key k){if(request_set.insert(k).second)requests.push_back(k);}
+void NativeRegionalWater::invalidate_snapshot() const {
+    if(!snapshot_cached)return;
+    snapshot_cached=false;saved_snapshot=PackedByteArray();saved_catalog=PackedByteArray();
+}
 NativeRegionalWater::Region *NativeRegionalWater::get(const Vector3i &p,bool ask){
     if(!in_domain(p))return nullptr;
     Key k=region_key(p);auto it=regions.find(k);
     if(it==regions.end()){
         if(!ask)return nullptr;
         if(regions.size()>=MAX_REGIONS){limit=true;return nullptr;}
-        preserve_mesh_region(k);it=regions.emplace(k,Region{}).first;
+        invalidate_snapshot();preserve_mesh_region(k);it=regions.emplace(k,Region{}).first;
     }
     if(!it->second.valid){if(ask)request(k);return nullptr;}
-    preserve_mesh_region(k);return &it->second;
+    invalidate_snapshot();preserve_mesh_region(k);return &it->second;
 }
 const NativeRegionalWater::Region *NativeRegionalWater::get(const Vector3i &p) const {
     if(!in_domain(p))return nullptr;auto it=regions.find(region_key(p));return it!=regions.end()&&it->second.valid?&it->second:nullptr;
@@ -243,7 +247,7 @@ WaterCellProfile NativeRegionalWater::surface_profile(const Vector3i &p,bool sna
     return profile(*r,index(p));
 }
 void NativeRegionalWater::changed(const Vector3i &p){
-    ++changes;Key k=region_key(p);if(mesh_set.insert(k).second)meshes.push_back(k);
+    invalidate_snapshot();++changes;Key k=region_key(p);if(mesh_set.insert(k).second)meshes.push_back(k);
     // Reconstruction reads adjacent levels as well as the meshing halo. Owners may
     // be empty storage regions; they still own boundary triangles.
     Vector3i lo=position(region_key(Vector3i(std::max(p.x-2,0),std::max(p.y-1,0),std::max(p.z-2,0))));
@@ -273,7 +277,7 @@ bool NativeRegionalWater::accept_patch(const Ref<NativeWaterTerrainPatch> &patch
     if(patch.is_null()||patch->status!=1)return false;Key k=key(patch->coord);auto it=regions.find(k);if(it==regions.end())return false;
     uint64_t old_bytes=it->second.structures?it->second.structures->bytes:0,new_bytes=patch->structures?patch->structures->bytes:0;
     if(solid_cache_bytes-old_bytes+new_bytes>64*1024*1024)return false;
-    preserve_mesh_region(k);if(restored_cache.count(k))++cache_rebuilds;
+    invalidate_snapshot();preserve_mesh_region(k);if(restored_cache.count(k))++cache_rebuilds;
     // Preserve the old water head while terrain occupancy is replaced. New
     // solid removes only water below that head; it must not push water upward.
     std::array<double,512> old_heads{},old_volumes{};
@@ -313,6 +317,7 @@ void NativeRegionalWater::invalidate_regions(const AABB &bounds,bool replace_wat
     if(!bounds.position.is_finite()||!bounds.size.is_finite()||bounds.size.x<=0||bounds.size.y<=0||bounds.size.z<=0)return;
     cancel_mesh_batch();
     for(auto &[k,r]:regions)if(AABB(Vector3(position(k))*4.0,Vector3(4,4,4)).intersects(bounds)){
+        invalidate_snapshot();
         // Only narrow mesh notifications when every pending invalidation is a
         // building edit. Terrain edits and restored unfinished regions retain
         // full-region notifications. Multiple building edits merge their bounds.
@@ -1189,6 +1194,7 @@ NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool s
 Dictionary NativeRegionalWater::statistics() const {
     uint64_t contact_bytes=0;for(const auto &[k,r]:regions)if(r.contacts)contact_bytes+=r.contacts->bytes;
     Dictionary d;d["structure_contact_bytes"]=int64_t(solid_cache_bytes);d["terrain_contact_bytes"]=int64_t(contact_bytes);d["pending_vertical"]=int64_t(0);d["vertical_steps"]=int64_t(0);d["water_ml"]=int64_t(total);d["active_cells"]=int64_t(0);d["regions"]=int64_t(regions.size());d["pending_regions"]=int64_t(requests.size());d["dirty_meshes"]=int64_t(meshes.size()+batch_queue.size());d["mesh_batch_active"]=batch_active;d["mesh_publish_pending"]=publish_pending;d["published_mesh_batch"]=int64_t(published_batch);d["query_cache_bytes"]=int64_t(query_cache_bytes);d["query_builds"]=int64_t(query_builds);d["query_cache_hits"]=int64_t(query_cache_hits);d["mesh_snapshot_bytes"]=int64_t(mesh_snapshot.size()*sizeof(Region));d["fill_active"]=fill.running;d["fill_remaining_ml"]=fill.remaining;d["sampled_nodes"]=int64_t(sampled);d["cache_hits"]=int64_t(cache_hits);d["cached_region_rebuilds"]=int64_t(cache_rebuilds);d["cell_steps"]=int64_t(0);d["changes"]=int64_t(changes);d["step_us"]=int64_t(last_us);d["max_step_us"]=int64_t(max_us);d["mesh_us"]=int64_t(mesh_us);d["max_mesh_us"]=int64_t(max_mesh_us);d["capacity_reached"]=limit;uint64_t vacancy_bytes=0;for(const auto &[k,r]:regions)vacancy_bytes+=r.vacancies.capacity()*sizeof(uint32_t);
+    d["snapshot_cache_bytes"]=saved_snapshot.size()+saved_catalog.size();d["snapshot_builds"]=int64_t(snapshot_builds);d["snapshot_hits"]=int64_t(snapshot_hits);
     d["vacancy_bytes"]=int64_t(vacancy_bytes);d["resident_cell_bytes"]=int64_t(regions.size()*sizeof(Region)+contact_bytes+solid_cache_bytes+vacancy_bytes);return d;
 }
 // Self-contained compound snapshot: authoritative amounts + derived occupancy.
@@ -1197,7 +1203,10 @@ Dictionary NativeRegionalWater::statistics() const {
 // reopen. All data has strict bounds; the outer world archive supplies checksums.
 static constexpr uint32_t MAGIC=0x31575256,OLD_REGION_BYTES=16+512*12,REGION_BYTES=OLD_REGION_BYTES+729*4;
 PackedByteArray NativeRegionalWater::capture_snapshot(const PackedByteArray &catalog) const {
-    PackedByteArray out;Ref<NativeLakeCatalog> validator;validator.instantiate();if(fill.running||!validator->validate_snapshot(catalog))return out;
+    PackedByteArray out;if(fill.running)return out;
+    if(snapshot_cached&&catalog==saved_catalog){++snapshot_hits;return saved_snapshot;}
+    Ref<NativeLakeCatalog> validator;validator.instantiate();if(!validator->validate_snapshot(catalog))return out;
+    ++snapshot_builds;
     uint64_t contact_bytes=regions.size()*4;
     for(const auto &[k,r]:regions)if(r.contacts){contact_bytes+=512*4;for(const auto &cell:r.contacts->floors)contact_bytes+=cell.size()*36;}
     contact_bytes+=regions.size()*4;
@@ -1234,6 +1243,8 @@ PackedByteArray NativeRegionalWater::capture_snapshot(const PackedByteArray &cat
         u32(offset,count);offset+=4;
         for(int i=0;i<int(r.vacancies.size());i++)if(r.vacancies[i]){u32(offset,i);u32(offset+4,r.vacancies[i]);offset+=8;}
     }
+    invalidate_snapshot();
+    if(out.size()+catalog.size()<=64*1024*1024){saved_snapshot=out;saved_catalog=catalog;snapshot_cached=true;}
     return out;
 }
 bool NativeRegionalWater::decode(const PackedByteArray &data,bool install){
@@ -1291,7 +1302,7 @@ bool NativeRegionalWater::decode(const PackedByteArray &data,bool install){
     }
     if(offset!=data.size())return false;
     if(sum!=expected)return false;if(!install)return true;
-    cancel_mesh_batch();published_surfaces.clear();published_batch=0;query_cache_bytes=0;query_builds=0;query_cache_hits=0;regions.swap(staged);solid_cache_bytes=structure_bytes;restored_cache.clear();cache_rebuilds=0;requests.clear();request_set.clear();meshes.clear();mesh_set.clear();fill=Fill{};total=sum;sampled=0;cache_hits=0;changes=0;last_us=max_us=mesh_us=max_mesh_us=0;limit=false;
+    invalidate_snapshot();cancel_mesh_batch();published_surfaces.clear();published_batch=0;query_cache_bytes=0;query_builds=0;query_cache_hits=0;regions.swap(staged);solid_cache_bytes=structure_bytes;restored_cache.clear();cache_rebuilds=0;requests.clear();request_set.clear();meshes.clear();mesh_set.clear();fill=Fill{};total=sum;sampled=0;cache_hits=0;changes=0;last_us=max_us=mesh_us=max_mesh_us=0;limit=false;
     for(auto &[k,r]:regions){if(r.valid){++cache_hits;restored_cache.insert(k);}else request(k);
         // Version 1 remains playable during one-time terrain-shape cache upgrade.
         if(!r.has_density)request(k);

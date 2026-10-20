@@ -1,0 +1,81 @@
+{
+  "first": {
+    "run": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 23732,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 20.390075999996043,
+      "passed": true
+    },
+    "samples": [
+      {
+        "total_us": 20625,
+        "water": {
+          "bytes": 36909584,
+          "us": 18649
+        },
+        "water_sha256": "478c92a8b46e664de65ab0fb926ed4d5972777e555aab77c97dffac337dd4fe6"
+      },
+      {
+        "total_us": 479,
+        "water": {
+          "bytes": 36909584,
+          "us": 61
+        },
+        "water_sha256": "478c92a8b46e664de65ab0fb926ed4d5972777e555aab77c97dffac337dd4fe6"
+      },
+      {
+        "total_us": 459,
+        "water": {
+          "bytes": 36909584,
+          "us": 57
+        },
+        "water_sha256": "478c92a8b46e664de65ab0fb926ed4d5972777e555aab77c97dffac337dd4fe6"
+      }
+    ]
+  },
+  "final": {
+    "run": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 34520,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 21.619525800007978,
+      "passed": true
+    },
+    "samples": [
+      {
+        "total_us": 19314,
+        "water": {
+          "bytes": 36909584,
+          "us": 17016
+        },
+        "water_sha256": "478c92a8b46e664de65ab0fb926ed4d5972777e555aab77c97dffac337dd4fe6"
+      },
+      {
+        "total_us": 492,
+        "water": {
+          "bytes": 36909584,
+          "us": 61
+        },
+        "water_sha256": "478c92a8b46e664de65ab0fb926ed4d5972777e555aab77c97dffac337dd4fe6"
+      },
+      {
+        "total_us": 471,
+        "water": {
+          "bytes": 36909584,
+          "us": 60
+        },
+        "water_sha256": "478c92a8b46e664de65ab0fb926ed4d5972777e555aab77c97dffac337dd4fe6"
+      }
+    ]
+  },
+  "unchanged_bytes": true
+}

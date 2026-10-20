@@ -11,6 +11,8 @@ func run()->void:
   var hashing:=HashingContext.new();hashing.start(HashingContext.HASH_SHA256);hashing.update(state.sections.volumetric_water)
   measured.water_sha256=hashing.finish().hex_encode()
   results.append(measured)
+  if i>0:check(measured.total_us<5000,"unchanged capture stays below 5 ms")
+  check(game.lakes.statistics().snapshot_cache_bytes<=64*1024*1024,"snapshot cache respects 64 MiB bound")
   check(not state.sections.is_empty(),"complete captured sections")
   for frame in 10:await process_frame
  # Exercise edited serialization on an independent store; preserve the source world.
@@ -19,6 +21,22 @@ func run()->void:
  var copy=ClassDB.instantiate("NativeRegionalWater")
  check(copy.restore_snapshot(original),"captured world restores")
  check(copy.capture_snapshot(catalog)==original,"restored world is byte-identical")
+ var builds:int=copy.statistics().snapshot_builds
+ check(copy.capture_snapshot(catalog)==original and copy.statistics().snapshot_builds==builds and copy.statistics().snapshot_hits>0,"unchanged snapshot reuses immutable bytes")
+ var caller_copy:PackedByteArray=copy.capture_snapshot(catalog)
+ caller_copy[0]=0
+ check(copy.capture_snapshot(catalog)==original,"caller mutation cannot corrupt cached snapshot")
+ copy.invalidate(AABB(Vector3.ZERO,Vector3(2000,256,2000)),false)
+ var invalidated:PackedByteArray=copy.capture_snapshot(catalog)
+ check(invalidated!=original and copy.validate_snapshot(invalidated),"terrain invalidation changes cached occupancy")
+ check(copy.restore_snapshot(original) and copy.capture_snapshot(catalog)==original,"restore invalidates older cached state")
+ copy.invalidate_buildings(AABB(Vector3.ZERO,Vector3(2000,256,2000)))
+ check(copy.capture_snapshot(catalog)!=original,"building invalidation changes cached occupancy")
+ check(copy.restore_snapshot(original),"original occupancy restored")
+ var other_catalog:PackedByteArray=ClassDB.instantiate("NativeLakeCatalog").encode([])
+ var other:PackedByteArray=copy.capture_snapshot(other_catalog)
+ check(other!=original and copy.snapshot_catalog(other)==other_catalog,"catalog identity invalidates cached archive")
+ check(copy.capture_snapshot(catalog)==original,"original catalog recaptures exactly")
  var removed:int=copy.remove_bounds(AABB(Vector3.ZERO,Vector3(2000,256,2000)))
  check(removed>0,"fixture contains removable water")
  var edited:PackedByteArray=copy.capture_snapshot(catalog)
