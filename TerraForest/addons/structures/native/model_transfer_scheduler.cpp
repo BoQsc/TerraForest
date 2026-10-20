@@ -170,6 +170,12 @@ Dictionary NativeModelTransferScheduler::select_focus(Vector3 world_focus,double
         if(expected.is_empty()||(!retiring&&distance>load_radius*load_radius)||(retiring&&distance<=unload_radius*unload_radius))continue;
         auto retry=binding.retry_after.find(key);if(retry!=binding.retry_after.end()&&retry->second>selection_tick)continue;
         if(retiring) {
+            // Background eviction must not occupy every slot while destination
+            // admissions wait. Keep at least one retirement progressing, but
+            // reserve most automatic scheduling capacity for foreground reads.
+            size_t retire_jobs=0;
+            for(const auto &entry:jobs)if(entry.second.retiring&&entry.second.stage!=DONE)++retire_jobs;
+            if(retire_jobs>=size_t(std::max(1,job_limit/4)))continue;
             // Skip renderer/history protection without starting disk reads.
             // Proxy protection is independently enforced by the transfer guard.
             auto drawn=collection->batches.lower_bound({key,0});

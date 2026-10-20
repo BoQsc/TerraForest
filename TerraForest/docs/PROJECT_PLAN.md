@@ -1,3 +1,14 @@
+## Model admission scheduling improved - 2026-10-20
+
+Automatic background retirement now occupies at most two of the eight native
+transfer slots, preserving foreground admission capacity without larger budgets.
+Actual north/south arrivals improved 1.782/1.195 s to 1.215/0.467 s in the first
+comparison. Both modified routes preserve readiness/correctness; the repeated
+route verifies eventual far-record retirement. Slower background retirement and
+its temporary residency increase are recorded in `evidence/model_admission_priority`.
+North still fails the one-second gate. Paging stays opt-in; next finish arrival
+latency qualification and travel frame timing rather than weakening readiness.
+
 ## Nearby visual readiness implemented - 2026-10-20
 
 Loading now waits for native model metadata admission AND published render pages

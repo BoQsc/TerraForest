@@ -23,7 +23,11 @@ func run()->void:
    var center:Vector3=layout.sites[site].position
    var arrival_begin:=Time.get_ticks_usec()
    game.teleport(center+Vector3(0,0,20))
-   if not check(await wait_for(func():return not game.loading_active,45),"destination terrain ready %d"%site):break
+   var arrival_trace:Array=[]
+   var arrived:bool=await wait_for(func():
+    arrival_trace.append({"ms":(Time.get_ticks_usec()-arrival_begin)/1000.0,"models":game.model_paging.last_state.duplicate(),"coordinator_us":game.model_paging.last_process_us,"reads":game.terrain.backend.snapshot_codec.region_read_stats(),"label":game.loading_label.text})
+    return not game.loading_active,45)
+   if not check(arrived,"destination terrain ready %d"%site):break
    game.set_physics_process(false);game._clear_motion()
    var expected:Array=records.filter(func(r):return Vector3(r.pose[3],r.pose[7],r.pose[11]).distance_to(game.player.position)<128)
    var released_ms:float=(Time.get_ticks_usec()-arrival_begin)/1000.0
@@ -55,11 +59,18 @@ func run()->void:
     var stats:Dictionary=batch.region_stats();resident+=stats.resident_instances;unloaded+=stats.unloaded_regions
    check(unloaded>0,"distant model regions actually unload %d"%site)
    check(game.model_paging.last_state.get("failed_transfers",0)==0,"no failed transfers %d"%site)
-   samples.append({"site":site,"arrival_ms":released_ms,"missing_at_release":missing_at_release,"pending_render_at_release":pending_at_release,"collision_at_release":collision_at_release,"frame_p95_ms":frame_times[113],"frame_max_ms":frame_times.back(),"expected_nearby":expected.size(),"resident_instances":resident,"unloaded_regions":unloaded,"scheduler":game.model_paging.last_state})
+   samples.append({"site":site,"arrival_trace":arrival_trace,"arrival_ms":released_ms,"missing_at_release":missing_at_release,"pending_render_at_release":pending_at_release,"collision_at_release":collision_at_release,"frame_p95_ms":frame_times[113],"frame_max_ms":frame_times.back(),"expected_nearby":expected.size(),"resident_instances":resident,"unloaded_regions":unloaded,"scheduler":game.model_paging.last_state})
    if "--capture-arrival" in OS.get_cmdline_user_args():
     game.camera.global_position=center+Vector3(75,35,75);game.camera.look_at(center+Vector3.UP*5)
     for frame in 4:await RenderingServer.frame_post_draw
     root.get_texture().get_image().save_png(OUT+"arrival_%d.png"%site)
+  var far_drained:bool=await wait_for(func():
+   for batch in game.structures._models.values():
+    for id:int in batch.get_ids():
+     var pose:PackedFloat32Array=batch.get_instance(id)
+     if Vector3(pose[3],pose[7],pose[11]).distance_to(game.player.position)>600:return false
+   return true,10)
+  check(far_drained,"background retirement drains far records after travel")
   if "--edit-check" in OS.get_cmdline_user_args():
    var asset:="architecture/metal_stairrail/v1"
    var batch=game.structures.model(asset)

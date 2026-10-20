@@ -1,0 +1,51 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[terrain-hitch] restore volumetric_water 183.47 ms at 3377
+[TerrainRewrite] World loaded
+[TerrainRewrite] World loaded
+[terrain-hitch] receive startup 199.92 ms at 3387
+[terrain-hitch] receive 202.11 ms at 3389
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS populated world ready
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS destination terrain ready 0
+PASS all nearby saved records ready when loading releases 0
+PASS nearby render pages ready at release 0
+PASS local collision ready when loading releases 0
+MODEL_STATE { "selection_scans": 64, "selection_requests": 0, "selection_usec": 62, "jobs": 0, "active": true, "reading": 0, "completed": 0, "collections": 12, "job_limit": 8, "byte_limit": 67108864, "reserved_bytes": 0, "packet_reservation": 5600232, "epoch": 0, "stopping": false, "busy": false, "ticks": 1153, "step_records": 0, "step_hash_bytes": 0, "step_operations": 0, "step_usec": 0, "peak_usec": 305, "drained": false, "failed_transfers": 0, "last_failure": {  } }
+PASS all nearby saved furnishing transforms exact 0
+Visual vehicle dents repaired.
+PASS distant model regions actually unload 0
+PASS no failed transfers 0
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS destination terrain ready 3
+PASS all nearby saved records ready when loading releases 3
+PASS nearby render pages ready at release 3
+PASS local collision ready when loading releases 3
+MODEL_STATE { "selection_scans": 64, "selection_requests": 2, "selection_usec": 71, "jobs": 6, "active": true, "reading": 2, "completed": 0, "collections": 12, "job_limit": 8, "byte_limit": 67108864, "reserved_bytes": 33601392, "packet_reservation": 5600232, "epoch": 0, "stopping": false, "busy": false, "ticks": 1375, "step_records": 32, "step_hash_bytes": 0, "step_operations": 6, "step_usec": 102, "peak_usec": 634, "drained": false, "failed_transfers": 0, "last_failure": {  } }
+PASS all nearby saved furnishing transforms exact 3
+Visual vehicle dents repaired.
+PASS distant model regions actually unload 3
+PASS no failed transfers 3
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS destination terrain ready 4
+PASS all nearby saved records ready when loading releases 4
+PASS nearby render pages ready at release 4
+PASS local collision ready when loading releases 4
+MODEL_STATE { "selection_scans": 64, "selection_requests": 1, "selection_usec": 69, "jobs": 7, "active": true, "reading": 1, "completed": 0, "collections": 12, "job_limit": 8, "byte_limit": 67108864, "reserved_bytes": 39201624, "packet_reservation": 5600232, "epoch": 0, "stopping": false, "busy": false, "ticks": 1566, "step_records": 3, "step_hash_bytes": 358, "step_operations": 8, "step_usec": 256, "peak_usec": 634, "drained": false, "failed_transfers": 0, "last_failure": {  } }
+PASS all nearby saved furnishing transforms exact 4
+PASS distant model regions actually unload 4
+PASS no failed transfers 4
+[TerrainRewrite] Ready: map coverage and local collision are active
+PASS destination terrain ready 0
+PASS all nearby saved records ready when loading releases 0
+PASS nearby render pages ready at release 0
+PASS local collision ready when loading releases 0
+MODEL_STATE { "selection_scans": 64, "selection_requests": 1, "selection_usec": 61, "jobs": 4, "active": true, "reading": 1, "completed": 0, "collections": 12, "job_limit": 8, "byte_limit": 67108864, "reserved_bytes": 22400928, "packet_reservation": 5600232, "epoch": 0, "stopping": false, "busy": false, "ticks": 1733, "step_records": 2, "step_hash_bytes": 0, "step_operations": 4, "step_usec": 69, "peak_usec": 634, "drained": false, "failed_transfers": 0, "last_failure": {  } }
+PASS all nearby saved furnishing transforms exact 0
+Visual vehicle dents repaired.
+PASS distant model regions actually unload 0
+PASS no failed transfers 0
+[TerrainRewrite] Temporary test world: save skipped
+POPULATED_MODEL_PAGING failures=0
