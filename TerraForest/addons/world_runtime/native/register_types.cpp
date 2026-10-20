@@ -6,6 +6,7 @@
 #include "world_archive.hpp"
 #include "derived_cache_index.hpp"
 #include "road_anchors.hpp"
+#include "generated_region.hpp"
 #include "road_editor_settings.hpp"
 #include <godot_cpp/godot.hpp>
 #include <godot_cpp/core/class_db.hpp>
@@ -22,6 +23,7 @@ static void initialize(ModuleInitializationLevel level) {
         GDREGISTER_CLASS(terraforest::NativeWorldArchive);
         GDREGISTER_CLASS(terraforest::NativeDerivedCacheIndex);
         GDREGISTER_CLASS(terraforest::NativeRoadAnchors);
+        GDREGISTER_CLASS(terraforest::NativeGeneratedRegion);
         GDREGISTER_CLASS(terraforest::NativeRoadEditorSettings);
     }
 }

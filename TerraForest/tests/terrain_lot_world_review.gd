@@ -13,9 +13,24 @@ func run()->void:
  if not plan.ok:quit(1);return
  var works:Dictionary=Planner.earthworks(plan)
  var game=load("res://demo/world.tscn").instantiate()
- game.temporary_world=true;game.max_fps=60;game.background_fps=60;root.add_child(game)
+ var bake:bool="--save-terrain-lots" in OS.get_cmdline_user_args()
+ var reopen:bool="--reopen-terrain-lots" in OS.get_cmdline_user_args()
+ if bake:
+  var slot:=""
+  for arg:String in OS.get_cmdline_user_args():
+   if arg.begins_with("--world-slot="):slot=arg.trim_prefix("--world-slot=")
+  if slot.is_empty() or FileAccess.file_exists("user://worlds/"+slot+".trw"):
+   print("REFUSING_EXISTING_OR_UNNAMED_BAKE");game.free();quit(1);return
+ game.temporary_world=not bake;game.max_fps=60;game.background_fps=60;root.add_child(game)
  if not await ready_world(game) or game.terrain.backend.world_generator!=17:print("WRONG_WORLD");quit(1);return
  game.set_physics_process(false);game._clear_motion()
+ if reopen:
+  var expected=FileAccess.get_file_as_bytes("res://reports/terrain_lot_region_expected.bin")
+  if expected.is_empty() or game.generated_region.store.capture_snapshot()!=expected or game.generated_region.describe(42,17).is_empty():
+   print("REGION_REOPEN_FAILED");game.free();quit(1);return
+  game.world_map.refresh_world()
+  print("TERRAIN_LOT_REOPEN failures=0 places=",game.world_map.places.size()," roads=",game.world_map.roads.size())
+  game.free();quit();return
  var runner=preload("res://addons/structures/site_preparation.gd").new()
  if not runner.begin(works,game.terrain,func(_bounds:AABB)->String:return ""):quit(1);return
  var deadline:int=Time.get_ticks_msec()+90000
@@ -41,6 +56,10 @@ func run()->void:
  var saved_paving:PackedByteArray=collection.capture_snapshot()
  if not collection.remove_instances(collection.get_ids()) or not collection.restore_snapshot(saved_paving) or collection.capture_snapshot()!=saved_paving:
   print("PAVING_ROUNDTRIP_FAILED");quit(1);return
+ if not game.generated_region.publish_neighborhood(42,plan):print("REGION_PUBLICATION_FAILED");quit(1);return
+ game.terrain.changed_since_save=true
+ game.world_map.refresh_world()
+ if game.world_map.places.size()!=1 or game.world_map.roads.is_empty():print("BAKED_MAP_FAILED");quit(1);return
  game.construction_palette.survey_dialog.hide()
  var center:Vector3=plan.center
  center.y=plan.lots[5].origin.y
@@ -74,5 +93,10 @@ func run()->void:
  game.controls.clear(Time.get_ticks_usec())
  print("PAVEMENT_WALK arrived=",arrived," start=",start," target=",target," actual=",game.player.position)
  if not arrived:game.free();quit(1);return
+ if bake:
+  var file=FileAccess.open("res://reports/terrain_lot_region_expected.bin",FileAccess.WRITE)
+  file.store_buffer(game.generated_region.store.capture_snapshot());file.close()
+  game.shutdown_requested=true
+  if not await game.terrain.shutdown_after_edits():print("BAKE_SAVE_FAILED");game.free();quit(1);return
  print("TERRAIN_LOT_WORLD_REVIEW failures=0 buildings=",plan.lots.size()," edits=",runner.completed)
  game.free();quit()

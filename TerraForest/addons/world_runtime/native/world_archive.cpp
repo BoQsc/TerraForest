@@ -48,7 +48,7 @@ bool NativeWorldArchive::acquire(const String &path) {
 }
 void NativeWorldArchive::release(){if(lease_){CloseHandle(static_cast<HANDLE>(lease_));lease_=nullptr;leased_path_=String();}}
 static int64_t archive_section_size(const Dictionary &sections) {
-    if(sections.size()<1 || sections.size()>64 || !sections.has("terrain"))return -1;
+    if(sections.size()<1 || sections.size()>128 || !sections.has("terrain"))return -1;
     Array keys=sections.keys();
     int64_t total=48;
     for(int64_t i=0;i<keys.size();++i) {
@@ -83,10 +83,10 @@ PackedByteArray NativeWorldArchive::encode(const Dictionary &sections) const {
 static Dictionary decode_archive(const PackedByteArray &bytes, bool materialize) {
     Dictionary result;result["ok"]=false;
     if(bytes.size()<48 || bytes.size()>LIMIT || std::memcmp(bytes.ptr(),MAGIC,8)!=0 || bytes.decode_u32(8)!=1)return result;
-    const uint32_t count=bytes.decode_u32(12);if(count<1||count>64)return result;
+    const uint32_t count=bytes.decode_u32(12);if(count<1||count>128)return result;
     if(archive_hash(bytes)!=bytes.slice(16,48))return result;
     // Validate every bound/name before materializing section payloads.
-    int64_t offsets[64], lengths[64];String names[64];int64_t cursor=48;
+    int64_t offsets[128], lengths[128];String names[128];int64_t cursor=48;
     String previous;
     for(uint32_t i=0;i<count;++i) {
         if(cursor>bytes.size()-8)return result;

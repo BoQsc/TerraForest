@@ -15,11 +15,19 @@ func refresh()->void:
  menu.label(self,"World destinations").add_theme_font_size_override("font_size",24)
  if game.loading_active or not game.terrain.world_ready:
   menu.label(self,"World loading. Reopen this page when ready.");return
- var key:="%d/%d"%[game.terrain.backend.world_seed,game.terrain.backend.world_generator]
+ var key:="%d/%d/%d/%d"%[game.terrain.backend.world_seed,game.terrain.backend.world_generator,game.terrain.epoch,game.generated_region.revision()]
  if key!=layout_key:
-  destinations=describe(game.terrain.backend.world_seed,game.terrain.backend.world_generator);layout_key=key
-  destinations.append_array(planted_woodland())
- menu.label(self,"Follow the regional roads from the central settlement to the western, eastern, northern and southern districts. Explore the eastern mine or visit the lake shores.")
+  layout_key=key
+  var baked:Dictionary=game.generated_region.describe(game.terrain.backend.world_seed,game.terrain.backend.world_generator)
+  if game.terrain.backend.world_generator>=17:
+   destinations.clear()
+   if not baked.is_empty():
+    for place:Dictionary in baked.places:destinations.append(place.duplicate())
+  else:
+   destinations=describe(game.terrain.backend.world_seed,game.terrain.backend.world_generator)
+   destinations.append_array(planted_woodland())
+ if game.terrain.backend.world_generator>=17:menu.label(self,"Public locations from the saved world layout.")
+ else:menu.label(self,"Follow the regional roads from the central settlement to the western, eastern, northern and southern districts. Explore the eastern mine or visit the lake shores.")
  menu.label(self,"Track a destination for its direction and distance while walking or driving. The guide points directly toward the location; use roads and entrances to get there. Development mode enables travel buttons.")
  if not game.destination_guide.destination.is_empty():
   menu.button(self,"Stop tracking: "+str(game.destination_guide.destination.title),func():game.destination_guide.clear();refresh())

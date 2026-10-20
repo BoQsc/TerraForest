@@ -29,7 +29,7 @@ func register_component(name: String, capture: Callable, restore: Callable, vali
 
 # Setup-only transaction: validate all entries before publishing any provider.
 func register_components(components: Array[Dictionary]) -> bool:
-	if _terrain != null or components.is_empty() or _providers.size()+components.size()>63:return false
+	if _terrain != null or components.is_empty() or _providers.size()+components.size()>127:return false
 	var staged:Dictionary={}
 	for entry:Dictionary in components:
 		for key in ["name","capture","restore","validator","empty"]:

@@ -1,3 +1,36 @@
+## Saved terrain-fitting neighborhood — 2026-10-20
+
+A loadable development save now exists: terrain_fitted_neighborhood_20261020.
+Play Terrain-Fitting Neighborhood.cmd opens a separate editable copy at the new
+neighborhood; the prior full-region review and existing saves remain unchanged.
+This is ONE developed neighborhood in profile17, not a completed replacement region.
+Regional connections, other settlements, authored lake filling, landscaping/public
+spaces, road-cut treatment, facade variety and broad traversal remain required.
+
+NativeGeneratedRegion stores the actual baked public locations and sampled road
+lines. Map/destinations use these persisted coordinates for17; they no longer infer
+built streets or lakes from planning descriptors. Publication follows successful
+terrain/building/paving completion. Old saves use an empty default component and
+retain their existing legacy directory. The native format is bounded and validates
+coordinates, labels, identity, duplicate IDs, truncation and exact payload length.
+
+Integration exposed the existing63-provider archive ceiling. The bounded ceiling
+is now127 providers plus terrain (128 sections), with unchanged total byte limits.
+Old archives remain readable; new >64-section saves require this updated runtime.
+Tests cover exact128-section roundtrip and129-section rejection, invalid metadata
+transactionality, and full-world save/fresh-process restoration. The integrated
+34.64-second check completed12 buildings and210 edits, walked the player on a
+sloping sidewalk, and durably saved. Fresh-process reopen took9.13 seconds, with
+one baked destination and272 road segments restored exactly. Both were diagnostic-
+free. Street screenshot shows54 FPS: sustained60/headroom is NOT established.
+
+Evidence: evidence/terrain_fitted_saved. Images inspected: sidewalks follow grade,
+but exposed raw cuts and repeated facades still prevent world-quality acceptance.
+A broader legacy world_persistence check also failed lake shutdown-drain and ID
+reuse assertions (retained log). Its failure is unresolved; do not claim the whole
+persistence suite passed. It is outside this no-water-work milestone and must be
+triaged before comprehensive persistence acceptance. No water behavior was changed.
+
 ## Terrain-supported pedestrian paving — 2026-10-20
 
 The new terrain-fitting neighborhood now reserves pedestrian corridors before

@@ -5,6 +5,7 @@ const Lakes = preload("res://addons/volumetric_water/lake_world.gd")
 const Persistence = preload("res://addons/world_runtime/world_persistence.gd")
 const Structures = preload("res://addons/structures/structures_world.gd")
 var persistence = Persistence.new()
+var generated_region=preload("res://addons/world_runtime/generated_region.gd").new()
 var actor_authoring=preload("res://addons/world_runtime/actor_authoring.gd").new()
 var actors=preload("res://addons/world_runtime/actor_world.gd").new()
 var model_paging: Node
@@ -141,6 +142,8 @@ func _ready() -> void:
 	var fence: Dictionary=preload("res://addons/structures/fence_catalog.gd").register(structures)
 	structures_ready = structures_ready and not fence.is_empty()
 	player_hud.ground_tools_enabled=ground_enabled
+	if not generated_region.prepare(persistence):
+		push_error("Generated region persistence initialization failed");get_tree().quit(2);return
 	if not player_hud.prepare() or not persistence.register_component("player_loadout", player_hud.capture_snapshot, player_hud.restore_snapshot, player_hud.inventory, player_hud.default_loadout):
 		push_error("Player loadout persistence initialization failed")
 		get_tree().quit(2)
@@ -171,10 +174,17 @@ func _ready() -> void:
 		push_error("Road anchor persistence initialization failed")
 		get_tree().quit(2)
 		return
-	if not storage.prepare(self,persistence) or not structures_ready or not lakes.prepare() or not persistence.register_component("structures", structures.capture_storage_snapshot, storage.restore_structures, structures.snapshot_validator(), structures.empty_snapshot()) or not persistence.register_component("volumetric_water", lakes.capture_storage_snapshot, lakes.restore_snapshot, lakes.snapshot_validator(), lakes.empty_snapshot()) or not persistence.enable_region_structures(true,model_region_paging) or persistence.attach(terrain) != OK:
-		push_error("World persistence initialization failed")
-		get_tree().quit(2)
-		return
+	var persistence_steps:Array=[
+		["chest storage",func():return storage.prepare(self,persistence)],
+		["structure catalog",func():return structures_ready],
+		["water",func():return lakes.prepare()],
+		["structure registration",func():return persistence.register_component("structures",structures.capture_storage_snapshot,storage.restore_structures,structures.snapshot_validator(),structures.empty_snapshot())],
+		["water registration",func():return persistence.register_component("volumetric_water",lakes.capture_storage_snapshot,lakes.restore_snapshot,lakes.snapshot_validator(),lakes.empty_snapshot())],
+		["regional archive",func():return persistence.enable_region_structures(true,model_region_paging)],
+		["terrain attachment",func():return persistence.attach(terrain)==OK]]
+	for step:Array in persistence_steps:
+		if not step[1].call():
+			push_error("World persistence initialization failed: "+step[0]);get_tree().quit(2);return
 	_setup_prefabs()
 	terrain.density_batch_ready.connect(foundation_check.receive)
 	structures.blocks.configure_history(16*1024*1024,128)

@@ -71,17 +71,20 @@ func set_open(value:bool)->void:
  else:timer.stop()
 func refresh_world()->void:
  var seed_value:int=game.terrain.backend.world_seed;var generator:int=game.terrain.backend.world_generator
- var next_key:="%d/%d/%d"%[seed_value,generator,game.terrain.epoch]
+ var baked:Dictionary=game.generated_region.describe(seed_value,generator)
+ var next_key:="%d/%d/%d/%d"%[seed_value,generator,game.terrain.epoch,game.generated_region.revision()]
  if next_key!=key:
   key=next_key;texture=null;places.clear();updates.reset()
   var layout:Dictionary=Layout.describe(seed_value,generator)
-  if not layout.is_empty():
+  if not baked.is_empty():
+   for place:Dictionary in baked.places:places.append(place.duplicate())
+  elif not layout.is_empty():
    var names:=["Central settlement","West settlement","East settlement","North neighborhood","South settlement"]
    for site:Dictionary in layout.sites:places.append({"title":names[site.id],"position":site.position})
   # Public basin shores only. Underground/secret descriptors are never enumerated.
   var core=ClassDB.instantiate("TerrainCore");core.execute(Survey.Codec.command(6,[seed_value,generator]))
   var data:PackedByteArray=core.execute(Survey.Codec.command(27))
-  if Survey.Codec.reply_ok(data) and data.size()==192:
+  if generator<17 and Survey.Codec.reply_ok(data) and data.size()==192:
    for i in 4:
     var at:=16+i*44
     places.append({"title":"Large lake" if generator>=12 and i==0 else "Pond %d"%(i+1),"position":Vector3(data.decode_float(at+32)+(72 if generator>=12 and i==0 else 27),data.decode_float(at+28),data.decode_float(at+40))})
@@ -89,7 +92,9 @@ func refresh_world()->void:
   for place:Dictionary in places:add_button(destination_list,place.title,func():game.destination_guide.track(place);view.queue_redraw())
  roads.clear()
  var layout:Dictionary=Layout.describe(seed_value,generator)
- if not layout.is_empty():
+ if not baked.is_empty():
+  for road:Dictionary in baked.roads:roads.append(road.duplicate())
+ elif not layout.is_empty():
   for road:Dictionary in layout.roads:
    var points:PackedVector3Array=road.get("points",PackedVector3Array([layout.sites[road.from].position,layout.sites[road.to].position]))
    for i in range(1,points.size()):roads.append({"a":points[i-1],"b":points[i],"width":road.half_width*2})
