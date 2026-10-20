@@ -39,6 +39,7 @@ void NativeStaticBatch::_bind_methods() {
     ClassDB::bind_method(D_METHOD("lock_asset_identity"),&NativeStaticBatch::lock_asset_identity);
     ClassDB::bind_method(D_METHOD("upsert_instances","ids","transforms"),&NativeStaticBatch::upsert_instances);
     ClassDB::bind_method(D_METHOD("remove_instances","ids"),&NativeStaticBatch::remove_instances);
+    ClassDB::bind_method(D_METHOD("clear_instances"),&NativeStaticBatch::clear_instances);
     ClassDB::bind_method(D_METHOD("get_instance","id"),&NativeStaticBatch::get_instance);
     ClassDB::bind_method(D_METHOD("get_ids"),&NativeStaticBatch::get_ids);
     ClassDB::bind_method(D_METHOD("capture_snapshot"),&NativeStaticBatch::capture_snapshot);
@@ -219,6 +220,21 @@ bool NativeStaticBatch::set_removal_protected(int64_t id,bool enabled) {
     if(!enabled){removal_protected.erase(id);return true;}
     if(!placements.count(id)&&!unloaded_ids.count(id))return false;
     removal_protected.insert(id);return true;
+}
+bool NativeStaticBatch::clear_instances() {
+    // Whole transient collection reset. Do not bypass persistence ownership,
+    // an in-flight region transfer, or protected object contents.
+    if(admission||paging_checkpoint||!unloaded_regions.empty()||!removal_protected.empty())return false;
+    if(placements.empty())return true;
+    // No surviving slots need repair when every page is being removed.
+    // Avoid release_batch's per-instance tree lookups for this whole reset.
+    render_evictions+=batches.size();
+    for(auto &entry:batches)memdelete(entry.second);
+    batches.clear();render_bytes=0;render_candidates=0;render_blocked=0;
+    clear_proxies();placements.clear();groups.clear();slots.clear();appearance_birth.clear();
+    resident_ids.clear();render_ids.clear();render_bounds.clear();render_pending.clear();
+    collision_bounds.clear();collision_dirty=true;render_dirty=true;
+    publish_change();return true;
 }
 bool NativeStaticBatch::remove_instances(const PackedInt64Array &ids) {
     if(ids.size()>100000)return false;std::set<int64_t> unique;

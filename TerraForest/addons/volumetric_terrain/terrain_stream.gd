@@ -1381,7 +1381,10 @@ func reload_world(reset: bool = false) -> void:
 		return
 	_reload_requested = false
 	_cancel_partition()
+	var dispatch_begin:=Time.get_ticks_usec()
 	reload_started.emit()
+	_record_stage("reload handlers",(Time.get_ticks_usec()-dispatch_begin)/1000.0)
+	dispatch_begin=Time.get_ticks_usec()
 	epoch += 1
 	initial_loading = true
 	root_coverage = 0
@@ -1411,7 +1414,10 @@ func reload_world(reset: bool = false) -> void:
 	visible_cut.clear()
 	active_leaves.clear()
 	cache_bytes = 0
+	_record_stage("reload terrain retirement",(Time.get_ticks_usec()-dispatch_begin)/1000.0)
+	dispatch_begin=Time.get_ticks_usec()
 	backend.submit({"kind": "reset" if reset else "load", "epoch": epoch}, true)
+	_record_stage("reload submit",(Time.get_ticks_usec()-dispatch_begin)/1000.0)
 
 func lod_counts() -> String:
 	var count: Dictionary = {16: 0, 32: 0, 64: 0, 128: 0, 256: 0}

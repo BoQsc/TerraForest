@@ -111,6 +111,7 @@ func _owner(key: Vector2i) -> String:
 	return "natural/%d/%d" % [key.x, key.y]
 
 func reset() -> void:
+	var reset_begin:=Time.get_ticks_usec()
 	for key in resident:
 		vegetation.remove_chunk(_owner(key))
 	resident.clear()
@@ -121,6 +122,7 @@ func reset() -> void:
 	_pending_cells.clear()
 	_wanted.clear()
 	_last_cell = Vector2i(-9999, -9999)
+	if terrain.has_method("_record_stage"):terrain._record_stage("reload trees",(Time.get_ticks_usec()-reset_begin)/1000.0)
 
 func _process(delta: float) -> void:
 	var begin:=Time.get_ticks_usec()

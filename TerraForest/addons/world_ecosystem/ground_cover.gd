@@ -84,10 +84,16 @@ func set_grass_texture(enabled: bool) -> bool:
 	return true
 
 func reset() -> void:
-	for key in resident: _retire(key)
+	var reset_begin:=Time.get_ticks_usec()
+	# Reset each native collection once; cell-by-cell removal repeatedly rebuilds
+	# the same 32m render groups during a whole-world reload.
+	for batch:Node3D in batches:
+		if not batch.clear_instances():push_error("Ground cover reset rejected native collection ownership");return
+	for key in resident:picker.remove_cell(key)
 	resident.clear();_wanted.clear();_dirty.clear();_pending.clear();_requests.clear();_support_job.clear()
 	_scatter_job.clear();_resident_layers.clear()
 	_last_cell=Vector2i(-999,-999)
+	if terrain.has_method("_record_stage"):terrain._record_stage("reload ground cover",(Time.get_ticks_usec()-reset_begin)/1000.0)
 
 func _retire(key: Vector2i) -> void:
 	picker.remove_cell(key)

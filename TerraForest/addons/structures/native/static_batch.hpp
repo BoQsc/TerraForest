@@ -189,6 +189,7 @@ public:
     bool lock_asset_identity();
     bool upsert_instances(const PackedInt64Array &ids,const PackedFloat32Array &transforms);
     bool remove_instances(const PackedInt64Array &ids);
+    bool clear_instances();
     PackedFloat32Array get_instance(int64_t id) const;
     PackedInt64Array get_ids() const;
     PackedByteArray capture_snapshot() const;

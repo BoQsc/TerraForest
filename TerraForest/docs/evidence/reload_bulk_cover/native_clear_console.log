@@ -1,0 +1,11 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS configure reset fixture
+PASS populate two render groups
+PASS protected contents reject clear without partial removal
+PASS clear removes every placement
+PASS bulk reset publishes one mutation
+PASS clear releases rendering indices and accounting
+PASS empty reset is idempotent
+PASS collection can repopulate with original asset and IDs
+STATIC_BATCH_CLEAR failures=0

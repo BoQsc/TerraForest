@@ -1,3 +1,36 @@
+## Native whole-collection vegetation reset — 2026-10-20
+
+Reload initiation is now instrumented separately for handlers, ground cover, trees,
+terrain retirement and backend submission. The initial check measured 11.060 ms in
+ground-cover reset: it removed each cell/species separately, repeatedly rebuilding
+the same native render groups. Ground cover now clears each species collection once
+through `NativeStaticBatch.clear_instances`, then clears interaction cells and
+coordinator metadata. Meshes, materials, LOD/shadow settings and saved removal edits
+are retained. No vegetation density reduction is involved.
+
+Native clearing releases complete pages without repairing per-item indices that are
+all being discarded, clears collision/render indices and appearance records, and
+publishes one mutation. It refuses protected objects, paging ownership and active
+region transfers. Empty clearing is idempotent. Native tests verify protected-state
+rejection without partial changes, complete render accounting, no leftover page nodes,
+exact revision behavior and repopulation using the original asset/IDs. Existing
+ground-cover streaming tests pass, including deterministic regeneration, reverse
+responses, failed-wave recovery and reset cleanup.
+
+At 1920x1080 fullscreen, final integrated reload passed with ground cover at
+**6.475 ms**, down from **11.060 ms**. Reload initiation measured **21.328 ms**;
+an intermediate run was 17.352 ms, illustrating that total reload remains variable.
+Final terrain retirement was **9.940 ms**, tree cleanup 2.433 ms and result restoration
+13.033 ms. Water interaction/quantities, component restoration, retirement cleanup and
+map cache reuse still pass. Debug/release structures binaries rebuilt; canonical save
+SHA-256 unchanged. Evidence: `evidence/reload_bulk_cover`.
+
+**Not closed:** the whole reload path is not yet within a 16.67 ms frame budget.
+Terrain retirement and remaining ground-cover metadata/native destruction are
+synchronous; they need bounded lifecycle work if larger worlds grow those costs.
+These measurements do not qualify city-scale population or sustained travel. The
+wider generator/design/storage/streaming gates below remain active.
+
 ## Populated-world reload retirement — 2026-10-20
 
 A new integrated `world_reload_foundation.gd` check loads the saved regional world,

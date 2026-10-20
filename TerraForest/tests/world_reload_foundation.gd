@@ -4,7 +4,7 @@ var stages:Dictionary={}
 func run()->void:
  game=load("res://demo/world.tscn").instantiate();game.temporary_world=true;game.max_fps=60;game.background_fps=60
  game.terrain.stage_measured.connect(func(label:String,ms:float):
-  if label.begins_with("restore ") or label=="receive reload":stages[label]=maxf(stages.get(label,0.0),ms))
+  if label.begins_with("restore ") or label.begins_with("reload ") or label=="receive reload":stages[label]=maxf(stages.get(label,0.0),ms))
  root.add_child(game)
  if not check(await wait_for(func():return not game.loading_active,60),"saved world starts before reload"):await done();return
  game.terrain.autosave_timer=-3600.0
