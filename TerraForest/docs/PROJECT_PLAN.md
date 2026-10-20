@@ -1,3 +1,14 @@
+## Short-route arrival gate passes - 2026-10-20
+
+Native completed reads now advance through local stages within each tick. The
+scene permits 16 operations while retaining 500 us/256 records/64 KiB budgets.
+Two populated routes reach north in 972/966 ms, south 549/484 ms and return
+633/667 ms, with exact nearby data, published pages, collision and retirement.
+Evidence: `evidence/model_admission_stages`. This closes the recorded one-second
+short-route gate, not a general latency guarantee. Prior 43.523 ms spike remains
+open. Next normal-launch/default-paging compatibility and final save/reopen, then
+combined travel frame attribution. Keep full world-foundation scope unchanged.
+
 ## Model admission scheduling improved - 2026-10-20
 
 Automatic background retirement now occupies at most two of the eight native

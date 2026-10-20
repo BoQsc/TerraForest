@@ -55,7 +55,9 @@ func step_model_paging(world_focus: Vector3, load_radius: float = 384, unload_ra
 		return {"active":false,"drained":true,"failed_transfers":_model_paging_failures}
 	if not _model_paging_draining:
 		_model_scheduler.select_focus(world_focus,load_radius,unload_radius)
-	_model_scheduler.tick()
+	# Small regions can exhaust the operation guard before the CPU-time budget.
+	# Keep time, record and byte budgets; allow more cheap state transitions.
+	_model_scheduler.tick(256,65536,500,16)
 	for result: Dictionary in _model_scheduler.poll(8):
 		if result.result == "failed":
 			_model_paging_failures += 1

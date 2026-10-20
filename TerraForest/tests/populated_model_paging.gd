@@ -30,7 +30,9 @@ func run()->void:
    if not check(arrived,"destination terrain ready %d"%site):break
    game.set_physics_process(false);game._clear_motion()
    var expected:Array=records.filter(func(r):return Vector3(r.pose[3],r.pose[7],r.pose[11]).distance_to(game.player.position)<128)
+   check(arrival_trace.all(func(t):return t.models.get("step_operations",0)<=16 and t.models.get("step_records",0)<=256 and t.models.get("step_hash_bytes",0)<=65536),"native arrival work limits respected %d"%site)
    var released_ms:float=(Time.get_ticks_usec()-arrival_begin)/1000.0
+   check(released_ms<=1000.0,"destination arrival within 1000 ms %d"%site)
    var missing_at_release:=0;var pending_at_release:=0
    for r:Dictionary in expected:
     if game.structures.model(r.asset).get_instance(int(r.id))!=PackedFloat32Array(r.pose):missing_at_release+=1

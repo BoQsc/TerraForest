@@ -263,9 +263,9 @@ Dictionary NativeModelTransferScheduler::tick(int records,int bytes,int usec,int
             job.read_ticket=0;
             if(!bool(result.get("ok",false))||!bool(result.get("checkpoint_verified",false))||int64_t(result.get("epoch",-1))!=job.epoch||
                PackedByteArray(result.get("checkpoint",PackedByteArray()))!=binding.lease->checkpoint) {finish(job,"failed","checkpoint_read");continue;}
-            job.packet=result["bytes"];job.stage=READY;continue;
+            job.packet=result["bytes"];job.stage=READY; // Continue local stages within remaining budgets.
         }
-        if(job.stage==READY) {
+        if(job.stage==READY&&last_operations<operations&&std::chrono::steady_clock::now()<deadline) {
             if(collection_busy(job))continue;
             ++last_operations;job.last_served=++serial;
             job.transfer_ticket=job.retiring?history->begin_region_retirement(collection,job.packet):history->begin_region_admission(collection,job.packet);
