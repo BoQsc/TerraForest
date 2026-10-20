@@ -48,7 +48,7 @@ static func streets(core,center:Vector3)->Dictionary:
     pair[0].low=lo;pair[0].high=hi
   if not changed:break
  # Both feasible envelopes are slope-compatible; their midpoint preserves this.
- var segments:Array=[];var max_fill:=0.0;var max_cut:=0.0
+ var segments:Array=[];var max_fill:=0.0;var max_cut:=0.0;var earthwork_sum:=0.0;var earthwork_samples:=0
  for edge:Dictionary in edges:
   var a:Vector3=vertices[edge.a].point;var b:Vector3=vertices[edge.b].point
   a.y=(vertices[edge.a].low+vertices[edge.a].high)*0.5;b.y=(vertices[edge.b].low+vertices[edge.b].high)*0.5
@@ -63,6 +63,7 @@ static func streets(core,center:Vector3)->Dictionary:
   if raw.size()!=points.size():return {"ok":false,"reason":"Street surface survey failed"}
   for i in points.size():
    var fill:float=points[i].y-raw[i]
+   earthwork_sum+=absf(fill);earthwork_samples+=1
    max_fill=maxf(max_fill,fill);max_cut=maxf(max_cut,-fill)
    if fill>2.001 or fill< -3.001:return {"ok":false,"reason":"Street interior exceeds earthworks budget","point":points[i]}
   segments.append(Lots._segment(a,b,3,1,4,0,4))
@@ -89,7 +90,7 @@ static func streets(core,center:Vector3)->Dictionary:
    var junction:Dictionary=Lots._segment(p-Vector3(0.5,0,0),p+Vector3(0.5,0,0),3,3,4,2,4)
    junction["coefficients"]=PackedFloat64Array([0,0,0,p.y]);junction["curve_index"]=0
    segments.append(junction)
- return {"ok":true,"segments":segments,"max_fill":max_fill,"max_cut":max_cut}
+ return {"ok":true,"segments":segments,"max_fill":max_fill,"max_cut":max_cut,"mean_earthwork":earthwork_sum/maxi(1,earthwork_samples)}
 
 static func heights(core,points:PackedVector3Array)->PackedFloat32Array:
  var result:=PackedFloat32Array()
@@ -188,18 +189,26 @@ static func plan(core,center:Vector3,roads:Array=[],variant:int=0)->Dictionary:
 
 static func locate(core,center:Vector3)->Dictionary:
  var attempts:=0;var reasons:Dictionary={};var best_missing:=12
- for dx in [0,-24,24,-48,48,-72,72,-96,96,-120,120,-144,144]:
-  for dz in [0,-24,24,-48,48,-72,72,-96,96,-120,120,-144,144]:
+ var candidates:Array=[]
+ for dx in [0,-24,24,-48,48,-72,72,-96,96,-120,120,-144,144,-168,168,-192,192,-216,216,-240,240,-264,264,-288,288]:
+  for dz in [0,-24,24,-48,48,-72,72,-96,96,-120,120,-144,144,-168,168,-192,192,-216,216,-240,240,-264,264,-288,288]:
    var candidate:=center+Vector3(dx,0,dz)
    if candidate.x<120 or candidate.z<120 or candidate.x>1880 or candidate.z>1880:continue
    attempts+=1
    var roads:Dictionary=streets(core,candidate)
    if not roads.ok:
     reasons[roads.reason]=int(reasons.get(roads.reason,0))+1;continue
-   for variant in [0,1,2,3]:
-    var lots:Dictionary=plan(core,candidate,roads.segments,variant)
-    best_missing=mini(best_missing,lots.rejected.size())
-    if lots.ok:return {"ok":true,"center":candidate,"lots":lots.lots,"roads":roads.segments,"attempts":attempts,"variant":variant}
+   # A permitted excavation is not necessarily a desirable location. Rank all
+   # bounded candidates before trying buildings; prefer little ground disturbance.
+   var cost:float=roads.mean_earthwork+0.3*(roads.max_cut+roads.max_fill)+0.001*center.distance_to(candidate)
+   candidates.append({"center":candidate,"roads":roads,"cost":cost,"order":attempts})
+ candidates.sort_custom(func(a:Dictionary,b:Dictionary):return a.cost<b.cost if a.cost!=b.cost else a.order<b.order)
+ for candidate:Dictionary in candidates:
+  for variant in [0,1,2,3]:
+   var lots:Dictionary=plan(core,candidate.center,candidate.roads.segments,variant)
+   best_missing=mini(best_missing,lots.rejected.size())
+   if lots.ok:return {"ok":true,"center":candidate.center,"lots":lots.lots,"roads":candidate.roads.segments,"attempts":attempts,"variant":variant,
+    "site_cost":candidate.cost,"mean_earthwork":candidate.roads.mean_earthwork,"max_cut":candidate.roads.max_cut,"max_fill":candidate.roads.max_fill,"ranked_candidates":candidates.size()}
  return {"ok":false,"reason":"No complete terrain-fitting layout in bounded search","attempts":attempts,"road_rejections":reasons,"best_missing":best_missing}
 
 static func earthworks(plan:Dictionary)->Dictionary:

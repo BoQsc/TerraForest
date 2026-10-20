@@ -29,7 +29,11 @@ func _initialize()->void:
   if not located.ok:failures+=1;print("LOCATE_REJECT ",located)
   if located.ok:
    summary["offset"]=str(located.center-center)
+   summary["mean_earthwork"]=located.mean_earthwork;summary["max_cut"]=located.max_cut;summary["max_fill"]=located.max_fill;summary["ranked_candidates"]=located.ranked_candidates
    summary["entrances"]=located.lots.size()
+   if seed_value==42:
+    var previous:Dictionary=Planner.streets(core,center+Vector3(0,0,120))
+    if not previous.ok or located.mean_earthwork>=previous.mean_earthwork or located.max_fill>=previous.max_fill:failures+=1
    for lot:Dictionary in located.lots:
     if not lot.entrance.get("ok",false):failures+=1
     var foundations:PackedVector3Array=lot.asset.foundation_samples(lot.origin,lot.rotation,0)

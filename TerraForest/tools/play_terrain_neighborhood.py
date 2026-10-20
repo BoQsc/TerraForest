@@ -13,9 +13,10 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--dry-run', action='store_true')
     parser.add_argument('--godot')
+    parser.add_argument('--previous-review', action='store_true')
     options = parser.parse_args()
-    source = 'terrain_fitted_neighborhood_20261020'
-    target = 'terrain_fitted_neighborhood_review'
+    source = 'terrain_fitted_neighborhood_20261020' if options.previous_review else 'terrain_ranked_neighborhood_20261020'
+    target = 'terrain_fitted_neighborhood_review' if options.previous_review else 'terrain_fitted_neighborhood_review_v2'
     worlds = Path(os.environ['APPDATA']) / 'Godot/app_userdata/TerraForest/worlds'
     if not (worlds / (source + '.trw')).is_file() and not (worlds / (target + '.trw')).is_file():
         parser.error('The prepared neighborhood is missing. This launcher requires its baked save.')

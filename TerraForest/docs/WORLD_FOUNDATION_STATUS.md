@@ -1,3 +1,40 @@
+## Lower-disturbance settlement siting — 2026-10-20
+
+The offline planner now ranks feasible street locations before fitting buildings,
+rather than returning the first passing location. Search stays bounded to625
+candidates within288m of the original district hint, clipped to world bounds. The
+score uses mean absolute road cut/fill, maximum cut/fill and a small displacement
+penalty. All12 buildings, 2m fill/3m cut limits, frontage checks, pedestrian
+clearances and existing native road grades remain mandatory. No runtime search.
+
+For seed42, selected road mean cut/fill falls0.747m ->0.496m, maximum fill1.334m
+->0.754m and maximum cut2.146m ->1.889m. The district moves168m east/288m south
+of its original hint. Seven seeds pass; the regression explicitly compares42
+against its previous passing site. Native application still uses210 edits and
+checks2,608 foundation points plus road/pavement probes with no mismatches.
+Terrain snapshot roundtrip is exact (1,733,208 bytes). Other seeds are checked for
+validity, not claimed to improve over their previous locations without comparison.
+
+The real-world33.33-second creation/walk/save check and7.27-second fresh-process
+reopen passed without diagnostics. Inspected street/overview images show gentler
+banks and reduced exposed cuts at the reviewed street. This is scoped visual
+improvement, not acceptance of every roadside or the complete world. The launcher
+now opens a distinct v2 copy of terrain_ranked_neighborhood_20261020. Its
+--previous-review option retains the prior source/copy; no existing save was moved.
+Evidence: evidence/terrain_ranked_neighborhood.
+
+A tested retaining-wall approach was rejected after image inspection: large
+concrete segments made the neighborhood look heavier. That implementation was
+removed and never published as a review save. Its local trial images remain in
+reports/retaining_wall_rejected. Prefer suitable terrain before adding structures
+whose only purpose is hiding an unnecessarily poor site.
+
+Next required integration: connect this terrain-fitting layout to the full region,
+account for lake/mine/other-site exclusion footprints, generate the other settlements
+and owned POIs, and finish public-space/entrance/vehicle review. Current generator17
+still has only one developed neighborhood and no baked regional water/roads. Building
+variety and middle-distance vegetation continuity remain visibly incomplete.
+
 ## Saved terrain-fitting neighborhood — 2026-10-20
 
 A loadable development save now exists: terrain_fitted_neighborhood_20261020.
