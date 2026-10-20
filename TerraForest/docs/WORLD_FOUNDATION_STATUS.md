@@ -1,3 +1,30 @@
+## Raw terrain earthworks rejection — 2026-10-20
+
+The previous lot checks sampled already-flattened generator terrain. They verify
+local authoring correctness, NOT the world-building cut/fill standard. Native
+command 37 now reports paired undeveloped/developed heights in bounded batches of
+256, without changing world state. Undeveloped retains natural mountains and basins
+but omits regional settlement/road grading. Runtime height calls default to their
+existing behavior; generator IDs and saves are unchanged.
+
+A 4 m grid inside all five site radii across seven seeds rejects all 35 generated
+pads against 2 m fill / 3 m cut limits. Seed 42 north: 10.413 m fill, 2.719 m cut;
+central: 12.417 m fill, 10.956 m cut. Sampling is a lower bound on worst displacement,
+not an exhaustive surface proof. This is enough to reject these layouts. Source
+surveys in docs/evidence/regional_earthworks/survey.json preserve every result.
+The --enforce-quality check intentionally exits 1 (35 violations, zero protocol
+failures). Do not interpret the default audit's exit 0 as world-quality acceptance.
+Existing generator-15 corridor checks still pass after the read-only height API change.
+
+Required next implementation: a new immutable generator profile that retains raw
+land between individual building/street footprints; site planning must choose
+per-lot grades against raw terrain, route streets between those grades, and relocate
+or omit unsuitable lots before any edits. Existing level sidewalk/common-area/
+parking recipes must follow the same grades. Do not simply disable broad pads while
+leaving those dependent plans level, enlarge plateaus, or relax the earthwork limits.
+Then regenerate and inspect integrated ground/overview views and walk entrances.
+Current v18 remains a development review; no visual fix is claimed for this audit.
+
 ## Surveyed regional locations — 2026-10-20
 
 Generator 16 surveys 45 candidate locations for each outer settlement against raw

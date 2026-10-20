@@ -60,7 +60,7 @@ struct World {
  void init(int p_seed=1703,u32 generator=1);void release();
  bool set_block(u32 key,int material);void erase_block(u32 key);
  bool has_geology()const{return generator_id==3||generator_id==4||generator_id==WALKABLE_CAVE_GENERATOR_ID||generator_id>=REGIONAL_WORLD_GENERATOR_ID;}
- float height(float x,float z)const;
+ float height(float x,float z,bool developed=true)const;
  float regional_height(float x,float z,float original)const;
  bool regional_asphalt(float x,float z)const;
  u8 base_material(V3 point,float height)const;

@@ -173,7 +173,7 @@ u8 World::base_material(V3 point,float h)const{
  if(has_geology()){float weight=ore_weight(point,h);return weight>.5f?8:(weight<-.5f?9:0);}
  return 0;
 }
-float World::height(float x,float z)const{
+float World::height(float x,float z,bool developed)const{
  if(generator_id==MATERIAL_FIELD_GENERATOR_ID)return 0;
  float h=49.f+noise(x/320.f,z/320.f,u32(seed))*20.f+noise(x/100.f,z/100.f,u32(seed)+1u)*8.f+noise(x/34.f,z/34.f,u32(seed)+2u)*2.5f;
  if(generator_id>=2){
@@ -195,7 +195,7 @@ float World::height(float x,float z)const{
    }else h+=bump(x,z,cx,cz,330.f+float(b&127),85.f+float((b>>8)&63));
   }
   h=clampf(h,18.f,225.f);
-  if(generator_id>=REGIONAL_WORLD_GENERATOR_ID)h=regional_height(x,z,h);
+  if(developed&&generator_id>=REGIONAL_WORLD_GENERATOR_ID)h=regional_height(x,z,h);
   for(int i=0;i<basin_count;i++){
    const auto &b=basins[i];float dx=x-b.x,dz=z-b.z,d2=dx*dx+dz*dz;
    if(generator_id>=NATURAL_REGION_GENERATOR_ID){
@@ -1340,6 +1340,16 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
   if(n!=4||w.generator_id<ROUTED_REGION_GENERATOR_ID){out.p[8]=1;return;}
   out.u(4);out.u(25);
   for(int road=0;road<4;road++)for(int k=0;k<25;k++)out.vec(w.road_points[road][k]);
+ }
+ else if(cmd==37){ // Bounded offline earthworks survey, before settlement/road grading.
+  int count=int(r.u());
+  if(!r.good||count<1||count>256||n!=8+count*12){out.p[8]=1;return;}
+  V3 points[256];
+  for(int i=0;i<count;i++){
+   points[i]=r.vec();
+   if(!(points[i].x>=0&&points[i].x<=2000&&points[i].z>=0&&points[i].z<=2000)){out.p[8]=1;return;}
+  }
+  for(int i=0;i<count;i++){out.f(w.height(points[i].x,points[i].z,false));out.f(w.height(points[i].x,points[i].z));}
  }
  else if(cmd==34){
   if(n!=4){out.p[8]=1;return;}

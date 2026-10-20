@@ -1,0 +1,321 @@
+{
+  "protocol_failures": 0,
+  "quality_violations": 35,
+  "sites": [
+    {
+      "cut": 18.7641906738281,
+      "fill": 9.76719284057617,
+      "quality_accepted": false,
+      "raw_relief": 28.5313835144043,
+      "samples": 5025,
+      "seed": 0,
+      "site": 0
+    },
+    {
+      "cut": 3.85477828979492,
+      "fill": 9.67038345336914,
+      "quality_accepted": false,
+      "raw_relief": 13.5251617431641,
+      "samples": 1009,
+      "seed": 0,
+      "site": 1
+    },
+    {
+      "cut": 1.47114562988281,
+      "fill": 6.56462478637695,
+      "quality_accepted": false,
+      "raw_relief": 8.03577041625977,
+      "samples": 1009,
+      "seed": 0,
+      "site": 2
+    },
+    {
+      "cut": 3.57577514648438,
+      "fill": 2.22905731201172,
+      "quality_accepted": false,
+      "raw_relief": 5.80483245849609,
+      "samples": 1009,
+      "seed": 0,
+      "site": 3
+    },
+    {
+      "cut": 7.36460113525391,
+      "fill": 0.0,
+      "quality_accepted": false,
+      "raw_relief": 7.19369125366211,
+      "samples": 1009,
+      "seed": 0,
+      "site": 4
+    },
+    {
+      "cut": 23.5260848999023,
+      "fill": 3.90700912475586,
+      "quality_accepted": false,
+      "raw_relief": 27.4330940246582,
+      "samples": 5025,
+      "seed": 1,
+      "site": 0
+    },
+    {
+      "cut": 1.42915344238281,
+      "fill": 5.95430374145508,
+      "quality_accepted": false,
+      "raw_relief": 7.38345718383789,
+      "samples": 1009,
+      "seed": 1,
+      "site": 1
+    },
+    {
+      "cut": 3.03245544433594,
+      "fill": 4.57522201538086,
+      "quality_accepted": false,
+      "raw_relief": 7.6076774597168,
+      "samples": 1009,
+      "seed": 1,
+      "site": 2
+    },
+    {
+      "cut": 1.75689697265625,
+      "fill": 8.71771621704102,
+      "quality_accepted": false,
+      "raw_relief": 10.4746131896973,
+      "samples": 1009,
+      "seed": 1,
+      "site": 3
+    },
+    {
+      "cut": 5.3785285949707,
+      "fill": 4.06691741943359,
+      "quality_accepted": false,
+      "raw_relief": 9.4454460144043,
+      "samples": 1009,
+      "seed": 1,
+      "site": 4
+    },
+    {
+      "cut": 10.9556274414063,
+      "fill": 12.4172096252441,
+      "quality_accepted": false,
+      "raw_relief": 23.3728370666504,
+      "samples": 5025,
+      "seed": 42,
+      "site": 0
+    },
+    {
+      "cut": 4.89326477050781,
+      "fill": 1.58957290649414,
+      "quality_accepted": false,
+      "raw_relief": 6.48283767700195,
+      "samples": 1009,
+      "seed": 42,
+      "site": 1
+    },
+    {
+      "cut": 2.90872192382813,
+      "fill": 5.59160232543945,
+      "quality_accepted": false,
+      "raw_relief": 8.50032424926758,
+      "samples": 1009,
+      "seed": 42,
+      "site": 2
+    },
+    {
+      "cut": 2.71920776367188,
+      "fill": 10.4130249023438,
+      "quality_accepted": false,
+      "raw_relief": 13.1322326660156,
+      "samples": 1009,
+      "seed": 42,
+      "site": 3
+    },
+    {
+      "cut": 4.85577392578125,
+      "fill": 6.59698867797852,
+      "quality_accepted": false,
+      "raw_relief": 11.4527626037598,
+      "samples": 1009,
+      "seed": 42,
+      "site": 4
+    },
+    {
+      "cut": 21.890998840332,
+      "fill": 5.0814323425293,
+      "quality_accepted": false,
+      "raw_relief": 26.9724311828613,
+      "samples": 5025,
+      "seed": 50,
+      "site": 0
+    },
+    {
+      "cut": 3.2397575378418,
+      "fill": 4.43410110473633,
+      "quality_accepted": false,
+      "raw_relief": 7.67385864257813,
+      "samples": 1009,
+      "seed": 50,
+      "site": 1
+    },
+    {
+      "cut": 4.01819610595703,
+      "fill": 7.19758987426758,
+      "quality_accepted": false,
+      "raw_relief": 11.2157859802246,
+      "samples": 1009,
+      "seed": 50,
+      "site": 2
+    },
+    {
+      "cut": 4.26959991455078,
+      "fill": 5.28768157958984,
+      "quality_accepted": false,
+      "raw_relief": 9.55728149414063,
+      "samples": 1009,
+      "seed": 50,
+      "site": 3
+    },
+    {
+      "cut": 4.13216400146484,
+      "fill": 3.14594650268555,
+      "quality_accepted": false,
+      "raw_relief": 7.27811050415039,
+      "samples": 1009,
+      "seed": 50,
+      "site": 4
+    },
+    {
+      "cut": 10.4662132263184,
+      "fill": 15.4992828369141,
+      "quality_accepted": false,
+      "raw_relief": 25.9654960632324,
+      "samples": 5025,
+      "seed": 141,
+      "site": 0
+    },
+    {
+      "cut": 3.3543701171875,
+      "fill": 2.358642578125,
+      "quality_accepted": false,
+      "raw_relief": 5.7130126953125,
+      "samples": 1009,
+      "seed": 141,
+      "site": 1
+    },
+    {
+      "cut": 7.04951477050781,
+      "fill": 4.25933837890625,
+      "quality_accepted": false,
+      "raw_relief": 11.3088531494141,
+      "samples": 1009,
+      "seed": 141,
+      "site": 2
+    },
+    {
+      "cut": 4.6815299987793,
+      "fill": 3.26971435546875,
+      "quality_accepted": false,
+      "raw_relief": 7.95124435424805,
+      "samples": 1009,
+      "seed": 141,
+      "site": 3
+    },
+    {
+      "cut": 3.53648376464844,
+      "fill": 12.0533294677734,
+      "quality_accepted": false,
+      "raw_relief": 15.5898132324219,
+      "samples": 1009,
+      "seed": 141,
+      "site": 4
+    },
+    {
+      "cut": 9.61122894287109,
+      "fill": 14.1721725463867,
+      "quality_accepted": false,
+      "raw_relief": 23.7834014892578,
+      "samples": 5025,
+      "seed": 1703,
+      "site": 0
+    },
+    {
+      "cut": 6.71353149414063,
+      "fill": 1.88257217407227,
+      "quality_accepted": false,
+      "raw_relief": 8.59610366821289,
+      "samples": 1009,
+      "seed": 1703,
+      "site": 1
+    },
+    {
+      "cut": 0.415855407714844,
+      "fill": 5.89345169067383,
+      "quality_accepted": false,
+      "raw_relief": 6.30930709838867,
+      "samples": 1009,
+      "seed": 1703,
+      "site": 2
+    },
+    {
+      "cut": 5.5558967590332,
+      "fill": 4.47908020019531,
+      "quality_accepted": false,
+      "raw_relief": 10.0349769592285,
+      "samples": 1009,
+      "seed": 1703,
+      "site": 3
+    },
+    {
+      "cut": 7.74326705932617,
+      "fill": 0.292484283447266,
+      "quality_accepted": false,
+      "raw_relief": 8.03575134277344,
+      "samples": 1009,
+      "seed": 1703,
+      "site": 4
+    },
+    {
+      "cut": 15.1995315551758,
+      "fill": 7.70152282714844,
+      "quality_accepted": false,
+      "raw_relief": 22.9010543823242,
+      "samples": 5025,
+      "seed": 9999,
+      "site": 0
+    },
+    {
+      "cut": 3.43570327758789,
+      "fill": 1.81532287597656,
+      "quality_accepted": false,
+      "raw_relief": 5.25102615356445,
+      "samples": 1009,
+      "seed": 9999,
+      "site": 1
+    },
+    {
+      "cut": 5.04590606689453,
+      "fill": 2.33160018920898,
+      "quality_accepted": false,
+      "raw_relief": 7.37750625610352,
+      "samples": 1009,
+      "seed": 9999,
+      "site": 2
+    },
+    {
+      "cut": 0.734046936035156,
+      "fill": 7.65662002563477,
+      "quality_accepted": false,
+      "raw_relief": 8.39066696166992,
+      "samples": 1009,
+      "seed": 9999,
+      "site": 3
+    },
+    {
+      "cut": 6.74706268310547,
+      "fill": 2.76561737060547,
+      "quality_accepted": false,
+      "raw_relief": 9.51268005371094,
+      "samples": 1009,
+      "seed": 9999,
+      "site": 4
+    }
+  ]
+}
