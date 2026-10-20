@@ -30,6 +30,8 @@ var source_hash:HashingContext
 var source_signature:=""
 var cache_key:=""
 var cache_checked:=false
+var fast_checked:=false
+var fast_cache_hits:=0
 var cache_hits:=0
 var cache_writes:=0
 var io:Thread
@@ -39,13 +41,14 @@ func _ready()->void:
  terrain=atlas.game.terrain;terrain.survey_patch_ready.connect(receive)
  set_process(false)
 func current_stamp()->String:return ""
+func fast_identity()->String:return ""
 func begin_source()->void:pass
 func stop_source()->void:pass
 func source_step()->Dictionary:return {"available":false}
 func restart(value:String)->void:
  stop_source();stamp=value;epoch=terrain.epoch;terrain_revision=terrain.density_revision
  texture=null;drawing_texture=null;raster=ClassDB.instantiate("NativeSurfaceMapRaster");raster.configure(image_size);offset=0;source_done=false;complete=false;failed=false;pending=false;builds+=1
- source_hash=HashingContext.new();source_hash.start(HashingContext.HASH_SHA256);source_signature="";cache_checked=false;cache_key=""
+ source_hash=HashingContext.new();source_hash.start(HashingContext.HASH_SHA256);source_signature="";cache_checked=false;fast_checked=false;cache_key=""
  begin_source();atlas.view.queue_redraw()
 func _process(_delta:float)->void:
  if io!=null:
@@ -55,11 +58,21 @@ func _process(_delta:float)->void:
    if reply.get("persisted",false):cache_writes+=1
   elif reply.get("hit",false) and io_stamp==stamp and current_stamp()==stamp and not terrain.pending_edit:
    publish(reply.pixels);cache_hits+=1
+   if io_kind=="fast_read":fast_cache_hits+=1
  if not atlas.opened or not terrain.world_ready or terrain.pending_edit:return
  var next:=current_stamp()
  if next.is_empty():return
  if next!=stamp:restart(next)
  if complete or failed or pending:return
+ if not fast_checked:
+  if not atlas.updates.identity_checked:return
+  fast_checked=true
+  var certified:=fast_identity()
+  if not certified.is_empty() and not atlas.updates.cache_identity.is_empty() and atlas.updates.cache_revision==terrain_revision:
+   cache_key=cache_namespace+"|certified|"+atlas.updates.cache_identity+"|"+certified;cache_checked=true
+   io_stamp=stamp;io_kind="fast_read";io=Thread.new()
+   if io.start(Cache.read.bind(cache_key,cache_key,cache_root,image_size),Thread.PRIORITY_LOW)!=OK:io=null
+   else:return
  if not source_done:
   var began:=Time.get_ticks_usec()
   for n in 4:

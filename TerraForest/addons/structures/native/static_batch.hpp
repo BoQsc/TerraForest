@@ -44,7 +44,7 @@ class NativeStaticBatch : public Node3D {
     static bool parse_region(const PackedByteArray &bytes,String &asset,BlockKey &region,std::map<int64_t,Placement> &values);
     static bool valid_model_region(BlockKey key);
     bool prepare_metadata(const PackedByteArray &bytes,std::map<BlockKey,UnloadedRegion> &staged,std::set<int64_t> &ids) const;
-    void install_metadata(std::map<BlockKey,UnloadedRegion> &&staged,std::set<int64_t> &&ids);
+    void install_metadata(std::map<BlockKey,UnloadedRegion> &&staged,std::set<int64_t> &&ids,const String &identity=String());
     bool unload_region_impl(const PackedByteArray &packet);
     bool restore_region_impl(const PackedByteArray &packet);
     struct RegionAdmission {
@@ -104,8 +104,9 @@ class NativeStaticBatch : public Node3D {
     uint64_t uploads=0;
     uint64_t instance_updates=0;
     uint64_t edit_revision=0;
+    String survey_saved_identity;
     bool defer_change_signal=false;
-    void publish_change();
+    void publish_change(bool storage_only=false);
     bool placement_clear(const PackedFloat32Array &transform,const AABB &protection) const;
     struct ProxyBody { RID body; std::vector<RID> shapes; };
     std::map<int64_t,ProxyBody> collision_bodies;
@@ -137,6 +138,7 @@ protected:
     static void _bind_methods();
     void _notification(int what);
 public:
+    String survey_cache_identity() const{return survey_saved_identity;}
     AABB survey_prototype_bounds() const{return source_mesh.is_valid()?source_mesh->get_aabb():AABB();}
     Dictionary survey_index() const;
     Dictionary survey_bounds(Vector3i region,int64_t after_id,int64_t expected_revision) const;

@@ -1,0 +1,26 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[terrain-hitch] restore volumetric_water 179.59 ms at 3170
+[terrain-hitch] receive startup 192.87 ms at 3176
+[terrain-hitch] receive 194.6 ms at 3178
+PASS saved world loads
+PASS all map layers complete
+PASS loaded world has certified object identity
+PASS archived object survey preserves all collection residency
+PASS fresh process reuses object raster without source or archive scans
+PASS unchanged reopening reuses object layer
+PASS exact collection transform participates in cache key
+PASS restoring collection transform restores cache key
+PASS actual large placed model inserted
+PASS placement refreshes actual object map
+PASS placed model adds map coverage
+PASS unsaved authoring cannot reuse certified old cache
+PASS temporary model removed
+PASS removal refreshes actual object map
+PASS removal restores identical map coverage
+PASS object survey has cancellable archive request
+PASS map close releases object request and lease
+MODEL_MAP_PROFILE builds=4 archived_reads=324 fast_hits=1 hits=3 writes=0 visibility_calls=0 max_visibility_ms=0.0
+WORLD_MAP_MODELS failures=0
+[TerrainRewrite] Temporary test world: save skipped

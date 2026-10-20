@@ -30,6 +30,7 @@ bool NativeStructuresSnapshot::restore_bootstrap(const PackedByteArray &bytes,Na
         std::set<int64_t> ids;
         uint64_t object_id=0;
         bool blocked=false;
+        String survey_identity;
     };
     std::vector<Prepared> prepared;prepared.reserve(assets.size());
     for(const auto &asset:assets) {
@@ -39,6 +40,7 @@ bool NativeStructuresSnapshot::restore_bootstrap(const PackedByteArray &bytes,Na
            (batch->paging_owner&&ObjectDB::get_instance(batch->paging_owner)))return false;
         Prepared stage;stage.batch=batch;stage.object_id=batch->get_instance_id();stage.blocked=batch->is_blocking_signals();
         if(models.has(asset)&&!batch->prepare_metadata(models[asset],stage.regions,stage.ids))return false;
+        stage.survey_identity=models.has(asset)?"metadata-v1|"+PackedByteArray(models[asset]).slice(PackedByteArray(models[asset]).size()-32).hex_encode():"empty-v1|"+asset;
         prepared.push_back(std::move(stage));
     }
     std::map<BlockKey,BlockChunk> resident;
@@ -55,7 +57,7 @@ bool NativeStructuresSnapshot::restore_bootstrap(const PackedByteArray &bytes,Na
     for(auto &stage:prepared)stage.batch->set_block_signals(true);
     blocks->replace_storage(std::move(resident),std::move(unavailable));
     for(auto &stage:prepared) {
-        stage.batch->install_metadata(std::move(stage.regions),std::move(stage.ids));
+        stage.batch->install_metadata(std::move(stage.regions),std::move(stage.ids),stage.survey_identity);
         stage.batch->paging_checkpoint.reset();
     }
     blocks->set_block_signals(block_signals);

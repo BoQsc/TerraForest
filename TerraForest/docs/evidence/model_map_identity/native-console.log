@@ -1,0 +1,41 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS unconfigured collection is not ready
+PASS 70 rotated scaled model records inserted
+PASS restore validates snapshot identity
+PASS validated snapshot certifies map identity
+PASS bounded model query
+PASS bounded model query
+PASS bounded model query
+PASS transformed mesh bounds match actual placement
+PASS archive decoder accepts exact asset and checksum
+PASS bounded model query
+PASS bounded model query
+PASS bounded model query
+PASS archived and resident model bounds match
+PASS actual region unloads
+PASS unload preserves logical map identity
+PASS old revision rejected
+PASS unloaded region retained in survey metadata
+PASS unloaded data is explicit
+PASS bounded model query
+PASS bounded model query
+PASS bounded model query
+PASS archive survey leaves gameplay residency unchanged
+PASS wrong asset clears decoded data
+PASS corruption rejected
+PASS invalid cursor rejected
+PASS original region restores
+PASS admission preserves logical map identity
+PASS retirement starts
+PASS in-flight transfer never exposes partial survey
+PASS cancelled retirement rollback drained
+PASS cancelled transfer preserves certified identity
+PASS full incremental retirement starts
+PASS completed incremental retirement preserves identity
+PASS incremental readmission starts
+PASS completed incremental admission preserves identity
+PASS authoring removal clears certification
+PASS exact validated restoration restores certificate
+PASS placement change clears certification
+MODEL_MAP_SURVEY failures=0

@@ -9,6 +9,7 @@ namespace terraforest {
 NativeStaticBatch::NativeStaticBatch() {set_notify_transform(true);}
 void NativeStaticBatch::_bind_methods() {
     ClassDB::bind_method(D_METHOD("survey_prototype_bounds"),&NativeStaticBatch::survey_prototype_bounds);
+    ClassDB::bind_method(D_METHOD("survey_cache_identity"),&NativeStaticBatch::survey_cache_identity);
     ClassDB::bind_method(D_METHOD("survey_index"),&NativeStaticBatch::survey_index);
     ClassDB::bind_method(D_METHOD("survey_revision_id"),&NativeStaticBatch::survey_revision_id);
     ClassDB::bind_method(D_METHOD("survey_bounds","region","after_id","expected_revision"),&NativeStaticBatch::survey_bounds);
@@ -68,7 +69,8 @@ bool NativeStaticBatch::valid_transform(const float *t) {
     double determinant=t[0]*(double(t[5])*t[10]-double(t[6])*t[9])-t[1]*(double(t[4])*t[10]-double(t[6])*t[8])+t[2]*(double(t[4])*t[9]-double(t[5])*t[8]);
     return std::abs(determinant)>=1e-9;
 }
-void NativeStaticBatch::publish_change() {
+void NativeStaticBatch::publish_change(bool storage_only) {
+    if(!storage_only)survey_saved_identity=String();
     ++edit_revision;
     if(!defer_change_signal)emit_signal("changed");
 }
@@ -117,7 +119,7 @@ bool NativeStaticBatch::configure_asset(const String &id,const Ref<Mesh> &mesh) 
     std::set<BlockKey> keys;for(auto &e:groups)keys.insert(e.first);refresh_collision_bounds(keys);
     for(auto &e:batches)e.second->get_multimesh()->set_mesh(mesh);
     // Invalidate journals before either notification can call back into editing.
-    if(changed)++edit_revision;
+    if(changed){++edit_revision;survey_saved_identity=String();}
     emit_signal("exclusion_changed");
     if(changed&&!defer_change_signal)emit_signal("changed");return true;
 }
@@ -313,7 +315,8 @@ bool NativeStaticBatch::restore_snapshot(const PackedByteArray &bytes) {
     std::set<BlockKey> touched;for(auto &e:groups)touched.insert(e.first);
     clear_proxies();collision_bounds.clear();collision_dirty=true;
     placements=std::move(restored);groups.clear();slots.clear();for(auto &e:placements){auto k=group_for(e.second);groups[k].insert(e.first);touched.insert(k);}
-    rebuild(touched);publish_change();return true;
+    survey_saved_identity="snapshot-v1|"+bytes.slice(bytes.size()-32).hex_encode();
+    rebuild(touched);publish_change(true);return true;
 }
 Dictionary NativeStaticBatch::stats() const {
     Dictionary d;d["removal_protected"]=int(removal_protected.size());d["instances"]=int(placements.size()-hidden_record_count());d["staged_instances"]=int(admission_retiring?0:hidden_record_count());d["retiring_instances"]=int(admission_retiring?hidden_record_count():0);d["spatial_batches"]=int(batches.size());d["transform_bytes"]=int(placements.size())*48;

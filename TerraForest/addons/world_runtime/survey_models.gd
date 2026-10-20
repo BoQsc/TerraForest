@@ -24,8 +24,18 @@ func current_stamp()->String:
  var names:Array=atlas.game.structures._models.keys();names.sort()
  for name in names:
   var source=atlas.game.structures._models[name]
-  parts.append("%s/%d/%d/%s/%s"%[name,source.get_instance_id(),source.survey_revision_id(),str(source.global_transform),str(source.survey_prototype_bounds())])
+  var identity:String=source.survey_cache_identity()
+  var content:String=identity if not identity.is_empty() else str(source.survey_revision_id())
+  parts.append("%s/%d/%s/%s/%s"%[name,source.get_instance_id(),content,var_to_bytes(source.global_transform).hex_encode(),var_to_bytes(source.survey_prototype_bounds()).hex_encode()])
  return "|".join(parts)
+func fast_identity()->String:
+ var parts:=PackedStringArray()
+ for name in assets:
+  var source=atlas.game.structures._models[name]
+  var identity:String=source.survey_cache_identity()
+  if identity.is_empty():return ""
+  parts.append(name+"|"+identity+"|"+var_to_bytes(source.global_transform).hex_encode()+"|"+var_to_bytes(source.survey_prototype_bounds()).hex_encode())
+ return "|".join(parts).sha256_text()
 func begin_source()->void:
  archive=terrain.backend.snapshot_codec;assets=atlas.game.structures._models.keys();assets.sort()
  asset_cursor=0;index={};boxes=[];decoded=null;region_cursor=0;after_id=0

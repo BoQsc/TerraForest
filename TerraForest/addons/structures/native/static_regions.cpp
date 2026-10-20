@@ -42,7 +42,7 @@ bool NativeStaticBatch::restore_metadata(const PackedByteArray &bytes) {
     if(source_mesh.is_null()||defer_change_signal||admission||!removal_protected.empty())return false;
     std::map<BlockKey,UnloadedRegion> staged;std::set<int64_t> ids;
     if(!prepare_metadata(bytes,staged,ids))return false;
-    install_metadata(std::move(staged),std::move(ids));return true;
+    install_metadata(std::move(staged),std::move(ids),"metadata-v1|"+bytes.slice(bytes.size()-32).hex_encode());return true;
 }
 bool NativeStaticBatch::prepare_metadata(const PackedByteArray &bytes,std::map<BlockKey,UnloadedRegion> &staged,std::set<int64_t> &ids) const {
     if(source_mesh.is_null())return false;
@@ -67,14 +67,14 @@ bool NativeStaticBatch::prepare_metadata(const PackedByteArray &bytes,std::map<B
     }
     return true;
 }
-void NativeStaticBatch::install_metadata(std::map<BlockKey,UnloadedRegion> &&staged,std::set<int64_t> &&ids) {
+void NativeStaticBatch::install_metadata(std::map<BlockKey,UnloadedRegion> &&staged,std::set<int64_t> &&ids,const String &identity) {
     // All validation and prototype bounds are prepared before scene publication.
     std::set<BlockKey> touched;for(const auto &entry:groups)touched.insert(entry.first);
     clear_proxies();collision_bounds.clear();collision_dirty=true;
     placements.clear();groups.clear();slots.clear();
     unloaded_regions=std::move(staged);unloaded_ids=std::move(ids);
     unloaded_bounds.clear();for(const auto &entry:unloaded_regions)unloaded_bounds.insert(entry.first,entry.second.bounds);
-    rebuild(touched);publish_change();
+    survey_saved_identity=identity;rebuild(touched);publish_change(true);
 }
 bool NativeStaticBatch::valid_model_region(BlockKey key) {
     for(int axis:{key.x,key.y,key.z})if(axis<-32768||axis>=32768)return false;
@@ -146,7 +146,7 @@ bool NativeStaticBatch::unload_region_impl(const PackedByteArray &expected) {
         unloaded_ids.insert(entry.first);invalidate_proxy(entry.first);
         placements.erase(entry.first);slots.erase(entry.first);
     }
-    groups.erase(key);rebuild({key});publish_change();return true;
+    groups.erase(key);rebuild({key});publish_change(true);return true;
 }
 bool NativeStaticBatch::restore_region(const PackedByteArray &bytes) {
     if(defer_change_signal)return false;
@@ -164,7 +164,7 @@ bool NativeStaticBatch::restore_region_impl(const PackedByteArray &bytes) {
         unloaded_ids.erase(entry.first);groups[key].insert(entry.first);
         placements.emplace(entry.first,std::move(entry.second));
     }
-    unloaded_regions.erase(missing);unloaded_bounds.erase(key);rebuild({key});publish_change();return true;
+    unloaded_regions.erase(missing);unloaded_bounds.erase(key);rebuild({key});publish_change(true);return true;
 }
 Dictionary NativeStaticBatch::region_stats() const {
     Dictionary out;out["region_edge_m"]=32;out["resident_regions"]=int(groups.size());

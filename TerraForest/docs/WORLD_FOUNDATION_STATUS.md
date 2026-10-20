@@ -1,3 +1,41 @@
+## Certified model-map cache skips archive scanning — 2026-10-20
+
+Validated full model snapshots and bootstrap metadata now install a native map
+identity derived from their verified checksum. Exact unload/readmission, including
+incremental transfer and cancelled transfer rollback, preserve it. Authoring changes,
+asset reconfiguration and combined prefab transactions clear it. The certificate is
+installed before publication, so synchronous authoring observers cannot leave an
+incorrect certificate behind. No caller-facing certification setter was added.
+
+The model overlay checks this identity before surveying any source geometry. Cache
+identity includes exact binary collection transforms and prototype bounds alongside
+the certified terrain identity and existing renderer version. Unchanged logical
+content also preserves its runtime stamp across paging, avoiding unnecessary map
+clears and cache reads. In-place mesh-bound changes invalidate the key even without
+a collection edit signal. Edited/uncertified content uses the existing full survey
+and content-hash path; it cannot use the saved-world shortcut.
+
+Verification: snapshot and metadata certification, direct/incremental paging,
+rollback, authoring removal/placement, prefab transactions, prototype mutation and
+exact transform invalidation pass. In a fresh process opening the actual world at
+1920x1080 fullscreen, the initial cached model map required **zero source calls,
+zero archived model reads and zero visibility queries**. The subsequent temporary
+placement and removal still refreshed/restored the correct pixels, and unsaved
+changes could not reuse the old certificate. Those two edited states still read
+324 archived regions in total; this is not an incremental-edit optimization.
+The preparation/reopen gate passed with the canonical world checksum unchanged.
+Debug/release structures DLLs rebuilt. Evidence: `evidence/model_map_identity`.
+
+**Remaining:** block and water map caches still scan their sources (preparation
+recorded 22 block archive reads and 506 water source calls). Apply safe early identity
+lookup there next. Model certificates currently distinguish full-snapshot and
+metadata bootstrap encodings, so different loading representations can create
+separate valid caches. A save after authoring does not yet recertify the live model
+collections; reopening a verified snapshot does. Local edits still trigger full
+uncertified surveys. Fine map detail, cross-layer height ordering, capacity and
+large-world/endurance qualification remain unfinished. These cache checks do not
+resolve the separately recorded startup hitches or prove sustained 60 FPS.
+
 ## Model coverage integrated into the playable map — 2026-10-20
 
 The M-map now draws a lilac model-object layer, using the same sparse native raster,

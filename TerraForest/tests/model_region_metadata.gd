@@ -42,6 +42,8 @@ func run() -> void:
 	check(read.ok and read.cache_hit and read.regions_read==0 and read.metadata==metadata,"cached metadata reuses exact checkpoint manifest without region reads")
 	var live:=batch("test/metadata")
 	check(live.validate_metadata(metadata) and live.restore_metadata(metadata),"fresh scene bootstraps from validated checkpoint metadata")
+	var map_identity:String=live.survey_cache_identity()
+	check(not map_identity.is_empty(),"validated metadata certifies model map identity")
 	var stats: Dictionary=live.region_stats()
 	check(stats.resident_instances==0 and stats.resident_transform_bytes==0 and stats.logical_instances==100000 and stats.reserved_ids==100000 and stats.unloaded_regions==100,"bootstrap reserves 100000 identities with zero resident transforms")
 	check(live.capture_snapshot().is_empty() and live.get_instance(1).is_empty(),"unloaded bootstrap cannot masquerade as a complete snapshot")
@@ -54,6 +56,7 @@ func run() -> void:
 	check(region.ok and live.restore_region(region.bytes) and live.region_stats().resident_instances==1000 and live.region_stats().reserved_ids==99000,"one exact region admits only 1000 nearby transforms from metadata bootstrap")
 	var state: Dictionary=live.capture_storage_state()
 	check(store.publish_storage_state(state.resident,state.unavailable_keys,state.unavailable_checksums,pin).ok,"bootstrapped partial collection can save while 99000 transforms remain unloaded")
+	check(live.survey_cache_identity()==map_identity,"metadata identity survives region admission")
 	var corrupt:=metadata.duplicate();corrupt[corrupt.size()-1]^=1
 	check(not live.restore_metadata(corrupt) and live.region_stats().resident_instances==1000,"corrupt manifest fails before replacing existing resident state")
 	var first:=48+metadata.decode_u32(8)

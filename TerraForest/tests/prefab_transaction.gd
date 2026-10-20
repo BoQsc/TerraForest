@@ -34,12 +34,14 @@ func run() -> void:
 	var exact_models:=true
 	for key: String in models:exact_models=exact_models and models[key].capture_snapshot()==revisions[key]
 	check(exact_models,"rejected transactions preserve every model store")
+	for key: String in models:check(models[key].restore_snapshot(revisions[key]) and not models[key].survey_cache_identity().is_empty(),"prefab fixture has certified model identity")
 	var observed: Array=[]
 	world.blocks.changed.connect(func():
 		observed.append(models["furniture/table/v1"].get_ids().size()==1 and models["furniture/chair/v1"].get_ids().size()==1 and models["furniture/shelf/v1"].get_ids().size()==1),CONNECT_ONE_SHOT)
 	check(coordinator.place_prefab(world.blocks,inventory,asset,Vector3i(40,40,40),0,models,catalog.recipes(),[]),"paid furnished cottage places: "+coordinator.reason)
 	check(world.blocks.history_stats().undo_steps==0 and world.blocks.history_stats().redo_steps==0,"combined placement establishes block-history barrier")
 	check(observed==[true],"block publication observes every committed model")
+	for key: String in models:check(models[key].survey_cache_identity().is_empty(),"prefab authoring invalidates model map certificate")
 	var expected=ClassDB.instantiate("NativePlayerInventory")
 	for item in range(101,105):expected.register_item(item,100000)
 	expected.restore(before,0)
