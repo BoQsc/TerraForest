@@ -41,6 +41,13 @@ func run() -> void:
 		terrain.free();persistence=null;inventory=null
 		check(await open_world(),"previous canonical save remains readable after failed close")
 		check(inventory.snapshot().slots[0].count==7 and terrain.density_revision==revision,"failed close cannot overwrite the consistent baseline")
+		check(await terrain.shutdown_after_edits(),"baseline closes before invalid capture test")
+		terrain.free();persistence=null;inventory=null
+		check(await open_world(),"baseline reopens for invalid capture test")
+		var canonical:=FileAccess.get_sha256("user://worlds/"+slot+".trw")
+		terrain.backend.snapshot_capture=func():return {"epoch":terrain.epoch,"sections":{"player_loadout":PackedByteArray([0])}}
+		check(not await terrain.shutdown_after_edits(),"invalid addon capture reports failed shutdown save")
+		check(FileAccess.get_sha256("user://worlds/"+slot+".trw")==canonical,"invalid capture preserves canonical bytes")
 	terrain.shutdown();terrain.free()
 	for suffix in [".trw",".trw.bak",".trw.lock"]: DirAccess.remove_absolute("user://worlds/"+slot+suffix)
 	print("SHUTDOWN_SAVE_ORDERING ",JSON.stringify({"checks":checks,"failures":failures}))

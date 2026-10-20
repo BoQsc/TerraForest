@@ -1,3 +1,50 @@
+## Connected cellar access and durable-close correctness - 2026-10-20
+
+The combined-world player now has an authored 1.5 m footpath from the western
+arterial around the cellar cottage to its entrance. It is prepared in the same
+protected plan as the cellar, before building placement, then stored with the
+road/path catalog. Seven generator seeds pass connected path geometry and base
+terrain height samples at one-metre intervals across centre and edges; native
+anchor serialization also passes. This is a fixed location recipe, not a claim
+of arbitrary-lot path planning.
+
+The first complete bake exposed a storage mismatch: terrain editing permits narrow
+paths but native road-anchor storage only accepted widths >=4 m. The resulting
+addon capture failed and fresh-process verification rejected the staged world;
+no review world was published. Native anchor validation now accepts widths >=1 m,
+matching the existing minimum terrain half-width of 0.5 m. Binary layout is unchanged;
+existing road persistence and catalog limits still pass. Debug and release DLLs
+were rebuilt against the pinned prebuilt SDK. Invalid/nonfinite/out-of-range widths
+remain rejected.
+
+That failure also exposed misleading graceful-close success: shutdown_after_edits
+reported settled edits even when its final save failed. It now requires successful
+persistent publication as well as settled edits. Disposable/read-only worlds still
+close without writing. A 17-check shutdown regression includes deliberately invalid
+addon bytes and proves both failure reporting and unchanged canonical file hash.
+
+New foundation_cellar_42_20261020 passes full creation and fresh-process reopen.
+Its saved path entries restore exactly. The real player walks from the arterial,
+climbs the cottage stairs, opens the door, descends into the cellar, climbs back,
+and returns to the street without intermediate teleports. The full route takes
+about 58 seconds including loading at 1920x1080/fullscreen capped60. This is not a
+frame-time benchmark: initial water restoration still reports a >200 ms loading
+hitch and the existing sustained-performance requirements remain open.
+
+Inspected overview, approach and ladder images show the connecting path and intact
+entrance/interior surfaces. Cottage repetition, simple materials, sparse interiors
+and broader landscape quality remain unfinished; these images are not world art
+acceptance. Evidence, including the rejected bake, is in
+`evidence/cellar_connected_access`. Play Regional World Review.cmd now creates a
+separate v13 copy. Versions1-12 and original player saves are preserved; original
+southern_mixed_42_20261018 SHA256 remains 3a76b6fa3e86aecf6c529263d22cf59174d73644dcb67d21b8332c4048ed4995.
+
+Next foundation work remains the edited-world map representation and the broader
+world qualification gaps (other road/junction and entrance topologies, multiple
+complete seeds, storage growth/failure recovery and sustained populated travel).
+Connected mine and cellar circulation now have direct integrated evidence; they
+must not be relabelled as finished location design or full gameplay coverage.
+
 ## Connected mine route and parking correction - 2026-10-20
 
 A full route from the eastern arterial exposed a real generator defect missed by

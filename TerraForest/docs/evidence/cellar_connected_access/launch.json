@@ -1,0 +1,37 @@
+{
+  "slot": "regional_world_review_v13",
+  "new_world_generator": 13,
+  "new_world_seed": 42,
+  "temporary": false,
+  "existing_save_takes_precedence": true,
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+    "--log-file",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\playtests\\20261020T121315914831Z\\engine.log",
+    "--path",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+    "--rendering-method",
+    "forward_plus",
+    "--fullscreen",
+    "--resolution",
+    "1920x1080",
+    "--max-fps",
+    "60",
+    "res://demo/world.tscn",
+    "--",
+    "--world-generator=13",
+    "--world-seed=42",
+    "--world-slot=regional_world_review_v13",
+    "--ground-cover",
+    "--actors",
+    "--vehicle-fleet",
+    "--gameplay-construction",
+    "--max-fps=60"
+  ],
+  "label": "Integrated regional world review",
+  "source_slot": "foundation_cellar_42_20261020",
+  "review_copy": {
+    "pending": true
+  },
+  "notes": "Development review; frame spikes remain unresolved. Esc > World lists destinations; development mode enables travel. Review progress is saved separately."
+}

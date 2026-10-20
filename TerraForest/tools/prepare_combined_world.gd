@@ -349,6 +349,7 @@ func prepare_cellar_location()->bool:
  var asset:Resource=preload("res://addons/structures/cellar_catalog.gd").cottage()
  game._accept_composed_prefab({"ok":true,"asset":asset})
  var plan:Dictionary=preload("res://addons/structures/site_plan.gd").prepare(asset,Vector3i(center),0,int(center.y))
+ plan=preload("res://addons/structures/cellar_catalog.gd").connect_access(plan,layout.sites[1].position)
  if not require(plan.ok,"cellar building site plan valid"):return false
  game._survey_generation+=1
  plan["epoch"]=game.terrain.epoch;plan["revision"]=game.terrain.density_revision;plan["generation"]=game._survey_generation;plan["asset"]=asset

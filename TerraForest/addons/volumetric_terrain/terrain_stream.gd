@@ -184,7 +184,7 @@ func shutdown_after_edits() -> bool:
 		backend.disable_snapshot_writes("world state did not settle before shutdown")
 		message_changed.emit("Closing without a new save: world state did not settle; previous save retained")
 	shutdown()
-	return settled
+	return settled and (backend.temporary or backend._last_save_success)
 
 func shutdown() -> void:
 	if stopping:

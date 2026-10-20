@@ -1,0 +1,25 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS isolated persistent world starts
+PASS excavation admitted immediately before close
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+PASS graceful close waits for pending edit publication
+PASS final snapshot captured after publication callback
+PASS closing world rejects new edits
+PASS new worker reloads the shutdown save from disk
+PASS shutdown save preserves edited terrain and callback inventory together
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+PASS idle graceful close also completes
+PASS reopen verified baseline for failed-publication case
+PASS second edit admitted before injected publication error
+[TerrainRewrite] ERROR: save blocked: world state did not settle before shutdown; previous canonical snapshot retained
+PASS failed publication blocks new shutdown snapshot
+PASS previous canonical save remains readable after failed close
+PASS failed close cannot overwrite the consistent baseline
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+PASS baseline closes before invalid capture test
+PASS baseline reopens for invalid capture test
+[TerrainRewrite] ERROR: invalid addon capture; previous canonical snapshot retained
+PASS invalid addon capture reports failed shutdown save
+PASS invalid capture preserves canonical bytes
+SHUTDOWN_SAVE_ORDERING {"checks":17,"failures":0}

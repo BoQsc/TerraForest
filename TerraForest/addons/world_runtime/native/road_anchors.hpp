@@ -11,7 +11,7 @@ namespace terraforest {
 class NativeRoadAnchors : public godot::RefCounted {
     GDCLASS(NativeRoadAnchors, godot::RefCounted)
     static bool valid(const godot::PackedVector3Array &ends, double width) {
-        if (ends.size()!=2 || !std::isfinite(width) || width<4 || width>64) return false;
+        if (ends.size()!=2 || !std::isfinite(width) || width<1 || width>64) return false;
         for (int i=0;i<2;++i) {
             const auto p=ends[i];
             if (!p.is_finite() || p.x<0 || p.x>2000 || p.z<0 || p.z>2000 || p.y<0 || p.y>250) return false;

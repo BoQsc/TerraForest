@@ -32,3 +32,20 @@ static func cottage() -> Resource:
  # applies this after surface grading and before the combined prefab transaction.
  asset.set_meta("cellar_clearance",true)
  return asset
+
+# Authored pedestrian connection from the western arterial around the cottage.
+# Prepared before prefab placement so grading cannot cut through placed blocks.
+static func connect_access(plan:Dictionary,site:Vector3)->Dictionary:
+ if not plan.get("ok",false):return plan
+ var points:=PackedVector3Array([site+Vector3(28,0,0),site+Vector3(28,0,29),site+Vector3(20.5,0,29),site+Vector3(20.5,0,28)])
+ var lines:=PackedVector3Array()
+ for i in range(points.size()-1):
+  var a:=points[i];var b:=points[i+1]
+  var bounds:=AABB(a.min(b)-Vector3(0.75,1,0.75),a.max(b)-a.min(b)+Vector3(1.5,5,1.5))
+  if bounds.position.x<5 or bounds.position.z<5 or bounds.end.x>1995 or bounds.end.z>1995:return {"ok":false,"reason":"Cellar path outside world"}
+  plan.segments.append({"start":a,"finish":b,"half_width":0.75,"depth":1.0,"clearance":4.0,"shoulder":0.0,"material":4,"bounds":bounds})
+  plan.bounds=plan.bounds.merge(bounds)
+  lines.append(a);lines.append(b)
+ plan["street_lines"]=lines;plan["street_ends"]=PackedVector3Array([points[0],points[-1]])
+ plan["street_width"]=1.5;plan["paving_segments"]=3
+ return plan

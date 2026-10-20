@@ -85,7 +85,10 @@ Lakes must meet the ground without gaps, sheets or disconnected visual remnants.
 
 Native hot paths; bounded streaming, collision and entity activation; shared/batched
 assets; bake/cache static work. Save authoritative changes and verify fresh-process
-restoration. Loading must communicate progress and avoid exposing incomplete local
+restoration. Shutdown and offline preparation must report durable save failure even when edits
+and addon transfers settled successfully. Every authored path width must survive
+the same native persistence validation used by the complete world.
+Loading must communicate progress and avoid exposing incomplete local
 collision. World generation must produce one coherent playable result, not rely on
 separate showcase scenes.
 
