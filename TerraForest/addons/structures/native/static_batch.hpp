@@ -137,6 +137,7 @@ protected:
     static void _bind_methods();
     void _notification(int what);
 public:
+    AABB survey_prototype_bounds() const{return source_mesh.is_valid()?source_mesh->get_aabb():AABB();}
     Dictionary survey_index() const;
     Dictionary survey_bounds(Vector3i region,int64_t after_id,int64_t expected_revision) const;
     int64_t survey_revision_id() const{return edit_revision;}

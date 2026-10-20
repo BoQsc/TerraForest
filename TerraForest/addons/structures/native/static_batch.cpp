@@ -8,6 +8,7 @@
 namespace terraforest {
 NativeStaticBatch::NativeStaticBatch() {set_notify_transform(true);}
 void NativeStaticBatch::_bind_methods() {
+    ClassDB::bind_method(D_METHOD("survey_prototype_bounds"),&NativeStaticBatch::survey_prototype_bounds);
     ClassDB::bind_method(D_METHOD("survey_index"),&NativeStaticBatch::survey_index);
     ClassDB::bind_method(D_METHOD("survey_revision_id"),&NativeStaticBatch::survey_revision_id);
     ClassDB::bind_method(D_METHOD("survey_bounds","region","after_id","expected_revision"),&NativeStaticBatch::survey_bounds);

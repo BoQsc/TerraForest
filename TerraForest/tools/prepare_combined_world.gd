@@ -70,6 +70,9 @@ func run()->void:
   var block_map:Node=game.world_map.block_survey
   if not require(await wait_until(func():return block_map.complete and block_map.io==null,90) and (block_map.cache_hits>0 or block_map.cache_writes>0),"actual block cartography cached before publication"):await finish(false);return
   print("PREPARED_BLOCK_CARTOGRAPHY hits=",block_map.cache_hits," writes=",block_map.cache_writes," archived_reads=",block_map.archived_reads," visibility_calls=",block_map.visibility_calls)
+  var model_map:Node=game.world_map.model_survey
+  if not require(await wait_until(func():return model_map.complete and model_map.io==null,90) and (model_map.cache_hits>0 or model_map.cache_writes>0),"actual model cartography cached before publication"):await finish(false);return
+  print("PREPARED_MODEL_CARTOGRAPHY hits=",model_map.cache_hits," writes=",model_map.cache_writes," archived_reads=",model_map.archived_reads," visibility_calls=",model_map.visibility_calls)
   game.world_map.set_open(false)
 
 

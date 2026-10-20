@@ -1,0 +1,12 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS projection batch bounded
+PASS projection batch bounded
+PASS projection batch bounded
+PASS large footprint continues across calls
+PASS continuation emits each subcell once
+PASS world transform and model top respected
+PASS small prop omitted from regional building coverage
+PASS map boundary clips instead of rejecting whole object
+PASS invalid continuation rejected
+MODEL_MAP_PROJECTION failures=0

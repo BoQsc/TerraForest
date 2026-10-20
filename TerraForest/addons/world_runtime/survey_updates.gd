@@ -84,7 +84,7 @@ func receive(result:Dictionary)->void:
 
 func description()->String:
  var count:=dirty.size()+(0 if pending.is_empty() else 1)
- return ("Terrain survey updating (%d areas)"%count if count>0 else "Terrain surface surveyed")+" | "+atlas.water_survey.description()+" | "+atlas.block_survey.description()
+ return ("Terrain survey updating (%d areas)"%count if count>0 else "Terrain surface surveyed")+" | "+atlas.water_survey.description()+" | "+atlas.block_survey.description()+" | "+atlas.model_survey.description()
 
 func recheck_identity()->void:
  # An intervening save may have certified a previously unsaved terrain revision.

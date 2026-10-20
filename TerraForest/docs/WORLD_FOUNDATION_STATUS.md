@@ -1,3 +1,50 @@
+## Model coverage integrated into the playable map — 2026-10-20
+
+The M-map now draws a lilac model-object layer, using the same sparse native raster,
+terrain-visibility worker, checksum cache and publication controller as block/water
+cartography. This completes the source-to-live-map integration described below.
+The region archive worker decodes model packets into survey objects; gameplay
+paging cannot consume their dedicated completion channel. Pending, active and
+completed cancellation release the correct model byte reservation and asset-specific
+checkpoint reference. One archive request/decoded region is held per survey.
+
+Native projection emits at most 256 samples per step, with continuation even for a
+large model. It applies the captured collection transform and clips to map bounds.
+Footprints under 4 square metres are omitted at this regional scale; larger objects
+use conservative transformed bounding rectangles, not exact silhouettes. Terrain
+above suppresses coverage. The 512-square layer is drawn below the block layer so
+furnishings do not paint over buildings. These are regional navigation marks, not
+an indoor map. Shared mesh bounds and collection transforms participate in runtime
+invalidation. The content cache has its own namespace/folder, with 16 entries.
+
+Verification: native projection continuation, transformed height, clipping and small
+prop filtering pass. Archive checks cover model survey isolation from both gameplay
+channels, worker decode and full reservation release on cancellation. In the actual
+1920x1080 fullscreen saved world, model placement changed pixels, removal restored
+identical pixels, unchanged reopening reused the layer, and closing an outstanding
+survey released its request and lease. All model collections retained their original
+storage/residency. The three-state run read 486 archived regions, made four visibility
+calls (maximum 0.8163 ms), and wrote two caches. Fresh-process repeat hit all three
+states with zero visibility calls. Before/edited images were inspected; the large
+placed model appears as a readable lilac mark. Current small furnishings mostly fall
+below the regional footprint threshold.
+
+Preparation now requires the model map cached before publication; the saved-world
+reopen gate passed with all four map layers cached. The canonical world root SHA-256
+remains 872531c6141123460ec06132ffbf1ba2c75de5d0089d420f75220d625602717a.
+Debug/release structures and world-runtime DLLs rebuilt using the pinned SDK.
+Evidence: `evidence/model_map_integration`.
+
+**Remaining map efficiency work:** content-key computation still scans source records
+and reads archived model regions before a cache hit. Replace that repeated work with
+validated region/asset identities, retaining exact invalidation for unsaved edits,
+prototype changes and collection transforms. Local overlay updates, fine-detail
+coverage, ordering by surface height across layers, capacity and large-world
+qualification remain open. Current visibility tests concern terrain occlusion, not
+exact mutual model/block occlusion. The integrated run also logged a startup receive
+hitch around 258 ms; screenshots at 60 FPS are not sustained-performance proof.
+The broader world foundation and world-art acceptance remain incomplete.
+
 ## Model cartography source verified against the generated world — 2026-10-20
 
 NativeStaticBatch now exposes a revision-guarded survey index for resident and

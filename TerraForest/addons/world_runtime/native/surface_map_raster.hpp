@@ -5,10 +5,14 @@
 #include <godot_cpp/variant/packed_vector3_array.hpp>
 #include <godot_cpp/variant/packed_byte_array.hpp>
 #include <godot_cpp/variant/color.hpp>
+#include <godot_cpp/variant/transform3d.hpp>
+#include <godot_cpp/variant/dictionary.hpp>
+#include <godot_cpp/variant/array.hpp>
 #include <vector>
 #include <unordered_map>
 #include <unordered_set>
 #include <algorithm>
+#include <cmath>
 namespace terraforest {
 // Sparse, bounded top-down samples, reduced 2x2 into regional map coverage.
 class NativeSurfaceMapRaster : public godot::RefCounted {
@@ -24,6 +28,7 @@ class NativeSurfaceMapRaster : public godot::RefCounted {
 protected:
  static void _bind_methods(){
   godot::ClassDB::bind_method(godot::D_METHOD("configure","size"),&NativeSurfaceMapRaster::configure);
+  godot::ClassDB::bind_method(godot::D_METHOD("project_bounds","boxes","transform","cursor"),&NativeSurfaceMapRaster::project_bounds);
   godot::ClassDB::bind_method(godot::D_METHOD("offer","points"),&NativeSurfaceMapRaster::offer);
   godot::ClassDB::bind_method(godot::D_METHOD("count"),&NativeSurfaceMapRaster::count);
   godot::ClassDB::bind_method(godot::D_METHOD("batch","offset"),&NativeSurfaceMapRaster::batch);
@@ -31,6 +36,36 @@ protected:
   godot::ClassDB::bind_method(godot::D_METHOD("pixels","color"),&NativeSurfaceMapRaster::pixels,DEFVAL(godot::Color(54/255.f,117/255.f,140/255.f)));
  }
 public:
+ godot::Dictionary project_bounds(const godot::Array &boxes,const godot::Transform3D &frame,godot::Vector2i cursor)const{
+  godot::Dictionary out;out["ok"]=false;
+  if(boxes.size()>32||!frame.is_finite()||cursor.x<0||cursor.x>boxes.size()||cursor.y<0)return out;
+  for(int i=0;i<boxes.size();++i){
+   if(boxes[i].get_type()!=godot::Variant::AABB)return out;
+   godot::AABB b=boxes[i];if(!b.position.is_finite()||!b.size.is_finite()||b.size.x<0||b.size.y<0||b.size.z<0)return out;
+  }
+  godot::PackedVector3Array points;const int edge=size*2;const double step=2000.0/edge;
+  for(;cursor.x<boxes.size();++cursor.x,cursor.y=0){
+   godot::AABB box=frame.xform(godot::AABB(boxes[cursor.x]));
+   if(!box.position.is_finite()||!box.size.is_finite())return out;
+   // Regional cartography omits small props; it does not force every chair or
+   // grass instance into a building-sized pixel. Larger extents remain visible.
+   if(double(box.size.x)*box.size.z<4.0)continue;
+   const auto end=box.position+box.size;
+   if(end.x<0||end.z<0||box.position.x>=1999||box.position.z>=1999||end.y<0||end.y>=255)continue;
+   int x0=std::clamp(int(std::floor(std::clamp(double(box.position.x),0.,1999.)/step)),0,edge-1);
+   int z0=std::clamp(int(std::floor(std::clamp(double(box.position.z),0.,1999.)/step)),0,edge-1);
+   int x1=std::clamp(int(std::ceil(std::clamp(double(end.x),0.,1999.)/step))-1,x0,edge-1);
+   int z1=std::clamp(int(std::ceil(std::clamp(double(end.z),0.,1999.)/step))-1,z0,edge-1);
+   int width=x1-x0+1,total=width*(z1-z0+1);
+   if(cursor.y>total)return out;
+   while(cursor.y<total&&points.size()<256){
+    int x=x0+cursor.y%width,z=z0+cursor.y/width;
+    points.push_back(godot::Vector3((x+.5)*step,end.y,(z+.5)*step));++cursor.y;
+   }
+   if(cursor.y<total)break;
+  }
+  out["ok"]=true;out["points"]=points;out["cursor"]=cursor;out["complete"]=cursor.x==boxes.size();return out;
+ }
  bool configure(int edge){if(!samples.empty()||(edge!=256&&edge!=512))return false;size=edge;return true;}
  bool offer(const godot::PackedVector3Array &points){
   if(points.size()>256)return false;

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: 0BSD
 #include "region_world_archive.hpp"
 #include "block_map_region.hpp"
+#include "model_map_region.hpp"
 #include <algorithm>
 #include <limits>
 
@@ -31,6 +32,10 @@ bool NativeRegionWorldArchive::start_region_reads(int request_limit,int64_t byte
     return true;
 }
 
+int64_t NativeRegionWorldArchive::request_model_survey_read(const String &asset,Vector3i region,const PackedByteArray &expected,const PackedByteArray &checkpoint,int64_t epoch,const AABB &bounds) {
+    if(asset.is_empty()||!bounds.position.is_finite()||!bounds.size.is_finite()||bounds.size.x<0||bounds.size.y<0||bounds.size.z<0)return 0;
+    return request_read(asset,region,expected,checkpoint,epoch,false,false,true,bounds);
+}
 int64_t NativeRegionWorldArchive::request_survey_region_read(Vector3i region,const PackedByteArray &expected,const PackedByteArray &checkpoint,int64_t epoch) {
     return request_read(String(),region,expected,checkpoint,epoch,false,false,true);
 }
@@ -51,7 +56,7 @@ int64_t NativeRegionWorldArchive::request_model_checkpoint_region_read(const Str
 int64_t NativeRegionWorldArchive::request_model_metadata(const String &asset,const PackedByteArray &checkpoint,int64_t epoch) {
     return request_read(asset,Vector3i(),PackedByteArray(),checkpoint,epoch,true);
 }
-int64_t NativeRegionWorldArchive::request_read(const String &asset,Vector3i region,const PackedByteArray &expected,const PackedByteArray &checkpoint,int64_t epoch,bool metadata,bool strict_checkpoint,bool survey) {
+int64_t NativeRegionWorldArchive::request_read(const String &asset,Vector3i region,const PackedByteArray &expected,const PackedByteArray &checkpoint,int64_t epoch,bool metadata,bool strict_checkpoint,bool survey,const AABB &bounds) {
     std::lock_guard<std::mutex> lock(read_mutex_);
     if(checkpoint.size()==32&&checkpoint_sweep_active_) {++read_rejected_;++read_checkpoint_busy_rejections_;return 0;}
     const bool model=!asset.is_empty();
@@ -63,7 +68,7 @@ int64_t NativeRegionWorldArchive::request_read(const String &asset,Vector3i regi
        reservation>read_byte_limit_-read_reserved_||read_next_ticket_==INT64_MAX) {
         ++read_rejected_;return 0;
     }
-    RegionRead request;request.ticket=read_next_ticket_++;request.epoch=epoch;request.asset=asset;request.metadata=metadata;request.strict_checkpoint=strict_checkpoint;request.survey=survey;
+    RegionRead request;request.ticket=read_next_ticket_++;request.epoch=epoch;request.asset=asset;request.metadata=metadata;request.strict_checkpoint=strict_checkpoint;request.survey=survey;request.survey_bounds=bounds;
     request.region=region;request.expected=expected;request.checkpoint=checkpoint;
     const int64_t ticket=request.ticket;
     if(checkpoint.size()==32)++read_checkpoint_refs_[{asset,checkpoint.hex_encode()}];
@@ -98,9 +103,15 @@ void NativeRegionWorldArchive::run_region_reads(Ref<NativeBlockRegionStore> stor
             result.clear();result["ok"]=false;result["error"]=int(ERR_BUSY);
         }
         if(request.survey&&bool(result.get("ok",false))) {
-            Ref<NativeBlockMapRegion> decoded;decoded.instantiate();
-            if(decoded->load_packet(result["bytes"],request.expected))result["survey"]=decoded;
-            else {result["ok"]=false;result["error"]=int(ERR_FILE_CORRUPT);}
+            bool valid=false;
+            if(request.asset.is_empty()) {
+                Ref<NativeBlockMapRegion> decoded;decoded.instantiate();
+                valid=decoded->load_packet(result["bytes"],request.expected);if(valid)result["survey"]=decoded;
+            } else {
+                Ref<NativeModelMapRegion> decoded;decoded.instantiate();
+                valid=decoded->load_packet(result["bytes"],request.expected,request.asset,request.survey_bounds);if(valid)result["survey"]=decoded;
+            }
+            if(!valid){result["ok"]=false;result["error"]=int(ERR_FILE_CORRUPT);}
             result.erase("bytes");
         }
         result["checkpoint_verified"]=(request.strict_checkpoint||request.metadata)&&bool(result.get("ok",false));
@@ -248,19 +259,21 @@ Dictionary NativeRegionWorldArchive::take_survey_region_read(int64_t ticket) {
  std::lock_guard<std::mutex> lock(read_mutex_);
  for(auto it=survey_read_completed_.begin();it!=survey_read_completed_.end();++it)if(int64_t((*it)["ticket"])==ticket){
   Dictionary result=*it;PackedByteArray pin=result["checkpoint"];
-  if(pin.size()==32)release_checkpoint_ref_locked({String(),pin.hex_encode()});
-  survey_read_completed_.erase(it);--read_outstanding_;read_reserved_-=READ_BYTES;return result;
+  String asset=result.get("asset",String());
+  if(pin.size()==32)release_checkpoint_ref_locked({asset,pin.hex_encode()});
+  survey_read_completed_.erase(it);--read_outstanding_;read_reserved_-=asset.is_empty()?READ_BYTES:MODEL_READ_BYTES;return result;
  }return {};
 }
 bool NativeRegionWorldArchive::discard_survey_region_read(int64_t ticket) {
  if(ticket<=0)return false;std::lock_guard<std::mutex> lock(read_mutex_);
  for(auto it=read_pending_.begin();it!=read_pending_.end();++it)if(it->ticket==ticket&&it->survey){
-  if(it->checkpoint.size()==32)release_checkpoint_ref_locked({String(),it->checkpoint.hex_encode()});
-  read_pending_.erase(it);++read_cancelled_before_start_;--read_outstanding_;read_reserved_-=READ_BYTES;return true;
+  if(it->checkpoint.size()==32)release_checkpoint_ref_locked({it->asset,it->checkpoint.hex_encode()});
+  const auto reservation=it->asset.is_empty()?READ_BYTES:MODEL_READ_BYTES;
+  read_pending_.erase(it);++read_cancelled_before_start_;--read_outstanding_;read_reserved_-=reservation;return true;
  }
  for(auto it=survey_read_completed_.begin();it!=survey_read_completed_.end();++it)if(int64_t((*it)["ticket"])==ticket){
-  PackedByteArray pin=(*it)["checkpoint"];if(pin.size()==32)release_checkpoint_ref_locked({String(),pin.hex_encode()});
-  survey_read_completed_.erase(it);--read_outstanding_;read_reserved_-=READ_BYTES;return true;
+  PackedByteArray pin=(*it)["checkpoint"];String asset=(*it).get("asset",String());if(pin.size()==32)release_checkpoint_ref_locked({asset,pin.hex_encode()});
+  survey_read_completed_.erase(it);--read_outstanding_;read_reserved_-=asset.is_empty()?READ_BYTES:MODEL_READ_BYTES;return true;
  }
  if(read_active_survey_ticket_==ticket){read_discard_active_=true;return true;}return false;
 }
