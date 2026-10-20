@@ -4,9 +4,9 @@ const SitePlan=preload("res://addons/structures/site_plan.gd")
 const Quality=preload("res://addons/world_runtime/world_building_quality.gd")
 static func recipe(center:Vector3)->Array:
  var catalog=preload("res://addons/structures/furniture_catalog.gd")
- var sources:Array[Resource]=[catalog.enclosed_cottage(),preload("res://addons/structures/workshop_catalog.gd").workshop(),catalog.furnished_tower(2),catalog.furnished_tower(3),catalog.furnished_tower(4)]
+ var sources:Array[Resource]=[catalog.enclosed_cottage(),preload("res://addons/structures/workshop_catalog.gd").workshop(),catalog.furnished_tower(2),catalog.furnished_tower(3),catalog.furnished_tower(4),preload("res://addons/structures/workshop_catalog.gd").village_shop()]
  # Lower houses at the perimeter, workshops beside the streets, taller centre.
- var choices:Array[int]=[0,0,2,1,3,4,4,3,1,2,0,0]
+ var choices:Array[int]=[0,0,2,5,3,4,4,3,1,2,0,0]
  var lots:Array=[]
  for street in [-52,0,52]:
   for side in [-1,1]:

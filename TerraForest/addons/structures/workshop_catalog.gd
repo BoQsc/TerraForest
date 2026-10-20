@@ -35,3 +35,38 @@ static func workshop()->Resource:
  if not asset.configure_model_attachments(models):return null
  asset.resource_name="Mine workshop and stores"
  return asset
+
+# Village service building: shares the workshop footprint/entrance contract, but
+# has its own roof silhouette and sales/storage circulation. Offline recipe only.
+static func village_shop()->Resource:
+ var source:Resource=workshop()
+ if source==null:return null
+ var cells:Dictionary={}
+ var original:PackedInt32Array=source.get_records()
+ for i in range(0,original.size(),4):
+  var p:=Vector3i(original[i],original[i+1],original[i+2])
+  if p.y==6:continue
+  cells[p]=original[i+3]
+ # Sloped timber roof, ridge along the long axis. Gables close both ends;
+ # every roof column stays within the surveyed workshop footprint.
+ for x in range(-6,7):
+  var roof_y:int=6+6-absi(x)
+  for z in range(-8,9):
+   cells[Vector3i(x,roof_y,z)]=33 if x==0 else (60 if x<0 else 44)
+   if absi(z)==8:
+    for y in range(6,roof_y):cells[Vector3i(x,y,z)]=1
+ var records:=PackedInt32Array()
+ for p:Vector3i in cells:records.append_array(PackedInt32Array([p.x,p.y,p.z,cells[p]]))
+ var shop:Resource=ClassDB.instantiate("NativeBlockPrefab")
+ if not shop.configure(records):return null
+ var models:Array=[]
+ for entry:Dictionary in source.get_model_attachments():
+  if entry.model=="furniture/table/v1":continue
+  models.append(entry)
+ # Two counters leave a central customer route and access to the rear stores.
+ for x in [-3.5,3.5]:
+  models.append({"model":"furniture/table/v1","transform":Transform3D(Basis.IDENTITY,Vector3(x,1,0.5))})
+  models.append({"model":"furniture/shelf/v1","transform":Transform3D(Basis.IDENTITY,Vector3(x,1,-0.8))})
+ if not shop.configure_model_attachments(models):return null
+ shop.resource_name="Village general store"
+ return shop

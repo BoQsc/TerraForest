@@ -1,0 +1,94 @@
+{
+  "slot": "combined_stage_640a515c25ee46c0ba533e3e765e9ab5",
+  "layout": "districts",
+  "seed": 42,
+  "revision": "2461f49f5c79551b20ef16c5f65bfe98a7eacefe",
+  "worktree_changes": [
+    " M TerraForest/addons/structures/northern_lots.gd",
+    " M TerraForest/addons/structures/workshop_catalog.gd",
+    "?? TerraForest/tests/village_shop.gd"
+  ],
+  "git_metadata_available": true,
+  "phases": [
+    {
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--fullscreen",
+        "--resolution",
+        "1920x1080",
+        "--max-fps",
+        "60",
+        "--script",
+        "res://tools/prepare_combined_world.gd",
+        "--",
+        "--world-slot=combined_stage_640a515c25ee46c0ba533e3e765e9ab5",
+        "--world-generator=13",
+        "--world-seed=42",
+        "--ground-cover",
+        "--actors",
+        "--vehicle-fleet",
+        "--checkpoint-layout=districts",
+        "--checkpoint-report=C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\combined_preparation\\20261020T162735683443Z\\checkpoint.json",
+        "--derived-cache=user://combined_stage_640a515c25ee46c0ba533e3e765e9ab5"
+      ],
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 13756,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 116.55381150000903,
+        "passed": true
+      }
+    },
+    {
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--fullscreen",
+        "--resolution",
+        "1920x1080",
+        "--max-fps",
+        "60",
+        "--script",
+        "res://tools/prepare_combined_world.gd",
+        "--",
+        "--world-slot=combined_stage_640a515c25ee46c0ba533e3e765e9ab5",
+        "--world-generator=13",
+        "--world-seed=42",
+        "--ground-cover",
+        "--actors",
+        "--vehicle-fleet",
+        "--checkpoint-layout=districts",
+        "--checkpoint-report=C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\combined_preparation\\20261020T162735683443Z\\checkpoint.json",
+        "--derived-cache=user://combined_stage_640a515c25ee46c0ba533e3e765e9ab5",
+        "--reopen-checkpoint",
+        "--gameplay-construction",
+        "--vehicle-fleet"
+      ],
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 54116,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 24.30199970000831,
+        "passed": true
+      }
+    }
+  ],
+  "publication": {
+    "created": true,
+    "slot": "foundation_village_shop_42_20261020",
+    "source_slot": "combined_stage_640a515c25ee46c0ba533e3e765e9ab5",
+    "source_sha256": "571ad507c55b2c357da4b48529053dc9abcdbd8636b944e5e3c3f0898f8fcead",
+    "map_cache_copied": true
+  }
+}
