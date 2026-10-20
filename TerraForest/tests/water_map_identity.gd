@@ -17,6 +17,8 @@ func run()->void:
  var copy:PackedByteArray=prepared.get_bytes();copy[0]^=1
  check(prepared.get_bytes()==packet,"caller mutation cannot change prepared bytes")
  check(water.restore_prepared(prepared) and water.statistics().map_identity_scene_hash_us==0,"prepared restore hashes no bytes on scene thread")
+ check(prepared.get_catalog()==catalog.encode([],1),"prepared catalog matches validated packet")
+ check(not water.restore_prepared(prepared),"prepared state cannot be consumed twice")
  var identity:String=water.survey_cache_identity()
  check(not identity.is_empty() and water.restore_snapshot(packet) and water.survey_cache_identity()==identity,"prepared and ordinary restore certify identical content")
  var bad= factory.prepare(PackedByteArray([1,2,3]))

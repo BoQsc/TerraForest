@@ -1,3 +1,29 @@
+## Water startup decoding moved off the scene thread — 2026-10-20
+
+The existing loading worker now validates and decodes the complete native water
+store, constructs its pending mesh/request queues, and extracts the validated lake
+catalog. A single-use prepared object transfers those containers into the live store;
+the scene no longer parses the full water packet twice. Serialized formats and static
+bucket gameplay are unchanged. Synchronous restore remains supported. Prepared state
+cannot be consumed twice; invalid input cannot replace live state.
+
+The same saved regional world at 1920x1080 fullscreen reopened successfully. Startup
+receive measured **12.561 ms**, including **0.069 ms** for the water component, compared
+with the preceding 215–248 ms startup receive measurements. SHA-256 preparation remained
+on the worker (126400 microseconds, zero scene-thread hash time). This is a measured
+startup improvement on the current laptop, not a sustained frame-rate guarantee.
+All four map layers reused their caches without initial source/visibility scans.
+The integrated water test removed and restored the full world water store through a
+worker-prepared handoff: all serialized water/contact bytes and map pixels matched.
+The canonical world file SHA-256 remained unchanged. Debug/release DLLs rebuilt using
+the existing prebuilt SDK. Evidence: `evidence/water_worker_restore`.
+
+Still open: destruction of an already-populated old store and retirement of existing
+render resources on an in-session reload have not been separately bounded. Decoding
+still consumes worker time and temporarily retains the incoming decoded state alongside
+any existing state. This work does not qualify large-world capacity, streaming tails,
+city gameplay or terrain-fitting world design. Those wider gates below remain active.
+
 ## Block and water map caches now skip initial source scans — 2026-10-20
 
 Both layers now use certified loaded-state identities before collecting geometry.

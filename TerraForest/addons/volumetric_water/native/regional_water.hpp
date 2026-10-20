@@ -20,16 +20,21 @@
 #include "water_cell_profile.hpp"
 
 namespace terraforest {
+class NativeRegionalWater;
 class NativeWaterMapIdentity : public godot::RefCounted {
  GDCLASS(NativeWaterMapIdentity,godot::RefCounted)
  friend class NativeRegionalWater;
  godot::PackedByteArray bytes;
  godot::String identity;
+ godot::Ref<NativeRegionalWater> decoded;
+ godot::PackedByteArray catalog;
+ bool consumed=false;
  uint64_t hash_us=0;
 protected: static void _bind_methods();
 public:
  godot::Ref<NativeWaterMapIdentity> prepare(const godot::PackedByteArray &data) const;
  godot::PackedByteArray get_bytes() const{return bytes;}
+ godot::PackedByteArray get_catalog() const{return catalog;}
 };
 class NativeWaterSnapshot;
 struct TerrainWaterContacts {uint64_t bytes=0;std::array<std::vector<WaterCellProfile::Triangle>,512> floors;};
@@ -66,10 +71,12 @@ public:
 
 // Sparse 0.5 m finite volumes in 4 m regions. Amounts are integer millilitres.
 // Terrain-derived floor/ceiling intervals are cached, not re-solved per frame.
-// Only the main thread owns this store; all loops have explicit work bounds.
+// Live stores belong to the main thread; private load stores may be decoded
+// on the loading worker and handed off only after that worker has completed.
 class NativeRegionalWater : public godot::RefCounted {
     GDCLASS(NativeRegionalWater,godot::RefCounted)
     friend class NativeWaterSnapshot;
+    friend class NativeWaterMapIdentity;
     using Key=uint64_t;
     struct Region {
         std::array<uint16_t,512> floor{},ceiling{};

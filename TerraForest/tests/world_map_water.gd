@@ -29,7 +29,12 @@ func run()->void:
  check(clear and atlas.updates.image.get_data()==land,"removed lakes leave no stale blue pixels and do not rebuild terrain")
  atlas.view.overview();await RenderingServer.frame_post_draw;root.get_texture().get_image().save_png("res://reports/world_map_water_removed.png")
  builds=survey.builds
- check(game.lakes.water.restore_snapshot(snapshot),"original water snapshot restores")
+ var factory=ClassDB.instantiate("NativeWaterMapIdentity")
+ var restore_worker:=Thread.new();restore_worker.start(factory.prepare.bind(snapshot))
+ while restore_worker.is_alive():await process_frame
+ var prepared:RefCounted=restore_worker.wait_to_finish()
+ check(game.lakes.water.restore_prepared(prepared),"worker-decoded original water snapshot restores")
+ check(game.lakes.water.capture_snapshot(prepared.get_catalog())==snapshot,"worker handoff preserves all water/contact bytes")
  if not check(await wait_for(func():return survey.complete and survey.builds>builds,30),"restored water resurvey completes"):await done();return
  check(survey.texture.get_image().get_data()==before,"restored water produces identical map coverage")
  check(await wait_for(func():return survey.io==null,5),"water cache I/O completes")

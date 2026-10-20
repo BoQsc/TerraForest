@@ -79,7 +79,7 @@ func snapshot_preparer()->RefCounted:
 func restore_prepared_snapshot(prepared:RefCounted)->bool:
  return restore_snapshot(prepared.get_bytes(),prepared)
 func restore_snapshot(bytes:PackedByteArray,prepared:RefCounted=null) -> bool:
- var catalog_bytes:PackedByteArray=water.snapshot_catalog(bytes)
+ var catalog_bytes:PackedByteArray=prepared.get_catalog() if prepared!=null else water.snapshot_catalog(bytes)
  if catalog_bytes.is_empty():return false
  var decoded:Dictionary=_catalog.decode(catalog_bytes)
  if not decoded.ok:return false

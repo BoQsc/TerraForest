@@ -37,7 +37,10 @@ func run()->void:
   if arg=="--checkpoint-layout=mixed":mixed=true
   if arg in ["--checkpoint-layout=regional","--checkpoint-layout=poi","--checkpoint-layout=lakes","--checkpoint-layout=districts"]:mixed=true;regional=true
  if report_path.is_empty():quit(1);return
- game=load("res://demo/world.tscn").instantiate();game.max_fps=60;game.background_fps=60;game.lakes.offline_preparation=true;game.model_region_paging=false;root.add_child(game)
+ game=load("res://demo/world.tscn").instantiate();game.max_fps=60;game.background_fps=60;game.lakes.offline_preparation=true;game.model_region_paging=false
+ game.terrain.stage_measured.connect(func(label:String,ms:float):
+  if label=="restore volumetric_water" or label=="receive startup":print("PREPARED_LOAD_STAGE ",label," ms=",ms))
+ root.add_child(game)
  # Whole-world offline signatures require every model resident, unlike gameplay.
  # Offline staging is committed explicitly after the complete generation batch.
  # A periodic save between survey and grading can invalidate admission.

@@ -1366,23 +1366,35 @@ bool NativeRegionalWater::decode(const PackedByteArray &data,bool install){
 void NativeWaterMapIdentity::_bind_methods(){
  ClassDB::bind_method(D_METHOD("prepare","bytes"),&NativeWaterMapIdentity::prepare);
  ClassDB::bind_method(D_METHOD("get_bytes"),&NativeWaterMapIdentity::get_bytes);
+ ClassDB::bind_method(D_METHOD("get_catalog"),&NativeWaterMapIdentity::get_catalog);
 }
 Ref<NativeWaterMapIdentity> NativeWaterMapIdentity::prepare(const PackedByteArray &data) const {
  if(data.is_empty()||data.size()>64*1024*1024)return {};
  Ref<NativeWaterMapIdentity> result;result.instantiate();result->bytes=data;
+ result->decoded.instantiate();
+ if(!result->decoded->decode(data,true))return {};
+ result->catalog=data.slice(32,32+data.decode_u32(8));
  const auto started=Time::get_singleton()->get_ticks_usec();
  Ref<HashingContext> hash;hash.instantiate();hash->start(HashingContext::HASH_SHA256);hash->update(data);
  result->identity="snapshot-v1|"+hash->finish().hex_encode();result->hash_us=Time::get_singleton()->get_ticks_usec()-started;return result;
 }
 bool NativeRegionalWater::restore_prepared(const Ref<NativeWaterMapIdentity> &prepared){
- if(prepared.is_null()||prepared->identity.is_empty()||!decode(prepared->bytes,true))return false;
+ if(prepared.is_null()||prepared->identity.is_empty()||prepared->decoded.is_null()||prepared->consumed)return false;
+ // Single-owner handoff after the loading worker has joined. No decoding,
+ // contact reconstruction, or traversal of incoming regions on this thread.
+ auto &source=*prepared->decoded.ptr();prepared->consumed=true;
+ invalidate_snapshot();cancel_mesh_batch();published_surfaces.clear();published_batch=0;
+ query_cache_bytes=0;query_builds=0;query_cache_hits=0;
+ regions.swap(source.regions);requests.swap(source.requests);request_set.swap(source.request_set);
+ meshes.swap(source.meshes);mesh_set.swap(source.mesh_set);restored_cache.swap(source.restored_cache);
+ solid_cache_bytes=source.solid_cache_bytes;total=source.total;cache_hits=source.cache_hits;
+ cache_rebuilds=0;fill=Fill{};sampled=0;changes=0;last_us=max_us=mesh_us=max_mesh_us=0;limit=false;
  survey_saved_identity=prepared->identity;survey_identity_hash_us=prepared->hash_us;survey_identity_scene_hash_us=0;return true;
 }
 bool NativeRegionalWater::restore_snapshot(const PackedByteArray &data){
- if(!decode(data,true))return false;
  Ref<NativeWaterMapIdentity> factory;factory.instantiate();auto prepared=factory->prepare(data);
- if(prepared.is_valid()){survey_saved_identity=prepared->identity;survey_identity_hash_us=survey_identity_scene_hash_us=prepared->hash_us;}
- return true;
+ if(!restore_prepared(prepared))return false;
+ survey_identity_scene_hash_us=prepared->hash_us;return true;
 }
 bool NativeRegionalWater::validate_snapshot(const PackedByteArray &data) const {
     if(data.size()>=4&&data.decode_u32(0)==MAGIC){return const_cast<NativeRegionalWater*>(this)->decode(data,false);}Ref<NativeLakeCatalog> legacy;legacy.instantiate();return legacy->validate_snapshot(data);
