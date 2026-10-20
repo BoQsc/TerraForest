@@ -1,0 +1,28 @@
+{
+  "center": "(1089.0, 62.0, 1792.0)",
+  "failures": 0,
+  "phases": [
+    {
+      "frame_p95": 17.195,
+      "gpu_median": 7.20699977874756,
+      "label": "normal",
+      "taa": false,
+      "worst": 21.954
+    },
+    {
+      "frame_p95": 17.329,
+      "gpu_median": 8.68900012969971,
+      "label": "taa",
+      "taa": true,
+      "worst": 33.567
+    },
+    {
+      "frame_p95": 16.86,
+      "gpu_median": 6.97599983215332,
+      "label": "normal_repeat",
+      "taa": false,
+      "worst": 18.032
+    }
+  ],
+  "scope": "Repeated six-metre camera path. Timing excludes image capture replay. Production settings unchanged."
+}

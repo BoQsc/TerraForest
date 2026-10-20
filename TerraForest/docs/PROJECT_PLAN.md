@@ -1,3 +1,12 @@
+## Moving-view comparison - 2026-10-20
+
+Six-metre camera-path evidence: `evidence/vegetation_motion_diagnostic`.
+TAA softens edges but retains speckling, raising GPU median from 6.98-7.21 ms
+to 8.69 ms. Production unchanged. Frame p95 16.86-17.33 ms does not establish
+strict 60 FPS. Screenshot replay has readback stalls; it is not real-time motion
+proof. Sparse placement is implemented; distant representation remains open.
+Next isolate species/representation contributions, not more blanket AA settings.
+
 ## Far-cover comparison results — 2026-10-19
 
 Higher LOD detail and 4x MSAA did not resolve the inspected speckled pattern;
