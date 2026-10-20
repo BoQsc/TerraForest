@@ -5,7 +5,7 @@ const Planner=preload("res://addons/structures/terrain_lot_planner.gd")
 func _initialize()->void:
  var failures:=0;var reports:Array=[]
  for seed_value in [0,1,42,50,141,1703,9999]:
-  var core=ClassDB.instantiate("TerrainCore");core.execute(Codec.command(6,[seed_value,16]))
+  var core=ClassDB.instantiate("TerrainCore");core.execute(Codec.command(6,[seed_value,17]))
   var layout:Dictionary=preload("res://addons/volumetric_terrain/generated_layout.gd").describe(seed_value,16)
   var center:Vector3=layout.sites[3].position
   var plan:Dictionary=Planner.plan(core,center)
@@ -28,6 +28,17 @@ func _initialize()->void:
   summary["located"]=located.ok;summary["attempts"]=located.attempts
   if not located.ok:failures+=1;print("LOCATE_REJECT ",located)
   if located.ok:
+   var protected:Dictionary=Planner.reservations(core,center)
+   var works:Dictionary=Planner.earthworks(located)
+   if not protected.ok or not works.ok:failures+=1
+   else:
+    var footprint:=Rect2(Vector2(works.bounds.position.x,works.bounds.position.z),Vector2(works.bounds.size.x,works.bounds.size.z))
+    for area:Rect2 in protected.areas:
+     if footprint.intersects(area):failures+=1;print("RESERVATION_OVERLAP ",seed_value," ",area)
+     var probe:=AABB(Vector3(area.get_center().x,0,area.get_center().y)-Vector3(0.5,0,0.5),Vector3.ONE)
+     if Planner.footprint_clear(probe,protected.areas):failures+=1;print("RESERVATION_NOT_ENFORCED")
+    if protected.areas.size()!=10:failures+=1
+    summary["protected_areas"]=protected.areas.size()
    summary["offset"]=str(located.center-center)
    summary["mean_earthwork"]=located.mean_earthwork;summary["max_cut"]=located.max_cut;summary["max_fill"]=located.max_fill;summary["ranked_candidates"]=located.ranked_candidates
    summary["entrances"]=located.lots.size()

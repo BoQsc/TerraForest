@@ -1,3 +1,27 @@
+## Regional exclusion planning — 2026-10-20
+
+Terrain-lot selection now reserves native lake catalog bounds plus 12 m shore
+margins, the mine underground footprint plus 12 m, its entrance approach, and the
+other four settlement planning footprints plus their transition margins. Descriptors
+come from the same native world being surveyed. Missing metadata rejects planning;
+these reservations do not publish nonexistent destinations or alter water behavior.
+A conservative candidate envelope rejects overlaps before street solving; the final
+actual earthworks AABB is checked again before acceptance. Existing generated saves
+are unchanged. All seven seeds retain 12 lots. Six retain their prior offsets, including the
+reviewed seed42; seed0 is relocated to avoid a reserved footprint.
+
+The profile17 regression checks final earthworks against all ten reserved areas
+and tests that probes inside each reservation are rejected. Native seed42 earthworks
+still pass support, road, pavement and exact terrain persistence checks. Evidence:
+evidence/terrain_region_reservations. This step adds no new visible world content;
+the prior reviewed images still describe the unchanged chosen neighborhood.
+
+These are reservations for existing native hints, not a finished regional planner.
+When multiple settlements move, their actual occupied footprints must be reserved
+transactionally, replacing the planning hints, before regional roads and POIs bake.
+Route crossings/bridges and owned mine access need explicit planning. Continue full-
+region integration; do not equate exclusions alone with a complete connected world.
+
 ## Lower-disturbance settlement siting — 2026-10-20
 
 The offline planner now ranks feasible street locations before fitting buildings,

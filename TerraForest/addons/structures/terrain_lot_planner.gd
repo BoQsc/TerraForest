@@ -187,7 +187,52 @@ static func plan(core,center:Vector3,roads:Array=[],variant:int=0)->Dictionary:
  return {"ok":rejected.is_empty(),"lots":fitted,"rejected":rejected,
   "reason":"" if rejected.is_empty() else "Frontage zones require relocation or a different street layout"}
 
+# Planning reservations come from the same native world instance being surveyed.
+# They are exclusions, never public map markers or evidence of baked construction.
+static func reservations(core,origin:Vector3)->Dictionary:
+ var result:Array[Rect2]=[]
+ var lakes:PackedByteArray=core.execute(Codec.command(27))
+ if not Codec.reply_ok(lakes) or lakes.size()<16:return {"ok":false}
+ var count:int=lakes.decode_u32(12)
+ if count>64 or lakes.size()!=16+count*44:return {"ok":false}
+ for i in count:
+  var at:int=16+i*44;var spacing:float=lakes.decode_float(at+24)
+  var low:=Vector2(lakes.decode_float(at),lakes.decode_float(at+8))
+  var size:=Vector2(lakes.decode_u32(at+12),lakes.decode_u32(at+20))*spacing
+  # Preserve the catalog volume and a 12 m shore/access margin.
+  result.append(Rect2(low,size).grow(12))
+ var sites:PackedByteArray=core.execute(Codec.command(34))
+ if not Codec.reply_ok(sites) or sites.size()!=168:return {"ok":false}
+ var owner:=-1;var closest:=INF
+ for i in 5:
+  var at:int=16+i*20
+  var point:=Vector2(sites.decode_float(at),sites.decode_float(at+8))
+  var distance:float=point.distance_squared_to(Vector2(origin.x,origin.z))
+  if distance<closest:closest=distance;owner=i
+ for i in 5:
+  if i==owner:continue
+  var at:int=16+i*20
+  var point:=Vector2(sites.decode_float(at),sites.decode_float(at+8))
+  var radius:float=sites.decode_float(at+12)+32
+  result.append(Rect2(point-Vector2.ONE*radius,Vector2.ONE*radius*2))
+ var mine:PackedByteArray=core.execute(Codec.command(35))
+ if not Codec.reply_ok(mine) or mine.size()!=76:return {"ok":false}
+ var low:=Vector2(mine.decode_float(44),mine.decode_float(52))
+ var high:=Vector2(mine.decode_float(56),mine.decode_float(64))
+ result.append(Rect2(low,high-low).grow(12))
+ var entrance:=Vector2(mine.decode_float(32),mine.decode_float(40))
+ result.append(Rect2(entrance-Vector2(16,16),Vector2(32,32)))
+ return {"ok":true,"areas":result,"owner":owner}
+
+static func footprint_clear(bounds:AABB,reserved:Array)->bool:
+ var footprint:=Rect2(Vector2(bounds.position.x,bounds.position.z),Vector2(bounds.size.x,bounds.size.z))
+ for area:Rect2 in reserved:
+  if footprint.intersects(area):return false
+ return true
+
 static func locate(core,center:Vector3)->Dictionary:
+ var protected:Dictionary=reservations(core,center)
+ if not protected.ok:return {"ok":false,"reason":"Native region reservations unavailable","attempts":0}
  var attempts:=0;var reasons:Dictionary={};var best_missing:=12
  var candidates:Array=[]
  for dx in [0,-24,24,-48,48,-72,72,-96,96,-120,120,-144,144,-168,168,-192,192,-216,216,-240,240,-264,264,-288,288]:
@@ -195,6 +240,9 @@ static func locate(core,center:Vector3)->Dictionary:
    var candidate:=center+Vector3(dx,0,dz)
    if candidate.x<120 or candidate.z<120 or candidate.x>1880 or candidate.z>1880:continue
    attempts+=1
+   # Conservative recipe envelope includes shifted plots, paths and shoulders.
+   if not footprint_clear(AABB(candidate-Vector3(75,0,100),Vector3(150,256,200)),protected.areas):
+    reasons["Reserved lake, POI or neighboring site"]=int(reasons.get("Reserved lake, POI or neighboring site",0))+1;continue
    var roads:Dictionary=streets(core,candidate)
    if not roads.ok:
     reasons[roads.reason]=int(reasons.get(roads.reason,0))+1;continue
@@ -207,7 +255,11 @@ static func locate(core,center:Vector3)->Dictionary:
   for variant in [0,1,2,3]:
    var lots:Dictionary=plan(core,candidate.center,candidate.roads.segments,variant)
    best_missing=mini(best_missing,lots.rejected.size())
-   if lots.ok:return {"ok":true,"center":candidate.center,"lots":lots.lots,"roads":candidate.roads.segments,"attempts":attempts,"variant":variant,
+   if lots.ok:
+    var checked:Dictionary={"ok":true,"lots":lots.lots,"roads":candidate.roads.segments}
+    var works:Dictionary=earthworks(checked)
+    if not works.ok or not footprint_clear(works.bounds,protected.areas):continue
+    return {"ok":true,"center":candidate.center,"lots":lots.lots,"roads":candidate.roads.segments,"attempts":attempts,"variant":variant,
     "site_cost":candidate.cost,"mean_earthwork":candidate.roads.mean_earthwork,"max_cut":candidate.roads.max_cut,"max_fill":candidate.roads.max_fill,"ranked_candidates":candidates.size()}
  return {"ok":false,"reason":"No complete terrain-fitting layout in bounded search","attempts":attempts,"road_rejections":reasons,"best_missing":best_missing}
 
