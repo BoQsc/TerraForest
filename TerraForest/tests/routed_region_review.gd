@@ -19,6 +19,15 @@ func run()->void:
   for i in 120:await process_frame
   await RenderingServer.frame_post_draw
   root.get_texture().get_image().save_png("res://reports/routed_region_"+row.name+".png")
+ if game.terrain.backend.world_generator>=16:
+  var north:Vector3=layout.sites[3].position
+  game.teleport(north+Vector3(85,0,85))
+  if not await ready_world(game):quit(1);return
+  game.set_physics_process(false);game._clear_motion()
+  game.camera.global_position=north+Vector3(85,65,85);game.camera.look_at(north+Vector3(0,3,0))
+  for i in 120:await process_frame
+  await RenderingServer.frame_post_draw
+  root.get_texture().get_image().save_png("res://reports/sited_region_neighborhood.png")
  game.app_focused=true;game.world_map.set_open(true);game.world_map.view.overview()
  var deadline:int=Time.get_ticks_msec()+30000
  while game.world_map.texture==null and Time.get_ticks_msec()<deadline:await process_frame

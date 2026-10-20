@@ -2,10 +2,11 @@
 extends SceneTree
 const Codec=preload("res://addons/volumetric_terrain/mesh_codec.gd")
 func _initialize()->void:
+ var generator:int=16 if "--sited" in OS.get_cmdline_user_args() else 15
  var failures:=0;var max_grade:=0.0;var max_error:=0.0;var bent:=0
  for seed_value in [0,1,42,50,141,1703,9999]:
-  var core=ClassDB.instantiate("TerrainCore");core.execute(Codec.command(6,[seed_value,15]))
-  var layout:Dictionary=preload("res://addons/volumetric_terrain/generated_layout.gd").describe(seed_value,15)
+  var core=ClassDB.instantiate("TerrainCore");core.execute(Codec.command(6,[seed_value,generator]))
+  var layout:Dictionary=preload("res://addons/volumetric_terrain/generated_layout.gd").describe(seed_value,generator)
   if layout.is_empty():failures+=1;continue
   for road:Dictionary in layout.roads:
    var points:PackedVector3Array=road.points

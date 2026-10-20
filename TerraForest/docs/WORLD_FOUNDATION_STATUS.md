@@ -1,3 +1,27 @@
+## Surveyed regional locations — 2026-10-20
+
+Generator 16 surveys 45 candidate locations for each outer settlement against raw
+terrain relief and lake clearance. Roads retain cardinal approaches into authored
+streets while following terrain-cost corridors through the countryside. Existing
+generator IDs and saves remain unchanged. This does not enforce a complete cut/fill
+budget: generated settlement plateaus and regular internal layouts remain rejected
+for final world quality.
+
+Seven-seed route and lot checks pass. All 28 roads bend; maximum grade is 0.120001,
+and maximum centerline surface error is 0.091 m. Full seed-42 generation and fresh
+process restoration passed (reports/combined_preparation/20261020T171213014996Z).
+The 26.85-second integrated visual capture passed without engine diagnostics.
+Inspected ground and neighborhood views show forested road travel and the shifted
+northern settlement, but also repeated buildings and overly smooth surroundings.
+The ground capture reads 46 FPS: these images do not establish sustained 60 FPS.
+All-route vehicle traversal, shoulder earthworks, streaming cutoffs and thermal
+headroom remain unqualified.
+
+Play Regional World Review.cmd now opens a separate editable v18 copy of
+sited_region_42_20261020, generator 16. Preparation uses --layout districts --natural
+--seed 42. Next content priority: settlement layout/terrain integration and purposeful
+location variety, not another cache or reload optimization pass.
+
 ## Generated terrain-cost road corridors — 2026-10-20
 
 Generator15 replaces straight regional road centerlines with bounded offline corridor

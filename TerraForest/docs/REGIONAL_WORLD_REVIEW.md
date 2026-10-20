@@ -1,7 +1,7 @@
 # Integrated regional world review
 
-Run `Play Regional World Review.cmd`. It opens `regional_world_review_v3`, a
-separate editable copy of the prepared profile-12 world. Repeated launches preserve
+Run `Play Regional World Review.cmd`. It opens `regional_world_review_v18`, a
+separate editable copy of the prepared generator-16 world. Repeated launches preserve
 your review progress. Existing gameplay worlds and the prepared source are retained.
 The viewport is 1920x1080 fullscreen, capped at 60 FPS. Frame spikes remain unresolved;
 this is a development review, not a performance-qualified release.
@@ -21,7 +21,7 @@ Further work should improve the actual locations and travel between them. Water
 flow, food/vitals and multiplayer implementation remain deferred.
 
 On a fresh installation without the prepared save:
-`python tools/prepare_combined_world.py --layout districts --destination regional_access_20261018`
+`python tools/prepare_combined_world.py --layout districts --natural --seed 42 --destination sited_region_42_20261020`
 Then use the review launcher. This cold preparation can take minutes; it is not
 repeated on normal launch.
 

@@ -35,7 +35,7 @@ def prepare(engine, worlds, folder, destination="combined_gameplay", layout="cot
         base = [str(engine), '--path', str(ROOT), '--fullscreen', '--resolution',
                 '1920x1080', '--max-fps', '60', '--script',
                 'res://tools/prepare_combined_world.gd', '--',
-                '--world-slot=' + slot, '--world-generator=' + ('15' if natural and layout == 'districts' else '13' if layout == 'districts' else '12' if layout == 'lakes' else '11' if layout == 'poi' else '8' if layout == 'regional' else '4'), '--world-seed=' + str(seed),
+                '--world-slot=' + slot, '--world-generator=' + ('16' if natural and layout == 'districts' else '13' if layout == 'districts' else '12' if layout == 'lakes' else '11' if layout == 'poi' else '8' if layout == 'regional' else '4'), '--world-seed=' + str(seed),
                 '--ground-cover', '--actors', '--vehicle-fleet', '--checkpoint-layout=' + layout, '--checkpoint-report=' + str(report),
                 '--derived-cache=user://' + slot]
         metadata = dict(slot=slot, layout=layout, seed=seed, **revision_metadata(), phases=[])

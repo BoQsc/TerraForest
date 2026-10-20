@@ -51,7 +51,16 @@ void World::plan_roads(){
    float t=float(k)/24.f,dist=t*span;
    float envelope=smooth(clampf((dist-sites[0].radius-24.f)/90.f,0,1))*smooth(clampf((span-dist-sites[road+1].radius-24.f)/90.f,0,1));
    for(int j=0;j<9;j++){
-    lateral[k][j]=(j-4)*24.f*envelope;
+    float approach=0;
+    if(generator_id>=SITED_REGION_GENERATOR_ID){
+     // Preserve cardinal approaches through authored lots; the countryside
+     // corridor still connects the newly offset settlement positions.
+     float slope=road<2?-axis.z/side.z:-axis.x/side.x;
+     float start_weight=1.f-smooth(clampf((dist-sites[0].radius-36.f)/90.f,0,1));
+     float end_weight=1.f-smooth(clampf((span-dist-sites[road+1].radius-36.f)/90.f,0,1));
+     approach=slope*(dist*start_weight-(span-dist)*end_weight);
+    }
+    lateral[k][j]=clampf(approach+(j-4)*24.f*envelope,-96.f,96.f);
     V3 p=a+axis*dist+side*lateral[k][j];
     float h=height(p.x,p.z);
     if(dist<=sites[0].radius+12.f)h=a.y;
@@ -75,7 +84,7 @@ void World::plan_roads(){
   for(int pass=0;pass<3;pass++){
    V3 smooth_points[25];copy_bytes(smooth_points,road_points[road],sizeof(smooth_points));
    for(int k=1;k<24;k++){
-    float dist=k*step;if(dist<sites[0].radius+24.f||span-dist<sites[road+1].radius+24.f)continue;
+    float dist=k*step,pad=generator_id>=SITED_REGION_GENERATOR_ID?36.f:24.f;if(dist<sites[0].radius+pad||span-dist<sites[road+1].radius+pad)continue;
     V3 p=(smooth_points[k-1]+smooth_points[k]*2.f+smooth_points[k+1])*.25f;
     p.y=height(p.x,p.z);road_points[road][k]=p;
    }
@@ -247,6 +256,30 @@ void World::init(int p_seed,u32 generator){
   const u32 layout_seed=hash32(u32(seed)^0x71c9e15bu);
   const float cx=1000.f+float(int(layout_seed&63)-31),cz=1000.f+float(int((layout_seed>>8)&63)-31);
   V3 centers[5]={{cx,0,cz},{230,0,cz},{1770,0,cz},{cx,0,230},{cx,0,1770}};
+  if(generator_id>=SITED_REGION_GENERATOR_ID){
+   // Survey full outer settlement footprints before selecting a location.
+   // Terrain relief dominates; seed-derived preference breaks geographic symmetry.
+   for(int i=1;i<5;i++){
+    V3 original=centers[i],best=original;float best_cost=1e20f;
+    float preferred=float(int(hash32(layout_seed+u32(i)*991u)%321u)-160);
+    for(int across=-4;across<=4;across++)for(int along=-2;along<=2;along++){
+     V3 candidate=original+(i<3?V3{float(along*32),0,float(across*48)}:V3{float(across*48),0,float(along*32)});
+     bool near_lake=false;
+     for(u32 lake=0;lake<4;lake++){
+      u32 key=hash32(u32(seed)^0x7a91c3b5u^(lake*0x9e3779b9u));
+      float lx=180.f+float(lake&1)*1000.f+float(key&63),lz=180.f+float(lake>>1)*1000.f+float((key>>8)&63);
+      float dx=candidate.x-lx,dz=candidate.z-lz;
+      if(dx*dx+dz*dz<(lake==0?205.f*205.f:150.f*150.f))near_lake=true;
+     }
+     if(near_lake)continue;
+     float low=255.f,high=0;
+     for(int x=-72;x<=72;x+=36)for(int z=-72;z<=72;z+=36){float h=height(candidate.x+x,candidate.z+z);low=mn(low,h);high=mx(high,h);}
+     float score=(high-low)*4.f+ab(across*48.f-preferred)*.015f+ab(along*32.f)*.005f;
+     if(score<best_cost){best_cost=score;best=candidate;}
+    }
+    centers[i]=best;
+   }
+  }
   for(int i=0;i<5;i++){centers[i].y=float(fl(height(centers[i].x,centers[i].z)));sites[i]={centers[i],i==0?160.f:72.f};}
   if(generator_id>=ROUTED_REGION_GENERATOR_ID)plan_roads();
   site_count=5;regional_roads=true;
@@ -498,7 +531,7 @@ bool World::deserialize(const u8*data,int n){
  Reader r{data,n-4};if(r.u()!=SAVE_MAGIC)return false;u32 format=r.u();if(format!=1&&format!=2)return false;
  int s=int(r.u()),pc=int(r.u()),bc=int(r.u()),rev=int(r.u()),ed=int(r.u());
  u32 generator=format==1?1:r.u();
- if(!r.good||generator<1||generator>ROUTED_REGION_GENERATOR_ID)return false;
+ if(!r.good||generator<1||generator>SITED_REGION_GENERATOR_ID)return false;
  if(pc<0||pc>MAX_PAGES||bc<0||bc>2000000||i64(pc)*(4+PAGE_SAMPLES*3)+i64(bc)*8+(format==1?28:32)!=n-4)return false;
  World t;t.build_control=build_control;t.init(s,generator);t.revision=rev;t.edits=ed;t.surface_style=surface_style;
  for(int i=0;i<pc;i++){
@@ -1127,7 +1160,7 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
  }
  else if(cmd==4){w.serialize(out);}
  else if(cmd==5){if(!w.deserialize(data+4,n-4))out.p[8]=1;out.u(w.revision);out.u(w.pages.n);out.u(w.blocks.n);}
- else if(cmd==6){int seed=int(r.u());u32 generator=n==12?r.u():1;if(!r.good||(n!=8&&n!=12)||generator<1||generator>ROUTED_REGION_GENERATOR_ID){out.p[8]=1;return;}BuildControl *control=w.build_control;w.release();w=World{};w.build_control=control;w.init(seed,generator);}
+ else if(cmd==6){int seed=int(r.u());u32 generator=n==12?r.u():1;if(!r.good||(n!=8&&n!=12)||generator<1||generator>SITED_REGION_GENERATOR_ID){out.p[8]=1;return;}BuildControl *control=w.build_control;w.release();w=World{};w.build_control=control;w.init(seed,generator);}
  else if(cmd==7){V3 p=r.vec();if(!r.good||!(ab(p.x)<=10000&&ab(p.y)<=10000&&ab(p.z)<=10000)){out.p[8]=1;return;}out.f(w.height(p.x,p.z));out.f(w.sample(fl(p.x),fl(p.y),fl(p.z)));}
  else if(cmd==8){ // Deterministic construction proof; not a replay list.
   int bx=1472,bz=1440,by=int(w.height(float(bx),float(bz)))+1;
