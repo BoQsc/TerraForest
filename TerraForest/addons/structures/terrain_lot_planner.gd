@@ -7,11 +7,11 @@ const Codec=preload("res://addons/volumetric_terrain/mesh_codec.gd")
 const Quality=preload("res://addons/world_runtime/world_building_quality.gd")
 const Lots=preload("res://addons/structures/northern_lots.gd")
 
-static func streets(core,center:Vector3)->Dictionary:
+static func streets(core,center:Vector3,source:Array=[])->Dictionary:
  var vertices:Dictionary={};var edges:Array=[]
  # Shared endpoints force exact junction elevations. Small segments follow the
  # ground; a bounded constraint solve limits grade without flattening a district.
- for road:Dictionary in Lots.street_segments(center):
+ for road:Dictionary in (Lots.street_segments(center) if source.is_empty() else source):
   var count:int=ceili(road.start.distance_to(road.finish)/14.0)*2
   var chain_start:int=edges.size()
   for i in count:
@@ -74,9 +74,16 @@ static func streets(core,center:Vector3)->Dictionary:
    coefficients.append_array(PackedFloat64Array([-2*delta,3*delta,0,segment.start.y]))
   segments[i]["coefficients"]=coefficients;segments[i]["curve_index"]=i-edge.chain_start
  # Shared level junction footprints, applied after adjoining sloped roads.
- for x in [-42,42]:
-  for z in [-52,0,52]:
-   var key:=Vector2i(roundi((center.x+x)*100),roundi((center.z+z)*100))
+ var junction_keys:Array=[]
+ if source.is_empty():
+  for x in [-42,42]:
+   for z in [-52,0,52]:junction_keys.append(Vector2i(roundi((center.x+x)*100),roundi((center.z+z)*100)))
+ else:
+  for road:Dictionary in source:
+   for p:Vector3 in [road.start,road.finish]:
+    var key:=Vector2i(roundi(p.x*100),roundi(p.z*100))
+    if not junction_keys.has(key):junction_keys.append(key)
+ for key:Vector2i in junction_keys:
    var vertex:Dictionary=vertices[key]
    var p:Vector3=vertex.point;p.y=(vertex.low+vertex.high)*0.5
    var probes:=PackedVector3Array()
@@ -127,9 +134,9 @@ static func frontage(core,lot:Dictionary,origin:Vector3i,roads:Array)->Dictionar
   if points[i].y-raw[i]>2 or raw[i]-points[i].y>3:return {"ok":false}
  return {"ok":true,"segment":Lots._segment(a,b,0.75,1,4,0,1)}
 
-static func plan(core,center:Vector3,roads:Array=[],variant:int=0)->Dictionary:
+static func plan(core,center:Vector3,roads:Array=[],variant:int=0,recipe:Array=[])->Dictionary:
  var fitted:Array=[];var reserved:Array[AABB]=[];var rejected:Array=[]
- var source:Array=Lots.recipe(center)
+ var source:Array=Lots.recipe(center) if recipe.is_empty() else recipe
  for index in source.size():
   var lot:Dictionary=source[index].duplicate()
   lot.asset=source[(index+variant)%source.size()].asset
@@ -149,10 +156,18 @@ static func plan(core,center:Vector3,roads:Array=[],variant:int=0)->Dictionary:
     var points:PackedVector3Array=lot.asset.foundation_samples(origin,lot.rotation,0)
     for point:Vector3 in points:
      if absf(point.x-center.x)<8:blocked=true;break
-     for street in [-52,0,52]:
-      if absf(point.z-center.z-street)<6.5:blocked=true;break
-     if blocked:break
-     if absf(absf(point.x-center.x)-42)<6.5 and absf(point.z-center.z)<=57:blocked=true;break
+     if recipe.is_empty():
+      for street in [-52,0,52]:
+       if absf(point.z-center.z-street)<6.5:blocked=true;break
+      if blocked:break
+      if absf(absf(point.x-center.x)-42)<6.5 and absf(point.z-center.z)<=57:blocked=true;break
+     else:
+      for road:Dictionary in roads:
+       var a:=Vector2(road.start.x,road.start.z);var b:=Vector2(road.finish.x,road.finish.z)
+       var p:=Vector2(point.x,point.z);var axis:Vector2=b-a
+       var t:float=clampf((p-a).dot(axis)/maxf(axis.length_squared(),0.001),0,1)
+       if p.distance_to(a+axis*t)<6.5:blocked=true;break
+      if blocked:break
     if blocked:continue
     var raw:PackedFloat32Array=heights(core,points)
     if raw.size()!=points.size():return {"ok":false,"reason":"Native raw survey failed"}
@@ -289,7 +304,9 @@ static func earthworks(plan:Dictionary)->Dictionary:
  return {"ok":true,"segments":segments,"bounds":bounds}
 
 static func paving(plan:Dictionary)->Array:
- var poses:Array=[]
+ var poses:Array=[];var crossings:Array[Vector3]=[]
+ for road:Dictionary in plan.roads:
+  if road.start.distance_to(road.finish)<2:crossings.append((road.start+road.finish)*0.5)
  for road:Dictionary in plan.roads:
   var span:Vector3=road.finish-road.start
   var horizontal:float=Vector2(span.x,span.z).length()
@@ -304,9 +321,8 @@ static func paving(plan:Dictionary)->Array:
    for side in [-1,1]:
     var midpoint:Vector3=(a+b)*0.5+across*side*3.75
     var crossing:=false
-    for x in [-42,42]:
-     for z in [-52,0,52]:
-      if Vector2(midpoint.x-plan.center.x-x,midpoint.z-plan.center.z-z).length()<6.5:crossing=true
+    for junction:Vector3 in crossings:
+     if Vector2(midpoint.x-junction.x,midpoint.z-junction.z).length()<6.5:crossing=true
     if crossing:continue
     var forward:Vector3=(b-a).normalized()
     var up:Vector3=forward.cross(across).normalized()

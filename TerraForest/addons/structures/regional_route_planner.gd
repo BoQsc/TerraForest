@@ -86,7 +86,7 @@ static func route(core,start:Vector3,finish:Vector3,reserved:Array)->Dictionary:
   return {"ok":true,"points":points,"segments":segments,"bounds":bounds,"nodes":graph.get_point_count(),"attempts":attempt+1}
  return {"ok":false,"reason":"Route refinement limit reached"}
 
-static func central_connection(core,town:Dictionary,layout:Dictionary)->Dictionary:
+static func central_connection(core,town:Dictionary,layout:Dictionary,market:Dictionary={})->Dictionary:
  var start:Vector3=town.roads[0].start
  for road:Dictionary in town.roads:
   for point:Vector3 in [road.start,road.finish]:
@@ -102,4 +102,13 @@ static func central_connection(core,town:Dictionary,layout:Dictionary)->Dictiona
  var index:int=reserved.find(central)
  if index<0:return {"ok":false,"reason":"Central destination reservation missing"}
  reserved.remove_at(index)
+ if not market.is_empty():
+  finish=market.roads[0].start
+  for road:Dictionary in market.roads:
+   for p:Vector3 in [road.start,road.finish]:
+    if p.z<finish.z or (p.z==finish.z and p.x>finish.x):finish=p
+  for site:Dictionary in [town,market]:
+   for lot:Dictionary in site.lots:
+    var bounds:AABB=lot.bounds
+    reserved.append(Rect2(Vector2(bounds.position.x,bounds.position.z),Vector2(bounds.size.x,bounds.size.z)).grow(2))
  return route(core,start,finish,reserved)

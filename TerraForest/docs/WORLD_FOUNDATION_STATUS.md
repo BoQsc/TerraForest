@@ -1468,3 +1468,31 @@ registry omitted non-UI collections. All world model collections now participate
 edit, normal save and fresh-process return pass. Original failures retained in
 `evidence/populated_model_paging`. No source save changed. Next: destination model
 collision/render readiness and measured arrival/frame bounds before default enable.
+
+## Two connected settlements — 2026-10-20
+
+Seed 42, generator 17, saved slot `two_settlements_paved_20261020`.
+The terrain-fitting review launcher now defaults to version 4; versions 1–3 and
+existing player saves remain intact. Twelve northern buildings connect by a
+surveyed forest road to eight central cottages, shops and workshops with sidewalks.
+The central recipe selects raw terrain within the same 2 m fill / 3 m cut limits.
+Actual neighboring lot bounds and regional reservations constrain its placement.
+
+Engineering: 352 combined terrain edits, 20 buildings; native foundation and road
+probes passed. Seven northern seed plans still pass after the shared planner change.
+Full bake/save passed in 84.43 s; separate-process reopen passed in 21.42 s with
+2 places, 437 map road segments and zero road/tree-root overlaps among 3300 residents.
+These durations include review orchestration; they are not production load benchmarks.
+Evidence: `evidence/two_settlements/`.
+
+World quality remains a draft. Inspected overview and street captures show the
+low-rise settlement integrated with forest and individually fitted lots, but repeated
+facades, regular street geometry and exposed banks still need design work. Only the
+northern sidewalk traversal is checked; all market entrances, vehicle access and
+common spaces remain unverified. A street screenshot showed 33 FPS; sustained 60 FPS
+and laptop thermal headroom are not established. No performance acceptance is claimed.
+
+Next required world work: move the combined bake out of the review harness into a
+reusable production generator entry point; connect the remaining regional locations,
+accepted static lakes and POI-owned underground; improve settlement variety and
+landscape transitions. The broader legacy water persistence failures remain open.

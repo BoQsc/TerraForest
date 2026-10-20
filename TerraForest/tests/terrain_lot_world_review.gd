@@ -12,9 +12,15 @@ func run()->void:
  var plan:Dictionary=Planner.locate(core,layout.sites[3].position)
  if not plan.ok:quit(1);return
  var works:Dictionary=Planner.earthworks(plan)
+ var market:Dictionary={}
+ if "--central-market" in OS.get_cmdline_user_args():
+  market=preload("res://addons/structures/central_market.gd").locate(core,layout.sites[0].position,works.bounds)
+  if not market.ok:print("CENTRAL_MARKET_FAILED ",market);quit(1);return
+  var market_works:Dictionary=Planner.earthworks(market)
+  works.segments.append_array(market_works.segments);works.bounds=works.bounds.merge(market_works.bounds)
  var connection:Dictionary={}
- if "--regional-connection" in OS.get_cmdline_user_args():
-  connection=preload("res://addons/structures/regional_route_planner.gd").central_connection(core,plan,layout)
+ if "--regional-connection" in OS.get_cmdline_user_args() or not market.is_empty():
+  connection=preload("res://addons/structures/regional_route_planner.gd").central_connection(core,plan,layout,market)
   if not connection.ok:print("REGIONAL_CONNECTION_FAILED ",connection);quit(1);return
   # Prepare the arterial first; local streets restore their shared junction grade.
   works.segments=connection.segments+works.segments
@@ -57,14 +63,20 @@ func run()->void:
   print("TERRAIN_LOT_REOPEN failures=0 places=",game.world_map.places.size()," roads=",game.world_map.roads.size())
   game.free();quit();return
  var runner=preload("res://addons/structures/site_preparation.gd").new()
- if not runner.begin(works,game.terrain,func(_bounds:AABB)->String:return ""):quit(1);return
- var deadline:int=Time.get_ticks_msec()+90000
- while runner.status=="running" and Time.get_ticks_msec()<deadline:
-  runner.tick(game.terrain,func(_bounds:AABB)->String:return "")
-  await process_frame
- if runner.status!="complete":print("PREPARATION_FAILED ",runner.status," ",runner.reason);quit(1);return
+ var completed_edits:=0
+ for offset in range(0,works.segments.size(),256):
+  var batch:Dictionary={"ok":true,"segments":works.segments.slice(offset,mini(offset+256,works.segments.size())),"bounds":works.bounds}
+  if not runner.begin(batch,game.terrain,func(_bounds:AABB)->String:return ""):quit(1);return
+  var deadline:int=Time.get_ticks_msec()+90000
+  while runner.status=="running" and Time.get_ticks_msec()<deadline:
+   runner.tick(game.terrain,func(_bounds:AABB)->String:return "")
+   await process_frame
+  if runner.status!="complete":print("PREPARATION_FAILED ",runner.status," ",runner.reason);quit(1);return
+  completed_edits+=runner.completed
  game.structure_mode=true;game.structure_rotation=0
- for lot:Dictionary in plan.lots:
+ var all_lots:Array=plan.lots.duplicate()
+ if not market.is_empty():all_lots.append_array(market.lots)
+ for lot:Dictionary in all_lots:
   var index:int=game.structure_prefabs.find(lot.asset)
   if index<0:
    game._accept_composed_prefab({"ok":true,"asset":lot.asset});index=game.structure_prefab_index
@@ -74,6 +86,7 @@ func run()->void:
   if not await wait_until(func():return game._foundation_placement.is_empty(),20) or game.doors.collection.get_ids().size()!=doors+1:
    print("BUILDING_FAILED ",lot.label," ",game.foundation_check.status);quit(1);return
  var poses:Array=Planner.paving(plan)
+ if not market.is_empty():poses.append_array(Planner.paving(market))
  var collection=game.structures.model(preload("res://addons/structures/paving_catalog.gd").KEY)
  for pose:Transform3D in poses:
   var records:PackedFloat32Array=preload("res://addons/structures/paving_catalog.gd").records([pose])
@@ -85,7 +98,11 @@ func run()->void:
  if not connection.is_empty():
   var metadata:Dictionary=game.generated_region.store.get_plan()
   for i in range(1,connection.points.size()):metadata.roads.append({"a":connection.points[i-1],"b":connection.points[i],"width":8.0})
-  metadata.places.append({"id":0,"title":"Central road arrival","detail":"Road end at the planned central site; settlement construction is unfinished.","position":connection.points[-1]})
+  if market.is_empty():
+   metadata.places.append({"id":0,"title":"Central road arrival","detail":"Road end at the planned central site; settlement construction is unfinished.","position":connection.points[-1]})
+  else:
+   var market_metadata:Dictionary=game.generated_region.neighborhood_metadata(market,0,"Central market","Shops, workshops and homes around two connected streets.")
+   metadata.places.append_array(market_metadata.places);metadata.roads.append_array(market_metadata.roads)
   if not game.generated_region.store.set_plan(42,17,metadata.places,metadata.roads):print("CONNECTION_MAP_FAILED");quit(1);return
  game.ecosystem._structures_changed()
  game.ground_cover._exclusion_changed(works.bounds)
@@ -119,6 +136,24 @@ func run()->void:
   game.teleport(road.start)
   if not await ready_world(game):quit(1);return
   game.set_physics_process(false);game._clear_motion()
+ if not market.is_empty():
+  game.teleport(market.center)
+  if not await ready_world(game):quit(1);return
+  game.set_physics_process(false);game._clear_motion()
+  game.camera.global_position=market.center+Vector3(65,45,65)
+  game.camera.global_position.y=market.lots[0].origin.y+45
+  game.camera.look_at(Vector3(market.center.x,market.lots[0].origin.y+2,market.center.z))
+  for i in 120:await process_frame
+  await RenderingServer.frame_post_draw
+  root.get_texture().get_image().save_png("res://reports/central_market_overview.png")
+  var market_road:Dictionary=market.roads[3]
+  game.camera.global_position=market_road.start+Vector3.UP*1.7;game.camera.look_at(market_road.finish+Vector3.UP*1.7)
+  for i in 90:await process_frame
+  await RenderingServer.frame_post_draw
+  root.get_texture().get_image().save_png("res://reports/central_market_street.png")
+  game.teleport(road.start)
+  if not await ready_world(game):quit(1);return
+  game.set_physics_process(false);game._clear_motion()
  # Short actual-player traversal along a sloping walkway; no jumping or flying.
  var direction:Vector3=(road.finish-road.start).normalized()
  var across:Vector3=Vector3.UP.cross(direction).normalized()
@@ -142,5 +177,5 @@ func run()->void:
   file.store_buffer(game.generated_region.store.capture_snapshot());file.close()
   game.shutdown_requested=true
   if not await game.terrain.shutdown_after_edits():print("BAKE_SAVE_FAILED");game.free();quit(1);return
- print("TERRAIN_LOT_WORLD_REVIEW failures=0 buildings=",plan.lots.size()," edits=",runner.completed)
+ print("TERRAIN_LOT_WORLD_REVIEW failures=0 buildings=",all_lots.size()," edits=",completed_edits)
  game.free();quit()

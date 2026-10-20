@@ -15,7 +15,11 @@ func describe(seed_value:int,generator:int)->Dictionary:
  if not result.get("present",false) or result.seed!=seed_value or result.generator!=generator:return {}
  return result
 func publish_neighborhood(seed_value:int,plan:Dictionary)->bool:
- if store==null or not plan.get("ok",false):return false
+ if store==null:return false
+ var data:Dictionary=neighborhood_metadata(plan,3,"North neighborhood","Homes and local streets fitted to the hillside.")
+ return not data.is_empty() and store.set_plan(seed_value,17,data.places,data.roads)
+static func neighborhood_metadata(plan:Dictionary,id:int,title:String,detail:String)->Dictionary:
+ if not plan.get("ok",false):return {}
  var roads:Array=[];var arrival:=Vector3.ZERO;var closest:=INF
  for road:Dictionary in plan.roads:
   # The one-metre junction patches are not separate navigable streets.
@@ -29,7 +33,7 @@ func publish_neighborhood(seed_value:int,plan:Dictionary)->bool:
    roads.append({"a":a,"b":b,"width":road.half_width*2})
    var distance:float=Vector2(a.x-plan.center.x,a.z-plan.center.z).length_squared()
    if distance<closest:closest=distance;arrival=a
- if roads.is_empty():return false
- var places:Array=[{"id":3,"title":"North neighborhood","detail":"Homes and local streets fitted to the hillside.","position":arrival}]
+ if roads.is_empty():return {}
+ var places:Array=[{"id":id,"title":title,"detail":detail,"position":arrival}]
  # Publication must happen only after terrain and buildings finish successfully.
- return store.set_plan(seed_value,17,places,roads)
+ return {"places":places,"roads":roads}
