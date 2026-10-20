@@ -1,3 +1,13 @@
+## Arrival collision gap corrected - 2026-10-20
+
+Populated-world paging released the northern loading screen before nearby model
+collision existed. Production now waits for native structure and vegetation
+collision in a small departure box. Four arrivals pass. Evidence and retained
+failure: `evidence/model_arrival_readiness`. Visual admission remains open: some
+nearby records are still absent at release even when pending render uploads is
+zero. Next add bounded native visual readiness over unloaded metadata and actual
+published pages; keep model paging opt-in until that and arrival budgets pass.
+
 ## Populated model paging defect corrected - 2026-10-20
 
 The real generated world revealed rejected transfers for prefab-only stair rails

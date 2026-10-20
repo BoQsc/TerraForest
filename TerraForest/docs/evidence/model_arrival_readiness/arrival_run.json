@@ -1,0 +1,13 @@
+{
+  "timed_out": false,
+  "launch_error": null,
+  "cancelled": false,
+  "pid": 14756,
+  "exit_code": 1,
+  "diagnostics": [
+    "FAIL local collision ready when loading releases 3"
+  ],
+  "required_text_found": false,
+  "elapsed_seconds": 31.38148569999612,
+  "passed": false
+}

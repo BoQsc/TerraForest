@@ -21,10 +21,19 @@ func run()->void:
   var layout:Dictionary=preload("res://addons/volumetric_terrain/generated_layout.gd").describe(game.terrain.backend.world_seed,game.terrain.backend.world_generator)
   for site in ([0] if "--diagnose-first" in OS.get_cmdline_user_args() else [0,3,4,0]):
    var center:Vector3=layout.sites[site].position
+   var arrival_begin:=Time.get_ticks_usec()
    game.teleport(center+Vector3(0,0,20))
    if not check(await wait_for(func():return not game.loading_active,45),"destination terrain ready %d"%site):break
    game.set_physics_process(false);game._clear_motion()
    var expected:Array=records.filter(func(r):return Vector3(r.pose[3],r.pose[7],r.pose[11]).distance_to(game.player.position)<128)
+   var released_ms:float=(Time.get_ticks_usec()-arrival_begin)/1000.0
+   var missing_at_release:=0;var pending_at_release:=0
+   for r:Dictionary in expected:
+    if game.structures.model(r.asset).get_instance(int(r.id))!=PackedFloat32Array(r.pose):missing_at_release+=1
+   var local_bounds:=AABB(game.player.position-Vector3(2,2,2),Vector3(4,5,4))
+   var collision_at_release:bool=game.structures.is_collision_region_ready(local_bounds)
+   for batch in game.structures._models.values():pending_at_release+=int(batch.render_stats().pending_batches)
+   check(collision_at_release,"local collision ready when loading releases %d"%site)
    var ready:bool=await wait_for(func():
     for r:Dictionary in expected:
      if game.structures.model(r.asset).get_instance(int(r.id))!=PackedFloat32Array(r.pose):return false
@@ -34,13 +43,17 @@ func run()->void:
      if game.structures.model(r.asset).get_instance(int(r.id))!=PackedFloat32Array(r.pose):print("MISSING_MODEL ",r.asset," id=",r.id)
    print("MODEL_STATE ",game.model_paging.last_state)
    check(not expected.is_empty() and ready,"all nearby saved furnishing transforms exact %d"%site)
-   for frame in 120:await process_frame
+   var frame_times:Array=[];var previous:=Time.get_ticks_usec()
+   for frame in 120:
+    await process_frame
+    var now:=Time.get_ticks_usec();frame_times.append((now-previous)/1000.0);previous=now
+   frame_times.sort()
    var resident:=0;var unloaded:=0
    for batch in game.structures._models.values():
     var stats:Dictionary=batch.region_stats();resident+=stats.resident_instances;unloaded+=stats.unloaded_regions
    check(unloaded>0,"distant model regions actually unload %d"%site)
    check(game.model_paging.last_state.get("failed_transfers",0)==0,"no failed transfers %d"%site)
-   samples.append({"site":site,"expected_nearby":expected.size(),"resident_instances":resident,"unloaded_regions":unloaded,"scheduler":game.model_paging.last_state})
+   samples.append({"site":site,"arrival_ms":released_ms,"missing_at_release":missing_at_release,"pending_render_at_release":pending_at_release,"collision_at_release":collision_at_release,"frame_p95_ms":frame_times[113],"frame_max_ms":frame_times.back(),"expected_nearby":expected.size(),"resident_instances":resident,"unloaded_regions":unloaded,"scheduler":game.model_paging.last_state})
   if "--edit-check" in OS.get_cmdline_user_args():
    var asset:="architecture/metal_stairrail/v1"
    var batch=game.structures.model(asset)

@@ -1416,6 +1416,12 @@ func _prefab_placement_text(asset: Resource) -> String:
 
 # Cached water surfaces must be visible before entering the playable world.
 func _additional_loading_ready() -> bool:
+	# Terrain readiness alone does not cover asynchronously admitted model proxies.
+	# Keep a small departure margin available before restoring player input.
+	var arrival_bounds:=AABB(player.global_position-Vector3(2,2,2),Vector3(4,5,4))
+	if not structures.is_collision_region_ready(arrival_bounds) or not vegetation.is_collision_region_ready(arrival_bounds):
+		loading_label.text+="\nPreparing nearby object collision"
+		return false
 	if lakes.water==null:return false
 	var state:Dictionary=lakes.statistics()
 	if not state.render_ready or state.ready!=state.lakes:
