@@ -1,3 +1,39 @@
+## Model cartography source verified against the generated world — 2026-10-20
+
+NativeStaticBatch now exposes a revision-guarded survey index for resident and
+archived model regions, captured collection transform and mesh bounds. A query
+returns at most 32 transformed model bounds, using stable ID continuation rather
+than rescanning records. In-flight region transfers explicitly report not ready;
+unloaded regions and stale revisions are explicit. Unconfigured collections are
+not ready. Metadata capture remains bounded by existing collection limits, not a
+per-frame operation.
+
+NativeModelMapRegion verifies the existing packet checksum, internal format and
+asset identity, and produces identical bounds without admitting models to gameplay.
+It is worker-owned and uses the existing model archive format. Bounds are local to
+the collection and conservative axis-aligned extents after placement rotation and
+scale, not exact mesh silhouettes. Consumers must also invalidate on prototype
+bounds/collection-transform changes; edits to a shared mesh resource in place do
+not necessarily advance the collection revision.
+
+Native tests cover 70 rotated/scaled records, bounded continuation, resident/archive
+equivalence, unloading, stale revisions, corruption, wrong asset identity and
+retirement-in-progress. The actual generated world at 1920x1080 fullscreen yielded
+995 models across 162 archived and 64 resident regions, with a maximum measured
+batch query of 80 microseconds. Collection storage/residency and revisions remained
+unchanged. Test reads used checkpoint leases and exact model tickets; archived
+packet decoding ran on a worker. Debug and release DLLs rebuilt with pinned SDK.
+Evidence: `evidence/model_map_source`.
+
+**Next required work, not complete:** integrate model bounds with the live map's
+native reduction, terrain occlusion and derived cache. Include transformed footprint
+coverage and a sensible minimum map size so tiny furnishings do not swamp buildings.
+Use the existing archive worker rather than one new thread per region in production.
+Then verify actual placement/removal, distant archived coverage, cache reopening,
+map closure/cancellation and visual readability. The test currently verifies the
+source only; models are not yet drawn by the playable M-map. This is continuation
+of the same map task, not acceptance or deferral of its unfinished integration.
+
 ## Building coverage integrated into the playable world map — 2026-10-20
 
 This supersedes the source-only limitation below. The M-map now draws constructed

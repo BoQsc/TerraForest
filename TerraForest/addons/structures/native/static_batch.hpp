@@ -19,6 +19,7 @@ using namespace godot;
 struct ModelCheckpointLease;
 class NativeStaticBatch : public Node3D {
     GDCLASS(NativeStaticBatch,Node3D)
+    friend class NativeModelMapRegion;
     friend class NativePrefabPlacement;
     friend class NativeStructureQueries;
     friend class NativeModelTransferScheduler;
@@ -136,6 +137,9 @@ protected:
     static void _bind_methods();
     void _notification(int what);
 public:
+    Dictionary survey_index() const;
+    Dictionary survey_bounds(Vector3i region,int64_t after_id,int64_t expected_revision) const;
+    int64_t survey_revision_id() const{return edit_revision;}
     bool set_removal_protected(int64_t id,bool enabled);
     bool is_removal_protected(int64_t id) const {return removal_protected.count(id)!=0;}
     bool begin_region_admission(const PackedByteArray &bytes);

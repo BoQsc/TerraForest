@@ -1,4 +1,5 @@
 #include "static_batch.hpp"
+#include "model_map_region.hpp"
 #include <godot_cpp/classes/multi_mesh.hpp>
 #include <godot_cpp/classes/hashing_context.hpp>
 #include <godot_cpp/core/class_db.hpp>
@@ -7,6 +8,9 @@
 namespace terraforest {
 NativeStaticBatch::NativeStaticBatch() {set_notify_transform(true);}
 void NativeStaticBatch::_bind_methods() {
+    ClassDB::bind_method(D_METHOD("survey_index"),&NativeStaticBatch::survey_index);
+    ClassDB::bind_method(D_METHOD("survey_revision_id"),&NativeStaticBatch::survey_revision_id);
+    ClassDB::bind_method(D_METHOD("survey_bounds","region","after_id","expected_revision"),&NativeStaticBatch::survey_bounds);
     ClassDB::bind_method(D_METHOD("set_removal_protected","id","enabled"),&NativeStaticBatch::set_removal_protected);
     ClassDB::bind_method(D_METHOD("is_removal_protected","id"),&NativeStaticBatch::is_removal_protected);
     ClassDB::bind_method(D_METHOD("begin_region_retirement","bytes"),&NativeStaticBatch::begin_region_retirement);
