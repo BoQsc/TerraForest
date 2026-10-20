@@ -8,6 +8,34 @@ import shutil
 import uuid
 
 
+def copy_map_cache(root, source, destination):
+    """Optional derived data only; runtime validates exact terrain/code identity."""
+    folder = root.parent / "cartography" / "edited"
+    source_path = folder / (hashlib.sha256(source.encode()).hexdigest() + ".bin")
+    target = folder / (hashlib.sha256(destination.encode()).hexdigest() + ".bin")
+    try:
+        if target.exists() or not source_path.is_file():
+            return False
+        if source_path.stat().st_size != 262216:
+            return False
+        data = source_path.read_bytes()
+        if len(data) != 262216 or data[:8] != b"TFEDIT01" or hashlib.sha256(data[:40] + data[72:]).digest() != data[40:72]:
+            return False
+        temporary = folder / (target.name + ".tmp_" + uuid.uuid4().hex)
+        try:
+            temporary.write_bytes(data)
+            temporary.rename(target)
+        finally:
+            temporary.unlink(missing_ok=True)
+        # Same dedicated cache bound as the engine writer. Never touch world data.
+        entries = sorted((p for p in folder.glob("*.bin") if re.fullmatch(r"[0-9a-f]{64}\.bin", p.name) and p != target), key=lambda p: p.stat().st_mtime)
+        for old in entries[:max(0, len(entries) + 1 - 64)]:
+            old.unlink(missing_ok=True)
+        return True
+    except OSError:
+        return False
+
+
 def clone_once(root, source, destination):
     root = Path(root).resolve()
     for slot in (source, destination):
@@ -51,6 +79,7 @@ def clone_once(root, source, destination):
         (stage / "world.trw").rename(target)
         stage.rmdir()
         return {"created": True, "slot": destination, "source_slot": source,
-                "source_sha256": hashlib.sha256(data).hexdigest()}
+                "source_sha256": hashlib.sha256(data).hexdigest(),
+                "map_cache_copied": copy_map_cache(root, source, destination)}
     finally:
         lock.unlink()

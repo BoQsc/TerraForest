@@ -58,6 +58,14 @@ func run()->void:
  var map_result:Dictionary=map_worker.wait_to_finish()
  if not require(map_result.get("ok",false),"cartography persisted and reopened before gameplay"):await finish(false);return
  print("PREPARED_CARTOGRAPHY ",JSON.stringify(map_result))
+ if reopening:
+  game.world_map.set_open(true)
+  var updates:Node=game.world_map.updates
+  var ready_map:bool=await wait_until(func():return updates.image!=null and updates.identity_checked and updates.dirty.is_empty() and updates.pending.is_empty() and updates.cache_saved and updates.io==null,90)
+  if not require(ready_map and (updates.cache_hits>0 or updates.cache_writes>0),"edited terrain cartography cached before publication"):await finish(false);return
+  print("PREPARED_EDITED_CARTOGRAPHY hits=",updates.cache_hits," writes=",updates.cache_writes," patches=",updates.patches)
+  game.world_map.set_open(false)
+
 
  if reopening:
   if not require(game.construction_inventory.gameplay and game.player_hud.gameplay_construction,"reopen uses resource-cost gameplay with actors and fleet enabled"):await finish(false);return

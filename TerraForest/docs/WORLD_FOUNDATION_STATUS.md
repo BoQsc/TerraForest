@@ -1,3 +1,33 @@
+## Prepared cartography reaches gameplay copies - 2026-10-20
+
+The ordinary complete-world workflow now warms edited terrain cartography during
+its fresh-process verification phase, after terrain publication establishes the
+exact content identity. It uses the same bounded map pipeline as gameplay and
+requires a completed cache hit/write before publishing the playable world. This
+moves initial modified-terrain surveying out of the first gameplay map open.
+
+World cloning opportunistically carries the derived map cache to the new slot.
+It validates magic, exact length and checksum before copying; runtime still checks
+the exact terrain/code identity. Missing/corrupt cache never blocks a valid world
+clone. Existing destinations remain untouched, and clone-side retention uses the
+same 64-entry dedicated cache bound. Tests cover valid copying, existing-save
+preservation, corrupt-cache fallback, retention and unrelated-file preservation;
+all three pass. All fifteen preparation/cancellation tests also pass.
+
+Fresh seed42/generator13 preparation of foundation_map_42_20261020 passes creation,
+reopen and cache publication (150 patches, one write). A further independent review
+copy starts a fresh gameplay process and opens its map with one cache hit, zero
+writes and zero native terrain patches. Its pixel digest matches the prepared
+terrain survey. Evidence: evidence/prepared_map_cache. Play Regional World
+Review.cmd now creates v14 from this prepared source; versions1-13 remain intact.
+This changes cache preparation, not world layout, assets or save format.
+
+The remaining map layers are still required: live water coverage and building
+footprints, with explicit scale/zoom limits. The world-quality, storage-growth and
+sustained-performance gates elsewhere in this document remain open. A cache hit
+is not proof of overall runtime performance; world startup still shows loading
+hitches. Continue the remaining representation scope before unrelated feature work.
+
 ## Persistent edited-map cache - 2026-10-20
 
 Edited terrain map pixels now persist in a disposable checked cache. The ordered
@@ -475,7 +505,7 @@ visual tuning after unsuccessful bounded cycles and return to the world blocker.
 |---|---|---|
 | Generator | Native terrain profiles; offline five-site composition with roads, buildings, POI undergrounds and lakes | Mostly fixed topology/palette; broader seed coverage and coherent landscape/design acceptance |
 | Preparation | Staged creation, fresh-process verification, no-overwrite publication, progress and cancellation | Whole-route cache coverage; standalone workflow without local Python/toolchain |
-| Player map | M map, content-checked persistent edited-terrain cache, bounded native patch updates, saved roads, destinations, pan/zoom/tracking | Preparation-time warming, live water, building footprints and finer zoom detail remain incomplete; see latest evidence above |
+| Player map | M map, content-checked persistent edited-terrain cache, bounded native patch updates, saved roads, destinations, pan/zoom/tracking | Live water, building footprints and finer zoom detail remain incomplete; see latest evidence above |
 | Terrain and distant world | Native streaming and derived caches, local edits | Distant edits must remain visible; mining/travel tails and cache/resource growth are not fully qualified |
 | Buildings and static props | Native blocks, batched props, furniture, doors/windows, storage, regional block paging | Detailed populated-world residency capacity; mixed interiors/approach acceptance |
 | Roads and travel | Regional routes, local streets, normal collision loading, parked/drivable vehicles | All shoulders/junctions and high-speed arrival at declared speed; bounded repeated cross-world travel |
