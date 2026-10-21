@@ -18,6 +18,7 @@ var _lakes:Dictionary={}
 var _next_id:=1
 var _catalog:RefCounted
 var water:RefCounted
+var _builder_patches:Array=[]
 var _builder:RefCounted
 var _busy:=false
 var _occupancy_failure:String=""
@@ -196,6 +197,8 @@ func _measured_step(delta:float)->void:
  if not _busy and not terrain.pending_edit and _occupancy_failure.is_empty():
   var request:Dictionary=water.next_request()
   if not request.is_empty():
+   if (_builder==null or _revision!=terrain.published_revision) and _surrounding_ocean!=null and _pending_bucket.is_empty() and _pending_dev.is_empty():
+    _prepare_ocean_batch()
    if _builder==null or _revision!=terrain.published_revision:
     _builder=ClassDB.instantiate("NativeWaterTerrainPatch");_builder.configure(request.coordinate);_builder_reused=false;_revision=terrain.published_revision
     _builder_structure_revision=_structure_revision
@@ -280,9 +283,27 @@ func _publish_meshes() -> void:
    _mesh_commit_us=Time.get_ticks_usec()-commit_started;_mesh_max_commit_us=maxi(_mesh_max_commit_us,_mesh_commit_us)
   if Time.get_ticks_usec()-mesh_started>=PublicationBudget.SOFT_TIME_US:break
  _mesh_publish_us=Time.get_ticks_usec()-mesh_started;_mesh_max_publish_us=maxi(_mesh_max_publish_us,_mesh_publish_us)
+func _prepare_ocean_batch() -> void:
+ _discard_builder()
+ _builder_reused=false
+ _revision=terrain.published_revision
+ _builder_structure_revision=_structure_revision
+ var hull_started:=Time.get_ticks_usec()
+ for coordinate:Vector3i in water.next_requests(8):
+  var patch:RefCounted=ClassDB.instantiate("NativeWaterTerrainPatch")
+  if not patch.configure(coordinate):_discard_builder();return
+  if blocks!=null:
+   var solids:Dictionary=blocks.solid_hulls(AABB(Vector3(coordinate)*4,Vector3(4,4,4)))
+   if not solids.ok or not patch.set_structure_hulls(solids.hulls):_discard_builder();return
+  _builder_patches.append(patch)
+ _hull_snapshot_us=Time.get_ticks_usec()-hull_started
+ var batch:RefCounted=ClassDB.instantiate("NativeWaterTerrainBatch")
+ if batch.configure(_builder_patches):_builder=batch
+ else:_discard_builder()
 func _discard_builder() -> void:
  if not _cached_job.is_empty():_cached_job.builder.cancel_cached()
  _builder=null
+ _builder_patches.clear()
 func _poll_cached_task() -> void:
  if _cached_task<0 or not WorkerThreadPool.is_task_completed(_cached_task):return
  WorkerThreadPool.wait_for_task_completion(_cached_task)
@@ -304,7 +325,11 @@ func _slice_ready(token:int,status:int,epoch_id:int,revision:int) -> void:
  if status==0:return
  if status==1:
   var accept_started:=Time.get_ticks_usec()
-  if not water.accept_patch(_builder):_occupancy_failure="Water occupancy cache budget reached; edit remains pending until the world changes"
+  var patches:Array=_builder_patches if not _builder_patches.is_empty() else [_builder]
+  for patch:RefCounted in patches:
+   if not water.accept_patch(patch):
+    _occupancy_failure="Water occupancy cache budget reached; edit remains pending until the world changes"
+    break
   _accept_patch_us=Time.get_ticks_usec()-accept_started
  else:_occupancy_failure="Water occupancy preparation failed; edit remains pending until the world changes"
  if not _occupancy_failure.is_empty():terrain.message_changed.emit(_occupancy_failure)

@@ -19,6 +19,33 @@ using namespace godot;
 namespace terraforest {
 static const Vector3i directions[6]={{0,-1,0},{1,0,0},{-1,0,0},{0,0,1},{0,0,-1},{0,1,0}};
 static bool reply_ok(const PackedByteArray &p,int size){return p.size()==size&&p.decode_u32(0)==0x32505254&&p.decode_u32(8)==0;}
+void NativeWaterTerrainBatch::_bind_methods(){
+    ClassDB::bind_method(D_METHOD("configure","patches"),&NativeWaterTerrainBatch::configure);
+    ClassDB::bind_method(D_METHOD("sample_terrain","core","budget","revision","epoch"),&NativeWaterTerrainBatch::sample_terrain);
+}
+bool NativeWaterTerrainBatch::configure(const Array &input){
+    if(!patches.empty()||input.is_empty()||input.size()>8)return false;
+    std::vector<Ref<NativeWaterTerrainPatch>> staged;
+    for(int i=0;i<input.size();++i){
+        Ref<NativeWaterTerrainPatch> p=input[i];
+        if(p.is_null()||int64_t(p->statistics()["status"])!=0)return false;
+        for(const auto &other:staged)if(other==p)return false;
+        staged.push_back(p);
+    }
+    patches=std::move(staged);return true;
+}
+int64_t NativeWaterTerrainBatch::sample_terrain(Object *core,int64_t budget,int64_t rev,int64_t cancel){
+    if(patches.empty()||!core||budget<1||budget>2048)return -1;
+    if(revision<0){revision=rev;epoch=cancel;}
+    if(revision!=rev||epoch!=cancel)return -4;
+    if(cursor==patches.size())return 1;
+    // One patch slice per invocation preserves the existing worker time bound.
+    // The terrain queue requeues status 0 without a main-thread/frame roundtrip.
+    int64_t status=patches[cursor]->sample_terrain(core,budget,rev,cancel);
+    if(status<0)return status;
+    if(status==1)++cursor;
+    return cursor==patches.size()?1:0;
+}
 void NativeWaterTerrainPatch::_bind_methods(){
     ClassDB::bind_method(D_METHOD("configure","coordinate"),&NativeWaterTerrainPatch::configure);
     ClassDB::bind_method(D_METHOD("set_structure_hulls","hulls"),&NativeWaterTerrainPatch::set_structure_hulls);
@@ -193,6 +220,7 @@ void NativeRegionalWater::_bind_methods(){
     ClassDB::bind_method(D_METHOD("update_ocean_residency","center","budget"),&NativeRegionalWater::update_ocean_residency);
     ClassDB::bind_method(D_METHOD("raycast_vacancy","from","to"),&NativeRegionalWater::raycast_vacancy);
     ClassDB::bind_method(D_METHOD("cell_geometry","point"),&NativeRegionalWater::cell_geometry);
+    ClassDB::bind_method(D_METHOD("next_requests","limit"),&NativeRegionalWater::next_requests);
     ClassDB::bind_method(D_METHOD("next_request"),&NativeRegionalWater::next_request);
     ClassDB::bind_method(D_METHOD("accept_patch","patch"),&NativeRegionalWater::accept_patch);
     ClassDB::bind_method(D_METHOD("set_western_ocean","enabled"),&NativeRegionalWater::set_western_ocean);
@@ -362,6 +390,15 @@ void NativeRegionalWater::changed(const Vector3i &p){
         if(other!=k&&mesh_set.insert(other).second)meshes.push_back(other);}
     for(const Vector3i &d:directions){Vector3i n=p+d;if(!in_domain(n))continue;Key other=region_key(n);
         if(other!=k&&mesh_set.insert(other).second)meshes.push_back(other);}
+}
+Array NativeRegionalWater::next_requests(int64_t limit){
+    Array result;if(limit<1||limit>8)return result;
+    for(Key k:requests){
+        auto it=regions.find(k);
+        if(it==regions.end()||it->second.ocean_state!=1||it->second.has_density)break;
+        result.push_back(position(k));if(result.size()==limit)break;
+    }
+    return result;
 }
 Dictionary NativeRegionalWater::next_request(){
     Dictionary d;if(requests.empty())return d;Key k=requests.front();

@@ -1722,3 +1722,30 @@ still rebuilds/publishes geometry. Remaining work stays active: bounded worker
 batching or reusable mesh/cache publication, persistent edited-region storage,
 baked cold loading, map coverage, creation options and complete save/reopen.
 No default-on creation control or offshore gameplay is claimed implemented.
+
+
+## Bounded ocean occupancy worker batches - 2026-10-21
+
+Pristine ocean admission now hands up to eight occupancy patches to the existing
+terrain worker per main-thread dispatch. Each worker invocation still samples only
+one bounded patch slice; status-zero work returns to the existing cooperative queue.
+Revision/cancellation and scene structure revisions still invalidate stale results.
+Ordinary lake/bucket edits and cached building-only occupancy keep their existing
+single-patch paths. This changes scheduling, not water geometry or representation.
+
+Native regression compares batch and serial snapshots byte-for-byte and checks
+revision/epoch rejection and the request cap. The existing bucket regression passes.
+Actual-world 1920x1080/cap60 west/east/return test passes normal bucket transfer,
+snapshot restoration, full-footprint publication, cache reuse and resident bounds.
+Initial coastal readiness: 6.019 s (previous 11.470 s); fresh east: 6.433 s
+(previous 11.778 s); cached return: 5.375 s (previous 5.318 s), 576 cache hits.
+Total test: 34.71 s. Inspected both destination captures without a new rectangular
+seam. Evidence: `evidence/ocean_worker_batch/`. These are one-run measurements,
+not sustained frame-time or thermal proof, and still NOT seamless loading acceptance.
+
+The comparable cold and warm delays now point toward geometry rebuilding/publication
+and admission as the next measurement target, rather than increasing sampling batch
+sizes. Reusable mesh publication, durable nonresident edited regions, baked cold
+loading, implicit-ocean map coverage, default-on opt-out world creation controls,
+and complete world save/reopen remain unfinished. Existing saves are unchanged;
+outside-world gameplay remains unsupported and must stay separately optional.

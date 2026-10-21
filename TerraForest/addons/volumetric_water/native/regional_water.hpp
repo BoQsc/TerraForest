@@ -70,6 +70,18 @@ public:
     godot::Dictionary statistics() const;
 };
 
+// A bounded worker handoff; each patch retains the existing sampling algorithm.
+class NativeWaterTerrainBatch : public godot::RefCounted {
+    GDCLASS(NativeWaterTerrainBatch,godot::RefCounted)
+    std::vector<godot::Ref<NativeWaterTerrainPatch>> patches;
+    size_t cursor=0;
+    int64_t revision=-1,epoch=-1;
+protected: static void _bind_methods();
+public:
+    bool configure(const godot::Array &input);
+    int64_t sample_terrain(godot::Object *core,int64_t budget,int64_t rev,int64_t cancel);
+};
+
 // Sparse 0.5 m finite volumes in 4 m regions. Amounts are integer millilitres.
 // Terrain-derived floor/ceiling intervals are cached, not re-solved per frame.
 // Live stores belong to the main thread; private load stores may be decoded
@@ -214,6 +226,7 @@ public:
     int64_t survey_revision_id() const {return int64_t(survey_revision);}
     godot::Dictionary survey_surfaces(int64_t cursor,int64_t expected_revision,int64_t region_budget) const;
     godot::Dictionary next_request();
+    godot::Array next_requests(int64_t limit);
     bool accept_patch(const godot::Ref<NativeWaterTerrainPatch> &patch);
     void invalidate(const godot::AABB &bounds,bool replace_water=false);
     void invalidate_buildings(const godot::AABB &bounds);

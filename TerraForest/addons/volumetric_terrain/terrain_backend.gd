@@ -289,7 +289,7 @@ func submit(job: Dictionary, priority: bool = false) -> bool:
 		job={"kind":"density_batch","points":job.points.duplicate(),"token":job.token,"epoch":job.epoch,"revision":job.revision,"support_depth":depth,"interpolated":interpolated}
 		priority=false
 	if job.get("kind","")=="lake_slice":
-		if not is_instance_valid(job.get("builder")) or job.builder.get_class() not in ["NativeWaterTerrainPatch"]: return false
+		if not is_instance_valid(job.get("builder")) or job.builder.get_class() not in ["NativeWaterTerrainPatch", "NativeWaterTerrainBatch"]: return false
 		# RefCounted instance IDs may use the signed integer's high bit.
 		if typeof(job.get("token"))!=TYPE_INT: return false
 		for field in ["epoch","revision","density_revision"]:

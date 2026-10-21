@@ -16,6 +16,30 @@ func _initialize()->void:
  var patch=ClassDB.instantiate("NativeWaterTerrainPatch")
  check(patch.configure(request.coordinate),"ocean uses existing terrain occupancy patch")
  var core=ClassDB.instantiate("TerrainCore");core.execute(Codec.command(6,[42,19]))
+ # Batch and serial preparation must produce byte-identical authoritative data.
+ var serial=ClassDB.instantiate("NativeRegionalWater")
+ var batched=ClassDB.instantiate("NativeRegionalWater")
+ serial.update_ocean_residency(Vector3(4,40,1000),8)
+ batched.update_ocean_residency(Vector3(4,40,1000),8)
+ check(batched.next_requests(9).is_empty(),"batch request cap enforced")
+ var patches:Array=[]
+ for coordinate:Vector3i in batched.next_requests(8):
+  var single=ClassDB.instantiate("NativeWaterTerrainPatch");single.configure(coordinate)
+  for step in 200:
+   if single.sample_terrain(core,256,0,0)!=0:break
+  check(serial.accept_patch(single),"serial reference occupancy accepted")
+  var pending=ClassDB.instantiate("NativeWaterTerrainPatch");pending.configure(coordinate);patches.append(pending)
+ var terrain_batch=ClassDB.instantiate("NativeWaterTerrainBatch")
+ check(terrain_batch.configure(patches) and not terrain_batch.configure(patches),"batch configured once")
+ check(terrain_batch.sample_terrain(core,256,0,0)==0,"batch yields bounded slices")
+ check(terrain_batch.sample_terrain(core,256,1,0)==-4 and terrain_batch.sample_terrain(core,256,0,1)==-4,"batch rejects changed revision and cancellation epoch")
+ var batch_status:=0
+ for step in 2000:
+  batch_status=terrain_batch.sample_terrain(core,256,0,0)
+  if batch_status!=0:break
+ check(batch_status==1,"bounded batch completes")
+ for pending:RefCounted in patches:check(batched.accept_patch(pending),"batch occupancy accepted")
+ check(serial.capture_snapshot(catalog)==batched.capture_snapshot(catalog),"batch and serial occupancy produce identical saved water")
  var status:=0
  for attempt in 200:
   status=patch.sample_terrain(core,256,0,0)

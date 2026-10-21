@@ -7,6 +7,7 @@ static void initialize(ModuleInitializationLevel level) {
     if (level == MODULE_INITIALIZATION_LEVEL_SCENE) {
         GDREGISTER_CLASS(terraforest::NativeLakeCatalog);
         GDREGISTER_CLASS(terraforest::NativeWaterTerrainPatch);
+        GDREGISTER_CLASS(terraforest::NativeWaterTerrainBatch);
         GDREGISTER_CLASS(terraforest::NativeWaterMapIdentity);
         GDREGISTER_CLASS(terraforest::NativeRegionalWater);
         GDREGISTER_CLASS(terraforest::NativeWaterSnapshot);

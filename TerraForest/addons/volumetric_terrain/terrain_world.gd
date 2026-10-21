@@ -275,7 +275,7 @@ func request_material_edit(field:RefCounted,minimum:Vector3,maximum:Vector3,add:
 
 func request_lake_slice(builder: RefCounted, token: int) -> bool:
 	# Optional native addon protocol: terrain has no dependency on its renderer.
-	if builder == null or builder.get_class() not in ["NativeWaterTerrainPatch"]:
+	if builder == null or builder.get_class() not in ["NativeWaterTerrainPatch", "NativeWaterTerrainBatch"]:
 		return false
 	if not world_ready or pending_edit or stopping:
 		return false
