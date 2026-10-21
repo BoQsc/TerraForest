@@ -5,6 +5,7 @@ var worlds: ItemList
 var name_field: LineEdit
 var seed_field: SpinBox
 var preset: OptionButton
+var ocean:CheckBox
 var gameplay: CheckBox
 var notice: Label
 var filter_field: LineEdit
@@ -47,6 +48,9 @@ func _ready() -> void:
 	heading(create,"Landscape",18);preset=OptionButton.new();create.add_child(preset)
 	for id: int in Launch.PRESETS:preset.add_item(Launch.PRESETS[id],id)
 	preset.select(0)
+	ocean=CheckBox.new();ocean.text="Surrounding ocean and beaches";ocean.button_pressed=true;create.add_child(ocean)
+	ocean.tooltip_text="Applies to new terrain-fitted worlds. Existing worlds keep their saved coastline."
+	preset.item_selected.connect(func(_index:int):ocean.visible=preset.get_selected_id()==Launch.INTEGRATED_PRESET)
 	heading(create,"Seed",18);seed_field=SpinBox.new();seed_field.min_value=0;seed_field.max_value=2147483647;seed_field.step=1;seed_field.value=1703;create.add_child(seed_field)
 	var explanation:=heading(create,"The seed and landscape apply only to new worlds. Saved worlds retain their generation settings. Integrated worlds are prepared and verified before play; first creation can take several minutes.",18);explanation.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
 	button(create,"Create and play",func():launch_selected(true))
@@ -71,7 +75,7 @@ func launch_selected(create: bool) -> void:
 	if not create:
 		if worlds.get_selected_items().is_empty():notice.text="Select a saved world first.";return
 		slot=str(worlds.get_item_metadata(worlds.get_selected_items()[0]))
-	var result:=Launch.command(slot,create,preset.get_selected_id(),int(seed_field.value),gameplay.button_pressed)
+	var result:=Launch.command(slot,create,preset.get_selected_id(),int(seed_field.value),gameplay.button_pressed,"user://worlds",ocean.button_pressed)
 	if not result.ok:notice.text=result.reason;return
 	if result.get("prepare",false):
 		preparation_slot=slot;preparation_gameplay=gameplay.button_pressed

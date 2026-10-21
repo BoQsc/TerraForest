@@ -1749,3 +1749,46 @@ sizes. Reusable mesh publication, durable nonresident edited regions, baked cold
 loading, implicit-ocean map coverage, default-on opt-out world creation controls,
 and complete world save/reopen remain unfinished. Existing saves are unchanged;
 outside-world gameplay remains unsupported and must stay separately optional.
+
+
+## Terrain-fitted world creation with optional coast - 2026-10-21
+
+Worlds now defaults to the terrain-fitted regional recipe (preset 10019), with a
+checked Surrounding ocean and beaches option. Enabled selects immutable terrain
+profile 19; disabled selects 17 with the same two-settlement recipe. Saved-world
+launches never apply these creation settings. Earlier five-site preset 10012 stays
+available with its existing preparation recipe. No saved world was migrated.
+
+Moved the existing terrain-lot/central-market review generation into the shared
+production `tools/prepare_terrain_world.gd`; its review test now uses that same
+implementation. It accepts the selected seed, prepares 12 northern buildings and
+8 central-market buildings, their terrain-fitted streets and connecting road,
+bakes cartography, performs the ordinary compound save, and compares exact block,
+model/furnishing/paving and navigation signatures in a separate read-only process.
+The launcher publishes only after both phases succeed. Failure/cancellation and
+existing-save preservation remain enforced. The native navigation archive now
+accepts profile 19 as well as 17/18, with storage roundtrip coverage.
+
+Both full creation paths passed using browser-default seed 1703 at 1920x1080/cap60:
+coast_creation_check_20261021 and inland_creation_check_20261021. Each has 20
+buildings, 364 terrain preparation edits, two public locations and 443 sampled road
+segments in its map metadata. Coast creation took 80.98 s and reopen 18.89 s.
+The route check found zero trees overlapping the sampled road corridor. The
+published coastal world then passed a separate 21.74 s actual-world ocean bucket
+scoop/return and native snapshot check; initial local coast readiness took 5.4 s,
+so the known loading delay is not resolved. The final bucket check was read-only;
+it does not establish durable player ocean edits across process restarts.
+Browser policy/layout and native navigation tests pass; Python preparation suite
+passes 16 tests, including both coast choices and failure-before-publication.
+Inspected browser, neighborhood overview, central street and coastal images.
+Evidence: `evidence/coastal_world_creation/`.
+
+Known gaps remain explicit: the newer recipe has not yet received all authored
+mines/cellars, inland lake fills, meadow paths, parked vehicles and residents from
+the older five-site recipe. Do not confuse the available coast choice with complete
+world-content coverage. Building variety, exterior landscaping and broad world
+quality are still drafts; one-seed creation does not qualify every seed or prove
+sustained performance. Next coastal dependencies remain fast detail loading,
+durable nonresident edited-region storage, full implicit ocean map coverage and
+save/reopen of actual coastal edits. Outside-border gameplay is still unsupported
+and must remain independently optional when implemented.

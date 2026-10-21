@@ -1,0 +1,7 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+PREPARED_CARTOGRAPHY {"cache_hit":false,"cache_persisted":true,"native_ms":9.6351,"ok":true,"reopen_verified":true,"worker_ms":22.85}
+PAVEMENT_WALK arrived=true start=(999.7974, 60.50176, 286.25) target=(1005.203, 60.06935, 286.25) actual=(1005.0, 60.05811, 286.25)
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+TERRAIN_LOT_WORLD_REVIEW failures=0 buildings=20 edits=364

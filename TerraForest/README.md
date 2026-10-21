@@ -5,12 +5,17 @@ See the [delivery plan and coverage register](docs/PROJECT_PLAN.md) for current 
 ## Playable checkpoints
 
 Open `Worlds.cmd` (or run the project from Godot) for the world browser. Select a
-saved world, or create a named world with a preset and seed. The default integrated
-regional preset prepares settlements, roads, mine/cellar locations, lakes, planted
-meadow paths and parked vehicles, then verifies the saved world in a fresh process
-before opening it. Preparation can take minutes. Simpler landscape presets remain
-available. Save from the Actions menu or F5; gameplay material costs can be enabled
-or disabled before opening. Runtime loading and performance limits remain.
+saved world, or create a named world with a preset and seed. The default terrain-fitted
+recipe prepares a 12-building northern neighborhood, an 8-building central market,
+and their connecting road. Surrounding ocean and beaches are enabled by default;
+uncheck the creation option for an inland world with the same settlement recipe.
+Preparation verifies saved buildings and navigation in a fresh process before
+publishing. Existing saves retain their generator and are never migrated by this
+option. Preparation can take minutes; ocean loading still has known delays.
+The earlier five-site recipe remains selectable for its mine/cellar locations,
+lakes, meadow paths and parked vehicles; those authored additions are not yet all
+ported into the newer terrain-fitted recipe. Simpler landscape presets also remain
+available. Save from Actions or F5; choose gameplay costs or free editor before play.
 Use **Esc > Session > World browser** to save and choose another world.
 
 | Launcher | What to try |

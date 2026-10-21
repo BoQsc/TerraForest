@@ -60,6 +60,28 @@ class PreparationTests(unittest.TestCase):
                 publish.assert_not_called()
             self.assertEqual(stages, ['creating'])
 
+    def test_terrain_fitted_coast_selection_and_reopen_gate(self):
+        for ocean, generator in ((True, 19), (False, 17)):
+            with tempfile.TemporaryDirectory() as temp:
+                root = Path(temp)
+                with patch.object(prep, 'execute', return_value={'passed': True}) as run, patch.object(prep, 'clone_once', return_value={'created': True}) as publish:
+                    self.assertEqual(prep.prepare('unused', root, root/'report', 'new_coast', 'districts', 1703, terrain_fitted=True, ocean=ocean), 0)
+                    self.assertEqual(run.call_count, 2)
+                    for call in run.call_args_list:
+                        self.assertIn('res://tools/prepare_terrain_world.gd', call.args[0])
+                        self.assertIn('--world-generator='+str(generator), call.args[0])
+                        self.assertIn('--central-market', call.args[0])
+                    self.assertIn('--save-terrain-lots', run.call_args_list[0].args[0])
+                    self.assertIn('--reopen-terrain-lots', run.call_args_list[1].args[0])
+                    self.assertIn('--snapshot-readonly', run.call_args_list[1].args[0])
+                    self.assertEqual(run.call_args_list[1].args[3], 'TERRAIN_LOT_REOPEN failures=0')
+                    publish.assert_called_once()
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            with patch.object(prep, 'execute', side_effect=[{'passed': True}, {'passed': False}]), patch.object(prep, 'clone_once') as publish:
+                self.assertEqual(prep.prepare('unused', root, root/'report', 'new_coast', 'districts', terrain_fitted=True), 1)
+                publish.assert_not_called()
+
     def test_seed_validation_and_forwarding(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)

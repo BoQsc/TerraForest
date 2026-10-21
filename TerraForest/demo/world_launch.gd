@@ -1,7 +1,8 @@
 # SPDX-License-Identifier: 0BSD
 extends RefCounted
-const INTEGRATED_PRESET:=10012
-const PRESETS={10012:"Integrated regional world (prepared settlements, roads and lakes)",1:"Original woodland",4:"Mountains, caves, ore veins and lakes",6:"Accessible cave entrances, ore veins and lakes",7:"Regional roads and settlement ground (in development)",8:"Regional world with domed cave chambers",9:"Regional world with connected cave floors",10:"Provisional mine layout",11:"Regional world with owned mine (in development)",12:"Regional world with larger lake (in development)"}
+const INTEGRATED_PRESET:=10019
+const LEGACY_INTEGRATED_PRESET:=10012
+const PRESETS={10019:"Terrain-fitted regional world",10012:"Earlier five-site regional recipe",1:"Original woodland",4:"Mountains, caves, ore veins and lakes",6:"Accessible cave entrances, ore veins and lakes",7:"Regional roads and settlement ground (in development)",8:"Regional world with domed cave chambers",9:"Regional world with connected cave floors",10:"Provisional mine layout",11:"Regional world with owned mine (in development)",12:"Regional world with larger lake (in development)"}
 static func valid_slot(slot: String) -> bool:
 	var pattern:=RegEx.new();pattern.compile("^[A-Za-z_][A-Za-z0-9_]{0,47}$")
 	return pattern.search(slot)!=null
@@ -14,7 +15,7 @@ static func saved_slots(directory: String="user://worlds",include_preparation:bo
 	for file in folder.get_files():
 		if file.ends_with(".trw") and valid_slot(file.trim_suffix(".trw")) and (include_preparation or not preparation_slot(file.trim_suffix(".trw"))):slots.append(file.trim_suffix(".trw"))
 	slots.sort();return slots
-static func command(slot: String,create: bool,generator: int,seed: int,gameplay: bool,directory: String="user://worlds") -> Dictionary:
+static func command(slot: String,create: bool,generator: int,seed: int,gameplay: bool,directory: String="user://worlds",ocean:bool=true) -> Dictionary:
 	if not valid_slot(slot):return {"ok":false,"reason":"Use 1–48 letters, digits or underscores; start with a letter or underscore."}
 	var canonical:=directory.path_join(slot+".trw")
 	if create:
@@ -25,8 +26,11 @@ static func command(slot: String,create: bool,generator: int,seed: int,gameplay:
 		for suffix in [".clone.lock",".prepare.lock"]:
 			if FileAccess.file_exists(directory.path_join(slot+suffix)):return {"ok":false,"reason":"That world is being prepared. Choose another name."}
 	elif not FileAccess.file_exists(canonical):return {"ok":false,"reason":"The selected save is no longer available. Refresh the list."}
-	if create and generator==INTEGRATED_PRESET:
+	if create and generator in [INTEGRATED_PRESET,LEGACY_INTEGRATED_PRESET]:
 		var preparation:=PackedStringArray([ProjectSettings.globalize_path("res://tools/prepare_combined_world.py"),"--godot",OS.get_executable_path(),"--layout","districts","--seed",str(seed),"--destination",slot])
+		if generator==INTEGRATED_PRESET:
+			preparation.append("--terrain-fitted")
+			if not ocean:preparation.append("--no-ocean")
 		return {"ok":true,"prepare":true,"args":preparation}
 	var args:=PackedStringArray(["--path",ProjectSettings.globalize_path("res://"),"--fullscreen","--resolution","1920x1080","--max-fps","60","res://demo/world.tscn","--","--world-slot="+slot,"--ground-cover","--actors","--vehicle-fleet","--max-fps=60"])
 	if create:args.append_array(PackedStringArray(["--world-generator="+str(generator),"--world-seed="+str(seed)]))

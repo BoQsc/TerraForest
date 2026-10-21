@@ -1,0 +1,113 @@
+{
+  "slot": "combined_stage_063a7ec8062942d2bc8db95d22174b5e",
+  "layout": "districts",
+  "seed": 1703,
+  "terrain_fitted": true,
+  "ocean": true,
+  "revision": "9c7980ddc9b1899f82a837a148a00be4adc86a18",
+  "worktree_changes": [
+    " M TerraForest/addons/world_runtime/bin/world_runtime.windows.template_debug.x86_64.dll",
+    " M TerraForest/addons/world_runtime/bin/world_runtime.windows.template_release.x86_64.dll",
+    " M TerraForest/addons/world_runtime/native/generated_region.hpp",
+    " M TerraForest/demo/world_launch.gd",
+    " M TerraForest/demo/worlds.gd",
+    " M TerraForest/tests/generated_region.gd",
+    " M TerraForest/tests/terrain_lot_world_review.gd",
+    " M TerraForest/tests/test_combined_preparation.py",
+    " M TerraForest/tests/world_browser.gd",
+    " M TerraForest/tools/prepare_combined_world.py",
+    "?? TerraForest/tools/prepare_terrain_world.gd"
+  ],
+  "git_metadata_available": true,
+  "phases": [
+    {
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--fullscreen",
+        "--resolution",
+        "1920x1080",
+        "--max-fps",
+        "60",
+        "--script",
+        "res://tools/prepare_terrain_world.gd",
+        "--",
+        "--world-slot=combined_stage_063a7ec8062942d2bc8db95d22174b5e",
+        "--world-generator=19",
+        "--world-seed=1703",
+        "--ground-cover",
+        "--actors",
+        "--vehicle-fleet",
+        "--checkpoint-layout=districts",
+        "--checkpoint-report=C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\combined_preparation\\20261021T104737110031Z\\checkpoint.json",
+        "--derived-cache=user://combined_stage_063a7ec8062942d2bc8db95d22174b5e",
+        "--central-market",
+        "--regional-connection",
+        "--preparation-output=C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\combined_preparation\\20261021T104737110031Z",
+        "--save-terrain-lots"
+      ],
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 18496,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 80.97640710000996,
+        "passed": true
+      }
+    },
+    {
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--fullscreen",
+        "--resolution",
+        "1920x1080",
+        "--max-fps",
+        "60",
+        "--script",
+        "res://tools/prepare_terrain_world.gd",
+        "--",
+        "--world-slot=combined_stage_063a7ec8062942d2bc8db95d22174b5e",
+        "--world-generator=19",
+        "--world-seed=1703",
+        "--ground-cover",
+        "--actors",
+        "--vehicle-fleet",
+        "--checkpoint-layout=districts",
+        "--checkpoint-report=C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\combined_preparation\\20261021T104737110031Z\\checkpoint.json",
+        "--derived-cache=user://combined_stage_063a7ec8062942d2bc8db95d22174b5e",
+        "--reopen-checkpoint",
+        "--gameplay-construction",
+        "--vehicle-fleet",
+        "--central-market",
+        "--regional-connection",
+        "--preparation-output=C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\combined_preparation\\20261021T104737110031Z",
+        "--reopen-terrain-lots",
+        "--snapshot-readonly"
+      ],
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 30068,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 18.89068180002505,
+        "passed": true
+      }
+    }
+  ],
+  "publication": {
+    "created": true,
+    "slot": "coast_creation_check_20261021",
+    "source_slot": "combined_stage_063a7ec8062942d2bc8db95d22174b5e",
+    "source_sha256": "ad6c867f4298ab1b294960c5156dbe13a5ef7e796dd8623644f19595a24d0f12",
+    "map_cache_copied": false
+  }
+}

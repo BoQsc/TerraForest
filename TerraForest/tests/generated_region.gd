@@ -36,5 +36,9 @@ func _initialize()->void:
  check(other.restore_snapshot(saved) and other.capture_snapshot()==saved,"exact roundtrip")
  check(other.placement_mask(poses,2.0)==PackedByteArray([1,0,0]),"road index rebuilt on restore")
  check(other.get_plan().places[0].position==places[0].position,"decoded position")
+ for generator in [18,19]:
+  check(other.set_plan(42,generator,places,roads),"coast generator navigation publishes")
+  var coast:PackedByteArray=other.capture_snapshot()
+  check(other.restore_snapshot(coast) and other.get_plan().generator==generator,"coast navigation identity survives storage")
  print("GENERATED_REGION failures=",failures)
  quit(0 if failures==0 else 1)
