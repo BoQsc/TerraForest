@@ -18,17 +18,28 @@ uniform sampler2D ripple_normal : hint_normal, repeat_enable, filter_linear_mipm
 uniform float ripple_strength : hint_range(0.0, 1.0) = 0.55;
 uniform float ripple_scale = 0.25;
 uniform bool ocean_horizon = false;
+uniform bool surrounding_ocean = false;
+uniform bool ocean_proxy = false;
+uniform sampler2D ocean_coverage : filter_nearest, repeat_disable;
+varying vec2 ocean_world;
 uniform bool coastal_join = false;
 varying float coastal_x;
 varying vec3 surface_world_normal;
 
 void vertex() {
     coastal_x = (MODEL_MATRIX * vec4(VERTEX,1.0)).x;
+    ocean_world = (MODEL_MATRIX * vec4(VERTEX,1.0)).xz;
     surface_world_normal = normalize(MODEL_NORMAL_MATRIX * NORMAL);
-    if (ocean_horizon) UV = (MODEL_MATRIX * vec4(VERTEX,1.0)).xz;
+    if (ocean_horizon || ocean_proxy) UV = (MODEL_MATRIX * vec4(VERTEX,1.0)).xz;
 }
 
 void fragment() {
+    float ocean_edge=min(min(ocean_world.x,ocean_world.y),min(2000.0-ocean_world.x,2000.0-ocean_world.y));
+    if (surrounding_ocean && ocean_edge>=0.0 && ocean_edge<140.0) {
+        bool detail=texture(ocean_coverage,ocean_world/2000.0).r>0.5;
+        if ((ocean_proxy && detail) || (!ocean_proxy && !ocean_horizon && !detail)) discard;
+    }
+
     float thickness = 40.0;
     if (!ocean_horizon) {
     float depth = textureLod(scene_depth, SCREEN_UV, 0.0).r;
@@ -48,6 +59,7 @@ void fragment() {
     if (submerged_exit) thickness = 0.0;
     // Resolve the shallow inlet into the opaque offshore horizon over 8 m.
     if (coastal_join && surface_world_normal.y > 0.5) thickness = mix(40.0, thickness, smoothstep(0.0,8.0,coastal_x));
+    if (surrounding_ocean && surface_world_normal.y > 0.5) thickness=mix(40.0,thickness,smoothstep(0.0,8.0,ocean_edge));
     float transmission = exp(-absorption * thickness);
     // At solid contact, the boundary converges to the already rendered terrain.
     // Fade surface lighting as well as tint; otherwise closed contact faces

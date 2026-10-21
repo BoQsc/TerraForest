@@ -121,7 +121,9 @@ class NativeRegionalWater : public godot::RefCounted {
     };
     std::map<Key,QuerySurface> published_surfaces,staged_surfaces;
     bool publication_enabled=false,publish_pending=false;
-    bool western_ocean=false;
+    bool western_ocean=false,surrounding_ocean=false;
+    std::unordered_set<Key> published_regions,staged_ready;
+    bool ocean_column_published(int x,int z) const;
     bool generating_ocean=false;
     uint64_t published_batch=0,query_cache_bytes=0;
     mutable uint64_t query_builds=0,query_cache_hits=0;
@@ -197,6 +199,8 @@ class NativeRegionalWater : public godot::RefCounted {
 protected: static void _bind_methods();
 public:
     void set_western_ocean(bool enabled){western_ocean=enabled;}
+    void set_surrounding_ocean(bool enabled){surrounding_ocean=enabled;}
+    godot::PackedByteArray ocean_publication_mask() const;
     godot::Dictionary update_ocean_residency(const godot::Vector3 &center,int64_t budget);
     // Conservative occupied-cell column envelope for cartography, not a mesh surface.
     godot::Dictionary survey_columns(int64_t cursor,int64_t expected_revision,int64_t region_budget) const;

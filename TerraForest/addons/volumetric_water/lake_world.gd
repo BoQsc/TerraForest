@@ -45,6 +45,7 @@ var _mesh_commit_us:int=0
 var _mesh_max_commit_us:int=0
 var _mesh_faces:Dictionary={}
 var _ocean_horizon:MeshInstance3D
+var _surrounding_ocean:Node3D
 var _material:=ShaderMaterial.new()
 var _pending_bucket:Dictionary={}
 var _bucket_native_us:=0
@@ -136,6 +137,8 @@ func clear(preserve_store:bool=false) -> void:
  for mesh:MeshInstance3D in _meshes.values():mesh.queue_free()
  _meshes.clear();_mesh_faces.clear();_staged_meshes.clear();_mesh_batch_id=0;_published_mesh_batch_id=0
  if not preserve_store:water=ClassDB.instantiate("NativeRegionalWater")
+ if _surrounding_ocean!=null:
+  var empty:=PackedByteArray();empty.resize(500*500);empty.fill(0);_surrounding_ocean.publish(empty)
  _discard_builder()
  _have_bounds=false;_last_changes=0
 func _invalidate(bounds:AABB) -> void:
@@ -155,6 +158,15 @@ func _measured_step(delta:float)->void:
  _poll_cached_task()
  if terrain==null or not terrain.world_ready:return
  water.set_western_ocean(terrain.backend.world_generator==18)
+ water.set_surrounding_ocean(terrain.backend.world_generator==19)
+ if terrain.backend.world_generator==19 and _surrounding_ocean==null:
+  _surrounding_ocean=preload("res://addons/volumetric_water/ocean_presentation.gd").new()
+  add_child(_surrounding_ocean);_surrounding_ocean.setup(_material)
+ elif terrain.backend.world_generator!=19 and _surrounding_ocean!=null:
+  _surrounding_ocean.queue_free();_surrounding_ocean=null;_material.set_shader_parameter("surrounding_ocean",false)
+ if _surrounding_ocean!=null and not _busy and _builder==null and not terrain.pending_edit and _pending_bucket.is_empty() and _pending_dev.is_empty():
+  water.update_ocean_residency(terrain.focus,16)
+
  if terrain.backend.world_generator==18 and _ocean_horizon==null:
   _material.set_shader_parameter("coastal_join",true)
   _ocean_horizon=preload("res://addons/volumetric_water/coastal_inlet.gd").horizon(_material);add_child(_ocean_horizon)
@@ -247,14 +259,19 @@ func _publish_meshes() -> void:
    var commit_started:=Time.get_ticks_usec()
    for coordinate:Vector3i in _staged_meshes:
     var staged:Dictionary=_staged_meshes[coordinate]
-    if not _meshes.has(coordinate) and staged.mesh!=null:
-     var node:=MeshInstance3D.new();node.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_OFF;node.material_override=_material;add_child(node);_meshes[coordinate]=node
-    _mesh_faces[coordinate]=staged.faces
-    if _meshes.has(coordinate):_meshes[coordinate].mesh=staged.mesh
+    if staged.mesh==null:
+     if _meshes.has(coordinate):_meshes[coordinate].queue_free();_meshes.erase(coordinate)
+     _mesh_faces.erase(coordinate)
+    else:
+     if not _meshes.has(coordinate):
+      var node:=MeshInstance3D.new();node.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_OFF;node.material_override=_material;add_child(node);_meshes[coordinate]=node
+     _mesh_faces[coordinate]=staged.faces
+     _meshes[coordinate].mesh=staged.mesh
     var bounds:=AABB(Vector3(coordinate)*4,Vector3(4,4,4))
     _changed_bounds=_changed_bounds.merge(bounds) if _have_bounds else bounds;_have_bounds=true
    if not water.commit_mesh_batch(update.batch):push_error("Water query publication did not match rendered batch")
    _published_mesh_batch_id=update.batch
+   if _surrounding_ocean!=null:_surrounding_ocean.publish(water.ocean_publication_mask())
    _staged_meshes.clear()
    _mesh_commit_us=Time.get_ticks_usec()-commit_started;_mesh_max_commit_us=maxi(_mesh_max_commit_us,_mesh_commit_us)
   if Time.get_ticks_usec()-mesh_started>=PublicationBudget.SOFT_TIME_US:break

@@ -1647,3 +1647,46 @@ checks; default-on opt-out world creation. Current `water_ml` counts resident
 explicit quantities, not total implicit ocean volume. Offshore travel remains
 unsupported. These dependencies remain part of this work; do not promote the new
 generator or treat this test as a playable surrounding ocean.
+
+## Surrounding ocean integrated publication - 2026-10-21
+
+Generator 19 now connects the existing lake runtime to bounded native ocean
+residency. Eight presentation quads surround the map: the inner ring uses normal
+water transmission and the outer horizon uses the existing cheap opaque variant.
+World-space ripples and lighting are shared. The sea is static; no new simulation
+or independent local water mesher was introduced. Existing generator 18 keeps its
+inlet behavior. The new profile remains absent from the creation UI for now.
+
+Native publication tracks completed regions, including empty owners. A 500x500
+R8 coverage mask switches presentation only after the entire vertical column plus
+its neighbor halo is published. Picking uses that same publication condition.
+An initial visible rectangular boundary failed image review; retaining a full
+published halo outside the visible switch removed it in inspected captures.
+Missing procedural sea halo samples continue at sea level. Edited cells remain
+authoritative. Retired scene meshes are freed rather than accumulated as empty
+nodes. Unchanged mask images are not reuploaded. The native store pins a two-column
+neighborhood of edits until durable edited-region caching is available.
+
+Actual 1080p/cap60 world check passes: coastal surface ray matches y=40, normal
+player bucket scoops/returns exactly one cubic metre, and the edited water snapshot
+restores exact quantity and durable ownership. Optional travel check now covers
+west, east, north, south, northwest corner and return to the edited west. It waits
+for the full 11x11 visible footprint, not only its already-pinned center. An earlier
+4 ms return number was misleading because it checked only that center; it is NOT
+cache/load evidence. Corrected return takes 11.8 seconds. Fresh destinations take
+about 12-15 seconds; initial preparation about 20 seconds. These delays are not
+acceptable travel performance. The full targeted run took 99.13 s. Resident regions
+stayed 676-776; scene mesh count also retired. Tests use teleport destinations,
+not continuous swimming, fast vehicles, long-run or old-laptop benchmarks.
+Native residency and legacy bucket/single-runtime checks still pass. Inspected
+west/east/north/south/corner captures; no rectangular seam in reviewed final views.
+Evidence: `evidence/surrounding_ocean_integration/`.
+
+Remaining required work: cached/baked ocean occupancy and fast loading; durable
+nonresident edited data rather than pinned regions; full-world save/reopen with
+coastal settings; map representation of the implicit ocean; default-on opt-out
+creation controls; continuous travel/underwater and repeated-edit validation.
+Far water is presentation until local detail is ready, and offshore gameplay is
+still unsupported. Do not claim complete gameplay or performance acceptance from
+these functional tests or the capped FPS in screenshots. The main outstanding
+work is still this ocean integration, not an unrelated feature.
