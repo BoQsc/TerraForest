@@ -49,6 +49,14 @@ func _initialize()->void:
   copy.update_ocean_residency(Vector3(1000,40,1000),32)
   restored.update_ocean_residency(Vector3(1000,40,1000),32)
  check(copy.statistics().regions==0 and copy.statistics().water_ml==0,"unmodified distant detail retires")
+ check(copy.statistics().ocean_cache_regions==1,"pristine occupancy retained in bounded cache")
+ var old_sampled:int=copy.statistics().sampled_nodes
+ copy.update_ocean_residency(Vector3(4,40,1000),1)
+ check(copy.statistics().ocean_cache_hits==1 and copy.statistics().water_ml==before.water_ml and copy.statistics().sampled_nodes==old_sampled,"return reuses exact water and occupancy without resampling")
+ copy.update_ocean_residency(Vector3(1000,40,1000),32)
+ copy.invalidate(AABB(origin,Vector3(4,4,4)),true)
+ check(copy.statistics().ocean_cache_regions==0 and copy.statistics().ocean_edited_regions==1 and copy.statistics().water_ml==before.water_ml,"distant terrain edit restores cached water before durable invalidation")
+
  check(restored.statistics().regions==1 and restored.statistics().water_ml==before.water_ml and restored.statistics().ocean_edited_regions==1,"edited distant region and water survive retirement after restore")
  var travel=ClassDB.instantiate("NativeRegionalWater");var maximum:=0
  for stop in 80:
@@ -59,5 +67,24 @@ func _initialize()->void:
   maximum=maxi(maximum,travel.statistics().regions)
  check(maximum<=1156 and not travel.statistics().capacity_reached,"long shoreline traversal does not accumulate pristine regions")
  check(travel.statistics().cell_steps==0,"no water simulation introduced")
+ # Stress eviction with valid flat, pristine cached-region records. This
+ # exercises storage limits, not terrain/visual correctness of the fixture.
+ var count:=1200;var payload:=PackedByteArray()
+ payload.resize(32+catalog.size()+count*(9076+12));payload.fill(0)
+ payload.encode_u32(0,0x31575256);payload.encode_u32(4,10)
+ payload.encode_u32(8,catalog.size());payload.encode_u32(12,count)
+ payload.encode_u64(16,count*125000);payload.encode_u64(24,count*12)
+ for i in catalog.size():payload[32+i]=catalog[i]
+ for n in count:
+  var at:=32+catalog.size()+n*9076
+  payload.encode_u64(at,(1<<24)|((7+n/400)<<12)|(n%400))
+  payload.encode_u32(at+8,1);payload.encode_u32(at+12,5)
+  for i in 512:payload.encode_u16(at+16+i*12+2,500)
+  payload.encode_u64(at+20,125000)
+  for i in 729:payload.encode_float(at+6160+i*4,1.0)
+ var pressure=ClassDB.instantiate("NativeRegionalWater")
+ check(pressure.restore_snapshot(payload),"cache pressure fixture valid")
+ for step in 40:pressure.update_ocean_residency(Vector3(1000,40,1000),32)
+ check(pressure.statistics().regions==0 and pressure.statistics().ocean_cache_regions<=1024 and pressure.statistics().ocean_cache_regions>0 and pressure.statistics().ocean_cache_bytes<=32*1024*1024,"valid pristine cache eviction respects entry and byte limits")
  print("OCEAN_RESIDENCY failures=",failures," max_regions=",maximum)
  quit(1 if failures else 0)

@@ -46,6 +46,7 @@ var _mesh_max_commit_us:int=0
 var _mesh_faces:Dictionary={}
 var _ocean_horizon:MeshInstance3D
 var _surrounding_ocean:Node3D
+var _ocean_admitting:=false
 var _material:=ShaderMaterial.new()
 var _pending_bucket:Dictionary={}
 var _bucket_native_us:=0
@@ -132,6 +133,7 @@ func remove_lake(id:int) -> void:
  water.remove_bounds(AABB(item.origin,Vector3(item.cells)*item.spacing))
  _lakes.erase(id);terrain.changed_since_save=true;catalog_changed.emit()
 func clear(preserve_store:bool=false) -> void:
+ _ocean_admitting=false
  _occupancy_failure=""
  _lakes.clear();_filling_id=0;_pending_bucket.clear();_pending_dev.clear()
  for mesh:MeshInstance3D in _meshes.values():mesh.queue_free()
@@ -164,8 +166,10 @@ func _measured_step(delta:float)->void:
   add_child(_surrounding_ocean);_surrounding_ocean.setup(_material)
  elif terrain.backend.world_generator!=19 and _surrounding_ocean!=null:
   _surrounding_ocean.queue_free();_surrounding_ocean=null;_material.set_shader_parameter("surrounding_ocean",false)
+ if _surrounding_ocean==null or not _pending_bucket.is_empty() or not _pending_dev.is_empty():_ocean_admitting=false
  if _surrounding_ocean!=null and not _busy and _builder==null and not terrain.pending_edit and _pending_bucket.is_empty() and _pending_dev.is_empty():
-  water.update_ocean_residency(terrain.focus,16)
+  var residency:Dictionary=water.update_ocean_residency(terrain.focus,16)
+  _ocean_admitting=int(residency.get("admitted",0))>0
 
  if terrain.backend.world_generator==18 and _ocean_horizon==null:
   _material.set_shader_parameter("coastal_join",true)
@@ -186,7 +190,7 @@ func _measured_step(delta:float)->void:
    break
  # Show edits before advancing their flow. Native immutable batches retain
  # that state if publication spans more than one frame.
- if not offline_preparation or _filling_id==0:_publish_meshes()
+ if (not offline_preparation or _filling_id==0) and not _ocean_admitting:_publish_meshes()
  # Explicit lake creation only. Resting or edited water has no flow tick.
  if _filling_id!=0:water.advance(2048,delta)
  if not _busy and not terrain.pending_edit and _occupancy_failure.is_empty():

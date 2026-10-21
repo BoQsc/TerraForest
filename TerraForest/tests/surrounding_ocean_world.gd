@@ -59,6 +59,7 @@ func run()->void:
  root.get_texture().get_image().save_png("res://reports/surrounding_ocean_overview.png")
  if "--coast-travel" in OS.get_cmdline_user_args():
   var sites:=[Vector3(1950,43,1000),Vector3(50,43,50),Vector3(1000,43,50),Vector3(1000,43,1950),Vector3(50,43,1000)]
+  if "--coast-cache-return" in OS.get_cmdline_user_args():sites=[Vector3(1950,43,1000),Vector3(50,43,1000)]
   for index in sites.size():
    var site:Vector3=sites[index];var began:=Time.get_ticks_msec()
    game.player.position=site;game.terrain.focus=site
@@ -75,6 +76,8 @@ func run()->void:
    check(picked.get("hit",false) and absf(picked.get("point",Vector3.ZERO).y-40)<0.01,"destination %d target matches surface"%index)
    check(game.lakes.statistics().regions<1600 and not game.lakes.statistics().capacity_reached,"travel resident regions remain bounded")
    print("OCEAN_TRAVEL ",index," ms=",Time.get_ticks_msec()-began," regions=",game.lakes.statistics().regions," scene_meshes=",game.lakes._meshes.size())
+   print("OCEAN_CACHE ",game.lakes.statistics().ocean_cache_hits," hits ",game.lakes.statistics().ocean_cache_bytes," bytes")
+   if "--coast-cache-return" in OS.get_cmdline_user_args() and index==1:check(game.lakes.statistics().ocean_cache_hits>500,"return reuses the full previously prepared ocean footprint")
    game.camera.global_position=site+Vector3(-45 if index==0 else 45,45,35)
    game.camera.look_at(target)
    for frame in 30:await process_frame

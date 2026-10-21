@@ -1690,3 +1690,35 @@ Far water is presentation until local detail is ready, and offshore gameplay is
 still unsupported. Do not claim complete gameplay or performance acceptance from
 these functional tests or the capped FPS in screenshots. The main outstanding
 work is still this ocean integration, not an unrelated feature.
+
+## Bounded pristine ocean occupancy cache - 2026-10-21
+
+Untouched terrain-only ocean regions now retire into a native LRU cache capped at
+32 MiB / 1024 entries, with combined live+cached record admission bounded by the
+existing region limit. Structure-bearing regions are not cached, avoiding a second
+unaccounted structure-contact budget. Cache entries retain exact amounts, vacancies
+and terrain contacts. Restoring a cached region bypasses sampling and republishes
+through the usual mesh batch. Terrain/building invalidation against a cached region
+first restores its prior amount and then makes it authoritative before invalidation.
+Edits are never evicted as pristine cache entries. Restore clears the old cache.
+This is an in-memory derived cache, not the outstanding durable edited-region cache
+or an offline world bake; pristine cache entries may be regenerated after eviction.
+
+Native checks pass exact no-resampling restore, distant invalidation, worker
+snapshot ownership, and pressure eviction with 1200 valid pristine region records.
+The pressure check verifies both entry and byte ceilings. Existing bucket check
+passes. The first graphical cache-only run reused 576 regions but still took
+10.876 s to return. This exposed repeated publication of small admission batches.
+The runtime now defers publication while admitting the next coastal footprint,
+without blocking bucket/development edits. Corrected 1080p/cap60 check: initial
+coastal preparation 11.470 s, fresh opposite edge 11.778 s, cached full-footprint
+return 5.318 s with 576 cache hits (roughly 10.8 MB cached). Total run 38.80 s.
+Normal bucket scoop/return and snapshot checks pass; inspected return image has
+no rectangular detail seam. Evidence: `evidence/ocean_occupancy_cache/`.
+
+This is a measured improvement, NOT acceptable seamless travel performance. Fresh
+sampling is still serialized one region per main-thread handoff; cached return
+still rebuilds/publishes geometry. Remaining work stays active: bounded worker
+batching or reusable mesh/cache publication, persistent edited-region storage,
+baked cold loading, map coverage, creation options and complete save/reopen.
+No default-on creation control or offshore gameplay is claimed implemented.

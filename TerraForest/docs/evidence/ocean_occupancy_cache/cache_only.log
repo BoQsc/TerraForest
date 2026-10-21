@@ -1,0 +1,24 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+PASS surrounding coast profile loaded in actual world
+PASS near coastal column replaces far proxy only after publication
+PASS published ocean surface is targetable at sea level
+OCEAN_LOAD_MS 11469 { "ocean_cache_regions": 0, "ocean_cache_bytes": 0, "ocean_cache_hits": 0, "ocean_clean_regions": 676, "ocean_edited_regions": 0, "structure_contact_bytes": 0, "terrain_contact_bytes": 5525160, "pending_vertical": 0, "vertical_steps": 0, "water_ml": 10184967445, "active_cells": 0, "regions": 676, "pending_regions": 0, "dirty_meshes": 0, "mesh_batch_active": false, "mesh_publish_pending": false, "published_mesh_batch": 175, "query_cache_bytes": 10156608, "query_builds": 0, "query_cache_hits": 2, "mesh_snapshot_bytes": 0, "fill_active": false, "fill_remaining_ml": -1, "sampled_nodes": 492804, "cache_hits": 0, "cached_region_rebuilds": 0, "cell_steps": 0, "changes": 87226, "step_us": 0, "max_step_us": 0, "mesh_us": 425, "max_mesh_us": 2043, "capacity_reached": false, "map_identity_scene_hash_us": 13, "map_identity_hash_us": 13, "snapshot_cache_bytes": 0, "snapshot_pending_bytes": 0, "snapshot_builds": 0, "snapshot_hits": 0, "vacancy_bytes": 0, "resident_cell_bytes": 11711912, &"lakes": 0, &"ready": 0, &"outstanding_slices": 0, &"resident_occupancy_bytes": 11711912, &"occupancy_failure": "", &"bucket_native_us": 0, &"max_bucket_native_us": 0, &"exclusion_notify_us": 94, &"accept_patch_us": 31, &"hull_snapshot_us": 13, &"mesh_publish_us": 2, &"max_mesh_publish_us": 2811, &"mesh_commit_us": 271, &"max_mesh_commit_us": 418, &"staged_meshes": 0, &"render_ready": true }
+PASS normal gameplay bucket equipped
+PASS ocean scoop transfers exactly one unit
+PASS ocean return restores quantity
+PASS actual ocean bucket edit snapshot restores
+PASS travel destination 0 full footprint published
+PASS destination 0 target matches surface
+PASS travel resident regions remain bounded
+OCEAN_TRAVEL 0 ms=11812 regions=776 scene_meshes=299
+OCEAN_CACHE 0 hits 10021968 bytes
+PASS travel destination 1 full footprint published
+PASS destination 1 target matches surface
+PASS travel resident regions remain bounded
+OCEAN_TRAVEL 1 ms=10876 regions=776 scene_meshes=380
+OCEAN_CACHE 576 hits 9991944 bytes
+PASS return reuses the full previously prepared ocean footprint
+[TerrainRewrite] Temporary test world: save skipped
+SURROUNDING_OCEAN_WORLD failures=0
