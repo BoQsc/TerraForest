@@ -1,6 +1,7 @@
 #include "regional_water.hpp"
 #include "lake_catalog.hpp"
 #include "water_region_store.hpp"
+#include "water_region_io.hpp"
 #include <godot_cpp/godot.hpp>
 #include <godot_cpp/core/class_db.hpp>
 using namespace godot;
@@ -13,6 +14,7 @@ static void initialize(ModuleInitializationLevel level) {
         GDREGISTER_CLASS(terraforest::NativeRegionalWater);
         GDREGISTER_CLASS(terraforest::NativeWaterSnapshot);
         GDREGISTER_CLASS(terraforest::NativeWaterRegionStore);
+        GDREGISTER_CLASS(terraforest::NativeWaterRegionIO);
     }
 }
 static void terminate(ModuleInitializationLevel) {}

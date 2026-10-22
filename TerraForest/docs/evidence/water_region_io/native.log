@@ -1,0 +1,21 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS isolated store opens
+PASS bounded worker starts
+PASS write queued
+PASS request limit includes unconsumed completion
+PASS worker returns durable write acknowledgement
+PASS read reserves maximum bounded result
+PASS read backpressure rejects excess work
+PASS asynchronous checkpoint read returns exact packet
+PASS poll releases reservations
+PASS world transition cancels outstanding epoch
+PASS stale queued or completed results never publish
+PASS old epoch submissions rejected
+PASS new epoch accepts work
+PASS new epoch completion tagged
+PASS failed I/O admitted as bounded job
+PASS missing checkpoint returns explicit failure
+PASS reservation high-water mark stays bounded
+PASS shutdown joins worker and rejects more work
+WATER_REGION_IO failures=0

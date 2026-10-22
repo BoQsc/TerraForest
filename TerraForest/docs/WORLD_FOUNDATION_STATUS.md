@@ -1939,3 +1939,32 @@ and retained manifest indexing. Checkpoint reference retention and garbage colle
 are not implemented, so unreachable blobs currently remain on disk. Compound-save
 integration, stale transfer guards, map/far presentation of unloaded edits and the
 edited-coast scaling gate remain open and required.
+
+
+## Bounded native water I/O worker — 2026-10-22
+
+Added NativeWaterRegionIO around the immutable region store. One native worker
+per coordinator accepts bounded writes and checkpoint reads, returns ticket/epoch/
+coordinate-tagged acknowledgements, and retains reservations until results are
+consumed. Read jobs reserve the maximum 8 MiB packet; configuration caps outstanding
+requests at 32 and payload reservations at 64 MiB. Reservations cover queued/result
+payloads, not total decoder/OS process memory. Stale epochs clear pending/completed
+work and discard active completions; an already executing immutable write may leave
+an unreachable blob but cannot change any selected checkpoint. Close joins the
+worker and clears reservations. No scene or live-water pointers cross threads.
+
+Native test passes for durable asynchronous write/read, exact packet restoration,
+backpressure including unconsumed completions, cancellation, old-epoch rejection,
+new-epoch success, explicit missing-checkpoint failure, reservation high-water bound
+and joined shutdown. Evidence: `evidence/water_region_io/native.log`. Debug/release
+DLLs rebuilt with prebuilt godot-cpp. No runtime eviction is enabled yet.
+
+Save-path inspection confirms `terrain_backend._apply_components` already resolves
+`serialize_snapshot` on its ordered worker, while `NativeRegionWorldArchive` wraps
+compound publication for block/model stores. Water checkpoint selection must join
+that compound archive transaction; it must not be stored as a separate mutable
+current pointer. Remaining work: checkpoint metadata/index and retention, provider/
+archive integration with legacy snapshot migration, acknowledgement-guarded region
+eviction and restoration, unloaded map/far surfaces, and the failing edited-coast
+scaling/actual-world travel gates. This worker is a prerequisite, not a claim that
+those gates now pass.
