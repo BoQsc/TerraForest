@@ -126,7 +126,7 @@ public:
  }
  // Save-worker adapter. No live water references; no selected checkpoint mutation.
  Bytes publish_water_snapshot(const Bytes &snapshot){
-  godot::Ref<NativeRegionalWater> water;water.instantiate();if(!water->restore_snapshot(snapshot))return {};
+  godot::Ref<NativeRegionalWater> water;water.instantiate();if(!water->restore_snapshot(snapshot))return water->validate_snapshot(snapshot)?snapshot:Bytes();
   auto keys=water->edited_region_coordinates();if(keys.is_empty())return snapshot;
   auto catalog=water->snapshot_catalog(snapshot);auto base=water->capture_unarchived_snapshot(catalog);if(base.is_empty())return {};
   godot::Array ids;

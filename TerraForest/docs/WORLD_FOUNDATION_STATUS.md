@@ -2072,3 +2072,22 @@ reference-aware garbage collection, failure injection at the gameplay load/save
 boundary, and the previously failing edited-coast scaling plus travel regression.
 New checkpoint-backed saves require this updated build and their .water directory;
 backups must preserve that directory alongside .trw/.bak and other dependencies.
+
+
+## Production water persistence failure guards — 2026-10-22
+
+Added a short headless failure-injection check invoking the actual terrain backend
+_load, _save and _publish_frozen paths against an isolated compound archive with
+real native terrain and checkpoint water. An exclusive sidecar lease, corrupt blob
+and missing checkpoint each prevent loading and disable writes; attempting save
+after failed load preserves canonical bytes. Repairing the dependency restores
+successful loading. Injected save-time sidecar lock failure reports unsuccessful
+frozen publication and leaves the canonical archive unchanged. This validates the
+production backend boundary, without claiming OS power-loss testing or a graphical
+error-screen review. Evidence: `evidence/water_storage_failure/`.
+
+Also corrected the checkpoint writer to preserve valid legacy lake-catalog payloads
+already accepted by the reader/validator. Invalid payloads still fail. Legacy
+catalog read/write and snapshot roundtrips pass after debug/release DLL rebuild.
+Live edited-water eviction and metadata-first restoration remain the next required
+capacity fix; these failure checks do not change current resident-region limits.

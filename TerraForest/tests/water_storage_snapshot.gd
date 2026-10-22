@@ -12,7 +12,7 @@ func _initialize()->void:
  var legacy:PackedByteArray=original.duplicate();legacy.encode_u32(32+legacy.decode_u32(8)+12,1)
  check(store.publish_water_snapshot(legacy)==legacy and store.expand_water_snapshot(legacy)==legacy,"ordinary legacy snapshot passes through without migration")
  var catalog:PackedByteArray=ClassDB.instantiate("NativeLakeCatalog").encode([])
- check(store.expand_water_snapshot(catalog)==catalog,"legacy catalog remains readable")
+ check(store.expand_water_snapshot(catalog)==catalog and store.publish_water_snapshot(catalog)==catalog,"legacy catalog remains readable and writable")
  var broken:PackedByteArray=encoded.duplicate();broken.encode_u64(8,1)
  check(store.expand_water_snapshot(broken).is_empty(),"bad component length rejected")
  broken=encoded.duplicate();broken[16]^=1
