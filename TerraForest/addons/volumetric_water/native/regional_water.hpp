@@ -222,6 +222,8 @@ public:
     godot::Dictionary survey_ocean(int64_t cursor,int64_t expected_revision) const;
     // Single-region transfer primitive; the caller must establish checkpoint and
     // terrain identity before reusing occupancy. It never retires live data.
+    godot::PackedInt32Array edited_region_coordinates() const;
+    godot::PackedByteArray capture_unarchived_snapshot(const godot::PackedByteArray &catalog) const;
     godot::PackedByteArray capture_region_snapshot(const godot::Vector3i &coordinate) const;
     bool restore_region_snapshot(const godot::Vector3i &coordinate,const godot::PackedByteArray &packet,int64_t expected_revision,bool reuse_occupancy);
     godot::PackedByteArray ocean_publication_mask() const;

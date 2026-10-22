@@ -1,0 +1,27 @@
+# SPDX-License-Identifier: 0BSD
+extends "res://tests/water_region_store.gd"
+func _initialize()->void:
+ var folder:=ProjectSettings.globalize_path("user://water_storage_check_"+str(Time.get_ticks_usec()))
+ var store=ClassDB.instantiate("NativeWaterRegionStore");check(store.open_store(folder),"isolated store opens")
+ var original:PackedByteArray=packet(125000)
+ var encoded:PackedByteArray=store.publish_water_snapshot(original)
+ check(encoded.size()>48 and encoded.slice(0,4).get_string_from_ascii()=="TFWS","edited snapshot becomes checkpoint component")
+ check(store.expand_water_snapshot(encoded)==original,"checkpoint component expands byte exactly")
+ var dry:PackedByteArray=packet(0);var dry_encoded:PackedByteArray=store.publish_water_snapshot(dry)
+ check(store.expand_water_snapshot(dry_encoded)==dry and store.expand_water_snapshot(encoded)==original,"old and empty-override component versions remain exact")
+ var legacy:PackedByteArray=original.duplicate();legacy.encode_u32(32+legacy.decode_u32(8)+12,1)
+ check(store.publish_water_snapshot(legacy)==legacy and store.expand_water_snapshot(legacy)==legacy,"ordinary legacy snapshot passes through without migration")
+ var catalog:PackedByteArray=ClassDB.instantiate("NativeLakeCatalog").encode([])
+ check(store.expand_water_snapshot(catalog)==catalog,"legacy catalog remains readable")
+ var broken:PackedByteArray=encoded.duplicate();broken.encode_u64(8,1)
+ check(store.expand_water_snapshot(broken).is_empty(),"bad component length rejected")
+ broken=encoded.duplicate();broken[16]^=1
+ check(store.expand_water_snapshot(broken).is_empty(),"missing checkpoint never becomes empty water")
+ var base:PackedByteArray=encoded.slice(48);var collision=ClassDB.instantiate("NativeRegionalWater")
+ check(collision.restore_snapshot(legacy),"overlap fixture valid")
+ broken.resize(48+legacy.size());broken=encoded.slice(0,48);broken.append_array(legacy);broken.encode_u64(8,legacy.size())
+ check(store.expand_water_snapshot(broken).is_empty(),"resident and archived ownership overlap rejected")
+ check(store.publish_water_snapshot(PackedByteArray([1,2,3])).is_empty(),"invalid source cannot produce checkpoint component")
+ store.close();check(store.open_store(folder),"store reopens")
+ check(store.expand_water_snapshot(encoded)==original and store.expand_water_snapshot(dry_encoded)==dry,"both component versions survive reopen")
+ store.close();print("WATER_STORAGE_SNAPSHOT failures=",failures);quit(1 if failures else 0)

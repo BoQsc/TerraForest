@@ -2015,3 +2015,31 @@ required integration remains a checkpoint-bearing water component format with
 legacy migration, archive/provider and clone-tool support, safe acknowledged
 unloading, unloaded map/far representation, retention/GC and actual-world travel
 and save/reopen checks. The edited-coast capacity regression remains failing.
+
+
+## Checkpoint-bearing water component adapter — 2026-10-22
+
+NativeWaterRegionStore now publishes a TFWS v1 component: a 48-byte header holds
+its immutable checkpoint identity and the length of an embedded water snapshot.
+Edited ocean records are published to that checkpoint; ordinary/pristine records
+and the lake catalog remain embedded. Source partitioning is native and preserves
+all exact quantities, vacancies and contacts. No save selects this component until
+all referenced blobs and checkpoint publication succeed. Expansion verifies the
+checkpoint and packets, rejects resident/archive ownership overlaps, and rebuilds
+the original validated snapshot; ordinary legacy snapshots and catalogs remain
+readable. Both methods operate on private copies, not live gameplay stores.
+
+Tests pass for exact original/empty versions across reopen, malformed lengths,
+missing checkpoint failure, overlap rejection, ordinary legacy passthrough and
+actual terrain-sampled/edited ocean byte-exact restoration (not just synthetic flat
+records). Evidence: `evidence/water_storage_snapshot/`. Debug/release DLLs rebuilt.
+
+The adapter is not enabled in the gameplay provider yet. Its eager expansion is a
+compatibility bridge bounded by the existing 4096 resident region limit, not the
+final large-world load algorithm. Publication and expansion belong on a worker;
+load must subsequently become metadata-first before enabling live eviction. The
+component header relies on the enclosing world archive checksum for integrity.
+Required next work: hook component codec/validator/preparer and storage path into
+world persistence, copy .water dependencies in clone/backup tools, durable-reference
+retention/GC, metadata-first loading, guarded retirement, unloaded map/far visuals,
+and the edited-coast capacity plus actual-world travel/save gates.

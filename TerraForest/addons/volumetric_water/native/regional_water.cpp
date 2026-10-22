@@ -248,6 +248,8 @@ void NativeRegionalWater::_bind_methods(){
     ClassDB::bind_method(D_METHOD("next_mesh","include_contacts"),&NativeRegionalWater::next_mesh,DEFVAL(false));
     ClassDB::bind_method(D_METHOD("statistics"),&NativeRegionalWater::statistics);
     ClassDB::bind_method(D_METHOD("capture_snapshot","catalog"),&NativeRegionalWater::capture_snapshot);
+    ClassDB::bind_method(D_METHOD("edited_region_coordinates"),&NativeRegionalWater::edited_region_coordinates);
+    ClassDB::bind_method(D_METHOD("capture_unarchived_snapshot","catalog"),&NativeRegionalWater::capture_unarchived_snapshot);
     ClassDB::bind_method(D_METHOD("capture_region_snapshot","coordinate"),&NativeRegionalWater::capture_region_snapshot);
     ClassDB::bind_method(D_METHOD("restore_region_snapshot","coordinate","packet","expected_revision","reuse_occupancy"),&NativeRegionalWater::restore_region_snapshot);
     ClassDB::bind_method(D_METHOD("capture_storage_snapshot","catalog"),&NativeRegionalWater::capture_storage_snapshot);
@@ -1708,4 +1710,13 @@ bool terraforest::NativeRegionalWater::restore_region_snapshot(const Vector3i &c
         const Key owner=key(p);if(mesh_set.insert(owner).second)meshes.push_back(owner);
     }
     return true;
+}
+
+godot::PackedInt32Array terraforest::NativeRegionalWater::edited_region_coordinates() const {
+ PackedInt32Array result;for(const auto &[k,r]:regions)if(r.ocean_state==2){auto p=position(k);result.push_back(p.x);result.push_back(p.y);result.push_back(p.z);}return result;
+}
+PackedByteArray terraforest::NativeRegionalWater::capture_unarchived_snapshot(const PackedByteArray &catalog) const {
+ if(fill.running)return {};Ref<NativeRegionalWater> copy;copy.instantiate();
+ for(const auto &[k,r]:regions)if(r.ocean_state!=2){copy->regions.emplace(k,r);for(auto amount:r.water)copy->total+=amount;}
+ return copy->capture_snapshot(catalog);
 }
