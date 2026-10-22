@@ -111,7 +111,7 @@ static func heights(core,points:PackedVector3Array)->PackedFloat32Array:
 
 static func frontage(core,lot:Dictionary,origin:Vector3i,roads:Array)->Dictionary:
  var bounds:AABB=lot.asset.placement_bounds(Vector3i.ZERO,0)
- var a:=Vector3(0.5,0,bounds.end.z+0.5)
+ var a:=Vector3(0.5,int(lot.asset.get_meta("site_surface_offset",0)),bounds.end.z+0.5)
  for turn in lot.rotation:a=Vector3(1-a.z,a.y,a.x)
  a+=Vector3(origin)
  var b:=Vector3(a.x,0,lot.street_z)
@@ -181,7 +181,7 @@ static func plan(core,center:Vector3,roads:Array=[],variant:int=0,recipe:Array=[
     if not roads.is_empty():
      var grade_found:=false
      for candidate_grade in range(minimum,maximum+1):
-      var candidate:=Vector3i(origin.x,candidate_grade,origin.z)
+      var candidate:=Vector3i(origin.x,candidate_grade-int(lot.asset.get_meta("site_surface_offset",0)),origin.z)
       var path:Dictionary=frontage(core,lot,candidate,roads)
       if path.ok and (not grade_found or absf(candidate_grade-(low+high)*0.5)<absf(grade-(low+high)*0.5)):
        grade=candidate_grade;entrance=path;grade_found=true
@@ -191,7 +191,7 @@ static func plan(core,center:Vector3,roads:Array=[],variant:int=0,recipe:Array=[
     var survey:Dictionary={"ok":true,"min_height":low,"max_height":high,"grade":grade}
     var quality:Dictionary=Quality.site(survey,lot.label)
     if quality.status!="pass":continue
-    origin.y=grade
+    origin.y=grade-int(lot.asset.get_meta("site_surface_offset",0))
     best={"asset":lot.asset,"origin":origin,"rotation":lot.rotation,"label":lot.label,
      "street_z":lot.street_z,"survey":survey,"quality":quality,
      "sample_count":points.size(),"bounds":lot.asset.placement_bounds(origin,lot.rotation),"entrance":entrance}
@@ -282,7 +282,7 @@ static func earthworks(plan:Dictionary)->Dictionary:
  if not plan.get("ok",false):return {"ok":false,"reason":"Incomplete layout"}
  var segments:Array=[];var bounds:=AABB();var first:=true
  for lot:Dictionary in plan.lots:
-  var foundation:Dictionary=preload("res://addons/structures/site_plan.gd").foundation(lot.asset,lot.origin,lot.rotation,lot.origin.y,4.0)
+  var foundation:Dictionary=preload("res://addons/structures/site_plan.gd").foundation(lot.asset,lot.origin,lot.rotation,int(lot.survey.grade),4.0)
   if not foundation.ok:return foundation
   for strip:Dictionary in foundation.segments:
    # Only the surveyed 2m fill / 3m cut is needed. Keep transition shoulders
@@ -299,6 +299,15 @@ static func earthworks(plan:Dictionary)->Dictionary:
   var segment:Dictionary=Lots._segment(road.start,road.finish,road.half_width,3,4,0,4)
   segment["coefficients"]=road.coefficients;segment["curve_index"]=road.curve_index
   segments.append(segment)
+ # Underground clearance is part of the master plan, after all surface grading
+ # and before any building is published. Later road support must not refill it.
+ for lot:Dictionary in plan.lots:
+  if not lot.asset.get_meta("cellar_clearance",false):continue
+  var site=preload("res://addons/structures/site_plan.gd")
+  var foundation:Dictionary=site.foundation(lot.asset,lot.origin,lot.rotation,int(lot.survey.grade))
+  var complete:Dictionary=site.prepare(lot.asset,lot.origin,lot.rotation,int(lot.survey.grade))
+  if not foundation.ok or not complete.ok:return {"ok":false,"reason":"Cellar preparation failed"}
+  segments.append_array(complete.segments.slice(foundation.segments.size()))
  for segment:Dictionary in segments:
   bounds=segment.bounds if first else bounds.merge(segment.bounds);first=false
  return {"ok":true,"segments":segments,"bounds":bounds}

@@ -33,6 +33,23 @@ func _initialize()->void:
   if not Codec.reply_ok(reply):quit(1);return
   for i in batch.size():
    if reply.decode_float(20+i*4)>=0:unsupported+=1
+ var cellars:=0
+ for lot:Dictionary in plan.lots:
+  if not lot.asset.get_meta("cellar_clearance",false):continue
+  cellars+=1
+  if lot.origin.y+5!=int(lot.survey.grade) or absf(lot.entrance.segment.start.y-lot.survey.grade)>0.001:
+   print("CELLAR_GRADE_FAILED");quit(1);return
+  var interior:=PackedVector3Array()
+  for x in [-1,0,1]:
+   for y in [2,3,4,5]:
+    for z in [-2,0,2]:interior.append(Vector3(lot.origin)+Vector3(x+0.5,y,z+0.5))
+  var probe:=Codec.command(31,[revision,interior.size()]);probe.append_array(interior.to_byte_array())
+  var result:PackedByteArray=core.execute(probe)
+  if not Codec.reply_ok(result):quit(1);return
+  for i in interior.size():
+   if result.decode_float(20+i*4)<=0:print("CELLAR_NOT_EXCAVATED ",interior[i]);quit(1);return
+ if cellars!=1:print("CELLAR_COUNT_FAILED ",cellars);quit(1);return
+ print("PASS one connected cellar with excavated interior and surface-level approach")
  var surfaces:=PackedVector3Array()
  var roads:Array=north.roads+plan.roads
  for i in range(1,route.points.size()):roads.append({"start":route.points[i-1],"finish":route.points[i],"linear":true})

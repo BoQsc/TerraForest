@@ -214,6 +214,20 @@ func run()->void:
   for i in 90:await process_frame
   await RenderingServer.frame_post_draw
   root.get_texture().get_image().save_png(output_dir.path_join("central_market_street.png"))
+  for lot:Dictionary in market.lots:
+   if not lot.asset.get_meta("cellar_clearance",false):continue
+   game.player_hud.set_open(false)
+   var origin:=Vector3(lot.origin)
+   FileAccess.open(output_dir.path_join("market_cellar_location.json"),FileAccess.WRITE).store_string(JSON.stringify({"origin":[lot.origin.x,lot.origin.y,lot.origin.z],"grade":lot.survey.grade,"arrival":[lot.entrance.segment.finish.x,lot.entrance.segment.finish.y,lot.entrance.segment.finish.z],"rotation":lot.rotation}))
+   game.camera.global_position=origin+Vector3(12,10,16);game.camera.look_at(origin+Vector3(0,7,0))
+   for i in 60:await process_frame
+   await RenderingServer.frame_post_draw
+   root.get_texture().get_image().save_png(output_dir.path_join("market_cellar_exterior.png"))
+   game.camera.global_position=origin+Vector3(-1,2.7,2);game.camera.look_at(origin+Vector3(-1,1.8,-2))
+   for i in 30:await process_frame
+   await RenderingServer.frame_post_draw
+   root.get_texture().get_image().save_png(output_dir.path_join("market_cellar_interior.png"))
+
   game.teleport(road.start)
   if not await ready_world(game):quit(1);return
   game.set_physics_process(false);game._clear_motion()

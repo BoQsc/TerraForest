@@ -2270,3 +2270,50 @@ store); selective loading, map/far representations, quantities and bounded retai
 receipt memory still need integration. Eager reopen retains its existing capacity
 limit. Passing this save test does not resolve the edited-coast scaling failure.
 Normal in-world scoop/save/reopen also passes (16.66 s / 9.94 s harness runs; not performance acceptance).
+
+
+## World-content milestone resumed — 2026-10-22
+
+Following the user's request to move forward beyond water, stop expanding water
+scope now. Keep accepted static bucket/lake gameplay and optional default-on coast.
+Automatic edited-ocean eviction remains disabled; its capacity failure is explicitly
+open in OCEAN_EDITED_STORAGE.md. Return before large-world readiness qualification,
+or sooner if ordinary play reaches the cap or risks saved edits. Preserve tested
+native retirement/save work; do not discard or call it finished.
+
+Next deliverable: one connected cellar cottage in the default terrain-fitted central
+settlement, with excavation in the master plan before building publication, a working
+entrance/ladder/storage route, and fresh-process persistence. No ambient cave network.
+Planning and placement checks alone do not establish human or visual acceptance.
+After this, remaining regional locations/roads and coherent exploration remain the
+priority; ocean micro-optimization must not silently resume as the main milestone.
+
+
+### Default market cellar integrated — 2026-10-22
+
+One of the eight central-market cottages now uses the existing cellar/ladder/chest
+prefab. The terrain-lot planner distinguishes surface grade from underground prefab
+origin, keeps the approach at surface grade, and appends underground excavation to
+the master earthworks after surface/road grading and before any building placement.
+No runtime generation processor, new water work, or ambient cave network was added.
+
+Native combined checks pass: exactly one cellar, excavated interior, matching street
+approach grade, supported foundations and intact connecting roads. Full default
+coastal generation and fresh-process reopen pass in the separate save slot
+`market_cellar_42_20261022` (seed42/gen19,20 buildings,2 public places,441 map road
+segments). Existing saves were not modified. Actual player movement in that saved
+world passes street approach, steps, opening the door, entering, ladder descent,
+climbing back out and return to the street, in 44.18 s total test runtime. The test
+uses temporary/read-only mode and discards door/player changes.
+
+Images were inspected. Initial preparation captures had an inventory overlay;
+future capture code closes it. The follow-up approach shows a supported cottage
+entrance, while the underground capture confirms masonry walls but is close to the
+ladder. These do not establish complete room art acceptance: the cellar remains
+plain, storage interaction was not newly tested, and no human review or sustained
+frame-time qualification is claimed. Existing furnished-region snapshot contents
+match after reopen. Evidence: `evidence/market_cellar_world/`.
+
+Next world-content work stays on coherent regional exploration and missing locations,
+including the owned mine and other connected destinations. Retain the water return
+criteria above; do not silently restart ocean optimization as the main milestone.

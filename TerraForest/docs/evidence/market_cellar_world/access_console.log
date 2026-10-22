@@ -1,0 +1,23 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+PASS world loads
+PASS saved cellar location available
+PASS western destination loads
+PASS cellar entrance resident
+PASS walk cellar approach (884.5, 55.74539, 831.0)
+PASS walk cellar approach (884.5, 56.0, 825.0)
+PASS walk cottage steps
+PASS open cellar cottage
+PASS enter cottage
+PASS walk beside hatch
+PASS walk to ladder approach
+PASS descend from house to cellar
+PASS climb back into house
+PASS exit cottage (0.5, 0.0, -4.0)
+PASS exit cottage (0.5, 0.0, -1.0)
+PASS exit cottage (0.5, 0.0, 0.8)
+PASS return to street (884.5, 56.0, 825.0)
+PASS return to street (884.5, 55.74539, 831.0)
+MARKET_CELLAR_CONNECTED_ACCESS failures=0 position=(884.4999, 55.75285, 830.7595)
+[TerrainRewrite] Temporary test world: save skipped

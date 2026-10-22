@@ -1,0 +1,7 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS one connected cellar with excavated interior and surface-level approach
+MARKET_ROADS probes=4434 mismatches=0
+MARKET_COMBINED edits=355 support_points=3882 unsupported=0 route_points=6
+CENTRAL_MARKET  lots=8 center=(906.0, 56.0, 855.0)
+CENTRAL_MARKET failures=0
