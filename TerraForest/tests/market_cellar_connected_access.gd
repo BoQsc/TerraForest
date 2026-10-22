@@ -52,10 +52,38 @@ func run()->void:
   if game.player.position.y<cottage.y-3.8:break
  game.controls.clear(Time.get_ticks_usec())
  if not check(game.player.position.y<cottage.y-3.8 and game.player.position.y>cottage.y-4.2,"descend from house to cellar"):await done();return
- game.camera.look_at(cottage+Vector3(-1,-2,-2))
+ if not check(await ground_walk(cottage+Vector3(-1,-4,0)),"walk from ladder to cellar chest"):await done();return
+ game.camera.look_at(cottage+Vector3(-1,-3.6,-2))
  game.headlamp.visible=true
+ game._set_player_tool_mode(false,false,1);Input.mouse_mode=Input.MOUSE_MODE_CAPTURED
+ use()
+ if not check(game.storage.opened,"E opens generated cellar chest"):await done();return
+ var inventory:RefCounted=game.player_hud.inventory
+ check(inventory.grant_items(PackedInt64Array([201,3]),inventory.snapshot().revision).ok,"supply three stone for transfer check")
+ game.storage.refresh()
+ var before_slots:Array=inventory.snapshot().slots.duplicate(true)
+ var chest_id:int=game.storage.identity
+ var before_chest:Array=game.storage.store.snapshot(chest_id).slots.duplicate(true)
+ var stone_slot:=-1
+ for i in before_slots.size():
+  if before_slots[i].item==201 and before_slots[i].count>=3:stone_slot=i;break
+ if not check(stone_slot>=0,"stone is available in inventory"):await done();return
+ game.storage.player_list.select(stone_slot);game.storage.quantity.get_line_edit().text="3"
+ check(game.storage.move_selected(true),"deposit three stone through cellar storage UI")
+ var deposited:Array=game.storage.store.snapshot(chest_id).slots
+ var deposited_slot:=-1
+ for i in deposited.size():
+  if deposited[i].item==201 and deposited[i].count>=3:deposited_slot=i;break
+ if not check(deposited_slot>=0,"deposited stone is present in cellar chest"):await done();return
+ game.storage.storage_list.select(deposited_slot);game.storage.quantity.get_line_edit().text="3"
+ check(game.storage.move_selected(false),"withdraw three stone through cellar storage UI")
+ check(inventory.snapshot().slots==before_slots and game.storage.store.snapshot(chest_id).slots==before_chest,"transfer roundtrip preserves both inventories exactly")
+ game.storage.close();game.player_hud.set_open(false)
  await RenderingServer.frame_post_draw
  root.get_texture().get_image().save_png("res://reports/market_cellar_connected_room.png")
+ for point:Vector3 in [cottage+Vector3(0,-4,3.2),cottage+Vector3(1.5,-4,3.2)]:
+  if not check(await ground_walk(point),"walk around ladder to climbing side"):await done();return
+ game.yaw=0;game.player.rotation.y=0
  game.camera.rotation=Vector3.ZERO
  game.controls.set_key(KEY_W,true,Time.get_ticks_usec())
  for tick in 360:

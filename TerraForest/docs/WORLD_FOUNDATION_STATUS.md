@@ -7,7 +7,7 @@ reason, prerequisite/return trigger and closure evidence.
 
 | Work | Status and reason | Prerequisite / return trigger | Required closure evidence |
 | --- | --- | --- | --- |
-| Generated market cellar storage | Open; movement and snapshot checks do not prove chest interaction | Next targeted world-content check; the connected cottage is now available | Reach the chest through the actual entrance/ladder route; transfer items without loss or duplication; verify persistence in a disposable save |
+| Generated market cellar storage | Interaction roundtrip and complete access route pass; location-specific storage persistence still open | Next targeted persistence check using a disposable copy | Deposit through the reached chest UI, save and reopen in a fresh process, verify both inventory sides and chest identity |
 | Cellar room presentation | Unreviewed; prior room capture was obstructed by the ladder | After storage interaction, before calling the location accepted | Clear interior capture and review of usable circulation and furnishings; human acceptance remains distinct |
 | Connected regional destinations and owned mine | Incomplete; current default world has only two public places | Main world-generation milestone after the cellar check | Actually generated accessible locations, connected roads, intentional underground access, map agreement and fresh-process reopen |
 | Regional landscaping and travel quality | Incomplete; exposed banks and route quality cannot be accepted from planning checks alone | Alongside regional content integration | Inspect road/terrain transitions and junctions; complete ground/vehicle travel on the actual generated routes |
@@ -2352,3 +2352,24 @@ match after reopen. Evidence: `evidence/market_cellar_world/`.
 Next world-content work stays on coherent regional exploration and missing locations,
 including the owned mine and other connected destinations. Retain the water return
 criteria above; do not silently restart ocean optimization as the main milestone.
+
+### Generated cellar chest interaction — 2026-10-22
+
+Extended the actual saved-world player route to walk away from the ladder, open
+its cellar chest through E, deposit three stone through the storage UI, withdraw
+three, and compare both inventories exactly. The player walks around to the
+ladder's climbing side, climbs out and returns to the street. This passes in the
+existing generated market save at 1920x1080/cap60 in temporary read-only mode.
+Evidence: `evidence/market_cellar_storage/` (console, harness result and room image).
+
+Two failed test iterations are retained: granting fixture inventory after opening
+storage correctly rejected a stale revision; refreshing the fixture UI resolves
+that. A direct return waypoint intersected the ladder; the route now walks around
+it. Neither required weakening runtime validation or changing gameplay code.
+
+The room image was inspected: chest and masonry are visible, but the room remains
+plain and the development HUD is visible. This is not human/art acceptance or a
+performance qualification. The harness currently uses the development tool mode;
+normal gameplay-mode parity and a fresh-process deposit/save/reopen on a disposable
+world copy remain required before closing the storage milestone. No user save was
+modified and no persistence claim is inferred from the inventory roundtrip.
