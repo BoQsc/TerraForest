@@ -1968,3 +1968,24 @@ archive integration with legacy snapshot migration, acknowledgement-guarded regi
 eviction and restoration, unloaded map/far surfaces, and the failing edited-coast
 scaling/actual-world travel gates. This worker is a prerequisite, not a claim that
 those gates now pass.
+
+
+## Bounded water checkpoint index — 2026-10-22
+
+Region reads now retain one verified packed checkpoint manifest and binary-search
+its sorted keys, instead of reading/parsing the full manifest for every region.
+The retained index is bounded to 2,621,484 bytes including its identity (65,536
+entries); switching checkpoint replaces it and closing releases it. Blob reads
+still verify SHA-256 and region payload validation on every read. Once verified,
+immutable checkpoint metadata stays trusted for the lifetime of its cached index;
+external manifest modification is detected on reloading the index, not on each hit.
+
+Added checkpoint_page with at most 256 coordinate/digest entries per call and strict
+cursor bounds, for future bounded streaming/map admission. Tests verify exact
+membership, repeated-read reuse without additional index loads, cursor/size limits,
+index bound, corrupt-blob rejection despite cached membership, and existing worker
+behavior. Evidence: `evidence/water_checkpoint_index/`. Both native DLL targets
+rebuilt. Initial index loading still validates the complete bounded manifest on the
+I/O owner; this is not a main-thread runtime API. Checkpoint publication still
+validates all references. Live world checkpoint/provider integration, retention/GC,
+eviction, unloaded edited-water rendering and scaling gates remain unfinished.

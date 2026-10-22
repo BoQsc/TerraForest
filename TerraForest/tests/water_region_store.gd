@@ -34,6 +34,13 @@ func _initialize()->void:
  store.close();check(other.open_store(folder),"store reopens after lease released")
  check(other.read_region(old.checkpoint,p).get("packet",PackedByteArray())==original,"reopened old checkpoint restores bytes")
  check(other.read_region(current.checkpoint,p).get("packet",PackedByteArray())==empty,"reopened new checkpoint restores bytes")
+ var indexed_before:int=other.index_stats().loads
+ for i in 12:check(other.read_region(current.checkpoint,p).get("packet",PackedByteArray())==empty,"repeated indexed read preserves packet")
+ check(other.index_stats().loads==indexed_before and other.index_stats().hits>=12,"repeated region reads reuse verified index")
+ var page:Dictionary=other.checkpoint_page(current.checkpoint,0,1)
+ check(page.ok and page.complete and page.cursor==1 and page.coordinates==keys and page.digests==second.digest,"bounded metadata page exposes exact membership")
+ check(other.checkpoint_page(current.checkpoint,1,1).complete and not other.checkpoint_page(current.checkpoint,2,1).ok and not other.checkpoint_page(current.checkpoint,0,257).ok,"metadata cursor and size bounds enforced")
+ check(other.index_stats().bytes<=2621484,"only one packed checkpoint index retained")
  var file:=FileAccess.open(folder.path_join(second.digest.hex_encode()+".water"),FileAccess.WRITE);file.store_buffer(PackedByteArray([1,2,3]));file.close()
  check(not other.read_region(current.checkpoint,p).ok,"corrupt blob rejected without regeneration")
  check(not other.publish_region(p,empty).ok,"corrupt existing identity is not silently overwritten")

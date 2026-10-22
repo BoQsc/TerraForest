@@ -19,6 +19,20 @@ class NativeWaterRegionStore : public godot::RefCounted {
  std::mutex mutex;
  godot::String directory;
  HANDLE lease=INVALID_HANDLE_VALUE;
+ Bytes indexed_id,indexed_catalog;
+ int64_t index_loads=0,index_hits=0;
+ bool index(const Bytes &id){
+  if(id.size()!=32)return false;
+  if(id==indexed_id){++index_hits;return true;}
+  Bytes bytes;std::map<uint64_t,Bytes> checked;
+  if(!read(id,".checkpoint",CATALOG_LIMIT,bytes)||!parse(bytes,checked))return false;
+  indexed_catalog=bytes;indexed_id=id;++index_loads;return true;
+ }
+ int64_t lower_bound(uint64_t wanted) const {
+  int64_t lo=0,hi=indexed_catalog.decode_u32(8);
+  while(lo<hi){int64_t mid=lo+(hi-lo)/2;if(indexed_catalog.decode_u64(12+mid*40)<wanted)lo=mid+1;else hi=mid;}
+  return lo;
+ }
  static constexpr int64_t REGION_LIMIT=8*1024*1024,CATALOG_LIMIT=4*1024*1024;
  static Bytes hash(const Bytes &b){godot::Ref<godot::HashingContext> h;h.instantiate();h->start(godot::HashingContext::HASH_SHA256);h->update(b);return h->finish();}
  static godot::Dictionary result(bool ok){godot::Dictionary d;d["ok"]=ok;return d;}
@@ -55,9 +69,11 @@ class NativeWaterRegionStore : public godot::RefCounted {
    if(!valid(p)||key(p)!=k||(i&&k<=previous))return false;previous=k;entries.emplace(k,bytes.slice(at+8,at+40));}
   return true;
  }
- void close_unlocked(){if(lease!=INVALID_HANDLE_VALUE)CloseHandle(lease);lease=INVALID_HANDLE_VALUE;directory=godot::String();}
+ void close_unlocked(){if(lease!=INVALID_HANDLE_VALUE)CloseHandle(lease);lease=INVALID_HANDLE_VALUE;directory=godot::String();indexed_id=Bytes();indexed_catalog=Bytes();index_loads=index_hits=0;}
 protected:
  static void _bind_methods(){
+  godot::ClassDB::bind_method(godot::D_METHOD("checkpoint_page","checkpoint","cursor","limit"),&NativeWaterRegionStore::checkpoint_page);
+  godot::ClassDB::bind_method(godot::D_METHOD("index_stats"),&NativeWaterRegionStore::index_stats);
   godot::ClassDB::bind_method(godot::D_METHOD("open_store","absolute_directory"),&NativeWaterRegionStore::open_store);
   godot::ClassDB::bind_method(godot::D_METHOD("close"),&NativeWaterRegionStore::close);
   godot::ClassDB::bind_method(godot::D_METHOD("publish_region","coordinate","packet"),&NativeWaterRegionStore::publish_region);
@@ -88,10 +104,24 @@ public:
  }
  godot::Dictionary read_region(const Bytes &checkpoint,const godot::Vector3i &p){std::lock_guard<std::mutex> lock(mutex);
   if(lease==INVALID_HANDLE_VALUE||!valid(p))return result(false);
-  Bytes bytes;std::map<uint64_t,Bytes> entries;if(!read(checkpoint,".checkpoint",CATALOG_LIMIT,bytes)||!parse(bytes,entries))return result(false);
-  auto it=entries.find(key(p));if(it==entries.end())return result(false);Bytes packet;
-  if(!read(it->second,".water",REGION_LIMIT,packet)||!packet_valid(p,packet))return result(false);
-  auto out=result(true);out["packet"]=packet;out["digest"]=it->second;return out;
+  if(!index(checkpoint))return result(false);
+  int64_t n=lower_bound(key(p));if(n>=indexed_catalog.decode_u32(8)||indexed_catalog.decode_u64(12+n*40)!=key(p))return result(false);
+  Bytes id=indexed_catalog.slice(20+n*40,52+n*40),packet;
+  if(!read(id,".water",REGION_LIMIT,packet)||!packet_valid(p,packet))return result(false);
+  auto out=result(true);out["packet"]=packet;out["digest"]=id;return out;
  }
+ godot::Dictionary checkpoint_page(const Bytes &checkpoint,int64_t cursor,int64_t limit){
+  std::lock_guard<std::mutex> lock(mutex);
+  if(lease==INVALID_HANDLE_VALUE||cursor<0||limit<1||limit>256||!index(checkpoint))return result(false);
+  int64_t count=indexed_catalog.decode_u32(8);if(cursor>count)return result(false);
+  int64_t end=std::min(count,cursor+limit);godot::PackedInt32Array coordinates;Bytes digests;
+  coordinates.resize((end-cursor)*3);digests.resize((end-cursor)*32);
+  for(int64_t n=cursor;n<end;++n){auto p=coordinate(indexed_catalog.decode_u64(12+n*40));int64_t i=n-cursor;
+   coordinates.set(i*3,p.x);coordinates.set(i*3+1,p.y);coordinates.set(i*3+2,p.z);
+   std::memcpy(digests.ptrw()+i*32,indexed_catalog.ptr()+20+n*40,32);
+  }
+  auto out=result(true);out["coordinates"]=coordinates;out["digests"]=digests;out["cursor"]=end;out["complete"]=end==count;return out;
+ }
+ godot::Dictionary index_stats(){std::lock_guard<std::mutex> lock(mutex);godot::Dictionary out;out["loads"]=index_loads;out["hits"]=index_hits;out["bytes"]=indexed_catalog.size()+indexed_id.size();return out;}
 };
 }
