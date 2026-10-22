@@ -11,6 +11,7 @@ static void initialize(ModuleInitializationLevel level) {
         GDREGISTER_CLASS(terraforest::NativeWaterTerrainPatch);
         GDREGISTER_CLASS(terraforest::NativeWaterTerrainBatch);
         GDREGISTER_CLASS(terraforest::NativeWaterMapIdentity);
+        GDREGISTER_CLASS(terraforest::NativeWaterRegionReceipt);
         GDREGISTER_CLASS(terraforest::NativeRegionalWater);
         GDREGISTER_CLASS(terraforest::NativeWaterSnapshot);
         GDREGISTER_CLASS(terraforest::NativeWaterRegionStore);

@@ -2216,3 +2216,31 @@ Live water eviction remains disabled. The next required work is verified durable
 retirement and selective runtime loading/save handoff, including map/far visual
 preservation. The edited-coast capacity failure remains unresolved.
 Integrated normal-world scoop/save/reopen also passes (18.62 s / 9.52 s harness runs; not performance acceptance).
+
+
+### Verified edited-water retirement primitive (2026-10-22)
+
+NativeWaterRegionStore now issues an immutable native receipt only after successful
+verified publication/read. The receipt holds coordinate, exact packet and digest;
+script-created empty receipts are invalid. The bounded I/O worker passes these
+receipts back with its existing epoch/ticket result. NativeRegionalWater retirement
+requires matching revision and byte-identical current region, refuses active mesh
+publication/fill, then replaces resident ownership with the durable digest. It
+releases cell/contact storage and schedules halo mesh retirement through the normal
+publication path. It does not put edited regions in the pristine RAM cache.
+
+The native regression exercises worker write/read, stale revision, changed-packet
+rejection even with a current revision, exactly-once retirement, exact quantity
+reload, empty overrides, and failed publication without a receipt. It also publishes
+initial geometry and verifies retirement clears its picking cache. Existing I/O and
+merged-checkpoint save tests pass. Ordinary in-world save/reopen passes (16.20 s /
+7.85 s whole harness runs, not performance acceptance). Evidence:
+`evidence/water_region_retirement/`. Both native configurations rebuilt.
+
+This is not yet live gameplay eviction. Runtime must retain the owning store,
+reject wrong-epoch completions, release consumed receipt buffers, preserve all
+unloaded references in compound saves and account resident versus archived amounts.
+The receipt proves a verified blob write/read, not compound-save publication or
+protection against later external file deletion. Retention/GC must respect these
+references. Selective loading, map/far visual preservation and the actual edited
+travel/capacity acceptance remain required. No increase to resident capacity.

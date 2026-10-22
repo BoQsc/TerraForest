@@ -248,6 +248,7 @@ void NativeRegionalWater::_bind_methods(){
     ClassDB::bind_method(D_METHOD("next_mesh","include_contacts"),&NativeRegionalWater::next_mesh,DEFVAL(false));
     ClassDB::bind_method(D_METHOD("statistics"),&NativeRegionalWater::statistics);
     ClassDB::bind_method(D_METHOD("capture_snapshot","catalog"),&NativeRegionalWater::capture_snapshot);
+    ClassDB::bind_method(D_METHOD("retire_region","receipt","expected_revision"),&NativeRegionalWater::retire_region);
     ClassDB::bind_method(D_METHOD("register_deferred_regions","coordinates","digests"),&NativeRegionalWater::register_deferred_regions);
     ClassDB::bind_method(D_METHOD("has_deferred_overlap","bounds"),&NativeRegionalWater::has_deferred_overlap);
     ClassDB::bind_method(D_METHOD("deferred_region_page","cursor","limit"),&NativeRegionalWater::deferred_region_page);
@@ -1768,4 +1769,27 @@ Dictionary terraforest::NativeRegionalWater::deferred_region_page(int64_t cursor
  auto it=deferred_regions.lower_bound(Key(cursor));PackedInt32Array keys;PackedByteArray digests;
  for(int64_t count=0;it!=deferred_regions.end()&&count<limit;++it,++count){auto p=position(it->first);keys.push_back(p.x);keys.push_back(p.y);keys.push_back(p.z);digests.append_array(it->second);}
  out["ok"]=true;out["coordinates"]=keys;out["digests"]=digests;out["complete"]=it==deferred_regions.end();out["cursor"]=it==deferred_regions.end()?int64_t(0):int64_t(it->first);return out;
+}
+
+// Only a verified store receipt can release edited authoritative data. This is
+// main-thread publication; the I/O worker never mutates the live water world.
+bool terraforest::NativeRegionalWater::retire_region(const Ref<NativeWaterRegionReceipt> &receipt,int64_t expected_revision){
+ if(receipt.is_null()||receipt->digest.size()!=32||receipt->packet.is_empty()||expected_revision<0||uint64_t(expected_revision)!=map_revision)return false;
+ if(fill.running||batch_active||publish_pending||deferred_regions.size()>=65536)return false;
+ const auto p=receipt->coordinate;const Key k=key(p);auto found=regions.find(k);
+ if(found==regions.end()||found->second.ocean_state!=2||deferred_regions.count(k)||ocean_cache.count(k))return false;
+ // Includes quantities, contacts, vacancies, and edit flags. A write of an older
+ // snapshot is not permission to discard changes made while that write ran.
+ if(capture_region_snapshot(p)!=receipt->packet)return false;
+ deferred_regions.emplace(k,receipt->digest);
+ for(auto amount:found->second.water)total-=amount;
+ if(found->second.structures)solid_cache_bytes-=found->second.structures->bytes;
+ request_set.erase(k);requests.erase(std::remove(requests.begin(),requests.end(),k),requests.end());
+ restored_cache.erase(k);regions.erase(found);invalidate_snapshot(false);limit=false;
+ // Retire renderer/picking through the normal coherent mesh publication path.
+ for(int z=-1;z<=1;++z)for(int y=-1;y<=1;++y)for(int x=-1;x<=1;++x){
+  auto n=p+Vector3i(x,y,z);if(n.x<0||n.x>=500||n.y<0||n.y>=64||n.z<0||n.z>=500)continue;
+  Key owner=key(n);if(mesh_set.insert(owner).second)meshes.push_back(owner);
+ }
+ return true;
 }

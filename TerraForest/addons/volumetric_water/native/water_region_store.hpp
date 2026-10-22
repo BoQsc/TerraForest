@@ -95,7 +95,8 @@ public:
  void close(){std::lock_guard<std::mutex> lock(mutex);close_unlocked();}
  godot::Dictionary publish_region(const godot::Vector3i &p,const Bytes &packet){std::lock_guard<std::mutex> lock(mutex);
   if(lease==INVALID_HANDLE_VALUE||!valid(p)||packet.size()>REGION_LIMIT||!packet_valid(p,packet))return result(false);
-  Bytes id;if(!publish(packet,".water",id))return result(false);auto out=result(true);out["digest"]=id;return out;
+  Bytes id;if(!publish(packet,".water",id))return result(false);auto out=result(true);out["digest"]=id;
+  godot::Ref<NativeWaterRegionReceipt> receipt;receipt.instantiate();receipt->coordinate=p;receipt->packet=packet;receipt->digest=id;out["receipt"]=receipt;return out;
  }
  godot::Dictionary publish_checkpoint(const godot::PackedInt32Array &coordinates,const godot::Array &digests){std::lock_guard<std::mutex> lock(mutex);
   if(lease==INVALID_HANDLE_VALUE||coordinates.size()%3||digests.size()!=coordinates.size()/3||digests.size()>65536)return result(false);
@@ -113,7 +114,8 @@ public:
   int64_t n=lower_bound(key(p));if(n>=indexed_catalog.decode_u32(8)||indexed_catalog.decode_u64(12+n*40)!=key(p))return result(false);
   Bytes id=indexed_catalog.slice(20+n*40,52+n*40),packet;
   if(!read(id,".water",REGION_LIMIT,packet)||!packet_valid(p,packet))return result(false);
-  auto out=result(true);out["packet"]=packet;out["digest"]=id;return out;
+  auto out=result(true);out["packet"]=packet;out["digest"]=id;
+  godot::Ref<NativeWaterRegionReceipt> receipt;receipt.instantiate();receipt->coordinate=p;receipt->packet=packet;receipt->digest=id;out["receipt"]=receipt;return out;
  }
  godot::Dictionary checkpoint_page(const Bytes &checkpoint,int64_t cursor,int64_t limit){
   std::lock_guard<std::mutex> lock(mutex);

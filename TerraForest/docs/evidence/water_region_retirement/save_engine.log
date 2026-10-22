@@ -1,0 +1,17 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS isolated store opens
+PASS resident edit merges with deferred distant reference
+PASS unloaded edit preserved byte exactly
+PASS new local edit included
+PASS replacement does not duplicate or remove membership
+PASS empty override replaces only its inherited region
+PASS unloaded second edit survives local empty replacement
+PASS prior checkpoint still restores original water
+PASS save with no resident edits preserves all deferred references
+PASS pristine resident overlap cannot hide deferred edit
+PASS missing inherited checkpoint aborts save
+PASS combined eager compatibility restore retains exact total and empty ownership
+PASS store reopens
+PASS merged checkpoint survives reopen exactly
+WATER_DEFERRED_SAVE failures=0

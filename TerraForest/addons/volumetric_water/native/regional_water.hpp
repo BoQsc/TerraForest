@@ -20,6 +20,14 @@
 #include "water_cell_profile.hpp"
 
 namespace terraforest {
+class NativeWaterRegionReceipt : public godot::RefCounted {
+ GDCLASS(NativeWaterRegionReceipt,godot::RefCounted)
+ friend class NativeWaterRegionStore;
+ friend class NativeRegionalWater;
+ godot::Vector3i coordinate;
+ godot::PackedByteArray packet,digest;
+protected: static void _bind_methods() {}
+};
 class NativeRegionalWater;
 class NativeWaterMapIdentity : public godot::RefCounted {
  GDCLASS(NativeWaterMapIdentity,godot::RefCounted)
@@ -223,6 +231,7 @@ public:
     godot::Dictionary survey_ocean(int64_t cursor,int64_t expected_revision) const;
     // Single-region transfer primitive; the caller must establish checkpoint and
     // terrain identity before reusing occupancy. It never retires live data.
+    bool retire_region(const godot::Ref<NativeWaterRegionReceipt> &receipt,int64_t expected_revision);
     bool register_deferred_regions(const godot::PackedInt32Array &coordinates,const godot::PackedByteArray &digests);
     godot::Dictionary deferred_region_page(int64_t cursor,int64_t limit) const;
     godot::PackedInt32Array edited_region_coordinates() const;

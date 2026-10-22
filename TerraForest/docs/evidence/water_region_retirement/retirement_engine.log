@@ -1,0 +1,26 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS store opens
+PASS bounded worker starts
+PASS resident fixture
+PASS initial render and pick geometry published
+PASS unverified receipt cannot release data
+PASS snapshot submitted
+PASS worker supplies verified receipt
+PASS edit after capture
+PASS stale revision rejected
+PASS stale packet rejected even with current revision
+PASS newer snapshot submitted
+PASS checkpoint owns saved version
+PASS verified unchanged region retires
+PASS retirement releases cells and schedules coherent mesh removal
+PASS retirement publication clears stale picking geometry
+PASS receipt cannot release region twice
+PASS deferred identity matches durable bytes
+PASS reload submitted
+PASS reload restores exact edited packet
+PASS reload restores exact quantity once
+PASS empty edited region retains ownership on retirement
+PASS empty override reload remains dry
+PASS failed write cannot issue retirement receipt
+WATER_REGION_RETIREMENT failures=0
