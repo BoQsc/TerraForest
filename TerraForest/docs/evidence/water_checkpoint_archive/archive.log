@@ -1,0 +1,23 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS isolated store opens
+PASS checkpoint worker configured
+PASS region write submitted
+PASS checkpoint submitted after durable region acknowledgement
+PASS checkpoint completion occupies bounded queue
+PASS frozen checkpoint job succeeds
+PASS compound archive leased
+PASS compound archive selects acknowledged checkpoint
+PASS new empty override submitted
+PASS new blob acknowledged without changing canonical save
+PASS uncommitted blob does not alter prior saved world
+PASS missing-blob checkpoint validation runs on worker
+PASS failed newer checkpoint leaves canonical save untouched
+PASS valid replacement checkpoint submitted
+PASS replacement checkpoint acknowledged
+PASS new checkpoint and inventory published together
+PASS canonical and backup retain corresponding inventory versions
+PASS canonical checkpoint selects empty override
+PASS backup checkpoint still selects original water
+PASS malformed checkpoint request rejected
+WATER_CHECKPOINT_ARCHIVE failures=0

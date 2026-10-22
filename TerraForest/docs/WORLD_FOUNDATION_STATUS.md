@@ -1989,3 +1989,29 @@ rebuilt. Initial index loading still validates the complete bounded manifest on 
 I/O owner; this is not a main-thread runtime API. Checkpoint publication still
 validates all references. Live world checkpoint/provider integration, retention/GC,
 eviction, unloaded edited-water rendering and scaling gates remain unfinished.
+
+
+## Worker checkpoint publication and compound archive proof — 2026-10-22
+
+NativeWaterRegionIO now accepts immutable packed coordinate/digest submissions for
+checkpoint publication on its existing bounded worker. Checkpoint jobs share queue
+limits and cancellation with region transfers, reserve submission bytes plus 8 MiB
+for validation work, and return a ticket/epoch-tagged checkpoint acknowledgement.
+Caller packed-array mutation after submission cannot modify the job. Reservation
+accounting is a payload/work allowance, not a total-process memory cap.
+
+`water_checkpoint_archive.gd` passes using the actual NativeWorldArchive codec and
+durable publisher with synthetic terrain/inventory sections and real water packets.
+It verifies region acknowledgement before checkpoint publication, queue backpressure,
+immutable submissions, old canonical preservation while newer blobs exist, missing
+blob rejection leaving the canonical unchanged, and canonical/backup selection of
+matching old/new water and inventory markers. Existing region-I/O tests pass.
+Evidence: `evidence/water_checkpoint_archive/`. Both DLL targets rebuilt.
+
+This proves the native transaction composition, not gameplay provider integration:
+synthetic terrain/inventory markers are not full gameplay snapshots. The actual
+lake provider still saves its monolithic v10 snapshot and cannot evict edits. Next
+required integration remains a checkpoint-bearing water component format with
+legacy migration, archive/provider and clone-tool support, safe acknowledged
+unloading, unloaded map/far representation, retention/GC and actual-world travel
+and save/reopen checks. The edited-coast capacity regression remains failing.
