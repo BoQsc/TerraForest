@@ -141,6 +141,7 @@ class NativeRegionalWater : public godot::RefCounted {
     mutable uint64_t query_builds=0,query_cache_hits=0;
     const QuerySurface *query_surface(Key k,QuerySurface &temporary) const;
     std::map<Key,Region> regions;
+    std::map<Key,godot::PackedByteArray> deferred_regions;
     struct OceanCached {Region region;uint64_t bytes=0,stamp=0;};
     std::map<Key,OceanCached> ocean_cache;
     uint64_t ocean_cache_bytes=0,ocean_cache_clock=0,ocean_cache_hits=0;
@@ -222,6 +223,8 @@ public:
     godot::Dictionary survey_ocean(int64_t cursor,int64_t expected_revision) const;
     // Single-region transfer primitive; the caller must establish checkpoint and
     // terrain identity before reusing occupancy. It never retires live data.
+    bool register_deferred_regions(const godot::PackedInt32Array &coordinates,const godot::PackedByteArray &digests);
+    godot::Dictionary deferred_region_page(int64_t cursor,int64_t limit) const;
     godot::PackedInt32Array edited_region_coordinates() const;
     godot::PackedByteArray capture_unarchived_snapshot(const godot::PackedByteArray &catalog) const;
     godot::PackedByteArray capture_region_snapshot(const godot::Vector3i &coordinate) const;

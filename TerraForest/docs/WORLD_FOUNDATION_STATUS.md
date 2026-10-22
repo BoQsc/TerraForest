@@ -2145,3 +2145,32 @@ work remains native resident/deferred ownership, acknowledgement-guarded retirem
 selective runtime admission, map/far visuals and reference-aware storage cleanup.
 The edited-coast exhaustion test is still not resolved. Publication's full-reference
 validation is also an explicit scaling cost to address without weakening integrity.
+
+
+## Native deferred-water identity guards — 2026-10-22
+
+NativeRegionalWater can now register bounded batches (256) of deferred region keys
+and exact blob digests, up to 65,536 references, atomically rejecting resident/cache
+overlap, duplicate input and identity conflicts. Repeated identical batches are
+idempotent. Deferred keys block procedural ocean admission and generic region
+allocation. Region restoration hashes the packet against its deferred identity
+before mutation, then atomically replaces that reference with resident ownership.
+A bounded metadata export exposes deferred references for the save merge path.
+Whole-world restoration clears/swaps this state correctly. Legacy whole snapshots
+and frozen captures fail closed while deferred references exist, preventing a
+partial resident-only save from silently losing distant edits.
+
+Tests verify exact procedural footprint exclusion (415 allocated rather than 416),
+registration atomicity/conflicts, failed capture, wrong-blob rejection, exact single
+admission, metadata export and deferred clearing during world replacement. Existing
+residency and deferred-save checks pass. Evidence: `evidence/water_deferred_ownership/`.
+Debug/release DLLs rebuilt. An initial test queried a nonexistent request status key;
+that ineffective assertion was replaced with exact resident/pending counts before
+recording final passing evidence.
+
+This state is not installed by gameplay yet. No automatic eviction is enabled.
+Before switching: add unavailable-overlap edit admission, guarded durable retirement,
+selective provider restore/save handoff, map and far/near visuals for unloaded edits,
+and actual-world travel/capacity checks. Existing query/depth paths do not yet expose
+complete pending semantics for unloaded regions, so treating this primitive alone
+as a playable selective loader would be incorrect. Capacity exhaustion remains open.

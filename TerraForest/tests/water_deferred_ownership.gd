@@ -1,0 +1,28 @@
+# SPDX-License-Identifier: 0BSD
+extends "res://tests/water_region_store.gd"
+func _initialize()->void:
+ var data:PackedByteArray=packet(125000);var hash:=HashingContext.new();hash.start(HashingContext.HASH_SHA256);hash.update(data);var digest:=hash.finish()
+ var water=ClassDB.instantiate("NativeRegionalWater");var keys:=PackedInt32Array([1,9,250])
+ check(water.register_deferred_regions(keys,digest),"deferred identity admitted")
+ var revision:int=water.survey_revision_id()
+ check(water.register_deferred_regions(keys,digest) and water.survey_revision_id()==revision,"same identity retry is idempotent")
+ var wrong:=digest.duplicate();wrong[0]^=1
+ check(not water.register_deferred_regions(keys,wrong),"conflicting deferred identity rejected")
+ check(not water.register_deferred_regions(PackedInt32Array([2,9,250,1,9,250]),wrong+wrong) and water.statistics().deferred_regions==1,"invalid batch leaves metadata unchanged")
+ for i in 25:water.update_ocean_residency(Vector3(4,40,1000),32)
+ check(water.statistics().regions==415 and water.statistics().pending_regions==415,"procedural footprint omits exactly the deferred region")
+ var catalog:PackedByteArray=ClassDB.instantiate("NativeLakeCatalog").encode([])
+ check(water.capture_snapshot(catalog).is_empty(),"legacy capture refuses to drop deferred references")
+ var frozen:Variant=water.capture_storage_snapshot(catalog)
+ check(frozen is PackedByteArray and frozen.is_empty(),"deferred legacy worker capture fails closed")
+ check(not water.restore_region_snapshot(Vector3i(1,9,250),packet(0),water.survey_revision_id(),true),"wrong acknowledged blob cannot replace deferred water")
+ check(water.statistics().deferred_regions==1,"failed admission retains deferred ownership")
+ var page:Dictionary=water.deferred_region_page(0,1)
+ check(page.ok and page.complete and page.coordinates==keys and page.digests==digest,"metadata export preserves checkpoint references")
+ check(water.restore_region_snapshot(Vector3i(1,9,250),data,water.survey_revision_id(),true),"matching blob becomes resident")
+ check(water.statistics().deferred_regions==0 and water.capture_region_snapshot(Vector3i(1,9,250))==data,"successful admission consumes deferred entry exactly once")
+ check(not water.register_deferred_regions(keys,digest),"resident region cannot simultaneously be deferred")
+ check(water.register_deferred_regions(PackedInt32Array([100,9,250]),digest),"second deferred region installed before whole-world reset")
+ var empty=ClassDB.instantiate("NativeRegionalWater");check(water.restore_snapshot(empty.capture_snapshot(catalog)),"whole-world replacement remains valid")
+ check(water.statistics().deferred_regions==0,"world replacement clears deferred state")
+ print("WATER_DEFERRED_OWNERSHIP failures=",failures);quit(1 if failures else 0)
