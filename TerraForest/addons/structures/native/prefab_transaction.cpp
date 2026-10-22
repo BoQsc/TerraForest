@@ -206,6 +206,9 @@ Dictionary NativePrefabPlacement::commit(const Array &protected_boxes) {
     if(busy||!pending||!pending->ready)return failure("Placement is not ready");
     if(!current()||!protection_valid(protected_boxes,pending->envelope)){pending.reset();return failure("World, source or protection changed before commit");}
     const auto started=Time::get_singleton()->get_ticks_usec();
+    auto *admission_blocks=Object::cast_to<NativeBlockWorld>(ObjectDB::get_instance(pending->block_id));
+    if(!admission_blocks->admits_edit(pending->changed_bounds)){pending.reset();return failure("Water data unavailable at building location");}
+    if(!current()){pending.reset();return failure("World changed during edit admission");}
     auto work=std::move(pending);auto &p=*work;busy=true;
     auto *blocks=Object::cast_to<NativeBlockWorld>(ObjectDB::get_instance(p.block_id));
     // No validation, per-cell traversal or scripts in this publication section.

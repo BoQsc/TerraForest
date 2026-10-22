@@ -1,0 +1,20 @@
+# SPDX-License-Identifier: 0BSD
+extends "res://tests/water_region_store.gd"
+func _initialize()->void:
+ var water=ClassDB.instantiate("NativeRegionalWater")
+ var data:PackedByteArray=packet(125000);var hash:=HashingContext.new();hash.start(HashingContext.HASH_SHA256);hash.update(data)
+ check(water.register_deferred_regions(PackedInt32Array([1,9,250]),hash.finish()),"deferred water fixture")
+ var blocks=ClassDB.instantiate("NativeBlockWorld")
+ blocks.configure_history(4096,8)
+ check(blocks.set_cells(PackedInt32Array([4,36,1000,1])),"initial building fixture")
+ var before:PackedByteArray=blocks.capture_snapshot();var history:Dictionary=blocks.history_stats()
+ blocks.set_edit_admission(func(bounds:AABB)->bool:return not water.has_deferred_overlap(bounds))
+ check(not blocks.set_cells(PackedInt32Array([4,36,1000,0,20,36,1000,1])) and blocks.capture_snapshot()==before,"mixed batch blocked atomically")
+ check(not blocks.undo() and blocks.capture_snapshot()==before and blocks.history_stats()==history,"blocked undo retains history and blocks")
+ var region:PackedByteArray=blocks.capture_region(Vector3i(0,0,15))
+ var other=ClassDB.instantiate("NativeBlockWorld");other.set_cells(PackedInt32Array([5,36,1000,1]))
+ check(not blocks.restore_region(other.capture_region(Vector3i(0,0,15)),region) and blocks.capture_snapshot()==before,"resident replacement blocked before publication")
+ check(water.restore_region_snapshot(Vector3i(1,9,250),data,water.survey_revision_id(),true),"water becomes available")
+ check(blocks.undo() and blocks.redo() and blocks.capture_snapshot()==before,"undo and redo recover when water is ready")
+ other.free();blocks.free()
+ print("WATER_BUILDING_ADMISSION failures=",failures);quit(1 if failures else 0)

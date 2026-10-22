@@ -35,6 +35,10 @@ func run() -> void:
 	for key: String in models:exact_models=exact_models and models[key].capture_snapshot()==revisions[key]
 	check(exact_models,"rejected transactions preserve every model store")
 	for key: String in models:check(models[key].restore_snapshot(revisions[key]) and not models[key].survey_cache_identity().is_empty(),"prefab fixture has certified model identity")
+	world.blocks.set_edit_admission(func(_bounds:AABB)->bool:return false)
+	check(not coordinator.place_prefab(world.blocks,inventory,asset,Vector3i(40,40,40),0,models,catalog.recipes(),[]) and inventory.snapshot().slots==before.slots and world.blocks.capture_snapshot()==blocks_before,"water admission rejects prefab and refunds inventory")
+	for key: String in models:check(models[key].capture_snapshot()==revisions[key],"water admission preserves attached models")
+	world.blocks.set_edit_admission(Callable())
 	var observed: Array=[]
 	world.blocks.changed.connect(func():
 		observed.append(models["furniture/table/v1"].get_ids().size()==1 and models["furniture/chair/v1"].get_ids().size()==1 and models["furniture/shelf/v1"].get_ids().size()==1),CONNECT_ONE_SHOT)

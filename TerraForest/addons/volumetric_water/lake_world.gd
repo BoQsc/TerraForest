@@ -120,6 +120,7 @@ func _ready() -> void:
  # the committed terrain worker samples; they never flow against stale solids.
  # Accepted terrain occupancy patches remove water replaced by solid terrain.
  if blocks!=null:
+  blocks.set_edit_admission(func(bounds:AABB)->bool:return not water.has_deferred_overlap(blocks.global_transform*bounds))
   blocks.cells_changed.connect(func(bounds:AABB):water.invalidate_buildings(blocks.global_transform*bounds);_occupancy_failure="";_discard_builder())
   blocks.changed.connect(func():_structure_revision+=1)
  _epoch=terrain.epoch

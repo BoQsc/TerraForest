@@ -2195,3 +2195,24 @@ Still required before selective gameplay loading: building mutation admission,
 loading requests/retries, guarded durable retirement, provider save/load handoff,
 map and distant visual handling, and actual edited travel/capacity proof. Live
 unloading remains disabled; the documented edited-region capacity failure is open.
+
+
+### Building admission over deferred water (2026-10-22)
+
+Native block edits now check an admission callback after staging and before any
+publication. LakeWorld connects it to deferred-water overlap in world coordinates.
+The same gate covers undo/redo, authored resident-region replacement and combined
+prefab commits. Ordinary loading of an identical saved building region remains a
+paging operation rather than a new solid replacement.
+
+Tests prove mixed block batches do not partly commit, blocked undo retains its
+history, resident replacement leaves data unchanged, and edits resume after water
+loads. The combined prefab regression verifies rejected placement refunds inventory
+and preserves all attached models, then successfully places again. This test caught
+and fixed a pending-transaction cleanup bug on admission rejection. Evidence:
+`evidence/water_building_admission/`. Debug/release structures DLLs rebuilt.
+
+Live water eviction remains disabled. The next required work is verified durable
+retirement and selective runtime loading/save handoff, including map/far visual
+preservation. The edited-coast capacity failure remains unresolved.
+Integrated normal-world scoop/save/reopen also passes (18.62 s / 9.52 s harness runs; not performance acceptance).

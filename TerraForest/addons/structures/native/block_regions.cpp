@@ -111,6 +111,7 @@ bool NativeBlockWorld::restore_region_impl(const PackedByteArray &bytes,const Pa
     if(chunks.size()-removed+restored.size()>2048)return false;
     if(unloaded==unloaded_regions.end()&&bytes==expected_current)return true;
     const bool replaces_resident=unloaded==unloaded_regions.end();
+    if(replaces_resident&&!admits_edit(AABB(Vector3(region.x*64,region.y*64,region.z*64),Vector3(64,64,64))))return false;
     unloaded_regions.erase(region);replace_region_chunks(region,std::move(restored),!preserve_history,!replaces_resident);
     // Paging the same saved region preserves water caches. Replacing resident
     // authored geometry must invalidate occupancy just like ordinary edits.

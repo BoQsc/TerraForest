@@ -46,6 +46,7 @@ void NativeBlockWorld::_bind_methods() {
     ClassDB::bind_method(D_METHOD("restore_storage_state","resident","keys","checksums"),&NativeBlockWorld::restore_storage_state);
     ClassDB::bind_method(D_METHOD("raycast_cells","from","to"),&NativeBlockWorld::raycast_cells);
     ClassDB::bind_method(D_METHOD("raycast_scene","from","to","collision_mask","exclude"),&NativeBlockWorld::raycast_scene,DEFVAL(3),DEFVAL(TypedArray<RID>()));
+    ClassDB::bind_method(D_METHOD("set_edit_admission","callback"),&NativeBlockWorld::set_edit_admission);
     ClassDB::bind_method(D_METHOD("set_cells","records"),&NativeBlockWorld::set_cells);
     ClassDB::bind_method(D_METHOD("configure_history","byte_limit","step_limit"),&NativeBlockWorld::configure_history);
     ClassDB::bind_method(D_METHOD("clear_history"),&NativeBlockWorld::clear_history);
@@ -111,6 +112,12 @@ bool NativeBlockWorld::set_cells(const PackedInt32Array &records) {
     if(changed)emit_signal("changed");
     return true;
 }
+bool NativeBlockWorld::admits_edit(const AABB &bounds) const {
+    if(edit_admission.is_null())return true;
+    if(!edit_admission.is_valid())return false;
+    Variant result=edit_admission.call(bounds);
+    return result.get_type()==Variant::BOOL&&bool(result);
+}
 bool NativeBlockWorld::apply_cells(const PackedInt32Array &records,bool record_history,bool &changed,AABB *deferred_bounds) {
     changed=false;
     if(records.size()%4 || records.size()>4*262144) return false;
@@ -139,6 +146,7 @@ bool NativeBlockWorld::apply_cells(const PackedInt32Array &records,bool record_h
         const uint16_t bit=uint16_t(1u<<(y&15));
         column=w?uint16_t(column|bit):uint16_t(column&~bit);
     }
+    if(has_bounds&&!admits_edit(changed_bounds))return false;
     int final_count=int(chunks.size());
     for(auto &entry:staged) final_count+=(entry.second.count>0)-(chunks.count(entry.first)>0);
     if(final_count>MAX_CHUNKS) return false;

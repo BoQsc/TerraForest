@@ -1,0 +1,10 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS deferred water fixture
+PASS initial building fixture
+PASS mixed batch blocked atomically
+PASS blocked undo retains history and blocks
+PASS resident replacement blocked before publication
+PASS water becomes available
+PASS undo and redo recover when water is ready
+WATER_BUILDING_ADMISSION failures=0

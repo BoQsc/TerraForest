@@ -7,6 +7,7 @@
 #include <godot_cpp/variant/packed_int32_array.hpp>
 #include <godot_cpp/variant/packed_byte_array.hpp>
 #include <godot_cpp/variant/packed_vector3_array.hpp>
+#include <godot_cpp/variant/callable.hpp>
 #include <array>
 #include <map>
 #include <set>
@@ -120,6 +121,8 @@ class NativeBlockWorld : public Node3D {
     std::deque<std::vector<BlockChange>> undo_edits,redo_edits;
     uint64_t history_bytes=0,history_budget=0,unrecorded_edits=0;
     int history_steps=0;
+    Callable edit_admission;
+    bool admits_edit(const AABB &bounds) const;
     bool apply_cells(const PackedInt32Array &records,bool record_history,bool &changed,AABB *deferred_bounds=nullptr);
     void remember_edit(std::vector<BlockChange> &&changes);
     void trim_history();
@@ -140,6 +143,7 @@ class NativeBlockWorld : public Node3D {
 protected:
     static void _bind_methods();
 public:
+    void set_edit_admission(const Callable &callback) { edit_admission=callback; }
     bool set_texture_set(const String &name);
     String get_texture_set() const { return texture_set.is_empty()?String("original"):texture_set; }
     PackedByteArray capture_region(Vector3i region) const;
