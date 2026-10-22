@@ -1859,3 +1859,29 @@ of edited water remains unimplemented, coastal loading remains slow, and authore
 world-content coverage and outside-border gameplay remain open. The reproducible
 check defaults to the existing prepared coastal fixture and accepts --source for
 another compatible prepared coastal slot.
+
+
+## Edited-coast capacity failure — 2026-10-22
+
+A short native residency-policy probe now reproduces the previously unmeasured
+edited-water scaling limit. `tests/ocean_edited_scaling.gd` intentionally exits 1
+while the requirement fails; this is not a passing regression or accepted baseline.
+It admits near-coast regions, invalidates one tiny AABB per separated site through
+the production API, then moves focus inland and drains bounded retirement calls.
+The invalidation halo touches eight regions per site; each site pins 144 regions
+including pristine neighbors. At site 26, admission hits the 4096-region limit;
+3744 remain after retirement, occupying 34,265,088 native cell bytes. The pristine
+control performs all 80 stops and returns to zero resident regions without a
+capacity failure. Evidence: `evidence/ocean_edited_scaling/`.
+
+This is a storage-policy test, intentionally without terrain sampling, contacts,
+meshing or rendering. It does not establish real-game memory usage or FPS, nor
+claim that 26 bucket clicks reproduce it (terrain invalidation has a larger halo).
+It isolates retained edited ownership as the cause rather than terrain-generation
+or GPU cost. The 1200-region post-travel diagnostic budget also fails at site 9;
+capacity exhaustion is independent of that chosen diagnostic budget.
+
+Required next implementation: durable edited-water region paging, integrated with
+compound world-save checkpoints. Raising MAX_REGIONS, evicting edits into the
+pristine cache, or keeping an unbounded second map in RAM are not fixes. Follow
+`OCEAN_EDITED_STORAGE.md` for the exact consistency and acceptance requirements.

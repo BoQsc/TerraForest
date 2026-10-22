@@ -1,0 +1,190 @@
+{
+  "bounded": false,
+  "pristine_control_regions": 0,
+  "resident_budget": 1200,
+  "scope": "Native residency policy, no terrain sampling or rendering; one tiny invalidation per separated coast site",
+  "sites": [
+    {
+      "bytes": 1317888,
+      "capacity": false,
+      "edited": 8,
+      "regions": 144,
+      "stop": 1
+    },
+    {
+      "bytes": 2635776,
+      "capacity": false,
+      "edited": 16,
+      "regions": 288,
+      "stop": 2
+    },
+    {
+      "bytes": 3953664,
+      "capacity": false,
+      "edited": 24,
+      "regions": 432,
+      "stop": 3
+    },
+    {
+      "bytes": 5271552,
+      "capacity": false,
+      "edited": 32,
+      "regions": 576,
+      "stop": 4
+    },
+    {
+      "bytes": 6589440,
+      "capacity": false,
+      "edited": 40,
+      "regions": 720,
+      "stop": 5
+    },
+    {
+      "bytes": 7907328,
+      "capacity": false,
+      "edited": 48,
+      "regions": 864,
+      "stop": 6
+    },
+    {
+      "bytes": 9225216,
+      "capacity": false,
+      "edited": 56,
+      "regions": 1008,
+      "stop": 7
+    },
+    {
+      "bytes": 10543104,
+      "capacity": false,
+      "edited": 64,
+      "regions": 1152,
+      "stop": 8
+    },
+    {
+      "bytes": 11860992,
+      "capacity": false,
+      "edited": 72,
+      "regions": 1296,
+      "stop": 9
+    },
+    {
+      "bytes": 13178880,
+      "capacity": false,
+      "edited": 80,
+      "regions": 1440,
+      "stop": 10
+    },
+    {
+      "bytes": 14496768,
+      "capacity": false,
+      "edited": 88,
+      "regions": 1584,
+      "stop": 11
+    },
+    {
+      "bytes": 15814656,
+      "capacity": false,
+      "edited": 96,
+      "regions": 1728,
+      "stop": 12
+    },
+    {
+      "bytes": 17132544,
+      "capacity": false,
+      "edited": 104,
+      "regions": 1872,
+      "stop": 13
+    },
+    {
+      "bytes": 18450432,
+      "capacity": false,
+      "edited": 112,
+      "regions": 2016,
+      "stop": 14
+    },
+    {
+      "bytes": 19768320,
+      "capacity": false,
+      "edited": 120,
+      "regions": 2160,
+      "stop": 15
+    },
+    {
+      "bytes": 21086208,
+      "capacity": false,
+      "edited": 128,
+      "regions": 2304,
+      "stop": 16
+    },
+    {
+      "bytes": 22404096,
+      "capacity": false,
+      "edited": 136,
+      "regions": 2448,
+      "stop": 17
+    },
+    {
+      "bytes": 23721984,
+      "capacity": false,
+      "edited": 144,
+      "regions": 2592,
+      "stop": 18
+    },
+    {
+      "bytes": 25039872,
+      "capacity": false,
+      "edited": 152,
+      "regions": 2736,
+      "stop": 19
+    },
+    {
+      "bytes": 26357760,
+      "capacity": false,
+      "edited": 160,
+      "regions": 2880,
+      "stop": 20
+    },
+    {
+      "bytes": 27675648,
+      "capacity": false,
+      "edited": 168,
+      "regions": 3024,
+      "stop": 21
+    },
+    {
+      "bytes": 28993536,
+      "capacity": false,
+      "edited": 176,
+      "regions": 3168,
+      "stop": 22
+    },
+    {
+      "bytes": 30311424,
+      "capacity": false,
+      "edited": 184,
+      "regions": 3312,
+      "stop": 23
+    },
+    {
+      "bytes": 31629312,
+      "capacity": false,
+      "edited": 192,
+      "regions": 3456,
+      "stop": 24
+    },
+    {
+      "bytes": 32947200,
+      "capacity": false,
+      "edited": 200,
+      "regions": 3600,
+      "stop": 25
+    },
+    {
+      "bytes": 34265088,
+      "capacity": true,
+      "edited": 208,
+      "regions": 3744,
+      "stop": 26
+    }
+  ]
+}
