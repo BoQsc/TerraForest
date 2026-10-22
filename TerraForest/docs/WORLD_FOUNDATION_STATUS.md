@@ -2118,3 +2118,30 @@ streamed blob admission, map/far-view handling and save capture of deferred refe
 The metadata API alone must not be enabled as a partial load that omits unknown edits.
 Live eviction, capacity exhaustion, reference retention/GC and travel verification
 remain unfinished.
+
+
+## Save merge preserves deferred edited-water references — 2026-10-22
+
+Added native merge_water_snapshot(resident, inherited_checkpoint). It starts from
+an immutable inherited manifest, replaces only resident edited-region entries,
+retains unloaded references including explicit empty overrides, and publishes a new
+checkpoint without mutating the inherited one. Pristine/ordinary resident overlap
+with inherited edited ownership is rejected. Missing inherited metadata or blobs
+aborts publication. No inherited region is reconstructed into the resident water
+store during merge, though publication still validates referenced blobs sequentially
+on the worker. Existing publish_water_snapshot now uses this same merge path with
+no inherited checkpoint.
+
+Tests pass for distant reference preservation, a new local edit, exact empty-region
+replacement, no duplication, no-resident-edit save identity, old-checkpoint
+preservation, overlap/missing-checkpoint failure and exact totals after compatibility
+expansion/reopen. Production failure guards and the actual 1080p/cap60 gameplay
+scoop/save/restart also pass (whole runs 16.95 s / 8.14 s). Evidence:
+`evidence/water_deferred_save/`; both native DLL targets rebuilt.
+
+This supplies the save operation needed by future selective residency; live gameplay
+still expands all archived edits and passes no inherited deferred index. Next required
+work remains native resident/deferred ownership, acknowledgement-guarded retirement,
+selective runtime admission, map/far visuals and reference-aware storage cleanup.
+The edited-coast exhaustion test is still not resolved. Publication's full-reference
+validation is also an explicit scaling cost to address without weakening integrity.

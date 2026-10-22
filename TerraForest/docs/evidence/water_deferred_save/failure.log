@@ -1,0 +1,18 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS isolated archive leased
+PASS production save adapter creates checkpoint
+PASS canonical fixture published
+PASS production load accepts complete checkpoint
+PASS exclusive sidecar lease acquired
+PASS competing sidecar owner blocks load and writes
+PASS failed load cannot overwrite canonical save
+PASS sidecar inspection opens
+PASS corrupt blob blocks production load and writes
+PASS corrupt sidecar leaves canonical bytes unchanged
+PASS repair of dependency permits exact load
+PASS test removes only its own checkpoint
+PASS missing manifest blocks production load
+PASS save-failure injection lease acquired
+PASS frozen save failure retains canonical archive
+WATER_STORAGE_FAILURE failures=0

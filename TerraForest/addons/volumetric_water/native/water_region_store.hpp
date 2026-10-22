@@ -72,6 +72,7 @@ class NativeWaterRegionStore : public godot::RefCounted {
  void close_unlocked(){if(lease!=INVALID_HANDLE_VALUE)CloseHandle(lease);lease=INVALID_HANDLE_VALUE;directory=godot::String();indexed_id=Bytes();indexed_catalog=Bytes();index_loads=index_hits=0;}
 protected:
  static void _bind_methods(){
+  godot::ClassDB::bind_method(godot::D_METHOD("merge_water_snapshot","resident","inherited_checkpoint"),&NativeWaterRegionStore::merge_water_snapshot);
   godot::ClassDB::bind_method(godot::D_METHOD("checkpoint_window","checkpoint","minimum","maximum","cursor","limit"),&NativeWaterRegionStore::checkpoint_window);
   godot::ClassDB::bind_method(godot::D_METHOD("describe_water_snapshot","snapshot"),&NativeWaterRegionStore::describe_water_snapshot);
   godot::ClassDB::bind_method(godot::D_METHOD("publish_water_snapshot","snapshot"),&NativeWaterRegionStore::publish_water_snapshot);
@@ -157,15 +158,31 @@ public:
   auto out=result(true);out["base"]=base;out["checkpoint"]=id;out["archived_regions"]=count;out["blobs_verified"]=false;return out;
  }
  // Save-worker adapter. No live water references; no selected checkpoint mutation.
- Bytes publish_water_snapshot(const Bytes &snapshot){
-  godot::Ref<NativeRegionalWater> water;water.instantiate();if(!water->restore_snapshot(snapshot))return water->validate_snapshot(snapshot)?snapshot:Bytes();
-  auto keys=water->edited_region_coordinates();if(keys.is_empty())return snapshot;
-  auto catalog=water->snapshot_catalog(snapshot);auto base=water->capture_unarchived_snapshot(catalog);if(base.is_empty())return {};
-  godot::Array ids;
-  for(int64_t i=0;i<keys.size();i+=3){godot::Vector3i p(keys[i],keys[i+1],keys[i+2]);auto reply=publish_region(p,water->capture_region_snapshot(p));
-   if(!bool(reply["ok"]))return {};ids.append(reply["digest"]);
+ Bytes publish_water_snapshot(const Bytes &snapshot){return merge_water_snapshot(snapshot,Bytes());}
+ Bytes merge_water_snapshot(const Bytes &snapshot,const Bytes &inherited){
+  godot::Ref<NativeRegionalWater> water;water.instantiate();
+  if(!water->restore_snapshot(snapshot))return inherited.is_empty()&&water->validate_snapshot(snapshot)?snapshot:Bytes();
+  std::map<uint64_t,Bytes> entries;
+  if(!inherited.is_empty()){
+   int64_t cursor=0;
+   for(;;){auto page=checkpoint_page(inherited,cursor,256);if(!bool(page["ok"]))return {};
+    godot::PackedInt32Array keys=page["coordinates"];Bytes digests=page["digests"];
+    for(int64_t i=0;i<keys.size();i+=3)entries.emplace(key(godot::Vector3i(keys[i],keys[i+1],keys[i+2])),digests.slice(i/3*32,i/3*32+32));
+    if(bool(page["complete"]))break;cursor=page["cursor"];
+   }
   }
-  auto checkpoint=publish_checkpoint(keys,ids);if(!bool(checkpoint["ok"]))return {};
+  auto keys=water->edited_region_coordinates();if(keys.is_empty()&&entries.empty())return snapshot;
+  auto catalog=water->snapshot_catalog(snapshot);auto base=water->capture_unarchived_snapshot(catalog);if(base.is_empty())return {};
+  // Never let a pristine/ordinary resident record conceal an inherited edit.
+  int64_t offset=32+base.decode_u32(8);
+  for(uint32_t n=0;n<base.decode_u32(12);++n)if(entries.count(base.decode_u64(offset+n*9076)))return {};
+  for(int64_t i=0;i<keys.size();i+=3){godot::Vector3i p(keys[i],keys[i+1],keys[i+2]);auto reply=publish_region(p,water->capture_region_snapshot(p));
+   if(!bool(reply["ok"]))return {};entries[key(p)]=reply["digest"];
+  }
+  if(entries.size()>65536)return {};
+  godot::PackedInt32Array all_keys;godot::Array ids;
+  for(const auto &[k,id]:entries){auto p=coordinate(k);all_keys.push_back(p.x);all_keys.push_back(p.y);all_keys.push_back(p.z);ids.append(id);}
+  auto checkpoint=publish_checkpoint(all_keys,ids);if(!bool(checkpoint["ok"]))return {};
   Bytes id=checkpoint["checkpoint"],out;if(base.size()>64*1024*1024-48)return {};
   out.resize(48+base.size());std::memcpy(out.ptrw(),"TFWS\1\0\0\0",8);out.encode_u64(8,base.size());
   std::memcpy(out.ptrw()+16,id.ptr(),32);std::memcpy(out.ptrw()+48,base.ptr(),base.size());return out;

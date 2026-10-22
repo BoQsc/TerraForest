@@ -1,0 +1,35 @@
+{
+  "clone": {
+    "created": true,
+    "slot": "ocean_persist_20261022_211456",
+    "source_slot": "coast_creation_check_20261021",
+    "source_sha256": "ad6c867f4298ab1b294960c5156dbe13a5ef7e796dd8623644f19595a24d0f12",
+    "map_cache_copied": true
+  },
+  "phases": [
+    {
+      "phase": "save",
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 68252,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 16.95440329995472,
+      "passed": true
+    },
+    {
+      "phase": "reopen",
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 69196,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 8.139276500034612,
+      "passed": true
+    }
+  ]
+}
