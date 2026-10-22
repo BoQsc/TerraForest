@@ -2174,3 +2174,24 @@ selective provider restore/save handoff, map and far/near visuals for unloaded e
 and actual-world travel/capacity checks. Existing query/depth paths do not yet expose
 complete pending semantics for unloaded regions, so treating this primitive alone
 as a playable selective loader would be incorrect. Capacity exhaustion remains open.
+
+
+### Deferred water edit admission (2026-10-22)
+
+Native water now exposes a spatial deferred-overlap check using ordered region
+row lookups. Placement/refill, bucket targeting, removal brushes, bounds removal
+and initial filling refuse operations crossing deferred data before changing
+resident quantities. Terrain edit admission checks the same bounds with the
+terrain invalidation halo. This adds no region sampling or loading on its own.
+
+The targeted test mixes a resident region with its deferred neighbour and checks
+that removal, brush, placement and filling cannot partly mutate the resident
+water. Normal in-world scoop/save/reopen also passes (18.07 s / 8.72 s whole test
+runs, not frame or loading benchmarks). Evidence: `evidence/water_deferred_edit_guard/`.
+Both native DLL configurations rebuilt. These are correctness checks, not new
+visual acceptance or a capacity fix.
+
+Still required before selective gameplay loading: building mutation admission,
+loading requests/retries, guarded durable retirement, provider save/load handoff,
+map and distant visual handling, and actual edited travel/capacity proof. Live
+unloading remains disabled; the documented edited-region capacity failure is open.

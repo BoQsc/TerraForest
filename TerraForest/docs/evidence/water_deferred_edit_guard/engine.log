@@ -1,0 +1,26 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS deferred identity admitted
+PASS adjacent resident fixture
+PASS deferred overlap detected
+PASS unrelated edits remain admissible
+PASS mixed removal cannot partially mutate resident water
+PASS mixed brush is atomic
+PASS placement waits for missing neighbouring data
+PASS fill cannot skip deferred water
+PASS same identity retry is idempotent
+PASS conflicting deferred identity rejected
+PASS invalid batch leaves metadata unchanged
+PASS procedural footprint omits exactly the deferred region
+PASS legacy capture refuses to drop deferred references
+PASS deferred legacy worker capture fails closed
+PASS wrong acknowledged blob cannot replace deferred water
+PASS failed admission retains deferred ownership
+PASS metadata export preserves checkpoint references
+PASS matching blob becomes resident
+PASS successful admission consumes deferred entry exactly once
+PASS resident region cannot simultaneously be deferred
+PASS second deferred region installed before whole-world reset
+PASS whole-world replacement remains valid
+PASS world replacement clears deferred state
+WATER_DEFERRED_OWNERSHIP failures=0

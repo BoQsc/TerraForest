@@ -251,6 +251,7 @@ public:
     godot::Vector3 surface_near(const godot::Vector3 &point,double radius) const;
     double depth_at(const godot::Vector3 &point) const;
     bool overlaps_occupied(const godot::AABB &bounds) const;
+    bool has_deferred_overlap(const godot::AABB &bounds) const;
     godot::Dictionary cell_geometry(const godot::Vector3 &point) const;
     godot::PackedByteArray placement_mask(const godot::TypedArray<godot::Transform3D> &transforms) const;
     godot::Dictionary raycast_vacancy(const godot::Vector3 &from,const godot::Vector3 &to) const;

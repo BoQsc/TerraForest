@@ -114,6 +114,7 @@ func _ready() -> void:
  _material.shader=preload("res://addons/volumetric_water/water.gdshader")
  _material.set_shader_parameter("ripple_normal",preload("res://addons/volumetric_water/textures/water_ripples_normal.png"))
  terrain.lake_slice_ready.connect(_slice_ready);terrain.region_invalidated.connect(_invalidate)
+ terrain.water_edit_admission=func(bounds:AABB,_selected:Array)->bool:return not water.has_deferred_overlap(bounds.grow(0.5))
  terrain.solid_deposited.connect(func(bounds:AABB):water.invalidate(bounds,true))
  # Mining is admitted normally. Invalid regions retain their water and wait for
  # the committed terrain worker samples; they never flow against stale solids.

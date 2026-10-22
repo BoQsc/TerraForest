@@ -249,6 +249,7 @@ void NativeRegionalWater::_bind_methods(){
     ClassDB::bind_method(D_METHOD("statistics"),&NativeRegionalWater::statistics);
     ClassDB::bind_method(D_METHOD("capture_snapshot","catalog"),&NativeRegionalWater::capture_snapshot);
     ClassDB::bind_method(D_METHOD("register_deferred_regions","coordinates","digests"),&NativeRegionalWater::register_deferred_regions);
+    ClassDB::bind_method(D_METHOD("has_deferred_overlap","bounds"),&NativeRegionalWater::has_deferred_overlap);
     ClassDB::bind_method(D_METHOD("deferred_region_page","cursor","limit"),&NativeRegionalWater::deferred_region_page);
     ClassDB::bind_method(D_METHOD("edited_region_coordinates"),&NativeRegionalWater::edited_region_coordinates);
     ClassDB::bind_method(D_METHOD("capture_unarchived_snapshot","catalog"),&NativeRegionalWater::capture_unarchived_snapshot);
@@ -500,6 +501,7 @@ void NativeRegionalWater::invalidate_regions(const AABB &bounds,bool replace_wat
     }
 }
 bool NativeRegionalWater::begin_fill(const AABB &bounds,double level,const Vector3 &seed,int64_t amount){
+    if(has_deferred_overlap(bounds))return false;
     if(fill.running||!bounds.position.is_finite()||!bounds.size.is_finite()||!seed.is_finite()||!std::isfinite(level)||amount<-1||amount>int64_t(MAX_TOTAL-total))return false;
     Vector3i lo=cell(bounds.position),hi=cell(bounds.position+bounds.size);Vector3i start=cell(seed);
     if(!in_domain(lo)||!in_domain(hi)||hi.x<=lo.x||hi.y<=lo.y||hi.z<=lo.z||int64_t(hi.x-lo.x)*(hi.y-lo.y)*(hi.z-lo.z)>2097152||!bounds.has_point(seed)||seed.y>=level)return false;
@@ -545,6 +547,7 @@ void NativeRegionalWater::advance(int64_t budget,double seconds){
     last_us=Time::get_singleton()->get_ticks_usec()-start;max_us=std::max(max_us,last_us);
 }
 int64_t NativeRegionalWater::remove_bounds(const AABB &bounds){
+    if(has_deferred_overlap(bounds))return 0;
     if(fill.running||!bounds.position.is_finite()||!bounds.size.is_finite())return 0;
     uint64_t removed=0;
     for(auto &[k,r]:regions){Vector3i base=position(k)*8;if(!AABB(Vector3(base)*0.5,Vector3(4,4,4)).intersects(bounds))continue;preserve_mesh_region(k);
@@ -788,6 +791,7 @@ bool NativeRegionalWater::plan_local_refill(Vector3i target,const Vector3 &aim,u
     take=std::move(proposed);return true;
 }
 bool NativeRegionalWater::plan_placement(Vector3i target,const Vector3 &aim,uint64_t amount,Placement &take,Dictionary &out,bool allow_refill){
+    if(has_deferred_overlap(AABB(Vector3(target)*.5-Vector3(2,3,2),Vector3(4.5,6.5,4.5)))){out["pending"]=true;out["reason"]="Loading saved water near the target";return false;}
     Region *origin=get(target,true);
     if(!origin){out["pending"]=in_domain(target)&&!limit;out["reason"]="Preparing water at this location";return false;}
     if(allow_refill&&plan_vacancy_refill(target,aim,amount,take))return true;
@@ -884,6 +888,7 @@ int64_t NativeRegionalWater::brush(const Vector3 &point,double radius,int64_t am
     if(!point.is_finite()||!std::isfinite(radius)||radius<0||radius>16||fill.running)return 0;
     if(amount>0){Dictionary result=place_water(point,amount);return bool(result["ok"])?amount:0;}
     if(amount==0)return 0;
+    if(has_deferred_overlap(AABB(point-Vector3(radius,radius,radius),Vector3(radius*2,radius*2,radius*2))))return 0;
     uint64_t removed=0,requested=amount==INT64_MIN?MAX_TOTAL:uint64_t(-amount);
     Vector3i lo=cell(point-Vector3(radius,radius,radius)),hi=cell(point+Vector3(radius,radius,radius));
     for(int z=lo.z;z<=hi.z;++z)for(int y=lo.y;y<=hi.y;++y)for(int x=lo.x;x<=hi.x;++x){Vector3i p(x,y,z);if(!in_domain(p)||(Vector3(p)*0.5+Vector3(0.25,0.25,0.25)-point).length()>radius)continue;
@@ -941,6 +946,7 @@ Dictionary NativeRegionalWater::transfer_water(const Vector3 &from,const Vector3
     if(pour&&held>0&&held<capacity){out["reason"]="Refill this older partial bucket before placing one water unit";return out;}
     uint64_t amount=uint64_t(pour?held:capacity-held);
     if(!amount){out["reason"]=pour?"Bucket empty":"Bucket full";return out;}
+    if(has_deferred_overlap(AABB(from.min(to),from.max(to)-from.min(to)).grow(3.5))){out["pending"]=true;out["reason"]="Loading saved water near the target";return out;}
     Dictionary surface=raycast_surface(from,to);
     if(pour){Dictionary vacancy=raycast_vacancy(from,to);
         if(bool(vacancy["hit"])&&(!bool(surface["hit"])||from.distance_squared_to(Vector3(vacancy["point"]))<from.distance_squared_to(Vector3(surface["point"]))))surface=vacancy;}
@@ -1074,6 +1080,23 @@ Dictionary NativeRegionalWater::cell_geometry(const Vector3 &point) const {
     }
     out["connections"]=connections;
     return out;
+}
+bool NativeRegionalWater::has_deferred_overlap(const AABB &bounds) const {
+    if(!bounds.position.is_finite()||!bounds.size.is_finite()||bounds.size.x<0||bounds.size.y<0||bounds.size.z<0)return true;
+    if(deferred_regions.empty())return false;
+    Vector3 end=bounds.position+bounds.size;
+    if(!end.is_finite())return true;
+    Vector3 lo=bounds.position.max(Vector3(0,0,0)),hi=end.min(Vector3(2000,256,2000));
+    if(lo.x>hi.x||lo.y>hi.y||lo.z>hi.z)return false;
+    // Key order is x/y/z. Seek each intersected row, never scan all edits.
+    int x0=int(lo.x/4),x1=std::min(499,int(hi.x/4));
+    int y0=int(lo.y/4),y1=std::min(63,int(hi.y/4));
+    int z0=int(lo.z/4),z1=std::min(499,int(hi.z/4));
+    for(int x=x0;x<=x1;++x)for(int y=y0;y<=y1;++y){
+        auto it=deferred_regions.lower_bound(key(Vector3i(x,y,z0)));
+        if(it!=deferred_regions.end()&&it->first<=key(Vector3i(x,y,z1)))return true;
+    }
+    return false;
 }
 bool NativeRegionalWater::overlaps_occupied(const AABB &bounds) const {
     // Conservative edit admission against authoritative occupancy, including
