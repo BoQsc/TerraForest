@@ -2091,3 +2091,30 @@ already accepted by the reader/validator. Invalid payloads still fail. Legacy
 catalog read/write and snapshot roundtrips pass after debug/release DLL rebuild.
 Live edited-water eviction and metadata-first restoration remain the next required
 capacity fix; these failure checks do not change current resident-region limits.
+
+
+## Selective archived-water metadata admission — 2026-10-22
+
+Added native describe_water_snapshot and checkpoint_window APIs. Description
+validates the TFWS/base/checkpoint metadata and disjoint base/archive ownership,
+returns the embedded base and explicit deferred checkpoint identity, and explicitly
+reports blobs_verified=false. It does not silently equate metadata membership with
+verified blob availability. Window queries binary-seek the x range, inspect at most
+1024 records and return at most 256 coordinate/digest references per invocation;
+continuations are indices into the immutable checkpoint. Blob read validation is
+unchanged and unavailable blobs still fail rather than becoming empty water.
+
+A 6000-entry synthetic manifest (deliberately without blobs) proves metadata can be
+queried beyond the 4096 resident-region capacity without allocating those regions.
+The exact selected window has 606 entries; 3000 records are inspected across bounded
+calls and no duplicates occur. Real single-region checkpoint metadata also passes.
+Synthetic metadata is not evidence of 6000 durable water edits or render performance.
+Existing snapshot compatibility and production failure-guard checks pass. Evidence:
+`evidence/water_metadata_window/`; debug/release native DLLs rebuilt.
+
+Gameplay still eagerly expands checkpoint water. Required next step is native live
+resident/deferred ownership and acknowledgement guards, then load-provider switching,
+streamed blob admission, map/far-view handling and save capture of deferred references.
+The metadata API alone must not be enabled as a partial load that omits unknown edits.
+Live eviction, capacity exhaustion, reference retention/GC and travel verification
+remain unfinished.

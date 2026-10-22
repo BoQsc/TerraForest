@@ -1,9 +1,11 @@
 # Durable edited ocean storage — implementation contract
 
 Status: required, not complete. Native edited-coast scaling currently fails.
-The single-region transfer primitive and immutable blob/checkpoint store are
-implemented and tested. Live eviction, compound-save integration, retention/GC
-and bounded worker coordination are not yet enabled. See WORLD_FOUNDATION_STATUS.md.
+Native transfers, immutable storage, bounded I/O, checkpoint-backed gameplay
+save/load, cloning and failure guards are implemented and tested. Selective
+metadata queries are available, but gameplay still eagerly restores all edits.
+Live eviction, deferred runtime ownership and retention/GC are not enabled.
+See WORLD_FOUNDATION_STATUS.md for scoped evidence and remaining integration.
 Evidence: `evidence/ocean_edited_scaling/result.json` and corresponding test.
 
 The existing NativeBlockRegionStore/NativeRegionWorldArchive establish a local

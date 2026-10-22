@@ -72,6 +72,8 @@ class NativeWaterRegionStore : public godot::RefCounted {
  void close_unlocked(){if(lease!=INVALID_HANDLE_VALUE)CloseHandle(lease);lease=INVALID_HANDLE_VALUE;directory=godot::String();indexed_id=Bytes();indexed_catalog=Bytes();index_loads=index_hits=0;}
 protected:
  static void _bind_methods(){
+  godot::ClassDB::bind_method(godot::D_METHOD("checkpoint_window","checkpoint","minimum","maximum","cursor","limit"),&NativeWaterRegionStore::checkpoint_window);
+  godot::ClassDB::bind_method(godot::D_METHOD("describe_water_snapshot","snapshot"),&NativeWaterRegionStore::describe_water_snapshot);
   godot::ClassDB::bind_method(godot::D_METHOD("publish_water_snapshot","snapshot"),&NativeWaterRegionStore::publish_water_snapshot);
   godot::ClassDB::bind_method(godot::D_METHOD("expand_water_snapshot","snapshot"),&NativeWaterRegionStore::expand_water_snapshot);
   godot::ClassDB::bind_method(godot::D_METHOD("checkpoint_page","checkpoint","cursor","limit"),&NativeWaterRegionStore::checkpoint_page);
@@ -123,6 +125,36 @@ public:
    std::memcpy(digests.ptrw()+i*32,indexed_catalog.ptr()+20+n*40,32);
   }
   auto out=result(true);out["coordinates"]=coordinates;out["digests"]=digests;out["cursor"]=end;out["complete"]=end==count;return out;
+ }
+ // Metadata-only admission query. At most 1024 records inspected, 256 emitted.
+ // Cursor is an absolute index into this immutable checkpoint, never a live store.
+ godot::Dictionary checkpoint_window(const Bytes &checkpoint,const godot::Vector3i &minimum,const godot::Vector3i &maximum,int64_t cursor,int64_t limit){
+  std::lock_guard<std::mutex> lock(mutex);
+  if(lease==INVALID_HANDLE_VALUE||!valid(minimum)||!valid(maximum)||minimum.x>maximum.x||minimum.y>maximum.y||minimum.z>maximum.z||cursor<0||limit<1||limit>256||!index(checkpoint))return result(false);
+  int64_t count=indexed_catalog.decode_u32(8);if(cursor>count)return result(false);
+  cursor=std::max(cursor,lower_bound(key(godot::Vector3i(minimum.x,0,0))));
+  int64_t end=lower_bound(key(godot::Vector3i(maximum.x+1,0,0))),scanned=0;
+  godot::PackedInt32Array coordinates;Bytes digests;
+  while(cursor<end&&scanned<1024&&coordinates.size()/3<limit){
+   int64_t at=12+cursor*40;auto p=coordinate(indexed_catalog.decode_u64(at));++cursor;++scanned;
+   if(p.y<minimum.y||p.y>maximum.y||p.z<minimum.z||p.z>maximum.z)continue;
+   coordinates.push_back(p.x);coordinates.push_back(p.y);coordinates.push_back(p.z);digests.append_array(indexed_catalog.slice(at+8,at+40));
+  }
+  auto out=result(true);out["coordinates"]=coordinates;out["digests"]=digests;out["cursor"]=cursor;out["complete"]=cursor>=end;out["inspected"]=scanned;return out;
+ }
+ godot::Dictionary describe_water_snapshot(const Bytes &snapshot){
+  std::lock_guard<std::mutex> lock(mutex);
+  if(lease==INVALID_HANDLE_VALUE||snapshot.size()<48||snapshot.size()>64*1024*1024||std::memcmp(snapshot.ptr(),"TFWS\1\0\0\0",8)||snapshot.decode_u64(8)!=uint64_t(snapshot.size()-48))return result(false);
+  Bytes id=snapshot.slice(16,48),base=snapshot.slice(48);
+  godot::Ref<NativeRegionalWater> validator;validator.instantiate();
+  if(!validator->restore_snapshot(base)||!validator->edited_region_coordinates().is_empty()||!index(id))return result(false);
+  // Existing base regions and deferred checkpoint entries must never own the same key.
+  if(base.size()<32||base.decode_u32(4)<2)return result(false);
+  int64_t offset=32+base.decode_u32(8),count=indexed_catalog.decode_u32(8);
+  for(uint32_t n=0;n<base.decode_u32(12);++n){uint64_t k=base.decode_u64(offset+n*9076);int64_t at=lower_bound(k);
+   if(at<count&&indexed_catalog.decode_u64(12+at*40)==k)return result(false);
+  }
+  auto out=result(true);out["base"]=base;out["checkpoint"]=id;out["archived_regions"]=count;out["blobs_verified"]=false;return out;
  }
  // Save-worker adapter. No live water references; no selected checkpoint mutation.
  Bytes publish_water_snapshot(const Bytes &snapshot){
