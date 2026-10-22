@@ -248,6 +248,8 @@ void NativeRegionalWater::_bind_methods(){
     ClassDB::bind_method(D_METHOD("next_mesh","include_contacts"),&NativeRegionalWater::next_mesh,DEFVAL(false));
     ClassDB::bind_method(D_METHOD("statistics"),&NativeRegionalWater::statistics);
     ClassDB::bind_method(D_METHOD("capture_snapshot","catalog"),&NativeRegionalWater::capture_snapshot);
+    ClassDB::bind_method(D_METHOD("capture_region_snapshot","coordinate"),&NativeRegionalWater::capture_region_snapshot);
+    ClassDB::bind_method(D_METHOD("restore_region_snapshot","coordinate","packet","expected_revision","reuse_occupancy"),&NativeRegionalWater::restore_region_snapshot);
     ClassDB::bind_method(D_METHOD("capture_storage_snapshot","catalog"),&NativeRegionalWater::capture_storage_snapshot);
     ClassDB::bind_method(D_METHOD("restore_prepared","prepared"),&NativeRegionalWater::restore_prepared);
     ClassDB::bind_method(D_METHOD("restore_snapshot","bytes"),&NativeRegionalWater::restore_snapshot);
@@ -1673,4 +1675,37 @@ godot::Dictionary terraforest::NativeRegionalWater::survey_ocean(int64_t cursor,
         points.push_back(Vector3(wx,40,wz));
     }
     out["ok"]=true;out["points"]=points;out["cursor"]=cursor;out["complete"]=cursor==512*512;return out;
+}
+
+// Region packets deliberately reuse the strict existing water snapshot codec.
+// Empty edited regions remain records: their ownership suppresses procedural sea.
+PackedByteArray terraforest::NativeRegionalWater::capture_region_snapshot(const Vector3i &coordinate) const {
+    if(coordinate.x<0||coordinate.x>=500||coordinate.y<0||coordinate.y>=64||coordinate.z<0||coordinate.z>=500||fill.running)return {};
+    auto found=regions.find(key(coordinate));if(found==regions.end()||found->second.ocean_state!=2)return {};
+    Ref<NativeRegionalWater> copy;copy.instantiate();copy->regions.emplace(found->first,found->second);
+    for(auto amount:found->second.water)copy->total+=amount;
+    Ref<NativeLakeCatalog> catalog;catalog.instantiate();return copy->capture_snapshot(catalog->encode(Array()));
+}
+bool terraforest::NativeRegionalWater::restore_region_snapshot(const Vector3i &coordinate,const PackedByteArray &packet,int64_t expected_revision,bool reuse_occupancy){
+    if(coordinate.x<0||coordinate.x>=500||coordinate.y<0||coordinate.y>=64||coordinate.z<0||coordinate.z>=500||expected_revision<0||uint64_t(expected_revision)!=map_revision)return false;
+    const Key k=key(coordinate);
+    if(fill.running||batch_active||publish_pending||regions.count(k)||ocean_cache.count(k)||regions.size()>=MAX_REGIONS)return false;
+    // Bound allocation before parsing and reject whole-world packets immediately.
+    if(packet.size()<32||packet.size()>8*1024*1024||packet.decode_u32(4)!=10||packet.decode_u32(12)!=1)return false;
+    Ref<NativeRegionalWater> copy;copy.instantiate();if(!copy->decode(packet,true)||copy->regions.size()!=1)return false;
+    auto found=copy->regions.find(k);if(found==copy->regions.end()||found->second.ocean_state!=2)return false;
+    Ref<NativeLakeCatalog> catalog;catalog.instantiate();
+    if(copy->snapshot_catalog(packet)!=catalog->encode(Array()))return false;
+    if(copy->total>MAX_TOTAL-total||copy->solid_cache_bytes>64*1024*1024-solid_cache_bytes)return false;
+    // All validation precedes mutation. Never overwrite a newer resident edit.
+    preserve_mesh_region(k);invalidate_snapshot();
+    Region region=std::move(found->second);if(!reuse_occupancy)region.valid=false;
+    total+=copy->total;solid_cache_bytes+=copy->solid_cache_bytes;
+    const bool needs_sample=!region.valid||!region.has_density;
+    regions.emplace(k,std::move(region));if(needs_sample)request(k);
+    for(int z=-1;z<=1;++z)for(int y=-1;y<=1;++y)for(int x=-1;x<=1;++x){
+        auto p=coordinate+Vector3i(x,y,z);if(p.x<0||p.x>=500||p.z<0||p.z>=500||p.y<0||p.y>=64)continue;
+        const Key owner=key(p);if(mesh_set.insert(owner).second)meshes.push_back(owner);
+    }
+    return true;
 }

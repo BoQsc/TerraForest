@@ -220,6 +220,10 @@ public:
     void set_western_ocean(bool enabled){western_ocean=enabled;}
     void set_surrounding_ocean(bool enabled){if(surrounding_ocean!=enabled){surrounding_ocean=enabled;++map_revision;}}
     godot::Dictionary survey_ocean(int64_t cursor,int64_t expected_revision) const;
+    // Single-region transfer primitive; the caller must establish checkpoint and
+    // terrain identity before reusing occupancy. It never retires live data.
+    godot::PackedByteArray capture_region_snapshot(const godot::Vector3i &coordinate) const;
+    bool restore_region_snapshot(const godot::Vector3i &coordinate,const godot::PackedByteArray &packet,int64_t expected_revision,bool reuse_occupancy);
     godot::PackedByteArray ocean_publication_mask() const;
     godot::Dictionary update_ocean_residency(const godot::Vector3 &center,int64_t budget);
     // Conservative occupied-cell column envelope for cartography, not a mesh surface.

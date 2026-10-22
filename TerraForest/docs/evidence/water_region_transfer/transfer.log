@@ -1,0 +1,20 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS pristine water is not archived as an edit
+PASS actual terrain occupancy prepared
+PASS actual sea edited
+PASS one edited region exported
+PASS validated region installed
+PASS exact region and quantity restored
+PASS duplicate cannot overwrite or duplicate quantity
+PASS stale completion rejected
+PASS wrong region rejected
+PASS truncated packet rejected
+PASS invalid quantity fails atomically
+PASS untrusted occupancy requests terrain resampling
+PASS resampling request preserves authoritative quantity
+PASS vacancies survive exact region transfer
+PASS empty edited override is transferable
+PASS empty override retains ownership and exact record
+PASS invalid coordinate rejected
+WATER_REGION_TRANSFER failures=0

@@ -1885,3 +1885,28 @@ Required next implementation: durable edited-water region paging, integrated wit
 compound world-save checkpoints. Raising MAX_REGIONS, evicting edits into the
 pristine cache, or keeping an unbounded second map in RAM are not fixes. Follow
 `OCEAN_EDITED_STORAGE.md` for the exact consistency and acceptance requirements.
+
+
+## Native water region transfers — 2026-10-22
+
+Implemented the first required paging primitive in NativeRegionalWater:
+`capture_region_snapshot` exports one edited ocean region using the existing strict
+v10 water codec; `restore_region_snapshot` installs an absent region only after
+coordinate, size/count, empty catalog, quantity, ownership and revision validation.
+The importer refuses occupied/cached keys and active publication/fill, validates
+before mutation, preserves quantities and vacancies, and queues a reconstruction
+halo. The caller explicitly chooses whether cached occupancy has a matching terrain
+identity; otherwise it queues resampling without changing authoritative quantities.
+Empty edited regions remain real records, never absence/regeneration.
+
+Native checks pass for actual sampled-and-edited sea, exact packet and quantity
+roundtrip, duplicate/stale/wrong-coordinate/truncated/inconsistent-quantity rejection,
+unchanged live state on failure, vacancy preservation and empty overrides. Existing
+ocean residency and full-coast map checks also pass. Debug and release extensions
+were rebuilt with pinned Zig and prebuilt godot-cpp (no SDK recompilation).
+Evidence: `evidence/water_region_transfer/`.
+
+This is a native prerequisite, not completed paging: no live eviction is enabled
+and the edited-coast scaling failure remains. Durable blob/checkpoint storage,
+compound-save integration, bounded asynchronous transfer coordination, unloaded
+map and far-view representation remain required before safely enabling retirement.

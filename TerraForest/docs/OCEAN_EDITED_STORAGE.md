@@ -1,6 +1,8 @@
 # Durable edited ocean storage — implementation contract
 
-Status: required, not implemented. Native edited-coast scaling currently fails.
+Status: required, not complete. Native edited-coast scaling currently fails.
+The single-region transfer primitive is implemented and tested; durable eviction
+and checkpoint integration are not yet enabled. See WORLD_FOUNDATION_STATUS.md.
 Evidence: `evidence/ocean_edited_scaling/result.json` and corresponding test.
 
 The existing NativeBlockRegionStore/NativeRegionWorldArchive establish a local
