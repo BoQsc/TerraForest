@@ -10,6 +10,7 @@ var stamp:=""
 var epoch:=-1
 var terrain_revision:=-1
 var offset:=0
+var batch_limit:=16
 var source_done:=false
 var complete:=false
 var failed:=false
@@ -97,7 +98,7 @@ func _process(_delta:float)->void:
    else:return
  if offset<raster.count():
   serial-=1
-  if terrain.request_water_visibility(raster.batch(offset),serial):pending=true
+  if terrain.request_water_visibility(raster.batch(offset,batch_limit),serial):pending=true
   return
  var pixels:PackedByteArray=raster.pixels(tint);publish(pixels)
  if not cache_key.is_empty():
@@ -114,7 +115,7 @@ func receive(result:Dictionary)->void:
  if not pending or result.get("kind","")!="survey_water_visibility" or result.token!=serial:return
  pending=false
  if result.epoch!=epoch or result.get("revision",-1)!=terrain_revision or current_stamp()!=stamp:stamp="";return
- if not result.get("ok",false) or not raster.accept(offset,result.visible):fail_survey();return
+ if not result.get("ok",false) or not raster.accept_prefix(offset,result.visible):fail_survey();return
  offset+=result.visible.size();visibility_calls+=1;max_visibility_ms=maxf(max_visibility_ms,result.generation_ms)
 func fail_survey()->void:
  failed=true;stop_source();atlas.status.text=atlas.updates.description()

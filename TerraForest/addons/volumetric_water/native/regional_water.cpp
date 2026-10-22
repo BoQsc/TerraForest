@@ -238,6 +238,7 @@ void NativeRegionalWater::_bind_methods(){
     ClassDB::bind_method(D_METHOD("survey_columns","cursor","expected_revision","region_budget"),&NativeRegionalWater::survey_columns);
     ClassDB::bind_method(D_METHOD("survey_cache_identity"),&NativeRegionalWater::survey_cache_identity);
     ClassDB::bind_method(D_METHOD("survey_revision_id"),&NativeRegionalWater::survey_revision_id);
+    ClassDB::bind_method(D_METHOD("survey_ocean","cursor","expected_revision"),&NativeRegionalWater::survey_ocean);
     ClassDB::bind_method(D_METHOD("survey_surfaces","cursor","expected_revision","region_budget"),&NativeRegionalWater::survey_surfaces);
     ClassDB::bind_method(D_METHOD("overlaps_occupied","bounds"),&NativeRegionalWater::overlaps_occupied);
     ClassDB::bind_method(D_METHOD("placement_mask","transforms"),&NativeRegionalWater::placement_mask);
@@ -267,7 +268,7 @@ void NativeRegionalWater::trim_ocean_cache(uint64_t incoming){
 }
 bool NativeRegionalWater::restore_ocean_cache(Key k){
     auto found=ocean_cache.find(k);if(found==ocean_cache.end())return false;
-    preserve_mesh_region(k);invalidate_snapshot();ocean_cache_bytes-=found->second.bytes;
+    preserve_mesh_region(k);invalidate_snapshot(false);ocean_cache_bytes-=found->second.bytes;
     Region r=std::move(found->second.region);ocean_cache.erase(found);
     for(auto amount:r.water)total+=amount;
     if(r.structures)solid_cache_bytes+=r.structures->bytes;
@@ -303,7 +304,7 @@ Dictionary NativeRegionalWater::update_ocean_residency(const Vector3 &center,int
         for(auto amount:r.water)total-=amount;
         if(r.structures)solid_cache_bytes-=r.structures->bytes;
         request_set.erase(k);requests.erase(std::remove(requests.begin(),requests.end(),k),requests.end());
-        restored_cache.erase(k);invalidate_snapshot();
+        restored_cache.erase(k);invalidate_snapshot(false);
         // Publish an empty replacement through the normal batch path; don't
         // leave stale pick triangles or remove scene geometry independently.
         if(mesh_set.insert(k).second)meshes.push_back(k);
@@ -328,7 +329,7 @@ Dictionary NativeRegionalWater::update_ocean_residency(const Vector3 &center,int
             trim_ocean_cache();
             if(regions.size()>=MAX_REGIONS){limit=true;out["capacity_reached"]=true;break;}
             Region r;r.ocean_state=1;regions.emplace(k,std::move(r));request(k);
-            invalidate_snapshot();++admitted;
+            invalidate_snapshot(false);++admitted;
         }
     }
     out["admitted"]=admitted;out["retired"]=retired;out["pending"]=!requests.empty();return out;
@@ -350,7 +351,8 @@ PackedByteArray NativeRegionalWater::ocean_publication_mask() const {
     return bytes;
 }
 void NativeRegionalWater::request(Key k){if(request_set.insert(k).second)requests.push_back(k);}
-void NativeRegionalWater::invalidate_snapshot() const {
+void NativeRegionalWater::invalidate_snapshot(bool map_changed) const {
+    if(map_changed&&!generating_ocean)++map_revision;
     ++survey_revision;survey_saved_identity=String();
     if(!snapshot_cached&&saved_frozen.is_null())return;
     snapshot_cached=false;saved_snapshot=PackedByteArray();saved_catalog=PackedByteArray();
@@ -421,7 +423,7 @@ bool NativeRegionalWater::accept_patch(const Ref<NativeWaterTerrainPatch> &patch
     const bool seed_ocean=it->second.ocean_state==1&&!it->second.has_density;
     uint64_t old_bytes=it->second.structures?it->second.structures->bytes:0,new_bytes=patch->structures?patch->structures->bytes:0;
     if(solid_cache_bytes-old_bytes+new_bytes>64*1024*1024)return false;
-    invalidate_snapshot();preserve_mesh_region(k);if(restored_cache.count(k))++cache_rebuilds;
+    invalidate_snapshot(!seed_ocean);preserve_mesh_region(k);if(restored_cache.count(k))++cache_rebuilds;
     // Preserve the old water head while terrain occupancy is replaced. New
     // solid removes only water below that head; it must not push water upward.
     std::array<double,512> old_heads{},old_volumes{};
@@ -1625,13 +1627,17 @@ Dictionary terraforest::NativeRegionalWater::survey_columns(int64_t cursor,int64
 // Cartographic point samples, not rendered triangles. Cached contact profiles
 // supply actual height; occupied cell envelopes are deliberately not used here.
 Dictionary terraforest::NativeRegionalWater::survey_surfaces(int64_t cursor,int64_t expected_revision,int64_t region_budget) const {
-    Dictionary out;out["ok"]=false;out["revision"]=int64_t(survey_revision);
+    Dictionary out;out["ok"]=false;out["revision"]=int64_t(map_revision);
     if(cursor<0||region_budget<1||region_budget>4||expected_revision<-1)return out;
-    if(expected_revision>=0&&uint64_t(expected_revision)!=survey_revision){out["stale"]=true;return out;}
+    if(expected_revision>=0&&uint64_t(expected_revision)!=map_revision){out["stale"]=true;return out;}
     const uint64_t begin=Time::get_singleton()->get_ticks_usec();
     auto it=regions.lower_bound(Key(cursor));int processed=0;PackedVector3Array points;bool ready=true;
     while(it!=regions.end()&&processed<region_budget){
         const auto coordinate=position(it->first);const auto &r=it->second;
+        if(surrounding_ocean&&r.ocean_state==1){
+            auto top=regions.find(key(Vector3i(coordinate.x,9,coordinate.z)));
+            if(top==regions.end()||top->second.ocean_state==1){++it;++processed;continue;}
+        }
         for(int z=0;z<8;++z)for(int x=0;x<8;++x)for(int y=7;y>=0;--y){
             int i=x+8*y+64*z;if(!r.water[i])continue;
             if(!r.valid){ready=false;break;}
@@ -1647,4 +1653,24 @@ Dictionary terraforest::NativeRegionalWater::survey_surfaces(int64_t cursor,int6
     }
     out["ok"]=true;out["ready"]=ready;out["complete"]=it==regions.end();out["cursor"]=it==regions.end()?int64_t(0):int64_t(it->first);
     out["regions"]=processed;out["points"]=points;out["worker_us"]=int64_t(Time::get_singleton()->get_ticks_usec()-begin);return out;
+}
+
+// Map samples describe implicit sea without creating any resident water region.
+// Existing edited top-layer regions override it; their actual surfaces are surveyed
+// by survey_surfaces. Terrain roofs/excavations are checked by the terrain worker.
+godot::Dictionary terraforest::NativeRegionalWater::survey_ocean(int64_t cursor,int64_t expected_revision) const {
+    Dictionary out;out["ok"]=false;
+    if(cursor<0||cursor>512*512||expected_revision<0)return out;
+    if(uint64_t(expected_revision)!=map_revision){out["stale"]=true;return out;}
+    PackedVector3Array points;int scans=0;
+    if(!surrounding_ocean)cursor=512*512;
+    while(cursor<512*512&&points.size()<256&&scans<1024){
+        int x=cursor%512,z=cursor/512;++cursor;++scans;
+        const double wx=(x+.5)*2000.0/512,wz=(z+.5)*2000.0/512;
+        if(wx>=1999||wz>=1999||std::min({wx,wz,2000-wx,2000-wz})>=140)continue;
+        auto it=regions.find(key(Vector3i(int(wx/4),9,int(wz/4))));
+        if(it!=regions.end()&&it->second.ocean_state!=1)continue;
+        points.push_back(Vector3(wx,40,wz));
+    }
+    out["ok"]=true;out["points"]=points;out["cursor"]=cursor;out["complete"]=cursor==512*512;return out;
 }

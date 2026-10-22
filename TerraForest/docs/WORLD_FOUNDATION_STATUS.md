@@ -1792,3 +1792,47 @@ sustained performance. Next coastal dependencies remain fast detail loading,
 durable nonresident edited-region storage, full implicit ocean map coverage and
 save/reopen of actual coastal edits. Outside-border gameplay is still unsupported
 and must remain independently optional when implemented.
+
+
+## Whole-coast map coverage and preparation - 2026-10-22
+
+The M map now surveys the complete profile-19 ocean perimeter without allocating
+water regions. A bounded native procedural source offers 68,544 map subsamples;
+edited top-layer regions suppress the implicit sea and contribute their actual
+stored surface instead. Lower pristine water beneath an edited top layer remains
+represented. Terrain visibility still handles excavation and roofs. The fast
+pristine-sea path uses the shared inclusive terrain page stride; an added-roof
+regression caught and corrected an initially wrong stride before publication.
+
+Visibility jobs accept up to 256 samples, but retain at most 16 full density scans
+per slice; responses may be prefixes, with explicit raster prefix validation.
+Unedited ocean samples use the generator shortcut. Ordinary 16-sample callers and
+the strict raster accept API remain supported. Water cartographic revisions now
+exclude pristine admission, sampling, retirement and cache restoration, while real
+edits invalidate continuations. Raw quantity surveys retain their separate full
+resident-data revision. Map cache namespace v2 avoids incompatible old rasters.
+
+Native tests cover all sides/corners, zero water allocation, bounded sample batches,
+stale edits, stable streaming revisions, removed top-water suppression, retained
+lower water, bulk-vs-density visibility and terrain roof/removal. Legacy saved-lake
+survey, exact amount accounting, restoration, visibility and raster checks pass.
+Corrected a test-only double-submit predicate in the legacy visibility harness;
+the request had succeeded but its second invocation incorrectly reported failure.
+
+Actual-world 1080p/cap60 map: first cold water layer 17.211 s, fresh-process cached
+layer 1.644 s with zero visibility queries; both use zero resident water regions.
+Streaming admission did not rebuild the completed layer. Inspected the whole-world
+map: ocean surrounds all edges, with the two settlements and connecting road intact.
+The production preparation reopen phase now waits for terrain/water/block/model
+map completion and successful cache write/read before publication. Its saved-world
+check passed in 39.72 s with a water cache hit and no visibility scan. This validates
+the new preparation gate against the existing staged world; it is not a second
+complete terrain/building generation run. Evidence: `evidence/ocean_map/`.
+
+Cold map work remains expensive after relevant edits/cache eviction and cached
+opening still scans procedural source points. Incremental map updates or a stable
+native procedural identity can improve that without weakening edit correctness.
+Coastal detail loading, durable nonresident edited water, full player-edit process
+save/reopen, older authored-content integration and optional offshore gameplay
+remain open. This change establishes regional map coverage, not world completion
+or sustained laptop performance acceptance.

@@ -103,6 +103,18 @@ func run()->void:
    if count!=0:game.free();quit(1);return
    await RenderingServer.frame_post_draw
    root.get_texture().get_image().save_png(output_dir.path_join("terrain_lot_regional_ground.png"))
+  game.app_focused=true;game.world_map.set_open(true)
+  var atlas:Node=game.world_map
+  var map_ready:bool=await wait_until(func():
+   if atlas.updates.image==null or not atlas.updates.cache_saved or atlas.updates.io!=null or not atlas.updates.dirty.is_empty() or not atlas.updates.pending.is_empty():return false
+   for layer:Node in [atlas.water_survey,atlas.block_survey,atlas.model_survey]:
+    if not layer.complete or layer.io!=null or layer.cache_hits+layer.cache_writes==0:return false
+   return true,120)
+  if not map_ready:print("WORLD_MAP_PREPARATION_FAILED ",atlas.status.text);game.free();quit(1);return
+  print("PREPARED_WORLD_MAP water_hits=",atlas.water_survey.cache_hits," water_writes=",atlas.water_survey.cache_writes," visibility_calls=",atlas.water_survey.visibility_calls)
+  atlas.view.overview();await RenderingServer.frame_post_draw
+  root.get_texture().get_image().save_png(output_dir.path_join("prepared_world_map.png"))
+  atlas.set_open(false)
   print("TERRAIN_LOT_REOPEN failures=0 places=",game.world_map.places.size()," roads=",game.world_map.roads.size())
   game.free();quit();return
  var runner=preload("res://addons/structures/site_preparation.gd").new()

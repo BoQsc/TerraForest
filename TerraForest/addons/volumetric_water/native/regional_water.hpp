@@ -154,7 +154,8 @@ class NativeRegionalWater : public godot::RefCounted {
     mutable godot::Ref<godot::RefCounted> saved_frozen;
     mutable bool snapshot_cached=false;
     mutable uint64_t snapshot_builds=0,snapshot_hits=0;
-    void invalidate_snapshot() const;
+    void invalidate_snapshot(bool map_changed=true) const;
+    mutable uint64_t map_revision=0;
     mutable uint64_t survey_revision=0;
     mutable godot::String survey_saved_identity;
     uint64_t survey_identity_hash_us=0,survey_identity_scene_hash_us=0;
@@ -217,13 +218,14 @@ class NativeRegionalWater : public godot::RefCounted {
 protected: static void _bind_methods();
 public:
     void set_western_ocean(bool enabled){western_ocean=enabled;}
-    void set_surrounding_ocean(bool enabled){surrounding_ocean=enabled;}
+    void set_surrounding_ocean(bool enabled){if(surrounding_ocean!=enabled){surrounding_ocean=enabled;++map_revision;}}
+    godot::Dictionary survey_ocean(int64_t cursor,int64_t expected_revision) const;
     godot::PackedByteArray ocean_publication_mask() const;
     godot::Dictionary update_ocean_residency(const godot::Vector3 &center,int64_t budget);
     // Conservative occupied-cell column envelope for cartography, not a mesh surface.
     godot::Dictionary survey_columns(int64_t cursor,int64_t expected_revision,int64_t region_budget) const;
     godot::String survey_cache_identity() const{return survey_saved_identity;}
-    int64_t survey_revision_id() const {return int64_t(survey_revision);}
+    int64_t survey_revision_id() const {return int64_t(map_revision);}
     godot::Dictionary survey_surfaces(int64_t cursor,int64_t expected_revision,int64_t region_budget) const;
     godot::Dictionary next_request();
     godot::Array next_requests(int64_t limit);

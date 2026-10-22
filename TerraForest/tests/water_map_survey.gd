@@ -31,7 +31,11 @@ func run()->void:
  var response:Dictionary={}
  game.terrain.survey_patch_ready.connect(func(reply:Dictionary):
   if reply.get("kind","")=="survey_water_visibility":response.merge(reply,true))
- check(await wait_for(func():return game.terrain.request_water_visibility(surfaces.slice(0,16),9017),5),"actual terrain worker accepts bounded visibility request")
+ var submitted:=false;var deadline:=Time.get_ticks_msec()+5000
+ while not submitted and Time.get_ticks_msec()<deadline:
+  submitted=game.terrain.request_water_visibility(surfaces.slice(0,16),9017)
+  if not submitted:await process_frame
+ check(submitted,"actual terrain worker accepts bounded visibility request")
  check(await wait_for(func():return not response.is_empty(),5) and response.get("ok",false) and response.get("visible",PackedByteArray()).size()==16,"ordered terrain worker returns map occlusion")
  print("WATER_SURFACE_PROFILE points=",surfaces.size()," max_call_us=",surface_peak," visibility_ms=",response.get("generation_ms",-1))
  var first:Dictionary=water.survey_columns(0,-1,1)

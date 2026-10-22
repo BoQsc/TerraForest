@@ -31,7 +31,8 @@ protected:
   godot::ClassDB::bind_method(godot::D_METHOD("project_bounds","boxes","transform","cursor"),&NativeSurfaceMapRaster::project_bounds);
   godot::ClassDB::bind_method(godot::D_METHOD("offer","points"),&NativeSurfaceMapRaster::offer);
   godot::ClassDB::bind_method(godot::D_METHOD("count"),&NativeSurfaceMapRaster::count);
-  godot::ClassDB::bind_method(godot::D_METHOD("batch","offset"),&NativeSurfaceMapRaster::batch);
+  godot::ClassDB::bind_method(godot::D_METHOD("batch","offset","limit"),&NativeSurfaceMapRaster::batch,DEFVAL(16));
+  godot::ClassDB::bind_method(godot::D_METHOD("accept_prefix","offset","mask"),&NativeSurfaceMapRaster::accept_prefix);
   godot::ClassDB::bind_method(godot::D_METHOD("accept","offset","mask"),&NativeSurfaceMapRaster::accept);
   godot::ClassDB::bind_method(godot::D_METHOD("pixels","color"),&NativeSurfaceMapRaster::pixels,DEFVAL(godot::Color(54/255.f,117/255.f,140/255.f)));
  }
@@ -77,9 +78,14 @@ public:
   }return true;
  }
  int64_t count()const{return samples.size();}
- godot::PackedVector3Array batch(int64_t offset)const{
-  godot::PackedVector3Array out;if(offset<0||offset>=count())return out;
-  for(int64_t i=offset;i<count()&&i<offset+16;++i)out.push_back(samples[i]);return out;
+ godot::PackedVector3Array batch(int64_t offset,int64_t limit=16)const{
+  godot::PackedVector3Array out;if(offset<0||offset>=count()||limit<1||limit>256)return out;
+  for(int64_t i=offset;i<count()&&i<offset+limit;++i)out.push_back(samples[i]);return out;
+ }
+ bool accept_prefix(int64_t offset,const godot::PackedByteArray &mask){
+  if(offset<0||mask.is_empty()||mask.size()>256||offset+mask.size()>count())return false;
+  for(int i=0;i<mask.size();++i)if(mask[i]>1)return false;
+  for(int i=0;i<mask.size();++i)visible[offset+i]=mask[i];return true;
  }
  bool accept(int64_t offset,const godot::PackedByteArray &mask){
   if(offset<0||offset>=count()||mask.size()!=std::min<int64_t>(16,count()-offset))return false;

@@ -18,7 +18,7 @@ func _initialize()->void:
  if not opened.get("ok",false) or opened.visible!=PackedByteArray([1,1,1]):failures+=1
  var copy=ClassDB.instantiate("TerrainCore");var saved:PackedByteArray=core.execute(Codec.command(4));var load:=Codec.command(5);load.append_array(saved.slice(12));copy.execute(load)
  if copy.survey_water_visibility(points).visible!=opened.visible:failures+=1
- var excessive:=PackedVector3Array();excessive.resize(17)
+ var excessive:=PackedVector3Array();excessive.resize(257)
  for invalid:PackedVector3Array in [PackedVector3Array(),excessive,PackedVector3Array([Vector3(NAN,2,2)]),PackedVector3Array([Vector3(2000,2,2)])]:
   if core.survey_water_visibility(invalid).get("ok",false):failures+=1
  print("SURVEY_WATER_VISIBILITY failures=",failures," closed=",result.get("visible",[])," opened=",opened.get("visible",[])," native_ms=",opened.get("generation_ms",-1))

@@ -26,7 +26,7 @@ static u32 build_epoch_value=0;
 u32 terrain_build_epoch(const World *w){return __atomic_load_n(w&&w->build_control?&w->build_control->epoch:&build_epoch_value,__ATOMIC_RELAXED);}
 u32 terrain_cancel_builds(const World *w){return __atomic_add_fetch(w&&w->build_control?&w->build_control->epoch:&build_epoch_value,1u,__ATOMIC_RELAXED);}
 static bool cancelled(const World &w,u32 epoch){return epoch!=0xffffffffu && terrain_build_epoch(&w)!=epoch;}
-static constexpr int NP=126;
+static constexpr int NP=WORLD_PAGE_COLUMNS;
 static float smooth(float t){return t*t*(3.f-2.f*t);}
 static float noise(float x,float z,u32 seed){
  int a=fl(x),b=fl(z);float u=smooth(x-a),v=smooth(z-b);
