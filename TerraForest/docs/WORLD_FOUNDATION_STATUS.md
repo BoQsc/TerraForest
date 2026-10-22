@@ -1836,3 +1836,26 @@ Coastal detail loading, durable nonresident edited water, full player-edit proce
 save/reopen, older authored-content integration and optional offshore gameplay
 remain open. This change establishes regional map coverage, not world completion
 or sustained laptop performance acceptance.
+
+
+## Ocean player-edit persistence — 2026-10-22
+
+The previously open basic fresh-process ocean-edit save/reopen check now passes.
+`tools/check_ocean_persistence.py` clones the prepared coastal world to a unique
+`ocean_persist_*` slot, never overwrites its source, and runs two sequential
+1080p fullscreen/cap60 game processes. The first uses normal gameplay mouse input
+to scoop exactly 1 m³, verifies local occupancy changed, saves the compound world
+and completes durable shutdown. The second opens that slot and verifies the full
+bucket, edited-region ownership and all 48 surrounding depth samples after coastal
+residency has republished. Durable shutdown succeeds again. Evidence is in
+`evidence/ocean_edit_reopen/`; runs took 16.28 s and 7.84 s respectively. These are
+whole harness durations, not frame-time or loading benchmarks.
+
+This is persistent gameplay evidence, not merely a native snapshot roundtrip. It
+covers one coastal scoop and inventory conservation across restart; it does not
+establish exhaustive bucket, terrain/building replacement, save-failure or large
+edited-coast coverage. No runtime fix was required for this case. Durable eviction
+of edited water remains unimplemented, coastal loading remains slow, and authored
+world-content coverage and outside-border gameplay remain open. The reproducible
+check defaults to the existing prepared coastal fixture and accepts --source for
+another compatible prepared coastal slot.
