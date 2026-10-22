@@ -1,5 +1,16 @@
 # World-building work
 
+## Unfinished-work tracking
+
+Never silently abandon unfinished work or report partial verification as completion.
+Before switching milestones, record any remaining requirement in
+`docs/WORLD_FOUNDATION_STATUS.md` (or link its dedicated contract from there).
+Record what is missing, why it is deferred, its prerequisite or return trigger,
+and the evidence required to close it. Keep failed and unreviewed checks visible.
+When a prerequisite is completed, revisit dependent work; update the existing entry
+instead of letting a newer progress note imply the old requirement is resolved.
+Deferral is not completion. Do not expand excluded features to clear a backlog.
+
 For world generation, settlement, road, POI or landscape changes, read
 `docs/WORLD_BUILDING_STANDARD.md` before choosing the implementation.
 

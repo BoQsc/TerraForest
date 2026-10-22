@@ -1,3 +1,38 @@
+## Current unfinished-work handoff — 2026-10-22
+
+This is the current priority index, not an exhaustive replacement for the open
+requirements and evidence in the chronological entries below. Moving to another
+milestone does not close those requirements. Each deferred item must retain a
+reason, prerequisite/return trigger and closure evidence.
+
+| Work | Status and reason | Prerequisite / return trigger | Required closure evidence |
+| --- | --- | --- | --- |
+| Generated market cellar storage | Open; movement and snapshot checks do not prove chest interaction | Next targeted world-content check; the connected cottage is now available | Reach the chest through the actual entrance/ladder route; transfer items without loss or duplication; verify persistence in a disposable save |
+| Cellar room presentation | Unreviewed; prior room capture was obstructed by the ladder | After storage interaction, before calling the location accepted | Clear interior capture and review of usable circulation and furnishings; human acceptance remains distinct |
+| Connected regional destinations and owned mine | Incomplete; current default world has only two public places | Main world-generation milestone after the cellar check | Actually generated accessible locations, connected roads, intentional underground access, map agreement and fresh-process reopen |
+| Regional landscaping and travel quality | Incomplete; exposed banks and route quality cannot be accepted from planning checks alone | Alongside regional content integration | Inspect road/terrain transitions and junctions; complete ground/vehicle travel on the actual generated routes |
+| Edited-ocean streaming | Deferred so world-content work can proceed; resident capacity failure remains open | Before large-world readiness qualification, or immediately if ordinary play reaches capacity or threatens saved edits | Complete runtime ownership/selective loading, retained far/map edits, quantity accounting and retention; pass edited travel/capacity and save/reopen checks. See [storage contract](OCEAN_EDITED_STORAGE.md) |
+| Integrated world performance | Not qualified by isolated passes or a 60 FPS screenshot | Once representative connected content is available, and whenever an ordinary-play regression appears | Short diagnostic checks first, then representative 1920x1080/60 FPS travel and sustained measurements with recorded hardware/settings and CPU/GPU/memory evidence |
+| Legacy world persistence regression | Last recorded broader check failed lake shutdown-drain and ID reuse assertions; later narrow water checks do not establish closure | Before comprehensive persistence acceptance; sooner if the ordinary save path shows a related failure | Reproduce or disprove the exact failing assertions on the current build, retain logs, and verify combined save/reopen without weakening the assertions |
+| Model paging and arrival | Historical checks do not qualify detailed populated-world residency or all arrivals | Before promoting paging/defaults or claiming large populated-world support | Inspect current runtime defaults, then test the same populated route with edits/save/reopen, visible/collision readiness and bounded residency |
+| Save/reload latency and storage growth | Historical measured hitches and capacity/recovery gates need explicit current-build closure | During integrated loading/storage qualification; immediately for an ordinary-play regression | Measure actual dispatch/restoration, verify failure recovery and authoritative/cache bounds, and attach evidence for each previously failing stage |
+| Map cost and edited-world coverage | Regional coverage has progressed beyond the older register; cold work and full edited-world qualification remain open | Alongside additional destinations and edited-world travel | Verify current terrain/water/block/model layers against the saved world, with cache invalidation, reopening, useful zoom and bounded work; do not reimplement already completed layers |
+| Vegetation continuity | Near gameplay exists; distant/bulk-change continuity and combined budgets are unqualified | Inspect along the connected regional routes | Ground/elevated travel and harvesting checks with the accepted sparse distribution, no area flicker or unsupported vegetation, and recorded resource costs |
+| Entities and authority boundaries | Stores and limited residents are not representative simulation or multiplayer proof | Before expanding population-dependent world content | Representative activation/navigation/animation workload and ownership/command audit; networking implementation remains deferred by user direction |
+| Standalone delivery | Local tooling and launchers do not prove a clean installation | After coherent world integration, before distributable/release acceptance | Create/open/export on a clean installation without the development Python/toolchain; verify supported configuration and recovery |
+
+Water remains static: flow and spillage are deliberately excluded, not pending
+requirements. Preserve existing saves. Review earlier open entries when their
+prerequisites become available, and explicitly record closure evidence rather than
+assuming a later successful test covers them.
+
+The older "Playable world foundation - current contract" coverage register below
+remains the broader scope checklist. Its dated implementation descriptions are
+historical: reconcile them against later evidence and current code before scheduling
+work. In particular, later ocean-map evidence establishes regional map coverage;
+the older row saying the live water layer is absent is not a current implementation
+claim. A new narrow pass cannot silently close a broader historical failure.
+
 ## First baked regional connection — 2026-10-20
 
 The terrain-fitting seed42 neighborhood now has an approximately 413 m forest
