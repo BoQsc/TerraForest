@@ -41,24 +41,14 @@ func run()->void:
   if arg.begins_with("--preparation-output="):output_dir=arg.trim_prefix("--preparation-output=")
  if generator not in [17,18,19] or seed_value<0 or seed_value>2147483647:quit(1);return
  DirAccess.make_dir_recursive_absolute(output_dir)
- var core=ClassDB.instantiate("TerrainCore");core.execute(Codec.command(6,[seed_value,generator]))
- var layout:Dictionary=preload("res://addons/volumetric_terrain/generated_layout.gd").describe(seed_value,16)
- var plan:Dictionary=Planner.locate(core,layout.sites[3].position)
- if not plan.ok:quit(1);return
- var works:Dictionary=Planner.earthworks(plan)
- var market:Dictionary={}
- if "--central-market" in OS.get_cmdline_user_args():
-  market=preload("res://addons/structures/central_market.gd").locate(core,layout.sites[0].position,works.bounds)
-  if not market.ok:print("CENTRAL_MARKET_FAILED ",market);quit(1);return
-  var market_works:Dictionary=Planner.earthworks(market)
-  works.segments.append_array(market_works.segments);works.bounds=works.bounds.merge(market_works.bounds)
- var connection:Dictionary={}
- if "--regional-connection" in OS.get_cmdline_user_args() or not market.is_empty():
-  connection=preload("res://addons/structures/regional_route_planner.gd").central_connection(core,plan,layout,market)
-  if not connection.ok:print("REGIONAL_CONNECTION_FAILED ",connection);quit(1);return
-  # Prepare the arterial first; local streets restore their shared junction grade.
-  works.segments=connection.segments+works.segments
-  works.bounds=works.bounds.merge(connection.bounds)
+ var prepared:Dictionary=preload("res://addons/world_runtime/world_generation_plan.gd").build(seed_value,generator,"--central-market" in OS.get_cmdline_user_args(),"--regional-connection" in OS.get_cmdline_user_args())
+ if not prepared.get("ok",false):print("WORLD_PLAN_FAILED ",prepared);quit(1);return
+ var plan:Dictionary=prepared.plan
+ var works:Dictionary=prepared.works
+ var market:Dictionary=prepared.market
+ var connection:Dictionary=prepared.connection
+ print("WORLD_PLAN digest=",prepared.plan_digest," cache_hit=",prepared.cache_hit," ms=",prepared.worker_ms)
+ FileAccess.open(output_dir.path_join("generation_plan_identity.json"),FileAccess.WRITE).store_string(JSON.stringify({"version":prepared.version,"seed":seed_value,"generator":generator,"digest":prepared.plan_digest}))
 
  var game=load("res://demo/world.tscn").instantiate()
  var bake:bool="--save-terrain-lots" in OS.get_cmdline_user_args()

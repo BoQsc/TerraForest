@@ -1,3 +1,18 @@
+## Native world-generation rewrite in progress — 2026-10-22
+
+Regional road search/surveys, street grading, building lot searches and entrance
+fit now use production C++ APIs. The generator UI and actual bake share a cached
+placement plan. Full creation and fresh-process restoration pass for
+`native_world_rewrite_42_20261022`; cached loading photos were inspected.
+[Evidence, measured timings and remaining requirements](evidence/native_world_generation/README.md).
+
+This closes the scripted road/lot computation and disconnected placement-preview
+steps, not the entire rewrite. Native job orchestration/compute, standalone
+creation, complete map layers/settings, canonical storage/capacity qualification
+and sustained performance remain active requirements of WORLD_WORKFLOW_REDESIGN.
+Visual settlement quality remains unaccepted; this implementation preserves the
+current recipes. No water or gameplay-detail milestone replaces this priority.
+
 ## Active priority changed — 2026-10-22
 
 The user stopped mine/POI detail work. The active deliverable is the unified world

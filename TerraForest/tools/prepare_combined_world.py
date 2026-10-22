@@ -69,6 +69,15 @@ def prepare(engine, worlds, folder, destination="combined_gameplay", layout="cot
         metadata['publication'] = clone_once(worlds, slot, destination)
         # Derived presentation assets are bounded and never replace world data.
         try:
+            identity_path = folder / 'generation_plan_identity.json'
+            if identity_path.is_file():
+                # Provenance is small derived metadata, not a replacement for saved edits.
+                identity = json.loads(identity_path.read_text(encoding='utf-8'))
+                metadata['generation_plan'] = identity
+                target = worlds / (destination + '.generation.json')
+                pending = target.with_suffix('.json.tmp')
+                pending.write_text(json.dumps(identity), encoding='utf-8')
+                pending.replace(target)
             preview = worlds / (destination + '.preview')
             captures = [name for name in ('north', 'road', 'market') if (folder / ('loading_' + name + '.png')).is_file()]
             if captures:

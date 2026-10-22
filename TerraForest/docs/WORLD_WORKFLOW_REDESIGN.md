@@ -79,3 +79,21 @@ create/reopen run after these changes. Existing worlds without cached photos sti
 use the plain fallback until previews are explicitly captured. These are open
 integration tasks, not a claim of universal loading-photo coverage. No new native
 planner, compute kernel, cache quota or storage migration was delivered in this pass.
+
+## Native backend and shared-plan implementation — 2026-10-22
+
+The previous UI-only status is superseded for road/lot computation: regional A*,
+corridor checks, street grading, lot relocation/grade search and entrance fitting
+now execute in the native TerrainCore. Production scripts call these APIs.
+Generator preview and preparation share a versioned, bounded, integrity-checked
+plan cache. Native rasterization overlays actual planned roads and lot footprints.
+Full seed42 creation and fresh-process reopen passed with the identical plan
+identity; new-world automatic loading-photo capture/publication was also exercised.
+See [evidence and limits](evidence/native_world_generation/README.md).
+
+The workstream remains open: native region/job orchestration and cancellation,
+compute field integration, Python-free generation, complete options and water/POI
+preview, canonical regional storage/capacity/recovery, and sustained performance.
+Current placement recipes remain visually unfinished. The derived plan cache
+must not be presented as completing canonical world storage. Next backend work
+must build on this shared plan rather than recreate separate preview logic.

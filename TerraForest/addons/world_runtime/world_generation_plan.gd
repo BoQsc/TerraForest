@@ -1,0 +1,112 @@
+# SPDX-License-Identifier: 0BSD
+extends RefCounted
+# Shared preview/bake orchestration. All field, road and lot searches are native.
+# Derived plans contain plain values; prefab Resources are reconstructed from recipes.
+const VERSION:=1 # Bump for native planner, terrain or prefab recipe changes.
+const CACHE_BYTES:=64*1024*1024
+const CACHE_ENTRIES:=32
+const LIMIT:=8*1024*1024
+const Codec=preload("res://addons/volumetric_terrain/mesh_codec.gd")
+const Planner=preload("res://addons/structures/terrain_lot_planner.gd")
+const Market=preload("res://addons/structures/central_market.gd")
+const Lots=preload("res://addons/structures/northern_lots.gd")
+const Survey=preload("res://addons/world_runtime/survey_cache.gd")
+static func path_for(seed_value:int,generator:int,market:bool,connection:bool,folder:String)->String:
+ return folder.path_join("plan_%d_%d_%d_%d_%d.bin"%[VERSION,seed_value,generator,int(market),int(connection)])
+static func without_assets(plan:Dictionary)->Dictionary:
+ var packed:Dictionary=plan.duplicate(true)
+ for site:String in ["plan","market"]:
+  for lot:Dictionary in packed[site].get("lots",[]):lot.erase("asset")
+ return packed
+static func attach_assets(result:Dictionary)->bool:
+ for site:String in ["plan","market"]:
+  var plan:Dictionary=result.get(site,{})
+  if plan.is_empty():continue
+  if not plan.has("center") or not plan.has("lots"):return false
+  var recipe:Array=Lots.recipe(plan.center) if site=="plan" else Market.recipe(plan.center)
+  if recipe.size()!=plan.lots.size():return false
+  var variant:int=plan.get("variant",0)
+  for i in plan.lots.size():plan.lots[i].asset=recipe[(i+variant)%recipe.size()].asset
+ return true
+static func read_plan(path:String,seed_value:int,generator:int,market:bool,connection:bool)->Dictionary:
+ var file:=FileAccess.open(path,FileAccess.READ)
+ if file==null or file.get_length()<40 or file.get_length()>LIMIT:return {}
+ var expected:=file.get_buffer(32);var bytes:=file.get_buffer(file.get_length()-32)
+ if Survey.digest(bytes)!=expected:return {}
+ var decoded=bytes_to_var(bytes) # Objects are deliberately disabled.
+ if not decoded is Dictionary:return {}
+ if decoded.get("version")!=VERSION or decoded.get("seed")!=seed_value or decoded.get("generator")!=generator or decoded.get("with_market")!=market or decoded.get("with_connection")!=connection:return {}
+ if not decoded.get("ok",false) or not decoded.has("works") or not decoded.has("connection") or not attach_assets(decoded):return {}
+ decoded["plan_digest"]=expected.hex_encode()
+ return decoded
+static func trim_cache(folder:String,keep:String)->void:
+ # Only regenerable files in this dedicated cache; never canonical world storage.
+ var entries:Array=[];var total:=0
+ var pattern:=RegEx.new();pattern.compile("^plan_[0-9]+_[0-9]+_[0-9]+_[01]_[01]\\.bin$")
+ for name:String in DirAccess.get_files_at(folder):
+  if pattern.search(name)==null:continue
+  var path:=folder.path_join(name);var file:=FileAccess.open(path,FileAccess.READ)
+  if file==null:continue
+  var size:int=file.get_length();file.close();total+=size
+  entries.append({"path":path,"size":size,"time":FileAccess.get_modified_time(path)})
+ entries.sort_custom(func(a:Dictionary,b:Dictionary):return a.time<b.time if a.time!=b.time else a.path<b.path)
+ var count:=entries.size()
+ for entry:Dictionary in entries:
+  if count<=CACHE_ENTRIES and total<=CACHE_BYTES:break
+  if entry.path==keep:continue
+  if DirAccess.remove_absolute(entry.path)==OK:count-=1;total-=entry.size
+static func build(seed_value:int,generator:int,with_market:bool=true,with_connection:bool=true,folder:String="user://generation_plans")->Dictionary:
+ var started:=Time.get_ticks_usec()
+ if seed_value<0 or seed_value>2147483647 or generator not in [17,18,19]:return {"ok":false,"reason":"Unsupported generation settings"}
+ with_connection=with_connection or with_market
+ var path:=path_for(seed_value,generator,with_market,with_connection,folder)
+ var cached:=read_plan(path,seed_value,generator,with_market,with_connection)
+ if not cached.is_empty():
+  cached["cache_hit"]=true;cached["worker_ms"]=(Time.get_ticks_usec()-started)/1000.0
+  return cached
+ var core=ClassDB.instantiate("TerrainCore")
+ if core==null or not Codec.reply_ok(core.execute(Codec.command(6,[seed_value,generator]))):return {"ok":false,"reason":"Native world initialization failed"}
+ var layout:Dictionary=preload("res://addons/volumetric_terrain/generated_layout.gd").describe(seed_value,16)
+ var plan:Dictionary=Planner.locate(core,layout.sites[3].position)
+ if not plan.ok:return plan
+ var works:Dictionary=Planner.earthworks(plan)
+ if not works.ok:return works
+ var market:Dictionary={};var connection:Dictionary={}
+ if with_market:
+  market=Market.locate(core,layout.sites[0].position,works.bounds)
+  if not market.ok:return market
+  var market_works:=Planner.earthworks(market)
+  if not market_works.ok:return market_works
+  works.segments.append_array(market_works.segments);works.bounds=works.bounds.merge(market_works.bounds)
+ if with_connection:
+  connection=preload("res://addons/structures/regional_route_planner.gd").central_connection(core,plan,layout,market)
+  if not connection.ok:return connection
+  works.segments=connection.segments+works.segments;works.bounds=works.bounds.merge(connection.bounds)
+ var result:Dictionary={"ok":true,"version":VERSION,"seed":seed_value,"generator":generator,"with_market":with_market,"with_connection":with_connection,"plan":plan,"market":market,"connection":connection,"works":works}
+ var bytes:=var_to_bytes(without_assets(result));var checksum:=Survey.digest(bytes)
+ result["plan_digest"]=checksum.hex_encode();result["cache_hit"]=false;result["cache_persisted"]=false
+ if bytes.size()+32<=LIMIT:
+  DirAccess.make_dir_recursive_absolute(folder)
+  var temporary:=path+".tmp_%d_%d"%[OS.get_process_id(),Time.get_ticks_usec()]
+  var file:=FileAccess.open(temporary,FileAccess.WRITE)
+  if file!=null:
+   file.store_buffer(checksum);file.store_buffer(bytes);file.close()
+   if not read_plan(temporary,seed_value,generator,with_market,with_connection).is_empty():result.cache_persisted=DirAccess.rename_absolute(temporary,path)==OK
+   if FileAccess.file_exists(temporary):DirAccess.remove_absolute(temporary)
+ if result.cache_persisted:trim_cache(folder,path)
+ result["worker_ms"]=(Time.get_ticks_usec()-started)/1000.0
+ return result
+static func preview(seed_value:int,generator:int,integrated:bool=true)->Dictionary:
+ var terrain:=Survey.build(seed_value,generator)
+ if not terrain.get("ok",false):return terrain
+ if not integrated or generator not in [17,18,19]:return terrain
+ var plan:=build(seed_value,generator)
+ if not plan.get("ok",false):return plan
+ var roads:Array=plan.plan.roads.duplicate();roads.append_array(plan.market.get("roads",[]));roads.append_array(plan.connection.get("segments",[]))
+ var bounds:Array=[]
+ for site:Dictionary in [plan.plan,plan.market]:
+  for lot:Dictionary in site.get("lots",[]):bounds.append(lot.bounds)
+ var core=ClassDB.instantiate("TerrainCore")
+ terrain.pixels=core.render_plan_map(terrain.pixels,roads,bounds)
+ terrain["plan_digest"]=plan.plan_digest;terrain["building_count"]=bounds.size();terrain["plan_cache_hit"]=plan.cache_hit;terrain["plan_ms"]=plan.worker_ms;terrain["plan_reusable"]=plan.get("cache_hit",false) or plan.get("cache_persisted",false)
+ return terrain

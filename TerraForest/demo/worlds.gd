@@ -65,8 +65,8 @@ func _ready() -> void:
 	var map_column:=VBoxContainer.new();map_column.size_flags_horizontal=Control.SIZE_EXPAND_FILL;create_page.add_child(map_column)
 	heading(map_column,"World preview",24)
 	preview_view=TextureRect.new();preview_view.custom_minimum_size=Vector2(560,410);preview_view.expand_mode=TextureRect.EXPAND_IGNORE_SIZE;preview_view.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_CENTERED;preview_view.size_flags_vertical=Control.SIZE_EXPAND_FILL;map_column.add_child(preview_view)
-	preview_status=heading(map_column,"Preview the terrain for this seed. Town and road planning is not shown yet.",18);preview_status.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
-	preview_button=button(map_column,"Preview terrain",start_preview)
+	preview_status=heading(map_column,"Preview terrain, fitted buildings and connected roads before baking.",18);preview_status.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
+	preview_button=button(map_column,"Preview world",start_preview)
 	seed_field.value_changed.connect(func(_value:float):invalidate_preview())
 	ocean.toggled.connect(func(_value:bool):invalidate_preview())
 	preset.item_selected.connect(func(_index:int):invalidate_preview())
@@ -171,15 +171,15 @@ func selected_preview_key()->String:
 	return "%d/%d"%[int(seed_field.value),19 if ocean.button_pressed else 17] if preset.get_selected_id()==Launch.INTEGRATED_PRESET else "%d/%d"%[int(seed_field.value),preset.get_selected_id()]
 func invalidate_preview()->void:
 	preview_view.texture=null
-	preview_status.text="Settings changed. Preview terrain before creating. Locations are planned during generation."
+	preview_status.text="Settings changed. Preview the new world plan before creating."
 func start_preview()->void:
 	if preview_worker!=null:return
 	var generator:int=19 if ocean.button_pressed else 17
 	if preset.get_selected_id()!=Launch.INTEGRATED_PRESET:generator=preset.get_selected_id()
 	if generator>=10000:preview_status.text="Select the current regional world to preview terrain.";return
-	preview_key=selected_preview_key();preview_status.text="Preparing native terrain survey…";preview_button.disabled=true
+	preview_key=selected_preview_key();preview_status.text="Planning terrain, settlements and roads…";preview_button.disabled=true
 	preview_worker=Thread.new()
-	var job:Callable=preload("res://addons/world_runtime/survey_cache.gd").build.bind(int(seed_field.value),generator)
+	var job:Callable=preload("res://addons/world_runtime/world_generation_plan.gd").preview.bind(int(seed_field.value),generator,preset.get_selected_id()==Launch.INTEGRATED_PRESET)
 	if preview_worker.start(job)!=OK:preview_worker=null;preview_button.disabled=false;preview_status.text="Could not start terrain preview."
 func poll_preview()->void:
 	if preview_worker==null or preview_worker.is_alive():return
@@ -187,6 +187,9 @@ func poll_preview()->void:
 	if preview_key!=selected_preview_key():return
 	if not result.get("ok",false):preview_status.text="Terrain preview failed. No world was created.";return
 	preview_view.texture=ImageTexture.create_from_image(Image.create_from_data(256,256,false,Image.FORMAT_RGBA8,result.pixels))
-	preview_status.text="Terrain preview · north is up · 2 km × 2 km\nTown and road layout is planned during generation."
+	if result.has("building_count"):
+		preview_status.text="World plan · north is up · 2 km × 2 km\n%d buildings · roads in gold · buildings in ivory\n"%int(result.building_count)
+		preview_status.text+="The bake reuses this cached placement plan." if result.get("plan_reusable",false) else "Cache unavailable; generation will repeat this deterministic plan."
+	else:preview_status.text="Terrain preview · north is up · 2 km × 2 km"
 func _exit_tree()->void:
 	if preview_worker!=null:preview_worker.wait_to_finish();preview_worker=null
