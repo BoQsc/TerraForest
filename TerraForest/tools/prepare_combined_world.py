@@ -6,6 +6,8 @@ import json
 import os
 import re
 import uuid
+import shutil
+import time
 from pathlib import Path
 from clone_world import clone_once
 from play_checkpoint import revision_metadata
@@ -65,6 +67,19 @@ def prepare(engine, worlds, folder, destination="combined_gameplay", layout="cot
         if progress is not None: progress('publishing')
         if cancel_requested is not None and cancel_requested(): return 2
         metadata['publication'] = clone_once(worlds, slot, destination)
+        # Derived presentation assets are bounded and never replace world data.
+        try:
+            preview = worlds / (destination + '.preview')
+            captures = [name for name in ('north', 'road', 'market') if (folder / ('loading_' + name + '.png')).is_file()]
+            if captures:
+                preview.mkdir(exist_ok=True)
+                for name in captures:
+                    shutil.copy2(folder / ('loading_' + name + '.png'), preview / (name + '.png'))
+            presentation = worlds / (destination + '.presentation.json')
+            presentation.write_text(json.dumps({'created': int(time.time()), 'seed': seed, 'preview_count': len(captures)}), encoding='utf-8')
+        except OSError as error:
+            metadata["presentation_warning"] = str(error)
+            print("World published; optional preview metadata could not be written: " + str(error))
         (folder / 'run.json').write_text(json.dumps(metadata, indent=2))
         print('Prepared and reopened slot ' + destination + '. Evidence: ' + str(folder))
         return 0

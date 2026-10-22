@@ -9,12 +9,24 @@ static func valid_slot(slot: String) -> bool:
 static func preparation_slot(slot:String)->bool:
 	var pattern:=RegEx.new();pattern.compile("^combined_stage_[0-9a-f]{32}$")
 	return pattern.search(slot)!=null
-static func saved_slots(directory: String="user://worlds",include_preparation:bool=false) -> PackedStringArray:
+static func saved_slots(directory: String="user://worlds",include_preparation:bool=false,order:String="played") -> PackedStringArray:
 	var slots:=PackedStringArray();var folder:=DirAccess.open(directory)
 	if folder==null:return slots
 	for file in folder.get_files():
 		if file.ends_with(".trw") and valid_slot(file.trim_suffix(".trw")) and (include_preparation or not preparation_slot(file.trim_suffix(".trw"))):slots.append(file.trim_suffix(".trw"))
-	slots.sort();return slots
+	var rows:Array=[]
+	for slot:String in slots:
+		var path:=directory.path_join(slot+".trw")
+		var data:Dictionary=preload("res://addons/world_runtime/world_presentation.gd").metadata(slot,directory)
+		rows.append({"slot":slot,"time":int(data.get("last_played",0)) if order=="played" else int(data.get("created",0)),"saved":FileAccess.get_modified_time(path)})
+	rows.sort_custom(func(a:Dictionary,b:Dictionary):
+		if order=="name":return a.slot.naturalnocasecmp_to(b.slot)<0
+		if a.time!=b.time:return a.time>b.time
+		if a.saved!=b.saved:return a.saved>b.saved
+		return a.slot.naturalnocasecmp_to(b.slot)<0)
+	slots.clear()
+	for row:Dictionary in rows:slots.append(row.slot)
+	return slots
 static func command(slot: String,create: bool,generator: int,seed: int,gameplay: bool,directory: String="user://worlds",ocean:bool=true) -> Dictionary:
 	if not valid_slot(slot):return {"ok":false,"reason":"Use 1–48 letters, digits or underscores; start with a letter or underscore."}
 	var canonical:=directory.path_join(slot+".trw")

@@ -5,6 +5,8 @@ var output_dir:="res://reports"
 func _initialize()->void:run.call_deferred()
 func ready_world(game:Node)->bool:
  return await wait_until(func():return not game.loading_active,120)
+func capture_loading_view(game:Node,name:String)->void:
+ await preload("res://addons/world_runtime/world_presentation.gd").capture(game,root,output_dir.path_join("loading_"+name+".png"))
 func snapshot_signature(game:Node)->Dictionary:
  var result:Dictionary={"blocks":block_signature(game),"region":Marshalls.raw_to_base64(game.generated_region.store.capture_snapshot())}
  for asset:String in game.structures._models:
@@ -187,6 +189,7 @@ func run()->void:
  for i in 90:await process_frame
  await RenderingServer.frame_post_draw
  root.get_texture().get_image().save_png(output_dir.path_join("terrain_lot_world_street.png"))
+ await capture_loading_view(game,"north")
  if not connection.is_empty():
   var midpoint:Vector3=connection.points[connection.points.size()/2]
   game.teleport(midpoint)
@@ -196,6 +199,7 @@ func run()->void:
   for i in 120:await process_frame
   await RenderingServer.frame_post_draw
   root.get_texture().get_image().save_png(output_dir.path_join("terrain_lot_regional_road.png"))
+  await capture_loading_view(game,"road")
   game.teleport(road.start)
   if not await ready_world(game):quit(1);return
   game.set_physics_process(false);game._clear_motion()
@@ -214,6 +218,7 @@ func run()->void:
   for i in 90:await process_frame
   await RenderingServer.frame_post_draw
   root.get_texture().get_image().save_png(output_dir.path_join("central_market_street.png"))
+  await capture_loading_view(game,"market")
   for lot:Dictionary in market.lots:
    if not lot.asset.get_meta("cellar_clearance",false):continue
    game.player_hud.set_open(false)

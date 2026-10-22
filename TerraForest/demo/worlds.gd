@@ -10,6 +10,12 @@ var gameplay: CheckBox
 var notice: Label
 var filter_field: LineEdit
 var show_preparation:CheckBox
+var sort_order:OptionButton
+var preview_view:TextureRect
+var preview_status:Label
+var preview_worker:Thread
+var preview_key:=""
+var preview_button:Button
 var slots:=PackedStringArray()
 var preparation_pid:=-1
 var preparation_status:=""
@@ -30,19 +36,22 @@ func _ready() -> void:
 	Engine.max_fps=60;DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_ENABLED)
 	Input.mouse_mode=Input.MOUSE_MODE_VISIBLE
 	var background:=ColorRect.new();background.color=Color("101e22");background.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT);add_child(background)
-	var panel:=VBoxContainer.new();panel.position=Vector2(160,100);panel.size=Vector2(1600,880);panel.add_theme_constant_override("separation",24);add_child(panel)
+	var panel:=VBoxContainer.new();panel.position=Vector2(160,100);panel.size=Vector2(1600,840);panel.add_theme_constant_override("separation",24);add_child(panel)
 	heading(panel,"TERRAFOREST / WORLDS",36)
 	heading(panel,"Choose where to play. Each named world keeps its own saved progress.",20)
-	var columns:=HBoxContainer.new();columns.size_flags_vertical=Control.SIZE_EXPAND_FILL;columns.add_theme_constant_override("separation",48);panel.add_child(columns)
-	var saved:=VBoxContainer.new();saved.custom_minimum_size.x=850;saved.add_theme_constant_override("separation",16);columns.add_child(saved)
+	var columns:=TabContainer.new();columns.size_flags_vertical=Control.SIZE_EXPAND_FILL;panel.add_child(columns)
+	var saved:=VBoxContainer.new();saved.name="My worlds";saved.custom_minimum_size.x=850;saved.add_theme_constant_override("separation",16);columns.add_child(saved)
 	heading(saved,"Saved worlds")
+	sort_order=OptionButton.new();sort_order.add_item("Last played · newest first");sort_order.add_item("Created · newest first");sort_order.add_item("Name");sort_order.item_selected.connect(func(_index:int):refresh());saved.add_child(sort_order)
+	sort_order.tooltip_text="Older worlds without recorded dates fall back to their last save time."
 	var filters:=HBoxContainer.new();saved.add_child(filters)
 	filter_field=LineEdit.new();filter_field.size_flags_horizontal=Control.SIZE_EXPAND_FILL;filter_field.placeholder_text="Filter saved worlds";filter_field.text_changed.connect(func(_text: String):filter_list());filters.add_child(filter_field)
 	show_preparation=CheckBox.new();show_preparation.text="Preparation saves (read-only)";show_preparation.toggled.connect(func(_on:bool):refresh());filters.add_child(show_preparation)
 	worlds=ItemList.new();worlds.size_flags_vertical=Control.SIZE_EXPAND_FILL;worlds.custom_minimum_size.y=360;saved.add_child(worlds)
 	button(saved,"Open selected world",func():launch_selected(false))
 	button(saved,"Refresh saved worlds",refresh)
-	var create:=VBoxContainer.new();create.size_flags_horizontal=Control.SIZE_EXPAND_FILL;create.add_theme_constant_override("separation",16);columns.add_child(create)
+	var create_page:=HBoxContainer.new();create_page.name="Create world";create_page.add_theme_constant_override("separation",40);columns.add_child(create_page)
+	var create:=VBoxContainer.new();create.custom_minimum_size.x=600;create.add_theme_constant_override("separation",12);create_page.add_child(create)
 	heading(create,"Create a world")
 	heading(create,"World name",18);name_field=LineEdit.new();name_field.placeholder_text="e.g. woodland_home";name_field.max_length=48;create.add_child(name_field)
 	heading(create,"Landscape",18);preset=OptionButton.new();create.add_child(preset)
@@ -53,6 +62,14 @@ func _ready() -> void:
 	preset.item_selected.connect(func(_index:int):ocean.visible=preset.get_selected_id()==Launch.INTEGRATED_PRESET)
 	heading(create,"Seed",18);seed_field=SpinBox.new();seed_field.min_value=0;seed_field.max_value=2147483647;seed_field.step=1;seed_field.value=1703;create.add_child(seed_field)
 	var explanation:=heading(create,"The seed and landscape apply only to new worlds. Saved worlds retain their generation settings. Integrated worlds are prepared and verified before play; first creation can take several minutes.",18);explanation.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
+	var map_column:=VBoxContainer.new();map_column.size_flags_horizontal=Control.SIZE_EXPAND_FILL;create_page.add_child(map_column)
+	heading(map_column,"World preview",24)
+	preview_view=TextureRect.new();preview_view.custom_minimum_size=Vector2(560,410);preview_view.expand_mode=TextureRect.EXPAND_IGNORE_SIZE;preview_view.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_CENTERED;preview_view.size_flags_vertical=Control.SIZE_EXPAND_FILL;map_column.add_child(preview_view)
+	preview_status=heading(map_column,"Preview the terrain for this seed. Town and road planning is not shown yet.",18);preview_status.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
+	preview_button=button(map_column,"Preview terrain",start_preview)
+	seed_field.value_changed.connect(func(_value:float):invalidate_preview())
+	ocean.toggled.connect(func(_value:bool):invalidate_preview())
+	preset.item_selected.connect(func(_index:int):invalidate_preview())
 	button(create,"Create and play",func():launch_selected(true))
 	cancel_button=button(create,"Cancel preparation",cancel_preparation);cancel_button.hide()
 	gameplay=CheckBox.new();gameplay.text="Gameplay material costs (uncheck for free editor)";gameplay.button_pressed=true;panel.add_child(gameplay)
@@ -61,7 +78,7 @@ func _ready() -> void:
 	refresh()
 func refresh() -> void:
 	if preparation_pid>=0:return
-	slots=Launch.saved_slots("user://worlds",show_preparation.button_pressed);filter_list()
+	slots=Launch.saved_slots("user://worlds",show_preparation.button_pressed,["played","created","name"][sort_order.selected]);filter_list()
 	notice.text="%d saved worlds. Save from the Actions menu or with F5 while playing."%slots.size()
 func filter_list() -> void:
 	worlds.clear()
@@ -94,6 +111,7 @@ func launch_selected(create: bool) -> void:
 	_open_game(result.args)
 
 func _process(delta:float)->void:
+	poll_preview()
 	if preparation_pid<0:return
 	preparation_poll-=delta
 	if preparation_poll>0:return
@@ -148,3 +166,27 @@ func request_quit()->void:
 	quit_pending=cancel_pending
 func _notification(what:int)->void:
 	if what==NOTIFICATION_WM_CLOSE_REQUEST:request_quit()
+
+func selected_preview_key()->String:
+	return "%d/%d"%[int(seed_field.value),19 if ocean.button_pressed else 17] if preset.get_selected_id()==Launch.INTEGRATED_PRESET else "%d/%d"%[int(seed_field.value),preset.get_selected_id()]
+func invalidate_preview()->void:
+	preview_view.texture=null
+	preview_status.text="Settings changed. Preview terrain before creating. Locations are planned during generation."
+func start_preview()->void:
+	if preview_worker!=null:return
+	var generator:int=19 if ocean.button_pressed else 17
+	if preset.get_selected_id()!=Launch.INTEGRATED_PRESET:generator=preset.get_selected_id()
+	if generator>=10000:preview_status.text="Select the current regional world to preview terrain.";return
+	preview_key=selected_preview_key();preview_status.text="Preparing native terrain survey…";preview_button.disabled=true
+	preview_worker=Thread.new()
+	var job:Callable=preload("res://addons/world_runtime/survey_cache.gd").build.bind(int(seed_field.value),generator)
+	if preview_worker.start(job)!=OK:preview_worker=null;preview_button.disabled=false;preview_status.text="Could not start terrain preview."
+func poll_preview()->void:
+	if preview_worker==null or preview_worker.is_alive():return
+	var result:Dictionary=preview_worker.wait_to_finish();preview_worker=null;preview_button.disabled=false
+	if preview_key!=selected_preview_key():return
+	if not result.get("ok",false):preview_status.text="Terrain preview failed. No world was created.";return
+	preview_view.texture=ImageTexture.create_from_image(Image.create_from_data(256,256,false,Image.FORMAT_RGBA8,result.pixels))
+	preview_status.text="Terrain preview · north is up · 2 km × 2 km\nTown and road layout is planned during generation."
+func _exit_tree()->void:
+	if preview_worker!=null:preview_worker.wait_to_finish();preview_worker=null

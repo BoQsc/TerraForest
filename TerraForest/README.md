@@ -2,7 +2,14 @@
 
 See the [delivery plan and coverage register](docs/PROJECT_PLAN.md) for current milestones, original-scope gaps and explicit return points for deferred work. Historical validation documents describe their recorded builds, not completion of the whole project.
 
-## Playable checkpoints
+## Start here
+
+`Worlds.cmd` is the single normal launcher. The library supports last-played and
+creation ordering; Create world includes a native terrain preview and coast option.
+Earlier launchers are preserved in `launchers/legacy/`, with their original save
+slots. The replacement workflow is tracked in [world workflow redesign](docs/WORLD_WORKFLOW_REDESIGN.md).
+
+## Historical playable checkpoints
 
 Open `Worlds.cmd` (or run the project from Godot) for the world browser. Select a
 saved world, or create a named world with a preset and seed. The default terrain-fitted
@@ -18,9 +25,11 @@ ported into the newer terrain-fitted recipe. Simpler landscape presets also rema
 available. Save from Actions or F5; choose gameplay costs or free editor before play.
 Use **Esc > Session > World browser** to save and choose another world.
 
-| Launcher | What to try |
+All launchers in this table now live under `launchers/legacy/`.
+
+| Historical launcher | What it contains |
 | --- | --- |
-| `Prepare Generated World.cmd`, then `Play Generated World.cmd` | Current integrated world in `generated_world_v4`: five settlement sites, workshops, rare owned underground locations, lakes, vegetation and saved vehicles. Preparation preserves existing progress. |
+| `Prepare Generated World.cmd`, then `Play Generated World.cmd` | Earlier integrated world in `generated_world_v4`: five settlement sites, workshops, rare owned underground locations, lakes, vegetation and saved vehicles. Preparation preserves existing progress. |
 | `Play Regional World Review.cmd` | Separate editable v6 copy of the same integrated content for review. |
 | `Play Combined Gameplay.cmd` | Resource gathering, crafting, construction and chest storage. |
 | `Review Mixed Neighborhood.cmd` | Five cottages and three furnished towers, connected streets, doors and windows. |

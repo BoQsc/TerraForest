@@ -125,6 +125,7 @@ var journal_timer: float = 0.0
 const StrokeBuffer = preload("res://demo/brush_stroke.gd")
 var stroke_buffer = StrokeBuffer.new()
 var loading_layer := CanvasLayer.new()
+var _recorded_world_visit:=false
 var loading_label := Label.new()
 var loading_progress := ProgressBar.new()
 var loading_active: bool = true
@@ -326,8 +327,16 @@ func _setup_loading() -> void:
 	background.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	loading_layer.add_child(background)
 	background.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	var picture:=TextureRect.new()
+	var preview_slot:String=terrain.save_slot
+	for arg:String in OS.get_cmdline_user_args():
+		if arg.begins_with("--world-slot="):preview_slot=arg.trim_prefix("--world-slot=")
+	picture.texture=preload("res://addons/world_runtime/world_presentation.gd").image_for(preview_slot)
+	picture.expand_mode=TextureRect.EXPAND_IGNORE_SIZE;picture.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	picture.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT);loading_layer.add_child(picture)
+	var shade:=ColorRect.new();shade.color=Color(0.01,0.02,0.03,0.63);shade.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT);loading_layer.add_child(shade)
 	var panel := VBoxContainer.new()
-	panel.position = Vector2(100, 180)
+	panel.position = Vector2(100, 680)
 	panel.custom_minimum_size = Vector2(900, 220)
 	loading_layer.add_child(panel)
 	loading_label.add_theme_font_size_override("font_size", 23)
@@ -337,9 +346,7 @@ func _setup_loading() -> void:
 	loading_progress.show_percentage = false
 	panel.add_child(loading_progress)
 	var explanation := Label.new()
-	explanation.text = "Waiting for complete map coverage and nearby collision.\nThe game is not accepting movement yet; no input is being queued.\nLarge saved worlds take longer. No world data is erased."
-	if terrain.nearby_first:
-		explanation.text = "Nearby-first: load a safe inner region, then stream distant terrain.\nThe initial view is explicitly limited to 320 m until outer coverage is ready.\nThe game is not accepting movement yet; no input is being queued."
+	explanation.text = "Preparing your surroundings before play. Your saved progress is preserved."
 	panel.add_child(explanation)
 	var quit_button := Button.new()
 	quit_button.text = "Save and quit"
@@ -368,11 +375,7 @@ func _update_loading() -> void:
 	if not loading_active:
 		return
 	var state: Dictionary = terrain.loading_state(player.position, fly)
-	loading_label.text = loading_reason + "\n"
-	loading_label.text += "World overview: %d/%d regions | Local collision: %d/%d\n" % [state["roots"], state["root_total"], state["local"], state["local_total"]]
-	if terrain.nearby_first:
-		loading_label.text += "Nearby-first: explicit 320 m view until outer coverage is ready\n"
-	loading_label.text += "Worker: %s | queued %d | elapsed %.1f s" % [state["worker"], state["queued"], float(Time.get_ticks_usec() - loading_started_us) / 1000000.0]
+	loading_label.text = loading_reason + "\nPreparing the environment · %.1f s" % (float(Time.get_ticks_usec() - loading_started_us) / 1000000.0)
 	loading_progress.max_value = maxf(1.0, float(state["root_total"] + state["local_total"]))
 	loading_progress.value = float(state["roots"] + state["local"])
 	if terrain.latest_error != "":
@@ -386,6 +389,8 @@ func _update_loading() -> void:
 		return
 	loading_layer.visible = false
 	loading_active = false
+	if not _recorded_world_visit and not temporary_world and not terrain.backend.readonly_snapshot:
+		_recorded_world_visit=preload("res://addons/world_runtime/world_presentation.gd").mark_played(terrain.save_slot)
 	terrain.initial_loading = false
 	terrain.autosave_paused = false
 	travel_blocked_s = 0.0

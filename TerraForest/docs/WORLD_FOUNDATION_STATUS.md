@@ -1,3 +1,11 @@
+## Active priority changed — 2026-10-22
+
+The user stopped mine/POI detail work. The active deliverable is the unified world
+generator, selector, loading presentation, map, native/compute generation pipeline,
+baking, caching and storage described in [WORLD_WORKFLOW_REDESIGN.md](WORLD_WORKFLOW_REDESIGN.md).
+Earlier next-step instructions for mine integration are superseded. Open defects
+remain tracked; UI improvements do not close native generation or capacity work.
+
 ## Current unfinished-work handoff — 2026-10-22
 
 This is the current priority index, not an exhaustive replacement for the open
