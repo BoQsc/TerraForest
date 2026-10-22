@@ -1,0 +1,16 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS isolated store opens
+PASS edited snapshot becomes checkpoint component
+PASS checkpoint component expands byte exactly
+PASS old and empty-override component versions remain exact
+PASS ordinary legacy snapshot passes through without migration
+PASS legacy catalog remains readable and writable
+PASS bad component length rejected
+PASS missing checkpoint never becomes empty water
+PASS overlap fixture valid
+PASS resident and archived ownership overlap rejected
+PASS invalid source cannot produce checkpoint component
+PASS store reopens
+PASS both component versions survive reopen
+WATER_STORAGE_SNAPSHOT failures=0

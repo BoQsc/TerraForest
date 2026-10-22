@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: 0BSD
 #pragma once
 #include "regional_water.hpp"
+#include "lake_catalog.hpp"
 #include <godot_cpp/classes/dir_access.hpp>
 #include <godot_cpp/classes/hashing_context.hpp>
 #include <godot_cpp/core/class_db.hpp>
@@ -160,10 +161,17 @@ public:
   auto out=result(true);out["base"]=base;out["checkpoint"]=id;out["archived_regions"]=count;out["blobs_verified"]=false;return out;
  }
  // Save-worker adapter. No live water references; no selected checkpoint mutation.
- Bytes publish_water_snapshot(const Bytes &snapshot){return merge_water_snapshot(snapshot,Bytes());}
+ Bytes publish_water_snapshot(const Bytes &snapshot){
+  if(snapshot.size()<4||snapshot.decode_u32(0)!=0x54574654)return merge_water_snapshot(snapshot,Bytes());
+  godot::Ref<NativeRegionalWater> validator;validator.instantiate();auto inspected=validator->inspect_streaming_snapshot(snapshot);
+  if(!bool(inspected["ok"]))return {};godot::PackedInt32Array keys=inspected["coordinates"];Bytes packed=inspected["digests"];
+  godot::Array ids;for(int64_t i=0;i<packed.size();i+=32)ids.append(packed.slice(i,i+32));
+  auto inherited=publish_checkpoint(keys,ids);if(!bool(inherited["ok"]))return {};
+  return merge_water_snapshot(inspected["base"],inherited["checkpoint"]);
+ }
  Bytes merge_water_snapshot(const Bytes &snapshot,const Bytes &inherited){
   godot::Ref<NativeRegionalWater> water;water.instantiate();
-  if(!water->restore_snapshot(snapshot))return inherited.is_empty()&&water->validate_snapshot(snapshot)?snapshot:Bytes();
+  if(!water->restore_snapshot(snapshot)){godot::Ref<NativeLakeCatalog> catalog;catalog.instantiate();return inherited.is_empty()&&catalog->validate_snapshot(snapshot)?snapshot:Bytes();}
   std::map<uint64_t,Bytes> entries;
   if(!inherited.is_empty()){
    int64_t cursor=0;
@@ -190,6 +198,7 @@ public:
   std::memcpy(out.ptrw()+16,id.ptr(),32);std::memcpy(out.ptrw()+48,base.ptr(),base.size());return out;
  }
  Bytes expand_water_snapshot(const Bytes &snapshot){
+  if(snapshot.size()>=4&&snapshot.decode_u32(0)==0x54574654)return {};
   godot::Ref<NativeRegionalWater> water;water.instantiate();
   if(snapshot.size()<8||std::memcmp(snapshot.ptr(),"TFWS\1\0\0\0",8))return water->validate_snapshot(snapshot)?snapshot:Bytes();
   if(snapshot.size()<48||snapshot.size()>64*1024*1024||snapshot.decode_u64(8)!=uint64_t(snapshot.size()-48))return {};

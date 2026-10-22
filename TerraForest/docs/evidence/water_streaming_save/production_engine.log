@@ -1,0 +1,17 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS archive acquired
+PASS store opens
+PASS distant region retired
+PASS resident local region
+PASS production worker validates frozen mixed-ownership handoff
+PASS handoff contains unloaded ownership
+PASS transient handoff cannot masquerade as canonical load
+PASS reserved header corruption rejected
+PASS resident and deferred ownership overlap rejected
+PASS production frozen publication retains resident and deferred water
+PASS production reopen expands checkpoint
+PASS frozen capture preserves earlier quantity across later edit
+PASS both original region packets survive production save/load
+PASS corrupt unloaded dependency aborts publication without replacing canonical
+WATER_STREAMING_SAVE failures=0

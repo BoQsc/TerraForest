@@ -24,7 +24,7 @@ func _initialize()->void:
  var catalog:PackedByteArray=ClassDB.instantiate("NativeLakeCatalog").encode([])
  check(water.capture_snapshot(catalog).is_empty(),"legacy capture refuses to drop deferred references")
  var frozen:Variant=water.capture_storage_snapshot(catalog)
- check(frozen is PackedByteArray and frozen.is_empty(),"deferred legacy worker capture fails closed")
+ check(frozen is RefCounted and water.inspect_streaming_snapshot(frozen.serialize_snapshot()).ok,"worker capture retains deferred references")
  check(not water.restore_region_snapshot(Vector3i(1,9,250),packet(0),water.survey_revision_id(),true),"wrong acknowledged blob cannot replace deferred water")
  check(water.statistics().deferred_regions==1,"failed admission retains deferred ownership")
  var page:Dictionary=water.deferred_region_page(0,1)

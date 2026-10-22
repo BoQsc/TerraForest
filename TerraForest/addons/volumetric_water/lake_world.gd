@@ -79,7 +79,7 @@ func _capture(deferred:bool) -> Variant:
  var records:Array=[]
  for item:Dictionary in _lakes.values():records.append({"id":item.id,"origin":item.origin,"cells":item.cells,"spacing":item.spacing,"level":item.level,"seed":item.seed})
  var catalog:PackedByteArray=_catalog.encode(records,_next_id)
- return water.capture_storage_snapshot(catalog) if deferred else water.capture_snapshot(catalog)
+ return water.capture_storage_snapshot(catalog) if deferred else water.capture_streaming_snapshot(catalog)
 func snapshot_preparer()->RefCounted:
  return ClassDB.instantiate("NativeWaterMapIdentity")
 func restore_prepared_snapshot(prepared:RefCounted)->bool:

@@ -2244,3 +2244,29 @@ The receipt proves a verified blob write/read, not compound-save publication or
 protection against later external file deletion. Retention/GC must respect these
 references. Selective loading, map/far visual preservation and the actual edited
 travel/capacity acceptance remain required. No increase to resident capacity.
+
+
+### Mixed resident/deferred water save handoff (2026-10-22)
+
+Water storage capture now freezes deferred digest membership alongside resident
+records. Worker serialization emits a bounded TFWT v1 transient handoff (24-byte
+header, ordinary resident snapshot, sorted 40-byte key/digest records; at most
+65536 references and 64 MiB total). Capture reservation includes metadata. The
+production component validator checks this handoff, including disjoint ownership,
+strict ordering, domain, sizes and header. Legacy direct capture still refuses to
+silently omit deferred records. LakeWorld capture selects the complete handoff.
+
+The save store verifies every referenced blob, merges resident edits and publishes
+the existing TFWS checkpoint component. TFWT is explicitly rejected as a canonical
+load format. The production backend test covers frozen capture after retirement,
+a subsequent live edit, compound publication/reopen, byte-identical region contents,
+and a corrupt unloaded blob preserving the previous canonical save. Existing
+ownership/storage snapshot checks pass. Evidence: `evidence/water_streaming_save/`.
+Both native configurations rebuilt.
+
+Runtime eviction is still disabled. An active loader must share/coordinate the
+sidecar owner with saving (the existing backend currently opens its own exclusive
+store); selective loading, map/far representations, quantities and bounded retained
+receipt memory still need integration. Eager reopen retains its existing capacity
+limit. Passing this save test does not resolve the edited-coast scaling failure.
+Normal in-world scoop/save/reopen also passes (16.66 s / 9.94 s harness runs; not performance acceptance).

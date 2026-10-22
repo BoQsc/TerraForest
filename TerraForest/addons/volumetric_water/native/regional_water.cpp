@@ -256,6 +256,8 @@ void NativeRegionalWater::_bind_methods(){
     ClassDB::bind_method(D_METHOD("capture_unarchived_snapshot","catalog"),&NativeRegionalWater::capture_unarchived_snapshot);
     ClassDB::bind_method(D_METHOD("capture_region_snapshot","coordinate"),&NativeRegionalWater::capture_region_snapshot);
     ClassDB::bind_method(D_METHOD("restore_region_snapshot","coordinate","packet","expected_revision","reuse_occupancy"),&NativeRegionalWater::restore_region_snapshot);
+    ClassDB::bind_method(D_METHOD("capture_streaming_snapshot","catalog"),&NativeRegionalWater::capture_streaming_snapshot);
+    ClassDB::bind_method(D_METHOD("inspect_streaming_snapshot","bytes"),&NativeRegionalWater::inspect_streaming_snapshot);
     ClassDB::bind_method(D_METHOD("capture_storage_snapshot","catalog"),&NativeRegionalWater::capture_storage_snapshot);
     ClassDB::bind_method(D_METHOD("restore_prepared","prepared"),&NativeRegionalWater::restore_prepared);
     ClassDB::bind_method(D_METHOD("restore_snapshot","bytes"),&NativeRegionalWater::restore_snapshot);
@@ -1430,7 +1432,7 @@ void NativeWaterSnapshot::_bind_methods(){ClassDB::bind_method(D_METHOD("seriali
 NativeWaterSnapshot::~NativeWaterSnapshot(){if(reserved_bytes)pending_bytes.fetch_sub(reserved_bytes);}
 PackedByteArray NativeWaterSnapshot::serialize_snapshot(){
     if(frozen.is_valid()){
-        serialized=frozen->capture_snapshot(catalog);
+        serialized=frozen->capture_streaming_snapshot(catalog);
         // Only immutable bytes remain after serialization; release the copied
         // mutable records and shared contacts on the worker, never at edit time.
         frozen.unref();catalog=PackedByteArray();
@@ -1438,20 +1440,20 @@ PackedByteArray NativeWaterSnapshot::serialize_snapshot(){
     return serialized;
 }
 Variant NativeRegionalWater::capture_storage_snapshot(const PackedByteArray &catalog) const {
-    if(fill.running||!deferred_regions.empty())return PackedByteArray();
+    if(fill.running)return PackedByteArray();
     if(snapshot_cached&&catalog==saved_catalog){++snapshot_hits;return saved_snapshot;}
     if(saved_frozen.is_valid()&&catalog==frozen_catalog){++snapshot_hits;return saved_frozen;}
     Ref<NativeLakeCatalog> validator;validator.instantiate();if(!validator->validate_snapshot(catalog))return PackedByteArray();
     // Account retained immutable contacts conservatively too. Fail closed when
     // queued snapshots exhaust this bound; the backend retains the canonical save.
-    uint64_t bytes=catalog.size()+regions.size()*(sizeof(Region)+64);
+    uint64_t bytes=catalog.size()+regions.size()*(sizeof(Region)+64)+deferred_regions.size()*128;
     for(const auto &[k,r]:regions){bytes+=r.vacancies.size()*sizeof(uint32_t);if(r.contacts)bytes+=r.contacts->bytes;if(r.structures)bytes+=r.structures->bytes;}
     uint64_t previous=NativeWaterSnapshot::pending_bytes.load();
     do{if(bytes>128*1024*1024||previous>128*1024*1024-bytes)return PackedByteArray();}
     while(!NativeWaterSnapshot::pending_bytes.compare_exchange_weak(previous,previous+bytes));
     Ref<NativeWaterSnapshot> snapshot;snapshot.instantiate();snapshot->reserved_bytes=bytes;
     snapshot->catalog=catalog;snapshot->frozen.instantiate();
-    snapshot->frozen->regions=regions;snapshot->frozen->total=total;
+    snapshot->frozen->regions=regions;snapshot->frozen->total=total;snapshot->frozen->deferred_regions=deferred_regions;
     saved_frozen=snapshot;frozen_catalog=catalog;
     return snapshot;
 }
@@ -1626,9 +1628,11 @@ bool NativeRegionalWater::restore_snapshot(const PackedByteArray &data){
  survey_identity_scene_hash_us=prepared->hash_us;return true;
 }
 bool NativeRegionalWater::validate_snapshot(const PackedByteArray &data) const {
+    if(data.size()>=4&&data.decode_u32(0)==0x54574654)return bool(inspect_streaming_snapshot(data).get("ok",false));
     if(data.size()>=4&&data.decode_u32(0)==MAGIC){return const_cast<NativeRegionalWater*>(this)->decode(data,false);}Ref<NativeLakeCatalog> legacy;legacy.instantiate();return legacy->validate_snapshot(data);
 }
 PackedByteArray NativeRegionalWater::snapshot_catalog(const PackedByteArray &data) const {
+    if(data.size()>=4&&data.decode_u32(0)==0x54574654){auto parsed=inspect_streaming_snapshot(data);return bool(parsed["ok"])?snapshot_catalog(parsed["base"]):PackedByteArray();}
     if(!validate_snapshot(data))return PackedByteArray();return data.decode_u32(0)==MAGIC?data.slice(32,32+data.decode_u32(8)):data;
 }
 }
@@ -1792,4 +1796,29 @@ bool terraforest::NativeRegionalWater::retire_region(const Ref<NativeWaterRegion
   Key owner=key(n);if(mesh_set.insert(owner).second)meshes.push_back(owner);
  }
  return true;
+}
+
+// Transient save-worker handoff, never the canonical on-disk world component.
+PackedByteArray terraforest::NativeRegionalWater::capture_streaming_snapshot(const PackedByteArray &catalog) const {
+ if(fill.running)return {};if(deferred_regions.empty())return capture_snapshot(catalog);
+ Ref<NativeRegionalWater> copy;copy.instantiate();copy->regions=regions;copy->total=total;
+ auto base=copy->capture_snapshot(catalog);if(base.is_empty()||base.size()+24+deferred_regions.size()*40>64*1024*1024)return {};
+ PackedByteArray out;out.resize(24+base.size()+deferred_regions.size()*40);out.fill(0);
+ out.encode_u32(0,0x54574654);out.encode_u32(4,1);out.encode_u64(8,base.size());out.encode_u32(16,deferred_regions.size());
+ std::memcpy(out.ptrw()+24,base.ptr(),base.size());int64_t at=24+base.size();
+ for(const auto &[k,d]:deferred_regions){out.encode_u64(at,k);std::memcpy(out.ptrw()+at+8,d.ptr(),32);at+=40;}
+ return out;
+}
+Dictionary terraforest::NativeRegionalWater::inspect_streaming_snapshot(const PackedByteArray &data) const {
+ Dictionary out;out["ok"]=false;
+ if(data.size()<24||data.size()>64*1024*1024||data.decode_u32(0)!=0x54574654||data.decode_u32(4)!=1||data.decode_u32(20)!=0)return out;
+ uint64_t size=data.decode_u64(8),count=data.decode_u32(16);
+ if(size<32||size>64*1024*1024||count==0||count>65536||24+size+count*40!=uint64_t(data.size()))return out;
+ PackedByteArray base=data.slice(24,24+size);Ref<NativeRegionalWater> copy;copy.instantiate();if(!copy->decode(base,true))return out;
+ PackedInt32Array keys;PackedByteArray digests;Key previous=0;
+ for(uint64_t i=0;i<count;++i){int64_t at=24+size+i*40;Key k=data.decode_u64(at);auto p=position(k);
+  if(key(p)!=k||p.x>=500||p.y>=64||p.z>=500||(i&&k<=previous)||copy->regions.count(k))return out;
+  previous=k;keys.push_back(p.x);keys.push_back(p.y);keys.push_back(p.z);digests.append_array(data.slice(at+8,at+40));
+ }
+ out["ok"]=true;out["base"]=base;out["coordinates"]=keys;out["digests"]=digests;return out;
 }

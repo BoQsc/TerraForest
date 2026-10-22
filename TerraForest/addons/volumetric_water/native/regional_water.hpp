@@ -271,6 +271,8 @@ public:
     // Runtime publication and picking use the same closed material boundary.
     godot::Dictionary next_mesh(bool include_contacts=false);
     godot::Dictionary statistics() const;
+    godot::PackedByteArray capture_streaming_snapshot(const godot::PackedByteArray &catalog) const;
+    godot::Dictionary inspect_streaming_snapshot(const godot::PackedByteArray &data) const;
     godot::Variant capture_storage_snapshot(const godot::PackedByteArray &catalog) const;
     godot::PackedByteArray capture_snapshot(const godot::PackedByteArray &catalog) const;
     bool restore_prepared(const godot::Ref<NativeWaterMapIdentity> &prepared);
