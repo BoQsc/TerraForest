@@ -62,4 +62,8 @@ func run()->void:
   check(matches,"48 local depth samples survive fresh process and residency refill")
  game.shutdown_requested=true
  check(await game.terrain.shutdown_after_edits(),"durable shutdown succeeds")
+ var archive=ClassDB.instantiate("NativeWorldArchive")
+ var saved:Dictionary=archive.decode(archive.read(ProjectSettings.globalize_path(game.terrain.backend.save_path)))
+ var water_component:PackedByteArray=saved.get("sections",{}).get("volumetric_water",PackedByteArray())
+ check(water_component.size()>=48 and water_component.slice(0,4).get_string_from_ascii()=="TFWS","canonical gameplay save references durable water checkpoint")
  game.free();print("OCEAN_EDIT_REOPEN failures=",failures," reopen=",reopen);quit(failures)

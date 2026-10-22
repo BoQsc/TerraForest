@@ -2043,3 +2043,32 @@ Required next work: hook component codec/validator/preparer and storage path int
 world persistence, copy .water dependencies in clone/backup tools, durable-reference
 retention/GC, metadata-first loading, guarded retirement, unloaded map/far visuals,
 and the edited-coast capacity plus actual-world travel/save gates.
+
+
+## Gameplay checkpoint-backed save/load enabled — 2026-10-22
+
+Connected the native TFWS adapter to both terrain backend compound-save paths
+(frozen publication worker and ordered synchronous shutdown save), before outer
+archive publication. Loads expand checkpoint components on the loading worker
+before existing addon validation/preparation. Missing/invalid sidecars fail loading
+with writes disabled; failed checkpoint conversion prevents canonical publication.
+Legacy non-checkpoint loads remain unchanged. Actual edits use the existing native
+runtime and bucket path; this changes persistence only, not water behavior.
+
+The .trw.water sidecar now follows clone_world's staged dependency copying before
+canonical publication. Four clone-cache/dependency tests pass, including preserving
+an existing destination's edited water. An isolated prepared-world copy passes the
+actual 1080p/cap60 gameplay scoop/save/restart test: exact 1 m³ bucket quantity,
+48 local depth samples and edited ownership restore, and the canonical component
+is explicitly asserted to contain TFWS. Whole harness times: save 19.06 s, reopen
+8.29 s. Cloning that checkpoint-backed save and reopening it also passes in 7.99 s.
+Evidence: `evidence/water_checkpoint_gameplay/`. Source player worlds were untouched.
+
+This closes real provider/save-path integration and dependency cloning. Eager load
+still expands all water into the existing resident store; therefore capacity
+exhaustion is NOT fixed and live eviction remains disabled. Next: metadata-first
+restore, resident/unloaded ownership and acknowledgements, far/map representation,
+reference-aware garbage collection, failure injection at the gameplay load/save
+boundary, and the previously failing edited-coast scaling plus travel regression.
+New checkpoint-backed saves require this updated build and their .water directory;
+backups must preserve that directory alongside .trw/.bak and other dependencies.

@@ -453,10 +453,28 @@ func _push(result: Dictionary) -> void:
 func _call(data: PackedByteArray) -> PackedByteArray:
 	return native.call("execute", data)
 
+# Called only by the ordered load/save worker or frozen publication worker.
+# The outer archive selects the checkpoint atomically with all other components.
+func _water_storage_sections(sections:Dictionary,path:String,writing:bool)->Dictionary:
+	if not sections.has("volumetric_water"):return sections
+	var bytes:PackedByteArray=sections.volumetric_water
+	var checkpoint:bool=bytes.size()>=4 and bytes.slice(0,4).get_string_from_ascii()=="TFWS"
+	if not writing and not checkpoint:return sections
+	if not ClassDB.class_exists("NativeWaterRegionStore"):return {}
+	if not writing and not DirAccess.dir_exists_absolute(path+".water"):return {}
+	var store:RefCounted=ClassDB.instantiate("NativeWaterRegionStore")
+	if not store.open_store(path+".water"):return {}
+	var converted:PackedByteArray=store.publish_water_snapshot(bytes) if writing else store.expand_water_snapshot(bytes)
+	store.close()
+	if converted.is_empty():return {}
+	var result:Dictionary=sections.duplicate();result.volumetric_water=converted;return result
+
 func _publish_frozen(sections:Dictionary,payload:PackedByteArray,path:String,codec:RefCounted) -> Dictionary:
 	var stages:Dictionary={};var start:=Time.get_ticks_usec();var phase:=start
 	var error:int
-	if codec.has_method("publish_sections"):
+	sections=_water_storage_sections(sections,path,true)
+	if sections.is_empty():error=ERR_INVALID_DATA
+	elif codec.has_method("publish_sections"):
 		stages.archive_encode_us=0
 		error=codec.publish_sections(path,sections)
 	else:
@@ -523,6 +541,8 @@ func _save() -> String:
 	if snapshot_codec != null:
 		var sections: Dictionary = components.duplicate()
 		sections["terrain"] = payload
+		sections=_water_storage_sections(sections,ProjectSettings.globalize_path(save_path),true)
+		if sections.is_empty():return "ERROR: water checkpoint save failed; previous canonical snapshot retained"
 		var publish_error:int
 		if snapshot_codec.has_method("publish_sections"):
 			_save_write_stages["archive_encode_us"]=0
@@ -629,7 +649,10 @@ func _load() -> String:
 		if not decoded.get("ok", false):
 			write_allowed = false
 			return "ERROR: invalid compound snapshot; original file protected"
-		restored = decoded["sections"]
+		restored = _water_storage_sections(decoded["sections"],ProjectSettings.globalize_path(save_path),false)
+		if restored.is_empty():
+			write_allowed=false
+			return "ERROR: water checkpoint unavailable or invalid; original file protected"
 		for key: String in snapshot_validators:
 			if restored.has(key) and not snapshot_validators[key].validate_snapshot(restored[key]):
 				write_allowed = false

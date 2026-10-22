@@ -5,6 +5,19 @@ import sys,tempfile,unittest
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/"tools"))
 from clone_world import clone_once
 class CacheCloneTests(unittest.TestCase):
+ def test_water_checkpoint_dependencies_follow_clone(self):
+  with tempfile.TemporaryDirectory() as temp:
+   root=Path(temp);(root/"source.trw").write_bytes(b"checkpoint reference")
+   water=root/"source.trw.water";water.mkdir()
+   (water/"version.water").write_bytes(b"authoritative water")
+   (water/"index.checkpoint").write_bytes(b"membership")
+   self.assertTrue(clone_once(root,"source","copy")["created"])
+   self.assertEqual((root/"copy.trw.water/version.water").read_bytes(),b"authoritative water")
+   self.assertEqual((root/"copy.trw.water/index.checkpoint").read_bytes(),b"membership")
+   (root/"copy.trw.water/version.water").write_bytes(b"player edit")
+   self.assertFalse(clone_once(root,"source","copy")["created"])
+   self.assertEqual((root/"copy.trw.water/version.water").read_bytes(),b"player edit")
+
  def test_valid_cache_follows_clone_but_existing_save_is_untouched(self):
   with tempfile.TemporaryDirectory() as temp:
    root=Path(temp)/"worlds";root.mkdir();(root/"source.trw").write_bytes(b"world")
