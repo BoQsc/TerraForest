@@ -1910,3 +1910,32 @@ This is a native prerequisite, not completed paging: no live eviction is enabled
 and the edited-coast scaling failure remains. Durable blob/checkpoint storage,
 compound-save integration, bounded asynchronous transfer coordination, unloaded
 map and far-view representation remain required before safely enabling retirement.
+
+
+## Durable water blob/checkpoint store — 2026-10-22
+
+Implemented NativeWaterRegionStore as a serialized native I/O owner. It validates
+edited-region packets, writes immutable SHA-256-addressed blobs, and publishes an
+immutable sorted coordinate/digest checkpoint only after validating its referenced
+blobs. Windows writes flush, read back for verification, then rename without
+replacement. An exclusive directory handle prevents competing writers. No mutable
+current-world pointer is stored here: selecting a water checkpoint must belong to
+the compound world archive, preserving older saves when newer unsaved blobs exist.
+
+Tests pass for publishing original and empty-override versions, reopening the store,
+reading both checkpoints byte-exactly, exclusive-writer rejection, malformed and
+mismatched region rejection, duplicate catalog rejection, missing checkpoint and
+corrupt blob failure, refusal to overwrite corrupted content-addressed identity,
+and continued readability of the prior checkpoint after newer data fails. Native
+region-transfer and ocean-map regressions also pass. Both water DLL targets rebuilt
+against prebuilt godot-cpp. Evidence: `evidence/water_region_store/`.
+
+This is not runtime paging yet. No live world eviction or new save format is enabled.
+The store is synchronous and must run on the planned I/O worker, never gameplay's
+main thread. It bounds packets to 8 MiB and checkpoint metadata to 65,536 entries;
+currently each checkpoint publication validates all references and each read parses
+the selected manifest. Runtime integration needs bounded/incremental coordination
+and retained manifest indexing. Checkpoint reference retention and garbage collection
+are not implemented, so unreachable blobs currently remain on disk. Compound-save
+integration, stale transfer guards, map/far presentation of unloaded edits and the
+edited-coast scaling gate remain open and required.

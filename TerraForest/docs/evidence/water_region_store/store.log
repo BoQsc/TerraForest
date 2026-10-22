@@ -1,0 +1,22 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS isolated store opens
+PASS second writer rejected
+PASS validated region flushed and published
+PASS checkpoint published after blob
+PASS empty override published
+PASS new checkpoint published
+PASS old checkpoint remains immutable
+PASS new checkpoint retains empty override
+PASS mismatched region cannot enter checkpoint
+PASS duplicate entries rejected
+PASS invalid packet rejected
+PASS store reopens after lease released
+PASS reopened old checkpoint restores bytes
+PASS reopened new checkpoint restores bytes
+PASS corrupt blob rejected without regeneration
+PASS corrupt existing identity is not silently overwritten
+PASS corrupt blob cannot publish a checkpoint
+PASS failed newer data leaves prior checkpoint readable
+PASS missing checkpoint fails closed
+WATER_REGION_STORE failures=0
