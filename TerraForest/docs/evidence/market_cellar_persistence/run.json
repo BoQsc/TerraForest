@@ -1,0 +1,35 @@
+{
+  "clone": {
+    "created": true,
+    "slot": "cellar_persist_20261022_223202",
+    "source_slot": "market_cellar_42_20261022",
+    "source_sha256": "cac9ae1acf530b412a86f25d24ffffa30e93ab103ffaefc13bc39c40ea394ca1",
+    "map_cache_copied": true
+  },
+  "phases": [
+    {
+      "phase": "save",
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 63612,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 36.986876900016796,
+      "passed": true
+    },
+    {
+      "phase": "reopen",
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 58756,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 31.164610699983314,
+      "passed": true
+    }
+  ]
+}

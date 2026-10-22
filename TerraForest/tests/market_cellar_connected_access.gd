@@ -1,8 +1,23 @@
 # SPDX-License-Identifier: 0BSD
 extends "res://tests/regional_connected_access.gd"
+var persistence:=false
+var reopen:=false
+var expected_path:=""
+var expected:Dictionary={}
 func run()->void:
- game=load("res://demo/world.tscn").instantiate();game.temporary_world=true;game.max_fps=60;game.background_fps=60;root.add_child(game)
+ var slot:=""
+ for arg:String in OS.get_cmdline_user_args():
+  if arg.begins_with("--cellar-record="):expected_path=arg.trim_prefix("--cellar-record=");persistence=true
+  if arg.begins_with("--world-slot="):slot=arg.trim_prefix("--world-slot=")
+ reopen="--cellar-reopen" in OS.get_cmdline_user_args()
+ if persistence and (not slot.begins_with("cellar_persist_") or expected_path.is_empty()):quit(2);return
+ if reopen:expected=FileAccess.open(expected_path,FileAccess.READ).get_var()
+ game=load("res://demo/world.tscn").instantiate();game.temporary_world=not persistence or reopen;game.max_fps=60;game.background_fps=60;root.add_child(game)
  if not check(await wait_for(func():return not game.loading_active,60),"world loads"):await done();return
+ if persistence:check(game.construction_inventory.gameplay,"normal gameplay mode enabled")
+ if reopen:
+  check(game.storage.store.capture_storage_snapshot()==expected.contents,"fresh process restores exact chest contents")
+  check(game.player_hud.inventory.capture_storage_snapshot()==expected.inventory,"fresh process restores exact player inventory")
  var location_path:=""
  for arg:String in OS.get_cmdline_user_args():
   if arg.begins_with("--cellar-location="):location_path=arg.trim_prefix("--cellar-location=")
@@ -39,7 +54,8 @@ func run()->void:
  await RenderingServer.frame_post_draw
  root.get_texture().get_image().save_png("res://reports/market_cellar_connected_approach.png")
  if not check(await go(door.pose,Vector3(0.5,0,0.8)),"walk cottage steps"):await done();return
- game.camera.look_at(door.pose*Vector3(0.5,1,0));use()
+ game.camera.look_at(door.pose*Vector3(0.5,1,0))
+ if not game.doors.state.is_open(door.id):use()
  if not check(game.doors.state.is_open(door.id),"open cellar cottage"):await done();return
  for tick in 15:await physics_frame
  if not check(await go(door.pose,Vector3(0.5,0,-1)),"enter cottage"):await done();return
@@ -58,6 +74,10 @@ func run()->void:
  game._set_player_tool_mode(false,false,1);Input.mouse_mode=Input.MOUSE_MODE_CAPTURED
  use()
  if not check(game.storage.opened,"E opens generated cellar chest"):await done();return
+ if reopen:
+  check(game.storage.identity==expected.id and game.storage.collection.is_removal_protected(expected.id),"reached saved chest retains identity and contents protection")
+  game.storage.close();game.player_hud.set_open(false)
+  await done();return
  var inventory:RefCounted=game.player_hud.inventory
  check(inventory.grant_items(PackedInt64Array([201,3]),inventory.snapshot().revision).ok,"supply three stone for transfer check")
  game.storage.refresh()
@@ -75,6 +95,15 @@ func run()->void:
  for i in deposited.size():
   if deposited[i].item==201 and deposited[i].count>=3:deposited_slot=i;break
  if not check(deposited_slot>=0,"deposited stone is present in cellar chest"):await done();return
+ if persistence:
+  expected={"id":chest_id,"contents":game.storage.store.capture_storage_snapshot(),"inventory":inventory.capture_storage_snapshot()}
+  game.storage.close();game.player_hud.set_open(false)
+  var saved:Array=[]
+  game.terrain.save_completed.connect(func(ok:bool):saved.append(ok))
+  game.terrain.changed_since_save=true;game.terrain.save_world()
+  check(await wait_for(func():return not saved.is_empty(),30) and not saved.is_empty() and saved[0],"normal save publishes deposited contents and player inventory")
+  if failures==0:FileAccess.open(expected_path,FileAccess.WRITE).store_var(expected)
+  await done();return
  game.storage.storage_list.select(deposited_slot);game.storage.quantity.get_line_edit().text="3"
  check(game.storage.move_selected(false),"withdraw three stone through cellar storage UI")
  check(inventory.snapshot().slots==before_slots and game.storage.store.snapshot(chest_id).slots==before_chest,"transfer roundtrip preserves both inventories exactly")

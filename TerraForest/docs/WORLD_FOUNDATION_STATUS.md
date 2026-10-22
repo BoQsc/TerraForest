@@ -7,7 +7,7 @@ reason, prerequisite/return trigger and closure evidence.
 
 | Work | Status and reason | Prerequisite / return trigger | Required closure evidence |
 | --- | --- | --- | --- |
-| Generated market cellar storage | Interaction roundtrip and complete access route pass; location-specific storage persistence still open | Next targeted persistence check using a disposable copy | Deposit through the reached chest UI, save and reopen in a fresh process, verify both inventory sides and chest identity |
+| Generated market cellar storage | Scoped interaction/persistence checks complete; see `evidence/market_cellar_storage/` and `evidence/market_cellar_persistence/` | Recheck if storage, prefab placement or loading changes | Actual route, exact inventory roundtrip, gameplay-mode deposit/save/fresh-process reopen and reached chest identity/protection all pass; this does not close room art or broader persistence failures |
 | Cellar room presentation | Unreviewed; prior room capture was obstructed by the ladder | After storage interaction, before calling the location accepted | Clear interior capture and review of usable circulation and furnishings; human acceptance remains distinct |
 | Connected regional destinations and owned mine | Incomplete; current default world has only two public places | Main world-generation milestone after the cellar check | Actually generated accessible locations, connected roads, intentional underground access, map agreement and fresh-process reopen |
 | Regional landscaping and travel quality | Incomplete; exposed banks and route quality cannot be accepted from planning checks alone | Alongside regional content integration | Inspect road/terrain transitions and junctions; complete ground/vehicle travel on the actual generated routes |
@@ -2373,3 +2373,26 @@ performance qualification. The harness currently uses the development tool mode;
 normal gameplay-mode parity and a fresh-process deposit/save/reopen on a disposable
 world copy remain required before closing the storage milestone. No user save was
 modified and no persistence claim is inferred from the inventory roundtrip.
+
+### Generated cellar storage persistence closed — 2026-10-22
+
+`tools/check_cellar_persistence.py` clones the generated market save, including
+regional sidecars, into a new `cellar_persist_` slot. Both graphical processes use
+1920x1080/cap60 and normal gameplay construction mode. The first walks from the
+street through the door and ladder, opens the actual cellar chest with E, deposits
+three fixture stone through its UI, and saves through normal compound publication.
+The second opens that snapshot read-only, compares exact chest and player inventory
+packets, repeats the route, and verifies the reached chest identity and native
+removal protection. Both pass. Source canonical SHA-256 remained unchanged.
+Evidence: `evidence/market_cellar_persistence/`.
+
+The first reopen harness omitted --snapshot-readonly while using temporary mode,
+which created a fresh world rather than loading the clone; that failed log is
+retained. Correcting the harness establishes the persistence result without a
+runtime change. An already-open saved door is used without toggling it closed.
+
+This closes the previously listed cellar storage interaction/gameplay/persistence
+check. It does not close the unrelated legacy shutdown-drain/ID-reuse regression,
+room art/human acceptance, global storage scaling or sustained performance. Continue
+connected regional destinations and the owned mine; keep those open requirements
+visible rather than extending water work or polishing this room indefinitely.
