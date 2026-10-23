@@ -72,11 +72,18 @@ game-world save size.
 
 ## Required continuation in this rewrite
 
-1. Replace full native history capture/recompression with immutable dirty-page
-   capture and checkpoint merging. The current worker still captures every page;
-   unchanged publication still processes historical pages even when no files change.
-   Close with concurrent edit/save ordering, failed-publication retry and work/bytes
-   that depend on changed pages rather than total history.
+1. Dirty-page capture and checkpoint merging are now used by both asynchronous
+   and shutdown compound saves. Native captures freeze only changed density/material
+   pages, original key order, process-local page versions and legacy block bytes.
+   A global 256 MiB admission budget bounds simultaneous pending captures. The
+   baseline advances only after successful outer-root publication; later edits stay
+   dirty. A load/reset invalidates old tokens even if revision values repeat.
+   Reopen binds the verified checkpoint as the clean baseline. See
+   [evidence](evidence/terrain_dirty_capture/README.md). Capture still scans page
+   keys and copies legacy exact blocks; publication still verifies retained
+   compressed regions. Eliminate unnecessary repeated history verification only
+   with explicit immutable-file ownership/invalidation, corruption and recovery
+   proof. Do not claim constant total save cost from the reduced sample copy.
 2. Wire selective region reads into native terrain residency. The production loader
    currently expands all pages, and the 16,384 resident-page cap is unchanged. Do not
    increase the cap to disguise this. Close with bounded residency, edited travel

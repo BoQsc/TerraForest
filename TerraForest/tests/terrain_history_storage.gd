@@ -8,6 +8,9 @@ func check(ok:bool,label:String)->void:
  if not ok:failures+=1
  print("PASS " if ok else "FAIL ",label)
 func _initialize()->void:run.call_deferred()
+func save(backend:RefCounted)->Dictionary:
+ var began:=Time.get_ticks_usec();var message:String=backend._save()
+ return {"success":backend._last_save_success,"stages":backend._save_write_stages.duplicate(),"write_us":Time.get_ticks_usec()-began,"message":message}
 func run()->void:
  var backend:=Backend.new();backend.native=ClassDB.instantiate("TerrainCore")
  backend.native.execute(Codec.command(6,[1703,19]));backend.disk_cache.enabled=false
@@ -22,7 +25,7 @@ func run()->void:
  DirAccess.make_dir_recursive_absolute(folder);var path:=folder.path_join("world.trw")
  var archive=ClassDB.instantiate("NativeWorldArchive");check(archive.acquire(path),"history fixture owns compound archive lease")
  backend.save_path=path;backend.snapshot_codec=archive
- var first:Dictionary=backend._publish_frozen({"terrain":original},original,path,archive)
+ var first:Dictionary=save(backend)
  check(first.success,"actual publisher saves 2048 distributed excavations")
  var canonical:PackedByteArray=archive.read(path);var selected:Dictionary=archive.decode(canonical)
  check(selected.ok and canonical.size()<1024 and selected.sections.terrain.size()==40,"large edit history has bounded small compound root")
@@ -33,21 +36,24 @@ func run()->void:
  check(serial_reference==selected.sections.terrain and serial.stats().workers==1,"parallel and serial encoding produce identical checkpoint bytes")
  check(first.stages.terrain_regions.workers<=mini(4,maxi(1,OS.get_processor_count()/2)) and not serial.configure_worker_limit(4),"worker count respects hardware cap and cannot change during publication ownership")
  serial.close();Support.cleanup(folder.path_join("serial.trw"))
- var repeated:Dictionary=backend._publish_frozen({"terrain":original},original,path,archive)
+ var repeated:Dictionary=save(backend)
  check(repeated.success and repeated.stages.terrain_regions.written_bytes==0,"unchanged history save publishes no terrain pack or index bytes")
+ check(repeated.stages.terrain_regions.capture.sample_bytes==0,"production unchanged capture copies no historical field samples")
  var point:=Vector3(999,0,999);point.y=backend.native.execute(Codec.point_command(point)).decode_float(12)-0.6
  check(Codec.reply_ok(backend.native.execute(Codec.brush(point,point,2.5,0,false,1))),"local excavation after large history remains admissible")
  began=Time.get_ticks_usec();var later:PackedByteArray=backend.native.execute(Codec.command(4,[3])).slice(12);var later_capture_ms:=(Time.get_ticks_usec()-began)/1000.0
- var changed:Dictionary=backend._publish_frozen({"terrain":later},later,path,archive)
+ var changed:Dictionary=save(backend)
  check(changed.success and changed.stages.terrain_regions.written_files<=2 and changed.stages.terrain_regions.written_bytes<original.size()/100,"one later excavation publishes only a small changed pack and checkpoint index")
+ check(changed.stages.terrain_regions.capture.sample_bytes>0 and changed.stages.terrain_regions.capture.sample_bytes<original.size()/100,"production later capture copies only locally dirty page samples")
  began=Time.get_ticks_usec();var loaded:String=backend._load();var reopen_ms:=(Time.get_ticks_usec()-began)/1000.0
  check(loaded=="World loaded" and backend.native.execute(Codec.command(4,[3])).slice(12)==later,"production reopen preserves every old and new edited page")
+ check(backend.native.capture_storage_snapshot().stats().sample_bytes==0,"production reopen establishes a clean native checkpoint baseline")
  var backup:Dictionary=archive.decode(archive.read(path+".bak"))
  check(backup.ok and Support.expand(path,backup.sections.terrain)==original,"prior checkpoint remains available through exact canonical backup")
  var total_bytes:=0
  for file:String in DirAccess.get_files_at(path+".terrain"):total_bytes+=FileAccess.get_file_as_bytes(path+".terrain/"+file).size()
  edit_times.sort()
- var report:={"failures":failures,"excavations":2048,"pages":original.decode_u32(12),"raw_bytes":original.size(),"capture_ms":capture_ms,"serial_first_publish_ms":serial_publish_ms,"later_capture_ms":later_capture_ms,"native_edit_median_ms":edit_times[1024],"native_edit_p95_ms":edit_times[int(2048*.95)],"first_save":first,"unchanged_save":repeated,"local_edit_save":changed,"reopen_ms":reopen_ms,"canonical_bytes":canonical.size(),"sidecar_bytes_including_backup":total_bytes,"scope":"Real compound publication and loader with native distributed edit history. No rendered terrain, scene streaming, full game addon population, thermal or endurance qualification. Resident page cap and full capture remain unchanged."}
+ var report:={"failures":failures,"excavations":2048,"pages":original.decode_u32(12),"raw_bytes":original.size(),"legacy_full_capture_ms":capture_ms,"serial_first_publish_ms":serial_publish_ms,"legacy_later_full_capture_ms":later_capture_ms,"native_edit_median_ms":edit_times[1024],"native_edit_p95_ms":edit_times[int(2048*.95)],"first_save":first,"unchanged_save":repeated,"local_edit_save":changed,"reopen_ms":reopen_ms,"canonical_bytes":canonical.size(),"sidecar_bytes_including_backup":total_bytes,"scope":"Production synchronous compound save and loader with native dirty-page capture. Async races are checked separately. No rendered terrain, scene streaming, full game addon population, thermal or endurance qualification. Resident page cap, all-page key scan and retained compressed-history verification remain."}
  FileAccess.open("res://reports/terrain_history_storage.json",FileAccess.WRITE).store_string(JSON.stringify(report,"  "))
  archive.release();Support.cleanup(path)
  for file:String in DirAccess.get_files_at(folder):DirAccess.remove_absolute(folder.path_join(file))

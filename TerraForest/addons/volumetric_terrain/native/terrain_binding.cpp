@@ -5,6 +5,7 @@
 #include "road_profile.hpp"
 #include "terrain_collision.hpp"
 #include "terrain_region_store.hpp"
+#include "terrain_capture.hpp"
 #include "geometry_content_key.hpp"
 #include "experimental/snapshot_worker.hpp"
 #include "experimental/godot_surface_mesh.hpp"
@@ -32,6 +33,14 @@ class TerrainCore : public godot::RefCounted {
     GDCLASS(TerrainCore, godot::RefCounted)
     BuildControl control_;
     World world_;
+    uint64_t storage_epoch_=1;
+    godot::PackedInt32Array saved_keys_;
+    godot::PackedInt64Array saved_versions_;
+    godot::PackedByteArray storage_reference_;
+    bool storage_load_pending_=false;
+    uint32_t storage_load_checksum_=0;
+    int storage_load_revision_=0;
+
     std::mutex mutex_;
     std::atomic<int64_t> active_command_{-1};
     std::atomic<u64> snapshot_epoch_{0};
@@ -49,6 +58,10 @@ class TerrainCore : public godot::RefCounted {
 protected:
     static void _bind_methods() {
         godot::ClassDB::bind_method(godot::D_METHOD("execute","packet"), &TerrainCore::execute);
+        godot::ClassDB::bind_method(godot::D_METHOD("capture_storage_snapshot"),&TerrainCore::capture_storage_snapshot);
+        godot::ClassDB::bind_method(godot::D_METHOD("commit_storage_snapshot","capture","checkpoint"),&TerrainCore::commit_storage_snapshot);
+        godot::ClassDB::bind_method(godot::D_METHOD("configure_storage_checkpoint","checkpoint","checksum"),&TerrainCore::configure_storage_checkpoint);
+
         godot::ClassDB::bind_method(godot::D_METHOD("plan_regional_route","start","finish","reservations"), &TerrainCore::plan_route);
         godot::ClassDB::bind_method(godot::D_METHOD("render_plan_map","pixels","roads","lots","water"), &TerrainCore::render_plan_map,DEFVAL(godot::PackedByteArray()));
         godot::ClassDB::bind_method(godot::D_METHOD("plan_lots","center","lots","roads","default_streets"), &TerrainCore::plan_lots);
@@ -317,6 +330,48 @@ public:
         result["worker_ms"]=std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-started).count();return result;
     }
     godot::Dictionary survey_generated_lake_surfaces(const godot::Array &records){std::lock_guard<std::mutex> lock(mutex_);return terraforest::survey_generated_lake_surfaces(world_,records);}
+    godot::Ref<NativeTerrainCapture> capture_storage_snapshot(){
+        std::lock_guard<std::mutex> lock(mutex_);
+        int count=world_.pages.n;if(count<0||count>MAX_PAGES)return {};
+        const int32_t *saved=saved_keys_.ptr();const int64_t *versions=saved_versions_.ptr();
+        auto dirty=[&](int i){return i>=saved_keys_.size()||saved[i]!=int32_t(world_.pages[i].key)||uint64_t(versions[i])!=world_.pages[i].storage_version;};
+        int changed=0;for(int i=0;i<count;i++)changed+=dirty(i);
+        uint64_t bytes=256+uint64_t(count)*12+uint64_t(changed)*(PAGE_SAMPLES*3+4)+uint64_t(world_.blocks.n)*8;
+        constexpr uint64_t limit=256*1024*1024;
+        uint64_t previous=NativeTerrainCapture::pending_bytes_.load();
+        do{if(bytes>limit||previous>limit-bytes)return {};}
+        while(!NativeTerrainCapture::pending_bytes_.compare_exchange_weak(previous,previous+bytes));
+        godot::Ref<NativeTerrainCapture> capture;capture.instantiate();if(capture.is_null()){NativeTerrainCapture::pending_bytes_.fetch_sub(bytes);return {};}capture->reserved_=bytes;
+        if(capture->keys_.resize(count)!=godot::OK||capture->versions_.resize(count)!=godot::OK||capture->changed_.resize(changed)!=godot::OK||capture->samples_.resize(int64_t(changed)*PAGE_SAMPLES*3)!=godot::OK||capture->blocks_.resize(int64_t(world_.blocks.n)*8)!=godot::OK)return {};
+        auto *keys=capture->keys_.ptrw();auto *stamps=capture->versions_.ptrw();auto *indices=capture->changed_.ptrw();auto *samples=capture->samples_.ptrw();
+        int next=0;
+        for(int i=0;i<count;i++){
+            const auto &page=world_.pages[i];keys[i]=page.key;stamps[i]=int64_t(page.storage_version);
+            if(dirty(i)){indices[next]=i;copy_bytes(samples+int64_t(next)*PAGE_SAMPLES*3,page.d,PAGE_SAMPLES*2);copy_bytes(samples+int64_t(next)*PAGE_SAMPLES*3+PAGE_SAMPLES*2,page.mat,PAGE_SAMPLES);++next;}
+        }
+        int64_t at=0;auto *blocks=capture->blocks_.ptrw();
+        for(int i=0;i<world_.blocks.cap;i++)if(world_.blocks.p[i].key&&world_.blocks.p[i].key!=0xffffffffu){
+            uint32_t key=world_.blocks.p[i].key,value=world_.blocks.p[i].value;copy_bytes(blocks+at,&key,4);copy_bytes(blocks+at+4,&value,4);at+=8;
+        }
+        if(at!=capture->blocks_.size())return {};
+        capture->owner_=get_instance_id();capture->epoch_=storage_epoch_;capture->seed_=world_.seed;capture->generator_=world_.generator_id;capture->revision_=world_.revision;capture->edits_=world_.edits;
+        capture->source_=storage_reference_;capture->expected_=storage_reference_;capture->sealed_=true;return capture;
+    }
+    bool configure_storage_checkpoint(const godot::PackedByteArray &reference,int64_t checksum){
+        std::lock_guard<std::mutex> lock(mutex_);
+        if(!storage_load_pending_||world_.revision!=storage_load_revision_||checksum<0||checksum>0xffffffffll||uint32_t(checksum)!=storage_load_checksum_||reference.size()!=40||reference.slice(0,4).get_string_from_ascii()!="TFTR"||reference.decode_u32(4)!=1)return false;
+        godot::PackedInt32Array keys;godot::PackedInt64Array versions;
+        if(keys.resize(world_.pages.n)!=godot::OK||versions.resize(world_.pages.n)!=godot::OK)return false;
+        for(int i=0;i<world_.pages.n;i++){keys.set(i,world_.pages[i].key);versions.set(i,int64_t(world_.pages[i].storage_version));}
+        saved_keys_=keys;saved_versions_=versions;storage_reference_=reference;storage_load_pending_=false;return true;
+    }
+    bool commit_storage_snapshot(const godot::Ref<NativeTerrainCapture> &capture,const godot::PackedByteArray &reference){
+        if(capture.is_null())return false;std::lock_guard<std::mutex> lock(mutex_);std::lock_guard<std::mutex> publication(capture->publication_mutex_);
+        if(!capture->sealed_||capture->owner_!=get_instance_id()||capture->epoch_!=storage_epoch_||capture->source_!=storage_reference_||capture->published_!=reference||reference.size()!=40||capture->keys_.size()>world_.pages.n)return false;
+        for(int i=0;i<capture->keys_.size();i++)if(uint32_t(capture->keys_[i])!=world_.pages[i].key)return false;
+        // Newer edits keep their newer page stamps and remain dirty.
+        saved_keys_=capture->keys_;saved_versions_=capture->versions_;storage_reference_=reference;storage_load_pending_=false;return true;
+    }
     godot::PackedByteArray execute(const godot::PackedByteArray &packet) {
         if(packet.size()<4 || packet.size()>512LL*1024*1024)return reply(0,1);
         const uint32_t command=packet.decode_u32(0);
@@ -335,12 +390,16 @@ public:
         if(edit_reply&&result.resize(expected_reply)!=godot::OK)return {};
         std::lock_guard<std::mutex> lock(mutex_);
         // Load/reset may reuse revision values; invalidate even a failed attempt.
-        if(command==5||command==6)snapshot_epoch_.fetch_add(1);
+        if(command==5||command==6){snapshot_epoch_.fetch_add(1);++storage_epoch_;saved_keys_=godot::PackedInt32Array();saved_versions_=godot::PackedInt64Array();storage_reference_=godot::PackedByteArray();storage_load_pending_=false;}
         tr_oom=false;
         Bytes bytes;
         const int previous_revision=world_.revision;
         active_command_.store(command,std::memory_order_relaxed);
         process_request(world_,packet.ptr(),int(packet.size()),bytes);
+        if((command==5||command==6)&&bytes.n>=12&&bytes.p[8]==0){
+            storage_load_pending_=command==5;storage_load_checksum_=command==5?packet.decode_u32(packet.size()-4):0;storage_load_revision_=world_.revision;
+        }
+
         if(command==2){
             if(bytes.n>=52&&bytes.p[8]==0){
                 Reader bounds{bytes.p,bytes.n,28};V3 lo=bounds.vec(),hi=bounds.vec();
@@ -366,6 +425,7 @@ static void initialize(godot::ModuleInitializationLevel level) {
     if(level!=godot::MODULE_INITIALIZATION_LEVEL_SCENE)return;
     // Installed once before any instance exists; thereafter immutable across workers.
     tr_alloc=std::malloc; tr_realloc=std::realloc; tr_free=std::free;
+    GDREGISTER_CLASS(terraforest::NativeTerrainCapture);
     GDREGISTER_CLASS(terraforest::TerrainCore);
     GDREGISTER_CLASS(terraforest::NativeTerrainRegionStore);
     GDREGISTER_CLASS(terraforest::NativeTerrainPlanner);

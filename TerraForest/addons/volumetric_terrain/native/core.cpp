@@ -513,10 +513,11 @@ bool World::edit(V3 a,V3 b,float radius,int shape,bool add,u8 material,V3&lo,V3&
   }
  }
  // No fallible allocation remains in the authoritative commit below.
+ if(staged.n)++storage_serial;
  for(int i=0;i<staged.n;i++){
   auto sample=staged[i];int id=sample.page<0?original_pages-1-sample.page:sample.page;auto &page=pages[id];
   if(sample.flags&2){u8 source=page.mat[sample.sample];if(source==0&&(sample.flags&4))source=10;if(source<16)removed_samples[source]++;}
-  page.d[sample.sample]=sample.density;if(sample.flags&1)page.mat[sample.sample]=material;page.geometry_digest_valid=false;
+  page.d[sample.sample]=sample.density;if(sample.flags&1)page.mat[sample.sample]=material;page.geometry_digest_valid=false;page.storage_version=storage_serial;
  }
  changes=staged.n;discard();
  // Construction is a separate exact grid. Smooth excavation removes whole intersected cubes,
@@ -564,9 +565,10 @@ bool World::material_box(const World&solid,V3 minimum,V3 maximum,bool add,V3&lo,
   for(int i=pages.n-1;i>=original_pages;i--){auto&p=pages[i];int x,y,z;decode_page(p.key,x,y,z);pages_by_key.erase(p.key);edit_columns[x+NP*z]&=~(1u<<y);tr_free(p.d);tr_free(p.mat);}
   pages.n=original_pages;staged.release();return false;
  }
+ ++storage_serial;
  for(int i=0;i<staged.n;i++){
   auto c=staged[i];int page=pages_by_key.get(page_key(c.x>>4,c.y>>4,c.z>>4));
-  auto&p=pages[page];int at=(c.x&15)+16*((c.z&15)+16*(c.y&15));p.d[at]=c.value;p.mat[at]=0;p.geometry_digest_valid=false;
+  auto&p=pages[page];int at=(c.x&15)+16*((c.z&15)+16*(c.y&15));p.d[at]=c.value;p.mat[at]=0;p.geometry_digest_valid=false;p.storage_version=storage_serial;
  }
  changes=staged.n;staged.release();
  if(changes){invalidate_geometry_cache(*this,lo,hi);revision++;edits++;changed_samples+=changes;lighting_revision=-1;}

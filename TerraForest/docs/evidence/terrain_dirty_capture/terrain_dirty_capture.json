@@ -1,0 +1,23 @@
+{
+  "checks": 100,
+  "failures": 0,
+  "initial": {
+    "dirty_pages": 90,
+    "legacy_block_bytes": 0,
+    "pages": 90,
+    "reserved_bytes": 1107616,
+    "revision": 64,
+    "sample_bytes": 1105920,
+    "sealed": true
+  },
+  "local": {
+    "dirty_pages": 1,
+    "legacy_block_bytes": 0,
+    "pages": 90,
+    "reserved_bytes": 13628,
+    "revision": 65,
+    "sample_bytes": 12288,
+    "sealed": true
+  },
+  "scope": "Exact native dirty-page capture, immutable checkpoint merge, stale acknowledgement and failure recovery; runtime paging and total history verification cost remain open."
+}

@@ -75,6 +75,7 @@ var _publication_done:=false # Published under mutex before waking terrain owner
 var _publication_epoch:=-1 # Terrain-worker owned frozen source identity.
 var _publication_revision:=-1
 var _publication_apply_us:=0
+var _publication_capture_us:=0
 
 func publication_pending() -> bool:
 	mutex.lock();var value:=_save_reserved;mutex.unlock();return value
@@ -472,7 +473,9 @@ func _call(data: PackedByteArray) -> PackedByteArray:
 # The outer archive selects the checkpoint atomically with all other components.
 func _terrain_storage_sections(sections:Dictionary,path:String,writing:bool,profile:Dictionary={})->Dictionary:
 	if not sections.has("terrain"):return {}
-	var bytes:PackedByteArray=sections.terrain
+	var capture:RefCounted=sections.terrain if sections.terrain is RefCounted else null
+	var bytes:PackedByteArray=sections.terrain if capture==null else PackedByteArray()
+	if capture!=null and (not writing or not capture.is_class("NativeTerrainCapture")):return {}
 	var checkpoint:bool=bytes.size()>=4 and bytes.slice(0,4).get_string_from_ascii()=="TFTR"
 	if not writing and not checkpoint:return sections
 	if not ClassDB.class_exists("NativeTerrainRegionStore"):return {}
@@ -485,7 +488,10 @@ func _terrain_storage_sections(sections:Dictionary,path:String,writing:bool,prof
 			if previous.size()>=4 and previous.slice(0,4).get_string_from_ascii()=="TFTR":inherited=previous
 	var store:RefCounted=ClassDB.instantiate("NativeTerrainRegionStore")
 	if not store.open_store(path+".terrain",writing):return {}
-	var converted:PackedByteArray=store.publish_snapshot(bytes,inherited) if writing else store.expand_snapshot(bytes)
+	var converted:PackedByteArray
+	if capture!=null:converted=store.publish_capture(capture,inherited)
+	else:converted=store.publish_snapshot(bytes,inherited) if writing else store.expand_snapshot(bytes)
+	if capture!=null:profile.capture=capture.stats()
 	profile.merge(store.stats());store.close()
 	if converted.is_empty():return {}
 	var result:Dictionary=sections.duplicate();result.terrain=converted;return result
@@ -504,12 +510,15 @@ func _water_storage_sections(sections:Dictionary,path:String,writing:bool)->Dict
 	if converted.is_empty():return {}
 	var result:Dictionary=sections.duplicate();result.volumetric_water=converted;return result
 
-func _publish_frozen(sections:Dictionary,_payload:PackedByteArray,path:String,codec:RefCounted) -> Dictionary:
+func _publish_frozen(sections:Dictionary,_payload:Variant,path:String,codec:RefCounted) -> Dictionary:
 	var stages:Dictionary={};var start:=Time.get_ticks_usec();var phase:=start
+	var capture:RefCounted=sections.get("terrain") if sections.get("terrain") is RefCounted else null
 	var error:int
 	stages.terrain_regions={}
 	sections=_terrain_storage_sections(sections,path,true,stages.terrain_regions)
+	stages.terrain_publish_us=Time.get_ticks_usec()-phase;phase=Time.get_ticks_usec()
 	if not sections.is_empty():sections=_water_storage_sections(sections,path,true)
+	stages.water_publish_us=Time.get_ticks_usec()-phase;phase=Time.get_ticks_usec()
 	if sections.is_empty():error=ERR_INVALID_DATA
 	elif codec.has_method("publish_sections"):
 		stages.archive_encode_us=0
@@ -522,6 +531,8 @@ func _publish_frozen(sections:Dictionary,_payload:PackedByteArray,path:String,co
 	if codec.has_method("publication_profile"):stages.regional=codec.publication_profile()
 	var id:=DiskCache.digest(sections.terrain).hex_encode() if error==OK else ""
 	var result:Dictionary={"success":error==OK,"snapshot_id":id,"write_us":Time.get_ticks_usec()-start,"stages":stages,"message":"World saved and verified; terrain and addon state published together" if error==OK else "ERROR: compound save failed; previous canonical snapshot retained"}
+	if error==OK and capture!=null:
+		result.terrain_capture=capture;result.terrain_reference=sections.terrain
 	mutex.lock();_publication_done=true;mutex.unlock()
 	semaphore.post()
 	return result
@@ -531,6 +542,12 @@ func _finish_publication(wait:bool=false) -> void:
 	mutex.lock();var done:=_publication_done;mutex.unlock()
 	if not wait and not done:return
 	var result:Dictionary=publication_thread.wait_to_finish()
+	result.stages.terrain_capture_us=_publication_capture_us
+	if result.success and result.has("terrain_capture"):
+		if not native.commit_storage_snapshot(result.terrain_capture,result.terrain_reference):
+			# The root is durable, but an unexpected reset invalidated this baseline.
+			# Do not permit a later incremental save against the wrong checkpoint.
+			write_allowed=false;result.success=false;result.message="ERROR: world saved but terrain baseline changed; reopen required before further saves"
 	_last_save_success=result.success
 	# Terrain edits may have progressed since capture. Never certify those newer
 	# derived packets under the identity of this older, now-durable save.
@@ -547,15 +564,14 @@ func _begin_publication(apply_us:int) -> bool:
 	# Legacy standalone saves keep their original path. Compound world saves use
 	# native publication on a single bounded job, retaining their existing lease.
 	if snapshot_codec==null or temporary or not _snapshot_writable() or not write_allowed or not _component_capture_valid:return false
-	var response:PackedByteArray=_call(Codec.command(4,[3]))
-	if not Codec.reply_ok(response):return false
-	var payload:PackedByteArray=response.slice(12)
-	var sections:Dictionary=components.duplicate();sections["terrain"]=payload
-	var stats:PackedByteArray=_call(Codec.command(0))
-	if not Codec.reply_ok(stats):return false
-	_publication_epoch=component_epoch;_publication_revision=stats.decode_u32(12);_publication_apply_us=apply_us
+	var captured_at:=Time.get_ticks_usec()
+	var capture:RefCounted=native.capture_storage_snapshot()
+	if capture==null:return false
+	var sections:Dictionary=components.duplicate();sections["terrain"]=capture
+	_publication_epoch=component_epoch;_publication_revision=capture.stats().revision;_publication_apply_us=apply_us
+	_publication_capture_us=Time.get_ticks_usec()-captured_at
 	mutex.lock();_publication_done=false;mutex.unlock()
-	return publication_thread.start(_publish_frozen.bind(sections,payload,ProjectSettings.globalize_path(save_path),snapshot_codec),Thread.PRIORITY_NORMAL)==OK
+	return publication_thread.start(_publish_frozen.bind(sections,null,ProjectSettings.globalize_path(save_path),snapshot_codec),Thread.PRIORITY_NORMAL)==OK
 
 func _save() -> String:
 	_save_write_stages={}
@@ -569,19 +585,26 @@ func _save() -> String:
 		return "ERROR: save blocked by world initialization or snapshot validation failure; previous canonical snapshot retained"
 	if not _component_capture_valid:
 		return "ERROR: invalid addon capture; previous canonical snapshot retained"
-	var response: PackedByteArray = _call(Codec.command(4,[3]))
-	if not Codec.reply_ok(response):
-		return "ERROR: native save failed; previous save retained"
-	var payload: PackedByteArray = response.slice(12)
+	var capture:RefCounted
+	var payload:=PackedByteArray()
+	if snapshot_codec!=null:
+		capture=native.capture_storage_snapshot()
+		if capture==null:return "ERROR: native capture failed; previous save retained"
+	else:
+		var response:PackedByteArray=_call(Codec.command(4,[3]))
+		if not Codec.reply_ok(response):return "ERROR: native save failed; previous save retained"
+		payload=response.slice(12)
 	_save_write_stages["terrain_capture_us"]=Time.get_ticks_usec()-phase_begin
 	phase_begin=Time.get_ticks_usec()
 	if snapshot_codec != null:
 		var sections: Dictionary = components.duplicate()
-		sections["terrain"] = payload
+		sections["terrain"] = capture
 		_save_write_stages.terrain_regions={}
 		sections=_terrain_storage_sections(sections,ProjectSettings.globalize_path(save_path),true,_save_write_stages.terrain_regions)
+		_save_write_stages.terrain_publish_us=Time.get_ticks_usec()-phase_begin;phase_begin=Time.get_ticks_usec()
 		if sections.is_empty():return "ERROR: terrain checkpoint save failed; previous canonical snapshot retained"
 		sections=_water_storage_sections(sections,ProjectSettings.globalize_path(save_path),true)
+		_save_write_stages.water_publish_us=Time.get_ticks_usec()-phase_begin;phase_begin=Time.get_ticks_usec()
 		if sections.is_empty():return "ERROR: water checkpoint save failed; previous canonical snapshot retained"
 		var publish_error:int
 		if snapshot_codec.has_method("publish_sections"):
@@ -594,6 +617,9 @@ func _save() -> String:
 			publish_error=ERR_INVALID_DATA if packed.is_empty() else snapshot_codec.publish(ProjectSettings.globalize_path(save_path),packed)
 		if publish_error!=OK:
 			return "ERROR: compound save failed; previous canonical snapshot retained"
+		if not native.commit_storage_snapshot(capture,sections.terrain):
+			write_allowed=false
+			return "ERROR: world saved but terrain baseline changed; reopen required before further saves"
 		_save_write_stages["archive_publish_us"]=Time.get_ticks_usec()-phase_begin
 		if snapshot_codec.has_method("publication_profile"):_save_write_stages["regional"]=snapshot_codec.publication_profile()
 		phase_begin=Time.get_ticks_usec()
@@ -684,13 +710,15 @@ func _load() -> String:
 	var payload: PackedByteArray = snapshot_codec.read(ProjectSettings.globalize_path(save_path)) if snapshot_codec != null else FileAccess.get_file_as_bytes(save_path)
 	var restored: Dictionary = {}
 	var stored_snapshot_id:=""
+	var stored_checkpoint:=PackedByteArray()
 	if snapshot_codec != null and (payload.size() < 4 or payload.decode_u32(0) != 0x32575254):
 		var decoded: Dictionary = snapshot_codec.decode(payload)
 		if not decoded.get("ok", false):
 			write_allowed = false
 			return "ERROR: invalid compound snapshot; original file protected"
 		var stored_terrain:PackedByteArray=decoded.sections.terrain
-		if stored_terrain.size()==40 and stored_terrain.slice(0,4).get_string_from_ascii()=="TFTR":stored_snapshot_id=DiskCache.digest(stored_terrain).hex_encode()
+		if stored_terrain.size()==40 and stored_terrain.slice(0,4).get_string_from_ascii()=="TFTR":
+			stored_snapshot_id=DiskCache.digest(stored_terrain).hex_encode();stored_checkpoint=stored_terrain
 		restored = _water_storage_sections(decoded["sections"],ProjectSettings.globalize_path(save_path),false)
 		if restored.is_empty():
 			write_allowed=false
@@ -711,6 +739,9 @@ func _load() -> String:
 	if not Codec.reply_ok(reply):
 		write_allowed = false
 		return "ERROR: invalid world snapshot; original file left untouched"
+	if not stored_checkpoint.is_empty() and not native.configure_storage_checkpoint(stored_checkpoint,payload.decode_u32(payload.size()-4)):
+		write_allowed=false
+		return "ERROR: terrain checkpoint baseline rejected; original file protected"
 	var info: PackedByteArray = _call(Codec.command(0))
 	if info.size() >= 36:
 		world_seed = info.decode_u32(32)

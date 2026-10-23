@@ -1,0 +1,73 @@
+{
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+    "--path",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+    "--log-file",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\checks\\20261023T101644337854Z\\engine.log",
+    "--headless",
+    "--max-fps",
+    "60",
+    "--script",
+    "res://tests/terrain_storage_failure.gd",
+    "--",
+    "--temporary",
+    "--world-slot=check_defaf44207b2459fb5fa678c3eca8afb",
+    "--derived-cache=user://terrain_storage_failure_defaf44207b2459fb5fa678c3eca8afb"
+  ],
+  "cache": "user://terrain_storage_failure_defaf44207b2459fb5fa678c3eca8afb",
+  "utc": "20261023T101644337854Z",
+  "timeout": 30.0,
+  "required_text": "TERRAIN_STORAGE_FAILURE failures=0",
+  "headless": true,
+  "persistent": false,
+  "scope": "Fresh derived-cache argument; test code must honor it. Not save isolation or a sandbox.",
+  "cache_retained": true,
+  "revision": "87390a2cc394cb5ba3d17963679019fe961d1e1e",
+  "worktree_changes": [
+    " M TerraForest/addons/volumetric_terrain/bin/terrain_core.windows.template_release.x86_64.dll",
+    " M TerraForest/addons/volumetric_terrain/bin/terrain_core.windows.x86_64.dll",
+    " M TerraForest/addons/volumetric_terrain/native/core.cpp",
+    " M TerraForest/addons/volumetric_terrain/native/core.h",
+    " M TerraForest/addons/volumetric_terrain/native/terrain_binding.cpp",
+    " M TerraForest/addons/volumetric_terrain/native/terrain_region_store.cpp",
+    " M TerraForest/addons/volumetric_terrain/native/terrain_region_store.hpp",
+    " M TerraForest/addons/volumetric_terrain/terrain_backend.gd",
+    " M TerraForest/tests/terrain_history_storage.gd",
+    " M TerraForest/tests/terrain_storage_failure.gd",
+    "?? TerraForest/addons/volumetric_terrain/native/terrain_capture.hpp",
+    "?? TerraForest/tests/terrain_dirty_capture.gd"
+  ],
+  "git_metadata_available": true,
+  "engine_sha256": "12310c74bdda7dcd43f28e971f33047dcecadd436b68169d61ce41009006df38",
+  "test_sha256": "5aebd22ba9d8dd394a28c5193312190fd86bc6743617196e4731cf3e48ab6e01",
+  "native_sha256": {
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "d1f3584b15e1d37175224e7825df5be6f00660ff6a307f445d9b5e8a523192ef",
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "3da35a33de06bf451ee0d58a1e414027d33e0064a50226d77d92b0af4c1627dc",
+    "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "12a58406de3bf8d4d30069b33f356c9fd69676880acf5d7a05d5aba3f6122a23",
+    "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "e9c60ab9e8a49bd3fb03615c11bada36ebeb416adadac2da7123da6ecbaa3911",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "e7be2f6b594e7f7ea74399cfa36df70f1cf3f4f27d887426933496f624c2f16c",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "8c318ca1c80da4ad791c90903202ab46b96b89a65f787cedea1c65777dc8013b",
+    "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "d6479d2a000657a5b5fd6a516220efc67a34ff3183eae8c93c622b27fcaf3934",
+    "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "c133f46b04d9cdefdbbf447323f1e65d4c7371e62530ed51276658bf2c931943",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "0391899a8af9b909348b2835400fb19712d0a0f0ff720db4c6133699d05c2a6d",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "c78bb48f0166358348cfa39a4b168c5f61d0a0026a55be7a4a14ff63be2b8d62",
+    "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "f43a7af31180b86dc3d7f7612479ee0c0a70318aa7b140e1cd03ee3fbea790d3",
+    "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "dfbcdf757ac6eaa3fcd03ef7b0993f06711f100029a30a9a04e7a3f05a7133c3",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "ea47cbe91e96a275b1d87b3fc2f7e39195a235a7b5f93858d13bb4cda76585c6",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "591f5f6bf2cacb3ed3158bc130e14fcf8a7cf10aee41cbba733497e7829ed692"
+  },
+  "result": {
+    "timed_out": false,
+    "launch_error": null,
+    "cancelled": false,
+    "pid": 63480,
+    "exit_code": 1,
+    "diagnostics": [
+      "FAIL production dirty capture survives outer root failure"
+    ],
+    "required_text_found": false,
+    "elapsed_seconds": 0.4868432999937795,
+    "passed": false
+  }
+}
