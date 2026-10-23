@@ -75,7 +75,7 @@ func run()->void:
 	game.tool_view.equip(0)
 	var output:="res://reports/human_placement"
 	DirAccess.make_dir_recursive_absolute(output+"/frames")
-	if DisplayServer.get_name()!="headless":
+	if DisplayServer.get_name()!="headless" and not "--no-capture" in OS.get_cmdline_user_args():
 		# Render the actual runtime rig at the normal first-person camera, then
 		# retain a deterministic two-cycle sequence for the Blender video encoder.
 		game.camera.rotation=Vector3.ZERO

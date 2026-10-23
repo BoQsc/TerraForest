@@ -34,6 +34,12 @@ body integration or root-motion events. Asset and tool hashes are retained.
 - The scoped character packaging check passes and now requires the placement
   resource in dependency bundles. Both Blender Python tools pass syntax checks.
 
+The concurrent world checkpoint `ad23e808` was then merged without source
+conflicts. Combined rendered placement checks still pass all 22 cases
+(`combined_placement/`, with capture disabled because the clip did not change).
+The incoming actual-world canopy/block preservation check also passes with the
+new hand feedback (`combined_block_forest/`). Both histories are retained.
+
 `preview.png`, the Blender detail image and the actual-world images were
 inspected. They show the corrected neutral wrist, low position and relaxed hand.
 `Human.placement.mp4` is a clean studio preview of the identical runtime rig and
@@ -52,3 +58,9 @@ it omitted gameplay construction, leaving encounters disabled, and headless mode
 cannot establish captured mouse input for the paid attack path. The unchanged
 world fixture passes all 18 checks in its intended rendered gameplay launch.
 This was a launcher error; no gameplay guards were weakened to make it pass.
+
+`headless_viewport/` retains a later attempted headless placement run: 21 checks
+pass, but its fingertip screen-projection check fails in that backend's viewport.
+The rendered 1920x1080 check passes, including projection. Screen-layout
+acceptance uses the rendered backend; no animation geometry or admission guard
+was changed to bypass the headless observation.

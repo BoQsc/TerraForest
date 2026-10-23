@@ -8,5 +8,5 @@
   "tools/import_human_placement.gd": "cbd769128a0116d69cb504cc024f9f8fb7abdec3cab0535d16fe6690cd173c40",
   "tools/preview_human_placement.gd": "483b58f6b2990a3517adf9bd7960a4b4dfeb355a15538a51a7c7ee8726c0e12f",
   "tools/encode_placement_preview.py": "8f259d9db43a60233e58b8c029b4394ab1f6eaeb9db1fa75ea0206113d76941f",
-  "tests/human_placement.gd": "6a330933f1c52177db19053bbb7f0f1967b8ab4d7d5daf1c01ccf44e8853f6d0"
+  "tests/human_placement.gd": "75574df2b5c3c6d4323b63f592c55c2ac4d94d7e275ed36fccdfb7b5529d1475"
 }

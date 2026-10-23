@@ -1,0 +1,26 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS actual temporary world loads
+PASS original 71 clips and new Blender action coexist
+PASS placement is a 0.9-second one-shot
+PASS placement contains no gameplay, audio or method tracks
+PASS empty-hand gesture starts
+PASS held placement never resets an unfinished gesture
+PASS wrist remains straight and aligned with the forearm
+PASS whole hand is held low
+FAIL index fingertip stays inside the first-person frame above the belt
+PASS equipment switch cancels gesture and restores authored tool idle
+PASS placement can temporarily free the equipped hand
+PASS placement pose is independent of the previously equipped tool
+PASS gesture hides Equipment_Axe
+PASS gesture hides Equipment_Carbine
+PASS gesture hides Equipment_Pickaxe
+PASS completed gesture restores selected equipment
+PASS legacy construction preview is hidden during the empty-hand action
+PASS construction preview returns after the action
+PASS accepted native block placement plays the gesture
+PASS block removal does not play a placement gesture
+PASS isolated terrain-fill sample is admitted
+PASS accepted terrain fill plays the gesture
+[TerrainRewrite] Temporary test world: save skipped
+HUMAN_PLACEMENT checks=22 failures=1
