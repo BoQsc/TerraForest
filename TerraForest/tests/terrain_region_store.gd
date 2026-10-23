@@ -29,6 +29,7 @@ func run()->void:
  check(reference.size()==40 and reference.slice(0,4).get_string_from_ascii()=="TFTR","terrain root becomes a 40-byte checkpoint reference")
  var description:Dictionary=store.describe_snapshot(reference)
  check(description.get("ok",false) and description.pages==raw.decode_u32(12) and description.generator==19,"checkpoint index preserves field metadata and page membership")
+ check(store.verify_snapshot(reference).get("ok",false),"native verification validates all regions without a monolithic expansion")
  began=Time.get_ticks_usec();var expanded:PackedByteArray=store.expand_snapshot(reference);var expand_ms:=(Time.get_ticks_usec()-began)/1000.0
  check(expanded==raw,"region expansion reconstructs exact native format 3 bytes")
  check(first_stats.written_bytes<raw.size()/2,"lossless page runs substantially reduce this edited-world fixture")
@@ -55,6 +56,7 @@ func run()->void:
  var blob_path:=path.path_join(index.slice(at+40,at+72).hex_encode()+".tpack")
  var blob:=FileAccess.get_file_as_bytes(blob_path);var broken:=blob.duplicate();broken[int(index.decode_u32(at+72)+index.decode_u32(at+76))-1]^=1;write(blob_path,broken)
  check(store.expand_snapshot(reference).is_empty() and not store.read_region(reference,coordinate).get("ok",true),"damaged referenced region fails instead of regenerating base terrain")
+ check(not store.verify_snapshot(reference).get("ok",true),"native world verification rejects damaged terrain dependencies")
  check(store.publish_snapshot(raw,reference).is_empty(),"publisher refuses to overwrite a damaged immutable identity")
  write(blob_path,blob)
  var bad_index:=index.duplicate();bad_index.encode_u32(44,bad_index.decode_u32(40))

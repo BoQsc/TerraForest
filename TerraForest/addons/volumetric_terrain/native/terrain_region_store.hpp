@@ -57,6 +57,7 @@ public:
  Buffer publish_capture(const godot::Ref<NativeTerrainCapture> &capture,const Buffer &inherited=Buffer(),int64_t test_stop_after=-1);
  Buffer expand_snapshot(const Buffer &reference);
  godot::Dictionary describe_snapshot(const Buffer &reference);
+ godot::Dictionary verify_snapshot(const Buffer &reference);
  godot::Dictionary read_region(const Buffer &reference,godot::Vector3i coordinate);
  godot::Dictionary stats();
 };

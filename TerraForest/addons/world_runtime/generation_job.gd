@@ -22,10 +22,14 @@ var publish_worker:Thread
 var metadata:Dictionary={}
 var progress_detail:Dictionary={}
 var next_progress_poll:=0
+var review_generation:=false # Developer qualification only; never the player path.
+var capture_generation_ui:=false
 func _initialize()->void:
  Engine.max_fps=10
  for arg:String in OS.get_cmdline_user_args():
   if arg=="--recover-publication":recovery_mode=true
+  if arg=="--review-generation":review_generation=true
+  if arg=="--capture-generation-ui":capture_generation_ui=true
   if arg.begins_with("--destination="):destination=arg.trim_prefix("--destination=")
   if arg.begins_with("--seed="):seed_value=int(arg.trim_prefix("--seed="))
   if arg.begins_with("--settlement-layout="):settlement_layout=arg.trim_prefix("--settlement-layout=")
@@ -66,12 +70,15 @@ func start_stage(state:String)->void:
  status(state)
  var folder:=report.path_join(state);DirAccess.make_dir_recursive_absolute(folder)
  var fitted:=generator in [17,19]
- var args:=Launch.engine_prefix()+PackedStringArray(["--fullscreen","--resolution","1920x1080","--max-fps","60","--log-file",ProjectSettings.globalize_path(folder.path_join("engine.log")),"--script","res://addons/world_runtime/prepare_terrain_world.gd" if fitted else "res://addons/world_runtime/prepare_combined_world.gd","--","--world-slot="+stage,"--world-generator="+str(generator),"--world-seed="+str(seed_value),"--progress-file="+ProjectSettings.globalize_path(report.path_join(state+"_progress.json")),"--ground-cover","--actors","--vehicle-fleet","--checkpoint-layout=districts","--checkpoint-report="+ProjectSettings.globalize_path(report.path_join("checkpoint.json")),"--derived-cache=user://derived_046"])
+ var entry:="res://addons/world_runtime/prepare_terrain_world.gd" if review_generation else "res://addons/world_runtime/generate_world.gd"
+ var args:=Launch.engine_prefix()+PackedStringArray(["--fullscreen","--resolution","1920x1080","--max-fps","60","--log-file",ProjectSettings.globalize_path(folder.path_join("engine.log")),"--script",entry if fitted else "res://addons/world_runtime/prepare_combined_world.gd","--","--world-slot="+stage,"--world-generator="+str(generator),"--world-seed="+str(seed_value),"--progress-file="+ProjectSettings.globalize_path(report.path_join(state+"_progress.json")),"--ground-cover","--actors","--vehicle-fleet","--checkpoint-layout=districts","--checkpoint-report="+ProjectSettings.globalize_path(report.path_join("checkpoint.json")),"--derived-cache=user://derived_046"])
  if fitted:
   if settlement_layout=="connected":args.append("--central-market")
   if settlement_layout!="settlement":args.append("--regional-connection")
   args.append_array(PackedStringArray(["--preparation-output="+ProjectSettings.globalize_path(report),"--save-terrain-lots" if state=="creating" else "--reopen-terrain-lots"]))
  if state=="verifying":args.append_array(PackedStringArray(["--reopen-checkpoint","--gameplay-construction","--snapshot-readonly"]))
+ if capture_generation_ui:args.append("--capture-generation-ui")
+ if not cancel_path.is_empty():args.append("--cancel-file="+cancel_path)
  child=OS.create_process(OS.get_executable_path(),args,false)
  if child<0:finish("failed","Could not start generation stage");return
  metadata.phases.append({"stage":state,"pid":child,"arguments":args,"started_usec":Time.get_ticks_usec()})
@@ -81,6 +88,11 @@ func _process(_delta:float)->bool:
  if publish_worker!=null:
   if publish_worker.is_alive():return false
   var result:Dictionary=publish_worker.wait_to_finish();publish_worker=null
+  if phase=="verifying" and not review_generation:
+   metadata["validation"]=result
+   if not result.get("ok",false):finish("failed",str(result.get("reason","Saved data verification failed")));return false
+   if not cancel_path.is_empty() and FileAccess.file_exists(cancel_path):finish("cancelled","Generation cancelled before publication");return false
+   begin_publication();return false
   metadata["publication"]=result
   if not result.get("ok",false):finish("failed",str(result.get("reason","Publication failed")));return false
   if recovery_mode:
@@ -111,15 +123,25 @@ func _process(_delta:float)->bool:
  var exit_code:=OS.get_process_exit_code(child);child=-1
  var log:=FileAccess.get_file_as_string(report.path_join(phase).path_join("engine.log"))
  var token:="TERRAIN_LOT_WORLD_REVIEW failures=0" if phase=="creating" else "TERRAIN_LOT_REOPEN failures=0"
+ if generator in [17,19] and not review_generation:token="WORLD_GENERATED failures=0"
  if generator==13:token="COMBINED_PREPARATION failures=0"
  metadata.phases[-1]["exit_code"]=exit_code
+ metadata.phases[-1]["elapsed_usec"]=Time.get_ticks_usec()-int(metadata.phases[-1].started_usec)
+ metadata.phases[-1]["profile"]=preload("res://addons/world_runtime/generation_progress.gd").read(report.path_join(phase+"_progress.json"))
  if exit_code!=0 or not token in log or "SCRIPT ERROR:" in log or "ERROR:" in log:
   finish("failed","Generation or restoration check failed; see stage log");return false
- if phase=="creating":start_stage("verifying");return false
- status("publishing");persist_metadata()
- publish_worker=Thread.new()
- if publish_worker.start(publish_world)!=OK:publish_worker=null;finish("failed","Cannot start publication worker")
+ if phase=="creating":
+  if generator==13 or review_generation:start_stage("verifying");return false
+  status("verifying");persist_metadata();publish_worker=Thread.new()
+  if publish_worker.start(verify_world)!=OK:publish_worker=null;finish("failed","Cannot start saved data verification")
+  return false
+ begin_publication()
  return false
+func verify_world()->Dictionary:
+ return preload("res://addons/world_runtime/verify_generated_world.gd").verify(ProjectSettings.globalize_path("user://worlds/"+stage+".trw"),seed_value,generator)
+func begin_publication()->void:
+ status("publishing");persist_metadata();publish_worker=Thread.new()
+ if publish_worker.start(publish_world)!=OK:publish_worker=null;finish("failed","Cannot start publication worker")
 func persist_metadata()->void:
  if report.is_empty():return
  var file:=FileAccess.open(report.path_join("run.json"),FileAccess.WRITE)

@@ -20,6 +20,7 @@ class NativeRegionWorldArchive : public RefCounted {
     mutable std::map<String,Ref<NativeModelRegionStore>> model_stores_;
     mutable std::mutex model_mutex_;
     Ref<NativeModelRegionStore> model_store(const String &asset,bool create) const;
+    Dictionary decode_mode(const PackedByteArray &bytes,bool metadata_first,bool model_metadata_first) const;
 
     bool metadata_first_=false,model_metadata_first_=false;
     int64_t published_index_revision_=0;
@@ -71,6 +72,7 @@ public:
     void release();
     PackedByteArray encode(const Dictionary &sections) const;
     Dictionary decode(const PackedByteArray &bytes) const;
+    Dictionary map_certificates() const;
     PackedByteArray read(const String &absolute_path) const;
     int64_t publish_sections(const String &absolute_path,const Dictionary &sections);
     int64_t publish(const String &absolute_path,const PackedByteArray &bytes);

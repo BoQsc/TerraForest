@@ -1,0 +1,28 @@
+{
+  "slot": "workflow_bundle_20261023T111441",
+  "seconds": 17.65047270001378,
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+    "--main-pack",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist\\TerraForest.pck",
+    "--fullscreen",
+    "--resolution",
+    "1920x1080",
+    "--max-fps",
+    "60",
+    "--script",
+    "res://addons/world_runtime/capture_world_previews.gd",
+    "--",
+    "--world-slot=workflow_bundle_20261023T111441",
+    "--snapshot-readonly",
+    "--ground-cover",
+    "--actors",
+    "--vehicle-fleet",
+    "--gameplay-construction"
+  ],
+  "exit_code": 0,
+  "before": "358df04647791c9370f8e073eb2e12b8f225e8a3ab2a80585eee02b4ec117890",
+  "after": "358df04647791c9370f8e073eb2e12b8f225e8a3ab2a80585eee02b4ec117890",
+  "passed": true,
+  "scope": "Explicit PCK full game restore and three location photographs, read-only root. Not all-map cache or sustained performance qualification."
+}

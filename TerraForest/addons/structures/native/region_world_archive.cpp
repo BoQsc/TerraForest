@@ -20,6 +20,7 @@ void NativeRegionWorldArchive::_bind_methods() {
     ClassDB::bind_method(D_METHOD("read","absolute_path"),&NativeRegionWorldArchive::read);
     ClassDB::bind_method(D_METHOD("publish","absolute_path","bytes"),&NativeRegionWorldArchive::publish);
     ClassDB::bind_method(D_METHOD("publish_sections","absolute_path","sections"),&NativeRegionWorldArchive::publish_sections);
+    ClassDB::bind_method(D_METHOD("map_certificates"),&NativeRegionWorldArchive::map_certificates);
     ClassDB::bind_method(D_METHOD("validate_snapshot","bytes"),&NativeRegionWorldArchive::validate_snapshot);
     ClassDB::bind_method(D_METHOD("read_storage_region","region","expected","checkpoint"),&NativeRegionWorldArchive::read_storage_region,DEFVAL(PackedByteArray()));
     ClassDB::bind_method(D_METHOD("start_region_reads","request_limit","byte_limit"),&NativeRegionWorldArchive::start_region_reads,DEFVAL(8),DEFVAL(int64_t(8)*(2*1024*1024+96)));
@@ -93,6 +94,9 @@ PackedByteArray NativeRegionWorldArchive::read(const String &path) const {
     if(archive_.is_null())return {};return archive_->call("read",path);
 }
 Dictionary NativeRegionWorldArchive::decode(const PackedByteArray &bytes) const {
+    return decode_mode(bytes,metadata_first_,model_metadata_first_);
+}
+Dictionary NativeRegionWorldArchive::decode_mode(const PackedByteArray &bytes,bool metadata_first,bool model_metadata_first) const {
     Dictionary failed;failed["ok"]=false;if(archive_.is_null())return failed;
     Dictionary root=archive_->call("decode",bytes);if(!bool(root.get("ok",false)))return root;
     Dictionary sections=root["sections"];if(!sections.has("structures"))return root;
@@ -100,12 +104,12 @@ Dictionary NativeRegionWorldArchive::decode(const PackedByteArray &bytes) const 
     Dictionary reference=codec_->decode_reference(structure);
     if(!bool(reference["ok"]))return codec_->validate_snapshot(structure)?root:failed;
     if(store_.is_null())return failed;
-    Dictionary restored=metadata_first_?store_->checkpoint_regions(reference["checkpoint"]):store_->read_block_checkpoint(reference["checkpoint"]);
+    Dictionary restored=metadata_first?store_->checkpoint_regions(reference["checkpoint"]):store_->read_block_checkpoint(reference["checkpoint"]);
     if(!bool(restored["ok"]))return failed;
     // Older saved bundles may omit newly registered model assets. Preserve that
     // schema behavior using the reference's own registered subset codec.
     Dictionary models=reference["models"];PackedStringArray ids;Array keys=models.keys();
-    bool bootstrap=model_metadata_first_;
+    bool bootstrap=model_metadata_first;
     int64_t metadata_reads=0,metadata_hits=0,metadata_bytes=0;
     // Legacy inline model payloads retain the existing resident decode path.
     for(int64_t i=0;i<keys.size();++i) {String asset;PackedByteArray pin;if(!NativeStructuresSnapshot::parse_model_reference(models[keys[i]],asset,pin))bootstrap=false;}
@@ -119,11 +123,24 @@ Dictionary NativeRegionWorldArchive::decode(const PackedByteArray &bytes) const 
     }
     for(int64_t i=0;i<keys.size();++i)ids.push_back(keys[i]);
     Ref<NativeStructuresSnapshot> subset;subset.instantiate();if(!subset->configure_assets(ids))return failed;
-    PackedByteArray resident=bootstrap?subset->encode_bootstrap(reference["checkpoint"],restored["keys"],restored["checksums"],models):metadata_first_?subset->encode_metadata(reference["checkpoint"],restored["keys"],restored["checksums"],models):subset->encode(restored["blocks"],models);
+    PackedByteArray resident=bootstrap?subset->encode_bootstrap(reference["checkpoint"],restored["keys"],restored["checksums"],models):metadata_first?subset->encode_metadata(reference["checkpoint"],restored["keys"],restored["checksums"],models):subset->encode(restored["blocks"],models);
     if(resident.is_empty()||!(bootstrap?codec_->validate_bootstrap(resident):codec_->validate_storage_snapshot(resident)))return failed;
     sections["structures"]=resident;root["sections"]=sections;
     if(bootstrap){Dictionary stats;stats["assets"]=keys.size();stats["regions_read"]=metadata_reads;stats["cache_hits"]=metadata_hits;stats["metadata_bytes"]=metadata_bytes;root["model_bootstrap"]=stats;}
     return root;
+}
+Dictionary NativeRegionWorldArchive::map_certificates() const {
+ Dictionary out;out["ok"]=false;if(path_.is_empty()||archive_.is_null()||codec_.is_null())return out;
+ PackedByteArray canonical=archive_->call("read",path_);Dictionary root=decode_mode(canonical,true,true);
+ if(!bool(root.get("ok",false)))return out;Dictionary sections=root["sections"];
+ if(!sections.has("structures"))return out;PackedByteArray bytes=sections["structures"];
+ Dictionary bootstrap=codec_->decode_bootstrap(bytes);if(!bool(bootstrap.get("ok",false)))return out;
+ Dictionary models=bootstrap["models"],identities;Array keys=models.keys();
+ for(int64_t i=0;i<keys.size();i++){PackedByteArray metadata=models[keys[i]];identities[keys[i]]=String("metadata-v1|")+metadata.slice(metadata.size()-32).hex_encode();}
+ // This is the exact startup representation's identity, without constructing
+ // scene nodes or changing current residency. Derived cache work can run offline.
+ if(PackedByteArray(archive_->call("read",path_))!=canonical)return out;
+ out["ok"]=true;out["blocks_identity"]=String("bootstrap-v1|")+bytes.slice(bytes.size()-32).hex_encode();out["models"]=identities;return out;
 }
 bool NativeRegionWorldArchive::reference_in_file(const String &path,std::set<String> &keep,std::map<String,std::set<String>> &model_keep) const {
     if(!FileAccess::file_exists(path))return true;

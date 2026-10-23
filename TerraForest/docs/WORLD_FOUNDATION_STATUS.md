@@ -1,3 +1,29 @@
+## User-directed generation workflow correction - 2026-10-23
+
+The ordinary Generate → Load → Play path now uses one generation child, native
+binary verification and root-last publication. It previously booted a rendered
+developer review twice. Production now builds field/prefab data before rendering,
+captures actual loading photographs, bakes the map and opens the published save.
+The old developer qualification remains available separately. Source creation,
+fresh full-game reopen with all four map cache hits, cancellation, native damaged
+section rejection, and explicit-PCK generation/reopen pass. Selector, creation,
+generation and restored map images were inspected. See
+[evidence/unified_generation_flow](evidence/unified_generation_flow/README.md).
+
+This closes that duplicated review workflow, not the complete rewrite. Measured
+generation ranges from 42–71 seconds across different warmed/cold seeds/layouts;
+no controlled speedup ratio or universal instant generation is claimed. Generated
+lake authoring alone takes 15–29 seconds, and first photographs/residency dominate
+the remainder. Required next generator work: detached native offline authoring
+using the accepted static volume algorithm, with identical saved water/terrain,
+bounded cancellation and actual create/reopen proof. Do not reopen water flow or
+art direction. Native selective terrain residency remains a parallel foundation
+requirement after this workflow correction: the 16,384 resident/history cap and
+full expansion are not solved. Full options/POI coverage, compute equivalence and
+benefit, world visual quality, populated runtime/thermal proof, and clean-machine
+release installation also remain open. Unused Blender source import was disabled;
+the updated 194,077,000-byte PCK starts and reopens with 14 external native DLLs.
+
 ## Native dirty-page saves integrated - 2026-10-23
 
 Compound saves now freeze changed native terrain pages and merge touched regions

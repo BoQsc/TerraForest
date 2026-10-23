@@ -1,0 +1,8 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS paging out does not invalidate map or certificate
+PASS paging in does not invalidate map or certificate
+PASS in-place prototype bounds change invalidates both identities
+PASS restored bounds recover exact identities
+PASS unsaved authoring invalidates runtime and disk shortcut
+MODEL_MAP_IDENTITY failures=0
