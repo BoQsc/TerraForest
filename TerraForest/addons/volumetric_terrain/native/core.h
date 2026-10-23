@@ -3,6 +3,7 @@
 #include "platform.h"
 constexpr int WORLD=2000, WORLD_Y=256, PAGE=16, PAGE_SAMPLES=4096, MAX_PAGES=16384;
 constexpr int WORLD_PAGE_COLUMNS=WORLD/PAGE+1; // Inclusive boundary lattice.
+constexpr int MAX_AUTHORED_PAGES=WORLD_PAGE_COLUMNS*WORLD_PAGE_COLUMNS*17;
 constexpr float SDF_BAND=4.f, SDF_SCALE=1024.f;
 constexpr u32 SAVE_MAGIC=0x32575254u, MESH_MAGIC=0x324d5254u, REPLY_MAGIC=0x32505254u;
 constexpr int EDIT_REPLY_CAPACITY=128; // Complete edit receipt, reserved before mutation.
@@ -29,6 +30,8 @@ constexpr u32 TERRAIN_GENERATOR_ID=1; // Default remains the legacy landscape.
 struct Page {
  u32 key=0; i16 *d=nullptr;u8 *mat=nullptr;
  u64 storage_version=0; // Process-local capture stamp; never serialized.
+ u64 clean_version=~u64(0); // Only durable, unchanged samples may be evicted.
+ int resident_previous=-1,resident_next=-1;
  // Derived worker-owned digest; never serialized or used as authoritative data.
  mutable bool geometry_digest_valid=false;
  mutable u8 geometry_digest[32]{};
@@ -40,12 +43,25 @@ struct SkyProbe {V3 p,n;float sky;};
 // Stable owner storage outside World, so reset/load cannot reset cancellation.
 struct BuildControl {u32 epoch=0;};
 struct GeometryCache;
+struct World;
+struct PageAccess {
+ virtual bool load(World&,int)=0;
+ virtual bool admit(World&)=0;
+ virtual void inserted(World&,int)=0;
+ virtual void touch(World&,int)=0;
+ virtual void removed(World&,int)=0;
+ virtual ~PageAccess()=default;
+};
 struct World {
  BuildControl *build_control=nullptr;
  Map pages_by_key,blocks; List<Page> pages; List<Cave> caves; List<List<u32>> block_columns;
  u32 *edit_columns=nullptr;
  int seed=1703, revision=0, edits=0;u64 changed_samples=0;
  u64 storage_serial=1;
+ PageAccess *page_access=nullptr; // Owner is the native binding; never serialized.
+ bool pages_pinned=false;V3 pin_lo{},pin_hi{};
+ const Page *resident_page(int index)const;
+ bool prepare_pages(V3 lo,V3 hi);
  u32 generator_id=TERRAIN_GENERATOR_ID;
  Basin basins[4]{};int basin_count=0;
  V3 road_points[4][25]{}; // Immutable derived routes; reconstructed from seed/version.

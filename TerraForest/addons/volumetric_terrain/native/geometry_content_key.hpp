@@ -52,6 +52,7 @@ static godot::Dictionary geometry_content_key(const World &w,int x,int z,int siz
             if(at>=0){
                 const Page &p=w.pages[at];
                 if(!p.geometry_digest_valid){
+                    if(!w.resident_page(at))return {};
                     godot::Ref<godot::HashingContext> page_hash;page_hash.instantiate();
                     godot::PackedByteArray samples;samples.resize(PAGE_SAMPLES*3);
                     copy_bytes(samples.ptrw(),p.d,PAGE_SAMPLES*sizeof(i16));

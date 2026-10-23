@@ -1,0 +1,6 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+SCRIPT ERROR: Parse Error: There is already a variable named "original" declared in this scope.
+   at: GDScript::reload (res://tests/terrain_residency.gd:56)
+ERROR: Failed to load script "res://tests/terrain_residency.gd" with error "Parse error".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)

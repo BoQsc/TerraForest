@@ -1,0 +1,37 @@
+{
+  "slot": "residency_bundle_20261023T144007",
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+    "--headless",
+    "--path",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist",
+    "--main-pack",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist\\TerraForest.pck",
+    "--log-file",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\terrain_residency_pack\\generation.log",
+    "--script",
+    "res://addons/world_runtime/generation_job.gd",
+    "--",
+    "--destination=residency_bundle_20261023T144007",
+    "--seed=1703",
+    "--generator=19",
+    "--settlement-layout=connected",
+    "--status-file=C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\terrain_residency_pack\\status.json",
+    "--cancel-file=C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\terrain_residency_pack\\cancel"
+  ],
+  "result": {
+    "timed_out": false,
+    "launch_error": null,
+    "cancelled": false,
+    "pid": 45132,
+    "exit_code": 0,
+    "diagnostics": [
+      "\nERROR: Attempt to open script 'res://tests/world_generation_workflow.gd' resulted in error 'File not found'.",
+      "ERROR: Can't load script: res://tests/world_generation_workflow.gd",
+      "ERROR: Failed loading resource: res://tests/world_generation_workflow.gd."
+    ],
+    "required_text_found": true,
+    "elapsed_seconds": 65.93450129998382,
+    "passed": false
+  }
+}

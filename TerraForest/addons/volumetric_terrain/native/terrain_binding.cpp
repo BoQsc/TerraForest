@@ -6,6 +6,7 @@
 #include "terrain_collision.hpp"
 #include "terrain_region_store.hpp"
 #include "terrain_capture.hpp"
+#include "terrain_residency.hpp"
 #include "geometry_content_key.hpp"
 #include "experimental/snapshot_worker.hpp"
 #include "experimental/godot_surface_mesh.hpp"
@@ -21,6 +22,7 @@
 #include <atomic>
 #include <mutex>
 #include <chrono>
+#include <memory>
 
 namespace terraforest {
 godot::PackedByteArray render_generation_map(const godot::PackedByteArray &,const godot::Array &,const godot::Array &,const godot::PackedByteArray &);
@@ -33,6 +35,7 @@ class TerrainCore : public godot::RefCounted {
     GDCLASS(TerrainCore, godot::RefCounted)
     BuildControl control_;
     World world_;
+    std::unique_ptr<TerrainResidency> residency_;
     uint64_t storage_epoch_=1;
     godot::PackedInt32Array saved_keys_;
     godot::PackedInt64Array saved_versions_;
@@ -61,6 +64,8 @@ protected:
         godot::ClassDB::bind_method(godot::D_METHOD("capture_storage_snapshot"),&TerrainCore::capture_storage_snapshot);
         godot::ClassDB::bind_method(godot::D_METHOD("commit_storage_snapshot","capture","checkpoint"),&TerrainCore::commit_storage_snapshot);
         godot::ClassDB::bind_method(godot::D_METHOD("configure_storage_checkpoint","checkpoint","checksum"),&TerrainCore::configure_storage_checkpoint);
+        godot::ClassDB::bind_method(godot::D_METHOD("mount_storage_checkpoint","directory","checkpoint","resident_limit"),&TerrainCore::mount_storage_checkpoint,DEFVAL(MAX_PAGES));
+        godot::ClassDB::bind_method(godot::D_METHOD("residency_stats"),&TerrainCore::residency_stats);
 
         godot::ClassDB::bind_method(godot::D_METHOD("plan_regional_route","start","finish","reservations"), &TerrainCore::plan_route);
         godot::ClassDB::bind_method(godot::D_METHOD("render_plan_map","pixels","roads","lots","water"), &TerrainCore::render_plan_map,DEFVAL(godot::PackedByteArray()));
@@ -91,26 +96,26 @@ protected:
         godot::ClassDB::bind_method(godot::D_METHOD("experimental_partition_mesh_budgeted","packet","workspace_bytes","output_bytes","expected_epoch"), &TerrainCore::experimental_partition_mesh_budgeted);
     }
 public:
-    godot::Dictionary fit_lakes(const godot::Array &records){std::lock_guard<std::mutex> lock(mutex_);return fit_generated_lakes(world_,records);}
+    godot::Dictionary fit_lakes(const godot::Array &records){std::lock_guard<std::mutex> lock(mutex_);tr_oom=false;auto result=fit_generated_lakes(world_,records);return tr_oom?godot::Dictionary():result;}
     godot::Dictionary plan_route(godot::Vector3 start,godot::Vector3 finish,const godot::Array &reservations){
-        std::lock_guard<std::mutex> lock(mutex_);return plan_regional_route(world_,start,finish,reservations);
+        std::lock_guard<std::mutex> lock(mutex_);tr_oom=false;auto result=plan_regional_route(world_,start,finish,reservations);return tr_oom?godot::Dictionary():result;
     }
     godot::PackedByteArray render_plan_map(const godot::PackedByteArray &pixels,const godot::Array &roads,const godot::Array &lots,const godot::PackedByteArray &water=godot::PackedByteArray()){return render_generation_map(pixels,roads,lots,water);}
     godot::Dictionary plan_lots(godot::Vector3 center,const godot::Array &lots,const godot::Array &roads,bool default_streets){
-        std::lock_guard<std::mutex> lock(mutex_);return plan_settlement_lots(world_,center,lots,roads,default_streets);
+        std::lock_guard<std::mutex> lock(mutex_);tr_oom=false;auto result=plan_settlement_lots(world_,center,lots,roads,default_streets);return tr_oom?godot::Dictionary():result;
     }
     godot::Dictionary plan_streets(const godot::Array &roads,const godot::PackedVector3Array &junctions){
-        std::lock_guard<std::mutex> lock(mutex_);return plan_street_network(world_,roads,junctions);
+        std::lock_guard<std::mutex> lock(mutex_);tr_oom=false;auto result=plan_street_network(world_,roads,junctions);return tr_oom?godot::Dictionary():result;
     }
     godot::Dictionary survey_water_visibility(const godot::PackedVector3Array &points){
-        std::lock_guard<std::mutex> lock(mutex_);return terraforest_survey_water_visibility(world_,points);
+        std::lock_guard<std::mutex> lock(mutex_);tr_oom=false;auto result=terraforest_survey_water_visibility(world_,points);return tr_oom?godot::Dictionary():result;
     }
     godot::Dictionary survey_patch(int64_t size,int64_t x,int64_t z,int64_t width,int64_t height){
         if(size<64||size>512||x<0||z<0||x>=size||z>=size||width<1||height<1||width>4||height>4)return {};
-        std::lock_guard<std::mutex> lock(mutex_);return terraforest_survey_patch(world_,int(size),int(x),int(z),int(width),int(height));
+        std::lock_guard<std::mutex> lock(mutex_);tr_oom=false;auto result=terraforest_survey_patch(world_,int(size),int(x),int(z),int(width),int(height));return tr_oom?godot::Dictionary():result;
     }
     godot::Dictionary survey_overview(int64_t size){
-        std::lock_guard<std::mutex> lock(mutex_);return terraforest_survey_map(world_,size);
+        std::lock_guard<std::mutex> lock(mutex_);tr_oom=false;auto result=terraforest_survey_map(world_,size);return tr_oom?godot::Dictionary():result;
     }
     godot::Dictionary measure_material_surface(int64_t x,int64_t z,int64_t size,int64_t y_begin,int64_t y_end){
         godot::Dictionary result;result["valid"]=false;
@@ -154,7 +159,7 @@ public:
     godot::Dictionary geometry_cache_key(int64_t x,int64_t z,int64_t size,int64_t step) {
         if(x<0||z<0||x>=2048||z>=2048||size<16||size>256||step<1||step>8)return {};
         std::lock_guard<std::mutex> lock(mutex_);
-        return terraforest::geometry_content_key(world_,int(x),int(z),int(size),int(step));
+        tr_oom=false;auto result=terraforest::geometry_content_key(world_,int(x),int(z),int(size),int(step));return tr_oom?godot::Dictionary():result;
     }
     TerrainCore() {world_.build_control=&control_; tr_oom=false; world_.init();}
     ~TerrainCore() {snapshot_worker_.reset();world_.release();}
@@ -329,10 +334,10 @@ public:
         result["ok"]=true;result["completed"]=completed;result["revision"]=world_.revision;
         result["worker_ms"]=std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-started).count();return result;
     }
-    godot::Dictionary survey_generated_lake_surfaces(const godot::Array &records){std::lock_guard<std::mutex> lock(mutex_);return terraforest::survey_generated_lake_surfaces(world_,records);}
+    godot::Dictionary survey_generated_lake_surfaces(const godot::Array &records){std::lock_guard<std::mutex> lock(mutex_);tr_oom=false;auto result=terraforest::survey_generated_lake_surfaces(world_,records);return tr_oom?godot::Dictionary():result;}
     godot::Ref<NativeTerrainCapture> capture_storage_snapshot(){
         std::lock_guard<std::mutex> lock(mutex_);
-        int count=world_.pages.n;if(count<0||count>MAX_PAGES)return {};
+        tr_oom=false;int count=world_.pages.n;if(count<0||count>MAX_AUTHORED_PAGES)return {};
         const int32_t *saved=saved_keys_.ptr();const int64_t *versions=saved_versions_.ptr();
         auto dirty=[&](int i){return i>=saved_keys_.size()||saved[i]!=int32_t(world_.pages[i].key)||uint64_t(versions[i])!=world_.pages[i].storage_version;};
         int changed=0;for(int i=0;i<count;i++)changed+=dirty(i);
@@ -347,7 +352,7 @@ public:
         int next=0;
         for(int i=0;i<count;i++){
             const auto &page=world_.pages[i];keys[i]=page.key;stamps[i]=int64_t(page.storage_version);
-            if(dirty(i)){indices[next]=i;copy_bytes(samples+int64_t(next)*PAGE_SAMPLES*3,page.d,PAGE_SAMPLES*2);copy_bytes(samples+int64_t(next)*PAGE_SAMPLES*3+PAGE_SAMPLES*2,page.mat,PAGE_SAMPLES);++next;}
+            if(dirty(i)){if(!world_.resident_page(i))return {};indices[next]=i;copy_bytes(samples+int64_t(next)*PAGE_SAMPLES*3,page.d,PAGE_SAMPLES*2);copy_bytes(samples+int64_t(next)*PAGE_SAMPLES*3+PAGE_SAMPLES*2,page.mat,PAGE_SAMPLES);++next;}
         }
         int64_t at=0;auto *blocks=capture->blocks_.ptrw();
         for(int i=0;i<world_.blocks.cap;i++)if(world_.blocks.p[i].key&&world_.blocks.p[i].key!=0xffffffffu){
@@ -370,8 +375,26 @@ public:
         if(!capture->sealed_||capture->owner_!=get_instance_id()||capture->epoch_!=storage_epoch_||capture->source_!=storage_reference_||capture->published_!=reference||reference.size()!=40||capture->keys_.size()>world_.pages.n)return false;
         for(int i=0;i<capture->keys_.size();i++)if(uint32_t(capture->keys_[i])!=world_.pages[i].key)return false;
         // Newer edits keep their newer page stamps and remain dirty.
-        saved_keys_=capture->keys_;saved_versions_=capture->versions_;storage_reference_=reference;storage_load_pending_=false;return true;
+        saved_keys_=capture->keys_;saved_versions_=capture->versions_;storage_reference_=reference;storage_load_pending_=false;
+        for(int i=0;i<capture->keys_.size();i++)world_.pages[i].clean_version=uint64_t(capture->versions_[i]);
+        if(residency_)residency_->checkpoint(reference);return true;
     }
+    bool mount_storage_checkpoint(const godot::String &directory,const godot::PackedByteArray &reference,int64_t limit=MAX_PAGES){
+        if(limit<8||limit>MAX_PAGES)return false;std::lock_guard<std::mutex> lock(mutex_);
+        godot::Ref<NativeTerrainRegionStore> store;store.instantiate();if(!store->open_store(directory,false))return false;
+        godot::Dictionary description=store->describe_snapshot(reference);if(!bool(description.get("ok",false)))return false;
+        godot::PackedInt32Array keys;godot::PackedInt64Array versions;int64_t count=description["pages"];
+        if(keys.resize(count)!=godot::OK||versions.resize(count)!=godot::OK)return false;
+        auto residency=std::make_unique<TerrainResidency>(store,reference,int(limit));
+        tr_oom=false;if(!store->mount_world(world_,reference))return false;
+        snapshot_worker_.reset(); // Old immutable jobs must not survive the new owner epoch.
+        residency_=std::move(residency);world_.page_access=residency_.get();
+        ++storage_epoch_;snapshot_epoch_.fetch_add(1);storage_load_pending_=false;storage_reference_=reference;
+        for(int i=0;i<world_.pages.n;i++){keys.set(i,world_.pages[i].key);versions.set(i,int64_t(world_.pages[i].storage_version));}
+        saved_keys_=keys;saved_versions_=versions;
+        return true;
+    }
+    godot::Dictionary residency_stats(){std::lock_guard<std::mutex> lock(mutex_);godot::Dictionary d;if(residency_)d=residency_->stats(world_);else{d["active"]=false;d["catalog_pages"]=world_.pages.n;d["resident_pages"]=world_.pages.n;d["resident_limit"]=MAX_PAGES;}d["generator"]=world_.generator_id;d["seed"]=world_.seed;return d;}
     godot::PackedByteArray execute(const godot::PackedByteArray &packet) {
         if(packet.size()<4 || packet.size()>512LL*1024*1024)return reply(0,1);
         const uint32_t command=packet.decode_u32(0);
@@ -396,7 +419,9 @@ public:
         const int previous_revision=world_.revision;
         active_command_.store(command,std::memory_order_relaxed);
         process_request(world_,packet.ptr(),int(packet.size()),bytes);
+        if(tr_oom&&bytes.n>=12)bytes.p[8]=2;
         if((command==5||command==6)&&bytes.n>=12&&bytes.p[8]==0){
+            residency_.reset();world_.page_access=nullptr;
             storage_load_pending_=command==5;storage_load_checksum_=command==5?packet.decode_u32(packet.size()-4):0;storage_load_revision_=world_.revision;
         }
 

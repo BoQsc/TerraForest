@@ -394,6 +394,25 @@ void World::init(int p_seed,u32 generator){
 void World::release(){owned_heights.release();release_geometry_cache(*this);light_roofs.release();light_samples.release();light_tops.release();light_probe_ids.release();light_probes.release();lighting_revision=-1;for(int i=0;i<pages.n;i++){if(pages[i].d)tr_free(pages[i].d);if(pages[i].mat)tr_free(pages[i].mat);}pages.release();pages_by_key.release();blocks.release();caves.release();for(int i=0;i<block_columns.n;i++)block_columns[i].release();block_columns.release();if(edit_columns)tr_free(edit_columns);edit_columns=nullptr;}
 static u32 page_key(int x,int y,int z){return u32(x+NP*(z+NP*y))+1;}
 static void decode_page(u32 k,int&x,int&y,int&z){int v=int(k-1);x=v%NP;v/=NP;z=v%NP;y=v/NP;}
+const Page *World::resident_page(int index)const{
+ if(index<0||index>=pages.n){tr_oom=true;return nullptr;}
+ const Page &p=pages[index];
+ if(!p.d&&(!page_access||!page_access->load(*const_cast<World*>(this),index))){tr_oom=true;return nullptr;}
+ if(page_access)page_access->touch(*const_cast<World*>(this),index);return &p;
+}
+bool World::prepare_pages(V3 lo,V3 hi){
+ if(!page_access)return true;
+ for(int y=fl(lo.y)/16;y<=fl(hi.y)/16;y++)for(int z=fl(lo.z)/16;z<=fl(hi.z)/16;z++)for(int x=fl(lo.x)/16;x<=fl(hi.x)/16;x++){
+  int i=pages_by_key.get(page_key(x,y,z));if(i>=0&&!resident_page(i))return false;
+ }
+ return true;
+}
+// Keep all pages touched by an atomic edit resident until its non-fallible commit.
+struct EditPagePin {
+ World &world;bool previous;V3 lo,hi;
+ EditPagePin(World&w,V3 a,V3 b):world(w),previous(w.pages_pinned),lo(w.pin_lo),hi(w.pin_hi){w.pages_pinned=true;w.pin_lo=a;w.pin_hi=b;}
+ ~EditPagePin(){world.pages_pinned=previous;world.pin_lo=lo;world.pin_hi=hi;}
+};
 static u32 block_key(int x,int y,int z){return 1+u32(x|(z<<11)|(y<<22));}
 static void decode_block(u32 key,int&x,int&y,int&z){u32 k=key-1;x=k&2047;z=(k>>11)&2047;y=(k>>22)&511;}
 bool World::set_block(u32 key,int material){
@@ -407,13 +426,14 @@ float World::sample(int x,int y,int z,u8*mat)const{
  if(mat)*mat=0;
  if(x<0||x>WORLD||z<0||z>WORLD||y<0||y>WORLD_Y)return SDF_BAND;
  int index=pages_by_key.get(page_key(x>>4,y>>4,z>>4));
- if(index>=0){const Page&p=pages[index];int j=(x&15)+16*((z&15)+16*(y&15));if(mat)*mat=p.mat[j];return float(p.d[j])/SDF_SCALE;}
+ if(index>=0){const Page*p=resident_page(index);if(!p)return __builtin_nanf("");int j=(x&15)+16*((z&15)+16*(y&15));if(mat)*mat=p->mat[j];return float(p->d[j])/SDF_SCALE;}
  V3 point={float(x),float(y),float(z)};float h=height(point.x,point.z);
  if(mat)*mat=base_material(point,h);
  return base(point,h);
 }
 Page* World::ensure(int px,int py,int pz){
- u32 key=page_key(px,py,pz);int at=pages_by_key.get(key);if(at>=0)return &pages[at];if(pages.n>=MAX_PAGES)return nullptr;
+ u32 key=page_key(px,py,pz);int at=pages_by_key.get(key);if(at>=0)return resident_page(at)?&pages[at]:nullptr;
+ if(pages.n>=(page_access?MAX_AUTHORED_PAGES:MAX_PAGES)||(page_access&&!page_access->admit(*this)))return nullptr;
  Page page;page.key=key;page.d=(i16*)tr_alloc(PAGE_SAMPLES*sizeof(i16));page.mat=(u8*)tr_alloc(PAGE_SAMPLES);
  if(!page.d||!page.mat){if(page.d)tr_free(page.d);if(page.mat)tr_free(page.mat);tr_oom=true;return nullptr;}
  zero_bytes(page.mat,PAGE_SAMPLES);
@@ -424,7 +444,7 @@ Page* World::ensure(int px,int py,int pz){
    page.mat[index]=base_material(point,h);
   }
  }
- int idx=pages.push(page);pages_by_key.put(key,idx);edit_columns[px+NP*pz]|=(1u<<py);return &pages[idx];
+ int idx=pages.push(page);pages_by_key.put(key,idx);edit_columns[px+NP*pz]|=(1u<<py);if(page_access)page_access->inserted(*this,idx);return &pages[idx];
 }
 static float box_distance(V3 p,V3 c,float r){V3 q={ab(p.x-c.x)-r,ab(p.y-c.y)-r,ab(p.z-c.z)-r};return length({mx(q.x,0),mx(q.y,0),mx(q.z,0)})+mn(mx(q.x,mx(q.y,q.z)),0);}
 static float road_bed_field(V3 p,V3 a,V3 b,float half_width,float depth,float shoulder=0,const float *curve=nullptr,int curve_count=0,int curve_index=0,float curve_offset=0,bool cut_shoulder=false){
@@ -461,7 +481,8 @@ bool World::edit(V3 a,V3 b,float radius,int shape,bool add,u8 material,V3&lo,V3&
  if(lo.x>hi.x||lo.y>hi.y||lo.z>hi.z)return false;
  // Capacity check before mutation: fail the edit, never silently discard terrain.
  int need=0;for(int py=fl(lo.y)/16;py<=fl(hi.y)/16;py++)for(int pz=fl(lo.z)/16;pz<=fl(hi.z)/16;pz++)for(int px=fl(lo.x)/16;px<=fl(hi.x)/16;px++)if(pages_by_key.get(page_key(px,py,pz))<0)need++;
- if(pages.n+need>MAX_PAGES)return false;
+ if(pages.n+need>(page_access?MAX_AUTHORED_PAGES:MAX_PAGES))return false;
+ EditPagePin pin(*this,lo,hi);if(!prepare_pages(lo,hi))return false;
  // Stage references and values before changing authoritative pages. Virtual
  // page admission preserves the old first-touch quantization/repaint behavior.
  struct EditSample {i32 page;u16 sample;i16 density;u8 flags;};
@@ -508,7 +529,7 @@ bool World::edit(V3 a,V3 b,float radius,int shape,bool add,u8 material,V3&lo,V3&
    if(!ensure(x,y,z)||tr_oom||pages.n!=original_pages+i+1){allocated=false;break;}
   }
   if(!allocated){
-   for(int i=pages.n-1;i>=original_pages;i--){auto &page=pages[i];int x,y,z;decode_page(page.key,x,y,z);pages_by_key.erase(page.key);edit_columns[x+NP*z]&=~(1u<<y);tr_free(page.d);tr_free(page.mat);}
+   for(int i=pages.n-1;i>=original_pages;i--){auto &page=pages[i];int x,y,z;decode_page(page.key,x,y,z);pages_by_key.erase(page.key);edit_columns[x+NP*z]&=~(1u<<y);if(page_access)page_access->removed(*this,i);tr_free(page.d);tr_free(page.mat);}
    pages.n=original_pages;discard();return false;
   }
  }
@@ -553,7 +574,8 @@ bool World::material_box(const World&solid,V3 minimum,V3 maximum,bool add,V3&lo,
  if(!staged.n){staged.release();return true;}
  int original_pages=pages.n,needed=0;
  for(int py=fl(lo.y)>>4;py<=(fl(hi.y)>>4);py++)for(int pz=fl(lo.z)>>4;pz<=(fl(hi.z)>>4);pz++)for(int px=fl(lo.x)>>4;px<=(fl(hi.x)>>4);px++)if(pages_by_key.get(page_key(px,py,pz))<0)needed++;
- if(original_pages+needed>MAX_PAGES||!pages.reserve(original_pages+needed)){staged.release();return false;}
+ EditPagePin pin(*this,lo,hi);if(!prepare_pages(lo,hi)){staged.release();return false;}
+ if(original_pages+needed>(page_access?MAX_AUTHORED_PAGES:MAX_PAGES)||!pages.reserve(original_pages+needed)){staged.release();return false;}
  int map_capacity=pages_by_key.cap?pages_by_key.cap:64;
  while((pages_by_key.used+needed+1)*10>=map_capacity*7)map_capacity*=2;
  if(map_capacity!=pages_by_key.cap)pages_by_key.rehash(map_capacity);
@@ -562,7 +584,7 @@ bool World::material_box(const World&solid,V3 minimum,V3 maximum,bool add,V3&lo,
  for(int i=0;i<staged.n;i++){auto c=staged[i];if(!ensure(c.x>>4,c.y>>4,c.z>>4)||tr_oom){allocated=false;break;}}
  if(!allocated){
   // Capacity may have been exhausted without setting the allocator flag.
-  for(int i=pages.n-1;i>=original_pages;i--){auto&p=pages[i];int x,y,z;decode_page(p.key,x,y,z);pages_by_key.erase(p.key);edit_columns[x+NP*z]&=~(1u<<y);tr_free(p.d);tr_free(p.mat);}
+  for(int i=pages.n-1;i>=original_pages;i--){auto&p=pages[i];int x,y,z;decode_page(p.key,x,y,z);pages_by_key.erase(p.key);edit_columns[x+NP*z]&=~(1u<<y);if(page_access)page_access->removed(*this,i);tr_free(p.d);tr_free(p.mat);}
   pages.n=original_pages;staged.release();return false;
  }
  ++storage_serial;
@@ -582,7 +604,7 @@ void World::serialize(Bytes&out,bool fast_checksum)const{
  if(required>0x7fffffff||!out.reserve(int(required))){tr_oom=true;return;}
  int start=out.n;
  out.u(SAVE_MAGIC);out.u(fast_checksum?3:2);out.u(seed);out.u(pages.n);out.u(blocks.n);out.u(revision);out.u(edits);out.u(generator_id);
- for(int i=0;i<pages.n;i++){const Page&p=pages[i];out.u(p.key);out.raw(p.d,PAGE_SAMPLES*2);out.raw(p.mat,PAGE_SAMPLES);}
+ for(int i=0;i<pages.n;i++){const Page*p=resident_page(i);if(!p)return;out.u(p->key);out.raw(p->d,PAGE_SAMPLES*2);out.raw(p->mat,PAGE_SAMPLES);}
  for(int i=0;i<blocks.cap;i++)if(blocks.p[i].key&&blocks.p[i].key!=0xffffffffu){out.u(blocks.p[i].key);out.u(blocks.p[i].value);}
  out.u(fast_checksum?terrain_checksum::checksum(out.p+start,out.n-start):checksum(out.p+start,out.n-start));
 }
@@ -752,7 +774,7 @@ static bool extract_vertices(const World&w,int ox,int oz,int size,Mesh&m,u32 epo
     CachedSample& cached=cache[cache_at];
     if(cached.valid){d[k]=float(cached.value)/SDF_SCALE;mats[k]=cached.material;if(d[k]<0)signs|=1u<<k;continue;}
     int py=yy>>4;if(py!=cached_py){for(int c=0;c<4;c++){int sx=gx+(c&1),sz=gz+((c>>1)&1);page_indices[c]=sx<0||sz<0||sx>WORLD||sz>WORLD?-1:w.pages_by_key.get(page_key(sx>>4,py,sz>>4));}cached_py=py;}
-    int pi=page_indices[hc];if(pi>=0){int at=(xx&15)+16*((zz&15)+16*(yy&15));d[k]=float(w.pages[pi].d[at])/SDF_SCALE;mats[k]=w.pages[pi].mat[at];}else d[k]=float(quant(w.base({float(xx),float(yy),float(zz)},h[hc])))/SDF_SCALE;
+    int pi=page_indices[hc];if(pi>=0){const Page*p=w.resident_page(pi);if(!p)return false;int at=(xx&15)+16*((zz&15)+16*(yy&15));d[k]=float(p->d[at])/SDF_SCALE;mats[k]=p->mat[at];}else d[k]=float(quant(w.base({float(xx),float(yy),float(zz)},h[hc])))/SDF_SCALE;
     cached.value=quant(d[k]);cached.material=mats[k];cached.valid=1;
     if(d[k]<0)signs|=1u<<k;
    }
@@ -1020,7 +1042,7 @@ void shade_mesh(const World&w,Mesh&m,u32 expected_epoch){
     float base=float(quant(original_sample))/SDF_SCALE;
     float current=original_sample;
     if(sx<0||sx>WORLD||sz<0||sz>WORLD||sy<0||sy>WORLD_Y)current=SDF_BAND;
-    else {int pi=w.pages_by_key.get(page_key(sx>>4,sy>>4,sz>>4));if(pi>=0){int at=(sx&15)+16*((sz&15)+16*(sy&15));current=float(w.pages[pi].d[at])/SDF_SCALE;mat=w.pages[pi].mat[at];}}
+    else {int pi=w.pages_by_key.get(page_key(sx>>4,sy>>4,sz>>4));if(pi>=0){const Page*p=w.resident_page(pi);if(!p)return;int at=(sx&15)+16*((sz&15)+16*(sy&15));current=float(p->d[at])/SDF_SCALE;mat=p->mat[at];}}
     original[k]=base;
     float weight=(k&1?f.x:1-f.x)*(k&2?f.y:1-f.y)*(k&4?f.z:1-f.z);float difference=current-base;
     delta+=difference*weight;

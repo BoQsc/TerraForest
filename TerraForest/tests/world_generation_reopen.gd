@@ -28,9 +28,12 @@ func run()->void:
  var ready:bool=await wait_until(func():return not game.loading_active,70)
  var failures:=0
  var map_profile:Dictionary={}
+ var residency:Dictionary={}
  if not ready or root.size!=Vector2i(1920,1080):failures+=1
  if ready:
   game.set_physics_process(false);game._clear_motion()
+  residency=game.terrain.backend.native.residency_stats()
+  if not residency.get("active",false) or residency.resident_pages>residency.resident_limit:failures+=1;print("FAIL runtime terrain checkpoint is not using bounded native residency")
   if game.generated_region.describe(expected_seed,expected_generator).get("places",[]).size()!=2 or not game.construction_inventory.gameplay:failures+=1
   await RenderingServer.frame_post_draw
   root.get_texture().get_image().save_png("res://reports/world_generation_reopen.png")
@@ -45,7 +48,7 @@ func run()->void:
   if not cached or map_profile.terrain_hits==0 or map_profile.water_hits==0 or map_profile.blocks_hits==0 or map_profile.models_hits==0:failures+=1
   await RenderingServer.frame_post_draw
   root.get_texture().get_image().save_png("res://reports/world_generation_reopen_map.png")
- var result:={"failures":failures,"slot":slot,"ready":ready,"map":map_profile,"load_milliseconds":Time.get_ticks_msec()-began,"root_size":str(root.size),"scope":"Fresh full game opens a generated published world read-only, with normal paid gameplay, native region restore and all baked map layers hitting cache. Not sustained performance qualification."}
+ var result:={"failures":failures,"slot":slot,"ready":ready,"map":map_profile,"terrain_residency":residency,"load_milliseconds":Time.get_ticks_msec()-began,"root_size":str(root.size),"scope":"Fresh full game opens a generated published world read-only, with normal paid gameplay, bounded native terrain residency and all baked map layers hitting cache. Not sustained performance qualification."}
  FileAccess.open("res://reports/world_generation_reopen.json",FileAccess.WRITE).store_string(JSON.stringify(result,"  "))
  game.shutdown_requested=true;game.terrain.backend.disable_snapshot_writes();await game.terrain.shutdown_after_edits();game.free()
  print("WORLD_GENERATION_REOPEN_CHILD failures=",failures);quit(1 if failures else 0)

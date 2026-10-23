@@ -1,0 +1,62 @@
+{
+  "failures": 0,
+  "checks": [
+    {
+      "case": "successful_edit_fields",
+      "passed": true
+    },
+    {
+      "case": "new_page_allocation_failure",
+      "passed": true,
+      "accepted": false,
+      "before_bytes": 36,
+      "after_bytes": 36,
+      "reported_changes": 0
+    },
+    {
+      "case": "existing_page_allocation_failure",
+      "passed": true,
+      "accepted": false,
+      "before_bytes": 12328,
+      "after_bytes": 12328,
+      "reported_changes": 0
+    },
+    {
+      "case": "allocation_and_reallocation_sweep",
+      "passed": true,
+      "attempts": 512,
+      "forced_failures": 224
+    },
+    {
+      "case": "allocation_balance",
+      "passed": true,
+      "live": 0
+    },
+    {
+      "case": "native_process_exit",
+      "passed": true,
+      "exit_code": 0
+    },
+    {
+      "case": "prechange_field_and_receipt_parity",
+      "passed": true,
+      "hashes": {
+        "field_1.bin": "b79baee7c15ae52b7ba9f35d11493efdb6585fa1dbf2accb18bf7d9d5da25326",
+        "field_19.bin": "1cb1bd8947f3cd1dec42bc41ffb663a2b6e367de639fee22d2222b71933cb91d",
+        "field_3.bin": "64c8f69c754298b0fd8186828c470574bede269640c37c24b0dd9911a2856828",
+        "field_5.bin": "6aa3b38991ee2c745d8d5a6d6f0c552c01d12b1672f72c180e004c9d438432f5",
+        "receipts_1.bin": "b38c8f3f8b57df9566760189e2da225ec51ce463dadfa6183932e4ddc2ef5801",
+        "receipts_19.bin": "fba3c349e3cf5faf37aa1054e7f6a433525caa15104eeaf750aee9dcea8e1cca",
+        "receipts_3.bin": "c05ac1ed0f55c19c84f6d42001a13991508c2b57a74dbff4923094aeb3b075be",
+        "receipts_5.bin": "f855198d84d8dfd2ddc13c3e6a55ea51d1f6a007d974095bb4cd2610a11fc311"
+      }
+    }
+  ],
+  "exit_code": 0,
+  "source_hashes": {
+    "tests\\native\\terrain_edit_atomicity_probe.cpp": "2ea94b3321c56405457b6e5e33803e59cf15f8fbd3b86d9ac1e9d75065e2f928",
+    "addons\\volumetric_terrain\\native\\core.cpp": "81ae52f99a456ab9f2107d211e391e75bf7aa1b62f98308391d5470cb7601c28",
+    "addons\\volumetric_terrain\\native\\core.h": "b8677e2e44097f4a79f681afad235ed65f8fbe4178c9aef9e645a75a485a9b47",
+    "addons\\volumetric_terrain\\native\\platform.h": "30bbec7107edc3a45082f5bb7caf49197aab781851d7f7a650f6ce8cc64ec8a5"
+  }
+}

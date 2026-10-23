@@ -1,0 +1,24 @@
+{
+  "passed": true,
+  "scope": "Evaluate only logs belonging to this generation; original wrapper also read the prior failed attempt engine.log. Fresh PCK reopen separately passes.",
+  "diagnostics": [],
+  "logs_sha256": {
+    "console.log": "6f70fbd11749760ba2eabeddfb335f5ee87b255b7ff88cfe135368e77e817894",
+    "generation.log": "7f6b3e9655e421900bb976fcf8d601629dccdd9e6006f8d931b4175d42ed3a76"
+  },
+  "original_wrapper_result": {
+    "timed_out": false,
+    "launch_error": null,
+    "cancelled": false,
+    "pid": 45132,
+    "exit_code": 0,
+    "diagnostics": [
+      "\nERROR: Attempt to open script 'res://tests/world_generation_workflow.gd' resulted in error 'File not found'.",
+      "ERROR: Can't load script: res://tests/world_generation_workflow.gd",
+      "ERROR: Failed loading resource: res://tests/world_generation_workflow.gd."
+    ],
+    "required_text_found": true,
+    "elapsed_seconds": 65.93450129998382,
+    "passed": false
+  }
+}

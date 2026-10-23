@@ -1,7 +1,8 @@
 # Regional terrain storage
 
-2026-10-23 implementation checkpoint. This is an active part of the world rewrite,
-not a claim that terrain residency or long-run capacity is complete.
+2026-10-23 implementation checkpoint. Native demand residency now uses the same
+regional products in ordinary world loading. This is an active part of the world
+rewrite, not a claim of complete long-run or rendered latency qualification.
 
 ## Authoritative representation
 
@@ -84,10 +85,32 @@ game-world save size.
    compressed regions. Eliminate unnecessary repeated history verification only
    with explicit immutable-file ownership/invalidation, corruption and recovery
    proof. Do not claim constant total save cost from the reduced sample copy.
-2. Wire selective region reads into native terrain residency. The production loader
-   currently expands all pages, and the 16,384 resident-page cap is unchanged. Do not
-   increase the cap to disguise this. Close with bounded residency, edited travel
-   beyond that historical cap, retained distant representations, and exact save/reopen.
+2. Selective native page residency is integrated. The production loader mounts the
+   verified regional checkpoint directly, retaining only its complete key catalog
+   and legacy exact blocks. It no longer constructs an expanded terrain byte array.
+   Intrusive LRU links give constant-time sample touches; eviction traverses only
+   the bounded resident set, never historical page keys. Each cold miss decodes a
+   verified 64 m region into one-region scratch and admits the requested 16 m page.
+   Dirty samples and the footprint of an atomic edit cannot be evicted. Rejected
+   admission rolls back new pages; only successful compound publication advances
+   clean stamps. Edits newer than a frozen save remain dirty after acknowledgement.
+   The default resident ceiling is still 16,384 pages, not increased. Native tests
+   exercise smaller 16/32/1024-page budgets. The full catalog is bounded by the
+   existing finite world's lattice (126 × 126 × 17 pages), independently of sample
+   residency. Legacy whole-blob import/expansion retains its old capacity limits;
+   larger histories must use the regional representation. A 2,112-addition fixture
+   reached 16,896 authored pages with at most 1,024 resident pages and cold reopened
+   under a 32-page bound. Density hits/normals/content identities and incremental
+   checkpoint retention pass. See [evidence](evidence/terrain_residency/README.md).
+   Required continuation: worker prefetch/admission for predictable first response,
+   a rendered populated-world journey with history beyond the old cap, pressure
+   from long unsaved edits, and the mining gate below. Demand faults are currently
+   synchronous on the terrain worker, so bounded memory is not a latency guarantee.
+   Dirty-only pressure rejects an edit when no resident slot can safely be freed;
+   it must never discard an unsaved page or silently restore base terrain.
+   A brand-new field also retains the old resident ceiling before its first
+   checkpoint. Large offline plans need bounded unpublished checkpoint stages;
+   add these before claiming generation of arbitrarily large authored layouts.
 3. Add bounded retention-aware collection and pack compaction. First establish
    canonical/backup/in-flight reader ownership, then collect only products not used
    by any retained checkpoint. Close with interrupted collection, active readers,

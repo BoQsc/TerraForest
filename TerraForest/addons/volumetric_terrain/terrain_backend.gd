@@ -743,9 +743,12 @@ func _load() -> String:
 		if restored.is_empty():
 			write_allowed=false
 			return "ERROR: water checkpoint unavailable or invalid; original file protected"
-		restored=_terrain_storage_sections(restored,ProjectSettings.globalize_path(save_path),false)
-		if restored.is_empty():
-			write_allowed=false;return "ERROR: terrain checkpoint unavailable or invalid; original file protected"
+		# Regional checkpoints remain regional in memory. Native worker-owned page
+		# faults read verified products; no expanded world-sized byte array is built.
+		if stored_checkpoint.is_empty():
+			restored=_terrain_storage_sections(restored,ProjectSettings.globalize_path(save_path),false)
+			if restored.is_empty():
+				write_allowed=false;return "ERROR: terrain checkpoint unavailable or invalid; original file protected"
 		for key: String in snapshot_validators:
 			if restored.has(key) and not snapshot_validators[key].validate_snapshot(restored[key]):
 				write_allowed = false
@@ -753,19 +756,21 @@ func _load() -> String:
 		payload = restored["terrain"]
 		restored.erase("terrain")
 	snapshot_id = stored_snapshot_id if not stored_snapshot_id.is_empty() else DiskCache.digest(payload).hex_encode()
-	var data := Codec.command(5)
-	data.append_array(payload)
-	var reply: PackedByteArray = _call(data)
-	if not Codec.reply_ok(reply):
-		write_allowed = false
-		return "ERROR: invalid world snapshot; original file left untouched"
-	if not stored_checkpoint.is_empty() and not native.configure_storage_checkpoint(stored_checkpoint,payload.decode_u32(payload.size()-4)):
-		write_allowed=false
-		return "ERROR: terrain checkpoint baseline rejected; original file protected"
+	if not stored_checkpoint.is_empty():
+		if not native.mount_storage_checkpoint(ProjectSettings.globalize_path(save_path)+".terrain",stored_checkpoint):
+			write_allowed=false
+			return "ERROR: terrain checkpoint unavailable or invalid; original file protected"
+	else:
+		var data := Codec.command(5)
+		data.append_array(payload)
+		var reply: PackedByteArray = _call(data)
+		if not Codec.reply_ok(reply):
+			write_allowed = false
+			return "ERROR: invalid world snapshot; original file left untouched"
 	var info: PackedByteArray = _call(Codec.command(0))
 	if info.size() >= 36:
 		world_seed = info.decode_u32(32)
-	world_generator=payload.decode_u32(28) if payload.decode_u32(4) in [2,3] else 1
+	world_generator=int(native.residency_stats().generator) if not stored_checkpoint.is_empty() else payload.decode_u32(28) if payload.decode_u32(4) in [2,3] else 1
 	components = restored
 	write_allowed = true
 	return "World loaded"
