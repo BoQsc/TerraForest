@@ -16,6 +16,7 @@ signal movement_mode_changed(mode: String)
 
 const MODEL_PATH := "res://addons/characters/runtime/assets/Zombie.r4.glb"
 const WORLD_LAYER := 1
+const PLAYER_LAYER := 2
 const CHARACTER_LAYER := 1 << 16
 const HIT_LAYER := 1 << 17
 const RAGDOLL_LAYER := 1 << 18
@@ -66,6 +67,7 @@ const PARTS := {
 @export var gravity := 9.8
 
 var target: Node3D
+var crowd_steering := Vector3.ZERO
 var alive := true
 var state := "idle"
 var health := 180.0
@@ -162,7 +164,7 @@ func configure(scene: PackedScene = null) -> void:
 					pair[side] = cap
 			caps[part] = pair
 	collision_layer = CHARACTER_LAYER
-	collision_mask = WORLD_LAYER
+	collision_mask = WORLD_LAYER | PLAYER_LAYER | CHARACTER_LAYER
 	capsule = CollisionShape3D.new()
 	capsule.name = "MovementCapsule"
 	var shape := CapsuleShape3D.new()
@@ -835,7 +837,7 @@ func _set_crawl_capsule(fraction: float) -> void:
 	capsule.rotation.x = _crawl_shape_fraction * PI * 0.5
 	# The prone head reaches about +0.63m. Keep this locomotion proxy behind
 	# that contact surface, so its rounded front does not stop a bite early.
-	capsule.position = Vector3(0.0, shape.radius + (shape.height * 0.5 - shape.radius) * cos(capsule.rotation.x), -0.035 * _crawl_shape_fraction)
+	capsule.position = Vector3(0.0, shape.radius + (shape.height * 0.5 - shape.radius) * cos(capsule.rotation.x), -0.12 * _crawl_shape_fraction)
 
 
 func _start_crawl() -> void:
@@ -919,21 +921,37 @@ func _face_target(delta: float, factor: float = 1.0) -> void:
 		return
 	var offset := target.global_position - global_position
 	offset.y = 0.0
+	_face_direction(offset, delta, factor)
+
+
+func _face_direction(offset: Vector3, delta: float, factor: float = 1.0) -> void:
 	if offset.length_squared() > 0.0004:
 		rotation.y = lerp_angle(rotation.y, atan2(offset.x, offset.z), minf(turn_speed * factor * delta, 1.0))
 
 
 func _tick_pursuit(delta: float) -> void:
-	_face_target(delta, 0.75 if _crawling else 1.0)
 	var distance := _target_distance()
 	var preferred_reach := 0.76 if _crawling else 0.62 if not _has_full_arm("l") and not _has_full_arm("r") else 0.96
 	preferred_reach = minf(preferred_reach, _contact_standoff)
+	if target.has_method("get_zombie_attack_radius"):
+		# A learned contact distance cannot require interpenetrating the player.
+		# Keep the prone proxy behind the mouth so this still fits bite reach.
+		var shape := capsule.shape as CapsuleShape3D
+		var front := shape.height * 0.5 + capsule.position.z if _crawling else shape.radius
+		var target_radius := clampf(float(target.call("get_zombie_attack_radius")), 0.01, 0.60)
+		preferred_reach = maxf(preferred_reach, front + target_radius + 0.02)
+	if distance <= preferred_reach:
+		_face_target(delta, 0.75 if _crawling else 1.0)
 	if distance <= preferred_reach and _action_cooldown <= 0.0:
 		if request_attack():
 			return
 	if distance > preferred_reach:
 		var direction := target.global_position - global_position
 		direction.y = 0.0
+		# The bounded host crowd supplies separation and a route past a peer.
+		# Turn into that route so locomotion keeps following the facing pose.
+		direction = (direction.normalized() + crowd_steering).normalized()
+		_face_direction(direction, delta, 0.75 if _crawling else 1.0)
 		var speed := get_crawl_speed() if _crawling else walk_speed * get_walk_multiplier()
 		if speed <= 0.0001:
 			state = "crawl_idle" if _crawling else "idle"
@@ -1347,6 +1365,10 @@ func cancel_traversal() -> void:
 
 
 func set_behavior(enabled: bool) -> void:
+	# The host refreshes availability every tick. Reapplying the same mode must
+	# preserve an attack's contact marker and any traversal already in progress.
+	if enabled == behavior_enabled:
+		return
 	if _r4_enabled:
 		_cancel_attack()
 		cancel_traversal()

@@ -60,6 +60,7 @@ func update(delta: float, focus: Vector3, available: bool, pursue: bool = true) 
 		zombie.set_behavior(available and ready and pursue)
 		if not ready:
 			_retire(index)
+	_update_spacing()
 	if not available:
 		return
 	_spawn_clock -= delta
@@ -74,6 +75,38 @@ func update(delta: float, focus: Vector3, available: bool, pursue: bool = true) 
 		var point := supported_point(focus + Vector3(sin(angle), 0, cos(angle)) * radius)
 		if point.is_finite() and spawn_at(point) != null:
 			break
+
+func _update_spacing() -> void:
+	# At most six actors: 30 ordered neighbour checks, with no world scan.
+	for index in residents.size():
+		var zombie = residents[index]
+		zombie.crowd_steering = Vector3.ZERO
+		if not zombie.alive:
+			continue
+		var approach: Vector3 = target.global_position - zombie.global_position
+		approach.y = 0.0
+		approach = approach.normalized()
+		var sideways := Vector3(-approach.z, 0, approach.x)
+		var steering := Vector3.ZERO
+		for peer in residents:
+			if peer == zombie or not peer.alive:
+				continue
+			var away: Vector3 = zombie.global_position - peer.global_position
+			if absf(away.y) > 1.5:
+				continue
+			away.y = 0.0
+			var distance := away.length()
+			if distance >= 1.25:
+				continue
+			var weight := 1.0 - distance / 1.25
+			steering += away.normalized() * weight * 0.7
+			if -away.dot(approach) > 0.2:
+				# Separation alone makes a following zombie stop behind the first.
+				# Pass on the nearer side; break a centred tie consistently.
+				var lateral := away.dot(sideways)
+				var side := signf(lateral) if absf(lateral) > 0.08 else (1.0 if index % 2 == 0 else -1.0)
+				steering += sideways * side * weight * 1.8
+		zombie.crowd_steering = steering.limit_length(1.2)
 
 func _freeze_detached(node: Node, frozen: bool) -> void:
 	if node is RigidBody3D:

@@ -1,0 +1,94 @@
+[
+  {
+    "run": "20261023T095125261266Z",
+    "test": "res://tests/zombie_encounters.gd",
+    "revision": "5f4a11038b0d225f0b22e3ab388f3039f7b09650",
+    "test_sha256": "22948945b162ed6bb87f3a30f81864bc7d1120f138b7b3b4cfb0252bf3fea8bc",
+    "result": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 21384,
+      "exit_code": 1,
+      "diagnostics": [
+        "FAIL autonomous attacks finish through manager updates",
+        "FAIL crowd attacks actually reach player damage adapter",
+        "FAIL per-tick encounter updates let attack windups reach contact",
+        "FAIL queued zombies spread around peers and join melee",
+        "FAIL resuming encounters restores completed attack contacts",
+        "FAIL zombie movement capsules never interpenetrate"
+      ],
+      "required_text_found": true,
+      "elapsed_seconds": 17.60513159999391,
+      "passed": false
+    }
+  },
+  {
+    "run": "20261023T095951807386Z",
+    "test": "res://tests/zombie_encounters.gd",
+    "revision": "5f4a11038b0d225f0b22e3ab388f3039f7b09650",
+    "test_sha256": "b625cf09d03f4b73fda4da82e93e427c6fd7523fb0439712728e878b9f64bfb5",
+    "result": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 54552,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 26.557440200005658,
+      "passed": true
+    }
+  },
+  {
+    "run": "20261023T100018690902Z",
+    "test": "res://tests/character_runtime.gd",
+    "revision": "5f4a11038b0d225f0b22e3ab388f3039f7b09650",
+    "test_sha256": "626c4c00199b304797baadeaa580fd4183253ae990fcaaa94f54f6c34f4e88ed",
+    "result": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 11992,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 7.146946299995761,
+      "passed": true
+    }
+  },
+  {
+    "run": "20261023T100026182876Z",
+    "test": "res://tests/character_world.gd",
+    "revision": "5f4a11038b0d225f0b22e3ab388f3039f7b09650",
+    "test_sha256": "c23c4889144d19a5ea766ed9c91d43b09f7ae8570b1c53287ac51f8747ead658",
+    "result": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 54712,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 9.19806399999652,
+      "passed": true
+    }
+  },
+  {
+    "run": "20261023T100035701772Z",
+    "test": "res://tests/zombie_world_combat.gd",
+    "revision": "5f4a11038b0d225f0b22e3ab388f3039f7b09650",
+    "test_sha256": "bb07605783cfcd27d4668d520ff0c3d7ffb58522a93003eb118a35e39a651591",
+    "result": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 62280,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 22.66210439999122,
+      "passed": true
+    }
+  }
+]

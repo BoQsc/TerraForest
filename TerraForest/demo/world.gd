@@ -205,6 +205,7 @@ func _ready() -> void:
 	zombie_target.attacked.connect(func(damage:float):_show_lake_notice("Zombie hit · %.0f damage"%damage))
 	add_child(zombies)
 	zombies.enabled=(construction_inventory.gameplay or "--zombies" in OS.get_cmdline_user_args()) and not "--no-zombies" in OS.get_cmdline_user_args()
+	if zombies.enabled:player.collision_mask |= zombies.CHARACTER_LAYER
 	zombies.target=zombie_target
 	zombies.readiness=_actor_collision_ready
 	zombies.water_depth=lakes.depth_at

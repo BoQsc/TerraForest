@@ -21,6 +21,14 @@ now use loaded collision and existing melee/tool-wear adapters. See
 pass; the old combat and packaging suites still fail identically on the baseline.
 Those failures remain open and are not overridden by the new fixture passes.
 
+User playtesting then exposed cancelled autonomous windups and overlapping zombie
+movement capsules. The initial contact fixture had omitted per-tick manager
+refreshes. Idempotent behavior changes, solid peer/player collision, bounded local
+steering and reachable prone/standing clearances now have new crowd and live-host
+checks. See [failure reproduction and fix evidence](evidence/zombie_encounters/README.md).
+This corrects the earlier autonomous-attack claim; that earlier fixture alone did
+not establish working encounters in the actual host loop.
+
 This is a first integration milestone, not completed survival gameplay. Required
 continuation: player health/death/respawn, saved encounter identity/state and loot,
 obstacle navigation and automatic traversal, third-person/outfit presentation,
