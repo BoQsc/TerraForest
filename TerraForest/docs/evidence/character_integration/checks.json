@@ -162,5 +162,21 @@
       "passed": true
     },
     "revision": "e63a36d8a7bec38e248a9766f78f005a1bd6bbfe"
+  },
+  {
+    "run": "20261023T094106916394Z",
+    "test": "res://tests/character_world.gd",
+    "result": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 42316,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 10.346538699988741,
+      "passed": true
+    },
+    "revision": "47313035f749c94f404e4be10bce53a3cdb8047b"
   }
 ]

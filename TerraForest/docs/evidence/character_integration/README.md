@@ -5,6 +5,11 @@ the separate `codex/character-integration` worktree while terrain work continued
 in the original checkout. No terrain generator, native movement, persistent actor
 schema or existing save was rewritten by the character change.
 
+The integrated world was repeated after rebasing onto concurrent terrain commit
+`87390a2c`. The final exact implementation commit is `47313035`; all 18 world
+checks pass again. `final_world_run.json` retains revision, test and native binary
+hashes. The final forest screenshot was re-inspected.
+
 ## Passing scoped checks
 
 Godot 4.7.2 Steam, Windows x86-64; rendered checks use Forward+ on the RTX 4050,

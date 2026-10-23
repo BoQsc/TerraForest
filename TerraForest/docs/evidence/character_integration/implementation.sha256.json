@@ -1,0 +1,12 @@
+{
+  "addons/characters/runtime/assets/Human.r11.glb": "0dc8fdbcfac451f61b6eee5c914b1e79f5ec450f5e98e4c896e8b46370bf35c8",
+  "addons/characters/runtime/assets/Zombie.r4.glb": "6b6021c6ab97191c5a438807998845cf05a645ba693798060b73c5d963d58fbf",
+  "addons/characters/runtime/assets/Zombie.r4.behavior.json": "712cccca48685db700977a631ad93535330245b5393e15eec587ffa7ef6a2be4",
+  "addons/characters/runtime/human_view.gd": "2c6d72959cec90a778d6efd0863e27ed1e419fcb226682634c0ada8103aac3c6",
+  "addons/characters/runtime/zombie.gd": "63e407321c8a3494dfe5dc5358b29da58d4820f96a9c5b20680dfc08cd067788",
+  "addons/characters/runtime/zombie_world.gd": "1eeb78e8f6403425fb280c8f58c2dad18f24f4ca0a5b473eaec605a188a5a847",
+  "addons/characters/runtime/zombie_target.gd": "ca1d81363fbe9339271583211808999a6c11b0e58520e7b3da53cddc03a7bb81",
+  "addons/player_runtime/tool_view.gd": "7a4fd5989953c2ccb82bcb0c9677a8e8c8bab1600c74926e3e997592c07a50f7",
+  "addons/player_runtime/world_attack.gd": "ced6a72ed01070c6860beac42fadc5c514110b9ed3b295a0b916bc0f8a3e84bd",
+  "demo/world.gd": "77824023f8fad2a9ff825463b73cf563bba9d8729d0fcc4319cfd832a3d0aca0"
+}
