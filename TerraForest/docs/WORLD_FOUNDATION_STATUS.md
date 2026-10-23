@@ -156,6 +156,19 @@ runtime animation, review images and targeted host checks are linked in
 [placement evidence](evidence/human_placement/README.md). The other presentation
 requirements above remain open.
 
+The zombie dragging-walk follow-up adds an in-place Blender-authored right-leg
+drag with a weight-bearing left step and a continuous two-second loop. Standing
+pursuit defaults to 0.45 m/s with matched playback; original R4 actions and
+severed-leg crawling remain available. Flat-floor evaluated-skin checks and real
+controller transitions are in [gait evidence](evidence/zombie_drag_walk/README.md).
+The selected tower/door/upper-floor round trip also passes at this slower speed
+with all210 source files unchanged. Cold paths in that uncontrolled run take
+20.3/40.2s and cooperative planning overruns remain; the animation does not close
+the existing navigation timing requirement.
+This is animation presentation and a deliberate speed change, not new traversal
+capabilities. Terrain foot planting, larger populations and the broader regional
+navigation/performance requirements remain open.
+
 ## Regional terrain checkpoint integration - 2026-10-23
 
 Actual compound saves now select native compressed, immutable terrain packs;

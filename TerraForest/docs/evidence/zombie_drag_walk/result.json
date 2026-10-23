@@ -1,0 +1,79 @@
+{
+  "checks": 16,
+  "failures": 0,
+  "left_sole_max": 0.117989897727966,
+  "left_sole_min": 0.00299791246652603,
+  "native_peak_work": 48,
+  "right_sole_max": 0.00449913367629051,
+  "right_sole_min": 0.00300014764070511,
+  "samples": [
+    {
+      "frame": 0,
+      "left_sole_y": 0.00300181470811367,
+      "right_sole_y": 0.00300014764070511
+    },
+    {
+      "frame": 10,
+      "left_sole_y": 0.00300243776291609,
+      "right_sole_y": 0.0031002089381218
+    },
+    {
+      "frame": 20,
+      "left_sole_y": 0.0030007406603545,
+      "right_sole_y": 0.00337463989853859
+    },
+    {
+      "frame": 30,
+      "left_sole_y": 0.00300043798051775,
+      "right_sole_y": 0.00374962761998177
+    },
+    {
+      "frame": 40,
+      "left_sole_y": 0.00300012994557619,
+      "right_sole_y": 0.00412448868155479
+    },
+    {
+      "frame": 50,
+      "left_sole_y": 0.00299941375851631,
+      "right_sole_y": 0.00439879670739174
+    },
+    {
+      "frame": 60,
+      "left_sole_y": 0.00299853575415909,
+      "right_sole_y": 0.00449913367629051
+    },
+    {
+      "frame": 70,
+      "left_sole_y": 0.00299795158207417,
+      "right_sole_y": 0.00439891219139099
+    },
+    {
+      "frame": 80,
+      "left_sole_y": 0.0352766625583172,
+      "right_sole_y": 0.00412460789084435
+    },
+    {
+      "frame": 90,
+      "left_sole_y": 0.100318551063538,
+      "right_sole_y": 0.00374989956617355
+    },
+    {
+      "frame": 100,
+      "left_sole_y": 0.115239478647709,
+      "right_sole_y": 0.0033750906586647
+    },
+    {
+      "frame": 110,
+      "left_sole_y": 0.0668232068419456,
+      "right_sole_y": 0.00310046598315239
+    },
+    {
+      "frame": 120,
+      "left_sole_y": 0.00300181470811367,
+      "right_sole_y": 0.00300014764070511
+    }
+  ],
+  "scope": "Flat-floor evaluated skin and live shared-navigation controller lifecycle; no terrain foot IK or complete-world traversal claim.",
+  "seam_error": 0.000000133280039449346,
+  "stance_drift_m": 0.000967021584510785
+}

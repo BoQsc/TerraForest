@@ -118,9 +118,14 @@ func run()->void:
 	if not check(zombie!=null,"zombie admits at the actual street/cave approach"):await finish();return
 	start=zombie.global_position
 	details.start=start;details.destination=goal
+	# This is a reachability/contact check. Scale its bounded travel allowance
+	# from the original 0.72-m/s fixture when an authored gait is deliberately
+	# slower, without changing planning budgets or the actual movement driver.
+	var journey_seconds:=150.0*clampf(.72/zombie.walk_speed,1.0,2.0)
+	details.walk_speed=zombie.walk_speed;details.journey_allowance_seconds=journey_seconds
 	camera=Camera3D.new();game.add_child(camera);camera.position=start+Vector3(4,3,4);camera.look_at(start+Vector3.UP);camera.current=true;game.tool_view.human.hide()
 	var light:=OmniLight3D.new();light.position=goal+Vector3.UP*2;light.omni_range=18;light.light_energy=3;game.add_child(light)
-	check(await chase(zombie,150,"outbound"),"zombie finds its own complete world route and reaches actual player attack contact")
+	check(await chase(zombie,journey_seconds,"outbound"),"zombie finds its own complete world route and reaches actual player attack contact")
 	if kind=="tower":
 		check(zombie.global_position.y>pose.origin.y+7.5,"pursuer physically reaches second upper floor through authored stairs")
 		check(game.doors.collection.get_instance(door_identity).is_empty(),"actual generated entrance door is destroyed before upper-floor arrival")
@@ -137,7 +142,7 @@ func run()->void:
 	# The player changes destination; the pursuer receives no waypoint hints,
 	# position correction, manual jump or movement calls from this fixture.
 	game.player.global_position=start+Vector3.UP*.05;game.terrain.focus=game.player.global_position
-	check(await chase(zombie,150,"return"),"pursuer replans and returns from upper floor/cave to the connected approach")
+	check(await chase(zombie,journey_seconds,"return"),"pursuer replans and returns from upper floor/cave to the connected approach")
 	if DisplayServer.get_name()!="headless":
 		camera.position=zombie.global_position+Vector3(3,2,0);camera.look_at(zombie.global_position+Vector3.UP)
 		await RenderingServer.frame_post_draw;root.get_texture().get_image().save_png("res://reports/zombie_regional_world/"+kind+"/return.png")

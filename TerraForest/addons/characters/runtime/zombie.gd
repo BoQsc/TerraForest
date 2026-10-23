@@ -15,6 +15,8 @@ signal action_finished(action: String)
 signal movement_mode_changed(mode: String)
 
 const MODEL_PATH := "res://addons/characters/runtime/assets/Zombie.r4.glb"
+const DRAG_WALK = preload("res://addons/characters/runtime/assets/Zombie.drag_walk.res")
+const DRAG_WALK_REFERENCE_SPEED := 0.45
 const WORLD_LAYER := 1
 const PLAYER_LAYER := 2
 const CHARACTER_LAYER := 1 << 16
@@ -58,9 +60,10 @@ const PARTS := {
 @export var revision_id := "r4"
 @export_file("*.json") var behavior_contract_path := ""
 @export var attack_strike_seconds := 0.6398
-@export var walk_reference_speed := 0.72
+@export var walk_reference_speed := 0.72 # Preserved original walk's reference.
+@export var dragging_walk := true
 @export var behavior_enabled := false
-@export var walk_speed := 0.72
+@export var walk_speed := 0.45
 @export var attack_distance := 1.25
 @export var attack_damage := 12.0
 @export var turn_speed := 3.6
@@ -146,6 +149,8 @@ func configure(scene: PackedScene = null) -> void:
 	add_child(model)
 	skeleton = _find_type(model, "Skeleton3D") as Skeleton3D
 	animation_player = _find_type(model, "AnimationPlayer") as AnimationPlayer
+	if animation_player!=null and revision_id=="r4":
+		animation_player.add_animation_library("drag_walk",DRAG_WALK)
 	if skeleton == null:
 		push_error("Zombie model requires a Skeleton3D.")
 		return
@@ -982,8 +987,8 @@ func _tick_pursuit(delta: float) -> void:
 		velocity.x = movement.x
 		velocity.z = movement.z
 		state = "crawl" if _crawling else "shamble"
-		_play_animation("Zombie_Crawl" if _crawling else "Zombie_Walk")
-		var authored_speed := float(behavior_contract.get("crawl", {}).get("authored_speed_mps", 0.32)) if _crawling else walk_reference_speed
+		_play_animation("Zombie_Crawl" if _crawling else _standing_walk_clip())
+		var authored_speed := float(behavior_contract.get("crawl", {}).get("authored_speed_mps", 0.32)) if _crawling else _standing_walk_reference_speed()
 		animation_player.speed_scale = speed / authored_speed if authored_speed > 0.0001 else 1.0
 	else:
 		state = "crawl_idle" if _crawling else "idle"
@@ -1346,7 +1351,7 @@ func _tick_ladder(delta: float) -> void:
 		elif remaining <= 0.004:
 			_traversal_state = "ladder_exit"
 			_ladder_time = 0.0
-			_play_animation("Zombie_Walk")
+			_play_animation(_standing_walk_clip())
 		return
 	if _traversal_state == "ladder_exit":
 		var direction: Vector3 = _ladder.exit - global_position
@@ -1355,7 +1360,8 @@ func _tick_ladder(delta: float) -> void:
 		velocity = Vector3(movement.x, 0.0, movement.z)
 		if direction.length_squared() > 0.0004:
 			rotation.y = lerp_angle(rotation.y, atan2(direction.x, direction.z), minf(delta * 5.0, 1.0))
-		animation_player.speed_scale = 0.70 / walk_reference_speed if walk_reference_speed > 0.0001 else 1.0
+		var authored_speed:=_standing_walk_reference_speed()
+		animation_player.speed_scale = 0.70 / authored_speed if authored_speed > 0.0001 else 1.0
 		move_and_slide()
 		if direction.length() < 0.025 and _supported_endpoint(global_position):
 			motion_mode = CharacterBody3D.MOTION_MODE_GROUNDED
@@ -1430,7 +1436,7 @@ func play_clip(clip_name: String) -> void:
 		if _crawling:
 			if clip_name in ["Zombie_Idle", "Zombie_Jump", "Zombie_Climb_Ladder", "Zombie_To_Crawl"]:
 				clip_name = "Zombie_Crawl_Idle"
-			elif clip_name in ["Zombie_Walk", "Zombie_Shamble"]:
+			elif clip_name in ["Zombie_Walk", "Zombie_Shamble", "Zombie_Walk_Drag_Right"]:
 				clip_name = "Zombie_Crawl"
 			elif clip_name.begins_with("Zombie_Attack"):
 				clip_name = "Zombie_Crawl_Bite"
@@ -1453,6 +1459,12 @@ func get_walk_multiplier() -> float:
 		var ratio := float(limb_health.get(part, 0.0)) / float(PARTS[part].health)
 		multiplier *= lerpf(0.55, 1.0, clampf(ratio, 0.0, 1.0))
 	return multiplier
+
+func _standing_walk_clip() -> String:
+	return "Zombie_Walk_Drag_Right" if dragging_walk and _r4_enabled else "Zombie_Walk"
+
+func _standing_walk_reference_speed() -> float:
+	return DRAG_WALK_REFERENCE_SPEED if dragging_walk and _r4_enabled else walk_reference_speed
 
 
 func get_attack_multiplier() -> float:

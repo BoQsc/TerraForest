@@ -1,0 +1,15 @@
+{
+  "addons/characters/authoring/Zombie.drag_walk.blend": "17fab5e39ffb23e5cc6f1f45b8091f131497e522e321f19b5ceb27f7bf7f54bd",
+  "addons/characters/authoring/Zombie.drag_walk.glb": "52711a2b08a3de9ec3185bb8e2bad133b97dff472c0d0b7a5f8cdbb5b6ba39c9",
+  "addons/characters/authoring/Zombie.drag_walk.json": "9a29506245283e7264fd0b70b89bec09b0a2d756fd6d93d55a76f1bec0ff3c98",
+  "addons/characters/runtime/assets/Zombie.drag_walk.res": "bfe030e814a20ab7c38b43959b5a49bc33fd972e4dc08b138cd74bafe7a8ae28",
+  "addons/characters/runtime/assets/Zombie.r4.glb": "6b6021c6ab97191c5a438807998845cf05a645ba693798060b73c5d963d58fbf",
+  "addons/characters/runtime/assets/Zombie.r4.behavior.json": "712cccca48685db700977a631ad93535330245b5393e15eec587ffa7ef6a2be4",
+  "addons/characters/runtime/zombie.gd": "a65ce5ab413406d142d71a7a23e37c45c5a4a329c5f11f8e28ac68bf27ee7c87",
+  "tools/author_zombie_drag_walk.py": "785b3b04c4e0bd12a74d93c707588452c182ee0ff500ec9241365aa21a9d0c94",
+  "tools/import_zombie_drag_walk.gd": "497dddad2783780a59393ace9bfcb4f9f45955f58ae66c6743b31958ad0bd177",
+  "tools/preview_zombie_drag_walk.gd": "24104b435fa3680fee859855dde07a5822d22562684d0d65f0871b2c722e69ba",
+  "tools/encode_zombie_drag_walk_preview.py": "ca3827b9ec0bcfcff024bd42d04fc1711459c392dbc2eeeda7e86646780beaca",
+  "tests/zombie_drag_walk.gd": "e374cc838b167676d4380355df87e97d15bdea84a1032d52cb70dbd23d09cec2",
+  "tests/zombie_regional_world.gd": "f0c9b816ceb7441d41b66578e402527e94a3c701dd60105e70fa4c4e9f28c8a2"
+}

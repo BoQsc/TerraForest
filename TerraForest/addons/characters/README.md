@@ -24,6 +24,13 @@ zombies too. `--zombies` enables encounters in an editor launch; switch off
 Development mode to use gameplay melee. `--no-zombies` overrides either mode.
 The free editor has no encounters unless requested. Existing saves remain valid.
 
+Standing zombies now use the Blender-authored `Zombie_Walk_Drag_Right`: a slow
+two-second limp with the right toe dragging and the left leg bearing weight.
+The default body speed is 0.45 m/s, with playback matched to movement speed.
+The original walk is preserved and selectable with `dragging_walk=false`.
+See the [editable source and rebuild steps](authoring/Zombie.drag_walk.README.md)
+and [gait verification](../../docs/evidence/zombie_drag_walk/README.md).
+
 The R11 first-person rig replaces the former box hands, pickaxe and axe. Belt
 selection drives equipment visibility; native motor velocity drives authored
 pickaxe/axe walk/run/jump presentation. Empty hands keep the original idle pose
