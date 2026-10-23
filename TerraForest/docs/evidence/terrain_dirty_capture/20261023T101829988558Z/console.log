@@ -1,0 +1,103 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS excavation admitted
+PASS excavation admitted
+PASS excavation admitted
+PASS excavation admitted
+PASS excavation admitted
+PASS excavation admitted
+PASS excavation admitted
+PASS excavation admitted
+PASS excavation admitted
+PASS excavation admitted
+PASS excavation admitted
+PASS excavation admitted
+PASS excavation admitted
+PASS excavation admitted
+PASS excavation admitted
+PASS excavation admitted
+PASS excavation admitted
+PASS excavation admitted
+PASS excavation admitted
+PASS excavation admitted
+PASS excavation admitted
+PASS excavation admitted
+PASS excavation admitted
+PASS excavation admitted
+PASS excavation admitted
+PASS excavation admitted
+PASS excavation admitted
+PASS excavation admitted
+PASS excavation admitted
+PASS excavation admitted
+PASS excavation admitted
+PASS excavation admitted
+PASS excavation admitted
+PASS excavation admitted
+PASS excavation admitted
+PASS excavation admitted
+PASS excavation admitted
+PASS excavation admitted
+PASS excavation admitted
+PASS excavation admitted
+PASS excavation admitted
+PASS excavation admitted
+PASS excavation admitted
+PASS excavation admitted
+PASS excavation admitted
+PASS excavation admitted
+PASS excavation admitted
+PASS excavation admitted
+PASS excavation admitted
+PASS excavation admitted
+PASS excavation admitted
+PASS excavation admitted
+PASS excavation admitted
+PASS excavation admitted
+PASS excavation admitted
+PASS excavation admitted
+PASS excavation admitted
+PASS excavation admitted
+PASS excavation admitted
+PASS excavation admitted
+PASS excavation admitted
+PASS excavation admitted
+PASS excavation admitted
+PASS excavation admitted
+PASS native store opens
+PASS initial capture contains every page
+PASS unpublished capture cannot become clean
+PASS initial capture reconstructs exact field
+PASS capture is bound to its terrain owner
+PASS published capture acknowledged
+PASS unchanged capture copies no field samples
+PASS unchanged checkpoint identity retained
+PASS unchanged checkpoint writes no bytes
+PASS unchanged capture acknowledged
+PASS excavation admitted
+PASS local capture contains only touched pages
+PASS incremental capture rejects wrong inherited root
+PASS interrupted checkpoint rejected
+PASS failed publication preserves dirty pages
+PASS incremental merge reconstructs exact frozen field
+PASS incremental publication matches full archive checkpoint
+PASS excavation admitted
+PASS older durable capture acknowledged after a newer edit
+PASS edits after capture remain dirty
+PASS frozen capture remains immutable
+PASS next publication includes concurrent edits exactly
+PASS fresh owner loads expanded field
+PASS incorrect load checksum rejected
+PASS verified loaded checkpoint establishes clean baseline
+PASS fresh reopen captures no unchanged samples
+PASS graded terrain field created
+PASS graded terrain checkpoint acknowledged
+PASS material-only road repaint admitted
+PASS material-only changes are captured exactly
+PASS legacy exact block placed
+PASS block-only change preserves unchanged terrain samples and exact block state
+PASS block-only checkpoint acknowledged
+PASS same revision reset invalidates old captures
+PASS explicit reset replaces previous page membership
+PASS script-created unsealed capture rejected
+TERRAIN_DIRTY_CAPTURE failures=0

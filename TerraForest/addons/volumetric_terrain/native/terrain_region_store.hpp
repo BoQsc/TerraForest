@@ -9,6 +9,7 @@
 #include <vector>
 
 namespace terraforest {
+class NativeTerrainCapture;
 // Immutable 64 m region products selected by the compound world's checkpoint.
 // This class owns no mutable "latest" pointer and never substitutes base terrain
 // for a missing region. Callers retain canonical/backup checkpoint references.
@@ -41,7 +42,9 @@ class NativeTerrainRegionStore : public godot::RefCounted {
  static bool valid_blocks(const Buffer &blocks);
  static bool parse_index(const Buffer &bytes,Index &out);
  bool load_index(const Buffer &reference,Index &out);
- bool load_region(uint32_t key,const Region &entry,std::map<uint32_t,Buffer> &pages);
+ bool load_region(uint32_t key,const Region &entry,std::map<uint32_t,Buffer> &pages,bool account=true);
+ struct Product{uint32_t key=0,pages=0;Buffer packet;};
+ Buffer publish_products(Index metadata,std::vector<Product> &products,const Index &previous,bool preserve,int64_t stop);
  void close_locked();
 protected:
  static void _bind_methods();
@@ -51,6 +54,7 @@ public:
  bool configure_worker_limit(int64_t workers);
  void close();
  Buffer publish_snapshot(const Buffer &snapshot,const Buffer &inherited=Buffer(),int64_t test_stop_after=-1);
+ Buffer publish_capture(const godot::Ref<NativeTerrainCapture> &capture,const Buffer &inherited=Buffer(),int64_t test_stop_after=-1);
  Buffer expand_snapshot(const Buffer &reference);
  godot::Dictionary describe_snapshot(const Buffer &reference);
  godot::Dictionary read_region(const Buffer &reference,godot::Vector3i coordinate);

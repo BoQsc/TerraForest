@@ -28,6 +28,7 @@ constexpr u32 REGIONAL_WORLD_GENERATOR_ID=7; // Shared settlement/road base layo
 constexpr u32 TERRAIN_GENERATOR_ID=1; // Default remains the legacy landscape.
 struct Page {
  u32 key=0; i16 *d=nullptr;u8 *mat=nullptr;
+ u64 storage_version=0; // Process-local capture stamp; never serialized.
  // Derived worker-owned digest; never serialized or used as authoritative data.
  mutable bool geometry_digest_valid=false;
  mutable u8 geometry_digest[32]{};
@@ -44,6 +45,7 @@ struct World {
  Map pages_by_key,blocks; List<Page> pages; List<Cave> caves; List<List<u32>> block_columns;
  u32 *edit_columns=nullptr;
  int seed=1703, revision=0, edits=0;u64 changed_samples=0;
+ u64 storage_serial=1;
  u32 generator_id=TERRAIN_GENERATOR_ID;
  Basin basins[4]{};int basin_count=0;
  V3 road_points[4][25]{}; // Immutable derived routes; reconstructed from seed/version.

@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: 0BSD
 #include "terrain_region_store.hpp"
+#include "terrain_capture.hpp"
 #include "terrain_checksum.hpp"
 #include "generation_parallel.hpp"
 #include <godot_cpp/classes/dir_access.hpp>
@@ -122,7 +123,7 @@ static Buffer encode_page(const uint8_t *density,const uint8_t *materials,uint32
  Buffer out;if(out.resize(12+payload.size())!=OK)return {};out.encode_u32(0,key);out.encode_u32(4,encoding);out.encode_u32(8,payload.size());
  std::memcpy(out.ptrw()+12,payload.ptr(),payload.size());return out;
 }
-bool NativeTerrainRegionStore::load_region(uint32_t key,const Region &entry,std::map<uint32_t,Buffer> &pages){
+bool NativeTerrainRegionStore::load_region(uint32_t key,const Region &entry,std::map<uint32_t,Buffer> &pages,bool account){
  Buffer b;if(!read_packet(entry,b)||!magic(b,"TFPG")||b.size()<16||b.decode_u32(8)!=key||b.decode_u32(12)!=entry.pages)return false;
  int64_t at=16;std::map<uint32_t,Buffer> staged;
  for(uint32_t i=0;i<entry.pages;i++){
@@ -142,12 +143,13 @@ bool NativeTerrainRegionStore::load_region(uint32_t key,const Region &entry,std:
   }
   staged.emplace(k,raw);at+=length;
  }
- if(at!=b.size())return false;++read_regions_;pages=std::move(staged);return true;
+ if(at!=b.size())return false;if(account)++read_regions_;pages=std::move(staged);return true;
 }
 void NativeTerrainRegionStore::_bind_methods(){
  ClassDB::bind_method(D_METHOD("configure_worker_limit","workers"),&NativeTerrainRegionStore::configure_worker_limit);
  ClassDB::bind_method(D_METHOD("open_store","absolute_directory","writable"),&NativeTerrainRegionStore::open_store,DEFVAL(false));
  ClassDB::bind_method(D_METHOD("close"),&NativeTerrainRegionStore::close);
+ ClassDB::bind_method(D_METHOD("publish_capture","capture","inherited","test_stop_after"),&NativeTerrainRegionStore::publish_capture,DEFVAL(Buffer()),DEFVAL(-1));
  ClassDB::bind_method(D_METHOD("publish_snapshot","snapshot","inherited","test_stop_after"),&NativeTerrainRegionStore::publish_snapshot,DEFVAL(Buffer()),DEFVAL(-1));
  ClassDB::bind_method(D_METHOD("expand_snapshot","reference"),&NativeTerrainRegionStore::expand_snapshot);
  ClassDB::bind_method(D_METHOD("describe_snapshot","reference"),&NativeTerrainRegionStore::describe_snapshot);
@@ -199,34 +201,96 @@ Buffer NativeTerrainRegionStore::publish_snapshot(const Buffer &b,const Buffer &
   job.group=group;
  },16,pc>=256?worker_limit_:1);
  if(failed)return {};
- Buffer index;if(index.resize(40+int64_t(pc)*4+blocks.size()+int64_t(jobs.size())*80)!=OK)return {};index.fill(0);
- std::memcpy(index.ptrw(),"TFTC",4);index.encode_u32(4,1);index.encode_u32(8,b.decode_u32(8));index.encode_u32(12,generator);index.encode_u32(16,b.decode_u32(20));index.encode_u32(20,b.decode_u32(24));index.encode_u32(24,pc);index.encode_u32(28,bc);index.encode_u32(32,jobs.size());
- at=40;for(auto key:order){index.encode_u32(at,key);at+=4;}if(blocks.size())std::memcpy(index.ptrw()+at,blocks.ptr(),blocks.size());at+=blocks.size();
- if(stop==0)return {};int promoted=0;Buffer pack;std::map<uint32_t,Region> entries;std::vector<uint32_t> pending;
+ Index metadata;metadata.seed=b.decode_u32(8);metadata.generator=generator;metadata.revision=b.decode_u32(20);metadata.edits=b.decode_u32(24);metadata.order=std::move(order);metadata.blocks=blocks;
+ std::vector<Product> products;for(auto &job:jobs)products.push_back({job.key,uint32_t(job.source->size()),job.group});
+ return publish_products(std::move(metadata),products,previous,false,stop);
+}
+Buffer NativeTerrainRegionStore::publish_products(Index metadata,std::vector<Product> &products,const Index &previous,bool preserve,int64_t stop){
+ if(stop==0)return {};int promoted=0;Buffer pack;std::map<uint32_t,Region> entries=preserve?previous.regions:std::map<uint32_t,Region>{};std::vector<uint32_t> pending;
+ std::set<uint32_t> touched;for(const auto &product:products)touched.insert(product.key);
+ // Retained products are still verified. Incremental capture avoids copying and
+ // recompressing their density pages; it does not silently skip integrity checks.
+ if(preserve)for(const auto &[key,entry]:previous.regions)if(!touched.count(key)){
+  Buffer packet;if(!read_packet(entry,packet)||!magic(packet,"TFPG")||packet.decode_u32(8)!=key||packet.decode_u32(12)!=entry.pages)return {};++reused_regions_;
+ }
  auto flush=[&](){
   if(pending.empty())return true;Buffer id;if(!publish_blob(pack,".tpack",id))return false;
   for(uint32_t key:pending)entries[key].pack=id;
   pending.clear();pack=Buffer();return true;
  };
- for(auto &job:jobs){
-  uint32_t key=job.key,count=job.source->size();Buffer &group=job.group;Buffer digest=hash(group);if(digest.size()!=32)return {};
+ for(auto &product:products){
+  uint32_t key=product.key,count=product.pages;Buffer &group=product.packet;Buffer digest=hash(group);if(digest.size()!=32)return {};
   auto old=previous.regions.find(key);
   if(old!=previous.regions.end()&&old->second.pages==count&&old->second.digest==digest){
-   Buffer verified;if(!read_packet(old->second,verified)||verified!=group)return {};entries.emplace(key,old->second);++reused_regions_;
+   Buffer verified;if(!read_packet(old->second,verified)||verified!=group)return {};entries[key]=old->second;++reused_regions_;
   }else{
    if(pack.size()+group.size()>PACK_LIMIT&&!flush())return {};
    if(pack.is_empty()){if(pack.resize(8)!=OK)return {};std::memcpy(pack.ptrw(),"TFTP",4);pack.encode_u32(4,1);}
    Region entry;entry.pages=count;entry.digest=digest;entry.offset=pack.size();entry.length=group.size();
-   int64_t expected=pack.size()+group.size();pack.append_array(group);if(pack.size()!=expected)return {};entries.emplace(key,entry);pending.push_back(key);
+   int64_t expected=pack.size()+group.size();pack.append_array(group);if(pack.size()!=expected)return {};entries[key]=entry;pending.push_back(key);
   }
   if(++promoted==stop){flush();return {};}
  }
  if(!flush())return {};
+ Buffer index;if(index.resize(40+int64_t(metadata.order.size())*4+metadata.blocks.size()+int64_t(entries.size())*80)!=OK||index.size()>INDEX_LIMIT)return {};index.fill(0);
+ std::memcpy(index.ptrw(),"TFTC",4);index.encode_u32(4,1);index.encode_u32(8,metadata.seed);index.encode_u32(12,metadata.generator);index.encode_u32(16,metadata.revision);index.encode_u32(20,metadata.edits);index.encode_u32(24,metadata.order.size());index.encode_u32(28,metadata.blocks.size()/8);index.encode_u32(32,entries.size());
+ int64_t at=40;for(uint32_t key:metadata.order){index.encode_u32(at,key);at+=4;}
+ if(metadata.blocks.size())std::memcpy(index.ptrw()+at,metadata.blocks.ptr(),metadata.blocks.size());at+=metadata.blocks.size();
  for(const auto &[key,entry]:entries){
   index.encode_u32(at,key);index.encode_u32(at+4,entry.pages);std::memcpy(index.ptrw()+at+8,entry.digest.ptr(),32);std::memcpy(index.ptrw()+at+40,entry.pack.ptr(),32);index.encode_u32(at+72,entry.offset);index.encode_u32(at+76,entry.length);at+=80;
  }
  Buffer id;if(!publish_blob(index,".tindex",id))return {};
  Buffer reference;if(reference.resize(40)!=OK)return {};std::memcpy(reference.ptrw(),"TFTR",4);reference.encode_u32(4,1);std::memcpy(reference.ptrw()+8,id.ptr(),32);return reference;
+}
+Buffer NativeTerrainRegionStore::publish_capture(const Ref<NativeTerrainCapture> &capture,const Buffer &inherited,int64_t stop){
+ std::lock_guard<std::mutex> lock(mutex_);
+ if(!writable_||capture.is_null()||!capture->sealed_||stop< -1||stop>5120)return {};
+ const bool incremental=!capture->source_.is_empty();
+ if(incremental&&capture->expected_!=inherited)return {};
+ Index previous;if(incremental){if(!load_index(capture->source_,previous))return {};}
+ else if(!inherited.is_empty()&&!load_index(inherited,previous))return {};
+ int64_t count=capture->keys_.size(),dirty=capture->changed_.size();
+ if(count>MAX_PAGES||capture->versions_.size()!=count||capture->samples_.size()!=dirty*PAGE_SAMPLES*3||(!incremental&&dirty!=count)||capture->blocks_.size()%8||capture->blocks_.size()>2000000*8||capture->generator_<1||capture->generator_>SURROUNDING_COAST_GENERATOR_ID)return {};
+ if(incremental&&(previous.seed!=capture->seed_||previous.generator!=capture->generator_||previous.order.size()>size_t(count)))return {};
+ Index metadata;metadata.seed=capture->seed_;metadata.generator=capture->generator_;metadata.revision=capture->revision_;metadata.edits=capture->edits_;metadata.blocks=capture->blocks_;
+ std::set<uint32_t> seen;std::map<uint32_t,std::vector<uint32_t>> members;
+ for(int64_t i=0;i<count;i++){
+  uint32_t key=capture->keys_[i];if(!valid_page(key)||!seen.insert(key).second||(incremental&&i<int64_t(previous.order.size())&&previous.order[i]!=key))return {};
+  metadata.order.push_back(key);members[region_for(key)].push_back(key);
+ }
+ std::map<uint32_t,std::vector<std::pair<uint32_t,int64_t>>> changes;int64_t last=-1;
+ for(int64_t i=0;i<dirty;i++){
+  int64_t index=capture->changed_[i];if(index<=last||index<0||index>=count)return {};last=index;
+  uint32_t key=capture->keys_[index];changes[region_for(key)].emplace_back(key,i*PAGE_SAMPLES*3);
+ }
+ // Every appended page needs captured data; old pages come from the bound source.
+ int64_t at=0;for(int64_t i=incremental?previous.order.size():0;i<count;i++){
+  while(at<dirty&&capture->changed_[at]<i)++at;if(at==dirty||capture->changed_[at]!=i)return {};
+ }
+ struct Job{uint32_t key=0;const std::vector<std::pair<uint32_t,int64_t>> *changes=nullptr;Product output;bool read=false;};std::vector<Job> jobs;
+ for(const auto &[key,rows]:changes)jobs.push_back({key,&rows,{key,uint32_t(members.at(key).size()),{}},false});
+ std::atomic<bool> failed{false};const uint8_t *samples=capture->samples_.ptr();
+ last_workers_=generation_parallel_for(int(jobs.size()),[&](int n){
+  if(failed.load())return;auto &job=jobs[n];std::map<uint32_t,Buffer> pages;
+  auto old=previous.regions.find(job.key);
+  if(incremental&&old!=previous.regions.end()){
+   if(!load_region(job.key,old->second,pages,false)){failed=true;return;}job.read=true;
+  }
+  for(const auto &[key,offset]:*job.changes){Buffer raw;if(raw.resize(PAGE_SAMPLES*3)!=OK){failed=true;return;}std::memcpy(raw.ptrw(),samples+offset,PAGE_SAMPLES*3);pages[key]=raw;}
+  Buffer group;if(group.resize(16)!=OK){failed=true;return;}std::memcpy(group.ptrw(),"TFPG",4);group.encode_u32(4,1);group.encode_u32(8,job.key);group.encode_u32(12,job.output.pages);
+  if(pages.size()!=job.output.pages){failed=true;return;}
+  for(uint32_t key:members.at(job.key)){
+   auto found=pages.find(key);if(found==pages.end()){failed=true;return;}const uint8_t *raw=found->second.ptr();
+   Buffer encoded=encode_page(raw,raw+PAGE_SAMPLES*2,key);if(encoded.is_empty()){failed=true;return;}
+   int64_t expected=group.size()+encoded.size();group.append_array(encoded);if(group.size()!=expected){failed=true;return;}
+  }
+  job.output.packet=group;
+ },16,dirty>=256?worker_limit_:1);
+ if(failed)return {};
+ std::vector<Product> products;for(auto &job:jobs){products.push_back(job.output);read_regions_+=job.read;}
+ Buffer reference=publish_products(std::move(metadata),products,previous,incremental,stop);
+ if(!reference.is_empty()){std::lock_guard<std::mutex> publication(capture->publication_mutex_);capture->published_=reference;}
+ return reference;
 }
 Buffer NativeTerrainRegionStore::expand_snapshot(const Buffer &reference){
  std::lock_guard<std::mutex> lock(mutex_);Index index;if(!load_index(reference,index)||index.order.size()>MAX_PAGES)return {};

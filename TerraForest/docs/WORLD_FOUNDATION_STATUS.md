@@ -1,3 +1,16 @@
+## Native dirty-page saves integrated - 2026-10-23
+
+Compound saves now freeze changed native terrain pages and merge touched regions
+against their bound checkpoint. Full-history sample copying and recompression are
+removed from subsequent unchanged/local saves. The 2,048-excavation production
+fixture captured zero unchanged sample bytes and 12 KiB for one local edit, with
+exact reopen, backup, root-failure retry and asynchronous edit/save ordering checks.
+See [evidence](evidence/terrain_dirty_capture/README.md). This is not completion of
+terrain storage: key scans, legacy block copies, compressed-history verification,
+full expansion, resident capacity, retention-aware cleanup and the rendered mining
+arrival gate remain open. Next is native selective residency; retain exact distant
+edits and test beyond the old 16,384-page historical limit without raising that cap.
+
 ## Terrain edit rejection is transactional - 2026-10-23
 
 An allocator probe confirmed partial brush edits after a returned failure.

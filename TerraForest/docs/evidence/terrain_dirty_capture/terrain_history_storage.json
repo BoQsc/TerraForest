@@ -1,0 +1,105 @@
+{
+  "canonical_bytes": 103,
+  "excavations": 2048,
+  "failures": 0,
+  "first_save": {
+    "message": "World saved and verified; terrain and addon state published together",
+    "stages": {
+      "archive_encode_us": 51,
+      "archive_publish_us": 4868,
+      "cache_us": 38,
+      "terrain_capture_us": 23499,
+      "terrain_publish_us": 241153,
+      "terrain_regions": {
+        "capture": {
+          "dirty_pages": 6612,
+          "legacy_block_bytes": 0,
+          "pages": 6612,
+          "reserved_bytes": 81354304,
+          "revision": 2048,
+          "sample_bytes": 81248256,
+          "sealed": true
+        },
+        "region_reads": 0,
+        "reused_files": 0,
+        "reused_regions": 0,
+        "workers": 4,
+        "written_bytes": 19358013,
+        "written_files": 3
+      },
+      "water_publish_us": 6
+    },
+    "success": true,
+    "write_us": 275150
+  },
+  "legacy_full_capture_ms": 94.133,
+  "legacy_later_full_capture_ms": 97.978,
+  "local_edit_save": {
+    "message": "World saved and verified; terrain and addon state published together",
+    "stages": {
+      "archive_encode_us": 29,
+      "archive_publish_us": 5703,
+      "cache_us": 35,
+      "terrain_capture_us": 100,
+      "terrain_publish_us": 116634,
+      "terrain_regions": {
+        "capture": {
+          "dirty_pages": 1,
+          "legacy_block_bytes": 0,
+          "pages": 6612,
+          "reserved_bytes": 91892,
+          "revision": 2049,
+          "sample_bytes": 12288,
+          "sealed": true
+        },
+        "region_reads": 1,
+        "reused_files": 0,
+        "reused_regions": 1043,
+        "workers": 1,
+        "written_bytes": 127043,
+        "written_files": 2
+      },
+      "water_publish_us": 7
+    },
+    "success": true,
+    "write_us": 122534
+  },
+  "native_edit_median_ms": 0.59,
+  "native_edit_p95_ms": 1.359,
+  "pages": 6612,
+  "raw_bytes": 81274740,
+  "reopen_ms": 312.528,
+  "scope": "Production synchronous compound save and loader with native dirty-page capture. Async races are checked separately. No rendered terrain, scene streaming, full game addon population, thermal or endurance qualification. Resident page cap, all-page key scan and retained compressed-history verification remain.",
+  "serial_first_publish_ms": 333.804,
+  "sidecar_bytes_including_backup": 19485056,
+  "unchanged_save": {
+    "message": "World saved and verified; terrain and addon state published together",
+    "stages": {
+      "archive_encode_us": 22,
+      "archive_publish_us": 6214,
+      "cache_us": 37,
+      "terrain_capture_us": 106,
+      "terrain_publish_us": 95319,
+      "terrain_regions": {
+        "capture": {
+          "dirty_pages": 0,
+          "legacy_block_bytes": 0,
+          "pages": 6612,
+          "reserved_bytes": 79600,
+          "revision": 2048,
+          "sample_bytes": 0,
+          "sealed": true
+        },
+        "region_reads": 0,
+        "reused_files": 1,
+        "reused_regions": 1044,
+        "workers": 1,
+        "written_bytes": 0,
+        "written_files": 0
+      },
+      "water_publish_us": 6
+    },
+    "success": true,
+    "write_us": 101729
+  }
+}

@@ -19,6 +19,7 @@ func run()->void:
  var path:=folder.path_join("world.trw");var archive=ClassDB.instantiate("NativeWorldArchive")
  check(archive.acquire(path),"compound root lease acquired")
  var backend:=Backend.new();backend.native=ClassDB.instantiate("TerrainCore");backend.save_path=path;backend.snapshot_codec=archive
+ backend.disk_cache.enabled=false
  backend.native.execute(Codec.command(6,[1703,19]));var point:=Vector3(1208,0,1208)
  point.y=backend.native.execute(Codec.point_command(point)).decode_float(12)-0.6
  backend.native.execute(Codec.brush(point,point,2.5,0,false,1))
@@ -43,10 +44,20 @@ func run()->void:
  check(DirAccess.rename_absolute(path+".terrain",path+".missing")==OK,"test temporarily removes named sidecar")
  check(backend._load().begins_with("ERROR: terrain checkpoint") and not DirAccess.dir_exists_absolute(path+".terrain"),"missing sidecar fails closed without creating empty storage")
  check(DirAccess.rename_absolute(path+".missing",path+".terrain")==OK and backend._load()=="World loaded","restored exact sidecar permits reopen")
- backend.native.execute(Codec.brush(point-Vector3.UP,point-Vector3.UP,1.5,0,false,1))
+ backend.native.execute(Codec.brush(point-Vector3.UP*2,point-Vector3.UP*2,1.5,0,false,1))
  var later:PackedByteArray=backend.native.execute(Codec.command(4,[3])).slice(12)
+ check(later!=terrain,"failure fixture actually changes the existing field")
  var reject:=RejectArchive.new();reject.raw=archive
  check(not backend._publish_frozen({"terrain":later,"future_addon":sections.future_addon},later,path,reject).success and archive.read(path)==canonical,"root publication failure leaves previous checkpoint selected despite staged new pack")
+ var dirty:int=backend.native.capture_storage_snapshot().stats().dirty_pages
+ backend.snapshot_codec=reject
+ check(dirty>0 and backend._save().begins_with("ERROR: compound save") and archive.read(path)==canonical,"production dirty capture survives outer root failure")
+ check(backend.native.capture_storage_snapshot().stats().dirty_pages==dirty,"failed outer publication never acknowledges dirty pages")
+ backend.snapshot_codec=archive
+ check(backend._save().begins_with("World saved and verified") and backend.native.capture_storage_snapshot().stats().dirty_pages==0,"production retry publishes and acknowledges the same dirty field")
+ check(backend._load()=="World loaded" and backend.native.execute(Codec.command(4,[3])).slice(12)==later,"successful retry reopens exact new field")
+ # Clone the backup selection used above, which must exclude the unpublished edit.
+ check(archive.publish(ProjectSettings.globalize_path(path),canonical)==OK,"test restores earlier root for clone isolation")
  archive.release()
  var copied:Dictionary=archive.clone_world(folder,"world","copy")
  check(copied.ok,"ordinary native clone includes terrain sidecar")
