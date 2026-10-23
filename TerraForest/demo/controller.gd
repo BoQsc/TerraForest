@@ -128,9 +128,12 @@ var loading_layer := CanvasLayer.new()
 var _recorded_world_visit:=false
 var loading_label: Label
 var loading_progress: ProgressBar
+var loading_diagnostics:Control
+var loading_diagnostics_next_us:=0
 var loading_panel: PanelContainer
 var loading_stage_percent:=75.0
 var loading_stage_text:="Checking nearby objects"
+var loading_work_text:=""
 var loading_from_generation:=false
 var loading_active: bool = true
 var loading_reason: String = "Preparing world"
@@ -339,6 +342,8 @@ func _setup_loading() -> void:
 	picture.expand_mode=TextureRect.EXPAND_IGNORE_SIZE;picture.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_COVERED
 	picture.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT);loading_layer.add_child(picture)
 	var shade:=ColorRect.new();shade.color=Color(0.01,0.02,0.03,0.63);shade.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT);loading_layer.add_child(shade)
+	loading_diagnostics=preload("res://addons/world_runtime/loading_details.gd").new()
+	loading_layer.add_child(loading_diagnostics)
 	loading_panel=preload("res://addons/world_runtime/loading_panel.gd").new()
 	loading_layer.add_child(loading_panel)
 	loading_label=loading_panel.detail;loading_progress=loading_panel.bar
@@ -352,6 +357,9 @@ func _loading_reload() -> void:
 
 func _begin_loading(reason: String) -> void:
 	loading_active = true
+	if loading_diagnostics!=null:
+		loading_diagnostics.reset();loading_diagnostics.set_process(true)
+	loading_diagnostics_next_us=0
 	if loading_panel!=null:
 		loading_panel.reset()
 		loading_panel.show_progress("Loading your world","Reading saved world data",94 if loading_from_generation else 0)
@@ -365,6 +373,9 @@ func _begin_loading(reason: String) -> void:
 	_clear_motion()
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 
+func _additional_loading_diagnostics() -> Dictionary:
+	return {}
+
 func _additional_loading_ready() -> bool:
 	return true
 
@@ -374,7 +385,12 @@ func _update_loading() -> void:
 	var state: Dictionary = terrain.loading_state(player.position, fly)
 	var observation:Dictionary=preload("res://addons/world_runtime/progress_meter.gd").loading(state,terrain.world_ready,waiting_spawn)
 	loading_stage_percent=observation.percent;loading_stage_text=observation.stage
+	loading_work_text=preload("res://addons/world_runtime/progress_meter.gd").loading_work(state,terrain)
+	if Time.get_ticks_usec()>=loading_diagnostics_next_us:
+		loading_diagnostics_next_us=Time.get_ticks_usec()+250000
+		loading_diagnostics.context=preload("res://addons/world_runtime/loading_diagnostics.gd").snapshot(self)
 	if terrain.latest_error != "":
+		loading_diagnostics.observe("Loading failed",{"error":terrain.latest_error})
 		loading_label.text = "Loading failed\n" + terrain.latest_error + "\nRead the startup log in reports."
 		return
 	if bool(state["ready"]) and not waiting_spawn and _additional_loading_ready():
@@ -383,12 +399,15 @@ func _update_loading() -> void:
 	else:
 		loading_ready_frames = 0
 	var display_percent:float=94.0+loading_stage_percent*0.06 if loading_from_generation else loading_stage_percent
-	loading_panel.show_progress("Loading your world",loading_stage_text,display_percent)
+	loading_panel.show_progress("Loading your world",preload("res://addons/world_runtime/progress_meter.gd").loading_caption(loading_stage_text,state),display_percent)
+	loading_panel.show_work(loading_work_text)
+	loading_diagnostics.observe(loading_stage_text,{"stage":loading_stage_text,"overall_percent":display_percent,"ready_frames":loading_ready_frames,"required_ready_frames":3})
 	if loading_ready_frames < 3:
 		return
 	loading_panel.show_progress("Ready to play","Your world is ready",100)
 	loading_from_generation=false
 	loading_layer.visible = false
+	loading_diagnostics.set_process(false)
 	loading_active = false
 	if not _recorded_world_visit and not temporary_world and not terrain.backend.readonly_snapshot:
 		_recorded_world_visit=preload("res://addons/world_runtime/world_presentation.gd").mark_played(terrain.save_slot)

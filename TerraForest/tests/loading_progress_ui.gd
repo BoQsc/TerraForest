@@ -27,26 +27,57 @@ func run()->void:
  screen.update_status("ready","Opening your world",{})
  check(screen.panel.bar.value==94,"generation handoff is not playable completion")
  screen.panel.reset();screen.update_stage("Photographing the generated world",1,3,{"activity":"View 2/3 · Woodland road · Loading grass and plants","stage_fraction":0.56,"work":"Waiting for nearby vegetation to finish appearing"})
+ screen.diagnostics.refresh()
  await RenderingServer.frame_post_draw
  var rect:Rect2=screen.panel.get_global_rect();var bar:Rect2=screen.panel.bar.get_global_rect()
  check(absf(bar.get_center().x-root.size.x*0.5)<2 and bar.position.y>root.size.y*0.65 and bar.size.x>root.size.x*0.85 and bar.size.y>=18 and bar.size.y<=22 and rect.size.y<180 and rect.end.y<=root.size.y-8 and screen.cancel_button.get_global_rect().end.y<root.size.y,"large bar centered near bottom at full resolution")
+ var logo:Rect2=screen.diagnostics.wordmark.get_global_rect()
+ check(absf(logo.get_center().x-root.size.x*0.5)<2 and logo.get_center().y>root.size.y*0.3 and logo.get_center().y<root.size.y*0.47,"wordmark is centered slightly above middle")
+ check(screen.diagnostics.panel.get_global_rect().end.y<rect.position.y and logo.end.y<screen.diagnostics.panel.get_global_rect().position.y,"wordmark, technical panel and bottom bar do not overlap")
+ check(screen.diagnostics.live.text.contains("stage_fraction = 0.56") and screen.diagnostics.history.text.contains("Photographing"),"raw work details and measured stage history are shown")
  root.get_texture().get_image().save_png("res://reports/loading_progress_generation.png")
+ # A large payload stays accessible by scrolling and is never interpreted as BBCode.
+ var probe:Dictionary={}
+ for i in 150:probe["field_%d"%i]="[b]literal[/b]"
+ screen.diagnostics.context=probe;screen.diagnostics.refresh()
+ await process_frame
+ screen.diagnostics.live.get_v_scroll_bar().value=120
+ var scrolled:float=screen.diagnostics.live.get_v_scroll_bar().value
+ screen.diagnostics.observe("Changed",{"native_completed":7});screen.diagnostics.refresh()
+ await process_frame
+ check(scrolled>0 and absf(screen.diagnostics.live.get_v_scroll_bar().value-scrolled)<2,"refresh preserves manual diagnostic scroll")
+ check(screen.diagnostics.live.get_parsed_text().contains("field_149 = [b]literal[/b]"),"all nested details remain available without markup injection")
  screen.cancellation_requested=true;screen.detail.text="Cancelling generation…";screen.update_stage("Saving generated world",0,0)
  check(screen.detail.text=="Cancelling generation…","cancel state cannot be overwritten")
  screen.free()
  var game=load("res://demo/world.tscn").instantiate();game.temporary_world=true;root.add_child(game)
  # Keep the actual loading flow; record only stage changes and one live frame.
- var rows:Array=[];var previous:="";var captured:=false;var deadline:=Time.get_ticks_msec()+60000
+ var rows:Array=[];var previous:="";var captured:=false;var diagnostic_sample:Dictionary={};var deadline:=Time.get_ticks_msec()+60000
  while game.loading_active and Time.get_ticks_msec()<deadline:
   if game.loading_label.text!=previous:
    previous=game.loading_label.text;rows.append({"stage":previous,"percent":game.loading_progress.value})
   check(game.loading_progress.value<100,"input remains gated below completion")
   if not captured and game.loading_progress.value>20:
+   game.loading_diagnostics.refresh()
    await RenderingServer.frame_post_draw
+   diagnostic_sample=game.loading_diagnostics.context.duplicate(true)
+   check(game.loading_diagnostics.live.text.contains("readiness.queued") and game.loading_diagnostics.live.text.contains("addons.ground_cover") and game.loading_diagnostics.live.text.contains("addons.water") and game.loading_diagnostics.live.text.contains("terrain_worker.phase"),"actual world diagnostics are displayed")
    root.get_texture().get_image().save_png("res://reports/loading_progress_world.png");captured=true
   await process_frame
  check(not game.loading_active and game.loading_progress.value==100,"100 only accompanies playable readiness")
+ check(not game.loading_diagnostics.is_processing(),"technical display stops polling when gameplay starts")
+ var state:Dictionary=game.terrain.loading_state(game.player.position,game.fly)
+ var expected:=0;var total:=0
+ for key:Vector3i in game.terrain.roots:
+  var dx:float=maxf(maxf(key.x-game.player.position.x,game.player.position.x-key.x-key.z),0)
+  var dz:float=maxf(maxf(key.y-game.player.position.z,game.player.position.z-key.y-key.z),0)
+  if not game.terrain.nearby_first or Vector2(dx,dz).length_squared()<384.0*384.0:
+   total+=1
+   if game.terrain.covered_roots.has(key):expected+=1
+ check(state.coverage_ready==expected and state.coverage_total==total,"display counts exactly the coverage required by the play gate")
+ check(Meter.loading_caption("Loading landscape coverage",state).contains("%d / %d"%[expected,total]),"landscape caption carries the live fraction")
  check(rows.size()>=3,"actual load communicates changing readiness stages")
- FileAccess.open("res://reports/loading_progress_ui.json",FileAccess.WRITE).store_string(JSON.stringify({"failures":failures,"stages":rows,"scope":"Real gameplay loading gates and rendered UI, plus controlled generation stage/counter presentation. Full generation workflow checked separately."},"  "))
+ check(game.loading_panel.work.text.contains("worker:") and game.loading_panel.work.text.contains("cache hits") and game.loading_panel.work.text.contains("Coverage"),"bottom bar itself exposes live landscape counters")
+ FileAccess.open("res://reports/loading_progress_ui.json",FileAccess.WRITE).store_string(JSON.stringify({"failures":failures,"stages":rows,"diagnostics":diagnostic_sample,"scope":"Real gameplay loading gates and rendered UI, plus controlled generation stage/counter presentation. Full generation workflow checked separately."},"  "))
  game.shutdown_requested=true;await game.terrain.shutdown_after_edits();game.free()
  print("LOADING_PROGRESS_UI failures=",failures);quit(1 if failures else 0)

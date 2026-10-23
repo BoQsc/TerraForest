@@ -24,7 +24,7 @@ func _ready()->void:
  var track:=StyleBoxFlat.new();track.bg_color=Color("263c40");track.set_corner_radius_all(4);bar.add_theme_stylebox_override("background",track)
  var fill:=StyleBoxFlat.new();fill.bg_color=Color("6cc7aa");fill.set_corner_radius_all(4);bar.add_theme_stylebox_override("fill",fill)
  bar.tooltip_text="Overall completion estimate based on finished stages and work counts. 100% means ready to play."
- work=Label.new();work.visible=false;work.add_theme_font_size_override("font_size",14);box.add_child(work)
+ work=Label.new();work.visible=false;work.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;work.add_theme_font_size_override("font_size",14);box.add_child(work)
 func reset()->void:
  high_water=0;bar.value=0;percentage.text="0%"
 func show_progress(caption:String,stage:String,value:float)->void:

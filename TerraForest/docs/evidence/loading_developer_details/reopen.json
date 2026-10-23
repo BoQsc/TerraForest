@@ -1,0 +1,439 @@
+{
+  "failures": 0,
+  "load_milliseconds": 14134,
+  "loading_ok": true,
+  "loading_stages": [
+    {
+      "percent": 94.0,
+      "stage": "Reading saved world data"
+    },
+    {
+      "percent": 94.9,
+      "stage": "Finding a safe player position"
+    },
+    {
+      "percent": 95.2,
+      "stage": "Loading nearby terrain and collision · 0 / 9 probes ready"
+    },
+    {
+      "percent": 96.68,
+      "stage": "Loading nearby terrain and collision · 6 / 9 probes ready"
+    },
+    {
+      "percent": 97.38,
+      "stage": "Loading landscape coverage · 1 / 15 required areas ready"
+    },
+    {
+      "percent": 97.46,
+      "stage": "Loading landscape coverage · 2 / 15 required areas ready"
+    },
+    {
+      "percent": 97.54,
+      "stage": "Loading landscape coverage · 3 / 15 required areas ready"
+    },
+    {
+      "percent": 97.62,
+      "stage": "Loading landscape coverage · 4 / 15 required areas ready"
+    },
+    {
+      "percent": 97.7,
+      "stage": "Loading landscape coverage · 5 / 15 required areas ready"
+    },
+    {
+      "percent": 97.78,
+      "stage": "Loading landscape coverage · 6 / 15 required areas ready"
+    },
+    {
+      "percent": 97.86,
+      "stage": "Loading landscape coverage · 7 / 15 required areas ready"
+    },
+    {
+      "percent": 97.94,
+      "stage": "Loading landscape coverage · 8 / 15 required areas ready"
+    },
+    {
+      "percent": 98.02,
+      "stage": "Loading landscape coverage · 9 / 15 required areas ready"
+    },
+    {
+      "percent": 98.1,
+      "stage": "Loading landscape coverage · 10 / 15 required areas ready"
+    },
+    {
+      "percent": 98.18,
+      "stage": "Loading landscape coverage · 11 / 15 required areas ready"
+    },
+    {
+      "percent": 98.26,
+      "stage": "Loading landscape coverage · 12 / 15 required areas ready"
+    },
+    {
+      "percent": 98.34,
+      "stage": "Loading landscape coverage · 13 / 15 required areas ready"
+    },
+    {
+      "percent": 98.42,
+      "stage": "Loading landscape coverage · 14 / 15 required areas ready"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 223 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 215 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 207 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 199 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 196 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 187 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 179 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 171 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 168 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 165 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 163 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 161 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 159 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 157 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 153 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 151 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 148 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 145 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 143 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 141 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 139 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 138 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 135 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 132 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 130 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 128 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 126 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 123 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 119 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 117 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 115 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 113 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 111 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 108 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 105 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 103 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 101 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 99 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 97 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 95 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 92 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 90 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 88 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 86 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 84 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 81 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 79 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 77 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 75 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 73 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 71 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 68 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 66 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 64 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 62 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 60 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 57 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 56 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 54 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 52 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 50 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 47 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 46 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 44 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 42 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 39 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 38 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 36 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 34 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 32 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 30 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 26 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 25 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 23 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 20 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 18 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 16 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 14 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 12 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 10 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 6 remaining"
+    },
+    {
+      "percent": 99.4,
+      "stage": "Building water surfaces - 4 remaining"
+    },
+    {
+      "percent": 99.82,
+      "stage": "Final checks before play"
+    }
+  ],
+  "map": {
+    "blocks_hits": 1,
+    "models_hits": 1,
+    "ready": true,
+    "terrain_hits": 1,
+    "terrain_patches": 0,
+    "water_hits": 1
+  },
+  "ready": true,
+  "root_size": "(1920, 1080)",
+  "scope": "Fresh full game opens a generated published world read-only, with normal paid gameplay, bounded native terrain residency and all baked map layers hitting cache. Not sustained performance qualification.",
+  "slot": "browser_seed50_366886",
+  "terrain_residency": {
+    "active": true,
+    "catalog_pages": 501,
+    "eviction_scan_high": 0,
+    "evictions": 0,
+    "failures": 0,
+    "faults": 350,
+    "generator": 19,
+    "profiled_fault_max_us": 0.0,
+    "profiled_fault_us": 0.0,
+    "resident_high": 350,
+    "resident_limit": 16384,
+    "resident_pages": 350,
+    "sample_bytes": 4300800,
+    "seed": 50
+  }
+}

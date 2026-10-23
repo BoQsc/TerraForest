@@ -8,6 +8,16 @@ final playable load: its child finishes at 88%, publication hands off at 94%, an
 only the existing terrain/collision/object/water readiness gates unlock play at
 100%. Ordinary saved-world loading starts at 0%. Cancel/error states stay explicit.
 
+The follow-up adds centered gold/green TerraForest lettering and a default-on,
+scrollable developer panel covering available native progress, raw queues/cache,
+addon readiness, stage timings, world paths and coordinator results. Landscape
+loading now exposes the actual required coverage fraction and worker/queue/cache
+counters directly in the bottom bar; nearby-first coverage counts only its existing
+384 m admission region. Diagnostics stop polling when gameplay starts. Targeted
+rendered and actual generation/fresh-process reopening checks pass; see
+[developer loading evidence](evidence/loading_developer_details/README.md). This
+improves visibility; it does not close the loading latency or world-quality gaps.
+
 Each photograph now names its viewpoint and exposes destination terrain/collision,
 water, nearby vegetation readiness, then capture/save. Map preparation reports
 pending layers, saved-world identity verification and cache writes. The first

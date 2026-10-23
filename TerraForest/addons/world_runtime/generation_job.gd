@@ -60,7 +60,7 @@ func status(state:String,reason:String="")->void:
  if state not in ["creating","verifying"]:progress_detail={}
  phase=state
  if status_path.is_empty():return
- var value:Dictionary={"state":state,"slot":destination,"report":ProjectSettings.globalize_path(report),"reason":reason,"progress":progress_detail}
+ var value:Dictionary={"state":state,"slot":destination,"report":ProjectSettings.globalize_path(report),"reason":reason,"progress":progress_detail,"coordinator_pid":OS.get_process_id(),"child_pid":child,"seed":seed_value,"generator":generator,"settlement_layout":settlement_layout,"staging_slot":stage,"status_file":status_path,"worker_active":publish_worker!=null,"validation":metadata.get("validation",{}),"publication":metadata.get("publication",{})}
  var pending:=status_path+".pending"
  var file:=FileAccess.open(pending,FileAccess.WRITE)
  if file!=null:
@@ -86,7 +86,10 @@ func start_stage(state:String)->void:
  persist_metadata()
 func _process(_delta:float)->bool:
  if publish_worker!=null:
-  if publish_worker.is_alive():return false
+  if publish_worker.is_alive():
+   if Time.get_ticks_msec()>=next_progress_poll:
+    next_progress_poll=Time.get_ticks_msec()+500;status(phase)
+   return false
   var result:Dictionary=publish_worker.wait_to_finish();publish_worker=null
   if phase=="verifying" and not review_generation:
    metadata["validation"]=result

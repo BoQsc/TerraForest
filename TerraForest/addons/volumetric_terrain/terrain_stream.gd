@@ -1264,17 +1264,20 @@ func loading_state(point: Vector3, flying: bool) -> Dictionary:
 					needed_near += 1
 					if player_region_ready(test):
 						ready_near += 1
-	var coverage_ready: bool = root_coverage == roots.size()
+	var ready_coverage:int=root_coverage
+	var needed_coverage:int=roots.size()
 	if nearby_first:
-		coverage_ready = true
+		ready_coverage=0;needed_coverage=0
 		for key: Vector3i in roots:
 			var dx: float = maxf(maxf(float(key.x) - point.x, point.x - float(key.x + key.z)), 0.0)
 			var dz: float = maxf(maxf(float(key.y) - point.z, point.z - float(key.y + key.z)), 0.0)
-			if dx * dx + dz * dz < 384.0 * 384.0 and not covered_roots.has(key):
-				coverage_ready = false
-				break
+			if dx * dx + dz * dz < 384.0 * 384.0:
+				needed_coverage+=1
+				if covered_roots.has(key):ready_coverage+=1
+	var coverage_ready:bool=ready_coverage==needed_coverage
 	return {"ready": world_ready and coverage_ready and ready_near == needed_near,
 		"roots": root_coverage, "root_total": roots.size(), "local": ready_near, "local_total": needed_near,
+		"coverage_ready":ready_coverage,"coverage_total":needed_coverage,"coverage_scope":"within 384 m" if nearby_first else "whole map",
 		"queued": backend.queued(), "worker": backend.status()}
 
 func edit(data: PackedByteArray, lo: Vector3, hi: Vector3, captured_us: int = 0, commands: Array[PackedByteArray] = [], member_captures: Array[Dictionary] = []) -> bool:

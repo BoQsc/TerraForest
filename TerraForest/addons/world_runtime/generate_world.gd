@@ -81,6 +81,7 @@ func run()->void:
  DirAccess.make_dir_recursive_absolute(output_dir)
  if not qualification:
   generation_screen=preload("res://addons/world_runtime/generation_screen.gd").new();generation_screen.cancel_path=generation_cancel_path;root.add_child(generation_screen)
+ if generation_screen!=null:generation_screen.diagnostics.context={"generation":{"seed":seed_value,"generator":generator,"output_path":ProjectSettings.globalize_path(output_dir),"progress_file":progress_path}}
  progress("Planning terrain, streets and building sites")
  await process_frame
  if not qualification and "--capture-generation-ui" in OS.get_cmdline_user_args():
@@ -121,6 +122,8 @@ func run()->void:
  if not qualification:
   game.set_process_input(false);game.set_process_unhandled_input(false);game.set_process_unhandled_key_input(false);game.set_process_shortcut_input(false)
   generation_screen.reparent(game)
+  generation_screen.diagnostics.provider=preload("res://addons/world_runtime/loading_diagnostics.gd").snapshot.bind(game)
+  generation_screen.diagnostics.context["plan"]={"digest":prepared.plan_digest,"cache_hit":prepared.cache_hit,"worker_ms":prepared.worker_ms,"version":prepared.version}
   game.ecosystem.set_process(false);game.ground_cover.set_process(false);game.vegetation.set_process(false)
  progress("Initializing generated terrain data" if not qualification else "Loading terrain and collision")
  if offline_grading and not qualification:
@@ -141,6 +144,7 @@ func run()->void:
   print("CARTOGRAPHY_WORKER_FAILED");game.free();quit(1);return
  while map_worker.is_alive():await process_frame
  var map_result:Dictionary=map_worker.wait_to_finish()
+ if generation_screen!=null:generation_screen.diagnostics.context["terrain_overview"]=map_result
  if not map_result.get("ok",false):print("CARTOGRAPHY_CACHE_FAILED");game.free();quit(1);return
  print("PREPARED_CARTOGRAPHY ",JSON.stringify(map_result))
  if reopen:
@@ -509,7 +513,7 @@ func bake_photographs(game:Node,plan:Dictionary,market:Dictionary,connection:Dic
    if Time.get_ticks_msec()>=next_poll:
     next_poll=Time.get_ticks_msec()+250
     var state:Dictionary=game.terrain.loading_state(game.player.position,game.fly)
-    progress("Photographing the generated world",completed,views.size(),{"activity":context+" · "+game.loading_stage_text,"stage_fraction":(completed+0.65*game.loading_stage_percent/100.0)/views.size(),"work":"Terrain %d/%d · nearby collision %d/%d · queued tasks %d"%[state.roots,state.root_total,state.local,state.local_total,state.queued]})
+    progress("Photographing the generated world",completed,views.size(),{"activity":context+" · "+game.loading_stage_text,"stage_fraction":(completed+0.65*game.loading_stage_percent/100.0)/views.size(),"work":game.loading_work_text,"terrain_readiness":state})
    await process_frame
   if game.loading_active:return false
   var loaded:=Time.get_ticks_msec()
@@ -531,7 +535,9 @@ func bake_photographs(game:Node,plan:Dictionary,market:Dictionary,connection:Dic
   await process_frame
   if await capture_loading_view(game,view.name)!=OK:print("PHOTOGRAPH_SAVE_FAILED ",view.name);return false
   trace.append({"view":view.name,"loading_ms":loaded-began,"vegetation_ms":detailed-loaded,"capture_ms":Time.get_ticks_msec()-detailed})
-  if generation_screen!=null:generation_screen.use_photograph(output_dir.path_join("loading_"+view.name+".png"))
+  if generation_screen!=null:
+   generation_screen.use_photograph(output_dir.path_join("loading_"+view.name+".png"))
+   generation_screen.diagnostics.context["photographs"]=trace.duplicate(true)
   if completed==0 and "--capture-generation-ui" in OS.get_cmdline_user_args():
    await RenderingServer.frame_post_draw
    root.get_texture().get_image().save_png(output_dir.path_join("generation_loading.png"))

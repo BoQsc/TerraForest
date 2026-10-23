@@ -17,6 +17,12 @@ and vegetation readiness in the finite trace; improve those budgets with matchin
 visual readiness and per-view timing evidence rather than claiming UI work sped up
 generation. All broader foundation requirements remain active.
 
+The loading follow-up exposes a centered TerraForest wordmark and developer
+telemetry by default. Landscape coverage fractions, active worker/queues and cache
+counters are also shown directly under the bar. Full details and completed-stage
+timings remain scrollable above it; see
+[developer loading evidence](evidence/loading_developer_details/README.md).
+
 The missing bounded pre-publication generation mechanism is now integrated.
 Native earthworks checkpoint into the coordinator's private staging world and
 continue through the same terrain pager; first compound save inherits that exact

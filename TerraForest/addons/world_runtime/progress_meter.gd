@@ -33,7 +33,16 @@ static func coordinator(state:String,detail:Dictionary)->float:
 static func loading(state:Dictionary,world_ready:bool,waiting_spawn:bool)->Dictionary:
  if not world_ready:return {"percent":0.0,"stage":"Reading saved world data"}
  if waiting_spawn:return {"percent":15.0,"stage":"Finding a safe player position"}
- var roots:float=clampf(float(state.get("roots",0))/maxi(1,int(state.get("root_total",0))),0,1)
+ var roots:float=clampf(float(state.get("coverage_ready",state.get("roots",0)))/maxi(1,int(state.get("coverage_total",state.get("root_total",0)))),0,1)
  var local:float=clampf(float(state.get("local",0))/maxi(1,int(state.get("local_total",0))),0,1)
  if state.get("ready",false):return {"percent":75.0,"stage":"Checking nearby objects"}
  return {"percent":20.0+20.0*roots+35.0*local,"stage":"Loading nearby terrain and collision" if local<1.0 else "Loading landscape coverage"}
+
+static func loading_caption(stage:String,state:Dictionary)->String:
+ if stage=="Loading landscape coverage":return "%s · %d / %d required areas ready"%[stage,state.get("coverage_ready",state.roots),state.get("coverage_total",state.root_total)]
+ if stage=="Loading nearby terrain and collision":return "%s · %d / %d probes ready"%[stage,state.local,state.local_total]
+ return stage
+
+static func loading_work(state:Dictionary,terrain:Node)->String:
+ var cache:Dictionary=terrain.derived_metrics
+ return "Coverage %d/%d (%s) · collision %d/%d · worker: %s · queued %d · in flight %d · upload queue %d · cache hits %d / misses %d"%[state.get("coverage_ready",state.roots),state.get("coverage_total",state.root_total),state.get("coverage_scope","world"),state.local,state.local_total,state.worker,state.queued,terrain.in_flight.size(),terrain.staging.size(),int(cache.get("hits",0)),int(cache.get("misses",0))]

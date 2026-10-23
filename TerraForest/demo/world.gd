@@ -1513,6 +1513,15 @@ func _prefab_placement_text(asset: Resource) -> String:
 	var attached: bool=not construction_inventory.prefab_transaction.model_counts(asset).is_empty()
 	return "%s placed - F5 saves%s" % [asset.resource_name,"; combined undo unavailable" if attached else ""]
 
+func _additional_loading_diagnostics() -> Dictionary:
+	# Constant-sized summaries. Never copy instance buffers or scan the world.
+	return {
+		"trees":vegetation.statistics(),
+		"ground_cover":{"enabled":ground_cover.is_processing(),"wanted_regions":ground_cover._wanted.size(),"resident_regions":ground_cover.resident.size(),"requested":ground_cover._requests.size(),"pending":ground_cover._pending.size(),"dirty":ground_cover._dirty.size(),"rejected_batches":ground_cover.rejected_batches},
+		"water":lakes.statistics() if lakes.water!=null else {"state":"not_initialized"},
+		"structures":{"asset_collections":structures._models.size(),"paging_failures":structures._model_paging_failures,"last_failure":structures._model_paging_last_failure,"paging":model_paging.last_state if model_paging!=null else {"active":false}}
+	}
+
 # Cached water surfaces must be visible before entering the playable world.
 func _additional_loading_ready() -> bool:
 	# Terrain readiness alone does not cover asynchronously admitted model proxies.
@@ -1520,17 +1529,20 @@ func _additional_loading_ready() -> bool:
 	var arrival_bounds:=AABB(player.global_position-Vector3(2,2,2),Vector3(4,5,4))
 	if not structures.is_collision_region_ready(arrival_bounds) or not vegetation.is_collision_region_ready(arrival_bounds):
 		loading_stage_percent=75;loading_stage_text="Preparing nearby object collision"
+		loading_work_text="Waiting for building / tree collision within 2 m of the player · "+loading_work_text
 		return false
 	# Match the nearby model acceptance radius; distant world continues streaming.
 	var visual_bounds:=AABB(player.global_position-Vector3(128,128,128),Vector3(256,256,256))
 	if not structures.is_model_render_region_ready(visual_bounds):
 		loading_stage_percent=82;loading_stage_text="Loading nearby buildings and objects"
+		loading_work_text="Waiting for model proxies within 128 m of the player · "+loading_work_text
 		return false
 	if lakes.water==null:
 		loading_stage_percent=90;loading_stage_text="Loading water sources";return false
 	var state:Dictionary=lakes.statistics()
 	if not state.render_ready or state.ready!=state.lakes:
 		loading_stage_percent=90
+		loading_work_text="Water: lakes %d/%d ready · %d regions pending · %d surfaces dirty · %d staged meshes"%[state.ready,state.lakes,state.pending_regions,state.dirty_meshes,state.staged_meshes]
 		loading_stage_text="Loading water - %d regions remaining"%int(state.pending_regions) if state.pending_regions>0 else "Building water surfaces - %d remaining"%int(state.dirty_meshes)
 		return false
 	return true

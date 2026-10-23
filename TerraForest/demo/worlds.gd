@@ -246,7 +246,7 @@ func _update_preparation_notice()->void:
 			stage=str(detail.get("details",{}).get("activity",detail.stage))
 			if int(detail.get("total",0))>0 and not detail.get("details",{}).has("activity"):stage+=" · %d / %d"%[int(detail.get("completed",0)),int(detail.total)]
 	if generation_screen!=null:
-		generation_screen.update_status(state,stage,detail)
+		generation_screen.update_status(state,stage,detail,result if result is Dictionary else {})
 		if generation_screen.picture.texture==null and result is Dictionary:
 			var photo:String=str(result.get("report","")).path_join("loading_north.png")
 			if FileAccess.file_exists(photo):generation_screen.use_photograph(photo)

@@ -1,0 +1,24 @@
+{
+  "failures": 0,
+  "notice": "Generation cancelled. Existing saves are preserved.",
+  "opened": false,
+  "slot": "cancel_review_1355523",
+  "status": {
+    "child_pid": -1.0,
+    "coordinator_pid": 67232.0,
+    "generator": 19.0,
+    "progress": {},
+    "publication": {},
+    "reason": "Unpublished staging retained for diagnosis",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/9b28ba205cdb63c988641f3305323d58",
+    "seed": 42.0,
+    "settlement_layout": "connected",
+    "slot": "cancel_review_1355523",
+    "staging_slot": "combined_stage_9b28ba205cdb63c988641f3305323d58",
+    "state": "cancelled",
+    "status_file": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/world_preparation_62892_1356782.json",
+    "validation": {},
+    "worker_active": false
+  },
+  "stop_ms": 571
+}
