@@ -150,6 +150,7 @@ void NativeTerrainRegionStore::_bind_methods(){
  ClassDB::bind_method(D_METHOD("open_store","absolute_directory","writable"),&NativeTerrainRegionStore::open_store,DEFVAL(false));
  ClassDB::bind_method(D_METHOD("close"),&NativeTerrainRegionStore::close);
  ClassDB::bind_method(D_METHOD("publish_capture","capture","inherited","test_stop_after"),&NativeTerrainRegionStore::publish_capture,DEFVAL(Buffer()),DEFVAL(-1));
+ ClassDB::bind_method(D_METHOD("verify_snapshot","reference"),&NativeTerrainRegionStore::verify_snapshot);
  ClassDB::bind_method(D_METHOD("publish_snapshot","snapshot","inherited","test_stop_after"),&NativeTerrainRegionStore::publish_snapshot,DEFVAL(Buffer()),DEFVAL(-1));
  ClassDB::bind_method(D_METHOD("expand_snapshot","reference"),&NativeTerrainRegionStore::expand_snapshot);
  ClassDB::bind_method(D_METHOD("describe_snapshot","reference"),&NativeTerrainRegionStore::describe_snapshot);
@@ -311,6 +312,16 @@ Dictionary NativeTerrainRegionStore::describe_snapshot(const Buffer &reference){
  PackedInt32Array coordinates;
  for(const auto &[key,entry]:index.regions){uint32_t v=key-1;coordinates.push_back(v%32);coordinates.push_back(v/1024);coordinates.push_back((v/32)%32);}
  out["ok"]=true;out["seed"]=index.seed;out["generator"]=index.generator;out["revision"]=index.revision;out["edits"]=index.edits;out["pages"]=int64_t(index.order.size());out["blocks"]=index.blocks.size()/8;out["coordinates"]=coordinates;return out;
+}
+Dictionary NativeTerrainRegionStore::verify_snapshot(const Buffer &reference){
+ std::lock_guard<std::mutex> lock(mutex_);Dictionary out;out["ok"]=false;Index index;if(!load_index(reference,index))return out;
+ std::set<uint32_t> expected(index.order.begin(),index.order.end());
+ for(const auto &[key,entry]:index.regions){
+  std::map<uint32_t,Buffer> pages;if(!load_region(key,entry,pages))return out;
+  for(const auto &[page,raw]:pages)if(!expected.erase(page))return out;
+ }
+ if(!expected.empty())return out;
+ out["ok"]=true;out["seed"]=index.seed;out["generator"]=index.generator;out["revision"]=index.revision;out["pages"]=int64_t(index.order.size());out["regions"]=int64_t(index.regions.size());out["blocks"]=index.blocks.size()/8;return out;
 }
 Dictionary NativeTerrainRegionStore::read_region(const Buffer &reference,Vector3i p){
  std::lock_guard<std::mutex> lock(mutex_);Dictionary out;out["ok"]=false;

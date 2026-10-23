@@ -26,7 +26,8 @@ func chase(zombie:CharacterBody3D,seconds:float,label:String)->bool:
 		var now:=Time.get_ticks_usec();frames.append(now-previous);previous=now
 		var stats:Dictionary=game.zombies.navigation_status
 		peak_work=maxi(peak_work,stats.get("route_work",0));peak_us=maxi(peak_us,stats.get("planning_us",0))
-		if first_path<0 and game.zombies.navigator.status(zombie.get_instance_id()).get("complete_path",false):first_path=(now-started)/1000000.0
+		var route_state:Dictionary=game.zombies.navigator.status(zombie.get_instance_id())
+		if first_path<0 and route_state.get("complete_path",false) and route_state.goal.distance_to(game.player.global_position)<.2:first_path=(now-started)/1000000.0
 		if tick%60==0:
 			var row:Dictionary={"phase":label,"tick":tick,"position":zombie.global_position,"navigation":game.zombies.navigator.status(zombie.get_instance_id())}
 			row.velocity=zombie.velocity;row.grounded=zombie.is_on_floor();row.behavior=zombie.state
@@ -107,7 +108,7 @@ func run()->void:
 		check(not roof.is_empty(),"arrival is inside the actual terrain cave beneath its solid roof")
 	DirAccess.make_dir_recursive_absolute("res://reports/zombie_regional_world/"+kind)
 	if DisplayServer.get_name()!="headless":
-		camera.position=zombie.global_position+Vector3(3,2,3);camera.look_at(zombie.global_position+Vector3.UP)
+		camera.position=zombie.global_position+(Vector3(3,2,0) if kind=="cave" else pose.basis*Vector3(2,2,0));camera.look_at(zombie.global_position+Vector3.UP)
 		await RenderingServer.frame_post_draw;root.get_texture().get_image().save_png("res://reports/zombie_regional_world/"+kind+"/arrival.png")
 	# The player changes destination; the pursuer receives no waypoint hints,
 	# position correction, manual jump or movement calls from this fixture.

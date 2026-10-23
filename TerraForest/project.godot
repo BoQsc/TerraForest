@@ -33,6 +33,10 @@ window/stretch/mode="viewport"
 
 enabled=PackedStringArray("res://addons/volumetric_terrain/plugin.cfg", "res://addons/vegetation/plugin.cfg", "res://addons/world_ecosystem/plugin.cfg")
 
+[filesystem]
+
+import/blender/enabled=false
+
 [physics]
 
 3d/default_gravity=20.0

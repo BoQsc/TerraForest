@@ -1,0 +1,20 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS author cube, slab, slope, stair and signed-coordinate samples
+PASS validated snapshot restores
+PASS snapshot certifies block map identity
+PASS survey uses highest column and shape centre height
+PASS checksum-bound archived region decodes
+PASS archived and resident columns match
+PASS real region unloaded
+PASS block unload preserves logical identity
+PASS changed storage rejects old cursor revision
+PASS nonresident region remains in survey index with exact checksum
+PASS unloaded geometry is explicit, never treated as empty
+PASS map decoder does not repopulate gameplay residency
+PASS corrupt region cannot expose old map data
+PASS bad checksum and cursor rejected
+PASS exact block admission preserves identity
+PASS authored block edit clears identity
+PASS validated storage state certifies map identity
+BLOCK_MAP_SURVEY failures=0

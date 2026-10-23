@@ -7,7 +7,9 @@ const SIZE:=256
 const BYTES:=SIZE*SIZE*4
 const HEADER_BYTES:=24
 static func digest(data:PackedByteArray)->PackedByteArray:
- var hash_context:=HashingContext.new();hash_context.start(HashingContext.HASH_SHA256);hash_context.update(data);return hash_context.finish()
+ var hash_context:=HashingContext.new();hash_context.start(HashingContext.HASH_SHA256)
+ if not data.is_empty():hash_context.update(data)
+ return hash_context.finish()
 static func cache_path(seed_value:int,generator:int,cache_root:String)->String:
  return cache_root+"/survey_%d_%d_%d.bin"%[VERSION,generator,seed_value]
 static func identity(seed_value:int,generator:int)->PackedByteArray:

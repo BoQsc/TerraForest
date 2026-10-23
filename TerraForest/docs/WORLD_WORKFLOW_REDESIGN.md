@@ -5,6 +5,33 @@ generator, selector, loading screen, map, baking/cache and storage foundation be
 returning to gameplay inconsistencies. This is a required workstream, not completed
 by the first UI changes.
 
+## Latest production workflow — 2026-10-23
+
+Ordinary creation is now Generate → Load → Play with one generation child,
+native binary integrity verification and existing root-last publication. Native
+field and atomic prefab data are built before mesh/collision loading; map layers
+and actual loading photographs are cached in that same generation scene. The
+second full rendered verification boot is confined to explicit developer review.
+The ordinary selector hides obsolete experimental generator choices; existing
+saves keep their original settings. Cancellation and staging recovery remain.
+
+Fresh playback now hits terrain, water, block and object map caches. A targeted
+reopen caught a real cache-identity mismatch between generation's resident data
+and playback's native paged metadata. Native saved-checkpoint certificates now
+produce aliases under the exact playback identity, guarded by generation's saved
+logical stamps. No save format, geometry or accepted water interaction changed.
+
+[Retained evidence and timings](evidence/unified_generation_flow/README.md)
+include source creation, fresh full-game read-only reopen, explicit-PCK generation
+and reopen, malformed inner-section rejection, cancellation and inspected UI.
+These supersede earlier entries saying production still runs two review boots.
+They do not establish complete world quality or sustained performance. Generated
+lake data still uses frame-paced authoring (15–29 s); first rendered photographs
+also dominate creation. Native offline baking, selective terrain residency,
+retention-safe cleanup, remaining options/map/POI coverage, compute qualification,
+world visual acceptance and populated/thermal proof remain required in this
+rewrite. Clean-machine release-template installation has not been demonstrated.
+
 ## Acceptance scope
 
 1. One ordinary launcher. Historical commands remain in a clearly separate folder.

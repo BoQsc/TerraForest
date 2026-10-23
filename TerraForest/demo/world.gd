@@ -96,6 +96,12 @@ func _additional_motion_ready(delta: float) -> bool:
 func _player_water_depth() -> float:
 	return lakes.depth_at(player.global_position+Vector3(0,1.1,0))
 
+var _initial_generation_spawn:=Vector3(800,0,1310)
+func configure_generation_spawn(point:Vector3)->bool:
+	if is_inside_tree() or not point.is_finite() or point.x<0 or point.x>2000 or point.z<0 or point.z>2000:return false
+	_initial_generation_spawn=point
+	return true
+
 func _ready() -> void:
 	construction_inventory.gameplay="--gameplay-construction" in OS.get_cmdline_user_args()
 	player_hud.gameplay_construction=construction_inventory.gameplay
@@ -195,7 +201,7 @@ func _ready() -> void:
 	structures.model("architecture/metal_beam/v1").configure_collision(beam.get_aabb(),64,512,8)
 	door_models.configure_compound_collision(doorway.get_meta("collision_boxes"),64,512,8,1536,24)
 	terrain.nearby_first = true
-	pending_spawn = Vector3(800, 0, 1310)
+	pending_spawn = _initial_generation_spawn
 	terrain.focus = pending_spawn
 	super._ready()
 	movement.configure_ladders(ladder.collection)
@@ -391,7 +397,7 @@ func _terrain_initialized(text: String) -> void:
 		equipped_tool=0;editor_tool_active=false;structure_mode=false;model_tool.set_active(false);tool_view.equip(0)
 		player_hud.active_slot=-1;player_hud.show_active_tool(0)
 	else:
-		pending_spawn=Vector3(800,0,1310)
+		pending_spawn=_initial_generation_spawn
 		spawn_override_y=-1.0
 	_restored_pose.clear()
 	super._terrain_initialized(text)

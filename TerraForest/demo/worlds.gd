@@ -56,7 +56,7 @@ func _ready() -> void:
 	sort_order.tooltip_text="Older worlds without recorded dates fall back to their last save time."
 	var filters:=HBoxContainer.new();saved.add_child(filters)
 	filter_field=LineEdit.new();filter_field.size_flags_horizontal=Control.SIZE_EXPAND_FILL;filter_field.placeholder_text="Filter saved worlds";filter_field.text_changed.connect(func(_text: String):filter_list());filters.add_child(filter_field)
-	show_preparation=CheckBox.new();show_preparation.text="Preparation saves (read-only)";show_preparation.toggled.connect(func(_on:bool):refresh());filters.add_child(show_preparation)
+	show_preparation=CheckBox.new();show_preparation.text="Generation drafts (developer, read-only)";show_preparation.visible="--developer-worlds" in OS.get_cmdline_user_args();show_preparation.toggled.connect(func(_on:bool):refresh());filters.add_child(show_preparation)
 	var library:=HBoxContainer.new();library.add_theme_constant_override("separation",28);library.size_flags_vertical=Control.SIZE_EXPAND_FILL;saved.add_child(library)
 	worlds=ItemList.new();worlds.size_flags_vertical=Control.SIZE_EXPAND_FILL;worlds.size_flags_horizontal=Control.SIZE_EXPAND_FILL;worlds.custom_minimum_size=Vector2(600,300);library.add_child(worlds)
 	var detail_column:=VBoxContainer.new();detail_column.custom_minimum_size.x=660;library.add_child(detail_column)
@@ -75,7 +75,8 @@ func _ready() -> void:
 	heading(create,"Create a world")
 	heading(create,"World name",18);name_field=LineEdit.new();name_field.placeholder_text="e.g. woodland_home";name_field.max_length=48;create.add_child(name_field)
 	heading(create,"Landscape",18);preset=OptionButton.new();create.add_child(preset)
-	for id: int in Launch.PRESETS:preset.add_item(Launch.PRESETS[id],id)
+	for id: int in Launch.PRESETS:
+		if id==Launch.INTEGRATED_PRESET or "--developer-worlds" in OS.get_cmdline_user_args():preset.add_item(Launch.PRESETS[id],id)
 	preset.select(0)
 	ocean=CheckBox.new();ocean.text="Surrounding ocean and beaches";ocean.button_pressed=true;create.add_child(ocean)
 	ocean.tooltip_text="Applies to new terrain-fitted worlds. Existing worlds keep their saved coastline."
@@ -85,7 +86,7 @@ func _ready() -> void:
 	layout_preset.item_selected.connect(func(_index:int):invalidate_preview())
 	preset.item_selected.connect(func(_index:int):layout_preset.visible=preset.get_selected_id()==Launch.INTEGRATED_PRESET)
 	heading(create,"Seed",18);seed_field=SpinBox.new();seed_field.min_value=0;seed_field.max_value=2147483647;seed_field.step=1;seed_field.value=1703;create.add_child(seed_field)
-	var explanation:=heading(create,"The seed and landscape apply only to new worlds. Saved worlds retain their generation settings. Integrated worlds are prepared and verified before play; first creation can take several minutes.",18);explanation.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
+	var explanation:=heading(create,"Generate → Load → Play. Terrain, locations, roads, world map and loading photographs are created together. Your saved world opens automatically when generation finishes.",18);explanation.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
 	var map_column:=VBoxContainer.new();map_column.size_flags_horizontal=Control.SIZE_EXPAND_FILL;create_page.add_child(map_column)
 	heading(map_column,"World preview",24)
 	preview_view=TextureRect.new();preview_view.custom_minimum_size=Vector2(560,410);preview_view.expand_mode=TextureRect.EXPAND_IGNORE_SIZE;preview_view.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_CENTERED;preview_view.size_flags_vertical=Control.SIZE_EXPAND_FILL;map_column.add_child(preview_view)
@@ -94,8 +95,8 @@ func _ready() -> void:
 	seed_field.value_changed.connect(func(_value:float):invalidate_preview())
 	ocean.toggled.connect(func(_value:bool):invalidate_preview())
 	preset.item_selected.connect(func(_index:int):invalidate_preview())
-	button(create,"Create and play",func():launch_selected(true))
-	cancel_button=button(create,"Cancel preparation",cancel_preparation);cancel_button.hide()
+	button(create,"Generate and play",func():launch_selected(true))
+	cancel_button=button(create,"Cancel generation",cancel_preparation);cancel_button.hide()
 	gameplay=CheckBox.new();gameplay.text="Gameplay material costs (uncheck for free editor)";gameplay.button_pressed=true;panel.add_child(gameplay)
 	notice=heading(panel,"",18);notice.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;notice.custom_minimum_size.y=54
 	button(panel,"Quit",request_quit)
@@ -162,7 +163,7 @@ func start_preparation(result:Dictionary,slot:String)->void:
 	cancel_button.show();cancel_button.disabled=false
 	preparation_started_msec=Time.get_ticks_msec()
 	Engine.max_fps=10
-	notice.text="Preparing and verifying %s. The preparation window will close when finished, then your world will open. Existing saves are preserved."%slot
+	notice.text="Generating %s. Your world will load automatically when it is ready."%slot
 
 func show_recovery()->void:
 	if preparation_pid>=0 or photograph_pid>=0:return
@@ -201,11 +202,11 @@ func _process(delta:float)->void:
 	refresh()
 	if quit_pending:get_tree().quit();return
 	if cancel_pending:
-		notice.text="Preparation cancelled. Existing saves are preserved."
-		if result is Dictionary and result.get("state","")=="ready":notice.text="Preparation finished before cancellation. The verified world is saved; select it when ready to play."
+		notice.text="Generation cancelled. Existing saves are preserved."
+		if result is Dictionary and result.get("state","")=="ready":notice.text="Generation finished before cancellation. The world is saved; select it when ready to play."
 		return
 	if not result is Dictionary or result.get("state","")!="ready":
-		notice.text="World preparation did not finish. Existing saves are preserved. " + (str(result.get("reason",""))+" Logs: "+str(result.get("report","")) if result is Dictionary else "Check the generation report.")
+		notice.text="World generation did not finish. Existing saves are preserved. " + (str(result.get("reason",""))+" Logs: "+str(result.get("report","")) if result is Dictionary else "Check the generation report.")
 		return
 	var launch:=Launch.command(preparation_slot,false,12,0,preparation_gameplay)
 	if not launch.ok:notice.text=launch.reason;return
@@ -219,28 +220,28 @@ func _open_game(args:PackedStringArray)->void:
 func _update_preparation_notice()->void:
 	var result:Variant=JSON.parse_string(FileAccess.get_file_as_string(preparation_status)) if FileAccess.file_exists(preparation_status) else null
 	if cancel_pending:
-		notice.text="Stopping preparation; waiting for its process to close. Existing saves are preserved.";return
-	var stage:="Starting preparation"
+		notice.text="Cancelling generation…";return
+	var stage:="Starting world generation"
 	if result is Dictionary:
 		match str(result.get("state","")):
 			"creating":stage="Generating terrain, locations and saved world"
-			"verifying":stage="Reopening the saved world and checking its contents"
+			"verifying":stage="Verifying saved terrain, buildings and water"
 			"recovering":stage="Verifying and recovering interrupted publication"
 			"publishing":stage="Publishing the verified world"
-			"ready":stage="World ready; preparing to open"
-			"failed":stage="Preparation failed; collecting the result"
+			"ready":stage="Loading your world"
+			"failed":stage="Generation failed; collecting the result"
 	if result is Dictionary and result.get("progress",{}) is Dictionary:
 		var detail:Dictionary=result.get("progress",{})
 		if not str(detail.get("stage","")).is_empty():
 			stage=str(detail.stage)
 			if int(detail.get("total",0))>0:stage+=" · %d / %d"%[int(detail.get("completed",0)),int(detail.total)]
 	var elapsed:int=maxi(0,Time.get_ticks_msec()-preparation_started_msec)/1000
-	notice.text="%s: %s. Elapsed %d:%02d. Existing saves are preserved."%[preparation_slot,stage,elapsed/60,elapsed%60]
+	notice.text="%s · %s · %d:%02d"%[preparation_slot,stage,elapsed/60,elapsed%60]
 
 func cancel_preparation()->void:
 	if preparation_pid<0 or cancel_pending:return
 	var request:=FileAccess.open(preparation_cancel,FileAccess.WRITE)
-	if request==null:notice.text="Could not request cancellation. Preparation is still running.";return
+	if request==null:notice.text="Could not request cancellation. Generation is still running.";return
 	request.store_string("cancel");request.close()
 	cancel_pending=true;cancel_button.disabled=true
 	_update_preparation_notice()
