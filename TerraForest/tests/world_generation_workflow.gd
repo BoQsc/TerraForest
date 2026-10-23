@@ -30,10 +30,14 @@ func run()->void:
  if not run.is_empty():
   var child_args:PackedStringArray=run.phases[0].arguments
   if not "res://addons/world_runtime/generate_world.gd" in child_args:failures+=1
+  var baked_path:String=str(result.report).path_join("generated_lakes_bake.json")
+  var baked=JSON.parse_string(FileAccess.get_file_as_string(baked_path)) if FileAccess.file_exists(baked_path) else null
+  if not baked is Dictionary or not baked.get("ok",false):failures+=1;print("FAIL offline native lake job did not complete")
  var photograph_names:Array=["north","road","market"] if layout=="connected" else ["north","road"] if layout=="road" else ["north"]
- for name:String in photograph_names:
-  var image:=Image.load_from_file("user://worlds/"+slot+".preview/"+name+".png")
-  if image==null or image.get_size()!=Vector2i(1280,720):failures+=1;print("FAIL world photograph ",name)
+ if result is Dictionary and result.get("state")=="ready":
+  for name:String in photograph_names:
+   var image:=Image.load_from_file("user://worlds/"+slot+".preview/"+name+".png")
+   if image==null or image.get_size()!=Vector2i(1280,720):failures+=1;print("FAIL world photograph ",name)
  var report:={"failures":failures,"slot":slot,"milliseconds":Time.get_ticks_msec()-began,"result":result,"run":run,"scope":"Actual player generation flow, native binary validation and published cached photographs. Fresh playable reopen/visual inspection are separate checks."}
  FileAccess.open(folder.path_join("report.json"),FileAccess.WRITE).store_string(JSON.stringify(report,"  "))
  print("WORLD_GENERATION_WORKFLOW failures=",failures," slot=",slot," milliseconds=",report.milliseconds)

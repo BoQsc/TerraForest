@@ -53,6 +53,7 @@ func run()->void:
   if arg.begins_with("--cancel-file="):generation_cancel_path=arg.trim_prefix("--cancel-file=")
   if arg.begins_with("--preparation-output="):output_dir=arg.trim_prefix("--preparation-output=")
  if generator not in [17,18,19] or seed_value<0 or seed_value>2147483647:quit(1);return
+ var native_lakes:=not qualification and generator in [17,19]
  DirAccess.make_dir_recursive_absolute(output_dir)
  progress("Planning terrain, streets and building sites")
  var prepared:Dictionary=preload("res://addons/world_runtime/world_generation_plan.gd").build(seed_value,generator,"--central-market" in OS.get_cmdline_user_args(),"--regional-connection" in OS.get_cmdline_user_args())
@@ -76,6 +77,7 @@ func run()->void:
  var offline_grading:=bake and not "--interactive-generation-grading" in OS.get_cmdline_user_args()
  if not qualification and not game.configure_generation_spawn(plan.roads[4].start):print("GENERATION_SPAWN_REJECTED");game.free();quit(1);return
  if not qualification:game.terrain.diagnostics_pause_streaming=true
+ if native_lakes and not game.terrain.backend.configure_initial_lake_bake():print("OFFLINE_LAKE_JOB_UNAVAILABLE");game.free();quit(1);return
  if offline_grading:
   var packets:=preload("res://addons/world_runtime/generation_earthworks.gd").packets(works.segments)
   if not game.terrain.backend.configure_initial_earthworks(packets,prepared.plan_digest):print("OFFLINE_PACKETS_REJECTED");game.free();quit(1);return
@@ -86,10 +88,13 @@ func run()->void:
   generation_screen=preload("res://addons/world_runtime/generation_screen.gd").new();generation_screen.cancel_path=generation_cancel_path;game.add_child(generation_screen)
   game.ecosystem.set_process(false);game.ground_cover.set_process(false);game.vegetation.set_process(false)
  progress("Initializing generated terrain data" if not qualification else "Loading terrain and collision")
- var initialized:bool=await ready_world(game) if qualification else await wait_until(func():return game.terrain.world_ready and game.terrain.snapshot_restore_ok,30)
+ var initialized:bool=await ready_world(game) if qualification else await wait_until(func():return game.terrain.world_ready and game.terrain.snapshot_restore_ok,60)
  if not initialized or game.terrain.backend.world_generator!=generator:print("WRONG_WORLD");quit(1);return
+ if native_lakes and not game.terrain.backend.initial_lakes_result.get("ok",false):print("OFFLINE_LAKE_DATA_FAILED ",game.terrain.backend.initial_lakes_result);game.free();quit(1);return
  progress("Baking generated lakes")
  if not await wait_until(func():return game.lakes.statistics().ready==game.lakes.statistics().lakes and not game.lakes.capture_snapshot().is_empty(),120):print("GENERATED_WATER_BAKE_FAILED ",game.lakes.statistics());game.free();quit(1);return
+ if not qualification:
+  FileAccess.open(output_dir.path_join("generated_lakes_bake.json"),FileAccess.WRITE).store_string(JSON.stringify(game.terrain.backend.initial_lakes_result))
  game.set_physics_process(false);game._clear_motion();game.terrain.autosave_timer=-3600.0
  progress("Baking terrain overview")
  var map_worker:=Thread.new()
@@ -318,7 +323,7 @@ func run()->void:
    var manifest:=FileAccess.open(output_dir.path_join("world_signature.json"),FileAccess.WRITE)
    manifest.store_string(JSON.stringify({"seed":seed_value,"generator":generator,"signature":snapshot_signature(game)}));manifest.close()
   else:
-   saved_map_stamps={"blocks":game.world_map.block_survey.current_stamp(),"models":game.world_map.model_survey.current_stamp(),"terrain":game.terrain.density_revision}
+   saved_map_stamps={"blocks":game.world_map.block_survey.current_stamp(),"models":game.world_map.model_survey.current_stamp(),"water":game.world_map.water_survey.current_stamp(),"terrain":game.terrain.density_revision}
    var saved:Dictionary={"done":false,"ok":false}
    game.terrain.save_completed.connect(func(ok:bool):saved.done=true;saved.ok=ok,CONNECT_ONE_SHOT)
    game.terrain.save_world()
@@ -347,29 +352,52 @@ func bake_map_layers(game:Node)->bool:
 func cache_for_playback(game:Node,atlas:Node)->bool:
  var block_stamp:String=atlas.block_survey.current_stamp()
  var model_stamp:String=atlas.model_survey.current_stamp()
- if saved_map_stamps.get("blocks")!=block_stamp or saved_map_stamps.get("models")!=model_stamp or saved_map_stamps.get("terrain")!=game.terrain.density_revision:return false
+ var water_stamp:String=atlas.water_survey.current_stamp()
+ if saved_map_stamps.get("blocks")!=block_stamp or saved_map_stamps.get("models")!=model_stamp or saved_map_stamps.get("water")!=water_stamp or saved_map_stamps.get("terrain")!=game.terrain.density_revision:
+  print("MAP_SAVED_STATE_CHANGED blocks=",saved_map_stamps.get("blocks")!=block_stamp," models=",saved_map_stamps.get("models")!=model_stamp," water=",saved_map_stamps.get("water")!=water_stamp," terrain=",saved_map_stamps.get("terrain")!=game.terrain.density_revision);return false
  var worker:=Thread.new()
- if worker.start(game.terrain.backend.snapshot_codec.map_certificates)!=OK:return false
+ if worker.start(saved_map_certificates.bind(game.terrain.backend))!=OK:print("MAP_CERTIFICATE_WORKER_FAILED");return false
  while worker.is_alive():await process_frame
  var certificate:Dictionary=worker.wait_to_finish()
- if not certificate.get("ok",false) or block_stamp!=atlas.block_survey.current_stamp() or model_stamp!=atlas.model_survey.current_stamp() or game.terrain.pending_edit:return false
+ if not certificate.get("ok",false) or block_stamp!=atlas.block_survey.current_stamp() or model_stamp!=atlas.model_survey.current_stamp() or water_stamp!=atlas.water_survey.current_stamp() or game.terrain.pending_edit:print("MAP_CERTIFICATE_FAILED ",certificate);return false
  var cache=preload("res://addons/world_runtime/survey_patch_cache.gd")
  var block_identity:String=certificate.blocks_identity+"|"+var_to_bytes(game.structures.blocks.global_transform).hex_encode()
  var parts:=PackedStringArray();var names:Array=game.structures._models.keys();names.sort()
  for name:String in names:
-  if not certificate.models.has(name):return false
+  if not certificate.models.has(name):print("MAP_CERTIFICATE_ASSET_MISSING ",name);return false
   var batch:Node3D=game.structures._models[name]
   parts.append(name+"|"+str(certificate.models[name])+"|"+var_to_bytes(batch.global_transform).hex_encode()+"|"+var_to_bytes(batch.survey_prototype_bounds()).hex_encode())
  var model_identity:String="|".join(parts).sha256_text()
- for row:Array in [[atlas.block_survey,block_identity],[atlas.model_survey,model_identity]]:
+ var aliases:Array=[[atlas.block_survey,block_identity],[atlas.model_survey,model_identity]]
+ if certificate.has("water_identity"):aliases.append([atlas.water_survey,certificate.water_identity])
+ for row:Array in aliases:
   var layer:Node=row[0]
   var key:String=layer.cache_namespace+"|certified|"+atlas.updates.cache_identity+"|"+str(row[1])
   var pixels:PackedByteArray=layer.texture.get_image().get_data()
   var io:=Thread.new()
-  if io.start(cache.write.bind(key,key,pixels,layer.cache_root,16,512),Thread.PRIORITY_LOW)!=OK:return false
+  if io.start(cache.write.bind(key,key,pixels,layer.cache_root,16 if layer.image_size==512 else 64,layer.image_size),Thread.PRIORITY_LOW)!=OK:print("MAP_ALIAS_WORKER_FAILED ",layer.caption);return false
   while io.is_alive():await process_frame
-  if not io.wait_to_finish().get("persisted",false):return false
+  var written:Dictionary=io.wait_to_finish()
+  if not written.get("persisted",false):print("MAP_ALIAS_WRITE_FAILED ",layer.caption," ",written);return false
  return true
+
+func saved_map_certificates(backend:RefCounted)->Dictionary:
+ # Worker-only codec orchestration. Bind aliases to the published bytes rather
+ # than generation's transient resident representations.
+ var path:=ProjectSettings.globalize_path(backend.save_path)
+ var raw:RefCounted=ClassDB.instantiate("NativeWorldArchive")
+ var canonical:PackedByteArray=raw.read(path)
+ var certificate:Dictionary=backend.snapshot_codec.map_certificates()
+ if not certificate.get("ok",false):return {}
+ if backend.world_generator!=19:
+  var root_data:Dictionary=raw.decode(canonical)
+  if not root_data.get("ok",false) or not root_data.sections.has("volumetric_water"):return {}
+  var store:RefCounted=ClassDB.instantiate("NativeWaterRegionStore")
+  if not store.open_store(path+".water"):return {}
+  var bytes:PackedByteArray=store.expand_water_snapshot(root_data.sections.volumetric_water);store.close()
+  if bytes.is_empty():return {}
+  certificate["water_identity"]="snapshot-v1|"+preload("res://addons/world_runtime/survey_cache.gd").digest(bytes).hex_encode()
+ return certificate if raw.read(path)==canonical else {}
 
 func generate_prefab(game:Node,lot:Dictionary)->bool:
  # Foundation/clearance checks sample the authoritative native field, independent

@@ -10,19 +10,29 @@ section rejection, and explicit-PCK generation/reopen pass. Selector, creation,
 generation and restored map images were inspected. See
 [evidence/unified_generation_flow](evidence/unified_generation_flow/README.md).
 
-This closes that duplicated review workflow, not the complete rewrite. Measured
-generation ranges from 42–71 seconds across different warmed/cold seeds/layouts;
-no controlled speedup ratio or universal instant generation is claimed. Generated
-lake authoring alone takes 15–29 seconds, and first photographs/residency dominate
-the remainder. Required next generator work: detached native offline authoring
-using the accepted static volume algorithm, with identical saved water/terrain,
-bounded cancellation and actual create/reopen proof. Do not reopen water flow or
-art direction. Native selective terrain residency remains a parallel foundation
+The generation-only native lake job now replaces frame-paced lake authoring. It
+preserves the accepted volume/contact algorithm and exact saved bytes. Native
+authoring measured about 0.9–2.2 seconds, versus the earlier 15–29-second paced
+stage. In-flight cancellation, time budgets, protected existing saves and actual
+source/PCK creation/reopen pass. It also exposed two map bookkeeping defects:
+exact block paging advanced an unsaved content stamp, and water serialization
+advanced a logical map revision. Both now preserve unchanged content; cursors
+still invalidate on residency changes and authoring still invalidates maps.
+The saved-water alias also uses the exact snapshot identity and raster size.
+See [offline_generation_bake](evidence/offline_generation_bake/README.md).
+
+This closes that duplicated review workflow and generation-authoring handoff, not
+the complete rewrite. Latest source runs observed 29–42 seconds; the explicit-PCK
+connected run took 60 seconds, including 36 seconds for photo residency. These are
+different warmed/cold seeds/layouts, not controlled speedup ratios or universal
+instant generation. First rendered photographs, scene finalization/handoff and
+whole startup cost remain required generator/loading work. Do not reopen water
+flow or art direction. Native selective terrain residency remains a foundation
 requirement after this workflow correction: the 16,384 resident/history cap and
 full expansion are not solved. Full options/POI coverage, compute equivalence and
 benefit, world visual quality, populated runtime/thermal proof, and clean-machine
 release installation also remain open. Unused Blender source import was disabled;
-the updated 194,077,000-byte PCK starts and reopens with 14 external native DLLs.
+the updated resource pack starts and reopens with 14 external native DLLs.
 
 ## Native dirty-page saves integrated - 2026-10-23
 
@@ -51,8 +61,13 @@ Continue the native dirty-page/checkpoint work in TERRAIN_REGIONAL_STORAGE.md.
 ## Character integration checkpoint — 2026-10-23
 
 Original Human R11 and Zombie Lab packages are preserved in asset-only baseline
-`e63a36d8`. Character work uses an isolated `codex/character-integration` checkout;
-concurrent terrain edits/commits remain owned by their existing checkout.
+`e63a36d8`. Character work uses an isolated `codex/character-integration` checkout.
+The 2026-10-23 pause synchronization combines the latest world checkpoint
+`3e568575` with character/navigation checkpoint `f9e4b4ad`, preserving both histories.
+The original world branch can advance to this combined checkpoint without a
+rebase. Shared structures DLLs were rebuilt from the combined sources in both
+variants; source merges had no conflicts. Integration checks and their exact
+binary identities are retained in [sync evidence](evidence/character_world_sync/README.md).
 R11 replaces first-person box hands/pickaxe/axe, and bounded R4 zombie encounters
 now use loaded collision and existing melee/tool-wear adapters. See
 [contract and remaining requirements](../addons/characters/README.md) and
@@ -82,8 +97,8 @@ requirement only for the checked local cases.
 Regional walking navigation now has a derived height-aware graph and bounded
 collision interests. Checkpoint `adf6c72f` records the implementation; world
 checkpoint `6e3575fc` is merged as `8ae421d8`, with combined native libraries rebuilt.
-Concurrent unfinished world edits remain in their original checkout. Selected
-actual saved-world tower and cave journeys pass in both directions. The tower
+The later native-lake/map-identity checkpoint is included by the synchronization
+above. Selected actual saved-world tower and cave journeys pass in both directions. The tower
 pursuer breaks the intact wooden door and reaches the second upper floor; the
 cave pursuer reaches the player beneath its terrain roof and returns outside.
 All210 tower and37 cave source files, including regional sidecars, remain unchanged.
@@ -95,7 +110,7 @@ This closes the earlier wholly-unimplemented regional graph, tile/floor walking
 connections and selected cave-journey requirements. It does not close arbitrary
 world reachability: the host admits at most six residents within96m, and distant
 80m residency evidence is component-level. Required continuation: faster cold
-planning (selected outbound queries still9.8-16.7s), actual full-domain pressure and
+planning (selected outbound queries still9.8-21.8s across rendered/headless checks), actual full-domain pressure and
 travel, current owned-mine and broader seed/building journeys, continuous moving
 targets and heterogeneous crowds. Resume these now that the shared graph exists;
 close them with autonomous live-host travel, explicit unavailable/recovery and

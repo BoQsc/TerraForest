@@ -41,6 +41,7 @@ void NativeBlockWorld::_bind_methods() {
     ClassDB::bind_method(D_METHOD("survey_cache_identity"),&NativeBlockWorld::survey_cache_identity);
     ClassDB::bind_method(D_METHOD("survey_index"),&NativeBlockWorld::survey_index);
     ClassDB::bind_method(D_METHOD("survey_revision_id"),&NativeBlockWorld::survey_revision_id);
+    ClassDB::bind_method(D_METHOD("survey_content_revision_id"),&NativeBlockWorld::survey_content_revision_id);
     ClassDB::bind_method(D_METHOD("survey_columns","region","offset","expected_revision"),&NativeBlockWorld::survey_columns);
     ClassDB::bind_method(D_METHOD("capture_storage_state"),&NativeBlockWorld::capture_storage_state);
     ClassDB::bind_method(D_METHOD("restore_storage_state","resident","keys","checksums"),&NativeBlockWorld::restore_storage_state);
@@ -165,7 +166,7 @@ bool NativeBlockWorld::apply_cells(const PackedInt32Array &records,bool record_h
         invalidate({k.x,k.y,k.z-1}); invalidate({k.x,k.y,k.z+1});
     }
     if(changed) {
-        ++mutation_revision;survey_saved_identity=String();
+        ++mutation_revision;++content_revision;survey_saved_identity=String();
         if(record_history)remember_edit(std::move(changes));
         set_process(true);
         if(deferred_bounds)*deferred_bounds=changed_bounds;
@@ -581,7 +582,7 @@ bool NativeBlockWorld::restore_snapshot(const PackedByteArray &bytes) {
 }
 void NativeBlockWorld::replace_storage(std::map<BlockKey,BlockChunk> &&restored,std::map<BlockKey,PackedByteArray> &&unavailable,const String &identity) {
     survey_saved_identity=identity;
-    ++mutation_revision;++storage_epoch;unloaded_regions=std::move(unavailable);
+    ++mutation_revision;++content_revision;++storage_epoch;unloaded_regions=std::move(unavailable);
     std::set<BlockKey> affected;for(auto &e:chunks)affected.insert(e.first);for(auto &e:restored)affected.insert(e.first);
     for(auto &e:visuals)affected.insert(e.first);
     // Preserve pending keys so any in-flight publication receives a new ticket.

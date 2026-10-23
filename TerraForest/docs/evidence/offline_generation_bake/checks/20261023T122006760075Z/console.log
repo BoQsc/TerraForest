@@ -1,0 +1,17 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS new offline authoring configuration is admitted
+PASS native generation worker starts
+OFFLINE_GENERATED_LAKES {"lakes":4,"milliseconds":2017.406,"ok":true,"patches":1626,"peak_native_state_bytes":59624696,"regions":1626,"slices":1626,"snapshot_bytes":31053016,"status":2,"steps":1740,"water_ml":37182823515}
+PASS lake data is baked before first world publication
+PASS published data restores with all occupancy requests completed
+PASS running worker cannot be reconfigured
+[TerrainRewrite] Temporary test world: save skipped
+PASS new offline authoring configuration is admitted
+PASS generation-only bake never replaces an existing world
+[TerrainRewrite] Temporary test world: save skipped
+PASS new offline authoring configuration is admitted
+OFFLINE_GENERATED_LAKES {"milliseconds":10.848,"ok":false,"reason":"Offline lake job cancelled or terrain changed","status":-4}
+[TerrainRewrite] Temporary test world: save skipped
+PASS backend stop cancels authoring before joining its worker
+OFFLINE_LAKES_STARTUP failures=0

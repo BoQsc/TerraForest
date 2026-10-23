@@ -26,11 +26,27 @@ include source creation, fresh full-game read-only reopen, explicit-PCK generati
 and reopen, malformed inner-section rejection, cancellation and inspected UI.
 These supersede earlier entries saying production still runs two review boots.
 They do not establish complete world quality or sustained performance. Generated
-lake data still uses frame-paced authoring (15–29 s); first rendered photographs
-also dominate creation. Native offline baking, selective terrain residency,
+lake data now uses the detached native bake below; first rendered photographs
+and scene finalization/handoff still dominate creation. Selective terrain residency,
 retention-safe cleanup, remaining options/map/POI coverage, compute qualification,
 world visual acceptance and populated/thermal proof remain required in this
 rewrite. Clean-machine release-template installation has not been demonstrated.
+
+The generation-only native lake job uses the existing fill/contact functions on
+the terrain owner's worker and hands immutable data to ordinary loading. Exact
+terrain/building/location/water hashes remain unchanged for coastal seed 1703 and
+inland seed 42. Authoring measured roughly 0.9–2.2 s, rather than 15–29 s of frame
+pacing. It has cancellation, revision/epoch guards, estimated-state/output limits
+and a deadline; no live water store is mutated by the worker. Old saves cannot
+take this new-world-only path. This does not add flow or change accepted water.
+
+Integrated checks found and corrected persistence being confused with content
+changes: block paging now has a separate logical content counter; water snapshot
+serialization leaves logical map stamps unchanged; generated rasters are aliased
+under exact saved checkpoint identities with their correct dimensions. Both
+coastal/inland playback hit all four map layers. Failed stages and the initially
+missed inland water-map cache are retained in
+[offline_generation_bake](evidence/offline_generation_bake/README.md).
 
 ## Acceptance scope
 

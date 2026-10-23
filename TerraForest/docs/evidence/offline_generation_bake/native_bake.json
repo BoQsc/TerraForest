@@ -1,0 +1,16 @@
+{
+  "cancel_microseconds": 1133,
+  "failures": 0,
+  "lakes": 1,
+  "milliseconds": 989.732,
+  "ok": true,
+  "patches": 872,
+  "peak_native_state_bytes": 31462480,
+  "regions": 872,
+  "slices": 872,
+  "snapshot_bytes": 13187368,
+  "snapshot_sha256": "9545e00eeee5b8c4566a0f7366efe6f95abc4d2279af8461231b4506790567b6",
+  "status": 2,
+  "steps": 895,
+  "water_ml": 13693871176
+}

@@ -17,7 +17,7 @@ func _ready()->void:
 func current_stamp()->String:
  var source=atlas.game.structures.blocks
  var identity:String=source.survey_cache_identity()
- var content:String=identity if not identity.is_empty() else str(source.survey_revision_id())
+ var content:String=identity if not identity.is_empty() else str(source.survey_content_revision_id())
  return "%d/%d/%d/%s/%s"%[terrain.epoch,terrain.density_revision,source.get_instance_id(),content,var_to_bytes(source.global_transform).hex_encode()]
 func fast_identity()->String:
  var identity:String=atlas.game.structures.blocks.survey_cache_identity()

@@ -45,7 +45,7 @@ class NativeBlockWorld : public Node3D {
     friend class NativePrefabPlacement;
     friend class NativeStructuresSnapshot;
     friend class NativeBlockPager;
-    uint64_t storage_epoch=0,history_revision=0,mutation_revision=0;
+    uint64_t storage_epoch=0,history_revision=0,mutation_revision=0,content_revision=0;
     String survey_saved_identity;
     bool region_has_history(BlockKey region) const;
     bool restore_region_impl(const PackedByteArray &bytes,const PackedByteArray &expected,bool preserve_history);
@@ -157,6 +157,9 @@ public:
     Dictionary survey_index() const;
     String survey_cache_identity() const{return survey_saved_identity;}
     int64_t survey_revision_id() const {return int64_t(mutation_revision);}
+    // Cursor revisions change when residency changes. Content stamps must not:
+    // an exact page transfer has not changed the logical world being surveyed.
+    int64_t survey_content_revision_id() const {return int64_t(content_revision);}
     Dictionary survey_columns(Vector3i region,int64_t offset,int64_t expected_revision) const;
     Dictionary capture_storage_state() const;
     bool restore_storage_state(const PackedByteArray &resident,const PackedInt32Array &keys,const PackedByteArray &checksums);

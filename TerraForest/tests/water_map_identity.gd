@@ -28,4 +28,9 @@ func run()->void:
  var bad= factory.prepare(PackedByteArray([1,2,3]))
  check(not water.restore_prepared(bad) and water.survey_cache_identity()==identity,"invalid prepared payload cannot replace certified state")
  check(not water.restore_prepared(null),"missing prepared payload rejected")
+ var revision:int=water.survey_revision_id()
+ check(water.capture_snapshot(catalog.encode([],1))==packet and water.survey_revision_id()==revision and water.survey_cache_identity()==identity,"serialization preserves the unchanged logical map stamp and certificate")
+ var frozen=water.capture_storage_snapshot(catalog.encode([],1))
+ var saved:PackedByteArray=frozen.serialize_snapshot() if frozen is RefCounted else frozen
+ check(saved==packet and water.survey_revision_id()==revision and water.survey_cache_identity()==identity,"storage capture does not turn persistence into a water edit")
  print("WATER_MAP_IDENTITY failures=",failures);quit(1 if failures else 0)

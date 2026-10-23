@@ -1,5 +1,6 @@
 #include "regional_water.hpp"
 #include "lake_catalog.hpp"
+#include "generated_lake_bake.hpp"
 #include "water_region_store.hpp"
 #include "water_region_io.hpp"
 #include <godot_cpp/godot.hpp>
@@ -8,6 +9,7 @@ using namespace godot;
 static void initialize(ModuleInitializationLevel level) {
     if (level == MODULE_INITIALIZATION_LEVEL_SCENE) {
         GDREGISTER_CLASS(terraforest::NativeLakeCatalog);
+        GDREGISTER_CLASS(terraforest::NativeGeneratedLakeBake);
         GDREGISTER_CLASS(terraforest::NativeWaterTerrainPatch);
         GDREGISTER_CLASS(terraforest::NativeWaterTerrainBatch);
         GDREGISTER_CLASS(terraforest::NativeWaterMapIdentity);

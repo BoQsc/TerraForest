@@ -98,6 +98,7 @@ class NativeRegionalWater : public godot::RefCounted {
     GDCLASS(NativeRegionalWater,godot::RefCounted)
     friend class NativeWaterSnapshot;
     friend class NativeWaterMapIdentity;
+    friend class NativeGeneratedLakeBake;
     using Key=uint64_t;
     struct Region {
         std::array<uint16_t,512> floor{},ceiling{};

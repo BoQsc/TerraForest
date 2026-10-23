@@ -1,0 +1,5 @@
+{
+  "bytes": 194079304,
+  "sha256": "06f1aa48d5e6ba9c820decd7082396f192a132e556d43ac1e64308010d38e5ae",
+  "scope": "Final export starts with 14 native DLLs. Full packaged generation/reopen is retained above; final setup-only failure guards additionally pass script loading/native verification and backend startup checks. Clean-machine release is unqualified."
+}

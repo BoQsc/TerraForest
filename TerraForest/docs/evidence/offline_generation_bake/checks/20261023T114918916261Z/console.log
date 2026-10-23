@@ -1,0 +1,31 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+FAIL native verification did not replace second game boot
+ERROR: Error opening file 'user://worlds/workflow_13424_142161.preview/north.png'.
+   at: load_image (core/io/image_loader.cpp:91)
+   GDScript backtrace (most recent call first):
+       [0] run (res://tests/world_generation_workflow.gd:35)
+ERROR: Failed to load image. Error 7
+   at: load_from_file (core/io/image.cpp:2787)
+   GDScript backtrace (most recent call first):
+       [0] run (res://tests/world_generation_workflow.gd:35)
+FAIL world photograph north
+ERROR: Error opening file 'user://worlds/workflow_13424_142161.preview/road.png'.
+   at: load_image (core/io/image_loader.cpp:91)
+   GDScript backtrace (most recent call first):
+       [0] run (res://tests/world_generation_workflow.gd:35)
+ERROR: Failed to load image. Error 7
+   at: load_from_file (core/io/image.cpp:2787)
+   GDScript backtrace (most recent call first):
+       [0] run (res://tests/world_generation_workflow.gd:35)
+FAIL world photograph road
+ERROR: Error opening file 'user://worlds/workflow_13424_142161.preview/market.png'.
+   at: load_image (core/io/image_loader.cpp:91)
+   GDScript backtrace (most recent call first):
+       [0] run (res://tests/world_generation_workflow.gd:35)
+ERROR: Failed to load image. Error 7
+   at: load_from_file (core/io/image.cpp:2787)
+   GDScript backtrace (most recent call first):
+       [0] run (res://tests/world_generation_workflow.gd:35)
+FAIL world photograph market
+WORLD_GENERATION_WORKFLOW failures=5 slot=workflow_13424_142161 milliseconds=51534

@@ -1,0 +1,214 @@
+{
+  "scope": "Combined character/world branch integration; functional checks, no new performance qualification.",
+  "outcomes": [
+    {
+      "name": "regional_navigation",
+      "arguments": [
+        "tools/run_godot_check.py",
+        "regional_navigation",
+        "--headless",
+        "--timeout",
+        "120",
+        "--require",
+        "REGIONAL_NAVIGATION checks=14 failures=0"
+      ],
+      "exit_code": 0,
+      "report": "C:\\Users\\windows10\\.codex\\worktrees\\character-integration\\Godot Terrain\\TerraForest\\reports\\checks\\20261023T130955851511Z"
+    },
+    {
+      "name": "navigation_residency",
+      "arguments": [
+        "tools/run_godot_check.py",
+        "navigation_residency",
+        "--headless",
+        "--timeout",
+        "120",
+        "--require",
+        "NAVIGATION_RESIDENCY checks=11 failures=0"
+      ],
+      "exit_code": 0,
+      "report": "C:\\Users\\windows10\\.codex\\worktrees\\character-integration\\Godot Terrain\\TerraForest\\reports\\checks\\20261023T131006911188Z"
+    },
+    {
+      "name": "actor_route_contract",
+      "arguments": [
+        "tools/run_godot_check.py",
+        "actor_route_contract",
+        "--headless",
+        "--timeout",
+        "120",
+        "--require",
+        "ACTOR_ROUTE_CONTRACT checks=14 failures=0"
+      ],
+      "exit_code": 0,
+      "report": "C:\\Users\\windows10\\.codex\\worktrees\\character-integration\\Godot Terrain\\TerraForest\\reports\\checks\\20261023T131008006557Z"
+    },
+    {
+      "name": "zombie_navigation",
+      "arguments": [
+        "tools/run_godot_check.py",
+        "zombie_navigation",
+        "--headless",
+        "--timeout",
+        "120",
+        "--require",
+        "ZOMBIE_NAVIGATION checks=14 failures=0"
+      ],
+      "exit_code": 0,
+      "report": "C:\\Users\\windows10\\.codex\\worktrees\\character-integration\\Godot Terrain\\TerraForest\\reports\\checks\\20261023T131013681356Z"
+    },
+    {
+      "name": "zombie_step_guard",
+      "arguments": [
+        "tools/run_godot_check.py",
+        "zombie_step_guard",
+        "--headless",
+        "--timeout",
+        "120",
+        "--require",
+        "ZOMBIE_STEP_GUARD PASS"
+      ],
+      "exit_code": 0,
+      "report": "C:\\Users\\windows10\\.codex\\worktrees\\character-integration\\Godot Terrain\\TerraForest\\reports\\checks\\20261023T131059227589Z"
+    },
+    {
+      "name": "player_cottage_stairs",
+      "arguments": [
+        "tools/run_godot_check.py",
+        "player_cottage_stairs",
+        "--headless",
+        "--timeout",
+        "120",
+        "--require",
+        "PLAYER_COTTAGE_STAIRS failures=0"
+      ],
+      "exit_code": 0,
+      "report": "C:\\Users\\windows10\\.codex\\worktrees\\character-integration\\Godot Terrain\\TerraForest\\reports\\checks\\20261023T131113594088Z"
+    },
+    {
+      "name": "block_map_identity",
+      "arguments": [
+        "tools/run_godot_check.py",
+        "block_map_identity",
+        "--headless",
+        "--timeout",
+        "120",
+        "--require",
+        "BLOCK_MAP_IDENTITY failures=0"
+      ],
+      "exit_code": 0,
+      "report": "C:\\Users\\windows10\\.codex\\worktrees\\character-integration\\Godot Terrain\\TerraForest\\reports\\checks\\20261023T131124092168Z"
+    },
+    {
+      "name": "water_map_identity",
+      "arguments": [
+        "tools/run_godot_check.py",
+        "water_map_identity",
+        "--headless",
+        "--timeout",
+        "120",
+        "--require",
+        "WATER_MAP_IDENTITY failures=0"
+      ],
+      "exit_code": 0,
+      "report": "C:\\Users\\windows10\\.codex\\worktrees\\character-integration\\Godot Terrain\\TerraForest\\reports\\checks\\20261023T131124752658Z"
+    },
+    {
+      "name": "offline_lakes_startup",
+      "arguments": [
+        "tools/run_godot_check.py",
+        "offline_lakes_startup",
+        "--headless",
+        "--timeout",
+        "120",
+        "--require",
+        "OFFLINE_LAKES_STARTUP failures=0"
+      ],
+      "exit_code": 0,
+      "report": "C:\\Users\\windows10\\.codex\\worktrees\\character-integration\\Godot Terrain\\TerraForest\\reports\\checks\\20261023T131125413596Z"
+    },
+    {
+      "name": "offline_generated_lakes",
+      "arguments": [
+        "tools/run_godot_check.py",
+        "offline_generated_lakes",
+        "--headless",
+        "--timeout",
+        "120",
+        "--require",
+        "OFFLINE_GENERATED_LAKES_CHECK failures=0"
+      ],
+      "exit_code": 0,
+      "report": "C:\\Users\\windows10\\.codex\\worktrees\\character-integration\\Godot Terrain\\TerraForest\\reports\\checks\\20261023T131128885602Z"
+    },
+    {
+      "name": "zombie_door_interaction",
+      "arguments": [
+        "tools/run_godot_check.py",
+        "zombie_door_interaction",
+        "--headless",
+        "--timeout",
+        "120",
+        "--require",
+        "ZOMBIE_DOOR_INTERACTION checks=14 failures=0",
+        "--",
+        "--gameplay-construction",
+        "--zombies"
+      ],
+      "exit_code": 0,
+      "report": "C:\\Users\\windows10\\.codex\\worktrees\\character-integration\\Godot Terrain\\TerraForest\\reports\\checks\\20261023T131131548188Z"
+    },
+    {
+      "name": "release",
+      "arguments": [
+        "tools/check_regional_release.py"
+      ],
+      "exit_code": 0,
+      "report": null
+    },
+    {
+      "name": "generation",
+      "arguments": [
+        "tools/run_godot_check.py",
+        "world_generation_workflow",
+        "--headless",
+        "--timeout",
+        "240",
+        "--require",
+        "WORLD_GENERATION_WORKFLOW failures=0"
+      ],
+      "exit_code": 0,
+      "report": "C:\\Users\\windows10\\.codex\\worktrees\\character-integration\\Godot Terrain\\TerraForest\\reports\\checks\\20261023T131231879702Z"
+    },
+    {
+      "name": "reopen",
+      "arguments": [
+        "tools/run_godot_check.py",
+        "world_generation_reopen",
+        "--headless",
+        "--timeout",
+        "150",
+        "--require",
+        "WORLD_GENERATION_REOPEN failures=0",
+        "--",
+        "--review-world=workflow_25344_134992"
+      ],
+      "exit_code": 0,
+      "report": "C:\\Users\\windows10\\.codex\\worktrees\\character-integration\\Godot Terrain\\TerraForest\\reports\\checks\\20261023T131329294147Z"
+    },
+    {
+      "name": "tower",
+      "arguments": [
+        "tools/check_zombie_regional_world.py",
+        "--slot",
+        "regional_districts_20261018",
+        "--case",
+        "tower",
+        "--headless"
+      ],
+      "exit_code": 0,
+      "report": "C:\\Users\\windows10\\.codex\\worktrees\\character-integration\\Godot Terrain\\TerraForest\\reports\\checks\\20261023T131348706022Z"
+    }
+  ],
+  "generated_slot": "workflow_25344_134992"
+}

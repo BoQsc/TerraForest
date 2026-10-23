@@ -1,0 +1,18 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS existing production plan builds
+PASS production earthworks use the existing native field
+PASS detached native job produces a complete snapshot
+PASS authoring is read-only to terrain
+PASS existing generated water checkpoint opens read-only
+PASS new offline job exactly matches the prior complete generated water bytes
+PASS baseline canonical root is unchanged
+PASS ordinary runtime restores exact quantities, contacts and catalog cursor
+PASS one-shot job rejects accidental reuse
+PASS stale terrain revision rejects before any output
+PASS malformed definitions reject
+PASS time-budget rejection exposes no partial snapshot
+PASS offline cancellation worker starts
+PASS in-flight cancellation promptly discards the detached output
+PASS failure, timeout and cancellation preserve the authoritative field
+OFFLINE_GENERATED_LAKES_CHECK failures=0 {"cancel_microseconds":484,"failures":0,"lakes":1,"milliseconds":1046.933,"ok":true,"patches":872,"peak_native_state_bytes":31462480,"regions":872,"slices":872,"snapshot_bytes":13187368,"snapshot_sha256":"9545e00eeee5b8c4566a0f7366efe6f95abc4d2279af8461231b4506790567b6","status":2,"steps":904,"water_ml":13693871176}

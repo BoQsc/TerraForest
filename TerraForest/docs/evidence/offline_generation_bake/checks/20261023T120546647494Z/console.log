@@ -1,0 +1,4 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+FAIL native verification did not replace second game boot
+WORLD_GENERATION_WORKFLOW failures=2 slot=workflow_69956_126679 milliseconds=29853

@@ -1,0 +1,12 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS offline startup requires valid bounded plan identity
+PASS offline startup worker starts
+OFFLINE_EARTHWORKS {"completed":1,"ok":true,"revision":1,"worker_ms":0.8839}
+PASS startup freezes configuration and applies native earthworks before first world publication
+PASS derived identity includes the applied generation plan
+PASS running worker rejects generation reconfiguration
+[TerrainRewrite] Temporary test world: save skipped
+PASS offline initialization never replaces an existing world
+[TerrainRewrite] Temporary test world: save skipped
+GENERATION_EARTHWORKS_STARTUP failures=0
