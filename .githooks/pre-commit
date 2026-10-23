@@ -1,0 +1,34 @@
+#!/bin/sh
+# SPDX-License-Identifier: 0BSD
+# Include Godot identity sidecars without staging unrelated source or import data.
+set -eu
+cd "$(git rev-parse --show-toplevel)"
+
+# Existing UID changes belong with the source being committed. NUL-delimited
+# paths preserve spaces, brackets and other valid resource filename characters.
+git diff --cached --name-only --diff-filter=ACMR -z -- \
+  '*.gd' '*.gdshader' '*.gdshaderinc' '*.gdextension' |
+  xargs -0 sh -c '
+    for source do
+      uid="${source}.uid"
+      if test -f "$uid"; then
+        git --literal-pathspecs add -- "$uid" || exit 1
+      fi
+    done
+  ' sh
+
+# Godot can create a new sidecar after its source was already committed. Only
+# include these when the corresponding source is present in the Git index.
+git ls-files --others --exclude-standard -z -- '*.uid' |
+  xargs -0 sh -c '
+    for uid do
+      source=${uid%.uid}
+      case "$source" in
+        *.gd|*.gdshader|*.gdshaderinc|*.gdextension) ;;
+        *) continue ;;
+      esac
+      if git --literal-pathspecs ls-files --error-unmatch -- "$source" >/dev/null 2>&1; then
+        git --literal-pathspecs add -- "$uid" || exit 1
+      fi
+    done
+  ' sh

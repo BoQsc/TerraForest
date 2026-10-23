@@ -1,5 +1,18 @@
 # World-building work
 
+## Godot identity files
+
+Commit Godot `.uid` sidecars with their corresponding source files. They are
+versioned resource identities, not disposable import cache. Let Godot generate
+them for new resources, then include them when staging the source; check for
+sidecars created by a later import before completing a commit.
+
+This repository provides `.githooks/pre-commit` at the Git root to stage matching
+UIDs automatically. Enable it per checkout with
+`git config --local core.hooksPath .githooks` when no existing hook configuration
+would be replaced. Do not add unrelated source changes or cache/report output
+while collecting UID sidecars.
+
 ## Unfinished-work tracking
 
 Never silently abandon unfinished work or report partial verification as completion.
