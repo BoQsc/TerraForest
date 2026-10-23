@@ -1,3 +1,17 @@
+## Regional terrain checkpoint integration - 2026-10-23
+
+Actual compound saves now select native compressed, immutable terrain packs;
+source generation, fresh reopen, exact prior-world equivalence, corruption/failure
+protection, cloning and recovery have scoped checks. See
+[TERRAIN_REGIONAL_STORAGE.md](TERRAIN_REGIONAL_STORAGE.md) for formats, evidence
+and required continuation. This is not yet native selective residency: full
+capture/recompression and full expansion still occur, and the resident cap is
+unchanged. Dirty-page capture, paging and retention-aware cleanup/compaction remain
+immediate requirements before storage/long-run readiness can be accepted.
+Explicit --main-pack child propagation now passes actual bundled creation/reopen
+and publication (d4340f6f90ce21f9e3b5a0f5abc1542c), with identical complete-world
+signature. Earlier failed launcher checks are retained; startup alone was insufficient.
+
 ## Terrain history storage evidence - 2026-10-23
 
 The broader persistence rerun still fails pending lake shutdown capture and

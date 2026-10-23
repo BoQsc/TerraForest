@@ -4,6 +4,7 @@
 #include "terrain_planner.hpp"
 #include "road_profile.hpp"
 #include "terrain_collision.hpp"
+#include "terrain_region_store.hpp"
 #include "geometry_content_key.hpp"
 #include "experimental/snapshot_worker.hpp"
 #include "experimental/godot_surface_mesh.hpp"
@@ -360,6 +361,7 @@ static void initialize(godot::ModuleInitializationLevel level) {
     // Installed once before any instance exists; thereafter immutable across workers.
     tr_alloc=std::malloc; tr_realloc=std::realloc; tr_free=std::free;
     GDREGISTER_CLASS(terraforest::TerrainCore);
+    GDREGISTER_CLASS(terraforest::NativeTerrainRegionStore);
     GDREGISTER_CLASS(terraforest::NativeTerrainPlanner);
     GDREGISTER_CLASS(terraforest::NativeRoadProfile);
     GDREGISTER_CLASS(terraforest::NativeTerrainCollisionPiece);

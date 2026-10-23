@@ -59,7 +59,7 @@ def clone_once(root, source, destination):
             raise ValueError("Source world is empty")
         stage = root / (".clone_" + uuid.uuid4().hex)
         stage.mkdir()
-        for suffix in (".regions", ".models", ".water"):
+        for suffix in (".regions", ".models", ".water", ".terrain"):
             folder = original.with_name(original.name + suffix)
             dest = target.with_name(target.name + suffix)
             if dest.exists():
@@ -71,7 +71,7 @@ def clone_once(root, source, destination):
         if original.read_bytes() != data:
             raise RuntimeError("Source world changed during copy; close the game and retry")
         (stage / "world.trw").write_bytes(data)
-        for suffix in (".regions", ".models", ".water"):
+        for suffix in (".regions", ".models", ".water", ".terrain"):
             folder = stage / suffix[1:]
             if folder.exists():
                 folder.rename(target.with_name(target.name + suffix))

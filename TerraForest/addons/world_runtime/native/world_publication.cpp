@@ -19,7 +19,7 @@ static bool slot_name(const String &s){
 Dictionary NativeWorldArchive::clone_world(const String &root,const String &source,const String &destination,int64_t test_stop_after) const {
  Dictionary result;result["ok"]=false;result["created"]=false;
  auto fail=[&](const char *reason){result["reason"]=reason;return result;};
- if(test_stop_after < -1 || test_stop_after > 3)return fail("Invalid publication stop phase");
+ if(test_stop_after < -1 || test_stop_after > 4)return fail("Invalid publication stop phase");
  if(!root.is_absolute_path()||root.begins_with("user://")||root.begins_with("res://")||!slot_name(source)||!slot_name(destination)||source.nocasecmp_to(destination)==0)return fail("Invalid publication path or slot");
  String original=root.path_join(source+String(".trw")),target=root.path_join(destination+String(".trw"));
  // Acquire the same OS leases used by ordinary world saves. No live writer can
@@ -31,7 +31,7 @@ Dictionary NativeWorldArchive::clone_world(const String &root,const String &sour
  auto src=base/fs::u8path((source+String(".trw")).utf8().get_data()),dst=base/fs::u8path((destination+String(".trw")).utf8().get_data());
  if(fs::exists(dst,error))return fail("Destination already exists");
  if(error)return fail("Cannot inspect destination");
- for(const char *suffix:{".regions",".models",".water",".bak",".tmp"}){
+ for(const char *suffix:{".regions",".models",".water",".terrain",".bak",".tmp"}){
   if(fs::exists(fs::u8path((target+String(suffix)).utf8().get_data()),error))return fail("Destination contains unpublished data");
   if(error)return fail("Cannot inspect destination stores");
  }
@@ -48,7 +48,7 @@ Dictionary NativeWorldArchive::clone_world(const String &root,const String &sour
  DWORD written=0;BOOL journal_ok=WriteFile(handle,encoded.get_data(),encoded.length(),&written,nullptr)&&written==encoded.length()&&FlushFileBuffers(handle);CloseHandle(handle);
  if(!journal_ok)return fail("Cannot flush publication journal");
  uint64_t bytes=0,files=0;
- for(const char *suffix:{".regions",".models",".water"}){
+ for(const char *suffix:{".regions",".models",".water",".terrain"}){
   auto from=fs::u8path((original+suffix).utf8().get_data()),to=stage/fs::path(suffix+1);
   bool present=fs::exists(from,error);if(error)return fail("Cannot inspect source store");if(!present)continue;
   if((GetFileAttributesW(from.c_str())&FILE_ATTRIBUTE_REPARSE_POINT)||fs::is_symlink(from,error)||!fs::is_directory(from,error))return fail("Unsupported source store");
@@ -79,7 +79,7 @@ Dictionary NativeWorldArchive::clone_world(const String &root,const String &sour
  staged->release();
  if(test_stop_after==0)return fail("Injected stop before store promotion");
  int promoted=0;
- for(const char *suffix:{".regions",".models",".water"}){
+ for(const char *suffix:{".regions",".models",".water",".terrain"}){
   auto folder=stage/fs::path(suffix+1);bool present=fs::exists(folder,error);if(error)return fail("Cannot inspect staged store");if(!present)continue;
   fs::rename(folder,fs::u8path((target+suffix).utf8().get_data()),error);if(error)return fail("Store promotion failed; canonical root not published");
   if(++promoted==test_stop_after)return fail("Injected stop after store promotion");
@@ -163,7 +163,7 @@ Dictionary NativeWorldArchive::recover_world(const String &root,const String &de
  if(!bool(decode(canonical)["ok"])||canonical!=read(original))return fail("Source or staged world changed after interruption");
  // Validate every authoritative file, including already-promoted stores, before
  // performing any more renames. Source leases prevent cooperating writers.
- for(const char *suffix:{".regions",".models",".water"}){
+ for(const char *suffix:{".regions",".models",".water",".terrain"}){
   auto source_store=fs::u8path((original+suffix).utf8().get_data()),pending=stage/fs::path(suffix+1),published=fs::u8path((target+suffix).utf8().get_data());
   bool a=fs::exists(source_store,error);if(error)return fail("Cannot inspect source store");
   bool b=fs::exists(pending,error);if(error)return fail("Cannot inspect staged store");
@@ -171,7 +171,7 @@ Dictionary NativeWorldArchive::recover_world(const String &root,const String &de
   if(error||b&&c||!a&&(b||c)||a&&!b&&!c)return fail("Recovery store ownership mismatch");
   if(a&&!same_store(source_store,b?pending:published,error))return fail("Recovery store verification failed; no changes made");
  }
- for(const char *suffix:{".regions",".models",".water"}){
+ for(const char *suffix:{".regions",".models",".water",".terrain"}){
   auto pending=stage/fs::path(suffix+1);bool exists=fs::exists(pending,error);if(error)return fail("Cannot inspect recovery store");
   if(exists){fs::rename(pending,fs::u8path((target+suffix).utf8().get_data()),error);if(error)return fail("Recovery promotion failed; journal retained");}
  }

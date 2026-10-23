@@ -1,4 +1,5 @@
 #include "world_archive.hpp"
+#include <godot_cpp/variant/packed_string_array.hpp>
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/classes/hashing_context.hpp>
 #include <godot_cpp/classes/file_access.hpp>
@@ -30,6 +31,7 @@ static PackedByteArray archive_hash(const PackedByteArray &data) {
     return context->finish();
 }
 void NativeWorldArchive::_bind_methods() {
+    ClassDB::bind_method(D_METHOD("process_arguments"),&NativeWorldArchive::process_arguments);
     ClassDB::bind_method(D_METHOD("clone_world","absolute_root","source","destination","test_stop_after"),&NativeWorldArchive::clone_world,DEFVAL(-1));
     ClassDB::bind_method(D_METHOD("recover_world","absolute_root","destination"),&NativeWorldArchive::recover_world);
     ClassDB::bind_method(D_METHOD("acquire","absolute_path"),&NativeWorldArchive::acquire);
@@ -39,6 +41,21 @@ void NativeWorldArchive::_bind_methods() {
     ClassDB::bind_method(D_METHOD("decode","bytes"),&NativeWorldArchive::decode);
     ClassDB::bind_method(D_METHOD("read","absolute_path"),&NativeWorldArchive::read);
     ClassDB::bind_method(D_METHOD("publish","absolute_path","bytes"),&NativeWorldArchive::publish);
+}
+PackedStringArray NativeWorldArchive::process_arguments() const {
+    // Godot consumes some engine flags before OS.get_cmdline_args(). Preserve
+    // explicit pack identity for child processes using the actual Windows argv.
+    PackedStringArray result;
+    HMODULE shell=LoadLibraryExW(L"shell32.dll",nullptr,LOAD_LIBRARY_SEARCH_SYSTEM32);
+    if(!shell)return result;
+    using Parse=LPWSTR *(WINAPI *)(LPCWSTR,int *);
+    auto parse=reinterpret_cast<Parse>(GetProcAddress(shell,"CommandLineToArgvW"));
+    int count=0;LPWSTR *arguments=parse?parse(GetCommandLineW(),&count):nullptr;
+    if(arguments){
+        if(count>0&&count<=32768)for(int i=0;i<count;i++)result.push_back(String::utf16(reinterpret_cast<const char16_t *>(arguments[i])));
+        LocalFree(arguments);
+    }
+    FreeLibrary(shell);return result;
 }
 NativeWorldArchive::~NativeWorldArchive(){release();}
 bool NativeWorldArchive::acquire(const String &path) {

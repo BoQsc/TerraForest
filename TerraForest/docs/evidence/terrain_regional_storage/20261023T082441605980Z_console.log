@@ -1,0 +1,19 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS compound root lease acquired
+PASS production publisher selects terrain checkpoint atomically with addon state
+PASS actual canonical root contains small terrain reference
+PASS production loader expands terrain and preserves unknown addon bytes
+PASS production restore has exact terrain density and materials
+PASS save completion and reopen share checkpoint-bound cache identity
+PASS corrupt region blocks startup and further saves
+PASS failed load protects canonical root
+PASS failed load cannot partially replace native terrain
+PASS corrupt inherited dependency aborts publication before root replacement
+PASS test temporarily removes named sidecar
+PASS missing sidecar fails closed without creating empty storage
+PASS restored exact sidecar permits reopen
+PASS root publication failure leaves previous checkpoint selected despite staged new pack
+PASS ordinary native clone includes terrain sidecar
+PASS cloned world restores the selected checkpoint, excluding unpublished edits
+TERRAIN_STORAGE_FAILURE failures=0

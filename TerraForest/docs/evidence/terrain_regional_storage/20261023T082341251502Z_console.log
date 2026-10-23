@@ -1,0 +1,13 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+SCRIPT ERROR: Parse Error: Identifier "sections" not declared in the current scope.
+   at: GDScript::reload (res://addons/volumetric_terrain/terrain_backend.gd:639)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+   at: GDScript::reload (res://tests/terrain_storage_failure.gd:0)
+ERROR: Failed to load script "res://tests/terrain_storage_failure.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+PASS compound root lease acquired
+SCRIPT ERROR: Invalid call. Nonexistent function 'new' in base 'GDScript'.
+   at: run (res://tests/terrain_storage_failure.gd:21)
+   GDScript backtrace (most recent call first):
+       [0] run (res://tests/terrain_storage_failure.gd:21)

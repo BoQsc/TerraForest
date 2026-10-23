@@ -1,0 +1,11 @@
+{
+  "changed_files": 2,
+  "checks": 86,
+  "expand_ms": 4.559,
+  "failures": 0,
+  "initial_files": 2,
+  "initial_publish_ms": 24.549,
+  "raw_bytes": 1106316,
+  "scope": "Native compressed region publication and selective reads; runtime terrain residency and whole-world frame cost are not qualified.",
+  "stored_first_bytes": 299943
+}

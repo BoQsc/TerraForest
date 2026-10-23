@@ -440,3 +440,23 @@ payload still takes about 70 ms to capture in the diagnostic sample. This is not
 regional terrain storage, a capacity increase, or closure of rendered mining latency.
 Canonical terrain paging/checkpoints/recovery, combined history save cost and the
 first-visible arrival gate remain required; do not replace these with checksum work.
+
+## Native regional terrain checkpoints - 2026-10-23
+
+Compound saves now select compressed immutable terrain packs through a small
+checkpoint reference. Region hashes, bounded pack ranges, exact legacy migration,
+backup selection and root-last failure protection are implemented. Both actual
+source and explicit-PCK creation/reopen/publication pass with identical complete
+world signatures. Native cloning, destination checks and recovery include terrain
+sidecars. Cold photograph refresh preserves them. The explicit-PCK child-launch
+failure and the failed per-file-flush primitive were found and corrected before
+this checkpoint; their evidence is retained.
+
+[TERRAIN_REGIONAL_STORAGE.md](TERRAIN_REGIONAL_STORAGE.md) records formats, exact
+scope, measurements and required continuation. Production residency still expands
+all pages, capture/recompression still traverse history, and collection/compaction
+is not implemented. These are active storage requirements, not closure or deferred
+post-release work. Continue with immutable dirty-page capture, native paging and
+retention-aware cleanup, then recheck mining arrival and combined populated travel.
+Compute generation integration, full options/map/POI coverage, vegetation arrival
+cases, world design acceptance and clean-machine release proof also remain active.

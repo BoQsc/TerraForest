@@ -11,7 +11,7 @@ func run():
  var archive=ClassDB.instantiate("NativeWorldArchive")
  var bytes:PackedByteArray=archive.encode({"terrain":PackedByteArray([1,2,3])})
  archive.acquire(folder.path_join(source+".trw"));archive.publish(folder.path_join(source+".trw"),bytes);archive.release()
- for suffix in ["regions","models","water"]:
+ for suffix in ["regions","models","water","terrain"]:
   DirAccess.make_dir_recursive_absolute(folder.path_join(source+".trw."+suffix))
   var file=FileAccess.open(folder.path_join(source+".trw."+suffix+"/part"),FileAccess.WRITE);file.store_8(12);file.close()
  var interrupted:Dictionary=archive.clone_world(folder,source,destination,1)
@@ -28,7 +28,7 @@ func run():
  if FileAccess.get_file_as_bytes(folder.path_join(destination+".trw"))!=bytes:failures+=1
  # Remove only this test's explicitly named dummy files, never real worlds.
  for slot in [source,destination]:
-  for suffix in ["regions","models","water"]:
+  for suffix in ["regions","models","water","terrain"]:
    var path=folder.path_join(slot+".trw."+suffix)
    DirAccess.remove_absolute(path+"/part");DirAccess.remove_absolute(path)
   for suffix in [".trw",".trw.lock",".prepare.lock",".presentation.json"]:

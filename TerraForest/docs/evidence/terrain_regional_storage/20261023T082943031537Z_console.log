@@ -1,0 +1,89 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS read-only open never creates missing storage
+PASS new native terrain store opens for publication
+PASS competing writer excluded by native lease
+PASS distributed edit 0
+PASS distributed edit 1
+PASS distributed edit 2
+PASS distributed edit 3
+PASS distributed edit 4
+PASS distributed edit 5
+PASS distributed edit 6
+PASS distributed edit 7
+PASS distributed edit 8
+PASS distributed edit 9
+PASS distributed edit 10
+PASS distributed edit 11
+PASS distributed edit 12
+PASS distributed edit 13
+PASS distributed edit 14
+PASS distributed edit 15
+PASS distributed edit 16
+PASS distributed edit 17
+PASS distributed edit 18
+PASS distributed edit 19
+PASS distributed edit 20
+PASS distributed edit 21
+PASS distributed edit 22
+PASS distributed edit 23
+PASS distributed edit 24
+PASS distributed edit 25
+PASS distributed edit 26
+PASS distributed edit 27
+PASS distributed edit 28
+PASS distributed edit 29
+PASS distributed edit 30
+PASS distributed edit 31
+PASS distributed edit 32
+PASS distributed edit 33
+PASS distributed edit 34
+PASS distributed edit 35
+PASS distributed edit 36
+PASS distributed edit 37
+PASS distributed edit 38
+PASS distributed edit 39
+PASS distributed edit 40
+PASS distributed edit 41
+PASS distributed edit 42
+PASS distributed edit 43
+PASS distributed edit 44
+PASS distributed edit 45
+PASS distributed edit 46
+PASS distributed edit 47
+PASS distributed edit 48
+PASS distributed edit 49
+PASS distributed edit 50
+PASS distributed edit 51
+PASS distributed edit 52
+PASS distributed edit 53
+PASS distributed edit 54
+PASS distributed edit 55
+PASS distributed edit 56
+PASS distributed edit 57
+PASS distributed edit 58
+PASS distributed edit 59
+PASS distributed edit 60
+PASS distributed edit 61
+PASS distributed edit 62
+PASS distributed edit 63
+PASS terrain root becomes a 40-byte checkpoint reference
+PASS checkpoint index preserves field metadata and page membership
+PASS region expansion reconstructs exact native format 3 bytes
+PASS lossless page runs substantially reduce this edited-world fixture
+PASS unchanged snapshot retains identical checkpoint identity
+PASS unchanged save writes no region or index bytes
+PASS second local excavation admitted
+PASS local edit publishes only touched regions and new checkpoint
+PASS both immutable checkpoints remain exactly readable
+PASS selective region read decodes exactly one bounded region
+PASS absent region is explicitly distinguished from a missing blob
+PASS invalid region coordinate rejected
+PASS interrupted region publication cannot alter an existing checkpoint
+PASS damaged referenced region fails instead of regenerating base terrain
+PASS publisher refuses to overwrite a damaged immutable identity
+PASS valid digest cannot disguise duplicate page membership
+PASS damaged native archive rejected before publication
+PASS fresh read-only store reopens exact checkpoint
+PASS read-only store cannot publish
+TERRAIN_REGION_STORE failures=0

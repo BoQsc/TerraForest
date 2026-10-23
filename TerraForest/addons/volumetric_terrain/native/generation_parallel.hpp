@@ -7,14 +7,14 @@
 #include <windows.h>
 
 namespace terraforest {
-// Offline immutable field work only. One parallel batch per extension prevents
+// Immutable generation/storage jobs only. One parallel batch per extension prevents
 // simultaneous preview/creation requests multiplying worker counts. The caller
 // keeps its World locked for the complete batch; workers touch disjoint outputs.
 inline std::atomic_flag generation_batch_busy=ATOMIC_FLAG_INIT;
-template<class F> int generation_parallel_for(int count,const F &function){
+template<class F> int generation_parallel_for(int count,const F &function,int minimum_count=16384,int max_workers=4){
  const unsigned logical=GetActiveProcessorCount(ALL_PROCESSOR_GROUPS);
- const int workers=std::min(4,int(std::max(1u,logical/2)));
- if(count<16384||workers==1){for(int i=0;i<count;i++)function(i);return 1;}
+ const int workers=std::min(max_workers,std::min(4,int(std::max(1u,logical/2))));
+ if(count<minimum_count||workers<=1){for(int i=0;i<count;i++)function(i);return 1;}
  if(generation_batch_busy.test_and_set(std::memory_order_acquire)){
   for(int i=0;i<count;i++)function(i);return 1;
  }

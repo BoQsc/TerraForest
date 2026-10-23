@@ -1,0 +1,21 @@
+{
+  "pid": 63604,
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+    "--headless",
+    "--path",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist",
+    "--main-pack",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist\\TerraForest.pck",
+    "--log-file",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\terrain_regional_bundle_native_argv\\engine.log",
+    "--script",
+    "res://addons/world_runtime/generation_job.gd",
+    "--",
+    "--destination=regional_storage_bundled_1703_20261023",
+    "--seed=1703",
+    "--generator=19",
+    "--status-file=C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\terrain_regional_bundle_native_argv\\status.json"
+  ],
+  "scope": "Full explicit-pack generation with native Windows argument propagation."
+}

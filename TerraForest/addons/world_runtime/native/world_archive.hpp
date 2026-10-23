@@ -10,6 +10,7 @@ class NativeWorldArchive : public godot::RefCounted {
 protected:
     static void _bind_methods();
 public:
+    godot::PackedStringArray process_arguments() const;
     ~NativeWorldArchive();
     godot::Dictionary clone_world(const godot::String &absolute_root,const godot::String &source,const godot::String &destination,int64_t test_stop_after=-1) const;
     godot::Dictionary recover_world(const godot::String &absolute_root,const godot::String &destination) const;

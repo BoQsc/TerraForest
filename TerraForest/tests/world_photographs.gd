@@ -29,7 +29,7 @@ func run()->void:
   for file:String in DirAccess.get_files_at(checkpoints):
    if file.ends_with(".tfmd") and DirAccess.remove_absolute(checkpoints.path_join(file))==OK:cold_removed+=1
  var before:Dictionary={}
- for suffix in [".trw",".trw.regions",".trw.models",".trw.water"]:before.merge(hashes("user://worlds/"+slot+suffix))
+ for suffix in [".trw",".trw.regions",".trw.models",".trw.water",".trw.terrain"]:before.merge(hashes("user://worlds/"+slot+suffix))
  var browser=load("res://demo/worlds.tscn").instantiate();root.add_child(browser)
  browser.slots=PackedStringArray([slot]);browser.filter_list();browser.refresh_photographs()
  var launched:bool=browser.photograph_pid>=0
@@ -39,7 +39,7 @@ func run()->void:
  if not launched or browser.photograph_pid>=0 or not browser.notice.text.begins_with("Photographs refreshed"):failures+=1
  if browser.photograph_pid>=0:browser.cancel_photographs()
  var after:Dictionary={}
- for suffix in [".trw",".trw.regions",".trw.models",".trw.water"]:after.merge(hashes("user://worlds/"+slot+suffix))
+ for suffix in [".trw",".trw.regions",".trw.models",".trw.water",".trw.terrain"]:after.merge(hashes("user://worlds/"+slot+suffix))
  if before!=after:
   failures+=1
   for path:String in before:

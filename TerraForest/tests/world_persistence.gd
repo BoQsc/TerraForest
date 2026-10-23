@@ -92,7 +92,7 @@ func run() -> void:
 	check(archive.decode(archive.read(path))["sections"]["future_addon"]==PackedByteArray([9,8,7,6]),"disabled or unknown addon bytes survive round trip")
 	close_world()
 	# Legacy terrain files migrate on save; the exact old file is retained as backup.
-	var legacy: PackedByteArray = archive.decode(archive.read(path))["sections"]["terrain"]
+	var legacy: PackedByteArray = preload("res://tests/terrain_storage_support.gd").expand(path,archive.decode(archive.read(path))["sections"]["terrain"])
 	write_bytes(path,legacy)
 	create_world()
 	check(await until(func(): return terrain.world_ready),"legacy raw terrain snapshot imports")
@@ -126,6 +126,7 @@ func run() -> void:
 	check(await until(func(): return terrain.world_ready),"empty lake catalog reloads")
 	check(add_lake()>id,"deleted persistent lake IDs are not reused after restart")
 	close_world()
+	preload("res://tests/terrain_storage_support.gd").cleanup(path)
 	for suffix in ["",".bak",".lock"]:
 		if FileAccess.file_exists(path+suffix): DirAccess.remove_absolute(path+suffix)
 	DirAccess.make_dir_recursive_absolute("res://reports")

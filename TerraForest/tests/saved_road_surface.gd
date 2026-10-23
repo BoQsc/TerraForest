@@ -10,7 +10,7 @@ func run()->void:
  var archive=ClassDB.instantiate("NativeWorldArchive")
  var decoded:Dictionary=archive.decode(FileAccess.get_file_as_bytes("user://worlds/"+slot+".trw"))
  if not decoded.get("ok",false):quit(2);return
- var payload:PackedByteArray=decoded.sections.terrain
+ var payload:PackedByteArray=preload("res://tests/terrain_storage_support.gd").expand("user://worlds/"+slot+".trw",decoded.sections.terrain)
  var core=ClassDB.instantiate("TerrainCore");var command:=Codec.command(5);command.append_array(payload)
  check(Codec.reply_ok(core.execute(command)),"saved terrain restores")
  var seed_value:int=payload.decode_u32(8);var generator:int=payload.decode_u32(28)

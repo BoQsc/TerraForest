@@ -79,5 +79,6 @@ func run()->void:
  backend.stop();release_thread.wait_to_finish()
  check(not codec.early_release,"shutdown joins publisher before releasing archive lease")
  check(codec.raw.decode(codec.raw.read(ProjectSettings.globalize_path(path))).ok,"shutdown leaves verified canonical archive")
+ preload("res://tests/terrain_storage_support.gd").cleanup(path)
  for suffix in ["",".bak",".lock"]:DirAccess.remove_absolute(ProjectSettings.globalize_path(path+suffix))
  print("ASYNC_SAVE_BARRIERS checks=",checks," failures=",failures);quit(1 if failures else 0)

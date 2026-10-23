@@ -4,10 +4,26 @@ const INTEGRATED_PRESET:=10019
 const LEGACY_INTEGRATED_PRESET:=10012
 const PRESETS={10019:"Terrain-fitted regional world",10012:"Earlier five-site regional recipe",1:"Original woodland",4:"Mountains, caves, ore veins and lakes",6:"Accessible cave entrances, ore veins and lakes",7:"Regional roads and settlement ground (in development)",8:"Regional world with domed cave chambers",9:"Regional world with connected cave floors",10:"Provisional mine layout",11:"Regional world with owned mine (in development)",12:"Regional world with larger lake (in development)"}
 static func engine_prefix()->PackedStringArray:
-	# In an export res:// is inside the PCK, not a filesystem directory. Child
-	# executions of the same exported binary discover its adjacent PCK themselves.
-	var folder:=ProjectSettings.globalize_path("res://")
-	return PackedStringArray(["--path",folder]) if not folder.is_empty() else PackedStringArray()
+	var arguments:=OS.get_cmdline_args()
+	if ClassDB.class_exists("NativeWorldArchive"):
+		var runtime=ClassDB.instantiate("NativeWorldArchive")
+		if runtime.has_method("process_arguments"):arguments=runtime.process_arguments()
+	return engine_prefix_for(arguments,ProjectSettings.globalize_path("res://"))
+static func engine_prefix_for(arguments:PackedStringArray,source_folder:String)->PackedStringArray:
+	# Explicit pack launches also work when the engine executable lives elsewhere.
+	# Preserve the same pack for every child instead of assuming an adjacent PCK.
+	var pack:=""
+	for i in arguments.size():
+		if arguments[i]=="--":break
+		if arguments[i]=="--main-pack" and i+1<arguments.size():pack=arguments[i+1]
+		elif arguments[i].begins_with("--main-pack="):pack=arguments[i].trim_prefix("--main-pack=")
+	if not pack.is_empty():
+		if not pack.is_absolute_path():
+			var current:=DirAccess.open(".")
+			if current!=null:pack=current.get_current_dir().path_join(pack).simplify_path()
+		return PackedStringArray(["--main-pack",pack])
+	# A native exported executable discovers an adjacent PCK without extra flags.
+	return PackedStringArray(["--path",source_folder]) if not source_folder.is_empty() else PackedStringArray()
 static func valid_slot(slot: String) -> bool:
 	var pattern:=RegEx.new();pattern.compile("^[A-Za-z_][A-Za-z0-9_]{0,47}$")
 	return pattern.search(slot)!=null
@@ -38,7 +54,7 @@ static func command(slot: String,create: bool,generator: int,seed: int,gameplay:
 	if create:
 		if preparation_slot(slot):return {"ok":false,"reason":"That name is reserved for preparation. Choose a different world name."}
 		if not PRESETS.has(generator) or seed<0 or seed>2147483647 or layout not in ["connected","road","settlement"]:return {"ok":false,"reason":"Choose a generator and seed between 0 and 2147483647."}
-		for suffix in ["",".bak",".tmp",".regions",".models",".water"]:
+		for suffix in ["",".bak",".tmp",".regions",".models",".water",".terrain"]:
 			if FileAccess.file_exists(canonical+suffix) or DirAccess.dir_exists_absolute(canonical+suffix):return {"ok":false,"reason":"That name already has world data. Choose another name or open the saved world."}
 		if FileAccess.file_exists(directory.path_join(slot+".clone.lock")):return {"ok":false,"reason":"That world is being prepared. Choose another name."}
 		# Native leases are owned by an OS handle, not by the presence of a file.

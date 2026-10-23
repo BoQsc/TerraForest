@@ -1,0 +1,11 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS isolated codec store opens
+PASS independently framed legacy fixture is accepted by authoritative reader 0
+PASS lossless codec preserves all density and material bytes 0
+PASS independently framed legacy fixture is accepted by authoritative reader 1
+PASS lossless codec preserves all density and material bytes 1
+PASS independently framed legacy fixture is accepted by authoritative reader 2
+PASS lossless codec preserves all density and material bytes 2
+PASS constant, high entropy and patterned fields exercise runs, raw fallback and FastLZ
+TERRAIN_PAGE_CODEC failures=0 encodings=[1, 0, 2]

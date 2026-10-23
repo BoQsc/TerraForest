@@ -1,0 +1,7 @@
+{
+  "equal": true,
+  "baseline_report": "684270f0920278eae91ba2db011eaa69",
+  "candidate_report": "a6db5bff938a88413d5d19060f3c3a07",
+  "baseline_sha256": "605c845484ea76b82ef57a45cdc59c7693208594e1776f78b061faf7fa3dd4b2",
+  "candidate_sha256": "605c845484ea76b82ef57a45cdc59c7693208594e1776f78b061faf7fa3dd4b2"
+}

@@ -1,0 +1,66 @@
+{
+  "canonical_bytes": 103,
+  "capture_ms": 88.381,
+  "excavations": 2048,
+  "failures": 0,
+  "first_save": {
+    "message": "World saved and verified; terrain and addon state published together",
+    "snapshot_id": "6a6f37074481f46a98bfb79816de91eb2ea5b59855bbfb2ee38fdb6bf628e039",
+    "stages": {
+      "archive_encode_us": 229628,
+      "archive_publish_us": 5090,
+      "terrain_regions": {
+        "region_reads": 0,
+        "reused_files": 0,
+        "workers": 4,
+        "written_bytes": 19358013,
+        "written_files": 3
+      }
+    },
+    "success": true,
+    "write_us": 234744
+  },
+  "later_capture_ms": 93.376,
+  "local_edit_save": {
+    "message": "World saved and verified; terrain and addon state published together",
+    "snapshot_id": "2172fef481d2c47333739b14404f5687b324d4a9b912e5d78d3880854d3395f0",
+    "stages": {
+      "archive_encode_us": 232173,
+      "archive_publish_us": 5679,
+      "terrain_regions": {
+        "region_reads": 0,
+        "reused_files": 1043,
+        "workers": 4,
+        "written_bytes": 127043,
+        "written_files": 2
+      }
+    },
+    "success": true,
+    "write_us": 237874
+  },
+  "native_edit_median_ms": 0.565,
+  "native_edit_p95_ms": 1.321,
+  "pages": 6612,
+  "raw_bytes": 81274740,
+  "reopen_ms": 306.637,
+  "scope": "Real compound publication and loader with native distributed edit history. No rendered terrain, scene streaming, full game addon population, thermal or endurance qualification. Resident page cap and full capture remain unchanged.",
+  "serial_first_publish_ms": 317.308,
+  "sidecar_bytes_including_backup": 19485056,
+  "unchanged_save": {
+    "message": "World saved and verified; terrain and addon state published together",
+    "snapshot_id": "6a6f37074481f46a98bfb79816de91eb2ea5b59855bbfb2ee38fdb6bf628e039",
+    "stages": {
+      "archive_encode_us": 219207,
+      "archive_publish_us": 5174,
+      "terrain_regions": {
+        "region_reads": 0,
+        "reused_files": 1045,
+        "workers": 4,
+        "written_bytes": 0,
+        "written_files": 0
+      }
+    },
+    "success": true,
+    "write_us": 224407
+  }
+}

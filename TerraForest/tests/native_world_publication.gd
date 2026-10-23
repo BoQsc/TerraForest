@@ -14,18 +14,18 @@ func _initialize()->void:
  var copier=ClassDB.instantiate("NativeWorldArchive")
  check(not copier.clone_world(folder,"source","copy").ok,"live writer exclusion")
  archive.release()
- for suffix:String in ["regions","models","water"]:
+ for suffix:String in ["regions","models","water","terrain"]:
   var path:=source+"."+suffix+"/nested";DirAccess.make_dir_recursive_absolute(path)
   var file:=FileAccess.open(path.path_join("data.bin"),FileAccess.WRITE);file.store_buffer(PackedByteArray([9,8,7]));file.close()
  var result:Dictionary=copier.clone_world(folder,"source","copy")
- check(result.ok and result.get("files",0)==3 and result.get("bytes",0)==9,"native store copy")
+ check(result.ok and result.get("files",0)==4 and result.get("bytes",0)==12,"native store copy")
  check(FileAccess.get_file_as_bytes(folder.path_join("copy.trw"))==bytes,"canonical equality")
- for suffix:String in ["regions","models","water"]:check(FileAccess.get_file_as_bytes(folder.path_join("copy.trw."+suffix+"/nested/data.bin"))==PackedByteArray([9,8,7]),"store equality")
+ for suffix:String in ["regions","models","water","terrain"]:check(FileAccess.get_file_as_bytes(folder.path_join("copy.trw."+suffix+"/nested/data.bin"))==PackedByteArray([9,8,7]),"store equality")
  check(not copier.clone_world(folder,"source","copy").ok,"no overwrite")
  DirAccess.make_dir_recursive_absolute(folder.path_join("orphan.trw.water"))
  check(not copier.clone_world(folder,"source","orphan").ok,"orphan store rejection")
  check(not copier.clone_world(folder,"../source","escape").ok,"path escape rejection")
- for phase in 4:
+ for phase in 5:
   var destination:="interrupted_%d"%phase
   var stopped:Dictionary=copier.clone_world(folder,"source",destination,phase)
   check(not stopped.ok and stopped.has("staging"),"injected publication interruption")
@@ -33,7 +33,7 @@ func _initialize()->void:
   var recovered:Dictionary=copier.recover_world(folder,destination)
   check(recovered.ok and recovered.get("recovered",false),"interrupted stores recover")
   check(FileAccess.get_file_as_bytes(folder.path_join(destination+".trw"))==bytes,"recovered root equals source")
-  for suffix:String in ["regions","models","water"]:check(FileAccess.get_file_as_bytes(folder.path_join(destination+".trw."+suffix+"/nested/data.bin"))==PackedByteArray([9,8,7]),"recovered store equals source")
+  for suffix:String in ["regions","models","water","terrain"]:check(FileAccess.get_file_as_bytes(folder.path_join(destination+".trw."+suffix+"/nested/data.bin"))==PackedByteArray([9,8,7]),"recovered store equals source")
  var damaged:Dictionary=copier.clone_world(folder,"source","damaged",1)
  var modified:=FileAccess.open(folder.path_join("damaged.trw.regions/nested/data.bin"),FileAccess.WRITE);modified.store_buffer(PackedByteArray([9,8,6]));modified.close()
  var recovery:Dictionary=copier.recover_world(folder,"damaged")
