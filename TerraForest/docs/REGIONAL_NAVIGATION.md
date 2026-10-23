@@ -1,7 +1,7 @@
 # Regional surface navigation
 
-Implementation under verification, 2026-10-23. This extends
-`NAVIGATION_STANDARD.md`; failed or unreviewed journeys do not count as accepted.
+Selected walking journeys verified, 2026-10-23. This extends
+`NAVIGATION_STANDARD.md`; broader coverage and performance remain explicit gates.
 
 `NativeActorNavigator` now owns a shared, derived surface graph for its external
 characters. Nearby level targets retain `ActorRoute`; targets farther than 12 m,
@@ -27,20 +27,25 @@ Goal connectors are validated incrementally too. Best-first search scores cost
 plus 1.25 times (horizontal distance + height weight times height difference).
 The height weight is 16 for an upstairs goal and 2 otherwise, so finding a cave
 entrance can first climb a ridge without flooding every lower outdoor surface.
-Height guidance
-prioritizes discovering the recipient's connected storey rather than flooding an
+Height guidance prioritizes discovering the recipient's connected storey rather than flooding an
 outdoor plane underneath it. This heuristic is not admissible and does not promise
 an optimal/shortest path. It still requires a complete supported path to the real
 destination. A failed query has no direct-chase or projected-horizon fallback.
 
 The shared graph retains at most 32,768 vertices. Each query retains at most
 16,384 search nodes, within +/-96 m horizontally and +/-64 m vertically of its
-start. Water footprint checks call the native water owner directly, preserving the same
+start. Water footprint checks call the native water owner directly, preserving
+the same
 feet+10 cm dry-ground policy without repeated script forwarding. Optional custom
-admission remains an additional gate. The service shares twelve local or up to 48 regional work quanta and a
+admission remains an additional gate. The service shares twelve local or up to
+48 regional work quanta and a
 cooperative 750 us deadline per tick. More regional quanta use otherwise idle
 time inside the same deadline; they do not authorize unlimited collision work.
-Cache hits require current collision readiness. Geometry,
+Planning may reuse positive readiness for containing4m-aligned boxes, at most128
+entries during one synchronous pass. Callbacks must report the whole input volume
+and remain pure. A larger-box miss falls back to the exact query. The cache is
+discarded between passes; actual motion guards always ask live providers.
+Geometry,
 water, exclusion and authorized-door changes invalidate the cache and queries.
 Final path reconstruction, query reset, physics calls and script callbacks can
 overrun the deadline; it is not a hard frame-time guarantee.
@@ -68,11 +73,17 @@ after four metres of progress or on the final approach. A storey change can
 retarget earlier. This avoids restarting a large search every pursuit tick.
 Continuous moving-target endurance remains an explicit acceptance gate.
 
-Required evidence: complete regional detour with work/memory/latency measurements;
-actual autonomous street-to-upper-floor and cave-entrance/interior/return journeys;
-conditional door contact/destruction without intact-door crossing; missing
-residency and return, edited/disconnected topology, anatomy/permission boundaries,
-debug/release builds and existing local-route, paging and checkpoint regressions.
-Inspect rendered evidence separately from functional paths. Do not qualify whole
-2 km world journeys, the district's visual design, large populations, tight crawler
-passages or arbitrary third-party buildings using these bounded cases.
+Selected evidence is complete in [regional navigation evidence](evidence/regional_navigation/README.md):
+actual saved tower and cave round trips, closed-door clearance/destruction, edited
+and unavailable topology, native debug/release fixtures and inspected images.
+The standing motor uses the actual capsule radius, swept30cm steps, verified
+front/foot-centre treads and floor snapping. Gravity cannot undo a verified riser
+advance; no jump, unsupported traversal or wall/ceiling bypass is authorized.
+
+Cold queries still take roughly10-17s in the selected outbound cases. Faster cold
+planning, full96m pressure/travel, current owned-mine and broader seeds/buildings,
+continuous moving-target endurance and heterogeneous crowds remain unqualified.
+Automatic ladder/jump links and tight crawler passages need separate capability
+and interaction checks. Door removal still needs fresh-process compound persistence.
+These cases do not qualify the whole2km world, large populations, sustained frame
+time, historical district/cave art or arbitrary third-party buildings.

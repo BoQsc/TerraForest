@@ -34,8 +34,7 @@ int RegionalGraph::candidate(int from,const Vector3 &origin,int profile,int dire
     AABB region(p-Vector3(radius,1.9,radius),Vector3(radius*2,3.7,radius*2));
     region=region.merge(AABB(next-Vector3(radius,1.9,radius),Vector3(radius*2,3.7,radius*2)));
     if(cached){
-        Variant ready=readiness.call(region);
-        if(ready.get_type()!=Variant::BOOL||!bool(ready)){request(next);return -3;}
+        if(!validator.collision_ready(region,readiness)){request(next);return -3;}
         ++hits;return vertices[from].edge[direction];
     }
     const bool permitted=validator.sample_motion(space,previous,next,readiness,admission,ray,shape);

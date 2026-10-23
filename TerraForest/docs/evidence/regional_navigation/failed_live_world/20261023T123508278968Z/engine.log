@@ -1,0 +1,23 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS routed zombie admits
+PASS zombie routes around a wall and reaches actual attack contact
+PASS route and body never cross the solid wall
+PASS zombie pool shares twelve native route work units
+PASS same bounded ActorRoute core supplies node limit
+PASS changed pursuit goal replans and reaches the moved player
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS route admission goes around deep water instead of walking across it
+WATER_RESULT {"body":{"action_time":0.533333333333333,"active_action":"left","alive":true,"animation_time":0.533333333333333,"available_attacks":["bite","left","right","both"],"behavior_enabled":true,"clip":"Zombie_Attack_Left","contact_count":1,"crawl_speed":0.32,"crawl_transition":false,"crawling":false,"grounded":true,"last_attack":"left","last_contact":{"action":"left","action_time":0.533333333333333,"damage":10.2,"landed":true,"point":"(2.368101, 1.397127, 0.024002)","surface_distance":0.134065106511116,"visible_target_shapes":false},"last_rejection":"","learned_contact_distance":null,"left_arm":true,"miss_count":0,"movement_mode":"standing","position":"(2.00251, 0.00084, 0.819912)","r4_actions_enabled":true,"revision_id":"r4","right_arm":true,"standing_legs":true,"state":"attack","target_distance":0.95903754234314,"traversal_state":"none","velocity":"(0.0, 0.0, 0.0)"},"crossed":false,"damage":10.2,"route":{"conditional_door_count":0,"expansions":53,"goal":"(2.00251, 0.00084, 0.819912)","local_horizon":false,"minimum_floor_normal_y":0.7072,"motion_rejection":"none","node_limit":2048,"nodes":105,"planner":"local","profile":0,"radius_m":16,"replans":0,"state":"idle","stuck_seconds":0.0,"waypoint_index":11,"waypoint_target":"(2.0, 0.93, 0.5)","waypoints":13}}
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS sealed room reports blocked/search limit instead of direct pursuit
+PASS failed route holds the real body
+PASS removing a blocking wall invalidates and restores traversal
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+FAIL unknown route coverage differs from blocked geometry
+PASS unknown route never falls back to direct chasing
+PASS ready coverage resumes bounded planning
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS shared walking route and native motor climb four stairs to attack
+ZOMBIE_NAVIGATION checks=14 failures=1

@@ -88,7 +88,7 @@ bool NativePlayerMovement::move_grounded(CharacterBody3D *body,double delta) {
         Dictionary hit=body->get_world_3d()->get_direct_space_state()->intersect_ray(step_support_);
         if(!hit.is_empty()&&Vector3(hit["normal"]).y>=std::cos(body->get_floor_max_angle())&&
            !body->test_move(body->get_global_transform(),horizontal,{},body->get_safe_margin())){
-            body->set_velocity(Vector3(velocity.x,0,velocity.z));body->move_and_slide();
+            body->set_velocity(Vector3(velocity.x,0,velocity.z));body->move_and_slide();body->apply_floor_snap();
             step_frame_=frame;return false;
         }
     }
@@ -133,6 +133,19 @@ bool NativePlayerMovement::move_grounded(CharacterBody3D *body,double delta) {
                         if(hit.has("normal")){
                             supported=Vector3(hit["normal"]).y>=std::cos(body->get_floor_max_angle());
                             if(supported){tread=hit["position"];has_tread=true;}
+                        }
+                        // Rough terrain may put the forward rim on a steep
+                        // facet while the proposed foot centre still has a
+                        // walkable tread. Qualify that tread independently;
+                        // capsule up/travel/landing sweeps remain mandatory.
+                        if(!supported){
+                            step_support_->set_from(raised.origin);
+                            step_support_->set_to(raised.origin-Vector3(0,.6,0));
+                            hit=body->get_world_3d()->get_direct_space_state()->intersect_ray(step_support_);
+                            if(hit.has("normal")){
+                                supported=Vector3(hit["normal"]).y>=std::cos(body->get_floor_max_angle());
+                                if(supported){tread=hit["position"];has_tread=true;}
+                            }
                         }
                     }
                     Vector3 landing=raised.origin+step_collision_->get_travel();

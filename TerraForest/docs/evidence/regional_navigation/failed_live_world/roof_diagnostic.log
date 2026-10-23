@@ -1,0 +1,6 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+CAVE_PROBE floor=(844.9996, 141.4621, 397.9) roof={ "status": "miss", "revision": 0, "cells": 31 }
+CAVE_PROBE floor=(813.0007, 135.0539, 398.1667) roof={ "status": "hit", "revision": 0, "cells": 16, "fraction": 0.47587814927101, "position": (813.0007, 151.2255, 398.1667), "normal": (0.501968, -0.863344, -0.051631) }
+CAVE_PROBE floor=(793.0014, 123.4338, 398.3333) roof={ "status": "hit", "revision": 0, "cells": 15, "fraction": 0.47539874911308, "position": (793.0014, 139.5909, 398.3333), "normal": (0.502644, -0.864052, -0.027627) }
+CAVE_PROBE floor=(773.0021, 111.8087, 398.5) roof={ "status": "hit", "revision": 0, "cells": 15, "fraction": 0.47524166107178, "position": (773.0021, 127.961, 398.5), "normal": (0.502907, -0.864327, -0.004861) }

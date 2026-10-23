@@ -38,7 +38,9 @@ func run()->void:
 	var collision:=CollisionShape3D.new();var capsule:=CapsuleShape3D.new();capsule.radius=0.34;capsule.height=1.8;collision.shape=capsule;collision.position.y=0.9;player.add_child(collision)
 	target=preload("res://addons/characters/runtime/zombie_target.gd").new();player.add_child(target)
 	encounters=preload("res://addons/characters/runtime/zombie_world.gd").new();stage.add_child(encounters);encounters.enabled=true;encounters.target=target
-	encounters.readiness=func(bounds:AABB):return not missing_route or bounds.size.x>2.0
+	# A small resident island contains the real body, while every exit corridor
+	# is unknown. Readiness must describe the entire box, including larger probes.
+	encounters.readiness=func(bounds:AABB):return not missing_route or bounds.position.x>=-4.2 and bounds.end.x<=-.8 and bounds.position.z>=-1.7 and bounds.end.z<=1.7
 	encounters.water_depth=func(point:Vector3):return 1.0 if wet_band and absf(point.x)<0.7 and absf(point.z)<1.3 else 0.0
 	encounters._spawn_clock=100000.0
 	physics_frame.connect(tick_manager)
@@ -99,8 +101,11 @@ func run()->void:
 	for index in range(1,4):gates[index].free()
 	await ticks(2);encounters._spawn_clock=100000.0
 	zombie=encounters.spawn_at(Vector3(-2.5,0,0));missing_route=true;active=true
-	await ticks(Engine.physics_ticks_per_second)
-	check(encounters.navigator.status(zombie.get_instance_id()).state=="unavailable","unknown route coverage differs from blocked geometry")
+	var unavailable_seen:=false
+	for tick in Engine.physics_ticks_per_second*2:
+		await physics_frame
+		if encounters.navigator.status(zombie.get_instance_id()).state=="unavailable":unavailable_seen=true;break
+	check(unavailable_seen,"unknown route coverage differs from blocked geometry")
 	check(zombie.position.distance_to(Vector3(-2.5,0,0))<0.15,"unknown route never falls back to direct chasing")
 	missing_route=false;encounters.invalidate_navigation();await ticks(Engine.physics_ticks_per_second)
 	check(encounters.navigator.status(zombie.get_instance_id()).state in ["following","planning"],"ready coverage resumes bounded planning")

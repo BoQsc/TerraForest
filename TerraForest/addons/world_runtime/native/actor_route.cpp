@@ -6,6 +6,32 @@ using namespace godot;
 namespace terraforest {
 static double horizontal(const Vector3 &a,const Vector3 &b){Vector3 d=a-b;d.y=0;return d.length();}
 void ActorRoute::include(const AABB &b){bounds_=has_bounds_?bounds_.merge(b):b;has_bounds_=true;}
+bool ActorRoute::collision_ready(const AABB &bounds,const Callable &readiness){
+    auto query=[&](const AABB &region){
+        if(readiness_cache)++readiness_cache->probes;
+        Variant value=readiness.call(region);return value.get_type()==Variant::BOOL&&bool(value);
+    };
+    // Only the synchronous planning pass opts in. Motion guards always ask the
+    // live providers, after any subsequent collision publication/retirement.
+    if(!readiness_cache)return query(bounds);
+    const Vector3 a=bounds.position,b=a+bounds.size;
+    if(!a.is_finite()||!b.is_finite())return false;
+    if(a.abs().length()>1000000||b.abs().length()>1000000)return query(bounds);
+    const int x=int(std::floor(a.x/4)),y=int(std::floor(a.y/4)),z=int(std::floor(a.z/4));
+    const int u=int(std::ceil(b.x/4)),v=int(std::ceil(b.y/4)),w=int(std::ceil(b.z/4));
+    const auto key=std::make_tuple(x,y,z,u,v,w);
+    auto found=readiness_cache->regions.find(key);
+    const bool reused=found!=readiness_cache->regions.end();
+    if(found==readiness_cache->regions.end()){
+        if(readiness_cache->regions.size()>=128)return query(bounds);
+        const bool ready=query(AABB(Vector3(x*4,y*4,z*4),Vector3((u-x)*4,(v-y)*4,(w-z)*4)));
+        found=readiness_cache->regions.emplace(key,ready).first;
+    }
+    if(found->second){if(reused)++readiness_cache->hits;return true;}
+    // An expanded box may contain unrelated missing proxies. Preserve exact
+    // readiness semantics instead of treating that conservative miss as a wall.
+    return query(bounds);
+}
 void ActorRoute::start(const Vector3 &position,const Vector3 &goal){
     nodes_.clear();lookup_.clear();open_={};path_.clear();waypoint_=0;
     expanding_=-1;neighbour_=0;limited_=unknown_=false;has_bounds_=false;expansions=0;
@@ -30,8 +56,7 @@ bool ActorRoute::edge(PhysicsDirectSpaceState3D *space,const Vector3 &from,Vecto
     const real_t radius=capsule.is_valid()?std::max(real_t(.4),capsule->get_radius()+real_t(.05)):real_t(.4);
     AABB region(from-Vector3(radius,1.9,radius),Vector3(radius*2,3.7,radius*2));
     region=region.merge(AABB(to-Vector3(radius,1.9,radius),Vector3(radius*2,3.7,radius*2)));include(region);
-    Variant ready=readiness.call(region);
-    if(ready.get_type()!=Variant::BOOL || !bool(ready)){unknown_=true;edge_unavailable_=true;return false;}
+    if(!collision_ready(region,readiness)){unknown_=true;edge_unavailable_=true;return false;}
     // Half-metre graph edges have a quarter-metre intermediate tread sample.
     // Each half must fit the same 30cm riser limit as actual movement.
     Vector3 middle=(from+to)*.5;

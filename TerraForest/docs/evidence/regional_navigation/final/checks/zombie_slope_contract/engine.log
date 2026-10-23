@@ -1,0 +1,7 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS standing slope 32.0 position=(4.206333, 2.671542, 0.0) route={"complete_path":true,"conditional_door_count":0,"expansions":12,"goal":"(4.206333, 2.671542, 0.0)","graph_cache_hits":0,"graph_node_limit":32768,"graph_nodes":59,"graph_revision":1,"highest_surface":3.12434656143188,"local_horizon":false,"lowest_surface":0.00000000715255732419706,"minimum_floor_normal_y":0.7072,"motion_rejection":"none","node_limit":16384,"nodes":60,"planner":"regional","portals":1,"profile":0,"radius_m":96.0,"regions":2,"replans":0,"state":"idle","stuck_seconds":0.0166666666666667,"waypoint_index":10,"waypoint_target":"(4.5, 3.741912, 0.0)","waypoints":13}
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS standing slope 46.0 position=(-1.0, 0.000191, 0.0) route={"complete_path":false,"conditional_door_count":0,"expansions":79,"goal":"(5.0, 5.217651, 0.0)","graph_cache_hits":0,"graph_node_limit":32768,"graph_nodes":78,"graph_revision":1,"highest_surface":0.00000000715255732419706,"local_horizon":false,"lowest_surface":0.00000000715255732419706,"minimum_floor_normal_y":0.7072,"motion_rejection":"none","node_limit":16384,"nodes":79,"planner":"regional","portals":0,"profile":0,"radius_m":96.0,"regions":0,"replans":0,"state":"blocked","stuck_seconds":0.0,"waypoint_index":0,"waypoints":0}
+ZOMBIE_SLOPE_CONTRACT failures=0

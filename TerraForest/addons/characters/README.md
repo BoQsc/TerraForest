@@ -90,8 +90,9 @@ grounded movement. New adapters use 0BSD.
 This is the first integration milestone. Zombie contacts emit damage feedback and
 record session damage; player health, death/respawn, balancing, loot and encounter
 persistence remain unimplemented. Local routing around obstacles and wooden-door
-attacks are implemented; regional journeys and general multistorey connectivity
-remain unqualified.
+attacks and regional walking are implemented. Actual saved tower/cave round trips
+pass; arbitrary buildings, full-domain pressure and continuous moving-target
+endurance remain unqualified. See the [regional evidence](../../docs/evidence/regional_navigation/README.md).
 Automatic traversal, full-body third-person view, outfit slots, authored empty-hand
 punches, construction grips, draw/stow transitions and camera/tool wall clipping
 need follow-up work. Six actors is a bounded prototype, not a measured scalability

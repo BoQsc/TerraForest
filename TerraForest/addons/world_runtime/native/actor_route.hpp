@@ -38,6 +38,12 @@ class ActorRoute {
         const godot::Ref<godot::PhysicsRayQueryParameters3D> &ray,
         const godot::Ref<godot::PhysicsShapeQueryParameters3D> &shape);
 public:
+    struct ReadinessCache {
+        std::map<std::tuple<int,int,int,int,int,int>,bool> regions;
+        int probes=0,hits=0;
+    };
+    ReadinessCache *readiness_cache=nullptr;
+    bool collision_ready(const godot::AABB &bounds,const godot::Callable &readiness);
     enum State {IDLE,PLANNING,FOLLOWING,ARRIVED,BLOCKED,UNAVAILABLE,SEARCH_LIMIT};
     State state=IDLE;
     double maximum_step=.30;

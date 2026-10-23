@@ -258,14 +258,17 @@ support/sweep/admission checks. Remove records on retirement; `clear` discards a
 transient routes. Call `set_exclusions` when the specific recipient RID changes,
 and `invalidate(bounds)` after relevant geometry changes.
 
-Profile 0 uses the existing 0.35 m / 1.8 m upright envelope and 0.30 m step. Profile
+Profile 0 uses the existing 0.35 m / 1.8 m upright envelope and 0.30 m step. Standing floor normal Y is >=0.7072, matching the45-degree physical setting; legacy walkers/crawlers retain >=0.85. Profile
 1 uses a conservative 0.75 m / 1.8 m turning envelope with no upward step for
 crawlers. The larger envelope participates in readiness bounds. The service owns
 at most 64 requested slots (the zombie host configures six); each retains at most
 2,048 local nodes. Regional queries retain up to 16,384 nodes in a shared
 32,768-vertex, height-aware surface graph. The external pool has twelve local or
 up to 48 regional planning quanta and the cooperative 750 us deadline, separate
-from the twelve-quanta legacy activation pool. Motion guards and bounded perception
+from the twelve-quanta legacy activation pool. A containing-box readiness cache
+holds at most128 entries for one synchronous planning pass; larger-box failures
+fall back to exact queries. Readiness must describe the whole volume and be pure.
+Motion guards use live uncached readiness. Motion guards and bounded perception
 are additional work. The current two avoidance implementations are not yet one
 heterogeneous crowd scheduler.
 

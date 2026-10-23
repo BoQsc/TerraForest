@@ -1312,10 +1312,18 @@ func _zombie_obstacle_target(zombie: CharacterBody3D) -> Node3D:
 	var base:Vector3=doors.collection.to_global(Vector3(transform[3],transform[7],transform[11]))
 	var leaf_pose:=Transform3D(Basis(Vector3(transform[0],transform[4],transform[8]),Vector3(transform[1],transform[5],transform[9]),Vector3(transform[2],transform[6],transform[10])),Vector3(transform[3],transform[7],transform[11]))
 	obstacle.shape_pose=doors.collection.global_transform*leaf_pose*Transform3D(Basis.IDENTITY,Vector3(.5,1.1,0))
-	obstacle.contact_point=Vector3(hit.position.x,base.y+1.1,hit.position.z)
-	obstacle.approach_point=hit.position+normal.normalized()*0.55-Vector3.UP*1.1
-	obstacle.approach_point.y=base.y+0.04
-	zombies.add_child(obstacle);obstacle.global_position=Vector3(hit.position.x,base.y,hit.position.z)
+	# Aim at the leaf centre, not an arbitrary ray hit near its jamb. The full
+	# standing envelope must fit the doorway, and entrance steps define support.
+	var centre:Vector3=obstacle.shape_pose.origin;centre.y=base.y
+	normal=obstacle.shape_pose.basis.z.normalized()
+	if (zombie.global_position-centre).dot(normal)<0:normal=-normal
+	obstacle.contact_point=centre+Vector3.UP*1.1+normal*.07
+	obstacle.approach_point=centre+normal*.55
+	var support_ray:=PhysicsRayQueryParameters3D.create(obstacle.approach_point+Vector3.UP*.6,obstacle.approach_point-Vector3.UP*.8,7,[player.get_rid(),hit.rid])
+	var support:Dictionary=get_world_3d().direct_space_state.intersect_ray(support_ray)
+	if support.is_empty() or support.normal.y<.7072:obstacle.free();return null
+	obstacle.approach_point.y=support.position.y+.04
+	zombies.add_child(obstacle);obstacle.global_position=centre
 	obstacle.validity=func():return _model_edit_available() and doors.collection.placement_for_body(obstacle.body_rid)==identity and doors.collection.get_instance(identity)==transform and not doors.state.is_open(identity) and not doors.collection.is_removal_protected(identity)
 	obstacle.damage_callback=func(damage:float):
 		var key:String="model:%s:%d"%[preload("res://addons/structures/door_catalog.gd").KEY,identity]

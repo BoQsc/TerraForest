@@ -1,0 +1,142 @@
+{
+  "project": "C:\\Users\\windows10\\.codex\\worktrees\\character-integration\\Godot Terrain\\TerraForest\\.build\\regional_release_20261023T123554588741Z",
+  "native_sha256": {
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "d672b6ab8087535a089c934ed43570fd44ca0381ff5dfa98787837fc3a73340d",
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "a53db9fb196efdfa2dfae1fa8eb9e379fd1f6c8fbb112ec888802b32657a9a64",
+    "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "c14eb2dbc35ea5cba7448cd3f3bba5ba2342bc0666f27b168bc155eaaa081a30",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "4f68c9383b7537b51494cf609fc05182906957404417b48789fa55141dc54622"
+  },
+  "scope": "Release DLL physics/API contracts in an isolated project; no exported-game or full-host release qualification.",
+  "revision": "8ae421d87345ff5da9a7134d15d714c08d620119",
+  "worktree_changes": [
+    " M TerraForest/addons/player_runtime/bin/player_runtime.windows.template_debug.x86_64.dll",
+    " M TerraForest/addons/player_runtime/bin/player_runtime.windows.template_release.x86_64.dll",
+    " M TerraForest/addons/player_runtime/native/movement.cpp",
+    " M TerraForest/addons/world_runtime/bin/world_runtime.windows.template_debug.x86_64.dll",
+    " M TerraForest/addons/world_runtime/bin/world_runtime.windows.template_release.x86_64.dll",
+    " M TerraForest/addons/world_runtime/native/actor_navigator.cpp",
+    " M TerraForest/addons/world_runtime/native/actor_navigator.hpp",
+    " M TerraForest/addons/world_runtime/native/actor_route.cpp",
+    " M TerraForest/addons/world_runtime/native/actor_route.hpp",
+    " M TerraForest/addons/world_runtime/native/regional_navigation.cpp",
+    " M TerraForest/demo/world.gd",
+    " M TerraForest/tests/regional_navigation.gd",
+    " M TerraForest/tests/zombie_navigation.gd",
+    " M TerraForest/tests/zombie_regional_world.gd",
+    " M TerraForest/tests/zombie_step_guard.gd",
+    " M TerraForest/tools/check_zombie_regional_world.py",
+    "?? TerraForest/docs/evidence/regional_navigation/pre_readiness_cache/",
+    "?? TerraForest/tools/check_regional_release.py"
+  ],
+  "git_metadata_available": true,
+  "outcomes": [
+    {
+      "test": "regional_navigation",
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--headless",
+        "--path",
+        "C:\\Users\\windows10\\.codex\\worktrees\\character-integration\\Godot Terrain\\TerraForest\\.build\\regional_release_20261023T123554588741Z",
+        "--max-fps",
+        "60",
+        "--log-file",
+        "C:\\Users\\windows10\\.codex\\worktrees\\character-integration\\Godot Terrain\\TerraForest\\reports\\regional_release\\20261023T123554588741Z\\regional_navigation\\engine.log",
+        "--script",
+        "res://tests/regional_navigation.gd"
+      ],
+      "test_sha256": "5b36a9228519e341a728f5ad9be6df4f3262e37dc9d3d7910dbc65a5d312d5de",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 7720,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 10.827015199989546,
+        "passed": true
+      }
+    },
+    {
+      "test": "navigation_residency",
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--headless",
+        "--path",
+        "C:\\Users\\windows10\\.codex\\worktrees\\character-integration\\Godot Terrain\\TerraForest\\.build\\regional_release_20261023T123554588741Z",
+        "--max-fps",
+        "60",
+        "--log-file",
+        "C:\\Users\\windows10\\.codex\\worktrees\\character-integration\\Godot Terrain\\TerraForest\\reports\\regional_release\\20261023T123554588741Z\\navigation_residency\\engine.log",
+        "--script",
+        "res://tests/navigation_residency.gd"
+      ],
+      "test_sha256": "54be3a9e364deeafb8bf1d50eb83ad18428972278d8695f505a8394511a3ab76",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 66164,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 0.7382185000460595,
+        "passed": true
+      }
+    },
+    {
+      "test": "zombie_step_guard",
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--headless",
+        "--path",
+        "C:\\Users\\windows10\\.codex\\worktrees\\character-integration\\Godot Terrain\\TerraForest\\.build\\regional_release_20261023T123554588741Z",
+        "--max-fps",
+        "60",
+        "--log-file",
+        "C:\\Users\\windows10\\.codex\\worktrees\\character-integration\\Godot Terrain\\TerraForest\\reports\\regional_release\\20261023T123554588741Z\\zombie_step_guard\\engine.log",
+        "--script",
+        "res://tests/zombie_step_guard.gd"
+      ],
+      "test_sha256": "6e1fe5ef93d59f2f8fb4b28e0f2fc8b8dee4a543ae038d65e1664fb9c0901df6",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 35204,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 13.988157999992836,
+        "passed": true
+      }
+    },
+    {
+      "test": "player_cottage_stairs",
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--headless",
+        "--path",
+        "C:\\Users\\windows10\\.codex\\worktrees\\character-integration\\Godot Terrain\\TerraForest\\.build\\regional_release_20261023T123554588741Z",
+        "--max-fps",
+        "60",
+        "--log-file",
+        "C:\\Users\\windows10\\.codex\\worktrees\\character-integration\\Godot Terrain\\TerraForest\\reports\\regional_release\\20261023T123554588741Z\\player_cottage_stairs\\engine.log",
+        "--script",
+        "res://tests/player_cottage_stairs.gd"
+      ],
+      "test_sha256": "822f7e8238399d74d0d13ef41c17c51b6cf75e66fbdee51ae49e3193021f7503",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 12052,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 10.09392850002041,
+        "passed": true
+      }
+    }
+  ]
+}

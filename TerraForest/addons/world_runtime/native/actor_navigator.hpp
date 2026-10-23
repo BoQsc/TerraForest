@@ -26,6 +26,7 @@ class NativeActorNavigator : public godot::Node3D {
     godot::TypedArray<godot::RID> exclusions_;
     godot::TypedArray<godot::RID> interactions_;
     RegionalGraph graph_;
+    ActorRoute::ReadinessCache readiness_cache_;
     Agent *find(int64_t id);
 protected:
     static void _bind_methods();

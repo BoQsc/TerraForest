@@ -36,7 +36,7 @@ func run()->void:
 			if tick%120==0:print("STEP ",kind," ",tick," ",body.position," guard=",guard," floor=",body.is_on_floor())
 			arrived=body.position.z>2 if kind=="narrow" else body.position.z<6.2
 			if arrived:break
-		var passed:=arrived and body.position.y>.9 and steps>0 and peak_rise<=.301
+		var passed:=arrived and body.position.y>.9 and steps>0 and peak_rise<=.301 and body.is_on_floor()
 		print(("PASS " if passed else "FAIL "),kind," slow capsule steps: peak_rise=",peak_rise," verified_steps=",steps)
 		if not passed:failures+=1
 		scene.free();await process_frame

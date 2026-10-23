@@ -79,33 +79,37 @@ Door attacks use authored contact timing and existing world durability/removal,
 with no player salvage or tool wear. This updates the earlier obstacle-navigation
 requirement only for the checked local cases.
 
-Regional navigation is in active implementation on the character branch. The
-stable world checkpoint `5e274359` has been merged as `3ed2c4dd`; concurrent dirty
-world edits stay in the original checkout. The derived height-aware graph and
-bounded collision interests pass isolated regional detour, multi-storey planning
-and residency fixtures. Repeated local horizons have been removed. These fixture
-passes do not yet qualify actual world navigation: saved-world tower and cave
-journeys currently fail physical traversal. Riser floor-contact/clearance mismatch
-is being corrected and must be rechecked against the actual saved worlds, both
-outbound and return. Failed evidence is retained in
-`evidence/regional_navigation/failed_live_world/`. The detailed implementation and
-closure gates are in [REGIONAL_NAVIGATION.md](REGIONAL_NAVIGATION.md).
+Regional walking navigation now has a derived height-aware graph and bounded
+collision interests. Checkpoint `adf6c72f` records the implementation; world
+checkpoint `6e3575fc` is merged as `8ae421d8`, with combined native libraries rebuilt.
+Concurrent unfinished world edits remain in their original checkout. Selected
+actual saved-world tower and cave journeys pass in both directions. The tower
+pursuer breaks the intact wooden door and reaches the second upper floor; the
+cave pursuer reaches the player beneath its terrain roof and returns outside.
+All210 tower and37 cave source files, including regional sidecars, remain unchanged.
+Debug/regional/release fixtures and inspected images are retained in
+[evidence](evidence/regional_navigation/README.md); earlier failures remain visible.
+The detailed bounds and policy are in [REGIONAL_NAVIGATION.md](REGIONAL_NAVIGATION.md).
 
-Required before closing this milestone: actual autonomous street-to-upper-floor
-and cave entrance/interior/return journeys; intact-door contact/destruction;
-rendered inspection; disconnected/edited topology and missing-residency recovery;
-native debug/release and relevant regression checks. Heterogeneous crowd avoidance,
-continuous moving-target endurance, automatic authorized ladder/jump links,
-tighter crawler clearance and total CPU/frame qualification remain open beyond
-these bounded cases. Door destruction still needs a fresh-process compound
-save/reopen check beyond its provider snapshot round trip. Do not expand encounter
-population or claim whole-world navigation from isolated fixtures. Subsequent
-world integration must merge sources and rebuild native binaries together, then
-rerun host checks.
+This closes the earlier wholly-unimplemented regional graph, tile/floor walking
+connections and selected cave-journey requirements. It does not close arbitrary
+world reachability: the host admits at most six residents within96m, and distant
+80m residency evidence is component-level. Required continuation: faster cold
+planning (selected outbound queries still9.8-16.7s), actual full-domain pressure and
+travel, current owned-mine and broader seed/building journeys, continuous moving
+targets and heterogeneous crowds. Resume these now that the shared graph exists;
+close them with autonomous live-host travel, explicit unavailable/recovery and
+measured workloads. Automatic authorized ladder/jump links and tighter crawler
+clearance need their own capability/interaction checks. Door destruction still
+needs fresh-process compound save/reopen beyond its provider snapshot round trip.
+A rendered773ms interval and cooperative planning overruns remain recorded; total
+CPU/frame, large populations, foot planting and world/art acceptance remain open.
+Do not expand population or claim whole-world navigation from the selected passes.
+Further world integration must merge sources and rebuild libraries together.
 
 This is a first integration milestone, not completed survival gameplay. Required
 continuation: player health/death/respawn, saved encounter identity/state and loot,
-regional obstacle navigation and automatic traversal, third-person/outfit presentation,
+broader traversal/link coverage, third-person/outfit presentation,
 authored empty-hand punches and construction grips, draw/stow transitions and
 camera/tool wall clipping, plus sustained population/frame-cost qualification.
 These are deferred because this milestone preserves native movement and existing

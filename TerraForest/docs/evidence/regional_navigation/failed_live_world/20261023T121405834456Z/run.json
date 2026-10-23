@@ -1,0 +1,63 @@
+{
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+    "--path",
+    "C:\\Users\\windows10\\.codex\\worktrees\\character-integration\\Godot Terrain\\TerraForest",
+    "--log-file",
+    "C:\\Users\\windows10\\.codex\\worktrees\\character-integration\\Godot Terrain\\TerraForest\\reports\\checks\\20261023T121405834456Z\\engine.log",
+    "--headless",
+    "--max-fps",
+    "60",
+    "--script",
+    "res://tests/zombie_regional_world.gd",
+    "--",
+    "--snapshot-readonly",
+    "--world-slot=cave_stage_7715b685870243ae972039d1ac7294de",
+    "--derived-cache=user://zombie_regional_20261023T121405834456Z",
+    "--navigation-case=cave",
+    "--gameplay-construction",
+    "--zombies"
+  ],
+  "source_archive_sha256": "05f1c0c5fcaa9c823e846af4d7a88e5abd73ca38c562d9af44c2485529f44a81",
+  "revision": "8ae421d87345ff5da9a7134d15d714c08d620119",
+  "worktree_changes": [
+    " M TerraForest/addons/player_runtime/native/movement.cpp",
+    " M TerraForest/demo/world.gd",
+    " M TerraForest/tests/zombie_regional_world.gd",
+    " M TerraForest/tests/zombie_step_guard.gd"
+  ],
+  "git_metadata_available": true,
+  "engine_sha256": "12310c74bdda7dcd43f28e971f33047dcecadd436b68169d61ce41009006df38",
+  "test_sha256": "2ed6bef2dc9e0a7dffd562438c8be47b1e8a45c863a521299a1ec4532ae37e92",
+  "native_sha256": {
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "0c8f02a43f87ece91c217f660f85ab37f8bc7381136cf67a55fc8563d6aabc29",
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "5edc0a3a43979f8414976c20be3490c1d33cf69cd1c4d2a7396770d53e26b744",
+    "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "a5469ea592ad6e372d44a0e30fe2c0a6c7cd97975899ff6ab9d825609f26657d",
+    "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "c14eb2dbc35ea5cba7448cd3f3bba5ba2342bc0666f27b168bc155eaaa081a30",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "e7be2f6b594e7f7ea74399cfa36df70f1cf3f4f27d887426933496f624c2f16c",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "8c318ca1c80da4ad791c90903202ab46b96b89a65f787cedea1c65777dc8013b",
+    "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "d6479d2a000657a5b5fd6a516220efc67a34ff3183eae8c93c622b27fcaf3934",
+    "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "c133f46b04d9cdefdbbf447323f1e65d4c7371e62530ed51276658bf2c931943",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "4f68c9383b7537b51494cf609fc05182906957404417b48789fa55141dc54622",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "0106db2f31f8b1d1c4a4c14b76f49fb407c017cb1cce1c8152964918151ad53f",
+    "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "f43a7af31180b86dc3d7f7612479ee0c0a70318aa7b140e1cd03ee3fbea790d3",
+    "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "dfbcdf757ac6eaa3fcd03ef7b0993f06711f100029a30a9a04e7a3f05a7133c3",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "013fcc3e23d92d95520063ee4d3448c8e4d6869997b35c0835068dce0f20ae5a",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "4efe2ed2e69568a759d46844f23e853e681986da428ba6643cd980df403da178"
+  },
+  "result": {
+    "timed_out": false,
+    "launch_error": null,
+    "cancelled": false,
+    "pid": 39188,
+    "exit_code": 1,
+    "diagnostics": [
+      "FAIL arrival is inside the actual terrain cave beneath its solid roof",
+      "FAIL pursuer replans and returns from upper floor/cave to the connected approach"
+    ],
+    "required_text_found": true,
+    "elapsed_seconds": 107.00709319999442,
+    "passed": false
+  },
+  "source_archive_unchanged": true
+}

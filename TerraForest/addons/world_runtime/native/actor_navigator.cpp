@@ -98,6 +98,7 @@ Dictionary NativeActorNavigator::advance(double delta,const Callable &readiness,
     if(!is_inside_tree() || !readiness.is_valid() || !std::isfinite(delta) || delta<=0 || delta>.1)return out;
     readiness_=readiness;admission_=admission;auto *space=get_world_3d()->get_direct_space_state();
     const uint64_t started=Time::get_singleton()->get_ticks_usec();
+    readiness_cache_.regions.clear();readiness_cache_.probes=readiness_cache_.hits=0;
     PackedVector3Array pending;
     for(int i=0;i<graph_.requests.size();++i){
         const Vector3 p=graph_.requests[i];Variant ready=readiness.call(AABB(p-Vector3(1,1.9,1),Vector3(2,3.7,2)));
@@ -113,6 +114,7 @@ Dictionary NativeActorNavigator::advance(double delta,const Callable &readiness,
         else {agent.route.prepare(agent.position,agent.goal,delta);agent.route.moved(agent.position,delta);}
     }
     int work=0,limit=12;size_t idle=0;
+    for(auto &agent:agents_)agent.route.readiness_cache=&readiness_cache_;
     for(const auto &agent:agents_)if(agent.active&&agent.regional&&agent.journey.state==ActorRoute::PLANNING){limit=48;break;}
     out["route_work_limit"]=limit;
     while(space && !agents_.empty() && work<limit && idle<agents_.size()){
@@ -125,6 +127,9 @@ Dictionary NativeActorNavigator::advance(double delta,const Callable &readiness,
         if(Time::get_singleton()->get_ticks_usec()-started>=750)break;
     }
     out["ok"]=true;out["route_work"]=work;out["goal_probes"]=0;
+    for(auto &agent:agents_)agent.route.readiness_cache=nullptr;
+    out["readiness_probes"]=readiness_cache_.probes;out["readiness_cache_hits"]=readiness_cache_.hits;
+    out["readiness_cache_entries"]=int(readiness_cache_.regions.size());
     out["graph_nodes"]=int(graph_.vertices.size());out["graph_node_limit"]=RegionalGraph::NODE_LIMIT;
     out["graph_cache_hits"]=int64_t(graph_.hits);out["streaming_requests"]=graph_.requests.size();
     out["planning_us"]=int64_t(Time::get_singleton()->get_ticks_usec()-started);out["agents"]=int(agents_.size());return out;

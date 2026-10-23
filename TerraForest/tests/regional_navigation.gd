@@ -6,6 +6,7 @@ var scene:Node3D
 var nav:Node3D
 var peak_work:=0
 var peak_us:=0
+var peak_readiness_hits:=0
 var pending:=false
 var rows:Array=[]
 func check(ok:bool,label:String)->void:
@@ -15,13 +16,14 @@ func check(ok:bool,label:String)->void:
 func box(at:Vector3,size:Vector3)->StaticBody3D:
 	var body:=StaticBody3D.new();body.position=at;scene.add_child(body)
 	var shape:=BoxShape3D.new();shape.size=size;var collider:=CollisionShape3D.new();collider.shape=shape;body.add_child(collider);return body
-func ready(bounds:AABB)->bool:return not pending or bounds.position.x<12
+func ready(bounds:AABB)->bool:return not pending or bounds.end.x<=12
 func plan(start:Vector3,goal:Vector3,seconds:float=30,stop_unavailable:bool=true)->Dictionary:
 	nav.set_agent(1,start,goal,0,true)
 	for tick in int(seconds*Engine.physics_ticks_per_second):
 		await physics_frame
 		var measured:Dictionary=nav.advance(1.0/Engine.physics_ticks_per_second,ready,Callable())
 		peak_work=maxi(peak_work,measured.route_work);peak_us=maxi(peak_us,measured.planning_us)
+		peak_readiness_hits=maxi(peak_readiness_hits,measured.readiness_cache_hits)
 		var state:Dictionary=nav.status(1)
 		if tick%300==0:print("REGIONAL_PROGRESS ",JSON.stringify(state))
 		if state.state in ["following","arrived","blocked","search_limit"] or stop_unavailable and state.state=="unavailable":
@@ -68,6 +70,7 @@ func run()->void:
 	state=await plan(Vector3(200,0,0),Vector3(240,0,0),15)
 	check(state.state=="following","removing the regional barrier restores connectivity")
 	check(peak_work<=48 and state.get("graph_nodes",0)<=32768 and state.nodes<=16384,"regional queries and shared graph respect declared work and memory caps")
+	check(peak_readiness_hits>0,"planning reuses positively ready containing boxes within its synchronous pass")
 	DirAccess.make_dir_recursive_absolute("res://reports/regional_navigation")
 	var file:=FileAccess.open("res://reports/regional_navigation/result.json",FileAccess.WRITE);file.store_string(JSON.stringify({"checks":checks,"failures":failures,"peak_work":peak_work,"peak_planning_us":peak_us,"routes":rows,"last":state},"  "));file.close()
 	scene.free();await process_frame;print("REGIONAL_NAVIGATION checks=",checks," failures=",failures);quit(1 if failures else 0)

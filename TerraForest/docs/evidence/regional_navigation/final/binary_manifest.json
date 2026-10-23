@@ -1,0 +1,19 @@
+{
+  "native_sha256": {
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "ef6546c32d692e7ae5c37b979091377c6ff7f2e47ef88c1b42795375bd9a8de3",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "d672b6ab8087535a089c934ed43570fd44ca0381ff5dfa98787837fc3a73340d",
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "50b44c7765b7d6cf9178f60b2d4445847ac673144dd29e60f2f08670d82ccbb9",
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "a53db9fb196efdfa2dfae1fa8eb9e379fd1f6c8fbb112ec888802b32657a9a64",
+    "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "a5469ea592ad6e372d44a0e30fe2c0a6c7cd97975899ff6ab9d825609f26657d",
+    "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "c14eb2dbc35ea5cba7448cd3f3bba5ba2342bc0666f27b168bc155eaaa081a30",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "4f68c9383b7537b51494cf609fc05182906957404417b48789fa55141dc54622",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "0106db2f31f8b1d1c4a4c14b76f49fb407c017cb1cce1c8152964918151ad53f"
+  },
+  "tests": {
+    "tests\\zombie_regional_world.gd": "c6cf17af08a9a81680e14e8c1c6a43514ab99f50031d67076e2507b284e9b13a",
+    "tests\\zombie_navigation.gd": "29675623f7974111c0f71cebd9bda26c61206d9f4392e84caa1ef4277b2e4e00",
+    "tests\\regional_navigation.gd": "5b36a9228519e341a728f5ad9be6df4f3262e37dc9d3d7910dbc65a5d312d5de"
+  },
+  "world_checkpoint": "6e3575fc",
+  "integration_merge": "8ae421d8"
+}
