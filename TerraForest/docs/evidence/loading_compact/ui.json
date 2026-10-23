@@ -1,0 +1,259 @@
+{
+  "diagnostics": {
+    "addons": {
+      "ground_cover": {
+        "dirty": 0,
+        "enabled": false,
+        "pending": 0,
+        "rejected_batches": 0,
+        "requested": 0,
+        "resident_regions": 0,
+        "wanted_regions": 0
+      },
+      "structures": {
+        "asset_collections": 13,
+        "last_failure": {},
+        "paging": {
+          "active": false
+        },
+        "paging_failures": 0
+      },
+      "trees": {
+        "custom_writes": 22,
+        "event_heap": 0,
+        "event_pops": 302,
+        "event_queue_records": 150,
+        "far": 150,
+        "flush_us": 695,
+        "flushed_tiers": 0,
+        "full_rebuilds": 5,
+        "instance_allocation_events": 22,
+        "instance_cache_live_payload_bytes": 44288,
+        "instance_cache_primes": 22,
+        "live_certificates": 150,
+        "middle": 79,
+        "owners": 5,
+        "resident_cells": 3,
+        "row_writes": 0,
+        "selection_checked": 452,
+        "selection_jobs": 7,
+        "selection_skipped_cells": 9,
+        "selection_us": 294,
+        "shadow_proxy": 129,
+        "shadow_source": 21,
+        "source": 71,
+        "tested_rows": 150,
+        "transition_followups": 0,
+        "transitions": 150,
+        "trees": 150,
+        "update_us": 143,
+        "uploaded_bytes": 72352,
+        "uploads": 22
+      },
+      "water": {
+        "accept_patch_us": 0,
+        "active_cells": 0,
+        "bucket_native_us": 0,
+        "cache_hits": 0,
+        "cached_region_rebuilds": 0,
+        "capacity_reached": false,
+        "cell_steps": 0,
+        "changes": 0,
+        "deferred_regions": 0,
+        "dirty_meshes": 0,
+        "exclusion_notify_us": 0,
+        "fill_active": false,
+        "fill_remaining_ml": -1,
+        "hull_snapshot_us": 0,
+        "lakes": 0,
+        "map_identity_hash_us": 9,
+        "map_identity_scene_hash_us": 9,
+        "max_bucket_native_us": 0,
+        "max_mesh_commit_us": 0,
+        "max_mesh_publish_us": 4,
+        "max_mesh_us": 0,
+        "max_step_us": 0,
+        "mesh_batch_active": false,
+        "mesh_commit_us": 0,
+        "mesh_publish_pending": false,
+        "mesh_publish_us": 2,
+        "mesh_snapshot_bytes": 0,
+        "mesh_us": 0,
+        "occupancy_failure": "",
+        "ocean_cache_bytes": 0,
+        "ocean_cache_hits": 0,
+        "ocean_cache_regions": 0,
+        "ocean_clean_regions": 0,
+        "ocean_edited_regions": 0,
+        "outstanding_slices": 0,
+        "pending_regions": 0,
+        "pending_vertical": 0,
+        "published_mesh_batch": 0,
+        "query_builds": 0,
+        "query_cache_bytes": 0,
+        "query_cache_hits": 0,
+        "ready": 0,
+        "regions": 0,
+        "render_ready": true,
+        "resident_cell_bytes": 0,
+        "resident_occupancy_bytes": 0,
+        "sampled_nodes": 0,
+        "snapshot_builds": 0,
+        "snapshot_cache_bytes": 0,
+        "snapshot_hits": 0,
+        "snapshot_pending_bytes": 0,
+        "staged_meshes": 0,
+        "step_us": 0,
+        "structure_contact_bytes": 0,
+        "terrain_contact_bytes": 0,
+        "vacancy_bytes": 0,
+        "vertical_steps": 0,
+        "water_ml": 0
+      }
+    },
+    "derived_cache_last_published": {
+      "accounting_complete": true,
+      "byte_limit": 536870912,
+      "cache_read_only": false,
+      "corrupt": 0,
+      "disk_bytes": 2483904,
+      "enabled": true,
+      "evicted_bytes": 0,
+      "eviction_pending": false,
+      "evictions": 0,
+      "hits": 0,
+      "last_available_bytes": 8636645376,
+      "lease_owned": true,
+      "minimum_free_bytes": 1073741824,
+      "misses": 27,
+      "reserve_blocked": false,
+      "reserve_skips": 0,
+      "scan_entries": 2,
+      "write_failures": 0,
+      "writes": 24
+    },
+    "readiness": {
+      "coverage_ready": 1,
+      "coverage_scope": "within 384 m",
+      "coverage_total": 15,
+      "local": 9,
+      "local_total": 9,
+      "queued": 4,
+      "ready": false,
+      "root_total": 64,
+      "roots": 1,
+      "worker": "mesh"
+    },
+    "terrain_stream": {
+      "active_leaves": 16,
+      "batch_remaining": 0,
+      "collision_pieces_built": 15,
+      "collision_pieces_reused": 0,
+      "in_flight": 3,
+      "mesh_cache_bytes": 1787876,
+      "pending_edit": false,
+      "revision": 0,
+      "sdf_pages": 0,
+      "staging": 0,
+      "tiles": 15,
+      "triangles": 31432,
+      "worker_builds": 15
+    },
+    "terrain_worker": {
+      "completed_us": {
+        "cache_configuration": 5127,
+        "cache_fingerprint": 7902,
+        "main_initialization": 115,
+        "native_configuration": 23,
+        "startup_metadata": 21,
+        "worker_launch": 325,
+        "world_load_or_generate": 97
+      },
+      "elapsed_us": 1195733,
+      "pending_results": 0,
+      "phase": "published",
+      "phase_us": 1182123,
+      "terrain_bake": {
+        "checkpoints": 0,
+        "completed": 0,
+        "phase": 0,
+        "state": 0,
+        "total": 0
+      }
+    },
+    "world": {
+      "derived_cache_path": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/loading_progress_ui_0a4b7922ef3a43cbb39ad6055f40863d",
+      "error": "",
+      "generator": 1,
+      "read_only": false,
+      "ready": true,
+      "save_path": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/worlds/check_0a4b7922ef3a43cbb39ad6055f40863d.trw",
+      "seed": 1703,
+      "slot": "check_0a4b7922ef3a43cbb39ad6055f40863d",
+      "snapshot_restore_ok": true,
+      "temporary": true,
+      "waiting_spawn": false
+    }
+  },
+  "failures": 0,
+  "scope": "Real gameplay loading gates and rendered UI, plus controlled generation stage/counter presentation. Full generation workflow checked separately.",
+  "stages": [
+    {
+      "percent": 0.0,
+      "stage": "Reading saved world data"
+    },
+    {
+      "percent": 15.0,
+      "stage": "Finding a safe player position"
+    },
+    {
+      "percent": 20.0,
+      "stage": "Loading nearby terrain and collision · 0 / 9 probes ready"
+    },
+    {
+      "percent": 56.33,
+      "stage": "Loading landscape coverage · 1 / 15 required areas ready"
+    },
+    {
+      "percent": 60.33,
+      "stage": "Loading landscape coverage · 4 / 15 required areas ready"
+    },
+    {
+      "percent": 63.0,
+      "stage": "Loading landscape coverage · 6 / 15 required areas ready"
+    },
+    {
+      "percent": 65.67,
+      "stage": "Loading landscape coverage · 8 / 15 required areas ready"
+    },
+    {
+      "percent": 67.0,
+      "stage": "Loading landscape coverage · 9 / 15 required areas ready"
+    },
+    {
+      "percent": 71.0,
+      "stage": "Loading landscape coverage · 12 / 15 required areas ready"
+    },
+    {
+      "percent": 72.33,
+      "stage": "Loading landscape coverage · 13 / 15 required areas ready"
+    },
+    {
+      "percent": 73.67,
+      "stage": "Loading landscape coverage · 14 / 15 required areas ready"
+    },
+    {
+      "percent": 97.0,
+      "stage": "Final checks before play"
+    }
+  ],
+  "timing": {
+    "elapsed_us": 3506534,
+    "estimate_state": "complete",
+    "progress": 100.0,
+    "remaining_us": 0,
+    "sample_count": 4,
+    "status": "complete",
+    "window_us": 30000000
+  }
+}

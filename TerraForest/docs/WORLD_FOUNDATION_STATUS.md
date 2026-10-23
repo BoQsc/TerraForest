@@ -26,6 +26,13 @@ while work is stalled. Completion freezes the total. This is a rough prediction
 from weighted work, not a measured guarantee for every upcoming stage. See
 [loading timer evidence](evidence/loading_timers/README.md).
 
+Compact loading is now the default: a centered 1120-pixel progress panel at
+1920x1080, with a saved Compact switch for the previous wide layout. Timers and
+technical details remain available. The targeted rendered check covers both
+widths, preference restoration and actual gameplay loading; see
+[compact loading evidence](evidence/loading_compact/README.md). This supersedes
+the earlier default-width description while retaining its readiness behavior.
+
 Each photograph now names its viewpoint and exposes destination terrain/collision,
 water, nearby vegetation readiness, then capture/save. Map preparation reports
 pending layers, saved-world identity verification and cache writes. The first

@@ -7,6 +7,7 @@ func check(ok:bool,message:String)->void:
 func _initialize()->void:run.call_deferred()
 func run()->void:
  var screen=preload("res://addons/world_runtime/generation_screen.gd").new();root.add_child(screen)
+ screen.panel.set_compact_width(true,false)
  screen.use_photograph("res://docs/evidence/generation_lifecycle/source_generation/generation_loading.png")
  # Use the actual raw world photograph rather than a prior UI capture when available.
  var raw:="user://worlds/lifecycle_bundle_20261023T163819.preview/north.png"
@@ -30,7 +31,7 @@ func run()->void:
  screen.diagnostics.refresh()
  await RenderingServer.frame_post_draw
  var rect:Rect2=screen.panel.get_global_rect();var bar:Rect2=screen.panel.bar.get_global_rect()
- check(absf(bar.get_center().x-root.size.x*0.5)<2 and bar.position.y>root.size.y*0.65 and bar.size.x>root.size.x*0.85 and bar.size.y>=18 and bar.size.y<=22 and rect.size.y<180 and rect.end.y<=root.size.y-8 and screen.cancel_button.get_global_rect().end.y<root.size.y,"large bar centered near bottom at full resolution")
+ check(absf(bar.get_center().x-root.size.x*0.5)<2 and bar.position.y>root.size.y*0.65 and bar.size.x>root.size.x*0.5 and bar.size.x<root.size.x*0.65 and bar.size.y>=18 and bar.size.y<=22 and rect.size.y<180 and rect.end.y<=root.size.y-8 and screen.cancel_button.get_global_rect().end.y<root.size.y,"compact bar centered near bottom at full resolution")
  var clock:Rect2=screen.panel.clock_label.get_global_rect()
  check(clock.end.x<screen.cancel_button.get_global_rect().position.x and clock.position.x>screen.panel.title.get_global_rect().end.x,"elapsed and estimate fit in header without overlap")
  check(screen.panel.clock_label.text.contains("Elapsed") and screen.panel.clock_label.text.contains("Est. remaining"),"both timers are visible beside bar from startup")
@@ -39,6 +40,24 @@ func run()->void:
  check(screen.diagnostics.panel.get_global_rect().end.y<rect.position.y and logo.end.y<screen.diagnostics.panel.get_global_rect().position.y,"wordmark, technical panel and bottom bar do not overlap")
  check(screen.diagnostics.live.text.contains("stage_fraction = 0.56") and screen.diagnostics.history.text.contains("Photographing"),"raw work details and measured stage history are shown")
  root.get_texture().get_image().save_png("res://reports/loading_progress_generation.png")
+ var progress_before:float=screen.panel.bar.value
+ var elapsed_before:int=screen.panel.timing_snapshot().elapsed_us
+ screen.panel.set_compact_width(false,false)
+ await RenderingServer.frame_post_draw
+ check(screen.panel.bar.get_global_rect().size.x>root.size.x*0.85 and absf(screen.panel.get_global_rect().get_center().x-root.size.x*0.5)<2,"wide option remains centered")
+ check(screen.panel.bar.value==progress_before and screen.panel.timing_snapshot().elapsed_us>=elapsed_before,"switching width preserves progress and timer")
+ root.get_texture().get_image().save_png("res://reports/loading_progress_wide.png")
+ screen.panel.set_compact_width(true,false)
+ # Exercise the actual toggle and disk preference using an isolated file.
+ var preference_path:="user://loading_layout_check_%d.cfg"%Time.get_ticks_usec()
+ var preference_panel=preload("res://addons/world_runtime/loading_panel.gd").new();preference_panel.preferences_path=preference_path;root.add_child(preference_panel)
+ check(preference_panel.compact_width and preference_panel.compact_toggle.button_pressed,"new users default to compact")
+ preference_panel.compact_toggle.button_pressed=false
+ check(not preference_panel.compact_width,"UI toggle changes to wide")
+ preference_panel.free()
+ var restored=preload("res://addons/world_runtime/loading_panel.gd").new();restored.preferences_path=preference_path;root.add_child(restored)
+ check(not restored.compact_width and not restored.compact_toggle.button_pressed,"wide choice survives a new loading panel")
+ restored.free();DirAccess.remove_absolute(ProjectSettings.globalize_path(preference_path))
  # A large payload stays accessible by scrolling and is never interpreted as BBCode.
  var probe:Dictionary={}
  for i in 150:probe["field_%d"%i]="[b]literal[/b]"
@@ -54,6 +73,7 @@ func run()->void:
  check(screen.detail.text=="Cancelling generation…","cancel state cannot be overwritten")
  screen.free()
  var game=load("res://demo/world.tscn").instantiate();game.temporary_world=true;root.add_child(game)
+ game.loading_panel.set_compact_width(true,false)
  # Keep the actual loading flow; record only stage changes and one live frame.
  var elapsed_samples:Array=[]
  var rows:Array=[];var previous:="";var captured:=false;var diagnostic_sample:Dictionary={};var deadline:=Time.get_ticks_msec()+60000
@@ -66,6 +86,8 @@ func run()->void:
    game.loading_diagnostics.refresh()
    await RenderingServer.frame_post_draw
    diagnostic_sample=game.loading_diagnostics.context.duplicate(true)
+   var loading_rect:Rect2=game.loading_panel.get_global_rect()
+   check(absf(loading_rect.get_center().x-root.size.x*0.5)<2 and loading_rect.size.x<root.size.x*0.65 and game.loading_diagnostics.panel.get_global_rect().end.y<=loading_rect.position.y,"actual loading uses compact centered panel without diagnostics overlap")
    check(game.loading_diagnostics.live.text.contains("readiness.queued") and game.loading_diagnostics.live.text.contains("addons.ground_cover") and game.loading_diagnostics.live.text.contains("addons.water") and game.loading_diagnostics.live.text.contains("terrain_worker.phase"),"actual world diagnostics are displayed")
    root.get_texture().get_image().save_png("res://reports/loading_progress_world.png");captured=true
   await process_frame

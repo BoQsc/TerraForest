@@ -3,6 +3,10 @@ extends PanelContainer
 # Shared, viewport-anchored presentation. No timed/fabricated progress animation.
 const Timing=preload("res://addons/world_runtime/loading_timer.gd")
 var timer=Timing.new()
+const COMPACT_WIDTH:=1120.0
+var preferences_path:="user://loading_presentation.cfg"
+var compact_width:=true
+var compact_toggle:CheckButton
 var clock_label:Label
 var next_clock_us:=0
 var title:Label
@@ -23,6 +27,9 @@ func _ready()->void:
  clock_label=Label.new();clock_label.add_theme_font_size_override("font_size",15);clock_label.add_theme_color_override("font_color",Color("a9ddc8"));clock_label.horizontal_alignment=HORIZONTAL_ALIGNMENT_RIGHT;header.add_child(clock_label)
  clock_label.tooltip_text="Elapsed time includes generation, verification and the first load. Remaining time is a rough estimate from recent measured progress, updated as work changes."
  header.add_theme_constant_override("separation",18)
+ compact_toggle=CheckButton.new();compact_toggle.text="Compact";compact_toggle.add_theme_font_size_override("font_size",14);header.add_child(compact_toggle)
+ compact_toggle.tooltip_text="Keep the loading panel compact and centered. Turn off for a wide layout. Applies to generation and loading."
+ compact_toggle.toggled.connect(set_compact_width)
  action=Button.new();action.custom_minimum_size=Vector2(180,26);action.add_theme_font_size_override("font_size",14);action.text="Cancel";header.add_child(action)
  var row:=HBoxContainer.new();row.add_theme_constant_override("separation",20);box.add_child(row)
  detail=Label.new();detail.text="Starting…";detail.size_flags_horizontal=Control.SIZE_EXPAND_FILL;detail.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;detail.add_theme_font_size_override("font_size",17);row.add_child(detail)
@@ -32,7 +39,25 @@ func _ready()->void:
  var fill:=StyleBoxFlat.new();fill.bg_color=Color("6cc7aa");fill.set_corner_radius_all(4);bar.add_theme_stylebox_override("fill",fill)
  bar.tooltip_text="Overall completion estimate based on finished stages and work counts. 100% means ready to play."
  work=Label.new();work.visible=false;work.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;work.add_theme_font_size_override("font_size",14);box.add_child(work)
+ var preferences:=ConfigFile.new()
+ if preferences.load(preferences_path)==OK:compact_width=bool(preferences.get_value("loading","compact_width",true))
+ set_compact_width(compact_width,false)
+ get_viewport().size_changed.connect(_apply_width)
  reset()
+func set_compact_width(enabled:bool,persist:bool=true)->void:
+ compact_width=enabled;compact_toggle.set_pressed_no_signal(enabled);_apply_width()
+ if persist:
+  var preferences:=ConfigFile.new();preferences.load(preferences_path)
+  preferences.set_value("loading","compact_width",enabled)
+  var result:=preferences.save(preferences_path)
+  if result!=OK:push_warning("Could not save loading layout preference: "+error_string(result))
+func _apply_width()->void:
+ grow_horizontal=Control.GROW_DIRECTION_BOTH
+ if compact_width:
+  var width:=minf(COMPACT_WIDTH,get_viewport_rect().size.x*0.9)
+  anchor_left=0.5;anchor_right=0.5;offset_left=-width*0.5;offset_right=width*0.5
+ else:
+  anchor_left=0.05;anchor_right=0.95;offset_left=0;offset_right=0
 func reset(start_ms:int=0,baseline:float=0)->void:
  high_water=baseline;bar.value=baseline;percentage.text="%d%%"%int(baseline)
  timer.reset(Time.get_ticks_usec(),baseline,Timing.carried_elapsed(start_ms));next_clock_us=0;set_process(true);refresh_clock()
