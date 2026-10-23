@@ -1,0 +1,16 @@
+{
+  "before": "1c803940ddbf260466c1d5bf21bb6605cee96da6",
+  "terrain_checkpoint": "17f949a9ed9fb193034e717387b1a27075482f05",
+  "backup": "C:\\Users\\windows10\\.codex\\worktrees\\character-integration\\Godot Terrain\\TerraForest\\.build\\pre_terrain_sync_20261023T185714Z",
+  "draft_file_count": 259,
+  "preserved_except_merged_status_document": true,
+  "checks": {
+    "character_runtime": "20261023T185735293430Z",
+    "pickaxe_arc_swing": "20261023T185735292933Z",
+    "zombie_drag_walk": "20261023T185735292618Z",
+    "pickaxe_world": "20261023T185753866681Z",
+    "loading_ui_rendered": "20261023T185823293789Z",
+    "loading_ui_headless_incomplete": "20261023T185735292642Z"
+  },
+  "animation_approval": "pending; no new animation commit, staging or terrain-checkout modification"
+}

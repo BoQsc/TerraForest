@@ -1,0 +1,15 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS test copy remains separate from the normal game selection
+PASS separate copy retains a single 1.2-second action
+PASS no gameplay, audio, collision or method events are added
+PASS root and torso remain neutral during the entire swing
+PASS both fitted hands stay attached to the handle
+PASS first and final bone poses match the kept ready grip
+PASS forward contact is preserved with only five degrees of extra rightward tilt
+PASS strike is driven by angular tool travel with much less forward hand extension
+PASS wind-up, strike and recovery all follow curved grip paths
+PASS follow-through stays forward with a bounded left/down continuation
+PASS test action returns to the kept idle
+PASS normal game selection still uses the original preserved candidate
+PICKAXE_ARC_SWING checks=12 failures=0

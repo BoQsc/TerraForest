@@ -1,0 +1,1 @@
+User review: too much twist to the left. This revision used 20-24 degrees of left shaft lean at contact/follow-through. Superseded by a smaller 6-8 degree left roll, a right-biased working-point corridor, and less torso turn. No visual approval or commit.

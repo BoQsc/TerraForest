@@ -1,0 +1,18 @@
+00:00.563  blend            | Read blend: "C:\Users\windows10\.codex\worktrees\character-integration\Godot Terrain\TerraForest\addons\characters\Human_R11_Complete_Repost\Human.r11.blend"
+INFO Draco is available, use library at C:\Program Files (x86)\Steam\steamapps\common\Blender\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_draco_bridge.dll
+INFO MeshOptimizer is available, use library at C:\Program Files (x86)\Steam\steamapps\common\Blender\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_meshopt_bridge.dll
+19:12:34 | INFO: Starting glTF 2.0 export
+19:12:34 | INFO: Extracting primitive: Reference_High_Mesh.001.ThirdPerson
+19:12:34 | INFO: Primitives created: 1
+19:12:34 | WARNING: There are more than 4 joint vertex influences.The 4 with highest weight will be used (and normalized).
+19:12:36 | INFO: Finished glTF 2.0 export in 2.6644814014434814 s
+C:\Users\windows10\.codex\worktrees\character-integration\Godot Terrain\TerraForest\tools\author_pickaxe_diagonal.py:243: DeprecationWarning: 'World.use_nodes' is expected to be removed in Blender 6.0
+  scene.world.use_nodes = True
+C:\Users\windows10\.codex\worktrees\character-integration\Godot Terrain\TerraForest\tools\author_pickaxe_diagonal.py:254: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  if ('Human.Head' in material.name or 'Human.Mouth' in material.name) and material.use_nodes:
+
+Info: Saved as "Human.pickaxe_diagonal.blend"
+PICKAXE_DIAGONAL_AUTHORED {"approval": "PENDING USER VISUAL REVIEW; do not commit", "blender": "5.2.3 LTS", "source": "addons\\characters\\Human_R11_Complete_Repost\\Human.r11.blend", "source_sha256": "8ad2d2c2d570f9adfa487cfd469957ff61b4fbe172f0b60d28a44529b8d822d3", "fps": 60, "actions": {"FP_Pickaxe_Diagonal_Swing": {"duration": 1.2, "frames": [0, 72]}, "FP_Pickaxe_Diagonal_Idle": {"duration": 3.0, "frames": [0, 180]}, "FP_Pickaxe_Diagonal_Walk": {"duration": 1.0, "frames": [0, 60]}, "FP_Pickaxe_Diagonal_Run": {"duration": 0.8, "frames": [0, 48]}, "FP_Pickaxe_Diagonal_Jump": {"duration": 1.5, "frames": [0, 90]}}, "revision": "Restrained left twist: 6-8 degrees, right-biased forward strike, minimal torso turn", "strike_frames": [20, 38], "contact_frame": 32, "working_tip_local": [-0.32600000500679016, 0.0, 0.5350000262260437], "coordinate_convention": "-X = player right; +X = player left; -Y forward; +Z up", "grip_source": "R11 FP_Pickaxe_RightGrip_Idle, original fitted hand wraps"}
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:37:16)
+
+Blender quit

@@ -1,0 +1,14 @@
+00:00.594  blend            | Read blend: "C:\Users\windows10\.codex\worktrees\character-integration\Godot Terrain\TerraForest\addons\characters\authoring\Human.pickaxe_side_strike.blend"
+INFO Draco is available, use library at C:\Program Files (x86)\Steam\steamapps\common\Blender\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_draco_bridge.dll
+INFO MeshOptimizer is available, use library at C:\Program Files (x86)\Steam\steamapps\common\Blender\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_meshopt_bridge.dll
+19:55:29 | INFO: Starting glTF 2.0 export
+19:55:29 | INFO: Extracting primitive: Reference_High_Mesh.001.ThirdPerson
+19:55:29 | INFO: Primitives created: 1
+19:55:29 | WARNING: There are more than 4 joint vertex influences.The 4 with highest weight will be used (and normalized).
+19:55:32 | INFO: Finished glTF 2.0 export in 3.6539483070373535 s
+
+Info: Saved as "Human.pickaxe_side_pullback.blend"
+PICKAXE_SIDE_PULLBACK_AUTHORED {"approval": "PENDING USER VISUAL REVIEW; do not commit", "source": "addons\\characters\\authoring\\Human.pickaxe_side_strike.blend", "source_sha256": "019e3f5b522127616d78d27cc6d9766e2bc51574c8e501f9af61d0203e48ea0f", "action": "FP_Pickaxe_SidePullback_Swing", "duration": 1.2, "fps": 60, "extra_pullback_m": 0.08, "changed_frames": [5, 27], "preserved_pose_error": 0.0, "body_error": 1.4901161193847656e-08, "tool_orientation_error_degrees": 0.0}
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:37:16)
+
+Blender quit

@@ -1,0 +1,16 @@
+{
+  "actions": {
+    "FP_Pickaxe_ArcSwing_Swing": {
+      "duration": 1.20000004768372,
+      "loop": 0,
+      "neutral_morphs": 530,
+      "tracks": 707
+    }
+  },
+  "approval": "PENDING USER VISUAL REVIEW; do not commit",
+  "bones": 59,
+  "original_clips": 71,
+  "rest_error": 0.000000240274005136598,
+  "save_error": 0,
+  "scope": "Blender bone animation on unchanged R11 runtime model; clears original pose-specific morph correctives; no methods, gameplay events, root motion or body integration."
+}

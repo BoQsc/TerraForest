@@ -277,7 +277,84 @@ This is animation presentation and a deliberate speed change, not new traversal
 capabilities. Terrain foot planting, larger populations and the broader regional
 navigation/performance requirements remain open.
 
+The diagonal pickaxe follow-up is an **uncommitted review draft in the character
+worktree**. It adds a diagonal ready grip with the left hand below the right and
+a forward strike from the right with a small left/down diagonal, plus matching
+tool locomotion holds. The initial sideways sweep was rejected; the first forward
+revision was too centered. The current revision keeps hands/handle on the right
+and only 6–8 degrees of left shaft roll through contact and a short follow-through.
+The 20–24 degree revision was rejected for excessive left twist; torso turn is
+also reduced to one degree. The working point stays right of center. Engineering
+and rendered review evidence are in [pickaxe draft evidence](evidence/pickaxe_diagonal/README.md).
+Visual acceptance remains open: the user explicitly requires approval before
+any commit. Return when the user has reviewed the video and approved the grip,
+hand deformation, camera crop and swing timing; otherwise revise the draft.
+Do not merge it into the ongoing terrain branch before that approval.
+
+The user asked to keep the reduced-twist v4 candidate and try a separate full
+right-to-left sweep. That experimental copy was rejected as a complete visual
+regression on 2026-10-23. It never replaced the game's v4 selection. Its source,
+tools and review stills are archived in
+[rejected full-sweep evidence](evidence/pickaxe_full_sweep/README.md), outside the
+character addon. All eleven preserved v4 source/runtime/tool/test/video hashes
+still match. The requested broader swing without leftward twist remains
+unresolved; the rejected copy is not an accepted implementation. Any future
+attempt must start from the kept v4 candidate and receive visual review before
+replacement or commit. No further variation is being authored during this
+rollback; animation approval and terrain synchronization remain pending.
+
+A second copy preserved v4 through contact and added a left follow-through.
+The user also rejected that result; its passing engineering checks do not qualify
+the appearance. Source and review evidence are archived in
+[rejected left-follow evidence](evidence/pickaxe_left_follow/README.md).
+The current request is a fresh copy of preserved v4 with a strike from the right
+side rather than from above. Both rejected continuations are excluded as motion
+sources. Visual approval, committing and terrain synchronization remain pending.
+
+The separate side-strike draft is now authored from the exact preserved v4 blend.
+It retains the ready grip, draws back lower to the right, drives forward
+diagonally, keeps the shaft leaning right and torso neutral, and recovers from a
+short follow-through. It is available only in the review preview; v4 remains the
+normal gameplay selection. Twelve scoped runtime/animation checks pass, and an
+eight-second studio video plus stills are retained in
+[side-strike review evidence](evidence/pickaxe_side_strike/README.md).
+The widest wind-up partially crops at the right/bottom screen edges. The user
+reviewed this as a good alternate and requested a separate copy with more
+pullback toward the player before launch. The liked side-strike assets remain
+unchanged and uncommitted. The newer
+[deeper-pullback copy](evidence/pickaxe_side_pullback/README.md) adds 8 cm toward
+the player during wind-up and rejoins the liked action at frame 28; contact,
+follow-through, recovery and ready poses are preserved. Nine scoped comparison
+checks pass. The user reviewed that deeper pullback as better and requested a
+test copy with a small rightward tool twist and a swinging motion throughout,
+replacing the straight pushing quality. The liked deeper-pullback assets remain
+unchanged. The new [arc-swing test copy](evidence/pickaxe_arc_swing/README.md)
+adds a five-degree rightward tilt during the stroke, uses an elliptical lower-hand
+path with more tool rotation, and curves the wind-up and recovery. Forward contact
+is preserved; lower-hand forward extension falls from about 22 cm to 10 cm.
+Twelve scoped animation checks pass. Its normal/half-speed studio video awaits
+user visual review, including the widened right-edge wind-up crop and recovery.
+The user then explicitly authorized committing and syncing the work. The liked
+deeper-pullback side strike is now selected for gameplay, with diagonal holds;
+the latest arc-swing copy remains an unselected visual test. Earlier no-commit
+statements are historical. Character runtime, packaging, pullback/arc comparison
+and diagonal-world checks pass. The actual-world placement test verifies the new
+default action and idle return, but its terrain-fill-feedback assertion remains
+failing and open: an admitted fill sample does not activate the gesture. Resume
+that issue with actual accepted fill submission/feedback evidence; do not close it
+from the swing checks. See [integration evidence](evidence/pickaxe_integration/README.md).
+
 ## Regional terrain checkpoint integration - 2026-10-23
+
+The character worktree was fast-forwarded to the latest committed terrain
+checkpoint `17f949a9` on 2026-10-23. All animation drafts remain uncommitted and
+unchanged; only this shared status document required a clean three-way merge.
+Character runtime, the arc-swing copy, zombie dragging walk, temporary-world
+pickaxe playback and rendered loading-UI checks pass on the combined state.
+See [synchronization evidence](evidence/animation_terrain_sync/README.md), including
+the retained incomplete headless UI attempt and successful rendered rerun.
+This synchronization does not resolve animation visual acceptance or authorize
+committing the animation work. Later terrain commits still require another sync.
 
 Actual compound saves now select native compressed, immutable terrain packs;
 source generation, fresh reopen, exact prior-world equivalence, corruption/failure

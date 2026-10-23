@@ -122,6 +122,25 @@ deep-water avoidance, sealed rooms, edit invalidation and missing coverage.
 durability, removal, hinge cleanup and provider snapshot; a full fresh-process
 door-destruction save/reopen gate is still required.
 
+## Pickaxe presentation and alternates
+
+The selected pickaxe action is the deeper-pullback side strike the user reviewed
+as better (`FP_Pickaxe_SidePullback_Swing`). Diagonal Idle/Walk/Run/Jump holds keep
+the left hand lower and right hand higher. The 1.2-second swing returns to that
+ready grip after the action. Empty hands continue to rest between deliberate
+actions. The original model, 71 source clips, axe and placement gesture remain.
+
+`pickaxe_swing="diagonal"` selects the earlier forward strike for comparison;
+`diagonal_pickaxe=false` selects the original pickaxe presentation. The side-strike
+and latest five-degree-right arc-swing libraries are retained as optional review
+alternates, with Blender sources, videos and test tools. The arc swing has not
+received user visual acceptance and is not the default.
+
+The user explicitly authorized committing and syncing this work on 2026-10-23.
+Earlier evidence files saying “uncommitted” or “do not commit” describe their
+historical review state; the selected default and integration decision are
+recorded in [release evidence](../../docs/evidence/pickaxe_integration/README.md).
+
 ## Relaxed placement animation
 
 Blender-authored `FP_Place_Relaxed` adds a 0.9-second empty-hand gesture for

@@ -1,0 +1,1 @@
+The revised forward/angled stroke passed 22 checks. The right-wrist requirement failed at the deepest follow-through: it came to 12.1 cm right of center against the 13 cm bound. Move the follow-through 2 cm right; keep the forward stroke and angle unchanged, then rerun.

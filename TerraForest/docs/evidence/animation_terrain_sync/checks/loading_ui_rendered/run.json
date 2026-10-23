@@ -1,0 +1,35 @@
+{
+  "test": "loading_progress_ui",
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+    "--path",
+    "C:\\Users\\windows10\\.codex\\worktrees\\character-integration\\Godot Terrain\\TerraForest",
+    "--log-file",
+    "C:\\Users\\windows10\\.codex\\worktrees\\character-integration\\Godot Terrain\\TerraForest\\reports\\checks\\20261023T185823293789Z\\engine.log",
+    "--position",
+    "-2300,0",
+    "--resolution",
+    "1920x1080",
+    "--max-fps",
+    "60",
+    "--script",
+    "res://tests/loading_progress_ui.gd",
+    "--",
+    "--temporary",
+    "--world-slot=check_5298559686ba418b8e18a051beee1c03",
+    "--derived-cache=user://loading_progress_ui_5298559686ba418b8e18a051beee1c03"
+  ],
+  "cache": "user://loading_progress_ui_5298559686ba418b8e18a051beee1c03",
+  "result": {
+    "timed_out": false,
+    "launch_error": null,
+    "cancelled": false,
+    "pid": 70660,
+    "exit_code": 0,
+    "diagnostics": [],
+    "required_text_found": true,
+    "elapsed_seconds": 9.551207299984526,
+    "passed": true
+  },
+  "scope": "Rendered loading UI in off-screen window; user saves isolated by launcher."
+}

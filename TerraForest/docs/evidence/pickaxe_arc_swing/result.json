@@ -1,0 +1,125 @@
+{
+  "angular_stroke_degrees": 48.9263730626613,
+  "approval": "PENDING USER VISUAL REVIEW; do not commit",
+  "body_error": 0.0000000149011611938477,
+  "checks": 12,
+  "extra_right_contact_tilt_degrees": 5.00001387514131,
+  "failures": 0,
+  "grip_curve_deviation_m": {
+    "recovery": 0.120322905480862,
+    "strike": 0.084384061396122,
+    "windup": 0.0597837418317795
+  },
+  "grip_error": 0.0000013324475958143,
+  "hand_forward_m": 0.0999998450279236,
+  "previous_hand_forward_m": 0.21794456243515,
+  "samples": [
+    {
+      "frame": 0,
+      "lower_hand_camera": [
+        -0.00504177482798696,
+        -0.304073691368103,
+        -0.442263931035995
+      ],
+      "working_point_camera": [
+        0.314966648817062,
+        0.00194120407104492,
+        -0.959389865398407
+      ]
+    },
+    {
+      "frame": 12,
+      "lower_hand_camera": [
+        0.10533083230257,
+        -0.275163888931274,
+        -0.3622787296772
+      ],
+      "working_point_camera": [
+        0.625778377056122,
+        -0.102835655212402,
+        -0.765896379947662
+      ]
+    },
+    {
+      "frame": 20,
+      "lower_hand_camera": [
+        0.0938602089881897,
+        -0.245957732200623,
+        -0.279752194881439
+      ],
+      "working_point_camera": [
+        0.702835917472839,
+        -0.0921697616577148,
+        -0.542369306087494
+      ]
+    },
+    {
+      "frame": 26,
+      "lower_hand_camera": [
+        0.0502265952527523,
+        -0.205957651138306,
+        -0.342101246118546
+      ],
+      "working_point_camera": [
+        0.518661677837372,
+        0.0017094612121582,
+        -0.790334224700928
+      ]
+    },
+    {
+      "frame": 32,
+      "lower_hand_camera": [
+        -0.106139786541462,
+        -0.165957570075989,
+        -0.379752039909363
+      ],
+      "working_point_camera": [
+        0.140018507838249,
+        -0.00998151302337646,
+        -0.995014309883118
+      ]
+    },
+    {
+      "frame": 40,
+      "lower_hand_camera": [
+        -0.18748714029789,
+        -0.240957736968994,
+        -0.371106684207916
+      ],
+      "working_point_camera": [
+        -0.0212018601596355,
+        -0.141993045806885,
+        -1.0238128900528
+      ]
+    },
+    {
+      "frame": 54,
+      "lower_hand_camera": [
+        -0.0984890013933182,
+        -0.35765266418457,
+        -0.32445564866066
+      ],
+      "working_point_camera": [
+        0.194252580404282,
+        -0.165430545806885,
+        -0.908256232738495
+      ]
+    },
+    {
+      "frame": 72,
+      "lower_hand_camera": [
+        -0.00504177482798696,
+        -0.304073691368103,
+        -0.442263931035995
+      ],
+      "working_point_camera": [
+        0.314966648817062,
+        0.00194120407104492,
+        -0.959389865398407
+      ]
+    }
+  ],
+  "scope": "Actual rig, evaluated cutting-point mesh and view controller in an isolated camera fixture. Engineering checks do not approve animation appearance or world collision/mining/performance.",
+  "seam_error": 0.000000676978629599034,
+  "tip_forward_m": 0.452645003795624
+}

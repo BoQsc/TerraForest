@@ -1,0 +1,14 @@
+00:00.469  blend            | Read blend: "C:\Users\windows10\.codex\worktrees\character-integration\Godot Terrain\TerraForest\addons\characters\authoring\Human.pickaxe_side_pullback.blend"
+INFO Draco is available, use library at C:\Program Files (x86)\Steam\steamapps\common\Blender\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_draco_bridge.dll
+INFO MeshOptimizer is available, use library at C:\Program Files (x86)\Steam\steamapps\common\Blender\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_meshopt_bridge.dll
+20:07:13 | INFO: Starting glTF 2.0 export
+20:07:13 | INFO: Extracting primitive: Reference_High_Mesh.001.ThirdPerson
+20:07:13 | INFO: Primitives created: 1
+20:07:13 | WARNING: There are more than 4 joint vertex influences.The 4 with highest weight will be used (and normalized).
+20:07:17 | INFO: Finished glTF 2.0 export in 3.35166335105896 s
+
+Info: Saved as "Human.pickaxe_arc_swing.blend"
+PICKAXE_ARC_SWING_AUTHORED {"approval": "PENDING USER VISUAL REVIEW; do not commit", "source": "addons\\characters\\authoring\\Human.pickaxe_side_pullback.blend", "source_sha256": "dc965a87b04ae4b91b3efbb9bff74e14fded13157bf16a0e9c1ce9753bc7dfbf", "action": "FP_Pickaxe_ArcSwing_Swing", "fps": 60, "duration": 1.2, "right_bias_degrees": 5.0, "contact_target_blender": [-0.14000001549720764, -1.024999976158142, 1.6399998664855957], "revision": "Curved wind-up, lower-grip-led rotational strike and curved recovery; neutral torso; kept ready endpoints"}
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:37:16)
+
+Blender quit

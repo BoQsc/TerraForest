@@ -1,0 +1,15 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS normal game selects preserved v4, with no trial animation loaded
+PASS separate library adds one 1.2-second swing
+PASS no method, gameplay, audio or damage events are added
+PASS root and torso remain at the preserved neutral pose for the whole action
+PASS both hands stay attached at their preserved handle stations
+PASS first and final poses match all 59 bones of the preserved ready grip
+PASS wind-up is lower on the right and approaches at target height, without an overhead chop
+PASS actual sharpened point drives forward diagonally from the right toward the target
+PASS shaft keeps leaning right and follow-through stays short in front
+PASS held input cannot restart the trial action
+PASS trial action returns to preserved idle
+PASS normal gameplay still selects the preserved swing after review
+PICKAXE_SIDE_STRIKE checks=12 failures=0

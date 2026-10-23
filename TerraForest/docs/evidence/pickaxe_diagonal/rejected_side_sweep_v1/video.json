@@ -1,0 +1,8 @@
+{
+  "approval": "PENDING USER VISUAL REVIEW; do not commit",
+  "encoder": "Blender 5.2.3 LTS",
+  "fps": 30,
+  "frames": 240,
+  "sha256": "e0569189293a40b3706b2cd1a2304b54f580b781d8305a9f49c78dfb0195227a",
+  "scope": "Actual runtime rig/camera. Two normal-speed swings and a half-speed inspection pass; deterministic visual review, not live input or performance evidence."
+}

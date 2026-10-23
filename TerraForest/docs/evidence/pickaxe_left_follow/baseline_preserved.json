@@ -1,0 +1,13 @@
+{
+  "addons/characters/authoring/Human.pickaxe_diagonal.blend": "fc19d70c8209b01f996e2658ccf2f424b93fb766928e27a3c3a2caba3ddd8351",
+  "addons/characters/authoring/Human.pickaxe_diagonal.glb": "0a121b512f4684f708add927503cd72ab8f0d97206a699d2077a7f640c062542",
+  "addons/characters/authoring/Human.pickaxe_diagonal.json": "ddb11137d7e766a81dbccb77a2f8aae3be4d7ff21bd0e0826c47604543a9dace",
+  "addons/characters/runtime/assets/Human.pickaxe_diagonal.res": "8fe847638c34f31c735c2bf928aadb5722c7244853433c72ba29c9753227a291",
+  "addons/characters/runtime/human_view.gd": "4651b1c548171314a8f988b56fe49a9378180e63c99afa1858fab5046922eac4",
+  "tools/author_pickaxe_diagonal.py": "c6d92dda74ec4e33074874d8bbb0e4915c09542c9e3a8280ae5575dc8f461969",
+  "tools/import_pickaxe_diagonal.gd": "49d92fbe6f4b1a97d2af081180f40e336b3c1bd6aa7b7fbdc195c556e37730e6",
+  "tools/preview_pickaxe_diagonal.gd": "1b0267a5f96aa13cc3664e67cd98b20a84d2ecea1792d6009124dadb4176ea67",
+  "tools/encode_pickaxe_diagonal_preview.py": "ded968a8a459e65a37b202c03caf347d658e06a97732e7bb936f1196f6172290",
+  "tests/pickaxe_diagonal.gd": "6a71a9f2b8cb20333469ebcfa4fc2bb39820d84328f7fb728e529ecacf53e0f2",
+  "docs/evidence/pickaxe_diagonal/Human.pickaxe_forward_reduced_twist_v4.mp4": "a9d5da26fad5b9ea50b4052ca1e5578aeff5393c9d0a1761e0ba13ddfba37d85"
+}

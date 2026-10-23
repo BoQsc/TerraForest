@@ -1,0 +1,86 @@
+[
+  {
+    "path": "addons/characters/authoring/Human.pickaxe_diagonal.blend",
+    "unchanged": true
+  },
+  {
+    "path": "addons/characters/authoring/Human.pickaxe_diagonal.glb",
+    "unchanged": true
+  },
+  {
+    "path": "addons/characters/authoring/Human.pickaxe_diagonal.json",
+    "unchanged": true
+  },
+  {
+    "path": "addons/characters/runtime/assets/Human.pickaxe_diagonal.res",
+    "unchanged": true
+  },
+  {
+    "path": "addons/characters/runtime/human_view.gd",
+    "unchanged": true
+  },
+  {
+    "path": "tools/author_pickaxe_diagonal.py",
+    "unchanged": true
+  },
+  {
+    "path": "tools/import_pickaxe_diagonal.gd",
+    "unchanged": true
+  },
+  {
+    "path": "tools/preview_pickaxe_diagonal.gd",
+    "unchanged": true
+  },
+  {
+    "path": "tools/encode_pickaxe_diagonal_preview.py",
+    "unchanged": true
+  },
+  {
+    "path": "tests/pickaxe_diagonal.gd",
+    "unchanged": true
+  },
+  {
+    "path": "docs/evidence/pickaxe_diagonal/Human.pickaxe_forward_reduced_twist_v4.mp4",
+    "unchanged": true
+  },
+  {
+    "path": "addons/characters/authoring/Human.pickaxe_side_strike.blend",
+    "unchanged": true
+  },
+  {
+    "path": "addons/characters/authoring/Human.pickaxe_side_strike.glb",
+    "unchanged": true
+  },
+  {
+    "path": "addons/characters/authoring/Human.pickaxe_side_strike.json",
+    "unchanged": true
+  },
+  {
+    "path": "addons/characters/runtime/assets/Human.pickaxe_side_strike.res",
+    "unchanged": true
+  },
+  {
+    "path": "tools/author_pickaxe_side_strike.py",
+    "unchanged": true
+  },
+  {
+    "path": "tools/import_pickaxe_side_strike.gd",
+    "unchanged": true
+  },
+  {
+    "path": "tools/preview_pickaxe_side_strike.gd",
+    "unchanged": true
+  },
+  {
+    "path": "tools/encode_pickaxe_side_strike_preview.py",
+    "unchanged": true
+  },
+  {
+    "path": "tests/pickaxe_side_strike.gd",
+    "unchanged": true
+  },
+  {
+    "path": "docs/evidence/pickaxe_side_strike/Human.pickaxe_side_strike.mp4",
+    "unchanged": true
+  }
+]

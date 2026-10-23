@@ -1,0 +1,70 @@
+{
+  "approval": "PENDING USER VISUAL REVIEW; do not commit",
+  "body_error": 0.00000000373255915064874,
+  "checks": 14,
+  "failures": 0,
+  "grip_error": 0.00000128703254631546,
+  "preserved_pose_error": 0.000000178813934326172,
+  "root_error": 0.0,
+  "samples": [
+    {
+      "frame": 0,
+      "working_point_camera": [
+        0.31496673822403,
+        0.00194120407104492,
+        -0.959389865398407
+      ]
+    },
+    {
+      "frame": 20,
+      "working_point_camera": [
+        0.528588652610779,
+        0.0960646867752075,
+        -0.687714159488678
+      ]
+    },
+    {
+      "frame": 32,
+      "working_point_camera": [
+        0.169997051358223,
+        -0.00997388362884521,
+        -0.995013833045959
+      ]
+    },
+    {
+      "frame": 40,
+      "working_point_camera": [
+        -0.00477603822946548,
+        -0.0710779428482056,
+        -0.975963473320007
+      ]
+    },
+    {
+      "frame": 48,
+      "working_point_camera": [
+        -0.190003037452698,
+        -0.0999736785888672,
+        -0.935013771057129
+      ]
+    },
+    {
+      "frame": 60,
+      "working_point_camera": [
+        0.0604748800396919,
+        -0.0160998106002808,
+        -0.950892627239227
+      ]
+    },
+    {
+      "frame": 72,
+      "working_point_camera": [
+        0.31496673822403,
+        0.00194120407104492,
+        -0.959389865398407
+      ]
+    }
+  ],
+  "scope": "Actual runtime rig, evaluated cutting-point mesh and view controller in an isolated camera fixture. No changes to world collision, damage, mining or default animation selection; no world/performance claims.",
+  "seam_error": 0.000000160490415623826,
+  "tool_basis_error": 0.000000178813934326172
+}

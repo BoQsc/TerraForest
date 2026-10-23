@@ -1,0 +1,107 @@
+{
+  "approval": "PENDING USER VISUAL REVIEW; do not commit",
+  "checks": 23,
+  "failures": 0,
+  "hand_station_separation_m": 0.168327137827873,
+  "head_samples": [
+    {
+      "frame": 0,
+      "handle_camera": [
+        0.0399999506771564,
+        -0.350001573562622,
+        -0.520092785358429
+      ],
+      "head_screen": "(1366.41, 433.692)",
+      "head_world": "(800.394, 51.51008, 1309.311)",
+      "shaft_angle_degrees": -38.0048896990965,
+      "working_point_camera": [
+        0.31488037109375,
+        0.001953125,
+        -0.95947265625
+      ]
+    },
+    {
+      "frame": 20,
+      "handle_camera": [
+        0.139999970793724,
+        -0.23000156879425,
+        -0.320092767477036
+      ],
+      "head_screen": "(2018.57, 270.7998)",
+      "head_world": "(800.5941, 51.58654, 1309.592)",
+      "shaft_angle_degrees": -49.9966440669099,
+      "working_point_camera": [
+        0.52874755859375,
+        0.0960311889648438,
+        -0.6873779296875
+      ]
+    },
+    {
+      "frame": 32,
+      "handle_camera": [
+        0.203867405653,
+        -0.332228779792786,
+        -0.458880573511124
+      ],
+      "head_screen": "(1099.051, 371.3703)",
+      "head_world": "(800.1498, 51.58074, 1309.227)",
+      "shaft_angle_degrees": 6.00081875742036,
+      "working_point_camera": [
+        0.16998291015625,
+        -0.0099639892578125,
+        -0.9951171875
+      ]
+    },
+    {
+      "frame": 38,
+      "handle_camera": [
+        0.201306268572807,
+        -0.373911023139954,
+        -0.473357319831848
+      ],
+      "head_screen": "(1075.793, 432.1793)",
+      "head_world": "(800.1315, 51.51768, 1309.193)",
+      "shaft_angle_degrees": 8.00923574794495,
+      "working_point_camera": [
+        0.15985107421875,
+        -0.0799560546875,
+        -1.025146484375
+      ]
+    },
+    {
+      "frame": 43,
+      "handle_camera": [
+        0.202507987618446,
+        -0.38047993183136,
+        -0.45940312743187
+      ],
+      "head_screen": "(1087.83, 427.968)",
+      "head_world": "(800.1407, 51.521, 1309.217)",
+      "shaft_angle_degrees": 6.99605436151712,
+      "working_point_camera": [
+        0.1650390625,
+        -0.074951171875,
+        -1.0052490234375
+      ]
+    },
+    {
+      "frame": 72,
+      "handle_camera": [
+        0.0399999506771564,
+        -0.350001573562622,
+        -0.520092785358429
+      ],
+      "head_screen": "(1366.41, 433.692)",
+      "head_world": "(800.394, 51.51008, 1309.311)",
+      "shaft_angle_degrees": -38.0048896990965,
+      "working_point_camera": [
+        0.31488037109375,
+        0.001953125,
+        -0.95947265625
+      ]
+    }
+  ],
+  "ready_vertical_hand_gap_m": 0.0791769027709961,
+  "scope": "Actual temporary world, real equipment/view controller and evaluated steel head. Animation engineering checks do not approve its appearance or qualify world performance.",
+  "seam_error": 0.000000160490415623826
+}

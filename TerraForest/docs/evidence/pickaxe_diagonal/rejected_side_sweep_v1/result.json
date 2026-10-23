@@ -1,0 +1,36 @@
+{
+  "approval": "PENDING USER VISUAL REVIEW; do not commit",
+  "checks": 20,
+  "failures": 0,
+  "hand_station_separation_m": 0.168327137827873,
+  "head_samples": [
+    {
+      "frame": 0,
+      "head_screen": "(1366.41, 433.692)",
+      "head_world": "(800.394, 51.51008, 1309.311)"
+    },
+    {
+      "frame": 20,
+      "head_screen": "(1766.35, 486.7906)",
+      "head_world": "(800.6698, 51.46126, 1309.414)"
+    },
+    {
+      "frame": 33,
+      "head_screen": "(930.9232, 507.0791)",
+      "head_world": "(799.9637, 51.4288, 1309.121)"
+    },
+    {
+      "frame": 40,
+      "head_screen": "(320.1643, 722.5458)",
+      "head_world": "(799.4897, 51.27474, 1309.456)"
+    },
+    {
+      "frame": 72,
+      "head_screen": "(1366.41, 433.692)",
+      "head_world": "(800.394, 51.51008, 1309.311)"
+    }
+  ],
+  "ready_vertical_hand_gap_m": 0.0791769027709961,
+  "scope": "Actual temporary world, real equipment/view controller and evaluated steel head. Animation engineering checks do not approve its appearance or qualify world performance.",
+  "seam_error": 0.0
+}

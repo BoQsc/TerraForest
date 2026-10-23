@@ -3,6 +3,8 @@ extends Node3D
 ## Camera-local presentation. The existing native motor remains the player owner.
 const MODEL = preload("res://addons/characters/runtime/assets/Human.r11.glb")
 const PLACEMENT = preload("res://addons/characters/runtime/assets/Human.placement.res")
+const PICKAXE_DIAGONAL = preload("res://addons/characters/runtime/assets/Human.pickaxe_diagonal.res")
+const PICKAXE_PULLBACK = preload("res://addons/characters/runtime/assets/Human.pickaxe_side_pullback.res")
 const HIDDEN_SURFACE = preload("res://addons/characters/runtime/hidden_surface.gdshader")
 var model: Node3D
 var animation_player: AnimationPlayer
@@ -13,6 +15,8 @@ var active_clip := ""
 var action_remaining := 0.0
 var placement_active := false
 var body: CharacterBody3D
+@export var diagonal_pickaxe := true
+@export_enum("pullback", "diagonal") var pickaxe_swing := "pullback"
 
 func _ready() -> void:
 	# Inverse of the source viewer's FP camera (0, 1.65, .03), facing +Z.
@@ -22,6 +26,8 @@ func _ready() -> void:
 	add_child(model)
 	_collect(model)
 	animation_player.add_animation_library("placement", PLACEMENT)
+	animation_player.add_animation_library("pickaxe_diagonal", PICKAXE_DIAGONAL)
+	animation_player.add_animation_library("pickaxe_pullback", PICKAXE_PULLBACK)
 	for clip in animation_player.get_animation_list():
 		clips[String(clip).get_slice("/", String(clip).get_slice_count("/") - 1)] = clip
 	equip(current)
@@ -60,6 +66,10 @@ func _sync_equipment() -> void:
 			mesh.hide()
 
 func _motion_clip(action: String) -> String:
+	if current == 1 and diagonal_pickaxe and action == "Swing" and pickaxe_swing == "pullback":
+		return "FP_Pickaxe_SidePullback_Swing"
+	if current == 1 and diagonal_pickaxe and clips.has("FP_Pickaxe_Diagonal_" + action):
+		return "FP_Pickaxe_Diagonal_" + action
 	var prefix := "FP_Pickaxe_" if current == 1 else ("FP_Axe_" if current == 2 else "")
 	return prefix + action if clips.has(prefix + action) else action
 

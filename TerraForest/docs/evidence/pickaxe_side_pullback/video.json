@@ -1,0 +1,9 @@
+{
+  "approval": "PENDING USER VISUAL REVIEW; do not commit",
+  "encoder": "Blender 5.2.3 LTS",
+  "fps": 30,
+  "frames": 240,
+  "sha256": "099624e87a561036db372920d02f9eb15547bc9feced735712bb63b160475012",
+  "revision": "Copy of liked side-strike alternate; 8 cm deeper wind-up, unchanged contact and recovery",
+  "scope": "Actual runtime rig/camera against a fixed studio target. Two normal-speed swings and a half-speed inspection pass; deterministic visual review, not live input, collision or performance evidence."
+}

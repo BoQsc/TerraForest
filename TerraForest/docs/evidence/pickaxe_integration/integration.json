@@ -1,0 +1,15 @@
+{
+  "user_authorization": "Commit and sync on 2026-10-23",
+  "selected_swing": "FP_Pickaxe_SidePullback_Swing",
+  "latest_arc_test": "retained, not default; visual acceptance pending",
+  "checks": {
+    "character_runtime": "20261023T190419948525Z",
+    "arc_swing": "20261023T190522584424Z",
+    "pullback_comparison": "20261023T190524932459Z",
+    "diagonal_world": "20261023T190527508416Z",
+    "placement_open_failure": "20261023T190522585963Z",
+    "initial_duplicate_library": "20261023T190419974067Z"
+  },
+  "placement_failure": "terrain-fill sample admitted but gesture not active; remains open",
+  "terrain_checkout_local_edit": "project.godot directional shadow setting retained"
+}

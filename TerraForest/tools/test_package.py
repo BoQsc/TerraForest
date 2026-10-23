@@ -73,6 +73,8 @@ class PackageTests(unittest.TestCase):
         self.assertIn('player_runtime',character_metadata['included_addons'])
         self.assertTrue({'addons/characters/runtime/assets/Human.r11.glb',
                          'addons/characters/runtime/assets/Human.placement.res',
+                         'addons/characters/runtime/assets/Human.pickaxe_diagonal.res',
+                         'addons/characters/runtime/assets/Human.pickaxe_side_pullback.res',
                          'addons/characters/runtime/assets/Zombie.drag_walk.res',
                          'addons/characters/runtime/assets/Zombie.r4.glb',
                          'addons/characters/runtime/assets/Zombie.r4.behavior.json',

@@ -1,0 +1,29 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS actual temporary world becomes ready
+PASS real belt selects the diagonal hold on the existing player body
+PASS all 71 original clips, placement and five new clips coexist
+PASS diagonal strike is a 1.2-second one-shot matching the melee cooldown
+PASS new animation has no gameplay, audio or method events
+PASS right hand holds above the left, at the upper handle station
+PASS animation leaves the physical player's root in place
+PASS both fitted hand transforms remain attached to the handle throughout the swing
+PASS actual sharpened point drives forward at least 25 cm from the right-side wind-up
+PASS forward contact stays slightly right of the aim line, approached diagonally from the right
+PASS hands and handle stay to the right through contact and follow-through
+PASS left shaft roll stays restrained below 12 degrees through contact and follow-through
+PASS short left/down follow-through remains in front of the player
+PASS strike ends at its starting ready pose without a bone-pose pop
+PASS held input cannot restart an unfinished diagonal strike
+PASS hidden presentation suspends the action timer
+PASS live one-shot playback returns to the diagonal ready hold
+PASS walking keeps the new diagonal hold
+PASS running keeps the new diagonal hold
+PASS tool switching cancels the strike and preserves the axe hold
+PASS existing placement action can temporarily free the equipped hand
+PASS placement restores the new pickaxe grip
+PASS empty hands retain their existing idle pose
+[TerrainRewrite] Temporary test world: save skipped
+PICKAXE_DIAGONAL checks=23 failures=0

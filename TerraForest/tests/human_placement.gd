@@ -13,6 +13,7 @@ func pose(view:Node3D,time:float)->void:
 	view.animation_player.pause()
 	view.animation_player.advance(0)
 func run()->void:
+	root.size=Vector2i(1920,1080)
 	var game=load("res://demo/world.tscn").instantiate();game.temporary_world=true;root.add_child(game)
 	var deadline:=Time.get_ticks_msec()+60000
 	while game.loading_active and Time.get_ticks_msec()<deadline:await process_frame
@@ -22,7 +23,7 @@ func run()->void:
 	game.session_menu.set_open(false);game.zombies.clear()
 	var view:Node3D=game.tool_view.human
 	game.tool_view.equip(0);view.set_process(false)
-	check(view.clips.size()==72 and view.clips.has("FP_Place_Relaxed"),"original 71 clips and new Blender action coexist")
+	check(view.clips.size()==78 and view.clips.has("FP_Place_Relaxed"),"original 71 clips, placement and diagonal pickaxe actions coexist")
 	view._process(.1)
 	check(view.active_clip=="Idle" and not view.placement_active and view.action_remaining==0,"empty hands rest in the original idle without an action")
 	game.player.velocity=Vector3(6,2,0);view._process(.1)
@@ -49,17 +50,21 @@ func run()->void:
 	var screen:Vector2=game.camera.unproject_position(tip.origin+tip.basis.y*.027)
 	check(screen.x>0 and screen.x<root.size.x and screen.y>0 and screen.y<root.size.y*.9,"index fingertip stays inside the first-person frame above the belt")
 	var empty_pose:=skeleton.get_bone_global_pose(skeleton.find_bone("RightHand"))
-	game.tool_view.equip(1);check(not view.placement_active and view.active_clip=="FP_Pickaxe_Idle","equipment switch cancels gesture and restores authored tool idle")
+	game.tool_view.equip(1);check(not view.placement_active and view.active_clip=="FP_Pickaxe_Diagonal_Idle","equipment switch cancels gesture and restores authored tool idle")
 	game.player.velocity=Vector3(6,0,0);view._process(.1)
-	check(view.active_clip=="FP_Pickaxe_Run","authored tool locomotion remains available while empty hands rest")
+	check(view.active_clip=="FP_Pickaxe_Diagonal_Run","authored tool locomotion remains available while empty hands rest")
 	game.player.velocity=Vector3.ZERO;game.tool_view.equip(1)
+	view.swing()
+	check(view.active_clip=="FP_Pickaxe_SidePullback_Swing" and view.action_remaining>1.0,"actual world uses the liked deeper-pullback swing by default")
+	view.set_process(true);await create_timer(1.4).timeout;view.set_process(false)
+	check(view.active_clip=="FP_Pickaxe_Diagonal_Idle" and view.action_remaining==0,"selected swing returns to its diagonal ready grip in the actual world")
 	check(game.tool_view.place(),"placement can temporarily free the equipped hand")
 	pose(view,.4333333)
 	check(skeleton.get_bone_global_pose(skeleton.find_bone("RightHand")).is_equal_approx(empty_pose),"placement pose is independent of the previously equipped tool")
 	for mesh in view.meshes:
 		if String(mesh.name).to_lower().begins_with("equipment"):check(not mesh.visible,"gesture hides "+String(mesh.name))
 	view._process(1.0)
-	check(not view.placement_active and view.active_clip=="FP_Pickaxe_Idle","completed gesture restores selected equipment")
+	check(not view.placement_active and view.active_clip=="FP_Pickaxe_Diagonal_Idle","completed gesture restores selected equipment")
 	game.tool_view.equip(3);game.tool_view.place();game.tool_view._process(0)
 	check(not game.tool_view.tools[3].visible,"legacy construction preview is hidden during the empty-hand action")
 	view._process(1.0);game.tool_view._process(0)
@@ -91,6 +96,9 @@ func run()->void:
 	check(not view.placement_active,"block removal does not play a placement gesture")
 	# A queued terrain addition exercises the shared accepted-edit callback.
 	var terrain_cell:=Vector3i(game.player.global_position.floor())+Vector3i(4,3,-4)
+	var edit_deadline:=Time.get_ticks_msec()+15000
+	while game.terrain.pending_edit and Time.get_ticks_msec()<edit_deadline:await process_frame
+	check(not game.terrain.pending_edit,"earlier world edits finish before submitting the fill gesture check")
 	check(game.stroke_buffer.push_cube(terrain_cell,1),"isolated terrain-fill sample is admitted")
 	game._consume_stroke()
 	check(view.placement_active,"accepted terrain fill plays the gesture")

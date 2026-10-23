@@ -1,0 +1,40 @@
+{
+  "actions": {
+    "FP_Pickaxe_FullSweep_Idle": {
+      "duration": 3.0,
+      "loop": 1,
+      "neutral_morphs": 530,
+      "tracks": 707
+    },
+    "FP_Pickaxe_FullSweep_Jump": {
+      "duration": 1.5,
+      "loop": 0,
+      "neutral_morphs": 530,
+      "tracks": 707
+    },
+    "FP_Pickaxe_FullSweep_Run": {
+      "duration": 0.800000011920929,
+      "loop": 1,
+      "neutral_morphs": 530,
+      "tracks": 707
+    },
+    "FP_Pickaxe_FullSweep_Swing": {
+      "duration": 1.20000004768372,
+      "loop": 0,
+      "neutral_morphs": 530,
+      "tracks": 707
+    },
+    "FP_Pickaxe_FullSweep_Walk": {
+      "duration": 1.0,
+      "loop": 1,
+      "neutral_morphs": 530,
+      "tracks": 707
+    }
+  },
+  "approval": "PENDING USER VISUAL REVIEW; do not commit",
+  "bones": 59,
+  "original_clips": 71,
+  "rest_error": 0.000000240274005136598,
+  "save_error": 0,
+  "scope": "Blender bone animation on unchanged R11 runtime model; clears original pose-specific morph correctives; no methods, gameplay events, root motion or body integration."
+}

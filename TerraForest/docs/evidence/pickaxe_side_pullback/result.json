@@ -1,0 +1,140 @@
+{
+  "approval": "PENDING USER VISUAL REVIEW; do not commit",
+  "body_error": 0.0,
+  "checks": 9,
+  "failures": 0,
+  "grip_error": 0.000000880942536696239,
+  "lateral_error": 0.000000133280039449346,
+  "peak_extra_pullback_m": 0.0800000429153442,
+  "preserved_pose_error": 0.000000171201307352931,
+  "samples": [
+    {
+      "extra_pullback_m": 0.0,
+      "frame": 0,
+      "kept_tip_camera": [
+        0.31496673822403,
+        0.00194120407104492,
+        -0.959389865398407
+      ],
+      "trial_tip_camera": [
+        0.31496673822403,
+        0.00194120407104492,
+        -0.959389865398407
+      ]
+    },
+    {
+      "extra_pullback_m": 0.0399998426437378,
+      "frame": 12,
+      "kept_tip_camera": [
+        0.463443100452423,
+        -0.0745083093643188,
+        -0.802293241024017
+      ],
+      "trial_tip_camera": [
+        0.463443100452423,
+        -0.0745083093643188,
+        -0.76229339838028
+      ]
+    },
+    {
+      "extra_pullback_m": 0.0800000429153442,
+      "frame": 20,
+      "kept_tip_camera": [
+        0.542508959770203,
+        -0.133654475212097,
+        -0.712607383728027
+      ],
+      "trial_tip_camera": [
+        0.542508959770203,
+        -0.133654475212097,
+        -0.632607340812683
+      ]
+    },
+    {
+      "extra_pullback_m": 0.0124998092651367,
+      "frame": 26,
+      "kept_tip_camera": [
+        0.350023210048676,
+        -0.0299839973449707,
+        -0.87000972032547
+      ],
+      "trial_tip_camera": [
+        0.350023239850998,
+        -0.0299839973449707,
+        -0.857509911060333
+      ]
+    },
+    {
+      "extra_pullback_m": 0.0,
+      "frame": 28,
+      "kept_tip_camera": [
+        0.272870481014252,
+        -0.0184506177902222,
+        -0.921102821826935
+      ],
+      "trial_tip_camera": [
+        0.272870481014252,
+        -0.0184506177902222,
+        -0.921102821826935
+      ]
+    },
+    {
+      "extra_pullback_m": 0.0,
+      "frame": 32,
+      "kept_tip_camera": [
+        0.140016883611679,
+        -0.00997984409332275,
+        -0.995014369487762
+      ],
+      "trial_tip_camera": [
+        0.140016883611679,
+        -0.00997984409332275,
+        -0.995014369487762
+      ]
+    },
+    {
+      "extra_pullback_m": 0.0,
+      "frame": 38,
+      "kept_tip_camera": [
+        0.0700148269534111,
+        -0.0499786138534546,
+        -1.01501488685608
+      ],
+      "trial_tip_camera": [
+        0.0700148269534111,
+        -0.0499786138534546,
+        -1.01501488685608
+      ]
+    },
+    {
+      "extra_pullback_m": 0.0,
+      "frame": 56,
+      "kept_tip_camera": [
+        0.313592910766602,
+        -0.0458621978759766,
+        -0.933676302433014
+      ],
+      "trial_tip_camera": [
+        0.313592910766602,
+        -0.0458621978759766,
+        -0.933676302433014
+      ]
+    },
+    {
+      "extra_pullback_m": 0.0,
+      "frame": 72,
+      "kept_tip_camera": [
+        0.31496673822403,
+        0.00194120407104492,
+        -0.959389865398407
+      ],
+      "trial_tip_camera": [
+        0.31496673822403,
+        0.00194120407104492,
+        -0.959389865398407
+      ]
+    }
+  ],
+  "scope": "Comparison of both imported animations on actual runtime rig and evaluated sharpened-point mesh in an isolated camera fixture. No visual acceptance, gameplay collision or performance claim.",
+  "tool_basis_error": 0.000000259810633451707
+}

@@ -1,0 +1,14 @@
+00:00.562  blend            | Read blend: "C:\Users\windows10\.codex\worktrees\character-integration\Godot Terrain\TerraForest\addons\characters\authoring\Human.pickaxe_diagonal.blend"
+INFO Draco is available, use library at C:\Program Files (x86)\Steam\steamapps\common\Blender\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_draco_bridge.dll
+INFO MeshOptimizer is available, use library at C:\Program Files (x86)\Steam\steamapps\common\Blender\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_meshopt_bridge.dll
+19:44:32 | INFO: Starting glTF 2.0 export
+19:44:32 | INFO: Extracting primitive: Reference_High_Mesh.001.ThirdPerson
+19:44:32 | INFO: Primitives created: 1
+19:44:32 | WARNING: There are more than 4 joint vertex influences.The 4 with highest weight will be used (and normalized).
+19:44:35 | INFO: Finished glTF 2.0 export in 3.220546245574951 s
+
+Info: Saved as "Human.pickaxe_side_strike.blend"
+PICKAXE_SIDE_STRIKE_AUTHORED {"approval": "PENDING USER VISUAL REVIEW; do not commit", "source": "addons\\characters\\authoring\\Human.pickaxe_diagonal.blend", "source_sha256": "fc19d70c8209b01f996e2658ccf2f424b93fb766928e27a3c3a2caba3ddd8351", "action": "FP_Pickaxe_SideStrike_Swing", "fps": 60, "duration": 1.2, "revision": "Side wind-up and forward diagonal strike; preserved ready pose; neutral torso"}
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:37:16)
+
+Blender quit
