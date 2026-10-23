@@ -1,0 +1,33 @@
+{
+  "checkpoints": [
+    {
+      "blocks": 0,
+      "generator": 19,
+      "ok": true,
+      "pages": 0,
+      "regions": 0,
+      "revision": 0,
+      "seed": 1703
+    },
+    {
+      "blocks": 0,
+      "generator": 19,
+      "ok": true,
+      "pages": 378,
+      "regions": 34,
+      "revision": 128,
+      "seed": 1703
+    },
+    {
+      "blocks": 0,
+      "generator": 19,
+      "ok": true,
+      "pages": 328,
+      "regions": 34,
+      "revision": 64,
+      "seed": 1703
+    }
+  ],
+  "ok": true,
+  "stage": "combined_stage_fd7d16b8e3319b6e93b7e072badc1a1d"
+}

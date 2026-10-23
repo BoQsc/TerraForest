@@ -1,0 +1,50 @@
+{
+  "failures": 0,
+  "progress": {
+    "checkpoints": 3,
+    "completed": 48,
+    "phase": 0,
+    "state": 3,
+    "total": 80
+  },
+  "regenerated": {
+    "admission_retries": 0,
+    "capture_sample_bytes_high": 1572864,
+    "checkpoints": 6,
+    "completed": 80,
+    "ok": true,
+    "resident_high": 256,
+    "resident_limit": 256,
+    "revision": 80,
+    "storage": {
+      "region_reads": 78,
+      "reused_files": 0,
+      "reused_regions": 122,
+      "workers": 1,
+      "written_bytes": 428440,
+      "written_files": 11
+    },
+    "worker_ms": 182.3987
+  },
+  "rejected": {
+    "admission_retries": 0,
+    "capture_sample_bytes_high": 1572864,
+    "checkpoints": 3,
+    "completed": 48,
+    "ok": false,
+    "reason": "Staged generation rejected or cancelled; unpublished edits discarded",
+    "resident_high": 256,
+    "resident_limit": 256,
+    "storage": {
+      "region_reads": 38,
+      "reused_files": 0,
+      "reused_regions": 42,
+      "workers": 1,
+      "written_bytes": 122101,
+      "written_files": 6
+    },
+    "worker_ms": 121.9611
+  },
+  "scope": "Deterministic interruption in the existing native product publisher before an intermediate index is published; retained-prefix integrity, full discard and exact fresh-owner regeneration. Not physical power-loss evidence.",
+  "verified_checkpoints": 3
+}

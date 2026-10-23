@@ -1,0 +1,1 @@
+{"admission_retries":0,"capture_sample_bytes_high":4030464,"checkpoints":7,"completed":367,"ok":true,"resident_high":479,"resident_limit":16384,"revision":367,"storage":{"region_reads":44,"reused_files":0,"reused_regions":137,"workers":1,"written_bytes":2775302,"written_files":13},"worker_ms":488.0372}

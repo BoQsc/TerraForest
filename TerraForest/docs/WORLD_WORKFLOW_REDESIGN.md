@@ -16,7 +16,17 @@ resident bound. Production creation and fresh full-game/cache reopen pass.
 See [generation staging](evidence/terrain_generation_staging/README.md).
 This supersedes the earlier requirement to implement unpublished checkpoint
 stages, not the larger capacity/runtime, retention, world-design or compute gates.
-Live detailed bake progress and mid-stage storage/crash recovery remain open.
+Live detailed bake progress and finite mid-stage safe-regeneration evidence are
+now covered by [generation lifecycle](evidence/generation_lifecycle/README.md).
+Cold/cached planning runs off the main loop; the loading screen is ready before
+the native bake is admitted, and reads one coherent command/checkpoint observation
+without the terrain mutex. Controlled native publication failure and termination
+of the actual Windows bake child retain valid private prefixes and no selectable
+partial world. Same-name regeneration uses a fresh private staging owner and
+passes full verification/publication. Source and exported generation plus fresh
+game/cache reopen pass. Physical power loss, disk-full coverage, partial-bake
+resume and retention/compaction remain open; these finite cases do not establish
+general crash tolerance, sustainable runtime or finished world design.
 
 The regional terrain checkpoint is now mounted by the production native worker
 without expanded whole-world sample bytes. Bounded LRU residency, dirty/atomic-edit

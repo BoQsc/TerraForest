@@ -1,0 +1,11 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS native staged bake starts on its owner
+PASS confirmed live bake after intermediate private checkpoints before cancellation
+PASS cancellation is nonblocking and owner joins within one second
+PASS in-flight cancellation discards unpublished world and exposes no final reference
+PASS production worker begins unpublished staged bake
+PASS confirmed live production bake after private checkpoint before stop
+[TerrainRewrite] ERROR: save blocked by world initialization or snapshot validation failure; previous canonical snapshot retained
+PASS production stop cancels and joins without publishing partial world
+TERRAIN_GENERATION_CANCEL failures=0

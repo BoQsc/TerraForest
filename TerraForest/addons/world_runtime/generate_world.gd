@@ -8,11 +8,35 @@ var progress_path:=""
 var generation_screen:CanvasLayer
 var generation_cancel_path:=""
 var saved_map_stamps:Dictionary={}
+var planning_worker:Thread
 const Progress=preload("res://addons/world_runtime/generation_progress.gd")
-func progress(stage:String,completed:int=0,total:int=0)->void:
- Progress.write(progress_path,stage,completed,total)
+func progress(stage:String,completed:int=0,total:int=0,details:Dictionary={})->void:
+ Progress.write(progress_path,stage,completed,total,details)
  if generation_screen!=null:generation_screen.update_stage(stage,completed,total)
 func _initialize()->void:run.call_deferred()
+func _finalize()->void:
+ if planning_worker!=null and planning_worker.is_started():planning_worker.wait_to_finish()
+func wait_generation_data(game:Node,seconds:float)->bool:
+ var deadline:=Time.get_ticks_msec()+int(seconds*1000);var next_poll:=0;var previous:Dictionary={}
+ var captured_bake:=false
+ while not (game.terrain.world_ready and game.terrain.snapshot_restore_ok) and Time.get_ticks_msec()<deadline:
+  if not game.terrain.latest_error.is_empty():return false
+  if Time.get_ticks_msec()>=next_poll:
+   next_poll=Time.get_ticks_msec()+100
+   var diagnostic:Dictionary=game.terrain.backend.startup_diagnostics()
+   var native_progress:Dictionary=diagnostic.get("terrain_bake",{})
+   var water_progress:Dictionary=diagnostic.get("lake_bake",{})
+   var observed:Dictionary={"terrain":native_progress,"water":water_progress,"phase":diagnostic.phase}
+   if observed!=previous:
+    if native_progress.get("state",0)==1:progress("Building roads and foundations",native_progress.completed,native_progress.total,native_progress)
+    elif water_progress.get("status",0)==1:progress("Preparing water sources",0,0,water_progress)
+    elif native_progress.get("state",0)==2:progress("Preparing generated world data")
+    previous=observed
+   if not captured_bake and native_progress.get("state",0)==1 and "--capture-generation-ui" in OS.get_cmdline_user_args():
+    await RenderingServer.frame_post_draw
+    root.get_texture().get_image().save_png(output_dir.path_join("generation_baking.png"));captured_bake=true
+  await process_frame
+ return game.terrain.world_ready and game.terrain.snapshot_restore_ok
 func ready_world(game:Node)->bool:
  return await wait_until(func():return not game.loading_active,120)
 func capture_loading_view(game:Node,name:String)->void:
@@ -55,14 +79,25 @@ func run()->void:
  if generator not in [17,18,19] or seed_value<0 or seed_value>2147483647:quit(1);return
  var native_lakes:=not qualification and generator in [17,19]
  DirAccess.make_dir_recursive_absolute(output_dir)
+ if not qualification:
+  generation_screen=preload("res://addons/world_runtime/generation_screen.gd").new();generation_screen.cancel_path=generation_cancel_path;root.add_child(generation_screen)
  progress("Planning terrain, streets and building sites")
- var prepared:Dictionary=preload("res://addons/world_runtime/world_generation_plan.gd").build(seed_value,generator,"--central-market" in OS.get_cmdline_user_args(),"--regional-connection" in OS.get_cmdline_user_args())
+ await process_frame
+ if not qualification and "--capture-generation-ui" in OS.get_cmdline_user_args():
+  await RenderingServer.frame_post_draw
+  root.get_texture().get_image().save_png(output_dir.path_join("generation_planning.png"))
+ planning_worker=Thread.new()
+ var build:=preload("res://addons/world_runtime/world_generation_plan.gd").build.bind(seed_value,generator,"--central-market" in OS.get_cmdline_user_args(),"--regional-connection" in OS.get_cmdline_user_args())
+ if planning_worker.start(build)!=OK:planning_worker=null;print("WORLD_PLAN_WORKER_FAILED");quit(1);return
+ var planning_frames:=0
+ while planning_worker.is_alive():await process_frame;planning_frames+=1
+ var prepared:Dictionary=planning_worker.wait_to_finish();planning_worker=null
  if not prepared.get("ok",false):print("WORLD_PLAN_FAILED ",prepared);quit(1);return
  var plan:Dictionary=prepared.plan
  var works:Dictionary=prepared.works
  var market:Dictionary=prepared.market
  var connection:Dictionary=prepared.connection
- print("WORLD_PLAN digest=",prepared.plan_digest," cache_hit=",prepared.cache_hit," ms=",prepared.worker_ms)
+ print("WORLD_PLAN digest=",prepared.plan_digest," cache_hit=",prepared.cache_hit," ms=",prepared.worker_ms," planning_frames=",planning_frames)
  FileAccess.open(output_dir.path_join("generation_plan_identity.json"),FileAccess.WRITE).store_string(JSON.stringify({"version":prepared.version,"seed":seed_value,"generator":generator,"digest":prepared.plan_digest}))
 
  var game=load("res://demo/world.tscn").instantiate()
@@ -80,18 +115,22 @@ func run()->void:
  if native_lakes and not game.terrain.backend.configure_initial_lake_bake():print("OFFLINE_LAKE_JOB_UNAVAILABLE");game.free();quit(1);return
  if offline_grading:
   var packets:=preload("res://addons/world_runtime/generation_earthworks.gd").packets(works.segments)
-  if not game.terrain.backend.configure_initial_earthworks(packets,prepared.plan_digest):print("OFFLINE_PACKETS_REJECTED");game.free();quit(1);return
+  if not game.terrain.backend.configure_initial_earthworks(packets,prepared.plan_digest,not qualification):print("OFFLINE_PACKETS_REJECTED");game.free();quit(1);return
   progress("Baking roads and foundations before terrain loading")
  game.lakes.offline_preparation=true;game.model_region_paging=false;game.temporary_world=not bake;game.max_fps=60;game.background_fps=60;root.add_child(game)
  if not qualification:
   game.set_process_input(false);game.set_process_unhandled_input(false);game.set_process_unhandled_key_input(false);game.set_process_shortcut_input(false)
-  generation_screen=preload("res://addons/world_runtime/generation_screen.gd").new();generation_screen.cancel_path=generation_cancel_path;game.add_child(generation_screen)
+  generation_screen.reparent(game)
   game.ecosystem.set_process(false);game.ground_cover.set_process(false);game.vegetation.set_process(false)
  progress("Initializing generated terrain data" if not qualification else "Loading terrain and collision")
- var initialized:bool=await ready_world(game) if qualification else await wait_until(func():return game.terrain.world_ready and game.terrain.snapshot_restore_ok,60)
+ if offline_grading and not qualification:
+  progress("Building roads and foundations",0,works.segments.size())
+  await process_frame
+  if not game.terrain.backend.admit_initial_generation():print("OFFLINE_JOB_ADMISSION_REJECTED");game.free();quit(1);return
+ var initialized:bool=await ready_world(game) if qualification else await wait_generation_data(game,60)
  if not initialized or game.terrain.backend.world_generator!=generator:print("WRONG_WORLD");quit(1);return
  if native_lakes and not game.terrain.backend.initial_lakes_result.get("ok",false):print("OFFLINE_LAKE_DATA_FAILED ",game.terrain.backend.initial_lakes_result);game.free();quit(1);return
- progress("Baking generated lakes")
+ progress("Loading water sources")
  if not await wait_until(func():return game.lakes.statistics().ready==game.lakes.statistics().lakes and not game.lakes.capture_snapshot().is_empty(),120):print("GENERATED_WATER_BAKE_FAILED ",game.lakes.statistics());game.free();quit(1);return
  if not qualification:
   FileAccess.open(output_dir.path_join("generated_lakes_bake.json"),FileAccess.WRITE).store_string(JSON.stringify(game.terrain.backend.initial_lakes_result))
@@ -149,12 +188,12 @@ func run()->void:
  var runner=preload("res://addons/structures/site_preparation.gd").new()
  var completed_edits:=0
  var last_progress_ms:=0
- progress("Grading roads and foundations",0,works.segments.size())
  if offline_grading:
   completed_edits=int(game.terrain.backend.initial_earthworks_result.get("completed",0))
   if completed_edits!=works.segments.size():print("OFFLINE_GRADING_INCOMPLETE");game.free();quit(1);return
   FileAccess.open(output_dir.path_join("earthworks_bake.json"),FileAccess.WRITE).store_string(JSON.stringify(game.terrain.backend.initial_earthworks_result))
  else:
+  progress("Grading roads and foundations",0,works.segments.size())
   for offset in range(0,works.segments.size(),256):
    var batch:Dictionary={"ok":true,"segments":works.segments.slice(offset,mini(offset+256,works.segments.size())),"bounds":works.bounds}
    if not runner.begin(batch,game.terrain,func(_bounds:AABB)->String:return ""):quit(1);return

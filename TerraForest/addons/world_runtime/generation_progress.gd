@@ -2,7 +2,7 @@
 extends RefCounted
 # Stage observations only: never fabricate an overall completion percentage.
 static var observations:Dictionary={}
-static func write(path:String,stage:String,completed:int=0,total:int=0)->bool:
+static func write(path:String,stage:String,completed:int=0,total:int=0,details:Dictionary={})->bool:
  if path.is_empty() or completed<0 or total<0 or (total>0 and completed>total):return false
  var now:=Time.get_ticks_usec()
  if not observations.has(path):observations[path]={"started":now,"stage":stage,"since":now,"timings":[]}
@@ -12,7 +12,7 @@ static func write(path:String,stage:String,completed:int=0,total:int=0)->bool:
   profile.stage=stage;profile.since=now
  var file:=FileAccess.open(path+".pending",FileAccess.WRITE)
  if file==null:return false
- file.store_string(JSON.stringify({"stage":stage,"completed":completed,"total":total,"elapsed_microseconds":now-int(profile.started),"stage_microseconds":now-int(profile.since),"timings":profile.timings}));file.close()
+ file.store_string(JSON.stringify({"stage":stage,"completed":completed,"total":total,"details":details,"elapsed_microseconds":now-int(profile.started),"stage_microseconds":now-int(profile.since),"timings":profile.timings}));file.close()
  return DirAccess.rename_absolute(path+".pending",path)==OK
 static func read(path:String)->Dictionary:
  var file:=FileAccess.open(path,FileAccess.READ) if FileAccess.file_exists(path) else null

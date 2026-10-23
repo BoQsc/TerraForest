@@ -20,8 +20,19 @@ It does not close populated travel beyond the former cap, long unsaved gameplay
 pressure, mining arrival, retention/compaction, POI/options coverage, compute
 benefit, visual world acceptance or thermal qualification. Private cancelled and
 superseded products remain retained until ownership-aware collection exists.
-Live per-command/checkpoint UI progress and injected mid-bake storage/crash
-recovery still need dedicated evidence; revisit now that staging boundaries exist.
+Live command/checkpoint UI progress and finite mid-bake interruption cases now
+have [generation lifecycle evidence](evidence/generation_lifecycle/README.md).
+Planning runs on a worker while the loading screen remains active; native baking
+starts after that screen is ready and publishes coherent counters without the
+terrain lock. A native product-publication interruption and termination of the
+actual Windows generator child retain valid private prefixes, publish no partial
+world and permit verified regeneration under the same public name with a fresh
+staging owner. Source and exported generation/reopen pass, with all four map
+layers hitting cache and canonical bytes unchanged on read-only reopen.
+These cases close the missing live progress and safe-regeneration evidence,
+not physical power-loss/disk-full coverage or partial-bake resume. Retained
+private products still need ownership-aware collection; broader storage failure,
+capacity/runtime and world-quality gates remain open.
 Keep every remaining requirement in WORLD_WORKFLOW_REDESIGN.md active.
 
 ## Selective native terrain residency integrated - 2026-10-23

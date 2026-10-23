@@ -1,0 +1,19 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS worker starts
+PASS world startup completes
+PASS first save admitted
+PASS publication held at controlled gate
+PASS second save gets bounded backpressure
+PASS edit and query admitted during disk publication
+PASS native edit and query finish before publication is released
+PASS old save completion cannot relabel edited terrain cache
+PASS next save admitted after completion
+PASS reload queued behind pending publication
+PASS reload cannot cross publication barrier
+PASS reload resumes after durable save
+PASS save before shutdown admitted
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+PASS shutdown joins publisher before releasing archive lease
+PASS shutdown leaves verified canonical archive
+ASYNC_SAVE_BARRIERS checks=15 failures=0

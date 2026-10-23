@@ -1,0 +1,10 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+MARKET_PLAN_TIMINGS candidates=69 attempts=6 survey_ms=38.157 recipe_ms=53.577 fitting_ms=74.834
+PASS independent cold native plan establishes reference
+PASS real plan computation starts on worker
+MARKET_PLAN_TIMINGS candidates=69 attempts=6 survey_ms=26.89 recipe_ms=42.46 fitting_ms=54.944
+PASS cold worker preserves exact shared plan while main loop remains live
+PASS cached plan also runs through worker
+PASS worker cache/recipe restoration preserves the same plan identity
+GENERATION_PLAN_WORKER failures=0

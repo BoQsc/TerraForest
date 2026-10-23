@@ -1,0 +1,4 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+FAIL actual coordinator's owned child is live after intermediate terrain checkpoints
+GENERATION_INTERRUPTION failures=1

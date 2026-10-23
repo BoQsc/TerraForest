@@ -6,6 +6,7 @@ var title:Label
 var picture:TextureRect
 var cancel_path:=""
 var cancel_button:Button
+var cancellation_requested:=false
 func _ready()->void:
  layer=120
  var fill:=ColorRect.new();fill.color=Color("101b1c");fill.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT);add_child(fill)
@@ -22,10 +23,10 @@ func _ready()->void:
  cancel_button.pressed.connect(func():
   var request:=FileAccess.open(cancel_path,FileAccess.WRITE)
   if request==null:detail.text="Could not request cancellation.";return
-  request.store_string("cancel");request.close();cancel_button.disabled=true;detail.text="Cancelling generation…")
+  request.store_string("cancel");request.close();cancellation_requested=true;cancel_button.disabled=true;detail.text="Cancelling generation…")
 func _process(_delta:float)->void:Input.mouse_mode=Input.MOUSE_MODE_VISIBLE
 func update_stage(stage:String,completed:int,total:int)->void:
- if detail==null:return
+ if detail==null or cancellation_requested:return
  detail.text=stage+("  ·  %d / %d"%[completed,total] if total>0 else "")
 func use_photograph(path:String)->void:
  var image:=Image.load_from_file(path)

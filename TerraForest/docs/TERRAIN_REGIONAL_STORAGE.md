@@ -117,7 +117,13 @@ game-world save size.
    job, cancellation and first-root handoff/retry. Legacy raw/unpublished API paths
    retain their old limits. This finite-world mechanism is not arbitrary world size
    or populated runtime qualification. Private stale products remain retained;
-   staged storage fault/crash recovery and live bake progress need further evidence.
+   [lifecycle evidence](evidence/generation_lifecycle/README.md) now covers coherent
+   live UI counters, controlled intermediate product-publication failure and
+   termination of the actual Windows generator child. Valid private prefixes
+   survive, no partial public root appears, and same-name regeneration with a
+   fresh staging owner verifies and publishes. This is safe regeneration, not
+   partial-bake resume or physical power-loss/disk-full qualification. Those
+   broader failure cases and retained-product collection remain required.
 3. Add bounded retention-aware collection and pack compaction. First establish
    canonical/backup/in-flight reader ownership, then collect only products not used
    by any retained checkpoint. Close with interrupted collection, active readers,

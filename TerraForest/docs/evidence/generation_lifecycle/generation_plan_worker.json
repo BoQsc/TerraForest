@@ -1,0 +1,7 @@
+{
+  "cold_ms": 349.889,
+  "digest": "abda4cb55d4643192bdffba8dd2e2862c726a8152164e469f64de97c91596e5f",
+  "failures": 0,
+  "main_loop_frames": 24,
+  "scope": "Actual shared native-backed plan and resource recipes from cold and cached worker calls; exact plan identity and headless main-loop liveness, not graphical FPS proof."
+}

@@ -58,6 +58,9 @@ var cache_valid: bool = true
 var readonly_snapshot: bool = false
 var _initial_earthworks:Array=[] # New-world offline bake; configured before worker start.
 var _initial_terrain_checkpoint:=PackedByteArray() # Private bake lineage before the first compound root.
+var _generation_start:=Semaphore.new()
+var _generation_requires_admission:=false
+var _generation_admitted:=false
 var _initial_plan_digest:=""
 var initial_earthworks_result:Dictionary={}
 var _initial_lake_bake:RefCounted # Detached native authoring, generation only.
@@ -119,6 +122,9 @@ func startup_diagnostics() -> Dictionary:
 	mutex.lock()
 	var result: Dictionary={"phase":_startup_phase,"phase_us":now-_startup_phase_us if _startup_phase_us>0 else 0,"elapsed_us":now-_startup_started_us if _startup_started_us>0 else 0,"completed_us":_startup_timings.duplicate(),"pending_results":results.size()}
 	mutex.unlock()
+	if is_instance_valid(native) and native.has_method("generation_bake_progress"):
+		result["terrain_bake"]=native.generation_bake_progress()
+	if _initial_lake_bake!=null:result["lake_bake"]=_initial_lake_bake.progress()
 	return result
 
 func disable_snapshot_writes(reason: String = "snapshot writes explicitly disabled") -> void:
@@ -226,7 +232,7 @@ func _flush_current_packets() -> void:
 	latest_packet_bytes = 0
 
 
-func configure_initial_earthworks(packets:Array,digest:String)->bool:
+func configure_initial_earthworks(packets:Array,digest:String,hold_until_admitted:bool=false)->bool:
 	if thread.is_started() or not _initial_earthworks.is_empty() or packets.is_empty() or packets.size()>4096 or digest.length()!=64:return false
 	for letter:String in digest:
 		if not letter in "0123456789abcdef":return false
@@ -236,7 +242,13 @@ func configure_initial_earthworks(packets:Array,digest:String)->bool:
 		total+=packet.size()
 	if total>4*1024*1024:return false
 	_initial_earthworks=packets.duplicate(true);_initial_plan_digest=digest
+	_generation_requires_admission=hold_until_admitted
 	return true
+
+func admit_initial_generation()->bool:
+	mutex.lock()
+	if not _generation_requires_admission or _generation_admitted or stopping or not thread.is_started():mutex.unlock();return false
+	_generation_admitted=true;mutex.unlock();_generation_start.post();return true
 
 func configure_initial_lake_bake()->bool:
 	if thread.is_started() or _initial_lake_bake!=null:return false
@@ -465,6 +477,8 @@ func stop() -> void:
 	_shutdown_snapshot = _capture_snapshot()
 	mutex.lock()
 	stopping = true
+	if _generation_requires_admission and not _generation_admitted:
+		_generation_admitted=true;_generation_start.post()
 	if active_kind=="partition": _call(Codec.command(12))
 	elif not _initial_earthworks.is_empty() and native!=null: _call(Codec.command(12))
 	mutex.unlock()
@@ -727,7 +741,7 @@ func _load() -> String:
 			else:
 				var page_limit:int=native.residency_stats().resident_limit
 				initial_earthworks_result=native.bake_generated_earthworks_staged(_initial_earthworks,ProjectSettings.globalize_path(save_path)+".terrain",page_limit,64,build_epoch)
-			if not initial_earthworks_result.get("ok",false):write_allowed=false;return "ERROR: offline earthworks rejected"
+			if not initial_earthworks_result.get("ok",false):write_allowed=false;return "ERROR: offline earthworks rejected: "+str(initial_earthworks_result.get("reason","native bake failed"))
 			_initial_terrain_checkpoint=initial_earthworks_result.get("checkpoint",PackedByteArray())
 			initial_earthworks_result.erase("checkpoint")
 			print("OFFLINE_EARTHWORKS ",JSON.stringify(initial_earthworks_result))
@@ -1187,7 +1201,12 @@ func _relight(item: Dictionary, expected_build_epoch: int) -> Dictionary:
 
 func _run() -> void:
 	_startup_mark("world_load_or_generate")
-	var load_message: String = _load()
+	if _generation_requires_admission:
+		_startup_mark("awaiting_generation_admission");_generation_start.wait()
+	mutex.lock();var cancelled_before_load:bool=_generation_requires_admission and stopping;mutex.unlock()
+	var load_message: String
+	if cancelled_before_load:write_allowed=false;load_message="ERROR: generation cancelled before native admission"
+	else:load_message=_load()
 	_startup_mark("cache_fingerprint")
 	var compatibility:=_compatibility()
 	survey_compatibility=compatibility

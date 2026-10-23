@@ -1,0 +1,77 @@
+{
+  "utc": "2026-10-23T16:51:38.048395+00:00",
+  "scope": "Current source/native/package hashes; individual raw run manifests retain tested revision and worktree state. Admission and optional screenshot ordering were added after the first targeted native checks; actual source/pack workflow tests cover that integration.",
+  "files": {
+    "addons/volumetric_terrain/bin/terrain_core.windows.x86_64.dll": {
+      "bytes": 1885696,
+      "sha256": "a51f70853e7da0f232f4f64c799720c8adf490c255edcdf256b01f919ac004b3"
+    },
+    "addons/volumetric_terrain/bin/terrain_core.windows.template_release.x86_64.dll": {
+      "bytes": 1778688,
+      "sha256": "e878a04095ca0057b78aa5e1bc1d277c1eeed23ecbbb0f0dfff744f51ee45f61"
+    },
+    "addons/volumetric_terrain/native/generation_bake_progress.hpp": {
+      "bytes": 1148,
+      "sha256": "46c8fab1ae9236e276ccfc7e80e290d3bc40607c15c044365c64b248f1cc5ce3"
+    },
+    "addons/volumetric_terrain/native/terrain_binding.cpp": {
+      "bytes": 44511,
+      "sha256": "59f2a92c6592c2a0186341fe00327d3f68c472da95c00f7b2ff1be79485f8a46"
+    },
+    "addons/volumetric_terrain/terrain_backend.gd": {
+      "bytes": 77213,
+      "sha256": "9d1069bf1f0ac83ffce8a65e00d1a78e4587c05ee3edb002322b155210d5cb85"
+    },
+    "addons/world_runtime/generate_world.gd": {
+      "bytes": 33650,
+      "sha256": "dd8227771b2e70593ad1d03158715637a527a4629816cbeb76f94114c9f393b2"
+    },
+    "addons/world_runtime/generation_progress.gd": {
+      "bytes": 1626,
+      "sha256": "d9a37f71f4b641776803187d914dee41ad03f03f0cedb9491b6b49f98a0c8395"
+    },
+    "addons/world_runtime/generation_screen.gd": {
+      "bytes": 2379,
+      "sha256": "05f3e5078a358fbf0959e74b9e1e0d221595559e2ff8d7b2404f595b338218c8"
+    },
+    "tests/generation_bake_progress.gd": {
+      "bytes": 2326,
+      "sha256": "1c15483e7d06f10932e5aa856b4b7953713fcff2cb4ec28ae490a0e257e59a08"
+    },
+    "tests/generation_bake_failure.gd": {
+      "bytes": 2943,
+      "sha256": "1c783e6dee8986cb1aa96ddc6c6eb383f803fc1667c962a060ee48a2ef318e52"
+    },
+    "tests/generation_admission.gd": {
+      "bytes": 2735,
+      "sha256": "da779a5dd4c8133e6c777a3e7d297fc5f99aad8393f1afbdc8623bf25f89c264"
+    },
+    "tests/generation_plan_worker.gd": {
+      "bytes": 2051,
+      "sha256": "f2f05d7c3047f3e9ee1677d0a8a8a8a039ec6ea25fde37647e40044ae07a274e"
+    },
+    "tests/generation_interruption_inspect.gd": {
+      "bytes": 1510,
+      "sha256": "95290391df85e53ebc95638b3ee0f00b3546e0908d7c34a38ef98148f4293645"
+    },
+    "tools/check_generation_interruption.py": {
+      "bytes": 9308,
+      "sha256": "d0846b0043b147400ab57632a85473bf6f7532ae4f0eaa1e9cf2663eb9e07b53"
+    },
+    "dist/TerraForest.pck": {
+      "bytes": 250060048,
+      "sha256": "4db89b65c80893e50102e5f65af3b8e8a90ad2c2f674d81c039b47bb64eeba1a"
+    }
+  },
+  "checks": {
+    "progress": "20261023T160928320193Z",
+    "failure": "20261023T160928312127Z",
+    "staging": "20261023T160928327075Z",
+    "admission": "20261023T162611901662Z",
+    "plan_worker": "20261023T163104225175Z",
+    "async_save": "20261023T163104223149Z",
+    "native_cancel": "20261023T163104222881Z",
+    "source_reopen": "20261023T163242388528Z",
+    "coordinator_cancel": "20261023T164537124847Z"
+  }
+}

@@ -1,0 +1,3072 @@
+{
+  "active_samples": 435,
+  "failures": 0,
+  "getter_max_us": 357,
+  "result": {
+    "admission_retries": 0,
+    "capture_sample_bytes_high": 2359296,
+    "checkpoints": 89,
+    "completed": 2112,
+    "ok": true,
+    "resident_high": 256,
+    "resident_limit": 256,
+    "revision": 2112,
+    "storage": {
+      "region_reads": 2334,
+      "reused_files": 0,
+      "reused_regions": 51810,
+      "workers": 1,
+      "written_bytes": 19879833,
+      "written_files": 177
+    },
+    "worker_ms": 7184.9149
+  },
+  "samples": [
+    {
+      "checkpoints": 0,
+      "completed": 0,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 0,
+      "completed": 0,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 0,
+      "completed": 0,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 0,
+      "completed": 0,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 1,
+      "completed": 24,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 1,
+      "completed": 24,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 2,
+      "completed": 48,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 2,
+      "completed": 48,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 3,
+      "completed": 71,
+      "phase": 1,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 3,
+      "completed": 72,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 3,
+      "completed": 72,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 4,
+      "completed": 96,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 4,
+      "completed": 96,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 4,
+      "completed": 96,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 5,
+      "completed": 120,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 5,
+      "completed": 120,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 5,
+      "completed": 120,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 6,
+      "completed": 144,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 6,
+      "completed": 144,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 6,
+      "completed": 144,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 6,
+      "completed": 144,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 7,
+      "completed": 168,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 7,
+      "completed": 168,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 7,
+      "completed": 168,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 8,
+      "completed": 172,
+      "phase": 1,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 8,
+      "completed": 192,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 8,
+      "completed": 192,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 8,
+      "completed": 192,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 9,
+      "completed": 216,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 9,
+      "completed": 216,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 9,
+      "completed": 216,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 10,
+      "completed": 229,
+      "phase": 1,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 10,
+      "completed": 240,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 10,
+      "completed": 240,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 11,
+      "completed": 240,
+      "phase": 1,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 11,
+      "completed": 264,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 11,
+      "completed": 264,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 11,
+      "completed": 264,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 11,
+      "completed": 264,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 12,
+      "completed": 288,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 12,
+      "completed": 288,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 12,
+      "completed": 288,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 13,
+      "completed": 290,
+      "phase": 1,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 13,
+      "completed": 312,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 13,
+      "completed": 312,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 13,
+      "completed": 312,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 13,
+      "completed": 312,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 14,
+      "completed": 314,
+      "phase": 1,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 14,
+      "completed": 336,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 14,
+      "completed": 336,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 14,
+      "completed": 336,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 15,
+      "completed": 358,
+      "phase": 1,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 15,
+      "completed": 360,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 15,
+      "completed": 360,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 15,
+      "completed": 360,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 16,
+      "completed": 384,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 16,
+      "completed": 384,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 16,
+      "completed": 384,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 17,
+      "completed": 401,
+      "phase": 1,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 17,
+      "completed": 408,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 17,
+      "completed": 408,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 17,
+      "completed": 408,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 17,
+      "completed": 408,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 18,
+      "completed": 432,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 18,
+      "completed": 432,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 18,
+      "completed": 432,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 18,
+      "completed": 432,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 19,
+      "completed": 456,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 19,
+      "completed": 456,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 19,
+      "completed": 456,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 19,
+      "completed": 456,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 20,
+      "completed": 480,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 20,
+      "completed": 480,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 20,
+      "completed": 480,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 21,
+      "completed": 504,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 21,
+      "completed": 504,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 21,
+      "completed": 504,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 21,
+      "completed": 504,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 22,
+      "completed": 528,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 22,
+      "completed": 528,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 22,
+      "completed": 528,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 22,
+      "completed": 528,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 23,
+      "completed": 552,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 23,
+      "completed": 552,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 23,
+      "completed": 552,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 23,
+      "completed": 552,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 24,
+      "completed": 568,
+      "phase": 1,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 24,
+      "completed": 576,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 24,
+      "completed": 576,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 24,
+      "completed": 576,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 25,
+      "completed": 595,
+      "phase": 1,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 25,
+      "completed": 600,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 25,
+      "completed": 600,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 25,
+      "completed": 600,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 26,
+      "completed": 624,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 26,
+      "completed": 624,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 26,
+      "completed": 624,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 26,
+      "completed": 624,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 27,
+      "completed": 641,
+      "phase": 1,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 27,
+      "completed": 648,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 27,
+      "completed": 648,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 27,
+      "completed": 648,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 28,
+      "completed": 668,
+      "phase": 1,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 28,
+      "completed": 672,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 28,
+      "completed": 672,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 28,
+      "completed": 672,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 28,
+      "completed": 672,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 28,
+      "completed": 672,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 29,
+      "completed": 696,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 29,
+      "completed": 696,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 29,
+      "completed": 696,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 29,
+      "completed": 696,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 30,
+      "completed": 720,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 30,
+      "completed": 720,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 30,
+      "completed": 720,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 31,
+      "completed": 743,
+      "phase": 1,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 31,
+      "completed": 744,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 31,
+      "completed": 744,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 31,
+      "completed": 744,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 32,
+      "completed": 763,
+      "phase": 1,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 32,
+      "completed": 768,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 32,
+      "completed": 768,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 32,
+      "completed": 768,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 33,
+      "completed": 780,
+      "phase": 1,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 33,
+      "completed": 792,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 33,
+      "completed": 792,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 33,
+      "completed": 792,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 34,
+      "completed": 793,
+      "phase": 1,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 34,
+      "completed": 816,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 34,
+      "completed": 816,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 34,
+      "completed": 816,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 35,
+      "completed": 821,
+      "phase": 1,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 35,
+      "completed": 840,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 35,
+      "completed": 840,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 35,
+      "completed": 840,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 35,
+      "completed": 840,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 36,
+      "completed": 864,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 36,
+      "completed": 864,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 36,
+      "completed": 864,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 36,
+      "completed": 864,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 36,
+      "completed": 864,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 37,
+      "completed": 888,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 37,
+      "completed": 888,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 37,
+      "completed": 888,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 37,
+      "completed": 888,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 38,
+      "completed": 907,
+      "phase": 1,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 38,
+      "completed": 912,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 38,
+      "completed": 912,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 38,
+      "completed": 912,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 39,
+      "completed": 925,
+      "phase": 1,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 39,
+      "completed": 936,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 39,
+      "completed": 936,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 39,
+      "completed": 936,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 39,
+      "completed": 936,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 40,
+      "completed": 960,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 40,
+      "completed": 960,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 40,
+      "completed": 960,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 40,
+      "completed": 960,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 41,
+      "completed": 979,
+      "phase": 1,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 41,
+      "completed": 984,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 41,
+      "completed": 984,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 41,
+      "completed": 984,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 41,
+      "completed": 984,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 42,
+      "completed": 997,
+      "phase": 1,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 42,
+      "completed": 1008,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 42,
+      "completed": 1008,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 42,
+      "completed": 1008,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 42,
+      "completed": 1008,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 43,
+      "completed": 1020,
+      "phase": 1,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 43,
+      "completed": 1032,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 43,
+      "completed": 1032,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 43,
+      "completed": 1032,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 43,
+      "completed": 1032,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 44,
+      "completed": 1056,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 44,
+      "completed": 1056,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 44,
+      "completed": 1056,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 44,
+      "completed": 1056,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 45,
+      "completed": 1080,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 45,
+      "completed": 1080,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 45,
+      "completed": 1080,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 45,
+      "completed": 1080,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 46,
+      "completed": 1104,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 46,
+      "completed": 1104,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 46,
+      "completed": 1104,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 46,
+      "completed": 1104,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 46,
+      "completed": 1104,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 47,
+      "completed": 1128,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 47,
+      "completed": 1128,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 47,
+      "completed": 1128,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 47,
+      "completed": 1128,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 47,
+      "completed": 1128,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 48,
+      "completed": 1152,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 48,
+      "completed": 1152,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 48,
+      "completed": 1152,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 48,
+      "completed": 1152,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 48,
+      "completed": 1152,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 49,
+      "completed": 1176,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 49,
+      "completed": 1176,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 49,
+      "completed": 1176,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 49,
+      "completed": 1176,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 49,
+      "completed": 1176,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 50,
+      "completed": 1200,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 50,
+      "completed": 1200,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 50,
+      "completed": 1200,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 50,
+      "completed": 1200,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 51,
+      "completed": 1224,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 51,
+      "completed": 1224,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 51,
+      "completed": 1224,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 51,
+      "completed": 1224,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 51,
+      "completed": 1224,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 52,
+      "completed": 1239,
+      "phase": 1,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 52,
+      "completed": 1248,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 52,
+      "completed": 1248,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 52,
+      "completed": 1248,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 52,
+      "completed": 1248,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 52,
+      "completed": 1248,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 53,
+      "completed": 1272,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 53,
+      "completed": 1272,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 53,
+      "completed": 1272,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 53,
+      "completed": 1272,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 54,
+      "completed": 1296,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 54,
+      "completed": 1296,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 54,
+      "completed": 1296,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 54,
+      "completed": 1296,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 54,
+      "completed": 1296,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 54,
+      "completed": 1296,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 55,
+      "completed": 1314,
+      "phase": 1,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 55,
+      "completed": 1320,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 55,
+      "completed": 1320,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 55,
+      "completed": 1320,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 55,
+      "completed": 1320,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 56,
+      "completed": 1344,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 56,
+      "completed": 1344,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 56,
+      "completed": 1344,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 56,
+      "completed": 1344,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 56,
+      "completed": 1344,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 57,
+      "completed": 1368,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 57,
+      "completed": 1368,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 57,
+      "completed": 1368,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 57,
+      "completed": 1368,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 57,
+      "completed": 1368,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 58,
+      "completed": 1387,
+      "phase": 1,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 58,
+      "completed": 1392,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 58,
+      "completed": 1392,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 58,
+      "completed": 1392,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 58,
+      "completed": 1392,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 58,
+      "completed": 1392,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 59,
+      "completed": 1416,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 59,
+      "completed": 1416,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 59,
+      "completed": 1416,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 59,
+      "completed": 1416,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 60,
+      "completed": 1440,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 60,
+      "completed": 1440,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 60,
+      "completed": 1440,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 60,
+      "completed": 1440,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 60,
+      "completed": 1440,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 61,
+      "completed": 1464,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 61,
+      "completed": 1464,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 61,
+      "completed": 1464,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 61,
+      "completed": 1464,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 61,
+      "completed": 1464,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 61,
+      "completed": 1464,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 62,
+      "completed": 1488,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 62,
+      "completed": 1488,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 62,
+      "completed": 1488,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 62,
+      "completed": 1488,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 62,
+      "completed": 1488,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 63,
+      "completed": 1512,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 63,
+      "completed": 1512,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 63,
+      "completed": 1512,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 63,
+      "completed": 1512,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 63,
+      "completed": 1512,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 64,
+      "completed": 1519,
+      "phase": 1,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 64,
+      "completed": 1536,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 64,
+      "completed": 1536,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 64,
+      "completed": 1536,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 64,
+      "completed": 1536,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 64,
+      "completed": 1536,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 65,
+      "completed": 1560,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 65,
+      "completed": 1560,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 65,
+      "completed": 1560,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 65,
+      "completed": 1560,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 65,
+      "completed": 1560,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 65,
+      "completed": 1560,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 66,
+      "completed": 1584,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 66,
+      "completed": 1584,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 66,
+      "completed": 1584,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 66,
+      "completed": 1584,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 66,
+      "completed": 1584,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 66,
+      "completed": 1584,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 67,
+      "completed": 1606,
+      "phase": 1,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 67,
+      "completed": 1608,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 67,
+      "completed": 1608,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 67,
+      "completed": 1608,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 67,
+      "completed": 1608,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 67,
+      "completed": 1608,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 68,
+      "completed": 1622,
+      "phase": 1,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 68,
+      "completed": 1632,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 68,
+      "completed": 1632,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 68,
+      "completed": 1632,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 68,
+      "completed": 1632,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 68,
+      "completed": 1632,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 68,
+      "completed": 1632,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 69,
+      "completed": 1656,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 69,
+      "completed": 1656,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 69,
+      "completed": 1656,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 69,
+      "completed": 1656,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 69,
+      "completed": 1656,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 70,
+      "completed": 1680,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 70,
+      "completed": 1680,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 70,
+      "completed": 1680,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 70,
+      "completed": 1680,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 70,
+      "completed": 1680,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 71,
+      "completed": 1699,
+      "phase": 1,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 71,
+      "completed": 1704,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 71,
+      "completed": 1704,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 71,
+      "completed": 1704,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 71,
+      "completed": 1704,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 71,
+      "completed": 1704,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 71,
+      "completed": 1704,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 72,
+      "completed": 1728,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 72,
+      "completed": 1728,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 72,
+      "completed": 1728,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 72,
+      "completed": 1728,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 72,
+      "completed": 1728,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 72,
+      "completed": 1728,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 73,
+      "completed": 1752,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 73,
+      "completed": 1752,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 73,
+      "completed": 1752,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 73,
+      "completed": 1752,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 73,
+      "completed": 1752,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 73,
+      "completed": 1752,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 74,
+      "completed": 1776,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 74,
+      "completed": 1776,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 74,
+      "completed": 1776,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 74,
+      "completed": 1776,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 74,
+      "completed": 1776,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 74,
+      "completed": 1776,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 75,
+      "completed": 1800,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 75,
+      "completed": 1800,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 75,
+      "completed": 1800,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 75,
+      "completed": 1800,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 75,
+      "completed": 1800,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 75,
+      "completed": 1800,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 75,
+      "completed": 1800,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 76,
+      "completed": 1812,
+      "phase": 1,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 76,
+      "completed": 1824,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 76,
+      "completed": 1824,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 76,
+      "completed": 1824,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 76,
+      "completed": 1824,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 76,
+      "completed": 1824,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 76,
+      "completed": 1824,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 76,
+      "completed": 1824,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 77,
+      "completed": 1833,
+      "phase": 1,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 77,
+      "completed": 1848,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 77,
+      "completed": 1848,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 77,
+      "completed": 1848,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 77,
+      "completed": 1848,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 77,
+      "completed": 1848,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 77,
+      "completed": 1848,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 78,
+      "completed": 1872,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 78,
+      "completed": 1872,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 78,
+      "completed": 1872,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 78,
+      "completed": 1872,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 78,
+      "completed": 1872,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 78,
+      "completed": 1872,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 79,
+      "completed": 1874,
+      "phase": 1,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 79,
+      "completed": 1896,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 79,
+      "completed": 1896,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 79,
+      "completed": 1896,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 79,
+      "completed": 1896,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 79,
+      "completed": 1896,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 79,
+      "completed": 1896,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 80,
+      "completed": 1920,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 80,
+      "completed": 1920,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 80,
+      "completed": 1920,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 80,
+      "completed": 1920,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 80,
+      "completed": 1920,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 80,
+      "completed": 1920,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 81,
+      "completed": 1928,
+      "phase": 1,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 81,
+      "completed": 1944,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 81,
+      "completed": 1944,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 81,
+      "completed": 1944,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 81,
+      "completed": 1944,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 81,
+      "completed": 1944,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 81,
+      "completed": 1944,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 82,
+      "completed": 1960,
+      "phase": 1,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 82,
+      "completed": 1968,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 82,
+      "completed": 1968,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 82,
+      "completed": 1968,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 82,
+      "completed": 1968,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 82,
+      "completed": 1968,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 83,
+      "completed": 1968,
+      "phase": 1,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 83,
+      "completed": 1992,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 83,
+      "completed": 1992,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 83,
+      "completed": 1992,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 83,
+      "completed": 1992,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 83,
+      "completed": 1992,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 83,
+      "completed": 1992,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 83,
+      "completed": 1992,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 84,
+      "completed": 2016,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 84,
+      "completed": 2016,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 84,
+      "completed": 2016,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 84,
+      "completed": 2016,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 84,
+      "completed": 2016,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 84,
+      "completed": 2016,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 84,
+      "completed": 2016,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 84,
+      "completed": 2016,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 85,
+      "completed": 2040,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 85,
+      "completed": 2040,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 85,
+      "completed": 2040,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 85,
+      "completed": 2040,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 85,
+      "completed": 2040,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 85,
+      "completed": 2040,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 86,
+      "completed": 2061,
+      "phase": 1,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 86,
+      "completed": 2064,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 86,
+      "completed": 2064,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 86,
+      "completed": 2064,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 86,
+      "completed": 2064,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 86,
+      "completed": 2064,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 86,
+      "completed": 2064,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 87,
+      "completed": 2088,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 87,
+      "completed": 2088,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 87,
+      "completed": 2088,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 87,
+      "completed": 2088,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 87,
+      "completed": 2088,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 87,
+      "completed": 2088,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 87,
+      "completed": 2088,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 88,
+      "completed": 2103,
+      "phase": 1,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 88,
+      "completed": 2112,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 88,
+      "completed": 2112,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 88,
+      "completed": 2112,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 88,
+      "completed": 2112,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 88,
+      "completed": 2112,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    },
+    {
+      "checkpoints": 88,
+      "completed": 2112,
+      "phase": 2,
+      "state": 1,
+      "total": 2112
+    }
+  ],
+  "scope": "Live native command/checkpoint observation during one staged bake; coherent counters, bounded polling and final/reset states. No rendered FPS or thermal claim."
+}

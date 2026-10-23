@@ -96,13 +96,15 @@ within the same exported build subsequently pass with all four cached layers.
 
 ## Remaining requirements and return triggers
 
-1. Expose native command/checkpoint progress to the generator UI without taking
-   the world lock. Staging boundaries now supply meaningful counters; do not
-   invent overall percentages or introduce a competing mutable world copy.
-2. Inject storage failure and process interruption during intermediate baking,
-   then verify no canonical destination and either explicit safe regeneration or
-   validated recovery. Existing store/outer-publication failures are prerequisites,
-   not complete mid-bake crash evidence.
+1. Live native command/checkpoint UI progress without the world lock is now
+   implemented and checked in [generation lifecycle](../generation_lifecycle/README.md).
+   It uses one atomic observation, explicit admission after UI readiness and no
+   fabricated overall percentage. Cold/cached planning also runs on a worker.
+2. The same lifecycle evidence covers controlled intermediate product-publication
+   failure and actual Windows bake-child termination, valid retained prefixes,
+   no partial canonical destination, and verified same-name regeneration using
+   a fresh staging owner. Broader disk-full/physical power-loss qualification
+   remains required; resuming an interrupted partial bake is not implemented.
 3. Collect/compact superseded and cancelled products only after canonical,
    backup, in-flight capture and active-reader ownership is explicit. No automatic
    cleanup of authoritative products is implemented here.

@@ -7,6 +7,7 @@
 #include "terrain_region_store.hpp"
 #include "terrain_capture.hpp"
 #include "terrain_residency.hpp"
+#include "generation_bake_progress.hpp"
 #include "geometry_content_key.hpp"
 #include "experimental/snapshot_worker.hpp"
 #include "experimental/godot_surface_mesh.hpp"
@@ -38,6 +39,7 @@ class TerrainCore : public godot::RefCounted {
     BuildControl control_;
     World world_;
     std::unique_ptr<TerrainResidency> residency_;
+    GenerationBakeProgress generation_progress_;
     uint64_t storage_epoch_=1;
     godot::PackedInt32Array saved_keys_;
     godot::PackedInt64Array saved_versions_;
@@ -77,7 +79,8 @@ protected:
         godot::ClassDB::bind_method(godot::D_METHOD("survey_overview","size"), &TerrainCore::survey_overview);
         godot::ClassDB::bind_method(godot::D_METHOD("survey_water_visibility","points"), &TerrainCore::survey_water_visibility);
         godot::ClassDB::bind_method(godot::D_METHOD("bake_generated_earthworks","packets"), &TerrainCore::bake_generated_earthworks);
-        godot::ClassDB::bind_method(godot::D_METHOD("bake_generated_earthworks_staged","packets","directory","resident_limit","checkpoint_commands","expected_epoch"), &TerrainCore::bake_generated_earthworks_staged,DEFVAL(MAX_PAGES),DEFVAL(64),DEFVAL(-1));
+        godot::ClassDB::bind_method(godot::D_METHOD("bake_generated_earthworks_staged","packets","directory","resident_limit","checkpoint_commands","expected_epoch","test_stop_at_checkpoint"), &TerrainCore::bake_generated_earthworks_staged,DEFVAL(MAX_PAGES),DEFVAL(64),DEFVAL(-1),DEFVAL(-1));
+        godot::ClassDB::bind_method(godot::D_METHOD("generation_bake_progress"),&TerrainCore::generation_bake_progress);
         godot::ClassDB::bind_method(godot::D_METHOD("survey_generated_lake_surfaces","records"), &TerrainCore::survey_generated_lake_surfaces);
         godot::ClassDB::bind_method(godot::D_METHOD("survey_patch","size","x","z","width","height"), &TerrainCore::survey_patch);
         godot::ClassDB::bind_method(godot::D_METHOD("measure_material_surface","x","z","size","y_begin","y_end"), &TerrainCore::measure_material_surface);
@@ -339,9 +342,10 @@ public:
     }
     // Unpublished generation only. Durable private checkpoints make clean pages
     // evictable without publishing a compound-world root or losing prior edits.
-    godot::Dictionary bake_generated_earthworks_staged(const godot::Array &packets,const godot::String &directory,int64_t limit=MAX_PAGES,int64_t batch=64,int64_t expected_epoch=-1){
+    godot::Dictionary generation_bake_progress()const{return generation_progress_.read();}
+    godot::Dictionary bake_generated_earthworks_staged(const godot::Array &packets,const godot::String &directory,int64_t limit=MAX_PAGES,int64_t batch=64,int64_t expected_epoch=-1,int64_t test_stop_at_checkpoint=-1){
         godot::Dictionary result;result["ok"]=false;result["completed"]=0;
-        if(packets.is_empty()||packets.size()>4096||limit<8||limit>MAX_PAGES||batch<1||batch>256||expected_epoch< -1||expected_epoch>0xffffffffll||!directory.is_absolute_path()){
+        if(packets.is_empty()||packets.size()>4096||limit<8||limit>MAX_PAGES||batch<1||batch>256||expected_epoch< -1||expected_epoch>0xffffffffll||test_stop_at_checkpoint< -1||test_stop_at_checkpoint>8193||!directory.is_absolute_path()){
             result["reason"]="Invalid staged generation bounds";return result;
         }
         std::vector<godot::PackedByteArray> commands;int64_t total=0;
@@ -363,35 +367,39 @@ public:
         if(!store->open_store(directory,true)){result["reason"]="Cannot create private terrain staging store";return result;}
         const int seed=world_.seed;const auto generator=world_.generator_id;
         const u32 epoch=expected_epoch>=0?uint32_t(expected_epoch):terrain_build_epoch(&world_);const auto started=std::chrono::steady_clock::now();
-        godot::PackedByteArray reference;int checkpoints=0,retries=0,checkpoint_revision=-1;
+        godot::PackedByteArray reference;int completed=0,checkpoints=0,retries=0,checkpoint_revision=-1;
         int64_t capture_high=0;
+        generation_progress_.publish(GenerationBakeProgress::RUNNING,GenerationBakeProgress::APPLYING,completed,int(commands.size()),checkpoints);
         auto checkpoint=[&](){
             if(terrain_build_epoch(&world_)!=epoch)return false;
             if(checkpoint_revision==world_.revision)return true;
+            generation_progress_.publish(GenerationBakeProgress::RUNNING,GenerationBakeProgress::CHECKPOINT,completed,int(commands.size()),checkpoints);
             auto capture=capture_storage_snapshot_locked();if(capture.is_null())return false;
             capture_high=std::max(capture_high,int64_t(capture->stats()["sample_bytes"]));
-            auto next=store->publish_capture(capture,reference);
+            auto next=store->publish_capture(capture,reference,checkpoints==test_stop_at_checkpoint?(checkpoints==0?0:1):-1);
             if(next.size()!=40||terrain_build_epoch(&world_)!=epoch||!commit_storage_snapshot_locked(capture,next))return false;
-            reference=next;checkpoint_revision=world_.revision;++checkpoints;return true;
+            reference=next;checkpoint_revision=world_.revision;++checkpoints;
+            generation_progress_.publish(GenerationBakeProgress::RUNNING,GenerationBakeProgress::APPLYING,completed,int(commands.size()),checkpoints);return true;
         };
         snapshot_epoch_.fetch_add(1);active_command_.store(28,std::memory_order_relaxed);
         bool good=checkpoint()&&mount_storage_checkpoint_locked(directory,reference,limit);
-        int completed=0;
         for(const auto &packet:commands){
             if(!good||terrain_build_epoch(&world_)!=epoch){good=false;break;}
+            bool retryable=false;
             auto apply=[&](){
                 tr_oom=false;Bytes response;process_request(world_,packet.ptr(),int(packet.size()),response);
-                bool ok=!tr_oom&&response.n>=12&&response.p[8]==0;response.release();return ok;
+                bool ok=!tr_oom&&response.n>=12&&response.p[8]==0;retryable=response.n>=12&&response.p[8]==2;response.release();return ok;
             };
             good=apply();
             // Ordinary edits roll back exactly on failed admission. Checkpoint
             // earlier commands once, then retry; an indivisible oversized edit
             // still rejects rather than raising the resident limit.
-            if(!good&&world_.revision!=checkpoint_revision&&terrain_build_epoch(&world_)==epoch){
+            if(!good&&retryable&&world_.revision!=checkpoint_revision&&terrain_build_epoch(&world_)==epoch){
                 ++retries;good=checkpoint()&&apply();
             }
             if(!good)break;
             ++completed;
+            generation_progress_.publish(GenerationBakeProgress::RUNNING,GenerationBakeProgress::APPLYING,completed,int(commands.size()),checkpoints);
             if(completed%batch==0)good=checkpoint();
         }
         if(good)good=checkpoint()&&terrain_build_epoch(&world_)==epoch;
@@ -402,6 +410,7 @@ public:
         result["worker_ms"]=std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-started).count();
         result["storage"]=store->stats();
         if(!good){
+            generation_progress_.publish(terrain_build_epoch(&world_)!=epoch?GenerationBakeProgress::CANCELLED:GenerationBakeProgress::FAILED,GenerationBakeProgress::NONE,completed,int(commands.size()),checkpoints);
             // Only immutable staging products may remain. No canonical root was
             // published; invalidate captures and discard every partial world edit.
             tr_oom=false;world_.release();residency_.reset();world_=World{};world_.build_control=&control_;world_.init(seed,generator);
@@ -409,6 +418,7 @@ public:
             storage_load_pending_=false;++storage_epoch_;snapshot_epoch_.fetch_add(1);
             result["reason"]="Staged generation rejected or cancelled; unpublished edits discarded";return result;
         }
+        generation_progress_.publish(GenerationBakeProgress::COMPLETE,GenerationBakeProgress::NONE,completed,int(commands.size()),checkpoints);
         result["ok"]=true;result["revision"]=world_.revision;result["checkpoint"]=reference;return result;
     }
     godot::Dictionary survey_generated_lake_surfaces(const godot::Array &records){std::lock_guard<std::mutex> lock(mutex_);tr_oom=false;auto result=terraforest::survey_generated_lake_surfaces(world_,records);return tr_oom?godot::Dictionary():result;}
@@ -507,6 +517,7 @@ public:
         process_request(world_,packet.ptr(),int(packet.size()),bytes);
         if(tr_oom&&bytes.n>=12)bytes.p[8]=2;
         if((command==5||command==6)&&bytes.n>=12&&bytes.p[8]==0){
+            generation_progress_.reset();
             residency_.reset();world_.page_access=nullptr;
             storage_load_pending_=command==5;storage_load_checksum_=command==5?packet.decode_u32(packet.size()-4):0;storage_load_revision_=world_.revision;
         }

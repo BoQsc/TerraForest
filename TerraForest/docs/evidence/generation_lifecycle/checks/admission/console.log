@@ -1,0 +1,14 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS offline job configures explicit admission
+PASS worker is live and waiting at the admission barrier
+PASS no native bake or storage work occurs before UI admission
+PASS main owner admits the generation job exactly once
+OFFLINE_EARTHWORKS {"admission_retries":0,"capture_sample_bytes_high":98304,"checkpoints":2,"completed":1,"ok":true,"resident_high":8,"resident_limit":16384,"revision":1,"storage":{"region_reads":0,"reused_files":0,"reused_regions":0,"workers":1,"written_bytes":3684,"written_files":3},"worker_ms":26.9077}
+PASS admitted job reaches native verified completion
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+PASS offline job configures explicit admission
+PASS second live worker reaches the same admission barrier
+[TerrainRewrite] ERROR: save blocked by world initialization or snapshot validation failure; previous canonical snapshot retained
+PASS stop releases a waiting worker promptly without starting or publishing generation
+GENERATION_ADMISSION failures=0

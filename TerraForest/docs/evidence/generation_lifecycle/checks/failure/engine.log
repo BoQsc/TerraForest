@@ -1,0 +1,11 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS injected product publication interruption occurs after earlier private checkpoints
+PASS failed progress is explicit and every unpublished edit is discarded
+PASS failed job releases its write lease
+PASS earlier private checkpoint remains fully verifiable
+PASS earlier private checkpoint remains fully verifiable
+PASS earlier private checkpoint remains fully verifiable
+PASS failed publication never selects the interrupted third batch
+PASS regeneration in a new staging owner restores exact intended data without modifying failed products
+GENERATION_BAKE_FAILURE failures=0
