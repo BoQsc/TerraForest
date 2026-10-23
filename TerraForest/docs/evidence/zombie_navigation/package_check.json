@@ -1,0 +1,6 @@
+{
+  "command": "python -m unittest discover -s TerraForest/tools -p test_package.py -k character_runtime",
+  "exit_code": 0,
+  "tests": 1,
+  "scope": "Runtime asset provenance and character -> world_runtime/player_runtime dependency closure. Existing full-suite baseline failures remain open."
+}

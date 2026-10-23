@@ -1,0 +1,60 @@
+{
+  "checks": 14,
+  "context_seen": true,
+  "door_removed": true,
+  "durability_changed": true,
+  "failures": 0,
+  "minimum_intact_door_side": 0.95941162109375,
+  "navigation": {
+    "agents": 1,
+    "goal_probes": 0,
+    "ok": true,
+    "planning_us": 1,
+    "route_work": 0,
+    "route_work_limit": 12
+  },
+  "player_damage": 18.0,
+  "zombie": {
+    "action_time": 0.716666666666667,
+    "active_action": "both",
+    "alive": true,
+    "animation_time": 0.716666666666667,
+    "available_attacks": [
+      "bite",
+      "left",
+      "right",
+      "both"
+    ],
+    "behavior_enabled": true,
+    "clip": "Zombie_Attack_Both",
+    "contact_count": 8,
+    "crawl_speed": 0.32,
+    "crawl_transition": false,
+    "crawling": false,
+    "grounded": true,
+    "last_attack": "both",
+    "last_contact": {
+      "action": "both",
+      "action_time": 0.700000000000001,
+      "damage": 18.0,
+      "landed": true,
+      "point": "(802.393, 57.05504, 1309.829)",
+      "surface_distance": 0.201732158660889,
+      "visible_target_shapes": false
+    },
+    "last_rejection": "",
+    "learned_contact_distance": null,
+    "left_arm": true,
+    "miss_count": 1,
+    "movement_mode": "standing",
+    "position": "(801.5506, 55.79648, 1310.0)",
+    "r4_actions_enabled": true,
+    "revision_id": "r4",
+    "right_arm": true,
+    "standing_legs": true,
+    "state": "attack",
+    "target_distance": 0.94940185546875,
+    "traversal_state": "none",
+    "velocity": "(0.0, 0.0, 0.0)"
+  }
+}

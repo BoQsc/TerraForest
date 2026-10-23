@@ -38,6 +38,7 @@ class ActorRoute {
 public:
     enum State {IDLE,PLANNING,FOLLOWING,ARRIVED,BLOCKED,UNAVAILABLE,SEARCH_LIMIT};
     State state=IDLE;
+    double maximum_step=.30;
     int expansions=0;
     void invalidate(){state=IDLE;}
     void invalidate(const godot::AABB &bounds){if(!has_bounds_ || bounds.size==godot::Vector3() || bounds_.intersects(bounds))invalidate();}
@@ -48,6 +49,11 @@ public:
         const godot::Ref<godot::PhysicsShapeQueryParameters3D> &shape);
     godot::Vector3 target(const godot::Vector3 &position);
     void moved(const godot::Vector3 &position,double delta);
+    bool permits_motion(godot::PhysicsDirectSpaceState3D *space,const godot::Vector3 &from,godot::Vector3 to,
+        const godot::Callable &readiness,const godot::Callable &admission,
+        const godot::Ref<godot::PhysicsRayQueryParameters3D> &ray,const godot::Ref<godot::PhysicsShapeQueryParameters3D> &shape) {
+        return edge(space,from,to,readiness,admission,ray,shape);
+    }
     godot::Dictionary status() const;
 };
 }

@@ -25,8 +25,10 @@ bool ActorRoute::edge(PhysicsDirectSpaceState3D *space,const Vector3 &from,Vecto
     const Callable &readiness,const Callable &admission,const Ref<PhysicsRayQueryParameters3D> &ray,
     const Ref<PhysicsShapeQueryParameters3D> &shape){
     // Include the full capsule, support rays and bounded stair clearance.
-    AABB region(from-Vector3(.4,1.9,.4),Vector3(.8,3.7,.8));
-    region=region.merge(AABB(to-Vector3(.4,1.9,.4),Vector3(.8,3.7,.8)));include(region);
+    Ref<CapsuleShape3D> capsule=shape->get_shape();
+    const real_t radius=capsule.is_valid()?std::max(real_t(.4),capsule->get_radius()+real_t(.05)):real_t(.4);
+    AABB region(from-Vector3(radius,1.9,radius),Vector3(radius*2,3.7,radius*2));
+    region=region.merge(AABB(to-Vector3(radius,1.9,radius),Vector3(radius*2,3.7,radius*2)));include(region);
     Variant ready=readiness.call(region);
     if(ready.get_type()!=Variant::BOOL || !bool(ready)){unknown_=true;return false;}
     // Half-metre graph edges have a quarter-metre intermediate tread sample.
@@ -37,10 +39,24 @@ bool ActorRoute::edge(PhysicsDirectSpaceState3D *space,const Vector3 &from,Vecto
         Dictionary hit=space->intersect_ray(ray);if(hit.is_empty() || Vector3(hit["normal"]).y<.85)return false;
         point.y=Vector3(hit["position"]).y+.93;return true;
     };
-    if(!support(middle,from.y) || std::abs(middle.y-from.y)>.33)return false;
-    if(!support(to,middle.y) || std::abs(to.y-middle.y)>.301)return false;
+    if(!support(middle,from.y) || std::abs(middle.y-from.y)>maximum_step+.03)return false;
+    if(!support(to,middle.y) || std::abs(to.y-middle.y)>maximum_step+.001)return false;
     if(admission.is_valid()){
-        for(const Vector3 &point:{to,middle}){Variant allowed=admission.call(point);if(allowed.get_type()!=Variant::BOOL || !bool(allowed))return false;}
+        // Conservative square footprint, including segment interiors. Endpoint
+        // and midpoint-only tests can skip a shoreline corner which the smaller
+        // actual movement guard then rejects, stranding the body on its route.
+        static const Vector3 offsets[]={Vector3(),Vector3(1,0,0),Vector3(-1,0,0),
+            Vector3(0,0,1),Vector3(0,0,-1),Vector3(1,0,1),
+            Vector3(-1,0,1),Vector3(1,0,-1),Vector3(-1,0,-1)};
+        const int segments=std::max(1,int(std::ceil(horizontal(from,to)/.1)));
+        for(int i=0;i<=segments;++i){
+            const double t=double(i)/segments;
+            const Vector3 point=t<=.5?from.lerp(middle,t*2):middle.lerp(to,(t-.5)*2);
+            for(const Vector3 &offset:offsets){
+                Variant allowed=admission.call(point+offset*radius);
+                if(allowed.get_type()!=Variant::BOOL || !bool(allowed))return false;
+            }
+        }
     }
     auto clear=[&](const Vector3 &point)->bool {
         shape->set_transform(Transform3D(Basis(),point));shape->set_motion(Vector3());
@@ -56,7 +72,7 @@ bool ActorRoute::edge(PhysicsDirectSpaceState3D *space,const Vector3 &from,Vecto
     Vector3 poses[3]={from,middle,to};
     for(auto &pose:poses){
         bool valid=false;
-        for(int lift=0;lift<=6;++lift){Vector3 raised=pose+Vector3(0,lift*.05,0);if(clear(raised)){pose=raised;valid=true;break;}}
+        for(int lift=0;lift<=6 && lift*.05<=maximum_step+.0001;++lift){Vector3 raised=pose+Vector3(0,lift*.05,0);if(clear(raised)){pose=raised;valid=true;break;}}
         if(!valid)return false;
     }
     for(int i=0;i<2;++i){

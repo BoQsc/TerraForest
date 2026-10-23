@@ -68,6 +68,10 @@ const PARTS := {
 
 var target: Node3D
 var crowd_steering := Vector3.ZERO
+var navigator: Node3D
+var navigation_target := Vector3.INF
+var navigation_attack_clear := true
+var navigation_motor: RefCounted
 var alive := true
 var state := "idle"
 var health := 180.0
@@ -164,7 +168,7 @@ func configure(scene: PackedScene = null) -> void:
 					pair[side] = cap
 			caps[part] = pair
 	collision_layer = CHARACTER_LAYER
-	collision_mask = WORLD_LAYER | PLAYER_LAYER | CHARACTER_LAYER
+	collision_mask = 15 | CHARACTER_LAYER
 	capsule = CollisionShape3D.new()
 	capsule.name = "MovementCapsule"
 	var shape := CapsuleShape3D.new()
@@ -913,7 +917,10 @@ func _physics_r4(delta: float) -> void:
 	else:
 		state = "crawl_idle" if _crawling else "idle"
 		_play_animation("Zombie_Crawl_Idle" if _crawling else "Zombie_Idle")
-	move_and_slide()
+	if navigation_motor!=null and not _crawling:
+		navigation_motor.move_grounded(self,delta)
+	else:
+		move_and_slide()
 
 
 func _face_target(delta: float, factor: float = 1.0) -> void:
@@ -942,11 +949,17 @@ func _tick_pursuit(delta: float) -> void:
 		preferred_reach = maxf(preferred_reach, front + target_radius + 0.02)
 	if distance <= preferred_reach:
 		_face_target(delta, 0.75 if _crawling else 1.0)
-	if distance <= preferred_reach and _action_cooldown <= 0.0:
+	if distance <= preferred_reach and navigation_attack_clear and _action_cooldown <= 0.0:
 		if request_attack():
 			return
-	if distance > preferred_reach:
+	if distance > preferred_reach or not navigation_attack_clear:
 		var direction := target.global_position - global_position
+		if is_instance_valid(navigator):
+			if not navigation_target.is_finite() or global_position.distance_to(navigation_target)<0.025:
+				velocity.x=0;velocity.z=0;state="crawl_idle" if _crawling else "idle"
+				_play_animation("Zombie_Crawl_Idle" if _crawling else "Zombie_Idle")
+				return
+			direction=navigation_target-global_position
 		direction.y = 0.0
 		# The bounded host crowd supplies separation and a route past a peer.
 		# Turn into that route so locomotion keeps following the facing pose.
@@ -963,6 +976,8 @@ func _tick_pursuit(delta: float) -> void:
 		# while its planted-foot animation still faces the target's old bearing.
 		speed *= clampf((facing.normalized().dot(direction.normalized()) + 0.15) / 1.15, 0.0, 1.0)
 		var movement := direction.normalized() * speed
+		if is_instance_valid(navigator) and not navigator.guard_motion(get_instance_id(),movement,speed*delta):
+			movement=Vector3.ZERO
 		velocity.x = movement.x
 		velocity.z = movement.z
 		state = "crawl" if _crawling else "shamble"
@@ -1110,12 +1125,14 @@ func _find_attack_contact(action: String) -> Dictionary:
 	# Check from the body side of the stroke. Starting inside an extended hand
 	# could miss a thin wall that the animated fingers had already crossed.
 	var ray_origin := Vector3(global_position.x, best_point.y, global_position.z)
-	var query := PhysicsRayQueryParameters3D.create(ray_origin, best_target, WORLD_LAYER)
+	var query := PhysicsRayQueryParameters3D.create(ray_origin, best_target, 7)
 	query.exclude = [get_rid()]
 	var hit := get_world_3d().direct_space_state.intersect_ray(query)
 	if not hit.is_empty():
 		var collider = hit.get("collider")
-		if collider != target and not (collider is Node and target.is_ancestor_of(collider)):
+		var intended_surface:bool=target.has_method("accepts_zombie_attack_surface") and bool(target.call("accepts_zombie_attack_surface",hit))
+		var recipient_body:bool=collider is Node and (target.is_ancestor_of(collider) or collider.is_ancestor_of(target))
+		if not intended_surface and collider != target and not recipient_body:
 			return {"valid": false, "reason": "solid world object blocked contact"}
 	return {"valid": true, "point": best_point, "surface_distance": best_distance, "visible_target_shapes": not contact_shapes.is_empty()}
 
@@ -1385,6 +1402,11 @@ func set_behavior(enabled: bool) -> void:
 	if alive and not enabled and not _crawl_transition:
 		state = "crawl_idle" if _crawling else "idle"
 		_play_animation("Zombie_Crawl_Idle" if _crawling else "Zombie_Idle")
+
+func set_behavior_target(destination: Node3D) -> void:
+	if target==destination:return
+	_cancel_attack();cancel_traversal()
+	target=destination
 
 
 func play_clip(clip_name: String) -> void:

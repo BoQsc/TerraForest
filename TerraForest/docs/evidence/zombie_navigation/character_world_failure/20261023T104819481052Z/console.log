@@ -1,0 +1,25 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS integrated terrain world becomes ready
+PASS gameplay enables zombie encounters
+PASS R11 presentation follows existing native player motor
+PASS real belt equips R11 pickaxe
+PASS real belt equips R11 axe
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS zombie admits on actual streamed world collision
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS existing world attack resolves R4 target
+PASS existing melee adapter accepts zombie strike
+PASS integrated strike reaches live zombie health
+PASS zombie strike wears the actual equipped tool once
+PASS tool wear marks compound player save dirty
+PASS integrated menu/edit gate suspends encounters
+PASS suspended target rejects stale attack
+PASS world pose restore clears transient encounters
+PASS existing wooden block damage fixture installs
+FAIL R11 axe preserves existing block damage and wear
+FAIL R11 axe preserves existing block destruction
+PASS encounters do not change persistent world actor schema
+[TerrainRewrite] Temporary test world: save skipped
+CHARACTER_WORLD checks=18 failures=2

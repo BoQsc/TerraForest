@@ -44,7 +44,7 @@ Dictionary NativeHingedDoors::toggle(NativeStaticBatch *batch,int64_t id,const A
         Ref<BoxShape3D> shape;shape.instantiate();shape->set_size(sweep.size);
         Ref<PhysicsShapeQueryParameters3D> query;query.instantiate();
         query->set_shape(shape);query->set_transform(Transform3D(Basis(),sweep.get_center()));
-        query->set_collision_mask(12);query->set_margin(0.0);
+        query->set_collision_mask(12 | (1<<16) | (1<<18));query->set_margin(0.0);
         if(!space->intersect_shape(query,1).is_empty()){
             result["reason"]="An actor or vehicle blocks the door swing";return result;
         }

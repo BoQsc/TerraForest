@@ -1,0 +1,185 @@
+{
+  "parent_commit": "c0ea8967550cccf34051ed3dd6d33764ad840ed2",
+  "source_and_binary_sha256": {
+    "TerraForest/AGENTS.md": "4211c9f5e0e9aa1352a137b1d3c371afc0dc69c0446d24df476496d174e02d46",
+    "TerraForest/addons/characters/README.md": "dd5b93467726326b9305de113de820093ca681fec3265756d52a9109ce6212b3",
+    "TerraForest/addons/characters/runtime/obstacle_target.gd": "bb0c4270c5f787c1f01a2ebe034c88ecf7763d60cc172837a425491154441ba8",
+    "TerraForest/addons/characters/runtime/zombie.gd": "40445e50baf87fa9d153ea9a71fbc323ef8ea8db16b347a464771ea574ff2820",
+    "TerraForest/addons/characters/runtime/zombie_world.gd": "2b5f4bc46c577f6ebf3e9701c25d3c0456e623cfc6885b3430cee6129608aca9",
+    "TerraForest/addons/structures/bin/structures.windows.template_debug.x86_64.dll": "3390ec85cab8a7e13bebc93d05331770f288e6922716440fa7602a1c28c4eb75",
+    "TerraForest/addons/structures/bin/structures.windows.template_release.x86_64.dll": "a5a197efdafc05438a71a62e4532f6873155f0519995d04adb728dfe38a80de7",
+    "TerraForest/addons/structures/native/hinged_doors.cpp": "7e48e935c32c2f43c5fb479146a43371a3201005233f5ab8bb9b3f6979dbe737",
+    "TerraForest/addons/world_runtime/README.md": "cb597b7fb7b57821414db710139b6ba664121ded52dca24802fcf51cff1a6ced",
+    "TerraForest/addons/world_runtime/bin/world_runtime.windows.template_debug.x86_64.dll": "21c3fb2a6ad1a5ba3e281fb1ef13a3bfd5b54325593c6632886a6f11eafb7560",
+    "TerraForest/addons/world_runtime/bin/world_runtime.windows.template_release.x86_64.dll": "17a269addcda031d57a53584db9b477edc983e1d2c4b6ffce00e18acddbb4693",
+    "TerraForest/addons/world_runtime/native/actor_navigator.cpp": "cb8b83e24afaebebf29a3038526ba63d3750a3ddf9541c29abb0666f48f29924",
+    "TerraForest/addons/world_runtime/native/actor_navigator.hpp": "d8933ca038155779f57ca35a1bbfa00c3cc1d9bdcddbdf415bff8f6b3fff6bb4",
+    "TerraForest/addons/world_runtime/native/actor_route.cpp": "9960d63862be5b600230780b6e199358055383e90d67986b312675a9056fdafd",
+    "TerraForest/addons/world_runtime/native/actor_route.hpp": "a1643518a5d0310213bc697c2edd404238c234beb23289f897ff64eb77a8e3c1",
+    "TerraForest/addons/world_runtime/native/entity_activation.cpp": "7308b598868e7f20a08ccf184050aed4c66fd8acd8f7b6f0ee525979e67f6ce1",
+    "TerraForest/addons/world_runtime/native/register_types.cpp": "51e2491368af7d75e8261ecdc609a33efd840cf04c56734019eb1c41dbd07c87",
+    "TerraForest/demo/world.gd": "03490733c2d070c6ae20e111063341b2238fa8116160ccc5cd34bf0c98c444e9",
+    "TerraForest/docs/NAVIGATION_STANDARD.md": "4b43662e0539c9c6baa955143d2b0702b95f69a82eefeb9eb7c047de7a12cc96",
+    "TerraForest/docs/WORLD_FOUNDATION_STATUS.md": "ec029056d9c5fc7de2f3def60bfd6b2a2fc0ffd7704b850525b6f9bba27e5873",
+    "TerraForest/tests/character_runtime.gd": "669c56ffe3b3f01efe89838b9982f59da486649172ef9f965a47fe57cce6749b",
+    "TerraForest/tests/character_world.gd": "cd05d5a7e0c1177fe6c32a575a8cd5b53e5ef666498c228b93c5fc90c150eb43",
+    "TerraForest/tests/door_component.gd": "1ee7cc7c95ec12b474c6c26aadc4c3865b91aee571e2050b27bfcbb13bdda3ec",
+    "TerraForest/tests/zombie_door_interaction.gd": "db00185cafb0f139a49882472b2fd018b2eb80757bfb615d31dfac4b75545e5b",
+    "TerraForest/tests/zombie_navigation.gd": "2f13e61008a02fc3f352ee90f7b86f5e58b5c5dcafc983f0379388424f35d01d",
+    "TerraForest/tools/package.py": "c2fdfb4d3ef00ae48c00adca2306480f6eca12b75054f8a754ae16dd8ecf2e0b",
+    "TerraForest/tools/test_package.py": "e92b17f48500ff426497ff22ffc7bbeb4c2ab6c6344f8ad79cf6d7bcd2644b6b"
+  },
+  "runs": [
+    {
+      "path": "debug/20261023T104553612080Z/run.json",
+      "passed": true,
+      "diagnostics": [],
+      "headless": false,
+      "elapsed_seconds": 47.31295470002806
+    },
+    {
+      "path": "debug/20261023T104641469177Z/run.json",
+      "passed": true,
+      "diagnostics": [],
+      "headless": false,
+      "elapsed_seconds": 28.452600200020242
+    },
+    {
+      "path": "debug/20261023T104710474172Z/run.json",
+      "passed": true,
+      "diagnostics": [],
+      "headless": true,
+      "elapsed_seconds": 5.2880684999981895
+    },
+    {
+      "path": "debug/20261023T104716431744Z/run.json",
+      "passed": true,
+      "diagnostics": [],
+      "headless": true,
+      "elapsed_seconds": 4.640351100009866
+    },
+    {
+      "path": "debug/20261023T104721442351Z/run.json",
+      "passed": true,
+      "diagnostics": [],
+      "headless": true,
+      "elapsed_seconds": 7.217803399951663
+    },
+    {
+      "path": "debug/20261023T104729023055Z/run.json",
+      "passed": true,
+      "diagnostics": [],
+      "headless": true,
+      "elapsed_seconds": 24.83672670001397
+    },
+    {
+      "path": "debug/20261023T104754300244Z/run.json",
+      "passed": true,
+      "diagnostics": [],
+      "headless": true,
+      "elapsed_seconds": 24.778324500017334
+    },
+    {
+      "path": "debug/20261023T105023908965Z/run.json",
+      "passed": true,
+      "diagnostics": [],
+      "headless": false,
+      "elapsed_seconds": 9.89064060000237
+    },
+    {
+      "path": "release/20261023T105134552482Z/run.json",
+      "passed": true,
+      "diagnostics": [],
+      "headless": true,
+      "elapsed_seconds": 45.633989900001325
+    },
+    {
+      "path": "release/20261023T105220561726Z/run.json",
+      "passed": true,
+      "diagnostics": [],
+      "headless": false,
+      "elapsed_seconds": 29.20211279997602
+    },
+    {
+      "path": "release/20261023T105250249366Z/run.json",
+      "passed": true,
+      "diagnostics": [],
+      "headless": true,
+      "elapsed_seconds": 5.21975210000528
+    },
+    {
+      "path": "release/20261023T105255965000Z/run.json",
+      "passed": true,
+      "diagnostics": [],
+      "headless": true,
+      "elapsed_seconds": 4.551755400025286
+    },
+    {
+      "path": "release/20261023T105300902736Z/run.json",
+      "passed": true,
+      "diagnostics": [],
+      "headless": false,
+      "elapsed_seconds": 10.175840899988543
+    },
+    {
+      "path": "point_contact_failure/20261023T102831578947Z/run.json",
+      "passed": false,
+      "diagnostics": [
+        "FAIL authored attack contacts debit existing world durability",
+        "FAIL door removal invalidates route and zombie reaches player",
+        "FAIL model snapshot round trip preserves destroyed door",
+        "FAIL repeated validated attacks destroy actual wooden door"
+      ],
+      "headless": false,
+      "elapsed_seconds": 52.40116360003594
+    },
+    {
+      "path": "before_water_fix/20261023T103509130978Z/run.json",
+      "passed": false,
+      "diagnostics": [
+        "FAIL route admission goes around deep water instead of walking across it"
+      ],
+      "headless": false,
+      "elapsed_seconds": 60.45714529999532
+    },
+    {
+      "path": "before_water_fix/20261023T103802497175Z/run.json",
+      "passed": false,
+      "diagnostics": [
+        "FAIL route admission goes around deep water instead of walking across it"
+      ],
+      "headless": true,
+      "elapsed_seconds": 59.18036790000042
+    },
+    {
+      "path": "footprint_only_failure/20261023T104313038927Z/run.json",
+      "passed": false,
+      "diagnostics": [
+        "FAIL route admission goes around deep water instead of walking across it"
+      ],
+      "headless": true,
+      "elapsed_seconds": 59.3668566000415
+    },
+    {
+      "path": "character_world_failure/20261023T104819481052Z/run.json",
+      "passed": false,
+      "diagnostics": [
+        "FAIL R11 axe preserves existing block damage and wear",
+        "FAIL R11 axe preserves existing block destruction"
+      ],
+      "headless": true,
+      "elapsed_seconds": 8.401498900027946
+    },
+    {
+      "path": "character_world_failure/20261023T104941728680Z/run.json",
+      "passed": false,
+      "diagnostics": [
+        "FAIL R11 axe preserves existing block damage and wear",
+        "FAIL R11 axe preserves existing block destruction"
+      ],
+      "headless": true,
+      "elapsed_seconds": 7.728092000004835
+    }
+  ],
+  "scope": "Changed source/binary hashes exclude evidence to avoid self-reference. Dirty-run identities and native binary hashes remain in individual run manifests."
+}

@@ -1,0 +1,25 @@
+{
+  "mode": "Release world_runtime and structures DLLs loaded by the Steam editor engine through temporary debug-path overrides; original configs restored in finally. Not a standalone export.",
+  "results": [
+    [
+      "zombie_navigation",
+      0
+    ],
+    [
+      "zombie_door_interaction",
+      0
+    ],
+    [
+      "actor_route_contract",
+      0
+    ],
+    [
+      "door_component",
+      0
+    ],
+    [
+      "character_world",
+      0
+    ]
+  ]
+}

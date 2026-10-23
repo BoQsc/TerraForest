@@ -37,13 +37,20 @@ seconds, 12–24 metres from the player. Four candidate probes per interval reje
 missing collision, unsupported/steep ground, water and occupied capsules. Admission
 and movement use the host's terrain/structure/vegetation collision-readiness gate.
 Controllers suspend during loading, edits, menus, inventory, driving or focus loss.
-Lost collision or distance over 64 metres retires them; corpses retire after 20
-seconds or on suspension. Detached bodies freeze during suspension and are removed
+Unknown collision holds living actors until coverage returns; distance over 64
+metres retires them. Corpses retire after 20 seconds or on suspension/unready
+collision. Detached bodies freeze during suspension and are removed
 with their owner. Encounters clear on world pose restore and are not persisted.
 
-Pursuing zombies collide with other zombies and the player. A bounded neighbour
-steering pass lets following zombies move around a blocked peer; it does not
-provide navigation around buildings. Availability refreshes preserve attacks and
+Pursuing zombies now use the same native `ActorRoute` core as settlement actors,
+through `NativeActorNavigator`, while retaining their own animated body and combat
+controller. They route around static obstacles, use bounded native stair movement,
+and apply dry-ground admission. The shared [navigation standard](../../docs/NAVIGATION_STANDARD.md)
+defines profiles, limits, failures, permissions and remaining world-scale gates.
+
+Zombies collide with other zombies, existing actors, vehicles and the player. A bounded neighbour
+steering pass lets following zombies move around a blocked peer; a native motion
+guard checks the resulting direction against route geometry. Availability refreshes preserve attacks and
 traversal until the mode actually changes. Learned approach distances respect
 solid player clearance, including the prone bite proxy.
 
@@ -52,19 +59,35 @@ after leg loss, severing and ragdolls. Player melee picks fitted limb areas with
 solid-world occlusion, applies damage, and charges the existing equipped tool's
 wear once. Pickaxe/axe zombie strikes use the source 1.2-second action duration;
 terrain/tool behavior retains its existing cadence. Source jump/ladder request APIs
-remain available but have no automatic world obstacle or ladder selection.
+remain available but have no automatic jump or ladder-link selection.
+
+Closed wooden doors blocking pursuit become explicit approach/attack targets.
+Only validated authored contacts damage the existing native durability store.
+Destruction removes the actual placement and hinge state, invalidates routes and
+marks the world dirty. It grants no player salvage and consumes no player tool.
+Zombies do not open doors. Other protected/unbreakable obstacles remain blocked.
+
+Standing and crawling profiles are conservative; the latter does not yet support
+low tunnels or stairs. The local search remains bounded to +/-16 m with at most
+2,048 nodes. Verified 12 m horizons can make local progress toward distant targets;
+there is no regional connectivity/streaming graph yet. Unknown or failed routes
+stop, with no direct-chase fallback. Both current actor pools have separate bounded
+budgets; combined planning is at most 24 work units/tick, excluding motion guards.
 
 Collision bits: world `1`, player `2`, zombie body `1 << 16`, fitted hit areas
 `1 << 17`, ragdolls `1 << 18`. The runtime copy of `zombie.gd` differs from its
 preserved CC0 source in default model path, collision bits, R4 revision, walk
 reference speed, idempotent behavior refreshes, crowd steering, and player/prone
-approach clearance. New adapters use 0BSD.
+approach clearance, native route following, collision masks and guarded native
+grounded movement. New adapters use 0BSD.
 
 ## Remaining work
 
 This is the first integration milestone. Zombie contacts emit damage feedback and
 record session damage; player health, death/respawn, balancing, loot and encounter
-persistence remain unimplemented. Direct pursuit does not route around buildings.
+persistence remain unimplemented. Local routing around obstacles and wooden-door
+attacks are implemented; regional journeys and general multistorey connectivity
+remain unqualified.
 Automatic traversal, full-body third-person view, outfit slots, authored empty-hand
 punches, construction grips, draw/stow transitions and camera/tool wall clipping
 need follow-up work. Six actors is a bounded prototype, not a measured scalability
@@ -79,6 +102,12 @@ the actual host physics running and checks attack contacts and Escape-menu
 suspend/resume. See the [follow-up evidence](../../docs/evidence/zombie_encounters/README.md)
 and retained evidence in `docs/evidence/character_integration/` and the linked requirement in
 `docs/WORLD_FOUNDATION_STATUS.md`.
+
+`tests/zombie_navigation.gd` verifies routed wall/stair arrival, moving goals,
+deep-water avoidance, sealed rooms, edit invalidation and missing coverage.
+`tests/zombie_door_interaction.gd` uses the actual host wooden-door collection,
+durability, removal, hinge cleanup and provider snapshot; a full fresh-process
+door-destruction save/reopen gate is still required.
 
 ## Provenance
 

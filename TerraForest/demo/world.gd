@@ -209,6 +209,7 @@ func _ready() -> void:
 	zombies.target=zombie_target
 	zombies.readiness=_actor_collision_ready
 	zombies.water_depth=lakes.depth_at
+	zombies.obstacle_provider=_zombie_obstacle_target
 	add_child(model_tool)
 	model_tool.gameplay=construction_inventory.gameplay
 	model_tool.paid_placement=_place_inventory_model
@@ -275,17 +276,22 @@ func _ready() -> void:
 	pickups.changed.connect(func(): terrain.changed_since_save=true)
 	structures.changed.connect(func():
 		terrain.changed_since_save=true
-		if actors.pool!=null:actors.pool.invalidate_navigation())
+		if actors.pool!=null:actors.pool.invalidate_navigation()
+		zombies.invalidate_navigation())
 	terrain.region_changed.connect(func(bounds: AABB,_revision: int):
-		if actors.pool!=null:actors.pool.invalidate_navigation(bounds))
+		if actors.pool!=null:actors.pool.invalidate_navigation(bounds)
+		zombies.invalidate_navigation(bounds))
 	lakes.exclusion_changed.connect(func(bounds: AABB):
-		if actors.pool!=null:actors.pool.invalidate_navigation(bounds))
+		if actors.pool!=null:actors.pool.invalidate_navigation(bounds)
+		zombies.invalidate_navigation(bounds))
 	world_vehicle.fleet.obstacles_changed.connect(func(bounds: AABB):
-		if actors.pool!=null:actors.pool.invalidate_navigation(bounds))
+		if actors.pool!=null:actors.pool.invalidate_navigation(bounds)
+		zombies.invalidate_navigation(bounds))
 	actors.set_navigation_admission(func(point: Vector3):return lakes.depth_at(point-Vector3.UP*0.8)<=0)
 	ecosystem.harvested.connect(func():
 		terrain.changed_since_save=true
-		if actors.pool!=null:actors.pool.invalidate_navigation())
+		if actors.pool!=null:actors.pool.invalidate_navigation()
+		zombies.invalidate_navigation())
 	_sync_player_tool()
 	DisplayServer.window_set_title("TerraForest | Living terrain")
 	vegetation.name = "Vegetation"
@@ -1272,6 +1278,39 @@ func _advance_frontage_placement() -> void:
 
 func _actor_collision_ready(bounds: AABB) -> bool:
 	return terrain.is_collision_region_ready(bounds) and structures.is_collision_region_ready(bounds) and vegetation.is_collision_region_ready(bounds)
+
+func _zombie_obstacle_target(zombie: CharacterBody3D) -> Node3D:
+	if not _model_edit_available():return null
+	var start:Vector3=zombie.global_position+Vector3.UP*1.1
+	var offset:Vector3=player.global_position+Vector3.UP*1.1-start
+	var ray:=PhysicsRayQueryParameters3D.create(start,start+offset.limit_length(12.0),7,[player.get_rid()])
+	var hit:=get_world_3d().direct_space_state.intersect_ray(ray)
+	if hit.is_empty() or hit.get("collider")!=doors.collection:return null
+	var identity:int=doors.collection.placement_for_body(hit.rid)
+	if identity<=0 or doors.state.is_open(identity) or doors.collection.is_removal_protected(identity):return null
+	var normal:Vector3=hit.normal;normal.y=0
+	if normal.length_squared()<0.5:return null
+	var obstacle=preload("res://addons/characters/runtime/obstacle_target.gd").new()
+	obstacle.surface=doors.collection;obstacle.body_rid=hit.rid;obstacle.identity=identity
+	var transform:PackedFloat32Array=doors.collection.get_instance(identity)
+	if transform.size()!=12:obstacle.free();return null
+	var base:Vector3=doors.collection.to_global(Vector3(transform[3],transform[7],transform[11]))
+	var leaf_pose:=Transform3D(Basis(Vector3(transform[0],transform[4],transform[8]),Vector3(transform[1],transform[5],transform[9]),Vector3(transform[2],transform[6],transform[10])),Vector3(transform[3],transform[7],transform[11]))
+	obstacle.shape_pose=doors.collection.global_transform*leaf_pose*Transform3D(Basis.IDENTITY,Vector3(.5,1.1,0))
+	obstacle.contact_point=Vector3(hit.position.x,base.y+1.1,hit.position.z)
+	obstacle.approach_point=hit.position+normal.normalized()*0.55-Vector3.UP*1.1
+	obstacle.approach_point.y=base.y+0.04
+	zombies.add_child(obstacle);obstacle.global_position=Vector3(hit.position.x,base.y,hit.position.z)
+	obstacle.validity=func():return _model_edit_available() and doors.collection.placement_for_body(obstacle.body_rid)==identity and doors.collection.get_instance(identity)==transform and not doors.state.is_open(identity) and not doors.collection.is_removal_protected(identity)
+	obstacle.damage_callback=func(damage:float):
+		var key:String="model:%s:%d"%[preload("res://addons/structures/door_catalog.gd").KEY,identity]
+		var result:Dictionary=world_attack.durability.hit(key,90,maxi(1,int(roundf(damage))))
+		if not result.ok:return
+		terrain.changed_since_save=true
+		if result.destroyed and doors.collection.remove_instances(PackedInt64Array([identity])):
+			doors.state.forget(identity);world_attack.durability.forget(key)
+			_show_lake_notice("Zombie broke a wooden door")
+	return obstacle
 
 func _physics_process(delta: float) -> void:
 	zombies.update(delta,player.global_position,not loading_active and not shutdown_requested and terrain.world_ready and not terrain.pending_edit and not session_menu.visible_ui() and not player_hud.inventory_open and not world_vehicle.driving and app_focused,not fly)

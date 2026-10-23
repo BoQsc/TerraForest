@@ -14,6 +14,12 @@ Deferral is not completion. Do not expand excluded features to clear a backlog.
 For world generation, settlement, road, POI or landscape changes, read
 `docs/WORLD_BUILDING_STANDARD.md` before choosing the implementation.
 
+For entity navigation, traversal, pursuit or world-interaction changes, read
+`docs/NAVIGATION_STANDARD.md` before choosing the implementation. Reuse the native
+route core, declare movement capabilities and interaction permissions, keep one
+body-integration owner, and retain explicit blocked/unavailable states and budgets.
+Local steering and repeated local horizons do not qualify whole-world navigation.
+
 Keep engineering verification separate from world-quality acceptance. Passing
 generation, persistence, movement or performance checks does not override visible
 design defects. Inspect relevant generated images before reporting visual success.

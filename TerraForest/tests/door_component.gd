@@ -35,7 +35,7 @@ func run() -> void:
 	var hinge_bytes: PackedByteArray=state.capture_storage_snapshot()
 	var model_bytes: PackedByteArray=batch.capture_snapshot()
 	obstacle.position=Vector3(0.5,1,-0.5)
-	for layer in [8,4]:
+	for layer in [8,4,1<<16,1<<18]:
 		obstacle.collision_layer=layer;await settle()
 		check(not state.toggle(batch,7,AABB()).ok and state.capture_storage_snapshot()==hinge_bytes and batch.capture_snapshot()==model_bytes,"occupied closing preserves pose and hinge on layer %d"%layer)
 	obstacle.free();await settle()

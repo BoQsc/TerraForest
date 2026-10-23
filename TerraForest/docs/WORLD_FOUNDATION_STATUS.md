@@ -29,9 +29,34 @@ checks. See [failure reproduction and fix evidence](evidence/zombie_encounters/R
 This corrects the earlier autonomous-attack claim; that earlier fixture alone did
 not establish working encounters in the actual host loop.
 
+The navigation follow-up connects zombies to the existing native `ActorRoute`
+core through an external-body service, retaining one character body/motor owner.
+The shared [navigation standard](NAVIGATION_STANDARD.md) now declares profiles,
+collision layers, readiness, blocked/unavailable states, budgets and interaction
+permissions. Local wall/stair traversal, moving goals, water avoidance, geometry
+invalidation and closed wooden-door attacks have dedicated checks; retained
+failures and final evidence are recorded in [navigation evidence](evidence/zombie_navigation/README.md).
+Door attacks use authored contact timing and existing world durability/removal,
+with no player salvage or tool wear. This updates the earlier obstacle-navigation
+requirement only for the checked local cases.
+
+Regional/portal routing, streaming requests along future routes, representative
+populated settlement/cave journeys, heterogeneous crowd avoidance, continuous
+moving-target endurance, automatic authorized ladder/jump links, tighter crawler
+clearance and total CPU/frame cost remain open. The current planner covers a
+bounded local graph; repeated 12 m horizons do not prove whole-world reachability.
+Door destruction still needs a fresh-process compound save/reopen check beyond
+its provider snapshot round trip. Resume these gates before expanding encounter
+population or claiming world-scale navigation; close them with actual journeys,
+fresh reopen and measured host workloads, as specified in the navigation standard.
+Integration with subsequent world work must merge source changes and rebuild
+native binaries together, then rerun the host checks. This branch remains based
+on `87390a2c`; concurrent terrain/structure changes in the original checkout are
+not overwritten or implicitly qualified by its local results.
+
 This is a first integration milestone, not completed survival gameplay. Required
 continuation: player health/death/respawn, saved encounter identity/state and loot,
-obstacle navigation and automatic traversal, third-person/outfit presentation,
+regional obstacle navigation and automatic traversal, third-person/outfit presentation,
 authored empty-hand punches and construction grips, draw/stow transitions and
 camera/tool wall clipping, plus sustained population/frame-cost qualification.
 These are deferred because this milestone preserves native movement and existing

@@ -68,6 +68,9 @@ class PackageTests(unittest.TestCase):
         files, metadata=package.addon_entries('player_runtime')
         names={p.relative_to(package.ROOT).as_posix() for p in files}
         self.assertIn('characters', metadata['included_addons'])
+        _, character_metadata=package.addon_entries('characters')
+        self.assertIn('world_runtime',character_metadata['included_addons'])
+        self.assertIn('player_runtime',character_metadata['included_addons'])
         self.assertTrue({'addons/characters/runtime/assets/Human.r11.glb',
                          'addons/characters/runtime/assets/Zombie.r4.glb',
                          'addons/characters/runtime/assets/Zombie.r4.behavior.json',

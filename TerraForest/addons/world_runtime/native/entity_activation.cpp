@@ -82,7 +82,7 @@ Dictionary NativeEntityActivation::select(const Vector3 &center,double radius,in
         if(empty==proxies_.end()||!empty->body->bind_entity(store_,ids[i])){sleep_all();result["ok"]=false;return result;}
         empty->route=ActorRoute();empty->handle=ids[i];// Actors occupy a dedicated layer; terrain (1), authored structures (2), vehicles (4)
         // constrain movement; actor collision backs up active native avoidance.
-        empty->body->set_collision_layer(8);empty->body->set_collision_mask(15);
+        empty->body->set_collision_layer(8);empty->body->set_collision_mask(15 | (1<<16));
         empty->body->set_crowd_active(true);
     }
     active_=ids;result["active"]=ids.size();return result;

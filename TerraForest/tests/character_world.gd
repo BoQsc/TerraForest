@@ -67,6 +67,7 @@ func run() -> void:
 	game.camera.global_position=Vector3(base)+Vector3(0.5,0.5,2.5);game.camera.look_at(Vector3(base)+Vector3.ONE*0.5)
 	for tick in 4:await physics_frame
 	var before:int=game.player_hud.inventory.snapshot().slots[1].wear
+	print("BLOCK_ATTACK_CONTEXT ",JSON.stringify({"target":game.world_attack.target(),"available":game._model_edit_available(),"tool":game.equipped_tool,"mouse":Input.mouse_mode,"menu":game.session_menu.visible_ui(),"camera":game.camera.global_position,"base":base}))
 	game.world_attack.next_attack=0
 	check(game.world_attack.attack() and game.structures.blocks.get_cell(base)!=0 and game.player_hud.inventory.snapshot().slots[1].wear==before+1,"R11 axe preserves existing block damage and wear")
 	game.world_attack.next_attack=0

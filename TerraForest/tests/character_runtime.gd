@@ -49,7 +49,9 @@ func run() -> void:
 	check(zombie!=null and zombie.initialized and zombie._r4_enabled,"R4 rig and behavior contract initialize")
 	check(zombie.hit_areas.size()==14 and zombie.physical_bones.size()==15,"R4 installs fitted limb regions and ragdoll")
 	check(zombie.collision_layer==1<<16,"zombie bodies use dedicated collision layer")
-	for tick in 90:await physics_frame
+	for tick in 90:
+		encounters.update(1.0/Engine.physics_ticks_per_second,Vector3.ZERO,true)
+		await physics_frame
 	check(zombie.position.z > -2.9,"zombie pursues the real target with physical movement")
 	encounters.update(0.01,Vector3.ZERO,false)
 	check(zombie.process_mode==Node.PROCESS_MODE_DISABLED,"world updates suspend zombie subtree")
@@ -88,7 +90,7 @@ func run() -> void:
 	encounters.update(0.1,Vector3.ZERO,true)
 	check(encounters.residents.size()==1,"automatic scheduler admits one supported encounter")
 	ready_gate=false;encounters.update(0.1,Vector3.ZERO,true)
-	check(encounters.residents.is_empty(),"lost streamed collision retires resident safely")
+	check(encounters.residents.size()==1 and encounters.residents[0].process_mode==Node.PROCESS_MODE_DISABLED,"unknown streamed collision holds resident without deleting it")
 	ready_gate=true
 	# Capture actual FP crop and a full R4 zombie together for visual review.
 	encounters.clear();await process_frame

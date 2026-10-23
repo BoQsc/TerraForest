@@ -173,6 +173,10 @@ interpolation, navigation or dense-crowd qualification. See
 
 ## Local actor walking routes
 
+The project-wide contract is [NAVIGATION_STANDARD.md](../../docs/NAVIGATION_STANDARD.md).
+It applies to settlement actors, zombies and future mobile entities. Local route
+tests do not qualify regional connectivity, all interiors or large populations.
+
 `NativeEntityActivation.enable_navigation(admission=Callable())` enables a native,
 main-thread incremental local A* planner for `settle`. `actor_world.gd` enables it
 by default; the legacy explicit-target `tick` API remains direct motion. Destinations
@@ -241,6 +245,34 @@ in `docs/evidence/actor_settlement_navigation/README.md`. This closes that bound
 integration check, not all furnished routes or large-population qualification.
 
 Persistence registration supports `register_components(Array[Dictionary])` for setup transactions. Each entry has `name`, `capture`, `restore`, `validator`, and `empty`; all entries validate before any is installed. Duplicate names, invalid snapshots, attached hosts, or exceeding the existing 63-provider limit reject the entire batch. `register_component` remains compatible. Pickup initialization stages all native stores and unparented renderers, then registers the batch and publishes them; failure permits retry without partial state. Repeating preparation succeeds only for its original host.
+
+### Routes for external character bodies
+
+`NativeActorNavigator` reuses the identical `ActorRoute` core without creating a
+second collision body or owning an entity store. Configure a bounded capacity,
+submit feet-origin `set_agent(id, feet, goal, profile, active)` records, then call
+`advance(delta, readiness, admission)` once per physics tick and consume
+`steering_target(id)`. `status(id)` exposes the ordinary route failures and work
+limits. `guard_motion` validates the actual post-steering direction with the same
+support/sweep/admission checks. Remove records on retirement; `clear` discards all
+transient routes. Call `set_exclusions` when the specific recipient RID changes,
+and `invalidate(bounds)` after relevant geometry changes.
+
+Profile 0 uses the existing 0.35 m / 1.8 m upright envelope and 0.30 m step. Profile
+1 uses a conservative 0.75 m / 1.8 m turning envelope with no upward step for
+crawlers. The larger envelope participates in readiness bounds. The service owns
+at most 64 requested slots (the zombie host configures six); each retains at most
+2,048 nodes. Its pool has 12 planning work units and the cooperative 750 us
+deadline, separate from the legacy activation pool. With both enabled the host
+budget is 24 planning units, not 12 globally; motion guards and bounded perception
+are additional work. The current two avoidance implementations are not yet one
+heterogeneous crowd scheduler.
+
+Moving goals use hysteresis. Distant targets may project 12 m local horizons;
+these remain local searches, not regional reachability. A missing projection or
+unready corridor stops rather than producing a direct pursuit vector. Zombie
+standing movement uses the existing native feet-origin grounded motor; authored
+animation and validated interactions remain owned by the character controller.
 
 ### Two-point actor patrol
 

@@ -1,0 +1,23 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS routed zombie admits
+PASS zombie routes around a wall and reaches actual attack contact
+PASS route and body never cross the solid wall
+PASS zombie pool shares twelve native route work units
+PASS same bounded ActorRoute core supplies node limit
+PASS changed pursuit goal replans and reaches the moved player
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+FAIL route admission goes around deep water instead of walking across it
+WATER_RESULT {"body":{"action_time":0.0,"active_action":"","alive":true,"animation_time":1.86666666666664,"available_attacks":["bite","left","right","both"],"behavior_enabled":true,"clip":"Zombie_Idle","contact_count":0,"crawl_speed":0.32,"crawl_transition":false,"crawling":false,"grounded":true,"last_attack":"","last_contact":{},"last_rejection":"","learned_contact_distance":null,"left_arm":true,"miss_count":0,"movement_mode":"standing","position":"(0.668999, 0.00084, 1.309577)","r4_actions_enabled":true,"revision_id":"r4","right_arm":true,"standing_legs":true,"state":"idle","target_distance":2.25112342834473,"traversal_state":"none","velocity":"(0.0, 0.0, 0.0)"},"crossed":false,"damage":0.0,"route":{"expansions":0,"goal":"(2.5, 0.0, 0.0)","local_horizon":false,"node_limit":2048,"nodes":1,"profile":0,"radius_m":16,"replans":3,"state":"blocked","stuck_seconds":1.0,"waypoint_index":1,"waypoint_target":"(1.075685, 0.93, 1.018705)","waypoints":6}}
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS sealed room reports blocked/search limit instead of direct pursuit
+PASS failed route holds the real body
+PASS removing a blocking wall invalidates and restores traversal
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS unknown route coverage differs from blocked geometry
+PASS unknown route never falls back to direct chasing
+PASS ready coverage resumes bounded planning
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS shared walking route and native motor climb four stairs to attack
+ZOMBIE_NAVIGATION checks=14 failures=1

@@ -10,7 +10,7 @@ EXCLUDED = {'.godot', '.build', '.git', 'dist', 'reports', '__pycache__'}
 # These are distribution dependencies, including optional native acceleration.
 # They do not claim that a scene adapter works without a host-world contract.
 DEPENDENCIES = {
-    'player_runtime': ['volumetric_water', 'characters'], 'characters': [], 'presentation': [],
+    'player_runtime': ['volumetric_water', 'characters'], 'characters': ['world_runtime'], 'presentation': [],
     'world_runtime': ['player_runtime', 'volumetric_water'],
     'vegetation_runtime': [], 'volumetric_water': [],
     'volumetric_terrain': ['world_runtime', 'volumetric_water'],
