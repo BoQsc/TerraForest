@@ -1,27 +1,29 @@
 ## Rewrite checkpoint — 2026-10-23 (work remains active)
 
-The generator now launches engine-owned creation/verification jobs without Python;
-native publication copies bounded stores under source/destination leases and promotes
-the canonical root last. Full seed42 creation and fresh-process verification passed:
-see the exact retained report in WORLD_WORKFLOW_REDESIGN.md. Cancellation before
-launch, duplicate destination and orphan-store preservation checks pass. This does
-not qualify recovery after every interruption or a clean exported installation.
+Native road/lot planning, shared preview/bake plans, layout options, engine-owned
+creation and verification, generated lake initialization, loading photographs,
+root-last publication and interrupted-publication recovery are implemented and
+have scoped evidence in WORLD_WORKFLOW_REDESIGN.md. Source and bundled generation
+have passed; the latest exported pack starts, but clean-machine release installation
+and current full bundled integration still require verification.
 
-Vegetation detail candidates now use irregular subcell jitter and continuous pocket
-strength; native placement applies bounded anisotropic silhouettes before overlap
-validation. Base stones and harvest identity namespaces remain stable. Existing
-1084-check scatter test and new multi-seed/edge distribution checks pass. Integrated
-near/elevated images in `reports/generated_vegetation_review/` were inspected.
-They show production vegetation and existing tree shadows, but are NOT evidence
-that distant shadow coverage or moving-owner transitions are fixed. Roadside cover
-is still sparse and settlement frontage/landscaping is not visually accepted.
+Vegetation now scatters detail without repeated four-metre rows. Stable harvest
+identities and base stones remain; procedural detail positions change. Normal-view
+circular prefetch passes a66m walking check with zero missing visible owner-frames,
+no rejected publications and no deferred renderer pages. The repeat endpoint was
+inspected. Distant terrain canopy shadows use a bounded native worker mask, while
+nearby real shadows remain. These do not prove zoom/high-speed/teleport continuity
+or sustained populated-world cost. See evidence/vegetation_rewrite/.
 
-Still required in this same rewrite: complete options and map layers; bounded native
-parallel generation/compute integration with equivalence and benefit evidence;
-canonical regional storage capacity/recovery; large-edit/mining scaling; distant
-shadow substitutes and rectangular streaming-transition review; clean standalone
-export; populated travel/frame-cost checks. These remain active, not deferred or
-redefined as optional. Preserve the 0BSD license, saves and accepted static water.
+Still required in this same rewrite: complete options and map layers; bounded
+native parallel generation/compute integration with equivalence and benefit evidence;
+canonical regional storage capacity/recovery; large-edit/mining scaling; remaining
+vegetation streaming cases; clean standalone export; populated travel/frame-cost
+checks and world visual acceptance. These remain active, not optional. Preserve
+0BSD, existing saves and accepted static water. Held mining after scripted arrival still fails the150ms first-visible-change
+gate after correcting its obsolete tool setup. Native fallback now applies to the
+ordinary renderer, but readiness/large-edit scaling remain open; see the exact
+failure reports in WORLD_WORKFLOW_REDESIGN.md.
 
 ## Native world-generation rewrite in progress — 2026-10-22
 

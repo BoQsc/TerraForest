@@ -148,11 +148,11 @@ func _measured_step(_delta:float)->void:
 	var forward:Vector3=-camera.global_basis.z
 	var zoomed:bool=camera.fov<71.0
 	var view_changed:bool=absf(camera.fov-_view_fov)>0.5 or (zoomed and (forward.dot(_view_forward)<0.9975 or camera.global_position.distance_squared_to(_view_eye)>16.0))
-	if center!=_last_cell or view_changed:
+	if center!=_last_cell or view_changed or camera.global_position.distance_squared_to(_view_eye)>64.0:
 		_last_cell=center;_wanted.clear()
 		_view_fov=camera.fov;_view_forward=forward;_view_eye=camera.global_position
 		var viewport_size:Vector2=camera.get_viewport().get_visible_rect().size
-		var view:Dictionary=native.wanted_view(_view_eye,forward,camera.fov,viewport_size.x/maxf(1.0,viewport_size.y))
+		var view:Dictionary=native.wanted_view(_view_eye,forward,camera.fov,viewport_size.x/maxf(1.0,viewport_size.y),true)
 		_view_range=view.range
 		for key in view.cells: _wanted[key]=true
 		for material in foliage_materials:

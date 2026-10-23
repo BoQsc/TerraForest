@@ -19,7 +19,7 @@ public:
     bool replace_cell(Vector2i key,const Array &species){
         if(!valid_cell(key)||species.size()!=9)return false;
         int owner=key.y*63+key.x;
-        if(!cells.count(owner)&&cells.size()>=81)return false;
+        if(!cells.count(owner)&&cells.size()>=121)return false;
         std::vector<Item> staged;std::unordered_set<int64_t> seen;
         for(int s=0;s<9;++s){
             if(species[s].get_type()!=Variant::DICTIONARY)return false;

@@ -8,7 +8,7 @@ class NativeGroundCover : public RefCounted {
 protected:
     static void _bind_methods(){
         ClassDB::bind_method(D_METHOD("wanted","center"),&NativeGroundCover::wanted);
-        ClassDB::bind_method(D_METHOD("wanted_view","eye","forward","fov","aspect"),&NativeGroundCover::wanted_view);
+        ClassDB::bind_method(D_METHOD("wanted_view","eye","forward","fov","aspect","preload"),&NativeGroundCover::wanted_view,DEFVAL(false));
         ClassDB::bind_method(D_METHOD("candidates","cell","seed","layer","shelter","irregular"),&NativeGroundCover::candidates,DEFVAL(0),DEFVAL(PackedVector3Array()),DEFVAL(false));
         ClassDB::bind_method(D_METHOD("place","ids","points","normals"),&NativeGroundCover::place);
         ClassDB::bind_method(D_METHOD("pack","ids","transforms","excluded","shelter"),&NativeGroundCover::pack,DEFVAL(PackedVector3Array()));
@@ -24,13 +24,30 @@ public:
         std::sort(cells.begin(),cells.end(),[](const Cell&a,const Cell&b){return a.d!=b.d?a.d<b.d:(a.p.y!=b.p.y?a.p.y<b.p.y:a.p.x<b.p.x);});
         for(const auto &c:cells)out.append(c.p);return out;
     }
-    Dictionary wanted_view(Vector3 eye,Vector3 forward,double fov,double aspect) const {
+    Dictionary wanted_view(Vector3 eye,Vector3 forward,double fov,double aspect,bool preload=false) const {
         Dictionary result;TypedArray<Vector2i> cells;result["range"]=124.0;result["cells"]=cells;
         if(!eye.is_finite()||!forward.is_finite()||!std::isfinite(fov)||!std::isfinite(aspect)||fov<1||fov>=179||aspect<=0||aspect>4||eye.x<-128||eye.z<-128||eye.x>2144||eye.z>2144)return result;
         Vector2i center(int(std::floor(eye.x/32)),int(std::floor(eye.z/32)));
         double zoom=std::clamp(std::tan(75.0*3.141592653589793/360.0)/std::tan(fov*3.141592653589793/360.0),1.0,2.0);
         Vector2 direction(forward.x,forward.z);
-        if(zoom<=1.05||direction.length_squared()<0.04){result["cells"]=wanted(center);return result;}
+        if(zoom<=1.05||direction.length_squared()<0.04){
+            if(!preload){result["cells"]=wanted(center);return result;}
+            // Cover the entire visible disk plus travel lead, not a square whose
+            // near edge can fall inside the 124m visible distance. Existing IDs
+            // and density are unchanged; this only schedules off-screen owners.
+            struct Cell{Vector2i p;double d;};std::vector<Cell> pending;
+            for(int z=std::max(0,center.y-6);z<=std::min(62,center.y+6);++z)
+                for(int x=std::max(0,center.x-6);x<=std::min(62,center.x+6);++x){
+                    double dx=std::max({double(x*32-eye.x),0.0,double(eye.x-(x+1)*32)});
+                    double dz=std::max({double(z*32-eye.z),0.0,double(eye.z-(z+1)*32)});
+                    if(dx*dx+dz*dz>160.0*160.0)continue;
+                    double cx=x*32+16-eye.x,cz=z*32+16-eye.z;
+                    pending.push_back({Vector2i(x,z),x==center.x&&z==center.y?-1.0:cx*cx+cz*cz});
+                }
+            std::sort(pending.begin(),pending.end(),[](const Cell&a,const Cell&b){return a.d!=b.d?a.d<b.d:(a.p.y!=b.p.y?a.p.y<b.p.y:a.p.x<b.p.x);});
+            for(const auto &c:pending)cells.append(c.p);
+            result["cells"]=cells;return result;
+        }
         direction=direction.normalized();
         const double reach=124.0*zoom;
         // Expanded horizontal cone covers cell corners and small yaw changes.
@@ -73,8 +90,8 @@ public:
                         // Full subcell jitter removes the previous layer-aligned 1m
                         // lattice. Stable IDs, owner bounds and base stones are unchanged.
                         const uint32_t random=hash(h^0x51e2a9bdu);
-                        x=bx+.04f+3.92f*(random&65535)/65535.f;
-                        z=bz+.04f+3.92f*(random>>16)/65535.f;
+                        x=cell.x*32+.04f+31.92f*(random&65535)/65535.f;
+                        z=cell.y*32+.04f+31.92f*(random>>16)/65535.f;
                     }
 
                     const uint32_t pocket=hash(uint32_t((cell.y*8+i/8)*504+cell.x*8+i%8)^uint32_t(seed));
@@ -89,7 +106,13 @@ public:
                     }
                     const float field=.5f+.25f*std::sin(bx*.083f+bz*.047f)+.25f*std::sin(bz*.139f-bx*.063f);
                     const float strength=irregular?.10f+.56f*field:.12f+.48f*float(pocket%997)/996.f;
-                    x+=(ax-x)*strength;z+=(az-z)*strength;
+                    if(irregular){
+                        // Continuous world-space displacement creates natural pockets;
+                        // taper only at ownership boundaries to retain local picking.
+                        float edge=std::clamp(std::min({x-cell.x*32,z-cell.y*32,(cell.x+1)*32-x,(cell.y+1)*32-z})/3.f,0.f,1.f);
+                        const float dx=1.2f*std::sin(z*.23f+x*.061f),dz=1.2f*std::sin(x*.19f-z*.073f);
+                        x+=dx*edge;z+=dz*edge;
+                    }else{x+=(ax-x)*strength;z+=(az-z)*strength;}
                     // Potential tree anchors use the same persisted grove recipe, not
                     // currently resident trees: visit order/harvesting cannot shuffle plants.
                     float nearest=25.f;Vector3 anchor;

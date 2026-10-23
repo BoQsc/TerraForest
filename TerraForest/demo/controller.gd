@@ -715,7 +715,7 @@ func _update_edit(delta: float) -> void:
 	latest_hit = get_world_3d().direct_space_state.intersect_ray(query)
 	# Terrain targeting must not wait for a streamed physics collider. Existing
 	# physics hits still win, so loaded structures/objects retain their ordering.
-	if latest_hit.is_empty() and terrain.backend.region_terrain:
+	if latest_hit.is_empty():
 		latest_hit=_terrain_pick(start,end)
 	if latest_hit.is_empty():
 		return

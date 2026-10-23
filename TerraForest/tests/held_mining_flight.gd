@@ -33,7 +33,10 @@ func run() -> void:
 		check(false,"initial readiness");finish();return
 	check(Presentation.measurement(root).fair_graphical_sample,"1920x1080 fullscreen at full scale")
 	var reports: Array=[]
-	game.tool=3;game.radius=2.5
+	if not game.session_menu.developer:game.session_menu.toggle_developer()
+	game.session_menu.activate_developer_slot(0)
+	game.radius=2.5
+	check(game.editor_tool_active and game.tool==3 and not game.session_menu.visible_ui(),"current terrain tool selected through session UI")
 	for destination in [Vector3(1308,0,1260),Vector3(1302,0,1212)]:
 		height_value=NAN;height_token+=1
 		game.terrain.request_height(destination,height_token)

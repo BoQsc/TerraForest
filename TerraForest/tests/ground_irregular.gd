@@ -27,6 +27,15 @@ func run()->void:
       samples+=1
  check(valid,"irregular placement deterministic and confined to stable owner namespaces")
  check(changed>samples*0.9,"detail positions no longer follow previous layer lattice")
+ var occupied:Dictionary={}
+ for layer in range(1,16):
+  var distribution:Dictionary=scatter.candidates(Vector2i(30,30),42,layer,PackedVector3Array(),true)
+  for point:Vector3 in distribution.points:
+   var pocket:=Vector2i(floori((point.x-960)/4),floori((point.z-960)/4))
+   occupied[pocket]=int(occupied.get(pocket,0))+1
+ var differing:=0
+ for count:int in occupied.values():differing+=int(count!=15)
+ check(differing>45,"four-metre pockets no longer all contain exactly fifteen detail plants")
  var data:Dictionary=scatter.candidates(Vector2i(30,30),42,3,PackedVector3Array(),true)
  var normals:=PackedVector3Array();normals.resize(data.ids.size());normals.fill(Vector3.UP)
  var placed:Dictionary=scatter.place(data.ids,data.points,normals)

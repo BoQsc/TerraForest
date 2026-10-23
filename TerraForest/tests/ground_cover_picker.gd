@@ -42,27 +42,27 @@ func run() -> void:
 	a=Transform3D(Basis.IDENTITY.scaled(Vector3(4,1,4)),Vector3(991.9,20,970))
 	check(picker.replace_cell(Vector2i(30,30),records(PackedInt64Array([8]),[a])),"boundary proxy accepted")
 	check(picker.pick(Vector3(992.5,20,968),Vector3(992.5,20,972)).hit,"cell padding finds protruding neighbour proxy")
-	for z in range(26,35):
-		for x in range(26,35):
+	for z in range(25,36):
+		for x in range(25,36):
 			if Vector2i(x,z)==Vector2i(30,30): continue
 			picker.replace_cell(Vector2i(x,z),records(PackedInt64Array([100+z*63+x]),[Transform3D(Basis.IDENTITY,Vector3(x*32+10,20,z*32+10))]))
 	hit=picker.pick(Vector3(992.5,20,968),Vector3(992.5,20,972))
-	check(hit.hit and hit.tested<=4 and hit.cells<=4,"query visits local cells independently of all 81 resident owners")
+	check(hit.hit and hit.tested<=4 and hit.cells<=4,"query visits local cells independently of all 121 resident owners")
 	check(not picker.replace_cell(Vector2i(40,40),records(PackedInt64Array([9]),[Transform3D(Basis.IDENTITY,Vector3(1290,20,1290))])),"resident interaction owner cap enforced")
 	picker.remove_cell(Vector2i(30,30))
 	check(not picker.pick(Vector3(992.5,20,968),Vector3(992.5,20,972)).hit,"retired render owner cannot be picked")
 	var dense=ClassDB.instantiate("NativeGroundCoverPicker")
 	var accepted:=true
-	for z in range(26,35):
-		for x in range(26,35):
+	for z in range(25,36):
+		for x in range(25,36):
 			var ids:=PackedInt64Array();var poses: Array[Transform3D]=[]
 			for i in range(1280):
 				ids.append((z*63+x)*1280+i+1)
 				poses.append(Transform3D(Basis.IDENTITY,Vector3(x*32+10,20,z*32+10)))
 			accepted=dense.replace_cell(Vector2i(x,z),records(ids,poses)) and accepted
-	check(accepted,"maximum 103680 resident interaction records accepted within owner bounds")
+	check(accepted,"maximum 154880 resident interaction records accepted within owner bounds")
 	hit=dense.pick(Vector3(968,20,970),Vector3(972,20,970))
-	check(hit.hit and hit.tested==1280 and hit.cells<=4,"dense local query tests 1280 records rather than scanning all 103680")
+	check(hit.hit and hit.tested==1280 and hit.cells<=4,"dense local query tests 1280 records rather than scanning all 154880")
 	check(hit.id==(30*63+30)*1280+1,"coincident proxy ties choose stable lowest identity")
 	var many_ids:=PackedInt64Array();var many_poses: Array[Transform3D]=[]
 	for i in range(1281): many_ids.append(i+1);many_poses.append(Transform3D(Basis.IDENTITY,Vector3(970,20,970)))

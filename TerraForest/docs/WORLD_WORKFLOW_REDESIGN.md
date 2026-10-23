@@ -250,3 +250,51 @@ capture max 1.320 ms. These short measurements are not sustained thermal proof.
 Integrated report: 20261023T053720559601Z. Large-root capture cost, vegetation
 owner-publication continuity, current bundled export and broader rewrite requirements
 remain open. No vegetation density reduction was introduced.
+
+
+## Vegetation coverage and row removal — 2026-10-23
+
+The first irregular-scatter walking image still showed repeated four-metre rows.
+It was rejected despite passing the streaming checks. Detail positions now scatter
+across their stable owner with continuous world-space displacement; they no longer
+have exactly fifteen plants assigned to each four-metre pocket. Base stones retain
+positions, total detail candidate counts are unchanged, and removal identities and
+authored placements retain their namespace. Procedural detail positions do change.
+The repeated endpoint image was inspected and the obvious rows are absent.
+
+Normal-view prefetch now covers a 160m disk rather than a 9x9 square that could end
+inside the 124m visible radius. Refresh occurs within 8m of movement; density and
+render distance are unchanged. This increases bounded off-screen ownership, not
+per-frame surface-query admission (still at most four). Native interaction capacity
+is now121 owners; the subcell coverage matrix observed at most104. Zoom retains its
+existing cone scheduling and still requires separate moving-view coverage proof.
+The first integration failure exposed the old81 interaction cap, which is now
+updated together with its dense/local-query tests; failed reports are retained.
+
+Coverage: 20261023T055538448972Z (zero missing probes;8576 missed by old square).
+Picker/stream lifecycle: 20261023T055859980513Z / 20261023T055901550475Z.
+Latest distribution/stream: 20261023T060136221535Z /20261023T060136998712Z.
+Final walking check:20261023T060459006299Z. Actual normal controls traverse66m and
+three owners: zero missing owner-frames within124m, four requests maximum,104
+resident owners maximum, no rejected publication or deferred renderer pages.
+Frame p95 was16.903ms, including the coverage observer, at1920x1080/cap60. This is
+seed1703/generator1 temporary terrain, not the populated generated region or a
+thermal/endurance result. Evidence: evidence/vegetation_rewrite/.
+
+Remaining continuity work: zoom and high-speed travel, initial/teleport owner
+publication, and integrated generated-world cost. Whole-owner initial publication
+is still atomic; this check only closes normal walking prefetch on the tested path.
+The full rewrite and large-edit/storage/map requirements remain active.
+
+
+### Current mining diagnostic — not closed
+
+The old held_mining_flight harness selected a brush number but not the current
+session development tool, so the first run performed no edits (060721814112Z).
+The corrected harness selects the real UI tool. On the ordinary renderer its two
+bursts then failed the150ms visible-gap gate (061226779980Z). Native targeting had
+been gated on the optional region renderer; enabling its existing visible-owner
+validated fallback on the ordinary renderer increased visible edits from18/24 to
+29/29, but both arrival gaps still fail (061615399336Z). Capture-to-draw p95 and
+frame p99 pass; these do not erase the failed first-response gate. Keep arrival
+readiness and large-edit scaling active. This is not sustained mining acceptance.
