@@ -393,7 +393,7 @@ func _terrain_initialized(text: String) -> void:
 		pitch=_restored_pose.pitch
 		player.rotation.y=yaw
 		camera.rotation.x=pitch
-		# Loading always starts with empty hands; old mode selectors never reactivate editing.
+		# Put saved modes away during loading; choose a default gameplay tool only when ready.
 		equipped_tool=0;editor_tool_active=false;structure_mode=false;model_tool.set_active(false);tool_view.equip(0)
 		player_hud.active_slot=-1;player_hud.show_active_tool(0)
 	else:
@@ -1512,6 +1512,11 @@ func _place_combined_prefab(asset: Resource,target: Vector3i,rotation: int) -> b
 func _prefab_placement_text(asset: Resource) -> String:
 	var attached: bool=not construction_inventory.prefab_transaction.model_counts(asset).is_empty()
 	return "%s placed - F5 saves%s" % [asset.resource_name,"; combined undo unavailable" if attached else ""]
+
+func _update_loading() -> void:
+	if not loading_active:return
+	super._update_loading()
+	if not loading_active:player_hud.equip_first_tool_if_unselected()
 
 func _additional_loading_diagnostics() -> Dictionary:
 	# Constant-sized summaries. Never copy instance buffers or scan the world.

@@ -311,6 +311,14 @@ func equip_item(item: int) -> bool:
 		if state.slots[i].item==item:equip_inventory(i);return true
 	return false
 
+func equip_first_tool_if_unselected() -> bool:
+	if not enabled or developer_belt or inventory==null or active_slot>=0:return false
+	var current:Dictionary=inventory.snapshot()
+	for slot in 10:
+		if current.slots[slot].count>0 and current.slots[slot].item in CATALOG:
+			equip_inventory(slot);return true
+	return false
+
 func _refresh_recipes() -> void:
 	var counts: Dictionary={}
 	for row: Dictionary in state.slots:counts[row.item]=int(counts.get(row.item,0))+int(row.count)

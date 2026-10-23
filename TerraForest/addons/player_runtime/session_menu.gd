@@ -197,6 +197,7 @@ func toggle_developer() -> void:
 	game.player_hud.developer_belt=developer;game.player_hud.active_slot=-1;game.player_hud.active_item=0;game._equip_player_tool(0)
 	if developer:activate_developer_slot(game.player_hud.developer_slot)
 	elif gameplay_slot>=0:game.player_hud.equip(gameplay_slot)
+	else:game.player_hud.equip_first_tool_if_unselected()
 	game.player_hud.refresh()
 	if had_ui:set_open(true)
 	refresh()

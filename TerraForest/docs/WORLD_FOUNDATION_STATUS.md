@@ -1,3 +1,13 @@
+## Default gameplay tool selection - 2026-10-23
+
+When gameplay becomes ready after startup/reload, an unselected toolbelt equips
+its first owned tool in belt order. Returning from development mode does the same
+if there is no previous gameplay selection. Explicit empty-slot selections and
+other existing selections remain intact. The scan checks at most ten slots at
+these transitions, never each gameplay frame, and never moves or creates items.
+The actual HUD interaction/pose-restore check passes; see
+[default tool evidence](evidence/toolbelt_default/README.md).
+
 ## Target durability feedback - 2026-10-23
 
 Accepted gameplay attacks now show the target's name, remaining/maximum durability

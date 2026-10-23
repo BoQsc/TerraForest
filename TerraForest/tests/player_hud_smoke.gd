@@ -24,6 +24,12 @@ func run() -> void:
 	# This fixture exercises gameplay items, independently of the editor launcher.
 	if game.session_menu.developer:game.session_menu.toggle_developer()
 	var hud=game.player_hud
+	check(hud.active_slot==0 and hud.active_item==1 and game.equipped_tool==1,"ready gameplay selects first belt tool")
+	hud.equip(9)
+	check(not hud.equip_first_tool_if_unselected() and hud.active_slot==9 and game.equipped_tool==0,"explicit empty slot remains selected")
+	hud.equip(1)
+	check(not hud.equip_first_tool_if_unselected() and hud.active_slot==1 and game.equipped_tool==2,"existing tool selection is preserved")
+	hud.equip(0)
 	var original_fly: bool=game.fly
 	var original_position: Vector3=game.player.position
 	game.fly=true
@@ -116,7 +122,7 @@ func run() -> void:
 	check(game.loading_active and game.waiting_spawn,"pose restoration uses destination loading gate")
 	deadline=Time.get_ticks_msec()+15000
 	while game.loading_active and Time.get_ticks_msec()<deadline: await process_frame
-	check(not game.loading_active and game.player.position.is_equal_approx(saved_position) and is_equal_approx(game.yaw,0.4) and is_equal_approx(game.pitch,-0.2) and hud.active_item==0 and not game.editor_tool_active,"saved position and view restore with tools put away after readiness")
+	check(not game.loading_active and game.player.position.is_equal_approx(saved_position) and is_equal_approx(game.yaw,0.4) and is_equal_approx(game.pitch,-0.2) and hud.active_slot==1 and hud.active_item==2 and game.equipped_tool==2 and not game.editor_tool_active,"saved position and view restore with first available belt tool after readiness")
 	game.shutdown_requested=true;await game.terrain.shutdown_after_edits();game.free()
 	await process_frame;await process_frame
 	print("PLAYER_HUD_SMOKE failures=",failures)
