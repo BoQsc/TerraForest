@@ -118,6 +118,11 @@ game-world save size.
 4. Re-run the failed rendered mining-arrival gate and combined populated-world
    travel after paging/admission changes. Native edit arithmetic and small roots
    do not prove visible responsiveness or sustainable 1920x1080 at 60 FPS.
+   The [coarse-owner replay](evidence/terrain_simplifier_links/README.md) now
+   separates that cost: no sample faults during the expensive rebuild, and most
+   native time in extraction/simplification of the visible 256 m owner. Preserve
+   the unchanged response/gap gates; bounded local publication is required in
+   addition to storage prefetch. The native scratch correction is not that closure.
 
 These are immediate dependent work, not optional features or post-release deferrals.
 The separately reproduced pending-lake shutdown and deleted-ID persistence defects

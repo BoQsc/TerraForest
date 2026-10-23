@@ -632,13 +632,32 @@ static void quad(Mesh&m,u32 a,u32 b,u32 c,u32 d,bool reverse){
   [&](int id){return m.v[id].p;},
   [&](int x,int y,int z){m.i.push(x);m.i.push(y);m.i.push(z);});
 }
-struct Neighbors{int p[160];int n=0;void add(int v){for(int i=0;i<n;i++)if(p[i]==v)return;if(n<160)p[n++]=v;}};
-static void prune(List<int>&adj,const Mesh&m,int v){int n=0;for(int j=0;j<adj.n;j++){int t=adj[j],at=t*3;if(m.i[at]!=0xffffffffu&&(m.i[at]==u32(v)||m.i[at+1]==u32(v)||m.i[at+2]==u32(v))){bool dup=false;for(int k=0;k<n;k++)if(adj[k]==t){dup=true;break;}if(!dup)adj[n++]=t;}}adj.n=n;}
-static void neighbors(const List<int>&adj,const Mesh&m,int v,Neighbors&out){for(int j=0;j<adj.n;j++){int t=adj[j]*3;for(int k=0;k<3;k++)if(m.i[t+k]!=u32(v))out.add(int(m.i[t+k]));}}
-static bool try_collapse(Mesh&m,int u,int v,List<int>*adj,float*weight,u8*alive){
- if(u==v||!alive[u]||!alive[v])return false;prune(adj[u],m,u);prune(adj[v],m,v);
+// One temporary array serves triangle deduplication and vertex intersections.
+// Each use gets a fresh stamp; no topology decision survives a collapse.
+static u32 next_link_stamp(u32*marks,int count,u32&stamp){
+ if(++stamp==0){zero_bytes(marks,size_t(count)*sizeof(u32));++stamp;}
+ return stamp;
+}
+static void prune(List<int>&adj,const Mesh&m,int v,u32*marks,int mark_count,u32&stamp){
+ u32 current=next_link_stamp(marks,mark_count,stamp);int n=0;
+ for(int j=0;j<adj.n;j++){
+  int t=adj[j],at=t*3;
+  if(m.i[at]!=0xffffffffu&&(m.i[at]==u32(v)||m.i[at+1]==u32(v)||m.i[at+2]==u32(v))&&marks[t]!=current){marks[t]=current;adj[n++]=t;}
+ }
+ adj.n=n;
+}
+static bool try_collapse(Mesh&m,int u,int v,List<int>*adj,float*weight,u8*alive,u32*link_marks,int mark_count,u32&link_stamp){
+ if(u==v||!alive[u]||!alive[v])return false;
+ prune(adj[u],m,u,link_marks,mark_count,link_stamp);prune(adj[v],m,v,link_marks,mark_count,link_stamp);
  if(adj[u].n>70||adj[v].n>70||adj[u].n<3||adj[v].n<3)return false;
- Neighbors nu,nv;neighbors(adj[u],m,u,nu);neighbors(adj[v],m,v,nv);int common=0;for(int a=0;a<nu.n;a++)for(int b=0;b<nv.n;b++)if(nu.p[a]==nv.p[b])common++;
+ // The pruned stars have at most 70 triangles, hence fewer than the old
+ // 160-neighbor limit. Count the same distinct intersection in linear time.
+ // Clear a matching mark after counting it, so duplicate edges count once.
+ // This scratch state never caches a decision across topology changes.
+ next_link_stamp(link_marks,mark_count,link_stamp);
+ for(int j=0;j<adj[u].n;j++)for(int k=0;k<3;k++){u32 n=m.i[adj[u][j]*3+k];if(n!=u32(u))link_marks[n]=link_stamp;}
+ int common=0;
+ for(int j=0;j<adj[v].n;j++)for(int k=0;k<3;k++){u32 n=m.i[adj[v][j]*3+k];if(n!=u32(v)&&link_marks[n]==link_stamp){++common;link_marks[n]=0;}}
  if(common!=2)return false; // Interior manifold link condition; borders are never candidates.
  float w=weight[u]+weight[v];V3 target=(m.v[u].p*weight[u]+m.v[v].p*weight[v])/w;
  for(int side=0;side<2;side++){const List<int>&a=adj[side?v:u];for(int j=0;j<a.n;j++){
@@ -658,9 +677,13 @@ static bool try_collapse(Mesh&m,int u,int v,List<int>*adj,float*weight,u8*alive)
 }
 static void simplify(const World&w,Mesh&m,int ox,int oz,int size,int step,u32 epoch,bool shared_regions=false){
  if(step<=1||m.i.n<300)return;
- int nv=m.v.n;auto adj=(List<int>*)tr_alloc(size_t(nv)*sizeof(List<int>));auto alive=(u8*)tr_alloc(nv);auto weight=(float*)tr_alloc(size_t(nv)*4);auto group=(u32*)tr_alloc(size_t(nv)*4);
- if(!adj||!alive||!weight||!group){if(adj)tr_free(adj);if(alive)tr_free(alive);if(weight)tr_free(weight);if(group)tr_free(group);return;}
+ int nv=m.v.n,mark_count=imx(nv,m.i.n/3);
+ auto adj=(List<int>*)tr_alloc(size_t(nv)*sizeof(List<int>));auto alive=(u8*)tr_alloc(nv);
+ auto weight=(float*)tr_alloc(size_t(nv)*4);auto group=(u32*)tr_alloc(size_t(nv)*4);
+ auto link_marks=(u32*)tr_alloc(size_t(mark_count)*sizeof(u32));u32 link_stamp=0;
+ if(!adj||!alive||!weight||!group||!link_marks){if(adj)tr_free(adj);if(alive)tr_free(alive);if(weight)tr_free(weight);if(group)tr_free(group);if(link_marks)tr_free(link_marks);return;}
  zero_bytes(adj,size_t(nv)*sizeof(List<int>));
+ zero_bytes(link_marks,size_t(mark_count)*sizeof(u32));
  for(int i=0;i<nv;i++){
   alive[i]=1;weight[i]=1;const Vertex&v=m.v[i];int x=v.cx-ox,z=v.cz-oz;
   // All patch-border representatives stay EXACTLY at their original world positions.
@@ -696,14 +719,14 @@ static void simplify(const World&w,Mesh&m,int ox,int oz,int size,int step,u32 ep
   int changed=0;for(int t=0;t<m.i.n;t+=3){if((t&255)==0&&cancelled(w,epoch))break;if(m.i[t]==0xffffffffu)continue;for(int k=0;k<3;k++){
    int a=m.i[t+k],b=m.i[t+(k+1)%3];if(a<0||b<0)break;
    if(group[a]==0xffffffffu||group[a]!=group[b]||ab(m.v[a].material-m.v[b].material)>.1f||dot(m.v[a].n,m.v[b].n)<.35f)continue;
-   if(try_collapse(m,a,b,adj,weight,alive)){changed++;break;}
+   if(try_collapse(m,a,b,adj,weight,alive,link_marks,mark_count,link_stamp)){changed++;break;}
   }}if(changed==0)break;
  }
  List<u32> remap;remap.resize(nv);List<Vertex> vertices;
  for(int i=0;i<nv;i++)if(alive[i]){remap[i]=vertices.n;vertices.push(m.v[i]);}
  int at=0;for(int t=0;t<m.i.n;t+=3)if(m.i[t]!=0xffffffffu){m.i[at++]=remap[m.i[t]];m.i[at++]=remap[m.i[t+1]];m.i[at++]=remap[m.i[t+2]];}
  m.i.n=at;m.v.release();m.v=vertices;
- for(int i=0;i<nv;i++)adj[i].release();tr_free(adj);tr_free(alive);tr_free(weight);tr_free(group);remap.release();
+ for(int i=0;i<nv;i++)adj[i].release();tr_free(adj);tr_free(alive);tr_free(weight);tr_free(group);tr_free(link_marks);remap.release();
 }
 struct Face {int axis,side,plane,u,v,mat;};
 static bool face_less(const Face&a,const Face&b){if(a.axis!=b.axis)return a.axis<b.axis;if(a.side!=b.side)return a.side<b.side;if(a.plane!=b.plane)return a.plane<b.plane;if(a.v!=b.v)return a.v<b.v;return a.u<b.u;}

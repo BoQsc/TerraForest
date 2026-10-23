@@ -1,0 +1,292 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS initial cache empty
+PASS malformed cache request rejected
+PASS malformed cache request rejected
+PASS malformed cache request rejected
+PASS malformed cache request rejected
+PASS malformed cache request rejected
+PASS malformed cache request rejected
+PASS fresh [0, 0, 16, 1]
+PASS fresh [0, 0, 16, 1] bounded cache
+PASS fresh [1984, 1984, 16, 1]
+PASS fresh [1984, 1984, 16, 1] bounded cache
+PASS fresh [2000, 2000, 16, 1]
+PASS fresh [2000, 2000, 16, 1] bounded cache
+PASS fresh [2032, 2032, 16, 1]
+PASS fresh [2032, 2032, 16, 1] bounded cache
+PASS fresh [1279, 1291, 32, 2]
+PASS fresh [1279, 1291, 32, 2] bounded cache
+PASS fresh [960, 960, 64, 1]
+PASS fresh [960, 960, 64, 1] bounded cache
+PASS fresh [1280, 1280, 128, 4]
+PASS fresh [1280, 1280, 128, 4] bounded cache
+PASS fresh [1280, 1280, 256, 8]
+PASS fresh [1280, 1280, 256, 8] bounded cache
+PASS derived cache does not change authoritative snapshot
+PASS warm exact mesh including collision and shading
+PASS warm exact mesh including collision and shading bounded cache
+PASS warm patch uses hits only
+PASS corner excavation changes terrain
+PASS corner edit invalidates four owned regions
+PASS local edit exact mesh
+PASS local edit exact mesh bounded cache
+PASS local rebuild reuses 285 of 289 regions
+PASS distant edit retains unrelated reconstruction
+PASS distant edit shading remains exact
+PASS distant edit shading remains exact bounded cache
+PASS unaligned edited patch LOD 1
+PASS unaligned edited patch LOD 1 bounded cache
+PASS unaligned edited patch LOD 2
+PASS unaligned edited patch LOD 2 bounded cache
+PASS unaligned edited patch LOD 4
+PASS unaligned edited patch LOD 4 bounded cache
+PASS unaligned edited patch LOD 8
+PASS unaligned edited patch LOD 8 bounded cache
+PASS legacy block appended to cached density
+PASS legacy block appended to cached density bounded cache
+PASS surface style clears cache
+PASS smooth style parity
+PASS smooth style parity bounded cache
+PASS snapshot load clears derived cache
+PASS slot pressure patch 0
+PASS slot pressure patch 0 bounded cache
+PASS slot pressure patch 1
+PASS slot pressure patch 1 bounded cache
+PASS slot pressure patch 2
+PASS slot pressure patch 2 bounded cache
+PASS slot pressure patch 3
+PASS slot pressure patch 3 bounded cache
+PASS slot pressure patch 4
+PASS slot pressure patch 4 bounded cache
+PASS slot pressure patch 5
+PASS slot pressure patch 5 bounded cache
+PASS slot pressure patch 6
+PASS slot pressure patch 6 bounded cache
+PASS slot pressure patch 7
+PASS slot pressure patch 7 bounded cache
+PASS slot pressure patch 8
+PASS slot pressure patch 8 bounded cache
+PASS working set exceeds 512 slots and evicts
+PASS revisit evicted patch
+PASS revisit evicted patch bounded cache
+PASS lower budget immediately evicts
+PASS 64 KiB pressure and oversized region fallback
+PASS 64 KiB pressure and oversized region fallback bounded cache
+PASS byte pressure evicts and oversized regions bypass
+PASS stale epoch rejects without partial mesh
+PASS valid request after cancellation
+PASS valid request after cancellation bounded cache
+PASS cached worker starts
+PASS cached worker observed inside native build
+PASS active cached build cancels without publishing partial mesh
+PASS cached cancellation joins within one second
+PASS partial cache after active cancellation remains exact
+PASS partial cache after active cancellation remains exact bounded cache
+PASS mixed boundary/depth edit 0
+PASS mixed boundary/depth edit 0 bounded cache
+PASS mixed boundary/depth edit 1
+PASS mixed boundary/depth edit 1 bounded cache
+PASS mixed boundary/depth edit 2
+PASS mixed boundary/depth edit 2 bounded cache
+PASS mixed boundary/depth edit 3
+PASS mixed boundary/depth edit 3 bounded cache
+PASS mixed boundary/depth edit 4
+PASS mixed boundary/depth edit 4 bounded cache
+PASS mixed boundary/depth edit 5
+PASS mixed boundary/depth edit 5 bounded cache
+PASS mixed boundary/depth edit 6
+PASS mixed boundary/depth edit 6 bounded cache
+PASS mixed boundary/depth edit 7
+PASS mixed boundary/depth edit 7 bounded cache
+PASS mixed boundary/depth edit 8
+PASS mixed boundary/depth edit 8 bounded cache
+PASS mixed boundary/depth edit 9
+PASS mixed boundary/depth edit 9 bounded cache
+PASS mixed boundary/depth edit 10
+PASS mixed boundary/depth edit 10 bounded cache
+PASS mixed boundary/depth edit 11
+PASS mixed boundary/depth edit 11 bounded cache
+PASS mixed boundary/depth edit 12
+PASS mixed boundary/depth edit 12 bounded cache
+PASS mixed boundary/depth edit 13
+PASS mixed boundary/depth edit 13 bounded cache
+PASS mixed boundary/depth edit 14
+PASS mixed boundary/depth edit 14 bounded cache
+PASS mixed boundary/depth edit 15
+PASS mixed boundary/depth edit 15 bounded cache
+PASS mixed boundary/depth edit 16
+PASS mixed boundary/depth edit 16 bounded cache
+PASS mixed boundary/depth edit 17
+PASS mixed boundary/depth edit 17 bounded cache
+PASS mixed boundary/depth edit 18
+PASS mixed boundary/depth edit 18 bounded cache
+PASS mixed boundary/depth edit 19
+PASS mixed boundary/depth edit 19 bounded cache
+PASS mixed boundary/depth edit 20
+PASS mixed boundary/depth edit 20 bounded cache
+PASS mixed boundary/depth edit 21
+PASS mixed boundary/depth edit 21 bounded cache
+PASS mixed boundary/depth edit 22
+PASS mixed boundary/depth edit 22 bounded cache
+PASS mixed boundary/depth edit 23
+PASS mixed boundary/depth edit 23 bounded cache
+PASS mixed boundary/depth edit 24
+PASS mixed boundary/depth edit 24 bounded cache
+PASS mixed boundary/depth edit 25
+PASS mixed boundary/depth edit 25 bounded cache
+PASS mixed boundary/depth edit 26
+PASS mixed boundary/depth edit 26 bounded cache
+PASS mixed boundary/depth edit 27
+PASS mixed boundary/depth edit 27 bounded cache
+PASS mixed boundary/depth edit 28
+PASS mixed boundary/depth edit 28 bounded cache
+PASS mixed boundary/depth edit 29
+PASS mixed boundary/depth edit 29 bounded cache
+PASS mixed boundary/depth edit 30
+PASS mixed boundary/depth edit 30 bounded cache
+PASS mixed boundary/depth edit 31
+PASS mixed boundary/depth edit 31 bounded cache
+PASS mixed boundary/depth edit 32
+PASS mixed boundary/depth edit 32 bounded cache
+PASS mixed boundary/depth edit 33
+PASS mixed boundary/depth edit 33 bounded cache
+PASS mixed boundary/depth edit 34
+PASS mixed boundary/depth edit 34 bounded cache
+PASS mixed boundary/depth edit 35
+PASS mixed boundary/depth edit 35 bounded cache
+PASS mixed boundary/depth edit 36
+PASS mixed boundary/depth edit 36 bounded cache
+PASS mixed boundary/depth edit 37
+PASS mixed boundary/depth edit 37 bounded cache
+PASS mixed boundary/depth edit 38
+PASS mixed boundary/depth edit 38 bounded cache
+PASS mixed boundary/depth edit 39
+PASS mixed boundary/depth edit 39 bounded cache
+PASS mixed boundary/depth edit 40
+PASS mixed boundary/depth edit 40 bounded cache
+PASS mixed boundary/depth edit 41
+PASS mixed boundary/depth edit 41 bounded cache
+PASS mixed boundary/depth edit 42
+PASS mixed boundary/depth edit 42 bounded cache
+PASS mixed boundary/depth edit 43
+PASS mixed boundary/depth edit 43 bounded cache
+PASS mixed boundary/depth edit 44
+PASS mixed boundary/depth edit 44 bounded cache
+PASS mixed boundary/depth edit 45
+PASS mixed boundary/depth edit 45 bounded cache
+PASS mixed boundary/depth edit 46
+PASS mixed boundary/depth edit 46 bounded cache
+PASS mixed boundary/depth edit 47
+PASS mixed boundary/depth edit 47 bounded cache
+PASS mixed boundary/depth edit 48
+PASS mixed boundary/depth edit 48 bounded cache
+PASS mixed boundary/depth edit 49
+PASS mixed boundary/depth edit 49 bounded cache
+PASS mixed boundary/depth edit 50
+PASS mixed boundary/depth edit 50 bounded cache
+PASS mixed boundary/depth edit 51
+PASS mixed boundary/depth edit 51 bounded cache
+PASS mixed boundary/depth edit 52
+PASS mixed boundary/depth edit 52 bounded cache
+PASS mixed boundary/depth edit 53
+PASS mixed boundary/depth edit 53 bounded cache
+PASS mixed boundary/depth edit 54
+PASS mixed boundary/depth edit 54 bounded cache
+PASS mixed boundary/depth edit 55
+PASS mixed boundary/depth edit 55 bounded cache
+PASS mixed boundary/depth edit 56
+PASS mixed boundary/depth edit 56 bounded cache
+PASS mixed boundary/depth edit 57
+PASS mixed boundary/depth edit 57 bounded cache
+PASS mixed boundary/depth edit 58
+PASS mixed boundary/depth edit 58 bounded cache
+PASS mixed boundary/depth edit 59
+PASS mixed boundary/depth edit 59 bounded cache
+PASS mixed boundary/depth edit 60
+PASS mixed boundary/depth edit 60 bounded cache
+PASS mixed boundary/depth edit 61
+PASS mixed boundary/depth edit 61 bounded cache
+PASS mixed boundary/depth edit 62
+PASS mixed boundary/depth edit 62 bounded cache
+PASS mixed boundary/depth edit 63
+PASS mixed boundary/depth edit 63 bounded cache
+PASS mixed boundary/depth edit 64
+PASS mixed boundary/depth edit 64 bounded cache
+PASS mixed boundary/depth edit 65
+PASS mixed boundary/depth edit 65 bounded cache
+PASS mixed boundary/depth edit 66
+PASS mixed boundary/depth edit 66 bounded cache
+PASS mixed boundary/depth edit 67
+PASS mixed boundary/depth edit 67 bounded cache
+PASS mixed boundary/depth edit 68
+PASS mixed boundary/depth edit 68 bounded cache
+PASS mixed boundary/depth edit 69
+PASS mixed boundary/depth edit 69 bounded cache
+PASS mixed boundary/depth edit 70
+PASS mixed boundary/depth edit 70 bounded cache
+PASS mixed boundary/depth edit 71
+PASS mixed boundary/depth edit 71 bounded cache
+PASS mixed boundary/depth edit 72
+PASS mixed boundary/depth edit 72 bounded cache
+PASS mixed boundary/depth edit 73
+PASS mixed boundary/depth edit 73 bounded cache
+PASS mixed boundary/depth edit 74
+PASS mixed boundary/depth edit 74 bounded cache
+PASS mixed boundary/depth edit 75
+PASS mixed boundary/depth edit 75 bounded cache
+PASS mixed boundary/depth edit 76
+PASS mixed boundary/depth edit 76 bounded cache
+PASS mixed boundary/depth edit 77
+PASS mixed boundary/depth edit 77 bounded cache
+PASS mixed boundary/depth edit 78
+PASS mixed boundary/depth edit 78 bounded cache
+PASS mixed boundary/depth edit 79
+PASS mixed boundary/depth edit 79 bounded cache
+PASS mixed boundary/depth edit 80
+PASS mixed boundary/depth edit 80 bounded cache
+PASS mixed boundary/depth edit 81
+PASS mixed boundary/depth edit 81 bounded cache
+PASS mixed boundary/depth edit 82
+PASS mixed boundary/depth edit 82 bounded cache
+PASS mixed boundary/depth edit 83
+PASS mixed boundary/depth edit 83 bounded cache
+PASS mixed boundary/depth edit 84
+PASS mixed boundary/depth edit 84 bounded cache
+PASS mixed boundary/depth edit 85
+PASS mixed boundary/depth edit 85 bounded cache
+PASS mixed boundary/depth edit 86
+PASS mixed boundary/depth edit 86 bounded cache
+PASS mixed boundary/depth edit 87
+PASS mixed boundary/depth edit 87 bounded cache
+PASS mixed boundary/depth edit 88
+PASS mixed boundary/depth edit 88 bounded cache
+PASS mixed boundary/depth edit 89
+PASS mixed boundary/depth edit 89 bounded cache
+PASS mixed boundary/depth edit 90
+PASS mixed boundary/depth edit 90 bounded cache
+PASS mixed boundary/depth edit 91
+PASS mixed boundary/depth edit 91 bounded cache
+PASS mixed boundary/depth edit 92
+PASS mixed boundary/depth edit 92 bounded cache
+PASS mixed boundary/depth edit 93
+PASS mixed boundary/depth edit 93 bounded cache
+PASS mixed boundary/depth edit 94
+PASS mixed boundary/depth edit 94 bounded cache
+PASS mixed boundary/depth edit 95
+PASS mixed boundary/depth edit 95 bounded cache
+PASS mixed edit sequence performs real mutations
+PASS reset frees all cache allocations
+PASS matched benchmark parity 0
+PASS matched benchmark parity 1
+PASS matched benchmark parity 2
+PASS matched benchmark parity 3
+PASS matched benchmark parity 4
+PASS matched benchmark parity 5
+PASS matched benchmark parity 6
+PASS replay all 2176 retained edit commands
+PASS at least 90 percent of replay commands change terrain
+PASS retained edit benchmark parity 0
+PASS retained edit benchmark parity 1
+PASS retained edit benchmark parity 2
+PASS retained edit benchmark parity 3

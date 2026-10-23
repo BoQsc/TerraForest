@@ -18,6 +18,7 @@ func run() -> void:
 	RenderingServer.frame_pre_draw.connect(pre_draw)
 	RenderingServer.frame_post_draw.connect(post_draw)
 	game.terrain.stage_measured.connect(stage)
+	game.terrain.work_measured.connect(func(row: Dictionary): work.append(row.duplicate(true)))
 	game.terrain.edit_measured.connect(func(row: Dictionary):
 		var measured: Dictionary=row.duplicate(true)
 		measured["current_visible_terrain"]=false
@@ -94,6 +95,7 @@ func run() -> void:
 		var row: Dictionary={"phase":phase,"changed_draws":gaps.size(),"visible_gaps":summary(gaps),"capture_to_draw":summary(latencies),"frames":summary(frames),"edits":edits.duplicate(true),"last_hit":not game.latest_hit.is_empty()}
 		row["input_state"]={"frames":input_frames,"eligible":eligible_frames,"ray_hit":hit_frames,"loading":loading_frames,"pending_edit":pending_frames}
 		row["readiness_trace"]=readiness_trace
+		row["patch_work"]=work.duplicate(true)
 		reports.append(row)
 		check(eligible_frames>=input_frames*.9,"held-input workload valid: focused, captured and pressed")
 		check(gaps.size()>=10,"held input produces repeated visible changes")

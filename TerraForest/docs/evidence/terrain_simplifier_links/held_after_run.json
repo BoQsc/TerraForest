@@ -1,0 +1,54 @@
+{
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+    "--path",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+    "--fullscreen",
+    "--resolution",
+    "1920x1080",
+    "--max-fps",
+    "60",
+    "--log-file",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\terrain_mining_link_after\\engine.log",
+    "--script",
+    "res://tests/held_mining_flight.gd",
+    "--",
+    "--snapshot-readonly",
+    "--world-slot=workflow_66068_179427",
+    "--derived-cache=user://mining_link_after_20261023",
+    "--profile-owned-regions"
+  ],
+  "result": {
+    "timed_out": false,
+    "launch_error": null,
+    "cancelled": false,
+    "pid": 22884,
+    "exit_code": 1,
+    "diagnostics": [
+      "FAIL held capture-to-draw p95 <=150ms",
+      "FAIL no gap between visible mining changes exceeds 150ms"
+    ],
+    "required_text_found": true,
+    "elapsed_seconds": 17.990720899950247,
+    "passed": false
+  },
+  "scope": "Existing generated regional checkpoint opened read-only; held terrain brush edits are in-memory only. Process inventory before launch showed no other Godot process. No isolated thermal or sustained-runtime claim.",
+  "utc": "2026-10-23T15:09:36.645163+00:00",
+  "native_sha256": {
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "50b44c7765b7d6cf9178f60b2d4445847ac673144dd29e60f2f08670d82ccbb9",
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "a53db9fb196efdfa2dfae1fa8eb9e379fd1f6c8fbb112ec888802b32657a9a64",
+    "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "61224c68966401aaaa3e9e6c3c27d74db42e934227bb708b6def67eecb28c5b7",
+    "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "00a29789d0bdd8c3c036de4c57b3eb1c75c6584762e71bb740f3e1af47c1b955",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "e7be2f6b594e7f7ea74399cfa36df70f1cf3f4f27d887426933496f624c2f16c",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "8c318ca1c80da4ad791c90903202ab46b96b89a65f787cedea1c65777dc8013b",
+    "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "d6479d2a000657a5b5fd6a516220efc67a34ff3183eae8c93c622b27fcaf3934",
+    "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "c133f46b04d9cdefdbbf447323f1e65d4c7371e62530ed51276658bf2c931943",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "fa24c563e3d3ca980551864fc2037d412a2d9e9278d8f8dd28b5b59bc2d40864",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "be2c2cb5825dae9dc05fbfbadb15d5bd83104f68b9b215f0da068dee065007fc",
+    "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "e0659a7a6c3c433c4c5064783521ed203dbe79b31c09bec5b6b241e8ad58a762",
+    "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "4daff770f98ba72f8c750f6226b0a7f863aafd1ea5b78bb06c963b4777ad39cb",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "ef6546c32d692e7ae5c37b979091377c6ff7f2e47ef88c1b42795375bd9a8de3",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "d672b6ab8087535a089c934ed43570fd44ca0381ff5dfa98787837fc3a73340d"
+  },
+  "observed_git_head": "1c803940ddbf260466c1d5bf21bb6605cee96da6"
+}

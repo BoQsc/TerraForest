@@ -17,6 +17,15 @@ below describe the prior checkpoint. Prefetch/first-response, populated rendered
 history pressure, retention-safe collection, complete generation/POI options,
 compute benefit and world quality remain active requirements of this rewrite.
 
+The subsequent [actual-world worker trace](evidence/terrain_simplifier_links/README.md)
+locates the current slow first edit in a still-visible 256 m parent rebuild, with
+no page faults during its measured reconstruction. Native simplifier scratch now
+preserves 60 complete pre-change mesh packets while avoiding nested neighbor
+searches, but the integrated 150 ms arrival/gap gates still fail. Bounded local
+owner publication remains the response prerequisite; storage prefetch alone is
+not a resolution. This does not close generation staging/capacity, world content,
+compute benefit, populated runtime or the larger rewrite.
+
 ## Latest production workflow — 2026-10-23
 
 Ordinary creation is now Generate → Load → Play with one generation child,

@@ -127,4 +127,5 @@ func run() -> void:
 	var file := FileAccess.open("res://reports/terrain_native.json",FileAccess.WRITE)
 	file.store_string(JSON.stringify({"checks":checks,"failures":failures,"fingerprints":fingerprints},"  "))
 	file.close()
+	print("TERRAIN_NATIVE failures=",failures)
 	quit(0 if failures==0 else 1)

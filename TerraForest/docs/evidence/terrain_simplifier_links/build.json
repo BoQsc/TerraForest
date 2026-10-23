@@ -1,0 +1,9 @@
+{
+  "source": "753d2ccef304f66f4c0e5e9e0c94fba1c37ee82989a1fef164bc5560fb393351",
+  "libraries": {
+    "terrain_core.windows.template_release.x86_64.dll": "3a42a4426ab5a8822bdb7f2bf3b87405d93ce058bfd5f441d8d20cce19d823a6",
+    "terrain_core.windows.x86_64.dll": "257bc0affff9924a05c44ed288760abff290872d19e262d4494bbf790f30fe4e"
+  },
+  "compiler": "pinned Zig 0.16.0; prebuilt godot-cpp API 4.7 d7b6162; godot-cpp sources compiled: 0",
+  "note": "Final library rebuild follows whitespace/comment cleanup only; held trace used the same algorithm before that cleanup. Native comparison recompiled final source."
+}

@@ -24,8 +24,17 @@ qualification remain open; do not return to water flow or unrelated gameplay wor
 The generated-checkpoint held-mining rerun explicitly still fails: first burst
 capture-to-draw p95 about 272 ms, second about 73 ms, and both visible-gap gates
 fail despite frame p99 below 20 ms. The older generator-1 fixture is a different
-world, so this is not a controlled regression comparison. Diagnose the remaining
-worker/build/arrival latency before declaring the paging path responsive.
+world, so this is not a controlled regression comparison. The follow-through
+worker trace identifies repeated reconstruction of the still-visible 256 m owner;
+native replay has no page faults during those expensive builds. Timestamped native
+simplifier scratch removes nested neighbor/dedup searches with 60 byte-identical
+pre-change mesh cases, but the new actual-world first-burst p95 is still 211 ms
+and its maximum visible gap 284 ms. Both gap gates remain failed. See
+[terrain_simplifier_links](evidence/terrain_simplifier_links/README.md).
+Arrival needs bounded local owner replacement, preserving distant representation,
+joins and collision, then the unchanged 150 ms response/gap gates. Prefetch remains
+required for cold-storage admission; it cannot resolve the measured whole-parent
+rebuild. The optional regional renderer is not automatically production-qualified.
 
 ## Block placement forest exclusion corrected - 2026-10-23
 
