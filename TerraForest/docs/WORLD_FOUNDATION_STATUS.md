@@ -2487,3 +2487,11 @@ hundreds of grading sections, repeatedly building intermediate terrain. Offline 
 admission; full archive equivalence and actual bake/reopen pass for seed1703.
 Details, remaining bundled coverage and limits are in WORLD_WORKFLOW_REDESIGN.md. Do not close earlier large
 edit/mining latency, compute, map/content or storage-capacity requirements from this.
+
+
+2026-10-23 cache handoff: preparation and play now share the bounded terrain mesh
+cache. Verified edited-map raster publication transfers the preparation key to the
+playable world. Independent-worker mesh parity and actual saved-world map reuse
+pass; see WORLD_WORKFLOW_REDESIGN.md. These close the identified handoff omissions,
+not whole-scene loading time, compute generation, complete preview layers, storage
+capacity or populated travel. Keep the earlier mining first-response failure open.

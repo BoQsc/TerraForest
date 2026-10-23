@@ -66,7 +66,7 @@ func start_stage(state:String)->void:
  status(state)
  var folder:=report.path_join(state);DirAccess.make_dir_recursive_absolute(folder)
  var fitted:=generator in [17,19]
- var args:=Launch.engine_prefix()+PackedStringArray(["--fullscreen","--resolution","1920x1080","--max-fps","60","--log-file",ProjectSettings.globalize_path(folder.path_join("engine.log")),"--script","res://addons/world_runtime/prepare_terrain_world.gd" if fitted else "res://addons/world_runtime/prepare_combined_world.gd","--","--world-slot="+stage,"--world-generator="+str(generator),"--world-seed="+str(seed_value),"--progress-file="+ProjectSettings.globalize_path(report.path_join(state+"_progress.json")),"--ground-cover","--actors","--vehicle-fleet","--checkpoint-layout=districts","--checkpoint-report="+ProjectSettings.globalize_path(report.path_join("checkpoint.json")),"--derived-cache=user://"+stage])
+ var args:=Launch.engine_prefix()+PackedStringArray(["--fullscreen","--resolution","1920x1080","--max-fps","60","--log-file",ProjectSettings.globalize_path(folder.path_join("engine.log")),"--script","res://addons/world_runtime/prepare_terrain_world.gd" if fitted else "res://addons/world_runtime/prepare_combined_world.gd","--","--world-slot="+stage,"--world-generator="+str(generator),"--world-seed="+str(seed_value),"--progress-file="+ProjectSettings.globalize_path(report.path_join(state+"_progress.json")),"--ground-cover","--actors","--vehicle-fleet","--checkpoint-layout=districts","--checkpoint-report="+ProjectSettings.globalize_path(report.path_join("checkpoint.json")),"--derived-cache=user://derived_046"])
  if fitted:
   if settlement_layout=="connected":args.append("--central-market")
   if settlement_layout!="settlement":args.append("--regional-connection")
@@ -131,6 +131,8 @@ func publish_world()->Dictionary:
  var archive=ClassDB.instantiate("NativeWorldArchive")
  return archive.clone_world(ProjectSettings.globalize_path("user://worlds"),stage,destination)
 func publish_presentation()->void:
+ var cache_source:String=str(metadata.get("recovered_source",stage))
+ metadata["terrain_map_cache"]=preload("res://addons/world_runtime/survey_patch_cache.gd").promote(cache_source,destination)
  var source_report:=report if presentation_report.is_empty() else presentation_report
  var prefix:="user://worlds/"+destination
  var count:=0

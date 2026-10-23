@@ -369,3 +369,31 @@ latency, populated/high-speed/zoom travel, and world-quality acceptance. The
 full rewrite is still active.
 
 Current bundled offline-grading create/reopen/publication now passes: bundled_offline_1703_20261023, report4f3b215fd572e0a083e6ef4d67793129. Both source and bundled native/run evidence are retained in evidence/native_world_generation/earthworks_* and *offline_1703*. This closes the packaging integration gap for this path. Clean-machine installation remains open.
+
+
+## Prepared cache handoff — 2026-10-23
+
+A follow-up audit found terrain preparation used a staging-only mesh cache; the
+normal playable launcher used a different root. Production generation now uses
+the same bounded512MiB derived cache as play, retaining native single-writer leases,
+compatibility fingerprints, content identities, quotas and read-only fallback.
+No authoritative stores are copied into this cache. Two independent terrain workers
+with the same prepared field reuse all four tested geometry packets exactly,
+including lighting (071247089482Z). See generation_mesh_cache.json; timings are
+small-worker evidence, not a populated-world loading/frame benchmark.
+
+Edited-terrain cartography was also keyed only to the preparation slot. After root
+publication, the coordinator now re-keys its bounded verified raster to the playable
+slot, preserving the content/compatibility header and64-entry quota. A real saved
+world opened read-only gets one prepared terrain-map hit with zero native resurvey
+patches (070941383359Z, prepared_map_reuse.log). The first harness accidentally
+opened its runner's empty temporary slot (070829697508Z); it is retained as failed.
+The corrected check launches the actual selected save with ordinary arguments.
+Corrupt-source promotion, stale identity, target preservation and ordinary cache
+quota tests pass071321760839Z. Cancellation and recovery pass071322432825Z /
+071325076997Z with optional cache promotion included.
+
+Map overlays already use content-addressed caches. Cache miss/fingerprint mismatch
+still regenerates safely; quotas may evict derived data. First-play whole-scene
+loading/resource cost, warm populated travel, map preview of inland water/POIs and
+canonical storage capacity remain separate open requirements.

@@ -30,13 +30,34 @@ static func write(slot:String,identity:String,pixels:PackedByteArray,folder:Stri
  if error==OK:result.persisted=DirAccess.rename_absolute(temporary,path)==OK
  if FileAccess.file_exists(temporary):DirAccess.remove_absolute(temporary)
  if not result.persisted:return result
+ trim(folder,path,limit)
+ return result
+
+# Re-key only a bounded, verified derived raster after canonical publication.
+# The identity header is content-based and deliberately contains no world name.
+static func promote(source:String,destination:String,folder:String=ROOT)->Dictionary:
+ var result:Dictionary={"promoted":false}
+ if source==destination:return result
+ var file:=FileAccess.open(path_for(source,folder),FileAccess.READ)
+ if file==null or file.get_length()!=40+32+BYTES:return result
+ var h:=file.get_buffer(40);var expected:=file.get_buffer(32);var pixels:=file.get_buffer(BYTES);file.close()
+ if h.slice(0,8)!=MAGIC.to_utf8_buffer() or Survey.digest(h+pixels)!=expected:return result
+ var target:=path_for(destination,folder);var pending:=target+".tmp_%d_%d"%[OS.get_process_id(),Time.get_ticks_usec()]
+ file=FileAccess.open(pending,FileAccess.WRITE)
+ if file==null:return result
+ file.store_buffer(h);file.store_buffer(expected);file.store_buffer(pixels);var error:=file.get_error();file.close()
+ if error==OK:result.promoted=DirAccess.rename_absolute(pending,target)==OK
+ if FileAccess.file_exists(pending):DirAccess.remove_absolute(pending)
+ if result.promoted:trim(folder,target,64)
+ return result
+
+static func trim(folder:String,keep:String,limit:int)->void:
  # Dedicated disposable cache. Caller limits entries for its fixed raster size.
  # Only this folder is pruned; saves are never enumerated or deleted.
  var files:Array=[]
  for name in DirAccess.get_files_at(folder):
   if name.length()!=68 or not name.ends_with(".bin") or not name.trim_suffix(".bin").is_valid_hex_number():continue
   var candidate:=folder+"/"+name
-  if candidate!=path:files.append({"path":candidate,"time":FileAccess.get_modified_time(candidate)})
+  if candidate!=keep:files.append({"path":candidate,"time":FileAccess.get_modified_time(candidate)})
  files.sort_custom(func(a,b):return a.time<b.time)
  for i in maxi(0,files.size()+1-limit):DirAccess.remove_absolute(files[i].path)
- return result

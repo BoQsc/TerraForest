@@ -8,8 +8,11 @@ func _initialize()->void:
  if not Cache.write("world","terrain-A",data,root_path,3).persisted:failures+=1
  if Cache.read("world","terrain-A",root_path).get("pixels")!=data:failures+=1
  if Cache.read("world","terrain-B",root_path).hit:failures+=1
+ if not Cache.promote("world","published",root_path).promoted or Cache.read("published","terrain-A",root_path).get("pixels")!=data:failures+=1
+ var promoted:=FileAccess.get_file_as_bytes(Cache.path_for("published",root_path))
  var path:=Cache.path_for("world",root_path);var file:=FileAccess.open(path,FileAccess.READ_WRITE);file.seek(100);file.store_8(0);file.close()
  if Cache.read("world","terrain-A",root_path).hit:failures+=1
+ if Cache.promote("world","published",root_path).promoted or FileAccess.get_file_as_bytes(Cache.path_for("published",root_path))!=promoted:failures+=1
  if not Cache.write("world","terrain-B",data,root_path,3).persisted or not Cache.read("world","terrain-B",root_path).hit:failures+=1
  if Cache.read("world","terrain-A",root_path).hit:failures+=1
  file=FileAccess.open(path,FileAccess.WRITE);file.store_8(1);file.close()

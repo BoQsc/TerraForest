@@ -1,0 +1,14 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+PASS verified prepared map is re-keyed to published world
+PASS published world opens read-only
+PASS prepared terrain map reaches ready
+PASS first playable map uses prepared edited terrain with zero native resurvey
+PREPARED_MAP_PROFILE hits=1 patches=0
+WORLD_MAP_CACHE failures=0
+[TerrainRewrite] Temporary test world: save skipped
+
+PREPARED_MAP_PARENT failures=0
