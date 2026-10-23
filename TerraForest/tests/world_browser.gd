@@ -1,6 +1,11 @@
 # SPDX-License-Identifier: 0BSD
 extends SceneTree
 const Launch=preload("res://demo/world_launch.gd")
+class NameBrowser extends "res://demo/worlds.gd":
+	var submitted_slot:=""
+	var submitted_args:=PackedStringArray()
+	func start_preparation(result:Dictionary,slot:String)->void:
+		submitted_slot=slot;submitted_args=result.args
 var failures:=0
 func check(ok: bool,label: String) -> void:
 	print("PASS " if ok else "FAIL ",label)
@@ -62,4 +67,19 @@ func run() -> void:
 		DirAccess.make_dir_recursive_absolute("res://reports/world_browser")
 		root.get_texture().get_image().save_png("res://reports/world_browser/browser.png")
 	browser.free()
+	# Exercise the real create action without starting an unnecessary world bake.
+	var naming:=NameBrowser.new();root.add_child(naming)
+	naming.name_field.text="   ";naming.seed_field.value=123;naming.launch_selected(true)
+	var generated:String=naming.name_field.text
+	check(Launch.valid_slot(generated) and generated.split("_").size()>=2 and naming.submitted_slot==generated and "--destination="+generated in naming.submitted_args,"blank create action assigns and submits a two-word world name")
+	check(naming.seed_field.value==123 and "--seed=123" in naming.submitted_args,"automatic naming preserves the chosen terrain seed")
+	var chosen:="Named_World_%d"%Time.get_ticks_usec()
+	naming.name_field.text=chosen;naming.launch_selected(true)
+	check(naming.name_field.text==chosen and naming.submitted_slot==chosen,"explicit world name remains unchanged")
+	naming.free()
+	file=FileAccess.open(path.path_join("misty_grove.trw.bak"),FileAccess.WRITE);file.store_string("keep backup");file.close()
+	DirAccess.make_dir_recursive_absolute(path.path_join("Misty_Grove_2.trw.models"))
+	file=FileAccess.open(path.path_join("Misty_Grove_3.clone.lock"),FileAccess.WRITE);file.store_string("keep lock");file.close()
+	var available:String=Launch.unique_world_name("Misty_Grove",path)
+	check(available=="Misty_Grove_4" and Launch.valid_slot(available) and FileAccess.get_file_as_string(path.path_join("misty_grove.trw.bak"))=="keep backup","automatic names avoid case aliases backups model folders and preparation locks")
 	print("WORLD_BROWSER failures=",failures);quit(1 if failures else 0)

@@ -74,7 +74,7 @@ func _ready() -> void:
 	var create_page:=HBoxContainer.new();create_page.name="Create world";create_page.add_theme_constant_override("separation",40);columns.add_child(create_page)
 	var create:=VBoxContainer.new();create.custom_minimum_size.x=600;create.add_theme_constant_override("separation",8);create_page.add_child(create)
 	heading(create,"Create a world")
-	heading(create,"World name",18);name_field=LineEdit.new();name_field.placeholder_text="e.g. woodland_home";name_field.max_length=48;create.add_child(name_field)
+	heading(create,"World name",18);name_field=LineEdit.new();name_field.placeholder_text="Leave blank for a generated two-word name";name_field.max_length=48;create.add_child(name_field)
 	heading(create,"Landscape",18);preset=OptionButton.new();create.add_child(preset)
 	for id: int in Launch.PRESETS:
 		if id==Launch.INTEGRATED_PRESET or "--developer-worlds" in OS.get_cmdline_user_args():preset.add_item(Launch.PRESETS[id],id)
@@ -143,6 +143,8 @@ func show_saved_details(index:int)->void:
 func launch_selected(create: bool) -> void:
 	if preparation_pid>=0 or photograph_pid>=0:return
 	var slot:=name_field.text.strip_edges()
+	if create and slot.is_empty():
+		slot=Launch.generated_world_name();name_field.text=slot
 	if not create:
 		if worlds.get_selected_items().is_empty():notice.text="Select a saved world first.";return
 		slot=str(worlds.get_item_metadata(worlds.get_selected_items()[0]))

@@ -27,6 +27,25 @@ static func engine_prefix_for(arguments:PackedStringArray,source_folder:String)-
 static func valid_slot(slot: String) -> bool:
 	var pattern:=RegEx.new();pattern.compile("^[A-Za-z_][A-Za-z0-9_]{0,47}$")
 	return pattern.search(slot)!=null
+const NAME_FIRST=["Amber","Autumn","Blue","Bright","Calm","Cedar","Copper","Crystal","Emerald","Golden","Hidden","Misty","Mossy","Quiet","Silver","Wild"]
+const NAME_SECOND=["Bay","Brook","Coast","Creek","Fields","Forest","Glen","Grove","Haven","Hills","Hollow","Meadow","Pines","Ridge","Vale","Woods"]
+static func unique_world_name(base:String,directory:String="user://worlds")->String:
+	# Include partial worlds and locks, and avoid Windows case aliases. No writes.
+	var occupied:Dictionary={}
+	var folder:=DirAccess.open(directory)
+	if folder!=null:
+		for entry:String in folder.get_files()+folder.get_directories():
+			occupied[entry.get_slice(".",0).to_lower()]=true
+	var candidate:=base
+	var suffix:=2
+	while occupied.has(candidate.to_lower()):
+		candidate=base+"_"+str(suffix);suffix+=1
+	return candidate
+static func generated_world_name(directory:String="user://worlds")->String:
+	# Naming has its own RNG; it must not change the terrain seed/random stream.
+	var random:=RandomNumberGenerator.new();random.randomize()
+	var base:String=NAME_FIRST[random.randi_range(0,NAME_FIRST.size()-1)]+"_"+NAME_SECOND[random.randi_range(0,NAME_SECOND.size()-1)]
+	return unique_world_name(base,directory)
 static func preparation_slot(slot:String)->bool:
 	var pattern:=RegEx.new();pattern.compile("^combined_stage_[0-9a-f]{32}$")
 	return pattern.search(slot)!=null

@@ -1,0 +1,34 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS invalid names cannot escape or alias save paths
+PASS invalid seed and generator rejected
+PASS integrated preset routes through verified offline preparation
+PASS new integrated worlds default to the surrounding coast recipe
+PASS earlier authored recipe remains available without unsupported coast overrides
+PASS ocean can be disabled without changing the settlement recipe
+PASS new world command uses chosen generation and gameplay settings
+PASS launch targets actual world at full resolution
+PASS command preparation never creates or changes canonical data
+PASS creation refuses an existing world
+PASS opening preserves saved generation and permits chosen editor mode
+PASS opening command preserves canonical bytes
+PASS orphan model data prevents accidental name reuse
+PASS fixture owns preparation lease
+PASS in-progress preparation name is reserved
+PASS stale preparation lock does not permanently reserve a name
+PASS listing selects canonical saves and missing save fails
+PASS unverified staging saves are hidden by default and retained for recovery
+PASS ordinary similarly named worlds remain visible
+PASS reserved staging identity cannot be used for new playable world
+PASS explicit preparation review disables snapshot writes
+PASS listing and launch preparation preserve stage bytes
+PASS browser owns close requests so preparation can cancel safely
+PASS coast creation option is visible and enabled by default
+PASS legacy landscape choices do not expose an unsupported coast option
+PASS saved-world filtering ignores case
+PASS invalid create action stays in browser with guidance
+PASS blank create action assigns and submits a two-word world name
+PASS automatic naming preserves the chosen terrain seed
+PASS explicit world name remains unchanged
+PASS automatic names avoid case aliases backups model folders and preparation locks
+WORLD_BROWSER failures=0

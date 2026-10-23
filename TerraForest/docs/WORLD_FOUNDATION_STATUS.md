@@ -1,3 +1,13 @@
+## Optional generated world names - 2026-10-23
+
+Blank or whitespace-only names in Create world now receive a random two-word name,
+such as Misty_Grove. The assigned name appears in the field and is passed unchanged
+to generation. Existing save/backup/model/lock names are avoided, including case
+aliases; a numeric suffix resolves collisions. Typed names retain existing
+validation. Naming uses its own RNG and does not change the terrain seed. The
+short browser policy/create-action check passes; see
+[automatic naming evidence](evidence/world_names/README.md).
+
 ## Default gameplay tool selection - 2026-10-23
 
 When gameplay becomes ready after startup/reload, an unselected toolbelt equips
