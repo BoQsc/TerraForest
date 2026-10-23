@@ -94,14 +94,56 @@ func run()->void:
 	check(view.placement_active,"accepted native block placement plays the gesture")
 	game.tool_view.equip(0);game._edit_structure(true)
 	check(not view.placement_active,"block removal does not play a placement gesture")
-	# A queued terrain addition exercises the shared accepted-edit callback.
+	# Capturing a sample does not mean the native edit was accepted. Gameplay
+	# permits excavation only; editor fills use the same real submission hook.
 	var terrain_cell:=Vector3i(game.player.global_position.floor())+Vector3i(4,3,-4)
 	var edit_deadline:=Time.get_ticks_msec()+15000
 	while game.terrain.pending_edit and Time.get_ticks_msec()<edit_deadline:await process_frame
 	check(not game.terrain.pending_edit,"earlier world edits finish before submitting the fill gesture check")
-	check(game.stroke_buffer.push_cube(terrain_cell,1),"isolated terrain-fill sample is admitted")
+	var prior_policy:bool=game.mining_rewards.enabled
+	game.mining_rewards.enabled=true
+	var before_ticket:int=game.terrain.edit_ticket
+	var before_revision:int=game.terrain.density_revision
+	var admission_messages:Array[String]=[]
+	var observe_admission:=func(message:String)->void:admission_messages.append(message)
+	game.terrain.message_changed.connect(observe_admission)
+	check(game.stroke_buffer.push_cube(terrain_cell,1),"gameplay fill sample can be captured before admission")
 	game._consume_stroke()
-	check(view.placement_active,"accepted terrain fill plays the gesture")
+	check(not view.placement_active and view.active_clip=="Idle" and view.action_remaining==0,"rejected gameplay fill leaves the empty hand at idle")
+	check(not game.terrain.pending_edit and game.terrain.edit_ticket==before_ticket and game.terrain.density_revision==before_revision,"gameplay fill rejection happens before any native terrain mutation")
+	check(admission_messages.any(func(message:String)->bool:return "excavate only" in message),"gameplay fill is rejected by the excavation-only admission policy")
+	game.terrain.message_changed.disconnect(observe_admission)
+	# Explicitly select the editor admission policy as well as free building costs.
+	game.mining_rewards.enabled=false
+	check(game.stroke_buffer.push_cube(terrain_cell,1),"isolated editor fill sample is captured")
+	game._consume_stroke()
+	check(game.terrain.pending_edit and game.terrain.edit_ticket==before_ticket+1 and view.placement_active,"accepted native editor fill starts the placement gesture")
+	var fill_capture:bool=DisplayServer.get_name()!="headless" and OS.get_cmdline_user_args().has("--capture-fill")
+	if fill_capture:
+		DirAccess.make_dir_recursive_absolute("res://reports/human_placement/fill_feedback")
+		pose(view,.4333333)
+		await RenderingServer.frame_post_draw
+		root.get_texture().get_image().save_png("res://reports/human_placement/fill_feedback/accepted_editor_fill.png")
+	edit_deadline=Time.get_ticks_msec()+15000
+	while game.terrain.pending_edit and Time.get_ticks_msec()<edit_deadline:await process_frame
+	check(not game.terrain.pending_edit and game.terrain.last_edit_outcome.get("status")=="published" and game.terrain.density_revision>before_revision,"editor fill reaches native publication before the test completes")
+	view._process(1.0)
+	check(not view.placement_active and view.active_clip=="Idle" and view.action_remaining==0,"editor fill gesture returns the empty hand to idle")
+	if fill_capture:
+		view.animation_player.advance(.2)
+		await RenderingServer.frame_post_draw
+		root.get_texture().get_image().save_png("res://reports/human_placement/fill_feedback/returned_idle.png")
+	# Both supported editor submission shapes exercise the actual acceptance path.
+	var brush_center:=Vector3(terrain_cell)+Vector3(2.5,.5,.5)
+	check(game.stroke_buffer.push_sweep(brush_center,brush_center,.5,0,true,1,false),"editor brush-fill sample is captured")
+	game._consume_stroke()
+	check(game.terrain.pending_edit and view.placement_active,"accepted native brush fill also starts the gesture")
+	var fill_remaining:float=view.action_remaining
+	check(not view.place() and view.action_remaining==fill_remaining,"unfinished fill gesture is not restarted")
+	edit_deadline=Time.get_ticks_msec()+15000
+	while game.terrain.pending_edit and Time.get_ticks_msec()<edit_deadline:await process_frame
+	check(not game.terrain.pending_edit and game.terrain.last_edit_outcome.get("status")=="published","brush fill publishes before restoring gameplay policy")
+	game.mining_rewards.enabled=prior_policy
 	game.tool_view.equip(0)
 	var output:="res://reports/human_placement"
 	DirAccess.make_dir_recursive_absolute(output+"/frames")
@@ -121,7 +163,7 @@ func run()->void:
 			var image:=root.get_texture().get_image()
 			image.save_png(output+"/frames/%03d.png"%frame)
 			if frame in [5,13,23]:image.save_png(output+"/runtime_%02d.png"%frame)
-	var report:={"checks":checks,"failures":failures,"clip_seconds":animation.length,"tracks":animation.get_track_count(),"scope":"Actual host placement feedback, original equipment restoration, animation-only bone tracks, lowered hand with neutral wrist and rendered first-person playback. No collision, navigation or save schema changes."}
+	var report:={"checks":checks,"failures":failures,"clip_seconds":animation.length,"tracks":animation.get_track_count(),"terrain_fill_policy":"Gameplay fill rejected without mutation/gesture; editor cube and brush fills admitted, gesture started, native publication verified and idle restored.","scope":"Actual host placement feedback, original equipment restoration, animation-only bone tracks, lowered hand with neutral wrist and rendered first-person playback. No collision, navigation or save schema changes."}
 	FileAccess.open(output+"/result.json",FileAccess.WRITE).store_string(JSON.stringify(report,"  "))
 	game.shutdown_requested=true;game.terrain.backend.disable_snapshot_writes();await game.terrain.shutdown_after_edits();game.free()
 	print("HUMAN_PLACEMENT checks=",checks," failures=",failures);quit(1 if failures else 0)

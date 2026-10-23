@@ -339,10 +339,15 @@ deeper-pullback side strike is now selected for gameplay, with diagonal holds;
 the latest arc-swing copy remains an unselected visual test. Earlier no-commit
 statements are historical. Character runtime, packaging, pullback/arc comparison
 and diagonal-world checks pass. The actual-world placement test verifies the new
-default action and idle return, but its terrain-fill-feedback assertion remains
-failing and open: an admitted fill sample does not activate the gesture. Resume
-that issue with actual accepted fill submission/feedback evidence; do not close it
-from the swing checks. See [integration evidence](evidence/pickaxe_integration/README.md).
+default action and idle return. The terrain-fill-feedback failure was traced to
+the test retaining gameplay's excavation-only admission policy after switching
+building inventory to editor costs: its sample was queued, not accepted by the
+terrain worker. The fixture now checks rejection without mutation/animation,
+then explicitly selects editor admission for cube and brush fills. Actual native
+publication, gesture activation and idle return pass in headless and rendered
+42-check world runs. This closes that specific reported failure without changing
+gameplay edit permissions. See [fill-feedback correction](evidence/terrain_fill_feedback/README.md)
+and the earlier [integration evidence](evidence/pickaxe_integration/README.md).
 
 ## Regional terrain checkpoint integration - 2026-10-23
 

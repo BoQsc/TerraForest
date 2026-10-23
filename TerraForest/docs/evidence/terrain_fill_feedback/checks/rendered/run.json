@@ -1,0 +1,45 @@
+{
+  "test": "human_placement",
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+    "--path",
+    "C:\\Users\\windows10\\.codex\\worktrees\\character-integration\\Godot Terrain\\TerraForest",
+    "--log-file",
+    "C:\\Users\\windows10\\.codex\\worktrees\\character-integration\\Godot Terrain\\TerraForest\\reports\\checks\\20261023T191404805439Z\\engine.log",
+    "--position",
+    "-2300,0",
+    "--resolution",
+    "1920x1080",
+    "--max-fps",
+    "60",
+    "--script",
+    "res://tests/human_placement.gd",
+    "--",
+    "--temporary",
+    "--world-slot=check_1eada63013464bc594ef5572fcdcf58b",
+    "--derived-cache=user://human_placement_1eada63013464bc594ef5572fcdcf58b",
+    "--gameplay-construction",
+    "--zombies",
+    "--no-capture",
+    "--capture-fill"
+  ],
+  "cache": "user://human_placement_1eada63013464bc594ef5572fcdcf58b",
+  "revision": "00a490fcaeafe0a6d3e3e00b34ff482dac39ea55",
+  "worktree_changes": [
+    " M TerraForest/tests/human_placement.gd"
+  ],
+  "git_metadata_available": true,
+  "test_sha256": "3e7c6d276c20475800c9b9fb59b7ba871ec2873bd9e9f53e9c23635ad5dae964",
+  "scope": "Rendered actual temporary world; editor fill/idle captures; isolated derived cache and save slot",
+  "result": {
+    "timed_out": false,
+    "launch_error": null,
+    "cancelled": false,
+    "pid": 71540,
+    "exit_code": 0,
+    "diagnostics": [],
+    "required_text_found": true,
+    "elapsed_seconds": 13.4219102000352,
+    "passed": true
+  }
+}

@@ -23,12 +23,16 @@ twice; test libraries now duplicate their container before attaching, resolving
 the signal connection errors. No animation asset rebake was required.
 
 The actual-world placement suite confirms the selected default swing starts and
-returns to ready, and block-placement/empty-idle lifecycle checks pass. Its broader
-terrain-fill-feedback assertion remains failing: an isolated sample is admitted,
-but the gesture is inactive after consumption. That failure remains visible in
-`placement_open_failure`, and is not overridden by animation-only checks. A
-headless viewport-size assertion was corrected by declaring the intended
-1920×1080 test viewport; earlier failures remain in the check reports.
+returns to ready, and block-placement/empty-idle lifecycle checks pass. Its initial
+terrain-fill-feedback assertion failed because the sample was captured but rejected
+by gameplay's excavation-only admission policy. The test had switched building
+costs without switching that independent terrain policy. The failure remains
+visible in `placement_open_failure`; its root cause and successful 42-check
+headless/rendered correction are in [fill-feedback evidence](../terrain_fill_feedback/README.md).
+The corrected test verifies permitted editor fills and rejected gameplay fills;
+production permissions and animation behavior required no change. A headless
+viewport-size assertion was also corrected by declaring the intended 1920×1080
+test viewport; earlier failures remain in the check reports.
 
 This commit changes camera-local presentation and tests. It does not change
 terrain/native code, actor movement, navigation, mining damage/cadence or saves.

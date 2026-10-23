@@ -1,0 +1,43 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS actual temporary world loads
+PASS original 71 clips, placement and diagonal pickaxe actions coexist
+PASS empty hands rest in the original idle without an action
+PASS movement alone keeps the empty hand idle
+PASS placement is a 0.9-second one-shot
+PASS placement contains no gameplay, audio or method tracks
+PASS empty-hand gesture starts
+PASS held placement never resets an unfinished gesture
+PASS wrist remains straight and aligned with the forearm
+PASS whole hand is held low
+PASS index fingertip stays inside the first-person frame above the belt
+PASS equipment switch cancels gesture and restores authored tool idle
+PASS authored tool locomotion remains available while empty hands rest
+PASS actual world uses the liked deeper-pullback swing by default
+PASS selected swing returns to its diagonal ready grip in the actual world
+PASS placement can temporarily free the equipped hand
+PASS placement pose is independent of the previously equipped tool
+PASS gesture hides Equipment_Axe
+PASS gesture hides Equipment_Carbine
+PASS gesture hides Equipment_Pickaxe
+PASS completed gesture restores selected equipment
+PASS legacy construction preview is hidden during the empty-hand action
+PASS construction preview returns after the action
+PASS empty hand can perform a fresh placement action
+PASS real-time one-shot automatically returns empty hands to idle
+PASS hand physically lowers back to the original resting pose
+PASS waiting without a new action never replays the placement gesture
+PASS accepted native block placement plays the gesture
+PASS block removal does not play a placement gesture
+PASS earlier world edits finish before submitting the fill gesture check
+PASS isolated terrain-fill sample is admitted
+FILL_DIAG before consume{ "loading": false, "shutdown": false, "ready": true, "pending": false, "samples": [{ "cube": true, "cell": (804, 52, 1306), "material": 1, "captured_us": 9016893 }], "action": 0.0, "visible": true }
+FILL_DIAG group=[{ "command": [3, 0, 0, 0, 36, 3, 0, 0, 52, 0, 0, 0, 26, 5, 0, 0, 1, 0, 0, 0], "lo": (802.0, 50.0, 1304.0), "hi": (807.0, 55.0, 1309.0), "sample": { "cube": true, "cell": (804, 52, 1306), "material": 1, "captured_us": 9016893 } }]player=(800.0, 49.79564, 1310.0)
+FILL_DIAG iterate sample={ "cube": true, "cell": (804, 52, 1306), "material": 1, "captured_us": 9016893 }
+FILL_DIAG append
+FILL_DIAG commands=1 addition=true
+FILL_DIAG after consume{ "loading": false, "shutdown": false, "ready": true, "pending": false, "samples": [], "action": 0.0, "visible": true, "rejections": 0 }
+FAIL accepted terrain fill plays the gesture
+[TerrainRewrite] Temporary test world: save skipped
+HUMAN_PLACEMENT checks=32 failures=1
