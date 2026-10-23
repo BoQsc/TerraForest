@@ -1,0 +1,72 @@
+{
+  "failures": 0,
+  "first_rejection": 0,
+  "rows": [
+    {
+      "archive_bytes": 48,
+      "attempted_edits": 0,
+      "control_query_ms": 0.035,
+      "control_status": "hit",
+      "pages": 0,
+      "raw_page_bytes": 0,
+      "recent_edit_median_ms": 0.0,
+      "recent_edit_p95_ms": 0.0,
+      "restore_ms": 0.874,
+      "revision": 0,
+      "serialize_ms": 0.03
+    },
+    {
+      "archive_bytes": 2728872,
+      "attempted_edits": 64,
+      "control_query_ms": 0.022,
+      "control_status": "hit",
+      "pages": 222,
+      "raw_page_bytes": 2727936,
+      "recent_edit_median_ms": 0.672,
+      "recent_edit_p95_ms": 1.293,
+      "restore_ms": 5.808,
+      "revision": 64,
+      "serialize_ms": 8.692
+    },
+    {
+      "archive_bytes": 10386788,
+      "attempted_edits": 256,
+      "control_query_ms": 0.02,
+      "control_status": "hit",
+      "pages": 845,
+      "raw_page_bytes": 10383360,
+      "recent_edit_median_ms": 0.61,
+      "recent_edit_p95_ms": 1.23,
+      "restore_ms": 16.155,
+      "revision": 256,
+      "serialize_ms": 28.11
+    },
+    {
+      "archive_bytes": 40735736,
+      "attempted_edits": 1024,
+      "control_query_ms": 0.02,
+      "control_status": "hit",
+      "pages": 3314,
+      "raw_page_bytes": 40722432,
+      "recent_edit_median_ms": 0.476,
+      "recent_edit_p95_ms": 1.031,
+      "restore_ms": 54.522,
+      "revision": 1024,
+      "serialize_ms": 86.929
+    },
+    {
+      "archive_bytes": 81274752,
+      "attempted_edits": 2048,
+      "control_query_ms": 0.033,
+      "control_status": "hit",
+      "pages": 6612,
+      "raw_page_bytes": 81248256,
+      "recent_edit_median_ms": 0.671,
+      "recent_edit_p95_ms": 1.739,
+      "restore_ms": 169.452,
+      "revision": 2048,
+      "serialize_ms": 211.652
+    }
+  ],
+  "scope": "Native sparse terrain history across distributed 2.5m excavations; exact archive restore and native CPU timings only. No rendered interaction, disk flush, full world save or endurance qualification."
+}

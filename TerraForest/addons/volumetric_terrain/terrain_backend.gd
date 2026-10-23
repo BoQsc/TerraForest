@@ -525,7 +525,7 @@ func _begin_publication(apply_us:int) -> bool:
 	# Legacy standalone saves keep their original path. Compound world saves use
 	# native publication on a single bounded job, retaining their existing lease.
 	if snapshot_codec==null or temporary or not _snapshot_writable() or not write_allowed or not _component_capture_valid:return false
-	var response:PackedByteArray=_call(Codec.command(4))
+	var response:PackedByteArray=_call(Codec.command(4,[3]))
 	if not Codec.reply_ok(response):return false
 	var payload:PackedByteArray=response.slice(12)
 	var sections:Dictionary=components.duplicate();sections["terrain"]=payload
@@ -547,7 +547,7 @@ func _save() -> String:
 		return "ERROR: save blocked by world initialization or snapshot validation failure; previous canonical snapshot retained"
 	if not _component_capture_valid:
 		return "ERROR: invalid addon capture; previous canonical snapshot retained"
-	var response: PackedByteArray = _call(Codec.command(4))
+	var response: PackedByteArray = _call(Codec.command(4,[3]))
 	if not Codec.reply_ok(response):
 		return "ERROR: native save failed; previous save retained"
 	var payload: PackedByteArray = response.slice(12)
@@ -683,7 +683,7 @@ func _load() -> String:
 	var info: PackedByteArray = _call(Codec.command(0))
 	if info.size() >= 36:
 		world_seed = info.decode_u32(32)
-	world_generator=payload.decode_u32(28) if payload.decode_u32(4)==2 else 1
+	world_generator=payload.decode_u32(28) if payload.decode_u32(4) in [2,3] else 1
 	components = restored
 	write_allowed = true
 	return "World loaded"

@@ -2,6 +2,7 @@
 #include "core.h"
 #include "geology.hpp"
 #include "density_surface.hpp"
+#include "terrain_checksum.hpp"
 #if defined(TERRAFOREST_TYPED_BRIDGE)
 #include <chrono>
 #endif
@@ -550,16 +551,20 @@ bool World::material_box(const World&solid,V3 minimum,V3 maximum,bool add,V3&lo,
  return true;
 }
 static u32 checksum(const u8*p,int n){u32 h=2166136261u;for(int i=0;i<n;i++){h^=p[i];h*=16777619u;}return h;}
-void World::serialize(Bytes&out)const{
+void World::serialize(Bytes&out,bool fast_checksum)const{
+ // The complete size is known. Reserve once instead of repeatedly copying the
+ // growing history buffer while appending sparse pages.
+ i64 required=i64(out.n)+36+i64(pages.n)*(4+PAGE_SAMPLES*3)+i64(blocks.n)*8;
+ if(required>0x7fffffff||!out.reserve(int(required))){tr_oom=true;return;}
  int start=out.n;
- out.u(SAVE_MAGIC);out.u(2);out.u(seed);out.u(pages.n);out.u(blocks.n);out.u(revision);out.u(edits);out.u(generator_id);
+ out.u(SAVE_MAGIC);out.u(fast_checksum?3:2);out.u(seed);out.u(pages.n);out.u(blocks.n);out.u(revision);out.u(edits);out.u(generator_id);
  for(int i=0;i<pages.n;i++){const Page&p=pages[i];out.u(p.key);out.raw(p.d,PAGE_SAMPLES*2);out.raw(p.mat,PAGE_SAMPLES);}
  for(int i=0;i<blocks.cap;i++)if(blocks.p[i].key&&blocks.p[i].key!=0xffffffffu){out.u(blocks.p[i].key);out.u(blocks.p[i].value);}
- out.u(checksum(out.p+start,out.n-start));
+ out.u(fast_checksum?terrain_checksum::checksum(out.p+start,out.n-start):checksum(out.p+start,out.n-start));
 }
 bool World::deserialize(const u8*data,int n){
- if(n<32)return false;u32 actual;copy_bytes(&actual,data+n-4,4);if(actual!=checksum(data,n-4))return false;
- Reader r{data,n-4};if(r.u()!=SAVE_MAGIC)return false;u32 format=r.u();if(format!=1&&format!=2)return false;
+ if(n<32)return false;u32 actual,format_hint;copy_bytes(&actual,data+n-4,4);copy_bytes(&format_hint,data+4,4);if(actual!=(format_hint==3?terrain_checksum::checksum(data,n-4):checksum(data,n-4)))return false;
+ Reader r{data,n-4};if(r.u()!=SAVE_MAGIC)return false;u32 format=r.u();if(format!=1&&format!=2&&format!=3)return false;
  int s=int(r.u()),pc=int(r.u()),bc=int(r.u()),rev=int(r.u()),ed=int(r.u());
  u32 generator=format==1?1:r.u();
  if(!r.good||generator<1||generator>SURROUNDING_COAST_GENERATOR_ID)return false;
@@ -1189,7 +1194,7 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
   }else if(old!=material){if(!w.set_block(key,material)){out.p[8]=2;return;}w.revision++;w.edits++;}
   out.u(w.revision);out.u(w.blocks.n);
  }
- else if(cmd==4){w.serialize(out);}
+ else if(cmd==4){bool fast=n==8&&r.u()==3;if((n!=4&&!fast)||!r.good){out.p[8]=1;return;}w.serialize(out,fast);}
  else if(cmd==5){if(!w.deserialize(data+4,n-4))out.p[8]=1;out.u(w.revision);out.u(w.pages.n);out.u(w.blocks.n);}
  else if(cmd==6){int seed=int(r.u());u32 generator=n==12?r.u():1;if(!r.good||(n!=8&&n!=12)||generator<1||generator>SURROUNDING_COAST_GENERATOR_ID){out.p[8]=1;return;}BuildControl *control=w.build_control;w.release();w=World{};w.build_control=control;w.init(seed,generator);}
  else if(cmd==7){V3 p=r.vec();if(!r.good||!(ab(p.x)<=10000&&ab(p.y)<=10000&&ab(p.z)<=10000)){out.p[8]=1;return;}out.f(w.height(p.x,p.z));out.f(w.sample(fl(p.x),fl(p.y),fl(p.z)));}

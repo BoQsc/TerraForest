@@ -1,0 +1,28 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS unmodified control ray remains valid
+PASS exact terrain restore at 0 edits
+PASS fast format explicitly tagged
+PASS fast format exact terrain restore at 0 edits
+HISTORY_SCALE {"archive_bytes":48,"attempted_edits":0,"control_query_ms":0.052,"control_status":"hit","crc_restore_ms":0.86,"crc_serialize_median_ms":0.002,"pages":0,"raw_page_bytes":0,"recent_edit_median_ms":0.0,"recent_edit_p95_ms":0.0,"restore_ms":0.844,"revision":0,"serialize_ms":0.016}
+PASS unmodified control ray remains valid
+PASS exact terrain restore at 64 edits
+PASS fast format explicitly tagged
+PASS fast format exact terrain restore at 64 edits
+HISTORY_SCALE {"archive_bytes":2728872,"attempted_edits":64,"control_query_ms":0.022,"control_status":"hit","crc_restore_ms":1.844,"crc_serialize_median_ms":3.868,"pages":222,"raw_page_bytes":2727936,"recent_edit_median_ms":0.671,"recent_edit_p95_ms":1.356,"restore_ms":4.45,"revision":64,"serialize_ms":6.356}
+PASS unmodified control ray remains valid
+PASS exact terrain restore at 256 edits
+PASS fast format explicitly tagged
+PASS fast format exact terrain restore at 256 edits
+HISTORY_SCALE {"archive_bytes":10386788,"attempted_edits":256,"control_query_ms":0.022,"control_status":"hit","crc_restore_ms":6.198,"crc_serialize_median_ms":16.105,"pages":845,"raw_page_bytes":10383360,"recent_edit_median_ms":0.546,"recent_edit_p95_ms":1.039,"restore_ms":14.914,"revision":256,"serialize_ms":24.481}
+PASS unmodified control ray remains valid
+PASS exact terrain restore at 1024 edits
+PASS fast format explicitly tagged
+PASS fast format exact terrain restore at 1024 edits
+HISTORY_SCALE {"archive_bytes":40735736,"attempted_edits":1024,"control_query_ms":0.025,"control_status":"hit","crc_restore_ms":21.942,"crc_serialize_median_ms":61.926,"pages":3314,"raw_page_bytes":40722432,"recent_edit_median_ms":0.503,"recent_edit_p95_ms":1.024,"restore_ms":56.493,"revision":1024,"serialize_ms":94.619}
+PASS unmodified control ray remains valid
+PASS exact terrain restore at 2048 edits
+PASS fast format explicitly tagged
+PASS fast format exact terrain restore at 2048 edits
+HISTORY_SCALE {"archive_bytes":81274752,"attempted_edits":2048,"control_query_ms":0.022,"control_status":"hit","crc_restore_ms":48.949,"crc_serialize_median_ms":128.019,"pages":6612,"raw_page_bytes":81248256,"recent_edit_median_ms":0.447,"recent_edit_p95_ms":1.098,"restore_ms":110.355,"revision":2048,"serialize_ms":196.595}
+TERRAIN_HISTORY_SCALING failures=0

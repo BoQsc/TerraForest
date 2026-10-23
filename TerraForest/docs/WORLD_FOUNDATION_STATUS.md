@@ -1,3 +1,19 @@
+## Terrain history storage evidence - 2026-10-23
+
+The broader persistence rerun still fails pending lake shutdown capture and
+deleted lake ID retention (20261023T075205102867Z). These are reproduced current
+defects, not historical assumptions. Investigate provider drain/cursor persistence
+before comprehensive persistence acceptance; ordinary save/reopen passes.
+
+Native edit arithmetic remained bounded through 2,048 distributed excavations;
+archive capture grew with history. One output reservation plus format 3 CRC32C
+reduced capture cost in the scoped check, with exact restore and legacy backup
+migration verified. See [evidence](evidence/terrain_history_storage/README.md).
+This does not close the monolithic terrain store, resident page capacity,
+selective loading, combined save latency or the failed rendered arrival gate.
+These remain active next requirements, with capacity/travel/recovery/save-reopen
+and visible-latency evidence required before closure.
+
 ## Rewrite checkpoint — 2026-10-23 (work remains active)
 
 Native road/lot planning, shared preview/bake plans, layout options, engine-owned

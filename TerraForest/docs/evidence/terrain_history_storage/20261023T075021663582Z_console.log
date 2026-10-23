@@ -1,0 +1,16 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS edited format 2 fixture prepared
+PASS terrain persistence worker starts
+FAIL legacy terrain opens with exact generator identity
+FAIL legacy load preserves terrain pages and revision
+PASS normal asynchronous world save admitted
+FAIL normal asynchronous world save publishes
+[TerrainRewrite] ERROR: save blocked: snapshot writes explicitly disabled; previous canonical snapshot retained
+FAIL actual compound save uses format 3
+FAIL migration retains original raw archive backup
+PASS terrain persistence worker starts
+PASS fresh worker opens new compound save with exact generator identity
+PASS save and fresh worker reopen preserve exact edited terrain
+[TerrainRewrite] ERROR: save blocked: snapshot writes explicitly disabled; previous canonical snapshot retained
+TERRAIN_SAVE_FORMAT failures=5

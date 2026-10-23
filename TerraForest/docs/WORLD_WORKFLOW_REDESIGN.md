@@ -428,3 +428,15 @@ Remaining preview scope: authored POI integration/markers and broader shoreline
 admission; compute work, canonical storage capacity, mining arrival readiness,
 world visual acceptance and populated performance remain active. Do not treat
 this map display as completing those systems.
+
+## Terrain history capture - 2026-10-23
+
+A 2,048-excavation native check found stable local edit cost but growing archive
+capture cost. Exact output reservation and explicitly versioned CRC32C capture
+are now on the production backend save path. Legacy imports, corruption rejection,
+backup migration, fresh-worker restore and async save ordering have scoped evidence
+in [terrain_history_storage](evidence/terrain_history_storage/README.md). The 81 MB
+payload still takes about 70 ms to capture in the diagnostic sample. This is not
+regional terrain storage, a capacity increase, or closure of rendered mining latency.
+Canonical terrain paging/checkpoints/recovery, combined history save cost and the
+first-visible arrival gate remain required; do not replace these with checksum work.

@@ -1,0 +1,68 @@
+{
+  "checks": [
+    {
+      "name": "standard CRC32C golden vector",
+      "passed": true
+    },
+    {
+      "name": "empty input CRC32C",
+      "passed": true
+    },
+    {
+      "name": "hardware and portable CRC32C agree on all alignments and tails",
+      "passed": true
+    },
+    {
+      "name": "fixture contains actual edited terrain pages",
+      "passed": true
+    },
+    {
+      "name": "format 3 changes only format tag and integrity checksum",
+      "passed": true
+    },
+    {
+      "name": "format 3 restores exact pages materials generator and metadata",
+      "passed": true
+    },
+    {
+      "name": "format 2 remains readable and byte stable",
+      "passed": true
+    },
+    {
+      "name": "legacy format 1 remains readable",
+      "passed": true
+    },
+    {
+      "name": "corruption and truncation reject without changing live terrain",
+      "passed": true
+    },
+    {
+      "name": "valid CRC cannot bypass generator semantic validation",
+      "passed": true
+    },
+    {
+      "name": "valid CRC cannot bypass page address validation",
+      "passed": true
+    },
+    {
+      "name": "command 4 explicitly selects format 3",
+      "passed": true
+    },
+    {
+      "name": "unknown serialization option rejects",
+      "passed": true
+    },
+    {
+      "name": "save allocation rejection leaves no partial archive",
+      "passed": true
+    }
+  ],
+  "failures": 0,
+  "source_hashes": {
+    "tests\\native\\terrain_checksum_probe.cpp": "cdf8bb0a453cc6f91c8dbf42b4e3c494326dbc1e4fb33b5510c1d041af456cd4",
+    "tools\\probe_terrain_checksum.py": "229fb380325e0c450a78609137962769cbb3495aebf8cf6eed0bc7e829ad9516",
+    "addons\\volumetric_terrain\\native\\core.cpp": "cc9a33155070a27f3b59a0244d76d4ca4186543f7fc3e589133940b649be74c0",
+    "addons\\volumetric_terrain\\native\\core.h": "30dca23c9c221374eac0c474676571ba6315508d9e5b48d639e90abb9a8bef33",
+    "addons\\volumetric_terrain\\native\\terrain_checksum.hpp": "ba100de58e224d6b3c6930f89d3ab692b8cde6fc185f6c87b424c99a5cd2e2d1"
+  }
+}
