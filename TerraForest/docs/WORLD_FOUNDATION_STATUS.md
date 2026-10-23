@@ -2483,7 +2483,7 @@ found and corrected by moving cache baking to save publication. Integrated cold
 capture and native bootstrap checks pass, but packaged end-to-end creation with
 these changes is still running. Generation now exposes actual stage/counter progress.
 Newly identified pipeline gap: offline creation reuses interactive publication for
-hundreds of grading sections, repeatedly building intermediate terrain. Next work
-applies the identical native packets before initial mesh admission, gated by exact
-saved-payload equivalence and actual bake/reopen proof. Do not close earlier large
+hundreds of grading sections, repeatedly building intermediate terrain. Offline new-world grading now applies identical native packets before first mesh
+admission; full archive equivalence and actual bake/reopen pass for seed1703.
+Details, remaining bundled coverage and limits are in WORLD_WORKFLOW_REDESIGN.md. Do not close earlier large
 edit/mining latency, compute, map/content or storage-capacity requirements from this.

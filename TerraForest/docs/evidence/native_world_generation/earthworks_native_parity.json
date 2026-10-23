@@ -1,0 +1,30 @@
+{
+  "cases": [
+    {
+      "batch_native_ms": 268.3986,
+      "bytes": 5506864,
+      "seed": 0,
+      "segments": 361,
+      "serial_native_ms": 292.439,
+      "sha256": "34a0550566238d159fda2c571001caa16851d1f5bfc065122dc9cec1096941f1"
+    },
+    {
+      "batch_native_ms": 313.9206,
+      "bytes": 6035420,
+      "seed": 42,
+      "segments": 363,
+      "serial_native_ms": 296.109,
+      "sha256": "1985c9f0808716e9f7f6cf0fc9d6d5ff882c0c6003e025edb3cd4adf9e228aa6"
+    },
+    {
+      "batch_native_ms": 282.3489,
+      "bytes": 5887916,
+      "seed": 1703,
+      "segments": 367,
+      "serial_native_ms": 292.527,
+      "sha256": "daea693c7af12813aa0cec26ff21f79bc8b98b4d7514e98d0d4dada5a0c2f71d"
+    }
+  ],
+  "failures": 0,
+  "scope": "Exact full native terrain serialization parity, offline transaction only; no rendered generation-time claim"
+}

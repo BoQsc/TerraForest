@@ -332,3 +332,40 @@ The job ran from dist/TerraForest.exe with its adjacent PCK and libraries, witho
 source-project arguments. Real creation/verification progress observations are in
 evidence/native_world_generation/bundled_1703_progress.json. This closes this
 bundled integration check, not clean-machine installation or the full rewrite.
+
+
+## Offline grading before mesh admission — 2026-10-23
+
+New-world creation now applies the shared plan's exact ordered command28 packets
+in a single native transaction before initial meshes/collision/vegetation load.
+The API accepts only a pristine unpublished world, at most4096 grading packets /
+4MiB, rejects other commands and discards all partial edits on failure. Existing
+worlds cannot enter this path. Startup freezes packets and includes the applied
+plan digest in the derived-cache identity. Normal interactive edits still use
+their existing publication/protection path. The explicit diagnostic flag
+--interactive-generation-grading retains the former offline comparison path.
+
+Three full native seed plans (0/42/1703) serialize byte-identically to ordinary
+ordered edits, including revisions and changed samples. The initial late-rejection
+check caught an incomplete World reset (065827748733Z); corrected reset/rejection
+and parity pass065943532041Z. Startup ownership, configuration freezing, cache
+identity and existing-world preservation pass070208536074Z. Cancellation still
+passes070007829130Z.
+
+Actual seed1703 connected-world creation, fresh-process verification and publication
+pass in report684270f0920278eae91ba2db011eaa69. All367 grading sections took325.694ms
+native. Its saved terrain archive matches bundled_rewrite_1703_20261023 exactly
+(070307362121Z); complete saved building/furnishing/navigation/water signatures also
+match the prior run. Both published291 sidecar files /204664bytes. Same-machine
+creation-stage observation decreased165.080s to67.143s; source/bundled packaging
+and cache state differ, so this is one integration comparison, not a statistical
+benchmark or runtime FPS claim. The native command-only timings did not show a
+consistent speedup: the benefit is avoiding intermediate interactive meshing.
+
+Latest export startup passes with the new native API and runtime helper. Remaining:
+current full bundled offline-grading creation proof, preview inland water/POIs,
+compute field equivalence/benefit, canonical storage capacity, arrival mining
+latency, populated/high-speed/zoom travel, and world-quality acceptance. The
+full rewrite is still active.
+
+Current bundled offline-grading create/reopen/publication now passes: bundled_offline_1703_20261023, report4f3b215fd572e0a083e6ef4d67793129. Both source and bundled native/run evidence are retained in evidence/native_world_generation/earthworks_* and *offline_1703*. This closes the packaging integration gap for this path. Clean-machine installation remains open.

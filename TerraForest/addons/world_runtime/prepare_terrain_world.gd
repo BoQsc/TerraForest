@@ -65,6 +65,11 @@ func run()->void:
    if arg.begins_with("--world-slot="):slot=arg.trim_prefix("--world-slot=")
   if slot.is_empty() or FileAccess.file_exists("user://worlds/"+slot+".trw"):
    print("REFUSING_EXISTING_OR_UNNAMED_BAKE");game.free();quit(1);return
+ var offline_grading:=bake and not "--interactive-generation-grading" in OS.get_cmdline_user_args()
+ if offline_grading:
+  var packets:=preload("res://addons/world_runtime/generation_earthworks.gd").packets(works.segments)
+  if not game.terrain.backend.configure_initial_earthworks(packets,prepared.plan_digest):print("OFFLINE_PACKETS_REJECTED");game.free();quit(1);return
+  progress("Baking roads and foundations before terrain loading")
  game.lakes.offline_preparation=true;game.model_region_paging=false;game.temporary_world=not bake;game.max_fps=60;game.background_fps=60;root.add_child(game)
  progress("Loading terrain and collision")
  if not await ready_world(game) or game.terrain.backend.world_generator!=generator:print("WRONG_WORLD");quit(1);return
@@ -125,17 +130,22 @@ func run()->void:
  var completed_edits:=0
  var last_progress_ms:=0
  progress("Grading roads and foundations",0,works.segments.size())
- for offset in range(0,works.segments.size(),256):
-  var batch:Dictionary={"ok":true,"segments":works.segments.slice(offset,mini(offset+256,works.segments.size())),"bounds":works.bounds}
-  if not runner.begin(batch,game.terrain,func(_bounds:AABB)->String:return ""):quit(1);return
-  var deadline:int=Time.get_ticks_msec()+90000
-  while runner.status=="running" and Time.get_ticks_msec()<deadline:
-   runner.tick(game.terrain,func(_bounds:AABB)->String:return "")
-   if Time.get_ticks_msec()-last_progress_ms>=250:
-    progress("Grading roads and foundations",completed_edits+runner.completed,works.segments.size());last_progress_ms=Time.get_ticks_msec()
-   await process_frame
-  if runner.status!="complete":print("PREPARATION_FAILED ",runner.status," ",runner.reason);quit(1);return
-  completed_edits+=runner.completed
+ if offline_grading:
+  completed_edits=int(game.terrain.backend.initial_earthworks_result.get("completed",0))
+  if completed_edits!=works.segments.size():print("OFFLINE_GRADING_INCOMPLETE");game.free();quit(1);return
+  FileAccess.open(output_dir.path_join("earthworks_bake.json"),FileAccess.WRITE).store_string(JSON.stringify(game.terrain.backend.initial_earthworks_result))
+ else:
+  for offset in range(0,works.segments.size(),256):
+   var batch:Dictionary={"ok":true,"segments":works.segments.slice(offset,mini(offset+256,works.segments.size())),"bounds":works.bounds}
+   if not runner.begin(batch,game.terrain,func(_bounds:AABB)->String:return ""):quit(1);return
+   var deadline:int=Time.get_ticks_msec()+90000
+   while runner.status=="running" and Time.get_ticks_msec()<deadline:
+    runner.tick(game.terrain,func(_bounds:AABB)->String:return "")
+    if Time.get_ticks_msec()-last_progress_ms>=250:
+     progress("Grading roads and foundations",completed_edits+runner.completed,works.segments.size());last_progress_ms=Time.get_ticks_msec()
+    await process_frame
+   if runner.status!="complete":print("PREPARATION_FAILED ",runner.status," ",runner.reason);quit(1);return
+   completed_edits+=runner.completed
  game.structure_mode=true;game.structure_rotation=0
  var all_lots:Array=plan.lots.duplicate()
  if not market.is_empty():all_lots.append_array(market.lots)

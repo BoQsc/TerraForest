@@ -56,6 +56,9 @@ var snapshot_id: String = ""
 var survey_compatibility: String = ""
 var cache_valid: bool = true
 var readonly_snapshot: bool = false
+var _initial_earthworks:Array=[] # New-world offline bake; configured before worker start.
+var _initial_plan_digest:=""
+var initial_earthworks_result:Dictionary={}
 var cache_path: String = "user://derived_046"
 var latest_packets: Dictionary = {}
 var latest_packet_bytes: int = 0
@@ -218,6 +221,18 @@ func _flush_current_packets() -> void:
 	latest_packets.clear()
 	latest_packet_bytes = 0
 
+
+func configure_initial_earthworks(packets:Array,digest:String)->bool:
+	if thread.is_started() or not _initial_earthworks.is_empty() or packets.is_empty() or packets.size()>4096 or digest.length()!=64:return false
+	for letter:String in digest:
+		if not letter in "0123456789abcdef":return false
+	var total:=0
+	for packet in packets:
+		if not packet is PackedByteArray or packet.size()<44 or packet.size()>1080 or packet.decode_u32(0)!=28:return false
+		total+=packet.size()
+	if total>4*1024*1024:return false
+	_initial_earthworks=packets.duplicate(true);_initial_plan_digest=digest
+	return true
 
 func start(use_temporary: bool) -> Error:
 	_startup_mark("main_initialization")
@@ -639,13 +654,19 @@ func _initialize_generated_components() -> bool:
 	return true
 
 func _load() -> String:
+	if not _initial_earthworks.is_empty() and (readonly_snapshot or FileAccess.file_exists(save_path)):
+		write_allowed=false;return "ERROR: offline grading never replaces existing world data"
 	if (temporary and not readonly_snapshot) or not FileAccess.file_exists(save_path):
 		if not Codec.reply_ok(_call(Codec.command(6,[world_seed,world_generator]))):
 			write_allowed=false
 			return "ERROR: unsupported world generator"
+		if not _initial_earthworks.is_empty():
+			initial_earthworks_result=native.bake_generated_earthworks(_initial_earthworks)
+			if not initial_earthworks_result.get("ok",false):write_allowed=false;return "ERROR: offline earthworks rejected"
+			print("OFFLINE_EARTHWORKS ",JSON.stringify(initial_earthworks_result))
 		if not _initialize_generated_components():
 			return "ERROR: generated lake definitions unavailable"
-		snapshot_id = "new_generator_%d_seed_%d"%[world_generator,world_seed]
+		snapshot_id = "new_generator_%d_seed_%d"%[world_generator,world_seed]+("_plan_"+_initial_plan_digest if not _initial_earthworks.is_empty() else "")
 		return "New world"
 	var payload: PackedByteArray = snapshot_codec.read(ProjectSettings.globalize_path(save_path)) if snapshot_codec != null else FileAccess.get_file_as_bytes(save_path)
 	var restored: Dictionary = {}

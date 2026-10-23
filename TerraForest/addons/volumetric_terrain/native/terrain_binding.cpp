@@ -18,6 +18,7 @@
 #include <cstdlib>
 #include <atomic>
 #include <mutex>
+#include <chrono>
 
 namespace terraforest {
 godot::PackedByteArray render_generation_map(const godot::PackedByteArray &,const godot::Array &,const godot::Array &,const godot::PackedByteArray &);
@@ -53,6 +54,7 @@ protected:
         godot::ClassDB::bind_method(godot::D_METHOD("plan_streets","roads","junctions"), &TerrainCore::plan_streets);
         godot::ClassDB::bind_method(godot::D_METHOD("survey_overview","size"), &TerrainCore::survey_overview);
         godot::ClassDB::bind_method(godot::D_METHOD("survey_water_visibility","points"), &TerrainCore::survey_water_visibility);
+        godot::ClassDB::bind_method(godot::D_METHOD("bake_generated_earthworks","packets"), &TerrainCore::bake_generated_earthworks);
         godot::ClassDB::bind_method(godot::D_METHOD("survey_patch","size","x","z","width","height"), &TerrainCore::survey_patch);
         godot::ClassDB::bind_method(godot::D_METHOD("measure_material_surface","x","z","size","y_begin","y_end"), &TerrainCore::measure_material_surface);
         godot::ClassDB::bind_method(godot::D_METHOD("material_box","solid","minimum","maximum","add","solid_revision","material_revision"), &TerrainCore::material_box, DEFVAL(-1));
@@ -277,6 +279,39 @@ public:
 #else
         return "template_release";
 #endif
+    }
+    // Offline new-world admission only. Apply the exact ordinary command28
+    // sequence once, before any mesh/collision or immutable snapshot is exposed.
+    godot::Dictionary bake_generated_earthworks(const godot::Array &packets) {
+        godot::Dictionary result;result["ok"]=false;result["completed"]=0;
+        if(packets.is_empty()||packets.size()>4096){result["reason"]="Invalid generation command count";return result;}
+        int64_t total=0;
+        std::vector<godot::PackedByteArray> commands;
+        for(int64_t i=0;i<packets.size();++i){
+            if(packets[i].get_type()!=godot::Variant::PACKED_BYTE_ARRAY)return result;
+            godot::PackedByteArray packet=packets[i];total+=packet.size();
+            if(packet.size()<44||packet.size()>1080||packet.decode_u32(0)!=28||total>4*1024*1024)return result;
+            commands.push_back(packet);
+        }
+        std::lock_guard<std::mutex> lock(mutex_);
+        if(world_.revision||world_.edits||world_.pages.n||world_.blocks.n||snapshot_worker_){result["reason"]="Generation requires a pristine unpublished world";return result;}
+        const int seed=world_.seed;const auto generator=world_.generator_id;
+        const auto started=std::chrono::steady_clock::now();
+        snapshot_epoch_.fetch_add(1);active_command_.store(28,std::memory_order_relaxed);
+        int completed=0;bool good=true;
+        for(const auto &packet:commands){
+            tr_oom=false;Bytes response;process_request(world_,packet.ptr(),int(packet.size()),response);
+            good=!tr_oom&&response.n>=12&&response.p[8]==0;response.release();
+            if(!good)break;++completed;
+        }
+        active_command_.store(-1,std::memory_order_relaxed);
+        if(!good){
+            // No published state exists. Discard every partial edit on rejection.
+            tr_oom=false;world_.release();world_=World{};world_.build_control=&control_;world_.init(seed,generator);
+            result["reason"]="Generation command rejected; unpublished edits discarded";return result;
+        }
+        result["ok"]=true;result["completed"]=completed;result["revision"]=world_.revision;
+        result["worker_ms"]=std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-started).count();return result;
     }
     godot::PackedByteArray execute(const godot::PackedByteArray &packet) {
         if(packet.size()<4 || packet.size()>512LL*1024*1024)return reply(0,1);
