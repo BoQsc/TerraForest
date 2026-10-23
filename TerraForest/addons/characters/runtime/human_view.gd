@@ -2,6 +2,7 @@
 extends Node3D
 ## Camera-local presentation. The existing native motor remains the player owner.
 const MODEL = preload("res://addons/characters/runtime/assets/Human.r11.glb")
+const PLACEMENT = preload("res://addons/characters/runtime/assets/Human.placement.res")
 const HIDDEN_SURFACE = preload("res://addons/characters/runtime/hidden_surface.gdshader")
 var model: Node3D
 var animation_player: AnimationPlayer
@@ -10,6 +11,7 @@ var clips: Dictionary = {}
 var current := 0
 var active_clip := ""
 var action_remaining := 0.0
+var placement_active := false
 var body: CharacterBody3D
 
 func _ready() -> void:
@@ -19,6 +21,7 @@ func _ready() -> void:
 	model = MODEL.instantiate()
 	add_child(model)
 	_collect(model)
+	animation_player.add_animation_library("placement", PLACEMENT)
 	for clip in animation_player.get_animation_list():
 		clips[String(clip).get_slice("/", String(clip).get_slice_count("/") - 1)] = clip
 	equip(current)
@@ -42,15 +45,19 @@ func _collect(node: Node) -> void:
 func equip(item: int) -> void:
 	current = item
 	action_remaining = 0.0
+	placement_active = false
 	if model == null:
 		return
+	_sync_equipment()
+	_play(_motion_clip("Idle"))
+
+func _sync_equipment() -> void:
 	for mesh in meshes:
 		var label := String(mesh.name).to_lower().replace("_", ".")
 		if label.begins_with("equipment."):
-			mesh.visible = (item == 1 and label.contains("pickaxe")) or (item == 2 and label.contains("axe") and not label.contains("pickaxe"))
+			mesh.visible = not placement_active and ((current == 1 and label.contains("pickaxe")) or (current == 2 and label.contains("axe") and not label.contains("pickaxe")))
 		elif label.begins_with("hair.") or label.begins_with("brows.") or label.begins_with("eye") or label.begins_with("upper_lashes"):
 			mesh.hide()
-	_play(_motion_clip("Idle"))
 
 func _motion_clip(action: String) -> String:
 	var prefix := "FP_Pickaxe_" if current == 1 else ("FP_Axe_" if current == 2 else "")
@@ -72,6 +79,14 @@ func swing() -> void:
 	if clips.has(clip):
 		_play(clip, true)
 
+func place() -> bool:
+	if action_remaining > 0.0 or not is_visible_in_tree():
+		return false
+	placement_active = true
+	_sync_equipment()
+	_play("FP_Place_Relaxed", true)
+	return true
+
 func _process(delta: float) -> void:
 	animation_player.active = is_visible_in_tree()
 	if not animation_player.active:
@@ -80,6 +95,9 @@ func _process(delta: float) -> void:
 		action_remaining = maxf(0.0, action_remaining - delta)
 		if action_remaining > 0.0:
 			return
+	if placement_active:
+		placement_active = false
+		_sync_equipment()
 	var motion := "Idle"
 	if is_instance_valid(body):
 		var speed := Vector2(body.velocity.x, body.velocity.z).length()

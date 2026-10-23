@@ -1,0 +1,7 @@
+{
+  "encoder": "Blender 5.2.3 LTS",
+  "source": "Unchanged runtime rig in a matching first-person studio camera; deterministic 30 Hz AnimationPlayer samples, no world UI",
+  "frames": 57,
+  "fps": 30,
+  "sha256": "1cb20474cc10eec72e4028183230348702aca1a24dbc5c74ab81644a9dfda865"
+}

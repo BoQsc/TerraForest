@@ -39,3 +39,12 @@ func swing() -> void:
 	if not tools.has(current):return
 	var preview:Node3D=tools[current]
 	motion=create_tween();motion.tween_property(preview,"rotation:x",-0.85,0.1);motion.tween_property(preview,"rotation:x",-0.2,0.18)
+
+func place() -> bool:
+	if not human.place():return false
+	if motion!=null:motion.kill()
+	for preview in tools.values():preview.hide()
+	return true
+
+func _process(_delta:float)->void:
+	if tools.has(current):tools[current].visible=not human.placement_active

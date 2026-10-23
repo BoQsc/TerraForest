@@ -409,6 +409,7 @@ func _consume_stroke() -> void:
 		return
 	var commands: Array[PackedByteArray] = []
 	var members: Array[Dictionary] = []
+	var contains_addition := false
 	var lo: Vector3 = Vector3.INF
 	var hi: Vector3 = -Vector3.INF
 	for work: Dictionary in group:
@@ -428,6 +429,7 @@ func _consume_stroke() -> void:
 				_reject_placement("Queued fill cancelled: player moved into the brush")
 				continue
 		commands.push_back(work["command"])
+		contains_addition = contains_addition or (int(sample["material"]) != 0 if bool(sample["cube"]) else bool(sample["add"]))
 		members.push_back({"captured_us": int(work["sample"].get("captured_us", Time.get_ticks_usec()))})
 		lo = lo.min(work["lo"])
 		hi = hi.max(work["hi"])
@@ -435,6 +437,11 @@ func _consume_stroke() -> void:
 		return
 	if not terrain.edit(commands[0], lo, hi, int(members[0]["captured_us"]), commands, members):
 		_message("Brush not submitted: " + terrain.latest_error)
+	elif contains_addition:
+		_terrain_placement_feedback()
+
+func _terrain_placement_feedback() -> void:
+	pass # Presentation hook; the accepted native edit remains the sole world owner.
 
 func _reject_placement(reason: String) -> void:
 	placement_rejections += 1

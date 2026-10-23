@@ -1,0 +1,10 @@
+{
+  "bones": 59,
+  "duration": 0.899999976158142,
+  "original_clips": 71,
+  "rest_error": 0.000000240274005136598,
+  "save_error": 0,
+  "scope": "Blender-authored bone tracks remapped onto the unchanged R11 runtime skeleton; no method, audio, object or gameplay-event tracks.",
+  "skeleton_path": "Human_Rig/Skeleton3D",
+  "track_count": 177
+}

@@ -1,0 +1,12 @@
+{
+  "addons/characters/authoring/Human.placement.blend": "8c42a6902526c4b13c0d5612888f998f5ab492d970c5aa0348eb04ae39097614",
+  "addons/characters/authoring/Human.placement.glb": "0e15130b2f4e4d2953e1d5b44417efb1d8841a08cfb8c3bb7ffffae8e323acf4",
+  "addons/characters/authoring/Human.placement.json": "fde675564bafc8aabd235844391c07dfe508fb7feb55c0f7ed8a1a9728d92c1e",
+  "addons/characters/runtime/assets/Human.placement.res": "37d9d45a2a70b2b878486427451d9b578ed6891a9e12a79a1f78c8b2effece8c",
+  "addons/characters/runtime/assets/Human.r11.glb": "0dc8fdbcfac451f61b6eee5c914b1e79f5ec450f5e98e4c896e8b46370bf35c8",
+  "tools/author_human_placement.py": "cc91c9459c535d3bbcb44c2243eb37c8cc7a84b09aa6b9d07c54f6086e11bbe2",
+  "tools/import_human_placement.gd": "cbd769128a0116d69cb504cc024f9f8fb7abdec3cab0535d16fe6690cd173c40",
+  "tools/preview_human_placement.gd": "483b58f6b2990a3517adf9bd7960a4b4dfeb355a15538a51a7c7ee8726c0e12f",
+  "tools/encode_placement_preview.py": "8f259d9db43a60233e58b8c029b4394ab1f6eaeb9db1fa75ea0206113d76941f",
+  "tests/human_placement.gd": "6a330933f1c52177db19053bbb7f0f1967b8ab4d7d5daf1c01ccf44e8853f6d0"
+}

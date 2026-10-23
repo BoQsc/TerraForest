@@ -1067,6 +1067,9 @@ func _road_protection_error(bounds: AABB) -> String:
 func _block_player_clear(target: Vector3i) -> bool:
 	return not _brush_overlaps_player(Vector3(target)+Vector3.ONE*0.5,0.87)
 
+func _terrain_placement_feedback() -> void:
+	tool_view.place()
+
 func _edit_structure(remove: bool) -> void:
 	if not terrain.world_ready or not app_focused:
 		return
@@ -1099,11 +1102,14 @@ func _edit_structure(remove: bool) -> void:
 		_show_lake_notice("Block placement intersects the player")
 		return
 	var word := 0 if remove else structure_shape+(structure_rotation<<3)+(structure_material<<5)
+	var placed := false
 	if construction_inventory.place_block(structures.blocks,player_hud.inventory,target,word):
+		placed = not remove
 		world_attack.durability.forget(world_attack.block_key(target))
 		_show_lake_notice("Block removed · F5 saves world" if remove else "Block placed · F5 saves world")
 	else: _show_lake_notice(construction_inventory.reason)
 	player_hud.refresh()
+	if placed:tool_view.place()
 
 func _survey_construction() -> void:
 	if site_preparation.status=="running" or site_survey.busy or loading_active or shutdown_requested or not app_focused or player_hud.inventory_open or world_vehicle.driving or not structure_mode or model_tool.active or structure_prefab_index<0: return

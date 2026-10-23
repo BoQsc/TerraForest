@@ -133,6 +133,14 @@ contract is accepted; close each with actual gameplay, save/reopen or rendered
 animation evidence as appropriate. The original source reports do not certify
 this host integration or close the wider world visual/performance gates.
 
+The relaxed placement follow-up supplies one Blender-authored empty-hand gesture:
+the whole hand is low with a neutral wrist, a slightly extended index and natural
+thumb. It is presentation for accepted single-block/terrain-fill submissions,
+not a construction-tool grip or general interaction system. Editable source,
+runtime animation, review images and targeted host checks are linked in
+[placement evidence](evidence/human_placement/README.md). The other presentation
+requirements above remain open.
+
 ## Regional terrain checkpoint integration - 2026-10-23
 
 Actual compound saves now select native compressed, immutable terrain packs;

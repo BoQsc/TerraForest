@@ -114,6 +114,17 @@ deep-water avoidance, sealed rooms, edit invalidation and missing coverage.
 durability, removal, hinge cleanup and provider snapshot; a full fresh-process
 door-destruction save/reopen gate is still required.
 
+## Relaxed placement animation
+
+Blender-authored `FP_Place_Relaxed` adds a 0.9-second empty-hand gesture for
+accepted block placements and terrain-fill submissions. The whole hand is held
+low; the wrist stays aligned with the forearm. The index is softly extended,
+the remaining fingers loosely curled and the thumb naturally opposed. Equipment
+returns afterward, and held placement cannot restart an unfinished gesture.
+The original 71 clips and runtime GLB are unchanged; a compact AnimationLibrary
+supplies the additional clip. See the [editable Blender source and rebuild steps](authoring/README.md)
+and [review evidence](../../docs/evidence/human_placement/README.md).
+
 ## Provenance
 
 The Human viewer README records Human R11 as CC0-1.0, derived from a user-provided

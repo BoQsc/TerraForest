@@ -27,7 +27,7 @@ func run() -> void:
 	var environment := WorldEnvironment.new();environment.environment=Environment.new();environment.environment.background_mode=Environment.BG_COLOR;environment.environment.background_color=Color("364756");environment.environment.ambient_light_source=Environment.AMBIENT_SOURCE_COLOR;environment.environment.ambient_light_color=Color.WHITE;environment.environment.ambient_light_energy=0.55;stage.add_child(environment)
 	camera=Camera3D.new();stage.add_child(camera);camera.position=Vector3(0,1.68,0);camera.fov=75;camera.near=0.04;camera.current=true
 	view=preload("res://addons/characters/runtime/human_view.gd").new();camera.add_child(view)
-	check(view.clips.size()==71,"R11 imports all 71 animations")
+	check(view.clips.size()==72 and view.clips.has("FP_Place_Relaxed"),"R11 retains 71 animations and adds the Blender placement action")
 	check(view.meshes.size()>20,"R11 imported skinned body, wardrobe and equipment")
 	print("HUMAN MESH NODES ",view.meshes.map(func(mesh):return mesh.name))
 	view.equip(1);check(view.active_clip=="FP_Pickaxe_Idle","pickaxe uses authored first-person idle")
