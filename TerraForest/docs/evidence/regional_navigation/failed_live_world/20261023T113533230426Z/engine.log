@@ -1,0 +1,10 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS saved actual world loads read-only
+PASS native cave entrance and interior descriptors match the saved generator
+PASS recipient's destination collision loads through normal travel
+PASS separate pursuit start has ready terrain, model and vegetation collision
+WORLD_SPAWN_REJECT {"enabled":true,"floor":{"collider":"MatchingCollision:<StaticBody3D#162017579954>","collider_id":162017579954,"face_index":789,"normal":"(0.529233, 0.83946, 0.123363)","position":"(844.9996, 141.461, 397.9)","rid":"RID(46518790782978)","shape":0},"ready":true,"start":"(844.9996, 141.4621, 397.9)","wet":0.0}
+FAIL zombie admits at the actual street/cave approach
+[TerrainRewrite] Temporary test world: save skipped
+ZOMBIE_REGIONAL_WORLD case=cave checks=5 failures=1

@@ -169,6 +169,7 @@ func configure(scene: PackedScene = null) -> void:
 			caps[part] = pair
 	collision_layer = CHARACTER_LAYER
 	collision_mask = 15 | CHARACTER_LAYER
+	floor_max_angle = deg_to_rad(45.0)
 	capsule = CollisionShape3D.new()
 	capsule.name = "MovementCapsule"
 	var shape := CapsuleShape3D.new()

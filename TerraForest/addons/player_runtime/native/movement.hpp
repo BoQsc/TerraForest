@@ -20,12 +20,14 @@ class NativePlayerMovement : public godot::RefCounted {
     godot::Ref<godot::PhysicsRayQueryParameters3D> ladder_probe_;
     godot::ObjectID ladder_collection_;
     double ladder_detach_=0;
+    double step_radius_=.34;
     static bool valid(double delta,const godot::Vector3 &v) {
         return std::isfinite(delta)&&delta>0&&delta<=0.25&&v.is_finite();
     }
 protected:
     static void _bind_methods();
 public:
+    void set_step_radius(double radius){if(std::isfinite(radius)&&radius>=.1&&radius<=.75)step_radius_=radius;}
     void configure_ladders(godot::Node3D *collection);
     bool ladder_velocity(godot::CharacterBody3D *body,godot::Vector3 direction,double delta,bool jump);
     bool move_grounded(godot::CharacterBody3D *body,double delta);

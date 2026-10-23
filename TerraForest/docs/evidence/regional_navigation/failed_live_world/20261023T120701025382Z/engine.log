@@ -1,0 +1,18 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+STEP narrow 0 (0.0, 0.057278, -0.988) guard=true floor=false
+STEP narrow 120 (0.0, 1.001, 0.451999) guard=true floor=false
+STEP narrow 240 (0.0, 1.001, 1.891997) guard=true floor=false
+PASS narrow slow capsule steps: peak_rise=0.25016030797269 verified_steps=4
+STEP tower 0 (0.5, 0.057278, 11.988) guard=true floor=false
+STEP tower 120 (0.5, 0.000839, 10.54799) guard=true floor=true
+STEP tower 240 (0.5, 1.001, 9.107975) guard=true floor=false
+STEP tower 360 (0.5, 1.001, 7.667965) guard=true floor=false
+STEP tower 480 (0.5, 1.001, 6.227955) guard=true floor=false
+STEP tower 600 (0.5, 1.001, 4.787945) guard=true floor=false
+STEP tower 720 (0.5, 1.001, 3.347935) guard=true floor=false
+STEP tower 840 (0.5, 0.999788, 2.363928) guard=false floor=true
+STEP tower 960 (0.5, 0.999788, 2.363928) guard=false floor=true
+STEP tower 1080 (0.5, 0.999788, 2.363928) guard=false floor=true
+FAIL tower slow capsule steps: peak_rise=0.25016030890401 verified_steps=4
+ZOMBIE_STEP_GUARD FAIL

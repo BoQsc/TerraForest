@@ -964,7 +964,10 @@ func _schedule_urgent_collision() -> void:
 
 func _plan_requests() -> Array[Vector3i]:
 	var plan: Dictionary
-	if backend.region_terrain and interaction_target.is_finite() and Time.get_ticks_usec()<interaction_target_until_us:
+	if not navigation_interest.is_empty():
+		var target:Vector3=interaction_target if backend.region_terrain and Time.get_ticks_usec()<interaction_target_until_us else Vector3.INF
+		plan=planner.requests_navigation(focus,require_collision,travel_velocity,target,navigation_interest,tiles,split_state,visible_cut)
+	elif backend.region_terrain and interaction_target.is_finite() and Time.get_ticks_usec()<interaction_target_until_us:
 		plan=planner.requests_targeted(focus,require_collision,interaction_target,tiles,split_state,visible_cut)
 	elif travel_velocity.is_finite() and travel_velocity.length_squared()>0.01:
 		plan=planner.requests_travel(focus,require_collision,travel_velocity,tiles,split_state,visible_cut)
@@ -977,6 +980,10 @@ func _plan_requests() -> Array[Vector3i]:
 	activation_keys = plan.activation_keys
 	split_state = plan.split_state
 	return plan.requests
+
+var navigation_interest:=PackedVector3Array()
+func set_navigation_interest(points:PackedVector3Array)->void:
+	if points.size()<=8:navigation_interest=points
 
 func _cancel_unrequested_meshes() -> void:
 	for cancelled: Dictionary in backend.cancel_stale_meshes(requested_keys, epoch, stamps):

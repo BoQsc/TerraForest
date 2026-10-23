@@ -53,19 +53,29 @@ Door attacks use authored contact timing and existing world durability/removal,
 with no player salvage or tool wear. This updates the earlier obstacle-navigation
 requirement only for the checked local cases.
 
-Regional/portal routing, streaming requests along future routes, representative
-populated settlement/cave journeys, heterogeneous crowd avoidance, continuous
-moving-target endurance, automatic authorized ladder/jump links, tighter crawler
-clearance and total CPU/frame cost remain open. The current planner covers a
-bounded local graph; repeated 12 m horizons do not prove whole-world reachability.
-Door destruction still needs a fresh-process compound save/reopen check beyond
-its provider snapshot round trip. Resume these gates before expanding encounter
-population or claiming world-scale navigation; close them with actual journeys,
-fresh reopen and measured host workloads, as specified in the navigation standard.
-Integration with subsequent world work must merge source changes and rebuild
-native binaries together, then rerun the host checks. This branch remains based
-on `87390a2c`; concurrent terrain/structure changes in the original checkout are
-not overwritten or implicitly qualified by its local results.
+Regional navigation is in active implementation on the character branch. The
+stable world checkpoint `5e274359` has been merged as `3ed2c4dd`; concurrent dirty
+world edits stay in the original checkout. The derived height-aware graph and
+bounded collision interests pass isolated regional detour, multi-storey planning
+and residency fixtures. Repeated local horizons have been removed. These fixture
+passes do not yet qualify actual world navigation: saved-world tower and cave
+journeys currently fail physical traversal. Riser floor-contact/clearance mismatch
+is being corrected and must be rechecked against the actual saved worlds, both
+outbound and return. Failed evidence is retained in
+`evidence/regional_navigation/failed_live_world/`. The detailed implementation and
+closure gates are in [REGIONAL_NAVIGATION.md](REGIONAL_NAVIGATION.md).
+
+Required before closing this milestone: actual autonomous street-to-upper-floor
+and cave entrance/interior/return journeys; intact-door contact/destruction;
+rendered inspection; disconnected/edited topology and missing-residency recovery;
+native debug/release and relevant regression checks. Heterogeneous crowd avoidance,
+continuous moving-target endurance, automatic authorized ladder/jump links,
+tighter crawler clearance and total CPU/frame qualification remain open beyond
+these bounded cases. Door destruction still needs a fresh-process compound
+save/reopen check beyond its provider snapshot round trip. Do not expand encounter
+population or claim whole-world navigation from isolated fixtures. Subsequent
+world integration must merge sources and rebuild native binaries together, then
+rerun host checks.
 
 This is a first integration milestone, not completed survival gameplay. Required
 continuation: player health/death/respawn, saved encounter identity/state and loot,

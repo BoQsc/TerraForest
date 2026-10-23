@@ -1,0 +1,17 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+ERROR: Index p_collision_index = 0 is out of bounds (result.collision_count = 0).
+   at: get_normal (scene/3d/physics/kinematic_collision_3d.cpp:58)
+   GDScript backtrace (most recent call first):
+       [0] run (res://tests/zombie_step_guard.gd:26)
+STEP 0 (0.0, 0.057278, -0.98) guard=true larger=true step=false floor=false wall=false head=false raisedwall=false landing=false normal=(0.0, 0.0, 0.0) travel=(0.0, -0.35, 0.0)
+STEP 60 (0.0, 0.23977, -0.194182) guard=false larger=true step=false floor=true wall=true head=false raisedwall=false landing=true normal=(0.0, 0.978698, -0.205303) travel=(0.0, -0.293262, 0.0)
+STEP 120 (0.0, 0.23977, -0.194182) guard=false larger=true step=false floor=true wall=true head=false raisedwall=false landing=true normal=(0.0, 0.978698, -0.205303) travel=(0.0, -0.293262, 0.0)
+STEP 180 (0.0, 0.23977, -0.194182) guard=false larger=true step=false floor=true wall=true head=false raisedwall=false landing=true normal=(0.0, 0.978698, -0.205303) travel=(0.0, -0.293262, 0.0)
+STEP 240 (0.0, 0.23977, -0.194182) guard=false larger=true step=false floor=true wall=true head=false raisedwall=false landing=true normal=(0.0, 0.978698, -0.205303) travel=(0.0, -0.293262, 0.0)
+STEP 300 (0.0, 0.23977, -0.194182) guard=false larger=true step=false floor=true wall=true head=false raisedwall=false landing=true normal=(0.0, 0.978698, -0.205303) travel=(0.0, -0.293262, 0.0)
+STEP 360 (0.0, 0.23977, -0.194182) guard=false larger=true step=false floor=true wall=true head=false raisedwall=false landing=true normal=(0.0, 0.978698, -0.205303) travel=(0.0, -0.293262, 0.0)
+STEP 420 (0.0, 0.23977, -0.194182) guard=false larger=true step=false floor=true wall=true head=false raisedwall=false landing=true normal=(0.0, 0.978698, -0.205303) travel=(0.0, -0.293262, 0.0)
+STEP 480 (0.0, 0.23977, -0.194182) guard=false larger=true step=false floor=true wall=true head=false raisedwall=false landing=true normal=(0.0, 0.978698, -0.205303) travel=(0.0, -0.293262, 0.0)
+STEP 540 (0.0, 0.23977, -0.194182) guard=false larger=true step=false floor=true wall=true head=false raisedwall=false landing=true normal=(0.0, 0.978698, -0.205303) travel=(0.0, -0.293262, 0.0)
+ZOMBIE_STEP_GUARD FAIL

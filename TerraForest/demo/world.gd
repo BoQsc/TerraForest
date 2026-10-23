@@ -9,6 +9,7 @@ var generated_region=preload("res://addons/world_runtime/generated_region.gd").n
 var actor_authoring=preload("res://addons/world_runtime/actor_authoring.gd").new()
 var zombies=preload("res://addons/characters/runtime/zombie_world.gd").new()
 var zombie_target=preload("res://addons/characters/runtime/zombie_target.gd").new()
+var navigation_residency=preload("res://addons/world_runtime/navigation_residency.gd").new()
 var actors=preload("res://addons/world_runtime/actor_world.gd").new()
 var model_paging: Node
 # Native regional residency is the normal world path; retain an explicit diagnostic fallback.
@@ -208,8 +209,10 @@ func _ready() -> void:
 	if zombies.enabled:player.collision_mask |= zombies.CHARACTER_LAYER
 	zombies.target=zombie_target
 	zombies.readiness=_actor_collision_ready
-	zombies.water_depth=lakes.depth_at
+	zombies.water_depth=lakes.water.depth_at
 	zombies.obstacle_provider=_zombie_obstacle_target
+	navigation_residency.game=self
+	zombies.navigation_interest=navigation_residency.update
 	add_child(model_tool)
 	model_tool.gameplay=construction_inventory.gameplay
 	model_tool.paid_placement=_place_inventory_model
@@ -1283,6 +1286,12 @@ func _zombie_obstacle_target(zombie: CharacterBody3D) -> Node3D:
 	if not _model_edit_available():return null
 	var start:Vector3=zombie.global_position+Vector3.UP*1.1
 	var offset:Vector3=player.global_position+Vector3.UP*1.1-start
+	# Follow the routed approach on this storey. A ray aimed straight at an
+	# upstairs recipient hits the lintel instead of the intervening door leaf.
+	if zombie.navigation_target.is_finite():
+		var routed:Vector3=zombie.navigation_target+Vector3.UP*1.1-start
+		if Vector2(routed.x,routed.z).length()>0.05:
+			offset=routed.normalized()*maxf(1.5,routed.length())
 	var ray:=PhysicsRayQueryParameters3D.create(start,start+offset.limit_length(12.0),7,[player.get_rid()])
 	var hit:=get_world_3d().direct_space_state.intersect_ray(ray)
 	if hit.is_empty() or hit.get("collider")!=doors.collection:return null

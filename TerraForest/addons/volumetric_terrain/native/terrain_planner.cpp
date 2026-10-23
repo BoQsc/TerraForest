@@ -160,6 +160,7 @@ void prioritize_coverage(Vector3 focus,bool collision,const State &state,const D
 }
 }
 void NativeTerrainPlanner::_bind_methods() {
+    ClassDB::bind_method(D_METHOD("requests_navigation","focus","require_collision","velocity","target","points","tiles","split_state","visible_cut"),&NativeTerrainPlanner::requests_navigation);
     ClassDB::bind_method(D_METHOD("requests_travel","focus","require_collision","velocity","tiles","split_state","visible_cut"),&NativeTerrainPlanner::requests_travel);
     ClassDB::bind_method(D_METHOD("collision_region_ready","bounds","active_leaves"),&NativeTerrainPlanner::collision_region_ready);
     ClassDB::bind_method(D_METHOD("requests","focus","require_collision","tiles","split_state","visible_cut"),&NativeTerrainPlanner::requests);
@@ -203,6 +204,14 @@ static Dictionary plan_requests(Vector3 focus,bool collision,const Dictionary &t
 }
 Dictionary NativeTerrainPlanner::requests(Vector3 focus,bool collision,const Dictionary &tiles,const Dictionary &previous,const Array &visible) const {
     return plan_requests(focus,collision,tiles,previous,visible,nullptr);
+}
+Dictionary NativeTerrainPlanner::requests_navigation(Vector3 focus,bool collision,Vector3 velocity,Vector3 target,const PackedVector3Array &points,const Dictionary &tiles,const Dictionary &previous,const Array &visible)const{
+    if(points.size()>8||!velocity.is_finite())return failure();
+    std::vector<Vector3> samples;
+    velocity.y=0;const double speed=velocity.length(),length=std::min(speed*2,128.0);
+    if(length>0){const int count=int(std::ceil(length/32));for(int i=1;i<=count;++i)samples.push_back(focus+velocity/real_t(speed)*real_t(length*i/count));}
+    for(int i=0;i<points.size();++i){if(!points[i].is_finite()||points[i].distance_to(focus)>128)return failure();samples.push_back(points[i]);}
+    return plan_requests(focus,collision,tiles,previous,visible,target.is_finite()?&target:nullptr,&samples);
 }
 Dictionary NativeTerrainPlanner::requests_travel(Vector3 focus,bool collision,Vector3 velocity,const Dictionary &tiles,const Dictionary &previous,const Array &visible) const {
     if(!velocity.is_finite())return failure();

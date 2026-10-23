@@ -1,0 +1,14 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS navigation adds bounded terrain detail beside the player's existing refinement
+PASS navigation leaves primary player activation first
+PASS terrain rejects more than eight interests
+PASS terrain rejects interests beyond its declared input domain
+PASS distant authored block is not falsely reported as resident collision
+PASS bounded block interest admits
+PASS block interest publishes collision without changing player focus
+PASS releasing interests retires distant block collision
+PASS player proxy keeps priority when navigation competes for a full body budget
+PASS navigation cannot exceed model proxy budget
+PASS rejected navigation interests cannot mutate authoritative model placements
+NAVIGATION_RESIDENCY checks=11 failures=0

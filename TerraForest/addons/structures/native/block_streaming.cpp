@@ -18,6 +18,14 @@ void NativeBlockWorld::set_focus(Vector3 p) {
         residency_focus=p;residency_dirty=true;set_process(true);
     }
 }
+bool NativeBlockWorld::set_navigation_interest(const PackedVector3Array &points){
+    if(points.size()>8)return false;
+    const Transform3D frame=is_inside_tree()?get_global_transform():get_transform();
+    if(!frame.is_finite()||std::abs(frame.basis.determinant())<1e-9)return false;
+    std::vector<Vector3> next;for(int i=0;i<points.size();++i){if(!points[i].is_finite())return false;next.push_back(frame.affine_inverse().xform(points[i]));}
+    if(next!=navigation_interest){navigation_interest=std::move(next);collision_work_pending=true;}
+    return true;
+}
 bool NativeBlockWorld::configure_streaming(bool enabled,double radius,int64_t chunk_limit,int64_t mesh_byte_limit,int64_t cache_byte_limit) {
     if(!std::isfinite(radius)||radius<16||radius>4096||chunk_limit<1||chunk_limit>2048||
        mesh_byte_limit<65536||mesh_byte_limit>512*1024*1024||cache_byte_limit<0||cache_byte_limit>512*1024*1024)return false;

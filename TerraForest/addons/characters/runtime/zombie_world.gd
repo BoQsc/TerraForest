@@ -8,12 +8,13 @@ const RAGDOLL_LAYER := 1 << 18
 const LIMIT := 6
 const MIN_RADIUS := 12.0
 const MAX_RADIUS := 24.0
-const RETIRE_RADIUS := 64.0
+const RETIRE_RADIUS := 96.0
 var enabled := false
 var target: Node3D
 var readiness: Callable
 var water_depth: Callable
 var obstacle_provider: Callable
+var navigation_interest:Callable
 var navigator: Node3D
 var navigation_status: Dictionary={}
 var _obstacles: Dictionary={}
@@ -42,6 +43,7 @@ func clear() -> void:
 		if is_instance_valid(obstacle):obstacle.queue_free()
 	_obstacles.clear();_obstacle_clock.clear()
 	if navigator!=null:navigator.clear()
+	if navigation_interest.is_valid():navigation_interest.call(PackedVector3Array())
 	_corpse_age.clear()
 	_spawn_clock = 0.0
 
@@ -74,6 +76,7 @@ func update(delta: float, focus: Vector3, available: bool, pursue: bool = true) 
 		if not ready and not zombie.alive:
 			_retire(index)
 	_update_navigation(delta,available and pursue)
+	if navigation_interest.is_valid():navigation_interest.call(navigator.interest_points() if available and pursue else PackedVector3Array())
 	_update_spacing()
 	if not available:
 		return
@@ -94,10 +97,8 @@ func invalidate_navigation(bounds: AABB=AABB()) -> void:
 	if navigator!=null:navigator.invalidate(bounds)
 	_obstacle_clock.clear()
 
-func _dry_route(point: Vector3) -> bool:
-	return not water_depth.is_valid() or float(water_depth.call(point-Vector3.UP*0.83))<=0.0
-
 func _update_navigation(delta: float, available: bool) -> void:
+	navigator.set_water_depth(water_depth)
 	var excluded: Array[RID]=[]
 	if target.get_parent() is PhysicsBody3D:excluded.append(target.get_parent().get_rid())
 	# Refresh only when the recipient body changes: assignment invalidates routes.
@@ -123,7 +124,7 @@ func _update_navigation(delta: float, available: bool) -> void:
 		var distance:Vector3=zombie.target.global_position-zombie.global_position;distance.y=0
 		var needs_route:bool=available and zombie.alive and zombie.process_mode!=Node.PROCESS_MODE_DISABLED and zombie._active_action.is_empty() and zombie._hit_timer<=0 and (distance.length()>1.0 or not zombie.navigation_attack_clear)
 		navigator.set_agent(id,zombie.global_position,goal,1 if zombie._crawling else 0,needs_route)
-	navigation_status=navigator.advance(delta,readiness,_dry_route)
+	navigation_status=navigator.advance(delta,readiness,Callable())
 	for zombie in residents:
 		var id:int=zombie.get_instance_id()
 		zombie.navigation_target=navigator.steering_target(id)
@@ -191,9 +192,9 @@ func supported_point(around: Vector3) -> Vector3:
 	var space := get_world_3d().direct_space_state
 	var ray := PhysicsRayQueryParameters3D.create(around + Vector3.UP * 4, around - Vector3.UP * 4, 1)
 	var hit := space.intersect_ray(ray)
-	if hit.is_empty() or hit.normal.y < 0.78:
+	if hit.is_empty() or hit.normal.y < 0.85:
 		return Vector3.INF
-	var point: Vector3 = hit.position + Vector3.UP * 0.04
+	var point: Vector3 = hit.position + Vector3.UP * 0.06
 	if water_depth.is_valid() and float(water_depth.call(point + Vector3.UP * 0.5)) > 0.0:
 		return Vector3.INF
 	var query := PhysicsShapeQueryParameters3D.new()
@@ -216,6 +217,7 @@ func spawn_at(point: Vector3) -> CharacterBody3D:
 	zombie.behavior_enabled = true
 	zombie.navigator=navigator
 	zombie.navigation_motor=ClassDB.instantiate("NativePlayerMovement")
+	zombie.navigation_motor.set_step_radius(.24)
 	var excluded: Array[RID]=[]
 	if target.get_parent() is PhysicsBody3D:excluded.append(target.get_parent().get_rid())
 	if excluded!=_navigation_exclusions:

@@ -10,6 +10,7 @@ void NativePlayerMovement::_bind_methods() {
     ClassDB::bind_method(D_METHOD("configure_ladders","collection"),&NativePlayerMovement::configure_ladders);
     ClassDB::bind_method(D_METHOD("ladder_velocity","body","direction","delta","jump"),&NativePlayerMovement::ladder_velocity);
     ClassDB::bind_method(D_METHOD("move_grounded","body","delta"),&NativePlayerMovement::move_grounded);
+    ClassDB::bind_method(D_METHOD("set_step_radius","radius"),&NativePlayerMovement::set_step_radius);
     ClassDB::bind_method(D_METHOD("swimming_velocity","direction","previous","vertical","depth","delta","sprint"),&NativePlayerMovement::swimming_velocity);
     ClassDB::bind_method(D_METHOD("walking_velocity","direction","previous","delta","sprint","grounded","jump"),&NativePlayerMovement::walking_velocity);
     ClassDB::bind_method(D_METHOD("flight_displacement","direction","vertical","delta","sprint"),&NativePlayerMovement::flight_displacement);
@@ -74,12 +75,44 @@ bool NativePlayerMovement::move_grounded(CharacterBody3D *body,double delta) {
     // Preserve that support for one tick only; jumping still rejects via velocity.y.
     const uint64_t frame=Engine::get_singleton()->get_physics_frames();
     const bool recent_step=uint64_t(step_body_)==body->get_instance_id() && frame>=step_frame_ && frame-step_frame_<=1;
-    if((body->is_on_floor()||recent_step)&&velocity.y<=0&&horizontal.length_squared()>0.000001&&horizontal.length()<=0.5) {
+    // Retain a verified tread while a rounded foot crosses its riser. Gravity
+    // must not project the walker back down the steep corner between tiny ticks.
+    // This assistance exists only after a swept step, with a tread under the
+    // actual capsule's front and at the already reached elevation.
+    if(recent_step&&!body->is_on_floor()&&velocity.y<=0&&horizontal.length_squared()>.000001&&horizontal.length()<=.5){
+        if(step_support_.is_null())step_support_.instantiate();
+        Vector3 probe=body->get_global_position()+horizontal.normalized()*real_t(step_radius_);
+        step_support_->set_from(probe+Vector3(0,.02,0));step_support_->set_to(probe-Vector3(0,.04,0));
+        step_support_->set_collision_mask(body->get_collision_mask());
+        TypedArray<RID> exclude;exclude.push_back(body->get_rid());step_support_->set_exclude(exclude);
+        Dictionary hit=body->get_world_3d()->get_direct_space_state()->intersect_ray(step_support_);
+        if(!hit.is_empty()&&Vector3(hit["normal"]).y>=std::cos(body->get_floor_max_angle())&&
+           !body->test_move(body->get_global_transform(),horizontal,{},body->get_safe_margin())){
+            body->set_velocity(Vector3(velocity.x,0,velocity.z));body->move_and_slide();
+            step_frame_=frame;return false;
+        }
+    }
+    if(velocity.y<=0&&horizontal.length_squared()>0.000001&&horizontal.length()<=0.5) {
         const Transform3D start=body->get_global_transform();
         const float margin=body->get_safe_margin();
         // Four bounded sweeps: obstacle, head clearance, raised travel, landing.
         // Refuse jumping, oversized tick travel, tall walls and unsupported gaps.
         if(body->test_move(start,horizontal,{},margin)&&!body->test_move(start,Vector3(0,0.3,0),{},margin)) {
+            // A rounded capsule can lose is_on_floor while touching a riser,
+            // including a tick without an attempted step. Require nearby actual
+            // walkable support instead of allowing that transient flag to
+            // deadlock the staircase. Falling through a gap is still rejected.
+            if(!body->is_on_floor()&&!recent_step) {
+                if(step_support_.is_null())step_support_.instantiate();
+                step_support_->set_from(start.origin+Vector3(0,.01,0));
+                step_support_->set_to(start.origin-Vector3(0,.3,0));
+                step_support_->set_collision_mask(body->get_collision_mask());
+                TypedArray<RID> exclude;exclude.push_back(body->get_rid());step_support_->set_exclude(exclude);
+                Dictionary hit=body->get_world_3d()->get_direct_space_state()->intersect_ray(step_support_);
+                if(hit.is_empty()||Vector3(hit["normal"]).y<std::cos(body->get_floor_max_angle())) {
+                    body->move_and_slide();return false;
+                }
+            }
             Transform3D raised=start;raised.origin.y+=0.3;
             if(!body->test_move(raised,horizontal,{},margin)) {
                 raised.origin+=horizontal;
@@ -89,20 +122,31 @@ bool NativePlayerMovement::move_grounded(CharacterBody3D *body,double delta) {
                     // Capsule/riser corner normals differ from tread normals.
                     // Confirm the tread under the front of the 0.34 m capsule;
                     // do not relax the player's walkable surface angle.
-                    if(!supported&&step_collision_->get_normal().y>0) {
+                    Vector3 tread;bool has_tread=false;
+                    if(!supported) {
                         if(step_support_.is_null())step_support_.instantiate();
-                        Vector3 probe=raised.origin+horizontal.normalized()*0.34;
+                        Vector3 probe=raised.origin+horizontal.normalized()*real_t(step_radius_);
                         step_support_->set_from(probe);step_support_->set_to(probe-Vector3(0,0.35,0));
                         step_support_->set_collision_mask(body->get_collision_mask());
                         TypedArray<RID> exclude;exclude.push_back(body->get_rid());step_support_->set_exclude(exclude);
                         Dictionary hit=body->get_world_3d()->get_direct_space_state()->intersect_ray(step_support_);
-                        if(hit.has("normal"))supported=Vector3(hit["normal"]).y>=std::cos(body->get_floor_max_angle());
+                        if(hit.has("normal")){
+                            supported=Vector3(hit["normal"]).y>=std::cos(body->get_floor_max_angle());
+                            if(supported){tread=hit["position"];has_tread=true;}
+                        }
                     }
-                    const Vector3 landing=raised.origin+step_collision_->get_travel();
+                    Vector3 landing=raised.origin+step_collision_->get_travel();
+                    // Stay above the first swept contact, at the verified tread
+                    // elevation. Never exceed the already cleared 30 cm lift.
+                    if(has_tread)landing.y=std::min(raised.origin.y,std::max(landing.y,tread.y+margin));
                     const real_t rise=landing.y-start.origin.y;
                     if(supported&&rise>0.001&&rise<=0.301) {
                         raised.origin=landing;body->set_global_transform(raised);
-                        body->set_velocity(Vector3(0,-1,0));body->move_and_slide();
+                        // The landing sweep already integrated the downward
+                        // part of this step. A second downward velocity projects
+                        // against a steep riser normal and slides the capsule
+                        // backwards farther than a slow walker advanced.
+                        body->set_velocity(Vector3());body->move_and_slide();
                         body->set_velocity(Vector3(velocity.x,body->get_velocity().y,velocity.z));
                         stepped=true;step_frame_=frame;step_body_=body->get_instance_id();
                     }

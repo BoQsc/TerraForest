@@ -90,6 +90,14 @@ void NativeStaticBatch::set_collision_focus(Vector3 p) {
     collision_focus=p;
     if(p.distance_squared_to(selection_focus)>=16)collision_dirty=true;
 }
+bool NativeStaticBatch::set_navigation_interest(const PackedVector3Array &points){
+    if(points.size()>8)return false;
+    const Transform3D frame=is_inside_tree()?get_global_transform():get_transform();
+    if(!frame.is_finite()||std::abs(frame.basis.determinant())<1e-9)return false;
+    std::vector<Vector3> next;for(int i=0;i<points.size();++i){if(!points[i].is_finite())return false;next.push_back(frame.affine_inverse().xform(points[i]));}
+    if(next!=navigation_interest){navigation_interest=std::move(next);collision_dirty=true;}
+    return true;
+}
 void NativeStaticBatch::invalidate_proxy(int64_t id) {release_proxy(id);collision_dirty=true;}
 void NativeStaticBatch::refresh_collision_bounds(const std::set<BlockKey> &keys) {
     if(source_mesh.is_null())return;
@@ -121,10 +129,12 @@ void NativeStaticBatch::select_proxies() {
     collision_dirty=false;selection_focus=collision_focus;proxy_queries++;invalid_proxies=0;
     std::vector<std::pair<double,int64_t>> candidates;
     double range=(proxy_radius+4)*(proxy_radius+4);
-    for(auto &group:collision_bounds)if(!retirement_locks(group.first)&&box_distance_squared(group.second,collision_focus)<=range) {
+    auto near_interest=[&](const AABB &box){double d=1e30;for(const auto &point:navigation_interest)d=std::min(d,box_distance_squared(box,point));return d;};
+    for(auto &group:collision_bounds)if(!retirement_locks(group.first)&&(box_distance_squared(group.second,collision_focus)<=range||near_interest(group.second)<=16*16)) {
         for(auto id:groups.at(group.first)) {
             double distance=box_distance_squared(placement_transform(placements.at(id)).xform(proxy_box),collision_focus);
             if(distance<=range)candidates.emplace_back(distance,id);
+            else {const double other=near_interest(placement_transform(placements.at(id)).xform(proxy_box));if(other<=16*16)candidates.emplace_back(range+other,id);}
         }
     }
     proxy_candidates=int(candidates.size());
@@ -178,6 +188,8 @@ void NativeStaticBatch::_physics_process(double) {
 int64_t NativeStaticBatch::placement_for_body(RID body) const {
     auto it=body_ids.find(body);return it==body_ids.end()?0:it->second;
 }
+RID NativeStaticBatch::collision_body_for(int64_t identity)const{auto it=collision_bodies.find(identity);return it==collision_bodies.end()?RID():it->second.body;}
+PackedInt64Array NativeStaticBatch::collision_identities()const{PackedInt64Array ids;for(const auto &entry:collision_bodies)ids.push_back(entry.first);return ids;}
 Dictionary NativeStaticBatch::collision_stats() const {
     Dictionary d;d["enabled"]=proxy_radius>0;d["radius"]=proxy_radius;d["instance_limit"]=proxy_limit;d["builds_per_tick"]=proxy_build_limit;
     d["resident_bodies"]=int(collision_bodies.size());d["pending_bodies"]=int(collision_pending.size());d["candidate_bodies"]=proxy_candidates;

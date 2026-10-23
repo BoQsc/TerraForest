@@ -117,6 +117,7 @@ class NativeStaticBatch : public Node3D {
     std::vector<AABB> proxy_parts;
     int proxy_shape_limit=4096,proxy_shapes_per_tick=64;
     Vector3 collision_focus,selection_focus;
+    std::vector<Vector3> navigation_interest;
     Transform3D collision_transform;
     double proxy_radius=0;
     int proxy_limit=512,proxy_build_limit=8;
@@ -194,6 +195,9 @@ public:
     bool configure_collision(const AABB &box,double radius,int64_t instance_limit,int64_t builds_per_tick);
     bool configure_compound_collision(const TypedArray<AABB> &boxes,double radius,int64_t instance_limit,int64_t builds_per_tick,int64_t shape_limit,int64_t shapes_per_tick);
     void set_collision_focus(Vector3 focus);
+    RID collision_body_for(int64_t identity)const;
+    PackedInt64Array collision_identities()const;
+    bool set_navigation_interest(const PackedVector3Array &points);
     Dictionary collision_stats() const;
     bool is_collision_region_ready(const AABB &world_bounds) const;
     int64_t placement_for_body(RID body) const;

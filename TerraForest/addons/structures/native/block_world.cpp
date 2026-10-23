@@ -64,6 +64,7 @@ void NativeBlockWorld::_bind_methods() {
     ClassDB::bind_method(D_METHOD("collision_stats"),&NativeBlockWorld::collision_stats);
     ClassDB::bind_method(D_METHOD("is_collision_region_ready","world_bounds"),&NativeBlockWorld::is_collision_region_ready);
     ClassDB::bind_method(D_METHOD("set_focus","position"),&NativeBlockWorld::set_focus);
+    ClassDB::bind_method(D_METHOD("set_navigation_interest","points"),&NativeBlockWorld::set_navigation_interest);
     ClassDB::bind_method(D_METHOD("configure_streaming","enabled","radius","chunk_limit","mesh_byte_limit","cache_byte_limit"),&NativeBlockWorld::configure_streaming);
     ClassDB::bind_method(D_METHOD("streaming_stats"),&NativeBlockWorld::streaming_stats);
     ClassDB::bind_method(D_METHOD("configure_mesh_uploads","chunk_limit","byte_limit","time_limit_us"),&NativeBlockWorld::configure_mesh_uploads);

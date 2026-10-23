@@ -1,6 +1,6 @@
 # Entity navigation and world interaction standard
 
-Version 1, 2026-10-23. Applies to settlement actors, zombies and future mobile
+Version 2, 2026-10-23. Applies to settlement actors, zombies and future mobile
 entities. This defines required behavior and distinguishes current local coverage
 from unfinished world-scale navigation. Character art and a passing empty-floor
 chase are insufficient navigation acceptance.
@@ -28,20 +28,24 @@ pursuit, teleport, noclip or movement through unready collision.
 | Crawling zombie | horizontal 1.2 m capsule behind mouth | upright capsule, radius 0.75 m, height 1.8 m | no positive step |
 
 The crawling envelope covers turning its long proxy, but is deliberately
-conservative in height. Slopes, low tunnels and crawling under furniture are **not yet
-qualified**. Anatomical changes must select a matching profile and invalidate the
+conservative in height. The standing slope profile has an explicit physical test; crawler slopes, low
+tunnels and crawling under furniture remain **unqualified**. Anatomical changes must select a matching profile and invalidate the
 old route. Capabilities cannot be inferred from an animation clip existing.
 
 Routes use a 0.5 m grid, intermediate tread support, swept capsule clearance,
-floor-normal Y >=0.85, and no more than the profile's step height. Readiness bounds
+the profile's floor-normal limit and step height. Legacy settlement walkers and
+crawlers retain normal Y >=0.85. Standing zombies use normal Y >=0.7072, matching
+their physical 45-degree floor setting with a small conservative tolerance. Readiness bounds
 must cover the full query envelope, including larger crawling clearance. Stairs
 require bounded up/forward/landing collision checks, not a position snap through a
 riser. Do not authorize unsupported drops or gaps as walkable edges.
 
 Hazard admission samples the centre, edge midpoints and corners of a conservative
 square footprint, with 5 cm padding (at least a 0.4 m half-width), along the edge
-at intervals no greater than 0.1 m. Each graph candidate has at most 81 admission
-calls. This is bounded sampling, not continuous hazard geometry; tiny hazards
+at intervals no greater than 0.1 m. Ordinary half-metre/diagonal candidates have at most 81 admission
+calls; an exact-position root connector to a neighbouring aligned cell is at most
+1.061 m and 108 admission calls. Open-space links consist of separate bounded
+half-metre quanta. This is bounded sampling, not continuous hazard geometry; tiny hazards
 between samples are not qualified. Admission callbacks and
 movement guards contribute to measured runtime cost separately from work counts.
 
@@ -55,18 +59,24 @@ support or traversal geometry.
 
 ## Runtime limits and failure states
 
-Each route retains at most 2,048 nodes and searches within +/-16 m of its origin.
-Each activation/navigator pool shares 12 candidate work units per tick under a
-cooperative 750 microsecond planning deadline. With both current pools active,
-the host has at most 24 planning work units; the deadlines can overrun during a
+Each local route retains at most 2,048 nodes and searches within +/-16 m of its origin.
+The external-body service adds a derived regional surface graph and complete
+height-aware queries. Its cache/query/domain/portal/residency contract and pending
+acceptance are declared in [REGIONAL_NAVIGATION.md](REGIONAL_NAVIGATION.md).
+The existing activation pool shares 12 candidate work units per tick. The external
+navigator uses 12 for local searches and at most 48 half-metre quanta when a
+regional search is planning, under the same cooperative 750 microsecond planning
+deadline. With both current pools active, the host has at most 60 planning quanta;
+the deadlines can overrun during a
 physics query, callback, reset or reconstruction. These are not a total frame or
 large-population performance guarantee. Motion guards and bounded perception are
 accounted separately from planning; do not hide their cost in the work count.
 
 Zombie navigation retains at most six routes and evaluates at most 30 ordered
 neighbour pairs per tick. Moving targets use bounded goal updates rather than
-restarting A* every frame. Far targets may use verified 12 m local horizons, but
-this is local progress, **not a regional route or proof of reachability**.
+restarting searches every frame. Far targets and different storeys use complete
+regional searches; projected 12 m pursuit horizons are removed. A bounded regional
+query still does not establish reachability beyond its declared resident domain.
 
 Expose `planning`, `following`, `arrived`, `blocked`, `unavailable` and
 `search_limit` plus work/node counts. `blocked` describes the sampled local graph.
@@ -104,9 +114,10 @@ host update loop, and rendered evidence must be inspected. Interaction acceptanc
 includes complete action-to-world-mutation behavior and saved-state correctness.
 Native debug and release builds and existing actor-route regressions remain gates.
 
-Still required before claiming proper whole-world navigation: a regional/portal
-graph linking streets, entrances, floors and caves; streaming requests for future
-routes; robust moving-target/endurance checks; shared heterogeneous avoidance;
+Regional graph and frontier residency changes remain under actual-world
+verification; implementation alone does not close the acceptance gate.
+Still required before claiming proper whole-world navigation: representative
+street/entrance/floor/cave journeys; robust moving-target/endurance checks; shared heterogeneous avoidance;
 automatic permitted ladder/jump links; tight crawler clearance; door-destruction
 fresh-process save/reopen; populated settlement/cave journeys and measured total
 CPU/frame cost. Building layouts must also satisfy `WORLD_BUILDING_STANDARD.md`.

@@ -262,15 +262,21 @@ Profile 0 uses the existing 0.35 m / 1.8 m upright envelope and 0.30 m step. Pro
 1 uses a conservative 0.75 m / 1.8 m turning envelope with no upward step for
 crawlers. The larger envelope participates in readiness bounds. The service owns
 at most 64 requested slots (the zombie host configures six); each retains at most
-2,048 nodes. Its pool has 12 planning work units and the cooperative 750 us
-deadline, separate from the legacy activation pool. With both enabled the host
-budget is 24 planning units, not 12 globally; motion guards and bounded perception
+2,048 local nodes. Regional queries retain up to 16,384 nodes in a shared
+32,768-vertex, height-aware surface graph. The external pool has twelve local or
+up to 48 regional planning quanta and the cooperative 750 us deadline, separate
+from the twelve-quanta legacy activation pool. Motion guards and bounded perception
 are additional work. The current two avoidance implementations are not yet one
 heterogeneous crowd scheduler.
 
-Moving goals use hysteresis. Distant targets may project 12 m local horizons;
-these remain local searches, not regional reachability. A missing projection or
-unready corridor stops rather than producing a direct pursuit vector. Zombie
+Moving goals use hysteresis. Targets beyond 12 m, on different storeys, or
+exhausting the local search use complete regional queries. Projected local
+horizons are removed. Missing collision requests bounded host residency interests;
+blocked/unavailable routes hold the body. `route_points` exposes the full feet-origin
+path; `interest_points` prioritizes resident bodies, then unknown frontier columns.
+`set_interactions` accepts specific conditional wooden-door RIDs for planning;
+actual motion keeps those doors solid. See `docs/REGIONAL_NAVIGATION.md` for the
+bounded domain, tile portals and qualification limits. Zombie
 standing movement uses the existing native feet-origin grounded motor; authored
 animation and validated interactions remain owned by the character controller.
 

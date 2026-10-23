@@ -86,6 +86,7 @@ class NativeBlockWorld : public Node3D {
     bool load_texture_set(const String &name);
     std::array<Ref<Mesh>,28> preview_meshes;
     Vector3 focus;
+    std::vector<Vector3> navigation_interest;
     double collision_radius=48.0;
     bool collisions=true;
     bool collision_work_pending=true;
@@ -184,6 +185,7 @@ public:
     Dictionary collision_stats() const;
     bool is_collision_region_ready(const AABB &world_bounds) const;
     void set_focus(Vector3 p);
+    bool set_navigation_interest(const PackedVector3Array &points);
     bool configure_streaming(bool enabled,double radius,int64_t chunk_limit,int64_t mesh_byte_limit,int64_t cache_byte_limit);
     Dictionary streaming_stats() const;
     bool configure_mesh_uploads(int chunk_limit,int64_t byte_limit,int64_t time_limit_us);

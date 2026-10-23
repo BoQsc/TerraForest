@@ -37,7 +37,7 @@ seconds, 12–24 metres from the player. Four candidate probes per interval reje
 missing collision, unsupported/steep ground, water and occupied capsules. Admission
 and movement use the host's terrain/structure/vegetation collision-readiness gate.
 Controllers suspend during loading, edits, menus, inventory, driving or focus loss.
-Unknown collision holds living actors until coverage returns; distance over 64
+Unknown collision holds living actors until coverage returns; distance over 96
 metres retires them. Corpses retire after 20 seconds or on suspension/unready
 collision. Detached bodies freeze during suspension and are removed
 with their owner. Encounters clear on world pose restore and are not persisted.
@@ -69,10 +69,14 @@ Zombies do not open doors. Other protected/unbreakable obstacles remain blocked.
 
 Standing and crawling profiles are conservative; the latter does not yet support
 low tunnels or stairs. The local search remains bounded to +/-16 m with at most
-2,048 nodes. Verified 12 m horizons can make local progress toward distant targets;
-there is no regional connectivity/streaming graph yet. Unknown or failed routes
-stop, with no direct-chase fallback. Both current actor pools have separate bounded
-budgets; combined planning is at most 24 work units/tick, excluding motion guards.
+2,048 nodes. A derived regional graph handles farther targets and different
+storeys using the same physical edge evaluator, retaining height and discovered
+cross-tile connections. It requests bounded collision interests within the existing
+archive paging domain. See [regional contract](../../docs/REGIONAL_NAVIGATION.md)
+for cache/query limits and acceptance evidence. Unknown or failed routes stop.
+External planning has twelve local or up to 48 regional quanta per tick under a
+cooperative 750 us deadline; the legacy actor pool has another twelve. Motion
+guards and perception add work outside those planning counts.
 
 Collision bits: world `1`, player `2`, zombie body `1 << 16`, fitted hit areas
 `1 << 17`, ragdolls `1 << 18`. The runtime copy of `zombie.gd` differs from its

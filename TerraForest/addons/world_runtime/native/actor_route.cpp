@@ -24,24 +24,30 @@ void ActorRoute::prepare(const Vector3 &position,const Vector3 &goal,double delt
 bool ActorRoute::edge(PhysicsDirectSpaceState3D *space,const Vector3 &from,Vector3 &to,
     const Callable &readiness,const Callable &admission,const Ref<PhysicsRayQueryParameters3D> &ray,
     const Ref<PhysicsShapeQueryParameters3D> &shape){
+    edge_unavailable_=false;edge_failure_="unavailable";
     // Include the full capsule, support rays and bounded stair clearance.
     Ref<CapsuleShape3D> capsule=shape->get_shape();
     const real_t radius=capsule.is_valid()?std::max(real_t(.4),capsule->get_radius()+real_t(.05)):real_t(.4);
     AABB region(from-Vector3(radius,1.9,radius),Vector3(radius*2,3.7,radius*2));
     region=region.merge(AABB(to-Vector3(radius,1.9,radius),Vector3(radius*2,3.7,radius*2)));include(region);
     Variant ready=readiness.call(region);
-    if(ready.get_type()!=Variant::BOOL || !bool(ready)){unknown_=true;return false;}
+    if(ready.get_type()!=Variant::BOOL || !bool(ready)){unknown_=true;edge_unavailable_=true;return false;}
     // Half-metre graph edges have a quarter-metre intermediate tread sample.
     // Each half must fit the same 30cm riser limit as actual movement.
     Vector3 middle=(from+to)*.5;
     auto support=[&](Vector3 &point,real_t base)->bool {
         ray->set_from(Vector3(point.x,base-.28,point.z));ray->set_to(Vector3(point.x,base-1.5,point.z));
-        Dictionary hit=space->intersect_ray(ray);if(hit.is_empty() || Vector3(hit["normal"]).y<.85)return false;
+        edge_failure_="missing_support";
+        Dictionary hit=space->intersect_ray(ray);if(hit.is_empty())return false;
+        edge_failure_="steep_support";if(Vector3(hit["normal"]).y<minimum_floor_normal)return false;
         point.y=Vector3(hit["position"]).y+.93;return true;
     };
-    if(!support(middle,from.y) || std::abs(middle.y-from.y)>maximum_step+.03)return false;
-    if(!support(to,middle.y) || std::abs(to.y-middle.y)>maximum_step+.001)return false;
-    if(admission.is_valid()){
+    if(!support(middle,from.y))return false;
+    edge_failure_="step_height";if(std::abs(middle.y-from.y)>maximum_step+.03)return false;
+    if(!support(to,middle.y))return false;
+    edge_failure_="step_height";if(std::abs(to.y-middle.y)>maximum_step+.001)return false;
+    if(admission.is_valid()||water_depth.is_valid()){
+        edge_failure_="hazard";
         // Conservative square footprint, including segment interiors. Endpoint
         // and midpoint-only tests can skip a shoreline corner which the smaller
         // actual movement guard then rejects, stranding the body on its route.
@@ -53,8 +59,16 @@ bool ActorRoute::edge(PhysicsDirectSpaceState3D *space,const Vector3 &from,Vecto
             const double t=double(i)/segments;
             const Vector3 point=t<=.5?from.lerp(middle,t*2):middle.lerp(to,(t-.5)*2);
             for(const Vector3 &offset:offsets){
-                Variant allowed=admission.call(point+offset*radius);
-                if(allowed.get_type()!=Variant::BOOL || !bool(allowed))return false;
+                if(water_depth.is_valid()){
+                    // Query the native water owner directly. Preserve the same
+                    // feet+10cm footprint policy without per-sample script glue.
+                    Variant depth=water_depth.call(point+offset*radius-Vector3(0,.83,0));
+                    if((depth.get_type()!=Variant::FLOAT&&depth.get_type()!=Variant::INT)||!std::isfinite(double(depth))||double(depth)>0)return false;
+                }
+                if(admission.is_valid()){
+                    Variant allowed=admission.call(point+offset*radius);
+                    if(allowed.get_type()!=Variant::BOOL || !bool(allowed))return false;
+                }
             }
         }
     }
@@ -68,21 +82,28 @@ bool ActorRoute::edge(PhysicsDirectSpaceState3D *space,const Vector3 &from,Vecto
     };
     // Flat/open edges retain the cheap path. Riser corners require extra capsule
     // clearance; sample it instead of treating the actor as a point on the tread.
-    if(std::abs(to.y-from.y)<.16 && clear(to) && sweep(from+Vector3(0,.03,0),to+Vector3(0,.03,0)))return true;
+    if(std::abs(to.y-from.y)<.16 && clear(to) && sweep(from+Vector3(0,.03,0),to+Vector3(0,.03,0))){edge_failure_="none";return true;}
+    edge_failure_="capsule_clearance";
     Vector3 poses[3]={from,middle,to};
     for(auto &pose:poses){
+        // A capsule may already stand above the centre's tread ray while its
+        // rounded foot rides a riser. Clearance starts at the body's current
+        // elevation, rather than spending its step allowance recovering that
+        // height. Support/step limits above still validate the actual treads.
+        pose.y=std::max(pose.y,from.y);
         bool valid=false;
         for(int lift=0;lift<=6 && lift*.05<=maximum_step+.0001;++lift){Vector3 raised=pose+Vector3(0,lift*.05,0);if(clear(raised)){pose=raised;valid=true;break;}}
         if(!valid)return false;
     }
     for(int i=0;i<2;++i){
+        edge_failure_="capsule_sweep";
         Vector3 a=poses[i],b=poses[i+1];
         if(sweep(a,b))continue;
         Vector3 up=a;up.y=std::max(a.y,b.y)+.001;
         Vector3 over=b;over.y=up.y;
         if(!sweep(a,up) || !sweep(up,over) || !sweep(over,b))return false;
     }
-    return true;
+    edge_failure_="none";return true;
 }
 void ActorRoute::step(PhysicsDirectSpaceState3D *space,const Callable &readiness,const Callable &admission,
     const Ref<PhysicsRayQueryParameters3D> &ray,const Ref<PhysicsShapeQueryParameters3D> &shape){

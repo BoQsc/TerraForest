@@ -27,6 +27,8 @@ class ActorRoute {
     godot::Vector3 origin_,goal_,expected_;
     godot::AABB bounds_;
     bool has_bounds_=false;
+    bool edge_unavailable_=false;
+    const char *edge_failure_="none";
     double retry_=0, stuck_=0;
     int stalls_=0;
     void start(const godot::Vector3 &position,const godot::Vector3 &goal);
@@ -39,6 +41,10 @@ public:
     enum State {IDLE,PLANNING,FOLLOWING,ARRIVED,BLOCKED,UNAVAILABLE,SEARCH_LIMIT};
     State state=IDLE;
     double maximum_step=.30;
+    double minimum_floor_normal=.85;
+    godot::Callable water_depth;
+    bool edge_unavailable() const {return edge_unavailable_;}
+    const char *edge_failure() const {return edge_failure_;}
     int expansions=0;
     void invalidate(){state=IDLE;}
     void invalidate(const godot::AABB &bounds){if(!has_bounds_ || bounds.size==godot::Vector3() || bounds_.intersects(bounds))invalidate();}
@@ -52,6 +58,11 @@ public:
     bool permits_motion(godot::PhysicsDirectSpaceState3D *space,const godot::Vector3 &from,godot::Vector3 to,
         const godot::Callable &readiness,const godot::Callable &admission,
         const godot::Ref<godot::PhysicsRayQueryParameters3D> &ray,const godot::Ref<godot::PhysicsShapeQueryParameters3D> &shape) {
+        return edge(space,from,to,readiness,admission,ray,shape);
+    }
+    bool sample_motion(godot::PhysicsDirectSpaceState3D *space,const godot::Vector3 &from,godot::Vector3 &to,
+        const godot::Callable &readiness,const godot::Callable &admission,
+        const godot::Ref<godot::PhysicsRayQueryParameters3D> &ray,const godot::Ref<godot::PhysicsShapeQueryParameters3D> &shape){
         return edge(space,from,to,readiness,admission,ray,shape);
     }
     godot::Dictionary status() const;

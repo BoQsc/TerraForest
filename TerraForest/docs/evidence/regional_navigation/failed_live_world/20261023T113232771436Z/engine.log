@@ -1,0 +1,6 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+SCRIPT ERROR: Parse Error: Cannot infer the type of "roof" variable because the value doesn't have a set type.
+   at: GDScript::reload (res://tests/zombie_regional_world.gd:77)
+ERROR: Failed to load script "res://tests/zombie_regional_world.gd" with error "Parse error".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)

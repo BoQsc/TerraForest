@@ -1,0 +1,15 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PLAYER_STAIR mode={ "rate": 60, "speed": 5.5 } end=(0.5, 1.0093, 1.991855) steps=7 grounded_ticks=68 normal=(0.0, 1.0, 0.0)
+PASS { "rate": 60, "speed": 5.5 } climbs unchanged cottage stairs and doorway
+PLAYER_STAIR mode={ "rate": 60, "speed": 9.9 } end=(0.499997, 1.007967, 1.841079) steps=5 grounded_ticks=44 normal=(0.0, 1.0, 0.0)
+PASS { "rate": 60, "speed": 9.9 } climbs unchanged cottage stairs and doorway
+PLAYER_STAIR mode={ "rate": 120, "speed": 5.5 } end=(0.5, 1.008611, 1.991709) steps=4 grounded_ticks=37 normal=(0.0, 1.0, 0.0)
+PASS { "rate": 120, "speed": 5.5 } climbs unchanged cottage stairs and doorway
+PLAYER_STAIR mode={ "rate": 120, "speed": 9.9 } end=(0.5, 1.00835, 1.960105) steps=11 grounded_ticks=82 normal=(0.0, 1.0, 0.0)
+PASS { "rate": 120, "speed": 9.9 } climbs unchanged cottage stairs and doorway
+PLAYER_STAIR mode={ "rate": 60, "speed": 2.5 } end=(0.5, 1.004444, 1.958338) steps=4 grounded_ticks=41 normal=(0.0, 1.0, 0.0)
+PASS { "rate": 60, "speed": 2.5 } climbs unchanged cottage stairs and doorway
+PASS one-metre obstacle remains unclimbable
+PASS low ceiling rejects step-up without clipping
+PLAYER_COTTAGE_STAIRS failures=0

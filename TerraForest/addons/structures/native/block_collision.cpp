@@ -62,7 +62,11 @@ bool NativeBlockWorld::is_collision_region_ready(const AABB &world_bounds) const
     return true;
 }
 bool NativeBlockWorld::collision_near(BlockKey key) const {
-    return collisions&&distance_to_focus(key)<=(collision_radius+14)*(collision_radius+14);
+    if(!collisions)return false;
+    if(distance_to_focus(key)<=(collision_radius+14)*(collision_radius+14))return true;
+    const Vector3 center(key.x*16+8,key.y*16+8,key.z*16+8);
+    for(const auto &p:navigation_interest)if(center.distance_squared_to(p)<=38*38)return true;
+    return false;
 }
 void NativeBlockWorld::retire_collision(BlockVisual &visual) {
     if(!visual.body)return;
