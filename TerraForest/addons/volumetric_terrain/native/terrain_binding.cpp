@@ -26,6 +26,7 @@ godot::Dictionary plan_regional_route(const World &,godot::Vector3,godot::Vector
 godot::Dictionary plan_settlement_lots(const World &,godot::Vector3,const godot::Array &,const godot::Array &,bool);
 godot::Dictionary plan_street_network(const World &,const godot::Array &,const godot::PackedVector3Array &);
 godot::Dictionary fit_generated_lakes(const World &,const godot::Array &);
+godot::Dictionary survey_generated_lake_surfaces(const World &,const godot::Array &);
 class TerrainCore : public godot::RefCounted {
     GDCLASS(TerrainCore, godot::RefCounted)
     BuildControl control_;
@@ -55,6 +56,7 @@ protected:
         godot::ClassDB::bind_method(godot::D_METHOD("survey_overview","size"), &TerrainCore::survey_overview);
         godot::ClassDB::bind_method(godot::D_METHOD("survey_water_visibility","points"), &TerrainCore::survey_water_visibility);
         godot::ClassDB::bind_method(godot::D_METHOD("bake_generated_earthworks","packets"), &TerrainCore::bake_generated_earthworks);
+        godot::ClassDB::bind_method(godot::D_METHOD("survey_generated_lake_surfaces","records"), &TerrainCore::survey_generated_lake_surfaces);
         godot::ClassDB::bind_method(godot::D_METHOD("survey_patch","size","x","z","width","height"), &TerrainCore::survey_patch);
         godot::ClassDB::bind_method(godot::D_METHOD("measure_material_surface","x","z","size","y_begin","y_end"), &TerrainCore::measure_material_surface);
         godot::ClassDB::bind_method(godot::D_METHOD("material_box","solid","minimum","maximum","add","solid_revision","material_revision"), &TerrainCore::material_box, DEFVAL(-1));
@@ -313,6 +315,7 @@ public:
         result["ok"]=true;result["completed"]=completed;result["revision"]=world_.revision;
         result["worker_ms"]=std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-started).count();return result;
     }
+    godot::Dictionary survey_generated_lake_surfaces(const godot::Array &records){std::lock_guard<std::mutex> lock(mutex_);return terraforest::survey_generated_lake_surfaces(world_,records);}
     godot::PackedByteArray execute(const godot::PackedByteArray &packet) {
         if(packet.size()<4 || packet.size()>512LL*1024*1024)return reply(0,1);
         const uint32_t command=packet.decode_u32(0);

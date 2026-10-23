@@ -70,6 +70,42 @@ Dictionary fit_generated_lakes(const World &world,const Array &records){
  }
  Dictionary result;result["ok"]=true;result["records"]=fitted;result["rejected"]=rejected;result["height_samples"]=survey.samples;return result;
 }
+// Regional preview at 2m sampling. This surveys the connected horizontal
+// surface of generated bowls, not their volume, and owns no water storage.
+Dictionary survey_generated_lake_surfaces(const World &world,const Array &records){
+ if(records.size()>4)return failure("Too many preview lakes");
+ PackedVector3Array points;int samples=0;
+ auto density=[&](Vector3 p){
+  const int ix=int(std::floor(p.x)),iy=int(std::floor(p.y)),iz=int(std::floor(p.z));
+  const float dx=p.x-ix,dy=p.y-iy,dz=p.z-iz;float d=0;
+  for(int c=0;c<8;c++){float weight=(c&1?dx:1-dx)*(c&2?dy:1-dy)*(c&4?dz:1-dz);if(weight>0)d+=world.sample(ix+(c&1),iy+((c>>1)&1),iz+((c>>2)&1))*weight;}
+  return d;
+ };
+ for(int i=0;i<records.size();i++){
+  if(records[i].get_type()!=Variant::DICTIONARY)return failure("Invalid preview lake");Dictionary r=records[i];
+  for(const char *key:{"origin","cells","spacing","level","seed"})if(!r.has(key))return failure("Incomplete preview lake");
+  if(r["origin"].get_type()!=Variant::VECTOR3||r["cells"].get_type()!=Variant::VECTOR3I||r["seed"].get_type()!=Variant::VECTOR3)return failure("Invalid preview lake shape");
+  Vector3 origin=r["origin"],seed=r["seed"];Vector3i cells=r["cells"];double spacing=r["spacing"],level=r["level"];
+  double width=cells.x*spacing,depth=cells.z*spacing;
+  if(!origin.is_finite()||!seed.is_finite()||!std::isfinite(spacing)||!std::isfinite(level)||spacing<=0||width<4||depth<4||width>160||depth>160||level<1||level>254||origin.x<0||origin.z<0||origin.x+width>=1999||origin.z+depth>=1999)return failure("Invalid preview lake bounds");
+  int nx=int(std::ceil(width/2)),nz=int(std::ceil(depth/2));std::vector<uint8_t> wet(nx*nz),seen(nx*nz);std::vector<int> queue;
+  for(int z=0;z<nz;z++)for(int x=0;x<nx;x++){
+   Vector3 p(origin.x+(x+.5)*width/nx,level-.001,origin.z+(z+.5)*depth/nz);
+   wet[z*nx+x]=density(p)>=0;++samples;
+  }
+  int sx=std::clamp(int((seed.x-origin.x)*nx/width),0,nx-1),sz=std::clamp(int((seed.z-origin.z)*nz/depth),0,nz-1),start=sz*nx+sx;
+  if(!wet[start])continue;seen[start]=1;queue.push_back(start);
+  for(size_t at=0;at<queue.size();at++){
+   int index=queue[at],x=index%nx,z=index/nx;
+   points.push_back(Vector3(origin.x+(x+.5)*width/nx,level,origin.z+(z+.5)*depth/nz));
+   for(int d=0;d<4;d++){int xx=x+(d==0)-(d==1),zz=z+(d==2)-(d==3);
+    if(xx<0||zz<0||xx>=nx||zz>=nz)continue;int next=zz*nx+xx;
+    if(wet[next]&&!seen[next]){seen[next]=1;queue.push_back(next);}
+   }
+  }
+ }
+ Dictionary out;out["ok"]=true;out["points"]=points;out["samples"]=samples;out["spacing_m"]=2;return out;
+}
 Dictionary plan_regional_route(const World &world,Vector3 start,Vector3 finish,const Array &reservations){
  if(!inside(start)||!inside(finish)||reservations.size()>4096)return failure("Invalid route input");
  Survey survey{world};

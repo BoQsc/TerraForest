@@ -29,4 +29,9 @@ func run()->void:
   for i in 3:await process_frame
   await RenderingServer.frame_post_draw
   root.get_texture().get_image().save_png("res://reports/world_recovery_ui.png")
+ browser.preview_worker=Thread.new();browser.preview_button.disabled=true
+ browser.preview_worker.start(func():return null)
+ while browser.preview_worker.is_alive():await process_frame
+ browser.poll_preview()
+ if browser.preview_worker!=null or browser.preview_button.disabled or not browser.preview_status.text.contains("failed"):failures+=1
  browser.free();print("WORLD_ENTRY_REVIEW failures=",failures);quit(1 if failures else 0)

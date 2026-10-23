@@ -2495,3 +2495,12 @@ playable world. Independent-worker mesh parity and actual saved-world map reuse
 pass; see WORLD_WORKFLOW_REDESIGN.md. These close the identified handoff omissions,
 not whole-scene loading time, compute generation, complete preview layers, storage
 capacity or populated travel. Keep the earlier mining first-response failure open.
+
+
+2026-10-23 preview coverage: inland lakes are now present alongside ocean, roads
+and building footprints, using shared generated catalog fitting and bounded native
+surface surveys. Two actual saved-world map comparisons pass within one regional
+pixel; all layout preview caches pass cold/warm parity. The full-volume preview
+candidate failed its15s gate and was removed. See WORLD_WORKFLOW_REDESIGN.md.
+POI planning/preview, broader admission and the other full rewrite requirements
+remain open. The surface preview does not alter static water gameplay.

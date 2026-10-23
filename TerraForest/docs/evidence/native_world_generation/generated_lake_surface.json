@@ -1,0 +1,27 @@
+{
+  "cases": [
+    {
+      "lakes": 3,
+      "ms": 0.777,
+      "points": 489,
+      "samples": 2352,
+      "seed": 0
+    },
+    {
+      "lakes": 4,
+      "ms": 2.411,
+      "points": 1639,
+      "samples": 6976,
+      "seed": 42
+    },
+    {
+      "lakes": 1,
+      "ms": 1.516,
+      "points": 1485,
+      "samples": 4624,
+      "seed": 1703
+    }
+  ],
+  "failures": 0,
+  "scope": "2m connected surface survey for generated bowl preview; no water volume, runtime or edited-world equivalence claim"
+}

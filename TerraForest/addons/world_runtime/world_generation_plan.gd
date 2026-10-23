@@ -106,24 +106,31 @@ static func build(seed_value:int,generator:int,with_market:bool=true,with_connec
  result["timings"]=timings
  result["worker_ms"]=(Time.get_ticks_usec()-started)/1000.0
  return result
-static func ocean_preview(core)->PackedByteArray:
+static func water_preview(core,generator:int)->PackedByteArray:
  # Reuse the runtime's native implicit-ocean source, visibility and rasterizer.
  # No resident water regions, meshes or scene nodes are created for this preview.
  var water=ClassDB.instantiate("NativeRegionalWater")
- water.set_surrounding_ocean(true)
+ water.set_surrounding_ocean(generator==19)
  var raster=ClassDB.instantiate("NativeSurfaceMapRaster")
  var cursor:=0
- while cursor<512*512:
+ while generator==19 and cursor<512*512:
   var source:Dictionary=water.survey_ocean(cursor,water.survey_revision_id())
   if not source.get("ok",false) or source.cursor<=cursor or not raster.offer(source.points):return PackedByteArray()
   cursor=source.cursor
+ var definitions:=preload("res://addons/volumetric_terrain/generated_lakes.gd").describe(core,generator)
+ if not definitions.get("ok",false):return PackedByteArray()
+ var inland:Dictionary=core.survey_generated_lake_surfaces(definitions.records)
+ if not inland.get("ok",false):return PackedByteArray()
+ var points:PackedVector3Array=inland.points
+ for first in range(0,points.size(),256):
+  if not raster.offer(points.slice(first,mini(first+256,points.size()))):return PackedByteArray()
  var offset:=0
  while offset<raster.count():
   var visibility:Dictionary=core.survey_water_visibility(raster.batch(offset,256))
   if not visibility.get("ok",false) or visibility.visible.is_empty() or not raster.accept_prefix(offset,visibility.visible):return PackedByteArray()
   offset+=visibility.visible.size()
  return raster.pixels(Color(54/255.0,117/255.0,140/255.0))
-static func preview(seed_value:int,generator:int,integrated:bool=true,with_market:bool=true,with_connection:bool=true)->Dictionary:
+static func preview(seed_value:int,generator:int,integrated:bool=true,with_market:bool=true,with_connection:bool=true,preview_folder:String="user://cartography/generation")->Dictionary:
  var terrain:=Survey.build(seed_value,generator)
  if not terrain.get("ok",false):return terrain
  if not integrated or generator not in [17,18,19]:return terrain
@@ -134,11 +141,22 @@ static func preview(seed_value:int,generator:int,integrated:bool=true,with_marke
  for site:Dictionary in [plan.plan,plan.market]:
   for lot:Dictionary in site.get("lots",[]):bounds.append(lot.bounds)
  var core=ClassDB.instantiate("TerrainCore")
- var water:=PackedByteArray()
- if generator==19:
+ var suffix:="template_release" if core.build_variant()=="template_release" else "template_debug"
+ var library:="res://addons/volumetric_terrain/bin/terrain_core.windows.template_release.x86_64.dll" if suffix=="template_release" else "res://addons/volumetric_terrain/bin/terrain_core.windows.x86_64.dll"
+ var terrain_binary:=FileAccess.get_sha256(library)
+ var water_binary:=FileAccess.get_sha256("res://addons/volumetric_water/bin/volumetric_water.windows.%s.x86_64.dll"%suffix)
+ var cache_key:String="generation-preview-v1|"+plan.plan_digest+"|"+terrain_binary+"|"+water_binary
+ var cache=preload("res://addons/world_runtime/survey_patch_cache.gd")
+ var cached:Dictionary=cache.read(cache_key,cache_key,preview_folder) if not terrain_binary.is_empty() and not water_binary.is_empty() else {}
+ terrain["preview_cache_hit"]=cached.get("hit",false)
+ if cached.get("hit",false):terrain.pixels=cached.pixels
+ else:
   if not Codec.reply_ok(core.execute(Codec.command(6,[seed_value,generator]))):return {"ok":false,"reason":"Preview terrain initialization failed"}
-  water=ocean_preview(core)
-  if water.is_empty():return {"ok":false,"reason":"Ocean preview unavailable"}
- terrain.pixels=core.render_plan_map(terrain.pixels,roads,bounds,water)
+  var packets:=preload("res://addons/world_runtime/generation_earthworks.gd").packets(plan.works.segments)
+  if not core.bake_generated_earthworks(packets).get("ok",false):return {"ok":false,"reason":"Preview earthworks unavailable"}
+  var water:=water_preview(core,generator)
+  if water.is_empty():return {"ok":false,"reason":"Water preview unavailable"}
+  terrain.pixels=core.render_plan_map(terrain.pixels,roads,bounds,water)
+  if not terrain_binary.is_empty() and not water_binary.is_empty():cache.write(cache_key,cache_key,terrain.pixels,preview_folder,32)
  terrain["plan_digest"]=plan.plan_digest;terrain["building_count"]=bounds.size();terrain["plan_cache_hit"]=plan.cache_hit;terrain["plan_ms"]=plan.worker_ms;terrain["plan_reusable"]=plan.get("cache_hit",false) or plan.get("cache_persisted",false)
  return terrain

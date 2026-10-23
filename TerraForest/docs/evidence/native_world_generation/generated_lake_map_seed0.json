@@ -1,0 +1,10 @@
+{
+  "actual_pixels": 58,
+  "failures": 0,
+  "generator": 19,
+  "map_size": 256,
+  "misses_beyond_one_pixel": 0,
+  "preview_pixels": 54,
+  "scope": "Saved generated bowls at regional map resolution; shoreline precision is one pixel, not edited arbitrary water-volume equivalence",
+  "seed": 0
+}

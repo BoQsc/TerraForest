@@ -268,7 +268,9 @@ func start_preview()->void:
 	if preview_worker.start(job)!=OK:preview_worker=null;preview_button.disabled=false;preview_status.text="Could not start terrain preview."
 func poll_preview()->void:
 	if preview_worker==null or preview_worker.is_alive():return
-	var result:Dictionary=preview_worker.wait_to_finish();preview_worker=null;preview_button.disabled=false
+	var completed=preview_worker.wait_to_finish();preview_worker=null;preview_button.disabled=false
+	if not completed is Dictionary:preview_status.text="Terrain preview failed. Try again after checking the generator log.";return
+	var result:Dictionary=completed
 	if preview_key!=selected_preview_key():return
 	if not result.get("ok",false):preview_status.text="Terrain preview failed. No world was created.";return
 	preview_view.texture=ImageTexture.create_from_image(Image.create_from_data(256,256,false,Image.FORMAT_RGBA8,result.pixels))

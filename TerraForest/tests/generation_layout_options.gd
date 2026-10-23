@@ -5,12 +5,15 @@ const Launch=preload("res://demo/world_launch.gd")
 func _initialize()->void:
  var failures:=0
  var digests:=[]
+ var folder:="user://generation_preview_test_%d_%d"%[OS.get_process_id(),Time.get_ticks_usec()]
  for option in ["connected","road","settlement"]:
   var market:bool=option=="connected"
   var connection:bool=option!="settlement"
   var plan:=Plan.build(42,19,market,connection)
   if not plan.get("ok",false):failures+=1;continue
-  var preview:=Plan.preview(42,19,true,market,connection)
+  var preview:=Plan.preview(42,19,true,market,connection,folder)
+  var warm:=Plan.preview(42,19,true,market,connection,folder)
+  if preview.get("preview_cache_hit",true) or not warm.get("preview_cache_hit",false) or preview.pixels!=warm.pixels:failures+=1
   if not preview.get("ok",false) or preview.plan_digest!=plan.plan_digest:failures+=1
   if preview.get("building_count",0)!=(20 if market else 12):failures+=1
   if plan.market.is_empty()==market or plan.connection.is_empty()==connection:failures+=1

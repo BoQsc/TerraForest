@@ -627,22 +627,10 @@ func _prepare_component_restores()->Dictionary:
 func _initialize_generated_components() -> bool:
 	components = {}
 	if world_generator in [4,6,7,8,9,10,11,12,13,14,15,16,17,19] and snapshot_validators.has("volumetric_water"):
-		var definitions: PackedByteArray=_call(Codec.command(27))
-		var records: Array=[]
-		if not Codec.reply_ok(definitions) or definitions.size()!=192:
-			write_allowed=false
-			return false
-		for i in range(4):
-			var offset:=16+i*44
-			var origin:=Vector3(definitions.decode_float(offset),definitions.decode_float(offset+4),definitions.decode_float(offset+8))
-			var cells:=Vector3i(definitions.decode_u32(offset+12),definitions.decode_u32(offset+16),definitions.decode_u32(offset+20))
-			var seed_point:=Vector3(definitions.decode_float(offset+32),definitions.decode_float(offset+36),definitions.decode_float(offset+40))
-			records.append({"id":i+1,"origin":origin,"cells":cells,"spacing":definitions.decode_float(offset+24),"level":definitions.decode_float(offset+28),"seed":seed_point})
-		if world_generator==19:
-			var fitted:Dictionary=native.fit_generated_lakes(records)
-			if not fitted.get("ok",false):write_allowed=false;return false
-			records=fitted.records
-			print("GENERATED_LAKE_ADMISSION accepted=",records.size()," rejected=",fitted.rejected," samples=",fitted.height_samples)
+		var fitted:Dictionary=preload("res://addons/volumetric_terrain/generated_lakes.gd").describe(native,world_generator)
+		if not fitted.get("ok",false):write_allowed=false;return false
+		var records:Array=fitted.records
+		if world_generator==19:print("GENERATED_LAKE_ADMISSION accepted=",records.size()," rejected=",fitted.rejected," samples=",fitted.height_samples)
 		# New worlds start from definitions, which the regional validator accepts.
 		# Encoding an empty regional snapshot here would mark unfilled lakes cached.
 		var catalog: RefCounted=ClassDB.instantiate("NativeLakeCatalog")

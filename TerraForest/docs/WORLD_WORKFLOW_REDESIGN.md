@@ -397,3 +397,34 @@ Map overlays already use content-addressed caches. Cache miss/fingerprint mismat
 still regenerates safely; quotas may evict derived data. First-play whole-scene
 loading/resource cost, warm populated travel, map preview of inland water/POIs and
 canonical storage capacity remain separate open requirements.
+
+
+## Inland lake preview — 2026-10-23
+
+Generator preview now shares the actual lake catalog decoding/fitting with new
+world initialization. Native connected surface sampling at2m spacing supplies
+regional preview coverage; the existing native visibility and rasterizer clip it.
+It does not generate or store another water volume. The preview applies planned
+terrain grading first and overlays its actual planned roads/building footprints.
+The UI image was inspected and includes inland lakes plus the surrounding ocean.
+
+Three-seed deterministic surface/read-only/invalid-input checks pass072207439680Z:
+0.777–2.411ms for2352–6976 surface samples. This measures the surface survey alone.
+Actual saved-world inland map comparisons pass for seed1703 (072437311245Z,
+120 actual/115 preview pixels) and seed0 (072535339474Z,58/54 pixels), with no
+coverage mismatch beyond one regional map pixel. These are generated bowl maps,
+not arbitrary edited-volume or exact shoreline equivalence. The first comparison
+harness failed type inference (072348276121Z), then was corrected.
+
+A full-volume preview candidate exceeded a15s gate (071836757440Z). It was removed
+without changing playable water. The retained failed report is not accepted work.
+Complete composite previews now use a bounded32-entry cache keyed by plan digest
+and native terrain/water binary identities; all3 layout cold/warm parity cases pass
+072824860460Z. An initial cache-key type inference failure is retained at
+072657457550Z. Worker failure cleanup now restores the preview button even when a
+worker returns null; inspected UI and null-result regression pass072826959884Z.
+
+Remaining preview scope: authored POI integration/markers and broader shoreline
+admission; compute work, canonical storage capacity, mining arrival readiness,
+world visual acceptance and populated performance remain active. Do not treat
+this map display as completing those systems.
